@@ -1,0 +1,113 @@
+package main
+
+import (
+	"encoding/json"
+	"errors"
+	"os"
+	"path/filepath"
+	"testing"
+
+	"siq-agent-security/edge/agent/protocol"
+)
+
+// TestValidateScopeSafety covers the hermes scope validation rules (empty
+// scope, filesystem root, ".env"/"secret" roots, ambiguous wildcards,
+// relative paths, missing roots) — the same code path the hermes connector's
+// validate_scope op runs.
+func TestValidateScopeSafety(t *testing.T) {
+	cases := []struct {
+		name  string
+		scope *protocol.Scope
+	}{
+		{"nil scope", nil},
+		{"no roots", &protocol.Scope{}},
+		{"filesystem root", &protocol.Scope{Roots: []string{"/"}}},
+		{"env root", &protocol.Scope{Roots: []string{"/tmp/.env-profiles"}}},
+		{"secret root", &protocol.Scope{Roots: []string{"/tmp/secret-stuff"}}},
+		{"midpath wildcard", &protocol.Scope{Roots: []string{"/tmp/a/*/b"}}},
+		{"recursive wildcard", &protocol.Scope{Roots: []string{"/tmp/**"}}},
+		{"question mark", &protocol.Scope{Roots: []string{"/tmp/profiles?"}}},
+		{"relative root", &protocol.Scope{Roots: []string{"profiles"}}},
+		{"missing root", &protocol.Scope{Roots: []string{"/nonexistent-siq-xyz"}}},
+		{"glob with no matches", &protocol.Scope{Roots: []string{"/nonexistent-siq-xyz/*"}}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if err := protocol.ValidateScopeSafety(tc.scope); err == nil {
+				t.Fatalf("expected rejection, got nil")
+			}
+		})
+	}
+}
+
+func TestValidateScopeSafetyAcceptsValid(t *testing.T) {
+	dir := t.TempDir()
+	sub := filepath.Join(dir, "profiles")
+	if err := os.Mkdir(sub, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := protocol.ValidateScopeSafety(&protocol.Scope{Roots: []string{sub}}); err != nil {
+		t.Errorf("plain dir root: %v", err)
+	}
+	if err := protocol.ValidateScopeSafety(&protocol.Scope{Roots: []string{dir + "/*"}}); err != nil {
+		t.Errorf("trailing glob root: %v", err)
+	}
+}
+
+// TestErrorCodeMapping verifies the connector error-code → typed error map
+// (contract §3).
+func TestErrorCodeMapping(t *testing.T) {
+	for code, want := range map[string]error{
+		protocol.CodeScopeInvalid:     ErrScopeInvalid,
+		protocol.CodeLimitExceeded:    ErrLimitExceeded,
+		protocol.CodeRedactionFailure: ErrRedactionFailure,
+		protocol.CodeTimeout:          ErrTimeout,
+		protocol.CodeUnsupported:      ErrUnsupported,
+	} {
+		got := mapCodeToError(code)
+		if !errors.Is(got, want) {
+			t.Errorf("mapCodeToError(%q)=%v, want %v", code, got, want)
+		}
+	}
+	if err := mapCodeToError("unknown-code"); err == nil {
+		t.Error("unknown code must produce an error")
+	}
+	if codeOf(ErrScopeInvalid) != protocol.CodeScopeInvalid {
+		t.Errorf("codeOf(ErrScopeInvalid)=%q", codeOf(ErrScopeInvalid))
+	}
+	if codeOf(ErrOutputLimit) != protocol.CodeLimitExceeded {
+		t.Errorf("codeOf(ErrOutputLimit)=%q", codeOf(ErrOutputLimit))
+	}
+	if codeOf(errors.New("boom")) != "internal_error" {
+		t.Errorf("codeOf(generic)=%q", codeOf(errors.New("boom")))
+	}
+}
+
+// TestRequestResponseEnvelope verifies the NDJSON request/response wire shape.
+func TestRequestResponseEnvelope(t *testing.T) {
+	req := protocol.Request{ID: "req-000001", Op: protocol.OpCollect, Params: json.RawMessage(`{"plan":{}}`)}
+	data, err := json.Marshal(&req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var back protocol.Request
+	if err := json.Unmarshal(data, &back); err != nil {
+		t.Fatal(err)
+	}
+	if back.ID != req.ID || back.Op != req.Op || string(back.Params) != string(req.Params) {
+		t.Errorf("request round trip mismatch: %s", data)
+	}
+
+	resp := protocol.Response{ID: req.ID, OK: false, Error: &protocol.ProtocolError{Code: protocol.CodeScopeInvalid, Message: "empty scope"}}
+	data, err = json.Marshal(&resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var backResp protocol.Response
+	if err := json.Unmarshal(data, &backResp); err != nil {
+		t.Fatal(err)
+	}
+	if !backResp.OK || backResp.Error == nil || backResp.Error.Code != protocol.CodeScopeInvalid {
+		t.Errorf("response round trip mismatch: %s", data)
+	}
+}
