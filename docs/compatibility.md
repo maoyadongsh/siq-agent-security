@@ -36,6 +36,13 @@
 | 审批门 | cooperative-mode 启发式，非安全边界 | 只作为 observed 证据 |
 | 运行形态 | SIQ 生产中为 hub 容器内子进程 | Agent Instance 模型含 embedded 运行时 |
 
+## OpenShell Enforcement Adapter 合同状态（Phase 3 前置，2026-08-13）
+
+- 合同类型与十方法（§15.3）：`apps/control-api/app/adapters/openshell/`（contracts/base/policy_compiler/fake_backend/client）
+- FakeBackend 契约测试 9 项：能力探测/revision 冲突/静态 generation/正负验证/回滚/unsupported 显式标记
+- 真实 client fail-closed 占位：D1（版本路径）+ D2（SIQ 基座部署）后接入
+- 部署流已接线：`SIQ_AS_ENFORCEMENT_BACKEND=fake` 时编译制品入任务 payload，未知语义 422 拒绝
+
 ## Connector 兼容
 
 | Connector | 状态 | 负向测试 |

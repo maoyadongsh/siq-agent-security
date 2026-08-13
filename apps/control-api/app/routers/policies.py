@@ -238,12 +238,19 @@ def create_deployment(
     )
     session.add(deployment)
     session.flush()  # deployment.id 为 insert 期默认，payload 需要真实 ID
-    # Phase 3 之前：EdgeTask 为 publish_policy 占位；真实编译由 OpenShell Adapter 承担
     expires_at = utcnow() + timedelta(seconds=_task_ttl())
+    task_payload: dict = {
+        "policy_id": policy.id,
+        "deployment_id": deployment.id,
+        "enforcement_mode": policy.enforcement_mode,
+    }
+    # 执行后端编译接线（Phase 3 前置）：SIQ_AS_ENFORCEMENT_BACKEND=fake 时编译并显式标记 unsupported；
+    # 默认 none 保持占位语义；真实后端待 D1/D2 后接入（fail-closed，见 adapters/openshell/client.py）
+    _compile_for_enforcement(policy, task_payload)
     task = EdgeTask(
         environment_id=env.id,
         task_type="publish_policy",
-        payload={"policy_id": policy.id, "deployment_id": deployment.id, "enforcement_mode": policy.enforcement_mode},
+        payload=task_payload,
         expires_at=expires_at,
     )
     session.add(task)
@@ -279,6 +286,56 @@ def _task_ttl() -> int:
     from app.config import load_settings
 
     return load_settings().edge_task_ttl_seconds
+
+
+def _compile_for_enforcement(policy: DesiredPolicy, task_payload: dict) -> None:
+    """执行后端编译（env 开关）。未知语义拒绝（422），unsupported 显式入 payload。"""
+    import os
+
+    backend = os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
+    if backend == "none":
+        return
+    if backend == "fake":
+        from app.adapters.openshell import FakeOpenShellBackend
+
+        adapter = FakeOpenShellBackend()
+    else:
+        raise HTTPException(status_code=400, detail=f"unknown_enforcement_backend: {backend}")
+
+    from app.adapters.openshell.contracts import UnsupportedCapability
+
+    desired = {
+        "policy_id": policy.id,
+        "version": policy.version,
+        "selector": policy.selector or {},
+        "filesystem": policy.filesystem,
+        "network": policy.network,
+        "process": policy.process,
+        "model_routing": policy.model_routing,
+        "tools": policy.tools,
+        "tool_policies": policy.tool_policies,
+        "data_scope_refs": policy.data_scope_refs,
+        "secrets": policy.secrets,
+        "resources": policy.resources,
+        "audit": policy.audit,
+        "exceptions": policy.exceptions,
+        "enforcement_mode": policy.enforcement_mode,
+        "status": policy.status,
+    }
+    try:
+        compiled = adapter.compile(desired)
+    except UnsupportedCapability as exc:
+        raise HTTPException(status_code=422, detail=f"compile_rejected: {exc}") from None
+    report = adapter.validate(compiled)
+    if not report.valid:
+        raise HTTPException(status_code=422, detail=f"compile_invalid: {report.errors}")
+    task_payload["compiled"] = {
+        "artifact_hash": compiled.artifact_hash,
+        "backend": compiled.backend,
+        "schema_version": compiled.schema_version,
+        "needs_generation": compiled.needs_generation,
+        "unsupported_by_backend": compiled.unsupported_by_backend,
+    }
 
 
 @router.post("/api/v1/deployments/{deployment_id}/rollback", response_model=DeploymentOut)

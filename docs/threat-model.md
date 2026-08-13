@@ -23,7 +23,7 @@
 | T7 | 跨租户访问 | 身份派生 tenant；先定位后权限（404 语义）；负向测试 | `test_tenant_isolation.py` 全组 |
 | T8 | 权限混淆代理 | 用户/Agent/Edge/Connector/执行后端身份分离；delegated_user 维度 | Phase 2 委托令牌链路测试（依赖 D6） |
 | T9 | 未审批策略下发 | 状态机 + SoD + 幂等键 + revision 并发控制 | `test_deployment_requires_approval`、`test_segregation_of_duties` |
-| T10 | 带外策略降级 | 有效策略回读、摘要比对、漂移告警 | Phase 3（OpenShell Adapter 交付后） |
+| T10 | 带外策略降级 | 有效策略回读、摘要比对、漂移告警；Adapter 合同 revision 并发防护已落地（FakeBackend 契约测试） | Phase 3 真实后端接入后补漂移告警 |
 | T11 | OpenShell 故障后回退 Host | 默认禁止无隔离回退；已审计回退策略进漂移监控 | Phase 3 故障演练 |
 | T12 | 恶意插件或供应链 | 受限子进程、无凭据注入、超时/限额、孤儿证据拒绝 | `test_orphan_evidence_rejected`；Connector 负向语料（设计文档 §32） |
 | T13 | 审计被修改 | 审计与状态同事务；追加式语义；导出 | `test_confirm_writes_audit_and_outbox_same_transaction` |

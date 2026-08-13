@@ -209,3 +209,20 @@ def test_deployment_effective_with_verification(client, tenant_a, env_a):
         d = session.query(Deployment).filter(Deployment.id == dep["id"]).one()
         assert d.status == "effective"
         assert d.verification["backend_revision"] == "rev_42"
+
+
+def test_deployment_compiles_with_fake_backend(client, tenant_a, env_a, monkeypatch):
+    """SIQ_AS_ENFORCEMENT_BACKEND=fake：部署任务携带编译制品 + unsupported 显式列表（§14.1）。"""
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "fake")
+    dep = _approved_deployment(client, tenant_a, env_a)
+    headers = _edge_headers(client, tenant_a, env_a, "edge-compile-1")
+    tasks = client.get("/edge/v1/tasks", headers=headers).json()
+    task = next(
+        t for t in tasks if t["task_type"] == "publish_policy" and t["payload"].get("deployment_id") == dep["id"]
+    )
+    compiled = task["payload"]["compiled"]
+    assert compiled["backend"] == "openshell"
+    assert compiled["artifact_hash"]
+    # 默认策略含 network（v0.0.83 无动态更新）→ needs_generation + 显式 unsupported
+    assert compiled["needs_generation"] is True
+    assert "network.dynamic_update" in compiled["unsupported_by_backend"]
