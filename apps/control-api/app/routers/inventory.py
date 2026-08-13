@@ -93,6 +93,36 @@ def create_scan(
     return ScanOut(task_id=task.id)
 
 
+@router.get("/api/v1/scans/{task_id}")
+def get_scan(
+    task_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """扫描任务状态查询（§18.2 首批 API 清单）。租户隔离：任务经环境归属租户。"""
+    from app.models import Environment as _Env
+
+    task = session.scalar(
+        select(EdgeTask).where(
+            EdgeTask.id == task_id,
+            EdgeTask.environment_id.in_(
+                select(_Env.id).where(_Env.tenant_id == identity.tenant_id)
+            ),
+        )
+    )
+    if task is None:
+        raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "env:read")
+    return {
+        "id": task.id,
+        "task_type": task.task_type,
+        "payload": task.payload,
+        "status": task.status,
+        "expires_at": task.expires_at.isoformat() if task.expires_at else None,
+        "created_at": task.created_at.isoformat() if task.created_at else None,
+    }
+
+
 def _task_ttl(session: Session) -> int:
     from app.config import load_settings
 

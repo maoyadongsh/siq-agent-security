@@ -414,3 +414,103 @@ def test_rollback_invokes_real_backend(client, tenant_a, env_a, monkeypatch):
     assert body["status"] == "rolled_back"
     assert body["verification"]["rollback"]["restored_revision"] == "1"
     assert fake.rollbacks == ["s-rollback"]
+
+
+def test_enforcement_mode_downgrade_requires_high_risk(client, tenant_a):
+    """§14.2 修订：enforcement_mode 只允许升级；降级审批必须 high_risk 变更单。"""
+    v1 = _create_policy(client, tenant_a, enforcement_mode="block")  # v1 = block
+    with session_scope() as session:
+        from app.models import DesiredPolicy
+
+        v2 = DesiredPolicy(
+            tenant_id="tnt-A",
+            name=v1["name"],
+            selector={"agent_ids": ["a"]},
+            enforcement_mode="warn",  # v2 降级
+            version=2,
+            status="validated",
+        )
+        session.add(v2)
+        session.commit()
+        v2_id = v2.id
+
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": v2_id, "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    resp = client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+    assert resp.status_code == 409
+    assert "enforcement_downgrade_requires_high_risk" in resp.json()["detail"]
+
+    # high_risk 变更单可以批准降级
+    cr2 = client.post(
+        "/api/v1/change-requests",
+        json={
+            "policy_id": v2_id,
+            "idempotency_key": f"ik-{uuid.uuid4().hex}",
+            "approval_policy": "high_risk",
+        },
+        headers=tenant_a,
+    ).json()
+    resp2 = client.post(f"/api/v1/change-requests/{cr2['id']}/approve", json={}, headers=approver)
+    assert resp2.status_code == 200
+
+
+def test_break_glass_bypasses_sod_and_marks_emergency(client, tenant_a):
+    """§19.3 末条：Break-glass 短期授权（提出者自批允许）→ emergency_applied。"""
+    policy = _create_policy(client, tenant_a)
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={
+            "policy_id": policy["id"],
+            "idempotency_key": f"ik-{uuid.uuid4().hex}",
+            "approval_policy": "break_glass",
+        },
+        headers=tenant_a,
+    ).json()
+    # 提出者自批：break_glass 豁免 SoD
+    resp = client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=tenant_a)
+    assert resp.status_code == 200
+    assert resp.json()["status"] == "emergency_applied"
+
+    # emergency_applied 允许部署
+    env = client.get("/api/v1/environments", headers=tenant_a).json()[0]
+    dep = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env["id"], "target": "bg-target"},
+        headers=tenant_a,
+    )
+    assert dep.status_code == 201
+
+
+def test_break_glass_review_due_after_ttl(client, tenant_a):
+    """worker：emergency_applied 超时 → post_review_due（事后复核标记）。"""
+    from datetime import timedelta
+
+    policy = _create_policy(client, tenant_a)
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={
+            "policy_id": policy["id"],
+            "idempotency_key": f"ik-{uuid.uuid4().hex}",
+            "approval_policy": "break_glass",
+        },
+        headers=tenant_a,
+    ).json()
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=tenant_a)
+    with session_scope() as session:
+        from app.models import ChangeRequest
+
+        row = session.query(ChangeRequest).filter(ChangeRequest.id == cr["id"]).one()
+        row.created_at = row.created_at - timedelta(hours=25)  # 超过默认 24h TTL
+        session.commit()
+    from app.worker import once
+
+    once()
+    with session_scope() as session:
+        from app.models import ChangeRequest
+
+        row = session.query(ChangeRequest).filter(ChangeRequest.id == cr["id"]).one()
+        assert row.status == "post_review_due"

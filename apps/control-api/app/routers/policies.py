@@ -235,12 +235,40 @@ def approve_change_request(
     )
     if cr is None:
         raise HTTPException(status_code=404, detail="not_found")
-    # 职责分离：提出者不能是唯一批准者（设计文档 §19.3）
+    # 职责分离：提出者不能是唯一批准者（设计文档 §19.3）；Break-glass 是显式例外（§19.3 末条）
     if cr.proposer_user_id == identity.actor_id and cr.approval_policy != "break_glass":
         raise HTTPException(status_code=409, detail="segregation_of_duties")
     if cr.status != "proposed":
         raise HTTPException(status_code=409, detail="invalid_state")
-    cr.status = "approved"
+
+    # 降级审批（§14.2 修订语义）：enforcement_mode 只允许升级；降级必须 high_risk 变更单
+    policy = session.get(DesiredPolicy, cr.policy_id)
+    if policy is not None:
+        previous = session.scalar(
+            select(DesiredPolicy)
+            .where(
+                DesiredPolicy.tenant_id == identity.tenant_id,
+                DesiredPolicy.name == policy.name,
+                DesiredPolicy.version < policy.version,
+            )
+            .order_by(DesiredPolicy.version.desc())
+        )
+        if previous is not None and previous.status not in ("rejected", "failed"):
+            if _MODE_RANK.get(policy.enforcement_mode, -1) < _MODE_RANK.get(previous.enforcement_mode, -1):
+                if cr.approval_policy != "high_risk":
+                    raise HTTPException(
+                        status_code=409,
+                        detail=(
+                            "enforcement_downgrade_requires_high_risk: "
+                            f"{previous.enforcement_mode} -> {policy.enforcement_mode}"
+                        ),
+                    )
+
+    if cr.approval_policy == "break_glass":
+        # 紧急变更：短期授权 + 事后复核标记（§19.3）
+        cr.status = "emergency_applied"
+    else:
+        cr.status = "approved"
     cr.approver_user_id = identity.actor_id
     audit(
         session,
@@ -250,12 +278,13 @@ def approve_change_request(
         "change.approve",
         "change_request",
         resource_id=cr.id,
+        summary={"approval_policy": cr.approval_policy},
     )
     emit_event(
         session,
         identity.tenant_id,
         "policy.change.approved.v1",
-        {"change_request_id": cr.id, "approver": identity.actor_id},
+        {"change_request_id": cr.id, "approver": identity.actor_id, "approval_policy": cr.approval_policy},
         resource_ref=cr.id,
     )
     session.commit()
@@ -305,7 +334,7 @@ def create_deployment(
     )
     if cr is None:
         raise HTTPException(status_code=404, detail="not_found")
-    if cr.status != "approved":
+    if cr.status not in ("approved", "emergency_applied"):
         raise HTTPException(status_code=409, detail="change_not_approved")
     env = session.scalar(
         select(Environment).where(Environment.id == body.environment_id, Environment.tenant_id == identity.tenant_id)

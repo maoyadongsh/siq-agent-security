@@ -18,7 +18,7 @@ from sqlalchemy import select
 
 from app.config import load_settings
 from app.db import init_db, session_scope
-from app.models import AgentAsset, Finding, OutboxEvent, Tenant, utcnow
+from app.models import AgentAsset, ChangeRequest, Finding, OutboxEvent, Tenant, utcnow
 from app.outbox import audit, emit_event
 from app.rules import evaluate_all, upsert_findings
 
@@ -153,6 +153,45 @@ def run_drift(session) -> dict:
     return total
 
 
+def reap_break_glass_reviews(session) -> int:
+    """Break-glass 事后复核（§19.3）：emergency_applied 超过时限转 post_review_due。"""
+    from datetime import timedelta
+
+
+    ttl = int(os.getenv("SIQ_AS_BREAKGLASS_REVIEW_SECONDS", "86400"))
+    threshold = utcnow() - timedelta(seconds=ttl)
+    rows = list(
+        session.scalars(
+            select(ChangeRequest).where(
+                ChangeRequest.status == "emergency_applied",
+                ChangeRequest.created_at < threshold,
+            )
+        )
+    )
+    due = 0
+    for cr in rows:
+        cr.status = "post_review_due"
+        audit(
+            session,
+            cr.tenant_id,
+            "system",
+            "worker",
+            "change.breakglass.review_due",
+            "change_request",
+            resource_id=cr.id,
+        )
+        emit_event(
+            session,
+            cr.tenant_id,
+            "policy.change.approved.v1",
+            {"change_request_id": cr.id, "resolution": "post_review_due"},
+            resource_ref=cr.id,
+        )
+        due += 1
+    session.commit()
+    return due
+
+
 def run_rules(session) -> dict:
     tenants = list(session.scalars(select(Tenant).where(Tenant.status == "active")))
     total = {"created": 0, "updated": 0}
@@ -172,9 +211,17 @@ def once() -> dict:
         published = publish_outbox(session)
         reaped = reap_expired_risk_acceptance(session)
         dismissals = reopen_expired_dismissals(session)
+        breakglass = reap_break_glass_reviews(session)
         drift = run_drift(session)
         rules = run_rules(session)
-    return {"published": published, "reaped": reaped, "dismissals": dismissals, "drift": drift, "rules": rules}
+    return {
+        "published": published,
+        "reaped": reaped,
+        "dismissals": dismissals,
+        "breakglass": breakglass,
+        "drift": drift,
+        "rules": rules,
+    }
 
 
 def loop(interval_seconds: int) -> None:

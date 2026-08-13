@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+import pytest
+
 from app.db import session_scope
 from app.models import AgentAsset, Environment, Finding, PermissionFact, Tenant, utcnow
 from app.rules import evaluate_all, upsert_findings
@@ -661,3 +663,110 @@ def test_permissions_diff_declared_vs_effective(client, tenant_a):
     assert any(r["resource"] == "api.example.com:443" for r in body["declared_not_effective"])
     assert any(r["resource"] == "other.example.com:443" for r in body["effective_not_declared"])
     assert any(r["resource"] == "common.example.com:443" for r in body["consistent"])
+
+
+def _provider_ok_response(content: dict) -> object:
+    import json as _j
+
+    return {"choices": [{"message": {"content": _j.dumps(content)}}]}
+
+
+def test_provider_classify_happy_path(monkeypatch):
+    """§11.4 provider 模式：OpenAI 兼容端点 + 严格输出解析。"""
+    import httpx
+
+    from app.classification import provider_classify
+    from app.models import AgentAsset
+
+    monkeypatch.setenv("SIQ_AS_CLASSIFIER_ENDPOINT", "https://model.example.com/v1")
+    monkeypatch.setenv("SIQ_AS_CLASSIFIER_API_KEY", "test-key")
+    output = {
+        "is_agent_candidate": True,
+        "role": {"value": "legal-advisor", "confidence": 0.94, "evidence_ids": []},
+        "system_candidates": [],
+        "capability_hints": ["document.read"],
+        "unresolved_questions": [],
+    }
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.url.path.endswith("/chat/completions")
+        assert request.headers["Authorization"] == "Bearer test-key"
+        import json as _j
+
+        assert _j.loads(request.content)["temperature"] == 0  # 可追溯重跑（§11.3）
+        return httpx.Response(200, json=_provider_ok_response(output))
+
+    result = provider_classify(
+        AgentAsset(tenant_id="t", name="legal-advisor", framework="hermes"),
+        transport=httpx.MockTransport(handler),
+    )
+    assert result["is_agent_candidate"] is True
+    assert result["role"]["value"] == "legal-advisor"
+
+
+def test_provider_classify_invalid_output_fails_closed(monkeypatch):
+    """输出缺字段/role 结构非法 → RuntimeError（绝不静默回退）。"""
+    import httpx
+
+    from app.classification import provider_classify
+    from app.models import AgentAsset
+
+    monkeypatch.setenv("SIQ_AS_CLASSIFIER_ENDPOINT", "https://model.example.com/v1")
+    bad = {"is_agent_candidate": True}  # 缺 role 等字段
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=_provider_ok_response(bad))
+
+    with pytest.raises(RuntimeError, match="缺字段"):
+        provider_classify(
+            AgentAsset(tenant_id="t", name="x", framework="hermes"),
+            transport=httpx.MockTransport(handler),
+        )
+
+
+def test_provider_unreachable_fails_closed(monkeypatch):
+    """Provider 不可达 → RuntimeError（分类端点如实 502/记录失败，不静默降级）。"""
+    import httpx
+
+    from app.classification import provider_classify
+    from app.models import AgentAsset
+
+    monkeypatch.setenv("SIQ_AS_CLASSIFIER_ENDPOINT", "https://model.example.com/v1")
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("down")
+
+    with pytest.raises(RuntimeError, match="不可达"):
+        provider_classify(
+            AgentAsset(tenant_id="t", name="x", framework="hermes"),
+            transport=httpx.MockTransport(handler),
+        )
+
+
+def test_get_scan_task_status(client, tenant_a, tenant_b, env_a):
+    """§18.2 首批 API：GET /api/v1/scans/{id} 任务状态 + 跨租户 404。"""
+    from sqlalchemy import select
+
+    from app.config import load_settings
+    from app.models import EdgeTask, Environment
+
+    quota = load_settings().scan_quota_per_tenant
+    with session_scope() as s:
+        env_ids = list(s.scalars(select(Environment.id).where(Environment.tenant_id == "tnt-A")))
+        pre = s.query(EdgeTask).filter(
+            EdgeTask.task_type == "scan", EdgeTask.status == "pending", EdgeTask.environment_id.in_(env_ids)
+        ).count()
+    if pre >= quota:
+        pytest.skip("共享库扫描配额已满（quota 测试占用）")
+    created = client.post(
+        "/api/v1/scans", json={"environment_id": env_a["id"], "scope": {"connector": "hermes"}}, headers=tenant_a
+    ).json()
+    resp = client.get(f"/api/v1/scans/{created['task_id']}", headers=tenant_a)
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["task_type"] == "scan"
+    assert body["status"] == "pending"
+    assert "signature" not in body  # 签名不回传（仅 Edge 消费）
+
+    cross = client.get(f"/api/v1/scans/{created['task_id']}", headers=tenant_b)
+    assert cross.status_code == 404
