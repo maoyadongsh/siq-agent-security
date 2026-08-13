@@ -201,3 +201,73 @@ def test_edge_cannot_assert_effective_permission(client, tenant_a, env_a):
     )
     assert good.status_code == 200
     assert good.json()["permission_facts"] == 1
+
+
+def _make_named_candidate(client, headers, name):
+    env = client.post("/api/v1/environments", json={"name": f"env-cls-{name}"}, headers=headers).json()
+    enr = client.post(f"/api/v1/environments/{env['id']}/edge-enrollment", json={}, headers=headers).json()
+    reg = client.post(
+        "/edge/v1/register",
+        json={
+            "enrollment_code": enr["code"],
+            "device_identity": f"edge-cls-{name}",
+            "public_key_pem": "PEM",
+            "version": "0.1.0",
+        },
+    ).json()
+    eh = {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": f"edge-cls-{name}"}
+    resp = client.post(
+        "/edge/v1/batches",
+        json={
+            "candidates": [
+                {
+                    "candidate_id": f"hermes:{name}",
+                    "source_type": "hermes_profile",
+                    "source_locator": f"hermes://profiles/{name}",
+                    "discovered_at": "2026-08-13T12:00:00Z",
+                    "name": name,
+                    "framework": "hermes",
+                    "evidence_ids": [],
+                }
+            ],
+            "evidence": [],
+        },
+        headers=eh,
+    )
+    assert resp.status_code == 200, resp.text
+    assets = client.get("/api/v1/candidates", headers=headers).json()
+    return next(a for a in assets if a["name"] == name)
+
+
+def test_baseline_classify_known_role(client, tenant_a):
+    """确定性基线：名称含 legal → legal-advisor，高置信不转 needs_review，落 classification_run。"""
+    asset = _make_named_candidate(client, tenant_a, "legal-advisor")
+    resp = client.post(f"/api/v1/candidates/{asset['id']}/classify", json={}, headers=tenant_a)
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["classifier"] == "baseline"
+    assert body["output"]["is_agent_candidate"] is True
+    assert body["output"]["role"]["value"] == "legal-advisor"
+    assert body["asset_status"] == "candidate"  # 高置信仍为 candidate，绝不自动纳管
+    with session_scope() as session:
+        from app.models import ClassificationRun
+
+        run = session.query(ClassificationRun).filter(ClassificationRun.id == body["classification_run_id"]).one()
+        assert run.temperature == 0.0
+        assert run.seed == 42
+
+
+def test_baseline_low_confidence_needs_review(client, tenant_a):
+    """低置信 → needs_review，进入人工确认（§11.3）。"""
+    asset = _make_named_candidate(client, tenant_a, "some-random-name")
+    resp = client.post(f"/api/v1/candidates/{asset['id']}/classify", json={}, headers=tenant_a)
+    assert resp.status_code == 200
+    assert resp.json()["asset_status"] == "needs_review"
+
+
+def test_classify_never_auto_confirms(client, tenant_a):
+    """分类不改变状态机到 confirmed（§11.2 模型禁止任务）。"""
+    asset = _make_named_candidate(client, tenant_a, "finance-auditor")
+    client.post(f"/api/v1/candidates/{asset['id']}/classify", json={}, headers=tenant_a)
+    refreshed = client.get(f"/api/v1/agents/{asset['id']}", headers=tenant_a).json()
+    assert refreshed["status"] in ("candidate", "needs_review")

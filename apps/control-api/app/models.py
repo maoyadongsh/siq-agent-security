@@ -160,6 +160,25 @@ class Evidence(Base):
     expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
 
+class ClassificationRun(Base):
+    """模型辅助分类运行记录（设计文档 §11.3：可重新计算/可追溯重跑）。"""
+
+    __tablename__ = "classification_run"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("cls"))
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id", ondelete="CASCADE"), index=True)
+    asset_id: Mapped[str] = mapped_column(String(64), ForeignKey("agent_asset.id", ondelete="CASCADE"), index=True)
+    classifier: Mapped[str] = mapped_column(String(32))  # baseline|model-off|provider
+    model_ref: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    prompt_version: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    schema_version: Mapped[int] = mapped_column(Integer, default=1)
+    temperature: Mapped[float | None] = mapped_column(nullable=True)
+    seed: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    input_evidence_ids: Mapped[list] = mapped_column(JSON, default=list)  # 只存引用，不存原始内容
+    output: Mapped[dict] = mapped_column(JSON, default=dict)  # 结构化结论（§11.3 Schema）
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
 class PermissionFact(Base):
     """权限事实（设计文档 §12.3，含 delegated_user 委托维度）。"""
 

@@ -323,6 +323,46 @@ def dismiss_candidate(
     return asset
 
 
+@router.post("/api/v1/candidates/{asset_id}/classify")
+def classify_candidate(
+    asset_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """触发候选分类（设计文档 §11）。分类永远不自动纳管；低置信 → needs_review。"""
+    asset = _asset_or_404(session, identity.tenant_id, asset_id)
+    ensure_permission(identity, "agent:confirm")
+    if asset.status not in ("candidate", "needs_review"):
+        raise HTTPException(status_code=409, detail="invalid_state")
+    from app.classification import classify_asset
+
+    run = classify_asset(session, identity.tenant_id, asset)
+    audit(
+        session,
+        identity.tenant_id,
+        identity.identity_type,
+        identity.actor_id,
+        "agent.classify",
+        "agent_asset",
+        resource_id=asset.id,
+        summary={"classifier": run.classifier, "is_agent_candidate": run.output.get("is_agent_candidate")},
+    )
+    emit_event(
+        session,
+        identity.tenant_id,
+        "agent.asset.classified.v1",
+        {"agent_asset_id": asset.id, "classification_run_id": run.id},
+        resource_ref=asset.id,
+    )
+    session.commit()
+    return {
+        "classification_run_id": run.id,
+        "classifier": run.classifier,
+        "asset_status": asset.status,
+        "output": run.output,
+    }
+
+
 @router.get("/api/v1/agents", response_model=list[AgentAssetOut])
 def list_agents(
     session: Session = Depends(get_session),
