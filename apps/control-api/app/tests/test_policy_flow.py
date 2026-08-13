@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import uuid
 
+from app.db import session_scope
+
 
 def _create_policy(client, headers, name=None, enforcement_mode="audit_only"):
     name = name or f"policy-{uuid.uuid4().hex[:8]}"
@@ -127,3 +129,83 @@ def test_policy_cross_tenant_404(client, tenant_a, tenant_b):
     policy = _create_policy(client, tenant_a)
     resp = client.post(f"/api/v1/policies/{policy['id']}/validate", json={}, headers=tenant_b)
     assert resp.status_code == 404
+
+
+def _approved_deployment(client, tenant_a, env_a):
+    policy = _create_policy(client, tenant_a)
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+    dep = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "target": "hermes:legal"},
+        headers=tenant_a,
+    ).json()
+    return dep
+
+
+def _edge_headers(client, tenant_a, env_a, identity):
+    enr = client.post(
+        f"/api/v1/environments/{env_a['id']}/edge-enrollment", json={}, headers=tenant_a
+    ).json()
+    reg = client.post(
+        "/edge/v1/register",
+        json={
+            "enrollment_code": enr["code"],
+            "device_identity": identity,
+            "public_key_pem": "PEM",
+            "version": "0.1.0",
+        },
+    ).json()
+    return {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": identity}
+
+
+def test_deployment_requires_verification_evidence(client, tenant_a, env_a):
+    """不变量 #5：无验证证据的回执不得标记 effective（fail-closed）。"""
+    dep = _approved_deployment(client, tenant_a, env_a)
+    headers = _edge_headers(client, tenant_a, env_a, "edge-verify-1")
+    tasks = client.get("/edge/v1/tasks", headers=headers).json()
+    task = next(
+        t for t in tasks if t["task_type"] == "publish_policy" and t["payload"].get("deployment_id") == dep["id"]
+    )
+
+    resp = client.post(
+        f"/edge/v1/tasks/{task['id']}/receipt",
+        json={"status": "success", "summary": {"applied": True}, "verification": {}},
+        headers=headers,
+    )
+    assert resp.status_code == 200
+    with session_scope() as session:
+        from app.models import Deployment
+
+        d = session.query(Deployment).filter(Deployment.id == dep["id"]).one()
+        assert d.status == "failed"  # 无验证证据 → 不得 effective
+
+
+def test_deployment_effective_with_verification(client, tenant_a, env_a):
+    dep = _approved_deployment(client, tenant_a, env_a)
+    headers = _edge_headers(client, tenant_a, env_a, "edge-verify-2")
+    tasks = client.get("/edge/v1/tasks", headers=headers).json()
+    task = next(
+        t for t in tasks if t["task_type"] == "publish_policy" and t["payload"].get("deployment_id") == dep["id"]
+    )
+    resp = client.post(
+        f"/edge/v1/tasks/{task['id']}/receipt",
+        json={
+            "status": "success",
+            "summary": {"applied": True},
+            "verification": {"backend_revision": "rev_42", "snapshot_hash": "e" * 64},
+        },
+        headers=headers,
+    )
+    assert resp.status_code == 200
+    with session_scope() as session:
+        from app.models import Deployment
+
+        d = session.query(Deployment).filter(Deployment.id == dep["id"]).one()
+        assert d.status == "effective"
+        assert d.verification["backend_revision"] == "rev_42"

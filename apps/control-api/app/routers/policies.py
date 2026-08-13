@@ -237,6 +237,7 @@ def create_deployment(
         status="pending",
     )
     session.add(deployment)
+    session.flush()  # deployment.id 为 insert 期默认，payload 需要真实 ID
     # Phase 3 之前：EdgeTask 为 publish_policy 占位；真实编译由 OpenShell Adapter 承担
     expires_at = utcnow() + timedelta(seconds=_task_ttl())
     task = EdgeTask(

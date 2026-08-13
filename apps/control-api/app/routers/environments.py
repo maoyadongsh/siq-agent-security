@@ -16,7 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
-from app.models import EdgeAgent, EdgeTask, EnrollmentToken, Environment, utcnow
+from app.models import Deployment, EdgeAgent, EdgeTask, EnrollmentToken, Environment, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import (
     EdgeHeartbeatRequest,
@@ -206,6 +206,11 @@ def edge_post_receipt(
     request: Request,
     session: Session = Depends(get_session),
 ):
+    """回执处理（设计文档 §21.1 不变量 #5）。
+
+    部署任务（publish_policy）的成功回执必须携带可机器校验证据（verification），
+    否则 Deployment 不得标记 effective（fail-closed，保留上一有效状态）。
+    """
     device_identity = request.headers.get("X-Edge-Identity")
     if not device_identity:
         raise HTTPException(status_code=401, detail="missing_edge_identity")
@@ -221,6 +226,44 @@ def edge_post_receipt(
     task.status = "delivered" if body.status == "success" else "failed"
     env = session.get(Environment, edge.environment_id)
     tenant_id = env.tenant_id if env else ""
+
+    deployment = None
+    if task.task_type == "publish_policy":
+        deployment = session.scalar(
+            select(Deployment).where(
+                Deployment.edge_task_id == task.id,
+                Deployment.tenant_id == tenant_id,
+            )
+        )
+        if deployment is not None:
+            deployment.receipt = body.summary
+            has_verification = bool(body.verification) and (
+                body.verification.get("backend_revision") or body.verification.get("snapshot_hash")
+            )
+            if body.status == "success" and has_verification:
+                # 验证证据齐备才允许 effective（不变量 #5）
+                deployment.verification = body.verification
+                deployment.status = "effective"
+                emit_event(
+                    session,
+                    tenant_id,
+                    "policy.deployment.verified.v1",
+                    {"deployment_id": deployment.id, "verification": body.verification},
+                    resource_ref=deployment.id,
+                )
+            else:
+                deployment.status = "failed"
+                emit_event(
+                    session,
+                    tenant_id,
+                    "policy.deployment.failed.v1",
+                    {
+                        "deployment_id": deployment.id,
+                        "reason": "verification_missing" if body.status == "success" else "edge_failure",
+                    },
+                    resource_ref=deployment.id,
+                )
+
     audit(
         session,
         tenant_id,
@@ -229,7 +272,11 @@ def edge_post_receipt(
         "edge.task.receipt",
         "edge_task",
         resource_id=task_id,
-        summary={"status": body.status, "verification": body.verification or {}},
+        summary={
+            "status": body.status,
+            "verification": body.verification or {},
+            "deployment_id": deployment.id if deployment else None,
+        },
     )
     session.commit()
     return {"ok": True}
