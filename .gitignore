@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+build/
+
+# 运行时与本地状态（禁止提交）
+.env
+dev.db
+*.sqlite3
+*.sqlite
+state.json
+.pids/
+
+# Go
+*.test
+*.out
+
+# 编辑器与系统
+.idea/
+.vscode/
+.DS_Store

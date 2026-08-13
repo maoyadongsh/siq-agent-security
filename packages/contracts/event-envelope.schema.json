@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/event-envelope.v1.json",
+  "title": "EventEnvelope",
+  "description": "领域事件统一信封（设计文档 §18.3）。消费者按 event_id 幂等处理；payload 必须脱敏。",
+  "type": "object",
+  "required": [
+    "event_id",
+    "event_type",
+    "occurred_at",
+    "tenant_id",
+    "schema_version"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": { "type": "string" },
+    "event_type": { "type": "string", "description": "如 agent.candidate.discovered.v1" },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "tenant_id": { "type": "string" },
+    "environment_id": { "type": ["string", "null"] },
+    "actor": { "type": ["object", "null"], "description": "actor_type + actor_id" },
+    "resource_ref": { "type": ["string", "null"] },
+    "request_id": { "type": ["string", "null"] },
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "payload": { "type": "object", "description": "脱敏后的领域载荷" }
+  }
+}

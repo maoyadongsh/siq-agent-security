@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/desired-policy.v1.json",
+  "title": "DesiredPolicy",
+  "description": "后端无关的期望安全状态（设计文档 §14.1）。后端不支持的字段必须标记为 unsupported 或由其他执行点承担，编译时不得静默丢失。",
+  "type": "object",
+  "required": ["policy_id", "selector", "version", "status", "enforcement_mode"],
+  "additionalProperties": false,
+  "properties": {
+    "policy_id": { "type": "string" },
+    "selector": {
+      "type": "object",
+      "description": "匹配 Agent 资产/实例的选择器（agent_ids / environment_ids / system_ref / labels）",
+      "required": ["agent_ids"],
+      "properties": {
+        "agent_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "environment_ids": { "type": "array", "items": { "type": "string" } },
+        "system_ref": { "type": ["string", "null"] },
+        "labels": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "filesystem": {
+      "type": "object",
+      "properties": {
+        "read_only": { "type": "array", "items": { "type": "string" } },
+        "read_write": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "network": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["endpoint", "effect"],
+        "properties": {
+          "endpoint": { "type": "string", "description": "host:port/path 形式，如 api.example.com:443/orders/**" },
+          "effect": { "type": "string", "enum": ["allow", "deny"] },
+          "methods": { "type": "array", "items": { "type": "string" } },
+          "binary_paths": { "type": "array", "items": { "type": "string" } },
+          "purpose": { "type": "string" }
+        }
+      }
+    },
+    "process": {
+      "type": "object",
+      "properties": {
+        "run_as": { "type": ["string", "null"], "description": "uid:gid" },
+        "forbid_privilege_escalation": { "type": "boolean" },
+        "seccomp_profile": { "type": ["string", "null"] }
+      }
+    },
+    "model_routing": {
+      "type": "object",
+      "properties": {
+        "allowed_models": { "type": "array", "items": { "type": "string" } },
+        "provider": { "type": ["string", "null"] }
+      }
+    },
+    "tools": { "type": "array", "items": { "type": "string" }, "description": "工具引用（tool_ref），参数约束经 tool_policies 表达" },
+    "tool_policies": { "type": "object", "additionalProperties": { "type": "object" } },
+    "data_scope_refs": { "type": "array", "items": { "type": "string" }, "description": "业务数据范围引用，权威源为业务 IAM" },
+    "secrets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ref", "purpose"],
+        "properties": {
+          "ref": { "type": "string", "description": "凭据引用，永不存明文" },
+          "purpose": { "type": "string" },
+          "injection": { "type": "string", "enum": ["gateway", "env_ref", "none"] }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "cpu": { "type": "string" },
+        "memory": { "type": "string" },
+        "concurrency": { "type": "integer" }
+      }
+    },
+    "audit": { "type": "object", "properties": { "required_level": { "type": "string" } } },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reason", "owner", "expires_at"],
+        "properties": {
+          "reason": { "type": "string" },
+          "owner": { "type": "string" },
+          "expires_at": { "type": "string", "format": "date-time" },
+          "approval_ref": { "type": "string" }
+        }
+      }
+    },
+    "unsupported_by_backend": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "编译后由其他执行点承担或标记 unsupported 的字段清单"
+    },
+    "version": { "type": "integer", "minimum": 1 },
+    "status": { "type": "string", "enum": ["draft", "validated", "proposed", "approved", "deploying", "effective", "rejected", "failed", "superseded", "rollback_pending", "rolled_back"] },
+    "enforcement_mode": {
+      "type": "string",
+      "enum": ["audit_only", "warn", "block"],
+      "description": "渐进执行档位，与 siq-platform 架构文档 §11 的 Observe→Canary→A/B→Enforced→Default 对齐"
+    }
+  }
+}

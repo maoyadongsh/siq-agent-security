@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/candidate.v1.json",
+  "title": "AgentCandidate",
+  "description": "确定性发现阶段产生的智能体候选。Connector 只产生候选与证据，不直接创建纳管资产（设计文档 §10.2）。",
+  "type": "object",
+  "required": [
+    "candidate_id",
+    "source_type",
+    "source_locator",
+    "discovered_at",
+    "name",
+    "framework",
+    "evidence_ids"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": { "type": "string", "description": "采集端生成的稳定候选 ID（含 connector 前缀，如 hermes:siq_legal_advisor@v1）" },
+    "source_type": {
+      "type": "string",
+      "enum": ["hermes_profile", "docker", "kubernetes", "systemd", "siq_hub", "process_list", "human"]
+    },
+    "source_locator": { "type": "string", "description": "脱敏后的稳定来源定位，不含凭据" },
+    "discovered_at": { "type": "string", "format": "date-time" },
+    "name": { "type": "string", "maxLength": 256 },
+    "framework": { "type": "string", "description": "hermes/openclaw/pi/unknown" },
+    "artifact_digest": { "type": "string", "description": "制品摘要（镜像 digest / 资产 sha256），可选" },
+    "attributes": {
+      "type": "object",
+      "description": "框架特有属性，必须已脱敏；禁止包含 token/secret/env 正文",
+      "additionalProperties": true
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "引用同一批次上传的 Evidence.evidence_id"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "确定性规则产生的候选为 1.0；模型辅助分类单独走 classification 流程，不回写本字段"
+    },
+    "status": { "type": "string", "enum": ["candidate", "needs_review", "dismissed"], "default": "candidate" }
+  }
+}

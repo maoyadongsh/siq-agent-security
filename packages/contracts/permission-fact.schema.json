@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/permission-fact.v1.json",
+  "title": "PermissionFact",
+  "description": "某个来源对主体、动作、资源和约束的结构化陈述（设计文档 §12.3）。智能体代用户运行时必须携带 delegated_user 维度：有效数据范围 = Agent 自身权限 ∩ 调用用户数据范围。",
+  "type": "object",
+  "required": [
+    "subject",
+    "domain",
+    "action",
+    "resource",
+    "effect",
+    "state",
+    "authority",
+    "evidence_ids"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "subject": { "type": "object", "required": ["type", "id"], "properties": {
+      "type": { "type": "string", "enum": ["agent_instance", "agent_asset", "identity_binding"] },
+      "id": { "type": "string" }
+    } },
+    "delegated_user": {
+      "type": ["object", "null"],
+      "description": "委托维度；来源优先为 SIQ IAM /auth/delegated-token（act claim、purpose、TTL≤300s），而非 Agent 自报身份",
+      "properties": {
+        "user_id": { "type": "string" },
+        "token_ref": { "type": "string" },
+        "purpose": { "type": "string" }
+      },
+      "required": ["user_id", "token_ref"]
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["business", "data_scope", "tool", "filesystem", "network", "process", "model", "credential", "resource", "control_plane"]
+    },
+    "action": { "type": "string", "description": "如 http.request / fs.write / model.generate" },
+    "resource": {
+      "type": "object",
+      "required": ["type", "value"],
+      "properties": {
+        "type": { "type": "string", "description": "endpoint / path / tool / model / credential_ref / namespace" },
+        "value": { "type": "string" }
+      }
+    },
+    "effect": { "type": "string", "enum": ["allow", "deny"] },
+    "conditions": {
+      "type": "object",
+      "description": "methods / binary_paths / purpose / ttl 等约束",
+      "additionalProperties": true
+    },
+    "state": { "type": "string", "enum": ["declared", "inferred", "observed", "effective", "unknown"] },
+    "authority": { "type": "string", "description": "openshell / siq-iam / siq-gateway / os / container / business-service" },
+    "authority_revision": { "type": ["string", "null"], "description": "权威源 revision，如 OpenShell 策略 revision" },
+    "evidence_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "valid_from": { "type": ["string", "null"], "format": "date-time" },
+    "valid_until": { "type": ["string", "null"], "format": "date-time" }
+  }
+}
