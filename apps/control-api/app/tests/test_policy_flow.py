@@ -342,3 +342,75 @@ def test_list_endpoints_tenant_isolated(client, tenant_a, tenant_b):
     crs_b = client.get("/api/v1/change-requests", headers=tenant_b).json()
     assert all(p["id"] != policy["id"] for p in policies_b)
     assert all(c["id"] != cr["id"] for c in crs_b)
+
+
+def test_rollback_invokes_real_backend(client, tenant_a, env_a, monkeypatch):
+    """§14.4：openshell-cli 模式下回滚调用真实后端（--rev 回读 + policy set）。"""
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    from app.adapters.openshell.cli_backend import OpenShellCliBackend
+    from app.adapters.openshell.contracts import (
+        BackendCapabilities,
+        DeploymentReceipt,
+        PolicySnapshot,
+        RollbackReceipt,
+        VerificationReport,
+    )
+
+    class FakeCli(OpenShellCliBackend):
+        def __init__(self):
+            super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
+            self.rollbacks: list[str] = []
+
+        def probe(self):
+            return BackendCapabilities(
+                backend="openshell", schema_version="v1", dynamic_network_update=True
+            )
+
+        def read_effective_policy(self, target):
+            return PolicySnapshot(target=target, revision="1", network=[])
+
+        def plan_change(self, target, compiled):
+            from app.adapters.openshell.contracts import ChangePlan
+
+            return ChangePlan(
+                target=target, kind="dynamic", expected_revision="1", artifact_hash=compiled.artifact_hash
+            )
+
+        def apply_dynamic(self, target, plan, expected_revision):
+            return DeploymentReceipt(backend_revision="2", evidence={"snapshot_hash": "h"})
+
+        def verify(self, target, checks, receipt):
+            return VerificationReport(
+                passed=True,
+                allow_checks=[{"endpoint": e, "result": "allow"} for e in checks.get("expect_allow", [])],
+                deny_checks=[{"endpoint": e, "result": "deny"} for e in checks.get("expect_deny", [])],
+            )
+
+        def rollback(self, target, receipt):
+            self.rollbacks.append(target)
+            return RollbackReceipt(restored_revision="1", evidence={"ok": True})
+
+    fake = FakeCli()
+    monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: fake)
+
+    policy = _create_policy(client, tenant_a)
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+    dep = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "target": "s-rollback"},
+        headers=tenant_a,
+    ).json()
+    assert dep["status"] == "effective", dep
+
+    resp = client.post(f"/api/v1/deployments/{dep['id']}/rollback", json={}, headers=tenant_a)
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["status"] == "rolled_back"
+    assert body["verification"]["rollback"]["restored_revision"] == "1"
+    assert fake.rollbacks == ["s-rollback"]

@@ -510,6 +510,44 @@ def rollback_deployment(
         raise HTTPException(status_code=404, detail="not_found")
     if deployment.status not in ("effective", "sent", "failed"):
         raise HTTPException(status_code=409, detail="invalid_state")
+
+    # 真实后端回滚（§14.4）：openshell-cli 模式恢复上一 revision（--rev 回读 + policy set）
+    import os
+
+    backend = os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
+    if backend == "openshell-cli" and deployment.status == "effective":
+        from app.adapters.openshell.contracts import AdapterError, DeploymentReceipt, VerificationFailed
+
+        receipt = deployment.receipt or {}
+        try:
+            rollback_receipt = OpenShellCliBackend().rollback(
+                deployment.target,
+                DeploymentReceipt(
+                    backend_revision=str(receipt.get("backend_revision", "")),
+                    evidence=receipt,
+                ),
+            )
+            deployment.verification = {
+                "rollback": {
+                    "restored_revision": rollback_receipt.restored_revision,
+                    "evidence": rollback_receipt.evidence,
+                }
+            }
+        except (AdapterError, VerificationFailed) as exc:
+            deployment.status = "failed"
+            audit(
+                session,
+                identity.tenant_id,
+                identity.identity_type,
+                identity.actor_id,
+                "deployment.rollback_fail",
+                "deployment",
+                resource_id=deployment.id,
+                summary={"reason": str(exc)[:200]},
+            )
+            session.commit()
+            raise HTTPException(status_code=502, detail=f"openshell_rollback_failed: {exc}") from None
+
     cr = session.get(ChangeRequest, deployment.change_request_id)
     if cr is not None:
         cr.status = "rolled_back"
