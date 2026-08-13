@@ -394,3 +394,53 @@ def test_worker_reopens_expired_dismissal(client, tenant_a):
         a = s.query(AgentAsset).filter(AgentAsset.name == "dismiss-me").one()
         assert a.status == "candidate"
         assert a.dismissed_expires_at is None
+
+
+def test_sync_openshell_writes_effective_facts(client, tenant_a, monkeypatch):
+    """真实 OpenShell 域 Resolver：有效策略 → PermissionFact(state=effective, authority=openshell)。"""
+    from app.adapters.openshell.cli_backend import OpenShellCliBackend
+    from app.tests.test_openshell_cli_backend import GATEWAY_INFO, REAL_POLICY_GET_FULL
+
+    class FakeCliBackend(OpenShellCliBackend):
+        def __init__(self):
+            super().__init__(runner=self._fake_runner, env_script="/nonexistent")
+
+        def _fake_runner(self, args):
+            if tuple(args[:2]) == ("sandbox", "list"):
+                return 1, "", "protobuf decode error"
+            if args[:2] == ["docker", "ps"]:
+                return 0, "openshell-demo-sandbox-8515c645-1682-4814-965d-e6b330e2af2e\n", ""
+            if tuple(args[:2]) == ("policy", "get") and "--full" in args:
+                return 0, REAL_POLICY_GET_FULL, ""
+            if tuple(args[:2]) == ("gateway", "info"):
+                return 0, GATEWAY_INFO, ""
+            return 1, "", f"unexpected: {args}"
+
+    monkeypatch.setattr("app.openshell_sync.OpenShellCliBackend", FakeCliBackend)
+    resp = client.post("/api/v1/permissions/sync-openshell", json={}, headers=tenant_a)
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["targets"] == 1
+    assert body["facts"] >= 10  # 7 只读路径 + 3 可写路径 + 进程身份
+
+    with session_scope() as session:
+        from app.models import PermissionFact
+
+        facts = session.query(PermissionFact).filter(PermissionFact.authority == "openshell").all()
+        assert all(f.state == "effective" for f in facts)
+        assert any(f.domain == "filesystem" and f.resource_value == "/usr" for f in facts)
+        assert any(f.domain == "process" and f.resource_value == "sandbox:sandbox" for f in facts)
+
+
+def test_sync_openshell_unreachable_fails_closed(client, tenant_a, monkeypatch):
+    """网关不可达 → 502，绝不产出空权限冒充安全状态（§23.2）。"""
+    from app.adapters.openshell.contracts import AdapterError
+
+    class DeadBackend:
+        def list_targets(self):
+            raise AdapterError("gateway down")
+
+    monkeypatch.setattr("app.openshell_sync.OpenShellCliBackend", DeadBackend)
+    resp = client.post("/api/v1/permissions/sync-openshell", json={}, headers=tenant_a)
+    assert resp.status_code == 502
+    assert "openshell_unreachable" in resp.json()["detail"]

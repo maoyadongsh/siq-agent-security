@@ -253,6 +253,27 @@ async def _read_json(request: Request) -> dict:
         raise HTTPException(status_code=400, detail="invalid_json") from None
 
 
+@router.post("/api/v1/permissions/sync-openshell")
+def sync_openshell_permissions(
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """拉取真实 OpenShell 有效策略入 PermissionFacts（权威来源：openshell）。
+
+    fail-closed：网关不可达 → 502，绝不产出空权限冒充安全状态。
+    """
+    from app.adapters.openshell.contracts import AdapterError
+    from app.openshell_sync import sync_openshell
+
+    ensure_permission(identity, "env:manage")
+    try:
+        result = sync_openshell(session, identity.tenant_id)
+    except AdapterError as exc:
+        session.rollback()
+        raise HTTPException(status_code=502, detail=f"openshell_unreachable: {exc}") from None
+    return result
+
+
 @router.get("/api/v1/candidates", response_model=list[AgentAssetOut])
 def list_candidates(
     cursor: str | None = None,  # 形如 "<updated_at_iso>|<id>"（§18.1 稳定 Cursor 分页）

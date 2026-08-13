@@ -11,14 +11,16 @@ import logging
 import uuid
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import select
 
 from app.config import load_settings
-from app.db import Base, init_db, session_scope
+from app.db import Base, get_session, init_db, session_scope
 from app.models import Tenant
 from app.routers import audit as audit_router
 from app.routers import environments, findings, inventory, policies
+from app.security import Identity, get_identity
 
 logger = logging.getLogger("siq-agent-security")
 
@@ -46,9 +48,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# CORS：dev 模式全放开（本地控制台可能从任意本机网卡 IP 打开）；
+# 生产保持显式白名单（身份仍由 OIDC 验证，dev 身份头生产不生效）。
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:1361", "http://localhost:5173"],
+    allow_origins=["*"] if settings.dev_mode else ["http://localhost:19876", "http://127.0.0.1:19876"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -66,6 +70,41 @@ async def request_id_middleware(request: Request, call_next):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/api/v1/overview")
+def overview(
+    session=Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """控制台总览统计（§20.1）。只读、租户隔离。"""
+    from sqlalchemy import func
+
+    from app.models import AgentAsset, EdgeAgent, Environment, Finding
+
+    def _count(model, *where):
+        return session.scalar(select(func.count(model.id)).where(model.tenant_id == identity.tenant_id, *where)) or 0
+
+    return {
+        "agents": _count(AgentAsset, AgentAsset.status.in_(["confirmed", "managed"])),
+        "candidates": _count(AgentAsset, AgentAsset.status.in_(["candidate", "needs_review"])),
+        "open_findings": _count(Finding, Finding.status.in_(["open", "acknowledged"])),
+        "critical_findings": _count(
+            Finding, Finding.status.in_(["open", "acknowledged"]), Finding.severity == "critical"
+        ),
+        "environments": _count(Environment),
+        # EdgeAgent 无 tenant_id（经 environment 归属租户），走子查询
+        "edges_online": session.scalar(
+            select(func.count(EdgeAgent.id)).where(
+                EdgeAgent.environment_id.in_(
+                    select(Environment.id).where(Environment.tenant_id == identity.tenant_id)
+                ),
+                EdgeAgent.revoked_at.is_(None),
+            )
+        )
+        or 0,
+        "policies": 0,  # Phase 3 Adapter 联调后接 DesiredPolicy 计数
+    }
 
 
 for router in (

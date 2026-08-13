@@ -299,6 +299,15 @@ def _compile_for_enforcement(policy: DesiredPolicy, task_payload: dict) -> None:
         from app.adapters.openshell import FakeOpenShellBackend
 
         adapter = FakeOpenShellBackend()
+    elif backend == "openshell-cli":
+        # 真实网关（v0.0.83 实测：动态网络更新可用）；不可达 fail-closed
+        from app.adapters.openshell.cli_backend import OpenShellCliBackend
+        from app.adapters.openshell.contracts import AdapterError
+
+        try:
+            adapter = OpenShellCliBackend()
+        except AdapterError as exc:
+            raise HTTPException(status_code=502, detail=f"openshell_unreachable: {exc}") from None
     else:
         raise HTTPException(status_code=400, detail=f"unknown_enforcement_backend: {backend}")
 
