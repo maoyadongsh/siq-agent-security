@@ -18,6 +18,7 @@ import type {
   Environment,
   Evidence,
   Finding,
+  PermissionFactRow,
   ApiEnvelope,
 } from './types';
 
@@ -239,8 +240,10 @@ export const api = {
   /** 触发候选分类（永不自动纳管；低置信 → needs_review） */
   classifyCandidate: (agentId: string) =>
     post<ClassificationRunResult>(`/candidates/${encodeURIComponent(agentId)}/classify`, {}),
-  /** 权限视图（占位：后端暂无 /permissions，保持 disconnected 空态） */
-  listPermissions: () => get<unknown[]>('/permissions'),
+  /** 权限视图（真实端点：authority/domain/state/subject_id 过滤） */
+  listPermissions: (query: RequestOptions['query'] = {}) => get<PermissionFactRow[]>('/permissions', { query }),
+  /** 拉取真实 OpenShell 有效策略入 PermissionFacts（fail-closed：网关不可达 502） */
+  syncOpenShell: () => post<{ targets: number; facts: number }>('/permissions/sync-openshell', {}),
   /** 风险中心（可按 severity / status_filter / asset_id 过滤） */
   listFindings: (query: RequestOptions['query'] = {}) => get<Finding[]>('/findings', { query }),
   /** 确认风险（状态 open → acknowledged，绑定 owner） */

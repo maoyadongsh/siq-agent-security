@@ -253,6 +253,37 @@ async def _read_json(request: Request) -> dict:
         raise HTTPException(status_code=400, detail="invalid_json") from None
 
 
+@router.get("/api/v1/permissions", response_model=list[PermissionFactOut])
+def list_permissions(
+    authority: str | None = None,
+    domain: str | None = None,
+    state: str | None = None,
+    subject_id: str | None = None,
+    cursor: str | None = None,
+    limit: int = 100,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """统一权限视图（§20.2）：按权限域/权威源/状态过滤，租户隔离。"""
+    ensure_permission(identity, "agent:read")
+    query = select(PermissionFact).where(PermissionFact.tenant_id == identity.tenant_id)
+    if authority:
+        query = query.where(PermissionFact.authority == authority)
+    if domain:
+        query = query.where(PermissionFact.domain == domain)
+    if state:
+        query = query.where(PermissionFact.state == state)
+    if subject_id:
+        query = query.where(PermissionFact.subject_id == subject_id)
+    if cursor:
+        query = _apply_cursor(query, PermissionFact, cursor)
+    return list(
+        session.scalars(
+            query.order_by(PermissionFact.authority, PermissionFact.domain, PermissionFact.id).limit(min(limit, 500))
+        )
+    )
+
+
 @router.post("/api/v1/permissions/sync-openshell")
 def sync_openshell_permissions(
     session: Session = Depends(get_session),

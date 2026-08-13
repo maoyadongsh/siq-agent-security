@@ -1,115 +1,138 @@
+/**
+ * 权限视图（§20.2）：按权限域展示真实 PermissionFact，权威源/状态分色。
+ * - 默认展示全部；提供 authority 过滤（含 openshell 真实有效权限）；
+ * - 「同步 OpenShell」按钮拉取真实网关有效策略（fail-closed：网关不可达显示错误）；
+ * - 模型推断（inferred）与未知（unknown）醒目样式，绝不显示成已生效。
+ */
+import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { useApiList } from '@/hooks/useApiList';
-import type { PermissionFact } from '@/api/types';
+import { api, ApiError } from '@/api/client';
+import type { PermissionFactRow } from '@/api/types';
 
-/** placeholder 数据（Phase 1；联调后由 /permissions 返回，映射 PermissionFact） */
-const PLACEHOLDER_PERMISSIONS: PermissionFact[] = [
-  {
-    subject: { type: 'agent_asset', id: 'ast-01h2kd93nf' },
-    delegated_user: { user_id: 'u-1024', token_ref: 'ref://delegated/…', purpose: 'contract-review' },
-    domain: 'network',
-    action: 'http.request',
-    resource: { type: 'endpoint', value: 'api.example.com:443/orders/**' },
-    effect: 'allow',
-    conditions: { methods: ['GET'], purpose: 'contract-review', ttl: 300 },
-    state: 'effective',
-    authority: 'siq-gateway',
-    authority_revision: 'gw-rev-4821',
-    evidence_ids: ['ev-0001', 'ev-0002'],
-    valid_from: '2026-08-01T00:00:00Z',
-    valid_until: '2026-09-01T00:00:00Z',
-  },
-  {
-    subject: { type: 'agent_asset', id: 'ast-01h2kd93nf' },
-    domain: 'filesystem',
-    action: 'fs.write',
-    resource: { type: 'path', value: '/srv/siq/legal/reviews/' },
-    effect: 'deny',
-    state: 'declared',
-    authority: 'openshell',
-    authority_revision: 'os-pol-9910',
-    evidence_ids: ['ev-0003'],
-  },
-  {
-    subject: { type: 'identity_binding', id: 'ib-u1024-agent01' },
-    delegated_user: { user_id: 'u-1024', token_ref: 'ref://delegated/…' },
-    domain: 'data_scope',
-    action: 'data.query',
-    resource: { type: 'namespace', value: 'sales:eu' },
-    effect: 'allow',
-    conditions: { ttl: 120 },
-    state: 'observed',
-    authority: 'siq-iam',
-    evidence_ids: ['ev-0004', 'ev-0005'],
-  },
-];
+const PLACEHOLDER_PERMISSIONS: PermissionFactRow[] = [];
 
-const effectTag = { allow: 'tag-ok', deny: 'tag-err' } as const;
-const stateTag = {
-  declared: '', inferred: 'tag-info', observed: 'tag-info',
-  effective: 'tag-ok', unknown: '',
-} as const;
+const DOMAIN_LABELS: Record<string, string> = {
+  filesystem: '文件',
+  network: '网络',
+  process: '进程',
+  model: '模型',
+  credential: '凭据',
+  data_scope: '数据范围',
+  tool: '工具',
+  business: '业务',
+  resource: '资源',
+  control_plane: '控制面',
+};
 
-const columns: TableColumn<PermissionFact>[] = [
+const columns: TableColumn<PermissionFactRow>[] = [
   {
-    key: 'subject',
-    header: '主体',
-    render: (f) => (
-      <>
-        <span className="mono">{f.subject.id}</span>{' '}
-        <span className="tag tag-info">{f.subject.type}</span>
-      </>
-    ),
+    key: 'domain',
+    header: '权限域',
+    render: (row) => DOMAIN_LABELS[row.domain] ?? row.domain,
   },
+  { key: 'action', header: '动作', render: (row) => row.action },
   {
-    key: 'delegated',
-    header: '委托用户',
-    render: (f) => f.delegated_user?.user_id ?? '—',
+    key: 'resource_value',
+    header: '资源',
+    render: (row) => <code className="resource-cell">{row.resource_value}</code>,
   },
-  {
-    key: 'domain_action',
-    header: '域 / 动作',
-    render: (f) => (
-      <>
-        <span className="tag">{f.domain}</span> {f.action}
-      </>
-    ),
-  },
-  { key: 'resource', header: '资源', render: (f) => <span className="mono">{f.resource.value}</span> },
-  {
-    key: 'effect',
-    header: '效果',
-    render: (f) => <span className={`tag ${effectTag[f.effect]}`}>{f.effect}</span>,
-  },
+  { key: 'effect', header: '效果', render: (row) => row.effect },
   {
     key: 'state',
     header: '状态',
-    render: (f) => <span className={`tag ${stateTag[f.state]}`}>{f.state}</span>,
+    render: (row) => (
+      <span className={`state-tag ${row.state}`}>
+        {row.state === 'effective' ? '有效' : row.state === 'inferred' ? '推断' : row.state}
+      </span>
+    ),
   },
-  { key: 'authority', header: '权威源', render: (f) => f.authority },
+  {
+    key: 'authority',
+    header: '权威来源',
+    render: (row) => (
+      <span className={row.authority === 'openshell' ? 'authority-openshell' : undefined}>{row.authority}</span>
+    ),
+  },
+  { key: 'authority_revision', header: 'Revision', render: (row) => row.authority_revision ?? '—' },
+  { key: 'subject_id', header: '主体', render: (row) => row.subject_id },
 ];
 
 export default function PermissionsPage() {
-  const facts = useApiList<PermissionFact>('/permissions', PLACEHOLDER_PERMISSIONS);
+  const { rows, status, error, refresh } = useApiList<PermissionFactRow>(
+    '/permissions',
+    PLACEHOLDER_PERMISSIONS,
+  );
+  const [authorityFilter, setAuthorityFilter] = useState<string>('');
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
+
+  const authorities = Array.from(new Set(rows.map((r) => r.authority))).sort();
+  const visible = authorityFilter ? rows.filter((r) => r.authority === authorityFilter) : rows;
+
+  const onSync = async () => {
+    setSyncing(true);
+    setSyncError(null);
+    setSyncMessage(null);
+    try {
+      const result = await api.syncOpenShell();
+      setSyncMessage(`已同步 ${result.facts} 条有效权限（${result.targets} 个沙箱）`);
+      refresh();
+    } catch (err) {
+      setSyncError(err instanceof ApiError ? err.message : '同步失败');
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   return (
-    <section>
+    <div>
       <PageHeader
         title="权限视图"
-        description="来自各权威源的权限事实（PermissionFact，设计文档 §12.3）：主体、委托用户、动作与效果。有效数据范围 = Agent 自身权限 ∩ 调用用户数据范围。"
-        connection={facts.status}
-        connectionError={facts.error}
+        description="按权限域与权威来源展示 declared / inferred / observed / effective / unknown 分层（设计文档 §12.2）"
+        connection={status}
+        connectionError={error}
       />
-      {facts.status === 'disconnected' ? (
-        <DisconnectedNotice error={facts.error} onRetry={facts.reload} />
-      ) : null}
-      <SimpleTable
-        columns={columns}
-        rows={facts.rows}
-        rowKey={(f) => `${f.subject.id}:${f.domain}:${f.action}:${f.resource.value}`}
-      />
-    </section>
+
+      <div className="permissions-toolbar">
+        <div className="filter-group">
+          <button className={`btn-sm ${authorityFilter === '' ? 'btn-active' : 'btn-ghost'}`} onClick={() => setAuthorityFilter('')}>
+            全部（{rows.length}）
+          </button>
+          {authorities.map((a) => (
+            <button
+              key={a}
+              className={`btn-sm ${authorityFilter === a ? 'btn-active' : 'btn-ghost'}`}
+              onClick={() => setAuthorityFilter(a)}
+            >
+              {a}（{rows.filter((r) => r.authority === a).length}）
+            </button>
+          ))}
+        </div>
+        <div className="sync-group">
+          <button className="btn-sm btn-primary" onClick={onSync} disabled={syncing}>
+            {syncing ? '同步中…' : '同步 OpenShell 有效策略'}
+          </button>
+          {syncMessage && <span className="sync-ok">{syncMessage}</span>}
+          {syncError && <span className="sync-err">{syncError}</span>}
+        </div>
+      </div>
+
+      {status === 'disconnected' ? (
+        <DisconnectedNotice error={error} onRetry={refresh} />
+      ) : (
+        <>
+          <SimpleTable columns={columns} rows={visible} rowKey={(row) => row.id} />
+          {status === 'connected' && visible.length === 0 && (
+            <p className="muted-text">
+              暂无权限事实。点击「同步 OpenShell 有效策略」从真实网关拉取（网关不可达时 fail-closed，不会显示空权限冒充安全状态）。
+            </p>
+          )}
+        </>
+      )}
+    </div>
   );
 }

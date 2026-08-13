@@ -483,3 +483,18 @@ body {
   margin: 0 0 8px;
   color: var(--text);
 }
+
+/* 权限视图 */
+.permissions-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
+.filter-group, .sync-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.btn-active { background: var(--accent, #3b82f6); color: #fff; border: 1px solid var(--accent, #3b82f6); }
+.btn-primary { background: #16a34a; color: #fff; border: 1px solid #16a34a; }
+.btn-primary:disabled { opacity: 0.6; cursor: wait; }
+.sync-ok { color: #16a34a; font-size: 13px; }
+.sync-err { color: #dc2626; font-size: 13px; }
+.state-tag { padding: 1px 8px; border-radius: 10px; font-size: 12px; background: #e5e7eb; color: #374151; }
+.state-tag.effective { background: #dcfce7; color: #166534; }
+.state-tag.inferred { background: #fef3c7; color: #92400e; }
+.state-tag.unknown { background: #fee2e2; color: #991b1b; }
+.authority-openshell { font-weight: 600; color: #0e7490; }
+.resource-cell { font-size: 12px; background: #f3f4f6; padding: 1px 6px; border-radius: 4px; }

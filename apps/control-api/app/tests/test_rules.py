@@ -446,3 +446,39 @@ def test_sync_openshell_unreachable_fails_closed(client, tenant_a, monkeypatch):
     resp = client.post("/api/v1/permissions/sync-openshell", json={}, headers=tenant_a)
     assert resp.status_code == 502
     assert "openshell_unreachable" in resp.json()["detail"]
+
+
+def test_permissions_list_tenant_isolation_and_filters(client, tenant_a, tenant_b):
+    """权限列表：权威源/域/状态过滤 + 跨租户不可见。"""
+    from app.db import session_scope as ss
+    from app.models import PermissionFact
+
+    with ss() as s:
+        s.add(
+            PermissionFact(
+                tenant_id="tnt-A",
+                subject_type="openshell_sandbox",
+                subject_id="sandbox:a",
+                domain="network",
+                action="http.request",
+                resource_type="endpoint",
+                resource_value="api.example.com:443",
+                effect="allow",
+                state="effective",
+                authority="openshell",
+                authority_revision="2",
+                evidence_ids=[],
+            )
+        )
+        s.commit()
+
+    resp = client.get(
+        "/api/v1/permissions", params={"authority": "openshell", "state": "effective"}, headers=tenant_a
+    )
+    assert resp.status_code == 200
+    rows = resp.json()
+    assert any(r["resource_value"] == "api.example.com:443" for r in rows)
+
+    # 跨租户不可见
+    resp_b = client.get("/api/v1/permissions", params={"authority": "openshell"}, headers=tenant_b)
+    assert all(r["resource_value"] != "api.example.com:443" for r in resp_b.json())

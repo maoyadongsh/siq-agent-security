@@ -465,6 +465,26 @@ export interface ApiErrorBody {
   details?: unknown;
 }
 
+/** 权限事实（后端 API 扁平形状，对齐 apps/control-api/app/schemas.py PermissionFactOut） */
+export interface PermissionFactRow {
+  id: string;
+  subject_type: string;
+  subject_id: string;
+  delegated_user: Record<string, string> | null;
+  domain: string;
+  action: string;
+  resource_type: string;
+  resource_value: string;
+  effect: 'allow' | 'deny';
+  conditions: Record<string, unknown>;
+  state: 'declared' | 'inferred' | 'observed' | 'effective' | 'unknown';
+  authority: string;
+  authority_revision: string | null;
+  evidence_ids: string[];
+  valid_from: string | null;
+  valid_until: string | null;
+}
+
 export interface ApiEnvelope<T> {
   ok: boolean;
   data?: T;
