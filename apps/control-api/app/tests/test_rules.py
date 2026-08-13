@@ -403,13 +403,15 @@ def test_sync_openshell_writes_effective_facts(client, tenant_a, monkeypatch):
 
     class FakeCliBackend(OpenShellCliBackend):
         def __init__(self):
-            super().__init__(runner=self._fake_runner, env_script="/nonexistent")
+            super().__init__(
+                runner=self._fake_runner,
+                env_script="/nonexistent",
+                docker_runner=lambda args: (0, "openshell-demo-sandbox-8515c645-1682-4814-965d-e6b330e2af2e\n", ""),
+            )
 
         def _fake_runner(self, args):
             if tuple(args[:2]) == ("sandbox", "list"):
                 return 1, "", "protobuf decode error"
-            if args[:2] == ["docker", "ps"]:
-                return 0, "openshell-demo-sandbox-8515c645-1682-4814-965d-e6b330e2af2e\n", ""
             if tuple(args[:2]) == ("policy", "get") and "--full" in args:
                 return 0, REAL_POLICY_GET_FULL, ""
             if tuple(args[:2]) == ("gateway", "info"):

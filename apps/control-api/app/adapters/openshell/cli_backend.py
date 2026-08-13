@@ -57,9 +57,16 @@ def _default_env_script() -> str:
 
 
 class OpenShellCliBackend(EnforcementAdapter):
-    def __init__(self, *, runner: Runner | None = None, env_script: str | None = None):
+    def __init__(
+        self,
+        *,
+        runner: Runner | None = None,
+        env_script: str | None = None,
+        docker_runner: Runner | None = None,
+    ):
         self._env_script = env_script or _default_env_script()
         self._runner = runner or self._subprocess_runner
+        self._docker_runner = docker_runner  # None = 原始 docker 子进程
         self._artifacts: dict[str, CompiledPolicy] = {}  # compile 注册，apply 引用
 
     # ------------------------------------------------------------ 子进程
@@ -123,13 +130,17 @@ class OpenShellCliBackend(EnforcementAdapter):
 
         注意：docker 命令不能走 openshell 包装壳（_subprocess_runner 固定 exec openshell）。
         """
-        try:
-            proc = subprocess.run(
-                ["docker", "ps", "--format", "{{.Names}}"], capture_output=True, text=True, timeout=10
-            )
-            out = proc.stdout if proc.returncode == 0 else ""
-        except (OSError, subprocess.TimeoutExpired):
-            out = ""
+        if self._docker_runner is not None:
+            rc, out, _ = self._docker_runner(["docker", "ps", "--format", "{{.Names}}"])
+            out = out if rc == 0 else ""
+        else:
+            try:
+                proc = subprocess.run(
+                    ["docker", "ps", "--format", "{{.Names}}"], capture_output=True, text=True, timeout=10
+                )
+                out = proc.stdout if proc.returncode == 0 else ""
+            except (OSError, subprocess.TimeoutExpired):
+                out = ""
         names = []
         for line in out.splitlines():
             line = line.strip()

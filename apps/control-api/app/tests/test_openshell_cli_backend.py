@@ -158,11 +158,12 @@ def test_sandbox_list_decode_bug_falls_back_to_docker():
     def runner(args):
         if tuple(args[:2]) == ("sandbox", "list"):
             return 1, "", "status: Internal, message: failed to decode Protobuf message: Sandbox.id"
-        if args[:2] == ["docker", "ps"]:
-            return 0, "openshell-siq-as-live-8515c645-1682-4814-965d-e6b330e2af2e\n", ""
         return 1, "", f"unexpected: {args}"
 
-    backend = OpenShellCliBackend(runner=runner)
+    def docker_runner(args):
+        return 0, "openshell-siq-as-live-8515c645-1682-4814-965d-e6b330e2af2e\n", ""
+
+    backend = OpenShellCliBackend(runner=runner, docker_runner=docker_runner)
     page = backend.list_targets()
     assert page.targets == [{"id": "siq-as-live"}]
 
