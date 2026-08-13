@@ -293,13 +293,28 @@ def test_finding_lifecycle_acknowledge_resolve(client, tenant_a):
 
 
 def test_scan_quota_per_tenant(client, tenant_a, env_a):
-    """威胁 T19：每租户 pending 扫描任务上限（默认 50），超限 429。"""
+    """威胁 T19：每租户 pending 扫描任务上限（默认 50），超限 429。
+
+    共享测试库中其他用例可能遗留 pending 扫描任务，故按"剩余额度"计算。
+    """
+    from sqlalchemy import select
+
     from app.config import load_settings
+    from app.db import session_scope
+    from app.models import EdgeTask, Environment
 
     quota = load_settings().scan_quota_per_tenant
-    for i in range(quota):
+    with session_scope() as s:
+        env_ids = list(s.scalars(select(Environment.id).where(Environment.tenant_id == "tnt-A")))
+        pre = s.query(EdgeTask).filter(
+            EdgeTask.task_type == "scan",
+            EdgeTask.status == "pending",
+            EdgeTask.environment_id.in_(env_ids),
+        ).count()
+    remaining = max(quota - pre, 0)
+    for i in range(remaining):
         resp = client.post("/api/v1/scans", json={"environment_id": env_a["id"], "scope": {"n": i}}, headers=tenant_a)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, f"quota loop {i}/{remaining}: {resp.text}"
     over = client.post("/api/v1/scans", json={"environment_id": env_a["id"], "scope": {}}, headers=tenant_a)
     assert over.status_code == 429
     assert "scan_quota_exceeded" in over.json()["detail"]
