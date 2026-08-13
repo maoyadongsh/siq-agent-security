@@ -371,7 +371,8 @@ def test_worker_reopens_expired_dismissal(client, tenant_a):
     from datetime import timedelta
 
     from app.db import session_scope as ss
-    from app.models import AgentAsset, utcnow as now_fn
+    from app.models import AgentAsset
+    from app.models import utcnow as now_fn
 
     with ss() as s:
         _ensure_tenant(s, "tnt-A")
