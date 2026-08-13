@@ -10,12 +10,12 @@
 | filesystem_policy 静态边界 | ✅ 编译期锁定，重建生效 | 待探测 |
 | Landlock | ✅ 带本地 patch（mask-file-access） | 待探测（rebase 后回归） |
 | process / seccomp 静态边界 | ✅ | 待探测 |
-| **network_policies 动态更新** | ❌ 编译期固定集合（build_policy.py `_validate_network` 只允许固定 broker 规则） | 待探测（Providers v2 / 新版本） |
+| **network_policies 动态更新** | ✅ **实测支持**（2026-08-13：活沙箱 `policy set` 网络段 → version 2 提交成功并读回生效；静态段修改被拒绝）。SIQ 自研编译器的固定规则限制 ≠ 网关能力限制 | ✅ 已探测 |
 | Provider 凭据隔离 | ✅ credential placeholder + 网关注入 | 待探测（Providers v2 动态能力） |
 | Gateway Interceptor | ❓ v0.0.83 上未使用/未验证 | 待探测 |
 | revision / 有效策略回读 | ✅ | 待探测 |
 
-**MVP 影响**：动态网络策略发布为版本依赖项（设计文档 §29.1 降级条款；ADR-009）。
+**MVP 影响（实测修正）**：动态网络策略发布**在 v0.0.83 上即可实现**（policy set + revision 读回）；§29.1 降级条款保留为风险预案。已知问题：网关 SandboxResponse 的 Protobuf 解码错误（list/create/get 响应），policy 类命令不受影响，升级 v0.0.104 预期修复。
 
 ## 本地 patch 清单（ADR-005）
 
