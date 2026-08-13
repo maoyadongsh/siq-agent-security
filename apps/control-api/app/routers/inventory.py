@@ -284,6 +284,87 @@ def list_permissions(
     )
 
 
+@router.get("/api/v1/permissions/diff")
+def permissions_diff(
+    subject_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """declared vs effective 权限 Diff（§12.4 第 6 步 / §20.2）。
+
+    对指定主体按 (domain, action, resource_value) 比对：
+    - declared_not_effective：声明了但无有效事实（待验证/风险）；
+    - effective_not_declared：生效但未声明（潜在带外）；
+    - consistent：两者一致。
+    """
+    ensure_permission(identity, "agent:read")
+    facts = list(
+        session.scalars(
+            select(PermissionFact).where(
+                PermissionFact.tenant_id == identity.tenant_id,
+                PermissionFact.subject_id == subject_id,
+            )
+        )
+    )
+
+    def key(f: PermissionFact) -> tuple:
+        return (f.domain, f.action, f.resource_value)
+
+    declared = {key(f): f for f in facts if f.state == "declared"}
+    effective = {key(f): f for f in facts if f.state == "effective"}
+    declared_only = [
+        {"domain": k[0], "action": k[1], "resource": k[2], "detail": "声明了但无有效事实（待验证）"}
+        for k in declared.keys() - effective.keys()
+    ]
+    effective_only = [
+        {"domain": k[0], "action": k[1], "resource": k[2], "detail": "生效但未声明（潜在带外）"}
+        for k in effective.keys() - declared.keys()
+    ]
+    consistent = [
+        {"domain": k[0], "action": k[1], "resource": k[2], "detail": "一致"}
+        for k in declared.keys() & effective.keys()
+    ]
+    return {
+        "subject_id": subject_id,
+        "declared_count": len(declared),
+        "effective_count": len(effective),
+        "declared_not_effective": declared_only,
+        "effective_not_declared": effective_only,
+        "consistent": consistent,
+    }
+
+
+@router.post("/api/v1/permissions/check-drift")
+def check_drift_endpoint(
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """漂移检测（§13.3）：期望状态 vs 执行端实际状态 → Finding。fail-closed。"""
+    from app.adapters.openshell.contracts import AdapterError as _AE
+    from app.drift import check_policy_drift, upsert_drift_findings
+
+    ensure_permission(identity, "env:manage")
+    try:
+        results = check_policy_drift(session, identity.tenant_id)
+    except _AE as exc:
+        session.rollback()
+        raise HTTPException(status_code=502, detail=f"openshell_unreachable: {exc}") from None
+    counts = upsert_drift_findings(session, identity.tenant_id, results)
+    session.commit()
+    return {
+        "drift_results": [
+            {
+                "deployment_id": r.deployment_id,
+                "severity": r.severity,
+                "kind": r.details.get("kind"),
+                "summary": r.summary,
+            }
+            for r in results
+        ],
+        **counts,
+    }
+
+
 @router.post("/api/v1/permissions/sync-openshell")
 def sync_openshell_permissions(
     session: Session = Depends(get_session),

@@ -482,3 +482,182 @@ def test_permissions_list_tenant_isolation_and_filters(client, tenant_a, tenant_
     # 跨租户不可见
     resp_b = client.get("/api/v1/permissions", params={"authority": "openshell"}, headers=tenant_b)
     assert all(r["resource_value"] != "api.example.com:443" for r in resp_b.json())
+
+
+def _seed_effective_deployment(session, tenant_id, target="sandbox:t1", receipt_rev="1"):
+    from app.models import ChangeRequest, Deployment, DesiredPolicy
+
+    policy = DesiredPolicy(
+        tenant_id=tenant_id,
+        name=f"drift-policy-{target}",
+        selector={"agent_ids": ["a"]},
+        network=[{"endpoint": "api.example.com:443", "effect": "allow"}],
+        enforcement_mode="block",
+        status="approved",
+    )
+    session.add(policy)
+    session.flush()
+    cr = ChangeRequest(
+        tenant_id=tenant_id,
+        policy_id=policy.id,
+        proposer_user_id="u1",
+        approver_user_id="u2",
+        status="effective",
+        idempotency_key=f"drift-ik-{target}",
+    )
+    session.add(cr)
+    session.flush()
+    dep = Deployment(
+        tenant_id=tenant_id,
+        environment_id="env-x",
+        change_request_id=cr.id,
+        target=target,
+        to_revision="policy-1",
+        status="effective",
+        receipt={"backend_revision": receipt_rev},
+    )
+    session.add(dep)
+    session.flush()
+    return dep
+
+
+def test_drift_revision_mismatch_creates_high_finding(client, tenant_a, monkeypatch):
+    from app.adapters.openshell.cli_backend import OpenShellCliBackend
+    from app.adapters.openshell.contracts import PolicySnapshot
+
+    class Fake(OpenShellCliBackend):
+        def __init__(self):
+            super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
+
+        def read_effective_policy(self, target):
+            return PolicySnapshot(
+                target=target,
+                revision="2",  # 与回执 1 不一致（带外变更）
+                network=[{"endpoint": "api.example.com:443", "effect": "allow"}],
+            )
+
+    monkeypatch.setattr("app.drift.OpenShellCliBackend", Fake)
+    with session_scope() as s:
+        _ensure_tenant(s, "tnt-A")
+        _seed_effective_deployment(s, "tnt-A")
+        s.commit()
+        from app.drift import check_policy_drift, upsert_drift_findings
+
+        results = check_policy_drift(s, "tnt-A")
+        assert any(r.kind if hasattr(r, "kind") else r.details.get("kind") == "revision_mismatch" for r in results)
+        counts = upsert_drift_findings(s, "tnt-A", results)
+        assert counts["created"] >= 1
+        s.commit()
+        from app.models import Finding
+
+        f = s.query(Finding).filter(Finding.rule_id == "policy-drift").first()
+        assert f is not None and f.severity == "high"
+
+
+def test_drift_missing_rules_detected(client, tenant_a, monkeypatch):
+    from app.adapters.openshell.cli_backend import OpenShellCliBackend
+    from app.adapters.openshell.contracts import PolicySnapshot
+
+    class Fake(OpenShellCliBackend):
+        def __init__(self):
+            super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
+
+        def read_effective_policy(self, target):
+            return PolicySnapshot(target=target, revision="1", network=[])  # 期望规则缺失
+
+    monkeypatch.setattr("app.drift.OpenShellCliBackend", Fake)
+    with session_scope() as s:
+        _ensure_tenant(s, "tnt-A")
+        _seed_effective_deployment(s, "tnt-A", target="sandbox:t2")
+        s.commit()
+        from app.drift import check_policy_drift
+
+        results = check_policy_drift(s, "tnt-A")
+        kinds = [r.details.get("kind") for r in results]
+        assert "missing_rules" in kinds
+
+
+def test_drift_unreadable_target_fails_closed(client, tenant_a, monkeypatch):
+    from app.adapters.openshell.cli_backend import OpenShellCliBackend
+    from app.adapters.openshell.contracts import AdapterError
+
+    class Fake(OpenShellCliBackend):
+        def __init__(self):
+            super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
+
+        def read_effective_policy(self, target):
+            raise AdapterError("no policy revision found for this sandbox")
+
+    monkeypatch.setattr("app.drift.OpenShellCliBackend", Fake)
+    with session_scope() as s:
+        _ensure_tenant(s, "tnt-A")
+        _seed_effective_deployment(s, "tnt-A", target="sandbox:gone")
+        s.commit()
+        from app.drift import check_policy_drift
+
+        results = check_policy_drift(s, "tnt-A")
+        assert any(r.details.get("kind") == "unreadable" for r in results)
+
+
+def test_drift_consistent_no_findings(client, tenant_a, monkeypatch):
+    from app.adapters.openshell.cli_backend import OpenShellCliBackend
+    from app.adapters.openshell.contracts import PolicySnapshot
+
+    class Fake(OpenShellCliBackend):
+        def __init__(self):
+            super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
+
+        def read_effective_policy(self, target):
+            return PolicySnapshot(
+                target=target, revision="1", network=[{"endpoint": "api.example.com:443", "effect": "allow"}]
+            )
+
+    monkeypatch.setattr("app.drift.OpenShellCliBackend", Fake)
+    with session_scope() as s:
+        _ensure_tenant(s, "tnt-A")
+        dep = _seed_effective_deployment(s, "tnt-A", target="sandbox:t4")
+        s.commit()
+        from app.drift import check_policy_drift
+
+        results = check_policy_drift(s, "tnt-A")
+        # 共享库中其他用例的旧部署可能漂移；只断言本部署无漂移
+        assert not any(r.deployment_id == dep.id for r in results)
+
+
+def test_permissions_diff_declared_vs_effective(client, tenant_a):
+    """§12.4 Diff：声明与有效按 (domain, action, resource) 对比。"""
+    from app.db import session_scope as ss
+    from app.models import PermissionFact
+
+    with ss() as s:
+        for state, value in [
+            ("declared", "api.example.com:443"),  # 声明了但无有效
+            ("effective", "other.example.com:443"),  # 生效但未声明
+            ("declared", "common.example.com:443"),
+            ("effective", "common.example.com:443"),
+        ]:
+            s.add(
+                PermissionFact(
+                    tenant_id="tnt-A",
+                    subject_type="agent_instance",
+                    subject_id="inst-diff",
+                    domain="network",
+                    action="http.request",
+                    resource_type="endpoint",
+                    resource_value=value,
+                    effect="allow",
+                    state=state,
+                    authority="edge-connector" if state == "declared" else "openshell",
+                    evidence_ids=[],
+                )
+            )
+        s.commit()
+
+    resp = client.get(
+        "/api/v1/permissions/diff", params={"subject_id": "inst-diff"}, headers=tenant_a
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert any(r["resource"] == "api.example.com:443" for r in body["declared_not_effective"])
+    assert any(r["resource"] == "other.example.com:443" for r in body["effective_not_declared"])
+    assert any(r["resource"] == "common.example.com:443" for r in body["consistent"])

@@ -69,9 +69,53 @@ export default function PermissionsPage() {
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [driftChecking, setDriftChecking] = useState(false);
+  const [driftMessage, setDriftMessage] = useState<string | null>(null);
+  const [diffChecking, setDiffChecking] = useState(false);
+  const [diffMessage, setDiffMessage] = useState<string | null>(null);
+  const [diffDetail, setDiffDetail] = useState<Awaited<ReturnType<typeof api.permissionsDiff>> | null>(null);
 
   const authorities = Array.from(new Set(rows.map((r) => r.authority))).sort();
   const visible = authorityFilter ? rows.filter((r) => r.authority === authorityFilter) : rows;
+
+  const onDrift = async () => {
+    setDriftChecking(true);
+    setDriftMessage(null);
+    try {
+      const result = await api.checkDrift();
+      if (result.drift_results.length === 0) {
+        setDriftMessage('漂移检测：无漂移（期望状态与执行端一致）');
+      } else {
+        setDriftMessage(`漂移检测：${result.drift_results.length} 项漂移已生成 Finding（新增 ${result.created}）`);
+      }
+      refresh();
+    } catch (err) {
+      setSyncError(err instanceof ApiError ? err.message : '漂移检测失败');
+    } finally {
+      setDriftChecking(false);
+    }
+  };
+
+  const onDiff = async () => {
+    setDiffChecking(true);
+    setDiffMessage(null);
+    setDiffDetail(null);
+    try {
+      // 对 openshell 主体（若存在）比对 declared vs effective
+      const subjects = Array.from(new Set(rows.filter((r) => r.authority === 'openshell').map((r) => r.subject_id)));
+      if (subjects.length === 0) {
+        setDiffMessage('当前没有 openshell 主体可比对（先执行同步）');
+        return;
+      }
+      const detail = await api.permissionsDiff(subjects[0]);
+      setDiffDetail(detail);
+      setDiffMessage(`主体 ${detail.subject_id}：声明 ${detail.declared_count} / 有效 ${detail.effective_count} / 一致 ${detail.consistent.length}`);
+    } catch (err) {
+      setSyncError(err instanceof ApiError ? err.message : 'Diff 失败');
+    } finally {
+      setDiffChecking(false);
+    }
+  };
 
   const onSync = async () => {
     setSyncing(true);
@@ -116,10 +160,28 @@ export default function PermissionsPage() {
           <button className="btn-sm btn-primary" onClick={onSync} disabled={syncing}>
             {syncing ? '同步中…' : '同步 OpenShell 有效策略'}
           </button>
+          <button className="btn-sm" onClick={onDrift} disabled={driftChecking}>
+            {driftChecking ? '检测中…' : '检查漂移'}
+          </button>
+          <button className="btn-sm" onClick={onDiff} disabled={diffChecking}>
+            {diffChecking ? '比对中…' : '声明 vs 有效 Diff'}
+          </button>
           {syncMessage && <span className="sync-ok">{syncMessage}</span>}
           {syncError && <span className="sync-err">{syncError}</span>}
         </div>
       </div>
+
+      {(driftMessage || diffMessage) && (
+        <div className="card">
+          {driftMessage && <p className="sync-ok">{driftMessage}</p>}
+          {diffMessage && (
+            <p className="page-desc">
+              {diffMessage}——声明了但无有效 {diffDetail?.declared_not_effective.length ?? 0} 项、
+              生效但未声明 {diffDetail?.effective_not_declared.length ?? 0} 项
+            </p>
+          )}
+        </div>
+      )}
 
       {status === 'disconnected' ? (
         <DisconnectedNotice error={error} onRetry={refresh} />

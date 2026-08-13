@@ -251,6 +251,23 @@ export const api = {
   listPermissions: (query: RequestOptions['query'] = {}) => get<PermissionFactRow[]>('/permissions', { query }),
   /** 拉取真实 OpenShell 有效策略入 PermissionFacts（fail-closed：网关不可达 502） */
   syncOpenShell: () => post<{ targets: number; facts: number }>('/permissions/sync-openshell', {}),
+  /** 漂移检测（§13.3）：期望状态 vs 执行端实际状态 → Finding */
+  checkDrift: () =>
+    post<{
+      drift_results: { deployment_id: string; severity: string; kind?: string; summary: string }[];
+      created: number;
+      updated: number;
+    }>('/permissions/check-drift', {}),
+  /** declared vs effective 权限 Diff（§12.4） */
+  permissionsDiff: (subjectId: string) =>
+    get<{
+      subject_id: string;
+      declared_count: number;
+      effective_count: number;
+      declared_not_effective: { domain: string; action: string; resource: string; detail: string }[];
+      effective_not_declared: { domain: string; action: string; resource: string; detail: string }[];
+      consistent: { domain: string; action: string; resource: string; detail: string }[];
+    }>('/permissions/diff', { query: { subject_id: subjectId } }),
   /** 策略中心 */
   listPolicies: (query: RequestOptions['query'] = {}) => get<PolicyRow[]>('/policies', { query }),
   createPolicy: (body: Record<string, unknown>) => post<PolicyRow>('/policies', body),

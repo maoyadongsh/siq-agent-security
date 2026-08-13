@@ -134,6 +134,25 @@ def reopen_expired_dismissals(session) -> int:
     return reopened
 
 
+def run_drift(session) -> dict:
+    """漂移检测循环（§13.3）：仅当配置了执行后端时执行；未配置返回 skipped。"""
+    import os
+
+    if os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none") == "none":
+        return {"skipped": True}
+    from app.drift import check_policy_drift, upsert_drift_findings
+
+    tenants = list(session.scalars(select(Tenant).where(Tenant.status == "active")))
+    total = {"created": 0, "updated": 0}
+    for tenant in tenants:
+        results = check_policy_drift(session, tenant.id)
+        counts = upsert_drift_findings(session, tenant.id, results)
+        total["created"] += counts["created"]
+        total["updated"] += counts["updated"]
+    session.commit()
+    return total
+
+
 def run_rules(session) -> dict:
     tenants = list(session.scalars(select(Tenant).where(Tenant.status == "active")))
     total = {"created": 0, "updated": 0}
@@ -153,8 +172,9 @@ def once() -> dict:
         published = publish_outbox(session)
         reaped = reap_expired_risk_acceptance(session)
         dismissals = reopen_expired_dismissals(session)
+        drift = run_drift(session)
         rules = run_rules(session)
-    return {"published": published, "reaped": reaped, "dismissals": dismissals, "rules": rules}
+    return {"published": published, "reaped": reaped, "dismissals": dismissals, "drift": drift, "rules": rules}
 
 
 def loop(interval_seconds: int) -> None:
