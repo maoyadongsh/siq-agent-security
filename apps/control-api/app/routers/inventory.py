@@ -43,6 +43,27 @@ def create_scan(
     )
     if env is None:
         raise HTTPException(status_code=404, detail="not_found")
+    # 租户级扫描配额（威胁 T19：扫描风暴 DoS）
+    from sqlalchemy import func
+
+    from app.config import load_settings
+    from app.models import Environment as EnvModel
+
+    pending_env_ids = session.scalars(
+        select(EnvModel.id).where(EnvModel.tenant_id == identity.tenant_id)
+    ).all()
+    pending_scans = session.scalar(
+        select(func.count(EdgeTask.id)).where(
+            EdgeTask.environment_id.in_(pending_env_ids),
+            EdgeTask.task_type == "scan",
+            EdgeTask.status == "pending",
+        )
+    )
+    if pending_scans >= load_settings().scan_quota_per_tenant:
+        raise HTTPException(
+            status_code=429,
+            detail=f"scan_quota_exceeded: {pending_scans} >= {load_settings().scan_quota_per_tenant}",
+        )
     expires_at = utcnow() + timedelta(seconds=_task_ttl(session))
     task = EdgeTask(
         environment_id=env.id,
@@ -234,20 +255,36 @@ async def _read_json(request: Request) -> dict:
 
 @router.get("/api/v1/candidates", response_model=list[AgentAssetOut])
 def list_candidates(
+    cursor: str | None = None,  # 形如 "<updated_at_iso>|<id>"（§18.1 稳定 Cursor 分页）
+    limit: int = 50,
     session: Session = Depends(get_session),
     identity: Identity = Depends(require_permission("agent:read")),
 ):
-    return list(
-        session.scalars(
-            select(AgentAsset)
-            .where(
-                AgentAsset.tenant_id == identity.tenant_id,
-                AgentAsset.status.in_(["candidate", "needs_review"]),
-            )
-            .order_by(AgentAsset.updated_at.desc())
-            .limit(200)
+    query = (
+        select(AgentAsset)
+        .where(
+            AgentAsset.tenant_id == identity.tenant_id,
+            AgentAsset.status.in_(["candidate", "needs_review"]),
         )
+        .order_by(AgentAsset.updated_at.desc(), AgentAsset.id)
     )
+    if cursor:
+        query = _apply_cursor(query, AgentAsset, cursor)
+    return list(session.scalars(query.limit(min(limit, 200))))
+
+
+def _apply_cursor(query, model, cursor: str):
+    """稳定游标：<iso时间>|<id>，晚于游标的行（§18.1）。解析失败按 id 兜底。"""
+    from datetime import datetime
+
+    try:
+        ts, rid = cursor.split("|", 1)
+        cursor_time = datetime.fromisoformat(ts)
+        return query.where(
+            (model.updated_at < cursor_time) | ((model.updated_at == cursor_time) & (model.id > rid))
+        )
+    except ValueError:
+        return query.where(model.id > cursor)
 
 
 def _asset_or_404(session: Session, tenant_id: str, asset_id: str) -> AgentAsset:
@@ -365,20 +402,22 @@ def classify_candidate(
 
 @router.get("/api/v1/agents", response_model=list[AgentAssetOut])
 def list_agents(
+    cursor: str | None = None,
+    limit: int = 50,
     session: Session = Depends(get_session),
     identity: Identity = Depends(require_permission("agent:read")),
 ):
-    return list(
-        session.scalars(
-            select(AgentAsset)
-            .where(
-                AgentAsset.tenant_id == identity.tenant_id,
-                AgentAsset.status.in_(["confirmed", "managed", "stale", "retired"]),
-            )
-            .order_by(AgentAsset.name)
-            .limit(200)
+    query = (
+        select(AgentAsset)
+        .where(
+            AgentAsset.tenant_id == identity.tenant_id,
+            AgentAsset.status.in_(["confirmed", "managed", "stale", "retired"]),
         )
+        .order_by(AgentAsset.updated_at.desc(), AgentAsset.id)
     )
+    if cursor:
+        query = _apply_cursor(query, AgentAsset, cursor)
+    return list(session.scalars(query.limit(min(limit, 200))))
 
 
 @router.get("/api/v1/agents/{asset_id}", response_model=AgentAssetOut)

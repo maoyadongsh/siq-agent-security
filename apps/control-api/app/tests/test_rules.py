@@ -271,3 +271,81 @@ def test_classify_never_auto_confirms(client, tenant_a):
     client.post(f"/api/v1/candidates/{asset['id']}/classify", json={}, headers=tenant_a)
     refreshed = client.get(f"/api/v1/agents/{asset['id']}", headers=tenant_a).json()
     assert refreshed["status"] in ("candidate", "needs_review")
+
+
+def test_finding_lifecycle_acknowledge_resolve(client, tenant_a):
+    """Finding 生命周期：open → acknowledged → resolved（§13.2）。"""
+    client.post("/api/v1/findings/run-rules", json={}, headers=tenant_a)
+    finding = client.get("/api/v1/findings", headers=tenant_a).json()[0]
+    assert finding["status"] == "open"
+
+    ack = client.post(f"/api/v1/findings/{finding['id']}/acknowledge", json={}, headers=tenant_a)
+    assert ack.status_code == 200
+    assert ack.json()["status"] == "acknowledged"
+
+    res = client.post(f"/api/v1/findings/{finding['id']}/resolve", json={}, headers=tenant_a)
+    assert res.status_code == 200
+    assert res.json()["status"] == "resolved"
+
+    # 重复解决：409
+    again = client.post(f"/api/v1/findings/{finding['id']}/resolve", json={}, headers=tenant_a)
+    assert again.status_code == 409
+
+
+def test_scan_quota_per_tenant(client, tenant_a, env_a):
+    """威胁 T19：每租户 pending 扫描任务上限（默认 50），超限 429。"""
+    from app.config import load_settings
+
+    quota = load_settings().scan_quota_per_tenant
+    for i in range(quota):
+        resp = client.post("/api/v1/scans", json={"environment_id": env_a["id"], "scope": {"n": i}}, headers=tenant_a)
+        assert resp.status_code == 200
+    over = client.post("/api/v1/scans", json={"environment_id": env_a["id"], "scope": {}}, headers=tenant_a)
+    assert over.status_code == 429
+    assert "scan_quota_exceeded" in over.json()["detail"]
+
+
+def test_cursor_pagination_agents(client, tenant_a):
+    """§18.1 稳定游标分页：limit + cursor 全量无重复。"""
+    for i in range(5):
+        env = client.post("/api/v1/environments", json={"name": f"env-pg-{i}"}, headers=tenant_a).json()
+        enr = client.post(f"/api/v1/environments/{env['id']}/edge-enrollment", json={}, headers=tenant_a).json()
+        reg = client.post(
+            "/edge/v1/register",
+            json={
+                "enrollment_code": enr["code"],
+                "device_identity": f"edge-pg-{i}",
+                "public_key_pem": "PEM",
+                "version": "0.1.0",
+            },
+        ).json()
+        eh = {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": f"edge-pg-{i}"}
+        client.post(
+            "/edge/v1/batches",
+            json={
+                "candidates": [
+                    {
+                        "candidate_id": f"hermes:pg-{i}",
+                        "source_type": "hermes_profile",
+                        "source_locator": f"hermes://pg/{i}",
+                        "discovered_at": "2026-08-13T12:00:00Z",
+                        "name": f"pg-agent-{i}",
+                        "framework": "hermes",
+                        "evidence_ids": [],
+                    }
+                ],
+                "evidence": [],
+            },
+            headers=eh,
+        )
+    seen: list[str] = []
+    cursor = None
+    while True:
+        page = client.get("/api/v1/candidates", params={"limit": 2, "cursor": cursor}, headers=tenant_a).json()
+        if not page:
+            break
+        seen.extend(a["id"] for a in page)
+        last = page[-1]
+        cursor = f"{last['updated_at']}|{last['id']}"
+    assert len(seen) == len(set(seen)), "游标分页出现重复"
+    assert len(seen) >= 5

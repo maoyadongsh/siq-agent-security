@@ -30,6 +30,8 @@ class Settings:
     edge_task_ttl_seconds: int
     # 心跳新鲜度阈值（秒），超过则环境标记 stale 的判定依据之一
     heartbeat_stale_seconds: int
+    # 每租户 pending 扫描任务上限（威胁 T19：扫描风暴 DoS）
+    scan_quota_per_tenant: int
     request_id_header: str = "X-Request-ID"
 
     @property
@@ -65,4 +67,5 @@ def load_settings() -> Settings:
         enrollment_ttl_seconds=int(os.getenv("SIQ_AS_ENROLLMENT_TTL_SECONDS", "900")),
         edge_task_ttl_seconds=int(os.getenv("SIQ_AS_EDGE_TASK_TTL_SECONDS", "3600")),
         heartbeat_stale_seconds=int(os.getenv("SIQ_AS_HEARTBEAT_STALE_SECONDS", "300")),
+        scan_quota_per_tenant=int(os.getenv("SIQ_AS_SCAN_QUOTA_PER_TENANT", "50")),
     )

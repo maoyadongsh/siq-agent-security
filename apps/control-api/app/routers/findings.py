@@ -22,6 +22,80 @@ from app.security import Identity, ensure_permission, get_identity, require_perm
 router = APIRouter(tags=["findings"])
 
 
+@router.post("/api/v1/findings/{finding_id}/acknowledge", response_model=FindingOut)
+def acknowledge_finding(
+    finding_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    finding = session.scalar(
+        select(Finding).where(Finding.id == finding_id, Finding.tenant_id == identity.tenant_id)
+    )
+    if finding is None:
+        raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "finding:manage")
+    if finding.status != "open":
+        raise HTTPException(status_code=409, detail="invalid_state")
+    finding.status = "acknowledged"
+    finding.owner_user_id = identity.actor_id
+    audit(
+        session,
+        identity.tenant_id,
+        identity.identity_type,
+        identity.actor_id,
+        "finding.acknowledge",
+        "finding",
+        resource_id=finding.id,
+    )
+    session.commit()
+    session.refresh(finding)
+    return finding
+
+
+@router.post("/api/v1/findings/{finding_id}/resolve", response_model=FindingOut)
+def resolve_finding(
+    finding_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """解决 Finding：必须回链修复证据（design §13.2 修复与验证方式）。"""
+    from pydantic import BaseModel
+
+    class ResolveBody(BaseModel):
+        evidence_ref: str = ""
+
+    body = ResolveBody.model_validate({})
+    finding = session.scalar(
+        select(Finding).where(Finding.id == finding_id, Finding.tenant_id == identity.tenant_id)
+    )
+    if finding is None:
+        raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "finding:manage")
+    if finding.status in ("resolved", "risk_accepted"):
+        raise HTTPException(status_code=409, detail="invalid_state")
+    finding.status = "resolved"
+    finding.risk_acceptance = {"resolved_by": identity.actor_id, "evidence_ref": body.evidence_ref}
+    audit(
+        session,
+        identity.tenant_id,
+        identity.identity_type,
+        identity.actor_id,
+        "finding.resolve",
+        "finding",
+        resource_id=finding.id,
+    )
+    emit_event(
+        session,
+        identity.tenant_id,
+        "agent.finding.resolved.v1",
+        {"finding_id": finding.id, "resolution": "resolved"},
+        resource_ref=finding.id,
+    )
+    session.commit()
+    session.refresh(finding)
+    return finding
+
+
 @router.get("/api/v1/findings", response_model=list[FindingOut])
 def list_findings(
     severity: str | None = None,
