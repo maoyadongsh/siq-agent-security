@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  control-api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/control-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install
+        run: uv sync --dev
+      - name: Ruff
+        run: uv run ruff check app
+      - name: Pytest（含租户隔离/职责分离/注册生命周期负向）
+        run: uv run pytest
+      - name: Alembic 基线回放（干净 SQLite）
+        env:
+          SIQ_AS_DEV: "1"
+          SIQ_AS_ALLOW_SQLITE: "1"
+          SIQ_AS_DATABASE_URL: sqlite:///./ci-migrate.db
+        run: uv run alembic upgrade head
+
+  edge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - name: Build & vet & test（edge/agent）
+        working-directory: edge/agent
+        run: |
+          go build ./...
+          go vet ./...
+          go test ./...
+      - name: Build & test（connectors/hermes）
+        working-directory: connectors/hermes
+        run: |
+          go build ./...
+          go test ./...
+      - name: Build & test（connectors/docker）
+        working-directory: connectors/docker
+        run: |
+          go build ./...
+          go test ./...
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npm run build

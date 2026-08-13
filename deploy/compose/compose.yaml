@@ -1,0 +1,35 @@
+# 本地开发部署：Control API + PostgreSQL（dev 模式显式开关，不用于生产）
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: siq_as
+      POSTGRES_PASSWORD: siq_as_dev
+      POSTGRES_DB: siq_as
+    ports:
+      - "127.0.0.1:55433:5432"
+    volumes:
+      - siq_as_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U siq_as"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  control-api:
+    build:
+      context: ../../apps/control-api
+      dockerfile: Dockerfile
+    environment:
+      SIQ_AS_DEV: "1"
+      SIQ_AS_ALLOW_SQLITE: "0"
+      SIQ_AS_DATABASE_URL: postgresql+psycopg://siq_as:siq_as_dev@postgres:5432/siq_as
+    ports:
+      - "127.0.0.1:8600:8600"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8600"]
+
+volumes:
+  siq_as_pg_data:
