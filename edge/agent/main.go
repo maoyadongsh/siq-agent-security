@@ -110,7 +110,7 @@ func cmdRegister(ctx context.Context, args []string) error {
 		return err
 	}
 	caps := map[string]any{
-		"connectors":       []string{"hermes", "docker"},
+		"connectors":       []string{"hermes", "docker", "directory"},
 		"protocol_version": "connector-protocol.v1",
 		"data_categories":  []string{"config_names", "tool_names", "image_names"},
 	}
