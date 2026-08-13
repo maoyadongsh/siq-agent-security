@@ -54,6 +54,90 @@ def _validate_policy_static(policy: DesiredPolicy) -> list[str]:
     return errors
 
 
+@router.get("/api/v1/policies", response_model=list[PolicyOut])
+def list_policies(
+    cursor: str | None = None,
+    limit: int = 50,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """策略中心列表（§20.1）：租户隔离 + 游标分页。"""
+    ensure_permission(identity, "policy:read")
+    query = (
+        select(DesiredPolicy)
+        .where(DesiredPolicy.tenant_id == identity.tenant_id)
+        .order_by(DesiredPolicy.updated_at.desc(), DesiredPolicy.id)
+    )
+    if cursor:
+        from datetime import datetime as _dt
+
+        try:
+            ts, rid = cursor.split("|", 1)
+            ctime = _dt.fromisoformat(ts)
+            query = query.where(
+                (DesiredPolicy.updated_at < ctime) | ((DesiredPolicy.updated_at == ctime) & (DesiredPolicy.id > rid))
+            )
+        except ValueError:
+            query = query.where(DesiredPolicy.id > cursor)
+    return list(session.scalars(query.limit(min(limit, 200))))
+
+
+@router.get("/api/v1/change-requests", response_model=list[ChangeRequestOut])
+def list_change_requests(
+    status_filter: str | None = None,
+    cursor: str | None = None,
+    limit: int = 50,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """变更中心列表（§20.1）。"""
+    ensure_permission(identity, "policy:read")
+    query = select(ChangeRequest).where(ChangeRequest.tenant_id == identity.tenant_id)
+    if status_filter:
+        query = query.where(ChangeRequest.status == status_filter)
+    query = query.order_by(ChangeRequest.created_at.desc(), ChangeRequest.id)
+    if cursor:
+        from datetime import datetime as _dt
+
+        try:
+            ts, rid = cursor.split("|", 1)
+            ctime = _dt.fromisoformat(ts)
+            query = query.where(
+                (ChangeRequest.created_at < ctime) | ((ChangeRequest.created_at == ctime) & (ChangeRequest.id > rid))
+            )
+        except ValueError:
+            query = query.where(ChangeRequest.id > cursor)
+    return list(session.scalars(query.limit(min(limit, 200))))
+
+
+@router.get("/api/v1/deployments", response_model=list[DeploymentOut])
+def list_deployments(
+    cursor: str | None = None,
+    limit: int = 50,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """部署列表（§20.1）。"""
+    ensure_permission(identity, "policy:read")
+    query = (
+        select(Deployment)
+        .where(Deployment.tenant_id == identity.tenant_id)
+        .order_by(Deployment.created_at.desc(), Deployment.id)
+    )
+    if cursor:
+        from datetime import datetime as _dt
+
+        try:
+            ts, rid = cursor.split("|", 1)
+            ctime = _dt.fromisoformat(ts)
+            query = query.where(
+                (Deployment.created_at < ctime) | ((Deployment.created_at == ctime) & (Deployment.id > rid))
+            )
+        except ValueError:
+            query = query.where(Deployment.id > cursor)
+    return list(session.scalars(query.limit(min(limit, 200))))
+
+
 @router.post("/api/v1/policies", response_model=PolicyOut, status_code=201)
 def create_policy(
     body: PolicyCreate,

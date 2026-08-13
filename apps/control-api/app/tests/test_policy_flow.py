@@ -322,3 +322,23 @@ def test_deployment_openshell_apply_failure_fails_closed(client, tenant_a, env_a
         d = session.query(Deployment).filter(Deployment.change_request_id == cr["id"]).one()
         assert d.status == "failed"
         assert "include_workdir" in (d.receipt or {}).get("error", "")
+
+
+def test_list_endpoints_tenant_isolated(client, tenant_a, tenant_b):
+    """策略/变更/部署列表：租户隔离 + 可见性。"""
+    policy = _create_policy(client, tenant_a)
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+
+    policies_a = client.get("/api/v1/policies", headers=tenant_a).json()
+    crs_a = client.get("/api/v1/change-requests", headers=tenant_a).json()
+    assert any(p["id"] == policy["id"] for p in policies_a)
+    assert any(c["id"] == cr["id"] for c in crs_a)
+
+    policies_b = client.get("/api/v1/policies", headers=tenant_b).json()
+    crs_b = client.get("/api/v1/change-requests", headers=tenant_b).json()
+    assert all(p["id"] != policy["id"] for p in policies_b)
+    assert all(c["id"] != cr["id"] for c in crs_b)

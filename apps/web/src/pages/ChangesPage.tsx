@@ -1,112 +1,133 @@
+/**
+ * 变更中心（§20.1）：真实变更单列表 + 审批（SoD）/驳回 + 部署到执行后端。
+ * - 部署目标默认取环境第一个 + 手动输入沙箱名（如 siq-as-live）；
+ * - 部署结果（effective/失败原因）行内展示；
+ * - SIQ_AS_ENFORCEMENT_BACKEND=openshell-cli 时部署触发真实 policy set + 读回验证。
+ */
+import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { useApiList } from '@/hooks/useApiList';
-import type { ChangeRequest } from '@/api/types';
+import { api, ApiError } from '@/api/client';
+import type { ChangeRequestRow, DeploymentRow } from '@/api/types';
 
-/** placeholder 数据（Phase 1；联调后由 /changes 返回） */
-const PLACEHOLDER_CHANGES: ChangeRequest[] = [
-  {
-    change_id: 'chg-0091',
-    policy_id: 'pol-legal-contract-review',
-    change_type: 'update',
-    summary: '续期 fs.write 例外（遗留路径兼容）',
-    status: 'pending',
-    requested_by: 'u-1024',
-    created_at: '2026-08-12T15:20:00Z',
-    reason: '风险中心 fnd-002：例外即将过期',
-  },
-  {
-    change_id: 'chg-0092',
-    policy_id: 'pol-incident-responder',
-    change_type: 'rollback',
-    summary: '回滚 process.run_as（1000:1000 → 65532:65532）',
-    status: 'approved',
-    requested_by: 'u-2048',
-    approved_by: 'u-0001',
-    created_at: '2026-08-11T09:44:00Z',
-    applied_at: '2026-08-11T09:52:00Z',
-  },
-  {
-    change_id: 'chg-0093',
-    change_type: 'emergency',
-    summary: '紧急阻断 data_analyst_ghost 的凭据工具调用',
-    status: 'deploying',
-    requested_by: 'u-0001',
-    created_at: '2026-08-12T16:01:00Z',
-    reason: '风险中心 fnd-001',
-  },
-  {
-    change_id: 'chg-0094',
-    policy_id: 'pol-data-analyst-draft',
-    change_type: 'create',
-    summary: 'data_analyst_ghost 策略草稿 → approved',
-    status: 'rejected',
-    requested_by: 'u-1024',
-    approved_by: 'u-0001',
-    created_at: '2026-08-09T08:30:00Z',
-  },
-];
+const PLACEHOLDER: ChangeRequestRow[] = [];
 
-const typeTag: Record<ChangeRequest['change_type'], string> = {
-  create: 'tag-ok',
-  update: 'tag-info',
-  delete: 'tag-err',
-  rollback: 'tag-warn',
-  emergency: 'tag-err',
+const STATUS_LABELS: Record<string, string> = {
+  proposed: '待审批',
+  approved: '已批准',
+  rejected: '已驳回',
+  deploying: '发布中',
+  effective: '已生效',
+  failed: '失败',
+  rolled_back: '已回滚',
 };
-
-const statusTag: Record<ChangeRequest['status'], string> = {
-  pending: 'tag-warn',
-  approved: 'tag-info',
-  rejected: 'tag-err',
-  deploying: 'tag-info',
-  deployed: 'tag-ok',
-  failed: 'tag-err',
-  rolled_back: 'tag-err',
-};
-
-const columns: TableColumn<ChangeRequest>[] = [
-  { key: 'change_id', header: '变更 ID', render: (c) => <span className="mono">{c.change_id}</span> },
-  {
-    key: 'type',
-    header: '类型',
-    render: (c) => <span className={`tag ${typeTag[c.change_type]}`}>{c.change_type}</span>,
-  },
-  { key: 'summary', header: '摘要', render: (c) => <span title={c.reason}>{c.summary ?? '—'}</span> },
-  { key: 'target', header: '对象', render: (c) => c.policy_id ?? c.agent_id ?? '—' },
-  {
-    key: 'status',
-    header: '状态',
-    render: (c) => <span className={`tag ${statusTag[c.status]}`}>{c.status}</span>,
-  },
-  { key: 'created_at', header: '提交时间', render: (c) => c.created_at },
-  {
-    key: 'requested_by',
-    header: '申请人',
-    render: (c) => <span className="mono">{c.requested_by ?? '—'}</span>,
-  },
-];
 
 export default function ChangesPage() {
-  const changes = useApiList<ChangeRequest>('/changes', PLACEHOLDER_CHANGES);
+  const { rows, status, error, refresh } = useApiList<ChangeRequestRow>('/change-requests', PLACEHOLDER);
+  const { rows: deployments } = useApiList<DeploymentRow>('/deployments', []);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [deployTarget, setDeployTarget] = useState('siq-as-live');
+  const [deployingId, setDeployingId] = useState<string | null>(null);
+
+  const approve = async (id: string) => {
+    setActionError(null);
+    try {
+      await api.approveChangeRequest(id);
+      refresh();
+    } catch (err) {
+      setActionError(err instanceof ApiError ? `${err.message}（批准需 reviewer 角色且与提出者不同）` : '操作失败');
+    }
+  };
+
+  const reject = async (id: string) => {
+    setActionError(null);
+    try {
+      await api.rejectChangeRequest(id);
+      refresh();
+    } catch (err) {
+      setActionError(err instanceof ApiError ? err.message : '操作失败');
+    }
+  };
+
+  const deploy = async (cr: ChangeRequestRow) => {
+    setActionError(null);
+    setDeployingId(cr.id);
+    try {
+      const envs = await api.listEnvironments();
+      const envId = envs[0]?.id;
+      if (!envId) {
+        setActionError('没有可用环境');
+        return;
+      }
+      await api.createDeployment(cr.id, envId, deployTarget || 'siq-as-live');
+      refresh();
+    } catch (err) {
+      setActionError(err instanceof ApiError ? err.message : '部署失败');
+    } finally {
+      setDeployingId(null);
+    }
+  };
+
+  const columns: TableColumn<ChangeRequestRow>[] = [
+    { key: 'id', header: '变更单', render: (r) => <span className="mono">{r.id}</span> },
+    { key: 'policy_id', header: '策略', render: (r) => <span className="mono">{r.policy_id}</span> },
+    { key: 'status', header: '状态', render: (r) => <span className={`state-tag ${r.status === 'effective' ? 'effective' : ''}`}>{STATUS_LABELS[r.status] ?? r.status}</span> },
+    { key: 'proposer_user_id', header: '提出者', render: (r) => r.proposer_user_id },
+    { key: 'approver_user_id', header: '批准者', render: (r) => r.approver_user_id ?? '—' },
+    {
+      key: 'deployment',
+      header: '部署',
+      render: (r) => {
+        const dep = deployments.find((d) => d.change_request_id === r.id);
+        return dep ? <span className="mono">{dep.status} @ {dep.target}（{dep.verification ? '已验证' : '—'}）</span> : '—';
+      },
+    },
+    { key: 'created_at', header: '时间', render: (r) => r.created_at },
+    {
+      key: 'actions',
+      header: '操作',
+      render: (r) => (
+        <div className="row-actions">
+          {r.status === 'proposed' && (
+            <>
+              <button className="btn-sm" onClick={() => approve(r.id)}>批准</button>
+              <button className="btn-sm btn-danger" onClick={() => reject(r.id)}>驳回</button>
+            </>
+          )}
+          {r.status === 'approved' && (
+            <>
+              <input
+                className="deploy-target"
+                value={deployTarget}
+                onChange={(e) => setDeployTarget(e.target.value)}
+                placeholder="沙箱名（siq-as-live）"
+              />
+              <button className="btn-sm btn-primary" onClick={() => deploy(r)} disabled={deployingId === r.id}>
+                {deployingId === r.id ? '部署中…' : '部署'}
+              </button>
+            </>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <section>
+    <div>
       <PageHeader
         title="变更中心"
-        description="策略与资产变更的申请、审批与执行记录（设计文档 §14.3）：变更需可审计、可回滚。"
-        connection={changes.status}
-        connectionError={changes.error}
+        description="提案 → 审批（职责分离）→ 发布 → 读回验证 → effective（§14/§19.3；部署目标默认活沙箱 siq-as-live）"
+        connection={status}
+        connectionError={error}
       />
-      {changes.status === 'disconnected' ? (
-        <DisconnectedNotice error={changes.error} onRetry={changes.reload} />
-      ) : null}
-      <SimpleTable
-        columns={columns}
-        rows={changes.rows}
-        rowKey={(c) => c.change_id}
-      />
-    </section>
+      {actionError && <p className="sync-err">{actionError}</p>}
+      {status === 'disconnected' ? (
+        <DisconnectedNotice error={error} onRetry={refresh} />
+      ) : (
+        <SimpleTable columns={columns} rows={rows} rowKey={(r) => r.id} />
+      )}
+    </div>
   );
 }

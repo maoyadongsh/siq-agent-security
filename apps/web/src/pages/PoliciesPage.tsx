@@ -1,137 +1,124 @@
+/**
+ * 策略中心（§20.1）：真实 /policies 列表 + 最小创建表单（selector/网络端点/执行档位）。
+ * 创建 → 变更单 → 审批 → 部署 的闭环入口在「变更中心」。
+ */
+import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { useApiList } from '@/hooks/useApiList';
-import type { DesiredPolicy } from '@/api/types';
+import { api, ApiError } from '@/api/client';
+import type { PolicyRow } from '@/api/types';
 
-/** placeholder 数据（Phase 1；联调后由 /policies 返回） */
-const PLACEHOLDER_POLICIES: DesiredPolicy[] = [
-  {
-    policy_id: 'pol-legal-contract-review',
-    selector: {
-      agent_ids: ['ast-01h2kd93nf'],
-      environment_ids: ['env-prod-k8s'],
-      labels: { role: 'contract-review' },
-    },
-    filesystem: { read_only: ['/etc', '/var/run'], read_write: ['/srv/siq/legal/reviews/'] },
-    network: [
-      { endpoint: 'api.example.com:443/orders/**', effect: 'allow', methods: ['GET'], purpose: 'contract-review' },
-      { endpoint: '0.0.0.0:0', effect: 'deny' },
-    ],
-    process: { run_as: '65532:65532', forbid_privilege_escalation: true, seccomp_profile: 'siq-default-v1' },
-    model_routing: { allowed_models: ['hermes-pro', 'hermes-lite'], provider: 'siq-model-gw' },
-    tools: ['tool:pdf-extract', 'tool:risk-score'],
-    tool_policies: { 'tool:pdf-extract': { max_pages: 500 } },
-    data_scope_refs: ['ds-sales-eu'],
-    secrets: [{ ref: 'cred:siq-gateway/api-key', purpose: 'http.request', injection: 'gateway' }],
-    resources: { cpu: '500m', memory: '512Mi', concurrency: 4 },
-    audit: { required_level: 'detailed' },
-    exceptions: [
-      { reason: '遗留路径兼容', owner: 'u-1024', expires_at: '2026-08-16T00:00:00Z', approval_ref: 'chg-0091' },
-    ],
-    version: 7,
-    status: 'effective',
-    enforcement_mode: 'block',
-  },
-  {
-    policy_id: 'pol-incident-responder',
-    selector: { agent_ids: ['ast-02k8w1b3m7'] },
-    process: { run_as: '1000:1000', forbid_privilege_escalation: true },
-    model_routing: { allowed_models: ['hermes-lite'] },
-    version: 3,
-    status: 'approved',
-    enforcement_mode: 'warn',
-  },
-  {
-    policy_id: 'pol-data-analyst-draft',
-    selector: { agent_ids: ['ast-03q4z9p6c2'] },
-    version: 1,
-    status: 'draft',
-    enforcement_mode: 'audit_only',
-    unsupported_by_backend: ['filesystem'],
-  },
-];
+const PLACEHOLDER_POLICIES: PolicyRow[] = [];
 
-const enforcementTag: Record<DesiredPolicy['enforcement_mode'], string> = {
-  audit_only: 'tag-info',
-  warn: 'tag-warn',
-  block: 'tag-err',
+const MODE_LABELS: Record<string, string> = {
+  audit_only: '仅审计',
+  warn: '告警',
+  block: '阻断',
 };
 
-const statusTag: Partial<Record<DesiredPolicy['status'], string>> = {
-  effective: 'tag-ok',
-  approved: 'tag-info',
-  draft: '',
-  proposed: 'tag-info',
-  rollback_pending: 'tag-warn',
-  rolled_back: 'tag-err',
-  failed: 'tag-err',
-  rejected: 'tag-err',
-};
-
-const columns: TableColumn<DesiredPolicy>[] = [
-  { key: 'policy_id', header: '策略 ID', render: (p) => <span className="mono">{p.policy_id}</span> },
-  {
-    key: 'selector',
-    header: '作用范围',
-    render: (p) => (
-      <>
-        <span className="mono">{p.selector.agent_ids.join(', ')}</span>
-        {p.selector.environment_ids ? (
-          <span className="tag">{p.selector.environment_ids.join(', ')}</span>
-        ) : null}
-      </>
-    ),
-  },
+const columns: TableColumn<PolicyRow>[] = [
+  { key: 'name', header: '名称', render: (p) => p.name },
   { key: 'version', header: '版本', render: (p) => `v${p.version}` },
   {
-    key: 'status',
-    header: '状态',
-    render: (p) => <span className={`tag ${statusTag[p.status] ?? ''}`}>{p.status}</span>,
-  },
-  {
-    key: 'enforcement',
+    key: 'enforcement_mode',
     header: '执行档位',
-    render: (p) => (
-      <span className={`tag ${enforcementTag[p.enforcement_mode]}`}>{p.enforcement_mode}</span>
-    ),
+    render: (p) => <span className={`state-tag ${p.enforcement_mode === 'block' ? 'effective' : ''}`}>{MODE_LABELS[p.enforcement_mode] ?? p.enforcement_mode}</span>,
   },
+  { key: 'status', header: '状态', render: (p) => p.status },
   {
-    key: 'network',
-    header: '网络规则',
-    render: (p) => (p.network ? `${p.network.length} 条` : '—'),
+    key: 'unsupported_by_backend',
+    header: '未覆盖项（显式）',
+    render: (p) => (p.unsupported_by_backend.length ? p.unsupported_by_backend.join('；') : '—'),
   },
-  {
-    key: 'unsupported',
-    header: 'unsupported',
-    render: (p) =>
-      p.unsupported_by_backend && p.unsupported_by_backend.length > 0 ? (
-        <span className="tag tag-warn">{p.unsupported_by_backend.join(', ')}</span>
-      ) : (
-        '—'
-      ),
-  },
+  { key: 'selector', header: '选择器', render: (p) => JSON.stringify(p.selector.agent_ids) },
+  { key: 'updated_at', header: '更新时间', render: (p) => p.updated_at },
 ];
 
 export default function PoliciesPage() {
-  const policies = useApiList<DesiredPolicy>('/policies', PLACEHOLDER_POLICIES);
+  const { rows, status, error, refresh } = useApiList<PolicyRow>('/policies', PLACEHOLDER_POLICIES);
+  const [showForm, setShowForm] = useState(false);
+  const [name, setName] = useState('');
+  const [agentId, setAgentId] = useState('agt-demo-1');
+  const [endpoint, setEndpoint] = useState('');
+  const [mode, setMode] = useState<'audit_only' | 'warn' | 'block'>('block');
+  const [formError, setFormError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+
+  const onCreate = async () => {
+    setCreating(true);
+    setFormError(null);
+    try {
+      const network = endpoint
+        ? [{ endpoint, effect: 'allow', binary_paths: ['/usr/bin/curl'], purpose: 'web-created' }]
+        : undefined;
+      await api.createPolicy({
+        name,
+        selector: { agent_ids: [agentId] },
+        network,
+        enforcement_mode: mode,
+      });
+      setName('');
+      setEndpoint('');
+      setShowForm(false);
+      refresh();
+    } catch (err) {
+      setFormError(err instanceof ApiError ? err.message : '创建失败');
+    } finally {
+      setCreating(false);
+    }
+  };
 
   return (
-    <section>
+    <div>
       <PageHeader
         title="策略中心"
-        description="后端无关的期望安全状态（DesiredPolicy，设计文档 §14.1）：文件系统、网络、进程、模型路由、工具、数据范围与凭据注入约束，按 enforcement_mode 渐进执行。"
-        connection={policies.status}
-        connectionError={policies.error}
+        description="后端无关的期望策略（§14.1）：编译时不支持字段显式列出，绝不静默丢失"
+        connection={status}
+        connectionError={error}
       />
-      {policies.status === 'disconnected' ? (
-        <DisconnectedNotice error={policies.error} onRetry={policies.reload} />
-      ) : null}
-      <SimpleTable
-        columns={columns}
-        rows={policies.rows}
-        rowKey={(p) => `${p.policy_id}:${p.version}`}
-      />
-    </section>
+
+      <div className="permissions-toolbar">
+        <button className="btn-sm btn-primary" onClick={() => setShowForm((v) => !v)}>
+          {showForm ? '收起' : '新建策略'}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="form-box">
+          <label>
+            名称
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="demo-policy" />
+          </label>
+          <label>
+            目标资产
+            <input value={agentId} onChange={(e) => setAgentId(e.target.value)} />
+          </label>
+          <label>
+            网络端点（host:port，留空=无网络规则）
+            <input value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="api.example.com:443" />
+          </label>
+          <label>
+            执行档位
+            <select value={mode} onChange={(e) => setMode(e.target.value as typeof mode)}>
+              <option value="audit_only">仅审计</option>
+              <option value="warn">告警</option>
+              <option value="block">阻断</option>
+            </select>
+          </label>
+          <button className="btn-sm btn-primary" onClick={onCreate} disabled={creating || !name}>
+            {creating ? '创建中…' : '创建'}
+          </button>
+          {formError && <span className="sync-err">{formError}</span>}
+        </div>
+      )}
+
+      {status === 'disconnected' ? (
+        <DisconnectedNotice error={error} onRetry={refresh} />
+      ) : (
+        <SimpleTable columns={columns} rows={rows} rowKey={(p) => p.id} />
+      )}
+    </div>
   );
 }

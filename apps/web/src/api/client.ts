@@ -19,6 +19,9 @@ import type {
   Evidence,
   Finding,
   PermissionFactRow,
+  PolicyRow,
+  ChangeRequestRow,
+  DeploymentRow,
   ApiEnvelope,
 } from './types';
 
@@ -244,6 +247,25 @@ export const api = {
   listPermissions: (query: RequestOptions['query'] = {}) => get<PermissionFactRow[]>('/permissions', { query }),
   /** 拉取真实 OpenShell 有效策略入 PermissionFacts（fail-closed：网关不可达 502） */
   syncOpenShell: () => post<{ targets: number; facts: number }>('/permissions/sync-openshell', {}),
+  /** 策略中心 */
+  listPolicies: (query: RequestOptions['query'] = {}) => get<PolicyRow[]>('/policies', { query }),
+  createPolicy: (body: Record<string, unknown>) => post<PolicyRow>('/policies', body),
+  /** 变更中心 */
+  listChangeRequests: (query: RequestOptions['query'] = {}) => get<ChangeRequestRow[]>('/change-requests', { query }),
+  createChangeRequest: (policyId: string) =>
+    post<ChangeRequestRow>('/change-requests', {
+      policy_id: policyId,
+      idempotency_key: `web-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+    }),
+  approveChangeRequest: (id: string) => post<ChangeRequestRow>(`/change-requests/${id}/approve`, {}),
+  rejectChangeRequest: (id: string) => post<ChangeRequestRow>(`/change-requests/${id}/reject`, {}),
+  listDeployments: (query: RequestOptions['query'] = {}) => get<DeploymentRow[]>('/deployments', { query }),
+  createDeployment: (changeRequestId: string, environmentId: string, target: string) =>
+    post<DeploymentRow>('/deployments', {
+      change_request_id: changeRequestId,
+      environment_id: environmentId,
+      target,
+    }),
   /** 风险中心（可按 severity / status_filter / asset_id 过滤） */
   listFindings: (query: RequestOptions['query'] = {}) => get<Finding[]>('/findings', { query }),
   /** 确认风险（状态 open → acknowledged，绑定 owner） */
@@ -252,10 +274,6 @@ export const api = {
   /** 解决风险（回链修复证据，不可逆） */
   resolveFinding: (findingId: string) =>
     post<Finding>(`/findings/${encodeURIComponent(findingId)}/resolve`, {}),
-  /** 策略中心（占位：后端暂无 /policies，保持 disconnected 空态） */
-  listPolicies: () => get<unknown[]>('/policies'),
-  /** 变更中心（占位：后端暂无 /changes，保持 disconnected 空态） */
-  listChanges: () => get<unknown[]>('/changes'),
   /** 环境与 Connector */
   listEnvironments: () => get<Environment[]>('/environments'),
   /** 审计事件（actor/action/resource_type 过滤 + 游标分页） */

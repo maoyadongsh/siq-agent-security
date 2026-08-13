@@ -485,6 +485,42 @@ export interface PermissionFactRow {
   valid_until: string | null;
 }
 
+/** 策略行（对齐 PolicyOut） */
+export interface PolicyRow {
+  id: string;
+  name: string;
+  selector: Record<string, unknown>;
+  enforcement_mode: 'audit_only' | 'warn' | 'block';
+  version: number;
+  status: string;
+  unsupported_by_backend: string[];
+  updated_at: string;
+}
+
+/** 变更单行（对齐 ChangeRequestOut） */
+export interface ChangeRequestRow {
+  id: string;
+  policy_id: string;
+  proposer_user_id: string;
+  approver_user_id: string | null;
+  approval_policy: string;
+  status: string;
+  idempotency_key: string;
+  created_at: string;
+}
+
+/** 部署行（对齐 DeploymentOut） */
+export interface DeploymentRow {
+  id: string;
+  environment_id: string;
+  change_request_id: string;
+  target: string;
+  from_revision: string | null;
+  to_revision: string;
+  status: string;
+  verification: Record<string, unknown> | null;
+}
+
 export interface ApiEnvelope<T> {
   ok: boolean;
   data?: T;

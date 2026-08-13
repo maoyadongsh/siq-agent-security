@@ -498,3 +498,10 @@ body {
 .state-tag.unknown { background: #fee2e2; color: #991b1b; }
 .authority-openshell { font-weight: 600; color: #0e7490; }
 .resource-cell { font-size: 12px; background: #f3f4f6; padding: 1px 6px; border-radius: 4px; }
+
+/* 策略中心表单 */
+.form-box { display: flex; flex-direction: column; gap: 10px; max-width: 520px; margin: 12px 0; padding: 14px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fafafa; }
+.form-box label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #374151; }
+.form-box input, .form-box select { padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+.deploy-target { padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; width: 150px; }
+.mono { font-family: ui-monospace, monospace; font-size: 12px; }
