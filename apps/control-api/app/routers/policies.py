@@ -385,7 +385,7 @@ def _compile_for_enforcement(policy: DesiredPolicy, task_payload: dict) -> None:
         adapter = FakeOpenShellBackend()
     elif backend == "openshell-cli":
         # 真实网关（v0.0.83 实测：动态网络更新可用）；不可达 fail-closed
-        from app.adapters.openshell.cli_backend import OpenShellCliBackend
+        # 使用模块级 OpenShellCliBackend（可 monkeypatch，测试不依赖真实网关）
         from app.adapters.openshell.contracts import AdapterError
 
         try:
