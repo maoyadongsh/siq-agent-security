@@ -15,7 +15,17 @@
 | Gateway Interceptor | ❓ v0.0.83 上未使用/未验证 | 待探测 |
 | revision / 有效策略回读 | ✅ | 待探测 |
 
-**MVP 影响（实测修正）**：动态网络策略发布**在 v0.0.83 上即可实现**（policy set + revision 读回）；§29.1 降级条款保留为风险预案。已知问题：网关 SandboxResponse 的 Protobuf 解码错误（list/create/get 响应），policy 类命令不受影响，升级 v0.0.104 预期修复。
+**MVP 影响（实测修正）**：动态网络策略发布**在 v0.0.83 上即可实现**（policy set + revision 读回）；§29.1 降级条款保留为风险预案。
+
+### v0.0.104 解码缺陷验证（2026-08-13 实测，本机原生构建 + 隔离网关）
+
+- 本机 cargo 原生构建 v0.0.104 三二进制（CLI 20MB / gateway 72MB / sandbox 22MB；gateway 需 `--features bundled-z3` + cmake）；
+- 隔离网关（端口 17673、独立 XDG/DB/命名空间、自建 supervisor 镜像 alpine+二进制）实测：
+  - `sandbox list` → 干净表格输出（NAME/CREATED/PHASE），**无 Protobuf 解码错误**；
+  - `sandbox create` → 进度流完整解析（allocated → image → container → supervisor relay），**响应完全可解码**；
+  - `sandbox delete` → 正常；
+- **结论：v0.0.83 的 SandboxResponse Protobuf 解码缺陷在 v0.0.104 已修复**；升级后 CLI 后端的 docker 兜底路径可退役；
+- 遗留：测试用沙箱容器因旧基础镜像+新 supervisor 组合不匹配而 restart（与解码无关），正式升级时需用 v0.0.104 配套 supervisor/基础镜像。
 
 ## 本地 patch 清单（ADR-005）
 

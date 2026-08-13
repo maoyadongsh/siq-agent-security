@@ -38,6 +38,12 @@ Hermes 3 个 patch（hermes-0.13.0 目录）不受 OpenShell 升级影响（Herm
 
 **强烈倾向方案 A**：深度分析（[openshell-upgrade-rebase-analysis.md](openshell-upgrade-rebase-analysis.md)）确认**两个 patch 均已被上游完全吸收**（常量/校验函数/测试夹具逐字存在），rebase 成本从 1-3 人日修正为 **≈0 + 语义等价验证（V1-V5）**。最终决策待构建/回归/能力探测完成后定稿（动态网络更新能力仍是 MVP 范围的关键闸门）。
 
+## v0.0.104 解码缺陷验证（2026-08-13 实测补充）
+
+本机原生构建 v0.0.104 三二进制并运行隔离网关（独立端口/DB/命名空间），实测：
+- `sandbox list/create/delete` 全链路响应**可解码**（v0.0.83 的 SandboxResponse Protobuf 错误不再出现）；
+- 与补丁上游化结论一致：升级 v0.0.104 同时消除解码缺陷与 Fork 债务，方案 A 的证据进一步加固。
+
 ## 后果
 
 - 定稿后：`apps/control-api` 的 OpenShell client（`adapters/openshell/client.py`）按探测到的能力矩阵实现；
