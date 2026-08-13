@@ -126,6 +126,7 @@ func cmdRegister(ctx context.Context, args []string) error {
 		PublicKeyPEM:          pubPEM,
 		ControlPlanePublicKey: resp.ControlPlanePublicKey,
 		EnvironmentID:         resp.EnvironmentID,
+		SignerSeed:            signer.SeedB64(),
 	}
 	if err := state.Save(); err != nil {
 		return err

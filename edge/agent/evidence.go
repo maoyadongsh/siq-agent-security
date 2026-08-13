@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/x509"
@@ -35,6 +36,25 @@ func NewSigner() (*Signer, error) {
 		return nil, fmt.Errorf("signer: keygen: %w", err)
 	}
 	return &Signer{priv: priv, pub: pub}, nil
+}
+
+// NewSignerFromSeed restores the signer from a base64 32-byte seed (state.json).
+// Evidence signatures become stable across restarts so the control plane can
+// re-verify them (threat-model TODO: 签名密钥持久化).
+func NewSignerFromSeed(seedB64 string) (*Signer, error) {
+	seed, err := base64.StdEncoding.DecodeString(seedB64)
+	if err != nil || len(seed) != ed25519.SeedSize {
+		return nil, fmt.Errorf("signer: invalid seed: %w", err)
+	}
+	priv := ed25519.NewKeyFromSeed(seed)
+	pub := priv.Public().(ed25519.PublicKey)
+	return &Signer{priv: priv, pub: pub}, nil
+}
+
+// SeedB64 exports the private key seed (base64) for persistence in state.json.
+// The state file is 0600; the seed never leaves the device.
+func (s *Signer) SeedB64() string {
+	return base64.StdEncoding.EncodeToString(s.priv.Seed())
 }
 
 // PublicKeyPEM returns the public key in PKIX PEM form (sent to the control

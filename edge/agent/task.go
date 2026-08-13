@@ -182,6 +182,23 @@ type scanOutcome struct {
 // runScan drives one connector subprocess through describe → validate_scope
 // (when a scope is given) → plan_scan → collect → checkpoint, then seals and
 // batch-validates the evidence (contract §5 + hard requirement 4).
+// loadSigner restores the device signing key from state (persisted since
+// register); falls back to generating a fresh one and persisting it.
+func loadSigner(state *State) (*Signer, error) {
+	if state.SignerSeed != "" {
+		return NewSignerFromSeed(state.SignerSeed)
+	}
+	signer, err := NewSigner()
+	if err != nil {
+		return nil, err
+	}
+	state.SignerSeed = signer.SeedB64()
+	if err := state.Save(); err != nil {
+		return nil, fmt.Errorf("signer: persist seed: %w", err)
+	}
+	return signer, nil
+}
+
 func (r *Runner) runScan(ctx context.Context, sr ScanRequest, bin string) (*scanOutcome, error) {
 	cc, err := NewSubprocessConnector(ctx, bin, SubprocessOptions{Name: sr.Connector, Version: agentVersion})
 	if err != nil {
@@ -221,8 +238,7 @@ func (r *Runner) runScan(ctx context.Context, sr ScanRequest, bin string) (*scan
 		return nil, err
 	}
 
-	// Phase-0 placeholder signer; see evidence.go Signer doc.
-	signer, err := NewSigner()
+	signer, err := loadSigner(r.State)
 	if err != nil {
 		return nil, err
 	}

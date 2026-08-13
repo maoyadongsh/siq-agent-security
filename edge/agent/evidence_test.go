@@ -8,6 +8,37 @@ import (
 )
 
 // TestRedactorString covers the siq.redaction.v1 rule set.
+func TestSignerSeedRoundTrip(t *testing.T) {
+	// 密钥持久化：seed 导出/恢复后公钥一致，证据签名跨重启稳定
+	s1, err := NewSigner()
+	if err != nil {
+		t.Fatal(err)
+	}
+	s2, err := NewSignerFromSeed(s1.SeedB64())
+	if err != nil {
+		t.Fatal(err)
+	}
+	pub1, _ := s1.PublicKeyPEM()
+	pub2, _ := s2.PublicKeyPEM()
+	if pub1 != pub2 {
+		t.Fatal("seed round trip changed public key")
+	}
+	sig1, _ := s1.Sign([]byte("evidence-bytes"))
+	sig2, _ := s2.Sign([]byte("evidence-bytes"))
+	if sig1 != sig2 {
+		t.Fatal("seed round trip changed signature")
+	}
+}
+
+func TestNewSignerFromSeedRejectsBadInput(t *testing.T) {
+	if _, err := NewSignerFromSeed("not-base64!!"); err == nil {
+		t.Fatal("invalid seed accepted")
+	}
+	if _, err := NewSignerFromSeed("c2hvcnQ="); err == nil { // 4 字节短 seed
+		t.Fatal("short seed accepted")
+	}
+}
+
 func TestRedactorString(t *testing.T) {
 	r := protocol.NewRedactor()
 	cases := []struct {
