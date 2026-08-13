@@ -1,11 +1,12 @@
 /**
  * SIQ Agent Security — 控制面 API 类型定义（与后端契约对齐）
  *
- * 事实源：packages/contracts/*.schema.json（本仓库为唯一事实源，改动必须升 schema 版本）。
- * 以下类型是对 JSON Schema 的 1:1 翻译，字段名/枚举值必须与 schema 一致。
+ * 契约事实源：packages/contracts/*.schema.json（本仓库为唯一事实源，改动必须升 schema 版本）。
+ * 契约类型（AgentCandidate / PermissionFact / DesiredPolicy / EventEnvelope）是对
+ * JSON Schema 的 1:1 翻译，字段名/枚举值必须与 schema 一致。
  *
- * 补充类型（Environment / AgentAsset / Finding / ChangeRequest）为控制面管理对象
- * 的 Phase 1 最小字段，后续以 Control API 的 OpenAPI 契约为准。
+ * 控制面管理对象（AgentAsset / Environment / Finding / Evidence / AuditEvent 等）
+ * 已与 Control API 实际响应字段对齐（事实源：apps/control-api/app/schemas.py 的 *Out 模型）。
  */
 
 /* ---------------------------------------------------------------------------
@@ -50,8 +51,9 @@ export interface AgentCandidate {
 }
 
 /* ---------------------------------------------------------------------------
- * Evidence — 可验证证据（evidence.schema.json，字段对齐设计文档 §10.5）
- * 原始配置不默认上传，payload_ref 仅在管理员批准且满足驻留策略时存在。
+ * Evidence — 可验证证据（API 投影 = schemas.py EvidenceOut）
+ * Connector 侧完整证据契约（含 signature 等）见 evidence.schema.json；
+ * 控制面 API 返回管理投影：原始配置不默认上传，payload_ref 仅授权场景存在。
  * ------------------------------------------------------------------------- */
 
 export type EvidenceSourceType =
@@ -73,10 +75,8 @@ export type EvidenceClassification =
   | 'secret_ref';
 
 export interface Evidence {
-  /** 租户内唯一（tenant_id + evidence_id 复合唯一） */
-  evidence_id: string;
-  tenant_id?: string;
-  environment_id?: string;
+  /** 服务端证据 ID（入库时保留 Connector 生成的 evidence_id） */
+  id: string;
   source_type: EvidenceSourceType;
   /** 脱敏后的稳定来源定位，不含凭据 */
   source_locator: string;
@@ -96,8 +96,6 @@ export interface Evidence {
   classification: EvidenceClassification;
   /** 加密对象引用；默认 null（仅结构化摘要） */
   payload_ref?: string | null;
-  /** Edge 对证据包的签名或证明（Ed25519，hex） */
-  signature: string;
   /** 证据新鲜度或例外失效时间 */
   expires_at?: string | null;
 }
@@ -293,63 +291,119 @@ export interface EventEnvelope {
 export type AgentStatus =
   | 'candidate'
   | 'needs_review'
-  | 'onboarding'
+  | 'confirmed'
   | 'managed'
-  | 'offboarding'
+  | 'stale'
+  | 'retired'
   | 'dismissed';
 
-/** 智能体资产（由 Candidate 纳管后形成，设计文档 §10 资产生命周期） */
+/**
+ * 智能体资产（schemas.py AgentAssetOut）。
+ * /candidates 与 /agents 均返回此结构：候选状态为 candidate|needs_review，
+ * 已纳管为 confirmed|managed|stale|retired（dismissed 为驳回终态）。
+ */
 export interface AgentAsset {
-  agent_id: string;
+  id: string;
   name: string;
   /** 业务角色，如 contract-review / incident-response */
-  role?: string;
-  status: AgentStatus;
+  role: string | null;
   /** hermes / openclaw / pi / unknown */
   framework: string;
-  environment_id?: string;
-  /** 来源候选引用 */
-  candidate_id?: string;
-  discovered_at?: string;
-  updated_at?: string;
+  status: AgentStatus;
+  system_id: string | null;
+  owner_user_id: string | null;
+  /** 来源采集类型（hermes_profile / docker / process_list …） */
+  source_type: string | null;
+  /** 脱敏后的稳定来源定位，不含凭据 */
+  source_locator: string | null;
+  /** ISO 8601 date-time */
+  updated_at: string;
 }
 
-export type EnvironmentKind = 'kubernetes' | 'docker' | 'systemd' | 'hermes' | 'siq_hub' | 'sandbox';
+/** 运行时实例（GET /agents/{id}/instances） */
+export interface AgentInstance {
+  id: string;
+  /** hermes / openclaw / pi / embedded / unknown */
+  runtime: string;
+  version: string | null;
+  artifact_digest: string | null;
+  location: Record<string, unknown>;
+  /** observed / running / stopped */
+  status: string;
+  observed_at: string | null;
+}
 
-export type EnvironmentStatus = 'healthy' | 'degraded' | 'unknown' | 'offline';
+/** 候选分类运行结果（POST /candidates/{id}/classify） */
+export interface ClassificationRunResult {
+  classification_run_id: string;
+  classifier: string;
+  asset_status: string;
+  output: Record<string, unknown>;
+}
 
-/** 环境与 Connector（Edge Agent 采集/执行单元，设计文档 §26） */
+/** 环境类型 / 运行模式 / 风险级别（schemas.py EnvironmentOut） */
+export type EnvironmentType = 'host' | 'container' | 'k8s' | 'account';
+export type EnvironmentMode = 'discovery' | 'observe' | 'recommend' | 'enforce';
+export type EnvironmentRiskLevel = 'low' | 'medium' | 'high';
+
+/** 环境与 Connector（GET /environments，设计文档 §26） */
 export interface Environment {
-  environment_id: string;
+  id: string;
+  tenant_id: string;
   name: string;
-  kind: EnvironmentKind;
-  status: EnvironmentStatus;
-  /** 已安装的 Connector 版本，如 docker/v1.2.0 */
-  connector_version?: string;
-  last_seen_at?: string;
-  description?: string;
+  env_type: EnvironmentType;
+  /** 渐进执行档位：discovery → observe → recommend → enforce */
+  mode: EnvironmentMode;
+  risk_level: EnvironmentRiskLevel;
+  /** 最近一次 Edge 心跳时间（EdgeAgent 心跳回写） */
+  last_heartbeat_at: string | null;
 }
 
 export type FindingSeverity = 'critical' | 'high' | 'medium' | 'low' | 'info';
 
-export type FindingStatus = 'open' | 'investigating' | 'mitigated' | 'accepted' | 'resolved';
+export type FindingStatus = 'open' | 'acknowledged' | 'resolved' | 'risk_accepted' | 'expired';
 
-/** 风险中心条目（聚合 Evidence 与 PermissionFact 的风险结论） */
+/** risk_acceptance 内容（acknowledge / resolve / accept-risk 回写） */
+export interface FindingRiskAcceptance {
+  reason?: string;
+  accepted_by?: string;
+  expires_at?: string;
+  resolved_by?: string;
+  evidence_ref?: string;
+}
+
+/** 风险中心条目（schemas.py FindingOut，GET /findings，设计文档 §13） */
 export interface Finding {
-  finding_id: string;
-  /** 关联智能体资产（可为空：环境/基础设施级风险） */
-  agent_id?: string;
-  environment_id?: string;
-  /** 触发风险的相关策略 */
-  policy_id?: string;
-  title: string;
-  description?: string;
+  id: string;
+  rule_id: string;
+  rule_version: number;
   severity: FindingSeverity;
-  status: FindingStatus;
+  domain: string | null;
+  /** 关联智能体资产（可为空：环境/基础设施级风险） */
+  asset_id: string | null;
   /** 支撑证据 */
   evidence_ids: string[];
-  detected_at: string;
-  assigned_to?: string;
+  impact: string | null;
+  remediation: string | null;
+  status: FindingStatus;
+  owner_user_id: string | null;
+  due_at: string | null;
+  risk_acceptance: FindingRiskAcceptance | null;
+  first_seen_at: string;
+  last_seen_at: string;
+}
+
+/* --- 请求体（schemas.py CandidateConfirm / CandidateDismiss） --- */
+
+export interface CandidateConfirmBody {
+  role?: string | null;
+  system_id?: string | null;
+  owner_user_id?: string | null;
+}
+
+export interface CandidateDismissBody {
+  reason: string;
+  expires_at?: string | null;
 }
 
 export type ChangeType = 'create' | 'update' | 'delete' | 'rollback' | 'emergency';
@@ -377,6 +431,25 @@ export interface ChangeRequest {
   applied_at?: string;
   /** 变更原因/审计说明 */
   reason?: string;
+}
+
+/* ---------------------------------------------------------------------------
+ * AuditEvent — 审计事件（schemas.py AuditEventOut，GET /audit-events，设计文档 §24）
+ * 审计只读、租户隔离、游标分页；summary 字段已脱敏。
+ * ------------------------------------------------------------------------- */
+
+export interface AuditEvent {
+  id: string;
+  actor_type: string;
+  actor_id: string;
+  action: string;
+  resource_type: string;
+  resource_id: string | null;
+  decision: string;
+  request_id: string | null;
+  /** 脱敏摘要：标识/数量/哈希，禁止原文 */
+  summary: Record<string, unknown>;
+  created_at: string;
 }
 
 /* ---------------------------------------------------------------------------

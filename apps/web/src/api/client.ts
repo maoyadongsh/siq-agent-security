@@ -8,7 +8,18 @@
  * - 401 处理为占位（`onUnauthorized`），Phase 2 接入真实认证流程。
  */
 
-import type { ApiEnvelope } from './types';
+import type {
+  AgentAsset,
+  AgentInstance,
+  AuditEvent,
+  CandidateConfirmBody,
+  CandidateDismissBody,
+  ClassificationRunResult,
+  Environment,
+  Evidence,
+  Finding,
+  ApiEnvelope,
+} from './types';
 
 /** 控制面 API 基础地址（默认本地 Control API） */
 export const API_BASE: string =
@@ -112,12 +123,17 @@ export async function request<T>(
     headers.Authorization = `Bearer ${authToken}`;
   }
 
-  // 开发模式身份注入（仅本地联调；生产构建 VITE_DEV_MODE=false）
+  // 开发模式身份注入（仅本地联调；生产构建 VITE_DEV_MODE=false）。
+  // 后端缺省角色仅 tenant_admin（无 agent:read 等权限点），故未配置
+  // VITE_DEV_ROLES 时默认注入覆盖控制台全部视图所需的角色组合。
   if (DEV_MODE) {
     const tenantId = import.meta.env.VITE_DEV_TENANT_ID;
     const userId = import.meta.env.VITE_DEV_USER_ID;
     if (tenantId) headers['X-Dev-Tenant-Id'] = tenantId;
     if (userId) headers['X-Dev-User-Id'] = userId;
+    const roles =
+      import.meta.env.VITE_DEV_ROLES ?? 'tenant_admin,security_admin,agent_owner,auditor';
+    headers['X-Dev-Roles'] = roles;
   }
 
   if (options.body !== undefined) {
@@ -186,27 +202,59 @@ export function get<T>(path: string, options: Omit<RequestOptions, 'method' | 'b
   return request<T>(path, { ...options, method: 'GET' });
 }
 
+/** POST 快捷方法（有 body 时自动 JSON 序列化） */
+export function post<T>(
+  path: string,
+  body?: unknown,
+  options: Omit<RequestOptions, 'method' | 'body'> = {},
+): Promise<T> {
+  return request<T>(path, { ...options, method: 'POST', body });
+}
+
 /* ---------------------------------------------------------------------------
- * 控制面端点（Phase 1 约定路径，待 Control API 联调确认）
+ * 控制面端点（路径与字段对齐 apps/control-api/app/routers/ 下的实现）
  * ------------------------------------------------------------------------- */
 
 export const api = {
-  /** 总览统计 */
+  /** 总览统计（占位：后端暂无 /overview，保持 disconnected 空态） */
   overview: () => get<Record<string, unknown>>('/overview'),
-  /** 智能体资产列表 */
-  listAgents: () => get<unknown[]>('/agents'),
+  /** 智能体资产列表（confirmed|managed|stale|retired） */
+  listAgents: () => get<AgentAsset[]>('/agents'),
   /** 智能体资产详情 */
-  getAgent: (agentId: string) => get<unknown>(`/agents/${encodeURIComponent(agentId)}`),
-  /** 权限视图 */
+  getAgent: (agentId: string) => get<AgentAsset>(`/agents/${encodeURIComponent(agentId)}`),
+  /** 资产关联证据 */
+  getAgentEvidence: (agentId: string) =>
+    get<Evidence[]>(`/agents/${encodeURIComponent(agentId)}/evidence`),
+  /** 资产运行时实例 */
+  getAgentInstances: (agentId: string) =>
+    get<AgentInstance[]>(`/agents/${encodeURIComponent(agentId)}/instances`),
+  /** 发现候选列表（candidate|needs_review） */
+  listCandidates: () => get<AgentAsset[]>('/candidates'),
+  /** 确认候选为纳管资产（role / system_id / owner 可选） */
+  confirmCandidate: (agentId: string, body: CandidateConfirmBody = {}) =>
+    post<AgentAsset>(`/candidates/${encodeURIComponent(agentId)}/confirm`, body),
+  /** 驳回候选（reason 必填） */
+  dismissCandidate: (agentId: string, body: CandidateDismissBody) =>
+    post<AgentAsset>(`/candidates/${encodeURIComponent(agentId)}/dismiss`, body),
+  /** 触发候选分类（永不自动纳管；低置信 → needs_review） */
+  classifyCandidate: (agentId: string) =>
+    post<ClassificationRunResult>(`/candidates/${encodeURIComponent(agentId)}/classify`, {}),
+  /** 权限视图（占位：后端暂无 /permissions，保持 disconnected 空态） */
   listPermissions: () => get<unknown[]>('/permissions'),
-  /** 风险中心 */
-  listFindings: () => get<unknown[]>('/findings'),
-  /** 策略中心 */
+  /** 风险中心（可按 severity / status_filter / asset_id 过滤） */
+  listFindings: (query: RequestOptions['query'] = {}) => get<Finding[]>('/findings', { query }),
+  /** 确认风险（状态 open → acknowledged，绑定 owner） */
+  acknowledgeFinding: (findingId: string) =>
+    post<Finding>(`/findings/${encodeURIComponent(findingId)}/acknowledge`, {}),
+  /** 解决风险（回链修复证据，不可逆） */
+  resolveFinding: (findingId: string) =>
+    post<Finding>(`/findings/${encodeURIComponent(findingId)}/resolve`, {}),
+  /** 策略中心（占位：后端暂无 /policies，保持 disconnected 空态） */
   listPolicies: () => get<unknown[]>('/policies'),
-  /** 变更中心 */
+  /** 变更中心（占位：后端暂无 /changes，保持 disconnected 空态） */
   listChanges: () => get<unknown[]>('/changes'),
   /** 环境与 Connector */
-  listEnvironments: () => get<unknown[]>('/environments'),
-  /** 审计 */
-  listAuditEvents: () => get<unknown[]>('/audit/events'),
+  listEnvironments: () => get<Environment[]>('/environments'),
+  /** 审计事件（actor/action/resource_type 过滤 + 游标分页） */
+  listAuditEvents: (query: RequestOptions['query'] = {}) => get<AuditEvent[]>('/audit-events', { query }),
 };

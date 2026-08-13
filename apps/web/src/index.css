@@ -324,6 +324,36 @@ body {
   font-size: 12.5px;
 }
 
+/* ---------------- 标签页 ---------------- */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
 /* ---------------- 按钮与表单 ---------------- */
 
 .btn {
@@ -338,6 +368,77 @@ body {
 
 .btn:hover {
   filter: brightness(1.08);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  padding: 3px 10px;
+  font-size: 12.5px;
+}
+
+.btn-ghost {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.btn-ghost:hover {
+  background: var(--accent-soft);
+  filter: none;
+}
+
+.btn-danger {
+  background: var(--surface);
+  color: var(--err);
+  border: 1px solid var(--err);
+}
+
+.btn-danger:hover {
+  background: var(--err-soft);
+  filter: none;
+}
+
+/* 行内操作组与操作错误提示 */
+.row-actions {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.action-error {
+  color: var(--err);
+  background: var(--err-soft);
+  border: 1px solid var(--err);
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.muted-text {
+  color: var(--muted);
+}
+
+/* 键值信息行（详情页） */
+.kv-list {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 6px 16px;
+  margin: 0;
+  font-size: 13.5px;
+}
+
+.kv-list dt {
+  color: var(--text-secondary);
+}
+
+.kv-list dd {
+  margin: 0;
+  word-break: break-all;
 }
 
 .field {

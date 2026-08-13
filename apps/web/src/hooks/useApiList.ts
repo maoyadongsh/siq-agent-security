@@ -2,6 +2,10 @@
  * 通用数据加载 hook：尝试从控制面 API 拉取列表；
  * 后端未联调（网络失败）时安全降级为 placeholder 数据并标记 disconnected，
  * 页面据此渲染"未连接"空态 —— 不阻塞构建、不阻塞路由。
+ *
+ * 写操作支持：
+ * - `mutate(updater)`：乐观更新当前行集（如确认/驳回后移除一行），不触发网络请求；
+ * - `refresh()`：重新拉取后端列表（POST 操作落库后与后端状态同步）。
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -16,6 +20,10 @@ export interface UseApiListResult<T> {
   /** 最近一次错误信息（用于展示，不阻断页面） */
   error: string | null;
   reload: () => void;
+  /** 与 reload 同义的再拉取（语义：写操作后与后端同步） */
+  refresh: () => void;
+  /** 乐观更新当前行集（如操作后移除/更新一行） */
+  mutate: (updater: (current: T[]) => T[]) => void;
 }
 
 export function useApiList<T>(
@@ -50,10 +58,16 @@ export function useApiList<T>(
       });
   };
 
+  const refresh = reload;
+
+  const mutate = (updater: (current: T[]) => T[]) => {
+    setRows((prev) => (Array.isArray(prev) ? updater(prev) : prev));
+  };
+
   useEffect(() => {
     reload();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
 
-  return { rows, status, error, reload };
+  return { rows, status, error, reload, refresh, mutate };
 }

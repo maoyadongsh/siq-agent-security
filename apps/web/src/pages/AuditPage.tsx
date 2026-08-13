@@ -2,65 +2,93 @@ import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { useApiList } from '@/hooks/useApiList';
-import type { EventEnvelope } from '@/api/types';
+import type { AuditEvent } from '@/api/types';
 
-/** placeholder 数据（Phase 1；联调后由 /audit/events 返回，映射 EventEnvelope） */
-const PLACEHOLDER_EVENTS: EventEnvelope[] = [
+/** placeholder 数据（Phase 1；联调后由 /audit-events 返回） */
+const PLACEHOLDER_EVENTS: AuditEvent[] = [
   {
-    event_id: 'evt-00001',
-    event_type: 'agent.candidate.discovered.v1',
-    occurred_at: '2026-08-12T09:30:00Z',
-    tenant_id: 'siq-dev',
-    environment_id: 'env-dev-docker',
-    actor: { actor_type: 'connector', actor_id: 'docker/v1.1.0' },
-    resource_ref: 'candidate:docker:data_analyst_ghost',
+    id: 'aud-00001',
+    actor_type: 'user',
+    actor_id: 'admin@siq.local',
+    action: 'agent.confirm',
+    resource_type: 'agent_asset',
+    resource_id: 'agt-01h2kd93nf',
+    decision: 'allow',
     request_id: 'req-8f2a',
-    schema_version: 1,
-    payload: { candidate_id: 'docker:data_analyst_ghost@v1', framework: 'unknown' },
+    summary: {},
+    created_at: '2026-08-12T09:30:00Z',
   },
   {
-    event_id: 'evt-00002',
-    event_type: 'policy.status.changed.v1',
-    occurred_at: '2026-08-11T09:52:00Z',
-    tenant_id: 'siq-dev',
-    environment_id: 'env-prod-k8s',
-    actor: { actor_type: 'human', actor_id: 'u-0001' },
-    resource_ref: 'policy:pol-incident-responder:v3',
+    id: 'aud-00002',
+    actor_type: 'edge',
+    actor_id: 'edge-node-01',
+    action: 'evidence.batch.upload',
+    resource_type: 'environment',
+    resource_id: 'env-dev-docker',
+    decision: 'allow',
     request_id: 'req-71bc',
-    schema_version: 1,
-    payload: { change_id: 'chg-0092', from: 'approved', to: 'effective' },
+    summary: { candidates: 2, evidence: 5, permission_facts: 0 },
+    created_at: '2026-08-11T09:52:00Z',
   },
   {
-    event_id: 'evt-00003',
-    event_type: 'permission.fact.observed.v1',
-    occurred_at: '2026-08-11T06:20:00Z',
-    tenant_id: 'siq-dev',
-    environment_id: 'env-edge-hermes',
-    actor: { actor_type: 'edge', actor_id: 'edge-node-01' },
-    resource_ref: 'agent_asset:ast-03q4z9p6c2',
+    id: 'aud-00003',
+    actor_type: 'user',
+    actor_id: 'u-0001',
+    action: 'finding.resolve',
+    resource_type: 'finding',
+    resource_id: 'fnd-0002',
+    decision: 'allow',
     request_id: 'req-19de',
-    schema_version: 1,
-    payload: { domain: 'credential', effect: 'allow', state: 'observed' },
+    summary: {},
+    created_at: '2026-08-11T06:20:00Z',
   },
 ];
 
-const columns: TableColumn<EventEnvelope>[] = [
-  { key: 'event_id', header: '事件 ID', render: (e) => <span className="mono">{e.event_id}</span> },
-  { key: 'event_type', header: '事件类型', render: (e) => <span className="mono">{e.event_type}</span> },
-  { key: 'occurred_at', header: '发生时间', render: (e) => e.occurred_at },
-  { key: 'actor', header: '触发者', render: (e) => (e.actor ? `${e.actor.actor_type}:${e.actor.actor_id}` : '—') },
-  { key: 'resource', header: '对象', render: (e) => <span className="mono">{e.resource_ref ?? '—'}</span> },
-  { key: 'schema', header: '版本', render: (e) => `v${e.schema_version}` },
+const decisionTag: Record<string, string> = {
+  allow: 'tag-ok',
+  deny: 'tag-err',
+};
+
+const columns: TableColumn<AuditEvent>[] = [
+  { key: 'id', header: '事件 ID', render: (e) => <span className="mono">{e.id}</span> },
+  { key: 'created_at', header: '发生时间', render: (e) => e.created_at },
+  { key: 'action', header: '动作', render: (e) => <span className="mono">{e.action}</span> },
+  {
+    key: 'actor',
+    header: '触发者',
+    render: (e) => (
+      <span title={e.actor_id}>
+        {e.actor_type}:{e.actor_id}
+      </span>
+    ),
+  },
+  {
+    key: 'resource',
+    header: '对象',
+    render: (e) => (
+      <span className="mono">
+        {e.resource_type}
+        {e.resource_id ? `:${e.resource_id}` : ''}
+      </span>
+    ),
+  },
+  {
+    key: 'decision',
+    header: '决策',
+    render: (e) => (
+      <span className={`tag ${decisionTag[e.decision] ?? ''}`}>{e.decision}</span>
+    ),
+  },
 ];
 
 export default function AuditPage() {
-  const events = useApiList<EventEnvelope>('/audit/events', PLACEHOLDER_EVENTS);
+  const events = useApiList<AuditEvent>('/audit-events', PLACEHOLDER_EVENTS);
 
   return (
     <section>
       <PageHeader
         title="审计"
-        description="领域事件统一信封（EventEnvelope，设计文档 §18.3）：消费者按 event_id 幂等处理，payload 已脱敏。"
+        description="控制面审计事件（AuditEvent，设计文档 §24）：只读、租户隔离、summary 已脱敏。"
         connection={events.status}
         connectionError={events.error}
       />
@@ -70,7 +98,7 @@ export default function AuditPage() {
       <SimpleTable
         columns={columns}
         rows={events.rows}
-        rowKey={(e) => e.event_id}
+        rowKey={(e) => e.id}
       />
     </section>
   );

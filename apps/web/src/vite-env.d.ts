@@ -10,6 +10,11 @@ interface ImportMetaEnv {
   readonly VITE_DEV_TENANT_ID?: string;
   /** 开发模式注入的用户（仅 VITE_DEV_MODE=true 生效） */
   readonly VITE_DEV_USER_ID?: string;
+  /**
+   * 开发模式注入的角色（逗号分隔，仅 VITE_DEV_MODE=true 生效）。
+   * 缺省 tenant_admin,security_admin,agent_owner,auditor（覆盖控制台全部视图权限点）。
+   */
+  readonly VITE_DEV_ROLES?: string;
 }
 
 interface ImportMeta {
