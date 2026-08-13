@@ -95,7 +95,10 @@ export class ApiError extends Error {
 function buildUrl(path: string, query?: RequestOptions['query']): string {
   const base = API_BASE.replace(/\/+$/, '');
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  const url = new URL(`${base}${normalizedPath}`);
+  // 相对 base（如 /api/v1，经 vite 同源代理）时 new URL 无 base 会抛 TypeError，
+  // 必须以页面 origin 为基准解析（绝对 base 时 URL 自身生效，origin 被忽略）。
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'http://127.0.0.1:8600';
+  const url = new URL(`${base}${normalizedPath}`, origin);
   if (query) {
     for (const [key, value] of Object.entries(query)) {
       if (value !== undefined) {
