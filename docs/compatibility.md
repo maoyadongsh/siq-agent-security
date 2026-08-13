@@ -26,6 +26,7 @@
   - `sandbox delete` → 正常；
 - **结论：v0.0.83 的 SandboxResponse Protobuf 解码缺陷在 v0.0.104 已修复**；升级后 CLI 后端的 docker 兜底路径可退役；
 - 遗留：测试用沙箱容器因旧基础镜像+新 supervisor 组合不匹配而 restart（与解码无关），正式升级时需用 v0.0.104 配套 supervisor/基础镜像。
+- **产品闭环实测（同日）**：官方 base 镜像 + 自建 supervisor 镜像 → 沙箱 `Ready`；产品 sync 拉取 52 条 effective 事实；审批部署闭环 `effective`（真实 policy set + 读回验证）——v0.0.104 作为产品执行后端完全可用。迁移 runbook 见 [openshell-v083-to-v0104-migration.md](openshell-v083-to-v0104-migration.md)。
 
 ## 本地 patch 清单（ADR-005）
 

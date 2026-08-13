@@ -198,3 +198,28 @@ def test_cli_failure_is_fail_closed():
     backend = OpenShellCliBackend(runner=runner)
     with pytest.raises(AdapterError):
         backend.read_effective_policy("x")
+
+
+def test_cli_backend_targets_v104_gateway_via_env(monkeypatch):
+    """v0.0.104 直连：SIQ_AS_OPENSHELL_CLI_BIN + ENDPOINT 绕过 env.sh（canary 隔离不破坏）。"""
+    monkeypatch.setenv("SIQ_AS_OPENSHELL_CLI_BIN", "/opt/os104/openshell")
+    monkeypatch.setenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT", "http://127.0.0.1:17673")
+    monkeypatch.setenv("SIQ_AS_OPENSHELL_GATEWAY_INSECURE", "1")
+
+    captured: list[list[str]] = []
+
+    def runner(args):
+        captured.append(args)
+        return 1, "", "unexpected in test"
+
+    backend = OpenShellCliBackend(runner=runner)
+    cmd = backend._build_command(["sandbox", "list"])
+    assert cmd[0] == "/opt/os104/openshell"
+    assert "--gateway-endpoint" in cmd and "http://127.0.0.1:17673" in cmd
+    assert "--gateway-insecure" in cmd
+    # 默认（无 env）走 canary env.sh 包装
+    monkeypatch.delenv("SIQ_AS_OPENSHELL_CLI_BIN")
+    monkeypatch.delenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT")
+    default_cmd = backend._build_command(["sandbox", "list"])
+    assert default_cmd[0] == "bash"
+    assert "source" in default_cmd[2]

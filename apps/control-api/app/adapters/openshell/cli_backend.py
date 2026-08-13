@@ -73,11 +73,30 @@ class OpenShellCliBackend(EnforcementAdapter):
 
     # ------------------------------------------------------------ 子进程
 
+    def _build_command(self, args: list[str]) -> list[str]:
+        """目标网关选择（§15.1 能力协商/多网关）。
+
+        - SIQ_AS_OPENSHELL_CLI_BIN 指定 CLI 二进制（如 v0.0.104 构建产物）
+          + SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT/INSECURE → 直连指定网关（不经 env.sh）；
+        - 默认：source research-engine env.sh 走 canary v0.0.83 隔离配置。
+        """
+        cli_bin = os.getenv("SIQ_AS_OPENSHELL_CLI_BIN")
+        endpoint = os.getenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT")
+        insecure = os.getenv("SIQ_AS_OPENSHELL_GATEWAY_INSECURE", "0") == "1"
+        if cli_bin and endpoint:
+            cmd = [cli_bin, "--gateway-endpoint", endpoint]
+            if insecure:
+                cmd.append("--gateway-insecure")
+            cmd.extend(args)
+        else:
+            cmd = ["bash", "-c", f'source "{self._env_script}" && exec openshell "$@"', "openshell", *args]
+        return cmd
+
     def _subprocess_runner(self, args: list[str]) -> tuple[int, str, str]:
-        wrapped = ["bash", "-c", f'source "{self._env_script}" && exec openshell "$@"', "openshell", *args]
+        cmd = self._build_command(args)
         try:
             proc = subprocess.run(
-                wrapped,
+                cmd,
                 capture_output=True,
                 text=True,
                 timeout=30,
