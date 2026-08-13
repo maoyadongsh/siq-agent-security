@@ -18,7 +18,7 @@
 | T2 | Collector 越界读取 | validate_scope 拒绝空/根/通配；文件与字节上限；本地审计 | connectors/hermes 单测（scope 校验/符号链接逃逸/.env 拒绝） |
 | T3 | Secret 泄露到中心或模型 | Edge 侧脱敏 siq.redaction.v1；.env 永不读取；审计摘要只存哈希 | `test_audit_summary_contains_no_secret_content` |
 | T4 | 伪造 Agent 或 Evidence | Edge 设备身份 + 注册码一次性；证据签名；稳定来源定位 | `test_enrollment_code_single_use`、`test_wrong_secret_rejected` |
-| T5 | 中心任务重放或篡改 | 注册码/secret 哈希；任务 TTL；**任务签名验证 = Phase 0 后续项（TODO）** | 待任务签名落地后补 |
+| T5 | 中心任务重放或篡改 | Ed25519 任务签名（信封含环境绑定）+ Edge fail-closed 验签；注册码/secret 哈希；任务 TTL | `test_signing.py`（4 项）+ Go `signature_test.go` 跨语言夹具（篡改/换钥/未签名拒绝） |
 | T6 | Edge 被攻陷后横向移动 | 独立设备身份；最小 Connector 凭据；无中心数据库凭据 | `test_heartbeat_and_revocation`（吊销即时） |
 | T7 | 跨租户访问 | 身份派生 tenant；先定位后权限（404 语义）；负向测试 | `test_tenant_isolation.py` 全组 |
 | T8 | 权限混淆代理 | 用户/Agent/Edge/Connector/执行后端身份分离；delegated_user 维度 | Phase 2 委托令牌链路测试（依赖 D6） |
@@ -49,7 +49,7 @@
 
 | 项 | 风险等级 | 计划 |
 | --- | --- | --- |
-| Edge 任务签名验证 | 高 | Phase 0 收尾（ADR-002 已记录） |
+| ~~Edge 任务签名验证~~ | ✅ 已落地（2026-08-13） | Ed25519 双向 + 跨语言规范字节夹具 |
 | Edge 签名密钥持久化（当前每次运行临时生成） | 中 | Phase 1 换控制面签发密钥链 |
 | 部署回执独立验证组件评估 | 中 | Phase 4 |
 | 租户级扫描配额/并发 | 中 | Phase 2 |

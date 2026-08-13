@@ -115,6 +115,7 @@ class AgentAsset(Base):
     confirmed_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
     dismissed_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     dismissed_expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    evidence_ids: Mapped[list] = mapped_column(JSON, default=list)  # 本资产关联的证据（批次上传时写入）
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, onupdate=utcnow)
 

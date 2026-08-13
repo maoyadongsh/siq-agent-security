@@ -12,6 +12,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"siq-agent-security/edge/agent/protocol"
 )
 
 // Client is the control-plane HTTP client. Endpoint contract (Phase 0, server
@@ -134,22 +136,18 @@ func (c *Client) RunHeartbeatLoop(ctx context.Context, interval, maxBackoff time
 	}
 }
 
-// TaskListResponse is the GET /edge/v1/tasks response envelope.
-type TaskListResponse struct {
-	Tasks []*Task `json:"tasks"`
-}
 
 // FetchTasks pulls the pending tasks for this device.
 func (c *Client) FetchTasks(ctx context.Context, deviceIdentity string) ([]*Task, error) {
-	path := "/edge/v1/tasks?device_identity=" + url.QueryEscape(deviceIdentity)
-	var out TaskListResponse
-	if err := c.do(ctx, http.MethodGet, path, nil, &out, 2); err != nil {
+	// 设备身份经 X-Edge-Identity 头传递（控制面契约），响应为裸任务列表
+	var out []*Task
+	if err := c.do(ctx, http.MethodGet, "/edge/v1/tasks", nil, &out, 2); err != nil {
 		return nil, err
 	}
-	if out.Tasks == nil {
-		out.Tasks = []*Task{}
+	if out == nil {
+		out = []*Task{}
 	}
-	return out.Tasks, nil
+	return out, nil
 }
 
 // Receipt is posted after task execution (POST /edge/v1/tasks/{id}/receipt).
@@ -191,6 +189,18 @@ func backoffDelay(attempt int) time.Duration {
 		exp = 5
 	}
 	return time.Duration(1<<exp) * time.Second
+}
+
+// UploadBatch posts discovered candidates and evidence to the control plane
+// (design doc §9.3 data flow: E -> C 上传候选资产与证据摘要). The batch is
+// sealed (signature/collector_id) before upload; permission facts are empty
+// in Phase 1 (connectors do not emit them yet).
+func (c *Client) UploadBatch(ctx context.Context, deviceIdentity string, candidates []*protocol.Candidate, evidence []*protocol.Evidence) error {
+	body := map[string]any{
+		"candidates": candidates,
+		"evidence":   evidence,
+	}
+	return c.do(ctx, http.MethodPost, "/edge/v1/batches", body, nil, 3)
 }
 
 // do runs doOnce with retries on retryable failures.
@@ -235,6 +245,9 @@ func (c *Client) doOnce(ctx context.Context, method, path string, body, out any)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Edge-Version", c.version)
 	req.Header.Set("User-Agent", "siq-edge/"+c.version)
+	if c.identity != "" {
+		req.Header.Set("X-Edge-Identity", c.identity)
+	}
 	if c.secret != "" {
 		req.Header.Set("Authorization", "Bearer "+c.secret)
 	}

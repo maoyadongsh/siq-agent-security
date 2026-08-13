@@ -17,7 +17,7 @@ import (
 // Task is the control-plane task envelope (task_id/task_type/payload/
 // environment_id/expires_at/signature). Executed locally by the `tasks` command.
 type Task struct {
-	TaskID        string          `json:"task_id"`
+	TaskID        string          `json:"id"` // 控制面契约字段名为 id（签名信封内仍为 task_id）
 	TaskType      string          `json:"task_type"`
 	EnvironmentID string          `json:"environment_id,omitempty"`
 	Payload       json.RawMessage `json:"payload,omitempty"`
@@ -85,7 +85,11 @@ func (t *Task) Expired(now time.Time) bool {
 	}
 	ts, err := time.Parse(time.RFC3339, t.ExpiresAt)
 	if err != nil {
-		return true
+		// 控制面下发 naive UTC（无时区后缀），回退本地格式按 UTC 解释
+		ts, err = time.Parse("2006-01-02T15:04:05.999999", t.ExpiresAt)
+	}
+	if err != nil {
+		return true // 不可解析视为过期（fail closed）
 	}
 	return now.After(ts)
 }
@@ -157,6 +161,12 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 	rcpt.Truncated = out.truncated
 	if out.dropped > 0 {
 		log.Printf("task %s: dropped %d unreferenced evidence items", t.TaskID, out.dropped)
+	}
+	if err := r.Client.UploadBatch(ctx, r.State.DeviceIdentity, out.candidates, out.evidence); err != nil {
+		rcpt.Status = "failed"
+		rcpt.ErrorCode = "batch_upload_failed"
+		rcpt.ErrorMessage = err.Error()
+		return rcpt, nil
 	}
 	return rcpt, nil
 }

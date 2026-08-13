@@ -56,6 +56,14 @@ def _make_agent(client, headers, name):
     return next(a for a in assets if a["name"] == name)
 
 
+def test_evidence_linked_to_asset_via_batch(client, tenant_a):
+    """批次上传的 evidence_ids 必须落库并可通过资产证据端点查询（§10.5 关联）。"""
+    agent_a = _make_agent(client, tenant_a, "agent-ev")
+    evidence = client.get(f"/api/v1/agents/{agent_a['id']}/evidence", headers=tenant_a).json()
+    assert len(evidence) == 1
+    assert evidence[0]["source_locator"].endswith("config.yaml")
+
+
 def test_cross_tenant_candidate_list_invisible(client, tenant_a, tenant_b):
     agent_a = _make_agent(client, tenant_a, "agent-a")
     assets_b = client.get("/api/v1/candidates", headers=tenant_b).json()

@@ -147,8 +147,10 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
                 AgentAsset.source_locator == cand["source_locator"],
             )
         )
+        cand_evidence_ids = cand.get("evidence_ids") or []
         if existing is not None:
             existing.updated_at = now
+            existing.evidence_ids = sorted(set((existing.evidence_ids or []) + cand_evidence_ids))
             continue
         session.add(
             AgentAsset(
@@ -158,6 +160,7 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
                 status="candidate",
                 source_type=cand["source_type"],
                 source_locator=cand["source_locator"],
+                evidence_ids=cand_evidence_ids,
             )
         )
         inserted_candidates += 1
@@ -376,12 +379,17 @@ def get_agent_evidence(
     session: Session = Depends(get_session),
     identity: Identity = Depends(get_identity),
 ):
-    _asset_or_404(session, identity.tenant_id, asset_id)
+    asset = _asset_or_404(session, identity.tenant_id, asset_id)
     ensure_permission(identity, "agent:read")
+    # 关联口径：批次写入的 evidence_ids 为主，subject_ref 直连为辅
+    linked = (asset.evidence_ids or [])
     return list(
         session.scalars(
             select(Evidence)
-            .where(Evidence.tenant_id == identity.tenant_id, Evidence.subject_ref == asset_id)
+            .where(
+                Evidence.tenant_id == identity.tenant_id,
+                Evidence.id.in_(linked) | (Evidence.subject_ref == asset_id),
+            )
             .order_by(Evidence.observed_at.desc())
             .limit(200)
         )
