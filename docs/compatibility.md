@@ -47,7 +47,7 @@
 
 | Connector | 状态 | 负向测试 |
 | --- | --- | --- |
-| hermes（Go） | 已实现（未编译验证） | scope 校验/符号链接逃逸/.env 拒绝/截断 |
-| docker（Go） | 已实现（未编译验证） | 环境变量值不出机（struct 无 Env 字段） |
+| hermes（Go） | 已实现（build/vet/test 全绿） | scope 校验/符号链接逃逸/.env 拒绝/截断 |
+| docker（Go） | 已实现（build/vet 通过，测试待补） | 环境变量值不出机（struct 无 Env 字段） |
 | kubernetes | 待 Phase 4 | — |
 | siq | 待 Phase 1（依赖 Export Contract D3-D5） | — |
