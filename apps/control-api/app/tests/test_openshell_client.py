@@ -59,7 +59,11 @@ def test_apply_dynamic_maps_409_to_revision_conflict():
     from app.adapters.openshell.contracts import ChangePlan
 
     with pytest.raises(RevisionConflict):
-        client.apply_dynamic("s-1", ChangePlan(target="s-1", kind="dynamic", expected_revision="1", artifact_hash="h"), "1")
+        client.apply_dynamic(
+            "s-1",
+            ChangePlan(target="s-1", kind="dynamic", expected_revision="1", artifact_hash="h"),
+            "1",
+        )
 
 
 def test_read_effective_policy_returns_backend_state():
