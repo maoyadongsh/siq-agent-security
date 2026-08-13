@@ -81,9 +81,16 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
     body = await _read_json(request)
     candidates = body.get("candidates") or []
     evidence = body.get("evidence") or []
+    permission_facts = body.get("permission_facts") or []
 
-    if not candidates and not evidence:
+    if not candidates and not evidence and not permission_facts:
         raise HTTPException(status_code=422, detail="empty_batch")
+    # 安全不变量：effective 只能来自权威源解析（Phase 2 Resolver），Edge 不得自报
+    for pf in permission_facts:
+        if pf.get("state") == "effective":
+            raise HTTPException(status_code=422, detail="edge_cannot_assert_effective")
+        if pf.get("state") not in ("declared", "inferred", "observed", "unknown"):
+            raise HTTPException(status_code=422, detail=f"invalid_permission_state: {pf.get('state')}")
     evidence_ids = {ev.get("evidence_id") for ev in evidence}
     if evidence_ids:
         referenced: set[str] = set()
@@ -148,6 +155,32 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
         )
         inserted_candidates += 1
 
+    inserted_permissions = 0
+    for pf in permission_facts:
+        subject = pf.get("subject") or {}
+        resource = pf.get("resource") or {}
+        session.add(
+            PermissionFact(
+                tenant_id=tenant_id,
+                subject_type=subject.get("type", "agent_instance"),
+                subject_id=subject.get("id", ""),
+                delegated_user=pf.get("delegated_user"),
+                domain=pf.get("domain", "unknown"),
+                action=pf.get("action", ""),
+                resource_type=resource.get("type", "unknown"),
+                resource_value=resource.get("value", ""),
+                effect=pf.get("effect", "allow"),
+                conditions=pf.get("conditions") or {},
+                state=pf.get("state", "unknown"),
+                authority=pf.get("authority", "edge-connector"),
+                authority_revision=pf.get("authority_revision"),
+                evidence_ids=pf.get("evidence_ids") or [],
+                valid_from=_parse_dt(pf.get("valid_from")),
+                valid_until=_parse_dt(pf.get("valid_until")),
+            )
+        )
+        inserted_permissions += 1
+
     audit(
         session,
         tenant_id,
@@ -156,10 +189,18 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
         "evidence.batch.upload",
         "environment",
         resource_id=env.id,
-        summary={"candidates": inserted_candidates, "evidence": inserted_evidence},
+        summary={
+            "candidates": inserted_candidates,
+            "evidence": inserted_evidence,
+            "permission_facts": inserted_permissions,
+        },
     )
     session.commit()
-    return {"candidates": inserted_candidates, "evidence": inserted_evidence}
+    return {
+        "candidates": inserted_candidates,
+        "evidence": inserted_evidence,
+        "permission_facts": inserted_permissions,
+    }
 
 
 def _parse_dt(value) -> datetime | None:

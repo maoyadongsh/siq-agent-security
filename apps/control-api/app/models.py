@@ -194,6 +194,7 @@ class Finding(Base):
     severity: Mapped[str] = mapped_column(String(16))  # critical|high|medium|low|info
     domain: Mapped[str | None] = mapped_column(String(32), nullable=True)
     asset_id: Mapped[str | None] = mapped_column(String(64), ForeignKey("agent_asset.id"), nullable=True, index=True)
+    resource_ref: Mapped[str | None] = mapped_column(String(128), nullable=True)  # 非资产作用域的资源（环境/凭据等）
     evidence_ids: Mapped[list] = mapped_column(JSON, default=list)
     impact: Mapped[str | None] = mapped_column(Text, nullable=True)
     remediation: Mapped[str | None] = mapped_column(Text, nullable=True)

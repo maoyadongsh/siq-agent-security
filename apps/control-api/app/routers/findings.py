@@ -48,6 +48,20 @@ def list_findings(
     return list(session.scalars(query.order_by(Finding.severity, Finding.first_seen_at.desc()).limit(200)))
 
 
+@router.post("/api/v1/findings/run-rules")
+def run_rules_endpoint(
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(require_permission("finding:manage")),
+):
+    """手动触发规则引擎（worker 同路径）；幂等，重复触发不产生重复 Finding。"""
+    from app.rules import evaluate_all, upsert_findings
+
+    results = evaluate_all(session, identity.tenant_id)
+    counts = upsert_findings(session, identity.tenant_id, results)
+    session.commit()
+    return {"evaluated_rules": len(results), **counts}
+
+
 @router.post("/api/v1/findings/{finding_id}/accept-risk", response_model=FindingOut)
 def accept_risk(
     finding_id: str,
