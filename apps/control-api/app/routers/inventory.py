@@ -43,13 +43,20 @@ def create_scan(
     )
     if env is None:
         raise HTTPException(status_code=404, detail="not_found")
+    expires_at = utcnow() + timedelta(seconds=_task_ttl(session))
     task = EdgeTask(
         environment_id=env.id,
         task_type="scan",
         payload={"scope": body.scope},
-        expires_at=utcnow() + timedelta(seconds=_task_ttl(session)),
+        expires_at=expires_at,
     )
     session.add(task)
+    session.flush()  # 获取 task.id 用于签名信封
+    from app.signing import sign_task_payload
+
+    task.signature = sign_task_payload(
+        task.id, task.task_type, env.id, task.payload, expires_at.isoformat()
+    )
     audit(
         session,
         identity.tenant_id,

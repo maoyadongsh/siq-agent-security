@@ -64,11 +64,12 @@ type RegisterRequest struct {
 	Capabilities   map[string]any `json:"capabilities"`
 }
 
-// RegisterResponse is the expected register response.
+// RegisterResponse is the POST /edge/v1/register response (control-api 实际契约).
 type RegisterResponse struct {
-	DeviceIdentity  string `json:"device_identity"`
-	Secret          string `json:"secret"`
-	ControlPlaneURL string `json:"control_plane_url"`
+	EdgeAgentID           string `json:"edge_agent_id"`
+	DeviceSecret          string `json:"device_secret"`
+	ControlPlanePublicKey string `json:"control_plane_public_key"`
+	EnvironmentID         string `json:"environment_id"`
 }
 
 // Register enrolls the device. The caller persists the returned secret into

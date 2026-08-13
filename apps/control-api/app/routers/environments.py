@@ -37,6 +37,7 @@ from app.security import (
     require_permission,
     verify_edge_secret,
 )
+from app.signing import public_key_base64
 
 router = APIRouter(tags=["environments"])
 
@@ -145,7 +146,12 @@ def register_edge(body: EdgeRegisterRequest, session: Session = Depends(get_sess
     session.add(token)
     audit(session, env.tenant_id, "edge", body.device_identity, "edge.register", "edge_agent")
     session.commit()
-    return EdgeRegisterOut(edge_agent_id=edge.id, device_secret=device_secret)
+    return EdgeRegisterOut(
+        edge_agent_id=edge.id,
+        device_secret=device_secret,
+        control_plane_public_key=public_key_base64(),
+        environment_id=env.id,
+    )
 
 
 @router.post("/edge/v1/heartbeat")

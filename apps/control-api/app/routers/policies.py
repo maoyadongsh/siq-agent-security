@@ -238,13 +238,18 @@ def create_deployment(
     )
     session.add(deployment)
     # Phase 3 之前：EdgeTask 为 publish_policy 占位；真实编译由 OpenShell Adapter 承担
+    expires_at = utcnow() + timedelta(seconds=_task_ttl())
     task = EdgeTask(
         environment_id=env.id,
         task_type="publish_policy",
         payload={"policy_id": policy.id, "deployment_id": deployment.id, "enforcement_mode": policy.enforcement_mode},
-        expires_at=utcnow() + timedelta(seconds=_task_ttl()),
+        expires_at=expires_at,
     )
     session.add(task)
+    session.flush()  # 获取 task.id 用于签名信封
+    from app.signing import sign_task_payload
+
+    task.signature = sign_task_payload(task.id, task.task_type, env.id, task.payload, expires_at.isoformat())
     deployment.edge_task_id = task.id
     cr.status = "deploying"
     deployment.status = "sent"

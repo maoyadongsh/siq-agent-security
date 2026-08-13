@@ -46,6 +46,8 @@ class EdgeRegisterRequest(BaseModel):
 class EdgeRegisterOut(BaseModel):
     edge_agent_id: str
     device_secret: str  # 明文仅本次返回
+    control_plane_public_key: str  # Edge 钉住，用于任务验签（ADR-002 / T5）
+    environment_id: str  # 任务信封含环境绑定（防跨环境重放）
     expires_at: datetime | None = None
 
 
@@ -58,6 +60,7 @@ class EdgeTaskOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: str
+    environment_id: str
     task_type: str
     payload: dict
     signature: str | None

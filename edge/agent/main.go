@@ -120,16 +120,12 @@ func cmdRegister(ctx context.Context, args []string) error {
 		return err
 	}
 	state := &State{
-		ControlPlaneURL: resp.ControlPlaneURL,
-		DeviceIdentity:  resp.DeviceIdentity,
-		Secret:          resp.Secret,
-		PublicKeyPEM:    pubPEM,
-	}
-	if state.ControlPlaneURL == "" {
-		state.ControlPlaneURL = *cp
-	}
-	if state.DeviceIdentity == "" {
-		state.DeviceIdentity = identity
+		ControlPlaneURL:       *cp,
+		DeviceIdentity:        identity,
+		Secret:                resp.DeviceSecret,
+		PublicKeyPEM:          pubPEM,
+		ControlPlanePublicKey: resp.ControlPlanePublicKey,
+		EnvironmentID:         resp.EnvironmentID,
 	}
 	if err := state.Save(); err != nil {
 		return err

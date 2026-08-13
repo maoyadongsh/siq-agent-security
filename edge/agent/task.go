@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
+	"crypto/ed25519"
+	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -11,15 +14,15 @@ import (
 	"siq-agent-security/edge/agent/protocol"
 )
 
-// Task is the control-plane task envelope (task_id/type/scope/payload/
-// expires_at/signature). Executed locally by the `tasks` command.
+// Task is the control-plane task envelope (task_id/task_type/payload/
+// environment_id/expires_at/signature). Executed locally by the `tasks` command.
 type Task struct {
-	TaskID    string          `json:"task_id"`
-	Type      string          `json:"type"`
-	Scope     json.RawMessage `json:"scope,omitempty"`
-	Payload   json.RawMessage `json:"payload,omitempty"`
-	ExpiresAt string          `json:"expires_at,omitempty"`
-	Signature string          `json:"signature,omitempty"`
+	TaskID        string          `json:"task_id"`
+	TaskType      string          `json:"task_type"`
+	EnvironmentID string          `json:"environment_id,omitempty"`
+	Payload       json.RawMessage `json:"payload,omitempty"`
+	ExpiresAt     string          `json:"expires_at,omitempty"`
+	Signature     string          `json:"signature,omitempty"`
 }
 
 // ScanRequest is task.payload for type=run-scan tasks.
@@ -28,12 +31,49 @@ type ScanRequest struct {
 	Scope     json.RawMessage `json:"scope,omitempty"`
 }
 
-// VerifyTaskSignature is a Phase-0 TODO. In Phase 1 the control plane will
-// sign task envelopes with an Ed25519 key pinned during register; the agent
-// must verify task.signature before executing. Until then we log a warning
-// and proceed (a signed-task requirement does not exist yet on the wire).
-func VerifyTaskSignature(t *Task) error {
-	log.Printf("WARNING: task %s signature verification is not implemented yet (Phase 1 TODO); task.signature=%q ignored", t.TaskID, t.Signature)
+// VerifyTaskSignature verifies the control-plane Ed25519 signature over the
+// canonical task envelope {task_id, task_type, environment_id, payload,
+// expires_at}. Canonicalization matches the control plane (app/signing.py):
+// JSON object with sorted keys, compact separators. Payload is re-normalized
+// through map[string]any so key order cannot break verification.
+// Fail closed: unsigned or unverifiable tasks are rejected (threat T5).
+func VerifyTaskSignature(t *Task, controlPlanePublicKeyB64 string) error {
+	if t.Signature == "" {
+		return errors.New("task signature missing; refusing unsigned task (fail closed)")
+	}
+	if controlPlanePublicKeyB64 == "" {
+		return errors.New("control-plane public key not pinned in state; re-run register")
+	}
+	pubRaw, err := base64.StdEncoding.DecodeString(controlPlanePublicKeyB64)
+	if err != nil || len(pubRaw) != ed25519.PublicKeySize {
+		return fmt.Errorf("invalid pinned control-plane public key: %w", err)
+	}
+	var payload any
+	if len(t.Payload) > 0 && string(t.Payload) != "null" {
+		if err := json.Unmarshal(t.Payload, &payload); err != nil {
+			return fmt.Errorf("task payload is not valid JSON: %w", err)
+		}
+	} else {
+		payload = map[string]any{}
+	}
+	envelope := map[string]any{
+		"task_id":        t.TaskID,
+		"task_type":      t.TaskType,
+		"environment_id": t.EnvironmentID,
+		"payload":        payload,
+		"expires_at":     t.ExpiresAt,
+	}
+	canonical, err := json.Marshal(envelope) // map 键自动排序，与 Python sort_keys=True 一致
+	if err != nil {
+		return err
+	}
+	sig, err := base64.StdEncoding.DecodeString(t.Signature)
+	if err != nil {
+		return fmt.Errorf("task signature is not valid base64: %w", err)
+	}
+	if !ed25519.Verify(ed25519.PublicKey(pubRaw), canonical, sig) {
+		return errors.New("task signature verification failed; task rejected")
+	}
 	return nil
 }
 
@@ -60,11 +100,16 @@ type Runner struct {
 // Errors returned by Execute are infrastructure failures; task-level failures
 // are encoded in the receipt (status/error_code) so they can be reported.
 func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
-	_ = VerifyTaskSignature(t) // Phase-0 TODO: failure must abort execution
 	rcpt := &Receipt{
 		TaskID:         t.TaskID,
 		DeviceIdentity: r.State.DeviceIdentity,
 		CompletedAt:    time.Now().UTC().Format(time.RFC3339),
+	}
+	if err := VerifyTaskSignature(t, r.State.ControlPlanePublicKey); err != nil {
+		rcpt.Status = "failed"
+		rcpt.ErrorCode = "signature_invalid"
+		rcpt.ErrorMessage = err.Error()
+		return rcpt, nil
 	}
 	if t.Expired(time.Now()) {
 		rcpt.Status = "failed"
@@ -72,9 +117,10 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 		rcpt.ErrorMessage = "task expired before execution"
 		return rcpt, nil
 	}
-	if t.Type != "run-scan" {
-		rcpt.Status = "unsupported"
-		rcpt.ErrorMessage = fmt.Sprintf("task type %q is not supported", t.Type)
+	if t.TaskType != "scan" {
+		rcpt.Status = "failed" // 控制面回执枚举仅 success|failed
+		rcpt.ErrorCode = "unsupported_task_type"
+		rcpt.ErrorMessage = fmt.Sprintf("task type %q is not supported", t.TaskType)
 		return rcpt, nil
 	}
 	var sr ScanRequest
@@ -103,7 +149,7 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 		rcpt.ErrorMessage = err.Error()
 		return rcpt, nil
 	}
-	rcpt.Status = "succeeded"
+	rcpt.Status = "success"
 	rcpt.CandidateCount = len(out.candidates)
 	rcpt.EvidenceCount = len(out.evidence)
 	rcpt.EvidenceIDs = evidenceIDs(out.evidence)
