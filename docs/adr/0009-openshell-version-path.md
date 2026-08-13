@@ -34,11 +34,11 @@ Hermes 3 个 patch（hermes-0.13.0 目录）不受 OpenShell 升级影响（Herm
 | B. 维持 v0.0.83 | 无 | 现状稳定 | MVP 降级为静态 generation 计划；长期漂移 |
 | C. 升级 + patch2 上游化 | A + 上游 PR 流程 | 消除全部 Fork 债务 | 上游合并节奏不可控 |
 
-## 阶段性推荐
+## 阶段性推荐（2026-08-13 深度分析更新）
 
-**倾向方案 A**：patch1 已上游化（删除），实际 rebase 债务只剩 patch2（1-3 人日），成本低于 ADR-009 原估的 2 周门槛。最终决策待构建/回归/能力探测三步完成后定稿（动态网络更新能力的实测结果仍是关键输入——若 v0.0.104 支持，Phase 3 的 MVP 动态策略发布可解锁）。
+**强烈倾向方案 A**：深度分析（[openshell-upgrade-rebase-analysis.md](openshell-upgrade-rebase-analysis.md)）确认**两个 patch 均已被上游完全吸收**（常量/校验函数/测试夹具逐字存在），rebase 成本从 1-3 人日修正为 **≈0 + 语义等价验证（V1-V5）**。最终决策待构建/回归/能力探测完成后定稿（动态网络更新能力仍是 MVP 范围的关键闸门）。
 
 ## 后果
 
 - 定稿后：`apps/control-api` 的 OpenShell client（`adapters/openshell/client.py`）按探测到的能力矩阵实现；
-- patch 治理表（ADR-005）同步：0001 → 待退役（回归验证后），0002 → 人工 rebase。
+- patch 治理表（ADR-005）同步：0001/0002 → `upstreamed`（V1-V5 验证通过后归档）。
