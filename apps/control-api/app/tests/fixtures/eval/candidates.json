@@ -1,0 +1,20 @@
+{
+  "schema_version": "siq.eval.candidates.v1",
+  "labeling": "人工标注：positive=智能体候选（Hermes/OpenClaw 等框架的 Agent 定义），negative=普通服务/脚本（非智能体）。两组：vocab_match=名称含基线词表关键词；hard=名称不含关键词（需模型语义理解）。",
+  "samples": [
+    {"name": "siq_legal_advisor", "label": "positive", "group": "vocab_match", "framework": "hermes"},
+    {"name": "finance-auditor", "label": "positive", "group": "vocab_match", "framework": "hermes"},
+    {"name": "risk-controller", "label": "positive", "group": "vocab_match", "framework": "hermes"},
+    {"name": "sector-expert", "label": "positive", "group": "vocab_match", "framework": "hermes"},
+    {"name": "research-assistant", "label": "positive", "group": "vocab_match", "framework": "hermes"},
+    {"name": "company-strategist", "label": "positive", "group": "vocab_match", "framework": "hermes"},
+    {"name": "deal_review_bot", "label": "positive", "group": "hard", "framework": "hermes"},
+    {"name": "risk_probe_runner", "label": "positive", "group": "hard", "framework": "hermes"},
+    {"name": "postgres-backup", "label": "negative", "group": "vocab_match", "framework": "none"},
+    {"name": "nginx-proxy", "label": "negative", "group": "vocab_match", "framework": "none"},
+    {"name": "redis-cache", "label": "negative", "group": "vocab_match", "framework": "none"},
+    {"name": "cron-cleaner", "label": "negative", "group": "vocab_match", "framework": "none"},
+    {"name": "file_sync_worker", "label": "negative", "group": "hard", "framework": "none"},
+    {"name": "log_rotator", "label": "negative", "group": "hard", "framework": "none"}
+  ]
+}
