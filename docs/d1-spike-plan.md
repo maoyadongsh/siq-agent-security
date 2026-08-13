@@ -38,6 +38,12 @@
 | 能力探测 | 动态网络更新 / Interceptor 实测结果（是/否 + 证据） |
 | 决策输出 | ADR-009 定稿（方案 A/B/C + 理由） |
 
+## 实测结果（2026-08-13，候选 v0.0.104）
+
+- 补丁 rebase：0001-landlock 3/5 hunk 冲突，但**上游 v0.0.104 已内置 access-mask 语义**（landlock.rs:297-400 区域），倾向退役；0002-bind-mount 10/11+1/1 冲突（driver-docker 上游重构），需人工 rebase 1-3 人日；
+- 待构建环境执行：构建 patched 二进制 → 78 项回归对照 → 动态网络更新/Interceptor 探测；
+- 阶段性结论已写入 [ADR-009](adr/0009-openshell-version-path.md)：倾向方案 A（升级），成本低于原估。
+
 ## 边界
 
 - 评估器只在 /tmp 目录工作，不修改生产状态（不 source env.sh、不写 var/、不动既有构建脚本）；
