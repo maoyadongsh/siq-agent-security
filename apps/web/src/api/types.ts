@@ -521,6 +521,17 @@ export interface DeploymentRow {
   verification: Record<string, unknown> | null;
 }
 
+/** 总览统计（对齐 GET /api/v1/overview） */
+export interface OverviewStats {
+  agents: number;
+  candidates: number;
+  open_findings: number;
+  critical_findings: number;
+  environments: number;
+  edges_online: number;
+  policies: number;
+}
+
 export interface ApiEnvelope<T> {
   ok: boolean;
   data?: T;

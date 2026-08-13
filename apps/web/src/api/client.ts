@@ -22,6 +22,7 @@ import type {
   PolicyRow,
   ChangeRequestRow,
   DeploymentRow,
+  OverviewStats,
   ApiEnvelope,
 } from './types';
 
@@ -220,8 +221,8 @@ export function post<T>(
  * ------------------------------------------------------------------------- */
 
 export const api = {
-  /** 总览统计（占位：后端暂无 /overview，保持 disconnected 空态） */
-  overview: () => get<Record<string, unknown>>('/overview'),
+  /** 总览统计（真实端点） */
+  overview: () => get<OverviewStats>('/overview'),
   /** 智能体资产列表（confirmed|managed|stale|retired） */
   listAgents: () => get<AgentAsset[]>('/agents'),
   /** 智能体资产详情 */
