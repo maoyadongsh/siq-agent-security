@@ -19,7 +19,7 @@ def _create_policy(client, headers, name=None, enforcement_mode="audit_only"):
             "selector": {"agent_ids": ["agt_1"]},
             "network": [
                 {
-                "endpoint": "api.example.com:443/orders/**",
+                "endpoint": "api.example.com:443",
                 "effect": "allow",
                 "methods": ["GET"],
                 "purpose": "order-read",
@@ -226,3 +226,99 @@ def test_deployment_compiles_with_fake_backend(client, tenant_a, env_a, monkeypa
     # 默认策略含 network（v0.0.83 无动态更新）→ needs_generation + 显式 unsupported
     assert compiled["needs_generation"] is True
     assert "network.dynamic_update" in compiled["unsupported_by_backend"]
+
+
+def _fake_cli_backend(monkeypatch, *, revision="1", apply_error=None):
+    """真实闭环测试夹具：审批→编译→plan→apply→verify 全链路的可控 CLI 后端。"""
+    from app.adapters.openshell.cli_backend import OpenShellCliBackend
+    from app.tests.test_openshell_cli_backend import GATEWAY_INFO, REAL_POLICY_GET_FULL
+
+    class FakeCli(OpenShellCliBackend):
+        def __init__(self):
+            super().__init__(runner=self._r, env_script="/nonexistent")
+            self.applied = []
+            self.active_rev = 1
+
+        def _r(self, args):
+            if tuple(args[:2]) == ("gateway", "info"):
+                return 0, GATEWAY_INFO, ""
+            if tuple(args[:2]) == ("policy", "get") and "--full" in args:
+                # 有状态：set 后回读必须反映新 revision 与新网络规则（真实网关语义）
+                import yaml as _yaml
+
+                body = _yaml.safe_load(REAL_POLICY_GET_FULL.split("---", 1)[1])
+                if self.active_rev >= 2:
+                    body["network_policies"] = {
+                        "siq_as_rule_0": {
+                            "name": "siq-as-rule-0",
+                            "endpoints": [{"host": "api.example.com", "port": 443}],
+                            "binaries": [{"path": "/usr/bin/curl"}],
+                        }
+                    }
+                meta = f"Version:      1\nHash:         h\nStatus:       Loaded\nActive:       {self.active_rev}\n---\n"
+                return 0, meta + _yaml.safe_dump(body, sort_keys=False), ""
+            if tuple(args[:2]) == ("policy", "set"):
+                if apply_error:
+                    return 1, apply_error, ""
+                self.applied.append(args)
+                self.active_rev += 1
+                return 0, f"✓ Policy version {self.active_rev} submitted (hash: 5385cd2cf66f)\n", ""
+            return 1, "", f"unexpected: {args}"
+
+    fake = FakeCli()
+    monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: fake)
+    return fake
+
+
+def test_deployment_openshell_cli_closed_loop(client, tenant_a, env_a, monkeypatch):
+    """#2 闭环：审批 → 编译 → 真实 policy set → 读回验证 → effective（不变量 #5）。"""
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    fake = _fake_cli_backend(monkeypatch)
+    policy = _create_policy(client, tenant_a)
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+
+    dep = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "target": "siq-as-live"},
+        headers=tenant_a,
+    )
+    assert dep.status_code == 201, dep.text
+    body = dep.json()
+    assert body["status"] == "effective"  # 真实 policy set + 读回验证通过
+    assert body["verification"]["allow_checks"]
+    assert body["verification"]["deny_checks"]
+    assert fake.applied, "policy set 必须真实发生"
+    assert fake.applied[0][2] == "siq-as-live"
+
+
+def test_deployment_openshell_apply_failure_fails_closed(client, tenant_a, env_a, monkeypatch):
+    """网关拒绝（如静态段不一致）→ 502 + deployment failed，绝不伪装 effective。"""
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    _fake_cli_backend(monkeypatch, apply_error="Error: filesystem include_workdir cannot be changed on a live sandbox")
+    policy = _create_policy(client, tenant_a)
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+
+    dep = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "target": "siq-as-live"},
+        headers=tenant_a,
+    )
+    assert dep.status_code == 502
+    with session_scope() as session:
+        from app.models import Deployment
+
+        d = session.query(Deployment).filter(Deployment.change_request_id == cr["id"]).one()
+        assert d.status == "failed"
+        assert "include_workdir" in (d.receipt or {}).get("error", "")

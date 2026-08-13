@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.adapters.openshell.cli_backend import OpenShellCliBackend
 from app.db import get_session
 from app.models import ChangeRequest, Deployment, DesiredPolicy, EdgeTask, Environment, utcnow
 from app.outbox import audit, emit_event
@@ -244,9 +245,70 @@ def create_deployment(
         "deployment_id": deployment.id,
         "enforcement_mode": policy.enforcement_mode,
     }
-    # 执行后端编译接线（Phase 3 前置）：SIQ_AS_ENFORCEMENT_BACKEND=fake 时编译并显式标记 unsupported；
-    # 默认 none 保持占位语义；真实后端待 D1/D2 后接入（fail-closed，见 adapters/openshell/client.py）
+    # 执行后端编译接线：SIQ_AS_ENFORCEMENT_BACKEND 决定编译与发布路径
     _compile_for_enforcement(policy, task_payload)
+
+    import os
+
+    backend = os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
+    if backend == "openshell-cli":
+        # 真实闭环（2026-08-13 活网关验证）：审批后直接 policy set + 读回验证
+        # 静态段一致（只改网络段）→ 动态热更新；验证通过才 effective（§21.1 不变量 #5）
+        from app.adapters.openshell.contracts import AdapterError, RevisionConflict
+
+        try:
+            adapter = OpenShellCliBackend()
+            caps = adapter.probe()
+            desired = _desired_from_policy(policy)
+            compiled = adapter.compile(desired, caps)
+            plan = adapter.plan_change(body.target, compiled)
+            receipt = adapter.apply_dynamic(body.target, plan, expected_revision=plan.expected_revision)
+            # 正负向验证：允许集=策略网络端点；拒绝集=合成未授权端点（block 模式下必须不在允许集）
+            allow = [r.get("endpoint") for r in (compiled.artifact.get("network_policies") or [])]
+            checks = {"expect_allow": allow, "expect_deny": ["10.255.255.255:1"]}
+            report = adapter.verify(body.target, checks, receipt)
+            if not report.passed:
+                raise AdapterError(f"验证失败: {report.failures}")
+            deployment.receipt = {
+                "backend_revision": receipt.backend_revision,
+                "snapshot_hash": receipt.evidence.get("snapshot_hash", ""),
+            }
+            deployment.verification = {"allow_checks": report.allow_checks, "deny_checks": report.deny_checks}
+            deployment.status = "effective"
+            cr.status = "effective"
+            emit_event(
+                session,
+                identity.tenant_id,
+                "policy.deployment.verified.v1",
+                {"deployment_id": deployment.id, "backend_revision": receipt.backend_revision},
+                resource_ref=deployment.id,
+            )
+            session.commit()
+            session.refresh(deployment)
+            return deployment
+        except (AdapterError, RevisionConflict) as exc:
+            deployment.status = "failed"
+            deployment.receipt = {"error": str(exc)[:300]}
+            audit(
+                session,
+                identity.tenant_id,
+                identity.identity_type,
+                identity.actor_id,
+                "deployment.fail",
+                "deployment",
+                resource_id=deployment.id,
+                summary={"reason": str(exc)[:200]},
+            )
+            emit_event(
+                session,
+                identity.tenant_id,
+                "policy.deployment.failed.v1",
+                {"deployment_id": deployment.id, "reason": str(exc)[:200]},
+                resource_ref=deployment.id,
+            )
+            session.commit()
+            raise HTTPException(status_code=502, detail=f"openshell_apply_failed: {exc}") from None
+
     task = EdgeTask(
         environment_id=env.id,
         task_type="publish_policy",
@@ -288,6 +350,28 @@ def _task_ttl() -> int:
     return load_settings().edge_task_ttl_seconds
 
 
+def _desired_from_policy(policy: DesiredPolicy) -> dict:
+    """DesiredPolicy 行 → 编译输入（§14.1 字段全集）。"""
+    return {
+        "policy_id": policy.id,
+        "version": policy.version,
+        "selector": policy.selector or {},
+        "filesystem": policy.filesystem,
+        "network": policy.network,
+        "process": policy.process,
+        "model_routing": policy.model_routing,
+        "tools": policy.tools,
+        "tool_policies": policy.tool_policies,
+        "data_scope_refs": policy.data_scope_refs,
+        "secrets": policy.secrets,
+        "resources": policy.resources,
+        "audit": policy.audit,
+        "exceptions": policy.exceptions,
+        "enforcement_mode": policy.enforcement_mode,
+        "status": policy.status,
+    }
+
+
 def _compile_for_enforcement(policy: DesiredPolicy, task_payload: dict) -> None:
     """执行后端编译（env 开关）。未知语义拒绝（422），unsupported 显式入 payload。"""
     import os
@@ -313,26 +397,8 @@ def _compile_for_enforcement(policy: DesiredPolicy, task_payload: dict) -> None:
 
     from app.adapters.openshell.contracts import UnsupportedCapability
 
-    desired = {
-        "policy_id": policy.id,
-        "version": policy.version,
-        "selector": policy.selector or {},
-        "filesystem": policy.filesystem,
-        "network": policy.network,
-        "process": policy.process,
-        "model_routing": policy.model_routing,
-        "tools": policy.tools,
-        "tool_policies": policy.tool_policies,
-        "data_scope_refs": policy.data_scope_refs,
-        "secrets": policy.secrets,
-        "resources": policy.resources,
-        "audit": policy.audit,
-        "exceptions": policy.exceptions,
-        "enforcement_mode": policy.enforcement_mode,
-        "status": policy.status,
-    }
     try:
-        compiled = adapter.compile(desired)
+        compiled = adapter.compile(_desired_from_policy(policy))
     except UnsupportedCapability as exc:
         raise HTTPException(status_code=422, detail=f"compile_rejected: {exc}") from None
     report = adapter.validate(compiled)

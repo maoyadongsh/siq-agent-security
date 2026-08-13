@@ -132,6 +132,29 @@ def test_apply_dynamic_revision_conflict():
         backend.apply_dynamic("s1", plan, expected_revision="0")  # 实际是 1
 
 
+def test_apply_dynamic_idempotent_unchanged_policy():
+    """实测网关语义：内容未变 → 'Policy unchanged (version N)'，视为成功（幂等重放）。"""
+    responses = {
+        ("gateway", "info"): (0, GATEWAY_INFO, ""),
+        ("policy", "get", "s1", "--full"): (0, REAL_POLICY_GET_FULL, ""),
+    }
+    unchanged = "· Policy unchanged (version 5, hash: 12f756c6915d)\n"
+
+    def runner(args):
+        if tuple(args[:2]) == ("policy", "set"):
+            return 0, unchanged, ""
+        return responses.get(tuple(args), (1, "", f"unexpected: {args}"))
+
+    backend = OpenShellCliBackend(runner=runner)
+    compiled = backend.compile(
+        {"policy_id": "p", "version": 1, "selector": {"agent_ids": ["a"]}, "network": [], "enforcement_mode": "block"}
+    )
+    plan = backend.plan_change("s1", compiled)
+    receipt = backend.apply_dynamic("s1", plan, expected_revision="1")
+    assert receipt.backend_revision == "5"
+    assert receipt.evidence["snapshot_hash"] == "12f756c6915d"
+
+
 def test_fs_change_rejected_by_gateway_is_adapter_error():
     responses = {
         ("gateway", "info"): (0, GATEWAY_INFO, ""),

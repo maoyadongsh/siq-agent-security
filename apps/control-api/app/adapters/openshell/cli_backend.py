@@ -45,6 +45,8 @@ _ANSI_RE = re.compile(r"\x1b\[[0-9;]*[mK]")
 
 # 实测捕获的真实输出（测试夹具同源）
 _VERSION_SUBMITTED_RE = re.compile(r"Policy version (\d+) submitted \(hash: ([0-9a-f]+)\)")
+# 实测：内容与当前一致时网关返回 no-op（幂等重放）
+_VERSION_UNCHANGED_RE = re.compile(r"Policy unchanged \(version (\d+), hash: ([0-9a-f]+)\)")
 
 Runner = Callable[[list[str]], tuple[int, str, str]]
 
@@ -88,11 +90,13 @@ class OpenShellCliBackend(EnforcementAdapter):
         return proc.returncode, proc.stdout, proc.stderr
 
     def _cli(self, *args: str) -> str:
+        """执行 CLI；成功输出可能落在 stdout 或 stderr（实测 policy set 的 ✓ 回执在 stderr）。"""
         rc, stdout, stderr = self._runner(list(args))
-        clean = _ANSI_RE.sub("", stdout)
+        clean_out = _ANSI_RE.sub("", stdout)
+        clean_err = _ANSI_RE.sub("", stderr)
         if rc != 0:
-            raise AdapterError(f"openshell {' '.join(args)} 失败(rc={rc}): {(stderr or clean).strip()[:300]}")
-        return clean
+            raise AdapterError(f"openshell {' '.join(args)} 失败(rc={rc}): {(clean_err or clean_out).strip()[:300]}")
+        return clean_out + "\n" + clean_err
 
     # ------------------------------------------------------------ 合同实现
 
@@ -201,7 +205,7 @@ class OpenShellCliBackend(EnforcementAdapter):
         }
         policy_file = self._write_policy_yaml(merged)
         out = self._cli("policy", "set", target, "--policy", policy_file)
-        match = _VERSION_SUBMITTED_RE.search(out)
+        match = _VERSION_SUBMITTED_RE.search(out) or _VERSION_UNCHANGED_RE.search(out)
         if not match:
             raise AdapterError(f"无法解析 policy set 回执（fail-closed）: {out.strip()[:200]}")
         new_revision = match.group(1)
@@ -218,7 +222,16 @@ class OpenShellCliBackend(EnforcementAdapter):
         )
 
     def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
+        """读回验证：Active 会短暂滞后于提交（实测 Loaded→Active 异步传播），
+        以 1s 间隔轮询至多 10 次；最终不一致才判失败（§21.1 不变量 #5）。"""
+        import time
+
         snapshot = self.read_effective_policy(target)
+        for _ in range(10):
+            if snapshot.revision == receipt.backend_revision:
+                break
+            time.sleep(1)
+            snapshot = self.read_effective_policy(target)
         failures: list[str] = []
         if snapshot.revision != receipt.backend_revision:
             failures.append(f"revision mismatch: {snapshot.revision} != {receipt.backend_revision}")
@@ -298,11 +311,16 @@ class OpenShellCliBackend(EnforcementAdapter):
         gateway: dict = {}
         for idx, rule in enumerate(rules):
             endpoint = rule.get("endpoint", "")
-            host, _, port = endpoint.partition(":")
+            host, _, rest = endpoint.partition(":")
+            port_str, _, path = rest.partition("/")
+            # v0.0.83 端点模型为 host:port；"/**" 全通配等价于无路径限制可剥离，
+            # 其他 path 粒度按 §15.2 "未知语义拒绝"（不静默弱化）
+            if path and path != "**":
+                raise AdapterError(f"path 级网络规则不被 v0.0.83 支持（拒绝编译）: {endpoint}")
             gateway[f"siq_as_rule_{idx}"] = {
                 "name": rule.get("rule_name", f"siq-as-rule-{idx}"),
-                "endpoints": [{"host": host, "port": int(port or 443)}],
-                "binaries": [{"path": p} for p in rule.get("binary_paths") or ["/usr/bin/curl"]],
+                "endpoints": [{"host": host, "port": int(port_str or 443)}],
+                "binaries": [{"path": bp} for bp in rule.get("binary_paths") or ["/usr/bin/curl"]],
             }
         return gateway
 
