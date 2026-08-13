@@ -1,0 +1,6 @@
+# gitleaks 配置：默认规则 + 测试夹具假凭据的精确放行
+[allowlist]
+  description = "测试夹具中的假凭据（非真实密钥，redactor 单测输入）"
+  regexes = [
+    '''ghp_0123456789abcdefghijklmnopqrstuvwxyz''',
+  ]

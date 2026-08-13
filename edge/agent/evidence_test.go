@@ -19,7 +19,7 @@ func TestRedactorString(t *testing.T) {
 		{"password=hunter2", true},
 		{"Authorization: Bearer abc.def.ghi", true},
 		{"AKIAIOSFODNN7EXAMPLE", true},
-		{"ghp_012345678901234567890123456789012345", true},
+		{"ghp_0123456789abcdefghijklmnopqrstuvwxyz", true}, // 测试夹具假令牌，.gitleaks.toml 已精确放行
 		{"-----BEGIN PRIVATE KEY-----\nabc\ndef\n-----END PRIVATE KEY-----", true},
 		{"model: gpt-4o", false},
 		{"hermes://profiles/siq_legal_advisor", false},

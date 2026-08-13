@@ -253,7 +253,7 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	rootBase := strings.TrimSuffix(strings.TrimSpace(protocol.ExpandHome(sc.Roots[0])), "/*")
 
 	for _, dir := range dirs {
-		if profiles >= limits.MaxFiles {
+		if int64(profiles) >= limits.MaxFiles {
 			batch.Truncated = true
 			break
 		}

@@ -107,7 +107,7 @@ func TestRequestResponseEnvelope(t *testing.T) {
 	if err := json.Unmarshal(data, &backResp); err != nil {
 		t.Fatal(err)
 	}
-	if !backResp.OK || backResp.Error == nil || backResp.Error.Code != protocol.CodeScopeInvalid {
-		t.Errorf("response round trip mismatch: %s", data)
+	if backResp.OK || backResp.Error == nil || backResp.Error.Code != protocol.CodeScopeInvalid {
+		t.Errorf("error response round trip mismatch: %s", data)
 	}
 }
