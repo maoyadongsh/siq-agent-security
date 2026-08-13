@@ -364,3 +364,32 @@ def test_cursor_pagination_agents(client, tenant_a):
         cursor = f"{last['updated_at']}|{last['id']}"
     assert len(seen) == len(set(seen)), "游标分页出现重复"
     assert len(seen) >= 5
+
+
+def test_worker_reopens_expired_dismissal(client, tenant_a):
+    """§10.4：dismissed 有效期到期自动重开为 candidate。"""
+    from datetime import timedelta
+
+    from app.db import session_scope as ss
+    from app.models import AgentAsset, utcnow as now_fn
+
+    with ss() as s:
+        _ensure_tenant(s, "tnt-A")
+        asset = AgentAsset(
+            tenant_id="tnt-A",
+            name="dismiss-me",
+            framework="hermes",
+            status="dismissed",
+            dismissed_reason="误判",
+            dismissed_expires_at=now_fn() - timedelta(minutes=1),
+            source_type="siq_hub",
+            source_locator="hub://dismiss-me",
+        )
+        s.add(asset)
+        s.commit()
+    summary = once()
+    assert summary["dismissals"] == 1
+    with ss() as s:
+        a = s.query(AgentAsset).filter(AgentAsset.name == "dismiss-me").one()
+        assert a.status == "candidate"
+        assert a.dismissed_expires_at is None

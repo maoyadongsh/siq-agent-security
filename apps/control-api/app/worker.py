@@ -18,7 +18,7 @@ from sqlalchemy import select
 
 from app.config import load_settings
 from app.db import init_db, session_scope
-from app.models import Finding, OutboxEvent, Tenant, utcnow
+from app.models import AgentAsset, Finding, OutboxEvent, Tenant, utcnow
 from app.outbox import audit, emit_event
 from app.rules import evaluate_all, upsert_findings
 
@@ -96,6 +96,44 @@ def reap_expired_risk_acceptance(session) -> int:
     return reopened
 
 
+def reopen_expired_dismissals(session) -> int:
+    """dismissed 资产到期自动重开为 candidate（设计文档 §10.4：有效期到期行为）。"""
+    now = utcnow()
+    rows = list(
+        session.scalars(
+            select(AgentAsset).where(
+                AgentAsset.status == "dismissed",
+                AgentAsset.dismissed_expires_at.is_not(None),
+                AgentAsset.dismissed_expires_at < now,
+            )
+        )
+    )
+    reopened = 0
+    for asset in rows:
+        asset.status = "candidate"
+        asset.dismissed_reason = None
+        asset.dismissed_expires_at = None
+        audit(
+            session,
+            asset.tenant_id,
+            "system",
+            "worker",
+            "agent.dismissal.expired",
+            "agent_asset",
+            resource_id=asset.id,
+        )
+        emit_event(
+            session,
+            asset.tenant_id,
+            "agent.candidate.discovered.v1",
+            {"agent_asset_id": asset.id, "reason": "dismissal_expired"},
+            resource_ref=asset.id,
+        )
+        reopened += 1
+    session.commit()
+    return reopened
+
+
 def run_rules(session) -> dict:
     tenants = list(session.scalars(select(Tenant).where(Tenant.status == "active")))
     total = {"created": 0, "updated": 0}
@@ -114,8 +152,9 @@ def once() -> dict:
     with session_scope() as session:
         published = publish_outbox(session)
         reaped = reap_expired_risk_acceptance(session)
+        dismissals = reopen_expired_dismissals(session)
         rules = run_rules(session)
-    return {"published": published, "reaped": reaped, "rules": rules}
+    return {"published": published, "reaped": reaped, "dismissals": dismissals, "rules": rules}
 
 
 def loop(interval_seconds: int) -> None:
