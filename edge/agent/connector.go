@@ -353,11 +353,9 @@ func ResolveConnectorBin(name, override string) (string, error) {
 	}
 	var candidates []string
 	if dir := os.Getenv("SIQ_CONNECTOR_BIN_DIR"); dir != "" {
-		candidates = append(candidates,
-			filepath.Join(dir, name+"-connector"),
-			filepath.Join(dir, name))
+		candidates = append(candidates, filepath.Join(dir, name+"-connector"))
 	}
-	candidates = append(candidates, name+"-connector", name)
+	candidates = append(candidates, name+"-connector")
 	for _, cand := range candidates {
 		if p, err := exec.LookPath(cand); err == nil {
 			return p, nil

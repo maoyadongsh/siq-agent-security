@@ -195,7 +195,11 @@ func cmdTasks(ctx context.Context, args []string) error {
 			log.Printf("task %s: failed to post receipt: %v", t.TaskID, err)
 			continue
 		}
-		log.Printf("task %s: status=%s candidates=%d evidence=%d", t.TaskID, rcpt.Status, rcpt.CandidateCount, rcpt.EvidenceCount)
+		if rcpt.Status != "success" {
+			log.Printf("task %s: status=%s error=%s %s", t.TaskID, rcpt.Status, rcpt.ErrorCode, rcpt.ErrorMessage)
+		} else {
+			log.Printf("task %s: status=%s candidates=%d evidence=%d", t.TaskID, rcpt.Status, rcpt.CandidateCount, rcpt.EvidenceCount)
+		}
 	}
 	return nil
 }

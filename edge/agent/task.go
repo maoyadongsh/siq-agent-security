@@ -162,6 +162,10 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 	if out.dropped > 0 {
 		log.Printf("task %s: dropped %d unreferenced evidence items", t.TaskID, out.dropped)
 	}
+	if len(out.candidates) == 0 && len(out.evidence) == 0 && len(out.permissions) == 0 {
+		// 空批是正常结果（如无标签容器）：跳过上传，回执记录 0 发现
+		return rcpt, nil
+	}
 	if err := r.Client.UploadBatch(ctx, r.State.DeviceIdentity, out.candidates, out.evidence, out.permissions); err != nil {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = "batch_upload_failed"

@@ -23,13 +23,35 @@ def _canonical_bytes(payload: dict) -> bytes:
 
 @lru_cache(maxsize=1)
 def get_signing_key() -> Ed25519PrivateKey:
+    # 生产：SIQ_AS_TASK_SIGNING_KEY_SEED（Secret Manager，32 字节 base64）
     seed_b64 = os.getenv("SIQ_AS_TASK_SIGNING_KEY_SEED")
     if seed_b64:
         seed = base64.b64decode(seed_b64)
         if len(seed) != 32:
             raise RuntimeError("SIQ_AS_TASK_SIGNING_KEY_SEED 必须是 32 字节 base64")
         return Ed25519PrivateKey.from_private_bytes(seed)
-    return Ed25519PrivateKey.generate()
+    # dev：持久化到本地文件（0600），后端重启密钥不变——
+    # 否则 Edge 钉住的公钥随重启失效（2026-08-14 实测教训：signature_invalid 全链路失败）
+    path = os.getenv("SIQ_AS_SIGNING_KEY_FILE", "signing-key.seed")
+    try:
+        with open(path) as fh:
+            existing = fh.read().strip()
+        if existing:
+            seed = base64.b64decode(existing)
+            if len(seed) == 32:
+                return Ed25519PrivateKey.from_private_bytes(seed)
+    except (OSError, ValueError):
+        pass
+    key = Ed25519PrivateKey.generate()
+    raw = key.private_bytes(
+        encoding=serialization.Encoding.Raw,
+        format=serialization.PrivateFormat.Raw,
+        encryption_algorithm=serialization.NoEncryption(),
+    )
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w") as fh:
+        fh.write(base64.b64encode(raw).decode("ascii"))
+    return key
 
 
 def public_key_base64() -> str:
