@@ -37,9 +37,9 @@ const columns: TableColumn<PermissionFactRow>[] = [
   {
     key: 'resource_value',
     header: '资源',
-    render: (row) => <code className="resource-cell">{row.resource_value}</code>,
+    render: (row) => <code className="resource-cell" title={row.resource_value}>{row.resource_value}</code>,
   },
-  { key: 'effect', header: '效果', render: (row) => row.effect },
+  { key: 'effect', header: '效果', render: (row) => <span className="cell-nowrap">{row.effect}</span> },
   {
     key: 'state',
     header: '状态',
@@ -53,11 +53,17 @@ const columns: TableColumn<PermissionFactRow>[] = [
     key: 'authority',
     header: '权威来源',
     render: (row) => (
-      <span className={row.authority === 'openshell' ? 'authority-openshell' : undefined}>{row.authority}</span>
+      <span className={`cell-nowrap${row.authority === 'openshell' ? ' authority-openshell' : ''}`}>{row.authority}</span>
     ),
   },
   { key: 'authority_revision', header: 'Revision', render: (row) => row.authority_revision ?? '—' },
-  { key: 'subject_id', header: '主体', render: (row) => row.subject_id },
+  {
+    key: 'subject_id',
+    header: '主体',
+    render: (row) => (
+      <span className="mono cell-ellipsis" title={row.subject_id}>{row.subject_id}</span>
+    ),
+  },
 ];
 
 export default function PermissionsPage() {

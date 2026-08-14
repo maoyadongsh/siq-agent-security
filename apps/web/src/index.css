@@ -588,9 +588,22 @@ a,
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  /* 桌面端固定一行七列（指标卡数量固定为 7），窄屏才折行 */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 20px;
+}
+
+@media (max-width: 1100px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .stat-card {
@@ -598,7 +611,7 @@ a,
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  padding: 18px 20px;
+  padding: 16px 18px;
 }
 
 /* 卡片 hover 微浮起（仅精确指针设备；触摸设备不触发） */
@@ -613,18 +626,78 @@ a,
   }
 }
 
+.stat-card .stat-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* 图标徽章：tint 底 + strong 图标（语义色调见 tone-*） */
+.stat-card .stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: rgb(0 0 0 / 0.05);
+  color: var(--text-secondary);
+}
+
+.stat-card .stat-icon.tone-primary {
+  background: #e6f1fc;
+  background: color-mix(in srgb, var(--siq-primary) 9%, transparent);
+  color: var(--siq-primary-strong);
+}
+
+.stat-card .stat-icon.tone-ok {
+  background: #e8f6ed;
+  background: color-mix(in srgb, var(--approve) 10%, transparent);
+  color: #0e6a30;
+  color: color-mix(in srgb, var(--approve) 65%, black);
+}
+
+.stat-card .stat-icon.tone-warn {
+  background: #fbf1e6;
+  background: color-mix(in srgb, var(--caution) 10%, transparent);
+  color: #8d4d04;
+  color: color-mix(in srgb, var(--caution) 65%, black);
+}
+
+.stat-card .stat-icon.tone-err {
+  background: #fce9e9;
+  background: color-mix(in srgb, var(--reject) 10%, transparent);
+  color: #8f1919;
+  color: color-mix(in srgb, var(--reject) 65%, black);
+}
+
 .stat-card .stat-value {
-  font-size: 27px;
+  font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.2;
+  line-height: 1.15;
   font-variant-numeric: tabular-nums;
 }
 
+/* 需要关注时数值才着色（0 值保持中性，页面更安静） */
+.stat-card .stat-value.tone-warn {
+  color: #8d4d04;
+  color: color-mix(in srgb, var(--caution) 65%, black);
+}
+
+.stat-card .stat-value.tone-err {
+  color: #8f1919;
+  color: color-mix(in srgb, var(--reject) 65%, black);
+}
+
 .stat-card .stat-label {
-  margin-top: 2px;
   color: var(--text-secondary);
   font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ---------------- 表格 ---------------- */
@@ -649,6 +722,8 @@ a,
   border-bottom: 1px solid var(--border);
   font-size: 13.5px;
   vertical-align: middle;
+  /* 长不可断内容（路径/ID）允许软换行，避免撑破表格 */
+  overflow-wrap: anywhere;
 }
 
 .table th {
@@ -1111,13 +1186,29 @@ a,
   flex-wrap: wrap;
 }
 
-/* 资源值芯片（mono 变体） */
+/* 资源值芯片（mono 变体）：长路径允许按字符换行 */
 .resource-cell {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 12px;
   background: rgb(0 0 0 / 0.05);
   padding: 1px 7px;
   border-radius: 6px;
+  word-break: break-all;
+}
+
+/* 单元格省略号截断（配合 title 悬浮显示全文） */
+.cell-ellipsis {
+  display: inline-block;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* 单元格不换行（短枚举值，如权威来源） */
+.cell-nowrap {
+  white-space: nowrap;
 }
 
 .authority-openshell {
@@ -1157,4 +1248,112 @@ a,
   letter-spacing: -0.03em;
   margin: 0 0 8px;
   color: var(--text);
+}
+
+/* ---------------- 总览快捷路径磁贴 ---------------- */
+
+.quick-grid {
+  display: grid;
+  /* 桌面端固定一行六列（入口数量固定为 6），窄屏才折行 */
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 1100px) {
+  .quick-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .quick-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.quick-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-card);
+  color: var(--text);
+  transition:
+    transform 180ms ease-out, box-shadow 180ms ease-out,
+    background-color 150ms ease-out, border-color 150ms ease-out;
+}
+
+.quick-tile:hover {
+  text-decoration: none;
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.quick-tile:active {
+  transform: scale(0.98);
+}
+
+/* 图标容器：默认主色 tint 底，hover 反白为主色实心（Apple 式强调切换） */
+.quick-tile-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  color: var(--siq-primary-strong);
+  background: #e6f1fc;
+  background: color-mix(in srgb, var(--siq-primary) 9%, transparent);
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+
+.quick-tile:hover .quick-tile-icon {
+  background: var(--siq-primary);
+  color: #fff;
+}
+
+.quick-tile-text {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quick-tile-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.quick-tile-desc {
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* hover 时出现的指向箭头（右上角） */
+.quick-tile-arrow {
+  position: absolute;
+  top: 16px;
+  right: 14px;
+  color: var(--text-secondary);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
+}
+
+.quick-tile:hover .quick-tile-arrow {
+  opacity: 1;
+  transform: none;
 }
