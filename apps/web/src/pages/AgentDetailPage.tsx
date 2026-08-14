@@ -143,11 +143,157 @@ export default function AgentDetailPage() {
               emptyText="暂无关联证据"
             />
           </div>
+          <PermissionGovernance assetId={id ?? ""} assetName={agent.name} />
         </>
       ) : null}
       <p>
         <Link to="/agents">← 返回智能体资产列表</Link>
       </p>
     </section>
+  );
+}
+
+
+/** 权限管控（§20.2 + 诚实边界 §6.5）：
+ * - enforce 徽标：enforced=真实强制（effective 部署）；declared_only=⚠️声明未强制；
+ * - 五域精细编辑器：文件读写路径 / 网络端点 / 进程身份 / 工具 / 模型 → 生成 Desired Policy；
+ * - 策略与部署列表（部署目标沙箱）。 */
+function PermissionGovernance({ assetId, assetName }: { assetId: string; assetName: string }) {
+  const [enf, setEnf] = useState<Awaited<ReturnType<typeof api.getAgentEnforcement>> | null>(null);
+  const [policies, setPolicies] = useState<Awaited<ReturnType<typeof api.getAgentPolicies>>>([]);
+  const [fsRO, setFsRO] = useState('/etc,/usr,/lib');
+  const [fsRW, setFsRW] = useState('/sandbox,/tmp');
+  const [network, setNetwork] = useState('');
+  const [tools, setTools] = useState('');
+  const [models, setModels] = useState('');
+  const [mode, setMode] = useState<'audit_only' | 'warn' | 'block'>('block');
+  const [formMsg, setFormMsg] = useState<string | null>(null);
+  const [formErr, setFormErr] = useState<string | null>(null);
+
+  const load = () => {
+    api
+      .getAgentEnforcement(assetId)
+      .then(setEnf)
+      .catch(() => setEnf(null));
+    api
+      .getAgentPolicies(assetId)
+      .then(setPolicies)
+      .catch(() => setPolicies([]));
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assetId]);
+
+  const onCreatePolicy = async () => {
+    setFormErr(null);
+    setFormMsg(null);
+    try {
+      const body: Record<string, unknown> = {
+        name: `agent-${assetName}-policy`,
+        selector: { agent_ids: [assetId] },
+        enforcement_mode: mode,
+      };
+      if (fsRO || fsRW) {
+        body.filesystem = {
+          read_only: fsRO.split(',').map((s) => s.trim()).filter(Boolean),
+          read_write: fsRW.split(',').map((s) => s.trim()).filter(Boolean),
+        };
+      }
+      if (network.trim()) {
+        body.network = network
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .map((endpoint) => ({ endpoint, effect: 'allow', binary_paths: ['/usr/bin/curl'], purpose: 'web-edited' }));
+      }
+      if (tools.trim()) body.tools = tools.split(',').map((s) => s.trim()).filter(Boolean);
+      if (models.trim()) body.model_routing = { allowed_models: models.split(',').map((s) => s.trim()).filter(Boolean) };
+      await api.createPolicy(body);
+      setFormMsg('策略已创建——请到「变更中心」审批并部署到该智能体的沙箱');
+      load();
+    } catch (err) {
+      setFormErr(err instanceof ApiError ? err.message : '创建失败');
+    }
+  };
+
+  return (
+    <div className="card">
+      <h2>
+        权限管控{' '}
+        {enf && (
+          <span className={`state-tag ${enf.enforce_status === 'enforced' ? 'effective' : 'unknown'}`}>
+            {enf.enforce_status === 'enforced' ? '✅ 已强制（OpenShell）' : '⚠️ 声明未强制'}
+          </span>
+        )}
+      </h2>
+
+      {enf && enf.enforce_status === 'declared_only' && (
+        <p className="page-desc">
+          该智能体当前没有 effective 部署：权限操作保存为期望策略，配合权限视图的 Diff 与漂移检测使用（§6.5 控制面≠执行面，未沙箱化的智能体无法真实强制）。
+        </p>
+      )}
+      {enf && enf.all_deployments.length > 0 && (
+        <p className="page-desc">
+          部署记录：{enf.all_deployments.map((d) => `${d.target}(${d.status})`).join('、')}
+        </p>
+      )}
+
+      <div className="form-box">
+        <label>
+          文件只读路径（逗号分隔）
+          <input value={fsRO} onChange={(e) => setFsRO(e.target.value)} />
+        </label>
+        <label>
+          文件可写路径（逗号分隔）
+          <input value={fsRW} onChange={(e) => setFsRW(e.target.value)} />
+        </label>
+        <label>
+          网络端点（每行一个 host:port）
+          <textarea rows={3} value={network} onChange={(e) => setNetwork(e.target.value)} placeholder="api.example.com:443" />
+        </label>
+        <label>
+          工具（逗号分隔）
+          <input value={tools} onChange={(e) => setTools(e.target.value)} placeholder="document.read,model.generate" />
+        </label>
+        <label>
+          允许模型（逗号分隔）
+          <input value={models} onChange={(e) => setModels(e.target.value)} placeholder="MiniMax-M3" />
+        </label>
+        <label>
+          执行档位
+          <select value={mode} onChange={(e) => setMode(e.target.value as typeof mode)}>
+            <option value="audit_only">仅审计</option>
+            <option value="warn">告警</option>
+            <option value="block">阻断</option>
+          </select>
+        </label>
+        <button className="btn-sm btn-primary" onClick={onCreatePolicy}>
+          生成期望策略
+        </button>
+        {formMsg && <span className="sync-ok">{formMsg}</span>}
+        {formErr && <span className="sync-err">{formErr}</span>}
+      </div>
+
+      {policies.length > 0 && (
+        <div className="card">
+          <h3>已有策略</h3>
+          <SimpleTable
+            columns={[
+              { key: 'name', header: '名称', render: (p) => p.name },
+              { key: 'version', header: '版本', render: (p) => `v${p.version}` },
+              { key: 'enforcement_mode', header: '档位', render: (p) => p.enforcement_mode },
+              { key: 'status', header: '状态', render: (p) => p.status },
+            ]}
+            rows={policies}
+            rowKey={(p) => p.id}
+          />
+          <p className="page-desc">
+            <Link to="/changes">→ 到变更中心审批并部署</Link>
+          </p>
+        </div>
+      )}
+    </div>
   );
 }

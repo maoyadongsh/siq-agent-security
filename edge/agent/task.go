@@ -162,7 +162,7 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 	if out.dropped > 0 {
 		log.Printf("task %s: dropped %d unreferenced evidence items", t.TaskID, out.dropped)
 	}
-	if err := r.Client.UploadBatch(ctx, r.State.DeviceIdentity, out.candidates, out.evidence); err != nil {
+	if err := r.Client.UploadBatch(ctx, r.State.DeviceIdentity, out.candidates, out.evidence, out.permissions); err != nil {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = "batch_upload_failed"
 		rcpt.ErrorMessage = err.Error()
@@ -172,11 +172,12 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 }
 
 type scanOutcome struct {
-	candidates []*protocol.Candidate
-	evidence   []*protocol.Evidence
-	dropped    int
-	cursor     string
-	truncated  bool
+	candidates  []*protocol.Candidate
+	evidence    []*protocol.Evidence
+	permissions []*protocol.PermissionFact
+	dropped     int
+	cursor      string
+	truncated   bool
 }
 
 // runScan drives one connector subprocess through describe → validate_scope
@@ -252,11 +253,12 @@ func (r *Runner) runScan(ctx context.Context, sr ScanRequest, bin string) (*scan
 		return nil, err
 	}
 	return &scanOutcome{
-		candidates: batch.Candidates,
-		evidence:   kept,
-		dropped:    len(dropped),
-		cursor:     cursor,
-		truncated:  batch.Truncated,
+		candidates:  batch.Candidates,
+		evidence:    kept,
+		permissions: batch.PermissionFacts,
+		dropped:     len(dropped),
+		cursor:      cursor,
+		truncated:   batch.Truncated,
 	}, nil
 }
 

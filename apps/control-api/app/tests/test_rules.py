@@ -770,3 +770,86 @@ def test_get_scan_task_status(client, tenant_a, tenant_b, env_a):
 
     cross = client.get(f"/api/v1/scans/{created['task_id']}", headers=tenant_b)
     assert cross.status_code == 404
+
+
+def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypatch):
+    """agent→policy/enforcement 绑定（诚实边界 §6.5）：未部署=declared_only，effective 部署=enforced。"""
+    # 造一个 confirmed 资产
+    agent = _make_named_candidate(client, tenant_a, "bind-agent")
+    client.post(f"/api/v1/candidates/{agent['id']}/confirm", json={}, headers=tenant_a)
+
+    # 初始：无策略 → declared_only
+    enf = client.get(f"/api/v1/agents/{agent['id']}/enforcement", headers=tenant_a).json()
+    assert enf["enforce_status"] == "declared_only"
+    assert enf["policy_count"] == 0
+
+    # 建策略并部署（fake 后端闭环）
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    from app.adapters.openshell.cli_backend import OpenShellCliBackend
+    from app.adapters.openshell.contracts import (
+        BackendCapabilities,
+        DeploymentReceipt,
+        PolicySnapshot,
+        VerificationReport,
+    )
+
+    class FakeCli(OpenShellCliBackend):
+        def __init__(self):
+            super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
+
+        def probe(self):
+            return BackendCapabilities(backend="openshell", schema_version="v1", dynamic_network_update=True)
+
+        def read_effective_policy(self, target):
+            return PolicySnapshot(target=target, revision="1", network=[])
+
+        def plan_change(self, target, compiled):
+            from app.adapters.openshell.contracts import ChangePlan
+
+            return ChangePlan(
+                target=target, kind="dynamic", expected_revision="1", artifact_hash=compiled.artifact_hash
+            )
+
+        def apply_dynamic(self, target, plan, expected_revision):
+            return DeploymentReceipt(backend_revision="2", evidence={"snapshot_hash": "h"})
+
+        def verify(self, target, checks, receipt):
+            return VerificationReport(
+                passed=True,
+                allow_checks=[{"endpoint": e, "result": "allow"} for e in checks.get("expect_allow", [])],
+                deny_checks=[{"endpoint": e, "result": "deny"} for e in checks.get("expect_deny", [])],
+            )
+
+    monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: FakeCli())
+
+    import uuid as _uuid
+
+    pol = client.post(
+        "/api/v1/policies",
+        json={
+            "name": f"bind-policy-{_uuid.uuid4().hex[:8]}",
+            "selector": {"agent_ids": [agent["id"]]},
+            "network": [{"endpoint": "bind.example.com:443", "effect": "allow"}],
+            "enforcement_mode": "block",
+        },
+        headers=tenant_a,
+    ).json()
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": pol["id"], "idempotency_key": f"ik-{_uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+    dep = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "target": "bind-sandbox"},
+        headers=tenant_a,
+    ).json()
+    assert dep["status"] == "effective"
+
+    policies = client.get(f"/api/v1/agents/{agent['id']}/policies", headers=tenant_a).json()
+    assert any(p["id"] == pol["id"] for p in policies)
+    enf2 = client.get(f"/api/v1/agents/{agent['id']}/enforcement", headers=tenant_a).json()
+    assert enf2["enforce_status"] == "enforced"
+    assert any(d["target"] == "bind-sandbox" for d in enf2["effective_deployments"])

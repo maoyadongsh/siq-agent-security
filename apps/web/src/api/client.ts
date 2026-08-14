@@ -258,6 +258,20 @@ export const api = {
       created: number;
       updated: number;
     }>('/permissions/check-drift', {}),
+  /** agent 的 Desired Policy 列表 */
+  getAgentPolicies: (assetId: string) =>
+    get<{ id: string; name: string; enforcement_mode: string; version: number; status: string; unsupported_by_backend: string[] }[]>(
+      `/agents/${encodeURIComponent(assetId)}/policies`,
+    ),
+  /** agent 管控状态（诚实边界：enforced / declared_only） */
+  getAgentEnforcement: (assetId: string) =>
+    get<{
+      agent_id: string;
+      enforce_status: 'enforced' | 'declared_only';
+      policy_count: number;
+      effective_deployments: { id: string; policy_id: string; target: string; status: string }[];
+      all_deployments: { id: string; policy_id: string; target: string; status: string }[];
+    }>(`/agents/${encodeURIComponent(assetId)}/enforcement`),
   /** declared vs effective 权限 Diff（§12.4） */
   permissionsDiff: (subjectId: string) =>
     get<{

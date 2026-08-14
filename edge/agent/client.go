@@ -195,10 +195,11 @@ func backoffDelay(attempt int) time.Duration {
 // (design doc §9.3 data flow: E -> C 上传候选资产与证据摘要). The batch is
 // sealed (signature/collector_id) before upload; permission facts are empty
 // in Phase 1 (connectors do not emit them yet).
-func (c *Client) UploadBatch(ctx context.Context, deviceIdentity string, candidates []*protocol.Candidate, evidence []*protocol.Evidence) error {
+func (c *Client) UploadBatch(ctx context.Context, deviceIdentity string, candidates []*protocol.Candidate, evidence []*protocol.Evidence, permissionFacts []*protocol.PermissionFact) error {
 	body := map[string]any{
-		"candidates": candidates,
-		"evidence":   evidence,
+		"candidates":       candidates,
+		"evidence":         evidence,
+		"permission_facts": permissionFacts,
 	}
 	return c.do(ctx, http.MethodPost, "/edge/v1/batches", body, nil, 3)
 }

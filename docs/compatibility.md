@@ -61,5 +61,6 @@
 | hermes（Go） | 已实现（build/vet/test 全绿） | scope 校验/符号链接逃逸/.env 拒绝/截断 |
 | docker（Go） | 已实现（build/vet 通过，测试待补） | 环境变量值不出机（struct 无 Env 字段） |
 | directory（Go） | 已实现（build/vet/test 全绿） | 空范围拒绝（无默认范围）/符号链接逃逸/.env 永不读取/限额截断 |
+| openclaw（Go） | 已实现（L1/L2 只读，build/vet/test 全绿） | 发现 agents.list + declared model/workspace 权限事实；auth-profiles 永不读（只记大小）；不写 OpenClaw 配置 |
 | kubernetes | 待 Phase 4 | — |
 | siq | 待 Phase 1（依赖 Export Contract D3-D5） | — |

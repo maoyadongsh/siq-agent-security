@@ -638,6 +638,93 @@ def get_agent_evidence(
     )
 
 
+@router.get("/api/v1/agents/{asset_id}/policies")
+def get_agent_policies(
+    asset_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """该智能体的 Desired Policy 列表（selector.agent_ids 匹配）。"""
+    from app.models import DesiredPolicy
+
+    _asset_or_404(session, identity.tenant_id, asset_id)
+    ensure_permission(identity, "agent:read")
+    policies = list(
+        session.scalars(
+            select(DesiredPolicy)
+            .where(DesiredPolicy.tenant_id == identity.tenant_id)
+            .order_by(DesiredPolicy.updated_at.desc())
+            .limit(200)
+        )
+    )
+    matched = [p for p in policies if asset_id in ((p.selector or {}).get("agent_ids") or [])]
+    return [
+        {
+            "id": p.id,
+            "name": p.name,
+            "enforcement_mode": p.enforcement_mode,
+            "version": p.version,
+            "status": p.status,
+            "unsupported_by_backend": p.unsupported_by_backend,
+        }
+        for p in matched
+    ]
+
+
+@router.get("/api/v1/agents/{asset_id}/enforcement")
+def get_agent_enforcement(
+    asset_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """该智能体的管控状态（诚实边界，§6.5 控制面≠执行面）：
+    enforced=存在 effective 部署（真实强制）；declared_only=只有期望策略未部署（⚠️声明未强制）。"""
+    from app.models import ChangeRequest, Deployment, DesiredPolicy
+
+    _asset_or_404(session, identity.tenant_id, asset_id)
+    ensure_permission(identity, "agent:read")
+    policies = list(
+        session.scalars(
+            select(DesiredPolicy)
+            .where(DesiredPolicy.tenant_id == identity.tenant_id)
+            .order_by(DesiredPolicy.updated_at.desc())
+            .limit(200)
+        )
+    )
+    matched = [p for p in policies if asset_id in ((p.selector or {}).get("agent_ids") or [])]
+    deployments: list[dict] = []
+    for policy in matched:
+        crs = list(
+            session.scalars(
+                select(ChangeRequest).where(
+                    ChangeRequest.tenant_id == identity.tenant_id,
+                    ChangeRequest.policy_id == policy.id,
+                )
+            )
+        )
+        for cr in crs:
+            for dep in session.scalars(
+                select(Deployment).where(Deployment.change_request_id == cr.id)
+            ):
+                deployments.append(
+                    {
+                        "id": dep.id,
+                        "policy_id": policy.id,
+                        "target": dep.target,
+                        "status": dep.status,
+                        "verification": dep.verification,
+                    }
+                )
+    enforced = [d for d in deployments if d["status"] == "effective"]
+    return {
+        "agent_id": asset_id,
+        "enforce_status": "enforced" if enforced else "declared_only",
+        "policy_count": len(matched),
+        "effective_deployments": enforced,
+        "all_deployments": deployments,
+    }
+
+
 @router.get("/api/v1/agents/{asset_id}/instances")
 def get_agent_instances(
     asset_id: str,

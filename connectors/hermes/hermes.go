@@ -241,8 +241,9 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	sort.Strings(dirs)
 
 	batch := protocol.EvidenceBatch{
-		Candidates: []*protocol.Candidate{},
-		Evidence:   []*protocol.Evidence{},
+		Candidates:      []*protocol.Candidate{},
+		Evidence:        []*protocol.Evidence{},
+		PermissionFacts: []*protocol.PermissionFact{},
 	}
 	now := time.Now().UTC().Format(time.RFC3339)
 	red := protocol.NewRedactor()
@@ -313,8 +314,27 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 		cand.Attributes["provider"] = red.RedactString(provider)
 		if len(toolsets) > 0 {
 			cand.Attributes["toolsets"] = red.RedactString(strings.Join(toolsets, ","))
+			// declared 工具权限事实（绝不 effective；权威源解析另行完成）
+			for _, toolset := range toolsets {
+				batch.PermissionFacts = append(batch.PermissionFacts, &protocol.PermissionFact{
+					Subject:    &protocol.Subject{Type: "agent_asset", ID: cand.CandidateID},
+					Domain:     "tool",
+					Action:     "tool.use",
+					Resource:   &protocol.Resource{Type: "toolset", Value: red.RedactString(toolset)},
+					Effect:     "allow",
+					State:      "declared",
+					Authority:  "hermes-profile",
+					EvidenceIDs: []string{},
+				})
+			}
 		}
 
+		// 把候选的证据引用回填到其 declared 权限事实（contract §4）
+		for _, pf := range batch.PermissionFacts {
+			if pf.Subject != nil && pf.Subject.ID == cand.CandidateID && len(pf.EvidenceIDs) == 0 {
+				pf.EvidenceIDs = cand.EvidenceIDs
+			}
+		}
 		for _, inc := range sc.Include {
 			if protocol.IsEnvFile(inc) {
 				continue // .env handled by the secret_ref pass below

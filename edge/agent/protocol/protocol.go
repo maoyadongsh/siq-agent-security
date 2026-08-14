@@ -114,8 +114,39 @@ type ScanPlan struct {
 type EvidenceBatch struct {
 	Candidates []*Candidate `json:"candidates"`
 	Evidence   []*Evidence  `json:"evidence"`
-	Cursor     string       `json:"cursor,omitempty"`
-	Truncated  bool         `json:"truncated,omitempty"`
+	// PermissionFacts 为声明/观察类权限事实（declared/observed）。
+	// effective 必须由权威源解析（控制面拒绝 Edge 断言 effective）。
+	PermissionFacts []*PermissionFact `json:"permission_facts,omitempty"`
+	Cursor          string            `json:"cursor,omitempty"`
+	Truncated       bool              `json:"truncated,omitempty"`
+}
+
+// PermissionFact mirrors permission-fact.schema.json (control-plane batch
+// ingestion). State must be declared/inferred/observed/unknown — NEVER effective.
+type PermissionFact struct {
+	Subject           *Subject       `json:"subject"`
+	DelegatedUser     map[string]any `json:"delegated_user,omitempty"`
+	Domain            string         `json:"domain"`
+	Action            string         `json:"action"`
+	Resource          *Resource      `json:"resource"`
+	Effect            string         `json:"effect"`
+	Conditions        map[string]any `json:"conditions,omitempty"`
+	State             string         `json:"state"`
+	Authority         string         `json:"authority"`
+	AuthorityRevision string         `json:"authority_revision,omitempty"`
+	EvidenceIDs       []string       `json:"evidence_ids"`
+}
+
+// Subject identifies the permission holder.
+type Subject struct {
+	Type string `json:"type"`
+	ID   string `json:"id"`
+}
+
+// Resource is the permission target.
+type Resource struct {
+	Type  string `json:"type"`
+	Value string `json:"value"`
 }
 
 // CursorResult is the checkpoint result.
