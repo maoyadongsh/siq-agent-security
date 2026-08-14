@@ -8,19 +8,24 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
+from app.evidence_signing import batch_signed_bytes, evidence_signed_bytes, verify_hex_signature
 from app.models import AgentAsset, AgentInstance, EdgeTask, Environment, Evidence, PermissionFact, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import (
     AgentAssetOut,
     CandidateConfirm,
     CandidateDismiss,
+    EdgeBatchIn,
     EvidenceOut,
     PermissionFactOut,
     ScanCreate,
@@ -29,6 +34,8 @@ from app.schemas import (
 from app.security import Identity, ensure_permission, get_identity, require_permission, verify_edge_secret
 
 router = APIRouter(tags=["inventory"])
+
+_MAX_EDGE_BATCH_BYTES = 8 * 1024 * 1024
 
 
 @router.post("/api/v1/scans", response_model=ScanOut)
@@ -206,126 +213,199 @@ def _task_ttl(session: Session) -> int:
 
 @router.post("/edge/v1/batches")
 async def edge_upload_batch(request: Request, session: Session = Depends(get_session)):
-    """Edge 上传候选与证据批次。签名校验为 Phase 0 后续项（当前记录并告警，不静默放行未知签名）。"""
+    """验签、任务绑定和 Schema 校验后写入不可变 Evidence observations。"""
     device_identity = request.headers.get("X-Edge-Identity")
     if not device_identity:
         raise HTTPException(status_code=401, detail="missing_edge_identity")
-    edge = verify_edge_secret(request, device_identity)
-    body = await _read_json(request)
-    candidates = body.get("candidates") or []
-    evidence = body.get("evidence") or []
-    permission_facts = body.get("permission_facts") or []
+    edge = verify_edge_secret(request, device_identity, session)
+    raw_body = await _read_json(request)
+    signature = raw_body.get("signature", "")
+    if not verify_hex_signature(edge.public_key_pem, batch_signed_bytes(raw_body), signature):
+        raise HTTPException(status_code=401, detail="batch_signature_invalid")
+    try:
+        body = EdgeBatchIn.model_validate(raw_body)
+    except ValidationError as exc:
+        errors = [{"loc": list(error["loc"]), "type": error["type"]} for error in exc.errors()]
+        raise HTTPException(status_code=422, detail={"code": "batch_schema_invalid", "errors": errors}) from None
+
+    candidates = body.candidates
+    evidence = body.evidence
+    permission_facts = body.permission_facts
 
     if not candidates and not evidence and not permission_facts:
         raise HTTPException(status_code=422, detail="empty_batch")
+    task = session.scalar(
+        select(EdgeTask).where(
+            EdgeTask.id == body.task_id,
+            EdgeTask.environment_id == edge.environment_id,
+            EdgeTask.task_type == "scan",
+            EdgeTask.status.in_(["pending", "uploaded"]),
+        )
+    )
+    if task is None or task.expires_at < utcnow():
+        raise HTTPException(status_code=409, detail="batch_task_binding_invalid")
+    result_digest = hashlib.sha256(batch_signed_bytes(raw_body)).hexdigest()
+    if task.status == "uploaded":
+        if task.result_digest != result_digest:
+            raise HTTPException(status_code=409, detail="batch_task_replay_conflict")
+        return {"candidates": 0, "evidence": 0, "permission_facts": 0, "idempotent": True}
+
+    raw_evidence = raw_body.get("evidence") or []
+    for item in raw_evidence:
+        if item.get("collector_id") != edge.device_identity:
+            raise HTTPException(status_code=422, detail="evidence_collector_mismatch")
+        if not verify_hex_signature(edge.public_key_pem, evidence_signed_bytes(item), item.get("signature", "")):
+            raise HTTPException(status_code=401, detail="evidence_signature_invalid")
+
+    now = utcnow()
+    for item in evidence:
+        collected_at = _parse_dt(item.collected_at)
+        if collected_at is None or abs(now - collected_at) > timedelta(minutes=5):
+            raise HTTPException(status_code=422, detail="evidence_collection_stale")
+
     # 安全不变量：effective 只能来自权威源解析（Phase 2 Resolver），Edge 不得自报
     for pf in permission_facts:
-        if pf.get("state") == "effective":
+        if pf.state == "effective":
             raise HTTPException(status_code=422, detail="edge_cannot_assert_effective")
-        if pf.get("state") not in ("declared", "inferred", "observed", "unknown"):
-            raise HTTPException(status_code=422, detail=f"invalid_permission_state: {pf.get('state')}")
-    evidence_ids = {ev.get("evidence_id") for ev in evidence}
-    if evidence_ids:
-        referenced: set[str] = set()
-        for cand in candidates:
-            referenced.update(cand.get("evidence_ids") or [])
-        orphan = evidence_ids - referenced
-        if orphan:
-            # Connector 合同：每批 evidence 必须被本批 candidate 引用
-            raise HTTPException(status_code=422, detail=f"orphan_evidence: {sorted(orphan)[:3]}")
+    candidate_ids = [cand.candidate_id for cand in candidates]
+    if len(candidate_ids) != len(set(candidate_ids)):
+        raise HTTPException(status_code=422, detail="duplicate_candidate_id")
+    candidate_id_set = set(candidate_ids)
+    for pf in permission_facts:
+        if pf.subject.type == "agent_asset" and pf.subject.id not in candidate_id_set:
+            raise HTTPException(status_code=422, detail="permission_subject_candidate_missing")
+    evidence_ids = {ev.evidence_id for ev in evidence}
+    referenced: set[str] = set()
+    for cand in candidates:
+        referenced.update(cand.evidence_ids)
+    orphan = evidence_ids - referenced
+    if orphan:
+        # Connector 合同：每批 evidence 必须被本批 candidate 引用
+        raise HTTPException(status_code=422, detail=f"orphan_evidence: {sorted(orphan)[:3]}")
+    missing = referenced - evidence_ids
+    if missing:
+        raise HTTPException(status_code=422, detail=f"candidate_evidence_missing: {sorted(missing)[:3]}")
+    permission_refs = {ref for pf in permission_facts for ref in pf.evidence_ids}
+    missing_permission_refs = permission_refs - evidence_ids
+    if missing_permission_refs:
+        raise HTTPException(
+            status_code=422,
+            detail=f"permission_evidence_missing: {sorted(missing_permission_refs)[:3]}",
+        )
 
     env = session.get(Environment, edge.environment_id)
     if env is None:
         raise HTTPException(status_code=404, detail="environment_gone")
     tenant_id = env.tenant_id
-    now = utcnow()
-
     inserted_evidence = 0
     for ev in evidence:
-        # 重扫幂等（§10.2 增量扫描 / 用户"重新扫描"需求）：
-        # 同一证据 ID（同一来源定位）已存在 → 更新快照字段（内容哈希/时间/签名），不产生重复行。
-        existing_ev = session.get(Evidence, ev["evidence_id"])
+        existing_ev = session.scalar(
+            select(Evidence).where(
+                Evidence.tenant_id == tenant_id,
+                Evidence.environment_id == env.id,
+                Evidence.evidence_id == ev.evidence_id,
+                Evidence.content_hash == ev.content_hash,
+            )
+        )
         if existing_ev is not None:
-            if existing_ev.tenant_id != tenant_id:
-                raise HTTPException(status_code=422, detail=f"evidence_tenant_conflict: {ev['evidence_id']}")
-            existing_ev.content_hash = ev["content_hash"]
-            existing_ev.observed_at = _parse_dt(ev["observed_at"]) or existing_ev.observed_at
-            existing_ev.collected_at = _parse_dt(ev.get("collected_at")) or now
-            existing_ev.collector_id = edge.device_identity
-            existing_ev.signature = ev.get("signature", "")
-            existing_ev.expires_at = _parse_dt(ev.get("expires_at"))
             continue
         session.add(
             Evidence(
-                id=ev["evidence_id"],
+                evidence_id=ev.evidence_id,
                 tenant_id=tenant_id,
                 environment_id=env.id,
-                source_type=ev["source_type"],
-                source_locator=ev["source_locator"],
-                subject_ref=ev.get("subject_ref"),
-                observed_at=_parse_dt(ev["observed_at"]),
-                collected_at=_parse_dt(ev.get("collected_at")) or now,
+                source_type=ev.source_type,
+                source_locator=ev.source_locator,
+                subject_ref=ev.subject_ref,
+                observed_at=_parse_dt(ev.observed_at),
+                collected_at=_parse_dt(ev.collected_at) or now,
                 collector_id=edge.device_identity,
-                connector_version=ev.get("connector_version", "0"),
-                content_hash=ev["content_hash"],
-                redaction_profile=ev.get("redaction_profile", "siq.redaction.v1"),
-                classification=ev.get("classification", "internal"),
-                payload_ref=ev.get("payload_ref"),
-                signature=ev.get("signature", ""),
-                expires_at=_parse_dt(ev.get("expires_at")),
+                connector_version=ev.connector_version,
+                content_hash=ev.content_hash,
+                redaction_profile=ev.redaction_profile,
+                classification=ev.classification,
+                payload_ref=ev.payload_ref,
+                signature=ev.signature,
+                expires_at=_parse_dt(ev.expires_at),
             )
         )
         inserted_evidence += 1
 
     inserted_candidates = 0
+    candidate_asset_ids: dict[str, str] = {}
     for cand in candidates:
         existing = session.scalar(
             select(AgentAsset).where(
                 AgentAsset.tenant_id == tenant_id,
-                AgentAsset.source_type == cand["source_type"],
-                AgentAsset.source_locator == cand["source_locator"],
+                AgentAsset.source_type == cand.source_type,
+                AgentAsset.source_locator == cand.source_locator,
             )
         )
-        cand_evidence_ids = cand.get("evidence_ids") or []
+        cand_evidence_ids = cand.evidence_ids
         if existing is not None:
             existing.updated_at = now
             existing.evidence_ids = sorted(set((existing.evidence_ids or []) + cand_evidence_ids))
+            candidate_asset_ids[cand.candidate_id] = existing.id
             continue
-        session.add(
-            AgentAsset(
-                tenant_id=tenant_id,
-                name=cand["name"],
-                framework=cand.get("framework", "unknown"),
-                status="candidate",
-                source_type=cand["source_type"],
-                source_locator=cand["source_locator"],
-                evidence_ids=cand_evidence_ids,
-            )
+        asset = AgentAsset(
+            tenant_id=tenant_id,
+            name=cand.name,
+            framework=cand.framework,
+            status="candidate",
+            source_type=cand.source_type,
+            source_locator=cand.source_locator,
+            evidence_ids=cand_evidence_ids,
         )
+        session.add(asset)
+        session.flush()
+        candidate_asset_ids[cand.candidate_id] = asset.id
         inserted_candidates += 1
 
     inserted_permissions = 0
     for pf in permission_facts:
-        subject = pf.get("subject") or {}
-        resource = pf.get("resource") or {}
+        subject_id = candidate_asset_ids[pf.subject.id] if pf.subject.type == "agent_asset" else pf.subject.id
+        existing_pf = session.scalar(
+            select(PermissionFact).where(
+                PermissionFact.tenant_id == tenant_id,
+                PermissionFact.environment_id == env.id,
+                PermissionFact.subject_type == pf.subject.type,
+                PermissionFact.subject_id == subject_id,
+                PermissionFact.domain == pf.domain,
+                PermissionFact.action == pf.action,
+                PermissionFact.resource_type == pf.resource.type,
+                PermissionFact.resource_value == pf.resource.value,
+                PermissionFact.effect == pf.effect,
+                PermissionFact.state == pf.state,
+                PermissionFact.authority == pf.authority,
+            )
+        )
+        if existing_pf is not None:
+            existing_pf.delegated_user = pf.delegated_user
+            existing_pf.conditions = pf.conditions
+            existing_pf.authority_revision = pf.authority_revision
+            existing_pf.evidence_ids = pf.evidence_ids
+            existing_pf.valid_from = _parse_dt(pf.valid_from)
+            existing_pf.valid_until = _parse_dt(pf.valid_until)
+            continue
         session.add(
             PermissionFact(
                 tenant_id=tenant_id,
-                subject_type=subject.get("type", "agent_instance"),
-                subject_id=subject.get("id", ""),
-                delegated_user=pf.get("delegated_user"),
-                domain=pf.get("domain", "unknown"),
-                action=pf.get("action", ""),
-                resource_type=resource.get("type", "unknown"),
-                resource_value=resource.get("value", ""),
-                effect=pf.get("effect", "allow"),
-                conditions=pf.get("conditions") or {},
-                state=pf.get("state", "unknown"),
-                authority=pf.get("authority", "edge-connector"),
-                authority_revision=pf.get("authority_revision"),
-                evidence_ids=pf.get("evidence_ids") or [],
-                valid_from=_parse_dt(pf.get("valid_from")),
-                valid_until=_parse_dt(pf.get("valid_until")),
+                environment_id=env.id,
+                subject_type=pf.subject.type,
+                subject_id=subject_id,
+                delegated_user=pf.delegated_user,
+                domain=pf.domain,
+                action=pf.action,
+                resource_type=pf.resource.type,
+                resource_value=pf.resource.value,
+                effect=pf.effect,
+                conditions=pf.conditions,
+                state=pf.state,
+                authority=pf.authority,
+                authority_revision=pf.authority_revision,
+                evidence_ids=pf.evidence_ids,
+                valid_from=_parse_dt(pf.valid_from),
+                valid_until=_parse_dt(pf.valid_until),
             )
         )
         inserted_permissions += 1
@@ -344,6 +424,8 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
             "permission_facts": inserted_permissions,
         },
     )
+    task.status = "uploaded"
+    task.result_digest = result_digest
     session.commit()
     return {
         "candidates": inserted_candidates,
@@ -357,17 +439,33 @@ def _parse_dt(value) -> datetime | None:
     if value is None:
         return None
     if isinstance(value, datetime):
+        if value.tzinfo is None:
+            return value
         return value.astimezone(UTC).replace(tzinfo=None)
     return datetime.fromisoformat(str(value).replace("Z", "+00:00")).astimezone(UTC).replace(tzinfo=None)
 
 
 async def _read_json(request: Request) -> dict:
+    content_length = request.headers.get("Content-Length")
+    if content_length:
+        try:
+            if int(content_length) > _MAX_EDGE_BATCH_BYTES:
+                raise HTTPException(status_code=413, detail="batch_too_large")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="invalid_content_length") from None
+    raw = bytearray()
     try:
-        body = await request.json()
+        async for chunk in request.stream():
+            raw.extend(chunk)
+            if len(raw) > _MAX_EDGE_BATCH_BYTES:
+                raise HTTPException(status_code=413, detail="batch_too_large")
+        body = json.loads(raw)
         if not isinstance(body, dict):
             raise ValueError
         return body
-    except Exception:
+    except HTTPException:
+        raise
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
         raise HTTPException(status_code=400, detail="invalid_json") from None
 
 
@@ -377,12 +475,22 @@ def list_permissions(
     domain: str | None = None,
     state: str | None = None,
     subject_id: str | None = None,
+    environment_id: str | None = None,
     cursor: str | None = None,
     limit: int = 100,
     session: Session = Depends(get_session),
     identity: Identity = Depends(get_identity),
 ):
     """统一权限视图（§20.2）：按权限域/权威源/状态过滤，租户隔离。"""
+    if environment_id:
+        env = session.scalar(
+            select(Environment).where(
+                Environment.id == environment_id,
+                Environment.tenant_id == identity.tenant_id,
+            )
+        )
+        if env is None:
+            raise HTTPException(status_code=404, detail="not_found")
     ensure_permission(identity, "agent:read")
     query = select(PermissionFact).where(PermissionFact.tenant_id == identity.tenant_id)
     if authority:
@@ -393,6 +501,8 @@ def list_permissions(
         query = query.where(PermissionFact.state == state)
     if subject_id:
         query = query.where(PermissionFact.subject_id == subject_id)
+    if environment_id:
+        query = query.where(PermissionFact.environment_id == environment_id)
     if cursor:
         query = _apply_cursor(query, PermissionFact, cursor)
     return list(
@@ -464,9 +574,9 @@ def check_drift_endpoint(
     ensure_permission(identity, "env:manage")
     try:
         results = check_policy_drift(session, identity.tenant_id)
-    except _AE as exc:
+    except _AE:
         session.rollback()
-        raise HTTPException(status_code=502, detail=f"openshell_unreachable: {exc}") from None
+        raise HTTPException(status_code=502, detail="openshell_unreachable") from None
     counts = upsert_drift_findings(session, identity.tenant_id, results)
     session.commit()
     return {
@@ -485,6 +595,7 @@ def check_drift_endpoint(
 
 @router.post("/api/v1/permissions/sync-openshell")
 def sync_openshell_permissions(
+    environment_id: str,
     session: Session = Depends(get_session),
     identity: Identity = Depends(get_identity),
 ):
@@ -495,12 +606,20 @@ def sync_openshell_permissions(
     from app.adapters.openshell.contracts import AdapterError
     from app.openshell_sync import sync_openshell
 
+    env = session.scalar(
+        select(Environment).where(
+            Environment.id == environment_id,
+            Environment.tenant_id == identity.tenant_id,
+        )
+    )
+    if env is None:
+        raise HTTPException(status_code=404, detail="not_found")
     ensure_permission(identity, "env:manage")
     try:
-        result = sync_openshell(session, identity.tenant_id)
-    except AdapterError as exc:
+        result = sync_openshell(session, identity.tenant_id, environment_id)
+    except AdapterError:
         session.rollback()
-        raise HTTPException(status_code=502, detail=f"openshell_unreachable: {exc}") from None
+        raise HTTPException(status_code=502, detail="openshell_unreachable") from None
     return result
 
 
@@ -718,7 +837,7 @@ def get_agent_evidence(
             select(Evidence)
             .where(
                 Evidence.tenant_id == identity.tenant_id,
-                Evidence.id.in_(linked) | (Evidence.subject_ref == asset_id),
+                Evidence.evidence_id.in_(linked) | (Evidence.subject_ref == asset_id),
             )
             .order_by(Evidence.observed_at.desc())
             .limit(200)

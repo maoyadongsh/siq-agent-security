@@ -10,8 +10,19 @@ from datetime import timedelta
 import pytest
 
 from app.db import session_scope
-from app.models import AgentAsset, Environment, Finding, PermissionFact, Tenant, utcnow
+from app.models import (
+    AgentAsset,
+    AuditEvent,
+    Environment,
+    Evidence,
+    Finding,
+    OutboxEvent,
+    PermissionFact,
+    Tenant,
+    utcnow,
+)
 from app.rules import evaluate_all, upsert_findings
+from app.tests.edge_helpers import candidate, create_scan_task, register_edge, signed_batch, signed_evidence
 from app.worker import once
 
 
@@ -144,96 +155,154 @@ def test_worker_once_reaps_expired_risk_acceptance(client, tenant_a):
     assert summary["reaped"] == 1
     with session_scope() as session:
         finding = session.query(Finding).filter(Finding.rule_id == "manual-test").one()
-        assert finding.status == "expired"
+        assert finding.status == "open"
 
 
 def test_edge_cannot_assert_effective_permission(client, tenant_a, env_a):
     """安全不变量：effective 只能来自权威源，Edge 上传标记 effective 的权限事实必须 422。"""
-    enr = client.post(
-        f"/api/v1/environments/{env_a['id']}/edge-enrollment", json={}, headers=tenant_a
-    ).json()
-    reg = client.post(
-        "/edge/v1/register",
-        json={
-            "enrollment_code": enr["code"],
-            "device_identity": "edge-pf-test",
-            "public_key_pem": "PEM",
-            "version": "0.1.0",
-        },
-    ).json()
-    eh = {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": "edge-pf-test"}
+    identity = "edge-pf-test"
+    eh, private_key = register_edge(client, tenant_a, env_a["id"], identity)
+    task_id = create_scan_task(client, tenant_a, env_a["id"])
+    evidence = signed_evidence(private_key, identity, "ev-pf-test")
+    cand = candidate("pf-test", ["ev-pf-test"])
+    permission = {
+        "subject": {"type": "agent_asset", "id": "hermes_profile:pf-test"},
+        "domain": "network",
+        "action": "http.request",
+        "resource": {"type": "endpoint", "value": "api.example.com"},
+        "effect": "allow",
+        "state": "effective",
+        "authority": "edge",
+        "evidence_ids": ["ev-pf-test"],
+    }
     bad = client.post(
         "/edge/v1/batches",
-        json={
-            "permission_facts": [
-                {
-                    "subject": {"type": "agent_instance", "id": "inst_x"},
-                    "domain": "network",
-                    "action": "http.request",
-                    "resource": {"type": "endpoint", "value": "api.example.com"},
-                    "effect": "allow",
-                    "state": "effective",  # 禁止
-                    "authority": "edge",
-                    "evidence_ids": [],
-                }
-            ]
-        },
+        json=signed_batch(
+            private_key,
+            task_id,
+            candidates=[cand],
+            evidence=[evidence],
+            permission_facts=[permission],
+        ),
         headers=eh,
     )
     assert bad.status_code == 422
     assert "edge_cannot_assert_effective" in bad.json()["detail"]
 
+    permission["state"] = "declared"
+    permission["authority"] = "edge-connector"
+    permission["subject"]["id"] = "hermes_profile:not-in-batch"
+    missing_subject = client.post(
+        "/edge/v1/batches",
+        json=signed_batch(
+            private_key,
+            task_id,
+            candidates=[cand],
+            evidence=[evidence],
+            permission_facts=[permission],
+        ),
+        headers=eh,
+    )
+    assert missing_subject.status_code == 422
+    assert missing_subject.json()["detail"] == "permission_subject_candidate_missing"
+
+    permission["subject"]["id"] = cand["candidate_id"]
     good = client.post(
         "/edge/v1/batches",
-        json={
-            "permission_facts": [
-                {
-                    "subject": {"type": "agent_instance", "id": "inst_x"},
-                    "domain": "network",
-                    "action": "http.request",
-                    "resource": {"type": "endpoint", "value": "api.example.com"},
-                    "effect": "allow",
-                    "state": "declared",
-                    "authority": "edge-connector",
-                    "evidence_ids": [],
-                }
-            ]
-        },
+        json=signed_batch(
+            private_key,
+            task_id,
+            candidates=[cand],
+            evidence=[evidence],
+            permission_facts=[permission],
+        ),
         headers=eh,
     )
     assert good.status_code == 200
     assert good.json()["permission_facts"] == 1
+    asset = next(
+        item
+        for item in client.get("/api/v1/candidates", headers=tenant_a).json()
+        if item["name"] == "pf-test"
+    )
+    facts = client.get(f"/api/v1/agents/{asset['id']}/permissions", headers=tenant_a).json()
+    assert len(facts) == 1
+    assert facts[0]["subject_id"] == asset["id"]
+    assert facts[0]["environment_id"] == env_a["id"]
+
+
+def test_edge_evidence_and_permissions_are_bound_to_source_environment(client, tenant_a):
+    """两个环境生成相同外部 evidence_id/hash 时，各自观察与权限事实都必须保留。"""
+    envs = [
+        client.post("/api/v1/environments", json={"name": f"env-binding-{idx}"}, headers=tenant_a).json()
+        for idx in range(2)
+    ]
+    for idx, env in enumerate(envs):
+        identity = f"edge-binding-{idx}"
+        edge_headers, private_key = register_edge(client, tenant_a, env["id"], identity)
+        task_id = create_scan_task(client, tenant_a, env["id"])
+        evidence = signed_evidence(
+            private_key,
+            identity,
+            "ev-shared-across-environments",
+            content_hash="d" * 64,
+        )
+        cand = candidate(f"binding-{idx}", [evidence["evidence_id"]])
+        permission = {
+            "subject": {"type": "agent_asset", "id": cand["candidate_id"]},
+            "domain": "network",
+            "action": "http.request",
+            "resource": {"type": "endpoint", "value": "api.example.com"},
+            "effect": "allow",
+            "state": "declared",
+            "authority": "edge-connector",
+            "evidence_ids": [evidence["evidence_id"]],
+        }
+        response = client.post(
+            "/edge/v1/batches",
+            json=signed_batch(
+                private_key,
+                task_id,
+                candidates=[cand],
+                evidence=[evidence],
+                permission_facts=[permission],
+            ),
+            headers=edge_headers,
+        )
+        assert response.status_code == 200, response.text
+
+    for env in envs:
+        facts = client.get(
+            "/api/v1/permissions",
+            params={"environment_id": env["id"]},
+            headers=tenant_a,
+        ).json()
+        assert len(facts) == 1
+        assert facts[0]["environment_id"] == env["id"]
+
+    with session_scope() as session:
+        observations = session.query(Evidence).filter(
+            Evidence.tenant_id == "tnt-A",
+            Evidence.evidence_id == "ev-shared-across-environments",
+        ).all()
+        assert {item.environment_id for item in observations} == {env["id"] for env in envs}
 
 
 def _make_named_candidate(client, headers, name):
     env = client.post("/api/v1/environments", json={"name": f"env-cls-{name}"}, headers=headers).json()
-    enr = client.post(f"/api/v1/environments/{env['id']}/edge-enrollment", json={}, headers=headers).json()
-    reg = client.post(
-        "/edge/v1/register",
-        json={
-            "enrollment_code": enr["code"],
-            "device_identity": f"edge-cls-{name}",
-            "public_key_pem": "PEM",
-            "version": "0.1.0",
-        },
-    ).json()
-    eh = {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": f"edge-cls-{name}"}
+    identity = f"edge-cls-{name}"
+    eh, private_key = register_edge(client, headers, env["id"], identity)
+    task_id = create_scan_task(client, headers, env["id"])
+    evidence_id = f"ev-cls-{name}"
+    evidence = signed_evidence(private_key, identity, evidence_id)
     resp = client.post(
         "/edge/v1/batches",
-        json={
-            "candidates": [
-                {
-                    "candidate_id": f"hermes:{name}",
-                    "source_type": "hermes_profile",
-                    "source_locator": f"hermes://profiles/{name}",
-                    "discovered_at": "2026-08-13T12:00:00Z",
-                    "name": name,
-                    "framework": "hermes",
-                    "evidence_ids": [],
-                }
-            ],
-            "evidence": [],
-        },
+        json=signed_batch(
+            private_key,
+            task_id,
+            candidates=[candidate(name, [evidence_id])],
+            evidence=[evidence],
+        ),
         headers=eh,
     )
     assert resp.status_code == 200, resp.text
@@ -285,12 +354,45 @@ def test_finding_lifecycle_acknowledge_resolve(client, tenant_a):
     assert ack.status_code == 200
     assert ack.json()["status"] == "acknowledged"
 
-    res = client.post(f"/api/v1/findings/{finding['id']}/resolve", json={}, headers=tenant_a)
+    missing_evidence = client.post(
+        f"/api/v1/findings/{finding['id']}/resolve", json={}, headers=tenant_a
+    )
+    assert missing_evidence.status_code == 422
+
+    res = client.post(
+        f"/api/v1/findings/{finding['id']}/resolve",
+        json={"evidence_ref": "repair-ticket:SEC-123"},
+        headers=tenant_a,
+    )
     assert res.status_code == 200
     assert res.json()["status"] == "resolved"
+    with session_scope() as session:
+        finding_row = session.get(Finding, finding["id"])
+        assert finding_row is not None
+        assert finding_row.risk_acceptance == {
+            "resolved_by": "user-a",
+            "evidence_ref": "repair-ticket:SEC-123",
+        }
+        audit_row = session.query(AuditEvent).filter(AuditEvent.resource_id == finding["id"]).order_by(
+            AuditEvent.created_at.desc()
+        ).first()
+        assert audit_row is not None
+        assert audit_row.summary == {"evidence_ref": "repair-ticket:SEC-123"}
+        event = next(
+            row
+            for row in session.query(OutboxEvent)
+            .filter(OutboxEvent.event_type == "agent.finding.resolved.v1")
+            .all()
+            if row.payload.get("resource_ref") == finding["id"]
+        )
+        assert event.payload["payload"]["finding_id"] == finding["id"]
 
     # 重复解决：409
-    again = client.post(f"/api/v1/findings/{finding['id']}/resolve", json={}, headers=tenant_a)
+    again = client.post(
+        f"/api/v1/findings/{finding['id']}/resolve",
+        json={"evidence_ref": "repair-ticket:SEC-123"},
+        headers=tenant_a,
+    )
     assert again.status_code == 409
 
 
@@ -314,45 +416,38 @@ def test_scan_quota_per_tenant(client, tenant_a, env_a):
             EdgeTask.environment_id.in_(env_ids),
         ).count()
     remaining = max(quota - pre, 0)
+    created_task_ids = []
     for i in range(remaining):
         resp = client.post("/api/v1/scans", json={"environment_id": env_a["id"], "scope": {"n": i}}, headers=tenant_a)
         assert resp.status_code == 200, f"quota loop {i}/{remaining}: {resp.text}"
+        created_task_ids.append(resp.json()["task_id"])
     over = client.post("/api/v1/scans", json={"environment_id": env_a["id"], "scope": {}}, headers=tenant_a)
     assert over.status_code == 429
     assert "scan_quota_exceeded" in over.json()["detail"]
+    with session_scope() as s:
+        s.query(EdgeTask).filter(EdgeTask.id.in_(created_task_ids)).update(
+            {EdgeTask.status: "failed"}, synchronize_session=False
+        )
+        s.commit()
 
 
 def test_cursor_pagination_agents(client, tenant_a):
     """§18.1 稳定游标分页：limit + cursor 全量无重复。"""
     for i in range(5):
         env = client.post("/api/v1/environments", json={"name": f"env-pg-{i}"}, headers=tenant_a).json()
-        enr = client.post(f"/api/v1/environments/{env['id']}/edge-enrollment", json={}, headers=tenant_a).json()
-        reg = client.post(
-            "/edge/v1/register",
-            json={
-                "enrollment_code": enr["code"],
-                "device_identity": f"edge-pg-{i}",
-                "public_key_pem": "PEM",
-                "version": "0.1.0",
-            },
-        ).json()
-        eh = {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": f"edge-pg-{i}"}
+        identity = f"edge-pg-{i}"
+        eh, private_key = register_edge(client, tenant_a, env["id"], identity)
+        task_id = create_scan_task(client, tenant_a, env["id"])
+        evidence_id = f"ev-pg-{i}"
+        evidence = signed_evidence(private_key, identity, evidence_id)
         client.post(
             "/edge/v1/batches",
-            json={
-                "candidates": [
-                    {
-                        "candidate_id": f"hermes:pg-{i}",
-                        "source_type": "hermes_profile",
-                        "source_locator": f"hermes://pg/{i}",
-                        "discovered_at": "2026-08-13T12:00:00Z",
-                        "name": f"pg-agent-{i}",
-                        "framework": "hermes",
-                        "evidence_ids": [],
-                    }
-                ],
-                "evidence": [],
-            },
+            json=signed_batch(
+                private_key,
+                task_id,
+                candidates=[candidate(f"pg-agent-{i}", [evidence_id])],
+                evidence=[evidence],
+            ),
             headers=eh,
         )
     seen: list[str] = []
@@ -398,7 +493,7 @@ def test_worker_reopens_expired_dismissal(client, tenant_a):
         assert a.dismissed_expires_at is None
 
 
-def test_sync_openshell_writes_effective_facts(client, tenant_a, monkeypatch):
+def test_sync_openshell_writes_effective_facts(client, tenant_a, env_a, monkeypatch):
     """真实 OpenShell 域 Resolver：有效策略 → PermissionFact(state=effective, authority=openshell)。"""
     from app.adapters.openshell.cli_backend import OpenShellCliBackend
     from app.tests.test_openshell_cli_backend import GATEWAY_INFO, REAL_POLICY_GET_FULL
@@ -421,7 +516,20 @@ def test_sync_openshell_writes_effective_facts(client, tenant_a, monkeypatch):
             return 1, "", f"unexpected: {args}"
 
     monkeypatch.setattr("app.openshell_sync.OpenShellCliBackend", FakeCliBackend)
-    resp = client.post("/api/v1/permissions/sync-openshell", json={}, headers=tenant_a)
+    with session_scope() as session:
+        _seed_effective_deployment(
+            session,
+            "tnt-A",
+            environment_id=env_a["id"],
+            target="demo-sandbox",
+        )
+        session.commit()
+    resp = client.post(
+        "/api/v1/permissions/sync-openshell",
+        params={"environment_id": env_a["id"]},
+        json={},
+        headers=tenant_a,
+    )
     assert resp.status_code == 200, resp.text
     body = resp.json()
     assert body["targets"] == 1
@@ -430,13 +538,16 @@ def test_sync_openshell_writes_effective_facts(client, tenant_a, monkeypatch):
     with session_scope() as session:
         from app.models import PermissionFact
 
-        facts = session.query(PermissionFact).filter(PermissionFact.authority == "openshell").all()
+        facts = session.query(PermissionFact).filter(
+            PermissionFact.authority == "openshell",
+            PermissionFact.environment_id == env_a["id"],
+        ).all()
         assert all(f.state == "effective" for f in facts)
         assert any(f.domain == "filesystem" and f.resource_value == "/usr" for f in facts)
         assert any(f.domain == "process" and f.resource_value == "sandbox:sandbox" for f in facts)
 
 
-def test_sync_openshell_unreachable_fails_closed(client, tenant_a, monkeypatch):
+def test_sync_openshell_unreachable_fails_closed(client, tenant_a, env_a, monkeypatch):
     """网关不可达 → 502，绝不产出空权限冒充安全状态（§23.2）。"""
     from app.adapters.openshell.contracts import AdapterError
 
@@ -445,7 +556,12 @@ def test_sync_openshell_unreachable_fails_closed(client, tenant_a, monkeypatch):
             raise AdapterError("gateway down")
 
     monkeypatch.setattr("app.openshell_sync.OpenShellCliBackend", DeadBackend)
-    resp = client.post("/api/v1/permissions/sync-openshell", json={}, headers=tenant_a)
+    resp = client.post(
+        "/api/v1/permissions/sync-openshell",
+        params={"environment_id": env_a["id"]},
+        json={},
+        headers=tenant_a,
+    )
     assert resp.status_code == 502
     assert "openshell_unreachable" in resp.json()["detail"]
 
@@ -486,7 +602,13 @@ def test_permissions_list_tenant_isolation_and_filters(client, tenant_a, tenant_
     assert all(r["resource_value"] != "api.example.com:443" for r in resp_b.json())
 
 
-def _seed_effective_deployment(session, tenant_id, target="sandbox:t1", receipt_rev="1"):
+def _seed_effective_deployment(
+    session,
+    tenant_id,
+    target="sandbox:t1",
+    receipt_rev="1",
+    environment_id="env-x",
+):
     from app.models import ChangeRequest, Deployment, DesiredPolicy
 
     policy = DesiredPolicy(
@@ -511,7 +633,7 @@ def _seed_effective_deployment(session, tenant_id, target="sandbox:t1", receipt_
     session.flush()
     dep = Deployment(
         tenant_id=tenant_id,
-        environment_id="env-x",
+        environment_id=environment_id,
         change_request_id=cr.id,
         target=target,
         to_revision="policy-1",
@@ -552,7 +674,7 @@ def test_drift_revision_mismatch_creates_high_finding(client, tenant_a, monkeypa
         s.commit()
         from app.models import Finding
 
-        f = s.query(Finding).filter(Finding.rule_id == "policy-drift").first()
+        f = s.query(Finding).filter(Finding.rule_id == "policy-drift", Finding.severity == "high").first()
         assert f is not None and f.severity == "high"
 
 
@@ -588,7 +710,7 @@ def test_drift_unreadable_target_fails_closed(client, tenant_a, monkeypatch):
             super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
 
         def read_effective_policy(self, target):
-            raise AdapterError("no policy revision found for this sandbox")
+            raise AdapterError("no policy revision; token=should-never-persist")
 
     monkeypatch.setattr("app.drift.OpenShellCliBackend", Fake)
     with session_scope() as s:
@@ -598,7 +720,9 @@ def test_drift_unreadable_target_fails_closed(client, tenant_a, monkeypatch):
         from app.drift import check_policy_drift
 
         results = check_policy_drift(s, "tnt-A")
-        assert any(r.details.get("kind") == "unreadable" for r in results)
+        unreadable = next(r for r in results if r.details.get("kind") == "unreadable")
+        assert "should-never-persist" not in str(unreadable)
+        assert len(unreadable.details["error_digest"]) == 64
 
 
 def test_drift_consistent_no_findings(client, tenant_a, monkeypatch):
@@ -743,6 +867,25 @@ def test_provider_unreachable_fails_closed(monkeypatch):
         )
 
 
+def test_provider_failure_persistence_contains_only_error_reference(monkeypatch):
+    from app.classification import classify_asset
+
+    monkeypatch.setenv("SIQ_AS_CLASSIFIER", "provider")
+
+    def fail_provider(asset):
+        raise RuntimeError("Authorization: Bearer should-never-persist")
+
+    monkeypatch.setattr("app.classification.provider_classify", fail_provider)
+    with session_scope() as session:
+        _ensure_tenant(session, "tnt-A")
+        asset = _seed_asset(session, "tnt-A", name="provider-failure", status="candidate")
+        session.flush()
+        run = classify_asset(session, "tnt-A", asset)
+        session.commit()
+        assert "should-never-persist" not in str(run.output)
+        assert "RuntimeError:" in run.output["unresolved_questions"][0]
+
+
 def test_get_scan_task_status(client, tenant_a, tenant_b, env_a):
     """§18.2 首批 API：GET /api/v1/scans/{id} 任务状态 + 跨租户 404。"""
     from sqlalchemy import select
@@ -855,66 +998,42 @@ def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypa
     assert any(d["target"] == "bind-sandbox" for d in enf2["effective_deployments"])
 
 
-def test_rescan_idempotent_upserts_evidence(client, tenant_a):
-    """重新扫描（用户需求）：同批两次上传不冲突，内容变化时哈希更新。"""
+def test_rescan_idempotent_versions_evidence(client, tenant_a):
+    """相同内容幂等；内容变化新增不可变 observation，不覆盖历史。"""
     env = client.post("/api/v1/environments", json={"name": "env-rescan"}, headers=tenant_a).json()
-    enr = client.post(f"/api/v1/environments/{env['id']}/edge-enrollment", json={}, headers=tenant_a).json()
-    reg = client.post(
-        "/edge/v1/register",
-        json={
-            "enrollment_code": enr["code"],
-            "device_identity": "edge-rescan",
-            "public_key_pem": "PEM",
-            "version": "0.1.0",
-        },
-    ).json()
-    eh = {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": "edge-rescan"}
+    identity = "edge-rescan"
+    eh, private_key = register_edge(client, tenant_a, env["id"], identity)
 
-    def batch(content_hash):
-        return {
-            "candidates": [
-                {
-                    "candidate_id": "hermes:rescan-agent",
-                    "source_type": "hermes_profile",
-                    "source_locator": "hermes://profiles/rescan-agent",
-                    "discovered_at": "2026-08-13T12:00:00Z",
-                    "name": "rescan-agent",
-                    "framework": "hermes",
-                    "evidence_ids": ["ev:rescan"],
-                }
-            ],
-            "evidence": [
-                {
-                    "evidence_id": "ev:rescan",
-                    "source_type": "manifest",
-                    "source_locator": "rescan-agent/config.yaml",
-                    "observed_at": "2026-08-13T12:00:00Z",
-                    "collector_id": "edge-rescan",
-                    "connector_version": "0.1.0",
-                    "content_hash": content_hash,
-                    "signature": "sig",
-                }
-            ],
-        }
+    def batch(content_hash, task_id):
+        evidence = signed_evidence(private_key, identity, "ev:rescan", content_hash=content_hash)
+        return signed_batch(
+            private_key,
+            task_id,
+            candidates=[candidate("rescan-agent", ["ev:rescan"])],
+            evidence=[evidence],
+        )
 
-    r1 = client.post("/edge/v1/batches", json=batch("a" * 64), headers=eh)
+    first_task = create_scan_task(client, tenant_a, env["id"])
+    first_batch = batch("a" * 64, first_task)
+    r1 = client.post("/edge/v1/batches", json=first_batch, headers=eh)
     assert r1.status_code == 200
-    r2 = client.post("/edge/v1/batches", json=batch("a" * 64), headers=eh)  # 幂等重扫
+    r2 = client.post("/edge/v1/batches", json=first_batch, headers=eh)  # 同一 HTTP body 网络重试幂等
     assert r2.status_code == 200, r2.text
 
     from app.db import session_scope as ss
     from app.models import Evidence
 
     with ss() as s:
-        rows = s.query(Evidence).filter(Evidence.id == "ev:rescan").all()
+        rows = s.query(Evidence).filter(Evidence.evidence_id == "ev:rescan").all()
         assert len(rows) == 1, "重扫不得产生重复证据行"
 
-    # 内容变化 → 哈希更新（同一证据行）
-    r3 = client.post("/edge/v1/batches", json=batch("b" * 64), headers=eh)
+    # 内容变化 → 新 observation，旧哈希保留
+    second_task = create_scan_task(client, tenant_a, env["id"])
+    r3 = client.post("/edge/v1/batches", json=batch("b" * 64, second_task), headers=eh)
     assert r3.status_code == 200
     with ss() as s:
-        row = s.query(Evidence).filter(Evidence.id == "ev:rescan").one()
-        assert row.content_hash == "b" * 64, "内容变化后哈希必须更新"
+        rows = s.query(Evidence).filter(Evidence.evidence_id == "ev:rescan").all()
+        assert {row.content_hash for row in rows} == {"a" * 64, "b" * 64}
 
 
 def test_smart_scan_creates_standard_tasks(client, tenant_a, env_a):

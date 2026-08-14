@@ -138,13 +138,16 @@ class AgentInstance(Base):
 
 
 class Evidence(Base):
-    """证据模型（设计文档 §10.5）。原始配置不默认上传。"""
+    """不可变证据观察；同一外部 evidence_id 的内容变化会新增 observation。"""
 
     __tablename__ = "evidence"
 
-    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("ev"))
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("evo"))
+    evidence_id: Mapped[str] = mapped_column(String(128))
     tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id", ondelete="CASCADE"), index=True)
-    environment_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    environment_id: Mapped[str | None] = mapped_column(
+        String(64), ForeignKey("environment.id", ondelete="CASCADE"), nullable=True
+    )
     source_type: Mapped[str] = mapped_column(String(32))
     source_locator: Mapped[str] = mapped_column(String(512))
     subject_ref: Mapped[str | None] = mapped_column(String(128), nullable=True)
@@ -158,6 +161,20 @@ class Evidence(Base):
     payload_ref: Mapped[str | None] = mapped_column(String(256), nullable=True)
     signature: Mapped[str] = mapped_column(String(256))
     expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id",
+            "environment_id",
+            "evidence_id",
+            "content_hash",
+            name="uq_evidence_observation",
+        ),
+    )
+
+    @property
+    def observation_id(self) -> str:
+        return self.id
 
 
 class ClassificationRun(Base):
@@ -186,6 +203,9 @@ class PermissionFact(Base):
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("pf"))
     tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id", ondelete="CASCADE"), index=True)
+    environment_id: Mapped[str | None] = mapped_column(
+        String(64), ForeignKey("environment.id", ondelete="CASCADE"), nullable=True, index=True
+    )
     subject_type: Mapped[str] = mapped_column(String(32))
     subject_id: Mapped[str] = mapped_column(String(64), index=True)
     delegated_user: Mapped[dict | None] = mapped_column(JSON, nullable=True)
@@ -218,7 +238,7 @@ class Finding(Base):
     evidence_ids: Mapped[list] = mapped_column(JSON, default=list)
     impact: Mapped[str | None] = mapped_column(Text, nullable=True)
     remediation: Mapped[str | None] = mapped_column(Text, nullable=True)
-    # open|acknowledged|resolved|risk_accepted|expired
+    # open|acknowledged|resolved|risk_accepted
     status: Mapped[str] = mapped_column(String(16), default="open", index=True)
     owner_user_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     due_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
@@ -300,8 +320,10 @@ class EdgeTask(Base):
     )
     task_type: Mapped[str] = mapped_column(String(32))  # scan|publish_policy|verify|rollback
     payload: Mapped[dict] = mapped_column(JSON, default=dict)
-    signature: Mapped[str | None] = mapped_column(String(256), nullable=True)  # Phase 0 后接 Edge 公钥验证
-    status: Mapped[str] = mapped_column(String(16), default="pending", index=True)  # pending|delivered|failed|expired
+    signature: Mapped[str | None] = mapped_column(String(256), nullable=True)  # 控制面 Ed25519 任务签名
+    # pending|uploaded|delivered|failed|expired；uploaded 表示结果已持久化、等待最终回执。
+    status: Mapped[str] = mapped_column(String(16), default="pending", index=True)
+    result_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
     expires_at: Mapped[datetime] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 

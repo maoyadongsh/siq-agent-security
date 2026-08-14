@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -16,8 +17,8 @@ import (
 	"siq-agent-security/edge/agent/protocol"
 )
 
-// Client is the control-plane HTTP client. Endpoint contract (Phase 0, server
-// implementation lives in apps/control-api, TBD):
+// Client is the control-plane HTTP client. The server implementation lives in
+// apps/control-api.
 //
 //	POST /edge/v1/register            body: RegisterRequest
 //	POST /edge/v1/heartbeat           body: {device_identity, version, sent_at}
@@ -27,11 +28,12 @@ import (
 // All requests carry the X-Edge-Version header; requests after registration
 // carry Authorization: Bearer <secret>.
 type Client struct {
-	base     string
-	identity string
-	secret   string
-	version  string
-	http     *http.Client
+	base      string
+	identity  string
+	secret    string
+	version   string
+	http      *http.Client
+	configErr error
 }
 
 // ClientConfig configures a Client.
@@ -48,13 +50,35 @@ func NewClient(cfg ClientConfig) *Client {
 	if cfg.HTTPTimeout <= 0 {
 		cfg.HTTPTimeout = 30 * time.Second
 	}
+	base, configErr := validateControlPlaneURL(cfg.ControlPlaneURL)
 	return &Client{
-		base:     strings.TrimRight(cfg.ControlPlaneURL, "/"),
-		identity: cfg.DeviceIdentity,
-		secret:   cfg.Secret,
-		version:  cfg.Version,
-		http:     &http.Client{Timeout: cfg.HTTPTimeout},
+		base:      base,
+		identity:  cfg.DeviceIdentity,
+		secret:    cfg.Secret,
+		version:   cfg.Version,
+		http:      &http.Client{Timeout: cfg.HTTPTimeout},
+		configErr: configErr,
 	}
+}
+
+func validateControlPlaneURL(raw string) (string, error) {
+	parsed, err := url.Parse(strings.TrimSpace(raw))
+	if err != nil || parsed.Hostname() == "" {
+		return "", fmt.Errorf("control plane URL is invalid")
+	}
+	if parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" || (parsed.Path != "" && parsed.Path != "/") {
+		return "", fmt.Errorf("control plane URL must be an origin without credentials, query, fragment, or path")
+	}
+	if parsed.Scheme == "http" {
+		host := strings.ToLower(parsed.Hostname())
+		ip := net.ParseIP(host)
+		if host != "localhost" && (ip == nil || !ip.IsLoopback()) {
+			return "", fmt.Errorf("unencrypted control plane HTTP is allowed only on loopback")
+		}
+	} else if parsed.Scheme != "https" {
+		return "", fmt.Errorf("control plane URL scheme must be https")
+	}
+	return strings.TrimRight(parsed.String(), "/"), nil
 }
 
 // RegisterRequest is the POST /edge/v1/register body.
@@ -136,7 +160,6 @@ func (c *Client) RunHeartbeatLoop(ctx context.Context, interval, maxBackoff time
 	}
 }
 
-
 // FetchTasks pulls the pending tasks for this device.
 func (c *Client) FetchTasks(ctx context.Context, deviceIdentity string) ([]*Task, error) {
 	// 设备身份经 X-Edge-Identity 头传递（控制面契约），响应为裸任务列表
@@ -195,12 +218,31 @@ func backoffDelay(attempt int) time.Duration {
 // (design doc §9.3 data flow: E -> C 上传候选资产与证据摘要). The batch is
 // sealed (signature/collector_id) before upload; permission facts are empty
 // in Phase 1 (connectors do not emit them yet).
-func (c *Client) UploadBatch(ctx context.Context, deviceIdentity string, candidates []*protocol.Candidate, evidence []*protocol.Evidence, permissionFacts []*protocol.PermissionFact) error {
+func (c *Client) UploadBatch(ctx context.Context, taskID string, candidates []*protocol.Candidate, evidence []*protocol.Evidence, permissionFacts []*protocol.PermissionFact, signer *Signer) error {
+	if candidates == nil {
+		candidates = []*protocol.Candidate{}
+	}
+	if evidence == nil {
+		evidence = []*protocol.Evidence{}
+	}
+	if permissionFacts == nil {
+		permissionFacts = []*protocol.PermissionFact{}
+	}
 	body := map[string]any{
+		"task_id":          taskID,
 		"candidates":       candidates,
 		"evidence":         evidence,
 		"permission_facts": permissionFacts,
 	}
+	payload, err := CanonicalJSON(body)
+	if err != nil {
+		return fmt.Errorf("control plane: canonicalize evidence batch: %w", err)
+	}
+	signature, err := signer.Sign(payload)
+	if err != nil {
+		return fmt.Errorf("control plane: sign evidence batch: %w", err)
+	}
+	body["signature"] = signature
 	return c.do(ctx, http.MethodPost, "/edge/v1/batches", body, nil, 3)
 }
 
@@ -230,6 +272,9 @@ func (c *Client) do(ctx context.Context, method, path string, body, out any, ret
 // doOnce performs a single HTTP round trip with the X-Edge-Version header and
 // (when a secret is configured) Bearer authentication.
 func (c *Client) doOnce(ctx context.Context, method, path string, body, out any) error {
+	if c.configErr != nil {
+		return c.configErr
+	}
 	urlStr := c.base + path
 	var rdr io.Reader
 	if body != nil {

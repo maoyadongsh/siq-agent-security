@@ -288,14 +288,14 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 		evidenceID := "ev:directory:" + hex.EncodeToString(relHash[:])[:16]
 		cand := &protocol.Candidate{
 			CandidateID:   "directory:" + f.rel,
-			SourceType:    "manifest",
+			SourceType:    "directory_manifest",
 			SourceLocator: red.RedactString("directory://" + f.rel),
 			DiscoveredAt:  now,
 			Name:          truncate(red.RedactString(parentName), 256),
 			Framework:     "unknown",
 			Confidence:    1.0,
 			Attributes: map[string]string{
-				"manifest":     f.rel,
+				"manifest":      f.rel,
 				"manifest_size": strconv.FormatInt(int64(len(data)), 10),
 			},
 			EvidenceIDs: []string{evidenceID},

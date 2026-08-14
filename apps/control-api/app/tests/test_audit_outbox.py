@@ -7,48 +7,29 @@ from __future__ import annotations
 
 from app.db import session_scope
 from app.models import AuditEvent, OutboxEvent
+from app.tests.edge_helpers import candidate, create_scan_task, register_edge, signed_batch, signed_evidence
 
 
 def _make_candidate(client, headers, name="audit-agent"):
     env = client.post("/api/v1/environments", json={"name": f"env-{name}"}, headers=headers).json()
-    enr = client.post(f"/api/v1/environments/{env['id']}/edge-enrollment", json={}, headers=headers).json()
-    reg = client.post(
-        "/edge/v1/register",
-        json={
-            "enrollment_code": enr["code"],
-            "device_identity": f"edge-{name}",
-            "public_key_pem": "PEM",
-            "version": "0.1.0",
-        },
-    ).json()
-    eh = {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": f"edge-{name}"}
+    identity = f"edge-{name}"
+    eh, private_key = register_edge(client, headers, env["id"], identity)
+    task_id = create_scan_task(client, headers, env["id"])
+    evidence = signed_evidence(
+        private_key,
+        identity,
+        f"ev-{name}",
+        content_hash="d" * 64,
+        source_locator=f"profiles/{name}/config.yaml",
+    )
     client.post(
         "/edge/v1/batches",
-        json={
-            "candidates": [
-                {
-                    "candidate_id": f"hermes:{name}",
-                    "source_type": "hermes_profile",
-                    "source_locator": f"hermes://profiles/{name}",
-                    "discovered_at": "2026-08-13T12:00:00Z",
-                    "name": name,
-                    "framework": "hermes",
-                    "evidence_ids": [f"ev-{name}"],
-                }
-            ],
-            "evidence": [
-                {
-                    "evidence_id": f"ev-{name}",
-                    "source_type": "manifest",
-                    "source_locator": f"profiles/{name}/config.yaml",
-                    "observed_at": "2026-08-13T12:00:00Z",
-                    "collector_id": f"edge-{name}",
-                    "connector_version": "0.1.0",
-                    "content_hash": "d" * 64,
-                    "signature": "sig",
-                }
-            ],
-        },
+        json=signed_batch(
+            private_key,
+            task_id,
+            candidates=[candidate(name, [f"ev-{name}"])],
+            evidence=[evidence],
+        ),
         headers=eh,
     )
     return client.get("/api/v1/candidates", headers=headers).json()[0]

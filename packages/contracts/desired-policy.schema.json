@@ -62,6 +62,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["ref", "purpose"],
         "properties": {
           "ref": { "type": "string", "description": "凭据引用，永不存明文" },

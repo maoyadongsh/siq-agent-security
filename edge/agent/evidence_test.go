@@ -30,6 +30,36 @@ func TestSignerSeedRoundTrip(t *testing.T) {
 	}
 }
 
+func TestCanonicalSignatureMatchesPythonFixture(t *testing.T) {
+	signer, err := NewSignerFromSeed("AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=")
+	if err != nil {
+		t.Fatal(err)
+	}
+	payload := map[string]any{
+		"task_id": "tsk_fixture",
+		"note":    "<安全>",
+		"counts":  []int{1, 2},
+		"nested":  map[string]any{"z": false, "a": "值"},
+	}
+	encoded, err := CanonicalJSON(payload)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedJSON := `{"counts":[1,2],"nested":{"a":"值","z":false},"note":"<安全>","task_id":"tsk_fixture"}`
+	if string(encoded) != expectedJSON {
+		t.Fatalf("canonical JSON mismatch:\nwant %s\n got %s", expectedJSON, encoded)
+	}
+	signature, err := signer.Sign(encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedSignature := "d9f7636415eca6419c6613673089f00cc254598d5211b710614c602d75de563e" +
+		"4f32da23213289be855a998d53380b21af99c810258b57e01ff15fafe41abe04"
+	if signature != expectedSignature {
+		t.Fatalf("signature mismatch:\nwant %s\n got %s", expectedSignature, signature)
+	}
+}
+
 func TestNewSignerFromSeedRejectsBadInput(t *testing.T) {
 	if _, err := NewSignerFromSeed("not-base64!!"); err == nil {
 		t.Fatal("invalid seed accepted")
@@ -42,7 +72,7 @@ func TestNewSignerFromSeedRejectsBadInput(t *testing.T) {
 func TestRedactorString(t *testing.T) {
 	r := protocol.NewRedactor()
 	cases := []struct {
-		in      string
+		in       string
 		redacted bool
 	}{
 		{"sk-abc123def456ghi789jkl012", true},
@@ -166,15 +196,21 @@ func TestSealEvidence(t *testing.T) {
 	}
 	ev := &protocol.Evidence{
 		EvidenceID:    "ev:test:1",
+		TenantID:      "attacker-tenant",
+		EnvironmentID: "attacker-environment",
 		SourceType:    "manifest",
 		SourceLocator: "test/1",
 		ContentHash:   protocol.ContentHash([]byte("x")),
+		CollectorID:   "attacker-collector",
 	}
 	if err := SealEvidence(ev, s, "device-1"); err != nil {
 		t.Fatal(err)
 	}
 	if ev.CollectorID != "device-1" {
 		t.Errorf("collector_id=%q", ev.CollectorID)
+	}
+	if ev.TenantID != "" || ev.EnvironmentID != "" {
+		t.Errorf("connector-controlled tenancy fields were retained: tenant=%q environment=%q", ev.TenantID, ev.EnvironmentID)
 	}
 	if ev.CollectedAt == "" || ev.ObservedAt == "" {
 		t.Error("collected_at/observed_at must be filled")
@@ -184,5 +220,18 @@ func TestSealEvidence(t *testing.T) {
 	}
 	if ev.Signature == "" {
 		t.Fatal("signature must be set")
+	}
+	pubPEM, err := s.PublicKeyPEM()
+	if err != nil {
+		t.Fatal(err)
+	}
+	clone := *ev
+	clone.Signature = ""
+	payload, err := CanonicalJSON(&clone)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := VerifySignature(pubPEM, payload, ev.Signature); err != nil {
+		t.Fatalf("canonical evidence signature did not verify: %v", err)
 	}
 }

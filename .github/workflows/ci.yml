@@ -1,5 +1,8 @@
 name: ci
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
@@ -15,9 +18,43 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Reject tracked task-signing private keys
+        run: |
+          bad=0
+          while IFS= read -r path; do
+            case "$path" in
+              *signing-key*.seed)
+                echo "tracked private-key artifact: $path"
+                bad=1
+                ;;
+            esac
+          done < <(git ls-files)
+          test "$bad" -eq 0
+      - name: Reject task-signing private keys anywhere in Git history
+        run: |
+          if git rev-list --objects --all \
+            | awk '{$1=""; sub(/^ /, ""); print}' \
+            | grep -E '(^|/)signing-key[^/]*\.seed$'; then
+            echo "task-signing private-key artifact remains in Git history"
+            exit 1
+          fi
 
   control-api:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: siq_as
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d siq_as"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     defaults:
       run:
         working-directory: apps/control-api
@@ -25,16 +62,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - name: Install
-        run: uv sync --dev
+        run: uv sync --dev --locked
       - name: Ruff
         run: uv run ruff check app
       - name: Pytest（含租户隔离/职责分离/注册生命周期负向）
         run: uv run pytest
-      - name: Alembic 基线回放（干净 SQLite）
+      - name: Python dependency audit
+        run: uv run --with pip-audit pip-audit
+      - name: Alembic 全量回放（干净 PostgreSQL）
         env:
           SIQ_AS_DEV: "1"
-          SIQ_AS_ALLOW_SQLITE: "1"
-          SIQ_AS_DATABASE_URL: sqlite:///./ci-migrate.db
+          SIQ_AS_DATABASE_URL: postgresql+psycopg://postgres:postgres@127.0.0.1:5432/siq_as
         run: uv run alembic upgrade head
 
   edge:
@@ -44,12 +82,16 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.22"
+      - name: Go formatting
+        run: |
+          gofmt -l edge connectors > /tmp/gofmt.out
+          test ! -s /tmp/gofmt.out || { cat /tmp/gofmt.out; exit 1; }
       - name: Build & vet & test（edge/agent）
         working-directory: edge/agent
         run: |
           go build ./...
           go vet ./...
-          go test ./...
+          go test -race ./...
       - name: Build & test（connectors/hermes）
         working-directory: connectors/hermes
         run: |
@@ -83,3 +125,4 @@ jobs:
           node-version: "22"
       - run: npm ci
       - run: npm run build
+      - run: npm audit --omit=dev --audit-level=moderate

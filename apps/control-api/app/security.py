@@ -18,9 +18,10 @@ from functools import lru_cache
 import httpx
 import jwt
 from fastapi import Depends, HTTPException, Request
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.config import Settings, load_settings
-from app.db import session_scope
 from app.models import EdgeAgent
 
 settings: Settings = load_settings()
@@ -146,7 +147,7 @@ def ensure_permission(identity: Identity, permission: str) -> None:
         raise HTTPException(status_code=403, detail="forbidden")
 
 
-def verify_edge_secret(request: Request, device_identity: str) -> EdgeAgent:
+def verify_edge_secret(request: Request, device_identity: str, session: Session) -> EdgeAgent:
     """Edge 设备认证：secret 哈希比对，吊销即时生效（设计文档 §31.4 验收）。"""
     auth = request.headers.get("Authorization", "")
     if not auth.startswith("Bearer "):
@@ -154,13 +155,12 @@ def verify_edge_secret(request: Request, device_identity: str) -> EdgeAgent:
     supplied = auth.removeprefix("Bearer ").strip()
     if not supplied:
         raise HTTPException(status_code=401, detail="missing_edge_credentials")
-    with session_scope() as session:
-        edge = session.query(EdgeAgent).filter(EdgeAgent.device_identity == device_identity).first()
-        if edge is None or edge.revoked_at is not None:
-            raise HTTPException(status_code=401, detail="edge_untrusted")
-        if not hmac.compare_digest(edge.secret_hash, _sha256(supplied)):
-            raise HTTPException(status_code=401, detail="edge_untrusted")
-        return edge
+    edge = session.scalar(select(EdgeAgent).where(EdgeAgent.device_identity == device_identity))
+    if edge is None or edge.revoked_at is not None:
+        raise HTTPException(status_code=401, detail="edge_untrusted")
+    if not hmac.compare_digest(edge.secret_hash, _sha256(supplied)):
+        raise HTTPException(status_code=401, detail="edge_untrusted")
+    return edge
 
 
 def _sha256(value: str) -> str:

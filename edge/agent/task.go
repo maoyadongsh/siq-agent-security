@@ -166,7 +166,14 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 		// 空批是正常结果（如无标签容器）：跳过上传，回执记录 0 发现
 		return rcpt, nil
 	}
-	if err := r.Client.UploadBatch(ctx, r.State.DeviceIdentity, out.candidates, out.evidence, out.permissions); err != nil {
+	signer, err := loadSigner(r.State)
+	if err != nil {
+		rcpt.Status = "failed"
+		rcpt.ErrorCode = "signer_unavailable"
+		rcpt.ErrorMessage = err.Error()
+		return rcpt, nil
+	}
+	if err := r.Client.UploadBatch(ctx, t.TaskID, out.candidates, out.evidence, out.permissions, signer); err != nil {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = "batch_upload_failed"
 		rcpt.ErrorMessage = err.Error()

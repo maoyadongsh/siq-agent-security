@@ -54,6 +54,14 @@ func TestValidateScopeSafetyAcceptsValid(t *testing.T) {
 	}
 }
 
+func TestResolveConnectorBinRejectsUntrustedNames(t *testing.T) {
+	for _, name := range []string{"/tmp/evil", "../evil", "bash", "hermes/../../evil", ""} {
+		if _, err := ResolveConnectorBin(name, ""); err == nil {
+			t.Fatalf("ResolveConnectorBin(%q) accepted an untrusted connector name", name)
+		}
+	}
+}
+
 // TestErrorCodeMapping verifies the connector error-code → typed error map
 // (contract §3).
 func TestErrorCodeMapping(t *testing.T) {

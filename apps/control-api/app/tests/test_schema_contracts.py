@@ -43,7 +43,7 @@ VALID_EXAMPLES = {
         "content_hash": "a" * 64,
         "redaction_profile": "siq.redaction.v1",
         "classification": "internal",
-        "signature": "sig",
+        "signature": "f" * 128,
     },
     "permission-fact": {
         "subject": {"type": "agent_instance", "id": "inst_1"},
@@ -100,6 +100,12 @@ def test_desired_policy_rejects_unknown_enforcement_mode():
     bad = dict(VALID_EXAMPLES["desired-policy"])
     bad["enforcement_mode"] = "yolo"
     assert _validate("desired-policy", bad), "enforcement_mode 枚举外值必须拒绝"
+
+
+def test_desired_policy_rejects_plaintext_secret_field():
+    bad = dict(VALID_EXAMPLES["desired-policy"])
+    bad["secrets"] = [{"ref": "vault://x", "purpose": "demo", "value": "plaintext"}]
+    assert _validate("desired-policy", bad), "secret item 必须拒绝 value 等未声明字段"
 
 
 def test_event_envelope_rejects_missing_tenant():

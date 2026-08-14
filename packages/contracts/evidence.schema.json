@@ -19,12 +19,12 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "evidence_id": { "type": "string", "description": "租户内唯一（tenant_id + evidence_id 复合唯一）" },
+    "evidence_id": { "type": "string", "description": "环境内稳定标识；观察唯一键为 tenant_id + environment_id + evidence_id + content_hash" },
     "tenant_id": { "type": "string" },
     "environment_id": { "type": "string" },
     "source_type": {
       "type": "string",
-      "enum": ["registry", "manifest", "process", "container", "k8s", "iam", "gateway", "openshell", "human", "deny_log"]
+      "enum": ["registry", "manifest", "openclaw_config", "process", "container", "k8s", "iam", "gateway", "openshell", "human", "deny_log"]
     },
     "source_locator": { "type": "string", "description": "脱敏后的稳定来源定位，不含凭据" },
     "subject_ref": { "type": ["string", "null"], "description": "Candidate / Asset / Instance 引用" },
@@ -32,11 +32,11 @@
     "collected_at": { "type": "string", "format": "date-time", "description": "Collector 采集时间" },
     "collector_id": { "type": "string", "description": "采集主体（Edge Agent 设备身份）" },
     "connector_version": { "type": "string" },
-    "content_hash": { "type": "string", "description": "原始证据规范化后的 sha256" },
-    "redaction_profile": { "type": "string", "description": "使用的脱敏规则版本，如 siq.redaction.v1" },
+    "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "原始证据规范化后的 sha256" },
+    "redaction_profile": { "type": "string", "enum": ["siq.redaction.v1"], "description": "使用的脱敏规则版本" },
     "classification": { "type": "string", "enum": ["public", "internal", "confidential", "secret_ref"] },
     "payload_ref": { "type": ["string", "null"], "description": "加密对象引用；默认 null（仅结构化摘要）" },
-    "signature": { "type": "string", "description": "Edge 对证据包的签名或证明（Ed25519，hex）" },
+    "signature": { "type": "string", "pattern": "^[0-9a-f]{128}$", "description": "Edge 对证据包的签名或证明（Ed25519，hex）" },
     "expires_at": { "type": ["string", "null"], "format": "date-time", "description": "证据新鲜度或例外失效时间" }
   }
 }

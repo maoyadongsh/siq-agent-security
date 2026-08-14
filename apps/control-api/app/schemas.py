@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+StrictModelConfig = ConfigDict(extra="forbid")
 
 
 class EnvironmentCreate(BaseModel):
@@ -36,9 +39,11 @@ class EnrollmentOut(BaseModel):
 
 
 class EdgeRegisterRequest(BaseModel):
+    model_config = StrictModelConfig
+
     enrollment_code: str
     device_identity: str = Field(min_length=8, max_length=128)
-    public_key_pem: str = Field(min_length=1, max_length=8192)  # Phase 0+ 接真实验签时收紧为合法 PEM 校验
+    public_key_pem: str = Field(min_length=1, max_length=8192)  # 注册路由会进一步校验为 Ed25519 PEM
     version: str = Field(max_length=32)
     capabilities: dict = Field(default_factory=dict)
 
@@ -67,11 +72,37 @@ class EdgeTaskOut(BaseModel):
     expires_at: datetime
 
 
+class EdgeReceiptSummary(BaseModel):
+    model_config = StrictModelConfig
+
+    applied: bool | None = None
+
+
+class EdgeReceiptVerification(BaseModel):
+    model_config = StrictModelConfig
+
+    backend_revision: str | None = Field(default=None, max_length=128)
+    snapshot_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+
+
 class EdgeReceiptRequest(BaseModel):
-    status: str = Field(pattern="^(success|failed)$")
-    summary: dict = Field(default_factory=dict)
+    model_config = StrictModelConfig
+
+    task_id: str | None = Field(default=None, min_length=1, max_length=64)
+    device_identity: str | None = Field(default=None, min_length=8, max_length=128)
+    status: Literal["success", "failed"]
+    error_code: str | None = Field(default=None, max_length=64)
+    error_message: str | None = Field(default=None, max_length=512)
+    candidate_count: int = Field(default=0, ge=0)
+    evidence_count: int = Field(default=0, ge=0)
+    evidence_ids: list[str] = Field(default_factory=list, max_length=10000)
+    cursor: str | None = Field(default=None, max_length=512)
+    truncated: bool = False
+    completed_at: datetime | None = None
+    # 旧版 publish_policy 回执字段仅保留到 Edge 发布协议正式上线；当前不能使部署 effective。
+    summary: EdgeReceiptSummary = Field(default_factory=EdgeReceiptSummary)
     # 回执必须含可机器校验证据（设计文档 §21.1 不变量 #5）：如后端 revision、快照哈希
-    verification: dict | None = None
+    verification: EdgeReceiptVerification | None = None
 
 
 class CandidateConfirm(BaseModel):
@@ -103,7 +134,8 @@ class AgentAssetOut(BaseModel):
 class EvidenceOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: str
+    id: str = Field(validation_alias="evidence_id")
+    observation_id: str
     source_type: str
     source_locator: str
     subject_ref: str | None
@@ -122,6 +154,7 @@ class PermissionFactOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: str
+    environment_id: str | None
     subject_type: str
     subject_id: str
     delegated_user: dict | None
@@ -139,20 +172,153 @@ class PermissionFactOut(BaseModel):
     valid_until: datetime | None
 
 
+ConnectorName = Literal["hermes", "openclaw", "docker", "directory"]
+
+
 class ScanCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     environment_id: str
     scope: dict = Field(default_factory=dict)
-    connector: str | None = None  # 指定 Connector（hermes/openclaw/directory/docker），缺省由 Edge 决定
+    connector: ConnectorName | None = None
 
 
 class ScanOut(BaseModel):
     task_id: str
 
 
+CandidateSourceType = Literal[
+    "hermes_profile",
+    "openclaw_agent",
+    "directory_manifest",
+    "docker",
+    "kubernetes",
+    "systemd",
+    "siq_hub",
+    "process_list",
+    "human",
+]
+EvidenceSourceType = Literal[
+    "registry",
+    "manifest",
+    "openclaw_config",
+    "process",
+    "container",
+    "k8s",
+    "iam",
+    "gateway",
+    "openshell",
+    "human",
+    "deny_log",
+]
+
+
+class EdgeCandidateIn(BaseModel):
+    model_config = StrictModelConfig
+
+    candidate_id: str = Field(min_length=1, max_length=256)
+    source_type: CandidateSourceType
+    source_locator: str = Field(min_length=1, max_length=512)
+    discovered_at: datetime
+    name: str = Field(min_length=1, max_length=256)
+    framework: str = Field(min_length=1, max_length=32)
+    artifact_digest: str | None = Field(default=None, max_length=256)
+    attributes: dict[str, str] | None = None
+    evidence_ids: list[str] = Field(min_length=1)
+    confidence: float | None = Field(default=None, ge=0, le=1)
+    status: Literal["candidate", "needs_review", "dismissed"] = "candidate"
+
+
+class EdgeEvidenceIn(BaseModel):
+    model_config = StrictModelConfig
+
+    evidence_id: str = Field(min_length=1, max_length=128)
+    source_type: EvidenceSourceType
+    source_locator: str = Field(min_length=1, max_length=512)
+    subject_ref: str | None = Field(default=None, max_length=128)
+    observed_at: datetime
+    collected_at: datetime
+    collector_id: str = Field(min_length=1, max_length=128)
+    connector_version: str = Field(min_length=1, max_length=32)
+    content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    redaction_profile: Literal["siq.redaction.v1"]
+    classification: Literal["public", "internal", "confidential", "secret_ref"]
+    payload_ref: str | None = Field(default=None, max_length=256)
+    signature: str = Field(pattern=r"^[0-9a-f]{128}$")
+    expires_at: datetime | None = None
+
+
+class PermissionSubjectIn(BaseModel):
+    model_config = StrictModelConfig
+
+    type: Literal["agent_instance", "agent_asset", "identity_binding"]
+    id: str = Field(min_length=1, max_length=128)
+
+
+class PermissionResourceIn(BaseModel):
+    model_config = StrictModelConfig
+
+    type: str = Field(min_length=1, max_length=32)
+    value: str = Field(min_length=1, max_length=512)
+
+
+class EdgePermissionFactIn(BaseModel):
+    model_config = StrictModelConfig
+
+    subject: PermissionSubjectIn
+    delegated_user: dict | None = None
+    domain: Literal[
+        "business",
+        "data_scope",
+        "tool",
+        "filesystem",
+        "network",
+        "process",
+        "model",
+        "credential",
+        "resource",
+        "control_plane",
+    ]
+    action: str = Field(min_length=1, max_length=64)
+    resource: PermissionResourceIn
+    effect: Literal["allow", "deny"]
+    conditions: dict = Field(default_factory=dict)
+    state: Literal["declared", "inferred", "observed", "effective", "unknown"]
+    authority: str = Field(min_length=1, max_length=32)
+    authority_revision: str | None = Field(default=None, max_length=64)
+    evidence_ids: list[str] = Field(min_length=1)
+    valid_from: datetime | None = None
+    valid_until: datetime | None = None
+
+
+class EdgeBatchIn(BaseModel):
+    model_config = StrictModelConfig
+
+    task_id: str = Field(min_length=1, max_length=64)
+    candidates: list[EdgeCandidateIn] = Field(default_factory=list, max_length=10000)
+    evidence: list[EdgeEvidenceIn] = Field(default_factory=list, max_length=10000)
+    permission_facts: list[EdgePermissionFactIn] = Field(default_factory=list, max_length=10000)
+    signature: str = Field(pattern=r"^[0-9a-f]{128}$")
+
+
 class FindingAcceptRisk(BaseModel):
+    model_config = StrictModelConfig
+
     owner_user_id: str
     reason: str = Field(min_length=1, max_length=512)
     expires_at: datetime
+
+
+class FindingResolve(BaseModel):
+    """解决操作必须指向可追溯的修复证据/工单，且禁止查询串等易夹带凭据的内容。"""
+
+    model_config = StrictModelConfig
+
+    evidence_ref: str = Field(
+        min_length=1,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._:/-]*$",
+    )
 
 
 class FindingOut(BaseModel):
@@ -175,7 +341,19 @@ class FindingOut(BaseModel):
     last_seen_at: datetime
 
 
+class SecretReference(BaseModel):
+    """策略只接受凭据引用；任何 value/token/password 等额外字段直接拒绝。"""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ref: str = Field(min_length=1, max_length=512)
+    purpose: str = Field(min_length=1, max_length=256)
+    injection: Literal["gateway", "env_ref", "none"] = "none"
+
+
 class PolicyCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     name: str = Field(min_length=1, max_length=128)
     selector: dict
     filesystem: dict | None = None
@@ -185,7 +363,7 @@ class PolicyCreate(BaseModel):
     tools: list | None = None
     tool_policies: dict | None = None
     data_scope_refs: list | None = None
-    secrets: list | None = None
+    secrets: list[SecretReference] | None = None
     resources: dict | None = None
     audit: dict | None = None
     exceptions: list | None = None

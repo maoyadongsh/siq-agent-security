@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from app.db import get_session
 from app.models import AgentAsset, Finding, utcnow
 from app.outbox import audit, emit_event
-from app.schemas import FindingAcceptRisk, FindingOut
+from app.schemas import FindingAcceptRisk, FindingOut, FindingResolve
 from app.security import Identity, ensure_permission, get_identity, require_permission
 
 router = APIRouter(tags=["findings"])
@@ -55,16 +55,11 @@ def acknowledge_finding(
 @router.post("/api/v1/findings/{finding_id}/resolve", response_model=FindingOut)
 def resolve_finding(
     finding_id: str,
+    body: FindingResolve,
     session: Session = Depends(get_session),
     identity: Identity = Depends(get_identity),
 ):
     """解决 Finding：必须回链修复证据（design §13.2 修复与验证方式）。"""
-    from pydantic import BaseModel
-
-    class ResolveBody(BaseModel):
-        evidence_ref: str = ""
-
-    body = ResolveBody.model_validate({})
     finding = session.scalar(
         select(Finding).where(Finding.id == finding_id, Finding.tenant_id == identity.tenant_id)
     )
@@ -83,6 +78,7 @@ def resolve_finding(
         "finding.resolve",
         "finding",
         resource_id=finding.id,
+        summary={"evidence_ref": body.evidence_ref},
     )
     emit_event(
         session,

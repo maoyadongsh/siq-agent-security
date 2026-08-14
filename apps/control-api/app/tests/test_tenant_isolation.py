@@ -5,51 +5,30 @@
 
 from __future__ import annotations
 
+from app.tests.edge_helpers import candidate, create_scan_task, register_edge, signed_batch, signed_evidence
 
-def _make_agent(client, headers, name):
+
+def _make_agent(client, headers, name, *, evidence_id=None, edge_identity=None):
     """经 Edge 上传批次创建一个候选资产（不直接写库）。"""
     env_resp = client.post("/api/v1/environments", json={"name": f"env-{name}"}, headers=headers)
     env_id = env_resp.json()["id"]
-    # 注册 Edge
-    enr = client.post(f"/api/v1/environments/{env_id}/edge-enrollment", json={}, headers=headers).json()
-    reg = client.post(
-        "/edge/v1/register",
-        json={
-            "enrollment_code": enr["code"],
-            "device_identity": f"edge-{name}",
-            "public_key_pem": "PEM-PLACEHOLDER",
-            "version": "0.1.0",
-        },
+    identity = edge_identity or f"edge-{name}"
+    evidence_id = evidence_id or f"ev-{name}"
+    edge_headers, private_key = register_edge(client, headers, env_id, identity)
+    task_id = create_scan_task(client, headers, env_id)
+    evidence = signed_evidence(
+        private_key,
+        identity,
+        evidence_id,
+        content_hash="a" * 64,
+        source_locator=f"profiles/{name}/config.yaml",
     )
-    edge_secret = reg.json()["device_secret"]
-    edge_headers = {"Authorization": f"Bearer {edge_secret}", "X-Edge-Identity": f"edge-{name}"}
-    batch = {
-        "candidates": [
-            {
-                "candidate_id": f"hermes:{name}",
-                "source_type": "hermes_profile",
-                "source_locator": f"hermes://profiles/{name}",
-                "discovered_at": "2026-08-13T12:00:00Z",
-                "name": name,
-                "framework": "hermes",
-                "evidence_ids": [f"ev-{name}"],
-            }
-        ],
-        "evidence": [
-            {
-                "evidence_id": f"ev-{name}",
-                "source_type": "manifest",
-                "source_locator": f"profiles/{name}/config.yaml",
-                "observed_at": "2026-08-13T12:00:00Z",
-                "collector_id": f"edge-{name}",
-                "connector_version": "0.1.0",
-                "content_hash": "a" * 64,
-                "redaction_profile": "siq.redaction.v1",
-                "classification": "internal",
-                "signature": "sig",
-            }
-        ],
-    }
+    batch = signed_batch(
+        private_key,
+        task_id,
+        candidates=[candidate(name, [evidence_id])],
+        evidence=[evidence],
+    )
     upload = client.post("/edge/v1/batches", json=batch, headers=edge_headers)
     assert upload.status_code == 200, upload.text
     assets = client.get("/api/v1/candidates", headers=headers).json()
@@ -105,32 +84,83 @@ def test_orphan_evidence_rejected(client, tenant_a):
     """Connector 合同：每批 evidence 必须被 candidate 引用，孤儿证据拒绝（§10.2 硬性要求）。"""
     env_resp = client.post("/api/v1/environments", json={"name": "env-orphan"}, headers=tenant_a)
     env_id = env_resp.json()["id"]
-    enr = client.post(f"/api/v1/environments/{env_id}/edge-enrollment", json={}, headers=tenant_a).json()
-    reg = client.post(
-        "/edge/v1/register",
-        json={
-            "enrollment_code": enr["code"],
-            "device_identity": "edge-orphan",
-            "public_key_pem": "PEM",
-            "version": "0.1.0",
-        },
-    )
-    edge_headers = {"Authorization": f"Bearer {reg.json()['device_secret']}", "X-Edge-Identity": "edge-orphan"}
-    batch = {
-        "candidates": [],
-        "evidence": [
-            {
-                "evidence_id": "ev-orphan",
-                "source_type": "manifest",
-                "source_locator": "x",
-                "observed_at": "2026-08-13T12:00:00Z",
-                "collector_id": "edge-orphan",
-                "connector_version": "0.1.0",
-                "content_hash": "b" * 64,
-                "signature": "sig",
-            }
-        ],
-    }
+    edge_headers, private_key = register_edge(client, tenant_a, env_id, "edge-orphan")
+    task_id = create_scan_task(client, tenant_a, env_id)
+    evidence = signed_evidence(private_key, "edge-orphan", "ev-orphan", content_hash="b" * 64)
+    batch = signed_batch(private_key, task_id, evidence=[evidence])
     resp = client.post("/edge/v1/batches", json=batch, headers=edge_headers)
     assert resp.status_code == 422
     assert "orphan_evidence" in resp.json()["detail"]
+
+
+def test_same_external_evidence_id_is_tenant_scoped(client, tenant_a, tenant_b):
+    agent_a = _make_agent(
+        client,
+        tenant_a,
+        "shared-evidence-a",
+        evidence_id="ev-shared-evidence-id",
+        edge_identity="edge-shared-evidence-a",
+    )
+    agent_b = _make_agent(
+        client,
+        tenant_b,
+        "shared-evidence-b",
+        evidence_id="ev-shared-evidence-id",
+        edge_identity="edge-shared-evidence-b",
+    )
+    evidence_a = client.get(f"/api/v1/agents/{agent_a['id']}/evidence", headers=tenant_a).json()
+    evidence_b = client.get(f"/api/v1/agents/{agent_b['id']}/evidence", headers=tenant_b).json()
+    assert evidence_a[0]["id"] == evidence_b[0]["id"] == "ev-shared-evidence-id"
+    assert evidence_a[0]["observation_id"] != evidence_b[0]["observation_id"]
+
+
+def test_tampered_or_unbound_evidence_batch_is_rejected(client, tenant_a):
+    env = client.post("/api/v1/environments", json={"name": "env-batch-negative"}, headers=tenant_a).json()
+    identity = "edge-batch-negative"
+    edge_headers, private_key = register_edge(client, tenant_a, env["id"], identity)
+    task_id = create_scan_task(client, tenant_a, env["id"])
+    evidence = signed_evidence(private_key, identity, "ev-batch-negative")
+    valid = signed_batch(
+        private_key,
+        task_id,
+        candidates=[candidate("batch-negative", ["ev-batch-negative"])],
+        evidence=[evidence],
+    )
+
+    tampered_batch = {**valid, "candidates": [{**valid["candidates"][0], "name": "tampered"}]}
+    response = client.post("/edge/v1/batches", json=tampered_batch, headers=edge_headers)
+    assert response.status_code == 401
+    assert response.json()["detail"] == "batch_signature_invalid"
+
+    tampered_evidence = {**evidence, "content_hash": "f" * 64}
+    resigned_batch = signed_batch(
+        private_key,
+        task_id,
+        candidates=[candidate("batch-negative", ["ev-batch-negative"])],
+        evidence=[tampered_evidence],
+    )
+    response = client.post("/edge/v1/batches", json=resigned_batch, headers=edge_headers)
+    assert response.status_code == 401
+    assert response.json()["detail"] == "evidence_signature_invalid"
+
+    unbound = signed_batch(
+        private_key,
+        "tsk-not-owned",
+        candidates=[candidate("batch-negative", ["ev-batch-negative"])],
+        evidence=[evidence],
+    )
+    response = client.post("/edge/v1/batches", json=unbound, headers=edge_headers)
+    assert response.status_code == 409
+    assert response.json()["detail"] == "batch_task_binding_invalid"
+
+
+def test_edge_batch_declared_over_size_limit_is_rejected_before_parsing(client, tenant_a):
+    env = client.post("/api/v1/environments", json={"name": "env-batch-size"}, headers=tenant_a).json()
+    edge_headers, _ = register_edge(client, tenant_a, env["id"], "edge-batch-size")
+    response = client.post(
+        "/edge/v1/batches",
+        content=b"{}",
+        headers={**edge_headers, "Content-Length": str(8 * 1024 * 1024 + 1)},
+    )
+    assert response.status_code == 413
+    assert response.json()["detail"] == "batch_too_large"

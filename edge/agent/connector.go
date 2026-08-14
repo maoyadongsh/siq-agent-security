@@ -110,11 +110,11 @@ type SubprocessConnector struct {
 // SubprocessOptions configures a SubprocessConnector; zero values get the
 // contract defaults.
 type SubprocessOptions struct {
-	Name          string
-	Version       string
-	Timeout       time.Duration // 0 → 60s
-	MaxOutputBytes int64        // 0 → 8 MiB
-	MaxStderrBytes int64        // 0 → 1 MiB
+	Name           string
+	Version        string
+	Timeout        time.Duration // 0 → 60s
+	MaxOutputBytes int64         // 0 → 8 MiB
+	MaxStderrBytes int64         // 0 → 1 MiB
 }
 
 // NewSubprocessConnector spawns the connector binary in --serve mode.
@@ -345,6 +345,9 @@ func (c *SubprocessConnector) Health(ctx context.Context) (*protocol.HealthRepor
 //  2. $SIQ_CONNECTOR_BIN_DIR/<name>-connector and $SIQ_CONNECTOR_BIN_DIR/<name>
 //  3. <name>-connector and <name> on PATH
 func ResolveConnectorBin(name, override string) (string, error) {
+	if !isOfficialConnector(name) {
+		return "", fmt.Errorf("connector %q is not allowlisted", name)
+	}
 	if override != "" {
 		if fi, err := os.Stat(override); err == nil && !fi.IsDir() {
 			return override, nil
@@ -362,6 +365,15 @@ func ResolveConnectorBin(name, override string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("connector binary for %q not found (set SIQ_CONNECTOR_BIN_DIR or install %s-connector on PATH)", name, name)
+}
+
+func isOfficialConnector(name string) bool {
+	switch name {
+	case "hermes", "openclaw", "docker", "directory":
+		return true
+	default:
+		return false
+	}
 }
 
 // cappedBuffer is a stderr buffer that stops growing after max bytes, so a

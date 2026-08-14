@@ -19,6 +19,7 @@ from app.adapters.openshell.cli_backend import OpenShellCliBackend
 from app.adapters.openshell.contracts import AdapterError
 from app.models import ChangeRequest, Deployment, DesiredPolicy, utcnow
 from app.outbox import audit, emit_event
+from app.safe_errors import error_reference
 
 
 @dataclass(frozen=True)
@@ -44,13 +45,14 @@ def check_policy_drift(session: Session, tenant_id: str) -> list[DriftResult]:
             snapshot = backend.read_effective_policy(dep.target)
         except AdapterError as exc:
             # 后端不可达/目标缺失：如实标记（fail-closed），不静默跳过
+            error = error_reference(exc)
             results.append(
                 DriftResult(
                     deployment_id=dep.id,
                     target=dep.target,
                     severity="medium",
-                    summary=f"无法读取后端有效策略（含目标不存在）: {str(exc)[:160]}",
-                    details={"kind": "unreadable", "error": str(exc)[:200]},
+                    summary=f"无法读取后端有效策略（错误参考 {error['error_digest']}）",
+                    details={"kind": "unreadable", **error},
                 )
             )
             continue

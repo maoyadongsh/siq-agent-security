@@ -122,9 +122,17 @@ def create_enrollment(
 @router.post("/edge/v1/register", response_model=EdgeRegisterOut)
 def register_edge(body: EdgeRegisterRequest, session: Session = Depends(get_session)):
     """Edge 使用一次性注册码换取设备身份与 secret。注册码不可重放。"""
+    from app.evidence_signing import load_edge_public_key
+
+    try:
+        load_edge_public_key(body.public_key_pem)
+    except ValueError:
+        raise HTTPException(status_code=422, detail="invalid_edge_public_key") from None
     now = utcnow()
     token = session.scalar(
-        select(EnrollmentToken).where(EnrollmentToken.code_hash == hash_secret(body.enrollment_code))
+        select(EnrollmentToken)
+        .where(EnrollmentToken.code_hash == hash_secret(body.enrollment_code))
+        .with_for_update()
     )
     if token is None or token.used_at is not None or token.expires_at < now:
         raise HTTPException(status_code=401, detail="enrollment_invalid")
@@ -163,7 +171,7 @@ def edge_heartbeat(
     device_identity = request.headers.get("X-Edge-Identity")
     if not device_identity:
         raise HTTPException(status_code=401, detail="missing_edge_identity")
-    edge = verify_edge_secret(request, device_identity)
+    edge = verify_edge_secret(request, device_identity, session)
     now = utcnow()
     edge.last_seen_at = now
     edge.version = body.version or edge.version
@@ -179,7 +187,7 @@ def edge_fetch_tasks(request: Request, session: Session = Depends(get_session)):
     device_identity = request.headers.get("X-Edge-Identity")
     if not device_identity:
         raise HTTPException(status_code=401, detail="missing_edge_identity")
-    edge = verify_edge_secret(request, device_identity)
+    edge = verify_edge_secret(request, device_identity, session)
     now = utcnow()
     # 过期任务顺带标记 expired（惰性清扫）
     session.query(EdgeTask).filter(
@@ -214,7 +222,7 @@ def edge_post_receipt(
     device_identity = request.headers.get("X-Edge-Identity")
     if not device_identity:
         raise HTTPException(status_code=401, detail="missing_edge_identity")
-    edge = verify_edge_secret(request, device_identity)
+    edge = verify_edge_secret(request, device_identity, session)
     task = session.scalar(
         select(EdgeTask).where(
             EdgeTask.id == task_id,
@@ -223,6 +231,24 @@ def edge_post_receipt(
     )
     if task is None:
         raise HTTPException(status_code=404, detail="not_found")
+    if body.task_id is not None and body.task_id != task.id:
+        raise HTTPException(status_code=409, detail="receipt_task_mismatch")
+    if body.device_identity is not None and body.device_identity != device_identity:
+        raise HTTPException(status_code=409, detail="receipt_device_mismatch")
+    terminal_status = "delivered" if body.status == "success" else "failed"
+    if task.status in ("delivered", "failed"):
+        if task.status != terminal_status:
+            raise HTTPException(status_code=409, detail="receipt_replay_conflict")
+        return {"ok": True, "idempotent": True}
+    if task.status == "expired" or task.expires_at < utcnow():
+        raise HTTPException(status_code=409, detail="receipt_task_expired")
+    if task.status not in ("pending", "uploaded"):
+        raise HTTPException(status_code=409, detail="receipt_task_state_invalid")
+    if task.task_type == "scan" and body.status == "success":
+        if body.evidence_count != len(body.evidence_ids):
+            raise HTTPException(status_code=422, detail="receipt_evidence_count_mismatch")
+        if (body.candidate_count > 0 or body.evidence_count > 0) and task.status != "uploaded":
+            raise HTTPException(status_code=409, detail="batch_upload_required")
     task.status = "delivered" if body.status == "success" else "failed"
     env = session.get(Environment, edge.environment_id)
     tenant_id = env.tenant_id if env else ""
@@ -236,33 +262,23 @@ def edge_post_receipt(
             )
         )
         if deployment is not None:
-            deployment.receipt = body.summary
-            has_verification = bool(body.verification) and (
-                body.verification.get("backend_revision") or body.verification.get("snapshot_hash")
+            verification = body.verification.model_dump(exclude_none=True) if body.verification else {}
+            deployment.receipt = {
+                "status": body.status,
+                "error_code": body.error_code,
+                **verification,
+            }
+            # 当前 Edge 明确只实现 scan，publish_policy 成功回执不属于可信协议。
+            # 在 Edge 具备制品哈希绑定、签名回执和活体探针前，永不由该路径转 effective。
+            deployment.status = "failed"
+            reason = "edge_publish_unsupported" if body.status == "success" else "edge_failure"
+            emit_event(
+                session,
+                tenant_id,
+                "policy.deployment.failed.v1",
+                {"deployment_id": deployment.id, "reason": reason},
+                resource_ref=deployment.id,
             )
-            if body.status == "success" and has_verification:
-                # 验证证据齐备才允许 effective（不变量 #5）
-                deployment.verification = body.verification
-                deployment.status = "effective"
-                emit_event(
-                    session,
-                    tenant_id,
-                    "policy.deployment.verified.v1",
-                    {"deployment_id": deployment.id, "verification": body.verification},
-                    resource_ref=deployment.id,
-                )
-            else:
-                deployment.status = "failed"
-                emit_event(
-                    session,
-                    tenant_id,
-                    "policy.deployment.failed.v1",
-                    {
-                        "deployment_id": deployment.id,
-                        "reason": "verification_missing" if body.status == "success" else "edge_failure",
-                    },
-                    resource_ref=deployment.id,
-                )
 
     audit(
         session,
@@ -274,7 +290,11 @@ def edge_post_receipt(
         resource_id=task_id,
         summary={
             "status": body.status,
-            "verification": body.verification or {},
+            "error_code": body.error_code,
+            "candidate_count": body.candidate_count,
+            "evidence_count": body.evidence_count,
+            "truncated": body.truncated,
+            "verification_present": body.verification is not None,
             "deployment_id": deployment.id if deployment else None,
         },
     )

@@ -16,12 +16,14 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "subject": { "type": "object", "required": ["type", "id"], "properties": {
-      "type": { "type": "string", "enum": ["agent_instance", "agent_asset", "identity_binding"] },
+    "environment_id": { "type": ["string", "null"], "description": "控制面从已验证的 Edge/后端绑定派生，不信任 Connector 自报" },
+    "subject": { "type": "object", "additionalProperties": false, "required": ["type", "id"], "properties": {
+      "type": { "type": "string", "enum": ["agent_instance", "agent_asset", "identity_binding", "openshell_sandbox"] },
       "id": { "type": "string" }
     } },
     "delegated_user": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "description": "委托维度；来源优先为 SIQ IAM /auth/delegated-token（act claim、purpose、TTL≤300s），而非 Agent 自报身份",
       "properties": {
         "user_id": { "type": "string" },
@@ -37,6 +39,7 @@
     "action": { "type": "string", "description": "如 http.request / fs.write / model.generate" },
     "resource": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["type", "value"],
       "properties": {
         "type": { "type": "string", "description": "endpoint / path / tool / model / credential_ref / namespace" },

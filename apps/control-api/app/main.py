@@ -48,11 +48,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS：dev 模式全放开（本地控制台可能从任意本机网卡 IP 打开）；
-# 生产保持显式白名单（身份仍由 OIDC 验证，dev 身份头生产不生效）。
+# CORS：dev 模式便于本地联调；生产默认同源（空列表），仅显式安全白名单可放开。
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if settings.dev_mode else ["http://localhost:19876", "http://127.0.0.1:19876"],
+    allow_origins=["*"] if settings.dev_mode else list(settings.cors_origins),
     allow_methods=["*"],
     allow_headers=["*"],
 )

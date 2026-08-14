@@ -15,6 +15,7 @@ import os
 from sqlalchemy.orm import Session
 
 from app.models import AgentAsset, ClassificationRun, utcnow
+from app.safe_errors import error_reference
 
 # §11.3 输出 Schema 字段（与设计文档示例一致）
 OUTPUT_KEYS = ("is_agent_candidate", "role", "system_candidates", "capability_hints", "unresolved_questions")
@@ -150,12 +151,16 @@ def classify_asset(session: Session, tenant_id: str, asset: AgentAsset) -> Class
         try:
             output = provider_classify(asset)
         except RuntimeError as exc:
+            error = error_reference(exc)
             output = {
                 "is_agent_candidate": None,
                 "role": None,
                 "system_candidates": [],
                 "capability_hints": [],
-                "unresolved_questions": [f"分类 Provider 失败（fail-closed）: {str(exc)[:200]}"],
+                "unresolved_questions": [
+                    "分类 Provider 失败（fail-closed）："
+                    f"{error['error_code']}:{error['error_digest']}"
+                ],
             }
             mode = f"provider_error:{mode}"
     else:

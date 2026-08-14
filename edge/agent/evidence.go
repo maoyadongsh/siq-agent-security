@@ -1,10 +1,11 @@
 package main
 
 import (
-	"encoding/base64"
+	"bytes"
 	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"encoding/pem"
@@ -19,11 +20,8 @@ import (
 // (protocol.ContentHash) and the .env refusal rule live in the shared protocol
 // package so the connectors and the Edge use the same implementation.
 
-// Signer is the Phase-0 Ed25519 signer placeholder. In Phase 0 the Edge
-// generates a local keypair per run; Phase 1 will pin the control-plane-issued
-// public key at register time and verify task signatures with it (see
-// task.go VerifyTaskSignature TODO). Security invariant: private keys never
-// leave the device.
+// Signer owns the Edge Ed25519 device key used for evidence and batch signing.
+// Security invariant: private keys never leave the device.
 type Signer struct {
 	priv ed25519.PrivateKey
 	pub  ed25519.PublicKey
@@ -40,7 +38,7 @@ func NewSigner() (*Signer, error) {
 
 // NewSignerFromSeed restores the signer from a base64 32-byte seed (state.json).
 // Evidence signatures become stable across restarts so the control plane can
-// re-verify them (threat-model TODO: 签名密钥持久化).
+// re-verify them.
 func NewSignerFromSeed(seedB64 string) (*Signer, error) {
 	seed, err := base64.StdEncoding.DecodeString(seedB64)
 	if err != nil || len(seed) != ed25519.SeedSize {
@@ -104,9 +102,11 @@ func SealEvidence(ev *protocol.Evidence, signer *Signer, collectorID string) err
 	if ev.CollectedAt == "" {
 		ev.CollectedAt = now
 	}
-	if ev.CollectorID == "" {
-		ev.CollectorID = collectorID
-	}
+	// Edge owns the identity boundary. Connector-provided tenant/environment/
+	// collector values are never trusted or signed through.
+	ev.TenantID = ""
+	ev.EnvironmentID = ""
+	ev.CollectorID = collectorID
 	if ev.RedactionProfile == "" {
 		ev.RedactionProfile = protocol.RedactionProfile
 	}
@@ -115,7 +115,7 @@ func SealEvidence(ev *protocol.Evidence, signer *Signer, collectorID string) err
 	}
 	clone := *ev
 	clone.Signature = ""
-	data, err := json.Marshal(&clone)
+	data, err := CanonicalJSON(&clone)
 	if err != nil {
 		return fmt.Errorf("seal: encode evidence %s: %w", ev.EvidenceID, err)
 	}
@@ -125,6 +125,27 @@ func SealEvidence(ev *protocol.Evidence, signer *Signer, collectorID string) err
 	}
 	ev.Signature = sig
 	return nil
+}
+
+// CanonicalJSON is shared by evidence and batch signatures. encoding/json
+// sorts map keys; SetEscapeHTML(false) aligns with the control plane's UTF-8
+// canonical form. The encoder newline is removed before signing.
+func CanonicalJSON(value any) ([]byte, error) {
+	raw, err := json.Marshal(value)
+	if err != nil {
+		return nil, err
+	}
+	var normalized any
+	if err := json.Unmarshal(raw, &normalized); err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(false)
+	if err := enc.Encode(normalized); err != nil {
+		return nil, err
+	}
+	return bytes.TrimSuffix(buf.Bytes(), []byte("\n")), nil
 }
 
 // ValidateBatchReferences enforces contract hard requirement 4: every

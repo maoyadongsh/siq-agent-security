@@ -14,6 +14,8 @@ os.environ["SIQ_AS_ALLOW_SQLITE"] = "1"
 
 _TMPDIR = tempfile.mkdtemp(prefix="siq-as-test-")
 os.environ["SIQ_AS_DATABASE_URL"] = f"sqlite:///{Path(_TMPDIR) / 'test.db'}"
+os.environ["SIQ_AS_SIGNING_KEY_FILE"] = str(Path(_TMPDIR) / "control-plane-signing.seed")
+os.environ["SIQ_AS_ENFORCEMENT_BACKEND"] = "fake"
 
 import pytest
 from fastapi.testclient import TestClient
@@ -48,7 +50,11 @@ def tenant_b():
 
 @pytest.fixture(scope="session")
 def env_a(client: TestClient, tenant_a: dict):
-    resp = client.post("/api/v1/environments", json={"name": "dev-host-a", "env_type": "host"}, headers=tenant_a)
+    resp = client.post(
+        "/api/v1/environments",
+        json={"name": "dev-host-a", "env_type": "host", "mode": "enforce"},
+        headers=tenant_a,
+    )
     assert resp.status_code == 201, resp.text
     return resp.json()
 

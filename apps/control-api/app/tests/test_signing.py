@@ -5,7 +5,11 @@
 
 from __future__ import annotations
 
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+from app.evidence_signing import canonical_json
 from app.signing import build_task_envelope, verify_task_signature
+from app.tests.edge_helpers import edge_public_key_pem
 
 
 def _register_and_fetch(client, tenant_a, env_a, identity):
@@ -17,11 +21,31 @@ def _register_and_fetch(client, tenant_a, env_a, identity):
         json={
             "enrollment_code": enr["code"],
             "device_identity": identity,
-            "public_key_pem": "PEM",
+            "public_key_pem": edge_public_key_pem(identity),
             "version": "0.1.0",
         },
     ).json()
     return reg
+
+
+def test_edge_python_canonical_signature_fixture():
+    payload = {
+        "task_id": "tsk_fixture",
+        "note": "<安全>",
+        "counts": [1, 2],
+        "nested": {"z": False, "a": "值"},
+    }
+    expected_json = (
+        '{"counts":[1,2],"nested":{"a":"值","z":false},'
+        '"note":"<安全>","task_id":"tsk_fixture"}'
+    ).encode()
+    expected_signature = (
+        "d9f7636415eca6419c6613673089f00cc254598d5211b710614c602d75de563e"
+        "4f32da23213289be855a998d53380b21af99c810258b57e01ff15fafe41abe04"
+    )
+    encoded = canonical_json(payload)
+    assert encoded == expected_json
+    assert Ed25519PrivateKey.from_private_bytes(bytes(range(32))).sign(encoded).hex() == expected_signature
 
 
 def test_register_returns_control_plane_public_key(client, tenant_a, env_a):

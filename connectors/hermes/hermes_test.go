@@ -137,6 +137,14 @@ func TestCollectProfiles(t *testing.T) {
 	if len(cand.EvidenceIDs) != 3 {
 		t.Errorf("candidate evidence_ids=%v want 3 references", cand.EvidenceIDs)
 	}
+	if len(batch.PermissionFacts) == 0 {
+		t.Fatal("toolsets must produce declared permission facts")
+	}
+	for _, fact := range batch.PermissionFacts {
+		if len(fact.EvidenceIDs) == 0 {
+			t.Fatalf("permission fact %s has no evidence reference", fact.Resource.Value)
+		}
+	}
 	if !strings.HasPrefix(batch.Cursor, "hermes-cursor:") {
 		t.Errorf("cursor=%q", batch.Cursor)
 	}

@@ -232,7 +232,7 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			if name == "" {
 				continue
 			}
-			evidenceID := "ev:openclaw:" + hex.EncodeToString([]byte(agent.ID+cfgHash))[:16]
+			evidenceID := "ev:openclaw:" + hex.EncodeToString([]byte(agent.ID + cfgHash))[:16]
 			cand := &protocol.Candidate{
 				CandidateID:   "openclaw:" + name,
 				SourceType:    "openclaw_agent",
@@ -272,25 +272,25 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			// declared 权限事实（绝不 effective；权威源解析另行完成）
 			for _, mid := range modelIDs {
 				batch.PermissionFacts = append(batch.PermissionFacts, &protocol.PermissionFact{
-					Subject:    &protocol.Subject{Type: "agent_asset", ID: cand.CandidateID},
-					Domain:     "model",
-					Action:     "model.generate",
-					Resource:   &protocol.Resource{Type: "model", Value: red.RedactString(mid)},
-					Effect:     "allow",
-					State:      "declared",
-					Authority:  "openclaw-config",
+					Subject:     &protocol.Subject{Type: "agent_asset", ID: cand.CandidateID},
+					Domain:      "model",
+					Action:      "model.generate",
+					Resource:    &protocol.Resource{Type: "model", Value: red.RedactString(mid)},
+					Effect:      "allow",
+					State:       "declared",
+					Authority:   "openclaw-config",
 					EvidenceIDs: []string{evidenceID},
 				})
 			}
 			if agent.Workspace != "" {
 				batch.PermissionFacts = append(batch.PermissionFacts, &protocol.PermissionFact{
-					Subject:    &protocol.Subject{Type: "agent_asset", ID: cand.CandidateID},
-					Domain:     "filesystem",
-					Action:     "fs.write",
-					Resource:   &protocol.Resource{Type: "path", Value: red.RedactString(agent.Workspace)},
-					Effect:     "allow",
-					State:      "declared",
-					Authority:  "openclaw-config",
+					Subject:     &protocol.Subject{Type: "agent_asset", ID: cand.CandidateID},
+					Domain:      "filesystem",
+					Action:      "fs.write",
+					Resource:    &protocol.Resource{Type: "path", Value: red.RedactString(agent.Workspace)},
+					Effect:      "allow",
+					State:       "declared",
+					Authority:   "openclaw-config",
 					EvidenceIDs: []string{evidenceID},
 				})
 			}

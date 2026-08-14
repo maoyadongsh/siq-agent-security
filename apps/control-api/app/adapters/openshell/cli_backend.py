@@ -10,8 +10,8 @@
   升级 v0.0.104（补丁已上游化）预期修复；本后端对 list_targets 提供 docker 回退。
 
 安全约束：
-- 子进程经 bash 包装 `source <env.sh>` 获得 research-engine 的隔离 XDG 状态，
-  不继承调用方用户级 OpenShell 配置；
+- 仅接受显式的 CLI+网关或绝对 env.sh 路径配置，不隐式依赖相邻仓库；
+- 非回环网关强制 HTTPS，拒绝 URL 凭据、路径、查询串和片段；
 - 每次调用超时 + 输出上限；任何异常 → AdapterError（fail-closed）。
 """
 
@@ -21,6 +21,9 @@ import os
 import re
 import subprocess
 from collections.abc import Callable
+from ipaddress import ip_address
+from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 
@@ -51,11 +54,19 @@ _VERSION_UNCHANGED_RE = re.compile(r"Policy unchanged \(version (\d+), hash: ([0
 Runner = Callable[[list[str]], tuple[int, str, str]]
 
 
-def _default_env_script() -> str:
-    return os.getenv(
-        "SIQ_AS_OPENSHELL_ENV_SH",
-        "/home/maoyd/siq-research-engine/scripts/openshell/env.sh",
-    )
+def _default_env_script() -> str | None:
+    return os.getenv("SIQ_AS_OPENSHELL_ENV_SH") or None
+
+
+def _is_loopback(host: str | None) -> bool:
+    if not host:
+        return False
+    if host.lower() == "localhost":
+        return True
+    try:
+        return ip_address(host).is_loopback
+    except ValueError:
+        return False
 
 
 class OpenShellCliBackend(EnforcementAdapter):
@@ -66,7 +77,7 @@ class OpenShellCliBackend(EnforcementAdapter):
         env_script: str | None = None,
         docker_runner: Runner | None = None,
     ):
-        self._env_script = env_script or _default_env_script()
+        self._env_script = env_script if env_script is not None else _default_env_script()
         self._runner = runner or self._subprocess_runner
         self._docker_runner = docker_runner  # None = 原始 docker 子进程
         self._artifacts: dict[str, CompiledPolicy] = {}  # compile 注册，apply 引用
@@ -78,18 +89,57 @@ class OpenShellCliBackend(EnforcementAdapter):
 
         - SIQ_AS_OPENSHELL_CLI_BIN 指定 CLI 二进制（如 v0.0.104 构建产物）
           + SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT/INSECURE → 直连指定网关（不经 env.sh）；
-        - 默认：source research-engine env.sh 走 canary v0.0.83 隔离配置。
+        - SIQ_AS_OPENSHELL_ENV_SH → 显式 source 指定的绝对路径脚本；
+        - 两种方式均未完整配置时 fail-closed。
         """
         cli_bin = os.getenv("SIQ_AS_OPENSHELL_CLI_BIN")
         endpoint = os.getenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT")
         insecure = os.getenv("SIQ_AS_OPENSHELL_GATEWAY_INSECURE", "0") == "1"
+        if bool(cli_bin) != bool(endpoint):
+            raise AdapterError("SIQ_AS_OPENSHELL_CLI_BIN 与 SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT 必须同时配置")
         if cli_bin and endpoint:
+            parsed = urlparse(endpoint)
+            try:
+                parsed.port
+            except ValueError as exc:
+                raise AdapterError("OpenShell gateway endpoint 端口无效") from exc
+            if (
+                parsed.scheme not in ("http", "https")
+                or not parsed.hostname
+                or parsed.username is not None
+                or parsed.password is not None
+                or parsed.path not in ("", "/")
+                or parsed.params
+                or parsed.query
+                or parsed.fragment
+            ):
+                raise AdapterError("OpenShell gateway endpoint 无效")
+            loopback = _is_loopback(parsed.hostname)
+            if parsed.scheme != "https" and not loopback:
+                raise AdapterError("非回环 OpenShell gateway 必须使用 HTTPS")
+            if insecure and not loopback:
+                raise AdapterError("--gateway-insecure 仅允许回环开发网关")
             cmd = [cli_bin, "--gateway-endpoint", endpoint]
             if insecure:
                 cmd.append("--gateway-insecure")
             cmd.extend(args)
+        elif self._env_script:
+            env_path = Path(self._env_script)
+            if not env_path.is_absolute():
+                raise AdapterError("SIQ_AS_OPENSHELL_ENV_SH 必须是绝对路径")
+            # 脚本路径通过位置参数传入，不拼接到 shell 程序文本。
+            cmd = [
+                "bash",
+                "-c",
+                'source "$1" && shift && exec openshell "$@"',
+                "openshell-env",
+                str(env_path),
+                *args,
+            ]
         else:
-            cmd = ["bash", "-c", f'source "{self._env_script}" && exec openshell "$@"', "openshell", *args]
+            raise AdapterError(
+                "OpenShell CLI 未配置：设置 CLI_BIN + GATEWAY_ENDPOINT，或显式设置 OPENSHELL_ENV_SH"
+            )
         return cmd
 
     def _subprocess_runner(self, args: list[str]) -> tuple[int, str, str]:
@@ -154,16 +204,23 @@ class OpenShellCliBackend(EnforcementAdapter):
         注意：docker 命令不能走 openshell 包装壳（_subprocess_runner 固定 exec openshell）。
         """
         if self._docker_runner is not None:
-            rc, out, _ = self._docker_runner(["docker", "ps", "--format", "{{.Names}}"])
-            out = out if rc == 0 else ""
+            rc, out, error = self._docker_runner(["docker", "ps", "--format", "{{.Names}}"])
+            if rc != 0:
+                raise AdapterError(f"docker 目标发现失败(rc={rc}): {error.strip()[:200]}")
         else:
             try:
                 proc = subprocess.run(
                     ["docker", "ps", "--format", "{{.Names}}"], capture_output=True, text=True, timeout=10
                 )
-                out = proc.stdout if proc.returncode == 0 else ""
-            except (OSError, subprocess.TimeoutExpired):
-                out = ""
+                if proc.returncode != 0:
+                    raise AdapterError(
+                        f"docker 目标发现失败(rc={proc.returncode}): {proc.stderr.strip()[:200]}"
+                    )
+                out = proc.stdout
+            except subprocess.TimeoutExpired as exc:
+                raise AdapterError("docker 目标发现超时（fail-closed）") from exc
+            except OSError as exc:
+                raise AdapterError(f"无法执行 docker 目标发现（fail-closed）: {exc}") from exc
         names = []
         for line in out.splitlines():
             line = line.strip()
@@ -237,7 +294,7 @@ class OpenShellCliBackend(EnforcementAdapter):
     def create_generation(self, target: str, compiled: CompiledPolicy) -> DeploymentReceipt:
         raise AdapterError(
             "sandbox create 经 CLI 受网关 SandboxResponse 解码缺陷影响；"
-            "经 research-engine 生命周期脚本或升级 v0.0.104 后启用"
+            "请通过受控生命周期创建，或升级到已修复的 OpenShell 版本后启用"
         )
 
     def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
@@ -350,5 +407,3 @@ class OpenShellCliBackend(EnforcementAdapter):
         with os.fdopen(fd, "w") as fh:
             yaml.safe_dump(doc, fh, sort_keys=False)
         return path
-
-

@@ -9,18 +9,19 @@
 
 from __future__ import annotations
 
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.adapters.openshell.cli_backend import OpenShellCliBackend
 from app.adapters.openshell.contracts import PolicySnapshot
-from app.models import PermissionFact, utcnow
+from app.models import Deployment, PermissionFact, utcnow
 from app.outbox import audit, emit_event
 
 AUTHORITY = "openshell"
 
 
 def _fact_for(
+    environment_id: str,
     subject_id: str,
     snapshot: PolicySnapshot,
     domain: str,
@@ -30,6 +31,7 @@ def _fact_for(
     conditions: dict | None = None,
 ) -> PermissionFact:
     return PermissionFact(
+        environment_id=environment_id,
         subject_type="openshell_sandbox",
         subject_id=subject_id,
         domain=domain,
@@ -46,11 +48,21 @@ def _fact_for(
     )
 
 
-def sync_openshell(session: Session, tenant_id: str, environment_id: str | None = None) -> dict:
+def sync_openshell(session: Session, tenant_id: str, environment_id: str) -> dict:
     """拉取真实 OpenShell 有效策略并写入 PermissionFacts。"""
     backend = OpenShellCliBackend()
 
-    targets = backend.list_targets().targets
+    backend_targets = backend.list_targets().targets
+    bound_targets = set(
+        session.scalars(
+            select(Deployment.target).where(
+                Deployment.tenant_id == tenant_id,
+                Deployment.environment_id == environment_id,
+                Deployment.status == "effective",
+            )
+        )
+    )
+    targets = [target for target in backend_targets if target.get("id") in bound_targets]
     facts: list[PermissionFact] = []
     for target in targets:
         snapshot = backend.read_effective_policy(target["id"])
@@ -58,13 +70,14 @@ def sync_openshell(session: Session, tenant_id: str, environment_id: str | None 
 
         fs = snapshot.filesystem
         for path in fs.get("read_only") or []:
-            facts.append(_fact_for(subject, snapshot, "filesystem", "fs.read", "path", str(path)))
+            facts.append(_fact_for(environment_id, subject, snapshot, "filesystem", "fs.read", "path", str(path)))
         for path in fs.get("read_write") or []:
-            facts.append(_fact_for(subject, snapshot, "filesystem", "fs.write", "path", str(path)))
+            facts.append(_fact_for(environment_id, subject, snapshot, "filesystem", "fs.write", "path", str(path)))
 
         for rule in snapshot.network:
             facts.append(
                 _fact_for(
+                    environment_id,
                     subject,
                     snapshot,
                     "network",
@@ -82,6 +95,7 @@ def sync_openshell(session: Session, tenant_id: str, environment_id: str | None 
         if proc.get("run_as_user") or proc.get("run_as_group"):
             facts.append(
                 _fact_for(
+                    environment_id,
                     subject,
                     snapshot,
                     "process",
@@ -91,10 +105,12 @@ def sync_openshell(session: Session, tenant_id: str, environment_id: str | None 
                 )
             )
 
-    # 替换语义：清掉该租户内旧 openshell 事实，写入新快照
+    # 替换语义：只替换该环境的 OpenShell 事实，不影响同租户其他环境。
     session.execute(
         delete(PermissionFact).where(
-            PermissionFact.tenant_id == tenant_id, PermissionFact.authority == AUTHORITY
+            PermissionFact.tenant_id == tenant_id,
+            PermissionFact.environment_id == environment_id,
+            PermissionFact.authority == AUTHORITY,
         )
     )
     for fact in facts:
@@ -108,14 +124,31 @@ def sync_openshell(session: Session, tenant_id: str, environment_id: str | None 
         "openshell-sync",
         "permission.sync",
         "permission_fact",
-        summary={"targets": len(targets), "facts": len(facts)},
+        resource_id=environment_id,
+        summary={
+            "environment_id": environment_id,
+            "backend_targets": len(backend_targets),
+            "bound_targets": len(targets),
+            "facts": len(facts),
+        },
     )
     if facts:
         emit_event(
             session,
             tenant_id,
             "agent.permission.snapshot.updated.v1",
-            {"authority": AUTHORITY, "facts": len(facts), "targets": len(targets)},
+            {
+                "authority": AUTHORITY,
+                "environment_id": environment_id,
+                "facts": len(facts),
+                "targets": len(targets),
+            },
+            environment_id=environment_id,
         )
     session.commit()
-    return {"targets": len(targets), "facts": len(facts)}
+    return {
+        "backend_targets": len(backend_targets),
+        "targets": len(targets),
+        "ignored_unbound_targets": len(backend_targets) - len(targets),
+        "facts": len(facts),
+    }

@@ -19,13 +19,13 @@ var ErrNotRegistered = errors.New("agent is not registered: run 'register' first
 //   - writes are atomic (temp file + rename) so a crashed agent cannot leave
 //     a half-written state file.
 type State struct {
-	ControlPlaneURL      string `json:"control_plane_url"`
-	DeviceIdentity       string `json:"device_identity"`
-	Secret               string `json:"secret"`
-	PublicKeyPEM         string `json:"public_key_pem,omitempty"`
+	ControlPlaneURL       string `json:"control_plane_url"`
+	DeviceIdentity        string `json:"device_identity"`
+	Secret                string `json:"secret"`
+	PublicKeyPEM          string `json:"public_key_pem,omitempty"`
 	ControlPlanePublicKey string `json:"control_plane_public_key,omitempty"` // 任务验签钉住（register 响应）
-	EnvironmentID        string `json:"environment_id,omitempty"`
-	SignerSeed           string `json:"signer_seed,omitempty"` // 证据签名密钥种子（base64，0600 文件保护）
+	EnvironmentID         string `json:"environment_id,omitempty"`
+	SignerSeed            string `json:"signer_seed,omitempty"` // 证据签名密钥种子（base64，0600 文件保护）
 }
 
 // StateDir returns SIQ_EDGE_STATE_DIR or ~/.siq-edge.

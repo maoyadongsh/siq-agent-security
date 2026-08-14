@@ -1,7 +1,3 @@
-module siq-agent-security/connectors/openclaw
+module siq-agent-security/edge/agent
 
 go 1.22
-
-require siq-agent-security/edge/agent v0.0.0
-
-replace siq-agent-security/edge/agent => ../../edge/agent

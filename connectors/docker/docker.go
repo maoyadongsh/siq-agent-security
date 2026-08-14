@@ -318,21 +318,21 @@ func buildObjects(row containerRow, insp *dockerInspect, now string, red *protoc
 
 	// 不含环境变量值：只有 image/digest/mounts 摘要进入 attributes。
 	cand := &protocol.Candidate{
-		CandidateID:     "docker:" + short,
-		SourceType:      "docker",
-		SourceLocator:   "docker://" + short,
-		DiscoveredAt:    now,
-		Name:            truncate(red.RedactString(row.Names), 256),
-		Framework:       "unknown",
-		ArtifactDigest:  digest,
-		Attributes:      map[string]string{
+		CandidateID:    "docker:" + short,
+		SourceType:     "docker",
+		SourceLocator:  "docker://" + short,
+		DiscoveredAt:   now,
+		Name:           truncate(red.RedactString(row.Names), 256),
+		Framework:      "unknown",
+		ArtifactDigest: digest,
+		Attributes: map[string]string{
 			"image":        truncate(red.RedactString(row.Image), 256),
 			"digest":       digest,
 			"mounts":       truncate(strings.Join(mounts, ","), 1024),
 			"labels_count": strconv.Itoa(len(insp.Config.Labels)),
 		},
-		EvidenceIDs:     []string{"ev:docker:" + short},
-		Confidence:      1.0,
+		EvidenceIDs: []string{"ev:docker:" + short},
+		Confidence:  1.0,
 	}
 	// Canonical facts hashed into the evidence (never env values).
 	facts, _ := json.Marshal(map[string]any{

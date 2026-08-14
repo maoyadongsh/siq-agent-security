@@ -8,6 +8,7 @@ from __future__ import annotations
 import uuid
 
 from app.db import session_scope
+from app.tests.edge_helpers import edge_public_key_pem
 
 
 def _create_policy(client, headers, name=None, enforcement_mode="audit_only"):
@@ -54,12 +55,26 @@ def test_secret_must_be_reference_not_plaintext(client, tenant_a):
         },
         headers=tenant_a,
     )
-    assert resp.status_code == 201
-    assert "secrets[]" in str(resp.json()["unsupported_by_backend"])
+    assert resp.status_code == 422
+    assert "extra_forbidden" in resp.text
+
+
+def test_secret_reference_is_accepted_without_plaintext(client, tenant_a):
+    resp = client.post(
+        "/api/v1/policies",
+        json={
+            "name": f"secret-ref-{uuid.uuid4().hex[:8]}",
+            "selector": {"agent_ids": ["agt_1"]},
+            "secrets": [{"ref": "vault://agents/provider", "purpose": "model access", "injection": "gateway"}],
+        },
+        headers=tenant_a,
+    )
+    assert resp.status_code == 201, resp.text
+    assert resp.json()["status"] == "validated"
 
 
 def test_segregation_of_duties(client, tenant_a):
-    policy = _create_policy(client, tenant_a)
+    policy = _create_policy(client, tenant_a, enforcement_mode="block")
     cr = client.post(
         "/api/v1/change-requests",
         json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
@@ -157,7 +172,7 @@ def _edge_headers(client, tenant_a, env_a, identity):
         json={
             "enrollment_code": enr["code"],
             "device_identity": identity,
-            "public_key_pem": "PEM",
+            "public_key_pem": edge_public_key_pem(identity),
             "version": "0.1.0",
         },
     ).json()
@@ -207,8 +222,8 @@ def test_deployment_effective_with_verification(client, tenant_a, env_a):
         from app.models import Deployment
 
         d = session.query(Deployment).filter(Deployment.id == dep["id"]).one()
-        assert d.status == "effective"
-        assert d.verification["backend_revision"] == "rev_42"
+        assert d.status == "failed"
+        assert d.verification is None
 
 
 def test_deployment_compiles_with_fake_backend(client, tenant_a, env_a, monkeypatch):
@@ -274,7 +289,7 @@ def test_deployment_openshell_cli_closed_loop(client, tenant_a, env_a, monkeypat
     """#2 闭环：审批 → 编译 → 真实 policy set → 读回验证 → effective（不变量 #5）。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     fake = _fake_cli_backend(monkeypatch)
-    policy = _create_policy(client, tenant_a)
+    policy = _create_policy(client, tenant_a, enforcement_mode="block")
     cr = client.post(
         "/api/v1/change-requests",
         json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
@@ -301,7 +316,7 @@ def test_deployment_openshell_apply_failure_fails_closed(client, tenant_a, env_a
     """网关拒绝（如静态段不一致）→ 502 + deployment failed，绝不伪装 effective。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     _fake_cli_backend(monkeypatch, apply_error="Error: filesystem include_workdir cannot be changed on a live sandbox")
-    policy = _create_policy(client, tenant_a)
+    policy = _create_policy(client, tenant_a, enforcement_mode="block")
     cr = client.post(
         "/api/v1/change-requests",
         json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
@@ -317,16 +332,24 @@ def test_deployment_openshell_apply_failure_fails_closed(client, tenant_a, env_a
     )
     assert dep.status_code == 502
     with session_scope() as session:
-        from app.models import Deployment
+        from app.models import AuditEvent, Deployment
 
         d = session.query(Deployment).filter(Deployment.change_request_id == cr["id"]).one()
         assert d.status == "failed"
-        assert "include_workdir" in (d.receipt or {}).get("error", "")
+        assert (d.receipt or {}).get("error_code") == "AdapterError"
+        assert len((d.receipt or {}).get("error_digest", "")) == 64
+        assert "include_workdir" not in str(d.receipt)
+        failure_audit = session.query(AuditEvent).filter(
+            AuditEvent.action == "deployment.fail",
+            AuditEvent.resource_id == d.id,
+        ).one()
+        assert "include_workdir" not in str(failure_audit.summary)
+        assert failure_audit.summary["error_digest"] == d.receipt["error_digest"]
 
 
 def test_list_endpoints_tenant_isolated(client, tenant_a, tenant_b):
     """策略/变更/部署列表：租户隔离 + 可见性。"""
-    policy = _create_policy(client, tenant_a)
+    policy = _create_policy(client, tenant_a, enforcement_mode="block")
     cr = client.post(
         "/api/v1/change-requests",
         json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
@@ -393,7 +416,7 @@ def test_rollback_invokes_real_backend(client, tenant_a, env_a, monkeypatch):
     fake = FakeCli()
     monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: fake)
 
-    policy = _create_policy(client, tenant_a)
+    policy = _create_policy(client, tenant_a, enforcement_mode="block")
     cr = client.post(
         "/api/v1/change-requests",
         json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
@@ -485,8 +508,8 @@ def test_break_glass_bypasses_sod_and_marks_emergency(client, tenant_a):
     assert dep.status_code == 201
 
 
-def test_break_glass_review_due_after_ttl(client, tenant_a):
-    """worker：emergency_applied 超时 → post_review_due（事后复核标记）。"""
+def test_break_glass_review_due_after_deployment_status_change(client, tenant_a):
+    """worker：紧急变更部署后状态已改变，到期仍必须转事后复核。"""
     from datetime import timedelta
 
     policy = _create_policy(client, tenant_a)
@@ -500,10 +523,18 @@ def test_break_glass_review_due_after_ttl(client, tenant_a):
         headers=tenant_a,
     ).json()
     client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=tenant_a)
+    env = client.get("/api/v1/environments", headers=tenant_a).json()[0]
+    deployed = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env["id"], "target": "bg-review-target"},
+        headers=tenant_a,
+    )
+    assert deployed.status_code == 201
     with session_scope() as session:
         from app.models import ChangeRequest
 
         row = session.query(ChangeRequest).filter(ChangeRequest.id == cr["id"]).one()
+        assert row.status != "emergency_applied"
         row.created_at = row.created_at - timedelta(hours=25)  # 超过默认 24h TTL
         session.commit()
     from app.worker import once

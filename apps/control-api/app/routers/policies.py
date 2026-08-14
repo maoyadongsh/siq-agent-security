@@ -17,6 +17,7 @@ from app.adapters.openshell.cli_backend import OpenShellCliBackend
 from app.db import get_session
 from app.models import ChangeRequest, Deployment, DesiredPolicy, EdgeTask, Environment, utcnow
 from app.outbox import audit, emit_event
+from app.safe_errors import error_reference
 from app.schemas import (
     ChangeRequestCreate,
     ChangeRequestOut,
@@ -341,7 +342,26 @@ def create_deployment(
     )
     if env is None:
         raise HTTPException(status_code=404, detail="not_found")
+    if env.mode != "enforce":
+        raise HTTPException(status_code=409, detail="environment_not_in_enforce_mode")
     policy = _policy_or_404(session, identity.tenant_id, cr.policy_id)
+
+    import os
+
+    backend = os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
+    if backend == "none":
+        raise HTTPException(status_code=409, detail="enforcement_backend_disabled")
+    if backend == "fake":
+        from app.config import load_settings
+
+        if not load_settings().dev_mode:
+            raise HTTPException(status_code=400, detail="fake_enforcement_backend_is_dev_only")
+    if backend == "openshell-cli" and policy.enforcement_mode != "block":
+        raise HTTPException(
+            status_code=422,
+            detail=f"openshell_cli_mode_unsupported: {policy.enforcement_mode}",
+        )
+
     deployment = Deployment(
         tenant_id=identity.tenant_id,
         environment_id=env.id,
@@ -361,9 +381,6 @@ def create_deployment(
     # 执行后端编译接线：SIQ_AS_ENFORCEMENT_BACKEND 决定编译与发布路径
     _compile_for_enforcement(policy, task_payload)
 
-    import os
-
-    backend = os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
     if backend == "openshell-cli":
         # 真实闭环（2026-08-13 活网关验证）：审批后直接 policy set + 读回验证
         # 静态段一致（只改网络段）→ 动态热更新；验证通过才 effective（§21.1 不变量 #5）
@@ -375,7 +392,10 @@ def create_deployment(
             desired = _desired_from_policy(policy)
             compiled = adapter.compile(desired, caps)
             plan = adapter.plan_change(body.target, compiled)
-            receipt = adapter.apply_dynamic(body.target, plan, expected_revision=plan.expected_revision)
+            if plan.kind == "generation":
+                receipt = adapter.create_generation(body.target, compiled)
+            else:
+                receipt = adapter.apply_dynamic(body.target, plan, expected_revision=plan.expected_revision)
             # 正负向验证：允许集=策略网络端点；拒绝集=合成未授权端点（block 模式下必须不在允许集）
             allow = [r.get("endpoint") for r in (compiled.artifact.get("network_policies") or [])]
             checks = {"expect_allow": allow, "expect_deny": ["10.255.255.255:1"]}
@@ -389,6 +409,16 @@ def create_deployment(
             deployment.verification = {"allow_checks": report.allow_checks, "deny_checks": report.deny_checks}
             deployment.status = "effective"
             cr.status = "effective"
+            audit(
+                session,
+                identity.tenant_id,
+                identity.identity_type,
+                identity.actor_id,
+                "deployment.verify",
+                "deployment",
+                resource_id=deployment.id,
+                summary={"backend_revision": receipt.backend_revision, "method": "policy_readback"},
+            )
             emit_event(
                 session,
                 identity.tenant_id,
@@ -400,8 +430,9 @@ def create_deployment(
             session.refresh(deployment)
             return deployment
         except (AdapterError, RevisionConflict) as exc:
+            error = error_reference(exc)
             deployment.status = "failed"
-            deployment.receipt = {"error": str(exc)[:300]}
+            deployment.receipt = error
             audit(
                 session,
                 identity.tenant_id,
@@ -410,17 +441,17 @@ def create_deployment(
                 "deployment.fail",
                 "deployment",
                 resource_id=deployment.id,
-                summary={"reason": str(exc)[:200]},
+                summary=error,
             )
             emit_event(
                 session,
                 identity.tenant_id,
                 "policy.deployment.failed.v1",
-                {"deployment_id": deployment.id, "reason": str(exc)[:200]},
+                {"deployment_id": deployment.id, **error},
                 resource_ref=deployment.id,
             )
             session.commit()
-            raise HTTPException(status_code=502, detail=f"openshell_apply_failed: {exc}") from None
+            raise HTTPException(status_code=502, detail=f"openshell_apply_failed: {error['error_digest']}") from None
 
     task = EdgeTask(
         environment_id=env.id,
@@ -559,10 +590,10 @@ def rollback_deployment(
             deployment.verification = {
                 "rollback": {
                     "restored_revision": rollback_receipt.restored_revision,
-                    "evidence": rollback_receipt.evidence,
                 }
             }
         except (AdapterError, VerificationFailed) as exc:
+            error = error_reference(exc)
             deployment.status = "failed"
             audit(
                 session,
@@ -572,10 +603,13 @@ def rollback_deployment(
                 "deployment.rollback_fail",
                 "deployment",
                 resource_id=deployment.id,
-                summary={"reason": str(exc)[:200]},
+                summary=error,
             )
             session.commit()
-            raise HTTPException(status_code=502, detail=f"openshell_rollback_failed: {exc}") from None
+            raise HTTPException(
+                status_code=502,
+                detail=f"openshell_rollback_failed: {error['error_digest']}",
+            ) from None
 
     cr = session.get(ChangeRequest, deployment.change_request_id)
     if cr is not None:

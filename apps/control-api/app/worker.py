@@ -2,7 +2,7 @@
 
 运行：uv run python -m app.worker [--once]
 - outbox 发布：Phase 2 为日志/HTTP Webhook（SIQ_AS_WEBHOOK_URL）；事件 payload 已脱敏；
-- reaper：risk_accepted 且 expires_at 过期 → status=expired（设计文档 §13.1 末条）；
+- reaper：risk_accepted 且 expires_at 过期 → status=open（设计文档 §13.1 末条）；
 - 规则循环：每租户 evaluate_all + 幂等 upsert。
 """
 
@@ -73,7 +73,7 @@ def reap_expired_risk_acceptance(session) -> int:
         if expires_at.tzinfo is not None:
             expires_at = expires_at.replace(tzinfo=None)
         if expires_at < now:
-            finding.status = "expired"
+            finding.status = "open"
             audit(
                 session,
                 finding.tenant_id,
@@ -87,8 +87,8 @@ def reap_expired_risk_acceptance(session) -> int:
             emit_event(
                 session,
                 finding.tenant_id,
-                "agent.finding.resolved.v1",
-                {"finding_id": finding.id, "resolution": "risk_acceptance_expired"},
+                "agent.finding.reopened.v1",
+                {"finding_id": finding.id, "reason": "risk_acceptance_expired"},
                 resource_ref=finding.id,
             )
             reopened += 1
@@ -154,16 +154,17 @@ def run_drift(session) -> dict:
 
 
 def reap_break_glass_reviews(session) -> int:
-    """Break-glass 事后复核（§19.3）：emergency_applied 超过时限转 post_review_due。"""
+    """Break-glass 事后复核：部署状态变化不得绕过到期复核。"""
     from datetime import timedelta
-
 
     ttl = int(os.getenv("SIQ_AS_BREAKGLASS_REVIEW_SECONDS", "86400"))
     threshold = utcnow() - timedelta(seconds=ttl)
     rows = list(
         session.scalars(
             select(ChangeRequest).where(
-                ChangeRequest.status == "emergency_applied",
+                ChangeRequest.approval_policy == "break_glass",
+                ChangeRequest.approver_user_id.is_not(None),
+                ChangeRequest.status != "post_review_due",
                 ChangeRequest.created_at < threshold,
             )
         )
@@ -183,7 +184,7 @@ def reap_break_glass_reviews(session) -> int:
         emit_event(
             session,
             cr.tenant_id,
-            "policy.change.approved.v1",
+            "policy.change.review_due.v1",
             {"change_request_id": cr.id, "resolution": "post_review_due"},
             resource_ref=cr.id,
         )

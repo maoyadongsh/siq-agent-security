@@ -317,24 +317,18 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			// declared 工具权限事实（绝不 effective；权威源解析另行完成）
 			for _, toolset := range toolsets {
 				batch.PermissionFacts = append(batch.PermissionFacts, &protocol.PermissionFact{
-					Subject:    &protocol.Subject{Type: "agent_asset", ID: cand.CandidateID},
-					Domain:     "tool",
-					Action:     "tool.use",
-					Resource:   &protocol.Resource{Type: "toolset", Value: red.RedactString(toolset)},
-					Effect:     "allow",
-					State:      "declared",
-					Authority:  "hermes-profile",
+					Subject:     &protocol.Subject{Type: "agent_asset", ID: cand.CandidateID},
+					Domain:      "tool",
+					Action:      "tool.use",
+					Resource:    &protocol.Resource{Type: "toolset", Value: red.RedactString(toolset)},
+					Effect:      "allow",
+					State:       "declared",
+					Authority:   "hermes-profile",
 					EvidenceIDs: []string{},
 				})
 			}
 		}
 
-		// 把候选的证据引用回填到其 declared 权限事实（contract §4）
-		for _, pf := range batch.PermissionFacts {
-			if pf.Subject != nil && pf.Subject.ID == cand.CandidateID && len(pf.EvidenceIDs) == 0 {
-				pf.EvidenceIDs = cand.EvidenceIDs
-			}
-		}
 		for _, inc := range sc.Include {
 			if protocol.IsEnvFile(inc) {
 				continue // .env handled by the secret_ref pass below
@@ -422,6 +416,13 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 
 		if len(cand.EvidenceIDs) == 0 {
 			continue // no readable evidence: no candidate (keeps batches reference-valid)
+		}
+		// 证据收集完成后再回填 declared 权限事实；提前回填会复制空 slice，
+		// 导致整批被控制面 evidence_ids.minItems 拒绝。
+		for _, pf := range batch.PermissionFacts {
+			if pf.Subject != nil && pf.Subject.ID == cand.CandidateID && len(pf.EvidenceIDs) == 0 {
+				pf.EvidenceIDs = append([]string(nil), cand.EvidenceIDs...)
+			}
 		}
 		batch.Candidates = append(batch.Candidates, cand)
 		scannedDirs = append(scannedDirs, dir)

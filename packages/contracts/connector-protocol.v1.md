@@ -41,3 +41,7 @@
 ## 5. 签名与新鲜度
 
 `evidence.signature` 与 `observed_at` 由 Edge 在打包时统一补齐；Connector 输出的 `observed_at` 仅作为事实时间参考，Edge 在 5 分钟内未完成打包则该批作废。
+
+签名规范为 UTF-8 JSON、对象键字典序、无多余空白、HTML 字符不转义。Evidence 签名时
+`signature` 字段置为空字符串；上传批次还必须携带 `task_id` 与同一设备密钥产生的
+`signature`（批次签名时移除该字段）。控制面同时验证任务绑定、批次签名和每条 Evidence 签名。

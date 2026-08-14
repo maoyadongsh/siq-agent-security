@@ -39,7 +39,7 @@ type Redactor struct {
 // NewRedactor builds the siq.redaction.v1 rule set.
 func NewRedactor() *Redactor {
 	return &Redactor{rules: []*regexp.Regexp{
-		regexp.MustCompile(`(?i)(?:sk|pk)-[A-Za-z0-9_\-]{12,}`),              // OpenAI-style keys
+		regexp.MustCompile(`(?i)(?:sk|pk)-[A-Za-z0-9_\-]{12,}`),                // OpenAI-style keys
 		regexp.MustCompile(`(?i)(?:api[_-]?key|apikey)\s*[:=]\s*[^\s,;"]{4,}`), // api_key=...
 		regexp.MustCompile(`(?i)(?:password|passwd|pwd)\s*[:=]\s*[^\s,;"]{4,}`),
 		regexp.MustCompile(`(?i)(?:secret|token)\s*[:=]\s*[^\s,;"]{4,}`),

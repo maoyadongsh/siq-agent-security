@@ -191,6 +191,18 @@ def test_sandbox_list_decode_bug_falls_back_to_docker():
     assert page.targets == [{"id": "siq-as-live"}]
 
 
+def test_sandbox_list_docker_fallback_failure_is_fail_closed():
+    def runner(args):
+        return 1, "", "protobuf decode error"
+
+    def docker_runner(args):
+        return 1, "", "docker daemon unavailable"
+
+    backend = OpenShellCliBackend(runner=runner, docker_runner=docker_runner)
+    with pytest.raises(AdapterError, match="docker"):
+        backend.list_targets()
+
+
 def test_cli_failure_is_fail_closed():
     def runner(args):
         return 1, "", "boom"
@@ -217,9 +229,45 @@ def test_cli_backend_targets_v104_gateway_via_env(monkeypatch):
     assert cmd[0] == "/opt/os104/openshell"
     assert "--gateway-endpoint" in cmd and "http://127.0.0.1:17673" in cmd
     assert "--gateway-insecure" in cmd
-    # 默认（无 env）走 canary env.sh 包装
+    # 显式 env.sh 时通过位置参数传路径，不做 shell 字符串拼接。
     monkeypatch.delenv("SIQ_AS_OPENSHELL_CLI_BIN")
     monkeypatch.delenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT")
-    default_cmd = backend._build_command(["sandbox", "list"])
-    assert default_cmd[0] == "bash"
-    assert "source" in default_cmd[2]
+    explicit_env_backend = OpenShellCliBackend(runner=runner, env_script="/opt/siq/openshell-env.sh")
+    default_cmd = explicit_env_backend._build_command(["sandbox", "list"])
+    assert default_cmd[:4] == [
+        "bash",
+        "-c",
+        'source "$1" && shift && exec openshell "$@"',
+        "openshell-env",
+    ]
+    assert default_cmd[4] == "/opt/siq/openshell-env.sh"
+
+
+def test_cli_backend_requires_explicit_secure_gateway_configuration(monkeypatch):
+    monkeypatch.delenv("SIQ_AS_OPENSHELL_CLI_BIN", raising=False)
+    monkeypatch.delenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT", raising=False)
+    monkeypatch.delenv("SIQ_AS_OPENSHELL_ENV_SH", raising=False)
+    with pytest.raises(AdapterError, match="未配置"):
+        OpenShellCliBackend()._build_command(["gateway", "info"])
+
+    monkeypatch.setenv("SIQ_AS_OPENSHELL_CLI_BIN", "/usr/bin/openshell")
+    monkeypatch.setenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT", "http://gateway.example.com:17671")
+    with pytest.raises(AdapterError, match="HTTPS"):
+        OpenShellCliBackend()._build_command(["gateway", "info"])
+
+    monkeypatch.setenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT", "https://gateway.example.com:17671")
+    monkeypatch.setenv("SIQ_AS_OPENSHELL_GATEWAY_INSECURE", "1")
+    with pytest.raises(AdapterError, match="回环"):
+        OpenShellCliBackend()._build_command(["gateway", "info"])
+
+    monkeypatch.setenv("SIQ_AS_OPENSHELL_GATEWAY_INSECURE", "0")
+    for endpoint in (
+        "https://user:secret@gateway.example.com:17671",
+        "https://gateway.example.com:17671/admin",
+        "https://gateway.example.com:17671?tenant=other",
+        "https://gateway.example.com:17671#fragment",
+        "https://gateway.example.com:invalid",
+    ):
+        monkeypatch.setenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT", endpoint)
+        with pytest.raises(AdapterError, match="无效"):
+            OpenShellCliBackend()._build_command(["gateway", "info"])
