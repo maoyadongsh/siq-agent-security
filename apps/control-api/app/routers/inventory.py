@@ -65,10 +65,13 @@ def create_scan(
             detail=f"scan_quota_exceeded: {pending_scans} >= {load_settings().scan_quota_per_tenant}",
         )
     expires_at = utcnow() + timedelta(seconds=_task_ttl(session))
+    payload: dict = {"scope": body.scope}
+    if body.connector:
+        payload["connector"] = body.connector
     task = EdgeTask(
         environment_id=env.id,
         task_type="scan",
-        payload={"scope": body.scope},
+        payload=payload,
         expires_at=expires_at,
     )
     session.add(task)
@@ -91,6 +94,78 @@ def create_scan(
     emit_event(session, identity.tenant_id, "scan.created.v1", {"task_id": task.id, "environment_id": env.id})
     session.commit()
     return ScanOut(task_id=task.id)
+
+
+@router.post("/api/v1/scans/smart")
+def smart_scan(
+    environment_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """智能扫描（用户一键发现）：标准安全范围一次下发。
+
+    范围（§10.1 默认排除原则）：Hermes profiles、OpenClaw 配置、带标签 Docker 容器。
+    不含目录扫描——受控目录必须用户显式授权（directory connector 无默认范围）。
+    """
+    from sqlalchemy import func
+
+    from app.config import load_settings
+    from app.models import Environment as _Env
+
+    ensure_permission(identity, "env:manage")
+    env = session.scalar(
+        select(_Env).where(_Env.id == environment_id, _Env.tenant_id == identity.tenant_id)
+    )
+    if env is None:
+        raise HTTPException(status_code=404, detail="not_found")
+
+    standard_scans = [
+        ("hermes", {"roots": ["~/.hermes/profiles/*"], "include": ["config.yaml", "SOUL.md"]}),
+        ("openclaw", {"roots": ["~/.openclaw"]}),
+        ("docker", {}),
+    ]
+    env_ids = list(session.scalars(select(_Env.id).where(_Env.tenant_id == identity.tenant_id)))
+    pending = session.scalar(
+        select(func.count(EdgeTask.id)).where(
+            EdgeTask.environment_id.in_(env_ids),
+            EdgeTask.task_type == "scan",
+            EdgeTask.status == "pending",
+        )
+    )
+    quota = load_settings().scan_quota_per_tenant
+    if pending + len(standard_scans) > quota:
+        raise HTTPException(
+            status_code=429,
+            detail=f"scan_quota_exceeded: {pending} + {len(standard_scans)} > {quota}",
+        )
+
+    from app.signing import sign_task_payload
+
+    tasks = []
+    for connector, scope in standard_scans:
+        expires_at = utcnow() + timedelta(seconds=_task_ttl(session))
+        task = EdgeTask(
+            environment_id=env.id,
+            task_type="scan",
+            payload={"scope": scope, "connector": connector},
+            expires_at=expires_at,
+        )
+        session.add(task)
+        session.flush()
+        task.signature = sign_task_payload(task.id, task.task_type, env.id, task.payload, expires_at.isoformat())
+        tasks.append({"task_id": task.id, "connector": connector})
+    audit(
+        session,
+        identity.tenant_id,
+        identity.identity_type,
+        identity.actor_id,
+        "scan.smart",
+        "environment",
+        resource_id=env.id,
+        summary={"connectors": [t["connector"] for t in tasks]},
+    )
+    session.commit()
+    return {"tasks": tasks, "note": "目录扫描需显式授权，不包含在智能扫描内（§10.1）"}
 
 
 @router.get("/api/v1/scans/{task_id}")
@@ -167,6 +242,19 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
 
     inserted_evidence = 0
     for ev in evidence:
+        # 重扫幂等（§10.2 增量扫描 / 用户"重新扫描"需求）：
+        # 同一证据 ID（同一来源定位）已存在 → 更新快照字段（内容哈希/时间/签名），不产生重复行。
+        existing_ev = session.get(Evidence, ev["evidence_id"])
+        if existing_ev is not None:
+            if existing_ev.tenant_id != tenant_id:
+                raise HTTPException(status_code=422, detail=f"evidence_tenant_conflict: {ev['evidence_id']}")
+            existing_ev.content_hash = ev["content_hash"]
+            existing_ev.observed_at = _parse_dt(ev["observed_at"]) or existing_ev.observed_at
+            existing_ev.collected_at = _parse_dt(ev.get("collected_at")) or now
+            existing_ev.collector_id = edge.device_identity
+            existing_ev.signature = ev.get("signature", "")
+            existing_ev.expires_at = _parse_dt(ev.get("expires_at"))
+            continue
         session.add(
             Evidence(
                 id=ev["evidence_id"],

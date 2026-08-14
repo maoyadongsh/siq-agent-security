@@ -109,8 +109,40 @@ export default function AgentsPage() {
   const [tab, setTab] = useState<TabKey>('agents');
   const [actionError, setActionError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [scanning, setScanning] = useState(false);
+  const [scanMessage, setScanMessage] = useState<string | null>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
 
   const agents = useApiList<AgentAsset>('/agents', PLACEHOLDER_AGENTS);
+
+  /** 智能扫描：标准安全范围一次下发（hermes profiles / OpenClaw 配置 / docker 标签）。 */
+  const runSmartScan = async () => {
+    setScanning(true);
+    setScanError(null);
+    setScanMessage(null);
+    try {
+      const envs = await api.listEnvironments();
+      const envId = envs[0]?.id;
+      if (!envId) {
+        setScanError('没有可用环境，无法下发扫描');
+        return;
+      }
+      const result = await api.smartScan(envId);
+      const names = result.tasks.map((t) => t.connector).join('、');
+      setScanMessage(`已下发 ${result.tasks.length} 个扫描任务（${names}）；本机 Edge 执行后候选将自动更新`);
+      if (result.note) setScanError(result.note);
+      // 给 Edge 一点执行时间后刷新候选
+      setTimeout(() => {
+        agents.refresh();
+        candidates.refresh();
+      }, 2500);
+    } catch (err) {
+      setScanError(err instanceof ApiError ? err.message : '扫描失败');
+    } finally {
+      setScanning(false);
+    }
+  };
+
   const candidates = useApiList<AgentAsset>('/candidates', PLACEHOLDER_CANDIDATES);
 
   const active = tab === 'agents' ? agents : candidates;
@@ -223,7 +255,25 @@ export default function AgentsPage() {
         description="由发现候选（AgentCandidate）纳管后的智能体资产清单；候选标签页支持确认纳管 / 驳回（设计文档 §10）。"
         connection={active.status}
         connectionError={active.error}
+        actions={
+          <div className="scan-actions">
+            <button className="btn-scan" onClick={runSmartScan} disabled={scanning}>
+              <span className="scan-icon">{scanning ? '⏳' : '🔍'}</span>
+              {scanning ? '扫描下发中…' : '智能扫描'}
+            </button>
+            <button className="btn-scan btn-scan-ghost" onClick={() => { agents.refresh(); candidates.refresh(); }} title="重新拉取资产与候选">
+              ⟳ 刷新
+            </button>
+          </div>
+        }
       />
+
+      {(scanMessage || scanError) && (
+        <div className="scan-result">
+          {scanMessage && <p className="sync-ok">{scanMessage}</p>}
+          {scanError && <p className="sync-err">{scanError}</p>}
+        </div>
+      )}
       <div className="tabs" role="tablist">
         <button
           type="button"

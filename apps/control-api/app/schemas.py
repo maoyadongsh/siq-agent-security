@@ -142,6 +142,7 @@ class PermissionFactOut(BaseModel):
 class ScanCreate(BaseModel):
     environment_id: str
     scope: dict = Field(default_factory=dict)
+    connector: str | None = None  # 指定 Connector（hermes/openclaw/directory/docker），缺省由 Edge 决定
 
 
 class ScanOut(BaseModel):

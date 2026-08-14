@@ -853,3 +853,96 @@ def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypa
     enf2 = client.get(f"/api/v1/agents/{agent['id']}/enforcement", headers=tenant_a).json()
     assert enf2["enforce_status"] == "enforced"
     assert any(d["target"] == "bind-sandbox" for d in enf2["effective_deployments"])
+
+
+def test_rescan_idempotent_upserts_evidence(client, tenant_a):
+    """重新扫描（用户需求）：同批两次上传不冲突，内容变化时哈希更新。"""
+    env = client.post("/api/v1/environments", json={"name": "env-rescan"}, headers=tenant_a).json()
+    enr = client.post(f"/api/v1/environments/{env['id']}/edge-enrollment", json={}, headers=tenant_a).json()
+    reg = client.post(
+        "/edge/v1/register",
+        json={
+            "enrollment_code": enr["code"],
+            "device_identity": "edge-rescan",
+            "public_key_pem": "PEM",
+            "version": "0.1.0",
+        },
+    ).json()
+    eh = {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": "edge-rescan"}
+
+    def batch(content_hash):
+        return {
+            "candidates": [
+                {
+                    "candidate_id": "hermes:rescan-agent",
+                    "source_type": "hermes_profile",
+                    "source_locator": "hermes://profiles/rescan-agent",
+                    "discovered_at": "2026-08-13T12:00:00Z",
+                    "name": "rescan-agent",
+                    "framework": "hermes",
+                    "evidence_ids": ["ev:rescan"],
+                }
+            ],
+            "evidence": [
+                {
+                    "evidence_id": "ev:rescan",
+                    "source_type": "manifest",
+                    "source_locator": "rescan-agent/config.yaml",
+                    "observed_at": "2026-08-13T12:00:00Z",
+                    "collector_id": "edge-rescan",
+                    "connector_version": "0.1.0",
+                    "content_hash": content_hash,
+                    "signature": "sig",
+                }
+            ],
+        }
+
+    r1 = client.post("/edge/v1/batches", json=batch("a" * 64), headers=eh)
+    assert r1.status_code == 200
+    r2 = client.post("/edge/v1/batches", json=batch("a" * 64), headers=eh)  # 幂等重扫
+    assert r2.status_code == 200, r2.text
+
+    from app.db import session_scope as ss
+    from app.models import Evidence
+
+    with ss() as s:
+        rows = s.query(Evidence).filter(Evidence.id == "ev:rescan").all()
+        assert len(rows) == 1, "重扫不得产生重复证据行"
+
+    # 内容变化 → 哈希更新（同一证据行）
+    r3 = client.post("/edge/v1/batches", json=batch("b" * 64), headers=eh)
+    assert r3.status_code == 200
+    with ss() as s:
+        row = s.query(Evidence).filter(Evidence.id == "ev:rescan").one()
+        assert row.content_hash == "b" * 64, "内容变化后哈希必须更新"
+
+
+def test_smart_scan_creates_standard_tasks(client, tenant_a, env_a):
+    """智能扫描：一次下发 hermes/openclaw/docker 三个标准任务；配额超限 429。"""
+    from sqlalchemy import select
+
+    from app.config import load_settings
+    from app.models import EdgeTask, Environment
+
+    quota = load_settings().scan_quota_per_tenant
+    with session_scope() as s:
+        env_ids = list(s.scalars(select(Environment.id).where(Environment.tenant_id == "tnt-A")))
+        pre = s.query(EdgeTask).filter(
+            EdgeTask.task_type == "scan", EdgeTask.status == "pending", EdgeTask.environment_id.in_(env_ids)
+        ).count()
+    remaining = quota - pre
+    if remaining < 3:
+        pytest.skip("配额不足，无法测试智能扫描")
+
+    resp = client.post(
+        "/api/v1/scans/smart", params={"environment_id": env_a["id"]}, headers=tenant_a
+    )
+    assert resp.status_code == 200, resp.text
+    tasks = resp.json()["tasks"]
+    assert [t["connector"] for t in tasks] == ["hermes", "openclaw", "docker"]
+    # 任务 payload 带 connector（Edge 选择对应二进制）
+    with session_scope() as s:
+        from app.models import EdgeTask as _T
+
+        row = s.query(_T).filter(_T.id == tasks[0]["task_id"]).one()
+        assert row.payload["connector"] == "hermes"

@@ -251,6 +251,13 @@ export const api = {
   listPermissions: (query: RequestOptions['query'] = {}) => get<PermissionFactRow[]>('/permissions', { query }),
   /** 拉取真实 OpenShell 有效策略入 PermissionFacts（fail-closed：网关不可达 502） */
   syncOpenShell: () => post<{ targets: number; facts: number }>('/permissions/sync-openshell', {}),
+  /** 智能扫描（用户一键发现）：标准安全范围一次下发（hermes/openclaw/docker） */
+  smartScan: (environmentId: string) =>
+    post<{ tasks: { task_id: string; connector: string }[]; note: string }>(
+      '/scans/smart',
+      {},
+      { query: { environment_id: environmentId } },
+    ),
   /** 漂移检测（§13.3）：期望状态 vs 执行端实际状态 → Finding */
   checkDrift: () =>
     post<{

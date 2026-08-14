@@ -244,3 +244,15 @@ func TestEnvOnlyProfileHasNoOrphanEvidence(t *testing.T) {
 		t.Errorf("profile without config.yaml/SOUL.md must produce nothing (candidates=%d evidence=%d)", len(batch.Candidates), len(batch.Evidence))
 	}
 }
+
+func TestExtractConfigFactsRecognizesPlainToolsets(t *testing.T) {
+	// 本机真实 profile 使用 toolsets:（非 platform_toolsets:）——必须识别
+	content := "model:\n  default: Qwen3.6-35B-A3B-FP8\nproviders: {}\ntoolsets:\n  - terminal\n  - file\n  - code_execution\n"
+	model, _, toolsets := extractConfigFacts([]byte(content))
+	if model != "Qwen3.6-35B-A3B-FP8" {
+		t.Fatalf("model 未解析: %q", model)
+	}
+	if len(toolsets) != 3 {
+		t.Fatalf("toolsets 未解析（got %v），plain toolsets: 键必须识别", toolsets)
+	}
+}

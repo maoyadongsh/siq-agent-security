@@ -471,7 +471,10 @@ func extractConfigFacts(data []byte) (model, provider string, toolsets []string)
 			continue
 		}
 		indent := len(line) - len(strings.TrimLeft(line, " "))
-		if indent == 0 {
+		isItem := strings.HasPrefix(trimmed, "-")
+		// 兼容本机真实 profile：toolsets 列表条目可能无缩进（非标准 YAML）。
+		// 仅当顶层非列表行才重置状态，列表条目保持所属段落。
+		if indent == 0 && !isItem {
 			inModel = false
 			inToolsets = false
 		}
@@ -483,10 +486,11 @@ func extractConfigFacts(data []byte) (model, provider string, toolsets []string)
 			model = yamlScalar(strings.TrimPrefix(trimmed, "default:"))
 		case indent == 0 && strings.HasPrefix(trimmed, "provider:"):
 			provider = yamlScalar(strings.TrimPrefix(trimmed, "provider:"))
-		case indent == 0 && trimmed == "platform_toolsets:":
+		case indent == 0 && (trimmed == "platform_toolsets:" || trimmed == "toolsets:"):
+			// 两种键名都识别：Hermes 规范 platform_toolsets，本机 profile 实际用 toolsets
 			inToolsets = true
 			inModel = false
-		case inToolsets && indent > 0 && strings.HasPrefix(trimmed, "-"):
+		case inToolsets && isItem:
 			key := yamlScalar(strings.TrimPrefix(trimmed, "-"))
 			if i := strings.Index(key, ":"); i >= 0 {
 				key = strings.TrimSpace(key[i+1:]) // "- name: foo" → "foo"

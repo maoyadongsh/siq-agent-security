@@ -505,3 +505,21 @@ body {
 .form-box input, .form-box select { padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
 .deploy-target { padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; width: 150px; }
 .mono { font-family: ui-monospace, monospace; font-size: 12px; }
+
+/* 智能扫描按钮 */
+.scan-actions { display: flex; align-items: center; gap: 8px; }
+.btn-scan {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 24px; border: none; cursor: pointer;
+  font-size: 14px; font-weight: 600; color: #fff;
+  background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.btn-scan:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45); }
+.btn-scan:disabled { opacity: 0.65; cursor: wait; }
+.btn-scan-ghost { background: transparent; color: #475569; border: 1px solid #cbd5e1; box-shadow: none; font-weight: 500; }
+.btn-scan-ghost:hover:not(:disabled) { background: #f1f5f9; box-shadow: none; }
+.scan-icon { font-size: 15px; }
+.scan-result { margin: 10px 0; padding: 10px 14px; border-radius: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; }
+.scan-result .sync-err { color: #b45309; }

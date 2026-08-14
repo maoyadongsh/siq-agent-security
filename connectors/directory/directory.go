@@ -284,7 +284,8 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 		if parentName == "." || parentName == string(filepath.Separator) || parentName == "" {
 			parentName = "root"
 		}
-		evidenceID := "ev:directory:" + hex.EncodeToString([]byte(f.rel))[:16]
+		relHash := sha256.Sum256([]byte(f.rel))
+		evidenceID := "ev:directory:" + hex.EncodeToString(relHash[:])[:16]
 		cand := &protocol.Candidate{
 			CandidateID:   "directory:" + f.rel,
 			SourceType:    "manifest",
