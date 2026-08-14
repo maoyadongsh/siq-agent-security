@@ -4,18 +4,7 @@ import react from '@vitejs/plugin-react';
 
 // SIQ Agent Security Web 控制台 — Vite 配置
 //
-// 开发代理（可选）：Phase 1 的 client 默认直连绝对地址
-// `VITE_API_BASE`（默认 http://127.0.0.1:8600/api/v1），不需要代理即可工作。
-// 若希望走同源相对路径（如 VITE_API_BASE=/api/v1），可启用下面的 proxy：
-//
-//   server: {
-//     proxy: {
-//       '/api': {
-//         target: 'http://127.0.0.1:8600',
-//         changeOrigin: true,
-//       },
-//     },
-//   },
+// client 默认使用同源 /api/v1；本地开发由下方 proxy 转发到 Control API。
 export default defineConfig({
   plugins: [react()],
   server: {

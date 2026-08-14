@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { get, ApiError } from '@/api/client';
+import { get, describeApiError } from '@/api/client';
 
 export type ApiConnectionStatus = 'loading' | 'connected' | 'disconnected';
 
@@ -50,11 +50,7 @@ export function useApiList<T>(
         if (seq !== requestSeq.current) return;
         setRows(placeholder);
         setStatus('disconnected');
-        setError(
-          err instanceof ApiError
-            ? `${err.message}${err.status ? `（HTTP ${err.status}）` : ''}`
-            : '数据加载失败',
-        );
+        setError(describeApiError(err, '数据加载失败'));
       });
   };
 

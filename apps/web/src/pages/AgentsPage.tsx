@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
+import { Icon } from '@/components/icons';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
 import type { AgentAsset } from '@/api/types';
@@ -258,11 +259,16 @@ export default function AgentsPage() {
         actions={
           <div className="scan-actions">
             <button className="btn-scan" onClick={runSmartScan} disabled={scanning}>
-              <span className="scan-icon">{scanning ? '⏳' : '🔍'}</span>
+              <span className="scan-icon">
+                <Icon name={scanning ? 'loading' : 'scan'} size={15} className={scanning ? 'icon-spin' : undefined} />
+              </span>
               {scanning ? '扫描下发中…' : '智能扫描'}
             </button>
             <button className="btn-scan btn-scan-ghost" onClick={() => { agents.refresh(); candidates.refresh(); }} title="重新拉取资产与候选">
-              ⟳ 刷新
+              <span className="scan-icon">
+                <Icon name="refresh" size={14} />
+              </span>
+              刷新
             </button>
           </div>
         }

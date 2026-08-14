@@ -3,6 +3,7 @@
  * 断连保持空态降级，不阻塞其余页面。
  */
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import { api, ApiError } from '@/api/client';
@@ -69,9 +70,10 @@ export default function OverviewPage() {
       <div className="card">
         <h2>快捷路径</h2>
         <p className="page-desc">
-          <a href="/agents">智能体资产</a> · <a href="/permissions">权限视图</a>（同步 OpenShell 有效策略）·{' '}
-          <a href="/findings">风险中心</a> · <a href="/policies">策略中心</a> ·{' '}
-          <a href="/changes">变更中心</a>（审批→部署到 OpenShell）· <a href="/audit">审计</a>
+          <Link to="/agents">智能体资产</Link> · <Link to="/permissions">权限视图</Link>
+          （同步 OpenShell 有效策略）· <Link to="/findings">风险中心</Link> ·{' '}
+          <Link to="/policies">策略中心</Link> · <Link to="/changes">变更中心</Link>
+          （审批→部署到 OpenShell）· <Link to="/audit">审计</Link>
         </p>
       </div>
     </section>

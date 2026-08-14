@@ -16,6 +16,8 @@
 
 export type AgentSourceType =
   | 'hermes_profile'
+  | 'openclaw_agent'
+  | 'directory_manifest'
   | 'docker'
   | 'kubernetes'
   | 'systemd'
@@ -59,6 +61,7 @@ export interface AgentCandidate {
 export type EvidenceSourceType =
   | 'registry'
   | 'manifest'
+  | 'openclaw_config'
   | 'process'
   | 'container'
   | 'k8s'
@@ -77,6 +80,8 @@ export type EvidenceClassification =
 export interface Evidence {
   /** 服务端证据 ID（入库时保留 Connector 生成的 evidence_id） */
   id: string;
+  /** 本次不可变采集观察的服务端 ID；同一 evidence id 内容变化时产生新值。 */
+  observation_id: string;
   source_type: EvidenceSourceType;
   /** 脱敏后的稳定来源定位，不含凭据 */
   source_locator: string;
@@ -361,7 +366,7 @@ export interface Environment {
 
 export type FindingSeverity = 'critical' | 'high' | 'medium' | 'low' | 'info';
 
-export type FindingStatus = 'open' | 'acknowledged' | 'resolved' | 'risk_accepted' | 'expired';
+export type FindingStatus = 'open' | 'acknowledged' | 'resolved' | 'risk_accepted';
 
 /** risk_acceptance 内容（acknowledge / resolve / accept-risk 回写） */
 export interface FindingRiskAcceptance {
@@ -468,6 +473,7 @@ export interface ApiErrorBody {
 /** 权限事实（后端 API 扁平形状，对齐 apps/control-api/app/schemas.py PermissionFactOut） */
 export interface PermissionFactRow {
   id: string;
+  environment_id: string | null;
   subject_type: string;
   subject_id: string;
   delegated_user: Record<string, string> | null;

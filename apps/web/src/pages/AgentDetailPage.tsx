@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
-import { api, ApiError } from '@/api/client';
+import { api, ApiError, describeApiError } from '@/api/client';
 import type { AgentAsset, Evidence } from '@/api/types';
 
 type LoadStatus = 'loading' | 'connected' | 'disconnected';
@@ -73,11 +73,7 @@ export default function AgentDetailPage() {
         if (cancelled) return;
         if (assetResult.status === 'rejected') {
           setStatus('disconnected');
-          setError(
-            assetResult.reason instanceof ApiError
-              ? `${assetResult.reason.message}（HTTP ${assetResult.reason.status}）`
-              : '资产详情加载失败',
-          );
+          setError(describeApiError(assetResult.reason, '资产详情加载失败'));
           return;
         }
         setAgent(assetResult.value);
@@ -224,7 +220,7 @@ function PermissionGovernance({ assetId, assetName }: { assetId: string; assetNa
         权限管控{' '}
         {enf && (
           <span className={`state-tag ${enf.enforce_status === 'enforced' ? 'effective' : 'unknown'}`}>
-            {enf.enforce_status === 'enforced' ? '✅ 已强制（OpenShell）' : '⚠️ 声明未强制'}
+            {enf.enforce_status === 'enforced' ? '已强制（OpenShell）' : '声明未强制'}
           </span>
         )}
       </h2>

@@ -4,13 +4,13 @@
  * - 「同步 OpenShell」按钮拉取真实网关有效策略（fail-closed：网关不可达显示错误）；
  * - 模型推断（inferred）与未知（unknown）醒目样式，绝不显示成已生效。
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
-import type { PermissionFactRow } from '@/api/types';
+import type { Environment, PermissionFactRow } from '@/api/types';
 
 const PLACEHOLDER_PERMISSIONS: PermissionFactRow[] = [];
 
@@ -65,6 +65,8 @@ export default function PermissionsPage() {
     '/permissions',
     PLACEHOLDER_PERMISSIONS,
   );
+  const environments = useApiList<Environment>('/environments', []);
+  const [environmentId, setEnvironmentId] = useState('');
   const [authorityFilter, setAuthorityFilter] = useState<string>('');
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
@@ -74,6 +76,12 @@ export default function PermissionsPage() {
   const [diffChecking, setDiffChecking] = useState(false);
   const [diffMessage, setDiffMessage] = useState<string | null>(null);
   const [diffDetail, setDiffDetail] = useState<Awaited<ReturnType<typeof api.permissionsDiff>> | null>(null);
+
+  useEffect(() => {
+    if (!environmentId && environments.rows.length > 0) {
+      setEnvironmentId(environments.rows[0].id);
+    }
+  }, [environmentId, environments.rows]);
 
   const authorities = Array.from(new Set(rows.map((r) => r.authority))).sort();
   const visible = authorityFilter ? rows.filter((r) => r.authority === authorityFilter) : rows;
@@ -122,8 +130,10 @@ export default function PermissionsPage() {
     setSyncError(null);
     setSyncMessage(null);
     try {
-      const result = await api.syncOpenShell();
-      setSyncMessage(`已同步 ${result.facts} 条有效权限（${result.targets} 个沙箱）`);
+      const result = await api.syncOpenShell(environmentId);
+      setSyncMessage(
+        `已同步 ${result.facts} 条有效权限（${result.targets} 个已绑定沙箱，忽略 ${result.ignored_unbound_targets} 个未绑定目标）`,
+      );
       refresh();
     } catch (err) {
       setSyncError(err instanceof ApiError ? err.message : '同步失败');
@@ -157,7 +167,19 @@ export default function PermissionsPage() {
           ))}
         </div>
         <div className="sync-group">
-          <button className="btn-sm btn-primary" onClick={onSync} disabled={syncing}>
+          <select
+            aria-label="OpenShell 同步环境"
+            value={environmentId}
+            onChange={(event) => setEnvironmentId(event.target.value)}
+          >
+            <option value="">选择环境</option>
+            {environments.rows.map((environment) => (
+              <option key={environment.id} value={environment.id}>
+                {environment.name}
+              </option>
+            ))}
+          </select>
+          <button className="btn-sm btn-primary" onClick={onSync} disabled={syncing || !environmentId}>
             {syncing ? '同步中…' : '同步 OpenShell 有效策略'}
           </button>
           <button className="btn-sm" onClick={onDrift} disabled={driftChecking}>

@@ -74,7 +74,6 @@ const statusTag: Record<FindingStatus, string> = {
   acknowledged: 'tag-warn',
   resolved: 'tag-ok',
   risk_accepted: 'tag-info',
-  expired: '',
 };
 
 /** 已终态（不可再 acknowledge/resolve） */
@@ -107,11 +106,15 @@ export default function FindingsPage() {
 
   /** 解决不可逆（无 reopen 路径），点击前二次确认 */
   const handleResolve = async (f: Finding) => {
+    const evidenceRef = window.prompt('请输入修复证据或工单引用（例如 repair-ticket:SEC-123）');
+    if (!evidenceRef) {
+      return;
+    }
     if (!window.confirm(`解决风险「${f.rule_id}」（${f.impact ?? ''}）？\n解决后不可撤销。`)) {
       return;
     }
     setBusyId(f.id);
-    await runAction(() => api.resolveFinding(f.id));
+    await runAction(() => api.resolveFinding(f.id, evidenceRef));
     setBusyId(null);
   };
 

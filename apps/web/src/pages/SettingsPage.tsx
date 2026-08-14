@@ -6,7 +6,7 @@ import { API_BASE } from '@/api/client';
  * 认证流程（登录/刷新）在 Phase 2 接入；届时 token 仍只允许驻留内存。
  */
 export default function SettingsPage() {
-  const devMode = import.meta.env.VITE_DEV_MODE !== 'false';
+  const devMode = import.meta.env.VITE_DEV_MODE === 'true';
 
   return (
     <section>
@@ -33,7 +33,7 @@ export default function SettingsPage() {
           />
         </div>
         <p className="page-desc">
-          生产构建必须设置 VITE_DEV_MODE=false：开发注入的 X-Dev-Tenant-Id / X-Dev-User-Id 头允许伪造身份。
+          开发身份注入默认关闭；只有显式设置 VITE_DEV_MODE=true 才会发送 X-Dev-* 头。
         </p>
       </div>
       <div className="card">

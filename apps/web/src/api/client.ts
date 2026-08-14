@@ -26,12 +26,11 @@ import type {
   ApiEnvelope,
 } from './types';
 
-/** 控制面 API 基础地址（默认本地 Control API） */
-export const API_BASE: string =
-  import.meta.env.VITE_API_BASE ?? 'http://127.0.0.1:8600/api/v1';
+/** 控制面 API 基础地址（默认同源，由网关/开发代理转发） */
+export const API_BASE: string = import.meta.env.VITE_API_BASE ?? '/api/v1';
 
 /** 开发模式身份注入开关（生产必须为 false，禁止身份伪造头） */
-const DEV_MODE: boolean = import.meta.env.VITE_DEV_MODE !== 'false';
+const DEV_MODE: boolean = import.meta.env.VITE_DEV_MODE === 'true';
 
 /** 请求超时（ms）：后端未联调时快速失败，避免页面挂起 */
 const REQUEST_TIMEOUT_MS = 5000;
@@ -90,6 +89,20 @@ export class ApiError extends Error {
     this.code = code;
     this.requestId = requestId;
   }
+}
+
+/**
+ * 展示用错误描述：HTTP 状态后缀只在 message 未自带时追加，
+ * 避免"请求失败（HTTP 500）（HTTP 500）"式重复（client 兜底文案已含状态）。
+ * status 0（网络失败/超时）不追加——message 本身已说明原因。
+ */
+export function describeApiError(err: unknown, fallback = '操作失败'): string {
+  if (err instanceof ApiError) {
+    return err.status && !err.message.includes(`HTTP ${err.status}`)
+      ? `${err.message}（HTTP ${err.status}）`
+      : err.message;
+  }
+  return fallback;
 }
 
 function buildUrl(path: string, query?: RequestOptions['query']): string {
@@ -250,7 +263,12 @@ export const api = {
   /** 权限视图（真实端点：authority/domain/state/subject_id 过滤） */
   listPermissions: (query: RequestOptions['query'] = {}) => get<PermissionFactRow[]>('/permissions', { query }),
   /** 拉取真实 OpenShell 有效策略入 PermissionFacts（fail-closed：网关不可达 502） */
-  syncOpenShell: () => post<{ targets: number; facts: number }>('/permissions/sync-openshell', {}),
+  syncOpenShell: (environmentId: string) =>
+    post<{ backend_targets: number; targets: number; ignored_unbound_targets: number; facts: number }>(
+      '/permissions/sync-openshell',
+      {},
+      { query: { environment_id: environmentId } },
+    ),
   /** 智能扫描（用户一键发现）：标准安全范围一次下发（hermes/openclaw/docker） */
   smartScan: (environmentId: string) =>
     post<{ tasks: { task_id: string; connector: string }[]; note: string }>(
@@ -314,8 +332,8 @@ export const api = {
   acknowledgeFinding: (findingId: string) =>
     post<Finding>(`/findings/${encodeURIComponent(findingId)}/acknowledge`, {}),
   /** 解决风险（回链修复证据，不可逆） */
-  resolveFinding: (findingId: string) =>
-    post<Finding>(`/findings/${encodeURIComponent(findingId)}/resolve`, {}),
+  resolveFinding: (findingId: string, evidenceRef: string) =>
+    post<Finding>(`/findings/${encodeURIComponent(findingId)}/resolve`, { evidence_ref: evidenceRef }),
   /** 环境与 Connector */
   listEnvironments: () => get<Environment[]>('/environments'),
   /** 审计事件（actor/action/resource_type 过滤 + 游标分页） */
