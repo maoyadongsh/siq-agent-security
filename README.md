@@ -36,8 +36,8 @@
   - **策略域**：审批状态机 + `enforcement_mode` 渐进档位 + 漂移检测，策略变更全程受控。
 - **漂移检测**：从执行后端回读有效策略（`/api/v1/permissions/sync-openshell`），与已生效部署做 revision 比对，不一致即生成高严重度 Finding；后端不可达时如实报错（fail-closed），绝不把"没查到"当"没漂移"。
 - **风险中心（Findings）**：内置规则引擎按租户周期评估、幂等 upsert；风险接受必填 Owner/原因/到期时间，到期自动重开并发出 `agent.finding.reopened.v1` 事件；驳回（dismissed）资产到期自动回到候选池。
-- **策略治理闭环**：`draft → validated → proposed → approved → deploying → effective` 全状态机；职责分离（SoD，提出者不能是唯一批准者）、幂等键防重复变更、未批准不可部署（409）、回滚同权审计；`enforcement_mode` 渐进档位 `audit_only → warn → block` 只允许升级，降级必须走新的 high_risk 变更单并审批；Break-glass 紧急通道记录短期授权并到期转入 `post_review_due` 事后复核。
-- **OpenShell 执行后端**（`apps/control-api/app/adapters/openshell/`）：后端无关的 DesiredPolicy 经策略编译器翻译为 OpenShell 策略，经 CLI 后端下发（`policy set`）并读回 revision 验证后置为 `effective`；FakeBackend 契约测试覆盖能力探测/revision 冲突/静态 generation/正负验证/回滚/unsupported 显式标记；已在 v0.0.104 真实网关完成"审批 → `policy set` → 读回验证 → `effective`"闭环实测（含网络策略热更新）。
+- **策略治理闭环**：`draft → validated → proposed → approved → deploying → effective` 全状态机；职责分离（SoD，提出者不能是唯一批准者，break_glass 不豁免）、幂等键防重复变更、未批准不可部署（409）、回滚同权审计；`enforcement_mode` 渐进档位 `audit_only → warn → block` 只允许升级，降级必须走新的 high_risk 变更单并审批；Break-glass 紧急通道需独立权限点 `change:break_glass`（security_admin）、仅跨人批准，记录短期授权并到期转入 `post_review_due` 事后复核。
+- **OpenShell 执行后端**（`apps/control-api/app/adapters/openshell/`）：后端无关的 DesiredPolicy 经策略编译器翻译为 OpenShell 策略，经 CLI 后端下发（`policy set`）并读回 revision 验证后置为 `effective`；FakeBackend 契约测试覆盖能力探测/revision 冲突/静态 generation/正负验证/回滚/unsupported 显式标记；已在 v0.0.104 真实网关完成"审批 → `policy set` → 读回验证 → `effective`"闭环实测（含网络策略热更新）。**已知限制（如实声明）**：渐进模式的设计与审批状态机已就绪，但 openshell-cli 后端当前仅支持 `block`（enforced）档——`audit_only`/`warn` 策略在部署时返回 422（`openshell_cli_mode_unsupported`），待后端支持后方可实际部署。
 - **Edge 全生命周期管控**：环境（Environment）→ 一次性注册码（15 分钟 TTL、只存哈希、单次有效）→ 设备注册（device secret 只返回一次、只存 sha256）→ 心跳（吊销即时生效，每次请求在线校验）→ 签名任务领取与执行（任务 Ed25519 签名 + TTL）→ 证据批次上传（批次 + 逐条双重验签、5 分钟新鲜度窗口）→ 回执。
 - **审计与事件**：AuditEvent 与状态变化同事务写入（审计缺失即操作失败），Outbox 事件同事务落库、由后台 worker 发布（Webhook/日志兜底）；审计摘要只存标识/数量/哈希，Secret 明文永不落库、不进日志；响应错误只返回错误引用（error digest）。
 - **Web 控制台**（`apps/web`，React/Vite/TS）：总览、资产、Agent 详情（五域编辑器 + enforce 徽标）、权限、风险、策略、变更、环境、审计、设置等 11 个页面组件（12 条路由，含首页重定向与 404）均已接真实 API；token 只存内存不落 localStorage / sessionStorage。
@@ -63,7 +63,7 @@
 - **影子智能体盘点 → 消除治理盲区**：持续发现容器、目录、框架配置中的智能体资产并确认归属，客户第一次能回答"我有多少智能体、谁负责"，这是任何安全与合规动作的前提。
 - **证据链 + 同事务审计 → 降低合规成本**：每个结论可回链证据、每次状态变化有不可绕过的审计记录，面向监管的说明从"人工整理材料"变为"导出即有据可查"。
 - **五态权限视图 + 漂移检测 → 持续收敛攻击面**：声明与生效权限的差异、带外修改、未知组合权限被显式暴露，最小权限从一次性整改变为可持续运营；带外降级（如绕过策略直接回退 Host）无处遁形。
-- **审批闭环 + 渐进执行 → 权限变更可控**：SoD、幂等、`enforcement_mode` 渐进档位让客户可以先观察（audit_only）再阻断（block），降低"上安全管控影响业务"的推行阻力；高风险变更降级必须二次审批，Break-glass 有事后复核兜底。
+- **审批闭环 + 渐进执行 → 权限变更可控**：SoD、幂等、`enforcement_mode` 渐进档位让客户可以先观察（audit_only）再阻断（block），降低"上安全管控影响业务"的推行阻力；高风险变更降级必须二次审批，Break-glass 有事后复核兜底。（**已知限制**：openshell-cli 执行后端当前仅支持 `block` 档，`audit_only`/`warn` 待后端支持后方可实际部署——渐进执行当前止于设计与审批状态机层面。）
 - **多框架 Connector + 后端无关策略模型 → 避免厂商锁定**：Hermes/Docker/受控目录/OpenClaw 已接入，策略模型不绑定 OpenShell，客户现有框架与未来执行后端的接入成本都被合同隔离。
 - **独立产品形态 → 一份资产多处变现**：不依赖 SIQ 代码与数据库即可部署，同一产品可服务 SIQ 客户与非 SIQ 环境（自托管/Managed）。
 

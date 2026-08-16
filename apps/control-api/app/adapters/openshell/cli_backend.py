@@ -17,10 +17,11 @@
 
 from __future__ import annotations
 
+import contextlib
 import os
 import re
 import subprocess
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from ipaddress import ip_address
 from pathlib import Path
 from urllib.parse import urlparse
@@ -279,8 +280,8 @@ class OpenShellCliBackend(EnforcementAdapter):
             "process": current.process,
             "network_policies": self._network_rules_to_gateway(compiled.artifact.get("network_policies") or []),
         }
-        policy_file = self._write_policy_yaml(merged)
-        out = self._cli("policy", "set", target, "--policy", policy_file)
+        with self._policy_yaml_file(merged) as policy_file:
+            out = self._cli("policy", "set", target, "--policy", policy_file)
         match = _VERSION_SUBMITTED_RE.search(out) or _VERSION_UNCHANGED_RE.search(out)
         if not match:
             raise AdapterError(f"无法解析 policy set 回执（fail-closed）: {out.strip()[:200]}")
@@ -327,16 +328,24 @@ class OpenShellCliBackend(EnforcementAdapter):
         )
 
     def rollback(self, target: str, receipt: DeploymentReceipt) -> RollbackReceipt:
-        prev_rev = int(receipt.backend_revision) - 1
+        raw_rev = str(receipt.backend_revision or "").strip()
+        if not raw_rev:
+            raise AdapterError("回执缺少 backend_revision，无法计算回滚目标（fail-closed）")
+        try:
+            prev_rev = int(raw_rev) - 1
+        except ValueError:
+            raise AdapterError(f"backend_revision 非法（无法解析为整数，fail-closed）: {raw_rev!r}") from None
         if prev_rev < 1:
             raise VerificationFailed("无可回滚的上一 revision")
         out = self._cli("policy", "get", target, "--rev", str(prev_rev), "--full")
         prev_doc = self._parse_policy_yaml(out)
-        policy_file = self._write_policy_yaml(prev_doc)
-        applied = self._cli("policy", "set", target, "--policy", policy_file)
-        match = _VERSION_SUBMITTED_RE.search(applied)
-        restored = match.group(1) if match else str(prev_rev)
-        return RollbackReceipt(restored_revision=restored, evidence={"applied": applied.strip()[:120]})
+        with self._policy_yaml_file(prev_doc) as policy_file:
+            applied = self._cli("policy", "set", target, "--policy", policy_file)
+        match = _VERSION_SUBMITTED_RE.search(applied) or _VERSION_UNCHANGED_RE.search(applied)
+        if not match:
+            # 回执不可解析即失败（fail-closed），不伪造 restored_revision
+            raise AdapterError(f"无法解析回滚 policy set 回执（fail-closed）: {applied.strip()[:200]}")
+        return RollbackReceipt(restored_revision=match.group(1), evidence={"applied": applied.strip()[:120]})
 
     def stream_events(self, cursor: str | None = None) -> EventBatch:
         try:
@@ -400,10 +409,19 @@ class OpenShellCliBackend(EnforcementAdapter):
             }
         return gateway
 
-    def _write_policy_yaml(self, doc: dict) -> str:
+    @contextlib.contextmanager
+    def _policy_yaml_file(self, doc: dict) -> Iterator[str]:
+        """策略 YAML 临时文件上下文：CLI 子进程读取后立即删除（生命周期限定在本上下文内）。
+
+        文件必须存活到 policy set 子进程读取完成（跨进程消费），故不能用 delete=True 的
+        关闭即删语义；mkstemp（0600）+ try/finally 删除，正常/异常路径均不泄漏。
+        """
         import tempfile
 
         fd, path = tempfile.mkstemp(prefix="siq-as-policy-", suffix=".yaml")
-        with os.fdopen(fd, "w") as fh:
-            yaml.safe_dump(doc, fh, sort_keys=False)
-        return path
+        try:
+            with os.fdopen(fd, "w") as fh:
+                yaml.safe_dump(doc, fh, sort_keys=False)
+            yield path
+        finally:
+            os.unlink(path)

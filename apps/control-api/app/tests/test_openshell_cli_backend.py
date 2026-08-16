@@ -6,10 +6,12 @@
 
 from __future__ import annotations
 
+import os
+
 import pytest
 
 from app.adapters.openshell.cli_backend import OpenShellCliBackend
-from app.adapters.openshell.contracts import AdapterError, RevisionConflict
+from app.adapters.openshell.contracts import AdapterError, DeploymentReceipt, RevisionConflict
 
 # 实测捕获：openshell policy get siq-as-live --full（截取）
 REAL_POLICY_GET_FULL = """Version:      1
@@ -87,10 +89,14 @@ def test_apply_dynamic_merges_static_and_replaces_network(tmp_path):
         ("policy", "get", "s1", "--full"): (0, REAL_POLICY_GET_FULL, ""),
     }
     set_calls: list[list[str]] = []
+    merged_docs: list[dict] = []
 
     def runner(args):
         if tuple(args[:2]) == ("policy", "set"):
             set_calls.append(args)
+            import yaml as _yaml
+
+            merged_docs.append(_yaml.safe_load(open(args[4])))  # CLI 读取期文件必须存在
             return 0, REAL_POLICY_SET_OK, ""
         return responses.get(tuple(args), (1, "", f"unexpected: {args}"))
 
@@ -110,12 +116,36 @@ def test_apply_dynamic_merges_static_and_replaces_network(tmp_path):
     assert receipt.backend_revision == "2"
     assert receipt.evidence["snapshot_hash"] == "5385cd2cf66f"
     # 合并后的 YAML 必须保留静态段 + 携带网络段
-    import yaml
-
-    merged = yaml.safe_load(open(set_calls[0][4]))
+    merged = merged_docs[0]
     assert merged["filesystem_policy"]["read_only"][0] == "/usr"
     assert "demo_allowed_api" not in merged["network_policies"]  # 名称按编译制品生成
     assert len(merged["network_policies"]) == 1
+    # 临时策略文件在 CLI 读取完成后立即删除（不泄漏）
+    assert not os.path.exists(set_calls[0][4])
+
+
+def test_apply_dynamic_tempfile_cleaned_on_cli_error():
+    """CLI 失败路径：临时策略文件同样删除（try/finally 清理点）。"""
+    responses = {
+        ("gateway", "info"): (0, GATEWAY_INFO, ""),
+        ("policy", "get", "s1", "--full"): (0, REAL_POLICY_GET_FULL, ""),
+    }
+    set_calls: list[list[str]] = []
+
+    def runner(args):
+        if tuple(args[:2]) == ("policy", "set"):
+            set_calls.append(args)
+            return 1, "", "gateway rejected"
+        return responses.get(tuple(args), (1, "", f"unexpected: {args}"))
+
+    backend = OpenShellCliBackend(runner=runner)
+    compiled = backend.compile(
+        {"policy_id": "p", "version": 1, "selector": {"agent_ids": ["a"]}, "network": [], "enforcement_mode": "block"}
+    )
+    plan = backend.plan_change("s1", compiled)
+    with pytest.raises(AdapterError):
+        backend.apply_dynamic("s1", plan, expected_revision="1")
+    assert set_calls and not os.path.exists(set_calls[0][4])
 
 
 def test_apply_dynamic_revision_conflict():
@@ -175,6 +205,74 @@ def test_fs_change_rejected_by_gateway_is_adapter_error():
     plan = backend.plan_change("s1", compiled)
     with pytest.raises(AdapterError):
         backend.apply_dynamic("s1", plan, expected_revision="1")
+
+
+def test_rollback_reports_gateway_reported_revision_and_cleans_tempfile():
+    """回滚成功：restored_revision 如实采用网关回执版本号；临时策略文件在 CLI 读取后删除。"""
+    responses = {
+        ("policy", "get", "s1", "--rev", "1", "--full"): (0, REAL_POLICY_GET_FULL, ""),
+    }
+    set_calls: list[list[str]] = []
+
+    def runner(args):
+        if tuple(args[:2]) == ("policy", "set"):
+            set_calls.append(args)
+            return 0, "✓ Policy version 3 submitted (hash: 3f3f3f3f)\n", ""
+        return responses.get(tuple(args), (1, "", f"unexpected: {args}"))
+
+    backend = OpenShellCliBackend(runner=runner)
+    receipt = backend.rollback("s1", DeploymentReceipt(backend_revision="2", evidence={}))
+    assert receipt.restored_revision == "3"  # 网关如实上报的版本号，而非推算的 prev_rev
+    assert set_calls and not os.path.exists(set_calls[0][4])
+
+
+def test_rollback_unparseable_set_receipt_fails_closed():
+    """policy set 成功但回执不可解析：如实报失败（不伪造 restored_revision=prev_rev）。"""
+    responses = {
+        ("policy", "get", "s1", "--rev", "1", "--full"): (0, REAL_POLICY_GET_FULL, ""),
+    }
+    set_calls: list[list[str]] = []
+
+    def runner(args):
+        if tuple(args[:2]) == ("policy", "set"):
+            set_calls.append(args)
+            return 0, "unexpected output without version receipt\n", ""
+        return responses.get(tuple(args), (1, "", f"unexpected: {args}"))
+
+    backend = OpenShellCliBackend(runner=runner)
+    with pytest.raises(AdapterError, match="回执"):
+        backend.rollback("s1", DeploymentReceipt(backend_revision="2", evidence={}))
+    assert set_calls and not os.path.exists(set_calls[0][4])
+
+
+def test_rollback_missing_backend_revision_fails_structured():
+    """空 backend_revision：结构化 AdapterError（此前 int('') 抛未捕获 ValueError → 500）。"""
+    backend = OpenShellCliBackend(runner=lambda a: (1, "", "unused"))
+    with pytest.raises(AdapterError, match="backend_revision"):
+        backend.rollback("s1", DeploymentReceipt(backend_revision="", evidence={}))
+
+
+def test_rollback_invalid_backend_revision_fails_structured():
+    """非法 backend_revision：结构化 AdapterError，不伪造恢复。"""
+    backend = OpenShellCliBackend(runner=lambda a: (1, "", "unused"))
+    with pytest.raises(AdapterError, match="backend_revision"):
+        backend.rollback("s1", DeploymentReceipt(backend_revision="12abc", evidence={}))
+
+
+def test_rollback_whitespace_revision_accepted():
+    """带空白的 revision 可解析（与路由端 str() 直传保持一致）。"""
+    responses = {
+        ("policy", "get", "s1", "--rev", "1", "--full"): (0, REAL_POLICY_GET_FULL, ""),
+    }
+
+    def runner(args):
+        if tuple(args[:2]) == ("policy", "set"):
+            return 0, "✓ Policy version 3 submitted (hash: 3f3f3f3f)\n", ""
+        return responses.get(tuple(args), (1, "", f"unexpected: {args}"))
+
+    backend = OpenShellCliBackend(runner=runner)
+    receipt = backend.rollback("s1", DeploymentReceipt(backend_revision=" 2 ", evidence={}))
+    assert receipt.restored_revision == "3"
 
 
 def test_sandbox_list_decode_bug_falls_back_to_docker():

@@ -71,6 +71,6 @@ Connector 是运行在 Edge Agent 侧的多语言插件（设计文档 §26.1：
 
 ## 与实现的对应关系（如实核对）
 
-- `desired-policy.enforcement_mode`：实现已落地——只允许升级（audit_only → warn → block），降级必须走 high_risk 变更单并审批（`apps/control-api/app/routers/policies.py`）；
+- `desired-policy.enforcement_mode`：实现已落地——只允许升级（audit_only → warn → block），降级必须走 high_risk 变更单并审批（`apps/control-api/app/routers/policies.py`）；**已知限制**：openshell-cli 执行后端当前仅支持 `block` 档，`audit_only`/`warn` 策略在部署时返回 422（`openshell_cli_mode_unsupported`），待后端支持后方可实际部署；
 - `permission-fact.delegated_user` 与五态 `state`：Edge 上传的 `permission_facts`（`EdgePermissionFactIn`）与 schema 字段一一对应；`effective` 状态仍只允许控制面派生（模型/Edge 上传不得声明 effective）；
 - **重叠冲突语义（overlap）**：定义于设计文档 §12.4（deny-overrides 组合、selector 冲突编译期报错）；实现以编译期静态校验起步，显式冲突输出待补，本目录暂不提供对应 schema 字段——变更前先立项升版。

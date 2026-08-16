@@ -12,6 +12,7 @@ import argparse
 import logging
 import os
 import time
+from collections.abc import Callable
 from datetime import datetime
 
 from sqlalchemy import select
@@ -225,15 +226,33 @@ def once() -> dict:
     }
 
 
-def loop(interval_seconds: int) -> None:
-    logger.info("worker loop started, interval=%ss", interval_seconds)
+def loop(
+    interval_seconds: int,
+    *,
+    max_backoff_seconds: int | None = None,
+    sleep_fn: Callable[[float], None] = time.sleep,
+) -> None:
+    """后台循环：周期执行全部子任务（outbox 发布/到期重开/规则/漂移），永不退出（保活）。
+
+    失败退避只影响下一次尝试的时间：interval → 2× → 4× …（封顶 max_backoff_seconds，
+    默认 SIQ_AS_WORKER_MAX_BACKOFF_SECONDS=300），成功即复位为 interval。
+    退避不改变 outbox 原子语义——发布仍按事件级幂等标记，未发布事件留待后续周期。
+    """
+    if max_backoff_seconds is None:
+        max_backoff_seconds = int(os.getenv("SIQ_AS_WORKER_MAX_BACKOFF_SECONDS", "300"))
+    logger.info("worker loop started, interval=%ss, backoff cap=%ss", interval_seconds, max_backoff_seconds)
+    consecutive_failures = 0
     while True:
         try:
             summary = once()
             logger.info("cycle: %s", summary)
+            consecutive_failures = 0  # 成功即复位退避
+            sleep_for = float(interval_seconds)
         except Exception:  # noqa: BLE001 —— 后台循环不得退出，记录后继续
             logger.exception("worker cycle failed")
-        time.sleep(interval_seconds)
+            consecutive_failures += 1
+            sleep_for = min(float(interval_seconds) * (2 ** (consecutive_failures - 1)), float(max_backoff_seconds))
+        sleep_fn(sleep_for)
 
 
 if __name__ == "__main__":

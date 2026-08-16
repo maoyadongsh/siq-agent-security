@@ -188,6 +188,9 @@ def create_change_request(
     identity: Identity = Depends(require_permission("change:propose")),
 ):
     policy = _policy_or_404(session, identity.tenant_id, body.policy_id)
+    # Break-glass 需独立权限点（§19.2）：普通 proposer 自选 break_glass 直接 403，不豁免职责分离
+    if body.approval_policy == "break_glass":
+        ensure_permission(identity, "change:break_glass")
     existing = session.scalar(
         select(ChangeRequest).where(ChangeRequest.idempotency_key == body.idempotency_key)
     )
@@ -236,8 +239,8 @@ def approve_change_request(
     )
     if cr is None:
         raise HTTPException(status_code=404, detail="not_found")
-    # 职责分离：提出者不能是唯一批准者（设计文档 §19.3）；Break-glass 是显式例外（§19.3 末条）
-    if cr.proposer_user_id == identity.actor_id and cr.approval_policy != "break_glass":
+    # 职责分离：提出者不能是唯一批准者（设计文档 §19.3）；break_glass 不豁免，仅允许跨人紧急批准
+    if cr.proposer_user_id == identity.actor_id:
         raise HTTPException(status_code=409, detail="segregation_of_duties")
     if cr.status != "proposed":
         raise HTTPException(status_code=409, detail="invalid_state")
@@ -453,6 +456,13 @@ def create_deployment(
             session.commit()
             raise HTTPException(status_code=502, detail=f"openshell_apply_failed: {error['error_digest']}") from None
 
+    # ── EdgeTask 占位通道（Phase 4 回执验证器落地前不可达 effective，保留为占位）──
+    # 生产路径不可达：backend=none 在上方 409 拒绝；openshell-cli 走真实闭环并已返回。
+    # 仅 dev/fake 后端可到达此处，且回执端（routers/environments.edge_post_receipt）对
+    # publish_policy 一律置 failed（edge_publish_unsupported 常量语义），该通道永不能转 effective。
+    # TODO(Phase 4)：回执验证器（制品哈希绑定 + 签名回执 + 活体探针）落地后，
+    # 此处才可能成为真实 Edge 执行路径（docs/adr/0002-edge-trust-model.md、
+    # docs/threat-model.md「部署回执独立验证」）。
     task = EdgeTask(
         environment_id=env.id,
         task_type="publish_policy",

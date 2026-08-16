@@ -226,6 +226,41 @@ def test_deployment_effective_with_verification(client, tenant_a, env_a):
         assert d.verification is None
 
 
+def test_edge_publish_policy_receipt_constant_fail_closed(client, tenant_a, env_a):
+    """常量语义：Phase 4 回执验证器落地前，publish_policy 成功回执一律 failed + edge_publish_unsupported。"""
+    dep = _approved_deployment(client, tenant_a, env_a)
+    headers = _edge_headers(client, tenant_a, env_a, "edge-const-1")
+    tasks = client.get("/edge/v1/tasks", headers=headers).json()
+    task = next(
+        t for t in tasks if t["task_type"] == "publish_policy" and t["payload"].get("deployment_id") == dep["id"]
+    )
+    resp = client.post(
+        f"/edge/v1/tasks/{task['id']}/receipt",
+        json={
+            "status": "success",
+            "summary": {"applied": True},
+            "verification": {"backend_revision": "rev_9", "snapshot_hash": "e" * 64},
+        },
+        headers=headers,
+    )
+    assert resp.status_code == 200
+    with session_scope() as session:
+        from app.models import Deployment, OutboxEvent
+
+        d = session.query(Deployment).filter(Deployment.id == dep["id"]).one()
+        assert d.status == "failed"
+        assert (d.receipt or {}).get("status") == "success"  # 回执保留原始状态
+        failed_events = [
+            e
+            for e in session.query(OutboxEvent)
+            .filter(OutboxEvent.event_type == "policy.deployment.failed.v1")
+            .all()
+            if e.payload.get("resource_ref") == dep["id"]
+        ]
+        assert failed_events, "失败事件必须已发出"
+        assert failed_events[-1].payload["payload"]["reason"] == "edge_publish_unsupported"
+
+
 def test_deployment_compiles_with_fake_backend(client, tenant_a, env_a, monkeypatch):
     """SIQ_AS_ENFORCEMENT_BACKEND=fake：部署任务携带编译制品 + unsupported 显式列表（§14.1）。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "fake")
@@ -481,8 +516,25 @@ def test_enforcement_mode_downgrade_requires_high_risk(client, tenant_a):
     assert resp2.status_code == 200
 
 
-def test_break_glass_bypasses_sod_and_marks_emergency(client, tenant_a):
-    """§19.3 末条：Break-glass 短期授权（提出者自批允许）→ emergency_applied。"""
+def test_break_glass_requires_dedicated_permission(client, tenant_a):
+    """§19.2：发起 break_glass 需独立权限点 change:break_glass；普通 proposer 自选 break_glass 直接 403。"""
+    policy = _create_policy(client, tenant_a)
+    proposer = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-plain-proposer", "X-Dev-Roles": "agent_owner"}
+    resp = client.post(
+        "/api/v1/change-requests",
+        json={
+            "policy_id": policy["id"],
+            "idempotency_key": f"ik-{uuid.uuid4().hex}",
+            "approval_policy": "break_glass",
+        },
+        headers=proposer,
+    )
+    assert resp.status_code == 403
+    assert resp.json()["detail"] == "forbidden"
+
+
+def test_break_glass_sod_applies_same_person_rejected(client, tenant_a):
+    """§19.3 修订：break_glass 不豁免 SoD；同一人 propose+approve 仍被 409 拒绝。"""
     policy = _create_policy(client, tenant_a)
     cr = client.post(
         "/api/v1/change-requests",
@@ -493,22 +545,39 @@ def test_break_glass_bypasses_sod_and_marks_emergency(client, tenant_a):
         },
         headers=tenant_a,
     ).json()
-    # 提出者自批：break_glass 豁免 SoD
     resp = client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=tenant_a)
+    assert resp.status_code == 409
+    assert resp.json()["detail"] == "segregation_of_duties"
+
+
+def test_break_glass_cross_person_emergency_approval(client, tenant_a, env_a):
+    """§19.3：持 change:break_glass 的提出者 + 跨人批准 → emergency_applied 并可部署。"""
+    policy = _create_policy(client, tenant_a)
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={
+            "policy_id": policy["id"],
+            "idempotency_key": f"ik-{uuid.uuid4().hex}",
+            "approval_policy": "break_glass",
+        },
+        headers=tenant_a,
+    ).json()
+    # 跨人批准（另一用户，change:approve）：放行进入紧急通道
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-bg-approver", "X-Dev-Roles": "security_admin"}
+    resp = client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
     assert resp.status_code == 200
     assert resp.json()["status"] == "emergency_applied"
 
     # emergency_applied 允许部署
-    env = client.get("/api/v1/environments", headers=tenant_a).json()[0]
     dep = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env["id"], "target": "bg-target"},
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "target": "bg-target"},
         headers=tenant_a,
     )
     assert dep.status_code == 201
 
 
-def test_break_glass_review_due_after_deployment_status_change(client, tenant_a):
+def test_break_glass_review_due_after_deployment_status_change(client, tenant_a, env_a):
     """worker：紧急变更部署后状态已改变，到期仍必须转事后复核。"""
     from datetime import timedelta
 
@@ -522,11 +591,11 @@ def test_break_glass_review_due_after_deployment_status_change(client, tenant_a)
         },
         headers=tenant_a,
     ).json()
-    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=tenant_a)
-    env = client.get("/api/v1/environments", headers=tenant_a).json()[0]
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-bg-approver", "X-Dev-Roles": "security_admin"}
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
     deployed = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env["id"], "target": "bg-review-target"},
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "target": "bg-review-target"},
         headers=tenant_a,
     )
     assert deployed.status_code == 201

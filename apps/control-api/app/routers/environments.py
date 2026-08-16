@@ -41,6 +41,22 @@ from app.signing import public_key_base64
 
 router = APIRouter(tags=["environments"])
 
+# publish_policy 回执的部署处置是常量语义（Phase 4 回执验证器落地前恒 failed）：
+# 当前 Edge 明确只实现 scan，publish_policy 成功回执不属于可信协议（设计文档 §21.1 不变量 #5）。
+# TODO(Phase 4)：回执验证器（制品哈希绑定 + 签名回执 + 活体探针）落地后，
+# 方可依据可机器校验证据决定 effective/failed（docs/adr/0002-edge-trust-model.md、
+# docs/threat-model.md「部署回执独立验证」）；此前任何回执都不得转 effective（fail-closed）。
+_EDGE_PUBLISH_RECEIPT_STATUS = "failed"
+
+
+def _edge_publish_receipt_reason(status: str) -> str:
+    """publish_policy 回执失败原因（常量语义，见 _EDGE_PUBLISH_RECEIPT_STATUS）。
+
+    成功回执也标记 edge_publish_unsupported：回执验证器落地前，
+    "成功"本身不构成可机器校验证据，不得与真实失败混同。
+    """
+    return "edge_publish_unsupported" if status == "success" else "edge_failure"
+
 
 def _env_or_404(session: Session, tenant_id: str, environment_id: str) -> Environment:
     env = session.scalar(
@@ -268,10 +284,10 @@ def edge_post_receipt(
                 "error_code": body.error_code,
                 **verification,
             }
-            # 当前 Edge 明确只实现 scan，publish_policy 成功回执不属于可信协议。
+            # 常量语义（Phase 4 回执验证器落地前）：publish_policy 回执一律置 failed，
             # 在 Edge 具备制品哈希绑定、签名回执和活体探针前，永不由该路径转 effective。
-            deployment.status = "failed"
-            reason = "edge_publish_unsupported" if body.status == "success" else "edge_failure"
+            deployment.status = _EDGE_PUBLISH_RECEIPT_STATUS
+            reason = _edge_publish_receipt_reason(body.status)
             emit_event(
                 session,
                 tenant_id,
