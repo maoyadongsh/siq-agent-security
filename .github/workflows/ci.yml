@@ -38,6 +38,8 @@ jobs:
             echo "task-signing private-key artifact remains in Git history"
             exit 1
           fi
+      - name: Event envelope core checksum
+        run: python3 scripts/check_event_envelope_core.py
 
   control-api:
     runs-on: ubuntu-latest

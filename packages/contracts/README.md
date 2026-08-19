@@ -2,6 +2,8 @@
 
 本目录是产品对外与对内合同的**事实源**：跨组件共享的 JSON Schema 与子进程协议规范。任何破坏性变更必须先升 schema 版本，再同步所有实现方与测试，杜绝"实现漂移即合同"。
 
+领域信封 `event-envelope.schema.json` 与 Document Engine 的同名文件**不是**同一 schema（一边 integer `schema_version`，一边 document 专用 enum）。共享字段以 `event-envelope-core.schema.json` 为权威，同步命令见 Document Engine `packages/contracts/json-schema/events/README.md`。
+
 ## 合同文件清单（6 份）
 
 | 文件 | 内容 | 关键字段/约定 | 对应设计文档 |
@@ -10,7 +12,8 @@
 | `evidence.schema.json` | 可验证证据 | `collected_at`、`expires_at`（新鲜度窗口）、`signature`（Edge 签名） | §10.5 |
 | `permission-fact.schema.json` | 权限事实 | 五态 `state`（declared/inferred/observed/effective/unknown）、`delegated_user` 委托维度、authority/revision 溯源 | §12.3 |
 | `desired-policy.schema.json` | 后端无关的期望策略 | `enforcement_mode` 渐进档位（audit_only/warn/block）、selector、版本与状态 | §14.1 |
-| `event-envelope.schema.json` | 领域事件信封 | event_id/type/occurred_at/tenant/environment/actor/payload + schema_version | §18.3 |
+| `event-envelope.schema.json` | 领域事件信封 | event_id/type/occurred_at/tenant/environment/actor/payload + integer schema_version | §18.3 |
+| `event-envelope-core.schema.json` | 跨域共享身份字段（ENG-03 权威副本） | event_id/type/occurred_at/tenant_id/request_id/payload；与 Document Engine 字节一致 | SIQ_CROSS_REPO_DEVPLAN ENG-03 |
 | `connector-protocol.v1.md` | Edge ↔ Connector 受限子进程协议 | NDJSON、op 清单、错误码、负向语料、签名与新鲜度约定 | §26.1 |
 
 控制面以 `apps/control-api/app/tests/test_schema_contracts.py` 守护示例与实现方字段同步：schema 示例校验 + 实现方字段一致性，任何一侧漂移即测试失败。
