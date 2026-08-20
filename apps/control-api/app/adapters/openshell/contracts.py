@@ -42,12 +42,12 @@ class BackendCapabilities:
     """probe() 结果：实际能力，不是版本号推断。"""
 
     backend: str  # openshell
-    schema_version: str  # 策略 Schema 版本
-    dynamic_network_update: bool  # v0.0.83 现状为 False（编译期固定集合）
+    schema_version: str  # 策略 Schema 版本（由 probe 探测结果组成，不硬编码）
+    dynamic_network_update: bool  # 由 probe 实测填充（v0.0.83 网关 2026-08-13 实测 policy set 热更新可用）
     static_filesystem: bool = True  # 创建时锁定
     static_process: bool = True
     landlock: bool = False
-    interceptor: bool = False  # v0.0.83 未验证
+    interceptor: bool = False  # 未经实测验证
     provider_credential_injection: bool = False
     revision_support: bool = True
     max_filesystem_paths: int = 1024

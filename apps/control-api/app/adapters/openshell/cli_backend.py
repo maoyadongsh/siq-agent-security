@@ -6,8 +6,13 @@
   （否则网关拒绝：include_workdir cannot be changed on a live sandbox），网络段可变更，
   成功输出 "Policy version N submitted (hash: ...)"；
 - revision 递增（1→2），`policy get --rev N --full` 可回读历史（回滚基础）；
-- 已知网关缺陷：SandboxResponse 的 Protobuf 解码错误影响 list/create/get（policy 命令不受影响），
-  升级 v0.0.104（补丁已上游化）预期修复；本后端对 list_targets 提供 docker 回退。
+- 已知网关缺陷：SandboxResponse 的 Protobuf 解码错误影响 v0.0.83 的 list/create/get
+  （policy 命令不受影响）；v0.0.104 已实测确认修复（docs/compatibility.md 2026-08-13
+  隔离网关验证）。list_targets 在探测版本 >= v0.0.104 时如实抛出 CLI 错误
+  （docker 回退退役），版本未知或低于 v0.0.104 保持 docker 兜底。
+- probe 版本探测：从 `gateway info` 输出 / `--version` 真实解析版本（保守正则，
+  解析不到记为 unknown，绝不编造）；schema_version 由探测结果组成，
+  不再硬编码 v0.0.83 假设。
 
 安全约束：
 - 仅接受显式的 CLI+网关或绝对 env.sh 路径配置，不隐式依赖相邻仓库；
@@ -52,6 +57,20 @@ _VERSION_SUBMITTED_RE = re.compile(r"Policy version (\d+) submitted \(hash: ([0-
 # 实测：内容与当前一致时网关返回 no-op（幂等重放）
 _VERSION_UNCHANGED_RE = re.compile(r"Policy unchanged \(version (\d+), hash: ([0-9a-f]+)\)")
 
+# 保守版本解析：只认 "…version…: vX.Y.Z" 或行首 "openshell … X.Y.Z" 形状，
+# 不匹配任意点分三元组（避免把 gateway endpoint 的 127.0.0.1 误判成版本）。
+_VERSION_LINE_RE = re.compile(r"(?im)^[^\n]*\bversion\b[^\n0-9]{0,16}v?(\d+\.\d+\.\d+)")
+_CLI_VERSION_RE = re.compile(r"(?im)^\s*openshell(?:\s+version)?[\s:v-]{0,4}(\d+\.\d+\.\d+)")
+
+
+def _parse_version(text: str) -> str | None:
+    """从 CLI 输出中保守解析 OpenShell 版本号；无法确定时返回 None（绝不编造）。"""
+    for pattern in (_VERSION_LINE_RE, _CLI_VERSION_RE):
+        match = pattern.search(text)
+        if match:
+            return match.group(1)
+    return None
+
 Runner = Callable[[list[str]], tuple[int, str, str]]
 
 
@@ -82,6 +101,8 @@ class OpenShellCliBackend(EnforcementAdapter):
         self._runner = runner or self._subprocess_runner
         self._docker_runner = docker_runner  # None = 原始 docker 子进程
         self._artifacts: dict[str, CompiledPolicy] = {}  # compile 注册，apply 引用
+        # 版本探测缓存：None = 未探测；"unknown" = 探测失败/输出不可解析
+        self._detected_version: str | None = None
 
     # ------------------------------------------------------------ 子进程
 
@@ -101,7 +122,7 @@ class OpenShellCliBackend(EnforcementAdapter):
         if cli_bin and endpoint:
             parsed = urlparse(endpoint)
             try:
-                parsed.port
+                _ = parsed.port  # 显式触发端口解析校验（非法端口抛 ValueError）
             except ValueError as exc:
                 raise AdapterError("OpenShell gateway endpoint 端口无效") from exc
             if (
@@ -171,26 +192,64 @@ class OpenShellCliBackend(EnforcementAdapter):
     # ------------------------------------------------------------ 合同实现
 
     def probe(self) -> BackendCapabilities:
-        """实测驱动：v0.0.83 动态网络更新可用（policy set 热更新已验证）。"""
-        self._cli("gateway", "info")  # 探测网关可达性；失败 fail-closed
+        """可达性 + 真实版本探测；能力布尔值只反映已实测验证的语义。
+
+        - `gateway info` 失败 → fail-closed（可达性是探测前提，保持现状）；
+        - 版本探测失败仅令 schema_version 退化为 "unknown-policy-v1"，不让 probe
+          整体失败（可达性已由 gateway info 证明），也绝不编造版本号；
+        - 能力值不因检测到新版本而上调：每个字段的依据见下方逐行注释。
+        """
+        info_out = self._cli("gateway", "info")  # 探测网关可达性；失败 fail-closed
+        version = self._detect_version(info_out)
         caps = BackendCapabilities(
             backend="openshell",
-            schema_version="v0.0.83-policy-v1",
+            schema_version=f"v{version}-policy-v1" if version != "unknown" else "unknown-policy-v1",
             dynamic_network_update=True,  # 2026-08-13 实测：网络段热更新成功（静态段锁定）
             static_filesystem=True,  # 实测：活沙箱 filesystem 变更被拒绝
-            static_process=True,
-            landlock=True,  # SIQ landlock patch（0001）在运行网关中
-            interceptor=False,
-            provider_credential_injection=False,
-            revision_support=True,  # policy list / --rev 回读
-            max_filesystem_paths=1024,
+            static_process=True,  # 实测：process 段同属静态边界（创建时锁定）
+            landlock=True,  # SIQ landlock patch 在 v0.0.83 运行网关中；v0.0.104 上游已内置（ADR-009）
+            interceptor=False,  # 未经任何版本实测验证（保守 False，不按新版本猜测）
+            provider_credential_injection=False,  # 未经实测验证（保守 False）
+            revision_support=True,  # 实测：policy list / --rev 回读可用
+            max_filesystem_paths=1024,  # 合同默认值，未经网关实测上限
         )
         return caps
+
+    def _detect_version(self, gateway_info_output: str) -> str:
+        """真实版本探测：先解析 gateway info 输出，再回退 `--version`。
+
+        解析基于保守正则；任何一步失败都返回 "unknown" 且不抛错
+        （版本缺失不掩盖可达性事实，也不编造版本号）。结果缓存供
+        list_targets 的 docker 回退退役判定使用。
+        """
+        version = _parse_version(gateway_info_output)
+        if version is None:
+            try:
+                version = _parse_version(self._cli("--version"))
+            except AdapterError:
+                version = None
+        self._detected_version = version or "unknown"
+        return self._detected_version
+
+    def _detected_version_at_least(self, minimum: tuple[int, int, int]) -> bool:
+        """已探测版本 >= minimum？未知/未探测一律 False（保守，不放宽行为）。"""
+        if not self._detected_version or self._detected_version == "unknown":
+            return False
+        try:
+            parts = tuple(int(p) for p in self._detected_version.split("."))
+        except ValueError:
+            return False
+        return parts >= minimum
 
     def list_targets(self, cursor: str | None = None) -> SandboxPage:
         try:
             out = self._cli("sandbox", "list")
         except AdapterError:
+            # SandboxResponse 解码缺陷在 v0.0.104 已实测确认修复（docs/compatibility.md
+            # 2026-08-13 隔离网关验证）：探测版本 >= v0.0.104 时 CLI 报错是真实故障，
+            # 如实抛出而非静默走 docker 回退；版本未知或低于 v0.0.104 保持兜底。
+            if self._detected_version_at_least((0, 0, 104)):
+                raise
             return self._list_targets_docker_fallback()
         targets = []
         for line in out.splitlines()[1:]:

@@ -138,3 +138,31 @@ def test_verify_requires_both_allow_and_deny():
         receipt=DeploymentReceipt(backend_revision="2", evidence={}),
     )
     assert report2.passed is True, report2.failures
+
+
+def test_http_client_implements_same_contract_as_cli_backend():
+    """HTTP transport 与 CLI transport 实现同一套 EnforcementAdapter 合同（签名逐一对齐）。"""
+    import inspect
+
+    from app.adapters.openshell.base import EnforcementAdapter
+    from app.adapters.openshell.cli_backend import OpenShellCliBackend
+
+    assert issubclass(OpenShellHttpClient, EnforcementAdapter)
+    assert issubclass(OpenShellCliBackend, EnforcementAdapter)
+    contract_methods = [
+        "probe",
+        "list_targets",
+        "read_effective_policy",
+        "compile",
+        "validate",
+        "plan_change",
+        "apply_dynamic",
+        "create_generation",
+        "verify",
+        "rollback",
+        "stream_events",
+    ]
+    for name in contract_methods:
+        expected = inspect.signature(getattr(EnforcementAdapter, name))
+        assert inspect.signature(getattr(OpenShellHttpClient, name)) == expected, name
+        assert inspect.signature(getattr(OpenShellCliBackend, name)) == expected, name

@@ -1,9 +1,14 @@
-"""真实 OpenShell HTTP 客户端（能力探测驱动骨架，D1 决策后联调校准）。
+"""OpenShell Gateway HTTP 客户端：EnforcementAdapter 合同的 HTTP transport 实现。
 
-现状（2026-08-13）：D1 spike 确认两补丁已上游化（v0.0.104），升级路径清晰；
-本客户端按"探测先行"实现：
-- 端点路径可配置（SIQ_AS_OPENSHELL_* 环境变量），默认值按官方 Gateway API 形状，
-  联调构建环境时以实测校准（V5 能力探测步骤）；
+与 cli_backend.OpenShellCliBackend 实现同一套抽象（base.EnforcementAdapter 十方法），
+共用 contracts dataclass 与策略编译器——合同只有一套，差异仅在 transport。
+
+当前部署路由使用 CLI transport（app/openshell_sync.py、app/drift.py、
+app/routers/policies.py 均实例化 OpenShellCliBackend）；本 HTTP transport 预留给
+官方 Gateway HTTP API，端点路径默认值按官方 Gateway API 形状，待构建环境联调
+校准（V5 能力探测步骤）。
+
+不变量（与 CLI transport 一致）：
 - 任何不可达/未知响应 → AdapterError（fail-closed，绝不伪装成功）；
 - 409 并发冲突 → RevisionConflict（对齐 FakeBackend 语义）；
 - httpx.MockTransport 可注入，单测不依赖真实网关。
@@ -38,7 +43,19 @@ def _env(name: str, default: str) -> str:
 
 
 class OpenShellHttpClient(EnforcementAdapter):
-    """真实 Gateway 客户端。默认端点路径待构建环境联调校准（见模块 docstring）。"""
+    """同一 EnforcementAdapter 合同的 HTTP transport 实现（部署路由当前走 CLI transport）。
+
+    与 CLI transport 的已知语义分叉（联调校准前如实记录，不改变合同）：
+    - compile 不在本进程注册制品：apply_dynamic 假定网关能按 artifact_hash 解析制品；
+      CLI transport 在进程内 _artifacts 注册并拒绝未知哈希（fail-closed）。联调时
+      需对齐制品登记语义；
+    - revision/错误码语义取自网关 JSON 响应原文（409 → RevisionConflict）；CLI
+      transport 从 CLI 回执正则解析 revision；
+    - verify 的 deny 判定额外考虑 enforcement_mode（与 FakeBackend 语义一致；CLI
+      transport 假定 block 模式）；
+    - runner 注入等 CLI 细节不适用于 HTTP transport，transport 细节保持在实现内部
+      （httpx.Client + MockTransport）。
+    """
 
     def __init__(
         self,

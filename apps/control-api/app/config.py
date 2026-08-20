@@ -98,7 +98,7 @@ def load_settings() -> Settings:
             parsed = urlparse(origin)
             host = parsed.hostname or ""
             try:
-                parsed.port
+                _ = parsed.port  # 显式触发端口解析校验（非法端口抛 ValueError）
             except ValueError as exc:
                 raise RuntimeError(f"SIQ_AS_CORS_ORIGINS 包含无效端口: {origin}") from exc
             try:

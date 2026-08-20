@@ -1,7 +1,8 @@
 """OpenShellCliBackend 测试：夹具为 2026-08-13 活网关（v0.0.83）实测捕获的真实输出。
 
 锁定语义：有效策略解析、动态 policy set（静态段一致+网络段替换）、revision 校验、
-版本回执解析、sandbox list 解码缺陷的 docker 兜底、fail-closed。
+版本回执解析、probe 真实版本探测（解析失败退化 unknown 不抛错）、sandbox list
+解码缺陷的 docker 兜底（探测 >= v0.0.104 时退役，如实抛出 CLI 错误）、fail-closed。
 """
 
 from __future__ import annotations
@@ -55,6 +56,12 @@ REAL_POLICY_SET_FS_REJECT = (
 
 GATEWAY_INFO = "Gateway Info\n  Gateway: siq-openshell-dev\n  Gateway endpoint: https://127.0.0.1:17671\n"
 
+# 版本探测夹具：保守解析只接受显式版本形状（"version: X.Y.Z" / "openshell … X.Y.Z"）
+GATEWAY_INFO_WITH_VERSION = GATEWAY_INFO + "  Gateway version: 0.0.104\n"
+VERSION_OUTPUT_V104 = "openshell version 0.0.104\n"
+VERSION_OUTPUT_V083 = "openshell 0.0.83\n"
+VERSION_OUTPUT_GARBAGE = "build-info: no semver here\n"
+
 
 def _backend(responses: dict[tuple, tuple[int, str, str]]) -> OpenShellCliBackend:
     def runner(args: list[str]) -> tuple[int, str, str]:
@@ -81,6 +88,51 @@ def test_probe_reports_measured_capabilities():
     assert caps.dynamic_network_update is True  # 2026-08-13 实测
     assert caps.static_filesystem is True
     assert caps.revision_support is True
+
+
+def test_probe_schema_version_reflects_detected_gateway_version():
+    """gateway info 输出携带版本时，schema_version 如实反映探测结果（不硬编码 v0.0.83）。"""
+    backend = _backend({("gateway", "info"): (0, GATEWAY_INFO_WITH_VERSION, "")})
+    caps = backend.probe()
+    assert caps.schema_version == "v0.0.104-policy-v1"
+
+
+def test_probe_version_falls_back_to_cli_version_flag():
+    """gateway info 无版本信息时回退 `--version` 解析真实版本。"""
+    backend = _backend(
+        {
+            ("gateway", "info"): (0, GATEWAY_INFO, ""),
+            ("--version",): (0, VERSION_OUTPUT_V104, ""),
+        }
+    )
+    caps = backend.probe()
+    assert caps.schema_version == "v0.0.104-policy-v1"
+
+
+def test_probe_version_command_failure_degrades_to_unknown_without_raising():
+    """版本命令失败：schema_version 退化 unknown 前缀，probe 不抛错（可达性已由 gateway info 证明）。"""
+    backend = _backend({("gateway", "info"): (0, GATEWAY_INFO, "")})  # --version 未夹具 → rc=1
+    caps = backend.probe()
+    assert caps.schema_version == "unknown-policy-v1"
+
+
+def test_probe_unparseable_version_output_degrades_to_unknown():
+    """版本输出不可解析：同样退化 unknown，绝不编造版本号。"""
+    backend = _backend(
+        {
+            ("gateway", "info"): (0, GATEWAY_INFO, ""),
+            ("--version",): (0, VERSION_OUTPUT_GARBAGE, ""),
+        }
+    )
+    caps = backend.probe()
+    assert caps.schema_version == "unknown-policy-v1"
+
+
+def test_probe_gateway_info_failure_remains_fail_closed():
+    """gateway info 失败仍 fail-closed（版本探测宽松化不影响可达性前提）。"""
+    backend = _backend({("gateway", "info"): (1, "", "connection refused")})
+    with pytest.raises(AdapterError):
+        backend.probe()
 
 
 def test_apply_dynamic_merges_static_and_replaces_network(tmp_path):
@@ -299,6 +351,48 @@ def test_sandbox_list_docker_fallback_failure_is_fail_closed():
     backend = OpenShellCliBackend(runner=runner, docker_runner=docker_runner)
     with pytest.raises(AdapterError, match="docker"):
         backend.list_targets()
+
+
+def test_list_targets_raises_cli_error_when_v104_retires_docker_fallback():
+    """探测版本 >= v0.0.104（解码缺陷已实测修复）：sandbox list 失败如实抛出，不再静默 docker 兜底。"""
+    docker_calls: list[list[str]] = []
+
+    def runner(args):
+        if tuple(args) == ("gateway", "info"):
+            return 0, GATEWAY_INFO_WITH_VERSION, ""
+        if tuple(args[:2]) == ("sandbox", "list"):
+            return 1, "", "status: Internal, message: some real error"
+        return 1, "", f"unexpected: {args}"
+
+    def docker_runner(args):
+        docker_calls.append(args)
+        return 0, "openshell-siq-as-live-8515c645-1682-4814-965d-e6b330e2af2e\n", ""
+
+    backend = OpenShellCliBackend(runner=runner, docker_runner=docker_runner)
+    backend.probe()  # 探测 v0.0.104 → docker 兜底退役
+    with pytest.raises(AdapterError, match="sandbox list"):
+        backend.list_targets()
+    assert docker_calls == []  # docker 兜底不再被调用
+
+
+def test_list_targets_docker_fallback_retained_below_v104():
+    """探测版本 < v0.0.104：解码缺陷仍在，docker 兜底保留。"""
+    def runner(args):
+        if tuple(args) == ("gateway", "info"):
+            return 0, GATEWAY_INFO, ""
+        if tuple(args) == ("--version",):
+            return 0, VERSION_OUTPUT_V083, ""
+        if tuple(args[:2]) == ("sandbox", "list"):
+            return 1, "", "status: Internal, message: failed to decode Protobuf message: Sandbox.id"
+        return 1, "", f"unexpected: {args}"
+
+    def docker_runner(args):
+        return 0, "openshell-siq-as-live-8515c645-1682-4814-965d-e6b330e2af2e\n", ""
+
+    backend = OpenShellCliBackend(runner=runner, docker_runner=docker_runner)
+    backend.probe()  # 探测 v0.0.83 → 兜底保留
+    page = backend.list_targets()
+    assert page.targets == [{"id": "siq-as-live"}]
 
 
 def test_cli_failure_is_fail_closed():
