@@ -1,20 +1,48 @@
+import { useEffect, useState } from 'react';
+
 import PageHeader from '@/components/PageHeader';
 import { API_BASE } from '@/api/client';
+import type { ApiConnectionStatus } from '@/hooks/useApiList';
 
 /**
- * 设置（Phase 1 占位）：展示连接配置与安全不变量说明。
+ * 设置：展示连接配置与安全不变量说明。
+ * 连接状态徽标来自控制面 /health 实时探测（vite proxy 已转发 /health）；
  * 认证流程（登录/刷新）在 Phase 2 接入；届时 token 仍只允许驻留内存。
  */
 export default function SettingsPage() {
   const devMode = import.meta.env.VITE_DEV_MODE === 'true';
+  const [connection, setConnection] = useState<ApiConnectionStatus>('loading');
+  const [connectionError, setConnectionError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/health', { headers: { Accept: 'application/json' } })
+      .then((resp) => {
+        if (cancelled) return;
+        if (resp.ok) {
+          setConnection('connected');
+        } else {
+          setConnection('disconnected');
+          setConnectionError(`健康检查返回 HTTP ${resp.status}`);
+        }
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        setConnection('disconnected');
+        setConnectionError(err instanceof Error ? err.message : String(err));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <section>
       <PageHeader
         title="设置"
-        description="控制台连接与认证配置（Phase 1 只读展示；Phase 2 接入真实登录与租户切换）。"
-        connection="disconnected"
-        connectionError="设置数据接口尚未联调"
+        description="控制台连接与认证配置（连接状态来自 /health 实时探测；Phase 2 接入真实登录与租户切换）。"
+        connection={connection}
+        connectionError={connectionError}
       />
       <div className="card">
         <h2>连接配置</h2>

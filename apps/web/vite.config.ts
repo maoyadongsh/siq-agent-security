@@ -16,6 +16,11 @@ export default defineConfig({
         target: 'http://127.0.0.1:8600',
         changeOrigin: true,
       },
+      // 设置页连接状态探测用的无鉴权健康检查
+      '/health': {
+        target: 'http://127.0.0.1:8600',
+        changeOrigin: true,
+      },
     },
   },
   resolve: {
