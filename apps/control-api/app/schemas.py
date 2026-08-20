@@ -107,8 +107,11 @@ class EdgeReceiptRequest(BaseModel):
 
 class CandidateConfirm(BaseModel):
     role: str | None = Field(default=None, max_length=128)
-    system_id: str | None = None
-    owner_user_id: str | None = None
+    system_id: str | None = Field(default=None, min_length=1, max_length=64)
+    # 用户身份的存在性/归属由 SIQ IAM 保证，本服务不解析用户目录；此处只做格式约束
+    owner_user_id: str | None = Field(
+        default=None, min_length=1, max_length=64, pattern=r"^[A-Za-z0-9][A-Za-z0-9._:@-]*$"
+    )
 
 
 class CandidateDismiss(BaseModel):

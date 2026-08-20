@@ -37,15 +37,64 @@ _ROLE_HINTS = [
     ("advisor", "advisor"),
 ]
 
+# 已知智能体运行时/框架（P1-10；与 models.AgentInstance.runtime 注释取值对齐）
+_KNOWN_AGENT_FRAMEWORKS = {"hermes", "openclaw", "pi", "embedded"}
+
+# 确定性能力提示映射（刻意保持简单、可解释）
+_FRAMEWORK_CAPABILITY_HINTS = {
+    "hermes": ["hub-runtime"],
+    "openclaw": ["config-driven"],
+    "pi": ["embedded-runtime"],
+    "embedded": ["embedded-runtime"],
+}
+_SOURCE_CAPABILITY_HINTS = {
+    "docker": ["containerized"],
+    "kubernetes": ["containerized", "orchestrated"],
+    "systemd": ["system-service"],
+    "hermes_profile": ["hub-runtime"],
+    "siq_hub": ["hub-runtime"],
+    "openclaw_agent": ["config-driven"],
+}
+
 
 def _baseline_classify(asset: AgentAsset) -> dict:
-    """确定性规则分类：不调用模型。返回 §11.3 Schema 结构。"""
+    """确定性规则分类：不调用模型。返回 §11.3 Schema 结构。
+
+    确定性信号（P1-10，规则可解释、重跑可复现）：
+    - 名称角色词表（_ROLE_HINTS）与智能体关键词：命中 → 强信号；
+    - framework ∈ 已知智能体运行时（hermes/openclaw/pi/embedded，与 AgentInstance.runtime 取值对齐）
+      → 独立确定性信号：即使名称匿名（无关键词）也判为候选；
+    - capability_hints 由 framework/source_type 静态映射推导；
+    - system_candidates 仅在资产已挂 system_id 时给出该引用（不臆测）。
+    置信度规则：名称角色命中 0.9（原行为不变）；名称关键词 + 已知框架双信号 0.8；
+    单一信号（仅关键词或仅已知框架）0.6；无信号 0.3。
+    """
     name = asset.name.lower()
     role_hints = [role for key, role in _ROLE_HINTS if key in name]
     role = role_hints[0] if role_hints else None
 
-    is_agent = bool(role) or any(
+    name_keyword_hit = bool(role) or any(
         kw in name for kw in ("agent", "assistant", "advisor", "auditor", "controller", "expert")
+    )
+    framework = (asset.framework or "unknown").lower()
+    framework_known = framework in _KNOWN_AGENT_FRAMEWORKS
+    is_agent = name_keyword_hit or framework_known
+
+    if not is_agent:
+        confidence = 0.3
+    elif role:
+        confidence = 0.9
+    elif name_keyword_hit and framework_known:
+        confidence = 0.8
+    else:
+        confidence = 0.6
+
+    capability_hints = sorted(
+        set(_FRAMEWORK_CAPABILITY_HINTS.get(framework, []))
+        | set(_SOURCE_CAPABILITY_HINTS.get(asset.source_type or "", []))
+    )
+    system_candidates = (
+        [{"system_id": asset.system_id, "source": "asset_link", "confidence": 1.0}] if asset.system_id else []
     )
 
     unresolved = []
@@ -54,16 +103,16 @@ def _baseline_classify(asset: AgentAsset) -> dict:
     if not asset.owner_user_id:
         unresolved.append("未发现可验证的负责人信息")
 
-    confidence = 0.9 if (is_agent and role) else (0.6 if is_agent else 0.3)
     return {
         "is_agent_candidate": is_agent,
+        "confidence": confidence,
         "role": (
             {"value": role, "confidence": confidence, "evidence_ids": list(asset.evidence_ids or [])}
             if role
             else None
         ),
-        "system_candidates": [],
-        "capability_hints": [],
+        "system_candidates": system_candidates,
+        "capability_hints": capability_hints,
         "unresolved_questions": unresolved,
     }
 
@@ -185,6 +234,9 @@ def classify_asset(session: Session, tenant_id: str, asset: AgentAsset) -> Class
     # 低置信/有未决问题 → needs_review；分类不改变 candidate→confirmed 之外的任何状态
     if asset.status == "candidate":
         confidence = (output.get("role") or {}).get("confidence")
+        if confidence is None:
+            # baseline 在无 role 的弱信号场景（如仅 framework 命中）给出顶层置信度
+            confidence = output.get("confidence")
         if output.get("is_agent_candidate") is False or (confidence is not None and confidence < CONFIDENCE_THRESHOLD):
             asset.status = "needs_review"
     return run

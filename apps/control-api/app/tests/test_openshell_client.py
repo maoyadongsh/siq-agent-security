@@ -166,3 +166,82 @@ def test_http_client_implements_same_contract_as_cli_backend():
         expected = inspect.signature(getattr(EnforcementAdapter, name))
         assert inspect.signature(getattr(OpenShellHttpClient, name)) == expected, name
         assert inspect.signature(getattr(OpenShellCliBackend, name)) == expected, name
+
+
+# ------------------------------------------------------------ P1-1/P1-2/P1-11：合同对齐
+
+
+def test_probe_capability_document_from_gateway_response():
+    """P1-1：能力文档只采纳网关如实上报的项；未报告项一律 unknown（fail-closed）。"""
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/v1/health":
+            return _json_response({"ok": True})
+        if request.url.path == "/v1/capabilities":
+            return _json_response(
+                {
+                    "schema_version": "v2",
+                    "capabilities": {
+                        "network_l34": {"status": "supported", "semantics": "enforce", "basis": "gw"},
+                        "enforcement_mode.block": {"status": "supported", "semantics": "enforce"},
+                    },
+                }
+            )
+        return _json_response({"detail": "not found"}, 404)
+
+    caps = _client(handler).probe()
+    assert caps.capability("network_l34").status == "supported"
+    assert caps.capability("enforcement_mode.block").status == "supported"
+    # 未报告 → unknown，不猜 supported
+    assert caps.capability("tools_mcp").status == "unknown"
+    assert caps.capability("enforcement_mode.warn").status == "unknown"
+
+
+def test_read_effective_policy_mode_defaults_to_unknown_when_absent():
+    """P1-11：网关响应未携带 enforcement_mode 时如实 unknown，不默认编造 block。"""
+    def handler(request: httpx.Request) -> httpx.Response:
+        return _json_response({"revision": "7", "network_policies": []})
+
+    snapshot = _client(handler).read_effective_policy("s-1")
+    assert snapshot.enforcement_mode == "unknown"
+
+
+def test_verify_level_readback_on_pass_and_failed_on_failure():
+    """P1-2：HTTP transport 同为配置读回——通过 readback_verified，失败 failed。"""
+    from app.adapters.openshell.contracts import DeploymentReceipt
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return _json_response(
+            {
+                "revision": "2",
+                "network_policies": [{"endpoint": "allowed.example.com", "effect": "allow"}],
+                "enforcement_mode": "block",
+            }
+        )
+
+    client = _client(handler)
+    ok = client.verify(
+        "s-1",
+        checks={"expect_allow": ["allowed.example.com"], "expect_deny": ["evil.example.com"]},
+        receipt=DeploymentReceipt(backend_revision="2", evidence={}),
+    )
+    assert ok.passed is True
+    assert ok.level == "readback_verified"
+    assert ok.allow_checks[0]["expected"] == "allow"
+    assert ok.allow_checks[0]["actual"] == "allow"
+
+    bad = client.verify(
+        "s-1",
+        checks={"expect_allow": ["missing.example.com"], "expect_deny": ["evil.example.com"]},
+        receipt=DeploymentReceipt(backend_revision="2", evidence={}),
+    )
+    assert bad.passed is False
+    assert bad.level == "failed"
+    assert bad.allow_checks[0]["actual"] == "not_in_allow_set"
+
+
+def test_stream_events_labels_gateway_source():
+    def handler(request: httpx.Request) -> httpx.Response:
+        return _json_response({"events": [{"type": "policy.applied"}], "cursor": "c2"})
+
+    batch = _client(handler).stream_events()
+    assert batch.source == "gateway_events"

@@ -12,7 +12,7 @@ import secrets
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy import select
+from sqlalchemy import or_, select, update
 from sqlalchemy.orm import Session
 
 from app.db import get_session
@@ -200,27 +200,69 @@ def edge_heartbeat(
 
 @router.get("/edge/v1/tasks", response_model=list[EdgeTaskOut])
 def edge_fetch_tasks(request: Request, session: Session = Depends(get_session)):
+    """领取任务（P1-5 原子 claim/lease）。
+
+    候选 = 同环境、pending、未过期，且（未租出 / 租约过期 / 本设备持有）。
+    对每个候选执行条件 UPDATE，rowcount==1 才真正领取成功：并发请求中只有
+    一个能抢到同一任务（SQLite 单写者串行化同样保证该语义）。同一设备重复
+    fetch（重试/重启）可拿回自己租约内的任务（at-least-once）。
+
+    注意：lease 不是分布式锁的完整替代（时钟漂移/持有者进程暂停仍可能
+    造成重复投递）；最终一致性由回执幂等（delivered/failed 终态去重）保障。
+    """
+    from app.config import load_settings
+
     device_identity = request.headers.get("X-Edge-Identity")
     if not device_identity:
         raise HTTPException(status_code=401, detail="missing_edge_identity")
     edge = verify_edge_secret(request, device_identity, session)
     now = utcnow()
+    # 租约 TTL 复用心跳失活阈值：持有者宕机后至多一个 TTL 即可被接管
+    lease_ttl_seconds = load_settings().heartbeat_stale_seconds
+    lease_cutoff = now - timedelta(seconds=lease_ttl_seconds)
     # 过期任务顺带标记 expired（惰性清扫）
     session.query(EdgeTask).filter(
         EdgeTask.environment_id == edge.environment_id,
         EdgeTask.status == "pending",
         EdgeTask.expires_at < now,
     ).update({EdgeTask.status: "expired"})
-    tasks = list(
+    # 租约前提：未租出 / 租约缺少时间戳（防御）/ 租约过期 / 本设备持有
+    claimable = or_(
+        EdgeTask.lease_owner.is_(None),
+        EdgeTask.leased_at.is_(None),
+        EdgeTask.leased_at < lease_cutoff,
+        EdgeTask.lease_owner == device_identity,
+    )
+    candidates = list(
         session.scalars(
-            select(EdgeTask)
-            .where(EdgeTask.environment_id == edge.environment_id, EdgeTask.status == "pending")
+            select(EdgeTask.id)
+            .where(
+                EdgeTask.environment_id == edge.environment_id,
+                EdgeTask.status == "pending",
+                claimable,
+            )
             .order_by(EdgeTask.created_at)
             .limit(10)
         )
     )
+    claimed: list[EdgeTask] = []
+    for task_id in candidates:
+        # 条件更新即领取：候选快照与更新之间被他人抢走时 rowcount==0，跳过
+        result = session.execute(
+            update(EdgeTask)
+            .where(EdgeTask.id == task_id, EdgeTask.status == "pending", claimable)
+            .values(
+                leased_at=now,
+                lease_owner=device_identity,
+                attempt=EdgeTask.attempt + 1,
+            )
+        )
+        if result.rowcount == 1:
+            task = session.get(EdgeTask, task_id)
+            if task is not None:
+                claimed.append(task)
     session.commit()
-    return tasks
+    return claimed
 
 
 @router.post("/edge/v1/tasks/{task_id}/receipt")
@@ -235,6 +277,8 @@ def edge_post_receipt(
     部署任务（publish_policy）的成功回执必须携带可机器校验证据（verification），
     否则 Deployment 不得标记 effective（fail-closed，保留上一有效状态）。
     """
+    from app.config import load_settings
+
     device_identity = request.headers.get("X-Edge-Identity")
     if not device_identity:
         raise HTTPException(status_code=401, detail="missing_edge_identity")
@@ -258,6 +302,17 @@ def edge_post_receipt(
         return {"ok": True, "idempotent": True}
     if task.status == "expired" or task.expires_at < utcnow():
         raise HTTPException(status_code=409, detail="receipt_task_expired")
+    # P1-5 租约一致性：任务被其他设备持有且租约未过期时，非持有者不得提交回执。
+    # 放在终态幂等（delivered/failed 重放）与过期检查之后，既有重放/过期语义不变；
+    # 租约过期或无租约的任务保持原有行为（任何本环境设备均可回执）。
+    lease_ttl_seconds = load_settings().heartbeat_stale_seconds
+    if (
+        task.lease_owner is not None
+        and task.lease_owner != device_identity
+        and task.leased_at is not None
+        and task.leased_at >= utcnow() - timedelta(seconds=lease_ttl_seconds)
+    ):
+        raise HTTPException(status_code=409, detail="receipt_lease_mismatch")
     if task.status not in ("pending", "uploaded"):
         raise HTTPException(status_code=409, detail="receipt_task_state_invalid")
     if task.task_type == "scan" and body.status == "success":

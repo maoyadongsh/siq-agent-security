@@ -2,6 +2,8 @@
 
 默认能力镜像 SIQ 冻结版本 v0.0.83：dynamic_network_update=False（编译期固定集合）、
 interceptor=False、provider_credential_injection=False（设计文档兼容矩阵）。
+能力文档（capabilities）按内存模拟的真实语义如实标注；verify 只有状态读回，
+level 如实标 readback_verified/failed（无行为 fixture，不产出 enforcement_verified）。
 行为与真实后端约束一致：revision 并发冲突、静态边界需 generation、正负向验证、回滚。
 """
 
@@ -13,7 +15,10 @@ from datetime import UTC, datetime
 
 from app.adapters.openshell.base import EnforcementAdapter
 from app.adapters.openshell.contracts import (
+    VERIFY_LEVEL_FAILED,
+    VERIFY_LEVEL_READBACK,
     BackendCapabilities,
+    CapabilityItem,
     ChangePlan,
     CompiledPolicy,
     DeploymentReceipt,
@@ -29,6 +34,51 @@ from app.adapters.openshell.contracts import (
 from app.adapters.openshell.policy_compiler import _canonical, compile_policy, validate_compiled
 
 
+def _fake_capability_document(dynamic_network_update: bool, interceptor: bool) -> dict[str, CapabilityItem]:
+    """Fake 后端能力文档：按内存模拟的真实语义如实标注（dev/test 参照）。"""
+    return {
+        "sandbox_lifecycle": CapabilityItem(
+            status="supported", semantics="enforce", basis="内存模拟 generation 创建"
+        ),
+        "filesystem": CapabilityItem(status="supported", semantics="enforce", basis="内存模拟静态边界"),
+        "process": CapabilityItem(status="supported", semantics="enforce", basis="内存模拟静态边界"),
+        "network_l34": (
+            CapabilityItem(status="supported", semantics="enforce", basis="内存模拟动态网络更新")
+            if dynamic_network_update
+            else CapabilityItem(
+                status="unsupported", semantics="none", basis="镜像 v0.0.83：编译期固定集合，无动态更新"
+            )
+        ),
+        "network_l7": CapabilityItem(
+            status="unsupported", semantics="none", basis="镜像 v0.0.83：端点模型仅 host:port"
+        ),
+        "tools_mcp": (
+            CapabilityItem(status="supported", semantics="observe", basis="内存模拟 interceptor")
+            if interceptor
+            else CapabilityItem(status="unknown", semantics="none", basis="镜像 v0.0.83：interceptor 未实测")
+        ),
+        "model_routing": CapabilityItem(
+            status="unsupported", semantics="none", basis="provider 凭据注入未模拟"
+        ),
+        "secrets": CapabilityItem(
+            status="unsupported", semantics="none", basis="凭据注入未模拟（§15.2 由 Provider 侧承担）"
+        ),
+        "resources": CapabilityItem(status="unknown", semantics="none", basis="资源配额未模拟"),
+        "audit_events": CapabilityItem(
+            status="supported", semantics="observe", basis="内存事件日志（记录型事件，非真实行为事件流）"
+        ),
+        "enforcement_mode.block": CapabilityItem(
+            status="supported", semantics="enforce", basis="内存模拟拦截语义"
+        ),
+        "enforcement_mode.warn": CapabilityItem(
+            status="supported", semantics="observe", basis="内存模拟记录模式"
+        ),
+        "enforcement_mode.audit_only": CapabilityItem(
+            status="supported", semantics="advisory", basis="内存模拟记录模式"
+        ),
+    }
+
+
 class FakeOpenShellBackend(EnforcementAdapter):
     def __init__(self, *, dynamic_network_update: bool = False, interceptor: bool = False):
         self.capabilities = BackendCapabilities(
@@ -38,6 +88,7 @@ class FakeOpenShellBackend(EnforcementAdapter):
             interceptor=interceptor,
             provider_credential_injection=False,
             landlock=True,
+            capabilities=_fake_capability_document(dynamic_network_update, interceptor),
         )
         self._lock = threading.Lock()
         # target -> {"revision": int, "snapshot": PolicySnapshot, "history": [PolicySnapshot]}
@@ -63,7 +114,8 @@ class FakeOpenShellBackend(EnforcementAdapter):
         with self._lock:
             state = self._targets.get(target)
             if state is None:
-                return PolicySnapshot(target=target, revision="0", enforcement_mode="block")
+                # 目标不存在：无法确定执行模式，如实 unknown（P1-11，不虚构 block）
+                return PolicySnapshot(target=target, revision="0")
             return state["snapshot"]
 
     def compile(self, desired_policy: dict, capabilities: BackendCapabilities | None = None) -> CompiledPolicy:
@@ -149,14 +201,38 @@ class FakeOpenShellBackend(EnforcementAdapter):
             )
 
     def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
-        """正负向验证各至少一项：allow 项必须命中网络规则，deny 项必须被拒绝。"""
-        allow_checks = [{"endpoint": e, "result": "allow"} for e in checks.get("expect_allow", [])]
-        deny_checks = [{"endpoint": e, "result": "deny"} for e in checks.get("expect_deny", [])]
+        """正负向验证各至少一项：allow 项必须命中网络规则，deny 项必须被拒绝。
+
+        P1-2：Fake 同样只有状态读回（内存快照比对），无行为 fixture 通道，
+        通过时 level=readback_verified，失败 → failed；不产出 enforcement_verified。
+        """
         failures: list[str] = []
         snapshot = self.read_effective_policy(target)
         if snapshot.revision != receipt.backend_revision:
             failures.append(f"revision mismatch: {snapshot.revision} != {receipt.backend_revision}")
         allowed_endpoints = {r.get("endpoint") for r in snapshot.network if r.get("effect") != "deny"}
+        allow_checks = [
+            {
+                "endpoint": e,
+                "request": "config_readback",
+                "expected": "allow",
+                "actual": "allow" if e in allowed_endpoints else "not_in_allow_set",
+                "result": "allow",
+                "revision": snapshot.revision,
+            }
+            for e in checks.get("expect_allow", [])
+        ]
+        deny_checks = [
+            {
+                "endpoint": e,
+                "request": "config_readback",
+                "expected": "deny",
+                "actual": ("deny" if e not in allowed_endpoints else "in_allow_set"),
+                "result": "deny",
+                "revision": snapshot.revision,
+            }
+            for e in checks.get("expect_deny", [])
+        ]
         for check in allow_checks:
             if check["endpoint"] not in allowed_endpoints:
                 failures.append(f"allow check failed: {check['endpoint']}")
@@ -165,9 +241,14 @@ class FakeOpenShellBackend(EnforcementAdapter):
                 failures.append(f"deny check failed: {check['endpoint']}")
         if not allow_checks or not deny_checks:
             failures.append("正负向验证必须各至少一项（§15.3）")
-        self._events.append({"type": "policy.verified", "target": target, "passed": not failures})
+        passed = not failures
+        self._events.append({"type": "policy.verified", "target": target, "passed": passed})
         return VerificationReport(
-            passed=not failures, allow_checks=allow_checks, deny_checks=deny_checks, failures=failures
+            passed=passed,
+            level=VERIFY_LEVEL_READBACK if passed else VERIFY_LEVEL_FAILED,
+            allow_checks=allow_checks,
+            deny_checks=deny_checks,
+            failures=failures,
         )
 
     def rollback(self, target: str, receipt: DeploymentReceipt) -> RollbackReceipt:
@@ -186,8 +267,9 @@ class FakeOpenShellBackend(EnforcementAdapter):
             )
 
     def stream_events(self, cursor: str | None = None) -> EventBatch:
+        """内存事件日志（apply/verify/rollback 记录）；source 如实标注，非行为事件流。"""
         with self._lock:
-            return EventBatch(events=list(self._events), cursor=None)
+            return EventBatch(events=list(self._events), cursor=None, source="fake_backend_log")
 
     # ------------------------------------------------------------ 内部
 

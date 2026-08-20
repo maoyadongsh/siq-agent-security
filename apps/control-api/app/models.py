@@ -105,8 +105,13 @@ class AgentAsset(Base):
     name: Mapped[str] = mapped_column(String(256))
     role: Mapped[str | None] = mapped_column(String(128), nullable=True)
     framework: Mapped[str] = mapped_column(String(32), default="unknown")
+    # system 引用的租户一致性无法用纯 FK 表达（复合约束需引用 system(tenant_id, id)），
+    # 由应用层在写入路径校验（confirm 端点：system 必须存在且同租户，见 routers/inventory.py）。
     system_id: Mapped[str | None] = mapped_column(String(64), ForeignKey("system.id"), nullable=True)
     owner_user_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # P1-8 制品指纹入账：候选上报的制品摘要与脱敏属性随资产保存
+    artifact_digest: Mapped[str | None] = mapped_column(String(256), nullable=True)
+    attributes: Mapped[dict] = mapped_column(JSON, default=dict)  # 脱敏候选属性 + digest 变更观察记录
     # candidate|needs_review|confirmed|managed|stale|retired|dismissed
     status: Mapped[str] = mapped_column(String(16), default="candidate", index=True)
     # 发现去重：同一来源同一位置的候选合并为一行
@@ -384,6 +389,13 @@ class EdgeTask(Base):
     # pending|uploaded|delivered|failed|expired；uploaded 表示结果已持久化、等待最终回执。
     status: Mapped[str] = mapped_column(String(16), default="pending", index=True)
     result_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # P1-5 任务租约（claim/lease）：lease_owner 为当前持有者 device_identity，
+    # leased_at 为最近一次领取/续约时间，attempt 累计领取次数。
+    # 注意：lease 不是分布式锁的完整替代（时钟漂移/进程暂停下仍可能重复投递），
+    # at-least-once 语义的最终一致性由回执幂等（delivered/failed 终态去重）保障。
+    leased_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    lease_owner: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    attempt: Mapped[int] = mapped_column(Integer, default=0)
     expires_at: Mapped[datetime] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 

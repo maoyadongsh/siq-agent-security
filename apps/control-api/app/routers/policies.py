@@ -415,9 +415,14 @@ def create_deployment(
         if not load_settings().dev_mode:
             raise HTTPException(status_code=400, detail="fake_enforcement_backend_is_dev_only")
     if backend == "openshell-cli" and policy.enforcement_mode != "block":
+        # P1-11：openshell-cli 能力文档中仅 enforcement_mode.block=supported/enforce，
+        # warn/audit_only 为 unsupported（无实测执行语义）；拒绝码引用能力文档结论
         raise HTTPException(
             status_code=422,
-            detail=f"openshell_cli_mode_unsupported: {policy.enforcement_mode}",
+            detail=(
+                f"capability_unsupported: enforcement_mode.{policy.enforcement_mode} "
+                "(openshell-cli 能力文档仅支持 enforcement_mode.block)"
+            ),
         )
 
     task_payload: dict = {
@@ -472,7 +477,16 @@ def create_deployment(
                 "backend_revision": receipt.backend_revision,
                 "snapshot_hash": receipt.evidence.get("snapshot_hash", ""),
             }
-            deployment.verification = {"allow_checks": report.allow_checks, "deny_checks": report.deny_checks}
+            # P1-2：verification JSON 如实分级。当前 openShell 路径的 effective
+            # 基于 readback（配置读回）验证——证明"后端配置与期望一致"，不证明
+            # 行为执行；待行为 fixture 通道落地后才允许标 enforcement_verified。
+            # deployment.status 语义不变（effective），验证强度以 level 字段区分。
+            deployment.verification = {
+                "level": report.level,
+                "method": "config_readback",
+                "allow_checks": report.allow_checks,
+                "deny_checks": report.deny_checks,
+            }
             deployment.status = "effective"
             cr.status = "effective"
             audit(
@@ -483,7 +497,11 @@ def create_deployment(
                 "deployment.verify",
                 "deployment",
                 resource_id=deployment.id,
-                summary={"backend_revision": receipt.backend_revision, "method": "policy_readback"},
+                summary={
+                    "backend_revision": receipt.backend_revision,
+                    "method": "policy_readback",
+                    "verification_level": report.level,
+                },
             )
             emit_event(
                 session,

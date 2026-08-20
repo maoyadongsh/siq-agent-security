@@ -348,10 +348,37 @@ def test_deployment_openshell_cli_closed_loop(client, tenant_a, env_a, monkeypat
     assert dep.status_code == 201, dep.text
     body = dep.json()
     assert body["status"] == "effective"  # 真实 policy set + 读回验证通过
+    # P1-2：effective 基于 readback（配置读回）验证，verification JSON 如实分级
+    assert body["verification"]["level"] == "readback_verified"
+    assert body["verification"]["method"] == "config_readback"
     assert body["verification"]["allow_checks"]
     assert body["verification"]["deny_checks"]
     assert fake.applied, "policy set 必须真实发生"
     assert fake.applied[0][2] == target
+
+
+def test_deployment_openshell_cli_rejects_non_block_mode_422(client, tenant_a, env_a, monkeypatch):
+    """P1-11：openshell-cli 能力文档仅支持 enforcement_mode.block；
+    audit_only/warn 部署 422，detail 引用能力文档结论。"""
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    _fake_cli_backend(monkeypatch)
+    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli")
+    for mode in ("audit_only", "warn"):
+        policy = _create_policy(client, tenant_a, enforcement_mode=mode, agent_ids=[asset_id])
+        cr = client.post(
+            "/api/v1/change-requests",
+            json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+            headers=tenant_a,
+        ).json()
+        approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+        client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+        dep = client.post(
+            "/api/v1/deployments",
+            json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+            headers=tenant_a,
+        )
+        assert dep.status_code == 422, dep.text
+        assert f"capability_unsupported: enforcement_mode.{mode}" in dep.json()["detail"]
 
 
 def test_deployment_openshell_apply_failure_fails_closed(client, tenant_a, env_a, monkeypatch):
@@ -448,6 +475,7 @@ def test_rollback_invokes_real_backend(client, tenant_a, env_a, monkeypatch):
         def verify(self, target, checks, receipt):
             return VerificationReport(
                 passed=True,
+                level="readback_verified",
                 allow_checks=[{"endpoint": e, "result": "allow"} for e in checks.get("expect_allow", [])],
                 deny_checks=[{"endpoint": e, "result": "deny"} for e in checks.get("expect_deny", [])],
             )

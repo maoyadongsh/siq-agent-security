@@ -22,8 +22,11 @@ import httpx
 
 from app.adapters.openshell.base import EnforcementAdapter
 from app.adapters.openshell.contracts import (
+    VERIFY_LEVEL_FAILED,
+    VERIFY_LEVEL_READBACK,
     AdapterError,
     BackendCapabilities,
+    CapabilityItem,
     ChangePlan,
     CompiledPolicy,
     DeploymentReceipt,
@@ -40,6 +43,43 @@ from app.adapters.openshell.policy_compiler import compile_policy, validate_comp
 
 def _env(name: str, default: str) -> str:
     return os.getenv(name, default)
+
+
+# 版本化能力文档的固定键（与 contracts.CAP_* 对齐）
+_CAPABILITY_KEYS = (
+    "sandbox_lifecycle",
+    "filesystem",
+    "process",
+    "network_l34",
+    "network_l7",
+    "tools_mcp",
+    "model_routing",
+    "secrets",
+    "resources",
+    "audit_events",
+    "enforcement_mode.block",
+    "enforcement_mode.warn",
+    "enforcement_mode.audit_only",
+)
+
+
+def _capability_document_from_response(caps: dict) -> dict[str, CapabilityItem]:
+    """从网关 capabilities 响应构建能力文档；未报告/非法项一律 unknown（fail-closed）。"""
+    raw = caps.get("capabilities") or {}
+    document: dict[str, CapabilityItem] = {}
+    for key in _CAPABILITY_KEYS:
+        entry = raw.get(key) if isinstance(raw, dict) else None
+        if isinstance(entry, dict) and entry.get("status") in ("supported", "unsupported", "unknown"):
+            document[key] = CapabilityItem(
+                status=entry["status"],
+                semantics=str(entry.get("semantics", "none")),
+                basis=str(entry.get("basis", "")),
+            )
+        else:
+            document[key] = CapabilityItem(
+                status="unknown", semantics="none", basis="网关 capabilities 响应未报告该能力项"
+            )
+    return document
 
 
 class OpenShellHttpClient(EnforcementAdapter):
@@ -111,6 +151,8 @@ class OpenShellHttpClient(EnforcementAdapter):
             provider_credential_injection=bool(caps.get("provider_credential_injection", False)),
             revision_support=bool(caps.get("revision_support", True)),
             max_filesystem_paths=int(caps.get("max_filesystem_paths", 1024)),
+            # 能力文档只采纳网关如实上报的项；未报告 → unknown（fail-closed）
+            capabilities=_capability_document_from_response(caps),
         )
 
     def list_targets(self, cursor: str | None = None) -> SandboxPage:
@@ -131,7 +173,8 @@ class OpenShellHttpClient(EnforcementAdapter):
             filesystem=data.get("filesystem_policy") or {},
             network=data.get("network_policies") or [],
             process=data.get("process") or {},
-            enforcement_mode=str(data.get("enforcement_mode", "block")),
+            # P1-11：网关响应未携带模式时如实 unknown，不默认编造 "block"
+            enforcement_mode=str(data.get("enforcement_mode", "unknown")),
             observed_at=data.get("observed_at"),
         )
 
@@ -183,14 +226,38 @@ class OpenShellHttpClient(EnforcementAdapter):
         )
 
     def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
-        """正负向验证：allow 项读回策略确认命中；deny 项确认不在允许集（block 模式）。"""
+        """正负向验证：allow 项读回策略确认命中；deny 项确认不在允许集（block 模式）。
+
+        P1-2：本方法同为配置读回验证（HTTP GET 比对），无行为 fixture 通道，
+        通过时 level=readback_verified，失败 → failed；不产出 enforcement_verified。
+        """
         failures: list[str] = []
         snapshot = self.read_effective_policy(target)
         if snapshot.revision != receipt.backend_revision:
             failures.append(f"revision mismatch: {snapshot.revision} != {receipt.backend_revision}")
         allowed = {r.get("endpoint") for r in snapshot.network if r.get("effect") != "deny"}
-        allow_checks = [{"endpoint": e, "result": "allow"} for e in checks.get("expect_allow", [])]
-        deny_checks = [{"endpoint": e, "result": "deny"} for e in checks.get("expect_deny", [])]
+        allow_checks = [
+            {
+                "endpoint": e,
+                "request": "config_readback",
+                "expected": "allow",
+                "actual": "allow" if e in allowed else "not_in_allow_set",
+                "result": "allow",
+                "revision": snapshot.revision,
+            }
+            for e in checks.get("expect_allow", [])
+        ]
+        deny_checks = [
+            {
+                "endpoint": e,
+                "request": "config_readback",
+                "expected": "deny",
+                "actual": "deny" if e not in allowed else "in_allow_set",
+                "result": "deny",
+                "revision": snapshot.revision,
+            }
+            for e in checks.get("expect_deny", [])
+        ]
         for check in allow_checks:
             if check["endpoint"] not in allowed:
                 failures.append(f"allow check failed: {check['endpoint']}")
@@ -199,8 +266,13 @@ class OpenShellHttpClient(EnforcementAdapter):
                 failures.append(f"deny check failed: {check['endpoint']}")
         if not allow_checks or not deny_checks:
             failures.append("正负向验证必须各至少一项（§15.3）")
+        passed = not failures
         return VerificationReport(
-            passed=not failures, allow_checks=allow_checks, deny_checks=deny_checks, failures=failures
+            passed=passed,
+            level=VERIFY_LEVEL_READBACK if passed else VERIFY_LEVEL_FAILED,
+            allow_checks=allow_checks,
+            deny_checks=deny_checks,
+            failures=failures,
         )
 
     def rollback(self, target: str, receipt: DeploymentReceipt) -> RollbackReceipt:
@@ -218,4 +290,8 @@ class OpenShellHttpClient(EnforcementAdapter):
     def stream_events(self, cursor: str | None = None) -> EventBatch:
         params = {"cursor": cursor} if cursor else None
         data = self._request("GET", self.endpoints["events"], params=params)
-        return EventBatch(events=data.get("events", []) if isinstance(data, dict) else [], cursor=data.get("cursor"))
+        return EventBatch(
+            events=data.get("events", []) if isinstance(data, dict) else [],
+            cursor=data.get("cursor"),
+            source="gateway_events",
+        )

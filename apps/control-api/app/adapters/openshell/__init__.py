@@ -8,7 +8,11 @@
 
 from app.adapters.openshell.base import EnforcementAdapter
 from app.adapters.openshell.contracts import (
+    VERIFY_LEVEL_ENFORCEMENT,
+    VERIFY_LEVEL_FAILED,
+    VERIFY_LEVEL_READBACK,
     BackendCapabilities,
+    CapabilityItem,
     ChangePlan,
     CompiledPolicy,
     DeploymentReceipt,
@@ -25,6 +29,7 @@ from app.adapters.openshell.fake_backend import FakeOpenShellBackend
 __all__ = [
     "EnforcementAdapter",
     "BackendCapabilities",
+    "CapabilityItem",
     "ChangePlan",
     "CompiledPolicy",
     "DeploymentReceipt",
@@ -35,5 +40,8 @@ __all__ = [
     "SandboxPage",
     "ValidationReport",
     "VerificationReport",
+    "VERIFY_LEVEL_ENFORCEMENT",
+    "VERIFY_LEVEL_FAILED",
+    "VERIFY_LEVEL_READBACK",
     "FakeOpenShellBackend",
 ]

@@ -53,7 +53,12 @@ class EnforcementAdapter(ABC):
 
     @abstractmethod
     def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
-        """至少验证预期允许和预期拒绝各一项。"""
+        """至少验证预期允许和预期拒绝各一项。
+
+        实现必须在 report.level 如实标注验证强度：配置读回类检查只能产出
+        readback_verified；enforcement_verified 需要真实行为 fixture 证据
+        （当前所有后端实现均无行为 fixture 通道，禁止产出该级别）。
+        """
 
     @abstractmethod
     def rollback(self, target: str, receipt: DeploymentReceipt) -> RollbackReceipt:
@@ -61,4 +66,5 @@ class EnforcementAdapter(ABC):
 
     @abstractmethod
     def stream_events(self, cursor: str | None = None) -> EventBatch:
-        ...
+        """事件批次必须在 source/事件 type 如实标注来源；CLI 后端的 policy list
+        回读不是行为事件流，不得伪装成行为事件。"""

@@ -80,6 +80,8 @@ def test_read_effective_policy_parses_real_output():
     assert snapshot.filesystem["read_only"][0] == "/usr"
     assert snapshot.process["run_as_user"] == "sandbox"
     assert snapshot.network == []  # 该策略无网络段
+    # P1-11：policy get --full 输出无执行模式字段 → 如实 unknown，不硬编码 block
+    assert snapshot.enforcement_mode == "unknown"
 
 
 def test_probe_reports_measured_capabilities():
@@ -88,6 +90,30 @@ def test_probe_reports_measured_capabilities():
     assert caps.dynamic_network_update is True  # 2026-08-13 实测
     assert caps.static_filesystem is True
     assert caps.revision_support is True
+
+
+def test_probe_capability_document_reflects_measured_semantics():
+    """P1-1/P1-11：能力文档逐项如实映射实测结论；未实测一律 unknown/unsupported。"""
+    backend = _backend({("gateway", "info"): (0, GATEWAY_INFO, "")})
+    caps = backend.probe()
+    doc = caps.capabilities
+    assert doc, "能力文档必须非空"
+    # 实测结论
+    assert doc["network_l34"].status == "supported" and doc["network_l34"].semantics == "enforce"
+    assert doc["filesystem"].status == "supported"
+    assert doc["process"].status == "supported"
+    assert doc["enforcement_mode.block"].status == "supported"
+    # 实测不可用
+    assert doc["network_l7"].status == "unsupported"
+    assert doc["sandbox_lifecycle"].status == "unsupported"
+    assert doc["enforcement_mode.warn"].status == "unsupported"
+    assert doc["enforcement_mode.audit_only"].status == "unsupported"
+    # 未实测 → unknown（不猜 supported），且每项都标注依据
+    assert doc["tools_mcp"].status == "unknown"
+    assert doc["resources"].status == "unknown"
+    assert doc["audit_events"].status == "unknown"
+    for name, item in doc.items():
+        assert item.basis, f"{name} 必须标注判定依据"
 
 
 def test_probe_schema_version_reflects_detected_gateway_version():
@@ -463,3 +489,82 @@ def test_cli_backend_requires_explicit_secure_gateway_configuration(monkeypatch)
         monkeypatch.setenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT", endpoint)
         with pytest.raises(AdapterError, match="无效"):
             OpenShellCliBackend()._build_command(["gateway", "info"])
+
+
+# ------------------------------------------------------------ P1-2：verify 分级 / 事件来源
+
+# 实测形状：revision=2 且含网络段的 policy get --full 输出
+REAL_POLICY_GET_FULL_V2_WITH_NET = """Version:      2
+Hash:         5385cd2cf66f
+Status:       Active
+Active:       2
+Created:      1786632645924 ms
+Loaded:       1786632646253 ms
+---
+version: 1
+filesystem_policy:
+  include_workdir: true
+  read_only:
+  - /usr
+  read_write:
+  - /sandbox
+landlock:
+  compatibility: best_effort
+process:
+  run_as_user: sandbox
+  run_as_group: sandbox
+network_policies:
+  siq_as_rule_0:
+    name: siq-as-rule-0
+    endpoints:
+    - host: api.example.com
+      port: 443
+    binaries:
+    - path: /usr/bin/curl
+"""
+
+
+def test_verify_pass_level_is_readback_verified_not_enforcement():
+    """P1-2：CLI verify 是配置读回——通过时 level=readback_verified，绝不 enforcement_verified。"""
+    backend = _backend({("policy", "get", "s1", "--full"): (0, REAL_POLICY_GET_FULL_V2_WITH_NET, "")})
+    report = backend.verify(
+        "s1",
+        checks={"expect_allow": ["api.example.com:443"], "expect_deny": ["10.255.255.255:1"]},
+        receipt=DeploymentReceipt(backend_revision="2", evidence={}),
+    )
+    assert report.passed is True, report.failures
+    assert report.level == "readback_verified"
+    # checks 携带 request/expected/actual/revision 供审计复核
+    allow = report.allow_checks[0]
+    assert allow["request"] == "config_readback"
+    assert allow["expected"] == "allow" and allow["actual"] == "allow"
+    assert allow["revision"] == "2"
+    deny = report.deny_checks[0]
+    assert deny["expected"] == "deny" and deny["actual"] == "deny"
+
+
+def test_verify_failure_level_is_failed(monkeypatch):
+    """P1-2：revision 读回不一致 → passed=False 且 level=failed（不伪装通过）。"""
+    monkeypatch.setattr("time.sleep", lambda _s: None)  # 跳过轮询等待
+    backend = _backend({("policy", "get", "s1", "--full"): (0, REAL_POLICY_GET_FULL_V2_WITH_NET, "")})
+    report = backend.verify(
+        "s1",
+        checks={"expect_allow": ["api.example.com:443"], "expect_deny": ["10.255.255.255:1"]},
+        receipt=DeploymentReceipt(backend_revision="3", evidence={}),
+    )
+    assert report.passed is False
+    assert report.level == "failed"
+    assert any("revision mismatch" in f for f in report.failures)
+
+
+def test_stream_events_labels_real_source_not_behavioral():
+    """P1-2：stream_events 是 policy list 回读，事件 type/source 如实标注，非行为事件流。"""
+    backend = _backend({("policy", "list"): (0, "siq-as-live  version 2\n", "")})
+    batch = backend.stream_events()
+    assert batch.source == "cli_policy_list_readback"
+    assert batch.events[0]["type"] == "policy_history"
+
+    failing = _backend({("policy", "list"): (1, "", "connection refused")})
+    batch2 = failing.stream_events(cursor="c1")
+    assert batch2.source == "cli_policy_list_readback"
+    assert batch2.events[0]["type"] == "backend_unavailable"

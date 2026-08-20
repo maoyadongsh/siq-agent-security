@@ -4,7 +4,7 @@
   "total": 14,
   "positive_count": 8,
   "negative_count": 6,
-  "recall_positive": 0.875,
+  "recall_positive": 1.0,
   "false_positive_rate": 0.0,
-  "gap_note": "hard 组（无关键词）召回为 0——模型辅助分类（§11）接入后重跑本基线"
+  "gap_note": "P1-10 起 hard 组由 framework 确定性信号检出；模型辅助（§11）的剩余差距为无名称关键词且无框架信号的样本（当前语料未覆盖）"
 }

@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 
 from app.db import get_session
 from app.evidence_signing import batch_signed_bytes, evidence_signed_bytes, verify_hex_signature
-from app.models import AgentAsset, AgentInstance, EdgeTask, Environment, Evidence, PermissionFact, utcnow
+from app.models import AgentAsset, AgentInstance, EdgeTask, Environment, Evidence, PermissionFact, System, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import (
     AgentAssetOut,
@@ -345,6 +345,23 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
         if existing is not None:
             existing.updated_at = now
             existing.evidence_ids = sorted(set((existing.evidence_ids or []) + cand_evidence_ids))
+            attrs = dict(existing.attributes or {})
+            if cand.attributes:
+                # 脱敏候选属性合并入账（后到的观察覆盖同名键）
+                attrs.update(cand.attributes)
+            if cand.artifact_digest and cand.artifact_digest != existing.artifact_digest:
+                # P1-8 变更痕迹：旧 digest 不静默丢弃，写入 attributes.digest_observations
+                observations = list(attrs.get("digest_observations", []))
+                observations.append(
+                    {
+                        "from": existing.artifact_digest,
+                        "to": cand.artifact_digest,
+                        "observed_at": now.isoformat(),
+                    }
+                )
+                attrs["digest_observations"] = observations[-20:]
+                existing.artifact_digest = cand.artifact_digest
+            existing.attributes = attrs
             candidate_asset_ids[cand.candidate_id] = existing.id
             continue
         asset = AgentAsset(
@@ -354,6 +371,8 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
             status="candidate",
             source_type=cand.source_type,
             source_locator=cand.source_locator,
+            artifact_digest=cand.artifact_digest,
+            attributes=dict(cand.attributes or {}),
             evidence_ids=cand_evidence_ids,
         )
         session.add(asset)
@@ -676,6 +695,14 @@ def confirm_candidate(
     asset = _asset_or_404(session, identity.tenant_id, asset_id)
     if asset.status not in ("candidate", "needs_review"):
         raise HTTPException(status_code=409, detail="invalid_state")
+    # P1-7：body 里的外键引用必须解析到本租户对象。system_id 是请求体引用而非路径定位，
+    # 不存在或跨租户统一 422（与 invalid_edge_public_key 等体校验惯例一致），不泄露存在性。
+    if body.system_id is not None:
+        system = session.scalar(
+            select(System).where(System.id == body.system_id, System.tenant_id == identity.tenant_id)
+        )
+        if system is None:
+            raise HTTPException(status_code=422, detail="invalid_system_ref")
     asset.status = "confirmed"
     asset.role = body.role or asset.role
     asset.system_id = body.system_id or asset.system_id

@@ -35,8 +35,11 @@ import yaml
 
 from app.adapters.openshell.base import EnforcementAdapter
 from app.adapters.openshell.contracts import (
+    VERIFY_LEVEL_FAILED,
+    VERIFY_LEVEL_READBACK,
     AdapterError,
     BackendCapabilities,
+    CapabilityItem,
     ChangePlan,
     CompiledPolicy,
     DeploymentReceipt,
@@ -70,6 +73,66 @@ def _parse_version(text: str) -> str | None:
         if match:
             return match.group(1)
     return None
+
+
+def _cli_capability_document() -> dict[str, CapabilityItem]:
+    """openshell-cli 路径的版本化能力文档（P1-1/P1-11）。
+
+    每一项的 status 只反映已实测结论；未实测一律 unknown/unsupported 并在
+    basis 注明依据，不得猜 supported。与上方布尔字段保持一致（布尔字段是
+    同一实测结论的便捷视图）。
+    """
+    return {
+        # 实测：v0.0.83 网关 SandboxResponse 解码缺陷致 create/list 经 CLI 不可用
+        # （v0.0.104 已确认修复但本探测路径未对 create 实测，保守 unsupported）
+        "sandbox_lifecycle": CapabilityItem(
+            status="unsupported",
+            semantics="none",
+            basis="实测：SandboxResponse 解码缺陷，create_generation 经 CLI 拒绝（v0.0.104 修复未在本路径实测）",
+        ),
+        # 实测：静态段创建时锁定，活沙箱变更被网关拒绝（include_workdir cannot be changed）
+        "filesystem": CapabilityItem(
+            status="supported", semantics="enforce", basis="实测：静态边界，创建时锁定，网关强制"
+        ),
+        "process": CapabilityItem(
+            status="supported", semantics="enforce", basis="实测：process 段同属静态边界，创建时锁定"
+        ),
+        # 2026-08-13 实测：policy set 对运行中沙箱热更新网络段成功（host:port 粒度）
+        "network_l34": CapabilityItem(
+            status="supported", semantics="enforce", basis="2026-08-13 实测：host:port 网络段热更新成功"
+        ),
+        # 实测：端点模型仅 host:port；path 级规则编译期拒绝（_network_rules_to_gateway）
+        "network_l7": CapabilityItem(
+            status="unsupported", semantics="none", basis="实测：端点模型仅 host:port，path 级规则编译拒绝"
+        ),
+        # interceptor 未经任何版本实测 → unknown（fail-closed，不猜测）
+        "tools_mcp": CapabilityItem(
+            status="unknown", semantics="none", basis="interceptor/工具治理未经实测（不猜测）"
+        ),
+        "model_routing": CapabilityItem(
+            status="unsupported", semantics="none", basis="provider 凭据注入未经实测（保守拒绝）"
+        ),
+        "secrets": CapabilityItem(
+            status="unsupported", semantics="none", basis="凭据注入能力未经实测（保守拒绝，§15.2 由 Provider 侧承担）"
+        ),
+        "resources": CapabilityItem(
+            status="unknown", semantics="none", basis="资源配额语义未经实测"
+        ),
+        # 网关无已实测行为事件流；stream_events 仅能回读 policy list 文本（非行为事件）
+        "audit_events": CapabilityItem(
+            status="unknown", semantics="none", basis="无已实测事件流；stream_events 仅 policy list 回读（非行为事件）"
+        ),
+        # P1-11：openshell-cli 当前只支持 block；warn/audit_only 无实测执行语义
+        "enforcement_mode.block": CapabilityItem(
+            status="supported", semantics="enforce", basis="网关策略默认拦截语义（部署路径实测）"
+        ),
+        "enforcement_mode.warn": CapabilityItem(
+            status="unsupported", semantics="none", basis="CLI 路径无 warn 执行语义的实测依据"
+        ),
+        "enforcement_mode.audit_only": CapabilityItem(
+            status="unsupported", semantics="none", basis="CLI 路径无 audit_only 执行语义的实测依据"
+        ),
+    }
 
 Runner = Callable[[list[str]], tuple[int, str, str]]
 
@@ -192,12 +255,14 @@ class OpenShellCliBackend(EnforcementAdapter):
     # ------------------------------------------------------------ 合同实现
 
     def probe(self) -> BackendCapabilities:
-        """可达性 + 真实版本探测；能力布尔值只反映已实测验证的语义。
+        """可达性 + 真实版本探测；能力值只反映已实测验证的语义。
 
         - `gateway info` 失败 → fail-closed（可达性是探测前提，保持现状）；
         - 版本探测失败仅令 schema_version 退化为 "unknown-policy-v1"，不让 probe
           整体失败（可达性已由 gateway info 证明），也绝不编造版本号；
-        - 能力值不因检测到新版本而上调：每个字段的依据见下方逐行注释。
+        - 能力值不因检测到新版本而上调：布尔字段依据见下方逐行注释，
+          版本化能力文档（capabilities）逐项标注 status/semantics/basis，
+          未实测的能力一律 unknown 或 unsupported（P1-1，不得猜 supported）。
         """
         info_out = self._cli("gateway", "info")  # 探测网关可达性；失败 fail-closed
         version = self._detect_version(info_out)
@@ -212,6 +277,7 @@ class OpenShellCliBackend(EnforcementAdapter):
             provider_credential_injection=False,  # 未经实测验证（保守 False）
             revision_support=True,  # 实测：policy list / --rev 回读可用
             max_filesystem_paths=1024,  # 合同默认值，未经网关实测上限
+            capabilities=_cli_capability_document(),
         )
         return caps
 
@@ -299,7 +365,9 @@ class OpenShellCliBackend(EnforcementAdapter):
             filesystem=doc.get("filesystem_policy") or {},
             network=self._network_rules(doc.get("network_policies") or {}),
             process=doc.get("process") or {},
-            enforcement_mode="block",
+            # P1-11：`policy get --full` 输出不含执行模式字段，无法从后端输出确定
+            # 模式时如实填 "unknown"，不得无条件硬编码 "block"
+            enforcement_mode="unknown",
             observed_at=None,
         )
 
@@ -358,8 +426,13 @@ class OpenShellCliBackend(EnforcementAdapter):
         )
 
     def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
-        """读回验证：Active 会短暂滞后于提交（实测 Loaded→Active 异步传播），
-        以 1s 间隔轮询至多 10 次；最终不一致才判失败（§21.1 不变量 #5）。"""
+        """配置读回验证（readback）：Active 会短暂滞后于提交（实测 Loaded→Active
+        异步传播），以 1s 间隔轮询至多 10 次；最终不一致才判失败（§21.1 不变量 #5）。
+
+        P1-2 分级语义：本方法只比对读回配置（revision + 网络允许集），没有任何
+        行为 fixture 通道，因此通过时 level 只能是 readback_verified，
+        绝不产出 enforcement_verified；任一失败 → failed。
+        """
         import time
 
         snapshot = self.read_effective_policy(target)
@@ -372,8 +445,28 @@ class OpenShellCliBackend(EnforcementAdapter):
         if snapshot.revision != receipt.backend_revision:
             failures.append(f"revision mismatch: {snapshot.revision} != {receipt.backend_revision}")
         allowed = {r.get("endpoint") for r in snapshot.network if r.get("effect") != "deny"}
-        allow_checks = [{"endpoint": e, "result": "allow"} for e in checks.get("expect_allow", [])]
-        deny_checks = [{"endpoint": e, "result": "deny"} for e in checks.get("expect_deny", [])]
+        allow_checks = [
+            {
+                "endpoint": e,
+                "request": "config_readback",
+                "expected": "allow",
+                "actual": "allow" if e in allowed else "not_in_allow_set",
+                "result": "allow",
+                "revision": snapshot.revision,
+            }
+            for e in checks.get("expect_allow", [])
+        ]
+        deny_checks = [
+            {
+                "endpoint": e,
+                "request": "config_readback",
+                "expected": "deny",
+                "actual": "deny" if e not in allowed else "in_allow_set",
+                "result": "deny",
+                "revision": snapshot.revision,
+            }
+            for e in checks.get("expect_deny", [])
+        ]
         for check in allow_checks:
             if check["endpoint"] not in allowed:
                 failures.append(f"allow check failed: {check['endpoint']}")
@@ -382,8 +475,13 @@ class OpenShellCliBackend(EnforcementAdapter):
                 failures.append(f"deny check failed: {check['endpoint']}")
         if not allow_checks or not deny_checks:
             failures.append("正负向验证必须各至少一项（§15.3）")
+        passed = not failures
         return VerificationReport(
-            passed=not failures, allow_checks=allow_checks, deny_checks=deny_checks, failures=failures
+            passed=passed,
+            level=VERIFY_LEVEL_READBACK if passed else VERIFY_LEVEL_FAILED,
+            allow_checks=allow_checks,
+            deny_checks=deny_checks,
+            failures=failures,
         )
 
     def rollback(self, target: str, receipt: DeploymentReceipt) -> RollbackReceipt:
@@ -407,11 +505,25 @@ class OpenShellCliBackend(EnforcementAdapter):
         return RollbackReceipt(restored_revision=match.group(1), evidence={"applied": applied.strip()[:120]})
 
     def stream_events(self, cursor: str | None = None) -> EventBatch:
+        """注意：这不是行为事件流（P1-2）。
+
+        openshell CLI 没有行为事件通道；这里只能回读 `policy list` 文本，
+        事件 type 如实标注为 backend_unavailable/policy_history，source 标注为
+        cli_policy_list_readback。消费方不得将其当作策略被执行的行为证据。
+        """
         try:
             out = self._cli("policy", "list")
         except AdapterError as exc:
-            return EventBatch(events=[{"type": "backend_unavailable", "detail": str(exc)[:200]}], cursor=cursor)
-        return EventBatch(events=[{"type": "policy_history", "raw": out.strip()[:500]}], cursor=cursor)
+            return EventBatch(
+                events=[{"type": "backend_unavailable", "detail": str(exc)[:200]}],
+                cursor=cursor,
+                source="cli_policy_list_readback",
+            )
+        return EventBatch(
+            events=[{"type": "policy_history", "raw": out.strip()[:500]}],
+            cursor=cursor,
+            source="cli_policy_list_readback",
+        )
 
     # ------------------------------------------------------------ 解析
 
