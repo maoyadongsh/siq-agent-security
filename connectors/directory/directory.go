@@ -269,7 +269,17 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			batch.Truncated = true
 			break
 		}
-		data, err := readFileLimited(f.path, limits.MaxBytes-readBytes)
+		remaining := limits.MaxBytes - readBytes
+		if remaining <= 0 {
+			// 预算耗尽：显式截断，不读下一文件（P1-6）
+			batch.Truncated = true
+			break
+		}
+		data, err := readFileLimited(f.path, remaining)
+		if errors.Is(err, errBudgetExhausted) {
+			batch.Truncated = true
+			break
+		}
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "directory-connector: read %s: %v\n", f.path, err)
 			continue
@@ -278,6 +288,12 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 		if readBytes > limits.MaxBytes {
 			batch.Truncated = true
 			break
+		}
+		// 文件内容被预算截断：证据不完整必须显式标注，不得误当完整内容分析（P1-6）
+		contentTruncated := false
+		if fi, statErr := os.Stat(f.path); statErr == nil && fi.Size() > int64(len(data)) {
+			contentTruncated = true
+			batch.Truncated = true
 		}
 
 		parentName := filepath.Base(filepath.Dir(f.path))
@@ -297,6 +313,10 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			Attributes: map[string]string{
 				"manifest":      f.rel,
 				"manifest_size": strconv.FormatInt(int64(len(data)), 10),
+				// P1-6：证据字节预算语义显式化（bytes_read/bytes_limit/truncated）
+				"bytes_read":        strconv.FormatInt(int64(len(data)), 10),
+				"bytes_limit":       strconv.FormatInt(remaining, 10),
+				"content_truncated": strconv.FormatBool(contentTruncated),
 			},
 			EvidenceIDs: []string{evidenceID},
 		}
@@ -347,15 +367,19 @@ func healthOp() protocol.HealthReport {
 	return protocol.HealthReport{Version: connectorVersion, Dependencies: []protocol.DependencyHealth{}}
 }
 
+// errBudgetExhausted: 剩余字节预算为 0 时的显式结果（P1-6）。
+// 预算耗尽必须表现为 truncated/skipped，禁止回退到默认大小继续读取。
+var errBudgetExhausted = errors.New("byte budget exhausted")
+
 func readFileLimited(path string, maxBytes int64) ([]byte, error) {
+	if maxBytes <= 0 {
+		return nil, errBudgetExhausted
+	}
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
-	if maxBytes <= 0 {
-		maxBytes = 1 << 20
-	}
 	data, err := io.ReadAll(io.LimitReader(f, maxBytes))
 	if err != nil {
 		return nil, err

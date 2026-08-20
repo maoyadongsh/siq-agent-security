@@ -1,6 +1,11 @@
 // Command docker-connector is the Docker Connector (connector-protocol.v1.md).
-// It discovers containers labeled siq.agent=true via the docker CLI (os/exec;
-// no docker SDK dependency) and emits candidates + evidence.
+// It enumerates ALL visible containers via the docker CLI (os/exec; no docker
+// SDK dependency), classifies agent candidates by image/command/label signals,
+// and emits candidates + evidence.
+//
+// Discovery policy (P1-9): the siq.agent=true label is only a high-confidence
+// hint / managed flag, NEVER a discovery precondition — unlabeled agent
+// containers (shadow agents) must still surface as heuristic candidates.
 //
 // Security invariants:
 //   - container environment values are NEVER read: the inspect payload is
@@ -186,8 +191,9 @@ func planScanOp(p planScanParams) protocol.ScanPlan {
 	return protocol.ScanPlan{Scope: p.Scope, Cursor: p.Cursor, Limits: protocol.CollectLimits{MaxFiles: 100}}
 }
 
-// collectOp discovers labeled containers, inspects them and emits one
-// candidate + one evidence per container.
+// collectOp enumerates all visible containers, classifies agent candidates
+// (P1-9: label is a hint, not a precondition) and emits one candidate + one
+// evidence per candidate container.
 func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	if _, err := exec.LookPath("docker"); err != nil {
 		return protocol.EvidenceBatch{}, errDockerMissing
@@ -199,7 +205,7 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), opTimeout)
 	defer cancel()
 
-	rows, err := listLabeledContainers(ctx)
+	rows, err := listContainers(ctx)
 	if err != nil {
 		return protocol.EvidenceBatch{}, err
 	}
@@ -212,6 +218,10 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	var ids []string
 
 	for _, row := range rows {
+		cls := classifyContainer(row)
+		if !cls.candidate {
+			continue // 无智能体信号的容器不产生候选噪音
+		}
 		if int64(len(ids)) >= limits.MaxFiles {
 			batch.Truncated = true
 			break
@@ -221,7 +231,7 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			fmt.Fprintf(os.Stderr, "docker: inspect %s: %v\n", row.ID, err)
 			continue
 		}
-		cand, ev := buildObjects(row, insp, now, red)
+		cand, ev := buildObjects(row, insp, cls, now, red)
 		batch.Candidates = append(batch.Candidates, cand)
 		batch.Evidence = append(batch.Evidence, ev)
 		ids = append(ids, row.ID)
@@ -234,14 +244,18 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 
 // containerRow is one line of `docker ps --format '{{json .}}'`.
 type containerRow struct {
-	ID     string `json:"ID"`
-	Names  string `json:"Names"`
-	Image  string `json:"Image"`
-	Status string `json:"Status"`
+	ID      string `json:"ID"`
+	Names   string `json:"Names"`
+	Image   string `json:"Image"`
+	Command string `json:"Command"`
+	Labels  string `json:"Labels"`
+	Status  string `json:"Status"`
 }
 
-func listLabeledContainers(ctx context.Context) ([]containerRow, error) {
-	cmd := exec.CommandContext(ctx, "docker", "ps", "--filter", "label=siq.agent=true", "--format", "{{json .}}")
+// listContainers enumerates ALL visible containers（P1-9：标签不再作为发现前置条件）。
+// docker daemon 不可达/权限不足时错误如实上抛（协议错误响应），形成显式覆盖缺口而非静默漏报。
+func listContainers(ctx context.Context) ([]containerRow, error) {
+	cmd := exec.CommandContext(ctx, "docker", "ps", "--format", "{{json .}}")
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("docker ps: %w", err)
@@ -261,6 +275,61 @@ func listLabeledContainers(ctx context.Context) ([]containerRow, error) {
 		}
 	}
 	return rows, nil
+}
+
+// 已知智能体框架镜像/命令关键词 → framework（高置信启发式）
+var knownFrameworks = map[string]string{
+	"hermes":    "hermes",
+	"openclaw":  "openclaw",
+	"dify":      "dify",
+	"piagent":   "pi",
+	"workbuddy": "workbuddy",
+}
+
+// 通用智能体运行时信号词（只提示候选，不猜测 framework）
+var agentSignals = []string{
+	"agent", "ollama", "langchain", "llamaindex", "autogen", "crewai", "mcp",
+}
+
+// containerClassification 是单个容器的发现分类结果。
+type containerClassification struct {
+	candidate  bool    // 是否进入候选
+	framework  string  // 识别出的框架，未知为 "unknown"
+	confidence float64 // 发现置信度
+	basis      string  // label|heuristic：发现依据（标签只是高置信提示）
+}
+
+// classifyContainer 按 标签 → 框架关键词 → 通用信号 的顺序分类（P1-9）。
+// 无任何信号的容器不是智能体候选（跳过，不产生噪音）。
+func classifyContainer(row containerRow) containerClassification {
+	haystack := strings.ToLower(row.Image + " " + row.Command + " " + row.Names)
+	labeled := false
+	for _, label := range strings.Split(row.Labels, ",") {
+		if strings.TrimSpace(label) == "siq.agent=true" {
+			labeled = true
+			break
+		}
+	}
+	framework := "unknown"
+	for keyword, fw := range knownFrameworks {
+		if strings.Contains(haystack, keyword) {
+			framework = fw
+			break
+		}
+	}
+	if labeled {
+		// 纳管标签：高置信提示；framework 仍由内容信号决定
+		return containerClassification{candidate: true, framework: framework, confidence: 1.0, basis: "label"}
+	}
+	if framework != "unknown" {
+		return containerClassification{candidate: true, framework: framework, confidence: 0.8, basis: "heuristic"}
+	}
+	for _, signal := range agentSignals {
+		if strings.Contains(haystack, signal) {
+			return containerClassification{candidate: true, framework: "unknown", confidence: 0.6, basis: "heuristic"}
+		}
+	}
+	return containerClassification{candidate: false}
 }
 
 // dockerInspect is the projection of `docker inspect` we decode.
@@ -298,7 +367,7 @@ func inspectContainer(ctx context.Context, id string) (*dockerInspect, error) {
 }
 
 // buildObjects emits the candidate and its evidence for one container.
-func buildObjects(row containerRow, insp *dockerInspect, now string, red *protocol.Redactor) (*protocol.Candidate, *protocol.Evidence) {
+func buildObjects(row containerRow, insp *dockerInspect, cls containerClassification, now string, red *protocol.Redactor) (*protocol.Candidate, *protocol.Evidence) {
 	short := row.ID
 	if len(short) > 12 {
 		short = short[:12]
@@ -323,16 +392,17 @@ func buildObjects(row containerRow, insp *dockerInspect, now string, red *protoc
 		SourceLocator:  "docker://" + short,
 		DiscoveredAt:   now,
 		Name:           truncate(red.RedactString(row.Names), 256),
-		Framework:      "unknown",
+		Framework:      cls.framework,
 		ArtifactDigest: digest,
 		Attributes: map[string]string{
-			"image":        truncate(red.RedactString(row.Image), 256),
-			"digest":       digest,
-			"mounts":       truncate(strings.Join(mounts, ","), 1024),
-			"labels_count": strconv.Itoa(len(insp.Config.Labels)),
+			"image":           truncate(red.RedactString(row.Image), 256),
+			"digest":          digest,
+			"mounts":          truncate(strings.Join(mounts, ","), 1024),
+			"labels_count":    strconv.Itoa(len(insp.Config.Labels)),
+			"discovery_basis": cls.basis, // P1-9：label|heuristic，发现依据可审计
 		},
 		EvidenceIDs: []string{"ev:docker:" + short},
-		Confidence:  1.0,
+		Confidence:  cls.confidence,
 	}
 	// Canonical facts hashed into the evidence (never env values).
 	facts, _ := json.Marshal(map[string]any{

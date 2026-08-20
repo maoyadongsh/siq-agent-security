@@ -212,12 +212,27 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	for _, raw := range sc.Roots {
 		root := strings.TrimSpace(protocol.ExpandHome(raw))
 		cfgPath := filepath.Join(root, "openclaw.json")
-		data, err := readFileLimited(cfgPath, limits.MaxBytes-readBytes)
+		remaining := limits.MaxBytes - readBytes
+		if remaining <= 0 {
+			// 预算耗尽：显式截断，不回退默认大小继续读（P1-6）
+			batch.Truncated = true
+			break
+		}
+		data, err := readFileLimited(cfgPath, remaining)
+		if errors.Is(err, errBudgetExhausted) {
+			batch.Truncated = true
+			break
+		}
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "openclaw-connector: read %s: %v\n", cfgPath, err)
 			continue
 		}
 		readBytes += int64(len(data))
+		// 配置被预算截断：解析结果不完整，显式标注而非静默继续（P1-6）
+		if fi, statErr := os.Stat(cfgPath); statErr == nil && fi.Size() > int64(len(data)) {
+			fmt.Fprintf(os.Stderr, "openclaw-connector: %s truncated by byte budget (%d/%d bytes)\n", cfgPath, len(data), fi.Size())
+			batch.Truncated = true
+		}
 		var cfg openclawConfig
 		if err := json.Unmarshal(data, &cfg); err != nil {
 			return protocol.EvidenceBatch{}, fmt.Errorf("openclaw.json 解析失败: %w", err)
@@ -349,15 +364,19 @@ func extractModelIDs(model any) []string {
 	return out
 }
 
+// errBudgetExhausted: 剩余字节预算为 0 时的显式结果（P1-6）。
+// 预算耗尽必须表现为 truncated/skipped，禁止回退到默认大小继续读取。
+var errBudgetExhausted = errors.New("byte budget exhausted")
+
 func readFileLimited(path string, maxBytes int64) ([]byte, error) {
+	if maxBytes <= 0 {
+		return nil, errBudgetExhausted
+	}
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
-	if maxBytes <= 0 {
-		maxBytes = 1 << 20
-	}
 	return io.ReadAll(io.LimitReader(f, maxBytes))
 }
 
