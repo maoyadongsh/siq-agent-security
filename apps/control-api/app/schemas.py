@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 StrictModelConfig = ConfigDict(extra="forbid")
 
@@ -362,6 +362,12 @@ class FindingOut(BaseModel):
     matches: list = Field(default_factory=list)
     first_seen_at: datetime
     last_seen_at: datetime
+
+    @field_validator("matches", "evidence_ids", mode="before")
+    @classmethod
+    def _null_legacy_columns_to_empty(cls, v):
+        """0010 之前的存量行 matches 为 NULL（列后加且无回填时），响应对外一律为列表。"""
+        return [] if v is None else v
 
 
 class ThreatScanRequest(BaseModel):
