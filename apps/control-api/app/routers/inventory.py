@@ -111,8 +111,11 @@ def smart_scan(
 ):
     """智能扫描（用户一键发现）：标准安全范围一次下发。
 
-    范围（§10.1 默认排除原则）：Hermes profiles、OpenClaw 配置、带标签 Docker 容器。
-    不含目录扫描——受控目录必须用户显式授权（directory connector 无默认范围）。
+    范围（§10.1 默认排除原则）：Hermes profiles、OpenClaw 配置、Docker 容器、
+    systemd 服务、进程列表、Kubernetes pod、MCP 客户端配置、PiAgent/WorkBuddy 约定目录。
+    不含目录扫描与 Dify 部署目录——受控目录必须用户显式授权（§10.1 无默认范围）。
+    scope 为 None 的 Connector 使用其众所周知默认路径（payload 不带 scope 键，
+    避免空 scope 被 validate_scope 拒绝）。
     """
     from sqlalchemy import func
 
@@ -130,6 +133,12 @@ def smart_scan(
         ("hermes", {"roots": ["~/.hermes/profiles/*"], "include": ["config.yaml", "SOUL.md"]}),
         ("openclaw", {"roots": ["~/.openclaw"]}),
         ("docker", {}),
+        ("systemd", {}),
+        ("process", {}),
+        ("kubernetes", {}),
+        ("mcp", None),
+        ("piagent", None),
+        ("workbuddy", None),
     ]
     env_ids = list(session.scalars(select(_Env.id).where(_Env.tenant_id == identity.tenant_id)))
     pending = session.scalar(
@@ -151,10 +160,14 @@ def smart_scan(
     tasks = []
     for connector, scope in standard_scans:
         expires_at = utcnow() + timedelta(seconds=_task_ttl(session))
+        # scope 为 None 时不带 scope 键：Connector 回退众所周知默认路径（空 scope 会被 validate_scope 拒绝）
+        payload: dict = {"connector": connector}
+        if scope is not None:
+            payload["scope"] = scope
         task = EdgeTask(
             environment_id=env.id,
             task_type="scan",
-            payload={"scope": scope, "connector": connector},
+            payload=payload,
             expires_at=expires_at,
         )
         session.add(task)
@@ -172,7 +185,7 @@ def smart_scan(
         summary={"connectors": [t["connector"] for t in tasks]},
     )
     session.commit()
-    return {"tasks": tasks, "note": "目录扫描需显式授权，不包含在智能扫描内（§10.1）"}
+    return {"tasks": tasks, "note": "受控目录与 Dify 部署目录扫描需显式授权，不包含在智能扫描内（§10.1）"}
 
 
 @router.get("/api/v1/scans/{task_id}")

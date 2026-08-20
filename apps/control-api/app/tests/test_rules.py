@@ -1059,7 +1059,7 @@ def test_rescan_idempotent_versions_evidence(client, tenant_a):
 
 
 def test_smart_scan_creates_standard_tasks(client, tenant_a, env_a):
-    """智能扫描：一次下发 hermes/openclaw/docker 三个标准任务；配额超限 429。"""
+    """智能扫描：一次下发标准发现源任务（含 P1-4 新发现源）；配额超限 429。"""
     from sqlalchemy import select
 
     from app.config import load_settings
@@ -1072,7 +1072,7 @@ def test_smart_scan_creates_standard_tasks(client, tenant_a, env_a):
             EdgeTask.task_type == "scan", EdgeTask.status == "pending", EdgeTask.environment_id.in_(env_ids)
         ).count()
     remaining = quota - pre
-    if remaining < 3:
+    if remaining < 9:
         pytest.skip("配额不足，无法测试智能扫描")
 
     resp = client.post(
@@ -1080,10 +1080,27 @@ def test_smart_scan_creates_standard_tasks(client, tenant_a, env_a):
     )
     assert resp.status_code == 200, resp.text
     tasks = resp.json()["tasks"]
-    assert [t["connector"] for t in tasks] == ["hermes", "openclaw", "docker"]
-    # 任务 payload 带 connector（Edge 选择对应二进制）
+    assert [t["connector"] for t in tasks] == [
+        "hermes",
+        "openclaw",
+        "docker",
+        "systemd",
+        "process",
+        "kubernetes",
+        "mcp",
+        "piagent",
+        "workbuddy",
+    ]
+    # 任务 payload 带 connector（Edge 选择对应二进制）；
+    # 默认路径型 Connector（mcp/piagent/workbuddy）不带 scope 键（空 scope 会被 validate_scope 拒绝）
     with session_scope() as s:
         from app.models import EdgeTask as _T
 
         row = s.query(_T).filter(_T.id == tasks[0]["task_id"]).one()
         assert row.payload["connector"] == "hermes"
+        assert row.payload["scope"]["roots"] == ["~/.hermes/profiles/*"]
+        by_connector = {t["connector"]: t["task_id"] for t in tasks}
+        mcp_row = s.query(_T).filter(_T.id == by_connector["mcp"]).one()
+        assert "scope" not in mcp_row.payload
+        docker_row = s.query(_T).filter(_T.id == by_connector["docker"]).one()
+        assert docker_row.payload["scope"] == {}

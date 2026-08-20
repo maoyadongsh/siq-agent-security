@@ -24,7 +24,7 @@
     "environment_id": { "type": "string" },
     "source_type": {
       "type": "string",
-      "enum": ["registry", "manifest", "openclaw_config", "process", "container", "k8s", "iam", "gateway", "openshell", "human", "deny_log"]
+      "enum": ["registry", "manifest", "openclaw_config", "process", "container", "k8s", "iam", "gateway", "openshell", "human", "deny_log", "systemd"]
     },
     "source_locator": { "type": "string", "description": "脱敏后的稳定来源定位，不含凭据" },
     "subject_ref": { "type": ["string", "null"], "description": "Candidate / Asset / Instance 引用" },

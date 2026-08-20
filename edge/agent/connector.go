@@ -369,7 +369,9 @@ func ResolveConnectorBin(name, override string) (string, error) {
 
 func isOfficialConnector(name string) bool {
 	switch name {
-	case "hermes", "openclaw", "docker", "directory":
+	case "hermes", "openclaw", "docker", "directory",
+		"systemd", "kubernetes", "process", "mcp",
+		"piagent", "workbuddy", "dify":
 		return true
 	default:
 		return false

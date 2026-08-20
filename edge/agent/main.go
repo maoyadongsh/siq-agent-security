@@ -209,7 +209,7 @@ func cmdTasks(ctx context.Context, args []string) error {
 // {"candidate":...}, {"evidence":...}, {"checkpoint":...}.
 func cmdRunOnce(ctx context.Context, args []string) error {
 	fs := flag.NewFlagSet("run-once", flag.ContinueOnError)
-	connector := fs.String("connector", "hermes", "connector name (hermes|docker)")
+	connector := fs.String("connector", "hermes", "connector name (hermes|openclaw|docker|directory|systemd|kubernetes|process|mcp|piagent|workbuddy|dify)")
 	scopeJSON := fs.String("scope", "", "connector scope as JSON (default: connector default scope)")
 	binOverride := fs.String("connector-bin", "", "explicit connector binary path")
 	if err := parseFlags(fs, args); err != nil {

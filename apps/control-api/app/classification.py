@@ -38,7 +38,7 @@ _ROLE_HINTS = [
 ]
 
 # 已知智能体运行时/框架（P1-10；与 models.AgentInstance.runtime 注释取值对齐）
-_KNOWN_AGENT_FRAMEWORKS = {"hermes", "openclaw", "pi", "embedded"}
+_KNOWN_AGENT_FRAMEWORKS = {"hermes", "openclaw", "pi", "embedded", "workbuddy", "dify"}
 
 # 确定性能力提示映射（刻意保持简单、可解释）
 _FRAMEWORK_CAPABILITY_HINTS = {
@@ -46,6 +46,8 @@ _FRAMEWORK_CAPABILITY_HINTS = {
     "openclaw": ["config-driven"],
     "pi": ["embedded-runtime"],
     "embedded": ["embedded-runtime"],
+    "workbuddy": ["desktop-assistant"],
+    "dify": ["llm-app-platform"],
 }
 _SOURCE_CAPABILITY_HINTS = {
     "docker": ["containerized"],
@@ -54,6 +56,11 @@ _SOURCE_CAPABILITY_HINTS = {
     "hermes_profile": ["hub-runtime"],
     "siq_hub": ["hub-runtime"],
     "openclaw_agent": ["config-driven"],
+    "piagent_profile": ["embedded-runtime"],
+    "workbuddy_profile": ["desktop-assistant"],
+    "dify_deployment": ["llm-app-platform"],
+    "process_list": ["host-process"],
+    "mcp_server": ["tool-protocol"],
 }
 
 

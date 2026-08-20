@@ -175,7 +175,19 @@ class PermissionFactOut(BaseModel):
     valid_until: datetime | None
 
 
-ConnectorName = Literal["hermes", "openclaw", "docker", "directory"]
+ConnectorName = Literal[
+    "hermes",
+    "openclaw",
+    "docker",
+    "directory",
+    "systemd",
+    "kubernetes",
+    "process",
+    "mcp",
+    "piagent",
+    "workbuddy",
+    "dify",
+]
 
 
 class ScanCreate(BaseModel):
@@ -200,6 +212,10 @@ CandidateSourceType = Literal[
     "siq_hub",
     "process_list",
     "human",
+    "mcp_server",
+    "piagent_profile",
+    "workbuddy_profile",
+    "dify_deployment",
 ]
 EvidenceSourceType = Literal[
     "registry",
@@ -213,6 +229,7 @@ EvidenceSourceType = Literal[
     "openshell",
     "human",
     "deny_log",
+    "systemd",
 ]
 
 

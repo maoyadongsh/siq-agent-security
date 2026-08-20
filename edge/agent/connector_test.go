@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"siq-agent-security/edge/agent/protocol"
@@ -58,6 +59,25 @@ func TestResolveConnectorBinRejectsUntrustedNames(t *testing.T) {
 	for _, name := range []string{"/tmp/evil", "../evil", "bash", "hermes/../../evil", ""} {
 		if _, err := ResolveConnectorBin(name, ""); err == nil {
 			t.Fatalf("ResolveConnectorBin(%q) accepted an untrusted connector name", name)
+		}
+	}
+}
+
+// TestOfficialConnectorAllowlist：P1-4 新发现源必须在白名单内
+// （找不到二进制是 "not found"，不得是 "not allowlisted"）。
+func TestOfficialConnectorAllowlist(t *testing.T) {
+	official := []string{
+		"hermes", "openclaw", "docker", "directory",
+		"systemd", "kubernetes", "process", "mcp",
+		"piagent", "workbuddy", "dify",
+	}
+	for _, name := range official {
+		_, err := ResolveConnectorBin(name, "")
+		if err == nil {
+			continue // 二进制恰好存在也算通过白名单
+		}
+		if got := err.Error(); !strings.Contains(got, "not found") {
+			t.Fatalf("official connector %q rejected: %v", name, err)
 		}
 	}
 }

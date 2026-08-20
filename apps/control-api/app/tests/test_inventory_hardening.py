@@ -233,8 +233,9 @@ def test_baseline_system_candidates_from_existing_link():
 
 def test_baseline_no_signal_behavior_unchanged():
     """无 framework 信号且无名称关键词：行为与 P1-10 之前完全一致。"""
+    # source_type 用无能力提示映射的 "human"（process_list 自 P1-4 起映射 host-process 提示）
     asset = AgentAsset(
-        tenant_id="tnt-A", name="postgres-backup", framework="unknown", source_type="process_list"
+        tenant_id="tnt-A", name="postgres-backup", framework="unknown", source_type="human"
     )
     output = _baseline_classify(asset)
     assert output["is_agent_candidate"] is False
