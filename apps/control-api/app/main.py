@@ -19,7 +19,7 @@ from app.config import load_settings
 from app.db import Base, get_session, init_db, session_scope
 from app.models import Tenant
 from app.routers import audit as audit_router
-from app.routers import bindings, environments, findings, inventory, policies, threat
+from app.routers import bindings, environments, export, findings, inventory, policies, threat
 from app.security import Identity, get_identity
 
 logger = logging.getLogger("siq-agent-security")
@@ -114,5 +114,6 @@ for router in (
     bindings.router,
     threat.router,
     audit_router.router,
+    export.router,
 ):
     app.include_router(router)
