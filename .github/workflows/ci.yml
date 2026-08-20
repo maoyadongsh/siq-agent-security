@@ -79,41 +79,40 @@ jobs:
 
   edge:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 双版本保险：1.22 = AGENTS.md 最低支持版本；stable = 最新稳定版
+        go-version: ["1.22", "stable"]
+        # 全模块覆盖：edge/agent + 现有全部 connector（含 go.mod 独立模块）
+        module:
+          - edge/agent
+          - connectors/hermes
+          - connectors/openclaw
+          - connectors/docker
+          - connectors/directory
+          - connectors/systemd
+          - connectors/kubernetes
+          - connectors/process
+          - connectors/mcp
+          - connectors/piagent
+          - connectors/workbuddy
+          - connectors/dify
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
-      - name: Go formatting
+          go-version: ${{ matrix.go-version }}
+      - name: Go formatting（edge 与 connectors 全部目录）
         run: |
           gofmt -l edge connectors > /tmp/gofmt.out
           test ! -s /tmp/gofmt.out || { cat /tmp/gofmt.out; exit 1; }
-      - name: Build & vet & test（edge/agent）
-        working-directory: edge/agent
+      - name: Build & vet & test（${{ matrix.module }} @ go ${{ matrix.go-version }}）
+        working-directory: ${{ matrix.module }}
         run: |
           go build ./...
           go vet ./...
           go test -race ./...
-      - name: Build & test（connectors/hermes）
-        working-directory: connectors/hermes
-        run: |
-          go build ./...
-          go test ./...
-      - name: Build & test（connectors/docker）
-        working-directory: connectors/docker
-        run: |
-          go build ./...
-          go test ./...
-      - name: Build & test（connectors/directory）
-        working-directory: connectors/directory
-        run: |
-          go build ./...
-          go test ./...
-      - name: Build & test（connectors/openclaw）
-        working-directory: connectors/openclaw
-        run: |
-          go build ./...
-          go test ./...
 
   web:
     runs-on: ubuntu-latest

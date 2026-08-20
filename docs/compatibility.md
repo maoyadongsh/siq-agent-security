@@ -4,16 +4,16 @@
 
 ## OpenShell 兼容矩阵（首个 Enforcement Adapter）
 
-| 能力 | v0.0.83（SIQ 冻结） | 最新版（待 D1 spike 实测） |
+| 能力 | v0.0.83（SIQ 冻结） | v0.0.104（2026-08-13 实测） |
 | --- | --- | --- |
-| Gateway 控制面 / Sandbox 生命周期 | ✅ 已实现（research-engine） | 待探测 |
-| filesystem_policy 静态边界 | ✅ 编译期锁定，重建生效 | 待探测 |
-| Landlock | ✅ 带本地 patch（mask-file-access） | 待探测（rebase 后回归） |
-| process / seccomp 静态边界 | ✅ | 待探测 |
-| **network_policies 动态更新** | ✅ **实测支持**（2026-08-13：活沙箱 `policy set` 网络段 → version 2 提交成功并读回生效；静态段修改被拒绝）。SIQ 自研编译器的固定规则限制 ≠ 网关能力限制 | ✅ 已探测 |
-| Provider 凭据隔离 | ✅ credential placeholder + 网关注入 | 待探测（Providers v2 动态能力） |
-| Gateway Interceptor | ❓ v0.0.83 上未使用/未验证 | 待探测 |
-| revision / 有效策略回读 | ✅ | 待探测 |
+| Gateway 控制面 / Sandbox 生命周期 | ✅ 已实现（research-engine） | ✅ 实测：sandbox list/create/delete 解码正常（Protobuf 解码缺陷已修复） |
+| filesystem_policy 静态边界 | ✅ 编译期锁定，重建生效 | ✅ 静态段创建时锁定（部署闭环未触发重建） |
+| Landlock | ✅ 带本地 patch（mask-file-access） | ✅ 上游已内置（ADR-009） |
+| process / seccomp 静态边界 | ✅ | ✅ 静态边界（创建时锁定） |
+| **network_policies 动态更新** | ✅ **实测支持**（2026-08-13：活沙箱 `policy set` 网络段 → version 2 提交成功并读回生效；静态段修改被拒绝）。SIQ 自研编译器的固定规则限制 ≠ 网关能力限制 | ✅ 实测：审批部署闭环 `effective`（真实 policy set + 读回验证） |
+| Provider 凭据隔离 | ✅ credential placeholder + 网关注入 | ❓ 未实测（Providers v2 动态能力） |
+| Gateway Interceptor | ❓ v0.0.83 上未使用/未验证 | ❓ 未实测 |
+| revision / 有效策略回读 | ✅ | ✅ 实测：policy set version 递增 + `policy get --full` 读回验证 |
 
 **MVP 影响（实测修正）**：动态网络策略发布**在 v0.0.83 上即可实现**（policy set + revision 读回）；§29.1 降级条款保留为风险预案。
 
@@ -64,3 +64,9 @@
 | openclaw（Go） | 已实现（L1/L2 只读，build/vet/test 全绿） | 发现 agents.list + declared model/workspace 权限事实；auth-profiles 永不读（只记大小）；不写 OpenClaw 配置 |
 | kubernetes | 待 Phase 4 | — |
 | siq | 待 Phase 1（依赖 Export Contract D3-D5） | — |
+
+## 版本兼容 CI（P2）
+
+- `scripts/openshell_compat_matrix.json`：机器可读兼容矩阵，逐版本记录 `probe()`/读回可探测能力的期望值（`dynamic_network_update`、`static_filesystem`、`static_process`、`landlock`、`interceptor`、`provider_credential_injection`、`revision_support`、`sandbox_list_decodable`），取值来源为本文上文 2026-08-13 实测结论。
+- `scripts/openshell_compat_check.py`：在 `apps/control-api` 下经 `uv run python ../../scripts/openshell_compat_check.py` 运行；按 `cli_backend` 相同环境变量约定（`SIQ_AS_OPENSHELL_CLI_BIN` + `SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT`，或 `SIQ_AS_OPENSHELL_ENV_SH`）连接真实网关，`OpenShellCliBackend().probe()` 取真实版本与能力后与矩阵比对，不一致项非零退出并逐项打印差异；未配置网关时打印 "SKIP: 未配置网关" 以 0 退出。`--live --sandbox <name>` 追加真实 policy set → 读回验证 → 回滚闭环 fixture。
+- `.github/workflows/openshell-compat.yml`：每周一定时 + `workflow_dispatch`（可注入 gateway_endpoint / cli_bin / cli_bin_asset / live_sandbox）。真实网关需 self-hosted runner 或预置环境；未配置 secret 时检查步骤自动跳过，不会产生红色失败。

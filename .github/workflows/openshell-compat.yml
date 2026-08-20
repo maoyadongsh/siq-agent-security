@@ -1,0 +1,69 @@
+name: openshell-compat
+
+permissions:
+  contents: read
+
+# 真实 OpenShell 网关无法从 GitHub-hosted runner 访问：
+# 需要 self-hosted runner（网关于 runner 本机/内网可达，CLI 二进制预置），
+# 或在预置好网关的环境中手动触发。未配置 secret/输入时检查步骤整体跳过，
+# 不产生红色失败（脚本自身也有 "SKIP: 未配置网关" → 退出 0 的兜底）。
+on:
+  workflow_dispatch:
+    inputs:
+      gateway_endpoint:
+        description: "OpenShell 网关 endpoint（如 https://127.0.0.1:17671；非回环必须 HTTPS）"
+        required: false
+        default: ""
+      cli_bin:
+        description: "openshell CLI 二进制路径（runner 上已预置；与 cli_bin_asset 二选一）"
+        required: false
+        default: ""
+      cli_bin_asset:
+        description: "openshell CLI 二进制下载 URL（可选，下载到 /tmp/openshell 使用）"
+        required: false
+        default: ""
+      gateway_insecure:
+        description: "回环开发网关允许 --gateway-insecure"
+        required: false
+        type: boolean
+        default: false
+      live_sandbox:
+        description: "可选：已存在的沙箱名，提供时追加真实 policy set/读回/回滚闭环 fixture"
+        required: false
+        default: ""
+  schedule:
+    # 每周一 02:00 UTC 定期回归（无网关配置时自动跳过）
+    - cron: "0 2 * * 1"
+
+env:
+  SIQ_AS_OPENSHELL_CLI_BIN: ${{ inputs.cli_bin || secrets.SIQ_AS_OPENSHELL_CLI_BIN }}
+  SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT: ${{ inputs.gateway_endpoint || secrets.SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT }}
+  SIQ_AS_OPENSHELL_GATEWAY_INSECURE: ${{ (inputs.gateway_insecure && '1') || '0' }}
+
+jobs:
+  compat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+
+      - name: 下载 openshell CLI（提供 cli_bin_asset 时）
+        if: ${{ inputs.cli_bin_asset != '' }}
+        run: |
+          curl -fsSL "${{ inputs.cli_bin_asset }}" -o /tmp/openshell
+          chmod +x /tmp/openshell
+          echo "SIQ_AS_OPENSHELL_CLI_BIN=/tmp/openshell" >> "$GITHUB_ENV"
+
+      - name: Install control-api deps
+        working-directory: apps/control-api
+        run: uv sync --dev --locked
+
+      - name: OpenShell 版本兼容矩阵检查（未配置网关时跳过）
+        if: ${{ env.SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT != '' }}
+        working-directory: apps/control-api
+        run: |
+          if [ -n "${{ inputs.live_sandbox }}" ]; then
+            uv run python ../../scripts/openshell_compat_check.py --live --sandbox "${{ inputs.live_sandbox }}"
+          else
+            uv run python ../../scripts/openshell_compat_check.py
+          fi

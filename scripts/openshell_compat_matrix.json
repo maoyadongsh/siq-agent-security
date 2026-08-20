@@ -1,0 +1,30 @@
+[
+  {
+    "version": "v0.0.83",
+    "expect": {
+      "dynamic_network_update": true,
+      "static_filesystem": true,
+      "static_process": true,
+      "landlock": true,
+      "interceptor": false,
+      "provider_credential_injection": false,
+      "revision_support": true,
+      "sandbox_list_decodable": false
+    },
+    "source": "docs/compatibility.md 2026-08-13 实测（SIQ 冻结版）：policy set 网络段热更新成功并读回生效；静态段（filesystem/process）创建时锁定；SandboxResponse Protobuf 解码缺陷致 sandbox list/create 经 CLI 不可解码；interceptor/凭据注入未实测（保守 false）"
+  },
+  {
+    "version": "v0.0.104",
+    "expect": {
+      "dynamic_network_update": true,
+      "static_filesystem": true,
+      "static_process": true,
+      "landlock": true,
+      "interceptor": false,
+      "provider_credential_injection": false,
+      "revision_support": true,
+      "sandbox_list_decodable": true
+    },
+    "source": "docs/compatibility.md 2026-08-13 隔离网关实测：sandbox list/create/delete 解码正常（v0.0.83 解码缺陷已修复）；审批部署闭环 effective（policy set + 读回验证）；landlock 上游已内置（ADR-009）；interceptor/凭据注入未实测（保守 false）"
+  }
+]
