@@ -579,6 +579,34 @@ def create_deployment(
     return deployment
 
 
+@router.post("/api/v1/deployments/{deployment_id}/receipt-verify")
+def verify_deployment_receipt_endpoint(
+    deployment_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """P2 部署回执独立验证：控制面独立读回后端 revision 与 receipt 比对（只读执行面）。
+
+    返回 attestation dict（同时写入 deployment.verification["independent_attestation"]）。
+    """
+    import os
+
+    from app.deployment_verify import verify_deployment_receipt
+
+    # 先租户定位（404）再权限（403）：跨租户 ID 猜测与不存在不可区分
+    deployment = session.scalar(
+        select(Deployment).where(Deployment.id == deployment_id, Deployment.tenant_id == identity.tenant_id)
+    )
+    if deployment is None:
+        raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "policy:read")  # 只读验证，不要求 policy:manage
+    if os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none") != "openshell-cli":
+        raise HTTPException(status_code=409, detail="receipt_verify_backend_unsupported")
+    attestation = verify_deployment_receipt(session, identity.tenant_id, deployment)
+    session.commit()
+    return attestation
+
+
 def _task_ttl() -> int:
     from app.config import load_settings
 
