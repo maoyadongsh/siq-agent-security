@@ -10,13 +10,14 @@ from __future__ import annotations
 
 import base64
 import binascii
+import hashlib
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
-from app.models import AgentAsset, Finding, QuarantineCase, utcnow
+from app.models import AgentAsset, Evidence, Finding, QuarantineCase, RuntimeBinding, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import (
     QuarantineCaseOut,
@@ -59,6 +60,27 @@ def threat_scan(
         raw = body.content.encode("utf-8")
     if len(raw) > MAX_CONTENT_BYTES:
         raise HTTPException(status_code=422, detail="content_too_large")
+
+    raw_hash = hashlib.sha256(raw).hexdigest()
+    if asset.artifact_digest and asset.artifact_digest != raw_hash:
+        is_bound = False
+        if body.evidence_ids:
+            ev_match = session.scalar(
+                select(Evidence.id).where(
+                    Evidence.tenant_id == identity.tenant_id,
+                    Evidence.evidence_id.in_(body.evidence_ids),
+                    Evidence.content_hash == raw_hash,
+                ).limit(1)
+            )
+            if ev_match:
+                is_bound = True
+        if not is_bound:
+            raise HTTPException(
+                status_code=422,
+                detail="content_not_bound: content hash does not match asset artifact_digest or evidence",
+            )
+    elif not asset.artifact_digest:
+        asset.artifact_digest = raw_hash
 
     result = analyze(raw, filename=body.filename)
 
@@ -105,6 +127,19 @@ def threat_scan(
         session.add(finding)
         session.flush()  # finding.id 为 insert 期默认，隔离单需要真实 ID
         findings.append(finding)
+        emit_event(
+            session,
+            identity.tenant_id,
+            "agent.finding.opened.v1",
+            {
+                "finding_id": finding.id,
+                "asset_id": asset.id,
+                "rule_id": match.rule_id,
+                "severity": match.severity,
+                "domain": "threat",
+            },
+            resource_ref=finding.id,
+        )
 
     rule_ids = [m.rule_id for m in result.matches]
 
@@ -131,6 +166,27 @@ def threat_scan(
         )
         session.add(quarantine)
         session.flush()
+
+        # 联动：自动吊销该资产关联的所有 active RuntimeBinding（防已隔离资产继续部署）
+        active_bindings = session.scalars(
+            select(RuntimeBinding).where(
+                RuntimeBinding.tenant_id == identity.tenant_id,
+                RuntimeBinding.asset_id == asset.id,
+                RuntimeBinding.status == "active",
+            )
+        ).all()
+        for b in active_bindings:
+            b.status = "revoked"
+            b.revoked_at = now
+            emit_event(
+                session,
+                identity.tenant_id,
+                "runtime_binding.revoked.v1",
+                {"binding_id": b.id, "asset_id": asset.id, "reason": "auto_quarantined"},
+                environment_id=b.environment_id,
+                resource_ref=b.id,
+            )
+
         audit(
             session,
             identity.tenant_id,
@@ -230,7 +286,7 @@ def release_quarantine_case(
     )
     if case is None:
         raise HTTPException(status_code=404, detail="not_found")
-    ensure_permission(identity, "finding:manage")
+    ensure_permission(identity, "quarantine:release")
     if case.status != "quarantined":
         raise HTTPException(status_code=409, detail="invalid_state")
     case.status = "released"

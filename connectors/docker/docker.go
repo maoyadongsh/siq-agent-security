@@ -277,13 +277,16 @@ func listContainers(ctx context.Context) ([]containerRow, error) {
 	return rows, nil
 }
 
-// 已知智能体框架镜像/命令关键词 → framework（高置信启发式）
-var knownFrameworks = map[string]string{
-	"hermes":    "hermes",
-	"openclaw":  "openclaw",
-	"dify":      "dify",
-	"piagent":   "pi",
-	"workbuddy": "workbuddy",
+// 已知智能体框架镜像/命令关键词 → framework（高置信启发式，有序切片防迭代随机）
+var knownFrameworks = []struct {
+	keyword   string
+	framework string
+}{
+	{"hermes", "hermes"},
+	{"openclaw", "openclaw"},
+	{"dify", "dify"},
+	{"piagent", "pi"},
+	{"workbuddy", "workbuddy"},
 }
 
 // 通用智能体运行时信号词（只提示候选，不猜测 framework）
@@ -311,9 +314,9 @@ func classifyContainer(row containerRow) containerClassification {
 		}
 	}
 	framework := "unknown"
-	for keyword, fw := range knownFrameworks {
-		if strings.Contains(haystack, keyword) {
-			framework = fw
+	for _, kf := range knownFrameworks {
+		if strings.Contains(haystack, kf.keyword) {
+			framework = kf.framework
 			break
 		}
 	}

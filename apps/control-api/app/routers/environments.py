@@ -27,6 +27,7 @@ from app.schemas import (
     EnrollmentCreate,
     EnrollmentOut,
     EnvironmentCreate,
+    EnvironmentModeUpdate,
     EnvironmentOut,
 )
 from app.security import (
@@ -100,6 +101,41 @@ def list_environments(
             select(Environment).where(Environment.tenant_id == identity.tenant_id).order_by(Environment.name)
         )
     )
+
+
+@router.patch("/api/v1/environments/{environment_id}/mode", response_model=EnvironmentOut)
+def update_environment_mode(
+    environment_id: str,
+    body: EnvironmentModeUpdate,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """切换环境模式（discovery <-> enforce 等），受控治理动作。"""
+    env = _env_or_404(session, identity.tenant_id, environment_id)
+    ensure_permission(identity, "env:manage")
+    old_mode = env.mode
+    env.mode = body.mode
+    audit(
+        session,
+        identity.tenant_id,
+        identity.identity_type,
+        identity.actor_id,
+        "environment.mode.update",
+        "environment",
+        resource_id=env.id,
+        summary={"old_mode": old_mode, "new_mode": env.mode, "reason": body.reason},
+    )
+    emit_event(
+        session,
+        identity.tenant_id,
+        "environment.mode_updated.v1",
+        {"environment_id": env.id, "old_mode": old_mode, "new_mode": env.mode},
+        environment_id=env.id,
+        resource_ref=env.id,
+    )
+    session.commit()
+    session.refresh(env)
+    return env
 
 
 @router.post("/api/v1/environments/{environment_id}/edge-enrollment", response_model=EnrollmentOut)

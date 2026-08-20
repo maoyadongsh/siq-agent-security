@@ -229,13 +229,20 @@ class OpenShellCliBackend(EnforcementAdapter):
 
     def _subprocess_runner(self, args: list[str]) -> tuple[int, str, str]:
         cmd = self._build_command(args)
+        # B4 环境变量白名单加固：过滤宿主敏感凭据，仅透传基础环境变量与显式配置
+        safe_keys = {"PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "USER", "TERM"}
+        clean_env = {
+            k: v for k, v in os.environ.items()
+            if k in safe_keys or k.startswith("SIQ_AS_") or k.startswith("OPENSHELL_")
+        }
+        clean_env.setdefault("PATH", os.environ.get("PATH", "/usr/bin:/bin"))
         try:
             proc = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
                 timeout=30,
-                env={**os.environ, "PATH": os.environ.get("PATH", "")},
+                env=clean_env,
             )
         except subprocess.TimeoutExpired as exc:
             raise AdapterError(f"openshell CLI 超时（fail-closed）: {exc}") from exc

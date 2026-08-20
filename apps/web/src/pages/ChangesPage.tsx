@@ -61,7 +61,17 @@ export default function ChangesPage() {
         setActionError('没有可用环境');
         return;
       }
-      await api.createDeployment(cr.id, envId, deployTarget || 'siq-as-live');
+      let bindingId = deployTarget?.trim();
+      if (!bindingId) {
+        const bindings = await api.listRuntimeBindings();
+        const activeBinding = bindings.find((b) => b.status === 'active' && b.environment_id === envId) || bindings.find((b) => b.status === 'active');
+        if (!activeBinding) {
+          setActionError('未找到可用的运行时绑定（Runtime Binding），请先登记绑定');
+          return;
+        }
+        bindingId = activeBinding.id;
+      }
+      await api.createDeployment(cr.id, envId, bindingId);
       refresh();
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : '部署失败');
@@ -102,7 +112,7 @@ export default function ChangesPage() {
                 className="deploy-target"
                 value={deployTarget}
                 onChange={(e) => setDeployTarget(e.target.value)}
-                placeholder="沙箱名（siq-as-live）"
+                placeholder="绑定ID（留空自动选择）"
               />
               <button className="btn-sm btn-primary" onClick={() => deploy(r)} disabled={deployingId === r.id}>
                 {deployingId === r.id ? '部署中…' : '部署'}

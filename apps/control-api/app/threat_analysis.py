@@ -164,6 +164,23 @@ def _attr_chain(node: ast.expr) -> str:
     return ".".join(reversed(parts))
 
 
+_SECRET_PATTERNS = [
+    (re.compile(r"sk-[a-zA-Z0-9_\-]{8,}"), "sk-***"),
+    (re.compile(r"gh[pousr]_[a-zA-Z0-9]{20,}"), "gh_***"),
+    (re.compile(r"(?i)bearer\s+[a-zA-Z0-9_\-\.]{10,}"), "Bearer ***"),
+    (re.compile(r"(?i)password\s*=\s*['\"][^'\"]+['\"]"), "password=***"),
+    (re.compile(r"(?i)token\s*=\s*['\"][^'\"]+['\"]"), "token=***"),
+    (re.compile(r"(?i)secret\s*=\s*['\"][^'\"]+['\"]"), "secret=***"),
+]
+
+
+def _redact_excerpt(text: str) -> str:
+    sanitized = text
+    for pattern, repl in _SECRET_PATTERNS:
+        sanitized = pattern.sub(repl, sanitized)
+    return sanitized
+
+
 def _make_match(
     rule_id: str,
     severity: str,
@@ -174,7 +191,8 @@ def _make_match(
     line: int | None,
     excerpt_src: str,
 ) -> RuleMatch:
-    excerpt = excerpt_src[:_EXCERPT_MAX]
+    redacted = _redact_excerpt(excerpt_src)
+    excerpt = redacted[:_EXCERPT_MAX]
     return RuleMatch(
         rule_id=rule_id,
         severity=severity,
@@ -188,11 +206,25 @@ def _make_match(
     )
 
 
-def _python_ast_checks(text: str) -> list[RuleMatch]:
-    """os.system / subprocess+shell=True / ctypes 加载；语法错误静默跳过。"""
+def _python_ast_checks(text: str, is_python_hint: bool = False) -> list[RuleMatch]:
+    """os.system / subprocess+shell=True / ctypes 加载；语法错误显式告警（避免静默放行）。"""
     try:
         tree = ast.parse(text)
-    except (SyntaxError, ValueError):
+    except (SyntaxError, ValueError) as err:
+        if is_python_hint or _PY_MARKER.search(text):
+            lineno = getattr(err, "lineno", 1)
+            return [
+                _make_match(
+                    "threat-py-syntax-parse-failed",
+                    "medium",
+                    0.75,
+                    f"Python 语法解析失败 (行 {lineno}): 无法进行完整 AST 静态安全分析",
+                    "语法错误可能被用于逃避 AST 规则检测，需人工审阅源码",
+                    "修复脚本语法错误以启用完整 AST 分析",
+                    lineno,
+                    f"SyntaxError at line {lineno}",
+                )
+            ]
         return []
     found: dict[str, RuleMatch] = {}
 
@@ -285,9 +317,9 @@ def analyze(
                 )
                 break  # 每条规则只记录首个命中（定位用）
 
-    if detected == "python":
+    if detected == "python" or (filename and (filename.endswith(".py") or filename.endswith(".pyw"))):
         existing_ids = {m.rule_id for m in matches}
-        for m in _python_ast_checks(text):
+        for m in _python_ast_checks(text, is_python_hint=True):
             if m.rule_id not in existing_ids:
                 matches.append(m)
 

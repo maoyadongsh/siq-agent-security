@@ -521,10 +521,26 @@ export interface DeploymentRow {
   environment_id: string;
   change_request_id: string;
   target: string;
+  runtime_binding_id?: string | null;
   from_revision: string | null;
   to_revision: string;
   status: string;
   verification: Record<string, unknown> | null;
+}
+
+/** 运行时绑定行（对齐 RuntimeBindingOut） */
+export interface RuntimeBindingRow {
+  id: string;
+  tenant_id: string;
+  environment_id: string;
+  agent_instance_id: string;
+  asset_id: string;
+  backend: string;
+  backend_target_id: string;
+  attestation: Record<string, unknown>;
+  status: 'active' | 'revoked';
+  created_at: string;
+  revoked_at: string | null;
 }
 
 /** 总览统计（对齐 GET /api/v1/overview） */

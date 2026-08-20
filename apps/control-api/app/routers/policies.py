@@ -23,6 +23,7 @@ from app.models import (
     DesiredPolicy,
     EdgeTask,
     Environment,
+    QuarantineCase,
     RuntimeBinding,
     utcnow,
 )
@@ -401,6 +402,17 @@ def create_deployment(
         raise HTTPException(status_code=409, detail="binding_revoked")
     if binding.environment_id != body.environment_id:
         raise HTTPException(status_code=409, detail="binding_environment_mismatch")
+    # 隔离门禁：若目标资产当前处于隔离状态，禁止部署
+    quarantine = session.scalar(
+        select(QuarantineCase).where(
+            QuarantineCase.tenant_id == identity.tenant_id,
+            QuarantineCase.asset_id == binding.asset_id,
+            QuarantineCase.status == "quarantined",
+        )
+    )
+    if quarantine is not None:
+        raise HTTPException(status_code=409, detail="asset_under_quarantine")
+
     _ensure_binding_in_selector(session, identity.tenant_id, policy, binding)
     target = binding.backend_target_id  # 服务端解析， Deployment.target 与适配器调用统一使用
 

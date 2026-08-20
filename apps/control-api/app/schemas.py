@@ -29,6 +29,39 @@ class EnvironmentOut(BaseModel):
     last_heartbeat_at: datetime | None
 
 
+class EnvironmentModeUpdate(BaseModel):
+    model_config = StrictModelConfig
+
+    mode: str = Field(..., pattern="^(discovery|observe|recommend|enforce)$")
+    reason: str = Field(..., min_length=1, max_length=256)
+
+
+class AgentInstanceCreate(BaseModel):
+    model_config = StrictModelConfig
+
+    environment_id: str | None = Field(default=None, max_length=64)
+    runtime: str = Field(default="hermes", max_length=32)
+    version: str | None = Field(default=None, max_length=64)
+    artifact_digest: str | None = Field(default=None, max_length=128)
+    location: dict = Field(default_factory=dict)
+    status: str = Field(default="observed", max_length=16)
+
+
+class AgentInstanceOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    tenant_id: str
+    asset_id: str
+    environment_id: str | None
+    runtime: str
+    version: str | None
+    artifact_digest: str | None
+    location: dict
+    status: str
+    observed_at: datetime
+
+
 class EnrollmentCreate(BaseModel):
     """创建 Edge 一次性注册码。"""
 

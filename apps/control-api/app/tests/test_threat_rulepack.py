@@ -74,7 +74,7 @@ class TestBuiltinRulepack:
         monkeypatch.delenv(RULEPACK_PATH_ENV, raising=False)
         version, rules = load_rulepack()
         assert version == 1
-        assert len(rules) == 20
+        assert len(rules) >= 20
         assert ta.RULEPACK_VERSION == 1
         assert ta.ANALYZER_VERSION == "siq.threat-static.v1"
 

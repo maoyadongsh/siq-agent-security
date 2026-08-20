@@ -28,11 +28,12 @@ settings: Settings = load_settings()
 
 # 产品内置角色 → 权限点（设计文档 §19.2；SIQ 部署时向 SIQ IAM 注册对应权限点）
 ROLE_PERMISSIONS: dict[str, set[str]] = {
-    "tenant_admin": {"env:manage", "env:read", "user:assign", "role:manage"},
+    "tenant_admin": {"env:manage", "env:read", "user:assign", "role:manage", "quarantine:release"},
     "security_admin": {
         "policy:manage",
         "policy:read",
         "finding:manage",
+        "quarantine:release",
         "change:approve",
         "change:break_glass",
         "env:read",

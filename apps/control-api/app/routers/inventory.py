@@ -23,6 +23,8 @@ from app.models import AgentAsset, AgentInstance, EdgeTask, Environment, Evidenc
 from app.outbox import audit, emit_event
 from app.schemas import (
     AgentAssetOut,
+    AgentInstanceCreate,
+    AgentInstanceOut,
     CandidateConfirm,
     CandidateDismiss,
     EdgeBatchIn,
@@ -721,6 +723,37 @@ def confirm_candidate(
     asset.system_id = body.system_id or asset.system_id
     asset.owner_user_id = body.owner_user_id or asset.owner_user_id
     asset.confirmed_by = identity.actor_id
+
+    # R-1 修复：资产确认时自动创建默认 AgentInstance（若尚无实例）
+    existing_inst = session.scalar(
+        select(AgentInstance).where(
+            AgentInstance.asset_id == asset.id,
+            AgentInstance.tenant_id == identity.tenant_id,
+        )
+    )
+    if existing_inst is None:
+        env_id = None
+        if asset.evidence_ids:
+            ev_obj = session.scalar(
+                select(Evidence).where(
+                    Evidence.tenant_id == identity.tenant_id,
+                    Evidence.evidence_id.in_(asset.evidence_ids),
+                    Evidence.environment_id.isnot(None),
+                ).limit(1)
+            )
+            if ev_obj:
+                env_id = ev_obj.environment_id
+        inst = AgentInstance(
+            tenant_id=identity.tenant_id,
+            asset_id=asset.id,
+            environment_id=env_id,
+            runtime=asset.framework if asset.framework and asset.framework != "unknown" else "hermes",
+            artifact_digest=asset.artifact_digest,
+            location={"source_type": asset.source_type, "source_locator": asset.source_locator},
+            status="observed",
+        )
+        session.add(inst)
+
     audit(
         session,
         identity.tenant_id,
@@ -883,6 +916,83 @@ def get_agent_evidence(
             .limit(200)
         )
     )
+
+
+@router.get("/api/v1/assets/{asset_id}/instances", response_model=list[AgentInstanceOut])
+@router.get("/api/v1/agents/{asset_id}/instances", response_model=list[AgentInstanceOut])
+def list_asset_instances(
+    asset_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """查询资产运行实例列表（支持 /assets/ 与 /agents/ 路径别名）。"""
+    asset = _asset_or_404(session, identity.tenant_id, asset_id)
+    ensure_permission(identity, "agent:read")
+    return list(
+        session.scalars(
+            select(AgentInstance)
+            .where(
+                AgentInstance.tenant_id == identity.tenant_id,
+                AgentInstance.asset_id == asset.id,
+            )
+            .order_by(AgentInstance.observed_at.desc(), AgentInstance.id)
+        )
+    )
+
+
+@router.post("/api/v1/assets/{asset_id}/instances", response_model=AgentInstanceOut, status_code=201)
+@router.post("/api/v1/agents/{asset_id}/instances", response_model=AgentInstanceOut, status_code=201)
+def create_asset_instance(
+    asset_id: str,
+    body: AgentInstanceCreate,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    """显式登记资产运行实例（支持 /assets/ 与 /agents/ 路径别名）。"""
+    asset = _asset_or_404(session, identity.tenant_id, asset_id)
+    ensure_permission(identity, "policy:manage")
+    if body.environment_id:
+        env = session.scalar(
+            select(Environment).where(
+                Environment.id == body.environment_id,
+                Environment.tenant_id == identity.tenant_id,
+            )
+        )
+        if env is None:
+            raise HTTPException(status_code=422, detail="invalid_environment_ref")
+
+    inst = AgentInstance(
+        tenant_id=identity.tenant_id,
+        asset_id=asset.id,
+        environment_id=body.environment_id,
+        runtime=body.runtime,
+        version=body.version,
+        artifact_digest=body.artifact_digest or asset.artifact_digest,
+        location=body.location,
+        status=body.status,
+    )
+    session.add(inst)
+    audit(
+        session,
+        identity.tenant_id,
+        identity.identity_type,
+        identity.actor_id,
+        "agent.instance.create",
+        "agent_instance",
+        resource_id=inst.id,
+        summary={"asset_id": asset.id, "runtime": inst.runtime, "environment_id": inst.environment_id},
+    )
+    emit_event(
+        session,
+        identity.tenant_id,
+        "agent.instance.created.v1",
+        {"agent_instance_id": inst.id, "asset_id": asset.id, "runtime": inst.runtime},
+        environment_id=inst.environment_id,
+        resource_ref=inst.id,
+    )
+    session.commit()
+    session.refresh(inst)
+    return inst
 
 
 @router.get("/api/v1/agents/{asset_id}/policies")

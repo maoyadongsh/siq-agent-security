@@ -310,13 +310,16 @@ func showUnit(ctx context.Context, unit string) (unitProps, error) {
 	return props, nil
 }
 
-// 已知智能体框架 unit 名称关键词 → framework（高置信启发式）
-var knownFrameworks = map[string]string{
-	"hermes":    "hermes",
-	"openclaw":  "openclaw",
-	"piagent":   "pi",
-	"workbuddy": "workbuddy",
-	"dify":      "dify",
+// 已知智能体框架 unit 名称关键词 → framework（高置信启发式，有序切片防迭代随机）
+var knownFrameworks = []struct {
+	keyword   string
+	framework string
+}{
+	{"hermes", "hermes"},
+	{"openclaw", "openclaw"},
+	{"piagent", "pi"},
+	{"workbuddy", "workbuddy"},
+	{"dify", "dify"},
 }
 
 // 通用智能体运行时信号词（只提示候选，不猜测 framework）
@@ -333,9 +336,9 @@ type unitClassification struct {
 // classifyName 按 unit 名称初筛：框架关键词 → 通用信号；无信号不是候选。
 func classifyName(name string) unitClassification {
 	h := strings.ToLower(name)
-	for keyword, fw := range knownFrameworks {
-		if strings.Contains(h, keyword) {
-			return unitClassification{candidate: true, framework: fw, confidence: 0.8, basis: "unit_keyword"}
+	for _, kf := range knownFrameworks {
+		if strings.Contains(h, kf.keyword) {
+			return unitClassification{candidate: true, framework: kf.framework, confidence: 0.8, basis: "unit_keyword"}
 		}
 	}
 	for _, signal := range agentSignals {
@@ -351,10 +354,10 @@ func classifyName(name string) unitClassification {
 // 路径无任何智能体信号时判定为误报，剔除候选。
 func reconfirm(cls unitClassification, head string) unitClassification {
 	h := strings.ToLower(head)
-	for keyword, fw := range knownFrameworks {
-		if strings.Contains(h, keyword) {
+	for _, kf := range knownFrameworks {
+		if strings.Contains(h, kf.keyword) {
 			cls.candidate = true
-			cls.framework = fw
+			cls.framework = kf.framework
 			cls.confidence = 0.8
 			return cls
 		}

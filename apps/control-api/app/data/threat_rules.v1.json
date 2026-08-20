@@ -222,6 +222,50 @@
         "<\\|im_start\\|>|<\\|im_end\\|>|<\\|endoftext\\|>|<<SYS>>|\\[INST\\]",
         "(?i)\\bDAN\\b\\s*(?:mode|prompt|jailbreak)|do\\s+anything\\s+now|jailbreak\\s+(?:prompt|mode|attack)"
       ]
+    },
+    {
+      "rule_id": "threat-py-os-system-regex",
+      "severity": "high",
+      "confidence": 0.9,
+      "description": "文本规则：调用 os.system/os.popen 执行系统命令",
+      "impact": "直接系统命令执行，易发生命令注入",
+      "remediation": "改用 subprocess 参数列表形式并固定命令",
+      "patterns": [
+        "\\b(?:os\\.(?:system|popen))\\s*\\("
+      ]
+    },
+    {
+      "rule_id": "threat-py-subprocess-shell-regex",
+      "severity": "high",
+      "confidence": 0.85,
+      "description": "文本规则：调用 subprocess 且启用 shell=True",
+      "impact": "shell=True 拼接命令存在注入风险",
+      "remediation": "移除 shell=True，改用参数数组",
+      "patterns": [
+        "\\bsubprocess\\.(?:run|Popen|call|check_output|check_call)\\s*\\([^)]*shell\\s*=\\s*True"
+      ]
+    },
+    {
+      "rule_id": "threat-py-ctypes-regex",
+      "severity": "medium",
+      "confidence": 0.8,
+      "description": "文本规则：通过 ctypes 动态加载本地动态链接库",
+      "impact": "可能加载未授权或恶意的本地共享库",
+      "remediation": "审计加载库路径，禁止加载不可信动态库",
+      "patterns": [
+        "\\b(?:ctypes\\.(?:CDLL|WinDLL|OleDLL)|LoadLibrary)\\s*\\("
+      ]
+    },
+    {
+      "rule_id": "threat-py-dangerous-import",
+      "severity": "high",
+      "confidence": 0.9,
+      "description": "文本规则：通过 __import__ 动态引入高危模块",
+      "impact": "规避常规静态 import 检查执行高危操作",
+      "remediation": "显式静态导入，禁止动态执行不可信模块",
+      "patterns": [
+        "\\b__import__\\s*\\(\\s*['\\\"](?:os|subprocess|pty|socket)['\\\"]\\s*\\)"
+      ]
     }
   ]
 }

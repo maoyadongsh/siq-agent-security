@@ -22,6 +22,7 @@ import type {
   PolicyRow,
   ChangeRequestRow,
   DeploymentRow,
+  RuntimeBindingRow,
   OverviewStats,
   ApiEnvelope,
 } from './types';
@@ -320,12 +321,24 @@ export const api = {
   approveChangeRequest: (id: string) => post<ChangeRequestRow>(`/change-requests/${id}/approve`, {}),
   rejectChangeRequest: (id: string) => post<ChangeRequestRow>(`/change-requests/${id}/reject`, {}),
   listDeployments: (query: RequestOptions['query'] = {}) => get<DeploymentRow[]>('/deployments', { query }),
-  createDeployment: (changeRequestId: string, environmentId: string, target: string) =>
+  createDeployment: (changeRequestId: string, environmentId: string, bindingId: string) =>
     post<DeploymentRow>('/deployments', {
       change_request_id: changeRequestId,
       environment_id: environmentId,
-      target,
+      binding_id: bindingId,
     }),
+  /** 运行时绑定管理 */
+  listRuntimeBindings: (query: RequestOptions['query'] = {}) =>
+    get<RuntimeBindingRow[]>('/runtime-bindings', { query }),
+  createRuntimeBinding: (body: {
+    environment_id: string;
+    agent_instance_id: string;
+    backend: string;
+    backend_target_id: string;
+    attestation?: Record<string, unknown>;
+  }) => post<RuntimeBindingRow>('/runtime-bindings', body),
+  revokeRuntimeBinding: (bindingId: string, reason: string) =>
+    post<RuntimeBindingRow>(`/runtime-bindings/${bindingId}/revoke`, { reason }),
   /** 风险中心（可按 severity / status_filter / asset_id 过滤） */
   listFindings: (query: RequestOptions['query'] = {}) => get<Finding[]>('/findings', { query }),
   /** 确认风险（状态 open → acknowledged，绑定 owner） */
