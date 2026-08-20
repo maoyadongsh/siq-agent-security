@@ -147,6 +147,20 @@ func TestValidateScopeRejectsRoot(t *testing.T) {
 	}
 }
 
+func TestValidateScopeOpValidFlagMatchesErrors(t *testing.T) {
+	// 回归：validateScopeOp 曾恒返回 Valid=true，即便 Errors 非空（bug）。
+	// Valid 必须与 Errors 是否为空保持一致，否则调用方可能忽略 Errors 误判为合法范围。
+	if res := validateScopeOp(nil); res.Valid || len(res.Errors) == 0 {
+		t.Fatalf("empty scope must report Valid=false with errors: %+v", res)
+	}
+	if res := validateScopeOp(&protocol.Scope{Roots: []string{"/"}}); res.Valid || len(res.Errors) == 0 {
+		t.Fatalf("root path must report Valid=false with errors: %+v", res)
+	}
+	if res := validateScopeOp(&protocol.Scope{Roots: []string{t.TempDir()}}); !res.Valid || len(res.Errors) != 0 {
+		t.Fatalf("legitimate scope must report Valid=true with no errors: %+v", res)
+	}
+}
+
 func TestPlanScanRejectsEmptyScope(t *testing.T) {
 	if _, err := planScanOp(planScanParams{}); err == nil {
 		t.Fatal("empty scope plan accepted")

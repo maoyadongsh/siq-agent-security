@@ -201,8 +201,18 @@ func planScanOp(p planScanParams) protocol.ScanPlan {
 	return protocol.ScanPlan{Scope: p.Scope, Cursor: p.Cursor, Limits: protocol.CollectLimits{MaxFiles: 100}}
 }
 
-// collectOp 枚举全部 service unit，按名称关键词初筛后对命中 unit 取详情并
-// 用 exec 路径再确认，每个存活候选产出一个 candidate + 一条 evidence。
+// collectOp 枚举全部 service unit：对每一个 unit 都取详情
+// （Id/Description/ActiveState/ExecStart），综合「unit 名称关键词」与
+// 「ExecStart 可执行路径」两个信号源判定候选与框架。
+//
+// 修复结构性漏报：旧实现先按名称关键词初筛，只有初筛命中的 unit 才会再取
+// ExecStart 详情做二次确认——意味着一个自定义/改名、名称不含任何智能体
+// 关键词的 unit（如 unit 名为 backend.service，但 ExecStart 实际启动
+// /opt/hermes/bin/hermes）永远不会被再看一眼，是漏报盲区。现在对全部 unit
+// 都取详情并综合两个信号源判定，ExecStart 命中同样可以独立产出候选，不再
+// 要求名称初筛先通过。
+//
+// 每个存活候选产出一个 candidate + 一条 evidence。
 func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	if _, err := lookPath("systemctl"); err != nil {
 		return protocol.EvidenceBatch{}, errSystemctlMissing
@@ -227,22 +237,24 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	var ids []string
 
 	for _, unit := range units {
-		cls := classifyName(unit)
-		if !cls.candidate {
-			continue // 无智能体信号的 unit 不产生候选噪音
-		}
 		if int64(len(ids)) >= limits.MaxFiles {
 			batch.Truncated = true
 			break
 		}
+		if ctx.Err() != nil {
+			// 上下文超时：剩余 unit 未及取详情核实，显式截断而非静默漏报
+			batch.Truncated = true
+			break
+		}
+		nameCls := classifyName(unit)
 		props, err := showUnit(ctx, unit)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "systemd: show %s: %v\n", unit, err)
 			continue
 		}
-		cls = reconfirm(cls, execHead(props.ExecStart))
+		cls := reconfirm(nameCls, execHead(props.ExecStart))
 		if !cls.candidate {
-			continue // 再确认失败：名称泛信号但 exec 路径无任何智能体信号
+			continue // 名称与 ExecStart 均无任何智能体信号
 		}
 		cand, ev := buildObjects(unit, props, cls, now, red)
 		batch.Candidates = append(batch.Candidates, cand)
@@ -349,25 +361,43 @@ func classifyName(name string) unitClassification {
 	return unitClassification{candidate: false}
 }
 
-// reconfirm 用 ExecStart 的可执行路径（首个参数之前的部分）再确认初筛结果：
-// exec 路径命中框架关键词可升级/补足框架识别；名称仅命中通用信号且 exec
-// 路径无任何智能体信号时判定为误报，剔除候选。
+// reconfirm 综合名称初筛结果与 ExecStart 可执行路径（首个参数之前的部分）
+// 判定最终分类：
+//   - exec 路径命中已知框架关键词：无论名称初筛是否已判定候选，都采信该
+//     框架（basis 补记为 exec_path，除非名称已给出同样的具体框架归属）；
+//   - 名称已命中具体框架（非 unknown）且 exec 无反驳信号：保留名称分类，
+//     名称证据已足够强；
+//   - 除此之外（名称未命中 / 名称仅通用信号）：exec 路径命中通用信号词
+//     同样可判定为候选——这是修复结构性漏报的关键分支：旧版用
+//     `cls.framework != "unknown"` 短路判断，对「名称未初筛通过」的零值
+//     状态（framework=""）误判为"已有强证据"而提前返回，导致 exec 路径的
+//     通用信号永远不会被检查；
+//   - 名称与 exec 均无信号：判定非候选。
 func reconfirm(cls unitClassification, head string) unitClassification {
 	h := strings.ToLower(head)
 	for _, kf := range knownFrameworks {
 		if strings.Contains(h, kf.keyword) {
+			// 名称已独立命中同一具体框架时，exec 只是重复确认，basis 仍归功于
+			// 名称初筛；否则这个框架归属是 exec 路径给出的新信息。
+			confirmsName := cls.candidate && cls.framework == kf.framework
 			cls.candidate = true
 			cls.framework = kf.framework
 			cls.confidence = 0.8
+			if !confirmsName {
+				cls.basis = "exec_path"
+			}
 			return cls
 		}
 	}
-	if cls.framework != "unknown" {
-		return cls // 名称框架命中已足够强
+	if cls.candidate && cls.framework != "unknown" {
+		return cls // 名称已命中具体框架，证据已足够强
 	}
 	for _, signal := range agentSignals {
 		if strings.Contains(h, signal) {
-			return cls // 通用信号再确认通过
+			if cls.candidate {
+				return cls // 名称通用信号 + exec 通用信号，再确认通过
+			}
+			return unitClassification{candidate: true, framework: "unknown", confidence: 0.6, basis: "exec_path"}
 		}
 	}
 	return unitClassification{candidate: false}

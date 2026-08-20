@@ -17,6 +17,8 @@ build/
 # 运行时与本地状态（禁止提交）
 .env
 dev.db
+dev_preview.db
+*.db-journal
 *.sqlite3
 *.sqlite
 state.json
@@ -27,6 +29,17 @@ signing-key.seed
 # Go
 *.test
 *.out
+
+# connectors/<name>/<name> 是 `go build ./...`（不带 -o）在该目录下的默认产物
+# ——本地起 Go 工具链跑 vet/test 时容易顺手生成，不应提交（与已跟踪的预置
+# 二进制区分：已跟踪的走 git rm 显式移除，这里只挡住新产生的同名可执行文件）
+connectors/dify/dify
+connectors/kubernetes/kubernetes
+connectors/mcp/mcp
+connectors/piagent/piagent
+connectors/process/process
+connectors/systemd/systemd
+connectors/workbuddy/workbuddy
 
 # 编辑器与系统
 .idea/

@@ -1,0 +1,20 @@
+{
+  "schema_version": "siq.threat.baseline.report.v1",
+  "analyzer": "app.threat_analysis.analyze",
+  "malicious_total": 25,
+  "benign_total": 12,
+  "known_fp_total": 1,
+  "recall_overall": 1.0,
+  "recall_by_category": {
+    "credential-access": 1.0,
+    "download-exec": 1.0,
+    "network": 1.0,
+    "obfuscation": 1.0,
+    "persistence": 1.0,
+    "prompt-injection": 1.0,
+    "python-dangerous": 1.0
+  },
+  "surprise_false_positive_rate": 0.0,
+  "known_false_positive_recall": 1.0,
+  "gap_note": "语料为逐规则构造样本，量化的是'规则能否在更接近真实文件的上下文中稳定命中'，不是野外恶意样本的统计分布；已知限制（如 threat-net-hardcoded-c2 对 socket.bind 的过泛匹配）单独统计，不计入 surprise_false_positive_rate。"
+}

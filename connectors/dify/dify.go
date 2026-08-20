@@ -179,7 +179,8 @@ func capabilities() protocol.ConnectorCapabilities {
 }
 
 func validateScopeOp(scope *protocol.Scope) protocol.ValidationResult {
-	return protocol.ValidationResult{Valid: true, Errors: validateScope(scope)}
+	errs := validateScope(scope)
+	return protocol.ValidationResult{Valid: len(errs) == 0, Errors: errs}
 }
 
 func validateScope(scope *protocol.Scope) []string {

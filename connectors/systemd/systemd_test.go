@@ -144,25 +144,40 @@ func TestReconfirmTable(t *testing.T) {
 		head      string
 		candidate bool
 		framework string
+		basis     string
 	}{
 		{"generic name + signal in exec path keeps candidate",
 			unitClassification{candidate: true, framework: "unknown", confidence: 0.6, basis: "unit_keyword"},
-			"/usr/local/bin/mcp-gateway", true, "unknown"},
+			"/usr/local/bin/mcp-gateway", true, "unknown", "unit_keyword"},
 		{"generic name + no signal in exec path drops candidate",
 			unitClassification{candidate: true, framework: "unknown", confidence: 0.6, basis: "unit_keyword"},
-			"/usr/bin/rsync", false, ""},
+			"/usr/bin/rsync", false, "", ""},
 		{"framework name survives plain exec path",
 			unitClassification{candidate: true, framework: "dify", confidence: 0.8, basis: "unit_keyword"},
-			"/usr/bin/python3", true, "dify"},
+			"/usr/bin/python3", true, "dify", "unit_keyword"},
 		{"exec path framework keyword upgrades generic hit",
 			unitClassification{candidate: true, framework: "unknown", confidence: 0.6, basis: "unit_keyword"},
-			"/opt/hermes/bin/hermes", true, "hermes"},
+			"/opt/hermes/bin/hermes", true, "hermes", "exec_path"},
+		// 回归：名称初筛未命中任何信号（candidate=false，framework 零值 ""）时，
+		// exec 路径仍必须能独立判定候选——这是结构性漏报的核心场景。
+		{"no name signal + exec path matches known framework",
+			unitClassification{candidate: false},
+			"/opt/hermes/bin/hermes", true, "hermes", "exec_path"},
+		{"no name signal + exec path matches generic signal",
+			unitClassification{candidate: false},
+			"/usr/local/bin/myagent", true, "unknown", "exec_path"},
+		{"no name signal + no exec signal stays non-candidate",
+			unitClassification{candidate: false},
+			"/usr/bin/rsync", false, "", ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			got := reconfirm(tc.cls, tc.head)
 			if got.candidate != tc.candidate || (tc.candidate && got.framework != tc.framework) {
 				t.Fatalf("reconfirm(%+v, %q) = %+v", tc.cls, tc.head, got)
+			}
+			if tc.candidate && got.basis != tc.basis {
+				t.Fatalf("reconfirm(%+v, %q) basis = %q, want %q", tc.cls, tc.head, got.basis, tc.basis)
 			}
 		})
 	}
@@ -215,6 +230,46 @@ func TestCollectIgnoresNonAgentUnits(t *testing.T) {
 	// 名称泛信号 + exec 无信号 → 再确认剔除
 	if candidateByID(batch, "systemd:backupagent.service") != nil {
 		t.Fatal("backupagent.service (rsync exec) must be dropped by reconfirm")
+	}
+}
+
+func TestCollectDiscoversRenamedUnitViaExecStart(t *testing.T) {
+	// 结构性漏报回归：unit 名称本身不含任何智能体关键词（如运维改名为
+	// backend.service），但 ExecStart 实际启动的是已知框架二进制——修复前
+	// 这类 unit 会在名称初筛阶段被直接跳过，永远不会被发现。
+	units := "backend.service enabled enabled\ncustom-worker.service enabled enabled\nplain-cron.service enabled enabled\n"
+	shows := map[string]string{
+		"backend.service": showFixture("backend.service", "Backend process", "active",
+			"{ path=/opt/hermes/bin/hermes ; argv[]=/opt/hermes/bin/hermes serve ; ignore_errors=no ; pid=0 ; code=(null) ; status=0/0 }"),
+		"custom-worker.service": showFixture("custom-worker.service", "Custom worker", "active",
+			"{ path=/usr/local/bin/myagent ; argv[]=/usr/local/bin/myagent run ; ignore_errors=no ; pid=0 ; code=(null) ; status=0/0 }"),
+		"plain-cron.service": showFixture("plain-cron.service", "Plain cron job", "active",
+			"{ path=/usr/bin/rsync ; argv[]=/usr/bin/rsync -a /data /backup ; ignore_errors=no ; pid=0 ; code=(null) ; status=0/0 }"),
+	}
+	withFakes(t, fakeRunner(units, shows))
+	batch, err := collectOp(protocol.ScanPlan{})
+	if err != nil {
+		t.Fatalf("collectOp: %v", err)
+	}
+
+	hermes := candidateByID(batch, "systemd:backend.service")
+	if hermes == nil {
+		t.Fatal("backend.service running hermes via ExecStart must be discovered despite non-matching unit name")
+	}
+	if hermes.Framework != "hermes" || hermes.Attributes["discovery_basis"] != "exec_path" {
+		t.Fatalf("backend.service must be attributed to hermes via exec_path: %+v", hermes)
+	}
+
+	generic := candidateByID(batch, "systemd:custom-worker.service")
+	if generic == nil {
+		t.Fatal("custom-worker.service running a generic agent binary must be discovered via ExecStart")
+	}
+	if generic.Framework != "unknown" || generic.Confidence != 0.6 || generic.Attributes["discovery_basis"] != "exec_path" {
+		t.Fatalf("custom-worker.service classification: %+v", generic)
+	}
+
+	if candidateByID(batch, "systemd:plain-cron.service") != nil {
+		t.Fatal("plain-cron.service (rsync, no signal anywhere) must not become a candidate")
 	}
 }
 

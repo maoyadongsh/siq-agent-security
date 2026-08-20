@@ -33,7 +33,44 @@ router = APIRouter(tags=["threat"])
 # 解码后内容上限 1 MiB：防内存放大与超大样本拖垮请求
 MAX_CONTENT_BYTES = 1024 * 1024
 
+# 同一 open Finding 重复扫描命中同一规则时，matches 保留的历史命中条数上限
+# （B-1）：旧实现 `existing.matches = [record]` 直接整列覆盖，每次重扫都会
+# 丢弃此前的命中记录——取证与"这条规则到底稳定命中过几次/最早何时开始"的
+# 时间线全部丢失。改为追加并保留最近 N 条，兼顾取证连续性与行大小上界。
+MAX_MATCH_HISTORY = 20
+
 _SEVERE = ("critical", "high")
+
+# 自动隔离置信度门槛（R-8）：critical/high 命中还不足以直接触发自动隔离，
+# 必须同时达到该置信度才会联动隔离 + 吊销 RuntimeBinding + 阻断后续部署
+# （见 routers/policies.py 的 QuarantineCase 部署门禁）。
+#
+# 背景：隔离是一次性的强干预动作，一旦触发就会拦掉该 asset 之后的所有部署，
+# 必须人工 release 才能恢复；而当前规则包中恰好存在置信度明显偏低（0.8）
+# 且规则本身泛匹配面很宽的高危规则，例如 threat-net-hardcoded-c2 的
+# `("IP", port)` 元组正则——这也是任何普通 socket 绑定代码
+# （如 `sock.bind(("0.0.0.0", 8080))`）的合法写法，并非硬编码 C2 特有语法。
+# 单条这类误报就会真的拦掉生产部署，风险与收益不成比例。
+#
+# 0.85 门槛精确排除了这一类低置信度规则，同时不影响任何其他 critical/high
+# 规则（credential 窃取、持久化、反弹 shell、混淆执行、prompt injection 等
+# 均 ≥ 0.85）——命中依然会记为 Finding 供人工复核，只是不再自动触发隔离。
+AUTO_QUARANTINE_MIN_CONFIDENCE = 0.85
+
+
+def _ensure_scan_permission(identity: Identity, asset: AgentAsset) -> None:
+    """扫描权限（R-4b）：finding:scan（security_admin）保留租户级全量扫描能力，
+    这是集中式安全团队管理全租户风险面所需的既定设计，不因本次改动收窄；
+    在此之上新增一条范围更小的自服务通道——持有 agent:confirm（agent_owner）
+    且确为该 asset 的 owner_user_id 本人，可以自行扫描自己名下的资产，无需
+    被授予租户级 finding:scan（最小权限：owner 不该拿到能扫全租户资产的权限）。
+    两者均不满足则 403（对象已在调用处先做过跨租户 404 判定）。
+    """
+    if identity.has_permission("finding:scan"):
+        return
+    if identity.has_permission("agent:confirm") and asset.owner_user_id == identity.actor_id:
+        return
+    raise HTTPException(status_code=403, detail="forbidden")
 
 
 @router.post("/api/v1/assets/{asset_id}/threat-scan", response_model=ThreatScanOut)
@@ -49,7 +86,14 @@ def threat_scan(
     )
     if asset is None:
         raise HTTPException(status_code=404, detail="not_found")
-    ensure_permission(identity, "finding:manage")
+    # R-4b：扫描入口独立权限点 finding:scan，与 finding:manage（Finding 生命
+    # 周期管理：acknowledge/resolve/accept-risk）分离，对齐已修复的释放侧
+    # SoD（quarantine:release 独立于 finding:manage）。触发扫描是会带来强
+    # 副作用的高风险动作（可联动自动隔离 + 吊销 RuntimeBinding + 阻断部署），
+    # 不应与"处理既有 Finding"这类日常分诊操作共用同一权限点。此外允许
+    # asset owner 在不持有租户级 finding:scan 时自扫自己名下资产（见
+    # _ensure_scan_permission），覆盖"个人开发者自查自己接的 Agent"场景。
+    _ensure_scan_permission(identity, asset)
 
     if body.encoding == "base64":
         try:
@@ -100,7 +144,9 @@ def threat_scan(
         )
         if existing is not None:
             existing.last_seen_at = now
-            existing.matches = [record]
+            # B-1：追加而非整列覆盖，保留最近 MAX_MATCH_HISTORY 条命中历史
+            # （重新赋值新列表对象，确保 SQLAlchemy JSON 字段变更被正确跟踪）
+            existing.matches = [*(existing.matches or []), record][-MAX_MATCH_HISTORY:]
             existing.confidence = match.confidence
             existing.analyzer_version = ANALYZER_VERSION
             if body.evidence_ids:
@@ -143,7 +189,8 @@ def threat_scan(
 
     rule_ids = [m.rule_id for m in result.matches]
 
-    # 任一 critical/high 命中且该 asset 无 quarantined 隔离单 → 创建隔离
+    # 任一 critical/high 且置信度达标的命中，且该 asset 无 quarantined 隔离单
+    # → 创建隔离（R-8：加置信度门槛，避免单条低置信度规则误伤生产部署）
     quarantine: QuarantineCase | None = session.scalar(
         select(QuarantineCase).where(
             QuarantineCase.tenant_id == identity.tenant_id,
@@ -151,15 +198,20 @@ def threat_scan(
             QuarantineCase.status == "quarantined",
         )
     )
-    if any(m.severity in _SEVERE for m in result.matches) and quarantine is None:
-        severe_ids = {m.rule_id for m in result.matches if m.severity in _SEVERE}
+    auto_quarantine_matches = [
+        m
+        for m in result.matches
+        if m.severity in _SEVERE and m.confidence >= AUTO_QUARANTINE_MIN_CONFIDENCE
+    ]
+    if auto_quarantine_matches and quarantine is None:
+        severe_ids = sorted({m.rule_id for m in auto_quarantine_matches})
         trigger = next(f for f in findings if f.rule_id in severe_ids)
         quarantine = QuarantineCase(
             tenant_id=identity.tenant_id,
             asset_id=asset.id,
             finding_id=trigger.id,
             evidence_ids=list(body.evidence_ids),
-            reason=f"threat-scan hit rules: {', '.join(rule_ids)}",
+            reason=f"threat-scan auto-quarantine triggered by rules: {', '.join(severe_ids)}",
             status="quarantined",
             created_by=identity.actor_id,
             created_at=now,
@@ -195,7 +247,7 @@ def threat_scan(
             "quarantine.create",
             "quarantine_case",
             resource_id=quarantine.id,
-            summary={"asset_id": asset.id, "rule_ids": rule_ids},
+            summary={"asset_id": asset.id, "rule_ids": severe_ids},
         )
         emit_event(
             session,
@@ -205,7 +257,7 @@ def threat_scan(
                 "quarantine_case_id": quarantine.id,
                 "asset_id": asset.id,
                 "finding_id": trigger.id,
-                "rule_ids": rule_ids,
+                "rule_ids": severe_ids,
                 "content_sha256": result.sha256,
             },
             resource_ref=quarantine.id,

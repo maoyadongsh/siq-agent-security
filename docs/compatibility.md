@@ -56,14 +56,29 @@
 
 ## Connector 兼容
 
-| Connector | 状态 | 负向测试 |
-| --- | --- | --- |
-| hermes（Go） | 已实现（build/vet/test 全绿） | scope 校验/符号链接逃逸/.env 拒绝/截断 |
-| docker（Go） | 已实现（build/vet 通过，测试待补） | 环境变量值不出机（struct 无 Env 字段） |
-| directory（Go） | 已实现（build/vet/test 全绿） | 空范围拒绝（无默认范围）/符号链接逃逸/.env 永不读取/限额截断 |
-| openclaw（Go） | 已实现（L1/L2 只读，build/vet/test 全绿） | 发现 agents.list + declared model/workspace 权限事实；auth-profiles 永不读（只记大小）；不写 OpenClaw 配置 |
-| kubernetes | 待 Phase 4 | — |
-| siq | 待 Phase 1（依赖 Export Contract D3-D5） | — |
+> 下表为 2026-08-20 实测状态（`go vet ./...` + `go test ./...` 全量跑过一遍，11 个已交付
+> Connector 模块全绿；`connectors/siq` 尚未开工，不计入本表）。发现层级：应用级（读取该
+> 框架自己的配置文件/目录布局）vs 运行级（通过操作系统/容器运行时枚举正在跑的进程/容器/
+> pod/service unit）。
+
+| Connector | 发现层级 | 状态 | 负向测试要点 |
+| --- | --- | --- | --- |
+| hermes（Go） | 应用级 | 已实现（build/vet/test 全绿） | scope 校验/符号链接逃逸/.env 拒绝/截断 |
+| openclaw（Go） | 应用级 | 已实现（L1/L2 只读，build/vet/test 全绿） | 发现 agents.list + declared model/workspace 权限事实；auth-profiles 永不读（只记大小）；不写 OpenClaw 配置 |
+| directory（Go） | 应用级 | 已实现（build/vet/test 全绿） | 空范围拒绝（无默认范围）/符号链接逃逸/.env 永不读取/限额截断 |
+| dify（Go） | 应用级（docker-compose 清单） | 已实现（build/vet/test 全绿） | 空 scope 拒绝；符号链接逃逸跳过；compose 文件仅 dify 相关行参与 content_hash，其余（尤其 environment 段密钥）绝不出内容；字节预算截断显式化 |
+| piagent（Go） | 应用级（~/.piagent 目录） | 已实现（build/vet/test 全绿） | agents.json 只解码 id/name/model/workspace 白名单字段，apiKey/token 类字段不进结构体；.env/secrets/keys 目录只记 name+size 不读正文；符号链接逃逸跳过；字节预算耗尽即报错，不回退默认大小 |
+| workbuddy（Go） | 应用级（~/.workbuddy 目录） | 已实现（build/vet/test 全绿） | buddies.json 白名单字段解码（同 docker 的无 Env struct 思路）；config.yaml 永不读正文（只探测存在性）；符号链接逃逸跳过；字节预算/文件数上限截断显式化 |
+| mcp（Go） | 应用级（各 MCP 客户端众所周知配置） | 已实现（build/vet/test 全绿） | server 的 env 值绝不采集（只留 env_keys）；command/args 中与 env 值逐字相同的串替换为 `[REDACTED]`（防 `--token <值>` 夹带）；url 只保留 scheme://host；畸形 JSON 显式报错而非静默漏报 |
+| docker（Go） | 运行级（容器） | 已实现（build/vet/test 全绿） | 容器环境变量值不出机（inspect 解码 struct 无 Env 字段）；`siq.agent=true` 标签仅为高置信提示/纳管标记，无标签的影子智能体容器仍按镜像/命令启发式信号纳入候选 |
+| process（Go） | 运行级（主机进程） | 已实现（build/vet/test 全绿） | args 可能夹带 token：attributes 只保留 comm + 关键词 + args sha256 截断摘要，完整 args 绝不出进程；PID 不作为候选身份（用 comm+args 哈希）；`ps` 缺失/超预算均显式报错而非静默漏报 |
+| systemd（Go） | 运行级（service unit） | 已实现（build/vet/test 全绿） | unit 名称关键词初筛 + ExecStart 可执行路径再确认（避免改名规避初筛的结构性漏报）；ExecStart 完整命令行脱敏截断后才入 attributes；`systemctl` 缺失/超时显式报错 |
+| kubernetes（Go） | 运行级（集群 pod） | 已实现（build/vet/test 全绿；2026-08 修复 `NetworkAccess` 声明与超字节预算整批失败问题） | 容器 env 值不出机（解码 struct 无 env value 字段）；`siq.agent=true` 标签同样仅为提示而非前置条件；超字节预算走流式 JSON 解码优雅截断（`batch.Truncated`），不再整批失败 |
+| siq | — | 待 Phase 1（依赖跨仓 Export Contract D3-D5） | — |
+
+**已知遗留（诚实边界）**：
+- `threat-obf-base64-blob` 等基于 240+ 字符连续 base64 的启发式规则，理论上可被跨行拆分绕过——静态规则的固有局限，非本轮范围。
+- Connector 侧发现结果的最终风险研判仍由控制面 `app/threat_analysis.py` 静态规则引擎完成；Connector 自身只做证据采集与脱敏，不做风险判定。
 
 ## 版本兼容 CI（P2）
 

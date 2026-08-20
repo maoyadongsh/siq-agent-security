@@ -266,6 +266,35 @@
       "patterns": [
         "\\b__import__\\s*\\(\\s*['\\\"](?:os|subprocess|pty|socket)['\\\"]\\s*\\)"
       ]
+    },
+    {
+      "rule_id": "threat-cred-hardcoded-secret",
+      "severity": "high",
+      "confidence": 0.9,
+      "description": "内容中直接硬编码常见格式的密钥/令牌/私钥（API Key、AWS/GitHub/Slack 令牌、PEM 私钥块、JWT）",
+      "impact": "密钥随内容本身流转与落库，一旦扩散即可被直接用于冒用身份或横向访问，风险高于仅访问凭据文件路径",
+      "remediation": "改用密钥管理服务/环境变量注入；从内容中移除硬编码密钥并轮换该密钥",
+      "patterns": [
+        "\\bsk-[a-zA-Z0-9_\\-]{16,}",
+        "\\bgh[pousr]_[a-zA-Z0-9]{20,}",
+        "\\bAKIA[0-9A-Z]{16}\\b",
+        "\\bxox[baprs]-[0-9A-Za-z\\-]{10,}",
+        "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+        "\\beyJ[a-zA-Z0-9_\\-]{10,}\\.[a-zA-Z0-9_\\-]{10,}\\.[a-zA-Z0-9_\\-]{10,}\\b"
+      ]
     }
+  ],
+  "redaction_patterns": [
+    { "pattern": "sk-[a-zA-Z0-9_\\-]{8,}", "replacement": "sk-***" },
+    { "pattern": "gh[pousr]_[a-zA-Z0-9]{20,}", "replacement": "gh_***" },
+    { "pattern": "(?i)bearer\\s+[a-zA-Z0-9_\\-\\.]{10,}", "replacement": "Bearer ***" },
+    { "pattern": "(?i)password\\s*=\\s*['\\\"][^'\\\"]+['\\\"]", "replacement": "password=***" },
+    { "pattern": "(?i)token\\s*=\\s*['\\\"][^'\\\"]+['\\\"]", "replacement": "token=***" },
+    { "pattern": "(?i)secret\\s*=\\s*['\\\"][^'\\\"]+['\\\"]", "replacement": "secret=***" },
+    { "pattern": "(?i)aws_secret_access_key\\s*=\\s*['\\\"]?[A-Za-z0-9/+=]{20,}['\\\"]?", "replacement": "aws_secret_access_key=***" },
+    { "pattern": "\\bAKIA[0-9A-Z]{16}\\b", "replacement": "AKIA***" },
+    { "pattern": "\\bxox[baprs]-[0-9A-Za-z\\-]{10,}", "replacement": "xox***" },
+    { "pattern": "-----BEGIN [A-Z ]*PRIVATE KEY-----(?:[\\s\\S]*?-----END [A-Z ]*PRIVATE KEY-----)?", "replacement": "***PRIVATE KEY REDACTED***" },
+    { "pattern": "eyJ[a-zA-Z0-9_\\-]{10,}\\.[a-zA-Z0-9_\\-]{10,}\\.[a-zA-Z0-9_\\-]{10,}", "replacement": "***JWT-REDACTED***" }
   ]
 }

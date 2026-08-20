@@ -19,12 +19,18 @@
 //     计数/discovery_basis 等摘要；所有字符串经 protocol.Redactor 脱敏；
 //   - 每条 evidence 必须被同批 candidate 引用（contract §4）；
 //   - kubectl 缺失或执行失败显式报错（覆盖缺口），不得静默漏报；
-//   - kubectl 输出走严格字节预算（errBudgetExhausted → limit_exceeded）；
-//   - 不访问网络（network_access: false，kubectl 是本机 CLI 子进程）。
+//   - kubectl 输出走流式解码，字节预算耗尽时优雅截断（Truncated=true，
+//     保留已解出的完整 pod）而非整批失败——集群规模不应导致发现整体失能；
+//   - network_access: true。kubectl 是本机 CLI 子进程不假，但
+//     `kubectl get pods -A` 本身必然通过网络（TCP，常见于连接到独立于本机
+//     的 API Server/托管控制面）与 Kubernetes API Server 通信，这与
+//     systemd/docker 连接的本机 IPC/Unix socket 有本质区别；声明
+//     network_access=false 会误导依赖该字段做网络隔离判断的调用方。
 package main
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -170,18 +176,12 @@ func errToProtocol(err error) *protocol.ProtocolError {
 	case errors.Is(err, errKubectlMissing):
 		// kubectl 不在 PATH：能力缺失是显式覆盖缺口，unsupported 而非静默空批次
 		return &protocol.ProtocolError{Code: protocol.CodeUnsupported, Message: err.Error()}
-	case errors.Is(err, errBudgetExhausted):
-		// 字节预算耗尽：显式 limit_exceeded，禁止回退默认大小继续读
-		return &protocol.ProtocolError{Code: protocol.CodeLimitExceeded, Message: err.Error()}
 	default:
 		return &protocol.ProtocolError{Code: "internal_error", Message: err.Error()}
 	}
 }
 
-var (
-	errKubectlMissing  = errors.New("kubectl binary not found")
-	errBudgetExhausted = errors.New("byte budget exhausted")
-)
+var errKubectlMissing = errors.New("kubectl binary not found")
 
 func capabilities() protocol.ConnectorCapabilities {
 	return protocol.ConnectorCapabilities{
@@ -190,7 +190,9 @@ func capabilities() protocol.ConnectorCapabilities {
 		RequiredPermissions: []string{"exec:kubectl"},
 		DataCategories:      []string{"image_names", "container_names", "labels"},
 		MaxOutputBytes:      protocol.DefaultOutputLimitBytes,
-		NetworkAccess:       false,
+		// kubectl 子进程本身要连接 Kubernetes API Server（TCP），与本机 IPC
+		// 性质的 docker/systemd 连接不同，如实声明为 true（见文件头说明）。
+		NetworkAccess: true,
 	}
 }
 
@@ -214,7 +216,9 @@ func planScanOp(p planScanParams) protocol.ScanPlan {
 type runner interface {
 	// available 报告 kubectl 是否在 PATH。
 	available() bool
-	// getPods 执行 `kubectl get pods -A -o json`，输出严格限制在 maxBytes 内。
+	// getPods 执行 `kubectl get pods -A -o json`，最多读取 maxBytes+1 字节
+	// （防内存放大）；是否命中预算边界由调用方按返回长度与 maxBytes 的关系
+	// 判定，getPods 本身不对预算耗尽报错——由调用方决定优雅截断而非整批失败。
 	getPods(ctx context.Context, maxBytes int64) ([]byte, error)
 }
 
@@ -228,12 +232,11 @@ func (execRunner) available() bool {
 	return err == nil
 }
 
-// getPods 以严格预算读取 kubectl 输出：超过 maxBytes 即 errBudgetExhausted，
-// 不把不完整 JSON 交给下游解析（P1-6 预算语义显式化）。
+// getPods 读取 kubectl 输出，硬上限 maxBytes+1 字节防内存放大。
+// 若真实输出超出预算，读取会在边界处停止（不等于失败）：调用方通过流式
+// JSON 解码提取已完整读到的 pod 对象，整批不因集群规模过大而失能
+// （P1-6 预算语义显式化：截断是显式、可观测的降级，而非报错清零）。
 func (execRunner) getPods(ctx context.Context, maxBytes int64) ([]byte, error) {
-	if maxBytes <= 0 {
-		return nil, errBudgetExhausted
-	}
 	cmd := exec.CommandContext(ctx, "kubectl", "get", "pods", "-A", "-o", "json")
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -247,17 +250,24 @@ func (execRunner) getPods(ctx context.Context, maxBytes int64) ([]byte, error) {
 	if readErr != nil {
 		return nil, fmt.Errorf("kubectl get pods: read: %w", readErr)
 	}
-	if waitErr != nil {
+	truncated := int64(len(data)) > maxBytes
+	// 预算边界之外提前停止读取时，kubectl 进程常因管道未排空而以非零状态
+	// 退出（或被 opTimeout 终止）：这是截断的正常副作用而非真实故障，不
+	// 应上抛为错误；只有「未截断却仍执行失败」才是需要如实上报的真实故障。
+	if waitErr != nil && !truncated {
 		return nil, fmt.Errorf("kubectl get pods: %w", waitErr)
-	}
-	if int64(len(data)) > maxBytes {
-		return nil, errBudgetExhausted
 	}
 	return data, nil
 }
 
 // collectOp 枚举全集群 pod 的容器（含 initContainers），按 P1-4 策略分类并
 // 为每个候选容器产出 1 candidate + 1 evidence（每条 evidence 必被引用）。
+//
+// 预算耗尽处理：旧实现要求 kubectl 完整输出必须 ≤ MaxBytes，否则
+// errBudgetExhausted 导致整批采集失败（0 候选）——大集群/大量 pod 的
+// 正常场景反而会让发现能力完全失能。现在改为流式解码：读取严格限制在
+// MaxBytes+1 字节内，超出部分之前已完整解出的 pod 对象仍然参与分类产出
+// candidate，只将 batch.Truncated 置位，不整批报错。
 func collectOp(plan protocol.ScanPlan, r runner) (protocol.EvidenceBatch, error) {
 	if !r.available() {
 		return protocol.EvidenceBatch{}, errKubectlMissing
@@ -274,24 +284,37 @@ func collectOp(plan protocol.ScanPlan, r runner) (protocol.EvidenceBatch, error)
 
 	raw, err := r.getPods(ctx, limits.MaxBytes)
 	if err != nil {
-		// kubectl 不可达/权限不足/预算耗尽：错误如实上抛，形成显式覆盖缺口
+		// kubectl 不可达/权限不足：错误如实上抛，形成显式覆盖缺口
 		return protocol.EvidenceBatch{}, err
-	}
-	var list podList
-	if err := json.Unmarshal(raw, &list); err != nil {
-		return protocol.EvidenceBatch{}, fmt.Errorf("kubectl get pods: decode: %w", err)
 	}
 
 	batch := protocol.EvidenceBatch{
 		Candidates: []*protocol.Candidate{},
 		Evidence:   []*protocol.Evidence{},
 	}
+
+	// hitBudget 精确判定是否真的越界：getPods 最多读 MaxBytes+1 字节，
+	// 只有真实输出严格大于 MaxBytes 时读到的长度才会等于 MaxBytes+1。
+	hitBudget := int64(len(raw)) > limits.MaxBytes
+	items, decodeErr := decodePodItems(bytes.NewReader(raw))
+	if decodeErr != nil && !hitBudget {
+		// 未触及预算边界却仍解码失败：kubectl 输出本身畸形，真实错误
+		return protocol.EvidenceBatch{}, fmt.Errorf("kubectl get pods: decode: %w", decodeErr)
+	}
+	if hitBudget {
+		// 预算边界处的截断：已解出的完整 pod 照常参与下方分类，整批不失败。
+		// 注意：json.Decoder.More() 在数据于空白符处被截断时会静默返回
+		// false 而非报错，所以 Truncated 必须独立基于字节长度判定，不能
+		// 依赖 decodeErr 是否非 nil。
+		batch.Truncated = true
+	}
+
 	now := time.Now().UTC().Format(time.RFC3339)
 	red := protocol.NewRedactor()
 	var ids []string
 
 loop:
-	for _, p := range list.Items {
+	for _, p := range items {
 		for _, c := range allContainers(p) {
 			cls := classifyContainer(p.Metadata.Labels, c.spec)
 			if !cls.candidate {
@@ -313,13 +336,9 @@ loop:
 	return batch, nil
 }
 
-// podList / pod / containerSpec 是 `kubectl get pods -A -o json` 的解码投影。
-// 安全不变量：env 只声明 Name 字段——Value/valueFrom 刻意不声明，容器
-// 环境变量值绝不离开本进程（对齐 docker connector 对 Config.Env 的处理）。
-type podList struct {
-	Items []pod `json:"items"`
-}
-
+// pod / containerSpec 是 `kubectl get pods -A -o json` 中单个 pod 元素的
+// 解码投影。安全不变量：env 只声明 Name 字段——Value/valueFrom 刻意不声明，
+// 容器环境变量值绝不离开本进程（对齐 docker connector 对 Config.Env 的处理）。
 type pod struct {
 	Metadata struct {
 		Name      string            `json:"name"`
@@ -338,6 +357,58 @@ type containerSpec struct {
 	Env   []struct {
 		Name string `json:"name"` // 只取变量名；Value 字段刻意不存在
 	} `json:"env"`
+}
+
+// decodePodItems 流式解码 `kubectl get pods -o json` 的
+// `{"apiVersion":...,"items":[pod,...],"kind":"List",...}` 顶层结构：
+// 逐个 token 消费，只在遇到 "items" 键时逐个 Decode 数组元素，其余顶层字段
+// （apiVersion/kind/metadata 等）原样跳过，不关心其取值。
+//
+// 这样即便输入在某个 pod 对象中途被截断（字节预算耗尽/上游提前停止读取），
+// 之前已完整解码的 pod 依然正确返回；调用方结合 error 与是否命中预算边界
+// 判定这是「优雅截断」还是「真实的畸形 JSON」。
+func decodePodItems(r io.Reader) ([]pod, error) {
+	dec := json.NewDecoder(r)
+	tok, err := dec.Token()
+	if err != nil {
+		return nil, err
+	}
+	if d, ok := tok.(json.Delim); !ok || d != '{' {
+		return nil, fmt.Errorf("unexpected top-level JSON token %v", tok)
+	}
+	var items []pod
+	for dec.More() {
+		keyTok, err := dec.Token()
+		if err != nil {
+			return items, err
+		}
+		key, _ := keyTok.(string)
+		if key != "items" {
+			var skip json.RawMessage
+			if err := dec.Decode(&skip); err != nil {
+				return items, err
+			}
+			continue
+		}
+		arrTok, err := dec.Token()
+		if err != nil {
+			return items, err
+		}
+		if d, ok := arrTok.(json.Delim); !ok || d != '[' {
+			return items, fmt.Errorf("'items' field is not an array")
+		}
+		for dec.More() {
+			var p pod
+			if err := dec.Decode(&p); err != nil {
+				return items, err
+			}
+			items = append(items, p)
+		}
+		if _, err := dec.Token(); err != nil { // 消费收尾 ']'
+			return items, err
+		}
+	}
+	return items, nil
 }
 
 // containerRef 标记容器来源（常规容器 / initContainer）。

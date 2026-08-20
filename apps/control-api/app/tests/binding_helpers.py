@@ -8,7 +8,13 @@ from __future__ import annotations
 import uuid
 
 
-def make_instance(tenant_id: str, env_id: str, *, asset_name: str | None = None):
+def make_instance(
+    tenant_id: str,
+    env_id: str,
+    *,
+    asset_name: str | None = None,
+    owner_user_id: str | None = None,
+):
     """库内直插 confirmed 资产 + 实例，返回 (asset_id, instance_id)。"""
     from app.db import session_scope
     from app.models import AgentAsset, AgentInstance
@@ -18,6 +24,7 @@ def make_instance(tenant_id: str, env_id: str, *, asset_name: str | None = None)
             tenant_id=tenant_id,
             name=asset_name or f"asset-{uuid.uuid4().hex[:8]}",
             status="confirmed",
+            owner_user_id=owner_user_id,
         )
         session.add(asset)
         session.flush()

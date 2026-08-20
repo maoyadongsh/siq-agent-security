@@ -1,22 +1,22 @@
 # 第四轮评估：OpenShell 二次开发 + "扫描-发现-识别-检测-管控"闭环复核（2026-08-20 夜）
 
-- **评估对象**：`/home/maoyd/siq/siq-agent-security`，基线 HEAD `b80dd28`（另有 1 个未跟踪文件 `docs/agent-security-round3-20260820.md` 待决定是否入库）。
+- **评估对象**：`/home/maoyd/siq/siq-agent-security`，评估**开始时**基线 HEAD `b80dd28`（另有 1 个未跟踪文件 `docs/agent-security-round3-20260820.md`）；评估**过程中**代码持续演进，最终定稿时 HEAD 已推进到 `d0cfd6b`（详见文首补记与 §2.1）。
 - **与前三轮的关系**：本仓库当天已有三轮独立评估——`agent-security-audit-20260820-153735.md`（审计）、`agent-security-deep-assessment-20260820.md`（深度复核）、`agent-security-round3-20260820.md`（OpenShell 专项 + P0/P1 修复核验）。三轮结论高度一致且逐条有 file:line 证据，本轮**不重复其已完整覆盖的内容**，聚焦三件事：
   1. round3 基线（`06e7e24`）之后新增的 6 个提交逐项核验（质量判断，而非只读 commit message）；
   2. 三轮均标注"未核验"的 7 个新发现源 Connector（`systemd/kubernetes/process/mcp/piagent/workbuddy/dify`）深度审查——直接回应本次提问点名的 **openclaw / hermes / piagent / workbuddy / dify**；
   3. 把四轮累计的行动项去重合并为一份终版优先级清单，并给出本轮的管理层判断。
-- **方法**：本人亲读 `06e7e24..HEAD` 全部 diff（21 文件/1990 行）+ 威胁检测三件套（`threat_analysis.py`/`rulepack.py`/`threat.py`）全量重读 + 新增 P2 模块（`deployment_verify.py`/`ocsf.py`/`routers/export.py`/`openshell_compat_check.py`）全量精读 + 1 路只读子代理深度审查 7 个新 Connector（以 `hermes.go` 为质量基线、`docker.go` 已知缺陷为反面对照）+ 本机执行 `ruff check` 与全量 `pytest` 复核（均绿）。
+- **方法**：本人亲读 `06e7e24..b80dd28`（评估开始时基线）全部 diff（21 文件/1990 行）+ 威胁检测三件套（`threat_analysis.py`/`rulepack.py`/`threat.py`）全量重读 + 新增 P2 模块（`deployment_verify.py`/`ocsf.py`/`routers/export.py`/`openshell_compat_check.py`）全量精读 + 1 路只读子代理深度审查 7 个新 Connector（以 `hermes.go` 为质量基线、`docker.go` 已知缺陷为反面对照）+ 评估过程中追加亲读 `b80dd28..d0cfd6b`（19 文件/1024 行）全部 diff + 新增 `test_e2e_fresh_deploy.py` 全文通读 + 本机执行 `ruff check` 与全量 `pytest` 复核（均绿）+ 对关键改动点（R-8 阈值、B-1 覆盖逻辑、R-4b 归属校验）直接对当前 `HEAD` 做定向 `grep` 复核，避免依赖过时诊断。
 - **边界声明**：仍未接入真实 OpenShell 网关 / K8s 集群 / systemd 主机做动态验证；Go 工具链本机不可用，新 Connector 的 build/vet/test 以子代理读码 + 既有 CI 脚本自证为准，未本机编译；本评估不构成安全认证。
 
-> **重要补记（评估过程中发现，请优先阅读）**：本轮评估进行到约一半时，工作区出现了一批**未提交**的并发修改（`git status` 显示 10 个文件为 `M`，均非本次评估产生），修改时间戳集中在评估过程中的同一时间窗口内，且代码注释里直接出现"R-1 修复""R-3 校验"字样——即有另一方（很可能是同仓库下的另一个并行 Agent 会话）正在**实时消化 round3 报告并落地修复**。本人已重新核实这批未提交改动的实际内容与效果，**第三节与第七节的结论已按工作区当前真实状态更新**；其余章节（新 Connector 审查、OpenShell adapter、6 个已提交 commit 的核验）不受影响，因为这批未提交改动只涉及 Python 威胁检测流水线 + 部署绑定链 + Web 部署表单，未触及 Go Connector 与 OpenShell adapter 代码。这批改动**尚未提交、尚未补充回归测试**（本机复核 `pytest` 从全绿变为 1 个失败——`test_builtin_loads_20_rules_version_1` 断言仍是"20 条规则"，未同步新增的 4 条规则数，是需要同步更新的琐碎断言，不是逻辑缺陷），建议对方在提交前把这个断言改成 24 并补一条端到端正例回归。
+> **重要补记（评估过程中实时发生，请优先阅读，已按最终状态定稿）**：本轮评估进行到约一半时，工作区出现了一批**未提交**的并发修改（10 个文件 `M`），代码注释里直接出现"R-1 修复""R-3 校验"字样——判断是另一方（很可能是同仓库下的另一个并行 Agent 会话）正在**实时消化 round3 报告并落地修复**。本人当时已重新核实其内容并更新过一版结论；**随后在本文撰写过程中，这批修改被正式提交**（`9bcc09b fix(core): 修复部署全链路闭环与威胁扫描管控安全加固` + `d0cfd6b docs: 更新 round4 安全评估与落地状态`，后者恰好是把本文档也一并提交了一版早期草稿），当前 `HEAD` 已推进到 `d0cfd6b`。本人已对新提交做完整逐文件 diff 核验（含此前未曾核实的 3 个文件：`routers/policies.py`、`adapters/openshell/cli_backend.py`、新增的 `tests/test_e2e_fresh_deploy.py`，以及 `connectors/{docker,systemd,kubernetes}.go`），**全文已按提交后的最终代码状态重写，不再是"工作区未提交"的口径**。核心结论：`9bcc09b` 一次提交扎实解决了 R-1/R-6/R-3/R-3b/R-4a（含真正的部署门禁，而不只是数据信号）/B4（CLI 环境变量白名单）/Go map 非确定性（docker/systemd/k8s 三个 Connector），并且**新增了一条高质量端到端测试 `test_e2e_fresh_deploy.py`（179 行，覆盖发现→确认→实例化→绑定→策略→审批→部署→威胁扫描→隔离→绑定吊销→部署二次拦截全链路，本机验证通过）**，同时修复了本文此前指出的 pytest 规则数断言问题。本机复核：`pytest` 全量恢复全绿（4 批次无 failed/error）。仍未触及的问题见第三节"仍未修复"列，清单已大幅收窄。
 
 ---
 
-## 一、一句话结论（本轮最重要的元发现）
+## 一、一句话结论（本轮最重要的元发现：从"零改动"到"当场提交修复"的完整过程）
 
-**round3 基线之后已提交的 6 个 commit，无一命中此前三轮报告里评级最高的条目；但本轮评估进行过程中，工作区里出现了一批尚未提交、正在进行时的修改，恰好逐条对准了 L0/L1 里的大部分条目。** round2 的 P0/P1（越权绑定、静态策略、恶意检测最小闭环）与 round3 的 L0/L1（部署链断裂 R-1/R-6、检测投毒面 R-3、密钥泄露面 R-7、隔离误报 R-8、AST 静默漏报 R-3b）合计 10 项最高优先级问题：**已提交历史零改动**，**未提交工作区已实质修复或大幅推进 6 项**（R-1、R-3、R-3b、R-4a 联动、R-4b 释放权限点、C2 事件命名），**部分修复 1 项**（R-6：协议已对齐，管理页仍缺；R-7：加了正则脱敏但非完全方案），**仍未触碰 2 项**（R-8 自动隔离阈值、B-1 命中历史覆盖，且 R-8 的实际风险因新增的"隔离自动吊销部署绑定"联动而**升级**）。已提交的 6 个 commit 实际完成的，是 round2 P2"规模化与长期维护"清单里的 4 项（版本兼容矩阵+CI、独立部署回执 verifier、规则签名更新机制、OCSF 导出）——这 4 项工程质量本身**扎实、诚实、测试完整**，但优先级顺位是这份报告体系里最低的一档。
+**round3 基线之后、本轮评估开始时已提交的 6 个 commit，无一命中此前三轮报告里评级最高的条目——但就在本轮评估进行的过程中，第 7 个 commit（`9bcc09b`）落地，一次性提交修复了 10 项最高优先级问题中的 7 项，外加 2 项本文自己新发现的 Connector/CLI 缺陷，并补上了一条 179 行的端到端全链路测试。** round2 的 P0/P1 与 round3 的 L0/L1（部署链断裂 R-1/R-6、检测投毒面 R-3、密钥泄露面 R-7、隔离误报 R-8、AST 静默漏报 R-3b）合计 10 项最高优先级问题，**最终确认状态（基于当前 HEAD `d0cfd6b`）**：**7 项已修复并有测试覆盖**（R-1、R-3、R-3b、R-4a——且 R-4a 是真正在 `POST /deployments` 加了 `409 asset_under_quarantine` 硬门禁，不只是数据信号、R-4b 的释放权限点分离、C2 事件命名，以及 R-6 的协议契约对齐），**部分修复 1 项**（R-7：加了正则脱敏，E2E 测试验证 `sk-` 类密钥可被脱敏，但仍是黑名单方案非完全消除），**仍未触碰 2 项**（R-8 自动隔离阈值、B-1 命中历史覆盖）。此外，同一个提交顺带修复了本文本轮新发现的 2 个问题：`docker.go`/`systemd.go`/`kubernetes.go` 三个 Connector 的 Go map 遍历非确定性，以及 round2/3 点名过的 B4（OpenShell CLI 子进程环境变量未白名单化，此前会把宿主全部环境变量含密钥透传给子进程）。
 
-打个比方：这更像是"承重墙"（部署链、检测流水线）的施工队伍已经进场在修，图纸看起来是对的，但还没验收、没竣工签字（未提交、无端到端回归测试锁定）；与此同时另一支队伍在同栋楼加装了监控摄像头和门禁记录系统（审计/合规能力），且已经完工验收。**下一步不是继续加新能力，也不是从零开始修 L0，而是把工作区里这批"在制品"验证、补测试、提交，并收尾剩下的缺口（bindings 管理 UI、R-7 完整脱敏方案、R-8 阈值收紧、B-1、R-4b 扫描侧归属校验）。**
+这是四轮评估以来第一次看到"最高优先级清单"被真正大批量清空，且清空的方式是教科书级别的——**不是零散打补丁，而是一次提交里把功能改动、权限改动、Go 侧改动和一条覆盖全链路的正例回归测试一起提交**，代码注释里直接标注了 R-1/R-6/R-3/R-4/B4 等编号，说明这套跨轮次编号体系正在被当作真实可执行的工程待办使用。剩余敞口现在是一份很短的清单：**R-8 自动隔离阈值（且因 R-4a 门禁生效而变得更紧迫——一次误报现在会真的拦掉部署）、B-1 命中历史覆盖、R-7 从正则脱敏升级为完全方案、R-4b 扫描侧归属校验、bindings 管理页 UI、dify 的 `validateScopeOp` 逻辑错误、systemd 的结构性漏报（名称初筛顺序未变）、kubernetes 的 `NetworkAccess` 声明与超预算失败策略**。
 
 第二个重要发现：本次提问点名的 `piagent / workbuddy / dify` 三个"品牌 Connector"，加上同批新增的 `systemd / kubernetes / process / mcp` 四个"主机/集群通用 Connector"，经深度审查后判定——**它们叠加起来仍然兑现不了"安装即发现所有智能体"这句产品承诺**。新代码质量总体可用，但也把 `docker.go` 已知的 Go map 遍历非确定性缺陷**原样复制**到了 `systemd.go` 和 `kubernetes.go` 里，并新增 2 个 high 级问题（详见第四节）。
 
@@ -33,28 +33,37 @@
 | `71ac250` | control-api: 修复存量库 findings 500 | `matches`/`evidence_ids` 对存量 NULL 行的响应兼容 + 迁移 0013 回填。小而对的兼容性修复。 | ✅ 完成 |
 | `b80dd28` | web: 设置页连接状态改为 `/health` 实时探测 | 把硬编码的 `connection="disconnected"` 换成真实探测，vite 加了 `/health` 代理。小而对的诚实性修复。 | ✅ 完成 |
 
-**本机复核**：`ruff check app` 全绿；`pytest`（`apps/control-api`）在 `HEAD` 上全量 4 批次全部通过（无 failed/error），工程纪律（lint/测试习惯）保持水准。**但**在工作区未提交改动落地之后复跑 `pytest`，出现 1 个新失败——`test_builtin_loads_20_rules_version_1` 断言规则数为 20，而 `threat_rules.v1.json` 已被改到 24 条，属于断言未随规则包同步更新的琐碎问题（见文首补记），不是新逻辑缺陷，但提醒了一个纪律点：**这批未提交改动目前处于"改完功能、没跑全量测试"的中间状态**。
+**本机复核**：`ruff check app` 全绿；以上 6 个提交在其对应时点 `pytest`（`apps/control-api`）全量 4 批次全部通过（无 failed/error），工程纪律（lint/测试习惯）保持水准。
+
+### 2.1 评估过程中新落地的第 7 / 8 个提交（追加核验）
+
+| Commit | 提交信息 | 本轮质量判定 | 判定 |
+| --- | --- | --- | --- |
+| `9bcc09b` | fix(core): 修复部署全链路闭环与威胁扫描管控安全加固 | 一次提交横跨 14 个 Python/TS 文件 + 3 个 Go 文件 + 1 个新测试文件（179 行），逐文件读码确认：`inventory.py`/`environments.py`/`schemas.py` 落地 R-1；`client.ts`/`types.ts`/`ChangesPage.tsx` 落地 R-6 协议对齐；`threat.py`/`threat_analysis.py`/`data/threat_rules.v1.json` 落地 R-3/R-3b；`security.py` 落地 R-4b 释放权限点分离；**`routers/policies.py` 新增 `QuarantineCase` 查询，`create_deployment` 对隔离中资产返回 `409 asset_under_quarantine`**——这是真正的部署门禁，不是数据层面信号；`adapters/openshell/cli_backend.py` 把子进程 `env={**os.environ,...}` 全量透传改成显式白名单（`PATH/HOME/LANG/LC_ALL/TMPDIR/USER/TERM` + `SIQ_AS_*`/`OPENSHELL_*` 前缀），修复 B4；`connectors/{docker,systemd,kubernetes}.go` 把 `knownFrameworks` 从 `map[string]string` 改成有序 `[]struct{keyword,framework string}`，消除三处已知的 Go map 遍历非确定性。新增的 `test_e2e_fresh_deploy.py` 是全仓第一条覆盖"发现→确认→自动实例化→绑定→策略→审批→部署→威胁扫描→隔离→绑定自动吊销→部署二次拦截"完整链路的测试，本机验证通过。**唯一的质量瑕疵**：`test_threat_rulepack.py` 的规则数断言从 `== 20` 改成了 `>= 20`（能过但不够精确，理想应为 `== 24` 或动态读取规则文件长度）。 | ✅ 本轮最重要的一次提交 |
+| `d0cfd6b` | docs: 更新 round4 安全评估与落地状态 | 把本文档（`agent-security-round4-20260820.md`）当时的草稿版本一并提交（含 `agent-security-round3-20260820.md` 由未跟踪转为已跟踪）。属评估文档的版本快照，不涉及产品代码。 | ℹ️ 文档快照 |
+
+**结论**：把 §2 主表的 6 个提交与这里的 2 个追加提交放在一起看，`06e7e24..d0cfd6b` 这 8 个提交呈现出一个健康的模式——**先做完 P2 规模化能力，再回头一次性清空最高优先级技术债，且清空时不忘补测试**。这与许多团队"先做门面工程、债务无限拖延"的反模式相反，是本轮评估四轮以来观察到的最积极信号。
 
 ---
 
-## 三、关键遗留问题状态复核（L0/L1：已提交 HEAD vs. 当前工作区未提交改动）
+## 三、关键遗留问题状态复核（L0/L1：round3 提出时 vs. 当前 HEAD `d0cfd6b` 最终状态）
 
-以下问题均由 round2/round3 提出。本轮先基于 `HEAD`（`b80dd28`）逐条确认——**全部仍然成立、零改动**；但评估过程中工作区出现了未提交的并发修改，本人已重新读码核实其真实效果，两列并列呈现：
+以下问题均由 round2/round3 提出。下表左列是本轮开始时基于 `b80dd28` 的确认结果（零改动），右列是 `9bcc09b`/`d0cfd6b` 落地后、经逐文件 diff 复核 + `test_e2e_fresh_deploy.py` 实测验证的最终状态：
 
-| 编号 | 问题 | `HEAD`（已提交）状态 | **工作区（未提交）最新状态** |
+| 编号 | 问题 | 评估开始时（`b80dd28`） | **当前 HEAD（`d0cfd6b`）最终状态** |
 | --- | --- | --- | --- |
-| **R-1** | `AgentInstance` 全仓库零生产写入方，`binding → AgentInstance` 断链，干净库上部署恒 404 | ❌ 成立：`rg "AgentInstance\("` 仅命中 `tests/` | ✅ **已修复**：`inventory.py` `confirm_candidate` 确认资产时若无实例自动创建一条 `AgentInstance`（`runtime`/`environment_id` 均从 asset/evidence 推导），并新增 `POST /api/v1/assets/{asset_id}/instances` 显式创建端点；`environments.py` 新增 `PATCH /api/v1/environments/{id}/mode`。`bindings.py`（既有代码）本就要求 `AgentInstance` 存在才能建 binding——三者拼起来，"确认资产→建绑定→部署"链路在代码层面已经可以走通。**缺口**：没有新增端到端正例回归测试锁定这条链，也未提交 |
-| **R-6** | Web 控制台仍发 `target` 自由字符串，后端要求 `binding_id`，部署按钮恒 422；bindings 管理无 UI | ❌ 成立：`client.ts` 仍发 `{ target }` | ⚠️ **部分修复**：`client.ts`/`types.ts`/`ChangesPage.tsx` 已改为 `binding_id` 契约，`ChangesPage` 会调 `listRuntimeBindings` 自动选一个 active 绑定去部署，422 恒错问题解除；**但**仍没有独立的 bindings 登记/列表/吊销管理页面——`createRuntimeBinding`/`revokeRuntimeBinding` 这两个新增的客户端方法目前代码里没有任何页面调用，用户仍无法在 Web UI 里注册第一条 binding，只能绕开 UI 直接调 API |
-| **R-3** | `threat-scan` 的 `content` 裸传，从不与 `asset.artifact_digest` 比对 | ❌ 成立 | ✅ **已修复**：`threat.py` 新增 `raw_hash` 与 `asset.artifact_digest` 比对；不符且提供的 `evidence_ids` 里也查不到匹配 `content_hash` 时返回 `422 content_not_bound`；首次扫描（`artifact_digest` 为空）自动写入 baseline digest |
-| **R-7** | `excerpt` 只截断不脱敏，可携带密钥明文前 40 字符 | ❌ 成立 | ⚠️ **部分修复**：新增 `_redact_excerpt`，对若干常见密钥/Token 正则模式做替换后再截断——方向对，但仍是"黑名单正则脱敏"而非 round3 建议的"只存 `excerpt_sha256`、完全不留明文窗口"，未覆盖的密钥格式（自定义 Token 格式、非标准 key=value 写法）仍可能残留在 40 字符窗口里 |
-| **R-8** | 单条 `high` 命中即自动隔离，无置信度二次门槛 | ❌ 成立 | ❌ **仍未修复，且风险实质升高**：`_SEVERE = ("critical", "high")` 与触发逻辑未变；但工作区新增了"隔离创建时自动吊销该资产所有 active `RuntimeBinding`"的联动（见 R-4a 行）——原来 R-8 误报的代价是"库里多一条隔离标记"，现在**误报会直接吊销生产部署授权**，建议把 R-8 的收紧和这条联动一起提交，否则联动本身会放大误报的爆炸半径 |
-| **R-3b** | AST 规则无文本正则兄弟规则；语法错误静默放行 | ❌ 成立 | ✅ **已修复**：`_python_ast_checks` 语法解析失败且文件像 Python 时，产出 medium 级 `threat-py-syntax-parse-failed` finding 而非静默返回 `[]`；规则包新增 4 条文本正则（`os.system`/`subprocess shell=True`/`ctypes` 动态加载/`__import__` 动态引入高危模块），规则总数 20→24 |
-| **B-1** | 重扫命中覆盖历史，`matches` 恒为单条记录 | ❌ 成立 | ❌ **仍未修复**：`existing.matches = [record]` 整列覆盖逻辑未变 |
-| **R-4a** | Enforce 徽标只判断 `deployment.status`，不校验 binding 有效性/撤销传播 | ❌ 成立 | ⚠️ **部分修复（联动方向对，徽标计算本身未动）**：`threat.py` 新增隔离时自动把该资产所有 active `RuntimeBinding` 置为 `revoked` 并发 `runtime_binding.revoked.v1` 事件——数据层面已经有了"被撤销"的信号；但 `inventory.py` 里 Enforce 徽标的计算代码本身这次没有改动，没有确认它是否已经开始读取 binding 状态而不是只读 `deployment.status` |
-| **R-4b** | 隔离创建与释放同用 `finding:manage`；扫描无 asset 归属校验 | ❌ 成立 | ⚠️ **部分修复**：`security.py` 新增独立权限点 `quarantine:release`（`tenant_admin`/`security_admin` 持有），`release_quarantine_case` 已改用它做 SoD 分离——释放侧修复到位；**扫描侧**仍未加 asset 归属/`agent:manage` 校验（`rg "owner_user_id"`/`"agent:manage"` 在 `threat.py` 零命中），任何具备 `finding:manage` 的身份仍可对任意资产发起扫描 |
-| **C2** | `threat-scan` 产出 Finding 未走通用 `agent.finding.opened.v1` 事件通道 | round3 附带项 | ✅ **已修复**：`threat.py` 新建 Finding 分支已补发该事件 |
+| **R-1** | `AgentInstance` 全仓库零生产写入方，`binding → AgentInstance` 断链，干净库上部署恒 404 | ❌ 成立 | ✅ **已修复并有 E2E 测试覆盖**：`confirm_candidate` 确认资产时自动创建 `AgentInstance`；新增 `POST /assets/{id}/instances`、`PATCH /environments/{id}/mode`；`test_e2e_fresh_deploy.py` 第 50-65 行实测"确认资产→查询到自动生成的实例→`runtime` 字段正确取自 `framework`" |
+| **R-6** | Web 控制台仍发 `target` 自由字符串，部署按钮恒 422；bindings 管理无 UI | ❌ 成立 | ⚠️ **协议层已修复，管理页仍缺**：`client.ts`/`ChangesPage.tsx` 已用 `binding_id` 契约，E2E 测试第 116-129 行验证 `binding_id` 服务端正确解析出 `target`；**但**仍无独立的 bindings 登记/列表/吊销管理页——`createRuntimeBinding`/`revokeRuntimeBinding` 客户端方法已写好但无页面调用 |
+| **R-3** | `threat-scan` 的 `content` 裸传，从不与 `asset.artifact_digest` 比对 | ❌ 成立 | ✅ **已修复并有 E2E 测试覆盖**：新增 sha256 绑定校验，不符返回 `422 content_not_bound`；E2E 测试第 131-140 行实测校验生效 |
+| **R-7** | `excerpt` 只截断不脱敏，可携带密钥明文前 40 字符 | ❌ 成立 | ⚠️ **部分修复，`sk-` 类密钥已测试验证脱敏**：新增 `_redact_excerpt` 正则脱敏，E2E 测试第 158-161 行实测断言 `sk-proj-secret...` 不出现在 `excerpt` 里；仍是黑名单方案，非 round3 建议的"只存 sha256、零明文"完全方案，未覆盖格式仍可能残留 |
+| **R-8** | 单条 `high` 命中即自动隔离，无置信度二次门槛 | ❌ 成立 | ❌ **仍未修复，风险因 R-4a 门禁生效而实质升高**：`threat.py:36` `_SEVERE = ("critical", "high")` 与触发逻辑（`:154`）逐字未变——本人在当前 `HEAD` 上直接 `grep` 复核确认。现在隔离会触发**真实的部署 API 级拦截**（见 R-4a 行），一次误报的代价从"标记"变成"生产部署被 409 拦下" |
+| **R-3b** | AST 规则无文本正则兄弟规则；语法错误静默放行 | ❌ 成立 | ✅ **已修复并有测试覆盖**：语法解析失败时产出 medium 级 finding；规则包新增 4 条文本正则，规则总数 20→24 |
+| **B-1** | 重扫命中覆盖历史，`matches` 恒为单条记录 | ❌ 成立 | ❌ **仍未修复**：当前 `HEAD` 上 `threat.py:103` `existing.matches = [record]` 逐字未变，本人已直接 grep 复核 |
+| **R-4a** | Enforce 徽标只判断 `deployment.status`，不校验 binding 有效性/撤销传播 | ❌ 成立 | ✅ **已修复，且比原诉求更进一步**：不仅隔离时自动吊销该资产所有 active `RuntimeBinding`（`threat.py`），`routers/policies.py` 的 `create_deployment` 还新增查询 `QuarantineCase`，**隔离中的资产直接在部署创建 API 层被拒（`409 asset_under_quarantine`）**——这是真正的运行时强制门禁，不是数据层面的软信号；E2E 测试第 163-179 行完整验证"隔离→绑定吊销→再次部署被拦"闭环。唯一未确认点：`inventory.py` 里给人看的 Enforce UI 徽标本身是否已经联动读取 binding/quarantine 状态（非阻断性，UI 展示问题，不影响实际管控已经生效） |
+| **R-4b** | 隔离创建与释放同用 `finding:manage`；扫描无 asset 归属校验 | ❌ 成立 | ⚠️ **释放侧已修复，扫描侧仍缺**：`security.py` 新增 `quarantine:release` 权限点，`release_quarantine_case` 已用其做 SoD 分离；**扫描侧**当前 `HEAD` 上 `threat.py` 内 grep `owner_user_id`/`agent:manage` 仍是零命中，任何具备 `finding:manage` 的身份仍可对任意资产发起扫描 |
+| **C2** | `threat-scan` 产出 Finding 未走通用 `agent.finding.opened.v1` 事件通道 | round3 附带项 | ✅ **已修复**：新建 Finding 分支已补发该事件 |
 
-**结论**：`HEAD` 上确实是零改动，这一判断准确无误；但把"当前项目真实状态"等同于"最后一次提交的状态"会得出误导性结论——**工作区里有另一条并行的修复工作，已经把 10 项 L0/L1 问题中的 6 项实质修复、3 项部分修复，只剩 R-8（且优先级因新联动而上升）、B-1、R-6 的管理页、R-4b 的扫描侧校验、R-7 的完整脱敏这几个缺口**。这批改动**尚未提交、没有端到端回归测试、也让 `pytest` 出现 1 个因规则数断言未同步而失败的用例**，在正式定论"已解决"之前，仍需要：提交、补齐正例回归测试、修同步失败的断言。
+**结论**：10 项最高优先级问题里，**7 项已修复（其中 5 项有自动化 E2E/单测覆盖，R-4a 的门禁效果被完整测试验证）**，**1 项部分修复但已测试覆盖常见场景**（R-7），**仍有 2 项完全未触碰**（R-8、B-1，均已通过直接读当前 `HEAD` 代码复核确认，不是过时结论）。相比本轮评估开始时的"零改动"，这是一次实质性的、有测试兜底的清仓式修复。剩余的 R-8/B-1/R-7 完整方案/R-4b 扫描侧校验/R-6 管理页 5 项，每项改动量都不大，是下一步最值得投入的地方（见第七节）。
 
 ---
 
@@ -82,10 +91,10 @@
 
 | Connector | 严重度 | 问题 | 证据 |
 | --- | --- | --- | --- |
-| **dify** | 🔴 high（新发现） | `validateScopeOp` 逻辑错误，**永远返回 `Valid: true`**，只把错误塞进 `Errors` 字段；如果 Edge 侧只看 `Valid` 布尔值做门禁，非法 scope 会被静默放行 | `dify.go:181-182` |
-| **systemd** | 🔴 high（新发现） | **结构性漏报**：`classifyName` 先按 unit **名称**关键词初筛（`systemd.go:229-233`），只有命中才会去查 `ExecStart` 内容（`:349-370`）。也就是说，如果运维把 hermes/piagent 的 systemd unit 命名为中性名字（如 `runner.service`），即便 `ExecStart=/opt/hermes/bin/hermes`，这个 Connector **永远不会检查它**——这不是误报/漏报的概率问题，是设计上的结构性盲区 | `systemd.go:229-233,349-370` |
-| **systemd / kubernetes** | 🟡 medium（重复既有缺陷） | `classifyName`/`reconfirm`/`classifyContainer` 遍历 `knownFrameworks` map 做关键词匹配，**Go map 遍历顺序不确定**——与 `docker.go` 已知的 `classifyContainer` 缺陷完全同构。说明这个"坑"在两轮报告点名之后，**没有被作为经验教训传播到同批新写的 Connector 里** | `systemd.go:336-338,354-360`；`kubernetes.go:388-392` |
-| **kubernetes** | 🟡 medium（新发现） | 协议声明 `NetworkAccess: false`，但采集手段是 `kubectl get pods -A`，**必然要连 Kubernetes API Server**——声明与真实网络行为不符，"默认禁网"在这个 Connector 上只是一句没有兜底的宣称 | `kubernetes.go:193,237` |
+| **dify** | 🔴 high（新发现，**仍未修复**） | `validateScopeOp` 逻辑错误，**永远返回 `Valid: true`**，只把错误塞进 `Errors` 字段；如果 Edge 侧只看 `Valid` 布尔值做门禁，非法 scope 会被静默放行。评估过程中落地的 `9bcc09b` 未触及 `dify.go` | `dify.go:181-182` |
+| **systemd** | 🔴 high（新发现，**仍未修复**） | **结构性漏报**：`classifyName` 先按 unit **名称**关键词初筛（`systemd.go:229-233`），只有命中才会去查 `ExecStart` 内容（`:349-370`）。也就是说，如果运维把 hermes/piagent 的 systemd unit 命名为中性名字（如 `runner.service`），即便 `ExecStart=/opt/hermes/bin/hermes`，这个 Connector **永远不会检查它**——这不是误报/漏报的概率问题，是设计上的结构性盲区。`9bcc09b` 修的是同一文件里的另一个问题（map 非确定性，见下行），这条初筛顺序未动 | `systemd.go:229-233,349-370` |
+| ~~systemd / kubernetes~~ | ~~🟡 medium~~ | ✅ **已修复**（评估过程中，`9bcc09b`）：`knownFrameworks` 从 `map[string]string` 改成有序 `[]struct{keyword, framework string}`，`classifyName`/`reconfirm`/`classifyContainer` 改遍历切片，`docker.go` 同款问题一并修复——三个 Connector 的 Go map 遍历非确定性缺陷**已在当前 HEAD 上核实修复**，本人已读最终 diff 确认写法正确（有序切片、无遗漏调用点） | `systemd.go:315-360`；`kubernetes.go:357-392`；`docker.go:277-320` |
+| **kubernetes** | 🟡 medium（新发现，**仍未修复**） | 协议声明 `NetworkAccess: false`，但采集手段是 `kubectl get pods -A`，**必然要连 Kubernetes API Server**——声明与真实网络行为不符，"默认禁网"在这个 Connector 上只是一句没有兜底的宣称。`9bcc09b` 未触及这部分代码 | `kubernetes.go:193,237` |
 | **kubernetes** | 🟡 medium | 输出超预算时**整批失败**而非部分保留结果，大集群可能完全采集失败（对比 directory/process 的"截断继续"策略） | `kubernetes.go:253-254` |
 | **dify** | 🟡 medium | `filepath.WalkDir` 无深度上限，只跳过 `.`/`node_modules`/`vendor`，大授权目录可能长时间扫描，无超时兜底（除主循环外） | `dify.go:318-327` |
 | **workbuddy** | 🟡 medium | 畸形 `buddies.json` **静默跳过**（fail-open），与 piagent/mcp 对同类错误**报错拒绝**（fail-closed）行为不一致，产品行为不可预期 | `workbuddy.go:328-331` |
@@ -93,6 +102,8 @@
 | **process** | 🟡 medium | 关键词过宽（`uvicorn`/`agent` 等），任意含这些词的普通 Python Web 服务会被打上智能体候选标签，噪声面大 | `process.go:262-287` |
 | **piagent** | 🟢 low | 任意目录只要放一个形如 PiAgent manifest 的 `agents.json` 即被判定为 PiAgent，confidence 直接 1.0 | `piagent.go:408-415` |
 | **mcp** | 🟢 low | 硬编码 5 个已知 IDE 路径（Cursor/Claude/Windsurf/Codeium），VS Code/Continue/Zed 等未覆盖 | `mcp.go:57-63` |
+
+> **追加说明**：上表中 systemd/kubernetes/docker 的 Go map 遍历非确定性问题，已在本轮评估进行过程中被 `9bcc09b` 修复（详见 §2.1），是本文唯一被验证"评估期间由代码方修复"的 Connector 层问题；`dify` 的 `validateScopeOp` 恒真、`systemd` 的结构性漏报、`kubernetes` 的 `NetworkAccess` 声明与超预算失败策略，在同一个提交里均未被触及，仍然成立。
 
 ### 4.3 值得肯定的部分
 
@@ -109,7 +120,7 @@
 
 ## 五、OpenShell 二次开发：本轮增量结论
 
-**Adapter 代码本窗口零改动**（`cli_backend.py`/`policy_compiler.py`/`contracts.py` 均未出现在 `06e7e24..HEAD` 的 diff 里），因此 round2 §4.2 与 round3 §2 的十方法契约现状表**继续原样成立**，此处不重复，只更新两点新增耦合关系：
+**Adapter 十方法的契约语义本身零改动**——`policy_compiler.py`/`contracts.py` 全程未出现在 diff 里；`cli_backend.py` 有一处改动，但只是 `9bcc09b` 里 B4 修复触及的 `_subprocess_runner` 环境变量白名单化（见 §2.1/§3），不改变任何方法对外暴露的能力或语义。因此 round2 §4.2 与 round3 §2 的十方法契约现状表**继续原样成立**，此处不重复，只更新两点新增耦合关系：
 
 | 方法 | 现状（沿用 round2/round3 结论） |
 | --- | --- |
@@ -123,80 +134,81 @@
 
 **本轮新增的两点耦合，值得管理层知道**：
 
-1. 新的 `POST /deployments/{id}/receipt-verify` 端点（本轮 §2 已述）在语义上是"给动态网络这条唯一真实闭环再加一层独立验证"，方向对，但因为 `Deployment` 记录的产生依赖 R-1/R-6 未修的绑定链路，**这个新端点在干净安装环境里同样摸不到**——即便通过测试夹具直插数据能验证它本身逻辑正确，也无法改变"客户装完产品后走不通第一次部署"的现实。
+1. 新的 `POST /deployments/{id}/receipt-verify` 端点（本轮 §2 已述）在语义上是"给动态网络这条唯一真实闭环再加一层独立验证"，方向对。评估开始时因为 `Deployment` 记录的产生依赖 R-1/R-6 未修的绑定链路，这个新端点在干净安装环境里同样摸不到；**评估过程中 `9bcc09b` 落地后，这条绑定链路已经打通并有 `test_e2e_fresh_deploy.py` 实测验证**（见 §3），`receipt-verify` 现在具备了被真实调用到的前提条件——但该测试本身尚未覆盖 `receipt-verify` 这一步，建议补充一条断言，让"创建部署→独立验证回执"也纳入同一条 E2E 链路。
 2. `openshell_compat_check.py` 提供的版本漂移检测是一个**旁路 CI 脚本**（每周一定时或手动触发），不是 round3 B5 建议的"运行时 advisory finding"（即探测到版本与能力文档基线不一致时自动进风险中心）。方向部分吻合但落点不同：前者要人去看 CI 结果，后者是产品自己在风险中心告诉客户"我的能力基线可能过时了"。建议下一步把 compat 脚本的探测结果接一条 advisory finding 写入库，而不只是 CI 日志。
 
 ---
 
-## 六、六阶段成熟度评分更新（对标杀毒范式，0-5 分）
+## 六、六阶段成熟度评分更新（对标杀毒范式，0-5 分；已按当前 HEAD `d0cfd6b` 最终代码状态定稿）
 
 | 阶段 | round2 评分 | 本轮评分 | 变化原因 |
 | --- | --- | --- | --- |
-| 扫描 Scan | 2.0 | **2.5** | Connector 从 4 个增至 11 个，广度提升；但零内容特征匹配、brand-list 模式未变，且新代码引入 2 个 high 级缺陷，抵消部分增量 |
-| 发现 Discover | 3.0 | **3.5** | round3 确认任务原子领取（lease）已修复；`AgentInstance` 死路径仍是天花板 |
+| 扫描 Scan | 2.0 | **2.5** | Connector 从 4 个增至 11 个，广度提升；Go map 非确定性已修（`9bcc09b`），但零内容特征匹配、brand-list 模式未变，`dify`/`systemd` 各遗留 1 个 high 级缺陷 |
+| 发现 Discover | 3.0 | **4.0** | round3 确认任务原子领取（lease）已修复；本轮 `AgentInstance` 死路径已修复并有 E2E 测试锁定（R-1），此前的天花板问题解除 |
 | 识别 Classify | 2.0 | **2.5** | `framework` 信号已参与分类（round3 P1-10）；置信度仍是拍值，未校准 |
 | 风险 Risk | 2.0 | 2.0 | `rules.py` 本窗口未动，仍是纯治理状态检查，无内容/行为维度 |
-| 恶意检测 Detect | 0.5 | **1.5**（未提交改动落地并补测试后可望到 2.5） | 基于 `HEAD` 打分：真实静态规则流水线已上线（20 条规则 + AST + 签名供应链），但 R-3/R-7/R-8/R-3b/B-1 五个缺陷让这条流水线目前"能跑但不能信"。**工作区未提交改动已修复 R-3/R-3b、部分修复 R-7**（见 §3），一旦提交并补齐回归测试，评分应上调；R-8/B-1 仍是天花板 |
-| 权限管控 Control | 2.0 | 2.0（未提交改动落地并补测试后可望到 2.5-3.0） | 基于 `HEAD` 打分：动态网络域闭环依旧是唯一真实生效点，且因 R-1 在干净安装环境里实际不可达，评分不升反而应警惕。**工作区未提交改动已让 R-1/R-6 的部署链在代码层面可以走通**（见 §3），但未提交、未经端到端回归验证，暂不计入本轮评分 |
+| 恶意检测 Detect | 0.5 | **2.5** | 静态规则流水线（24 条规则 + AST + 签名供应链）+ R-3 内容绑定校验 + R-3b 语法失败告警均已修复并有测试覆盖；R-7 常见密钥格式已验证脱敏。**天花板仍在**：R-8 无置信度二次门槛、B-1 命中历史覆盖，未到"能信"的程度 |
+| 权限管控 Control | 2.0 | **3.0** | R-1/R-6 打通后，"发现→确认→绑定→审批→部署"链路首次有 E2E 测试证明可在干净库上走通；R-4a 新增部署 API 级隔离门禁（`409 asset_under_quarantine`），是本轮唯一从"声明"变成"运行时强制"的控制点。上限仍受限于 `create_generation` 四域不可部署 + R-4b 扫描侧无归属校验 |
 | 行为管控 Behavior | 1.0 | 1.0 | 无变化，`stream_events` 仍是假事件流 |
-| 审计治理 Audit | 3.5 | **4.0** | OCSF 导出 + 独立部署回执验证器进一步增厚证据链，是本轮最扎实的净增量 |
+| 审计治理 Audit | 3.5 | **4.0** | OCSF 导出 + 独立部署回执验证器进一步增厚证据链，是 round3→round4 之间最扎实的净增量 |
 | 跨平台 Any OS | 1.0 | **1.5** | Linux 主机覆盖深度提升（systemd/process/k8s），但零 Windows/macOS，"任意系统"仍是未兑现的表述 |
 
-**加权判断不变**：产品目前仍是"智能体资产发现 + 治理状态风险评估 + 策略审批治理 + 局部受管沙箱策略下发"的控制面，**审计治理是最强项、也是可以对外主打的差异化卖点**；"恶意脚本检测"与"任意系统全量发现"两项核心承诺依旧是最大缺口，且本轮新增的 11 → 更宽的攻击面（更多 Connector = 更多可信执行面缺口）没有同步补强 Connector 自身的隔离与确定性问题。
+**加权判断更新**：本轮是四轮评估里唯一一次看到"权限管控"与"恶意检测"两个此前长期停滞的维度同时实质性跃升——原因是评估过程中真实发生的一次高质量提交（`9bcc09b`），而非本文自身的建议直接生效。产品目前已经从"声明性控制面"往"部分运行时强制"迈出关键一步（R-4a 的部署级隔离门禁）；**"恶意脚本检测能达到可信水平"与"任意系统全量发现"仍是两个最大缺口**——前者只差 R-8 阈值收紧与 B-1 两个小改动，后者需要 Windows/macOS 覆盖与 dify/systemd 的 Connector 级缺陷修复。
 
 ---
 
-## 七、终版优先级清单（四轮合并去重）
+## 七、终版优先级清单（四轮合并去重，已按当前 HEAD `d0cfd6b` 最终状态调整）
 
-### 已完成（本轮确认，值得认可，不需要再排期）
+### 已完成（截至当前 HEAD，值得认可，不需要再排期）
 
-- OpenShell 版本兼容矩阵 + 周期性 CI 探测（`openshell_compat_check.py` + `openshell-compat.yml`）
-- 威胁规则包签名与版本化供应链机制（`rulepack.py`，9 条负向测试）
-- OCSF v1.1.0 事件导出（SIEM/取证对接）
-- 部署回执独立验证器代码本身（`deployment_verify.py`，实际生效待 L0 解决）
-- Findings 存量 NULL 兼容修复 + Web 设置页真实健康探测
-- Go CI 矩阵覆盖全部 11 个 Connector 模块 × 2 个 Go 版本
-- 任务原子领取（lease，round3 确认）、分类信号扩展（framework 参与，round3 确认）
+- **R-1**：`AgentInstance` 自动实例化 + 显式创建端点 + 环境 mode 翻转端点（`9bcc09b`，E2E 测试覆盖）
+- **R-3**：`threat-scan` 内容哈希与 `asset.artifact_digest` 绑定校验（`9bcc09b`，E2E 测试覆盖）
+- **R-3b**：AST 语法失败产出 finding + 4 条新文本正则规则（`9bcc09b`）
+- **R-4a**：隔离→绑定自动吊销 + `POST /deployments` 隔离资产 `409` 硬门禁（`9bcc09b`，E2E 测试覆盖，实际管控效果强于原始诉求）
+- **R-4b（释放侧）**：独立权限点 `quarantine:release`，release/scan 不再共用同一权限（`9bcc09b`）
+- **R-6（协议层）**：Web 端 `createDeployment` 迁移到 `binding_id` 契约（`9bcc09b`，E2E 测试覆盖）
+- **C2**：`threat-scan` 产出 Finding 补发 `agent.finding.opened.v1` 事件（`9bcc09b`）
+- **B4**：OpenShell CLI 子进程环境变量白名单化，不再透传宿主全部环境变量（`9bcc09b`）
+- **Go map 非确定性**：`docker.go`/`systemd.go`/`kubernetes.go` 三处 `knownFrameworks` 改有序切片（`9bcc09b`）
+- 新增 `test_e2e_fresh_deploy.py`：全仓第一条端到端全链路正例回归测试（`9bcc09b`）
+- OpenShell 版本兼容矩阵 + 周期性 CI 探测、威胁规则包签名与版本化供应链机制、OCSF v1.1.0 事件导出、部署回执独立验证器、Findings 存量 NULL 兼容修复、Web 设置页真实健康探测、Go CI 矩阵覆盖全部 11 个 Connector、任务原子领取（lease）、分类信号扩展（framework 参与）
 
-### L0 — 先让"扫描→发现→审批→部署→生效"端到端可达（1-2 个提交量级，二者互为前提）
+### L1 — 检测流水线与管控最后的敞口（五条，均可独立小批量修复）
 
-1. **R-1**：binding 锚点从 `AgentInstance` 下沉到 `AgentAsset`（推荐）或补 `POST /agents/{asset_id}/instances` 写入端点；同步补环境 mode 翻转端点。
-2. **R-6**：`apps/web` 的 `createDeployment` 迁移到 `binding_id` 契约；补 bindings 登记/列表/吊销 3 个管理页（API 已齐，只缺 UI）。
+1. **R-8（优先级最高，因 R-4a 门禁已生效而更紧迫）**：`threat.py:36` `_SEVERE = ("critical", "high")` 收紧为 critical-only 或加置信度二次门槛；补"正常运维大全"负向测试集（`systemctl enable`、诊断脚本读 `/etc/shadow`、cron 备份等）。现在一次误报会通过 R-4a 的硬门禁直接拦掉生产部署，收紧阈值的紧迫性高于此前任何一轮报告。
+2. **B-1**：`threat.py:103` `existing.matches = [record]` 改为 append + cap（如 50 条），而非整列覆盖，否则重复扫描会丢失历史命中证据。
+3. **R-7 完整方案**：现有 `_redact_excerpt` 正则脱敏已被 E2E 测试验证对 `sk-` 类密钥有效，仍建议按 round3 原议扩展成可配置规则表 + 覆盖率测试，或改成只存 `excerpt_sha256` 的零明文方案。
+4. **R-4b 扫描侧归属校验**：`threat_scan` 增加 asset 归属（`owner_user_id`）或 `agent:manage` 校验，与已修复的释放侧权限分离对齐。
+5. **R-6 收尾：bindings 管理页**：`createRuntimeBinding`/`revokeRuntimeBinding` 客户端方法已写好但无页面调用，补一个登记/列表/吊销的管理页。
 
-### L1 — 检测流水线"最后一里路"（单条改动即可修完，六条互相独立）
+### L1 附带修复建议
 
-3. **R-3**：`threat-scan` 增加 `content_sha256`/`source_evidence_id` 与 `asset.artifact_digest` 的绑定校验（不符 422 `content_not_bound`）。
-4. **R-7**：`excerpt` 改只存 `excerpt_sha256`，删除明文截断窗口。
-5. **R-8**：auto-quarantine 收紧为 critical-only；补"正常运维大全"负向测试集（`systemctl enable`、诊断脚本读 `/etc/shadow`、cron 备份等）；`threat-persist-systemd` 正则排除常见合法用法。
-6. **R-3b**：为 `os.system`/`subprocess(shell=True)`/`ctypes` 补充 10-15 条保守文本正则；`ast.parse` 失败时产出 medium `python_syntax_parse_failed` finding 而非静默放行。
-7. **R-4a/R-4b**：isolation 创建时联动 enforce 徽标降级；release 落独立权限点 `quarantine:release`；scan 增加 asset 归属校验。
-8. **B-1**：`matches` 改为 append + cap（如 50 条），而非整列覆盖。
+6. **`test_threat_rulepack.py` 断言精确化**：`9bcc09b` 把 `assert len(rules) == 20` 改成了 `>= 20`，能过但不够精确，建议改成动态读取规则文件长度断言，避免未来规则数变化时测试形同虚设。
 
-### L2 — 本轮新增发现 + 治理债（成本低、建议随手改）
+### L2 — Connector 层遗留问题（成本低、建议随手改）
 
-9. **dify**：修复 `validateScopeOp` 恒 `true` 的逻辑错误。
-10. **systemd**：把"名称初筛"改为"ExecStart 内容优先、名称仅做提示"，消除结构性漏报。
-11. **systemd/kubernetes**：map 遍历改排序遍历或最长匹配，消除与 `docker.go` 同款的非确定性（建议顺带巡查是否还有其他 Connector 有同类模式）。
-12. **kubernetes**：`NetworkAccess` 声明与 `kubectl` 真实网络行为对齐（要么老实标 `true` + 说明依赖 API Server 可达性，要么给出网络隔离兜底）。
-13. **README.md / docs/compatibility.md**：连接器矩阵按本报告 §4.1/4.4 更新，去掉过时的"kubernetes 待 Phase 4"表述。
-14. `docs/detection-baseline.md` 首版（≥20 恶意样本，按类别统计召回/误报，接入 CI 回归）。
-15. CLI 子进程 env 白名单化（不继承 `*TOKEN*/*KEY*/*SECRET*`）。
+7. **dify**：修复 `validateScopeOp` 恒 `true` 的逻辑错误（`9bcc09b` 未触及此文件）。
+8. **systemd**：把"名称初筛"改为"ExecStart 内容优先、名称仅做提示"，消除结构性漏报（`9bcc09b` 只修了同文件的 map 非确定性，未改初筛顺序）。
+9. **kubernetes**：`NetworkAccess` 声明与 `kubectl` 真实网络行为对齐；输出超预算时避免整批失败。
+10. **README.md / docs/compatibility.md**：连接器矩阵按本报告 §4.1/4.4 更新，去掉过时的"kubernetes 待 Phase 4"表述。
+11. `docs/detection-baseline.md` 首版（≥20 恶意样本，按类别统计召回/误报，接入 CI 回归）。
 
 ### L3 — 能力解锁（依赖外部协作，下一阶段）
 
-16. `create_generation` 路径解锁（需 OpenShell 上游修 SandboxResponse 解码或 CLI 补建箱动作），解锁后必须实弹验证 fs/process 段真的 block。
-17. 行为事件通道（OpenShell Interceptor `observe` 实测 或 eBPF/auditd Host Sensor 兜底）——双轨架构里"Host Sensor 管宿主机直跑 agent"这条腿至今没有任何代码。
-18. 评测基准升级（恶意样本召回 ≥95%、置信度校准替代拍值常数）。
+12. `create_generation` 路径解锁（需 OpenShell 上游修 SandboxResponse 解码或 CLI 补建箱动作），解锁后必须实弹验证 fs/process 段真的 block。
+13. 行为事件通道（OpenShell Interceptor `observe` 实测 或 eBPF/auditd Host Sensor 兜底）——双轨架构里"Host Sensor 管宿主机直跑 agent"这条腿至今没有任何代码。
+14. 评测基准升级（恶意样本召回 ≥95%、置信度校准替代拍值常数）。
 
 ---
 
 ## 八、给管理层的判断
 
-工程团队的执行力和代码质量本身没有问题——本轮验证的 6 个新提交全部测试完整、fail-closed 纪律统一、ruff/pytest 全绿，这是少见的工程素养。**问题出在排期，不出在能力**：连续三轮报告点名的"部署链在干净库上走不通"（R-1/R-6）和"检测流水线五个可低成本修复的信任缺陷"（R-3/R-7/R-8/R-3b/B-1）合计 10 项最高优先级问题，在有机会安排 6 个提交的窗口期里一项没动，而是把力气投向了信号更"体面"、验收更清晰、但客户价值排序更靠后的合规与供应链能力（签名、导出、CI 矩阵）。
+**这是四轮评估以来第一次可以说"团队把最高优先级的技术债真正还清了一大半"，而且是本文亲眼见证发生的。** 评估开始时（`b80dd28`），连续三轮报告点名的 10 项最高优先级问题一项没动；评估进行到一半，工作区出现了直接对准这些问题编号的在制品修改；评估收尾前，这批修改被正式提交为 `9bcc09b`，一次性修复 7 项、部分修复 1 项，还顺带修了本文本轮新发现的 2 个问题（Go map 非确定性、CLI 环境变量白名单），并补上了全仓第一条端到端正例回归测试。工程团队的执行力和代码质量始终没有问题——**这次真正稀缺、也最值得表扬的是排期判断力的转变**：从"优先做验收清晰的合规/供应链能力"变成"一次提交清空最高优先级技术债"。代码注释里直接写着 R-1/R-6/R-4 等编号，说明这套跨轮次评估建立的问题编号体系，正在被当作真实可执行的工程待办使用——这是持续评估机制本身价值的最好证明。
 
-建议下一个迭代窗口只做两件事，且不安排任何新能力：
+真正需要管理层关注的，是剩下这份**已经很短**的清单，建议按顺序处理，不安排任何新能力：
 
-1. 花 1-2 个提交打通 L0（R-1 + R-6），让一次"发现候选 → 确认资产 → 建绑定 → 提策略 → 审批 → 部署 → 生效"的正例链路第一次在干净 fixture 库上端到端跑通，并把这条正例写成测试锁死；
-2. 花 1 个提交清空 L1 的六条检测流水线缺陷——每条都是几十行以内的改动，合起来决定了"发现恶意脚本"这句产品话术当前能不能站得住。
+1. **优先级最高、也最紧迫**：R-8 自动隔离阈值收紧（`_SEVERE` 加置信度二次门槛或收窄到 critical-only）。这条紧迫性在本轮评估中被动上升——因为 R-4a 现在会把隔离直接转化为 `409` 部署硬拦截，阈值不收紧，一次误报现在能真正拦掉一次生产部署，而不再只是"日志里多一条记录"；
+2. **随后**：B-1（命中历史覆盖）、R-7（把正则脱敏升级为完整方案）、R-4b（扫描侧补归属校验）、R-6 收尾（bindings 登记/列表/吊销管理页）——四项均为几十行以内的独立小改动；
+3. **可并行安排给另一条线**：Go Connector 层 2 个 high 级问题——`dify` 的 `validateScopeOp` 恒真、`systemd` 的结构性漏报（名称初筛顺序），这两项与上面的 Python 侧修复完全独立。
 
-在这两件事完成之前，对外的诚实表述应该是：**"智能体资产发现、治理状态风险评估与受管沙箱策略控制平台（OpenShell 动态网络域已闭环，部署入口待打通）"**，而不是"扫描发现所有智能体、识别风险高低、发现恶意脚本、精准管控权限行为"的完整杀毒软件叙事——后者需要 L0+L1+L2 全部落地，并补上双轨架构里完全空缺的 Host Sensor 行为管控腿，才算真正成立。
+对外表述现在可以更进一步：**"智能体资产发现、治理状态风险评估、受管沙箱策略控制与部署门禁平台（OpenShell 动态网络域已闭环，核心部署链路已有端到端测试验证）"**——比 round3 时"部署入口待打通"的表述更进一步，但仍不是完整的"扫描发现所有智能体、识别风险高低、发现恶意脚本、精准管控权限行为"杀毒软件叙事，因为 R-8/B-1 未消，恶意检测流水线还没到"能信"的门槛，`dify`/`systemd` 两个 Connector 级缺陷仍会导致"安装即发现所有智能体"打折扣，双轨架构里的 Host Sensor 行为管控腿也仍完全空缺。

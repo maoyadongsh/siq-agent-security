@@ -4,13 +4,15 @@ package main
 //   - siq.agent=true 标签只是高置信提示而非发现前置条件；
 //   - 未打标签的 dify 镜像 pod（影子智能体）必须经启发式信号被发现；
 //   - 无信号 pod/容器跳过，不产生候选噪音；
-//   - kubectl 缺失/预算耗尽显式报错，不得静默漏报；
+//   - kubectl 缺失显式报错，不得静默漏报；字节预算耗尽优雅降级为部分批次
+//     （Truncated=true），不得整批失败清零；
 //   - env 秘密值绝不出现在任何输出中（contract §4 负向安全用例）。
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -79,14 +81,21 @@ type fakeRunner struct {
 
 func (f fakeRunner) available() bool { return f.isAvailable }
 
+// getPods 镜像 execRunner 的真实语义：读取最多 maxBytes+1 字节，预算耗尽时
+// 返回截断后的前缀而不是报错——截断检测与优雅降级由 collectOp 负责。
 func (f fakeRunner) getPods(_ context.Context, maxBytes int64) ([]byte, error) {
 	if f.err != nil {
 		return nil, f.err
 	}
-	if maxBytes <= 0 || int64(len(f.payload)) > maxBytes {
-		return nil, errBudgetExhausted
+	data := []byte(f.payload)
+	limit := maxBytes + 1
+	if limit < 0 {
+		limit = 0
 	}
-	return []byte(f.payload), nil
+	if int64(len(data)) > limit {
+		data = data[:limit]
+	}
+	return data, nil
 }
 
 func collectFixture(t *testing.T, plan protocol.ScanPlan) protocol.EvidenceBatch {
@@ -296,15 +305,74 @@ func TestCollectKubectlFailurePropagates(t *testing.T) {
 	}
 }
 
-func TestCollectBudgetExhausted(t *testing.T) {
-	// 字节预算耗尽：显式 limit_exceeded，不解析不完整 JSON
-	plan := protocol.ScanPlan{Limits: protocol.CollectLimits{MaxBytes: 16}}
-	_, err := collectOp(plan, fakeRunner{isAvailable: true, payload: fixturePods})
-	if !errors.Is(err, errBudgetExhausted) {
-		t.Fatalf("want errBudgetExhausted, got %v", err)
+func TestCollectBudgetTinyYieldsEmptyTruncatedBatch(t *testing.T) {
+	// 字节预算小到连第一个 token 都读不全：优雅降级为空的截断批次，
+	// 而不是报错——旧版在这里会返回 errBudgetExhausted 导致整批失败。
+	plan := protocol.ScanPlan{Limits: protocol.CollectLimits{MaxBytes: 2}}
+	batch, err := collectOp(plan, fakeRunner{isAvailable: true, payload: fixturePods})
+	if err != nil {
+		t.Fatalf("tiny budget must not fail the whole batch, got err: %v", err)
 	}
-	if perr := errToProtocol(err); perr.Code != protocol.CodeLimitExceeded {
-		t.Fatalf("budget exhaustion must map to limit_exceeded, got %q", perr.Code)
+	if !batch.Truncated {
+		t.Fatalf("tiny budget must set Truncated=true: %+v", batch)
+	}
+	if len(batch.Candidates) != 0 {
+		t.Fatalf("2-byte budget cannot yield any complete pod: %+v", batch.Candidates)
+	}
+}
+
+func TestCollectBudgetExceededKeepsCompletePodsPartialBatch(t *testing.T) {
+	// 核心回归（P1-6）：预算耗尽时已解出的完整 pod 必须保留，整批不因为
+	// 集群/输出过大而彻底失能——只标记 Truncated，候选数量随预算变化但绝不为
+	// "报错清零"。
+	const podTemplate = `{"metadata":{"name":"hermes-worker-%02d","namespace":"prod","labels":{}},"spec":{"containers":[{"name":"hermes","image":"siq/hermes:2.0"}]}}`
+	var items []string
+	for i := 0; i < 20; i++ {
+		items = append(items, fmt.Sprintf(podTemplate, i))
+	}
+	full := `{"items":[` + strings.Join(items, ",") + `]}`
+
+	fullBatch, err := collectOp(protocol.ScanPlan{}, fakeRunner{isAvailable: true, payload: full})
+	if err != nil {
+		t.Fatalf("collect full payload: %v", err)
+	}
+	if fullBatch.Truncated || len(fullBatch.Candidates) != 20 {
+		t.Fatalf("sanity: full payload must yield all 20 candidates untruncated: %+v", fullBatch)
+	}
+
+	// 预算只给完整负载的一半：必须仍然返回 >0 且 <20 个候选，且不报错。
+	half := int64(len(full) / 2)
+	partial, err := collectOp(protocol.ScanPlan{Limits: protocol.CollectLimits{MaxBytes: half}}, fakeRunner{isAvailable: true, payload: full})
+	if err != nil {
+		t.Fatalf("half-budget collect must not error, got: %v", err)
+	}
+	if !partial.Truncated {
+		t.Fatal("half-budget collect must be marked Truncated")
+	}
+	if len(partial.Candidates) == 0 || len(partial.Candidates) >= 20 {
+		t.Fatalf("half-budget collect must yield a strict partial set (0 < n < 20), got %d", len(partial.Candidates))
+	}
+	// 每条 evidence 依然必须被引用（截断不能破坏 contract §4 不变量）。
+	referenced := map[string]bool{}
+	for _, c := range partial.Candidates {
+		for _, id := range c.EvidenceIDs {
+			referenced[id] = true
+		}
+	}
+	for _, ev := range partial.Evidence {
+		if !referenced[ev.EvidenceID] {
+			t.Fatalf("truncated batch: evidence %s not referenced", ev.EvidenceID)
+		}
+	}
+}
+
+func TestCollectMalformedJSONStillErrors(t *testing.T) {
+	// 与预算截断区分：真正畸形的 JSON（未命中预算边界）必须如实报错，
+	// 不能被误判为"优雅截断"而悄悄吞掉。
+	plan := protocol.ScanPlan{Limits: protocol.CollectLimits{MaxBytes: 10_000}}
+	_, err := collectOp(plan, fakeRunner{isAvailable: true, payload: `{"items": [not-json}`})
+	if err == nil {
+		t.Fatal("malformed JSON well within budget must surface as an error")
 	}
 }
 
@@ -329,8 +397,11 @@ func TestCollectEmptyClusterEmptyBatch(t *testing.T) {
 
 func TestCapabilities(t *testing.T) {
 	caps := capabilities()
-	if caps.NetworkAccess {
-		t.Fatal("kubernetes connector must declare network_access=false")
+	// kubectl get pods -A 必然连接 Kubernetes API Server（TCP），与
+	// docker/systemd 走本机 IPC 的连接性质不同；声明必须如实为 true，
+	// 否则依赖该字段做网络隔离判断的调用方会被误导（回归：曾误标为 false）。
+	if !caps.NetworkAccess {
+		t.Fatal("kubernetes connector must declare network_access=true (kubectl talks to the API server over the network)")
 	}
 	if caps.MaxOutputBytes != protocol.DefaultOutputLimitBytes {
 		t.Fatalf("max_output_bytes = %d, want %d", caps.MaxOutputBytes, protocol.DefaultOutputLimitBytes)

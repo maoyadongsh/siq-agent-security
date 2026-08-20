@@ -13,6 +13,7 @@ const NAV_ITEMS: { to: string; label: string; icon: IconName }[] = [
   { to: '/findings', label: '风险中心', icon: 'findings' },
   { to: '/policies', label: '策略中心', icon: 'policies' },
   { to: '/changes', label: '变更中心', icon: 'changes' },
+  { to: '/runtime-bindings', label: '运行时绑定', icon: 'bindings' },
   { to: '/environments', label: '环境与 Connector', icon: 'environments' },
   { to: '/audit', label: '审计', icon: 'audit' },
   { to: '/settings', label: '设置', icon: 'settings' },

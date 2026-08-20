@@ -3,8 +3,10 @@
 安全红线：
 - 分析是纯静态的：绝不执行/导入被分析内容，Python 内容只过 ast.parse 树检查；
 - 规则全部本地确定性实现（正则/字符串/AST），无外部依赖、无网络；
-- 正则规则来自规则包（app.rulepack）：内置 app/data/threat_rules.v1.json，
-  可选 SIQ_AS_THREAT_RULEPACK_PATH 外部签名更新包（验签失败/降级一律回退内置包）；
+- 正则规则与脱敏规则均来自规则包（app.rulepack）：内置
+  app/data/threat_rules.v1.json，可选 SIQ_AS_THREAT_RULEPACK_PATH 外部签名
+  更新包（验签失败/降级一律回退内置包，见 R-7：脱敏规则可运维侧配置更新，
+  不再是本文件里的硬编码正则）；
 - Python AST 检查保留在代码中（非数据，见 _python_ast_checks）；
 - 模型输出不参与处置（本模块不接任何模型）；
 - 命中只记录行号、规则 id、片段 sha256 与截断脱敏摘要，原文整段不入库。
@@ -19,14 +21,14 @@ from dataclasses import dataclass
 
 from app.rulepack import load_rulepack
 
-RULEPACK_VERSION, _RULES = load_rulepack()
+RULEPACK_VERSION, _RULES, _REDACTION_RULES = load_rulepack()
 ANALYZER_VERSION = f"siq.threat-static.v{RULEPACK_VERSION}"
 
 
 def reload_rulepack() -> None:
-    """重新加载规则包并更新模块级版本/规则（运维热更新、回滚或测试用）。"""
-    global RULEPACK_VERSION, ANALYZER_VERSION, _RULES
-    RULEPACK_VERSION, _RULES = load_rulepack()
+    """重新加载规则包并更新模块级版本/规则/脱敏规则（运维热更新、回滚或测试用）。"""
+    global RULEPACK_VERSION, ANALYZER_VERSION, _RULES, _REDACTION_RULES
+    RULEPACK_VERSION, _RULES, _REDACTION_RULES = load_rulepack()
     ANALYZER_VERSION = f"siq.threat-static.v{RULEPACK_VERSION}"
 
 # 命中摘要截断长度：只存定位用片段，不存整行/整段原文
@@ -164,20 +166,17 @@ def _attr_chain(node: ast.expr) -> str:
     return ".".join(reversed(parts))
 
 
-_SECRET_PATTERNS = [
-    (re.compile(r"sk-[a-zA-Z0-9_\-]{8,}"), "sk-***"),
-    (re.compile(r"gh[pousr]_[a-zA-Z0-9]{20,}"), "gh_***"),
-    (re.compile(r"(?i)bearer\s+[a-zA-Z0-9_\-\.]{10,}"), "Bearer ***"),
-    (re.compile(r"(?i)password\s*=\s*['\"][^'\"]+['\"]"), "password=***"),
-    (re.compile(r"(?i)token\s*=\s*['\"][^'\"]+['\"]"), "token=***"),
-    (re.compile(r"(?i)secret\s*=\s*['\"][^'\"]+['\"]"), "secret=***"),
-]
-
-
 def _redact_excerpt(text: str) -> str:
+    """按当前生效规则包的 redaction_patterns 做黑名单正则脱敏（R-7）。
+
+    仍是黑名单方案（未知/自定义密钥格式可能残留），但规则本身已从代码里的
+    硬编码列表变为规则包数据字段：可随签名规则包热更新覆盖面，无需改代码/
+    发版；excerpt_sha256（见 RuleMatch）始终基于脱敏前原文计算，保留"同一
+    命中片段"的可比对能力，脱敏只影响人可读的 excerpt 展示字段。
+    """
     sanitized = text
-    for pattern, repl in _SECRET_PATTERNS:
-        sanitized = pattern.sub(repl, sanitized)
+    for rule in _REDACTION_RULES:
+        sanitized = rule.pattern.sub(rule.replacement, sanitized)
     return sanitized
 
 

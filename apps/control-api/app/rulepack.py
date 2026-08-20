@@ -8,6 +8,12 @@
   一律拒绝并回退内置包，绝不加载未验签或降级的规则；
 - 拒绝原因只记类别与路径，规则包内容不进日志；
 - 内置包损坏是构建事故：直接 RuntimeError 拒绝启动，不静默。
+
+R-7（excerpt 脱敏方案）：脱敏规则（redaction_patterns）与检测规则（rules）同属
+一份签名规则包，运维可不发代码就更新/新增脱敏正则覆盖面；字段可选——外部包若
+不提供该字段，退回内置默认脱敏规则（与检测规则解耦，避免"只想更新检测规则却
+被迫连带重签脱敏配置"）；字段一旦提供，校验严格度与 rules 一致（整包拒绝式
+fail-closed），不允许"部分脱敏规则非法但其余生效"这种半生效状态。
 """
 
 from __future__ import annotations
@@ -47,11 +53,58 @@ class Rule:
     patterns: tuple[re.Pattern[str], ...]
 
 
+@dataclass(frozen=True)
+class RedactionRule:
+    pattern: re.Pattern[str]
+    replacement: str
+
+
 class RulepackError(ValueError):
     """规则包非法/验签失败。消息只含类别信息，不含规则内容（可安全进日志）。"""
 
 
-def _parse_rulepack(data: Any) -> tuple[int, tuple[Rule, ...]]:
+# 内置默认脱敏规则：字段级 key=value 与常见密钥前缀/格式的黑名单正则。
+# 外部规则包未提供 redaction_patterns 字段时的兜底（见模块 docstring R-7 说明）。
+_DEFAULT_REDACTION_RULES: tuple[RedactionRule, ...] = (
+    RedactionRule(re.compile(r"sk-[a-zA-Z0-9_\-]{8,}"), "sk-***"),
+    RedactionRule(re.compile(r"gh[pousr]_[a-zA-Z0-9]{20,}"), "gh_***"),
+    RedactionRule(re.compile(r"(?i)bearer\s+[a-zA-Z0-9_\-\.]{10,}"), "Bearer ***"),
+    RedactionRule(re.compile(r"(?i)password\s*=\s*['\"][^'\"]+['\"]"), "password=***"),
+    RedactionRule(re.compile(r"(?i)token\s*=\s*['\"][^'\"]+['\"]"), "token=***"),
+    RedactionRule(re.compile(r"(?i)secret\s*=\s*['\"][^'\"]+['\"]"), "secret=***"),
+)
+
+
+def _parse_redaction_patterns(raw: Any) -> tuple[RedactionRule, ...]:
+    """解析可选的 'redaction_patterns' 字段。
+
+    - 字段缺失（None）：返回内置默认脱敏规则，与检测规则更新解耦；
+    - 字段存在：必须是非空数组，每项含字符串 pattern/replacement 且 pattern
+      可编译，否则抛 RulepackError（整包拒绝，校验严格度与 rules 一致）。
+    """
+    if raw is None:
+        return _DEFAULT_REDACTION_RULES
+    if not isinstance(raw, list) or not raw:
+        raise RulepackError("rulepack 'redaction_patterns' must be a non-empty array when present")
+    out: list[RedactionRule] = []
+    for idx, item in enumerate(raw):
+        if not isinstance(item, dict):
+            raise RulepackError(f"redaction_patterns #{idx} must be an object")
+        pattern = item.get("pattern")
+        replacement = item.get("replacement")
+        if not isinstance(pattern, str) or not pattern:
+            raise RulepackError(f"redaction_patterns #{idx} missing non-empty string 'pattern'")
+        if not isinstance(replacement, str):
+            raise RulepackError(f"redaction_patterns #{idx} missing string 'replacement'")
+        try:
+            compiled = re.compile(pattern)
+        except re.error as exc:
+            raise RulepackError(f"redaction_patterns #{idx} contains an uncompilable pattern") from exc
+        out.append(RedactionRule(compiled, replacement))
+    return tuple(out)
+
+
+def _parse_rulepack(data: Any) -> tuple[int, tuple[Rule, ...], tuple[RedactionRule, ...]]:
     """校验规则包结构并编译 patterns；任何非法都抛 RulepackError（整包拒绝）。"""
     if not isinstance(data, dict):
         raise RulepackError("rulepack root must be an object")
@@ -102,10 +155,11 @@ def _parse_rulepack(data: Any) -> tuple[int, tuple[Rule, ...]]:
                 patterns=patterns,
             )
         )
-    return version, tuple(rules)
+    redaction_rules = _parse_redaction_patterns(data.get("redaction_patterns"))
+    return version, tuple(rules), redaction_rules
 
 
-def _load_builtin() -> tuple[int, tuple[Rule, ...]]:
+def _load_builtin() -> tuple[int, tuple[Rule, ...], tuple[RedactionRule, ...]]:
     """加载内置包；损坏即构建事故，RuntimeError 拒绝启动（不静默回退）。"""
     try:
         data = json.loads(_BUILTIN_PATH.read_text(encoding="utf-8"))
@@ -131,11 +185,12 @@ def _verify_signature(path: Path, data: dict) -> None:
         raise RulepackError("signature verification failed") from exc
 
 
-def load_rulepack() -> tuple[int, tuple[Rule, ...]]:
-    """加载生效规则包，返回 (version, rules)。可重复调用（热更新/测试）。
+def load_rulepack() -> tuple[int, tuple[Rule, ...], tuple[RedactionRule, ...]]:
+    """加载生效规则包，返回 (version, rules, redaction_rules)。可重复调用（热更新/测试）。
 
     默认内置包；SIQ_AS_THREAT_RULEPACK_PATH 指向的外部包经验签通过且
     version >= 内置版本才采用，否则回退内置包并 logging.warning（fail-closed）。
+    redaction_rules 随整包一起验签/版本比较，外部包省略该字段时退回内置默认值。
     """
     builtin = _load_builtin()
     raw_path = os.getenv(RULEPACK_PATH_ENV)

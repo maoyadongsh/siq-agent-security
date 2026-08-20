@@ -7,6 +7,7 @@ import PermissionsPage from '@/pages/PermissionsPage';
 import FindingsPage from '@/pages/FindingsPage';
 import PoliciesPage from '@/pages/PoliciesPage';
 import ChangesPage from '@/pages/ChangesPage';
+import RuntimeBindingsPage from '@/pages/RuntimeBindingsPage';
 import EnvironmentsPage from '@/pages/EnvironmentsPage';
 import AuditPage from '@/pages/AuditPage';
 import SettingsPage from '@/pages/SettingsPage';
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/findings" element={<FindingsPage />} />
         <Route path="/policies" element={<PoliciesPage />} />
         <Route path="/changes" element={<ChangesPage />} />
+        <Route path="/runtime-bindings" element={<RuntimeBindingsPage />} />
         <Route path="/environments" element={<EnvironmentsPage />} />
         <Route path="/audit" element={<AuditPage />} />
         <Route path="/settings" element={<SettingsPage />} />

@@ -1,10 +1,13 @@
 """P2 威胁规则包版本化签名更新机制测试。
 
 证明的安全属性：
-- 内置包（app/data/threat_rules.v1.json）加载后 20 条规则与迁移前行为一致；
+- 内置包（app/data/threat_rules.v1.json）加载后规则数与包内实际条数一致，
+  行为与迁移前一致；
 - 验签通过且 version >= 内置的外部包生效，ANALYZER_VERSION 随版本变化；
 - fail-closed 回退内置包：签名被篡改 / 缺 .sig / JSON 畸形 / 版本低于内置 /
-  正则不可编译 / 规则字段缺漏，一律拒绝且绝不加载未验签规则。
+  正则不可编译 / 规则字段缺漏，一律拒绝且绝不加载未验签规则；
+- R-7：脱敏规则（redaction_patterns）与检测规则同包同签名，校验严格度一致——
+  外部包省略该字段回退内置默认脱敏规则，提供该字段则同样 fail-closed。
 """
 
 from __future__ import annotations
@@ -70,11 +73,14 @@ def _v2_pack() -> dict:
 
 
 class TestBuiltinRulepack:
-    def test_builtin_loads_20_rules_version_1(self, monkeypatch):
+    def test_builtin_loads_all_rules_version_1(self, monkeypatch):
+        """规则数与内置 JSON 文件实际条数动态比对，而非硬编码魔数——避免
+        每次新增/删减规则都要回来同步改这条断言（断言腐化）。"""
         monkeypatch.delenv(RULEPACK_PATH_ENV, raising=False)
-        version, rules = load_rulepack()
+        version, rules, redaction_rules = load_rulepack()
         assert version == 1
-        assert len(rules) >= 20
+        assert len(rules) == len(_builtin_data()["rules"])
+        assert len(redaction_rules) == len(_builtin_data()["redaction_patterns"])
         assert ta.RULEPACK_VERSION == 1
         assert ta.ANALYZER_VERSION == "siq.threat-static.v1"
 
@@ -106,9 +112,11 @@ class TestBuiltinRulepack:
 
     def test_builtin_json_field_order_and_schema(self):
         data = _builtin_data()
-        assert set(data) == {"version", "rules"}
+        assert set(data) == {"version", "rules", "redaction_patterns"}
         for rule in data["rules"]:
             assert set(rule) == set(_TEST_RULE)
+        for item in data["redaction_patterns"]:
+            assert set(item) == {"pattern", "replacement"}
 
 
 # ------------------------------------------------------------ 外部签名更新包
@@ -174,6 +182,79 @@ class TestExternalRulepack:
         pack = _v2_pack()
         del pack["rules"][-1]["severity"]
         path = _write_pack(tmp_path, pack)  # 正确签名：证明拒绝原因是字段缺漏
+        monkeypatch.setenv(RULEPACK_PATH_ENV, str(path))
+        ta.reload_rulepack()
+        assert ta.RULEPACK_VERSION == 1
+
+
+# ------------------------------------------------------------ R-7：脱敏规则可配置化
+
+
+class TestRedactionRulepack:
+    """redaction_patterns 与 rules 同包同签名，解耦省略 + 严格校验（R-7）。"""
+
+    def test_omitted_redaction_field_falls_back_to_builtin_defaults(self, tmp_path, monkeypatch):
+        """外部包只想更新检测规则，省略 redaction_patterns 字段——脱敏不应
+        因此失效，须退回内置默认脱敏规则集（字段解耦，见模块 docstring）。"""
+        pack = _v2_pack()
+        del pack["redaction_patterns"]
+        path = _write_pack(tmp_path, pack)
+        monkeypatch.setenv(RULEPACK_PATH_ENV, str(path))
+        ta.reload_rulepack()
+        assert ta.RULEPACK_VERSION == 2  # 外部包的检测规则仍然生效
+        # 内置默认脱敏规则（sk- 前缀）依然生效：新增的硬编码密钥检测规则命中后，
+        # excerpt 中的密钥原文被打码而非原样落库
+        result = ta.analyze(b"sk-abcdefghijklmnop1234\n", filename="x.sh")
+        matches = {m.rule_id: m for m in result.matches}
+        assert "threat-cred-hardcoded-secret" in matches
+        assert "sk-abcdefghijklmnop1234" not in matches["threat-cred-hardcoded-secret"].excerpt
+        assert matches["threat-cred-hardcoded-secret"].excerpt.startswith("sk-***")
+
+    def test_external_pack_can_override_redaction_patterns(self, tmp_path, monkeypatch):
+        """外部包显式提供 redaction_patterns 时以其为准（可整体替换覆盖面），
+        用新增测试规则命中的固定字面串验证替换确实生效。"""
+        pack = _v2_pack()
+        pack["redaction_patterns"] = [{"pattern": "siq-test-marker-v2", "replacement": "***MARKER***"}]
+        path = _write_pack(tmp_path, pack)
+        monkeypatch.setenv(RULEPACK_PATH_ENV, str(path))
+        ta.reload_rulepack()
+        result = ta.analyze(b"echo siq-test-marker-v2\n", filename="x.sh")
+        matches = {m.rule_id: m for m in result.matches}
+        assert matches["threat-test-v2-marker"].excerpt == "***MARKER***"
+        # 内置默认脱敏规则（sk- 前缀）已被整体替换覆盖，不再生效
+        result2 = ta.analyze(b"sk-abcdefghijklmnop1234\n", filename="x.sh")
+        hardcoded = next(m for m in result2.matches if m.rule_id == "threat-cred-hardcoded-secret")
+        assert hardcoded.excerpt == "sk-abcdefghijklmnop1234"
+
+    def test_redaction_pattern_uncompilable_rejects_whole_pack(self, tmp_path, monkeypatch, caplog):
+        """redaction_patterns 中一条正则不可编译 → 整包拒绝（含 rules 一起回退），
+        校验严格度与 rules 字段一致，不允许"部分脱敏规则非法但其余生效"。"""
+        pack = _v2_pack()
+        pack["redaction_patterns"] = [{"pattern": "(invalid[", "replacement": "***"}]
+        path = _write_pack(tmp_path, pack)
+        monkeypatch.setenv(RULEPACK_PATH_ENV, str(path))
+        with caplog.at_level(logging.WARNING, logger="app.rulepack"):
+            ta.reload_rulepack()
+        assert ta.RULEPACK_VERSION == 1  # 检测规则也一并回退，证明是整包拒绝
+        assert "threat-test-v2-marker" not in {
+            m.rule_id for m in ta.analyze(b"siq-test-marker-v2", filename="x.sh").matches
+        }
+        assert any("回退内置包" in r.getMessage() for r in caplog.records)
+
+    def test_redaction_pattern_missing_replacement_rejected(self, tmp_path, monkeypatch):
+        pack = _v2_pack()
+        pack["redaction_patterns"] = [{"pattern": "sk-[a-z]+"}]  # 缺 replacement
+        path = _write_pack(tmp_path, pack)
+        monkeypatch.setenv(RULEPACK_PATH_ENV, str(path))
+        ta.reload_rulepack()
+        assert ta.RULEPACK_VERSION == 1
+
+    def test_redaction_pattern_empty_array_rejected(self, tmp_path, monkeypatch):
+        """字段存在但为空数组：区别于"省略字段"（回退默认），空数组视为非法配置拒绝，
+        避免误配置成"关闭全部脱敏"这种危险的静默降级。"""
+        pack = _v2_pack()
+        pack["redaction_patterns"] = []
+        path = _write_pack(tmp_path, pack)
         monkeypatch.setenv(RULEPACK_PATH_ENV, str(path))
         ta.reload_rulepack()
         assert ta.RULEPACK_VERSION == 1

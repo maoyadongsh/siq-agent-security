@@ -33,6 +33,7 @@ ROLE_PERMISSIONS: dict[str, set[str]] = {
         "policy:manage",
         "policy:read",
         "finding:manage",
+        "finding:scan",
         "quarantine:release",
         "change:approve",
         "change:break_glass",
