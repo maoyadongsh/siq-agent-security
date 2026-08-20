@@ -11,7 +11,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
@@ -243,8 +243,34 @@ class Finding(Base):
     owner_user_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     due_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     risk_acceptance: Mapped[dict | None] = mapped_column(JSON, nullable=True)  # reason/approver/expires_at
+    # P0-3 威胁检测流水线产物（仅 domain="threat" 的 Finding 使用；脱敏命中记录，不存原文）
+    analyzer_version: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
+    matches: Mapped[list] = mapped_column(JSON, default=list)  # [{rule_id,line,excerpt_sha256,excerpt,...}]
     first_seen_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
     last_seen_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, onupdate=utcnow)
+
+
+class QuarantineCase(Base):
+    """威胁检测隔离处置（P0-3）：critical/high 命中即隔离，释放须显式理由。
+
+    处置分离：释放隔离不会自动改动关联 Finding 的状态（Finding 生命周期独立管理）。
+    """
+
+    __tablename__ = "quarantine_case"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("qr"))
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id", ondelete="CASCADE"), index=True)
+    asset_id: Mapped[str] = mapped_column(String(64), ForeignKey("agent_asset.id", ondelete="CASCADE"), index=True)
+    finding_id: Mapped[str | None] = mapped_column(String(64), ForeignKey("finding.id"), nullable=True)
+    evidence_ids: Mapped[list] = mapped_column(JSON, default=list)
+    reason: Mapped[str] = mapped_column(Text)  # 隔离原因（命中规则 id 汇总）
+    status: Mapped[str] = mapped_column(String(16), default="quarantined", index=True)  # quarantined|released
+    created_by: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    released_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    released_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    release_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 
 class DesiredPolicy(Base):
@@ -293,6 +319,36 @@ class ChangeRequest(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
 
+class RuntimeBinding(Base):
+    """策略 selector 与运行时目标的强绑定（P0-1）。
+
+    部署目标不再接受客户端自由文本，只允许来自本表登记且 active 的绑定；
+    backend_target_id 登记后不可变（变更 = 吊销重建），防止部署被重定向到未登记运行时。
+    """
+
+    __tablename__ = "runtime_binding"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("rb"))
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id", ondelete="CASCADE"), index=True)
+    environment_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("environment.id", ondelete="CASCADE"), index=True
+    )
+    agent_instance_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("agent_instance.id", ondelete="CASCADE"), index=True
+    )
+    asset_id: Mapped[str] = mapped_column(String(64), ForeignKey("agent_asset.id", ondelete="CASCADE"), index=True)
+    backend: Mapped[str] = mapped_column(String(32))  # openshell-cli|fake|...
+    backend_target_id: Mapped[str] = mapped_column(String(128))  # 不可变运行时目标（如 sandbox 名）
+    attestation: Mapped[dict] = mapped_column(JSON, default=dict)  # 后端版本/启动证明等登记佐证
+    status: Mapped[str] = mapped_column(String(16), default="active", index=True)  # active|revoked
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "backend", "backend_target_id", name="uq_runtime_binding_target"),
+    )
+
+
 class Deployment(Base):
     __tablename__ = "deployment"
 
@@ -300,7 +356,11 @@ class Deployment(Base):
     tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id", ondelete="CASCADE"), index=True)
     environment_id: Mapped[str] = mapped_column(String(64), ForeignKey("environment.id"))
     change_request_id: Mapped[str] = mapped_column(String(64), ForeignKey("change_request.id"))
+    # P0-1：target 服务端从 RuntimeBinding.backend_target_id 解析，客户端不可指定
     target: Mapped[str] = mapped_column(String(128))
+    runtime_binding_id: Mapped[str | None] = mapped_column(
+        String(64), ForeignKey("runtime_binding.id"), nullable=True, index=True
+    )
     from_revision: Mapped[str | None] = mapped_column(String(64), nullable=True)
     to_revision: Mapped[str] = mapped_column(String(64))
     edge_task_id: Mapped[str | None] = mapped_column(String(64), nullable=True)

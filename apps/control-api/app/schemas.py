@@ -337,8 +337,57 @@ class FindingOut(BaseModel):
     owner_user_id: str | None
     due_at: datetime | None
     risk_acceptance: dict | None
+    analyzer_version: str | None = None
+    confidence: float | None = None
+    matches: list = Field(default_factory=list)
     first_seen_at: datetime
     last_seen_at: datetime
+
+
+class ThreatScanRequest(BaseModel):
+    """威胁扫描请求（P0-3）：content 为文本或 base64；1 MiB 解码上限在路由侧强制。"""
+
+    model_config = StrictModelConfig
+
+    content: str = Field(min_length=1, max_length=4_000_000)
+    encoding: Literal["text", "base64"] = "text"
+    filename: str | None = Field(default=None, max_length=256)
+    evidence_ids: list[str] = Field(default_factory=list, max_length=1000)
+
+
+class QuarantineCaseOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    tenant_id: str
+    asset_id: str
+    finding_id: str | None
+    evidence_ids: list
+    reason: str
+    status: str
+    created_by: str
+    created_at: datetime
+    released_by: str | None
+    released_at: datetime | None
+    release_reason: str | None
+
+
+class QuarantineReleaseRequest(BaseModel):
+    model_config = StrictModelConfig
+
+    reason: str = Field(min_length=1, max_length=512)
+
+
+class ThreatScanOut(BaseModel):
+    """扫描结果只含标识/哈希/脱敏命中记录，不回传原始内容。"""
+
+    asset_id: str
+    content_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    detected_type: str
+    analyzer_version: str
+    match_count: int
+    findings: list[FindingOut]
+    quarantine_case: QuarantineCaseOut | None
 
 
 class SecretReference(BaseModel):
@@ -403,10 +452,39 @@ class ChangeRequestOut(BaseModel):
     created_at: datetime
 
 
+class RuntimeBindingCreate(BaseModel):
+    """登记运行时绑定（P0-1）：部署目标只能来自 active 绑定，禁止客户端自由文本。"""
+
+    model_config = StrictModelConfig
+
+    agent_instance_id: str = Field(min_length=1, max_length=64)
+    environment_id: str = Field(min_length=1, max_length=64)
+    backend: str = Field(min_length=1, max_length=32)
+    backend_target_id: str = Field(min_length=1, max_length=128)
+    attestation: dict = Field(default_factory=dict)
+
+
+class RuntimeBindingOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    environment_id: str
+    agent_instance_id: str
+    asset_id: str
+    backend: str
+    backend_target_id: str
+    attestation: dict
+    status: str
+    created_at: datetime
+    revoked_at: datetime | None
+
+
 class DeploymentCreate(BaseModel):
+    model_config = StrictModelConfig
+
     change_request_id: str
     environment_id: str
-    target: str = Field(max_length=128)
+    binding_id: str = Field(min_length=1, max_length=64)
 
 
 class DeploymentOut(BaseModel):
@@ -416,6 +494,7 @@ class DeploymentOut(BaseModel):
     environment_id: str
     change_request_id: str
     target: str
+    runtime_binding_id: str | None
     from_revision: str | None
     to_revision: str
     status: str

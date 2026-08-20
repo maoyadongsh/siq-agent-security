@@ -984,9 +984,31 @@ def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypa
     ).json()
     approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
     client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+    # P0-1：部署必须经登记的 RuntimeBinding（instance 挂在被 selector 选中的资产下）
+    from app.models import AgentInstance
+
+    with session_scope() as s:
+        inst = AgentInstance(
+            tenant_id="tnt-A", asset_id=agent["id"], environment_id=env_a["id"], runtime="hermes"
+        )
+        s.add(inst)
+        s.flush()
+        inst_id = inst.id
+        s.commit()
+    binding = client.post(
+        "/api/v1/runtime-bindings",
+        json={
+            "agent_instance_id": inst_id,
+            "environment_id": env_a["id"],
+            "backend": "openshell-cli",
+            "backend_target_id": "bind-sandbox",
+        },
+        headers=tenant_a,
+    )
+    assert binding.status_code == 201, binding.text
     dep = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "target": "bind-sandbox"},
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding.json()["id"]},
         headers=tenant_a,
     ).json()
     assert dep["status"] == "effective"

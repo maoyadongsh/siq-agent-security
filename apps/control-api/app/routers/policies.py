@@ -15,7 +15,17 @@ from sqlalchemy.orm import Session
 
 from app.adapters.openshell.cli_backend import OpenShellCliBackend
 from app.db import get_session
-from app.models import ChangeRequest, Deployment, DesiredPolicy, EdgeTask, Environment, utcnow
+from app.models import (
+    AgentAsset,
+    AgentInstance,
+    ChangeRequest,
+    Deployment,
+    DesiredPolicy,
+    EdgeTask,
+    Environment,
+    RuntimeBinding,
+    utcnow,
+)
 from app.outbox import audit, emit_event
 from app.safe_errors import error_reference
 from app.schemas import (
@@ -53,6 +63,35 @@ def _validate_policy_static(policy: DesiredPolicy) -> list[str]:
         if "ref" not in secret or "purpose" not in secret:
             errors.append("secrets[] 必须含 ref 与 purpose，禁止明文")
     return errors
+
+
+def _ensure_binding_in_selector(
+    session: Session, tenant_id: str, policy: DesiredPolicy, binding: RuntimeBinding
+) -> None:
+    """selector 与绑定的运行时强绑定校验（P0-1，fail-closed）。
+
+    selector.agent_ids 允许填资产 id 或该资产下实例 id；任一 id 在本租户内
+    无法解析为已知资产/实例即拒绝（防止 selector 拼写漂移导致策略落空），
+    且绑定的 asset/instance 必须命中 selector。
+    """
+    agent_ids = [str(aid) for aid in (policy.selector or {}).get("agent_ids") or []]
+    if agent_ids:
+        known: set[str] = set(
+            session.scalars(
+                select(AgentAsset.id).where(AgentAsset.tenant_id == tenant_id, AgentAsset.id.in_(agent_ids))
+            )
+        )
+        known |= set(
+            session.scalars(
+                select(AgentInstance.id).where(
+                    AgentInstance.tenant_id == tenant_id, AgentInstance.id.in_(agent_ids)
+                )
+            )
+        )
+        if any(aid not in known for aid in agent_ids):
+            raise HTTPException(status_code=409, detail="selector_unknown_agent_id")
+    if binding.asset_id not in agent_ids and binding.agent_instance_id not in agent_ids:
+        raise HTTPException(status_code=409, detail="binding_not_in_policy_selector")
 
 
 @router.get("/api/v1/policies", response_model=list[PolicyOut])
@@ -349,6 +388,22 @@ def create_deployment(
         raise HTTPException(status_code=409, detail="environment_not_in_enforce_mode")
     policy = _policy_or_404(session, identity.tenant_id, cr.policy_id)
 
+    # P0-1：部署目标只允许来自登记的 active RuntimeBinding（selector 与运行时强绑定），
+    # 客户端不可指定 target；跨租户/不存在统一 404 隐藏存在性
+    binding = session.scalar(
+        select(RuntimeBinding).where(
+            RuntimeBinding.id == body.binding_id, RuntimeBinding.tenant_id == identity.tenant_id
+        )
+    )
+    if binding is None:
+        raise HTTPException(status_code=404, detail="not_found")
+    if binding.status != "active":
+        raise HTTPException(status_code=409, detail="binding_revoked")
+    if binding.environment_id != body.environment_id:
+        raise HTTPException(status_code=409, detail="binding_environment_mismatch")
+    _ensure_binding_in_selector(session, identity.tenant_id, policy, binding)
+    target = binding.backend_target_id  # 服务端解析， Deployment.target 与适配器调用统一使用
+
     import os
 
     backend = os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
@@ -365,24 +420,32 @@ def create_deployment(
             detail=f"openshell_cli_mode_unsupported: {policy.enforcement_mode}",
         )
 
+    task_payload: dict = {
+        "policy_id": policy.id,
+        "enforcement_mode": policy.enforcement_mode,
+    }
+    # 执行后端编译接线：SIQ_AS_ENFORCEMENT_BACKEND 决定编译与发布路径
+    # 编译先于 Deployment 落库：编译拒绝/静态 gate 命中时不产生任何状态变化
+    _compile_for_enforcement(policy, task_payload)
+
+    # P0-2：静态段（filesystem/process 等需重建生效）在 generation 路径修复前
+    # 不得经 openshell-cli 进入 effective；此时尚未 flush 任何行，直接拒绝无副作用
+    if backend == "openshell-cli" and (task_payload.get("compiled") or {}).get("needs_generation"):
+        raise HTTPException(status_code=422, detail="static_generation_unavailable")
+
     deployment = Deployment(
         tenant_id=identity.tenant_id,
         environment_id=env.id,
         change_request_id=cr.id,
-        target=body.target,
+        target=target,
+        runtime_binding_id=binding.id,
         to_revision=f"policy-{policy.version}",
         status="pending",
     )
     session.add(deployment)
     session.flush()  # deployment.id 为 insert 期默认，payload 需要真实 ID
+    task_payload["deployment_id"] = deployment.id
     expires_at = utcnow() + timedelta(seconds=_task_ttl())
-    task_payload: dict = {
-        "policy_id": policy.id,
-        "deployment_id": deployment.id,
-        "enforcement_mode": policy.enforcement_mode,
-    }
-    # 执行后端编译接线：SIQ_AS_ENFORCEMENT_BACKEND 决定编译与发布路径
-    _compile_for_enforcement(policy, task_payload)
 
     if backend == "openshell-cli":
         # 真实闭环（2026-08-13 活网关验证）：审批后直接 policy set + 读回验证
@@ -394,15 +457,15 @@ def create_deployment(
             caps = adapter.probe()
             desired = _desired_from_policy(policy)
             compiled = adapter.compile(desired, caps)
-            plan = adapter.plan_change(body.target, compiled)
+            plan = adapter.plan_change(target, compiled)
             if plan.kind == "generation":
-                receipt = adapter.create_generation(body.target, compiled)
+                receipt = adapter.create_generation(target, compiled)
             else:
-                receipt = adapter.apply_dynamic(body.target, plan, expected_revision=plan.expected_revision)
+                receipt = adapter.apply_dynamic(target, plan, expected_revision=plan.expected_revision)
             # 正负向验证：允许集=策略网络端点；拒绝集=合成未授权端点（block 模式下必须不在允许集）
             allow = [r.get("endpoint") for r in (compiled.artifact.get("network_policies") or [])]
             checks = {"expect_allow": allow, "expect_deny": ["10.255.255.255:1"]}
-            report = adapter.verify(body.target, checks, receipt)
+            report = adapter.verify(target, checks, receipt)
             if not report.passed:
                 raise AdapterError(f"验证失败: {report.failures}")
             deployment.receipt = {
