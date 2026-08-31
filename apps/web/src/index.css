@@ -1,7 +1,7 @@
 /* ---------------------------------------------------------------------------
  * SIQ Agent Security 控制台 — 全局样式
  * 设计语言对齐 SIQ 工作台（siq-workbench packages/ui/tokens.css）：
- * Apple 风格浅色界面 —— 系统蓝主色 + 四档语义色 + 发丝边框 + 连续圆角。
+ * Apple/Claude 风格浅色界面 —— 暖纸底 + 深墨主色 + 深金强调 + 四档语义色。
  * 手写 CSS，不引入组件库 / tailwind（仓库既定约定）。
  *
  * 对比度（对 #f5f5f7 页面底 / #fff 卡片底）：
@@ -13,18 +13,18 @@
 :root {
   color-scheme: light;
 
-  /* 主色：Apple 系统蓝 */
-  --siq-primary: #0071e3;
-  --siq-primary-hover: #0066d6;
+  /* 主色：GP Governance 深金 */
+  --siq-primary: #7c5a0c;
+  --siq-primary-hover: #63490a;
   /* 文本/链接用的深色主色（浅色 tint 或页面底上的可访问文本色） */
-  --siq-primary-strong: #005ab6;
+  --siq-primary-strong: #63490a;
 
   /* 中性色：Apple 浅灰页面底 / 白卡片 / 近黑文字 / 次级灰 / 发丝边框 */
-  --bg: #f5f5f7;
-  --card: #ffffff;
-  --text: #1d1d1f;
-  --text-secondary: #6e6e73;
-  --border: rgb(0 0 0 / 0.08);
+  --bg: #f7f4ee;
+  --card: #fdfcf9;
+  --text: #12203e;
+  --text-secondary: #6c6863;
+  --border: #e8e1d4;
 
   /* 语义四档（复用 SIQ 意见四档：通过 / 注意 / 拒绝 / 信息不足） */
   --approve: #16a34a;
@@ -33,17 +33,17 @@
   --insufficient: #6b7280;
 
   /* Apple 连续圆角感：卡片 14px / 控件 10px */
-  --radius-card: 14px;
-  --radius-ctrl: 10px;
+  --radius-card: 10px;
+  --radius-ctrl: 6px;
 
   /* 柔和环境阴影 */
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
-  --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.05), 0 12px 32px rgb(0 0 0 / 0.09);
-  --shadow-pop: 0 12px 32px rgb(0 113 227 / 0.12);
-  --focus-ring: 0 0 0 3px rgb(0 113 227 / 0.14);
+  --shadow-card: 0 1px 2px rgb(23 35 64 / 0.05);
+  --shadow-card-hover: 0 8px 30px rgb(23 35 64 / 0.08);
+  --shadow-pop: 0 16px 48px rgb(23 35 64 / 0.1);
+  --focus-ring: 0 0 0 3px rgb(184 134 11 / 0.16);
 
-  --sidebar-w: 216px;
-  --sidebar-w-collapsed: 64px;
+  --sidebar-w: 256px;
+  --sidebar-w-collapsed: 72px;
 }
 
 * {
@@ -58,14 +58,30 @@ body {
 
 body {
   font-family:
-    -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei',
+    Inter, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei',
     'Noto Sans CJK SC', 'Segoe UI', system-ui, sans-serif;
   background: var(--bg);
+  background-image:
+    linear-gradient(90deg, transparent calc(25% - 1px), rgb(23 35 64 / 0.035) 25%, transparent calc(25% + 1px)),
+    linear-gradient(90deg, transparent calc(50% - 1px), rgb(23 35 64 / 0.035) 50%, transparent calc(50% + 1px)),
+    linear-gradient(90deg, transparent calc(75% - 1px), rgb(23 35 64 / 0.035) 75%, transparent calc(75% + 1px));
   color: var(--text);
   font-size: 14px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Playfair Display", "Noto Serif SC", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: .012em;
+  text-wrap: balance;
+}
+
+h1 { font-size: clamp(24px, 1.15rem + .9vw, 30px); line-height: 1.25; }
 
 #root {
   min-height: 100vh;
@@ -85,6 +101,7 @@ a:hover {
 :where(button, a, input, select, textarea, summary, [role='button'], [role='tab'], [tabindex]):focus-visible {
   outline: 2px solid var(--siq-primary);
   outline-offset: 2px;
+  box-shadow: var(--focus-ring);
 }
 
 /* 全局交互基线 */
@@ -113,9 +130,9 @@ a,
 
 /* Apple 式磨砂半透明栏（侧栏/顶栏）：不支持 backdrop-filter 时回落实色 */
 .siq-glass {
-  background: rgb(255 255 255 / 0.8);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
+  background: rgb(250 248 244 / 0.92);
+  -webkit-backdrop-filter: saturate(140%) blur(18px);
+  backdrop-filter: saturate(140%) blur(18px);
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -235,8 +252,8 @@ a,
   border-radius: 9px;
   flex-shrink: 0;
   color: #fff;
-  background: linear-gradient(135deg, #4da3ec 0%, var(--siq-primary) 55%, var(--siq-primary-hover) 100%);
-  box-shadow: 0 4px 12px rgb(0 113 227 / 0.28);
+  background: #001840;
+  box-shadow: 0 1px 2px rgb(23 35 64 / .12);
 }
 
 .brand-text {
@@ -252,6 +269,7 @@ a,
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text);
+  font-family: "Playfair Display", "Noto Serif SC", Georgia, serif;
 }
 
 .brand-sub {
@@ -288,7 +306,7 @@ a,
 }
 
 .nav-link.active {
-  background: #e6f1fc; /* ≈ primary 10% tint（color-mix 兜底） */
+  background: #f5eee0; /* 深金 10% tint（color-mix 兜底） */
   background: color-mix(in srgb, var(--siq-primary) 10%, transparent);
   color: var(--siq-primary-strong);
   font-weight: 500;
@@ -453,7 +471,7 @@ a,
 
 .content-page {
   padding: 24px 28px 64px;
-  max-width: 1280px;
+  max-width: 1680px;
 }
 
 @media (max-width: 767.98px) {
@@ -475,9 +493,9 @@ a,
 
 .page-header h1 {
   margin: 0 0 4px;
-  font-size: 20px;
+  font-size: clamp(24px, 1.15rem + .9vw, 30px);
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: .012em;
 }
 
 .page-desc {
@@ -1356,4 +1374,11 @@ a,
 .quick-tile:hover .quick-tile-arrow {
   opacity: 1;
   transform: none;
+}
+
+@media (max-width: 767px) {
+  body { background-image: none; }
+  input,
+  select,
+  textarea { font-size: 16px; }
 }
