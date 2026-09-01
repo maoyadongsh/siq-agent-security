@@ -40,7 +40,7 @@ export default function SettingsPage() {
     <section>
       <PageHeader
         title="设置"
-        description="控制台连接与认证配置（连接状态来自 /health 实时探测；Phase 2 接入真实登录与租户切换）。"
+        description="查看控制面连接状态、运行环境与当前会话的安全边界。"
         connection={connection}
         connectionError={connectionError}
       />
@@ -65,18 +65,16 @@ export default function SettingsPage() {
         </p>
       </div>
       <div className="card">
-        <h2>安全不变量</h2>
+        <h2>会话安全边界</h2>
         <ul className="page-desc">
           <li>
-            <strong>token 不落 localStorage</strong>：Bearer token 仅保存在内存
-            （src/api/client.ts 的 setToken），页面刷新即失效，与 SIQ 平台安全不变量一致；
+            <strong>访问凭证不写入浏览器长期存储</strong>：凭证仅保留在当前页面会话内，刷新后即失效；
           </li>
           <li>
-            开发/演示环境仅通过 X-Dev-Tenant-Id / X-Dev-User-Id 头注入身份，
-            由 VITE_DEV_MODE 开关控制；
+            开发身份模拟默认关闭，只有显式启用开发模式后才会附加租户与用户标识；
           </li>
           <li>
-            401 处理为占位（client.onUnauthorized），Phase 2 接入刷新 / 重定向登录流程。
+            认证失效时会立即清除会话凭证，避免失效身份继续访问控制面。
           </li>
         </ul>
       </div>

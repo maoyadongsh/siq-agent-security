@@ -88,7 +88,7 @@ export default function AuditPage() {
     <section>
       <PageHeader
         title="审计"
-        description="控制面审计事件（AuditEvent，设计文档 §24）：只读、租户隔离、summary 已脱敏。"
+        description="只读查看经租户隔离和敏感信息处理的控制面审计事件。"
         connection={events.status}
         connectionError={events.error}
       />

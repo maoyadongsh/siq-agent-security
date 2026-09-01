@@ -87,7 +87,7 @@ export default function EnvironmentsPage() {
     <section>
       <PageHeader
         title="环境与 Connector"
-        description="纳管环境与其运行模式 / 风险级别（设计文档 §26）：last_heartbeat_at 由 Edge 心跳回写，长期缺失表示 Connector 离线。"
+        description="查看纳管环境的运行模式、风险级别与最近心跳；长期未上报表示连接器可能离线。"
         connection={environments.status}
         connectionError={environments.error}
       />

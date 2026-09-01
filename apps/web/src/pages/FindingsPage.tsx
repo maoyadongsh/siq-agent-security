@@ -181,7 +181,7 @@ export default function FindingsPage() {
     <section>
       <PageHeader
         title="风险中心"
-        description="规则引擎产出的风险结论（Finding，设计文档 §13）：级别、规则、关联资产与处置状态；支持行内确认 / 解决。"
+        description="汇总规则引擎识别的风险级别、关联资产与处置状态，并支持就地确认和解决。"
         connection={findings.status}
         connectionError={findings.error}
       />

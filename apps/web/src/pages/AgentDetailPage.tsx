@@ -93,7 +93,7 @@ export default function AgentDetailPage() {
     <section>
       <PageHeader
         title={agent?.name ?? '智能体资产详情'}
-        description="资产详情：来源候选、纳管状态、角色与关联证据（设计文档 §10）。"
+        description="查看资产来源、纳管状态、角色、运行边界与关联证据。"
         connection={status}
         connectionError={error}
       />
@@ -227,7 +227,7 @@ function PermissionGovernance({ assetId, assetName }: { assetId: string; assetNa
 
       {enf && enf.enforce_status === 'declared_only' && (
         <p className="page-desc">
-          该智能体当前没有 effective 部署：权限操作保存为期望策略，配合权限视图的 Diff 与漂移检测使用（§6.5 控制面≠执行面，未沙箱化的智能体无法真实强制）。
+          该智能体尚无生效部署。权限调整会先保存为期望策略；只有完成沙箱部署并通过回读验证后，控制项才会进入强制状态。
         </p>
       )}
       {enf && enf.all_deployments.length > 0 && (

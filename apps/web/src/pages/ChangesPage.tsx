@@ -128,7 +128,7 @@ export default function ChangesPage() {
     <div>
       <PageHeader
         title="变更中心"
-        description="提案 → 审批（职责分离）→ 发布 → 读回验证 → effective（§14/§19.3；部署目标默认活沙箱 siq-as-live）"
+        description="每项变更均经过提案、职责分离审批、发布与回读验证；默认部署到在线沙箱 siq-as-live。"
         connection={status}
         connectionError={error}
       />

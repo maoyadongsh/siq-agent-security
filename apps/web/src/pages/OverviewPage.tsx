@@ -78,7 +78,7 @@ export default function OverviewPage() {
     <section>
       <PageHeader
         title="总览"
-        description="智能体安全管控平台控制台：资产、权限、风险、策略、变更与审计的统一入口（设计文档 §20.1）。"
+        description="智能体资产、权限、风险、策略、变更与审计的统一安全入口。"
         connection={loading ? 'loading' : connected ? 'connected' : 'disconnected'}
         connectionError={error}
       />

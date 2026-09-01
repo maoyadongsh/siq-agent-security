@@ -152,7 +152,7 @@ export default function PermissionsPage() {
     <div>
       <PageHeader
         title="权限视图"
-        description="按权限域与权威来源展示 declared / inferred / observed / effective / unknown 分层（设计文档 §12.2）"
+        description="按权限域与权威来源区分声明、推断、观测、生效与未知状态。"
         connection={status}
         connectionError={error}
       />

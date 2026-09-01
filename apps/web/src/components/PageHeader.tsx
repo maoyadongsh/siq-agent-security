@@ -13,7 +13,7 @@ interface PageHeaderProps {
 
 /**
  * 页头：标题 + 简要说明 + 连接状态徽标 + 可选的页面级操作。
- * Phase 1 后端未联调时，各页展示"未连接"状态但不阻塞路由与构建。
+ * 控制面不可用时，各页展示明确连接状态但不阻塞路由渲染。
  */
 export default function PageHeader({
   title,
@@ -37,7 +37,8 @@ export default function PageHeader({
 
   return (
     <header className="page-header">
-      <div>
+      <div className="page-header-copy">
+        <span className="page-eyebrow">SIQ AGENT SECURITY</span>
         <h1>{title}</h1>
         <p className="page-desc">{description}</p>
       </div>

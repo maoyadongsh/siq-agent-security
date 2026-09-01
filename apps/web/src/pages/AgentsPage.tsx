@@ -253,7 +253,7 @@ export default function AgentsPage() {
     <section>
       <PageHeader
         title="智能体资产"
-        description="由发现候选（AgentCandidate）纳管后的智能体资产清单；候选标签页支持确认纳管 / 驳回（设计文档 §10）。"
+        description="集中管理已发现与已纳管的智能体资产，并在候选视图中完成确认或驳回。"
         connection={active.status}
         connectionError={active.error}
         actions={

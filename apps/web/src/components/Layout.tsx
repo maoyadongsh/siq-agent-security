@@ -1,7 +1,7 @@
 /** 应用外壳（对齐 SIQ 工作台布局语言：浅色磨砂侧栏 + 顶栏 + 独立滚动内容区）。
  * 桌面端侧边栏支持 展开（图标+文字）/ 收起（仅图标 + tooltip），选择持久化
  * localStorage（非敏感 UI 偏好）；移动端 <768px 为抽屉导航。 */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon, type IconName } from '@/components/icons';
 
@@ -45,6 +45,22 @@ export default function Layout() {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(readCollapsed);
 
+  useEffect(() => setOpen(false), [location.pathname, location.search]);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
+
   const toggleCollapsed = () =>
     setCollapsed((current) => {
       const next = !current;
@@ -60,6 +76,7 @@ export default function Layout() {
     <div className="app-shell">
       {/* 侧边导航 */}
       <aside
+        aria-label="SIQ 智能体安全导航"
         className={`sidebar siq-glass${collapsed ? ' collapsed' : ''}${open ? ' open' : ''}`}
       >
         <div className="brand">
@@ -88,7 +105,7 @@ export default function Layout() {
           ))}
         </nav>
         <div className="sidebar-foot">
-          <span className="sidebar-version">v0.1 · Phase 1</span>
+          <span className="sidebar-version">Evidence-first control plane</span>
           <button
             type="button"
             className="nav-collapse-btn"
@@ -122,11 +139,11 @@ export default function Layout() {
             <Icon name="menu" size={20} />
           </button>
           <span className="topbar-title">{currentTitle(location.pathname)}</span>
-          <span className="topbar-phase">Phase 1 · 骨架</span>
+          <span className="topbar-phase"><span aria-hidden="true" />证据优先 · 安全控制面</span>
         </header>
         <main className="content">
           {/* key 驱动换页入场动画 */}
-          <div key={location.pathname} className="siq-page-enter content-page">
+          <div key={`${location.pathname}${location.search}`} className="siq-page-enter content-page">
             <Outlet />
           </div>
         </main>

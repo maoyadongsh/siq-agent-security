@@ -4,10 +4,7 @@
  * Apple/Claude 风格浅色界面 —— 暖纸底 + 深墨主色 + 深金强调 + 四档语义色。
  * 手写 CSS，不引入组件库 / tailwind（仓库既定约定）。
  *
- * 对比度（对 #f5f5f7 页面底 / #fff 卡片底）：
- * - primary #0071e3（apple.com 按钮蓝）：白字其上 4.7:1 ✓
- * - primary-strong ≈ #005ab6：浅 tint 底上 ≥5.5:1 ✓
- * - 各 *-strong 语义色：对应 10% tint 徽章底上 ≥5.5:1 ✓
+ * 深金用于证据与关键操作，墨蓝用于身份与信息结构，语义色仅表达状态。
  * ------------------------------------------------------------------------- */
 
 :root {
@@ -19,7 +16,7 @@
   /* 文本/链接用的深色主色（浅色 tint 或页面底上的可访问文本色） */
   --siq-primary-strong: #63490a;
 
-  /* 中性色：Apple 浅灰页面底 / 白卡片 / 近黑文字 / 次级灰 / 发丝边框 */
+  /* 中性色：暖纸页面底 / 象牙白卡片 / 治理墨蓝文字 / 发丝边框 */
   --bg: #f7f4ee;
   --card: #fdfcf9;
   --text: #12203e;
@@ -32,17 +29,17 @@
   --reject: #dc2626;
   --insufficient: #6b7280;
 
-  /* Apple 连续圆角感：卡片 14px / 控件 10px */
+  /* 企业控制台连续圆角 */
   --radius-card: 10px;
   --radius-ctrl: 6px;
 
   /* 柔和环境阴影 */
-  --shadow-card: 0 1px 2px rgb(23 35 64 / 0.05);
+  --shadow-card: 0 8px 30px rgb(23 35 64 / 0.06);
   --shadow-card-hover: 0 8px 30px rgb(23 35 64 / 0.08);
   --shadow-pop: 0 16px 48px rgb(23 35 64 / 0.1);
   --focus-ring: 0 0 0 3px rgb(184 134 11 / 0.16);
 
-  --sidebar-w: 256px;
+  --sidebar-w: 272px;
   --sidebar-w-collapsed: 72px;
 }
 
@@ -84,7 +81,7 @@ h4 {
 h1 { font-size: clamp(24px, 1.15rem + .9vw, 30px); line-height: 1.25; }
 
 #root {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* 链接：深色主色，hover 才出下划线（Apple HIG） */
@@ -229,7 +226,7 @@ a,
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border);
-  transition: width 200ms ease-out, transform 200ms ease-out;
+  transition: width 200ms ease-out, transform 200ms ease-out, visibility 200ms ease-out;
   z-index: 30;
 }
 
@@ -237,23 +234,23 @@ a,
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 18px;
+  padding: 16px;
   border-bottom: 1px solid var(--border);
-  min-height: 62px;
+  min-height: 72px;
 }
 
-/* 品牌标：主色渐变圆角方块 + 白色盾牌（对齐 SIQ qa-avatar 语言） */
+/* 品牌标：稳定墨蓝 + 白色盾牌。 */
 .brand-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   flex-shrink: 0;
   color: #fff;
   background: #001840;
-  box-shadow: 0 1px 2px rgb(23 35 64 / .12);
+  box-shadow: 0 6px 16px rgb(23 35 64 / .14);
 }
 
 .brand-text {
@@ -273,7 +270,7 @@ a,
 }
 
 .brand-sub {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-secondary);
 }
 
@@ -291,7 +288,8 @@ a,
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 12px;
+  min-height: 44px;
+  padding: 8px 12px;
   border-radius: var(--radius-ctrl);
   color: var(--text-secondary);
   font-size: 13.5px;
@@ -300,7 +298,7 @@ a,
 }
 
 .nav-link:hover {
-  background: rgb(0 0 0 / 0.04);
+  background: color-mix(in srgb, var(--siq-primary) 5%, transparent);
   color: var(--text);
   text-decoration: none;
 }
@@ -325,7 +323,7 @@ a,
   gap: 8px;
   padding: 10px 12px;
   border-top: 1px solid var(--border);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
@@ -336,7 +334,8 @@ a,
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 6px;
+  min-height: 44px;
+  padding: 8px;
   border: none;
   border-radius: var(--radius-ctrl);
   background: none;
@@ -386,10 +385,12 @@ a,
     position: fixed;
     inset: 0 auto 0 0;
     transform: translateX(-100%);
+    visibility: hidden;
   }
 
   .sidebar.open {
     transform: translateX(0);
+    visibility: visible;
     box-shadow: var(--shadow-card-hover);
   }
 }
@@ -398,7 +399,9 @@ a,
   position: fixed;
   inset: 0;
   z-index: 20;
-  background: rgb(0 0 0 / 0.2);
+  background: rgb(18 32 62 / 0.3);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
   border: none;
   padding: 0;
   cursor: default;
@@ -422,30 +425,46 @@ a,
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid var(--border);
-  padding: 12px 20px;
+  min-height: 72px;
+  padding: 12px 24px;
 }
 
 .topbar-title {
-  font-size: 14.5px;
+  font-family: "Playfair Display", "Noto Serif SC", Georgia, serif;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
 
 .topbar-phase {
   margin-left: auto;
-  font-size: 11.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
   color: var(--text-secondary);
-  background: rgb(0 0 0 / 0.05);
-  border-radius: 999px;
-  padding: 2px 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: var(--radius-ctrl);
+  padding: 5px 9px;
   white-space: nowrap;
+}
+
+.topbar-phase > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--approve);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--approve) 12%, transparent);
 }
 
 .hamburger {
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 7px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   border: none;
   border-radius: var(--radius-ctrl);
   background: none;
@@ -472,6 +491,7 @@ a,
 .content-page {
   padding: 24px 28px 64px;
   max-width: 1680px;
+  margin: 0 auto;
 }
 
 @media (max-width: 767.98px) {
@@ -488,7 +508,27 @@ a,
   align-items: flex-start;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+  padding: 22px 24px;
+}
+
+.page-header-copy {
+  max-width: 820px;
+  border-left: 3px solid var(--siq-primary);
+  padding-left: 16px;
+}
+
+.page-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--siq-primary-strong);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .12em;
 }
 
 .page-header h1 {
@@ -606,16 +646,9 @@ a,
 
 .stats-grid {
   display: grid;
-  /* 桌面端固定一行七列（指标卡数量固定为 7），窄屏才折行 */
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 14px;
   margin-bottom: 20px;
-}
-
-@media (max-width: 1100px) {
-  .stats-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 640px) {
@@ -632,14 +665,14 @@ a,
   padding: 16px 18px;
 }
 
-/* 卡片 hover 微浮起（仅精确指针设备；触摸设备不触发） */
+/* 精确指针下仅加强边界，不移动信息密集卡片。 */
 @media (hover: hover) and (pointer: fine) {
   .stat-card {
-    transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+    transition: border-color 150ms ease-out, box-shadow 180ms ease-out;
   }
 
   .stat-card:hover {
-    transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--siq-primary) 28%, var(--border));
     box-shadow: var(--shadow-card-hover);
   }
 }
@@ -692,8 +725,9 @@ a,
 }
 
 .stat-card .stat-value {
+  font-family: "DM Serif Display", "Playfair Display", "Noto Serif SC", Georgia, serif;
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.15;
   font-variant-numeric: tabular-nums;
@@ -894,6 +928,7 @@ a,
 
 .btn,
 .btn-sm {
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -906,7 +941,7 @@ a,
   text-decoration: none;
 }
 
-/* 中号主按钮：主色填充（Apple 按钮蓝） */
+/* 中号主按钮：深金主操作。 */
 .btn {
   background: var(--siq-primary);
   color: #fff;
@@ -1017,25 +1052,25 @@ a,
 }
 
 .btn-scan {
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   gap: 7px;
   padding: 8px 18px;
-  border-radius: 999px;
+  border-radius: var(--radius-ctrl);
   border: none;
   cursor: pointer;
   font-size: 13.5px;
   font-weight: 600;
   color: #fff;
   background: var(--siq-primary);
-  box-shadow: var(--shadow-pop);
+  box-shadow: 0 8px 24px rgb(23 35 64 / .1);
   transition: transform 150ms ease-out, box-shadow 150ms ease-out, background-color 150ms ease-out;
 }
 
 .btn-scan:hover:not(:disabled) {
   background: var(--siq-primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 16px 36px rgb(0 113 227 / 0.18);
+  box-shadow: 0 12px 30px rgb(124 90 12 / 0.18);
 }
 
 .btn-scan:disabled {
@@ -1118,6 +1153,7 @@ a,
 .form-box textarea,
 .deploy-target,
 .sync-group select {
+  min-height: 40px;
   padding: 7px 11px;
   border: 1px solid var(--border);
   border-radius: var(--radius-ctrl);
@@ -1272,15 +1308,8 @@ a,
 
 .quick-grid {
   display: grid;
-  /* 桌面端固定一行六列（入口数量固定为 6），窄屏才折行 */
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
-}
-
-@media (max-width: 1100px) {
-  .quick-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 640px) {
@@ -1301,8 +1330,8 @@ a,
   border-radius: var(--radius-card);
   color: var(--text);
   transition:
-    transform 180ms ease-out, box-shadow 180ms ease-out,
-    background-color 150ms ease-out, border-color 150ms ease-out;
+    box-shadow 180ms ease-out, background-color 150ms ease-out,
+    border-color 150ms ease-out;
 }
 
 .quick-tile:hover {
@@ -1310,11 +1339,6 @@ a,
   background: var(--card);
   border-color: var(--border);
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
-}
-
-.quick-tile:active {
-  transform: scale(0.98);
 }
 
 /* 图标容器：默认主色 tint 底，hover 反白为主色实心（Apple 式强调切换） */
@@ -1381,4 +1405,22 @@ a,
   input,
   select,
   textarea { font-size: 16px; }
+}
+
+@media (pointer: coarse) {
+  .btn,
+  .btn-sm,
+  .btn-scan,
+  .tab-btn,
+  .nav-collapse-btn,
+  .hamburger,
+  .quick-tile,
+  .field input,
+  .field select,
+  .form-box input,
+  .form-box select,
+  .deploy-target,
+  .sync-group select {
+    min-height: 44px;
+  }
 }

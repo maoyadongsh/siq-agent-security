@@ -40,7 +40,7 @@ export default function PoliciesPage() {
   const { rows, status, error, refresh } = useApiList<PolicyRow>('/policies', PLACEHOLDER_POLICIES);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
-  const [agentId, setAgentId] = useState('agt-demo-1');
+  const [agentId, setAgentId] = useState('');
   const [endpoint, setEndpoint] = useState('');
   const [mode, setMode] = useState<'audit_only' | 'warn' | 'block'>('block');
   const [formError, setFormError] = useState<string | null>(null);
@@ -74,7 +74,7 @@ export default function PoliciesPage() {
     <div>
       <PageHeader
         title="策略中心"
-        description="后端无关的期望策略（§14.1）：编译时不支持字段显式列出，绝不静默丢失"
+        description="统一描述跨执行后端的期望安全状态；编译结果会明确列出后端暂不支持的控制项。"
         connection={status}
         connectionError={error}
       />
@@ -89,11 +89,11 @@ export default function PoliciesPage() {
         <div className="form-box">
           <label>
             名称
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="demo-policy" />
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="例如：财务智能体网络策略" />
           </label>
           <label>
             目标资产
-            <input value={agentId} onChange={(e) => setAgentId(e.target.value)} />
+            <input value={agentId} onChange={(e) => setAgentId(e.target.value)} placeholder="例如：agt-finance-01" />
           </label>
           <label>
             网络端点（host:port，留空=无网络规则）
@@ -107,7 +107,7 @@ export default function PoliciesPage() {
               <option value="block">阻断</option>
             </select>
           </label>
-          <button className="btn-sm btn-primary" onClick={onCreate} disabled={creating || !name}>
+          <button className="btn-sm btn-primary" onClick={onCreate} disabled={creating || !name.trim() || !agentId.trim()}>
             {creating ? '创建中…' : '创建'}
           </button>
           {formError && <span className="sync-err">{formError}</span>}
