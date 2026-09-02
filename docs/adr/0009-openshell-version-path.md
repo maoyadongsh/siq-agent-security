@@ -17,7 +17,7 @@ SIQ 冻结 OpenShell v0.0.83（上游 commit e3d26dd3），带 2 个本地 patch
 | 0001-landlock-mask-file-access.patch | **3/5 hunk 冲突**；但上游 v0.0.104 的 landlock.rs 已内置 access-mask 语义（`Restrict a rule's access mask to rights valid for the opened path type` / `Tailor a rule's access mask to the inode...`，landlock.rs:297-400 区域）——**倾向结论：该 patch 已上游化，可退役，需回归验证 mask 行为与 SIQ 语义等价** |
 | 0002-siq-strict-bind-mount-contract.patch | **10/11 + 1/1 hunk 冲突**（crates/openshell-driver-docker/src/lib.rs 与 tests.rs 上游重构，偏移数百行）——需人工 rebase，估计 **1-3 人日**，且需重审 bind-mount 契约在新版 driver 架构中的落点 |
 
-Hermes 3 个 patch（hermes-0.13.0 目录）不受 OpenShell 升级影响（Hermes 版本独立固定 0.13.0），不在本 ADR 范围。
+Hermes 补丁不受 OpenShell 升级影响（Hermes 已独立升级到 v0.21.0，剩余 2 个 SIQ 补丁），不在本 ADR 范围。
 
 ## 待完成项（构建环境）
 

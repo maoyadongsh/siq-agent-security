@@ -186,7 +186,7 @@ cd ../../edge/agent && go run . run-once --connector hermes --connector-bin ../.
 | 上游依赖 | siq-agent-hub | Export Contract：`/runs/{id}/audit` 服务身份豁免 + `/ledger` cursor 分页（D3），供 SIQ Connector 采集运行台账 | 待 D3（Phase 1 前置） |
 | 上游依赖 | siq-gateway | Export Contract：keys/routes/usage 只读 service scope（D5）；agent×model 组合事实当前无校验源 → 标 `unknown` 并告警 | 待 D5 |
 | 上游依赖 | siq-platform | OpenShell 生产基座部署（D2）、渐进执行模式字段对齐（D7）、Host fallback 归类漂移监控（D9）；进入平台 Compose 与 Gateway 路由（规划中） | D2 为 Phase 3 集成测试前置 |
-| 集成对象 | hermes-agent | Hermes Connector 扫描 profile 目录（config.yaml/SOUL.md + toolsets）；Hermes 0.13.0 的 3 个本地 patch 已登记治理（ADR-005） | Connector 已实现 |
+| 集成对象 | hermes-agent | Hermes Connector 扫描 profile 目录（config.yaml/SOUL.md + toolsets）；Hermes 0.21.0 剩余 2 个本地 patch 已登记治理（ADR-005） | Connector 已实现 |
 | 集成对象 | OpenShell（外部） | 首个 Enforcement Adapter：策略编译、`policy set` 下发、revision 读回验证、effective 事实同步 | v0.0.104 隔离网关闭环实测通过；正式迁移 runbook 待执行 |
 | 下游 | siq-notify / siq-document-engine / siq-memory / siq-flow-engine / siq-workbench | 当前无直接集成；事件经 Outbox → Webhook 外发，未来可接 siq-notify 事件摄取 | 规划中 |
 

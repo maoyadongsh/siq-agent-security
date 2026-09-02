@@ -34,9 +34,9 @@
 | --- | --- | --- |
 | 0001-landlock-mask-file-access | OpenShell v0.0.83 | 待上游化评估 |
 | 0002-siq-strict-bind-mount-contract | OpenShell v0.0.83 | 待上游化评估 |
-| 0001-runtime-auth-file-override | Hermes 0.13.0 | 待上游化评估 |
-| 0002-runtime-state-home-override | Hermes 0.13.0 | 待上游化评估 |
-| 0003-api-run-stop-quiescence | Hermes 0.13.0 | 待上游化评估 |
+| 0001-runtime-auth-file-override | Hermes 0.13.0 | **上游 v0.21.0 已吸收**（fail-closed `API_SERVER_KEY` 启动守卫） |
+| 0002-runtime-state-home-override | Hermes 0.21.0 | 仍为 SIQ 补丁（`HERMES_RUNTIME_HOME`），已 rebase 到 `4c47525e2a` |
+| 0003-api-run-stop-quiescence | Hermes 0.13.0 | **上游 v0.21.0 已吸收**（Runs API：`/v1/runs` + SSE + `/stop` + `/steer`） |
 
 ## Hermes 现实边界（L1-L3 评级依据，ADR 结论同步自设计文档 v0.2 §16.3）
 
