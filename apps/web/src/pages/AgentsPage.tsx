@@ -8,7 +8,7 @@ import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
 import type { AgentAsset } from '@/api/types';
 
-/** placeholder 数据（Phase 1，后端未联调；联调后由 /agents 返回） */
+/** 控制面不可达时的安全示例数据；已连接时由 GET /agents 覆盖 */
 const PLACEHOLDER_AGENTS: AgentAsset[] = [
   {
     id: 'agt-01h2kd93nf',

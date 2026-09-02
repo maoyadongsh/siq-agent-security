@@ -14,8 +14,8 @@ import SettingsPage from '@/pages/SettingsPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 /**
- * 控制台路由（对齐设计文档 §20.1 信息架构）
- * Phase 1 骨架：每页一个组件，侧边导航，详情页为占位。
+ * 控制台路由（对齐设计文档 §20.1 信息架构）。
+ * 各页已对接 Control API；API 不可达时页面降级为本地示例数据，不阻塞浏览。
  */
 export default function App() {
   return (

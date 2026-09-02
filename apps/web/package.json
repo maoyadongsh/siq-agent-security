@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "SIQ Agent Security Web 控制台（Phase 1 骨架：可编译可路由，后端未联调）",
+  "description": "SIQ Agent Security Web 控制台（已对接 Control API 真实接口；断连时降级为占位视图）",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

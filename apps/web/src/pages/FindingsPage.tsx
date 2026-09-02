@@ -6,7 +6,7 @@ import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
 import type { Finding, FindingSeverity, FindingStatus } from '@/api/types';
 
-/** placeholder 数据（Phase 1；联调后由 /findings 返回） */
+/** 控制面不可达时的安全示例数据；已连接时由 GET /findings 覆盖 */
 const PLACEHOLDER_FINDINGS: Finding[] = [
   {
     id: 'fnd-0001',

@@ -81,7 +81,7 @@ flowchart LR
     subgraph 控制面
         API[Control API<br/>FastAPI 模块化单体 :8600]
         WK[Worker<br/>outbox/规则/漂移/到期重开/复核]
-        DB[(PostgreSQL<br/>Alembic 迁移 0001-0008)]
+        DB[(PostgreSQL<br/>Alembic 迁移 0001-0013)]
         WEB[Web 控制台<br/>React/Vite]
     end
     EA -- "HTTPS 出站（注册/心跳/任务/证据）" --> API
@@ -98,7 +98,7 @@ apps/control-api/         Control Plane API（Python ≥3.12 / FastAPI / SQLAlch
   app/adapters/openshell/ OpenShell 执行后端：contracts / base / policy_compiler / fake_backend / client / cli_backend
   app/worker.py           单进程后台循环：outbox 发布、规则引擎、漂移、风险接受到期重开、dismissed 到期回归、Break-glass 复核
   app/tests/              pytest 套件（319 项，2026-08-20 实测全绿）：含租户隔离/SoD/注册生命周期/签名跨语言夹具/威胁检测规则包与脱敏覆盖率负向测试
-  migrations/             Alembic 迁移（0001–0008，干净库可全量回放）
+  migrations/             Alembic 迁移（0001–0013，干净库可全量回放）
 apps/web/                 Web 控制台（React / Vite / TypeScript；dev 代理 /api → 127.0.0.1:8600；token 仅内存）
 edge/agent/               Edge Agent（Go 1.22）：register / heartbeat / tasks / run-once + 共享 protocol 包 + 原子 0600 状态
 connectors/hermes/        Hermes Profile Connector（Go；scope 校验/符号链接逃逸/.env 拒绝/toolsets 声明事实）

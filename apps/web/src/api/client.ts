@@ -5,7 +5,8 @@
  * - Bearer token 仅保存在模块内存（`setToken`），页面刷新即失效；
  * - 开发/演示模式通过 `X-Dev-Tenant-Id` / `X-Dev-User-Id` 请求头注入身份，
  *   由 `VITE_DEV_MODE` 开关控制，生产构建必须关闭；
- * - 401 处理为占位（`onUnauthorized`），Phase 2 接入真实认证流程。
+ * - 401 清内存 token 并回调 `onUnauthorized`；未接入 IAM 刷新/登录重定向，
+ *   由调用方注册处理（当前控制台以开发身份头或外部注入 token 运行）。
  */
 
 import type {
@@ -33,7 +34,7 @@ export const API_BASE: string = import.meta.env.VITE_API_BASE ?? '/api/v1';
 /** 开发模式身份注入开关（生产必须为 false，禁止身份伪造头） */
 const DEV_MODE: boolean = import.meta.env.VITE_DEV_MODE === 'true';
 
-/** 请求超时（ms）：后端未联调时快速失败，避免页面挂起 */
+/** 请求超时（ms）：控制面不可达时快速失败，避免页面挂起 */
 const REQUEST_TIMEOUT_MS = 5000;
 
 /* ---------------------------------------------------------------------------
@@ -46,7 +47,7 @@ const REQUEST_TIMEOUT_MS = 5000;
  */
 let authToken: string | null = null;
 
-/** 401 处理器（占位：Phase 2 接入刷新/重定向登录流程） */
+/** 401 回调（清 token 后通知 UI；刷新/登录重定向由调用方实现） */
 let unauthorizedHandler: (() => void) | null = null;
 
 export function setToken(token: string | null): void {
@@ -57,7 +58,7 @@ export function clearToken(): void {
   authToken = null;
 }
 
-/** 注册 401 回调（占位实现） */
+/** 注册 401 回调 */
 export function onUnauthorized(handler: () => void): () => void {
   unauthorizedHandler = handler;
   return () => {
@@ -182,7 +183,7 @@ export async function request<T>(
   }
 
   if (response.status === 401) {
-    // 401 处理占位：清内存 token 并通知已注册处理器（Phase 2 接入刷新流程）
+    // 401：清内存 token 并通知已注册处理器（无自动刷新）
     clearToken();
     unauthorizedHandler?.();
     throw new ApiError(401, '未授权（401）：会话过期或凭据无效');

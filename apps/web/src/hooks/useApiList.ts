@@ -1,6 +1,6 @@
 /**
  * 通用数据加载 hook：尝试从控制面 API 拉取列表；
- * 后端未联调（网络失败）时安全降级为 placeholder 数据并标记 disconnected，
+ * 控制面不可达时安全降级为本地示例数据并标记 disconnected，
  * 页面据此渲染"未连接"空态 —— 不阻塞构建、不阻塞路由。
  *
  * 写操作支持：
@@ -14,7 +14,7 @@ import { get, describeApiError } from '@/api/client';
 export type ApiConnectionStatus = 'loading' | 'connected' | 'disconnected';
 
 export interface UseApiListResult<T> {
-  /** 展示用数据：connected 时为后端数据；disconnected 时为 placeholder */
+  /** 展示用数据：connected 时为后端数据；disconnected 时为本地示例 */
   rows: T[];
   status: ApiConnectionStatus;
   /** 最近一次错误信息（用于展示，不阻断页面） */

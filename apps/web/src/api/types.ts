@@ -288,9 +288,9 @@ export interface EventEnvelope {
 }
 
 /* ===========================================================================
- * 控制面管理对象（Phase 1 最小字段）
- * 以 packages/contracts 的 schema 为事实源；以下对象待 Control API 的
- * OpenAPI 契约落地后对齐。字段保持最小化，避免臆造契约。
+ * 控制面管理对象
+ * 以 packages/contracts 的 schema 与 control-api schemas 为事实源。
+ * 字段保持最小化，避免臆造契约。
  * ========================================================================= */
 
 export type AgentStatus =
@@ -458,7 +458,7 @@ export interface AuditEvent {
 }
 
 /* ---------------------------------------------------------------------------
- * API 信封 — 控制面响应包装（Phase 1 约定，待 Control API 联调确认）
+ * API 信封 — 控制面响应包装（与 Control API 实际返回兼容）
  * 兼容两种形态：
  *   1. 信封：{ "ok": true, "data": ... }
  *   2. 裸数据：直接返回数组 / 对象

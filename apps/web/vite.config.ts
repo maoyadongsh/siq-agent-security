@@ -30,7 +30,7 @@ export default defineConfig({
     },
   },
   build: {
-    // Phase 1 骨架构建产物，按需调整
+    // 生产构建输出；本地开发走上方 proxy
     outDir: 'dist',
     sourcemap: false,
   },

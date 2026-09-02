@@ -1,6 +1,6 @@
 /**
- * "未连接"空态：控制面 API 不可达时展示，标注 placeholder 数据来源，
- * 并给出重试入口 —— 不阻塞页面与构建（Phase 1 后端未联调）。
+ * "未连接"空态：控制面 API 不可达时展示，标注当前为本地示例数据，
+ * 并给出重试入口。已对接 Control API；此组件只在断连降级时出现。
  */
 import type { ReactNode } from 'react';
 

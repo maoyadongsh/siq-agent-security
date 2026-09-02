@@ -4,7 +4,7 @@ import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { useApiList } from '@/hooks/useApiList';
 import type { Environment } from '@/api/types';
 
-/** placeholder 数据（Phase 1；联调后由 /environments 返回） */
+/** 控制面不可达时的安全示例数据；已连接时由 GET /environments 覆盖 */
 const PLACEHOLDER_ENVIRONMENTS: Environment[] = [
   {
     id: 'env-prod-k8s',

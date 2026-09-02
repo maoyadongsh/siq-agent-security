@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react';
 
 /**
- * 最简单的表格容器（Phase 1：不做排序/分页/虚拟滚动，
- * 仅用于骨架联调时呈现后端列表数据）。
+ * 最简单的表格容器（不做排序/分页/虚拟滚动，仅呈现列表）。
  */
 export interface TableColumn<T> {
   key: string;
