@@ -41,6 +41,7 @@ class Settings:
     task_signing_key_seed: str | None
     task_signing_key_file: str | None
     cors_origins: tuple[str, ...]
+    bootstrap_tenant_id: str
     request_id_header: str = "X-Request-ID"
 
     @property
@@ -132,4 +133,5 @@ def load_settings() -> Settings:
         task_signing_key_seed=task_signing_key_seed,
         task_signing_key_file=task_signing_key_file,
         cors_origins=cors_origins,
+        bootstrap_tenant_id=os.getenv("SIQ_AS_BOOTSTRAP_TENANT_ID", "default").strip() or "default",
     )

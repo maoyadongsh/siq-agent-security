@@ -180,6 +180,7 @@ export default function FindingsPage() {
   return (
     <section>
       <PageHeader
+        icon="findings"
         title="风险中心"
         description="汇总规则引擎识别的风险级别、关联资产与处置状态，并支持就地确认和解决。"
         connection={findings.status}

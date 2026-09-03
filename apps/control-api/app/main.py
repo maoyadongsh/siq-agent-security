@@ -39,6 +39,12 @@ async def lifespan(app: FastAPI):
                 session.add(Tenant(id="dev-tenant", name="Development Tenant"))
                 session.commit()
         logger.warning("dev 模式：自动建表 + dev-tenant 种子数据（仅限本地开发）")
+    else:
+        tenant_id = settings.bootstrap_tenant_id
+        with session_scope() as session:
+            if session.get(Tenant, tenant_id) is None:
+                session.add(Tenant(id=tenant_id, name=f"Tenant {tenant_id}"))
+                logger.info("已种子控制面租户 %s（对齐 IAM SIQ_DEFAULT_TENANT_ID）", tenant_id)
     yield
 
 
@@ -68,6 +74,12 @@ async def request_id_middleware(request: Request, call_next):
 
 @app.get("/health")
 def health():
+    return {"status": "ok"}
+
+
+@app.get("/api/v1/health")
+def api_health():
+    """设置页同源探测；无鉴权。路径挂到网关 /api/agent-security/v1/health。"""
     return {"status": "ok"}
 
 

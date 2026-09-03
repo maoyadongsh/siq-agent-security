@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Icon } from '@/components/icons';
 
 /**
  * 最简单的表格容器（不做排序/分页/虚拟滚动，仅呈现列表）。
@@ -23,7 +24,14 @@ export default function SimpleTable<T>({
   emptyText = '暂无数据',
 }: SimpleTableProps<T>) {
   if (rows.length === 0) {
-    return <p className="table-empty">{emptyText}</p>;
+    return (
+      <div className="table-empty">
+        <span className="empty-icon" aria-hidden="true">
+          <Icon name="scan" size={20} />
+        </span>
+        <span>{emptyText}</span>
+      </div>
+    );
   }
   return (
     <div className="table-wrap">

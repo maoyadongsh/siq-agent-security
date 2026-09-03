@@ -92,6 +92,7 @@ export default function AgentDetailPage() {
   return (
     <section>
       <PageHeader
+        icon="agents"
         title={agent?.name ?? '智能体资产详情'}
         description="查看资产来源、纳管状态、角色、运行边界与关联证据。"
         connection={status}
@@ -101,7 +102,13 @@ export default function AgentDetailPage() {
         <DisconnectedNotice error={error} onRetry={() => setReloadSeq((s) => s + 1)} />
       ) : null}
       {status === 'loading' ? (
-        <p className="table-empty">加载中…</p>
+        <div className="card">
+          <div className="skeleton" aria-label="加载中">
+            <span className="skeleton-line" style={{ width: '42%' }} />
+            <span className="skeleton-line" style={{ width: '88%' }} />
+            <span className="skeleton-line" style={{ width: '67%' }} />
+          </div>
+        </div>
       ) : null}
       {status === 'connected' && agent ? (
         <>

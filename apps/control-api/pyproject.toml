@@ -16,6 +16,17 @@ dependencies = [
     "pyyaml>=6.0.3",
 ]
 
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = ["app.tests*"]
+
+[tool.setuptools.package-data]
+app = ["data/*.json"]
+
 [dependency-groups]
 dev = [
     "jsonschema>=4.26.0",

@@ -86,6 +86,7 @@ export default function EnvironmentsPage() {
   return (
     <section>
       <PageHeader
+        icon="environments"
         title="环境与 Connector"
         description="查看纳管环境的运行模式、风险级别与最近心跳；长期未上报表示连接器可能离线。"
         connection={environments.status}

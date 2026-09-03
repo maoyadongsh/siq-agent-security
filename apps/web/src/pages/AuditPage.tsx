@@ -87,6 +87,7 @@ export default function AuditPage() {
   return (
     <section>
       <PageHeader
+        icon="audit"
         title="审计"
         description="只读查看经租户隔离和敏感信息处理的控制面审计事件。"
         connection={events.status}

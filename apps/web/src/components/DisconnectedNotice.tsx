@@ -24,7 +24,7 @@ export default function DisconnectedNotice({
       {error ? <p className="notice-detail">{error}</p> : null}
       {children ? <p className="notice-detail">{children}</p> : null}
       {onRetry ? (
-        <button type="button" className="btn" onClick={onRetry}>
+        <button type="button" className="btn btn-primary" onClick={onRetry}>
           重试连接
         </button>
       ) : null}

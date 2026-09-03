@@ -5,8 +5,7 @@
  * - Bearer token 仅保存在模块内存（`setToken`），页面刷新即失效；
  * - 开发/演示模式通过 `X-Dev-Tenant-Id` / `X-Dev-User-Id` 请求头注入身份，
  *   由 `VITE_DEV_MODE` 开关控制，生产构建必须关闭；
- * - 401 清内存 token 并回调 `onUnauthorized`；未接入 IAM 刷新/登录重定向，
- *   由调用方注册处理（当前控制台以开发身份头或外部注入 token 运行）。
+ * - 401 清内存 token 并回调 `onUnauthorized`；平台嵌入由 AuthGate 重新登录。
  */
 
 import type {

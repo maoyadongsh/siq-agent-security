@@ -2,8 +2,10 @@
 
 /** 控制台环境变量（见 .env.example） */
 interface ImportMetaEnv {
-  /** 控制面 API 基础地址，默认 http://127.0.0.1:8600/api/v1 */
+  /** 控制面 API 基础地址，默认 /api/v1；平台嵌入为 /api/agent-security/v1 */
   readonly VITE_API_BASE?: string;
+  /** IAM 前缀，平台嵌入为 /api/iam */
+  readonly VITE_IAM_URL?: string;
   /** 开发模式身份注入开关（生产必须为 false） */
   readonly VITE_DEV_MODE?: string;
   /** 开发模式注入的租户（仅 VITE_DEV_MODE=true 生效） */

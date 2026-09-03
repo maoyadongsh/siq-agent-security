@@ -57,7 +57,8 @@ class Identity:
     permissions: frozenset[str] = field(default_factory=frozenset)
 
     def has_permission(self, required: str) -> bool:
-        return required in self.permissions
+        # IAM 管理员 permissions 含 "*"，与工作台/Gateway 通配语义对齐。
+        return "*" in self.permissions or required in self.permissions
 
     @property
     def is_authenticated(self) -> bool:
@@ -65,6 +66,31 @@ class Identity:
 
 
 ANONYMOUS = Identity("anon", "anon", "")
+
+_ALL_ROLE_PERMISSIONS: frozenset[str] = frozenset(
+    perm for perms in ROLE_PERMISSIONS.values() for perm in perms
+)
+
+
+def _identity_from_claims(claims: dict) -> Identity:
+    """把 IAM JWT claims 映射为控制面 Identity。
+
+    IAM 把角色主键放在 `roles` / `role_ids`，产品角色码在 `role_codes`。
+    管理员是 `permissions: ["*"]` + `role_codes: ["admin"]`，没有 `admin: true`。
+    """
+    tenant_id = str(claims.get("tenant_id") or "")
+    if not tenant_id:
+        raise HTTPException(status_code=401, detail="missing_tenant")
+    raw_type = str(claims.get("type") or "user")
+    id_type = "user" if raw_type in {"access", "refresh", "user"} else raw_type
+    role_codes = frozenset(str(item) for item in (claims.get("role_codes") or []) if item)
+    perms: set[str] = {str(item) for item in (claims.get("permissions") or []) if item}
+    for code in role_codes:
+        perms |= ROLE_PERMISSIONS.get(code, set())
+    if claims.get("admin") is True or "*" in perms or "admin" in role_codes:
+        perms |= set(_ALL_ROLE_PERMISSIONS)
+        perms.add("*")
+    return Identity(id_type, str(claims.get("sub")), tenant_id, role_codes, frozenset(perms))
 
 
 @lru_cache(maxsize=1)
@@ -126,18 +152,7 @@ def get_identity(request: Request) -> Identity:
     auth = request.headers.get("Authorization", "")
     if auth.startswith("Bearer "):
         claims = _verify_jwt(auth.removeprefix("Bearer ").strip())
-        # 租户归属：优先 claim 内 tenant_id；生产禁止客户端自报（dev 模式下已短路）
-        tenant_id = str(claims.get("tenant_id") or "")
-        if not tenant_id:
-            raise HTTPException(status_code=401, detail="missing_tenant")
-        id_type = str(claims.get("type", "user"))
-        roles = frozenset(claims.get("roles", []) or [])
-        perms: set[str] = set(claims.get("permissions", []) or [])
-        for role in roles:
-            perms |= ROLE_PERMISSIONS.get(role, set())
-        if claims.get("admin") is True:
-            perms.add("*")
-        return Identity(id_type, str(claims.get("sub")), tenant_id, roles, frozenset(perms))
+        return _identity_from_claims(claims)
 
     raise HTTPException(status_code=401, detail="missing_credentials")
 

@@ -151,6 +151,7 @@ export default function PermissionsPage() {
   return (
     <div>
       <PageHeader
+        icon="permissions"
         title="权限视图"
         description="按权限域与权威来源区分声明、推断、观测、生效与未知状态。"
         connection={status}

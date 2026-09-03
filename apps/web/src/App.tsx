@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import AuthGate from '@/components/AuthGate';
 import Layout from '@/components/Layout';
 import OverviewPage from '@/pages/OverviewPage';
 import AgentsPage from '@/pages/AgentsPage';
@@ -19,22 +20,24 @@ import NotFoundPage from '@/pages/NotFoundPage';
  */
 export default function App() {
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Navigate to="/overview" replace />} />
-        <Route path="/overview" element={<OverviewPage />} />
-        <Route path="/agents" element={<AgentsPage />} />
-        <Route path="/agents/:id" element={<AgentDetailPage />} />
-        <Route path="/permissions" element={<PermissionsPage />} />
-        <Route path="/findings" element={<FindingsPage />} />
-        <Route path="/policies" element={<PoliciesPage />} />
-        <Route path="/changes" element={<ChangesPage />} />
-        <Route path="/runtime-bindings" element={<RuntimeBindingsPage />} />
-        <Route path="/environments" element={<EnvironmentsPage />} />
-        <Route path="/audit" element={<AuditPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+    <AuthGate>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Navigate to="/overview" replace />} />
+          <Route path="/overview" element={<OverviewPage />} />
+          <Route path="/agents" element={<AgentsPage />} />
+          <Route path="/agents/:id" element={<AgentDetailPage />} />
+          <Route path="/permissions" element={<PermissionsPage />} />
+          <Route path="/findings" element={<FindingsPage />} />
+          <Route path="/policies" element={<PoliciesPage />} />
+          <Route path="/changes" element={<ChangesPage />} />
+          <Route path="/runtime-bindings" element={<RuntimeBindingsPage />} />
+          <Route path="/environments" element={<EnvironmentsPage />} />
+          <Route path="/audit" element={<AuditPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </AuthGate>
   );
 }

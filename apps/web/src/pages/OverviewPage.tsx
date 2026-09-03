@@ -77,6 +77,7 @@ export default function OverviewPage() {
   return (
     <section>
       <PageHeader
+        icon="overview"
         title="总览"
         description="智能体资产、权限、风险、策略、变更与审计的统一安全入口。"
         connection={loading ? 'loading' : connected ? 'connected' : 'disconnected'}

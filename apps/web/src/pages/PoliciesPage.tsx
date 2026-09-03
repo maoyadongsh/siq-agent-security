@@ -73,6 +73,7 @@ export default function PoliciesPage() {
   return (
     <div>
       <PageHeader
+        icon="policies"
         title="策略中心"
         description="统一描述跨执行后端的期望安全状态；编译结果会明确列出后端暂不支持的控制项。"
         connection={status}

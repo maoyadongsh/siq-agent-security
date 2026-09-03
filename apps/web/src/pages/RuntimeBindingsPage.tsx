@@ -175,6 +175,7 @@ export default function RuntimeBindingsPage() {
   return (
     <section>
       <PageHeader
+        icon="bindings"
         title="运行时绑定"
         description='声明"某 agent 实例在某环境下对应某后端运行时目标"：部署只接受 active 绑定并据此解析目标；backend_target_id 登记后不可变，变更目标须吊销旧绑定并登记新绑定（全量审计）。'
         connection={bindings.status}

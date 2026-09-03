@@ -6,8 +6,8 @@ import type { ApiConnectionStatus } from '@/hooks/useApiList';
 
 /**
  * 设置：展示连接配置与安全不变量说明。
- * 连接状态徽标来自控制面 /health 实时探测（vite proxy 已转发 /health）；
- * 认证流程（登录/刷新）在 Phase 2 接入；届时 token 仍只允许驻留内存。
+ * 连接状态徽标来自控制面 API `/health` 实时探测；
+ * 平台嵌入时走 IAM 会话；token 仍只允许驻留内存。
  */
 export default function SettingsPage() {
   const devMode = import.meta.env.VITE_DEV_MODE === 'true';
@@ -16,7 +16,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/health', { headers: { Accept: 'application/json' } })
+    fetch(`${API_BASE}/health`, { headers: { Accept: 'application/json' } })
       .then((resp) => {
         if (cancelled) return;
         if (resp.ok) {
@@ -39,6 +39,7 @@ export default function SettingsPage() {
   return (
     <section>
       <PageHeader
+        icon="settings"
         title="设置"
         description="查看控制面连接状态、运行环境与当前会话的安全边界。"
         connection={connection}
