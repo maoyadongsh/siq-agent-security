@@ -1,0 +1,22 @@
+{
+  "name": "siq-agent-security",
+  "user": "ubuntu",
+  "install": "bash .cursor/install.sh",
+  "start": "bash .cursor/start.sh",
+  "terminals": [
+    {
+      "name": "control-api",
+      "description": "Control Plane API (FastAPI) @ 127.0.0.1:8600，dev 模式接本地 PostgreSQL，启动时种子 dev-tenant。",
+      "command": "export PATH=\"$HOME/.local/bin:$PATH\"; cd apps/control-api && SIQ_AS_DEV=1 SIQ_AS_DATABASE_URL=\"postgresql+psycopg://siq_as:siq_as_dev@127.0.0.1:5432/siq_as\" uv run uvicorn app.main:app --host 127.0.0.1 --port 8600"
+    },
+    {
+      "name": "web",
+      "description": "Web 控制台 (Vite) @ 127.0.0.1:5173，/api 与 /health 代理到 Control API。",
+      "command": "cd apps/web && npm run dev -- --host 127.0.0.1 --port 5173"
+    }
+  ],
+  "ports": [
+    { "name": "control-api", "port": 8600 },
+    { "name": "web", "port": 5173 }
+  ]
+}
