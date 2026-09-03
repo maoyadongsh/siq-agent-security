@@ -28,8 +28,7 @@ cd "$REPO_ROOT/apps/web"
 npm ci
 [ -f .env.local ] || cp .env.example .env.local
 
-# 5) 预热 Edge Agent 与首个 Connector 的 Go 构建缓存（加速首次扫描演示）
+# 5) 预热 Edge Agent 的 Go 构建缓存（Connector 各为独立模块，按需 go build 即可）
 cd "$REPO_ROOT/edge/agent" && go build ./...
-cd "$REPO_ROOT/connectors/hermes" && go build -o hermes-connector .
 
 echo "install.sh: done"

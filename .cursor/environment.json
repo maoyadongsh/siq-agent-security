@@ -7,7 +7,7 @@
     {
       "name": "control-api",
       "description": "Control Plane API (FastAPI) @ 127.0.0.1:8600，dev 模式接本地 PostgreSQL，启动时种子 dev-tenant。",
-      "command": "export PATH=\"$HOME/.local/bin:$PATH\"; cd apps/control-api && SIQ_AS_DEV=1 SIQ_AS_DATABASE_URL=\"postgresql+psycopg://siq_as:siq_as_dev@127.0.0.1:5432/siq_as\" uv run uvicorn app.main:app --host 127.0.0.1 --port 8600"
+      "command": "export PATH=\"$HOME/.local/bin:$PATH\"; cd apps/control-api && SIQ_AS_DEV=1 SIQ_AS_DATABASE_URL=\"postgresql+psycopg://siq_as:siq_as_dev@127.0.0.1:5432/siq_as\" uv run --frozen uvicorn app.main:app --host 127.0.0.1 --port 8600"
     },
     {
       "name": "web",

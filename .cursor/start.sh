@@ -25,6 +25,6 @@ sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='siq_as'" | 
 cd "$REPO_ROOT/apps/control-api"
 export SIQ_AS_DEV=1
 export SIQ_AS_DATABASE_URL="postgresql+psycopg://siq_as:siq_as_dev@127.0.0.1:5432/siq_as"
-uv run alembic upgrade head
+uv run --frozen alembic upgrade head
 
 echo "start.sh: PostgreSQL ready and migrations applied"
