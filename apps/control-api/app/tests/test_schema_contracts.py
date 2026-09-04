@@ -603,7 +603,10 @@ def test_go_evidence_sample_conforms_and_is_referenced():
 
 
 @pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
-@pytest.mark.parametrize("name,status", [("grant.pending.sample.json", "pending_approval"), ("grant.effective.sample.json", "effective")])
+@pytest.mark.parametrize(
+    "name,status",
+    [("grant.pending.sample.json", "pending_approval"), ("grant.effective.sample.json", "effective")],
+)
 def test_go_grant_samples_conform(name, status):
     g = json.loads((GO_SAMPLES / name).read_text())
     errors = _validate("grant", g)
@@ -617,6 +620,17 @@ def test_go_grant_samples_conform(name, status):
         assert not any(f["domain"] in static for f in effective), "静态域事实不得 effective"
     else:
         assert not any(f["state"] == "effective" for f in g["facts"])
+
+
+@pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
+def test_go_receipt_sample_conforms():
+    r = json.loads((GO_SAMPLES / "receipt.sample.json").read_text())
+    errors = _validate("receipt", r)
+    assert not errors, [e.message for e in errors]
+    assert r["seq"] == 0 and r["prev_hash"] == "0" * 64
+    assert r["action"] == "deny" and r["reason"]
+    assert "params" not in r, "回执不得携带参数原文"
+    assert len(r["hash"]) == 64 and len(r["sig"]) == 128
 
 
 @pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")

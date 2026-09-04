@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
+	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/threat"
@@ -44,6 +45,8 @@ func main() {
 		err = cmdAdmit(os.Args[2:])
 	case "pubkey":
 		err = cmdPubkey()
+	case "verify":
+		err = cmdVerify(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
@@ -61,7 +64,39 @@ func usage() {
   agentshield scan <file>...      # static threat scan, one JSON result per line
   agentshield admit <skill-dir> [--trust trusted|community|unknown] [--out <dir>] [--card]
                                   # pre-install verdict (JSON); exit 3 = quarantine
-  agentshield pubkey              # local signing public key (base64)`)
+  agentshield pubkey              # local signing public key (base64)
+  agentshield verify [--chain local]
+                                  # recompute the receipt hash chain and signatures; exit 4 on first break`)
+}
+
+func cmdVerify(args []string) error {
+	fs := flag.NewFlagSet("verify", flag.ContinueOnError)
+	chainID := fs.String("chain", "local", "chain id under <state>/receipts/")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	dir, err := stateDir()
+	if err != nil {
+		return err
+	}
+	key, err := signing.Load(dir)
+	if err != nil {
+		return err
+	}
+	chain, err := receipt.OpenChain(dir, *chainID, key)
+	if err != nil {
+		return err
+	}
+	all, err := chain.Read()
+	if err != nil {
+		return err
+	}
+	if verr := receipt.Verify(all, key.Public()); verr != nil {
+		fmt.Fprintln(os.Stderr, "agentshield:", verr)
+		os.Exit(4)
+	}
+	seq, head := chain.Head()
+	return json.NewEncoder(os.Stdout).Encode(map[string]any{"chain": *chainID, "receipts": len(all), "head_seq": seq, "head_hash": head, "verified": true})
 }
 
 func cmdAdmit(args []string) error {
