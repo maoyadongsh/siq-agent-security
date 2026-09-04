@@ -145,7 +145,7 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二�
 
 **新增（相对现有 Connector）**：Skill 目录扫描——每个 `SKILL.md` 产出 candidate `source_type=skill_dir`（需在 `candidate.schema.json` enum 增加 `skill_dir`，合同升版），附 `content_hash` 与是否已有 admission 记录。
 
-**实现方式**：Go 直接调用 `connectors/*` 包（`go.work` 引入），不经子进程 NDJSON；协议类型仍来自 `edge/agent/protocol`。
+**实现方式（2026-09-04 修正）**：`connectors/*` 全部是 `package main` 的 NDJSON 子进程，不能作为库导入。v1 inventory 用 Go **原生只读发现**实现平台配置存在性与 Skill 目录扫描（这是相对既有 Connector 新增的能力），产出 `source_type=platform_config` / `skill_dir` 候选；Connector 子进程接入（复用 `edge/agent/protocol` 类型与 Edge 的 NDJSON 客户端）作为 `--connectors-dir` 可选增强，路线图项。合同：`candidate.source_type` 与 `evidence.source_type` 追加 `skill_dir`、`platform_config`（非破坏性枚举追加）。
 
 ### 3.6 `internal/admission`（规格，W1 余量）
 
