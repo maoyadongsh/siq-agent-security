@@ -194,10 +194,11 @@ Finding 的 `disposition` 由**类别**决定，不由 severity 决定。规则�
 | 内置 | `adm-allowed-tools` | capability_declaration | declare（每个工具一条 `tool.invoke`）| 不是越权 |
 | 内置 | `adm-egress-domain`：脚本中的 URL 主机 | capability_declaration | declare（`network` `http.request` endpoint）| 去重；localhost/127.0.0.1 记 info |
 | 内置 | `adm-package-install`：pip/npm/brew/apt/cargo/go install | capability_declaration | declare（`resource` `package.install`）| |
+| 内置 | `adm-credential-path`：`SKILL.md` / `scripts/` 引用 `.env`、`.ssh/`、`id_rsa` 等凭据路径 | credential_exfil | **同文件有出网槽 → quarantine**；否则 declare（`credential.read`）| 规则包 `threat-cred-*` 偏 shell；本检查覆盖 `open()` / `ReadFile` 等 |
 | 内置 | `adm-writes-outside-skill`：脚本写入 `~`、`/etc`、`$HOME`、`%APPDATA%` 等 | capability_declaration | declare（`filesystem.write`）| |
 | 内置 | `adm-binary-file`：非文本文件 | supply_chain | info（计入 `binary_files`）；可执行位或 `.exe/.so/.dll` → declare `process.exec` | |
-| 内置 | `adm-symlink-escape` / `adm-over-limit` / `adm-skill-md-missing` | integrity | **quarantine** | schema 已用 if/then 强制 |
-| 内置 | `adm-name-mismatch`：frontmatter `name` 与目录名不一致 | info | info | |
+| 内置 | `adm-symlink-escape` / `adm-over-limit` / `adm-skill-md-missing` / `adm-manifest-mismatch` | integrity | **quarantine** | 候选目录自带 `skill.manifest.json` 的 per-file sha256 与实文件不一致时隔离；无 manifest 不是 finding |
+| 内置 | `adm-name-mismatch` / `adm-name-invalid`：frontmatter `name` 与目录名不一致或违反 agentskills 规则 | info | info | |
 
 **类别 → verdict**：
 
@@ -557,10 +558,10 @@ cd apps/web && npm ci && npm run build
 | --- | --- | --- |
 | W0 合同 | 四 schema + 42 负向测试 + README + 兼容矩阵 | **完成** |
 | W1 Go 核心 | canon / rulepack / threat / signing / admission / grant / receipt / CLI | **完成**；每个模块的 Go 样例均回灌 Python schema 校验；grant 的 `artifact_hash` 与 Python 编译器一致 |
-| W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve`（§3.8.1 全部端点、loopback + bearer、serve.lock、优雅停机）**完成**；HTTP E2E 测试覆盖 admit→grant→approve→deploy→decide/hold/observe→receipts；`inventory` **完成**；embed UI **未开始** |
-| W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**（10 测试 + 真机 E2E）；OpenClaw `policy-exec` **完成**（Go 单测 + 冒烟）、TS 插件已写未在真实网关运行；CodeBuddy `hook codebuddy` **完成**（Go 单测）；`adapter install/uninstall` 与备份还原 **未开始** |
+| W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve` **完成**；HTTP E2E **完成**；`inventory` **完成**；embed UI **未开始** |
+| W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**；OpenClaw `policy-exec` **完成**；CodeBuddy `hook codebuddy` **完成**；`adapter install/uninstall`（备份还原）**完成** |
 | W4 OpenShell | probe / 网络 policy set / 读回 | 未开始 |
-| W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | 未开始（备份中的 `skill-admission` 规范目录可迁入）|
+| W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **进行中**：Skill 目录、evals、bootstrap/adapter 脚本、`grant` CLI、自扫描不得 quarantine；发布 manifest / 交叉编译哈希待 CI |
 | W6 材料 | README、演示、基线更新、十日谈 | 未开始 |
 
 ---
