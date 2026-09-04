@@ -556,8 +556,8 @@ cd apps/web && npm ci && npm run build
 | 阶段 | 内容 | 进度 |
 | --- | --- | --- |
 | W0 合同 | 四 schema + 42 负向测试 + README + 兼容矩阵 | **完成** |
-| W1 Go 核心 | canon / rulepack / threat / signing / CLI | **完成**；admission **完成**（§3.6 全部检查项、决策表、Skill Card、`admit` 子命令、Go 样例回灌 Python schema 校验）；grant / receipt **未开始** |
-| W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | 未开始（三 OS 交叉编译已验证）|
+| W1 Go 核心 | canon / rulepack / threat / signing / admission / grant / receipt / CLI | **完成**；每个模块的 Go 样例均回灌 Python schema 校验；grant 的 `artifact_hash` 与 Python 编译器一致 |
+| W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve`（§3.8.1 全部端点、loopback + bearer、serve.lock、优雅停机）**完成**；HTTP E2E 测试覆盖 admit→grant→approve→deploy→decide/hold/observe→receipts；`inventory` 与 embed UI **未开始** |
 | W3 适配器 | OpenClaw、Hermes、CodeBuddy | 未开始 |
 | W4 OpenShell | probe / 网络 policy set / 读回 | 未开始 |
 | W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | 未开始（备份中的 `skill-admission` 规范目录可迁入）|

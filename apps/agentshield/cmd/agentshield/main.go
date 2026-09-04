@@ -4,20 +4,29 @@
 package main
 
 import (
+	"context"
 	"crypto/ed25519"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
+	"net"
+	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"runtime"
 	"strings"
+	"syscall"
+	"time"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
+	"siq-agent-security/apps/agentshield/internal/server"
 	"siq-agent-security/apps/agentshield/internal/signing"
+	"siq-agent-security/apps/agentshield/internal/state"
 	"siq-agent-security/apps/agentshield/internal/threat"
 )
 
@@ -47,6 +56,8 @@ func main() {
 		err = cmdPubkey()
 	case "verify":
 		err = cmdVerify(os.Args[2:])
+	case "serve":
+		err = cmdServe(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
@@ -66,7 +77,97 @@ func usage() {
                                   # pre-install verdict (JSON); exit 3 = quarantine
   agentshield pubkey              # local signing public key (base64)
   agentshield verify [--chain local]
-                                  # recompute the receipt hash chain and signatures; exit 4 on first break`)
+                                  # recompute the receipt hash chain and signatures; exit 4 on first break
+  agentshield serve [--port N] [--mode audit_only|warn|block]
+                                  # decision API + console on 127.0.0.1 (bearer token in <state>/token)`)
+}
+
+func cmdServe(args []string) error {
+	fs := flag.NewFlagSet("serve", flag.ContinueOnError)
+	port := fs.Int("port", 0, "listen port (default from config.json, 47611)")
+	mode := fs.String("mode", "", "enforcement mode override: audit_only|warn|block")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	dir, err := stateDir()
+	if err != nil {
+		return err
+	}
+	st, err := state.Open(dir)
+	if err != nil {
+		return err
+	}
+	cfg, err := st.LoadConfig()
+	if err != nil {
+		return err
+	}
+	if *port != 0 {
+		cfg.Port = *port
+	}
+	if *mode != "" {
+		switch *mode {
+		case "audit_only", "warn", "block":
+			cfg.EnforcementMode = *mode
+		default:
+			return fmt.Errorf("serve: invalid --mode %q", *mode)
+		}
+	}
+	lockPath := filepath.Join(dir, "serve.lock")
+	lock, err := os.OpenFile(lockPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	if err != nil {
+		if os.IsExist(err) {
+			return fmt.Errorf("serve: another instance holds %s (remove it if that process is gone)", lockPath)
+		}
+		return err
+	}
+	fmt.Fprintf(lock, "%d\n", os.Getpid())
+	_ = lock.Close()
+	defer os.Remove(lockPath)
+
+	key, err := signing.Load(dir)
+	if err != nil {
+		return err
+	}
+	pack, err := loadPack()
+	if err != nil {
+		return err
+	}
+	tok, err := st.Token()
+	if err != nil {
+		return err
+	}
+	chain, err := receipt.OpenChain(dir, "local", key)
+	if err != nil {
+		return err
+	}
+	eng, err := receipt.New(receipt.Options{Pack: pack, Chain: chain, Grants: st.ActiveGrant, EnforcementMode: cfg.EnforcementMode, Version: Version, HoldChannel: cfg.HoldChannel})
+	if err != nil {
+		return err
+	}
+	srv, err := server.New(server.Deps{Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: tok, Version: Version, Mode: cfg.EnforcementMode})
+	if err != nil {
+		return err
+	}
+	addr := fmt.Sprintf("127.0.0.1:%d", cfg.Port)
+	ln, err := net.Listen("tcp", addr)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(os.Stderr, "agentshield %s serving on http://%s  mode=%s  state=%s\n", Version, addr, cfg.EnforcementMode, dir)
+	fmt.Fprintf(os.Stderr, "bearer token: %s\n", filepath.Join(dir, "token"))
+	hs := &http.Server{Handler: srv.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second}
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-stop
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		_ = hs.Shutdown(ctx)
+	}()
+	if err := hs.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
+	return nil
 }
 
 func cmdVerify(args []string) error {
@@ -187,37 +288,7 @@ func cmdAdmit(args []string) error {
 	return nil
 }
 
-func stateDir() (string, error) {
-	if d := os.Getenv("AGENTSHIELD_STATE_DIR"); d != "" {
-		return d, nil
-	}
-	switch runtime.GOOS {
-	case "windows":
-		if d := os.Getenv("LOCALAPPDATA"); d != "" {
-			return filepath.Join(d, "agentshield"), nil
-		}
-	case "darwin":
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return "", err
-		}
-		return filepath.Join(home, "Library", "Application Support", "agentshield"), nil
-	default:
-		if d := os.Getenv("XDG_STATE_HOME"); d != "" {
-			return filepath.Join(d, "agentshield"), nil
-		}
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return "", err
-		}
-		return filepath.Join(home, ".local", "state", "agentshield"), nil
-	}
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-	return filepath.Join(home, ".agentshield"), nil
-}
+func stateDir() (string, error) { return state.DefaultDir() }
 
 func rulepackPub() (ed25519.PublicKey, error) {
 	b64 := os.Getenv(RulepackPubEnv)

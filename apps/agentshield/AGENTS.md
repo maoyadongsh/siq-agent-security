@@ -12,8 +12,10 @@ AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本
 | `internal/signing` | 本地 Ed25519 身份、文档/字节签名与验签 | 完成 |
 | `internal/inventory` | 只读盘点平台配置与 Skill 目录（复用 `connectors/*`） | 规格 §3.5 |
 | `internal/admission` | frontmatter、哈希、限额、决策表、Skill Card | 完成（决策表变更需同步规格 §3.6.4 与 `dispositions.go`）|
-| `internal/grant` | declared → allowlist / DesiredPolicy；状态机；读回 effective | 规格 §3.7 |
-| `internal/receipt` | `/v1/decide`、污点、哈希链、fail-closed | 规格 §3.8 |
+| `internal/grant` | declared → allowlist / DesiredPolicy；状态机；读回 effective | 完成（`CompilePolicy` 与 Python `artifact_hash` 对等）|
+| `internal/receipt` | 决策引擎、污点/trifecta、哈希链、Verify | 完成 |
+| `internal/state` | 状态目录、token、admission/grant/policy 文件态存储 | 完成 |
+| `internal/server` | `/v1/*` HTTP（loopback + bearer） | 完成，UI embed 待接 |
 | `internal/openshell` | probe / 网络 `policy set` / 读回；不调 `create_generation` | 规格 §3.9 |
 | `internal/ui` | embed `apps/web` 构建产物 | 规格 §3.10 |
 | `cmd/agentshield` | 子命令入口 | 部分 |
