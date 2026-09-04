@@ -11,7 +11,7 @@ AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本
 | `internal/threat` | 静态分析器（Python `threat_analysis.py` 移植，AST 层缺席） | 完成 |
 | `internal/signing` | 本地 Ed25519 身份、文档/字节签名与验签 | 完成 |
 | `internal/inventory` | 只读盘点平台配置与 Skill 目录（复用 `connectors/*`） | 规格 §3.5 |
-| `internal/admission` | frontmatter、哈希、限额、决策表、Skill Card | 规格 §3.6 |
+| `internal/admission` | frontmatter、哈希、限额、决策表、Skill Card | 完成（决策表变更需同步规格 §3.6.4 与 `dispositions.go`）|
 | `internal/grant` | declared → allowlist / DesiredPolicy；状态机；读回 effective | 规格 §3.7 |
 | `internal/receipt` | `/v1/decide`、污点、哈希链、fail-closed | 规格 §3.8 |
 | `internal/openshell` | probe / 网络 `policy set` / 读回；不调 `create_generation` | 规格 §3.9 |

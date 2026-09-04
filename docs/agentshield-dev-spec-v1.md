@@ -556,7 +556,7 @@ cd apps/web && npm ci && npm run build
 | 阶段 | 内容 | 进度 |
 | --- | --- | --- |
 | W0 合同 | 四 schema + 42 负向测试 + README + 兼容矩阵 | **完成** |
-| W1 Go 核心 | canon / rulepack / threat / signing / CLI | **完成**；admission / grant / receipt **未开始** |
+| W1 Go 核心 | canon / rulepack / threat / signing / CLI | **完成**；admission **完成**（§3.6 全部检查项、决策表、Skill Card、`admit` 子命令、Go 样例回灌 Python schema 校验）；grant / receipt **未开始** |
 | W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | 未开始（三 OS 交叉编译已验证）|
 | W3 适配器 | OpenClaw、Hermes、CodeBuddy | 未开始 |
 | W4 OpenShell | probe / 网络 policy set / 读回 | 未开始 |
