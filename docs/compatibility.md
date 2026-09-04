@@ -80,6 +80,21 @@
 - `threat-obf-base64-blob` 等基于 240+ 字符连续 base64 的启发式规则，理论上可被跨行拆分绕过——静态规则的固有局限，非本轮范围。
 - Connector 侧发现结果的最终风险研判仍由控制面 `app/threat_analysis.py` 静态规则引擎完成；Connector 自身只做证据采集与脱敏，不做风险判定。
 
+## AgentShield 平台 × OS × 档位矩阵（ADR-011，2026-09-04 文档核实，未实测）
+
+档位：L0 审计（盘点 + 准入 + Skill Card + 控制台）/ L1 安装门禁 / L2 运行时回执与阻断 / L3 OpenShell 策略下发。取值依据各平台 2026-09 公开文档；实现落地后以 `skill-manifest.support_matrix` 为机器可读事实源，本表随之更新。
+
+| 平台 | 安装钩子 | 工具调用钩子 | Linux | macOS | Windows | 备注 |
+| --- | --- | --- | --- | --- | --- | --- |
+| OpenClaw | `security.installPolicy.exec`（allow/warn/block，fail-closed） | 插件 `before_tool_call`（block / 改参 / requireApproval，15s 超时 fail-closed） | L0–L3 | L0–L2；L3 需 Docker Desktop | L0–L2；L3 需 WSL2（Experimental） | P0 |
+| Hermes | 无原生装前钩子；包装 `hermes skills install` 先 admit | 插件 `pre_tool_call` 返回 block | L0–L3 | L0–L2；L3 需 Docker | L0–L2；L3 需 WSL2 | P0；本地放入 `~/.hermes/skills` 由 inventory 周期扫描补 L1 |
+| WorkBuddy / CodeBuddy | 无 | 全局 `settings.json` `PreToolUse`（需用户确认写入）；Skill frontmatter hooks 仅 `context: fork` 且默认关闭 | L0–L2 | L0–L2 | L0–L2 | P1；L3 未规划 |
+| Trae / TraeWork | 无 | 无 | L0 | L0 | L0 | P2；控制台必须显示「审计模式，无法阻断」 |
+| Claude Code | 无 | hooks | L0–L2 | L0–L2 | L0–L2 | P2，非本轮 |
+| Codex | `requirements.toml` MCP allowlist（管理面） | managed hooks | L0–L2 | L0–L2 | L0–L2 | P2，非本轮 |
+
+OpenShell 本身：Linux 原生 Landlock/seccomp；macOS 官方支持但内核模块跑在 Docker Desktop Linux VM；Windows 为 WSL2 + Docker Desktop，官方标 Experimental。因此 macOS/Windows 的 L3 在 `skill-manifest` 中必须填写 `requires`（schema 强制）。
+
 ## 版本兼容 CI（P2）
 
 - `scripts/openshell_compat_matrix.json`：机器可读兼容矩阵，逐版本记录 `probe()`/读回可探测能力的期望值（`dynamic_network_update`、`static_filesystem`、`static_process`、`landlock`、`interceptor`、`provider_credential_injection`、`revision_support`、`sandbox_list_decodable`），取值来源为本文上文 2026-08-13 实测结论。
