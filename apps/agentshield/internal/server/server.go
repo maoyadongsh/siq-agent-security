@@ -17,6 +17,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/inventory"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
@@ -55,6 +56,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/receipts", s.auth(s.receipts))
 	s.mux.HandleFunc("/v1/admit", s.auth(s.admit))
 	s.mux.HandleFunc("/v1/admissions", s.auth(s.admissions))
+	s.mux.HandleFunc("/v1/inventory", s.auth(s.inventory))
 	s.mux.HandleFunc("/v1/grants", s.auth(s.grants))
 	s.mux.HandleFunc("/v1/grants/", s.auth(s.grantAction))
 	if d.UI != nil {
@@ -256,6 +258,29 @@ func (s *Server) admit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, 200, map[string]any{"admission": res.Admission, "skill_card": res.SkillCard})
+}
+
+func (s *Server) inventory(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeJSON(w, 405, map[string]any{"error": "POST required"})
+		return
+	}
+	var body struct {
+		Cwd string `json:"cwd"`
+	}
+	_ = readJSON(r, &body, 64<<10)
+	admissions, _ := s.d.Store.ListAdmissions()
+	byHash := map[string]string{}
+	for _, a := range admissions {
+		byHash[a.ContentHash] = a.Verdict
+	}
+	rep, err := inventory.Run(inventory.Options{Cwd: body.Cwd, Version: s.d.Version, Key: s.d.Key,
+		HasAdmission: func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
+	if err != nil {
+		writeJSON(w, 500, map[string]any{"error": "inventory failed"})
+		return
+	}
+	writeJSON(w, 200, rep)
 }
 
 func (s *Server) admissions(w http.ResponseWriter, r *http.Request) {

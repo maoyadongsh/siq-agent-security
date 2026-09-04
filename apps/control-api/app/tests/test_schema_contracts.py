@@ -634,6 +634,28 @@ def test_go_receipt_sample_conforms():
 
 
 @pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
+def test_go_inventory_sample_conforms():
+    rep = json.loads((GO_SAMPLES / "inventory.sample.json").read_text())
+    for c in rep["candidates"]:
+        errors = _validate("candidate", c)
+        assert not errors, (c["candidate_id"], [e.message for e in errors])
+        assert c["source_type"] in {"skill_dir", "platform_config"}
+    ids = set()
+    for ev in rep["evidence"]:
+        errors = _validate("evidence", ev)
+        assert not errors, [e.message for e in errors]
+        ids.add(ev["evidence_id"])
+    for f in rep["facts"]:
+        errors = _validate("permission-fact", f)
+        assert not errors, [e.message for e in errors]
+        assert f["state"] == "observed", "inventory 只能产出 observed，不得声称 effective"
+    referenced = {i for c in rep["candidates"] for i in c["evidence_ids"]}
+    referenced |= {i for f in rep["facts"] for i in f["evidence_ids"]}
+    assert referenced == ids, "evidence 与引用必须一一对应（无孤儿、无悬空）"
+    assert rep["home"] == "~", "报告不得携带真实家目录路径"
+
+
+@pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
 def test_go_desired_policy_sample_compiles_like_python():
     """Go 产出的 DesiredPolicy 既要过 schema，也要能被 Python 编译器接受（双实现共用合同）。"""
     from app.adapters.openshell.contracts import BackendCapabilities, CapabilityItem

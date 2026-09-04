@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
+	"siq-agent-security/apps/agentshield/internal/inventory"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/server"
@@ -58,6 +59,8 @@ func main() {
 		err = cmdVerify(os.Args[2:])
 	case "serve":
 		err = cmdServe(os.Args[2:])
+	case "inventory":
+		err = cmdInventory(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
@@ -78,8 +81,50 @@ func usage() {
   agentshield pubkey              # local signing public key (base64)
   agentshield verify [--chain local]
                                   # recompute the receipt hash chain and signatures; exit 4 on first break
+  agentshield inventory [--cwd DIR] [--out FILE]
+                                  # read-only discovery of platforms + skill dirs (JSON report)
   agentshield serve [--port N] [--mode audit_only|warn|block]
                                   # decision API + console on 127.0.0.1 (bearer token in <state>/token)`)
+}
+
+func cmdInventory(args []string) error {
+	fs := flag.NewFlagSet("inventory", flag.ContinueOnError)
+	cwd := fs.String("cwd", "", "also scan project-level skill dirs under this directory")
+	out := fs.String("out", "", "also write the report to this file (0600)")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	dir, err := stateDir()
+	if err != nil {
+		return err
+	}
+	st, err := state.Open(dir)
+	if err != nil {
+		return err
+	}
+	key, err := signing.Load(dir)
+	if err != nil {
+		return err
+	}
+	admissions, _ := st.ListAdmissions()
+	byHash := map[string]string{}
+	for _, a := range admissions {
+		byHash[a.ContentHash] = a.Verdict
+	}
+	rep, err := inventory.Run(inventory.Options{Cwd: *cwd, Version: Version, Key: key,
+		HasAdmission: func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
+	if err != nil {
+		return err
+	}
+	raw, _ := json.MarshalIndent(rep, "", "  ")
+	if *out != "" {
+		if err := os.WriteFile(*out, raw, 0o600); err != nil {
+			return err
+		}
+	}
+	_ = os.WriteFile(filepath.Join(dir, "inventory", time.Now().UTC().Format("20060102T150405Z")+".json"), raw, 0o600)
+	_, err = os.Stdout.Write(append(raw, '\n'))
+	return err
 }
 
 func cmdServe(args []string) error {

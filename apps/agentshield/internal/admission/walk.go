@@ -133,6 +133,19 @@ func (w *walked) addFile(rel, p string, info fs.FileInfo, lim Limits) error {
 	return nil
 }
 
+// HashDir returns the content_hash and manifest of a skill directory using the
+// same traversal and limits as Admit (used by inventory for tool pinning).
+func HashDir(root string, lim Limits) (string, []FileEntry, error) {
+	if lim == (Limits{}) {
+		lim = DefaultLimits
+	}
+	w, err := walk(root, lim)
+	if err != nil {
+		return "", nil, err
+	}
+	return contentHash(w.files), w.files, nil
+}
+
 // contentHash implements spec §3.6.2:
 // sha256( join( sorted( "<path>\n<sha256>\n<bytes>\n" ) ) ).
 func contentHash(files []FileEntry) string {
