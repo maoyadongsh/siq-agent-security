@@ -4,6 +4,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"crypto/ed25519"
 	"encoding/base64"
@@ -21,6 +22,7 @@ import (
 	"syscall"
 	"time"
 
+	"siq-agent-security/apps/agentshield/internal/adapters"
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/inventory"
 	"siq-agent-security/apps/agentshield/internal/receipt"
@@ -61,6 +63,10 @@ func main() {
 		err = cmdServe(os.Args[2:])
 	case "inventory":
 		err = cmdInventory(os.Args[2:])
+	case "policy-exec":
+		err = cmdPolicyExec()
+	case "hook":
+		err = cmdHook(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
@@ -83,6 +89,8 @@ func usage() {
                                   # recompute the receipt hash chain and signatures; exit 4 on first break
   agentshield inventory [--cwd DIR] [--out FILE]
                                   # read-only discovery of platforms + skill dirs (JSON report)
+  agentshield policy-exec         # OpenClaw security.installPolicy exec: stdin request → {decision,reason}
+  agentshield hook codebuddy      # CodeBuddy PreToolUse/PostToolUse hook: stdin event → hookSpecificOutput
   agentshield serve [--port N] [--mode audit_only|warn|block]
                                   # decision API + console on 127.0.0.1 (bearer token in <state>/token)`)
 }
@@ -125,6 +133,103 @@ func cmdInventory(args []string) error {
 	_ = os.WriteFile(filepath.Join(dir, "inventory", time.Now().UTC().Format("20060102T150405Z")+".json"), raw, 0o600)
 	_, err = os.Stdout.Write(append(raw, '\n'))
 	return err
+}
+
+func cmdPolicyExec() error {
+	dir, err := stateDir()
+	if err != nil {
+		return err
+	}
+	st, err := state.Open(dir)
+	if err != nil {
+		return err
+	}
+	key, err := signing.Load(dir)
+	if err != nil {
+		return err
+	}
+	pack, err := loadPack()
+	if err != nil {
+		return err
+	}
+	out := adapters.PolicyExec(os.Stdin, adapters.PolicyExecDeps{Pack: pack, Key: key, Version: Version, Persist: st.PutAdmission})
+	return json.NewEncoder(os.Stdout).Encode(out)
+}
+
+// httpDecider talks to a running `agentshield serve` on behalf of hook subcommands.
+type httpDecider struct {
+	endpoint, token string
+	client          *http.Client
+}
+
+func (h *httpDecider) post(path string, body any, out any) error {
+	raw, _ := json.Marshal(body)
+	req, err := http.NewRequest(http.MethodPost, h.endpoint+path, bytes.NewReader(raw))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", "Bearer "+h.token)
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := h.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("decision service returned %d", resp.StatusCode)
+	}
+	return json.NewDecoder(resp.Body).Decode(out)
+}
+
+func (h *httpDecider) Decide(r receipt.Request) (*receipt.Decision, error) {
+	var out struct {
+		Action    string         `json:"action"`
+		Reason    string         `json:"reason"`
+		ReceiptID string         `json:"receipt_id"`
+		Params    map[string]any `json:"params"`
+	}
+	if err := h.post("/v1/decide", r, &out); err != nil {
+		return nil, err
+	}
+	return &receipt.Decision{Action: out.Action, Reason: out.Reason, Params: out.Params, Receipt: receipt.Receipt{ReceiptID: out.ReceiptID}}, nil
+}
+
+func (h *httpDecider) Observe(r receipt.Request, result string) error {
+	body := map[string]any{"platform": r.Platform, "session_id": r.SessionID, "agent_id": r.AgentID, "tool": r.Tool, "params": map[string]any{}, "result": result}
+	var out map[string]any
+	return h.post("/v1/observe", body, &out)
+}
+
+func cmdHook(args []string) error {
+	if len(args) < 1 || args[0] != "codebuddy" {
+		return fmt.Errorf("hook: supported platforms: codebuddy")
+	}
+	dir, err := stateDir()
+	if err != nil {
+		return err
+	}
+	st, err := state.Open(dir)
+	if err != nil {
+		return err
+	}
+	cfg, err := st.LoadConfig()
+	if err != nil {
+		return err
+	}
+	tok, err := st.Token()
+	if err != nil {
+		return err
+	}
+	agentID := os.Getenv("AGENTSHIELD_AGENT_ID")
+	if agentID == "" {
+		agentID = "default"
+	}
+	d := &httpDecider{endpoint: fmt.Sprintf("http://127.0.0.1:%d", cfg.Port), token: tok, client: &http.Client{Timeout: 4 * time.Second}}
+	out, err := adapters.CodeBuddyHook(os.Stdin, d, agentID, cfg.EnforcementMode)
+	if err != nil {
+		return err
+	}
+	return json.NewEncoder(os.Stdout).Encode(out)
 }
 
 func cmdServe(args []string) error {

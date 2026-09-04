@@ -1,0 +1,15 @@
+{
+  "name": "openclaw-agentshield",
+  "version": "0.1.0",
+  "description": "AgentShield runtime adapter for OpenClaw: before_tool_call/after_tool_call → local decision API. No policy, no keys.",
+  "type": "module",
+  "main": "index.ts",
+  "openclaw": {
+    "kind": "plugin",
+    "hooks": ["before_tool_call", "after_tool_call"]
+  },
+  "peerDependencies": {
+    "openclaw": "*"
+  },
+  "license": "Apache-2.0"
+}
