@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/grant.v1.json",
+  "title": "LeastPrivilegeGrant",
+  "description": "最小权限签发（ADR-011 / 设计方案 v1 §4）。输入是 admission 的 declared 事实，输出是平台 allowlist + 后端无关 DesiredPolicy 引用。不变量：default-deny；deny 覆盖 allow；重叠必须显式列出而不是静默并集；approved 及之后的状态只能由人签核（模型 / 自动化不得批准，ADR-003）；effective 必须带后端读回证据。",
+  "type": "object",
+  "required": [
+    "grant_id",
+    "admission_id",
+    "subject",
+    "platform",
+    "facts",
+    "default_effect",
+    "enforcement_mode",
+    "status",
+    "overlap_conflicts",
+    "created_at",
+    "signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "grant_id": { "type": "string" },
+    "admission_id": { "type": "string", "description": "来源 admission.admission_id；一次 grant 只服务一次准入结论" },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "id"],
+      "properties": {
+        "type": { "type": "string", "enum": ["agent_instance", "agent_asset", "openshell_sandbox"] },
+        "id": { "type": "string" }
+      }
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["openclaw", "hermes", "codebuddy", "trae", "claude_code", "codex", "other"],
+      "description": "被授权 Agent 所在平台；决定输出哪种 allowlist"
+    },
+    "facts": {
+      "type": "array",
+      "description": "签发后的权限事实。state 五态与 permission-fact.schema 对齐：declared 来自 admission；effective 只能由读回（authority_revision + readback_evidence_id）支撑",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fact_id", "domain", "action", "resource", "effect", "state", "authority", "evidence_ids"],
+        "properties": {
+          "fact_id": { "type": "string" },
+          "domain": { "type": "string", "enum": ["tool", "filesystem", "network", "process", "model", "credential", "resource"] },
+          "action": { "type": "string" },
+          "resource": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "value"],
+            "properties": {
+              "type": { "type": "string" },
+              "value": { "type": "string" }
+            }
+          },
+          "effect": { "type": "string", "enum": ["allow", "deny"] },
+          "conditions": { "type": "object", "additionalProperties": true },
+          "state": { "type": "string", "enum": ["declared", "inferred", "observed", "effective", "unknown"] },
+          "authority": { "type": "string", "description": "skill_manifest / agentshield / openshell / hermes / openclaw / os" },
+          "authority_revision": { "type": ["string", "null"] },
+          "readback_evidence_id": { "type": ["string", "null"], "description": "effective 时必填：后端读回的证据 id" },
+          "evidence_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "state": { "const": "effective" } } },
+            "then": {
+              "properties": {
+                "authority_revision": { "type": "string", "minLength": 1 },
+                "readback_evidence_id": { "type": "string", "minLength": 1 }
+              },
+              "required": ["authority_revision", "readback_evidence_id"]
+            }
+          }
+        ]
+      }
+    },
+    "default_effect": { "type": "string", "const": "deny", "description": "闭世界：未出现在 facts 的工具 / 域名 / 路径一律拒绝" },
+    "hermes_toolset_allowlist": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "platform=hermes 时输出，对应 platform_toolset_modes: allowlist"
+    },
+    "openclaw_tool_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "platform=openclaw 时输出，映射 before_tool_call 决策：allow 直接放行、deny 直接 block、require_approval 走 requireApproval",
+      "properties": {
+        "allow": { "type": "array", "items": { "type": "string" } },
+        "deny": { "type": "array", "items": { "type": "string" } },
+        "require_approval": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "desired_policy_ref": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["policy_id", "version"],
+      "description": "编译到 OpenShell 的后端无关策略引用（desired-policy.schema）；null 表示本平台 / OS 无 L3",
+      "properties": {
+        "policy_id": { "type": "string" },
+        "version": { "type": "integer", "minimum": 1 },
+        "static_domains_unavailable": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["filesystem", "process"] },
+          "description": "因 create_generation 不可用而无法热下发、只能在沙箱创建时静态写入的域；写在这里，不得伪装 effective"
+        }
+      }
+    },
+    "overlap_conflicts": {
+      "type": "array",
+      "description": "同域资源模式重叠（设计文档 §12.4）。存在未解决冲突时 status 不得进入 approved 及之后",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["domain", "fact_ids", "resolution"],
+        "properties": {
+          "domain": { "type": "string" },
+          "fact_ids": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+          "resolution": { "type": "string", "enum": ["deny_overrides", "manual", "unresolved"] },
+          "note": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "enforcement_mode": { "type": "string", "enum": ["audit_only", "warn", "block"] },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "pending_approval", "approved", "deployed", "effective", "rejected", "revoked"]
+    },
+    "approved_by": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["actor_type", "actor_id", "approved_at"],
+      "properties": {
+        "actor_type": { "type": "string", "enum": ["human"], "description": "只允许 human；模型与自动化不能批准" },
+        "actor_id": { "type": "string", "minLength": 1 },
+        "approved_at": { "type": "string", "format": "date-time" },
+        "channel": { "type": "string", "enum": ["console", "openclaw_approval", "hermes_cli", "codebuddy_prompt", "other"] }
+      }
+    },
+    "effective_readback": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["backend", "revision", "verified_at", "evidence_id"],
+      "properties": {
+        "backend": { "type": "string", "description": "openshell / hermes / openclaw" },
+        "revision": { "type": "string", "minLength": 1 },
+        "verified_at": { "type": "string", "format": "date-time" },
+        "evidence_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "signature": { "type": "string", "pattern": "^[0-9a-f]{128}$" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "enum": ["approved", "deployed", "effective"] } } },
+      "then": {
+        "properties": {
+          "approved_by": { "type": "object" },
+          "overlap_conflicts": {
+            "not": { "contains": { "properties": { "resolution": { "const": "unresolved" } }, "required": ["resolution"] } }
+          }
+        },
+        "required": ["approved_by"]
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "effective" } } },
+      "then": {
+        "properties": { "effective_readback": { "type": "object" } },
+        "required": ["effective_readback"]
+      }
+    },
+    {
+      "if": { "properties": { "status": { "enum": ["draft", "pending_approval", "rejected"] } } },
+      "then": {
+        "properties": {
+          "facts": {
+            "not": { "contains": { "properties": { "state": { "const": "effective" } }, "required": ["state"] } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "platform": { "const": "hermes" } } },
+      "then": { "required": ["hermes_toolset_allowlist"] }
+    },
+    {
+      "if": { "properties": { "platform": { "const": "openclaw" } } },
+      "then": { "required": ["openclaw_tool_policy"] }
+    }
+  ]
+}

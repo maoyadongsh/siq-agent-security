@@ -4,10 +4,14 @@
 
 领域信封 `event-envelope.schema.json` 与 Document Engine 的同名文件**不是**同一 schema（一边 integer `schema_version`，一边 document 专用 enum）。共享字段以 `event-envelope-core.schema.json` 为权威，同步命令见 Document Engine `packages/contracts/json-schema/events/README.md`。
 
-## 合同文件清单（6 份）
+## 合同文件清单（10 份）
 
 | 文件 | 内容 | 关键字段/约定 | 对应设计文档 |
 | --- | --- | --- | --- |
+| `admission.schema.json` | Skill 安装前准入结论（AgentShield） | 三值 `verdict`；`findings.disposition`（quarantine / declare / info）与 verdict 用 `if/then` 锁定自洽；`declared_facts` 只能 `state=declared`、`effect=allow`；`over_limit` / `symlink_escape` 强制 quarantine；`content_hash` 用于 tool pinning | ADR-011、设计方案 v1 §4.1 |
+| `grant.schema.json` | 最小权限签发 | `default_effect` 恒为 `deny`；`approved_by.actor_type` 只允许 `human`；approved 及之后禁止 `unresolved` 重叠；`effective` 必须带 `effective_readback` 与逐条 `authority_revision`/`readback_evidence_id`；按 `platform` 强制输出 `hermes_toolset_allowlist` / `openclaw_tool_policy`；`static_domains_unavailable` 显式承认 fs/process 不可热下发 | ADR-011、ADR-003/004、§12.4 |
+| `receipt.schema.json` | 每次工具调用的签名回执 | 哈希链（`seq`/`prev_hash`/`hash`/`sig`，创世 prev 全 0）；四种处置 allow/deny/hold/redact；deny/hold/redact 必须有 `reason`；`audit_only` 只能 allow 并以 `advisory_action` 记录；只存 `params_digest` 与脱敏 `params_excerpt`，禁止参数原文；`taint_labels` + `trifecta` | 设计方案 v1 §4.2 |
+| `skill-manifest.schema.json` | AgentShield Skill 发布清单 | 二进制按 OS × arch 钉 `sha256`；规则包版本 + 公钥；`support_matrix` 按平台 × OS 标 L0–L3，`audit_only` 不得宣称 L2，macOS/Windows 的 L3 必须写 `requires`；`description` ≤60 字符句号结尾；清单本身签名 | ADR-011 D1/D5 |
 | `candidate.schema.json` | 发现阶段的智能体候选 | `evidence_ids` 必填（minItems 1）、确认/驳回生命周期 | §10.2 / §10.5 |
 | `evidence.schema.json` | 可验证证据 | `collected_at`、`expires_at`（新鲜度窗口）、`signature`（Edge 签名） | §10.5 |
 | `permission-fact.schema.json` | 权限事实 | 五态 `state`（declared/inferred/observed/effective/unknown）、`delegated_user` 委托维度、authority/revision 溯源 | §12.3 |
@@ -16,7 +20,19 @@
 | `event-envelope-core.schema.json` | 跨域共享身份字段（ENG-03 权威副本） | event_id/type/occurred_at/tenant_id/request_id/payload；与 Document Engine 字节一致 | SIQ_CROSS_REPO_DEVPLAN ENG-03 |
 | `connector-protocol.v1.md` | Edge ↔ Connector 受限子进程协议 | NDJSON、op 清单、错误码、负向语料、签名与新鲜度约定 | §26.1 |
 
-控制面以 `apps/control-api/app/tests/test_schema_contracts.py` 守护示例与实现方字段同步：schema 示例校验 + 实现方字段一致性，任何一侧漂移即测试失败。
+控制面以 `apps/control-api/app/tests/test_schema_contracts.py` 守护示例与实现方字段同步：schema 示例校验 + 实现方字段一致性，任何一侧漂移即测试失败。ADR-011 四份合同的每条 `if/then` 不变量在该文件各有一条负向测试。
+
+### AgentShield 四合同的数据流
+
+```
+SKILL.md → skill-manifest（校验二进制哈希）→ agentshield 二进制
+  inventory ──► candidate + evidence（既有合同）
+  admit     ──► admission（declared_facts ⊂ permission-fact 语义，state 恒为 declared）
+  grant     ──► grant（facts 五态；effective 只能来自后端读回）+ desired-policy 引用
+  serve     ──► receipt（哈希链 + Ed25519；平台适配器与模型无签名密钥）
+```
+
+Go 实现（`apps/agentshield/`，规划中）与 Python 实现（control-api）共用本目录 schema 与同一套语料；`engine.name` 字段区分双实现，一致性测试以此比对。
 
 ## 变更规则
 
