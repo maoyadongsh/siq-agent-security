@@ -75,6 +75,22 @@
 
 **已知粒度局限**：`AUTO_QUARANTINE_MIN_CONFIDENCE` 是全局单一常量，不能按规则单独设置阈值；若未来某条规则需要"高置信但业务上仍不希望自动隔离"，目前只能通过下调该规则包里的 `confidence` 字段间接实现，语义上不够直接（见"后续"）。
 
+## Go 双实现基线（ADR-011 D2，`apps/agentshield/internal/threat`，2026-09-04）
+
+AgentShield 本地二进制用 Go 重写检测核心，与本文的 Python 引擎**共用同一份规则包 JSON**（`apps/agentshield/internal/rulepack/data/threat_rules.v1.json` 由测试 `TestEmbeddedPackMatchesControlPlaneCopy` 锁定与 `apps/control-api/app/data/threat_rules.v1.json` 逐字节一致）和**同一份语料** `corpus.json`。
+
+| 项 | Go 实现现状 | 锁定方式 |
+| --- | --- | --- |
+| 规则包 25 条正则规则 | 全部在 Go RE2 编译通过并命中语料 | `TestCorpusParityWithPython`（25 恶意全命中 / 12 良性零命中 / 1 已知误报仍触发）+ `TestEveryRuleCoveredByCorpus` |
+| `threat-persist-crontab` | 原负向前瞻 `(?![el]\b)` 改写为 `(?:[^el]\|[el]\w\|$)`，Python 语义等价（9 组边界用例在 CPython 下对旧/新模式比对一致） | `TestCrontabRewriteKeepsPythonSemantics` |
+| 脱敏规则 11 条 + 默认兜底 6 条 | 全部 RE2 兼容 | `TestExcerptIsRedactedAndTruncated` |
+| 类型识别 / 首命中 / 40 字符截断 / excerpt_sha256 | 与 Python 逐字段一致（同一样本 sha256、rule_id、line、excerpt_sha256、excerpt 完全相同） | `TestDetectTypeMirrorsPython`、`TestFirstHitPerRuleOnly` |
+| 规范化 JSON 与 Ed25519 签名 | 与 CPython `json.dumps(sort_keys, separators)` 逐字节一致；同 seed 同文档签名十六进制完全相同 | `canon_test.go`、`signing_test.go` 固定向量 |
+| 外部规则包验签 / 防降级 / fail-closed 回退 | 与 `rulepack.py` 同语义；拒绝原因只记类别 | `TestLoadFailsClosedToBuiltin` |
+| **Python AST 层 4 条**（`threat-py-os-system` / `threat-py-subprocess-shell` / `threat-py-ctypes-load` / `threat-py-syntax-parse-failed`） | **Go v1 未实现** | 前三条有正则孪生规则（`threat-py-*-regex`）仍生效，因此 Go 侧对同一行为只有 1 条命中而非 Python 的 2 条；`syntax-parse-failed` 无等价，Go 侧不会对语法错误的 Python 文件告警。路线图：tree-sitter 或纯 Go 词法层 |
+
+**诚实边界**：Go 侧「25/25 召回、0/12 误报」与 Python 同属冒烟回归而非野外能力评测；AST 层缺席意味着 Go 对 Python 脚本的置信度略低于控制面（0.9 vs 0.95）。
+
 ## 脱敏覆盖率基线（R-7，`redaction_patterns` 字段，规则包内 11 条）
 
 `app/rulepack.py` 把脱敏正则与检测规则放进同一份 Ed25519 签名规则包（`_parse_redaction_patterns`），版本化、可整包热更新；外部包省略该字段时退回内置默认值（与检测规则更新解耦）；字段一旦提供，校验严格度与 `rules` 一致——任何一条不可编译/缺字段即整包拒绝（fail-closed，不允许"部分脱敏规则失效"的半生效状态）。
