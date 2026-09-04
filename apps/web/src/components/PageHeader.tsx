@@ -7,6 +7,8 @@ interface PageHeaderProps {
   description: string;
   /** kicker 眉题胶囊图标（默认盾牌，页面对齐各自导航图标） */
   icon?: IconName;
+  /** 眉题文字；企业控制台默认 SIQ AGENT SECURITY，本地模式传入 AGENTSHIELD */
+  kicker?: string;
   /** 控制面连接状态（未连接时展示空态提示） */
   connection?: ApiConnectionStatus;
   /** 连接错误信息 */
@@ -22,6 +24,7 @@ export default function PageHeader({
   title,
   description,
   icon = 'shield',
+  kicker = 'SIQ AGENT SECURITY',
   connection = 'loading',
   connectionError = null,
   actions,
@@ -44,7 +47,7 @@ export default function PageHeader({
       <div className="page-header-copy">
         <span className="kicker">
           <Icon name={icon} size={14} />
-          SIQ AGENT SECURITY
+          {kicker}
         </span>
         <h1>{title}</h1>
       </div>

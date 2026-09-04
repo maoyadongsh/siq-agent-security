@@ -284,6 +284,11 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 | `GET /v1/status` | 版本、enforcement_mode、平台档位、链头 |
 | `POST /v1/admit` / `POST /v1/grant/...` | 控制台与 CLI 复用；同 §3.6/§3.7 |
 | `GET /` | 内嵌 UI |
+| `GET /ui-config.json` | loopback 无鉴权：token + version + mode，供控制台内存持有；禁止 localStorage |
+| `GET /v1/inventory` | 盘点（POST 仍可用，body.cwd 或 `?cwd=`）|
+| `GET`/`PUT /v1/config` | 读/写 `enforcement_mode`（热更新 Engine）|
+| `GET /v1/adapter/status` `POST /v1/adapter/install` `POST /v1/adapter/uninstall` | 控制台装/卸适配器 |
+| `GET /v1/admissions/{id}` | 单条准入 + Skill Card markdown |
 
 请求体（decide）：
 
@@ -347,10 +352,12 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 
 ### 3.10 `internal/ui`（规格）
 
-- 复用 `apps/web` 构建产物（`vite build` → `dist/`），Go `embed` 进二进制；构建脚本 `make ui` 先跑 `npm ci && npm run build`。
+- 复用 `apps/web` **设计系统**（`index.css`、PageHeader、SimpleTable、icons、Layout 磨砂侧栏），**不要**把本地页塞进企业控制台的 `AuthGate` / JWT 路由。
+- 第二入口：`index.local.html` + `src/local/`；`npm run build:local`（`VITE_APP=agentshield`）写入 `apps/agentshield/internal/ui/embedded/`，Go `embed` 进二进制。`make -C apps/agentshield ui` 先跑 `npm ci && npm run build:local`。
+- 企业控制台（`index.html` + `src/App.tsx`，对接 Control API `:8600`）保持独立；`npm run build` 行为不变。
 - 页面：Overview（档位、链头、平台登记）、Inventory、Admissions（列表 + 卡）、Grants（审批、重叠确认）、Receipts（链、红色 deny 高亮、验签按钮）、Settings（enforcement_mode、平台适配器安装/卸载）。
-- 顶栏常驻标签：**「本地模式 · 单用户」** + 当前平台档位（如 `OpenClaw · L3` / `Trae · 审计模式，无法阻断`）。
-- 所有写操作走 §3.8.1 端点并带 token；UI 无私钥。
+- 顶栏常驻标签：**「本地模式 · 单用户」** + 当前平台档位（如 `OpenClaw · L2` / `Trae · 审计模式，无法阻断`）。L3 仅在 OpenShell probe 成功后显示。
+- 所有写操作走 §3.8.1 端点并带 token；UI 无私钥。Token 由 `GET /ui-config.json`（仅 loopback）进入内存，禁止 `localStorage` / 地址栏 `?token=`。
 
 ---
 
@@ -530,8 +537,9 @@ cd apps/control-api && uv sync --dev --frozen && uv run --frozen ruff check app 
 # 规则包变更：两侧都要跑
 uv run --frozen pytest app/tests/test_threat_analysis.py app/tests/test_threat_rulepack.py app/tests/test_detection_baseline.py
 (cd ../agentshield && go test ./internal/rulepack ./internal/threat)
-# UI
-cd apps/web && npm ci && npm run build
+# UI（AgentShield 本地控制台；企业控制台仍是 npm run build）
+cd apps/web && npm ci && npm run build:local
+make -C apps/agentshield ui
 ```
 
 ### 8.3 规则
@@ -558,7 +566,7 @@ cd apps/web && npm ci && npm run build
 | --- | --- | --- |
 | W0 合同 | 四 schema + 42 负向测试 + README + 兼容矩阵 | **完成** |
 | W1 Go 核心 | canon / rulepack / threat / signing / admission / grant / receipt / CLI | **完成**；每个模块的 Go 样例均回灌 Python schema 校验；grant 的 `artifact_hash` 与 Python 编译器一致 |
-| W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve` **完成**；HTTP E2E **完成**；`inventory` **完成**；embed UI **未开始** |
+| W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve` **完成**；HTTP E2E **完成**；`inventory` **完成**；embed UI **完成**（`src/local/` + `internal/ui`） |
 | W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**；OpenClaw `policy-exec` **完成**；CodeBuddy `hook codebuddy` **完成**；`adapter install/uninstall`（备份还原）**完成** |
 | W4 OpenShell | probe / 网络 policy set / 读回 | 未开始 |
 | W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **进行中**：Skill 目录、evals、bootstrap/adapter 脚本、`grant` CLI、自扫描不得 quarantine；发布 manifest / 交叉编译哈希待 CI |

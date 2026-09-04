@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -13,6 +14,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
+	"siq-agent-security/apps/agentshield/internal/ui"
 )
 
 const token = "0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -34,7 +36,12 @@ func newServer(t *testing.T, mode string) (*Server, *state.Store) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	s, err := New(Deps{Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: token, Version: "test", Mode: mode})
+	home := filepath.Join(dir, "home")
+	if err := os.MkdirAll(home, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	s, err := New(Deps{Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: token, Version: "test", Mode: mode,
+		Home: home, Binary: "agentshield-test", UI: ui.Handler()})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -221,6 +228,138 @@ func TestStateStoreVersionsGrantsAndNeverRewrites(t *testing.T) {
 	cfg, err := st.LoadConfig()
 	if err != nil || cfg.EnforcementMode != "block" || cfg.Port != 47611 {
 		t.Fatalf("%v %+v", err, cfg)
+	}
+}
+
+func TestUIConfigIsLoopbackUnauthenticatedAndNotCached(t *testing.T) {
+	s, _ := newServer(t, "block")
+	req := httptest.NewRequest("GET", "/ui-config.json", nil)
+	req.RemoteAddr = "127.0.0.1:9"
+	rr := httptest.NewRecorder()
+	s.Handler().ServeHTTP(rr, req)
+	if rr.Code != 200 {
+		t.Fatalf("ui-config: %d %s", rr.Code, rr.Body.String())
+	}
+	if rr.Header().Get("Cache-Control") != "no-store" {
+		t.Fatal("ui-config must not be cached")
+	}
+	var out map[string]any
+	if err := json.Unmarshal(rr.Body.Bytes(), &out); err != nil {
+		t.Fatal(err)
+	}
+	if out["token"] != token || out["local_mode"] != true {
+		t.Fatalf("%v", out)
+	}
+	req = httptest.NewRequest("GET", "/ui-config.json", nil)
+	req.RemoteAddr = "10.1.1.8:9"
+	rr = httptest.NewRecorder()
+	s.Handler().ServeHTTP(rr, req)
+	if rr.Code != 403 {
+		t.Fatalf("non-loopback ui-config must be 403, got %d", rr.Code)
+	}
+}
+
+func TestEmbeddedConsoleServesIndexWithoutBearer(t *testing.T) {
+	s, _ := newServer(t, "block")
+	req := httptest.NewRequest("GET", "/", nil)
+	req.RemoteAddr = "127.0.0.1:9"
+	rr := httptest.NewRecorder()
+	s.Handler().ServeHTTP(rr, req)
+	if rr.Code != 200 || !strings.Contains(rr.Body.String(), "AgentShield") {
+		t.Fatalf("%d %s", rr.Code, rr.Body.String())
+	}
+	req = httptest.NewRequest("GET", "/overview", nil)
+	req.RemoteAddr = "127.0.0.1:9"
+	rr = httptest.NewRecorder()
+	s.Handler().ServeHTTP(rr, req)
+	if rr.Code != 200 || !strings.Contains(rr.Body.String(), "AgentShield") {
+		t.Fatalf("SPA fallback: %d %s", rr.Code, rr.Body.String())
+	}
+	req = httptest.NewRequest("GET", "/missing.js", nil)
+	req.RemoteAddr = "127.0.0.1:9"
+	rr = httptest.NewRecorder()
+	s.Handler().ServeHTTP(rr, req)
+	if rr.Code != 404 {
+		t.Fatalf("missing asset must 404, got %d", rr.Code)
+	}
+}
+
+func TestInventoryGETConfigPutAndAdapterHTTP(t *testing.T) {
+	s, _ := newServer(t, "block")
+	code, inv := call(t, s, "GET", "/v1/inventory", token, nil)
+	if code != 200 {
+		t.Fatalf("inventory GET: %d %v", code, inv)
+	}
+	if _, ok := inv["platforms"]; !ok {
+		t.Fatalf("inventory missing platforms: %v", inv)
+	}
+	code, st := call(t, s, "GET", "/v1/status", token, nil)
+	if code != 200 {
+		t.Fatal(st)
+	}
+	plats, _ := st["platforms"].([]any)
+	if len(plats) < 4 {
+		t.Fatalf("status platforms: %v", st["platforms"])
+	}
+	code, cfg := call(t, s, "PUT", "/v1/config", token, map[string]any{"enforcement_mode": "warn"})
+	if code != 200 || cfg["enforcement_mode"] != "warn" {
+		t.Fatalf("config put: %d %v", code, cfg)
+	}
+	_, st = call(t, s, "GET", "/v1/status", token, nil)
+	if st["enforcement_mode"] != "warn" {
+		t.Fatalf("live mode: %v", st)
+	}
+	code, bad := call(t, s, "PUT", "/v1/config", token, map[string]any{"enforcement_mode": "explode"})
+	if code != 400 {
+		t.Fatalf("invalid mode must 400: %d %v", code, bad)
+	}
+	code, ad := call(t, s, "GET", "/v1/adapter/status", token, nil)
+	if code != 200 {
+		t.Fatalf("adapter status: %d %v", code, ad)
+	}
+	code, ins := call(t, s, "POST", "/v1/adapter/install", token, map[string]any{"platform": "hermes"})
+	if code != 200 {
+		t.Fatalf("install: %d %v", code, ins)
+	}
+	if ins["action"] != "install" {
+		t.Fatalf("%v", ins)
+	}
+	_, ad = call(t, s, "GET", "/v1/adapter/status", token, nil)
+	found := false
+	for _, p := range ad["platforms"].([]any) {
+		m := p.(map[string]any)
+		if m["name"] == "hermes" && m["adapter"] == "installed" && m["tier"] == "L2" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("hermes not L2 after install: %v", ad)
+	}
+	code, un := call(t, s, "POST", "/v1/adapter/uninstall", token, map[string]any{"platform": "hermes"})
+	if code != 200 || un["action"] != "uninstall" {
+		t.Fatalf("uninstall: %d %v", code, un)
+	}
+	code, trae := call(t, s, "POST", "/v1/adapter/install", token, map[string]any{"platform": "trae"})
+	if code != 200 || trae["action"] != "skipped" {
+		t.Fatalf("trae must skip: %d %v", code, trae)
+	}
+}
+
+func TestAdmissionOneReturnsSkillCard(t *testing.T) {
+	s, _ := newServer(t, "block")
+	skill, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "benign", "pure-doc"))
+	_, a := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": skill})
+	id := a["admission"].(map[string]any)["admission_id"].(string)
+	code, one := call(t, s, "GET", "/v1/admissions/"+id, token, nil)
+	if code != 200 {
+		t.Fatalf("%d %v", code, one)
+	}
+	if one["admission"] == nil {
+		t.Fatalf("missing admission: %v", one)
+	}
+	card, _ := one["skill_card"].(string)
+	if card == "" {
+		t.Fatalf("missing card: %v", one)
 	}
 }
 

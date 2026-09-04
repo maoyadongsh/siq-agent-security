@@ -12,6 +12,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -26,15 +27,18 @@ import (
 
 // Deps wires the server.
 type Deps struct {
-	Store   *state.Store
-	Engine  *receipt.Engine
-	Chain   *receipt.Chain
-	Pack    *rulepack.Pack
-	Key     *signing.Key
-	Token   string
-	Version string
-	Mode    string
-	UI      http.Handler // optional embedded console
+	Store    *state.Store
+	Engine   *receipt.Engine
+	Chain    *receipt.Chain
+	Pack     *rulepack.Pack
+	Key      *signing.Key
+	Token    string
+	Version  string
+	Mode     string
+	UI       http.Handler // optional embedded console
+	Home     string       // override os.UserHomeDir (tests + adapter HTTP)
+	Binary   string       // agentshield path written into adapter configs
+	Endpoint string       // decision API URL written into adapter configs
 }
 
 // Server is the HTTP handler set.
@@ -56,9 +60,15 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/receipts", s.auth(s.receipts))
 	s.mux.HandleFunc("/v1/admit", s.auth(s.admit))
 	s.mux.HandleFunc("/v1/admissions", s.auth(s.admissions))
+	s.mux.HandleFunc("/v1/admissions/", s.auth(s.admissionOne))
 	s.mux.HandleFunc("/v1/inventory", s.auth(s.inventory))
 	s.mux.HandleFunc("/v1/grants", s.auth(s.grants))
 	s.mux.HandleFunc("/v1/grants/", s.auth(s.grantAction))
+	s.mux.HandleFunc("/v1/config", s.auth(s.config))
+	s.mux.HandleFunc("/v1/adapter/status", s.auth(s.adapterStatus))
+	s.mux.HandleFunc("/v1/adapter/install", s.auth(s.adapterInstall))
+	s.mux.HandleFunc("/v1/adapter/uninstall", s.auth(s.adapterUninstall))
+	s.mux.HandleFunc("/ui-config.json", s.uiConfig)
 	if d.UI != nil {
 		s.mux.Handle("/", d.UI)
 	} else {
@@ -110,14 +120,81 @@ func readJSON(r *http.Request, v any, limit int64) error {
 	return dec.Decode(v)
 }
 
-func (s *Server) status(w http.ResponseWriter, r *http.Request) {
+func (s *Server) currentMode() string {
+	if s.d.Engine != nil {
+		if m := s.d.Engine.Mode(); m != "" {
+			return m
+		}
+	}
+	return s.d.Mode
+}
+
+func (s *Server) status(w http.ResponseWriter, _ *http.Request) {
 	seq, head := s.d.Chain.Head()
 	writeJSON(w, 200, map[string]any{
-		"version": s.d.Version, "enforcement_mode": s.d.Mode, "local_mode": true, "single_user": true,
+		"version": s.d.Version, "enforcement_mode": s.currentMode(), "local_mode": true, "single_user": true,
 		"rulepack_version": s.d.Pack.Version, "rulepack_source": s.d.Pack.Source,
 		"chain":              map[string]any{"id": "local", "head_seq": seq, "head_hash": head},
 		"signing_public_key": s.d.Key.PublicBase64(),
+		"platforms":          s.platforms(),
 	})
+}
+
+// uiConfig is loopback-only (enforced by Handler) and unauthenticated: the
+// same user can already read <state>/token. The browser keeps the value in
+// memory; it must not be written to localStorage.
+func (s *Server) uiConfig(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		writeJSON(w, 405, map[string]any{"error": "GET required"})
+		return
+	}
+	w.Header().Set("Cache-Control", "no-store")
+	writeJSON(w, 200, map[string]any{
+		"token":            s.d.Token,
+		"version":          s.d.Version,
+		"enforcement_mode": s.currentMode(),
+		"local_mode":       true,
+		"single_user":      true,
+	})
+}
+
+func (s *Server) config(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		cfg, err := s.d.Store.LoadConfig()
+		if err != nil {
+			writeJSON(w, 500, map[string]any{"error": "config unreadable"})
+			return
+		}
+		cfg.EnforcementMode = s.currentMode()
+		writeJSON(w, 200, cfg)
+	case http.MethodPut, http.MethodPost:
+		var body struct {
+			EnforcementMode string `json:"enforcement_mode"`
+		}
+		if err := readJSON(r, &body, 16<<10); err != nil || body.EnforcementMode == "" {
+			writeJSON(w, 400, map[string]any{"error": "enforcement_mode required"})
+			return
+		}
+		if err := s.d.Engine.SetMode(body.EnforcementMode); err != nil {
+			writeJSON(w, 400, map[string]any{"error": err.Error()})
+			return
+		}
+		cfg, err := s.d.Store.LoadConfig()
+		if err != nil {
+			writeJSON(w, 500, map[string]any{"error": "config unreadable"})
+			return
+		}
+		cfg.EnforcementMode = body.EnforcementMode
+		if err := s.d.Store.SaveConfig(cfg); err != nil {
+			writeJSON(w, 500, map[string]any{"error": "config write failed"})
+			return
+		}
+		s.d.Mode = body.EnforcementMode
+		writeJSON(w, 200, cfg)
+	default:
+		writeJSON(w, 405, map[string]any{"error": "GET or PUT"})
+	}
 }
 
 func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
@@ -241,6 +318,7 @@ func (s *Server) admit(w http.ResponseWriter, r *http.Request) {
 	if body.TrustLevel == "" {
 		body.TrustLevel = "unknown"
 	}
+	body.Path = expandHome(body.Path, s.d.Home)
 	if st, err := os.Stat(body.Path); err != nil || !st.IsDir() {
 		writeJSON(w, 400, map[string]any{"error": "path is not a readable directory"})
 		return
@@ -261,20 +339,29 @@ func (s *Server) admit(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) inventory(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		writeJSON(w, 405, map[string]any{"error": "POST required"})
+	if r.Method != http.MethodPost && r.Method != http.MethodGet {
+		writeJSON(w, 405, map[string]any{"error": "GET or POST"})
 		return
 	}
-	var body struct {
-		Cwd string `json:"cwd"`
+	cwd := r.URL.Query().Get("cwd")
+	if r.Method == http.MethodPost {
+		var body struct {
+			Cwd string `json:"cwd"`
+		}
+		_ = readJSON(r, &body, 64<<10)
+		if body.Cwd != "" {
+			cwd = body.Cwd
+		}
 	}
-	_ = readJSON(r, &body, 64<<10)
+	if cwd != "" {
+		cwd = expandHome(cwd, s.d.Home)
+	}
 	admissions, _ := s.d.Store.ListAdmissions()
 	byHash := map[string]string{}
 	for _, a := range admissions {
 		byHash[a.ContentHash] = a.Verdict
 	}
-	rep, err := inventory.Run(inventory.Options{Cwd: body.Cwd, Version: s.d.Version, Key: s.d.Key,
+	rep, err := inventory.Run(inventory.Options{Home: s.d.Home, Cwd: cwd, Version: s.d.Version, Key: s.d.Key,
 		HasAdmission: func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
 	if err != nil {
 		writeJSON(w, 500, map[string]any{"error": "inventory failed"})
@@ -323,7 +410,7 @@ func (s *Server) grants(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		res, err := grant.Build(*adm, grant.Options{Subject: grant.Subject{Type: body.SubjectType, ID: body.SubjectID},
-			Platform: body.Platform, EnforcementMode: s.d.Mode, Key: s.d.Key, RedactSecrets: body.Redact})
+			Platform: body.Platform, EnforcementMode: s.currentMode(), Key: s.d.Key, RedactSecrets: body.Redact})
 		if err != nil {
 			writeJSON(w, 400, map[string]any{"error": err.Error()})
 			return
@@ -399,4 +486,46 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, 200, map[string]any{"grant": out})
+}
+
+func (s *Server) admissionOne(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeJSON(w, 405, map[string]any{"error": "GET required"})
+		return
+	}
+	id := strings.Trim(strings.TrimPrefix(r.URL.Path, "/v1/admissions/"), "/")
+	if id == "" {
+		s.admissions(w, r)
+		return
+	}
+	adm, err := s.d.Store.GetAdmission(id)
+	if err != nil {
+		writeJSON(w, 404, map[string]any{"error": "admission not found"})
+		return
+	}
+	card, _ := s.d.Store.SkillCard(id)
+	writeJSON(w, 200, map[string]any{"admission": adm, "skill_card": card})
+}
+
+func expandHome(p, home string) string {
+	if p == "~" || p == "~/" {
+		if home != "" {
+			return home
+		}
+		h, err := os.UserHomeDir()
+		if err == nil {
+			return h
+		}
+		return p
+	}
+	if strings.HasPrefix(p, "~/") || strings.HasPrefix(p, "~\\") {
+		base := home
+		if base == "" {
+			base, _ = os.UserHomeDir()
+		}
+		if base != "" {
+			return filepath.Join(base, p[2:])
+		}
+	}
+	return p
 }

@@ -31,6 +31,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
 	"siq-agent-security/apps/agentshield/internal/threat"
+	"siq-agent-security/apps/agentshield/internal/ui"
 )
 
 // Version is set by the release build (-ldflags "-X main.Version=...").
@@ -303,11 +304,20 @@ func cmdServe(args []string) error {
 	if err != nil {
 		return err
 	}
-	srv, err := server.New(server.Deps{Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: tok, Version: Version, Mode: cfg.EnforcementMode})
+	home, _ := os.UserHomeDir()
+	bin, _ := os.Executable()
+	if bin != "" {
+		bin, _ = filepath.Abs(bin)
+	}
+	addr := fmt.Sprintf("127.0.0.1:%d", cfg.Port)
+	srv, err := server.New(server.Deps{
+		Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: tok,
+		Version: Version, Mode: cfg.EnforcementMode, UI: ui.Handler(),
+		Home: home, Binary: bin, Endpoint: "http://" + addr,
+	})
 	if err != nil {
 		return err
 	}
-	addr := fmt.Sprintf("127.0.0.1:%d", cfg.Port)
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
 		return err

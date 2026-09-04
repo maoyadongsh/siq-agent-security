@@ -172,6 +172,18 @@ func (s *Store) GetAdmission(id string) (*admission.Admission, error) {
 	return &a, nil
 }
 
+// SkillCard returns the markdown card written next to an admission.
+func (s *Store) SkillCard(id string) (string, error) {
+	if !safeID(id) {
+		return "", errors.New("state: invalid admission id")
+	}
+	raw, err := os.ReadFile(filepath.Join(s.Dir, "admissions", id+".skill-card.md"))
+	if err != nil {
+		return "", err
+	}
+	return string(raw), nil
+}
+
 // ListAdmissions returns all admissions (newest decided_at first).
 func (s *Store) ListAdmissions() ([]admission.Admission, error) {
 	entries, err := os.ReadDir(filepath.Join(s.Dir, "admissions"))

@@ -1687,3 +1687,64 @@ a,
     min-height: 44px;
   }
 }
+
+/* ---------------- AgentShield 本地控制台（serve embed；企业 Layout 不使用） ---------------- */
+
+.topbar-tags {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.topbar-tags .topbar-phase {
+  margin-left: 0;
+}
+
+.table tbody tr.row-deny td {
+  background: rgb(168 16 24 / 0.07);
+}
+
+.table tbody tr.row-deny td:first-child {
+  box-shadow: inset 3px 0 0 var(--reject);
+}
+
+.table tbody tr.clickable {
+  cursor: pointer;
+}
+
+.skill-card-pre {
+  margin: 12px 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--table-head);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-ctrl);
+  padding: 12px 14px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 767.98px) {
+  .topbar-tags {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+
+  .topbar-phase {
+    white-space: normal;
+  }
+}

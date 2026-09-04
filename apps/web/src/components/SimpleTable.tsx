@@ -15,6 +15,9 @@ interface SimpleTableProps<T> {
   rows: T[];
   rowKey: (row: T) => string;
   emptyText?: string;
+  /** 行 class（如回执 deny 高亮）；企业列表页不传 */
+  rowClassName?: (row: T) => string | undefined;
+  onRowClick?: (row: T) => void;
 }
 
 export default function SimpleTable<T>({
@@ -22,6 +25,8 @@ export default function SimpleTable<T>({
   rows,
   rowKey,
   emptyText = '暂无数据',
+  rowClassName,
+  onRowClick,
 }: SimpleTableProps<T>) {
   if (rows.length === 0) {
     return (
@@ -44,13 +49,21 @@ export default function SimpleTable<T>({
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
-            <tr key={rowKey(row)}>
-              {columns.map((col) => (
-                <td key={col.key}>{col.render(row)}</td>
-              ))}
-            </tr>
-          ))}
+            {rows.map((row) => {
+              const extra = rowClassName?.(row);
+              const clickable = onRowClick ? ' clickable' : '';
+              return (
+                <tr
+                  key={rowKey(row)}
+                  className={`${extra ?? ''}${clickable}`.trim() || undefined}
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
+                >
+                  {columns.map((col) => (
+                    <td key={col.key}>{col.render(row)}</td>
+                  ))}
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </div>

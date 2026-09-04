@@ -11,6 +11,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"regexp"
 	"sort"
 	"strings"
@@ -159,6 +160,26 @@ func New(opts Options) (*Engine, error) {
 		opts.Now = func() time.Time { return time.Now().UTC() }
 	}
 	return &Engine{opts: opts, analyzer: threat.New(opts.Pack), sessions: map[string]*session{}}, nil
+}
+
+// SetMode updates enforcement_mode for subsequent Decide calls (settings UI).
+func (e *Engine) SetMode(mode string) error {
+	switch mode {
+	case "audit_only", "warn", "block":
+	default:
+		return fmt.Errorf("receipt: invalid enforcement_mode %q", mode)
+	}
+	e.mu.Lock()
+	e.opts.EnforcementMode = mode
+	e.mu.Unlock()
+	return nil
+}
+
+// Mode returns the live enforcement_mode.
+func (e *Engine) Mode() string {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.opts.EnforcementMode
 }
 
 var (
