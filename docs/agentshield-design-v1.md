@@ -3,6 +3,7 @@
 - 日期：2026-09-04
 - 依据：ADR-011；`docs/research/agentshield-market-survey-2026-09.md`；ADR-003/004/005
 - 目标赛事：第三届 NVIDIA DGX Spark 黑客松 · Agent Skills 开发挑战赛（报名截止 9/19，提交 9/20–29，决赛 10/15）
+- 下游文档：`agentshield-dev-spec-v1.md`（开发规格：模块算法、接口、状态布局、适配器协议、测试计划、进度）；本文只回答「做什么、为什么」，实现细节以规格为准
 
 ## 1. 一句话
 
