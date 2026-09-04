@@ -2,6 +2,8 @@
 
 独立部署的智能体安全管控面（Agent Security Control Plane）：把"谁、以什么目的、对什么资源、执行什么动作"的决策，转化为可执行、可观测、可审计的运行约束。
 
+> **黑客松 / 评委请先读 [AGENTSHIELD.md](./AGENTSHIELD.md)。** 本地门禁官是 `apps/agentshield`（Skill + 单文件二进制）。下面这篇 README 描述企业控制面（Control API、PostgreSQL、登录台），与 AgentShield 本地模式不是同一条入口。
+
 > 状态：**Phase 0–2 基线可运行，Phase 3（OpenShell 策略管控）进行中——部署闭环已在 OpenShell v0.0.104 隔离网关实测接通，正式迁移（canary 窗口）runbook 待执行**。
 > 治理收口进行中：代码已领先于经评审修订的设计基线，设计文档 v0.2 待最终评审确认。
 > 设计文档与评审意见见工作区根目录 [`SIQ_AGENT_SECURITY_DESIGN.md`](../SIQ_AGENT_SECURITY_DESIGN.md)（v0.2，待最终评审确认）、
