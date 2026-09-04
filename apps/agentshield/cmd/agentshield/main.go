@@ -67,6 +67,10 @@ func main() {
 		err = cmdPolicyExec()
 	case "hook":
 		err = cmdHook(os.Args[2:])
+	case "adapter":
+		err = cmdAdapter(os.Args[2:])
+	case "grant":
+		err = cmdGrant(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
@@ -91,6 +95,11 @@ func usage() {
                                   # read-only discovery of platforms + skill dirs (JSON report)
   agentshield policy-exec         # OpenClaw security.installPolicy exec: stdin request → {decision,reason}
   agentshield hook codebuddy      # CodeBuddy PreToolUse/PostToolUse hook: stdin event → hookSpecificOutput
+  agentshield adapter install|uninstall|status [platform]
+                                  # write/restore host adapter files (openclaw|hermes|codebuddy|trae)
+  agentshield grant <admission_id> --platform P --subject ID
+  agentshield grant approve|deploy|reject|revoke <grant_id> [--approve-as ACTOR]
+                                  # least-privilege grant; approve requires a human --approve-as
   agentshield serve [--port N] [--mode audit_only|warn|block]
                                   # decision API + console on 127.0.0.1 (bearer token in <state>/token)`)
 }
@@ -404,6 +413,9 @@ func cmdAdmit(args []string) error {
 	if err != nil {
 		return err
 	}
+	if err := persistAdmission(res); err != nil {
+		return err
+	}
 	if *out != "" {
 		base := filepath.Join(*out, res.Admission.AdmissionID)
 		cardPath := base + ".skill-card.md"
@@ -439,6 +451,26 @@ func cmdAdmit(args []string) error {
 }
 
 func stateDir() (string, error) { return state.DefaultDir() }
+
+func loadKey() (*signing.Key, error) {
+	dir, err := stateDir()
+	if err != nil {
+		return nil, err
+	}
+	return signing.Load(dir)
+}
+
+func persistAdmission(res *admission.Result) error {
+	dir, err := stateDir()
+	if err != nil {
+		return err
+	}
+	st, err := state.Open(dir)
+	if err != nil {
+		return err
+	}
+	return st.PutAdmission(res)
+}
 
 func rulepackPub() (ed25519.PublicKey, error) {
 	b64 := os.Getenv(RulepackPubEnv)

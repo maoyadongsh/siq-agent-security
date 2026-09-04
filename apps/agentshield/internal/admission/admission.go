@@ -236,9 +236,46 @@ func (b *builder) run() (*Result, error) {
 			b.addHit(rawHit{"adm-frontmatter-hooks", catCapability, "medium", 0.9, dispDeclare, "SKILL.md", 1, "hooks declared in frontmatter",
 				&declaredCapability{"process", "process.exec", "tool", "frontmatter-hooks"}})
 		}
+		dir := baseName(b.opts.Source.Locator)
+		if name := b.fm.Fields["name"]; name != "" && dir != "" && dir != "." && dir != name {
+			b.addHit(rawHit{"adm-name-mismatch", catInfo, "info", 1.0, dispInfo, "SKILL.md", 1, "frontmatter name differs from directory", nil})
+		}
+	}
+
+	for _, h := range checkShippedManifest(b.w.contents, b.w.files) {
+		b.addHit(h)
 	}
 
 	return b.finish(hasSkillMD)
+}
+
+// checkShippedManifest verifies a candidate's detached per-file hash list
+// (legacy skill.manifest.json). Mismatch is integrity failure → quarantine
+// (design §4.1 / spec §3.6.4). An absent or empty files map is not a finding:
+// shipping a manifest is optional.
+func checkShippedManifest(contents map[string][]byte, files []FileEntry) []rawHit {
+	raw, ok := contents["skill.manifest.json"]
+	if !ok {
+		return nil
+	}
+	var m struct {
+		Files map[string]string `json:"files"`
+	}
+	if json.Unmarshal(raw, &m) != nil || len(m.Files) == 0 {
+		return nil
+	}
+	have := make(map[string]string, len(files))
+	for _, f := range files {
+		have[f.Path] = f.SHA256
+	}
+	var hits []rawHit
+	for p, want := range m.Files {
+		got := have[p]
+		if !strings.EqualFold(got, strings.TrimSpace(want)) {
+			hits = append(hits, rawHit{"adm-manifest-mismatch", catIntegrity, "high", 1.0, dispQuarantine, p, 0, "sha256 does not match skill.manifest.json", nil})
+		}
+	}
+	return hits
 }
 
 func isNativeExt(p string) bool {
@@ -301,6 +338,9 @@ func (b *builder) scanTextFile(p, text string) {
 		b.addHit(rawHit{m.RuleID, cat, m.Severity, m.Confidence, disp, p, m.Line, m.Excerpt, capab})
 	}
 	for _, h := range egressHits {
+		b.addHit(h)
+	}
+	for _, h := range checkCredentialPaths(p, text, hasEgress) {
 		b.addHit(h)
 	}
 	for _, h := range checkPackageInstall(p, text) {

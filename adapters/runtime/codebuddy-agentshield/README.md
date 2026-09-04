@@ -4,19 +4,9 @@ CodeBuddy 没有装前钩子；运行时用全局 `PreToolUse` / `PostToolUse` �
 
 ## 安装（需用户确认；写入前备份）
 
-`~/.codebuddy/settings.json` 追加：
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      { "matcher": ".*", "hooks": [ { "type": "command", "command": "/usr/local/bin/agentshield hook codebuddy", "timeout": 5 } ] }
-    ],
-    "PostToolUse": [
-      { "matcher": ".*", "hooks": [ { "type": "command", "command": "/usr/local/bin/agentshield hook codebuddy", "timeout": 5 } ] }
-    ]
-  }
-}
+```bash
+agentshield adapter install codebuddy
+# merges PreToolUse / PostToolUse command hooks into ~/.codebuddy/settings.json (backup first)
 ```
 
 `agentshield serve` 必须在运行；`hook` 子命令从状态目录读 `config.json`（端口、enforcement_mode）与 `token`。`AGENTSHIELD_AGENT_ID` 指定 grant 的 `subject.id`（默认 `default`）。
@@ -48,7 +38,7 @@ stdout：
 
 ## 卸载
 
-移除上述两条钩子（`agentshield adapter uninstall codebuddy` 会还原备份，W5 提供）。
+`agentshield adapter uninstall codebuddy` 还原安装前的 `settings.json`。
 
 ## 验证状态
 

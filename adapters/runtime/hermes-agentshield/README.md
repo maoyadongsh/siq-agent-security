@@ -5,11 +5,9 @@
 ## 安装
 
 ```bash
-agentshield serve &                                   # 先启动决策服务
-mkdir -p ~/.hermes/plugins/agentshield
-cp plugin.yaml __init__.py ~/.hermes/plugins/agentshield/
-# 可选：~/.hermes/plugins/agentshield/config.json
-# {"endpoint":"http://127.0.0.1:47611","enforcement_mode":"block","timeout_s":5,"agent_id":"finance-analyst"}
+agentshield adapter install hermes
+# copies plugin.yaml + __init__.py into ~/.hermes/plugins/agentshield/
+# and writes ~/.local/bin/hermes-skills-install (admit-then-install wrapper)
 ```
 
 Hermes 在下次会话启动时发现插件（`hermes_cli/plugins.py` 从 `~/.hermes/plugins/` 扫描）。工具边界仍由 grant 写入的 `platform_toolset_modes: allowlist` 承担；本插件负责运行时回执与阻断（L2）。
@@ -35,6 +33,7 @@ Hermes 在下次会话启动时发现插件（`hermes_cli/plugins.py` 从 `~/.he
 
 ```bash
 rm -rf ~/.hermes/plugins/agentshield
+# or: agentshield adapter uninstall hermes   (restores any pre-existing files from <state>/backups/adapters/)
 ```
 
 ## 已知限制

@@ -177,6 +177,22 @@
       ]
     },
     {
+      "finding_id": "f-37a47f16460dbb14",
+      "rule_id": "adm-name-mismatch",
+      "category": "info",
+      "severity": "info",
+      "confidence": 1,
+      "disposition": "info",
+      "location": {
+        "path": "SKILL.md",
+        "line": 1
+      },
+      "excerpt": "frontmatter name differs from directory",
+      "evidence_ids": [
+        "ev-1ff45d8ec55b116f"
+      ]
+    },
+    {
       "finding_id": "f-cafb8e86628c51af",
       "rule_id": "adm-egress-domain",
       "category": "capability_declaration",
@@ -300,6 +316,7 @@
   "skill_card_ref": null,
   "evidence_ids": [
     "ev-0fd8c0d316d5f636",
+    "ev-1ff45d8ec55b116f",
     "ev-2a89ce7627420137",
     "ev-2c6910adf5062bc7",
     "ev-6dac6b3d5f199f75",
@@ -308,5 +325,5 @@
     "ev-a461b43625cb23c4",
     "ev-f1091526703f86a0"
   ],
-  "signature": "a14980b50ce1c1629675e925b0888b07e72c44d14814b963f653d65bd32ce120eccf275bad0093aecd1576160004f9c4c85f6ad2c8668900c4d3bcfb3a1bf400"
+  "signature": "bdc741ba70d35085346c4c873105fbd0a76b829a9c0a1b84ac16102785887cd8454d8400224d21a0f1c9394af38bdb48ecc35d57ebc8ab17132556c2848c440b"
 }

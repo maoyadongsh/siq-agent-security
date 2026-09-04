@@ -40,10 +40,8 @@
 ## L2 运行时
 
 ```bash
-agentshield serve &
-# 把本目录安装为 OpenClaw 插件（按 OpenClaw 插件安装方式，例如放入 ~/.openclaw/plugins/agentshield 并在 openclaw.json 启用）
-# 可选 ~/.openclaw/agentshield.json：
-# {"endpoint":"http://127.0.0.1:47611","enforcementMode":"block","timeoutMs":5000,"agentId":"finance-analyst"}
+agentshield adapter install openclaw
+# writes ~/.openclaw/plugins/agentshield/ and merges security.installPolicy into openclaw.json (backup first)
 ```
 
 | 决策 API `action` | 插件返回 |
@@ -64,7 +62,7 @@ agentshield serve &
 
 ## 卸载
 
-删除插件目录、移除 `openclaw.json` 中的 `security.installPolicy` 与插件启用项（`agentshield adapter uninstall openclaw` 会从 `<state>/backups/` 还原，W5 提供）。
+`agentshield adapter uninstall openclaw` 从 `<state>/backups/adapters/` 还原 `openclaw.json` 并删除本插件目录。
 
 ## 验证状态
 

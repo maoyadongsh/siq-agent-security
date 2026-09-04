@@ -34,6 +34,12 @@ var (
 	identRe       = regexp.MustCompile(`[\p{L}\p{N}_]+`)
 )
 
+// credPathRe catches credential material referenced from code in any
+// language (Python open(), Node fs.readFile, Go os.ReadFile, PowerShell
+// Get-Content, plain string literals) — the rulepack's shell-oriented
+// cred rules do not see these.
+var credPathRe = regexp.MustCompile(`(?i)(?:^|[^A-Za-z0-9_])((?:~|\$HOME|%USERPROFILE%|/home/[A-Za-z0-9_.-]+|/root|os\.path\.expanduser\("~)?[^\s"'()]*?(?:/|\\|^|")(?:\.env(?:\.[a-z]+)?|\.ssh/[A-Za-z0-9_.-]*|\.aws/credentials|\.aws/config|\.config/gcloud[^\s"']*|\.azure/[^\s"']*|\.netrc|\.npmrc|\.pypirc|\.git-credentials|\.docker/config\.json|\.kube/config|id_rsa|id_ed25519|auth\.json|credentials\.json|token\.json))(?:["'\s)]|$)`)
+
 var localHosts = map[string]bool{"localhost": true, "127.0.0.1": true, "0.0.0.0": true, "::1": true, "[::1]": true}
 
 // invisibleRune flags zero-width and BiDi control characters (U+FEFF only when
@@ -179,6 +185,40 @@ func checkEgress(p, text string) (hits []rawHit, hasEgress bool) {
 		}
 	}
 	return hits, hasEgress
+}
+
+// checkCredentialPaths flags code that references credential files. With an
+// egress sink in the same file it is exfiltration (quarantine); alone it is a
+// declared credential.read capability (spec §3.6.4).
+func checkCredentialPaths(p, text string, fileHasEgress bool) []rawHit {
+	if z := zoneOf(p); z == zoneDocs || z == zoneOther {
+		return nil
+	}
+	var hits []rawHit
+	seen := map[string]bool{}
+	for ln, line := range strings.Split(text, "\n") {
+		t := strings.TrimSpace(line)
+		if strings.HasPrefix(t, "#") || strings.HasPrefix(t, "//") {
+			continue // comments describing credentials are not access
+		}
+		m := credPathRe.FindStringSubmatch(line)
+		if m == nil {
+			continue
+		}
+		ref := strings.TrimSpace(m[1])
+		ref = strings.TrimPrefix(ref, `os.path.expanduser("`)
+		if seen[ref] {
+			continue
+		}
+		seen[ref] = true
+		if fileHasEgress {
+			hits = append(hits, rawHit{"adm-credential-path", catExfil, "high", 0.9, dispQuarantine, p, ln + 1, m[0], nil})
+			continue
+		}
+		hits = append(hits, rawHit{"adm-credential-path", catExfil, "medium", 0.85, dispDeclare, p, ln + 1, m[0],
+			&declaredCapability{"credential", "credential.read", "credential_ref", ref}})
+	}
+	return hits
 }
 
 func checkPackageInstall(p, text string) []rawHit {

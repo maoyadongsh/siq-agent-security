@@ -63,6 +63,7 @@ func TestMaliciousFixturesAreQuarantined(t *testing.T) {
 		"malicious/env-webhook":    "threat-cred-dotenv",
 		"malicious/deception":      "adm-user-deception",
 		"malicious/no-skill-md":    "adm-skill-md-missing",
+		"malicious/py-env-exfil":   "adm-credential-path",
 	}
 	for rel, rule := range cases {
 		t.Run(rel, func(t *testing.T) {
@@ -85,6 +86,68 @@ func TestEnvReadPlusWebhookIsExfilNotDeclaration(t *testing.T) {
 	q := findingRules(res, dispQuarantine)
 	if !q["threat-cred-dotenv"] || !q["threat-net-webhook-exfil"] {
 		t.Fatalf("both credential read and webhook must be quarantine-class in the same file: %v", q)
+	}
+}
+
+func TestCredentialPathWithEgressIsQuarantineWithoutIsDeclare(t *testing.T) {
+	q := admitFixture(t, "malicious/py-env-exfil")
+	if q.Admission.Verdict != "quarantine" {
+		t.Fatalf("dotenv + outbound POST must quarantine, got %s %v", q.Admission.Verdict, findingRules(q, ""))
+	}
+	if !findingRules(q, dispQuarantine)["adm-credential-path"] {
+		t.Fatalf("expected adm-credential-path quarantine, got %v", findingRules(q, dispQuarantine))
+	}
+	if len(q.Admission.DeclaredFacts) != 0 {
+		t.Fatal("quarantine must not hand declared facts to grant")
+	}
+
+	d := admitFixture(t, "benign/cred-read-only")
+	if d.Admission.Verdict != "admit_with_conditions" {
+		t.Fatalf("dotenv without egress must declare, not quarantine: verdict=%s q=%v", d.Admission.Verdict, findingRules(d, dispQuarantine))
+	}
+	if findingRules(d, dispQuarantine)["adm-credential-path"] {
+		t.Fatal("lone credential read must not quarantine")
+	}
+	if !findingRules(d, dispDeclare)["adm-credential-path"] && !findingRules(d, dispDeclare)["threat-cred-dotenv"] {
+		t.Fatalf("lone credential read must be declared: %v", findingRules(d, dispDeclare))
+	}
+	seenCred := false
+	for _, f := range d.Admission.DeclaredFacts {
+		if f.Domain == "credential" && f.Action == "credential.read" {
+			seenCred = true
+		}
+	}
+	if !seenCred {
+		t.Fatalf("expected credential.read declared fact, got %+v", d.Admission.DeclaredFacts)
+	}
+}
+
+func TestShippedManifestMismatchIsQuarantined(t *testing.T) {
+	root := t.TempDir()
+	_ = os.WriteFile(filepath.Join(root, "SKILL.md"), []byte("---\nname: x\ndescription: y.\n---\n# x\n"), 0o600)
+	_ = os.MkdirAll(filepath.Join(root, "scripts"), 0o700)
+	_ = os.WriteFile(filepath.Join(root, "scripts", "a.py"), []byte("print(1)\n"), 0o600)
+	_ = os.WriteFile(filepath.Join(root, "skill.manifest.json"), []byte(`{"files":{"SKILL.md":"deadbeef","scripts/a.py":"cafebabe"}}`), 0o600)
+	res, err := Admit(root, testOpts(t, "tmp/x", "unknown"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Admission.Verdict != "quarantine" || !findingRules(res, dispQuarantine)["adm-manifest-mismatch"] {
+		t.Fatalf("stale per-file hashes must quarantine: verdict=%s %v", res.Admission.Verdict, findingRules(res, ""))
+	}
+
+	// matching hashes: not a finding
+	clean := t.TempDir()
+	md := []byte("---\nname: x\ndescription: y.\n---\n# x\n")
+	_ = os.WriteFile(filepath.Join(clean, "SKILL.md"), md, 0o600)
+	sum := sha256Hex(md)
+	_ = os.WriteFile(filepath.Join(clean, "skill.manifest.json"), []byte(`{"files":{"SKILL.md":"`+sum+`"}}`), 0o600)
+	ok, err := Admit(clean, testOpts(t, "tmp/x", "unknown"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if findingRules(ok, "")["adm-manifest-mismatch"] {
+		t.Fatal("matching shipped manifest must not flag mismatch")
 	}
 }
 

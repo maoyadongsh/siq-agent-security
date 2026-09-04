@@ -16,9 +16,10 @@ AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本
 | `internal/receipt` | 决策引擎、污点/trifecta、哈希链、Verify | 完成 |
 | `internal/state` | 状态目录、token、admission/grant/policy 文件态存储 | 完成 |
 | `internal/server` | `/v1/*` HTTP（loopback + bearer） | 完成，UI embed 待接 |
+| `internal/adapterinstall` | `adapter install/uninstall/status`：写主机钩子，先备份可还原 | 完成 |
 | `internal/openshell` | probe / 网络 `policy set` / 读回；不调 `create_generation` | 规格 §3.9 |
 | `internal/ui` | embed `apps/web` 构建产物 | 规格 §3.10 |
-| `cmd/agentshield` | 子命令入口 | 部分 |
+| `cmd/agentshield` | 子命令入口（含 `admit`/`grant`/`adapter`/`serve`） | 完成（UI 与 OpenShell 子命令除外） |
 
 ## 硬性规则
 
