@@ -7,11 +7,14 @@ import (
 	"crypto/ed25519"
 	"encoding/base64"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
+	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/threat"
@@ -37,6 +40,8 @@ func main() {
 		err = cmdRulepack()
 	case "scan":
 		err = cmdScan(os.Args[2:])
+	case "admit":
+		err = cmdAdmit(os.Args[2:])
 	case "pubkey":
 		err = cmdPubkey()
 	default:
@@ -54,7 +59,97 @@ func usage() {
   agentshield version
   agentshield rulepack            # effective rule pack summary (JSON)
   agentshield scan <file>...      # static threat scan, one JSON result per line
+  agentshield admit <skill-dir> [--trust trusted|community|unknown] [--out <dir>] [--card]
+                                  # pre-install verdict (JSON); exit 3 = quarantine
   agentshield pubkey              # local signing public key (base64)`)
+}
+
+func cmdAdmit(args []string) error {
+	fs := flag.NewFlagSet("admit", flag.ContinueOnError)
+	trust := fs.String("trust", "unknown", "source trust level: trusted|community|unknown")
+	out := fs.String("out", "", "write <admission_id>.json / .skill-card.md / evidence into this directory")
+	card := fs.Bool("card", false, "print the skill card to stderr")
+	// allow the positional directory before or after flags
+	var root string
+	var flagArgs []string
+	for i := 0; i < len(args); i++ {
+		a := args[i]
+		if !strings.HasPrefix(a, "-") && root == "" {
+			root = a
+			continue
+		}
+		flagArgs = append(flagArgs, a)
+		if (a == "--trust" || a == "-trust" || a == "--out" || a == "-out") && i+1 < len(args) {
+			flagArgs = append(flagArgs, args[i+1])
+			i++
+		}
+	}
+	if err := fs.Parse(flagArgs); err != nil {
+		return err
+	}
+	if root == "" || fs.NArg() != 0 {
+		return fmt.Errorf("admit: exactly one skill directory required")
+	}
+	pack, err := loadPack()
+	if err != nil {
+		return err
+	}
+	dir, err := stateDir()
+	if err != nil {
+		return err
+	}
+	key, err := signing.Load(dir)
+	if err != nil {
+		return err
+	}
+	var cardRef *string
+	if *out != "" {
+		if err := os.MkdirAll(*out, 0o700); err != nil {
+			return err
+		}
+	}
+	res, err := admission.Admit(root, admission.Options{
+		Source:   admission.Source{Type: "local_dir", Locator: root, TrustLevel: *trust},
+		Version:  Version,
+		Key:      key,
+		Pack:     pack,
+		CardPath: cardRef,
+	})
+	if err != nil {
+		return err
+	}
+	if *out != "" {
+		base := filepath.Join(*out, res.Admission.AdmissionID)
+		cardPath := base + ".skill-card.md"
+		res.Admission.SkillCardRef = &cardPath
+		if err := os.WriteFile(cardPath, []byte(res.SkillCard), 0o600); err != nil {
+			return err
+		}
+		admJSON, _ := json.MarshalIndent(res.Admission, "", "  ")
+		if err := os.WriteFile(base+".json", admJSON, 0o600); err != nil {
+			return err
+		}
+		evDir := filepath.Join(*out, "evidence")
+		_ = os.MkdirAll(evDir, 0o700)
+		for _, ev := range res.Evidence {
+			evJSON, _ := json.Marshal(ev)
+			if err := os.WriteFile(filepath.Join(evDir, ev.EvidenceID+".json"), evJSON, 0o600); err != nil {
+				return err
+			}
+		}
+	}
+	if *card {
+		fmt.Fprintln(os.Stderr, res.SkillCard)
+	}
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(res.Admission); err != nil {
+		return err
+	}
+	if res.Admission.Verdict == "quarantine" {
+		os.Exit(3)
+	}
+	return nil
 }
 
 func stateDir() (string, error) {

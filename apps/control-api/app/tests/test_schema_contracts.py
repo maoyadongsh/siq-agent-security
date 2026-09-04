@@ -566,3 +566,37 @@ def test_manifest_signature_required():
     bad = dict(VALID_EXAMPLES["skill-manifest"])
     del bad["signature"]
     assert _validate("skill-manifest", bad)
+
+
+# ---------------------------------------------------------------------------
+# 跨实现：Go 二进制（apps/agentshield）提交的输出样例必须通过本目录 schema
+# ---------------------------------------------------------------------------
+
+GO_SAMPLES = Path(__file__).parents[4] / "apps" / "agentshield" / "testdata" / "contracts"
+
+
+@pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
+def test_go_admission_sample_conforms():
+    adm = json.loads((GO_SAMPLES / "admission.sample.json").read_text())
+    errors = _validate("admission", adm)
+    assert not errors, [e.message for e in errors]
+    assert adm["engine"]["name"] == "agentshield-go"
+    assert adm["verdict"] == "admit_with_conditions"
+    assert all(f["state"] == "declared" for f in adm["declared_facts"])
+
+
+@pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
+def test_go_evidence_sample_conforms_and_is_referenced():
+    adm = json.loads((GO_SAMPLES / "admission.sample.json").read_text())
+    evs = json.loads((GO_SAMPLES / "evidence.sample.json").read_text())
+    ids = {e["evidence_id"] for e in evs}
+    for ev in evs:
+        errors = _validate("evidence", ev)
+        assert not errors, [e.message for e in errors]
+    referenced = set(adm["evidence_ids"])
+    for f in adm["findings"]:
+        referenced.update(f["evidence_ids"])
+    for fact in adm["declared_facts"]:
+        referenced.update(fact["evidence_ids"])
+    assert referenced <= ids, "admission 引用了未导出的 evidence"
+    assert ids <= referenced, "存在孤儿 evidence（合同：每条 evidence 必须被引用）"
