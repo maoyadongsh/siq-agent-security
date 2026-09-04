@@ -568,7 +568,7 @@ make -C apps/agentshield ui
 | W1 Go 核心 | canon / rulepack / threat / signing / admission / grant / receipt / CLI | **完成**；每个模块的 Go 样例均回灌 Python schema 校验；grant 的 `artifact_hash` 与 Python 编译器一致 |
 | W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve` **完成**；HTTP E2E **完成**；`inventory` **完成**；embed UI **完成**（`src/local/` + `internal/ui`） |
 | W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**；OpenClaw `policy-exec` **完成**；CodeBuddy `hook codebuddy` **完成**；`adapter install/uninstall`（备份还原）**完成** |
-| W4 OpenShell | probe / 网络 policy set / 读回 | 未开始 |
+| W4 OpenShell | probe / 网络 policy set / 读回 | **完成**（CLI 后端 + `agentshield openshell` + `/v1/openshell/*` + 控制台 L3；假 CLI 正负测试。无 DGX 真网关 E2E） |
 | W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **进行中**：Skill 目录、evals、bootstrap/adapter 脚本、`grant` CLI、自扫描不得 quarantine；发布 manifest / 交叉编译哈希待 CI |
 | W6 材料 | README、演示、基线更新、十日谈 | 未开始 |
 
