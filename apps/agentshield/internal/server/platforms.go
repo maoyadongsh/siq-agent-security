@@ -44,5 +44,6 @@ func (s *Server) platforms() []PlatformInfo {
 		}
 		out = append(out, info)
 	}
+	out = append(out, s.openshellPlatform(false))
 	return out
 }

@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
@@ -360,6 +361,128 @@ func TestAdmissionOneReturnsSkillCard(t *testing.T) {
 	card, _ := one["skill_card"].(string)
 	if card == "" {
 		t.Fatalf("missing card: %v", one)
+	}
+}
+
+func TestOpenshellUnconfiguredIsL0(t *testing.T) {
+	s, _ := newServer(t, "block")
+	code, st := call(t, s, "GET", "/v1/status", token, nil)
+	if code != 200 {
+		t.Fatal(st)
+	}
+	found := false
+	for _, p := range st["platforms"].([]any) {
+		m := p.(map[string]any)
+		if m["name"] == "openshell" {
+			found = true
+			if m["tier"] != "L0" {
+				t.Fatalf("unconfigured OpenShell must be L0: %v", m)
+			}
+		}
+	}
+	if !found {
+		t.Fatalf("openshell platform missing: %v", st["platforms"])
+	}
+	code, probe := call(t, s, "GET", "/v1/openshell/probe", token, nil)
+	if code != 200 || probe["ok"] != false {
+		t.Fatalf("probe: %d %v", code, probe)
+	}
+	code, apply := call(t, s, "POST", "/v1/openshell/apply", token, map[string]any{"target": "s1", "network": []any{}})
+	if code != 503 {
+		t.Fatalf("apply without backend must 503, got %d %v", code, apply)
+	}
+}
+
+func TestOpenshellProbeL3AndNetworkApply(t *testing.T) {
+	full, err := os.ReadFile(filepath.Join("..", "openshell", "testdata", "policy_get_full.txt"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	v2, err := os.ReadFile(filepath.Join("..", "openshell", "testdata", "policy_get_full_v2.txt"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	cli := openshell.New(openshell.Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
+		if len(args) >= 2 && args[0] == "gateway" && args[1] == "info" {
+			return 0, "Gateway Info\n  Gateway version: 0.0.104\n", ""
+		}
+		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
+			return 0, string(full), ""
+		}
+		if len(args) >= 2 && args[0] == "policy" && args[1] == "set" {
+			return 0, "Policy version 2 submitted (hash: 5385cd2cf66f)\n", ""
+		}
+		return 1, "", "unexpected " + strings.Join(args, " ")
+	}})
+	s, _ := newServer(t, "block")
+	s.d.Openshell = cli
+	code, probe := call(t, s, "GET", "/v1/openshell/probe", token, nil)
+	if code != 200 || probe["ok"] != true || probe["tier"] != "L3" {
+		t.Fatalf("probe L3: %d %v", code, probe)
+	}
+	_, st := call(t, s, "GET", "/v1/status", token, nil)
+	found := false
+	for _, p := range st["platforms"].([]any) {
+		m := p.(map[string]any)
+		if m["name"] == "openshell" && m["tier"] == "L3" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("status missing L3: %v", st["platforms"])
+	}
+
+	// After set, readback should see v2 network so verify can pass.
+	cli2 := openshell.New(openshell.Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
+		if len(args) >= 2 && args[0] == "gateway" && args[1] == "info" {
+			return 0, "Gateway Info\n  Gateway version: 0.0.104\n", ""
+		}
+		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
+			return 0, string(v2), ""
+		}
+		if len(args) >= 2 && args[0] == "policy" && args[1] == "set" {
+			return 0, "Policy version 2 submitted (hash: 5385cd2cf66f)\n", ""
+		}
+		return 1, "", "unexpected"
+	}})
+	s.d.Openshell = cli2
+	code, applied := call(t, s, "POST", "/v1/openshell/apply", token, map[string]any{
+		"target": "s1", "expected_revision": "2",
+		"network":      []any{map[string]any{"endpoint": "api.example.com:443", "effect": "allow"}},
+		"expect_allow": []string{"api.example.com:443"},
+		"expect_deny":  []string{"192.0.2.1:1"},
+	})
+	if code != 200 || applied["passed"] != true || applied["verify_level"] != "readback_verified" {
+		t.Fatalf("apply: %d %v", code, applied)
+	}
+	rb := applied["effective_readback"].(map[string]any)
+	if rb["backend"] != "openshell" || rb["revision"] != "2" {
+		t.Fatalf("readback: %v", rb)
+	}
+}
+
+func TestOpenshellApplyRejectsCreatePathAndRevisionConflict(t *testing.T) {
+	full, err := os.ReadFile(filepath.Join("..", "openshell", "testdata", "policy_get_full.txt"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	cli := openshell.New(openshell.Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
+		if strings.Contains(strings.Join(args, " "), "create") {
+			t.Fatalf("create_generation must not run: %v", args)
+		}
+		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
+			return 0, string(full), ""
+		}
+		return 1, "", "unexpected"
+	}})
+	s, _ := newServer(t, "block")
+	s.d.Openshell = cli
+	code, out := call(t, s, "POST", "/v1/openshell/apply", token, map[string]any{
+		"target": "s1", "expected_revision": "99",
+		"network": []any{map[string]any{"endpoint": "api.example.com:443"}},
+	})
+	if code != 409 {
+		t.Fatalf("conflict: %d %v", code, out)
 	}
 }
 

@@ -25,6 +25,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/adapters"
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/inventory"
+	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/server"
@@ -72,6 +73,8 @@ func main() {
 		err = cmdAdapter(os.Args[2:])
 	case "grant":
 		err = cmdGrant(os.Args[2:])
+	case "openshell":
+		err = cmdOpenshell(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
@@ -101,6 +104,9 @@ func usage() {
   agentshield grant <admission_id> --platform P --subject ID
   agentshield grant approve|deploy|reject|revoke <grant_id> [--approve-as ACTOR]
                                   # least-privilege grant; approve requires a human --approve-as
+  agentshield openshell probe
+  agentshield openshell apply --target NAME [--allow host:port] [--deny host:port]
+                                  # L3: CLI-only network policy set + readback (never create_generation)
   agentshield serve [--port N] [--mode audit_only|warn|block]
                                   # decision API + console on 127.0.0.1 (bearer token in <state>/token)`)
 }
@@ -314,6 +320,7 @@ func cmdServe(args []string) error {
 		Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: tok,
 		Version: Version, Mode: cfg.EnforcementMode, UI: ui.Handler(),
 		Home: home, Binary: bin, Endpoint: "http://" + addr,
+		Openshell: openshell.New(openshell.Options{ProbeTimeout: 5 * time.Second}),
 	})
 	if err != nil {
 		return err

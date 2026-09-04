@@ -319,6 +319,18 @@ func (s *Store) PutDesiredPolicy(dp grant.DesiredPolicy) error {
 	return writeNew(filepath.Join(s.Dir, "policies", fmt.Sprintf("%s.v%d.json", id, v)), raw)
 }
 
+// PutEvidence writes a new evidence file (0600). Existing ids are left as-is.
+func (s *Store) PutEvidence(id string, doc any) error {
+	if !safeID(id) {
+		return errors.New("state: invalid evidence id")
+	}
+	raw, err := json.MarshalIndent(doc, "", "  ")
+	if err != nil {
+		return err
+	}
+	return writeNew(filepath.Join(s.Dir, "evidence", id+".json"), raw)
+}
+
 func writeNew(path string, data []byte) error {
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
 	if errors.Is(err, os.ErrExist) {

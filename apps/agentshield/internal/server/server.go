@@ -14,11 +14,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/inventory"
+	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
@@ -27,24 +29,30 @@ import (
 
 // Deps wires the server.
 type Deps struct {
-	Store    *state.Store
-	Engine   *receipt.Engine
-	Chain    *receipt.Chain
-	Pack     *rulepack.Pack
-	Key      *signing.Key
-	Token    string
-	Version  string
-	Mode     string
-	UI       http.Handler // optional embedded console
-	Home     string       // override os.UserHomeDir (tests + adapter HTTP)
-	Binary   string       // agentshield path written into adapter configs
-	Endpoint string       // decision API URL written into adapter configs
+	Store     *state.Store
+	Engine    *receipt.Engine
+	Chain     *receipt.Chain
+	Pack      *rulepack.Pack
+	Key       *signing.Key
+	Token     string
+	Version   string
+	Mode      string
+	UI        http.Handler // optional embedded console
+	Home      string       // override os.UserHomeDir (tests + adapter HTTP)
+	Binary    string       // agentshield path written into adapter configs
+	Endpoint  string       // decision API URL written into adapter configs
+	Openshell *openshell.Client
 }
 
 // Server is the HTTP handler set.
 type Server struct {
-	d   Deps
-	mux *http.ServeMux
+	d      Deps
+	mux    *http.ServeMux
+	osMu   sync.Mutex
+	osAt   time.Time
+	osRow  PlatformInfo
+	osOK   bool
+	osCaps *openshell.Capabilities
 }
 
 // New builds the handler.
@@ -68,6 +76,8 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/adapter/status", s.auth(s.adapterStatus))
 	s.mux.HandleFunc("/v1/adapter/install", s.auth(s.adapterInstall))
 	s.mux.HandleFunc("/v1/adapter/uninstall", s.auth(s.adapterUninstall))
+	s.mux.HandleFunc("/v1/openshell/probe", s.auth(s.openshellProbe))
+	s.mux.HandleFunc("/v1/openshell/apply", s.auth(s.openshellApply))
 	s.mux.HandleFunc("/ui-config.json", s.uiConfig)
 	if d.UI != nil {
 		s.mux.Handle("/", d.UI)
