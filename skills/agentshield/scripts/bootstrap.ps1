@@ -4,7 +4,11 @@ $ErrorActionPreference = "Stop"
 
 $SkillDir = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $Manifest = Join-Path $SkillDir "skill-manifest.json"
+$VerifyPy = Join-Path $SkillDir "scripts\verify_manifest.py"
 $Port = if ($env:AGENTSHIELD_PORT) { [int]$env:AGENTSHIELD_PORT } else { 47611 }
+
+# v1 local trust root (Ed25519, base64). Used to verify skill-manifest.json.
+$ReleasePubKeyB64 = 'rlDnDsQ3RCwpdX2deW/iUqey1RZiWYvFCp2Ux6xplRo='
 
 function Find-Bin {
     if ($env:AGENTSHIELD_BIN -and (Test-Path $env:AGENTSHIELD_BIN)) {
@@ -19,7 +23,29 @@ function Find-Bin {
     throw "agentshield binary not found. Set AGENTSHIELD_BIN. Refusing to download without a signed skill-manifest.json."
 }
 
+function Find-Python {
+    foreach ($name in @("python3", "python")) {
+        $cmd = Get-Command $name -ErrorAction SilentlyContinue
+        if ($cmd) { return $cmd.Source }
+    }
+    throw "python3 required to verify skill-manifest.json"
+}
+
+if (-not (Test-Path $Manifest)) {
+    throw "skill-manifest.json missing; refusing to start"
+}
+
 $Bin = Find-Bin
+$Py = Find-Python
+$verifyArgs = @($VerifyPy, "--manifest", $Manifest, "--pubkey", $ReleasePubKeyB64, "--bin", $Bin)
+if (-not $env:AGENTSHIELD_REQUIRE_PINNED) {
+    $verifyArgs += "--allow-local"
+}
+& $Py @verifyArgs
+if ($LASTEXITCODE -ne 0) {
+    throw "skill-manifest.json verification failed"
+}
+
 Write-Host "agentshield-bootstrap: using $Bin"
 & $Bin version
 

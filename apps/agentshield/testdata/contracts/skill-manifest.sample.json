@@ -1,0 +1,240 @@
+{
+  "manifest_version": 1,
+  "skill": {
+    "name": "agentshield",
+    "version": "0.1.0",
+    "description": "Admits unknown skills and signs each tool-call receipt.",
+    "content_hash": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+    "sub_skills": [
+      "agent-asset-inventory",
+      "skill-admission",
+      "least-privilege-grant",
+      "runtime-receipt"
+    ]
+  },
+  "binary": {
+    "name": "agentshield",
+    "version": "0.1.0",
+    "artifacts": [
+      {
+        "os": "linux",
+        "arch": "amd64",
+        "sha256": "abababababababababababababababababababababababababababababababab",
+        "url": "https://example.invalid/agentshield-linux-amd64",
+        "bytes": 1
+      },
+      {
+        "os": "linux",
+        "arch": "arm64",
+        "sha256": "abababababababababababababababababababababababababababababababab",
+        "url": "https://example.invalid/agentshield-linux-arm64",
+        "bytes": 1
+      },
+      {
+        "os": "darwin",
+        "arch": "arm64",
+        "sha256": "abababababababababababababababababababababababababababababababab",
+        "url": "https://example.invalid/agentshield-darwin-arm64",
+        "bytes": 1
+      },
+      {
+        "os": "windows",
+        "arch": "amd64",
+        "sha256": "abababababababababababababababababababababababababababababababab",
+        "url": "https://example.invalid/agentshield-windows-amd64.exe",
+        "bytes": 1
+      }
+    ]
+  },
+  "rulepack": {
+    "version": 1,
+    "sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051",
+    "public_key_b64": "Zr5+Myx6RTMyvZ0Kf32wVfXF7xoGraZtmLOftoEMRzo="
+  },
+  "support_matrix": [
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "adapter + OpenShell CLI landed; Spark E2E pending"
+    },
+    {
+      "platform": "hermes",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "policy-exec + plugin landed; no E2E evidence"
+    },
+    {
+      "platform": "openclaw",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "trae",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "claude_code",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    }
+  ],
+  "signed_by": "Zr5+Myx6RTMyvZ0Kf32wVfXF7xoGraZtmLOftoEMRzo=",
+  "signature": "cf8b4016a65fc458373216d6a915451abb3c058caecb00d591f3af9c10ec6e8810c262763b28a46eda90916987c06f3e0d6dbfe7f0e624b43fc6fe14d7c76e0d"
+}

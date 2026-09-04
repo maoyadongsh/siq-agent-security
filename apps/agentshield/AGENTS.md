@@ -19,7 +19,8 @@ AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本
 | `internal/adapterinstall` | `adapter install/uninstall/status`：写主机钩子，先备份可还原 | 完成 |
 | `internal/openshell` | probe / 网络 `policy set` / 读回；不调 `create_generation` | 完成 |
 | `internal/ui` | embed `apps/web` 本地模式构建产物（`npm run build:local`） | 完成 |
-| `cmd/agentshield` | 子命令入口（含 `admit`/`grant`/`adapter`/`openshell`/`serve`） | 完成 |
+| `cmd/agentshield` | 子命令入口（含 `admit`/`grant`/`adapter`/`openshell`/`serve`/`release-manifest`/`manifest-verify`） | 完成 |
+| `internal/skillmanifest` | 发布清单构建、Ed25519 验签、诚实 support_matrix | 完成 |
 
 ## 硬性规则
 

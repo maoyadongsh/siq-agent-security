@@ -52,8 +52,10 @@ ${HERMES_SKILL_DIR}/scripts/adapter.sh          # or: adapter.ps1 on Windows
 On Windows use `scripts/bootstrap.ps1` then `scripts/adapter.ps1`.
 
 If `agentshield` is already on `PATH` (or `AGENTSHIELD_BIN` is set), bootstrap
-reuses it after hashing it. It never downloads a binary unless a signed
-`skill-manifest.json` is present next to this file.
+reuses it after verifying `skill-manifest.json` (Ed25519, embedded pubkey) and
+hashing the binary. A local `go build` that does not match the pinned sha256
+is a warning unless `AGENTSHIELD_REQUIRE_PINNED=1`. Bootstrap never downloads
+a binary; the `url` fields in the manifest are unpublished Release paths.
 
 ## Quick Reference
 

@@ -75,6 +75,10 @@ func main() {
 		err = cmdGrant(os.Args[2:])
 	case "openshell":
 		err = cmdOpenshell(os.Args[2:])
+	case "release-manifest":
+		err = cmdReleaseManifest(os.Args[2:])
+	case "manifest-verify":
+		err = cmdManifestVerify(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
@@ -108,7 +112,11 @@ func usage() {
   agentshield openshell apply --target NAME [--allow host:port] [--deny host:port]
                                   # L3: CLI-only network policy set + readback (never create_generation)
   agentshield serve [--port N] [--mode audit_only|warn|block]
-                                  # decision API + console on 127.0.0.1 (bearer token in <state>/token)`)
+                                  # decision API + console on 127.0.0.1 (bearer token in <state>/token)
+  agentshield release-manifest [--build] [--bin-dir DIR] [--skill-dir DIR]
+                                  # sign skill-manifest.json (requires AGENTSHIELD_RELEASE_SEED)
+  agentshield manifest-verify [path]
+                                  # verify signature + content_hash of a skill-manifest.json`)
 }
 
 func cmdInventory(args []string) error {

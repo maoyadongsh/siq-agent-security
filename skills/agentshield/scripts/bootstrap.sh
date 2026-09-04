@@ -1,24 +1,19 @@
 #!/bin/sh
 # Locate or verify the agentshield binary, then start serve on loopback.
 # Never execute a downloaded file until its sha256 matches skill-manifest.json.
+# Manifest signature is verified against the v1 local trust root below.
 set -eu
 
 SKILL_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 STATE_OVERRIDE=${AGENTSHIELD_STATE_DIR:-}
 MANIFEST="$SKILL_DIR/skill-manifest.json"
+VERIFY_PY="$SKILL_DIR/scripts/verify_manifest.py"
+
+# v1 local trust root (Ed25519, base64). Used to verify skill-manifest.json.
+RELEASE_PUBKEY_B64='rlDnDsQ3RCwpdX2deW/iUqey1RZiWYvFCp2Ux6xplRo='
 
 log() { printf 'agentshield-bootstrap: %s\n' "$*" >&2; }
 die() { log "error: $*"; exit 1; }
-
-sha256_file() {
-  if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum "$1" | awk '{print $1}'
-  elif command -v shasum >/dev/null 2>&1; then
-    shasum -a 256 "$1" | awk '{print $1}'
-  else
-    die "need sha256sum or shasum"
-  fi
-}
 
 find_bin() {
   if [ -n "${AGENTSHIELD_BIN:-}" ] && [ -x "$AGENTSHIELD_BIN" ]; then
@@ -41,37 +36,23 @@ find_bin() {
   return 1
 }
 
-verify_against_manifest() {
+verify_manifest() {
   bin=$1
-  [ -f "$MANIFEST" ] || return 0
-  command -v python3 >/dev/null 2>&1 || return 0
-  got=$(sha256_file "$bin")
-  python3 - "$MANIFEST" "$got" <<'PY'
-import json, sys, platform
-manifest_path, got = sys.argv[1], sys.argv[2].lower()
-with open(manifest_path, encoding="utf-8") as f:
-    m = json.load(f)
-arts = (m.get("binary") or {}).get("artifacts") or []
-if not arts:
-    sys.exit(0)
-osname = {"linux": "linux", "darwin": "darwin", "windows": "windows"}.get(sys.platform, sys.platform)
-arch = platform.machine().lower()
-arch = {"x86_64": "amd64", "amd64": "amd64", "aarch64": "arm64", "arm64": "arm64"}.get(arch, arch)
-want = None
-for a in arts:
-    if a.get("os") == osname and a.get("arch") == arch:
-        want = (a.get("sha256") or "").lower()
-        break
-if not want:
-    sys.exit(0)
-if want != got:
-    sys.stderr.write("agentshield-bootstrap: sha256 mismatch for this OS/arch\n")
-    sys.exit(3)
-PY
+  [ -f "$MANIFEST" ] || die "skill-manifest.json missing; refusing to start"
+  command -v python3 >/dev/null 2>&1 || die "python3 required to verify skill-manifest.json"
+  extra=""
+  if [ -n "${AGENTSHIELD_REQUIRE_PINNED:-}" ]; then
+    extra=""
+  else
+    extra="--allow-local"
+  fi
+  # shellcheck disable=SC2086
+  python3 "$VERIFY_PY" --manifest "$MANIFEST" --pubkey "$RELEASE_PUBKEY_B64" --bin "$bin" $extra \
+    || die "skill-manifest.json verification failed"
 }
 
 BIN=$(find_bin) || die "agentshield binary not found. Build apps/agentshield or set AGENTSHIELD_BIN. Refusing to download without a signed skill-manifest.json."
-verify_against_manifest "$BIN" || die "binary hash does not match skill-manifest.json"
+verify_manifest "$BIN" || die "binary hash does not match skill-manifest.json"
 
 log "using $BIN"
 "$BIN" version >&2 || die "binary failed to run"
