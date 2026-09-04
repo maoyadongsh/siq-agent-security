@@ -45,3 +45,12 @@ connectors/workbuddy/workbuddy
 .idea/
 .vscode/
 .DS_Store
+
+# AgentShield 本地构建产物（哈希钉在 skills/agentshield/skill-manifest.json）
+apps/agentshield/agentshield
+apps/agentshield/agentshield.exe
+apps/agentshield/.state/
+
+# 发布私钥（只允许环境变量 AGENTSHIELD_RELEASE_SEED）
+*.release.seed
+secrets/

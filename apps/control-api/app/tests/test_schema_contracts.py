@@ -673,3 +673,35 @@ def test_go_desired_policy_sample_compiles_like_python():
     compiled = compile_policy(dp, caps)
     assert compiled.needs_generation, "含 filesystem/process 的策略必须标记需重建"
     assert "network_policies" in compiled.artifact
+
+
+RELEASE_MANIFEST = Path(__file__).parents[4] / "skills" / "agentshield" / "skill-manifest.json"
+
+
+@pytest.mark.skipif(not (GO_SAMPLES / "skill-manifest.sample.json").exists(), reason="Go skill-manifest sample missing")
+def test_go_skill_manifest_sample_conforms():
+    doc = json.loads((GO_SAMPLES / "skill-manifest.sample.json").read_text())
+    errors = _validate("skill-manifest", doc)
+    assert not errors, [e.message for e in errors]
+    assert doc["skill"]["name"] == "agentshield"
+    assert len(doc["signature"]) == 128
+    assert all(row["status"] != "supported" for row in doc["support_matrix"])
+
+
+@pytest.mark.skipif(not RELEASE_MANIFEST.exists(), reason="signed skill-manifest.json not generated")
+def test_committed_skill_manifest_is_honest_and_valid():
+    doc = json.loads(RELEASE_MANIFEST.read_text())
+    errors = _validate("skill-manifest", doc)
+    assert not errors, [e.message for e in errors]
+    assert doc["manifest_version"] == 1
+    assert doc["skill"]["description"].endswith(".")
+    assert len(doc["skill"]["description"]) <= 60
+    assert len(doc["binary"]["artifacts"]) >= 4
+    assert all(row["status"] != "supported" for row in doc["support_matrix"]), "无归档证据不得标 supported"
+    trae = [r for r in doc["support_matrix"] if r["platform"] == "trae"]
+    assert trae, "trae 必须出现在 support_matrix"
+    assert all(r["status"] == "audit_only" and r["tiers"] == ["L0"] for r in trae)
+    assert not any("L2" in r.get("tiers", []) and r["status"] == "audit_only" for r in doc["support_matrix"])
+    for r in doc["support_matrix"]:
+        if "L3" in r["tiers"] and r["os"] in {"darwin", "windows"}:
+            assert r.get("requires"), f"L3 on {r['os']} must declare requires"
