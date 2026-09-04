@@ -86,7 +86,7 @@ export default function OverviewPage() {
       <div className="card">
         <h2>平台档位</h2>
         <p className="page-desc">
-          Linux 可达 L3（OpenShell）；当前二进制未接 OpenShell 探针，最高显示 L2。Trae 没有工具钩子，只能审计。
+          Linux 可达 L3（OpenShell probe 成功后）。Trae 没有工具钩子，只能审计。filesystem / process 永远不会标 effective。
         </p>
         <ul className="page-desc">
           {(status?.platforms ?? []).map((p) => (

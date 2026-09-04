@@ -29,6 +29,8 @@ export function platformLabel(name: string): string {
       return 'CodeBuddy';
     case 'trae':
       return 'Trae';
+    case 'openshell':
+      return 'OpenShell';
     default:
       return name;
   }

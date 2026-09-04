@@ -11,6 +11,8 @@ export default function SettingsPage() {
   const [mode, setMode] = useState(status?.enforcement_mode ?? 'block');
   const [msg, setMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [osTarget, setOsTarget] = useState('siq-as-live');
+  const [osAllow, setOsAllow] = useState('');
 
   useEffect(() => {
     if (status?.enforcement_mode) setMode(status.enforcement_mode);
@@ -37,6 +39,54 @@ export default function SettingsPage() {
         reload();
       })
       .catch((err: unknown) => setMsg(err instanceof Error ? err.message : '适配器操作失败'))
+      .finally(() => setBusy(null));
+  };
+
+  const probeOpenshell = () => {
+    setBusy('openshell:probe');
+    setMsg(null);
+    localApi
+      .openshellProbe()
+      .then((res) => {
+        setMsg(
+          res.ok
+            ? `OpenShell L3 · ${res.schema_version ?? ''} — ${res.note ?? 'probe 成功'}`
+            : `OpenShell 不可用（${res.tier}）：${res.note ?? 'probe 失败'}`,
+        );
+        reload();
+      })
+      .catch((err: unknown) => setMsg(err instanceof Error ? err.message : 'probe 失败'))
+      .finally(() => setBusy(null));
+  };
+
+  const applyOpenshell = () => {
+    const endpoints = osAllow
+      .split(/[\s,]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (!osTarget.trim() || endpoints.length === 0) {
+      setMsg('需要 sandbox 名和至少一个 host:port。');
+      return;
+    }
+    setBusy('openshell:apply');
+    setMsg(null);
+    localApi
+      .openshellApply({
+        target: osTarget.trim(),
+        network: endpoints.map((endpoint) => ({ endpoint, effect: 'allow' })),
+        expect_allow: endpoints,
+        expect_deny: ['192.0.2.1:1'],
+      })
+      .then((res) => {
+        const rb = res.effective_readback;
+        setMsg(
+          res.passed
+            ? `读回 ${res.verify_level} · revision ${rb?.revision ?? '—'} · ${rb?.evidence_id ?? ''}`
+            : `读回失败：${(res.failures ?? []).join('; ') || res.error || 'unknown'}`,
+        );
+        reload();
+      })
+      .catch((err: unknown) => setMsg(err instanceof Error ? err.message : 'apply 失败'))
       .finally(() => setBusy(null));
   };
 
@@ -100,6 +150,8 @@ export default function SettingsPage() {
                   <td>
                     {p.name === 'trae' ? (
                       <span className="page-desc">审计 only</span>
+                    ) : p.name === 'openshell' ? (
+                      <span className="page-desc">CLI 探针，无安装钩子</span>
                     ) : (
                       <span className="toolbar" style={{ marginBottom: 0 }}>
                         <button
@@ -128,11 +180,38 @@ export default function SettingsPage() {
         </div>
       </div>
       <div className="card">
+        <h2>OpenShell（L3）</h2>
+        <p className="page-desc">
+          只用 CLI。probe 成功才显示 L3。apply 只提交网络段；filesystem / process 保持当前读回，禁止 create_generation。
+        </p>
+        <div className="toolbar">
+          <button type="button" className="btn btn-primary" disabled={busy !== null} onClick={probeOpenshell}>
+            探测网关
+          </button>
+        </div>
+        <div className="field">
+          <label htmlFor="os-target">sandbox / policy 名</label>
+          <input id="os-target" value={osTarget} onChange={(e) => setOsTarget(e.target.value)} />
+        </div>
+        <div className="field">
+          <label htmlFor="os-allow">允许的 host:port（逗号或空格分隔）</label>
+          <input
+            id="os-allow"
+            value={osAllow}
+            onChange={(e) => setOsAllow(e.target.value)}
+            placeholder="api.example.com:443"
+          />
+        </div>
+        <button type="button" className="btn btn-sm" disabled={busy !== null} onClick={applyOpenshell}>
+          下发网络段并读回
+        </button>
+      </div>
+      <div className="card">
         <h2>安全边界</h2>
         <ul className="page-desc">
           <li>本控制台无私钥；验签由 `agentshield verify` / GET /v1/receipts 完成。</li>
           <li>Bearer token 来自 loopback 的 /ui-config.json，只留在内存，刷新会再取一次。</li>
-          <li>L3 OpenShell 探针尚未接入：不要把 filesystem/process 当成已 effective。</li>
+          <li>OpenShell verify 最高只到 readback_verified；filesystem/process 永不标 effective。</li>
         </ul>
       </div>
       {msg ? (

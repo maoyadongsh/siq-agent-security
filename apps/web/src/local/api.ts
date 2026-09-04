@@ -108,4 +108,28 @@ export const localApi = {
       method: 'POST',
       body: JSON.stringify({ platform }),
     }),
+  openshellProbe: () =>
+    request<{
+      ok: boolean;
+      tier: string;
+      note?: string;
+      schema_version?: string;
+      dynamic_network_update?: boolean;
+      revision_support?: boolean;
+    }>('/v1/openshell/probe'),
+  openshellApply: (body: {
+    target: string;
+    network: { endpoint: string; effect?: string }[];
+    expected_revision?: string;
+    expect_allow?: string[];
+    expect_deny?: string[];
+  }) =>
+    request<{
+      ok?: boolean;
+      passed?: boolean;
+      verify_level?: string;
+      error?: string;
+      effective_readback?: { backend: string; revision: string; evidence_id: string };
+      failures?: string[];
+    }>('/v1/openshell/apply', { method: 'POST', body: JSON.stringify(body) }),
 };
