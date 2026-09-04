@@ -1,0 +1,199 @@
+{
+  "grant_id": "grt-4af17a9f9719-aff60f4b",
+  "admission_id": "adm-4af17a9f9719",
+  "subject": {
+    "type": "agent_instance",
+    "id": "inst_1"
+  },
+  "platform": "hermes",
+  "facts": [
+    {
+      "fact_id": "pf-1-aa79ee81",
+      "domain": "tool",
+      "action": "tool.invoke",
+      "resource": {
+        "type": "tool",
+        "value": "terminal"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "skill_manifest",
+      "authority_revision": null,
+      "readback_evidence_id": null,
+      "evidence_ids": [
+        "ev-1"
+      ]
+    },
+    {
+      "fact_id": "pf-2-811cbc58",
+      "domain": "tool",
+      "action": "tool.invoke",
+      "resource": {
+        "type": "tool",
+        "value": "read_file"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "skill_manifest",
+      "authority_revision": null,
+      "readback_evidence_id": null,
+      "evidence_ids": [
+        "ev-1"
+      ]
+    },
+    {
+      "fact_id": "pf-3-aa748b8b",
+      "domain": "network",
+      "action": "http.request",
+      "resource": {
+        "type": "endpoint",
+        "value": "api.github.com:443"
+      },
+      "effect": "allow",
+      "state": "effective",
+      "authority": "openshell",
+      "authority_revision": "7",
+      "readback_evidence_id": "ev-9",
+      "evidence_ids": [
+        "ev-1"
+      ]
+    },
+    {
+      "fact_id": "pf-4-8c755530",
+      "domain": "process",
+      "action": "process.exec",
+      "resource": {
+        "type": "tool",
+        "value": "shell"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "skill_manifest",
+      "authority_revision": null,
+      "readback_evidence_id": null,
+      "evidence_ids": [
+        "ev-1"
+      ]
+    },
+    {
+      "fact_id": "pf-5-ff0482d3",
+      "domain": "resource",
+      "action": "package.install",
+      "resource": {
+        "type": "package",
+        "value": "pip"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "skill_manifest",
+      "authority_revision": null,
+      "readback_evidence_id": null,
+      "evidence_ids": [
+        "ev-1"
+      ]
+    },
+    {
+      "fact_id": "pf-6-20449849",
+      "domain": "filesystem",
+      "action": "fs.write",
+      "resource": {
+        "type": "path",
+        "value": "~/work/out"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "skill_manifest",
+      "authority_revision": null,
+      "readback_evidence_id": null,
+      "evidence_ids": [
+        "ev-1"
+      ]
+    },
+    {
+      "fact_id": "pf-7-ab9a6f10",
+      "domain": "credential",
+      "action": "credential.read",
+      "resource": {
+        "type": "credential_ref",
+        "value": ".env"
+      },
+      "effect": "deny",
+      "conditions": {
+        "reason": "credential access requires per-use approval",
+        "redact_secrets": false
+      },
+      "state": "inferred",
+      "authority": "agentshield",
+      "authority_revision": null,
+      "readback_evidence_id": null,
+      "evidence_ids": [
+        "ev-1"
+      ]
+    },
+    {
+      "fact_id": "pf-8-1f853c60",
+      "domain": "model",
+      "action": "model.generate",
+      "resource": {
+        "type": "model",
+        "value": "nemotron-local"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "skill_manifest",
+      "authority_revision": null,
+      "readback_evidence_id": null,
+      "evidence_ids": [
+        "ev-1"
+      ]
+    },
+    {
+      "fact_id": "pf-inf-a9836a0d",
+      "domain": "process",
+      "action": "process.privilege_escalation",
+      "resource": {
+        "type": "capability",
+        "value": "setuid/sudo"
+      },
+      "effect": "deny",
+      "state": "inferred",
+      "authority": "agentshield",
+      "authority_revision": null,
+      "readback_evidence_id": null,
+      "evidence_ids": [
+        "ev-1"
+      ]
+    }
+  ],
+  "default_effect": "deny",
+  "hermes_toolset_allowlist": [
+    "read_file",
+    "terminal"
+  ],
+  "desired_policy_ref": {
+    "policy_id": "pol-4af17a9f9719",
+    "version": 1,
+    "static_domains_unavailable": [
+      "filesystem",
+      "process"
+    ]
+  },
+  "overlap_conflicts": [],
+  "enforcement_mode": "block",
+  "status": "effective",
+  "approved_by": {
+    "actor_type": "human",
+    "actor_id": "u-admin",
+    "approved_at": "2026-09-04T06:05:00Z",
+    "channel": "console"
+  },
+  "effective_readback": {
+    "backend": "openshell",
+    "revision": "7",
+    "verified_at": "2026-09-04T06:10:00Z",
+    "evidence_id": "ev-9"
+  },
+  "created_at": "2026-09-04T06:00:00Z",
+  "expires_at": null,
+  "signature": "c5b80604407c4aa790aa7cbab723911bb89c5701072d11d43b7e0f50b21ba86d66c8f29b0174ff227ac3ff0cd2a66daa98205383da493e7d07af0e6872321f07"
+}

@@ -600,3 +600,40 @@ def test_go_evidence_sample_conforms_and_is_referenced():
         referenced.update(fact["evidence_ids"])
     assert referenced <= ids, "admission 引用了未导出的 evidence"
     assert ids <= referenced, "存在孤儿 evidence（合同：每条 evidence 必须被引用）"
+
+
+@pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
+@pytest.mark.parametrize("name,status", [("grant.pending.sample.json", "pending_approval"), ("grant.effective.sample.json", "effective")])
+def test_go_grant_samples_conform(name, status):
+    g = json.loads((GO_SAMPLES / name).read_text())
+    errors = _validate("grant", g)
+    assert not errors, [e.message for e in errors]
+    assert g["status"] == status and g["default_effect"] == "deny"
+    if status == "effective":
+        assert g["approved_by"]["actor_type"] == "human"
+        effective = [f for f in g["facts"] if f["state"] == "effective"]
+        assert effective and all(f["authority_revision"] and f["readback_evidence_id"] for f in effective)
+        static = set(g["desired_policy_ref"]["static_domains_unavailable"])
+        assert not any(f["domain"] in static for f in effective), "静态域事实不得 effective"
+    else:
+        assert not any(f["state"] == "effective" for f in g["facts"])
+
+
+@pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
+def test_go_desired_policy_sample_compiles_like_python():
+    """Go 产出的 DesiredPolicy 既要过 schema，也要能被 Python 编译器接受（双实现共用合同）。"""
+    from app.adapters.openshell.contracts import BackendCapabilities, CapabilityItem
+    from app.adapters.openshell.policy_compiler import compile_policy
+
+    dp = json.loads((GO_SAMPLES / "desired-policy.sample.json").read_text())
+    errors = _validate("desired-policy", dp)
+    assert not errors, [e.message for e in errors]
+    caps = BackendCapabilities(
+        backend="openshell",
+        schema_version="siq.openshell.policy.v1",
+        dynamic_network_update=True,
+        capabilities={"enforcement_mode.block": CapabilityItem("supported", "enforce", "test")},
+    )
+    compiled = compile_policy(dp, caps)
+    assert compiled.needs_generation, "含 filesystem/process 的策略必须标记需重建"
+    assert "network_policies" in compiled.artifact

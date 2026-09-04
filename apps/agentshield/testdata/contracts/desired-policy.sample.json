@@ -1,0 +1,35 @@
+{
+  "enforcement_mode": "block",
+  "filesystem": {
+    "read_only": [],
+    "read_write": [
+      "~/work/out"
+    ]
+  },
+  "model_routing": {
+    "allowed_models": [
+      "nemotron-local"
+    ]
+  },
+  "network": [
+    {
+      "effect": "allow",
+      "endpoint": "api.github.com:443"
+    }
+  ],
+  "policy_id": "pol-4af17a9f9719",
+  "process": {
+    "forbid_privilege_escalation": true
+  },
+  "selector": {
+    "agent_ids": [
+      "inst_1"
+    ]
+  },
+  "status": "validated",
+  "tools": [
+    "terminal",
+    "read_file"
+  ],
+  "version": 1
+}
