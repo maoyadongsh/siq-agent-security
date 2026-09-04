@@ -11,6 +11,11 @@ on:
 jobs:
   gitleaks:
     runs-on: ubuntu-latest
+    # gitleaks-action 在 pull_request 上会 GET /pulls/{n}/commits；
+    # 顶层 contents:read 会把其余权限置 none，缺了这一项即 403。
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -126,4 +131,19 @@ jobs:
           node-version: "22"
       - run: npm ci
       - run: npm run build
-      - run: npm audit --omit=dev --audit-level=moderate
+      - name: Production dependency audit
+        run: |
+          set +e
+          output=$(npm audit --omit=dev --audit-level=moderate 2>&1)
+          code=$?
+          printf '%s\n' "$output"
+          if [ "$code" -eq 0 ]; then
+            exit 0
+          fi
+          # npm v1/security/audits/quick 正在退役，常返回 400/503，
+          # 与依赖漏洞不是同一类失败。
+          if printf '%s\n' "$output" | grep -Eqi 'audit endpoint returned an error|This endpoint is being retired|Service Unavailable|Bad Request'; then
+            echo "::warning::npm audit registry unavailable; skipping (not a package vulnerability finding)"
+            exit 0
+          fi
+          exit "$code"
