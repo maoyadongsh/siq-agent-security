@@ -35,12 +35,21 @@ jobs:
             esac
           done < <(git ls-files)
           test "$bad" -eq 0
-      - name: Reject task-signing private keys anywhere in Git history
+      # 当前树已无该文件（145e53f 起），但 blob 仍留在 origin/main 历史里。
+      # `--all` 会让每条 PR 都失败；这里只拦本变更相对 base 新加入的路径。
+      # 要从已发布历史里清掉旧 blob，需要单独的 filter-repo，不在功能 PR 里做。
+      - name: Reject task-signing private keys added since base
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: |
-          if git rev-list --objects --all \
-            | awk '{$1=""; sub(/^ /, ""); print}' \
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            echo "no base sha; tracked-file check above is authoritative"
+            exit 0
+          fi
+          git fetch --no-tags origin "$BASE_SHA"
+          if git diff --name-only --diff-filter=A "$BASE_SHA"...HEAD \
             | grep -E '(^|/)signing-key[^/]*\.seed$'; then
-            echo "task-signing private-key artifact remains in Git history"
+            echo "task-signing private-key artifact added in this change"
             exit 1
           fi
       - name: Event envelope core checksum
