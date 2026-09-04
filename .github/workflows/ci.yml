@@ -156,3 +156,30 @@ jobs:
             exit 0
           fi
           exit "$code"
+
+  agentshield:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/agentshield
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - name: gofmt
+        run: |
+          test -z "$(gofmt -l .)"
+      - name: vet & test
+        run: |
+          go vet ./...
+          go test ./...
+      - name: Cross-compile
+        run: |
+          set -e
+          for t in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do
+            os=${t%/*}
+            arch=${t#*/}
+            echo "building $os/$arch"
+            GOOS=$os GOARCH=$arch CGO_ENABLED=0 go build -o /tmp/agentshield-$os-$arch ./cmd/agentshield
+          done
