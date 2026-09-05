@@ -120,6 +120,15 @@ func TestCompilePolicyStaticNetworkWhenNoDynamicUpdate(t *testing.T) {
 	}
 }
 
+func TestIsLiveStatus(t *testing.T) {
+	if !IsLiveStatus("pending_approval") || !IsLiveStatus("approved") || !IsLiveStatus("deployed") || !IsLiveStatus("effective") {
+		t.Fatal("live statuses")
+	}
+	if IsLiveStatus("rejected") || IsLiveStatus("revoked") || IsLiveStatus("draft") || IsLiveStatus("") {
+		t.Fatal("terminal/empty must not be live")
+	}
+}
+
 func TestBuildTransformsDeclaredFactsPerTable(t *testing.T) {
 	res := build(t, "hermes", sampleAdmission())
 	g := res.Grant

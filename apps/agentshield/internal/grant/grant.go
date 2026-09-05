@@ -360,6 +360,18 @@ func canTransition(from, to string) bool {
 	return false
 }
 
+// IsLiveStatus is true when a new grant.Build must not replace the current
+// version. Repeating `grant <admission_id>` (or POST /v1/grants) used to append
+// a pending_approval snapshot and hide an already approved/deployed grant.
+func IsLiveStatus(status string) bool {
+	switch status {
+	case "pending_approval", "approved", "deployed", "effective":
+		return true
+	default:
+		return false
+	}
+}
+
 // Approve moves pending_approval → approved. Fails unless the actor is human
 // and no overlap is unresolved (mirrors the schema's if/then).
 func Approve(g Grant, actor Approval, key *signing.Key) (Grant, error) {

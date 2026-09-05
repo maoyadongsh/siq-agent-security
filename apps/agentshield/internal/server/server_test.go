@@ -173,6 +173,34 @@ func TestEndToEndAdmitGrantDecide(t *testing.T) {
 	}
 }
 
+func TestGrantCreateReusesLiveGrant(t *testing.T) {
+	s, _ := newServer(t, "block")
+	skill, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like"))
+	_, a := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": skill, "trust_level": "trusted"})
+	admID := a["admission"].(map[string]any)["admission_id"].(string)
+	body := map[string]any{"admission_id": admID, "platform": "openclaw", "subject_id": "inst_1"}
+	_, g := call(t, s, "POST", "/v1/grants", token, body)
+	gid := g["grant"].(map[string]any)["grant_id"].(string)
+	if _, r := call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u-admin"}); r["error"] != nil {
+		t.Fatalf("approve: %v", r)
+	}
+	if code, r := call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, map[string]any{}); code != 200 {
+		t.Fatalf("deploy: %d %v", code, r)
+	}
+	code, again := call(t, s, "POST", "/v1/grants", token, body)
+	if code != 200 {
+		t.Fatalf("reuse: %d %v", code, again)
+	}
+	got := again["grant"].(map[string]any)
+	if got["grant_id"] != gid || got["status"] != "deployed" || again["reused"] != true {
+		t.Fatalf("must reuse deployed grant, got %v", again)
+	}
+	_, d := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://evil.example/"}})
+	if d["action"] != "deny" {
+		t.Fatalf("overreach after reused deploy: %v", d)
+	}
+}
+
 func TestQuarantinedAdmissionCannotBeGranted(t *testing.T) {
 	s, _ := newServer(t, "block")
 	skill, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "malicious", "env-webhook"))

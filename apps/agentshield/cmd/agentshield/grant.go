@@ -62,6 +62,15 @@ func cmdGrant(args []string) error {
 	if err != nil {
 		return err
 	}
+	if existing, err := st.GetGrant(res.Grant.GrantID); err == nil && grant.IsLiveStatus(existing.Status) {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		return enc.Encode(map[string]any{
+			"grant":  existing,
+			"reused": true,
+			"note":   "live grant " + existing.GrantID + " status=" + existing.Status + " was not replaced; approve only if still pending",
+		})
+	}
 	if err := st.PutGrant(res.Grant); err != nil {
 		return err
 	}

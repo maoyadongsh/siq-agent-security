@@ -77,10 +77,19 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 
 # 3. 起草 grant（不要让模型批准）
 ./agentshield grant <admission_id> --platform hermes --subject demo
+# 若该 admission 已有 pending/approved/deployed grant，命令会 reused=true，不会覆盖。
 # 人类执行：
 ./agentshield grant approve <grant_id> --approve-as <your-name>
+./agentshield grant deploy <grant_id>
 
-# 4. 越权工具调用应 deny（需已安装 Hermes 适配器并走 /v1/decide）
+# 4. 越权工具调用应 deny（Hermes 插件会 POST 同一请求体；不要把 token 贴进聊天）
+TOKEN=$(cat "$AGENTSHIELD_STATE_DIR/token")
+curl -sS http://127.0.0.1:47611/v1/decide \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"platform":"hermes","session_id":"judge-demo","agent_id":"demo","tool":"web_fetch","params":{"url":"https://evil.example/"}}'
+unset TOKEN
+# 期望 action=deny（未部署 grant 时是 default deny；已部署且未授 web_fetch 时是 tool not granted）
+
 # 5. 回执链
 ./agentshield verify
 ```

@@ -476,6 +476,10 @@ func (s *Server) grants(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, 400, map[string]any{"error": err.Error()})
 			return
 		}
+		if existing, err := s.d.Store.GetGrant(res.Grant.GrantID); err == nil && grant.IsLiveStatus(existing.Status) {
+			writeJSON(w, 200, map[string]any{"grant": existing, "reused": true})
+			return
+		}
 		if err := s.d.Store.PutGrant(res.Grant); err != nil {
 			writeJSON(w, 500, map[string]any{"error": "store failed"})
 			return
