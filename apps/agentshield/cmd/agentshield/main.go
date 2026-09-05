@@ -109,6 +109,7 @@ func usage() {
   agentshield grant approve|deploy|reject|revoke <grant_id> [--approve-as ACTOR]
                                   # least-privilege grant; approve requires a human --approve-as
   agentshield openshell probe
+  agentshield openshell doctor    # diagnose CLI/gateway; never starts a gateway
   agentshield openshell apply --target NAME [--allow host:port] [--deny host:port]
                                   # L3: CLI-only network policy set + readback (never create_generation)
   agentshield serve [--port N] [--mode audit_only|warn|block]

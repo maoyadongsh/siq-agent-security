@@ -8,7 +8,7 @@ $VerifyPy = Join-Path $SkillDir "scripts\verify_manifest.py"
 $Port = if ($env:AGENTSHIELD_PORT) { [int]$env:AGENTSHIELD_PORT } else { 47611 }
 
 # v1 local trust root (Ed25519, base64). Used to verify skill-manifest.json.
-$ReleasePubKeyB64 = 'rlDnDsQ3RCwpdX2deW/iUqey1RZiWYvFCp2Ux6xplRo='
+$ReleasePubKeyB64 = 'LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY='
 
 function Find-Bin {
     if ($env:AGENTSHIELD_BIN -and (Test-Path $env:AGENTSHIELD_BIN)) {

@@ -27,6 +27,7 @@ type Client struct {
 	PollAttempts int
 	MaxOutput    int
 	lookup       func(string) (string, bool)
+	lookPath     func(string) (string, error)
 
 	mu              sync.Mutex
 	detectedVersion string
@@ -44,6 +45,7 @@ func New(opts Options) *Client {
 		PollAttempts: opts.PollAttempts,
 		MaxOutput:    opts.MaxOutput,
 		lookup:       opts.LookupEnv,
+		lookPath:     opts.LookPath,
 	}
 	if c.Timeout <= 0 {
 		c.Timeout = 30 * time.Second
@@ -124,13 +126,31 @@ func capabilityDocument() map[string]CapabilityItem {
 }
 
 // Probe checks gateway reachability and reports already-measured capabilities.
-// gateway info failure is fail-closed; an unparseable version becomes "unknown"
-// and never invents a version string. Capability booleans are not raised for a
-// newer parsed version.
+// `gateway info` only prints local CLI config and can succeed against a
+// non-OpenShell process on the same port; `status` is the live handshake.
+// Either command looking like OpenClaw/Hermes is fail-closed. An unparseable
+// version becomes "unknown" and never invents a version string. Capability
+// booleans are not raised for a newer parsed version.
 func (c *Client) Probe() (Capabilities, error) {
 	infoOut, err := c.cli("gateway", "info")
 	if err != nil {
+		if looksLikeForeignGateway(err.Error()) {
+			return Capabilities{}, fail(errNotOpenShell)
+		}
 		return Capabilities{}, err
+	}
+	if !looksLikeOpenShellGateway(infoOut) {
+		return Capabilities{}, fail(errNotOpenShell)
+	}
+	statusOut, err := c.cli("status")
+	if err != nil {
+		if looksLikeForeignGateway(err.Error()) {
+			return Capabilities{}, fail(errNotOpenShell)
+		}
+		return Capabilities{}, err
+	}
+	if looksLikeForeignGateway(statusOut) {
+		return Capabilities{}, fail(errNotOpenShell)
 	}
 	version := c.detectVersion(infoOut)
 	schema := "unknown-policy-v1"

@@ -4,7 +4,7 @@
     "name": "agentshield",
     "version": "0.1.0",
     "description": "Admits unknown skills and signs each tool-call receipt.",
-    "content_hash": "635904b1af24b566ed0cd98f826f2fb114e706169ebe1e588eff060799995477",
+    "content_hash": "269fd07c464ea2a4d9bd91b717624b0f181f1837262596bd272b4f8674abda0e",
     "sub_skills": [
       "agent-asset-inventory",
       "skill-admission",
@@ -19,37 +19,37 @@
       {
         "os": "linux",
         "arch": "amd64",
-        "sha256": "08d30821352e7c43fcb0638b729dcdba126f50cea69d5cf3894d3c2a425fcfb2",
+        "sha256": "ea1a3420d8f9b8366800816f7cbad3b62bcac9fe6cb1717e1ec8c45c67359e58",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-linux-amd64",
-        "bytes": 7286936
+        "bytes": 7303320
       },
       {
         "os": "linux",
         "arch": "arm64",
-        "sha256": "28cbcb9811a41ad4c63751586f6c104987b6a53f560663d7acda16866d51860b",
+        "sha256": "00e63cbee369fd71d4799600cc26927e8e161c4c0f5b559f0bfa5632b1a0db4b",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-linux-arm64",
         "bytes": 7012504
       },
       {
         "os": "darwin",
         "arch": "arm64",
-        "sha256": "73a5d07f48a1f6e9185de6c91ca75ae82b918c4de2077af215d5990a7e921b2f",
+        "sha256": "fd711d04e9cf0fd5042082e759c1622cc155594e66de3972a704a528a4aa0d8d",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-darwin-arm64",
-        "bytes": 7178466
+        "bytes": 7195266
       },
       {
         "os": "windows",
         "arch": "amd64",
-        "sha256": "59f5a0436d194b250d0fc1f23553431416407fe757326d0f12c413417dc4ea84",
+        "sha256": "afade545b43ddf835f6eed58d4f36d8cea79fca50bc89c11244058f14be3b17b",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-windows-amd64.exe",
-        "bytes": 7498240
+        "bytes": 7517696
       }
     ]
   },
   "rulepack": {
     "version": 1,
     "sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051",
-    "public_key_b64": "rlDnDsQ3RCwpdX2deW/iUqey1RZiWYvFCp2Ux6xplRo="
+    "public_key_b64": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY="
   },
   "support_matrix": [
     {
@@ -235,6 +235,6 @@
       "note": "not this round"
     }
   ],
-  "signed_by": "rlDnDsQ3RCwpdX2deW/iUqey1RZiWYvFCp2Ux6xplRo=",
-  "signature": "731a27bf0061a63de97d12073aa734623c6da69178ca543753d0737170907bfd78198ab8035145801621fc6ffebb906d20de15646659b6a82e90de921ac66b0e"
+  "signed_by": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
+  "signature": "1f10b19e4f6fc547f2b5c2a07a5f8ebe0e3f6edd40ddb1d7d551662d0ebd81151d1c009addd6287e4e0b0f1b056b650b191d64d15811d43562158548ee017c0b"
 }

@@ -24,8 +24,35 @@ func TestBootstrapEmbedsConstant(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(ps1), ReleasePublicKeyB64) {
-		t.Fatal("bootstrap.ps1 must embed the same public key")
+	if !strings.Contains(string(ps1), "$ReleasePubKeyB64 = '"+ReleasePublicKeyB64+"'") {
+		t.Fatal("bootstrap.ps1 must keep $ReleasePubKeyB64 = '<pubkey>' (regexp $ must not eat the variable)")
+	}
+}
+
+func TestEmbedReleasePubkeyKeepsPS1Variable(t *testing.T) {
+	dir := t.TempDir()
+	scripts := filepath.Join(dir, "scripts")
+	if err := os.MkdirAll(scripts, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(scripts, "bootstrap.sh"), []byte("RELEASE_PUBKEY_B64='old'\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(scripts, "bootstrap.ps1"), []byte("$ReleasePubKeyB64 = 'old'\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	k := testKey(t)
+	pub := k.PublicBase64()
+	if err := EmbedReleasePubkey(dir, pub); err != nil {
+		t.Fatal(err)
+	}
+	ps1, err := os.ReadFile(filepath.Join(scripts, "bootstrap.ps1"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := "$ReleasePubKeyB64 = '" + pub + "'"
+	if !strings.Contains(string(ps1), want) {
+		t.Fatalf("ps1 rewrite ate the variable:\n%s", ps1)
 	}
 }
 

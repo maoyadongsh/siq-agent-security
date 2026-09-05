@@ -27,7 +27,7 @@ import (
 // ReleasePublicKeyB64 is the v1 local trust root (Ed25519, standard base64).
 // Bootstrap scripts must embed the same value. Rotating it requires re-signing
 // skill-manifest.json and updating both bootstrap files.
-const ReleasePublicKeyB64 = "rlDnDsQ3RCwpdX2deW/iUqey1RZiWYvFCp2Ux6xplRo="
+const ReleasePublicKeyB64 = "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY="
 
 // SeedEnv is the 32-byte Ed25519 seed (standard base64) used to sign a release.
 const SeedEnv = "AGENTSHIELD_RELEASE_SEED"

@@ -114,8 +114,12 @@ func TestGatewayEndpointValidation(t *testing.T) {
 	}
 }
 
+func missingPATH() func(string) (string, error) {
+	return func(string) (string, error) { return "", os.ErrNotExist }
+}
+
 func TestBuildCommandRequiresPairOrEnvSH(t *testing.T) {
-	c := New(Options{})
+	c := New(Options{LookPath: missingPATH()})
 	t.Setenv(envCLIBin, "")
 	t.Setenv(envEndpoint, "")
 	t.Setenv(envEnvSH, "")
@@ -174,5 +178,51 @@ func TestEnvScriptMustBeAbsolute(t *testing.T) {
 	c := New(Options{EnvScript: "relative/env.sh"})
 	if _, err := c.BuildCommand([]string{"gateway", "info"}); err == nil || !strings.Contains(err.Error(), "绝对路径") {
 		t.Fatalf("%v", err)
+	}
+}
+
+func TestBuildCommandDiscoversPATH(t *testing.T) {
+	c := New(Options{
+		LookPath: func(name string) (string, error) {
+			if name != "openshell" {
+				t.Fatalf("looked up %q", name)
+			}
+			return "/usr/bin/openshell", nil
+		},
+		LookupEnv: func(string) (string, bool) { return "", false },
+	})
+	cmd, err := c.BuildCommand([]string{"gateway", "info"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(cmd) != 3 || cmd[0] != "/usr/bin/openshell" || cmd[1] != "gateway" || cmd[2] != "info" {
+		t.Fatalf("path discovery argv: %v", cmd)
+	}
+	if contains(cmd, "--gateway-endpoint") {
+		t.Fatal("PATH discovery must not inject --gateway-endpoint")
+	}
+}
+
+func TestBuildCommandIgnoresRelativePATHHit(t *testing.T) {
+	c := New(Options{
+		LookPath:  func(string) (string, error) { return "openshell", nil },
+		LookupEnv: func(string) (string, bool) { return "", false },
+	})
+	if _, err := c.BuildCommand([]string{"gateway", "info"}); err == nil || !strings.Contains(err.Error(), "未配置") {
+		t.Fatalf("relative LookPath must fail closed: %v", err)
+	}
+}
+
+func TestExplicitPairWinsOverPATH(t *testing.T) {
+	c := New(Options{LookPath: func(string) (string, error) { return "/usr/bin/openshell", nil }})
+	t.Setenv(envCLIBin, "/opt/os104/openshell")
+	t.Setenv(envEndpoint, "http://127.0.0.1:17673")
+	t.Setenv(envInsecure, "1")
+	cmd, err := c.BuildCommand([]string{"gateway", "info"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cmd[0] != "/opt/os104/openshell" || !contains(cmd, "--gateway-endpoint") {
+		t.Fatalf("explicit pair must win: %v", cmd)
 	}
 }

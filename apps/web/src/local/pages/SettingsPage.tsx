@@ -48,10 +48,11 @@ export default function SettingsPage() {
     localApi
       .openshellProbe()
       .then((res) => {
+        const next = res.doctor?.human_next;
         setMsg(
           res.ok
             ? `OpenShell L3 · ${res.schema_version ?? ''} — ${res.note ?? 'probe 成功'}`
-            : `OpenShell 不可用（${res.tier}）：${res.note ?? 'probe 失败'}`,
+            : `OpenShell 不可用（${res.tier}）：${next || res.note || 'probe 失败'}`,
         );
         reload();
       })
@@ -182,7 +183,9 @@ export default function SettingsPage() {
       <div className="card">
         <h2>OpenShell（L3）</h2>
         <p className="page-desc">
-          只用 CLI。probe 成功才显示 L3。apply 只提交网络段；filesystem / process 保持当前读回，禁止 create_generation。
+          自动发现 PATH 上的 openshell（显式 SIQ_AS_* 仍优先）。probe 必须验明网关是 OpenShell；连到
+          OpenClaw / Hermes 会失败。agentshield 不会执行 gateway start。apply 只提交网络段；filesystem /
+          process 保持当前读回，禁止 create_generation。
         </p>
         <div className="toolbar">
           <button type="button" className="btn btn-primary" disabled={busy !== null} onClick={probeOpenshell}>

@@ -39,7 +39,7 @@ bootstrap 会用内置公钥校验 `skill-manifest.json` 签名。本地 `go bui
 
 ## 档位（诚实）
 
-机器可读事实源：[`skills/agentshield/skill-manifest.json`](./skills/agentshield/skill-manifest.json) 的 `support_matrix`。当前**没有任何一行 `supported`**。2026-09-05 已在 DGX Spark（linux/arm64）归档 Hermes L0–L2 路径证据（[`docs/evidence/agentshield/hermes-linux-2026-09-05/`](./docs/evidence/agentshield/hermes-linux-2026-09-05/)）：恶意 fixture `quarantine` / 退出码 3、官方风格 `admit_with_conditions`、Hermes 适配器越权 `web_fetch` deny、`verify` 通过。grant 已由人类 `--approve-as maoyd` 批准并 deploy，授后 `web_fetch` 为 deny。OpenShell 网关未配置，L3 不宣称；矩阵在重签前不改 `supported`。
+机器可读事实源：[`skills/agentshield/skill-manifest.json`](./skills/agentshield/skill-manifest.json) 的 `support_matrix`。当前**没有任何一行 `supported`**。2026-09-05 已在 DGX Spark（linux/arm64）归档 Hermes L0–L2 路径证据（[`docs/evidence/agentshield/hermes-linux-2026-09-05/`](./docs/evidence/agentshield/hermes-linux-2026-09-05/)）：恶意 fixture `quarantine` / 退出码 3、官方风格 `admit_with_conditions`、Hermes 适配器越权 `web_fetch` deny、`verify` 通过。grant 已由人类 `--approve-as maoyd` 批准并 deploy，授后 `web_fetch` 为 deny。OpenShell 由 PATH 发现 CLI，但本机默认网关未验明为正身（常见：端口被 OpenClaw 占用），L3 不宣称；矩阵在有 probe+网络段读回证据并重签前不改 `supported`。
 
 | 平台 | Linux | macOS | Windows | 说明 |
 | --- | --- | --- | --- | --- |
@@ -56,6 +56,8 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 - filesystem / process 策略不能热更新，grant 不得把这两域标成 `effective`
 - Trae 只能审计，控制台必须显示无法阻断
 - OpenShell `verify` 只到 `readback_verified`，不到 `enforcement_verified`
+- AgentShield 会发现 PATH 上的 `openshell`，但**不会**执行 `openshell gateway start`，也不会猜测端口或改别人的网关
+- 连到非 OpenShell 进程（OpenClaw / Hermes）时 probe fail-closed；运行 `agentshield openshell doctor` 看下一步
 - Windows L3 需要 WSL2 / Docker；本快照不宣称
 - GitHub Release 未打 tag；用源码构建，不要指望 url 能下载
 - 批准 grant 必须人工 `--approve-as` / 控制台点击；SKILL.md 禁止模型批准
@@ -96,7 +98,7 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 7. 适配器把工具调用转到 `/v1/decide`。
 8. 越权出网或读凭据 → deny，回执入链。
 9. `verify` 重算哈希链；断链即失败。
-10. OpenShell 若在：只下发网络段并读回；fs/process 仍非 effective。
+10. OpenShell 若在：先 `openshell doctor` 验明正身再下发网络段并读回；fs/process 仍非 effective。AgentShield 不 `gateway start`。
 
 ## 仓库地图
 

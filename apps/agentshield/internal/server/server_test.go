@@ -387,6 +387,10 @@ func TestOpenshellUnconfiguredIsL0(t *testing.T) {
 	if code != 200 || probe["ok"] != false {
 		t.Fatalf("probe: %d %v", code, probe)
 	}
+	code, doctor := call(t, s, "GET", "/v1/openshell/doctor", token, nil)
+	if code != 200 || doctor["source"] != "none" || doctor["started_gateway"] != false || doctor["tier"] != "L0" {
+		t.Fatalf("doctor: %d %v", code, doctor)
+	}
 	code, apply := call(t, s, "POST", "/v1/openshell/apply", token, map[string]any{"target": "s1", "network": []any{}})
 	if code != 503 {
 		t.Fatalf("apply without backend must 503, got %d %v", code, apply)
@@ -405,6 +409,9 @@ func TestOpenshellProbeL3AndNetworkApply(t *testing.T) {
 	cli := openshell.New(openshell.Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
 		if len(args) >= 2 && args[0] == "gateway" && args[1] == "info" {
 			return 0, "Gateway Info\n  Gateway version: 0.0.104\n", ""
+		}
+		if len(args) == 1 && args[0] == "status" {
+			return 0, "Server Status\n  Gateway: siq-openshell-dev\n", ""
 		}
 		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
 			return 0, string(full), ""

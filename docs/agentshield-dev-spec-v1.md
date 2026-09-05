@@ -288,7 +288,9 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 | `GET /v1/inventory` | 盘点（POST 仍可用，body.cwd 或 `?cwd=`）|
 | `GET`/`PUT /v1/config` | 读/写 `enforcement_mode`（热更新 Engine）|
 | `GET /v1/adapter/status` `POST /v1/adapter/install` `POST /v1/adapter/uninstall` | 控制台装/卸适配器 |
-| `GET /v1/admissions/{id}` | 单条准入 + Skill Card markdown |
+| `GET /v1/openshell/probe` | OpenShell L3 探测；失败时附 `doctor` |
+| `GET /v1/openshell/doctor` | OpenShell 诊断（不启动网关；`started_gateway` 恒 false） |
+| `POST /v1/openshell/apply` | 仅网络段 `policy set` + 读回 |
 
 请求体（decide）：
 
@@ -344,8 +346,11 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 
 ### 3.9 `internal/openshell`（规格）
 
-- 后端只用 CLI（与 `cli_backend.py` 相同环境变量：`SIQ_AS_OPENSHELL_CLI_BIN`、`SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT` 或 `SIQ_AS_OPENSHELL_ENV_SH`）。
-- `probe()`：`gateway info` + `policy get` 探测 `dynamic_network_update`、`revision_support`、`sandbox_list_decodable`；不按版本号假设。
+- 后端只用 CLI。显式环境变量与 Python `cli_backend.py` 相同：`SIQ_AS_OPENSHELL_CLI_BIN` 与 `SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT`（必须成对）或 `SIQ_AS_OPENSHELL_ENV_SH`。
+- AgentShield 额外发现 PATH 上的 `openshell`，走用户 CLI 配置（`HOME` / XDG / `OPENSHELL_*`），不注入 `--gateway-endpoint`。显式 `SIQ_AS_*` 优先于 PATH。Python 控制面后端不跟随此发现。
+- `probe()`：`gateway info` 只表示调用了 OpenShell CLI（本地配置打印，端口上即使是 OpenClaw 也可能 rc=0）。必须以 `status`（或等价的会真正连网关的命令）做握手。`status` 出现 `InvalidContentType` / OpenClaw / Hermes 特征则 fail-closed。不按版本号假设能力。禁止猜测端口，禁止改别人的网关。
+- **禁止** `openshell gateway start`。bootstrap、doctor、serve 都不启动网关。缺 CLI、网关没起、连错进程时 L0–L2 照常，并给出人类可执行修复。
+- `agentshield openshell doctor` 与 `GET /v1/openshell/doctor`：报告 CLI 路径、覆盖来源（`env_pair` / `env_sh` / `path` / `none`）、探针、身份、`human_next`；`started_gateway` 恒为 `false`。
 - `apply(network)`：`policy set` 只提交网络段；`policy get --full` 读回 → 比对 → 产出 `effective_readback{backend:"openshell", revision}` 与 evidence。
 - 不调用 `create_generation`；fs/process 段写入 `sandbox create` 时的策略文件（静态），并在 grant 里标 `static_domains_unavailable`。
 - macOS/Windows：`probe()` 失败（无 Docker/WSL2）→ L3 不可用，UI 显示原因。
@@ -568,9 +573,9 @@ make -C apps/agentshield ui
 | W1 Go 核心 | canon / rulepack / threat / signing / admission / grant / receipt / CLI | **完成**；每个模块的 Go 样例均回灌 Python schema 校验；grant 的 `artifact_hash` 与 Python 编译器一致 |
 | W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve` **完成**；HTTP E2E **完成**；`inventory` **完成**；embed UI **完成**（`src/local/` + `internal/ui`） |
 | W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**；OpenClaw `policy-exec` **完成**；CodeBuddy `hook codebuddy` **完成**；`adapter install/uninstall`（备份还原）**完成** |
-| W4 OpenShell | probe / 网络 policy set / 读回 | **完成**（CLI 后端 + `agentshield openshell` + `/v1/openshell/*` + 控制台 L3；假 CLI 正负测试。无 DGX 真网关 E2E） |
+| W4 OpenShell | probe / 网络 policy set / 读回 | **完成**（CLI 后端 + PATH 发现 + 网关验明 + `openshell doctor` + `/v1/openshell/*` + 控制台 L3；假 CLI 正负测试。无 DGX 真网关 E2E；矩阵不标 `supported`） |
 | W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **完成**（Skill 目录、evals、bootstrap 验签、`grant` CLI、自扫描不得 quarantine、已签名 `skill-manifest.json` + 四目标哈希。GitHub Release URL 为预定路径，尚未发布；矩阵仍无 `supported` 行） |
-| W6 材料 | README、演示、基线更新、十日谈 | **进行中**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark Hermes linux 证据已归档（admit / `--approve-as maoyd` / 授后 deny / verify）。OpenShell 未配置；矩阵仍无 `supported` |
+| W6 材料 | README、演示、基线更新、十日谈 | **进行中**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark Hermes linux 证据已归档（admit / `--approve-as maoyd` / 授后 deny / verify）。OpenShell 可 PATH 发现但本机网关须验明正身；矩阵仍无 `supported` |
 
 ---
 

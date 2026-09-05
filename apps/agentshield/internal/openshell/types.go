@@ -1,7 +1,10 @@
 // Package openshell is the stdlib-only OpenShell CLI backend (dev-spec §3.9).
-// Behaviour is locked to apps/control-api/app/adapters/openshell/cli_backend.py:
-// probe fail-closed on gateway info, apply submits only the network section,
-// verify tops out at readback_verified, and create_generation is refused.
+// Probe, apply, and verify stay aligned with
+// apps/control-api/app/adapters/openshell/cli_backend.py: fail-closed on
+// gateway info, network-only policy set, readback_verified cap,
+// create_generation refused. AgentShield additionally discovers `openshell` on
+// PATH and rejects non-OpenShell gateways. The Python control-plane backend
+// is unchanged and still requires explicit env.
 package openshell
 
 import "fmt"

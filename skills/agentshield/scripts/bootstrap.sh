@@ -10,7 +10,7 @@ MANIFEST="$SKILL_DIR/skill-manifest.json"
 VERIFY_PY="$SKILL_DIR/scripts/verify_manifest.py"
 
 # v1 local trust root (Ed25519, base64). Used to verify skill-manifest.json.
-RELEASE_PUBKEY_B64='rlDnDsQ3RCwpdX2deW/iUqey1RZiWYvFCp2Ux6xplRo='
+RELEASE_PUBKEY_B64='LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY='
 
 log() { printf 'agentshield-bootstrap: %s\n' "$*" >&2; }
 die() { log "error: $*"; exit 1; }

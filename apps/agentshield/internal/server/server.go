@@ -53,6 +53,7 @@ type Server struct {
 	osRow  PlatformInfo
 	osOK   bool
 	osCaps *openshell.Capabilities
+	osDiag openshell.Diagnosis
 }
 
 // New builds the handler.
@@ -77,6 +78,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/adapter/install", s.auth(s.adapterInstall))
 	s.mux.HandleFunc("/v1/adapter/uninstall", s.auth(s.adapterUninstall))
 	s.mux.HandleFunc("/v1/openshell/probe", s.auth(s.openshellProbe))
+	s.mux.HandleFunc("/v1/openshell/doctor", s.auth(s.openshellDoctor))
 	s.mux.HandleFunc("/v1/openshell/apply", s.auth(s.openshellApply))
 	s.mux.HandleFunc("/ui-config.json", s.uiConfig)
 	if d.UI != nil {

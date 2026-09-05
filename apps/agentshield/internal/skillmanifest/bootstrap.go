@@ -55,6 +55,6 @@ func rewrite(path string, re *regexp.Regexp, repl string) error {
 	if !re.Match(raw) {
 		return fmt.Errorf("skillmanifest: %s has no pubkey assignment to replace", filepath.Base(path))
 	}
-	out := re.ReplaceAll(raw, []byte(repl))
+	out := re.ReplaceAllLiteral(raw, []byte(repl))
 	return os.WriteFile(path, out, 0o755)
 }

@@ -13,6 +13,9 @@ import (
 func (s *Server) openshellPlatform(refresh bool) PlatformInfo {
 	row := PlatformInfo{Name: "openshell", Detected: false, Adapter: "unconfigured", Tier: "L0", Note: "未配置 CLI/网关"}
 	if s.d.Openshell == nil {
+		s.osMu.Lock()
+		s.osDiag = openshell.UnconfiguredDiagnosis()
+		s.osMu.Unlock()
 		return row
 	}
 	s.osMu.Lock()
@@ -20,19 +23,24 @@ func (s *Server) openshellPlatform(refresh bool) PlatformInfo {
 	if !refresh && !s.osAt.IsZero() && time.Since(s.osAt) < 15*time.Second {
 		return s.osRow
 	}
-	caps, err := s.d.Openshell.Probe()
-	if err != nil {
-		row.Note = sanitizeOpenshellErr(err)
-		if runtime.GOOS != "linux" && !strings.Contains(row.Note, "未配置") {
+	d := s.d.Openshell.Diagnose()
+	s.osDiag = d
+	if !d.ProbeOK || d.Capabilities == nil {
+		row.Note = d.HumanNext
+		if row.Note == "" {
+			row.Note = sanitizeOpenshellNote(d.Note)
+		}
+		if runtime.GOOS != "linux" && !strings.Contains(row.Note, "未配置") && !strings.Contains(row.Note, "未在 PATH") {
 			row.Note += "；非 Linux 无 Docker/WSL2 时 L3 不可用"
 		}
 		s.osRow, s.osAt, s.osOK = row, time.Now(), false
 		return row
 	}
+	caps := *d.Capabilities
 	row.Detected = true
 	row.Adapter = "cli"
 	row.Tier = "L3"
-	row.Note = "网络段热更新 · " + caps.SchemaVersion
+	row.Note = d.Note
 	s.osRow, s.osAt, s.osOK, s.osCaps = row, time.Now(), true, &caps
 	return row
 }
@@ -48,6 +56,7 @@ func (s *Server) openshellProbe(w http.ResponseWriter, r *http.Request) {
 		"detected": row.Detected, "adapter": row.Adapter, "note": row.Note,
 	}
 	s.osMu.Lock()
+	out["doctor"] = s.osDiag
 	if s.osOK && s.osCaps != nil {
 		out["schema_version"] = s.osCaps.SchemaVersion
 		out["dynamic_network_update"] = s.osCaps.DynamicNetworkUpdate
@@ -56,6 +65,18 @@ func (s *Server) openshellProbe(w http.ResponseWriter, r *http.Request) {
 	}
 	s.osMu.Unlock()
 	writeJSON(w, 200, out)
+}
+
+func (s *Server) openshellDoctor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		writeJSON(w, 405, map[string]any{"error": "GET required"})
+		return
+	}
+	if s.d.Openshell == nil {
+		writeJSON(w, 200, openshell.UnconfiguredDiagnosis())
+		return
+	}
+	writeJSON(w, 200, s.d.Openshell.Diagnose())
 }
 
 func (s *Server) openshellApply(w http.ResponseWriter, r *http.Request) {
@@ -116,7 +137,10 @@ func sanitizeOpenshellErr(err error) string {
 	if err == nil {
 		return ""
 	}
-	msg := err.Error()
+	return sanitizeOpenshellNote(err.Error())
+}
+
+func sanitizeOpenshellNote(msg string) string {
 	if len(msg) > 240 {
 		msg = msg[:240]
 	}

@@ -44,6 +44,20 @@ func backend(t *testing.T, responses map[string]struct {
 	stderr string
 }) *Client {
 	t.Helper()
+	if responses == nil {
+		responses = map[string]struct {
+			rc     int
+			stdout string
+			stderr string
+		}{}
+	}
+	if _, ok := responses[k("status")]; !ok {
+		responses[k("status")] = struct {
+			rc     int
+			stdout string
+			stderr string
+		}{0, "Server Status\n  Gateway: siq-openshell-dev\n", ""}
+	}
 	return New(Options{
 		Runner:       fake(responses),
 		EnvScript:    "/nonexistent/env.sh",
@@ -196,6 +210,49 @@ func TestProbeGatewayInfoFailureIsFailClosed(t *testing.T) {
 	})
 	if _, err := c.Probe(); err == nil {
 		t.Fatal("expected fail-closed")
+	}
+}
+
+func TestProbeRejectsForeignGateway(t *testing.T) {
+	c := backend(t, map[string]struct {
+		rc     int
+		stdout string
+		stderr string
+	}{
+		k("gateway", "info"): {1, "", "Error: client error (Connect)\nreceived corrupt message of type InvalidContentType\n"},
+	})
+	_, err := c.Probe()
+	if err == nil || !strings.Contains(err.Error(), "不是 OpenShell") {
+		t.Fatalf("foreign gateway: %v", err)
+	}
+}
+
+func TestProbeRejectsUnrecognizedSuccess(t *testing.T) {
+	c := backend(t, map[string]struct {
+		rc     int
+		stdout string
+		stderr string
+	}{
+		k("gateway", "info"): {0, "{\"ok\":true,\"server\":\"openclaw\"}\n", ""},
+	})
+	_, err := c.Probe()
+	if err == nil || !strings.Contains(err.Error(), "不是 OpenShell") {
+		t.Fatalf("unrecognized success: %v", err)
+	}
+}
+
+func TestProbeStatusHandshakeRejectsForeignGateway(t *testing.T) {
+	c := backend(t, map[string]struct {
+		rc     int
+		stdout string
+		stderr string
+	}{
+		k("gateway", "info"): {0, gatewayInfo, ""},
+		k("status"):          {1, "", "received corrupt message of type InvalidContentType"},
+	})
+	_, err := c.Probe()
+	if err == nil || !strings.Contains(err.Error(), "不是 OpenShell") {
+		t.Fatalf("status handshake: %v", err)
 	}
 }
 
@@ -497,6 +554,9 @@ func TestSandboxListDockerFallbackBelowV104(t *testing.T) {
 			if eq(args, "gateway", "info") {
 				return 0, gatewayInfo, ""
 			}
+			if eq(args, "status") {
+				return 0, "Server Status\n  Gateway: siq-openshell-dev\n", ""
+			}
 			if eq(args, "--version") {
 				return 0, versionOutputV083, ""
 			}
@@ -528,6 +588,9 @@ func TestSandboxListV104RetiresDockerFallback(t *testing.T) {
 		Runner: func(args []string) (int, string, string) {
 			if eq(args, "gateway", "info") {
 				return 0, gatewayInfoWithVersion, ""
+			}
+			if eq(args, "status") {
+				return 0, "Server Status\n  Gateway: siq-openshell-dev\n", ""
 			}
 			if len(args) >= 2 && args[0] == "sandbox" && args[1] == "list" {
 				return 1, "", "status: Internal, message: some real error"

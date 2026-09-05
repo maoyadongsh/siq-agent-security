@@ -37,7 +37,8 @@ Do not use this skill to answer business questions. Do not approve grants.
   `~/Library/Application Support/agentshield` on macOS,
   `%LOCALAPPDATA%\agentshield` on Windows).
 - For L2: a platform with a tool hook (OpenClaw, Hermes, or CodeBuddy).
-- For L3: OpenShell on Linux, or Docker/WSL2 elsewhere. Trae is L0 only.
+- For L3: a running NVIDIA OpenShell gateway on Linux, or Docker/WSL2 elsewhere.
+  AgentShield discovers `openshell` on PATH; it does not start the gateway. Trae is L0 only.
 
 ## How to Run
 
@@ -68,6 +69,8 @@ a binary; the `url` fields in the manifest are unpublished Release paths.
 | `agentshield serve` | Decision API + console on loopback |
 | `agentshield verify` | Recompute the receipt hash chain |
 | `agentshield adapter install [platform]` | Write host hooks; backups first |
+| `agentshield openshell doctor` | Diagnose OpenShell CLI/gateway; never starts a gateway |
+| `agentshield openshell probe` | L3 probe; fail-closed if the endpoint is not OpenShell |
 
 ## Procedure
 
@@ -82,12 +85,19 @@ a binary; the `url` fields in the manifest are unpublished Release paths.
 4. **Adapter.** `agentshield adapter install` (or `scripts/adapter.sh`).
 5. **Serve.** If bootstrap did not start it: `agentshield serve`.
 6. Present the console URL. Runtime allow/deny comes from signed receipts.
+7. **L3 (optional).** If the user wants OpenShell network enforcement: run
+   `agentshield openshell doctor`. If the CLI or gateway is missing, show
+   `human_next` unchanged. Do not run `openshell gateway start`. Do not guess
+   ports. Do not change another product's gateway.
 
 ## Pitfalls
 
 - Trae has no tool hook: audit only, cannot block. Say so.
 - OpenShell cannot hot-update filesystem/process policy; those domains stay
   non-effective. Do not claim they are enforced.
+- AgentShield never starts an OpenShell gateway. `openshell gateway info` only
+  prints local CLI config; a live OpenShell is confirmed by `openshell status`.
+  Missing CLI or a non-OpenShell process on the configured port is L0–L2 only.
 - Windows L3 needs WSL2 or Docker; without it, cap at L2.
 - `enforcement_mode=block` fails closed: if `serve` is down, adapters deny.
 - Quoted examples in SKILL.md and files under `references/` / `evals/` are

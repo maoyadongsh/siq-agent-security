@@ -116,6 +116,13 @@ export const localApi = {
       schema_version?: string;
       dynamic_network_update?: boolean;
       revision_support?: boolean;
+      doctor?: {
+        source?: string;
+        human_next?: string;
+        cli_found?: boolean;
+        identity_ok?: boolean;
+        started_gateway?: boolean;
+      };
     }>('/v1/openshell/probe'),
   openshellApply: (body: {
     target: string;

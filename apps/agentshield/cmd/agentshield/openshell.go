@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/state"
@@ -21,12 +22,14 @@ func (s *repeatedString) Set(v string) error {
 
 func cmdOpenshell(args []string) error {
 	if len(args) < 1 {
-		return fmt.Errorf("openshell: usage: agentshield openshell probe|apply")
+		return fmt.Errorf("openshell: usage: agentshield openshell probe|apply|doctor")
 	}
-	c := openshell.New(openshell.Options{})
+	c := openshell.New(openshell.Options{ProbeTimeout: 5 * time.Second})
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	switch args[0] {
+	case "doctor":
+		return enc.Encode(c.Diagnose())
 	case "probe":
 		caps, err := c.Probe()
 		if err != nil {
@@ -75,6 +78,6 @@ func cmdOpenshell(args []string) error {
 		}
 		return enc.Encode(result)
 	default:
-		return fmt.Errorf("openshell: unknown subcommand %q (probe|apply)", args[0])
+		return fmt.Errorf("openshell: unknown subcommand %q (probe|apply|doctor)", args[0])
 	}
 }

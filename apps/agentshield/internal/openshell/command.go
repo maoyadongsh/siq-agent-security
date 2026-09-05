@@ -21,6 +21,9 @@ const (
 
 var safeEnvKeys = map[string]bool{
 	"PATH": true, "HOME": true, "LANG": true, "LC_ALL": true, "TMPDIR": true, "USER": true, "TERM": true,
+	"XDG_CONFIG_HOME": true, "XDG_STATE_HOME": true, "XDG_DATA_HOME": true,
+	"XDG_CACHE_HOME": true, "XDG_RUNTIME_DIR": true,
+	"USERPROFILE": true, "APPDATA": true, "LOCALAPPDATA": true,
 }
 
 // Runner executes CLI args (not the wrapper argv). Tests inject a fake.
@@ -37,6 +40,7 @@ type Options struct {
 	PollAttempts int
 	MaxOutput    int
 	LookupEnv    func(string) (string, bool)
+	LookPath     func(string) (string, error)
 }
 
 func (c *Client) env(key string) string {
@@ -49,23 +53,39 @@ func (c *Client) env(key string) string {
 	return os.Getenv(key)
 }
 
-// BuildCommand mirrors Python OpenShellCliBackend._build_command.
-func (c *Client) BuildCommand(args []string) ([]string, error) {
+const (
+	SourceNone    = "none"
+	SourceInvalid = "invalid"
+	SourceEnvPair = "env_pair"
+	SourceEnvSH   = "env_sh"
+	SourcePath    = "path"
+)
+
+const errCLIUnconfigured = "OpenShell CLI 未配置：PATH 上没有 openshell。成对设置 SIQ_AS_OPENSHELL_CLI_BIN 与 SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT，或设置 SIQ_AS_OPENSHELL_ENV_SH。运行 agentshield openshell doctor。agentshield 不会代为启动网关"
+
+// Invocation is how AgentShield will invoke the OpenShell CLI.
+type Invocation struct {
+	Source    string
+	CLIPath   string
+	Endpoint  string
+	EnvScript string
+	Insecure  bool
+}
+
+// ResolveInvocation picks explicit env, then ENV_SH, then PATH. It never
+// starts a gateway and never guesses a port.
+func (c *Client) ResolveInvocation() (Invocation, error) {
 	cliBin := c.env(envCLIBin)
 	endpoint := c.env(envEndpoint)
 	insecure := c.env(envInsecure) == "1"
 	if (cliBin == "") != (endpoint == "") {
-		return nil, fail("SIQ_AS_OPENSHELL_CLI_BIN 与 SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT 必须同时配置")
+		return Invocation{Source: SourceInvalid}, fail("SIQ_AS_OPENSHELL_CLI_BIN 与 SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT 必须同时配置")
 	}
 	if cliBin != "" && endpoint != "" {
 		if err := validateGatewayEndpoint(endpoint, insecure); err != nil {
-			return nil, err
+			return Invocation{Source: SourceInvalid}, err
 		}
-		cmd := []string{cliBin, "--gateway-endpoint", endpoint}
-		if insecure {
-			cmd = append(cmd, "--gateway-insecure")
-		}
-		return append(cmd, args...), nil
+		return Invocation{Source: SourceEnvPair, CLIPath: cliBin, Endpoint: endpoint, Insecure: insecure}, nil
 	}
 	envScript := c.EnvScript
 	if envScript == "" {
@@ -73,12 +93,50 @@ func (c *Client) BuildCommand(args []string) ([]string, error) {
 	}
 	if envScript != "" {
 		if !isAbsPath(envScript) {
-			return nil, fail("SIQ_AS_OPENSHELL_ENV_SH 必须是绝对路径")
+			return Invocation{Source: SourceInvalid}, fail("SIQ_AS_OPENSHELL_ENV_SH 必须是绝对路径")
 		}
-		cmd := []string{"bash", "-c", `source "$1" && shift && exec openshell "$@"`, "openshell-env", envScript}
-		return append(cmd, args...), nil
+		return Invocation{Source: SourceEnvSH, EnvScript: envScript}, nil
 	}
-	return nil, fail("OpenShell CLI 未配置：设置 CLI_BIN + GATEWAY_ENDPOINT，或显式设置 OPENSHELL_ENV_SH")
+	if bin := c.findOnPATH(); bin != "" {
+		return Invocation{Source: SourcePath, CLIPath: bin}, nil
+	}
+	return Invocation{Source: SourceNone}, fail(errCLIUnconfigured)
+}
+
+func (c *Client) findOnPATH() string {
+	fn := c.lookPath
+	if fn == nil {
+		fn = exec.LookPath
+	}
+	bin, err := fn("openshell")
+	if err != nil || bin == "" || !isAbsPath(bin) {
+		return ""
+	}
+	return bin
+}
+
+// BuildCommand mirrors Python OpenShellCliBackend._build_command, then falls
+// back to PATH discovery (AgentShield-only).
+func (c *Client) BuildCommand(args []string) ([]string, error) {
+	inv, err := c.ResolveInvocation()
+	if err != nil {
+		return nil, err
+	}
+	switch inv.Source {
+	case SourceEnvPair:
+		cmd := []string{inv.CLIPath, "--gateway-endpoint", inv.Endpoint}
+		if inv.Insecure {
+			cmd = append(cmd, "--gateway-insecure")
+		}
+		return append(cmd, args...), nil
+	case SourceEnvSH:
+		cmd := []string{"bash", "-c", `source "$1" && shift && exec openshell "$@"`, "openshell-env", inv.EnvScript}
+		return append(cmd, args...), nil
+	case SourcePath:
+		return append([]string{inv.CLIPath}, args...), nil
+	default:
+		return nil, fail(errCLIUnconfigured)
+	}
 }
 
 func isAbsPath(p string) bool {
@@ -146,7 +204,7 @@ func (c *Client) subprocess(args []string) (int, string, string) {
 		return 1, "", err.Error()
 	}
 	timeout := c.Timeout
-	if c.ProbeTimeout > 0 && ((len(args) >= 2 && args[0] == "gateway" && args[1] == "info") || (len(args) >= 1 && args[0] == "--version")) {
+	if c.ProbeTimeout > 0 && ((len(args) >= 2 && args[0] == "gateway" && args[1] == "info") || (len(args) >= 1 && args[0] == "--version") || (len(args) == 1 && args[0] == "status")) {
 		timeout = c.ProbeTimeout
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
