@@ -35,7 +35,7 @@ skills/agentshield/scripts/adapter.sh     # 探测并安装当前平台钩子
 
 bootstrap 会用内置公钥校验 `skill-manifest.json` 签名。本地 `go build` 的二进制哈希通常与清单里的发布钉不一致，默认只告警；要强制钉死则设 `AGENTSHIELD_REQUIRE_PINNED=1`。
 
-清单里的 `binary.artifacts[].url` 是预定 GitHub Release 路径，**尚未发布**；bootstrap **不会下载**，找不到二进制就失败退出。
+清单里的 `binary.artifacts[].url` 指向 GitHub Release `agentshield-v0.1.0`（已上传四目标二进制）。bootstrap **仍不会下载**；找不到本地二进制就失败退出。评委复现继续用下面的源码 `go build`。
 
 ## 档位（诚实）
 
@@ -59,7 +59,7 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 - AgentShield 会发现 PATH 上的 `openshell`，但**不会**执行 `openshell gateway start`，也不会猜测端口或改别人的网关
 - 接入已有 OpenShell（例如 research-engine 的 `siq-openshell-dev`）时设 `SIQ_AS_OPENSHELL_ENV_SH` 指向其 `scripts/openshell/env.sh`；不要改对方仓库。AgentShield 不 `gateway start`
 - Windows L3 需要 WSL2 / Docker；本快照不宣称
-- GitHub Release 未打 tag；用源码构建，不要指望 url 能下载。操作清单：[`docs/agentshield-release-checklist-v1.md`](./docs/agentshield-release-checklist-v1.md)
+- GitHub Release tag `agentshield-v0.1.0` 已切；评委仍以源码构建为准。bootstrap 不按 URL 下载。操作清单：[`docs/agentshield-release-checklist-v1.md`](./docs/agentshield-release-checklist-v1.md)
 - 批准 grant 必须人工 `--approve-as` / 控制台点击；SKILL.md 禁止模型批准
 
 ## 演示（评委路径）

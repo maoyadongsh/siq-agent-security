@@ -407,7 +407,7 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 1. `/admissions` 独立页是否保留为「准入流水」二级入口（建议 P0 做重定向，P1 在资产详情内嵌列表）。
 2. 资产 ID 稳定性：`skill:hermes:name@hash12` 在改名后是否迁移（建议 locator + hash 为主键，name 可变）。
 3. 本机是否默认扫描 Claude Code / Codex 仅作 L0 展示（inventory 已能探测配置；适配器未做则只发现不管控）。
-4. OpenClaw / CodeBuddy linux E2E 证据已归档（隔离 HOME；不改矩阵）。剩余：GitHub Release、是否把矩阵行改成 `supported`（须重签）。
+4. OpenClaw / CodeBuddy linux E2E 证据已归档（隔离 HOME；不改矩阵）。GitHub Release `agentshield-v0.1.0` 已切。是否把矩阵行改成 `supported` 仍须另案 + 重签。
 
 ---
 

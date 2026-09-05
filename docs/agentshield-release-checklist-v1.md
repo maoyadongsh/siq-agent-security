@@ -1,7 +1,7 @@
 # AgentShield GitHub Release 清单 v1
 
 - 日期：2026-09-05
-- 状态：**清单就绪；tag / GitHub Release 未切**
+- 状态：**tag `agentshield-v0.1.0` 已切**（2026-09-06，commit `f14bb06`）。矩阵仍无 `supported` 行。
 - 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)
 - 分支：`cursor/agentshield-w0-contracts-8eff`（**不要**为发版而合 `main`，除非另行要求）
 - 规格：[`agentshield-dev-spec-v1.md`](./agentshield-dev-spec-v1.md) §5.2
@@ -72,7 +72,7 @@ uv run --frozen pytest app/tests/test_schema_contracts.py -q -k skill_manifest
 
 1. **不要**伪造签名，不要改 `signed_by` / bootstrap 公钥。
 2. 只跑哈希核对（下一节）。源码若已变，核对会失败——这是预期，说明不能上传旧清单对应的 URL。
-3. 评委路径继续 `go build`；`AGENTSHIELD.md` 写明 URL 尚未发布。
+3. 评委路径继续 `go build`；bootstrap 不按 URL 下载。
 
 ---
 

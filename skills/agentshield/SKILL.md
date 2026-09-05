@@ -58,7 +58,7 @@ If `agentshield` is already on `PATH` (or `AGENTSHIELD_BIN` is set), bootstrap
 reuses it after verifying `skill-manifest.json` (Ed25519, embedded pubkey) and
 hashing the binary. A local `go build` that does not match the pinned sha256
 is a warning unless `AGENTSHIELD_REQUIRE_PINNED=1`. Bootstrap never downloads
-a binary; the `url` fields in the manifest are unpublished Release paths.
+a binary; the `url` fields point at GitHub Release `agentshield-v0.1.0` but bootstrap still never downloads them.
 
 ## Quick Reference
 
