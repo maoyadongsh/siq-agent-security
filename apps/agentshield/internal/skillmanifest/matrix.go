@@ -2,9 +2,10 @@ package skillmanifest
 
 import "fmt"
 
-// DefaultMatrix is the honest contest snapshot: no row is "supported"
-// because Spark E2E evidence has not been archived yet. Trae is audit_only
-// (no tool hook). L3 is claimed only on Linux, and only as experimental.
+// DefaultMatrix is the honest contest snapshot: no row is "supported".
+// Hermes/linux L0–L2 is evidenced; L3 stays experimental until a verified
+// OpenShell probe+readback is archived. Trae is audit_only (no tool hook).
+// L3 is listed only on Linux, and only as experimental.
 func DefaultMatrix() []Row {
 	note := func(s string) string { return s }
 	row := func(platform, osName string, tiers []string, status, n string, requires []string) Row {
@@ -16,7 +17,7 @@ func DefaultMatrix() []Row {
 	}
 	out := []Row{
 		row("hermes", "linux", []string{"L0", "L1", "L2", "L3"}, "experimental",
-			note("adapter + OpenShell CLI landed; Spark E2E pending"), nil),
+			note("L0–L2 evidenced on Spark 2026-09-05; L3 optional (verified OpenShell gateway), not claimed"), nil),
 		row("hermes", "darwin", []string{"L0", "L1", "L2"}, "experimental",
 			note("L3 needs Docker Desktop; not evidenced"), nil),
 		row("hermes", "windows", []string{"L0", "L1", "L2"}, "experimental",

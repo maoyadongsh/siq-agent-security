@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/receipt"
@@ -331,6 +332,10 @@ func TestInventoryGETConfigPutAndAdapterHTTP(t *testing.T) {
 		m := p.(map[string]any)
 		if m["name"] == "hermes" && m["adapter"] == "installed" && m["tier"] == "L2" {
 			found = true
+			note, _ := m["note"].(string)
+			if !strings.Contains(note, "仅工具层拦截") {
+				t.Fatalf("L2 without OpenShell L3 must say tool-layer only: %v", m)
+			}
 		}
 	}
 	if !found {
@@ -490,6 +495,226 @@ func TestOpenshellApplyRejectsCreatePathAndRevisionConflict(t *testing.T) {
 	})
 	if code != 409 {
 		t.Fatalf("conflict: %d %v", code, out)
+	}
+}
+
+func TestLedgerAssetsPermissionsFindings(t *testing.T) {
+	s, _ := newServer(t, "block")
+	demo := filepath.Join(s.d.Home, ".hermes", "skills", "demo")
+	if err := os.MkdirAll(demo, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(demo, "SKILL.md"), []byte("---\nname: demo\nallowed-tools: web_fetch\n---\n# d\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	code, body := call(t, s, "GET", "/v1/assets", token, nil)
+	if code != 200 {
+		t.Fatalf("assets: %d %v", code, body)
+	}
+	list, _ := body["assets"].([]any)
+	var skillID string
+	for _, raw := range list {
+		row, _ := raw.(map[string]any)
+		if row["source_type"] == "skill_dir" && row["name"] == "demo" {
+			skillID, _ = row["id"].(string)
+			if row["status"] != "unadmitted" {
+				t.Fatalf("unadmitted skill: %v", row)
+			}
+		}
+	}
+	if skillID == "" {
+		t.Fatalf("demo skill missing: %v", body)
+	}
+	code, detail := call(t, s, "GET", "/v1/assets/"+skillID, token, nil)
+	if code != 200 || detail["id"] != skillID {
+		t.Fatalf("detail: %d %v", code, detail)
+	}
+	if code, miss := call(t, s, "GET", "/v1/assets/no-such-asset", token, nil); code != 404 {
+		t.Fatalf("missing asset: %d %v", code, miss)
+	}
+
+	toxic, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "malicious", "env-webhook"))
+	call(t, s, "POST", "/v1/admit", token, map[string]any{"path": toxic})
+	code, fnd := call(t, s, "GET", "/v1/findings", token, nil)
+	if code != 200 {
+		t.Fatalf("findings: %d %v", code, fnd)
+	}
+	findings, _ := fnd["findings"].([]any)
+	if len(findings) == 0 {
+		t.Fatal("quarantine admission must project findings")
+	}
+
+	clean, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like"))
+	_, a := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": clean})
+	admID := a["admission"].(map[string]any)["admission_id"].(string)
+	_, g := call(t, s, "POST", "/v1/grants", token, map[string]any{"admission_id": admID, "platform": "openclaw", "subject_id": "inst_1"})
+	gid := g["grant"].(map[string]any)["grant_id"].(string)
+	call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u"})
+	call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, map[string]any{})
+
+	code, perm := call(t, s, "GET", "/v1/permissions?subject_id=inst_1", token, nil)
+	if code != 200 {
+		t.Fatalf("permissions: %d %v", code, perm)
+	}
+	facts, _ := perm["facts"].([]any)
+	if len(facts) == 0 {
+		t.Fatal("grant facts missing")
+	}
+	for _, raw := range facts {
+		row, _ := raw.(map[string]any)
+		if row["state"] == "effective" {
+			t.Fatalf("deployed grant projected effective: %v", row)
+		}
+		if row["domain"] == "filesystem" && row["state"] == "effective" {
+			t.Fatal("filesystem effective")
+		}
+	}
+
+	call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://evil.example/"}})
+	_, perm = call(t, s, "GET", "/v1/permissions?subject_id=inst_1", token, nil)
+	var observed bool
+	for _, raw := range perm["facts"].([]any) {
+		row, _ := raw.(map[string]any)
+		if row["source"] == "receipt" && row["state"] == "observed" && row["action"] == "deny" {
+			observed = true
+		}
+	}
+	if !observed {
+		t.Fatalf("expected observed deny: %v", perm)
+	}
+}
+
+func TestAssetConfirmDismissAndPatchDesired(t *testing.T) {
+	s, _ := newServer(t, "block")
+	demo := filepath.Join(s.d.Home, ".hermes", "skills", "demo")
+	if err := os.MkdirAll(demo, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(demo, "SKILL.md"), []byte("---\nname: demo\nallowed-tools: web_fetch\n---\n# d\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	_, body := call(t, s, "GET", "/v1/assets", token, nil)
+	var skillID string
+	for _, raw := range body["assets"].([]any) {
+		row := raw.(map[string]any)
+		if row["name"] == "demo" {
+			skillID = row["id"].(string)
+		}
+	}
+	if skillID == "" {
+		t.Fatal("demo missing")
+	}
+	code, miss := call(t, s, "POST", "/v1/assets/"+skillID+"/dismiss", token, map[string]any{"actor_id": "u"})
+	if code != 400 {
+		t.Fatalf("dismiss missing fields: %d %v", code, miss)
+	}
+	until := time.Now().Add(time.Hour).UTC().Format(time.RFC3339)
+	code, dis := call(t, s, "POST", "/v1/assets/"+skillID+"/dismiss", token, map[string]any{"actor_id": "u", "reason": "shadow", "until": until})
+	if code != 200 {
+		t.Fatalf("dismiss: %d %v", code, dis)
+	}
+	code, cf := call(t, s, "POST", "/v1/assets/"+skillID+"/confirm", token, map[string]any{"actor_id": "u"})
+	if code != 200 {
+		t.Fatalf("confirm: %d %v", code, cf)
+	}
+	_, listed := call(t, s, "GET", "/v1/assets", token, nil)
+	found := false
+	for _, raw := range listed["assets"].([]any) {
+		row := raw.(map[string]any)
+		if row["id"] == skillID && row["status"] == "confirmed" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("confirmed not listed: %v", listed)
+	}
+
+	clean, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like"))
+	_, a := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": clean})
+	admID := a["admission"].(map[string]any)["admission_id"].(string)
+	_, g := call(t, s, "POST", "/v1/grants", token, map[string]any{"admission_id": admID, "platform": "hermes", "subject_id": "inst_p"})
+	gid := g["grant"].(map[string]any)["grant_id"].(string)
+	code, patched := call(t, s, "POST", "/v1/grants/"+gid+"/patch-desired", token, map[string]any{
+		"tools":   []string{"web_fetch"},
+		"network": []any{map[string]any{"endpoint": "api.example.com:443", "effect": "allow"}},
+	})
+	if code != 200 {
+		t.Fatalf("patch: %d %v", code, patched)
+	}
+	call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u"})
+	code, again := call(t, s, "POST", "/v1/grants/"+gid+"/patch-desired", token, map[string]any{"tools": []string{"read_file"}})
+	if code != 400 {
+		t.Fatalf("patch after approve: %d %v", code, again)
+	}
+	_, aud := call(t, s, "GET", "/v1/audit", token, nil)
+	if evs, _ := aud["events"].([]any); len(evs) == 0 {
+		t.Fatalf("audit empty: %v", aud)
+	}
+}
+
+func TestDriftCheckFailClosedAndFinding(t *testing.T) {
+	s, _ := newServer(t, "block")
+	code, no := call(t, s, "POST", "/v1/openshell/drift-check", token, map[string]any{})
+	if code != 503 {
+		t.Fatalf("no cli: %d %v", code, no)
+	}
+	failCLI := openshell.New(openshell.Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
+		return 1, "", "boom"
+	}})
+	s.d.Openshell = failCLI
+	_, before := call(t, s, "GET", "/v1/findings", token, nil)
+	beforeN := 0
+	if f, ok := before["findings"].([]any); ok {
+		beforeN = len(f)
+	}
+	code, fail := call(t, s, "POST", "/v1/openshell/drift-check", token, map[string]any{})
+	if code < 500 {
+		t.Fatalf("probe fail must 5xx: %d %v", code, fail)
+	}
+	_, after := call(t, s, "GET", "/v1/findings", token, nil)
+	afterN := 0
+	if f, ok := after["findings"].([]any); ok {
+		afterN = len(f)
+	}
+	if afterN != beforeN {
+		t.Fatalf("failed drift-check must not add findings: %d → %d", beforeN, afterN)
+	}
+
+	full, err := os.ReadFile(filepath.Join("..", "openshell", "testdata", "policy_get_full.txt"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	okCLI := openshell.New(openshell.Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
+		if len(args) >= 2 && args[0] == "gateway" && args[1] == "info" {
+			return 0, "Gateway Info\n  Gateway version: 0.0.104\n", ""
+		}
+		if len(args) == 1 && args[0] == "status" {
+			return 0, "Server Status\n  Gateway: siq-openshell-dev\n", ""
+		}
+		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
+			return 0, string(full), ""
+		}
+		return 1, "", "unexpected"
+	}})
+	s.d.Openshell = okCLI
+	clean, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like"))
+	_, a := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": clean})
+	admID := a["admission"].(map[string]any)["admission_id"].(string)
+	_, g := call(t, s, "POST", "/v1/grants", token, map[string]any{"admission_id": admID, "platform": "hermes", "subject_id": "s1"})
+	gid := g["grant"].(map[string]any)["grant_id"].(string)
+	call(t, s, "POST", "/v1/grants/"+gid+"/patch-desired", token, map[string]any{
+		"network": []any{map[string]any{"endpoint": "api.github.com:443", "effect": "allow"}},
+	})
+	call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u"})
+	call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, map[string]any{})
+	code, drift := call(t, s, "POST", "/v1/openshell/drift-check", token, map[string]any{})
+	if code != 200 {
+		t.Fatalf("drift: %d %v", code, drift)
+	}
+	written, _ := drift["findings_written"].([]any)
+	if len(written) == 0 {
+		t.Fatalf("expected drift finding vs empty network readback: %v", drift)
 	}
 }
 

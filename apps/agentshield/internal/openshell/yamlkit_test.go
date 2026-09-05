@@ -154,7 +154,7 @@ func TestBuildCommandRequiresPairOrEnvSH(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		// still produces a bash wrapper; execution would fail closed later
 	}
-	want := []string{"bash", "-c", `source "$1" && shift && exec openshell "$@"`, "openshell-env", "/opt/siq/openshell-env.sh"}
+	want := []string{"bash", "-c", `source "$1" && shift && exec "${SIQ_OPENSHELL_BIN:-openshell}" "$@"`, "openshell-env", "/opt/siq/openshell-env.sh"}
 	if len(cmd) < 5 {
 		t.Fatalf("%v", cmd)
 	}

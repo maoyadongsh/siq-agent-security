@@ -343,8 +343,23 @@ func cmdServe(args []string) error {
 	hs := &http.Server{Handler: srv.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second}
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	refreshCtx, refreshCancel := context.WithCancel(context.Background())
+	defer refreshCancel()
+	go func() {
+		ticker := time.NewTicker(5 * time.Minute)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				_ = srv.Refresh("")
+			case <-refreshCtx.Done():
+				return
+			}
+		}
+	}()
 	go func() {
 		<-stop
+		refreshCancel()
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
 		_ = hs.Shutdown(ctx)

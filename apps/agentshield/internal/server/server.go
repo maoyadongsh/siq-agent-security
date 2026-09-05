@@ -80,6 +80,13 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/openshell/probe", s.auth(s.openshellProbe))
 	s.mux.HandleFunc("/v1/openshell/doctor", s.auth(s.openshellDoctor))
 	s.mux.HandleFunc("/v1/openshell/apply", s.auth(s.openshellApply))
+	s.mux.HandleFunc("/v1/openshell/drift-check", s.auth(s.openshellDriftCheck))
+	s.mux.HandleFunc("/v1/assets", s.auth(s.assets))
+	s.mux.HandleFunc("/v1/assets/", s.auth(s.assets))
+	s.mux.HandleFunc("/v1/permissions", s.auth(s.permissions))
+	s.mux.HandleFunc("/v1/findings", s.auth(s.findings))
+	s.mux.HandleFunc("/v1/findings/", s.auth(s.findings))
+	s.mux.HandleFunc("/v1/audit", s.auth(s.auditLog))
 	s.mux.HandleFunc("/ui-config.json", s.uiConfig)
 	if d.UI != nil {
 		s.mux.Handle("/", d.UI)
@@ -347,7 +354,21 @@ func (s *Server) admit(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 500, map[string]any{"error": "store failed"})
 		return
 	}
+	_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "admit", Target: res.Admission.AdmissionID, Note: res.Admission.Verdict})
 	writeJSON(w, 200, map[string]any{"admission": res.Admission, "skill_card": res.SkillCard})
+}
+
+func (s *Server) runInventory(cwd string) (*inventory.Report, error) {
+	if cwd != "" {
+		cwd = expandHome(cwd, s.d.Home)
+	}
+	admissions, _ := s.d.Store.ListAdmissions()
+	byHash := map[string]string{}
+	for _, a := range admissions {
+		byHash[a.ContentHash] = a.Verdict
+	}
+	return inventory.Run(inventory.Options{Home: s.d.Home, Cwd: cwd, Version: s.d.Version, Key: s.d.Key,
+		HasAdmission: func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
 }
 
 func (s *Server) inventory(w http.ResponseWriter, r *http.Request) {
@@ -365,16 +386,7 @@ func (s *Server) inventory(w http.ResponseWriter, r *http.Request) {
 			cwd = body.Cwd
 		}
 	}
-	if cwd != "" {
-		cwd = expandHome(cwd, s.d.Home)
-	}
-	admissions, _ := s.d.Store.ListAdmissions()
-	byHash := map[string]string{}
-	for _, a := range admissions {
-		byHash[a.ContentHash] = a.Verdict
-	}
-	rep, err := inventory.Run(inventory.Options{Home: s.d.Home, Cwd: cwd, Version: s.d.Version, Key: s.d.Key,
-		HasAdmission: func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
+	rep, err := s.runInventory(cwd)
 	if err != nil {
 		writeJSON(w, 500, map[string]any{"error": "inventory failed"})
 		return
@@ -432,13 +444,14 @@ func (s *Server) grants(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		_ = s.d.Store.PutDesiredPolicy(res.DesiredPolicy)
+		_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "grant_create", Target: res.Grant.GrantID})
 		writeJSON(w, 200, map[string]any{"grant": res.Grant, "desired_policy": res.DesiredPolicy})
 	default:
 		writeJSON(w, 405, map[string]any{"error": "GET or POST"})
 	}
 }
 
-// grantAction: POST /v1/grants/{id}/{approve|reject|deploy|revoke|resolve-overlap|effective}
+// grantAction: POST /v1/grants/{id}/{approve|reject|deploy|revoke|resolve-overlap|effective|patch-desired}
 func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		writeJSON(w, 405, map[string]any{"error": "POST required"})
@@ -455,12 +468,16 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var body struct {
-		ActorID  string                 `json:"actor_id"`
-		Channel  string                 `json:"channel"`
-		Index    int                    `json:"index"`
-		Readback *grant.Readback        `json:"readback"`
-		Facts    map[string]string      `json:"fact_readbacks"`
-		Extra    map[string]interface{} `json:"-"`
+		ActorID    string                 `json:"actor_id"`
+		Channel    string                 `json:"channel"`
+		Index      int                    `json:"index"`
+		Readback   *grant.Readback        `json:"readback"`
+		Facts      map[string]string      `json:"fact_readbacks"`
+		Tools      *[]string              `json:"tools"`
+		Network    *[]grant.NetworkPatch  `json:"network"`
+		Filesystem *grant.FilesystemPatch `json:"filesystem"`
+		Process    *grant.ProcessPatch    `json:"process"`
+		Models     *[]string              `json:"models"`
 	}
 	_ = readJSON(r, &body, 64<<10)
 	actor := grant.Approval{ActorType: "human", ActorID: body.ActorID, ApprovedAt: time.Now().UTC().Format(time.RFC3339), Channel: body.Channel}
@@ -468,6 +485,7 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 		actor.Channel = "console"
 	}
 	var out grant.Grant
+	var dp grant.DesiredPolicy
 	switch parts[1] {
 	case "approve":
 		out, err = grant.Approve(*g, actor, s.d.Key)
@@ -485,6 +503,23 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 		} else {
 			out, err = grant.MarkEffective(*g, *body.Readback, body.Facts, s.d.Key)
 		}
+	case "patch-desired":
+		patch := grant.DesiredPatch{
+			HasTools: body.Tools != nil, HasNetwork: body.Network != nil,
+			HasFilesystem: body.Filesystem != nil, HasProcess: body.Process != nil, HasModels: body.Models != nil,
+		}
+		if body.Tools != nil {
+			patch.Tools = *body.Tools
+		}
+		if body.Network != nil {
+			patch.Network = *body.Network
+		}
+		patch.Filesystem = body.Filesystem
+		patch.Process = body.Process
+		if body.Models != nil {
+			patch.Models = *body.Models
+		}
+		out, dp, err = grant.PatchDesired(*g, patch, s.d.Key)
 	default:
 		writeJSON(w, 404, map[string]any{"error": "unknown action"})
 		return
@@ -495,6 +530,17 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := s.d.Store.PutGrant(out); err != nil {
 		writeJSON(w, 500, map[string]any{"error": "store failed"})
+		return
+	}
+	if dp != nil {
+		_ = s.d.Store.PutDesiredPolicy(dp)
+	}
+	switch parts[1] {
+	case "approve", "revoke", "reject", "deploy":
+		_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "grant_" + parts[1], ActorID: body.ActorID, Target: out.GrantID})
+	case "patch-desired":
+		_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "grant_patch", ActorID: body.ActorID, Target: out.GrantID})
+		writeJSON(w, 200, map[string]any{"grant": out, "desired_policy": dp})
 		return
 	}
 	writeJSON(w, 200, map[string]any{"grant": out})

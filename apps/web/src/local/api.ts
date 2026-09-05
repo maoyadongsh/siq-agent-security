@@ -7,13 +7,32 @@ import type {
   AdapterResult,
   Grant,
   InventoryReport,
+  LedgerAsset,
+  LedgerAssetDetail,
+  LedgerFinding,
+  LedgerOverview,
+  PermissionFact,
   PlatformInfo,
   Receipt,
   Status,
   UiBoot,
 } from './types';
 
-export type { Admission, AdapterResult, Grant, InventoryReport, PlatformInfo, Receipt, Status, UiBoot };
+export type {
+  Admission,
+  AdapterResult,
+  Grant,
+  InventoryReport,
+  LedgerAsset,
+  LedgerAssetDetail,
+  LedgerFinding,
+  LedgerOverview,
+  PermissionFact,
+  PlatformInfo,
+  Receipt,
+  Status,
+  UiBoot,
+};
 
 let token = '';
 
@@ -65,6 +84,33 @@ export const localApi = {
     const q = cwd ? `?cwd=${encodeURIComponent(cwd)}` : '';
     return request<InventoryReport>(`/v1/inventory${q}`);
   },
+  assets: (cwd?: string) => {
+    const q = cwd ? `?cwd=${encodeURIComponent(cwd)}` : '';
+    return request<{ assets: LedgerAsset[]; overview: LedgerOverview }>(`/v1/assets${q}`);
+  },
+  asset: (id: string) =>
+    request<LedgerAssetDetail>(`/v1/assets/${encodeURIComponent(id)}`),
+  confirmAsset: (id: string, actorId: string) =>
+    request<{ asset: LedgerAsset }>(`/v1/assets/${encodeURIComponent(id)}/confirm`, {
+      method: 'POST',
+      body: JSON.stringify({ actor_id: actorId }),
+    }),
+  dismissAsset: (id: string, body: { actor_id: string; reason: string; until: string }) =>
+    request<{ asset: LedgerAsset }>(`/v1/assets/${encodeURIComponent(id)}/dismiss`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  permissions: (subjectId?: string) => {
+    const q = subjectId ? `?subject_id=${encodeURIComponent(subjectId)}` : '';
+    return request<{ facts: PermissionFact[] }>(`/v1/permissions${q}`);
+  },
+  findings: () => request<{ findings: LedgerFinding[] }>('/v1/findings'),
+  acceptFinding: (id: string, body: { actor_id: string; reason: string; until: string }) =>
+    request(`/v1/findings/${encodeURIComponent(id)}/accept`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  audit: () => request<{ events: { at: string; event: string; actor_id?: string; target?: string; note?: string }[] }>('/v1/audit'),
   admit: (path: string, trustLevel = 'unknown') =>
     request<{ admission: Admission; skill_card: string }>('/v1/admit', {
       method: 'POST',
@@ -139,4 +185,9 @@ export const localApi = {
       effective_readback?: { backend: string; revision: string; evidence_id: string };
       failures?: string[];
     }>('/v1/openshell/apply', { method: 'POST', body: JSON.stringify(body) }),
+  openshellDriftCheck: () =>
+    request<{ ok?: boolean; findings_written?: string[]; error?: string }>('/v1/openshell/drift-check', {
+      method: 'POST',
+      body: JSON.stringify({}),
+    }),
 };

@@ -1003,6 +1003,18 @@ a,
   color: var(--reject);
 }
 
+.state-tag.declared {
+  background: rgb(0 24 64 / 0.05);
+  border-color: rgb(0 24 64 / 0.18);
+  color: var(--ink);
+}
+
+.state-tag.observed {
+  background: rgb(29 78 216 / 0.08);
+  border-color: rgb(29 78 216 / 0.22);
+  color: #1d4ed8;
+}
+
 /* 编码信息：mono 小号降权 */
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;

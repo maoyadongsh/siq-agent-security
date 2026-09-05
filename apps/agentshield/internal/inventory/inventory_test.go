@@ -25,12 +25,14 @@ const secretMarker = "sk-SECRETSECRETSECRETSECRET"
 func fakeHome(t *testing.T) string {
 	t.Helper()
 	home := t.TempDir()
-	write(t, filepath.Join(home, ".hermes", "config.yaml"), "model: x\nplugins:\n  - agentshield\n")
+	write(t, filepath.Join(home, ".hermes", "config.yaml"), "model: x\nplugins:\n  - agentshield\nplatform_toolsets:\n  - web\nplatform_toolset_modes:\n  web: allow\n")
+	write(t, filepath.Join(home, ".hermes", "profiles", "work", "config.yaml"), "model:\n  default: local\ntoolsets:\n  - terminal\n  - web\n")
+	write(t, filepath.Join(home, ".hermes", "profiles", "home", "SOUL.md"), "# home profile\n")
 	write(t, filepath.Join(home, ".hermes", ".env"), "OPENAI_API_KEY="+secretMarker+"\n")
 	write(t, filepath.Join(home, ".hermes", "skills", "report-beautifier", "SKILL.md"), "---\nname: report-beautifier\ndescription: Beautify.\nallowed-tools: terminal\n---\n# x\n")
 	write(t, filepath.Join(home, ".hermes", "skills", "report-beautifier", "scripts", "run.sh"), "echo "+secretMarker+"\n")
 	write(t, filepath.Join(home, ".hermes", "skills", "not-a-skill", "README.md"), "no SKILL.md here\n")
-	write(t, filepath.Join(home, ".openclaw", "openclaw.json"), `{"security":{"installPolicy":{"enabled":true,"exec":{"command":"/usr/local/bin/agentshield","args":["policy-exec"]}}},"plugins":{"entries":{"agentshield":{"enabled":true}}},"apiKey":"`+secretMarker+`"}`)
+	write(t, filepath.Join(home, ".openclaw", "openclaw.json"), `{"security":{"installPolicy":{"enabled":true,"exec":{"command":"/usr/local/bin/agentshield","args":["policy-exec"]}}},"plugins":{"entries":{"agentshield":{"enabled":true}}},"agents":{"list":[{"id":"main","name":"Main"},{"id":"other","name":"Other"}]},"apiKey":"`+secretMarker+`"}`)
 	write(t, filepath.Join(home, ".openclaw", "skills", "gh-triage", "SKILL.md"), "---\nname: gh-triage\ndescription: Triage.\n---\n")
 	write(t, filepath.Join(home, ".agents", "skills", "shared", "SKILL.md"), "---\nname: shared\ndescription: Shared.\n---\n")
 	write(t, filepath.Join(home, ".codebuddy", "settings.json"), `{"hooks":{"PreToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"/x/agentshield hook codebuddy"}]}]}}`)
@@ -59,7 +61,7 @@ func byID(rep *Report) map[string]Candidate {
 
 func TestDiscoversPlatformsAndSkills(t *testing.T) {
 	rep := runInv(t, fakeHome(t))
-	if strings.Join(rep.Platforms, ",") != "hermes,openclaw,codebuddy,trae" {
+	if strings.Join(rep.Platforms, ",") != "codebuddy,hermes,openclaw,trae" {
 		t.Fatalf("platforms %v", rep.Platforms)
 	}
 	c := byID(rep)
@@ -89,15 +91,42 @@ func TestDiscoversPlatformsAndSkills(t *testing.T) {
 	if c["platform:hermes"].Attributes["agentshield_install_gate"] == "true" {
 		t.Fatal("hermes has no install gate; must not be claimed")
 	}
-	facts := 0
+	factsObs := 0
+	declaredTools := 0
 	for _, f := range rep.Facts {
-		if f.State != "observed" || f.Domain != "control_plane" {
-			t.Fatalf("adapter facts must be observed control_plane: %+v", f)
+		if f.State == "effective" {
+			t.Fatalf("inventory must not claim effective: %+v", f)
 		}
-		facts++
+		if f.State == "observed" {
+			if f.Domain != "control_plane" {
+				t.Fatalf("adapter facts must be observed control_plane: %+v", f)
+			}
+			factsObs++
+		}
+		if f.State == "declared" && f.Domain == "tool" {
+			declaredTools++
+		}
 	}
-	if facts != 4 { // openclaw gate+hook, codebuddy hook, hermes plugin marker
-		t.Fatalf("expected 4 observed facts, got %d", facts)
+	if factsObs != 4 { // openclaw gate+hook, codebuddy hook, hermes plugin marker
+		t.Fatalf("expected 4 observed facts, got %d", factsObs)
+	}
+	if declaredTools < 1 {
+		t.Fatal("hermes platform_toolsets must produce declared tool facts")
+	}
+	profiles, agents := 0, 0
+	for _, cand := range c {
+		switch cand.SourceType {
+		case "hermes_profile":
+			profiles++
+		case "openclaw_agent":
+			agents++
+		}
+	}
+	if profiles < 2 {
+		t.Fatalf("expected >=2 hermes profiles, got %d: %v", profiles, keys(c))
+	}
+	if agents < 2 {
+		t.Fatalf("expected >=2 openclaw agents, got %d: %v", agents, keys(c))
 	}
 }
 

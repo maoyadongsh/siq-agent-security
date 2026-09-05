@@ -1,3 +1,4 @@
+/** 旧盘点页；路由已重定向到 /agents，保留作交互参考。 */
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';

@@ -64,7 +64,7 @@ func Open(dir string) (*Store, error) {
 	if dir == "" {
 		return nil, errors.New("state: directory required")
 	}
-	for _, sub := range []string{"", "keys", "admissions", "grants", "policies", "evidence", "receipts", "inventory", "backups", "logs"} {
+	for _, sub := range []string{"", "keys", "admissions", "grants", "policies", "evidence", "receipts", "inventory", "backups", "logs", "assets", "findings"} {
 		if err := os.MkdirAll(filepath.Join(dir, sub), 0o700); err != nil {
 			return nil, err
 		}

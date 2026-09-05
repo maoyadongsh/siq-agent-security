@@ -148,6 +148,12 @@ func Run(opts Options) (*Report, error) {
 			r.report.Platforms = append(r.report.Platforms, p.name)
 		}
 	}
+	if r.hermesProfiles(filepath.Join(opts.Home, ".hermes", "profiles")) {
+		if !containsStr(r.report.Platforms, "hermes") {
+			r.report.Platforms = append(r.report.Platforms, "hermes")
+		}
+	}
+	sort.Strings(r.report.Platforms)
 	sort.Slice(r.report.Candidates, func(i, j int) bool { return r.report.Candidates[i].CandidateID < r.report.Candidates[j].CandidateID })
 	sort.Slice(r.report.Evidence, func(i, j int) bool { return r.report.Evidence[i].EvidenceID < r.report.Evidence[j].EvidenceID })
 	return r.report, nil
@@ -177,11 +183,26 @@ func (r *run) platformConfig(p platformSpec, full, rel string) bool {
 	l1, l2 := adapterInstalled(p.name, raw)
 	if l1 {
 		attrs["agentshield_install_gate"] = "true"
-		r.fact(locator, "control_plane", "install.gate", "platform", p.name, evID)
+		r.fact(locator, "control_plane", "install.gate", "platform", p.name, evID, "observed")
 	}
 	if l2 {
 		attrs["agentshield_tool_hook"] = "true"
-		r.fact(locator, "control_plane", "tool.hook", "platform", p.name, evID)
+		r.fact(locator, "control_plane", "tool.hook", "platform", p.name, evID, "observed")
+	}
+	if p.name == "hermes" {
+		_, _, toolsets := extractConfigFacts(raw)
+		modes := extractToolsetModeKeys(raw)
+		if len(toolsets) > 0 {
+			attrs["toolsets"] = joinCSV(toolsets)
+			attrs["platform_toolsets"] = joinCSV(toolsets)
+			r.declaredTools(locator, toolsets, evID)
+		}
+		if len(modes) > 0 {
+			attrs["platform_toolset_modes"] = joinCSV(modes)
+		}
+	}
+	if p.name == "openclaw" {
+		r.openclawAgents(raw, evID)
 	}
 	r.report.Candidates = append(r.report.Candidates, Candidate{
 		CandidateID: "platform:" + p.name, SourceType: "platform_config", SourceLocator: locator, DiscoveredAt: r.now,
@@ -295,12 +316,125 @@ func (r *run) evidence(sourceType, locator, contentHash string) string {
 	return id
 }
 
-func (r *run) fact(locator, domain, action, rtype, rvalue, evID string) {
+func (r *run) fact(locator, domain, action, rtype, rvalue, evID, state string) {
+	if state == "" {
+		state = "observed"
+	}
 	r.report.Facts = append(r.report.Facts, Fact{
 		Subject: Subject{Type: "agent_asset", ID: locator}, Domain: domain, Action: action,
-		Resource: admission.Resource{Type: rtype, Value: rvalue}, Effect: "allow", State: "observed",
+		Resource: admission.Resource{Type: rtype, Value: rvalue}, Effect: "allow", State: state,
 		Authority: "agentshield", EvidenceIDs: []string{evID},
 	})
+}
+
+func (r *run) declaredTools(locator string, tools []string, evID string) {
+	for _, t := range tools {
+		if t == "" {
+			continue
+		}
+		r.fact(locator, "tool", "tool.invoke", "tool", t, evID, "declared")
+	}
+}
+
+func (r *run) hermesProfiles(dir string) bool {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return false
+	}
+	found := false
+	for _, e := range entries {
+		if !e.IsDir() {
+			continue
+		}
+		name := e.Name()
+		if name == "" || strings.HasPrefix(name, ".") {
+			continue
+		}
+		cfg := filepath.Join(dir, name, "config.yaml")
+		soul := filepath.Join(dir, name, "SOUL.md")
+		var raw []byte
+		srcFile := ""
+		if b, err := os.ReadFile(cfg); err == nil {
+			raw = b
+			srcFile = "config.yaml"
+		} else if b, err := os.ReadFile(soul); err == nil {
+			raw = b
+			srcFile = "SOUL.md"
+		} else {
+			continue
+		}
+		sum := sha256.Sum256(raw)
+		locator := "hermes://profiles/" + name
+		evID := r.evidence("platform_config", locator, hex.EncodeToString(sum[:]))
+		attrs := map[string]string{"platform": "hermes", "profile": name, "config": srcFile}
+		_, _, toolsets := extractConfigFacts(raw)
+		modes := extractToolsetModeKeys(raw)
+		if len(toolsets) > 0 {
+			attrs["toolsets"] = joinCSV(toolsets)
+			r.declaredTools(locator, toolsets, evID)
+		}
+		if len(modes) > 0 {
+			attrs["platform_toolset_modes"] = joinCSV(modes)
+		}
+		r.report.Candidates = append(r.report.Candidates, Candidate{
+			CandidateID: "agent:hermes:" + name, SourceType: "hermes_profile", SourceLocator: locator,
+			DiscoveredAt: r.now, Name: name, Framework: "hermes", ArtifactDigest: hex.EncodeToString(sum[:]),
+			Attributes: attrs, EvidenceIDs: []string{evID}, Confidence: 1.0, Status: "candidate",
+		})
+		found = true
+	}
+	return found
+}
+
+func (r *run) openclawAgents(raw []byte, configEv string) {
+	var doc struct {
+		Agents struct {
+			List []struct {
+				ID   string `json:"id"`
+				Name string `json:"name"`
+			} `json:"list"`
+		} `json:"agents"`
+	}
+	if json.Unmarshal(raw, &doc) != nil {
+		return
+	}
+	for _, a := range doc.Agents.List {
+		id := strings.TrimSpace(a.ID)
+		if id == "" {
+			id = strings.TrimSpace(a.Name)
+		}
+		if id == "" || looksLikeSecret(id) {
+			continue
+		}
+		name := strings.TrimSpace(a.Name)
+		if name == "" {
+			name = id
+		}
+		if looksLikeSecret(name) {
+			name = id
+		}
+		locator := "openclaw://agents/" + id
+		evID := configEv
+		if evID == "" {
+			sum := sha256.Sum256([]byte("openclaw-agent:" + id))
+			evID = r.evidence("platform_config", locator, hex.EncodeToString(sum[:]))
+		}
+		attrs := map[string]string{"platform": "openclaw", "agent_id": id}
+		r.report.Candidates = append(r.report.Candidates, Candidate{
+			CandidateID: "agent:openclaw:" + id, SourceType: "openclaw_agent", SourceLocator: locator,
+			DiscoveredAt: r.now, Name: name, Framework: "openclaw",
+			Attributes: attrs, EvidenceIDs: []string{evID}, Confidence: 1.0, Status: "candidate",
+		})
+	}
+}
+
+func containsStr(ss []string, want string) bool {
+	for _, s := range ss {
+		if s == want {
+			return true
+		}
+	}
+	return false
 }
 
 func signDoc(key *signing.Key, v any) string {

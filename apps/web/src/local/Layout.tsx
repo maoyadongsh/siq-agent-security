@@ -1,16 +1,18 @@
-/** 本地模式外壳：复用企业控制台 Layout 语言，导航换成 AgentShield 五页。 */
+/** 本地模式外壳：复用企业控制台 Layout 语言，导航对齐规格 §3.10 八项。 */
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon, type IconName } from '@/components/icons';
 import { useLocalSession } from './session';
-import { platformLabel } from './format';
+import { platformTierText, hasOpenShellL3 } from './format';
 
 const NAV_ITEMS: { to: string; label: string; icon: IconName }[] = [
   { to: '/overview', label: '总览', icon: 'overview' },
-  { to: '/inventory', label: '盘点', icon: 'scan' },
-  { to: '/admissions', label: '准入', icon: 'findings' },
-  { to: '/grants', label: '签发', icon: 'permissions' },
+  { to: '/agents', label: '智能体资产', icon: 'agents' },
+  { to: '/permissions', label: '权限视图', icon: 'permissions' },
+  { to: '/findings', label: '风险中心', icon: 'findings' },
+  { to: '/grants', label: '签发', icon: 'policies' },
   { to: '/receipts', label: '回执', icon: 'audit' },
+  { to: '/bindings', label: '运行时绑定', icon: 'bindings' },
   { to: '/settings', label: '设置', icon: 'settings' },
 ];
 
@@ -25,6 +27,7 @@ function readCollapsed(): boolean {
 }
 
 function currentTitle(pathname: string): string {
+  if (pathname.startsWith('/agents/')) return '智能体详情';
   const exact = NAV_ITEMS.find((item) => item.to === pathname);
   return exact?.label ?? '总览';
 }
@@ -65,6 +68,7 @@ export default function Layout() {
   const badges = (status?.platforms ?? []).filter(
     (p) => p.detected || p.adapter === 'installed',
   );
+  const openShellL3 = hasOpenShellL3(status?.platforms);
 
   return (
     <div className="app-shell">
@@ -133,7 +137,7 @@ export default function Layout() {
             ) : (
               badges.map((p) => (
                 <span key={p.name} className="topbar-phase" title={p.note}>
-                  {platformLabel(p.name)} · {p.tier}
+                  {platformTierText(p, openShellL3)}
                 </span>
               ))
             )}

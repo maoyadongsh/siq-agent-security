@@ -130,7 +130,10 @@ func (c *Client) BuildCommand(args []string) ([]string, error) {
 		}
 		return append(cmd, args...), nil
 	case SourceEnvSH:
-		cmd := []string{"bash", "-c", `source "$1" && shift && exec openshell "$@"`, "openshell-env", inv.EnvScript}
+		// After source, prefer SIQ_OPENSHELL_BIN (research-engine env.sh) so
+		// we do not fall through to a global PATH openshell that talks to
+		// another product's gateway. Unset → PATH openshell.
+		cmd := []string{"bash", "-c", `source "$1" && shift && exec "${SIQ_OPENSHELL_BIN:-openshell}" "$@"`, "openshell-env", inv.EnvScript}
 		return append(cmd, args...), nil
 	case SourcePath:
 		return append([]string{inv.CLIPath}, args...), nil

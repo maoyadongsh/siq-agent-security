@@ -60,6 +60,10 @@ func (c *Client) Diagnose() Diagnosis {
 	d.CLIPath = inv.CLIPath
 	d.EnvScript = inv.EnvScript
 	d.CLIFound = inv.Source != SourceNone && inv.Source != SourceInvalid
+	if inv.Source == SourceEnvSH {
+		// Host ~/.config/openshell is a different product (often OpenClaw).
+		d.ActiveGateway = ""
+	}
 	if inv.Source == SourceNone {
 		d.Note = "OpenShell CLI 未找到"
 		d.HumanNext = MsgUnconfigured
@@ -73,6 +77,11 @@ func (c *Client) Diagnose() Diagnosis {
 		d.ProbeOK = false
 		return d
 	}
+	c.mu.Lock()
+	if c.probedGateway != "" {
+		d.ActiveGateway = c.probedGateway
+	}
+	c.mu.Unlock()
 	d.ProbeOK = true
 	d.IdentityOK = true
 	d.Tier = "L3"
@@ -116,15 +125,33 @@ func readActiveGatewayName() string {
 			continue
 		}
 		name := strings.TrimSpace(string(raw))
-		if name == "" || len(name) > 64 {
-			continue
+		if n := sanitizeGatewayName(name); n != "" {
+			return n
 		}
-		for _, r := range name {
-			if r > unicode.MaxASCII || !(unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' || r == '_' || r == '.') {
-				return ""
-			}
-		}
-		return name
 	}
 	return ""
+}
+
+func parseGatewayName(text string) string {
+	for _, line := range strings.Split(text, "\n") {
+		line = strings.TrimSpace(line)
+		if !strings.HasPrefix(line, "Gateway:") {
+			continue
+		}
+		return sanitizeGatewayName(strings.TrimSpace(strings.TrimPrefix(line, "Gateway:")))
+	}
+	return ""
+}
+
+func sanitizeGatewayName(name string) string {
+	name = strings.TrimSpace(name)
+	if name == "" || len(name) > 64 {
+		return ""
+	}
+	for _, r := range name {
+		if r > unicode.MaxASCII || !(unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' || r == '_' || r == '.') {
+			return ""
+		}
+	}
+	return name
 }

@@ -1,3 +1,4 @@
+/** 旧准入流水页；路由已重定向到 /agents，签发改走资产详情。 */
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';

@@ -63,6 +63,9 @@ func TestDiagnosePATHProbeOK(t *testing.T) {
 	if !d.ProbeOK || !d.IdentityOK || d.Tier != "L3" || d.StartedGateway {
 		t.Fatalf("%+v", d)
 	}
+	if d.ActiveGateway != "siq-openshell-dev" {
+		t.Fatalf("probed gateway %q", d.ActiveGateway)
+	}
 	if d.HumanNext != MsgReady {
 		t.Fatalf("human_next %q", d.HumanNext)
 	}

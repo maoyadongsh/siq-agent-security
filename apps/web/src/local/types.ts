@@ -121,3 +121,88 @@ export interface AdapterResult {
   paths?: string[];
   note?: string;
 }
+
+export interface LedgerAsset {
+  id: string;
+  name: string;
+  framework: string;
+  source_type: string;
+  source_locator: string;
+  status: string;
+  admission_id?: string;
+  admission_verdict?: string;
+  grant_id?: string;
+  grant_status?: string;
+  declared_tools?: string[];
+  evidence_ids: string[];
+  admit_path?: string;
+  content_hash?: string;
+  attributes?: Record<string, string>;
+  updated_at?: string;
+  dismiss_reason?: string;
+  dismiss_until?: string;
+  hook_lost?: boolean;
+  actor_id?: string;
+}
+
+export interface LedgerEvidence {
+  evidence_id: string;
+  source_type: string;
+  source_locator: string;
+  collected_at?: string;
+  content_hash?: string;
+  classification?: string;
+}
+
+export interface LedgerAssetDetail extends LedgerAsset {
+  evidence?: LedgerEvidence[];
+  admission?: Admission;
+  grants?: Grant[];
+}
+
+export interface LedgerOverview {
+  assets: number;
+  unadmitted_skills: number;
+  open_findings: number;
+  recent_denies: number;
+  grants_deployed: number;
+}
+
+export interface PermissionFact {
+  fact_id: string;
+  subject_type: string;
+  subject_id: string;
+  domain: string;
+  action: string;
+  resource_type: string;
+  resource_value: string;
+  effect: string;
+  state: string;
+  authority: string;
+  authority_revision?: string | null;
+  evidence_ids?: string[];
+  source: string;
+  grant_id?: string;
+  grant_status?: string;
+  receipt_id?: string;
+  admission_id?: string;
+}
+
+export interface LedgerFinding {
+  finding_id: string;
+  rule_id: string;
+  category: string;
+  severity: string;
+  disposition: string;
+  status: string;
+  admission_id: string;
+  skill_name: string;
+  path?: string;
+  line?: number | null;
+  excerpt?: string | null;
+  evidence_ids?: string[];
+  source?: string;
+  subject_ref?: string;
+  accept_reason?: string;
+  accept_until?: string;
+}

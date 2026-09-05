@@ -4,8 +4,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
+	"siq-agent-security/apps/agentshield/internal/state"
 )
 
 func (s *Server) adapterStatus(w http.ResponseWriter, r *http.Request) {
@@ -73,5 +75,6 @@ func (s *Server) adapterMutate(w http.ResponseWriter, r *http.Request, action st
 		writeJSON(w, 400, map[string]any{"error": err.Error()})
 		return
 	}
+	_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "adapter_" + action, Target: body.Platform})
 	writeJSON(w, 200, res)
 }

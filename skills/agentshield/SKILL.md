@@ -38,7 +38,9 @@ Do not use this skill to answer business questions. Do not approve grants.
   `%LOCALAPPDATA%\agentshield` on Windows).
 - For L2: a platform with a tool hook (OpenClaw, Hermes, or CodeBuddy).
 - For L3: a running NVIDIA OpenShell gateway on Linux, or Docker/WSL2 elsewhere.
-  AgentShield discovers `openshell` on PATH; it does not start the gateway. Trae is L0 only.
+  L3 is optional. AgentShield already gates skills and tool calls at L0–L2.
+  It discovers `openshell` on PATH or via `SIQ_AS_OPENSHELL_ENV_SH`; it does
+  not start the gateway. Trae is L0 only.
 
 ## How to Run
 
@@ -85,10 +87,11 @@ a binary; the `url` fields in the manifest are unpublished Release paths.
 4. **Adapter.** `agentshield adapter install` (or `scripts/adapter.sh`).
 5. **Serve.** If bootstrap did not start it: `agentshield serve`.
 6. Present the console URL. Runtime allow/deny comes from signed receipts.
-7. **L3 (optional).** If the user wants OpenShell network enforcement: run
-   `agentshield openshell doctor`. If the CLI or gateway is missing, show
-   `human_next` unchanged. Do not run `openshell gateway start`. Do not guess
-   ports. Do not change another product's gateway.
+7. **L3 (optional).** OpenShell is not required for the gate. If the user wants
+   network enforcement on top of L2: run `agentshield openshell doctor`. If the
+   CLI or gateway is missing, show `human_next` unchanged. Do not run
+   `openshell gateway start`. Do not guess ports. Do not change another
+   product's gateway. Without L3, say the console is tool-layer only.
 
 ## Pitfalls
 

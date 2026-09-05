@@ -334,6 +334,9 @@ func (e *Engine) evaluate(req Request, s *session, hosts, paths []string, rec *R
 		}
 		rec.MatchedFactIDs = appendUnique(rec.MatchedFactIDs, fid)
 	}
+	if shellTools[req.Tool] && netCmdRe.MatchString(paramsTextOf(req)) && len(hosts) == 0 {
+		return ActionDeny, "egress exec requires granted host"
+	}
 	// step 4c: paths must be granted or inside cwd
 	cwd, _ := req.Context["cwd"].(string)
 	for _, p := range paths {

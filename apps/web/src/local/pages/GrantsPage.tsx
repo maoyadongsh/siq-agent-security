@@ -78,7 +78,7 @@ export default function GrantsPage() {
           columns={columns}
           rows={rows}
           rowKey={(r) => r.grant_id}
-          emptyText="还没有 grant。从准入页对非隔离 Skill 创建。"
+          emptyText="还没有 grant。从智能体详情对非隔离 Skill 起草签发。"
           onRowClick={setSelected}
         />
       </div>

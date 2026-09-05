@@ -2,12 +2,85 @@
   "generated_at": "2026-09-04T08:00:00Z",
   "home": "~",
   "platforms": [
+    "codebuddy",
     "hermes",
     "openclaw",
-    "codebuddy",
     "trae"
   ],
   "candidates": [
+    {
+      "candidate_id": "agent:hermes:home",
+      "source_type": "hermes_profile",
+      "source_locator": "hermes://profiles/home",
+      "discovered_at": "2026-09-04T08:00:00Z",
+      "name": "home",
+      "framework": "hermes",
+      "artifact_digest": "6232eff7cfea05fc769373aa4b4d7b642ed5074df5a3d82b049c3f27368546dc",
+      "attributes": {
+        "config": "SOUL.md",
+        "platform": "hermes",
+        "profile": "home"
+      },
+      "evidence_ids": [
+        "ev-93004b3da5767ead"
+      ],
+      "confidence": 1,
+      "status": "candidate"
+    },
+    {
+      "candidate_id": "agent:hermes:work",
+      "source_type": "hermes_profile",
+      "source_locator": "hermes://profiles/work",
+      "discovered_at": "2026-09-04T08:00:00Z",
+      "name": "work",
+      "framework": "hermes",
+      "artifact_digest": "986e41e0415cee0425a5a413ab6b674cacb9038f78ef952e94978559836929e0",
+      "attributes": {
+        "config": "config.yaml",
+        "platform": "hermes",
+        "profile": "work",
+        "toolsets": "terminal,web"
+      },
+      "evidence_ids": [
+        "ev-2e94a758dfe45116"
+      ],
+      "confidence": 1,
+      "status": "candidate"
+    },
+    {
+      "candidate_id": "agent:openclaw:main",
+      "source_type": "openclaw_agent",
+      "source_locator": "openclaw://agents/main",
+      "discovered_at": "2026-09-04T08:00:00Z",
+      "name": "Main",
+      "framework": "openclaw",
+      "attributes": {
+        "agent_id": "main",
+        "platform": "openclaw"
+      },
+      "evidence_ids": [
+        "ev-b5d42fc63d1ccff7"
+      ],
+      "confidence": 1,
+      "status": "candidate"
+    },
+    {
+      "candidate_id": "agent:openclaw:other",
+      "source_type": "openclaw_agent",
+      "source_locator": "openclaw://agents/other",
+      "discovered_at": "2026-09-04T08:00:00Z",
+      "name": "Other",
+      "framework": "openclaw",
+      "attributes": {
+        "agent_id": "other",
+        "platform": "openclaw"
+      },
+      "evidence_ids": [
+        "ev-b5d42fc63d1ccff7"
+      ],
+      "confidence": 1,
+      "status": "candidate"
+    },
     {
       "candidate_id": "platform:codebuddy",
       "source_type": "platform_config",
@@ -35,15 +108,18 @@
       "discovered_at": "2026-09-04T08:00:00Z",
       "name": "hermes",
       "framework": "hermes",
-      "artifact_digest": "a42e66079c87afb6b347a4117e40cf79ab19c44c755fb84d19da63efeb190b8e",
+      "artifact_digest": "73135df453118d01c3c617a9e656304ad2a662476b996ec6c701cee96ec261a8",
       "attributes": {
         "agentshield_tool_hook": "true",
-        "bytes": "34",
+        "bytes": "98",
         "config": ".hermes/config.yaml",
-        "platform": "hermes"
+        "platform": "hermes",
+        "platform_toolset_modes": "web",
+        "platform_toolsets": "web",
+        "toolsets": "web"
       },
       "evidence_ids": [
-        "ev-7c44d7eb67a28e5f"
+        "ev-e57589243098b6ff"
       ],
       "confidence": 1,
       "status": "candidate"
@@ -55,16 +131,16 @@
       "discovered_at": "2026-09-04T08:00:00Z",
       "name": "openclaw",
       "framework": "openclaw",
-      "artifact_digest": "52a15918daa18bc623bfbefc7243532e054a819ac374a2c57ad19b292397b4be",
+      "artifact_digest": "5e798e3c4bbd556818dbe381158f18cdf1302714780d1a55d145d496890d0f62",
       "attributes": {
         "agentshield_install_gate": "true",
         "agentshield_tool_hook": "true",
-        "bytes": "212",
+        "bytes": "290",
         "config": ".openclaw/openclaw.json",
         "platform": "openclaw"
       },
       "evidence_ids": [
-        "ev-b9b72b83653b86db"
+        "ev-b5d42fc63d1ccff7"
       ],
       "confidence": 1,
       "status": "candidate"
@@ -189,6 +265,22 @@
       "expires_at": null
     },
     {
+      "evidence_id": "ev-2e94a758dfe45116",
+      "source_type": "platform_config",
+      "source_locator": "hermes://profiles/work",
+      "subject_ref": null,
+      "observed_at": "2026-09-04T08:00:00Z",
+      "collected_at": "2026-09-04T08:00:00Z",
+      "collector_id": "agentshield-local",
+      "connector_version": "test",
+      "content_hash": "986e41e0415cee0425a5a413ab6b674cacb9038f78ef952e94978559836929e0",
+      "redaction_profile": "siq.redaction.v1",
+      "classification": "internal",
+      "payload_ref": null,
+      "signature": "08dd9cd04117f9231cdd163038e59cf626b754807e750bad37c27e845591bb95283776f9f2e3c9167d90950f4e88d26249318fd0c57871cbf2fa62ba5cc75b0b",
+      "expires_at": null
+    },
+    {
       "evidence_id": "ev-30bfb01f25347d4b",
       "source_type": "skill_dir",
       "source_locator": "openclaw://skills/~/.openclaw/skills/gh-triage",
@@ -221,23 +313,23 @@
       "expires_at": null
     },
     {
-      "evidence_id": "ev-7c44d7eb67a28e5f",
+      "evidence_id": "ev-93004b3da5767ead",
       "source_type": "platform_config",
-      "source_locator": "hermes://.hermes/config.yaml",
+      "source_locator": "hermes://profiles/home",
       "subject_ref": null,
       "observed_at": "2026-09-04T08:00:00Z",
       "collected_at": "2026-09-04T08:00:00Z",
       "collector_id": "agentshield-local",
       "connector_version": "test",
-      "content_hash": "a42e66079c87afb6b347a4117e40cf79ab19c44c755fb84d19da63efeb190b8e",
+      "content_hash": "6232eff7cfea05fc769373aa4b4d7b642ed5074df5a3d82b049c3f27368546dc",
       "redaction_profile": "siq.redaction.v1",
       "classification": "internal",
       "payload_ref": null,
-      "signature": "0a04c80943036a640bf9b0f25be2910a8e4a286a98a168881d169c365e0e9d726f63b722ba3bc3e443970d757d8a3562c15245b8bceaaf8f0a1e134f73ef7a04",
+      "signature": "bcf74602abb5b0bc0b9685db29fdc5081c8fa7671346dd05bc871c2c4165190d8bb4ec980fae62311a5a02be9559006440c4e05b010afb1198784013c699c40c",
       "expires_at": null
     },
     {
-      "evidence_id": "ev-b9b72b83653b86db",
+      "evidence_id": "ev-b5d42fc63d1ccff7",
       "source_type": "platform_config",
       "source_locator": "openclaw://.openclaw/openclaw.json",
       "subject_ref": null,
@@ -245,11 +337,11 @@
       "collected_at": "2026-09-04T08:00:00Z",
       "collector_id": "agentshield-local",
       "connector_version": "test",
-      "content_hash": "52a15918daa18bc623bfbefc7243532e054a819ac374a2c57ad19b292397b4be",
+      "content_hash": "5e798e3c4bbd556818dbe381158f18cdf1302714780d1a55d145d496890d0f62",
       "redaction_profile": "siq.redaction.v1",
       "classification": "internal",
       "payload_ref": null,
-      "signature": "214343ef94fd0e905a2adb484094e0404550b9b6e58f4e642cd2097cfc8bdac4d85d8cea566d581b9f28c7f12a260c11533ffd59d11623c6c872e0384f3a9d0f",
+      "signature": "ab31156f72b8e3b2fb2f15d4216ea5f5ebde4b2e7895458ddc0305de0feb38580de65d706a108b68a97559ab121d0d39c33428faa5dd13485308d527b907a500",
       "expires_at": null
     },
     {
@@ -266,6 +358,22 @@
       "classification": "internal",
       "payload_ref": null,
       "signature": "5c5af8608ebcdf1d84149730279aa14adade63bd1f018c044cae04580ea6a595917ce8fbc62fddba128bb8ac505cb527b610edcfe8647d9531a96ac05ced4d09",
+      "expires_at": null
+    },
+    {
+      "evidence_id": "ev-e57589243098b6ff",
+      "source_type": "platform_config",
+      "source_locator": "hermes://.hermes/config.yaml",
+      "subject_ref": null,
+      "observed_at": "2026-09-04T08:00:00Z",
+      "collected_at": "2026-09-04T08:00:00Z",
+      "collector_id": "agentshield-local",
+      "connector_version": "test",
+      "content_hash": "73135df453118d01c3c617a9e656304ad2a662476b996ec6c701cee96ec261a8",
+      "redaction_profile": "siq.redaction.v1",
+      "classification": "internal",
+      "payload_ref": null,
+      "signature": "fac77c9cd1ca6670defb7234acc657dbd20bcfaecc2a335bf247a3f9d44a83cf7c977778f36a84aa7fbee59ceebf6c17115a2a525e6a7a00f4d7ff0d14d8030e",
       "expires_at": null
     }
   ],
@@ -285,7 +393,25 @@
       "state": "observed",
       "authority": "agentshield",
       "evidence_ids": [
-        "ev-7c44d7eb67a28e5f"
+        "ev-e57589243098b6ff"
+      ]
+    },
+    {
+      "subject": {
+        "type": "agent_asset",
+        "id": "hermes://.hermes/config.yaml"
+      },
+      "domain": "tool",
+      "action": "tool.invoke",
+      "resource": {
+        "type": "tool",
+        "value": "web"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "agentshield",
+      "evidence_ids": [
+        "ev-e57589243098b6ff"
       ]
     },
     {
@@ -303,7 +429,7 @@
       "state": "observed",
       "authority": "agentshield",
       "evidence_ids": [
-        "ev-b9b72b83653b86db"
+        "ev-b5d42fc63d1ccff7"
       ]
     },
     {
@@ -321,7 +447,7 @@
       "state": "observed",
       "authority": "agentshield",
       "evidence_ids": [
-        "ev-b9b72b83653b86db"
+        "ev-b5d42fc63d1ccff7"
       ]
     },
     {
@@ -340,6 +466,42 @@
       "authority": "agentshield",
       "evidence_ids": [
         "ev-276866d2bba0a04f"
+      ]
+    },
+    {
+      "subject": {
+        "type": "agent_asset",
+        "id": "hermes://profiles/work"
+      },
+      "domain": "tool",
+      "action": "tool.invoke",
+      "resource": {
+        "type": "tool",
+        "value": "terminal"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "agentshield",
+      "evidence_ids": [
+        "ev-2e94a758dfe45116"
+      ]
+    },
+    {
+      "subject": {
+        "type": "agent_asset",
+        "id": "hermes://profiles/work"
+      },
+      "domain": "tool",
+      "action": "tool.invoke",
+      "resource": {
+        "type": "tool",
+        "value": "web"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "agentshield",
+      "evidence_ids": [
+        "ev-2e94a758dfe45116"
       ]
     }
   ],

@@ -13,10 +13,18 @@ export default function SettingsPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [osTarget, setOsTarget] = useState('siq-as-live');
   const [osAllow, setOsAllow] = useState('');
+  const [audit, setAudit] = useState<{ at: string; event: string; actor_id?: string; target?: string; note?: string }[]>([]);
 
   useEffect(() => {
     if (status?.enforcement_mode) setMode(status.enforcement_mode);
   }, [status?.enforcement_mode]);
+
+  useEffect(() => {
+    localApi
+      .audit()
+      .then((res) => setAudit(res.events ?? []))
+      .catch(() => setAudit([]));
+  }, [msg, status?.enforcement_mode]);
 
   const saveMode = () => {
     setMsg(null);
@@ -183,9 +191,10 @@ export default function SettingsPage() {
       <div className="card">
         <h2>OpenShell（L3）</h2>
         <p className="page-desc">
-          自动发现 PATH 上的 openshell（显式 SIQ_AS_* 仍优先）。probe 必须验明网关是 OpenShell；连到
-          OpenClaw / Hermes 会失败。agentshield 不会执行 gateway start。apply 只提交网络段；filesystem /
-          process 保持当前读回，禁止 create_generation。
+          接入已在运行、已验明的 OpenShell 网关（显式 SIQ_AS_* 优先，其次 ENV_SH，再 PATH）。probe
+          必须验明网关是 OpenShell；连到 OpenClaw / Hermes 会失败。agentshield 不会执行 gateway
+          start。apply 只提交网络段；filesystem / process 保持当前读回，禁止 create_generation。无
+          L3 时产品仍完整，控制台显示「仅工具层拦截」。
         </p>
         <div className="toolbar">
           <button type="button" className="btn btn-primary" disabled={busy !== null} onClick={probeOpenshell}>
@@ -208,6 +217,40 @@ export default function SettingsPage() {
         <button type="button" className="btn btn-sm" disabled={busy !== null} onClick={applyOpenshell}>
           下发网络段并读回
         </button>
+      </div>
+      <div className="card">
+        <h2>操作审计</h2>
+        <p className="page-desc">
+          来自 <span className="mono">audit.jsonl</span> 的最近记录。不含密钥、不含参数原文。
+        </p>
+        {audit.length === 0 ? (
+          <p className="page-desc">暂无审计事件。</p>
+        ) : (
+          <div className="table-wrap">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>时间</th>
+                  <th>事件</th>
+                  <th>操作者</th>
+                  <th>对象</th>
+                  <th>备注</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...audit].reverse().slice(0, 40).map((ev, i) => (
+                  <tr key={`${ev.at}-${ev.event}-${i}`}>
+                    <td className="mono">{ev.at}</td>
+                    <td>{ev.event}</td>
+                    <td>{ev.actor_id || '—'}</td>
+                    <td className="mono">{ev.target || '—'}</td>
+                    <td>{ev.note || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
       <div className="card">
         <h2>安全边界</h2>

@@ -9,7 +9,7 @@ higher tier.
 | L0 | Inventory + admit. Cannot block a running tool call. | Any OS |
 | L1 | Pre-install gate. Quarantined skills are refused at install. | A platform install hook (OpenClaw `installPolicy`) or the Hermes wrapper `hermes-skills-install` |
 | L2 | Every tool call goes through `/v1/decide`; deny is a signed receipt. | OpenClaw `before_tool_call`, Hermes `pre_tool_call`, or CodeBuddy `PreToolUse` |
-| L3 | OpenShell network `policy set` + read-back. Filesystem and process stay static. | A running OpenShell gateway that `gateway info` recognizes (Linux native, or Docker/WSL2). AgentShield discovers the CLI on PATH; it does not start the gateway. |
+| L3 | OpenShell network `policy set` + read-back. Filesystem and process stay static. | A running OpenShell gateway that `status` verifies as OpenShell (Linux native, or Docker/WSL2). Optional: L0–L2 still work. AgentShield discovers the CLI on PATH or `SIQ_AS_OPENSHELL_ENV_SH`; it does not start the gateway. Without L3 the console must say tool-layer only. |
 
 ## Platform matrix (honest)
 

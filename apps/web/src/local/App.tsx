@@ -5,10 +5,13 @@ import { boot, localApi } from './api';
 import { LocalSessionContext, readActorId, writeActorId, type LocalSession } from './session';
 import type { Status } from './types';
 import OverviewPage from './pages/OverviewPage';
-import InventoryPage from './pages/InventoryPage';
-import AdmissionsPage from './pages/AdmissionsPage';
+import AgentsPage from './pages/AgentsPage';
+import AgentDetailPage from './pages/AgentDetailPage';
+import PermissionsPage from './pages/PermissionsPage';
+import FindingsPage from './pages/FindingsPage';
 import GrantsPage from './pages/GrantsPage';
 import ReceiptsPage from './pages/ReceiptsPage';
+import BindingsPage from './pages/BindingsPage';
 import SettingsPage from './pages/SettingsPage';
 
 export default function App() {
@@ -67,11 +70,16 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/overview" replace />} />
           <Route path="/overview" element={<OverviewPage />} />
-          <Route path="/inventory" element={<InventoryPage />} />
-          <Route path="/admissions" element={<AdmissionsPage />} />
+          <Route path="/agents" element={<AgentsPage />} />
+          <Route path="/agents/:id" element={<AgentDetailPage />} />
+          <Route path="/permissions" element={<PermissionsPage />} />
+          <Route path="/findings" element={<FindingsPage />} />
           <Route path="/grants" element={<GrantsPage />} />
           <Route path="/receipts" element={<ReceiptsPage />} />
+          <Route path="/bindings" element={<BindingsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/inventory" element={<Navigate to="/agents" replace />} />
+          <Route path="/admissions" element={<Navigate to="/agents" replace />} />
           <Route path="*" element={<Navigate to="/overview" replace />} />
         </Route>
       </Routes>

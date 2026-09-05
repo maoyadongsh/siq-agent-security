@@ -125,6 +125,19 @@ func TestEgressHostMustBeGranted(t *testing.T) {
 	if d.Action != ActionDeny {
 		t.Fatalf("shell egress must be checked too: %+v", d)
 	}
+	d, _ = fx.eng.Decide(req("hermes", "exec", map[string]any{"command": "curl -sS"}))
+	if d.Action != ActionDeny || !strings.Contains(d.Reason, "egress exec requires granted host") {
+		t.Fatalf("curl without host must deny in block: %+v", d)
+	}
+	d, _ = fx.eng.Decide(req("hermes", "exec", map[string]any{"command": "curl https://api.github.com/repos"}))
+	if d.Action != ActionAllow {
+		t.Fatalf("curl to granted host must pass: %+v", d)
+	}
+	warnFx := newFixture(t, "warn", g, false)
+	d, _ = warnFx.eng.Decide(req("hermes", "exec", map[string]any{"command": "curl -sS"}))
+	if d.Action != ActionAllow || d.Receipt.AdvisoryAction == nil || *d.Receipt.AdvisoryAction != ActionDeny {
+		t.Fatalf("warn must not extra-deny curl without host: %+v", d)
+	}
 }
 
 func TestCredentialPathAndOutsideWriteDenied(t *testing.T) {

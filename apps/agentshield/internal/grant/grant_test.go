@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -356,6 +357,33 @@ func TestContractSamplesAreCurrent(t *testing.T) {
 		if !bytes.Equal(bytes.TrimSpace(want), got) {
 			t.Fatalf("%s drifted; regenerate with AGENTSHIELD_UPDATE_SAMPLES=1", name)
 		}
+	}
+}
+
+func TestPatchDesiredPendingOnlyAndStatic(t *testing.T) {
+	k := key(t)
+	g := build(t, "hermes", sampleAdmission()).Grant
+	patched, dp, err := PatchDesired(g, DesiredPatch{
+		HasTools: true, Tools: []string{"web_fetch"},
+		HasNetwork: true, Network: []NetworkPatch{{Endpoint: "api.example.com:443", Effect: "allow"}},
+		HasFilesystem: true, Filesystem: &FilesystemPatch{ReadWrite: []string{"/tmp"}},
+	}, k)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if patched.Status != "pending_approval" {
+		t.Fatalf("status %s", patched.Status)
+	}
+	static := strings.Join(patched.DesiredPolicyRef.StaticDomainsUnavailable, ",")
+	if !strings.Contains(static, "filesystem") {
+		t.Fatalf("fs patch must mark static: %s", static)
+	}
+	if dp["network"] == nil {
+		t.Fatal("desired policy missing network")
+	}
+	g, _ = Approve(patched, human(), k)
+	if _, _, err := PatchDesired(g, DesiredPatch{HasTools: true, Tools: []string{"read_file"}}, k); err == nil {
+		t.Fatal("approved grant must not accept patch-desired")
 	}
 }
 

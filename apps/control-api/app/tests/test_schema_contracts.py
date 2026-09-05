@@ -639,7 +639,7 @@ def test_go_inventory_sample_conforms():
     for c in rep["candidates"]:
         errors = _validate("candidate", c)
         assert not errors, (c["candidate_id"], [e.message for e in errors])
-        assert c["source_type"] in {"skill_dir", "platform_config"}
+        assert c["source_type"] in {"skill_dir", "platform_config", "hermes_profile", "openclaw_agent"}
     ids = set()
     for ev in rep["evidence"]:
         errors = _validate("evidence", ev)
@@ -648,7 +648,8 @@ def test_go_inventory_sample_conforms():
     for f in rep["facts"]:
         errors = _validate("permission-fact", f)
         assert not errors, [e.message for e in errors]
-        assert f["state"] == "observed", "inventory 只能产出 observed，不得声称 effective"
+        assert f["state"] in {"observed", "declared"}, "inventory 不得声称 effective"
+        assert f["state"] != "effective"
     referenced = {i for c in rep["candidates"] for i in c["evidence_ids"]}
     referenced |= {i for f in rep["facts"] for i in f["evidence_ids"]}
     assert referenced == ids, "evidence 与引用必须一一对应（无孤儿、无悬空）"

@@ -4,7 +4,7 @@
     "name": "agentshield",
     "version": "0.1.0",
     "description": "Admits unknown skills and signs each tool-call receipt.",
-    "content_hash": "269fd07c464ea2a4d9bd91b717624b0f181f1837262596bd272b4f8674abda0e",
+    "content_hash": "32a8bcef21d688020533ebf03cd2b0839831479096640c10416dcb39213ea796",
     "sub_skills": [
       "agent-asset-inventory",
       "skill-admission",
@@ -19,30 +19,30 @@
       {
         "os": "linux",
         "arch": "amd64",
-        "sha256": "ea1a3420d8f9b8366800816f7cbad3b62bcac9fe6cb1717e1ec8c45c67359e58",
+        "sha256": "efad9851261a8520d3e250378fa2535b21d1b4679f863f372df9adaa483c3249",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-linux-amd64",
         "bytes": 7303320
       },
       {
         "os": "linux",
         "arch": "arm64",
-        "sha256": "00e63cbee369fd71d4799600cc26927e8e161c4c0f5b559f0bfa5632b1a0db4b",
+        "sha256": "591d2f0f2929975b229248a3ac191c9d71c8308167c55003c8582684f0b4c14b",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-linux-arm64",
         "bytes": 7012504
       },
       {
         "os": "darwin",
         "arch": "arm64",
-        "sha256": "fd711d04e9cf0fd5042082e759c1622cc155594e66de3972a704a528a4aa0d8d",
+        "sha256": "e78d9e6ef8b784b1655dae7efbd2b46c07463969e766dc61ace45972268cc874",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-darwin-arm64",
         "bytes": 7195266
       },
       {
         "os": "windows",
         "arch": "amd64",
-        "sha256": "afade545b43ddf835f6eed58d4f36d8cea79fca50bc89c11244058f14be3b17b",
+        "sha256": "06de0878241ce228d88a8b33d1db918157d77ddeada4a23545ceb304ea521d9a",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-windows-amd64.exe",
-        "bytes": 7517696
+        "bytes": 7518208
       }
     ]
   },
@@ -62,7 +62,7 @@
         "L3"
       ],
       "status": "experimental",
-      "note": "adapter + OpenShell CLI landed; Spark E2E pending"
+      "note": "L0–L2 evidenced on Spark 2026-09-05; L3 optional (verified OpenShell gateway), not claimed"
     },
     {
       "platform": "hermes",
@@ -236,5 +236,5 @@
     }
   ],
   "signed_by": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
-  "signature": "1f10b19e4f6fc547f2b5c2a07a5f8ebe0e3f6edd40ddb1d7d551662d0ebd81151d1c009addd6287e4e0b0f1b056b650b191d64d15811d43562158548ee017c0b"
+  "signature": "18f6621a8ece7d00c2daebba99e1a1cc966ad8edcf871036c924e052475851e1e17a2da8778b748a2b40c6d3f3c973db1b1e8a5b29d628045e2c8784f8901501"
 }

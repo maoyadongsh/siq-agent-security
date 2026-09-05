@@ -2,7 +2,7 @@
 
 本地单文件门禁官：盘点 Agent 资产、准入未知 Skill、签发最小权限、给每次工具调用签回执。
 
-**模型不判断 Skill 是否安全。** 裁决只由 `agentshield` 二进制产出。本文件是评委 / 黑客松入口；企业控制面（Control API、PostgreSQL、登录台）见根 [`README.md`](./README.md)。
+**模型不判断 Skill 是否安全。** 裁决只由 `agentshield` 二进制产出。本文件是评委 / 黑客松入口；企业控制面（Control API、PostgreSQL、登录台）见根 [`README.md`](./README.md)。本地控制台将按 [`docs/agentshield-local-ledger-dev-plan-v1.md`](./docs/agentshield-local-ledger-dev-plan-v1.md) 对齐企业台账观感；评委复现仍只需 `serve`，不必启动控制面。
 
 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)  
 分支：`cursor/agentshield-w0-contracts-8eff`（尚未合入 `main`；clone 默认分支看不到本产品）
@@ -39,11 +39,11 @@ bootstrap 会用内置公钥校验 `skill-manifest.json` 签名。本地 `go bui
 
 ## 档位（诚实）
 
-机器可读事实源：[`skills/agentshield/skill-manifest.json`](./skills/agentshield/skill-manifest.json) 的 `support_matrix`。当前**没有任何一行 `supported`**。2026-09-05 已在 DGX Spark（linux/arm64）归档 Hermes L0–L2 路径证据（[`docs/evidence/agentshield/hermes-linux-2026-09-05/`](./docs/evidence/agentshield/hermes-linux-2026-09-05/)）：恶意 fixture `quarantine` / 退出码 3、官方风格 `admit_with_conditions`、Hermes 适配器越权 `web_fetch` deny、`verify` 通过。grant 已由人类 `--approve-as maoyd` 批准并 deploy，授后 `web_fetch` 为 deny。OpenShell 由 PATH 发现 CLI，但本机默认网关未验明为正身（常见：端口被 OpenClaw 占用），L3 不宣称；矩阵在有 probe+网络段读回证据并重签前不改 `supported`。
+机器可读事实源：[`skills/agentshield/skill-manifest.json`](./skills/agentshield/skill-manifest.json) 的 `support_matrix`。当前**没有任何一行 `supported`**。2026-09-05 已在 DGX Spark（linux/arm64）归档 Hermes L0–L2 路径证据（[`docs/evidence/agentshield/hermes-linux-2026-09-05/`](./docs/evidence/agentshield/hermes-linux-2026-09-05/)）：恶意 fixture `quarantine` / 退出码 3、官方风格 `admit_with_conditions`、Hermes 适配器越权 `web_fetch` deny、`verify` 通过。grant 已由人类 `--approve-as maoyd` 批准并 deploy，授后 `web_fetch` 为 deny。Hermes on Linux L0–L2 已归档；L3 需验明的 OpenShell 网关，可选、不宣称。OpenShell 由 PATH 或 `SIQ_AS_OPENSHELL_ENV_SH` 发现 CLI，但默认不得把未验明的网关（常见：端口被 OpenClaw 占用）当成 L3；矩阵在有 probe+网络段读回证据并重签前不改 `supported`。
 
 | 平台 | Linux | macOS | Windows | 说明 |
 | --- | --- | --- | --- | --- |
-| Hermes | L0–L3 experimental | L0–L2 experimental | L0–L2 experimental | 适配器已落地；L3 仅 Linux 宣称 |
+| Hermes | L0–L3 experimental | L0–L2 experimental | L0–L2 experimental | Linux L0–L2 有 Spark 证据；L3 可选未宣称 |
 | OpenClaw | L0–L3 experimental | L0–L2 experimental | L0–L2 experimental | policy-exec + 插件已落地 |
 | CodeBuddy | L0–L2 experimental | L0–L2 experimental | L0–L2 experimental | hook 已落地；无 L3 |
 | Trae | L0 audit_only | L0 audit_only | L0 audit_only | 无工具钩子，不能阻断 |
@@ -57,7 +57,7 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 - Trae 只能审计，控制台必须显示无法阻断
 - OpenShell `verify` 只到 `readback_verified`，不到 `enforcement_verified`
 - AgentShield 会发现 PATH 上的 `openshell`，但**不会**执行 `openshell gateway start`，也不会猜测端口或改别人的网关
-- 连到非 OpenShell 进程（OpenClaw / Hermes）时 probe fail-closed；运行 `agentshield openshell doctor` 看下一步
+- 接入已有 OpenShell（例如 research-engine 的 `siq-openshell-dev`）时设 `SIQ_AS_OPENSHELL_ENV_SH` 指向其 `scripts/openshell/env.sh`；不要改对方仓库。AgentShield 不 `gateway start`
 - Windows L3 需要 WSL2 / Docker；本快照不宣称
 - GitHub Release 未打 tag；用源码构建，不要指望 url 能下载
 - 批准 grant 必须人工 `--approve-as` / 控制台点击；SKILL.md 禁止模型批准
@@ -86,6 +86,17 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 ```
 
 脱敏回执见 [`docs/evidence/agentshield/`](./docs/evidence/agentshield/README.md)。没有完整证据（含人类批准 grant）的矩阵行保持 `experimental`。
+
+## 台账演示（加分主界面，非前置依赖）
+
+三步对抗之后，打开 `http://127.0.0.1:47611`（无需登录、不必起 PostgreSQL / `:8600`）：
+
+1. **智能体资产** `/agents`：本机平台、Hermes profile / OpenClaw agent、Skill；详情可确认/驳回，准入后起草签发，批准前可改五域。
+2. **权限视图** `/permissions`：五态分色。无 OpenShell 时「有效」列应为空；`deployed` grant 仍是声明态。filesystem / process 永不标有效。有 L3 时可跑漂移检测。
+3. **风险中心** `/findings`：准入与漂移 finding；接受须原因和到期。
+4. **回执** `/receipts`：越权调用的 deny 高亮，并可验签。
+
+顶栏保持「本地模式 · 单用户」。旧书签 `/inventory`、`/admissions` 会转到 `/agents`。
 
 ## 十日谈（十条）
 

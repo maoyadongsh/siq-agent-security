@@ -31,6 +31,7 @@ type Client struct {
 
 	mu              sync.Mutex
 	detectedVersion string
+	probedGateway   string
 }
 
 // New builds a Client. A nil Runner uses a filtered subprocess.
@@ -151,6 +152,11 @@ func (c *Client) Probe() (Capabilities, error) {
 	}
 	if looksLikeForeignGateway(statusOut) {
 		return Capabilities{}, fail(errNotOpenShell)
+	}
+	if name := parseGatewayName(statusOut); name != "" {
+		c.mu.Lock()
+		c.probedGateway = name
+		c.mu.Unlock()
 	}
 	version := c.detectVersion(infoOut)
 	schema := "unknown-policy-v1"

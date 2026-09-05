@@ -1,28 +1,41 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import { Icon, type IconName } from '@/components/icons';
+import { localApi } from '../api';
 import { useLocalSession } from '../session';
-import { platformLabel, shortHash } from '../format';
+import { platformTierText, hasOpenShellL3, shortHash } from '../format';
+import type { LedgerOverview } from '../types';
 
 const TILES: { to: string; title: string; desc: string; icon: IconName }[] = [
-  { to: '/inventory', title: '盘点', desc: '发现本机平台与 Skill 目录', icon: 'scan' },
-  { to: '/admissions', title: '准入', desc: '审查未知 Skill 并看 Skill Card', icon: 'findings' },
-  { to: '/grants', title: '签发', desc: '人工批准最小权限，重叠需确认', icon: 'permissions' },
+  { to: '/agents', title: '智能体资产', desc: '本机平台与 Skill，点进详情看证据', icon: 'agents' },
+  { to: '/permissions', title: '权限视图', desc: '五态对照：声明 ≠ 观测 ≠ 有效', icon: 'permissions' },
+  { to: '/findings', title: '风险中心', desc: '准入与漂移 finding，可接受覆盖', icon: 'findings' },
+  { to: '/grants', title: '签发', desc: '人工批准最小权限，重叠需确认', icon: 'policies' },
   { to: '/receipts', title: '回执', desc: '工具调用链、deny 高亮、验签', icon: 'audit' },
-  { to: '/settings', title: '设置', desc: 'enforcement_mode 与适配器安装', icon: 'settings' },
+  { to: '/bindings', title: '运行时绑定', desc: '适配器钩子与 OpenShell 探针', icon: 'bindings' },
 ];
 
 export default function OverviewPage() {
   const { status, error, reload } = useLocalSession();
+  const [overview, setOverview] = useState<LedgerOverview | null>(null);
   const connected = status !== null;
+
+  useEffect(() => {
+    if (!connected) return;
+    localApi
+      .assets()
+      .then((data) => setOverview(data.overview))
+      .catch(() => setOverview(null));
+  }, [connected, status?.chain.head_seq, status?.enforcement_mode]);
 
   return (
     <section>
       <PageHeader
         kicker="AGENTSHIELD"
         icon="overview"
-        title="总览"
-        description="本地单用户门禁官：盘点资产、准入未知 Skill、签发最小权限、给每次工具调用开签名回执。"
+        title="智能体总览"
+        description="本地单用户门禁官：看得见本机 Skill，对照权限五态，查得到被拒的调用。不登录、不依赖企业控制面。"
         connection={connected ? 'connected' : error ? 'disconnected' : 'loading'}
         connectionError={error}
         actions={
@@ -37,6 +50,45 @@ export default function OverviewPage() {
           <p className="notice-detail">{error}。确认已运行 `agentshield serve`，且本页来自 127.0.0.1。</p>
         </div>
       ) : null}
+
+      <div className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-head">
+            <span className="stat-icon tone-primary">
+              <Icon name="agents" size={16} />
+            </span>
+            <span className="stat-label">本机资产</span>
+          </div>
+          <div className="stat-value">{overview ? String(overview.assets) : '—'}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-head">
+            <span className="stat-icon tone-warn">
+              <Icon name="shield-alert" size={16} />
+            </span>
+            <span className="stat-label">未准入 Skill</span>
+          </div>
+          <div className="stat-value">{overview ? String(overview.unadmitted_skills) : '—'}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-head">
+            <span className="stat-icon tone-warn">
+              <Icon name="findings" size={16} />
+            </span>
+            <span className="stat-label">开放 finding</span>
+          </div>
+          <div className="stat-value">{overview ? String(overview.open_findings) : '—'}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-head">
+            <span className="stat-icon">
+              <Icon name="activity" size={16} />
+            </span>
+            <span className="stat-label">回执 deny</span>
+          </div>
+          <div className="stat-value">{overview ? String(overview.recent_denies) : '—'}</div>
+        </div>
+      </div>
 
       <div className="stats-grid">
         <div className="stat-card">
@@ -72,26 +124,26 @@ export default function OverviewPage() {
         </div>
         <div className="stat-card">
           <div className="stat-head">
-            <span className="stat-icon tone-warn">
-              <Icon name="bindings" size={16} />
+            <span className="stat-icon tone-ok">
+              <Icon name="policies" size={16} />
             </span>
-            <span className="stat-label">已装适配器</span>
+            <span className="stat-label">已部署签发</span>
           </div>
-          <div className="stat-value">
-            {status ? String(status.platforms.filter((p) => p.adapter === 'installed').length) : '—'}
-          </div>
+          <div className="stat-value">{overview ? String(overview.grants_deployed) : '—'}</div>
         </div>
       </div>
 
       <div className="card">
         <h2>平台档位</h2>
         <p className="page-desc">
-          Linux 可达 L3（OpenShell probe 成功后）。Trae 没有工具钩子，只能审计。filesystem / process 永远不会标 effective。
+          管控默认是 L0–L2（准入、授权、工具调用回执）。OpenShell 是可选 L3：probe
+          成功后才显示。无 L3 时顶栏写「仅工具层拦截」。Trae 没有工具钩子，只能审计。filesystem /
+          process 永远不会标有效。
         </p>
         <ul className="page-desc">
           {(status?.platforms ?? []).map((p) => (
             <li key={p.name}>
-              <strong>{platformLabel(p.name)}</strong> · {p.tier} · {p.adapter}
+              <strong>{platformTierText(p, hasOpenShellL3(status?.platforms))}</strong> · {p.adapter}
               {p.note ? ` — ${p.note}` : ''}
             </li>
           ))}

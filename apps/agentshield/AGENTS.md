@@ -1,6 +1,6 @@
 # apps/agentshield 工作约定
 
-AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本文只写本模块的就近规则。实现规格是 `docs/agentshield-dev-spec-v1.md`——**先读它，再改代码；规格与代码冲突时先改规格。**
+AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本文只写本模块的就近规则。实现规格是 `docs/agentshield-dev-spec-v1.md`——**先读它，再改代码；规格与代码冲突时先改规格。** W7 本地台账计划见 `docs/agentshield-local-ledger-dev-plan-v1.md`（新 API / 状态文件须先回写规格）。
 
 ## 模块与职责
 
@@ -10,11 +10,12 @@ AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本
 | `internal/rulepack` | 内嵌规则包、外部包 Ed25519 验签、防降级、fail-closed 回退 | 完成 |
 | `internal/threat` | 静态分析器（Python `threat_analysis.py` 移植，AST 层缺席） | 完成 |
 | `internal/signing` | 本地 Ed25519 身份、文档/字节签名与验签 | 完成 |
-| `internal/inventory` | 只读盘点平台配置与 Skill 目录（复用 `connectors/*`） | 规格 §3.5 |
+| `internal/inventory` | 只读盘点：平台配置、Skill、Hermes profiles、OpenClaw agents.list（不 import `connectors/*`） | 规格 §3.5 |
 | `internal/admission` | frontmatter、哈希、限额、决策表、Skill Card | 完成（决策表变更需同步规格 §3.6.4 与 `dispositions.go`）|
-| `internal/grant` | declared → allowlist / DesiredPolicy；状态机；读回 effective | 完成（`CompilePolicy` 与 Python `artifact_hash` 对等）|
-| `internal/receipt` | 决策引擎、污点/trifecta、哈希链、Verify | 完成 |
-| `internal/state` | 状态目录、token、admission/grant/policy 文件态存储 | 完成 |
+| `internal/grant` | declared → allowlist / DesiredPolicy；状态机；`PatchDesired`；读回 effective | 完成（`CompilePolicy` 与 Python `artifact_hash` 对等）|
+| `internal/receipt` | 决策引擎、污点/trifecta、哈希链、Verify；block 下无 host 的出网 exec deny | 完成 |
+| `internal/state` | 状态目录、token、admission/grant/policy/assets/findings/audit 文件态存储 | 完成 |
+| `internal/ledger` | 台账投影 + 资产生命周期 refresh（G7）；confirm/dismiss/drift/accept | 完成 |
 | `internal/server` | `/v1/*` HTTP（loopback + bearer）+ `/ui-config.json` + embed UI | 完成 |
 | `internal/adapterinstall` | `adapter install/uninstall/status`：写主机钩子，先备份可还原 | 完成 |
 | `internal/openshell` | probe / 网络 `policy set` / 读回；不调 `create_generation` | 完成 |

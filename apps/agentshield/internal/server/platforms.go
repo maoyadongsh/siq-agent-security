@@ -44,6 +44,14 @@ func (s *Server) platforms() []PlatformInfo {
 		}
 		out = append(out, info)
 	}
-	out = append(out, s.openshellPlatform(false))
+	osRow := s.openshellPlatform(false)
+	if osRow.Tier != "L3" {
+		for i := range out {
+			if out[i].Tier == "L2" {
+				out[i].Note = "运行时回执 · 仅工具层拦截"
+			}
+		}
+	}
+	out = append(out, osRow)
 	return out
 }

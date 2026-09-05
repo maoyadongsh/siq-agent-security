@@ -14,7 +14,7 @@
 2. 设计文档 v0.2 与 ADR（`docs/adr/`）；
 3. 实现与测试。
 
-AgentShield（本地 Agent 形态，ADR-011）在此之上再加一层：ADR-011 → `docs/agentshield-design-v1.md`（方案）→ `docs/agentshield-dev-spec-v1.md`（规格，实现以此为准）→ 合同。规格与实现不一致时先改规格再改代码；就近约定见 `apps/agentshield/AGENTS.md`。
+AgentShield（本地 Agent 形态，ADR-011）在此之上再加一层：ADR-011 → `docs/agentshield-design-v1.md`（方案）→ `docs/agentshield-dev-spec-v1.md`（规格，实现以此为准）→ 合同。W7 本地台账增量见 `docs/agentshield-local-ledger-dev-plan-v1.md`（先回写规格再实现）。规格与实现不一致时先改规格再改代码；就近约定见 `apps/agentshield/AGENTS.md`。
 
 ## 安全不变量（任何改动不得破坏）
 
