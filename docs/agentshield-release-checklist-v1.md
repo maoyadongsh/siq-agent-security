@@ -1,7 +1,7 @@
 # siq-agent-security GitHub Release 清单 v1
 
 - 日期：2026-09-06
-- 状态：**tag `siq-agent-security-v0.2.0` 已切**（2026-09-06，commit `b60be6a`）。破坏性更名：二进制与 Skill 从 AgentShield 改为与仓库同名。矩阵仍无 `supported` 行。旧 tag `agentshield-v0.1.0` 保留对照。
+- 状态：**tag `siq-agent-security-v0.2.0` 已切**（2026-09-06，commit `b60be6a`）。矩阵仍无 `supported` 行。
 - 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)
 - 分支：`cursor/agentshield-w0-contracts-8eff`（**不要**为发版而合 `main`，除非另行要求）
 - 规格：[`agentshield-dev-spec-v1.md`](./agentshield-dev-spec-v1.md) §5.2
@@ -106,8 +106,6 @@ gh release create siq-agent-security-v0.2.0 \
   /tmp/siq-agent-security-release-bin/siq-agent-security-darwin-arm64 \
   /tmp/siq-agent-security-release-bin/siq-agent-security-windows-amd64.exe <<'EOF'
 siq-agent-security 0.2.0 binaries pinned by skills/siq-agent-security/skill-manifest.json.
-
-Renamed from AgentShield so the product, binary, and Skill match the repository name.
 
 Judge path: AGENTSHIELD.md (source go build). bootstrap does not download these URLs.
 

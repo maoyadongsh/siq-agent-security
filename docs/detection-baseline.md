@@ -77,7 +77,7 @@
 
 ## Go 双实现基线（ADR-011 D2，`apps/agentshield/internal/threat`，2026-09-04）
 
-AgentShield 本地二进制用 Go 重写检测核心，与本文的 Python 引擎**共用同一份规则包 JSON**（`apps/agentshield/internal/rulepack/data/threat_rules.v1.json` 由测试 `TestEmbeddedPackMatchesControlPlaneCopy` 锁定与 `apps/control-api/app/data/threat_rules.v1.json` 逐字节一致）和**同一份语料** `corpus.json`。
+siq-agent-security 本地二进制用 Go 重写检测核心，与本文的 Python 引擎**共用同一份规则包 JSON**（`apps/agentshield/internal/rulepack/data/threat_rules.v1.json` 由测试 `TestEmbeddedPackMatchesControlPlaneCopy` 锁定与 `apps/control-api/app/data/threat_rules.v1.json` 逐字节一致）和**同一份语料** `corpus.json`。
 
 | 项 | Go 实现现状 | 锁定方式 |
 | --- | --- | --- |

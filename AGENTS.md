@@ -14,7 +14,7 @@
 2. 设计文档 v0.2 与 ADR（`docs/adr/`）；
 3. 实现与测试。
 
-siq-agent-security（本地 Agent 形态，ADR-011；旧称 AgentShield）在此之上再加一层：ADR-011 → `docs/agentshield-design-v1.md`（方案）→ `docs/agentshield-dev-spec-v1.md`（规格，实现以此为准）→ 合同。W7 本地台账增量见 `docs/agentshield-local-ledger-dev-plan-v1.md`（先回写规格再实现）。规格与实现不一致时先改规格再改代码；就近约定见 `apps/agentshield/AGENTS.md`。
+siq-agent-security（本地 Agent 形态，ADR-011）在此之上再加一层：ADR-011 → `docs/agentshield-design-v1.md`（方案）→ `docs/agentshield-dev-spec-v1.md`（规格，实现以此为准）→ 合同。W7 本地台账增量见 `docs/agentshield-local-ledger-dev-plan-v1.md`（先回写规格再实现）。规格与实现不一致时先改规格再改代码；就近约定见 `apps/agentshield/AGENTS.md`。
 
 ## 安全不变量（任何改动不得破坏）
 
@@ -55,6 +55,6 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 | Connector | 负向语料（恶意配置/符号链接逃逸/超大文件/.env 拒绝） |
 | Web | `npm run build` + 类型检查 |
 | 规则包 | Python 三组测试（analysis/rulepack/baseline）+ Go `internal/rulepack` `internal/threat` 对等测试 + `detection-baseline.md` 数字同步 |
-| AgentShield Go 模块 | `gofmt -l . && go vet ./... && go test ./...` + 三 OS 交叉编译；输出样例回灌 Python schema 校验 |
+| 本机门禁 Go 模块（`apps/agentshield`） | `gofmt -l . && go vet ./... && go test ./...` + 三 OS 交叉编译；输出样例回灌 Python schema 校验 |
 | 适配器 | 每平台一条「装 → 扫 → 授 → 越权被拒」E2E + fail-closed 负向（服务不可达时 block 模式必须拒绝） |
 | Skill 包 | 用自建二进制 `admit` 自扫描不得 quarantine；四平台安装验证 |

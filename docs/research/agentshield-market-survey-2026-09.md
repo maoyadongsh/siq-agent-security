@@ -1,17 +1,17 @@
-# AgentShield 外部市场调研：同类产品功能与可借鉴方法论
+# siq-agent-security 外部市场调研：同类产品功能与可借鉴方法论
 
 - 日期：2026-09-03
 - 范围：Skill / MCP / Agent 运行时安全（扫描、准入、最小权限、沙箱、回执）
-- 用途：给 `siq-agent-security` 上的 **AgentShield · Skill 门禁官** 定方案，不另起产品线
-- 结论先说：市面上没有和 AgentShield 完全同构的产品。扫描器很多、MCP 网关很多、沙箱很多、企业态势很多——**把「发现 → 声明能力 → 签发最小权限 → 沙箱执行 → 每次工具调用出回执」串成一条本地可运行闭环的，几乎没有。** 这正是黑客松作品该打的点。
+- 用途：给本仓本机门禁定方案，不另起产品线
+- 结论先说：市面上没有和 siq-agent-security 完全同构的产品。扫描器很多、MCP 网关很多、沙箱很多、企业态势很多——**把「发现 → 声明能力 → 签发最小权限 → 沙箱执行 → 每次工具调用出回执」串成一条本地可运行闭环的，几乎没有。** 这正是黑客松作品该打的点。
 
 ---
 
 ## 0. 怎么读这份调研
 
-同类产品按 **六条边界** 卖（PipeLab 2026 买方地图）。买错边界会买到「模型网关」却解决不了「Skill 把 `.env` POST 出去」。AgentShield 只覆盖其中四条，且必须本地、可离线、挂在 OpenShell + Hermes 上：
+同类产品按 **六条边界** 卖（PipeLab 2026 买方地图）。买错边界会买到「模型网关」却解决不了「Skill 把 `.env` POST 出去」。siq-agent-security 只覆盖其中四条，且必须本地、可离线、挂在 OpenShell + Hermes 上：
 
-| 边界 | 市场在卖什么 | AgentShield 现场做不做 |
+| 边界 | 市场在卖什么 | siq-agent-security 现场做不做 |
 | --- | --- | --- |
 | 1. 模型 / API 网关 | LiteLLM、TrueFoundry、SIQ Gateway | **轻做**：模型路由进 grant（本地 Nemotron 放行，云端 StepFun 经脱敏 broker），不重做 Gateway |
 | 2. MCP / 工具网关 | Solo.io agentgateway、Docker MCP Gateway、mcp-gate、MCPKernel | **做工具拦截，不做成通用 MCP 代理**：Hermes `pre_tool_call` / `post_tool_call` |
@@ -20,7 +20,7 @@
 | 5. 运行时隔离 | OpenShell、E2B、Daytona、gVisor、Firecracker | **用 OpenShell，不另起沙箱** |
 | 6. 出网内容防火墙 | Prompt Security、Pipelock、Claude/Codex 域名 allowlist | **做网络策略 + 回执里的 DLP/污点，不做独立 HTTPS MITM** |
 
-PipeLab 的原话值得当成设计约束：**「多数认真的 Agent 部署至少需要三条边界：身份管谁、运行时管在哪、出网管什么。买一个产品不等于买齐六条。」** AgentShield 的叙事应是「四 Skill 覆盖 2/4/5/6 的本地最小闭环」，而不是「取代 SkillSpector / Prisma」。
+PipeLab 的原话值得当成设计约束：**「多数认真的 Agent 部署至少需要三条边界：身份管谁、运行时管在哪、出网管什么。买一个产品不等于买齐六条。」** siq-agent-security 的叙事应是「四 Skill 覆盖 2/4/5/6 的本地最小闭环」，而不是「取代 SkillSpector / Prisma」。
 
 ---
 
@@ -63,7 +63,7 @@ PipeLab 的原话值得当成设计约束：**「多数认真的 Agent 部署至
 | **gVisor / Modal** | 用户态内核，适合多租户容器 | OpenShell 已覆盖 syscall/Landlock 故事 |
 | **Firecracker / Kata** | 硬件虚拟化，最强隔离 | Spark 上不值得为黑客松再叠一层 VMM |
 
-行业共识（Northflank / Spheron 2026）：不信任代码用 Firecracker；自有代码用 gVisor；信任代码才用普通容器。AgentShield **不重做沙箱**，只证明「谁有资格进已有沙箱、带什么策略进去」。
+行业共识（Northflank / Spheron 2026）：不信任代码用 Firecracker；自有代码用 gVisor；信任代码才用普通容器。siq-agent-security **不重做沙箱**，只证明「谁有资格进已有沙箱、带什么策略进去」。
 
 ### 1.4 企业态势 / 扫描平台（盘点层）
 
@@ -81,7 +81,7 @@ PipeLab 的原话值得当成设计约束：**「多数认真的 Agent 部署至
 
 **OWASP Top 10 for Agentic Applications 2026（ASI01–ASI10）**
 
-| ID | 风险 | AgentShield 对应控制 |
+| ID | 风险 | siq-agent-security 对应控制 |
 | --- | --- | --- |
 | ASI01 Goal Hijack | 目标被文档/工具描述改写 | admission 硬隔离欺骗用户 / 提示注入 |
 | ASI02 Tool Misuse | 工具组合、过度权限 | grant 最小权限 + receipt 参数校验 |
@@ -193,7 +193,7 @@ SkillSpector / SkillEvaluator 的 triage 表：
 
 ---
 
-## 3. 一张总表：市场功能 → AgentShield 落点
+## 3. 一张总表：市场功能 → siq-agent-security 落点
 
 | 市场功能 | 代表产品 | 落哪个 Skill | 现场形态 | 优先级 |
 | --- | --- | --- | --- | --- |
@@ -224,7 +224,7 @@ SkillSpector / SkillEvaluator 的 triage 表：
 > SkillSpector 告诉你「这个 Skill 像不像恶意的」。  
 > Claude/Codex 告诉你「这个 Agent 能不能调这把工具」。  
 > OpenShell 告诉你「进了沙箱之后手能伸多远」。  
-> **AgentShield 把三句话接成一条本地流水线，并且用 permission-fact 五态保证：扫描结论和模型建议永远不能自己变成生效权限。**
+> **siq-agent-security 把三句话接成一条本地流水线，并且用 permission-fact 五态保证：扫描结论和模型建议永远不能自己变成生效权限。**
 
 市场空白具体有三处：
 

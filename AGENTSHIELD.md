@@ -4,8 +4,6 @@
 
 **模型不判断 Skill 是否安全。** 裁决只由 `siq-agent-security` 二进制产出。产品说明见根 [`README.md`](./README.md)；本文件是本机操作与夹具步骤。企业控制面见 [`docs/control-plane.md`](./docs/control-plane.md)。本地模式只需 `serve`，不必启动 PostgreSQL / `:8600`。
 
-本文件名沿用历史链接；对外产品名已与仓库同名（旧称 AgentShield）。
-
 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)  
 分支：`cursor/agentshield-w0-contracts-8eff`（尚未合入 `main`；clone 默认分支看不到本产品）
 

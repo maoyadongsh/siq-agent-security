@@ -1,4 +1,4 @@
-# AgentShield · Skill 门禁官 — 设计方案 v1
+# siq-agent-security · Skill 门禁官 — 设计方案 v1
 
 - 日期：2026-09-04
 - 依据：ADR-011；`docs/research/agentshield-market-survey-2026-09.md`；ADR-003/004/005
@@ -32,10 +32,10 @@
 ┌──────────────────────── 用户主机（任意 OS）────────────────────────┐
 │                                                                    │
 │  Agent 平台（OpenClaw / Hermes / WorkBuddy / Trae）                │
-│   ├─ skills/agentshield/SKILL.md   ← 入口：校验二进制、注册适配器   │
+│   ├─ skills/siq-agent-security/SKILL.md   ← 入口：校验二进制、注册适配器   │
 │   └─ 平台钩子 ──► 适配器（薄）──► http://127.0.0.1:<port>/v1/decide │
 │                                                                    │
-│  agentshield（Go 单文件，内嵌 Web）                                 │
+│  siq-agent-security（Go 单文件，内嵌 Web）                                 │
 │   ├─ inventory  盘点（复用 connectors/*）                            │
 │   ├─ admission  准入（规则包 + frontmatter + 哈希 + Skill Card）      │
 │   ├─ grant      五态权限事实 → Hermes/OpenClaw allowlist + DesiredPolicy │
@@ -133,11 +133,11 @@ packages/contracts/                 新增 admission / grant / receipt / manifes
 
 ## 7. 演示脚本（3 分钟）
 
-1. 财务分析 Agent（仓内合成 Hermes/OpenClaw profile）装了一个来源不明的「报表美化」Skill；无 AgentShield 时它读取 `.env` 并 POST 到外网——红队成功。
-2. 装 AgentShield Skill：模型校验二进制、注册适配器，控制台亮起「本地模式 · L3」。
+1. 财务分析 Agent（仓内合成 Hermes/OpenClaw profile）装了一个来源不明的「报表美化」Skill；无 siq-agent-security 时它读取 `.env` 并 POST 到外网——红队成功。
+2. 装 siq-agent-security Skill：模型校验二进制、注册适配器，控制台亮起「本地模式 · L3」。
 3. `admit` 该 Skill：隔离，红卡列出隐藏指令与凭据外传证据；再 `admit` 一个 NVIDIA 官方 Skill：admit_with_conditions，列出 `allowed-tools` 与出网域名。
 4. `grant`：人工签核，生成 allowlist + 网络策略，`policy set` 读回 revision → `effective`。
-5. 沙箱内运行；Skill 试图越权访问兄弟目录/未授权域 → `deny`，红色签名回执弹出，`agentshield verify` 验签通过。
+5. 沙箱内运行；Skill 试图越权访问兄弟目录/未授权域 → `deny`，红色签名回执弹出，`siq-agent-security verify` 验签通过。
 6. 切到 macOS：同一二进制跑 inventory + admit，L3 显示「需 Docker」。
 
 ## 8. 工作拆分

@@ -1,6 +1,6 @@
 # openclaw-agentshield（OpenClaw 适配器：L1 安装门禁 + L2 运行时）
 
-两半：**安装门禁**由 OpenClaw 的 `security.installPolicy` 调用 `agentshield policy-exec`（Go，在本仓 `apps/agentshield`）；**运行时**由本目录的插件把 `before_tool_call` / `after_tool_call` 接到决策 API。两半都不含规则、判定或密钥。
+两半：**安装门禁**由 OpenClaw 的 `security.installPolicy` 调用 `siq-agent-security policy-exec`（Go，在本仓 `apps/agentshield`）；**运行时**由本目录的插件把 `before_tool_call` / `after_tool_call` 接到决策 API。两半都不含规则、判定或密钥。
 
 ## L1 安装门禁
 
@@ -14,34 +14,34 @@
       targets: ["skill"],
       exec: {
         source: "exec",
-        command: "/usr/local/bin/agentshield",   // 绝对路径
+        command: "/usr/local/bin/siq-agent-security",   // 绝对路径
         args: ["policy-exec"],
         timeoutMs: 10000,
         trustedDirs: ["/usr/local/bin"],
-        passEnv: ["AGENTSHIELD_STATE_DIR", "HOME", "PATH"]
+        passEnv: ["SIQ_AGENT_SECURITY_STATE_DIR", "HOME", "PATH"]
       }
     }
   }
 }
 ```
 
-`policy-exec` 读 stdin 的安装请求，对 `stagedPath` 跑 `agentshield admit`，输出：
+`policy-exec` 读 stdin 的安装请求，对 `stagedPath` 跑 `siq-agent-security admit`，输出：
 
 | admission verdict | decision | 说明 |
 | --- | --- | --- |
 | `quarantine` | `block` | reason 列出隔离类别 |
-| `admit_with_conditions` | `warn` | 提示安装后 `agentshield grant <admission_id>` |
+| `admit_with_conditions` | `warn` | 提示安装后 `siq-agent-security grant <admission_id>` |
 | `admit` | `allow` | |
 | 请求畸形 / 无路径 / 分析失败 | `block` | fail-closed（OpenClaw 在 exec 失败时同样 fail-closed）|
 | `targetType != skill` | `warn` | 插件安装不在本策略范围 |
 
-准入结论与 Skill Card 同时写入 AgentShield 状态目录，控制台可见。
+准入结论与 Skill Card 同时写入本机状态目录，控制台可见。
 
 ## L2 运行时
 
 ```bash
-agentshield adapter install openclaw
-# writes ~/.openclaw/plugins/agentshield/ and merges security.installPolicy into openclaw.json (backup first)
+siq-agent-security adapter install openclaw
+# writes ~/.openclaw/plugins/siq-agent-security/ and merges security.installPolicy into openclaw.json (backup first)
 ```
 
 | 决策 API `action` | 插件返回 |
@@ -62,7 +62,7 @@ agentshield adapter install openclaw
 
 ## 卸载
 
-`agentshield adapter uninstall openclaw` 从 `<state>/backups/adapters/` 还原 `openclaw.json` 并删除本插件目录。
+`siq-agent-security adapter uninstall openclaw` 从 `<state>/backups/adapters/` 还原 `openclaw.json` 并删除本插件目录。
 
 ## 验证状态
 

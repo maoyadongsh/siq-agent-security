@@ -1,4 +1,4 @@
-# ADR-011：AgentShield 可移植 Skill 形态（Skill + 本地二进制 + 平台适配器）
+# ADR-011：siq-agent-security 可移植 Skill 形态（Skill + 本地二进制 + 平台适配器）
 
 - 状态：**已采纳（暂行）**
 - 日期：2026-09-04
@@ -22,8 +22,8 @@
 
 | 件 | 职责 | 位置 |
 | --- | --- | --- |
-| `SKILL.md`（一份，按 agentskills.io 规范） | 引导模型：校验并启动本地二进制、注册当前平台适配器、把裁决结果呈现给用户 | `skills/agentshield/` |
-| `agentshield` 本地二进制（Go，单文件，内嵌 Web 控制台） | 盘点、准入、签发最小权限、写签名回执、localhost 决策 API | `apps/agentshield/` |
+| `SKILL.md`（一份，按 agentskills.io 规范） | 引导模型：校验并启动本地二进制、注册当前平台适配器、把裁决结果呈现给用户 | `skills/siq-agent-security/` |
+| `siq-agent-security` 本地二进制（Go，单文件，内嵌 Web 控制台） | 盘点、准入、签发最小权限、写签名回执、localhost 决策 API | `apps/agentshield/` |
 | 平台适配器（薄） | 把平台钩子接到二进制的决策 API；无钩子平台注册为审计模式 | `adapters/runtime/<platform>-agentshield/` |
 
 SKILL.md 正文只允许「运行脚本并呈现结果」，**裁决由二进制产出**，模型不做安全判断（ADR-003）。SKILL.md 第一步必须校验二进制哈希/签名——安全 Skill 本身也是供应链项。
@@ -40,7 +40,7 @@ SKILL.md 正文只允许「运行脚本并呈现结果」，**裁决由二进制
 本地模式定义：
 
 - 单机、单用户、非多租户；`tenant_id` 固定为 `local`，不接受任何客户端自报身份。
-- 状态目录：Linux `$XDG_STATE_HOME/agentshield`、macOS `~/Library/Application Support/agentshield`、Windows `%LOCALAPPDATA%\agentshield`。
+- 状态目录：Linux `$XDG_STATE_HOME/siq-agent-security`、macOS `~/Library/Application Support/siq-agent-security`、Windows `%LOCALAPPDATA%\siq-agent-security`。
 - 回执 `receipts/YYYY-MM-DD.jsonl` **只追加、哈希链接**（每条含前条哈希），Ed25519 签名，密钥在状态目录内生成并只读。
 - 权限事实、策略、准入结论以 JSON 文件存放，schema 与 `packages/contracts/` 一致。
 - 可选：以现有 Edge 协议把候选/证据/回执同步到 Control API；同步是**追加上传**，本地不因失联而失效。
@@ -61,10 +61,10 @@ SKILL.md 正文只允许「运行脚本并呈现结果」，**裁决由二进制
 
 ### D5 仓库归属：不新开仓库
 
-AgentShield 是 `siq-agent-security` 的本地 Agent 形态，代码、合同、Connector、规则包、检测基线都在本仓，另开仓库只会复制合同并制造漂移。因此：
+本机门禁与企业控制面同属 `siq-agent-security` 仓库：代码、合同、Connector、规则包、检测基线都在本仓，另开仓库只会复制合同并制造漂移。因此：
 
 - `skills/`、`apps/agentshield/`、`adapters/runtime/` 直接落在本仓根目录；
-- 平台市场（ClawHub、TraeWork 上传、`hermes skills install`）需要「根目录即 Skill」或 zip 时，由 CI 从 `skills/agentshield/` 打 release zip 并附二进制哈希；
+- 平台市场（ClawHub、TraeWork 上传、`hermes skills install`）需要「根目录即 Skill」或 zip 时，由 CI 从 `skills/siq-agent-security/` 打 release zip 并附二进制哈希；
 - 只有当市场分发**强制要求独立 git 仓**时，才新建一个仅含 `SKILL.md` + 安装脚本、由 CI 自动镜像的分发仓，源码不迁出。
 
 ## 后果

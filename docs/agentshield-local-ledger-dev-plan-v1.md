@@ -1,4 +1,4 @@
-# AgentShield 开发计划：本地台账与企业能力对齐 v1
+# siq-agent-security 开发计划：本地台账与企业能力对齐 v1
 
 - 日期：2026-09-05
 - 状态：**计划生效；P0–P3 已落地（2026-09-05）**。本文锁定目标、分期与不变量。新增 HTTP 路径、状态目录文件、UI 路由在开工该期之前回写 [`agentshield-dev-spec-v1.md`](./agentshield-dev-spec-v1.md)；未回写不得合入实现。
@@ -14,7 +14,7 @@
 
 仓库里并存两条产品线，入口不同、观感不同、评委路径被写成只走其中一条：
 
-| | 企业控制面 | AgentShield 本地门禁 |
+| | 企业控制面 | siq-agent-security 本地门禁 |
 | --- | --- | --- |
 | 入口 | [`README.md`](../README.md)、`apps/web` 默认构建、`http://localhost:52741/agents`（本机 Vite 示例） | [`AGENTSHIELD.md`](../AGENTSHIELD.md)、`siq-agent-security serve`、`http://127.0.0.1:47611` |
 | 代码 | `apps/control-api` + `apps/web/src/{App,pages,components}` | `apps/agentshield` + `apps/web/src/local/` |
@@ -46,7 +46,7 @@
 
 ### 1.2 本计划增量目标（W7）
 
-让 AgentShield **具备企业控制面那套治理语义**，数据与决策仍在本机：
+让 siq-agent-security **具备企业控制面那套治理语义**，数据与决策仍在本机：
 
 | 企业台能力 | 本地等价物 | 成功时评委能看到 |
 | --- | --- | --- |
@@ -121,7 +121,7 @@
 | G5 | 五域编辑器只在企业详情页 | 本地签发偏 CLI |
 | G6 | 无漂移 finding（读回 vs 已部署） | L3 已能读回，未产品化 |
 | G7 | Skill 哈希变化 / 目录消失不自动 revoke；钩子丢失不降 L0 | 先前 P0 加固，与台账展示绑定 |
-| G8 | `agentshield sync --control-api` | **已落地**（默认不跑；缺凭据跳过；失败不改本地决策） |
+| G8 | `siq-agent-security sync --control-api` | **已落地**（默认不跑；缺凭据跳过；失败不改本地决策） |
 | G9 | Connector 子进程 | **已落地**为可选 `--connectors-dir` / `SIQ_AS_CONNECTORS_DIR` |
 
 ### 2.3 本机观察到的双入口（开发环境，非产品承诺）
@@ -140,7 +140,7 @@
 
 | 编号 | 决策 | 理由 |
 | --- | --- | --- |
-| D1 | **作品主叙事仍是 AgentShield**。评委入口继续 `AGENTSHIELD.md`。 | 赛事是 Agent Skills，不是企业 SaaS 控制面赛道。 |
+| D1 | **作品主叙事仍是 siq-agent-security**。评委入口继续 `AGENTSHIELD.md`。 | 赛事是 Agent Skills，不是企业 SaaS 控制面赛道。 |
 | D2 | **现场主界面是本地台账**，信息架构向企业 `/agents` 对齐，而不是维持「五页运维台」。 | 台账是参赛加分项；进程依赖不是。 |
 | D3 | **本地是唯一决策事实源。** 禁止 `src/local` 调用 Control API `:8600`。 | 避免两套 allow/deny；评委复现零库。 |
 | D4 | **企业控制面保持独立可运行。** `npm run build`、`AuthGate`、`:8600` 行为不变。 | 公司台账与 SIQ 平台接入仍走原产品；不毁 Phase 0–2。 |
@@ -315,8 +315,8 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 ### P3 — 风险、审计、可选同步 **已落地（2026-09-05）**
 
 - `/findings` 全页；接受/到期重开。
-- `audit.jsonl` + `GET /v1/export` / `agentshield export` 脱敏包。
-- `agentshield sync --control-api`：Edge `POST /edge/v1/batches`；默认不跑；缺凭据退出 0；失败不改本地。
+- `audit.jsonl` + `GET /v1/export` / `siq-agent-security export` 脱敏包。
+- `siq-agent-security sync --control-api`：Edge `POST /edge/v1/batches`；默认不跑；缺凭据退出 0；失败不改本地。
 - 可选 `--connectors-dir`（失败记 skipped）。
 
 **验收**：评委可从设置页或 CLI 导出脱敏 JSON。企业台若已登记本机公钥并签发 scan 任务，sync 可上传候选/证据；未登记则跳过，不挡比赛。
@@ -388,7 +388,7 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 | `AGENTSHIELD.md` | 台账演示节；仍声明企业 API 评委不必跑 |
 | `apps/agentshield/AGENTS.md` | 新包职责行（assets/findings 若拆包） |
 
-企业 README 增加一句：本地门禁台账是 AgentShield embed UI；本 README 描述的控制面仍用于多环境/多租户部署。
+企业 README 增加一句：本地门禁台账是 siq-agent-security embed UI；本 README 描述的控制面仍用于多环境/多租户部署。
 
 ---
 

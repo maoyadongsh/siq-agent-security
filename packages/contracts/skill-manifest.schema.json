@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "https://siq-agent-security.local/schemas/skill-manifest.v1.json",
-  "title": "AgentShieldSkillManifest",
-  "description": "AgentShield Skill 发布清单（ADR-011 D1 / D5）。随 release zip 发布并被 SKILL.md 引用：模型在任何平台加载 Skill 后第一步是按本清单校验二进制哈希，再启动二进制。清单本身由发布密钥签名；支持矩阵按平台 × OS 诚实标注可达档位，无钩子平台只能 L0。",
+  "title": "SiqAgentSecuritySkillManifest",
+  "description": "siq-agent-security Skill 发布清单（ADR-011 D1 / D5）。随 release zip 发布并被 SKILL.md 引用：模型在任何平台加载 Skill 后第一步是按本清单校验二进制哈希，再启动二进制。清单本身由发布密钥签名；支持矩阵按平台 × OS 诚实标注可达档位，无钩子平台只能 L0。",
   "type": "object",
   "required": ["manifest_version", "skill", "binary", "rulepack", "support_matrix", "signed_by", "signature"],
   "additionalProperties": false,

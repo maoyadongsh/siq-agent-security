@@ -1,4 +1,4 @@
-# AgentShield 开发规格 v1（Development Specification）
+# siq-agent-security 开发规格 v1（Development Specification）
 
 - 日期：2026-09-04
 - 状态：**生效**；实现必须以本文为准，偏离先改本文再改代码
@@ -29,7 +29,7 @@
 ### 1.1 组件
 
 ```
-SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二进制
+SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-security 二进制
                                               ├─ inventory   ─► candidate / evidence
                                               ├─ admit       ─► admission + skill-card
                                               ├─ grant       ─► grant + desired-policy 引用
@@ -46,9 +46,9 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二�
 | 环节 | 信任根 | 校验方式 | 失败行为 |
 | --- | --- | --- | --- |
 | SKILL.md → 二进制 | `skill-manifest.json`（发布密钥签名） | bootstrap 脚本比对下载文件 sha256 与 manifest；manifest 签名由脚本内置公钥验证 | 拒绝启动，提示手动核对 |
-| 二进制 → 规则包 | 内嵌包为基线；外部包需 `AGENTSHIELD_RULEPACK_PUBKEY` 验签 | Ed25519 over canonical JSON；版本 ≥ 内嵌 | 回退内嵌包，stderr 记类别 |
+| 二进制 → 规则包 | 内嵌包为基线；外部包需 `SIQ_AGENT_SECURITY_RULEPACK_PUBKEY` 验签 | Ed25519 over canonical JSON；版本 ≥ 内嵌 | 回退内嵌包，stderr 记类别 |
 | 适配器 → 决策 API | 状态目录内 `token`（0600） | `Authorization: Bearer <token>`；只监听 127.0.0.1 | 401；适配器按 fail-closed 表处理 |
-| 回执 → 阅读者 | 本地 Ed25519 身份（`keys/signing.seed`） | `agentshield verify` 重算哈希链并验签 | 报告首个断链/坏签位置 |
+| 回执 → 阅读者 | 本地 Ed25519 身份（`keys/signing.seed`） | `siq-agent-security verify` 重算哈希链并验签 | 报告首个断链/坏签位置 |
 | 模型 → 任何裁决 | **无** | 模型只能触发子命令并呈现输出 | — |
 
 ### 1.3 不变量（实现红线）
@@ -69,9 +69,9 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二�
 
 | OS | 默认 | 覆盖 |
 | --- | --- | --- |
-| Linux | `$XDG_STATE_HOME/agentshield`，否则 `~/.local/state/agentshield` | `AGENTSHIELD_STATE_DIR` |
-| macOS | `~/Library/Application Support/agentshield` | 同上 |
-| Windows | `%LOCALAPPDATA%\agentshield` | 同上 |
+| Linux | `$XDG_STATE_HOME/siq-agent-security`，否则 `~/.local/state/siq-agent-security` | `SIQ_AGENT_SECURITY_STATE_DIR` |
+| macOS | `~/Library/Application Support/siq-agent-security` | 同上 |
+| Windows | `%LOCALAPPDATA%\siq-agent-security` | 同上 |
 
 ### 2.2 布局
 
@@ -104,7 +104,7 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二�
 
 ### 2.4 与控制面同步（可选，非现场）
 
-`agentshield sync --control-api <url>`：把最新盘点的 **candidates + evidence** 按现有 Edge `POST /edge/v1/batches` 追加上传（不传 `permission_facts`，避免 `agent_asset` 主体对不上 candidate_id，也禁止自报 `effective`）。本地是事实源：**`serve` 从不自动 sync**；缺 Edge 凭据则跳过并退出 0；HTTP/验签失败退出非 0 且 **不写** admissions/grants/receipts。凭据来自 `--identity` / `--secret-file` / `--task-id`，或环境变量 `SIQ_AS_EDGE_IDENTITY`、`SIQ_AS_EDGE_SECRET`、`SIQ_AS_EDGE_TASK_ID`。上传前刷新 `collected_at` 并把 `collector_id` 写成设备身份后用本地 Ed25519 重签；控制面仍用已登记的 Edge 公钥验签（须把本机 `agentshield pubkey` 登记为该设备）。回执链本身不进 Edge batch，评委导出走 §3.8.1 `GET /v1/export`。
+`siq-agent-security sync --control-api <url>`：把最新盘点的 **candidates + evidence** 按现有 Edge `POST /edge/v1/batches` 追加上传（不传 `permission_facts`，避免 `agent_asset` 主体对不上 candidate_id，也禁止自报 `effective`）。本地是事实源：**`serve` 从不自动 sync**；缺 Edge 凭据则跳过并退出 0；HTTP/验签失败退出非 0 且 **不写** admissions/grants/receipts。凭据来自 `--identity` / `--secret-file` / `--task-id`，或环境变量 `SIQ_AS_EDGE_IDENTITY`、`SIQ_AS_EDGE_SECRET`、`SIQ_AS_EDGE_TASK_ID`。上传前刷新 `collected_at` 并把 `collector_id` 写成设备身份后用本地 Ed25519 重签；控制面仍用已登记的 Edge 公钥验签（须把本机 `siq-agent-security pubkey` 登记为该设备）。回执链本身不进 Edge batch，评委导出走 §3.8.1 `GET /v1/export`。
 
 现场主界面是内嵌本地台账（§3.10），不依赖本同步、不依赖 PostgreSQL / `:8600`。P0 为只读投影；P1 起写入 `assets/`（确认/驳回/stale）；P2 写入漂移 finding；接受覆盖与 `audit.jsonl` 随 P1/P2 落地。P3 增加脱敏导出包。`sync --control-api` 仍非现场、默认不跑。
 
@@ -240,7 +240,7 @@ else:
 #### 3.6.6 输出
 
 - `admissions/<admission_id>.json`（符合 `admission.schema.json`，`signature` 覆盖去签名后的规范化文档）。
-- `admissions/<admission_id>.skill-card.md`：NVIDIA 最小卡结构（Description / Owner / License / Use Case / Requirements / Known Risks and Mitigations / References / Output / Version / Ethical）。Owner、License、Use Case 取 frontmatter，缺失写 `[unknown]`；Known Risks 由 declared 事实与 finding 生成可执行陈述（「该 Skill 会向 api.github.com:443 发起 HTTPS 请求；grant 未放行前被拒」）。页脚固定：**「本卡由 agentshield 生成，不构成签名、批准或发布。」**
+- `admissions/<admission_id>.skill-card.md`：NVIDIA 最小卡结构（Description / Owner / License / Use Case / Requirements / Known Risks and Mitigations / References / Output / Version / Ethical）。Owner、License、Use Case 取 frontmatter，缺失写 `[unknown]`；Known Risks 由 declared 事实与 finding 生成可执行陈述（「该 Skill 会向 api.github.com:443 发起 HTTPS 请求；grant 未放行前被拒」）。页脚固定：**「本卡由 siq-agent-security 生成，不构成签名、批准或发布。」**
 - stdout：JSON（默认）或 `--format sarif`（W5 可选）。退出码：admit 0、admit_with_conditions 0、quarantine 3、内部错误 1。
 
 #### 3.6.7 变更重审
@@ -362,7 +362,7 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 
 #### 3.8.1.3 脱敏导出（P3）
 
-`GET /v1/export` 与 `agentshield export [--out FILE]` 产出同一 JSON（`format=agentshield.export.v1`）：
+`GET /v1/export` 与 `siq-agent-security export [--out FILE]` 产出同一 JSON（`format=agentshield.export.v1`）：
 
 - 含：公钥、enforcement_mode、资产摘要、准入 verdict/哈希/finding 规则、grant 状态与事实摘要、回执（seq/action/tool/reason/hash，**不含** `params` / `params_excerpt`）、`audit.jsonl` 尾部、回执链 `verify` 结果。
 - 不含：token、signing seed、私钥、Skill 文件正文、环境变量、OpenShell 密钥。
@@ -410,7 +410,7 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 
 - `chain_id`：本地模式固定 `local`；同步到控制面后由控制面归属。
 - 每条：`seq = prev.seq+1`；`prev_hash = prev.hash`（创世 64 个 0）；`hash = sha256(canon(receipt 去掉 hash/sig))`；`sig = Ed25519(hash 的 hex 字符串字节)`。
-- `agentshield verify [--chain local]`：逐行重算，报告首个 `seq` 不连续 / `prev_hash` 不匹配 / `hash` 不符 / `sig` 无效。
+- `siq-agent-security verify [--chain local]`：逐行重算，报告首个 `seq` 不连续 / `prev_hash` 不匹配 / `hash` 不符 / `sig` 无效。
 
 #### 3.8.4 fail-closed 表（适配器侧行为）
 
@@ -423,10 +423,10 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 ### 3.9 `internal/openshell`（规格）
 
 - 后端只用 CLI。显式环境变量与 Python `cli_backend.py` 相同：`SIQ_AS_OPENSHELL_CLI_BIN` 与 `SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT`（必须成对）或 `SIQ_AS_OPENSHELL_ENV_SH`。`ENV_SH` 在 `source` 之后优先 `exec $SIQ_OPENSHELL_BIN`（research-engine `env.sh` 约定），否则 PATH 上的 `openshell`。
-- AgentShield 额外发现 PATH 上的 `openshell`，走用户 CLI 配置（`HOME` / XDG / `OPENSHELL_*`），不注入 `--gateway-endpoint`。显式 `SIQ_AS_*` 优先于 PATH。Python 控制面后端不跟随此发现。
+- siq-agent-security 额外发现 PATH 上的 `openshell`，走用户 CLI 配置（`HOME` / XDG / `OPENSHELL_*`），不注入 `--gateway-endpoint`。显式 `SIQ_AS_*` 优先于 PATH。Python 控制面后端不跟随此发现。
 - `probe()`：`gateway info` 只表示调用了 OpenShell CLI（本地配置打印，端口上即使是 OpenClaw 也可能 rc=0）。必须以 `status`（或等价的会真正连网关的命令）做握手。`status` 出现 `InvalidContentType` / OpenClaw / Hermes 特征则 fail-closed。不按版本号假设能力。禁止猜测端口，禁止改别人的网关。
 - **禁止** `openshell gateway start`。bootstrap、doctor、serve 都不启动网关。缺 CLI、网关没起、连错进程时 L0–L2 照常，并给出人类可执行修复。
-- `agentshield openshell doctor` 与 `GET /v1/openshell/doctor`：报告 CLI 路径、覆盖来源（`env_pair` / `env_sh` / `path` / `none`）、探针、身份、`human_next`；`started_gateway` 恒为 `false`。
+- `siq-agent-security openshell doctor` 与 `GET /v1/openshell/doctor`：报告 CLI 路径、覆盖来源（`env_pair` / `env_sh` / `path` / `none`）、探针、身份、`human_next`；`started_gateway` 恒为 `false`。
 - `apply(network)`：`policy set` 只提交网络段；`policy get --full` 读回 → 比对 → 产出 `effective_readback{backend:"openshell", revision}` 与 evidence。
 - 不调用 `create_generation`；fs/process 段写入 `sandbox create` 时的策略文件（静态），并在 grant 里标 `static_domains_unavailable`。
 - macOS/Windows：`probe()` 失败（无 Docker/WSL2）→ L3 不可用，UI 显示原因。
@@ -463,31 +463,31 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 
 ```json5
 security: { installPolicy: { enabled: true, targets: ["skill","plugin"],
-  exec: { source: "exec", command: "<abs path>/agentshield", args: ["policy-exec","--json"],
+  exec: { source: "exec", command: "<abs path>/siq-agent-security", args: ["policy-exec","--json"],
           timeoutMs: 10000, trustedDirs: ["<dir>"] } } }
 ```
 
-`agentshield policy-exec`：stdin 读 OpenClaw 请求（含 staged 路径与 `skill.installSpec`）→ 对 staged 目录跑 §3.6 → 输出 `{"decision":"allow|warn|block","reason":...}`：quarantine → block；admit_with_conditions → warn（附「安装后请 grant」）；admit → allow。任何内部错误 → block（OpenClaw 自身在 exec 失败时也 fail-closed）。
+`siq-agent-security policy-exec`：stdin 读 OpenClaw 请求（含 staged 路径与 `skill.installSpec`）→ 对 staged 目录跑 §3.6 → 输出 `{"decision":"allow|warn|block","reason":...}`：quarantine → block；admit_with_conditions → warn（附「安装后请 grant」）；admit → allow。任何内部错误 → block（OpenClaw 自身在 exec 失败时也 fail-closed）。
 
 **运行时（L2）**：插件 `adapters/runtime/openclaw-agentshield/`（TypeScript，`definePluginEntry`）：
 
 - `before_tool_call`（priority 10）：POST `/v1/decide`；映射 `deny → {block:true, blockReason}`、`hold → {requireApproval:{title, description, severity:"warning", timeoutMs}}`、`redact → {params}`、`allow → undefined`。
 - `after_tool_call`：POST `/v1/observe`（结果截断 64 KiB 后发送，服务端再脱敏）。
 - 超时：插件侧 5 s；OpenClaw 钩子 15 s fail-closed 兜底。
-- 配置：`~/.openclaw/agentshield.json` 保存 `endpoint`、`token_path`、`enforcement_mode`。
+- 配置：`~/.openclaw/siq-agent-security.json` 保存 `endpoint`、`token_path`、`enforcement_mode`。
 
-**卸载**：`agentshield adapter uninstall openclaw` 删除插件目录并把 `openclaw.json` 恢复到 `<state>/backups/` 中的副本。
+**卸载**：`siq-agent-security adapter uninstall openclaw` 删除插件目录并把 `openclaw.json` 恢复到 `<state>/backups/` 中的副本。
 
 ### 4.2 Hermes（P0）
 
-**运行时（L2）**：`~/.hermes/plugins/agentshield/`（`plugin.yaml` + `__init__.py`，纯 stdlib `urllib`）：
+**运行时（L2）**：`~/.hermes/plugins/siq-agent-security/`（`plugin.yaml` + `__init__.py`，纯 stdlib `urllib`）：
 
 - `register(ctx)`：`ctx.register_hook("pre_tool_call", cb)`、`ctx.register_hook("post_tool_call", cb)`。
 - `pre_tool_call(tool_name, args, task_id, session_id, tool_call_id)` → POST `/v1/decide` → `deny/hold` 返回 `{"action":"block","message": reason}`（Hermes 无 approval 通道：hold 在 Hermes 上退化为 block 并在 message 里给控制台 URL）；`allow` 返回 `None`。
 - `post_tool_call` → `/v1/observe`。
 - 插件不修改 Hermes 核心（AGENTS.md 规则）。
 
-**安装门禁（L1，弱）**：`agentshield adapter install hermes` 生成 `~/.local/bin/hermes-skills-install` 包装脚本：先 `agentshield admit <src>`，非 quarantine 才调用真实 `hermes skills install`；SKILL.md 引导用户用包装脚本。本地放入 `~/.hermes/skills` 由 inventory 周期扫描（`serve` 每 5 分钟）发现未准入 Skill 并在 UI 标红。
+**安装门禁（L1，弱）**：`siq-agent-security adapter install hermes` 生成 `~/.local/bin/hermes-skills-install` 包装脚本：先 `siq-agent-security admit <src>`，非 quarantine 才调用真实 `hermes skills install`；SKILL.md 引导用户用包装脚本。本地放入 `~/.hermes/skills` 由 inventory 周期扫描（`serve` 每 5 分钟）发现未准入 Skill 并在 UI 标红。
 
 **工具边界（grant 输出）**：写 `platform_toolset_modes` allowlist（Hermes siq-patches 支持闭世界模式）；写前备份。
 
@@ -496,11 +496,11 @@ security: { installPolicy: { enabled: true, targets: ["skill","plugin"],
 **运行时（L2）**：`~/.codebuddy/settings.json` 追加（需用户确认，幂等）：
 
 ```json
-{"hooks":{"PreToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"<abs>/agentshield hook codebuddy","timeout":5}]}],
-          "PostToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"<abs>/agentshield hook codebuddy --observe","timeout":5}]}]}}
+{"hooks":{"PreToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"<abs>/siq-agent-security hook codebuddy","timeout":5}]}],
+          "PostToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"<abs>/siq-agent-security hook codebuddy --observe","timeout":5}]}]}}
 ```
 
-`agentshield hook codebuddy`：stdin 读 `{session_id, tool_name, tool_input, cwd, permission_mode}` → `/v1/decide` → stdout：
+`siq-agent-security hook codebuddy`：stdin 读 `{session_id, tool_name, tool_input, cwd, permission_mode}` → `/v1/decide` → stdout：
 
 ```json
 {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow|deny|ask","permissionDecisionReason":"..."}}
@@ -512,7 +512,7 @@ security: { installPolicy: { enabled: true, targets: ["skill","plugin"],
 
 ### 4.4 Trae / TraeWork（P2，审计）
 
-无钩子。SKILL.md 引导：安装前 `agentshield admit`；`serve` 周期扫描 `.trae/skills`；UI 标「审计模式，无法阻断」。`skill-manifest.support_matrix` 对应行 `status=audit_only, tiers=[L0]`。
+无钩子。SKILL.md 引导：安装前 `siq-agent-security admit`；`serve` 周期扫描 `.trae/skills`；UI 标「审计模式，无法阻断」。`skill-manifest.support_matrix` 对应行 `status=audit_only, tiers=[L0]`。
 
 ### 4.5 适配器公共约定
 
@@ -524,14 +524,14 @@ security: { installPolicy: { enabled: true, targets: ["skill","plugin"],
 
 ## 5. SKILL.md 与发布
 
-### 5.1 `skills/agentshield/`
+### 5.1 `skills/siq-agent-security/`
 
 ```
-SKILL.md                 frontmatter: name agentshield, description ≤60 字符句号结尾,
+SKILL.md                 frontmatter: name siq-agent-security, description ≤60 字符句号结尾,
                          allowed-tools（声明本 Skill 自身需要：terminal/read_file）, compatibility
 scripts/bootstrap.sh     POSIX：定位/下载二进制 → 校验 manifest 签名与 sha256 → serve → 打印 UI URL
 scripts/bootstrap.ps1    Windows 同上
-scripts/adapter.sh       调用 agentshield adapter install <platform>（探测当前平台）
+scripts/adapter.sh       调用 siq-agent-security adapter install <platform>（探测当前平台）
 references/tiers.md      档位说明与各平台限制（给模型读，减少幻觉）
 references/decision-table.md  §3.6.4 的精简版
 evals/evals.json         SkillEvaluator 格式：装恶意 Skill 应 quarantine、官方 Skill 应 admit_with_conditions、越权应 deny
@@ -539,32 +539,32 @@ skill-card.md            本 Skill 自己的卡
 skill-manifest.json      发布时生成并签名（schema: skill-manifest）
 ```
 
-SKILL.md 正文结构：`# AgentShield Skill` / 简介 / When to Use / Prerequisites / How to Run（三步：bootstrap → adapter → 打开 UI）/ Quick Reference（子命令）/ Procedure（四个子 Skill 的调用顺序与「结果由二进制给出，不要自行判断」）/ Pitfalls（无钩子平台、fs 不热更新、Windows L3）/ Verification。
+SKILL.md 正文结构：`# siq-agent-security Skill` / 简介 / When to Use / Prerequisites / How to Run（三步：bootstrap → adapter → 打开 UI）/ Quick Reference（子命令）/ Procedure（四个子 Skill 的调用顺序与「结果由二进制给出，不要自行判断」）/ Pitfalls（无钩子平台、fs 不热更新、Windows L3）/ Verification。
 
-**模型行为约束写法**：正文明确「你（模型）不判断 Skill 是否安全；运行 `agentshield admit` 并原样呈现 verdict 与 Skill Card」。
+**模型行为约束写法**：正文明确「你（模型）不判断 Skill 是否安全；运行 `siq-agent-security admit` 并原样呈现 verdict 与 Skill Card」。
 
 ### 5.2 发布流程（CI）
 
 1. `go test ./...`、`go vet`、`gofmt`；Python 全量测试。
 2. 交叉编译 `linux/{amd64,arm64}`、`darwin/arm64`、`windows/amd64`，`-ldflags "-X main.Version=<tag>"`，产出 sha256。
-3. 计算 `skills/agentshield/` `content_hash`；生成 `skill-manifest.json`；用发布密钥（CI secret `AGENTSHIELD_RELEASE_SEED`）签名；bootstrap 脚本内置发布公钥。
-4. 打 `agentshield-skill-<tag>.zip`（Skill 目录 + manifest）供 TraeWork 上传 / ClawHub / 手动安装；GitHub Release 挂二进制。
-5. 自扫描：CI 用刚构建的二进制对 `skills/agentshield/` 跑 `admit`，必须为 `admit_with_conditions`（声明 terminal/network），不得 quarantine。
+3. 计算 `skills/siq-agent-security/` `content_hash`；生成 `skill-manifest.json`；用发布密钥（环境变量 `SIQ_AGENT_SECURITY_RELEASE_SEED`）签名；bootstrap 脚本内置发布公钥。
+4. 打 `siq-agent-security-skill-<tag>.zip`（Skill 目录 + manifest）供 TraeWork 上传 / ClawHub / 手动安装；GitHub Release 挂二进制。
+5. 自扫描：CI 用刚构建的二进制对 `skills/siq-agent-security/` 跑 `admit`，必须为 `admit_with_conditions`（声明 terminal/network），不得 quarantine。
 
-操作清单（tag 未切前 URL 对象不存在；bootstrap 不下载）：[`agentshield-release-checklist-v1.md`](./agentshield-release-checklist-v1.md)。哈希核对脚本 `scripts/agentshield-release-check.sh` 不需要种子；重签需要 `AGENTSHIELD_RELEASE_SEED`。矩阵不得出现 `supported` 行。
+操作清单（tag 未切前 URL 对象不存在；bootstrap 不下载）：[`agentshield-release-checklist-v1.md`](./agentshield-release-checklist-v1.md)。哈希核对脚本 `scripts/agentshield-release-check.sh` 不需要种子；重签需要 `SIQ_AGENT_SECURITY_RELEASE_SEED`。矩阵不得出现 `supported` 行。
 
 ### 5.3 分发仓库
 
-不新开（ADR-011 D5）。若市场要求根目录即 Skill，由 CI 镜像 `skills/agentshield/` 到分发仓，源码不迁出。
+不新开（ADR-011 D5）。若市场要求根目录即 Skill，由 CI 镜像 `skills/siq-agent-security/` 到分发仓，源码不迁出。
 
 ---
 
-## 6. 安全模型（AgentShield 自身）
+## 6. 安全模型（siq-agent-security 自身）
 
 | 威胁 | 缓解 | 残余 |
 | --- | --- | --- |
-| 恶意 Skill 冒充 AgentShield 引导用户跑假二进制 | manifest 签名 + sha256 内置于 bootstrap；UI 显示公钥指纹 | 用户跳过校验 |
-| 模型被注入后调用 `grant --approve` | CLI 批准需 `--approve-as` 且写 `channel`；UI 批准需人点；SKILL.md 禁止模型批准 | 模型仍可在终端执行 CLI —— 通过 grant 把 `agentshield grant approve` 本身列入 `require_approval`（自保护） |
+| 恶意 Skill 冒充 siq-agent-security 引导用户跑假二进制 | manifest 签名 + sha256 内置于 bootstrap；UI 显示公钥指纹 | 用户跳过校验 |
+| 模型被注入后调用 `grant --approve` | CLI 批准需 `--approve-as` 且写 `channel`；UI 批准需人点；SKILL.md 禁止模型批准 | 模型仍可在终端执行 CLI —— 通过 grant 把 `siq-agent-security grant approve` 本身列入 `require_approval`（自保护） |
 | 适配器被绕过（Agent 用原生 HTTP 出网） | OpenShell 网络 default-deny（L3）；无 L3 时 UI 明示「仅工具层拦截」 | Mac/Win 无 Docker |
 | 回执被改写 | 只追加 + 哈希链 + 签名；`verify` | 私钥泄露（状态目录被读）|
 | 规则包被替换 | 外部包验签 + 防降级；内嵌包为基线 | 二进制本身被替换（由 manifest 校验覆盖）|
@@ -620,7 +620,7 @@ apps/agentshield/            Go module（stdlib only；go.work 引入 connectors
   internal/{canon,rulepack,threat,signing,inventory,admission,grant,receipt,openshell,ui,state}
   testdata/{contracts,skills}
 adapters/runtime/{openclaw,hermes,codebuddy}-agentshield/
-skills/agentshield/
+skills/siq-agent-security/
 packages/contracts/
 ```
 
@@ -635,7 +635,7 @@ cd apps/control-api && uv sync --dev --frozen && uv run --frozen ruff check app 
 # 规则包变更：两侧都要跑
 uv run --frozen pytest app/tests/test_threat_analysis.py app/tests/test_threat_rulepack.py app/tests/test_detection_baseline.py
 (cd ../agentshield && go test ./internal/rulepack ./internal/threat)
-# UI（AgentShield 本地控制台；企业控制台仍是 npm run build）
+# UI（siq-agent-security 本地控制台；企业控制台仍是 npm run build）
 cd apps/web && npm ci && npm run build:local
 make -C apps/agentshield ui
 ```
@@ -667,7 +667,7 @@ make -C apps/agentshield ui
 | W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve` **完成**；HTTP E2E **完成**；`inventory` **完成**；embed UI **完成**（`src/local/` + `internal/ui`） |
 | W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**；OpenClaw `policy-exec` **完成**；CodeBuddy `hook codebuddy` **完成**；`adapter install/uninstall`（备份还原）**完成** |
 | W4 OpenShell | probe / 网络 policy set / 读回 | **完成**（CLI 后端 + PATH/ENV_SH 发现 + 网关验明 + `openshell doctor` + `/v1/openshell/*` + 控制台 L3；假 CLI 正负测试。矩阵不标 `supported`） |
-| W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **完成**（Skill 目录、evals、bootstrap 验签、`grant` CLI、自扫描不得 quarantine、已签名 `skill-manifest.json` + 四目标哈希。GitHub Release `agentshield-v0.1.0` 已挂二进制；bootstrap 仍不下载。矩阵仍无 `supported` 行） |
+| W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **完成**（Skill 目录、evals、bootstrap 验签、`grant` CLI、自扫描不得 quarantine、已签名 `skill-manifest.json` + 四目标哈希。GitHub Release `siq-agent-security-v0.2.0` 已挂二进制；bootstrap 仍不下载。矩阵仍无 `supported` 行） |
 | W6 材料 | README、演示、基线更新、十日谈 | **完成**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark linux 证据已归档：Hermes 实机插件、OpenClaw `policy-exec`、CodeBuddy `hook`（隔离 HOME）。矩阵备注已对齐证据，**仍无 `supported` 行**。Release tag 已切（清单 [`agentshield-release-checklist-v1.md`](./agentshield-release-checklist-v1.md)）。L3 可选：须验明正身的 OpenShell |
 | W7 本地台账 | 企业治理语义在本地文件态落地（资产/五态权限/风险/漂移/导出）；Control API 仍非现场依赖 | **P0–P3 已落地**（§2.4 / §3.5 / §3.8.1 / §3.10）：assets 状态机、profiles/agents.list、五域补丁、漂移、exec 无 host deny、findings 接受、audit.jsonl、脱敏导出、`sync --control-api`（默认不跑）、可选 `--connectors-dir`、MCP 配置原生只读（`mcp_server`）。矩阵仍无 `supported` 行 |
 

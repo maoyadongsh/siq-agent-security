@@ -80,9 +80,9 @@
 - `threat-obf-base64-blob` 等基于 240+ 字符连续 base64 的启发式规则，理论上可被跨行拆分绕过——静态规则的固有局限，非本轮范围。
 - Connector 侧发现结果的最终风险研判仍由控制面 `app/threat_analysis.py` 静态规则引擎完成；Connector 自身只做证据采集与脱敏，不做风险判定。
 
-## AgentShield 平台 × OS × 档位矩阵（ADR-011，2026-09-04 文档核实，未实测）
+## siq-agent-security 平台 × OS × 档位矩阵（ADR-011，2026-09-04 文档核实，未实测）
 
-档位：L0 审计（盘点 + 准入 + Skill Card + 控制台）/ L1 安装门禁 / L2 运行时回执与阻断 / L3 OpenShell 策略下发。取值依据各平台 2026-09 公开文档；**机器可读事实源是 `skills/agentshield/skill-manifest.json` 的 `support_matrix`**（当前快照全部 `experimental` 或 Trae `audit_only`，无 `supported` 行）。下表是文档核实的能力上限，不是已归档 E2E。
+档位：L0 审计（盘点 + 准入 + Skill Card + 控制台）/ L1 安装门禁 / L2 运行时回执与阻断 / L3 OpenShell 策略下发。取值依据各平台 2026-09 公开文档；**机器可读事实源是 `skills/siq-agent-security/skill-manifest.json` 的 `support_matrix`**（当前快照全部 `experimental` 或 Trae `audit_only`，无 `supported` 行）。下表是文档核实的能力上限，不是已归档 E2E。
 
 | 平台 | 安装钩子 | 工具调用钩子 | Linux | macOS | Windows | 备注 |
 | --- | --- | --- | --- | --- | --- | --- |

@@ -10,15 +10,13 @@
 | 干什么 | 装 Skill 前先审查，每次调用工具留签字据 | 资产台账、审批、采集、策略下发 |
 | 怎么跑 | 一个本地程序，不用登录、不用数据库 | 控制台 + API + PostgreSQL，见 [`docs/control-plane.md`](./docs/control-plane.md) |
 
-下面以 **siq-agent-security** 为主。为何落在 DGX Spark、本机如何适配，见 [为什么做在 NVIDIA DGX Spark 上](#为什么做在-nvidia-dgx-spark-上) 与 [在 DGX Spark 上的适配与实测](#在-dgx-spark-上的适配与实测)。命令与演示夹具见 [`AGENTSHIELD.md`](./AGENTSHIELD.md)。
+下面以 **siq-agent-security** 为主。为何落在 DGX Spark、本机如何适配，见 [为什么做在 NVIDIA DGX Spark 上](#为什么做在-nvidia-dgx-spark-上) 与 [在 DGX Spark 上的适配与实测](#在-dgx-spark-上的适配与实测)。命令与演示夹具见 [本机操作](./AGENTSHIELD.md)。
 
-当前代码在分支 [`cursor/agentshield-w0-contracts-8eff`](https://github.com/maoyadongsh/siq-agent-security/tree/cursor/agentshield-w0-contracts-8eff)，尚未合入 `main`。发布：[v0.2.0](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.2.0)（二进制与 Skill 已从旧名 AgentShield 更名；旧 tag `agentshield-v0.1.0` 仍可对照）。
+当前代码在分支 [`cursor/agentshield-w0-contracts-8eff`](https://github.com/maoyadongsh/siq-agent-security/tree/cursor/agentshield-w0-contracts-8eff)，尚未合入 `main`。发布：[v0.2.0](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.2.0)。
 
 ---
 
-# siq-agent-security
-
-本机智能体的门禁。把它当成一个可安装的 Skill 放进 Hermes、OpenClaw、WorkBuddy / CodeBuddy 之后，对话里就能调用；真正做判断的是本机上的 `siq-agent-security` 程序，不是模型。对外名与仓库名相同，避免和其他已占用「AgentShield」的开源项目撞名。
+本机智能体的门禁。把它当成一个可安装的 Skill 放进 Hermes、OpenClaw、WorkBuddy / CodeBuddy 之后，对话里就能调用；真正做判断的是本机上的 `siq-agent-security` 程序，不是模型。
 
 一句话：**先看清本机有哪些智能体和 Skill，装之前给出结论，人批准最小权限，之后每次工具调用都留一张签过名的回执。**
 
@@ -143,7 +141,7 @@ Hermes 会多一个包装命令 `hermes-skills-install`：先审查再调用官�
 
 卸掉钩子：`siq-agent-security adapter uninstall`。再删掉 skills 目录里的链接。状态目录里有密钥和历史记录，删了不可恢复。
 
-更细的页面说明和演示目录见 [`AGENTSHIELD.md`](./AGENTSHIELD.md)。
+更细的页面说明和演示目录见 [本机操作](./AGENTSHIELD.md)。
 
 ---
 
@@ -264,7 +262,7 @@ SIQ_AGENT_SECURITY_STATE_DIR=$(mktemp -d) ./siq-agent-security admit ../../skill
 
 | 主题 | 文档 |
 | --- | --- |
-| 本机操作与演示目录 | [`AGENTSHIELD.md`](./AGENTSHIELD.md) |
+| 本机操作与演示目录 | [本机操作](./AGENTSHIELD.md) |
 | DGX Spark 本机实测（脱敏） | [`docs/evidence/agentshield/`](./docs/evidence/agentshield/README.md) |
 | 企业控制面 | [`docs/control-plane.md`](./docs/control-plane.md) |
 | 检测规则基线 | [`docs/detection-baseline.md`](./docs/detection-baseline.md) |
