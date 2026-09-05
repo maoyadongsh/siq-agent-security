@@ -42,4 +42,4 @@ stdout：
 
 ## 验证状态
 
-Go 单测覆盖映射与 fail-closed 表；未在真实 CodeBuddy 客户端上运行（国内客户端，需本机验证）。
+Go 单测覆盖映射与 fail-closed 表。linux 隔离 HOME 上已用真实 `agentshield hook codebuddy` 跑通授前/授后 deny（[`docs/evidence/agentshield/codebuddy-linux-2026-09-05/`](../../../docs/evidence/agentshield/codebuddy-linux-2026-09-05/)）。**未**驱动 CodeBuddy GUI 客户端。矩阵不标 `supported`。

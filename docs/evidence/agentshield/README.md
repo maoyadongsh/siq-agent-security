@@ -5,6 +5,8 @@
 当前快照：
 
 - [`hermes-linux-2026-09-05/`](./hermes-linux-2026-09-05/)：DGX Spark（linux/arm64）Hermes 路径。admit 正负样例、`--approve-as maoyd` 批准并 deploy、授后越权 deny、`verify` 已归档。OpenShell 网关未配置。
+- [`openclaw-linux-2026-09-05/`](./openclaw-linux-2026-09-05/)：隔离 `$HOME` 上的 `policy-exec`（L1）+ 插件形态 `POST /v1/decide`（L2）。未挂到本机 OpenClaw 网关进程。
+- [`codebuddy-linux-2026-09-05/`](./codebuddy-linux-2026-09-05/)：隔离 `$HOME` 上的真实 `hook codebuddy` PreToolUse。未驱动 CodeBuddy GUI。
 - `skills/agentshield/skill-manifest.json` 的 `support_matrix` **仍然没有任何 `supported` 行**。
 
 ## 每条证据最少包含

@@ -39,13 +39,13 @@ bootstrap 会用内置公钥校验 `skill-manifest.json` 签名。本地 `go bui
 
 ## 档位（诚实）
 
-机器可读事实源：[`skills/agentshield/skill-manifest.json`](./skills/agentshield/skill-manifest.json) 的 `support_matrix`。当前**没有任何一行 `supported`**。2026-09-05 已在 DGX Spark（linux/arm64）归档 Hermes L0–L2 路径证据（[`docs/evidence/agentshield/hermes-linux-2026-09-05/`](./docs/evidence/agentshield/hermes-linux-2026-09-05/)）：恶意 fixture `quarantine` / 退出码 3、官方风格 `admit_with_conditions`、Hermes 适配器越权 `web_fetch` deny、`verify` 通过。grant 已由人类 `--approve-as maoyd` 批准并 deploy，授后 `web_fetch` 为 deny。Hermes on Linux L0–L2 已归档；L3 需验明的 OpenShell 网关，可选、不宣称。OpenShell 由 PATH 或 `SIQ_AS_OPENSHELL_ENV_SH` 发现 CLI，但默认不得把未验明的网关（常见：端口被 OpenClaw 占用）当成 L3；矩阵在有 probe+网络段读回证据并重签前不改 `supported`。
+机器可读事实源：[`skills/agentshield/skill-manifest.json`](./skills/agentshield/skill-manifest.json) 的 `support_matrix`。当前**没有任何一行 `supported`**。2026-09-05 已在 DGX Spark（linux/arm64）归档：Hermes 实机插件 L0–L2（[`hermes-linux-2026-09-05/`](./docs/evidence/agentshield/hermes-linux-2026-09-05/)）、OpenClaw 隔离 HOME 的 `policy-exec` + 插件形态 decide（[`openclaw-linux-2026-09-05/`](./docs/evidence/agentshield/openclaw-linux-2026-09-05/)）、CodeBuddy 隔离 HOME 的真实 `hook codebuddy`（[`codebuddy-linux-2026-09-05/`](./docs/evidence/agentshield/codebuddy-linux-2026-09-05/)）。grant 均由人类 `--approve-as maoyd` 批准并 deploy，授后越权为 deny，`verify` 通过。L3 需验明的 OpenShell 网关，可选、不宣称。OpenShell 由 PATH 或 `SIQ_AS_OPENSHELL_ENV_SH` 发现 CLI，但默认不得把未验明的网关（常见：端口被 OpenClaw 占用）当成 L3；矩阵在重签前不改 `supported`。
 
 | 平台 | Linux | macOS | Windows | 说明 |
 | --- | --- | --- | --- | --- |
 | Hermes | L0–L3 experimental | L0–L2 experimental | L0–L2 experimental | Linux L0–L2 有 Spark 证据；L3 可选未宣称 |
-| OpenClaw | L0–L3 experimental | L0–L2 experimental | L0–L2 experimental | policy-exec + 插件已落地 |
-| CodeBuddy | L0–L2 experimental | L0–L2 experimental | L0–L2 experimental | hook 已落地；无 L3 |
+| OpenClaw | L0–L3 experimental | L0–L2 experimental | L0–L2 experimental | linux L1 `policy-exec` + L2 decide 证据已归档；未挂本机 OpenClaw 网关；矩阵不改 |
+| CodeBuddy | L0–L2 experimental | L0–L2 experimental | L0–L2 experimental | linux `hook codebuddy` 证据已归档；非 GUI 客户端；无 L3；矩阵不改 |
 | Trae | L0 audit_only | L0 audit_only | L0 audit_only | 无工具钩子，不能阻断 |
 | Claude Code / Codex | L0 experimental | L0 experimental | L0 experimental | 非本轮 |
 
@@ -85,7 +85,7 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 ./agentshield verify
 ```
 
-脱敏回执见 [`docs/evidence/agentshield/`](./docs/evidence/agentshield/README.md)。没有完整证据（含人类批准 grant）的矩阵行保持 `experimental`。
+脱敏回执见 [`docs/evidence/agentshield/`](./docs/evidence/agentshield/README.md)。即使已有 linux 证据，矩阵行在重签前仍保持 `experimental`。
 
 ## 台账演示（加分主界面，非前置依赖）
 

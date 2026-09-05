@@ -1,0 +1,84 @@
+{
+  "http_status": 200,
+  "receipts": {
+    "receipts": [
+      {
+        "receipt_id": "rcp-e4c1903be265-141557.046634",
+        "chain_id": "local",
+        "seq": 0,
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "cf969b8dcbc5ecdfc4c8bfae462c96b6c8f302e3e8ec9ea912ebdb2d4e3b3274",
+        "sig": "<redacted len=128 sha256=2bca87a03e57>",
+        "issued_at": "2026-09-05T14:15:57Z",
+        "platform": "codebuddy",
+        "session_id": "spark-codebuddy-demo",
+        "agent_id": "codebuddy-demo",
+        "tool": "WebFetch",
+        "tool_call_id": null,
+        "params_digest": "e4c1903be265e621dd2eccded080dc9ca560c80df481f522eb702c8444320877",
+        "params_excerpt": "<redacted len=27 sha256=de89233e0f70>",
+        "action": "deny",
+        "advisory_action": null,
+        "reason": "no deployed grant for agent (default deny)",
+        "matched_grant_id": null,
+        "matched_fact_ids": [],
+        "matched_rule_ids": [],
+        "taint_labels": [],
+        "trifecta": {
+          "private_data": false,
+          "untrusted_input": false,
+          "egress": true
+        },
+        "enforcement_mode": "block",
+        "policy_revision": null,
+        "sandbox_id": null,
+        "model_key": null,
+        "engine": {
+          "version": "0.1.0",
+          "rulepack_version": 1
+        },
+        "decision_latency_ms": 0,
+        "hold": null
+      },
+      {
+        "receipt_id": "rcp-e4c1903be265-141557.069491",
+        "chain_id": "local",
+        "seq": 1,
+        "prev_hash": "cf969b8dcbc5ecdfc4c8bfae462c96b6c8f302e3e8ec9ea912ebdb2d4e3b3274",
+        "hash": "5f43be2246418c89f292ea910e3f22170dedd92303e776b3ec08e1c9c6d3c706",
+        "sig": "<redacted len=128 sha256=df20bfa4729f>",
+        "issued_at": "2026-09-05T14:15:57Z",
+        "platform": "codebuddy",
+        "session_id": "spark-codebuddy-demo",
+        "agent_id": "codebuddy-demo",
+        "tool": "WebFetch",
+        "tool_call_id": null,
+        "params_digest": "e4c1903be265e621dd2eccded080dc9ca560c80df481f522eb702c8444320877",
+        "params_excerpt": "<redacted len=27 sha256=de89233e0f70>",
+        "action": "deny",
+        "advisory_action": null,
+        "reason": "tool WebFetch not granted (default deny)",
+        "matched_grant_id": "grt-4af17a9f9719-260a2709",
+        "matched_fact_ids": [],
+        "matched_rule_ids": [],
+        "taint_labels": [],
+        "trifecta": {
+          "private_data": false,
+          "untrusted_input": false,
+          "egress": true
+        },
+        "enforcement_mode": "block",
+        "policy_revision": null,
+        "sandbox_id": null,
+        "model_key": null,
+        "engine": {
+          "version": "0.1.0",
+          "rulepack_version": 1
+        },
+        "decision_latency_ms": 0,
+        "hold": null
+      }
+    ],
+    "verified": true
+  }
+}

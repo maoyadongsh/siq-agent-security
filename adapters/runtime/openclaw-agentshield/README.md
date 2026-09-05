@@ -66,5 +66,5 @@ agentshield adapter install openclaw
 
 ## 验证状态
 
-- `policy-exec`：Go 单测 + 真机冒烟（隐藏注释 Skill → block；官方风格 Skill → warn）。
-- 插件 TS：按 OpenClaw 2026-09 `before_tool_call` 合同编写（`block` 终止、`requireApproval` 首个生效、`params` 改写），**尚未在真实 OpenClaw 网关上运行**；E2E 计划见规格 §7.4。
+- `policy-exec`：Go 单测 + linux 隔离 HOME 证据（隐藏注释 Skill → block；官方风格 Skill → warn）。见 [`docs/evidence/agentshield/openclaw-linux-2026-09-05/`](../../../docs/evidence/agentshield/openclaw-linux-2026-09-05/)。
+- 插件 TS：按 OpenClaw 2026-09 `before_tool_call` 合同编写（`block` 终止、`requireApproval` 首个生效、`params` 改写）。同一证据目录用插件会发出的 `/v1/decide` 请求体做了授前/授后 deny；**仍未**把插件加载进本机正在跑的 OpenClaw 网关进程。矩阵不标 `supported`。

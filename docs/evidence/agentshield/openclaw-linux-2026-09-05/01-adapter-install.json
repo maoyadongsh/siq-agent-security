@@ -1,0 +1,28 @@
+{
+  "exit_code": 0,
+  "stderr": "",
+  "result": {
+    "platform": "openclaw",
+    "action": "install",
+    "paths": [
+      "$HOME/.openclaw/plugins/agentshield/package.json",
+      "$HOME/.openclaw/plugins/agentshield/index.ts",
+      "$HOME/.openclaw/agentshield.json",
+      "$HOME/.openclaw/openclaw.json"
+    ],
+    "record": {
+      "platform": "openclaw",
+      "installed_at": "2026-09-05T14:15:56Z",
+      "binary": "$BIN",
+      "created": [
+        "$HOME/.openclaw/plugins/agentshield/package.json",
+        "$HOME/.openclaw/plugins/agentshield/index.ts",
+        "$HOME/.openclaw/agentshield.json",
+        "$HOME/.openclaw/plugins/agentshield"
+      ],
+      "modified": {
+        "$HOME/.openclaw/openclaw.json": "$HOME/.openclaw/openclaw.json.agentshield-bak"
+      }
+    }
+  }
+}

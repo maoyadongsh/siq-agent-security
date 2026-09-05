@@ -1,0 +1,23 @@
+{
+  "host": "DGX Spark linux/arm64",
+  "date": "2026-09-05",
+  "platform": "openclaw",
+  "binary_version": "0.1.0",
+  "home": "isolated $HOME (did not mutate the operator's real ~/.openclaw)",
+  "live_openclaw_gateway": false,
+  "policy_exec_toxic_decision": "block",
+  "policy_exec_toxic_verdict": "quarantine",
+  "policy_exec_official_decision": "warn",
+  "policy_exec_official_verdict": "admit_with_conditions",
+  "grant_id": "grt-4af17a9f9719-f33ebb37",
+  "grant_approved_by_model": false,
+  "grant_approved_by": "maoyd",
+  "grant_status": "deployed",
+  "pre_grant_overreach": "no deployed grant for agent (default deny)",
+  "post_grant_overreach": "tool web_fetch not granted (default deny)",
+  "l2_path": "POST /v1/decide with OpenClaw plugin before_tool_call body; plugin was installed into isolated HOME but not loaded by a live OpenClaw gateway process",
+  "verify_ok": true,
+  "verify_receipts": 2,
+  "support_matrix_updated": false,
+  "reason_matrix_unchanged": "L2 evidence is the decision API the plugin would call, not a live OpenClaw gateway session; ValidateMatrix still forbids supported rows without a re-sign"
+}

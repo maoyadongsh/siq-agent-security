@@ -1,0 +1,23 @@
+{
+  "host": "DGX Spark linux/arm64",
+  "date": "2026-09-05",
+  "platform": "codebuddy",
+  "binary_version": "0.1.0",
+  "home": "isolated $HOME (did not mutate the operator's real ~/.codebuddy)",
+  "live_codebuddy_gui": false,
+  "toxic_exit": 3,
+  "toxic_verdict": "quarantine",
+  "official_exit": 0,
+  "official_verdict": "admit_with_conditions",
+  "grant_id": "grt-4af17a9f9719-260a2709",
+  "grant_approved_by_model": false,
+  "grant_approved_by": "maoyd",
+  "grant_status": "deployed",
+  "pre_grant_overreach": "no deployed grant for agent (default deny)",
+  "post_grant_overreach": "tool WebFetch not granted (default deny)",
+  "l2_path": "real `agentshield hook codebuddy` PreToolUse stdin → /v1/decide; not the CodeBuddy GUI client",
+  "verify_ok": true,
+  "verify_receipts": 2,
+  "support_matrix_updated": false,
+  "reason_matrix_unchanged": "hook contract E2E is archived; CodeBuddy GUI was not driven; matrix stays experimental until a re-sign is explicitly requested"
+}

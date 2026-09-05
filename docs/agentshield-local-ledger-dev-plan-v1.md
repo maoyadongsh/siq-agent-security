@@ -333,7 +333,7 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 | 窗口 | 内容 |
 | --- | --- |
 | 现在 → 提交前 | **P0 必做**；P1 尽力；P2 有 L3 环境则做漂移，否则文档标明 |
-| 提交后 → 决赛 | P2 收口、P3 导出、补 OpenClaw/CodeBuddy E2E 证据（另案，不改矩阵除非有证据） |
+| 提交后 → 决赛 | P2 收口、P3 导出、OpenClaw/CodeBuddy E2E 证据 **已归档（不改矩阵）** |
 
 ---
 
@@ -407,7 +407,7 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 1. `/admissions` 独立页是否保留为「准入流水」二级入口（建议 P0 做重定向，P1 在资产详情内嵌列表）。
 2. 资产 ID 稳定性：`skill:hermes:name@hash12` 在改名后是否迁移（建议 locator + hash 为主键，name 可变）。
 3. 本机是否默认扫描 Claude Code / Codex 仅作 L0 展示（inventory 已能探测配置；适配器未做则只发现不管控）。
-4. 决赛前是否补 OpenClaw E2E 证据（与 W7 平行，不改矩阵除非有包）。
+4. OpenClaw / CodeBuddy linux E2E 证据已归档（隔离 HOME；不改矩阵）。剩余：GitHub Release、是否把矩阵行改成 `supported`（须重签）。
 
 ---
 
