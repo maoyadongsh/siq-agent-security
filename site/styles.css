@@ -469,10 +469,60 @@ pre {
   bottom: 0.7rem;
 }
 
-.note {
-  margin: 0.75rem 0 0;
+.diagram-frame {
+  overflow-x: auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  padding: 1rem;
+}
+
+.diagram-frame .mermaid {
+  margin: 0;
+}
+
+.diagram-frame svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.sources {
+  margin: 0.55rem 0 0;
+  font-size: 0.8125rem;
   color: var(--text-secondary);
-  font-size: 0.875rem;
+}
+
+.sources code {
+  font-size: 0.75rem;
+}
+
+.toc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.85rem;
+  margin: 0 0 1.5rem;
+}
+
+.toc-links a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.extract {
+  margin: 1rem 0 0;
+  padding: 0.85rem 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.extract summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
 .site-footer {

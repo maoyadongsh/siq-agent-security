@@ -1,0 +1,91 @@
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#fdfcf9',
+  'primaryTextColor': '#001840',
+  'primaryBorderColor': '#001840',
+  'lineColor': '#7c5a0c',
+  'secondaryColor': '#f3eee2',
+  'tertiaryColor': '#f7f4ee',
+  'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
+}}}%%
+flowchart LR
+  adapterinstall["adapterinstall"]
+  adapters["adapters"]
+  admission["admission"]
+  canon["canon"]
+  controlsync["controlsync"]
+  export["export"]
+  grant["grant"]
+  inventory["inventory"]
+  ledger["ledger"]
+  openshell["openshell"]
+  product["product"]
+  receipt["receipt"]
+  rulepack["rulepack"]
+  server["server"]
+  signing["signing"]
+  skillmanifest["skillmanifest"]
+  state["state"]
+  threat["threat"]
+  ui["ui"]
+  adapterinstall --> product
+  adapterinstall --> state
+  adapters --> admission
+  adapters --> product
+  adapters --> receipt
+  adapters --> rulepack
+  adapters --> signing
+  admission --> canon
+  admission --> rulepack
+  admission --> signing
+  admission --> threat
+  controlsync --> admission
+  controlsync --> canon
+  controlsync --> inventory
+  controlsync --> signing
+  export --> ledger
+  export --> receipt
+  export --> signing
+  export --> state
+  grant --> admission
+  grant --> canon
+  grant --> signing
+  inventory --> admission
+  inventory --> canon
+  inventory --> product
+  inventory --> signing
+  ledger --> admission
+  ledger --> canon
+  ledger --> grant
+  ledger --> inventory
+  ledger --> receipt
+  ledger --> signing
+  ledger --> state
+  receipt --> canon
+  receipt --> grant
+  receipt --> rulepack
+  receipt --> signing
+  receipt --> threat
+  rulepack --> canon
+  server --> adapterinstall
+  server --> admission
+  server --> export
+  server --> grant
+  server --> inventory
+  server --> ledger
+  server --> openshell
+  server --> product
+  server --> receipt
+  server --> rulepack
+  server --> signing
+  server --> state
+  signing --> canon
+  signing --> product
+  skillmanifest --> admission
+  skillmanifest --> canon
+  skillmanifest --> product
+  skillmanifest --> rulepack
+  skillmanifest --> signing
+  state --> admission
+  state --> grant
+  state --> product
+  threat --> rulepack

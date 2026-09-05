@@ -26,6 +26,7 @@
           <span class="brand-name">siq-agent-security</span>
         </a>
         <nav class="nav-links" aria-label="站点">
+          <a href="./architecture.html">架构</a>
           <a href="#verdicts">结论</a>
           <a href="#spark">实测</a>
           <a href="#install">安装</a>
@@ -107,6 +108,18 @@
               </div>
             </li>
           </ol>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="wrap">
+          <h2>架构图从源码生成</h2>
+          <p class="section-intro">
+            CLI 子命令、HTTP 路由、包依赖、准入结论、运行时返回路径和 grant 状态机，都由扫描当前仓库抽出来，而不是手绘。源码一改，图跟着改。
+          </p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="./architecture.html">打开从代码生成的图</a>
+          </div>
         </div>
       </section>
 

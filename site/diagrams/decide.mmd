@@ -1,0 +1,27 @@
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#fdfcf9',
+  'primaryTextColor': '#001840',
+  'primaryBorderColor': '#001840',
+  'lineColor': '#7c5a0c',
+  'secondaryColor': '#f3eee2',
+  'tertiaryColor': '#f7f4ee',
+  'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
+}}}%%
+flowchart TD
+  dec["Engine.Decide"] --> ev["Engine.evaluate"]
+  ev --> r0["deny: 'no deployed grant for agent (default deny)'"]
+  ev --> r1["deny: 'tool ' + req.Tool + ' not granted (default deny)'"]
+  ev --> r2["deny: 'tainted egress: session carries ' + strings.Join(sor..."]
+  ev --> r3["deny: 'lethal trifecta: private data + untrusted input + eg..."]
+  ev --> r4["deny: 'network egress to ' + h + ' not in grant ' + g.Grant..."]
+  ev --> r5["deny: 'egress exec requires granted host'"]
+  ev --> r6["deny: 'credential path ' + p + ' denied (credential facts a..."]
+  ev --> r7["deny: 'write to ' + p + ' outside granted paths and cwd (de..."]
+  ev --> r8["hold: 'tool ' + req.Tool + ' requires human approval per gr..."]
+  ev --> r9["allow: 'granted by ' + g.GrantID"]
+  dec --> mode["switch EnforcementMode"]
+  mode --> m_audit_only["audit_only"]
+  mode --> m_warn["warn"]
+  mode --> m_default["default"]
+  m_audit_only --> advisory["non-allow → AdvisoryAction; action=allow"]
+  m_warn --> advisory

@@ -1,5 +1,6 @@
 # 把 site/ 发布到 gh-pages，供 GitHub Pages 托管。
 # 产品代码仍在功能分支；不把 Pages 源设成 docs/，以免规格文档被当成站点。
+# 部署前从当前源码扫描生成 Mermaid（CLI / HTTP / import / 状态机），不是手绘。
 name: pages
 
 on:
@@ -8,6 +9,8 @@ on:
       - cursor/agentshield-w0-contracts-8eff
     paths:
       - "site/**"
+      - "apps/agentshield/**"
+      - "adapters/runtime/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -23,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Generate diagrams from source
+        run: python3 site/diagrams/from_code.py
       - name: Publish site/ to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:

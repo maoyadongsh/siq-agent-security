@@ -1,0 +1,70 @@
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#fdfcf9',
+  'primaryTextColor': '#001840',
+  'primaryBorderColor': '#001840',
+  'lineColor': '#7c5a0c',
+  'secondaryColor': '#f3eee2',
+  'tertiaryColor': '#f7f4ee',
+  'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
+}}}%%
+flowchart TB
+  subgraph cli["cmd/agentshield switch os.Args[1]"]
+    cli_version["version"]
+    cli_rulepack["rulepack"]
+    cli_scan["scan"]
+    cli_admit["admit"]
+    cli_pubkey["pubkey"]
+    cli_verify["verify"]
+    cli_serve["serve"]
+    cli_inventory["inventory"]
+    cli_export["export"]
+    cli_sync["sync"]
+    cli_policy_exec["policy-exec"]
+    cli_hook["hook"]
+    cli_adapter["adapter"]
+    cli_grant["grant"]
+    cli_openshell["openshell"]
+    cli_release_manifest["release-manifest"]
+    cli_manifest_verify["manifest-verify"]
+  end
+  subgraph http["internal/server New() ServeMux"]
+    rt__v1_status["/v1/status"]
+    rt__v1_decide["/v1/decide"]
+    rt__v1_observe["/v1/observe"]
+    rt__v1_hold_["/v1/hold/"]
+    rt__v1_receipts["/v1/receipts"]
+    rt__v1_admit["/v1/admit"]
+    rt__v1_admissions["/v1/admissions"]
+    rt__v1_admissions_["/v1/admissions/"]
+    rt__v1_inventory["/v1/inventory"]
+    rt__v1_grants["/v1/grants"]
+    rt__v1_grants_["/v1/grants/"]
+    rt__v1_config["/v1/config"]
+    rt__v1_adapter_status["/v1/adapter/status"]
+    rt__v1_adapter_install["/v1/adapter/install"]
+    rt__v1_adapter_uninstall["/v1/adapter/uninstall"]
+    rt__v1_openshell_probe["/v1/openshell/probe"]
+    rt__v1_openshell_doctor["/v1/openshell/doctor"]
+    rt__v1_openshell_apply["/v1/openshell/apply"]
+    rt__v1_openshell_drift_check["/v1/openshell/drift-check"]
+    rt__v1_assets["/v1/assets"]
+    rt__v1_assets_["/v1/assets/"]
+    rt__v1_permissions["/v1/permissions"]
+    rt__v1_findings["/v1/findings"]
+    rt__v1_findings_["/v1/findings/"]
+    rt__v1_audit["/v1/audit"]
+    rt__v1_export["/v1/export"]
+    rt__ui_config_json["/ui-config.json"]
+    rt__["/"]
+    rt__["/"]
+  end
+  subgraph adp["adapters/runtime"]
+    ad_codebuddy_agentshield["codebuddy-agentshield"]
+    ad_hermes_agentshield["hermes-agentshield"]
+    ad_openclaw_agentshield["openclaw-agentshield"]
+  end
+  adp --> http
+  cli_serve --> http
+  cli_admit -.-> rt__v1_admit
+  cli_policy_exec --> adp
+  cli_hook --> adp
