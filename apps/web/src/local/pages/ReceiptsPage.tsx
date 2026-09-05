@@ -5,7 +5,11 @@ import { Icon } from '@/components/icons';
 import { localApi } from '../api';
 import type { Receipt } from '../types';
 import { useLocalSession } from '../session';
-import { actionTag, shortHash } from '../format';
+import { actionLabel, actionTag, platformLabel, shortHash } from '../format';
+
+function shortTime(iso: string): string {
+  return iso.length >= 19 ? iso.slice(0, 19).replace('T', ' ') : iso;
+}
 
 export default function ReceiptsPage() {
   const { actorId } = useLocalSession();
@@ -14,6 +18,7 @@ export default function ReceiptsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState<string | null>(null);
+  const [holdErr, setHoldErr] = useState<string | null>(null);
 
   const load = (announce = false) => {
     setLoading(true);
@@ -39,43 +44,74 @@ export default function ReceiptsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const resolve = (receiptId: string, approve: boolean) => {
+    setHoldErr(null);
+    localApi
+      .resolveHold(receiptId, approve, actorId)
+      .then(() => load(false))
+      .catch((err: unknown) => {
+        setHoldErr(err instanceof Error ? err.message : '签核失败');
+      });
+  };
+
   const columns: TableColumn<Receipt>[] = [
     { key: 'seq', header: 'seq', render: (r) => String(r.seq) },
     {
+      key: 'time',
+      header: '时间',
+      render: (r) => <span className="mono cell-nowrap">{shortTime(r.issued_at)}</span>,
+    },
+    {
       key: 'action',
       header: '动作',
-      render: (r) => <span className={actionTag(r.action)}>{r.action}</span>,
+      render: (r) => (
+        <span className={actionTag(r.action)} title={r.action}>
+          {actionLabel(r.action)}
+        </span>
+      ),
     },
     { key: 'tool', header: '工具', render: (r) => r.tool },
-    { key: 'plat', header: '平台', render: (r) => r.platform },
+    { key: 'plat', header: '平台', render: (r) => platformLabel(r.platform) },
     { key: 'reason', header: '原因', render: (r) => r.reason },
-    { key: 'hash', header: 'hash', render: (r) => <span className="mono">{shortHash(r.hash, 10)}</span> },
+    {
+      key: 'advisory',
+      header: '建议动作',
+      render: (r) =>
+        r.advisory_action ? (
+          <span className={actionTag(r.advisory_action)} title={r.advisory_action}>
+            {actionLabel(r.advisory_action)}
+          </span>
+        ) : (
+          '—'
+        ),
+    },
+    {
+      key: 'hash',
+      header: 'hash',
+      render: (r) => <span className="mono">{shortHash(r.hash, 10)}</span>,
+    },
     {
       key: 'hold',
       header: '',
       render: (r) =>
         r.action === 'hold' ? (
-          <span>
+          <span className="row-actions">
             <button
               type="button"
               className="btn btn-sm btn-primary"
               onClick={(e) => {
                 e.stopPropagation();
-                localApi.resolveHold(r.receipt_id, true, actorId).then(() => load(false)).catch((err: unknown) => {
-                  setMsg(err instanceof Error ? err.message : '签核失败');
-                });
+                resolve(r.receipt_id, true);
               }}
             >
               放行
-            </button>{' '}
+            </button>
             <button
               type="button"
-              className="btn btn-sm"
+              className="btn btn-sm btn-danger"
               onClick={(e) => {
                 e.stopPropagation();
-                localApi.resolveHold(r.receipt_id, false, actorId).then(() => load(false)).catch((err: unknown) => {
-                  setMsg(err instanceof Error ? err.message : '签核失败');
-                });
+                resolve(r.receipt_id, false);
               }}
             >
               拒绝
@@ -100,20 +136,39 @@ export default function ReceiptsPage() {
           </button>
         }
       />
-      {verified === true ? <p className="page-desc">链完整，签名有效。</p> : null}
-      {verified === false ? (
-        <div className="notice" role="status">
-          <p className="notice-title">验签失败</p>
-          <p className="notice-detail">{msg}</p>
+      {verified === true ? (
+        <div className="scan-result" role="status">
+          <p>链完整，签名有效（{rows.length} 条）。</p>
         </div>
       ) : null}
-      {msg && verified !== false ? <p className="page-desc">{msg}</p> : null}
+      {verified === false ? (
+        <p className="action-error" role="alert">
+          验签失败：{msg ?? '链断裂或签名不匹配。'}
+        </p>
+      ) : null}
+      {holdErr ? (
+        <p className="action-error" role="alert">
+          {holdErr}
+        </p>
+      ) : null}
+      {error ? (
+        <div className="notice" role="status">
+          <p className="notice-title">加载失败</p>
+          <p className="notice-detail">{error}</p>
+        </div>
+      ) : null}
       <div className="card">
         <SimpleTable
           columns={columns}
           rows={rows}
           rowKey={(r) => r.receipt_id}
-          emptyText="还没有回执。装上适配器后，工具调用会写到这里。"
+          emptyText={
+            loading
+              ? '加载中…'
+              : error
+                ? '决策 API 不可达，暂时无法读取回执。'
+                : '还没有回执。装上适配器后，工具调用会写到这里。'
+          }
           rowClassName={(r) => (r.action === 'deny' ? 'row-deny' : undefined)}
         />
       </div>

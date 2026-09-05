@@ -6,7 +6,6 @@ import type {
   Admission,
   AdapterResult,
   Grant,
-  InventoryReport,
   LedgerAsset,
   LedgerAssetDetail,
   LedgerFinding,
@@ -22,7 +21,6 @@ export type {
   Admission,
   AdapterResult,
   Grant,
-  InventoryReport,
   LedgerAsset,
   LedgerAssetDetail,
   LedgerFinding,
@@ -80,10 +78,6 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
 export const localApi = {
   status: () => request<Status>('/v1/status'),
-  inventory: (cwd?: string) => {
-    const q = cwd ? `?cwd=${encodeURIComponent(cwd)}` : '';
-    return request<InventoryReport>(`/v1/inventory${q}`);
-  },
   assets: (cwd?: string) => {
     const q = cwd ? `?cwd=${encodeURIComponent(cwd)}` : '';
     return request<{ assets: LedgerAsset[]; overview: LedgerOverview }>(`/v1/assets${q}`);
@@ -116,7 +110,6 @@ export const localApi = {
       method: 'POST',
       body: JSON.stringify({ path, trust_level: trustLevel }),
     }),
-  admissions: () => request<{ admissions: Admission[] }>('/v1/admissions'),
   admission: (id: string) =>
     request<{ admission: Admission; skill_card: string }>(`/v1/admissions/${id}`),
   grants: () => request<{ grants: Grant[] }>('/v1/grants'),

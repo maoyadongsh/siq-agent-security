@@ -5,8 +5,10 @@ import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { Icon } from '@/components/icons';
 import { localApi } from '../api';
 import type { PermissionFact } from '../types';
-import { DOMAIN_LABELS, factStateLabel, hasOpenShellL3 } from '../format';
+import { domainLabel, factStateLabel, factStateTag, hasOpenShellL3 } from '../format';
 import { useLocalSession } from '../session';
+
+const STATE_ORDER = ['effective', 'observed', 'inferred', 'declared', 'unknown'];
 
 export default function PermissionsPage() {
   const { status } = useLocalSession();
@@ -63,7 +65,13 @@ export default function PermissionsPage() {
   };
 
   const domains = useMemo(() => Array.from(new Set(rows.map((r) => r.domain))).sort(), [rows]);
-  const states = useMemo(() => Array.from(new Set(rows.map((r) => r.state))).sort(), [rows]);
+  const states = useMemo(
+    () =>
+      Array.from(new Set(rows.map((r) => r.state))).sort(
+        (a, b) => STATE_ORDER.indexOf(a) - STATE_ORDER.indexOf(b),
+      ),
+    [rows],
+  );
   const visible = rows.filter((r) => {
     if (domain && r.domain !== domain) return false;
     if (stateFilter && r.state !== stateFilter) return false;
@@ -72,7 +80,7 @@ export default function PermissionsPage() {
   const effectiveCount = rows.filter((r) => r.state === 'effective').length;
 
   const columns: TableColumn<PermissionFact>[] = [
-    { key: 'domain', header: '权限域', render: (r) => DOMAIN_LABELS[r.domain] ?? r.domain },
+    { key: 'domain', header: '权限域', render: (r) => domainLabel(r.domain) },
     { key: 'action', header: '动作', render: (r) => r.action },
     {
       key: 'resource',
@@ -87,9 +95,18 @@ export default function PermissionsPage() {
     {
       key: 'state',
       header: '状态',
-      render: (r) => <span className={`state-tag ${r.state}`}>{factStateLabel(r.state)}</span>,
+      render: (r) => <span className={factStateTag(r.state)}>{factStateLabel(r.state)}</span>,
     },
-    { key: 'authority', header: '权威来源', render: (r) => r.authority },
+    {
+      key: 'authority',
+      header: '权威来源',
+      render: (r) =>
+        r.authority === 'openshell' ? (
+          <span className="authority-openshell cell-nowrap">{r.authority}</span>
+        ) : (
+          <span className="cell-nowrap">{r.authority}</span>
+        ),
+    },
     { key: 'source', header: '投影源', render: (r) => r.source },
     {
       key: 'subject',
@@ -117,55 +134,73 @@ export default function PermissionsPage() {
           </button>
         }
       />
+      <div className="permissions-toolbar">
+        <div className="filter-group">
+          <button
+            type="button"
+            className={`btn-sm ${stateFilter === '' ? 'btn-active' : 'btn-ghost'}`}
+            onClick={() => setStateFilter('')}
+          >
+            全部（{rows.length}）
+          </button>
+          {states.map((s) => (
+            <button
+              key={s}
+              type="button"
+              className={`btn-sm ${stateFilter === s ? 'btn-active' : 'btn-ghost'}`}
+              onClick={() => setStateFilter(s)}
+            >
+              {factStateLabel(s)}（{rows.filter((r) => r.state === s).length}）
+            </button>
+          ))}
+        </div>
+        <div className="filter-group">
+          <button
+            type="button"
+            className="btn btn-sm"
+            disabled={!l3}
+            title={l3 ? '对 OpenShell 做读回比对' : '无 L3：须已验明 OpenShell 才能漂移检测'}
+            onClick={runDrift}
+          >
+            漂移检测
+          </button>
+          {!l3 ? (
+            <span className="muted-text">
+              无 L3：按钮已禁用。须已验明 OpenShell，失败不得写成「无漂移」。
+            </span>
+          ) : null}
+        </div>
+      </div>
+      {driftMsg ? <p className="sync-ok">{driftMsg}</p> : null}
+      <div className="toolbar">
+        <div className="field field-flush">
+          <label htmlFor="perm-sub">主体 ID</label>
+          <input
+            id="perm-sub"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            placeholder="可选过滤"
+          />
+        </div>
+        <button type="button" className="btn btn-sm" onClick={applySubject}>
+          过滤
+        </button>
+        <div className="field field-flush">
+          <label htmlFor="perm-dom">权限域</label>
+          <select id="perm-dom" value={domain} onChange={(e) => setDomain(e.target.value)}>
+            <option value="">全部</option>
+            {domains.map((d) => (
+              <option key={d} value={d}>
+                {domainLabel(d)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
       <p className="page-desc">
         当前投影 {rows.length} 条 · 标为有效 {effectiveCount} 条
         {effectiveCount === 0 ? '（无 OpenShell 读回时这是预期）' : ''}。
       </p>
-      <div className="toolbar">
-        <button type="button" className="btn btn-sm" disabled={!l3} onClick={runDrift}>
-          漂移检测
-        </button>
-        {!l3 ? <span className="page-desc">无 L3：按钮禁用。须已验明 OpenShell，失败不得写成「无漂移」。</span> : null}
-      </div>
-      {driftMsg ? <p className="page-desc">{driftMsg}</p> : null}
-      <div className="permissions-toolbar">
-        <div className="filter-group">
-          <div className="field" style={{ marginBottom: 0 }}>
-            <label htmlFor="perm-sub">主体 ID</label>
-            <input
-              id="perm-sub"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              placeholder="可选过滤"
-            />
-          </div>
-          <button type="button" className="btn btn-sm" onClick={applySubject}>
-            过滤
-          </button>
-          <div className="field" style={{ marginBottom: 0 }}>
-            <label htmlFor="perm-dom">权限域</label>
-            <select id="perm-dom" value={domain} onChange={(e) => setDomain(e.target.value)}>
-              <option value="">全部</option>
-              {domains.map((d) => (
-                <option key={d} value={d}>
-                  {DOMAIN_LABELS[d] ?? d}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="field" style={{ marginBottom: 0 }}>
-            <label htmlFor="perm-st">状态</label>
-            <select id="perm-st" value={stateFilter} onChange={(e) => setStateFilter(e.target.value)}>
-              <option value="">全部</option>
-              {states.map((s) => (
-                <option key={s} value={s}>
-                  {factStateLabel(s)}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
       {error ? (
         <div className="notice" role="status">
           <p className="notice-title">加载失败</p>
@@ -177,7 +212,15 @@ export default function PermissionsPage() {
           columns={columns}
           rows={visible}
           rowKey={(r) => r.fact_id}
-          emptyText={loading ? '加载中…' : '暂无权限事实。准入或签发后会出现声明态。'}
+          emptyText={
+            loading
+              ? '加载中…'
+              : error
+                ? '决策 API 不可达，暂时无法读取权限事实。'
+                : rows.length > 0
+                  ? '当前筛选无匹配事实。'
+                  : '暂无权限事实。准入或签发后会出现声明态。'
+          }
         />
       </div>
     </section>

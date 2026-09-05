@@ -6,7 +6,15 @@ import { Icon } from '@/components/icons';
 import { LocalApiError, localApi } from '../api';
 import type { LedgerAsset } from '../types';
 import { useLocalSession } from '../session';
-import { assetStatusLabel, assetStatusTag, grantTag, platformLabel, verdictTag } from '../format';
+import {
+  assetStatusLabel,
+  assetStatusTag,
+  grantStatusLabel,
+  grantTag,
+  platformLabel,
+  verdictLabel,
+  verdictTag,
+} from '../format';
 
 export default function AgentsPage() {
   const navigate = useNavigate();
@@ -18,7 +26,8 @@ export default function AgentsPage() {
   const [framework, setFramework] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [admitPath, setAdmitPath] = useState('');
-  const [admitMsg, setAdmitMsg] = useState<string | null>(null);
+  const [admitResult, setAdmitResult] = useState<{ name: string; verdict: string } | null>(null);
+  const [admitErr, setAdmitErr] = useState<string | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -43,15 +52,16 @@ export default function AgentsPage() {
   }, []);
 
   const runAdmit = (path: string) => {
-    setAdmitMsg(null);
+    setAdmitResult(null);
+    setAdmitErr(null);
     localApi
       .admit(path)
       .then((res) => {
-        setAdmitMsg(`${res.admission.skill_name}: ${res.admission.verdict}`);
+        setAdmitResult({ name: res.admission.skill_name, verdict: res.admission.verdict });
         load();
       })
       .catch((err: unknown) => {
-        setAdmitMsg(err instanceof LocalApiError ? err.message : '准入失败');
+        setAdmitErr(err instanceof LocalApiError ? err.message : '准入失败');
       });
   };
 
@@ -69,14 +79,30 @@ export default function AgentsPage() {
     return true;
   });
 
+  const emptyText = loading
+    ? '盘点中…'
+    : error
+      ? '决策 API 不可达，暂时无法读取资产。'
+      : rows.length > 0
+        ? '当前筛选无匹配资产，可放宽平台 / 状态条件。'
+        : '未发现资产。确认本机装有 Agent 平台，或在下方粘贴 Skill 目录做准入。';
+
   const columns: TableColumn<LedgerAsset>[] = [
-    { key: 'name', header: '名称', render: (r) => r.name || r.id },
+    {
+      key: 'name',
+      header: '名称',
+      render: (r) => (
+        <span className="cell-ellipsis" title={r.id}>
+          {r.name || r.id}
+        </span>
+      ),
+    },
     {
       key: 'fw',
       header: '平台',
-      render: (r) => platformLabel(r.framework),
+      render: (r) => <span className="cell-nowrap">{platformLabel(r.framework)}</span>,
     },
-    { key: 'type', header: '来源', render: (r) => r.source_type },
+    { key: 'type', header: '来源', render: (r) => <span className="cell-nowrap">{r.source_type}</span> },
     {
       key: 'status',
       header: '状态',
@@ -87,7 +113,9 @@ export default function AgentsPage() {
       header: '准入',
       render: (r) =>
         r.admission_verdict ? (
-          <span className={verdictTag(r.admission_verdict)}>{r.admission_verdict}</span>
+          <span className={verdictTag(r.admission_verdict)} title={r.admission_verdict}>
+            {verdictLabel(r.admission_verdict)}
+          </span>
         ) : (
           '—'
         ),
@@ -96,12 +124,23 @@ export default function AgentsPage() {
       key: 'grant',
       header: '签发',
       render: (r) =>
-        r.grant_status ? <span className={grantTag(r.grant_status)}>{r.grant_status}</span> : '—',
+        r.grant_status ? (
+          <span className={grantTag(r.grant_status)} title={r.grant_status}>
+            {grantStatusLabel(r.grant_status)}
+          </span>
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'tools',
       header: '声明工具',
-      render: (r) => (r.declared_tools && r.declared_tools.length > 0 ? r.declared_tools.join(', ') : '—'),
+      render: (r) =>
+        r.declared_tools && r.declared_tools.length > 0 ? (
+          <span className="muted-text">{r.declared_tools.join(', ')}</span>
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'act',
@@ -138,7 +177,7 @@ export default function AgentsPage() {
         }
       />
       <div className="toolbar">
-        <div className="field" style={{ marginBottom: 0 }}>
+        <div className="field field-flush">
           <label htmlFor="inv-cwd">额外扫描目录（可选）</label>
           <input
             id="inv-cwd"
@@ -147,7 +186,7 @@ export default function AgentsPage() {
             placeholder="项目根，例如 ~/src/app"
           />
         </div>
-        <div className="field" style={{ marginBottom: 0 }}>
+        <div className="field field-flush">
           <label htmlFor="fw-filter">平台</label>
           <select id="fw-filter" value={framework} onChange={(e) => setFramework(e.target.value)}>
             <option value="">全部</option>
@@ -158,9 +197,13 @@ export default function AgentsPage() {
             ))}
           </select>
         </div>
-        <div className="field" style={{ marginBottom: 0 }}>
+        <div className="field field-flush">
           <label htmlFor="st-filter">状态</label>
-          <select id="st-filter" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <select
+            id="st-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
             <option value="">全部</option>
             {statuses.map((s) => (
               <option key={s} value={s}>
@@ -173,7 +216,7 @@ export default function AgentsPage() {
       {error ? (
         <div className="notice" role="status">
           <p className="notice-title">盘点失败</p>
-          <p className="notice-detail">{error}</p>
+          <p className="notice-detail">{error}。确认已运行 agentshield serve 后点「重新盘点」。</p>
         </div>
       ) : null}
       <div className="card">
@@ -182,7 +225,7 @@ export default function AgentsPage() {
           columns={columns}
           rows={visible}
           rowKey={(r) => r.id}
-          emptyText={loading ? '盘点中…' : '未发现资产。可在下方粘贴 Skill 目录做准入。'}
+          emptyText={emptyText}
           onRowClick={(r) => navigate(`/agents/${encodeURIComponent(r.id)}`)}
         />
       </div>
@@ -191,8 +234,8 @@ export default function AgentsPage() {
         <p className="page-desc">
           列表「准入」使用本机目录（admit_path）。平台 locator 不是文件系统路径，请用绝对路径或 ~/…
         </p>
-        <div className="toolbar">
-          <div className="field" style={{ marginBottom: 0, flex: 1 }}>
+        <div className="toolbar toolbar-end">
+          <div className="field field-flush field-grow">
             <label htmlFor="admit-path">Skill 目录</label>
             <input
               id="admit-path"
@@ -210,7 +253,19 @@ export default function AgentsPage() {
             运行 admit
           </button>
         </div>
-        {admitMsg ? <p className="page-desc">{admitMsg}</p> : null}
+        {admitResult ? (
+          <p className="page-desc">
+            {admitResult.name}{' '}
+            <span className={verdictTag(admitResult.verdict)} title={admitResult.verdict}>
+              {verdictLabel(admitResult.verdict)}
+            </span>
+          </p>
+        ) : null}
+        {admitErr ? (
+          <p className="action-error" role="alert">
+            {admitErr}
+          </p>
+        ) : null}
       </div>
     </section>
   );

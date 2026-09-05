@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './Layout';
+import { Icon } from '@/components/icons';
 import { boot, localApi } from './api';
 import { LocalSessionContext, readActorId, writeActorId, type LocalSession } from './session';
 import type { Status } from './types';
@@ -58,8 +59,13 @@ export default function App() {
 
   if (!ready) {
     return (
-      <div className="content-page">
-        <p className="page-desc">正在连接本地决策 API…</p>
+      <div className="auth-boot">
+        <div className="auth-boot-inner">
+          <span className="icon-spin" aria-hidden="true">
+            <Icon name="loading" size={18} />
+          </span>
+          正在连接本地决策 API…
+        </div>
       </div>
     );
   }

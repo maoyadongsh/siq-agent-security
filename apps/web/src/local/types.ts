@@ -32,24 +32,6 @@ export interface UiBoot {
   single_user: boolean;
 }
 
-export interface InventoryCandidate {
-  candidate_id: string;
-  source_type: string;
-  source_locator: string;
-  name: string;
-  framework: string;
-  status: string;
-  attributes?: Record<string, string>;
-}
-
-export interface InventoryReport {
-  generated_at: string;
-  home: string;
-  platforms: string[];
-  candidates: InventoryCandidate[];
-  skipped?: string[];
-}
-
 export interface Finding {
   finding_id: string;
   rule_id: string;

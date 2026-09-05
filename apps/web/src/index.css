@@ -1750,6 +1750,32 @@ a,
   margin-bottom: 16px;
 }
 
+/* 工具栏内的字段不带下间距（替代内联 style）；卡片内操作行上间距 16px */
+.field-flush {
+  margin-bottom: 0;
+}
+
+.field-grow {
+  flex: 1;
+  min-width: 220px;
+}
+
+.toolbar-end {
+  margin: 16px 0 0;
+}
+
+/* 卡片内次级区块/说明的上间距 */
+.block-gap {
+  margin-top: 12px;
+}
+
+/* 本地台账表格列多：窄屏横向滚动优于逐字断行（只作用于本地壳，企业台保持原样） */
+@media (max-width: 767.98px) {
+  .local-shell .table {
+    min-width: 620px;
+  }
+}
+
 @media (max-width: 767.98px) {
   .topbar-tags {
     flex: 1 1 100%;

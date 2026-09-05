@@ -1,19 +1,30 @@
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
+import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { localApi } from '../api';
+import type { PlatformInfo } from '../types';
 import { useLocalSession } from '../session';
-import { platformLabel } from '../format';
+import { adapterLabel, adapterTag, platformLabel } from '../format';
 
 const MODES = ['block', 'warn', 'audit_only'] as const;
+
+interface AuditEvent {
+  at: string;
+  event: string;
+  actor_id?: string;
+  target?: string;
+  note?: string;
+}
 
 export default function SettingsPage() {
   const { status, error, actorId, setActorId, reload } = useLocalSession();
   const [mode, setMode] = useState(status?.enforcement_mode ?? 'block');
   const [msg, setMsg] = useState<string | null>(null);
+  const [msgErr, setMsgErr] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [osTarget, setOsTarget] = useState('siq-as-live');
   const [osAllow, setOsAllow] = useState('');
-  const [audit, setAudit] = useState<{ at: string; event: string; actor_id?: string; target?: string; note?: string }[]>([]);
+  const [audit, setAudit] = useState<AuditEvent[]>([]);
 
   useEffect(() => {
     if (status?.enforcement_mode) setMode(status.enforcement_mode);
@@ -26,15 +37,22 @@ export default function SettingsPage() {
       .catch(() => setAudit([]));
   }, [msg, status?.enforcement_mode]);
 
+  const report = (text: string, isErr = false) => {
+    setMsg(text);
+    setMsgErr(isErr);
+  };
+
   const saveMode = () => {
+    setBusy('mode');
     setMsg(null);
     localApi
       .putConfig(mode)
       .then(() => {
-        setMsg(`enforcement_mode 已设为 ${mode}。已装适配器可能仍缓存旧模式，可重新安装以同步。`);
+        report(`enforcement_mode 已设为 ${mode}。已装适配器可能仍缓存旧模式，可重新安装以同步。`);
         reload();
       })
-      .catch((err: unknown) => setMsg(err instanceof Error ? err.message : '保存失败'));
+      .catch((err: unknown) => report(err instanceof Error ? err.message : '保存失败', true))
+      .finally(() => setBusy(null));
   };
 
   const mutate = (platform: string, action: 'install' | 'uninstall') => {
@@ -43,10 +61,10 @@ export default function SettingsPage() {
     const op = action === 'install' ? localApi.adapterInstall : localApi.adapterUninstall;
     op(platform)
       .then((res) => {
-        setMsg(`${res.platform}: ${res.action}${res.note ? ` — ${res.note}` : ''}`);
+        report(`${platformLabel(res.platform)}：${res.action}${res.note ? ` — ${res.note}` : ''}`);
         reload();
       })
-      .catch((err: unknown) => setMsg(err instanceof Error ? err.message : '适配器操作失败'))
+      .catch((err: unknown) => report(err instanceof Error ? err.message : '适配器操作失败', true))
       .finally(() => setBusy(null));
   };
 
@@ -57,14 +75,15 @@ export default function SettingsPage() {
       .openshellProbe()
       .then((res) => {
         const next = res.doctor?.human_next;
-        setMsg(
+        report(
           res.ok
             ? `OpenShell L3 · ${res.schema_version ?? ''} — ${res.note ?? 'probe 成功'}`
             : `OpenShell 不可用（${res.tier}）：${next || res.note || 'probe 失败'}`,
+          !res.ok,
         );
         reload();
       })
-      .catch((err: unknown) => setMsg(err instanceof Error ? err.message : 'probe 失败'))
+      .catch((err: unknown) => report(err instanceof Error ? err.message : 'probe 失败', true))
       .finally(() => setBusy(null));
   };
 
@@ -74,7 +93,7 @@ export default function SettingsPage() {
       .map((s) => s.trim())
       .filter(Boolean);
     if (!osTarget.trim() || endpoints.length === 0) {
-      setMsg('需要 sandbox 名和至少一个 host:port。');
+      report('需要 sandbox 名和至少一个 host:port。', true);
       return;
     }
     setBusy('openshell:apply');
@@ -88,16 +107,71 @@ export default function SettingsPage() {
       })
       .then((res) => {
         const rb = res.effective_readback;
-        setMsg(
+        report(
           res.passed
             ? `读回 ${res.verify_level} · revision ${rb?.revision ?? '—'} · ${rb?.evidence_id ?? ''}`
             : `读回失败：${(res.failures ?? []).join('; ') || res.error || 'unknown'}`,
+          !res.passed,
         );
         reload();
       })
-      .catch((err: unknown) => setMsg(err instanceof Error ? err.message : 'apply 失败'))
+      .catch((err: unknown) => report(err instanceof Error ? err.message : 'apply 失败', true))
       .finally(() => setBusy(null));
   };
+
+  const adapterCols: TableColumn<PlatformInfo>[] = [
+    {
+      key: 'name',
+      header: '平台',
+      render: (p) => <span className="cell-nowrap">{platformLabel(p.name)}</span>,
+    },
+    { key: 'tier', header: '档位', render: (p) => <span className="cell-nowrap">{p.tier}</span> },
+    {
+      key: 'adapter',
+      header: '适配器',
+      render: (p) => <span className={adapterTag(p.adapter)}>{adapterLabel(p.adapter)}</span>,
+    },
+    { key: 'note', header: '说明', render: (p) => p.note || '—' },
+    {
+      key: 'act',
+      header: '',
+      render: (p) => {
+        if (p.name === 'trae') return <span className="muted-text">审计模式 · 无法阻断</span>;
+        if (p.name === 'openshell') return <span className="muted-text">CLI 探针，无安装钩子</span>;
+        const installed = p.adapter === 'installed';
+        return (
+          <span className="row-actions">
+            <button
+              type="button"
+              className={`btn btn-sm${installed ? '' : ' btn-primary'}`}
+              disabled={busy !== null}
+              onClick={() => mutate(p.name, 'install')}
+            >
+              {busy === `install:${p.name}` ? '安装中…' : installed ? '重新安装' : '安装'}
+            </button>
+            {installed ? (
+              <button
+                type="button"
+                className="btn btn-sm btn-danger"
+                disabled={busy !== null}
+                onClick={() => mutate(p.name, 'uninstall')}
+              >
+                {busy === `uninstall:${p.name}` ? '卸载中…' : '卸载'}
+              </button>
+            ) : null}
+          </span>
+        );
+      },
+    },
+  ];
+
+  const auditCols: TableColumn<AuditEvent>[] = [
+    { key: 'at', header: '时间', render: (ev) => <span className="mono">{ev.at}</span> },
+    { key: 'event', header: '事件', render: (ev) => ev.event },
+    { key: 'actor', header: '操作者', render: (ev) => ev.actor_id || '—' },
+    { key: 'target', header: '对象', render: (ev) => <span className="mono">{ev.target || '—'}</span> },
+    { key: 'note', header: '备注', render: (ev) => ev.note || '—' },
+  ];
 
   return (
     <section>
@@ -109,96 +183,78 @@ export default function SettingsPage() {
         connection={status ? 'connected' : error ? 'disconnected' : 'loading'}
         connectionError={error}
       />
+      {msg ? (
+        msgErr ? (
+          <p className="action-error" role="alert">
+            {msg}
+          </p>
+        ) : (
+          <div className="scan-result" role="status">
+            <p>{msg}</p>
+          </div>
+        )
+      ) : null}
       <div className="card">
         <h2>执行模式</h2>
         <p className="page-desc">
           block：决策 API 不可达即拒绝。warn / audit_only：放行并记录 advisory_action。
         </p>
-        <div className="field">
-          <label htmlFor="mode">enforcement_mode</label>
-          <select id="mode" value={mode} onChange={(e) => setMode(e.target.value)}>
-            {MODES.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
+        <div className="toolbar toolbar-end">
+          <div className="field field-flush">
+            <label htmlFor="mode">enforcement_mode</label>
+            <select id="mode" value={mode} onChange={(e) => setMode(e.target.value)}>
+              {MODES.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={busy !== null}
+            onClick={saveMode}
+          >
+            {busy === 'mode' ? '保存中…' : '保存模式'}
+          </button>
         </div>
-        <button type="button" className="btn btn-primary" onClick={saveMode}>
-          保存模式
-        </button>
       </div>
       <div className="card">
         <h2>人工身份</h2>
         <div className="field">
-          <label htmlFor="actor-set">批准 / hold 签核使用的 actor_id（写入 sessionStorage，非 token）</label>
+          <label htmlFor="actor-set">
+            批准 / hold 签核使用的 actor_id（写入 sessionStorage，非 token）
+          </label>
           <input id="actor-set" value={actorId} onChange={(e) => setActorId(e.target.value)} />
         </div>
       </div>
       <div className="card">
         <h2>平台适配器</h2>
         <p className="page-desc">安装会先备份再写钩子。Trae 没有工具钩子，操作为 skipped。</p>
-        <div className="table-wrap">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>平台</th>
-                <th>档位</th>
-                <th>适配器</th>
-                <th>说明</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {(status?.platforms ?? []).map((p) => (
-                <tr key={p.name}>
-                  <td>{platformLabel(p.name)}</td>
-                  <td>{p.tier}</td>
-                  <td>{p.adapter}</td>
-                  <td>{p.note}</td>
-                  <td>
-                    {p.name === 'trae' ? (
-                      <span className="page-desc">审计 only</span>
-                    ) : p.name === 'openshell' ? (
-                      <span className="page-desc">CLI 探针，无安装钩子</span>
-                    ) : (
-                      <span className="toolbar" style={{ marginBottom: 0 }}>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-primary"
-                          disabled={busy !== null}
-                          onClick={() => mutate(p.name, 'install')}
-                        >
-                          安装
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-sm"
-                          disabled={busy !== null}
-                          onClick={() => mutate(p.name, 'uninstall')}
-                        >
-                          卸载
-                        </button>
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <SimpleTable
+          columns={adapterCols}
+          rows={status?.platforms ?? []}
+          rowKey={(p) => p.name}
+          emptyText="决策 API 不可达，暂时无法读取平台适配器状态。"
+        />
       </div>
       <div className="card">
         <h2>OpenShell（L3）</h2>
         <p className="page-desc">
           接入已在运行、已验明的 OpenShell 网关（显式 SIQ_AS_* 优先，其次 ENV_SH，再 PATH）。probe
           必须验明网关是 OpenShell；连到 OpenClaw / Hermes 会失败。agentshield 不会执行 gateway
-          start。apply 只提交网络段；filesystem / process 保持当前读回，禁止 create_generation。无
-          L3 时产品仍完整，控制台显示「仅工具层拦截」。
+          start。apply 只提交网络段；filesystem / process 保持当前读回，禁止
+          create_generation。无 L3 时产品仍完整，控制台显示「仅工具层拦截」。
         </p>
-        <div className="toolbar">
-          <button type="button" className="btn btn-primary" disabled={busy !== null} onClick={probeOpenshell}>
-            探测网关
+        <div className="toolbar toolbar-end">
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={busy !== null}
+            onClick={probeOpenshell}
+          >
+            {busy === 'openshell:probe' ? '探测中…' : '探测网关'}
           </button>
         </div>
         <div className="field">
@@ -214,8 +270,13 @@ export default function SettingsPage() {
             placeholder="api.example.com:443"
           />
         </div>
-        <button type="button" className="btn btn-sm" disabled={busy !== null} onClick={applyOpenshell}>
-          下发网络段并读回
+        <button
+          type="button"
+          className="btn"
+          disabled={busy !== null}
+          onClick={applyOpenshell}
+        >
+          {busy === 'openshell:apply' ? '下发中…' : '下发网络段并读回'}
         </button>
       </div>
       <div className="card">
@@ -234,12 +295,12 @@ export default function SettingsPage() {
             setMsg(null);
             localApi
               .downloadExport()
-              .then(() => setMsg('已下载 agentshield-export.json'))
-              .catch((err: unknown) => setMsg(err instanceof Error ? err.message : '导出失败'))
+              .then(() => report('已下载 agentshield-export.json'))
+              .catch((err: unknown) => report(err instanceof Error ? err.message : '导出失败', true))
               .finally(() => setBusy(null));
           }}
         >
-          下载导出包
+          {busy === 'export' ? '导出中…' : '下载导出包'}
         </button>
       </div>
       <div className="card">
@@ -247,49 +308,21 @@ export default function SettingsPage() {
         <p className="page-desc">
           来自 <span className="mono">audit.jsonl</span> 的最近记录。不含密钥、不含参数原文。
         </p>
-        {audit.length === 0 ? (
-          <p className="page-desc">暂无审计事件。</p>
-        ) : (
-          <div className="table-wrap">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>时间</th>
-                  <th>事件</th>
-                  <th>操作者</th>
-                  <th>对象</th>
-                  <th>备注</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...audit].reverse().slice(0, 40).map((ev, i) => (
-                  <tr key={`${ev.at}-${ev.event}-${i}`}>
-                    <td className="mono">{ev.at}</td>
-                    <td>{ev.event}</td>
-                    <td>{ev.actor_id || '—'}</td>
-                    <td className="mono">{ev.target || '—'}</td>
-                    <td>{ev.note || '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <SimpleTable
+          columns={auditCols}
+          rows={[...audit].reverse().slice(0, 40).map((ev, i) => ({ ...ev, idx: i }))}
+          rowKey={(ev) => `${ev.idx}-${ev.at}-${ev.event}`}
+          emptyText="暂无审计事件。安装适配器、批准签发、改模式都会写这里。"
+        />
       </div>
       <div className="card">
         <h2>安全边界</h2>
         <ul className="page-desc">
-          <li>本控制台无私钥；验签由 `agentshield verify` / GET /v1/receipts 完成。</li>
+          <li>本控制台无私钥；验签由 agentshield verify / GET /v1/receipts 完成。</li>
           <li>Bearer token 来自 loopback 的 /ui-config.json，只留在内存，刷新会再取一次。</li>
-          <li>OpenShell verify 最高只到 readback_verified；filesystem/process 永不标 effective。</li>
+          <li>OpenShell verify 最高只到 readback_verified；filesystem/process 永不标有效。</li>
         </ul>
       </div>
-      {msg ? (
-        <div className="notice" role="status">
-          <p className="notice-title">结果</p>
-          <p className="notice-detail">{msg}</p>
-        </div>
-      ) : null}
     </section>
   );
 }

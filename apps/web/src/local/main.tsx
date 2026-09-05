@@ -8,6 +8,8 @@ import '@fontsource/inter/latin-600.css';
 import '@fontsource/playfair-display/latin-500.css';
 import '@fontsource/playfair-display/latin-600.css';
 import '@fontsource/playfair-display/latin-700.css';
+import '@fontsource/noto-serif-sc/400.css';
+import '@fontsource/noto-serif-sc/600.css';
 import '@fontsource/dm-serif-display/latin-400.css';
 
 import App from './App';

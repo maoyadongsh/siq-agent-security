@@ -71,7 +71,7 @@ export default function Layout() {
   const openShellL3 = hasOpenShellL3(status?.platforms);
 
   return (
-    <div className="app-shell">
+    <div className="app-shell local-shell">
       <aside
         aria-label="AgentShield 本地导航"
         className={`sidebar siq-glass${collapsed ? ' collapsed' : ''}${open ? ' open' : ''}`}
@@ -132,7 +132,9 @@ export default function Layout() {
               <span aria-hidden="true" />
               本地模式 · 单用户
             </span>
-            {badges.length === 0 ? (
+            {!status ? (
+              <span className="topbar-phase">平台探测不可用</span>
+            ) : badges.length === 0 ? (
               <span className="topbar-phase">未发现平台</span>
             ) : (
               badges.map((p) => (

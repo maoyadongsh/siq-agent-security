@@ -5,13 +5,21 @@ import { Icon } from '@/components/icons';
 import { localApi } from '../api';
 import type { LedgerFinding } from '../types';
 import { useLocalSession } from '../session';
+import {
+  dispositionLabel,
+  findingStatusLabel,
+  findingStatusTag,
+  severityLabel,
+  severityTag,
+} from '../format';
 
-function sevTag(sev: string): string {
-  if (sev === 'critical' || sev === 'high') return 'tag tag-err';
-  if (sev === 'medium') return 'tag tag-warn';
-  if (sev === 'low') return 'tag tag-info';
-  return 'tag';
-}
+type StatusFilter = 'open' | 'accepted' | 'all';
+
+const TABS: { id: StatusFilter; label: string }[] = [
+  { id: 'open', label: '待处理' },
+  { id: 'accepted', label: '已接受' },
+  { id: 'all', label: '全部' },
+];
 
 export default function FindingsPage() {
   const { actorId } = useLocalSession();
@@ -21,7 +29,8 @@ export default function FindingsPage() {
   const [reason, setReason] = useState('');
   const [until, setUntil] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<'open' | 'accepted' | 'all'>('open');
+  const [msgErr, setMsgErr] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('open');
 
   const load = () => {
     setLoading(true);
@@ -43,26 +52,77 @@ export default function FindingsPage() {
     load();
   }, []);
 
+  const accept = (findingId: string) => {
+    if (!reason.trim() || !until.trim()) {
+      setMsg('接受需要原因和到期（RFC3339）');
+      setMsgErr(true);
+      return;
+    }
+    localApi
+      .acceptFinding(findingId, { actor_id: actorId, reason: reason.trim(), until: until.trim() })
+      .then(() => {
+        setMsg('已接受');
+        setMsgErr(false);
+        load();
+      })
+      .catch((err: unknown) => {
+        setMsg(err instanceof Error ? err.message : '接受失败');
+        setMsgErr(true);
+      });
+  };
+
+  const visible =
+    statusFilter === 'all' ? rows : rows.filter((r) => (r.status || 'open') === statusFilter);
+  const openCount = rows.filter((r) => (r.status || 'open') === 'open').length;
+  const acceptedCount = rows.length - openCount;
+  const tabCount = (id: StatusFilter) =>
+    id === 'open' ? openCount : id === 'accepted' ? acceptedCount : rows.length;
+
   const columns: TableColumn<LedgerFinding>[] = [
     {
       key: 'sev',
       header: '严重度',
-      render: (r) => <span className={sevTag(r.severity)}>{r.severity}</span>,
+      render: (r) => (
+        <span className={severityTag(r.severity)} title={r.severity}>
+          {severityLabel(r.severity)}
+        </span>
+      ),
     },
     { key: 'rule', header: '规则', render: (r) => r.rule_id },
     { key: 'skill', header: 'Skill', render: (r) => r.skill_name || '—' },
-    { key: 'disp', header: '处置', render: (r) => r.disposition },
-    { key: 'path', header: '位置', render: (r) => r.path || '—' },
+    {
+      key: 'disp',
+      header: '处置',
+      render: (r) => <span title={r.disposition}>{dispositionLabel(r.disposition)}</span>,
+    },
+    {
+      key: 'path',
+      header: '位置',
+      render: (r) =>
+        r.path ? (
+          <span className="mono cell-ellipsis" title={r.path}>
+            {r.path}
+          </span>
+        ) : (
+          '—'
+        ),
+    },
     {
       key: 'st',
       header: '状态',
-      render: (r) => r.status,
+      render: (r) => (
+        <span className={findingStatusTag(r.status)}>{findingStatusLabel(r.status)}</span>
+      ),
     },
-    { key: 'src', header: '来源', render: (r) => r.source || 'admission' },
+    { key: 'src', header: '来源', render: (r) => <span className="cell-nowrap">{r.source || 'admission'}</span> },
     {
       key: 'adm',
       header: '准入 ID',
-      render: (r) => <span className="mono">{r.admission_id || r.subject_ref || '—'}</span>,
+      render: (r) => (
+        <span className="mono cell-ellipsis" title={r.admission_id || r.subject_ref || ''}>
+          {r.admission_id || r.subject_ref || '—'}
+        </span>
+      ),
     },
     {
       key: 'act',
@@ -71,23 +131,7 @@ export default function FindingsPage() {
         r.status === 'accepted' ? (
           '已接受'
         ) : (
-          <button
-            type="button"
-            className="btn btn-sm"
-            onClick={() => {
-              if (!reason.trim() || !until.trim()) {
-                setMsg('接受需要原因和到期（RFC3339）');
-                return;
-              }
-              localApi
-                .acceptFinding(r.finding_id, { actor_id: actorId, reason: reason.trim(), until: until.trim() })
-                .then(() => {
-                  setMsg('已接受');
-                  load();
-                })
-                .catch((err: unknown) => setMsg(err instanceof Error ? err.message : '接受失败'));
-            }}
-          >
+          <button type="button" className="btn btn-sm" onClick={() => accept(r.finding_id)}>
             接受
           </button>
         ),
@@ -115,44 +159,61 @@ export default function FindingsPage() {
           <p className="notice-detail">{error}</p>
         </div>
       ) : null}
-      {msg ? <p className="page-desc">{msg}</p> : null}
-      <div className="toolbar">
-        <div className="toolbar" style={{ marginBottom: 0 }}>
-          {(['open', 'accepted', 'all'] as const).map((id) => (
-            <button
-              key={id}
-              type="button"
-              className={statusFilter === id ? 'btn btn-sm btn-primary' : 'btn btn-sm'}
-              onClick={() => setStatusFilter(id)}
-            >
-              {id === 'open' ? '待处理' : id === 'accepted' ? '已接受' : '全部'}
-            </button>
-          ))}
-        </div>
-        <div className="field" style={{ marginBottom: 0 }}>
-          <label htmlFor="acc-reason">接受原因</label>
-          <input id="acc-reason" value={reason} onChange={(e) => setReason(e.target.value)} />
-        </div>
-        <div className="field" style={{ marginBottom: 0 }}>
-          <label htmlFor="acc-until">到期（RFC3339）</label>
-          <input id="acc-until" value={until} onChange={(e) => setUntil(e.target.value)} placeholder="2026-12-31T00:00:00Z" />
-        </div>
+      <div className="tabs" role="tablist" aria-label="finding 状态筛选">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={statusFilter === tab.id}
+            className={`tab-btn${statusFilter === tab.id ? ' active' : ''}`}
+            onClick={() => setStatusFilter(tab.id)}
+          >
+            {tab.label}（{tabCount(tab.id)}）
+          </button>
+        ))}
       </div>
+      {statusFilter === 'open' ? (
+        <div className="toolbar">
+          <div className="field field-flush">
+            <label htmlFor="acc-reason">接受原因</label>
+            <input id="acc-reason" value={reason} onChange={(e) => setReason(e.target.value)} />
+          </div>
+          <div className="field field-flush">
+            <label htmlFor="acc-until">到期（RFC3339）</label>
+            <input
+              id="acc-until"
+              value={until}
+              onChange={(e) => setUntil(e.target.value)}
+              placeholder="2026-12-31T00:00:00Z"
+            />
+          </div>
+        </div>
+      ) : null}
+      {msg ? (
+        msgErr ? (
+          <p className="action-error" role="alert">
+            {msg}
+          </p>
+        ) : (
+          <p className="sync-ok">{msg}</p>
+        )
+      ) : null}
       <div className="card">
         <SimpleTable
           columns={columns}
-          rows={
-            statusFilter === 'all' ? rows : rows.filter((r) => (r.status || 'open') === statusFilter)
-          }
+          rows={visible}
           rowKey={(r) => r.finding_id}
           emptyText={
             loading
               ? '加载中…'
-              : statusFilter === 'accepted'
-                ? '暂无已接受的 finding。'
-                : statusFilter === 'open'
-                  ? '暂无待处理 finding。准入扫描或漂移检测后会出现。'
-                  : '暂无 finding。准入扫描或漂移检测后会出现。'
+              : error
+                ? '决策 API 不可达，暂时无法读取 finding。'
+                : statusFilter === 'accepted'
+                  ? '暂无已接受的 finding。'
+                  : statusFilter === 'open'
+                    ? '暂无待处理 finding。准入扫描或漂移检测后会出现。'
+                    : '暂无 finding。准入扫描或漂移检测后会出现。'
           }
         />
       </div>

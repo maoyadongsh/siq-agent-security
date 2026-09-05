@@ -22,6 +22,35 @@ function renameLocalIndex(): Plugin {
   };
 }
 
+/**
+ * Local embed is go:embed'd into a single binary. @fontsource CSS lists
+ * woff2 + woff; modern browsers only need woff2. Strip the woff fallback so
+ * Noto Serif SC (and latin faces) do not double the artifact.
+ * Enterprise `npm run build` is unchanged.
+ */
+function dropLegacyWoff(): Plugin {
+  const woffSrc =
+    /,\s*url\((['"]?)[^'")]+?\.woff\1\)\s*format\(\s*(['"])woff\2\s*\)/g;
+  return {
+    name: 'agentshield-drop-woff',
+    enforce: 'pre',
+    transform(code, id) {
+      if (!isLocal || !id.includes('.css')) return null;
+      const next = code.replace(woffSrc, '');
+      if (next === code) return null;
+      return { code: next, map: null };
+    },
+    generateBundle(_opts, bundle) {
+      if (!isLocal) return;
+      for (const file of Object.keys(bundle)) {
+        if (file.endsWith('.woff') && !file.endsWith('.woff2')) {
+          delete bundle[file];
+        }
+      }
+    },
+  };
+}
+
 /** `npm run dev:local` must SPA-fallback to index.local.html, not the enterprise index.html. */
 function localDevSpaFallback(): Plugin {
   return {
@@ -58,7 +87,7 @@ function localDevSpaFallback(): Plugin {
 // AgentShield 本地模式：VITE_APP=agentshield，产物 embed 进 agentshield serve。
 export default defineConfig({
   base: isLocal ? '/' : process.env.SIQ_AS_WEB_BASE || '/',
-  plugins: [react(), renameLocalIndex(), localDevSpaFallback()],
+  plugins: [react(), dropLegacyWoff(), renameLocalIndex(), localDevSpaFallback()],
   server: {
     headers: {
       'Cache-Control': 'no-store, max-age=0',
