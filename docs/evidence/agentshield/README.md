@@ -2,7 +2,10 @@
 
 本目录归档评委可核验的脱敏录屏与回执，命名：`<platform>-<YYYY-MM-DD>/`。
 
-当前快照：**尚无归档证据**。因此 `skills/agentshield/skill-manifest.json` 的 `support_matrix` 没有任何 `supported` 行。
+当前快照：
+
+- [`hermes-linux-2026-09-05/`](./hermes-linux-2026-09-05/)：DGX Spark（linux/arm64）Hermes 路径。admit 正负样例、适配器越权 deny、`verify` 已归档。grant 待人类 `--approve-as`；OpenShell 网关未配置。
+- `skills/agentshield/skill-manifest.json` 的 `support_matrix` **仍然没有任何 `supported` 行**。
 
 ## 每条证据最少包含
 
@@ -15,4 +18,4 @@
 
 不要提交 token、私钥、完整家目录路径、客户文档。
 
-DGX Spark 上拉同一功能分支后，把本目录填上，再把对应矩阵行从 `experimental` 改为 `supported`（须同时重签 `skill-manifest.json`）。
+矩阵行从 `experimental` 改为 `supported` 须同时重签 `skill-manifest.json`（发布私钥不在仓库）。Hermes Linux 在人类批准 grant 之前不要改。

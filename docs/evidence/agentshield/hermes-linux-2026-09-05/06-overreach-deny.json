@@ -1,0 +1,52 @@
+{
+  "hook": {
+    "via": "hermes_plugin._pre_tool_call",
+    "hook_result": {
+      "action": "block",
+      "message": "AgentShield denied: no deployed grant for agent (default deny) (receipt rcp-2ff1cb321bd5-034538.156399)"
+    }
+  },
+  "receipts": {
+    "receipts": [
+      {
+        "receipt_id": "rcp-2ff1cb321bd5-034538.156399",
+        "chain_id": "local",
+        "seq": 0,
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "e16b117a571b1811acb309c3923f17ce34741555b089f895b906351c8ab1335b",
+        "sig": "<redacted len=128 sha256=b561bba25556>",
+        "issued_at": "2026-09-05T03:45:38Z",
+        "platform": "hermes",
+        "session_id": "spark-hermes-demo",
+        "agent_id": "default",
+        "tool": "web_fetch",
+        "tool_call_id": "tc-overreach-001",
+        "params_digest": "2ff1cb321bd5ddeed7184418ab9eda69f9694c277199331b4a5b17ef0814af22",
+        "params_excerpt": "<redacted len=26 sha256=1928650af64e>",
+        "action": "deny",
+        "advisory_action": null,
+        "reason": "no deployed grant for agent (default deny)",
+        "matched_grant_id": null,
+        "matched_fact_ids": [],
+        "matched_rule_ids": [],
+        "taint_labels": [],
+        "trifecta": {
+          "private_data": false,
+          "untrusted_input": false,
+          "egress": true
+        },
+        "enforcement_mode": "block",
+        "policy_revision": null,
+        "sandbox_id": null,
+        "model_key": null,
+        "engine": {
+          "version": "0.1.0",
+          "rulepack_version": 1
+        },
+        "decision_latency_ms": 0,
+        "hold": null
+      }
+    ],
+    "verified": true
+  }
+}

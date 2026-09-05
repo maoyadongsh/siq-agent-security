@@ -569,8 +569,8 @@ make -C apps/agentshield ui
 | W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve` **完成**；HTTP E2E **完成**；`inventory` **完成**；embed UI **完成**（`src/local/` + `internal/ui`） |
 | W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**；OpenClaw `policy-exec` **完成**；CodeBuddy `hook codebuddy` **完成**；`adapter install/uninstall`（备份还原）**完成** |
 | W4 OpenShell | probe / 网络 policy set / 读回 | **完成**（CLI 后端 + `agentshield openshell` + `/v1/openshell/*` + 控制台 L3；假 CLI 正负测试。无 DGX 真网关 E2E） |
-| W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **完成**（Skill 目录、evals、bootstrap 验签、`grant` CLI、自扫描不得 quarantine、已签名 `skill-manifest.json` + 四目标哈希。GitHub Release URL 为预定路径，尚未发布；无 Spark 证据故矩阵无 `supported` 行） |
-| W6 材料 | README、演示、基线更新、十日谈 | **进行中**：评委入口 `AGENTSHIELD.md` + 演示步骤；实机证据待 DGX Spark 归档 |
+| W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **完成**（Skill 目录、evals、bootstrap 验签、`grant` CLI、自扫描不得 quarantine、已签名 `skill-manifest.json` + 四目标哈希。GitHub Release URL 为预定路径，尚未发布；矩阵仍无 `supported` 行） |
+| W6 材料 | README、演示、基线更新、十日谈 | **进行中**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark Hermes linux 证据已归档（admit / 适配器 deny / verify）。grant 待人类批准；OpenShell 未配置；矩阵仍无 `supported` |
 
 ---
 

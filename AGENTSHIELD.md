@@ -39,7 +39,7 @@ bootstrap 会用内置公钥校验 `skill-manifest.json` 签名。本地 `go bui
 
 ## 档位（诚实）
 
-机器可读事实源：[`skills/agentshield/skill-manifest.json`](./skills/agentshield/skill-manifest.json) 的 `support_matrix`。当前**没有任何一行 `supported`**——Spark 实机证据还没归档。
+机器可读事实源：[`skills/agentshield/skill-manifest.json`](./skills/agentshield/skill-manifest.json) 的 `support_matrix`。当前**没有任何一行 `supported`**。2026-09-05 已在 DGX Spark（linux/arm64）归档 Hermes L0–L2 路径证据（[`docs/evidence/agentshield/hermes-linux-2026-09-05/`](./docs/evidence/agentshield/hermes-linux-2026-09-05/)）：恶意 fixture `quarantine` / 退出码 3、官方风格 `admit_with_conditions`、Hermes 适配器越权 `web_fetch` deny、`verify` 通过。grant 仍待人类 `--approve-as`；OpenShell 网关未配置，L3 不宣称。这两项完成前不改矩阵。
 
 | 平台 | Linux | macOS | Windows | 说明 |
 | --- | --- | --- | --- | --- |
@@ -83,7 +83,7 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 ./agentshield verify
 ```
 
-实机录屏与脱敏回执放到 [`docs/evidence/agentshield/`](./docs/evidence/agentshield/README.md)。没有证据的矩阵行保持 `experimental`。
+脱敏回执见 [`docs/evidence/agentshield/`](./docs/evidence/agentshield/README.md)。没有完整证据（含人类批准 grant）的矩阵行保持 `experimental`。
 
 ## 十日谈（十条）
 

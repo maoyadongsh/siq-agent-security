@@ -1,0 +1,197 @@
+{
+  "exit_code": 0,
+  "stderr": "",
+  "result": {
+    "desired_policy": {
+      "enforcement_mode": "block",
+      "network": [
+        {
+          "effect": "allow",
+          "endpoint": "api.github.com:443"
+        },
+        {
+          "effect": "allow",
+          "endpoint": "astral.sh:443"
+        }
+      ],
+      "policy_id": "pol-4af17a9f9719",
+      "process": {
+        "forbid_privilege_escalation": true
+      },
+      "selector": {
+        "agent_ids": [
+          "demo"
+        ]
+      },
+      "status": "validated",
+      "tools": [
+        "read_file",
+        "terminal",
+        "web_extract"
+      ],
+      "version": 1
+    },
+    "grant": {
+      "grant_id": "grt-4af17a9f9719-bebf3ee8",
+      "admission_id": "adm-4af17a9f9719",
+      "subject": {
+        "type": "agent_instance",
+        "id": "demo"
+      },
+      "platform": "hermes",
+      "facts": [
+        {
+          "fact_id": "pf-1-aa748b8b",
+          "domain": "network",
+          "action": "http.request",
+          "resource": {
+            "type": "endpoint",
+            "value": "api.github.com:443"
+          },
+          "effect": "allow",
+          "state": "declared",
+          "authority": "skill_manifest",
+          "authority_revision": null,
+          "readback_evidence_id": null,
+          "evidence_ids": [
+            "ev-7e75b5986f8b464d"
+          ]
+        },
+        {
+          "fact_id": "pf-2-ec32c7d9",
+          "domain": "network",
+          "action": "http.request",
+          "resource": {
+            "type": "endpoint",
+            "value": "astral.sh:443"
+          },
+          "effect": "allow",
+          "state": "declared",
+          "authority": "skill_manifest",
+          "authority_revision": null,
+          "readback_evidence_id": null,
+          "evidence_ids": [
+            "ev-2a89ce7627420137"
+          ]
+        },
+        {
+          "fact_id": "pf-3-8c755530",
+          "domain": "process",
+          "action": "process.exec",
+          "resource": {
+            "type": "tool",
+            "value": "shell"
+          },
+          "effect": "allow",
+          "state": "declared",
+          "authority": "skill_manifest",
+          "authority_revision": null,
+          "readback_evidence_id": null,
+          "evidence_ids": [
+            "ev-a461b43625cb23c4"
+          ]
+        },
+        {
+          "fact_id": "pf-4-811cbc58",
+          "domain": "tool",
+          "action": "tool.invoke",
+          "resource": {
+            "type": "tool",
+            "value": "read_file"
+          },
+          "effect": "allow",
+          "state": "declared",
+          "authority": "skill_manifest",
+          "authority_revision": null,
+          "readback_evidence_id": null,
+          "evidence_ids": [
+            "ev-0fd8c0d316d5f636"
+          ]
+        },
+        {
+          "fact_id": "pf-5-aa79ee81",
+          "domain": "tool",
+          "action": "tool.invoke",
+          "resource": {
+            "type": "tool",
+            "value": "terminal"
+          },
+          "effect": "allow",
+          "state": "declared",
+          "authority": "skill_manifest",
+          "authority_revision": null,
+          "readback_evidence_id": null,
+          "evidence_ids": [
+            "ev-0fd8c0d316d5f636"
+          ]
+        },
+        {
+          "fact_id": "pf-6-df3ab44f",
+          "domain": "tool",
+          "action": "tool.invoke",
+          "resource": {
+            "type": "tool",
+            "value": "web_extract"
+          },
+          "effect": "allow",
+          "state": "declared",
+          "authority": "skill_manifest",
+          "authority_revision": null,
+          "readback_evidence_id": null,
+          "evidence_ids": [
+            "ev-0fd8c0d316d5f636"
+          ]
+        },
+        {
+          "fact_id": "pf-inf-a9836a0d",
+          "domain": "process",
+          "action": "process.privilege_escalation",
+          "resource": {
+            "type": "capability",
+            "value": "setuid/sudo"
+          },
+          "effect": "deny",
+          "state": "inferred",
+          "authority": "agentshield",
+          "authority_revision": null,
+          "readback_evidence_id": null,
+          "evidence_ids": [
+            "ev-0fd8c0d316d5f636",
+            "ev-1ff45d8ec55b116f",
+            "ev-2a89ce7627420137",
+            "ev-2c6910adf5062bc7",
+            "ev-6dac6b3d5f199f75",
+            "ev-7e75b5986f8b464d",
+            "ev-9ba244c2a9ed3802",
+            "ev-a461b43625cb23c4",
+            "ev-f1091526703f86a0"
+          ]
+        }
+      ],
+      "default_effect": "deny",
+      "hermes_toolset_allowlist": [
+        "read_file",
+        "terminal",
+        "web_extract"
+      ],
+      "desired_policy_ref": {
+        "policy_id": "pol-4af17a9f9719",
+        "version": 1,
+        "static_domains_unavailable": [
+          "process"
+        ]
+      },
+      "overlap_conflicts": [],
+      "enforcement_mode": "block",
+      "status": "pending_approval",
+      "approved_by": null,
+      "effective_readback": null,
+      "created_at": "2026-09-05T03:45:38Z",
+      "expires_at": null,
+      "signature": "<redacted len=128 sha256=15c47ed66203>"
+    },
+    "note": "model must not approve; a human runs: agentshield grant approve grt-4af17a9f9719-bebf3ee8 --approve-as <actor>"
+  },
+  "human_must_run": "./agentshield grant approve grt-4af17a9f9719-bebf3ee8 --approve-as <your-name>",
+  "model_did_not_approve": true
+}
