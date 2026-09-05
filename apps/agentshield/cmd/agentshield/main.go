@@ -103,7 +103,7 @@ func usage() {
   agentshield verify [--chain local]
                                   # recompute the receipt hash chain and signatures; exit 4 on first break
   agentshield inventory [--cwd DIR] [--out FILE] [--connectors-dir DIR]
-                                  # read-only discovery of platforms + skill dirs (JSON report)
+                                  # read-only discovery of platforms, skill dirs, MCP configs (JSON report)
   agentshield export [--out FILE] # redacted judge bundle (0600 file or stdout)
   agentshield sync --control-api URL [--identity ID] [--secret-file PATH] [--task-id ID]
                                   # optional Edge upload; skip (exit 0) without creds; never auto-runs from serve

@@ -38,6 +38,18 @@ func fakeHome(t *testing.T) string {
 	write(t, filepath.Join(home, ".agents", "skills", "shared", "SKILL.md"), "---\nname: shared\ndescription: Shared.\n---\n")
 	write(t, filepath.Join(home, ".codebuddy", "settings.json"), `{"hooks":{"PreToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"/x/agentshield hook codebuddy"}]}]}}`)
 	write(t, filepath.Join(home, ".trae", "skills", "style", "SKILL.md"), "---\nname: style\ndescription: Style.\n---\n")
+	write(t, filepath.Join(home, ".cursor", "mcp.json"), `{
+  "mcpServers": {
+    "github": {
+      "command": "/usr/bin/npx",
+      "args": ["-y", "mcp-github", "--token", "`+secretMarker+`"],
+      "env": {"GITHUB_TOKEN": "`+secretMarker+`"}
+    },
+    "remote": {
+      "url": "https://user:`+secretMarker+`@mcp.example.com/v1/sse?apiKey=`+secretMarker+`"
+    }
+  }
+}`)
 	return home
 }
 
@@ -62,7 +74,7 @@ func byID(rep *Report) map[string]Candidate {
 
 func TestDiscoversPlatformsAndSkills(t *testing.T) {
 	rep := runInv(t, fakeHome(t))
-	if strings.Join(rep.Platforms, ",") != "codebuddy,hermes,openclaw,trae" {
+	if strings.Join(rep.Platforms, ",") != "codebuddy,hermes,mcp,openclaw,trae" {
 		t.Fatalf("platforms %v", rep.Platforms)
 	}
 	c := byID(rep)
@@ -128,6 +140,15 @@ func TestDiscoversPlatformsAndSkills(t *testing.T) {
 	}
 	if agents < 2 {
 		t.Fatalf("expected >=2 openclaw agents, got %d: %v", agents, keys(c))
+	}
+	mcpN := 0
+	for _, cand := range c {
+		if cand.SourceType == "mcp_server" {
+			mcpN++
+		}
+	}
+	if mcpN != 2 {
+		t.Fatalf("expected 2 mcp_server candidates, got %d: %v", mcpN, keys(c))
 	}
 }
 
@@ -370,4 +391,113 @@ for line in sys.stdin:
         }}))
     sys.stdout.flush()
 `
+}
+
+func TestMCPSanitizesSecretsAndURL(t *testing.T) {
+	rep := runInv(t, fakeHome(t))
+	raw, err := json.Marshal(rep)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(raw, []byte(secretMarker)) {
+		t.Fatal("mcp secret leaked into inventory report")
+	}
+	var github, remote Candidate
+	for _, c := range rep.Candidates {
+		if c.SourceType != "mcp_server" {
+			continue
+		}
+		switch c.Name {
+		case "github":
+			github = c
+		case "remote":
+			remote = c
+		}
+	}
+	if github.CandidateID == "" || remote.CandidateID == "" {
+		t.Fatalf("missing mcp candidates: %v", keys(byID(rep)))
+	}
+	if github.Framework != "unknown" || github.Confidence != 0.9 || github.Status != "candidate" {
+		t.Fatalf("github meta: %+v", github)
+	}
+	if github.Attributes["client"] != "cursor" || github.Attributes["transport"] != "stdio" {
+		t.Fatalf("github attrs: %v", github.Attributes)
+	}
+	if github.Attributes["command"] != "npx" {
+		t.Fatalf("command must be basename, got %q", github.Attributes["command"])
+	}
+	if strings.Contains(github.Attributes["command"], "/") || strings.Contains(github.Attributes["command"], `\`) {
+		t.Fatal("full command path must not appear")
+	}
+	if github.Attributes["env_keys"] != "GITHUB_TOKEN" {
+		t.Fatalf("env_keys must list names only, got %q", github.Attributes["env_keys"])
+	}
+	if github.SourceLocator != "mcp://~/.cursor/mcp.json#github" {
+		t.Fatalf("locator=%q", github.SourceLocator)
+	}
+	if remote.Attributes["url"] != "https://mcp.example.com" {
+		t.Fatalf("url must be scheme://host, got %q", remote.Attributes["url"])
+	}
+	if remote.Attributes["transport"] != "sse" {
+		t.Fatalf("remote transport=%q", remote.Attributes["transport"])
+	}
+	if strings.Contains(string(raw), "apiKey=") || strings.Contains(string(raw), "user:") {
+		t.Fatal("url userinfo or query leaked")
+	}
+}
+
+func TestMCPSymlinkIsSkipped(t *testing.T) {
+	home := t.TempDir()
+	target := filepath.Join(home, "elsewhere.json")
+	write(t, target, `{"mcpServers":{"x":{"command":"npx"}}}`)
+	link := filepath.Join(home, ".cursor", "mcp.json")
+	if err := os.MkdirAll(filepath.Dir(link), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(target, link); err != nil {
+		t.Fatal(err)
+	}
+	rep := runInv(t, home)
+	for _, c := range rep.Candidates {
+		if c.SourceType == "mcp_server" {
+			t.Fatalf("followed symlink: %+v", c)
+		}
+	}
+	found := false
+	for _, s := range rep.Skipped {
+		if s == "symlink:mcp:.cursor/mcp.json" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("skipped=%v", rep.Skipped)
+	}
+}
+
+func TestMCPMalformedJSONIsSkipped(t *testing.T) {
+	home := t.TempDir()
+	write(t, filepath.Join(home, ".cursor", "mcp.json"), `{not json`)
+	rep := runInv(t, home)
+	if len(rep.Candidates) != 0 {
+		t.Fatalf("malformed must not yield candidates: %+v", rep.Candidates)
+	}
+	found := false
+	for _, s := range rep.Skipped {
+		if s == "unreadable:mcp:.cursor/mcp.json" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("skipped=%v", rep.Skipped)
+	}
+}
+
+func TestMCPEmptyServersIsNotError(t *testing.T) {
+	home := t.TempDir()
+	write(t, filepath.Join(home, ".cursor", "mcp.json"), `{"mcpServers":{}}`)
+	rep := runInv(t, home)
+	if len(rep.Candidates) != 0 || len(rep.Skipped) != 0 || len(rep.Platforms) != 0 {
+		t.Fatalf("empty mcpServers must be a no-op: candidates=%v skipped=%v platforms=%v",
+			rep.Candidates, rep.Skipped, rep.Platforms)
+	}
 }

@@ -10,7 +10,7 @@ AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本
 | `internal/rulepack` | 内嵌规则包、外部包 Ed25519 验签、防降级、fail-closed 回退 | 完成 |
 | `internal/threat` | 静态分析器（Python `threat_analysis.py` 移植，AST 层缺席） | 完成 |
 | `internal/signing` | 本地 Ed25519 身份、文档/字节签名与验签 | 完成 |
-| `internal/inventory` | 只读盘点：平台配置、Skill、Hermes profiles、OpenClaw agents.list；可选 `--connectors-dir` **exec** 子进程（不 import `connectors/*`） | 规格 §3.5 |
+| `internal/inventory` | 只读盘点：平台配置、Skill、Hermes profiles、OpenClaw agents.list、MCP 客户端配置（`mcp_server`）；可选 `--connectors-dir` **exec** 子进程（不 import `connectors/*`） | 规格 §3.5 |
 | `internal/export` | 脱敏导出包 `agentshield.export.v1`（无私钥/token/参数原文） | 规格 §3.8.1.3 |
 | `internal/controlsync` | `sync --control-api` → Edge `POST /edge/v1/batches`；缺凭据跳过；失败不改本地决策 | 规格 §2.4 |
 | `internal/admission` | frontmatter、哈希、限额、决策表、Skill Card | 完成（决策表变更需同步规格 §3.6.4 与 `dispositions.go`）|

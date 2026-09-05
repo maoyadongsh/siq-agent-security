@@ -639,7 +639,7 @@ def test_go_inventory_sample_conforms():
     for c in rep["candidates"]:
         errors = _validate("candidate", c)
         assert not errors, (c["candidate_id"], [e.message for e in errors])
-        assert c["source_type"] in {"skill_dir", "platform_config", "hermes_profile", "openclaw_agent"}
+        assert c["source_type"] in {"skill_dir", "platform_config", "hermes_profile", "openclaw_agent", "mcp_server"}
     ids = set()
     for ev in rep["evidence"]:
         errors = _validate("evidence", ev)

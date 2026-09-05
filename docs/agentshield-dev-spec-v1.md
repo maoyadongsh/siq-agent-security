@@ -35,6 +35,8 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二�
                                               ├─ grant       ─► grant + desired-policy 引用
                                               ├─ serve       ─► /v1/decide ─► receipt 链
                                               ├─ openshell   ─► policy set / get --full
+                                              ├─ export      ─► 脱敏包 agentshield.export.v1
+                                              ├─ sync        ─► 可选 Edge batch（默认不跑）
                                               └─ ui          ─► 127.0.0.1:<port>/
 平台钩子 ──(2) 适配器 HTTP + 本地 token──────► /v1/decide
 ```
@@ -145,13 +147,13 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二�
 | OpenClaw | `~/.openclaw/openclaw.json` agents.list、`~/.openclaw/skills`、`~/.agents/skills`、`workspace/skills`、`security.installPolicy` 是否指向本机二进制 | 同上 + observed 事实（installPolicy 已接管 = L1 就位）|
 | CodeBuddy | `~/.codebuddy/settings.json` hooks、`.codebuddy/skills` | candidate（skill）、observed（PreToolUse 已接管 = L2 就位）|
 | Trae | `~/.trae/skills`、`.trae/skills`、`.agents/skills` | candidate（skill）；档位标 audit_only |
-| MCP 配置 | 复用 `connectors/mcp`：只留 `env_keys`、`scheme://host`；不连接 | candidate（mcp_server）|
+| MCP 配置 | 原生只读众所周知客户端配置（`~/.cursor/mcp.json`、`~/.claude.json`、`~/.claude/mcp.json`、`~/.windsurf/mcp_config.json`、`~/.codeium/windsurf/mcp_config.json`）：只留 `env_keys`、`scheme://host`、command 基名；不连接、不 exec | candidate（mcp_server）|
 
 **输出**：`inventory/<ts>.json`，内容符合 `candidate.schema.json` + `evidence.schema.json`；每条 candidate 至少引用 1 条 evidence；`.env`/`auth-profiles`/`apiKey` 类字段只出 `secret_ref` 或 `size`。
 
 **新增（相对现有 Connector）**：Skill 目录扫描——每个 `SKILL.md` 产出 candidate `source_type=skill_dir`（需在 `candidate.schema.json` enum 增加 `skill_dir`，合同升版），附 `content_hash` 与是否已有 admission 记录。
 
-**实现方式（2026-09-04 修正）**：`connectors/*` 全部是 `package main` 的 NDJSON 子进程，不能作为库导入。inventory 用 Go **原生只读发现**，产出 `platform_config` / `skill_dir` / `hermes_profile` / `openclaw_agent` 候选。可选 `--connectors-dir`（或 `SIQ_AS_CONNECTORS_DIR`）：对 `hermes` / `openclaw` / `directory` / `mcp` **exec** `--serve`，超时 60s、stdout 上限 8MB；`describe.network_access=true` 或失败记入 `skipped`，不阻断原生结果。合同：`candidate.source_type` 已含上述枚举。
+**实现方式（2026-09-04 修正）**：`connectors/*` 全部是 `package main` 的 NDJSON 子进程，不能作为库导入。inventory 用 Go **原生只读发现**，产出 `platform_config` / `skill_dir` / `hermes_profile` / `openclaw_agent` / `mcp_server` 候选。可选 `--connectors-dir`（或 `SIQ_AS_CONNECTORS_DIR`）：对 `hermes` / `openclaw` / `directory` / `mcp` **exec** `--serve`，超时 60s、stdout 上限 8MB；`describe.network_access=true` 或失败记入 `skipped`，不阻断原生结果。合同：`candidate.source_type` 已含上述枚举。
 
 **实现状态（相对本表）**：
 
@@ -161,7 +163,9 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二�
 | Hermes `profiles/*/`（`config.yaml` 或 `SOUL.md`）各一条 `hermes_profile`；`platform_toolsets`/`toolsets` → tool 域 declared | **P1** |
 | `~/.hermes/config.yaml` 的 `platform_toolset_modes` 键（只读，不执行） | **P1** |
 | OpenClaw `agents.list`（密钥值不出结构体；不读 `auth-profiles` 正文） | **P1** |
-| MCP Connector 子进程 / k8s / docker | **未做**（默认不扫舰队） |
+| MCP 众所周知客户端配置只读（`mcp_server`；不连接、不 exec command；env 只出键名；url 只留 `scheme://host`；符号链接/畸形 JSON 记 `skipped`） | **已完成** |
+| 可选 `--connectors-dir` exec（含 `connectors/mcp`） | **已完成**（P3；默认不跑） |
+| k8s / docker 舰队扫描 | **未做**（默认不扫） |
 
 ### 3.6 `internal/admission`（规格，W1 余量）
 
@@ -660,8 +664,8 @@ make -C apps/agentshield ui
 | W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**；OpenClaw `policy-exec` **完成**；CodeBuddy `hook codebuddy` **完成**；`adapter install/uninstall`（备份还原）**完成** |
 | W4 OpenShell | probe / 网络 policy set / 读回 | **完成**（CLI 后端 + PATH/ENV_SH 发现 + 网关验明 + `openshell doctor` + `/v1/openshell/*` + 控制台 L3；假 CLI 正负测试。矩阵不标 `supported`） |
 | W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **完成**（Skill 目录、evals、bootstrap 验签、`grant` CLI、自扫描不得 quarantine、已签名 `skill-manifest.json` + 四目标哈希。GitHub Release URL 为预定路径，尚未发布；矩阵仍无 `supported` 行） |
-| W6 材料 | README、演示、基线更新、十日谈 | **进行中**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark Hermes linux 证据已归档（admit / `--approve-as maoyd` / 授后 deny / verify）。L3 可选：须验明正身的 OpenShell；矩阵仍无 `supported` |
-| W7 本地台账 | 企业治理语义在本地文件态落地（资产/五态权限/风险/漂移/导出）；Control API 仍非现场依赖 | **P0–P3 已落地**（§2.4 / §3.5 / §3.8.1 / §3.10）：assets 状态机、profiles/agents.list、五域补丁、漂移、exec 无 host deny、findings 接受、audit.jsonl、脱敏导出、`sync --control-api`（默认不跑）、可选 `--connectors-dir`。矩阵仍无 `supported` 行 |
+| W6 材料 | README、演示、基线更新、十日谈 | **大体齐**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark Hermes linux 证据已归档（admit / `--approve-as maoyd` / 授后 deny / verify）。剩余：GitHub Release 未打、矩阵仍无 `supported`、OpenClaw/CodeBuddy E2E 另案。L3 可选：须验明正身的 OpenShell |
+| W7 本地台账 | 企业治理语义在本地文件态落地（资产/五态权限/风险/漂移/导出）；Control API 仍非现场依赖 | **P0–P3 已落地**（§2.4 / §3.5 / §3.8.1 / §3.10）：assets 状态机、profiles/agents.list、五域补丁、漂移、exec 无 host deny、findings 接受、audit.jsonl、脱敏导出、`sync --control-api`（默认不跑）、可选 `--connectors-dir`、MCP 配置原生只读（`mcp_server`）。矩阵仍无 `supported` 行 |
 
 ---
 

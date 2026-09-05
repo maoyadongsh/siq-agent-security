@@ -4,6 +4,7 @@
   "platforms": [
     "codebuddy",
     "hermes",
+    "mcp",
     "openclaw",
     "trae"
   ],
@@ -79,6 +80,47 @@
         "ev-b5d42fc63d1ccff7"
       ],
       "confidence": 1,
+      "status": "candidate"
+    },
+    {
+      "candidate_id": "mcp:cursor:github@47b27826",
+      "source_type": "mcp_server",
+      "source_locator": "mcp://~/.cursor/mcp.json#github",
+      "discovered_at": "2026-09-04T08:00:00Z",
+      "name": "github",
+      "framework": "unknown",
+      "attributes": {
+        "client": "cursor",
+        "command": "npx",
+        "config": "~/.cursor/mcp.json",
+        "discovery_basis": "client_config",
+        "env_keys": "GITHUB_TOKEN",
+        "transport": "stdio"
+      },
+      "evidence_ids": [
+        "ev-0f3e28e913d22312"
+      ],
+      "confidence": 0.9,
+      "status": "candidate"
+    },
+    {
+      "candidate_id": "mcp:cursor:remote@9d6746f3",
+      "source_type": "mcp_server",
+      "source_locator": "mcp://~/.cursor/mcp.json#remote",
+      "discovered_at": "2026-09-04T08:00:00Z",
+      "name": "remote",
+      "framework": "unknown",
+      "attributes": {
+        "client": "cursor",
+        "config": "~/.cursor/mcp.json",
+        "discovery_basis": "client_config",
+        "transport": "sse",
+        "url": "https://mcp.example.com"
+      },
+      "evidence_ids": [
+        "ev-44b59b211fa828c4"
+      ],
+      "confidence": 0.9,
       "status": "candidate"
     },
     {
@@ -233,6 +275,22 @@
   ],
   "evidence": [
     {
+      "evidence_id": "ev-0f3e28e913d22312",
+      "source_type": "platform_config",
+      "source_locator": "mcp://~/.cursor/mcp.json#github",
+      "subject_ref": null,
+      "observed_at": "2026-09-04T08:00:00Z",
+      "collected_at": "2026-09-04T08:00:00Z",
+      "collector_id": "agentshield-local",
+      "connector_version": "test",
+      "content_hash": "15bab867fde12024685f22fafa22a05b4fe1930f60d6e764fe66cad0ea82a64f",
+      "redaction_profile": "siq.redaction.v1",
+      "classification": "internal",
+      "payload_ref": null,
+      "signature": "2dd67a496ae9044185eb44ab0fd2244a66c9e892e1d3fa04a8e5e554202534034f18a4df9545983426504291fe0c3543bcb36d9219c65861010b989ba941480d",
+      "expires_at": null
+    },
+    {
       "evidence_id": "ev-276866d2bba0a04f",
       "source_type": "platform_config",
       "source_locator": "codebuddy://.codebuddy/settings.json",
@@ -294,6 +352,22 @@
       "classification": "internal",
       "payload_ref": null,
       "signature": "19f157d000ec11f94b3bd7ebee8322e1847d1038b7c6db7b5f5ee24e3e67214db9f5947ce13ca932bc057304e6b4e97a32cb26c45bb59ce217f398bcb311e909",
+      "expires_at": null
+    },
+    {
+      "evidence_id": "ev-44b59b211fa828c4",
+      "source_type": "platform_config",
+      "source_locator": "mcp://~/.cursor/mcp.json#remote",
+      "subject_ref": null,
+      "observed_at": "2026-09-04T08:00:00Z",
+      "collected_at": "2026-09-04T08:00:00Z",
+      "collector_id": "agentshield-local",
+      "connector_version": "test",
+      "content_hash": "0b10df0a2106c96e9fa83e61eaded53a1df25881081a230ef06b172f5c624b9d",
+      "redaction_profile": "siq.redaction.v1",
+      "classification": "internal",
+      "payload_ref": null,
+      "signature": "45b665a0e67a766cd2f1fef64ed2ae984fd43d889bd54ac38a1002c37eebd68c056d3cca7b13bd4512fb78d505e62dca2241d75142bcd91186dd92190d611905",
       "expires_at": null
     },
     {

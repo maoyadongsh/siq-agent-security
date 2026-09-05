@@ -86,9 +86,10 @@
 
 **发现（浅）**
 
-- `internal/inventory`：只读扫描 Hermes / OpenClaw / CodeBuddy / Trae / Claude Code / Codex 的已知配置与 `SKILL.md` 目录。
-- 产出 `platform_config` 与 `skill_dir` 候选，带 content hash、是否已准入；不启动 MCP、不读密钥正文。
-- **P1 已补**：Hermes `profiles/*`、OpenClaw `agents.list`、`platform_toolset_modes` 键作为 tool 域 declared。MCP Connector 子进程仍未做。
+- `internal/inventory`：只读扫描 Hermes / OpenClaw / CodeBuddy / Trae / Claude Code / Codex 的已知配置与 `SKILL.md` 目录，以及众所周知 MCP 客户端配置。
+- 产出 `platform_config`、`skill_dir`、`hermes_profile`、`openclaw_agent`、`mcp_server` 候选，带 content hash、是否已准入；不启动 MCP、不读密钥正文。
+- **P1 已补**：Hermes `profiles/*`、OpenClaw `agents.list`、`platform_toolset_modes` 键作为 tool 域 declared。
+- **MCP 原生只读已补**：`mcp_server` 候选（env 只出键名、url 只留 `scheme://host`）。可选 `--connectors-dir` 仍可 **exec** `connectors/mcp`，禁止 import。
 
 **管控（硬闭环，平台相关）**
 
@@ -114,7 +115,7 @@
 | ID | 缺口 | 性质 |
 | --- | --- | --- |
 | G1 | 本地 UI 五页、无资产详情/五态权限/风险运营页 | 观感 + 叙事（参赛权重高） |
-| G2 | inventory 未扫具名 Agent 实例 | 规格 §3.5 未完成 |
+| G2 | inventory 未扫具名 Agent 实例 | **P1 已补** profiles / agents.list；MCP 配置只读已补。k8s/docker 仍默认不扫 |
 | G3 | 无资产 confirm/dismiss | 企业有、本地无；规格未强制文件布局 |
 | G4 | 权限事实散落在 grant/receipt/openshell，无聚合 API | 数据已有，缺对照面 |
 | G5 | 五域编辑器只在企业详情页 | 本地签发偏 CLI |
@@ -258,6 +259,7 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 1. Hermes：`profiles/*/` 各出一条 agent 候选；读取 `platform_toolset_modes` 作为 tool 域 declared（只读结构，不执行）。
 2. OpenClaw：解析 `agents.list`（或等价键），密钥值不出结构体。
 3. 周期：`serve` 已有约 5 分钟扫描未准入 Skill 的意图；W7 扩展为刷新资产投影，哈希变化触发 G7。
+4. MCP：众所周知客户端 `mcp.json` 原生只读，产出 `mcp_server`；安全边界对齐 `connectors/mcp`，但不 import、不连接、不 exec command。
 
 可选 `--connectors-dir`：对 `connectors/{hermes,openclaw,directory,mcp}` `exec` + NDJSON；超时 60s、输出上限 8MB、失败记 skipped，不阻断原生结果。
 
@@ -319,6 +321,13 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 
 **验收**：评委可从设置页或 CLI 导出脱敏 JSON。企业台若已登记本机公钥并签发 scan 任务，sync 可上传候选/证据；未登记则跳过，不挡比赛。
 
+### P3+ — MCP 配置原生只读 **已落地（2026-09-05）**
+
+- inventory 扫众所周知 MCP 客户端配置，产出 `source_type=mcp_server`。
+- 不连接、不 exec command；env 只出键名；url 只留 `scheme://host`；符号链接与畸形 JSON 记 `skipped`，不让整个 `inventory.Run` 失败。
+
+**验收**：fixture 含 token/userinfo 时整份 inventory JSON 不含密钥原文；`platforms` 含 `mcp`。
+
 ### 建议日历（相对提交窗口）
 
 | 窗口 | 内容 |
@@ -344,7 +353,7 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 
 ### 8.3 对外口径
 
-- 发现范围：**本机**平台、profile/agent 列表、Skill 目录；不是公司舰队。
+- 发现范围：**本机**平台、profile/agent 列表、Skill 目录、MCP 客户端配置；不是公司舰队。
 - 管控范围：已装适配器的平台之工具层；L3 仅已验明 OpenShell 的网络段读回。
 - Trae：发现得到，不能阻断。
 - 企业控制面：完整产品仍在，现场评委不必启动。
