@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
@@ -75,16 +76,20 @@ func cmdGrant(args []string) error {
 }
 
 func cmdGrantAction(st *state.Store, key *signing.Key, verb string, args []string) error {
+	id, flagArgs, err := splitGrantIDAndFlags(args)
+	if err != nil {
+		return fmt.Errorf("grant %s: %w", verb, err)
+	}
 	fs := flag.NewFlagSet("grant-"+verb, flag.ContinueOnError)
 	actor := fs.String("approve-as", "", "human actor id (required for approve)")
 	channel := fs.String("channel", "cli", "approval channel recorded on the grant")
-	if err := fs.Parse(args); err != nil {
+	if err := fs.Parse(flagArgs); err != nil {
 		return err
 	}
-	if fs.NArg() != 1 {
-		return fmt.Errorf("grant %s: grant id required", verb)
+	if fs.NArg() != 0 {
+		return fmt.Errorf("grant %s: unexpected extra args %v", verb, fs.Args())
 	}
-	g, err := st.GetGrant(fs.Arg(0))
+	g, err := st.GetGrant(id)
 	if err != nil {
 		return fmt.Errorf("grant: %w", err)
 	}
@@ -112,4 +117,33 @@ func cmdGrantAction(st *state.Store, key *signing.Key, verb string, args []strin
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	return enc.Encode(out)
+}
+
+// splitGrantIDAndFlags accepts both documented
+// `grant approve <id> --approve-as NAME` and flag-first order. Go's flag.Parse
+// otherwise stops at the first positional and never sees --approve-as.
+func splitGrantIDAndFlags(args []string) (id string, flags []string, err error) {
+	takesValue := map[string]bool{
+		"--approve-as": true, "-approve-as": true,
+		"--channel": true, "-channel": true,
+	}
+	for i := 0; i < len(args); i++ {
+		a := args[i]
+		if strings.HasPrefix(a, "-") {
+			flags = append(flags, a)
+			if takesValue[a] && i+1 < len(args) && !strings.HasPrefix(args[i+1], "-") {
+				flags = append(flags, args[i+1])
+				i++
+			}
+			continue
+		}
+		if id != "" {
+			return "", nil, fmt.Errorf("unexpected extra arg %q", a)
+		}
+		id = a
+	}
+	if id == "" {
+		return "", nil, fmt.Errorf("grant id required")
+	}
+	return id, flags, nil
 }
