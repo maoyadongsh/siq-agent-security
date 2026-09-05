@@ -10,7 +10,7 @@
 | 干什么 | 装 Skill 前先审查，每次调用工具留签字据 | 资产台账、审批、采集、策略下发 |
 | 怎么跑 | 一个本地程序，不用登录、不用数据库 | 控制台 + API + PostgreSQL，见 [`docs/control-plane.md`](./docs/control-plane.md) |
 
-下面以 **AgentShield** 为主。命令与演示夹具见 [`AGENTSHIELD.md`](./AGENTSHIELD.md)。
+下面以 **AgentShield** 为主。为何落在 DGX Spark、本机如何适配，见 [为什么做在 NVIDIA DGX Spark 上](#为什么做在-nvidia-dgx-spark-上) 与 [在 DGX Spark 上的适配与实测](#在-dgx-spark-上的适配与实测)。命令与演示夹具见 [`AGENTSHIELD.md`](./AGENTSHIELD.md)。
 
 当前代码在分支 [`cursor/agentshield-w0-contracts-8eff`](https://github.com/maoyadongsh/siq-agent-security/tree/cursor/agentshield-w0-contracts-8eff)，尚未合入 `main`。发布：[v0.1.0](https://github.com/maoyadongsh/siq-agent-security/releases/tag/agentshield-v0.1.0)。
 
@@ -41,6 +41,18 @@ AgentShield 补的就是这一条。它不另做一套账号体系，不自己�
 - **通过**：能力声明干净。仍须人授权后，运行时才放行。
 
 默认拒绝未授予的能力。例如没批准过上网，`web_fetch` 就会被挡住，并留下回执。
+
+---
+
+## 为什么做在 NVIDIA DGX Spark 上
+
+SIQ 把一批面向企业的 AI 应用和系统放在 **NVIDIA DGX Spark** 上做本地开发与运行：助手与运行面（Hermes）、投研与分析（research-engine）、文档与流程、身份与网关等。共同前提是数据和模型尽量留在客户机房或专有环境里，而不是默认上公有云。
+
+一旦智能体真正开始干活，安全要求会立刻高于「聊天机器人」。企业、政府部门要面对的是：Skill 和 MCP 从哪来、工具能不能出网、文件和凭据碰没碰、出事之后能不能拿出签字据。本地算力越强、助手越勤快，装错一个插件的后果就越大。
+
+近一两年行业里已经不只是论文里的假设。公开披露过 MCP 工具描述投毒、安装后静默外传邮件、技能市场上规模化恶意 Skill，以及开发环境里的零点击提示注入。共同教训很清楚：**装上之后再让模型「看一眼安不安全」，等于把裁决权交给攻击者最容易影响的那一层。** 对要把智能体放进办公网、专网、政务网的机构来说，这不是可选的加分项，而是能不能上线的门槛。
+
+AgentShield 就是补在同一台 Spark 上的本机门禁：不替代现有业务系统，不把流量拐去云上扫描，审查和拦截都在这台机器上完成。企业侧若要把多台 Spark、多个环境收成台账，再走同一仓库里的控制面。
 
 ---
 
@@ -151,7 +163,7 @@ Hermes 会多一个包装命令 `hermes-skills-install`：先审查再调用官�
 
 **不替换现有账号、网关和沙箱。** 接入成本是挂钩子，不是搬家。能力按平台真实钩子分档：没有钩子就写明「拦不住」，减少「买了以为拦住其实没拦」的合规事故。
 
-**同一份资产两处用。** 控制面可不依赖特定业务平台单独部署；AgentShield 覆盖个人桌面。客户按规模选入口，安全语言一致。
+**同一份资产两处用。** 控制面可不依赖特定业务平台单独部署；AgentShield 覆盖单台 Spark / 个人桌面。客户按规模选入口，安全语言一致。数据不必为了「扫一眼安不安全」离开本地主机。
 
 ---
 
@@ -189,22 +201,42 @@ Hermes 会多一个包装命令 `hermes-skills-install`：先审查再调用官�
 
 ---
 
-## 现在能挡到哪一步
+## 在 DGX Spark 上的适配与实测
 
-四档：看清楚（审计）→ 装之前能拒 → 调用时能拒并记账 → 把网络策略交给已验明的 OpenShell。
+以下均来自本仓库开发机：**NVIDIA DGX Spark**（硬件型号 `NVIDIA_DGX_Spark`，`aarch64`，Ubuntu 24.04，内核 `6.17.0-1014-nvidia`，GPU **NVIDIA GB10**，驱动 580.126.09，约 20 逻辑核 / 121 GiB 内存）。程序为原生 `linux/arm64` 构建（Go 1.22.12），`agentshield 0.1.0`，约 13 MB 单文件，不依赖本机 Python 服务做裁决。安装脚本不从网上下载二进制——这在不能随意出网的政务 / 企业网上是硬条件，不是发布省事。
 
-能力表目前全部是「试验中」，Trae 为「仅审计」。已在 NVIDIA DGX Spark（Linux ARM）留下可核对记录：
+### 和 Spark 上已有系统怎么相处
 
-| 产品 | 已经验证过 | 明确不宣称 |
+门禁和业务系统**共栈、不抢控制权**：
+
+- 只监听 `127.0.0.1`，本机控制台在 `:47611`；不改 Hermes 核心，不改 `siq-research-engine` 仓库。
+- 不执行 `openshell gateway start`，不接管本机已在跑的 OpenClaw 网关。需要网络隔离时，用环境变量指向对方已有的 `env.sh`，先验明网关身份再握手。
+- 适配器安装前备份，卸载还原。OpenClaw / WorkBuddy 的实机合同在**隔离 HOME** 里跑通，避免改操作者日常配置。
+- 交叉编译清单含 `linux/arm64`，与 x86 发布物并列钉哈希。Spark 上用的就是这条 ARM 产物。
+
+这台机器上同时存在着 SIQ 的本地 AI 应用（Hermes 助手、投研 OpenShell 等）和 AgentShield。产品形态按「企业把 Spark 当本地 AI 主机」来设计：一个文件程序、无登录、无数据库，和需要 PostgreSQL 的企业控制面分开。
+
+### 2026-09-05 本机走过的路径
+
+脱敏记录在 [`docs/evidence/agentshield/`](./docs/evidence/agentshield/README.md)。批准人均为人类 `--approve-as`，模型未代批。能力表**没有**改成「正式支持」——没有核验过的档位就不宣称。
+
+| 接入面 | 在这台 Spark 上实际做了什么 | 明确没做 / 不宣称 |
 | --- | --- | --- |
-| Hermes | 本机插件：审查、签发后越权会被拒、记录可核验 | 网络沙箱档 |
-| OpenClaw | 隔离环境下的安装前审查与调用拦截 | 接管你机器上已经在跑的网关 |
-| WorkBuddy / CodeBuddy | 隔离环境下的真实工具钩子 | 图形界面里的完整点击路径；网络沙箱档 |
-| Trae | 产品规定只能审计 | 任何阻断 |
+| **Hermes（本机插件）** | 恶意夹具隔离（退出码 3）；官方风格夹具附条件准入；人批准并部署后，未授予的 `web_fetch` 被拒；回执链 `verify` 通过；控制台 `GET /` 返回本地模式页面 | 未配置 OpenShell 时不宣称网络沙箱档 |
+| **OpenClaw（隔离 HOME）** | 写入安装策略与插件后可还原；`policy-exec` 对恶意夹具 `block`、对官方风格 `warn`；授前授后越权均为 deny | **未**挂到本机正在跑的 OpenClaw 网关进程 |
+| **WorkBuddy / CodeBuddy（隔离 HOME）** | 真实 `hook codebuddy` 读 PreToolUse、打本机决策接口；授前默认拒绝，授后未授予的 `WebFetch` 仍 deny | **未**驱动图形界面客户端；无网络沙箱档 |
+| **OpenShell（投研隔离网关）** | 指向 research-engine 的 `env.sh` 后 `doctor` / `probe`：身份核验通过、握手网关名 `siq-openshell-dev`、**未**由 AgentShield 启动网关 | 当时没有活动的分析沙箱可做网络策略读回闭环，故不把该档标成正式支持 |
+| **Trae** | 产品规定仅审计 | 任何阻断 |
 
-记录见 [`docs/evidence/agentshield/`](./docs/evidence/agentshield/README.md)。要把某行改成正式支持，需要新的核验记录并重新签发清单。
+现场还可核验：恶意目录 → 隔离；官方风格目录 → 附条件；签发后越权 → deny；`verify` 重算哈希链。控制台把已下发但没有沙箱读回的签发标成「已部署 · 未读回」，文件系统 / 进程权限不会显示成「真正生效」。
 
-其它边界：文件系统 / 进程权限不会显示为「真正生效」；Windows 上的网络沙箱依赖 WSL2 或 Docker，当前发布不宣称；没有钩子就拦不住绕过工具层的直连访问。
+### 这对 Spark 上的业务意味着什么
+
+把投研助手、办公助手、文档智能体放在同一台 GB10 上，并不自动等于安全。AgentShield 在这台机器上证明的是：**审查、人签最小权限、工具层拦截、可核验回执，可以和现有本地 AI 栈并排运行，而且不必把数据送出 Spark。** 机构若要把多台 Spark 收成企业台账，再用控制面；单台先把门禁跑起来。
+
+四档能力仍按钩子说话：看清楚 → 装之前能拒 → 调用时能拒并记账 → 把网络策略交给已验明的 OpenShell。Windows 上的网络沙箱依赖 WSL2 或 Docker，当前发布不宣称。没有钩子就拦不住绕过工具层的直连访问。
+
+要把某行改成正式支持，需要新的核验记录并重新签发清单。
 
 ---
 
@@ -233,6 +265,7 @@ AGENTSHIELD_STATE_DIR=$(mktemp -d) ./agentshield admit ../../skills/agentshield
 | 主题 | 文档 |
 | --- | --- |
 | 本机操作与演示目录 | [`AGENTSHIELD.md`](./AGENTSHIELD.md) |
+| DGX Spark 本机实测（脱敏） | [`docs/evidence/agentshield/`](./docs/evidence/agentshield/README.md) |
 | 企业控制面 | [`docs/control-plane.md`](./docs/control-plane.md) |
 | 检测规则基线 | [`docs/detection-baseline.md`](./docs/detection-baseline.md) |
 | 本地台账与企业语义 | [`docs/agentshield-local-ledger-dev-plan-v1.md`](./docs/agentshield-local-ledger-dev-plan-v1.md) |
