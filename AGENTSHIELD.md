@@ -2,7 +2,7 @@
 
 本地单文件门禁官：盘点 Agent 资产、准入未知 Skill、签发最小权限、给每次工具调用签回执。
 
-**模型不判断 Skill 是否安全。** 裁决只由 `agentshield` 二进制产出。本文件是评委 / 黑客松入口；企业控制面（Control API、PostgreSQL、登录台）见根 [`README.md`](./README.md)。本地控制台将按 [`docs/agentshield-local-ledger-dev-plan-v1.md`](./docs/agentshield-local-ledger-dev-plan-v1.md) 对齐企业台账观感；评委复现仍只需 `serve`，不必启动控制面。
+**模型不判断 Skill 是否安全。** 裁决只由 `agentshield` 二进制产出。产品说明见根 [`README.md`](./README.md)；本文件是本机操作与夹具步骤。企业控制面见 [`docs/control-plane.md`](./docs/control-plane.md)。本地模式只需 `serve`，不必启动 PostgreSQL / `:8600`。
 
 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)  
 分支：`cursor/agentshield-w0-contracts-8eff`（尚未合入 `main`；clone 默认分支看不到本产品）
@@ -26,7 +26,7 @@ export AGENTSHIELD_STATE_DIR="${AGENTSHIELD_STATE_DIR:-$(pwd)/.state}"
 
 浏览器打开 `http://127.0.0.1:47611`。Bearer token 在 `$AGENTSHIELD_STATE_DIR/token`（0600），不要贴进聊天或截图。
 
-Skill 入口（Hermes 等加载 `skills/agentshield` 时）：
+把 Skill 装进 Hermes / OpenClaw / WorkBuddy 的步骤见根 README [使用说明](./README.md#使用说明)。本机已检出仓库、二进制已在 PATH 时：
 
 ```bash
 skills/agentshield/scripts/bootstrap.sh   # Windows: bootstrap.ps1

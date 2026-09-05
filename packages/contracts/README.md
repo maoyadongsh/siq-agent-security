@@ -85,7 +85,7 @@ Connector 是运行在 Edge Agent 侧的多语言插件（设计文档 §26.1：
 合同定义见设计文档 §15.3（OpenShell Adapter）与 §16.2（Runtime Adapter）。首版实现位于 `apps/control-api/app/adapters/openshell/`（contracts / base / policy_compiler / fake_backend / client / cli_backend）：
 
 - **FakeBackend 契约测试**覆盖：能力探测、revision 冲突、静态 generation、正负验证、回滚、unsupported 显式标记；
-- **`openshell-cli` 后端**：已在 OpenShell v0.0.104 真实网关实测"审批 → `policy set` → 读回验证 → effective"闭环（含网络策略热更新，见根 README 与 `docs/compatibility.md`）；SIQ 侧正式迁移（v0.0.83 → v0.0.104）处于 canary 窗口期，runbook 见 `docs/openshell-v083-to-v0104-migration.md`；
+- **`openshell-cli` 后端**：已在 OpenShell v0.0.104 真实网关实测"审批 → `policy set` → 读回验证 → effective"闭环（含网络策略热更新，见 [`docs/control-plane.md`](../../docs/control-plane.md) 与 `docs/compatibility.md`）；SIQ 侧正式迁移（v0.0.83 → v0.0.104）处于 canary 窗口期，runbook 见 `docs/openshell-v083-to-v0104-migration.md`；
 - `adapters/enforcement/` 预留给未来的独立进程形态，当前为空（规划中）。
 
 ## 与实现的对应关系（如实核对）
