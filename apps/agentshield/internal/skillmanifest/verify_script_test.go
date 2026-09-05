@@ -84,7 +84,7 @@ func TestPythonVerifierAcceptsSignedManifest(t *testing.T) {
 	}
 
 	bad := m.Signature
-	m.Signature = "ff" + bad[2:]
+	m.Signature = "00" + bad[2:]
 	if err := WriteFile(tmp, m); err != nil {
 		t.Fatal(err)
 	}

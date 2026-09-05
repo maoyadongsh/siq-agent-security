@@ -16,7 +16,7 @@
 
 | | 企业控制面 | AgentShield 本地门禁 |
 | --- | --- | --- |
-| 入口 | [`README.md`](../README.md)、`apps/web` 默认构建、`http://localhost:52741/agents`（本机 Vite 示例） | [`AGENTSHIELD.md`](../AGENTSHIELD.md)、`agentshield serve`、`http://127.0.0.1:47611` |
+| 入口 | [`README.md`](../README.md)、`apps/web` 默认构建、`http://localhost:52741/agents`（本机 Vite 示例） | [`AGENTSHIELD.md`](../AGENTSHIELD.md)、`siq-agent-security serve`、`http://127.0.0.1:47611` |
 | 代码 | `apps/control-api` + `apps/web/src/{App,pages,components}` | `apps/agentshield` + `apps/web/src/local/` |
 | 后端 | FastAPI `:8600` + PostgreSQL + 登录/多租户 + Edge | Go 标准库、文件态 `STATE_DIR`、loopback token |
 | 回答的问题 | 公司里有多少智能体、谁批的、有没有漂移 | 这台机器上的 Skill 能不能装、这次调用允不允许 |
@@ -61,7 +61,7 @@
 
 ### 1.3 现场成功标准（可判定）
 
-现场 10 分钟内，**只启动 `agentshield serve`**（可选已在跑的 Hermes / 已验明 OpenShell），能够：
+现场 10 分钟内，**只启动 `siq-agent-security serve`**（可选已在跑的 Hermes / 已验明 OpenShell），能够：
 
 1. 打开内嵌控制台，侧栏能走到「资产 / 权限 / 风险 / 签发 / 回执」，观感对齐企业壳（磨砂侧栏、PageHeader、表格密度），顶栏仍标明「本地模式 · 单用户」+ 平台档位。
 2. 盘点页列出本机平台与 Skill；点进详情能看到 evidence 与声明工具。
@@ -126,7 +126,7 @@
 
 ### 2.3 本机观察到的双入口（开发环境，非产品承诺）
 
-- `127.0.0.1:47611`：`agentshield serve`（本地台）。
+- `127.0.0.1:47611`：`siq-agent-security serve`（本地台）。
 - `127.0.0.1:52741`：`apps/web` Vite（企业台 `/agents`）。
 - `127.0.0.1:8600`：control-api uvicorn（企业 API）。
 
@@ -278,7 +278,7 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 
 ## 7. 分期
 
-每期结束必须：`gofmt` / `go vet` / `go test ./...`、四目标交叉编译、`npm run build:local` 后 embed、相关 Go 合同样例仍能过 Python schema。改 `skills/agentshield` 则用 `AGENTSHIELD_RELEASE_SEED` 重签（seed 在 gitignore）。
+每期结束必须：`gofmt` / `go vet` / `go test ./...`、四目标交叉编译、`npm run build:local` 后 embed、相关 Go 合同样例仍能过 Python schema。改 `skills/siq-agent-security` 则用 `SIQ_AGENT_SECURITY_RELEASE_SEED`（兼容旧名）重签（seed 在 gitignore）。
 
 ### P0 — 台账壳与五态对照（优先，参赛观感）**已落地（2026-09-05）**
 
@@ -407,7 +407,7 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 1. `/admissions` 独立页是否保留为「准入流水」二级入口（建议 P0 做重定向，P1 在资产详情内嵌列表）。
 2. 资产 ID 稳定性：`skill:hermes:name@hash12` 在改名后是否迁移（建议 locator + hash 为主键，name 可变）。
 3. 本机是否默认扫描 Claude Code / Codex 仅作 L0 展示（inventory 已能探测配置；适配器未做则只发现不管控）。
-4. OpenClaw / CodeBuddy linux E2E 证据已归档（隔离 HOME；不改矩阵）。GitHub Release `agentshield-v0.1.0` 已切。是否把矩阵行改成 `supported` 仍须另案 + 重签。
+4. OpenClaw / CodeBuddy linux E2E 证据已归档（隔离 HOME；不改矩阵）。GitHub Release `siq-agent-security-v0.2.0` 覆盖更名后的二进制与 Skill；旧 tag `agentshield-v0.1.0` 仍可对照。是否把矩阵行改成 `supported` 仍须另案 + 重签。
 
 ---
 

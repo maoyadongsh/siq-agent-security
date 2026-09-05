@@ -8,12 +8,13 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/skillmanifest"
 )
 
 func cmdReleaseManifest(args []string) error {
 	fs := flag.NewFlagSet("release-manifest", flag.ContinueOnError)
-	skillDir := fs.String("skill-dir", "", "skills/agentshield directory (default: discover)")
+	skillDir := fs.String("skill-dir", "", "skills/"+product.Name+" directory (default: discover)")
 	binDir := fs.String("bin-dir", "", "directory of cross-compiled binaries (required unless --build)")
 	out := fs.String("out", "", "output path (default: <skill-dir>/skill-manifest.json)")
 	version := fs.String("version", skillmanifest.DefaultVersion, "skill and binary version")
@@ -47,12 +48,12 @@ func cmdReleaseManifest(args []string) error {
 		}
 	}
 	if key.PublicBase64() != skillmanifest.ReleasePublicKeyB64 {
-		fmt.Fprintf(os.Stderr, "agentshield: warning: signing key public half %s does not match ReleasePublicKeyB64; update the constant and bootstrap before publishing\n", key.PublicBase64())
+		fmt.Fprintf(os.Stderr, "siq-agent-security: warning: signing key public half %s does not match ReleasePublicKeyB64; update the constant and bootstrap before publishing\n", key.PublicBase64())
 	}
 
 	if *doBuild {
 		if *binDir == "" {
-			*binDir = filepath.Join(os.TempDir(), "agentshield-release-bin")
+			*binDir = filepath.Join(os.TempDir(), "siq-agent-security-release-bin")
 		}
 		if err := os.MkdirAll(*binDir, 0o755); err != nil {
 			return err
@@ -95,7 +96,7 @@ func cmdReleaseManifest(args []string) error {
 	if err := skillmanifest.WriteFile(dest, m); err != nil {
 		return err
 	}
-	fmt.Fprintf(os.Stderr, "agentshield: wrote %s (content_hash %s signed_by %s)\n", dest, contentHash, m.SignedBy)
+	fmt.Fprintf(os.Stderr, "siq-agent-security: wrote %s (content_hash %s signed_by %s)\n", dest, contentHash, m.SignedBy)
 	return json.NewEncoder(os.Stdout).Encode(map[string]any{
 		"path":         dest,
 		"content_hash": contentHash,
@@ -177,7 +178,7 @@ func crossCompile(binDir, version string) error {
 		cmd.Env = append(os.Environ(), "GOOS="+t.OS, "GOARCH="+t.Arch, "CGO_ENABLED=0")
 		cmd.Stdout = os.Stderr
 		cmd.Stderr = os.Stderr
-		fmt.Fprintf(os.Stderr, "agentshield: building %s/%s -> %s\n", t.OS, t.Arch, name)
+		fmt.Fprintf(os.Stderr, "siq-agent-security: building %s/%s -> %s\n", t.OS, t.Arch, name)
 		if err := cmd.Run(); err != nil {
 			return fmt.Errorf("release-manifest: build %s/%s: %w", t.OS, t.Arch, err)
 		}

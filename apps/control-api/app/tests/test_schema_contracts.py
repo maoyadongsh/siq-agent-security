@@ -197,17 +197,17 @@ VALID_EXAMPLES = {
     "skill-manifest": {
         "manifest_version": 1,
         "skill": {
-            "name": "agentshield",
+            "name": "siq-agent-security",
             "version": "0.1.0",
             "description": "Audit, admit, grant and receipt agent skills locally.",
             "content_hash": _SHA,
             "sub_skills": ["agent-asset-inventory", "skill-admission"],
         },
         "binary": {
-            "name": "agentshield",
+            "name": "siq-agent-security",
             "version": "0.1.0",
             "artifacts": [
-                {"os": "linux", "arch": "arm64", "sha256": _SHA, "url": "https://example.invalid/agentshield-linux-arm64"},
+                {"os": "linux", "arch": "arm64", "sha256": _SHA, "url": "https://example.invalid/siq-agent-security-linux-arm64"},
             ],
         },
         "rulepack": {"version": 1, "sha256": _SHA, "public_key_b64": "A" * 44},
@@ -676,7 +676,7 @@ def test_go_desired_policy_sample_compiles_like_python():
     assert "network_policies" in compiled.artifact
 
 
-RELEASE_MANIFEST = Path(__file__).parents[4] / "skills" / "agentshield" / "skill-manifest.json"
+RELEASE_MANIFEST = Path(__file__).parents[4] / "skills" / "siq-agent-security" / "skill-manifest.json"
 
 
 @pytest.mark.skipif(not (GO_SAMPLES / "skill-manifest.sample.json").exists(), reason="Go skill-manifest sample missing")
@@ -684,7 +684,7 @@ def test_go_skill_manifest_sample_conforms():
     doc = json.loads((GO_SAMPLES / "skill-manifest.sample.json").read_text())
     errors = _validate("skill-manifest", doc)
     assert not errors, [e.message for e in errors]
-    assert doc["skill"]["name"] == "agentshield"
+    assert doc["skill"]["name"] == "siq-agent-security"
     assert len(doc["signature"]) == 128
     assert all(row["status"] != "supported" for row in doc["support_matrix"])
 

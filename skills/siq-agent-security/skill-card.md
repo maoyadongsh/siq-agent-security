@@ -1,10 +1,10 @@
-# Skill Card — AgentShield
+# Skill Card — siq-agent-security
 
 ## Description
 
 Admits unknown skills and signs each tool-call receipt.
 
-Admission verdict: **self** (regenerate with `agentshield admit skills/agentshield`).
+Admission verdict: **self** (regenerate with `siq-agent-security admit skills/siq-agent-security`).
 
 ## Owner
 
@@ -60,7 +60,7 @@ local Ed25519 identity in the state directory.
 
 ## Skill Version
 
-0.1.0
+0.2.0
 
 ## Ethical Considerations
 
@@ -68,4 +68,4 @@ This skill never executes candidate skill code. Findings store redacted excerpts
 only. The model is not an authority for safety decisions.
 
 ---
-本卡描述 AgentShield Skill 自身，不构成对第三方 Skill 的签名、批准或发布。
+本卡描述 siq-agent-security Skill 自身，不构成对第三方 Skill 的签名、批准或发布。

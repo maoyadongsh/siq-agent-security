@@ -1,4 +1,4 @@
-/** AgentShield 本地控制台类型（对接 Go /v1/*，不是 Control API）。 */
+/** siq-agent-security 本地控制台类型（对接 Go /v1/*，不是 Control API）。 */
 
 export interface PlatformInfo {
   name: string;

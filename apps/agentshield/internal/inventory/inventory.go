@@ -23,6 +23,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/canon"
+	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
 
@@ -225,14 +226,14 @@ func adapterInstalled(platform string, raw []byte) (installGate, toolHook bool) 
 	if json.Unmarshal(raw, &doc) != nil {
 		// Hermes YAML / Codex TOML: string search on the adapter marker only
 		s := string(raw)
-		return false, strings.Contains(s, "agentshield")
+		return false, product.Mentions(s)
 	}
 	switch platform {
 	case "openclaw":
 		if sec, ok := doc["security"].(map[string]any); ok {
 			if ip, ok := sec["installPolicy"].(map[string]any); ok {
 				if ex, ok := ip["exec"].(map[string]any); ok {
-					if cmd, _ := ex["command"].(string); strings.Contains(cmd, "agentshield") {
+					if cmd, _ := ex["command"].(string); product.Mentions(cmd) {
 						installGate = true
 					}
 				}
@@ -240,12 +241,12 @@ func adapterInstalled(platform string, raw []byte) (installGate, toolHook bool) 
 		}
 		if plugins, ok := doc["plugins"].(map[string]any); ok {
 			b, _ := json.Marshal(plugins)
-			toolHook = strings.Contains(string(b), "agentshield")
+			toolHook = product.Mentions(string(b))
 		}
 	case "codebuddy", "claude_code":
 		if hooks, ok := doc["hooks"].(map[string]any); ok {
 			b, _ := json.Marshal(hooks["PreToolUse"])
-			toolHook = strings.Contains(string(b), "agentshield")
+			toolHook = product.Mentions(string(b))
 		}
 	}
 	return installGate, toolHook

@@ -1,10 +1,11 @@
 // Package skillmanifest builds and verifies the signed skill-manifest.json
-// published next to skills/agentshield/SKILL.md (dev-spec §5.2, schema
+// published next to skills/siq-agent-security/SKILL.md (dev-spec §5.2, schema
 // skill-manifest.v1).
 //
 // The v1 trust root is a repo-local Ed25519 key. The public key is embedded in
 // bootstrap.sh / bootstrap.ps1 and in ReleasePublicKeyB64; the private seed is
-// AGENTSHIELD_RELEASE_SEED and is never committed.
+// SIQ_AGENT_SECURITY_RELEASE_SEED (legacy AGENTSHIELD_RELEASE_SEED still works)
+// and is never committed.
 package skillmanifest
 
 import (
@@ -20,6 +21,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/canon"
+	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
@@ -30,14 +32,14 @@ import (
 const ReleasePublicKeyB64 = "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY="
 
 // SeedEnv is the 32-byte Ed25519 seed (standard base64) used to sign a release.
-const SeedEnv = "AGENTSHIELD_RELEASE_SEED"
+const SeedEnv = product.EnvReleaseSeed
 
-// DefaultVersion is the contest snapshot version.
-const DefaultVersion = "0.1.0"
+// DefaultVersion is the Skill and binary version for this snapshot.
+const DefaultVersion = "0.2.0"
 
 // DefaultURLBase is the intended GitHub Release prefix. The objects are not
 // published until a tag is cut; bootstrap never downloads, it only pins hashes.
-const DefaultURLBase = "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0"
+const DefaultURLBase = "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0"
 
 // SkillDescription is copied from SKILL.md frontmatter (≤60 chars, period).
 const SkillDescription = "Admits unknown skills and signs each tool-call receipt."
@@ -150,14 +152,14 @@ func Build(opts Options) (*Manifest, error) {
 	return &Manifest{
 		ManifestVersion: 1,
 		Skill: Skill{
-			Name:        "agentshield",
+			Name:        product.Name,
 			Version:     opts.Version,
 			Description: opts.Description,
 			ContentHash: opts.ContentHash,
 			SubSkills:   []string{"agent-asset-inventory", "skill-admission", "least-privilege-grant", "runtime-receipt"},
 		},
 		Binary: Binary{
-			Name:      "agentshield",
+			Name:      product.Name,
 			Version:   opts.Version,
 			Artifacts: opts.Artifacts,
 		},
@@ -228,9 +230,9 @@ func ParsePublicKey(b64 string) (ed25519.PublicKey, error) {
 	return ed25519.PublicKey(raw), nil
 }
 
-// KeyFromEnv loads AGENTSHIELD_RELEASE_SEED. Fail closed if unset or invalid.
+// KeyFromEnv loads SIQ_AGENT_SECURITY_RELEASE_SEED (or the legacy name). Fail closed if unset or invalid.
 func KeyFromEnv() (*signing.Key, error) {
-	b64 := strings.TrimSpace(os.Getenv(SeedEnv))
+	b64 := product.Env(product.EnvReleaseSeed, product.EnvReleaseSeedOld)
 	if b64 == "" {
 		return nil, fmt.Errorf("skillmanifest: %s is not set (refusing to sign)", SeedEnv)
 	}
@@ -277,7 +279,7 @@ func WriteFile(path string, m *Manifest) error {
 
 // ArtifactName is the file name used in --bin-dir and in the unpublished URL.
 func ArtifactName(osName, arch, ext string) string {
-	return "agentshield-" + osName + "-" + arch + ext
+	return product.Name + "-" + osName + "-" + arch + ext
 }
 
 // HashFile returns sha256 hex and size of one built binary.

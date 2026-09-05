@@ -46,11 +46,13 @@ connectors/workbuddy/workbuddy
 .vscode/
 .DS_Store
 
-# AgentShield 本地构建产物（哈希钉在 skills/agentshield/skill-manifest.json）
+# 本机门禁构建产物（哈希钉在 skills/siq-agent-security/skill-manifest.json）
 apps/agentshield/agentshield
 apps/agentshield/agentshield.exe
+apps/agentshield/siq-agent-security
+apps/agentshield/siq-agent-security.exe
 apps/agentshield/.state/
 
-# 发布私钥（只允许环境变量 AGENTSHIELD_RELEASE_SEED）
+# 发布私钥（只允许环境变量 SIQ_AGENT_SECURITY_RELEASE_SEED，兼容 AGENTSHIELD_RELEASE_SEED）
 *.release.seed
 secrets/

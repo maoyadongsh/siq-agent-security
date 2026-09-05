@@ -22,6 +22,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/inventory"
 	"siq-agent-security/apps/agentshield/internal/openshell"
+	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
@@ -95,7 +96,7 @@ func New(d Deps) (*Server, error) {
 	} else {
 		s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-			fmt.Fprintf(w, "agentshield %s — local mode · single user · %s\nAPI: /v1/status (bearer token required)\n", d.Version, d.Mode)
+			fmt.Fprintf(w, "%s %s — local mode · single user · %s\nAPI: /v1/status (bearer token required)\n", product.Name, d.Version, d.Mode)
 		})
 	}
 	return s, nil
@@ -402,7 +403,7 @@ func (s *Server) exportBundle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Content-Disposition", `attachment; filename="agentshield-export.json"`)
+	w.Header().Set("Content-Disposition", `attachment; filename="siq-agent-security-export.json"`)
 	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(append(raw, '\n'))

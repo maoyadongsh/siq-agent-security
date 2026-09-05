@@ -2,7 +2,7 @@
 """Verify skill-manifest.json (Ed25519 over canonical JSON) and optional binary sha256.
 
 stdlib + openssl 3 only. Never executes the binary.
-Exit 3 on mismatch (same as agentshield admit quarantine).
+Exit 3 on mismatch (same as siq-agent-security admit quarantine).
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ import tempfile
 
 
 def die(msg: str, code: int = 3) -> None:
-    sys.stderr.write(f"agentshield-verify-manifest: {msg}\n")
+    sys.stderr.write(f"siq-agent-security-verify-manifest: {msg}\n")
     raise SystemExit(code)
 
 
@@ -99,7 +99,7 @@ def check_binary(manifest: dict, bin_path: str, allow_local: bool) -> None:
             break
     if not want:
         if allow_local:
-            sys.stderr.write("agentshield-verify-manifest: no artifact pin for this OS/arch; skipping binary hash\n")
+            sys.stderr.write("siq-agent-security-verify-manifest: no artifact pin for this OS/arch; skipping binary hash\n")
             return
         die("no artifact pin for this OS/arch")
     got = file_sha256(bin_path)
@@ -107,8 +107,8 @@ def check_binary(manifest: dict, bin_path: str, allow_local: bool) -> None:
         return
     if allow_local:
         sys.stderr.write(
-            "agentshield-verify-manifest: warning: local binary sha256 does not match skill-manifest.json "
-            "(set AGENTSHIELD_REQUIRE_PINNED=1 to refuse)\n"
+            "siq-agent-security-verify-manifest: warning: local binary sha256 does not match skill-manifest.json "
+            "(set SIQ_AGENT_SECURITY_REQUIRE_PINNED=1 to refuse)\n"
         )
         return
     die("binary sha256 does not match skill-manifest.json")
@@ -155,7 +155,7 @@ def main() -> None:
             die(f"binary not found: {args.bin_path}", 1)
         check_binary(doc, args.bin_path, args.allow_local)
 
-    sys.stderr.write("agentshield-verify-manifest: ok\n")
+    sys.stderr.write("siq-agent-security-verify-manifest: ok\n")
 
 
 if __name__ == "__main__":

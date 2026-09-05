@@ -1,6 +1,6 @@
-name: agentshield
-version: 0.1.0
-description: "AgentShield runtime adapter: forwards every tool call to the local agentshield decision API (127.0.0.1) and blocks on deny/hold. Contains no policy logic and no keys."
+name: siq-agent-security
+version: 0.2.0
+description: "siq-agent-security runtime adapter: forwards every tool call to the local decision API (127.0.0.1) and blocks on deny/hold. Contains no policy logic and no keys."
 author: "SIQ Agent Security"
 hooks:
   - pre_tool_call

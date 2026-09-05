@@ -1,6 +1,5 @@
-// agentshield is the local AgentShield binary (ADR-011). W1 scope: rulepack
-// loading, static scan, local signing identity. inventory / admit / grant /
-// serve land in later increments.
+// agentshield is the local siq-agent-security binary (ADR-011). The public
+// CLI name is siq-agent-security; this package path stays apps/agentshield.
 package main
 
 import (
@@ -25,6 +24,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/adapters"
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/openshell"
+	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/server"
@@ -39,7 +39,7 @@ var Version = "0.0.0-dev"
 
 // RulepackPubEnv carries the base64 Ed25519 public key that external rule
 // packs must be signed with. Unset means only the built-in pack is trusted.
-const RulepackPubEnv = "AGENTSHIELD_RULEPACK_PUBKEY"
+const RulepackPubEnv = product.EnvRulepackPub
 
 func main() {
 	if len(os.Args) < 2 {
@@ -49,7 +49,7 @@ func main() {
 	var err error
 	switch os.Args[1] {
 	case "version":
-		fmt.Printf("agentshield %s (%s/%s)\n", Version, runtime.GOOS, runtime.GOARCH)
+		fmt.Printf("%s %s (%s/%s)\n", product.Name, Version, runtime.GOOS, runtime.GOARCH)
 	case "rulepack":
 		err = cmdRulepack()
 	case "scan":
@@ -87,43 +87,45 @@ func main() {
 		os.Exit(2)
 	}
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "agentshield:", err)
+		fmt.Fprintln(os.Stderr, product.Name+":", err)
 		os.Exit(1)
 	}
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, `usage:
-  agentshield version
-  agentshield rulepack            # effective rule pack summary (JSON)
-  agentshield scan <file>...      # static threat scan, one JSON result per line
-  agentshield admit <skill-dir> [--trust trusted|community|unknown] [--out <dir>] [--card]
+	n := product.Name
+	fmt.Fprintf(os.Stderr, `usage:
+  %[1]s version
+  %[1]s rulepack            # effective rule pack summary (JSON)
+  %[1]s scan <file>...      # static threat scan, one JSON result per line
+  %[1]s admit <skill-dir> [--trust trusted|community|unknown] [--out <dir>] [--card]
                                   # pre-install verdict (JSON); exit 3 = quarantine
-  agentshield pubkey              # local signing public key (base64)
-  agentshield verify [--chain local]
+  %[1]s pubkey              # local signing public key (base64)
+  %[1]s verify [--chain local]
                                   # recompute the receipt hash chain and signatures; exit 4 on first break
-  agentshield inventory [--cwd DIR] [--out FILE] [--connectors-dir DIR]
+  %[1]s inventory [--cwd DIR] [--out FILE] [--connectors-dir DIR]
                                   # read-only discovery of platforms, skill dirs, MCP configs (JSON report)
-  agentshield export [--out FILE] # redacted judge bundle (0600 file or stdout)
-  agentshield sync --control-api URL [--identity ID] [--secret-file PATH] [--task-id ID]
+  %[1]s export [--out FILE] # redacted bundle (0600 file or stdout)
+  %[1]s sync --control-api URL [--identity ID] [--secret-file PATH] [--task-id ID]
                                   # optional Edge upload; skip (exit 0) without creds; never auto-runs from serve
-  agentshield policy-exec         # OpenClaw security.installPolicy exec: stdin request → {decision,reason}
-  agentshield hook codebuddy      # CodeBuddy PreToolUse/PostToolUse hook: stdin event → hookSpecificOutput
-  agentshield adapter install|uninstall|status [platform]
+  %[1]s policy-exec         # OpenClaw security.installPolicy exec: stdin request → {decision,reason}
+  %[1]s hook codebuddy      # CodeBuddy PreToolUse/PostToolUse hook: stdin event → hookSpecificOutput
+  %[1]s adapter install|uninstall|status [platform]
                                   # write/restore host adapter files (openclaw|hermes|codebuddy|trae)
-  agentshield grant <admission_id> --platform P --subject ID
-  agentshield grant approve|deploy|reject|revoke <grant_id> [--approve-as ACTOR]
+  %[1]s grant <admission_id> --platform P --subject ID
+  %[1]s grant approve|deploy|reject|revoke <grant_id> [--approve-as ACTOR]
                                   # least-privilege grant; approve requires a human --approve-as
-  agentshield openshell probe
-  agentshield openshell doctor    # diagnose CLI/gateway; never starts a gateway
-  agentshield openshell apply --target NAME [--allow host:port] [--deny host:port]
+  %[1]s openshell probe
+  %[1]s openshell doctor    # diagnose CLI/gateway; never starts a gateway
+  %[1]s openshell apply --target NAME [--allow host:port] [--deny host:port]
                                   # L3: CLI-only network policy set + readback (never create_generation)
-  agentshield serve [--port N] [--mode audit_only|warn|block]
+  %[1]s serve [--port N] [--mode audit_only|warn|block]
                                   # decision API + console on 127.0.0.1 (bearer token in <state>/token)
-  agentshield release-manifest [--build] [--bin-dir DIR] [--skill-dir DIR]
-                                  # sign skill-manifest.json (requires AGENTSHIELD_RELEASE_SEED)
-  agentshield manifest-verify [path]
-                                  # verify signature + content_hash of a skill-manifest.json`)
+  %[1]s release-manifest [--build] [--bin-dir DIR] [--skill-dir DIR]
+                                  # sign skill-manifest.json (requires SIQ_AGENT_SECURITY_RELEASE_SEED)
+  %[1]s manifest-verify [path]
+                                  # verify signature + content_hash of a skill-manifest.json
+`, n)
 }
 
 func cmdInventory(args []string) error {
@@ -182,7 +184,7 @@ func cmdPolicyExec() error {
 	return json.NewEncoder(os.Stdout).Encode(out)
 }
 
-// httpDecider talks to a running `agentshield serve` on behalf of hook subcommands.
+// httpDecider talks to a running `siq-agent-security serve` on behalf of hook subcommands.
 type httpDecider struct {
 	endpoint, token string
 	client          *http.Client
@@ -246,7 +248,7 @@ func cmdHook(args []string) error {
 	if err != nil {
 		return err
 	}
-	agentID := os.Getenv("AGENTSHIELD_AGENT_ID")
+	agentID := product.Env(product.EnvAgentID, product.EnvAgentIDOld)
 	if agentID == "" {
 		agentID = "default"
 	}
@@ -339,7 +341,7 @@ func cmdServe(args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprintf(os.Stderr, "agentshield %s serving on http://%s  mode=%s  state=%s\n", Version, addr, cfg.EnforcementMode, dir)
+	fmt.Fprintf(os.Stderr, "%s %s serving on http://%s  mode=%s  state=%s\n", product.Name, Version, addr, cfg.EnforcementMode, dir)
 	fmt.Fprintf(os.Stderr, "bearer token: %s\n", filepath.Join(dir, "token"))
 	hs := &http.Server{Handler: srv.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second}
 	stop := make(chan os.Signal, 1)
@@ -394,7 +396,7 @@ func cmdVerify(args []string) error {
 		return err
 	}
 	if verr := receipt.Verify(all, key.Public()); verr != nil {
-		fmt.Fprintln(os.Stderr, "agentshield:", verr)
+		fmt.Fprintln(os.Stderr, product.Name+":", verr)
 		os.Exit(4)
 	}
 	seq, head := chain.Head()
@@ -515,7 +517,7 @@ func persistAdmission(res *admission.Result) error {
 }
 
 func rulepackPub() (ed25519.PublicKey, error) {
-	b64 := os.Getenv(RulepackPubEnv)
+	b64 := product.Env(product.EnvRulepackPub, product.EnvRulepackPubOld)
 	if b64 == "" {
 		return nil, nil
 	}
@@ -531,7 +533,7 @@ func loadPack() (*rulepack.Pack, error) {
 	if err != nil {
 		return nil, err
 	}
-	return rulepack.Load(pub, func(reason string) { fmt.Fprintln(os.Stderr, "agentshield:", reason) })
+	return rulepack.Load(pub, func(reason string) { fmt.Fprintln(os.Stderr, product.Name+":", reason) })
 }
 
 func cmdRulepack() error {

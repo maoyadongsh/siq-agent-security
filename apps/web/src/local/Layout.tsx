@@ -73,7 +73,7 @@ export default function Layout() {
   return (
     <div className="app-shell local-shell">
       <aside
-        aria-label="AgentShield 本地导航"
+        aria-label="siq-agent-security 本地导航"
         className={`sidebar siq-glass${collapsed ? ' collapsed' : ''}${open ? ' open' : ''}`}
       >
         <div className="brand">
@@ -81,7 +81,7 @@ export default function Layout() {
             <Icon name="shield" size={17} />
           </span>
           <span className="brand-text">
-            <span className="brand-title">AgentShield</span>
+            <span className="brand-title">siq-agent-security</span>
             <span className="brand-sub">本地门禁官 · 单用户</span>
           </span>
         </div>

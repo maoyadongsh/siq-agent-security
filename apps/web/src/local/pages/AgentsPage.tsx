@@ -216,7 +216,7 @@ export default function AgentsPage() {
       {error ? (
         <div className="notice" role="status">
           <p className="notice-title">盘点失败</p>
-          <p className="notice-detail">{error}。确认已运行 agentshield serve 后点「重新盘点」。</p>
+          <p className="notice-detail">{error}。确认已运行 siq-agent-security serve 后点「重新盘点」。</p>
         </div>
       ) : null}
       <div className="card">

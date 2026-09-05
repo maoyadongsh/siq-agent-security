@@ -1,5 +1,5 @@
 /**
- * AgentShield 本地 API 客户端。
+ * siq-agent-security 本地 API 客户端。
  * Bearer token 只留在模块闭包里，不进 React state、不写 localStorage。
  */
 import type {
@@ -203,7 +203,7 @@ export const localApi = {
     try {
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'agentshield-export.json';
+      a.download = 'siq-agent-security-export.json';
       document.body.appendChild(a);
       a.click();
       a.remove();

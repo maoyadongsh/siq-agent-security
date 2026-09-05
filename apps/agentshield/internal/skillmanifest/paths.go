@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"siq-agent-security/apps/agentshield/internal/product"
 )
 
 const goModuleLine = "module siq-agent-security/apps/agentshield"
@@ -33,7 +35,7 @@ func FindModuleRoot() (string, error) {
 	return "", fmt.Errorf("skillmanifest: apps/agentshield go.mod not found from cwd")
 }
 
-// FindSkillDir locates skills/agentshield (SKILL.md present).
+// FindSkillDir locates skills/siq-agent-security (SKILL.md present).
 func FindSkillDir() (string, error) {
 	var starts []string
 	if cwd, err := os.Getwd(); err == nil {
@@ -44,7 +46,7 @@ func FindSkillDir() (string, error) {
 	}
 	for _, s := range starts {
 		for d := s; ; d = filepath.Dir(d) {
-			p := filepath.Join(d, "skills", "agentshield")
+			p := filepath.Join(d, "skills", product.Name)
 			if _, err := os.Stat(filepath.Join(p, "SKILL.md")); err == nil {
 				return p, nil
 			}
@@ -53,7 +55,7 @@ func FindSkillDir() (string, error) {
 			}
 		}
 	}
-	return "", fmt.Errorf("skillmanifest: skills/agentshield not found")
+	return "", fmt.Errorf("skillmanifest: skills/%s not found", product.Name)
 }
 
 // RepoRoot is the parent of apps/.

@@ -183,13 +183,13 @@ jobs:
             ext=""
             if [ "$os" = windows ]; then ext=.exe; fi
             echo "building $os/$arch"
-            GOOS=$os GOARCH=$arch CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.Version=0.1.0" -o /tmp/agentshield-$os-$arch$ext ./cmd/agentshield
+            GOOS=$os GOARCH=$arch CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.Version=0.2.0" -o /tmp/siq-agent-security-$os-$arch$ext ./cmd/agentshield
           done
       - name: Verify signed skill-manifest.json
         run: |
-          go run ./cmd/agentshield manifest-verify ../../skills/agentshield/skill-manifest.json
+          go run ./cmd/agentshield manifest-verify ../../skills/siq-agent-security/skill-manifest.json
       - name: Self-scan Skill pack
         run: |
-          go build -trimpath -ldflags "-s -w -X main.Version=0.1.0" -o /tmp/agentshield ./cmd/agentshield
-          AGENTSHIELD_STATE_DIR=$(mktemp -d) /tmp/agentshield admit ../../skills/agentshield > /tmp/admit.json
+          go build -trimpath -ldflags "-s -w -X main.Version=0.2.0" -o /tmp/siq-agent-security ./cmd/agentshield
+          SIQ_AGENT_SECURITY_STATE_DIR=$(mktemp -d) /tmp/siq-agent-security admit ../../skills/siq-agent-security > /tmp/admit.json
           python3 -c 'import json,sys; d=json.load(open("/tmp/admit.json")); v=d.get("verdict"); print(v); sys.exit(0 if v=="admit_with_conditions" else 1)'

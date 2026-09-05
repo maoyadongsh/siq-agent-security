@@ -295,14 +295,14 @@ func TestEmbeddedConsoleServesIndexWithoutBearer(t *testing.T) {
 	req.RemoteAddr = "127.0.0.1:9"
 	rr := httptest.NewRecorder()
 	s.Handler().ServeHTTP(rr, req)
-	if rr.Code != 200 || !strings.Contains(rr.Body.String(), "AgentShield") {
+	if rr.Code != 200 || !strings.Contains(rr.Body.String(), "siq-agent-security") {
 		t.Fatalf("%d %s", rr.Code, rr.Body.String())
 	}
 	req = httptest.NewRequest("GET", "/overview", nil)
 	req.RemoteAddr = "127.0.0.1:9"
 	rr = httptest.NewRecorder()
 	s.Handler().ServeHTTP(rr, req)
-	if rr.Code != 200 || !strings.Contains(rr.Body.String(), "AgentShield") {
+	if rr.Code != 200 || !strings.Contains(rr.Body.String(), "siq-agent-security") {
 		t.Fatalf("SPA fallback: %d %s", rr.Code, rr.Body.String())
 	}
 	req = httptest.NewRequest("GET", "/missing.js", nil)
@@ -764,7 +764,7 @@ func TestExportOmitsToken(t *testing.T) {
 	if strings.Contains(body, token) {
 		t.Fatal("bearer token must not appear in export")
 	}
-	if !strings.Contains(rr.Header().Get("Content-Disposition"), "agentshield-export.json") {
+	if !strings.Contains(rr.Header().Get("Content-Disposition"), "siq-agent-security-export.json") {
 		t.Fatalf("disposition %q", rr.Header().Get("Content-Disposition"))
 	}
 	if code, _ := call(t, s, "GET", "/v1/export", "", nil); code != 401 {

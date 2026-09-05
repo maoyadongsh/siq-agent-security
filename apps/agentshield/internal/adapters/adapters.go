@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
+	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
@@ -61,17 +62,17 @@ type PolicyExecDeps struct {
 func PolicyExec(in io.Reader, d PolicyExecDeps) PolicyExecResponse {
 	var req PolicyExecRequest
 	if err := json.NewDecoder(in).Decode(&req); err != nil {
-		return PolicyExecResponse{Decision: "block", Reason: "agentshield: malformed install policy request"}
+		return PolicyExecResponse{Decision: "block", Reason: product.Name + ": malformed install policy request"}
 	}
 	if req.TargetType != "" && req.TargetType != "skill" {
-		return PolicyExecResponse{Decision: "warn", Reason: "agentshield: only skill targets are analysed; plugin installs are not covered by this policy"}
+		return PolicyExecResponse{Decision: "warn", Reason: product.Name + ": only skill targets are analysed; plugin installs are not covered by this policy"}
 	}
 	if req.StagedPath == "" {
-		return PolicyExecResponse{Decision: "block", Reason: "agentshield: no staged path to analyse"}
+		return PolicyExecResponse{Decision: "block", Reason: product.Name + ": no staged path to analyse"}
 	}
 	st, err := os.Stat(req.StagedPath)
 	if err != nil || !st.IsDir() {
-		return PolicyExecResponse{Decision: "block", Reason: "agentshield: staged path is not a readable directory"}
+		return PolicyExecResponse{Decision: "block", Reason: product.Name + ": staged path is not a readable directory"}
 	}
 	trust := "unknown"
 	if strings.Contains(strings.ToLower(req.Source.Kind), "clawhub") {
@@ -82,7 +83,7 @@ func PolicyExec(in io.Reader, d PolicyExecDeps) PolicyExecResponse {
 		Version: d.Version, Key: d.Key, Pack: d.Pack,
 	})
 	if err != nil {
-		return PolicyExecResponse{Decision: "block", Reason: "agentshield: admission failed (fail-closed)"}
+		return PolicyExecResponse{Decision: "block", Reason: product.Name + ": admission failed (fail-closed)"}
 	}
 	if d.Persist != nil {
 		_ = d.Persist(res)
@@ -90,13 +91,13 @@ func PolicyExec(in io.Reader, d PolicyExecDeps) PolicyExecResponse {
 	out := PolicyExecResponse{AdmissionID: res.Admission.AdmissionID, Verdict: res.Admission.Verdict}
 	switch res.Admission.Verdict {
 	case "admit":
-		out.Decision, out.Reason = "allow", "agentshield: no capability declarations or threats found"
+		out.Decision, out.Reason = "allow", product.Name+": no capability declarations or threats found"
 	case "admit_with_conditions":
 		out.Decision = "warn"
-		out.Reason = "agentshield: skill declares " + itoa(len(res.Admission.DeclaredFacts)) + " capabilities; run `agentshield grant " + res.Admission.AdmissionID + "` before use"
+		out.Reason = product.Name + ": skill declares " + itoa(len(res.Admission.DeclaredFacts)) + " capabilities; run `" + product.Name + " grant " + res.Admission.AdmissionID + "` before use"
 	default:
 		out.Decision = "block"
-		out.Reason = "agentshield: quarantined (" + quarantineSummary(res.Admission) + ")"
+		out.Reason = product.Name + ": quarantined (" + quarantineSummary(res.Admission) + ")"
 	}
 	return out
 }
@@ -187,7 +188,7 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode string) (CodeBuddyOutp
 		default:
 			return failClosed(out, "PreToolUse", mode, "malformed decision")
 		}
-		out.HookSpecificOutput.PermissionDecisionReason = "AgentShield: " + dec.Reason + " (receipt " + dec.Receipt.ReceiptID + ")"
+		out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": " + dec.Reason + " (receipt " + dec.Receipt.ReceiptID + ")"
 		return out, nil
 	}
 	return out, errors.New("unsupported hook event " + ev.HookEventName)
@@ -197,10 +198,10 @@ func failClosed(out CodeBuddyOutput, event, mode, reason string) (CodeBuddyOutpu
 	out.HookSpecificOutput.HookEventName = event
 	if mode == "block" {
 		out.HookSpecificOutput.PermissionDecision = "deny"
-		out.HookSpecificOutput.PermissionDecisionReason = "AgentShield: " + reason + "; blocked (fail-closed)"
+		out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": " + reason + "; blocked (fail-closed)"
 	} else {
 		out.HookSpecificOutput.PermissionDecision = "allow"
-		out.HookSpecificOutput.PermissionDecisionReason = "AgentShield: " + reason + "; allowed in " + mode + " mode"
+		out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": " + reason + "; allowed in " + mode + " mode"
 	}
 	return out, nil
 }

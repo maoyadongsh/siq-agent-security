@@ -9,13 +9,14 @@ import (
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
 )
 
 func cmdGrant(args []string) error {
 	if len(args) < 1 {
-		return fmt.Errorf("grant: usage: agentshield grant <admission_id> --platform P --subject ID\n       agentshield grant approve|deploy|reject|revoke <grant_id> [--approve-as ACTOR]")
+		return fmt.Errorf("grant: usage: %s grant <admission_id> --platform P --subject ID\n       %s grant approve|deploy|reject|revoke <grant_id> [--approve-as ACTOR]", product.Name, product.Name)
 	}
 	dir, err := stateDir()
 	if err != nil {
@@ -80,7 +81,7 @@ func cmdGrant(args []string) error {
 	return enc.Encode(map[string]any{
 		"grant":          res.Grant,
 		"desired_policy": res.DesiredPolicy,
-		"note":           "model must not approve; a human runs: agentshield grant approve " + res.Grant.GrantID + " --approve-as <actor>",
+		"note":           "model must not approve; a human runs: " + product.Name + " grant approve " + res.Grant.GrantID + " --approve-as <actor>",
 	})
 }
 

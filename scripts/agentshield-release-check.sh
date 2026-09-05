@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Compare cross-compiled agentshield binaries to skill-manifest.json pins.
-# Does not sign, does not read AGENTSHIELD_RELEASE_SEED, does not print secrets.
+# Compare cross-compiled binaries to skill-manifest.json pins.
+# Does not sign, does not read release seeds, does not print secrets.
 set -euo pipefail
 
 usage() {
   cat <<'EOF'
 usage: agentshield-release-check.sh [--build] [--bin-dir DIR] [--manifest PATH]
 
-  --build         cross-compile four targets into --bin-dir (default: /tmp/agentshield-release-bin)
+  --build         cross-compile four targets into --bin-dir (default: /tmp/siq-agent-security-release-bin)
   --bin-dir DIR   directory that already contains the four artifact names
-  --manifest PATH skills/agentshield/skill-manifest.json (default: repo path)
+  --manifest PATH skills/siq-agent-security/skill-manifest.json (default: repo path)
 
 Exit 0 if sha256 and bytes match the signed manifest. Exit 1 on drift.
 EOF
@@ -18,7 +18,7 @@ EOF
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BIN_DIR=""
 DO_BUILD=0
-MANIFEST="${ROOT}/skills/agentshield/skill-manifest.json"
+MANIFEST="${ROOT}/skills/siq-agent-security/skill-manifest.json"
 GO_BIN="${HOME}/sdk/go/bin/go"
 if ! command -v go >/dev/null 2>&1 && [[ -x "$GO_BIN" ]]; then
   export PATH="$(dirname "$GO_BIN"):$PATH"
@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$BIN_DIR" ]]; then
-  BIN_DIR="/tmp/agentshield-release-bin"
+  BIN_DIR="/tmp/siq-agent-security-release-bin"
 fi
 if [[ ! -f "$MANIFEST" ]]; then
   echo "missing manifest: $MANIFEST" >&2
@@ -44,7 +44,12 @@ fi
 
 VERSION="$(python3 - "$MANIFEST" <<'PY'
 import json, sys
-print(json.load(open(sys.argv[1])).get("binary", {}).get("version") or "0.1.0")
+print(json.load(open(sys.argv[1])).get("binary", {}).get("version") or "0.2.0")
+PY
+)"
+BIN_NAME="$(python3 - "$MANIFEST" <<'PY'
+import json, sys
+print(json.load(open(sys.argv[1])).get("binary", {}).get("name") or "siq-agent-security")
 PY
 )"
 
@@ -57,7 +62,7 @@ if [[ "$DO_BUILD" -eq 1 ]]; then
     arch="${spec#*/}"
     ext=""
     if [[ "$os" == windows ]]; then ext=".exe"; fi
-    name="agentshield-${os}-${arch}${ext}"
+    name="${BIN_NAME}-${os}-${arch}${ext}"
     echo "building ${os}/${arch} -> ${name}" >&2
     GOOS="$os" GOARCH="$arch" CGO_ENABLED=0 \
       go build -C "$module" -trimpath -ldflags "$ldflags" -o "${BIN_DIR}/${name}" ./cmd/agentshield
@@ -70,6 +75,7 @@ import hashlib, json, os, sys
 manifest_path, bin_dir = sys.argv[1], sys.argv[2]
 doc = json.load(open(manifest_path))
 arts = doc.get("binary", {}).get("artifacts") or []
+bin_name = (doc.get("binary") or {}).get("name") or "siq-agent-security"
 if len(arts) < 4:
     print(f"manifest has {len(arts)} artifacts, expected 4", file=sys.stderr)
     sys.exit(1)
@@ -78,7 +84,7 @@ bad = 0
 for a in arts:
     os_name, arch = a.get("os"), a.get("arch")
     ext = ".exe" if os_name == "windows" else ""
-    name = f"agentshield-{os_name}-{arch}{ext}"
+    name = f"{bin_name}-{os_name}-{arch}{ext}"
     path = os.path.join(bin_dir, name)
     if not os.path.isfile(path):
         print(f"MISSING {name}", file=sys.stderr)

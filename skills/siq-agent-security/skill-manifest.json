@@ -1,10 +1,10 @@
 {
   "manifest_version": 1,
   "skill": {
-    "name": "agentshield",
-    "version": "0.1.0",
+    "name": "siq-agent-security",
+    "version": "0.2.0",
     "description": "Admits unknown skills and signs each tool-call receipt.",
-    "content_hash": "b4f8e15b8ecf14398ddc5b338ca388f2a611ede1d92a03d69622d0aae900298e",
+    "content_hash": "915c0b8f11292b788f4aa00b1648682f24e478ea1ae4998b064efd81d6f1c8eb",
     "sub_skills": [
       "agent-asset-inventory",
       "skill-admission",
@@ -13,36 +13,36 @@
     ]
   },
   "binary": {
-    "name": "agentshield",
-    "version": "0.1.0",
+    "name": "siq-agent-security",
+    "version": "0.2.0",
     "artifacts": [
       {
         "os": "linux",
         "arch": "amd64",
-        "sha256": "8b0f6ed1d045f29f36daf57565f37e607f410e34b5c428fea8977da872c17089",
-        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-linux-amd64",
-        "bytes": 13975704
+        "sha256": "6e0875a311135af182feb84a08f742367d293da36b66c00e3a070c490b4d991c",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-linux-amd64",
+        "bytes": 13983896
       },
       {
         "os": "linux",
         "arch": "arm64",
-        "sha256": "1e5272b8db5ed20d5399be0f394aaae5189faf5a7507fadf9974ede481f18fc7",
-        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-linux-arm64",
+        "sha256": "9983fcb7292a22079766941250e03c522dbaca95262e13c97afdefe94e3917cd",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-linux-arm64",
         "bytes": 13697176
       },
       {
         "os": "darwin",
         "arch": "arm64",
-        "sha256": "7603b01294751fb2dca82a963f51c41468e745721180ba090bb842b1380127a8",
-        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-darwin-arm64",
+        "sha256": "3c2eab891ba5d13d5ea081ecfffd689f53124c83662805bdaba438b48eedf158",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-darwin-arm64",
         "bytes": 13921362
       },
       {
         "os": "windows",
         "arch": "amd64",
-        "sha256": "0278702b68097ba9aed37f105e5a2f5b87c5b036ef0232c516aae9e97495d689",
-        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-windows-amd64.exe",
-        "bytes": 14200832
+        "sha256": "fcf9ce242c70a21c29a7e8415a5c1f45fe2391ebad908e2fa4ea02b3a8ed668e",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-windows-amd64.exe",
+        "bytes": 14204928
       }
     ]
   },
@@ -236,5 +236,5 @@
     }
   ],
   "signed_by": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
-  "signature": "15fa5e1e16f0ba508abfb614375303818f40e8b82c6cce9d22dfe0530bbb463b38b683c8349b07a121507174241ffbb08019c9ca10c069e9d988ab9ba3011109"
+  "signature": "1da3912f61975fc32bc1e006594c6cc93c61cbd8dc2cc7117337d24670b4909d4b5b4b827f0dcb4406eb98bf80d49c90abe02488ce5cdc12242db8db69383700"
 }

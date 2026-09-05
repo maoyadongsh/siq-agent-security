@@ -1,8 +1,8 @@
 {
   "manifest_version": 1,
   "skill": {
-    "name": "agentshield",
-    "version": "0.1.0",
+    "name": "siq-agent-security",
+    "version": "0.2.0",
     "description": "Admits unknown skills and signs each tool-call receipt.",
     "content_hash": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
     "sub_skills": [
@@ -13,35 +13,35 @@
     ]
   },
   "binary": {
-    "name": "agentshield",
-    "version": "0.1.0",
+    "name": "siq-agent-security",
+    "version": "0.2.0",
     "artifacts": [
       {
         "os": "linux",
         "arch": "amd64",
         "sha256": "abababababababababababababababababababababababababababababababab",
-        "url": "https://example.invalid/agentshield-linux-amd64",
+        "url": "https://example.invalid/siq-agent-security-linux-amd64",
         "bytes": 1
       },
       {
         "os": "linux",
         "arch": "arm64",
         "sha256": "abababababababababababababababababababababababababababababababab",
-        "url": "https://example.invalid/agentshield-linux-arm64",
+        "url": "https://example.invalid/siq-agent-security-linux-arm64",
         "bytes": 1
       },
       {
         "os": "darwin",
         "arch": "arm64",
         "sha256": "abababababababababababababababababababababababababababababababab",
-        "url": "https://example.invalid/agentshield-darwin-arm64",
+        "url": "https://example.invalid/siq-agent-security-darwin-arm64",
         "bytes": 1
       },
       {
         "os": "windows",
         "arch": "amd64",
         "sha256": "abababababababababababababababababababababababababababababababab",
-        "url": "https://example.invalid/agentshield-windows-amd64.exe",
+        "url": "https://example.invalid/siq-agent-security-windows-amd64.exe",
         "bytes": 1
       }
     ]
@@ -236,5 +236,5 @@
     }
   ],
   "signed_by": "Zr5+Myx6RTMyvZ0Kf32wVfXF7xoGraZtmLOftoEMRzo=",
-  "signature": "48a38212daca92f1b1cbc13eecd4085235800d6fe7510029d780be4deccbb3bf5f84190d8047390c430c83a35cc4d742463c2b50fb6d87ce0644cd131b56f503"
+  "signature": "ff9562ce3f0e9fdd43737f7697e00dff681197fc56d6c76d0d20d03e4c3d2d94049939c97841f321a2f3c674da600d4abe938240e4401b9f85134244a4f77204"
 }

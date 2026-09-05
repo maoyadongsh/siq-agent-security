@@ -1,4 +1,4 @@
-/** AgentShield 本地控制台展示助手：状态 → 中文标签 / 语义 tag 类名。 */
+/** siq-agent-security 本地控制台展示助手：状态 → 中文标签 / 语义 tag 类名。 */
 
 export function verdictTag(v: string): string {
   if (v === 'quarantine') return 'tag tag-err';

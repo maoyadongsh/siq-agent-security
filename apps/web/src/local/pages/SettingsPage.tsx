@@ -243,7 +243,7 @@ export default function SettingsPage() {
         <h2>OpenShell（L3）</h2>
         <p className="page-desc">
           接入已在运行、已验明的 OpenShell 网关（显式 SIQ_AS_* 优先，其次 ENV_SH，再 PATH）。probe
-          必须验明网关是 OpenShell；连到 OpenClaw / Hermes 会失败。agentshield 不会执行 gateway
+          必须验明网关是 OpenShell；连到 OpenClaw / Hermes 会失败。siq-agent-security 不会执行 gateway
           start。apply 只提交网络段；filesystem / process 保持当前读回，禁止
           create_generation。无 L3 时产品仍完整，控制台显示「仅工具层拦截」。
         </p>
@@ -283,7 +283,7 @@ export default function SettingsPage() {
         <h2>脱敏导出</h2>
         <p className="page-desc">
           下载评委验收包：公钥、资产摘要、准入结论、回执哈希链校验、审计尾部。不含 token、私钥、Skill
-          正文或工具参数。控制面同步请用 CLI <span className="mono">agentshield sync</span>
+          正文或工具参数。控制面同步请用 CLI <span className="mono">siq-agent-security sync</span>
           ，本控制台不会自动上传。
         </p>
         <button
@@ -295,7 +295,7 @@ export default function SettingsPage() {
             setMsg(null);
             localApi
               .downloadExport()
-              .then(() => report('已下载 agentshield-export.json'))
+              .then(() => report('已下载 siq-agent-security-export.json'))
               .catch((err: unknown) => report(err instanceof Error ? err.message : '导出失败', true))
               .finally(() => setBusy(null));
           }}
@@ -318,7 +318,7 @@ export default function SettingsPage() {
       <div className="card">
         <h2>安全边界</h2>
         <ul className="page-desc">
-          <li>本控制台无私钥；验签由 agentshield verify / GET /v1/receipts 完成。</li>
+          <li>本控制台无私钥；验签由 siq-agent-security verify / GET /v1/receipts 完成。</li>
           <li>Bearer token 来自 loopback 的 /ui-config.json，只留在内存，刷新会再取一次。</li>
           <li>OpenShell verify 最高只到 readback_verified；filesystem/process 永不标有效。</li>
         </ul>

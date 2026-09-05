@@ -15,6 +15,7 @@ import (
 
 	"embed"
 
+	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/state"
 )
 
@@ -96,7 +97,7 @@ func Install(opts Options) (*Result, error) {
 		return nil, err
 	}
 	if opts.Platform == Trae {
-		return &Result{Platform: Trae, Action: "skipped", Note: "Trae has no tool hook; L0 audit only. Run agentshield admit before installing a skill."}, nil
+		return &Result{Platform: Trae, Action: "skipped", Note: "Trae has no tool hook; L0 audit only. Run " + product.Name + " admit before installing a skill."}, nil
 	}
 	st, err := state.Open(opts.StateDir)
 	if err != nil {
@@ -199,7 +200,7 @@ func (o *Options) normalise() error {
 }
 
 func installHermes(opts Options, rec *Record) ([]string, error) {
-	root := filepath.Join(configDir(opts.Home, Hermes), "plugins", "agentshield")
+	root := filepath.Join(configDir(opts.Home, Hermes), "plugins", product.PluginDir())
 	if err := os.MkdirAll(root, 0o700); err != nil {
 		return nil, err
 	}
@@ -264,15 +265,15 @@ set +e
 status=$?
 set -e
 if [ "$status" -eq 3 ]; then
-  echo "agentshield: skill quarantined; refusing hermes skills install" >&2
+  echo "%s: skill quarantined; refusing hermes skills install" >&2
   exit 3
 fi
 if [ "$status" -ne 0 ]; then
-  echo "agentshield: admit failed (exit $status)" >&2
+  echo "%s: admit failed (exit $status)" >&2
   exit "$status"
 fi
 exec hermes skills install "$SRC" "$@"
-`, opts.Binary)
+`, opts.Binary, product.Name, product.Name)
 	if err := writeNewOrReplace(dest, []byte(body), rec); err != nil {
 		return "", err
 	}
@@ -281,7 +282,7 @@ exec hermes skills install "$SRC" "$@"
 }
 
 func installOpenClaw(opts Options, rec *Record) ([]string, error) {
-	root := filepath.Join(configDir(opts.Home, OpenClaw), "plugins", "agentshield")
+	root := filepath.Join(configDir(opts.Home, OpenClaw), "plugins", product.PluginDir())
 	if err := os.MkdirAll(root, 0o700); err != nil {
 		return nil, err
 	}
@@ -305,7 +306,7 @@ func installOpenClaw(opts Options, rec *Record) ([]string, error) {
 		"timeoutMs":       5000,
 	}
 	raw, _ := json.MarshalIndent(cfg, "", "  ")
-	cfgPath := filepath.Join(configDir(opts.Home, OpenClaw), "agentshield.json")
+	cfgPath := filepath.Join(configDir(opts.Home, OpenClaw), product.Name+".json")
 	if err := writeNewOrReplace(cfgPath, append(raw, '\n'), rec); err != nil {
 		return nil, err
 	}
@@ -329,7 +330,7 @@ func installOpenClaw(opts Options, rec *Record) ([]string, error) {
 			"args":        []any{"policy-exec"},
 			"timeoutMs":   10000,
 			"trustedDirs": []any{filepath.Dir(opts.Binary)},
-			"passEnv":     []any{"AGENTSHIELD_STATE_DIR", "HOME", "PATH"},
+			"passEnv":     []any{product.EnvStateDir, product.EnvStateDirOld, "HOME", "PATH"},
 		},
 	}
 	doc["security"] = sec
@@ -381,7 +382,7 @@ func upsertHook(existing any, command string) []any {
 		inner, _ := m["hooks"].([]any)
 		for _, h := range inner {
 			hm, _ := h.(map[string]any)
-			if c, _ := hm["command"].(string); strings.Contains(c, "agentshield hook codebuddy") {
+			if c, _ := hm["command"].(string); strings.Contains(c, "hook codebuddy") && product.Mentions(c) {
 				hm["command"] = command
 				return list
 			}
@@ -508,22 +509,28 @@ func Status(opts Options) (*Result, error) {
 	var paths []string
 	switch opts.Platform {
 	case Hermes:
-		p := filepath.Join(configDir(opts.Home, Hermes), "plugins", "agentshield", "plugin.yaml")
-		if exists(p) {
-			note = "installed"
-			paths = []string{filepath.Dir(p)}
+		for _, leaf := range []string{product.PluginDir(), product.LegacyName} {
+			p := filepath.Join(configDir(opts.Home, Hermes), "plugins", leaf, "plugin.yaml")
+			if exists(p) {
+				note = "installed"
+				paths = []string{filepath.Dir(p)}
+				break
+			}
 		}
 	case OpenClaw:
-		p := filepath.Join(configDir(opts.Home, OpenClaw), "plugins", "agentshield", "index.ts")
-		if exists(p) {
-			note = "installed"
-			paths = []string{filepath.Dir(p)}
+		for _, leaf := range []string{product.PluginDir(), product.LegacyName} {
+			p := filepath.Join(configDir(opts.Home, OpenClaw), "plugins", leaf, "index.ts")
+			if exists(p) {
+				note = "installed"
+				paths = []string{filepath.Dir(p)}
+				break
+			}
 		}
 	case CodeBuddy:
 		p := filepath.Join(configDir(opts.Home, CodeBuddy), "settings.json")
 		if exists(p) {
 			raw, _ := os.ReadFile(p)
-			if strings.Contains(string(raw), "agentshield hook codebuddy") {
+			if strings.Contains(string(raw), "hook codebuddy") && product.Mentions(string(raw)) {
 				note = "installed"
 				paths = []string{p}
 			}

@@ -1,8 +1,8 @@
 # 企业控制面（Control Plane）
 
-本文描述同一仓库里的**企业管控面**：Control API、PostgreSQL、登录台、Edge / Connector。它和 AgentShield 本地门禁官共享合同与规则包，但是另一条运行时入口。
+本文描述同一仓库里的**企业管控面**：Control API、PostgreSQL、登录台、Edge / Connector。它和 siq-agent-security 本地门禁官共享合同与规则包，但是另一条运行时入口。
 
-- AgentShield 本机门禁：根 [`README.md`](../README.md)
+- siq-agent-security 本机门禁：根 [`README.md`](../README.md)
 - 本机操作细则：[`AGENTSHIELD.md`](../AGENTSHIELD.md)
 
 以下为企业控制面说明。

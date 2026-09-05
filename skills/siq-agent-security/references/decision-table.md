@@ -34,4 +34,4 @@ else admit_with_conditions if any declare
 else admit
 ```
 
-The model does not choose the verdict. `agentshield admit` does.
+The model does not choose the verdict. `siq-agent-security admit` does.

@@ -22,7 +22,7 @@
           "pattern": "\\.$",
           "description": "与 SKILL.md frontmatter 一致：≤60 字符、一句话、句号结尾"
         },
-        "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "skills/agentshield/ 目录（不含本清单）的规范化 sha256" },
+        "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "skills/siq-agent-security/ 目录（不含本清单）的规范化 sha256" },
         "sub_skills": {
           "type": "array",
           "items": { "type": "string", "enum": ["agent-asset-inventory", "skill-admission", "least-privilege-grant", "runtime-receipt"] },
@@ -35,7 +35,7 @@
       "additionalProperties": false,
       "required": ["name", "version", "artifacts"],
       "properties": {
-        "name": { "type": "string", "const": "agentshield" },
+        "name": { "type": "string", "const": "siq-agent-security" },
         "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$" },
         "artifacts": {
           "type": "array",

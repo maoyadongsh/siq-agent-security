@@ -154,7 +154,7 @@ export default function OverviewPage() {
         <div className="notice" role="status">
           <p className="notice-title">决策 API 暂不可达</p>
           <p className="notice-detail">
-            {error}。确认已运行 <span className="mono">agentshield serve</span>，且本页来自
+            {error}。确认已运行 <span className="mono">siq-agent-security serve</span>，且本页来自
             127.0.0.1。
           </p>
         </div>
@@ -190,7 +190,7 @@ export default function OverviewPage() {
           emptyText={
             connected
               ? '平台清单未返回。'
-              : '决策 API 不可达，无法读取平台档位；请先启动 agentshield serve。'
+              : '决策 API 不可达，无法读取平台档位；请先启动 siq-agent-security serve。'
           }
         />
         {status?.chain.head_hash ? (

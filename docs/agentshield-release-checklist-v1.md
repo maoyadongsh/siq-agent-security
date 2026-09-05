@@ -1,7 +1,7 @@
-# AgentShield GitHub Release 清单 v1
+# siq-agent-security GitHub Release 清单 v1
 
-- 日期：2026-09-05
-- 状态：**tag `agentshield-v0.1.0` 已切**（2026-09-06，commit `f14bb06`）。矩阵仍无 `supported` 行。
+- 日期：2026-09-06
+- 状态：**准备切 tag `siq-agent-security-v0.2.0`**（破坏性更名：二进制与 Skill 从 AgentShield 改为与仓库同名）。矩阵仍无 `supported` 行。旧 tag `agentshield-v0.1.0` 保留对照。
 - 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)
 - 分支：`cursor/agentshield-w0-contracts-8eff`（**不要**为发版而合 `main`，除非另行要求）
 - 规格：[`agentshield-dev-spec-v1.md`](./agentshield-dev-spec-v1.md) §5.2
@@ -15,9 +15,9 @@
 
 | 项 | 口径 |
 | --- | --- |
-| tag 名 | `agentshield-v0.1.0`（与 `DefaultURLBase` / `binary.version` 一致） |
-| 资产文件名 | `agentshield-linux-amd64`、`agentshield-linux-arm64`、`agentshield-darwin-arm64`、`agentshield-windows-amd64.exe` |
-| URL 前缀 | `https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/` |
+| tag 名 | `siq-agent-security-v0.2.0`（与 `DefaultURLBase` / `binary.version` 一致） |
+| 资产文件名 | `siq-agent-security-linux-amd64`、`siq-agent-security-linux-arm64`、`siq-agent-security-darwin-arm64`、`siq-agent-security-windows-amd64.exe` |
+| URL 前缀 | `https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/` |
 | 公钥（bootstrap 已嵌入） | `LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=` |
 | `support_matrix` | 全行 `experimental` 或 Trae `audit_only`；**0 行 `supported`** |
 | bootstrap | 找不到本地二进制就失败；不下载 Release 对象 |
@@ -30,7 +30,7 @@ OpenClaw / CodeBuddy linux 备注指向 2026-09-05 隔离 HOME 证据；**状态
 ## 1. 禁止项
 
 - 把任意一行改成 `supported`（`ValidateMatrix` 会拒绝；评委入口也禁止）
-- 打印、粘贴、提交 `AGENTSHIELD_RELEASE_SEED`；不要写进 commit、PR、Release notes、证据、聊天
+- 打印、粘贴、提交 `SIQ_AGENT_SECURITY_RELEASE_SEED` 或旧名 `AGENTSHIELD_RELEASE_SEED`；不要写进 commit、PR、Release notes、证据、聊天
 - 轮换公钥，除非种子丢失或密钥泄露（要同时改 `ReleasePublicKeyB64`、bootstrap、`--write-bootstrap`）
 - 上传与清单 `sha256` / `bytes` 不一致的二进制
 - 用 `gh release create` 之前跳过 `manifest-verify` 与哈希核对
@@ -40,14 +40,14 @@ OpenClaw / CodeBuddy linux 备注指向 2026-09-05 隔离 HOME 证据；**状态
 
 ## 2. 重签（有种子才做）
 
-种子只允许环境变量 `AGENTSHIELD_RELEASE_SEED`（32 字节 Ed25519 seed 的标准 base64）。gitignore：`*.release.seed`、`secrets/`。本机若有忽略文件，注入后**不要 `echo` / `cat` 该值。
+种子只允许环境变量 `SIQ_AGENT_SECURITY_RELEASE_SEED`（兼容旧名 `AGENTSHIELD_RELEASE_SEED`；32 字节 Ed25519 seed 的标准 base64）。gitignore：`*.release.seed`、`secrets/`。本机若有忽略文件，注入后**不要 `echo` / `cat` 该值。
 
 ```bash
 cd apps/agentshield
 export PATH="${HOME}/sdk/go/bin:${PATH}"
 # 注入种子后：
-./agentshield release-manifest --build --bin-dir /tmp/agentshield-release-bin
-./agentshield manifest-verify ../../skills/agentshield/skill-manifest.json
+./siq-agent-security release-manifest --build --bin-dir /tmp/siq-agent-security-release-bin
+./siq-agent-security manifest-verify ../../skills/siq-agent-security/skill-manifest.json
 gofmt -l . && go vet ./... && go test ./...
 ```
 
@@ -68,7 +68,7 @@ uv run --frozen pytest app/tests/test_schema_contracts.py -q -k skill_manifest
 
 ## 3. 无种子时的失败闭合
 
-没有 `AGENTSHIELD_RELEASE_SEED`：
+没有 `SIQ_AGENT_SECURITY_RELEASE_SEED`（也没有旧名）：
 
 1. **不要**伪造签名，不要改 `signed_by` / bootstrap 公钥。
 2. 只跑哈希核对（下一节）。源码若已变，核对会失败——这是预期，说明不能上传旧清单对应的 URL。
@@ -79,16 +79,16 @@ uv run --frozen pytest app/tests/test_schema_contracts.py -q -k skill_manifest
 ## 4. 哈希核对（不需要种子）
 
 ```bash
-# 现编四目标并与 skills/agentshield/skill-manifest.json 比对
+# 现编四目标并与 skills/siq-agent-security/skill-manifest.json 比对
 ./scripts/agentshield-release-check.sh --build
 
 # 或对已有目录（例如 release-manifest --bin-dir）
-./scripts/agentshield-release-check.sh --bin-dir /tmp/agentshield-release-bin
+./scripts/agentshield-release-check.sh --bin-dir /tmp/siq-agent-security-release-bin
 ```
 
 退出码 0：四个 `sha256` 与 `bytes` 都与清单一致。非 0：禁止 `gh release create`。
 
-CI 的 `agentshield` job 会交叉编译并 `manifest-verify`，**故意不**把每次 PR 的二进制钉死到清单（否则任何 Go 改动都要种子）。发版前必须本地（或 tag 作业）跑本脚本。
+CI 的 agentshield job 会交叉编译并 `manifest-verify`，**故意不**把每次 PR 的二进制钉死到清单（否则任何 Go 改动都要种子）。发版前必须本地（或 tag 作业）跑本脚本。
 
 ---
 
@@ -98,14 +98,16 @@ CI 的 `agentshield` job 会交叉编译并 `manifest-verify`，**故意不**把
 
 ```bash
 # 二进制必须是重签时编出来的那四个文件
-gh release create agentshield-v0.1.0 \
-  --title "agentshield 0.1.0" \
+gh release create siq-agent-security-v0.2.0 \
+  --title "siq-agent-security 0.2.0" \
   --notes-file - \
-  /tmp/agentshield-release-bin/agentshield-linux-amd64 \
-  /tmp/agentshield-release-bin/agentshield-linux-arm64 \
-  /tmp/agentshield-release-bin/agentshield-darwin-arm64 \
-  /tmp/agentshield-release-bin/agentshield-windows-amd64.exe <<'EOF'
-AgentShield 0.1.0 binaries pinned by skills/agentshield/skill-manifest.json.
+  /tmp/siq-agent-security-release-bin/siq-agent-security-linux-amd64 \
+  /tmp/siq-agent-security-release-bin/siq-agent-security-linux-arm64 \
+  /tmp/siq-agent-security-release-bin/siq-agent-security-darwin-arm64 \
+  /tmp/siq-agent-security-release-bin/siq-agent-security-windows-amd64.exe <<'EOF'
+siq-agent-security 0.2.0 binaries pinned by skills/siq-agent-security/skill-manifest.json.
+
+Renamed from AgentShield so the product, binary, and Skill match the repository name.
 
 Judge path: AGENTSHIELD.md (source go build). bootstrap does not download these URLs.
 
@@ -116,19 +118,19 @@ EOF
 notes 里不要出现种子、token、本机绝对路径。创建后立刻：
 
 ```bash
-gh release view agentshield-v0.1.0 --json assets --jq '.assets[].name'
+gh release view siq-agent-security-v0.2.0 --json assets --jq '.assets[].name'
 # 抽查一个资产的 sha256，必须等于清单对应字段
 ```
 
-评委仍以源码构建为准，直到你明确改 `AGENTSHIELD.md` 的「尚未发布」句。
+评委仍以源码构建为准。
 
 ---
 
 ## 6. 可选：Skill zip（§5.2 第 4 步）
 
 ```bash
-git archive --format=zip --prefix=agentshield/ \
-  HEAD:skills/agentshield > /tmp/agentshield-skill-v0.1.0.zip
+git archive --format=zip --prefix=siq-agent-security/ \
+  HEAD:skills/siq-agent-security > /tmp/siq-agent-security-skill-v0.2.0.zip
 ```
 
 可挂到同一 Release，不是评委复现的前置。
@@ -137,7 +139,7 @@ git archive --format=zip --prefix=agentshield/ \
 
 ## 7. 完成后回写
 
-- [`AGENTSHIELD.md`](../AGENTSHIELD.md)：删掉「GitHub Release 未打 tag」或改成已发布 + tag
+- [`AGENTSHIELD.md`](../AGENTSHIELD.md)：已发布 + tag `siq-agent-security-v0.2.0`
 - 本文件状态行改为「tag 已切」
 - 规格 §9 W5/W6：URL 对象已存在
 - **仍然不要**把矩阵改成 `supported`，除非另案 + 重签

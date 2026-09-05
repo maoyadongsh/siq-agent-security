@@ -1,28 +1,34 @@
 #!/bin/sh
-# Run skills/agentshield/evals/evals.json against a local agentshield binary.
+# Run skills/siq-agent-security/evals/evals.json against a local binary.
 set -eu
 SKILL_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 EVALS="$SKILL_DIR/evals/evals.json"
 
 find_bin() {
-  if [ -n "${AGENTSHIELD_BIN:-}" ] && [ -x "$AGENTSHIELD_BIN" ]; then
-    printf '%s\n' "$AGENTSHIELD_BIN"
-    return
-  fi
-  if command -v agentshield >/dev/null 2>&1; then
-    command -v agentshield
-    return
-  fi
-  repo_bin="$SKILL_DIR/../../apps/agentshield/agentshield"
-  if [ -x "$repo_bin" ]; then
-    printf '%s\n' "$repo_bin"
-    return
-  fi
+  for cand in "${SIQ_AGENT_SECURITY_BIN:-}" "${AGENTSHIELD_BIN:-}"; do
+    if [ -n "$cand" ] && [ -x "$cand" ]; then
+      printf '%s\n' "$cand"
+      return
+    fi
+  done
+  for name in siq-agent-security agentshield; do
+    if command -v "$name" >/dev/null 2>&1; then
+      command -v "$name"
+      return
+    fi
+  done
+  for leaf in siq-agent-security agentshield; do
+    repo_bin="$SKILL_DIR/../../apps/agentshield/$leaf"
+    if [ -x "$repo_bin" ]; then
+      printf '%s\n' "$repo_bin"
+      return
+    fi
+  done
   return 1
 }
 
 BIN=$(find_bin) || {
-  echo "run_evals.sh: agentshield binary not found" >&2
+  echo "run_evals.sh: siq-agent-security binary not found" >&2
   exit 1
 }
 
@@ -31,7 +37,7 @@ command -v python3 >/dev/null 2>&1 || {
   exit 1
 }
 
-AGENTSHIELD_BIN="$BIN" python3 - "$EVALS" "$SKILL_DIR" "$BIN" <<'PY'
+SIQ_AGENT_SECURITY_BIN="$BIN" python3 - "$EVALS" "$SKILL_DIR" "$BIN" <<'PY'
 import json, os, subprocess, sys
 evals_path, skill_dir, binary = sys.argv[1], sys.argv[2], sys.argv[3]
 cases = json.loads(open(evals_path, encoding="utf-8").read())

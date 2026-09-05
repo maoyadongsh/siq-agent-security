@@ -20,11 +20,12 @@ import (
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/canon"
+	"siq-agent-security/apps/agentshield/internal/product"
 )
 
 // SeedEnv lets deployments pin a base64 32-byte seed (mirrors
 // SIQ_AS_TASK_SIGNING_KEY_SEED semantics on the Python side).
-const SeedEnv = "AGENTSHIELD_SIGNING_KEY_SEED"
+const SeedEnv = product.EnvSigningSeed
 
 // Key is a loaded signing identity.
 type Key struct {
@@ -45,7 +46,7 @@ func FromSeed(seed []byte) (*Key, error) {
 // generating it on first use. Generation is atomic (O_EXCL) so two concurrent
 // first runs cannot end up with different keys.
 func Load(stateDir string) (*Key, error) {
-	if b64 := strings.TrimSpace(os.Getenv(SeedEnv)); b64 != "" {
+	if b64 := product.Env(product.EnvSigningSeed, product.EnvSigningSeedOld); b64 != "" {
 		seed, err := base64.StdEncoding.Strict().DecodeString(b64)
 		if err != nil {
 			return nil, fmt.Errorf("signing: %s is not valid base64", SeedEnv)

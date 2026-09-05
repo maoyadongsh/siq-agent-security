@@ -9,9 +9,9 @@ import (
 
 func skillPackRoot(t *testing.T) string {
 	t.Helper()
-	root := filepath.Join("..", "..", "..", "..", "skills", "agentshield")
+	root := filepath.Join("..", "..", "..", "..", "skills", "siq-agent-security")
 	if _, err := os.Stat(filepath.Join(root, "SKILL.md")); err != nil {
-		t.Skip("skills/agentshield not present")
+		t.Skip("skills/siq-agent-security not present")
 	}
 	return root
 }
@@ -94,7 +94,7 @@ func TestSkillDescriptionBound(t *testing.T) {
 	if d == "" || d[len(d)-1] != '.' || len([]rune(d)) > 60 {
 		t.Fatalf("description must be ≤60 chars, one sentence, period-terminated: %q (%d)", d, len([]rune(d)))
 	}
-	if fm.Fields["name"] != "agentshield" {
+	if fm.Fields["name"] != "siq-agent-security" {
 		t.Fatalf("name=%s", fm.Fields["name"])
 	}
 }

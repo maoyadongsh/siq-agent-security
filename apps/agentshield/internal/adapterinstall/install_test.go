@@ -33,8 +33,8 @@ func TestHermesInstallUninstallRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	plugin := filepath.Join(opts.Home, ".hermes", "plugins", "agentshield", "plugin.yaml")
-	initPy := filepath.Join(opts.Home, ".hermes", "plugins", "agentshield", "__init__.py")
+	plugin := filepath.Join(opts.Home, ".hermes", "plugins", "siq-agent-security", "plugin.yaml")
+	initPy := filepath.Join(opts.Home, ".hermes", "plugins", "siq-agent-security", "__init__.py")
 	if !exists(plugin) || !exists(initPy) {
 		t.Fatalf("plugin files missing: %+v", res.Paths)
 	}
@@ -95,7 +95,7 @@ func TestCodeBuddyIsIdempotentAndFailClosedUninstallWithoutRecord(t *testing.T) 
 		t.Fatal(err)
 	}
 	raw, _ := os.ReadFile(filepath.Join(opts.Home, ".codebuddy", "settings.json"))
-	if strings.Count(string(raw), "agentshield hook codebuddy") != 2 { // Pre + Post
+	if strings.Count(string(raw), "hook codebuddy") != 2 { // Pre + Post
 		t.Fatalf("expected one command per event, got %s", raw)
 	}
 	fresh := testOpts(t, CodeBuddy)

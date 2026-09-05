@@ -25,10 +25,10 @@ func testKey(t *testing.T) *signing.Key {
 func fakeArtifacts() []Artifact {
 	h := strings.Repeat("ab", 32)
 	return []Artifact{
-		{OS: "linux", Arch: "amd64", SHA256: h, URL: "https://example.invalid/agentshield-linux-amd64", Bytes: 1},
-		{OS: "linux", Arch: "arm64", SHA256: h, URL: "https://example.invalid/agentshield-linux-arm64", Bytes: 1},
-		{OS: "darwin", Arch: "arm64", SHA256: h, URL: "https://example.invalid/agentshield-darwin-arm64", Bytes: 1},
-		{OS: "windows", Arch: "amd64", SHA256: h, URL: "https://example.invalid/agentshield-windows-amd64.exe", Bytes: 1},
+		{OS: "linux", Arch: "amd64", SHA256: h, URL: "https://example.invalid/siq-agent-security-linux-amd64", Bytes: 1},
+		{OS: "linux", Arch: "arm64", SHA256: h, URL: "https://example.invalid/siq-agent-security-linux-arm64", Bytes: 1},
+		{OS: "darwin", Arch: "arm64", SHA256: h, URL: "https://example.invalid/siq-agent-security-darwin-arm64", Bytes: 1},
+		{OS: "windows", Arch: "amd64", SHA256: h, URL: "https://example.invalid/siq-agent-security-windows-amd64.exe", Bytes: 1},
 	}
 }
 
@@ -285,6 +285,7 @@ func TestHashFile(t *testing.T) {
 
 func TestKeyFromEnvFailClosed(t *testing.T) {
 	t.Setenv(SeedEnv, "")
+	t.Setenv("AGENTSHIELD_RELEASE_SEED", "")
 	if _, err := KeyFromEnv(); err == nil {
 		t.Fatal("empty env must fail closed")
 	}

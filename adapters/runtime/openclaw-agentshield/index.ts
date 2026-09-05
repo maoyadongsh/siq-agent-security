@@ -1,8 +1,8 @@
 /**
- * OpenClaw runtime adapter for AgentShield (dev-spec §4.1).
+ * OpenClaw runtime adapter for siq-agent-security (dev-spec §4.1).
  *
  * Thin by contract: maps `before_tool_call` / `after_tool_call` to the local
- * agentshield decision API (127.0.0.1, bearer token read once from the state
+ * decision API (127.0.0.1, bearer token read once from the state
  * directory). Holds no rules, no policy and no signing key.
  *
  * Decision mapping:
@@ -15,7 +15,7 @@
  * malformed service blocks the call; in `audit_only` / `warn` it allows and logs.
  * OpenClaw's own 15 s policy-hook timeout fails closed as the outer guard.
  *
- * Config: ~/.openclaw/agentshield.json (all optional)
+ * Config: ~/.openclaw/siq-agent-security.json (legacy agentshield.json still read)
  *   { "endpoint": "http://127.0.0.1:47611", "tokenPath": "<state>/token",
  *     "enforcementMode": "block", "timeoutMs": 5000, "agentId": "default" }
  */
@@ -42,12 +42,21 @@ interface Decision {
   hold?: { channel: string; timeout_ms: number };
 }
 
+function env(...keys: string[]): string {
+  for (const k of keys) {
+    const v = process.env[k]?.trim();
+    if (v) return v;
+  }
+  return "";
+}
+
 function stateDir(): string {
-  if (process.env.AGENTSHIELD_STATE_DIR) return process.env.AGENTSHIELD_STATE_DIR;
+  const fromEnv = env("SIQ_AGENT_SECURITY_STATE_DIR", "AGENTSHIELD_STATE_DIR");
+  if (fromEnv) return fromEnv;
   const home = homedir();
-  if (process.platform === "darwin") return join(home, "Library", "Application Support", "agentshield");
-  if (process.platform === "win32") return join(process.env.LOCALAPPDATA ?? join(home, "AppData", "Local"), "agentshield");
-  return join(process.env.XDG_STATE_HOME ?? join(home, ".local", "state"), "agentshield");
+  if (process.platform === "darwin") return join(home, "Library", "Application Support", "siq-agent-security");
+  if (process.platform === "win32") return join(process.env.LOCALAPPDATA ?? join(home, "AppData", "Local"), "siq-agent-security");
+  return join(process.env.XDG_STATE_HOME ?? join(home, ".local", "state"), "siq-agent-security");
 }
 
 function loadConfig(): Config {
@@ -56,15 +65,21 @@ function loadConfig(): Config {
     tokenPath: join(stateDir(), "token"),
     enforcementMode: "block",
     timeoutMs: 5000,
-    agentId: process.env.AGENTSHIELD_AGENT_ID ?? "default",
+    agentId: env("SIQ_AGENT_SECURITY_AGENT_ID", "AGENTSHIELD_AGENT_ID") || "default",
   };
-  try {
-    Object.assign(cfg, JSON.parse(readFileSync(join(homedir(), ".openclaw", "agentshield.json"), "utf8")));
-  } catch {
-    /* defaults */
+  const home = homedir();
+  for (const name of ["siq-agent-security.json", "agentshield.json"]) {
+    try {
+      Object.assign(cfg, JSON.parse(readFileSync(join(home, ".openclaw", name), "utf8")));
+      break;
+    } catch {
+      /* try next */
+    }
   }
-  if (process.env.AGENTSHIELD_ENDPOINT) cfg.endpoint = process.env.AGENTSHIELD_ENDPOINT;
-  if (process.env.AGENTSHIELD_MODE) cfg.enforcementMode = process.env.AGENTSHIELD_MODE as Mode;
+  const endpoint = env("SIQ_AGENT_SECURITY_ENDPOINT", "AGENTSHIELD_ENDPOINT");
+  if (endpoint) cfg.endpoint = endpoint;
+  const mode = env("SIQ_AGENT_SECURITY_MODE", "AGENTSHIELD_MODE");
+  if (mode) cfg.enforcementMode = mode as Mode;
   return cfg;
 }
 
@@ -107,15 +122,15 @@ async function post<T>(path: string, body: unknown, signal?: AbortSignal): Promi
 
 function failClosed(reason: string) {
   if (cfg.enforcementMode === "block") {
-    return { block: true, blockReason: `AgentShield: decision service unavailable (${reason}); blocked (fail-closed)` };
+    return { block: true, blockReason: `siq-agent-security: decision service unavailable (${reason}); blocked (fail-closed)` };
   }
-  console.warn(`agentshield: decision service unavailable (${reason}); allowing in ${cfg.enforcementMode} mode`);
+  console.warn(`siq-agent-security: decision service unavailable (${reason}); allowing in ${cfg.enforcementMode} mode`);
   return undefined;
 }
 
 export default definePluginEntry({
-  id: "agentshield",
-  name: "AgentShield",
+  id: "siq-agent-security",
+  name: "siq-agent-security",
   register(api) {
     api.on(
       "before_tool_call",
@@ -138,13 +153,13 @@ export default definePluginEntry({
           case "allow":
             return undefined;
           case "deny":
-            return { block: true, blockReason: `AgentShield denied: ${decision.reason} (receipt ${decision.receipt_id})` };
+            return { block: true, blockReason: `siq-agent-security denied: ${decision.reason} (receipt ${decision.receipt_id})` };
           case "redact":
-            return decision.params ? { params: decision.params } : { block: true, blockReason: "AgentShield: redaction failed" };
+            return decision.params ? { params: decision.params } : { block: true, blockReason: "siq-agent-security: redaction failed" };
           case "hold":
             return {
               requireApproval: {
-                title: `AgentShield: approve ${event.toolName}?`,
+                title: `siq-agent-security: approve ${event.toolName}?`,
                 description: `${decision.reason} (receipt ${decision.receipt_id})`,
                 severity: "warning",
                 timeoutMs: decision.hold?.timeout_ms ?? 60_000,

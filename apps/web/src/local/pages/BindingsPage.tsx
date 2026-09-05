@@ -200,7 +200,7 @@ export default function BindingsPage() {
           <p className="page-desc">尚未取得探针结果。</p>
         )}
         <p className="page-desc block-gap">
-          AgentShield 不执行 gateway start。无 L3 时顶栏写「仅工具层拦截」，产品仍完整。
+          siq-agent-security 不执行 gateway start。无 L3 时顶栏写「仅工具层拦截」，产品仍完整。
         </p>
       </div>
     </section>

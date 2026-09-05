@@ -19,34 +19,48 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/product"
 )
 
 // DirEnv overrides the platform default state directory.
-const DirEnv = "AGENTSHIELD_STATE_DIR"
+const DirEnv = product.EnvStateDir
 
 // DefaultDir resolves the per-OS state directory (spec §2.1).
 func DefaultDir() (string, error) {
-	if d := os.Getenv(DirEnv); d != "" {
+	if d := product.Env(product.EnvStateDir, product.EnvStateDirOld); d != "" {
 		return d, nil
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
+	var newer, older string
 	switch runtime.GOOS {
 	case "windows":
-		if d := os.Getenv("LOCALAPPDATA"); d != "" {
-			return filepath.Join(d, "agentshield"), nil
+		base := os.Getenv("LOCALAPPDATA")
+		if base == "" {
+			base = filepath.Join(home, "AppData", "Local")
 		}
-		return filepath.Join(home, "AppData", "Local", "agentshield"), nil
+		newer = filepath.Join(base, product.Name)
+		older = filepath.Join(base, product.LegacyName)
 	case "darwin":
-		return filepath.Join(home, "Library", "Application Support", "agentshield"), nil
+		newer = filepath.Join(home, "Library", "Application Support", product.Name)
+		older = filepath.Join(home, "Library", "Application Support", product.LegacyName)
 	default:
-		if d := os.Getenv("XDG_STATE_HOME"); d != "" {
-			return filepath.Join(d, "agentshield"), nil
+		base := os.Getenv("XDG_STATE_HOME")
+		if base == "" {
+			base = filepath.Join(home, ".local", "state")
 		}
-		return filepath.Join(home, ".local", "state", "agentshield"), nil
+		newer = filepath.Join(base, product.Name)
+		older = filepath.Join(base, product.LegacyName)
 	}
+	if _, err := os.Stat(newer); err == nil {
+		return newer, nil
+	}
+	if _, err := os.Stat(older); err == nil {
+		return older, nil
+	}
+	return newer, nil
 }
 
 // Config is <state>/config.json.

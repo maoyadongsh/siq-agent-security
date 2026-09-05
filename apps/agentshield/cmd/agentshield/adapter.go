@@ -7,12 +7,13 @@ import (
 	"path/filepath"
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
+	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/state"
 )
 
 func cmdAdapter(args []string) error {
 	if len(args) < 1 {
-		return fmt.Errorf("adapter: usage: agentshield adapter install|uninstall|status [platform]")
+		return fmt.Errorf("adapter: usage: %s adapter install|uninstall|status [platform]", product.Name)
 	}
 	action := args[0]
 	rest := args[1:]
@@ -37,7 +38,7 @@ func cmdAdapter(args []string) error {
 	if err != nil {
 		return err
 	}
-	from := os.Getenv("AGENTSHIELD_ADAPTERS_DIR")
+	from := product.Env(product.EnvAdaptersDir, product.EnvAdaptersDirOld)
 	if from == "" {
 		from = findAdaptersRuntime()
 	}
