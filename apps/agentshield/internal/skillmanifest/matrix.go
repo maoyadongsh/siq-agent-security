@@ -3,7 +3,8 @@ package skillmanifest
 import "fmt"
 
 // DefaultMatrix is the honest contest snapshot: no row is "supported".
-// Hermes/linux L0–L2 is evidenced; L3 stays experimental until a verified
+// Hermes/linux L0–L2 is evidenced; OpenClaw/CodeBuddy linux L1–L2 (or L2 hook)
+// are evidenced on isolated HOME. L3 stays experimental until a verified
 // OpenShell probe+readback is archived. Trae is audit_only (no tool hook).
 // L3 is listed only on Linux, and only as experimental.
 func DefaultMatrix() []Row {
@@ -24,14 +25,14 @@ func DefaultMatrix() []Row {
 			note("L3 needs WSL2; not evidenced"), nil),
 
 		row("openclaw", "linux", []string{"L0", "L1", "L2", "L3"}, "experimental",
-			note("policy-exec + plugin landed; no E2E evidence"), nil),
+			note("L1–L2 evidenced Spark 2026-09-05 isolated HOME; L3 optional, not claimed"), nil),
 		row("openclaw", "darwin", []string{"L0", "L1", "L2"}, "experimental",
 			note("L3 needs Docker Desktop; not evidenced"), nil),
 		row("openclaw", "windows", []string{"L0", "L1", "L2"}, "experimental",
 			note("L3 needs WSL2; not evidenced"), nil),
 
 		row("codebuddy", "linux", []string{"L0", "L1", "L2"}, "experimental",
-			note("hook landed; no E2E evidence"), nil),
+			note("L2 hook evidenced Spark 2026-09-05 isolated HOME, not GUI"), nil),
 		row("codebuddy", "darwin", []string{"L0", "L1", "L2"}, "experimental",
 			note("hook landed; no E2E evidence"), nil),
 		row("codebuddy", "windows", []string{"L0", "L1", "L2"}, "experimental",

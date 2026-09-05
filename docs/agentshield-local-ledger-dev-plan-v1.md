@@ -76,7 +76,7 @@
 - 企业控制面 12 路由全部出现且后端为空壳。
 - 多租户、OIDC、Edge 注册码、k8s 舰队盘点、变更中心、Break-glass。
 - `support_matrix` 改为 `supported`（须新证据 + 重签，另案）。
-- 合入 `main`、打 GitHub Release（除非另行明确要求）。
+- 合入 `main`、打 GitHub Release（除非另行明确要求）。操作清单：[`agentshield-release-checklist-v1.md`](./agentshield-release-checklist-v1.md)。
 
 ---
 

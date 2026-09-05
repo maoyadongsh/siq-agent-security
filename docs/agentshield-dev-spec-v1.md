@@ -551,6 +551,8 @@ SKILL.md 正文结构：`# AgentShield Skill` / 简介 / When to Use / Prerequis
 4. 打 `agentshield-skill-<tag>.zip`（Skill 目录 + manifest）供 TraeWork 上传 / ClawHub / 手动安装；GitHub Release 挂二进制。
 5. 自扫描：CI 用刚构建的二进制对 `skills/agentshield/` 跑 `admit`，必须为 `admit_with_conditions`（声明 terminal/network），不得 quarantine。
 
+操作清单（tag 未切前 URL 对象不存在；bootstrap 不下载）：[`agentshield-release-checklist-v1.md`](./agentshield-release-checklist-v1.md)。哈希核对脚本 `scripts/agentshield-release-check.sh` 不需要种子；重签需要 `AGENTSHIELD_RELEASE_SEED`。矩阵不得出现 `supported` 行。
+
 ### 5.3 分发仓库
 
 不新开（ADR-011 D5）。若市场要求根目录即 Skill，由 CI 镜像 `skills/agentshield/` 到分发仓，源码不迁出。
@@ -666,7 +668,7 @@ make -C apps/agentshield ui
 | W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**；OpenClaw `policy-exec` **完成**；CodeBuddy `hook codebuddy` **完成**；`adapter install/uninstall`（备份还原）**完成** |
 | W4 OpenShell | probe / 网络 policy set / 读回 | **完成**（CLI 后端 + PATH/ENV_SH 发现 + 网关验明 + `openshell doctor` + `/v1/openshell/*` + 控制台 L3；假 CLI 正负测试。矩阵不标 `supported`） |
 | W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **完成**（Skill 目录、evals、bootstrap 验签、`grant` CLI、自扫描不得 quarantine、已签名 `skill-manifest.json` + 四目标哈希。GitHub Release URL 为预定路径，尚未发布；矩阵仍无 `supported` 行） |
-| W6 材料 | README、演示、基线更新、十日谈 | **大体齐**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark linux 证据已归档：Hermes 实机插件、OpenClaw `policy-exec`、CodeBuddy `hook`（后两者隔离 HOME，未改矩阵）。剩余：GitHub Release 未打、矩阵仍无 `supported`。L3 可选：须验明正身的 OpenShell |
+| W6 材料 | README、演示、基线更新、十日谈 | **大体齐**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark linux 证据已归档：Hermes 实机插件、OpenClaw `policy-exec`、CodeBuddy `hook`（隔离 HOME）。矩阵备注已对齐证据，**仍无 `supported` 行**。剩余：GitHub Release 未打 tag（清单 [`agentshield-release-checklist-v1.md`](./agentshield-release-checklist-v1.md)）。L3 可选：须验明正身的 OpenShell |
 | W7 本地台账 | 企业治理语义在本地文件态落地（资产/五态权限/风险/漂移/导出）；Control API 仍非现场依赖 | **P0–P3 已落地**（§2.4 / §3.5 / §3.8.1 / §3.10）：assets 状态机、profiles/agents.list、五域补丁、漂移、exec 无 host deny、findings 接受、audit.jsonl、脱敏导出、`sync --control-api`（默认不跑）、可选 `--connectors-dir`、MCP 配置原生只读（`mcp_server`）。矩阵仍无 `supported` 行 |
 
 ---

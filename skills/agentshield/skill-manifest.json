@@ -19,30 +19,30 @@
       {
         "os": "linux",
         "arch": "amd64",
-        "sha256": "efad9851261a8520d3e250378fa2535b21d1b4679f863f372df9adaa483c3249",
+        "sha256": "7769bc3d4b48e044aff7764f7386f61348041252bef9b5c8938d7f74bf84ad1f",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-linux-amd64",
-        "bytes": 7303320
+        "bytes": 7557272
       },
       {
         "os": "linux",
         "arch": "arm64",
-        "sha256": "591d2f0f2929975b229248a3ac191c9d71c8308167c55003c8582684f0b4c14b",
+        "sha256": "76ae9a0213ae2c16a63737a310eb7d69576cabb80c07ccd3d2b08490f16e32bb",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-linux-arm64",
-        "bytes": 7012504
+        "bytes": 7274648
       },
       {
         "os": "darwin",
         "arch": "arm64",
-        "sha256": "e78d9e6ef8b784b1655dae7efbd2b46c07463969e766dc61ace45972268cc874",
+        "sha256": "4c45f4af76ec70c8a8b015dddb56aa155a5f7fae2b6c7f10d2006663c84ab802",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-darwin-arm64",
-        "bytes": 7195266
+        "bytes": 7430226
       },
       {
         "os": "windows",
         "arch": "amd64",
-        "sha256": "06de0878241ce228d88a8b33d1db918157d77ddeada4a23545ceb304ea521d9a",
+        "sha256": "fede63a1c4aad17fd8a7f96291f10c2ee5480fbe48ff1f87ff5b6340228e659b",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/agentshield-v0.1.0/agentshield-windows-amd64.exe",
-        "bytes": 7518208
+        "bytes": 7779840
       }
     ]
   },
@@ -96,7 +96,7 @@
         "L3"
       ],
       "status": "experimental",
-      "note": "policy-exec + plugin landed; no E2E evidence"
+      "note": "L1–L2 evidenced Spark 2026-09-05 isolated HOME; L3 optional, not claimed"
     },
     {
       "platform": "openclaw",
@@ -129,7 +129,7 @@
         "L2"
       ],
       "status": "experimental",
-      "note": "hook landed; no E2E evidence"
+      "note": "L2 hook evidenced Spark 2026-09-05 isolated HOME, not GUI"
     },
     {
       "platform": "codebuddy",
@@ -236,5 +236,5 @@
     }
   ],
   "signed_by": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
-  "signature": "18f6621a8ece7d00c2daebba99e1a1cc966ad8edcf871036c924e052475851e1e17a2da8778b748a2b40c6d3f3c973db1b1e8a5b29d628045e2c8784f8901501"
+  "signature": "035b77db600697cd68eb596991298d15493c22889c24b2823a74d27f3c888469b22e82b4605841a0e377a1ea87f630ed2edf675a98d94f200f14a6765e55d60d"
 }

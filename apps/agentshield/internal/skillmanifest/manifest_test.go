@@ -229,6 +229,17 @@ func TestCommittedReleaseManifest(t *testing.T) {
 	if err := ValidateMatrix(m.SupportMatrix); err != nil {
 		t.Fatal(err)
 	}
+	wantMatrix, err := json.Marshal(DefaultMatrix())
+	if err != nil {
+		t.Fatal(err)
+	}
+	gotMatrix, err := json.Marshal(m.SupportMatrix)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(wantMatrix) != string(gotMatrix) {
+		t.Fatal("committed support_matrix drifted from DefaultMatrix (re-run release-manifest)")
+	}
 	if len(m.Binary.Artifacts) != len(Targets) {
 		t.Fatalf("expected %d artifacts, got %d", len(Targets), len(m.Binary.Artifacts))
 	}
