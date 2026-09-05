@@ -190,4 +190,32 @@ export const localApi = {
       method: 'POST',
       body: JSON.stringify({}),
     }),
+  downloadExport: async () => {
+    const headers = new Headers();
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    const resp = await fetch('/v1/export', { headers, cache: 'no-store' });
+    if (!resp.ok) {
+      let message = `HTTP ${resp.status}`;
+      const text = await resp.text();
+      try {
+        const parsed = JSON.parse(text) as { error?: string };
+        if (parsed.error) message = parsed.error;
+      } catch {
+        if (text) message = text;
+      }
+      throw new LocalApiError(resp.status, message);
+    }
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'agentshield-export.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  },
 };

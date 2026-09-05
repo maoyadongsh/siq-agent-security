@@ -21,6 +21,7 @@ export default function FindingsPage() {
   const [reason, setReason] = useState('');
   const [until, setUntil] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<'open' | 'accepted' | 'all'>('open');
 
   const load = () => {
     setLoading(true);
@@ -116,6 +117,18 @@ export default function FindingsPage() {
       ) : null}
       {msg ? <p className="page-desc">{msg}</p> : null}
       <div className="toolbar">
+        <div className="toolbar" style={{ marginBottom: 0 }}>
+          {(['open', 'accepted', 'all'] as const).map((id) => (
+            <button
+              key={id}
+              type="button"
+              className={statusFilter === id ? 'btn btn-sm btn-primary' : 'btn btn-sm'}
+              onClick={() => setStatusFilter(id)}
+            >
+              {id === 'open' ? '待处理' : id === 'accepted' ? '已接受' : '全部'}
+            </button>
+          ))}
+        </div>
         <div className="field" style={{ marginBottom: 0 }}>
           <label htmlFor="acc-reason">接受原因</label>
           <input id="acc-reason" value={reason} onChange={(e) => setReason(e.target.value)} />
@@ -128,9 +141,19 @@ export default function FindingsPage() {
       <div className="card">
         <SimpleTable
           columns={columns}
-          rows={rows}
+          rows={
+            statusFilter === 'all' ? rows : rows.filter((r) => (r.status || 'open') === statusFilter)
+          }
           rowKey={(r) => r.finding_id}
-          emptyText={loading ? '加载中…' : '暂无 finding。准入扫描或漂移检测后会出现。'}
+          emptyText={
+            loading
+              ? '加载中…'
+              : statusFilter === 'accepted'
+                ? '暂无已接受的 finding。'
+                : statusFilter === 'open'
+                  ? '暂无待处理 finding。准入扫描或漂移检测后会出现。'
+                  : '暂无 finding。准入扫描或漂移检测后会出现。'
+          }
         />
       </div>
     </section>

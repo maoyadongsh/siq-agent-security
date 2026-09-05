@@ -219,6 +219,30 @@ export default function SettingsPage() {
         </button>
       </div>
       <div className="card">
+        <h2>脱敏导出</h2>
+        <p className="page-desc">
+          下载评委验收包：公钥、资产摘要、准入结论、回执哈希链校验、审计尾部。不含 token、私钥、Skill
+          正文或工具参数。控制面同步请用 CLI <span className="mono">agentshield sync</span>
+          ，本控制台不会自动上传。
+        </p>
+        <button
+          type="button"
+          className="btn btn-primary"
+          disabled={busy !== null}
+          onClick={() => {
+            setBusy('export');
+            setMsg(null);
+            localApi
+              .downloadExport()
+              .then(() => setMsg('已下载 agentshield-export.json'))
+              .catch((err: unknown) => setMsg(err instanceof Error ? err.message : '导出失败'))
+              .finally(() => setBusy(null));
+          }}
+        >
+          下载导出包
+        </button>
+      </div>
+      <div className="card">
         <h2>操作审计</h2>
         <p className="page-desc">
           来自 <span className="mono">audit.jsonl</span> 的最近记录。不含密钥、不含参数原文。

@@ -718,4 +718,30 @@ func TestDriftCheckFailClosedAndFinding(t *testing.T) {
 	}
 }
 
+func TestExportOmitsToken(t *testing.T) {
+	s, st := newServer(t, "block")
+	_ = st.AppendAudit(state.AuditEvent{At: "2026-09-05T00:00:00Z", Event: "asset_confirm", ActorID: "u", Target: "agent:hermes:x"})
+	req := httptest.NewRequest(http.MethodGet, "/v1/export", nil)
+	req.RemoteAddr = "127.0.0.1:5555"
+	req.Header.Set("Authorization", "Bearer "+token)
+	rr := httptest.NewRecorder()
+	s.Handler().ServeHTTP(rr, req)
+	if rr.Code != 200 {
+		t.Fatalf("export %d %s", rr.Code, rr.Body.String())
+	}
+	body := rr.Body.String()
+	if !strings.Contains(body, `"format": "agentshield.export.v1"`) {
+		t.Fatalf("format missing: %s", body[:min(200, len(body))])
+	}
+	if strings.Contains(body, token) {
+		t.Fatal("bearer token must not appear in export")
+	}
+	if !strings.Contains(rr.Header().Get("Content-Disposition"), "agentshield-export.json") {
+		t.Fatalf("disposition %q", rr.Header().Get("Content-Disposition"))
+	}
+	if code, _ := call(t, s, "GET", "/v1/export", "", nil); code != 401 {
+		t.Fatalf("unauth export %d", code)
+	}
+}
+
 var _ = http.StatusOK

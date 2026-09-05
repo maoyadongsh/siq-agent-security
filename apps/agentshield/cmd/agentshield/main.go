@@ -24,7 +24,6 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/adapters"
 	"siq-agent-security/apps/agentshield/internal/admission"
-	"siq-agent-security/apps/agentshield/internal/inventory"
 	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
@@ -65,6 +64,10 @@ func main() {
 		err = cmdServe(os.Args[2:])
 	case "inventory":
 		err = cmdInventory(os.Args[2:])
+	case "export":
+		err = cmdExport(os.Args[2:])
+	case "sync":
+		err = cmdSync(os.Args[2:])
 	case "policy-exec":
 		err = cmdPolicyExec()
 	case "hook":
@@ -99,8 +102,11 @@ func usage() {
   agentshield pubkey              # local signing public key (base64)
   agentshield verify [--chain local]
                                   # recompute the receipt hash chain and signatures; exit 4 on first break
-  agentshield inventory [--cwd DIR] [--out FILE]
+  agentshield inventory [--cwd DIR] [--out FILE] [--connectors-dir DIR]
                                   # read-only discovery of platforms + skill dirs (JSON report)
+  agentshield export [--out FILE] # redacted judge bundle (0600 file or stdout)
+  agentshield sync --control-api URL [--identity ID] [--secret-file PATH] [--task-id ID]
+                                  # optional Edge upload; skip (exit 0) without creds; never auto-runs from serve
   agentshield policy-exec         # OpenClaw security.installPolicy exec: stdin request → {decision,reason}
   agentshield hook codebuddy      # CodeBuddy PreToolUse/PostToolUse hook: stdin event → hookSpecificOutput
   agentshield adapter install|uninstall|status [platform]
@@ -124,6 +130,7 @@ func cmdInventory(args []string) error {
 	fs := flag.NewFlagSet("inventory", flag.ContinueOnError)
 	cwd := fs.String("cwd", "", "also scan project-level skill dirs under this directory")
 	out := fs.String("out", "", "also write the report to this file (0600)")
+	connectors := fs.String("connectors-dir", "", "optional parent of hermes/openclaw/directory/mcp connector binaries")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -139,13 +146,7 @@ func cmdInventory(args []string) error {
 	if err != nil {
 		return err
 	}
-	admissions, _ := st.ListAdmissions()
-	byHash := map[string]string{}
-	for _, a := range admissions {
-		byHash[a.ContentHash] = a.Verdict
-	}
-	rep, err := inventory.Run(inventory.Options{Cwd: *cwd, Version: Version, Key: key,
-		HasAdmission: func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
+	rep, err := runLocalInventory(st, key, *cwd, resolveConnectorsDir(*connectors))
 	if err != nil {
 		return err
 	}

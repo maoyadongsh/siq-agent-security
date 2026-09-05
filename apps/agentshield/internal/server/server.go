@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
+	"siq-agent-security/apps/agentshield/internal/export"
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/inventory"
 	"siq-agent-security/apps/agentshield/internal/openshell"
@@ -87,6 +88,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/findings", s.auth(s.findings))
 	s.mux.HandleFunc("/v1/findings/", s.auth(s.findings))
 	s.mux.HandleFunc("/v1/audit", s.auth(s.auditLog))
+	s.mux.HandleFunc("/v1/export", s.auth(s.exportBundle))
 	s.mux.HandleFunc("/ui-config.json", s.uiConfig)
 	if d.UI != nil {
 		s.mux.Handle("/", d.UI)
@@ -368,7 +370,42 @@ func (s *Server) runInventory(cwd string) (*inventory.Report, error) {
 		byHash[a.ContentHash] = a.Verdict
 	}
 	return inventory.Run(inventory.Options{Home: s.d.Home, Cwd: cwd, Version: s.d.Version, Key: s.d.Key,
-		HasAdmission: func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
+		ConnectorsDir: strings.TrimSpace(os.Getenv("SIQ_AS_CONNECTORS_DIR")),
+		HasAdmission:  func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
+}
+
+func (s *Server) exportBundle(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		writeJSON(w, 405, map[string]any{"error": "GET required"})
+		return
+	}
+	snap, err := s.snapshot("")
+	if err != nil {
+		writeJSON(w, 500, map[string]any{"error": "export failed"})
+		return
+	}
+	audit, err := s.d.Store.TailAudit(200)
+	if err != nil {
+		writeJSON(w, 500, map[string]any{"error": "audit unreadable"})
+		return
+	}
+	bundle := export.Build(export.Input{
+		Now:   time.Now().UTC().Format(time.RFC3339),
+		Mode:  s.currentMode(),
+		Key:   s.d.Key,
+		Snap:  snap,
+		Audit: audit,
+	})
+	raw, err := export.MarshalJSONBytes(bundle)
+	if err != nil {
+		writeJSON(w, 500, map[string]any{"error": "export marshal failed"})
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Disposition", `attachment; filename="agentshield-export.json"`)
+	w.Header().Set("Cache-Control", "no-store")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(append(raw, '\n'))
 }
 
 func (s *Server) inventory(w http.ResponseWriter, r *http.Request) {

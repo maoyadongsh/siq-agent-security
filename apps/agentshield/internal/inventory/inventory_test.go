@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -225,4 +226,148 @@ func keys(m map[string]Candidate) []string {
 		out = append(out, k)
 	}
 	return out
+}
+
+func writeExec(t *testing.T, path, content string) {
+	t.Helper()
+	_ = os.MkdirAll(filepath.Dir(path), 0o700)
+	if err := os.WriteFile(path, []byte(content), 0o755); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func requirePython3(t *testing.T) {
+	t.Helper()
+	if _, err := exec.LookPath("python3"); err != nil {
+		t.Skip("python3 required for connector exec tests")
+	}
+}
+
+func TestConnectorsMergeWithoutDroppingNative(t *testing.T) {
+	requirePython3(t)
+	home := fakeHome(t)
+	native := runInv(t, home)
+	if _, ok := byID(native)["platform:hermes"]; !ok {
+		t.Fatal("need native hermes")
+	}
+	dir := t.TempDir()
+	writeExec(t, filepath.Join(dir, "hermes", "hermes"), connectorScript(false, true))
+	key, _ := signing.FromSeed(bytes.Repeat([]byte{4}, 32))
+	rep, err := Run(Options{Home: home, Now: time.Date(2026, 9, 4, 8, 0, 0, 0, time.UTC), Version: "test", Key: key,
+		ConnectorsDir: dir, HasAdmission: func(h string) (string, bool) { return "", false }})
+	if err != nil {
+		t.Fatal(err)
+	}
+	c := byID(rep)
+	if _, ok := c["platform:hermes"]; !ok {
+		t.Fatalf("native dropped: %v", keys(c))
+	}
+	if _, ok := c["connector:extra"]; !ok {
+		t.Fatalf("connector candidate missing, skipped=%v ids=%v", rep.Skipped, keys(c))
+	}
+	for _, f := range rep.Facts {
+		if f.State == "effective" || f.Resource.Value == "should-not-appear-effective" {
+			t.Fatalf("effective fact leaked: %+v", f)
+		}
+	}
+	var declared bool
+	for _, f := range rep.Facts {
+		if f.Resource.Value == "connector-declared-tool" && f.State == "declared" {
+			declared = true
+		}
+	}
+	if !declared {
+		t.Fatalf("declared connector fact missing: %+v", rep.Facts)
+	}
+}
+
+func TestConnectorsNetworkAccessSkipped(t *testing.T) {
+	requirePython3(t)
+	home := fakeHome(t)
+	dir := t.TempDir()
+	writeExec(t, filepath.Join(dir, "hermes", "hermes"), connectorScript(true, false))
+	key, _ := signing.FromSeed(bytes.Repeat([]byte{4}, 32))
+	rep, err := Run(Options{Home: home, Now: time.Date(2026, 9, 4, 8, 0, 0, 0, time.UTC), Version: "test", Key: key,
+		ConnectorsDir: dir, HasAdmission: func(h string) (string, bool) { return "", false }})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := byID(rep)["platform:hermes"]; !ok {
+		t.Fatal("native dropped on connector skip")
+	}
+	if _, ok := byID(rep)["connector:extra"]; ok {
+		t.Fatal("network_access connector must not merge")
+	}
+	joined := strings.Join(rep.Skipped, ",")
+	if !strings.Contains(joined, "connector_failed:hermes") {
+		t.Fatalf("skipped %v", rep.Skipped)
+	}
+}
+
+func TestConnectorsDirUnreadable(t *testing.T) {
+	home := fakeHome(t)
+	key, _ := signing.FromSeed(bytes.Repeat([]byte{4}, 32))
+	rep, err := Run(Options{Home: home, Now: time.Date(2026, 9, 4, 8, 0, 0, 0, time.UTC), Version: "test", Key: key,
+		ConnectorsDir: filepath.Join(home, "no-such-connectors"), HasAdmission: func(h string) (string, bool) { return "", false }})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := byID(rep)["platform:hermes"]; !ok {
+		t.Fatal("native dropped")
+	}
+	if !strings.Contains(strings.Join(rep.Skipped, ","), "connectors_dir_unreadable") {
+		t.Fatalf("skipped %v", rep.Skipped)
+	}
+}
+
+func connectorScript(network, withCollect bool) string {
+	net := "False"
+	if network {
+		net = "True"
+	}
+	collect := "False"
+	if withCollect {
+		collect = "True"
+	}
+	return `#!/usr/bin/env python3
+import json, sys
+NET = ` + net + `
+COLLECT = ` + collect + `
+for line in sys.stdin:
+    line = line.strip()
+    if not line:
+        continue
+    req = json.loads(line)
+    if req.get("op") == "describe":
+        print(json.dumps({"id": req.get("id"), "ok": True, "result": {
+            "version": "0.0.1", "objects": ["hermes_profile"], "required_permissions": [],
+            "data_categories": [], "max_output_bytes": 1024, "network_access": NET
+        }}))
+    elif req.get("op") == "collect" and COLLECT:
+        print(json.dumps({"id": req.get("id"), "ok": True, "result": {
+            "candidates": [{
+                "candidate_id": "connector:extra", "source_type": "hermes_profile",
+                "source_locator": "hermes://extra", "discovered_at": "2026-09-05T00:00:00Z",
+                "name": "extra", "framework": "hermes", "evidence_ids": ["ev-conn-1"],
+                "confidence": 1.0, "status": "candidate"
+            }],
+            "evidence": [{
+                "evidence_id": "ev-conn-1", "source_type": "platform_config",
+                "source_locator": "hermes://extra", "observed_at": "2026-09-05T00:00:00Z",
+                "collected_at": "2026-09-05T00:00:00Z", "collector_id": "connector",
+                "connector_version": "0.0.1", "content_hash": "ab"*32,
+                "redaction_profile": "siq.redaction.v1", "classification": "internal",
+                "signature": "f"*128
+            }],
+            "permission_facts": [
+                {"subject": {"type": "agent_instance", "id": "extra"}, "domain": "tool",
+                 "action": "invoke", "resource": {"type": "tool", "value": "should-not-appear-effective"},
+                 "effect": "allow", "state": "effective", "authority": "connector", "evidence_ids": ["ev-conn-1"]},
+                {"subject": {"type": "agent_instance", "id": "extra"}, "domain": "tool",
+                 "action": "invoke", "resource": {"type": "tool", "value": "connector-declared-tool"},
+                 "effect": "allow", "state": "declared", "authority": "connector", "evidence_ids": ["ev-conn-1"]}
+            ]
+        }}))
+    sys.stdout.flush()
+`
 }

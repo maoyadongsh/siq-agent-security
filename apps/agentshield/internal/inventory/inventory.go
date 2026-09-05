@@ -1,10 +1,10 @@
 // Package inventory implements agent-asset-inventory (dev-spec §3.5) as a
 // read-only, native discovery of agent platforms and skill directories on the
-// local machine. It never starts MCP servers, never imports skill code and
-// never reads credential files: platform configs contribute only existence,
-// size and hash (and, for a few well-known keys, whether an AgentShield
-// adapter is installed). Output conforms to candidate.schema.json /
-// evidence.schema.json / permission-fact.schema.json.
+// local machine. It never starts MCP servers and never imports skill code or
+// connectors/* (optional --connectors-dir only execs connector binaries).
+// Platform configs contribute only existence, size and hash (and, for a few
+// well-known keys, whether an AgentShield adapter is installed). Output
+// conforms to candidate.schema.json / evidence.schema.json / permission-fact.schema.json.
 package inventory
 
 import (
@@ -78,6 +78,9 @@ type Options struct {
 	// HasAdmission tells whether a skill content_hash already has an admission.
 	HasAdmission func(contentHash string) (verdict string, ok bool)
 	Limits       admission.Limits
+	// ConnectorsDir is an optional parent of hermes/openclaw/directory/mcp
+	// connector binaries (exec --serve). Empty skips subprocesses.
+	ConnectorsDir string
 }
 
 type platformSpec struct {
@@ -153,6 +156,7 @@ func Run(opts Options) (*Report, error) {
 			r.report.Platforms = append(r.report.Platforms, "hermes")
 		}
 	}
+	r.mergeConnectors()
 	sort.Strings(r.report.Platforms)
 	sort.Slice(r.report.Candidates, func(i, j int) bool { return r.report.Candidates[i].CandidateID < r.report.Candidates[j].CandidateID })
 	sort.Slice(r.report.Evidence, func(i, j int) bool { return r.report.Evidence[i].EvidenceID < r.report.Evidence[j].EvidenceID })

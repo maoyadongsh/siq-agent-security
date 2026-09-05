@@ -102,9 +102,9 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二�
 
 ### 2.4 与控制面同步（可选，非现场）
 
-`agentshield sync --control-api <url>`：把 `inventory/`、`admissions/`、`receipts/` 以现有 Edge 协议追加上传；本地是事实源，上传失败不影响本地决策。
+`agentshield sync --control-api <url>`：把最新盘点的 **candidates + evidence** 按现有 Edge `POST /edge/v1/batches` 追加上传（不传 `permission_facts`，避免 `agent_asset` 主体对不上 candidate_id，也禁止自报 `effective`）。本地是事实源：**`serve` 从不自动 sync**；缺 Edge 凭据则跳过并退出 0；HTTP/验签失败退出非 0 且 **不写** admissions/grants/receipts。凭据来自 `--identity` / `--secret-file` / `--task-id`，或环境变量 `SIQ_AS_EDGE_IDENTITY`、`SIQ_AS_EDGE_SECRET`、`SIQ_AS_EDGE_TASK_ID`。上传前刷新 `collected_at` 并把 `collector_id` 写成设备身份后用本地 Ed25519 重签；控制面仍用已登记的 Edge 公钥验签（须把本机 `agentshield pubkey` 登记为该设备）。回执链本身不进 Edge batch，评委导出走 §3.8.1 `GET /v1/export`。
 
-现场主界面是内嵌本地台账（§3.10），不依赖本同步、不依赖 PostgreSQL / `:8600`。P0 为只读投影；P1 起写入 `assets/`（确认/驳回/stale）；P2 写入漂移 finding；接受覆盖与 `audit.jsonl` 随 P1/P2 落地。`sync --control-api` 仍非现场、默认不跑。
+现场主界面是内嵌本地台账（§3.10），不依赖本同步、不依赖 PostgreSQL / `:8600`。P0 为只读投影；P1 起写入 `assets/`（确认/驳回/stale）；P2 写入漂移 finding；接受覆盖与 `audit.jsonl` 随 P1/P2 落地。P3 增加脱敏导出包。`sync --control-api` 仍非现场、默认不跑。
 
 ---
 
@@ -151,7 +151,7 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► agentshield 二�
 
 **新增（相对现有 Connector）**：Skill 目录扫描——每个 `SKILL.md` 产出 candidate `source_type=skill_dir`（需在 `candidate.schema.json` enum 增加 `skill_dir`，合同升版），附 `content_hash` 与是否已有 admission 记录。
 
-**实现方式（2026-09-04 修正）**：`connectors/*` 全部是 `package main` 的 NDJSON 子进程，不能作为库导入。inventory 用 Go **原生只读发现**，产出 `platform_config` / `skill_dir` / `hermes_profile` / `openclaw_agent` 候选；Connector 子进程接入作为 `--connectors-dir` 可选增强（未做）。合同：`candidate.source_type` 已含上述枚举。
+**实现方式（2026-09-04 修正）**：`connectors/*` 全部是 `package main` 的 NDJSON 子进程，不能作为库导入。inventory 用 Go **原生只读发现**，产出 `platform_config` / `skill_dir` / `hermes_profile` / `openclaw_agent` 候选。可选 `--connectors-dir`（或 `SIQ_AS_CONNECTORS_DIR`）：对 `hermes` / `openclaw` / `directory` / `mcp` **exec** `--serve`，超时 60s、stdout 上限 8MB；`describe.network_access=true` 或失败记入 `skipped`，不阻断原生结果。合同：`candidate.source_type` 已含上述枚举。
 
 **实现状态（相对本表）**：
 
@@ -317,6 +317,7 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 | `POST /v1/findings/{id}/accept` | body：`actor_id` + `reason` + `until` 必填；到期后 GET 视为 open |
 | `POST /v1/openshell/drift-check` | 读回 vs 已部署 grant 的 network 段；不一致写 finding。网关/CLI 失败 **5xx** 且 **不**写「无漂移」 |
 | `GET /v1/audit` | 最近操作（无密钥、无参数原文） |
+| `GET /v1/export` | 脱敏导出包 `agentshield.export.v1`（无 token、无私钥、无参数原文、无 Skill 正文） |
 
 #### 3.8.1.1 五态聚合（P0）
 
@@ -354,6 +355,14 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 | `dismiss_until` 过期 | 回到 `candidate` / `unadmitted` |
 
 `POST /v1/openshell/drift-check`：仅已验明 L3。对 `deployed`/`effective` grant 的 network 段做 `policy get --full` 比对；不一致写入 `findings/`（`source=drift`）。CLI/网关失败 **5xx**，**不得**写「无漂移」finding。
+
+#### 3.8.1.3 脱敏导出（P3）
+
+`GET /v1/export` 与 `agentshield export [--out FILE]` 产出同一 JSON（`format=agentshield.export.v1`）：
+
+- 含：公钥、enforcement_mode、资产摘要、准入 verdict/哈希/finding 规则、grant 状态与事实摘要、回执（seq/action/tool/reason/hash，**不含** `params` / `params_excerpt`）、`audit.jsonl` 尾部、回执链 `verify` 结果。
+- 不含：token、signing seed、私钥、Skill 文件正文、环境变量、OpenShell 密钥。
+- CLI 写文件 0600。控制台设置页可下载。失败不得把密钥写进错误字符串。
 
 请求体（decide）：
 
@@ -434,7 +443,7 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 | `/grants` | 签发 | 现有 grant 审批 |
 | `/receipts` | 回执 | 现有链；deny 高亮；验签 |
 | `/bindings` | 运行时绑定 | 适配器 status + OpenShell probe 摘要 |
-| `/settings` | 设置 | enforcement_mode、actor、OpenShell apply |
+| `/settings` | 设置 | enforcement_mode、actor、OpenShell apply、操作审计、脱敏导出 |
 
 - 兼容重定向：`/inventory`、`/admissions` → `/agents`。顶栏常驻标签：**「本地模式 · 单用户」** + 当前平台档位（如 `OpenClaw · L2 · 仅工具层拦截` / `Trae · 审计模式，无法阻断`）。无 OpenShell L3 时，L2 必须带「仅工具层拦截」。L3 仅在 OpenShell probe 成功后显示。
 - 资产详情：确认 / 驳回（reason+until）；`pending_approval` grant 可编辑五域后 `patch-desired`（fs/process 标静态不可用）。权限页：有 L3 才启用漂移检测，否则禁用并写原因。绑定页可装/卸适配器。
@@ -652,7 +661,7 @@ make -C apps/agentshield ui
 | W4 OpenShell | probe / 网络 policy set / 读回 | **完成**（CLI 后端 + PATH/ENV_SH 发现 + 网关验明 + `openshell doctor` + `/v1/openshell/*` + 控制台 L3；假 CLI 正负测试。矩阵不标 `supported`） |
 | W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **完成**（Skill 目录、evals、bootstrap 验签、`grant` CLI、自扫描不得 quarantine、已签名 `skill-manifest.json` + 四目标哈希。GitHub Release URL 为预定路径，尚未发布；矩阵仍无 `supported` 行） |
 | W6 材料 | README、演示、基线更新、十日谈 | **进行中**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark Hermes linux 证据已归档（admit / `--approve-as maoyd` / 授后 deny / verify）。L3 可选：须验明正身的 OpenShell；矩阵仍无 `supported` |
-| W7 本地台账 | 企业治理语义在本地文件态落地（资产/五态权限/风险/漂移）；Control API 仍非现场依赖 | **P1/P2 已落地**（§3.8.1 / §3.8.1.2 / §3.10）：assets 状态机、profiles/agents.list、五域补丁、漂移检测、exec 无 host deny、findings 接受与 audit.jsonl。`sync --control-api` 未做 |
+| W7 本地台账 | 企业治理语义在本地文件态落地（资产/五态权限/风险/漂移/导出）；Control API 仍非现场依赖 | **P0–P3 已落地**（§2.4 / §3.5 / §3.8.1 / §3.10）：assets 状态机、profiles/agents.list、五域补丁、漂移、exec 无 host deny、findings 接受、audit.jsonl、脱敏导出、`sync --control-api`（默认不跑）、可选 `--connectors-dir`。矩阵仍无 `supported` 行 |
 
 ---
 

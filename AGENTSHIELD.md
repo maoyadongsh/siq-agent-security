@@ -95,6 +95,7 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 2. **权限视图** `/permissions`：五态分色。无 OpenShell 时「有效」列应为空；`deployed` grant 仍是声明态。filesystem / process 永不标有效。有 L3 时可跑漂移检测。
 3. **风险中心** `/findings`：准入与漂移 finding；接受须原因和到期。
 4. **回执** `/receipts`：越权调用的 deny 高亮，并可验签。
+5. **设置**：下载脱敏导出包（无私钥、无 token）。也可用 `agentshield export --out ./agentshield-export.json`。`sync --control-api` 不是现场步骤。
 
 顶栏保持「本地模式 · 单用户」。旧书签 `/inventory`、`/admissions` 会转到 `/agents`。
 

@@ -10,7 +10,9 @@ AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本
 | `internal/rulepack` | 内嵌规则包、外部包 Ed25519 验签、防降级、fail-closed 回退 | 完成 |
 | `internal/threat` | 静态分析器（Python `threat_analysis.py` 移植，AST 层缺席） | 完成 |
 | `internal/signing` | 本地 Ed25519 身份、文档/字节签名与验签 | 完成 |
-| `internal/inventory` | 只读盘点：平台配置、Skill、Hermes profiles、OpenClaw agents.list（不 import `connectors/*`） | 规格 §3.5 |
+| `internal/inventory` | 只读盘点：平台配置、Skill、Hermes profiles、OpenClaw agents.list；可选 `--connectors-dir` **exec** 子进程（不 import `connectors/*`） | 规格 §3.5 |
+| `internal/export` | 脱敏导出包 `agentshield.export.v1`（无私钥/token/参数原文） | 规格 §3.8.1.3 |
+| `internal/controlsync` | `sync --control-api` → Edge `POST /edge/v1/batches`；缺凭据跳过；失败不改本地决策 | 规格 §2.4 |
 | `internal/admission` | frontmatter、哈希、限额、决策表、Skill Card | 完成（决策表变更需同步规格 §3.6.4 与 `dispositions.go`）|
 | `internal/grant` | declared → allowlist / DesiredPolicy；状态机；`PatchDesired`；读回 effective | 完成（`CompilePolicy` 与 Python `artifact_hash` 对等）|
 | `internal/receipt` | 决策引擎、污点/trifecta、哈希链、Verify；block 下无 host 的出网 exec deny | 完成 |
@@ -20,7 +22,7 @@ AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本
 | `internal/adapterinstall` | `adapter install/uninstall/status`：写主机钩子，先备份可还原 | 完成 |
 | `internal/openshell` | probe / 网络 `policy set` / 读回；不调 `create_generation` | 完成 |
 | `internal/ui` | embed `apps/web` 本地模式构建产物（`npm run build:local`） | 完成 |
-| `cmd/agentshield` | 子命令入口（含 `admit`/`grant`/`adapter`/`openshell`/`serve`/`release-manifest`/`manifest-verify`） | 完成 |
+| `cmd/agentshield` | 子命令入口（含 `admit`/`grant`/`adapter`/`openshell`/`serve`/`export`/`sync`/`release-manifest`/`manifest-verify`） | 完成 |
 | `internal/skillmanifest` | 发布清单构建、Ed25519 验签、诚实 support_matrix | 完成 |
 
 ## 硬性规则
@@ -30,7 +32,7 @@ AgentShield 本地二进制（Go）。上层约束见仓库根 `AGENTS.md`；本
 3. **对等优先于"更好"。** `threat` 的输出（sha256 / rule_id / line / excerpt_sha256 / excerpt）必须与 Python 相同；想改行为先在 Python 侧改并同步语料，再移植。
 4. **签名只签规范化字节。** 所有文档签名 = `Ed25519(canon.Marshal(doc 去掉 signature))`，十六进制 128 位；回执链签 `hash` 字符串字节。任何新文档类型都走 `signing`，不得自建序列化。
 5. **状态目录之外不写。** 路径由 `state` 包解析（`AGENTSHIELD_STATE_DIR` 覆盖）；目录 0700、文件 0600；只追加或新建，禁止原地改写准入/签发/回执文件。
-6. **不执行被分析内容。** 不 `exec`、不 `import`、不解压嵌套压缩包、不跟随符号链接；git 来源用 `--depth 1` 并禁用 hooks。
+6. **不执行被分析内容。** 不 `import` Skill、不解压嵌套压缩包、不跟随符号链接；git 来源用 `--depth 1` 并禁用 hooks。可选 `--connectors-dir` 仅 **exec** connector 二进制（规格 §3.5），禁止 import `connectors/*`。
 7. **模型不是权威。** 任何未来的 LLM 语义层只能产生 `inferred` 事实或 `info` finding，不能改 verdict / action / status。
 8. **fail-closed 表是合同。** `block` 模式下服务不可达、超时、401、非法响应 = 拒绝；`audit_only`/`warn` = allow + `advisory_action`。每个适配器必须有对应负向测试。
 9. **日志只记类别。** 拒绝原因、异常消息不得包含规则内容、参数、文件内容或密钥。

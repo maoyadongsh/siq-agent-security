@@ -1,7 +1,7 @@
 # AgentShield 开发计划：本地台账与企业能力对齐 v1
 
 - 日期：2026-09-05
-- 状态：**计划生效；P0 已落地（2026-09-05）；P1/P2 已落地（2026-09-05）**。`sync --control-api`（P3）未做。本文锁定目标、分期与不变量。新增 HTTP 路径、状态目录文件、UI 路由在开工该期之前回写 [`agentshield-dev-spec-v1.md`](./agentshield-dev-spec-v1.md)；未回写不得合入实现。
+- 状态：**计划生效；P0–P3 已落地（2026-09-05）**。本文锁定目标、分期与不变量。新增 HTTP 路径、状态目录文件、UI 路由在开工该期之前回写 [`agentshield-dev-spec-v1.md`](./agentshield-dev-spec-v1.md)；未回写不得合入实现。
 - 上游：ADR-011 → [`agentshield-design-v1.md`](./agentshield-design-v1.md) → [`agentshield-dev-spec-v1.md`](./agentshield-dev-spec-v1.md) → **本文（W7 增量计划）**
 - 依据：仓内实现与证据（2026-09-05）、企业控制面 README / 控制台 IA、以及同期产品讨论（双入口、台账对参赛的价值、发现/管控能力边界）
 - 赛事：第三届 NVIDIA DGX Spark 黑客松 · Agent Skills 开发挑战赛（提交 9/20–29，决赛 10/15）
@@ -120,8 +120,8 @@
 | G5 | 五域编辑器只在企业详情页 | 本地签发偏 CLI |
 | G6 | 无漂移 finding（读回 vs 已部署） | L3 已能读回，未产品化 |
 | G7 | Skill 哈希变化 / 目录消失不自动 revoke；钩子丢失不降 L0 | 先前 P0 加固，与台账展示绑定 |
-| G8 | `agentshield sync --control-api` 未实现 | 规格 §2.4；**现场非必须** |
-| G9 | Connector 子进程未接入 | 规格路线图；本计划 P2 可选 |
+| G8 | `agentshield sync --control-api` | **已落地**（默认不跑；缺凭据跳过；失败不改本地决策） |
+| G9 | Connector 子进程 | **已落地**为可选 `--connectors-dir` / `SIQ_AS_CONNECTORS_DIR` |
 
 ### 2.3 本机观察到的双入口（开发环境，非产品承诺）
 
@@ -310,14 +310,14 @@ Finding 最小字段：`finding_id`、`rule_id`、`severity`、`status`（open /
 
 **验收**：改网络 allow → 批准 → deploy；有网关则读回 revision 一致；人为改网关后 drift finding 出现。无网关演示不假装 effective。
 
-### P3 — 风险、审计、可选同步
+### P3 — 风险、审计、可选同步 **已落地（2026-09-05）**
 
 - `/findings` 全页；接受/到期重开。
-- `audit.jsonl` + 导出。
-- **最后**实现 `agentshield sync --control-api`（Edge 协议追加）；默认不跑；失败忽略。
-- 可选 `--connectors-dir`。
+- `audit.jsonl` + `GET /v1/export` / `agentshield export` 脱敏包。
+- `agentshield sync --control-api`：Edge `POST /edge/v1/batches`；默认不跑；缺凭据退出 0；失败不改本地。
+- 可选 `--connectors-dir`（失败记 skipped）。
 
-**验收**：评委可导出脱敏包；企业台若启动，能看到上传的候选/回执（若未做 sync，本条跳过，不挡比赛）。
+**验收**：评委可从设置页或 CLI 导出脱敏 JSON。企业台若已登记本机公钥并签发 scan 任务，sync 可上传候选/证据；未登记则跳过，不挡比赛。
 
 ### 建议日历（相对提交窗口）
 
