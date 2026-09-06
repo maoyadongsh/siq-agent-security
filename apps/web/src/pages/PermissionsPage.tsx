@@ -4,13 +4,14 @@
  * - 「同步 OpenShell」按钮拉取真实网关有效策略（fail-closed：网关不可达显示错误）；
  * - 模型推断（inferred）与未知（unknown）醒目样式，绝不显示成已生效。
  */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
 import type { Environment, PermissionFactRow } from '@/api/types';
+import { permissionStateLabel } from '@/ui/verification';
 
 const PLACEHOLDER_PERMISSIONS: PermissionFactRow[] = [];
 
@@ -44,8 +45,8 @@ const columns: TableColumn<PermissionFactRow>[] = [
     key: 'state',
     header: '状态',
     render: (row) => (
-      <span className={`state-tag ${row.state}`}>
-        {row.state === 'effective' ? '有效' : row.state === 'inferred' ? '推断' : row.state}
+      <span className={`state-tag ${row.state}`} title={row.state}>
+        {permissionStateLabel(row.state)}
       </span>
     ),
   },
@@ -67,7 +68,16 @@ const columns: TableColumn<PermissionFactRow>[] = [
 ];
 
 export default function PermissionsPage() {
-  const { rows, status, error, refresh } = useApiList<PermissionFactRow>(
+  const {
+    rows,
+    status,
+    error,
+    refresh,
+    coverageText,
+    hasMore,
+    loadingMore,
+    loadMore,
+  } = useApiList<PermissionFactRow>(
     '/permissions',
     PLACEHOLDER_PERMISSIONS,
   );
@@ -82,12 +92,6 @@ export default function PermissionsPage() {
   const [diffChecking, setDiffChecking] = useState(false);
   const [diffMessage, setDiffMessage] = useState<string | null>(null);
   const [diffDetail, setDiffDetail] = useState<Awaited<ReturnType<typeof api.permissionsDiff>> | null>(null);
-
-  useEffect(() => {
-    if (!environmentId && environments.rows.length > 0) {
-      setEnvironmentId(environments.rows[0].id);
-    }
-  }, [environmentId, environments.rows]);
 
   const authorities = Array.from(new Set(rows.map((r) => r.authority))).sort();
   const visible = authorityFilter ? rows.filter((r) => r.authority === authorityFilter) : rows;
@@ -216,12 +220,29 @@ export default function PermissionsPage() {
         <DisconnectedNotice error={error} onRetry={refresh} />
       ) : (
         <>
+          {coverageText ? (
+            <p className="list-coverage" role="status">
+              {coverageText}
+            </p>
+          ) : null}
           <SimpleTable columns={columns} rows={visible} rowKey={(row) => row.id} />
           {status === 'connected' && visible.length === 0 && (
             <p className="muted-text">
               暂无权限事实。点击「同步 OpenShell 有效策略」从真实网关拉取（网关不可达时 fail-closed，不会显示空权限冒充安全状态）。
             </p>
           )}
+          {hasMore ? (
+            <div className="list-more">
+              <button
+                type="button"
+                className="btn-sm"
+                disabled={loadingMore}
+                onClick={() => loadMore()}
+              >
+                {loadingMore ? '加载中…' : '加载更多'}
+              </button>
+            </div>
+          ) : null}
         </>
       )}
     </div>

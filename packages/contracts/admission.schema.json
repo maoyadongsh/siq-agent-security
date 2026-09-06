@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/admission.v1.json",
+  "title": "SkillAdmission",
+  "description": "Skill 安装前准入结论（ADR-011 / 设计方案 v1 §4.1）。由 agentshield 二进制基于签名规则包产出；模型不参与裁决。verdict 只有三值：admit / admit_with_conditions / quarantine。命中\"能力需求\"类模式不隔离，而是升级为 state=declared 的权限事实交 grant；只有欺骗用户、隐藏指令、提示注入、凭据外传、完整性失败才 quarantine。",
+  "type": "object",
+  "required": [
+    "admission_id",
+    "skill_id",
+    "skill_name",
+    "source",
+    "content_hash",
+    "verdict",
+    "decided_at",
+    "engine",
+    "declared_facts",
+    "findings",
+    "integrity",
+    "evidence_ids",
+    "signing_schema",
+    "signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "admission_id": { "type": "string", "description": "稳定标识，建议 adm-<content_hash 前 12 位>" },
+    "skill_id": { "type": "string", "description": "规范化 Skill 标识：<source_type>:<name>@<content_hash 前 12 位>" },
+    "skill_name": {
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "SKILL.md frontmatter name（agentskills.io 规范：小写字母/数字/连字符，≤64）"
+    },
+    "skill_version": { "type": ["string", "null"], "description": "frontmatter version 原文，可缺" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "locator", "trust_level"],
+      "properties": {
+        "type": { "type": "string", "enum": ["local_dir", "zip", "git", "marketplace", "platform_managed"] },
+        "locator": { "type": "string", "description": "脱敏后的稳定来源定位（路径 / git URL 不含 token / 市场 slug）" },
+        "trust_level": {
+          "type": "string",
+          "enum": ["trusted", "community", "unknown"],
+          "description": "来源信任级别影响阈值但不改变 quarantine 类别集合"
+        },
+        "ref": { "type": ["string", "null"], "description": "git commit / 市场版本号" }
+      }
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Skill 目录规范化（排序路径 + 各文件 sha256）后的 sha256；用于 tool pinning / 变更重审"
+    },
+    "file_manifest": {
+      "type": "array",
+      "description": "参与 content_hash 的文件清单；符号链接逃逸、超体积文件在 integrity 单独记",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256", "bytes"],
+        "properties": {
+          "path": { "type": "string", "description": "相对 Skill 根的 POSIX 路径" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "bytes": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "verdict": { "type": "string", "enum": ["admit", "admit_with_conditions", "quarantine"] },
+    "decided_at": { "type": "string", "format": "date-time" },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "rulepack_version"],
+      "properties": {
+        "name": { "type": "string", "enum": ["agentshield-go", "control-api-python"], "description": "双实现标识，用于一致性测试" },
+        "version": { "type": "string" },
+        "rulepack_version": { "type": "integer", "minimum": 1 },
+        "rulepack_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "declared_facts": {
+      "type": "array",
+      "description": "从 frontmatter allowed-tools / compatibility / 脚本静态扫描提取的能力声明；一律 state=declared，authority=skill_manifest；grant 阶段才可能变为 effective",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["domain", "action", "resource", "effect", "state", "authority", "source_field", "evidence_ids"],
+        "properties": {
+          "domain": { "type": "string", "enum": ["tool", "filesystem", "network", "process", "model", "credential", "resource"] },
+          "action": { "type": "string", "description": "如 tool.invoke / http.request / fs.write / process.exec / model.generate" },
+          "resource": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "value"],
+            "properties": {
+              "type": { "type": "string", "description": "tool / endpoint / path / model / credential_ref / package" },
+              "value": { "type": "string" }
+            }
+          },
+          "effect": { "type": "string", "const": "allow", "description": "声明只表达需要什么，不表达拒绝" },
+          "state": { "type": "string", "const": "declared" },
+          "authority": { "type": "string", "const": "skill_manifest" },
+          "source_field": { "type": "string", "description": "声明出处：frontmatter.allowed-tools / frontmatter.compatibility / scripts/run.sh:12" },
+          "conditions": { "type": "object", "additionalProperties": true },
+          "evidence_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "description": "规则命中。disposition 决定命中如何进入 verdict：quarantine 直接隔离；declare 升级为 declared_facts；info 只记录",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["finding_id", "rule_id", "category", "severity", "confidence", "disposition", "location", "evidence_ids"],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "rule_id": { "type": "string", "description": "规则包 rule_id 或 admission 内置检查 id（如 adm-unicode-homoglyph）" },
+          "category": {
+            "type": "string",
+            "enum": [
+              "user_deception",
+              "hidden_instruction",
+              "prompt_injection",
+              "credential_exfil",
+              "integrity",
+              "capability_declaration",
+              "dangerous_code",
+              "persistence",
+              "supply_chain",
+              "info"
+            ]
+          },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "disposition": { "type": "string", "enum": ["quarantine", "declare", "info"] },
+          "location": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path"],
+            "properties": {
+              "path": { "type": "string" },
+              "line": { "type": ["integer", "null"], "minimum": 1 }
+            }
+          },
+          "excerpt": { "type": ["string", "null"], "maxLength": 200, "description": "已脱敏的命中片段；禁止包含 token / secret 原文" },
+          "evidence_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file_count", "total_bytes", "symlink_escape", "binary_files", "over_limit"],
+      "properties": {
+        "file_count": { "type": "integer", "minimum": 0 },
+        "total_bytes": { "type": "integer", "minimum": 0 },
+        "symlink_escape": { "type": "boolean", "description": "任一符号链接解析到 Skill 根之外" },
+        "binary_files": { "type": "integer", "minimum": 0 },
+        "over_limit": { "type": "boolean", "description": "超出分析资源上限（文件数 / 字节 / 嵌套产物 / finding 数）——超限即 quarantine，不静默截断" },
+        "frontmatter_valid": { "type": "boolean" }
+      }
+    },
+    "skill_card_ref": { "type": ["string", "null"], "description": "生成的 skill-card.md 路径；生成卡 ≠ 签名 ≠ 批准" },
+    "evidence_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "signing_schema": {
+      "type": "string",
+      "const": "local_canonical/v1",
+      "description": "正文内嵌签名合同 id（DEV09-G）；参与签名字节；缺字段的遗留体由验签双读默认为 local_canonical/v1"
+    },
+    "signature": { "type": "string", "pattern": "^[0-9a-f]{128}$", "description": "agentshield 对本结论规范化 JSON 的 Ed25519 签名（hex）" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "verdict": { "const": "quarantine" } } },
+      "then": {
+        "properties": {
+          "findings": { "contains": { "properties": { "disposition": { "const": "quarantine" } }, "required": ["disposition"] } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "verdict": { "const": "admit" } } },
+      "then": {
+        "properties": {
+          "findings": { "not": { "contains": { "properties": { "disposition": { "enum": ["quarantine", "declare"] } }, "required": ["disposition"] } } },
+          "declared_facts": { "maxItems": 0 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "verdict": { "const": "admit_with_conditions" } } },
+      "then": {
+        "properties": {
+          "findings": { "not": { "contains": { "properties": { "disposition": { "const": "quarantine" } }, "required": ["disposition"] } } },
+          "declared_facts": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "integrity": { "properties": { "over_limit": { "const": true } }, "required": ["over_limit"] } } },
+      "then": { "properties": { "verdict": { "const": "quarantine" } } }
+    },
+    {
+      "if": { "properties": { "integrity": { "properties": { "symlink_escape": { "const": true } }, "required": ["symlink_escape"] } } },
+      "then": { "properties": { "verdict": { "const": "quarantine" } } }
+    }
+  ]
+}

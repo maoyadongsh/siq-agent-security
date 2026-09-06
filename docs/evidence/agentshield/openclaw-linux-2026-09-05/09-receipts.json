@@ -1,0 +1,84 @@
+{
+  "http_status": 200,
+  "receipts": {
+    "receipts": [
+      {
+        "receipt_id": "rcp-e4c1903be265-141556.887219",
+        "chain_id": "local",
+        "seq": 0,
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "d4ed701d2c189ef10e40a8e23cc29f33676c68886aee18f4c5805e468e465197",
+        "sig": "<redacted len=128 sha256=6679edc2e694>",
+        "issued_at": "2026-09-05T14:15:56Z",
+        "platform": "openclaw",
+        "session_id": "spark-openclaw-demo",
+        "agent_id": "openclaw-demo",
+        "tool": "web_fetch",
+        "tool_call_id": "tc-overreach-before",
+        "params_digest": "e4c1903be265e621dd2eccded080dc9ca560c80df481f522eb702c8444320877",
+        "params_excerpt": "<redacted len=27 sha256=de89233e0f70>",
+        "action": "deny",
+        "advisory_action": null,
+        "reason": "no deployed grant for agent (default deny)",
+        "matched_grant_id": null,
+        "matched_fact_ids": [],
+        "matched_rule_ids": [],
+        "taint_labels": [],
+        "trifecta": {
+          "private_data": false,
+          "untrusted_input": false,
+          "egress": true
+        },
+        "enforcement_mode": "block",
+        "policy_revision": null,
+        "sandbox_id": null,
+        "model_key": null,
+        "engine": {
+          "version": "0.1.0",
+          "rulepack_version": 1
+        },
+        "decision_latency_ms": 0,
+        "hold": null
+      },
+      {
+        "receipt_id": "rcp-e4c1903be265-141556.907815",
+        "chain_id": "local",
+        "seq": 1,
+        "prev_hash": "d4ed701d2c189ef10e40a8e23cc29f33676c68886aee18f4c5805e468e465197",
+        "hash": "f22643f047ad7b061eae909fb1bba614f6642b78cb24c017f920af74537918ef",
+        "sig": "<redacted len=128 sha256=cfb195c23339>",
+        "issued_at": "2026-09-05T14:15:56Z",
+        "platform": "openclaw",
+        "session_id": "spark-openclaw-demo",
+        "agent_id": "openclaw-demo",
+        "tool": "web_fetch",
+        "tool_call_id": "tc-overreach-after",
+        "params_digest": "e4c1903be265e621dd2eccded080dc9ca560c80df481f522eb702c8444320877",
+        "params_excerpt": "<redacted len=27 sha256=de89233e0f70>",
+        "action": "deny",
+        "advisory_action": null,
+        "reason": "tool web_fetch not granted (default deny)",
+        "matched_grant_id": "grt-4af17a9f9719-f33ebb37",
+        "matched_fact_ids": [],
+        "matched_rule_ids": [],
+        "taint_labels": [],
+        "trifecta": {
+          "private_data": false,
+          "untrusted_input": false,
+          "egress": true
+        },
+        "enforcement_mode": "block",
+        "policy_revision": null,
+        "sandbox_id": null,
+        "model_key": null,
+        "engine": {
+          "version": "0.1.0",
+          "rulepack_version": 1
+        },
+        "decision_latency_ms": 0,
+        "hold": null
+      }
+    ],
+    "verified": true
+  }
+}

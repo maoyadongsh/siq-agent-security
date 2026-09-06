@@ -892,7 +892,7 @@ wheels = [
 [[package]]
 name = "siq-agent-security-control-api"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "alembic" },
     { name = "cryptography" },

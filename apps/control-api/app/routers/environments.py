@@ -13,10 +13,11 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import or_, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db import get_session
-from app.models import Deployment, EdgeAgent, EdgeTask, EnrollmentToken, Environment, utcnow
+from app.models import Deployment, EdgeAgent, EdgeTask, EnrollmentToken, Environment, new_id, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import (
     EdgeHeartbeatRequest,
@@ -35,6 +36,7 @@ from app.security import (
     ensure_permission,
     get_identity,
     hash_secret,
+    mint_edge_device_secret,
     require_permission,
     verify_edge_secret,
 )
@@ -75,7 +77,7 @@ def create_environment(
     session: Session = Depends(get_session),
     identity: Identity = Depends(require_permission("env:manage")),
 ):
-    env = Environment(tenant_id=identity.tenant_id, **body.model_dump())
+    env = Environment(id=new_id("env"), tenant_id=identity.tenant_id, **body.model_dump())
     session.add(env)
     audit(
         session,
@@ -84,8 +86,15 @@ def create_environment(
         identity.actor_id,
         "environment.create",
         "environment",
+        resource_id=env.id,
     )
-    emit_event(session, identity.tenant_id, "environment.created.v1", {"environment_id": env.id})
+    emit_event(
+        session,
+        identity.tenant_id,
+        "environment.created.v1",
+        {"environment_id": env.id},
+        resource_ref=env.id,
+    )
     session.commit()
     session.refresh(env)
     return env
@@ -146,14 +155,27 @@ def create_enrollment(
     session: Session = Depends(get_session),
     identity: Identity = Depends(get_identity),
 ):
-    # 先租户定位（404）再权限（403）：跨租户 ID 猜测不可区分存在性
+    from app.config import load_settings
+    from app.rate_limit import check_enrollment_create_rate
+
     env = _env_or_404(session, identity.tenant_id, environment_id)
     ensure_permission(identity, "edge:manage")
+    allowed, retry_after = check_enrollment_create_rate(
+        tenant_id=identity.tenant_id, environment_id=env.id
+    )
+    if not allowed:
+        raise HTTPException(
+            status_code=429,
+            detail="enrollment_create_rate_limited",
+            headers={"Retry-After": str(retry_after)},
+        )
     code = f"enr-{secrets.token_urlsafe(24)}"
+    ttl = load_settings().enrollment_ttl_seconds
     token = EnrollmentToken(
+        id=new_id("enr"),
         environment_id=env.id,
         code_hash=hash_secret(code),
-        expires_at=utcnow() + timedelta(seconds=900),
+        expires_at=utcnow() + timedelta(seconds=ttl),
         created_by=identity.actor_id,
     )
     session.add(token)
@@ -165,7 +187,7 @@ def create_enrollment(
         "edge.enrollment.create",
         "environment",
         resource_id=environment_id,
-        request_id=request.headers.get("X-Request-ID"),
+        request_id=getattr(request.state, "request_id", None),
     )
     session.commit()
     return EnrollmentOut(code=code, expires_at=token.expires_at)
@@ -173,8 +195,23 @@ def create_enrollment(
 
 @router.post("/edge/v1/register", response_model=EdgeRegisterOut)
 def register_edge(body: EdgeRegisterRequest, session: Session = Depends(get_session)):
-    """Edge 使用一次性注册码换取设备身份与 secret。注册码不可重放。"""
+    """Edge 使用一次性注册码换取设备身份与 secret。注册码不可重放。
+
+    DEV11-B / M-P5b：重复 device_identity 返回受控 409，且不得消耗注册码。
+    DEV11-E / M-P5d：按 device_identity 与 enrollment_code 限速（不按源 IP）。
+    """
     from app.evidence_signing import load_edge_public_key
+    from app.rate_limit import check_register_rate
+
+    allowed, retry_after = check_register_rate(
+        device_identity=body.device_identity, enrollment_code=body.enrollment_code
+    )
+    if not allowed:
+        raise HTTPException(
+            status_code=429,
+            detail="registration_rate_limited",
+            headers={"Retry-After": str(retry_after)},
+        )
 
     try:
         load_edge_public_key(body.public_key_pem)
@@ -192,8 +229,13 @@ def register_edge(body: EdgeRegisterRequest, session: Session = Depends(get_sess
     if env is None:
         raise HTTPException(status_code=401, detail="enrollment_invalid")
 
-    device_secret = f"edge-{secrets.token_urlsafe(32)}"
+    # 预检：避免唯一约束冲突变成 500，并在失败路径上不标记 used_at
+    if session.scalar(select(EdgeAgent.id).where(EdgeAgent.device_identity == body.device_identity)):
+        raise HTTPException(status_code=409, detail="device_identity_conflict")
+
+    device_secret = mint_edge_device_secret()
     edge = EdgeAgent(
+        id=new_id("edge"),
         environment_id=env.id,
         device_identity=body.device_identity,
         secret_hash=hash_secret(device_secret),
@@ -204,8 +246,21 @@ def register_edge(body: EdgeRegisterRequest, session: Session = Depends(get_sess
     token.used_at = now
     session.add(edge)
     session.add(token)
-    audit(session, env.tenant_id, "edge", body.device_identity, "edge.register", "edge_agent")
-    session.commit()
+    audit(
+        session,
+        env.tenant_id,
+        "edge",
+        body.device_identity,
+        "edge.register",
+        "edge_agent",
+        resource_id=edge.id,
+    )
+    try:
+        session.commit()
+    except IntegrityError:
+        # 并发双注册同一身份：回滚使注册码仍可用
+        session.rollback()
+        raise HTTPException(status_code=409, detail="device_identity_conflict") from None
     return EdgeRegisterOut(
         edge_agent_id=edge.id,
         device_secret=device_secret,
@@ -238,13 +293,17 @@ def edge_heartbeat(
 def edge_fetch_tasks(request: Request, session: Session = Depends(get_session)):
     """领取任务（P1-5 原子 claim/lease）。
 
-    候选 = 同环境、pending、未过期，且（未租出 / 租约过期 / 本设备持有）。
+    候选 = 同环境、pending|uploaded、未过期，且（未租出 / 租约过期 / 本设备持有）。
+    uploaded 表示 batch 已持久化、等待最终回执（R04）：允许原持有者或租约过期后
+    的接管方再次领取，以便重传回执或在丢失本地 journal 时幂等重传 batch。
+
     对每个候选执行条件 UPDATE，rowcount==1 才真正领取成功：并发请求中只有
     一个能抢到同一任务（SQLite 单写者串行化同样保证该语义）。同一设备重复
     fetch（重试/重启）可拿回自己租约内的任务（at-least-once）。
 
     注意：lease 不是分布式锁的完整替代（时钟漂移/持有者进程暂停仍可能
-    造成重复投递）；最终一致性由回执幂等（delivered/failed 终态去重）保障。
+    造成重复投递）；最终一致性由回执幂等（delivered/failed 终态去重）与
+    batch result_digest 幂等保障。
     """
     from app.config import load_settings
 
@@ -256,10 +315,10 @@ def edge_fetch_tasks(request: Request, session: Session = Depends(get_session)):
     # 租约 TTL 复用心跳失活阈值：持有者宕机后至多一个 TTL 即可被接管
     lease_ttl_seconds = load_settings().heartbeat_stale_seconds
     lease_cutoff = now - timedelta(seconds=lease_ttl_seconds)
-    # 过期任务顺带标记 expired（惰性清扫）
+    # 过期任务顺带标记 expired（惰性清扫）：含 pending 与 uploaded（R04）
     session.query(EdgeTask).filter(
         EdgeTask.environment_id == edge.environment_id,
-        EdgeTask.status == "pending",
+        EdgeTask.status.in_(("pending", "uploaded")),
         EdgeTask.expires_at < now,
     ).update({EdgeTask.status: "expired"})
     # 租约前提：未租出 / 租约缺少时间戳（防御）/ 租约过期 / 本设备持有
@@ -269,12 +328,13 @@ def edge_fetch_tasks(request: Request, session: Session = Depends(get_session)):
         EdgeTask.leased_at < lease_cutoff,
         EdgeTask.lease_owner == device_identity,
     )
+    # pending：待执行；uploaded：结果已持久化、等待回执（R04 允许本设备或接管方再领）
     candidates = list(
         session.scalars(
             select(EdgeTask.id)
             .where(
                 EdgeTask.environment_id == edge.environment_id,
-                EdgeTask.status == "pending",
+                EdgeTask.status.in_(("pending", "uploaded")),
                 claimable,
             )
             .order_by(EdgeTask.created_at)
@@ -286,7 +346,11 @@ def edge_fetch_tasks(request: Request, session: Session = Depends(get_session)):
         # 条件更新即领取：候选快照与更新之间被他人抢走时 rowcount==0，跳过
         result = session.execute(
             update(EdgeTask)
-            .where(EdgeTask.id == task_id, EdgeTask.status == "pending", claimable)
+            .where(
+                EdgeTask.id == task_id,
+                EdgeTask.status.in_(("pending", "uploaded")),
+                claimable,
+            )
             .values(
                 leased_at=now,
                 lease_owner=device_identity,

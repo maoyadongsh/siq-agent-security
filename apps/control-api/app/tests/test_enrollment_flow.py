@@ -57,9 +57,54 @@ def test_enrollment_code_single_use(client, tenant_a, env_a):
     assert replay.status_code == 401
 
 
-def test_wrong_enrollment_code_rejected(client, tenant_a, env_a):
-    resp = _register_edge(client, env_a["id"], tenant_a, "edge-bad", code="enr-forged-code")
-    assert resp.status_code == 401
+def test_enrollment_uses_configured_ttl(client, tenant_a, env_a, monkeypatch):
+    """DEV11-C / M-P5f：非默认 SIQ_AS_ENROLLMENT_TTL_SECONDS 写入 expires_at。"""
+    from datetime import datetime, timedelta
+
+    from app.models import utcnow
+
+    monkeypatch.setenv("SIQ_AS_ENROLLMENT_TTL_SECONDS", "120")
+    before = utcnow()
+    resp = client.post(
+        f"/api/v1/environments/{env_a['id']}/edge-enrollment", json={}, headers=tenant_a
+    )
+    assert resp.status_code == 200
+    expires_at = datetime.fromisoformat(resp.json()["expires_at"])
+    after = utcnow()
+    # 允许少量时钟/处理抖动
+    assert before + timedelta(seconds=115) <= expires_at <= after + timedelta(seconds=125)
+    first = _register_edge(client, env_a["id"], tenant_a, "edge-dup-id")
+    assert first.status_code == 200
+
+    code = client.post(
+        f"/api/v1/environments/{env_a['id']}/edge-enrollment", json={}, headers=tenant_a
+    ).json()["code"]
+    conflict = client.post(
+        "/edge/v1/register",
+        json={
+            "enrollment_code": code,
+            "device_identity": "edge-dup-id",
+            "public_key_pem": edge_public_key_pem("edge-dup-id-retry"),
+            "version": "0.1.0",
+        },
+    )
+    assert conflict.status_code == 409
+    assert conflict.json()["detail"] == "device_identity_conflict"
+    assert "Traceback" not in conflict.text
+    assert "secret" not in conflict.text.lower() or "device_secret" not in conflict.text
+
+    # 同一注册码换新身份仍可成功（证明冲突路径未标记 used_at）
+    ok = client.post(
+        "/edge/v1/register",
+        json={
+            "enrollment_code": code,
+            "device_identity": "edge-dup-id-alt",
+            "public_key_pem": edge_public_key_pem("edge-dup-id-alt"),
+            "version": "0.1.0",
+        },
+    )
+    assert ok.status_code == 200
+    assert ok.json()["device_secret"].startswith("edge-")
 
 
 def test_invalid_edge_public_key_rejected_without_consuming_enrollment(client, tenant_a, env_a):

@@ -9,12 +9,13 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.adapters.openshell.cli_backend import OpenShellCliBackend
 from app.db import get_session
+from app.list_meta import apply_list_meta, clamp_limit, take_page
 from app.models import (
     AgentAsset,
     AgentInstance,
@@ -25,6 +26,7 @@ from app.models import (
     Environment,
     QuarantineCase,
     RuntimeBinding,
+    new_id,
     utcnow,
 )
 from app.outbox import audit, emit_event
@@ -125,13 +127,14 @@ def list_policies(
 
 @router.get("/api/v1/change-requests", response_model=list[ChangeRequestOut])
 def list_change_requests(
+    response: Response,
     status_filter: str | None = None,
     cursor: str | None = None,
     limit: int = 50,
     session: Session = Depends(get_session),
     identity: Identity = Depends(get_identity),
 ):
-    """变更中心列表（§20.1）。"""
+    """变更中心列表（§20.1）。DEV13-D：截断元数据走响应头。"""
     ensure_permission(identity, "policy:read")
     query = select(ChangeRequest).where(ChangeRequest.tenant_id == identity.tenant_id)
     if status_filter:
@@ -148,7 +151,21 @@ def list_change_requests(
             )
         except ValueError:
             query = query.where(ChangeRequest.id > cursor)
-    return list(session.scalars(query.limit(min(limit, 200))))
+    page_limit = clamp_limit(limit)
+    rows = list(session.scalars(query.limit(page_limit + 1)))
+    page, truncated = take_page(rows, limit=page_limit)
+    next_cursor = None
+    if truncated and page:
+        last = page[-1]
+        next_cursor = f"{last.created_at.isoformat()}|{last.id}"
+    apply_list_meta(
+        response,
+        limit=page_limit,
+        returned=len(page),
+        truncated=truncated,
+        next_cursor=next_cursor,
+    )
+    return page
 
 
 @router.get("/api/v1/deployments", response_model=list[DeploymentOut])
@@ -185,7 +202,7 @@ def create_policy(
     session: Session = Depends(get_session),
     identity: Identity = Depends(require_permission("policy:manage")),
 ):
-    policy = DesiredPolicy(tenant_id=identity.tenant_id, **body.model_dump())
+    policy = DesiredPolicy(id=new_id("pol"), tenant_id=identity.tenant_id, **body.model_dump())
     errors = _validate_policy_static(policy)
     policy.status = "validated" if not errors else "draft"
     if errors:
@@ -198,6 +215,7 @@ def create_policy(
         identity.actor_id,
         "policy.create",
         "desired_policy",
+        resource_id=policy.id,
     )
     session.commit()
     session.refresh(policy)
@@ -239,6 +257,7 @@ def create_change_request(
             raise HTTPException(status_code=404, detail="not_found")
         return existing  # 幂等：重复提交返回既有变更单
     cr = ChangeRequest(
+        id=new_id("cr"),
         tenant_id=identity.tenant_id,
         policy_id=policy.id,
         diff={"policy_version": policy.version, "enforcement_mode": policy.enforcement_mode},
@@ -255,6 +274,7 @@ def create_change_request(
         identity.actor_id,
         "change.request.create",
         "change_request",
+        resource_id=cr.id,
     )
     emit_event(
         session,
@@ -309,10 +329,22 @@ def approve_change_request(
                     )
 
     if cr.approval_policy == "break_glass":
-        # 紧急变更：短期授权 + 事后复核标记（§19.3）
+        # 紧急变更：业务态 emergency_applied；复核正交挂起（DEV12-A / M-P4）
+        import os
+        from datetime import timedelta
+
+        now = utcnow()
+        ttl = int(os.getenv("SIQ_AS_BREAKGLASS_REVIEW_SECONDS", "86400"))
         cr.status = "emergency_applied"
+        cr.approved_at = now
+        cr.review_status = "pending"
+        cr.review_due_at = now + timedelta(seconds=ttl)
+        cr.reviewed_by = None
     else:
         cr.status = "approved"
+        cr.approved_at = utcnow()
+        cr.review_status = "none"
+        cr.review_due_at = None
     cr.approver_user_id = identity.actor_id
     audit(
         session,

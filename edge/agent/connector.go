@@ -193,14 +193,18 @@ func (c *SubprocessConnector) killLocked() {
 }
 
 // call performs one NDJSON request/response round trip. Only one call runs at
-// a time (mu). On deadline the subprocess is killed and the connector is
-// marked closed.
+// a time (mu). The parent independently enforces c.timeout over stdin write +
+// response read (DEV10 / M-E1); env hints alone are not enough. On deadline the
+// subprocess is killed and the connector is marked closed.
 func (c *SubprocessConnector) call(ctx context.Context, op string, params any, into any) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if c.closed || c.cmd == nil {
 		return ErrConnectorClosed
 	}
+	opCtx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
+
 	c.seq++
 	req := protocol.Request{ID: fmt.Sprintf("req-%06d", c.seq), Op: op}
 	if params == nil {
@@ -216,11 +220,16 @@ func (c *SubprocessConnector) call(ctx context.Context, op string, params any, i
 	if err != nil {
 		return fmt.Errorf("connector: encode %s request: %w", op, err)
 	}
-	if _, err := c.stdin.Write(append(line, '\n')); err != nil {
-		return fmt.Errorf("connector: write %s request: %w (stderr: %s)", op, err, c.stderr.String())
+	if int64(len(line))+1 > c.maxOutput {
+		// Reuse output cap as a hard request-size bound so a huge params blob
+		// cannot stall the pipe before the read deadline applies.
+		return fmt.Errorf("%w: %s request exceeded %d bytes", ErrOutputLimit, op, c.maxOutput)
+	}
+	if err := c.writeLine(opCtx, op, append(line, '\n')); err != nil {
+		return err
 	}
 	c.totalOut = 0 // output cap applies per op
-	respLine, err := c.readLine(ctx, op)
+	respLine, err := c.readLine(opCtx, op)
 	if err != nil {
 		return err
 	}
@@ -248,6 +257,25 @@ func (c *SubprocessConnector) call(ctx context.Context, op string, params any, i
 		}
 	}
 	return nil
+}
+
+// writeLine writes one NDJSON request line under the per-op deadline.
+func (c *SubprocessConnector) writeLine(ctx context.Context, op string, line []byte) error {
+	ch := make(chan error, 1)
+	go func() {
+		_, err := c.stdin.Write(line)
+		ch <- err
+	}()
+	select {
+	case <-ctx.Done():
+		c.killLocked()
+		return fmt.Errorf("%w: %s op exceeded deadline during write (stderr: %s)", ErrTimeout, op, c.stderr.String())
+	case err := <-ch:
+		if err != nil {
+			return fmt.Errorf("connector: write %s request: %w (stderr: %s)", op, err, c.stderr.String())
+		}
+		return nil
+	}
 }
 
 type lineResult struct {

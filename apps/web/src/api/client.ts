@@ -26,6 +26,12 @@ import type {
   OverviewStats,
   ApiEnvelope,
 } from './types';
+import {
+  classifyContentType,
+  looksLikeHtml,
+  protocolErrorMessage,
+} from './protocol';
+import { parseListMeta, type ListMeta } from './listMeta';
 
 /** 控制面 API 基础地址（默认同源，由网关/开发代理转发） */
 export const API_BASE: string = import.meta.env.VITE_API_BASE ?? '/api/v1';
@@ -130,6 +136,15 @@ export async function request<T>(
   path: string,
   options: RequestOptions = {},
 ): Promise<T> {
+  const { data } = await requestWithHeaders<T>(path, options);
+  return data;
+}
+
+/** 同 request，额外返回响应头（列表分页元数据等）。 */
+export async function requestWithHeaders<T>(
+  path: string,
+  options: RequestOptions = {},
+): Promise<{ data: T; headers: Headers }> {
   const controller = new AbortController();
   const timeout = setTimeout(
     () => controller.abort(),
@@ -189,11 +204,34 @@ export async function request<T>(
   }
 
   if (response.status === 204) {
-    return undefined as T;
+    return { data: undefined as T, headers: response.headers };
   }
 
-  // 信封解包：{ ok, data } 与裸数据两种形态兼容
-  const body: unknown = await response.json().catch(() => null);
+  const contentType = response.headers.get('content-type');
+  const ctIssue = classifyContentType(contentType);
+  if (ctIssue) {
+    // 仍读取一小段正文以便识别 HTML 漏标
+    const peek = await response.clone().text().catch(() => '');
+    if (looksLikeHtml(peek)) {
+      throw new ApiError(response.status, protocolErrorMessage('html_body', response.status));
+    }
+    throw new ApiError(response.status, protocolErrorMessage(ctIssue, response.status));
+  }
+
+  const rawText = await response.text();
+  if (looksLikeHtml(rawText)) {
+    throw new ApiError(response.status, protocolErrorMessage('html_body', response.status));
+  }
+
+  let body: unknown = null;
+  try {
+    body = rawText ? JSON.parse(rawText) : null;
+  } catch {
+    throw new ApiError(response.status, protocolErrorMessage('null_body', response.status));
+  }
+  if (body === null && response.ok && response.status !== 204) {
+    throw new ApiError(response.status, protocolErrorMessage('null_body', response.status));
+  }
   if (!response.ok) {
     const envelope = body as ApiEnvelope<never> | null;
     throw new ApiError(
@@ -214,9 +252,21 @@ export async function request<T>(
         unwrapped.request_id,
       );
     }
-    return unwrapped.data as T;
+    return { data: unwrapped.data as T, headers: response.headers };
   }
-  return body as T;
+  return { data: body as T, headers: response.headers };
+}
+
+/** GET 列表页：数组体 + 分页头（DEV13-D）。 */
+export async function getListPage<T>(
+  path: string,
+  options: Omit<RequestOptions, 'method' | 'body'> = {},
+): Promise<{ items: T[]; meta: ListMeta }> {
+  const { data, headers } = await requestWithHeaders<T[]>(path, { ...options, method: 'GET' });
+  if (!Array.isArray(data)) {
+    throw new ApiError(200, protocolErrorMessage('non_array_list', 200));
+  }
+  return { items: data, meta: parseListMeta(headers) };
 }
 
 /** GET 快捷方法 */

@@ -1,0 +1,240 @@
+{
+  "manifest_version": 1,
+  "skill": {
+    "name": "siq-agent-security",
+    "version": "0.2.0",
+    "description": "Admits unknown skills and signs each tool-call receipt.",
+    "content_hash": "e69b1486c4dda3b6c8be242a80ab610ca04988a59dd5e3bb5c142e157e0a7098",
+    "sub_skills": [
+      "agent-asset-inventory",
+      "skill-admission",
+      "least-privilege-grant",
+      "runtime-receipt"
+    ]
+  },
+  "binary": {
+    "name": "siq-agent-security",
+    "version": "0.2.0",
+    "artifacts": [
+      {
+        "os": "linux",
+        "arch": "amd64",
+        "sha256": "e003e02c4d3b958306db6ebf483c228f9c1b28dd302c30b86e735ce948fa521a",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-linux-amd64",
+        "bytes": 14127256
+      },
+      {
+        "os": "linux",
+        "arch": "arm64",
+        "sha256": "5c10a7ec8094ed1c3cc9071ed6072f5f26ea471ab9b0f5bc37967d4a5685cc3a",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-linux-arm64",
+        "bytes": 13828248
+      },
+      {
+        "os": "darwin",
+        "arch": "arm64",
+        "sha256": "a62c57efaf0caa7f1767bcabdc530901edc4455872f7ab41326cf9a6b543031a",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-darwin-arm64",
+        "bytes": 14054882
+      },
+      {
+        "os": "windows",
+        "arch": "amd64",
+        "sha256": "1340e0c3c14466b8b7f7fa0ba8386f081ba10466b4f34bb79203b88f5d08a878",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-windows-amd64.exe",
+        "bytes": 14348800
+      }
+    ]
+  },
+  "rulepack": {
+    "version": 1,
+    "sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051",
+    "public_key_b64": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY="
+  },
+  "support_matrix": [
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "L0–L2 evidenced on Spark 2026-09-05; L3 optional (verified OpenShell gateway), not claimed"
+    },
+    {
+      "platform": "hermes",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "L1–L2 evidenced Spark 2026-09-05 isolated HOME; L3 optional, not claimed"
+    },
+    {
+      "platform": "openclaw",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L2 hook evidenced Spark 2026-09-05 isolated HOME, not GUI"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "trae",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "claude_code",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    }
+  ],
+  "signed_by": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
+  "signature": "c67512175046b6aa9c1b65b20f8d8b9ea8728ab62d2da3f069344248413d793a6ff8bc2b4d4fd26f59a22bfcf03d906ed122392e46e08659b2be338ed7da5009"
+}

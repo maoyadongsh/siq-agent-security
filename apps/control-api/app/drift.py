@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 from app.adapters.openshell.cli_backend import OpenShellCliBackend
 from app.adapters.openshell.contracts import AdapterError
-from app.models import ChangeRequest, Deployment, DesiredPolicy, utcnow
+from app.models import ChangeRequest, Deployment, DesiredPolicy, Finding, new_id, utcnow
 from app.outbox import audit, emit_event
 from app.safe_errors import error_reference
 
@@ -108,7 +108,6 @@ def check_policy_drift(session: Session, tenant_id: str) -> list[DriftResult]:
 
 def upsert_drift_findings(session: Session, tenant_id: str, results: list[DriftResult]) -> dict:
     """漂移 → Finding（幂等 upsert，键 = rule_id + resource_ref + open）。"""
-    from app.models import Finding
 
     created = 0
     updated = 0
@@ -129,6 +128,7 @@ def upsert_drift_findings(session: Session, tenant_id: str, results: list[DriftR
             updated += 1
             continue
         finding = Finding(
+            id=new_id("fnd"),
             tenant_id=tenant_id,
             rule_id="policy-drift",
             rule_version=1,

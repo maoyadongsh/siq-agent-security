@@ -1,0 +1,126 @@
+{
+  "schema": "local_doc_embedded_schema_vectors/v1",
+  "producer": "CPython json.dumps(sort_keys=True, separators=(',',':'), ensure_ascii=True) + Ed25519 seed=bytes(range(32))",
+  "contract": "Dual-read VerifyDocument: omit signing_schema → local_canonical/v1; embed field in signed body; unsupported/unknown ids fail closed. Writers not switched in this fixture set.",
+  "cross_note": {
+    "legacy_vs_embedded_must_differ": true,
+    "legacy_canonical_utf8": "{\"admission_id\":\"adm-embed-01\",\"doc_kind\":\"admission_fragment\",\"n\":100.0,\"note\":\"<\\u5b89\\u5168>\",\"verdict\":\"admit\"}",
+    "embedded_canonical_utf8": "{\"admission_id\":\"adm-embed-01\",\"doc_kind\":\"admission_fragment\",\"n\":100.0,\"note\":\"<\\u5b89\\u5168>\",\"signing_schema\":\"local_canonical/v1\",\"verdict\":\"admit\"}"
+  },
+  "vectors": [
+    {
+      "name": "legacy_no_schema_field",
+      "expect": "verify_ok",
+      "document": {
+        "doc_kind": "admission_fragment",
+        "admission_id": "adm-embed-01",
+        "verdict": "admit",
+        "note": "<安全>",
+        "n": 100.0
+      },
+      "canonical_utf8": "{\"admission_id\":\"adm-embed-01\",\"doc_kind\":\"admission_fragment\",\"n\":100.0,\"note\":\"<\\u5b89\\u5168>\",\"verdict\":\"admit\"}",
+      "signature_hex": "161d931b78f29190902098a233c02cea557eececadd0909f146f6878fda8bb6eb6d68588052ad4547bcfaca6fed2612990c6f3bcfb719512fe2840e2da9b0200",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "embedded_local_canonical_v1",
+      "expect": "verify_ok",
+      "document": {
+        "doc_kind": "admission_fragment",
+        "admission_id": "adm-embed-01",
+        "verdict": "admit",
+        "note": "<安全>",
+        "n": 100.0,
+        "signing_schema": "local_canonical/v1"
+      },
+      "canonical_utf8": "{\"admission_id\":\"adm-embed-01\",\"doc_kind\":\"admission_fragment\",\"n\":100.0,\"note\":\"<\\u5b89\\u5168>\",\"signing_schema\":\"local_canonical/v1\",\"verdict\":\"admit\"}",
+      "signature_hex": "5b89bb40b0b97652cd83a3e08eec95ba576d0530480f70523dc3e8fa467a3691bc081daa5d6d9069fe0a5edea417112ac2263013b186143553cf7723b90ddc05",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "embedded_task_envelope_v1",
+      "expect": "verify_ok",
+      "document": {
+        "doc_kind": "admission_fragment",
+        "admission_id": "adm-embed-01",
+        "verdict": "admit",
+        "note": "<安全>",
+        "n": 100.0,
+        "signing_schema": "task_envelope/v1"
+      },
+      "canonical_utf8": "{\"admission_id\":\"adm-embed-01\",\"doc_kind\":\"admission_fragment\",\"n\":100.0,\"note\":\"<\\u5b89\\u5168>\",\"signing_schema\":\"task_envelope/v1\",\"verdict\":\"admit\"}",
+      "signature_hex": "10ed669164b0a1fed0beb34f0113144e1fdbc6969242247284870bba49bc40a5ce2df8ca2e9071521e1dc5213d5406c8dbea750a1cfdae21b3c5630d8a0cf20c",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "embedded_evidence_utf8_rejected",
+      "expect": "schema_not_supported",
+      "document": {
+        "doc_kind": "admission_fragment",
+        "admission_id": "adm-embed-01",
+        "verdict": "admit",
+        "note": "<安全>",
+        "n": 100.0,
+        "signing_schema": "evidence_utf8/v1"
+      },
+      "signature_hex": "00",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "embedded_receipt_hash_chain_rejected",
+      "expect": "schema_not_supported",
+      "document": {
+        "doc_kind": "admission_fragment",
+        "admission_id": "adm-embed-01",
+        "verdict": "admit",
+        "note": "<安全>",
+        "n": 100.0,
+        "signing_schema": "receipt_hash_chain/v1"
+      },
+      "signature_hex": "00",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "embedded_unknown_v2_rejected",
+      "expect": "unknown_schema",
+      "document": {
+        "doc_kind": "admission_fragment",
+        "admission_id": "adm-embed-01",
+        "verdict": "admit",
+        "note": "<安全>",
+        "n": 100.0,
+        "signing_schema": "local_canonical/v2"
+      },
+      "signature_hex": "00",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "embedded_non_string_schema_rejected",
+      "expect": "unknown_schema",
+      "document": {
+        "doc_kind": "admission_fragment",
+        "admission_id": "adm-embed-01",
+        "verdict": "admit",
+        "note": "<安全>",
+        "n": 100.0,
+        "signing_schema": 1
+      },
+      "signature_hex": "00",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "legacy_sig_must_not_verify_embedded_body",
+      "expect": "verify_fail",
+      "document": {
+        "doc_kind": "admission_fragment",
+        "admission_id": "adm-embed-01",
+        "verdict": "admit",
+        "note": "<安全>",
+        "n": 100.0,
+        "signing_schema": "local_canonical/v1"
+      },
+      "signature_hex": "161d931b78f29190902098a233c02cea557eececadd0909f146f6878fda8bb6eb6d68588052ad4547bcfaca6fed2612990c6f3bcfb719512fe2840e2da9b0200",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    }
+  ]
+}

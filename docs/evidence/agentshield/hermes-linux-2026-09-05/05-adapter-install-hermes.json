@@ -1,0 +1,27 @@
+{
+  "exit_code": 0,
+  "stderr": "",
+  "result": {
+    "platform": "hermes",
+    "action": "install",
+    "paths": [
+      "$HOME/.hermes/plugins/agentshield/plugin.yaml",
+      "$HOME/.hermes/plugins/agentshield/__init__.py",
+      "$HOME/.hermes/plugins/agentshield/config.json",
+      "$HOME/.local/bin/hermes-skills-install"
+    ],
+    "record": {
+      "platform": "hermes",
+      "installed_at": "2026-09-05T03:45:38Z",
+      "binary": "$REPO/apps/agentshield/agentshield",
+      "created": [
+        "$HOME/.hermes/plugins/agentshield/plugin.yaml",
+        "$HOME/.hermes/plugins/agentshield/__init__.py",
+        "$HOME/.hermes/plugins/agentshield/config.json",
+        "$HOME/.hermes/plugins/agentshield",
+        "$HOME/.local/bin/hermes-skills-install"
+      ],
+      "modified": {}
+    }
+  }
+}

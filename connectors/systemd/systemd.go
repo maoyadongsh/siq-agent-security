@@ -7,9 +7,9 @@
 // 安全边界：
 //   - 绝不采集 secret 值：不读 unit 的环境变量/凭据，只取
 //     Id/Description/ActiveState/ExecStart 四个属性；
-//   - ExecStart 可能携带敏感参数（token/apiKey 等）：仅「可执行文件路径到首个
-//     参数之前」的部分参与关键词再确认；完整命令行必须经 protocol.Redactor
-//     脱敏并截断 256 后才允许进入 attributes（exec_summary）；
+//   - ExecStart 可能携带敏感参数：仅「可执行文件路径」进入 attributes
+//     （exec_path）；完整 argv 不上传，仅上传脱敏后命令行的 sha256
+//     （exec_argv_digest）供变更检测（DEV10 / M-E3 允许字段清单）；
 //   - unit 名与描述同样经 Redactor 脱敏并截断；
 //   - systemctl 缺失或执行失败时显式报错（unsupported），形成覆盖缺口而非
 //     静默漏报；
@@ -418,9 +418,10 @@ func execHead(execStart string) string {
 }
 
 // buildObjects 为一个 unit 产出 candidate 及其 evidence。
-// exec 完整命令行先脱敏再截断 256 入 exec_summary；哈希也只覆盖脱敏后事实。
+// DEV10：不上传完整 ExecStart；仅允许 exec_path + 脱敏 argv 摘要哈希。
 func buildObjects(unit string, props unitProps, cls unitClassification, now string, red *protocol.Redactor) (*protocol.Candidate, *protocol.Evidence) {
-	execSummary := truncate(red.RedactString(props.ExecStart), 256)
+	execPath := truncate(red.RedactString(execHead(props.ExecStart)), 256)
+	argvDigest := protocol.ContentHash([]byte(red.RedactString(props.ExecStart)))
 	evidenceID := "ev:systemd:" + unit
 
 	cand := &protocol.Candidate{
@@ -432,18 +433,20 @@ func buildObjects(unit string, props unitProps, cls unitClassification, now stri
 		Framework:     cls.framework,
 		Confidence:    cls.confidence,
 		Attributes: map[string]string{
-			"active_state":    truncate(red.RedactString(props.ActiveState), 64),
-			"description":     truncate(red.RedactString(props.Description), 256),
-			"exec_summary":    execSummary,
-			"discovery_basis": cls.basis,
+			"active_state":     truncate(red.RedactString(props.ActiveState), 64),
+			"description":      truncate(red.RedactString(props.Description), 256),
+			"exec_path":        execPath,
+			"exec_argv_digest": argvDigest,
+			"discovery_basis":  cls.basis,
 		},
 		EvidenceIDs: []string{evidenceID},
 	}
-	// 进入哈希的只有 unit 事实（名称/状态/脱敏后的 exec 摘要），绝无敏感原文。
+	// 进入哈希的只有 unit 事实（名称/状态/路径/脱敏 argv digest），绝无 argv 原文。
 	facts, _ := json.Marshal(map[string]any{
-		"unit":         unit,
-		"active_state": props.ActiveState,
-		"exec_summary": execSummary,
+		"unit":             unit,
+		"active_state":     props.ActiveState,
+		"exec_path":        execPath,
+		"exec_argv_digest": argvDigest,
 	})
 	ev := &protocol.Evidence{
 		EvidenceID:       evidenceID,

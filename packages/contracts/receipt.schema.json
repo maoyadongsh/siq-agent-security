@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/receipt.v1.json",
+  "title": "RuntimeReceipt",
+  "description": "每次工具调用的运行时回执（ADR-011 / 设计方案 v1 §4.2）。由 agentshield 决策 API 产出并签名；平台适配器与模型都没有签名密钥。回执只追加、哈希链接：hash = sha256(规范化(本条除 hash/sig 的字段))，prev_hash 指向同一链上一条（创世为 64 个 0）。参数只存摘要与脱敏片段，禁止原文。",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "chain_id",
+    "seq",
+    "prev_hash",
+    "hash",
+    "sig",
+    "issued_at",
+    "platform",
+    "session_id",
+    "tool",
+    "params_digest",
+    "action",
+    "reason",
+    "enforcement_mode",
+    "matched_fact_ids",
+    "taint_labels",
+    "engine"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "receipt_id": { "type": "string" },
+    "chain_id": { "type": "string", "description": "链标识（本地模式为状态目录内单链；同步到控制面后按 tenant/environment 归属）" },
+    "seq": { "type": "integer", "minimum": 0, "description": "链内序号，从 0 起连续递增" },
+    "prev_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "上一条 hash；seq=0 时为 64 个 0" },
+    "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "sig": { "type": "string", "pattern": "^[0-9a-f]{128}$", "description": "Ed25519 对 hash 的签名（hex）" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "platform": { "type": "string", "enum": ["openclaw", "hermes", "codebuddy", "trae", "claude_code", "codex", "other"] },
+    "session_id": { "type": "string", "description": "平台会话键（脱敏）；污点与 trifecta 以此为作用域" },
+    "agent_id": { "type": ["string", "null"] },
+    "tool": { "type": "string", "description": "平台工具名，如 exec / terminal / web_fetch / send_message" },
+    "tool_call_id": { "type": ["string", "null"] },
+    "params_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "规范化参数的 sha256；不存参数原文" },
+    "params_excerpt": { "type": ["string", "null"], "maxLength": 512, "description": "脱敏后的参数片段，供人阅读；禁止 token / secret 原文" },
+    "action": { "type": "string", "enum": ["allow", "deny", "hold", "redact"] },
+    "advisory_action": {
+      "type": ["string", "null"],
+      "enum": ["deny", "hold", "redact", null],
+      "description": "enforcement_mode=audit_only / warn 时记录\"若为 block 会怎样\"；block 模式下为 null"
+    },
+    "reason": { "type": "string", "maxLength": 1024, "description": "人可读的决策理由；deny / hold / redact 必须非空并点名命中的事实或污点规则" },
+    "matched_grant_id": { "type": ["string", "null"] },
+    "matched_fact_ids": { "type": "array", "items": { "type": "string" } },
+    "matched_rule_ids": { "type": "array", "items": { "type": "string" }, "description": "参数 / 结果命中的规则包或污点规则" },
+    "taint_labels": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["secret", "pii", "untrusted_content", "private_mount"] },
+      "description": "本次调用之前会话已累积的污点标签"
+    },
+    "trifecta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["private_data", "untrusted_input", "egress"],
+      "description": "lethal trifecta 三要素在本会话是否已具备；三者同时为 true 且本次为出网类工具时默认 deny",
+      "properties": {
+        "private_data": { "type": "boolean" },
+        "untrusted_input": { "type": "boolean" },
+        "egress": { "type": "boolean" }
+      }
+    },
+    "enforcement_mode": { "type": "string", "enum": ["audit_only", "warn", "block"] },
+    "policy_revision": { "type": ["string", "null"], "description": "决策时生效的 OpenShell / 平台策略 revision" },
+    "sandbox_id": { "type": ["string", "null"] },
+    "model_key": { "type": ["string", "null"], "description": "命名模型 key，不含凭据" },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "rulepack_version"],
+      "properties": {
+        "version": { "type": "string" },
+        "rulepack_version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "decision_latency_ms": { "type": ["integer", "null"], "minimum": 0 },
+    "hold": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["channel", "timeout_ms"],
+      "description": "action=hold 时的人工签核请求；结果由后续回执记录，不改写本条",
+      "properties": {
+        "channel": { "type": "string", "enum": ["console", "openclaw_approval", "hermes_cli", "codebuddy_prompt", "other"] },
+        "timeout_ms": { "type": "integer", "minimum": 1 },
+        "resolved_by_receipt_id": { "type": ["string", "null"] }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "action": { "enum": ["deny", "hold", "redact"] } } },
+      "then": { "properties": { "reason": { "minLength": 1 } } }
+    },
+    {
+      "if": { "properties": { "action": { "const": "hold" } } },
+      "then": { "properties": { "hold": { "type": "object" } }, "required": ["hold"] }
+    },
+    {
+      "if": { "properties": { "seq": { "const": 0 } } },
+      "then": { "properties": { "prev_hash": { "const": "0000000000000000000000000000000000000000000000000000000000000000" } } }
+    },
+    {
+      "if": { "properties": { "enforcement_mode": { "const": "audit_only" } } },
+      "then": { "properties": { "action": { "enum": ["allow"] } } }
+    }
+  ]
+}

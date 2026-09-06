@@ -26,7 +26,7 @@ from sqlalchemy.orm import Session
 
 from app.adapters.openshell.cli_backend import OpenShellCliBackend
 from app.adapters.openshell.contracts import AdapterError
-from app.models import Deployment, Finding, utcnow
+from app.models import Deployment, Finding, new_id, utcnow
 from app.outbox import audit, emit_event
 from app.safe_errors import error_reference
 
@@ -112,6 +112,7 @@ def _record_mismatch(
     else:
         session.add(
             Finding(
+                id=new_id("fnd"),
                 tenant_id=tenant_id,
                 rule_id=MISMATCH_RULE_ID,
                 rule_version=1,

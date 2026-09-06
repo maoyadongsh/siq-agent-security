@@ -1,0 +1,15 @@
+{
+  "name": "openclaw-siq-agent-security",
+  "version": "0.2.0",
+  "description": "siq-agent-security runtime adapter for OpenClaw: before_tool_call/after_tool_call → local decision API. No policy, no keys.",
+  "type": "module",
+  "main": "index.ts",
+  "openclaw": {
+    "kind": "plugin",
+    "hooks": ["before_tool_call", "after_tool_call"]
+  },
+  "peerDependencies": {
+    "openclaw": "*"
+  },
+  "license": "Apache-2.0"
+}

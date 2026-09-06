@@ -150,3 +150,62 @@ def test_terminal_receipt_replay_semantics_unchanged(client, tenant_a, lease_env
     )
     assert other.status_code == 200
     assert other.json()["idempotent"] is True
+
+
+def test_uploaded_task_reclaimable_by_owner(client, tenant_a, lease_env):
+    """R04：batch 上传后 status=uploaded 仍可被原持有者 fetch（补回执）。"""
+    from app.tests.edge_helpers import candidate, signed_batch, signed_evidence
+
+    task_id = create_scan_task(client, tenant_a, lease_env["id"])
+    headers, priv = register_edge(client, tenant_a, lease_env["id"], "edge-lease-up1")
+    assert any(t["id"] == task_id for t in client.get("/edge/v1/tasks", headers=headers).json())
+
+    ev = signed_evidence(priv, "edge-lease-up1", "ev:up1")
+    batch = signed_batch(
+        priv,
+        task_id,
+        candidates=[candidate("p1", [ev["evidence_id"]])],
+        evidence=[ev],
+    )
+    up = client.post("/edge/v1/batches", json=batch, headers=headers)
+    assert up.status_code == 200, up.text
+    with session_scope() as session:
+        task = session.get(EdgeTask, task_id)
+        assert task.status == "uploaded"
+
+    # 再次 fetch 必须仍能拿到 uploaded 任务（否则 Edge 无法补回执）
+    again = client.get("/edge/v1/tasks", headers=headers).json()
+    assert any(t["id"] == task_id for t in again)
+    with session_scope() as session:
+        task = session.get(EdgeTask, task_id)
+        assert task.status == "uploaded"
+        assert task.attempt >= 2
+
+
+def test_uploaded_past_expires_marked_expired_on_fetch(client, tenant_a, lease_env):
+    """R04：过期的 uploaded 在 fetch 时惰性标 expired，不再可领。"""
+    from app.tests.edge_helpers import candidate, signed_batch, signed_evidence
+
+    task_id = create_scan_task(client, tenant_a, lease_env["id"])
+    headers, priv = register_edge(client, tenant_a, lease_env["id"], "edge-lease-up2")
+    client.get("/edge/v1/tasks", headers=headers)
+
+    ev = signed_evidence(priv, "edge-lease-up2", "ev:up2")
+    batch = signed_batch(
+        priv,
+        task_id,
+        candidates=[candidate("p2", [ev["evidence_id"]])],
+        evidence=[ev],
+    )
+    assert client.post("/edge/v1/batches", json=batch, headers=headers).status_code == 200
+
+    with session_scope() as session:
+        task = session.get(EdgeTask, task_id)
+        task.expires_at = utcnow() - timedelta(seconds=1)
+        assert task.status == "uploaded"
+
+    tasks = client.get("/edge/v1/tasks", headers=headers).json()
+    assert all(t["id"] != task_id for t in tasks)
+    with session_scope() as session:
+        task = session.get(EdgeTask, task_id)
+        assert task.status == "expired"

@@ -1,0 +1,15 @@
+{
+  "exit_code": 0,
+  "stderr": "",
+  "grant": {
+    "grant_id": "grt-4af17a9f9719-260a2709",
+    "status": "pending_approval",
+    "platform": "codebuddy",
+    "subject": {
+      "type": "agent_instance",
+      "id": "codebuddy-demo"
+    },
+    "approved_by": null
+  },
+  "note": "model must not approve; a human runs: agentshield grant approve grt-4af17a9f9719-260a2709 --approve-as <actor>"
+}

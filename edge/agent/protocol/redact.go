@@ -37,7 +37,13 @@ type Redactor struct {
 }
 
 // NewRedactor builds the siq.redaction.v1 rule set.
+//
+// Includes key=value forms and space-separated CLI flags (DEV10 / M-E3):
+// `--password VALUE`, quoted values, and `scheme://user:pass@host` credentials.
+// Short ambiguous flags like bare `-p` are intentionally omitted (port/path FP).
 func NewRedactor() *Redactor {
+	// Sensitive long-option names used in ExecStart / argv style strings.
+	sensFlag := `(?:password|passwd|pwd|token|secret|api[_-]?key|access[_-]?key|client[_-]?secret)`
 	return &Redactor{rules: []*regexp.Regexp{
 		regexp.MustCompile(`(?i)(?:sk|pk)-[A-Za-z0-9_\-]{12,}`),                // OpenAI-style keys
 		regexp.MustCompile(`(?i)(?:api[_-]?key|apikey)\s*[:=]\s*[^\s,;"]{4,}`), // api_key=...
@@ -47,6 +53,11 @@ func NewRedactor() *Redactor {
 		regexp.MustCompile(`AKIA[0-9A-Z]{16}`),                 // AWS access key
 		regexp.MustCompile(`ghp_[A-Za-z0-9]{36}`),              // GitHub PAT
 		regexp.MustCompile(`(?s)-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----.*?-----END [A-Z0-9 ]*PRIVATE KEY-----`),
+		// Space-separated / equals CLI flags (long names only).
+		regexp.MustCompile(`(?i)--` + sensFlag + `\s+(?:'[^']{1,}'|"[^"]{1,}"|[^\s"']{4,})`),
+		regexp.MustCompile(`(?i)--` + sensFlag + `=(?:'[^']{1,}'|"[^"]{1,}"|[^\s"']{4,})`),
+		// URL embedded credentials.
+		regexp.MustCompile(`(?i)[a-z][a-z0-9+.-]*://[^/\s:@]+:[^/\s@]+@`),
 	}}
 }
 

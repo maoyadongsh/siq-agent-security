@@ -1,0 +1,72 @@
+{
+  "schema": "evidence_signature_vectors/v1",
+  "producer": "CPython json.dumps(sort_keys=True, separators=(',',':'), ensure_ascii=False) + Ed25519 seed=bytes(range(32))",
+  "contract": "apps/control-api/app/evidence_signing.py canonical_json; edge/agent CanonicalJSON (SetEscapeHTML false); NOT task signing ensure_ascii=True",
+  "vectors": [
+    {
+      "name": "unicode_html_nested",
+      "kind": "opaque_payload",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAA6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=\n-----END PUBLIC KEY-----\n",
+      "seed_b64": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+      "document": {
+        "task_id": "tsk_fixture",
+        "note": "<安全>",
+        "counts": [
+          1,
+          2
+        ],
+        "nested": {
+          "z": false,
+          "a": "值"
+        }
+      },
+      "canonical_utf8": "{\"counts\":[1,2],\"nested\":{\"a\":\"值\",\"z\":false},\"note\":\"<安全>\",\"task_id\":\"tsk_fixture\"}",
+      "signature_hex": "d9f7636415eca6419c6613673089f00cc254598d5211b710614c602d75de563e4f32da23213289be855a998d53380b21af99c810258b57e01ff15fafe41abe04"
+    },
+    {
+      "name": "evidence_like_unicode",
+      "kind": "evidence_seal",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAA6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=\n-----END PUBLIC KEY-----\n",
+      "seed_b64": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+      "document": {
+        "evidence_id": "ev-fixture-001",
+        "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_type": "manifest",
+        "classification": "internal",
+        "collector_id": "edge-fixture",
+        "collected_at": "2026-09-06T00:00:00Z",
+        "observed_at": "2026-09-06T00:00:00Z",
+        "redaction_profile": "siq.redaction.v1",
+        "note": "<安全>",
+        "signature": ""
+      },
+      "canonical_utf8": "{\"classification\":\"internal\",\"collected_at\":\"2026-09-06T00:00:00Z\",\"collector_id\":\"edge-fixture\",\"content_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"evidence_id\":\"ev-fixture-001\",\"note\":\"<安全>\",\"observed_at\":\"2026-09-06T00:00:00Z\",\"redaction_profile\":\"siq.redaction.v1\",\"signature\":\"\",\"source_type\":\"manifest\"}",
+      "signature_hex": "6414b4bdf8dfc51206f2bac872c52680d3190b05c00e763f628000d31b2d4a4d3403c3185e134f33695e635704a635976cedee80190a741b1591d2c3431ea402"
+    },
+    {
+      "name": "float_100_0",
+      "kind": "opaque_payload",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAA6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=\n-----END PUBLIC KEY-----\n",
+      "seed_b64": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+      "document": {
+        "n": 100.0,
+        "note": "x",
+        "i": 100
+      },
+      "canonical_utf8": "{\"i\":100,\"n\":100.0,\"note\":\"x\"}",
+      "signature_hex": "a84438bd223f93c30453b5ddf691e2fa3108f3d52bb2d8f9925c13c740e229ad8909e164f82f5c963a338480bb4ae830ca227e7d0de7b6f343e97cb63dc85005",
+      "note": "CPython dumps 100.0 as 100.0; Go encoding/json round-trip may differ — consumers must match this producer"
+    },
+    {
+      "name": "html_angle_brackets",
+      "kind": "opaque_payload",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAA6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=\n-----END PUBLIC KEY-----\n",
+      "seed_b64": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+      "document": {
+        "msg": "<script>"
+      },
+      "canonical_utf8": "{\"msg\":\"<script>\"}",
+      "signature_hex": "fdec2b478bf9b173d984f4120c3b066535651de41f7047e8b9eb6be0fb9c0bf3d9ed5e909111e96085d3aa5a745a1d69ff59b1c04bd2ce90d788e2037efff500"
+    }
+  ]
+}

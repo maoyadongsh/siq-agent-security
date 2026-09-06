@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"strings"
 	"testing"
 
@@ -82,8 +83,13 @@ func TestRedactorString(t *testing.T) {
 		{"AKIAIOSFODNN7EXAMPLE", true},
 		{"ghp_0123456789abcdefghijklmnopqrstuvwxyz", true}, // 测试夹具假令牌，.gitleaks.toml 已精确放行
 		{"-----BEGIN PRIVATE KEY-----\nabc\ndef\n-----END PRIVATE KEY-----", true},
+		{"/bin/app --password spacesecret999", true},
+		{"/bin/app --token=tokensecret1234", true},
+		{"https://user:passw0rd@example.com/x", true},
+		{`/bin/svc --token 'quotedtok123'`, true},
 		{"model: gpt-4o", false},
 		{"hermes://profiles/siq_legal_advisor", false},
+		{"/usr/bin/rsync -a /data /backup", false},
 	}
 	for _, tc := range cases {
 		out := r.RedactString(tc.in)
@@ -221,6 +227,9 @@ func TestSealEvidence(t *testing.T) {
 	if ev.Signature == "" {
 		t.Fatal("signature must be set")
 	}
+	if ev.SigningSchema != EvidenceSigningSchemaV1 {
+		t.Fatalf("writer must embed signing_schema=%s, got %q", EvidenceSigningSchemaV1, ev.SigningSchema)
+	}
 	pubPEM, err := s.PublicKeyPEM()
 	if err != nil {
 		t.Fatal(err)
@@ -231,7 +240,21 @@ func TestSealEvidence(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if !bytes.Contains(payload, []byte(`"signing_schema":"evidence_utf8/v1"`)) {
+		t.Fatalf("canonical bytes must include embedded schema, got %s", payload)
+	}
 	if err := VerifySignature(pubPEM, payload, ev.Signature); err != nil {
 		t.Fatalf("canonical evidence signature did not verify: %v", err)
+	}
+	// Stripping schema must invalidate the writer signature (field is in signed body).
+	stripped := *ev
+	stripped.Signature = ""
+	stripped.SigningSchema = ""
+	strippedPayload, err := CanonicalJSON(&stripped)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := VerifySignature(pubPEM, strippedPayload, ev.Signature); err == nil {
+		t.Fatal("signature must not verify after stripping signing_schema")
 	}
 }

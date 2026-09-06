@@ -1,0 +1,92 @@
+{
+  "schema": "local_doc_signature_vectors/v1",
+  "producer": "CPython json.dumps(sort_keys=True, separators=(',',':'), ensure_ascii=True) + Ed25519 seed=bytes(range(32))",
+  "contract": "apps/agentshield/internal/canon.Marshal / signing.VerifyCanonical; signing_schema=local_canonical/v1",
+  "cross_contract_note": {
+    "document_name": "chinese_html_float_null",
+    "evidence_utf8_canonical": "{\"items\":[1,0.85,null],\"n\":100.0,\"nested\":{\"a\":null,\"y\":\"值\",\"z\":true},\"note\":\"<安全>\"}",
+    "must_differ_from_local_canonical": true
+  },
+  "vectors": [
+    {
+      "name": "admission_minimal",
+      "signing_schema": "local_canonical/v1",
+      "document": {
+        "admission_id": "adm-fixture01",
+        "skill_id": "local_dir:demo@aaaaaaaaaaaa",
+        "skill_name": "demo",
+        "skill_version": "1.0.0",
+        "source": {
+          "type": "local_dir",
+          "locator": "fixtures/demo",
+          "trust_level": "unknown",
+          "ref": null
+        },
+        "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "verdict": "admit",
+        "decided_at": "2026-09-06T00:00:00Z",
+        "engine": {
+          "name": "agentshield-go",
+          "version": "test",
+          "rulepack_version": 1,
+          "rulepack_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "declared_facts": [],
+        "findings": [],
+        "integrity": {
+          "over_limit": false,
+          "symlink_escape": false,
+          "file_count": 1,
+          "total_bytes": 10
+        },
+        "evidence_ids": []
+      },
+      "canonical_utf8": "{\"admission_id\":\"adm-fixture01\",\"content_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"decided_at\":\"2026-09-06T00:00:00Z\",\"declared_facts\":[],\"engine\":{\"name\":\"agentshield-go\",\"rulepack_sha256\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"rulepack_version\":1,\"version\":\"test\"},\"evidence_ids\":[],\"findings\":[],\"integrity\":{\"file_count\":1,\"over_limit\":false,\"symlink_escape\":false,\"total_bytes\":10},\"skill_id\":\"local_dir:demo@aaaaaaaaaaaa\",\"skill_name\":\"demo\",\"skill_version\":\"1.0.0\",\"source\":{\"locator\":\"fixtures/demo\",\"ref\":null,\"trust_level\":\"unknown\",\"type\":\"local_dir\"},\"verdict\":\"admit\"}",
+      "signature_hex": "515dced206c0cf804ab623207dfa4a51fe86b2b569cdbf6e92ce465c5898051ee2aeafc23bf64af0340c8d732c7c60693d9814538bb5d62b9135992857d3ee05",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "grant_minimal",
+      "signing_schema": "local_canonical/v1",
+      "document": {
+        "grant_id": "grn-fixture01",
+        "admission_id": "adm-fixture01",
+        "subject": {
+          "type": "agent_instance",
+          "id": "agent-1"
+        },
+        "platform": "hermes",
+        "facts": [],
+        "default_effect": "deny",
+        "enforcement_mode": "block",
+        "status": "pending",
+        "overlap_conflicts": [],
+        "created_at": "2026-09-06T00:00:00Z"
+      },
+      "canonical_utf8": "{\"admission_id\":\"adm-fixture01\",\"created_at\":\"2026-09-06T00:00:00Z\",\"default_effect\":\"deny\",\"enforcement_mode\":\"block\",\"facts\":[],\"grant_id\":\"grn-fixture01\",\"overlap_conflicts\":[],\"platform\":\"hermes\",\"status\":\"pending\",\"subject\":{\"id\":\"agent-1\",\"type\":\"agent_instance\"}}",
+      "signature_hex": "c257faeb4d0b314f76580ea3e803b209ca9b9995987a3eef2fd83d97a6927a1523c5d5c0f012e2f219f555dcb82e848396e5eb27ed9a7ddf3d938d324202a906",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "chinese_html_float_null",
+      "signing_schema": "local_canonical/v1",
+      "document": {
+        "note": "<安全>",
+        "n": 100.0,
+        "nested": {
+          "z": true,
+          "y": "值",
+          "a": null
+        },
+        "items": [
+          1,
+          0.85,
+          null
+        ]
+      },
+      "canonical_utf8": "{\"items\":[1,0.85,null],\"n\":100.0,\"nested\":{\"a\":null,\"y\":\"\\u503c\",\"z\":true},\"note\":\"<\\u5b89\\u5168>\"}",
+      "signature_hex": "7d2a0f258c2026ae617fc35a8f69c71e29a0460a9a02fac6da5e9f9e1388443d57b81ceeb94203540dc5e84e89d9f9d0334bf071f08a0050b35fe76c51467707",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    }
+  ]
+}

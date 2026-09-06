@@ -1,0 +1,15 @@
+{
+  "exit_code": 0,
+  "stderr": "",
+  "grant": {
+    "grant_id": "grt-4af17a9f9719-f33ebb37",
+    "status": "pending_approval",
+    "platform": "openclaw",
+    "subject": {
+      "type": "agent_instance",
+      "id": "openclaw-demo"
+    },
+    "approved_by": null
+  },
+  "note": "model must not approve; a human runs: agentshield grant approve grt-4af17a9f9719-f33ebb37 --approve-as <actor>"
+}

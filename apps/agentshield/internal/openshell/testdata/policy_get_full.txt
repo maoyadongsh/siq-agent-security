@@ -1,0 +1,27 @@
+Version:      1
+Hash:         21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43
+Status:       Loaded
+Active:       1
+Created:      1786632645924 ms
+Loaded:       1786632646253 ms
+---
+version: 1
+filesystem_policy:
+  include_workdir: true
+  read_only:
+  - /usr
+  - /lib
+  - /proc
+  - /dev/urandom
+  - /app
+  - /etc
+  - /var/log
+  read_write:
+  - /sandbox
+  - /tmp
+  - /dev/null
+landlock:
+  compatibility: best_effort
+process:
+  run_as_user: sandbox
+  run_as_group: sandbox

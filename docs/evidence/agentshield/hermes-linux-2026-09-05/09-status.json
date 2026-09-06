@@ -1,0 +1,51 @@
+{
+  "chain": {
+    "head_hash": "e16b117a571b1811acb309c3923f17ce34741555b089f895b906351c8ab1335b",
+    "head_seq": 0,
+    "id": "local"
+  },
+  "enforcement_mode": "block",
+  "local_mode": true,
+  "platforms": [
+    {
+      "name": "openclaw",
+      "detected": true,
+      "adapter": "not installed",
+      "tier": "L0",
+      "note": "\u672a\u88c5\u9002\u914d\u5668\uff0c\u65e0\u6cd5\u963b\u65ad"
+    },
+    {
+      "name": "hermes",
+      "detected": true,
+      "adapter": "installed",
+      "tier": "L2",
+      "note": "\u8fd0\u884c\u65f6\u56de\u6267"
+    },
+    {
+      "name": "codebuddy",
+      "detected": true,
+      "adapter": "not installed",
+      "tier": "L0",
+      "note": "\u672a\u88c5\u9002\u914d\u5668\uff0c\u65e0\u6cd5\u963b\u65ad"
+    },
+    {
+      "name": "trae",
+      "detected": false,
+      "adapter": "audit_only",
+      "tier": "L0",
+      "note": "\u672a\u53d1\u73b0\uff1b\u5373\u4fbf\u5b89\u88c5\u4e5f\u4ec5\u5ba1\u8ba1\u3001\u65e0\u6cd5\u963b\u65ad"
+    },
+    {
+      "name": "openshell",
+      "detected": false,
+      "adapter": "unconfigured",
+      "tier": "L0",
+      "note": "openshell gateway info \u5931\u8d25(rc=1): OpenShell CLI \u672a\u914d\u7f6e\uff1a\u8bbe\u7f6e CLI_BIN + GATEWAY_ENDPOINT\uff0c\u6216\u663e\u5f0f\u8bbe\u7f6e OPENSHELL_ENV_SH"
+    }
+  ],
+  "rulepack_source": "builtin",
+  "rulepack_version": 1,
+  "signing_public_key": "9oDobjDO+9+HzakYQIxuLakByz0fmn7qV9Iv0HaEY3k=",
+  "single_user": true,
+  "version": "0.1.0"
+}

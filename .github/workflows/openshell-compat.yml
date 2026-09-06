@@ -7,6 +7,8 @@ permissions:
 # 需要 self-hosted runner（网关于 runner 本机/内网可达，CLI 二进制预置），
 # 或在预置好网关的环境中手动触发。未配置 secret/输入时检查步骤整体跳过，
 # 不产生红色失败（脚本自身也有 "SKIP: 未配置网关" → 退出 0 的兜底）。
+#
+# DEV17-C / M-C1b：下载 URL 与摘要经 env 传递并校验；禁止把 workflow 输入直接插值进 shell。
 on:
   workflow_dispatch:
     inputs:
@@ -19,7 +21,11 @@ on:
         required: false
         default: ""
       cli_bin_asset:
-        description: "openshell CLI 二进制下载 URL（可选，下载到 /tmp/openshell 使用）"
+        description: "openshell CLI 二进制下载 URL（可选；须配合 cli_bin_sha256；仅允许 GitHub 发布域）"
+        required: false
+        default: ""
+      cli_bin_sha256:
+        description: "cli_bin_asset 的 SHA-256（64 hex；下载时必填）"
         required: false
         default: ""
       gateway_insecure:
@@ -43,14 +49,39 @@ env:
 jobs:
   compat:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86  # v5
 
       - name: 下载 openshell CLI（提供 cli_bin_asset 时）
         if: ${{ inputs.cli_bin_asset != '' }}
+        env:
+          CLI_BIN_ASSET: ${{ inputs.cli_bin_asset }}
+          CLI_BIN_SHA256: ${{ inputs.cli_bin_sha256 }}
         run: |
-          curl -fsSL "${{ inputs.cli_bin_asset }}" -o /tmp/openshell
+          set -euo pipefail
+          if [ -z "${CLI_BIN_SHA256}" ]; then
+            echo "FAIL: cli_bin_sha256 is required when cli_bin_asset is set" >&2
+            exit 1
+          fi
+          if ! printf '%s' "${CLI_BIN_SHA256}" | grep -Eq '^[0-9a-fA-F]{64}$'; then
+            echo "FAIL: cli_bin_sha256 must be exactly 64 hex characters" >&2
+            exit 1
+          fi
+          case "${CLI_BIN_ASSET}" in
+            https://github.com/*|https://objects.githubusercontent.com/*|https://release-assets.githubusercontent.com/*) ;;
+            *)
+              echo "FAIL: cli_bin_asset host not allowlisted (github.com / objects.githubusercontent.com / release-assets.githubusercontent.com)" >&2
+              exit 1
+              ;;
+          esac
+          if printf '%s' "${CLI_BIN_ASSET}" | grep -Eq '[^A-Za-z0-9:/._?&=%~+-]'; then
+            echo "FAIL: cli_bin_asset contains disallowed characters" >&2
+            exit 1
+          fi
+          curl -fsSL --proto '=https' --tlsv1.2 "${CLI_BIN_ASSET}" -o /tmp/openshell
+          echo "${CLI_BIN_SHA256}  /tmp/openshell" | sha256sum -c -
           chmod +x /tmp/openshell
           echo "SIQ_AS_OPENSHELL_CLI_BIN=/tmp/openshell" >> "$GITHUB_ENV"
 
@@ -61,9 +92,16 @@ jobs:
       - name: OpenShell 版本兼容矩阵检查（未配置网关时跳过）
         if: ${{ env.SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT != '' }}
         working-directory: apps/control-api
+        env:
+          LIVE_SANDBOX: ${{ inputs.live_sandbox }}
         run: |
-          if [ -n "${{ inputs.live_sandbox }}" ]; then
-            uv run python ../../scripts/openshell_compat_check.py --live --sandbox "${{ inputs.live_sandbox }}"
+          set -euo pipefail
+          if [ -n "${LIVE_SANDBOX}" ]; then
+            if ! printf '%s' "${LIVE_SANDBOX}" | grep -Eq '^[A-Za-z0-9._-]{1,128}$'; then
+              echo "FAIL: live_sandbox must match [A-Za-z0-9._-]{1,128}" >&2
+              exit 1
+            fi
+            uv run python ../../scripts/openshell_compat_check.py --live --sandbox "${LIVE_SANDBOX}"
           else
             uv run python ../../scripts/openshell_compat_check.py
           fi

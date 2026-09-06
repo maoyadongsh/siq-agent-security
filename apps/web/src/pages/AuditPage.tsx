@@ -82,7 +82,9 @@ const columns: TableColumn<AuditEvent>[] = [
 ];
 
 export default function AuditPage() {
-  const events = useApiList<AuditEvent>('/audit-events', PLACEHOLDER_EVENTS);
+  const events = useApiList<AuditEvent>('/audit-events', PLACEHOLDER_EVENTS, {
+    includeTotal: true,
+  });
 
   return (
     <section>
@@ -96,11 +98,28 @@ export default function AuditPage() {
       {events.status === 'disconnected' ? (
         <DisconnectedNotice error={events.error} onRetry={events.reload} />
       ) : null}
+      {events.coverageText ? (
+        <p className="list-coverage" role="status">
+          {events.coverageText}
+        </p>
+      ) : null}
       <SimpleTable
         columns={columns}
         rows={events.rows}
         rowKey={(e) => e.id}
       />
+      {events.hasMore ? (
+        <div className="list-more">
+          <button
+            type="button"
+            className="btn-sm"
+            disabled={events.loadingMore}
+            onClick={() => events.loadMore()}
+          >
+            {events.loadingMore ? '加载中…' : '加载更多'}
+          </button>
+        </div>
+      ) : null}
     </section>
   );
 }

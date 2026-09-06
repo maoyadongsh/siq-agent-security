@@ -215,16 +215,24 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	red := protocol.NewRedactor()
 	now := time.Now().UTC().Format(time.RFC3339)
 
-	// 收集候选清单（先走查，后读取，保证限额可控）
+	// 收集候选清单：枚举阶段即强制 MaxFiles，禁止先攒完全树再截断。
 	var foundFiles []found
 	var skippedDirs int
+	truncated := false
 	for _, raw := range sc.Roots {
+		if truncated {
+			break
+		}
 		root := strings.TrimSpace(protocol.ExpandHome(raw))
 		rootBase := strings.TrimSuffix(root, "/*")
 		err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "directory-connector: walk %s: %v\n", path, err)
 				return nil
+			}
+			if opTimeout > 0 && time.Since(start) > opTimeout {
+				truncated = true
+				return errBudgetExhausted
 			}
 			if d.IsDir() {
 				name := d.Name()
@@ -241,6 +249,10 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 						fmt.Fprintf(os.Stderr, "directory-connector: skipping %s: symlink escapes scope\n", path)
 						continue
 					}
+					if int64(len(foundFiles)) >= limits.MaxFiles {
+						truncated = true
+						return errBudgetExhausted
+					}
 					rel, _ := filepath.Rel(rootBase, path)
 					foundFiles = append(foundFiles, found{path: path, rel: rel})
 					break
@@ -248,7 +260,7 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			}
 			return nil
 		})
-		if err != nil {
+		if err != nil && !errors.Is(err, errBudgetExhausted) {
 			return protocol.EvidenceBatch{}, fmt.Errorf("walk %s: %w", root, err)
 		}
 	}
@@ -257,6 +269,7 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	batch := protocol.EvidenceBatch{
 		Candidates: []*protocol.Candidate{},
 		Evidence:   []*protocol.Evidence{},
+		Truncated:  truncated,
 	}
 	var readBytes int64
 	profiles := 0
@@ -375,11 +388,18 @@ func readFileLimited(path string, maxBytes int64) ([]byte, error) {
 	if maxBytes <= 0 {
 		return nil, errBudgetExhausted
 	}
-	f, err := os.Open(path)
+	f, err := openRegular(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
+	st, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if !st.Mode().IsRegular() {
+		return nil, errors.New("non-regular file refused after open")
+	}
 	data, err := io.ReadAll(io.LimitReader(f, maxBytes))
 	if err != nil {
 		return nil, err

@@ -1,0 +1,20 @@
+{
+  "host": "DGX Spark linux/arm64",
+  "date": "2026-09-05",
+  "platform": "hermes",
+  "binary_version": "0.1.0",
+  "toxic_exit": 3,
+  "toxic_verdict": "quarantine",
+  "official_exit": 0,
+  "official_verdict": "admit_with_conditions",
+  "grant_id": "grt-4af17a9f9719-bebf3ee8",
+  "grant_approved_by_model": false,
+  "grant_approved_by": "maoyd",
+  "grant_status": "deployed",
+  "post_grant_overreach": "tool web_fetch not granted (default deny)",
+  "verify_ok": true,
+  "verify_receipts": 3,
+  "openshell_configured": false,
+  "support_matrix_updated": false,
+  "reason_matrix_unchanged": "OpenShell gateway not configured so L3 is not claimed; ValidateMatrix still forbids supported rows until that helper and a re-sign land together"
+}

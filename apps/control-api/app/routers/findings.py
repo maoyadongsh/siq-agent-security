@@ -9,11 +9,12 @@ from __future__ import annotations
 
 from datetime import UTC
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
+from app.list_meta import apply_list_meta, clamp_limit, take_page
 from app.models import AgentAsset, Finding, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import FindingAcceptRisk, FindingOut, FindingResolve
@@ -94,12 +95,16 @@ def resolve_finding(
 
 @router.get("/api/v1/findings", response_model=list[FindingOut])
 def list_findings(
+    response: Response,
     severity: str | None = None,
     status_filter: str | None = None,
     asset_id: str | None = None,
+    cursor: str | None = None,
+    limit: int = 50,
     session: Session = Depends(get_session),
     identity: Identity = Depends(get_identity),
 ):
+    """风险列表。DEV13-E：截断元数据走响应头；稳定按 first_seen_at 游标。"""
     if asset_id:
         # 越权资产 ID 直接 404，不泄露其他租户数据（先定位后权限）
         asset = session.scalar(
@@ -115,7 +120,33 @@ def list_findings(
         query = query.where(Finding.status == status_filter)
     if asset_id:
         query = query.where(Finding.asset_id == asset_id)
-    return list(session.scalars(query.order_by(Finding.severity, Finding.first_seen_at.desc()).limit(200)))
+    query = query.order_by(Finding.first_seen_at.desc(), Finding.id)
+    if cursor:
+        from datetime import datetime as _dt
+
+        try:
+            ts, rid = cursor.split("|", 1)
+            ctime = _dt.fromisoformat(ts)
+            query = query.where(
+                (Finding.first_seen_at < ctime) | ((Finding.first_seen_at == ctime) & (Finding.id > rid))
+            )
+        except ValueError:
+            query = query.where(Finding.id > cursor)
+    page_limit = clamp_limit(limit)
+    rows = list(session.scalars(query.limit(page_limit + 1)))
+    page, truncated = take_page(rows, limit=page_limit)
+    next_cursor = None
+    if truncated and page:
+        last = page[-1]
+        next_cursor = f"{last.first_seen_at.isoformat()}|{last.id}"
+    apply_list_meta(
+        response,
+        limit=page_limit,
+        returned=len(page),
+        truncated=truncated,
+        next_cursor=next_cursor,
+    )
+    return page
 
 
 @router.post("/api/v1/findings/run-rules")

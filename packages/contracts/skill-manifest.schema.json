@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/skill-manifest.v1.json",
+  "title": "SiqAgentSecuritySkillManifest",
+  "description": "siq-agent-security Skill 发布清单（ADR-011 D1 / D5）。随 release zip 发布并被 SKILL.md 引用：模型在任何平台加载 Skill 后第一步是按本清单校验二进制哈希，再启动二进制。清单本身由发布密钥签名；支持矩阵按平台 × OS 诚实标注可达档位，无钩子平台只能 L0。",
+  "type": "object",
+  "required": ["manifest_version", "skill", "binary", "rulepack", "support_matrix", "signed_by", "signature"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": { "type": "integer", "const": 1 },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "description", "content_hash"],
+      "properties": {
+        "name": { "type": "string", "maxLength": 64, "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$" },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "pattern": "\\.$",
+          "description": "与 SKILL.md frontmatter 一致：≤60 字符、一句话、句号结尾"
+        },
+        "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "skills/siq-agent-security/ 目录（不含本清单）的规范化 sha256" },
+        "sub_skills": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["agent-asset-inventory", "skill-admission", "least-privilege-grant", "runtime-receipt"] },
+          "uniqueItems": true
+        }
+      }
+    },
+    "binary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "artifacts"],
+      "properties": {
+        "name": { "type": "string", "const": "siq-agent-security" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$" },
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["os", "arch", "sha256", "url"],
+            "properties": {
+              "os": { "type": "string", "enum": ["linux", "darwin", "windows"] },
+              "arch": { "type": "string", "enum": ["amd64", "arm64"] },
+              "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+              "url": { "type": "string", "format": "uri", "description": "release 下载地址；SKILL.md 引导脚本下载后必须比对 sha256 再执行" },
+              "bytes": { "type": ["integer", "null"], "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "rulepack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "sha256", "public_key_b64"],
+      "properties": {
+        "version": { "type": "integer", "minimum": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "public_key_b64": { "type": "string", "minLength": 40, "description": "验证规则包 Ed25519 签名的公钥（base64）" }
+      }
+    },
+    "support_matrix": {
+      "type": "array",
+      "minItems": 1,
+      "description": "每行一个平台 × OS 组合可达的档位。L1 需要安装钩子，L2 需要工具调用钩子，L3 需要 OpenShell（Linux 原生 / macOS Docker / Windows WSL2）",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["platform", "os", "tiers", "status"],
+        "properties": {
+          "platform": { "type": "string", "enum": ["openclaw", "hermes", "codebuddy", "trae", "claude_code", "codex"] },
+          "os": { "type": "string", "enum": ["linux", "darwin", "windows"] },
+          "tiers": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "enum": ["L0", "L1", "L2", "L3"] },
+            "description": "L0 审计 / L1 安装门禁 / L2 运行时回执与阻断 / L3 OpenShell 策略下发"
+          },
+          "status": { "type": "string", "enum": ["supported", "experimental", "audit_only"] },
+          "requires": { "type": "array", "items": { "type": "string" }, "description": "如 docker-desktop / wsl2 / allowUntrustedFrontmatterHooks" },
+          "note": { "type": ["string", "null"], "maxLength": 200 }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "tiers": { "contains": { "const": "L2" } } } },
+            "then": { "properties": { "status": { "enum": ["supported", "experimental"] } } }
+          },
+          {
+            "if": { "properties": { "status": { "const": "audit_only" } } },
+            "then": { "properties": { "tiers": { "items": { "const": "L0" } } } }
+          },
+          {
+            "if": { "properties": { "tiers": { "contains": { "const": "L3" } }, "os": { "enum": ["darwin", "windows"] } } },
+            "then": { "properties": { "requires": { "minItems": 1 } }, "required": ["requires"] }
+          }
+        ]
+      }
+    },
+    "signed_by": { "type": "string", "minLength": 40, "description": "发布密钥公钥（base64）；v1 为仓内 Ed25519 本地信任根，OMS / Sigstore 在路线图" },
+    "signature": { "type": "string", "pattern": "^[0-9a-f]{128}$", "description": "对本清单除 signature 外规范化 JSON 的 Ed25519 签名（hex）" }
+  }
+}

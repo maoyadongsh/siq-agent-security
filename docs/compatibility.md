@@ -80,8 +80,23 @@
 - `threat-obf-base64-blob` 等基于 240+ 字符连续 base64 的启发式规则，理论上可被跨行拆分绕过——静态规则的固有局限，非本轮范围。
 - Connector 侧发现结果的最终风险研判仍由控制面 `app/threat_analysis.py` 静态规则引擎完成；Connector 自身只做证据采集与脱敏，不做风险判定。
 
+## siq-agent-security 平台 × OS × 档位矩阵（ADR-011，2026-09-04 文档核实，未实测）
+
+档位：L0 审计（盘点 + 准入 + Skill Card + 控制台）/ L1 安装门禁 / L2 运行时回执与阻断 / L3 OpenShell 策略下发。取值依据各平台 2026-09 公开文档；**机器可读事实源是 `skills/siq-agent-security/skill-manifest.json` 的 `support_matrix`**（当前快照全部 `experimental` 或 Trae `audit_only`，无 `supported` 行）。下表是文档核实的能力上限，不是已归档 E2E。
+
+| 平台 | 安装钩子 | 工具调用钩子 | Linux | macOS | Windows | 备注 |
+| --- | --- | --- | --- | --- | --- | --- |
+| OpenClaw | `security.installPolicy.exec`（allow/warn/block，fail-closed） | 插件 `before_tool_call`（block / 改参 / requireApproval，15s 超时 fail-closed） | L0–L3 | L0–L2；L3 需 Docker Desktop | L0–L2；L3 需 WSL2（Experimental） | P0 |
+| Hermes | 无原生装前钩子；包装 `hermes skills install` 先 admit | 插件 `pre_tool_call` 返回 block | L0–L3 | L0–L2；L3 需 Docker | L0–L2；L3 需 WSL2 | P0；本地放入 `~/.hermes/skills` 由 inventory 周期扫描补 L1 |
+| WorkBuddy / CodeBuddy | 无 | 全局 `settings.json` `PreToolUse`（需用户确认写入）；Skill frontmatter hooks 仅 `context: fork` 且默认关闭 | L0–L2 | L0–L2 | L0–L2 | P1；L3 未规划 |
+| Trae / TraeWork | 无 | 无 | L0 | L0 | L0 | P2；控制台必须显示「审计模式，无法阻断」 |
+| Claude Code | 无 | hooks | L0–L2 | L0–L2 | L0–L2 | P2，非本轮 |
+| Codex | `requirements.toml` MCP allowlist（管理面） | managed hooks | L0–L2 | L0–L2 | L0–L2 | P2，非本轮 |
+
+OpenShell 本身：Linux 原生 Landlock/seccomp；macOS 官方支持但内核模块跑在 Docker Desktop Linux VM；Windows 为 WSL2 + Docker Desktop，官方标 Experimental。因此 macOS/Windows 的 L3 在 `skill-manifest` 中必须填写 `requires`（schema 强制）。
+
 ## 版本兼容 CI（P2）
 
 - `scripts/openshell_compat_matrix.json`：机器可读兼容矩阵，逐版本记录 `probe()`/读回可探测能力的期望值（`dynamic_network_update`、`static_filesystem`、`static_process`、`landlock`、`interceptor`、`provider_credential_injection`、`revision_support`、`sandbox_list_decodable`），取值来源为本文上文 2026-08-13 实测结论。
 - `scripts/openshell_compat_check.py`：在 `apps/control-api` 下经 `uv run python ../../scripts/openshell_compat_check.py` 运行；按 `cli_backend` 相同环境变量约定（`SIQ_AS_OPENSHELL_CLI_BIN` + `SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT`，或 `SIQ_AS_OPENSHELL_ENV_SH`）连接真实网关，`OpenShellCliBackend().probe()` 取真实版本与能力后与矩阵比对，不一致项非零退出并逐项打印差异；未配置网关时打印 "SKIP: 未配置网关" 以 0 退出。`--live --sandbox <name>` 追加真实 policy set → 读回验证 → 回滚闭环 fixture。
-- `.github/workflows/openshell-compat.yml`：每周一定时 + `workflow_dispatch`（可注入 gateway_endpoint / cli_bin / cli_bin_asset / live_sandbox）。真实网关需 self-hosted runner 或预置环境；未配置 secret 时检查步骤自动跳过，不会产生红色失败。
+- `.github/workflows/openshell-compat.yml`：每周一定时 + `workflow_dispatch`（可注入 gateway_endpoint / cli_bin / cli_bin_asset + **cli_bin_sha256** / live_sandbox）。下载 URL 与摘要经 `env:` 传递；仅允许 GitHub 发布域；`sha256sum -c` 校验；`live_sandbox` 经字符集校验。真实网关需 self-hosted runner 或预置环境；未配置 secret 时检查步骤自动跳过，不会产生红色失败。

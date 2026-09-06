@@ -279,6 +279,21 @@ func TestCollectSymlinkEscape(t *testing.T) {
 	}
 }
 
+func TestReadFileLimitedRefusesSymlink(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "real.json")
+	link := filepath.Join(dir, buddiesFileName)
+	if err := os.WriteFile(target, []byte(`{"buddies":[]}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("symlink: %v", err)
+	}
+	if _, err := readFileLimited(link, 1<<20); err == nil {
+		t.Fatal("DEV10-I: symlink path must not be read via openRegular")
+	}
+}
+
 func TestCollectByteBudget(t *testing.T) {
 	root := t.TempDir()
 	install := filepath.Join(root, ".workbuddy")

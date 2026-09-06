@@ -19,7 +19,10 @@ export default function DisconnectedNotice({
   return (
     <div className="notice" role="status">
       <p className="notice-title">
-        未连接 — 控制面暂不可达，以下展示安全示例数据
+        未连接 — 控制面暂不可达
+        {import.meta.env.VITE_DEMO_PLACEHOLDERS === 'true'
+          ? '，以下为显式演示占位数据'
+          : '，不展示示例业务数据'}
       </p>
       {error ? <p className="notice-detail">{error}</p> : null}
       {children ? <p className="notice-detail">{children}</p> : null}

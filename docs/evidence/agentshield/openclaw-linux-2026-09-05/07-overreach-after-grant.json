@@ -1,0 +1,9 @@
+{
+  "http_status": 200,
+  "via": "plugin_shaped POST /v1/decide (OpenClaw before_tool_call body)",
+  "decide": {
+    "action": "deny",
+    "reason": "tool web_fetch not granted (default deny)",
+    "receipt_id": "rcp-e4c1903be265-141556.907815"
+  }
+}

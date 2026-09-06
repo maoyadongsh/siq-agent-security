@@ -14,7 +14,7 @@ from datetime import datetime
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models import AgentAsset, Environment, Evidence, Finding, PermissionFact
+from app.models import AgentAsset, Environment, Evidence, Finding, PermissionFact, new_id
 
 
 @dataclass(frozen=True)
@@ -223,6 +223,7 @@ def upsert_findings(session: Session, tenant_id: str, results: list[RuleResult])
             updated += 1
             continue
         finding = Finding(
+            id=new_id("fnd"),
             tenant_id=tenant_id,
             rule_id=r.rule_id,
             rule_version=1,
@@ -246,16 +247,18 @@ def upsert_findings(session: Session, tenant_id: str, results: list[RuleResult])
             resource_id=finding.id,
             summary={"rule_id": r.rule_id, "severity": r.severity},
         )
+        payload = {
+            "finding_id": finding.id,
+            "rule_id": r.rule_id,
+            "severity": r.severity,
+        }
+        if r.asset_id:
+            payload["asset_id"] = r.asset_id
         emit_event(
             session,
             tenant_id,
             "agent.finding.opened.v1",
-            {
-                "finding_id": finding.id,
-                "rule_id": r.rule_id,
-                "severity": r.severity,
-                "asset_id": r.asset_id,
-            },
+            payload,
             resource_ref=finding.id,
         )
         created += 1

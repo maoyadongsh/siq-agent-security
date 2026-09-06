@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"siq-agent-security/edge/agent/protocol"
 )
@@ -52,6 +54,39 @@ func TestValidateScopeSafetyAcceptsValid(t *testing.T) {
 	}
 	if err := protocol.ValidateScopeSafety(&protocol.Scope{Roots: []string{dir + "/*"}}); err != nil {
 		t.Errorf("trailing glob root: %v", err)
+	}
+}
+
+// TestValidateScopeSafetyRejectsSymlinkRoot: DEV10 / M-E2 — a scope root (or
+// trailing-/* match) that is a symlink must be refused even when the target
+// is an existing directory (Stat would have accepted it).
+func TestValidateScopeSafetyRejectsSymlinkRoot(t *testing.T) {
+	dir := t.TempDir()
+	real := filepath.Join(dir, "real")
+	if err := os.Mkdir(real, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	link := filepath.Join(dir, "link-root")
+	if err := os.Symlink(real, link); err != nil {
+		t.Skipf("symlink: %v", err)
+	}
+	if err := protocol.ValidateScopeSafety(&protocol.Scope{Roots: []string{link}}); err == nil {
+		t.Fatal("symlink scope root must be rejected")
+	} else if !strings.Contains(err.Error(), "symlink") {
+		t.Fatalf("error should mention symlink, got %v", err)
+	}
+
+	// Glob parent/* where the only match is a symlink dir.
+	parent := filepath.Join(dir, "glob-parent")
+	if err := os.Mkdir(parent, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	childLink := filepath.Join(parent, "profiles")
+	if err := os.Symlink(real, childLink); err != nil {
+		t.Fatal(err)
+	}
+	if err := protocol.ValidateScopeSafety(&protocol.Scope{Roots: []string{parent + "/*"}}); err == nil {
+		t.Fatal("trailing glob matching only symlink dirs must be rejected")
 	}
 }
 
@@ -108,6 +143,42 @@ func TestErrorCodeMapping(t *testing.T) {
 	}
 	if codeOf(errors.New("boom")) != "internal_error" {
 		t.Errorf("codeOf(generic)=%q", codeOf(errors.New("boom")))
+	}
+}
+
+// TestPerOpDeadlineKillsHungConnector：父进程必须独立强制 per-op 超时（M-E1），
+// 不能只靠传给子进程的环境变量。挂起 Connector 须在 Timeout 内返回 ErrTimeout，
+// 并关闭连接以便后续任务继续。
+func TestPerOpDeadlineKillsHungConnector(t *testing.T) {
+	dir := t.TempDir()
+	bin := filepath.Join(dir, "hang-connector")
+	script := "#!/bin/sh\n# hang in-process (exec) so Kill reaps the sleeper; never emit NDJSON\nIFS= read -r _ || exit 0\nexec sleep 3600\n"
+	if err := os.WriteFile(bin, []byte(script), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	ctx := context.Background()
+	c, err := NewSubprocessConnector(ctx, bin, SubprocessOptions{
+		Name:    "hang",
+		Timeout: 250 * time.Millisecond,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer c.Close()
+
+	start := time.Now()
+	_, err = c.Describe(ctx)
+	elapsed := time.Since(start)
+	if !errors.Is(err, ErrTimeout) {
+		t.Fatalf("hung connector must time out, got %v", err)
+	}
+	if elapsed > 3*time.Second {
+		t.Fatalf("parent deadline too slow: %s (must not wait on child sleep)", elapsed)
+	}
+
+	_, err = c.Health(ctx)
+	if !errors.Is(err, ErrConnectorClosed) {
+		t.Fatalf("after timeout connector must be closed, got %v", err)
 	}
 }
 

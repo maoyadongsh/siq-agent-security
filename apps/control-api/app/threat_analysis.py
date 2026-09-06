@@ -286,6 +286,44 @@ def _python_ast_checks(text: str, is_python_hint: bool = False) -> list[RuleMatc
 # 入口
 # ---------------------------------------------------------------------------
 
+def _scan_lines(text: str, detected: str) -> list[tuple[int, str]]:
+    """Yield (1-based start line, scan text).
+
+    - shell: join physical lines ending with ``\\`` (POSIX continuation, H5a).
+    - powershell: join physical lines ending with `` ` `` (PS continuation, DEV06-D).
+    - shell and powershell: also join when the next physical line starts with ``|``
+      after optional whitespace (DEV06-E pseudo pipe; no embedded newline so
+      patterns that forbid ``\\n`` still match).
+    - other types: physical lines only (Python ``\\`` at EOL must not join).
+    """
+    physical = text.splitlines()  # Unicode LS/PS/NEL etc. (DEV06-G / M-D2); Go mirrors
+    if detected == "shell":
+        cont = "\\"
+    elif detected == "powershell":
+        cont = "`"
+    else:
+        return list(enumerate(physical, 1))
+    out: list[tuple[int, str]] = []
+    i = 0
+    while i < len(physical):
+        start = i + 1
+        buf = physical[i]
+        i += 1
+        while i < len(physical):
+            if buf.endswith(cont):
+                buf = buf[: -len(cont)] + physical[i]
+                i += 1
+                continue
+            nxt = physical[i]
+            if nxt.lstrip(" \t").startswith("|"):
+                buf = buf.rstrip(" \t") + nxt.lstrip(" \t")
+                i += 1
+                continue
+            break
+        out.append((start, buf))
+    return out
+
+
 def analyze(
     content: bytes,
     filename: str | None = None,
@@ -297,9 +335,8 @@ def analyze(
     text = content.decode("utf-8", errors="replace")
 
     matches: list[RuleMatch] = []
-    lines = text.splitlines()
     for rule in _RULES:
-        for lineno, line in enumerate(lines, 1):
+        for lineno, line in _scan_lines(text, detected):
             hit = next((pat.search(line) for pat in rule.patterns if pat.search(line)), None)
             if hit is not None:
                 matches.append(

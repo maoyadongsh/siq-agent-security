@@ -16,9 +16,24 @@ from ipaddress import ip_address
 from pathlib import Path
 from urllib.parse import urlparse
 
+# Edge 注册码 TTL：正数秒；上限 7 天（防误配成长效码）
+DEFAULT_ENROLLMENT_TTL_SECONDS = 900
+MIN_ENROLLMENT_TTL_SECONDS = 60
+MAX_ENROLLMENT_TTL_SECONDS = 7 * 24 * 3600
+
 
 def _bool(name: str, default: bool = False) -> bool:
     return os.getenv(name, "1" if default else "0").lower() in {"1", "true", "yes"}
+
+
+def clamp_enrollment_ttl(raw: int) -> int:
+    """DEV11-C / M-P5f：启动期校验 enrollment TTL 为正且有上限。"""
+    if raw < MIN_ENROLLMENT_TTL_SECONDS or raw > MAX_ENROLLMENT_TTL_SECONDS:
+        raise ValueError(
+            "SIQ_AS_ENROLLMENT_TTL_SECONDS 必须在 "
+            f"[{MIN_ENROLLMENT_TTL_SECONDS}, {MAX_ENROLLMENT_TTL_SECONDS}] 秒内，收到 {raw}"
+        )
+    return raw
 
 
 @dataclass(frozen=True)
@@ -28,6 +43,7 @@ class Settings:
     oidc_jwks_url: str | None
     oidc_issuer: str | None
     jwt_audience: str
+    jwks_ttl_seconds: float
     # 生产强制：dev 模式与 SQLite 必须显式开启，否则拒绝启动
     allow_sqlite: bool
     # Edge 注册码与任务默认 TTL
@@ -37,6 +53,10 @@ class Settings:
     heartbeat_stale_seconds: int
     # 每租户 pending 扫描任务上限（威胁 T19：扫描风暴 DoS）
     scan_quota_per_tenant: int
+    # Edge 注册限速（DEV11-E）：按业务键，不按源 IP
+    register_rate_limit: int
+    enrollment_create_rate_limit: int
+    register_rate_window_seconds: int
     # 控制面任务签名：生产只能由 Secret Manager 注入；dev 文件必须位于仓库外。
     task_signing_key_seed: str | None
     task_signing_key_file: str | None
@@ -68,6 +88,25 @@ def load_settings() -> Settings:
     oidc_jwks_url = os.getenv("SIQ_AS_OIDC_JWKS_URL") or None
     if not dev_mode and not oidc_jwks_url:
         raise RuntimeError("生产模式必须配置 SIQ_AS_OIDC_JWKS_URL（RS256/JWKS）")
+    oidc_issuer = os.getenv("SIQ_AS_OIDC_ISSUER") or None
+    if not dev_mode and not oidc_issuer:
+        raise RuntimeError("生产模式必须配置 SIQ_AS_OIDC_ISSUER")
+
+    jwt_audience_raw = os.getenv("SIQ_AS_JWT_AUDIENCE")
+    if not dev_mode:
+        # DEV08-C：生产必须显式配置 audience，禁止静默默认冒充已核对 IdP 合同。
+        if not jwt_audience_raw or not jwt_audience_raw.strip():
+            raise RuntimeError("生产模式必须配置 SIQ_AS_JWT_AUDIENCE")
+        jwt_audience = jwt_audience_raw.strip()
+    else:
+        jwt_audience = (jwt_audience_raw or "siq-agent-security").strip() or "siq-agent-security"
+
+    from app.jwks import DEFAULT_TTL_SECONDS, clamp_jwks_ttl
+
+    try:
+        jwks_ttl_seconds = clamp_jwks_ttl(float(os.getenv("SIQ_AS_JWKS_TTL_SECONDS", str(DEFAULT_TTL_SECONDS))))
+    except ValueError as exc:
+        raise RuntimeError(str(exc)) from exc
 
     task_signing_key_seed = os.getenv("SIQ_AS_TASK_SIGNING_KEY_SEED") or None
     if task_signing_key_seed:
@@ -119,17 +158,28 @@ def load_settings() -> Settings:
             ):
                 raise RuntimeError(f"SIQ_AS_CORS_ORIGINS 包含不安全来源: {origin}")
 
+    try:
+        enrollment_ttl_seconds = clamp_enrollment_ttl(
+            int(os.getenv("SIQ_AS_ENROLLMENT_TTL_SECONDS", str(DEFAULT_ENROLLMENT_TTL_SECONDS)))
+        )
+    except ValueError as exc:
+        raise RuntimeError(str(exc)) from exc
+
     return Settings(
         database_url=database_url,
         dev_mode=dev_mode,
         oidc_jwks_url=oidc_jwks_url,
-        oidc_issuer=os.getenv("SIQ_AS_OIDC_ISSUER"),
-        jwt_audience=os.getenv("SIQ_AS_JWT_AUDIENCE", "siq-agent-security"),
+        oidc_issuer=oidc_issuer,
+        jwt_audience=jwt_audience,
+        jwks_ttl_seconds=jwks_ttl_seconds,
         allow_sqlite=allow_sqlite,
-        enrollment_ttl_seconds=int(os.getenv("SIQ_AS_ENROLLMENT_TTL_SECONDS", "900")),
+        enrollment_ttl_seconds=enrollment_ttl_seconds,
         edge_task_ttl_seconds=int(os.getenv("SIQ_AS_EDGE_TASK_TTL_SECONDS", "3600")),
         heartbeat_stale_seconds=int(os.getenv("SIQ_AS_HEARTBEAT_STALE_SECONDS", "300")),
         scan_quota_per_tenant=int(os.getenv("SIQ_AS_SCAN_QUOTA_PER_TENANT", "50")),
+        register_rate_limit=int(os.getenv("SIQ_AS_REGISTER_RATE_LIMIT", "30")),
+        enrollment_create_rate_limit=int(os.getenv("SIQ_AS_ENROLLMENT_CREATE_RATE_LIMIT", "30")),
+        register_rate_window_seconds=int(os.getenv("SIQ_AS_REGISTER_RATE_WINDOW_SECONDS", "60")),
         task_signing_key_seed=task_signing_key_seed,
         task_signing_key_file=task_signing_key_file,
         cors_origins=cors_origins,

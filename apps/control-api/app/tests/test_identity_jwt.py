@@ -8,6 +8,69 @@ from fastapi import HTTPException
 from app.security import Identity, _identity_from_claims
 
 
+def test_refresh_token_type_rejected_on_resource_identity():
+    with pytest.raises(HTTPException) as exc_info:
+        _identity_from_claims(
+            {
+                "sub": "user-1",
+                "tenant_id": "default",
+                "type": "refresh",
+                "permissions": ["*"],
+            }
+        )
+    assert exc_info.value.status_code == 401
+    assert exc_info.value.detail == "token_type_rejected"
+
+
+def test_id_token_and_unknown_types_rejected():
+    for typ in ("id_token", "offline", "foobar"):
+        with pytest.raises(HTTPException) as exc_info:
+            _identity_from_claims(
+                {
+                    "sub": "user-1",
+                    "tenant_id": "default",
+                    "type": typ,
+                    "permissions": ["agent:read"],
+                }
+            )
+        assert exc_info.value.detail == "token_type_rejected", typ
+
+
+def test_missing_type_defaults_to_user():
+    identity = _identity_from_claims(
+        {"sub": "user-1", "tenant_id": "default", "permissions": ["agent:read"]}
+    )
+    assert identity.identity_type == "user"
+
+
+def test_access_token_type_maps_to_user():
+    identity = _identity_from_claims(
+        {
+            "sub": "user-1",
+            "tenant_id": "default",
+            "type": "access",
+            "role_codes": ["viewer"],
+            "permissions": [],
+        }
+    )
+    assert identity.identity_type == "user"
+
+
+def test_service_token_type_maps_to_service_without_role_inflation():
+    identity = _identity_from_claims(
+        {
+            "sub": "svc-batch",
+            "tenant_id": "default",
+            "type": "service",
+            "permissions": ["agent:read"],
+            "role_codes": [],
+        }
+    )
+    assert identity.identity_type == "service"
+    assert identity.has_permission("agent:read")
+    assert not identity.has_permission("env:manage")
+
+
 def test_iam_admin_star_permission_is_wildcard():
     identity = _identity_from_claims(
         {

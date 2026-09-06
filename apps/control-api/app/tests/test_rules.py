@@ -820,19 +820,24 @@ def test_provider_classify_happy_path(monkeypatch):
         assert _j.loads(request.content)["temperature"] == 0  # 可追溯重跑（§11.3）
         return httpx.Response(200, json=_provider_ok_response(output))
 
-    result = provider_classify(
+    result, trace = provider_classify(
         AgentAsset(tenant_id="t", name="legal-advisor", framework="hermes"),
         transport=httpx.MockTransport(handler),
     )
     assert result["is_agent_candidate"] is True
     assert result["role"]["value"] == "legal-advisor"
+    assert trace.temperature == 0.0
+    assert trace.seed is None  # 未发送，禁止编造
+    assert trace.model_ref
+    assert trace.latency_ms is not None
+    assert trace.input_summary["framework"] == "hermes"
 
 
 def test_provider_classify_invalid_output_fails_closed(monkeypatch):
-    """输出缺字段/role 结构非法 → RuntimeError（绝不静默回退）。"""
+    """输出缺字段/role 结构非法 → ClassificationContractError（绝不静默回退）。"""
     import httpx
 
-    from app.classification import provider_classify
+    from app.classification import ClassificationContractError, provider_classify
     from app.models import AgentAsset
 
     monkeypatch.setenv("SIQ_AS_CLASSIFIER_ENDPOINT", "https://model.example.com/v1")
@@ -841,7 +846,7 @@ def test_provider_classify_invalid_output_fails_closed(monkeypatch):
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(200, json=_provider_ok_response(bad))
 
-    with pytest.raises(RuntimeError, match="缺字段"):
+    with pytest.raises(ClassificationContractError, match="schema_invalid"):
         provider_classify(
             AgentAsset(tenant_id="t", name="x", framework="hermes"),
             transport=httpx.MockTransport(handler),
@@ -849,10 +854,10 @@ def test_provider_classify_invalid_output_fails_closed(monkeypatch):
 
 
 def test_provider_unreachable_fails_closed(monkeypatch):
-    """Provider 不可达 → RuntimeError（分类端点如实 502/记录失败，不静默降级）。"""
+    """Provider 不可达 → ClassificationContractError（分类端点如实记录失败，不静默降级）。"""
     import httpx
 
-    from app.classification import provider_classify
+    from app.classification import ClassificationContractError, provider_classify
     from app.models import AgentAsset
 
     monkeypatch.setenv("SIQ_AS_CLASSIFIER_ENDPOINT", "https://model.example.com/v1")
@@ -860,11 +865,12 @@ def test_provider_unreachable_fails_closed(monkeypatch):
     def handler(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("down")
 
-    with pytest.raises(RuntimeError, match="不可达"):
+    with pytest.raises(ClassificationContractError) as ei:
         provider_classify(
             AgentAsset(tenant_id="t", name="x", framework="hermes"),
             transport=httpx.MockTransport(handler),
         )
+    assert ei.value.reason == "provider_unreachable"
 
 
 def test_provider_failure_persistence_contains_only_error_reference(monkeypatch):
@@ -872,7 +878,7 @@ def test_provider_failure_persistence_contains_only_error_reference(monkeypatch)
 
     monkeypatch.setenv("SIQ_AS_CLASSIFIER", "provider")
 
-    def fail_provider(asset):
+    def fail_provider(asset, transport=None):
         raise RuntimeError("Authorization: Bearer should-never-persist")
 
     monkeypatch.setattr("app.classification.provider_classify", fail_provider)
@@ -882,8 +888,13 @@ def test_provider_failure_persistence_contains_only_error_reference(monkeypatch)
         session.flush()
         run = classify_asset(session, "tnt-A", asset)
         session.commit()
-        assert "should-never-persist" not in str(run.output)
-        assert "RuntimeError:" in run.output["unresolved_questions"][0]
+        session.refresh(asset)
+        assert asset.status == "needs_review"
+        blob = str(run.output)
+        assert "should-never-persist" not in blob
+        assert "Authorization" not in blob
+        assert run.output["unresolved_questions"][0].startswith("classification_degraded:")
+        assert run.output["degradation_reason"]
 
 
 def test_get_scan_task_status(client, tenant_a, tenant_b, env_a):

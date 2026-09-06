@@ -10,6 +10,8 @@
 //     records only name+size.
 //   - apiKey values are environment-variable references and are redacted anyway.
 //   - NO default scope: explicit authorized roots required.
+//   - openclaw.json must be a real file under the authorized root: final-path
+//     symlinks are refused (DEV10 / M-E6); only controlled fields are extracted.
 package main
 
 import (
@@ -372,11 +374,18 @@ func readFileLimited(path string, maxBytes int64) ([]byte, error) {
 	if maxBytes <= 0 {
 		return nil, errBudgetExhausted
 	}
-	f, err := os.Open(path)
+	f, err := openRegular(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
+	st, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if !st.Mode().IsRegular() {
+		return nil, errors.New("non-regular file refused after open")
+	}
 	return io.ReadAll(io.LimitReader(f, maxBytes))
 }
 

@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"siq-agent-security/edge/agent/canon"
 	"siq-agent-security/edge/agent/protocol"
 )
 
@@ -33,10 +34,10 @@ type ScanRequest struct {
 
 // VerifyTaskSignature verifies the control-plane Ed25519 signature over the
 // canonical task envelope {task_id, task_type, environment_id, payload,
-// expires_at}. Canonicalization matches the control plane (app/signing.py):
-// JSON object with sorted keys, compact separators. Payload is re-normalized
-// through map[string]any so key order cannot break verification.
-// Fail closed: unsigned or unverifiable tasks are rejected (threat T5).
+// expires_at}. Canonicalization matches apps/control-api/app/signing.py:
+// json.dumps(..., sort_keys=True, separators=(",", ":")) — CPython default
+// ensure_ascii=True (not evidence_signing.canonical_json). Payload numbers are
+// decoded with json.Number so 100 vs 100.0 survive. Fail closed (threat T5).
 func VerifyTaskSignature(t *Task, controlPlanePublicKeyB64 string) error {
 	if t.Signature == "" {
 		return errors.New("task signature missing; refusing unsigned task (fail closed)")
@@ -50,7 +51,8 @@ func VerifyTaskSignature(t *Task, controlPlanePublicKeyB64 string) error {
 	}
 	var payload any
 	if len(t.Payload) > 0 && string(t.Payload) != "null" {
-		if err := json.Unmarshal(t.Payload, &payload); err != nil {
+		payload, err = canon.Decode(t.Payload)
+		if err != nil {
 			return fmt.Errorf("task payload is not valid JSON: %w", err)
 		}
 	} else {
@@ -63,9 +65,9 @@ func VerifyTaskSignature(t *Task, controlPlanePublicKeyB64 string) error {
 		"payload":        payload,
 		"expires_at":     t.ExpiresAt,
 	}
-	canonical, err := json.Marshal(envelope) // map 键自动排序，与 Python sort_keys=True 一致
+	canonical, err := canon.Marshal(envelope)
 	if err != nil {
-		return err
+		return fmt.Errorf("task envelope canonicalization failed: %w", err)
 	}
 	sig, err := base64.StdEncoding.DecodeString(t.Signature)
 	if err != nil {
@@ -77,21 +79,50 @@ func VerifyTaskSignature(t *Task, controlPlanePublicKeyB64 string) error {
 	return nil
 }
 
-// Expired reports whether the task's deadline has passed. An unparseable
-// deadline is treated as expired (fail closed).
+// TaskExpiryLeeway is the allowed clock skew when comparing now to expires_at
+// (DEV10 / M-E5). Local clocks slightly ahead of the control plane still accept
+// the task until expires_at+leeway; missing/unparseable deadlines never get a
+// grace window.
+const TaskExpiryLeeway = 60 * time.Second
+
+// Expired reports whether the task must not execute.
+//
+// Fail-closed rules (DEV10):
+//   - empty expires_at → expired (no unlimited legacy validity);
+//   - unparseable expires_at → expired;
+//   - now after expires_at+TaskExpiryLeeway → expired.
 func (t *Task) Expired(now time.Time) bool {
-	if t.ExpiresAt == "" {
-		return false
+	return t.ExpiryError(now) != nil
+}
+
+// ExpiryError returns a stable reason when the task is past its deadline, or
+// nil when execution is still allowed under TaskExpiryLeeway.
+func (t *Task) ExpiryError(now time.Time) error {
+	if strings.TrimSpace(t.ExpiresAt) == "" {
+		return errors.New("task expires_at missing; refusing task without deadline (fail closed)")
 	}
-	ts, err := time.Parse(time.RFC3339, t.ExpiresAt)
+	ts, err := parseTaskTime(t.ExpiresAt)
 	if err != nil {
-		// 控制面下发 naive UTC（无时区后缀），回退本地格式按 UTC 解释
-		ts, err = time.Parse("2006-01-02T15:04:05.999999", t.ExpiresAt)
+		return fmt.Errorf("task expires_at unparseable; refusing task (fail closed): %w", err)
 	}
+	deadline := ts.Add(TaskExpiryLeeway)
+	if now.After(deadline) {
+		return fmt.Errorf("task expired at %s (leeway %s)", ts.UTC().Format(time.RFC3339), TaskExpiryLeeway)
+	}
+	return nil
+}
+
+func parseTaskTime(s string) (time.Time, error) {
+	ts, err := time.Parse(time.RFC3339, s)
+	if err == nil {
+		return ts, nil
+	}
+	// Control plane may emit naive UTC (no zone suffix); interpret as UTC.
+	ts, err = time.Parse("2006-01-02T15:04:05.999999", s)
 	if err != nil {
-		return true // 不可解析视为过期（fail closed）
+		return time.Time{}, err
 	}
-	return now.After(ts)
+	return ts.UTC(), nil
 }
 
 // Runner executes control-plane tasks on this device.
@@ -103,6 +134,10 @@ type Runner struct {
 // Execute runs one task and returns the receipt to post to the control plane.
 // Errors returned by Execute are infrastructure failures; task-level failures
 // are encoded in the receipt (status/error_code) so they can be reported.
+//
+// DEV10 / M-E5: after signature and expiry checks, a prior local outcome with
+// the same content digest is reused (no connector re-run). A prior outcome
+// with a different digest fails closed as task_content_conflict.
 func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 	rcpt := &Receipt{
 		TaskID:         t.TaskID,
@@ -115,16 +150,28 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 		rcpt.ErrorMessage = err.Error()
 		return rcpt, nil
 	}
-	if t.Expired(time.Now()) {
+	if err := t.ExpiryError(time.Now()); err != nil {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = "expired"
-		rcpt.ErrorMessage = "task expired before execution"
+		rcpt.ErrorMessage = err.Error()
 		return rcpt, nil
+	}
+	if reused, err := LookupExecReuse(t); err != nil {
+		rcpt.Status = "failed"
+		rcpt.ErrorCode = "task_content_conflict"
+		rcpt.ErrorMessage = err.Error()
+		return rcpt, nil
+	} else if reused != nil {
+		reused.DeviceIdentity = r.State.DeviceIdentity
+		reused.CompletedAt = time.Now().UTC().Format(time.RFC3339)
+		log.Printf("task %s: reusing prior local outcome (content digest match)", t.TaskID)
+		return reused, nil
 	}
 	if t.TaskType != "scan" {
 		rcpt.Status = "failed" // 控制面回执枚举仅 success|failed
 		rcpt.ErrorCode = "unsupported_task_type"
 		rcpt.ErrorMessage = fmt.Sprintf("task type %q is not supported", t.TaskType)
+		_ = SaveExecLedgerRecord(t, rcpt)
 		return rcpt, nil
 	}
 	var sr ScanRequest
@@ -133,6 +180,7 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 			rcpt.Status = "failed"
 			rcpt.ErrorCode = "invalid_payload"
 			rcpt.ErrorMessage = err.Error()
+			_ = SaveExecLedgerRecord(t, rcpt)
 			return rcpt, nil
 		}
 	}
@@ -144,6 +192,7 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = protocol.CodeUnsupported
 		rcpt.ErrorMessage = err.Error()
+		_ = SaveExecLedgerRecord(t, rcpt)
 		return rcpt, nil
 	}
 	out, err := r.runScan(ctx, sr, bin)
@@ -151,6 +200,7 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = codeOf(err)
 		rcpt.ErrorMessage = err.Error()
+		_ = SaveExecLedgerRecord(t, rcpt)
 		return rcpt, nil
 	}
 	rcpt.Status = "success"
@@ -164,6 +214,10 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 	}
 	if len(out.candidates) == 0 && len(out.evidence) == 0 && len(out.permissions) == 0 {
 		// 空批是正常结果（如无标签容器）：跳过上传，回执记录 0 发现
+		if err := SavePendingReceipt(rcpt); err != nil {
+			log.Printf("task %s: pending receipt journal failed: %v", t.TaskID, err)
+		}
+		_ = SaveExecLedgerRecord(t, rcpt)
 		return rcpt, nil
 	}
 	signer, err := loadSigner(r.State)
@@ -171,14 +225,21 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = "signer_unavailable"
 		rcpt.ErrorMessage = err.Error()
+		_ = SaveExecLedgerRecord(t, rcpt)
 		return rcpt, nil
 	}
 	if err := r.Client.UploadBatch(ctx, t.TaskID, out.candidates, out.evidence, out.permissions, signer); err != nil {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = "batch_upload_failed"
 		rcpt.ErrorMessage = err.Error()
+		_ = SaveExecLedgerRecord(t, rcpt)
 		return rcpt, nil
 	}
+	// R04：上传成功后、回执提交前落盘，崩溃后可 DrainPendingReceipts 恢复。
+	if err := SavePendingReceipt(rcpt); err != nil {
+		log.Printf("task %s: pending receipt journal failed: %v", t.TaskID, err)
+	}
+	_ = SaveExecLedgerRecord(t, rcpt)
 	return rcpt, nil
 }
 

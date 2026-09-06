@@ -4,11 +4,15 @@
 
 领域信封 `event-envelope.schema.json` 与 Document Engine 的同名文件**不是**同一 schema（一边 integer `schema_version`，一边 document 专用 enum）。共享字段以 `event-envelope-core.schema.json` 为权威，同步命令见 Document Engine `packages/contracts/json-schema/events/README.md`。
 
-## 合同文件清单（6 份）
+## 合同文件清单（10 份）
 
 | 文件 | 内容 | 关键字段/约定 | 对应设计文档 |
 | --- | --- | --- | --- |
-| `candidate.schema.json` | 发现阶段的智能体候选 | `evidence_ids` 必填（minItems 1）、确认/驳回生命周期 | §10.2 / §10.5 |
+| `admission.schema.json` | Skill 安装前准入结论（本机门禁） | 三值 `verdict`；`findings.disposition`（quarantine / declare / info）与 verdict 用 `if/then` 锁定自洽；`declared_facts` 只能 `state=declared`、`effect=allow`；`over_limit` / `symlink_escape` 强制 quarantine；`content_hash` 用于 tool pinning | ADR-011、设计方案 v1 §4.1 |
+| `grant.schema.json` | 最小权限签发 | `default_effect` 恒为 `deny`；`approved_by.actor_type` 只允许 `human`；approved 及之后禁止 `unresolved` 重叠；`effective` 必须带 `effective_readback` 与逐条 `authority_revision`/`readback_evidence_id`；按 `platform` 强制输出 `hermes_toolset_allowlist` / `openclaw_tool_policy`；`static_domains_unavailable` 显式承认 fs/process 不可热下发 | ADR-011、ADR-003/004、§12.4 |
+| `receipt.schema.json` | 每次工具调用的签名回执 | 哈希链（`seq`/`prev_hash`/`hash`/`sig`，创世 prev 全 0）；四种处置 allow/deny/hold/redact；deny/hold/redact 必须有 `reason`；`audit_only` 只能 allow 并以 `advisory_action` 记录；只存 `params_digest` 与脱敏 `params_excerpt`，禁止参数原文；`taint_labels` + `trifecta` | 设计方案 v1 §4.2 |
+| `skill-manifest.schema.json` | siq-agent-security Skill 发布清单 | 二进制按 OS × arch 钉 `sha256`；规则包版本 + 公钥；`support_matrix` 按平台 × OS 标 L0–L3，`audit_only` 不得宣称 L2，macOS/Windows 的 L3 必须写 `requires`；`description` ≤60 字符句号结尾；清单本身签名 | ADR-011 D1/D5 |
+| `candidate.schema.json` | 发现阶段的智能体候选 | `evidence_ids` 必填（minItems 1）、确认/驳回生命周期；ADR-011 追加 `source_type` 枚举 `skill_dir`（Skill 目录）与 `platform_config`（平台配置存在性，本机 inventory 产出） | §10.2 / §10.5 |
 | `evidence.schema.json` | 可验证证据 | `collected_at`、`expires_at`（新鲜度窗口）、`signature`（Edge 签名） | §10.5 |
 | `permission-fact.schema.json` | 权限事实 | 五态 `state`（declared/inferred/observed/effective/unknown）、`delegated_user` 委托维度、authority/revision 溯源 | §12.3 |
 | `desired-policy.schema.json` | 后端无关的期望策略 | `enforcement_mode` 渐进档位（audit_only/warn/block）、selector、版本与状态 | §14.1 |
@@ -16,7 +20,19 @@
 | `event-envelope-core.schema.json` | 跨域共享身份字段（ENG-03 权威副本） | event_id/type/occurred_at/tenant_id/request_id/payload；与 Document Engine 字节一致 | SIQ_CROSS_REPO_DEVPLAN ENG-03 |
 | `connector-protocol.v1.md` | Edge ↔ Connector 受限子进程协议 | NDJSON、op 清单、错误码、负向语料、签名与新鲜度约定 | §26.1 |
 
-控制面以 `apps/control-api/app/tests/test_schema_contracts.py` 守护示例与实现方字段同步：schema 示例校验 + 实现方字段一致性，任何一侧漂移即测试失败。
+控制面以 `apps/control-api/app/tests/test_schema_contracts.py` 守护示例与实现方字段同步：schema 示例校验 + 实现方字段一致性，任何一侧漂移即测试失败。ADR-011 四份合同的每条 `if/then` 不变量在该文件各有一条负向测试。
+
+### 本机门禁四合同的数据流
+
+```
+SKILL.md → skill-manifest（校验二进制哈希）→ siq-agent-security 二进制
+  inventory ──► candidate + evidence（既有合同）
+  admit     ──► admission（declared_facts ⊂ permission-fact 语义，state 恒为 declared）
+  grant     ──► grant（facts 五态；effective 只能来自后端读回）+ desired-policy 引用
+  serve     ──► receipt（哈希链 + Ed25519；平台适配器与模型无签名密钥）
+```
+
+Go 实现（`apps/agentshield/`）与 Python 实现（control-api）共用本目录 schema 与同一套语料；`engine.name` 字段区分双实现，一致性测试以此比对。
 
 ## 变更规则
 
@@ -69,7 +85,7 @@ Connector 是运行在 Edge Agent 侧的多语言插件（设计文档 §26.1：
 合同定义见设计文档 §15.3（OpenShell Adapter）与 §16.2（Runtime Adapter）。首版实现位于 `apps/control-api/app/adapters/openshell/`（contracts / base / policy_compiler / fake_backend / client / cli_backend）：
 
 - **FakeBackend 契约测试**覆盖：能力探测、revision 冲突、静态 generation、正负验证、回滚、unsupported 显式标记；
-- **`openshell-cli` 后端**：已在 OpenShell v0.0.104 真实网关实测"审批 → `policy set` → 读回验证 → effective"闭环（含网络策略热更新，见根 README 与 `docs/compatibility.md`）；SIQ 侧正式迁移（v0.0.83 → v0.0.104）处于 canary 窗口期，runbook 见 `docs/openshell-v083-to-v0104-migration.md`；
+- **`openshell-cli` 后端**：已在 OpenShell v0.0.104 真实网关实测"审批 → `policy set` → 读回验证 → effective"闭环（含网络策略热更新，见 [`docs/control-plane.md`](../../docs/control-plane.md) 与 `docs/compatibility.md`）；SIQ 侧正式迁移（v0.0.83 → v0.0.104）处于 canary 窗口期，runbook 见 `docs/openshell-v083-to-v0104-migration.md`；
 - `adapters/enforcement/` 预留给未来的独立进程形态，当前为空（规划中）。
 
 ## 与实现的对应关系（如实核对）

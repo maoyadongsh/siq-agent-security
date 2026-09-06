@@ -18,7 +18,7 @@
     "candidate_id": { "type": "string", "description": "采集端生成的稳定候选 ID（含 connector 前缀，如 hermes:siq_legal_advisor@v1）" },
     "source_type": {
       "type": "string",
-      "enum": ["hermes_profile", "openclaw_agent", "directory_manifest", "docker", "kubernetes", "systemd", "siq_hub", "process_list", "human", "mcp_server", "piagent_profile", "workbuddy_profile", "dify_deployment"]
+      "enum": ["hermes_profile", "openclaw_agent", "directory_manifest", "docker", "kubernetes", "systemd", "siq_hub", "process_list", "human", "mcp_server", "piagent_profile", "workbuddy_profile", "dify_deployment", "skill_dir", "platform_config"]
     },
     "source_locator": { "type": "string", "description": "脱敏后的稳定来源定位，不含凭据" },
     "discovered_at": { "type": "string", "format": "date-time" },

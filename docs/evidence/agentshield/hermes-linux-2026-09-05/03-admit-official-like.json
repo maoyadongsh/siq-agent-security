@@ -1,0 +1,333 @@
+{
+  "exit_code": 0,
+  "stderr": "",
+  "admission": {
+    "admission_id": "adm-4af17a9f9719",
+    "skill_id": "local_dir:github-triage@4af17a9f9719",
+    "skill_name": "github-triage",
+    "skill_version": "1.2.0",
+    "source": {
+      "type": "local_dir",
+      "locator": "../../skills/agentshield/evals/fixtures/official-like",
+      "trust_level": "unknown",
+      "ref": null
+    },
+    "content_hash": "4af17a9f97199f397e267a992f07d36fdd1c01c9d6d618a87cf44c7e10108ab3",
+    "file_manifest": [
+      {
+        "path": "SKILL.md",
+        "sha256": "a5329211ea070bde1e45d46df66ca57562573b709eddc590eab7accaa1d5e507",
+        "bytes": 576
+      },
+      {
+        "path": "references/setup.md",
+        "sha256": "5734589f41fbe6f5ee05fee4b630e9b652eb8ca058a26386b896ebaa4f9d504b",
+        "bytes": 214
+      },
+      {
+        "path": "scripts/fetch.py",
+        "sha256": "ca97427d00e9f1e1a6a8112b9d77e327ba971714ef209edd6b13e6a06f1472e0",
+        "bytes": 190
+      }
+    ],
+    "verdict": "admit_with_conditions",
+    "decided_at": "2026-09-05T03:45:38Z",
+    "engine": {
+      "name": "agentshield-go",
+      "version": "0.1.0",
+      "rulepack_version": 1,
+      "rulepack_sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051"
+    },
+    "declared_facts": [
+      {
+        "domain": "network",
+        "action": "http.request",
+        "resource": {
+          "type": "endpoint",
+          "value": "api.github.com:443"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "source_field": "scripts/fetch.py:5",
+        "evidence_ids": [
+          "ev-7e75b5986f8b464d"
+        ]
+      },
+      {
+        "domain": "network",
+        "action": "http.request",
+        "resource": {
+          "type": "endpoint",
+          "value": "astral.sh:443"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "source_field": "SKILL.md:17",
+        "evidence_ids": [
+          "ev-2a89ce7627420137"
+        ]
+      },
+      {
+        "domain": "process",
+        "action": "process.exec",
+        "resource": {
+          "type": "tool",
+          "value": "shell"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "source_field": "SKILL.md:17",
+        "evidence_ids": [
+          "ev-a461b43625cb23c4"
+        ]
+      },
+      {
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "source_field": "frontmatter.allowed-tools",
+        "evidence_ids": [
+          "ev-0fd8c0d316d5f636"
+        ]
+      },
+      {
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "terminal"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "source_field": "frontmatter.allowed-tools",
+        "evidence_ids": [
+          "ev-0fd8c0d316d5f636"
+        ]
+      },
+      {
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "web_extract"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "source_field": "frontmatter.allowed-tools",
+        "evidence_ids": [
+          "ev-0fd8c0d316d5f636"
+        ]
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "f-d2e25737589d110c",
+        "rule_id": "adm-allowed-tools",
+        "category": "capability_declaration",
+        "severity": "low",
+        "confidence": 1,
+        "disposition": "declare",
+        "location": {
+          "path": "SKILL.md",
+          "line": 1
+        },
+        "excerpt": "<redacted len=23 sha256=c6900835bfc3>",
+        "evidence_ids": [
+          "ev-0fd8c0d316d5f636"
+        ]
+      },
+      {
+        "finding_id": "f-5a4a13e31a221e57",
+        "rule_id": "adm-allowed-tools",
+        "category": "capability_declaration",
+        "severity": "low",
+        "confidence": 1,
+        "disposition": "declare",
+        "location": {
+          "path": "SKILL.md",
+          "line": 1
+        },
+        "excerpt": "<redacted len=24 sha256=38537068e162>",
+        "evidence_ids": [
+          "ev-0fd8c0d316d5f636"
+        ]
+      },
+      {
+        "finding_id": "f-5624f3e39ab27045",
+        "rule_id": "adm-allowed-tools",
+        "category": "capability_declaration",
+        "severity": "low",
+        "confidence": 1,
+        "disposition": "declare",
+        "location": {
+          "path": "SKILL.md",
+          "line": 1
+        },
+        "excerpt": "<redacted len=26 sha256=8ad0c0df444c>",
+        "evidence_ids": [
+          "ev-0fd8c0d316d5f636"
+        ]
+      },
+      {
+        "finding_id": "f-37a47f16460dbb14",
+        "rule_id": "adm-name-mismatch",
+        "category": "info",
+        "severity": "info",
+        "confidence": 1,
+        "disposition": "info",
+        "location": {
+          "path": "SKILL.md",
+          "line": 1
+        },
+        "excerpt": "<redacted len=39 sha256=bdde3d86dd88>",
+        "evidence_ids": [
+          "ev-1ff45d8ec55b116f"
+        ]
+      },
+      {
+        "finding_id": "f-cafb8e86628c51af",
+        "rule_id": "adm-egress-domain",
+        "category": "capability_declaration",
+        "severity": "medium",
+        "confidence": 0.9,
+        "disposition": "declare",
+        "location": {
+          "path": "SKILL.md",
+          "line": 17
+        },
+        "excerpt": "<redacted len=17 sha256=f488e8639efb>",
+        "evidence_ids": [
+          "ev-2a89ce7627420137"
+        ]
+      },
+      {
+        "finding_id": "f-8b3dc7700f4e964b",
+        "rule_id": "threat-download-exec-pipe",
+        "category": "dangerous_code",
+        "severity": "critical",
+        "confidence": 0.95,
+        "disposition": "declare",
+        "location": {
+          "path": "SKILL.md",
+          "line": 17
+        },
+        "excerpt": "<redacted len=40 sha256=821814479c98>",
+        "evidence_ids": [
+          "ev-a461b43625cb23c4"
+        ]
+      },
+      {
+        "finding_id": "f-d0f32c6b95c4be46",
+        "rule_id": "adm-user-deception",
+        "category": "info",
+        "severity": "low",
+        "confidence": 0.4,
+        "disposition": "info",
+        "location": {
+          "path": "SKILL.md",
+          "line": 22
+        },
+        "excerpt": "<redacted len=19 sha256=f646b34956ab>",
+        "evidence_ids": [
+          "ev-2c6910adf5062bc7"
+        ]
+      },
+      {
+        "finding_id": "f-9f61209db466ac76",
+        "rule_id": "threat-prompt-injection",
+        "category": "prompt_injection",
+        "severity": "high",
+        "confidence": 0.9,
+        "disposition": "info",
+        "location": {
+          "path": "SKILL.md",
+          "line": 22
+        },
+        "excerpt": "<redacted len=28 sha256=2e4221a7f996>",
+        "evidence_ids": [
+          "ev-9ba244c2a9ed3802"
+        ]
+      },
+      {
+        "finding_id": "f-34400f65d2e42a51",
+        "rule_id": "threat-prompt-injection",
+        "category": "prompt_injection",
+        "severity": "high",
+        "confidence": 0.9,
+        "disposition": "info",
+        "location": {
+          "path": "references/setup.md",
+          "line": 3
+        },
+        "excerpt": "<redacted len=28 sha256=2e4221a7f996>",
+        "evidence_ids": [
+          "ev-6dac6b3d5f199f75"
+        ]
+      },
+      {
+        "finding_id": "f-09899277f468b728",
+        "rule_id": "threat-cred-dotenv",
+        "category": "credential_exfil",
+        "severity": "high",
+        "confidence": 0.85,
+        "disposition": "info",
+        "location": {
+          "path": "references/setup.md",
+          "line": 4
+        },
+        "excerpt": "<redacted len=8 sha256=648b13a0a355>",
+        "evidence_ids": [
+          "ev-f1091526703f86a0"
+        ]
+      },
+      {
+        "finding_id": "f-2fd6643de17d43ca",
+        "rule_id": "adm-egress-domain",
+        "category": "capability_declaration",
+        "severity": "medium",
+        "confidence": 0.9,
+        "disposition": "declare",
+        "location": {
+          "path": "scripts/fetch.py",
+          "line": 5
+        },
+        "excerpt": "<redacted len=22 sha256=b2fd47bfbc5a>",
+        "evidence_ids": [
+          "ev-7e75b5986f8b464d"
+        ]
+      }
+    ],
+    "integrity": {
+      "file_count": 3,
+      "total_bytes": 980,
+      "symlink_escape": false,
+      "binary_files": 0,
+      "over_limit": false,
+      "frontmatter_valid": true
+    },
+    "skill_card_ref": "$REPO/apps/agentshield/.state/admissions/adm-4af17a9f9719.skill-card.md",
+    "evidence_ids": [
+      "ev-0fd8c0d316d5f636",
+      "ev-1ff45d8ec55b116f",
+      "ev-2a89ce7627420137",
+      "ev-2c6910adf5062bc7",
+      "ev-6dac6b3d5f199f75",
+      "ev-7e75b5986f8b464d",
+      "ev-9ba244c2a9ed3802",
+      "ev-a461b43625cb23c4",
+      "ev-f1091526703f86a0"
+    ],
+    "signature": "<redacted len=128 sha256=e16044e607c3>"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "schema": "evidence_embedded_schema_vectors/v1",
+  "producer": "CPython json.dumps(sort_keys=True, separators=(',',':'), ensure_ascii=False) + Ed25519 seed=bytes(range(32))",
+  "contract": "DEV09-H dual-read: omit signing_schema → evidence_utf8/v1; embed field in signed body; wrong schema ids fail closed before accept.",
+  "cross_contract_note": {
+    "legacy_canonical_utf8": "{\"classification\":\"internal\",\"collected_at\":\"2026-09-06T00:00:00Z\",\"collector_id\":\"edge-fixture\",\"content_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"evidence_id\":\"ev-embed-001\",\"note\":\"<安全>\",\"observed_at\":\"2026-09-06T00:00:00Z\",\"redaction_profile\":\"siq.redaction.v1\",\"signature\":\"\",\"source_type\":\"manifest\"}",
+    "embedded_canonical_utf8": "{\"classification\":\"internal\",\"collected_at\":\"2026-09-06T00:00:00Z\",\"collector_id\":\"edge-fixture\",\"content_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"evidence_id\":\"ev-embed-001\",\"note\":\"<安全>\",\"observed_at\":\"2026-09-06T00:00:00Z\",\"redaction_profile\":\"siq.redaction.v1\",\"signature\":\"\",\"signing_schema\":\"evidence_utf8/v1\",\"source_type\":\"manifest\"}"
+  },
+  "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAA6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=\n-----END PUBLIC KEY-----\n",
+  "seed_b64": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+  "vectors": [
+    {
+      "name": "legacy_omit_signing_schema",
+      "expect": "accept",
+      "document": {
+        "evidence_id": "ev-embed-001",
+        "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_type": "manifest",
+        "classification": "internal",
+        "collector_id": "edge-fixture",
+        "collected_at": "2026-09-06T00:00:00Z",
+        "observed_at": "2026-09-06T00:00:00Z",
+        "redaction_profile": "siq.redaction.v1",
+        "note": "<安全>",
+        "signature": ""
+      },
+      "canonical_utf8": "{\"classification\":\"internal\",\"collected_at\":\"2026-09-06T00:00:00Z\",\"collector_id\":\"edge-fixture\",\"content_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"evidence_id\":\"ev-embed-001\",\"note\":\"<安全>\",\"observed_at\":\"2026-09-06T00:00:00Z\",\"redaction_profile\":\"siq.redaction.v1\",\"signature\":\"\",\"source_type\":\"manifest\"}",
+      "signature_hex": "b1750ad7140850904eb7b3aa6cbfd87beb2e8b26eb9ee37f1f9a94a52c78734479cae0b59258630a6bf992da421c0a210efc6987df0e1c7ef1ce015910ff0e07"
+    },
+    {
+      "name": "embedded_evidence_utf8_v1",
+      "expect": "accept",
+      "document": {
+        "evidence_id": "ev-embed-001",
+        "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_type": "manifest",
+        "classification": "internal",
+        "collector_id": "edge-fixture",
+        "collected_at": "2026-09-06T00:00:00Z",
+        "observed_at": "2026-09-06T00:00:00Z",
+        "redaction_profile": "siq.redaction.v1",
+        "note": "<安全>",
+        "signature": "",
+        "signing_schema": "evidence_utf8/v1"
+      },
+      "canonical_utf8": "{\"classification\":\"internal\",\"collected_at\":\"2026-09-06T00:00:00Z\",\"collector_id\":\"edge-fixture\",\"content_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"evidence_id\":\"ev-embed-001\",\"note\":\"<安全>\",\"observed_at\":\"2026-09-06T00:00:00Z\",\"redaction_profile\":\"siq.redaction.v1\",\"signature\":\"\",\"signing_schema\":\"evidence_utf8/v1\",\"source_type\":\"manifest\"}",
+      "signature_hex": "01d701efcb68f6cd5acb3076e1a01acb390a8fa4b8f4f68cfe8d043b4151338c7496ac9beb1239e0bdc84d57e4dfadbd569b4d25886b4cd4e19fbdc9981b2c0d"
+    },
+    {
+      "name": "embedded_local_canonical_rejected",
+      "expect": "reject_schema",
+      "document": {
+        "evidence_id": "ev-embed-001",
+        "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_type": "manifest",
+        "classification": "internal",
+        "collector_id": "edge-fixture",
+        "collected_at": "2026-09-06T00:00:00Z",
+        "observed_at": "2026-09-06T00:00:00Z",
+        "redaction_profile": "siq.redaction.v1",
+        "note": "<安全>",
+        "signature": "",
+        "signing_schema": "local_canonical/v1"
+      },
+      "canonical_utf8": "{\"classification\":\"internal\",\"collected_at\":\"2026-09-06T00:00:00Z\",\"collector_id\":\"edge-fixture\",\"content_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"evidence_id\":\"ev-embed-001\",\"note\":\"<安全>\",\"observed_at\":\"2026-09-06T00:00:00Z\",\"redaction_profile\":\"siq.redaction.v1\",\"signature\":\"\",\"signing_schema\":\"local_canonical/v1\",\"source_type\":\"manifest\"}",
+      "signature_hex": "28166d1b098924e5870ceae0b28639c5701e02ede764aa58e0e5934f12d954855eb4dbbb55943b20923d74ea6ee01fd6cdf1c38edaf3c989e7872fe52c31eb01",
+      "note": "Bytes may verify under UTF-8 canon, but schema dual-read must reject."
+    },
+    {
+      "name": "embedded_non_string_schema_rejected",
+      "expect": "reject_schema",
+      "document": {
+        "evidence_id": "ev-embed-001",
+        "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_type": "manifest",
+        "classification": "internal",
+        "collector_id": "edge-fixture",
+        "collected_at": "2026-09-06T00:00:00Z",
+        "observed_at": "2026-09-06T00:00:00Z",
+        "redaction_profile": "siq.redaction.v1",
+        "note": "<安全>",
+        "signature": "",
+        "signing_schema": 1
+      },
+      "canonical_utf8": "{\"classification\":\"internal\",\"collected_at\":\"2026-09-06T00:00:00Z\",\"collector_id\":\"edge-fixture\",\"content_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"evidence_id\":\"ev-embed-001\",\"note\":\"<安全>\",\"observed_at\":\"2026-09-06T00:00:00Z\",\"redaction_profile\":\"siq.redaction.v1\",\"signature\":\"\",\"signing_schema\":1,\"source_type\":\"manifest\"}",
+      "signature_hex": "6649a3b3c09eec9c4f566e11280a9a920ff08ea2ea49e843db7e4035cff7715d7808880f6b01269daaf351d1d4ae7145ed19f7bd6f7574f548b2572fca1a6407"
+    }
+  ]
+}

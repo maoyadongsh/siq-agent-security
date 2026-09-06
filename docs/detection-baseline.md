@@ -21,6 +21,8 @@
 
 **严重度分布**：critical 3 / high 18 / medium 4 / low 0（当前无 low 级规则）。
 
+Go↔Python **共享正则层**字段对等与 AST 独有边界见 [detection-support-matrix-v1.md](detection-support-matrix-v1.md)（`match_oracle_v1`）。
+
 ## 双层检测：正则规则 + Python AST（含重叠计数，2026-08-20 实测验证）
 
 `app/threat_analysis.py` 对 Python 内容额外跑 `_python_ast_checks`（`ast.parse` 树检查），产出 4 条**不在签名规则包内、硬编码在代码里**的规则：`threat-py-os-system`（high/0.95）、`threat-py-subprocess-shell`（high/0.9）、`threat-py-ctypes-load`（medium/0.8）、`threat-py-syntax-parse-failed`（medium/0.75，AST 解析失败时的告警）。这 4 条**不能**通过规则包热更新调整，改动需要发代码。
@@ -55,8 +57,8 @@
 
 | 指标 | 值 | 说明 |
 | --- | --- | --- |
-| 恶意语料规模 | 25 条 | 覆盖全部 7 大类：下载即执行/凭据访问/持久化/混淆/网络/提示注入/Python 高危调用，每条内置规则恰好 1 个样本 |
-| 总体召回率 | **25/25 = 1.0** | 25 条内置规则各 1 个带上下文的正样本；与 `test_rule_positive` 单行语料形成双锁 |
+| 恶意语料规模 | 30 条 | 覆盖全部 7 大类；规则包 25 条各至少 1 个正样本，另含 H5a/DEV06-D/E 续行与 DEV06-G Unicode LS 样本 |
+| 总体召回率 | **30/30 = 1.0** | 标注 `rule_id` 全命中；与 `test_rule_positive` / `match_oracle_v1` 形成锁 |
 | 分类别召回率 | 7/7 类别均 1.0 | `recall_by_category`：download-exec/credential-access/persistence/obfuscation/network/prompt-injection/python-dangerous |
 | 良性语料规模 | 12 条 | 与任一威胁规则语义无关的正常运维/开发脚本（只读 crontab/systemd 状态查询、参数数组形式 subprocess、IAM 角色型 boto3、prose 提及 token/password 但非字面量等） |
 | 意外误报率（surprise） | **0/12 = 0.0** | 12 条良性语料零命中 |
@@ -74,6 +76,22 @@
 本轮补齐了此前缺失的 API 层回归测试 `test_scan_high_severity_low_confidence_no_auto_quarantine`（`app/tests/test_threat_analysis.py`）：以 `sock.bind(("0.0.0.0", 8080))` 为语料，断言产生 `threat-net-hardcoded-c2` Finding 但 `quarantine_case` 为 `None`——这正是 R-8 收紧阈值要保护的场景，此前只有单元层的规则命中测试，没有 API 层"确认不误隔离"的直接断言。
 
 **已知粒度局限**：`AUTO_QUARANTINE_MIN_CONFIDENCE` 是全局单一常量，不能按规则单独设置阈值；若未来某条规则需要"高置信但业务上仍不希望自动隔离"，目前只能通过下调该规则包里的 `confidence` 字段间接实现，语义上不够直接（见"后续"）。
+
+## Go 双实现基线（ADR-011 D2，`apps/agentshield/internal/threat`，2026-09-04）
+
+siq-agent-security 本地二进制用 Go 重写检测核心，与本文的 Python 引擎**共用同一份规则包 JSON**（`apps/agentshield/internal/rulepack/data/threat_rules.v1.json` 由测试 `TestEmbeddedPackMatchesControlPlaneCopy` 锁定与 `apps/control-api/app/data/threat_rules.v1.json` 逐字节一致）和**同一份语料** `corpus.json`。
+
+| 项 | Go 实现现状 | 锁定方式 |
+| --- | --- | --- |
+| 规则包 25 条正则规则 | 全部在 Go RE2 编译通过并命中语料 | `TestCorpusParityWithPython`（26 恶意全命中 / 12 良性零命中 / 1 已知误报仍触发）+ `TestEveryRuleCoveredByCorpus` + `TestMatchOracleFieldParity` |
+| `threat-persist-crontab` | 原负向前瞻 `(?![el]\b)` 改写为 `(?:[^el]\|[el]\w\|$)`，Python 语义等价（9 组边界用例在 CPython 下对旧/新模式比对一致） | `TestCrontabRewriteKeepsPythonSemantics` |
+| 脱敏规则 11 条 + 默认兜底 6 条 | 全部 RE2 兼容 | `TestExcerptIsRedactedAndTruncated` |
+| 类型识别 / 首命中 / 40 字符截断 / excerpt_sha256 / shell `\` 与 PS `` ` `` 续行 | 与 Python 逐字段一致（同一样本 sha256、rule_id、line、excerpt_sha256、excerpt；续行见 H5a / DEV06-D） | `TestDetectTypeMirrorsPython`、`TestFirstHitPerRuleOnly`、`TestShellBackslashContinuationJoinsDownloadExec`、`TestPowerShellBacktickContinuationJoinsDownloadExec`、`TestMatchOracleFieldParity` |
+| 规范化 JSON 与 Ed25519 签名 | 与 CPython `json.dumps(sort_keys, separators)` 逐字节一致；同 seed 同文档签名十六进制完全相同 | `canon_test.go`、`signing_test.go` 固定向量 |
+| 外部规则包验签 / 防降级 / fail-closed 回退 | 与 `rulepack.py` 同语义；拒绝原因只记类别 | `TestLoadFailsClosedToBuiltin` |
+| **Python AST 层 4 条**（`threat-py-os-system` / `threat-py-subprocess-shell` / `threat-py-ctypes-load` / `threat-py-syntax-parse-failed`） | **Go v1 未实现** | 前三条有正则孪生规则（`threat-py-*-regex`）仍生效，因此 Go 侧对同一行为只有 1 条命中而非 Python 的 2 条；`syntax-parse-failed` 无等价，Go 侧不会对语法错误的 Python 文件告警。路线图：tree-sitter 或纯 Go 词法层 |
+
+**诚实边界**：Go 侧「30/30 召回」与 Python 同属冒烟回归而非野外能力评测；AST 层缺席意味着 Go 对 Python 脚本的置信度略低于控制面（0.9 vs 0.95）。
 
 ## 脱敏覆盖率基线（R-7，`redaction_patterns` 字段，规则包内 11 条）
 

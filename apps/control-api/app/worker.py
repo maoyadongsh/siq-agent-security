@@ -19,7 +19,7 @@ from sqlalchemy import select
 
 from app.config import load_settings
 from app.db import init_db, session_scope
-from app.models import AgentAsset, ChangeRequest, Finding, OutboxEvent, Tenant, utcnow
+from app.models import AgentAsset, ChangeRequest, Finding, Tenant, utcnow
 from app.outbox import audit, emit_event
 from app.rules import evaluate_all, upsert_findings
 
@@ -27,27 +27,53 @@ logger = logging.getLogger("siq-agent-security.worker")
 
 
 def publish_outbox(session) -> int:
-    """发布未投递事件；Phase 2 为可选 Webhook + 日志兜底，保证幂等标记。"""
+    """发布未投递事件（DEV12-B：先领取提交，再网络，再 CAS 确认）。
+
+    至少一次投递；不宣称 exactly-once。Webhook 失败则退避重试。
+    """
     import httpx
 
-    webhook = os.getenv("SIQ_AS_WEBHOOK_URL")
-    rows = list(
-        session.scalars(
-            select(OutboxEvent).where(OutboxEvent.published_at.is_(None)).order_by(OutboxEvent.id).limit(50)
-        )
+    from app.db import session_scope
+    from app.outbox_lease import (
+        claim_outbox_batch,
+        confirm_outbox_published,
+        nack_outbox_publish,
+        worker_instance_id,
     )
+
+    webhook = os.getenv("SIQ_AS_WEBHOOK_URL")
+    worker_id = worker_instance_id()
+    claimed = claim_outbox_batch(session, worker_id=worker_id)
     published = 0
-    for event in rows:
+    for item in claimed:
+        ok = True
         try:
             if webhook:
-                resp = httpx.post(webhook, json=event.payload, timeout=5)
+                resp = httpx.post(webhook, json=item.payload, timeout=5)
                 resp.raise_for_status()
-        except httpx.HTTPError as exc:  # 失败保留未发布，下轮重试
-            logger.warning("outbox publish failed for %s: %s", event.id, exc)
-            continue
-        event.published_at = utcnow()
-        published += 1
-    session.commit()
+            else:
+                logger.info("outbox deliver %s type=%s", item.id, item.payload.get("event_type"))
+        except httpx.HTTPError as exc:
+            logger.warning("outbox publish failed for %s: %s", item.id, exc)
+            ok = False
+        # 确认/释放使用独立短事务，避免慢 webhook 长期占用业务会话
+        with session_scope() as confirm_session:
+            if ok:
+                if confirm_outbox_published(
+                    confirm_session,
+                    event_id=item.id,
+                    worker_id=worker_id,
+                    lease_revision=item.lease_revision,
+                ):
+                    published += 1
+            else:
+                nack_outbox_publish(
+                    confirm_session,
+                    event_id=item.id,
+                    worker_id=item.worker_id,
+                    lease_revision=item.lease_revision,
+                    attempt=item.attempt,
+                )
     return published
 
 
@@ -155,24 +181,26 @@ def run_drift(session) -> dict:
 
 
 def reap_break_glass_reviews(session) -> int:
-    """Break-glass 事后复核：部署状态变化不得绕过到期复核。"""
-    from datetime import timedelta
+    """Break-glass 事后复核：只推进 review_status，不改写业务终态（DEV12-A / M-P4）。
 
-    ttl = int(os.getenv("SIQ_AS_BREAKGLASS_REVIEW_SECONDS", "86400"))
-    threshold = utcnow() - timedelta(seconds=ttl)
+    期限以批准时写入的 review_due_at 为准（源于 approved_at + 合同 TTL），
+    不以 created_at 重算。到期自动撤销权限不在本切片默认加入。
+    """
+    now = utcnow()
     rows = list(
         session.scalars(
             select(ChangeRequest).where(
                 ChangeRequest.approval_policy == "break_glass",
-                ChangeRequest.approver_user_id.is_not(None),
-                ChangeRequest.status != "post_review_due",
-                ChangeRequest.created_at < threshold,
+                ChangeRequest.review_status == "pending",
+                ChangeRequest.review_due_at.is_not(None),
+                ChangeRequest.review_due_at <= now,
             )
         )
     )
     due = 0
     for cr in rows:
-        cr.status = "post_review_due"
+        business_status = cr.status  # 保留 effective/failed/rolled_back/emergency_applied/...
+        cr.review_status = "due"
         audit(
             session,
             cr.tenant_id,
@@ -181,12 +209,17 @@ def reap_break_glass_reviews(session) -> int:
             "change.breakglass.review_due",
             "change_request",
             resource_id=cr.id,
+            summary={"business_status": business_status, "review_status": "due"},
         )
         emit_event(
             session,
             cr.tenant_id,
             "policy.change.review_due.v1",
-            {"change_request_id": cr.id, "resolution": "post_review_due"},
+            {
+                "change_request_id": cr.id,
+                "resolution": "review_due",
+                "business_status": business_status,
+            },
             resource_ref=cr.id,
         )
         due += 1
