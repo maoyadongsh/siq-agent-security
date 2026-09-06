@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/x509"
@@ -13,6 +12,7 @@ import (
 	"fmt"
 	"time"
 
+	"siq-agent-security/edge/agent/canon"
 	"siq-agent-security/edge/agent/protocol"
 )
 
@@ -97,6 +97,9 @@ func VerifySignature(pubPEM string, data []byte, sigHex string) error {
 // SealEvidence fills the Edge-owned evidence fields (contract §5: the Edge
 // fills signature and collected_at at packaging time) and signs the canonical
 // JSON of the evidence (signature excluded from the signed payload).
+//
+// DEV09-H: writers embed signing_schema=evidence_utf8/v1 in the signed body.
+// Control-plane dual-reads legacy bodies that omit the field as the same schema.
 func SealEvidence(ev *protocol.Evidence, signer *Signer, collectorID string) error {
 	now := time.Now().UTC().Format(time.RFC3339)
 	if ev.CollectedAt == "" {
@@ -113,6 +116,7 @@ func SealEvidence(ev *protocol.Evidence, signer *Signer, collectorID string) err
 	if ev.ObservedAt == "" {
 		ev.ObservedAt = now
 	}
+	ev.SigningSchema = EvidenceSigningSchemaV1
 	clone := *ev
 	clone.Signature = ""
 	data, err := CanonicalJSON(&clone)
@@ -127,25 +131,32 @@ func SealEvidence(ev *protocol.Evidence, signer *Signer, collectorID string) err
 	return nil
 }
 
-// CanonicalJSON is shared by evidence and batch signatures. encoding/json
-// sorts map keys; SetEscapeHTML(false) aligns with the control plane's UTF-8
-// canonical form. The encoder newline is removed before signing.
+// EvidenceSigningSchemaV1 is the Edge Evidence/Batch UTF-8 canon contract id.
+const EvidenceSigningSchemaV1 = "evidence_utf8/v1"
+
+// CanonicalJSON is the evidence/batch signature form (DEV09-B): CPython
+// json.dumps(sort_keys=True, separators=(",", ":"), ensure_ascii=False) with
+// CPython float.__repr__ for native floats.
+//
+// Values already in the JSON model (map[string]any / []any / scalars) are
+// marshaled directly so float64(100.0) stays "100.0". Structs (e.g. sealed
+// evidence) are encoding/json-encoded first so the field set matches the wire
+// schema; whole-number floats may then appear as integer literals.
 func CanonicalJSON(value any) ([]byte, error) {
-	raw, err := json.Marshal(value)
-	if err != nil {
-		return nil, err
+	switch value.(type) {
+	case nil, bool, string, float64, int, int64, json.Number, map[string]any, []any:
+		return canon.MarshalUTF8(value)
+	default:
+		raw, err := json.Marshal(value)
+		if err != nil {
+			return nil, err
+		}
+		v, err := canon.Decode(raw)
+		if err != nil {
+			return nil, err
+		}
+		return canon.MarshalUTF8(v)
 	}
-	var normalized any
-	if err := json.Unmarshal(raw, &normalized); err != nil {
-		return nil, err
-	}
-	var buf bytes.Buffer
-	enc := json.NewEncoder(&buf)
-	enc.SetEscapeHTML(false)
-	if err := enc.Encode(normalized); err != nil {
-		return nil, err
-	}
-	return bytes.TrimSuffix(buf.Bytes(), []byte("\n")), nil
 }
 
 // ValidateBatchReferences enforces contract hard requirement 4: every

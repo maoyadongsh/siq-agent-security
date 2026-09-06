@@ -81,8 +81,15 @@ func TestOpenClawMergesInstallPolicyAndRestoresBackup(t *testing.T) {
 		t.Fatal(err)
 	}
 	restored, _ := os.ReadFile(oc)
-	if !strings.Contains(string(restored), `"extra":true`) || strings.Contains(string(restored), "installPolicy") {
-		t.Fatalf("restore did not put the original file back: %s", restored)
+	if err := json.Unmarshal(restored, &doc); err != nil {
+		t.Fatal(err)
+	}
+	sec = doc["security"].(map[string]any)
+	if sec["extra"] != true {
+		t.Fatal("extra must remain after surgical uninstall")
+	}
+	if _, ok := sec["installPolicy"]; ok {
+		t.Fatal("installPolicy must be stripped")
 	}
 }
 
@@ -109,6 +116,184 @@ func TestTraeIsAuditOnly(t *testing.T) {
 	res, err := Install(opts)
 	if err != nil || res.Action != "skipped" {
 		t.Fatalf("%+v %v", res, err)
+	}
+}
+
+func TestReinstallKeepsImmutableOriginal(t *testing.T) {
+	opts := testOpts(t, OpenClaw)
+	oc := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+	_ = os.MkdirAll(filepath.Dir(oc), 0o700)
+	original := `{"gateway":{"mode":"local"},"security":{"extra":true}}` + "\n"
+	_ = os.WriteFile(oc, []byte(original), 0o600)
+
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	origPath := oc + originalSuffix
+	firstOrig, err := os.ReadFile(origPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(firstOrig) != original {
+		t.Fatalf("first original snapshot wrong: %s", firstOrig)
+	}
+	// Second install must not overwrite the immutable original even though live file changed.
+	opts.Now = opts.Now.Add(time.Minute)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	secondOrig, _ := os.ReadFile(origPath)
+	if string(secondOrig) != original {
+		t.Fatal("reinstall overwrote immutable original snapshot")
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	restored, _ := os.ReadFile(oc)
+	var doc map[string]any
+	if err := json.Unmarshal(restored, &doc); err != nil {
+		t.Fatal(err)
+	}
+	if doc["gateway"] == nil {
+		t.Fatal("gateway missing after uninstall")
+	}
+	sec := doc["security"].(map[string]any)
+	if sec["extra"] != true {
+		t.Fatal("extra missing after surgical uninstall")
+	}
+	if _, ok := sec["installPolicy"]; ok {
+		t.Fatal("installPolicy still present")
+	}
+}
+
+func TestSurgicalUninstallKeepsPostInstallUserFields(t *testing.T) {
+	opts := testOpts(t, OpenClaw)
+	oc := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+	_ = os.MkdirAll(filepath.Dir(oc), 0o700)
+	_ = os.WriteFile(oc, []byte(`{"gateway":{"mode":"local"}}`), 0o600)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := os.ReadFile(oc)
+	var doc map[string]any
+	_ = json.Unmarshal(raw, &doc)
+	doc["user_added_after_install"] = true
+	out, _ := json.MarshalIndent(doc, "", "  ")
+	_ = os.WriteFile(oc, append(out, '\n'), 0o600)
+
+	res, err := Uninstall(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Note == "" || !strings.Contains(res.Note, "surgical") {
+		t.Fatalf("expected surgical note, got %+v", res)
+	}
+	restored, _ := os.ReadFile(oc)
+	var got map[string]any
+	if err := json.Unmarshal(restored, &got); err != nil {
+		t.Fatal(err)
+	}
+	if got["user_added_after_install"] != true {
+		t.Fatal("post-install user field must survive uninstall")
+	}
+	sec, _ := got["security"].(map[string]any)
+	if sec != nil {
+		if _, ok := sec["installPolicy"]; ok {
+			t.Fatalf("installPolicy must be gone; security=%v", sec)
+		}
+	}
+}
+
+func TestCodeBuddySurgicalUninstallKeepsUserSettings(t *testing.T) {
+	opts := testOpts(t, CodeBuddy)
+	settings := filepath.Join(opts.Home, ".codebuddy", "settings.json")
+	_ = os.MkdirAll(filepath.Dir(settings), 0o700)
+	_ = os.WriteFile(settings, []byte(`{"theme":"dark"}`), 0o600)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := os.ReadFile(settings)
+	var doc map[string]any
+	_ = json.Unmarshal(raw, &doc)
+	doc["user_pref"] = "keep-me"
+	out, _ := json.MarshalIndent(doc, "", "  ")
+	_ = os.WriteFile(settings, append(out, '\n'), 0o600)
+
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	restored, _ := os.ReadFile(settings)
+	var got map[string]any
+	if err := json.Unmarshal(restored, &got); err != nil {
+		t.Fatal(err)
+	}
+	if got["user_pref"] != "keep-me" || got["theme"] != "dark" {
+		t.Fatalf("user settings lost: %s", restored)
+	}
+	if strings.Contains(string(restored), "hook codebuddy") {
+		t.Fatal("product hooks must be removed")
+	}
+}
+
+func TestUninstallConflictReturnsRecoveryPlan(t *testing.T) {
+	opts := testOpts(t, CodeBuddy)
+	settings := filepath.Join(opts.Home, ".codebuddy", "settings.json")
+	_ = os.MkdirAll(filepath.Dir(settings), 0o700)
+	_ = os.WriteFile(settings, []byte(`{"theme":"dark"}`), 0o600)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	_ = os.WriteFile(settings, []byte("{broken"), 0o600)
+	res, err := Uninstall(opts)
+	if err == nil {
+		t.Fatal("expected conflict")
+	}
+	if res == nil || res.Recovery == nil || res.Recovery.LivePath != settings {
+		t.Fatalf("want recovery plan, got %+v", res)
+	}
+	raw, _ := os.ReadFile(settings)
+	if string(raw) != "{broken" {
+		t.Fatal("conflict must not silently overwrite live broken JSON")
+	}
+	if _, err := os.Stat(settings + originalSuffix); err != nil {
+		t.Fatal("original snapshot must remain for manual recovery")
+	}
+}
+
+func TestBadJSONRefusesRewrite(t *testing.T) {
+	opts := testOpts(t, CodeBuddy)
+	settings := filepath.Join(opts.Home, ".codebuddy", "settings.json")
+	_ = os.MkdirAll(filepath.Dir(settings), 0o700)
+	_ = os.WriteFile(settings, []byte("{not-json"), 0o600)
+	if _, err := Install(opts); err == nil || !strings.Contains(err.Error(), "invalid JSON") {
+		t.Fatalf("want invalid JSON refusal, got %v", err)
+	}
+	raw, _ := os.ReadFile(settings)
+	if string(raw) != "{not-json" {
+		t.Fatal("bad JSON must remain untouched")
+	}
+}
+
+func TestUnknownModeRejected(t *testing.T) {
+	opts := testOpts(t, Hermes)
+	opts.Mode = "explode"
+	if _, err := Install(opts); err == nil || !strings.Contains(err.Error(), "enforcement_mode") {
+		t.Fatalf("want mode rejection, got %v", err)
+	}
+}
+
+func TestSymlinkConfigRefused(t *testing.T) {
+	opts := testOpts(t, CodeBuddy)
+	dir := filepath.Join(opts.Home, ".codebuddy")
+	_ = os.MkdirAll(dir, 0o700)
+	real := filepath.Join(opts.Home, "elsewhere.json")
+	_ = os.WriteFile(real, []byte(`{"hooks":{}}`), 0o600)
+	link := filepath.Join(dir, "settings.json")
+	if err := os.Symlink(real, link); err != nil {
+		t.Skipf("symlink: %v", err)
+	}
+	if _, err := Install(opts); err == nil || !strings.Contains(err.Error(), "symlink") {
+		t.Fatalf("want symlink refusal, got %v", err)
 	}
 }
 

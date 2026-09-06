@@ -44,17 +44,49 @@ export default function GrantsPage() {
   const act = (id: string, action: string, extra: Record<string, unknown> = {}) => {
     setMsg(null);
     setMsgErr(false);
-    localApi
-      .grantAction(id, action, { actor_id: actorId, channel: 'console', ...extra })
-      .then((res) => {
-        setSelected(res.grant);
-        setMsg(`${res.grant.grant_id} → ${grantStatusLabel(res.grant.status)}`);
-        load();
-      })
-      .catch((err: unknown) => {
-        setMsg(err instanceof Error ? err.message : '操作失败');
-        setMsgErr(true);
-      });
+    const current = selected?.grant_id === id ? selected : rows.find((g) => g.grant_id === id);
+    if (current?.state_revision === undefined) {
+      setMsg('缺少 state_revision，请刷新后重试');
+      setMsgErr(true);
+      return;
+    }
+    const rev = current.state_revision;
+    const run = (payload: Record<string, unknown>) =>
+      localApi
+        .grantAction(id, action, {
+          actor_id: actorId,
+          channel: 'console',
+          expected_revision: rev,
+          ...extra,
+          ...payload,
+        })
+        .then((res) => {
+          setSelected({ ...res.grant!, state_revision: res.state_revision ?? res.grant!.state_revision });
+          setMsg(`${res.grant!.grant_id} → ${grantStatusLabel(res.grant!.status)}`);
+          load();
+        })
+        .catch((err: unknown) => {
+          setMsg(err instanceof Error ? err.message : '操作失败');
+          setMsgErr(true);
+        });
+
+    if (action === 'approve') {
+      localApi
+        .grantAction(id, 'challenge', { expected_revision: rev })
+        .then((res) => {
+          const ch = res.challenge;
+          if (!ch?.challenge_id || !ch?.nonce) {
+            throw new Error('未返回批准挑战');
+          }
+          return run({ challenge_id: ch.challenge_id, nonce: ch.nonce });
+        })
+        .catch((err: unknown) => {
+          setMsg(err instanceof Error ? err.message : '挑战签发失败');
+          setMsgErr(true);
+        });
+      return;
+    }
+    run({});
   };
 
   const columns: TableColumn<Grant>[] = [

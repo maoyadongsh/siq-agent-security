@@ -12,13 +12,14 @@ import hashlib
 import json
 from datetime import UTC, datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
-from app.evidence_signing import batch_signed_bytes, evidence_signed_bytes, verify_hex_signature
+from app.evidence_signing import batch_signed_bytes, verify_evidence_signature, verify_hex_signature
+from app.list_meta import apply_list_meta, clamp_limit, take_page
 from app.models import AgentAsset, AgentInstance, EdgeTask, Environment, Evidence, PermissionFact, System, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import (
@@ -269,7 +270,7 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
     for item in raw_evidence:
         if item.get("collector_id") != edge.device_identity:
             raise HTTPException(status_code=422, detail="evidence_collector_mismatch")
-        if not verify_hex_signature(edge.public_key_pem, evidence_signed_bytes(item), item.get("signature", "")):
+        if not verify_evidence_signature(edge.public_key_pem, item):
             raise HTTPException(status_code=401, detail="evidence_signature_invalid")
 
     now = utcnow()
@@ -505,6 +506,7 @@ async def _read_json(request: Request) -> dict:
 
 @router.get("/api/v1/permissions", response_model=list[PermissionFactOut])
 def list_permissions(
+    response: Response,
     authority: str | None = None,
     domain: str | None = None,
     state: str | None = None,
@@ -515,7 +517,7 @@ def list_permissions(
     session: Session = Depends(get_session),
     identity: Identity = Depends(get_identity),
 ):
-    """统一权限视图（§20.2）：按权限域/权威源/状态过滤，租户隔离。"""
+    """统一权限视图（§20.2）。DEV13-E：截断元数据走响应头。"""
     if environment_id:
         env = session.scalar(
             select(Environment).where(
@@ -537,13 +539,34 @@ def list_permissions(
         query = query.where(PermissionFact.subject_id == subject_id)
     if environment_id:
         query = query.where(PermissionFact.environment_id == environment_id)
+    query = query.order_by(PermissionFact.created_at.desc(), PermissionFact.id)
     if cursor:
-        query = _apply_cursor(query, PermissionFact, cursor)
-    return list(
-        session.scalars(
-            query.order_by(PermissionFact.authority, PermissionFact.domain, PermissionFact.id).limit(min(limit, 500))
-        )
+        from datetime import datetime as _dt
+
+        try:
+            ts, rid = cursor.split("|", 1)
+            ctime = _dt.fromisoformat(ts)
+            query = query.where(
+                (PermissionFact.created_at < ctime)
+                | ((PermissionFact.created_at == ctime) & (PermissionFact.id > rid))
+            )
+        except ValueError:
+            query = query.where(PermissionFact.id > cursor)
+    page_limit = clamp_limit(limit, default=100, hard_max=500)
+    rows = list(session.scalars(query.limit(page_limit + 1)))
+    page, truncated = take_page(rows, limit=page_limit)
+    next_cursor = None
+    if truncated and page:
+        last = page[-1]
+        next_cursor = f"{last.created_at.isoformat()}|{last.id}"
+    apply_list_meta(
+        response,
+        limit=page_limit,
+        returned=len(page),
+        truncated=truncated,
+        next_cursor=next_cursor,
     )
+    return page
 
 
 @router.get("/api/v1/permissions/diff")
@@ -659,11 +682,13 @@ def sync_openshell_permissions(
 
 @router.get("/api/v1/candidates", response_model=list[AgentAssetOut])
 def list_candidates(
+    response: Response,
     cursor: str | None = None,  # 形如 "<updated_at_iso>|<id>"（§18.1 稳定 Cursor 分页）
     limit: int = 50,
     session: Session = Depends(get_session),
     identity: Identity = Depends(require_permission("agent:read")),
 ):
+    """发现候选列表。DEV13-E：截断元数据走响应头。"""
     query = (
         select(AgentAsset)
         .where(
@@ -674,7 +699,21 @@ def list_candidates(
     )
     if cursor:
         query = _apply_cursor(query, AgentAsset, cursor)
-    return list(session.scalars(query.limit(min(limit, 200))))
+    page_limit = clamp_limit(limit)
+    rows = list(session.scalars(query.limit(page_limit + 1)))
+    page, truncated = take_page(rows, limit=page_limit)
+    next_cursor = None
+    if truncated and page:
+        last = page[-1]
+        next_cursor = f"{last.updated_at.isoformat()}|{last.id}"
+    apply_list_meta(
+        response,
+        limit=page_limit,
+        returned=len(page),
+        truncated=truncated,
+        next_cursor=next_cursor,
+    )
+    return page
 
 
 def _apply_cursor(query, model, cursor: str):
@@ -845,11 +884,13 @@ def classify_candidate(
 
 @router.get("/api/v1/agents", response_model=list[AgentAssetOut])
 def list_agents(
+    response: Response,
     cursor: str | None = None,
     limit: int = 50,
     session: Session = Depends(get_session),
     identity: Identity = Depends(require_permission("agent:read")),
 ):
+    """纳管资产列表。DEV13-E：截断元数据走响应头。"""
     query = (
         select(AgentAsset)
         .where(
@@ -860,7 +901,21 @@ def list_agents(
     )
     if cursor:
         query = _apply_cursor(query, AgentAsset, cursor)
-    return list(session.scalars(query.limit(min(limit, 200))))
+    page_limit = clamp_limit(limit)
+    rows = list(session.scalars(query.limit(page_limit + 1)))
+    page, truncated = take_page(rows, limit=page_limit)
+    next_cursor = None
+    if truncated and page:
+        last = page[-1]
+        next_cursor = f"{last.updated_at.isoformat()}|{last.id}"
+    apply_list_meta(
+        response,
+        limit=page_limit,
+        returned=len(page),
+        truncated=truncated,
+        next_cursor=next_cursor,
+    )
+    return page
 
 
 @router.get("/api/v1/agents/{asset_id}", response_model=AgentAssetOut)

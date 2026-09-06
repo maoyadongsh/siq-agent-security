@@ -1,3 +1,6 @@
+/**
+ * 智能体资产（DEV13-B）：智能扫描须显式选择环境，禁止静默 envs[0]。
+ */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
@@ -6,7 +9,7 @@ import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { Icon } from '@/components/icons';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
-import type { AgentAsset } from '@/api/types';
+import type { AgentAsset, Environment } from '@/api/types';
 
 /** 控制面不可达时的安全示例数据；已连接时由 GET /agents 覆盖 */
 const PLACEHOLDER_AGENTS: AgentAsset[] = [
@@ -113,8 +116,11 @@ export default function AgentsPage() {
   const [scanning, setScanning] = useState(false);
   const [scanMessage, setScanMessage] = useState<string | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
+  const [scanEnvironmentId, setScanEnvironmentId] = useState('');
 
   const agents = useApiList<AgentAsset>('/agents', PLACEHOLDER_AGENTS);
+  const candidates = useApiList<AgentAsset>('/candidates', PLACEHOLDER_CANDIDATES);
+  const { rows: environments, status: envStatus } = useApiList<Environment>('/environments', []);
 
   /** 智能扫描：标准安全范围一次下发（hermes profiles / OpenClaw 配置 / docker 标签）。 */
   const runSmartScan = async () => {
@@ -122,13 +128,16 @@ export default function AgentsPage() {
     setScanError(null);
     setScanMessage(null);
     try {
-      const envs = await api.listEnvironments();
-      const envId = envs[0]?.id;
-      if (!envId) {
-        setScanError('没有可用环境，无法下发扫描');
+      if (!scanEnvironmentId) {
+        setScanError('请先选择环境（禁止自动选首个）');
         return;
       }
-      const result = await api.smartScan(envId);
+      const known = environments.some((e) => e.id === scanEnvironmentId);
+      if (!known) {
+        setScanError('所选环境不在当前列表中，请重新选择');
+        return;
+      }
+      const result = await api.smartScan(scanEnvironmentId);
       const names = result.tasks.map((t) => t.connector).join('、');
       setScanMessage(`已下发 ${result.tasks.length} 个扫描任务（${names}）；本机 Edge 执行后候选将自动更新`);
       if (result.note) setScanError(result.note);
@@ -143,8 +152,6 @@ export default function AgentsPage() {
       setScanning(false);
     }
   };
-
-  const candidates = useApiList<AgentAsset>('/candidates', PLACEHOLDER_CANDIDATES);
 
   const active = tab === 'agents' ? agents : candidates;
 
@@ -259,7 +266,28 @@ export default function AgentsPage() {
         connectionError={active.error}
         actions={
           <div className="scan-actions">
-            <button className="btn-scan" onClick={runSmartScan} disabled={scanning}>
+            <label className="scan-env-pick">
+              <select
+                className="deploy-target"
+                value={scanEnvironmentId}
+                onChange={(e) => setScanEnvironmentId(e.target.value)}
+                disabled={scanning || envStatus === 'loading'}
+                aria-label="扫描目标环境"
+              >
+                <option value="">选择环境…</option>
+                {environments.map((env) => (
+                  <option key={env.id} value={env.id}>
+                    {env.name || env.id}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              className="btn-scan"
+              onClick={() => void runSmartScan()}
+              disabled={scanning || !scanEnvironmentId}
+              title={!scanEnvironmentId ? '请先选择环境' : undefined}
+            >
               <span className="scan-icon">
                 <Icon name={scanning ? 'loading' : 'scan'} size={15} className={scanning ? 'icon-spin' : undefined} />
               </span>
@@ -309,6 +337,11 @@ export default function AgentsPage() {
       {active.status === 'disconnected' ? (
         <DisconnectedNotice error={active.error} onRetry={active.reload} />
       ) : null}
+      {active.coverageText ? (
+        <p className="list-coverage" role="status">
+          {active.coverageText}
+        </p>
+      ) : null}
       {tab === 'agents' ? (
         <SimpleTable
           columns={agentColumns}
@@ -323,6 +356,18 @@ export default function AgentsPage() {
           emptyText="暂无待评审候选"
         />
       )}
+      {active.hasMore ? (
+        <div className="list-more">
+          <button
+            type="button"
+            className="btn-sm"
+            disabled={active.loadingMore}
+            onClick={() => active.loadMore()}
+          >
+            {active.loadingMore ? '加载中…' : '加载更多'}
+          </button>
+        </div>
+      ) : null}
     </section>
   );
 }

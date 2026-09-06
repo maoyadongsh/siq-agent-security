@@ -522,13 +522,21 @@ func yamlScalar(v string) string {
 }
 
 // readFileLimited reads at most maxBytes (contract §4: oversized files are
-// truncated within the limit).
+// truncated within the limit). DEV10-H: final path must be a regular file
+// opened without following symlinks (Unix O_NOFOLLOW).
 func readFileLimited(path string, maxBytes int64) ([]byte, error) {
-	f, err := os.Open(path)
+	f, err := openRegular(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
+	st, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if !st.Mode().IsRegular() {
+		return nil, fmt.Errorf("non-regular file refused after open")
+	}
 	return io.ReadAll(io.LimitReader(f, maxBytes))
 }
 

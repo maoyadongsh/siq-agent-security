@@ -446,11 +446,18 @@ func readFileLimited(path string, maxBytes int64) ([]byte, error) {
 	if maxBytes <= 0 {
 		return nil, errBudgetExhausted
 	}
-	f, err := os.Open(path)
+	f, err := openRegular(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
+	st, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if !st.Mode().IsRegular() {
+		return nil, errors.New("non-regular file refused after open")
+	}
 	return io.ReadAll(io.LimitReader(f, maxBytes))
 }
 

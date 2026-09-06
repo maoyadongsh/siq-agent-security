@@ -20,6 +20,7 @@ import (
 	"unicode/utf8"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/threat"
 )
@@ -36,7 +37,21 @@ const (
 	taintPrivate   = "private_mount"
 
 	excerptMax = 512
+
+	// Session capacity defaults (DEV16-A / M-G6a). Tainted sessions are never
+	// LRU-evicted to free slots — capacity pressure refuses new session IDs.
+	defaultMaxSessions = 4096
+	minMaxSessions     = 1
+	maxMaxSessions     = 1_000_000
+
+	// Untainted idle TTL (DEV16-E). Options 0 → default; negative → disabled.
+	defaultSessionIdleTTL = 30 * time.Minute
+	minSessionIdleTTL     = time.Second
+	maxSessionIdleTTL     = 24 * time.Hour
 )
+
+// ErrSessionCapacity is returned when a new session_id would exceed MaxSessions.
+var ErrSessionCapacity = errors.New("receipt: session capacity exhausted")
 
 // Request is one tool call awaiting a decision.
 type Request struct {
@@ -123,7 +138,14 @@ type Options struct {
 	Version         string
 	HoldChannel     string // console | openclaw_approval | hermes_cli | codebuddy_prompt | other
 	HoldTimeoutMS   int
-	Now             func() time.Time
+	// MaxSessions caps distinct in-memory session IDs (0 → defaultMaxSessions).
+	// Out of range values are rejected at New.
+	MaxSessions int
+	// SessionIdleTTL expires only sessions with no taint/trifecta memory after
+	// idle (DEV16-E). 0 → default 30m; negative → disabled; positive must be in
+	// [1s, 24h]. Tainted / trifecta sessions never idle-expire (would fake clean).
+	SessionIdleTTL time.Duration
+	Now            func() time.Time
 	// UntrustedSkillLoaded reports whether the session has a non-admit skill
 	// loaded (sets trifecta.untrusted_input).
 	UntrustedSkillLoaded func(sessionID string) bool
@@ -132,14 +154,28 @@ type Options struct {
 type session struct {
 	taints   map[string]bool
 	trifecta Trifecta
+	lastUsed time.Time
+}
+
+// SessionStats is a point-in-time view of session capacity (DEV16-A/E).
+type SessionStats struct {
+	Active         int    `json:"active"`
+	Max            int    `json:"max"`
+	Refusals       uint64 `json:"capacity_refusals"`
+	IdleExpired    uint64 `json:"idle_expired"`
+	IdleTTLSeconds int    `json:"idle_ttl_seconds"` // 0 means idle expiry disabled
 }
 
 // Engine decides tool calls.
 type Engine struct {
-	opts     Options
-	analyzer *threat.Analyzer
-	mu       sync.Mutex
-	sessions map[string]*session
+	opts               Options
+	analyzer           *threat.Analyzer
+	mu                 sync.Mutex
+	sessions           map[string]*session
+	maxSessions        int
+	sessionIdleTTL     time.Duration // <=0 disabled
+	sessionCapRefusals uint64
+	sessionIdleExpired uint64
 }
 
 // New builds an engine.
@@ -159,7 +195,45 @@ func New(opts Options) (*Engine, error) {
 	if opts.Now == nil {
 		opts.Now = func() time.Time { return time.Now().UTC() }
 	}
-	return &Engine{opts: opts, analyzer: threat.New(opts.Pack), sessions: map[string]*session{}}, nil
+	maxSess := opts.MaxSessions
+	if maxSess == 0 {
+		maxSess = defaultMaxSessions
+	}
+	if maxSess < minMaxSessions || maxSess > maxMaxSessions {
+		return nil, fmt.Errorf("receipt: MaxSessions %d out of range [%d,%d]", maxSess, minMaxSessions, maxMaxSessions)
+	}
+	idleTTL := opts.SessionIdleTTL
+	switch {
+	case idleTTL < 0:
+		idleTTL = 0 // disabled
+	case idleTTL == 0:
+		idleTTL = defaultSessionIdleTTL
+	default:
+		if idleTTL < minSessionIdleTTL || idleTTL > maxSessionIdleTTL {
+			return nil, fmt.Errorf("receipt: SessionIdleTTL %s out of range [%s,%s]", idleTTL, minSessionIdleTTL, maxSessionIdleTTL)
+		}
+	}
+	return &Engine{
+		opts:           opts,
+		analyzer:       threat.New(opts.Pack),
+		sessions:       map[string]*session{},
+		maxSessions:    maxSess,
+		sessionIdleTTL: idleTTL,
+	}, nil
+}
+
+// SessionStats returns live session capacity counters (no secrets / IDs).
+func (e *Engine) SessionStats() SessionStats {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	ttlSec := 0
+	if e.sessionIdleTTL > 0 {
+		ttlSec = int(e.sessionIdleTTL / time.Second)
+	}
+	return SessionStats{
+		Active: len(e.sessions), Max: e.maxSessions, Refusals: e.sessionCapRefusals,
+		IdleExpired: e.sessionIdleExpired, IdleTTLSeconds: ttlSec,
+	}
 }
 
 // SetMode updates enforcement_mode for subsequent Decide calls (settings UI).
@@ -201,7 +275,10 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	start := e.opts.Now()
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	s := e.session(req.SessionID)
+	s, err := e.sessionOrReject(req.SessionID, start)
+	if err != nil {
+		return nil, err
+	}
 
 	paramsJSON, _ := json.Marshal(req.Params)
 	// scan the raw string values, not the JSON encoding (which escapes quotes
@@ -366,9 +443,13 @@ func (e *Engine) evaluate(req Request, s *session, hosts, paths []string, rec *R
 
 // Observe records a tool result (spec §3.8.2 /v1/observe): taint update only.
 func (e *Engine) Observe(req Request, result string) (*Receipt, error) {
+	now := e.opts.Now()
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	s := e.session(req.SessionID)
+	s, err := e.sessionOrReject(req.SessionID, now)
+	if err != nil {
+		return nil, err
+	}
 	newTaints, ruleIDs := e.scanTaints(result)
 	for _, t := range newTaints {
 		s.taints[t] = true
@@ -378,7 +459,6 @@ func (e *Engine) Observe(req Request, result string) (*Receipt, error) {
 		s.taints[taintUntrusted] = true
 	}
 	digest := sha256.Sum256([]byte(result))
-	now := e.opts.Now()
 	excerpt := truncate(e.analyzer.Redact(result), excerptMax)
 	tf := s.trifecta
 	rec := Receipt{
@@ -399,20 +479,102 @@ func (e *Engine) Observe(req Request, result string) (*Receipt, error) {
 	return &rec, nil
 }
 
+// AppendPendingObserved promotes one unsigned pending_decision/v1 line into a
+// signed hash-chain receipt (DEV07-D / spec §3.8.4). Outcome deny→action deny;
+// allow→action allow. Does not update session taint state.
+func (e *Engine) AppendPendingObserved(p pending.Record) (*Receipt, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	action := ActionDeny
+	if p.Outcome == "allow" {
+		action = ActionAllow
+	} else if p.Outcome != "" && p.Outcome != "deny" {
+		return nil, fmt.Errorf("receipt: pending outcome %q not deny|allow", p.Outcome)
+	}
+	seed := p.RecordedAt + "|" + p.Platform + "|" + p.Tool + "|" + p.SessionID + "|" + p.Outcome + "|" + p.Reason
+	digest := sha256.Sum256([]byte(seed))
+	now := e.opts.Now()
+	issued := p.RecordedAt
+	if issued == "" {
+		issued = now.Format(time.RFC3339)
+	}
+	mode := p.EnforcementMode
+	if mode == "" {
+		mode = e.opts.EnforcementMode
+	}
+	platform := p.Platform
+	if platform == "" {
+		platform = "other"
+	}
+	session := p.SessionID
+	if session == "" {
+		session = "pending-unknown"
+	}
+	tool := p.Tool
+	if tool == "" {
+		tool = "pending.fail_closed"
+	}
+	reason := "promoted pending fail-closed: " + p.Reason
+	if p.Reason == "" {
+		reason = "promoted pending fail-closed"
+	}
+	tf := Trifecta{}
+	rec := Receipt{
+		ReceiptID:       "rcp-" + hex.EncodeToString(digest[:])[:12] + "-pending",
+		IssuedAt:        issued,
+		Platform:        platform,
+		SessionID:       session,
+		Tool:            tool,
+		ParamsDigest:    hex.EncodeToString(digest[:]),
+		Action:          action,
+		Reason:          reason,
+		MatchedFactIDs:  []string{},
+		MatchedRuleIDs:  []string{"pending.fail_closed"},
+		TaintLabels:     []string{},
+		Trifecta:        &tf,
+		EnforcementMode: mode,
+		Engine:          EngineInfo{Version: e.opts.Version, RulepackVersion: e.opts.Pack.Version},
+	}
+	if err := e.opts.Chain.Append(&rec); err != nil {
+		return nil, err
+	}
+	return &rec, nil
+}
+
 // ResolveHold records a human decision on a held call as a new receipt.
+// Same decision is idempotent; opposite decision conflicts; expired holds refuse.
 func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Receipt, error) {
 	if actorID == "" {
 		return nil, errors.New("receipt: actor required to resolve hold")
 	}
+	if held.Action != ActionHold {
+		return nil, errors.New("receipt: not a held call")
+	}
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	now := e.opts.Now()
+	if err := holdExpired(held, now); err != nil {
+		return nil, err
+	}
+	want := ActionDeny
+	if approve {
+		want = ActionAllow
+	}
+	if existing, err := e.findHoldResolution(held.ReceiptID); err != nil {
+		return nil, err
+	} else if existing != nil {
+		if existing.Action == want {
+			return existing, nil
+		}
+		return nil, fmt.Errorf("%w: hold already resolved as %s", ErrHoldConflict, existing.Action)
+	}
 	action, reason := ActionDeny, "hold rejected by "+actorID
 	if approve {
 		action, reason = ActionAllow, "hold approved by "+actorID
 	}
+	resID := holdResolutionID(held.ReceiptID)
 	rec := held
-	rec.ReceiptID = held.ReceiptID + "-res"
+	rec.ReceiptID = resID
 	rec.IssuedAt = now.Format(time.RFC3339)
 	rec.Action, rec.Reason = action, reason
 	rec.Hold = nil
@@ -425,13 +587,106 @@ func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Recei
 	return &rec, nil
 }
 
-func (e *Engine) session(id string) *session {
-	s, ok := e.sessions[id]
-	if !ok {
-		s = &session{taints: map[string]bool{}}
-		e.sessions[id] = s
+// ErrHoldConflict means a hold was already resolved with a different decision.
+var ErrHoldConflict = errors.New("receipt: hold resolution conflict")
+
+// ErrHoldExpired means the hold timeout elapsed before resolution.
+var ErrHoldExpired = errors.New("receipt: hold expired")
+
+func holdResolutionID(heldID string) string {
+	return heldID + "-res"
+}
+
+func (e *Engine) findHoldResolution(heldID string) (*Receipt, error) {
+	all, err := e.opts.Chain.Read()
+	if err != nil {
+		return nil, err
 	}
-	return s
+	want := holdResolutionID(heldID)
+	for i := len(all) - 1; i >= 0; i-- {
+		if all[i].ReceiptID == want && (all[i].Action == ActionAllow || all[i].Action == ActionDeny) {
+			r := all[i]
+			return &r, nil
+		}
+	}
+	return nil, nil
+}
+
+func holdExpired(held Receipt, now time.Time) error {
+	if held.Hold == nil || held.Hold.TimeoutMS <= 0 {
+		return nil
+	}
+	issued, err := time.Parse(time.RFC3339, held.IssuedAt)
+	if err != nil {
+		issued, err = time.Parse(time.RFC3339Nano, held.IssuedAt)
+	}
+	if err != nil {
+		return fmt.Errorf("receipt: held issued_at unreadable: %w", err)
+	}
+	deadline := issued.Add(time.Duration(held.Hold.TimeoutMS) * time.Millisecond)
+	if now.After(deadline) {
+		return fmt.Errorf("%w at %s", ErrHoldExpired, deadline.UTC().Format(time.RFC3339))
+	}
+	return nil
+}
+
+// sessionOrReject returns an existing session, or allocates one if under
+// capacity. Never evicts tainted/trifecta sessions to free slots (DEV16-A/E).
+// Untainted idle sessions may expire (lazy + sweep) before allocation.
+// Caller must pass a single now for this request (avoid extra clock ticks).
+func (e *Engine) sessionOrReject(id string, now time.Time) (*session, error) {
+	if id == "" {
+		return nil, errors.New("receipt: session_id required")
+	}
+	if s, ok := e.sessions[id]; ok {
+		if e.idleExpiredLocked(s, now) {
+			delete(e.sessions, id)
+			e.sessionIdleExpired++
+		} else {
+			s.lastUsed = now
+			return s, nil
+		}
+	}
+	e.sweepIdleLocked(now)
+	if len(e.sessions) >= e.maxSessions {
+		e.sessionCapRefusals++
+		return nil, ErrSessionCapacity
+	}
+	s := &session{taints: map[string]bool{}, lastUsed: now}
+	e.sessions[id] = s
+	return s, nil
+}
+
+func (s *session) retainsSecurityState() bool {
+	if len(s.taints) > 0 {
+		return true
+	}
+	return s.trifecta.PrivateData || s.trifecta.UntrustedInput || s.trifecta.Egress
+}
+
+func (e *Engine) idleExpiredLocked(s *session, now time.Time) bool {
+	if e.sessionIdleTTL <= 0 || s == nil {
+		return false
+	}
+	if s.retainsSecurityState() {
+		return false
+	}
+	if s.lastUsed.IsZero() {
+		return false
+	}
+	return !now.Before(s.lastUsed.Add(e.sessionIdleTTL))
+}
+
+func (e *Engine) sweepIdleLocked(now time.Time) {
+	if e.sessionIdleTTL <= 0 {
+		return
+	}
+	for id, s := range e.sessions {
+		if e.idleExpiredLocked(s, now) {
+			delete(e.sessions, id)
+			e.sessionIdleExpired++
+		}
+	}
 }
 
 func (e *Engine) scanTaints(text string) ([]string, []string) {

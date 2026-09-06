@@ -326,6 +326,12 @@ func TestEffectiveRequiresReadbackAndSkipsStaticDomains(t *testing.T) {
 func TestSignatureTamperFails(t *testing.T) {
 	k := key(t)
 	g := build(t, "hermes", sampleAdmission()).Grant
+	if g.SigningSchema != signing.SchemaLocalCanonicalV1 {
+		t.Fatalf("writer must embed signing_schema, got %q", g.SigningSchema)
+	}
+	if !Verify(k.Public(), g) {
+		t.Fatal("fresh grant must verify")
+	}
 	g.DefaultEffect = "allow"
 	if Verify(k.Public(), g) {
 		t.Fatal("tampered grant must not verify")

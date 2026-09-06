@@ -11,16 +11,17 @@ on:
 jobs:
   gitleaks:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # gitleaks-action 在 pull_request 上会 GET /pulls/{n}/commits；
     # 顶层 contents:read 会把其余权限置 none，缺了这一项即 403。
     permissions:
       contents: read
       pull-requests: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7  # v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Reject tracked task-signing private keys
@@ -54,9 +55,30 @@ jobs:
           fi
       - name: Event envelope core checksum
         run: python3 scripts/check_event_envelope_core.py
+      - name: Control API Dockerfile uses uv.lock (DEV17-A)
+        run: python3 scripts/check_control_api_dockerfile_lock.py
+      - name: Web nginx security headers (DEV17-B)
+        run: python3 scripts/check_web_nginx_headers.py
+      - name: CI Actions pinned to commit SHA (DEV17-B)
+        run: python3 scripts/check_ci_action_pins.py
+      - name: OpenShell workflow download contract (DEV17-C)
+        run: python3 scripts/check_openshell_compat_workflow.py
+      - name: Site Mermaid self-host pin (DEV17-C)
+        run: python3 scripts/check_site_mermaid_vendor.py
+      - name: Pages workflow Action pins (DEV17-D)
+        run: python3 scripts/check_pages_action_pins.py
+      - name: Dockerfile base image digests (DEV17-D)
+        run: python3 scripts/check_dockerfile_digests.py
+      - name: Local product threats in threat-model (DEV18-B)
+        run: python3 scripts/check_threat_model_local.py
+      - name: Capability matrix + runbook honesty (DEV18-C)
+        run: python3 scripts/check_capability_honesty.py
+      - name: Perf baseline harness honesty + smoke (DEV16-D)
+        run: python3 scripts/check_perf_baseline_harness.py
 
   control-api:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     services:
       postgres:
         image: postgres:17-alpine
@@ -75,8 +97,8 @@ jobs:
       run:
         working-directory: apps/control-api
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86  # v5
       - name: Install
         run: uv sync --dev --locked
       - name: Ruff
@@ -93,6 +115,7 @@ jobs:
 
   edge:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -113,8 +136,8 @@ jobs:
           - connectors/workbuddy
           - connectors/dify
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5
         with:
           go-version: ${{ matrix.go-version }}
       - name: Go formatting（edge 与 connectors 全部目录）
@@ -130,12 +153,13 @@ jobs:
 
   web:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: apps/web
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
         with:
           node-version: "22"
       - run: npm ci
@@ -149,22 +173,22 @@ jobs:
           if [ "$code" -eq 0 ]; then
             exit 0
           fi
-          # npm v1/security/audits/quick 正在退役，常返回 400/503，
-          # 与依赖漏洞不是同一类失败。
+          # DEV17-A: registry/tool failure must not soft-pass as clean.
           if printf '%s\n' "$output" | grep -Eqi 'audit endpoint returned an error|This endpoint is being retired|Service Unavailable|Bad Request'; then
-            echo "::warning::npm audit registry unavailable; skipping (not a package vulnerability finding)"
-            exit 0
+            echo "::error::npm audit registry unavailable — marking job failed (not a vulnerability clean bill)"
+            exit 1
           fi
           exit "$code"
 
   agentshield:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: apps/agentshield
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5
         with:
           go-version: "1.22"
       - name: gofmt
@@ -174,6 +198,24 @@ jobs:
         run: |
           go vet ./...
           go test ./...
+      - name: govulncheck (DEV17-A)
+        run: |
+          set -e
+          go install golang.org/x/vuln/cmd/govulncheck@v1.7.0
+          set +e
+          govulncheck ./... | tee /tmp/govulncheck.txt
+          code=${PIPESTATUS[0]}
+          if [ "$code" -eq 0 ]; then
+            echo "govulncheck: no known reachable vulnerabilities"
+            exit 0
+          fi
+          # Non-zero with findings means the scanner ran — not a soft-skip, not CVE-clear.
+          if [ "$code" -eq 3 ] || grep -q 'Vulnerability #' /tmp/govulncheck.txt; then
+            echo "::warning::govulncheck reported findings (see log). Scan executed; not claiming CVE-clear."
+            exit 0
+          fi
+          echo "::error::govulncheck failed to run (exit $code) — gate must not pass"
+          exit 1
       - name: Cross-compile
         run: |
           set -e

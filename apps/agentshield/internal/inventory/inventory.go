@@ -279,12 +279,11 @@ func (r *run) skillDir(p platformSpec, dir string, seen map[string]bool) bool {
 }
 
 func (r *run) skill(p platformSpec, path, dirName string) {
-	hash, files, err := admission.HashDir(path, r.opts.Limits)
+	hash, files, md, err := admission.HashDirWithSkillMD(path, r.opts.Limits)
 	if err != nil {
 		r.report.Skipped = append(r.report.Skipped, "unhashable:"+p.name+":"+dirName)
 		return
 	}
-	md, _ := os.ReadFile(filepath.Join(path, "SKILL.md"))
 	name := dirName
 	if m := frontName.FindSubmatch(md); m != nil {
 		name = strings.Trim(strings.TrimSpace(string(m[1])), `"'`)

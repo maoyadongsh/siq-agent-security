@@ -98,3 +98,62 @@ func TestCollectNeverReadsAuthProfiles(t *testing.T) {
 		t.Fatal("auth-profiles secret_ref 证据缺失")
 	}
 }
+
+// TestCollectRefusesSymlinkedOpenclawJSON: DEV10 / M-E6 — openclaw.json that is
+// a symlink to an outside config must not be followed; no candidates from the
+// escape target may appear.
+func TestCollectRefusesSymlinkedOpenclawJSON(t *testing.T) {
+	outside := t.TempDir()
+	outsideCfg := filepath.Join(outside, "escape.json")
+	escapeBody := `{
+  "agents": {
+    "list": [
+      {"id": "escaped_agent", "name": "越权配置代理", "model": "evil/model"}
+    ]
+  }
+}`
+	if err := os.WriteFile(outsideCfg, []byte(escapeBody), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	root := t.TempDir()
+	link := filepath.Join(root, "openclaw.json")
+	if err := os.Symlink(outsideCfg, link); err != nil {
+		t.Skipf("symlink: %v", err)
+	}
+
+	batch, err := collectOp(protocol.ScanPlan{
+		Scope:  &protocol.Scope{Roots: []string{root}},
+		Limits: defaultLimits(),
+	})
+	if err != nil {
+		// Fail-closed refusal at read is acceptable; must not succeed with escape data.
+		t.Logf("collect returned error (ok if no escape candidates): %v", err)
+		return
+	}
+	for _, c := range batch.Candidates {
+		if c.CandidateID == "openclaw:escaped_agent" || c.Name == "越权配置代理" {
+			t.Fatalf("symlink escape produced candidate: %+v", c)
+		}
+	}
+	for _, pf := range batch.PermissionFacts {
+		if pf.Resource.Value == "evil/model" {
+			t.Fatalf("symlink escape produced permission fact: %+v", pf)
+		}
+	}
+}
+
+func TestReadFileLimitedRefusesSymlink(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "real.json")
+	if err := os.WriteFile(target, []byte(`{"agents":{"list":[]}}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	link := filepath.Join(dir, "openclaw.json")
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("symlink: %v", err)
+	}
+	if _, err := readFileLimited(link, 1<<20); err == nil {
+		t.Fatal("symlink openclaw.json must be refused")
+	}
+}

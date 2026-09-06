@@ -2,7 +2,6 @@
 package export
 
 import (
-	"encoding/json"
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/ledger"
@@ -16,19 +15,41 @@ const Format = "agentshield.export.v1"
 // Bundle is the downloadable JSON. It must not contain tokens, seeds, private
 // keys, skill bodies, or tool-call parameters.
 type Bundle struct {
-	Format           string              `json:"format"`
-	GeneratedAt      string              `json:"generated_at"`
-	Identity         Identity            `json:"identity"`
-	EnforcementMode  string              `json:"enforcement_mode"`
-	ChainVerified    bool                `json:"chain_verified"`
-	ChainVerifyError string              `json:"chain_verify_error,omitempty"`
-	Overview         ledger.Overview     `json:"overview"`
-	Assets           []AssetSummary      `json:"assets"`
-	Admissions       []AdmissionSummary  `json:"admissions"`
-	Grants           []GrantSummary      `json:"grants"`
-	Findings         []ledger.FindingRow `json:"findings"`
-	Receipts         []ReceiptSummary    `json:"receipts"`
-	Audit            []state.AuditEvent  `json:"audit"`
+	Format          string   `json:"format"`
+	PrivacyProfile  string   `json:"privacy_profile"`
+	GeneratedAt     string   `json:"generated_at"`
+	Identity        Identity `json:"identity"`
+	EnforcementMode string   `json:"enforcement_mode"`
+	// ChainVerified is true only when the present prefix verifies (sig/link/hash).
+	// It does NOT mean full history integrity; see HistoryIntegrity (DEV15-A).
+	ChainVerified        bool                `json:"chain_verified"`
+	ChainPrefixValid     bool                `json:"chain_prefix_valid"`
+	HistoryIntegrity     string              `json:"history_integrity"` // verified|unknown|failed
+	CheckpointConsistent *bool               `json:"checkpoint_consistent,omitempty"`
+	ChainVerifyError     string              `json:"chain_verify_error,omitempty"`
+	Overview             ledger.Overview     `json:"overview"`
+	Assets               []AssetSummary      `json:"assets"`
+	Admissions           []AdmissionSummary  `json:"admissions"`
+	Grants               []GrantSummary      `json:"grants"`
+	Findings             []ledger.FindingRow `json:"findings"`
+	Receipts             []ReceiptSummary    `json:"receipts"`
+	Audit                []state.AuditEvent  `json:"audit"`
+	Incomplete           bool                `json:"incomplete"`
+	Truncation           *Truncation         `json:"truncation,omitempty"`
+	// Derived provenance + independent seal (DEV15-D). Signature covers the
+	// share projection only; it must not be confused with receipt/admission seals.
+	DerivedFrom   *DerivedFrom `json:"derived_from,omitempty"`
+	SigningSchema string       `json:"signing_schema,omitempty"`
+	Signature     string       `json:"signature,omitempty"`
+}
+
+// DerivedFrom records that this bundle is a redacted projection with its own seal.
+type DerivedFrom struct {
+	Kind             string `json:"kind"` // agentshield.export.derived/v1
+	AttestationScope string `json:"attestation_scope"`
+	SourceTipHash    string `json:"source_tip_hash,omitempty"`
+	SourceSeq        int    `json:"source_seq,omitempty"`
+	SourceCount      int    `json:"source_receipt_count"`
 }
 
 // Identity is the local verification key only.
@@ -90,47 +111,87 @@ type ReceiptSummary struct {
 
 // Input is everything Build needs.
 type Input struct {
-	Now   string
-	Mode  string
-	Key   *signing.Key
-	Snap  ledger.Snapshot
-	Audit []state.AuditEvent
+	Now        string
+	Mode       string
+	Key        *signing.Key
+	Snap       ledger.Snapshot
+	Audit      []state.AuditEvent
+	Checkpoint *receipt.Checkpoint // optional independent tip; same-dir HEAD is not valid
+	Budget     Budget
+	// DiskRead carries metrics from receipt.ReadLimited (disk budget, not slice).
+	DiskRead *receipt.ReadResult
 }
 
 // Build projects a redacted bundle. Verify uses the public key only.
 func Build(in Input) Bundle {
+	bud := normalizeBudget(in.Budget)
+	tr := &Truncation{}
+	if in.DiskRead != nil {
+		tr.BytesScanned = in.DiskRead.BytesScanned
+		if in.DiskRead.Truncated {
+			tr.ReceiptsTruncated = true
+			tr.Incomplete = true
+		}
+		if in.DiskRead.DiskBudget {
+			tr.DiskBudgetHit = true
+			tr.Incomplete = true
+		}
+	}
+
 	b := Bundle{
-		Format:          Format,
-		GeneratedAt:     in.Now,
-		EnforcementMode: in.Mode,
-		Overview:        ledger.Counts(in.Snap),
-		Audit:           in.Audit,
-		Assets:          []AssetSummary{},
-		Admissions:      []AdmissionSummary{},
-		Grants:          []GrantSummary{},
-		Receipts:        []ReceiptSummary{},
-		Findings:        []ledger.FindingRow{},
+		Format:           Format,
+		PrivacyProfile:   PrivacyProfileID,
+		GeneratedAt:      in.Now,
+		EnforcementMode:  in.Mode,
+		HistoryIntegrity: receipt.HistoryUnknown,
+		Overview:         ledger.Counts(in.Snap),
+		Audit:            in.Audit,
+		Assets:           []AssetSummary{},
+		Admissions:       []AdmissionSummary{},
+		Grants:           []GrantSummary{},
+		Receipts:         []ReceiptSummary{},
+		Findings:         []ledger.FindingRow{},
 	}
 	if in.Key != nil {
 		b.Identity.PublicKeyBase64 = in.Key.PublicBase64()
-		if err := receipt.Verify(in.Snap.Receipts, in.Key.Public()); err != nil {
-			b.ChainVerified = false
-			b.ChainVerifyError = err.Error()
-		} else {
-			b.ChainVerified = true
+		rep := receipt.VerifyDetailed(in.Snap.Receipts, in.Key.Public(), in.Checkpoint)
+		b.ChainPrefixValid = rep.PrefixValid
+		b.ChainVerified = rep.PrefixValid // prefix-only; not full-history
+		b.HistoryIntegrity = rep.HistoryIntegrity
+		b.CheckpointConsistent = rep.CheckpointConsistent
+		if rep.Error != "" {
+			b.ChainVerifyError = rep.Error
 		}
 	}
-	for _, f := range ledger.Findings(in.Snap) {
+	findings := ledger.Findings(in.Snap)
+	if capped, hit := capSlice(findings, bud.MaxFindings); hit {
+		tr.FindingsTruncated = true
+		tr.Incomplete = true
+		findings = capped
+	}
+	for _, f := range findings {
 		f.Excerpt = nil
 		b.Findings = append(b.Findings, f)
 	}
-	for _, a := range ledger.Assets(in.Snap) {
+	assets := ledger.Assets(in.Snap)
+	if capped, hit := capSlice(assets, bud.MaxAssets); hit {
+		tr.AssetsTruncated = true
+		tr.Incomplete = true
+		assets = capped
+	}
+	for _, a := range assets {
 		b.Assets = append(b.Assets, AssetSummary{
 			ID: a.ID, Name: a.Name, Framework: a.Framework, SourceType: a.SourceType,
-			SourceLocator: a.SourceLocator, Status: a.Status, AdmissionID: a.AdmissionID, GrantID: a.GrantID,
+			SourceLocator: NormalizeLocator(a.SourceLocator), Status: a.Status, AdmissionID: a.AdmissionID, GrantID: a.GrantID,
 		})
 	}
-	for _, ad := range in.Snap.Admissions {
+	admissions := in.Snap.Admissions
+	if capped, hit := capSlice(admissions, bud.MaxAdmissions); hit {
+		tr.AdmissionsTruncated = true
+		tr.Incomplete = true
+		admissions = capped
+	}
+	for _, ad := range admissions {
 		ids := make([]string, 0, len(ad.Findings))
 		for _, f := range ad.Findings {
 			ids = append(ids, f.FindingID)
@@ -140,31 +201,47 @@ func Build(in Input) Bundle {
 			ContentHash: ad.ContentHash, FindingIDs: ids,
 		})
 	}
-	for _, g := range in.Snap.Grants {
+	grants := in.Snap.Grants
+	if capped, hit := capSlice(grants, bud.MaxGrants); hit {
+		tr.GrantsTruncated = true
+		tr.Incomplete = true
+		grants = capped
+	}
+	for _, g := range grants {
 		gs := GrantSummary{
 			GrantID: g.GrantID, Status: g.Status, Platform: g.Platform,
 			SubjectID: g.Subject.ID, AdmissionID: g.AdmissionID, Facts: []FactSummary{},
 		}
 		for _, f := range g.Facts {
 			gs.Facts = append(gs.Facts, FactSummary{
-				Domain: f.Domain, Action: f.Action, ResourceValue: f.Resource.Value,
+				Domain: f.Domain, Action: f.Action, ResourceValue: NormalizeResourceValue(f.Resource.Value),
 				Effect: f.Effect, State: f.State,
 			})
 		}
 		b.Grants = append(b.Grants, gs)
 	}
-	for _, r := range in.Snap.Receipts {
+	recs := in.Snap.Receipts
+	if capped, hit := capSlice(recs, bud.MaxReceipts); hit {
+		tr.ReceiptsTruncated = true
+		tr.Incomplete = true
+		recs = capped
+	}
+	for _, r := range recs {
 		b.Receipts = append(b.Receipts, ReceiptSummary{
 			ReceiptID: r.ReceiptID, Seq: r.Seq, IssuedAt: r.IssuedAt, Platform: r.Platform,
-			Tool: r.Tool, Action: r.Action, Reason: r.Reason, Hash: r.Hash,
+			Tool: r.Tool, Action: r.Action, Reason: SanitizeReason(r.Reason), Hash: r.Hash,
 		})
 	}
+	if capped, hit := capSlice(b.Audit, bud.MaxAudit); hit {
+		tr.AuditTruncated = true
+		tr.Incomplete = true
+		b.Audit = capped
+	}
+	b.Incomplete = tr.Incomplete
+	if tr.Incomplete {
+		b.Truncation = tr
+	}
 	return b
-}
-
-// MarshalJSONBytes is pretty JSON for download.
-func MarshalJSONBytes(b Bundle) ([]byte, error) {
-	return json.MarshalIndent(b, "", "  ")
 }
 
 // ContainsForbidden reports whether raw looks like it leaked a secret class.

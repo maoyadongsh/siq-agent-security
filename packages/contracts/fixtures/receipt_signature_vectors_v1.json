@@ -1,0 +1,105 @@
+{
+  "schema": "receipt_signature_vectors/v1",
+  "signing_schema": "receipt_hash_chain/v1",
+  "producer": "CPython local_canon(ensure_ascii=True) → sha256 hex → Ed25519(hex ASCII); seed=bytes(range(32))",
+  "contract": "receipt.ContentHash + signing.SignBytes([]byte(hashHex)); NOT SignCanonical(body)",
+  "genesis_prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "cross_contract_note": {
+    "name": "genesis_chinese_html",
+    "sign_canonical_of_body_hex": "14fd88e4cc737a26b1d6b24a6a684a69e6ecdc4f2c60f627886a938161a8ab5316b1c004dffaa3de535d7a48783aac3fc67c34916c65463c5f94cb0724966505",
+    "must_differ_from_hash_chain_sig": true
+  },
+  "vectors": [
+    {
+      "name": "genesis_chinese_html",
+      "document": {
+        "receipt_id": "rcp-fixture-0",
+        "chain_id": "chain-fixture",
+        "seq": 0,
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "issued_at": "2026-09-06T00:00:00Z",
+        "platform": "hermes",
+        "session_id": "sess-1",
+        "agent_id": "agent-1",
+        "tool": "exec",
+        "tool_call_id": null,
+        "params_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "params_excerpt": null,
+        "action": "deny",
+        "advisory_action": null,
+        "reason": "命中规则 <危险>",
+        "matched_grant_id": null,
+        "matched_fact_ids": [],
+        "matched_rule_ids": [
+          "rule.fixture"
+        ],
+        "taint_labels": [],
+        "trifecta": {
+          "private_data": false,
+          "untrusted_input": false,
+          "egress": false
+        },
+        "enforcement_mode": "block",
+        "policy_revision": null,
+        "sandbox_id": null,
+        "model_key": null,
+        "engine": {
+          "version": "test",
+          "rulepack_version": 1
+        },
+        "decision_latency_ms": null,
+        "hold": null
+      },
+      "canonical_utf8": "{\"action\":\"deny\",\"advisory_action\":null,\"agent_id\":\"agent-1\",\"chain_id\":\"chain-fixture\",\"decision_latency_ms\":null,\"enforcement_mode\":\"block\",\"engine\":{\"rulepack_version\":1,\"version\":\"test\"},\"hold\":null,\"issued_at\":\"2026-09-06T00:00:00Z\",\"matched_fact_ids\":[],\"matched_grant_id\":null,\"matched_rule_ids\":[\"rule.fixture\"],\"model_key\":null,\"params_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"params_excerpt\":null,\"platform\":\"hermes\",\"policy_revision\":null,\"prev_hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"reason\":\"\\u547d\\u4e2d\\u89c4\\u5219 <\\u5371\\u9669>\",\"receipt_id\":\"rcp-fixture-0\",\"sandbox_id\":null,\"seq\":0,\"session_id\":\"sess-1\",\"taint_labels\":[],\"tool\":\"exec\",\"tool_call_id\":null,\"trifecta\":{\"egress\":false,\"private_data\":false,\"untrusted_input\":false}}",
+      "content_hash_hex": "69196bf804b8ba8817f4bf00c9c77a90c41fb68ea990a0f89c0a9680f1102ae6",
+      "signature_hex": "21c4fdde4d5813ed5e4b51ce58ea9c8e6e27d437c11371a4106f72a25c6594f4252884311e9bf7eae86df2acfea9efc70908eb18a74040ebcbdb76941369d400",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg="
+    },
+    {
+      "name": "chained_second",
+      "document": {
+        "receipt_id": "rcp-fixture-1",
+        "chain_id": "chain-fixture",
+        "seq": 1,
+        "prev_hash": "69196bf804b8ba8817f4bf00c9c77a90c41fb68ea990a0f89c0a9680f1102ae6",
+        "issued_at": "2026-09-06T00:00:01Z",
+        "platform": "hermes",
+        "session_id": "sess-1",
+        "agent_id": "agent-1",
+        "tool": "exec",
+        "tool_call_id": null,
+        "params_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "params_excerpt": null,
+        "action": "allow",
+        "advisory_action": null,
+        "reason": "granted",
+        "matched_grant_id": "grn-fixture01",
+        "matched_fact_ids": [
+          "fact.read"
+        ],
+        "matched_rule_ids": [],
+        "taint_labels": [],
+        "trifecta": {
+          "private_data": false,
+          "untrusted_input": false,
+          "egress": false
+        },
+        "enforcement_mode": "block",
+        "policy_revision": null,
+        "sandbox_id": null,
+        "model_key": null,
+        "engine": {
+          "version": "test",
+          "rulepack_version": 1
+        },
+        "decision_latency_ms": null,
+        "hold": null
+      },
+      "canonical_utf8": "{\"action\":\"allow\",\"advisory_action\":null,\"agent_id\":\"agent-1\",\"chain_id\":\"chain-fixture\",\"decision_latency_ms\":null,\"enforcement_mode\":\"block\",\"engine\":{\"rulepack_version\":1,\"version\":\"test\"},\"hold\":null,\"issued_at\":\"2026-09-06T00:00:01Z\",\"matched_fact_ids\":[\"fact.read\"],\"matched_grant_id\":\"grn-fixture01\",\"matched_rule_ids\":[],\"model_key\":null,\"params_digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"params_excerpt\":null,\"platform\":\"hermes\",\"policy_revision\":null,\"prev_hash\":\"69196bf804b8ba8817f4bf00c9c77a90c41fb68ea990a0f89c0a9680f1102ae6\",\"reason\":\"granted\",\"receipt_id\":\"rcp-fixture-1\",\"sandbox_id\":null,\"seq\":1,\"session_id\":\"sess-1\",\"taint_labels\":[],\"tool\":\"exec\",\"tool_call_id\":null,\"trifecta\":{\"egress\":false,\"private_data\":false,\"untrusted_input\":false}}",
+      "content_hash_hex": "9c53d5d56e4fb7b7935023da442b3d2919cbfa21800a95dfda1a09ad7ce053c8",
+      "signature_hex": "0b195bb1e3b4dc1a9b2f8c8d081d53c1552c0ea67a2d489803f691b71817fc948b26cf3955f815deff50aa79f80b416aebf66ed4de1741652902edc55dbaa906",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=",
+      "prev_must_equal_hash_of": "genesis_chinese_html"
+    }
+  ]
+}

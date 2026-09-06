@@ -7,7 +7,10 @@
 //     type, Python marker) with "unknown" when evidence is insufficient;
 //   - each rule records only its first line hit; excerpt is redacted with the
 //     pack's redaction patterns and truncated to 40 characters; excerpt_sha256
-//     is computed over the un-redacted hit.
+//     is computed over the un-redacted hit;
+//   - shell joins POSIX trailing-backslash continuations; powershell joins
+//     trailing-backtick continuations before regex matching; other types keep
+//     physical lines.
 //
 // Deliberate difference (ADR-011 D2): the Python AST layer (threat-py-os-system,
 // threat-py-subprocess-shell, threat-py-ctypes-load, threat-py-syntax-parse-failed)
@@ -168,17 +171,20 @@ func (a *Analyzer) makeMatch(r rulepack.Rule, line int, hit string) Match {
 }
 
 // Analyze mirrors analyze(): sha256 + type + first-hit-per-rule line scan.
+// Shell joins POSIX “\“ and DEV06-E pseudo pipe (next line starts with “|“);
+// PowerShell joins trailing “ ` “ and the same pseudo-pipe heuristic.
 func (a *Analyzer) Analyze(content []byte, filename, contentType string) Result {
 	sum := sha256.Sum256(content)
-	res := Result{SHA256: hex.EncodeToString(sum[:]), DetectedType: DetectType(content, filename, contentType), Matches: []Match{}}
+	detected := DetectType(content, filename, contentType)
+	res := Result{SHA256: hex.EncodeToString(sum[:]), DetectedType: detected, Matches: []Match{}}
 	text := strings.ToValidUTF8(string(content), "\uFFFD")
-	lines := splitLines(text)
+	lines := scanLines(text, detected)
 	for _, rule := range a.pack.Rules {
 	scan:
-		for i, line := range lines {
+		for _, sl := range lines {
 			for _, p := range rule.Patterns {
-				if loc := p.FindStringIndex(line); loc != nil {
-					res.Matches = append(res.Matches, a.makeMatch(rule, i+1, line[loc[0]:loc[1]]))
+				if loc := p.FindStringIndex(sl.Text); loc != nil {
+					res.Matches = append(res.Matches, a.makeMatch(rule, sl.Line, sl.Text[loc[0]:loc[1]]))
 					break scan
 				}
 			}
@@ -187,16 +193,91 @@ func (a *Analyzer) Analyze(content []byte, filename, contentType string) Result 
 	return res
 }
 
-// splitLines mirrors str.splitlines() for the separators that matter to the
-// rules (\n, \r\n, \r); a trailing terminator does not create an empty line.
+type scanLine struct {
+	Line int
+	Text string
+}
+
+// scanLines mirrors Python _scan_lines:
+//   - shell: join trailing POSIX “\“ continuations (H5a / DEV06-B)
+//   - powershell: join trailing backtick continuations (DEV06-D)
+//   - shell and powershell: also join when the next physical line starts with “|“
+//     after optional whitespace (DEV06-E pseudo pipe; join without embedding “\n“
+//     so patterns that forbid newlines still match)
+//   - other types: physical lines only
+func scanLines(s, detected string) []scanLine {
+	physical := splitLines(s)
+	var contSuffix string
+	switch detected {
+	case "shell":
+		contSuffix = `\`
+	case "powershell":
+		contSuffix = "`"
+	default:
+		out := make([]scanLine, len(physical))
+		for i, line := range physical {
+			out[i] = scanLine{Line: i + 1, Text: line}
+		}
+		return out
+	}
+	out := make([]scanLine, 0, len(physical))
+	for i := 0; i < len(physical); {
+		start := i + 1
+		buf := physical[i]
+		i++
+		for i < len(physical) {
+			if contSuffix != "" && strings.HasSuffix(buf, contSuffix) {
+				buf = strings.TrimSuffix(buf, contSuffix) + physical[i]
+				i++
+				continue
+			}
+			if pipeContinuationLine(physical[i]) {
+				// Drop trailing spaces on the left fragment so "| bash" attaches cleanly.
+				buf = strings.TrimRight(buf, " \t") + strings.TrimLeft(physical[i], " \t")
+				i++
+				continue
+			}
+			break
+		}
+		out = append(out, scanLine{Line: start, Text: buf})
+	}
+	return out
+}
+
+func pipeContinuationLine(line string) bool {
+	return strings.HasPrefix(strings.TrimLeft(line, " \t"), "|")
+}
+
+// splitLines mirrors Python str.splitlines() separators used by the control-plane
+// analyzer (DEV06-G / M-D2): LF, CR, CRLF, VT, FF, file/group/record separators,
+// NEL (U+0085), LS (U+2028), PS (U+2029). A trailing terminator does not create
+// an empty final line beyond what Split yields after TrimSuffix.
 func splitLines(s string) []string {
 	if s == "" {
 		return nil
 	}
-	s = strings.ReplaceAll(s, "\r\n", "\n")
-	s = strings.ReplaceAll(s, "\r", "\n")
-	s = strings.TrimSuffix(s, "\n")
-	return strings.Split(s, "\n")
+	var b strings.Builder
+	b.Grow(len(s))
+	for i := 0; i < len(s); {
+		r, size := utf8.DecodeRuneInString(s[i:])
+		i += size
+		switch r {
+		case '\r':
+			if i < len(s) {
+				nr, nsize := utf8.DecodeRuneInString(s[i:])
+				if nr == '\n' {
+					i += nsize
+				}
+			}
+			b.WriteByte('\n')
+		case '\n', '\v', '\f', '\x1c', '\x1d', '\x1e', '\u0085', '\u2028', '\u2029':
+			b.WriteByte('\n')
+		default:
+			b.WriteRune(r)
+		}
+	}
+	out := strings.TrimSuffix(b.String(), "\n")
+	return strings.Split(out, "\n")
 }
 
 func itoa(i int) string { return strconv.Itoa(i) }

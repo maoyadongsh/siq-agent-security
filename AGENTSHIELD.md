@@ -24,7 +24,7 @@ export SIQ_AGENT_SECURITY_STATE_DIR="${SIQ_AGENT_SECURITY_STATE_DIR:-$(pwd)/.sta
 ./siq-agent-security serve --port 47611
 ```
 
-浏览器打开 `http://127.0.0.1:47611`。Bearer token 在 `$SIQ_AGENT_SECURITY_STATE_DIR/token`（0600），不要贴进聊天或截图。
+浏览器打开 `http://127.0.0.1:47611`，在页面输入终端打印的**管理配对码**（5 分钟内单次有效）。适配器决策 token 在 `$SIQ_AGENT_SECURITY_STATE_DIR/token`（0600），不要贴进聊天或截图。当前是同 UID 桌面模式：不能防止同一用户下的 Agent 直接跑 CLI。
 
 把 Skill 装进 Hermes / OpenClaw / WorkBuddy 的步骤见根 README [使用说明](./README.md#使用说明)。本机已检出仓库、二进制已在 PATH 时：
 
@@ -61,6 +61,8 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 - Windows L3 需要 WSL2 / Docker；本快照不宣称
 - GitHub Release tag `siq-agent-security-v0.2.0`；复现仍以源码构建为准。bootstrap 不按 URL 下载。操作清单：[`docs/agentshield-release-checklist-v1.md`](./docs/agentshield-release-checklist-v1.md)
 - 批准 grant 必须人工 `--approve-as` / 控制台点击；SKILL.md 禁止模型批准
+- 控制台管理入口需要 `serve` 终端里的一次性配对码；`/ui-config.json` 不含凭据；适配器决策 token 不能调用管理接口
+- 当前桌面模式是 `desktop-same-uid`：同 OS 用户下的 Agent 仍可读状态目录并执行 CLI，**不**宣称“无法自批”
 
 ## 演示（评委路径）
 

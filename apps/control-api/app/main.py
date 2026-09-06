@@ -8,7 +8,6 @@
 from __future__ import annotations
 
 import logging
-import uuid
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, Request
@@ -17,6 +16,7 @@ from sqlalchemy import select
 
 from app.config import load_settings
 from app.db import Base, get_session, init_db, session_scope
+from app.list_meta import EXPOSE_HEADERS as LIST_EXPOSE_HEADERS
 from app.models import Tenant
 from app.routers import audit as audit_router
 from app.routers import bindings, environments, export, findings, inventory, policies, threat
@@ -60,12 +60,16 @@ app.add_middleware(
     allow_origins=["*"] if settings.dev_mode else list(settings.cors_origins),
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=list(LIST_EXPOSE_HEADERS),
 )
 
 
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
-    request_id = request.headers.get(settings.request_id_header) or f"req-{uuid.uuid4().hex[:12]}"
+    from app.request_id import normalize_client_request_id
+
+    # 客户端 header 仅 correlation；非法则服务端生成（M-P5c）
+    request_id = normalize_client_request_id(request.headers.get(settings.request_id_header))
     request.state.request_id = request_id
     response = await call_next(request)
     response.headers[settings.request_id_header] = request_id

@@ -2,7 +2,10 @@
 
 - 生产：SIQ_AS_TASK_SIGNING_KEY_SEED（base64，32 字节）来自 Secret Manager；
 - dev：自动生成到仓库外的用户状态目录，仅当前用户可读；
-- 规范签名：dict 按键排序 + JSON 紧凑序列化后 Ed25519 签名；
+- 规范签名：dict 按键排序 + JSON 紧凑序列化后 Ed25519 签名
+  （`json.dumps(..., sort_keys=True, separators=(",", ":"))`，CPython 默认
+  `ensure_ascii=True`；与 evidence_signing.canonical_json 的 UTF-8 原文不同）；
+- 固定向量：packages/contracts/fixtures/task_signature_vectors_v1.json（DEV09）；
 - 公钥随 register 响应下发给 Edge 钉住（ADR-002）。
 """
 

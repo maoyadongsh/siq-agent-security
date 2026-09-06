@@ -285,6 +285,19 @@ func TestCollectSkipsSymlinkEscape(t *testing.T) {
 	}
 }
 
+func TestReadFileLimitedRefusesSymlink(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "real.yaml")
+	link := filepath.Join(dir, "docker-compose.yaml")
+	writeFile(t, target, difyComposeFixture)
+	if err := os.Symlink(target, link); err != nil {
+		t.Skip("symlink not supported")
+	}
+	if _, err := readFileLimited(link, 1<<20); err == nil {
+		t.Fatal("DEV10-I: symlink path must not be read via openRegular")
+	}
+}
+
 // 安全红线：environment 段的 secret 值（含不被 Redactor 规则覆盖的明文）
 // 绝不出现在任何输出字段；content_hash 只覆盖 dify 相关行而非整个文件。
 func TestSecretEnvValuesNeverLeak(t *testing.T) {

@@ -30,6 +30,8 @@ export interface UiBoot {
   enforcement_mode: string;
   local_mode: boolean;
   single_user: boolean;
+  trust_profile?: string;
+  pairing_required?: boolean;
 }
 
 export interface Finding {
@@ -78,6 +80,8 @@ export interface Grant {
   facts?: GrantFact[];
   enforcement_mode: string;
   created_at: string;
+  /** Disk version seq from GET/POST responses; required for mutate CAS. */
+  state_revision?: number;
   desired_policy_ref?: {
     static_domains_unavailable?: string[];
   };

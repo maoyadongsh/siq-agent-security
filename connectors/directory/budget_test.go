@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -104,5 +105,21 @@ func TestCollectNoFallbackReadBeyondBudget(t *testing.T) {
 	}
 	if _, err := os.Stat(dir); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestReadFileLimitedRefusesSymlink(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("ADR-013 Unix O_NOFOLLOW")
+	}
+	dir := t.TempDir()
+	target := filepath.Join(dir, "agent.yaml")
+	writeFile(t, target, "name: x\n")
+	link := filepath.Join(dir, "link.yaml")
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("symlink: %v", err)
+	}
+	if _, err := readFileLimited(link, 1024); err == nil {
+		t.Fatal("symlink path must not be read via openRegular")
 	}
 }

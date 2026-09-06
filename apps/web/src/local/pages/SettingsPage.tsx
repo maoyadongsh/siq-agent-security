@@ -319,7 +319,8 @@ export default function SettingsPage() {
         <h2>安全边界</h2>
         <ul className="page-desc">
           <li>本控制台无私钥；验签由 siq-agent-security verify / GET /v1/receipts 完成。</li>
-          <li>Bearer token 来自 loopback 的 /ui-config.json，只留在内存，刷新会再取一次。</li>
+          <li>管理会话来自启动配对，只留在内存；/ui-config.json 不再返回凭据。适配器决策 token 不能调用管理接口。</li>
+          <li>当前信任配置是 desktop-same-uid：同用户 Agent 仍可读状态目录或执行 CLI，不宣称“无法自批”。</li>
           <li>OpenShell verify 最高只到 readback_verified；filesystem/process 永不标有效。</li>
         </ul>
       </div>

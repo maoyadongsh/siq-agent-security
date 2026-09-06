@@ -203,6 +203,7 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 		g.OpenClawToolPolicy = &OpenClawToolPolicy{Allow: keysSorted(ocAllow), Deny: []string{}, RequireApproval: keysSorted(ocReq)}
 	}
 
-	g.Signature = sign(key, g)
+	g.Signature = "" // cleared before resign
+	resign(key, &g)
 	return g, dp, nil
 }

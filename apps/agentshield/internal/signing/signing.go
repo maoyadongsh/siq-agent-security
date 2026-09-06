@@ -135,6 +135,18 @@ func VerifyCanonical(pub ed25519.PublicKey, doc map[string]any, sigHex string) b
 	return ed25519.Verify(pub, msg, sig)
 }
 
+// VerifyWithSchema dual-reads by signing_schema: local_canonical/v1 and
+// task_envelope/v1 use VerifyCanonical; unknown or evidence_utf8 fail closed.
+func VerifyWithSchema(schema string, pub ed25519.PublicKey, doc map[string]any, sigHex string) error {
+	if _, err := NormalizeSigningSchema(schema); err != nil {
+		return err
+	}
+	if !VerifyCanonical(pub, doc, sigHex) {
+		return errors.New("signing: signature verification failed")
+	}
+	return nil
+}
+
 // SignBytes / VerifyBytes are for hash-chain receipts, where the signature is
 // over the hex hash string itself.
 func (k *Key) SignBytes(msg []byte) string { return hex.EncodeToString(ed25519.Sign(k.priv, msg)) }

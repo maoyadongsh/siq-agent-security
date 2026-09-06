@@ -130,22 +130,28 @@ export default function AgentDetailPage() {
   };
 
   const patchPending = (grantId: string) => {
-    const body: Record<string, unknown> = { actor_id: actorId };
-    if (tools.trim()) body.tools = tools.split(/[\s,]+/).filter(Boolean);
+    const bodyBase: Record<string, unknown> = { actor_id: actorId };
+    if (tools.trim()) bodyBase.tools = tools.split(/[\s,]+/).filter(Boolean);
     if (network.trim()) {
-      body.network = network
+      bodyBase.network = network
         .split(/\n+/)
         .map((s) => s.trim())
         .filter(Boolean)
         .map((endpoint) => ({ endpoint, effect: 'allow' }));
     }
     if (fsRw.trim()) {
-      body.filesystem = { read_only: [], read_write: fsRw.split(/[\s,]+/).filter(Boolean) };
+      bodyBase.filesystem = { read_only: [], read_write: fsRw.split(/[\s,]+/).filter(Boolean) };
     }
-    if (models.trim()) body.models = models.split(/[\s,]+/).filter(Boolean);
+    if (models.trim()) bodyBase.models = models.split(/[\s,]+/).filter(Boolean);
     setFlash(null);
     localApi
-      .grantAction(grantId, 'patch-desired', body)
+      .grant(grantId)
+      .then(({ state_revision }) =>
+        localApi.grantAction(grantId, 'patch-desired', {
+          ...bodyBase,
+          expected_revision: state_revision,
+        }),
+      )
       .then(() => {
         ok('已写入五域补丁，仍须人类批准');
         load();

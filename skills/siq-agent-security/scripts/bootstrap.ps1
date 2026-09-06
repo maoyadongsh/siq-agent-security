@@ -28,7 +28,7 @@ function Find-Bin {
         $repo = Join-Path $SkillDir "..\..\apps\agentshield\$leaf"
         if (Test-Path $repo) { return (Resolve-Path $repo).Path }
     }
-    throw "siq-agent-security binary not found. Set SIQ_AGENT_SECURITY_BIN. Refusing to download without a signed skill-manifest.json."
+    return $null
 }
 
 function Find-Python {
@@ -45,13 +45,27 @@ if (-not (Test-Path $Manifest)) {
 
 $Bin = Find-Bin
 $Py = Find-Python
-$verifyArgs = @($VerifyPy, "--manifest", $Manifest, "--pubkey", $ReleasePubKeyB64, "--bin", $Bin)
-if (-not $env:SIQ_AGENT_SECURITY_REQUIRE_PINNED -and -not $env:AGENTSHIELD_REQUIRE_PINNED) {
-    $verifyArgs += "--allow-local"
+$stageRoot = if ($env:SIQ_AGENT_SECURITY_STAGE_DIR) { $env:SIQ_AGENT_SECURITY_STAGE_DIR } else { Join-Path $env:TEMP "siq-agent-security-stage-$PID" }
+New-Item -ItemType Directory -Force -Path $stageRoot | Out-Null
+if ($Bin) {
+    $verifyArgs = @($VerifyPy, "--manifest", $Manifest, "--pubkey", $ReleasePubKeyB64, "--skill-dir", $SkillDir, "--bin", $Bin)
+    if (-not $env:SIQ_AGENT_SECURITY_REQUIRE_PINNED -and -not $env:AGENTSHIELD_REQUIRE_PINNED) {
+        $verifyArgs += "--allow-local"
+    }
+    $verifyArgs += @("--stage-to", $stageRoot)
+} elseif ($env:SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD -eq "1") {
+    # DEV04-E: download only after signed-manifest verify; pin sha256+bytes.
+    $verifyArgs = @($VerifyPy, "--manifest", $Manifest, "--pubkey", $ReleasePubKeyB64, "--skill-dir", $SkillDir, "--fetch-artifact", "--stage-to", $stageRoot)
+} else {
+    throw "siq-agent-security binary not found. Set SIQ_AGENT_SECURITY_BIN. To download a pinned release artifact after signed-manifest verify, set SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1."
 }
-& $Py @verifyArgs
-if ($LASTEXITCODE -ne 0) {
-    throw "skill-manifest.json verification failed"
+$staged = & $Py @verifyArgs | Select-Object -Last 1
+if ($LASTEXITCODE -ne 0 -or -not $staged) {
+    throw "siq-agent-security-bootstrap: skill-manifest.json verification or staging failed"
+}
+$Bin = "$staged".Trim()
+if (-not (Test-Path $Bin)) {
+    throw "siq-agent-security-bootstrap: staged binary missing: $Bin"
 }
 
 Write-Host "siq-agent-security-bootstrap: using $Bin"

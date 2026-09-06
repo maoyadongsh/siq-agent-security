@@ -5,7 +5,6 @@
 package server
 
 import (
-	"crypto/subtle"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -22,6 +21,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/inventory"
 	"siq-agent-security/apps/agentshield/internal/openshell"
+	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
@@ -31,19 +31,22 @@ import (
 
 // Deps wires the server.
 type Deps struct {
-	Store     *state.Store
-	Engine    *receipt.Engine
-	Chain     *receipt.Chain
-	Pack      *rulepack.Pack
-	Key       *signing.Key
-	Token     string
-	Version   string
-	Mode      string
-	UI        http.Handler // optional embedded console
-	Home      string       // override os.UserHomeDir (tests + adapter HTTP)
-	Binary    string       // agentshield path written into adapter configs
-	Endpoint  string       // decision API URL written into adapter configs
-	Openshell *openshell.Client
+	Store       *state.Store
+	Engine      *receipt.Engine
+	Chain       *receipt.Chain
+	Pack        *rulepack.Pack
+	Key         *signing.Key
+	Token       string
+	Version     string
+	Mode        string
+	UI          http.Handler // optional embedded console
+	Home        string       // override os.UserHomeDir (tests + adapter HTTP)
+	Binary      string       // agentshield path written into adapter configs
+	Endpoint    string       // decision API URL written into adapter configs
+	Openshell   *openshell.Client
+	ListenHost  string // bind address advertised for Host allowlisting (default 127.0.0.1)
+	ListenPort  int    // must match the actual listen port
+	PairingCode string // tests only; production serve generates a random code
 }
 
 // Server is the HTTP handler set.
@@ -56,6 +59,21 @@ type Server struct {
 	osOK   bool
 	osCaps *openshell.Capabilities
 	osDiag openshell.Diagnosis
+
+	pairMu       sync.Mutex
+	pairDisplay  string
+	pairHash     [32]byte
+	pairDeadline time.Time
+	pairAttempts int
+	pairConsumed bool
+	sessMu       sync.Mutex
+	sessions     map[string]time.Time
+	bootAdmin    string // test harness after RedeemPairing
+
+	pendingMu sync.Mutex
+
+	// GET ledger projection cache (DEV16-B): Refresh/ticker write; assets/permissions/findings/export read.
+	proj projectionCache
 }
 
 // New builds the handler.
@@ -64,9 +82,12 @@ func New(d Deps) (*Server, error) {
 		return nil, errors.New("server: incomplete dependencies")
 	}
 	s := &Server{d: d, mux: http.NewServeMux()}
+	if err := s.initPairing(d.PairingCode); err != nil {
+		return nil, err
+	}
 	s.mux.HandleFunc("/v1/status", s.auth(s.status))
-	s.mux.HandleFunc("/v1/decide", s.auth(s.decide))
-	s.mux.HandleFunc("/v1/observe", s.auth(s.observe))
+	s.mux.HandleFunc("/v1/decide", s.auth(s.decide, capDecision))
+	s.mux.HandleFunc("/v1/observe", s.auth(s.observe, capDecision))
 	s.mux.HandleFunc("/v1/hold/", s.auth(s.hold))
 	s.mux.HandleFunc("/v1/receipts", s.auth(s.receipts))
 	s.mux.HandleFunc("/v1/admit", s.auth(s.admit))
@@ -90,6 +111,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/findings/", s.auth(s.findings))
 	s.mux.HandleFunc("/v1/audit", s.auth(s.auditLog))
 	s.mux.HandleFunc("/v1/export", s.auth(s.exportBundle))
+	s.mux.HandleFunc("/v1/pair", s.pair)
 	s.mux.HandleFunc("/ui-config.json", s.uiConfig)
 	if d.UI != nil {
 		s.mux.Handle("/", d.UI)
@@ -110,6 +132,13 @@ func (s *Server) Handler() http.Handler {
 			http.Error(w, "loopback only", http.StatusForbidden)
 			return
 		}
+		if !s.allowedHost(r.Host) {
+			http.Error(w, "host not allowed", http.StatusForbidden)
+			return
+		}
+		if s.rejectBadOrigin(w, r) {
+			return
+		}
 		s.mux.ServeHTTP(w, r)
 	})
 }
@@ -117,17 +146,6 @@ func (s *Server) Handler() http.Handler {
 func isLoopback(host string) bool {
 	ip := net.ParseIP(host)
 	return ip != nil && ip.IsLoopback()
-}
-
-func (s *Server) auth(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		h := r.Header.Get("Authorization")
-		if !strings.HasPrefix(h, "Bearer ") || subtle.ConstantTimeCompare([]byte(strings.TrimPrefix(h, "Bearer ")), []byte(s.d.Token)) != 1 {
-			writeJSON(w, http.StatusUnauthorized, map[string]any{"error": "unauthorized"})
-			return
-		}
-		next(w, r)
-	}
 }
 
 func writeJSON(w http.ResponseWriter, code int, v any) {
@@ -139,6 +157,13 @@ func writeJSON(w http.ResponseWriter, code int, v any) {
 func readJSON(r *http.Request, v any, limit int64) error {
 	dec := json.NewDecoder(http.MaxBytesReader(nil, r.Body, limit))
 	dec.UseNumber()
+	return dec.Decode(v)
+}
+
+func readJSONStrict(r *http.Request, v any, limit int64) error {
+	dec := json.NewDecoder(http.MaxBytesReader(nil, r.Body, limit))
+	dec.UseNumber()
+	dec.DisallowUnknownFields()
 	return dec.Decode(v)
 }
 
@@ -162,21 +187,23 @@ func (s *Server) status(w http.ResponseWriter, _ *http.Request) {
 	})
 }
 
-// uiConfig is loopback-only (enforced by Handler) and unauthenticated: the
-// same user can already read <state>/token. The browser keeps the value in
-// memory; it must not be written to localStorage.
+// uiConfig is loopback-only and unauthenticated. It never returns secrets.
 func (s *Server) uiConfig(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet && r.Method != http.MethodHead {
 		writeJSON(w, 405, map[string]any{"error": "GET required"})
 		return
 	}
+	s.pairMu.Lock()
+	pairingOpen := !s.pairConsumed && time.Now().Before(s.pairDeadline)
+	s.pairMu.Unlock()
 	w.Header().Set("Cache-Control", "no-store")
 	writeJSON(w, 200, map[string]any{
-		"token":            s.d.Token,
 		"version":          s.d.Version,
 		"enforcement_mode": s.currentMode(),
 		"local_mode":       true,
 		"single_user":      true,
+		"trust_profile":    "desktop-same-uid",
+		"pairing_required": pairingOpen,
 	})
 }
 
@@ -224,6 +251,7 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 405, map[string]any{"error": "POST required"})
 		return
 	}
+	s.promotePendingBestEffort()
 	var req receipt.Request
 	if err := readJSON(r, &req, 4<<20); err != nil || req.Tool == "" || req.SessionID == "" || req.Platform == "" {
 		writeJSON(w, 400, map[string]any{"error": "invalid request: platform, session_id and tool are required"})
@@ -231,6 +259,16 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 	}
 	d, err := s.d.Engine.Decide(req)
 	if err != nil {
+		if errors.Is(err, receipt.ErrSessionCapacity) {
+			st := s.d.Engine.SessionStats()
+			writeJSON(w, 503, map[string]any{
+				"error":             "session capacity exhausted",
+				"session_active":    st.Active,
+				"session_max":       st.Max,
+				"capacity_refusals": st.Refusals,
+			})
+			return
+		}
 		writeJSON(w, 500, map[string]any{"error": "decision failed"})
 		return
 	}
@@ -241,7 +279,19 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 	if d.Hold != nil {
 		resp["hold"] = d.Hold
 	}
+	s.invalidateProjection("decide")
 	writeJSON(w, 200, resp)
+}
+
+// promotePendingBestEffort signs any new fail-closed pending lines onto the
+// receipt chain (DEV07-D). Errors are swallowed so decision path stays available.
+func (s *Server) promotePendingBestEffort() {
+	s.pendingMu.Lock()
+	defer s.pendingMu.Unlock()
+	_, _ = pending.Promote(s.d.Store.Dir, func(rec pending.Record) error {
+		_, err := s.d.Engine.AppendPendingObserved(rec)
+		return err
+	})
 }
 
 func (s *Server) observe(w http.ResponseWriter, r *http.Request) {
@@ -262,9 +312,20 @@ func (s *Server) observe(w http.ResponseWriter, r *http.Request) {
 	}
 	rec, err := s.d.Engine.Observe(body.Request, body.Result)
 	if err != nil {
+		if errors.Is(err, receipt.ErrSessionCapacity) {
+			st := s.d.Engine.SessionStats()
+			writeJSON(w, 503, map[string]any{
+				"error":             "session capacity exhausted",
+				"session_active":    st.Active,
+				"session_max":       st.Max,
+				"capacity_refusals": st.Refusals,
+			})
+			return
+		}
 		writeJSON(w, 500, map[string]any{"error": "observe failed"})
 		return
 	}
+	s.invalidateProjection("observe")
 	writeJSON(w, 200, map[string]any{"receipt_id": rec.ReceiptID, "taint_labels": rec.TaintLabels})
 }
 
@@ -278,7 +339,11 @@ func (s *Server) hold(w http.ResponseWriter, r *http.Request) {
 		Approve bool   `json:"approve"`
 		ActorID string `json:"actor_id"`
 	}
-	if err := readJSON(r, &body, 64<<10); err != nil || body.ActorID == "" {
+	if err := readJSONStrict(r, &body, 64<<10); err != nil {
+		writeJSON(w, 400, map[string]any{"error": "invalid json"})
+		return
+	}
+	if body.ActorID == "" {
 		writeJSON(w, 400, map[string]any{"error": "actor_id required"})
 		return
 	}
@@ -291,6 +356,14 @@ func (s *Server) hold(w http.ResponseWriter, r *http.Request) {
 		if all[i].ReceiptID == id && all[i].Action == receipt.ActionHold {
 			rec, err := s.d.Engine.ResolveHold(all[i], body.Approve, body.ActorID)
 			if err != nil {
+				if errors.Is(err, receipt.ErrHoldConflict) {
+					writeJSON(w, 409, map[string]any{"error": err.Error()})
+					return
+				}
+				if errors.Is(err, receipt.ErrHoldExpired) {
+					writeJSON(w, 400, map[string]any{"error": err.Error()})
+					return
+				}
 				writeJSON(w, 400, map[string]any{"error": err.Error()})
 				return
 			}
@@ -358,6 +431,7 @@ func (s *Server) admit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "admit", Target: res.Admission.AdmissionID, Note: res.Admission.Verdict})
+	s.invalidateProjection("admit")
 	writeJSON(w, 200, map[string]any{"admission": res.Admission, "skill_card": res.SkillCard})
 }
 
@@ -380,24 +454,45 @@ func (s *Server) exportBundle(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 405, map[string]any{"error": "GET required"})
 		return
 	}
-	snap, err := s.snapshot("")
+	snap, meta, err := s.readProjection("")
 	if err != nil {
-		writeJSON(w, 500, map[string]any{"error": "export failed"})
+		writeJSON(w, 500, map[string]any{"error": "export failed", "projection": meta})
 		return
 	}
-	audit, err := s.d.Store.TailAudit(200)
+	disk, err := s.d.Chain.ReadLimited(receipt.ReadLimit{
+		MaxRecords: export.DefaultMaxReceipts,
+		MaxBytes:   32 << 20,
+	})
+	if err != nil {
+		writeJSON(w, 500, map[string]any{"error": "export failed", "projection": meta})
+		return
+	}
+	snap.Receipts = disk.Receipts
+	audit, err := s.d.Store.TailAudit(export.DefaultMaxAudit)
 	if err != nil {
 		writeJSON(w, 500, map[string]any{"error": "audit unreadable"})
 		return
 	}
+	var cp *receipt.Checkpoint
+	if store, err := receipt.OpenCheckpointStore(s.d.Store.Dir, s.d.Key); err == nil {
+		cp, _ = store.LoadOptional(s.d.Chain.ChainID())
+	}
+	bud := export.Budget{}
 	bundle := export.Build(export.Input{
-		Now:   time.Now().UTC().Format(time.RFC3339),
-		Mode:  s.currentMode(),
-		Key:   s.d.Key,
-		Snap:  snap,
-		Audit: audit,
+		Now:        time.Now().UTC().Format(time.RFC3339),
+		Mode:       s.currentMode(),
+		Key:        s.d.Key,
+		Snap:       snap,
+		Audit:      audit,
+		Budget:     bud,
+		DiskRead:   &disk,
+		Checkpoint: cp,
 	})
-	raw, err := export.MarshalJSONBytes(bundle)
+	if err := export.Seal(s.d.Key, &bundle); err != nil {
+		writeJSON(w, 500, map[string]any{"error": "export seal failed"})
+		return
+	}
+	raw, err := export.MarshalJSONBytesBudget(bundle, export.DefaultMaxJSONBytes)
 	if err != nil {
 		writeJSON(w, 500, map[string]any{"error": "export marshal failed"})
 		return
@@ -450,7 +545,13 @@ func (s *Server) grants(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, 500, map[string]any{"error": "store unreadable"})
 			return
 		}
-		writeJSON(w, 200, map[string]any{"grants": list})
+		revs := map[string]int{}
+		for _, g := range list {
+			if _, seq, err := s.d.Store.GetGrantWithSeq(g.GrantID); err == nil {
+				revs[g.GrantID] = seq
+			}
+		}
+		writeJSON(w, 200, map[string]any{"grants": list, "state_revisions": revs})
 	case http.MethodPost:
 		var body struct {
 			AdmissionID string `json:"admission_id"`
@@ -477,51 +578,86 @@ func (s *Server) grants(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, 400, map[string]any{"error": err.Error()})
 			return
 		}
-		if existing, err := s.d.Store.GetGrant(res.Grant.GrantID); err == nil && grant.IsLiveStatus(existing.Status) {
-			writeJSON(w, 200, map[string]any{"grant": existing, "reused": true})
+		if existing, seq, err := s.d.Store.GetGrantWithSeq(res.Grant.GrantID); err == nil && grant.IsLiveStatus(existing.Status) {
+			writeJSON(w, 200, map[string]any{"grant": existing, "reused": true, "state_revision": seq})
 			return
 		}
-		if err := s.d.Store.PutGrant(res.Grant); err != nil {
+		expected, _, err := s.d.Store.LatestSeq("grants", res.Grant.GrantID)
+		if err != nil {
 			writeJSON(w, 500, map[string]any{"error": "store failed"})
 			return
 		}
-		_ = s.d.Store.PutDesiredPolicy(res.DesiredPolicy)
-		_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "grant_create", Target: res.Grant.GrantID})
-		writeJSON(w, 200, map[string]any{"grant": res.Grant, "desired_policy": res.DesiredPolicy})
+		seq, err := s.d.Store.CommitGrant(state.GrantCommit{
+			Grant:            res.Grant,
+			ExpectedRevision: expected,
+			DesiredPolicy:    res.DesiredPolicy,
+			Audit: &state.AuditEvent{
+				At: time.Now().UTC().Format(time.RFC3339), Event: "grant_create", Target: res.Grant.GrantID,
+			},
+		})
+		if err != nil {
+			writeCommitError(w, err)
+			return
+		}
+		s.invalidateProjection("grant_create")
+		writeJSON(w, 200, map[string]any{"grant": res.Grant, "desired_policy": res.DesiredPolicy, "state_revision": seq})
 	default:
 		writeJSON(w, 405, map[string]any{"error": "GET or POST"})
 	}
 }
 
-// grantAction: POST /v1/grants/{id}/{approve|reject|deploy|revoke|resolve-overlap|effective|patch-desired}
+// grantAction: GET /v1/grants/{id}; POST /v1/grants/{id}/{approve|...}
 func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(strings.Trim(strings.TrimPrefix(r.URL.Path, "/v1/grants/"), "/"), "/")
+	if len(parts) == 1 && parts[0] != "" && r.Method == http.MethodGet {
+		g, seq, err := s.d.Store.GetGrantWithSeq(parts[0])
+		if err != nil {
+			writeJSON(w, 404, map[string]any{"error": "grant not found"})
+			return
+		}
+		writeJSON(w, 200, map[string]any{"grant": g, "state_revision": seq})
+		return
+	}
 	if r.Method != http.MethodPost {
 		writeJSON(w, 405, map[string]any{"error": "POST required"})
 		return
 	}
-	parts := strings.Split(strings.TrimPrefix(r.URL.Path, "/v1/grants/"), "/")
 	if len(parts) != 2 {
 		writeJSON(w, 404, map[string]any{"error": "not found"})
 		return
 	}
-	g, err := s.d.Store.GetGrant(parts[0])
+	g, seq, err := s.d.Store.GetGrantWithSeq(parts[0])
 	if err != nil {
 		writeJSON(w, 404, map[string]any{"error": "grant not found"})
 		return
 	}
 	var body struct {
-		ActorID    string                 `json:"actor_id"`
-		Channel    string                 `json:"channel"`
-		Index      int                    `json:"index"`
-		Readback   *grant.Readback        `json:"readback"`
-		Facts      map[string]string      `json:"fact_readbacks"`
-		Tools      *[]string              `json:"tools"`
-		Network    *[]grant.NetworkPatch  `json:"network"`
-		Filesystem *grant.FilesystemPatch `json:"filesystem"`
-		Process    *grant.ProcessPatch    `json:"process"`
-		Models     *[]string              `json:"models"`
+		ExpectedRevision *int                   `json:"expected_revision"`
+		ActorID          string                 `json:"actor_id"`
+		Channel          string                 `json:"channel"`
+		ChallengeID      string                 `json:"challenge_id"`
+		Nonce            string                 `json:"nonce"`
+		Index            int                    `json:"index"`
+		Readback         *grant.Readback        `json:"readback"`
+		Facts            map[string]string      `json:"fact_readbacks"`
+		Tools            *[]string              `json:"tools"`
+		Network          *[]grant.NetworkPatch  `json:"network"`
+		Filesystem       *grant.FilesystemPatch `json:"filesystem"`
+		Process          *grant.ProcessPatch    `json:"process"`
+		Models           *[]string              `json:"models"`
 	}
-	_ = readJSON(r, &body, 64<<10)
+	if err := readJSON(r, &body, 64<<10); err != nil {
+		writeJSON(w, 400, map[string]any{"error": "invalid json"})
+		return
+	}
+	if body.ExpectedRevision == nil {
+		writeJSON(w, 400, map[string]any{"error": "expected_revision required", "state_revision": seq})
+		return
+	}
+	if *body.ExpectedRevision != seq {
+		writeJSON(w, 409, map[string]any{"error": "revision conflict", "expected": *body.ExpectedRevision, "actual": seq})
+		return
+	}
 	actor := grant.Approval{ActorType: "human", ActorID: body.ActorID, ApprovedAt: time.Now().UTC().Format(time.RFC3339), Channel: body.Channel}
 	if actor.Channel == "" {
 		actor.Channel = "console"
@@ -529,7 +665,43 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 	var out grant.Grant
 	var dp grant.DesiredPolicy
 	switch parts[1] {
+	case "challenge":
+		ch, err := grant.IssueChallenge(*g, seq, time.Now().UTC())
+		if err != nil {
+			writeJSON(w, 400, map[string]any{"error": err.Error()})
+			return
+		}
+		if err := s.d.Store.PutChallenge(*ch); err != nil {
+			writeJSON(w, 500, map[string]any{"error": "challenge persist failed"})
+			return
+		}
+		_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "grant_challenge", Target: g.GrantID, ActorID: body.ActorID})
+		writeJSON(w, 200, map[string]any{
+			"challenge":       ch,
+			"state_revision":  seq,
+			"note":            "approve must present challenge_id + nonce; body changes invalidate the digest",
+			"capability_note": "desktop-same-uid: challenge does not prevent a same-UID agent from issuing and consuming its own challenge",
+		})
+		return
 	case "approve":
+		if body.ChallengeID == "" || body.Nonce == "" {
+			writeJSON(w, 400, map[string]any{"error": "approval challenge required", "hint": "POST /v1/grants/{id}/challenge then include challenge_id and nonce"})
+			return
+		}
+		ch, chSeq, err := s.d.Store.GetChallengeWithSeq(body.ChallengeID)
+		if err != nil {
+			writeJSON(w, 400, map[string]any{"error": "unknown approval challenge"})
+			return
+		}
+		if err := grant.ValidateChallenge(*ch, *g, seq, body.Nonce, time.Now().UTC()); err != nil {
+			writeJSON(w, 400, map[string]any{"error": err.Error()})
+			return
+		}
+		consumed := grant.MarkConsumed(*ch, time.Now().UTC())
+		if _, err := s.d.Store.PutChallengeCAS(consumed, chSeq); err != nil {
+			writeRevisionConflict(w, err)
+			return
+		}
 		out, err = grant.Approve(*g, actor, s.d.Key)
 	case "reject":
 		out, err = grant.Reject(*g, s.d.Key)
@@ -570,22 +742,61 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 400, map[string]any{"error": err.Error()})
 		return
 	}
-	if err := s.d.Store.PutGrant(out); err != nil {
-		writeJSON(w, 500, map[string]any{"error": "store failed"})
-		return
-	}
-	if dp != nil {
-		_ = s.d.Store.PutDesiredPolicy(dp)
-	}
+	auditEv := state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), ActorID: body.ActorID, Target: out.GrantID}
 	switch parts[1] {
 	case "approve", "revoke", "reject", "deploy":
-		_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "grant_" + parts[1], ActorID: body.ActorID, Target: out.GrantID})
+		auditEv.Event = "grant_" + parts[1]
 	case "patch-desired":
-		_ = s.d.Store.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "grant_patch", ActorID: body.ActorID, Target: out.GrantID})
-		writeJSON(w, 200, map[string]any{"grant": out, "desired_policy": dp})
+		auditEv.Event = "grant_patch"
+	default:
+		auditEv.Event = "grant_" + parts[1]
+	}
+	commit := state.GrantCommit{
+		Grant:            out,
+		ExpectedRevision: seq,
+		Audit:            &auditEv,
+	}
+	if dp != nil {
+		commit.DesiredPolicy = dp
+	}
+	newSeq, err := s.d.Store.CommitGrant(commit)
+	if err != nil {
+		writeCommitError(w, err)
 		return
 	}
-	writeJSON(w, 200, map[string]any{"grant": out})
+	s.invalidateProjection("grant_" + parts[1])
+	if parts[1] == "patch-desired" {
+		writeJSON(w, 200, map[string]any{"grant": out, "desired_policy": dp, "state_revision": newSeq})
+		return
+	}
+	writeJSON(w, 200, map[string]any{"grant": out, "state_revision": newSeq})
+}
+
+func writeCommitError(w http.ResponseWriter, err error) {
+	var inc *state.IncompleteCommitError
+	if errors.As(err, &inc) {
+		writeJSON(w, 500, map[string]any{
+			"error":          "incomplete_commit",
+			"phase":          inc.Phase,
+			"state_revision": inc.Seq,
+			"detail":         inc.Err.Error(),
+		})
+		return
+	}
+	writeRevisionConflict(w, err)
+}
+
+func writeRevisionConflict(w http.ResponseWriter, err error) {
+	var conflict *state.RevisionConflictError
+	if errors.As(err, &conflict) {
+		writeJSON(w, 409, map[string]any{"error": "revision conflict", "expected": conflict.Expected, "actual": conflict.Actual})
+		return
+	}
+	if errors.Is(err, state.ErrRevisionConflict) {
+		writeJSON(w, 409, map[string]any{"error": "revision conflict"})
+		return
+	}
+	writeJSON(w, 500, map[string]any{"error": "store failed"})
 }
 
 func (s *Server) admissionOne(w http.ResponseWriter, r *http.Request) {

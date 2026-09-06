@@ -107,17 +107,57 @@ def _post(path: str, body: dict[str, Any]) -> dict[str, Any] | None:
         return None
 
 
-def _fail_closed(reason: str) -> dict[str, str] | None:
-    if _CFG["enforcement_mode"] == "block":
+def _fail_closed(reason: str, *, tool: str = "", session_id: str = "") -> dict[str, str] | None:
+    mode = str(_CFG["enforcement_mode"])
+    outcome = "deny" if mode == "block" else "allow"
+    _append_pending(
+        {
+            "schema": "pending_decision/v1",
+            "recorded_at": _utcnow(),
+            "platform": "hermes",
+            "tool": tool,
+            "session_id": session_id,
+            "enforcement_mode": mode,
+            "outcome": outcome,
+            "reason": reason if reason.startswith("decision") else f"decision service unavailable ({reason})",
+            "signed": False,
+        }
+    )
+    if mode == "block":
         return {
             "action": "block",
             "message": f"siq-agent-security: decision service unavailable ({reason}); blocked (fail-closed)",
         }
     print(
-        f"siq-agent-security: decision service unavailable ({reason}); allowing in {_CFG['enforcement_mode']} mode",
+        f"siq-agent-security: decision service unavailable ({reason}); allowing in {mode} mode",
         file=sys.stderr,
     )
     return None
+
+
+def _utcnow() -> str:
+    from datetime import datetime, timezone
+
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+
+def _append_pending(rec: dict[str, Any]) -> None:
+    try:
+        root = Path(str(_CFG.get("token_path") or "")).expanduser().resolve().parent
+        if not root:
+            root = _state_dir()
+        dest_dir = root / "pending"
+        dest_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
+        path = dest_dir / "decisions.jsonl"
+        line = json.dumps(rec, ensure_ascii=False, separators=(",", ":")) + "\n"
+        flags = os.O_APPEND | os.O_CREAT | os.O_WRONLY
+        fd = os.open(path, flags, 0o600)
+        try:
+            os.write(fd, line.encode("utf-8"))
+        finally:
+            os.close(fd)
+    except OSError:
+        pass
 
 
 def _pre_tool_call(
@@ -128,11 +168,12 @@ def _pre_tool_call(
     tool_call_id: str = "",
     **_: Any,
 ):
+    sid = session_id or task_id or "hermes-default"
     decision = _post(
         "/v1/decide",
         {
             "platform": _CFG["platform"],
-            "session_id": session_id or task_id or "hermes-default",
+            "session_id": sid,
             "agent_id": _CFG["agent_id"] or os.environ.get("HERMES_PROFILE", "default"),
             "tool": tool_name,
             "tool_call_id": tool_call_id,
@@ -141,7 +182,7 @@ def _pre_tool_call(
         },
     )
     if decision is None:
-        return _fail_closed("no response")
+        return _fail_closed("no response", tool=tool_name, session_id=sid)
     action = decision.get("action")
     reason = str(decision.get("reason", ""))
     rid = decision.get("receipt_id", "")
@@ -160,7 +201,7 @@ def _pre_tool_call(
         }
     if action == "deny":
         return {"action": "block", "message": f"siq-agent-security denied: {reason} (receipt {rid})"}
-    return _fail_closed("malformed decision")
+    return _fail_closed("malformed decision", tool=tool_name, session_id=sid)
 
 
 def _post_tool_call(

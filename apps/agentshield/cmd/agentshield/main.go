@@ -24,6 +24,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/adapters"
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/openshell"
+	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
@@ -82,6 +83,8 @@ func main() {
 		err = cmdReleaseManifest(os.Args[2:])
 	case "manifest-verify":
 		err = cmdManifestVerify(os.Args[2:])
+	case "incomplete":
+		err = cmdIncomplete(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
@@ -120,12 +123,49 @@ func usage() {
   %[1]s openshell apply --target NAME [--allow host:port] [--deny host:port]
                                   # L3: CLI-only network policy set + readback (never create_generation)
   %[1]s serve [--port N] [--mode audit_only|warn|block]
-                                  # decision API + console on 127.0.0.1 (bearer token in <state>/token)
+                                  # loopback console; adapters use <state>/token; UI requires pairing code
   %[1]s release-manifest [--build] [--bin-dir DIR] [--skill-dir DIR]
                                   # sign skill-manifest.json (requires SIQ_AGENT_SECURITY_RELEASE_SEED)
   %[1]s manifest-verify [path]
                                   # verify signature + content_hash of a skill-manifest.json
+  %[1]s incomplete [--recover]  # list durable incomplete multi-file commits
 `, n)
+}
+
+func cmdIncomplete(args []string) error {
+	fs := flag.NewFlagSet("incomplete", flag.ContinueOnError)
+	recoverFlag := fs.Bool("recover", false, "replay prepared commits under exclusive writer ownership")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if fs.NArg() != 0 {
+		return errors.New("incomplete: unexpected arguments")
+	}
+	dir, err := stateDir()
+	if err != nil {
+		return err
+	}
+	st, err := state.Open(dir)
+	if err != nil {
+		return err
+	}
+	if *recoverFlag {
+		writer, err := state.AcquireWriter(dir)
+		if err != nil {
+			return err
+		}
+		defer writer.Release()
+		if _, err := st.RecoverGrantCommits(writer); err != nil {
+			return err
+		}
+	}
+	markers, err := st.ListIncompleteCommits()
+	if err != nil {
+		return err
+	}
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	return enc.Encode(markers)
 }
 
 func cmdInventory(args []string) error {
@@ -253,7 +293,7 @@ func cmdHook(args []string) error {
 		agentID = "default"
 	}
 	d := &httpDecider{endpoint: fmt.Sprintf("http://127.0.0.1:%d", cfg.Port), token: tok, client: &http.Client{Timeout: 4 * time.Second}}
-	out, err := adapters.CodeBuddyHook(os.Stdin, d, agentID, cfg.EnforcementMode)
+	out, err := adapters.CodeBuddyHook(os.Stdin, d, agentID, cfg.EnforcementMode, dir)
 	if err != nil {
 		return err
 	}
@@ -290,17 +330,14 @@ func cmdServe(args []string) error {
 			return fmt.Errorf("serve: invalid --mode %q", *mode)
 		}
 	}
-	lockPath := filepath.Join(dir, "serve.lock")
-	lock, err := os.OpenFile(lockPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	writer, err := state.AcquireWriter(dir)
 	if err != nil {
-		if os.IsExist(err) {
-			return fmt.Errorf("serve: another instance holds %s (remove it if that process is gone)", lockPath)
-		}
+		return fmt.Errorf("serve: %w", err)
+	}
+	defer func() { _ = writer.Release() }()
+	if _, err := st.RecoverGrantCommits(writer); err != nil {
 		return err
 	}
-	fmt.Fprintf(lock, "%d\n", os.Getpid())
-	_ = lock.Close()
-	defer os.Remove(lockPath)
 
 	key, err := signing.Load(dir)
 	if err != nil {
@@ -318,9 +355,25 @@ func cmdServe(args []string) error {
 	if err != nil {
 		return err
 	}
-	eng, err := receipt.New(receipt.Options{Pack: pack, Chain: chain, Grants: st.ActiveGrant, EnforcementMode: cfg.EnforcementMode, Version: Version, HoldChannel: cfg.HoldChannel})
+	if cpStore, err := receipt.OpenCheckpointStore(dir, key); err != nil {
+		return err
+	} else {
+		chain.AttachCheckpointStore(cpStore)
+	}
+	eng, err := receipt.New(receipt.Options{
+		Pack: pack, Chain: chain, Grants: st.ActiveGrant, EnforcementMode: cfg.EnforcementMode,
+		Version: Version, HoldChannel: cfg.HoldChannel, SessionIdleTTL: cfg.SessionIdleTTL(),
+	})
 	if err != nil {
 		return err
+	}
+	if n, err := pending.Promote(dir, func(rec pending.Record) error {
+		_, err := eng.AppendPendingObserved(rec)
+		return err
+	}); err != nil {
+		return fmt.Errorf("serve: promote pending: %w", err)
+	} else if n > 0 {
+		fmt.Fprintf(os.Stderr, "%s: promoted %d pending fail-closed decision(s) to signed receipts\n", product.Name, n)
 	}
 	home, _ := os.UserHomeDir()
 	bin, _ := os.Executable()
@@ -332,7 +385,8 @@ func cmdServe(args []string) error {
 		Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: tok,
 		Version: Version, Mode: cfg.EnforcementMode, UI: ui.Handler(),
 		Home: home, Binary: bin, Endpoint: "http://" + addr,
-		Openshell: openshell.New(openshell.Options{ProbeTimeout: 5 * time.Second}),
+		Openshell:  openshell.New(openshell.Options{ProbeTimeout: 5 * time.Second}),
+		ListenHost: "127.0.0.1", ListenPort: cfg.Port,
 	})
 	if err != nil {
 		return err
@@ -342,7 +396,11 @@ func cmdServe(args []string) error {
 		return err
 	}
 	fmt.Fprintf(os.Stderr, "%s %s serving on http://%s  mode=%s  state=%s\n", product.Name, Version, addr, cfg.EnforcementMode, dir)
-	fmt.Fprintf(os.Stderr, "bearer token: %s\n", filepath.Join(dir, "token"))
+	fmt.Fprintf(os.Stderr, "adapters: decision token file %s (not accepted on admin endpoints)\n", filepath.Join(dir, "token"))
+	if code := srv.PairingDisplay(); code != "" {
+		fmt.Fprintf(os.Stderr, "admin pairing code (single use, 5 min): %s\n", code)
+		fmt.Fprintf(os.Stderr, "desktop profile is same-UID: this code does not stop a same-user Agent from reading the state directory or running CLI.\n")
+	}
 	hs := &http.Server{Handler: srv.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second}
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)

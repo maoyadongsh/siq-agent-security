@@ -1,0 +1,81 @@
+{
+  "schema": "rulepack_signature_vectors/v1",
+  "signing_schema": "local_canonical/v1",
+  "producer": "CPython json.dumps(sort_keys=True, separators=(',',':'), ensure_ascii=True) + Ed25519 seed=bytes(range(32)); signature is base64 (rulepack .sig wire form)",
+  "contract": "apps/agentshield/internal/canon.Marshal + rulepack.VerifySignature; control-api app.signing._canonical_bytes + rulepack._verify_signature. Sidecar .sig over document body — no embedded signing_schema field.",
+  "cross_contract_note": {
+    "evidence_utf8_canonical": "{\"rules\":[{\"confidence\":0.85,\"description\":\"<安全> pattern\",\"impact\":\"impact\",\"patterns\":[\"\\\\bSECRET_MARKER\\\\b\"],\"remediation\":\"fix\",\"rule_id\":\"fixture.chinese_html\",\"severity\":\"high\"}],\"version\":2}",
+    "must_differ_from_local_canonical": true
+  },
+  "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=",
+  "seed_b64": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+  "vectors": [
+    {
+      "name": "chinese_html_confidence",
+      "document": {
+        "version": 2,
+        "rules": [
+          {
+            "rule_id": "fixture.chinese_html",
+            "severity": "high",
+            "confidence": 0.85,
+            "description": "<安全> pattern",
+            "impact": "impact",
+            "remediation": "fix",
+            "patterns": [
+              "\\bSECRET_MARKER\\b"
+            ]
+          }
+        ]
+      },
+      "canonical_utf8": "{\"rules\":[{\"confidence\":0.85,\"description\":\"<\\u5b89\\u5168> pattern\",\"impact\":\"impact\",\"patterns\":[\"\\\\bSECRET_MARKER\\\\b\"],\"remediation\":\"fix\",\"rule_id\":\"fixture.chinese_html\",\"severity\":\"high\"}],\"version\":2}",
+      "signature_b64": "lRnTKXi5c6cIcbntEWO7BfOB12D6sGz3EKUNEkLc5V4tWDFe6fMPTEHE/ClXKSKbuGS2pLwrO76kd/VZkdVyAw=="
+    },
+    {
+      "name": "key_order_independent",
+      "document": {
+        "rules": [
+          {
+            "patterns": [
+              "\\bSECRET_MARKER\\b"
+            ],
+            "remediation": "fix",
+            "impact": "impact",
+            "description": "<安全> pattern",
+            "confidence": 0.85,
+            "severity": "high",
+            "rule_id": "fixture.chinese_html"
+          }
+        ],
+        "version": 2
+      },
+      "canonical_utf8": "{\"rules\":[{\"confidence\":0.85,\"description\":\"<\\u5b89\\u5168> pattern\",\"impact\":\"impact\",\"patterns\":[\"\\\\bSECRET_MARKER\\\\b\"],\"remediation\":\"fix\",\"rule_id\":\"fixture.chinese_html\",\"severity\":\"high\"}],\"version\":2}",
+      "signature_b64": "lRnTKXi5c6cIcbntEWO7BfOB12D6sGz3EKUNEkLc5V4tWDFe6fMPTEHE/ClXKSKbuGS2pLwrO76kd/VZkdVyAw==",
+      "note": "Same bytes/signature as chinese_html_confidence after sort_keys"
+    },
+    {
+      "name": "float_100_0",
+      "document": {
+        "version": 3,
+        "note": "n",
+        "n": 100.0,
+        "rules": [
+          {
+            "rule_id": "fixture.float",
+            "severity": "medium",
+            "confidence": 1.0,
+            "description": "x",
+            "impact": "i",
+            "remediation": "r",
+            "patterns": [
+              "a"
+            ]
+          }
+        ]
+      },
+      "canonical_utf8": "{\"n\":100.0,\"note\":\"n\",\"rules\":[{\"confidence\":1.0,\"description\":\"x\",\"impact\":\"i\",\"patterns\":[\"a\"],\"remediation\":\"r\",\"rule_id\":\"fixture.float\",\"severity\":\"medium\"}],\"version\":3}",
+      "signature_b64": "gcwdMJPxNYYkkceUjOoChrNcbMcaXOJJ9oyJU4IBLw6CENBKR2mxvz+/Q7Iia8Tz0FzwbHPTJ/FboBzX6bLjDA==",
+      "note": "CPython dumps 100.0 as 100.0; consumers must match producer"
+    }
+  ]
+}

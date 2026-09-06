@@ -1,35 +1,14 @@
 #!/bin/sh
-# Probe well-known platform dirs and call `siq-agent-security adapter install`.
+# Probe well-known platform dirs, verify release manifest, then call adapter install.
+# Shares resolve_verified_bin.sh with bootstrap.sh (DEV04-B): never exec an unverified binary.
 set -eu
 SKILL_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+RESOLVE="$SKILL_DIR/scripts/resolve_verified_bin.sh"
 
-find_bin() {
-  for cand in "${SIQ_AGENT_SECURITY_BIN:-}" "${AGENTSHIELD_BIN:-}"; do
-    if [ -n "$cand" ] && [ -x "$cand" ]; then
-      printf '%s\n' "$cand"
-      return
-    fi
-  done
-  for name in siq-agent-security agentshield; do
-    if command -v "$name" >/dev/null 2>&1; then
-      command -v "$name"
-      return
-    fi
-  done
-  for leaf in siq-agent-security agentshield; do
-    repo_bin="$SKILL_DIR/../../apps/agentshield/$leaf"
-    if [ -x "$repo_bin" ]; then
-      printf '%s\n' "$repo_bin"
-      return
-    fi
-  done
-  return 1
-}
+die() { echo "adapter.sh: $*" >&2; exit 1; }
 
-BIN=$(find_bin) || {
-  echo "adapter.sh: run scripts/bootstrap.sh first" >&2
-  exit 1
-}
+[ -f "$RESOLVE" ] || die "missing resolve_verified_bin.sh; refuse to run unverified binary"
+BIN=$(sh "$RESOLVE") || die "run scripts/bootstrap.sh first (or fix verification)"
 
 if [ $# -gt 0 ]; then
   exec "$BIN" adapter install "$1"

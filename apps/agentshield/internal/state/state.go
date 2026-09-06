@@ -5,6 +5,7 @@
 package state
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -16,6 +17,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
@@ -68,6 +70,9 @@ type Config struct {
 	EnforcementMode string `json:"enforcement_mode"`
 	Port            int    `json:"port"`
 	HoldChannel     string `json:"hold_channel"`
+	// SessionIdleTTLSeconds: 0 → engine default (30m); -1 → disable idle expiry;
+	// positive → seconds in [1, 86400] (DEV16-E).
+	SessionIdleTTLSeconds int `json:"session_idle_ttl_seconds,omitempty"`
 }
 
 // Store is an opened state directory.
@@ -78,7 +83,7 @@ func Open(dir string) (*Store, error) {
 	if dir == "" {
 		return nil, errors.New("state: directory required")
 	}
-	for _, sub := range []string{"", "keys", "admissions", "grants", "policies", "evidence", "receipts", "inventory", "backups", "logs", "assets", "findings"} {
+	for _, sub := range []string{"", "keys", "admissions", "grants", "policies", "evidence", "receipts", "checkpoints", "inventory", "backups", "logs", "assets", "findings", "commits", "challenges"} {
 		if err := os.MkdirAll(filepath.Join(dir, sub), 0o700); err != nil {
 			return nil, err
 		}
@@ -107,7 +112,23 @@ func (s *Store) LoadConfig() (Config, error) {
 	if cfg.Port <= 0 || cfg.Port > 65535 {
 		return cfg, fmt.Errorf("state: invalid port %d", cfg.Port)
 	}
+	if cfg.SessionIdleTTLSeconds < -1 || cfg.SessionIdleTTLSeconds > 86400 {
+		return cfg, fmt.Errorf("state: session_idle_ttl_seconds %d out of range [-1,86400]", cfg.SessionIdleTTLSeconds)
+	}
 	return cfg, nil
+}
+
+// SessionIdleTTL maps config seconds to receipt.Engine Options (DEV16-E).
+// 0 → use engine default (pass 0); -1 → disable (negative duration); else seconds.
+func (c Config) SessionIdleTTL() time.Duration {
+	switch {
+	case c.SessionIdleTTLSeconds < 0:
+		return -time.Second
+	case c.SessionIdleTTLSeconds == 0:
+		return 0
+	default:
+		return time.Duration(c.SessionIdleTTLSeconds) * time.Second
+	}
 }
 
 // SaveConfig writes config.json (the one file that is rewritten; it holds no
@@ -148,22 +169,26 @@ func (s *Store) Token() (string, error) {
 
 // --- admissions ---------------------------------------------------------------
 
-// PutAdmission stores an admission (new file; identical id = identical content
-// hash, so overwriting is a no-op by construction) plus its card and evidence.
+// PutAdmission stores an admission plus its card and evidence. Fixed-id files
+// are never overwritten: identical bytes are idempotent; same identity with
+// later timestamps keeps the first write; a different identity is an error.
 func (s *Store) PutAdmission(res *admission.Result) error {
 	base := filepath.Join(s.Dir, "admissions", res.Admission.AdmissionID)
 	cardPath := base + ".skill-card.md"
 	res.Admission.SkillCardRef = &cardPath
-	if err := writeNew(cardPath, []byte(res.SkillCard)); err != nil {
+	if err := writeNewCompatible(cardPath, []byte(res.SkillCard), func([]byte) bool {
+		return true
+	}); err != nil {
 		return err
 	}
 	raw, _ := json.MarshalIndent(res.Admission, "", "  ")
-	if err := writeNew(base+".json", raw); err != nil {
+	if err := writeNewCompatible(base+".json", raw, func(existing []byte) bool {
+		return sameAdmissionIdentity(existing, res.Admission)
+	}); err != nil {
 		return err
 	}
 	for _, ev := range res.Evidence {
-		evRaw, _ := json.Marshal(ev)
-		if err := writeNew(filepath.Join(s.Dir, "evidence", ev.EvidenceID+".json"), evRaw); err != nil {
+		if err := s.PutEvidence(ev.EvidenceID, ev); err != nil {
 			return err
 		}
 	}
@@ -214,9 +239,10 @@ func (s *Store) ListAdmissions() ([]admission.Admission, error) {
 			return nil, err
 		}
 		var a admission.Admission
-		if json.Unmarshal(raw, &a) == nil {
-			out = append(out, a)
+		if err := json.Unmarshal(raw, &a); err != nil || a.AdmissionID != strings.TrimSuffix(e.Name(), ".json") {
+			return nil, errors.New("state: malformed admission document")
 		}
+		out = append(out, a)
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].DecidedAt > out[j].DecidedAt })
 	return out, nil
@@ -225,36 +251,90 @@ func (s *Store) ListAdmissions() ([]admission.Admission, error) {
 // --- grants -------------------------------------------------------------------
 
 // PutGrant appends a new version file for the grant: <grant_id>.<n>.json.
+// Prefer PutGrantCAS for read-modify-write transitions that must not double-succeed.
 func (s *Store) PutGrant(g grant.Grant) error {
 	if !safeID(g.GrantID) {
 		return errors.New("state: invalid grant id")
 	}
-	n := 0
-	for {
-		p := filepath.Join(s.Dir, "grants", fmt.Sprintf("%s.%d.json", g.GrantID, n))
-		if _, err := os.Stat(p); errors.Is(err, os.ErrNotExist) {
-			raw, _ := json.MarshalIndent(g, "", "  ")
-			return writeNew(p, raw)
-		}
-		n++
-		if n > 10000 {
-			return errors.New("state: too many grant versions")
-		}
+	return s.PutVersioned("grants", g.GrantID, g)
+}
+
+// PutGrantCAS publishes the next grant version only when expected matches the head seq.
+func (s *Store) PutGrantCAS(g grant.Grant, expected int) (int, error) {
+	if !safeID(g.GrantID) {
+		return -1, errors.New("state: invalid grant id")
 	}
+	return s.PutVersionedCAS("grants", g.GrantID, expected, g)
 }
 
 // GetGrant returns the latest version of a grant.
 func (s *Store) GetGrant(id string) (*grant.Grant, error) {
-	all, err := s.ListGrants()
+	g, _, err := s.GetGrantWithSeq(id)
+	return g, err
+}
+
+// GetGrantWithSeq returns the latest grant and its disk version number.
+func (s *Store) GetGrantWithSeq(id string) (*grant.Grant, int, error) {
+	if !safeID(id) {
+		return nil, -1, errors.New("state: invalid grant id")
+	}
+	seq, raw, err := s.LatestSeq("grants", id)
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
-	for i := range all {
-		if all[i].GrantID == id {
-			return &all[i], nil
-		}
+	if err := s.checkGrantCommit(id, seq); err != nil {
+		return nil, -1, err
 	}
-	return nil, os.ErrNotExist
+	if seq < 0 {
+		return nil, -1, os.ErrNotExist
+	}
+	var g grant.Grant
+	if err := json.Unmarshal(raw, &g); err != nil {
+		return nil, -1, fmt.Errorf("state: malformed grant version: %w", err)
+	}
+	if g.GrantID != id {
+		return nil, -1, errors.New("state: grant identity does not match version filename")
+	}
+	return &g, seq, nil
+}
+
+// PutChallenge publishes a new approval challenge (expected head 0 for fresh ids).
+func (s *Store) PutChallenge(ch grant.ApprovalChallenge) error {
+	if !safeID(ch.ChallengeID) {
+		return errors.New("state: invalid challenge id")
+	}
+	_, err := s.PutVersionedCAS("challenges", ch.ChallengeID, -1, ch)
+	return err
+}
+
+// PutChallengeCAS updates a challenge when expected matches the head seq.
+func (s *Store) PutChallengeCAS(ch grant.ApprovalChallenge, expected int) (int, error) {
+	if !safeID(ch.ChallengeID) {
+		return -1, errors.New("state: invalid challenge id")
+	}
+	return s.PutVersionedCAS("challenges", ch.ChallengeID, expected, ch)
+}
+
+// GetChallengeWithSeq loads the latest approval challenge document.
+func (s *Store) GetChallengeWithSeq(id string) (*grant.ApprovalChallenge, int, error) {
+	if !safeID(id) {
+		return nil, -1, errors.New("state: invalid challenge id")
+	}
+	seq, raw, err := s.LatestSeq("challenges", id)
+	if err != nil {
+		return nil, -1, err
+	}
+	if seq < 0 {
+		return nil, -1, os.ErrNotExist
+	}
+	var ch grant.ApprovalChallenge
+	if err := json.Unmarshal(raw, &ch); err != nil {
+		return nil, -1, fmt.Errorf("state: malformed challenge version: %w", err)
+	}
+	if ch.ChallengeID != id {
+		return nil, -1, errors.New("state: challenge identity does not match version filename")
+	}
+	return &ch, seq, nil
 }
 
 // ListGrants returns the latest version of every grant.
@@ -286,15 +366,22 @@ func (s *Store) ListGrants() ([]grant.Grant, error) {
 		}
 	}
 	var out []grant.Grant
-	for _, p := range files {
+	for id, p := range files {
+		if err := s.checkGrantCommit(id, latest[id]); err != nil {
+			return nil, err
+		}
 		raw, err := os.ReadFile(p)
 		if err != nil {
 			return nil, err
 		}
 		var g grant.Grant
-		if json.Unmarshal(raw, &g) == nil {
-			out = append(out, g)
+		if err := json.Unmarshal(raw, &g); err != nil {
+			return nil, fmt.Errorf("state: malformed grant version: %w", err)
 		}
+		if g.GrantID != id {
+			return nil, errors.New("state: grant identity does not match version filename")
+		}
+		out = append(out, g)
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].CreatedAt > out[j].CreatedAt })
 	return out, nil
@@ -317,6 +404,7 @@ func (s *Store) ActiveGrant(platform, agentID string) *grant.Grant {
 }
 
 // PutDesiredPolicy stores the derived policy as policies/<id>.v<version>.json.
+// The file is Sync'd before close so a successful return means durable bytes.
 func (s *Store) PutDesiredPolicy(dp grant.DesiredPolicy) error {
 	id, _ := dp["policy_id"].(string)
 	if !safeID(id) {
@@ -329,26 +417,82 @@ func (s *Store) PutDesiredPolicy(dp grant.DesiredPolicy) error {
 	case float64:
 		v = int(t)
 	}
-	raw, _ := json.MarshalIndent(dp, "", "  ")
-	return writeNew(filepath.Join(s.Dir, "policies", fmt.Sprintf("%s.v%d.json", id, v)), raw)
+	raw, err := json.MarshalIndent(dp, "", "  ")
+	if err != nil {
+		return err
+	}
+	raw = append(raw, '\n')
+	dir := filepath.Join(s.Dir, "policies")
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return err
+	}
+	return publishCommitFile(filepath.Join(dir, fmt.Sprintf("%s.v%d.json", id, v)), raw)
 }
 
-// PutEvidence writes a new evidence file (0600). Existing ids are left as-is.
+// writeDurable creates path exclusively, Syncs, then closes. Identical content
+// at an existing path is treated as idempotent success (same as writeNew).
+func writeDurable(path string, data []byte) error {
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	if errors.Is(err, os.ErrExist) {
+		existing, readErr := os.ReadFile(path)
+		if readErr != nil {
+			return readErr
+		}
+		if bytes.Equal(existing, data) {
+			return nil
+		}
+		return fmt.Errorf("%w: %s", ErrConflict, filepath.Base(path))
+	}
+	if err != nil {
+		return err
+	}
+	if _, err := f.Write(data); err != nil {
+		_ = f.Close()
+		_ = os.Remove(path)
+		return err
+	}
+	if err := f.Sync(); err != nil {
+		_ = f.Close()
+		_ = os.Remove(path)
+		return err
+	}
+	if err := f.Close(); err != nil {
+		_ = os.Remove(path)
+		return err
+	}
+	return nil
+}
+
+// PutEvidence writes a new evidence file (0600). A later write with the same
+// evidence_id, content_hash and source_locator is idempotent; a different
+// identity at that path is an error and does not replace the file.
 func (s *Store) PutEvidence(id string, doc any) error {
 	if !safeID(id) {
 		return errors.New("state: invalid evidence id")
 	}
-	raw, err := json.MarshalIndent(doc, "", "  ")
+	raw, err := json.Marshal(doc)
 	if err != nil {
 		return err
 	}
-	return writeNew(filepath.Join(s.Dir, "evidence", id+".json"), raw)
+	return writeNewCompatible(filepath.Join(s.Dir, "evidence", id+".json"), raw, func(existing []byte) bool {
+		return sameJSONIdentity(existing, raw, "evidence_id", "content_hash", "source_locator")
+	})
 }
+
+// ErrConflict means an O_EXCL target exists with bytes that are not identical.
+var ErrConflict = errors.New("state: immutable path exists with different content")
 
 func writeNew(path string, data []byte) error {
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
 	if errors.Is(err, os.ErrExist) {
-		return nil // identical id ⇒ identical content by construction
+		existing, readErr := os.ReadFile(path)
+		if readErr != nil {
+			return readErr
+		}
+		if bytes.Equal(existing, data) {
+			return nil
+		}
+		return fmt.Errorf("%w: %s", ErrConflict, filepath.Base(path))
 	}
 	if err != nil {
 		return err
@@ -358,6 +502,48 @@ func writeNew(path string, data []byte) error {
 		return err
 	}
 	return f.Close()
+}
+
+func writeNewCompatible(path string, data []byte, sameIdentity func(existing []byte) bool) error {
+	err := writeNew(path, data)
+	if err == nil || !errors.Is(err, ErrConflict) {
+		return err
+	}
+	existing, readErr := os.ReadFile(path)
+	if readErr != nil {
+		return readErr
+	}
+	if sameIdentity != nil && sameIdentity(existing) {
+		return nil
+	}
+	return err
+}
+
+func sameAdmissionIdentity(existing []byte, a admission.Admission) bool {
+	var old admission.Admission
+	if json.Unmarshal(existing, &old) != nil {
+		return false
+	}
+	return old.AdmissionID == a.AdmissionID && old.ContentHash == a.ContentHash
+}
+
+func sameJSONIdentity(existing, neu []byte, keys ...string) bool {
+	var oldDoc, newDoc map[string]any
+	if json.Unmarshal(existing, &oldDoc) != nil || json.Unmarshal(neu, &newDoc) != nil {
+		return false
+	}
+	for _, key := range keys {
+		oldVal, oldOK := oldDoc[key]
+		newVal, newOK := newDoc[key]
+		if !oldOK || !newOK {
+			return false
+		}
+		left, right := fmt.Sprint(oldVal), fmt.Sprint(newVal)
+		if left == "" || left != right {
+			return false
+		}
+	}
+	return true
 }
 
 func safeID(id string) bool {

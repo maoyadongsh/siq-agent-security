@@ -1,0 +1,307 @@
+{
+  "schema": "policy_compile_vectors/v1",
+  "producer": "apps/control-api/app/adapters/openshell/policy_compiler.compile_policy",
+  "contract": "Go grant.CompilePolicy must match artifact_hash / unsupported / needs_generation; unknown keys refuse.",
+  "known_keys": [
+    "audit",
+    "data_scope_refs",
+    "enforcement_mode",
+    "exceptions",
+    "filesystem",
+    "model_routing",
+    "network",
+    "policy_id",
+    "process",
+    "resources",
+    "secrets",
+    "selector",
+    "status",
+    "tool_policies",
+    "tools",
+    "version"
+  ],
+  "vectors": [
+    {
+      "name": "parity_full_domains",
+      "expect": "ok",
+      "desired": {
+        "policy_id": "pol-grt-1",
+        "selector": {
+          "agent_ids": [
+            "inst_1"
+          ]
+        },
+        "version": 1,
+        "status": "validated",
+        "enforcement_mode": "block",
+        "filesystem": {
+          "read_only": [
+            "/skills/github-triage"
+          ],
+          "read_write": [
+            "~/work/out"
+          ]
+        },
+        "network": [
+          {
+            "endpoint": "api.github.com:443",
+            "effect": "allow"
+          },
+          {
+            "endpoint": "astral.sh:443",
+            "effect": "allow"
+          }
+        ],
+        "process": {
+          "forbid_privilege_escalation": true
+        },
+        "model_routing": {
+          "allowed_models": [
+            "nemotron-local"
+          ]
+        },
+        "tools": [
+          "terminal",
+          "read_file",
+          "web_extract"
+        ]
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.block": {
+            "status": "supported",
+            "semantics": "enforce",
+            "basis": "test"
+          },
+          "model_routing": {
+            "status": "unknown",
+            "semantics": "none",
+            "basis": "not probed"
+          },
+          "tools_mcp": {
+            "status": "unsupported",
+            "semantics": "none",
+            "basis": "cli"
+          }
+        }
+      },
+      "artifact_hash": "60e90e56ea34fe46081f3c055b03e18b7a7cb135ced8edc57d5e0e9da38575b6",
+      "unsupported": [
+        "model_routing.inference_routing: capability unknown（fail-closed）: not probed",
+        "tools: capability tools_mcp=unsupported: cli"
+      ],
+      "needs_generation": true,
+      "enforcement_mode": "block",
+      "artifact": {
+        "version": 1,
+        "filesystem_policy": {
+          "read_only": [
+            "/skills/github-triage"
+          ],
+          "read_write": [
+            "~/work/out"
+          ]
+        },
+        "process": {
+          "forbid_privilege_escalation": true
+        },
+        "network_policies": [
+          {
+            "endpoint": "api.github.com:443",
+            "effect": "allow"
+          },
+          {
+            "endpoint": "astral.sh:443",
+            "effect": "allow"
+          }
+        ]
+      }
+    },
+    {
+      "name": "minimal_audit_only_default_mode",
+      "expect": "ok",
+      "desired": {
+        "policy_id": "pol-min"
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": false,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "artifact_hash": "2430f1a2ad2982d0067885488a4c89e21ad1d7c83b115ba8f1b20acc88dfaea8",
+      "unsupported": [],
+      "needs_generation": false,
+      "enforcement_mode": "audit_only",
+      "artifact": {
+        "version": 1
+      }
+    },
+    {
+      "name": "network_static_when_no_dynamic",
+      "expect": "ok",
+      "desired": {
+        "policy_id": "pol-net",
+        "network": [
+          {
+            "endpoint": "a:443",
+            "effect": "allow"
+          }
+        ],
+        "enforcement_mode": "audit_only"
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": false,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "artifact_hash": "5123dac8e60b9ebb4e5ed57497bc49437e1b090a97849ce405da86d64741b7ef",
+      "unsupported": [
+        "network.dynamic_update"
+      ],
+      "needs_generation": true,
+      "enforcement_mode": "audit_only",
+      "artifact": {
+        "version": 1,
+        "network_policies": [
+          {
+            "endpoint": "a:443",
+            "effect": "allow"
+          }
+        ]
+      }
+    },
+    {
+      "name": "field_matrix_unsupported_bucket",
+      "expect": "ok",
+      "desired": {
+        "policy_id": "pol-fields",
+        "enforcement_mode": "audit_only",
+        "tools": [
+          "x"
+        ],
+        "tool_policies": {
+          "x": {}
+        },
+        "data_scope_refs": [
+          "s1"
+        ],
+        "resources": [
+          "r1"
+        ],
+        "audit": {
+          "level": "full"
+        },
+        "exceptions": [
+          {
+            "id": "e1"
+          }
+        ],
+        "secrets": [
+          {
+            "ref": "vault://a"
+          }
+        ]
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": false,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          },
+          "tools_mcp": {
+            "status": "unsupported",
+            "semantics": "none",
+            "basis": "cli"
+          },
+          "resources": {
+            "status": "unknown",
+            "semantics": "none",
+            "basis": "n/a"
+          },
+          "audit_events": {
+            "status": "unsupported",
+            "semantics": "none",
+            "basis": "none"
+          },
+          "secrets": {
+            "status": "unsupported",
+            "semantics": "none",
+            "basis": "provider"
+          }
+        }
+      },
+      "artifact_hash": "2430f1a2ad2982d0067885488a4c89e21ad1d7c83b115ba8f1b20acc88dfaea8",
+      "unsupported": [
+        "secrets.injection: capability unsupported: provider",
+        "tools: capability tools_mcp=unsupported: cli",
+        "tool_policies: capability tools_mcp=unsupported: cli",
+        "data_scope_refs: 无对应后端能力项，由其他执行点承担",
+        "resources: capability resources=unknown（fail-closed 视为不可执行）: n/a",
+        "audit: capability audit_events=unsupported: none",
+        "exceptions: 无对应后端能力项，由其他执行点承担"
+      ],
+      "needs_generation": false,
+      "enforcement_mode": "audit_only",
+      "artifact": {
+        "version": 1
+      }
+    },
+    {
+      "name": "unknown_key_bogus",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "policy_id": "p",
+        "bogus": 1
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": false,
+        "provider_credential_injection": false,
+        "items": {}
+      },
+      "error_contains": "未知策略字段"
+    },
+    {
+      "name": "unknown_key_typo_filesystem",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "policy_id": "p",
+        "file_system": {}
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": false,
+        "provider_credential_injection": false,
+        "items": {}
+      },
+      "error_contains": "未知策略字段"
+    }
+  ]
+}

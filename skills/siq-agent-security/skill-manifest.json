@@ -4,7 +4,7 @@
     "name": "siq-agent-security",
     "version": "0.2.0",
     "description": "Admits unknown skills and signs each tool-call receipt.",
-    "content_hash": "915c0b8f11292b788f4aa00b1648682f24e478ea1ae4998b064efd81d6f1c8eb",
+    "content_hash": "e69b1486c4dda3b6c8be242a80ab610ca04988a59dd5e3bb5c142e157e0a7098",
     "sub_skills": [
       "agent-asset-inventory",
       "skill-admission",
@@ -19,30 +19,30 @@
       {
         "os": "linux",
         "arch": "amd64",
-        "sha256": "6e0875a311135af182feb84a08f742367d293da36b66c00e3a070c490b4d991c",
+        "sha256": "e003e02c4d3b958306db6ebf483c228f9c1b28dd302c30b86e735ce948fa521a",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-linux-amd64",
-        "bytes": 13983896
+        "bytes": 14127256
       },
       {
         "os": "linux",
         "arch": "arm64",
-        "sha256": "9983fcb7292a22079766941250e03c522dbaca95262e13c97afdefe94e3917cd",
+        "sha256": "5c10a7ec8094ed1c3cc9071ed6072f5f26ea471ab9b0f5bc37967d4a5685cc3a",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-linux-arm64",
-        "bytes": 13697176
+        "bytes": 13828248
       },
       {
         "os": "darwin",
         "arch": "arm64",
-        "sha256": "3c2eab891ba5d13d5ea081ecfffd689f53124c83662805bdaba438b48eedf158",
+        "sha256": "a62c57efaf0caa7f1767bcabdc530901edc4455872f7ab41326cf9a6b543031a",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-darwin-arm64",
-        "bytes": 13921362
+        "bytes": 14054882
       },
       {
         "os": "windows",
         "arch": "amd64",
-        "sha256": "fcf9ce242c70a21c29a7e8415a5c1f45fe2391ebad908e2fa4ea02b3a8ed668e",
+        "sha256": "1340e0c3c14466b8b7f7fa0ba8386f081ba10466b4f34bb79203b88f5d08a878",
         "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0/siq-agent-security-windows-amd64.exe",
-        "bytes": 14204928
+        "bytes": 14348800
       }
     ]
   },
@@ -236,5 +236,5 @@
     }
   ],
   "signed_by": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
-  "signature": "1da3912f61975fc32bc1e006594c6cc93c61cbd8dc2cc7117337d24670b4909d4b5b4b827f0dcb4406eb98bf80d49c90abe02488ce5cdc12242db8db69383700"
+  "signature": "c67512175046b6aa9c1b65b20f8d8b9ea8728ab62d2da3f069344248413d793a6ff8bc2b4d4fd26f59a22bfcf03d906ed122392e46e08659b2be338ed7da5009"
 }

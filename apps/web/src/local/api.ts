@@ -1,6 +1,6 @@
 /**
  * siq-agent-security 本地 API 客户端。
- * Bearer token 只留在模块闭包里，不进 React state、不写 localStorage。
+ * 管理会话只留在模块闭包里，不进 React state、不写 localStorage。
  */
 import type {
   Admission,
@@ -32,7 +32,7 @@ export type {
   UiBoot,
 };
 
-let token = '';
+let session = '';
 
 export class LocalApiError extends Error {
   status: number;
@@ -48,14 +48,38 @@ export async function boot(): Promise<UiBoot> {
     throw new LocalApiError(resp.status, `无法读取 ui-config（HTTP ${resp.status}）`);
   }
   const data = (await resp.json()) as UiBoot & { token?: string };
-  token = typeof data.token === 'string' ? data.token : '';
+  if (typeof data.token === 'string' && data.token) {
+    throw new LocalApiError(500, 'ui-config 返回了凭据，已拒绝启动');
+  }
   delete data.token;
   return data;
 }
 
+export async function pair(code: string): Promise<void> {
+  const resp = await fetch('/v1/pair', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code }),
+    cache: 'no-store',
+  });
+  const text = await resp.text();
+  let parsed: { session?: string; error?: string } = {};
+  if (text) {
+    try {
+      parsed = JSON.parse(text) as { session?: string; error?: string };
+    } catch {
+      parsed = { error: text };
+    }
+  }
+  if (!resp.ok || typeof parsed.session !== 'string' || parsed.session.length < 32) {
+    throw new LocalApiError(resp.status || 401, parsed.error || `配对失败（HTTP ${resp.status}）`);
+  }
+  session = parsed.session;
+}
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
-  if (token) headers.set('Authorization', `Bearer ${token}`);
+  if (session) headers.set('Authorization', `Bearer ${session}`);
   if (init.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
@@ -112,18 +136,38 @@ export const localApi = {
     }),
   admission: (id: string) =>
     request<{ admission: Admission; skill_card: string }>(`/v1/admissions/${id}`),
-  grants: () => request<{ grants: Grant[] }>('/v1/grants'),
+  grants: () =>
+    request<{ grants: Grant[]; state_revisions?: Record<string, number> }>('/v1/grants').then((data) => {
+      const revs = data.state_revisions ?? {};
+      return {
+        ...data,
+        grants: (data.grants ?? []).map((g) => ({
+          ...g,
+          state_revision: revs[g.grant_id] ?? g.state_revision,
+        })),
+      };
+    }),
   createGrant: (body: {
     admission_id: string;
     platform: string;
     subject_id: string;
     redact_secrets?: boolean;
-  }) => request<{ grant: Grant }>('/v1/grants', { method: 'POST', body: JSON.stringify(body) }),
+  }) => request<{ grant: Grant; state_revision?: number }>('/v1/grants', { method: 'POST', body: JSON.stringify(body) }),
   grantAction: (id: string, action: string, body: Record<string, unknown>) =>
-    request<{ grant: Grant }>(`/v1/grants/${id}/${action}`, {
+    request<{
+      grant?: Grant;
+      challenge?: { challenge_id: string; nonce: string; grant_digest?: string; expires_at?: string };
+      state_revision?: number;
+      note?: string;
+    }>(`/v1/grants/${id}/${action}`, {
       method: 'POST',
       body: JSON.stringify(body),
     }),
+  grant: (id: string) =>
+    request<{ grant: Grant; state_revision: number }>(`/v1/grants/${id}`).then((data) => ({
+      grant: { ...data.grant, state_revision: data.state_revision },
+      state_revision: data.state_revision,
+    })),
   receipts: () => request<{ receipts: Receipt[]; verified: boolean }>('/v1/receipts?since_seq=-1'),
   resolveHold: (id: string, approve: boolean, actorId: string) =>
     request(`/v1/hold/${id}`, {
@@ -185,7 +229,7 @@ export const localApi = {
     }),
   downloadExport: async () => {
     const headers = new Headers();
-    if (token) headers.set('Authorization', `Bearer ${token}`);
+    if (session) headers.set('Authorization', `Bearer ${session}`);
     const resp = await fetch('/v1/export', { headers, cache: 'no-store' });
     if (!resp.ok) {
       let message = `HTTP ${resp.status}`;

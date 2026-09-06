@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -43,21 +44,70 @@ func newServer(t *testing.T, mode string) (*Server, *state.Store) {
 		t.Fatal(err)
 	}
 	s, err := New(Deps{Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: token, Version: "test", Mode: mode,
-		Home: home, Binary: "agentshield-test", UI: ui.Handler()})
+		Home: home, Binary: "agentshield-test", UI: ui.Handler(),
+		ListenHost: "127.0.0.1", ListenPort: 47611, PairingCode: testPairingCode})
 	if err != nil {
 		t.Fatal(err)
 	}
+	sess, err := s.RedeemPairing(testPairingCode)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.bootAdmin = sess
 	return s, st
+}
+
+func newUnpairedServer(t *testing.T, mode string) *Server {
+	t.Helper()
+	dir := t.TempDir()
+	st, err := state.Open(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	key, _ := signing.FromSeed(bytes.Repeat([]byte{3}, 32))
+	pack, _ := rulepack.Builtin()
+	chain, err := receipt.OpenChain(dir, "local", key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	eng, err := receipt.New(receipt.Options{Pack: pack, Chain: chain, Grants: st.ActiveGrant, EnforcementMode: mode, Version: "test", HoldChannel: "openclaw_approval"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	home := filepath.Join(dir, "home")
+	if err := os.MkdirAll(home, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	s, err := New(Deps{Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: token, Version: "test", Mode: mode,
+		Home: home, Binary: "agentshield-test", UI: ui.Handler(),
+		ListenHost: "127.0.0.1", ListenPort: 47611, PairingCode: testPairingCode})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return s
+}
+
+func loopbackRequest(method, path string, body any) *http.Request {
+	var buf bytes.Buffer
+	if body != nil {
+		if s, ok := body.(string); ok {
+			buf.WriteString(s)
+		} else {
+			_ = json.NewEncoder(&buf).Encode(body)
+		}
+	}
+	req := httptest.NewRequest(method, path, &buf)
+	req.RemoteAddr = "127.0.0.1:5555"
+	req.Host = "127.0.0.1:47611"
+	return req
 }
 
 func call(t *testing.T, s *Server, method, path, tok string, body any) (int, map[string]any) {
 	t.Helper()
-	var buf bytes.Buffer
-	if body != nil {
-		_ = json.NewEncoder(&buf).Encode(body)
+	req := loopbackRequest(method, path, body)
+	if tok == token && !isDecisionPath(path) && path != "/ui-config.json" && path != "/v1/pair" {
+		tok = s.bootAdmin
 	}
-	req := httptest.NewRequest(method, path, &buf)
-	req.RemoteAddr = "127.0.0.1:5555"
 	if tok != "" {
 		req.Header.Set("Authorization", "Bearer "+tok)
 	}
@@ -68,6 +118,49 @@ func call(t *testing.T, s *Server, method, path, tok string, body any) (int, map
 	return rr.Code, out
 }
 
+func stateRevision(t *testing.T, resp map[string]any) int {
+	t.Helper()
+	switch v := resp["state_revision"].(type) {
+	case float64:
+		return int(v)
+	case int:
+		return v
+	default:
+		t.Fatalf("missing state_revision: %v", resp)
+		return -1
+	}
+}
+
+func withRevision(body map[string]any, rev int) map[string]any {
+	if body == nil {
+		body = map[string]any{}
+	}
+	out := map[string]any{}
+	for k, v := range body {
+		out[k] = v
+	}
+	out["expected_revision"] = rev
+	return out
+}
+
+// approveChallenged issues a one-time challenge then approves (DEV02-B).
+func approveChallenged(t *testing.T, s *Server, gid, actor string, rev int) (int, map[string]any) {
+	t.Helper()
+	code, chResp := call(t, s, "POST", "/v1/grants/"+gid+"/challenge", token, withRevision(map[string]any{}, rev))
+	if code != 200 {
+		t.Fatalf("challenge: %d %v", code, chResp)
+	}
+	ch, _ := chResp["challenge"].(map[string]any)
+	if ch == nil {
+		t.Fatalf("missing challenge object: %v", chResp)
+	}
+	return call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, withRevision(map[string]any{
+		"actor_id":     actor,
+		"challenge_id": ch["challenge_id"],
+		"nonce":        ch["nonce"],
+	}, rev))
+}
+
 func TestAuthAndLoopbackAreEnforced(t *testing.T) {
 	s, _ := newServer(t, "block")
 	if code, _ := call(t, s, "GET", "/v1/status", "", nil); code != 401 {
@@ -76,7 +169,7 @@ func TestAuthAndLoopbackAreEnforced(t *testing.T) {
 	if code, _ := call(t, s, "GET", "/v1/status", "wrong", nil); code != 401 {
 		t.Fatal("wrong token must be 401")
 	}
-	req := httptest.NewRequest("GET", "/v1/status", nil)
+	req := loopbackRequest("GET", "/v1/status", nil)
 	req.RemoteAddr = "10.0.0.7:4444"
 	req.Header.Set("Authorization", "Bearer "+token)
 	rr := httptest.NewRecorder()
@@ -115,6 +208,7 @@ func TestEndToEndAdmitGrantDecide(t *testing.T) {
 		t.Fatalf("grant: %d %v", code, g)
 	}
 	gid := g["grant"].(map[string]any)["grant_id"].(string)
+	rev := stateRevision(t, g)
 
 	// still deny: grant is pending
 	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "read_file", "params": map[string]any{"path": "/tmp/x"}})
@@ -122,13 +216,18 @@ func TestEndToEndAdmitGrantDecide(t *testing.T) {
 		t.Fatal("pending grant must not authorise")
 	}
 
-	if code, r := call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{}); code != 400 {
-		t.Fatalf("approve without actor must fail: %d %v", code, r)
+	if code, r := call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, withRevision(map[string]any{"actor_id": "u-admin"}, rev)); code != 400 || !strings.Contains(fmt.Sprint(r["error"]), "challenge") {
+		t.Fatalf("approve without challenge must fail: %d %v", code, r)
 	}
-	if code, r := call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u-admin"}); code != 200 {
+	if code, r := call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u-admin"}); code != 400 || !strings.Contains(fmt.Sprint(r["error"]), "expected_revision") {
+		t.Fatalf("approve without revision must fail: %d %v", code, r)
+	}
+	code, r := approveChallenged(t, s, gid, "u-admin", rev)
+	if code != 200 {
 		t.Fatalf("approve: %d %v", code, r)
 	}
-	if code, r := call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, map[string]any{}); code != 200 {
+	rev = stateRevision(t, r)
+	if code, r := call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, withRevision(map[string]any{}, rev)); code != 200 {
 		t.Fatalf("deploy: %d %v", code, r)
 	}
 
@@ -151,7 +250,7 @@ func TestEndToEndAdmitGrantDecide(t *testing.T) {
 	if code, r := call(t, s, "POST", "/v1/hold/"+rid, token, map[string]any{"approve": true}); code != 400 {
 		t.Fatalf("resolve without actor must fail: %d %v", code, r)
 	}
-	code, r := call(t, s, "POST", "/v1/hold/"+rid, token, map[string]any{"approve": true, "actor_id": "u-admin"})
+	code, r = call(t, s, "POST", "/v1/hold/"+rid, token, map[string]any{"approve": true, "actor_id": "u-admin"})
 	if code != 200 || r["action"] != "allow" {
 		t.Fatalf("%d %v", code, r)
 	}
@@ -181,10 +280,13 @@ func TestGrantCreateReusesLiveGrant(t *testing.T) {
 	body := map[string]any{"admission_id": admID, "platform": "openclaw", "subject_id": "inst_1"}
 	_, g := call(t, s, "POST", "/v1/grants", token, body)
 	gid := g["grant"].(map[string]any)["grant_id"].(string)
-	if _, r := call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u-admin"}); r["error"] != nil {
+	rev := stateRevision(t, g)
+	code, r := approveChallenged(t, s, gid, "u-admin", rev)
+	if r["error"] != nil {
 		t.Fatalf("approve: %v", r)
 	}
-	if code, r := call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, map[string]any{}); code != 200 {
+	rev = stateRevision(t, r)
+	if code, r := call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, withRevision(map[string]any{}, rev)); code != 200 {
 		t.Fatalf("deploy: %d %v", code, r)
 	}
 	code, again := call(t, s, "POST", "/v1/grants", token, body)
@@ -217,9 +319,9 @@ func TestDecideRejectsMalformedAndAuditOnlyAllows(t *testing.T) {
 	if code, _ := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw"}); code != 400 {
 		t.Fatal("missing fields must be 400")
 	}
-	req := httptest.NewRequest("POST", "/v1/decide", strings.NewReader("{not json"))
-	req.RemoteAddr = "127.0.0.1:1"
+	req := loopbackRequest("POST", "/v1/decide", "{not json")
 	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 	s.Handler().ServeHTTP(rr, req)
 	if rr.Code != 400 {
@@ -238,7 +340,8 @@ func TestStateStoreVersionsGrantsAndNeverRewrites(t *testing.T) {
 	admID := a["admission"].(map[string]any)["admission_id"].(string)
 	_, g := call(t, s, "POST", "/v1/grants", token, map[string]any{"admission_id": admID, "platform": "hermes", "subject_id": "x"})
 	gid := g["grant"].(map[string]any)["grant_id"].(string)
-	call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u"})
+	rev := stateRevision(t, g)
+	approveChallenged(t, s, gid, "u", rev)
 	matches, _ := filepath.Glob(filepath.Join(st.Dir, "grants", gid+".*.json"))
 	if len(matches) != 2 {
 		t.Fatalf("expected 2 grant versions on disk, got %d", len(matches))
@@ -261,10 +364,9 @@ func TestStateStoreVersionsGrantsAndNeverRewrites(t *testing.T) {
 	}
 }
 
-func TestUIConfigIsLoopbackUnauthenticatedAndNotCached(t *testing.T) {
+func TestUIConfigOmitsSecretsAndRequiresHost(t *testing.T) {
 	s, _ := newServer(t, "block")
-	req := httptest.NewRequest("GET", "/ui-config.json", nil)
-	req.RemoteAddr = "127.0.0.1:9"
+	req := loopbackRequest("GET", "/ui-config.json", nil)
 	rr := httptest.NewRecorder()
 	s.Handler().ServeHTTP(rr, req)
 	if rr.Code != 200 {
@@ -277,36 +379,47 @@ func TestUIConfigIsLoopbackUnauthenticatedAndNotCached(t *testing.T) {
 	if err := json.Unmarshal(rr.Body.Bytes(), &out); err != nil {
 		t.Fatal(err)
 	}
-	if out["token"] != token || out["local_mode"] != true {
+	if _, ok := out["token"]; ok {
+		t.Fatal("unauthenticated ui-config returned a credential")
+	}
+	if out["local_mode"] != true || out["trust_profile"] != "desktop-same-uid" {
 		t.Fatalf("%v", out)
 	}
-	req = httptest.NewRequest("GET", "/ui-config.json", nil)
+	raw := rr.Body.String()
+	if strings.Contains(raw, token) || strings.Contains(raw, s.bootAdmin) {
+		t.Fatal("ui-config leaked a bearer token")
+	}
+	req = loopbackRequest("GET", "/ui-config.json", nil)
 	req.RemoteAddr = "10.1.1.8:9"
 	rr = httptest.NewRecorder()
 	s.Handler().ServeHTTP(rr, req)
 	if rr.Code != 403 {
 		t.Fatalf("non-loopback ui-config must be 403, got %d", rr.Code)
 	}
+	req = loopbackRequest("GET", "/ui-config.json", nil)
+	req.Host = "evil.example:47611"
+	rr = httptest.NewRecorder()
+	s.Handler().ServeHTTP(rr, req)
+	if rr.Code != 403 {
+		t.Fatalf("rebinding Host must be 403, got %d", rr.Code)
+	}
 }
 
 func TestEmbeddedConsoleServesIndexWithoutBearer(t *testing.T) {
 	s, _ := newServer(t, "block")
-	req := httptest.NewRequest("GET", "/", nil)
-	req.RemoteAddr = "127.0.0.1:9"
+	req := loopbackRequest("GET", "/", nil)
 	rr := httptest.NewRecorder()
 	s.Handler().ServeHTTP(rr, req)
 	if rr.Code != 200 || !strings.Contains(rr.Body.String(), "siq-agent-security") {
 		t.Fatalf("%d %s", rr.Code, rr.Body.String())
 	}
-	req = httptest.NewRequest("GET", "/overview", nil)
-	req.RemoteAddr = "127.0.0.1:9"
+	req = loopbackRequest("GET", "/overview", nil)
 	rr = httptest.NewRecorder()
 	s.Handler().ServeHTTP(rr, req)
 	if rr.Code != 200 || !strings.Contains(rr.Body.String(), "siq-agent-security") {
 		t.Fatalf("SPA fallback: %d %s", rr.Code, rr.Body.String())
 	}
-	req = httptest.NewRequest("GET", "/missing.js", nil)
-	req.RemoteAddr = "127.0.0.1:9"
+	req = loopbackRequest("GET", "/missing.js", nil)
 	rr = httptest.NewRecorder()
 	s.Handler().ServeHTTP(rr, req)
 	if rr.Code != 404 {
@@ -563,7 +676,9 @@ func TestLedgerAssetsPermissionsFindings(t *testing.T) {
 	}
 
 	toxic, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "malicious", "env-webhook"))
-	call(t, s, "POST", "/v1/admit", token, map[string]any{"path": toxic})
+	if code, out := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": toxic}); code != 200 {
+		t.Fatalf("admit toxic: %d %v", code, out)
+	}
 	code, fnd := call(t, s, "GET", "/v1/findings", token, nil)
 	if code != 200 {
 		t.Fatalf("findings: %d %v", code, fnd)
@@ -574,12 +689,27 @@ func TestLedgerAssetsPermissionsFindings(t *testing.T) {
 	}
 
 	clean, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like"))
-	_, a := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": clean})
-	admID := a["admission"].(map[string]any)["admission_id"].(string)
-	_, g := call(t, s, "POST", "/v1/grants", token, map[string]any{"admission_id": admID, "platform": "openclaw", "subject_id": "inst_1"})
+	code, a := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": clean})
+	if code != 200 {
+		t.Fatalf("admit clean: %d %v", code, a)
+	}
+	adm, _ := a["admission"].(map[string]any)
+	admID, _ := adm["admission_id"].(string)
+	if admID == "" {
+		t.Fatalf("missing admission_id: %v", a)
+	}
+	code, g := call(t, s, "POST", "/v1/grants", token, map[string]any{"admission_id": admID, "platform": "openclaw", "subject_id": "inst_1"})
+	if code != 200 {
+		t.Fatalf("grant: %d %v", code, g)
+	}
 	gid := g["grant"].(map[string]any)["grant_id"].(string)
-	call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u"})
-	call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, map[string]any{})
+	rev := stateRevision(t, g)
+	code, r := approveChallenged(t, s, gid, "u", rev)
+	if code != 200 {
+		t.Fatalf("approve: %d %v", code, r)
+	}
+	rev = stateRevision(t, r)
+	call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, withRevision(map[string]any{}, rev))
 
 	code, perm := call(t, s, "GET", "/v1/permissions?subject_id=inst_1", token, nil)
 	if code != 200 {
@@ -663,15 +793,21 @@ func TestAssetConfirmDismissAndPatchDesired(t *testing.T) {
 	admID := a["admission"].(map[string]any)["admission_id"].(string)
 	_, g := call(t, s, "POST", "/v1/grants", token, map[string]any{"admission_id": admID, "platform": "hermes", "subject_id": "inst_p"})
 	gid := g["grant"].(map[string]any)["grant_id"].(string)
-	code, patched := call(t, s, "POST", "/v1/grants/"+gid+"/patch-desired", token, map[string]any{
+	rev := stateRevision(t, g)
+	code, patched := call(t, s, "POST", "/v1/grants/"+gid+"/patch-desired", token, withRevision(map[string]any{
 		"tools":   []string{"web_fetch"},
 		"network": []any{map[string]any{"endpoint": "api.example.com:443", "effect": "allow"}},
-	})
+	}, rev))
 	if code != 200 {
 		t.Fatalf("patch: %d %v", code, patched)
 	}
-	call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u"})
-	code, again := call(t, s, "POST", "/v1/grants/"+gid+"/patch-desired", token, map[string]any{"tools": []string{"read_file"}})
+	rev = stateRevision(t, patched)
+	code, approved := approveChallenged(t, s, gid, "u", rev)
+	if code != 200 {
+		t.Fatalf("approve: %d %v", code, approved)
+	}
+	rev = stateRevision(t, approved)
+	code, again := call(t, s, "POST", "/v1/grants/"+gid+"/patch-desired", token, withRevision(map[string]any{"tools": []string{"read_file"}}, rev))
 	if code != 400 {
 		t.Fatalf("patch after approve: %d %v", code, again)
 	}
@@ -731,11 +867,20 @@ func TestDriftCheckFailClosedAndFinding(t *testing.T) {
 	admID := a["admission"].(map[string]any)["admission_id"].(string)
 	_, g := call(t, s, "POST", "/v1/grants", token, map[string]any{"admission_id": admID, "platform": "hermes", "subject_id": "s1"})
 	gid := g["grant"].(map[string]any)["grant_id"].(string)
-	call(t, s, "POST", "/v1/grants/"+gid+"/patch-desired", token, map[string]any{
+	rev := stateRevision(t, g)
+	code, patched := call(t, s, "POST", "/v1/grants/"+gid+"/patch-desired", token, withRevision(map[string]any{
 		"network": []any{map[string]any{"endpoint": "api.github.com:443", "effect": "allow"}},
-	})
-	call(t, s, "POST", "/v1/grants/"+gid+"/approve", token, map[string]any{"actor_id": "u"})
-	call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, map[string]any{})
+	}, rev))
+	if code != 200 {
+		t.Fatalf("patch: %d %v", code, patched)
+	}
+	rev = stateRevision(t, patched)
+	code, approved := approveChallenged(t, s, gid, "u", rev)
+	if code != 200 {
+		t.Fatalf("approve: %d %v", code, approved)
+	}
+	rev = stateRevision(t, approved)
+	call(t, s, "POST", "/v1/grants/"+gid+"/deploy", token, withRevision(map[string]any{}, rev))
 	code, drift := call(t, s, "POST", "/v1/openshell/drift-check", token, map[string]any{})
 	if code != 200 {
 		t.Fatalf("drift: %d %v", code, drift)
@@ -749,9 +894,8 @@ func TestDriftCheckFailClosedAndFinding(t *testing.T) {
 func TestExportOmitsToken(t *testing.T) {
 	s, st := newServer(t, "block")
 	_ = st.AppendAudit(state.AuditEvent{At: "2026-09-05T00:00:00Z", Event: "asset_confirm", ActorID: "u", Target: "agent:hermes:x"})
-	req := httptest.NewRequest(http.MethodGet, "/v1/export", nil)
-	req.RemoteAddr = "127.0.0.1:5555"
-	req.Header.Set("Authorization", "Bearer "+token)
+	req := loopbackRequest(http.MethodGet, "/v1/export", nil)
+	req.Header.Set("Authorization", "Bearer "+s.bootAdmin)
 	rr := httptest.NewRecorder()
 	s.Handler().ServeHTTP(rr, req)
 	if rr.Code != 200 {

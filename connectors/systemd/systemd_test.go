@@ -298,10 +298,11 @@ func TestCollectListFailureIsExplicitError(t *testing.T) {
 }
 
 func TestCollectRedactsExecSecrets(t *testing.T) {
+	// DEV10-C / M-E3：完整 ExecStart 不得上传；空格分隔敏感 flag 也不得泄漏到 attributes。
 	units := "dify-api.service enabled enabled\n"
 	shows := map[string]string{
 		"dify-api.service": showFixture("dify-api.service", "Dify API", "active",
-			"{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 app.py --token=supersecrettoken123 --api_key=sk-livekey123456789 ; ignore_errors=no ; pid=0 ; code=(null) ; status=0/0 }"),
+			"{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 app.py --token=supersecrettoken123 --api_key=sk-livekey123456789 --password spacesecret999 ; ignore_errors=no ; pid=0 ; code=(null) ; status=0/0 }"),
 	}
 	withFakes(t, fakeRunner(units, shows))
 	batch, err := collectOp(protocol.ScanPlan{})
@@ -312,17 +313,25 @@ func TestCollectRedactsExecSecrets(t *testing.T) {
 	if cand == nil {
 		t.Fatal("expected dify candidate")
 	}
-	summary := cand.Attributes["exec_summary"]
-	for _, secret := range []string{"supersecrettoken123", "sk-livekey123456789"} {
-		if strings.Contains(summary, secret) {
-			t.Fatalf("exec_summary leaked secret %q: %s", secret, summary)
+	if _, ok := cand.Attributes["exec_summary"]; ok {
+		t.Fatal("exec_summary must not be uploaded (allowlist: exec_path + exec_argv_digest only)")
+	}
+	path := cand.Attributes["exec_path"]
+	if path == "" || !strings.Contains(path, "/usr/bin/python3") {
+		t.Fatalf("exec_path must be binary path, got %q", path)
+	}
+	digest := cand.Attributes["exec_argv_digest"]
+	if digest == "" || len(digest) < 16 {
+		t.Fatalf("exec_argv_digest must be present, got %q", digest)
+	}
+	blob, _ := json.Marshal(cand.Attributes)
+	for _, secret := range []string{"supersecrettoken123", "sk-livekey123456789", "spacesecret999"} {
+		if strings.Contains(string(blob), secret) {
+			t.Fatalf("attributes leaked secret %q: %s", secret, blob)
 		}
-	}
-	if !strings.Contains(summary, "[REDACTED]") {
-		t.Fatalf("exec_summary must show redaction marker: %s", summary)
-	}
-	if len(summary) > 256 {
-		t.Fatalf("exec_summary must be truncated to 256, got %d", len(summary))
+		if strings.Contains(path, secret) {
+			t.Fatalf("exec_path leaked secret %q: %s", secret, path)
+		}
 	}
 }
 

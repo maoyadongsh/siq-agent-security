@@ -176,6 +176,12 @@ func cmdTasks(ctx context.Context, args []string) error {
 		return err
 	}
 	cli := newAuthedClient(state)
+	// R04：先冲刷本地 pending receipt，避免 uploaded 卡住无人回执。
+	if n, err := DrainPendingReceipts(ctx, cli); err != nil {
+		log.Printf("drain pending receipts: posted=%d err=%v", n, err)
+	} else if n > 0 {
+		log.Printf("drain pending receipts: posted=%d", n)
+	}
 	tasks, err := cli.FetchTasks(ctx, state.DeviceIdentity)
 	if err != nil {
 		return err
@@ -194,6 +200,9 @@ func cmdTasks(ctx context.Context, args []string) error {
 		if err := cli.PostReceipt(ctx, t.TaskID, rcpt); err != nil {
 			log.Printf("task %s: failed to post receipt: %v", t.TaskID, err)
 			continue
+		}
+		if err := RemovePendingReceipt(t.TaskID); err != nil {
+			log.Printf("task %s: clear pending receipt: %v", t.TaskID, err)
 		}
 		if rcpt.Status != "success" {
 			log.Printf("task %s: status=%s error=%s %s", t.TaskID, rcpt.Status, rcpt.ErrorCode, rcpt.ErrorMessage)

@@ -3,12 +3,18 @@ package admission
 import (
 	"fmt"
 	"strings"
+
+	"siq-agent-security/apps/agentshield/internal/display"
 )
 
 // renderCard produces the NVIDIA minimum skill card (dev-spec §3.6.6). Risk
 // statements are derived from declared facts and findings so they are
 // actionable rather than generic. The footer states that the card is neither a
 // signature nor an approval.
+//
+// DEV15-C: original skill description is rendered only inside an untrusted
+// metadata zone with terminal/Markdown escaping; it must not drive a TTY or
+// break out of the card structure.
 func renderCard(adm Admission, fm Frontmatter) string {
 	get := func(k, def string) string {
 		if v := strings.TrimSpace(fm.Fields[k]); v != "" {
@@ -20,18 +26,20 @@ func renderCard(adm Admission, fm Frontmatter) string {
 	w := func(format string, a ...any) { fmt.Fprintf(&b, format, a...) }
 
 	w("# Skill Card\n\n")
-	w("## Description\n\n%s\n\n", get("description", "[unknown]"))
+	w("## Description\n\n")
+	desc := get("description", "[unknown]")
+	w("%s\n", display.ForMarkdownUntrusted(desc, 2000))
 	w("Admission verdict: **%s** (engine %s, rulepack v%d, decided %s).\n\n", adm.Verdict, adm.Engine.Name, adm.Engine.RulepackVersion, adm.DecidedAt)
-	w("## Owner\n\n%s\n\n", get("author", get("owner", "[unknown]")))
-	w("## License/Terms of Use\n\n%s\n\n", get("license", "[unknown]"))
-	w("## Use Case\n\n%s\n\n", get("compatibility", "[not declared in frontmatter]"))
+	w("## Owner\n\n%s\n\n", display.ForTerminal(get("author", get("owner", "[unknown]"))))
+	w("## License/Terms of Use\n\n%s\n\n", display.ForTerminal(get("license", "[unknown]")))
+	w("## Use Case\n\n%s\n\n", display.ForTerminal(get("compatibility", "[not declared in frontmatter]")))
 	w("## Deployment Geography for Use\n\n[not declared]\n\n")
 
 	w("### Requirements / Dependencies\n\n")
 	cred := "No"
 	for _, f := range adm.DeclaredFacts {
 		if f.Domain == "credential" {
-			cred = "Yes (declared: " + f.Resource.Value + ")"
+			cred = "Yes (declared: " + display.ForTerminal(f.Resource.Value) + ")"
 			break
 		}
 	}
@@ -41,7 +49,7 @@ func renderCard(adm Admission, fm Frontmatter) string {
 		w("- none\n")
 	}
 	for _, f := range adm.DeclaredFacts {
-		w("- `%s` %s → %s `%s` (from %s)\n", f.Domain, f.Action, f.Resource.Type, f.Resource.Value, f.SourceField)
+		w("- `%s` %s → %s `%s` (from %s)\n", f.Domain, f.Action, f.Resource.Type, display.ForTerminal(f.Resource.Value), f.SourceField)
 	}
 	w("\nDo not include secrets in prompts/logs/output; use least-privilege credentials; rotate keys as appropriate.\n\n")
 
@@ -56,7 +64,8 @@ func renderCard(adm Admission, fm Frontmatter) string {
 		if f.Location.Line != nil {
 			line = fmt.Sprintf(":%d", *f.Location.Line)
 		}
-		w("Risk: %s at `%s%s` (%s, %s/%.2f).\n\n", riskText(f), f.Location.Path, line, f.Category, f.Severity, f.Confidence)
+		path := display.ForTerminal(f.Location.Path)
+		w("Risk: %s at `%s%s` (%s, %s/%.2f).\n\n", riskText(f), path, line, f.Category, f.Severity, f.Confidence)
 		w("Mitigation: %s\n\n", mitigationText(f))
 	}
 	if risks == 0 {
@@ -66,7 +75,7 @@ func renderCard(adm Admission, fm Frontmatter) string {
 
 	w("## References\n\n- admission `%s` (content_hash `%s`)\n- rulepack v%d\n\n", adm.AdmissionID, adm.ContentHash, adm.Engine.RulepackVersion)
 	w("## Skill Output\n\n[not declared]\n\n")
-	w("## Skill Version\n\n%s (content_hash %s)\n\n", ptrOr(adm.SkillVersion, "[unversioned]"), adm.ContentHash[:12])
+	w("## Skill Version\n\n%s (content_hash %s)\n\n", display.ForTerminal(ptrOr(adm.SkillVersion, "[unversioned]")), adm.ContentHash[:12])
 	w("## Ethical Considerations\n\n")
 	if adm.Verdict == "quarantine" {
 		w("Quarantined: do not install until the flagged content is removed and re-admitted.\n\n")

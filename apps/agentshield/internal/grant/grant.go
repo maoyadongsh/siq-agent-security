@@ -95,6 +95,7 @@ type Grant struct {
 	EffectiveReadback      *Readback           `json:"effective_readback"`
 	CreatedAt              string              `json:"created_at"`
 	ExpiresAt              *string             `json:"expires_at"`
+	SigningSchema          string              `json:"signing_schema"`
 	Signature              string              `json:"signature"`
 }
 
@@ -256,7 +257,7 @@ func Build(adm admission.Admission, opts Options) (*Result, error) {
 	g.DesiredPolicyRef = &DesiredPolicyRef{PolicyID: dp["policy_id"].(string), Version: 1, StaticDomainsUnavailable: static}
 
 	g.Status = "pending_approval"
-	g.Signature = sign(opts.Key, g)
+	resign(opts.Key, &g)
 	return &Result{Grant: g, DesiredPolicy: dp}, nil
 }
 
@@ -339,7 +340,7 @@ func ResolveOverlap(g Grant, idx int, actor Approval, key *signing.Key) (Grant, 
 	g.OverlapConflicts[idx].Resolution = "manual"
 	note := "merged by " + actor.ActorID + " at " + actor.ApprovedAt
 	g.OverlapConflicts[idx].Note = &note
-	g.Signature = sign(key, g)
+	resign(key, &g)
 	return g, nil
 }
 
@@ -389,7 +390,7 @@ func Approve(g Grant, actor Approval, key *signing.Key) (Grant, error) {
 	a := actor
 	g.ApprovedBy = &a
 	g.Status = "approved"
-	g.Signature = sign(key, g)
+	resign(key, &g)
 	return g, nil
 }
 
@@ -407,7 +408,7 @@ func transition(g Grant, to string, key *signing.Key) (Grant, error) {
 		return g, fmt.Errorf("grant: illegal transition %s → %s", g.Status, to)
 	}
 	g.Status = to
-	g.Signature = sign(key, g)
+	resign(key, &g)
 	return g, nil
 }
 
@@ -451,11 +452,13 @@ func MarkEffective(g Grant, rb Readback, factReadbacks map[string]string, key *s
 	r := rb
 	g.EffectiveReadback = &r
 	g.Status = "effective"
-	g.Signature = sign(key, g)
+	resign(key, &g)
 	return g, nil
 }
 
 func sign(key *signing.Key, g Grant) string {
+	g.SigningSchema = signing.SchemaLocalCanonicalV1
+	g.Signature = ""
 	raw, _ := json.Marshal(g)
 	dec, err := canon.Decode(raw)
 	if err != nil {
@@ -463,11 +466,21 @@ func sign(key *signing.Key, g Grant) string {
 	}
 	m := dec.(map[string]any)
 	delete(m, "signature")
+	m, err = signing.WithSigningSchema(m, signing.SchemaLocalCanonicalV1)
+	if err != nil {
+		return ""
+	}
 	sig, err := key.SignCanonical(m)
 	if err != nil {
 		return ""
 	}
 	return sig
+}
+
+// resign sets signing_schema + signature on g (DEV09-G writer default embed).
+func resign(key *signing.Key, g *Grant) {
+	g.SigningSchema = signing.SchemaLocalCanonicalV1
+	g.Signature = sign(key, *g)
 }
 
 // Verify checks the grant signature.
@@ -480,7 +493,7 @@ func Verify(pub []byte, g Grant) bool {
 	m := dec.(map[string]any)
 	sig, _ := m["signature"].(string)
 	delete(m, "signature")
-	return signing.VerifyCanonical(pub, m, sig)
+	return signing.VerifyDocument(pub, m, sig) == nil
 }
 
 func keysSorted(m map[string]bool) []string {

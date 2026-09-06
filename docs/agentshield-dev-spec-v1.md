@@ -47,7 +47,8 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 | --- | --- | --- | --- |
 | SKILL.md → 二进制 | `skill-manifest.json`（发布密钥签名） | bootstrap 脚本比对下载文件 sha256 与 manifest；manifest 签名由脚本内置公钥验证 | 拒绝启动，提示手动核对 |
 | 二进制 → 规则包 | 内嵌包为基线；外部包需 `SIQ_AGENT_SECURITY_RULEPACK_PUBKEY` 验签 | Ed25519 over canonical JSON；版本 ≥ 内嵌 | 回退内嵌包，stderr 记类别 |
-| 适配器 → 决策 API | 状态目录内 `token`（0600） | `Authorization: Bearer <token>`；只监听 127.0.0.1 | 401；适配器按 fail-closed 表处理 |
+| 适配器 → 决策 API | 状态目录内 `token`（0600） | `Authorization: Bearer <token>`；只监听 127.0.0.1；**仅** `/v1/decide` 与 `/v1/observe` | 401；管理端点对该凭据返回 403；适配器按 fail-closed 表处理 |
+| 控制台 → 管理 API | serve 启动时的一次性配对码 → 有期限管理会话 | `POST /v1/pair` 后 `Authorization: Bearer <session>`；Host 仅 `127.0.0.1`/`localhost`/`::1` + 监听端口；写操作拒绝非法 Origin / `Sec-Fetch-Site: cross-site` | 401/403；无认证配置接口不含 secret |
 | 回执 → 阅读者 | 本地 Ed25519 身份（`keys/signing.seed`） | `siq-agent-security verify` 重算哈希链并验签 | 报告首个断链/坏签位置 |
 | 模型 → 任何裁决 | **无** | 模型只能触发子命令并呈现输出 | — |
 
@@ -98,9 +99,14 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 
 ### 2.3 并发
 
-- 单写者：`serve` 持有 `<state>/serve.lock`（O_EXCL 创建，内含 pid；启动时若 pid 不存活则接管）。
-- 子命令（`admit`/`grant`）与 `serve` 同时运行时，通过 HTTP 提交给 `serve` 写入；`serve` 未运行则子命令直接写文件。
+- 单写者：`serve` 通过 `state.AcquireWriter` 持有 `<state>/serve.lock`（O_EXCL；内含 pid/owner；启动时若 pid 不存活则将旧锁 rename 为 `serve.lock.stale.*` 后接管，禁止无条件删除）。离线 `grant` 子命令须取得同一写锁；锁被存活 `serve` 占用时拒绝直写。
+- 子命令（`admit`/`grant`）与 `serve` 同时运行时，通过 HTTP 提交给 `serve` 写入；`serve` 未运行则子命令在写锁下直接写文件。
 - 回执链：`serve` 内存持有 `(seq, hash)`；写入顺序 = 先 append 行、`fsync`、再更新 `HEAD`。恢复时以文件最后一行为准，`HEAD` 只是加速。
+- 不可变版本按 ADR-012 先在同目录私有暂存文件完成写入/Sync，再排他发布最终版本名；版本占用只允许重试下一序号，不能返回伪成功。读者不得看见未完成暂存或把损坏最新版本忽略为空。
+- grant 状态变迁（approve/reject/deploy/revoke/patch-desired/effective/resolve-overlap）必须带 `expected_revision`（当前磁盘版本序号）；冲突返回 409，不得静默追加成功。创建响应与 `GET /v1/grants/{id}` 返回 `state_revision`。该 CAS 不替代多文档审计事务（DEV03）。
+- **高影响批准（DEV02-B）：** `approve` 前须 `POST /v1/grants/{id}/challenge` 取得单次 `challenge_id`+`nonce`；挑战绑定 grant digest、scope digest、subject/platform 与 `expected_revision`，TTL 5 分钟，消费后不可重放。grant 正文或 desired 变更会使 digest 失配。desktop-same-uid 下挑战不是 OS 隔离边界，不宣称防止同 UID 自批。
+- **多文档提交（DEV03-E）：** 在原单写者/CAS 上，`commits/<grant_id>.<seq>.prepare.json` 先持久化 `grant_commit/v1` 完整材料（已签 grant 原文、expected revision、可选 policy、审计）；随后排他发布 policy、`commit-audit/<id>.json`、grant 版本，最后写与 prepare SHA-256 绑定的 `.done.json`。`.done` 是可见性界限；未完成的当前或下一版本使 grant 读取失败关闭，不能继续沿用旧批准。`TailAudit` 合并历史 JSONL 与已提交的独立审计，不重复追加。所有写入采用同目录暂存+Sync+Link，Linux 同步目录；不支持目录 Sync 的 Windows 仅声明进程崩溃恢复，不声明断电保证。`serve`/离线 grant 获写锁后先恢复；`incomplete` 只读诊断，`incomplete --recover` 获同一写锁后幂等补齐，无新批准/后端副作用。旧 `.incomplete.json` 缺完整材料时保留且拒绝自动猜测恢复。升级前备份 state；不得用不理解 prepare/done 的旧二进制混跑或回退写入。
+- **发布 staging（DEV04-D）：** bootstrap/adapter 经 `resolve_verified_bin.sh` 在验签后将二进制复制到私有 staging（0700），对副本再算 sha256；与源摘要（及 pin，若强制）不一致则拒绝。stdout 仅输出 staged 路径。不宣称同 UID 进程无法在验证后改写。真实下载链另做。
 
 ### 2.4 与控制面同步（可选，非现场）
 
@@ -188,6 +194,7 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 - 遍历用 `filepath.WalkDir`，**不跟随符号链接**；对每个 symlink `EvalSymlinks` 后若不在 Skill 根内 → `symlink_escape=true`（quarantine），在根内则按普通文件计入。
 - `file_manifest`：相对 POSIX 路径（`/` 分隔）、sha256、bytes；排除 `.git/`、`skill.oms.sig`、`skill-manifest.json`。
 - `content_hash = sha256( join( sorted( "<path>\n<sha256>\n<bytes>\n" ) ) )`，与 `skill-manifest.skill.content_hash` 同算法。
+- 仅普通文件可被读取；根内链接的目标也必须是普通文件。FIFO、设备、socket 等类型直接返回受控错误。读取按剩余总字节预算加 1 字节探测，记录实际字节数；超过预算的准入显示 over_limit，HashDir/发布/盘点不得把不完整或越界树当完整哈希。稳定树的根内普通文件链接仍合法。**打开契约（ADR-013 / DEV05-C）：** 打开后对 fd 再 Stat，须仍为普通文件且 `SameFile` 与打开前一致；Unix 使用 `O_NOFOLLOW|O_NONBLOCK` 降低 symlink 替换与 FIFO 阻塞。不宣称同 UID 零窗口或 Windows 特殊文件完整矩阵。
 
 #### 3.6.3 frontmatter 解析
 
@@ -235,7 +242,7 @@ else:
 
 #### 3.6.5 evidence
 
-每条 finding 与每条 declared 事实引用 ≥1 evidence：`evidence_id = ev-<sha256(path + line + rule_id)[:16]>`，`source_type=manifest`，`content_hash` = 命中行脱敏前 sha256，`classification=internal`，`signature` 由本地 key 签。evidence 写 `evidence/`。
+每条 finding 与每条 declared 事实引用 ≥1 evidence：`evidence_id = ev-<sha256(path + line + rule_id + source.locator)[:16]>`，`source_type=manifest`，`content_hash` = 命中行脱敏前 sha256，`classification=internal`，`signature` 由本地 key 签。locator 进入 ID，避免不同 Skill 的相对路径命中共用同一文件名。evidence 写 `evidence/`。同一 `evidence_id` 再次写入时，仅当 `content_hash` 与 `source_locator` 一致才视为幂等；字节不完全相同也不得覆盖。
 
 #### 3.6.6 输出
 
@@ -291,20 +298,26 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 
 #### 3.8.1 HTTP
 
-- 监听 `127.0.0.1:<port>`（默认 47611，`config.json` 可改）；拒绝非 loopback 远端地址。
-- 认证：`Authorization: Bearer <token>`；token 文件仅 0600，适配器安装时读取一次。
+- 监听 `127.0.0.1:<port>`（默认 47611，`config.json` 可改）；拒绝非 loopback 远端地址。`Host` 必须是 `127.0.0.1` / `localhost` / `::1` 且端口与监听端口一致，否则 403（DNS rebinding 工程控制；完整浏览器链见 DEV18 记录）。
+- 认证分权：
+  - 决策：`Authorization: Bearer <token>`，token 文件仅 0600，适配器安装时读取一次；**只**接受于 `POST /v1/decide` 与 `POST /v1/observe`。
+  - 管理：浏览器经 `POST /v1/pair` 用启动配对码换取有期限会话；CLI 写文件或带管理会话调用。决策 token 调用管理端点 → 403。
+  - 配对：尝试预算 5、TTL 5 分钟、单次消费；凭据不进 `/ui-config.json`、localStorage、URL 或日志。
+- 非浏览器 CLI：不发送 `Origin` / `Sec-Fetch-Site` 的已认证请求视为 CLI；浏览器写操作必须同源。Fetch Metadata 只作辅助。
+- 桌面 profile 为 `desktop-same-uid`：同 UID 进程仍可读状态目录并执行 CLI 批准。不宣称防止被注入 Agent 自批；受管身份隔离是后续 Linux 配置。能力与证明强度见 [`agentshield-capability-profiles-v1.md`](agentshield-capability-profiles-v1.md)。
 - 端点：
 
 | 方法 路径 | 用途 |
 | --- | --- |
 | `POST /v1/decide` | 工具调用决策（同步）|
 | `POST /v1/observe` | 工具结果观测（after/post 钩子；用于污点更新，不做决策）|
-| `POST /v1/hold/{receipt_id}` | 人工签核结果（body: `{"approve": bool, "actor_id": ...}`）|
+| `POST /v1/hold/{receipt_id}` | 人工签核（body: `{"approve": bool, "actor_id": ...}`；拒绝未知字段）。同一决议幂等返回已有回执；相反决议 409；超过 `hold.timeout_ms` 拒绝。 |
 | `GET /v1/receipts?chain=&since_seq=` | 分页读回执 |
 | `GET /v1/status` | 版本、enforcement_mode、平台档位、链头 |
 | `POST /v1/admit` / `POST /v1/grant/...` | 控制台与 CLI 复用；同 §3.6/§3.7 |
 | `GET /` | 内嵌 UI |
-| `GET /ui-config.json` | loopback 无鉴权：token + version + mode，供控制台内存持有；禁止 localStorage |
+| `POST /v1/pair` | 一次性配对码换管理会话；无 secret 的 bootstrap |
+| `GET /ui-config.json` | loopback 无鉴权：version + mode + `trust_profile` + `pairing_required`；**禁止**返回 token/session |
 | `GET /v1/inventory` | 盘点（POST 仍可用，body.cwd 或 `?cwd=`）|
 | `GET`/`PUT /v1/config` | 读/写 `enforcement_mode`（热更新 Engine）|
 | `GET /v1/adapter/status` `POST /v1/adapter/install` `POST /v1/adapter/uninstall` | 控制台装/卸适配器 |
@@ -365,6 +378,7 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 `GET /v1/export` 与 `siq-agent-security export [--out FILE]` 产出同一 JSON（`format=agentshield.export.v1`）：
 
 - 含：公钥、enforcement_mode、资产摘要、准入 verdict/哈希/finding 规则、grant 状态与事实摘要、回执（seq/action/tool/reason/hash，**不含** `params` / `params_excerpt`）、`audit.jsonl` 尾部、回执链 `verify` 结果。
+- **派生签名（DEV15-D）：** 写者对脱敏投影独立嵌入 `signing_schema=local_canonical/v1` + `signature`，并附 `derived_from`（`kind=agentshield.export.derived/v1`，`attestation_scope=share_projection_only`，可选 tip hash/seq）。此签只证明分享投影；**不得**把回执 `receipt_hash_chain` 或准入原文签名粘贴到导出上冒充仍“原样有效”。
 - 不含：token、signing seed、私钥、Skill 文件正文、环境变量、OpenShell 密钥。
 - CLI 写文件 0600。控制台设置页可下载。失败不得把密钥写进错误字符串。
 
@@ -389,6 +403,10 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 
 ```
 1. 找 session 状态（内存 + receipts 回放）：taint_labels、trifecta 三布尔
+   - 内存 session：容量上限 MaxSessions；满则拒绝新 session_id（禁止 LRU 清污点腾位，DEV16-A）
+   - 空闲过期（DEV16-E）：仅无 taint 且无 trifecta 记忆的 session 可在 SessionIdleTTL 后释放；
+     默认 30m；config `session_idle_ttl_seconds`：0=默认，-1=关闭，1..86400=秒。
+     污点/trifecta session 永不过期腾位（避免同 ID 被当成干净会话）。
 2. 定位 grant：platform + agent_id → 最新 status ∈ {deployed, effective} 的 grant；无 grant → 按 default_effect=deny（block 模式）
 3. 工具级：tool ∉ allow 且 ∉ require_approval → deny("tool not granted")
            tool ∈ require_approval → hold
@@ -411,12 +429,13 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 - `chain_id`：本地模式固定 `local`；同步到控制面后由控制面归属。
 - 每条：`seq = prev.seq+1`；`prev_hash = prev.hash`（创世 64 个 0）；`hash = sha256(canon(receipt 去掉 hash/sig))`；`sig = Ed25519(hash 的 hex 字符串字节)`。
 - `siq-agent-security verify [--chain local]`：逐行重算，报告首个 `seq` 不连续 / `prev_hash` 不匹配 / `hash` 不符 / `sig` 无效。
+- **受管 checkpoint（DEV15-E）：** `<state>/checkpoints/<chain_id>.json`（`agentshield.checkpoint.v1`，`local_canonical/v1` 签名）保存最高 `seq`+`tip_hash`。路径必须在 `receipts/` **之外**；**禁止**把 `receipts/<id>/HEAD` 当锚点。Append 成功后由 serve 自动 Publish。有匹配 checkpoint 时 `history_integrity=verified`；截断/回滚相对该文件可检为 `failed`；无 checkpoint 时前缀有效仍为 `unknown`。诚实边界：同 UID 整 state 目录回滚不在本切片宣称；可用 `OpenCheckpointStoreAt` 指向独立挂载。
 
 #### 3.8.4 fail-closed 表（适配器侧行为）
 
 | 场景 | block | warn / audit_only |
 | --- | --- | --- |
-| API 不可达 / 超时 / 5xx | deny（reason 写「decision service unavailable」，适配器本地写一条未签名的 `pending` 记录，恢复后由 serve 补签 `observed`）| allow + stderr 警告 |
+| API 不可达 / 超时 / 5xx | deny（reason 含「decision service unavailable」；写 `<state>/pending/decisions.jsonl` 行，`schema=pending_decision/v1`，`signed=false`，DEV07-C）。serve 启动与 `/v1/decide` 将未提升行补签为链上回执（`matched_rule_ids` 含 `pending.fail_closed`，DEV07-D；游标 `pending/promoted.lines`） | allow + stderr 警告 + 同 pending 行（outcome=allow）；同样可被 DEV07-D 补签 |
 | 401 | deny | allow + 警告 |
 | 返回非法 JSON | deny | allow |
 
@@ -451,7 +470,7 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 
 - 兼容重定向：`/inventory`、`/admissions` → `/agents`。顶栏常驻标签：**「本地模式 · 单用户」** + 当前平台档位（如 `OpenClaw · L2 · 仅工具层拦截` / `Trae · 审计模式，无法阻断`）。无 OpenShell L3 时，L2 必须带「仅工具层拦截」。L3 仅在 OpenShell probe 成功后显示。
 - 资产详情：确认 / 驳回（reason+until）；`pending_approval` grant 可编辑五域后 `patch-desired`（fs/process 标静态不可用）。权限页：有 L3 才启用漂移检测，否则禁用并写原因。绑定页可装/卸适配器。
-- 所有写操作走 §3.8.1 端点并带 token；UI 无私钥。Token 由 `GET /ui-config.json`（仅 loopback）进入内存，禁止 `localStorage` / 地址栏 `?token=`。
+- 所有写操作走 §3.8.1 端点并带**管理会话**；UI 无私钥。会话由配对进入内存，禁止 `localStorage` / 地址栏 `?token=`。`GET /ui-config.json` 不含凭据。
 
 ---
 
@@ -477,6 +496,8 @@ security: { installPolicy: { enabled: true, targets: ["skill","plugin"],
 - 配置：`~/.openclaw/siq-agent-security.json` 保存 `endpoint`、`token_path`、`enforcement_mode`。
 
 **卸载**：`siq-agent-security adapter uninstall openclaw` 删除插件目录并把 `openclaw.json` 恢复到 `<state>/backups/` 中的副本。
+- **安装首备（DEV07-A）：** 改写已有用户配置前，以 `*.siq-agent-security.orig`（O_EXCL、0600）保存首次见到的原文；重装不得覆盖。坏 JSON、指向配置的 symlink、未知 `enforcement_mode` 拒绝且不改写。配置写入同目录暂存+Rename。
+- **外科卸载（DEV07-B）：** OpenClaw/CodeBuddy 在活配置上剥离本产品 `installPolicy`/hooks，保留安装后用户字段；冲突（坏 JSON 等）返回 `RecoveryPlan`，不静默整文件回滚。首备仅供人工恢复参考。
 
 ### 4.2 Hermes（P0）
 
@@ -548,6 +569,7 @@ SKILL.md 正文结构：`# siq-agent-security Skill` / 简介 / When to Use / Pr
 1. `go test ./...`、`go vet`、`gofmt`；Python 全量测试。
 2. 交叉编译 `linux/{amd64,arm64}`、`darwin/arm64`、`windows/amd64`，`-ldflags "-X main.Version=<tag>"`，产出 sha256。
 3. 计算 `skills/siq-agent-security/` `content_hash`；生成 `skill-manifest.json`；用发布密钥（环境变量 `SIQ_AGENT_SECURITY_RELEASE_SEED`）签名；bootstrap 脚本内置发布公钥。
+   Go `manifest-verify` 同样只接受内置信任的发行公钥，清单 `signed_by` 不授予信任。开发签后自检可显式提供调用者已知的公钥，但不等同于发行者验证通过，不放宽默认 CLI。
 4. 打 `siq-agent-security-skill-<tag>.zip`（Skill 目录 + manifest）供 TraeWork 上传 / ClawHub / 手动安装；GitHub Release 挂二进制。
 5. 自扫描：CI 用刚构建的二进制对 `skills/siq-agent-security/` 跑 `admit`，必须为 `admit_with_conditions`（声明 terminal/network），不得 quarantine。
 
@@ -564,11 +586,11 @@ SKILL.md 正文结构：`# siq-agent-security Skill` / 简介 / When to Use / Pr
 | 威胁 | 缓解 | 残余 |
 | --- | --- | --- |
 | 恶意 Skill 冒充 siq-agent-security 引导用户跑假二进制 | manifest 签名 + sha256 内置于 bootstrap；UI 显示公钥指纹 | 用户跳过校验 |
-| 模型被注入后调用 `grant --approve` | CLI 批准需 `--approve-as` 且写 `channel`；UI 批准需人点；SKILL.md 禁止模型批准 | 模型仍可在终端执行 CLI —— 通过 grant 把 `siq-agent-security grant approve` 本身列入 `require_approval`（自保护） |
+| 模型被注入后调用 `grant --approve` | CLI 批准需 `--approve-as` 且写 `channel`；UI 批准需管理会话；SKILL.md 禁止模型批准 | 同 UID 模型仍可执行 CLI 或读状态目录 —— desktop-same-uid 只记录人工声明，不构成隔离 |
+| 决策 API 被本机其他进程调用 | loopback + Host 允许列表 + 决策/管理分权 | 同用户下其他进程可读 token 文件（OS 边界）；管理会话不经 ui-config 泄漏 |
 | 适配器被绕过（Agent 用原生 HTTP 出网） | OpenShell 网络 default-deny（L3）；无 L3 时 UI 明示「仅工具层拦截」 | Mac/Win 无 Docker |
 | 回执被改写 | 只追加 + 哈希链 + 签名；`verify` | 私钥泄露（状态目录被读）|
 | 规则包被替换 | 外部包验签 + 防降级；内嵌包为基线 | 二进制本身被替换（由 manifest 校验覆盖）|
-| 决策 API 被本机其他进程调用 | loopback + bearer token 0600 | 同用户下其他进程可读 token（OS 边界）|
 | 参数/结果含密钥进入回执 | 只存摘要 + 脱敏 excerpt ≤512 | 未知密钥格式（黑名单固有局限）|
 | Skill 扫描触发解压炸弹/巨文件 | §3.6.1 限额，超限 quarantine | — |
 

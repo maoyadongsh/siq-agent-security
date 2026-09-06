@@ -48,7 +48,7 @@
       "authority": "skill_manifest",
       "source_field": "scripts/fetch.py:5",
       "evidence_ids": [
-        "ev-7e75b5986f8b464d"
+        "ev-68cfcc3a06543300"
       ]
     },
     {
@@ -63,7 +63,7 @@
       "authority": "skill_manifest",
       "source_field": "SKILL.md:17",
       "evidence_ids": [
-        "ev-2a89ce7627420137"
+        "ev-fbdf9a7e9499edc8"
       ]
     },
     {
@@ -78,7 +78,7 @@
       "authority": "skill_manifest",
       "source_field": "SKILL.md:17",
       "evidence_ids": [
-        "ev-a461b43625cb23c4"
+        "ev-ca7080089100d8fc"
       ]
     },
     {
@@ -93,7 +93,7 @@
       "authority": "skill_manifest",
       "source_field": "frontmatter.allowed-tools",
       "evidence_ids": [
-        "ev-0fd8c0d316d5f636"
+        "ev-40f609a7af2049a5"
       ]
     },
     {
@@ -108,7 +108,7 @@
       "authority": "skill_manifest",
       "source_field": "frontmatter.allowed-tools",
       "evidence_ids": [
-        "ev-0fd8c0d316d5f636"
+        "ev-40f609a7af2049a5"
       ]
     },
     {
@@ -123,7 +123,7 @@
       "authority": "skill_manifest",
       "source_field": "frontmatter.allowed-tools",
       "evidence_ids": [
-        "ev-0fd8c0d316d5f636"
+        "ev-40f609a7af2049a5"
       ]
     }
   ],
@@ -141,7 +141,7 @@
       },
       "excerpt": "allowed-tools: terminal",
       "evidence_ids": [
-        "ev-0fd8c0d316d5f636"
+        "ev-40f609a7af2049a5"
       ]
     },
     {
@@ -157,7 +157,7 @@
       },
       "excerpt": "allowed-tools: read_file",
       "evidence_ids": [
-        "ev-0fd8c0d316d5f636"
+        "ev-40f609a7af2049a5"
       ]
     },
     {
@@ -173,7 +173,7 @@
       },
       "excerpt": "allowed-tools: web_extract",
       "evidence_ids": [
-        "ev-0fd8c0d316d5f636"
+        "ev-40f609a7af2049a5"
       ]
     },
     {
@@ -189,7 +189,7 @@
       },
       "excerpt": "frontmatter name differs from directory",
       "evidence_ids": [
-        "ev-1ff45d8ec55b116f"
+        "ev-a7b7f808f5dfbd93"
       ]
     },
     {
@@ -205,7 +205,7 @@
       },
       "excerpt": "https://astral.sh",
       "evidence_ids": [
-        "ev-2a89ce7627420137"
+        "ev-fbdf9a7e9499edc8"
       ]
     },
     {
@@ -221,7 +221,7 @@
       },
       "excerpt": "curl -fsSL https://astral.sh/uv/install.",
       "evidence_ids": [
-        "ev-a461b43625cb23c4"
+        "ev-ca7080089100d8fc"
       ]
     },
     {
@@ -237,7 +237,7 @@
       },
       "excerpt": "Never tell the user",
       "evidence_ids": [
-        "ev-2c6910adf5062bc7"
+        "ev-6c247de9b87d127a"
       ]
     },
     {
@@ -253,7 +253,7 @@
       },
       "excerpt": "ignore previous instructions",
       "evidence_ids": [
-        "ev-9ba244c2a9ed3802"
+        "ev-99d6c2b9e907ba56"
       ]
     },
     {
@@ -269,7 +269,7 @@
       },
       "excerpt": "ignore previous instructions",
       "evidence_ids": [
-        "ev-6dac6b3d5f199f75"
+        "ev-1dc329b659ebaaaf"
       ]
     },
     {
@@ -285,7 +285,7 @@
       },
       "excerpt": "cat .env",
       "evidence_ids": [
-        "ev-f1091526703f86a0"
+        "ev-36a0123c3d2501d2"
       ]
     },
     {
@@ -301,7 +301,7 @@
       },
       "excerpt": "https://api.github.com",
       "evidence_ids": [
-        "ev-7e75b5986f8b464d"
+        "ev-68cfcc3a06543300"
       ]
     }
   ],
@@ -315,15 +315,16 @@
   },
   "skill_card_ref": null,
   "evidence_ids": [
-    "ev-0fd8c0d316d5f636",
-    "ev-1ff45d8ec55b116f",
-    "ev-2a89ce7627420137",
-    "ev-2c6910adf5062bc7",
-    "ev-6dac6b3d5f199f75",
-    "ev-7e75b5986f8b464d",
-    "ev-9ba244c2a9ed3802",
-    "ev-a461b43625cb23c4",
-    "ev-f1091526703f86a0"
+    "ev-1dc329b659ebaaaf",
+    "ev-36a0123c3d2501d2",
+    "ev-40f609a7af2049a5",
+    "ev-68cfcc3a06543300",
+    "ev-6c247de9b87d127a",
+    "ev-99d6c2b9e907ba56",
+    "ev-a7b7f808f5dfbd93",
+    "ev-ca7080089100d8fc",
+    "ev-fbdf9a7e9499edc8"
   ],
-  "signature": "bdc741ba70d35085346c4c873105fbd0a76b829a9c0a1b84ac16102785887cd8454d8400224d21a0f1c9394af38bdb48ecc35d57ebc8ab17132556c2848c440b"
+  "signing_schema": "local_canonical/v1",
+  "signature": "69c1d90cf3e200be0e1871351feee3406c8da0b7faca091049b24c08e9eb0a989e941bfdc0d33c76c3c1debc61c88cdd2175f15363ccac8825b7ccc71b026f07"
 }

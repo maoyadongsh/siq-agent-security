@@ -86,7 +86,7 @@ func cmdReleaseManifest(args []string) error {
 	if err := skillmanifest.Sign(m, key); err != nil {
 		return err
 	}
-	if err := skillmanifest.Verify(m); err != nil {
+	if err := skillmanifest.VerifyWithPublicKey(m, key.Public()); err != nil {
 		return err
 	}
 	dest := *out

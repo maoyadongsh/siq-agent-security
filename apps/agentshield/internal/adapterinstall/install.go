@@ -54,11 +54,21 @@ type Record struct {
 
 // Result of an install/uninstall.
 type Result struct {
-	Platform string   `json:"platform"`
-	Action   string   `json:"action"`
-	Paths    []string `json:"paths"`
-	Note     string   `json:"note,omitempty"`
-	Record   *Record  `json:"record,omitempty"`
+	Platform string        `json:"platform"`
+	Action   string        `json:"action"`
+	Paths    []string      `json:"paths"`
+	Note     string        `json:"note,omitempty"`
+	Record   *Record       `json:"record,omitempty"`
+	Recovery *RecoveryPlan `json:"recovery,omitempty"`
+}
+
+// RecoveryPlan is returned when live config cannot be surgically edited
+// (DEV07-B). Callers must not treat this as a successful silent rollback.
+type RecoveryPlan struct {
+	Reason           string   `json:"reason"`
+	LivePath         string   `json:"live_path"`
+	OriginalSnapshot string   `json:"original_snapshot,omitempty"`
+	SuggestedActions []string `json:"suggested_actions"`
 }
 
 var known = map[string]bool{OpenClaw: true, Hermes: true, CodeBuddy: true, Trae: true}
@@ -135,7 +145,10 @@ func Install(opts Options) (*Result, error) {
 	return &Result{Platform: opts.Platform, Action: "install", Paths: paths, Record: rec}, nil
 }
 
-// Uninstall restores the newest backup for the platform.
+// Uninstall removes this product's hooks/files. JSON host configs are edited
+// surgically so post-install user fields survive (DEV07-B). On conflict
+// (bad JSON / symlink), returns an error plus RecoveryPlan — no silent
+// full-file rollback onto live user config.
 func Uninstall(opts Options) (*Result, error) {
 	if err := opts.normalise(); err != nil {
 		return nil, err
@@ -147,19 +160,237 @@ func Uninstall(opts Options) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	for dest, bak := range rec.Modified {
-		data, err := os.ReadFile(bak)
-		if err != nil {
-			return nil, err
+	switch opts.Platform {
+	case CodeBuddy:
+		return uninstallCodeBuddy(opts, rec)
+	case OpenClaw:
+		return uninstallOpenClaw(opts, rec)
+	case Hermes:
+		return uninstallHermes(opts, rec)
+	default:
+		return nil, fmt.Errorf("adapter: unknown platform %q", opts.Platform)
+	}
+}
+
+func uninstallCodeBuddy(opts Options, rec *Record) (*Result, error) {
+	settings := filepath.Join(configDir(opts.Home, CodeBuddy), "settings.json")
+	if err := stripCodeBuddyHooks(settings, rec); err != nil {
+		var recov *RecoveryPlan
+		if errors.As(err, &recov) {
+			return &Result{Platform: CodeBuddy, Action: "uninstall_conflict", Record: rec, Recovery: recov, Note: recov.Reason}, err
 		}
-		if err := os.WriteFile(dest, data, 0o600); err != nil {
+		return nil, err
+	}
+	removeCreatedExcept(rec, settings)
+	return &Result{Platform: CodeBuddy, Action: "uninstall", Paths: []string{settings}, Record: rec, Note: "surgical: removed product hooks; preserved other settings"}, nil
+}
+
+func stripCodeBuddyHooks(settings string, rec *Record) error {
+	doc, err := readJSONObject(settings)
+	if err != nil {
+		return conflictRecovery(settings, rec.Modified[settings], err)
+	}
+	hooks, _ := doc["hooks"].(map[string]any)
+	if hooks != nil {
+		for _, event := range []string{"PreToolUse", "PostToolUse"} {
+			if cleaned, ok := removeProductHookEntries(hooks[event]); ok {
+				if len(cleaned) == 0 {
+					delete(hooks, event)
+				} else {
+					hooks[event] = cleaned
+				}
+			}
+		}
+		if len(hooks) == 0 {
+			delete(doc, "hooks")
+		} else {
+			doc["hooks"] = hooks
+		}
+	}
+	if len(doc) == 0 && rec.Modified[settings] == "" {
+		// We created an empty-ish file solely for hooks.
+		_ = os.Remove(settings)
+		return nil
+	}
+	return writeAtomicJSON(settings, doc)
+}
+
+func removeProductHookEntries(existing any) ([]any, bool) {
+	list, ok := existing.([]any)
+	if !ok {
+		return nil, false
+	}
+	var out []any
+	changed := false
+	for _, item := range list {
+		m, _ := item.(map[string]any)
+		inner, _ := m["hooks"].([]any)
+		var kept []any
+		for _, h := range inner {
+			hm, _ := h.(map[string]any)
+			c, _ := hm["command"].(string)
+			if strings.Contains(c, "hook codebuddy") && product.Mentions(c) {
+				changed = true
+				continue
+			}
+			kept = append(kept, h)
+		}
+		if len(kept) == 0 {
+			changed = true
+			continue
+		}
+		m["hooks"] = kept
+		out = append(out, m)
+	}
+	return out, changed || len(out) != len(list)
+}
+
+func uninstallOpenClaw(opts Options, rec *Record) (*Result, error) {
+	ocPath := filepath.Join(configDir(opts.Home, OpenClaw), "openclaw.json")
+	if exists(ocPath) || rec.Modified[ocPath] != "" {
+		if err := stripOpenClawInstallPolicy(ocPath, rec); err != nil {
+			var recov *RecoveryPlan
+			if errors.As(err, &recov) {
+				return &Result{Platform: OpenClaw, Action: "uninstall_conflict", Record: rec, Recovery: recov, Note: recov.Reason}, err
+			}
 			return nil, err
 		}
 	}
+	cfgPath := filepath.Join(configDir(opts.Home, OpenClaw), product.Name+".json")
+	removeOwnedFile(cfgPath, rec)
+	pluginRoot := filepath.Join(configDir(opts.Home, OpenClaw), "plugins", product.PluginDir())
+	removeCreatedMatching(rec, pluginRoot)
+	for _, p := range rec.Created {
+		if p == ocPath {
+			continue
+		}
+		_ = os.RemoveAll(p)
+	}
+	return &Result{Platform: OpenClaw, Action: "uninstall", Paths: []string{ocPath, pluginRoot}, Record: rec, Note: "surgical: removed installPolicy and product plugin; preserved other openclaw.json fields"}, nil
+}
+
+func stripOpenClawInstallPolicy(ocPath string, rec *Record) error {
+	doc, err := readJSONObject(ocPath)
+	if err != nil {
+		return conflictRecovery(ocPath, rec.Modified[ocPath], err)
+	}
+	if sec, ok := doc["security"].(map[string]any); ok {
+		delete(sec, "installPolicy")
+		if len(sec) == 0 {
+			delete(doc, "security")
+		} else {
+			doc["security"] = sec
+		}
+	}
+	if len(doc) == 0 && rec.Modified[ocPath] == "" {
+		_ = os.Remove(ocPath)
+		return nil
+	}
+	return writeAtomicJSON(ocPath, doc)
+}
+
+func uninstallHermes(opts Options, rec *Record) (*Result, error) {
+	pluginRoot := filepath.Join(configDir(opts.Home, Hermes), "plugins", product.PluginDir())
+	wrapper := filepath.Join(opts.Home, ".local", "bin", "hermes-skills-install")
+	for dest, bak := range rec.Modified {
+		if dest == wrapper {
+			// Restore pre-install wrapper if any; otherwise delete below via Created.
+			if err := restoreFromSnapshot(dest, bak); err != nil {
+				return nil, err
+			}
+		}
+	}
+	removeCreatedMatching(rec, pluginRoot)
 	for _, p := range rec.Created {
 		_ = os.RemoveAll(p)
 	}
-	return &Result{Platform: opts.Platform, Action: "uninstall", Paths: rec.Created, Record: rec}, nil
+	if exists(wrapper) && rec.Modified[wrapper] == "" {
+		// Install created the wrapper (may be listed under Created or only Paths).
+		raw, _ := os.ReadFile(wrapper)
+		if product.Mentions(string(raw)) && strings.Contains(string(raw), "hermes-skills-install") {
+			_ = os.Remove(wrapper)
+		}
+	}
+	return &Result{Platform: Hermes, Action: "uninstall", Paths: []string{pluginRoot}, Record: rec, Note: "removed product plugin; restored prior wrapper if snapshotted"}, nil
+}
+
+func restoreFromSnapshot(dest, bak string) error {
+	if err := refuseSymlink(dest); err != nil {
+		return err
+	}
+	if err := refuseSymlink(bak); err != nil {
+		return err
+	}
+	data, err := os.ReadFile(bak)
+	if err != nil {
+		return err
+	}
+	return writeAtomic(dest, data, 0o600)
+}
+
+func conflictRecovery(live, orig string, cause error) error {
+	plan := &RecoveryPlan{
+		Reason:           cause.Error(),
+		LivePath:         live,
+		OriginalSnapshot: orig,
+		SuggestedActions: []string{
+			"inspect the live file and original snapshot",
+			"manually remove product hooks or restore from the .siq-agent-security.orig snapshot",
+			"do not overwrite live user edits without review",
+		},
+	}
+	return plan
+}
+
+func (p *RecoveryPlan) Error() string {
+	if p == nil {
+		return "adapter: recovery required"
+	}
+	return "adapter: uninstall conflict: " + p.Reason
+}
+
+func writeAtomicJSON(path string, doc map[string]any) error {
+	raw, err := json.MarshalIndent(doc, "", "  ")
+	if err != nil {
+		return err
+	}
+	return writeAtomic(path, append(raw, '\n'), 0o600)
+}
+
+func removeOwnedFile(path string, rec *Record) {
+	if rec.Modified[path] != "" {
+		_ = restoreFromSnapshot(path, rec.Modified[path])
+		return
+	}
+	for _, c := range rec.Created {
+		if c == path {
+			_ = os.RemoveAll(path)
+			return
+		}
+	}
+	if exists(path) {
+		raw, _ := os.ReadFile(path)
+		if product.Mentions(string(raw)) {
+			_ = os.Remove(path)
+		}
+	}
+}
+
+func removeCreatedExcept(rec *Record, keep string) {
+	for _, p := range rec.Created {
+		if p == keep {
+			continue
+		}
+		_ = os.RemoveAll(p)
+	}
+}
+
+func removeCreatedMatching(rec *Record, prefix string) {
+	for _, p := range rec.Created {
+		if p == prefix || strings.HasPrefix(p, prefix+string(filepath.Separator)) {
+			_ = os.RemoveAll(p)
+		}
+	}
 }
 
 func (o *Options) normalise() error {
@@ -192,6 +423,11 @@ func (o *Options) normalise() error {
 	}
 	if o.Mode == "" {
 		o.Mode = "block"
+	}
+	switch o.Mode {
+	case "block", "warn", "audit_only":
+	default:
+		return fmt.Errorf("adapter: unknown enforcement_mode %q (want block|warn|audit_only)", o.Mode)
 	}
 	if o.Now.IsZero() {
 		o.Now = time.Now().UTC()
@@ -313,9 +549,9 @@ func installOpenClaw(opts Options, rec *Record) ([]string, error) {
 	paths = append(paths, cfgPath)
 
 	ocPath := filepath.Join(configDir(opts.Home, OpenClaw), "openclaw.json")
-	doc := map[string]any{}
-	if data, err := os.ReadFile(ocPath); err == nil {
-		_ = json.Unmarshal(data, &doc)
+	doc, err := readJSONObject(ocPath)
+	if err != nil {
+		return nil, err
 	}
 	sec, _ := doc["security"].(map[string]any)
 	if sec == nil {
@@ -350,9 +586,9 @@ func installCodeBuddy(opts Options, rec *Record) ([]string, error) {
 		return nil, err
 	}
 	settingsPath := filepath.Join(dir, "settings.json")
-	doc := map[string]any{}
-	if data, err := os.ReadFile(settingsPath); err == nil {
-		_ = json.Unmarshal(data, &doc)
+	doc, err := readJSONObject(settingsPath)
+	if err != nil {
+		return nil, err
 	}
 	cmd := opts.Binary + " hook codebuddy"
 	hooks, _ := doc["hooks"].(map[string]any)
@@ -397,44 +633,147 @@ func backupAndWriteJSON(path string, doc map[string]any, rec *Record) error {
 		return err
 	}
 	raw = append(raw, '\n')
-	if exists(path) {
-		if rec.Modified[path] == "" {
-			bak := path + ".agentshield-bak"
-			src, err := os.ReadFile(path)
-			if err != nil {
-				return err
-			}
-			if err := os.WriteFile(bak, src, 0o600); err != nil {
-				return err
-			}
-			rec.Modified[path] = bak
-		}
-	} else {
-		rec.Created = appendUnique(rec.Created, path)
+	if err := captureOriginal(path, rec); err != nil {
+		return err
 	}
-	return os.WriteFile(path, raw, 0o600)
+	return writeAtomic(path, raw, 0o600)
 }
 
 func writeNewOrReplace(dest string, data []byte, rec *Record) error {
 	if err := os.MkdirAll(filepath.Dir(dest), 0o700); err != nil {
 		return err
 	}
-	if exists(dest) {
-		if rec.Modified[dest] == "" {
-			src, err := os.ReadFile(dest)
-			if err != nil {
-				return err
-			}
-			bak := dest + ".agentshield-bak"
-			if err := os.WriteFile(bak, src, 0o600); err != nil {
-				return err
-			}
-			rec.Modified[dest] = bak
-		}
-	} else {
-		rec.Created = appendUnique(rec.Created, dest)
+	if err := captureOriginal(dest, rec); err != nil {
+		return err
 	}
-	return os.WriteFile(dest, data, 0o600)
+	return writeAtomic(dest, data, 0o600)
+}
+
+// originalSuffix is the immutable first-seen user content snapshot (DEV07-A).
+// Reinstall must never overwrite it. Uninstall prefers surgical live edits
+// (DEV07-B); the snapshot remains for conflict recovery.
+const originalSuffix = ".siq-agent-security.orig"
+
+func captureOriginal(path string, rec *Record) error {
+	if rec.Modified[path] != "" {
+		return nil
+	}
+	if err := refuseSymlink(path); err != nil {
+		return err
+	}
+	orig := path + originalSuffix
+	if _, err := os.Lstat(orig); err == nil {
+		if err := refuseSymlink(orig); err != nil {
+			return err
+		}
+		rec.Modified[path] = orig
+		return nil
+	} else if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	if !exists(path) {
+		rec.Created = appendUnique(rec.Created, path)
+		return nil
+	}
+	src, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	f, err := os.OpenFile(orig, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	if err != nil {
+		if os.IsExist(err) {
+			rec.Modified[path] = orig
+			return nil
+		}
+		return err
+	}
+	defer f.Close()
+	if _, err := f.Write(src); err != nil {
+		return err
+	}
+	if err := f.Sync(); err != nil {
+		return err
+	}
+	rec.Modified[path] = orig
+	return nil
+}
+
+func readJSONObject(path string) (map[string]any, error) {
+	if err := refuseSymlink(path); err != nil {
+		return nil, err
+	}
+	data, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return map[string]any{}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	trim := strings.TrimSpace(string(data))
+	if trim == "" {
+		return map[string]any{}, nil
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(data, &doc); err != nil {
+		return nil, fmt.Errorf("adapter: refuse to rewrite invalid JSON at %s: %w", path, err)
+	}
+	if doc == nil {
+		return nil, fmt.Errorf("adapter: refuse to rewrite JSON null at %s", path)
+	}
+	return doc, nil
+}
+
+func refuseSymlink(path string) error {
+	fi, err := os.Lstat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if fi.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("adapter: refuse to modify symlink %s", path)
+	}
+	return nil
+}
+
+func writeAtomic(path string, data []byte, mode os.FileMode) error {
+	if err := refuseSymlink(path); err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
+		return err
+	}
+	tmp, err := os.CreateTemp(filepath.Dir(path), ".siq-adapter-*")
+	if err != nil {
+		return err
+	}
+	tmpName := tmp.Name()
+	ok := false
+	defer func() {
+		if !ok {
+			_ = os.Remove(tmpName)
+		}
+	}()
+	if _, err := tmp.Write(data); err != nil {
+		_ = tmp.Close()
+		return err
+	}
+	if err := tmp.Sync(); err != nil {
+		_ = tmp.Close()
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	if err := os.Chmod(tmpName, mode); err != nil {
+		return err
+	}
+	if err := os.Rename(tmpName, path); err != nil {
+		return err
+	}
+	ok = true
+	return nil
 }
 
 func readAsset(opts Options, rel string) ([]byte, error) {

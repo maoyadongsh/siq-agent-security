@@ -73,14 +73,16 @@
       </div>
     </footer>
 
+    <script src="./vendor/mermaid-11.4.1.min.js"></script>
     <script type="module">
-      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-
       const root = document.getElementById("diagram-root");
       const toc = document.getElementById("toc");
       const facts = document.getElementById("facts-body");
 
       try {
+        // Self-hosted pinned Mermaid (DEV17-C / M-C2) — no CDN import.
+        const mermaid = window.mermaid;
+        if (!mermaid) throw new Error("mermaid not loaded from vendor");
         mermaid.initialize({
           startOnLoad: false,
           securityLevel: "strict",

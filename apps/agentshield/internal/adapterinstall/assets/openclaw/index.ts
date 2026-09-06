@@ -19,7 +19,7 @@
  *   { "endpoint": "http://127.0.0.1:47611", "tokenPath": "<state>/token",
  *     "enforcementMode": "block", "timeoutMs": 5000, "agentId": "default" }
  */
-import { readFileSync } from "node:fs";
+import { appendFileSync, mkdirSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
@@ -120,12 +120,36 @@ async function post<T>(path: string, body: unknown, signal?: AbortSignal): Promi
   }
 }
 
-function failClosed(reason: string) {
-  if (cfg.enforcementMode === "block") {
+function failClosed(reason: string, tool = "", sessionId = "") {
+  const mode = cfg.enforcementMode;
+  const outcome = mode === "block" ? "deny" : "allow";
+  appendPending({
+    schema: "pending_decision/v1",
+    recorded_at: new Date().toISOString(),
+    platform: "openclaw",
+    tool,
+    session_id: sessionId,
+    enforcement_mode: mode,
+    outcome,
+    reason: reason.startsWith("decision") ? reason : `decision service unavailable (${reason})`,
+    signed: false,
+  });
+  if (mode === "block") {
     return { block: true, blockReason: `siq-agent-security: decision service unavailable (${reason}); blocked (fail-closed)` };
   }
-  console.warn(`siq-agent-security: decision service unavailable (${reason}); allowing in ${cfg.enforcementMode} mode`);
+  console.warn(`siq-agent-security: decision service unavailable (${reason}); allowing in ${mode} mode`);
   return undefined;
+}
+
+function appendPending(rec: Record<string, unknown>): void {
+  try {
+    const root = cfg.tokenPath ? join(cfg.tokenPath, "..") : stateDir();
+    const dir = join(root, "pending");
+    mkdirSync(dir, { recursive: true, mode: 0o700 });
+    appendFileSync(join(dir, "decisions.jsonl"), JSON.stringify(rec) + "\n", { mode: 0o600 });
+  } catch {
+    /* best-effort local pending log */
+  }
 }
 
 export default definePluginEntry({
@@ -148,7 +172,7 @@ export default definePluginEntry({
           },
           ctx?.abortSignal,
         );
-        if (!decision) return failClosed("no response");
+        if (!decision) return failClosed("no response", event.toolName, (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default");
         switch (decision.action) {
           case "allow":
             return undefined;
@@ -166,7 +190,7 @@ export default definePluginEntry({
               },
             };
           default:
-            return failClosed("malformed decision");
+            return failClosed("malformed decision", event.toolName, (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default");
         }
       },
       { priority: 10 },

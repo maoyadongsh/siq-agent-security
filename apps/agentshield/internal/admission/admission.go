@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"sort"
 	"strings"
 	"time"
@@ -104,6 +105,7 @@ type Admission struct {
 	Integrity     Integrity      `json:"integrity"`
 	SkillCardRef  *string        `json:"skill_card_ref"`
 	EvidenceIDs   []string       `json:"evidence_ids"`
+	SigningSchema string         `json:"signing_schema"`
 	Signature     string         `json:"signature"`
 }
 
@@ -279,7 +281,7 @@ func checkShippedManifest(contents map[string][]byte, files []FileEntry) []rawHi
 }
 
 func isNativeExt(p string) bool {
-	switch strings.ToLower(p[strings.LastIndex(p, "."):]) {
+	switch strings.ToLower(filepath.Ext(p)) {
 	case ".exe", ".dll", ".so", ".dylib", ".bin", ".elf":
 		return true
 	}
@@ -408,7 +410,7 @@ func sourceField(h rawHit) string {
 }
 
 func (b *builder) addEvidence(h rawHit) string {
-	id := "ev-" + shortHash(h.path+"|"+itoa(h.line)+"|"+h.ruleID)
+	id := "ev-" + shortHash(h.path+"|"+itoa(h.line)+"|"+h.ruleID+"|"+b.opts.Source.Locator)
 	if _, ok := b.evidence[id]; ok {
 		return id
 	}
@@ -418,7 +420,7 @@ func (b *builder) addEvidence(h rawHit) string {
 		ObservedAt: b.now, CollectedAt: b.now, CollectorID: "agentshield-local", ConnectorVersion: b.opts.Version,
 		ContentHash: hex.EncodeToString(sum[:]), RedactionProfile: "siq.redaction.v1", Classification: "internal",
 	}
-	ev.Signature = b.signDoc(ev)
+	ev.Signature = b.signDoc(ev, false)
 	b.evidence[id] = ev
 	return id
 }
@@ -524,7 +526,8 @@ func (b *builder) finish(hasSkillMD bool) (*Result, error) {
 	if adm.Findings == nil {
 		adm.Findings = []Finding{}
 	}
-	adm.Signature = b.signDoc(adm)
+	adm.SigningSchema = signing.SchemaLocalCanonicalV1
+	adm.Signature = b.signDoc(adm, true)
 	card := renderCard(adm, b.fm)
 	return &Result{Admission: adm, Evidence: evs, SkillCard: card, Frontmatter: b.fm}, nil
 }
@@ -545,7 +548,10 @@ func (b *builder) infoFinding(ruleID, excerpt, evID string) Finding {
 }
 
 // signDoc signs the canonical JSON of v with its "signature" field removed.
-func (b *builder) signDoc(v any) string {
+// When embedLocal is true (admission writers, DEV09-G), signing_schema is
+// embedded as local_canonical/v1 and participates in the signed bytes.
+// Evidence remains omit-field dual-read until its writer switch.
+func (b *builder) signDoc(v any, embedLocal bool) string {
 	raw, _ := json.Marshal(v)
 	dec, err := canon.Decode(raw)
 	if err != nil {
@@ -553,6 +559,12 @@ func (b *builder) signDoc(v any) string {
 	}
 	m := dec.(map[string]any)
 	delete(m, "signature")
+	if embedLocal {
+		m, err = signing.WithSigningSchema(m, signing.SchemaLocalCanonicalV1)
+		if err != nil {
+			return ""
+		}
+	}
 	sig, err := b.opts.Key.SignCanonical(m)
 	if err != nil {
 		return ""
@@ -571,7 +583,7 @@ func Verify(pub []byte, adm Admission) bool {
 	m := dec.(map[string]any)
 	sig, _ := m["signature"].(string)
 	delete(m, "signature")
-	return signing.VerifyCanonical(pub, m, sig)
+	return signing.VerifyDocument(pub, m, sig) == nil
 }
 
 // fencedLines marks 1-based line numbers that sit inside ``` / ~~~ fences.

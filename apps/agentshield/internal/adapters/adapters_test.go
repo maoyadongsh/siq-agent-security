@@ -3,6 +3,7 @@ package adapters
 import (
 	"bytes"
 	"errors"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -74,7 +75,7 @@ func TestCodeBuddyHookMapping(t *testing.T) {
 	in := `{"session_id":"s","cwd":"/p","hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"ls"}}`
 	for action, want := range map[string]string{receipt.ActionAllow: "allow", receipt.ActionDeny: "deny", receipt.ActionHold: "ask", receipt.ActionRedact: "ask"} {
 		fd := &fakeDecider{dec: &receipt.Decision{Action: action, Reason: "r", Receipt: receipt.Receipt{ReceiptID: "rcp-1"}}}
-		out, err := CodeBuddyHook(strings.NewReader(in), fd, "a", "block")
+		out, err := CodeBuddyHook(strings.NewReader(in), fd, "a", "block", t.TempDir())
 		if err != nil || out.HookSpecificOutput.PermissionDecision != want || !strings.Contains(out.HookSpecificOutput.PermissionDecisionReason, "rcp-1") {
 			t.Fatalf("%s → %+v %v", action, out, err)
 		}
@@ -83,19 +84,25 @@ func TestCodeBuddyHookMapping(t *testing.T) {
 
 func TestCodeBuddyHookFailClosedTable(t *testing.T) {
 	in := `{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{}}`
-	out, _ := CodeBuddyHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "block")
+	state := t.TempDir()
+	out, _ := CodeBuddyHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "block", state)
 	if out.HookSpecificOutput.PermissionDecision != "deny" {
 		t.Fatal("block mode must deny when service is down")
 	}
-	out, _ = CodeBuddyHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "audit_only")
+	pendingPath := filepath.Join(state, "pending", "decisions.jsonl")
+	raw, err := os.ReadFile(pendingPath)
+	if err != nil || !strings.Contains(string(raw), `"signed":false`) || !strings.Contains(string(raw), "decision service unavailable") {
+		t.Fatalf("fail-closed must append unsigned pending record: %v %s", err, raw)
+	}
+	out, _ = CodeBuddyHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "audit_only", state)
 	if out.HookSpecificOutput.PermissionDecision != "allow" {
 		t.Fatal("audit_only must allow when service is down")
 	}
-	out, _ = CodeBuddyHook(strings.NewReader(`{bad`), &fakeDecider{}, "a", "block")
+	out, _ = CodeBuddyHook(strings.NewReader(`{bad`), &fakeDecider{}, "a", "block", state)
 	if out.HookSpecificOutput.PermissionDecision != "deny" {
 		t.Fatal("malformed input must deny in block mode")
 	}
-	out, _ = CodeBuddyHook(strings.NewReader(in), &fakeDecider{dec: &receipt.Decision{Action: "maybe"}}, "a", "block")
+	out, _ = CodeBuddyHook(strings.NewReader(in), &fakeDecider{dec: &receipt.Decision{Action: "maybe"}}, "a", "block", state)
 	if out.HookSpecificOutput.PermissionDecision != "deny" {
 		t.Fatal("unknown action must deny")
 	}
@@ -104,7 +111,7 @@ func TestCodeBuddyHookFailClosedTable(t *testing.T) {
 func TestCodeBuddyPostToolUseObservesAndNeverBlocks(t *testing.T) {
 	fd := &fakeDecider{}
 	in := `{"hook_event_name":"PostToolUse","tool_name":"WebFetch","tool_response":"` + strings.Repeat("x", 70*1024) + `"}`
-	out, err := CodeBuddyHook(strings.NewReader(in), fd, "a", "block")
+	out, err := CodeBuddyHook(strings.NewReader(in), fd, "a", "block", t.TempDir())
 	if err != nil || out.HookSpecificOutput.PermissionDecision != "" || len(fd.obs) != 1 || len(fd.obs[0]) != 64*1024 {
 		t.Fatalf("%+v %v %d", out, err, len(fd.obs))
 	}

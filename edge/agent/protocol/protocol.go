@@ -204,6 +204,7 @@ type Evidence struct {
 	Classification   string  `json:"classification"`
 	PayloadRef       *string `json:"payload_ref,omitempty"`
 	Signature        string  `json:"signature"`
+	SigningSchema    string  `json:"signing_schema,omitempty"` // DEV09-H: evidence_utf8/v1 when sealed
 	ExpiresAt        *string `json:"expires_at,omitempty"`
 }
 
@@ -234,7 +235,10 @@ func ExpandHome(p string) string {
 //   - ambiguous wildcards are rejected: "**", "?", mid-path "*" (a single
 //     trailing "/*" glob — the hermes default — is allowed and expanded);
 //   - roots must be absolute after "~" expansion;
-//   - at least one root must exist and resolve to a directory.
+//   - at least one root must exist and resolve to a directory;
+//   - scope roots and trailing-/* glob matches must not be symlinks (DEV10 /
+//     M-E2): Stat-following would authorize a lexical path whose real target
+//     lies outside the approved root.
 func ValidateScopeSafety(scope *Scope) error {
 	if scope == nil || len(scope.Roots) == 0 {
 		return errors.New("empty scope: no roots")
@@ -289,7 +293,9 @@ func checkGlobShape(p string) error {
 	return nil
 }
 
-// countGlobMatches counts existing directories matched by root (glob or plain).
+// countGlobMatches counts existing non-symlink directories matched by root.
+// Symlink paths are refused (not silently skipped) so a planted link cannot
+// satisfy ValidateScopeSafety while pointing outside the lexical root.
 func countGlobMatches(root string) (int, error) {
 	if strings.ContainsAny(root, "*?[{") {
 		matches, err := filepath.Glob(root)
@@ -298,21 +304,39 @@ func countGlobMatches(root string) (int, error) {
 		}
 		n := 0
 		for _, m := range matches {
-			if fi, err := os.Stat(m); err == nil && fi.IsDir() {
+			ok, err := isNonSymlinkDir(m)
+			if err != nil {
+				return 0, err
+			}
+			if ok {
 				n++
 			}
 		}
 		return n, nil
 	}
-	fi, err := os.Stat(root)
+	ok, err := isNonSymlinkDir(root)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return 0, nil
-		}
 		return 0, err
 	}
-	if !fi.IsDir() {
+	if !ok {
 		return 0, nil
 	}
 	return 1, nil
+}
+
+// isNonSymlinkDir reports whether path is a directory without following links.
+// Returns an error when path is a symlink (escape vector). Missing paths are
+// (false, nil); other Lstat errors are returned as-is.
+func isNonSymlinkDir(path string) (bool, error) {
+	fi, err := os.Lstat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	if fi.Mode()&os.ModeSymlink != 0 {
+		return false, fmt.Errorf("symlink refused (scope roots must be real directories)")
+	}
+	return fi.IsDir(), nil
 }

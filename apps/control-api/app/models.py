@@ -191,12 +191,18 @@ class ClassificationRun(Base):
     tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id", ondelete="CASCADE"), index=True)
     asset_id: Mapped[str] = mapped_column(String(64), ForeignKey("agent_asset.id", ondelete="CASCADE"), index=True)
     classifier: Mapped[str] = mapped_column(String(32))  # baseline|model-off|provider
-    model_ref: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    model_ref: Mapped[str | None] = mapped_column(String(128), nullable=True)
     prompt_version: Mapped[str | None] = mapped_column(String(32), nullable=True)
     schema_version: Mapped[int] = mapped_column(Integer, default=1)
     temperature: Mapped[float | None] = mapped_column(nullable=True)
     seed: Mapped[int | None] = mapped_column(Integer, nullable=True)
     input_evidence_ids: Mapped[list] = mapped_column(JSON, default=list)  # 只存引用，不存原始内容
+    # DEV14-B：可追溯元数据（无原始正文 / 无 secret）
+    input_summary: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    error_ref: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    latency_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    prompt_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    completion_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
     output: Mapped[dict] = mapped_column(JSON, default=dict)  # 结构化结论（§11.3 Schema）
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
@@ -318,8 +324,16 @@ class ChangeRequest(Base):
     proposer_user_id: Mapped[str] = mapped_column(String(64))
     approver_user_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     approval_policy: Mapped[str] = mapped_column(String(16), default="standard")  # standard|high_risk|break_glass
-    # proposed|approved|rejected|deploying|effective|failed|rolled_back|emergency_applied|post_review_due
+    # 业务生命周期：proposed|approved|rejected|deploying|effective|failed|rolled_back|emergency_applied
+    # 遗留值 post_review_due 仅存量迁移保留，新代码不再写入（复核见 review_status）
     status: Mapped[str] = mapped_column(String(16), default="proposed", index=True)
+    # DEV12-A：复核正交于业务终态（M-P4）
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    review_status: Mapped[str | None] = mapped_column(
+        String(16), nullable=True, index=True
+    )  # none|pending|due|completed；非 break_glass 为 none/NULL
+    review_due_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    reviewed_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
     idempotency_key: Mapped[str] = mapped_column(String(128), unique=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
@@ -427,3 +441,10 @@ class OutboxEvent(Base):
     payload: Mapped[dict] = mapped_column(JSON, default=dict)  # 必须已脱敏
     occurred_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
     published_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    # DEV12-B：多实例领取/租约（至少一次投递；确认前崩溃可被接管）
+    lease_owner: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    leased_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    lease_revision: Mapped[int] = mapped_column(Integer, default=0)
+    attempt: Mapped[int] = mapped_column(Integer, default=0)
+    next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    dead_lettered_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

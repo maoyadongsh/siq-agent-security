@@ -194,11 +194,28 @@ export default function FindingsPage() {
       {findings.status === 'disconnected' ? (
         <DisconnectedNotice error={findings.error} onRetry={findings.reload} />
       ) : null}
+      {findings.coverageText ? (
+        <p className="list-coverage" role="status">
+          {findings.coverageText}
+        </p>
+      ) : null}
       <SimpleTable
         columns={columns}
         rows={findings.rows}
         rowKey={(f) => f.id}
       />
+      {findings.hasMore ? (
+        <div className="list-more">
+          <button
+            type="button"
+            className="btn-sm"
+            disabled={findings.loadingMore}
+            onClick={() => findings.loadMore()}
+          >
+            {findings.loadingMore ? '加载中…' : '加载更多'}
+          </button>
+        </div>
+      ) : null}
     </section>
   );
 }

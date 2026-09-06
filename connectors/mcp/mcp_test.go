@@ -347,6 +347,19 @@ func TestCollectSkipsSymlinkEscape(t *testing.T) {
 	}
 }
 
+func TestReadFileLimitedRefusesSymlink(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "real.json")
+	link := filepath.Join(dir, "mcp.json")
+	writeFile(t, target, `{"mcpServers":{}}`)
+	if err := os.Symlink(target, link); err != nil {
+		t.Skip("symlink not supported")
+	}
+	if _, err := readFileLimited(link, 1<<20); err == nil {
+		t.Fatal("DEV10-I: symlink path must not be read via openRegular")
+	}
+}
+
 // 恶意配置只作为数据传出，不执行（contract §4）。
 func TestCollectMaliciousConfigIsDataOnly(t *testing.T) {
 	home := newHome(t)

@@ -1015,6 +1015,59 @@ a,
   color: #1d4ed8;
 }
 
+.verification-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 28rem;
+  line-height: 1.35;
+}
+
+.verification-badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.verification-badge.tone-ok {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.verification-badge.tone-warn {
+  background: #fef7e0;
+  color: #8a6d00;
+}
+
+.verification-badge.tone-err {
+  background: #fce8e6;
+  color: #c5221f;
+}
+
+.verification-badge.tone-neutral {
+  background: #f1f3f4;
+  color: #3c4043;
+}
+
+.verification-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.list-coverage {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.list-more {
+  margin-top: 12px;
+}
+
 /* 编码信息：mono 小号降权 */
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -1185,6 +1238,16 @@ a,
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.scan-env-pick {
+  display: inline-flex;
+  align-items: center;
+}
+
+.scan-env-pick .deploy-target {
+  min-width: 10rem;
+  max-width: 16rem;
 }
 
 .btn-scan {

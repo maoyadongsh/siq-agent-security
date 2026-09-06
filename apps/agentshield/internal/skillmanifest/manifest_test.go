@@ -44,11 +44,11 @@ func TestSignAndVerify(t *testing.T) {
 	if len(m.Signature) != 128 {
 		t.Fatalf("signature length %d", len(m.Signature))
 	}
-	if err := Verify(m); err != nil {
+	if err := VerifyWithPublicKey(m, k.Public()); err != nil {
 		t.Fatal(err)
 	}
 	m.Signature = "00" + m.Signature[2:]
-	if err := Verify(m); err == nil {
+	if err := VerifyWithPublicKey(m, k.Public()); err == nil {
 		t.Fatal("tampered signature must fail")
 	}
 }
@@ -67,7 +67,7 @@ func TestVerifyRejectsWrongKey(t *testing.T) {
 		t.Fatal(err)
 	}
 	m.SignedBy = other.PublicBase64()
-	if err := Verify(m); err == nil {
+	if err := VerifyWithPublicKey(m, k.Public()); err == nil {
 		t.Fatal("signature under a different signed_by must fail")
 	}
 }
@@ -174,7 +174,7 @@ func TestSampleManifestMatchesBuilder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("committed sample missing (%v); generate with the test key seed 0x0b*32", err)
 	}
-	if err := Verify(got); err != nil {
+	if err := VerifyWithPublicKey(got, k.Public()); err != nil {
 		t.Fatal(err)
 	}
 	wantJSON, err := json.Marshal(m)

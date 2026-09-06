@@ -1,6 +1,8 @@
 # 把 site/ 发布到 gh-pages，供 GitHub Pages 托管。
 # 产品代码仍在功能分支；不把 Pages 源设成 docs/，以免规格文档被当成站点。
 # 部署前从当前源码扫描生成 Mermaid（CLI / HTTP / import / 状态机），不是手绘。
+#
+# DEV17-D / M-C1a：Actions 钉完整 commit SHA；contents:write 仅因 peaceiris 推 gh-pages 所需。
 name: pages
 
 on:
@@ -24,12 +26,13 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
       - name: Generate diagrams from source
         run: python3 site/diagrams/from_code.py
       - name: Publish site/ to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453  # v4.0.4 (tag v4 → commit)
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site

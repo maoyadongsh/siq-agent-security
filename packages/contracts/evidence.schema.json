@@ -37,6 +37,11 @@
     "classification": { "type": "string", "enum": ["public", "internal", "confidential", "secret_ref"] },
     "payload_ref": { "type": ["string", "null"], "description": "加密对象引用；默认 null（仅结构化摘要）" },
     "signature": { "type": "string", "pattern": "^[0-9a-f]{128}$", "description": "Edge 对证据包的签名或证明（Ed25519，hex）" },
+    "signing_schema": {
+      "type": "string",
+      "const": "evidence_utf8/v1",
+      "description": "DEV09-H：Edge 新签默认嵌入；缺省时控制面双读为 evidence_utf8/v1。不得用 local_canonical/task 等 ASCII 合同。"
+    },
     "expires_at": { "type": ["string", "null"], "format": "date-time", "description": "证据新鲜度或例外失效时间" }
   }
 }

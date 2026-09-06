@@ -16,7 +16,53 @@ def _production_env(monkeypatch) -> None:
     monkeypatch.setenv("SIQ_AS_DEV", "0")
     monkeypatch.setenv("SIQ_AS_DATABASE_URL", "postgresql+psycopg://localhost/siq")
     monkeypatch.setenv("SIQ_AS_OIDC_JWKS_URL", "https://iam.invalid/.well-known/jwks.json")
+    monkeypatch.setenv("SIQ_AS_OIDC_ISSUER", "https://iam.invalid/")
+    monkeypatch.setenv("SIQ_AS_JWT_AUDIENCE", "siq-agent-security")
     monkeypatch.delenv("SIQ_AS_TASK_SIGNING_KEY_SEED", raising=False)
+
+
+def test_production_requires_oidc_issuer(monkeypatch):
+    _production_env(monkeypatch)
+    monkeypatch.setenv("SIQ_AS_TASK_SIGNING_KEY_SEED", base64.b64encode(bytes(range(32))).decode())
+    monkeypatch.delenv("SIQ_AS_OIDC_ISSUER", raising=False)
+    with pytest.raises(RuntimeError, match="OIDC_ISSUER"):
+        load_settings()
+
+
+def test_production_requires_jwt_audience(monkeypatch):
+    """DEV08-C：生产必须显式 SIQ_AS_JWT_AUDIENCE。"""
+    _production_env(monkeypatch)
+    monkeypatch.setenv("SIQ_AS_TASK_SIGNING_KEY_SEED", base64.b64encode(bytes(range(32))).decode())
+    monkeypatch.delenv("SIQ_AS_JWT_AUDIENCE", raising=False)
+    with pytest.raises(RuntimeError, match="JWT_AUDIENCE"):
+        load_settings()
+    monkeypatch.setenv("SIQ_AS_JWT_AUDIENCE", "   ")
+    with pytest.raises(RuntimeError, match="JWT_AUDIENCE"):
+        load_settings()
+    monkeypatch.setenv("SIQ_AS_JWT_AUDIENCE", "siq-control-api")
+    assert load_settings().jwt_audience == "siq-control-api"
+
+
+def test_enrollment_ttl_out_of_bounds_rejected(monkeypatch):
+    """DEV11-C：坏 TTL 拒绝启动配置。"""
+    monkeypatch.setenv("SIQ_AS_DEV", "1")
+    monkeypatch.setenv("SIQ_AS_ALLOW_SQLITE", "1")
+    monkeypatch.setenv("SIQ_AS_DATABASE_URL", "sqlite:///./dev.db")
+    monkeypatch.setenv("SIQ_AS_ENROLLMENT_TTL_SECONDS", "0")
+    with pytest.raises(RuntimeError, match="ENROLLMENT_TTL"):
+        load_settings()
+    monkeypatch.setenv("SIQ_AS_ENROLLMENT_TTL_SECONDS", str(8 * 24 * 3600))
+    with pytest.raises(RuntimeError, match="ENROLLMENT_TTL"):
+        load_settings()
+
+
+def test_enrollment_ttl_non_default_accepted(monkeypatch):
+    monkeypatch.setenv("SIQ_AS_DEV", "1")
+    monkeypatch.setenv("SIQ_AS_ALLOW_SQLITE", "1")
+    monkeypatch.setenv("SIQ_AS_DATABASE_URL", "sqlite:///./dev.db")
+    monkeypatch.setenv("SIQ_AS_ENROLLMENT_TTL_SECONDS", "120")
+    settings = load_settings()
+    assert settings.enrollment_ttl_seconds == 120
 
 
 def test_production_requires_secret_managed_task_signing_key(monkeypatch):

@@ -60,9 +60,10 @@ type declaredCapability struct {
 // credential read is a capability declaration.
 func classifyRuleHit(ruleID, filePath, excerpt, lineText string, fileHasEgress bool) (string, string, *declaredCapability) {
 	cat, disp, capab := classifyCore(ruleID, filePath, excerpt, lineText, fileHasEgress)
-	if zoneOf(filePath) == zoneDocs {
-		// documentation zones only inform: they are neither executed nor
-		// loaded as instructions, so they yield no quarantine and no declaration
+	// Documentation *prose* zones only inform. Executable / structured code
+	// under docs|references|evals|assets (H5b) keeps the core disposition —
+	// directory name alone must not demote download-exec or credential sinks.
+	if zoneOf(filePath) == zoneDocs && !isCodeFile(filePath) {
 		return cat, dispInfo, nil
 	}
 	return cat, disp, capab
@@ -139,17 +140,30 @@ func persistTarget(ruleID string) string {
 	return ruleID
 }
 
-// isExampleLine treats quoted text, blockquotes and inline code as examples
-// the skill is warning about rather than instructions it issues (the main
-// false-positive source on NVIDIA's official skill catalogue). Fenced code
-// blocks are handled by the caller via fence tracking.
+// isExampleLine treats blockquotes and explicit "this is an example /
+// do-not-follow" prose as examples the skill is warning about (main FP source
+// on NVIDIA catalogues). Quote characters alone — including a wholly quoted
+// line — are NOT enough (H5c): an attacker must not quarantine-bypass by
+// wrapping a real instruction in quotes. Fenced blocks are handled by the
+// caller via fence tracking.
 func isExampleLine(line string) bool {
 	t := strings.TrimSpace(line)
+	if t == "" {
+		return false
+	}
 	if strings.HasPrefix(t, ">") {
 		return true
 	}
-	if strings.Count(line, "\"") >= 2 || strings.Count(line, "“")+strings.Count(line, "”") >= 2 || strings.Count(line, "`") >= 2 {
-		return true
+	lower := strings.ToLower(t)
+	for _, marker := range []string{
+		"example of", "for example", "e.g.", "eg.",
+		"should not follow", "do not follow", "don't follow",
+		"red flag", "must not follow", "never follow",
+		"you should not", "never tell the user",
+	} {
+		if strings.Contains(lower, marker) {
+			return true
+		}
 	}
 	return false
 }

@@ -37,8 +37,9 @@ const SeedEnv = product.EnvReleaseSeed
 // DefaultVersion is the Skill and binary version for this snapshot.
 const DefaultVersion = "0.2.0"
 
-// DefaultURLBase is the intended GitHub Release prefix. The objects are not
-// published until a tag is cut; bootstrap never downloads, it only pins hashes.
+// DefaultURLBase is the intended GitHub Release prefix. Download is opt-in
+// (SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1) after signed-manifest verify; hashes
+// always pin the object (DEV04-E).
 const DefaultURLBase = "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.2.0"
 
 // SkillDescription is copied from SKILL.md frontmatter (≤60 chars, period).
@@ -191,19 +192,34 @@ func Sign(m *Manifest, key *signing.Key) error {
 	return nil
 }
 
-// Verify checks the signature against signed_by (or ReleasePublicKeyB64 if
-// signed_by is empty). Fail closed.
+// Verify verifies a release against the built-in trusted issuer, never a key
+// supplied by the untrusted manifest itself.
 func Verify(m *Manifest) error {
+	pub, err := ParsePublicKey(ReleasePublicKeyB64)
+	if err != nil {
+		return err
+	}
+	return VerifyWithPublicKey(m, pub)
+}
+
+// VerifyWithPublicKey verifies against a caller-established trust anchor. It is
+// used for explicit development signing self-checks; callers must not derive
+// trusted from the document being verified.
+func VerifyWithPublicKey(m *Manifest, trusted ed25519.PublicKey) error {
 	if m == nil {
 		return fmt.Errorf("skillmanifest: nil manifest")
 	}
-	pubB64 := m.SignedBy
-	if pubB64 == "" {
-		pubB64 = ReleasePublicKeyB64
+	if len(trusted) != ed25519.PublicKeySize {
+		return fmt.Errorf("skillmanifest: invalid trusted public key")
 	}
-	pub, err := ParsePublicKey(pubB64)
-	if err != nil {
-		return err
+	if m.SignedBy != "" {
+		declared, err := ParsePublicKey(m.SignedBy)
+		if err != nil {
+			return err
+		}
+		if !trusted.Equal(declared) {
+			return fmt.Errorf("skillmanifest: untrusted signing identity")
+		}
 	}
 	if m.Signature == "" {
 		return fmt.Errorf("skillmanifest: missing signature")
@@ -212,7 +228,7 @@ func Verify(m *Manifest) error {
 	if err != nil {
 		return err
 	}
-	if !signing.VerifyCanonical(pub, doc, m.Signature) {
+	if !signing.VerifyCanonical(trusted, doc, m.Signature) {
 		return fmt.Errorf("skillmanifest: signature mismatch")
 	}
 	return nil

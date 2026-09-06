@@ -511,6 +511,10 @@ export interface ChangeRequestRow {
   approver_user_id: string | null;
   approval_policy: string;
   status: string;
+  approved_at?: string | null;
+  review_status?: string | null;
+  review_due_at?: string | null;
+  reviewed_by?: string | null;
   idempotency_key: string;
   created_at: string;
 }

@@ -15,7 +15,8 @@
     "status",
     "overlap_conflicts",
     "created_at",
-    "signature"
+    "signature",
+    "signing_schema"
   ],
   "additionalProperties": false,
   "properties": {
@@ -152,6 +153,11 @@
     },
     "created_at": { "type": "string", "format": "date-time" },
     "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "signing_schema": {
+      "type": "string",
+      "const": "local_canonical/v1",
+      "description": "正文内嵌签名合同 id（DEV09-G）；参与签名字节"
+    },
     "signature": { "type": "string", "pattern": "^[0-9a-f]{128}$" }
   },
   "allOf": [

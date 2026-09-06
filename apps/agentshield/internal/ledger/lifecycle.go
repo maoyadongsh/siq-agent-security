@@ -2,6 +2,7 @@ package ledger
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 	"time"
 
@@ -70,28 +71,36 @@ func signRecord(key *signing.Key, v any) string {
 	return sig
 }
 
-func loadAssetRecords(st *state.Store) []AssetRecord {
-	raws, _ := st.LatestVersioned("assets")
+func loadAssetRecords(st *state.Store) ([]AssetRecord, error) {
+	raws, err := st.LatestVersioned("assets")
+	if err != nil {
+		return nil, err
+	}
 	var out []AssetRecord
 	for _, raw := range raws {
 		var rec AssetRecord
-		if json.Unmarshal(raw, &rec) == nil && rec.CandidateID != "" {
-			out = append(out, rec)
+		if json.Unmarshal(raw, &rec) != nil || rec.CandidateID == "" {
+			return nil, errors.New("ledger: malformed asset record")
 		}
+		out = append(out, rec)
 	}
-	return out
+	return out, nil
 }
 
-func loadFindingRecords(st *state.Store) []FindingRecord {
-	raws, _ := st.LatestVersioned("findings")
+func loadFindingRecords(st *state.Store) ([]FindingRecord, error) {
+	raws, err := st.LatestVersioned("findings")
+	if err != nil {
+		return nil, err
+	}
 	var out []FindingRecord
 	for _, raw := range raws {
 		var rec FindingRecord
-		if json.Unmarshal(raw, &rec) == nil && rec.FindingID != "" {
-			out = append(out, rec)
+		if json.Unmarshal(raw, &rec) != nil || rec.FindingID == "" {
+			return nil, errors.New("ledger: malformed finding record")
 		}
+		out = append(out, rec)
 	}
-	return out
+	return out, nil
 }
 
 func putAsset(st *state.Store, key *signing.Key, rec AssetRecord) error {
@@ -142,9 +151,9 @@ func parseUntil(s string) (time.Time, bool) {
 	return t, true
 }
 
-func revokeLinked(st *state.Store, key *signing.Key, grants []grant.Grant, admissionID, grantID, now, actor string) []grant.Grant {
+func revokeLinked(st *state.Store, key *signing.Key, grants []grant.Grant, admissionID, grantID, now, actor string) ([]grant.Grant, error) {
 	if admissionID == "" && grantID == "" {
-		return grants
+		return grants, nil
 	}
 	out := make([]grant.Grant, 0, len(grants))
 	for _, g := range grants {
@@ -155,14 +164,17 @@ func revokeLinked(st *state.Store, key *signing.Key, grants []grant.Grant, admis
 		}
 		ng, err := grant.Revoke(g, key)
 		if err != nil {
-			out = append(out, g)
-			continue
+			return nil, err
 		}
-		_ = st.PutGrant(ng)
-		_ = st.AppendAudit(state.AuditEvent{At: now, Event: "grant_revoke", ActorID: actor, Target: ng.GrantID, Note: "lifecycle"})
+		if err := st.PutGrant(ng); err != nil {
+			return nil, err
+		}
+		if err := st.AppendAudit(state.AuditEvent{At: now, Event: "grant_revoke", ActorID: actor, Target: ng.GrantID, Note: "lifecycle"}); err != nil {
+			return nil, err
+		}
 		out = append(out, ng)
 	}
-	return out
+	return out, nil
 }
 
 func attr(c inventory.Candidate, k string) string {
@@ -222,7 +234,14 @@ func Refresh(st *state.Store, key *signing.Key, snap *Snapshot, now time.Time) e
 		now = time.Now().UTC()
 	}
 	nowS := now.Format(time.RFC3339)
-	prev := loadAssetRecords(st)
+	prev, err := loadAssetRecords(st)
+	if err != nil {
+		return err
+	}
+	findings, err := loadFindingRecords(st)
+	if err != nil {
+		return err
+	}
 	byID := map[string]AssetRecord{}
 	byStable := map[string]AssetRecord{}
 	for _, rec := range prev {
@@ -257,7 +276,10 @@ func Refresh(st *state.Store, key *signing.Key, snap *Snapshot, now time.Time) e
 			}
 			rec, revoke := overlayLive(row, stored, ok, c, now)
 			if revoke {
-				grants = revokeLinked(st, key, grants, stored.AdmissionID, stored.GrantID, nowS, "lifecycle")
+				grants, err = revokeLinked(st, key, grants, stored.AdmissionID, stored.GrantID, nowS, "lifecycle")
+				if err != nil {
+					return err
+				}
 			}
 			if needsPersist(rec) {
 				var prevPtr *AssetRecord
@@ -267,7 +289,9 @@ func Refresh(st *state.Store, key *signing.Key, snap *Snapshot, now time.Time) e
 				}
 				if prevPtr == nil || !recordsEqual(*prevPtr, rec) {
 					rec.UpdatedAt = nowS
-					_ = putAsset(st, key, rec)
+					if err := putAsset(st, key, rec); err != nil {
+						return err
+					}
 				}
 			}
 			next = append(next, rec)
@@ -282,15 +306,22 @@ func Refresh(st *state.Store, key *signing.Key, snap *Snapshot, now time.Time) e
 		if rec.Status != "stale" {
 			rec.Status = "stale"
 			rec.UpdatedAt = nowS
-			_ = putAsset(st, key, rec)
-			_ = st.AppendAudit(state.AuditEvent{At: nowS, Event: "asset_stale", Target: rec.CandidateID, Note: "source gone"})
-			grants = revokeLinked(st, key, grants, rec.AdmissionID, rec.GrantID, nowS, "lifecycle")
+			if err := putAsset(st, key, rec); err != nil {
+				return err
+			}
+			if err := st.AppendAudit(state.AuditEvent{At: nowS, Event: "asset_stale", Target: rec.CandidateID, Note: "source gone"}); err != nil {
+				return err
+			}
+			grants, err = revokeLinked(st, key, grants, rec.AdmissionID, rec.GrantID, nowS, "lifecycle")
+			if err != nil {
+				return err
+			}
 		}
 		next = append(next, rec)
 	}
 
 	snap.Records = next
-	snap.FindingRecords = loadFindingRecords(st)
+	snap.FindingRecords = findings
 	snap.Grants = grants
 	return nil
 }

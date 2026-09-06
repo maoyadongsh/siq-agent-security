@@ -1,0 +1,87 @@
+{
+  "schema": "task_signature_vectors/v1",
+  "producer": "CPython json.dumps(sort_keys=True, separators=(',',':')) + Ed25519 seed=bytes(range(32))",
+  "contract": "apps/control-api/app/signing.py _canonical_bytes (ensure_ascii=True default); NOT evidence_signing.canonical_json",
+  "vectors": [
+    {
+      "name": "baseline_ascii",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=",
+      "envelope": {
+        "task_id": "tsk_fixture",
+        "task_type": "scan",
+        "environment_id": "env_fixture",
+        "payload": {
+          "scope": {
+            "connector": "hermes"
+          }
+        },
+        "expires_at": "2026-08-13T12:00:00.123456"
+      },
+      "payload_json": "{\"scope\":{\"connector\":\"hermes\"}}",
+      "canonical_utf8": "{\"environment_id\":\"env_fixture\",\"expires_at\":\"2026-08-13T12:00:00.123456\",\"payload\":{\"scope\":{\"connector\":\"hermes\"}},\"task_id\":\"tsk_fixture\",\"task_type\":\"scan\"}",
+      "signature_b64": "SzOyUikO4TPYEmTPgSgxfKydYcqgNiMNPdTbY9391hjRIlJ8Qhq8KvFAJYrz3FE62Qtcwr80V755QenL4nRiDg=="
+    },
+    {
+      "name": "chinese_html_float",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=",
+      "envelope": {
+        "task_id": "tsk_fixture",
+        "task_type": "scan",
+        "environment_id": "env_fixture",
+        "payload": {
+          "n": 100.0,
+          "note": "<安全>",
+          "scope": {
+            "connector": "hermes"
+          }
+        },
+        "expires_at": "2026-08-13T12:00:00.123456"
+      },
+      "payload_json": "{\"n\":100.0,\"note\":\"<\\u5b89\\u5168>\",\"scope\":{\"connector\":\"hermes\"}}",
+      "canonical_utf8": "{\"environment_id\":\"env_fixture\",\"expires_at\":\"2026-08-13T12:00:00.123456\",\"payload\":{\"n\":100.0,\"note\":\"<\\u5b89\\u5168>\",\"scope\":{\"connector\":\"hermes\"}},\"task_id\":\"tsk_fixture\",\"task_type\":\"scan\"}",
+      "signature_b64": "Ox6BEhyWEhCCkVea/eAr+bJVBhejU4VukryBwSauOSijP5G4r2sSl4E29+Aa+ZQzuct1JNKZsYRrVx05BPKIDw=="
+    },
+    {
+      "name": "nested_unicode_html",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=",
+      "envelope": {
+        "task_id": "tsk_fixture",
+        "task_type": "scan",
+        "environment_id": "env_fixture",
+        "payload": {
+          "counts": [
+            1,
+            2
+          ],
+          "nested": {
+            "z": false,
+            "a": "值"
+          },
+          "note": "<安全>"
+        },
+        "expires_at": "2026-08-13T12:00:00.123456"
+      },
+      "payload_json": "{\"counts\":[1,2],\"nested\":{\"a\":\"\\u503c\",\"z\":false},\"note\":\"<\\u5b89\\u5168>\"}",
+      "canonical_utf8": "{\"environment_id\":\"env_fixture\",\"expires_at\":\"2026-08-13T12:00:00.123456\",\"payload\":{\"counts\":[1,2],\"nested\":{\"a\":\"\\u503c\",\"z\":false},\"note\":\"<\\u5b89\\u5168>\"},\"task_id\":\"tsk_fixture\",\"task_type\":\"scan\"}",
+      "signature_b64": "tKBZykdEuGtHzOw0+rHVzkSJTunBFg/7eYiJrxHs5Qb++aAPOQWwPNH8iyocbxeFyqHI2ahbDGflPv9OBNbkAQ=="
+    },
+    {
+      "name": "int_vs_float_100",
+      "public_key_b64": "A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=",
+      "envelope": {
+        "task_id": "tsk_fixture",
+        "task_type": "scan",
+        "environment_id": "env_fixture",
+        "payload": {
+          "a": 100,
+          "b": 100.0,
+          "c": 100.0
+        },
+        "expires_at": "2026-08-13T12:00:00.123456"
+      },
+      "payload_json": "{\"a\":100,\"b\":100.0,\"c\":100.0}",
+      "canonical_utf8": "{\"environment_id\":\"env_fixture\",\"expires_at\":\"2026-08-13T12:00:00.123456\",\"payload\":{\"a\":100,\"b\":100.0,\"c\":100.0},\"task_id\":\"tsk_fixture\",\"task_type\":\"scan\"}",
+      "signature_b64": "jHmuuA0oyG8V46odD11ewx1yZuUKhg9gFras/Tw+RK42nXNo0G8eQwgbN9mOkyzvHIhaA3NX5q9hNnCG4cjfDw=="
+    }
+  ]
+}

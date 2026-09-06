@@ -272,6 +272,19 @@ func TestCollectSkipsSymlinkEscape(t *testing.T) {
 	}
 }
 
+func TestReadFileLimitedRefusesSymlink(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "real.md")
+	link := filepath.Join(dir, "SOUL.md")
+	writeFile(t, target, "soul")
+	if err := os.Symlink(target, link); err != nil {
+		t.Skip("symlink not supported")
+	}
+	if _, err := readFileLimited(link, 1<<20); err == nil {
+		t.Fatal("DEV10-I: symlink path must not be read via openRegular")
+	}
+}
+
 func TestCollectByteBudgetTruncates(t *testing.T) {
 	// 预算只够 agents.json 的一部分：显式 truncated，不误报畸形、不回退默认大小
 	root := t.TempDir()

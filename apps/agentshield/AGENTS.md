@@ -18,7 +18,7 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 | `internal/receipt` | 决策引擎、污点/trifecta、哈希链、Verify；block 下无 host 的出网 exec deny | 完成 |
 | `internal/state` | 状态目录、token、admission/grant/policy/assets/findings/audit 文件态存储 | 完成 |
 | `internal/ledger` | 台账投影 + 资产生命周期 refresh（G7）；confirm/dismiss/drift/accept | 完成 |
-| `internal/server` | `/v1/*` HTTP（loopback + bearer）+ `/ui-config.json` + embed UI | 完成 |
+| `internal/server` | `/v1/*` HTTP（loopback + Host 允许列表 + 决策/管理分权 + 配对）+ 无 secret 的 `/ui-config.json` + embed UI | DEV02-A |
 | `internal/adapterinstall` | `adapter install/uninstall/status`：写主机钩子，先备份可还原 | 完成 |
 | `internal/openshell` | probe / 网络 `policy set` / 读回；不调 `create_generation` | 完成 |
 | `internal/ui` | embed `apps/web` 本地模式构建产物（`npm run build:local`） | 完成 |
@@ -27,7 +27,7 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 
 ## 硬性规则
 
-1. **仅标准库。** 需要第三方依赖（如 tree-sitter）先立 ADR。交叉编译 `linux/{amd64,arm64}`、`darwin/arm64`、`windows/amd64` 必须始终通过；不得引入 `fcntl`/`syscall` 平台专属调用，文件独占用 `O_EXCL`。
+1. **仅标准库。** 需要第三方依赖（如 tree-sitter）先立 ADR。交叉编译 `linux/{amd64,arm64}`、`darwin/arm64`、`windows/amd64` 必须始终通过；不得引入 `fcntl`/`syscall` 平台专属调用，文件/锁独占用 `O_EXCL`。不可变版本允许按 ADR-012 用标准库 `os.Link` 将已写完的同目录暂存文件排他发布；文件系统不支持时显式失败，不回退覆盖或暴露半写文件。
 2. **规则包是共享文件。** `internal/rulepack/data/threat_rules.v1.json` 必须与 `apps/control-api/app/data/threat_rules.v1.json` 逐字节一致（`TestEmbeddedPackMatchesControlPlaneCopy` 锁定）。改模式：RE2 可编译、CPython 语义等价、附边界用例、两侧测试都跑。
 3. **对等优先于"更好"。** `threat` 的输出（sha256 / rule_id / line / excerpt_sha256 / excerpt）必须与 Python 相同；想改行为先在 Python 侧改并同步语料，再移植。
 4. **签名只签规范化字节。** 所有文档签名 = `Ed25519(canon.Marshal(doc 去掉 signature))`，十六进制 128 位；回执链签 `hash` 字符串字节。任何新文档类型都走 `signing`，不得自建序列化。

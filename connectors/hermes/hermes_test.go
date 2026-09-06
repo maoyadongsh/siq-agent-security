@@ -204,6 +204,49 @@ func TestCollectSymlinkEscape(t *testing.T) {
 	}
 }
 
+func TestReadFileLimitedRefusesSymlink(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "real.yaml")
+	link := filepath.Join(dir, "config.yaml")
+	if err := os.WriteFile(target, []byte("model:\n  default: x\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("symlink: %v", err)
+	}
+	if _, err := readFileLimited(link, 1<<20); err == nil {
+		t.Fatal("symlink path must not be read via openRegular")
+	}
+}
+
+func TestCollectRefusesSymlinkedConfigYAML(t *testing.T) {
+	// DEV10-H: final-path symlink for config.yaml must not yield a candidate.
+	root := t.TempDir()
+	outside := t.TempDir()
+	outsideCfg := filepath.Join(outside, "config.yaml")
+	if err := os.WriteFile(outsideCfg, []byte("model:\n  default: escaped\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	prof := filepath.Join(root, "profiles", "p1")
+	if err := os.MkdirAll(prof, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outsideCfg, filepath.Join(prof, "config.yaml")); err != nil {
+		t.Skipf("symlink: %v", err)
+	}
+	plan := protocol.ScanPlan{
+		Scope:  &protocol.Scope{Roots: []string{filepath.Join(root, "profiles") + "/*"}, Include: []string{"config.yaml"}},
+		Limits: protocol.CollectLimits{MaxFiles: 200, MaxBytes: 1 << 20},
+	}
+	batch, err := collectOp(plan)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(batch.Candidates) != 0 {
+		t.Fatalf("symlinked config.yaml must not produce candidates, got %d", len(batch.Candidates))
+	}
+}
+
 func TestCollectTruncation(t *testing.T) {
 	root := t.TempDir()
 	for i := 0; i < 3; i++ {

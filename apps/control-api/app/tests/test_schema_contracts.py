@@ -158,6 +158,7 @@ VALID_EXAMPLES = {
         "findings": [_DECLARE_FINDING],
         "integrity": _INTEGRITY_OK,
         "evidence_ids": ["ev-1"],
+        "signing_schema": "local_canonical/v1",
         "signature": _SIG,
     },
     "grant": {
@@ -172,6 +173,7 @@ VALID_EXAMPLES = {
         "status": "pending_approval",
         "overlap_conflicts": [],
         "created_at": "2026-09-04T03:00:00Z",
+        "signing_schema": "local_canonical/v1",
         "signature": _SIG,
     },
     "receipt": {

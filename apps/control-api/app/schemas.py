@@ -298,6 +298,7 @@ class EdgeEvidenceIn(BaseModel):
     classification: Literal["public", "internal", "confidential", "secret_ref"]
     payload_ref: str | None = Field(default=None, max_length=256)
     signature: str = Field(pattern=r"^[0-9a-f]{128}$")
+    signing_schema: Literal["evidence_utf8/v1"] | None = None
     expires_at: datetime | None = None
 
 
@@ -507,6 +508,10 @@ class ChangeRequestOut(BaseModel):
     approver_user_id: str | None
     approval_policy: str
     status: str
+    approved_at: datetime | None = None
+    review_status: str | None = None
+    review_due_at: datetime | None = None
+    reviewed_by: str | None = None
     idempotency_key: str
     created_at: datetime
 

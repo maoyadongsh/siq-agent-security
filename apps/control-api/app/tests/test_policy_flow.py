@@ -616,9 +616,13 @@ def test_break_glass_cross_person_emergency_approval(client, tenant_a, env_a):
     assert dep.status_code == 201
 
 
-def test_break_glass_review_due_after_deployment_status_change(client, tenant_a, env_a):
-    """worker：紧急变更部署后状态已改变，到期仍必须转事后复核。"""
+def test_break_glass_review_due_preserves_business_status(client, tenant_a, env_a):
+    """DEV12-A / M-P4：到期只推进 review_status=due，不改写 effective/deploying 等业务终态。"""
     from datetime import timedelta
+
+    from app.db import session_scope
+    from app.models import ChangeRequest, OutboxEvent
+    from app.worker import once, reap_break_glass_reviews
 
     binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"])
     policy = _create_policy(client, tenant_a, agent_ids=[asset_id])
@@ -631,26 +635,63 @@ def test_break_glass_review_due_after_deployment_status_change(client, tenant_a,
         },
         headers=tenant_a,
     ).json()
-    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-bg-approver", "X-Dev-Roles": "security_admin"}
-    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+    approver = {
+        "X-Dev-Tenant-Id": "tnt-A",
+        "X-Dev-User-Id": "user-bg-approver",
+        "X-Dev-Roles": "security_admin",
+    }
+    approved = client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+    assert approved.status_code == 200
+    assert approved.json()["status"] == "emergency_applied"
+    assert approved.json()["review_status"] == "pending"
+    assert approved.json()["review_due_at"] is not None
+
     deployed = client.post(
         "/api/v1/deployments",
         json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     )
     assert deployed.status_code == 201
-    with session_scope() as session:
-        from app.models import ChangeRequest
 
+    with session_scope() as session:
         row = session.query(ChangeRequest).filter(ChangeRequest.id == cr["id"]).one()
-        assert row.status != "emergency_applied"
-        row.created_at = row.created_at - timedelta(hours=25)  # 超过默认 24h TTL
+        business_before = row.status
+        assert business_before != "post_review_due"
+        assert row.review_status == "pending"
+        assert row.review_due_at is not None
+        # 模拟复核到期（基于批准时写入的 due，而非 created_at）
+        row.review_due_at = row.review_due_at - timedelta(hours=25)
         session.commit()
-    from app.worker import once
 
     once()
     with session_scope() as session:
-        from app.models import ChangeRequest
-
         row = session.query(ChangeRequest).filter(ChangeRequest.id == cr["id"]).one()
-        assert row.status == "post_review_due"
+        assert row.review_status == "due"
+        assert row.status == business_before  # 业务终态保持
+        events = (
+            session.query(OutboxEvent)
+            .filter(OutboxEvent.event_type == "policy.change.review_due.v1")
+            .all()
+        )
+        matching = [
+            e
+            for e in events
+            if (e.payload.get("payload") or {}).get("change_request_id") == cr["id"]
+        ]
+        assert len(matching) == 1
+        assert matching[0].payload["payload"]["business_status"] == business_before
+
+    # 重复 reaper 不得再发提醒 / 不得改业务态
+    with session_scope() as session:
+        assert reap_break_glass_reviews(session) == 0
+        row = session.query(ChangeRequest).filter(ChangeRequest.id == cr["id"]).one()
+        assert row.status == business_before
+        assert row.review_status == "due"
+        matching = [
+            e
+            for e in session.query(OutboxEvent)
+            .filter(OutboxEvent.event_type == "policy.change.review_due.v1")
+            .all()
+            if (e.payload.get("payload") or {}).get("change_request_id") == cr["id"]
+        ]
+        assert len(matching) == 1

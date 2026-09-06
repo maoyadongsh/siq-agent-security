@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
+	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
@@ -146,12 +147,13 @@ type Decider interface {
 }
 
 // CodeBuddyHook maps one hook event. mode is the enforcement mode used for the
-// fail-closed table when the decider errors.
-func CodeBuddyHook(in io.Reader, d Decider, agentID, mode string) (CodeBuddyOutput, error) {
+// fail-closed table when the decider errors. stateDir receives unsigned pending
+// records on fail-closed (dev-spec §3.8.4); empty skips the log.
+func CodeBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (CodeBuddyOutput, error) {
 	var out CodeBuddyOutput
 	var ev CodeBuddyInput
 	if err := json.NewDecoder(in).Decode(&ev); err != nil {
-		return failClosed(out, "PreToolUse", mode, "malformed hook input")
+		return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", "", "", "malformed hook input")
 	}
 	out.HookSpecificOutput.HookEventName = ev.HookEventName
 	req := receipt.Request{Platform: "codebuddy", SessionID: firstNonEmpty(ev.SessionID, "codebuddy-default"), AgentID: agentID,
@@ -176,7 +178,7 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode string) (CodeBuddyOutp
 		out.HookSpecificOutput.HookEventName = "PreToolUse"
 		dec, err := d.Decide(req)
 		if err != nil || dec == nil {
-			return failClosed(out, "PreToolUse", mode, "decision service unavailable")
+			return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", ev.ToolName, req.SessionID, "decision service unavailable")
 		}
 		switch dec.Action {
 		case receipt.ActionAllow:
@@ -186,7 +188,7 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode string) (CodeBuddyOutp
 		case receipt.ActionHold, receipt.ActionRedact: // CodeBuddy cannot rewrite params → ask
 			out.HookSpecificOutput.PermissionDecision = "ask"
 		default:
-			return failClosed(out, "PreToolUse", mode, "malformed decision")
+			return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", ev.ToolName, req.SessionID, "malformed decision")
 		}
 		out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": " + dec.Reason + " (receipt " + dec.Receipt.ReceiptID + ")"
 		return out, nil
@@ -194,8 +196,9 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode string) (CodeBuddyOutp
 	return out, errors.New("unsupported hook event " + ev.HookEventName)
 }
 
-func failClosed(out CodeBuddyOutput, event, mode, reason string) (CodeBuddyOutput, error) {
+func failClosed(out CodeBuddyOutput, event, mode, stateDir, platform, tool, session, reason string) (CodeBuddyOutput, error) {
 	out.HookSpecificOutput.HookEventName = event
+	outcome := pending.OutcomeForMode(mode)
 	if mode == "block" {
 		out.HookSpecificOutput.PermissionDecision = "deny"
 		out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": " + reason + "; blocked (fail-closed)"
@@ -203,6 +206,10 @@ func failClosed(out CodeBuddyOutput, event, mode, reason string) (CodeBuddyOutpu
 		out.HookSpecificOutput.PermissionDecision = "allow"
 		out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": " + reason + "; allowed in " + mode + " mode"
 	}
+	_ = pending.Append(stateDir, pending.Record{
+		Platform: platform, Tool: tool, SessionID: session,
+		EnforcementMode: mode, Outcome: outcome, Reason: reason,
+	})
 	return out, nil
 }
 

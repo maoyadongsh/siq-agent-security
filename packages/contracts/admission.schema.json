@@ -17,6 +17,7 @@
     "findings",
     "integrity",
     "evidence_ids",
+    "signing_schema",
     "signature"
   ],
   "additionalProperties": false,
@@ -162,6 +163,11 @@
     },
     "skill_card_ref": { "type": ["string", "null"], "description": "生成的 skill-card.md 路径；生成卡 ≠ 签名 ≠ 批准" },
     "evidence_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "signing_schema": {
+      "type": "string",
+      "const": "local_canonical/v1",
+      "description": "正文内嵌签名合同 id（DEV09-G）；参与签名字节；缺字段的遗留体由验签双读默认为 local_canonical/v1"
+    },
     "signature": { "type": "string", "pattern": "^[0-9a-f]{128}$", "description": "agentshield 对本结论规范化 JSON 的 Ed25519 签名（hex）" }
   },
   "allOf": [

@@ -92,6 +92,10 @@ def test_fail_closed_when_service_down_in_block_mode(tmp_path):
     mod = load("block", "http://127.0.0.1:9", token)  # nothing listens
     out = mod._pre_tool_call("exec", {"command": "ls"})
     assert out["action"] == "block" and "fail-closed" in out["message"]
+    pending = (tmp_path / "pending" / "decisions.jsonl").read_text(encoding="utf-8")
+    assert '"schema":"pending_decision/v1"' in pending or '"schema": "pending_decision/v1"' in pending
+    assert '"signed":false' in pending or '"signed": false' in pending
+    assert "decision service unavailable" in pending
 
 
 def test_fail_open_when_service_down_in_audit_mode(tmp_path, capsys):
@@ -100,6 +104,16 @@ def test_fail_open_when_service_down_in_audit_mode(tmp_path, capsys):
     mod = load("audit_only", "http://127.0.0.1:9", token)
     assert mod._pre_tool_call("exec", {"command": "ls"}) is None
     assert "unavailable" in capsys.readouterr().err
+    pending = (tmp_path / "pending" / "decisions.jsonl").read_text(encoding="utf-8")
+    assert '"outcome":"allow"' in pending or '"outcome": "allow"' in pending
+
+
+def test_warn_mode_allows_when_service_down(tmp_path, capsys):
+    token = tmp_path / "token"
+    token.write_text("t" * 64)
+    mod = load("warn", "http://127.0.0.1:9", token)
+    assert mod._pre_tool_call("exec", {"command": "ls"}) is None
+    assert "warn" in capsys.readouterr().err
 
 
 def test_401_and_malformed_are_fail_closed(server):
