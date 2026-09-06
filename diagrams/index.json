@@ -1,0 +1,535 @@
+{
+  "generated_from": "site/diagrams/from_code.py",
+  "note": "Nodes and edges are parsed from the current checkout, not drawn by hand.",
+  "cli": [
+    "version",
+    "rulepack",
+    "scan",
+    "admit",
+    "pubkey",
+    "verify",
+    "serve",
+    "inventory",
+    "export",
+    "sync",
+    "policy-exec",
+    "hook",
+    "adapter",
+    "grant",
+    "openshell",
+    "release-manifest",
+    "manifest-verify",
+    "incomplete"
+  ],
+  "http_routes": [
+    "/v1/status",
+    "/v1/decide",
+    "/v1/observe",
+    "/v1/hold/",
+    "/v1/receipts",
+    "/v1/admit",
+    "/v1/admissions",
+    "/v1/admissions/",
+    "/v1/inventory",
+    "/v1/grants",
+    "/v1/grants/",
+    "/v1/config",
+    "/v1/adapter/status",
+    "/v1/adapter/install",
+    "/v1/adapter/uninstall",
+    "/v1/openshell/probe",
+    "/v1/openshell/doctor",
+    "/v1/openshell/apply",
+    "/v1/openshell/drift-check",
+    "/v1/assets",
+    "/v1/assets/",
+    "/v1/permissions",
+    "/v1/findings",
+    "/v1/findings/",
+    "/v1/audit",
+    "/v1/export",
+    "/v1/pair",
+    "/ui-config.json",
+    "/",
+    "/"
+  ],
+  "packages": [
+    "adapterinstall",
+    "adapters",
+    "admission",
+    "canon",
+    "controlsync",
+    "display",
+    "export",
+    "grant",
+    "inventory",
+    "ledger",
+    "openshell",
+    "pending",
+    "perfbaseline",
+    "product",
+    "receipt",
+    "rulepack",
+    "server",
+    "signing",
+    "skillmanifest",
+    "state",
+    "threat",
+    "ui"
+  ],
+  "package_imports": [
+    {
+      "from": "adapterinstall",
+      "to": "product"
+    },
+    {
+      "from": "adapterinstall",
+      "to": "state"
+    },
+    {
+      "from": "adapters",
+      "to": "admission"
+    },
+    {
+      "from": "adapters",
+      "to": "pending"
+    },
+    {
+      "from": "adapters",
+      "to": "product"
+    },
+    {
+      "from": "adapters",
+      "to": "receipt"
+    },
+    {
+      "from": "adapters",
+      "to": "rulepack"
+    },
+    {
+      "from": "adapters",
+      "to": "signing"
+    },
+    {
+      "from": "admission",
+      "to": "canon"
+    },
+    {
+      "from": "admission",
+      "to": "display"
+    },
+    {
+      "from": "admission",
+      "to": "rulepack"
+    },
+    {
+      "from": "admission",
+      "to": "signing"
+    },
+    {
+      "from": "admission",
+      "to": "threat"
+    },
+    {
+      "from": "controlsync",
+      "to": "admission"
+    },
+    {
+      "from": "controlsync",
+      "to": "canon"
+    },
+    {
+      "from": "controlsync",
+      "to": "inventory"
+    },
+    {
+      "from": "controlsync",
+      "to": "signing"
+    },
+    {
+      "from": "export",
+      "to": "canon"
+    },
+    {
+      "from": "export",
+      "to": "display"
+    },
+    {
+      "from": "export",
+      "to": "ledger"
+    },
+    {
+      "from": "export",
+      "to": "receipt"
+    },
+    {
+      "from": "export",
+      "to": "signing"
+    },
+    {
+      "from": "export",
+      "to": "state"
+    },
+    {
+      "from": "grant",
+      "to": "admission"
+    },
+    {
+      "from": "grant",
+      "to": "canon"
+    },
+    {
+      "from": "grant",
+      "to": "signing"
+    },
+    {
+      "from": "inventory",
+      "to": "admission"
+    },
+    {
+      "from": "inventory",
+      "to": "canon"
+    },
+    {
+      "from": "inventory",
+      "to": "product"
+    },
+    {
+      "from": "inventory",
+      "to": "signing"
+    },
+    {
+      "from": "ledger",
+      "to": "admission"
+    },
+    {
+      "from": "ledger",
+      "to": "canon"
+    },
+    {
+      "from": "ledger",
+      "to": "grant"
+    },
+    {
+      "from": "ledger",
+      "to": "inventory"
+    },
+    {
+      "from": "ledger",
+      "to": "receipt"
+    },
+    {
+      "from": "ledger",
+      "to": "signing"
+    },
+    {
+      "from": "ledger",
+      "to": "state"
+    },
+    {
+      "from": "perfbaseline",
+      "to": "export"
+    },
+    {
+      "from": "perfbaseline",
+      "to": "ledger"
+    },
+    {
+      "from": "perfbaseline",
+      "to": "receipt"
+    },
+    {
+      "from": "perfbaseline",
+      "to": "signing"
+    },
+    {
+      "from": "receipt",
+      "to": "canon"
+    },
+    {
+      "from": "receipt",
+      "to": "grant"
+    },
+    {
+      "from": "receipt",
+      "to": "pending"
+    },
+    {
+      "from": "receipt",
+      "to": "rulepack"
+    },
+    {
+      "from": "receipt",
+      "to": "signing"
+    },
+    {
+      "from": "receipt",
+      "to": "threat"
+    },
+    {
+      "from": "rulepack",
+      "to": "canon"
+    },
+    {
+      "from": "server",
+      "to": "adapterinstall"
+    },
+    {
+      "from": "server",
+      "to": "admission"
+    },
+    {
+      "from": "server",
+      "to": "export"
+    },
+    {
+      "from": "server",
+      "to": "grant"
+    },
+    {
+      "from": "server",
+      "to": "inventory"
+    },
+    {
+      "from": "server",
+      "to": "ledger"
+    },
+    {
+      "from": "server",
+      "to": "openshell"
+    },
+    {
+      "from": "server",
+      "to": "pending"
+    },
+    {
+      "from": "server",
+      "to": "product"
+    },
+    {
+      "from": "server",
+      "to": "receipt"
+    },
+    {
+      "from": "server",
+      "to": "rulepack"
+    },
+    {
+      "from": "server",
+      "to": "signing"
+    },
+    {
+      "from": "server",
+      "to": "state"
+    },
+    {
+      "from": "signing",
+      "to": "canon"
+    },
+    {
+      "from": "signing",
+      "to": "product"
+    },
+    {
+      "from": "skillmanifest",
+      "to": "admission"
+    },
+    {
+      "from": "skillmanifest",
+      "to": "canon"
+    },
+    {
+      "from": "skillmanifest",
+      "to": "product"
+    },
+    {
+      "from": "skillmanifest",
+      "to": "rulepack"
+    },
+    {
+      "from": "skillmanifest",
+      "to": "signing"
+    },
+    {
+      "from": "state",
+      "to": "admission"
+    },
+    {
+      "from": "state",
+      "to": "grant"
+    },
+    {
+      "from": "state",
+      "to": "product"
+    },
+    {
+      "from": "threat",
+      "to": "rulepack"
+    }
+  ],
+  "grant_transitions": [
+    {
+      "from": "draft",
+      "to": "pending_approval"
+    },
+    {
+      "from": "draft",
+      "to": "rejected"
+    },
+    {
+      "from": "draft",
+      "to": "revoked"
+    },
+    {
+      "from": "pending_approval",
+      "to": "approved"
+    },
+    {
+      "from": "pending_approval",
+      "to": "rejected"
+    },
+    {
+      "from": "pending_approval",
+      "to": "revoked"
+    },
+    {
+      "from": "approved",
+      "to": "deployed"
+    },
+    {
+      "from": "approved",
+      "to": "revoked"
+    },
+    {
+      "from": "deployed",
+      "to": "effective"
+    },
+    {
+      "from": "deployed",
+      "to": "revoked"
+    },
+    {
+      "from": "effective",
+      "to": "revoked"
+    }
+  ],
+  "decide_returns": [
+    {
+      "action": "deny",
+      "reason": "\"no deployed grant for agent (default deny)\""
+    },
+    {
+      "action": "deny",
+      "reason": "\"tool \" + req.Tool + \" not granted (default deny)\""
+    },
+    {
+      "action": "deny",
+      "reason": "\"tainted egress: session carries \" + strings.Join(sortedKeys(s.taints), \",\") ..."
+    },
+    {
+      "action": "deny",
+      "reason": "\"lethal trifecta: private data + untrusted input + egress in one session\""
+    },
+    {
+      "action": "deny",
+      "reason": "\"network egress to \" + h + \" not in grant \" + g.GrantID + \" (default deny)\""
+    },
+    {
+      "action": "deny",
+      "reason": "\"egress exec requires granted host\""
+    },
+    {
+      "action": "deny",
+      "reason": "\"credential path \" + p + \" denied (credential facts are never allow)\""
+    },
+    {
+      "action": "deny",
+      "reason": "\"write to \" + p + \" outside granted paths and cwd (default deny)\""
+    },
+    {
+      "action": "hold",
+      "reason": "\"tool \" + req.Tool + \" requires human approval per grant \" + g.GrantID"
+    },
+    {
+      "action": "allow",
+      "reason": "\"granted by \" + g.GrantID"
+    }
+  ],
+  "enforcement_modes_in_decide": [
+    "audit_only",
+    "warn",
+    "default"
+  ],
+  "policy_exec": [
+    {
+      "verdict": "admit",
+      "decision": "allow"
+    },
+    {
+      "verdict": "admit_with_conditions",
+      "decision": "warn"
+    },
+    {
+      "verdict": "quarantine",
+      "decision": "block"
+    }
+  ],
+  "adapters": [
+    "codebuddy-agentshield",
+    "hermes-agentshield",
+    "openclaw-agentshield"
+  ],
+  "diagrams": [
+    {
+      "id": "runtime",
+      "title": "本仓目录怎么接到本机程序",
+      "file": "runtime.mmd",
+      "sources": [
+        "apps/agentshield/cmd/agentshield/main.go",
+        "adapters/runtime/"
+      ]
+    },
+    {
+      "id": "packages",
+      "title": "Go internal 包依赖（import）",
+      "file": "packages.mmd",
+      "sources": [
+        "apps/agentshield/internal/*/"
+      ]
+    },
+    {
+      "id": "cli-http",
+      "title": "CLI 子命令与 HTTP 路由",
+      "file": "cli-http.mmd",
+      "sources": [
+        "apps/agentshield/cmd/agentshield/main.go",
+        "apps/agentshield/internal/server/server.go"
+      ]
+    },
+    {
+      "id": "admission",
+      "title": "admit 结论与 policy-exec 映射",
+      "file": "admission.mmd",
+      "sources": [
+        "apps/agentshield/internal/admission/admission.go",
+        "apps/agentshield/internal/adapters/adapters.go"
+      ]
+    },
+    {
+      "id": "decide",
+      "title": "Decide / evaluate 返回路径",
+      "file": "decide.mmd",
+      "sources": [
+        "apps/agentshield/internal/receipt/engine.go"
+      ]
+    },
+    {
+      "id": "grant",
+      "title": "grant.transitions 状态机",
+      "file": "grant.mmd",
+      "sources": [
+        "apps/agentshield/internal/grant/grant.go"
+      ]
+    }
+  ]
+}
