@@ -67,9 +67,10 @@ func DefaultDir() (string, error) {
 
 // Config is <state>/config.json.
 type Config struct {
-	EnforcementMode string `json:"enforcement_mode"`
-	Port            int    `json:"port"`
-	HoldChannel     string `json:"hold_channel"`
+	IntentEnforcement string `json:"intent_enforcement"`
+	EnforcementMode   string `json:"enforcement_mode"`
+	Port              int    `json:"port"`
+	HoldChannel       string `json:"hold_channel"`
 	// SessionIdleTTLSeconds: 0 → engine default (30m); -1 → disable idle expiry;
 	// positive → seconds in [1, 86400] (DEV16-E).
 	SessionIdleTTLSeconds int `json:"session_idle_ttl_seconds,omitempty"`
@@ -83,7 +84,7 @@ func Open(dir string) (*Store, error) {
 	if dir == "" {
 		return nil, errors.New("state: directory required")
 	}
-	for _, sub := range []string{"", "keys", "admissions", "grants", "policies", "evidence", "receipts", "checkpoints", "inventory", "backups", "logs", "assets", "findings", "commits", "challenges"} {
+	for _, sub := range []string{"", "keys", "admissions", "grants", "policies", "evidence", "receipts", "checkpoints", "inventory", "backups", "logs", "assets", "findings", "commits", "challenges", "intents", "intent-bindings", "action-correlation"} {
 		if err := os.MkdirAll(filepath.Join(dir, sub), 0o700); err != nil {
 			return nil, err
 		}
@@ -93,7 +94,7 @@ func Open(dir string) (*Store, error) {
 
 // LoadConfig returns config.json or defaults (block / 47611 / console).
 func (s *Store) LoadConfig() (Config, error) {
-	cfg := Config{EnforcementMode: "block", Port: 47611, HoldChannel: "console"}
+	cfg := Config{IntentEnforcement: "optional", EnforcementMode: "block", Port: 47611, HoldChannel: "console"}
 	raw, err := os.ReadFile(filepath.Join(s.Dir, "config.json"))
 	if errors.Is(err, os.ErrNotExist) {
 		return cfg, nil
@@ -103,6 +104,9 @@ func (s *Store) LoadConfig() (Config, error) {
 	}
 	if err := json.Unmarshal(raw, &cfg); err != nil {
 		return cfg, fmt.Errorf("state: config.json malformed: %w", err)
+	}
+	if cfg.IntentEnforcement != "optional" && cfg.IntentEnforcement != "required" {
+		return cfg, fmt.Errorf("state: invalid intent_enforcement")
 	}
 	switch cfg.EnforcementMode {
 	case "audit_only", "warn", "block":

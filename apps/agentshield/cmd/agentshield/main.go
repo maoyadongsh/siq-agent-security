@@ -254,16 +254,17 @@ func (h *httpDecider) Decide(r receipt.Request) (*receipt.Decision, error) {
 		Action    string         `json:"action"`
 		Reason    string         `json:"reason"`
 		ReceiptID string         `json:"receipt_id"`
+		ActionID  string         `json:"action_id"`
 		Params    map[string]any `json:"params"`
 	}
 	if err := h.post("/v1/decide", r, &out); err != nil {
 		return nil, err
 	}
-	return &receipt.Decision{Action: out.Action, Reason: out.Reason, Params: out.Params, Receipt: receipt.Receipt{ReceiptID: out.ReceiptID}}, nil
+	return &receipt.Decision{Action: out.Action, Reason: out.Reason, Params: out.Params, Receipt: receipt.Receipt{ReceiptID: out.ReceiptID, ActionID: out.ActionID}}, nil
 }
 
 func (h *httpDecider) Observe(r receipt.Request, result string) error {
-	body := map[string]any{"platform": r.Platform, "session_id": r.SessionID, "agent_id": r.AgentID, "tool": r.Tool, "params": map[string]any{}, "result": result}
+	body := map[string]any{"platform": r.Platform, "session_id": r.SessionID, "agent_id": r.AgentID, "tool": r.Tool, "tool_call_id": r.ToolCallID, "action_id": r.ActionID, "decision_receipt_id": r.DecisionReceiptID, "params": r.Params, "result": result}
 	var out map[string]any
 	return h.post("/v1/observe", body, &out)
 }
@@ -343,6 +344,10 @@ func cmdServe(args []string) error {
 	if err != nil {
 		return err
 	}
+	intentStore, err := st.IntentAuthority(key)
+	if err != nil {
+		return err
+	}
 	pack, err := loadPack()
 	if err != nil {
 		return err
@@ -363,6 +368,8 @@ func cmdServe(args []string) error {
 	eng, err := receipt.New(receipt.Options{
 		Pack: pack, Chain: chain, Grants: st.ActiveGrant, EnforcementMode: cfg.EnforcementMode,
 		Version: Version, HoldChannel: cfg.HoldChannel, SessionIdleTTL: cfg.SessionIdleTTL(),
+		IntentLookup:      receipt.ResolveStore(intentStore),
+		IntentEnforcement: cfg.IntentEnforcement,
 	})
 	if err != nil {
 		return err

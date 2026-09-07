@@ -372,3 +372,48 @@ func VerifyDetailed(receipts []Receipt, pub []byte, cp *Checkpoint) Verification
 	}
 	return rep
 }
+
+// walkVerified streams the chain without retaining the historical receipt set.
+func (c *Chain) walkVerified(visit func(Receipt) error) error {
+	files, err := c.files()
+	if err != nil {
+		return err
+	}
+	seq := 0
+	prev := GenesisPrev
+	for _, p := range files {
+		f, err := os.Open(p)
+		if err != nil {
+			return err
+		}
+		sc := bufio.NewScanner(f)
+		sc.Buffer(make([]byte, 64<<10), 1<<20)
+		for sc.Scan() {
+			if len(bytes.TrimSpace(sc.Bytes())) == 0 {
+				continue
+			}
+			var r Receipt
+			if err = json.Unmarshal(sc.Bytes(), &r); err != nil {
+				_ = f.Close()
+				return errors.New("receipt: incomplete recovery chain")
+			}
+			hash, hashErr := hashOf(r)
+			if hashErr != nil || r.Seq != seq || r.PrevHash != prev || hash != r.Hash || !signing.VerifyBytes(c.key.Public(), []byte(hash), r.Sig) {
+				_ = f.Close()
+				return errors.New("receipt: invalid recovery chain")
+			}
+			if err = visit(r); err != nil {
+				_ = f.Close()
+				return err
+			}
+			seq++
+			prev = r.Hash
+		}
+		err = sc.Err()
+		_ = f.Close()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

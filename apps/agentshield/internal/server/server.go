@@ -19,6 +19,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/export"
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/inventory"
 	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/pending"
@@ -51,14 +52,15 @@ type Deps struct {
 
 // Server is the HTTP handler set.
 type Server struct {
-	d      Deps
-	mux    *http.ServeMux
-	osMu   sync.Mutex
-	osAt   time.Time
-	osRow  PlatformInfo
-	osOK   bool
-	osCaps *openshell.Capabilities
-	osDiag openshell.Diagnosis
+	intents *intent.Store
+	d       Deps
+	mux     *http.ServeMux
+	osMu    sync.Mutex
+	osAt    time.Time
+	osRow   PlatformInfo
+	osOK    bool
+	osCaps  *openshell.Capabilities
+	osDiag  openshell.Diagnosis
 
 	pairMu       sync.Mutex
 	pairDisplay  string
@@ -82,9 +84,18 @@ func New(d Deps) (*Server, error) {
 		return nil, errors.New("server: incomplete dependencies")
 	}
 	s := &Server{d: d, mux: http.NewServeMux()}
+	var err error
+	s.intents, err = d.Store.IntentAuthority(d.Key)
+	if err != nil {
+		return nil, err
+	}
 	if err := s.initPairing(d.PairingCode); err != nil {
 		return nil, err
 	}
+	s.mux.HandleFunc("/v1/intents", s.auth(s.intentCollection, capAdmin))
+	s.mux.HandleFunc("/v1/intents/", s.auth(s.intentOne, capAdmin))
+	s.mux.HandleFunc("/v1/intent-bindings", s.auth(s.bindingCollection, capAdmin))
+	s.mux.HandleFunc("/v1/intent-bindings/", s.auth(s.bindingOne, capAdmin))
 	s.mux.HandleFunc("/v1/status", s.auth(s.status))
 	s.mux.HandleFunc("/v1/decide", s.auth(s.decide, capDecision))
 	s.mux.HandleFunc("/v1/observe", s.auth(s.observe, capDecision))
@@ -257,9 +268,13 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 400, map[string]any{"error": "invalid request: platform, session_id and tool are required"})
 		return
 	}
+	if req.Intent != nil {
+		writeJSON(w, 400, map[string]string{"error": "inline_intent_rejected", "reason_code": "inline_intent_rejected"})
+		return
+	}
 	d, err := s.d.Engine.Decide(req)
 	if err != nil {
-		if errors.Is(err, receipt.ErrSessionCapacity) {
+		if errors.Is(err, receipt.ErrSessionCapacity) || errors.Is(err, receipt.ErrActionCapacity) {
 			st := s.d.Engine.SessionStats()
 			writeJSON(w, 503, map[string]any{
 				"error":             "session capacity exhausted",
@@ -272,7 +287,7 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 500, map[string]any{"error": "decision failed"})
 		return
 	}
-	resp := map[string]any{"action": d.Action, "reason": d.Reason, "receipt_id": d.Receipt.ReceiptID}
+	resp := map[string]any{"action": d.Action, "reason": d.Reason, "receipt_id": d.Receipt.ReceiptID, "action_id": d.Receipt.ActionID, "reason_code": d.Receipt.ReasonCode}
 	if d.Params != nil {
 		resp["params"] = d.Params
 	}
@@ -308,11 +323,12 @@ func (s *Server) observe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(body.Result) > 64<<10 {
-		body.Result = body.Result[:64<<10]
+		writeJSON(w, 413, map[string]string{"error": "observation_result_too_large"})
+		return
 	}
 	rec, err := s.d.Engine.Observe(body.Request, body.Result)
 	if err != nil {
-		if errors.Is(err, receipt.ErrSessionCapacity) {
+		if errors.Is(err, receipt.ErrSessionCapacity) || errors.Is(err, receipt.ErrActionCapacity) {
 			st := s.d.Engine.SessionStats()
 			writeJSON(w, 503, map[string]any{
 				"error":             "session capacity exhausted",
@@ -322,11 +338,20 @@ func (s *Server) observe(w http.ResponseWriter, r *http.Request) {
 			})
 			return
 		}
+		var correlation *receipt.CorrelationError
+		if errors.As(err, &correlation) {
+			status := 400
+			if correlation.Code == "observation_conflict" {
+				status = 409
+			}
+			writeJSON(w, status, map[string]string{"error": correlation.Code, "reason_code": correlation.Code})
+			return
+		}
 		writeJSON(w, 500, map[string]any{"error": "observe failed"})
 		return
 	}
 	s.invalidateProjection("observe")
-	writeJSON(w, 200, map[string]any{"receipt_id": rec.ReceiptID, "taint_labels": rec.TaintLabels})
+	writeJSON(w, 200, map[string]any{"receipt_id": rec.ReceiptID, "action_id": rec.ActionID, "taint_labels": rec.TaintLabels})
 }
 
 func (s *Server) hold(w http.ResponseWriter, r *http.Request) {

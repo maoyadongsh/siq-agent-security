@@ -122,6 +122,7 @@ func quarantineSummary(a admission.Admission) string {
 
 // CodeBuddyInput is the PreToolUse / PostToolUse stdin document.
 type CodeBuddyInput struct {
+	ToolUseID      string         `json:"tool_use_id"`
 	SessionID      string         `json:"session_id"`
 	Cwd            string         `json:"cwd"`
 	PermissionMode string         `json:"permission_mode"`
@@ -157,7 +158,7 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (Cod
 	}
 	out.HookSpecificOutput.HookEventName = ev.HookEventName
 	req := receipt.Request{Platform: "codebuddy", SessionID: firstNonEmpty(ev.SessionID, "codebuddy-default"), AgentID: agentID,
-		Tool: ev.ToolName, Params: ev.ToolInput, Context: map[string]any{"cwd": ev.Cwd, "permission_mode": ev.PermissionMode}}
+		Tool: ev.ToolName, ToolCallID: ev.ToolUseID, Params: ev.ToolInput, Context: map[string]any{"cwd": ev.Cwd, "permission_mode": ev.PermissionMode}}
 	switch ev.HookEventName {
 	case "PostToolUse":
 		text := ""

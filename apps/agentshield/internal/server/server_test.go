@@ -254,8 +254,9 @@ func TestEndToEndAdmitGrantDecide(t *testing.T) {
 	if code != 200 || r["action"] != "allow" {
 		t.Fatalf("%d %v", code, r)
 	}
-	// observe taints, then egress denied
-	call(t, s, "POST", "/v1/observe", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "result": "leaked: sk-" + strings.Repeat("Z", 40)})
+	// observe an authorized action, then egress is denied by result taint
+	call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "tool_call_id": "observe-1", "params": map[string]any{"url": "https://api.github.com/x"}})
+	call(t, s, "POST", "/v1/observe", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "tool_call_id": "observe-1", "result": "leaked: sk-" + strings.Repeat("Z", 40)})
 	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://api.github.com/x"}})
 	if d["action"] != "deny" || !strings.HasPrefix(d["reason"].(string), "tainted egress") {
 		t.Fatalf("%v", d)

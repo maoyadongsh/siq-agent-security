@@ -15,11 +15,27 @@ import (
 )
 
 func main() {
+	intentOnly := flag.Bool("intent", false, "measure local intent lookup and matching (200 samples)")
 	scale := flag.String("scale", perfbaseline.ScaleSmoke, "smoke|medium|large")
 	receipts := flag.Int("receipts", 0, "override receipt count (0 = scale default)")
 	out := flag.String("out", "", "write JSON report (default stdout)")
 	flag.Parse()
 
+	if *intentOnly {
+		raw, err := perfbaseline.MeasureIntent()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "intent benchmark failed:", err)
+			os.Exit(1)
+		}
+		raw = append(raw, '\n')
+		if *out == "" {
+			_, _ = os.Stdout.Write(raw)
+		} else if err := os.WriteFile(*out, raw, 0600); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		return
+	}
 	rep, err := perfbaseline.Run(perfbaseline.Options{
 		Scale:    *scale,
 		Receipts: *receipts,

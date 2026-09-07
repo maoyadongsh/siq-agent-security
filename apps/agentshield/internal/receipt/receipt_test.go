@@ -238,13 +238,40 @@ func TestAuditOnlyNeverBlocks(t *testing.T) {
 func TestObserveTaintsSession(t *testing.T) {
 	g := deployedGrant(t, "hermes", false)
 	fx := newFixture(t, "block", g, false)
-	r, err := fx.eng.Observe(req("hermes", "web_fetch", nil), "page says: password=\"hunter2hunter2\"")
+	observeReq := req("hermes", "web_fetch", map[string]any{"url": "https://api.github.com/x"})
+	if d, err := fx.eng.Decide(observeReq); err != nil || d.Action != ActionAllow {
+		t.Fatal(d, err)
+	}
+	r, err := fx.eng.Observe(observeReq, "page says: password=\"hunter2hunter2\"")
 	if err != nil || r.Action != ActionAllow || !contains(r.TaintLabels, taintSecret) || !contains(r.TaintLabels, taintUntrusted) {
 		t.Fatalf("%v %+v", err, r)
 	}
 	d, _ := fx.eng.Decide(req("hermes", "web_fetch", map[string]any{"url": "https://api.github.com/x"}))
 	if d.Action != ActionDeny {
 		t.Fatal("secret observed in a result must taint later egress")
+	}
+}
+
+func TestDecisionAndObserveShareActionID(t *testing.T) {
+	g := deployedGrant(t, "hermes", false)
+	fx := newFixture(t, "block", g, false)
+	rq := req("hermes", "exec", map[string]any{"command": "curl https://api.github.com/repos"})
+	dec, err := fx.eng.Decide(rq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	obs, err := fx.eng.Observe(rq, "ok")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if dec.Receipt.ActionID == "" || obs.ActionID == "" {
+		t.Fatalf("missing action ids: decide=%q observe=%q", dec.Receipt.ActionID, obs.ActionID)
+	}
+	if dec.Receipt.ActionID != obs.ActionID {
+		t.Fatalf("action ids diverged: decide=%q observe=%q", dec.Receipt.ActionID, obs.ActionID)
+	}
+	if dec.Receipt.Operation != "exec" || !contains(dec.Receipt.Effects, "network.request") {
+		t.Fatalf("normalized action missing: %+v", dec.Receipt)
 	}
 }
 

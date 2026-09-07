@@ -20,8 +20,10 @@ import (
 	"unicode/utf8"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"siq-agent-security/apps/agentshield/internal/threat"
 )
 
@@ -55,18 +57,24 @@ var ErrSessionCapacity = errors.New("receipt: session capacity exhausted")
 
 // Request is one tool call awaiting a decision.
 type Request struct {
-	Platform   string          `json:"platform"`
-	SessionID  string          `json:"session_id"`
-	AgentID    string          `json:"agent_id"`
-	Tool       string          `json:"tool"`
-	ToolCallID string          `json:"tool_call_id"`
-	Params     map[string]any  `json:"params"`
-	Context    map[string]any  `json:"context"`
-	TaskID     string          `json:"task_id,omitempty"`
-	IntentID   string          `json:"intent_id,omitempty"`
-	Principal  string          `json:"principal,omitempty"`
-	Intent     *IntentContract `json:"intent,omitempty"`
+	ActionID          string          `json:"action_id,omitempty"`
+	DecisionReceiptID string          `json:"decision_receipt_id,omitempty"`
+	Platform          string          `json:"platform"`
+	SessionID         string          `json:"session_id"`
+	AgentID           string          `json:"agent_id"`
+	Tool              string          `json:"tool"`
+	ToolCallID        string          `json:"tool_call_id"`
+	Params            map[string]any  `json:"params"`
+	Context           map[string]any  `json:"context"`
+	TaskID            string          `json:"task_id,omitempty"`
+	IntentID          string          `json:"intent_id,omitempty"`
+	Principal         string          `json:"principal,omitempty"`
+	Intent            *IntentContract `json:"intent,omitempty"`
 }
+
+// IntentLookup resolves authority from trusted local state. Implementations
+// must verify the stored digest/signature before returning an intent.
+type IntentLookup func(platform, sessionID, agentID string) (*IntentContract, error)
 
 // Trifecta flags for the session.
 type Trifecta struct {
@@ -90,6 +98,10 @@ type EngineInfo struct {
 
 // Receipt is the signed, chained record (receipt.schema.json).
 type Receipt struct {
+	RecordType        string     `json:"record_type,omitempty"`
+	DecisionReceiptID string     `json:"decision_receipt_id,omitempty"`
+	ParentActionID    string     `json:"parent_action_id,omitempty"`
+	TaskSeq           int        `json:"task_seq,omitempty"`
 	ReceiptID         string     `json:"receipt_id"`
 	ChainID           string     `json:"chain_id"`
 	Seq               int        `json:"seq"`
@@ -99,14 +111,23 @@ type Receipt struct {
 	IssuedAt          string     `json:"issued_at"`
 	Platform          string     `json:"platform"`
 	SessionID         string     `json:"session_id"`
+	ActionID          string     `json:"action_id,omitempty"`
 	AgentID           *string    `json:"agent_id"`
+	TaskID            string     `json:"task_id,omitempty"`
+	IntentID          string     `json:"intent_id,omitempty"`
+	IntentDigest      string     `json:"intent_digest,omitempty"`
+	IntentBinding     string     `json:"intent_binding,omitempty"`
+	AuthorityRevision string     `json:"authority_revision,omitempty"`
 	Tool              string     `json:"tool"`
 	ToolCallID        *string    `json:"tool_call_id"`
+	Operation         string     `json:"operation,omitempty"`
+	Effects           []string   `json:"effects,omitempty"`
 	ParamsDigest      string     `json:"params_digest"`
 	ParamsExcerpt     *string    `json:"params_excerpt"`
 	Action            string     `json:"action"`
 	AdvisoryAction    *string    `json:"advisory_action"`
 	Reason            string     `json:"reason"`
+	ReasonCode        string     `json:"reason_code,omitempty"`
 	MatchedGrantID    *string    `json:"matched_grant_id"`
 	MatchedFactIDs    []string   `json:"matched_fact_ids"`
 	MatchedRuleIDs    []string   `json:"matched_rule_ids"`
@@ -153,12 +174,20 @@ type Options struct {
 	// UntrustedSkillLoaded reports whether the session has a non-admit skill
 	// loaded (sets trifecta.untrusted_input).
 	UntrustedSkillLoaded func(sessionID string) bool
+	IntentLookup         IntentLookup
+	IntentEnforcement    string // optional (legacy) or required (fail closed)
 }
 
 type session struct {
-	taints   map[string]bool
-	trifecta Trifecta
-	lastUsed time.Time
+	taskSeq                int
+	parentActionID         string
+	taints                 map[string]bool
+	trifecta               Trifecta
+	lastUsed               time.Time
+	boundIntentID          string
+	boundTaskID            string
+	boundIntentDigest      string
+	boundAuthorityRevision string
 }
 
 // SessionStats is a point-in-time view of session capacity (DEV16-A/E).
@@ -172,6 +201,7 @@ type SessionStats struct {
 
 // Engine decides tool calls.
 type Engine struct {
+	actions            map[string]*actionRecord
 	opts               Options
 	analyzer           *threat.Analyzer
 	mu                 sync.Mutex
@@ -189,6 +219,12 @@ func New(opts Options) (*Engine, error) {
 	}
 	if opts.EnforcementMode == "" {
 		opts.EnforcementMode = "block"
+	}
+	if opts.IntentEnforcement == "" {
+		opts.IntentEnforcement = "optional"
+	}
+	if opts.IntentEnforcement != "optional" && opts.IntentEnforcement != "required" {
+		return nil, fmt.Errorf("receipt: invalid intent_enforcement %q", opts.IntentEnforcement)
 	}
 	if opts.HoldChannel == "" {
 		opts.HoldChannel = "console"
@@ -217,13 +253,18 @@ func New(opts Options) (*Engine, error) {
 			return nil, fmt.Errorf("receipt: SessionIdleTTL %s out of range [%s,%s]", idleTTL, minSessionIdleTTL, maxSessionIdleTTL)
 		}
 	}
-	return &Engine{
+	eng := &Engine{
 		opts:           opts,
 		analyzer:       threat.New(opts.Pack),
 		sessions:       map[string]*session{},
+		actions:        map[string]*actionRecord{},
 		maxSessions:    maxSess,
 		sessionIdleTTL: idleTTL,
-	}, nil
+	}
+	if err := eng.restoreActionState(); err != nil {
+		return nil, err
+	}
+	return eng, nil
 }
 
 // SessionStats returns live session capacity counters (no secrets / IDs).
@@ -276,30 +317,103 @@ var (
 
 // Decide evaluates a tool call (spec §3.8.2) and appends a receipt.
 func (e *Engine) Decide(req Request) (*Decision, error) {
-	start := e.opts.Now()
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	start := e.opts.Now()
+	// Intent authority is resolved from trusted state; a decision client may
+	// never mint or replace it inline.
+	if req.Intent != nil {
+		return nil, fmt.Errorf("inline intent is not accepted; use a trusted session binding")
+	}
 	s, err := e.sessionOrReject(req.SessionID, start)
 	if err != nil {
 		return nil, err
 	}
+	var resolvedIntent *IntentContract
+	var authorityErr error
+	if e.opts.IntentLookup != nil {
+		resolvedIntent, authorityErr = e.opts.IntentLookup(req.Platform, req.SessionID, req.AgentID)
+	}
+	if authorityErr == nil {
+		switch {
+		case s.boundIntentID != "" && resolvedIntent == nil:
+			authorityErr = &intent.Violation{Code: "intent_downgrade_attempt"}
+		case e.opts.IntentEnforcement == "required" && resolvedIntent == nil:
+			authorityErr = &intent.Violation{Code: "intent_binding_missing"}
+		case resolvedIntent != nil:
+			if s.boundIntentID != "" && (s.boundIntentID != resolvedIntent.IntentID || s.boundTaskID != resolvedIntent.TaskID || s.boundIntentDigest != resolvedIntent.Digest || s.boundAuthorityRevision != resolvedIntent.AuthorityRevision) {
+				authorityErr = &intent.Violation{Code: "intent_downgrade_attempt"}
+			} else {
+				// Bind security state even if this particular action is outside its authority.
+				s.boundIntentID, s.boundTaskID = resolvedIntent.IntentID, resolvedIntent.TaskID
+				s.boundIntentDigest, s.boundAuthorityRevision = resolvedIntent.Digest, resolvedIntent.AuthorityRevision
+				switch {
+				case req.IntentID != "" && req.IntentID != resolvedIntent.IntentID:
+					authorityErr = &intent.Violation{Code: "intent_downgrade_attempt"}
+				case req.TaskID != "" && req.TaskID != resolvedIntent.TaskID:
+					authorityErr = &intent.Violation{Code: "intent_task_mismatch"}
+				default:
+					authorityErr = resolvedIntent.validate(req, start)
+				}
+			}
+		}
+	}
 
+	if err := e.actionCapacity(start); err != nil {
+		return nil, err
+	}
 	paramsJSON, _ := json.Marshal(req.Params)
 	// scan the raw string values, not the JSON encoding (which escapes quotes
 	// and > < & and would hide `token="..."` or `> /etc/...` from the rules)
 	paramsText := flattenStrings(req.Params)
 	digest := sha256.Sum256(paramsJSON)
 
+	paramsDigest := hex.EncodeToString(digest[:])
+	operation, effects := runtimeaction.Normalize(req.Tool, req.Params)
+	taskID := s.boundTaskID
+	intentID := s.boundIntentID
+	intentDigest := s.boundIntentDigest
+	authorityRevision := s.boundAuthorityRevision
+
+	chainSeq, _ := e.opts.Chain.Head()
+	actionID := runtimeaction.ActionID(runtimeaction.Envelope{
+		Sequence:     chainSeq + 1,
+		Platform:     req.Platform,
+		SessionID:    req.SessionID,
+		AgentID:      req.AgentID,
+		TaskID:       taskID,
+		IntentID:     intentID,
+		Tool:         req.Tool,
+		ToolCallID:   req.ToolCallID,
+		Operation:    operation,
+		Effects:      effects,
+		ParamsDigest: paramsDigest,
+	})
+	s.taskSeq++
 	rec := Receipt{
-		ReceiptID: "rcp-" + hex.EncodeToString(digest[:])[:12] + "-" + start.Format("150405.000000"),
-		IssuedAt:  start.Format(time.RFC3339),
-		Platform:  req.Platform, SessionID: req.SessionID, Tool: req.Tool,
-		ParamsDigest:    hex.EncodeToString(digest[:]),
-		MatchedFactIDs:  []string{},
-		MatchedRuleIDs:  []string{},
-		TaintLabels:     []string{},
-		EnforcementMode: e.opts.EnforcementMode,
-		Engine:          EngineInfo{Version: e.opts.Version, RulepackVersion: e.opts.Pack.Version},
+		RecordType: "decision", TaskSeq: s.taskSeq, ParentActionID: s.parentActionID,
+		ReceiptID:         "rcp-" + hex.EncodeToString(digest[:])[:12] + "-" + start.Format("150405.000000"),
+		IssuedAt:          start.Format(time.RFC3339),
+		Platform:          req.Platform,
+		SessionID:         req.SessionID,
+		ActionID:          actionID,
+		Tool:              req.Tool,
+		TaskID:            taskID,
+		IntentID:          intentID,
+		IntentDigest:      intentDigest,
+		IntentBinding:     "unbound",
+		AuthorityRevision: authorityRevision,
+		Operation:         operation,
+		Effects:           effects,
+		ParamsDigest:      paramsDigest,
+		MatchedFactIDs:    []string{},
+		MatchedRuleIDs:    []string{},
+		TaintLabels:       []string{},
+		EnforcementMode:   e.opts.EnforcementMode,
+		Engine:            EngineInfo{Version: e.opts.Version, RulepackVersion: e.opts.Pack.Version},
+	}
+	if resolvedIntent != nil || s.boundIntentID != "" {
+		rec.IntentBinding = "bound"
 	}
 	if req.AgentID != "" {
 		a := req.AgentID
@@ -311,16 +425,6 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	}
 	excerpt := truncate(e.analyzer.Redact(paramsText), excerptMax)
 	rec.ParamsExcerpt = &excerpt
-	var intentErr error
-	if req.Intent != nil {
-		if req.IntentID != "" && req.IntentID != req.Intent.IntentID {
-			intentErr = fmt.Errorf("intent_id mismatch")
-		} else if req.TaskID != "" && req.TaskID != req.Intent.TaskID {
-			intentErr = fmt.Errorf("task_id mismatch")
-		} else {
-			intentErr = req.Intent.validate(req, start)
-		}
-	}
 
 	// step 4a: taint scan of params (updates session before the decision so
 	// a secret passed to an egress tool in the same call is caught)
@@ -348,15 +452,22 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	rec.Trifecta = &tf
 
 	action, reason := e.evaluate(req, s, hosts, paths, &rec)
-	if intentErr != nil {
-		action, reason = ActionDeny, "intent violation: "+intentErr.Error()
-	}
 
 	// step 6: redact — only when the grant permits and a secret literal is in params
 	var redacted map[string]any
 	if action == ActionDeny && strings.HasPrefix(reason, "tainted egress") && e.redactAllowed(req) && containsSecretLiteral(e.analyzer, paramsText) {
 		redacted = redactParams(e.analyzer, req.Params)
 		action, reason = ActionRedact, "secret literal removed from params before egress (grant permits redaction)"
+	}
+
+	authorityCode := ""
+	if authorityErr != nil {
+		authorityCode = "intent_authority_invalid"
+		var v *intent.Violation
+		if errors.As(authorityErr, &v) {
+			authorityCode = v.Code
+		}
+		action, reason, redacted = ActionDeny, authorityCode, nil
 	}
 
 	// step 7: enforcement mode
@@ -380,13 +491,41 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	}
 	rec.Action = action
 	rec.Reason = reason
+	rec.ReasonCode = classifyReason(reason, action)
+	if authorityCode != "" {
+		rec.ReasonCode = authorityCode
+	}
 	lat := int(e.opts.Now().Sub(start).Milliseconds())
 	rec.DecisionLatencyMS = &lat
 
 	if err := e.opts.Chain.Append(&rec); err != nil {
 		return nil, err
 	}
+	e.actions[rec.ActionID] = &actionRecord{decision: rec, expires: start.Add(actionWindow)}
+	if action == ActionAllow || action == ActionRedact {
+		s.parentActionID = rec.ActionID
+	}
 	return &Decision{Action: action, Reason: reason, Receipt: rec, Params: redacted, Hold: hold}, nil
+}
+
+func classifyReason(reason, action string) string {
+	r := strings.ToLower(reason)
+	switch {
+	case strings.Contains(r, "no deployed grant"):
+		return "grant_missing"
+	case strings.Contains(r, "not granted") || strings.Contains(r, "outside granted"):
+		return "grant_scope_violation"
+	case strings.Contains(r, "intent"):
+		return "intent_violation"
+	case strings.Contains(r, "lethal trifecta"):
+		return "lethal_trifecta"
+	case strings.Contains(r, "tainted egress"):
+		return "session_taint_violation"
+	case action == ActionAllow:
+		return "allow"
+	default:
+		return "runtime_denied"
+	}
 }
 
 // evaluate performs steps 2–5 and returns the raw (pre-mode) action.
@@ -456,44 +595,6 @@ func (e *Engine) evaluate(req Request, s *session, hosts, paths []string, rec *R
 		}
 	}
 	return ActionAllow, "granted by " + g.GrantID
-}
-
-// Observe records a tool result (spec §3.8.2 /v1/observe): taint update only.
-func (e *Engine) Observe(req Request, result string) (*Receipt, error) {
-	now := e.opts.Now()
-	e.mu.Lock()
-	defer e.mu.Unlock()
-	s, err := e.sessionOrReject(req.SessionID, now)
-	if err != nil {
-		return nil, err
-	}
-	newTaints, ruleIDs := e.scanTaints(result)
-	for _, t := range newTaints {
-		s.taints[t] = true
-	}
-	if isEgress(req.Tool, "") || egressTools[req.Tool] {
-		s.trifecta.UntrustedInput = true
-		s.taints[taintUntrusted] = true
-	}
-	digest := sha256.Sum256([]byte(result))
-	excerpt := truncate(e.analyzer.Redact(result), excerptMax)
-	tf := s.trifecta
-	rec := Receipt{
-		ReceiptID: "rcp-" + hex.EncodeToString(digest[:])[:12] + "-" + now.Format("150405.000000") + "-obs",
-		IssuedAt:  now.Format(time.RFC3339), Platform: req.Platform, SessionID: req.SessionID, Tool: req.Tool,
-		ParamsDigest: hex.EncodeToString(digest[:]), ParamsExcerpt: &excerpt,
-		Action: ActionAllow, Reason: "observation of tool result", MatchedFactIDs: []string{}, MatchedRuleIDs: ruleIDs,
-		TaintLabels: sortedKeys(s.taints), Trifecta: &tf, EnforcementMode: e.opts.EnforcementMode,
-		Engine: EngineInfo{Version: e.opts.Version, RulepackVersion: e.opts.Pack.Version},
-	}
-	if req.AgentID != "" {
-		a := req.AgentID
-		rec.AgentID = &a
-	}
-	if err := e.opts.Chain.Append(&rec); err != nil {
-		return nil, err
-	}
-	return &rec, nil
 }
 
 // AppendPendingObserved promotes one unsigned pending_decision/v1 line into a
@@ -594,12 +695,22 @@ func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Recei
 	rec.ReceiptID = resID
 	rec.IssuedAt = now.Format(time.RFC3339)
 	rec.Action, rec.Reason = action, reason
+	rec.RecordType = "hold_resolution"
+	rec.DecisionReceiptID = held.ReceiptID
 	rec.Hold = nil
 	rec.AdvisoryAction = nil
 	rec.DecisionLatencyMS = nil
 	rec.Hash, rec.Sig = "", ""
 	if err := e.opts.Chain.Append(&rec); err != nil {
 		return nil, err
+	}
+	if entry := e.actions[held.ActionID]; entry != nil {
+		entry.approved = approve
+		if approve {
+			if session := e.sessions[held.SessionID]; session != nil {
+				session.parentActionID = held.ActionID
+			}
+		}
 	}
 	return &rec, nil
 }
@@ -682,6 +793,9 @@ func (s *session) retainsSecurityState() bool {
 }
 
 func (e *Engine) idleExpiredLocked(s *session, now time.Time) bool {
+	if s.boundIntentID != "" {
+		return false
+	}
 	if e.sessionIdleTTL <= 0 || s == nil {
 		return false
 	}
