@@ -1,0 +1,66 @@
+{
+  "schema": "intent-v2-native-hermes-validation/v1",
+  "passed": true,
+  "recorded_at": "2026-09-07T11:26:58.740452+00:00",
+  "siq_commit": "60313a4acbb9c12e321fabe8d7b1057ab8b45b24",
+  "siq_dirty": true,
+  "harness_sha256": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+  "server_sha256": "a9344aef8fae6e58f9ad3a10242fb546285afb5c5683146d3cd3f8d09b1d9069",
+  "binary_sha256": "16729e0b2ac419da94e750ed35a4becaa492a0ee75bba7e06ec3d88ea66c2912",
+  "adapter_sha256": "9d0f872cfec2266c7b1b757e4202337e7e88aa4cfa2775c314eda9caba5eafe9",
+  "hermes_source_sha256": {
+    "model_tools.py": "5227bfe30f7c3f6eb20d064f648420138031e038d38eac2829d25b749739ad11",
+    "hermes_cli/plugins.py": "63cef01ae81a23c859170d36860c9ac257f320266a88640a8b9690952728bba6",
+    "hermes_cli/lifecycle.py": "e820ed8114d7062d53223113cc053c737d4ced6b624ce1fbe88f79ad8b2a26bd",
+    "tools/file_tools.py": "59c8c64cacefefd8d505e9d4b168878d2d00a5094bc6c76dcab99f1fea2631a9"
+  },
+  "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+  "hermes_dirty": false,
+  "hermes_python_version": "Python 3.11.15",
+  "go_version": "go version go1.26.5 linux/arm64",
+  "os": "Linux",
+  "architecture": "aarch64",
+  "checks": [
+    "decision_token_cannot_read_authority",
+    "native_read_and_bound_observation",
+    "resource_scope_denied",
+    "path_prefix_boundary_denied",
+    "native_write_not_executed",
+    "required_missing_binding_denied",
+    "native_offline_block_with_pending",
+    "daemon_kill_restart_binding_and_pending_recovery",
+    "http_post_replay_idempotent_and_conflict_after_restart",
+    "http_concurrent_post_restart_replay_single_observation",
+    "bounded_http_load_all_actions_correlated",
+    "optional_unbound_native_compatibility",
+    "bound_cannot_downgrade_in_optional",
+    "offline_cli_receipt_chain_verified"
+  ],
+  "receipt_count": 1036,
+  "measurements": {
+    "samples": 512,
+    "concurrency": 32,
+    "elapsed_seconds": 10.994287289999193,
+    "pairs_per_second": 46.569639895233045,
+    "decide": {
+      "p50_ms": 340.22136800922453,
+      "p95_ms": 361.3790899980813,
+      "p99_ms": 376.5355859941337
+    },
+    "observe": {
+      "p50_ms": 343.871074001072,
+      "p95_ms": 371.91372699453495,
+      "p99_ms": 379.33464600064326
+    },
+    "thresholds": null,
+    "scope": "loopback HTTP, binding validation, signing, receipt persistence; synthetic results",
+    "limitations": "bounded run, not long-duration soak, native tool latency or SLA"
+  },
+  "scope": "installed native plugin loader and tool dispatcher; actual Go HTTP and signed receipt chain",
+  "limitations": [
+    "synthetic calls and operator; no LLM session or human approval proof",
+    "no Hermes native approval/hold journey",
+    "no OpenClaw or CodeBuddy runtime",
+    "no OS isolation or full platform support claim"
+  ]
+}

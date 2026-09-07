@@ -5,6 +5,7 @@
   "type": "module",
   "main": "index.ts",
   "openclaw": {
+    "extensions": ["./index.ts"],
     "kind": "plugin",
     "hooks": ["before_tool_call", "after_tool_call"]
   },

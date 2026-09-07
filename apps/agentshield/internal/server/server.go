@@ -722,12 +722,18 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, 400, map[string]any{"error": err.Error()})
 			return
 		}
+		// Validate the transition before consuming its single-use proof. The
+		// challenge lookup's err is scoped to this case, so handle it here.
+		out, err = grant.Approve(*g, actor, s.d.Key)
+		if err != nil {
+			writeJSON(w, 400, map[string]any{"error": err.Error()})
+			return
+		}
 		consumed := grant.MarkConsumed(*ch, time.Now().UTC())
 		if _, err := s.d.Store.PutChallengeCAS(consumed, chSeq); err != nil {
 			writeRevisionConflict(w, err)
 			return
 		}
-		out, err = grant.Approve(*g, actor, s.d.Key)
 	case "reject":
 		out, err = grant.Reject(*g, s.d.Key)
 	case "revoke":

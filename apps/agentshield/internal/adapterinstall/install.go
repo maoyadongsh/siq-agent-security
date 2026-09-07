@@ -19,7 +19,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/state"
 )
 
-//go:embed assets/hermes/plugin.yaml assets/hermes/__init__.py assets/openclaw/package.json assets/openclaw/index.ts
+//go:embed assets/hermes/plugin.yaml assets/hermes/__init__.py assets/openclaw/package.json assets/openclaw/index.ts assets/openclaw/openclaw.plugin.json
 var embedded embed.FS
 
 // Platforms the installer knows.
@@ -282,6 +282,7 @@ func stripOpenClawInstallPolicy(ocPath string, rec *Record) error {
 			doc["security"] = sec
 		}
 	}
+	stripOpenClawRuntime(doc, filepath.Join(filepath.Dir(ocPath), "plugins", product.PluginDir()))
 	if len(doc) == 0 && rec.Modified[ocPath] == "" {
 		_ = os.Remove(ocPath)
 		return nil
@@ -519,12 +520,34 @@ exec hermes skills install "$SRC" "$@"
 
 func installOpenClaw(opts Options, rec *Record) ([]string, error) {
 	root := filepath.Join(configDir(opts.Home, OpenClaw), "plugins", product.PluginDir())
+	ocPath := filepath.Join(configDir(opts.Home, OpenClaw), "openclaw.json")
+	doc, err := readJSONObject(ocPath)
+	if err != nil {
+		return nil, err
+	}
+	if err := configureOpenClawRuntime(doc, root); err != nil {
+		return nil, err
+	}
+	// Reinstall must retain ownership of files created by the first install;
+	// otherwise the latest uninstall record leaves an active plugin behind.
+	prior, err := newestRecord(opts.StateDir, OpenClaw)
+	if err != nil && !errors.Is(err, errNoInstallRecord) {
+		return nil, err
+	}
+	if prior != nil {
+		for _, path := range prior.Created {
+			if path == root || strings.HasPrefix(path, root+string(filepath.Separator)) ||
+				path == ocPath || path == filepath.Join(configDir(opts.Home, OpenClaw), product.Name+".json") {
+				rec.Created = appendUnique(rec.Created, path)
+			}
+		}
+	}
 	if err := os.MkdirAll(root, 0o700); err != nil {
 		return nil, err
 	}
 	pluginExisted := exists(filepath.Join(root, "index.ts"))
 	var paths []string
-	for _, name := range []string{"package.json", "index.ts"} {
+	for _, name := range []string{"package.json", "index.ts", "openclaw.plugin.json"} {
 		data, err := readAsset(opts, "openclaw/"+name)
 		if err != nil {
 			return nil, err
@@ -548,11 +571,6 @@ func installOpenClaw(opts Options, rec *Record) ([]string, error) {
 	}
 	paths = append(paths, cfgPath)
 
-	ocPath := filepath.Join(configDir(opts.Home, OpenClaw), "openclaw.json")
-	doc, err := readJSONObject(ocPath)
-	if err != nil {
-		return nil, err
-	}
 	sec, _ := doc["security"].(map[string]any)
 	if sec == nil {
 		sec = map[string]any{}
@@ -791,11 +809,16 @@ func readAsset(opts Options, rel string) ([]byte, error) {
 	return embedded.ReadFile("assets/" + rel)
 }
 
+var errNoInstallRecord = errors.New("adapter: no install record")
+
 func newestRecord(stateDir, platform string) (*Record, error) {
 	dir := filepath.Join(stateDir, "backups", "adapters")
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return nil, fmt.Errorf("adapter: no install record for %s", platform)
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, fmt.Errorf("%w for %s", errNoInstallRecord, platform)
+		}
+		return nil, err
 	}
 	var latest string
 	for _, e := range entries {
@@ -805,7 +828,7 @@ func newestRecord(stateDir, platform string) (*Record, error) {
 		}
 	}
 	if latest == "" {
-		return nil, fmt.Errorf("adapter: no install record for %s", platform)
+		return nil, fmt.Errorf("%w for %s", errNoInstallRecord, platform)
 	}
 	raw, err := os.ReadFile(filepath.Join(dir, latest))
 	if err != nil {

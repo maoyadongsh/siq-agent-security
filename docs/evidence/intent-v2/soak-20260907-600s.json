@@ -1,0 +1,371 @@
+{
+  "schema": "intent-v2-soak/v1",
+  "passed": true,
+  "recorded_at": "2026-09-07T11:46:08.604687+00:00",
+  "siq_commit": "60313a4acbb9c12e321fabe8d7b1057ab8b45b24",
+  "siq_dirty": true,
+  "script_sha256": "52ced7d4b52d0cda2ef033bd629f39de2388b6f14a367fc5994b04040847072c",
+  "fixture_sha256": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+  "binary_sha256": "16729e0b2ac419da94e750ed35a4becaa492a0ee75bba7e06ec3d88ea66c2912",
+  "duration_seconds": 600.1810516800033,
+  "sessions": 32,
+  "workers": 8,
+  "requested_operation_rate_ceiling": 24.0,
+  "counts_before_final_reconciliation": {
+    "observe_success": 14088,
+    "decide_success": 1409,
+    "transport_errors_during_restart": 109
+  },
+  "restart_measurements": [
+    {
+      "elapsed_seconds": 90.06579274400428,
+      "recovery_seconds": 0.605204519990366
+    },
+    {
+      "elapsed_seconds": 180.1364409079979,
+      "recovery_seconds": 0.655666390011902
+    },
+    {
+      "elapsed_seconds": 270.0566719190101,
+      "recovery_seconds": 0.7053639510122593
+    },
+    {
+      "elapsed_seconds": 360.02612741499615,
+      "recovery_seconds": 0.8091714260081062
+    },
+    {
+      "elapsed_seconds": 450.0978946850082,
+      "recovery_seconds": 0.8604537820065161
+    },
+    {
+      "elapsed_seconds": 540.0271649869974,
+      "recovery_seconds": 0.9102263989916537
+    }
+  ],
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0.004,
+      "generation": 0,
+      "daemon_rss_kib": 16488,
+      "daemon_threads": 15,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 196108,
+      "known_actions": 32,
+      "counts": {
+        "observe_success": 8
+      }
+    },
+    {
+      "elapsed_seconds": 30.024,
+      "generation": 0,
+      "daemon_rss_kib": 17440,
+      "daemon_threads": 16,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 443951,
+      "known_actions": 103,
+      "counts": {
+        "observe_success": 713,
+        "decide_success": 71
+      }
+    },
+    {
+      "elapsed_seconds": 60.045,
+      "generation": 0,
+      "daemon_rss_kib": 17392,
+      "daemon_threads": 17,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 692023,
+      "known_actions": 174,
+      "counts": {
+        "observe_success": 1425,
+        "decide_success": 142
+      }
+    },
+    {
+      "elapsed_seconds": 90.066,
+      "generation": 1,
+      "daemon_rss_kib": 16672,
+      "daemon_threads": 15,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 940183,
+      "known_actions": 245,
+      "counts": {
+        "observe_success": 2135,
+        "decide_success": 213,
+        "transport_errors_during_restart": 12
+      }
+    },
+    {
+      "elapsed_seconds": 120.094,
+      "generation": 1,
+      "daemon_rss_kib": 18568,
+      "daemon_threads": 16,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 1184803,
+      "known_actions": 315,
+      "counts": {
+        "observe_success": 2832,
+        "decide_success": 283,
+        "transport_errors_during_restart": 12
+      }
+    },
+    {
+      "elapsed_seconds": 150.117,
+      "generation": 1,
+      "daemon_rss_kib": 19396,
+      "daemon_threads": 19,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 1432975,
+      "known_actions": 386,
+      "counts": {
+        "observe_success": 3541,
+        "decide_success": 354,
+        "transport_errors_during_restart": 12
+      }
+    },
+    {
+      "elapsed_seconds": 180.136,
+      "generation": 2,
+      "daemon_rss_kib": 17704,
+      "daemon_threads": 14,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 1681221,
+      "known_actions": 457,
+      "counts": {
+        "observe_success": 4253,
+        "decide_success": 425,
+        "transport_errors_during_restart": 28
+      }
+    },
+    {
+      "elapsed_seconds": 210.013,
+      "generation": 2,
+      "daemon_rss_kib": 20332,
+      "daemon_threads": 18,
+      "daemon_open_fds": 7,
+      "state_bytes_approx": 1920712,
+      "known_actions": 525,
+      "counts": {
+        "observe_success": 4941,
+        "decide_success": 493,
+        "transport_errors_during_restart": 28
+      }
+    },
+    {
+      "elapsed_seconds": 240.035,
+      "generation": 2,
+      "daemon_rss_kib": 21464,
+      "daemon_threads": 21,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 2170863,
+      "known_actions": 597,
+      "counts": {
+        "observe_success": 5653,
+        "decide_success": 565,
+        "transport_errors_during_restart": 28
+      }
+    },
+    {
+      "elapsed_seconds": 270.057,
+      "generation": 3,
+      "daemon_rss_kib": 19024,
+      "daemon_threads": 14,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 2419313,
+      "known_actions": 668,
+      "counts": {
+        "observe_success": 6364,
+        "decide_success": 636,
+        "transport_errors_during_restart": 45
+      }
+    },
+    {
+      "elapsed_seconds": 300.182,
+      "generation": 3,
+      "daemon_rss_kib": 22644,
+      "daemon_threads": 19,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 2664217,
+      "known_actions": 738,
+      "counts": {
+        "observe_success": 7059,
+        "decide_success": 706,
+        "transport_errors_during_restart": 45
+      }
+    },
+    {
+      "elapsed_seconds": 330.003,
+      "generation": 3,
+      "daemon_rss_kib": 22552,
+      "daemon_threads": 20,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 2909111,
+      "known_actions": 808,
+      "counts": {
+        "observe_success": 7763,
+        "decide_success": 776,
+        "transport_errors_during_restart": 45
+      }
+    },
+    {
+      "elapsed_seconds": 360.026,
+      "generation": 4,
+      "daemon_rss_kib": 20412,
+      "daemon_threads": 17,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 3157543,
+      "known_actions": 879,
+      "counts": {
+        "observe_success": 8474,
+        "decide_success": 847,
+        "transport_errors_during_restart": 65
+      }
+    },
+    {
+      "elapsed_seconds": 390.055,
+      "generation": 4,
+      "daemon_rss_kib": 23192,
+      "daemon_threads": 18,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 3398935,
+      "known_actions": 948,
+      "counts": {
+        "observe_success": 9164,
+        "decide_success": 916,
+        "transport_errors_during_restart": 65
+      }
+    },
+    {
+      "elapsed_seconds": 420.075,
+      "generation": 4,
+      "daemon_rss_kib": 24508,
+      "daemon_threads": 18,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 3650896,
+      "known_actions": 1020,
+      "counts": {
+        "observe_success": 9876,
+        "decide_success": 988,
+        "transport_errors_during_restart": 65
+      }
+    },
+    {
+      "elapsed_seconds": 450.098,
+      "generation": 5,
+      "daemon_rss_kib": 22404,
+      "daemon_threads": 15,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 3896036,
+      "known_actions": 1090,
+      "counts": {
+        "observe_success": 10582,
+        "decide_success": 1058,
+        "transport_errors_during_restart": 87
+      }
+    },
+    {
+      "elapsed_seconds": 480.18,
+      "generation": 5,
+      "daemon_rss_kib": 25708,
+      "daemon_threads": 17,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 4137611,
+      "known_actions": 1159,
+      "counts": {
+        "observe_success": 11271,
+        "decide_success": 1127,
+        "transport_errors_during_restart": 87
+      }
+    },
+    {
+      "elapsed_seconds": 510.006,
+      "generation": 5,
+      "daemon_rss_kib": 26108,
+      "daemon_threads": 19,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 4386210,
+      "known_actions": 1230,
+      "counts": {
+        "observe_success": 11976,
+        "decide_success": 1198,
+        "transport_errors_during_restart": 87
+      }
+    },
+    {
+      "elapsed_seconds": 540.027,
+      "generation": 6,
+      "daemon_rss_kib": 23780,
+      "daemon_threads": 18,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 4634841,
+      "known_actions": 1301,
+      "counts": {
+        "observe_success": 12688,
+        "decide_success": 1269,
+        "transport_errors_during_restart": 109
+      }
+    },
+    {
+      "elapsed_seconds": 570.159,
+      "generation": 6,
+      "daemon_rss_kib": 26428,
+      "daemon_threads": 19,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 4876374,
+      "known_actions": 1370,
+      "counts": {
+        "observe_success": 13378,
+        "decide_success": 1338,
+        "transport_errors_during_restart": 109
+      }
+    },
+    {
+      "elapsed_seconds": 600.181,
+      "generation": 6,
+      "daemon_rss_kib": 27260,
+      "daemon_threads": 21,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 5124907,
+      "known_actions": 1441,
+      "counts": {
+        "observe_success": 14088,
+        "decide_success": 1409,
+        "transport_errors_during_restart": 109
+      }
+    }
+  ],
+  "latency_last_10000_successful_requests": {
+    "decide": {
+      "p50_ms": 21.082969004055485,
+      "p95_ms": 23.014215999864973,
+      "p99_ms": 23.995534997084178
+    },
+    "observe": {
+      "p50_ms": 1.0195439972449094,
+      "p95_ms": 12.061959991115145,
+      "p99_ms": 19.690319008077495
+    }
+  },
+  "verification": {
+    "receipts": 2882,
+    "decisions": 1441,
+    "observations": 1441,
+    "unacknowledged_or_unobserved_decisions": 0,
+    "checks": [
+      "all_acknowledged_actions_observed_once",
+      "post_replay_same_receipt",
+      "per_session_intent_authority",
+      "task_sequence_and_parent_recovery",
+      "cross_session_observe_denied",
+      "conflicting_result_denied",
+      "offline_chain_verified"
+    ]
+  },
+  "thresholds": null,
+  "limitations": [
+    "synthetic HTTP and tool results, not native Agent sessions",
+    "observed duration only; no 24-hour uptime or power-loss claim",
+    "transport failures accepted only during tracked kill/restart generations",
+    "lost Decide responses never authorize tool execution or invented Observe references"
+  ]
+}

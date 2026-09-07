@@ -41,7 +41,7 @@
 
 ```bash
 siq-agent-security adapter install openclaw
-# writes ~/.openclaw/plugins/siq-agent-security/ and merges security.installPolicy into openclaw.json (backup first)
+# writes plugin assets/manifest, registers plugins.load.paths + entry, and merges installPolicy (backup first)
 ```
 
 | 决策 API `action` | 插件返回 |
@@ -52,6 +52,10 @@ siq-agent-security adapter install openclaw
 | `redact` | `{ params }`（改写后的参数） |
 
 `after_tool_call` 把结果截断 64 KiB 发 `/v1/observe`（服务端脱敏、更新污点）。
+
+插件目录包含 `openclaw.plugin.json` 和 package 的 `openclaw.extensions` 入口。安装器登记加载路径并启用本插件 entry；保留其他插件的配置，已有 allow 列表时追加本插件。全局插件禁用、本插件在 deny 列表或相关配置类型错误时拒绝安装。重装保留卸载归属；卸载删除本插件的运行时登记和自建文件。
+
+适配器优先从 `OPENCLAW_STATE_DIR` 读取产品配置，未设置时使用 `~/.openclaw`。这支持原生平台的隔离测试实例；不是 OS 隔离保证。
 
 ## fail-closed
 
@@ -70,3 +74,5 @@ siq-agent-security adapter install openclaw
 - 插件 TS：按 OpenClaw 2026-09 `before_tool_call` 合同编写（`block` 终止、`requireApproval` 首个生效、`params` 改写）。同一证据目录用插件会发出的 `/v1/decide` 请求体做了授前/授后 deny；**仍未**把插件加载进本机正在跑的 OpenClaw 网关进程。矩阵不标 `supported`。
 
 V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多 2048 项、TTL 300 秒，重复 ID 冲突不绑定旧动作。hold 的 execution observation 还必须有本地管理面批准记录；平台自身弹窗不自动创建本地批准。`node scripts/test-openclaw-adapter.cjs` 提供隔离的 mock hook 回归，真实平台 V2 归档仍为 unverified。
+
+2026-09-07 增量：[原生加载器及工具链验收](../../../docs/trusted-intent-v2-openclaw-validation-20260907-192539.md) 已在 OpenClaw 2026.5.12 / linux/arm64 的临时实例通过，包括 V2 关联、目录/工具拒绝、失联与重启。真实前置包装器和后置 relay 使用夹具提供的调用 ID，不等于完整网关/LLM 会话与平台审批验收；综合状态仍为 unverified。

@@ -519,7 +519,9 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	if err := e.opts.Chain.Append(&rec); err != nil {
 		return nil, err
 	}
-	e.actions[rec.ActionID] = &actionRecord{decision: rec, expires: start.Add(actionWindow)}
+	// issued_at is signed at whole-second precision. Use the same deadline as
+	// restoreActionState; subsecond wall time must not extend a live authority.
+	e.actions[rec.ActionID] = &actionRecord{decision: rec, expires: start.Truncate(time.Second).Add(actionWindow)}
 	if action == ActionAllow || action == ActionRedact {
 		s.parentActionID = rec.ActionID
 	}

@@ -1,0 +1,105 @@
+{
+  "schema": "intent-v2-soak/v1",
+  "passed": true,
+  "recorded_at": "2026-09-07T11:46:20.271769+00:00",
+  "siq_commit": "60313a4acbb9c12e321fabe8d7b1057ab8b45b24",
+  "siq_dirty": true,
+  "script_sha256": "52ced7d4b52d0cda2ef033bd629f39de2388b6f14a367fc5994b04040847072c",
+  "fixture_sha256": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+  "binary_sha256": "e58af6f6fab36cb5f7acddc14b84da2ac7b8ea080bb75664ad001d76f22b3e1a",
+  "duration_seconds": 60.15728282199416,
+  "sessions": 32,
+  "workers": 8,
+  "requested_operation_rate_ceiling": 24.0,
+  "counts_before_final_reconciliation": {
+    "observe_success": 1400,
+    "decide_success": 140,
+    "transport_errors_during_restart": 26
+  },
+  "restart_measurements": [
+    {
+      "elapsed_seconds": 20.019072013004916,
+      "recovery_seconds": 0.5555817870044848
+    },
+    {
+      "elapsed_seconds": 40.18743664599606,
+      "recovery_seconds": 0.5553068720037118
+    }
+  ],
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0.004,
+      "generation": 0,
+      "daemon_rss_kib": 16916,
+      "daemon_threads": 15,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 196109,
+      "known_actions": 32,
+      "counts": {
+        "observe_success": 8
+      }
+    },
+    {
+      "elapsed_seconds": 30.181,
+      "generation": 1,
+      "daemon_rss_kib": 16636,
+      "daemon_threads": 13,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 444017,
+      "known_actions": 103,
+      "counts": {
+        "observe_success": 711,
+        "decide_success": 71,
+        "transport_errors_during_restart": 10
+      }
+    },
+    {
+      "elapsed_seconds": 60.157,
+      "generation": 2,
+      "daemon_rss_kib": 17552,
+      "daemon_threads": 15,
+      "daemon_open_fds": 6,
+      "state_bytes_approx": 685203,
+      "known_actions": 172,
+      "counts": {
+        "observe_success": 1400,
+        "decide_success": 140,
+        "transport_errors_during_restart": 26
+      }
+    }
+  ],
+  "latency_last_10000_successful_requests": {
+    "decide": {
+      "p50_ms": 20.75919100025203,
+      "p95_ms": 22.98210299341008,
+      "p99_ms": 24.189839998143725
+    },
+    "observe": {
+      "p50_ms": 0.8703740022610873,
+      "p95_ms": 11.835750003228895,
+      "p99_ms": 19.583246001275256
+    }
+  },
+  "verification": {
+    "receipts": 344,
+    "decisions": 172,
+    "observations": 172,
+    "unacknowledged_or_unobserved_decisions": 0,
+    "checks": [
+      "all_acknowledged_actions_observed_once",
+      "post_replay_same_receipt",
+      "per_session_intent_authority",
+      "task_sequence_and_parent_recovery",
+      "cross_session_observe_denied",
+      "conflicting_result_denied",
+      "offline_chain_verified"
+    ]
+  },
+  "thresholds": null,
+  "limitations": [
+    "synthetic HTTP and tool results, not native Agent sessions",
+    "observed duration only; no 24-hour uptime or power-loss claim",
+    "transport failures accepted only during tracked kill/restart generations",
+    "lost Decide responses never authorize tool execution or invented Observe references"
+  ]
+}

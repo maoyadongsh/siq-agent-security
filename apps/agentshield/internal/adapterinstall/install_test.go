@@ -303,6 +303,7 @@ func TestEmbeddedAssetsMatchRuntimeTree(t *testing.T) {
 		{"assets/hermes/plugin.yaml", "hermes-agentshield/plugin.yaml"},
 		{"assets/hermes/__init__.py", "hermes-agentshield/__init__.py"},
 		{"assets/openclaw/package.json", "openclaw-agentshield/package.json"},
+		{"assets/openclaw/openclaw.plugin.json", "openclaw-agentshield/openclaw.plugin.json"},
 		{"assets/openclaw/index.ts", "openclaw-agentshield/index.ts"},
 	}
 	for _, p := range pairs {

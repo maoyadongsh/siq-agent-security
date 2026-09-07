@@ -13,17 +13,23 @@ const output = ts.transpileModule(source, { compilerOptions: { module: ts.Module
 assert.equal(output.diagnostics.length, 0);
 const hooks = {};
 const seen = [];
+const configReads = [];
 let decision = { action: 'allow', action_id: 'act-1', receipt_id: 'rcp-1', reason: 'approved' };
 let unavailable = false;
 const exportsObject = {};
 const sandbox = {
   exports: exportsObject,
-  process: { env: {}, platform: 'linux' },
+  process: { env: { OPENCLAW_STATE_DIR: '/isolated-profile' }, platform: 'linux' },
   console: { warn() {} },
   setTimeout, clearTimeout, AbortController,
   require(name) {
     if (name === 'node:fs') return {
-      readFileSync(p) { if (p.endsWith('/token')) return 't'.repeat(64); throw Error('test config absent'); },
+      readFileSync(p) {
+        if (p.endsWith('/token')) return 't'.repeat(64);
+        configReads.push(p);
+        if (p === '/isolated-profile/siq-agent-security.json') return JSON.stringify({ tokenPath: '/isolated-profile/decision/token' });
+        throw Error('unexpected config location');
+      },
       mkdirSync() {}, appendFileSync() {},
     };
     if (name === 'node:os') return { homedir: () => '/isolated-test' };
@@ -37,6 +43,7 @@ const sandbox = {
   },
 };
 vm.runInNewContext(output.outputText, sandbox, { filename: sourcePath });
+assert.deepEqual(configReads, ['/isolated-profile/siq-agent-security.json'], 'isolated platform state must not read the default user config');
 exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } });
 (async () => {
   const event = { toolName: 'read_file', toolCallId: 'call-1', params: { path: '/approved/report' }, result: 'ok' };

@@ -68,4 +68,10 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 
 核心资源规范化、可信 Principal / resource_refs / provenance_refs、任务边界恢复、同会话并发和进程强杀恢复已有本地证据，见 [trusted-intent-v2-progress-20260907-164919.md](trusted-intent-v2-progress-20260907-164919.md)。绑定查找已改为确定性 ID 直接读取，实测覆盖 1 / 128 / 1024 / 4096 个绑定。新增字段预留不代表 Provenance DAG；这些核心证据不提升任一真实平台 V2 列。
 
+2026-09-07 19:10 新增 [Hermes 原生工具分发器集成证据](trusted-intent-v2-native-validation-20260907-191006.md)：实际插件加载、pre/post、合成文件读写、HTTP 签名回执、失联阻断和重启恢复通过。调用标识由测试提供，未驱动完整 LLM 会话或 hold/审批；该证据不等于全部平台 V2 验收，因此上表综合状态保持 `unverified`。
+
+2026-09-07 19:25 新增 [OpenClaw 安装与原生工具链证据](trusted-intent-v2-openclaw-validation-20260907-192539.md)：Go 安装输出通过真实加载器验证，原生 before wrapper / Pi 文件工具 / after relay 连接实际 HTTP 通过。清单、插件加载注册和重装卸载修复已有回归；完整会话和审批未验收，综合状态不升级。
+
+2026-09-07 19:47 新增 [持续运行与旧 Hermes 兼容证据](trusted-intent-v2-soak-and-compatibility-20260907-194732.md)：32 会话/600 秒/六次强杀恢复，24h 边界回归，以及未修改的历史 Hermes 适配器通过。持续 HTTP 负载不是完整平台会话，历史源代码测试不是发布制品验收，平台综合状态保持 `unverified`。
+
 上一批 `0f232f4` 的远端 CI 已通过；本轮远端 CI 需按对应新 SHA 单独验证，结果以 GitHub Actions 运行记录为准。

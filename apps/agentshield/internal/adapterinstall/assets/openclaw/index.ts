@@ -68,10 +68,10 @@ function loadConfig(): Config {
     timeoutMs: 5000,
     agentId: env("SIQ_AGENT_SECURITY_AGENT_ID", "AGENTSHIELD_AGENT_ID") || "default",
   };
-  const home = homedir();
+  const configDir = env("OPENCLAW_STATE_DIR") || join(homedir(), ".openclaw");
   for (const name of ["siq-agent-security.json", "agentshield.json"]) {
     try {
-      Object.assign(cfg, JSON.parse(readFileSync(join(home, ".openclaw", name), "utf8")));
+      Object.assign(cfg, JSON.parse(readFileSync(join(configDir, name), "utf8")));
       break;
     } catch {
       /* try next */

@@ -105,6 +105,7 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 - 不可变版本按 ADR-012 先在同目录私有暂存文件完成写入/Sync，再排他发布最终版本名；版本占用只允许重试下一序号，不能返回伪成功。读者不得看见未完成暂存或把损坏最新版本忽略为空。
 - grant 状态变迁（approve/reject/deploy/revoke/patch-desired/effective/resolve-overlap）必须带 `expected_revision`（当前磁盘版本序号）；冲突返回 409，不得静默追加成功。创建响应与 `GET /v1/grants/{id}` 返回 `state_revision`。该 CAS 不替代多文档审计事务（DEV03）。
 - **高影响批准（DEV02-B）：** `approve` 前须 `POST /v1/grants/{id}/challenge` 取得单次 `challenge_id`+`nonce`；挑战绑定 grant digest、scope digest、subject/platform 与 `expected_revision`，TTL 5 分钟，消费后不可重放。grant 正文或 desired 变更会使 digest 失配。desktop-same-uid 下挑战不是 OS 隔离边界，不宣称防止同 UID 自批。
+- 审批状态转换先校验 actor 与未解决 overlap，再消费挑战。缺 actor 或 overlap 未解决时返回 HTTP 400；不追加 Grant 版本或成功审批审计，也不消费挑战。挑战成功消费后的持久化故障仍遵循既有提交恢复协议，不将整个审批流程宣称为跨文件事务。
 - **多文档提交（DEV03-E）：** 在原单写者/CAS 上，`commits/<grant_id>.<seq>.prepare.json` 先持久化 `grant_commit/v1` 完整材料（已签 grant 原文、expected revision、可选 policy、审计）；随后排他发布 policy、`commit-audit/<id>.json`、grant 版本，最后写与 prepare SHA-256 绑定的 `.done.json`。`.done` 是可见性界限；未完成的当前或下一版本使 grant 读取失败关闭，不能继续沿用旧批准。`TailAudit` 合并历史 JSONL 与已提交的独立审计，不重复追加。所有写入采用同目录暂存+Sync+Link，Linux 同步目录；不支持目录 Sync 的 Windows 仅声明进程崩溃恢复，不声明断电保证。`serve`/离线 grant 获写锁后先恢复；`incomplete` 只读诊断，`incomplete --recover` 获同一写锁后幂等补齐，无新批准/后端副作用。旧 `.incomplete.json` 缺完整材料时保留且拒绝自动猜测恢复。升级前备份 state；不得用不理解 prepare/done 的旧二进制混跑或回退写入。
 - **发布 staging（DEV04-D）：** bootstrap/adapter 经 `resolve_verified_bin.sh` 在验签后将二进制复制到私有 staging（0700），对副本再算 sha256；与源摘要（及 pin，若强制）不一致则拒绝。stdout 仅输出 staged 路径。不宣称同 UID 进程无法在验证后改写。真实下载链另做。
 
@@ -490,6 +491,9 @@ security: { installPolicy: { enabled: true, targets: ["skill","plugin"],
 
 **运行时（L2）**：插件 `adapters/runtime/openclaw-agentshield/`（TypeScript，`definePluginEntry`）：
 
+- 安装资产包含 `openclaw.plugin.json`（插件 ID、无凭据配置 schema）和 package 的 `openclaw.extensions` 入口。安装器把插件绝对目录加入 `plugins.load.paths`，启用本插件 entry；已有 allow 列表时仅追加本插件，保留其他插件。显式全局禁用或 deny 本插件、配置类型错误时安装拒绝，不擅自打开全局插件开关。卸载只移除本插件的路径/entry/allow 项。
+- 插件配置目录优先采用 `OPENCLAW_STATE_DIR`，否则使用 `~/.openclaw`；用于原生平台隔离实例，不能通过环境覆盖冒充 OS 隔离。
+
 - `before_tool_call`（priority 10）：POST `/v1/decide`；映射 `deny → {block:true, blockReason}`、`hold → {requireApproval:{title, description, severity:"warning", timeoutMs}}`、`redact → {params}`、`allow → undefined`。
 - `after_tool_call`：POST `/v1/observe`（结果截断 64 KiB 后发送，服务端再脱敏）。
 - 超时：插件侧 5 s；OpenClaw 钩子 15 s fail-closed 兜底。
@@ -498,6 +502,7 @@ security: { installPolicy: { enabled: true, targets: ["skill","plugin"],
 **卸载**：`siq-agent-security adapter uninstall openclaw` 删除插件目录并把 `openclaw.json` 恢复到 `<state>/backups/` 中的副本。
 - **安装首备（DEV07-A）：** 改写已有用户配置前，以 `*.siq-agent-security.orig`（O_EXCL、0600）保存首次见到的原文；重装不得覆盖。坏 JSON、指向配置的 symlink、未知 `enforcement_mode` 拒绝且不改写。配置写入同目录暂存+Rename。
 - **外科卸载（DEV07-B）：** OpenClaw/CodeBuddy 在活配置上剥离本产品 `installPolicy`/hooks，保留安装后用户字段；冲突（坏 JSON 等）返回 `RecoveryPlan`，不静默整文件回滚。首备仅供人工恢复参考。
+- OpenClaw 重装记录保留先前由本产品创建的插件目录/文件及本产品配置的归属；损坏的既有安装记录拒绝继续。卸载同时移除本插件运行时注册，不把“安装资产存在”当作原生运行时已验收。
 
 ### 4.2 Hermes（P0）
 
@@ -724,6 +729,8 @@ make -C apps/agentshield ui
 Observe 显式携带 action_id 与 decision_receipt_id；旧适配器可用相同 platform/session/agent/tool/tool_call_id 唯一定位。缺 tool_call_id 时必须携带相同参数，若有多个候选则拒绝，不能猜测。
 只有 allow/redact 或已由本地管理面批准的 hold 可观测。同一动作相同结果摘要幂等返回原回执，不同摘要返回 409。结果超过 64 KiB 拒绝，避免截断掩盖冲突。
 关联状态从签名回执恢复，内存最多 8192 项，默认 24h 窗口；溢出拒绝新决策，过期动作不再接受 Observe。过期仅清理动作关联，不清理 bound/tainted 会话安全状态。
+
+24h 窗口从签名 decision 的 `issued_at`（当前秒精度）计算，到达边界即拒绝；内存运行期与重启恢复使用相同精度。较晚的 observation 不延长原动作窗口，也不使 bound/tainted 会话变回 clean。
 
 ### 10.2 V2 完整性补齐（2026-09-07）
 
