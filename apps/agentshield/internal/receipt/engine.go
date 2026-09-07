@@ -55,13 +55,17 @@ var ErrSessionCapacity = errors.New("receipt: session capacity exhausted")
 
 // Request is one tool call awaiting a decision.
 type Request struct {
-	Platform   string         `json:"platform"`
-	SessionID  string         `json:"session_id"`
-	AgentID    string         `json:"agent_id"`
-	Tool       string         `json:"tool"`
-	ToolCallID string         `json:"tool_call_id"`
-	Params     map[string]any `json:"params"`
-	Context    map[string]any `json:"context"`
+	Platform   string          `json:"platform"`
+	SessionID  string          `json:"session_id"`
+	AgentID    string          `json:"agent_id"`
+	Tool       string          `json:"tool"`
+	ToolCallID string          `json:"tool_call_id"`
+	Params     map[string]any  `json:"params"`
+	Context    map[string]any  `json:"context"`
+	TaskID     string          `json:"task_id,omitempty"`
+	IntentID   string          `json:"intent_id,omitempty"`
+	Principal  string          `json:"principal,omitempty"`
+	Intent     *IntentContract `json:"intent,omitempty"`
 }
 
 // Trifecta flags for the session.
@@ -307,6 +311,16 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	}
 	excerpt := truncate(e.analyzer.Redact(paramsText), excerptMax)
 	rec.ParamsExcerpt = &excerpt
+	var intentErr error
+	if req.Intent != nil {
+		if req.IntentID != "" && req.IntentID != req.Intent.IntentID {
+			intentErr = fmt.Errorf("intent_id mismatch")
+		} else if req.TaskID != "" && req.TaskID != req.Intent.TaskID {
+			intentErr = fmt.Errorf("task_id mismatch")
+		} else {
+			intentErr = req.Intent.validate(req, start)
+		}
+	}
 
 	// step 4a: taint scan of params (updates session before the decision so
 	// a secret passed to an egress tool in the same call is caught)
@@ -334,6 +348,9 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	rec.Trifecta = &tf
 
 	action, reason := e.evaluate(req, s, hosts, paths, &rec)
+	if intentErr != nil {
+		action, reason = ActionDeny, "intent violation: "+intentErr.Error()
+	}
 
 	// step 6: redact — only when the grant permits and a secret literal is in params
 	var redacted map[string]any

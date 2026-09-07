@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/intent-contract.v1.json",
+  "title": "IntentContract",
+  "description": "单次任务的授权边界；运行时授权必须同时满足 Grant、Intent 和 RuntimeState。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["intent_id", "task_id", "principal", "agent_id", "purpose", "allowed_effects", "resources", "parameter_constraints", "valid_until", "authority_revision", "evidence_ids"],
+  "properties": {
+    "intent_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "principal": {"type": "string", "minLength": 1},
+    "agent_id": {"type": "string", "minLength": 1},
+    "purpose": {"type": "string", "minLength": 1},
+    "allowed_effects": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "resources": {"type": "object", "additionalProperties": {"type": ["string", "array", "object"]}},
+    "parameter_constraints": {"type": "object", "additionalProperties": {"type": ["string", "number", "boolean", "array", "object"]}},
+    "valid_until": {"type": "string", "format": "date-time"},
+    "authority_revision": {"type": "string", "minLength": 1},
+    "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

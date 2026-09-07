@@ -12,7 +12,7 @@
 
 下面以 **siq-agent-security** 为主。为何落在 DGX Spark、本机如何适配，见 [为什么做在 NVIDIA DGX Spark 上](#为什么做在-nvidia-dgx-spark-上) 与 [在 DGX Spark 上的适配与实测](#在-dgx-spark-上的适配与实测)。命令与演示夹具见 [本机操作](./AGENTSHIELD.md)。
 
-当前代码在分支 [`cursor/agentshield-w0-contracts-8eff`](https://github.com/maoyadongsh/siq-agent-security/tree/cursor/agentshield-w0-contracts-8eff)，尚未合入 `main`。发布：[v0.2.0](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.2.0)。产品页：[https://maoyadongsh.github.io/siq-agent-security/](https://maoyadongsh.github.io/siq-agent-security/)。从源码生成的架构图：[架构](https://maoyadongsh.github.io/siq-agent-security/architecture.html)。
+当前实现已合入 `main`；从源码构建和验证请直接使用 `main`。发布：[v0.2.0](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.2.0)。产品页：[https://maoyadongsh.github.io/siq-agent-security/](https://maoyadongsh.github.io/siq-agent-security/)。从源码生成的架构图：[架构](https://maoyadongsh.github.io/siq-agent-security/architecture.html)。
 
 ---
 
@@ -65,8 +65,7 @@ siq-agent-security 就是补在同一台 Spark 上的本机门禁：不替代现
 ```bash
 git clone https://github.com/maoyadongsh/siq-agent-security.git
 cd siq-agent-security
-git fetch origin cursor/agentshield-w0-contracts-8eff
-git checkout cursor/agentshield-w0-contracts-8eff
+git checkout main
 
 cd apps/agentshield
 go test ./...

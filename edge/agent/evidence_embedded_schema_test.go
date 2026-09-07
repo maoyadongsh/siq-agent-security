@@ -12,11 +12,11 @@ import (
 )
 
 type evidenceEmbedFixtureFile struct {
-	Schema            string                   `json:"schema"`
-	PublicKeyPEM      string                   `json:"public_key_pem"`
-	SeedB64           string                   `json:"seed_b64"`
-	CrossContractNote map[string]string        `json:"cross_contract_note"`
-	Vectors           []evidenceEmbedVector    `json:"vectors"`
+	Schema            string                `json:"schema"`
+	PublicKeyPEM      string                `json:"public_key_pem"`
+	SeedB64           string                `json:"seed_b64"`
+	CrossContractNote map[string]string     `json:"cross_contract_note"`
+	Vectors           []evidenceEmbedVector `json:"vectors"`
 }
 
 type evidenceEmbedVector struct {
