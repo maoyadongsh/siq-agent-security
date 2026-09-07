@@ -1,0 +1,1789 @@
+{
+  "conclusion": "success",
+  "createdAt": "2026-09-07T12:56:55Z",
+  "databaseId": 34124655497,
+  "headSha": "78e740a01fa9c46cfb256fa2d84c2cf0739bdb2e",
+  "jobs": [
+    {
+      "completedAt": "2026-09-07T12:57:47Z",
+      "conclusion": "success",
+      "databaseId": 101750379096,
+      "name": "control-api",
+      "startedAt": "2026-09-07T12:57:15Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize containers",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Ruff",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Pytest（含租户隔离/职责分离/注册生命周期负向）",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Python dependency audit",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Alembic 全量回放（干净 PostgreSQL）",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86",
+          "number": 16,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 17,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Stop containers",
+          "number": 18,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 19,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379096"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:12Z",
+      "conclusion": "success",
+      "databaseId": 101750379191,
+      "name": "web",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm ci",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm run build",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "OpenClaw hook correlation regression",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Production dependency audit",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "number": 13,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 14,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379191"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:29Z",
+      "conclusion": "success",
+      "databaseId": 101750379238,
+      "name": "edge (1.22, connectors/docker)",
+      "startedAt": "2026-09-07T12:57:00Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/docker @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379238"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:32Z",
+      "conclusion": "success",
+      "databaseId": 101750379248,
+      "name": "edge (stable, connectors/hermes)",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/hermes @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379248"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:29Z",
+      "conclusion": "success",
+      "databaseId": 101750379250,
+      "name": "edge (1.22, connectors/process)",
+      "startedAt": "2026-09-07T12:57:00Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/process @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379250"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:26Z",
+      "conclusion": "success",
+      "databaseId": 101750379271,
+      "name": "edge (1.22, connectors/directory)",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/directory @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379271"
+    },
+    {
+      "completedAt": "2026-09-07T12:58:50Z",
+      "conclusion": "success",
+      "databaseId": 101750379278,
+      "name": "agentshield",
+      "startedAt": "2026-09-07T12:57:11Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "gofmt",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "vet & test",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "govulncheck (DEV17-A)",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Cross-compile",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify signed skill-manifest.json",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Self-scan Skill pack",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 17,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 18,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 19,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379278"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:21Z",
+      "conclusion": "success",
+      "databaseId": 101750379283,
+      "name": "gitleaks",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Reject tracked task-signing private keys",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Reject task-signing private keys added since base",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Event envelope core checksum",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Control API Dockerfile uses uv.lock (DEV17-A)",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Web nginx security headers (DEV17-B)",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "CI Actions pinned to commit SHA (DEV17-B)",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "OpenShell workflow download contract (DEV17-C)",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Site Mermaid self-host pin (DEV17-C)",
+          "number": 11,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Pages workflow Action pins (DEV17-D)",
+          "number": 12,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Dockerfile base image digests (DEV17-D)",
+          "number": 13,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Local product threats in threat-model (DEV18-B)",
+          "number": 14,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Capability matrix + runbook honesty (DEV18-C)",
+          "number": 15,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Perf baseline harness honesty + smoke (DEV16-D)",
+          "number": 16,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 32,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 33,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379283"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:28Z",
+      "conclusion": "success",
+      "databaseId": 101750379284,
+      "name": "edge (1.22, connectors/hermes)",
+      "startedAt": "2026-09-07T12:57:00Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/hermes @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379284"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:36Z",
+      "conclusion": "success",
+      "databaseId": 101750379287,
+      "name": "edge (stable, connectors/piagent)",
+      "startedAt": "2026-09-07T12:57:00Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/piagent @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379287"
+    },
+    {
+      "completedAt": "2026-09-07T12:58:08Z",
+      "conclusion": "success",
+      "databaseId": 101750379291,
+      "name": "edge (stable, connectors/docker)",
+      "startedAt": "2026-09-07T12:57:32Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/docker @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379291"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:38Z",
+      "conclusion": "success",
+      "databaseId": 101750379292,
+      "name": "edge (stable, connectors/mcp)",
+      "startedAt": "2026-09-07T12:57:00Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/mcp @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379292"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:25Z",
+      "conclusion": "success",
+      "databaseId": 101750379294,
+      "name": "edge (1.22, connectors/piagent)",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/piagent @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379294"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:37Z",
+      "conclusion": "success",
+      "databaseId": 101750379296,
+      "name": "edge (stable, connectors/dify)",
+      "startedAt": "2026-09-07T12:57:01Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/dify @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379296"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:30Z",
+      "conclusion": "success",
+      "databaseId": 101750379303,
+      "name": "edge (1.22, connectors/workbuddy)",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/workbuddy @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379303"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:29Z",
+      "conclusion": "success",
+      "databaseId": 101750379316,
+      "name": "edge (1.22, connectors/kubernetes)",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/kubernetes @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379316"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:25Z",
+      "conclusion": "success",
+      "databaseId": 101750379320,
+      "name": "edge (1.22, connectors/systemd)",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/systemd @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379320"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:32Z",
+      "conclusion": "success",
+      "databaseId": 101750379332,
+      "name": "edge (stable, connectors/kubernetes)",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/kubernetes @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379332"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:54Z",
+      "conclusion": "success",
+      "databaseId": 101750379341,
+      "name": "edge (stable, edge/agent)",
+      "startedAt": "2026-09-07T12:57:00Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（edge/agent @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379341"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:42Z",
+      "conclusion": "success",
+      "databaseId": 101750379343,
+      "name": "edge (1.22, edge/agent)",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（edge/agent @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379343"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:26Z",
+      "conclusion": "success",
+      "databaseId": 101750379346,
+      "name": "edge (1.22, connectors/dify)",
+      "startedAt": "2026-09-07T12:56:59Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/dify @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379346"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:40Z",
+      "conclusion": "success",
+      "databaseId": 101750379360,
+      "name": "edge (stable, connectors/openclaw)",
+      "startedAt": "2026-09-07T12:57:03Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/openclaw @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379360"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:55Z",
+      "conclusion": "success",
+      "databaseId": 101750379371,
+      "name": "edge (1.22, connectors/mcp)",
+      "startedAt": "2026-09-07T12:57:30Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/mcp @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379371"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:52Z",
+      "conclusion": "success",
+      "databaseId": 101750379373,
+      "name": "edge (1.22, connectors/openclaw)",
+      "startedAt": "2026-09-07T12:57:27Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/openclaw @ go 1.22）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379373"
+    },
+    {
+      "completedAt": "2026-09-07T12:57:58Z",
+      "conclusion": "success",
+      "databaseId": 101750379383,
+      "name": "edge (stable, connectors/process)",
+      "startedAt": "2026-09-07T12:57:27Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/process @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379383"
+    },
+    {
+      "completedAt": "2026-09-07T12:58:08Z",
+      "conclusion": "success",
+      "databaseId": 101750379415,
+      "name": "edge (stable, connectors/systemd)",
+      "startedAt": "2026-09-07T12:57:29Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/systemd @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379415"
+    },
+    {
+      "completedAt": "2026-09-07T12:58:08Z",
+      "conclusion": "success",
+      "databaseId": 101750379421,
+      "name": "edge (stable, connectors/directory)",
+      "startedAt": "2026-09-07T12:57:29Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/directory @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379421"
+    },
+    {
+      "completedAt": "2026-09-07T12:58:00Z",
+      "conclusion": "success",
+      "databaseId": 101750379428,
+      "name": "edge (stable, connectors/workbuddy)",
+      "startedAt": "2026-09-07T12:57:24Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Go formatting（edge 与 connectors 全部目录）",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build & vet & test（connectors/workbuddy @ go stable）",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 11,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497/job/101750379428"
+    }
+  ],
+  "status": "completed",
+  "updatedAt": "2026-09-07T12:58:51Z",
+  "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34124655497"
+}

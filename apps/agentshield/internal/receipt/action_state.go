@@ -19,10 +19,11 @@ func (e *CorrelationError) Error() string { return e.Code }
 func correlationError(code string) error  { return &CorrelationError{code} }
 
 type actionRecord struct {
-	decision    Receipt
-	observation *Receipt
-	expires     time.Time
-	approved    bool
+	decision     Receipt
+	observation  *Receipt
+	expires      time.Time
+	approved     bool
+	holdResolved bool
 }
 
 func (e *Engine) actionCapacity(now time.Time) error {
@@ -206,6 +207,7 @@ func (e *Engine) restoreActionState() error {
 			}
 			if a := e.actions[r.ActionID]; a != nil {
 				a.approved = r.Action == ActionAllow
+				a.holdResolved = true
 			}
 		}
 		return nil

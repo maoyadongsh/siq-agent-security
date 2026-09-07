@@ -736,6 +736,10 @@ Observe 显式携带 action_id 与 decision_receipt_id；旧适配器可用相�
 
 ### 10.2 V2 完整性补齐（2026-09-07）
 
+执行前 hold 检查：`POST /v1/hold-status` 使用 capDecision，只读，不接受批准字段。请求严格限定 platform/session_id/agent_id/tool/tool_call_id/action_id/decision_receipt_id/params，必须提供完整服务端动作身份和原参数。返回合同 `hold-status/v1`：status 为 pending/approved/denied/expired/consumed，带原 action_id、decision_receipt_id、expires_at 和 reason_code；不返回参数或管理身份。身份/参数不匹配、未知动作或非 hold 返回 400，匿名返回 401。状态由已有签名 decision/resolution/observation 恢复，不新增授权记录；查询不续期。原 hold 到期（含边界）、已观察或当前授权不再匹配时不得报告 approved。
+
+OpenClaw hold 按顺序执行：先等待上述本地批准，再返回原生 requireApproval。默认本地等待上限 10 秒（配置 holdWaitMs，范围 100–10000ms），每次 HTTP 仍受 timeoutMs 与总剩余等待时间限制；上限为适配原生 15 秒 hook 预算而设，不能把等待挂起为无限期。管理端需在等待期间处理当前 hold，超时后该次调用阻断，迟到批准不会自动重新执行。平台审批超时不超过原 hold 剩余有效期；本地拒绝、异常响应、断连和取消均在 block 下阻断。warn/audit_only 仍由服务端产生 allow/advisory，不把该模式升级成强制阻断。本地状态查询是执行前检查快照，不是外部工具执行完成证明；平台等待期间的外部状态变化仍须单独验证。
+
 - Shell/exec 命令不作完整解释或执行。所有文本命令均带 `process.exec` 和 `unknown`；可识别的网络词仅追加 `network.request`，不能证明没有其他副作用。V2 Intent 遇到 unknown 拒绝（即使 allowed_effects 包含 unknown），optional 无绑定保留原 Grant 语义。
 - 结构化 file/network/message 工具使用统一的内存 Resource 类型做提取/归一化/匹配；`resource_refs` 只存 domain 与归一化资源的 canonical SHA-256，参数、URL query、文件路径和收件人原文不增加到签名资源字段。无法提取时为空，不伪装已观察到资源。
 - 新回执可选 `principal` 来自已验签 Intent；`provenance_refs` 仅为管理面签名的保留引用（最多 64 个合法 ID），不解释传播图、不参与扩大权限，Decision 自报不成为可信引用。Envelope、Intent V2 和 Receipt 增加兼容可选字段；原 resources 留作历史字段，新生产者只生成 typed resource_refs。

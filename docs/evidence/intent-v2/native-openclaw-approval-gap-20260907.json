@@ -1,0 +1,108 @@
+{
+  "schema": "intent-v2-openclaw-approval-validation/v1",
+  "recorded_at": "2026-09-07T13:10:32.278504+00:00",
+  "passed": false,
+  "observation_invariants_passed": true,
+  "siq_commit": "78e740a01fa9c46cfb256fa2d84c2cf0739bdb2e",
+  "siq_dirty": true,
+  "siq_binary_sha256": "50f9d422f14542c1d3e65d8fbe74c217e5c02bf4bb7e82387d2d296158668261",
+  "cases": [
+    {
+      "id": "platform-deny",
+      "executed": false,
+      "platform_decision": "deny",
+      "blocked": true,
+      "local_approval": null,
+      "expected_execution": false,
+      "observation_count": 0,
+      "execution_gate_passed": true
+    },
+    {
+      "id": "both-approve",
+      "executed": true,
+      "platform_decision": "allow-once",
+      "blocked": false,
+      "local_approval": true,
+      "expected_execution": true,
+      "observation_count": 1,
+      "execution_gate_passed": true
+    },
+    {
+      "id": "local-missing",
+      "executed": true,
+      "platform_decision": "allow-once",
+      "blocked": false,
+      "local_approval": null,
+      "expected_execution": false,
+      "observation_count": 0,
+      "execution_gate_passed": false
+    },
+    {
+      "id": "local-reject",
+      "executed": true,
+      "platform_decision": "allow-once",
+      "blocked": false,
+      "local_approval": false,
+      "expected_execution": false,
+      "observation_count": 0,
+      "execution_gate_passed": false
+    }
+  ],
+  "receipt_count": 7,
+  "receipt_chain_verified": true,
+  "openclaw_runtime": {
+    "outputs": [
+      {
+        "id": "platform-deny",
+        "executed": false,
+        "platform_decision": "deny",
+        "blocked": true
+      },
+      {
+        "id": "both-approve",
+        "executed": true,
+        "platform_decision": "allow-once",
+        "blocked": false
+      },
+      {
+        "id": "local-missing",
+        "executed": true,
+        "platform_decision": "allow-once",
+        "blocked": false
+      },
+      {
+        "id": "local-reject",
+        "executed": true,
+        "platform_decision": "allow-once",
+        "blocked": false
+      }
+    ],
+    "sources": {
+      "dist/server-DCqS_Ro7.js": "0a0b9a399c0370b1fcbd06b8c63f252a45cd06818c11f3fb66feac8cdbcaf484",
+      "dist/server.impl-D3CWr7f5.js": "68262664701ca2ec11004c7cbf056cad81bb77875babc77a936cd0177f56c249",
+      "dist/plugin-approval-DGSeVwU6.js": "3a1a769e0593653414a9089aecd3c421f867c5701f32e1a1c42a59ef6890849a",
+      "dist/approval-shared-lxPlCjce.js": "47bd0d6a7c499a7cfb0ef950fb8fb13330fe89eb29199d17837fd03e65724c91",
+      "dist/server-request-context-CslsVvbA.js": "0f8eb35347dd49d4f9bca599254313a8a94b31a0e733bd6d0456317a0fdec906",
+      "dist/operator-approvals-client-DhuKX2Cs.js": "e309ce5c0458fe207c7e0bd277dda19f4165204f668c2ce94481b3731955686f",
+      "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+      "dist/pi-tools.before-tool-call-BmZM4hyt.js": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+      "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61"
+    },
+    "openclaw_version": "2026.5.12"
+  },
+  "node_version": "v22.22.1",
+  "sources": {
+    "scripts/validate-intent-v2-openclaw-approval.py": "1aa19f154e09537d50bf689d9c143f66d2c95363a39da8e6d45bb420d2c35366",
+    "scripts/openclaw-approval-worker.mjs": "c30f13a5cb508cfcab7fbc601dcd57bbc10d099e3b8aeef67d09bd0df82e31be",
+    "scripts/openclaw-fixture-guard.mjs": "d520368340e6672182e3a3ba72dc8ae09c7359fb367f7a859b0058647874671b",
+    "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+    "scripts/validate-intent-v2-hermes.py": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+    "adapters/runtime/openclaw-agentshield/index.ts": "de0fb32e04081a9765b53b00da1119af11a7a1933af6e35949fd596fbf42ff6a"
+  },
+  "limitations": [
+    "synthetic tool executor and operator; no model or human approval proof",
+    "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
+    "optional unbound exec; required bound opaque shell remains denied",
+    "test IO guard is not OS isolation; installed runtime and real settings unchanged"
+  ]
+}

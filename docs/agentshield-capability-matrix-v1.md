@@ -83,3 +83,7 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 2026-09-07 20:36 新增 [OpenClaw 空闲重置失败证据](trusted-intent-v2-openclaw-idle-reset-20260907-203600.md)：同 key 的 SIQ 绑定、动作链和污点保持，原生 UUID 轮换后却继续使用旧 transcript。报告 `passed=false`、`siq_invariants_passed=true`，进程退出码 1；不得把这份归档作为完整重置通过证据，综合状态继续 `unverified`。
 
 2026-09-07 20:42 新增 [OpenClaw 临时补丁副本证据](trusted-intent-v2-openclaw-reset-patch-20260907-204200.md)：指纹限定补丁通过相同空闲重置测试，并保留正常续聊及 SIQ 安全状态。本机原版未更新；不能把该副本的 `passed=true` 归于原版或视作上游已修复，综合状态不升级。
+
+2026-09-07 21:11 新增 [原生审批执行失败证据](trusted-intent-v2-native-approval-gap-20260907-211105.md)：实际网关/审批 WebSocket/前置包装器下，平台允许但本地未批准或已拒绝时，合成执行器仍被调用。Observe 拒绝发生于执行之后；两个门禁场景失败，综合 `unverified` 保持，不能宣称本地 hold 已在平台执行前强制生效。
+
+2026-09-07 21:33 新增 [执行前审批修复证据](trusted-intent-v2-approval-gate-validation-20260907-213332.md)：当前工作树先等待本地批准，再进入平台审批；六个原生夹具场景及十二条回执恢复验签通过。21:11 原失败归档保留；真人流程、平台等待期间授权变化与综合平台验收仍未完成，不升级综合状态。

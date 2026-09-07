@@ -81,6 +81,28 @@ func TestHoldHTTPRequiresManagementApprovalAcrossRecovery(t *testing.T) {
 				t.Fatalf("edited grant lost per-use approval: %v", decision)
 			}
 			heldPath := "/v1/hold/" + decision["receipt_id"].(string)
+			statusRequest := map[string]any{}
+			for key, value := range request {
+				statusRequest[key] = value
+			}
+			statusRequest["action_id"] = decision["action_id"]
+			statusRequest["decision_receipt_id"] = decision["receipt_id"]
+			post("/v1/hold-status", "", statusRequest, 401)
+			post("/v1/hold-status", s.bootAdmin, statusRequest, 401)
+			if status := post("/v1/hold-status", token, statusRequest, 200); status["status"] != "pending" {
+				t.Fatal(status)
+			}
+			statusRequest["approve"] = true
+			post("/v1/hold-status", token, statusRequest, 400)
+			delete(statusRequest, "approve")
+			statusRequest["params"] = map[string]any{"command": "changed"}
+			post("/v1/hold-status", token, statusRequest, 400)
+			statusRequest["params"] = request["params"]
+			rawStatus, err := json.Marshal(statusRequest)
+			if err != nil {
+				t.Fatal(err)
+			}
+			post("/v1/hold-status", token, string(rawStatus)+" {}", 400)
 			resolution := map[string]any{"approve": true, "actor_id": "spoofed-platform-operator"}
 			post(heldPath, "", resolution, 401)
 			post(heldPath, token, resolution, 403)
@@ -99,6 +121,10 @@ func TestHoldHTTPRequiresManagementApprovalAcrossRecovery(t *testing.T) {
 			resolution = map[string]any{"approve": approve, "actor_id": "fixture-admin"}
 			resolved := post(heldPath, s.bootAdmin, resolution, 200)
 			recoverEngine()
+			wantStatus := map[bool]string{true: "approved", false: "denied"}[approve]
+			if status := post("/v1/hold-status", token, statusRequest, 200); status["status"] != wantStatus {
+				t.Fatal(status)
+			}
 			replayed := post(heldPath, s.bootAdmin, resolution, 200)
 			if replayed["receipt_id"] != resolved["receipt_id"] {
 				t.Fatal("recovered approval retry created another resolution")

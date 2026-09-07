@@ -99,3 +99,7 @@
 | T24 Intent Downgrade / Binding Removal | 固定签名绑定、过期拒绝；bound 状态保留在拒绝回执并在重启时恢复 | `TestBoundSessionCannotDowngradeOrSwapIntent`、`TestDowngradeDenialDoesNotEraseRecoveredBinding` | 不提供任务切换/解绑；状态整体删除不属于强 OS 隔离保证 |
 | T25 Intent Authority Tampering | canonical digest 与 Ed25519 校验；排他发布不可变文档 | `TestStoreIntegrityAndImmutability`、Python fixed vector 签名篡改测试 | 私钥同 UID 读取、备份回滚需要独立系统边界 |
 | T26 Decision–Effect Confusion | 动作序号生成 ID；Observe 强校验前置动作、身份、hold 审批与结果幂等 | `TestObserveRequiresAuthorizedDecision`、`TestObserveIdempotencyConcurrencyAndRecovery`、`TestObserveHoldRequiresManagementResolution`、`TestShellCannotClaimExhaustiveEffects`、`TestTrustedTaskBoundarySurvivesLateResultsAndRestart`、`TestActionRecoveryAfterProcessKill` | 工具结果是适配器提供的 observed 证据，不能证明真实 OS/外部副作用；不完整链恢复失败关闭 |
+
+T26 原生增量（2026-09-07 21:11）：[OpenClaw 网关审批夹具](trusted-intent-v2-native-approval-gap-20260907-211105.md) 动态证明平台允许、本地未批准或已拒绝时，合成执行器仍会被调用，随后 Observe 才被拒绝。该执行前衔接缺口尚未修复；现有观察关联控制不能被描述为这条路径上的完整执行阻断。
+
+T26 修复增量（2026-09-07 21:33）：[执行前本地审批门禁](trusted-intent-v2-approval-gate-validation-20260907-213332.md) 通过只读强关联查询、有界等待、本地批准后再进入平台审批，阻断已复现路径。`TestHoldStatusIsReadOnlyBoundedAndRecovered`、`TestHoldStatusRejectsIdentityAndAuthorityChanges`、HTTP 回归和六个原生场景通过；查询是快照，平台等待期间的授权变化及外部真实副作用仍不由此证明。

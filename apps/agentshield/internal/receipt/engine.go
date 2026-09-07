@@ -726,6 +726,7 @@ func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Recei
 	}
 	if entry := e.actions[held.ActionID]; entry != nil {
 		entry.approved = approve
+		entry.holdResolved = true
 		if approve {
 			if session := e.sessions[held.SessionID]; session != nil && session.boundTaskID == held.TaskID && session.boundIntentID == held.IntentID {
 				session.parentActionID = held.ActionID

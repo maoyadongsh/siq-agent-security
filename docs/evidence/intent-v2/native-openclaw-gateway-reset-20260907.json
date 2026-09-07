@@ -1,0 +1,142 @@
+{
+  "schema": "intent-v2-openclaw-gateway-reset-validation/v1",
+  "passed": true,
+  "siq_invariants_passed": true,
+  "native_transcript_cleared": true,
+  "native_reset_observations": {
+    "tool_results_retained": 0,
+    "pii_marker_retained": false,
+    "uuid_rotated_before_model_request": true,
+    "session_file_unchanged": true
+  },
+  "recorded_at": "2026-09-07T13:43:18.038529+00:00",
+  "baseline_conversation": {
+    "schema": "intent-v2-openclaw-conversation-validation/v1",
+    "passed": true,
+    "recorded_at": "2026-09-07T13:43:06.799453+00:00",
+    "siq_commit": "78e740a01fa9c46cfb256fa2d84c2cf0739bdb2e",
+    "siq_dirty": true,
+    "openclaw_version": "2026.5.12",
+    "node_version": "v22.22.1",
+    "harness_sha256": "aa2be513958101f5e00c20fd6ebee8104e4097c875e16220796ba8e8edcdb9b4",
+    "guard_sha256": "d520368340e6672182e3a3ba72dc8ae09c7359fb367f7a859b0058647874671b",
+    "adapter_sha256": "ef520709e165da99b85f8d57d7a7ad6281d8791a218a748655b6945310650b65",
+    "binary_sha256": "757606dbde5ee681383dceb9943485fb868c9d803f72dec8c00e41f2be4e4198",
+    "native_session_key": "agent:intent-v2-fixture-agent:main",
+    "native_session_id": "4108f60d-e12c-4cb7-8123-c5fc8d7be13d",
+    "unbound_session_selector": "3a913652-6630-4edc-9fbd-3079cf4539d2",
+    "unbound_native_session_key": "agent:intent-v2-fixture-agent:explicit:3a913652-6630-4edc-9fbd-3079cf4539d2",
+    "runtime_source_sha256": {
+      "openclaw.mjs": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733",
+      "package.json": "84cb48b639a69a10703eb9d24c612f8f4780f73163dc09927309a6e0026968f2",
+      "dist/entry.js": "21120f85d3a3de0da3276c2748f06317e173baf3f7baef30cff4e1a4342ea72d",
+      "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+      "node_modules/@earendil-works/pi-ai/dist/providers/openai-completions.js": "8c03f377889ce735959b1b0229b511337cda9f7386a74fb7e51673eb2612b07e",
+      "dist/agent-command-BQgTSh4F.js": "662d34784888289ecd133aec3ddb605de1f7076e9897e2e2e636ad246d6617f1",
+      "dist/pi-embedded-subscribe.handlers.compaction.runtime.js": "d9c8f0885dd1bbd1abe413bb64e1540f37fe7fded5be2d9ab269b91439ceddb5",
+      "dist/pi-embedded-subscribe.handlers.compaction.runtime-Cp1dHUYN.js": "54f20a709dbc01d6eb897a30dc166b3723c7b3843804438c89426af75eea6d25",
+      "dist/pi-embedded-utils-1bVAKyYK.js": "33ea83ba5e4709889c9af32435fe23baca0b13a9617de35c19bb1e0a6625fb51",
+      "dist/pi-embedded-DBLudmkf.js": "dd00edf017c2b5e0bec59c50c1cd8eb98a401524edce4ea0d8360eab6c40ac5f",
+      "dist/pi-embedded-block-chunker-BqrLgtPu.js": "c53bd9a69ee90b4096c5521d17284855286fab7024aed30b775db4939e0eb167",
+      "dist/pi-embedded-CPEBK2iK.js": "011cb71da7c37a8667646184d271e839d329eedc9c36bf73dbce6bea273f7ad9",
+      "dist/pi-embedded-helpers-CVGWGeIq.js": "a5c907eec9fd426164e9c5e5e60aa5af5d173e18f61165fdfad888a35cb26de8",
+      "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61",
+      "dist/pi-tools.before-tool-call-CwZBGw2i.js": "59462311be15399b98c2c3bd63de50456a40ca34d8e110c79df7b2fefa0f995d",
+      "dist/pi-tools.before-tool-call-BmZM4hyt.js": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+      "dist/tool-call-id-DHd-I_KM.js": "0416badba23228de8efaeceaba9f5e1698f1f8a2b53f3624f9202ae51f59536d",
+      "dist/model-fallback-auth.runtime.js": "1a9329ea8d3a56a02dee21ef1d43cc8005226177b8b21f6d00cd64f1750d4675",
+      "dist/model-fallback-auth.runtime-COtF5mDw.js": "7579abb77668919ea622b16c31a5ef23f73382c01289dbb80900a8f898a273da",
+      "dist/model-fallback-CFP2h22a.js": "878bfa10007deedd87d05e6986c2cbf57d7dcc1e796d74d102dab55f382bc11b"
+    },
+    "shared_harness_sha256": {
+      "validate-intent-v2-hermes.py": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+      "validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e"
+    },
+    "cli_turns": 4,
+    "completion_requests": 10,
+    "streaming_requests": 10,
+    "tool_calls": 6,
+    "receipt_count": 8,
+    "history_id_mappings": [
+      {
+        "response_id": "foreign-company",
+        "history_id": "foreigncompany"
+      },
+      {
+        "response_id": "prefix-collision",
+        "history_id": "prefixcollision"
+      },
+      {
+        "response_id": "write-denied",
+        "history_id": "writedenied"
+      },
+      {
+        "response_id": "allowed-after-denials",
+        "history_id": "allowedafterdenials"
+      },
+      {
+        "response_id": "missing-binding",
+        "history_id": "missingbinding"
+      }
+    ],
+    "checks": [
+      "decision_token_cannot_read_authority",
+      "native_cli_session_creation",
+      "native_stream_tool_dispatch",
+      "native_post_hook_observation",
+      "scope_and_write_denied",
+      "cross_process_transcript_and_action_chain",
+      "explicit_new_native_session_has_no_binding",
+      "offline_receipt_chain_verified"
+    ],
+    "limitations": [
+      "synthetic model and operator; no human approval proof",
+      "embedded CLI path, not a live gateway or channel delivery",
+      "no hold approval, session reset or CodeBuddy journey",
+      "no OS isolation claim"
+    ]
+  },
+  "harness_sha256": "85ec6132d5d224d4b0e399f9fd34ccf8f273bf744bceed302bba53a7cc730f53",
+  "conversation_harness_sha256": "aa2be513958101f5e00c20fd6ebee8104e4097c875e16220796ba8e8edcdb9b4",
+  "gateway_reset": {
+    "method": "sessions.reset",
+    "readonly_reset_rejected": true,
+    "rejected_reset_store_unchanged": true,
+    "fresh_header_matches_new_uuid": true,
+    "old_transcript_archived_unchanged": true,
+    "reset_succeeded": true,
+    "native_uuid_after_rpc": "18965ff1-9f0d-43d1-b1a8-6860500f7e6d",
+    "sources": {
+      "dist/server-DCqS_Ro7.js": "0a0b9a399c0370b1fcbd06b8c63f252a45cd06818c11f3fb66feac8cdbcaf484",
+      "dist/server.impl-D3CWr7f5.js": "68262664701ca2ec11004c7cbf056cad81bb77875babc77a936cd0177f56c249",
+      "dist/session-reset-service-CZlxWK9Q.js": "e14832f8c4afce4fb022532911d642215806060e1f2f6fa2b11aef62b5bfcf50",
+      "dist/call-DO7ujqcl.js": "94fb255579be707d99234f52b5f8250780f81e18016e71311a0a1740fbf03c77"
+    }
+  },
+  "gateway_worker_sha256": "f29f6be95c42de2ccf87b941b6360e346855bdb46e09a7d0d60e5aac736c5474",
+  "native_session_key": "agent:intent-v2-fixture-agent:main",
+  "previous_native_uuid": "4108f60d-e12c-4cb7-8123-c5fc8d7be13d",
+  "new_native_uuid": "18965ff1-9f0d-43d1-b1a8-6860500f7e6d",
+  "reset_stage_completion_requests": 5,
+  "receipt_count": 13,
+  "task_sequences": [
+    6,
+    7,
+    8
+  ],
+  "checks": [
+    "native_gateway_sessions_reset_rpc",
+    "read_only_gateway_scope_cannot_reset",
+    "fixed_binding_survives_same_routing_key",
+    "scope_denial_survives_rollover",
+    "action_sequence_and_parent_survive_rollover",
+    "pii_taint_survives_before_new_read",
+    "offline_chain_verified"
+  ],
+  "limitations": [
+    "native UUID rollover does not by itself prove transcript erasure; inspect native_transcript_cleared",
+    "gateway reset RPC and subsequent local CLI only; no message channel reset journey",
+    "same routing key intentionally remains the same SIQ authority/session",
+    "synthetic model and operator; no human approval or OS isolation proof"
+  ]
+}

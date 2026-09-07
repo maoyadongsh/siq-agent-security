@@ -8,7 +8,7 @@
  * Decision mapping:
  *   allow  → undefined (no decision)
  *   deny   → { block: true, blockReason }
- *   hold   → { requireApproval: { title, description, severity, timeoutMs } }
+ *   hold   → wait for local approval, then require native platform approval
  *   redact → { params }  (host-owned params rewritten with secrets removed)
  *
  * Fail-closed table (§3.8.4): in `block` mode an unreachable / timed-out / 401 /
@@ -31,6 +31,7 @@ interface Config {
   tokenPath: string;
   enforcementMode: Mode;
   timeoutMs: number;
+  holdWaitMs: number;
   agentId: string;
 }
 
@@ -66,6 +67,7 @@ function loadConfig(): Config {
     tokenPath: join(stateDir(), "token"),
     enforcementMode: "block",
     timeoutMs: 5000,
+    holdWaitMs: 10000,
     agentId: env("SIQ_AGENT_SECURITY_AGENT_ID", "AGENTSHIELD_AGENT_ID") || "default",
   };
   const configDir = env("OPENCLAW_STATE_DIR") || join(homedir(), ".openclaw");
@@ -81,6 +83,7 @@ function loadConfig(): Config {
   if (endpoint) cfg.endpoint = endpoint;
   const mode = env("SIQ_AGENT_SECURITY_MODE", "AGENTSHIELD_MODE");
   if (mode) cfg.enforcementMode = mode as Mode;
+  if (!Number.isInteger(cfg.holdWaitMs) || cfg.holdWaitMs < 100 || cfg.holdWaitMs > 10000) cfg.holdWaitMs = 10000;
   return cfg;
 }
 
@@ -98,12 +101,14 @@ function readToken(): string | null {
   return token || null;
 }
 
-async function post<T>(path: string, body: unknown, signal?: AbortSignal): Promise<T | null> {
+async function post<T>(path: string, body: unknown, signal?: AbortSignal, remainingMs?: number): Promise<T | null> {
+  if (signal?.aborted) return null;
   const tok = readToken();
   if (!tok) return null;
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), cfg.timeoutMs);
-  signal?.addEventListener("abort", () => ctrl.abort(), { once: true });
+  const timer = setTimeout(() => ctrl.abort(), Math.min(cfg.timeoutMs, remainingMs ?? cfg.timeoutMs));
+  const abort = () => ctrl.abort();
+  signal?.addEventListener("abort", abort, { once: true });
   try {
     const res = await fetch(cfg.endpoint.replace(/\/$/, "") + path, {
       method: "POST",
@@ -118,7 +123,40 @@ async function post<T>(path: string, body: unknown, signal?: AbortSignal): Promi
     return null;
   } finally {
     clearTimeout(timer);
+    signal?.removeEventListener("abort", abort);
   }
+}
+
+function pause(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    const finish = () => { clearTimeout(timer); signal?.removeEventListener("abort", finish); resolve(); };
+    const timer = setTimeout(finish, ms);
+    signal?.addEventListener("abort", finish, { once: true });
+    if (signal?.aborted) finish();
+  });
+}
+
+async function waitForLocalApproval(decision: Decision, call: Record<string, unknown>, hookDeadline: number, signal?: AbortSignal) {
+  if (typeof decision.action_id !== "string" || !decision.action_id || typeof decision.receipt_id !== "string" ||
+    !decision.receipt_id || typeof call.tool_call_id !== "string" || !call.tool_call_id) return { state: "rejected" };
+  const deadline = Math.min(Date.now() + cfg.holdWaitMs, hookDeadline);
+  while (!signal?.aborted && Date.now() < deadline) {
+    const status = await post<Record<string, unknown>>("/v1/hold-status", {
+      ...call, action_id: decision.action_id, decision_receipt_id: decision.receipt_id,
+    }, signal, deadline - Date.now());
+    if (signal?.aborted) return { state: "rejected" };
+    if (!status || status.schema_version !== "hold-status/v1" || status.action_id !== decision.action_id ||
+      status.decision_receipt_id !== decision.receipt_id || typeof status.expires_at !== "string" ||
+      !["pending", "approved", "denied", "expired", "consumed"].includes(String(status.status))) return { state: "unavailable" };
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(status.expires_at)) return { state: "unavailable" };
+    const expires = Date.parse(status.expires_at);
+    if (!Number.isFinite(expires)) return { state: "unavailable" };
+    if (Date.now() >= deadline || Date.now() >= expires) return { state: "rejected" };
+    if (status.status === "approved" && status.reason_code === "hold_approved") return { state: "approved", expires };
+    if (status.status !== "pending" || status.reason_code !== "hold_pending") return { state: "rejected" };
+    await pause(Math.min(250, deadline - Date.now(), expires - Date.now()), signal);
+  }
+  return { state: "rejected" };
 }
 
 function failClosed(reason: string, tool = "", sessionId = "") {
@@ -182,18 +220,23 @@ export default definePluginEntry({
     api.on(
       "before_tool_call",
       async (event, ctx) => {
+        const hookDeadline = Date.now() + 12000;
+        const call = {
+          platform: "openclaw",
+          session_id: (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default",
+          agent_id: (ctx as { agentId?: string } | undefined)?.agentId ?? cfg.agentId,
+          tool: event.toolName,
+          tool_call_id: event.toolCallId ?? "",
+          params: event.params ?? {},
+        };
         const decision = await post<Decision>(
           "/v1/decide",
           {
-            platform: "openclaw",
-            session_id: (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default",
-            agent_id: (ctx as { agentId?: string } | undefined)?.agentId ?? cfg.agentId,
-            tool: event.toolName,
-            tool_call_id: event.toolCallId ?? "",
-            params: event.params ?? {},
+            ...call,
             context: { host: "openclaw", tool_kind: (event as { toolKind?: string }).toolKind ?? "" },
           },
           ctx?.abortSignal,
+          hookDeadline - Date.now(),
         );
         if (!decision) return failClosed("no response", event.toolName, (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default");
         if (["allow", "redact", "hold"].includes(decision.action) && !rememberDecision(
@@ -207,15 +250,22 @@ export default definePluginEntry({
             return { block: true, blockReason: `siq-agent-security denied: ${decision.reason} (receipt ${decision.receipt_id})` };
           case "redact":
             return decision.params ? { params: decision.params } : { block: true, blockReason: "siq-agent-security: redaction failed" };
-          case "hold":
+          case "hold": {
+            const approval = await waitForLocalApproval(decision, call, hookDeadline, ctx?.abortSignal);
+            if (approval.state === "unavailable") return failClosed("local approval status unavailable", event.toolName, call.session_id);
+            if (approval.state !== "approved" || !approval.expires || ctx?.abortSignal?.aborted) {
+              return { block: true, blockReason: `siq-agent-security: local approval required or expired (receipt ${decision.receipt_id})` };
+            }
             return {
               requireApproval: {
                 title: `siq-agent-security: approve ${event.toolName}?`,
                 description: `${decision.reason} (receipt ${decision.receipt_id})`,
                 severity: "warning",
-                timeoutMs: decision.hold?.timeout_ms ?? 60_000,
+                timeoutMs: Math.max(1, approval.expires - Date.now()),
+                timeoutBehavior: "deny",
               },
             };
+          }
           default:
             return failClosed("malformed decision", event.toolName, (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default");
         }

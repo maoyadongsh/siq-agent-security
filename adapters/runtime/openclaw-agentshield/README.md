@@ -48,7 +48,7 @@ siq-agent-security adapter install openclaw
 | --- | --- |
 | `allow` | 无决策 |
 | `deny` | `{ block: true, blockReason }` |
-| `hold` | `{ requireApproval: { title, description, severity: "warning", timeoutMs } }` → OpenClaw 审批流；结果由后续调用重新决策 |
+| `hold` | 先通过 `/v1/hold-status` 等待本地批准，再返回 `requireApproval` 进入平台审批；本地拒绝/超时/过期阻断 |
 | `redact` | `{ params }`（改写后的参数） |
 
 `after_tool_call` 把结果截断 64 KiB 发 `/v1/observe`（服务端脱敏、更新污点）。
@@ -74,6 +74,10 @@ siq-agent-security adapter install openclaw
 - 插件 TS：按 OpenClaw 2026-09 `before_tool_call` 合同编写（`block` 终止、`requireApproval` 首个生效、`params` 改写）。同一证据目录用插件会发出的 `/v1/decide` 请求体做了授前/授后 deny；**仍未**把插件加载进本机正在跑的 OpenClaw 网关进程。矩阵不标 `supported`。
 
 V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多 2048 项、TTL 300 秒，重复 ID 冲突不绑定旧动作。hold 的 execution observation 还必须有本地管理面批准记录；平台自身弹窗不自动创建本地批准。`node scripts/test-openclaw-adapter.cjs` 提供隔离的 mock hook 回归，真实平台 V2 归档仍为 unverified。
+
+2026-09-07 21:11 的[原生失败证据](../../../docs/trusted-intent-v2-native-approval-gap-20260907-211105.md) 保留为历史基线。21:33 的[修复验收](../../../docs/trusted-intent-v2-approval-gate-validation-20260907-213332.md) 已通过六个原生场景：当前插件在进入平台审批前按完整动作身份和原参数确认本地批准，未批准或已拒绝时工具不执行。
+
+本地批准等待默认 10 秒，可在本插件独立配置文件中设置 `holdWaitMs`（100–10000ms），整个 hook 最多使用 12 秒。管理操作者需先在本地控制台处理当前 hold，再处理平台审批；本地等待超时后本次调用阻断，迟到批准不会自动重试。平台审批仍受原 hold 剩余有效期限制。需要同时更新 daemon 与插件；旧 daemon 缺少状态接口时 block 下拒绝。该查询是执行前快照，完整真人流程和平台等待期间授权变化仍待验收。
 
 2026-09-07 增量：[原生加载器及工具链验收](../../../docs/trusted-intent-v2-openclaw-validation-20260907-192539.md) 已在 OpenClaw 2026.5.12 / linux/arm64 的临时实例通过，包括 V2 关联、目录/工具拒绝、失联与重启。真实前置包装器和后置 relay 使用夹具提供的调用 ID，不等于完整网关/LLM 会话与平台审批验收；综合状态仍为 unverified。
 

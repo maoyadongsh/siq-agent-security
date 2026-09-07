@@ -99,6 +99,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/status", s.auth(s.status))
 	s.mux.HandleFunc("/v1/decide", s.auth(s.decide, capDecision))
 	s.mux.HandleFunc("/v1/observe", s.auth(s.observe, capDecision))
+	s.mux.HandleFunc("/v1/hold-status", s.auth(s.holdStatus, capDecision))
 	s.mux.HandleFunc("/v1/hold/", s.auth(s.hold))
 	s.mux.HandleFunc("/v1/receipts", s.auth(s.receipts))
 	s.mux.HandleFunc("/v1/admit", s.auth(s.admit))
