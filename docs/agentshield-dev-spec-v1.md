@@ -521,6 +521,10 @@ security: { installPolicy: { enabled: true, targets: ["skill","plugin"],
 
 ### 4.3 CodeBuddy / WorkBuddy（P1）
 
+**配置目录（2026-09-07 增量）**：安装、状态、自动发现与卸载统一读取进程环境 `CODEBUDDY_CONFIG_DIR`，未设置或为空时保留 `~/.codebuddy`。覆盖值须为绝对路径，现存路径及祖先不得为符号链接；非法覆盖明确拒绝操作，自动发现忽略该平台，不静默回退默认目录。CLI 与管理 API 使用相同解析逻辑；管理 API 不接受请求正文指定配置目录。卸载须核对最新安装记录中的目标路径，环境改变导致记录与当前配置目录不符时拒绝，避免误删另一实例的钩子。多实例建议分别使用独立 SIQ 状态目录；本增量不扩展 inventory 的扫描范围。
+
+**钩子启动失败（2026-09-07 增量）**：CodeBuddy 将普通非零退出视为非阻断错误，不能用进程退出码 1 代替 pre hook 的拒绝。状态目录、完整配置或 decision token 读取失败时，钩子仍读取事件并输出结构化 PreToolUse 结果；无有效完整配置时按 block，已验证 warn/audit_only 配置但 token 不可用时按 advisory allow。PostToolUse 在客户端不可用时只返回非阻断结果，不制造 observation。状态目录可用时沿用 pending 记录；目录不可用时拒绝仍生效，但不声称已持久化。返回原因仅使用固定类别，不含底层路径、配置内容或凭据。此机制不覆盖二进制未启动、被杀、超时或 stdout 管道不可写的宿主行为。
+
 **运行时（L2）**：`~/.codebuddy/settings.json` 追加（需用户确认，幂等）：
 
 ```json
@@ -534,7 +538,7 @@ security: { installPolicy: { enabled: true, targets: ["skill","plugin"],
 {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow|deny|ask","permissionDecisionReason":"..."}}
 ```
 
-`hold → ask`、`deny → deny`、`redact` → 当前 CodeBuddy 不支持改参，退化为 `ask`。
+`hold → ask`、`deny → deny`、`redact` → 当前适配器尚未接入原生改参，退化为 `ask`。
 
 不使用 Skill frontmatter hooks（仅 fork Skill 且默认关闭）。
 
@@ -765,3 +769,15 @@ JSON 数值匹配的单个数字词法表示上限为 1024 字符，超过上限
 当前适配器及内嵌安装资产应携带实际 `beforeExecute` 回调，在一秒预算内用原动作身份与最终参数重新查询 hold-status，仅仍 approved 且未取消时返回 true。配套宿主补丁 v2 增加上述 context 能力标记，原版和旧候选 v1 不具备该标记。协议标记属于同一受信宿主执行边界，不是对恶意同进程插件的密码证明。原版升级适配器后，hold 需要配套宿主支持才能完成；不得把这种明确的兼容性要求写成无缝兼容。
 
 宿主兼容工具提供 `inspect/apply/restore`，只支持固定包版本和源码指纹。修改操作要求显式指定运行时与独立备份目录，先持有 POSIX 文件锁、持久化原始字节和恢复记录，再同目录原子替换目标；保留原文件权限和属主。恢复只接受已记录的目标身份及预期补丁后字节，拒绝覆盖后续改动。记录与完成标记只新建，不原地覆盖；替换后但完成标记前中断可通过相同命令幂等收尾。工具不更新用户配置、插件或自动重启服务；磁盘文件状态不代表运行进程已加载新代码。Windows 修改路径暂不支持，不能绕过文件锁运行。
+
+### Trusted Intent V2：绑定撤销（原始要求 §42）
+
+管理面新增 `POST /v1/intent-bindings/{binding_id}/revoke`，请求仅含 `expected_intent_digest`（64 位小写 SHA-256），成功返回 200 的签名 `intent-binding-revocation/v1`。相同绑定和 digest 的重复撤销返回首次原记录；digest 不匹配返回 409。Decision credential 无权操作。`GET /v1/intent-bindings/{binding_id}/revocation` 读取签名撤销记录，未撤销为 404；原绑定 GET 保留不可变历史。
+
+撤销是终止该运行时身份的授权，不是删除绑定或回退 unbound。新增 `<state>/intent-binding-revocations/{binding_id}.json`，含原完整签名 Binding 的 canonical SHA-256、撤销时间、固定 reason_code、signing_schema 与签名。记录由既有 signing/key 签发，只新建，不修改原 Binding/Intent；本身构成受信管理面的撤销审计。只有现存签名绑定可撤销，数量受绑定容量 4096 限制，读取为确定性路径，无 TTL 清除。
+
+运行时每次可信绑定解析读取并验签撤销记录。存在有效撤销时返回 `intent_binding_revoked`；撤销记录损坏、非普通文件或绑定摘要不匹配时失败关闭。即使旧绑定文件被移除，保留的有效撤销记录也阻止 optional 降级。已撤销身份不得重新绑定其他 Intent；新任务使用新的受信会话身份，不复用旧身份清理 taint。原本已绑定的安全状态、序号与污点不因撤销清空。
+
+并发线性化点为本地可信绑定解析：同进程 Store 的解析持读锁、撤销持写锁；撤销返回后开始解析的请求不得使用旧授权。已经取得快照的并发请求可能先于撤销被授权；该机制不取消已发出的允许决策，不提供覆盖真实副作用的原子执行租约。原有 hold 状态重查通过同一解析器观察撤销；历史合法动作的 Observe 仍按原决策及幂等规则记录，不把撤销误作抹除已发生事实。多进程仅依赖独占发布和每次读回，不能宣称跨进程读写锁或恶意同 UID 隔离。
+
+HTTP 请求/撤销记录分别遵守 `intent-binding-revoke-request.v1.schema.json` 与 `intent-binding-revocation.v1.schema.json`。回执使用既有可选扩展与稳定 reason_code，不重签历史回执。

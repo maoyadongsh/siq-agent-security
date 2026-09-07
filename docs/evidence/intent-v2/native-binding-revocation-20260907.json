@@ -1,0 +1,61 @@
+{
+  "schema": "intent-binding-revocation-validation/v1",
+  "passed": true,
+  "recorded_at": "2026-09-07T15:45:04.343047+00:00",
+  "siq_commit": "d860bdfb9f18bb9c3964ac74c1bc919a34281489",
+  "runtime": {
+    "package": "@tencent-ai/codebuddy-code",
+    "version": "2.146.0",
+    "headless_sha256": "b021f04799df7f3d74ec98c6dbbf7d9a5e0d1a96372a2d05ef8ae1c2928bb508"
+  },
+  "source_sha256": {
+    "scripts/validate-intent-binding-revocation.py": "fc351bfd72bb3d7c30abb690d3b865f5678513bd9fafcf92e61d743a09c4419e",
+    "scripts/validate-intent-v2-codebuddy.py": "5e096dd5ca97cbc5739253d82f4ceb7baae2fe9f5a845ca34666fc6fd997da2d",
+    "apps/agentshield/internal/intent/revocation.go": "e29d1369b89edbfff5661700f69591e97ee372ee650d19a6af74fe2f9bdda0c6",
+    "apps/agentshield/internal/intent/store.go": "8852972098ac17c3812a37fa9a9195eb08d09842b826be01d0e9ea5364a2c73f",
+    "apps/agentshield/internal/receipt/engine.go": "f1f9a8cfe7dfcdcef7c00240ad1df332085d60c8a3c1547867761066234094c2",
+    "apps/agentshield/internal/receipt/intent.go": "8b3f87f1a1192eea22f1a6f01fa3562923d47d3fbc7053c0a4ef2d343d8911bc",
+    "apps/agentshield/internal/server/intent_http.go": "d9d56166085d691b04551fe260e2e809879284362bb8897263659ee2780e6101"
+  },
+  "binary_sha256": "567efe55a8b3a5127af5cbad5b36e02b0e3af6deae4c278b4aa17690f13e4cb8",
+  "binding_sha256": "c79528a0deebd678e36e3fcd241542a07b1a40c4387b73e7b8aa3a64b1d655db",
+  "revocation_sha256": "b019be2a767cdb60ee11dc3c14f98588864f7547b00d0e80f7664af2b36e28f1",
+  "concurrent_http": {
+    "concurrency": 8,
+    "overlap_count": 32,
+    "overlap_allowed": 1,
+    "post_revoke_count": 32,
+    "post_revoke_denied": 32,
+    "idempotent_retries": 8,
+    "overlap_latency": {
+      "p50_ms": 83.402,
+      "p95_ms": 89.041,
+      "p99_ms": 92.47
+    },
+    "post_revoke_latency": {
+      "p50_ms": 84.876,
+      "p95_ms": 89.743,
+      "p99_ms": 89.992
+    }
+  },
+  "native_cli_invocations": 4,
+  "model_requests": 8,
+  "receipt_count": 70,
+  "offline_verified": true,
+  "checks": [
+    "decision_credential_cannot_revoke",
+    "signed_revocation_readback_and_idempotency",
+    "original_binding_preserved",
+    "post_revoke_http_denied",
+    "native_tool_blocked_after_revoke",
+    "kill_restart_optional_no_downgrade",
+    "unrelated_optional_session_still_allowed"
+  ],
+  "limitations": [
+    "snapshot authorization, not atomic effect cancellation",
+    "HTTP concurrency mixed with separately labelled native calls",
+    "synthetic operator and local deterministic model",
+    "desktop same UID; no OS isolation",
+    "one fixed Linux CLI version"
+  ]
+}

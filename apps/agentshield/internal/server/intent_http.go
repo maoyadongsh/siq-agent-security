@@ -110,11 +110,44 @@ func (s *Server) bindingCollection(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func (s *Server) bindingOne(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(r.URL.Path, "/v1/intent-bindings/")
+	if strings.HasSuffix(id, "/revoke") {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		var body struct {
+			ExpectedIntentDigest string `json:"expected_intent_digest"`
+		}
+		if !readAuthority(w, r, &body) {
+			return
+		}
+		revoked, err := s.intents.RevokeBinding(strings.TrimSuffix(id, "/revoke"), body.ExpectedIntentDigest)
+		if err != nil {
+			intentError(w, err)
+			return
+		}
+		writeJSON(w, 200, revoked)
+		return
+	}
+	if strings.HasSuffix(id, "/revocation") {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		revoked, err := s.intents.GetBindingRevocation(strings.TrimSuffix(id, "/revocation"))
+		if err != nil {
+			intentError(w, err)
+			return
+		}
+		writeJSON(w, 200, revoked)
+		return
+	}
 	if r.Method != http.MethodGet {
 		w.WriteHeader(405)
 		return
 	}
-	b, err := s.intents.GetBinding(strings.TrimPrefix(r.URL.Path, "/v1/intent-bindings/"))
+	b, err := s.intents.GetBinding(id)
 	if err != nil {
 		intentError(w, err)
 		return

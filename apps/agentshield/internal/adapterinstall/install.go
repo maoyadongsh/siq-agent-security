@@ -80,6 +80,9 @@ func Detect(home string) []string {
 	}
 	var out []string
 	for _, p := range []string{OpenClaw, Hermes, CodeBuddy, Trae} {
+		if p == CodeBuddy && validateCodeBuddyConfigDir() != nil {
+			continue
+		}
 		if st, err := os.Stat(configDir(home, p)); err == nil && st.IsDir() {
 			out = append(out, p)
 		}
@@ -94,11 +97,38 @@ func configDir(home, platform string) string {
 	case Hermes:
 		return filepath.Join(home, ".hermes")
 	case CodeBuddy:
+		if dir := os.Getenv("CODEBUDDY_CONFIG_DIR"); dir != "" {
+			return filepath.Clean(dir)
+		}
 		return filepath.Join(home, ".codebuddy")
 	case Trae:
 		return filepath.Join(home, ".trae")
 	}
 	return ""
+}
+
+// A bad override must never silently select a different user's configuration.
+// This is path validation, not protection against hostile concurrent renames.
+func validateCodeBuddyConfigDir() error {
+	dir := os.Getenv("CODEBUDDY_CONFIG_DIR")
+	if dir == "" {
+		return nil
+	}
+	if !filepath.IsAbs(dir) {
+		return errors.New("adapter: CODEBUDDY_CONFIG_DIR must be an absolute path")
+	}
+	for p := filepath.Clean(dir); ; p = filepath.Dir(p) {
+		info, err := os.Lstat(p)
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			return errors.New("adapter: cannot inspect CODEBUDDY_CONFIG_DIR")
+		}
+		if err == nil && (!info.IsDir() || info.Mode()&os.ModeSymlink != 0) {
+			return errors.New("adapter: CODEBUDDY_CONFIG_DIR requires directory ancestors without symlinks")
+		}
+		if filepath.Dir(p) == p {
+			return nil
+		}
+	}
 }
 
 // Install writes adapter files for one platform. Trae is audit-only: no files.
@@ -174,6 +204,13 @@ func Uninstall(opts Options) (*Result, error) {
 
 func uninstallCodeBuddy(opts Options, rec *Record) (*Result, error) {
 	settings := filepath.Join(configDir(opts.Home, CodeBuddy), "settings.json")
+	owned := rec.Modified[settings] != ""
+	for _, path := range rec.Created {
+		owned = owned || path == settings
+	}
+	if !owned {
+		return nil, errors.New("adapter: CodeBuddy config directory differs from the latest install record; use the original directory and state")
+	}
 	if err := stripCodeBuddyHooks(settings, rec); err != nil {
 		var recov *RecoveryPlan
 		if errors.As(err, &recov) {
@@ -397,6 +434,11 @@ func removeCreatedMatching(rec *Record, prefix string) {
 func (o *Options) normalise() error {
 	if !known[o.Platform] {
 		return fmt.Errorf("adapter: unknown platform %q", o.Platform)
+	}
+	if o.Platform == CodeBuddy {
+		if err := validateCodeBuddyConfigDir(); err != nil {
+			return err
+		}
 	}
 	if o.Home == "" {
 		h, err := os.UserHomeDir()
@@ -857,6 +899,11 @@ func appendUnique(ss []string, v string) []string {
 
 // Status reports whether a platform currently looks installed.
 func Status(opts Options) (*Result, error) {
+	if opts.Platform == CodeBuddy {
+		if err := validateCodeBuddyConfigDir(); err != nil {
+			return nil, err
+		}
+	}
 	if opts.Home == "" {
 		h, err := os.UserHomeDir()
 		if err != nil {

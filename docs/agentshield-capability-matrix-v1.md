@@ -97,3 +97,7 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 2026-09-07 22:18 新增 [宿主能力识别与当前适配器集成](trusted-intent-v2-approval-integration-20260907-221813.md)：源码及内嵌资产已提供审批后检查；缺能力宿主明确阻断 hold，配套 v2 宿主正常审批、撤销及故障均通过，原生合计 18 场景。真实安装未更新，配套宿主非官方能力，旧版本不记为无缝兼容，综合等级不升级。
 
 2026-09-07 22:36 新增 [宿主升级/回退证据](trusted-intent-v2-checkpoint-upgrade-20260907-223635.md)：固定指纹工具通过 15 项恢复/拒绝测试，完整副本经真实 CLI 升级后验证批准与撤销，经回退后验证新进程缺能力拒绝。仅验证 POSIX 文件级操作和新进程，未升级实际安装或证明真实会话迁移，综合状态不变。
+
+2026-09-07 23:11 新增 [CodeBuddy 原生 CLI 与隔离配置验收](trusted-intent-v2-codebuddy-validation-20260907-231146.md)：Linux 上腾讯 `@tencent-ai/codebuddy-code@2.146.0` 的真实安装/重装/卸载、8 次 CLI 会话调用、19 次 SSE、11 次工具调用与 13 条回执通过。当前适配器 pre/post 关联、资源拒绝、续聊/新会话、强杀/pending 恢复、optional 边界取得限定版本证据；配置覆盖已覆盖 CLI 与管理 API。GUI、hold/redact、历史适配器制品及其他 OS 未因此完成，综合状态仍为 `unverified`，代码仍为 experimental。
+
+2026-09-07 23:25 新增 [CodeBuddy 初始化故障原生复现与修复](trusted-intent-v2-codebuddy-bootstrap-fix-20260907-232551.md)：修复前退出码 1 导致非阻断执行；修复后 10 个场景、七条 pending 幂等提升与 11 条回执验证通过。正常 CLI 全链回归另有 13 条回执。该证据仅覆盖钩子可启动并输出 JSON 的初始化故障，不覆盖二进制缺失/强杀/宿主超时；综合状态不提升。

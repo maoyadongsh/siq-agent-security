@@ -143,3 +143,37 @@ def test_resource_refs_and_principal_reject_plaintext_or_forged_shape(name):
 def test_historical_receipt_without_optional_metadata_still_valid():
     sample = json.loads((SAMPLES / "receipt.pre-resource-refs.sample.json").read_text())
     validator("receipt").validate(sample)
+
+
+@pytest.mark.parametrize("name", ["intent-binding-revoke-request.v1", "intent-binding-revocation.v1"])
+def test_binding_revocation_wire_contract(name):
+    sample = json.loads((SAMPLES / f"{name}.sample.json").read_text())
+    check = validator(name)
+    check.validate(sample)
+    for field in check.schema["required"]:
+        assert list(check.iter_errors({k: v for k, v in sample.items() if k != field})), field
+    assert list(check.iter_errors({**sample, "approved": True}))
+    if name == "intent-binding-revoke-request.v1":
+        for bad in ("", "A" * 64, "0" * 63, None):
+            assert list(check.iter_errors({"expected_intent_digest": bad}))
+    else:
+        for field, bad in (("signature", "0" * 127), ("binding_id", "../escape"),
+                           ("binding_digest", "A" * 64), ("revoked_at", "yesterday"),
+                           ("reason_code", "allow"), ("signing_schema", "unknown")):
+            assert list(check.iter_errors({**sample, field: bad}))
+
+
+def test_go_binding_revocation_signature_and_binding_digest_vector():
+    vector = json.loads((SAMPLES / "intent-binding-revocation.v1.vector.json").read_text())
+    binding, revocation = vector["binding"], vector["revocation"]
+    public = Ed25519PublicKey.from_public_bytes(bytes.fromhex(vector["public_key_hex"]))
+    public.verify(bytes.fromhex(binding["signature"]),
+                  _canonical_bytes({k: v for k, v in binding.items() if k != "signature"}))
+    assert hashlib.sha256(_canonical_bytes(binding)).hexdigest() == revocation["binding_digest"]
+    unsigned = {k: v for k, v in revocation.items() if k != "signature"}
+    canonical = _canonical_bytes(unsigned)
+    assert canonical.hex() == vector["canonical_hex"]
+    public.verify(bytes.fromhex(revocation["signature"]), canonical)
+    for field, replacement in (("binding_digest", "0" * 64), ("revoked_at", "2099-01-01T00:00:00Z")):
+        with pytest.raises(InvalidSignature):
+            public.verify(bytes.fromhex(revocation["signature"]), _canonical_bytes({**unsigned, field: replacement}))

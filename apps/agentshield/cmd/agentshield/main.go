@@ -11,6 +11,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -273,32 +274,46 @@ func cmdHook(args []string) error {
 	if len(args) < 1 || args[0] != "codebuddy" {
 		return fmt.Errorf("hook: supported platforms: codebuddy")
 	}
+	return runCodeBuddyHook(os.Stdin, os.Stdout)
+}
+
+// A command-hook exit status of 1 is non-blocking in CodeBuddy. Initialization
+// failures must still reach the adapter's structured pre/post failure mapping.
+func codeBuddyClient() (adapters.Decider, string, string) {
 	dir, err := stateDir()
 	if err != nil {
-		return err
+		return nil, "block", ""
 	}
 	st, err := state.Open(dir)
 	if err != nil {
-		return err
+		return nil, "block", ""
 	}
 	cfg, err := st.LoadConfig()
 	if err != nil {
-		return err
+		// Partial decoded fields cannot authorize advisory mode.
+		return nil, "block", dir
 	}
-	tok, err := st.Token()
-	if err != nil {
-		return err
+	// Credential creation belongs to the daemon. A hook only reads its token.
+	raw, err := os.ReadFile(filepath.Join(dir, "token"))
+	tok := strings.TrimSpace(string(raw))
+	if err != nil || len(tok) < 32 {
+		return nil, cfg.EnforcementMode, dir
 	}
+	d := &httpDecider{endpoint: fmt.Sprintf("http://127.0.0.1:%d", cfg.Port), token: tok, client: &http.Client{Timeout: 4 * time.Second}}
+	return d, cfg.EnforcementMode, dir
+}
+
+func runCodeBuddyHook(in io.Reader, out io.Writer) error {
+	d, mode, dir := codeBuddyClient()
 	agentID := product.Env(product.EnvAgentID, product.EnvAgentIDOld)
 	if agentID == "" {
 		agentID = "default"
 	}
-	d := &httpDecider{endpoint: fmt.Sprintf("http://127.0.0.1:%d", cfg.Port), token: tok, client: &http.Client{Timeout: 4 * time.Second}}
-	out, err := adapters.CodeBuddyHook(os.Stdin, d, agentID, cfg.EnforcementMode, dir)
+	result, err := adapters.CodeBuddyHook(in, d, agentID, mode, dir)
 	if err != nil {
 		return err
 	}
-	return json.NewEncoder(os.Stdout).Encode(out)
+	return json.NewEncoder(out).Encode(result)
 }
 
 func cmdServe(args []string) error {

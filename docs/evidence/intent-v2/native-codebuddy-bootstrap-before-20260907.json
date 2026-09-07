@@ -1,0 +1,95 @@
+{
+  "schema": "codebuddy-native-bootstrap-failures/v1",
+  "passed": false,
+  "recorded_at": "2026-09-07T15:17:35.947383+00:00",
+  "siq_commit": "d860bdfb9f18bb9c3964ac74c1bc919a34281489",
+  "runtime_version": "2.146.0",
+  "native_cli_invocations": 8,
+  "model_requests": 16,
+  "cases": [
+    {
+      "name": "normal",
+      "expected": "execute",
+      "executed": true,
+      "passed": true
+    },
+    {
+      "name": "malformed-config",
+      "expected": "block",
+      "executed": true,
+      "fail_closed_reason": false,
+      "online_receipts": 0,
+      "pending_added": 0,
+      "passed": false
+    },
+    {
+      "name": "partially-invalid-config",
+      "expected": "block",
+      "executed": true,
+      "fail_closed_reason": false,
+      "online_receipts": 0,
+      "pending_added": 0,
+      "passed": false
+    },
+    {
+      "name": "short-token-block",
+      "expected": "block",
+      "executed": true,
+      "fail_closed_reason": false,
+      "online_receipts": 0,
+      "pending_added": 0,
+      "passed": false
+    },
+    {
+      "name": "short-token-warn",
+      "expected": "execute_advisory",
+      "executed": true,
+      "fail_closed_reason": false,
+      "online_receipts": 0,
+      "pending_added": 0,
+      "passed": false
+    },
+    {
+      "name": "short-token-audit",
+      "expected": "execute_advisory",
+      "executed": true,
+      "fail_closed_reason": false,
+      "online_receipts": 0,
+      "pending_added": 0,
+      "passed": false
+    },
+    {
+      "name": "state-is-file",
+      "expected": "block",
+      "executed": true,
+      "fail_closed_reason": false,
+      "online_receipts": 0,
+      "pending_added": 0,
+      "passed": false
+    },
+    {
+      "name": "recovered",
+      "expected": "execute",
+      "executed": true,
+      "passed": true
+    }
+  ],
+  "receipt_count": 4,
+  "offline_verified": true,
+  "promoted_pending": [],
+  "source_sha256": {
+    "scripts/validate-codebuddy-hook-failures.py": "1b33c238267c999efc8d8e5c6d1eedce7fb20b7eb8729552a37edf44464edd66",
+    "scripts/validate-intent-v2-codebuddy.py": "5e096dd5ca97cbc5739253d82f4ceb7baae2fe9f5a845ca34666fc6fd997da2d",
+    "scripts/codebuddy-fixture-guard.mjs": "ce85ecc4285fcc57a3ef24b2bca200265d3af2be788e53a8224df324486aea7c",
+    "apps/agentshield/cmd/agentshield/main.go": "b855baac4d1c48a402e667dbaf1ae5c1893f900ba66624bacb5e0f7fc643e234",
+    "apps/agentshield/internal/adapters/adapters.go": "82df24c5eb42c713c4a9ee95ec5e9270e7b95367271aeed32ba06a863ba1b863"
+  },
+  "runtime_sha256": "b021f04799df7f3d74ec98c6dbbf7d9a5e0d1a96372a2d05ef8ae1c2928bb508",
+  "binary_sha256": "64cb7d093947810841aa1f5173c37182b1788889917eebffdcc352fc57127735",
+  "limitations": [
+    "synthetic operator and loopback model",
+    "runtime hook process crash/kill and missing binary are not covered",
+    "no redaction or approval proof",
+    "no OS isolation"
+  ]
+}

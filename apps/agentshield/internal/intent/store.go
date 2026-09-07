@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-var authorityWriteMu sync.Mutex
+var authorityWriteMu sync.RWMutex
 
 const maxRecords = 4096
 const maxRecordBytes = 1 << 20
@@ -32,7 +32,7 @@ func Open(dir string, key *signing.Key) (*Store, error) {
 	if dir == "" || key == nil {
 		return nil, errors.New("intent: directory and key required")
 	}
-	for _, name := range []string{"intents", "intent-bindings"} {
+	for _, name := range []string{"intents", "intent-bindings", "intent-binding-revocations"} {
 		if err := os.MkdirAll(filepath.Join(dir, name), 0700); err != nil {
 			return nil, err
 		}
@@ -253,11 +253,22 @@ func (s *Store) List() ([]Contract, error) {
 	return out, nil
 }
 func (s *Store) ResolveBinding(platform, sessionID, agentID string) (*Contract, *Binding, error) {
+	authorityWriteMu.RLock()
+	defer authorityWriteMu.RUnlock()
+	id := bindingID(platform, sessionID, agentID)
+	revoked, revokeErr := s.GetBindingRevocation(id)
+	if revokeErr != nil && !errors.Is(revokeErr, os.ErrNotExist) {
+		return nil, nil, revokeErr
+	}
+
 	// Binding IDs already impose uniqueness on the complete runtime identity.
 	// Read and verify that record on every call; no stale authorization cache and
 	// no O(number of unrelated sessions) signature scan on the decision path.
-	binding, err := s.GetBinding(bindingID(platform, sessionID, agentID))
+	binding, err := s.GetBinding(id)
 	if errors.Is(err, os.ErrNotExist) {
+		if revokeErr == nil {
+			return nil, nil, violation("intent_binding_revoked")
+		}
 		return nil, nil, nil
 	}
 	if err != nil {
@@ -267,6 +278,21 @@ func (s *Store) ResolveBinding(platform, sessionID, agentID string) (*Contract, 
 		return nil, nil, violation("intent_agent_mismatch")
 	}
 	found := &binding
+	if revokeErr == nil {
+		wanted, err := bindingDigest(binding)
+		if err != nil || revoked.BindingDigest != wanted {
+			return nil, found, violation("intent_binding_revocation_invalid")
+		}
+		c, err := s.Get(binding.IntentID)
+		if err != nil {
+			return nil, found, err
+		}
+		if c.Digest != binding.IntentDigest || c.Authority.Revision != binding.AuthorityRevision || c.TaskID != binding.TaskID || c.Agent.ID != agentID || c.Agent.Platform != platform {
+			return nil, found, violation("intent_digest_mismatch")
+		}
+		// Valid metadata remains available for a signed denial, never authorization.
+		return &c, found, violation("intent_binding_revoked")
+	}
 	until, err := time.Parse(time.RFC3339, found.ExpiresAt)
 	if err != nil || !time.Now().Before(until) {
 		return nil, found, violation("intent_expired")

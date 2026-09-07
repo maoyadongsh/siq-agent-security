@@ -59,6 +59,11 @@ func (s *Store) Bind(b Binding) (Binding, error) {
 		return b, violation("intent_task_mismatch")
 	}
 	b.BindingID = bindingID(b.Platform, b.SessionID, b.AgentID)
+	if _, err := s.GetBindingRevocation(b.BindingID); err == nil {
+		return b, violation("intent_binding_revoked")
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return b, err
+	}
 	b.TaskID = c.TaskID
 	b.IntentDigest = c.Digest
 	b.AuthorityRevision = c.Authority.Revision

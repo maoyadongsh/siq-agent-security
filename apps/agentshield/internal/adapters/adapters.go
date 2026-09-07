@@ -161,6 +161,9 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (Cod
 		Tool: ev.ToolName, ToolCallID: ev.ToolUseID, Params: ev.ToolInput, Context: map[string]any{"cwd": ev.Cwd, "permission_mode": ev.PermissionMode}}
 	switch ev.HookEventName {
 	case "PostToolUse":
+		if d == nil {
+			return out, nil // no client: do not manufacture an observation
+		}
 		text := ""
 		switch t := ev.ToolResponse.(type) {
 		case string:
@@ -177,6 +180,9 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (Cod
 		return out, nil
 	case "PreToolUse", "":
 		out.HookSpecificOutput.HookEventName = "PreToolUse"
+		if d == nil {
+			return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", ev.ToolName, req.SessionID, "local hook initialization unavailable")
+		}
 		dec, err := d.Decide(req)
 		if err != nil || dec == nil {
 			return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", ev.ToolName, req.SessionID, "decision service unavailable")
@@ -186,7 +192,7 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (Cod
 			out.HookSpecificOutput.PermissionDecision = "allow"
 		case receipt.ActionDeny:
 			out.HookSpecificOutput.PermissionDecision = "deny"
-		case receipt.ActionHold, receipt.ActionRedact: // CodeBuddy cannot rewrite params → ask
+		case receipt.ActionHold, receipt.ActionRedact: // input rewrite is not integrated in this adapter → ask
 			out.HookSpecificOutput.PermissionDecision = "ask"
 		default:
 			return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", ev.ToolName, req.SessionID, "malformed decision")

@@ -339,6 +339,15 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	if e.opts.IntentLookup != nil {
 		resolvedIntent, authorityErr = e.opts.IntentLookup(req.Platform, req.SessionID, req.AgentID)
 	}
+	// A revoked but verified binding still identifies the trusted task for its
+	// denial receipt. Retain that metadata without clearing taints or the error.
+	if authorityErr != nil && resolvedIntent != nil && resolvedIntent.Trusted != nil && s.boundIntentID == "" {
+		s.taskSeq, s.parentActionID = 0, ""
+		s.boundIntentID, s.boundTaskID = resolvedIntent.IntentID, resolvedIntent.TaskID
+		s.boundIntentDigest, s.boundAuthorityRevision = resolvedIntent.Digest, resolvedIntent.AuthorityRevision
+		s.boundPrincipal = &runtimeaction.Principal{Type: "user", ID: resolvedIntent.Principal}
+		s.boundProvenanceRefs = append([]string(nil), resolvedIntent.Trusted.ProvenanceRefs...)
+	}
 	if authorityErr == nil {
 		switch {
 		case s.boundIntentID != "" && resolvedIntent == nil:

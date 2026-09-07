@@ -1,0 +1,320 @@
+{
+  "schema": "intent-v2-native-codebuddy-validation/v1",
+  "passed": true,
+  "recorded_at": "2026-09-07T15:10:10.052169+00:00",
+  "siq_commit": "d860bdfb9f18bb9c3964ac74c1bc919a34281489",
+  "runtime": {
+    "package": "@tencent-ai/codebuddy-code",
+    "version": "2.146.0",
+    "headless_sha256": "b021f04799df7f3d74ec98c6dbbf7d9a5e0d1a96372a2d05ef8ae1c2928bb508"
+  },
+  "source_sha256": {
+    "scripts/validate-intent-v2-codebuddy.py": "5e096dd5ca97cbc5739253d82f4ceb7baae2fe9f5a845ca34666fc6fd997da2d",
+    "scripts/codebuddy-fixture-guard.mjs": "ce85ecc4285fcc57a3ef24b2bca200265d3af2be788e53a8224df324486aea7c",
+    "scripts/validate-intent-v2-hermes.py": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+    "apps/agentshield/internal/adapters/adapters.go": "82df24c5eb42c713c4a9ee95ec5e9270e7b95367271aeed32ba06a863ba1b863",
+    "apps/agentshield/internal/adapterinstall/install.go": "d29d0ec44ecd13ff00575ddab5c5761ab64eab05376ca3a80f6931aa391b5e94"
+  },
+  "binary_sha256": "64cb7d093947810841aa1f5173c37182b1788889917eebffdcc352fc57127735",
+  "checks": [
+    "cli_custom_config_install_reinstall_backup_and_native_pregrant_denial",
+    "decision_token_cannot_read_authority",
+    "native_allowed_read_and_correlated_post",
+    "native_resource_and_prefix_denial",
+    "native_denied_write_has_no_effect",
+    "native_new_session_does_not_inherit_binding",
+    "native_resume_daemon_kill_and_pending_recovery",
+    "native_optional_unbound_and_bound_no_downgrade",
+    "bound_action_sequence_and_parent_survive_native_resume",
+    "cli_uninstall_preserves_settings_and_native_control_executes"
+  ],
+  "native_cli_invocations": 8,
+  "model_requests": 19,
+  "sessions": [
+    "intent-v2-fixture-session",
+    "unbound-fixture"
+  ],
+  "journeys": [
+    {
+      "session_id": "intent-v2-fixture-session",
+      "call_ids": [
+        "before-grant"
+      ],
+      "completed": true,
+      "prior_tool_result_ids": []
+    },
+    {
+      "session_id": "intent-v2-fixture-session",
+      "call_ids": [
+        "allowed",
+        "foreign-company",
+        "prefix-collision",
+        "write-denied"
+      ],
+      "completed": true,
+      "prior_tool_result_ids": [
+        "before-grant"
+      ]
+    },
+    {
+      "session_id": "unbound-fixture",
+      "call_ids": [
+        "missing-binding"
+      ],
+      "completed": true,
+      "prior_tool_result_ids": []
+    },
+    {
+      "session_id": "intent-v2-fixture-session",
+      "call_ids": [
+        "offline"
+      ],
+      "completed": true,
+      "prior_tool_result_ids": [
+        "before-grant",
+        "allowed",
+        "foreign-company",
+        "prefix-collision",
+        "write-denied"
+      ]
+    },
+    {
+      "session_id": "intent-v2-fixture-session",
+      "call_ids": [
+        "after-restart"
+      ],
+      "completed": true,
+      "prior_tool_result_ids": [
+        "before-grant",
+        "allowed",
+        "foreign-company",
+        "prefix-collision",
+        "write-denied",
+        "offline"
+      ]
+    },
+    {
+      "session_id": "unbound-fixture",
+      "call_ids": [
+        "optional-unbound"
+      ],
+      "completed": true,
+      "prior_tool_result_ids": [
+        "missing-binding"
+      ]
+    },
+    {
+      "session_id": "intent-v2-fixture-session",
+      "call_ids": [
+        "bound-still-denied"
+      ],
+      "completed": true,
+      "prior_tool_result_ids": [
+        "before-grant",
+        "allowed",
+        "foreign-company",
+        "prefix-collision",
+        "write-denied",
+        "offline",
+        "after-restart"
+      ]
+    },
+    {
+      "session_id": "intent-v2-fixture-session",
+      "call_ids": [
+        "uninstalled-control"
+      ],
+      "completed": true,
+      "prior_tool_result_ids": [
+        "before-grant",
+        "allowed",
+        "foreign-company",
+        "prefix-collision",
+        "write-denied",
+        "offline",
+        "after-restart",
+        "bound-still-denied"
+      ]
+    }
+  ],
+  "receipt_count": 13,
+  "receipt_summaries": [
+    {
+      "record_type": "decision",
+      "tool_call_id": "before-grant",
+      "session_id": "intent-v2-fixture-session",
+      "action": "deny",
+      "reason_code": "intent_binding_missing",
+      "intent_binding": "unbound",
+      "task_seq": 1,
+      "action_id": "act-8df35bdb0a45cc779f227be4",
+      "parent_action_id": null,
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-579f278e4eb2-151001.615580"
+    },
+    {
+      "record_type": "decision",
+      "tool_call_id": "allowed",
+      "session_id": "intent-v2-fixture-session",
+      "action": "allow",
+      "reason_code": "allow",
+      "intent_binding": "bound",
+      "task_seq": 1,
+      "action_id": "act-4c6923d1f82236af41b7acfc",
+      "parent_action_id": null,
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-579f278e4eb2-151002.948046"
+    },
+    {
+      "record_type": "observation",
+      "tool_call_id": "allowed",
+      "session_id": "intent-v2-fixture-session",
+      "action": "allow",
+      "reason_code": "observation_accepted",
+      "intent_binding": "bound",
+      "task_seq": 1,
+      "action_id": "act-4c6923d1f82236af41b7acfc",
+      "parent_action_id": null,
+      "decision_receipt_id": "rcp-579f278e4eb2-151002.948046",
+      "receipt_id": "rcp-579f278e4eb2-151002.948046-obs"
+    },
+    {
+      "record_type": "decision",
+      "tool_call_id": "foreign-company",
+      "session_id": "intent-v2-fixture-session",
+      "action": "deny",
+      "reason_code": "intent_resource_not_allowed",
+      "intent_binding": "bound",
+      "task_seq": 2,
+      "action_id": "act-75d16a43617cfe66f2abb6fb",
+      "parent_action_id": "act-4c6923d1f82236af41b7acfc",
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-8cf2eaff8e6a-151003.035682"
+    },
+    {
+      "record_type": "decision",
+      "tool_call_id": "prefix-collision",
+      "session_id": "intent-v2-fixture-session",
+      "action": "deny",
+      "reason_code": "intent_resource_not_allowed",
+      "intent_binding": "bound",
+      "task_seq": 3,
+      "action_id": "act-71b7c719b78f4a1318573c31",
+      "parent_action_id": "act-4c6923d1f82236af41b7acfc",
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-8e6e2dd968ff-151003.073895"
+    },
+    {
+      "record_type": "decision",
+      "tool_call_id": "write-denied",
+      "session_id": "intent-v2-fixture-session",
+      "action": "deny",
+      "reason_code": "intent_tool_not_allowed",
+      "intent_binding": "bound",
+      "task_seq": 4,
+      "action_id": "act-17d5c0f3945496bc0897da49",
+      "parent_action_id": "act-4c6923d1f82236af41b7acfc",
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-a4a24054ab7d-151003.112613"
+    },
+    {
+      "record_type": "decision",
+      "tool_call_id": "missing-binding",
+      "session_id": "unbound-fixture",
+      "action": "deny",
+      "reason_code": "intent_binding_missing",
+      "intent_binding": "unbound",
+      "task_seq": 1,
+      "action_id": "act-7e92d8d51d1b4ff1175b7009",
+      "parent_action_id": null,
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-579f278e4eb2-151004.210213"
+    },
+    {
+      "record_type": null,
+      "tool_call_id": null,
+      "session_id": "intent-v2-fixture-session",
+      "action": "deny",
+      "reason_code": null,
+      "intent_binding": null,
+      "task_seq": null,
+      "action_id": null,
+      "parent_action_id": null,
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-e6b7ea638dc0-pending"
+    },
+    {
+      "record_type": "decision",
+      "tool_call_id": "after-restart",
+      "session_id": "intent-v2-fixture-session",
+      "action": "allow",
+      "reason_code": "allow",
+      "intent_binding": "bound",
+      "task_seq": 5,
+      "action_id": "act-fc274095083e98759ffd261c",
+      "parent_action_id": "act-4c6923d1f82236af41b7acfc",
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-579f278e4eb2-151006.448597"
+    },
+    {
+      "record_type": "observation",
+      "tool_call_id": "after-restart",
+      "session_id": "intent-v2-fixture-session",
+      "action": "allow",
+      "reason_code": "observation_accepted",
+      "intent_binding": "bound",
+      "task_seq": 5,
+      "action_id": "act-fc274095083e98759ffd261c",
+      "parent_action_id": "act-4c6923d1f82236af41b7acfc",
+      "decision_receipt_id": "rcp-579f278e4eb2-151006.448597",
+      "receipt_id": "rcp-579f278e4eb2-151006.448597-obs"
+    },
+    {
+      "record_type": "decision",
+      "tool_call_id": "optional-unbound",
+      "session_id": "unbound-fixture",
+      "action": "allow",
+      "reason_code": "allow",
+      "intent_binding": "unbound",
+      "task_seq": 2,
+      "action_id": "act-c644bc0630bdb784e0e17ecc",
+      "parent_action_id": null,
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-579f278e4eb2-151007.661659"
+    },
+    {
+      "record_type": "observation",
+      "tool_call_id": "optional-unbound",
+      "session_id": "unbound-fixture",
+      "action": "allow",
+      "reason_code": "observation_accepted",
+      "intent_binding": "unbound",
+      "task_seq": 2,
+      "action_id": "act-c644bc0630bdb784e0e17ecc",
+      "parent_action_id": null,
+      "decision_receipt_id": "rcp-579f278e4eb2-151007.661659",
+      "receipt_id": "rcp-579f278e4eb2-151007.661659-obs"
+    },
+    {
+      "record_type": "decision",
+      "tool_call_id": "bound-still-denied",
+      "session_id": "intent-v2-fixture-session",
+      "action": "deny",
+      "reason_code": "intent_resource_not_allowed",
+      "intent_binding": "bound",
+      "task_seq": 6,
+      "action_id": "act-a636c54949b12765a6fb1046",
+      "parent_action_id": "act-fc274095083e98759ffd261c",
+      "decision_receipt_id": null,
+      "receipt_id": "rcp-8cf2eaff8e6a-151008.824140"
+    }
+  ],
+  "offline_verified": true,
+  "limitations": [
+    "synthetic operator and local deterministic model",
+    "installer/native CLI E2E only in a temporary config and state directory",
+    "no GUI, real human approval, hold/redact or channel proof",
+    "Node IO guard is not OS isolation",
+    "no overall supported claim"
+  ]
+}

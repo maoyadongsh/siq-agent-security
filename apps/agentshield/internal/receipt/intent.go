@@ -97,9 +97,9 @@ func (i *IntentContract) validate(req Request, now time.Time) error {
 func ResolveStore(store *intent.Store) IntentLookup {
 	return func(platform, session, agent string) (*IntentContract, error) {
 		c, _, err := store.ResolveBinding(platform, session, agent)
-		if err != nil || c == nil {
+		if c == nil {
 			return nil, err
 		}
-		return &IntentContract{Trusted: c, IntentID: c.IntentID, TaskID: c.TaskID, Principal: c.Principal.ID, AgentID: c.Agent.ID, Purpose: c.Purpose, Digest: c.Digest, AuthorityRevision: c.Authority.Revision}, nil
+		return &IntentContract{Trusted: c, IntentID: c.IntentID, TaskID: c.TaskID, Principal: c.Principal.ID, AgentID: c.Agent.ID, Purpose: c.Purpose, Digest: c.Digest, AuthorityRevision: c.Authority.Revision}, err
 	}
 }
