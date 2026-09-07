@@ -62,7 +62,7 @@ assert.deepEqual(configReads, ['/isolated-profile/siq-agent-security.json'], 'is
 exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } });
 (async () => {
   const event = { toolName: 'read_file', toolCallId: 'call-1', params: { path: '/approved/report' }, result: 'ok' };
-  const context = { sessionKey: 'session-1', agentId: 'agent-1' };
+  const context = { sessionKey: 'session-1', agentId: 'agent-1', approvalExecutionRecheckVersion: 1 };
   assert.equal(await hooks.before_tool_call(event, context), undefined);
   await hooks.after_tool_call(event, context);
   assert.equal(seen.at(-1).body.action_id, 'act-1');
@@ -77,6 +77,19 @@ exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } 
   unavailable = true;
   assert.equal((await hooks.before_tool_call({ ...event, toolCallId: 'offline' }, context)).block, true);
   unavailable = false;
+  for (const capability of [undefined, 0, 2, '1', true]) {
+    const id = 'unsupported-' + String(capability);
+    decision = { action: 'hold', action_id: 'act-' + id, receipt_id: 'rcp-' + id, reason: 'approval' };
+    const previousQueries = statusQueries;
+    const result = await hooks.before_tool_call(
+      { ...event, toolCallId: id, approvalExecutionRecheckVersion: 1,
+        params: { ...event.params, approvalExecutionRecheckVersion: 1 } },
+      { ...context, approvalExecutionRecheckVersion: capability },
+    );
+    assert.equal(result.block, true, 'unsupported host must not enter platform approval');
+    assert.equal(result.requireApproval, undefined);
+    assert.equal(statusQueries, previousQueries, 'untrusted event/params cannot announce host support');
+  }
   for (const mode of ['approved', 'pending-then-approved', 'denied', 'expired', 'consumed', 'wrong-action', 'stale', 'invalid-time', 'pending', 'offline']) {
     approvalMode = mode;
     statusQueries = 0;
@@ -86,6 +99,19 @@ exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } 
     assert.equal(!!result.requireApproval, shouldApprove, mode);
     if (shouldApprove) {
       assert.equal(result.requireApproval.timeoutBehavior, 'deny');
+      assert.equal(typeof result.requireApproval.beforeExecute, 'function');
+      approvalMode = 'approved';
+      assert.equal(await result.requireApproval.beforeExecute(event.params), true);
+      assert.equal(seen.at(-1).body.action_id, decision.action_id);
+      for (const changed of ['denied', 'expired', 'consumed', 'wrong-action', 'stale', 'offline']) {
+        approvalMode = changed;
+        assert.equal(await result.requireApproval.beforeExecute(event.params), false, changed);
+      }
+      const aborted = new AbortController();
+      aborted.abort();
+      approvalMode = 'approved';
+      assert.equal(await result.requireApproval.beforeExecute(event.params, aborted.signal), false);
+
       assert.ok(result.requireApproval.timeoutMs > 0 && result.requireApproval.timeoutMs <= 60000);
     } else assert.equal(result.block, true, mode);
     const request = seen.filter(item => item.url.endsWith('/v1/hold-status')).at(-1).body;
@@ -103,5 +129,18 @@ exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } 
   assert.equal(cancelled.block, true);
   decision = { action: 'hold', receipt_id: 'missing-action', reason: 'hold' };
   assert.equal((await hooks.before_tool_call({ ...event, toolCallId: 'missing-action' }, context)).block, true);
-  console.log('OpenClaw correlation and local approval/denial/expiry/timeout/cancellation gates passed');
+  for (const mode of ['warn', 'audit_only']) {
+    const modeExports = {};
+    const modeHooks = {};
+    vm.runInNewContext(output.outputText, {
+      ...sandbox, exports: modeExports,
+      process: { ...sandbox.process, env: { ...sandbox.process.env, SIQ_AGENT_SECURITY_MODE: mode } },
+    }, { filename: sourcePath });
+    modeExports.default.register({ on(name, callback) { modeHooks[name] = callback; } });
+    decision = { action: 'hold', action_id: 'act-' + mode, receipt_id: 'rcp-' + mode, reason: 'approval' };
+    const queries = statusQueries;
+    assert.equal(await modeHooks.before_tool_call({ ...event, toolCallId: mode }, { sessionKey: 'session-1', agentId: 'agent-1' }), undefined);
+    assert.equal(statusQueries, queries, 'advisory mode must not enter unsupported platform approval');
+  }
+  console.log('OpenClaw correlation, host capability and approval recheck gates passed');
 })().catch(error => { console.error(error); process.exitCode = 1; });

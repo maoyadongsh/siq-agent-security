@@ -48,7 +48,7 @@ siq-agent-security adapter install openclaw
 | --- | --- |
 | `allow` | 无决策 |
 | `deny` | `{ block: true, blockReason }` |
-| `hold` | 先通过 `/v1/hold-status` 等待本地批准，再返回 `requireApproval` 进入平台审批；本地拒绝/超时/过期阻断 |
+| `hold` | 要求宿主检查点协议版本 1；先取得本地批准，再进入平台审批，执行前按最终参数重查授权；缺能力、拒绝、过期或失败在 block 下阻断 |
 | `redact` | `{ params }`（改写后的参数） |
 
 `after_tool_call` 把结果截断 64 KiB 发 `/v1/observe`（服务端脱敏、更新污点）。
@@ -84,3 +84,13 @@ V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多
 20:16 增量：[完整 CLI 会话验收](../../../docs/trusted-intent-v2-openclaw-conversation-20260907-201600.md) 从真实 `agent --local` 入口驱动本地合成模型，验证原生 pre/post、跨进程续聊与显式新会话不继承权限。创建 Intent Binding 时，`session_id` 使用 hook 提供的原生 `sessionKey`（如 `agent:<id>:main`），并非 transcript UUID。模型历史可能规范化调用 ID，SIQ 回执仍严格按真实 pre/post 执行 ID 关联。网关审批和同 key reset 生命周期尚未验收。
 
 20:36 增量：[空闲重置实测](../../../docs/trusted-intent-v2-openclaw-idle-reset-20260907-203600.md) 确认同 key 下 UUID 轮换不解除 SIQ 绑定或清除污点；但本机 OpenClaw 2026.5.12 仍将旧 transcript 发送给模型，整体重置测试失败。不能以 UUID 变化宣称上下文已清空。
+
+21:51 增量：[原生网关重置验收](../../../docs/trusted-intent-v2-gateway-reset-and-ci-20260907-215104.md) 通过 `sessions.reset` → 本地 CLI 路径：只读客户端拒绝、旧 transcript 完整归档、新 Session header 和下一次模型请求均无旧工具历史；同一 routing key 的 SIQ 绑定及污点保持。活动文件可以复用原路径，重置是否成功应检查实际内容和模型请求。此结果不覆盖消息渠道，也不改变上述空闲重置失败结论。
+
+22:00 增量：[平台等待期间 Grant 撤销](../../../docs/trusted-intent-v2-approval-revocation-20260907-220037.md) 已复现执行缺口：当前默认插件的本地预检通过后，等待平台审批时撤销 Grant 仍可能执行。宿主和适配器配套候选在独立副本通过八个场景，但未进入默认安装；原版没有可等待、可否决的审批后回调，不能仅添加异步 `onResolution` 就宣称修复。
+
+22:08 增量：[候选检查点故障验收](../../../docs/trusted-intent-v2-checkpoint-faults-20260907-220834.md) 新增九个通过场景，覆盖超时、取消、异常、非法返回、最终参数篡改和审批后失联。实际原版组合未更新，该结果只属于配套候选的临时实例。
+
+22:18 当前集成：[宿主能力识别及 18 场景验收](../../../docs/trusted-intent-v2-approval-integration-20260907-221813.md)。适配器源码与内嵌资产已包含 `beforeExecute` 重查，并要求原生 hook context 的 `approvalExecutionRecheckVersion: 1`；原版或旧候选 v1 缺少该能力时 block 下拒绝 hold，不会进入平台审批。此标记不能由用户配置或工具参数补齐。配套 v2 宿主在隔离副本保留正常执行并阻断撤销、参数篡改和故障；真实安装未自动升级，重新安装插件也不会替宿主打补丁。当前复测使用 `scripts/validate-openclaw-approval-integration.py`，旧候选脚本仅供旧指纹基线复核。
+
+22:36 配套交付：[宿主升级、回退和恢复说明](../../../docs/trusted-intent-v2-checkpoint-upgrade-20260907-223635.md)。`scripts/openclaw-checkpoint-compat.py` 提供只读 inspect 和显式 apply/restore，使用固定指纹、私有原始备份与 POSIX 文件锁；完成修改后需重新启动目标运行时。已在完整临时副本验证升级后的批准/撤销及回退后拒绝，未修改本机安装；回退宿主不会使当前适配器在原版上自动恢复 hold 支持。

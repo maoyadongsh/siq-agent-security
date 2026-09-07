@@ -1,0 +1,15 @@
+{
+  "package": "openclaw",
+  "version": "2026.5.12",
+  "target": "dist/pi-tools.before-tool-call-BmZM4hyt.js",
+  "before_sha256": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+  "after_sha256": "e3dff0e2d8aa0ddf3cf13fbe0e41c70001c52a33bad34d0833cb3062b8abdf64",
+  "patch_sha256": "989ae3eb08986aa29d3166199f414a8fb41e70e8d0c2df98eec1261be1de56d3",
+  "adapter": {
+    "target": "index.ts",
+    "source": "adapters/runtime/openclaw-agentshield/index.ts",
+    "before_sha256": "ef520709e165da99b85f8d57d7a7ad6281d8791a218a748655b6945310650b65",
+    "after_sha256": "732cb069f4cff5a6e07fd807b69d64691b98c044ac42429b4292c0e949fe6359",
+    "patch_sha256": "ac85a167f8d5720244b9c92d07c13981802599f99cde56ff76d499f99f0fd7a9"
+  }
+}

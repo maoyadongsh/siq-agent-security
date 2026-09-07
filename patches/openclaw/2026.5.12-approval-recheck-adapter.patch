@@ -1,0 +1,16 @@
+--- a/index.ts
++++ b/index.ts
+@@ -263,6 +263,13 @@
+                 severity: "warning",
+                 timeoutMs: Math.max(1, approval.expires - Date.now()),
+                 timeoutBehavior: "deny",
++                // Requires the paired native beforeExecute checkpoint patch.
++                beforeExecute: async (finalParams: Record<string, unknown>, signal?: AbortSignal) => {
++                  const checked = await waitForLocalApproval(
++                    decision, { ...call, params: finalParams }, Date.now() + 1000, signal,
++                  );
++                  return checked.state === "approved" && !signal?.aborted;
++                },
+               },
+             };
+           }

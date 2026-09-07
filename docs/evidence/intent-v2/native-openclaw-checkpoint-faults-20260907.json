@@ -1,0 +1,450 @@
+{
+  "schema": "openclaw-approval-checkpoint-fault-patch-validation/v1",
+  "recorded_at": "2026-09-07T14:08:19.270078+00:00",
+  "passed": true,
+  "installed_source_unchanged": true,
+  "shipping_adapter_unchanged": true,
+  "runtime_kind": "temporary OpenClaw 2026.5.12 and SIQ adapter with paired candidate patches",
+  "patch": {
+    "package": "openclaw",
+    "version": "2026.5.12",
+    "target": "dist/pi-tools.before-tool-call-BmZM4hyt.js",
+    "before_sha256": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+    "after_sha256": "e3dff0e2d8aa0ddf3cf13fbe0e41c70001c52a33bad34d0833cb3062b8abdf64",
+    "patch_sha256": "989ae3eb08986aa29d3166199f414a8fb41e70e8d0c2df98eec1261be1de56d3",
+    "adapter": {
+      "target": "index.ts",
+      "source": "adapters/runtime/openclaw-agentshield/index.ts",
+      "before_sha256": "ef520709e165da99b85f8d57d7a7ad6281d8791a218a748655b6945310650b65",
+      "after_sha256": "732cb069f4cff5a6e07fd807b69d64691b98c044ac42429b4292c0e949fe6359",
+      "patch_sha256": "ac85a167f8d5720244b9c92d07c13981802599f99cde56ff76d499f99f0fd7a9"
+    }
+  },
+  "runner_sha256": "6c7ec978a6299b08584579f7a0bbc8b23070cd4d1b78a0581d8433e22b6fe181",
+  "validation": {
+    "faults": {
+      "schema": "intent-v2-openclaw-approval-checkpoint-fault-validation/v1",
+      "recorded_at": "2026-09-07T14:08:19.240400+00:00",
+      "passed": true,
+      "observation_identity_checks_passed": true,
+      "configured_local_wait_ms": 1500,
+      "daemon_kill_restarts": 1,
+      "siq_commit": "87fd1ce3b6b7967c94846a798b4fca868aedd857",
+      "siq_dirty": true,
+      "siq_binary_sha256": "6e4ff43fc2d35d3fc22718d82a15ec466356a84331cef1d5638d2a8827c548dc",
+      "cases": [
+        {
+          "id": "normal",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [
+              {
+                "status": 200,
+                "reason_code": "hold_approved"
+              }
+            ],
+            "transport_failed": false,
+            "elapsed_ms": 26.988202
+          },
+          "fault": null,
+          "executed": true,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": false,
+          "local_approval": true,
+          "expected_execution": true,
+          "observation_count": 1,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-throw",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 0.2324349999998958
+          },
+          "fault": "throw",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-reject",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 0.13294500000029075
+          },
+          "fault": "reject",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-undefined",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 0.11130199999979595
+          },
+          "fault": "undefined",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-truthy",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 0.1853080000000773
+          },
+          "fault": "truthy",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-timeout",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": true,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 5000.455100000001
+          },
+          "fault": "timeout",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-cancel",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": true,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 25.47742400000061
+          },
+          "fault": "cancel",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-params-changed",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": true,
+            "http_checks": [
+              {
+                "status": 400,
+                "reason_code": "hold_identity_mismatch"
+              }
+            ],
+            "transport_failed": false,
+            "elapsed_ms": 0.981898000000001
+          },
+          "fault": "params-changed",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-offline",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": true,
+            "elapsed_ms": 1.738005000001067
+          },
+          "fault": null,
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "execution_gate_passed": true
+        }
+      ],
+      "receipt_count": 19,
+      "receipt_chain_verified": true,
+      "openclaw_runtime": {
+        "outputs": [
+          {
+            "id": "normal",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [
+                {
+                  "status": 200,
+                  "reason_code": "hold_approved"
+                }
+              ],
+              "transport_failed": false,
+              "elapsed_ms": 26.988202
+            },
+            "fault": null,
+            "executed": true,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": false
+          },
+          {
+            "id": "checkpoint-throw",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 0.2324349999998958
+            },
+            "fault": "throw",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-reject",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 0.13294500000029075
+            },
+            "fault": "reject",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-undefined",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 0.11130199999979595
+            },
+            "fault": "undefined",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-truthy",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 0.1853080000000773
+            },
+            "fault": "truthy",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-timeout",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": true,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 5000.455100000001
+            },
+            "fault": "timeout",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-cancel",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": true,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 25.47742400000061
+            },
+            "fault": "cancel",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-params-changed",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": true,
+              "http_checks": [
+                {
+                  "status": 400,
+                  "reason_code": "hold_identity_mismatch"
+                }
+              ],
+              "transport_failed": false,
+              "elapsed_ms": 0.981898000000001
+            },
+            "fault": "params-changed",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-offline",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": true,
+              "elapsed_ms": 1.738005000001067
+            },
+            "fault": null,
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          }
+        ],
+        "sources": {
+          "dist/server-DCqS_Ro7.js": "0a0b9a399c0370b1fcbd06b8c63f252a45cd06818c11f3fb66feac8cdbcaf484",
+          "dist/hook-runner-global-aUo3QVZe.js": "9a2f457f6fbc5ad5da07d00c66e6c4db782753e30aadd5c984309838453e30a6",
+          "dist/server.impl-D3CWr7f5.js": "68262664701ca2ec11004c7cbf056cad81bb77875babc77a936cd0177f56c249",
+          "dist/plugin-approval-DGSeVwU6.js": "3a1a769e0593653414a9089aecd3c421f867c5701f32e1a1c42a59ef6890849a",
+          "dist/approval-shared-lxPlCjce.js": "47bd0d6a7c499a7cfb0ef950fb8fb13330fe89eb29199d17837fd03e65724c91",
+          "dist/server-request-context-CslsVvbA.js": "0f8eb35347dd49d4f9bca599254313a8a94b31a0e733bd6d0456317a0fdec906",
+          "dist/operator-approvals-client-DhuKX2Cs.js": "e309ce5c0458fe207c7e0bd277dda19f4165204f668c2ce94481b3731955686f",
+          "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+          "dist/pi-tools.before-tool-call-BmZM4hyt.js": "e3dff0e2d8aa0ddf3cf13fbe0e41c70001c52a33bad34d0833cb3062b8abdf64",
+          "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61"
+        },
+        "openclaw_version": "2026.5.12"
+      },
+      "node_version": "v22.22.1",
+      "limitations": [
+        "synthetic tool executor and operator; no model or human approval proof",
+        "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
+        "optional unbound exec; required bound opaque shell remains denied",
+        "fault injection wraps the real SIQ hook callback; params-change injection uses native hook result merging",
+        "test IO guard is not OS isolation; installed runtime and real settings unchanged"
+      ],
+      "runtime_kind": "temporary paired native/adapter checkpoint patches",
+      "executed_adapter_sha256": "732cb069f4cff5a6e07fd807b69d64691b98c044ac42429b4292c0e949fe6359",
+      "baseline_project_sources": {
+        "scripts/validate-intent-v2-openclaw-checkpoint-faults.py": "549924845aabee96c868f196315bee6c7c8b1393b400f164561f2d893f2788d0",
+        "scripts/openclaw-approval-checkpoint-fault-worker.mjs": "4d632a84762c496fc44502c4bfb6dbe798e37ac87056215ff1fb133899be9621",
+        "scripts/openclaw-fixture-guard.mjs": "d520368340e6672182e3a3ba72dc8ae09c7359fb367f7a859b0058647874671b",
+        "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+        "scripts/validate-intent-v2-hermes.py": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+        "adapters/runtime/openclaw-agentshield/index.ts": "ef520709e165da99b85f8d57d7a7ad6281d8791a218a748655b6945310650b65",
+        "apps/agentshield/internal/receipt/hold_status.go": "d95b27c43dd43e9351f2d6b2658296afbc56dbc05a6da1d74e887868137f04e3",
+        "apps/agentshield/internal/receipt/action_state.go": "7d69a02a4af3e5e93fd36f4b879f6a3869e4c94fc14d06f391617e1c8283350e",
+        "apps/agentshield/internal/receipt/engine.go": "a72721924d8a894429b28bf4438b4a1ca18eedf3c15ae92a332ea169d762ddb9",
+        "apps/agentshield/internal/server/hold_status.go": "555ea3671f39b3e8fd97f3eb97f2c9744b61e6e59c7c12007b2d916d907c67da",
+        "apps/agentshield/internal/server/server.go": "16c5b83cc01354682725a788723ca4c06e0be3fa2c85952d34252b72ac9d2aaf",
+        "apps/agentshield/internal/server/authz.go": "369adcf9c23d3d8262a6d3888c3e39f0d960ec55d3b3eb97935b5c55f2d57c35"
+      }
+    }
+  },
+  "limitations": [
+    "stock runtime and shipping adapter remain affected by the archived revocation gap",
+    "new beforeExecute callback is a local candidate extension, not an upstream API",
+    "checkpoint is not an atomic execution lease or proof against all concurrent mutations",
+    "synthetic tools/operators; no human approval or OS isolation proof"
+  ]
+}

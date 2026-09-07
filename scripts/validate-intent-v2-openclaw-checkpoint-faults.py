@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure real OpenClaw gateway approval versus SIQ hold before tool execution.
+"""Exercise native approval checkpoint callback faults and final-parameter binding.
 
 Uses temporary state, a synthetic operator and a marker-writing tool; never
 executes the command string, calls models, or configures a real installation.
@@ -86,7 +86,7 @@ class ApprovalHarness(native.OpenClawHarness):
             time.sleep(0.025)
         raise RuntimeError("native worker result timeout")
 
-    def run(self, cases=None):
+    def run(self):
         self.config("optional")
         self.build()
         self.start()
@@ -142,23 +142,32 @@ class ApprovalHarness(native.OpenClawHarness):
                 ),
             }
         )
-        cases = (
-            cases
-            if cases is not None
-            else [
-                {"id": "platform-deny", "platform": "deny", "local": True},
-                {"id": "both-approve", "platform": "allow-once", "local": True},
-                {"id": "local-missing", "platform": "allow-once", "local": None},
-                {"id": "local-reject", "platform": "allow-once", "local": False},
-                {"id": "platform-cancel", "platform": "cancel", "local": True},
+        cases = [
+            {"id": "normal", "platform": "allow-once", "local": True},
+            *[
                 {
-                    "id": "local-offline",
+                    "id": "checkpoint-" + fault,
+                    "fault": fault,
                     "platform": "allow-once",
-                    "local": None,
-                    "disconnect": True,
-                },
-            ]
-        )
+                    "local": True,
+                }
+                for fault in (
+                    "throw",
+                    "reject",
+                    "undefined",
+                    "truthy",
+                    "timeout",
+                    "cancel",
+                    "params-changed",
+                )
+            ],
+            {
+                "id": "checkpoint-offline",
+                "platform": "allow-once",
+                "local": True,
+                "disconnect": True,
+            },
+        ]
         spec = control / "spec.json"
         spec.write_text(
             json.dumps(
@@ -178,7 +187,7 @@ class ApprovalHarness(native.OpenClawHarness):
             str(self.args.node),
             "--import",
             str(ROOT / "scripts/openclaw-fixture-guard.mjs"),
-            str(ROOT / "scripts/openclaw-approval-gate-worker.mjs"),
+            str(ROOT / "scripts/openclaw-approval-checkpoint-fault-worker.mjs"),
             str(spec),
         ]
         with tempfile.TemporaryFile(mode="w+t") as log:
@@ -232,12 +241,12 @@ class ApprovalHarness(native.OpenClawHarness):
                         )
                     if case["local"] is True:
                         self.wait_file(control / f"{call_id}.request.json", process)
+                        if case.get("disconnect"):
+                            self.stop(kill=True)
                         choice = control / f"{call_id}.choice.json"
                         temporary = choice.with_suffix(".tmp")
                         temporary.write_text(json.dumps({"decision": case["platform"]}))
                         temporary.replace(choice)
-                    if case.get("disconnect"):
-                        self.stop(kill=True)
                     result = self.wait_file(control / f"{call_id}.done.json", process)
                     if case.get("disconnect"):
                         self.start()
@@ -251,11 +260,9 @@ class ApprovalHarness(native.OpenClawHarness):
                         if r.get("tool_call_id") == call_id
                         and r.get("record_type") == "observation"
                     ]
-                    expected = (
-                        case["platform"] == "allow-once" and case["local"] is True
-                    )
+                    expected = case["id"] == "normal"
                     require(
-                        len(observations) == int(expected),
+                        len(observations) == int(result["executed"]),
                         "observation authorization invariant failed",
                     )
                     if observations:
@@ -292,12 +299,12 @@ class ApprovalHarness(native.OpenClawHarness):
         require(verified["verified"], "offline receipt verification failed")
         sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
         return {
-            "schema": "intent-v2-openclaw-approval-gate-validation/v1",
+            "schema": "intent-v2-openclaw-approval-checkpoint-fault-validation/v1",
             "recorded_at": datetime.now(timezone.utc).isoformat(),
             "passed": all(item["execution_gate_passed"] for item in outcomes),
-            "observation_invariants_passed": True,
+            "observation_identity_checks_passed": True,
             "configured_local_wait_ms": 1500,
-            "daemon_kill_restarts": sum(bool(case.get("disconnect")) for case in cases),
+            "daemon_kill_restarts": 1,
             "siq_commit": self.command(["git", "rev-parse", "HEAD"], cwd=ROOT).strip(),
             "siq_dirty": bool(
                 self.command(["git", "status", "--porcelain"], cwd=ROOT).strip()
@@ -312,7 +319,7 @@ class ApprovalHarness(native.OpenClawHarness):
                 str(path.relative_to(ROOT)): sha(path)
                 for path in [
                     Path(__file__),
-                    ROOT / "scripts/openclaw-approval-gate-worker.mjs",
+                    ROOT / "scripts/openclaw-approval-checkpoint-fault-worker.mjs",
                     ROOT / "scripts/openclaw-fixture-guard.mjs",
                     ROOT / "scripts/validate-intent-v2-openclaw.py",
                     ROOT / "scripts/validate-intent-v2-hermes.py",
@@ -329,7 +336,7 @@ class ApprovalHarness(native.OpenClawHarness):
                 "synthetic tool executor and operator; no model or human approval proof",
                 "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
                 "optional unbound exec; required bound opaque shell remains denied",
-                "cancelled native wait is explicitly resolved as deny after execution settles, for fixture cleanup",
+                "fault injection wraps the real SIQ hook callback; params-change injection uses native hook result merging",
                 "test IO guard is not OS isolation; installed runtime and real settings unchanged",
             ],
         }

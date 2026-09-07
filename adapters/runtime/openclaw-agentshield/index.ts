@@ -251,6 +251,9 @@ export default definePluginEntry({
           case "redact":
             return decision.params ? { params: decision.params } : { block: true, blockReason: "siq-agent-security: redaction failed" };
           case "hold": {
+            if ((ctx as { approvalExecutionRecheckVersion?: unknown } | undefined)?.approvalExecutionRecheckVersion !== 1) {
+              return failClosed("native approval execution recheck unsupported", event.toolName, call.session_id);
+            }
             const approval = await waitForLocalApproval(decision, call, hookDeadline, ctx?.abortSignal);
             if (approval.state === "unavailable") return failClosed("local approval status unavailable", event.toolName, call.session_id);
             if (approval.state !== "approved" || !approval.expires || ctx?.abortSignal?.aborted) {
@@ -263,6 +266,12 @@ export default definePluginEntry({
                 severity: "warning",
                 timeoutMs: Math.max(1, approval.expires - Date.now()),
                 timeoutBehavior: "deny",
+                beforeExecute: async (finalParams: Record<string, unknown>, signal?: AbortSignal) => {
+                  const checked = await waitForLocalApproval(
+                    decision, { ...call, params: finalParams }, Date.now() + 1000, signal,
+                  );
+                  return checked.state === "approved" && !signal?.aborted;
+                },
               },
             };
           }

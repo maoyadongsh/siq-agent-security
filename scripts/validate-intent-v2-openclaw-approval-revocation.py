@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure real OpenClaw gateway approval versus SIQ hold before tool execution.
+"""Measure Grant revocation while native OpenClaw platform approval is pending.
 
 Uses temporary state, a synthetic operator and a marker-writing tool; never
 executes the command string, calls models, or configures a real installation.
@@ -48,6 +48,8 @@ class ApprovalHarness(native.OpenClawHarness):
         )
         route = "/v1/grants/" + result["grant"]["grant_id"]
 
+        self.grant_route = route
+
         def action(name, **body):
             nonlocal result
             result = self.api(
@@ -66,6 +68,7 @@ class ApprovalHarness(native.OpenClawHarness):
             "approve", challenge_id=challenge["challenge_id"], nonce=challenge["nonce"]
         )
         action("deploy")
+        self.grant_revision = result["state_revision"]
         require(
             "exec" in result["grant"]["openclaw_tool_policy"]["require_approval"],
             "exec hold gate missing",
@@ -86,7 +89,7 @@ class ApprovalHarness(native.OpenClawHarness):
             time.sleep(0.025)
         raise RuntimeError("native worker result timeout")
 
-    def run(self, cases=None):
+    def run(self):
         self.config("optional")
         self.build()
         self.start()
@@ -142,23 +145,15 @@ class ApprovalHarness(native.OpenClawHarness):
                 ),
             }
         )
-        cases = (
-            cases
-            if cases is not None
-            else [
-                {"id": "platform-deny", "platform": "deny", "local": True},
-                {"id": "both-approve", "platform": "allow-once", "local": True},
-                {"id": "local-missing", "platform": "allow-once", "local": None},
-                {"id": "local-reject", "platform": "allow-once", "local": False},
-                {"id": "platform-cancel", "platform": "cancel", "local": True},
-                {
-                    "id": "local-offline",
-                    "platform": "allow-once",
-                    "local": None,
-                    "disconnect": True,
-                },
-            ]
-        )
+        cases = [
+            {"id": "both-approve", "platform": "allow-once", "local": True},
+            {
+                "id": "grant-revoked",
+                "platform": "allow-once",
+                "local": True,
+                "revoke_during_platform_wait": True,
+            },
+        ]
         spec = control / "spec.json"
         spec.write_text(
             json.dumps(
@@ -232,6 +227,41 @@ class ApprovalHarness(native.OpenClawHarness):
                         )
                     if case["local"] is True:
                         self.wait_file(control / f"{call_id}.request.json", process)
+                        if case.get("revoke_during_platform_wait"):
+                            revoked = self.api(
+                                self.grant_route + "/revoke",
+                                {
+                                    "expected_revision": self.grant_revision,
+                                    "actor_id": "synthetic-fixture-operator",
+                                },
+                            )
+                            require(
+                                revoked["grant"]["status"] == "revoked",
+                                "grant not revoked",
+                            )
+                            status = self.api(
+                                "/v1/hold-status",
+                                {
+                                    "platform": "openclaw",
+                                    "session_id": fixture.SESSION,
+                                    "agent_id": fixture.AGENT,
+                                    "tool": "exec",
+                                    "tool_call_id": call_id,
+                                    "action_id": decision["action_id"],
+                                    "decision_receipt_id": decision["receipt_id"],
+                                    "params": {"command": "printf fixture"},
+                                },
+                                token=(self.state / "token").read_text().strip(),
+                            )
+                            require(
+                                status["status"] == "denied"
+                                and status["reason_code"] == "hold_authority_changed",
+                                "revoked hold was still reported approved",
+                            )
+                            require(
+                                not (control / f"{call_id}.executed.json").exists(),
+                                "tool executed before revocation check",
+                            )
                         choice = control / f"{call_id}.choice.json"
                         temporary = choice.with_suffix(".tmp")
                         temporary.write_text(json.dumps({"decision": case["platform"]}))
@@ -252,10 +282,12 @@ class ApprovalHarness(native.OpenClawHarness):
                         and r.get("record_type") == "observation"
                     ]
                     expected = (
-                        case["platform"] == "allow-once" and case["local"] is True
+                        case["platform"] == "allow-once"
+                        and case["local"] is True
+                        and not case.get("revoke_during_platform_wait")
                     )
                     require(
-                        len(observations) == int(expected),
+                        len(observations) == int(result["executed"]),
                         "observation authorization invariant failed",
                     )
                     if observations:
@@ -269,6 +301,12 @@ class ApprovalHarness(native.OpenClawHarness):
                         {
                             **result,
                             "local_approval": case["local"],
+                            "grant_revoked_before_platform_allow": bool(
+                                case.get("revoke_during_platform_wait")
+                            ),
+                            "status_before_platform_allow": "denied"
+                            if case.get("revoke_during_platform_wait")
+                            else "approved",
                             "expected_execution": expected,
                             "observation_count": len(observations),
                             "execution_gate_passed": result["executed"] == expected,
@@ -292,12 +330,12 @@ class ApprovalHarness(native.OpenClawHarness):
         require(verified["verified"], "offline receipt verification failed")
         sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
         return {
-            "schema": "intent-v2-openclaw-approval-gate-validation/v1",
+            "schema": "intent-v2-openclaw-approval-revocation-validation/v1",
             "recorded_at": datetime.now(timezone.utc).isoformat(),
             "passed": all(item["execution_gate_passed"] for item in outcomes),
-            "observation_invariants_passed": True,
+            "observation_identity_checks_passed": True,
             "configured_local_wait_ms": 1500,
-            "daemon_kill_restarts": sum(bool(case.get("disconnect")) for case in cases),
+            "daemon_kill_restarts": 0,
             "siq_commit": self.command(["git", "rev-parse", "HEAD"], cwd=ROOT).strip(),
             "siq_dirty": bool(
                 self.command(["git", "status", "--porcelain"], cwd=ROOT).strip()
@@ -329,7 +367,7 @@ class ApprovalHarness(native.OpenClawHarness):
                 "synthetic tool executor and operator; no model or human approval proof",
                 "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
                 "optional unbound exec; required bound opaque shell remains denied",
-                "cancelled native wait is explicitly resolved as deny after execution settles, for fixture cleanup",
+                "observation refers to the originally approved decision; it is not a current-authority check",
                 "test IO guard is not OS isolation; installed runtime and real settings unchanged",
             ],
         }

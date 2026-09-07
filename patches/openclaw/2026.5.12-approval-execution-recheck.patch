@@ -1,0 +1,62 @@
+--- a/dist/pi-tools.before-tool-call-BmZM4hyt.js
++++ b/dist/pi-tools.before-tool-call-BmZM4hyt.js
+@@ -391,6 +391,35 @@
+ }
+ async function requestPluginToolApproval(params) {
+ 	const approval = params.approval;
++	// SIQ candidate: a bounded, awaited checkpoint after platform approval.
++	const allowAfterRecheck = async () => {
++		const finalParams = mergeParamsWithApprovalOverrides(params.baseParams, params.overrideParams);
++		if (typeof approval.beforeExecute !== "function") return { blocked: false, params: finalParams };
++		const controller = new AbortController();
++		let timer;
++		const abort = () => controller.abort();
++		params.signal?.addEventListener("abort", abort, { once: true });
++		if (params.signal?.aborted) controller.abort();
++		try {
++			const timeout = new Promise((resolve) => {
++				timer = setTimeout(() => { controller.abort(); resolve(false); }, 5000);
++			});
++			const valid = await Promise.race([
++				Promise.resolve().then(() => approval.beforeExecute(finalParams, controller.signal)),
++				timeout
++			]);
++			if (valid === true && !controller.signal.aborted) return { blocked: false, params: finalParams };
++		} catch {
++			// Rejection is a veto; callback errors never enable execution.
++		} finally {
++			clearTimeout(timer);
++			params.signal?.removeEventListener("abort", abort);
++		}
++		return {
++			blocked: true, kind: "veto", deniedReason: "plugin-approval-recheck",
++			reason: "Approval execution recheck denied", params: params.baseParams
++		};
++	};
+ 	const safeOnResolution = (resolution) => {
+ 		const onResolution = approval.onResolution;
+ 		if (typeof onResolution !== "function") return;
+@@ -463,10 +492,7 @@
+ 			decision = waitResult?.decision;
+ 		}
+ 		safeOnResolution(decision === PluginApprovalResolutions.ALLOW_ONCE || decision === PluginApprovalResolutions.ALLOW_ALWAYS || decision === PluginApprovalResolutions.DENY ? decision : PluginApprovalResolutions.TIMEOUT);
+-		if (decision === PluginApprovalResolutions.ALLOW_ONCE || decision === PluginApprovalResolutions.ALLOW_ALWAYS) return {
+-			blocked: false,
+-			params: mergeParamsWithApprovalOverrides(params.baseParams, params.overrideParams)
+-		};
++		if (decision === PluginApprovalResolutions.ALLOW_ONCE || decision === PluginApprovalResolutions.ALLOW_ALWAYS) return await allowAfterRecheck();
+ 		if (decision === PluginApprovalResolutions.DENY) return {
+ 			blocked: true,
+ 			kind: "failure",
+@@ -474,10 +500,7 @@
+ 			reason: "Denied by user",
+ 			params: params.baseParams
+ 		};
+-		if ((approval.timeoutBehavior ?? "deny") === "allow") return {
+-			blocked: false,
+-			params: mergeParamsWithApprovalOverrides(params.baseParams, params.overrideParams)
+-		};
++		if ((approval.timeoutBehavior ?? "deny") === "allow") return await allowAfterRecheck();
+ 		return {
+ 			blocked: true,
+ 			kind: "failure",

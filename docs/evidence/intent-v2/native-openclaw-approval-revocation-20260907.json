@@ -1,0 +1,97 @@
+{
+  "schema": "intent-v2-openclaw-approval-revocation-validation/v1",
+  "recorded_at": "2026-09-07T13:56:11.169957+00:00",
+  "passed": false,
+  "observation_identity_checks_passed": true,
+  "configured_local_wait_ms": 1500,
+  "daemon_kill_restarts": 0,
+  "siq_commit": "87fd1ce3b6b7967c94846a798b4fca868aedd857",
+  "siq_dirty": true,
+  "siq_binary_sha256": "6e4ff43fc2d35d3fc22718d82a15ec466356a84331cef1d5638d2a8827c548dc",
+  "cases": [
+    {
+      "id": "both-approve",
+      "executed": true,
+      "platform_decision": "allow-once",
+      "platform_requested": true,
+      "cancelled_request_cleanup": false,
+      "blocked": false,
+      "local_approval": true,
+      "grant_revoked_before_platform_allow": false,
+      "status_before_platform_allow": "approved",
+      "expected_execution": true,
+      "observation_count": 1,
+      "execution_gate_passed": true
+    },
+    {
+      "id": "grant-revoked",
+      "executed": true,
+      "platform_decision": "allow-once",
+      "platform_requested": true,
+      "cancelled_request_cleanup": false,
+      "blocked": false,
+      "local_approval": true,
+      "grant_revoked_before_platform_allow": true,
+      "status_before_platform_allow": "denied",
+      "expected_execution": false,
+      "observation_count": 1,
+      "execution_gate_passed": false
+    }
+  ],
+  "receipt_count": 6,
+  "receipt_chain_verified": true,
+  "openclaw_runtime": {
+    "outputs": [
+      {
+        "id": "both-approve",
+        "executed": true,
+        "platform_decision": "allow-once",
+        "platform_requested": true,
+        "cancelled_request_cleanup": false,
+        "blocked": false
+      },
+      {
+        "id": "grant-revoked",
+        "executed": true,
+        "platform_decision": "allow-once",
+        "platform_requested": true,
+        "cancelled_request_cleanup": false,
+        "blocked": false
+      }
+    ],
+    "sources": {
+      "dist/server-DCqS_Ro7.js": "0a0b9a399c0370b1fcbd06b8c63f252a45cd06818c11f3fb66feac8cdbcaf484",
+      "dist/server.impl-D3CWr7f5.js": "68262664701ca2ec11004c7cbf056cad81bb77875babc77a936cd0177f56c249",
+      "dist/plugin-approval-DGSeVwU6.js": "3a1a769e0593653414a9089aecd3c421f867c5701f32e1a1c42a59ef6890849a",
+      "dist/approval-shared-lxPlCjce.js": "47bd0d6a7c499a7cfb0ef950fb8fb13330fe89eb29199d17837fd03e65724c91",
+      "dist/server-request-context-CslsVvbA.js": "0f8eb35347dd49d4f9bca599254313a8a94b31a0e733bd6d0456317a0fdec906",
+      "dist/operator-approvals-client-DhuKX2Cs.js": "e309ce5c0458fe207c7e0bd277dda19f4165204f668c2ce94481b3731955686f",
+      "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+      "dist/pi-tools.before-tool-call-BmZM4hyt.js": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+      "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61"
+    },
+    "openclaw_version": "2026.5.12"
+  },
+  "node_version": "v22.22.1",
+  "sources": {
+    "scripts/validate-intent-v2-openclaw-approval-revocation.py": "64aa306ae07df9fd60455742ee98237b1a6f4218e2b3a4a3211ad2b485324ccc",
+    "scripts/openclaw-approval-gate-worker.mjs": "65258afedb98382e53150989f3fc989dd3a79a58e1f8c6cc7b4f245b45a20601",
+    "scripts/openclaw-fixture-guard.mjs": "d520368340e6672182e3a3ba72dc8ae09c7359fb367f7a859b0058647874671b",
+    "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+    "scripts/validate-intent-v2-hermes.py": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+    "adapters/runtime/openclaw-agentshield/index.ts": "ef520709e165da99b85f8d57d7a7ad6281d8791a218a748655b6945310650b65",
+    "apps/agentshield/internal/receipt/hold_status.go": "d95b27c43dd43e9351f2d6b2658296afbc56dbc05a6da1d74e887868137f04e3",
+    "apps/agentshield/internal/receipt/action_state.go": "7d69a02a4af3e5e93fd36f4b879f6a3869e4c94fc14d06f391617e1c8283350e",
+    "apps/agentshield/internal/receipt/engine.go": "a72721924d8a894429b28bf4438b4a1ca18eedf3c15ae92a332ea169d762ddb9",
+    "apps/agentshield/internal/server/hold_status.go": "555ea3671f39b3e8fd97f3eb97f2c9744b61e6e59c7c12007b2d916d907c67da",
+    "apps/agentshield/internal/server/server.go": "16c5b83cc01354682725a788723ca4c06e0be3fa2c85952d34252b72ac9d2aaf",
+    "apps/agentshield/internal/server/authz.go": "369adcf9c23d3d8262a6d3888c3e39f0d960ec55d3b3eb97935b5c55f2d57c35"
+  },
+  "limitations": [
+    "synthetic tool executor and operator; no model or human approval proof",
+    "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
+    "optional unbound exec; required bound opaque shell remains denied",
+    "observation refers to the originally approved decision; it is not a current-authority check",
+    "test IO guard is not OS isolation; installed runtime and real settings unchanged"
+  ]
+}
