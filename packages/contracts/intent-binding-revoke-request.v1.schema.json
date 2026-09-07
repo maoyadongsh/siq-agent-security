@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Trusted binding revocation request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "expected_intent_digest"
+  ],
+  "properties": {
+    "expected_intent_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

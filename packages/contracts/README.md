@@ -103,3 +103,5 @@ Connector 是运行在 Edge Agent 侧的多语言插件（设计文档 §26.1：
 V2 Go 输出与固定向量位于 `apps/agentshield/testdata/contracts/intent-contract.v2.*.json`，由
 `apps/control-api/app/tests/test_intent_v2_contracts.py` 独立验证规范化字节、digest 和签名。
 JSON Schema 负责结构；RE2 可编译性、时间窗顺序、证据存在性和 digest/signature 完整性由 Go 运行时校验，不能仅凭 schema 通过就视为可信授权。
+
+绑定撤销：[请求 schema](intent-binding-revoke-request.v1.schema.json)、[签名记录 schema](intent-binding-revocation.v1.schema.json)。管理面撤销为追加不可变记录；原绑定保留，运行时不得回退 unbound。并发与恢复语义见开发规格的绑定撤销增量。

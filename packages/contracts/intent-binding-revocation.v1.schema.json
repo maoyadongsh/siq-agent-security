@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Immutable signed binding revocation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "binding_id",
+    "binding_digest",
+    "revoked_at",
+    "reason_code",
+    "signing_schema",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "intent-binding-revocation/v1"
+    },
+    "binding_id": {
+      "type": "string",
+      "pattern": "^bind-[0-9a-f]{64}$"
+    },
+    "binding_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "revoked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reason_code": {
+      "const": "intent_binding_revoked"
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  }
+}
