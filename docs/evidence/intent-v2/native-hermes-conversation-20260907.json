@@ -1,0 +1,77 @@
+{
+  "schema": "intent-v2-hermes-conversation-validation/v1",
+  "passed": true,
+  "recorded_at": "2026-09-07T12:03:49.381525+00:00",
+  "siq_commit": "3d1a9b50b2e9429c183b4381a20f36e2cac2f735",
+  "siq_dirty": true,
+  "adapter_sha256": "9d0f872cfec2266c7b1b757e4202337e7e88aa4cfa2775c314eda9caba5eafe9",
+  "hermes_source_sha256": {
+    "model_tools.py": "5227bfe30f7c3f6eb20d064f648420138031e038d38eac2829d25b749739ad11",
+    "hermes_cli/plugins.py": "63cef01ae81a23c859170d36860c9ac257f320266a88640a8b9690952728bba6",
+    "hermes_cli/lifecycle.py": "e820ed8114d7062d53223113cc053c737d4ced6b624ce1fbe88f79ad8b2a26bd",
+    "tools/file_tools.py": "59c8c64cacefefd8d505e9d4b168878d2d00a5094bc6c76dcab99f1fea2631a9"
+  },
+  "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+  "hermes_dirty": false,
+  "hermes_python_version": "Python 3.11.15",
+  "conversation_source_sha256": {
+    "run_agent.py": "5b2e7083680e6c728f2306adc73e5f814c444aaa9ff3e3b840206142c67a7149",
+    "agent/agent_init.py": "a7caf2c1fcd66fe55b483435ec759811376c303d0724a8dda57446f6dfd61545",
+    "agent/conversation_loop.py": "33924321c2ef848a7474d4daf4dd5ec1e98588aa54db967d92ea2fc6aa3ff56a",
+    "agent/tool_executor.py": "5aff6c7e95a280adc5124e7c1f1019b54984b8e7091db48bac35ad5bc2387813"
+  },
+  "harness_sha256": "b4983d2d3c4d86f31000a4d44c59a59fa41847ce770f932c533215003b960a75",
+  "shared_harness_sha256": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+  "binary_sha256": "148de82e1efbd74b32764c0c31df16b0662f434a44143e5c89c5504e52d6aa0b",
+  "conversations": [
+    {
+      "bound": true,
+      "session_id": "20260907_200346_ee8b10",
+      "model_requests": 7,
+      "streaming_requests": 7,
+      "tool_calls": 5,
+      "turns": 2,
+      "metadata_requests": [
+        "/api/v1/models",
+        "/api/tags",
+        "/v1/props",
+        "/props",
+        "/version",
+        "/v1/models"
+      ]
+    },
+    {
+      "bound": false,
+      "session_id": "20260907_200348_67722d",
+      "model_requests": 2,
+      "streaming_requests": 2,
+      "tool_calls": 1,
+      "turns": 1,
+      "metadata_requests": [
+        "/api/v1/models",
+        "/api/tags",
+        "/v1/props",
+        "/props",
+        "/version",
+        "/v1/models"
+      ]
+    }
+  ],
+  "receipt_count": 8,
+  "checks": [
+    "decision_token_cannot_read_authority",
+    "native_generated_session_binding",
+    "native_model_response_tool_dispatch",
+    "native_multi_turn_history_and_action_chain",
+    "allowed_read_observed",
+    "scope_and_write_denials_reach_model",
+    "fresh_unbound_session_denied",
+    "offline_receipt_chain_verified"
+  ],
+  "scope": "installed AIAgent.run_conversation with loopback synthetic chat completions and actual SIQ HTTP daemon",
+  "limitations": [
+    "synthetic model and operator, no real model quality or human approval proof",
+    "no native Hermes hold approval journey",
+    "no OpenClaw/CodeBuddy conversation or OS isolation claim"
+  ]
+}

@@ -76,3 +76,7 @@ siq-agent-security adapter install openclaw
 V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多 2048 项、TTL 300 秒，重复 ID 冲突不绑定旧动作。hold 的 execution observation 还必须有本地管理面批准记录；平台自身弹窗不自动创建本地批准。`node scripts/test-openclaw-adapter.cjs` 提供隔离的 mock hook 回归，真实平台 V2 归档仍为 unverified。
 
 2026-09-07 增量：[原生加载器及工具链验收](../../../docs/trusted-intent-v2-openclaw-validation-20260907-192539.md) 已在 OpenClaw 2026.5.12 / linux/arm64 的临时实例通过，包括 V2 关联、目录/工具拒绝、失联与重启。真实前置包装器和后置 relay 使用夹具提供的调用 ID，不等于完整网关/LLM 会话与平台审批验收；综合状态仍为 unverified。
+
+20:16 增量：[完整 CLI 会话验收](../../../docs/trusted-intent-v2-openclaw-conversation-20260907-201600.md) 从真实 `agent --local` 入口驱动本地合成模型，验证原生 pre/post、跨进程续聊与显式新会话不继承权限。创建 Intent Binding 时，`session_id` 使用 hook 提供的原生 `sessionKey`（如 `agent:<id>:main`），并非 transcript UUID。模型历史可能规范化调用 ID，SIQ 回执仍严格按真实 pre/post 执行 ID 关联。网关审批和同 key reset 生命周期尚未验收。
+
+20:36 增量：[空闲重置实测](../../../docs/trusted-intent-v2-openclaw-idle-reset-20260907-203600.md) 确认同 key 下 UUID 轮换不解除 SIQ 绑定或清除污点；但本机 OpenClaw 2026.5.12 仍将旧 transcript 发送给模型，整体重置测试失败。不能以 UUID 变化宣称上下文已清空。

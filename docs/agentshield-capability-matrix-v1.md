@@ -75,3 +75,11 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 2026-09-07 19:47 新增 [持续运行与旧 Hermes 兼容证据](trusted-intent-v2-soak-and-compatibility-20260907-194732.md)：32 会话/600 秒/六次强杀恢复，24h 边界回归，以及未修改的历史 Hermes 适配器通过。持续 HTTP 负载不是完整平台会话，历史源代码测试不是发布制品验收，平台综合状态保持 `unverified`。
 
 上一批 `0f232f4` 的远端 CI 已通过；本轮远端 CI 需按对应新 SHA 单独验证，结果以 GitHub Actions 运行记录为准。
+
+2026-09-07 20:04 新增 [Hermes 完整会话与 CI 证据](trusted-intent-v2-conversation-validation-20260907-200400.md)：原生 Agent 生成会话 ID，实际 SSE 模型协议驱动 pre/post；两个会话、三轮对话、六次工具调用及八条回执通过。已覆盖跨轮固定绑定、动作链和新会话不继承权限；模型与管理操作者为合成测试，平台审批和其他平台完整会话仍未完成，综合列保持 `unverified`。`3d1a9b5` 的完整远端 CI 28 个 job 全部成功，本轮新增测试脚本的本地证据单独归档。
+
+2026-09-07 20:16 新增 [OpenClaw 完整 CLI 会话证据](trusted-intent-v2-openclaw-conversation-20260907-201600.md)：真实 `agent --local` 四轮命令、十次 SSE completion、六次工具调用及八条回执通过；实际 post hook、跨进程续聊和新 explicit 会话隔离已验证。该路径不含网关审批与同 key reset，综合列仍为 `unverified`。
+
+2026-09-07 20:36 新增 [OpenClaw 空闲重置失败证据](trusted-intent-v2-openclaw-idle-reset-20260907-203600.md)：同 key 的 SIQ 绑定、动作链和污点保持，原生 UUID 轮换后却继续使用旧 transcript。报告 `passed=false`、`siq_invariants_passed=true`，进程退出码 1；不得把这份归档作为完整重置通过证据，综合状态继续 `unverified`。
+
+2026-09-07 20:42 新增 [OpenClaw 临时补丁副本证据](trusted-intent-v2-openclaw-reset-patch-20260907-204200.md)：指纹限定补丁通过相同空闲重置测试，并保留正常续聊及 SIQ 安全状态。本机原版未更新；不能把该副本的 `passed=true` 归于原版或视作上游已修复，综合状态不升级。

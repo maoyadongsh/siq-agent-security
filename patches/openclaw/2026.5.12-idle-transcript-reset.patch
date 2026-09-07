@@ -1,0 +1,22 @@
+--- a/dist/agent-command-BQgTSh4F.js
++++ b/dist/agent-command-BQgTSh4F.js
+@@ -473,7 +473,8 @@
+ 				...current,
+ 				sessionId,
+ 				updatedAt: now,
+-				sessionStartedAt: current.sessionStartedAt ?? now,
++				sessionStartedAt: current.sessionId === sessionId ? current.sessionStartedAt ?? now : now,
++				...current.sessionId !== sessionId ? { sessionFile: void 0 } : {},
+ 				skillsSnapshot
+ 			};
+ 			await persistSessionEntry({
+@@ -495,7 +496,8 @@
+ 				...entry,
+ 				sessionId,
+ 				updatedAt: now,
+-				sessionStartedAt: entry.sessionStartedAt ?? now,
++				sessionStartedAt: entry.sessionId === sessionId ? entry.sessionStartedAt ?? now : now,
++				...entry.sessionId !== sessionId ? { sessionFile: void 0 } : {},
+ 				lastInteractionAt: now
+ 			};
+ 			if (thinkOverride) next.thinkingLevel = thinkOverride;

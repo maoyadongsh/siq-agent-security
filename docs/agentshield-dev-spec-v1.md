@@ -337,6 +337,8 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 | `GET /v1/audit` | 最近操作（无密钥、无参数原文） |
 | `GET /v1/export` | 脱敏导出包 `agentshield.export.v1`（无 token、无私钥、无参数原文、无 Skill 正文） |
 
+`patch-desired` 重建平台工具策略时，必须从补丁后仍存在的事实重新派生 OpenClaw 的逐次审批限制，与初始 Grant Build 一致：process、resource（package.install）、credential 事实均使 `exec` 保持 `require_approval`。修改其他域或显式保留 `exec` 工具 allow 不得抹掉这项限制；凭据 deny 事实仍保留。审批限制由当前事实推导，不直接复制旧策略中的过期条目。该要求不把 `declared`/`deployed` 提升为 `effective`。
+
 #### 3.8.1.1 五态聚合（P0）
 
 `GET /v1/permissions` 由 `internal/ledger` 从已有 admission / grant / receipt / inventory fact 投影，不新写 STATE_DIR。

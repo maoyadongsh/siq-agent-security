@@ -150,6 +150,11 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 			}
 		case "process":
 			needsProcess = true
+			ocReq["exec"] = true
+		case "resource", "credential":
+			// Rebuild the same per-use gate as Build. A change to another
+			// domain must not turn an approval-gated exec into plain allow.
+			ocReq["exec"] = true
 		case "model":
 			models = append(models, f.Resource.Value)
 		}
