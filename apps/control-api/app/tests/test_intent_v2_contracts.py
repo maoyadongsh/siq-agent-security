@@ -37,6 +37,26 @@ def validator(name):
     return Draft7Validator(schema, format_checker=FORMATS)
 
 
+@pytest.mark.parametrize("name", ["hold-status-request.v1", "hold-status.v1"])
+def test_hold_status_wire_contract(name):
+    sample = json.loads((SAMPLES / f"{name}.sample.json").read_text())
+    check = validator(name)
+    check.validate(sample)
+    for field in check.schema["required"]:
+        bad = {key: value for key, value in sample.items() if key != field}
+        assert list(check.iter_errors(bad)), field
+    assert list(check.iter_errors({**sample, "approve": True}))
+    if name == "hold-status-request.v1":
+        assert list(check.iter_errors({**sample, "params": None}))
+        assert list(check.iter_errors({**sample, "action_id": ""}))
+    else:
+        for status in ("pending", "approved", "denied", "expired", "consumed"):
+            check.validate({**sample, "status": status, "reason_code": f"hold_{status}"})
+        check.validate({**sample, "status": "denied", "reason_code": "hold_authority_changed"})
+        assert list(check.iter_errors({**sample, "status": "approved", "reason_code": "hold_denied"}))
+        assert list(check.iter_errors({**sample, "expires_at": "yesterday"}))
+
+
 @pytest.mark.parametrize("name", ["intent-contract.v2", "runtime-action-envelope"])
 def test_v2_go_fixture_and_required_fields(name):
     sample = json.loads((SAMPLES / f"{name}.sample.json").read_text())

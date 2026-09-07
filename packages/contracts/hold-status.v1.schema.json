@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Read-only local hold status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "action_id", "decision_receipt_id", "expires_at", "reason_code"],
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "pending"}}}, "then": {"properties": {"reason_code": {"const": "hold_pending"}}}},
+    {"if": {"properties": {"status": {"const": "approved"}}}, "then": {"properties": {"reason_code": {"const": "hold_approved"}}}},
+    {"if": {"properties": {"status": {"const": "denied"}}}, "then": {"properties": {"reason_code": {"enum": ["hold_denied", "hold_authority_changed"]}}}},
+    {"if": {"properties": {"status": {"const": "expired"}}}, "then": {"properties": {"reason_code": {"const": "hold_expired"}}}},
+    {"if": {"properties": {"status": {"const": "consumed"}}}, "then": {"properties": {"reason_code": {"const": "hold_consumed"}}}}
+  ],
+  "properties": {
+    "schema_version": {"const": "hold-status/v1"},
+    "status": {"enum": ["pending", "approved", "denied", "expired", "consumed"]},
+    "action_id": {"type": "string", "minLength": 1},
+    "decision_receipt_id": {"type": "string", "minLength": 1},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "reason_code": {"enum": ["hold_pending", "hold_approved", "hold_denied", "hold_expired", "hold_consumed", "hold_authority_changed"]}
+  }
+}
