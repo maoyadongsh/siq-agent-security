@@ -1,0 +1,39 @@
+{
+  "schema_version": "intent/v2",
+  "intent_id": "int-test",
+  "task_id": "task-1",
+  "principal": {
+    "type": "user",
+    "id": "u-1"
+  },
+  "agent": {
+    "id": "a-1",
+    "platform": "hermes"
+  },
+  "purpose": "read approved report",
+  "allowed_tools": [
+    "read_file"
+  ],
+  "allowed_effects": [
+    "file.read"
+  ],
+  "resource_constraints": [],
+  "parameter_constraints": [
+    {
+      "path": "/request/body/project_id",
+      "operator": "equals",
+      "value": "project-1"
+    }
+  ],
+  "issued_at": "2026-01-01T00:00:00Z",
+  "valid_from": "2026-01-01T00:00:00Z",
+  "expires_at": "2099-01-01T00:00:00Z",
+  "authority": {
+    "issuer": "local-admin",
+    "revision": "r1",
+    "evidence_ids": []
+  },
+  "signing_schema": "local_canonical/v1",
+  "digest": "ce1554dad18bff0c7d92c9198d444baefec7b682045f5080df4f7a3a91916404",
+  "signature": "588c75131f5aa96b74fcbc7a942499bae5869ad947b2b5f37d5ef2c0b19bc807ff9b8aa16196465d1cfc5d5e8a5796dfbbb8cf141cdb24e5de5e9b16bb98de0c"
+}
