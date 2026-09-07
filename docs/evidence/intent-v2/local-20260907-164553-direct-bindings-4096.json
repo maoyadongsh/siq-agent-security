@@ -1,0 +1,34 @@
+{
+  "arch": "arm64",
+  "bindings": 4096,
+  "format": "intent.perf_baseline.v1",
+  "go_version": "go1.26.5",
+  "lookup_ms": {
+    "p50": 0.21943,
+    "p95": 0.239623,
+    "p99": 0.300265,
+    "n": 200,
+    "min_ms": 0.213814,
+    "max_ms": 0.510735
+  },
+  "matcher_ms": {
+    "p50": 0.00192,
+    "p95": 0.00256,
+    "p99": 0.00384,
+    "n": 200,
+    "min_ms": 0.001664,
+    "max_ms": 0.007568
+  },
+  "measured_at": "2026-09-07T08:46:30Z",
+  "missing_lookup_ms": {
+    "p50": 0.005152,
+    "p95": 0.006593,
+    "p99": 0.012352,
+    "n": 200,
+    "min_ms": 0.004544,
+    "max_ms": 0.019344
+  },
+  "notes": "Observations only. No SLA pass/fail. Do not prefill millisecond guarantees; compare like-for-like hardware/version later. Excludes fixture setup, HTTP, receipt fsync and actual effects.",
+  "os": "linux",
+  "samples": 200
+}

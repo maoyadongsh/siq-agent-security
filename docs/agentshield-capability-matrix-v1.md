@@ -63,3 +63,9 @@ OpenShell 隔离探测归档（非 hermes 产品 L3 宣称）：[openshell-siq-r
 
 CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID 时只允许参数一致且唯一的候选，歧义拒绝。
 本轮未声称 effect 实际发生已验证。单绑定性能记录：[local-20260907.json](evidence/intent-v2/local-20260907.json)。
+
+### V2 补齐增量（20260907-164919）
+
+核心资源规范化、可信 Principal / resource_refs / provenance_refs、任务边界恢复、同会话并发和进程强杀恢复已有本地证据，见 [trusted-intent-v2-progress-20260907-164919.md](trusted-intent-v2-progress-20260907-164919.md)。绑定查找已改为确定性 ID 直接读取，实测覆盖 1 / 128 / 1024 / 4096 个绑定。新增字段预留不代表 Provenance DAG；这些核心证据不提升任一真实平台 V2 列。
+
+上一批 `0f232f4` 的远端 CI 已通过；本轮远端 CI 需按对应新 SHA 单独验证，结果以 GitHub Actions 运行记录为准。

@@ -33,3 +33,14 @@ go run ./cmd/perfbaseline -scale smoke -out /tmp/perf-smoke.json
 - 决策路径 p95&lt;200ms（规格另节）不等于本导出/扫盘基线
 - 空闲无污点会话过期（另切片）
 - 整任务 DEV16 验收
+
+## Intent V2 本地查找基线
+
+```bash
+cd apps/agentshield
+go run ./cmd/perfbaseline -intent -intent-bindings 1024 -intent-samples 200 -out /tmp/intent-perf.json
+```
+
+`intent-bindings` 范围为 1–4096，`intent-samples` 为 1–10000，默认 1 / 200。报告的 `lookup_ms`、`missing_lookup_ms`、`matcher_ms` 均含 p50/p95/p99；不包含初始化、HTTP、回执 fsync 或真实工具执行。
+
+2026-09-07 对照数据在 [`../intent-v2/`](../intent-v2/)：`local-20260907-164340-bindings-*.json` 为目录扫描方案，`local-20260907-164553-direct-bindings-*.json` 为确定性 ID 直接读取方案。每次目标查找仍执行签名与时效检查，未用缓存替代授权。
