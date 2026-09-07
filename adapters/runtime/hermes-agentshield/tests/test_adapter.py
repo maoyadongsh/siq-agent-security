@@ -13,6 +13,7 @@ import sys
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
+from typing import ClassVar
 
 import pytest
 
@@ -20,11 +21,11 @@ ADAPTER = Path(__file__).resolve().parents[1] / "__init__.py"
 
 
 class _Fake(BaseHTTPRequestHandler):
-    decision: dict = {"action": "allow", "reason": "ok", "receipt_id": "rcp-1"}
+    decision: ClassVar[dict] = {"action": "allow", "reason": "ok", "receipt_id": "rcp-1"}
     status = 200
-    seen: list = []
+    seen: ClassVar[list] = []
 
-    def do_POST(self):  # noqa: N802
+    def do_POST(self):
         n = int(self.headers.get("Content-Length", 0))
         body = json.loads(self.rfile.read(n) or b"{}")
         _Fake.seen.append((self.path, self.headers.get("Authorization"), body))
@@ -151,3 +152,29 @@ def test_register_wires_both_hooks(server):
 
     mod.register(Ctx())
     assert calls == ["pre_tool_call", "post_tool_call"]
+
+
+def test_correlation_is_bounded_and_conflict_safe(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    decision = {"action": "allow", "action_id": "act-1", "receipt_id": "rcp-1"}
+    assert mod._remember_decision("s", "read_file", "c1", decision)
+    assert not mod._remember_decision("s", "read_file", "c1", {**decision, "action_id": "act-2"})
+    assert mod._decision_reference("s", "read_file", "c1") == {}
+    assert mod._decision_reference("other", "read_file", "c1") == {}
+    mod._CORRELATION_MAX = 1
+    assert not mod._remember_decision("s", "read_file", "c2", decision)
+    mod._CORRELATIONS[("s", "read_file", "c1")] = (0, "act-1", "rcp-1")
+    assert mod._decision_reference("s", "read_file", "c1") == {}
+    assert mod._remember_decision("s", "read_file", "c2", decision)
+
+
+def test_hooks_forward_decision_identity(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {"action": "allow", "action_id": "act-1", "receipt_id": "rcp-1"}
+    assert mod._pre_tool_call("read_file", {}, session_id="s", tool_call_id="c") is None
+    mod._post_tool_call("read_file", {}, result="ok", session_id="s", tool_call_id="c")
+    path, _, body = _Fake.seen[-1]
+    assert path == "/v1/observe"
+    assert body["action_id"] == "act-1" and body["decision_receipt_id"] == "rcp-1"

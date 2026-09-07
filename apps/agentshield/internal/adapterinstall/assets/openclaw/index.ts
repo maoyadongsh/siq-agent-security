@@ -38,6 +38,7 @@ interface Decision {
   action: "allow" | "deny" | "hold" | "redact";
   reason: string;
   receipt_id: string;
+  action_id?: string;
   params?: Record<string, unknown>;
   hold?: { channel: string; timeout_ms: number };
 }
@@ -152,6 +153,28 @@ function appendPending(rec: Record<string, unknown>): void {
   }
 }
 
+type Correlation = { expires: number; action_id: string; decision_receipt_id: string };
+const correlations = new Map<string, Correlation>();
+const correlationKey = (session: string, tool: string, call: string) => JSON.stringify([session, tool, call]);
+function rememberDecision(session: string, tool: string, call: string, decision: Decision): boolean {
+  if (!call || !decision.action_id) return true;
+  const now = Date.now();
+  for (const [key, value] of correlations) if (value.expires <= now) correlations.delete(key);
+  const key = correlationKey(session, tool, call);
+  if (correlations.has(key)) {
+    correlations.set(key, { expires: now + 300_000, action_id: "", decision_receipt_id: "" });
+    return false;
+  }
+  if (correlations.size >= 2048) return false;
+  correlations.set(key, { expires: now + 300_000, action_id: decision.action_id, decision_receipt_id: decision.receipt_id });
+  return true;
+}
+function decisionReference(session: string, tool: string, call: string): Record<string, string> {
+  const value = correlations.get(correlationKey(session, tool, call));
+  return value && value.action_id && value.expires > Date.now()
+    ? { action_id: value.action_id, decision_receipt_id: value.decision_receipt_id } : {};
+}
+
 export default definePluginEntry({
   id: "siq-agent-security",
   name: "siq-agent-security",
@@ -173,6 +196,10 @@ export default definePluginEntry({
           ctx?.abortSignal,
         );
         if (!decision) return failClosed("no response", event.toolName, (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default");
+        if (["allow", "redact", "hold"].includes(decision.action) && !rememberDecision(
+          (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default",
+          event.toolName, event.toolCallId ?? "", decision,
+        )) return failClosed("decision correlation conflict or capacity", event.toolName);
         switch (decision.action) {
           case "allow":
             return undefined;
@@ -204,7 +231,12 @@ export default definePluginEntry({
         session_id: (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default",
         agent_id: (ctx as { agentId?: string } | undefined)?.agentId ?? cfg.agentId,
         tool: event.toolName,
-        params: {},
+        tool_call_id: event.toolCallId ?? "",
+        params: event.params ?? {},
+        ...decisionReference(
+          (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default",
+          event.toolName, event.toolCallId ?? "",
+        ),
         result: text.slice(0, 64 * 1024),
       });
     });

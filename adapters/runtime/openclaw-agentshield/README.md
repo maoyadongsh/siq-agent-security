@@ -68,3 +68,5 @@ siq-agent-security adapter install openclaw
 
 - `policy-exec`：Go 单测 + linux 隔离 HOME 证据（隐藏注释 Skill → block；官方风格 Skill → warn）。见 [`docs/evidence/agentshield/openclaw-linux-2026-09-05/`](../../../docs/evidence/agentshield/openclaw-linux-2026-09-05/)。
 - 插件 TS：按 OpenClaw 2026-09 `before_tool_call` 合同编写（`block` 终止、`requireApproval` 首个生效、`params` 改写）。同一证据目录用插件会发出的 `/v1/decide` 请求体做了授前/授后 deny；**仍未**把插件加载进本机正在跑的 OpenClaw 网关进程。矩阵不标 `supported`。
+
+V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多 2048 项、TTL 300 秒，重复 ID 冲突不绑定旧动作。hold 的 execution observation 还必须有本地管理面批准记录；平台自身弹窗不自动创建本地批准。`node scripts/test-openclaw-adapter.cjs` 提供隔离的 mock hook 回归，真实平台 V2 归档仍为 unverified。

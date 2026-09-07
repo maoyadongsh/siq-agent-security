@@ -40,3 +40,5 @@ rm -rf ~/.hermes/plugins/siq-agent-security
 
 - L1 安装门禁：Hermes 无装前钩子；用 `siq-agent-security admit <src>` 后再 `hermes skills install`，或让 `siq-agent-security serve` 周期盘点 `~/.hermes/skills` 标出未准入 Skill。
 - `agent_id` 默认取 `HERMES_PROFILE` 或 `default`，需与 grant 的 `subject.id` 一致。
+
+V2：有 tool_call_id 时保存服务端 action_id/receipt_id（最多 2048 项、TTL 300 秒）并在 post 回传；重复 ID 冲突不覆盖旧关联，产生无关联的拒绝路径。无 ID 时由服务端用相同参数唯一匹配，歧义拒绝。这里只提供 hook 单测证据，真实平台新版本关联仍为 unverified。

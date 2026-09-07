@@ -1,3 +1,4 @@
+# ruff: noqa: N999 -- platform plugin directory is loaded by path.
 """Hermes runtime adapter for siq-agent-security (dev-spec §4.2).
 
 Thin by contract: this plugin only maps Hermes hooks to the local decision API.
@@ -20,6 +21,8 @@ from __future__ import annotations
 import json
 import os
 import sys
+import threading
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -160,6 +163,37 @@ def _append_pending(rec: dict[str, Any]) -> None:
         pass
 
 
+_CORRELATIONS: dict[tuple[str, str, str], tuple[float, str, str]] = {}
+_CORRELATION_LOCK = threading.Lock()
+_CORRELATION_TTL = 300
+_CORRELATION_MAX = 2048
+
+
+def _remember_decision(sid, tool, call_id, decision):
+    if not call_id or not decision.get("action_id") or not decision.get("receipt_id"):
+        return True  # server can resolve a unique legacy tuple
+    now = time.monotonic()
+    key = (sid, tool, call_id)
+    with _CORRELATION_LOCK:
+        for old in [k for k, v in _CORRELATIONS.items() if v[0] <= now]:
+            del _CORRELATIONS[old]
+        if key in _CORRELATIONS:
+            _CORRELATIONS[key] = (now + _CORRELATION_TTL, "", "")
+            return False
+        if len(_CORRELATIONS) >= _CORRELATION_MAX:
+            return False
+        _CORRELATIONS[key] = (now + _CORRELATION_TTL, decision["action_id"], decision["receipt_id"])
+    return True
+
+
+def _decision_reference(sid, tool, call_id):
+    with _CORRELATION_LOCK:
+        value = _CORRELATIONS.get((sid, tool, call_id))
+        if value and value[1] and value[0] > time.monotonic():
+            return {"action_id": value[1], "decision_receipt_id": value[2]}
+    return {}
+
+
 def _pre_tool_call(
     tool_name: str,
     args: dict[str, Any] | None = None,
@@ -187,6 +221,8 @@ def _pre_tool_call(
     reason = str(decision.get("reason", ""))
     rid = decision.get("receipt_id", "")
     if action == "allow":
+        if not _remember_decision(sid, tool_name, tool_call_id, decision):
+            return _fail_closed("decision correlation conflict or capacity", tool=tool_name, session_id=sid)
         return None
     if action == "redact":
         # Hermes pre_tool_call cannot rewrite params; treat as block with guidance
@@ -222,8 +258,9 @@ def _post_tool_call(
             "agent_id": _CFG["agent_id"] or os.environ.get("HERMES_PROFILE", "default"),
             "tool": tool_name,
             "tool_call_id": tool_call_id,
-            "params": {},
+            "params": args if isinstance(args, dict) else {},
             "result": text[: 64 * 1024],
+            **_decision_reference(session_id or task_id or "hermes-default", tool_name, tool_call_id),
         },
     )
 

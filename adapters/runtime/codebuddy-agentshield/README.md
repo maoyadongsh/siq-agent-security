@@ -43,3 +43,5 @@ stdout：
 ## 验证状态
 
 Go 单测覆盖映射与 fail-closed 表。linux 隔离 HOME 上已用真实 `siq-agent-security hook codebuddy` 跑通授前/授后 deny（[`docs/evidence/agentshield/codebuddy-linux-2026-09-05/`](../../../docs/evidence/agentshield/codebuddy-linux-2026-09-05/)）。**未**驱动 CodeBuddy GUI 客户端。矩阵不标 `supported`。
+
+V2：透传 tool_use_id 为 tool_call_id；不同 hook 进程无需共享签名密钥或授权缓存，由本地 daemon 唯一匹配已授权动作。没有稳定 ID 时，需相同工具参数且只有一个候选；歧义 Observe 被拒绝，不能作为正常成功执行证据。真实平台 V2 关联仍为 unverified。
