@@ -27,6 +27,23 @@ func ActionID(e Envelope) string {
 		"effects":       effects,
 		"params_digest": e.ParamsDigest,
 	}
+	if e.Principal != nil {
+		m["principal"] = map[string]any{"type": e.Principal.Type, "id": e.Principal.ID}
+	}
+	if len(e.ResourceRefs) > 0 {
+		refs := make([]any, len(e.ResourceRefs))
+		for i, r := range e.ResourceRefs {
+			refs[i] = map[string]any{"domain": r.Domain, "digest": r.Digest}
+		}
+		m["resource_refs"] = refs
+	}
+	if len(e.ProvenanceRefs) > 0 {
+		refs := make([]any, len(e.ProvenanceRefs))
+		for i, r := range e.ProvenanceRefs {
+			refs[i] = r
+		}
+		m["provenance_refs"] = refs
+	}
 	raw, err := canon.Marshal(m)
 	if err != nil {
 		panic("runtimeaction: invalid canonical identity")

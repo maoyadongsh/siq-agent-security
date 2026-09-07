@@ -7,7 +7,7 @@ import (
 
 func TestNormalizeSeparatesToolOperationAndEffect(t *testing.T) {
 	op, effects := Normalize("Bash", map[string]any{"command": "curl https://example.com"})
-	if op != "exec" || len(effects) != 2 || effects[0] != EffectProcessExec || effects[1] != EffectNetworkRequest {
+	if op != "exec" || len(effects) != 3 || effects[0] != EffectProcessExec || effects[1] != EffectNetworkRequest || effects[2] != EffectUnknown {
 		t.Fatalf("got operation=%q effects=%v", op, effects)
 	}
 	op, effects = Normalize("send_message", nil)

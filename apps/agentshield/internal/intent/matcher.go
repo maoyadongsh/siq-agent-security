@@ -2,7 +2,6 @@ package intent
 
 import (
 	"net"
-	"path"
 	"regexp"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"strconv"
@@ -117,60 +116,18 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 			return violation("intent_parameter_violation")
 		}
 	}
-	for _, r := range c.ResourceConstraints {
-		// Shell and opaque tools have no trusted resource extraction: fail closed.
-		keys := []string{}
-		switch r.Domain {
-		case "filesystem":
-			if requested[0] == "file.read" || requested[0] == "file.write" || requested[0] == "file.delete" {
-				keys = []string{"path", "file_path"}
-			}
-		case "network":
-			if requested[0] == "network.request" {
-				keys = []string{"url", "host"}
-			}
-		case "message":
-			if requested[0] == "message.send" {
-				keys = []string{"recipient", "to"}
-			}
+	resources, resourceErr := runtimeaction.ExtractResources(tool, params)
+	for _, constraint := range c.ResourceConstraints {
+		if resourceErr != nil {
+			return violation("intent_resource_not_allowed")
 		}
 		seen := false
-		for _, key := range keys {
-			raw, ok := params[key]
-			if !ok {
+		for _, resource := range resources {
+			if resource.Domain != constraint.Domain {
 				continue
 			}
 			seen = true
-			value, ok := raw.(string)
-			if !ok {
-				return violation("intent_resource_not_allowed")
-			}
-			wanted := r.Value
-			values, _ := r.Value.([]any)
-			if r.Domain == "filesystem" {
-				if !path.IsAbs(value) || strings.Contains(value, `\`) {
-					return violation("intent_resource_not_allowed")
-				}
-				value = path.Clean(value)
-				if w, ok := wanted.(string); ok && r.Operator != "regex" {
-					wanted = path.Clean(w)
-				}
-				if r.Operator == "prefix" {
-					w := wanted.(string)
-					if value != w && !strings.HasPrefix(value, strings.TrimSuffix(w, "/")+"/") {
-						return violation("intent_resource_not_allowed")
-					}
-					continue
-				}
-			}
-			if r.Domain == "network" {
-				var err error
-				value, err = normalizeHost(value)
-				if err != nil {
-					return violation("intent_resource_not_allowed")
-				}
-			}
-			if !matches(value, r.Operator, wanted, values) {
+			if !matchResource(resource, constraint) {
 				return violation("intent_resource_not_allowed")
 			}
 		}
@@ -179,4 +136,47 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 		}
 	}
 	return nil
+}
+
+func matchResource(resource runtimeaction.Resource, constraint ResourceConstraint) bool {
+	normalized := func(wanted any) (string, bool) {
+		value, ok := wanted.(string)
+		if !ok {
+			return "", false
+		}
+		value, err := runtimeaction.NormalizeResource(resource.Domain, value)
+		return value, err == nil
+	}
+	if constraint.Operator == "equals" || constraint.Operator == "one_of" {
+		values := []any{constraint.Value}
+		if constraint.Operator == "one_of" {
+			values, _ = constraint.Value.([]any)
+		}
+		for _, value := range values {
+			wanted, ok := normalized(value)
+			if ok && resource.Value == wanted {
+				return true
+			}
+		}
+		return false
+	}
+	wanted := constraint.Value
+	if resource.Domain == "filesystem" && constraint.Operator != "regex" {
+		value, ok := normalized(wanted)
+		if !ok {
+			return false
+		}
+		wanted = value
+		if constraint.Operator == "prefix" {
+			return resource.Value == value || strings.HasPrefix(resource.Value, strings.TrimSuffix(value, "/")+"/")
+		}
+	}
+	if resource.Domain == "network" && (constraint.Operator == "prefix" || constraint.Operator == "suffix") {
+		value, ok := wanted.(string)
+		if !ok {
+			return false
+		}
+		wanted = strings.ToLower(strings.TrimSuffix(value, "."))
+	}
+	return matches(resource.Value, constraint.Operator, wanted, nil)
 }

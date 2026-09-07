@@ -88,6 +88,22 @@ export interface Grant {
 }
 
 export interface Receipt {
+  record_type?: 'decision' | 'observation' | 'hold_resolution';
+  decision_receipt_id?: string;
+  action_id?: string;
+  parent_action_id?: string;
+  task_seq?: number;
+  task_id?: string;
+  intent_id?: string;
+  intent_digest?: string;
+  intent_binding?: 'bound' | 'unbound';
+  authority_revision?: string;
+  principal?: { type: 'user'; id: string };
+  resource_refs?: { domain: 'filesystem' | 'network' | 'message'; digest: string }[];
+  provenance_refs?: string[];
+  operation?: string;
+  effects?: string[];
+  reason_code?: string;
   receipt_id: string;
   seq: number;
   issued_at: string;

@@ -1,11 +1,10 @@
 package intent
 
 import (
-	"encoding/json"
 	"net"
-	"net/url"
 	"path"
 	"regexp"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"strings"
 	"time"
 )
@@ -25,6 +24,14 @@ func uniqueNonempty(values []string) bool {
 	return true
 }
 func (c Contract) Validate() error {
+	if len(c.ProvenanceRefs) > 64 || !uniqueNonempty(c.ProvenanceRefs) {
+		return violation("intent_invalid_provenance_ref")
+	}
+	for _, ref := range c.ProvenanceRefs {
+		if !validID(ref) {
+			return violation("intent_invalid_provenance_ref")
+		}
+	}
 	if c.SchemaVersion != "intent/v2" || !validID(c.IntentID) || c.TaskID == "" || c.Principal.Type != "user" || c.Principal.ID == "" || c.Agent.ID == "" || c.Agent.Platform == "" || c.Purpose == "" || c.Authority.Issuer == "" || c.Authority.Revision == "" {
 		return violation("intent_invalid_contract")
 	}
@@ -60,6 +67,11 @@ func (c Contract) Validate() error {
 			}
 			if r.Domain == "filesystem" && r.Operator != "regex" && (!path.IsAbs(str) || strings.Contains(str, `\`)) {
 				return violation("intent_invalid_resource_constraint")
+			}
+			if r.Operator == "equals" || r.Operator == "one_of" || (r.Domain == "filesystem" && r.Operator != "regex") {
+				if _, err := runtimeaction.NormalizeResource(r.Domain, str); err != nil {
+					return violation("intent_invalid_resource_constraint")
+				}
 			}
 			if r.Operator == "host" {
 				if r.Domain != "network" {
@@ -139,29 +151,11 @@ func pointerParts(pointer string) ([]string, error) {
 	return parts, nil
 }
 func normalizeHost(value string) (string, error) {
-	if strings.Contains(value, "://") {
-		u, err := url.Parse(value)
-		if err != nil || u.Hostname() == "" || u.User != nil {
-			return "", violation("intent_invalid_host")
-		}
-		value = u.Hostname()
-	}
-	value = strings.ToLower(strings.TrimSuffix(value, "."))
-	if value == "" {
+	host, err := runtimeaction.NormalizeHost(value)
+	if err != nil {
 		return "", violation("intent_invalid_host")
 	}
-	for _, r := range value {
-		if r > 127 || r <= 32 || strings.ContainsRune("/@?#\\", r) {
-			return "", violation("intent_invalid_host")
-		}
-	}
-	return value, nil
-}
-func jsonEqual(a, b any) bool {
-	// JSON numbers decoded by HTTP (json.Number) and native callers compare identically.
-	aa, e1 := json.Marshal(a)
-	bb, e2 := json.Marshal(b)
-	return e1 == nil && e2 == nil && string(aa) == string(bb)
+	return host, nil
 }
 func (c Contract) Active(now time.Time) error {
 	if c.Expired(now) {

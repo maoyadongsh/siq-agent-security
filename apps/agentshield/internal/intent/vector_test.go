@@ -13,6 +13,7 @@ import (
 func TestFixedIntentVector(t *testing.T) {
 	s := testStore(t)
 	c := testContract()
+	c.ProvenanceRefs = []string{"prov-approved-input"}
 	c.ParameterConstraints = []ParameterConstraint{{Path: "/request/body/project_id", Operator: "equals", Value: "project-1"}}
 	issued, err := s.Issue(c)
 	if err != nil {

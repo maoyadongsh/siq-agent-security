@@ -164,17 +164,24 @@ func (e *Engine) restoreActionState() error {
 			s.trifecta.UntrustedInput = s.trifecta.UntrustedInput || r.Trifecta.UntrustedInput
 			s.trifecta.Egress = s.trifecta.Egress || r.Trifecta.Egress
 		}
-		if r.IntentBinding == "bound" {
-			s.boundIntentID = r.IntentID
-			s.boundTaskID = r.TaskID
-			s.boundIntentDigest = r.IntentDigest
-			s.boundAuthorityRevision = r.AuthorityRevision
-		}
-		if r.TaskSeq > s.taskSeq {
-			s.taskSeq = r.TaskSeq
-		}
-		if r.RecordType == "decision" && (r.Action == ActionAllow || r.Action == ActionRedact) {
-			s.parentActionID = r.ActionID
+		// Late observations/resolutions carry the original task identity. They must
+		// not restore its sequence or binding over a more recent trusted decision.
+		if r.RecordType == "decision" {
+			if r.IntentBinding == "bound" {
+				if s.boundIntentID == "" {
+					s.taskSeq = 0
+					s.parentActionID = ""
+				}
+				s.boundIntentID, s.boundTaskID = r.IntentID, r.TaskID
+				s.boundIntentDigest, s.boundAuthorityRevision = r.IntentDigest, r.AuthorityRevision
+				s.boundPrincipal, s.boundProvenanceRefs = r.Principal, r.ProvenanceRefs
+			}
+			if r.TaskSeq > s.taskSeq {
+				s.taskSeq = r.TaskSeq
+			}
+			if r.Action == ActionAllow || r.Action == ActionRedact {
+				s.parentActionID = r.ActionID
+			}
 		}
 		switch r.RecordType {
 		case "decision":
@@ -194,7 +201,7 @@ func (e *Engine) restoreActionState() error {
 				a.observation = &copy
 			}
 		case "hold_resolution":
-			if r.Action == ActionAllow {
+			if r.Action == ActionAllow && r.TaskID == s.boundTaskID && r.IntentID == s.boundIntentID {
 				s.parentActionID = r.ActionID
 			}
 			if a := e.actions[r.ActionID]; a != nil {

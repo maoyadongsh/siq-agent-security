@@ -98,48 +98,51 @@ type EngineInfo struct {
 
 // Receipt is the signed, chained record (receipt.schema.json).
 type Receipt struct {
-	RecordType        string     `json:"record_type,omitempty"`
-	DecisionReceiptID string     `json:"decision_receipt_id,omitempty"`
-	ParentActionID    string     `json:"parent_action_id,omitempty"`
-	TaskSeq           int        `json:"task_seq,omitempty"`
-	ReceiptID         string     `json:"receipt_id"`
-	ChainID           string     `json:"chain_id"`
-	Seq               int        `json:"seq"`
-	PrevHash          string     `json:"prev_hash"`
-	Hash              string     `json:"hash"`
-	Sig               string     `json:"sig"`
-	IssuedAt          string     `json:"issued_at"`
-	Platform          string     `json:"platform"`
-	SessionID         string     `json:"session_id"`
-	ActionID          string     `json:"action_id,omitempty"`
-	AgentID           *string    `json:"agent_id"`
-	TaskID            string     `json:"task_id,omitempty"`
-	IntentID          string     `json:"intent_id,omitempty"`
-	IntentDigest      string     `json:"intent_digest,omitempty"`
-	IntentBinding     string     `json:"intent_binding,omitempty"`
-	AuthorityRevision string     `json:"authority_revision,omitempty"`
-	Tool              string     `json:"tool"`
-	ToolCallID        *string    `json:"tool_call_id"`
-	Operation         string     `json:"operation,omitempty"`
-	Effects           []string   `json:"effects,omitempty"`
-	ParamsDigest      string     `json:"params_digest"`
-	ParamsExcerpt     *string    `json:"params_excerpt"`
-	Action            string     `json:"action"`
-	AdvisoryAction    *string    `json:"advisory_action"`
-	Reason            string     `json:"reason"`
-	ReasonCode        string     `json:"reason_code,omitempty"`
-	MatchedGrantID    *string    `json:"matched_grant_id"`
-	MatchedFactIDs    []string   `json:"matched_fact_ids"`
-	MatchedRuleIDs    []string   `json:"matched_rule_ids"`
-	TaintLabels       []string   `json:"taint_labels"`
-	Trifecta          *Trifecta  `json:"trifecta"`
-	EnforcementMode   string     `json:"enforcement_mode"`
-	PolicyRevision    *string    `json:"policy_revision"`
-	SandboxID         *string    `json:"sandbox_id"`
-	ModelKey          *string    `json:"model_key"`
-	Engine            EngineInfo `json:"engine"`
-	DecisionLatencyMS *int       `json:"decision_latency_ms"`
-	Hold              *Hold      `json:"hold"`
+	Principal         *runtimeaction.Principal    `json:"principal,omitempty"`
+	ResourceRefs      []runtimeaction.ResourceRef `json:"resource_refs,omitempty"`
+	ProvenanceRefs    []string                    `json:"provenance_refs,omitempty"`
+	RecordType        string                      `json:"record_type,omitempty"`
+	DecisionReceiptID string                      `json:"decision_receipt_id,omitempty"`
+	ParentActionID    string                      `json:"parent_action_id,omitempty"`
+	TaskSeq           int                         `json:"task_seq,omitempty"`
+	ReceiptID         string                      `json:"receipt_id"`
+	ChainID           string                      `json:"chain_id"`
+	Seq               int                         `json:"seq"`
+	PrevHash          string                      `json:"prev_hash"`
+	Hash              string                      `json:"hash"`
+	Sig               string                      `json:"sig"`
+	IssuedAt          string                      `json:"issued_at"`
+	Platform          string                      `json:"platform"`
+	SessionID         string                      `json:"session_id"`
+	ActionID          string                      `json:"action_id,omitempty"`
+	AgentID           *string                     `json:"agent_id"`
+	TaskID            string                      `json:"task_id,omitempty"`
+	IntentID          string                      `json:"intent_id,omitempty"`
+	IntentDigest      string                      `json:"intent_digest,omitempty"`
+	IntentBinding     string                      `json:"intent_binding,omitempty"`
+	AuthorityRevision string                      `json:"authority_revision,omitempty"`
+	Tool              string                      `json:"tool"`
+	ToolCallID        *string                     `json:"tool_call_id"`
+	Operation         string                      `json:"operation,omitempty"`
+	Effects           []string                    `json:"effects,omitempty"`
+	ParamsDigest      string                      `json:"params_digest"`
+	ParamsExcerpt     *string                     `json:"params_excerpt"`
+	Action            string                      `json:"action"`
+	AdvisoryAction    *string                     `json:"advisory_action"`
+	Reason            string                      `json:"reason"`
+	ReasonCode        string                      `json:"reason_code,omitempty"`
+	MatchedGrantID    *string                     `json:"matched_grant_id"`
+	MatchedFactIDs    []string                    `json:"matched_fact_ids"`
+	MatchedRuleIDs    []string                    `json:"matched_rule_ids"`
+	TaintLabels       []string                    `json:"taint_labels"`
+	Trifecta          *Trifecta                   `json:"trifecta"`
+	EnforcementMode   string                      `json:"enforcement_mode"`
+	PolicyRevision    *string                     `json:"policy_revision"`
+	SandboxID         *string                     `json:"sandbox_id"`
+	ModelKey          *string                     `json:"model_key"`
+	Engine            EngineInfo                  `json:"engine"`
+	DecisionLatencyMS *int                        `json:"decision_latency_ms"`
+	Hold              *Hold                       `json:"hold"`
 }
 
 // Decision is what the adapter acts on.
@@ -179,6 +182,8 @@ type Options struct {
 }
 
 type session struct {
+	boundPrincipal         *runtimeaction.Principal
+	boundProvenanceRefs    []string
 	taskSeq                int
 	parentActionID         string
 	taints                 map[string]bool
@@ -344,6 +349,15 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 			if s.boundIntentID != "" && (s.boundIntentID != resolvedIntent.IntentID || s.boundTaskID != resolvedIntent.TaskID || s.boundIntentDigest != resolvedIntent.Digest || s.boundAuthorityRevision != resolvedIntent.AuthorityRevision) {
 				authorityErr = &intent.Violation{Code: "intent_downgrade_attempt"}
 			} else {
+				// The first trusted task starts its own sequence without clearing taints.
+				if s.boundIntentID == "" {
+					s.taskSeq = 0
+					s.parentActionID = ""
+				}
+				s.boundPrincipal = &runtimeaction.Principal{Type: "user", ID: resolvedIntent.Principal}
+				if resolvedIntent.Trusted != nil {
+					s.boundProvenanceRefs = append([]string(nil), resolvedIntent.Trusted.ProvenanceRefs...)
+				}
 				// Bind security state even if this particular action is outside its authority.
 				s.boundIntentID, s.boundTaskID = resolvedIntent.IntentID, resolvedIntent.TaskID
 				s.boundIntentDigest, s.boundAuthorityRevision = resolvedIntent.Digest, resolvedIntent.AuthorityRevision
@@ -375,9 +389,12 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	intentDigest := s.boundIntentDigest
 	authorityRevision := s.boundAuthorityRevision
 
+	resources, _ := runtimeaction.ExtractResources(req.Tool, req.Params)
+	resourceRefs := runtimeaction.ResourceRefs(resources)
 	chainSeq, _ := e.opts.Chain.Head()
 	actionID := runtimeaction.ActionID(runtimeaction.Envelope{
-		Sequence:     chainSeq + 1,
+		Sequence:  chainSeq + 1,
+		Principal: s.boundPrincipal, ResourceRefs: resourceRefs, ProvenanceRefs: s.boundProvenanceRefs,
 		Platform:     req.Platform,
 		SessionID:    req.SessionID,
 		AgentID:      req.AgentID,
@@ -392,6 +409,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	s.taskSeq++
 	rec := Receipt{
 		RecordType: "decision", TaskSeq: s.taskSeq, ParentActionID: s.parentActionID,
+		Principal: s.boundPrincipal, ResourceRefs: resourceRefs, ProvenanceRefs: append([]string(nil), s.boundProvenanceRefs...),
 		ReceiptID:         "rcp-" + hex.EncodeToString(digest[:])[:12] + "-" + start.Format("150405.000000"),
 		IssuedAt:          start.Format(time.RFC3339),
 		Platform:          req.Platform,
@@ -707,7 +725,7 @@ func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Recei
 	if entry := e.actions[held.ActionID]; entry != nil {
 		entry.approved = approve
 		if approve {
-			if session := e.sessions[held.SessionID]; session != nil {
+			if session := e.sessions[held.SessionID]; session != nil && session.boundTaskID == held.TaskID && session.boundIntentID == held.IntentID {
 				session.parentActionID = held.ActionID
 			}
 		}

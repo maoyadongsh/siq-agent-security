@@ -34,6 +34,7 @@ type ParameterConstraint struct {
 
 // Contract is the signed intent/v2 wire contract. V1 remains a separate schema.
 type Contract struct {
+	ProvenanceRefs       []string              `json:"provenance_refs,omitempty"`
 	SchemaVersion        string                `json:"schema_version"`
 	IntentID             string                `json:"intent_id"`
 	TaskID               string                `json:"task_id"`

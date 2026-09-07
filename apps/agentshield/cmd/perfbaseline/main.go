@@ -15,14 +15,16 @@ import (
 )
 
 func main() {
-	intentOnly := flag.Bool("intent", false, "measure local intent lookup and matching (200 samples)")
+	intentOnly := flag.Bool("intent", false, "measure local intent lookup and matching")
+	intentBindings := flag.Int("intent-bindings", 1, "binding count for -intent (1..4096)")
+	intentSamples := flag.Int("intent-samples", 200, "samples for -intent (1..10000)")
 	scale := flag.String("scale", perfbaseline.ScaleSmoke, "smoke|medium|large")
 	receipts := flag.Int("receipts", 0, "override receipt count (0 = scale default)")
 	out := flag.String("out", "", "write JSON report (default stdout)")
 	flag.Parse()
 
 	if *intentOnly {
-		raw, err := perfbaseline.MeasureIntent()
+		raw, err := perfbaseline.MeasureIntentScale(*intentBindings, *intentSamples)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "intent benchmark failed:", err)
 			os.Exit(1)

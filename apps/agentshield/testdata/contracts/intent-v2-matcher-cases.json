@@ -1,0 +1,557 @@
+[
+  {
+    "name": "file-equals",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "equals",
+        "value": "/work/./a"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {
+      "path": "/work/a"
+    },
+    "allowed": true
+  },
+  {
+    "name": "file-one-of",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "one_of",
+        "value": [
+          "/work/x/../a"
+        ]
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {
+      "path": "/work/a"
+    },
+    "allowed": true
+  },
+  {
+    "name": "file-prefix",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "prefix",
+        "value": "/work/"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {
+      "path": "/work/sub/a"
+    },
+    "allowed": true
+  },
+  {
+    "name": "file-prefix-boundary",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "prefix",
+        "value": "/work"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {
+      "path": "/worker/a"
+    },
+    "allowed": false
+  },
+  {
+    "name": "file-traversal",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "prefix",
+        "value": "/work"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {
+      "path": "/work/../secret"
+    },
+    "allowed": false
+  },
+  {
+    "name": "file-suffix",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "suffix",
+        "value": "/a"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {
+      "path": "/work/a"
+    },
+    "allowed": true
+  },
+  {
+    "name": "file-regex",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "regex",
+        "value": "^/work/[a-z]+$"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {
+      "path": "/work/a"
+    },
+    "allowed": true
+  },
+  {
+    "name": "file-regex-deny",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "regex",
+        "value": "^/work/[a-z]+$"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {
+      "path": "/work/123"
+    },
+    "allowed": false
+  },
+  {
+    "name": "conflicting-alias",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "prefix",
+        "value": "/work"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {
+      "path": "/work/a",
+      "file_path": "/secret"
+    },
+    "allowed": false
+  },
+  {
+    "name": "missing-resource",
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "prefix",
+        "value": "/work"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "read_file",
+    "params": {},
+    "allowed": false
+  },
+  {
+    "name": "host-equals",
+    "resource_constraints": [
+      {
+        "domain": "network",
+        "operator": "equals",
+        "value": "EXAMPLE.COM."
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "web_fetch",
+    "params": {
+      "url": "https://example.com/path?q=secret"
+    },
+    "allowed": true
+  },
+  {
+    "name": "host-one-of",
+    "resource_constraints": [
+      {
+        "domain": "network",
+        "operator": "one_of",
+        "value": [
+          "EXAMPLE.COM."
+        ]
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "web_fetch",
+    "params": {
+      "url": "https://example.com/path"
+    },
+    "allowed": true
+  },
+  {
+    "name": "host-exact",
+    "resource_constraints": [
+      {
+        "domain": "network",
+        "operator": "host",
+        "value": "EXAMPLE.COM."
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "web_fetch",
+    "params": {
+      "url": "https://example.com:443"
+    },
+    "allowed": true
+  },
+  {
+    "name": "host-impostor",
+    "resource_constraints": [
+      {
+        "domain": "network",
+        "operator": "host",
+        "value": "example.com"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "web_fetch",
+    "params": {
+      "url": "https://example.com.evil"
+    },
+    "allowed": false
+  },
+  {
+    "name": "host-suffix",
+    "resource_constraints": [
+      {
+        "domain": "network",
+        "operator": "suffix",
+        "value": ".EXAMPLE.COM."
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "web_fetch",
+    "params": {
+      "url": "https://sub.example.com"
+    },
+    "allowed": true
+  },
+  {
+    "name": "host-cidr4",
+    "resource_constraints": [
+      {
+        "domain": "network",
+        "operator": "cidr",
+        "value": "192.0.2.0/24"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "web_fetch",
+    "params": {
+      "url": "https://192.0.2.10/path"
+    },
+    "allowed": true
+  },
+  {
+    "name": "host-cidr-deny",
+    "resource_constraints": [
+      {
+        "domain": "network",
+        "operator": "cidr",
+        "value": "192.0.2.0/24"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "web_fetch",
+    "params": {
+      "url": "https://192.0.3.1"
+    },
+    "allowed": false
+  },
+  {
+    "name": "host-cidr6",
+    "resource_constraints": [
+      {
+        "domain": "network",
+        "operator": "cidr",
+        "value": "2001:db8::/32"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "web_fetch",
+    "params": {
+      "url": "https://[2001:db8::1]"
+    },
+    "allowed": true
+  },
+  {
+    "name": "host-userinfo",
+    "resource_constraints": [
+      {
+        "domain": "network",
+        "operator": "host",
+        "value": "example.com"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "web_fetch",
+    "params": {
+      "url": "https://user@example.com"
+    },
+    "allowed": false
+  },
+  {
+    "name": "recipient-exact",
+    "resource_constraints": [
+      {
+        "domain": "message",
+        "operator": "equals",
+        "value": "Alice"
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "send_message",
+    "params": {
+      "to": "Alice"
+    },
+    "allowed": true
+  },
+  {
+    "name": "recipient-case-sensitive",
+    "resource_constraints": [
+      {
+        "domain": "message",
+        "operator": "one_of",
+        "value": [
+          "Alice"
+        ]
+      }
+    ],
+    "parameter_constraints": [],
+    "tool": "send_message",
+    "params": {
+      "to": "alice"
+    },
+    "allowed": false
+  },
+  {
+    "name": "parameter-equals-True",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "equals",
+        "value": {
+          "n": 1
+        }
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": {
+            "n": 1.0
+          }
+        }
+      ]
+    },
+    "allowed": true
+  },
+  {
+    "name": "parameter-equals-False",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "equals",
+        "value": {
+          "n": 1
+        }
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": {
+            "n": true
+          }
+        }
+      ]
+    },
+    "allowed": false
+  },
+  {
+    "name": "parameter-one_of-True",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "one_of",
+        "values": [
+          1,
+          "one"
+        ]
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": 1.0
+        }
+      ]
+    },
+    "allowed": true
+  },
+  {
+    "name": "parameter-one_of-False",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "one_of",
+        "values": [
+          1,
+          "one"
+        ]
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": "two"
+        }
+      ]
+    },
+    "allowed": false
+  },
+  {
+    "name": "parameter-prefix-True",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "prefix",
+        "value": "abc"
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": "abcd"
+        }
+      ]
+    },
+    "allowed": true
+  },
+  {
+    "name": "parameter-prefix-False",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "prefix",
+        "value": "abc"
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": "zabc"
+        }
+      ]
+    },
+    "allowed": false
+  },
+  {
+    "name": "parameter-suffix-True",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "suffix",
+        "value": "xyz"
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": "axyz"
+        }
+      ]
+    },
+    "allowed": true
+  },
+  {
+    "name": "parameter-suffix-False",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "suffix",
+        "value": "xyz"
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": "xyza"
+        }
+      ]
+    },
+    "allowed": false
+  },
+  {
+    "name": "parameter-regex-True",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "regex",
+        "value": "^[a-z]+$"
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": "abc"
+        }
+      ]
+    },
+    "allowed": true
+  },
+  {
+    "name": "parameter-regex-False",
+    "resource_constraints": [],
+    "parameter_constraints": [
+      {
+        "path": "/a~1b/0/~0key",
+        "operator": "regex",
+        "value": "^[a-z]+$"
+      }
+    ],
+    "tool": "read_file",
+    "params": {
+      "a/b": [
+        {
+          "~key": "123"
+        }
+      ]
+    },
+    "allowed": false
+  }
+]

@@ -253,24 +253,20 @@ func (s *Store) List() ([]Contract, error) {
 	return out, nil
 }
 func (s *Store) ResolveBinding(platform, sessionID, agentID string) (*Contract, *Binding, error) {
-	bindings, err := s.ListBindings()
+	// Binding IDs already impose uniqueness on the complete runtime identity.
+	// Read and verify that record on every call; no stale authorization cache and
+	// no O(number of unrelated sessions) signature scan on the decision path.
+	binding, err := s.GetBinding(bindingID(platform, sessionID, agentID))
+	if errors.Is(err, os.ErrNotExist) {
+		return nil, nil, nil
+	}
 	if err != nil {
 		return nil, nil, err
 	}
-	var found *Binding
-	for _, b := range bindings {
-		if b.Platform != platform || b.SessionID != sessionID || b.AgentID != agentID {
-			continue
-		}
-		if found != nil {
-			return nil, nil, violation("intent_binding_conflict")
-		}
-		copy := b
-		found = &copy
+	if binding.Platform != platform || binding.SessionID != sessionID || binding.AgentID != agentID {
+		return nil, nil, violation("intent_agent_mismatch")
 	}
-	if found == nil {
-		return nil, nil, nil
-	}
+	found := &binding
 	until, err := time.Parse(time.RFC3339, found.ExpiresAt)
 	if err != nil || !time.Now().Before(until) {
 		return nil, found, violation("intent_expired")

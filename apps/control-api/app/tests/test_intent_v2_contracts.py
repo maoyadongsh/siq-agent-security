@@ -83,3 +83,43 @@ def test_go_intent_canonical_digest_and_signature_vector():
         public.verify(signature, _canonical_bytes({**signed, "purpose": "widened authority"}))
     with pytest.raises(InvalidSignature):
         public.verify(signature, _canonical_bytes({**signed, "digest": "0" * 64}))
+
+
+@pytest.mark.parametrize(
+    "case",
+    json.loads((SAMPLES / "intent-v2-matcher-cases.json").read_text()),
+    ids=lambda case: case["name"],
+)
+def test_shared_matcher_constraints_conform_to_schema(case):
+    # Go evaluates these exact cases; Python independently validates wire shape.
+    sample = json.loads((SAMPLES / "intent-contract.v2.sample.json").read_text())
+    sample.update(
+        resource_constraints=case["resource_constraints"],
+        parameter_constraints=case["parameter_constraints"],
+        allowed_tools=[case["tool"]],
+        allowed_effects=["file.read", "network.request", "message.send"],
+    )
+    validator("intent-contract.v2").validate(sample)
+
+
+@pytest.mark.parametrize("name", ["intent-contract.v2", "runtime-action-envelope", "receipt"])
+@pytest.mark.parametrize("refs", [["../unsafe"], ["duplicate", "duplicate"], [f"ref-{i}" for i in range(65)]])
+def test_provenance_reference_limits(name, refs):
+    sample = json.loads((SAMPLES / f"{name}.sample.json").read_text())
+    assert list(validator(name).iter_errors({**sample, "provenance_refs": refs}))
+
+
+@pytest.mark.parametrize("name", ["runtime-action-envelope", "receipt"])
+def test_resource_refs_and_principal_reject_plaintext_or_forged_shape(name):
+    sample = json.loads((SAMPLES / f"{name}.sample.json").read_text())
+    for field, value in [
+        ("resource_refs", [{"domain": "filesystem", "digest": "a" * 64, "value": "/private"}]),
+        ("resource_refs", [{"domain": "filesystem", "digest": "/private"}]),
+        ("principal", {"type": "model", "id": "a-1"}),
+    ]:
+        assert list(validator(name).iter_errors({**sample, field: value}))
+
+
+def test_historical_receipt_without_optional_metadata_still_valid():
+    sample = json.loads((SAMPLES / "receipt.pre-resource-refs.sample.json").read_text())
+    validator("receipt").validate(sample)

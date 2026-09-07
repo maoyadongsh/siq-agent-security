@@ -120,6 +120,7 @@ func TestV2TrustedStoreGrantIntersectionAndHints(t *testing.T) {
 		t.Fatal(err)
 	}
 	c := intent.Contract{SchemaVersion: "intent/v2", IntentID: "int-v2", TaskID: "task-1", Principal: intent.Principal{Type: "user", ID: "u-1"}, Agent: intent.Agent{ID: "inst_1", Platform: "hermes"}, Purpose: "approved read", AllowedTools: []string{"read_file", "send_message"}, AllowedEffects: []string{"file.read", "message.send"}, ResourceConstraints: []intent.ResourceConstraint{}, ParameterConstraints: []intent.ParameterConstraint{{Path: "/request/body/project_id", Operator: "equals", Value: "p1"}}, IssuedAt: "2026-01-01T00:00:00Z", ValidFrom: "2026-01-01T00:00:00Z", ExpiresAt: "2099-01-01T00:00:00Z", Authority: intent.Authority{Issuer: "local-admin", Revision: "r1", EvidenceIDs: []string{}}}
+	c.ProvenanceRefs = []string{"prov-approved-input"}
 	issued, err := store.Issue(c)
 	if err != nil {
 		t.Fatal(err)
@@ -129,11 +130,34 @@ func TestV2TrustedStoreGrantIntersectionAndHints(t *testing.T) {
 		t.Fatal(err)
 	}
 	fx.eng.opts.IntentLookup = ResolveStore(store)
-	params := map[string]any{"request": map[string]any{"body": map[string]any{"project_id": "p1"}}}
+	params := map[string]any{"path": "/work/report", "provenance_refs": []string{"forged"}, "request": map[string]any{"body": map[string]any{"project_id": "p1"}}}
 	request := req("hermes", "read_file", params)
 	d, err := fx.eng.Decide(request)
 	if err != nil || d.Action != ActionAllow || d.Receipt.IntentBinding != "bound" || d.Receipt.IntentDigest != issued.Digest || d.Receipt.TaskID != c.TaskID {
 		t.Fatalf("valid V2: %+v %v", d, err)
+	}
+	if d.Receipt.Principal == nil || d.Receipt.Principal.ID != c.Principal.ID || len(d.Receipt.ProvenanceRefs) != 1 || d.Receipt.ProvenanceRefs[0] != "prov-approved-input" || len(d.Receipt.ResourceRefs) != 1 {
+		t.Fatal("missing trusted metadata", d.Receipt)
+	}
+	observed, err := fx.eng.Observe(correlatedRequest(request, d), "report result")
+	if err != nil || observed.Principal.ID != c.Principal.ID || observed.ProvenanceRefs[0] != "prov-approved-input" || observed.ResourceRefs[0] != d.Receipt.ResourceRefs[0] {
+		t.Fatal(observed, err)
+	}
+	all, err := fx.chain.Read()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = Verify(all, fx.k.Public()); err != nil {
+		t.Fatal(err)
+	}
+	for _, edit := range []func(*Receipt){func(r *Receipt) { r.Principal.ID = "forged" }, func(r *Receipt) { r.ProvenanceRefs = []string{"forged"} }, func(r *Receipt) { r.ResourceRefs = nil }} {
+		copy := all[0]
+		principalCopy := *copy.Principal
+		copy.Principal = &principalCopy
+		edit(&copy)
+		if Verify([]Receipt{copy}, fx.k.Public()) == nil {
+			t.Fatal("metadata tampering accepted")
+		}
 	}
 	cases := []struct {
 		name, code string
