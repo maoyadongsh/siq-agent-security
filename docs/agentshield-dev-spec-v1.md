@@ -702,3 +702,25 @@ make -C apps/agentshield ui
 3. **Hermes hold 语义**：无 approval 通道，退化为 block + URL；是否值得给 Hermes 提一个 `pre_tool_call` 返回 `ask` 的上游 PR。
 4. **StepFun 云端路由**：`model_routing` 在 OpenShell 走 `inference.local`，脱敏 broker 是否复用 research-engine 的 provider 合同（只读参考，不依赖）。
 5. **训练营 9/20 工具包**：若 NVIDIA 发布 OMS 签名工具链，`skill-manifest.signed_by` 是否切换到证书链（当前 Ed25519 本地信任根）。
+
+## 10. Trusted Intent Authority V2 增量（2026-09-07）
+
+本节承接用户提供的 Trusted Intent Authority & Action Binding V2，优先于第一版客户端 Intent 语义。
+`intent-contract.v2.schema.json` 为受信签发格式，v1 合同保留供历史读取，不允许运行时 inline 签发。
+
+- `POST/GET /v1/intents`、`GET /v1/intents/{id}` 和对应 `/v1/intent-bindings` 端点只接受管理会话（capAdmin）；Decision token 一律 403。
+- 管理面提交结构化 V2 合同，服务端校验身份、时间窗、工具/effect、受限 JSON Pointer 与资源操作符后计算 digest 并签名。调用方提供的 digest/signature 不作为可信输入。
+- `intents/<id>.json` 与 `intent-bindings/<id>.json` 通过同目录临时文件 fsync 后排他发布；签名文件同时是签发/绑定的不可变审计记录，发布失败不激活授权。ID 不得覆盖；绑定从已验签 Store 读回合同，不接受外部 Contract 充当 authority。
+- 会话绑定按 platform/session/agent 唯一且只追加；冲突绑定拒绝。过期绑定保留并导致拒绝，重启后也不得退回 optional Grant-only。暂不提供任务切换/撤销入口，避免隐式解绑。
+- 参数使用 RFC 6901 指针（含嵌套对象、数组和 ~0/~1 转义），支持 equals/one_of/prefix/suffix/regex；正则至多 1024 字节，使用 Go RE2。未知操作符、缺失路径和不匹配全部拒绝。
+- filesystem 资源使用绝对 POSIX clean 路径与目录边界匹配；network 使用 URL host、小写和移除末尾点，非 ASCII host 拒绝（管理员须预先输入 ASCII/Punycode）；message 使用显式 recipient。无法确定资源的工具失败关闭，不用 shell 文本猜测资源。符号链接仍由文件安全层处理。
+- evidence_ids 的 `external:https://…` 表示明确的外部引用而非已核验证据；本地 evidence ID 必须在状态目录 evidence 中存在且格式一致。
+- `intent_enforcement=optional|required` 独立于运行时 enforcement_mode；新回执记录 bound/unbound。V2 授权由 intent 包确定性执行，receipt 只消费已解析合同。
+- desktop-same-uid 仍无法隔离恶意同 UID 进程；此轮建立协议授权完整性，不宣称 OS 隔离。
+
+### 10.1 Decision → Observe 关联
+
+新回执增加 `record_type`、`decision_receipt_id`、`parent_action_id`、`task_seq`（均为可选扩展，不重签历史回执）。服务端将单次决策链序号纳入 action ID；同一 task/session 的 task_seq 单调增加，parent 指向上一条允许或 redact 的动作。
+Observe 显式携带 action_id 与 decision_receipt_id；旧适配器可用相同 platform/session/agent/tool/tool_call_id 唯一定位。缺 tool_call_id 时必须携带相同参数，若有多个候选则拒绝，不能猜测。
+只有 allow/redact 或已由本地管理面批准的 hold 可观测。同一动作相同结果摘要幂等返回原回执，不同摘要返回 409。结果超过 64 KiB 拒绝，避免截断掩盖冲突。
+关联状态从签名回执恢复，内存最多 8192 项，默认 24h 窗口；溢出拒绝新决策，过期动作不再接受 Observe。过期仅清理动作关联，不清理 bound/tainted 会话安全状态。

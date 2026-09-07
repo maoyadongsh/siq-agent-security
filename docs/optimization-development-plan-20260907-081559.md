@@ -32,9 +32,13 @@
 
 已修复 Edge 测试格式门禁，并同步 README 的 main 分支说明。分支保护和发布候选仍需仓库管理员在 GitHub 配置。
 
-### O1：Intent-bound authorization（P0，首个代码切片已完成）
+### O1：Trusted Intent Authority V2（P0，核心链路已落盘，验收收尾中）
 
-新增 `packages/contracts/intent-contract.schema.json` 和 Edge receipt 层 `IntentContract`。请求可携带 `task_id`、`intent_id`、`principal` 和 intent；运行时校验 agent、有效期、允许效果及参数约束，违反时 fail-closed 并写入拒绝原因。下一步是把 intent 摘要纳入签名回执、服务端 schema 双读和跨语言固定向量。
+2026-09-07 增量：管理会话专属 Intent 签发/列表/读取与会话绑定 API；V2 类型与 Schema 对齐；canonical digest + Ed25519 不可变 Store；JSON Pointer、资源、工具/effect 约束进入运行时授权；required 配置读入 daemon；授权拒绝写签名 reason_code 回执，audit_only 保留 would-deny；bound 会话防省略/替换并可从签名回执恢复。
+
+Decision/Observe 已校验 action/receipt、平台、会话、agent、工具和 tool_call_id；拒绝无决策、deny 和未批准 hold；同结果幂等、冲突拒绝。新增 task_seq/parent_action_id 与 8192 项、24h 关联窗口。修复 action_id 规范化失败被忽略而产生相同摘要的问题。Hermes/OpenClaw 增加有界 TTL 关联缓存，CodeBuddy 透传 tool_use_id，由 daemon 唯一匹配。
+
+Go/Python 固定向量、负向回归与本地性能测量已增加。完整工程报告与后续边界见 [V2 工程报告](trusted-intent-v2-report-20260907-161622.md)。真实平台新版本端到端归档、远端 CI 和恶意同 UID 隔离仍不能据源码测试宣称完成。
 
 ### O2：provenance.v1（P0）
 
@@ -81,14 +85,12 @@
 - 不以增加规则数量代替行为验证，不引入模型自动审批。
 - 真实 PostgreSQL、OIDC、OS 隔离、OpenShell 行为和独立安全复核不受源码单测替代。
 
-## 6. 立即执行清单
+## 6. 当前执行顺序（以 Trusted Intent V2 为最高优先级）
 
-1. 将 IntentContract 摘要接入签名 receipt、server 请求 schema 和 Python/Go 固定向量。
-2. 冻结 supply-chain/runtime provenance 合同，增加字段路径和来源标签。
-3. 将最小 BehaviorChain 接入 Edge execution ledger，增加隐藏触发器正负轨迹测试。
-4. 将 token、时间、session 和网络字节预算接入 task lease，覆盖耗尽、重试和跨主体负向。
-5. 为 Connector contract 增加 scope、timeout、side-effect 字段并逐适配器迁移。
-6. 创建 AMR/RNR/直接与间接 ASR 基线工具，不预填未经测量的 SLA。
-7. 在真实 PG、OIDC、OS 隔离和 OpenShell 环境就绪后执行 P2/P3。
+1. 完成 V2 的真实 OpenClaw/Hermes/CodeBuddy hook 归档；缺少稳定 tool-call identity 的路径继续标记 unverified。
+2. 执行远端完整 CI、Go 最低版本与安全扫描；本地已通过的命令及范围以工程报告为准。
+3. 针对长时间运行、关联容量上限和重启故障进行规模压测；当前性能数据仅为单 binding 本地 lookup/matcher。
+4. 如需任务迁移或撤销，先设计 append-only 管理生命周期；当前固定绑定不可替换，不提供隐式解绑。
+5. V2 验收后再启动 Parameter Provenance / Behavior Chain 深化 / Behavioral Sandbox / Delegation DAG；这些不是本轮已交付能力。
 
-**当前结论：** O1—O5 可在现有仓库继续开发；O6 和真实 O5 验收依赖外部环境；概率性 TCB、通用 IFC 和未知攻击泛化仍是研究风险，不能宣称本项目已经解决。
+O2—O8 保留为后续路线，不能用这些条目的进展替代 V2 授权完整性验收。

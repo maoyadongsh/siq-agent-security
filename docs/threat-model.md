@@ -90,3 +90,12 @@
 | 控制面 / 发布 key | 见上表 T*；本地不持有生产密钥 |
 
 更新本表时须同步能力 profile 与发布 checklist 的诚实措辞；不得把“文档已写”记成“威胁已消除”。
+
+## Trusted Intent V2 威胁增量（2026-09-07）
+
+| Threat | Control | Negative Test | Residual Risk |
+| --- | --- | --- | --- |
+| T23 Client-Supplied Intent Forgery | 管理 API capAdmin；Decision inline Intent 400；由 Store 解析绑定 | `TestIntentManagementRequiresAdmin`、`TestDecideRejectsInlineIntentAuthority` | desktop-same-uid Agent 仍可能读写相同 UID 状态 |
+| T24 Intent Downgrade / Binding Removal | 固定签名绑定、过期拒绝；bound 状态保留在拒绝回执并在重启时恢复 | `TestBoundSessionCannotDowngradeOrSwapIntent`、`TestDowngradeDenialDoesNotEraseRecoveredBinding` | 不提供任务切换/解绑；状态整体删除不属于强 OS 隔离保证 |
+| T25 Intent Authority Tampering | canonical digest 与 Ed25519 校验；排他发布不可变文档 | `TestStoreIntegrityAndImmutability`、Python fixed vector 签名篡改测试 | 私钥同 UID 读取、备份回滚需要独立系统边界 |
+| T26 Decision–Effect Confusion | 动作序号生成 ID；Observe 强校验前置动作、身份、hold 审批与结果幂等 | `TestObserveRequiresAuthorizedDecision`、`TestObserveIdempotencyConcurrencyAndRecovery`、`TestObserveHoldRequiresManagementResolution` | 工具结果是适配器提供的 observed 证据，不能证明真实 OS/外部副作用；不完整链恢复失败关闭 |

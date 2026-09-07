@@ -48,3 +48,18 @@ OpenShell 隔离探测归档（非 hermes 产品 L3 宣称）：[openshell-siq-r
 ## 与发布清单
 
 发版前仍按 [agentshield-release-checklist-v1.md](agentshield-release-checklist-v1.md)：矩阵与二进制哈希一致，且不得为发版把行抬成 `supported`。
+
+## Trusted Intent V2 独立证据项（2026-09-07）
+
+此表将源码/本地测试与真实平台归档分开，既有 L2 证据不自动证明 V2 关联。
+
+| 能力 | 核心实现 | Hermes 真平台 V2 | OpenClaw 真平台 V2 | CodeBuddy 真平台 V2 | 证据 |
+| --- | --- | --- | --- | --- | --- |
+| IntentContract schema | evidenced | n/a | n/a | n/a | Go 固定向量 + `test_intent_v2_contracts.py` |
+| Trusted Intent Issuance | evidenced | n/a | n/a | n/a | `intent_http_test.go` 管理权与 Decision token 403 |
+| Session Intent Binding | evidenced | unverified | unverified | unverified | `intent/store_test.go` 并发唯一、过期、重启 |
+| Intent Runtime Enforcement | evidenced | unverified | unverified | unverified | `receipt/intent_test.go` 交集、省略、替换、主体伪造 |
+| Decision/Observe Correlation | evidenced | unverified | unverified | unverified | `receipt/action_state_test.go`；Hermes 13 项单测；OpenClaw mock hook 测试 |
+
+CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID 时只允许参数一致且唯一的候选，歧义拒绝。
+本轮未声称 effect 实际发生已验证。单绑定性能记录：[local-20260907.json](evidence/intent-v2/local-20260907.json)。
