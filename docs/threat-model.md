@@ -96,7 +96,7 @@
 | Threat | Control | Negative Test | Residual Risk |
 | --- | --- | --- | --- |
 | T23 Client-Supplied Intent Forgery | 管理 API capAdmin；Decision inline Intent 400；由 Store 解析绑定 | `TestIntentManagementRequiresAdmin`、`TestDecideRejectsInlineIntentAuthority` | desktop-same-uid Agent 仍可能读写相同 UID 状态 |
-| T24 Intent Downgrade / Binding Removal | 固定签名绑定、过期拒绝；bound 状态保留在拒绝回执并在重启时恢复 | `TestBoundSessionCannotDowngradeOrSwapIntent`、`TestDowngradeDenialDoesNotEraseRecoveredBinding` | 不提供任务切换/解绑；状态整体删除不属于强 OS 隔离保证 |
+| T24 Intent Downgrade / Binding Removal | 固定签名绑定、过期拒绝；独立签名撤销记录；bound 状态保留在拒绝回执并在重启时恢复；optional 撤销不降级 | `TestBoundSessionCannotDowngradeOrSwapIntent`、`TestDowngradeDenialDoesNotEraseRecoveredBinding`、`TestBindingRevokeWhileDecideUsesExplicitSnapshotOrder`、`TestRevokedBindingCannotDowngradeEvenBeforeFirstDecision` | 撤销前已取得授权快照的动作可能完成，不是副作用原子取消；无原会话换绑；同 UID 删除/回滚状态不属于强 OS 隔离保证 |
 | T25 Intent Authority Tampering | canonical digest 与 Ed25519 校验；排他发布不可变文档 | `TestStoreIntegrityAndImmutability`、Python fixed vector 签名篡改测试 | 私钥同 UID 读取、备份回滚需要独立系统边界 |
 | T26 Decision–Effect Confusion | 动作序号生成 ID；Observe 强校验前置动作、身份、hold 审批与结果幂等 | `TestObserveRequiresAuthorizedDecision`、`TestObserveIdempotencyConcurrencyAndRecovery`、`TestObserveHoldRequiresManagementResolution`、`TestShellCannotClaimExhaustiveEffects`、`TestTrustedTaskBoundarySurvivesLateResultsAndRestart`、`TestActionRecoveryAfterProcessKill` | 工具结果是适配器提供的 observed 证据，不能证明真实 OS/外部副作用；不完整链恢复失败关闭 |
 
@@ -111,3 +111,5 @@ T26 修复增量（2026-09-07 21:33）：[执行前本地审批门禁](trusted-i
 2026-09-07 22:18，当前适配器通过受信原生 context 识别检查点协议，缺失或错误版本在 block 下阻断 hold。配套 v2 宿主的 18 个集成场景见 [验收报告](trusted-intent-v2-approval-integration-20260907-221813.md)。该标记不接受工具参数/event 提示，也不是抵抗同进程恶意插件的证明；实际安装未更新和检查点后竞态继续保留。
 
 2026-09-07 22:36，配套宿主文件修改新增 [升级/回退及强杀恢复验证](trusted-intent-v2-checkpoint-upgrade-20260907-223635.md)：预期哈希、私有备份、完成标记、权限属主与内核文件锁共同约束本工具写入；目标后来变更时拒绝覆盖。锁不约束不合作的包管理器或同 UID 进程，文件恢复通过也不证明运行进程已加载目标代码。
+
+2026-09-08，T26 旧版观察边界：原始基线 OpenClaw/CodeBuddy 的 optional 执行授权兼容已验证；缺 ID/参数的 post 不产生可信观察，升级到当前适配器后同状态恢复关联。详见 [最终工程验收](trusted-intent-v2-final-audit-20260908-000506.md)。没有按最近动作猜测关联，也不把原版观察失败改写为通过。

@@ -101,3 +101,7 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 2026-09-07 23:11 新增 [CodeBuddy 原生 CLI 与隔离配置验收](trusted-intent-v2-codebuddy-validation-20260907-231146.md)：Linux 上腾讯 `@tencent-ai/codebuddy-code@2.146.0` 的真实安装/重装/卸载、8 次 CLI 会话调用、19 次 SSE、11 次工具调用与 13 条回执通过。当前适配器 pre/post 关联、资源拒绝、续聊/新会话、强杀/pending 恢复、optional 边界取得限定版本证据；配置覆盖已覆盖 CLI 与管理 API。GUI、hold/redact、历史适配器制品及其他 OS 未因此完成，综合状态仍为 `unverified`，代码仍为 experimental。
 
 2026-09-07 23:25 新增 [CodeBuddy 初始化故障原生复现与修复](trusted-intent-v2-codebuddy-bootstrap-fix-20260907-232551.md)：修复前退出码 1 导致非阻断执行；修复后 10 个场景、七条 pending 幂等提升与 11 条回执验证通过。正常 CLI 全链回归另有 13 条回执。该证据仅覆盖钩子可启动并输出 JSON 的初始化故障，不覆盖二进制缺失/强杀/宿主超时；综合状态不提升。
+
+2026-09-07 23:56 新增 [旧版兼容与升级恢复证据](trusted-intent-v2-legacy-upgrade-20260907-235638.md)：旧 OpenClaw/CodeBuddy 执行授权通过，但无 ID/参数的 post 没有产生关联观察，报告 `passed=false`。保留同一状态升级到当前适配器后，重复读取和重启恢复的关联观察通过，两平台各 14 条回执验签成功。此结果证明指定版本的迁移路径，不将旧版完整兼容或综合支持状态提升为通过。
+
+2026-09-08，[最终工程验收](trusted-intent-v2-final-audit-20260908-000506.md) 按原文 T15 核对三平台原始基线 optional Grant/unbound 兼容；旧 post 完整兼容与平台综合支持仍保留独立限制。新增 [Hermes 原始基线复测](evidence/intent-v2/legacy-hermes-baseline-20260908.json) 与 `2305979` 的 28/28 CI 证据，未变更平台支持等级。

@@ -1,0 +1,144 @@
+{
+  "platform": "openclaw",
+  "legacy_commit": "0caacd3bd678051f80efb2737ea26a0c76f96a97",
+  "historical_artifacts": {
+    "index.ts": "1bc3b76f5ae391b92c4876a45113db53797e7601a3c215f9efa78d21997a3dc1"
+  },
+  "current_binary_sha256": "055dae939dc08d6ac79b838149f19b12a174ed20c34a213b9f8dc32cc52b1441",
+  "authorization_checks_passed": true,
+  "offline_verified": true,
+  "full_observation_compatibility": false,
+  "upgrade_recovery_passed": true,
+  "upgraded_artifact_sha256": "9e7ba73c4d9999ba5dd9f6f1cdd1af1f4c593ca3cfb4b982d49350e0248fbeb8",
+  "legacy_case_count": 7,
+  "cases": [
+    {
+      "case": "before-grant",
+      "action": "deny",
+      "intent_binding": "unbound",
+      "reason_code": "grant_missing",
+      "native_executed": false,
+      "observations": 0,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "optional-first",
+      "action": "allow",
+      "intent_binding": "unbound",
+      "reason_code": "allow",
+      "native_executed": true,
+      "observations": 0,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "optional-repeat",
+      "action": "allow",
+      "intent_binding": "unbound",
+      "reason_code": "allow",
+      "native_executed": true,
+      "observations": 0,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "optional-other-resource",
+      "action": "allow",
+      "intent_binding": "unbound",
+      "reason_code": "allow",
+      "native_executed": true,
+      "observations": 0,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "bound-denial",
+      "action": "deny",
+      "intent_binding": "bound",
+      "reason_code": "intent_resource_not_allowed",
+      "native_executed": false,
+      "observations": 0,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "required-missing",
+      "action": "deny",
+      "intent_binding": "unbound",
+      "reason_code": "intent_binding_missing",
+      "native_executed": false,
+      "observations": 0,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "optional-repeat-after-restart",
+      "action": "allow",
+      "intent_binding": "unbound",
+      "reason_code": "allow",
+      "native_executed": true,
+      "observations": 0,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "upgraded-first",
+      "action": "allow",
+      "intent_binding": "unbound",
+      "reason_code": "allow",
+      "native_executed": true,
+      "observations": 1,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "upgraded-repeat",
+      "action": "allow",
+      "intent_binding": "unbound",
+      "reason_code": "allow",
+      "native_executed": true,
+      "observations": 1,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "upgraded-bound-denial",
+      "action": "deny",
+      "intent_binding": "bound",
+      "reason_code": "intent_resource_not_allowed",
+      "native_executed": false,
+      "observations": 0,
+      "decision_tool_call_id_present": true
+    },
+    {
+      "case": "upgraded-after-restart",
+      "action": "allow",
+      "intent_binding": "unbound",
+      "reason_code": "allow",
+      "native_executed": true,
+      "observations": 1,
+      "decision_tool_call_id_present": true
+    }
+  ],
+  "receipt_count": 14,
+  "runtime": {
+    "sources": {
+      "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+      "dist/pi-tools.before-tool-call-BmZM4hyt.js": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+      "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61",
+      "node_modules/@earendil-works/pi-coding-agent/dist/index.js": "8fa80bd4e39e73b03914eab8c49247d31d29b1baf3b0a7761835a23de7c4a30f"
+    },
+    "openclaw_version": "2026.5.12"
+  },
+  "schema": "intent-v2-legacy-platform-validation/v1",
+  "passed": false,
+  "recorded_at": "2026-09-07T15:56:32.195619+00:00",
+  "siq_commit": "2305979dd2d6b3d58390d888756a6ffb45b86a98",
+  "source_sha256": {
+    "scripts/validate-intent-v2-legacy-platforms.py": "a1c1249fb47cf2b68b40571e16046bfb6d270ddd406599e17b7cb80f1da169d9",
+    "scripts/validate-intent-v2-hermes.py": "1f14adbecb88561801865426207cf3fd1310a8a25ad1a4d5825236cf71c75186",
+    "scripts/validate-intent-v2-codebuddy.py": "5e096dd5ca97cbc5739253d82f4ceb7baae2fe9f5a845ca34666fc6fd997da2d",
+    "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+    "scripts/openclaw-native-worker.mjs": "7f69ae98a9e22e5408ae8e546b585916a46c5143c2f222f6502513c37af17b7e",
+    "scripts/codebuddy-fixture-guard.mjs": "ce85ecc4285fcc57a3ef24b2bca200265d3af2be788e53a8224df324486aea7c"
+  },
+  "limitations": [
+    "fixed historical source, not all released artifacts",
+    "OpenClaw uses native tool components and harness-driven after relay",
+    "CodeBuddy uses complete native CLI with synthetic loopback model",
+    "no user configuration, human approval or OS isolation validation",
+    "missing/ambiguous observations remain rejected; no matching by guess"
+  ]
+}

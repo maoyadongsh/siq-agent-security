@@ -2,8 +2,9 @@
 
 - 时间：2026-09-07，Asia/Shanghai
 - 仓库：siq-agent-security；分支：main；工作基线：`0caacd3`
-- 当前状态（2026-09-07，提交前核验）：CodeBuddy 隔离配置与启动失败修复、原始 §42 绑定撤销并发项已实现。签名撤销记录、管理 API、幂等重试、重启后 optional 不降级与拒绝回执测试通过；原生 CodeBuddy 撤销验收包含 4 次 CLI 调用、70 条可离线验签回执，撤销返回后的 32 次 HTTP 决策全部拒绝。当前工作树 Go race/vet、Python 120 项合同测试与相关 Ruff 检查通过。DoD 13 完整旧适配器兼容与本次提交的远端 CI 仍需验收；GUI、真人审批等边界沿用下文限制。
+- 当前状态（2026-09-08 00:05）：原始 V2 工程要求已完成逐项核对，见 [最终工程验收](trusted-intent-v2-final-audit-20260908-000506.md)。产品基线 `2305979` 已推送且 28/28 CI 成功；三平台原始 `0caacd3` 适配器满足 T15 的 optional Grant/unbound 授权兼容。旧 OpenClaw/CodeBuddy 无法关联的 post 继续拒绝，升级恢复已有证据。此前约 94% 的估计包含了原文未要求的旧 post 无缝接受条件，现按 T15 与 §25 分别核对；生产/跨平台完整支持不随本专项验收升级。
 - 本报告记录开发验证完成时的工作树快照；后续提交与推送状态以 Git 历史为准。未部署。
+- 最新核对：[旧适配器兼容、升级恢复与进度口径](trusted-intent-v2-legacy-upgrade-20260907-235638.md)。原始失败记录保留 `passed=false`；升级成功不改写旧版本的完整兼容结论。
 - 绑定撤销证据：[原生运行与并发记录](evidence/intent-v2/native-binding-revocation-20260907.json)。撤销保留原绑定和审计记录，撤销前已取得授权快照的动作仍可能完成；此机制不承诺原子取消已开始的副作用。记录中的提交号为测试工作基线，具体受测源码由 `source_sha256` 标识。
 - 最新增量（2026-09-07 23:25）：[CodeBuddy 钩子启动失败绕过修复](trusted-intent-v2-codebuddy-bootstrap-fix-20260907-232551.md)。修复前配置/凭据/状态故障会令原生工具执行且无在线回执；修复后初始化失败仍输出结构化 pre/post 结果，完整配置验证失败按 block，有效告警配置保留 allow + pending。未覆盖二进制未启动、进程强杀与宿主超时，redact/hold 仍待原生验证。
 - 最新增量（2026-09-07 23:11）：[CodeBuddy 原生 CLI 与隔离配置目录验收](trusted-intent-v2-codebuddy-validation-20260907-231146.md)。真实安装/重装、授前拒绝、可信授权、pre/post 关联、续聊与新会话隔离、强杀/pending 恢复、optional 边界和卸载对照通过；修复安装器忽略 CODEBUDDY_CONFIG_DIR，非法覆盖及跨实例卸载拒绝。固定版本 CLI 证据不扩展到 GUI、真人审批或整体 supported。
@@ -115,8 +116,8 @@ Adapter 工具事件
 ```
 
 4. 新 Observe 可同时传 action_id/decision_receipt_id；旧适配器保留 pre 决策兼容。post 有稳定 tool_call_id 时服务器可唯一解析；无 ID 时必须传相同参数且唯一，否则拒绝。
-5. Hermes/OpenClaw 提供关联字段的 mock/单元证据；CodeBuddy 按 tool_use_id 跨 hook 进程关联。三者真实平台 V2 关联仍为 **unverified**。
-6. OpenClaw 平台原生审批不自动成为本地 hold 管理批准；缺本地批准的 Observe 拒绝。
+5. 当前三平台适配器已具备原生关联证据，具体版本、调用入口和限制见最终验收与各平台报告；综合平台状态仍为 **unverified**，不把固定版本测试推广为所有宿主路径。旧 OpenClaw/CodeBuddy post 缺字段时拒绝，升级后恢复关联。
+6. OpenClaw 平台审批不自动成为本地 hold 管理批准。当前适配器先等待本地批准；缺受信审批后检查点的宿主在 block 下拒绝 hold，配套宿主在执行前再查当前授权。检查点不提供副作用原子取消。
 7. 历史 v1 Receipt 新字段可省略，不重算或重签历史文件；历史记录不凭字段缺省获得新动作授权。
 
 ## Performance
@@ -129,9 +130,11 @@ Adapter 工具事件
 | 本地 binding + Intent 读取/验签 | 0.112369 | 0.136178 | 0.191122 |
 | 结构校验与确定性资源匹配 | 0.000640 | 0.001488 | 0.003152 |
 
-不包含 HTTP、receipt fsync、全链重启恢复、真实工具执行；不作为 SLA。大规模绑定/关联和长期运行另需测量。
+上述早期微基准不包含 HTTP、receipt fsync、全链重启恢复或真实工具执行，不作为 SLA。后续已补齐 1/128/1024/4096 绑定、HTTP 并发、600 秒负载与强杀恢复，见 [分档基准](trusted-intent-v2-progress-20260907-164919.md) 和 [持续运行记录](trusted-intent-v2-soak-and-compatibility-20260907-194732.md)；不同构建的时长不合并。
 
 ## CI / 本地验证
+
+当前产品基线 `2305979` 的 [完整 CI](https://github.com/maoyadongsh/siq-agent-security/actions/runs/34140323805) 已确认 28/28 成功；提交前 Go 全模块 race/vet、四目标构建、Python 120 项合同测试及相关 Ruff 通过。以下表格是初次开发时的历史快照，不能用于推翻后续准确 SHA 的 CI 结论。
 
 | 命令与范围 | 结果 |
 | --- | --- |
@@ -150,14 +153,14 @@ Adapter 工具事件
 - **desktop-same-uid**：恶意同 UID 进程可能调用 CLI、读取密钥或重写状态。协议分权不等同 managed-linux 隔离。
 - 资源匹配支持明确的文件/URL host/recipient 字段；未知资源与 opaque shell 资源拒绝。静态 effect 分类不证明 shell 程序全部真实副作用；网络 ASCII host（Unicode host 需预先转 Punycode），符号链接由已有文件安全层负责。
 - 签名恢复遇到损坏/不完整链失败关闭，需要诊断恢复；未宣称覆盖所有断电/文件系统故障。动作窗口外重试拒绝。
-- 暂未提供 revoke/任务切换 API，固定绑定不能覆盖。需要该能力时应增加 append-only 管理生命周期和并发撤销测试。
+- 已提供 append-only 签名绑定撤销 API，含并发、幂等、重启与 optional 不降级测试；同一会话不能重写原绑定换任务。撤销前已取得授权快照的动作仍可能完成，不承诺取消已开始的副作用。
 - task_seq/parent_action_id 是当前 Session 的最小行为骨架，未实现跨 Session 任务图或 Delegation DAG。
 - **Parameter provenance、behavioral sandbox、multi-agent delegation、real-world effect verification** 均未实现，按本轮要求保留为后续阶段。
-- 下一步验收：真实平台 pre/post 稳定 ID 和审批归档；大规模/长运行/强杀恢复压测；远端完整 CI 与独立安全复核。无真实平台证据不得把 capability matrix 的 unverified 改为 evidenced。
+- 后续发布验收：独立安全复核、真人审批/消息渠道、跨 OS 实机和目标部署故障模型。已有原生 pre/post、受控审批、负载、强杀恢复及 CI 证据的准确范围见最终工程验收；这些范围外的能力继续保持 unverified。
 
 ## Definition of Done 判断
 
-DoD 1–12、14–16 的核心行为已有实现与本地测试证据。DoD 13 的旧 pre 决策保持兼容；无法唯一关联的旧 post 明确拒绝，真实平台兼容性待归档。DoD 17（全仓远端 CI green）尚未确认，因此本报告不宣称整个 V2 已完成验收。
+按原文 §49 的 17 项 DoD 与 T1–T16，核心工程行为、三平台原始基线的 optional 授权兼容及产品基线 CI 已具备证据，逐项见 [最终工程验收](trusted-intent-v2-final-audit-20260908-000506.md)。T15 要求旧请求继续执行 Grant 逻辑并记录 unbound；它不授权接受缺失关联信息的旧 post。后者继续按 §25 拒绝，原始失败归档不改写。本次结论限于 V2 工程范围，后续新提交的 CI 以其实际运行结果为准。
 
 ### 当前验收状态（2026-09-07 19:10 增量）
 
