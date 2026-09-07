@@ -25,6 +25,56 @@
   ],
   "additionalProperties": false,
   "properties": {
+    "provenance_refs": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+      }
+    },
+    "resource_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "domain",
+          "digest"
+        ],
+        "properties": {
+          "domain": {
+            "enum": [
+              "filesystem",
+              "network",
+              "message"
+            ]
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "const": "user"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "record_type": {"enum": ["decision", "observation", "hold_resolution"]},
     "decision_receipt_id": {"type": "string"},
     "parent_action_id": {"type": "string"},

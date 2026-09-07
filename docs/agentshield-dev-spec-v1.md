@@ -724,3 +724,17 @@ make -C apps/agentshield ui
 Observe 显式携带 action_id 与 decision_receipt_id；旧适配器可用相同 platform/session/agent/tool/tool_call_id 唯一定位。缺 tool_call_id 时必须携带相同参数，若有多个候选则拒绝，不能猜测。
 只有 allow/redact 或已由本地管理面批准的 hold 可观测。同一动作相同结果摘要幂等返回原回执，不同摘要返回 409。结果超过 64 KiB 拒绝，避免截断掩盖冲突。
 关联状态从签名回执恢复，内存最多 8192 项，默认 24h 窗口；溢出拒绝新决策，过期动作不再接受 Observe。过期仅清理动作关联，不清理 bound/tainted 会话安全状态。
+
+### 10.2 V2 完整性补齐（2026-09-07）
+
+- Shell/exec 命令不作完整解释或执行。所有文本命令均带 `process.exec` 和 `unknown`；可识别的网络词仅追加 `network.request`，不能证明没有其他副作用。V2 Intent 遇到 unknown 拒绝（即使 allowed_effects 包含 unknown），optional 无绑定保留原 Grant 语义。
+- 结构化 file/network/message 工具使用统一的内存 Resource 类型做提取/归一化/匹配；`resource_refs` 只存 domain 与归一化资源的 canonical SHA-256，参数、URL query、文件路径和收件人原文不增加到签名资源字段。无法提取时为空，不伪装已观察到资源。
+- 新回执可选 `principal` 来自已验签 Intent；`provenance_refs` 仅为管理面签名的保留引用（最多 64 个合法 ID），不解释传播图、不参与扩大权限，Decision 自报不成为可信引用。Envelope、Intent V2 和 Receipt 增加兼容可选字段；原 resources 留作历史字段，新生产者只生成 typed resource_refs。
+- unbound 首次进入可信任务时重置任务序号/父动作，不清除 taint/trifecta。旧任务延迟 Observe 仍传播污点，但不改当前任务序号/父动作；旧任务 hold 批准亦不成为当前任务父动作。重启回放遵循同一规则。
+- 参数比较中 JSON 数值按精确数值比较（1 与 1.0 相等，不转换为 float64）；资源 equals/one_of 与正向前缀在两侧应用相同归一化。正则在归一化输入上按 Go RE2 执行，表达式本身不做路径清理。
+
+性能测量入口 `perfbaseline -intent` 保留默认单绑定 / 200 样本，可用 `-intent-bindings`（1–4096）与 `-intent-samples`（1–10000）复测不同规模；报告同时记录命中 / 缺失绑定查找和约束匹配的 p50/p95/p99，不包括 HTTP、回执 fsync 或真实工具执行。
+
+绑定查询使用既有 `sha256([platform, session_id, agent_id])` 确定性 ID 直接读取不可变签名文件；每次请求仍验证目标绑定和 Intent，不引入权限缓存。管理列表仍检查整个目录的记录完整性和容量。无关绑定损坏由管理枚举发现，不再阻塞其他会话的有效授权；目标绑定损坏/签名异常/过期始终拒绝，已绑定会话缺失记录仍由 receipt 的粘性状态拒绝降级。
+
+JSON 数值匹配的单个数字词法表示上限为 1024 字符，超过上限按不匹配处理；十进制等价比较不改变既有 canonical/signing 的序列化规则。
