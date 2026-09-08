@@ -978,3 +978,9 @@ Completion 对已验签网络材料同时比较签名 endpoint 与 requested/rec
 ### C2 observer撤销持久终态
 
 DELETE effect-observers/{id}在删除内存凭据前发布effect-observer-revocation/v1签名记录，字段仅owner_digest、revoked_at和签名元数据，独立effect-observer-revocations目录8192条预算。撤销记录不可覆盖，同owner重试返回原记录；损坏状态失败关闭。后续pending恢复必须检查原owner与接管owner的终态，不能通过注册相同source的新token复活被撤销采样。新token注册本身不撤销旧终态，也不自动获得旧pending。
+
+### C2 显式pending接管历史
+
+恢复使用file-observation-recovery/v1不可变签名链，不改原pending：observation_id、pending_digest（完整已签名pending的canonical SHA256）、sequence(1..64)、previous_hash（前一完整recovery的canonical SHA256，首条全0）、owner_digest、recovered_at与签名字段。时刻不早于原采样/前一接管且早于原deadline；相邻owner必须不同。任何断链、替换pending、损坏签名或超64次拒绝。
+
+后续管理恢复端点必须验证当前observer固定source/scope及原始和全部历史owner的持久撤销终态；原owner或历史接管owner已撤销，不允许新token继续该pending。记录先持久发布后再更新内存owner。重复当前owner幂等，不能借恢复延长原deadline。此节定义接管模型；API、存储发布及强杀测试按后续实现落地，不提前宣称可用。
