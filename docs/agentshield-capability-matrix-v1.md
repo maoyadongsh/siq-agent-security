@@ -110,16 +110,22 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 
 以下状态只表示当前开发分支组件，不更改上文平台综合支持等级，也不继承旧版native测试来证明新增V3采集能力。
 
-| 能力 | 已实现/验证边界 | 尚未证明 |
-| --- | --- | --- |
-| Authority Hard Gate | 无效必需Authority三模式拒绝、普通策略advisory兼容，本地Go回归 | 当前分支全仓远端CI及全部native回归 |
-| Trusted Context | admin签名workspace与请求绑定，Grant/Intent不被扩大 | 外部attestor部署、恶意同UID隔离 |
-| Parameter Provenance / Intent V3 | issuer/图签名、scope/期限/撤销、最低父trust、参数摘要和默认高影响约束；实际MCP组件流程 | 各平台自动捕获/传播完整来源，模型隐式推理lineage |
-| 文件效果与Completion | 实际前后快照、签名材料、要求摘要/历史动作；host_independent/partial | OS级独立观察、所有写路径强制经过observer、完整业务语义 |
-| 网络效果 | 受控loopback服务器接收事件、重定向最终端点与签名要求核对 | 公网provider审计、全平台每跳拦截、签名网络无效果证明 |
-| Pending恢复 | admin显式接管、原deadline、历史撤销、并发/容量/篡改；两次真实Linux SIGKILL重启 | 断电及文件系统故障矩阵、原生自动调度、状态目录回滚隔离 |
-| Benchmark | 20对组件场景，公共回执/效果离线签名验证，显式D0–D5分母 | D0/D1、完整独立效果覆盖、全局Intent撤销等完整场景语义及原生强制执行 |
-| 性能 | 八阶段各100个暖态顺序样本与P50/P95/P99，原始数据及源码摘要 | 生产SLA、冷启动/饱和并发、全攻击与深图性能矩阵 |
-| CI与治理 | PR/nightly工作流、恢复/性能报告步骤、CODEOWNERS源码规则 | 新工作流远端执行结果；CODEOWNERS不能单独证明main保护已强制 |
+| 独立能力 | 组件状态 | 已验证边界 | 尚未证明 |
+| --- | --- | --- | --- |
+| Authority Hard Gate | evidenced | 无效必需Authority三模式拒绝；693641d CI与本地回归 | 全平台原生强制执行 |
+| Context Assertion | evidenced | admin签名workspace、请求/scope/期限绑定，不能扩大Grant | 外部attestor部署、恶意同UID隔离 |
+| Provenance Assertion | evidenced | issuer registry、公钥验签、scope/期限/撤销、父图与最低trust | 来源数据真实性、企业trust bundle部署 |
+| Parameter Provenance | evidenced | Intent V3签名约束、参数摘要/引用匹配、V2双读 | 模型隐式推理lineage、所有平台自动传播 |
+| MCP Provenance | evidenced | 实际MCP组件、默认untrusted、确定性选择、Hermes显式桥接 | OpenClaw/CodeBuddy原生V3端到端与所有MCP传输 |
+| High-Impact Parameter IFC | evidenced | 显式参数来源与值联合约束、默认required/trusted、缺失拒绝 | 神经语义污点跟踪、未知转换的隐式来源推断 |
+| EffectEvidence | evidenced | 签名材料、action/rid关联、冲突/越权finding与持久化 | 任意工具/所有写路径自动采集、OS级隔离 |
+| Independent Effect Oracle | evidenced | 文件host_independent/partial；受控loopback接收端及重定向核对 | 公网provider审计、全平台每跳拦截、签名网络无效果证明 |
+| Completion Evaluation | evidenced | 签名要求、历史授权及实际材料，verified/incomplete/unknown/conflicting | 完整业务语义、任意SaaS任务完成证明 |
+| Pending恢复 | evidenced | 原deadline、管理接管/历史撤销/并发容量；两次Linux SIGKILL | 断电/文件系统故障矩阵、全平台原生自动调度、目录回滚隔离 |
+| Benchmark | evidenced | full 21对42场景；PR smoke 5对10场景；签名/关联/显式D0–D5分母 | D0/D1、全样本独立效果覆盖、通用离线策略重演 |
+| 性能 | evidenced | 八阶段及完整Decide各100次实测；原始数据/源码摘要 | 生产SLA、冷启动/饱和并发、全攻击与深图性能 |
+| CI与治理 | evidenced | 693641d两套PR工作流success，CODEOWNERS源码规则 | nightly完整执行尚在运行；main保护强制性须独立核验 |
+
+`evidenced`仅指表中组件边界，不将任意平台综合状态提升。OpenClaw/CodeBuddy新增V3原生端到端保持`unverified`；Hermes显式桥接也不等于所有宿主原生事件调度已验证。性能与基准各自基线见工程报告，不能混称最新生产性能。
 
 复现入口与限制见[benchmark说明](../benchmarks/runtime-security/README.md)、[威胁T27–T35](threat-model.md)和[开发台账](provenance-bound-effect-v1-progress.md)。未修改GitHub Ruleset；main protection仍需发布前独立核验，不把源码审阅路由当作仓库管理设置已启用的证据。
