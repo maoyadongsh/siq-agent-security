@@ -781,3 +781,250 @@ JSON 数值匹配的单个数字词法表示上限为 1024 字符，超过上限
 并发线性化点为本地可信绑定解析：同进程 Store 的解析持读锁、撤销持写锁；撤销返回后开始解析的请求不得使用旧授权。已经取得快照的并发请求可能先于撤销被授权；该机制不取消已发出的允许决策，不提供覆盖真实副作用的原子执行租约。原有 hold 状态重查通过同一解析器观察撤销；历史合法动作的 Observe 仍按原决策及幂等规则记录，不把撤销误作抹除已发生事实。多进程仅依赖独占发布和每次读回，不能宣称跨进程读写锁或恶意同 UID 隔离。
 
 HTTP 请求/撤销记录分别遵守 `intent-binding-revoke-request.v1.schema.json` 与 `intent-binding-revocation.v1.schema.json`。回执使用既有可选扩展与稳定 reason_code，不重签历史回执。
+
+
+## Provenance-Bound Effect V1 — A1 授权硬门禁（2026-09-08）
+
+依据用户[当前开发模板](templates/provenance-bound-effect-v1-development-template.md)与 ADR-015，覆盖此前 audit/warn 对 authority failure 转 allow 的语义。只改变新决策，历史已签回执按原字节验签，不重写历史。
+
+先分类可信 Authority 与普通 Policy。required 缺绑定、缺失/篡改/过期/撤销/身份范围错误的已绑定 Intent，以及不能识别的 resolver 错误，均为 Authority invalid，任何 mode 实际 deny、无 advisory allow。optional 从未绑定且无错误时为 unbound_legacy，继续 Grant 逻辑。合法授权中的工具/效果/资源/参数约束不满足属于 Policy deny，仍按 audit/warn/block 处理。新 context/provenance 完整性失败接入同一门禁，不复制第二个授权器。
+
+新 decision 回执使用可选签名字段 authority_status（valid/invalid/unbound_legacy）、authority_reason_code、policy_action、effective_action。Authority invalid 时不执行 Policy evaluator，policy_action 缺省；effective_action 与实际返回 action 一致。新正常观察与 hold resolution 同步实际 action，历史缺字段回执仍可读取。所有新字段沿用既有 Chain/canon/signing。
+
+### caller cwd 边界
+
+请求 Context 为 observational。删除 caller cwd 的 filesystem allow 捷径；工作区写权限必须由受信 Grant 明确授权，合法 ContextAssertion 也不能突破 Grant ∩ Intent。保持日志脱敏，不持久化额外 cwd 明文。新上下文签发/验证将在 A2 独立包实现。
+
+## Provenance-Bound Effect V1：A2 可信上下文
+
+`context-assertion/v1` 仅声明 `workspace_root`，由管理 capability 签发并在状态目录 `context-assertions/` 追加保存。V1 使用本地签名身份，issuer_id 固定为 `local-admin`；不声称支持任意外部 host attestor。Decision 调用只能提交 `context_assertion_id` 引用；普通 `context` 始终是观测信息。未知引用、签名/结构错误、到期、范围或请求绑定不匹配进入 Authority Hard Gate。
+
+管理端 `POST /v1/context-assertions` 接受完整未签名合同，服务端设置 signing_schema/signature；`GET /v1/context-assertions/{id}` 读取签名记录，两者均要求 admin。请求绑定为 canon.Marshal 后的 SHA256，字段固定为 platform/session_id/agent_id/task_id/tool/tool_call_id/params。task_id 从已验证 Intent binding 派生；使用 assertion 必须存在可信 Intent 和非空 tool_call_id。不同任务、会话、工具调用、参数不能复用 assertion；同一调用在到期前允许幂等重试和审批复查。它不是一次性执行租约。
+
+签名 workspace_root 是绝对路径，不补充 Grant 权限，也不修改 Intent 约束，授权仍取现有 Grant 与 Intent。回执仅持久化 assertion_id，不增加原始工作区路径。审批执行前继续验证该引用的签名、时效、范围和完整请求绑定；历史无引用回执保留旧签名语义。状态容量 4096、单记录 64 KiB，超额失败关闭；使用同目录 fsync 临时文件后排他发布，重启直接读取验签。
+
+## Provenance-Bound Effect V1：R 统一动作描述
+
+`runtimeaction.Describe(tool, params)` 为工具语义的唯一入口，输出 Tool、Operation、Effects、Resources、Egress、Mutating、ShellLike 和 HighImpactParameterPaths。Normalize/ExtractResources 仅作为旧调用方的兼容入口，委托同一描述实现。Grant/taint/trifecta/审批复查消费描述中的 Hosts/Paths/FilesystemWriteHint，不再各自维护工具表或命令正则。Hosts/Paths 是保守文本提示，只能增加检查，不作为结构化资源证明；Resources 仍仅来自已识别的结构化字段，解析错误显式保留。
+
+shell、sh、bash、python/python3、node、powershell/pwsh 等解释器至少 process.exec + unknown，即使文本看似简单也不能宣称完整效果。Mutating 对解释器保守为 true；FilesystemWriteHint 表示文本发现的文件写提示，不代表无该提示就无文件副作用。高影响参数以排序 JSON Pointer 输出，覆盖 recipient/to、host/destination_host/url、文件目标、database_scope、credential_ref、deployment_target、repo/branch、command/cmd、account/identity；未知工具的这些显式参数仍参与来源约束。路径和值不写入独立日志；回执资源继续以摘要存储。
+
+## Provenance-Bound Effect V1：B1 来源合同与约束基础
+
+来源 taxonomy 与 trust 独立校验；不得根据 USER/MCP 等字符串推导 authority。参数来源记录只允许 parameter_path 和 provenance_refs，路径为 RFC 6901 JSON Pointer，绑定内容以现有 canon.Marshal 的 SHA256 验证。所有引用都必须通过后续可信 store 验签、issuer/scope/时效校验后才能交给 matcher；普通调用方提交的 Assertion 不视为已验证。minimum_trust 的顺序为 unknown < untrusted < trusted < authoritative；required 缺字段或缺引用拒绝，来源集合不匹配、内容摘要不匹配或 unknown derivation 拒绝。多个引用必须全部满足约束，不能混入一份可信引用掩盖低可信引用。
+
+签发者 registry 数据模型包含 public_key（外部 Ed25519 公钥）或 local_key_ref（二选一）、allowed_source_types、max_trust_level、完整 scope、expires_at、revoked_at；具体发布与验签由管理端持久化模块实施。Decision 上报仅允许 MCP/WEB/TOOL/AGENT/UNKNOWN 且最多 untrusted，不接受 caller 指定 USER/TRUSTED_IAM 等授权来源。
+
+### B1 签名验证边界
+
+Assertion.VerifyAuthority 接受来自管理面可信 registry 的 Issuer 与本地公钥，不接受 decision 请求内嵌的 issuer。外部公钥严格 base64 解码为 32 字节 Ed25519；本地引用只识别 `local-state`。Issuer 的完整 scope 必须与 assertion、当前请求完全一致；来源类型必须被允许，trust 不得超过 issuer 上限。Issuer/Assertion 都检查时效；任何非空 revoked_at 都拒绝。声明过期不能超过 issuer 过期，未来 issued_at 拒绝。
+
+验签使用原 signing.VerifyWithSchema/canon；结构校验拒绝未知 signing_schema、空/重复/自引用父节点、超限父节点、direct 带父节点以及 transformed/aggregated 无父节点。此阶段仅验证单节点授权；父节点签名、派生信任上限与深度/容量由后续图解析器验证，单节点验签不代表完整 lineage 已验证。
+
+### B1 不可变签发者 registry
+
+`provenance.Open(stateDir,key)` 在状态目录建立 provenance-issuers 与 provenance-issuer-revocations。Registry entry 使用 provenance-issuer-record/v1 envelope，内容为 issuer，管理身份签名；撤销使用 provenance-issuer-revocation/v1 envelope，包含 issuer_id、原签名记录摘要和 revoked_at。两者均复用 canonical signing。注册 ID 不可覆盖，重试同一内容返回原记录；同 ID 改内容冲突。撤销终态，不改写原 issuer 文件；每次 GetIssuer 验证原记录和撤销记录，无法读取或篡改拒绝。进程内读写锁保证并发顺序，跨进程的排他硬链接保证文件不覆盖；单 daemon 的既有 writer lock 仍是生产写入边界。
+
+写入采用 0600 同目录临时文件、fsync 后硬链接排他发布；不支持硬链接即失败，不回退为覆盖。读取只接受普通文件、单 JSON 文档、已知字段，最大 64 KiB；最多4096个签发者。状态文件签名证明完整性，不提供对同 UID 恶意进程的防删除/整目录快照回滚隔离。
+
+### B1 声明图存储与解析
+
+声明按完整 Scope 的 canonical SHA256 分目录存于 provenance-assertions。每个 scope 最多1024节点、4096条父引用边、32父节点和64层深度。新节点发布前验证当前 issuer、全部父节点与同 scope，禁止 trust 高于任一父节点，禁止子节点有效期超出父节点；unknown 派生必须保持 unknown trust。派生 source type 只能保持父类型或显式降为 AGENT/UNKNOWN，不允许把 MCP 重标为 USER。
+
+IssueAssertion 仅供后续管理面调用，使用已注册 local-state issuer 签发；ImportAssertion 接受外部签名，必须通过 registry 公钥验证。Resolve 每次重读并验证整个父图，不保留跨请求信任缓存，故父 issuer 撤销/过期会使子图即时拒绝。未找到、环、容量、篡改均失败关闭；同 ID 同签名内容可重试，冲突不覆盖。HTTP 暂未接入，普通 decision 上报必须走后续受限入口而不能调用管理签发函数。
+
+### B2 参数联合匹配
+
+Store.MatchParameters 在一次 registry 读锁内验证所有 parameter_provenance：路径唯一、每路径1–32个唯一引用、总路径不超过1024；路径必须实际存在，引用必须与该参数的 canonical 内容摘要相同。所有引用及父节点都验证，不能忽略未被约束的伪造引用，也不能只挑一个高可信引用。匹配期间的 issuer 撤销与写入被序列化，下次调用重新读取当前状态。
+
+每条约束先校验路径/source taxonomy/minimum_trust；required 且参数或绑定缺失返回 provenance_missing。存在绑定时每个引用都必须满足 allowed_source_types 与 minimum_trust，unknown derivation 返回 provenance_derivation_unknown。此方法只做参数来源约束，不替代 Grant/Intent 的值约束或 RuntimeActionDescriptor。V3/runtime 接线另行实施并端到端验证。
+
+### B2 Intent V3 双读与执行门禁
+
+新增 intent/v3 合同，基于 V2 字段新增必需 provenance_constraints 数组（允许显式空数组）。Go 使用指针数组区分旧版省略与 V3 空数组；V2 不得携带该新字段，历史 canonical 签名不变。每条来源约束以唯一 parameter_path 指定 allowed_source_types/minimum_trust/required，复用 provenance.Constraint.Validate。
+
+任何 V3 在参数来源检查器未配置时拒绝，不允许先签发 V3 再把它当 V2 执行。Decide 接受 parameter_provenance 的引用绑定，使用已验证 Intent 的 task_id 和请求 platform/session/agent 构成范围；由来源 Store 对所有引用与约束执行匹配。无效/缺失必需来源进入 Authority Hard Gate。回执持久化绑定引用，审批执行前用原始回执绑定和当前参数重新验证，不能在 hold-status 临时替换来源。普通 V2 无新引用时保持原行为。
+
+### B1 管理 HTTP 接口
+
+新增管理 capability 路由：POST /v1/provenance-issuers 注册，GET /v1/provenance-issuers/{id} 读回，POST /v1/provenance-issuers/{id}/revoke 终态撤销（空 JSON 对象）；POST /v1/provenance-assertions 本地签发，POST /v1/provenance-assertions/import 外部签名导入。POST /v1/provenance-resolve 接受 provenance_id 与完整 scope，返回经过当前 issuer/父图验证的声明。管理输入严格拒绝未知字段、多 JSON 文档和超过64 KiB的正文。
+
+以上接口均为 admin，决策 token 返回403。状态错误对外只输出稳定 provenance reason_code，不暴露文件路径或底层异常。来源普通上报另设受限接口，不能复用管理签发接口。生产 Server 与 Engine 打开同一状态目录的 provenance Store；均逐次读取签名记录，不引入独立数据库或新的裁决服务。
+
+### B1 受限来源上报
+
+POST /v1/provenance-reports 使用 decision capability。正文包含 report_id、platform/session_id/agent_id、source（type/source_id/trust）和 content（JSON值）。服务从已验证且当前有效的 Intent binding 派生 task_id，不接受 caller task/issuer/signature。仅允许 MCP/WEB/TOOL/AGENT/UNKNOWN，trust 缺省为 untrusted，不能超过 untrusted；来源类型不在允许集合时直接拒绝。
+
+服务为该完整 scope 使用专用 report issuer（local-state、五类低可信来源、untrusted ceiling、到期不晚于 Intent），不允许请求选择其他 issuer。source_id 在签名声明中只保留摘要标识；content 仅存 canonical 内容摘要，不持久化原文。声明有效期最多15分钟且不晚于 Intent。report_id 在 scope 内幂等，同 ID 不同内容冲突；同 ID 的过期重试拒绝，调用方为新的采集生成新 report_id。上报是 self-reported 输入记录，不证明真实 MCP 服务身份或实际执行，不能赋予工具效果独立证据地位。
+
+### B2 确定性低可信内容选择
+
+Store.Select 从已验证的低可信父节点中派生参数：调用方重送原始 JSON，服务先比较完整 canonical digest，再按严格 JSON Pointer 自行提取值并计算子摘要。调用方不能指定输出值、类型或 trust。V1 选择入口限于 MCP/WEB/TOOL/AGENT/UNKNOWN 且最多 untrusted、本地签发的来源，不能借低权限入口使用可信 USER/IAM issuer。
+
+子节点继承父节点 source type/trust、scope、issuer 和时效；source_id 记录 parent_id+pointer 的摘要，provenance_id 由该选择身份与完整 scope 确定。已知 lineage 标记 transformed；unknown 父节点继续 unknown。同一选择可幂等重试，原文和被选值不落盘，父节点撤销/过期/篡改立即拒绝。后续 MCP 集成调用此确定性方法连接工具结果与高影响参数。
+
+HTTP 入口为 POST /v1/provenance-select，使用 decision capability；请求仅含 parent_id/pointer/platform/session_id/agent_id/content。服务从当前 Intent binding 派生 task_id，严格64 KiB读取；拒绝额外输出值或权限字段。
+
+### B2 MCP 本地协议集成验收
+
+新增隔离验证脚本，通过本地 loopback MCP JSON-RPC 服务执行 initialize→notifications/initialized→tools/call，取得实际协议结果，再经生产 SIQ daemon 的 Report→Select→Intent V3→Decide。复用现有集成 Harness 的临时状态、准入、Grant 人工 challenge/approve/deploy 与绑定流程，不使用真实平台配置或付费模型。
+
+该验证固定 MCP 2025-06-18 的 HTTP JSON 响应分支；不声称实现通用 Streamable HTTP/SSE 客户端、OAuth 或 native 平台自动采集。协议依据为官方 [transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) 与 [lifecycle](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle)。报告标注 component_fixture，只存动作、reason code、哈希与检查结果，不保留原始工具内容或凭据。MCP endpoint/tool 身份由测试实际连接配置构造；上报仍不具备独立 attestor 权威。
+
+### B2 高影响参数默认约束
+
+V3 对 RuntimeActionDescriptor.HighImpactParameterPaths 中每个实际出现且没有显式来源约束的路径，补 required=true、minimum_trust=trusted、allowed_source_types=[USER,SYSTEM,TRUSTED_IAM,TRUSTED_DATABASE]。显式签名约束按精确 JSON Pointer 覆盖该路径的默认值，因此业务可明确许可特定 MCP/untrusted 来源；没有显式许可时不能由低可信输入控制高影响参数。
+
+默认值只作用于 V3，不静默改变 V2 历史语义。Provenance 模块直接消费 runtimeaction.Descriptor，不建立第二套工具/字段分类。默认约束为每次动作生成的新副本，不修改已签名 Intent 的数组或摘要。空 provenance_constraints 在合同上仍有效，但不表示高影响参数无需来源授权。
+
+### C1 EffectEvidence 合同（运行时待接入）
+
+按 ADR-0017 定义 `effect-evidence/v1`，关联 action_id 与 decision_receipt_id，分离 execution_state/source/independence/coverage/result。工具自报只允许 self_reported + unknown coverage/result；unknown 来源不提升任何证据维度。签名、observer 权限、动作关联和资源匹配必须由后续运行时验证，schema 合法不代表完成任务。新增 API 和存储尚未上线；现有 Observe 保持原语义。
+
+C1 资源引用冻结为 `filesystem|network|message:sha256:<64小写hex>`（实际格式如 `filesystem:sha256:…`），直接复用 RuntimeAction ResourceRefs 的 domain/digest，不保存原始路径、收件人或 URL。EffectEvidence 结构校验必须严格解析 RFC3339 时间、拒绝未来观察、未知字段/多文档，并通过原 signing/canon 验签。单条证据验签不能替代 observer capability 与动作匹配。
+
+### C1 决策关联与效果分类
+
+Engine 的 EffectAction 仅从已签发或经回执链恢复的动作状态读取，要求精确 action_id+decision_receipt_id，沿用24小时动作关联窗口；未知、过期、错配引用拒绝。输出包括决策时间、task、效果集合和资源摘要，不包含参数原文；hold 只有已批准才视为动作授权。
+
+效果提交必须与管理端指定的 observer Source 完全一致，正文不能改变 source_id/type/independence。独立 completed 证据若关联未获授权动作，保留为 unexpected 并给出 unauthorized_effect_observed；效果类型或资源不匹配为 unexpected/effect_scope_mismatch，不能记为预期完成。观察时间不得早于关联决策。分类器只返回待存储记录与 finding code，后续存储/API 必须将两者作为同一不可变事实处理；本次分类器不单独写 finding。
+
+### C1 不可变证据存储
+
+`effect-evidence/` 中每个 ID 对应一个0600不可变签名封套，包含 evidence、finding_code、request_digest、task_id。外层签名将事件与证据绑定，内层签名保持 EffectEvidence 合同独立可验证；request_digest 为原始无签名提交的 canonical SHA256，用于防止分类归一化掩盖冲突。相同 ID 相同请求返回既有记录，变化请求拒绝；重试不会改写历史事件。
+
+先完整写暂存文件、fsync、关闭，再同目录 os.Link 排他发布。无覆盖回退；暂存文件不算有效记录。读取拒绝符号链接、超限、多文档、签名错误与 ID 错配。单状态目录最多8192份记录，进程内多 Store 共享锁；跨进程仍依赖 daemon writer lock。同 UID 目录整体删除/回滚和机器断电的目录项持久性不作为本实现已解决的保证。
+
+### C1 observer capability 与 API
+
+Admin POST `/v1/effect-observers` 管理签发短期 observer token，请求固定 source 和完整 platform/session/agent/task scope。仅允许 host_observer/host_independent、openshell/host_independent、provider_audit/external_independent、test_oracle/external_independent；source_id由管理员指定。有效期1–3600秒，最多128个活动 token；内存仅存 token SHA256，服务重启全部失效。DELETE `/v1/effect-observers/{id}` 立即撤销。生产 observer 需管理端重新配置，不自动延续。
+
+POST `/v1/effect-evidence` 仅 capEffectObserve，scope 必须精确匹配 Engine 动作，Source 必须与 token 配置一致，提交 Evidence signature 必须为空。GET `/v1/effect-evidence/{id}` 与 GET `/v1/actions/{id}/effect-evidence` 为 admin 读取。普通 decision/admin token 均不能代替 observer 提交。撤销与提交共享 observer 锁，撤销返回后的请求不再落盘。签发响应 no-store，不记录明文 token。
+
+### C1 文件观察器
+
+复用 ADR-013 的普通文件打开保证，抽为 internal/fileopen，准入扫描继续使用相同实现。文件 observer 拒绝路径任一可见符号链接、非普通文件、读取超预算以及打开/读取期间检测到的身份或 size/mtime 变化；Unix 保留 NOFOLLOW/NONBLOCK，Windows 保留已说明的残余 TOCTOU。
+
+Capture 仅输出资源摘要、存在性、内容 SHA256、size、mtime 和采样时间；文件原文及路径不落证据。前后资源必须一致，后采样时间不早于前采样；最长读取16 MiB。FileWrite 对比可信预期摘要：后文件缺失为 failed/unexpected；发生可见变化且摘要匹配为 completed/expected，不匹配为 completed/unexpected；前后无可见变化为 unknown/unknown，不能证明重复同值写已执行。coverage 固定 partial，independence 由受信 host observer 注册为 host_independent；同 UID 攻击者与采样间隔内瞬态变化仍属残余风险。
+
+C1 文件材料附加：不可变 Record 增加可选 file_observation（file-observation.v1 合同），旧记录缺省时保持签名字节不变。SubmitFile 将观测材料、摘要证据与 finding 同封套保存，读回重新验证材料计算的 evidence_digest、资源、时间与执行状态。相同 ID 的普通摘要提交与带材料提交不可互换；拒绝把后来补充的材料伪装为原始记录。材料只含摘要/元数据，不含路径或文件原文。
+
+### C1 文件采样 HTTP 生命周期
+
+capEffectObserve 新增 POST `/v1/file-observations`（observation_id/action_id/decision_receipt_id/path/expected_digest/max_bytes），服务端验证固定 host_observer、完整 scope、file.write 效果和路径资源摘要匹配真实动作后，实际 CaptureFile。POST `/v1/file-observations/{id}/finish`（path）再次读真实文件并 SubmitFile，客户端不得上传前后快照。前置采样不授权执行，deny 动作仍可观测并记事件。
+
+待采样记录仅保留摘要快照、动作引用、预期摘要和 token 归属，不保存明文路径。最多128条，随 observer token 到期/撤销失效；服务重启失效并要求重新开始，禁止把丢失的前置采样补成成功。完成后的持久化证据仍可读回；同 token 完成重试返回原证据，不重新采样改写结果。持久化 pending 与跨重启继续采样尚待后续恢复实现。
+
+### C1 受控网络 oracle
+
+NetworkOracle 仅用于本地 benchmark，绑定127.0.0.1随机端口，对外名称仅允许 localhost/127.0.0.1；记录随机私有路径上实际收到的请求。监听器配置决定最终scheme/host/port/resolved_target，不信任客户端 Host 头对最终目标的声明。每个接收事件生成服务器 request_id，保存方法/URI/正文的组合摘要与接收时间，不记录正文或URI原文；1 MiB请求体、64事件预算，超限拒绝且不生成完整接收证据。
+
+网络证据来自该 oracle 的事件对象，source=test_oracle/external_independent、coverage=partial。requested endpoint 与 final endpoint 分开；最终资源引用复用 runtimeaction 的 network host摘要。目标scheme/host/port变化分类为 unexpected；共享主机不同端口也保持差异，不能由旧 host-only 资源匹配掩盖。此为固定本地服务证明，不推广为通用互联网、provider审计或native平台支持。
+
+### C2 签名效果验证要求
+
+Intent V3 增加可选 effect_requirements 数组（最多128项、requirement_id唯一），缺省/空数组表示没有声明效果要求，Completion返回unknown/not_required。显式null拒绝；V2拒绝该字段，包括null，旧V3缺省保持签名字节不变。
+
+第一阶段要求明确 file.write、filesystem资源摘要、预期文件内容SHA256、minimum_independence（host_independent或external_independent）和minimum_coverage（partial或full），所有字段必填，不把缺省值解释为更低要求。效果必须在 allowed_effects 中；要求不扩大运行时授权。网络要求在服务器接收材料归档后另行扩展，暂不声称已支持网络任务完成证明。
+
+### C2 Completion 聚合规则
+
+聚合器接收管理端已验证 Intent 投影（task_id/intent_id/digest/requirements）、当前验签有效的 Record、Engine 动作查询和验证公钥；任何调用方正文不能替代这些依赖。对全部输入记录先验签，再按 task 过滤；动作必须匹配 task、Intent ID/digest、action/receipt、资源和 file.write 效果。无要求为 unknown/not_required。
+
+每项要求至少需要一份 completed/expected、无 finding、独立性与coverage达到要求、FileObservation 与证据绑定且实际后文件摘要匹配签名预期的证据才能 verified。无证据或文件缺失为 incomplete；已知越权/目标内容冲突为 conflicting；验签或关联失败直接错误，材料缺失/等级不足或未知执行为 unknown。冲突优先于unknown，unknown优先于incomplete，全部满足才verified。未知证据不得被一条正例遮蔽；同任务其他资源的已知安全事件也阻止整体verified。
+
+这是确定性状态投影，不写 completed 字段、不执行模型判断。当前动作查询仍受24小时窗口限制，超窗关联不得制造完成证明；历史查询恢复另行补齐。
+
+### C2 任务查询 API
+
+Admin GET `/v1/tasks/{task_id}/completion` 查验签名 Intent、按task读出并验签全量有界证据、关联Engine动作后返回 completion-status/v1。未知任务404，同task对应多份Intent返回409（不擅自挑选较宽要求），损坏Intent/证据或缺失动作关联返回通用500并拒绝完成判断。decision/observer凭据不能读取管理任务投影；接口仅GET，不能写 completed=true。
+
+查询反映已发生效果对已签名要求的满足情况，不是新的执行授权；当前动作关联窗口仍是24小时。状态不缓存，新的失败/冲突证据会影响后续查询。跨存储并发读不是全局快照，结果仅代表本次读到的已发布证据；任务冻结/最终封账不在本轮最小模型内。
+
+### C2 历史动作复核
+
+Completion 使用 HistoricalEffectActions 按本次证据引用集合单次扫描整条签名回执链，最多8192个引用；历史查询不依赖24小时内存动作缓存。要求精确decision action_id/receipt_id以及hold_resolution对原决策的引用和scope一致；重复决策/重复审批或链校验失败拒绝。扫描结束与当前进程已知链头比较，防止运行中截断被误当完整历史。
+
+HistoricalEffectActions 只生成只读投影供已保存证据复核，不重新注册动作、不延长 Observe/hold-status/新证据提交的执行窗口。新请求继续用 EffectAction。完整目录回滚后重启的保护仍取决于既有可信checkpoint，不能把内存链头比较宣称为永久防回滚。
+
+### C2 审批生效时间
+
+动作投影增加仅服务端派生的 AuthorizedAt。普通允许动作取决策时间，hold获批取签名hold_resolution时间；新审批记录使用RFC3339Nano保留亚秒精度。当前缓存、重启恢复和历史扫描均从同一签名时间恢复。独立completed效果若observed_at早于AuthorizedAt，记录unauthorized_effect_observed；Completion也复核该关系，旧expected证据不能因后续获批变成verified。旧秒级审批记录仍只能提供秒级历史精度，不伪称能恢复当时未记录的亚秒顺序。
+
+### C1 网络观测材料归档
+
+Record 增加可选 network_observation：请求的scheme/host/port与真实接收事件（最终scheme/host/port/resolved_target、server request_id、请求摘要、接收时间）。不存请求路径、查询串、正文或完整URL。NetworkOracle.Material 只读取自身收到的事件；SubmitNetwork 将材料、效果和finding同封套签名，读回重新派生摘要/资源/时间/结果校验。文件/网络材料互斥；旧记录省略新字段保持签名兼容。当前只验证 loopback test_oracle，不扩展为生产公网审计。
+
+### C1 网络材料提交 API
+
+POST `/v1/network-observations` 使用capEffectObserve，正文只含observation_id、action_id、decision_receipt_id、observation。Source从已注册observer派生，必须为test_oracle/external_independent，scope精确匹配真实动作；server request_id绑定该Source。调用管理端信任的独立测试服务器上报材料，不赋予decision token上报权限，不由此宣称接受任意客户端日志为独立真相。SubmitNetwork原子保存材料/证据/事件，同ID冲突409，来源/scope错误403。
+
+### C2 网络完成要求
+
+Effect requirement 增加 network.request 分支：resource_ref 为 network 主机摘要，expected_digest 为受控服务器请求组合摘要（method、URI、body_digest 的 canonical SHA256），expected_endpoint 必须包含 scheme、规范化 host、十进制 port。最低独立性必须 external_independent。file.write 不接受 expected_endpoint，旧文件要求签名表示保持不变。
+
+Completion 对已验签网络材料同时比较签名 endpoint 与 requested/received 两端、request_digest 和真实动作资源；缺少材料 unknown，端点或摘要不符 conflicting。不得仅凭主机摘要匹配忽略端口/协议，也不得让上报者自行选择的 requested endpoint 替代签名要求。当前网络材料仅支持受控 loopback oracle，partial 覆盖不能满足 full 要求。
+
+### C2 文件pending持久记录（恢复基础）
+
+新增签名 file-observation-pending/v1，保留observation/action/decision引用、完整scope、固定observer source、原owner token摘要、服务端before快照、expected_digest/max_bytes和原到期时间；不保存原始路径、文件内容或token。不可变发布到effect-evidence-pending目录，0600文件，独立8192条归档上限；同ID同内容幂等，任何字段变化冲突。
+
+该记录是恢复依据，不是新的执行授权；读取过期记录供诊断不延长采样有效期。恢复仍必须验证当前observer凭据、source/scope、动作与原deadline；跨token接管与撤销终态需后续管理API接入，在此之前持久记录不能自动被任意新observer续用。
+
+### C2 begin写前持久化与原快照重用
+
+文件begin先检查已签名pending记录。同ID且owner/source/scope/动作/预期摘要/预算/资源一致、原deadline仍有效时，仅重用原before并恢复内存索引，返回200；不重新读取文件、不延长deadline。不同owner或元数据冲突409，损坏记录失败关闭。首次采样必须SavePendingFile成功后才返回201和建立内存索引。Server重启导致原token失效，新token不能以begin隐式接管旧快照；显式管理恢复仍须后续接入。
+
+### C2 observer撤销持久终态
+
+DELETE effect-observers/{id}在删除内存凭据前发布effect-observer-revocation/v1签名记录，字段仅owner_digest、revoked_at和签名元数据，独立effect-observer-revocations目录8192条预算。撤销记录不可覆盖，同owner重试返回原记录；损坏状态失败关闭。后续pending恢复必须检查原owner与接管owner的终态，不能通过注册相同source的新token复活被撤销采样。新token注册本身不撤销旧终态，也不自动获得旧pending。
+
+### C2 显式pending接管历史
+
+恢复使用file-observation-recovery/v1不可变签名链，不改原pending：observation_id、pending_digest（完整已签名pending的canonical SHA256）、sequence(1..64)、previous_hash（前一完整recovery的canonical SHA256，首条全0）、owner_digest、recovered_at与签名字段。时刻不早于原采样/前一接管且早于原deadline；相邻owner必须不同。任何断链、替换pending、损坏签名或超64次拒绝。
+
+后续管理恢复端点必须验证当前observer固定source/scope及原始和全部历史owner的持久撤销终态；原owner或历史接管owner已撤销，不允许新token继续该pending。记录先持久发布后再更新内存owner。重复当前owner幂等，不能借恢复延长原deadline。此节定义接管模型；API、存储发布及强杀测试按后续实现落地，不提前宣称可用。
+
+接管存储使用原pending旁的独立子目录，按六位sequence排他发布签名JSON；读取必须验证连续序号和完整链。存储层接管使用expected_owner进行比较后追加，防止并发不同接管者覆盖；当前owner的同内容重试幂等。读取有效owner及追加都复核全部历史撤销与原deadline，损坏状态失败关闭。存储不代替管理端的source/scope和动作有效性复核；同UID删除整个历史的回滚防护仍属于既有可信状态目录边界。
+
+管理恢复接口：POST /v1/file-observation-recoveries，仅admin；请求observation_id、observer_id（当前已签发session ID）、expected_owner（当前owner摘要）。不接收原始token或路径。验证目标observer未到期/未撤销、原pending完整source/scope一致及fileAction历史动作关联，随后执行存储CAS接管。返回200包含recovery签名记录与原expires_at；不得延长期限。已完成效果拒绝恢复409。begin/finish均复核持久owner和全部历史撤销，不能仅凭内存缓存；恢复后由新observer调用begin重建索引，复用原before。完成记录已发布而缓存Completed未更新时，finish返回已签名记录而不重新采样。
+
+### D 决策阶段性能采样
+
+Engine.Options可选StageTiming回调仅由宿主测试/基线程序注入，不接受请求参数，默认关闭。以Go单调时钟time.Now/time.Since测量实际执行的intent_lookup、authority_validation（lookup之后的绑定/合同校验）、runtime_action_normalization、context_validation、provenance_resolution、policy_evaluation和receipt_append_fsync。未进入的阶段不报0；回调在引擎锁内同步执行，宿主必须非阻塞且不可重入引擎。阶段不改变签名回执或授权时间源，耗时只用于性能统计，不作授权输入。效果处理单独由效果存储层接入，完整P50/P95/P99报告后续由真实采样聚合。
+
+效果阶段基线在受控测试中以单调时钟直接包围Store.SubmitFile，包含材料转Evidence、相关性检查、签名及持久发布，排除调用前的采样和调用后的日志。独立构造的Action明确标注为组件微基准，不将其称为全链路性能。基线分别预热5次、采集100次，完整原始样本和nearest-rank P50/P95/P99一并导出；没有实际样本或数量不符直接失败，不填入虚构延迟。
+
+### B 全局Intent撤销
+
+intent-revocation/v1不可变终态记录包含intent_id、intent_digest、revoked_at、reason_code=intent_revoked及canonical签名；不修改原Intent或各binding。RevokeIntent(id, expected_intent_digest)在authority写锁下发布，错误摘要冲突、同摘要重试返回原记录；沿用4096条容量和私有排他发布。Bind拒绝已撤销Intent；ResolveBinding每次在同一authority读锁内复核全局终态，返回已验证Contract和Binding元数据供签名deny使用。普通Get/List保留历史合同读取，不能将历史读取当作当前有效授权。损坏/摘要不匹配撤销记录intent_revocation_invalid失败关闭。原绑定撤销优先保持既有错误码；无全局撤销记录的V2/V3不改变行为。新API与多会话fixture后续接入；检查完成前已取得的执行快照不构成原子取消保证。
+
+全局撤销管理路由：POST /v1/intents/{id}/revoke，请求仅expected_intent_digest；GET /v1/intents/{id}/revocation读取已签名终态。两者均复用现有capAdmin保护，decision/observer不得撤销或读取管理状态；方法不符405，错误摘要409，未知Intent/撤销记录404。重复POST返回同一签名与时间。原GET /v1/intents/{id}保持历史合同读取语义；runtime ResolveBinding及holdAuthorityCurrent使用当前撤销状态，三模式均hard deny。
+
+### B Hermes宿主来源引用桥接
+
+pre_tool_call增加可选宿主关键字parameter_provenance与context_assertion_id，原样映射为Decide顶层引用，不从tool args/result或cwd推导可信来源，不传入内联Intent/issuer/trust。签名、scope和参数摘要仍由daemon验证。缺省不改变旧请求；显式提供引用但服务不可达、400或响应非法时必须block，包括warn/audit_only，避免引用校验失败退回legacy放行。该桥接不代表原版Hermes会自动生成这些字段；原生MCP捕获与传播仍须单独集成验证。
+
+Hermes HTTP映射在发送前用严格JSON编码（拒绝NaN/循环/非JSON对象），请求UTF-8字节不超过1MiB；失败返回无有效裁决，由引用调用的硬拒绝分支处理。响应读取最多1MiB+1字节，超限视为无效，防止无界读取。此为传输预算与错误处理，不在适配器重新实现来源验签/授权策略。
+
+### B Hermes显式MCP工具来源采集
+
+适配器配置mcp_sources是精确runtime tool_name→部署者指定server/endpoint identity的映射，默认空；不按mcp名称前缀推断server（原生名称可能歧义），不从args/result接收该映射。post_tool_call对匹配项自动向/v1/provenance-reports提交实际result，source固定MCP/untrusted，source_id为server identity+tool canonical摘要；report_id绑定platform/session/agent/tool/call。超过64KiB、不具备稳定call ID或无法JSON编码的结果不登记、不截断后当完整来源。成功后仅在有界内存缓存保留provenance_id，通过provenance_reference(session,tool,call)供宿主显式传递；缓存不保存result/token，5分钟到期，2048条满时不丢弃旧引用、不声称采集成功。引用最终由daemon复验。采集失败不伪造来源且不阻止已经发生的工具效果；后续required引用缺失必须由V3拒绝。此配置桥接仍需真实原生MCP集成验证，不能称为任意服务器零配置支持。
+
+Hermes显式携带Authority引用的调用，在决策关联缓存冲突或容量耗尽时也必须block，不能因warn/audit_only退回allow。拒绝不改变daemon裁决，不声称已执行工具；未携带引用的legacy调用保留原策略表。
+
+### RuntimeAction参数遍历预算
+
+描述器预检参数树：根深度0，最多64层、8192个值节点、单JSON Pointer最多1024 UTF-8字节、全部指针累计最多1MiB。超限返回runtime_parameter_budget_exceeded及unknown描述，不产生部分资源/高影响路径。Decide保留原参数摘要和签名拒绝回执，跳过参数文本扫描、Intent参数校验和policy，三模式均hard deny。直接Intent检查同样拒绝预算异常。该预算不提高任何资源权限，不将截断结果当作完整描述。
+
+### Completion同动作矛盾材料（2026-09-08）
+
+同一效果要求中，同一action_id与decision_receipt_id同时有满足要求的完成材料和独立失败材料时，保留双方Evidence IDs并返回conflicting/effect_evidence_conflicting。仅失败材料仍为incomplete；不同动作的成功/失败不因此自动认定矛盾。失败方必须附实际文件/网络材料且满足要求的独立性/覆盖范围，不能凭工具自报制造独立冲突。该判断表示材料不一致，不裁定先后观测变化的业务原因，不改变历史授权。
+
+E-05补充：已签名记录中的tool_report/self_reported、execution_state=completed表示工具的成功声明，仍要求coverage/result为unknown，不能证明实际成功。若同一动作和决策回执存在满足上述独立性与覆盖要求的实际失败材料，则声明与材料构成冲突，Completion返回conflicting并保留双方引用。成功声明单独存在仍为unknown；仅有无材料的失败声明不构成此类冲突；不同动作不混合比较。本轮以独立文件采样确认输出未出现验证该分支，不宣称具备通用网络未接收证明。
+
+POST `/v1/tool-effect-reports` 使用capDecision，合同为tool-effect-report.v1（复用effect-evidence-submit/v1字段）。仅允许tool_report/self_reported、coverage/result=unknown、空signature；source_id是未验证的工具声明标签。动作与回执必须由Engine历史台账解析并匹配，其他source拒绝，不能提交独立采样材料。沿用64KiB解析预算、8192条不可变效果存储预算与重放冲突规则。返回签名effect-evidence-record/v1记录，签名仅证明收录该声明，不证明声明属实。该历史效果记录入口允许撤销后补报已发生动作，不创建或恢复执行授权；无有效历史动作的声明拒绝。管理或observer凭据不能代替decision凭据。
+
+### Runtime 参数来源的 scope 拒绝码
+
+MatchParameters 对调用方明确提供、但无法在当前 platform/session/agent/task 目录解析的 provenance ref 返回 provenance_scope_mismatch。跨任务、跨会话及未知 ID 使用同一代码，不探测其他 scope 是否存在该 ID，不新增全局索引或目录扫描。代码含义是“引用无法绑定当前 scope”，不声称已确认该 ID 存在于其他任务。未提供必需引用仍为 provenance_missing，管理 Resolve 的未找到仍为 provenance_not_found；坏签名、过期及撤销保留各自明确代码。该调整只影响签名拒绝原因，不改变任何允许条件。

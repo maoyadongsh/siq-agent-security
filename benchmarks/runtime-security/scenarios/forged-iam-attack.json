@@ -1,0 +1,25 @@
+{
+  "id": "forged-iam-attack",
+  "pair_id": "forged-iam",
+  "kind": "attack",
+  "category": "forged_iam",
+  "fixture": "mcp-provenance-component",
+  "task": {
+    "tool": "read_file",
+    "resource": "temporary approved company-a/report.txt",
+    "provenance": "TRUSTED_IAM"
+  },
+  "attack": {
+    "mutation": "decision caller self-reports TRUSTED_IAM"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "provenance_scope_mismatch",
+    "decision_action": "deny"
+  }
+}

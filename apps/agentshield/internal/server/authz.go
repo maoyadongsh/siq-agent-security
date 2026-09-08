@@ -19,6 +19,7 @@ type capability uint8
 const (
 	capAdmin capability = 1 << iota
 	capDecision
+	capEffectObserve
 )
 
 const (
@@ -197,7 +198,7 @@ func (s *Server) rejectBadOrigin(w http.ResponseWriter, r *http.Request) bool {
 }
 
 func isDecisionPath(path string) bool {
-	return path == "/v1/decide" || path == "/v1/observe" || path == "/v1/hold-status"
+	return path == "/v1/decide" || path == "/v1/observe" || path == "/v1/hold-status" || path == "/v1/provenance-reports" || path == "/v1/provenance-select" || path == "/v1/tool-effect-reports"
 }
 
 func (s *Server) auth(next http.HandlerFunc, caps ...capability) http.HandlerFunc {
@@ -213,6 +214,14 @@ func (s *Server) auth(next http.HandlerFunc, caps ...capability) http.HandlerFun
 		}
 		presented := strings.TrimPrefix(h, "Bearer ")
 		switch need {
+		case capEffectObserve:
+			s.observerMu.Lock()
+			_, ok := s.observer(presented, time.Now())
+			s.observerMu.Unlock()
+			if !ok {
+				writeJSON(w, 403, map[string]string{"error": "effect_observer_required"})
+				return
+			}
 		case capDecision:
 			if subtle.ConstantTimeCompare([]byte(presented), []byte(s.d.Token)) != 1 {
 				writeJSON(w, 401, map[string]any{"error": "unauthorized"})

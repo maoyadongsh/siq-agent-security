@@ -1,0 +1,25 @@
+{
+  "id": "approval-revoked-attack",
+  "pair_id": "approval-revoked",
+  "kind": "attack",
+  "category": "approval_revoked",
+  "fixture": "approval-component",
+  "task": {
+    "tool": "exec",
+    "intent_mode": "optional unbound",
+    "resource": "synthetic marker only"
+  },
+  "attack": {
+    "mutation": "revoke Grant after local approval before execution"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": false,
+    "d4": null,
+    "d5": null,
+    "reason_code": "runtime_denied",
+    "decision_action": "hold"
+  }
+}

@@ -104,12 +104,12 @@ func TestBoundSessionCannotDowngradeOrSwapIntent(t *testing.T) {
 	}
 }
 
-func TestRequiredIntentAuditProducesSignedWouldDeny(t *testing.T) {
+func TestRequiredIntentAuditProducesSignedHardDeny(t *testing.T) {
 	fx := newFixture(t, "audit_only", nil, false)
 	fx.eng.opts.IntentEnforcement = "required"
 	d, err := fx.eng.Decide(Request{Platform: "hermes", SessionID: "audit-intent", AgentID: "a-1", Tool: "read_file", Params: map[string]any{}})
-	if err != nil || d.Action != ActionAllow || d.Receipt.AdvisoryAction == nil || *d.Receipt.AdvisoryAction != ActionDeny || d.Receipt.ReasonCode != "intent_binding_missing" || d.Receipt.IntentBinding != "unbound" || d.Receipt.Sig == "" {
-		t.Fatalf("would deny receipt: %+v %v", d, err)
+	if err != nil || d.Action != ActionDeny || d.Receipt.AdvisoryAction != nil || d.Receipt.AuthorityStatus != "invalid" || d.Receipt.ReasonCode != "intent_binding_missing" || d.Receipt.IntentBinding != "unbound" || d.Receipt.Sig == "" {
+		t.Fatalf("hard deny receipt: %+v %v", d, err)
 	}
 }
 

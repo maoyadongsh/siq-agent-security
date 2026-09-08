@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"time"
 )
 
@@ -82,6 +83,11 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 		return false
 	}
 	r := Request{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, Tool: req.Tool, ToolCallID: req.ToolCallID, Params: req.Params}
+	r.ContextAssertionID = d.ContextAssertionID
+	r.ParameterProvenance = d.ParameterProvenance
+	if e.checkContext(r, d.TaskID, now) != nil {
+		return false
+	}
 	var resolved *IntentContract
 	var err error
 	if e.opts.IntentLookup != nil {
@@ -97,8 +103,11 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 	} else if resolved.IntentID != d.IntentID || resolved.TaskID != d.TaskID || resolved.Digest != d.IntentDigest || resolved.AuthorityRevision != d.AuthorityRevision || resolved.validate(r, now) != nil {
 		return false
 	}
+	if e.checkProvenance(r, resolved, now) != nil {
+		return false
+	}
 	var checked Receipt
-	text := flattenStrings(req.Params)
-	action, _ := e.evaluate(r, s, extractHosts(req.Tool, text), extractPaths(req.Tool, text), &checked)
+	descriptor := runtimeaction.Describe(req.Tool, req.Params)
+	action, _ := e.evaluate(r, s, descriptor, &checked)
 	return (action == ActionAllow || action == ActionHold) && str(checked.MatchedGrantID) == str(d.MatchedGrantID)
 }

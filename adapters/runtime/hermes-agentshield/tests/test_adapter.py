@@ -178,3 +178,128 @@ def test_hooks_forward_decision_identity(server):
     path, _, body = _Fake.seen[-1]
     assert path == "/v1/observe"
     assert body["action_id"] == "act-1" and body["decision_receipt_id"] == "rcp-1"
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+def test_authority_references_forwarded_without_claim_inference(server, mode):
+    srv, token = server
+    _Fake.decision = {"action": "allow", "receipt_id": "r"}
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    refs = [{"parameter_path": "/path", "provenance_refs": ["signed-reference"]}]
+    args = {"path": "/work/report", "parameter_provenance": [{"trust": "authoritative"}]}
+    assert mod._pre_tool_call("read_file", args, parameter_provenance=refs,
+                              context_assertion_id="signed-context") is None
+    body = _Fake.seen[-1][2]
+    assert body["parameter_provenance"] == refs
+    assert body["context_assertion_id"] == "signed-context"
+    assert body["params"] == args
+    assert "intent" not in body and "trust" not in body
+    assert mod._pre_tool_call("read_file", args) is None
+    assert "parameter_provenance" not in _Fake.seen[-1][2]
+    assert "context_assertion_id" not in _Fake.seen[-1][2]
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+@pytest.mark.parametrize("status,decision", [(400, {}), (503, {}), (200, {"action": "invalid"}),
+                                               (200, {"action": "deny", "reason": "provenance_not_found"})])
+def test_reference_validation_failure_never_becomes_advisory_allow(server, mode, status, decision):
+    srv, token = server
+    _Fake.status, _Fake.decision = status, decision
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    out = mod._pre_tool_call("read_file", {"path": "/work/report"},
+                             parameter_provenance=[{"parameter_path": "/path", "provenance_refs": ["missing"]}])
+    assert out["action"] == "block"
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+@pytest.mark.parametrize("invalid", [object(), float("nan"), "x" * ((1 << 20) + 1)],
+                         ids=["object", "nan", "over-budget"])
+def test_unencodable_or_oversized_authority_reference_blocks_without_http(server, mode, invalid):
+    srv, token = server
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    out = mod._pre_tool_call("read_file", {"path": "/work/report"}, context_assertion_id=invalid)
+    assert out["action"] == "block"
+    assert _Fake.seen == []
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+def test_cyclic_authority_reference_blocks_without_hook_exception(server, mode):
+    srv, token = server
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    refs = []
+    refs.append(refs)
+    out = mod._pre_tool_call("read_file", {"path": "/work/report"}, parameter_provenance=refs)
+    assert out["action"] == "block"
+    assert _Fake.seen == []
+
+
+def test_response_budget_is_enforced_before_authority_allow(server):
+    srv, token = server
+    mod = load("warn", f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {"action": "allow", "padding": "x" * (1 << 20)}
+    out = mod._pre_tool_call("read_file", {"path": "/work/report"}, context_assertion_id="ctx")
+    assert out["action"] == "block"
+
+
+def test_request_budget_accepts_exact_limit_and_rejects_next_byte(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {"action": "allow"}
+    size = (1 << 20) - len(json.dumps({"payload": ""}).encode())
+    assert mod._post("/v1/decide", {"payload": "x" * size})["action"] == "allow"
+    assert mod._post("/v1/decide", {"payload": "x" * (size + 1)}) is None
+    assert len(_Fake.seen) == 1
+
+
+def test_configured_mcp_result_capture_uses_exact_tool_and_low_trust(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    mod._CFG["mcp_sources"] = {"mcp__a__lookup": "https://fixture.invalid/mcp"}
+    _Fake.status, _Fake.decision = 201, {"provenance_id": "rep-fixture"}
+    result = {"path": "/work/report", "source": {"type": "USER", "trust": "authoritative"}}
+    mod._post_tool_call("mcp__a__lookup", result=result, session_id="s1", tool_call_id="c1")
+    reports = [body for path, _, body in _Fake.seen if path == "/v1/provenance-reports"]
+    assert len(reports) == 1
+    assert reports[0]["source"]["type"] == "MCP" and reports[0]["source"]["trust"] == "untrusted"
+    assert "https://fixture.invalid/mcp" not in json.dumps(reports[0])
+    assert reports[0]["content"] == result
+    assert mod.provenance_reference("s1", "mcp__a__lookup", "c1") == "rep-fixture"
+    assert mod.provenance_reference("other-session", "mcp__a__lookup", "c1") is None
+    mod._post_tool_call("mcp__a__lookup_unregistered", result=result, session_id="s1", tool_call_id="c2")
+    assert len([path for path, _, _ in _Fake.seen if path == "/v1/provenance-reports"]) == 1
+
+
+def test_mcp_capture_failure_and_capacity_do_not_create_or_replace_refs(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    mod._CFG["mcp_sources"] = {"mcp__a__lookup": "fixture-server"}
+    _Fake.status, _Fake.decision = 201, {"provenance_id": "rep-original"}
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "c1", "original")
+    mod._CORRELATION_MAX = 1
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "c2", "another")
+    assert mod.provenance_reference("s1", "mcp__a__lookup", "c1") == "rep-original"
+    assert mod.provenance_reference("s1", "mcp__a__lookup", "c2") is None
+    _Fake.status = 409
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "c1", "changed")
+    assert mod.provenance_reference("s1", "mcp__a__lookup", "c1") is None
+    count = len(_Fake.seen)
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "c3", "x" * (64 * 1024))
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "", "no stable call")
+    assert len(_Fake.seen) == count
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+@pytest.mark.parametrize("failure", ["conflict", "capacity"])
+@pytest.mark.parametrize("reference", ["context", "provenance"])
+def test_authority_correlation_failure_blocks(server, mode, failure, reference):
+    srv, token = server
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {"action": "allow", "action_id": "act-1", "receipt_id": "rcp-1"}
+    mod._CORRELATION_MAX = 1
+    refs = ({"context_assertion_id": "ctx-1"} if reference == "context" else
+            {"parameter_provenance": [{"parameter_path": "/path", "provenance_refs": ["p-1"]}]})
+    assert mod._pre_tool_call("read_file", {}, session_id="s", tool_call_id="c1", **refs) is None
+    call_id = "c1" if failure == "conflict" else "c2"
+    result = mod._pre_tool_call("read_file", {}, session_id="s", tool_call_id=call_id, **refs)
+    assert result is not None and result["action"] == "block"
+    assert mod._decision_reference("s", "read_file", call_id) == {}

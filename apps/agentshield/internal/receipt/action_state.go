@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"time"
 )
 
@@ -19,6 +20,7 @@ func (e *CorrelationError) Error() string { return e.Code }
 func correlationError(code string) error  { return &CorrelationError{code} }
 
 type actionRecord struct {
+	approvedAt   time.Time
 	decision     Receipt
 	observation  *Receipt
 	expires      time.Time
@@ -112,7 +114,7 @@ func (e *Engine) Observe(req Request, result string) (*Receipt, error) {
 	for _, label := range labels {
 		s.taints[label] = true
 	}
-	if isEgress(req.Tool, "") || egressTools[req.Tool] {
+	if runtimeaction.Describe(req.Tool, req.Params).Egress {
 		s.trifecta.UntrustedInput = true
 		s.taints[taintUntrusted] = true
 	}
@@ -126,6 +128,9 @@ func (e *Engine) Observe(req Request, result string) (*Receipt, error) {
 	rec.ParamsDigest = resultDigest
 	rec.ParamsExcerpt = &excerpt
 	rec.Action = ActionAllow
+	if rec.EffectiveAction != "" {
+		rec.EffectiveAction = ActionAllow
+	}
 	rec.Reason = "correlated observation of tool result"
 	rec.ReasonCode = "observation_accepted"
 	rec.TaintLabels = sortedKeys(s.taints)
@@ -207,6 +212,7 @@ func (e *Engine) restoreActionState() error {
 			}
 			if a := e.actions[r.ActionID]; a != nil {
 				a.approved = r.Action == ActionAllow
+				a.approvedAt = at
 				a.holdResolved = true
 			}
 		}

@@ -1,0 +1,380 @@
+{
+  "source_baseline": "c36009c962490f7237ccaa02d2907dec0f5913ce",
+  "working_tree_changes": "matcher scope rejection plus matching scenario expectations; captured before implementation commit",
+  "source_sha256": {
+    "apps/agentshield/internal/provenance/matcher.go": "7068d88024a7c783248f32d4adb4f6bc91ecf98b11d0d260bb5693a44c834dc6",
+    "scripts/validate-mcp-provenance.py": "edf3e7cb657a682e2e248d23980a51a8d0520f5eb8ccd2fa681a14db99a5312c"
+  },
+  "report_sha256": "89177224d3e2b4954ff1d86178b9170e9bf50feac5ba60ae0ad8a63daf97c651",
+  "suite": "full",
+  "coverage": "component_fixture",
+  "summary": {
+    "stages": {
+      "attack": {
+        "d0": {
+          "positive": 0,
+          "negative": 0,
+          "not_evaluated": 21,
+          "denominator": 0,
+          "positive_rate": null
+        },
+        "d1": {
+          "positive": 0,
+          "negative": 0,
+          "not_evaluated": 21,
+          "denominator": 0,
+          "positive_rate": null
+        },
+        "d2": {
+          "positive": 21,
+          "negative": 0,
+          "not_evaluated": 0,
+          "denominator": 21,
+          "positive_rate": 1.0
+        },
+        "d3": {
+          "positive": 4,
+          "negative": 4,
+          "not_evaluated": 13,
+          "denominator": 8,
+          "positive_rate": 0.5
+        },
+        "d4": {
+          "positive": 3,
+          "negative": 2,
+          "not_evaluated": 16,
+          "denominator": 5,
+          "positive_rate": 0.6
+        },
+        "d5": {
+          "positive": 3,
+          "negative": 2,
+          "not_evaluated": 16,
+          "denominator": 5,
+          "positive_rate": 0.6
+        }
+      },
+      "benign": {
+        "d0": {
+          "positive": 0,
+          "negative": 0,
+          "not_evaluated": 21,
+          "denominator": 0,
+          "positive_rate": null
+        },
+        "d1": {
+          "positive": 0,
+          "negative": 0,
+          "not_evaluated": 21,
+          "denominator": 0,
+          "positive_rate": null
+        },
+        "d2": {
+          "positive": 21,
+          "negative": 0,
+          "not_evaluated": 0,
+          "denominator": 21,
+          "positive_rate": 1.0
+        },
+        "d3": {
+          "positive": 8,
+          "negative": 0,
+          "not_evaluated": 13,
+          "denominator": 8,
+          "positive_rate": 1.0
+        },
+        "d4": {
+          "positive": 6,
+          "negative": 0,
+          "not_evaluated": 15,
+          "denominator": 6,
+          "positive_rate": 1.0
+        },
+        "d5": {
+          "positive": 6,
+          "negative": 0,
+          "not_evaluated": 15,
+          "denominator": 6,
+          "positive_rate": 1.0
+        }
+      }
+    },
+    "latency_ms": {
+      "authority_validation": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "intent_lookup": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "context_validation": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "provenance_resolution": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "runtime_action_normalization": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "policy_evaluation": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "receipt_append_fsync": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "effect_evidence_processing": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null
+      }
+    },
+    "metrics": {
+      "false_allow_rate": {
+        "numerator": 0,
+        "denominator": 16,
+        "rate": 0.0,
+        "sample_count": 42,
+        "excluded_count": 26,
+        "population": "observations with expected deny and an actual decision"
+      },
+      "false_deny_rate": {
+        "numerator": 0,
+        "denominator": 22,
+        "rate": 0.0,
+        "sample_count": 42,
+        "excluded_count": 20,
+        "population": "observations with expected allow and an actual decision"
+      },
+      "benign_task_completion_rate": {
+        "numerator": 6,
+        "denominator": 6,
+        "rate": 1.0,
+        "sample_count": 42,
+        "excluded_count": 36,
+        "population": "benign observations with a completion record"
+      },
+      "intent_violation_block_rate": {
+        "numerator": 5,
+        "denominator": 5,
+        "rate": 1.0,
+        "sample_count": 42,
+        "excluded_count": 37,
+        "population": "expected deny with intent reason and an actual decision"
+      },
+      "provenance_violation_block_rate": {
+        "numerator": 10,
+        "denominator": 10,
+        "rate": 1.0,
+        "sample_count": 42,
+        "excluded_count": 32,
+        "population": "expected deny with provenance reason and an actual decision"
+      },
+      "resource_hijacking_block_rate": {
+        "numerator": 2,
+        "denominator": 2,
+        "rate": 1.0,
+        "sample_count": 42,
+        "excluded_count": 40,
+        "population": "expected deny in filesystem/destination hijacking with an actual decision"
+      },
+      "unauthorized_effect_rate": {
+        "numerator": 1,
+        "denominator": 11,
+        "rate": 0.09090909090909091,
+        "sample_count": 42,
+        "excluded_count": 31,
+        "population": "observations with an effect record"
+      },
+      "unknown_effect_rate": {
+        "numerator": 0,
+        "denominator": 11,
+        "rate": 0.0,
+        "sample_count": 42,
+        "excluded_count": 31,
+        "population": "observations with an effect record"
+      },
+      "manual_approval_rate": {
+        "numerator": 4,
+        "denominator": 42,
+        "rate": 0.09523809523809523,
+        "sample_count": 42,
+        "excluded_count": 0,
+        "population": "observations with both expected and actual decisions"
+      }
+    },
+    "metrics_by_kind": {
+      "attack": {
+        "false_allow_rate": {
+          "numerator": 0,
+          "denominator": 16,
+          "rate": 0.0,
+          "sample_count": 21,
+          "excluded_count": 5,
+          "population": "observations with expected deny and an actual decision"
+        },
+        "false_deny_rate": {
+          "numerator": 0,
+          "denominator": 3,
+          "rate": 0.0,
+          "sample_count": 21,
+          "excluded_count": 18,
+          "population": "observations with expected allow and an actual decision"
+        },
+        "benign_task_completion_rate": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null,
+          "sample_count": 21,
+          "excluded_count": 21,
+          "population": "benign observations with a completion record"
+        },
+        "intent_violation_block_rate": {
+          "numerator": 5,
+          "denominator": 5,
+          "rate": 1.0,
+          "sample_count": 21,
+          "excluded_count": 16,
+          "population": "expected deny with intent reason and an actual decision"
+        },
+        "provenance_violation_block_rate": {
+          "numerator": 10,
+          "denominator": 10,
+          "rate": 1.0,
+          "sample_count": 21,
+          "excluded_count": 11,
+          "population": "expected deny with provenance reason and an actual decision"
+        },
+        "resource_hijacking_block_rate": {
+          "numerator": 2,
+          "denominator": 2,
+          "rate": 1.0,
+          "sample_count": 21,
+          "excluded_count": 19,
+          "population": "expected deny in filesystem/destination hijacking with an actual decision"
+        },
+        "unauthorized_effect_rate": {
+          "numerator": 1,
+          "denominator": 5,
+          "rate": 0.2,
+          "sample_count": 21,
+          "excluded_count": 16,
+          "population": "observations with an effect record"
+        },
+        "unknown_effect_rate": {
+          "numerator": 0,
+          "denominator": 5,
+          "rate": 0.0,
+          "sample_count": 21,
+          "excluded_count": 16,
+          "population": "observations with an effect record"
+        },
+        "manual_approval_rate": {
+          "numerator": 2,
+          "denominator": 21,
+          "rate": 0.09523809523809523,
+          "sample_count": 21,
+          "excluded_count": 0,
+          "population": "observations with both expected and actual decisions"
+        }
+      },
+      "benign": {
+        "false_allow_rate": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null,
+          "sample_count": 21,
+          "excluded_count": 21,
+          "population": "observations with expected deny and an actual decision"
+        },
+        "false_deny_rate": {
+          "numerator": 0,
+          "denominator": 19,
+          "rate": 0.0,
+          "sample_count": 21,
+          "excluded_count": 2,
+          "population": "observations with expected allow and an actual decision"
+        },
+        "benign_task_completion_rate": {
+          "numerator": 6,
+          "denominator": 6,
+          "rate": 1.0,
+          "sample_count": 21,
+          "excluded_count": 15,
+          "population": "benign observations with a completion record"
+        },
+        "intent_violation_block_rate": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null,
+          "sample_count": 21,
+          "excluded_count": 21,
+          "population": "expected deny with intent reason and an actual decision"
+        },
+        "provenance_violation_block_rate": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null,
+          "sample_count": 21,
+          "excluded_count": 21,
+          "population": "expected deny with provenance reason and an actual decision"
+        },
+        "resource_hijacking_block_rate": {
+          "numerator": 0,
+          "denominator": 0,
+          "rate": null,
+          "sample_count": 21,
+          "excluded_count": 21,
+          "population": "expected deny in filesystem/destination hijacking with an actual decision"
+        },
+        "unauthorized_effect_rate": {
+          "numerator": 0,
+          "denominator": 6,
+          "rate": 0.0,
+          "sample_count": 21,
+          "excluded_count": 15,
+          "population": "observations with an effect record"
+        },
+        "unknown_effect_rate": {
+          "numerator": 0,
+          "denominator": 6,
+          "rate": 0.0,
+          "sample_count": 21,
+          "excluded_count": 15,
+          "population": "observations with an effect record"
+        },
+        "manual_approval_rate": {
+          "numerator": 2,
+          "denominator": 21,
+          "rate": 0.09523809523809523,
+          "sample_count": 21,
+          "excluded_count": 0,
+          "population": "observations with both expected and actual decisions"
+        }
+      }
+    }
+  },
+  "verified_receipts": 51,
+  "verified_effect_envelopes": 11,
+  "limitations": "Compact execution summary, not a substitute for the full signed report at /tmp/siq-scope-benchmark.json; full source baseline includes the stated working tree changes."
+}

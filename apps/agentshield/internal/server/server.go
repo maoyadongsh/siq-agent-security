@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
+	"siq-agent-security/apps/agentshield/internal/effectevidence"
 	"siq-agent-security/apps/agentshield/internal/export"
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/intent"
@@ -24,6 +25,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/product"
+	"siq-agent-security/apps/agentshield/internal/provenance"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
@@ -52,15 +54,21 @@ type Deps struct {
 
 // Server is the HTTP handler set.
 type Server struct {
-	intents *intent.Store
-	d       Deps
-	mux     *http.ServeMux
-	osMu    sync.Mutex
-	osAt    time.Time
-	osRow   PlatformInfo
-	osOK    bool
-	osCaps  *openshell.Capabilities
-	osDiag  openshell.Diagnosis
+	fileObservations map[string]pendingFileObservation
+
+	effects    *effectevidence.Store
+	observerMu sync.Mutex
+	observers  map[string]observerSession
+	provenance *provenance.Store
+	intents    *intent.Store
+	d          Deps
+	mux        *http.ServeMux
+	osMu       sync.Mutex
+	osAt       time.Time
+	osRow      PlatformInfo
+	osOK       bool
+	osCaps     *openshell.Capabilities
+	osDiag     openshell.Diagnosis
 
 	pairMu       sync.Mutex
 	pairDisplay  string
@@ -89,10 +97,40 @@ func New(d Deps) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
+	s.provenance, err = provenance.Open(d.Store.Dir, d.Key)
+	if err != nil {
+		return nil, err
+	}
+	s.effects, err = effectevidence.NewStore(d.Store.Dir, d.Key)
+	if err != nil {
+		return nil, err
+	}
+	s.observers = map[string]observerSession{}
+	s.fileObservations = map[string]pendingFileObservation{}
 	if err := s.initPairing(d.PairingCode); err != nil {
 		return nil, err
 	}
+	s.mux.HandleFunc("/v1/tasks/", s.auth(s.taskCompletion, capAdmin))
+	s.mux.HandleFunc("/v1/network-observations", s.auth(s.submitNetworkObservation, capEffectObserve))
+	s.mux.HandleFunc("/v1/file-observation-recoveries", s.auth(s.recoverFileObservation, capAdmin))
+	s.mux.HandleFunc("/v1/file-observations", s.auth(s.beginFileObservation, capEffectObserve))
+	s.mux.HandleFunc("/v1/file-observations/", s.auth(s.finishFileObservation, capEffectObserve))
+	s.mux.HandleFunc("/v1/effect-observers", s.auth(s.effectObservers, capAdmin))
+	s.mux.HandleFunc("/v1/effect-observers/", s.auth(s.revokeEffectObserver, capAdmin))
+	s.mux.HandleFunc("/v1/effect-evidence", s.auth(s.submitEffect, capEffectObserve))
+	s.mux.HandleFunc("/v1/tool-effect-reports", s.auth(s.toolEffectReport, capDecision))
+	s.mux.HandleFunc("/v1/effect-evidence/", s.auth(s.getEffect, capAdmin))
+	s.mux.HandleFunc("/v1/actions/", s.auth(s.actionEffects, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-issuers", s.auth(s.provenanceIssuers, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-issuers/", s.auth(s.provenanceIssuer, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-assertions", s.auth(s.provenanceIssue, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-assertions/import", s.auth(s.provenanceImport, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-resolve", s.auth(s.provenanceResolve, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-reports", s.auth(s.provenanceReport, capDecision))
+	s.mux.HandleFunc("/v1/provenance-select", s.auth(s.provenanceSelect, capDecision))
 	s.mux.HandleFunc("/v1/intents", s.auth(s.intentCollection, capAdmin))
+	s.mux.HandleFunc("/v1/context-assertions", s.auth(s.contextCollection, capAdmin))
+	s.mux.HandleFunc("/v1/context-assertions/", s.auth(s.contextOne, capAdmin))
 	s.mux.HandleFunc("/v1/intents/", s.auth(s.intentOne, capAdmin))
 	s.mux.HandleFunc("/v1/intent-bindings", s.auth(s.bindingCollection, capAdmin))
 	s.mux.HandleFunc("/v1/intent-bindings/", s.auth(s.bindingOne, capAdmin))
@@ -289,6 +327,14 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp := map[string]any{"action": d.Action, "reason": d.Reason, "receipt_id": d.Receipt.ReceiptID, "action_id": d.Receipt.ActionID, "reason_code": d.Receipt.ReasonCode}
+	resp["authority_status"] = d.Receipt.AuthorityStatus
+	resp["effective_action"] = d.Receipt.EffectiveAction
+	if d.Receipt.AuthorityReasonCode != "" {
+		resp["authority_reason_code"] = d.Receipt.AuthorityReasonCode
+	}
+	if d.Receipt.PolicyAction != "" {
+		resp["policy_action"] = d.Receipt.PolicyAction
+	}
 	if d.Params != nil {
 		resp["params"] = d.Params
 	}

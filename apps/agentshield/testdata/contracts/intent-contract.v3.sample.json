@@ -1,0 +1,43 @@
+{
+  "provenance_constraints": [
+    {
+      "parameter_path": "/recipient",
+      "allowed_source_types": [
+        "USER"
+      ],
+      "minimum_trust": "trusted",
+      "required": true
+    }
+  ],
+  "schema_version": "intent/v3",
+  "intent_id": "int-v3",
+  "task_id": "task-1",
+  "principal": {
+    "type": "user",
+    "id": "u-1"
+  },
+  "agent": {
+    "id": "a-1",
+    "platform": "hermes"
+  },
+  "purpose": "read approved report",
+  "allowed_tools": [
+    "read_file"
+  ],
+  "allowed_effects": [
+    "file.read"
+  ],
+  "resource_constraints": [],
+  "parameter_constraints": [],
+  "issued_at": "2026-01-01T00:00:00Z",
+  "valid_from": "2026-01-01T00:00:00Z",
+  "expires_at": "2099-01-01T00:00:00Z",
+  "authority": {
+    "issuer": "local-admin",
+    "revision": "r1",
+    "evidence_ids": []
+  },
+  "signing_schema": "local_canonical/v1",
+  "digest": "52d0d691de9e74791d0ee13ac5e6cbab5fd1995cecb3ccafc6f593e54c2e97be",
+  "signature": "6afa31866af05776fd0a4d2ebb03ebb2e1437288eaa0fb4ded5831b78d6ee06e091e44db33a4466ee42c9da9cc73cfafaddfa293abb0d42167dd1299b0ab1204"
+}

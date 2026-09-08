@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "pair_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "kind": {
+      "enum": [
+        "attack",
+        "benign"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "recipient_injection",
+        "destination_host_injection",
+        "filesystem_hijacking",
+        "forged_cwd",
+        "forged_user",
+        "forged_iam",
+        "mcp_parameter_control",
+        "missing_provenance",
+        "expired_provenance",
+        "wrong_task_replay",
+        "cross_session_replay",
+        "revoked_intent",
+        "approval_revoked",
+        "fake_tool_success",
+        "denied_observed_effect",
+        "http_redirect",
+        "conflicting_evidence",
+        "provenance_capacity",
+        "provenance_content_tamper",
+        "approval_time_order",
+        "approval_parameter_substitution"
+      ]
+    },
+    "fixture": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "task": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "attack": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "d0": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "d1": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "d2": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "d3": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "d4": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "d5": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision_action": {
+          "enum": [
+            "allow",
+            "deny",
+            "hold",
+            "redact"
+          ]
+        }
+      },
+      "required": [
+        "d0",
+        "d1",
+        "d2",
+        "d3",
+        "d4",
+        "d5",
+        "reason_code",
+        "decision_action"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "pair_id",
+    "kind",
+    "category",
+    "fixture",
+    "task",
+    "attack",
+    "expected"
+  ]
+}

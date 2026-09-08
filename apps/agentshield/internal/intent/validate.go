@@ -32,8 +32,41 @@ func (c Contract) Validate() error {
 			return violation("intent_invalid_provenance_ref")
 		}
 	}
-	if c.SchemaVersion != "intent/v2" || !validID(c.IntentID) || c.TaskID == "" || c.Principal.Type != "user" || c.Principal.ID == "" || c.Agent.ID == "" || c.Agent.Platform == "" || c.Purpose == "" || c.Authority.Issuer == "" || c.Authority.Revision == "" {
+	if (c.SchemaVersion != "intent/v2" && c.SchemaVersion != "intent/v3") || !validID(c.IntentID) || c.TaskID == "" || c.Principal.Type != "user" || c.Principal.ID == "" || c.Agent.ID == "" || c.Agent.Platform == "" || c.Purpose == "" || c.Authority.Issuer == "" || c.Authority.Revision == "" {
 		return violation("intent_invalid_contract")
+	}
+	if c.SchemaVersion == "intent/v2" && c.ProvenanceConstraints != nil || c.SchemaVersion == "intent/v3" && c.ProvenanceConstraints == nil {
+		return violation("intent_invalid_contract")
+	}
+	if c.EffectRequirements != nil {
+		if c.SchemaVersion != "intent/v3" || len(*c.EffectRequirements) > 128 {
+			return violation("intent_invalid_contract")
+		}
+		seen := map[string]bool{}
+		for _, req := range *c.EffectRequirements {
+			allowed := false
+			for _, effect := range c.AllowedEffects {
+				if effect == req.EffectType {
+					allowed = true
+				}
+			}
+			if req.Validate() != nil || seen[req.RequirementID] || !allowed {
+				return violation("intent_invalid_constraint")
+			}
+			seen[req.RequirementID] = true
+		}
+	}
+	if c.ProvenanceConstraints != nil {
+		if len(*c.ProvenanceConstraints) > 1024 {
+			return violation("intent_invalid_constraint")
+		}
+		seen := map[string]bool{}
+		for _, constraint := range *c.ProvenanceConstraints {
+			if constraint.Validate() != nil || seen[constraint.ParameterPath] {
+				return violation("intent_invalid_constraint")
+			}
+			seen[constraint.ParameterPath] = true
+		}
 	}
 	if len(c.AllowedTools) == 0 || len(c.AllowedEffects) == 0 || !uniqueNonempty(c.AllowedTools) || !uniqueNonempty(c.AllowedEffects) || c.ResourceConstraints == nil || c.ParameterConstraints == nil || c.Authority.EvidenceIDs == nil || !uniqueNonempty(c.Authority.EvidenceIDs) {
 		return violation("intent_invalid_contract")

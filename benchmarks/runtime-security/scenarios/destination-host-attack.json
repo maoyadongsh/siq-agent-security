@@ -1,0 +1,25 @@
+{
+  "id": "destination-host-attack",
+  "pair_id": "destination-host",
+  "kind": "attack",
+  "category": "destination_host_injection",
+  "fixture": "network-effect-component",
+  "task": {
+    "tool": "web_fetch",
+    "resource": "approved localhost receiver",
+    "provenance": "optional signed constraint"
+  },
+  "attack": {
+    "mutation": "replace approved host before request"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": false,
+    "d4": null,
+    "d5": null,
+    "reason_code": "intent_resource_not_allowed",
+    "decision_action": "deny"
+  }
+}

@@ -38,12 +38,8 @@ func assertRevokedDecision(t *testing.T, d *Decision, err error, mode string) {
 	if d.Receipt.ReasonCode != "intent_binding_revoked" || d.Receipt.IntentBinding != "bound" || d.Receipt.IntentID != "int-revocable" || d.Receipt.Principal == nil || d.Receipt.Principal.ID != "fixture-user" {
 		t.Fatalf("revoked binding lost denial metadata: %+v", d.Receipt)
 	}
-	if mode == "block" {
-		if d.Action != ActionDeny {
-			t.Fatal("revocation did not block")
-		}
-	} else if d.Action != ActionAllow || str(d.Receipt.AdvisoryAction) != ActionDeny {
-		t.Fatal("advisory mode lost would-deny")
+	if d.Action != ActionDeny || d.Receipt.AdvisoryAction != nil || d.Receipt.AuthorityStatus != "invalid" || d.Receipt.EffectiveAction != ActionDeny {
+		t.Fatalf("revocation did not hard block in %s", mode)
 	}
 }
 func TestRevokedBindingCannotDowngradeEvenBeforeFirstDecision(t *testing.T) {

@@ -1,0 +1,25 @@
+{
+  "id": "denied-effect-attack",
+  "pair_id": "denied-effect",
+  "kind": "attack",
+  "category": "denied_observed_effect",
+  "fixture": "file-effect-component",
+  "task": {
+    "tool": "write_file",
+    "resource": "temporary report",
+    "provenance": "optional signed constraint"
+  },
+  "attack": {
+    "mutation": "denied-effect"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": true,
+    "d4": true,
+    "d5": true,
+    "reason_code": "intent_tool_not_allowed",
+    "decision_action": "deny"
+  }
+}

@@ -59,8 +59,8 @@ func (i *IntentContract) validate(req Request, now time.Time) error {
 	if err != nil || !now.Before(until) {
 		return fmt.Errorf("intent expired or invalid valid_until")
 	}
-	_, normalizedEffects := runtimeaction.Normalize(req.Tool, req.Params)
-	for _, effect := range normalizedEffects {
+	descriptor := runtimeaction.Describe(req.Tool, req.Params)
+	for _, effect := range descriptor.Effects {
 		allowed := false
 		for _, wanted := range i.AllowedEffects {
 			if wanted == "*" || wanted == effect || wanted == req.Tool { // req.Tool keeps intent/v1 compatibility

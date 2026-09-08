@@ -23,10 +23,10 @@ var networkCommand = regexp.MustCompile(`(?i)\b(curl|wget|nc|ncat|netcat|ssh|scp
 
 // Normalize maps adapter vocabulary to stable operation/effect vocabulary.
 // Unknown tools remain explicit unknown so an intent can fail closed.
-func Normalize(tool string, params map[string]any) (operation string, effects []string) {
+func normalizeEffects(tool string, params map[string]any) (operation string, effects []string) {
 	t := strings.ToLower(strings.TrimSpace(tool))
 	switch t {
-	case "read_file", "read", "cat":
+	case "read_file", "read", "cat", "search_files":
 		return "read", []string{EffectFileRead}
 	case "write_file", "write", "edit", "patch":
 		return "write", []string{EffectFileWrite}
@@ -36,7 +36,7 @@ func Normalize(tool string, params map[string]any) (operation string, effects []
 		return "send", []string{EffectMessageSend}
 	case "web_fetch", "web_extract", "web_search", "http", "http_request", "fetch", "browser_navigate", "webfetch", "websearch", "browser":
 		return "request", []string{EffectNetworkRequest}
-	case "exec", "terminal", "bash", "shell", "process":
+	case "exec", "terminal", "bash", "shell", "process", "sh", "python", "python3", "node", "powershell", "pwsh":
 		effects := []string{EffectProcessExec}
 		for _, value := range params {
 			if text, ok := value.(string); ok {
@@ -53,4 +53,10 @@ func Normalize(tool string, params map[string]any) (operation string, effects []
 	default:
 		return "invoke", []string{EffectUnknown}
 	}
+}
+
+// Normalize preserves the legacy API over the shared descriptor.
+func Normalize(tool string, params map[string]any) (string, []string) {
+	d := Describe(tool, params)
+	return d.Operation, d.Effects
 }

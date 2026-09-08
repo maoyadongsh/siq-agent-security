@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "requirement_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "effect_type": {
+      "enum": [
+        "file.write",
+        "network.request"
+      ]
+    },
+    "resource_ref": {
+      "type": "string",
+      "pattern": "^(filesystem|network):sha256:[0-9a-f]{64}$"
+    },
+    "expected_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "minimum_independence": {
+      "enum": [
+        "host_independent",
+        "external_independent"
+      ]
+    },
+    "minimum_coverage": {
+      "enum": [
+        "partial",
+        "full"
+      ]
+    },
+    "expected_endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "enum": [
+            "http",
+            "https"
+          ]
+        },
+        "host": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253
+        },
+        "port": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,4}$"
+        }
+      },
+      "required": [
+        "scheme",
+        "host",
+        "port"
+      ]
+    }
+  },
+  "required": [
+    "requirement_id",
+    "effect_type",
+    "resource_ref",
+    "expected_digest",
+    "minimum_independence",
+    "minimum_coverage"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "effect_type": {
+            "const": "file.write"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "resource_ref": {
+            "pattern": "^filesystem:sha256:[0-9a-f]{64}$"
+          }
+        },
+        "not": {
+          "required": [
+            "expected_endpoint"
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "expected_endpoint"
+        ],
+        "properties": {
+          "resource_ref": {
+            "pattern": "^network:sha256:[0-9a-f]{64}$"
+          },
+          "minimum_independence": {
+            "const": "external_independent"
+          }
+        }
+      }
+    }
+  ]
+}

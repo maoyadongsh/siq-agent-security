@@ -1,0 +1,20 @@
+{
+  "schema_version": "effect-evidence/v1",
+  "effect_evidence_id": "eff-1",
+  "action_id": "action-1",
+  "decision_receipt_id": "rcp-1",
+  "effect_type": "file.write",
+  "resource_ref": "filesystem:sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "execution_state": "completed",
+  "source": {
+    "type": "host_observer",
+    "source_id": "observer-1",
+    "independence": "host_independent"
+  },
+  "coverage": "partial",
+  "result": "expected",
+  "evidence_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "observed_at": "2026-09-08T01:00:00Z",
+  "signing_schema": "local_canonical/v1",
+  "signature": "13ee7d207cdafeebd57596f0a7a21a22f37149a577fc069a5d74454d4ac9721be579505b413fc098fd45d7dc93761593f7bd763e643d7831cc91aca56ae57009"
+}

@@ -27,6 +27,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/product"
+	"siq-agent-security/apps/agentshield/internal/provenance"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/server"
@@ -380,10 +381,16 @@ func cmdServe(args []string) error {
 	} else {
 		chain.AttachCheckpointStore(cpStore)
 	}
+	provenanceStore, err := provenance.Open(dir, key)
+	if err != nil {
+		return err
+	}
 	eng, err := receipt.New(receipt.Options{
 		Pack: pack, Chain: chain, Grants: st.ActiveGrant, EnforcementMode: cfg.EnforcementMode,
 		Version: Version, HoldChannel: cfg.HoldChannel, SessionIdleTTL: cfg.SessionIdleTTL(),
 		IntentLookup:      receipt.ResolveStore(intentStore),
+		ProvenanceCheck:   provenanceStore.MatchParameters,
+		ContextLookup:     intentStore.GetContext,
 		IntentEnforcement: cfg.IntentEnforcement,
 	})
 	if err != nil {

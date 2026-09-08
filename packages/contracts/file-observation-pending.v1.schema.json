@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "file-observation-pending/v1"
+    },
+    "observation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "action_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "decision_receipt_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platform": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "platform",
+        "session_id",
+        "agent_id",
+        "task_id"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "host_observer"
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "independence": {
+          "const": "host_independent"
+        }
+      },
+      "required": [
+        "type",
+        "source_id",
+        "independence"
+      ]
+    },
+    "before": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resource_ref": {
+          "type": "string",
+          "pattern": "^filesystem:sha256:[0-9a-f]{64}$"
+        },
+        "exists": {
+          "type": "boolean"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{64})?$"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16777216
+        },
+        "mtime": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "resource_ref",
+        "exists",
+        "digest",
+        "size",
+        "mtime",
+        "captured_at"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "exists": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "digest": {
+                "const": ""
+              },
+              "size": {
+                "const": 0
+              },
+              "mtime": {
+                "const": ""
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "mtime": {
+                "type": "string",
+                "format": "date-time",
+                "maxLength": 64
+              }
+            }
+          }
+        }
+      ]
+    },
+    "owner_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "expected_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "max_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 16777216
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "maxLength": 64
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "observation_id",
+    "action_id",
+    "decision_receipt_id",
+    "scope",
+    "source",
+    "before",
+    "owner_digest",
+    "expected_digest",
+    "max_bytes",
+    "expires_at",
+    "signing_schema",
+    "signature"
+  ]
+}

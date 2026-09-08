@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "provenance-assertion/v1"
+    },
+    "provenance_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "USER",
+            "SYSTEM",
+            "TRUSTED_IAM",
+            "TRUSTED_DATABASE",
+            "MCP",
+            "WEB",
+            "TOOL",
+            "MEMORY",
+            "AGENT",
+            "SECRET",
+            "CONFIDENTIAL",
+            "UNKNOWN"
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "trust": {
+          "enum": [
+            "authoritative",
+            "trusted",
+            "untrusted",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "source_id",
+        "trust"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platform": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "platform",
+        "session_id",
+        "agent_id",
+        "task_id"
+      ]
+    },
+    "content_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "parents": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+      }
+    },
+    "derivation": {
+      "enum": [
+        "direct",
+        "transformed",
+        "aggregated",
+        "unknown"
+      ]
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuer": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "provenance_id",
+    "source",
+    "scope",
+    "content_digest",
+    "parents",
+    "derivation",
+    "issued_at",
+    "expires_at",
+    "issuer",
+    "signing_schema",
+    "signature"
+  ]
+}

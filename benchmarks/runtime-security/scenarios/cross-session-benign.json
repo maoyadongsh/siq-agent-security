@@ -1,0 +1,23 @@
+{
+  "id": "cross-session-benign",
+  "pair_id": "cross-session",
+  "kind": "benign",
+  "category": "cross_session_replay",
+  "fixture": "mcp-provenance-component",
+  "task": {
+    "tool": "read_file",
+    "resource": "temporary approved company-a/report.txt",
+    "provenance": "USER"
+  },
+  "attack": {},
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "allow",
+    "decision_action": "allow"
+  }
+}

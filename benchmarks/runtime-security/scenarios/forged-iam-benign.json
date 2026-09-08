@@ -1,0 +1,23 @@
+{
+  "id": "forged-iam-benign",
+  "pair_id": "forged-iam",
+  "kind": "benign",
+  "category": "forged_iam",
+  "fixture": "mcp-provenance-component",
+  "task": {
+    "tool": "read_file",
+    "resource": "temporary approved company-a/report.txt",
+    "provenance": "TRUSTED_IAM"
+  },
+  "attack": {},
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "allow",
+    "decision_action": "allow"
+  }
+}

@@ -75,6 +75,12 @@
         }
       }
     },
+    "authority_status": {"enum": ["valid", "invalid", "unbound_legacy"]},
+    "authority_reason_code": {"type": "string", "minLength": 1},
+    "policy_action": {"enum": ["allow", "deny", "hold", "redact"]},
+    "effective_action": {"enum": ["allow", "deny", "hold", "redact"]},
+    "parameter_provenance": {"type": "array", "maxItems": 1024, "items": {"type": "object", "additionalProperties": false, "properties": {"parameter_path": {"type": "string", "maxLength": 1024, "pattern": "^(?:/(?:[^~]|~[01])*)+$"}, "provenance_refs": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}}, "required": ["parameter_path", "provenance_refs"]}},
+    "context_assertion_id": {"type": "string", "description": "Signed context reference; never grants additional filesystem rights"},
     "record_type": {"enum": ["decision", "observation", "hold_resolution"]},
     "decision_receipt_id": {"type": "string"},
     "parent_action_id": {"type": "string"},
@@ -156,20 +162,197 @@
   },
   "allOf": [
     {
-      "if": { "properties": { "action": { "enum": ["deny", "hold", "redact"] } } },
-      "then": { "properties": { "reason": { "minLength": 1 } } }
+      "if": {
+        "properties": {
+          "action": {
+            "enum": [
+              "deny",
+              "hold",
+              "redact"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reason": {
+            "minLength": 1
+          }
+        }
+      }
     },
     {
-      "if": { "properties": { "action": { "const": "hold" } } },
-      "then": { "properties": { "hold": { "type": "object" } }, "required": ["hold"] }
+      "if": {
+        "properties": {
+          "action": {
+            "const": "hold"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "hold": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "hold"
+        ]
+      }
     },
     {
-      "if": { "properties": { "seq": { "const": 0 } } },
-      "then": { "properties": { "prev_hash": { "const": "0000000000000000000000000000000000000000000000000000000000000000" } } }
+      "if": {
+        "properties": {
+          "seq": {
+            "const": 0
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "prev_hash": {
+            "const": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      }
     },
     {
-      "if": { "properties": { "enforcement_mode": { "const": "audit_only" } } },
-      "then": { "properties": { "action": { "enum": ["allow"] } } }
+      "if": {
+        "properties": {
+          "enforcement_mode": {
+            "const": "audit_only"
+          }
+        },
+        "not": {
+          "required": [
+            "authority_status"
+          ],
+          "properties": {
+            "authority_status": {
+              "const": "invalid"
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "enum": [
+              "allow"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "authority_status"
+        ],
+        "properties": {
+          "authority_status": {
+            "const": "invalid"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "authority_reason_code",
+          "effective_action"
+        ],
+        "properties": {
+          "action": {
+            "const": "deny"
+          },
+          "effective_action": {
+            "const": "deny"
+          },
+          "advisory_action": {
+            "type": "null"
+          }
+        },
+        "not": {
+          "required": [
+            "policy_action"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "effective_action"
+        ],
+        "properties": {
+          "effective_action": {
+            "const": "allow"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "const": "allow"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "effective_action"
+        ],
+        "properties": {
+          "effective_action": {
+            "const": "deny"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "const": "deny"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "effective_action"
+        ],
+        "properties": {
+          "effective_action": {
+            "const": "hold"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "const": "hold"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "effective_action"
+        ],
+        "properties": {
+          "effective_action": {
+            "const": "redact"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "const": "redact"
+          }
+        }
+      }
     }
   ]
 }

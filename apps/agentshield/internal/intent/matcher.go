@@ -95,8 +95,11 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 	if !found {
 		return violation("intent_tool_not_allowed")
 	}
-	_, requested := runtimeaction.Normalize(tool, params)
-	for _, effect := range requested {
+	descriptor := runtimeaction.Describe(tool, params)
+	if descriptor.ResourceError == runtimeaction.ErrParameterBudget {
+		return violation("runtime_parameter_budget_exceeded")
+	}
+	for _, effect := range descriptor.Effects {
 		if effect == runtimeaction.EffectUnknown {
 			return violation("runtime_effect_unknown")
 		}
@@ -116,7 +119,7 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 			return violation("intent_parameter_violation")
 		}
 	}
-	resources, resourceErr := runtimeaction.ExtractResources(tool, params)
+	resources, resourceErr := descriptor.Resources, descriptor.ResourceError
 	for _, constraint := range c.ResourceConstraints {
 		if resourceErr != nil {
 			return violation("intent_resource_not_allowed")

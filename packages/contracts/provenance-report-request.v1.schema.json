@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "platform": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "source_id"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "MCP",
+            "WEB",
+            "TOOL",
+            "AGENT",
+            "UNKNOWN"
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "trust": {
+          "enum": [
+            "untrusted",
+            "unknown"
+          ],
+          "default": "untrusted"
+        }
+      }
+    },
+    "content": {}
+  },
+  "required": [
+    "report_id",
+    "platform",
+    "session_id",
+    "agent_id",
+    "source",
+    "content"
+  ]
+}

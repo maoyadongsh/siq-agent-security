@@ -28,6 +28,33 @@ func TestIntentManagementRequiresAdmin(t *testing.T) {
 		t.Fatal("decision token created authority", err)
 	}
 }
+
+func TestAuthorityHardGateHTTPModes(t *testing.T) {
+	for _, mode := range []string{"block", "warn", "audit_only"} {
+		t.Run(mode, func(t *testing.T) {
+			s, st := newServer(t, mode)
+			eng, err := receipt.New(receipt.Options{Pack: s.d.Pack, Chain: s.d.Chain, Grants: st.ActiveGrant, EnforcementMode: mode, IntentEnforcement: "required", IntentLookup: receipt.ResolveStore(s.intents)})
+			if err != nil {
+				t.Fatal(err)
+			}
+			s.d.Engine = eng
+			r := map[string]any{"platform": "hermes", "session_id": "unbound", "agent_id": "a-1", "tool": "read_file", "params": map[string]any{"path": "/work/report"}}
+			status, d := call(t, s, "POST", "/v1/decide", token, r)
+			if status != 200 || d["action"] != "deny" || d["effective_action"] != "deny" || d["authority_status"] != "invalid" || d["authority_reason_code"] != "intent_binding_missing" || d["policy_action"] != nil || d["advisory_action"] != nil {
+				t.Fatalf("invalid authority response: %d %v", status, d)
+			}
+			r["action_id"], r["decision_receipt_id"], r["result"] = d["action_id"], d["receipt_id"], "synthetic success"
+			status, observed := call(t, s, "POST", "/v1/observe", token, r)
+			if status != 400 || observed["reason_code"] != "observation_action_not_authorized" {
+				t.Fatalf("denied action accepted success: %d %v", status, observed)
+			}
+			chain, err := s.d.Chain.Read()
+			if err != nil || len(chain) != 1 || chain[0].AuthorityStatus != "invalid" {
+				t.Fatal("denied observation changed signed chain", err)
+			}
+		})
+	}
+}
 func TestIntentAdminLifecycleAndRuntimeRejection(t *testing.T) {
 	s, st := newServer(t, "block")
 	eng, err := receipt.New(receipt.Options{Pack: s.d.Pack, Chain: s.d.Chain, Grants: st.ActiveGrant, EnforcementMode: "block", IntentEnforcement: "required", IntentLookup: receipt.ResolveStore(s.intents)})

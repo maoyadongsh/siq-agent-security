@@ -1,0 +1,19 @@
+{
+  "schema_version": "context-assertion/v1",
+  "assertion_id": "ctx-1",
+  "issuer_id": "local-admin",
+  "subject": {
+    "platform": "hermes",
+    "session_id": "s1",
+    "agent_id": "a-1"
+  },
+  "task_id": "task-1",
+  "claims": {
+    "workspace_root": "/work"
+  },
+  "issued_at": "2026-01-01T00:00:00Z",
+  "expires_at": "2026-01-02T00:00:00Z",
+  "request_binding": "9a1b538ccd5e50bb83d9d4fb221e772f1b2eb8ea21e50bffa5ea55aea4e23747",
+  "signing_schema": "local_canonical/v1",
+  "signature": "1408bb9cc88df386110d0735a1f6cb112b60743cdbdd88217ef09043fe69ecdf8c1fce1b2cbb8336bddbb88b4e1da4bbb081b1c45ef0728fe0b79a352c8ed306"
+}

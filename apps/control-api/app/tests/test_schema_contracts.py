@@ -625,14 +625,38 @@ def test_go_grant_samples_conform(name, status):
 
 
 @pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
-def test_go_receipt_sample_conforms():
-    r = json.loads((GO_SAMPLES / "receipt.sample.json").read_text())
+@pytest.mark.parametrize("name", [
+    "receipt.sample.json",
+    "receipt.pre-authority-gate.sample.json",
+    "receipt.authority-invalid.sample.json",
+])
+def test_go_receipt_sample_conforms(name):
+    r = json.loads((GO_SAMPLES / name).read_text())
     errors = _validate("receipt", r)
     assert not errors, [e.message for e in errors]
     assert r["seq"] == 0 and r["prev_hash"] == "0" * 64
     assert r["action"] == "deny" and r["reason"]
     assert "params" not in r, "回执不得携带参数原文"
     assert len(r["hash"]) == 64 and len(r["sig"]) == 128
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+def test_receipt_invalid_authority_requires_hard_deny(mode):
+    r = json.loads((GO_SAMPLES / "receipt.authority-invalid.sample.json").read_text())
+    r["enforcement_mode"] = mode
+    assert not _validate("receipt", r)
+    for overrides in [
+        {"action": "allow", "effective_action": "allow"},
+        {"advisory_action": "deny"},
+        {"policy_action": "allow"},
+        {"authority_reason_code": ""},
+        {"effective_action": "allow"},
+    ]:
+        assert _validate("receipt", {**r, **overrides}), overrides
+    for required in ["authority_reason_code", "effective_action"]:
+        bad = dict(r)
+        del bad[required]
+        assert _validate("receipt", bad), required
 
 
 @pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
@@ -708,3 +732,109 @@ def test_committed_skill_manifest_is_honest_and_valid():
     for r in doc["support_matrix"]:
         if "L3" in r["tiers"] and r["os"] in {"darwin", "windows"}:
             assert r.get("requires"), f"L3 on {r['os']} must declare requires"
+
+
+def test_go_pending_recovery_vectors_verify_in_python():
+    """Independent Ed25519 verification of Go's integer-preserving signed chain."""
+    import hashlib
+    from datetime import datetime
+
+    from cryptography.exceptions import InvalidSignature
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+    from jsonschema import Draft202012Validator
+
+    samples = Path(__file__).parents[4] / "apps/agentshield/testdata/contracts"
+    pending = json.loads((samples / "file-observation-pending.sample.json").read_text())
+    history = [json.loads((samples / f"file-observation-recovery-{i}.sample.json").read_text()) for i in (1, 2)]
+    # Public test seed only; never a production signing identity.
+    public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+
+    def digest(value):
+        return hashlib.sha256(canonical(value)).hexdigest()
+
+    for value, schema_name in [(pending, "file-observation-pending")] + [
+        (entry, "file-observation-recovery") for entry in history
+    ]:
+        schema = json.loads((CONTRACTS / f"{schema_name}.v1.schema.json").read_text())
+        Draft202012Validator.check_schema(schema)
+        Draft202012Validator(schema).validate(value)
+        unsigned = {key: item for key, item in value.items() if key != "signature"}
+        public.verify(bytes.fromhex(value["signature"]), canonical(unsigned))
+        with pytest.raises(InvalidSignature):
+            public.verify(bytes.fromhex(value["signature"]), canonical(unsigned | {"owner_digest": "f" * 64}))
+    # Float conversion would silently change signed bytes: the new contracts retain integers.
+    unsigned = {key: item for key, item in pending.items() if key != "signature"}
+    with pytest.raises(InvalidSignature):
+        public.verify(bytes.fromhex(pending["signature"]), canonical(unsigned | {"max_bytes": 1024.0}))
+    previous = "0" * 64
+    owner = pending["owner_digest"]
+    last = datetime.fromisoformat(pending["before"]["captured_at"])
+    expiry = datetime.fromisoformat(pending["expires_at"])
+    for sequence, entry in enumerate(history, 1):
+        assert entry["observation_id"] == pending["observation_id"]
+        assert entry["pending_digest"] == digest(pending)
+        assert entry["previous_hash"] == previous
+        assert entry["sequence"] == sequence
+        assert entry["owner_digest"] != owner
+        stamp = datetime.fromisoformat(entry["recovered_at"])
+        assert last <= stamp < expiry
+        previous, owner, last = digest(entry), entry["owner_digest"], stamp
+
+
+def test_global_intent_revocation_fixed_vector():
+    """Go reproduces the same signature; Python independently validates every signed field."""
+    from cryptography.exceptions import InvalidSignature
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+    from jsonschema import Draft7Validator, FormatChecker
+
+    sample = Path(__file__).parents[4] / "apps/agentshield/testdata/contracts/intent-revocation.sample.json"
+    record = json.loads(sample.read_text())
+    schema = json.loads((CONTRACTS / "intent-revocation.v1.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    Draft7Validator(schema, format_checker=FormatChecker()).validate(record)
+    public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+    unsigned = {key: value for key, value in record.items() if key != "signature"}
+
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+
+    signature = bytes.fromhex(record["signature"])
+    public.verify(signature, canonical(unsigned))
+    for field in unsigned:
+        changed = unsigned | {field: unsigned[field] + "x"}
+        with pytest.raises(InvalidSignature):
+            public.verify(signature, canonical(changed))
+    with pytest.raises(InvalidSignature):
+        public.verify(bytes(64), canonical(unsigned))
+
+
+@pytest.mark.parametrize("sample,schema_name,time_field", [
+    ("context-assertion.sample.json", "context-assertion.v1", "expires_at"),
+    ("effect-evidence.sample.json", "effect-evidence.v1", "observed_at"),
+    ("file-observation-pending.sample.json", "file-observation-pending.v1", "expires_at"),
+    ("file-observation-recovery-1.sample.json", "file-observation-recovery.v1", "recovered_at"),
+    ("intent-revocation.sample.json", "intent-revocation.v1", "revoked_at"),
+    ("intent-contract.v3.sample.json", "intent-contract.v3", "expires_at"),
+])
+def test_v1_signed_contract_calendar_and_closed_fields(sample, schema_name, time_field):
+    from jsonschema import FormatChecker
+    from jsonschema.validators import validator_for
+
+    checker = FormatChecker()
+    assert "date-time" in checker.checkers, "install locked dev dependency rfc3339-validator"
+    record = json.loads((GO_SAMPLES / sample).read_text())
+    schema = json.loads((CONTRACTS / f"{schema_name}.schema.json").read_text())
+    kind = Draft7Validator if "draft-07/" in schema["$schema"] else validator_for(schema)
+    kind.check_schema(schema)
+    validator = kind(schema, format_checker=checker)
+    validator.validate(record)
+    for value in ("2026-02-30T00:00:00Z", "2026-13-01T00:00:00Z", "2026-09-08T25:00:00Z",
+                  "2026-09-08T00:00:00", "not-a-time"):
+        assert list(validator.iter_errors(record | {time_field: value})), (sample, value)
+    assert list(validator.iter_errors(record | {"unexpected_field": True}))
+    for field in schema["required"]:
+        missing = {key: value for key, value in record.items() if key != field}
+        assert list(validator.iter_errors(missing)), (sample, field)

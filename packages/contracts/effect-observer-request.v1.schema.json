@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "host_observer",
+            "openshell",
+            "provider_audit",
+            "test_oracle"
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "independence": {
+          "enum": [
+            "host_independent",
+            "external_independent"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "source_id",
+        "independence"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "host_observer",
+                  "openshell"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "independence": {
+                "const": "host_independent"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "independence": {
+                "const": "external_independent"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platform": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "platform",
+        "session_id",
+        "agent_id",
+        "task_id"
+      ]
+    },
+    "expires_in": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3600
+    }
+  },
+  "required": [
+    "source",
+    "scope",
+    "expires_in"
+  ]
+}

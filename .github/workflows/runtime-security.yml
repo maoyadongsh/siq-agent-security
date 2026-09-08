@@ -1,0 +1,111 @@
+name: runtime-security
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '23 19 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  runtime-security-toolchain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.26.6'
+      - name: Strict reachable vulnerability gate
+        working-directory: apps/agentshield
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@v1.7.0
+          govulncheck ./...
+      - name: Patched toolchain race and vet
+        working-directory: apps/agentshield
+        run: |
+          go vet ./...
+          go test -race ./...
+  runtime-security-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.22'
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86
+      - name: Install locked validation dependencies
+        working-directory: apps/control-api
+        run: uv sync --dev --locked
+      - name: Validate scenario contracts and statistics
+        run: |
+          apps/control-api/.venv/bin/pytest -q \
+            apps/control-api/app/tests/test_schema_contracts.py \
+            apps/control-api/app/tests/test_provenance_contracts.py \
+            apps/control-api/app/tests/test_provenance_schema_matrix.py \
+            apps/control-api/app/tests/test_effect_evidence_contracts.py \
+            apps/control-api/app/tests/test_effect_schema_matrix.py \
+            apps/control-api/app/tests/test_context_assertion_contract.py \
+            apps/control-api/app/tests/test_authority_effect_vectors.py
+          apps/control-api/.venv/bin/python benchmarks/runtime-security/check_contracts.py
+          apps/control-api/.venv/bin/python -m unittest discover -s benchmarks/runtime-security -p 'test_*.py'
+          apps/control-api/.venv/bin/ruff check benchmarks/runtime-security
+      - name: Hermes adapter authority and transport regressions
+        run: |
+          apps/control-api/.venv/bin/pytest adapters/runtime/hermes-agentshield/tests/test_adapter.py -q
+          apps/control-api/.venv/bin/ruff check adapters/runtime/hermes-agentshield
+      - name: Run real component benchmark and verify public evidence
+        run: |
+          python3 benchmarks/runtime-security/run.py --suite smoke --out artifacts/runtime-security/report.json
+          apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py --suite smoke artifacts/runtime-security/report.json
+          sha256sum artifacts/runtime-security/report.json > artifacts/runtime-security/report.sha256
+          python3 benchmarks/runtime-security/recovery_fixture.py --out artifacts/runtime-security/recovery.json
+          apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.py artifacts/runtime-security/recovery.json
+          sha256sum artifacts/runtime-security/recovery.json > artifacts/runtime-security/recovery.sha256
+          python3 benchmarks/runtime-security/performance.py --out artifacts/runtime-security/performance.json
+          python3 scripts/validate-mcp-provenance.py --hermes-bridge --out artifacts/runtime-security/hermes-mcp-bridge.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: runtime-security-smoke
+          path: artifacts/runtime-security/
+          if-no-files-found: error
+          retention-days: 14
+
+  runtime-security-nightly:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        repetition: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.22'
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86
+      - name: Install locked validation dependencies
+        working-directory: apps/control-api
+        run: uv sync --dev --locked
+      - name: Independent full run
+        run: |
+          python3 benchmarks/runtime-security/run.py --out artifacts/runtime-security/report.json
+          apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py artifacts/runtime-security/report.json
+          sha256sum artifacts/runtime-security/report.json > artifacts/runtime-security/report.sha256
+          python3 benchmarks/runtime-security/recovery_fixture.py --out artifacts/runtime-security/recovery.json
+          apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.py artifacts/runtime-security/recovery.json
+          sha256sum artifacts/runtime-security/recovery.json > artifacts/runtime-security/recovery.sha256
+          python3 benchmarks/runtime-security/performance.py --out artifacts/runtime-security/performance.json
+          python3 scripts/validate-mcp-provenance.py --hermes-bridge --out artifacts/runtime-security/hermes-mcp-bridge.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: runtime-security-nightly-${{ matrix.repetition }}
+          path: artifacts/runtime-security/
+          if-no-files-found: error
+          retention-days: 30

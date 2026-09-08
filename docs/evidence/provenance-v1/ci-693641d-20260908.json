@@ -1,0 +1,1273 @@
+{
+  "baseline": "693641d9527d79a6e3453de8b4e3566104f7101e",
+  "scope": "PR workflows; nightly skipped, not passed",
+  "runs": [
+    {
+      "id": 34187693641,
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34187693641",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "web",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm run build",
+              "conclusion": "success"
+            },
+            {
+              "name": "OpenClaw hook correlation regression",
+              "conclusion": "success"
+            },
+            {
+              "name": "Production dependency audit",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "gitleaks",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7",
+              "conclusion": "success"
+            },
+            {
+              "name": "Reject tracked task-signing private keys",
+              "conclusion": "success"
+            },
+            {
+              "name": "Reject task-signing private keys added since base",
+              "conclusion": "success"
+            },
+            {
+              "name": "Event envelope core checksum",
+              "conclusion": "success"
+            },
+            {
+              "name": "Control API Dockerfile uses uv.lock (DEV17-A)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Web nginx security headers (DEV17-B)",
+              "conclusion": "success"
+            },
+            {
+              "name": "CI Actions pinned to commit SHA (DEV17-B)",
+              "conclusion": "success"
+            },
+            {
+              "name": "OpenShell workflow download contract (DEV17-C)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Site Mermaid self-host pin (DEV17-C)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Pages workflow Action pins (DEV17-D)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Dockerfile base image digests (DEV17-D)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Local product threats in threat-model (DEV18-B)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Capability matrix + runbook honesty (DEV18-C)",
+              "conclusion": "success"
+            },
+            {
+              "name": "OpenClaw checkpoint upgrade and rollback recovery",
+              "conclusion": "success"
+            },
+            {
+              "name": "Perf baseline harness honesty + smoke (DEV16-D)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "agentshield",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "gofmt",
+              "conclusion": "success"
+            },
+            {
+              "name": "vet & test",
+              "conclusion": "success"
+            },
+            {
+              "name": "govulncheck (DEV17-A)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Cross-compile",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify signed skill-manifest.json",
+              "conclusion": "success"
+            },
+            {
+              "name": "Self-scan Skill pack",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/mcp)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/mcp @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, edge/agent)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08edge/agent @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "control-api",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ruff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Pytest\uff08\u542b\u79df\u6237\u9694\u79bb/\u804c\u8d23\u5206\u79bb/\u6ce8\u518c\u751f\u547d\u5468\u671f\u8d1f\u5411\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Python dependency audit",
+              "conclusion": "success"
+            },
+            {
+              "name": "Alembic \u5168\u91cf\u56de\u653e\uff08\u5e72\u51c0 PostgreSQL\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/directory)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/directory @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, edge/agent)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08edge/agent @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/systemd)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/systemd @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/systemd)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/systemd @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/kubernetes)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/kubernetes @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/dify)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/dify @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/hermes)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/hermes @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/workbuddy)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/workbuddy @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/hermes)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/hermes @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/directory)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/directory @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/piagent)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/piagent @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/openclaw)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/openclaw @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/workbuddy)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/workbuddy @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/process)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/process @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/piagent)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/piagent @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/docker)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/docker @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/dify)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/dify @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/openclaw)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/openclaw @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/docker)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/docker @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (1.22, connectors/process)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/process @ go 1.22\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/mcp)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/mcp @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "edge (stable, connectors/kubernetes)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Go formatting\uff08edge \u4e0e connectors \u5168\u90e8\u76ee\u5f55\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build & vet & test\uff08connectors/kubernetes @ go stable\uff09",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 34187693678,
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34187693678",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "runtime-security-toolchain",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Strict reachable vulnerability gate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Patched toolchain race and vet",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "runtime-security-contracts",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install locked validation dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate scenario contracts and statistics",
+              "conclusion": "success"
+            },
+            {
+              "name": "Hermes adapter authority and transport regressions",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run real component benchmark and verify public evidence",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "runtime-security-nightly",
+          "conclusion": "skipped",
+          "steps": []
+        }
+      ]
+    }
+  ]
+}

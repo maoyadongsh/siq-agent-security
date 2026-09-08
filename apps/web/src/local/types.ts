@@ -88,6 +88,12 @@ export interface Grant {
 }
 
 export interface Receipt {
+  authority_status?: "valid" | "invalid" | "unbound_legacy";
+  context_assertion_id?: string;
+  parameter_provenance?: { parameter_path: string; provenance_refs: string[] }[];
+  authority_reason_code?: string;
+  policy_action?: "allow" | "deny" | "hold" | "redact";
+  effective_action?: "allow" | "deny" | "hold" | "redact";
   record_type?: 'decision' | 'observation' | 'hold_resolution';
   decision_receipt_id?: string;
   action_id?: string;

@@ -1,0 +1,25 @@
+{
+  "id": "content-tamper-attack",
+  "pair_id": "content-tamper",
+  "kind": "attack",
+  "category": "provenance_content_tamper",
+  "fixture": "mcp-provenance-component",
+  "task": {
+    "tool": "read_file",
+    "resource": "temporary approved company-a/report.txt",
+    "provenance": "USER"
+  },
+  "attack": {
+    "mutation": "provenance_content_tamper"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "provenance_content_mismatch",
+    "decision_action": "deny"
+  }
+}

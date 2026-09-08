@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tool effect claim request V1",
+  "allOf": [
+    {"$ref": "effect-evidence-submit.v1.schema.json"},
+    {
+      "properties": {
+        "source": {"properties": {
+          "type": {"const": "tool_report"},
+          "independence": {"const": "self_reported"}
+        }},
+        "coverage": {"const": "unknown"},
+        "result": {"const": "unknown"}
+      }
+    }
+  ]
+}

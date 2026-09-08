@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "File observation material V1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "before": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resource_ref": {
+          "type": "string",
+          "pattern": "^filesystem:sha256:[0-9a-f]{64}$"
+        },
+        "exists": {
+          "type": "boolean"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{64})?$"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16777216
+        },
+        "mtime": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "resource_ref",
+        "exists",
+        "digest",
+        "size",
+        "mtime",
+        "captured_at"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "exists": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "digest": {
+                "const": ""
+              },
+              "size": {
+                "const": 0
+              },
+              "mtime": {
+                "const": ""
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "mtime": {
+                "type": "string",
+                "format": "date-time",
+                "maxLength": 64
+              }
+            }
+          }
+        }
+      ]
+    },
+    "after": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resource_ref": {
+          "type": "string",
+          "pattern": "^filesystem:sha256:[0-9a-f]{64}$"
+        },
+        "exists": {
+          "type": "boolean"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{64})?$"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16777216
+        },
+        "mtime": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "resource_ref",
+        "exists",
+        "digest",
+        "size",
+        "mtime",
+        "captured_at"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "exists": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "digest": {
+                "const": ""
+              },
+              "size": {
+                "const": 0
+              },
+              "mtime": {
+                "const": ""
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "mtime": {
+                "type": "string",
+                "format": "date-time",
+                "maxLength": 64
+              }
+            }
+          }
+        }
+      ]
+    },
+    "expected_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "execution_state": {
+      "enum": [
+        "completed",
+        "failed",
+        "unknown"
+      ]
+    },
+    "result": {
+      "enum": [
+        "expected",
+        "unexpected",
+        "unknown"
+      ]
+    }
+  },
+  "required": [
+    "before",
+    "after",
+    "expected_digest",
+    "execution_state",
+    "result"
+  ]
+}

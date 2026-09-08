@@ -1,0 +1,25 @@
+{
+  "id": "recipient-injection-attack",
+  "pair_id": "recipient-injection",
+  "kind": "attack",
+  "category": "recipient_injection",
+  "fixture": "recipient-component",
+  "task": {
+    "tool": "send_message",
+    "resource": "fixture-finance-team",
+    "provenance": "MCP"
+  },
+  "attack": {
+    "mutation": "MCP controls recipient"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "provenance_source_not_allowed",
+    "decision_action": "deny"
+  }
+}

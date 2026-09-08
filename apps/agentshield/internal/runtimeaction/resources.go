@@ -90,8 +90,8 @@ func NormalizeHost(value string) (string, error) {
 
 // ExtractResources examines only known structured fields. It never infers a shell
 // target from command text; missing/invalid values remain unavailable to matching.
-func ExtractResources(tool string, params map[string]any) ([]Resource, error) {
-	_, effects := Normalize(tool, params)
+func extractResources(tool string, params map[string]any) ([]Resource, error) {
+	_, effects := normalizeEffects(tool, params)
 	domain := ""
 	keys := []string{}
 	switch effects[0] {
@@ -141,4 +141,9 @@ func ResourceRefs(resources []Resource) []ResourceRef {
 		out = append(out, ResourceRef{r.Domain, hex.EncodeToString(digest[:])})
 	}
 	return out
+}
+
+func ExtractResources(tool string, params map[string]any) ([]Resource, error) {
+	d := Describe(tool, params)
+	return d.Resources, d.ResourceError
 }

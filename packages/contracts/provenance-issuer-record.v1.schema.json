@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "provenance-issuer-record/v1"
+    },
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "issuer_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "public_key": {
+          "type": "string",
+          "minLength": 44,
+          "maxLength": 44
+        },
+        "local_key_ref": {
+          "const": "local-state"
+        },
+        "allowed_source_types": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "USER",
+              "SYSTEM",
+              "TRUSTED_IAM",
+              "TRUSTED_DATABASE",
+              "MCP",
+              "WEB",
+              "TOOL",
+              "MEMORY",
+              "AGENT",
+              "SECRET",
+              "CONFIDENTIAL",
+              "UNKNOWN"
+            ]
+          }
+        },
+        "max_trust_level": {
+          "enum": [
+            "authoritative",
+            "trusted",
+            "untrusted",
+            "unknown"
+          ]
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "platform": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "agent_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "task_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "required": [
+            "platform",
+            "session_id",
+            "agent_id",
+            "task_id"
+          ]
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revoked_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "issuer_id",
+        "allowed_source_types",
+        "max_trust_level",
+        "scope",
+        "expires_at"
+      ],
+      "oneOf": [
+        {
+          "required": [
+            "public_key"
+          ],
+          "not": {
+            "required": [
+              "local_key_ref"
+            ]
+          }
+        },
+        {
+          "required": [
+            "local_key_ref"
+          ],
+          "not": {
+            "required": [
+              "public_key"
+            ]
+          }
+        }
+      ]
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "issuer",
+    "signing_schema",
+    "signature"
+  ]
+}
