@@ -914,3 +914,9 @@ C1 文件材料附加：不可变 Record 增加可选 file_observation（file-ob
 capEffectObserve 新增 POST `/v1/file-observations`（observation_id/action_id/decision_receipt_id/path/expected_digest/max_bytes），服务端验证固定 host_observer、完整 scope、file.write 效果和路径资源摘要匹配真实动作后，实际 CaptureFile。POST `/v1/file-observations/{id}/finish`（path）再次读真实文件并 SubmitFile，客户端不得上传前后快照。前置采样不授权执行，deny 动作仍可观测并记事件。
 
 待采样记录仅保留摘要快照、动作引用、预期摘要和 token 归属，不保存明文路径。最多128条，随 observer token 到期/撤销失效；服务重启失效并要求重新开始，禁止把丢失的前置采样补成成功。完成后的持久化证据仍可读回；同 token 完成重试返回原证据，不重新采样改写结果。持久化 pending 与跨重启继续采样尚待后续恢复实现。
+
+### C1 受控网络 oracle
+
+NetworkOracle 仅用于本地 benchmark，绑定127.0.0.1随机端口，对外名称仅允许 localhost/127.0.0.1；记录随机私有路径上实际收到的请求。监听器配置决定最终scheme/host/port/resolved_target，不信任客户端 Host 头对最终目标的声明。每个接收事件生成服务器 request_id，保存方法/URI/正文的组合摘要与接收时间，不记录正文或URI原文；1 MiB请求体、64事件预算，超限拒绝且不生成完整接收证据。
+
+网络证据来自该 oracle 的事件对象，source=test_oracle/external_independent、coverage=partial。requested endpoint 与 final endpoint 分开；最终资源引用复用 runtimeaction 的 network host摘要。目标scheme/host/port变化分类为 unexpected；共享主机不同端口也保持差异，不能由旧 host-only 资源匹配掩盖。此为固定本地服务证明，不推广为通用互联网、provider审计或native平台支持。

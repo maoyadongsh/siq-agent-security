@@ -192,3 +192,10 @@
 - pending 只存摘要/元数据，128上限、token 归属及到期；完成重试返回原持久化证据，避免重采样改写。已撤销 observer 的 pending 在后续 begin 清理。
 - 原始 HTTP + 真实临时文件验证路径替换、伪造 before/after、决策 token 拒绝、真实写入、缺失文件假成功和完成重试。block 用例产生拒绝后实际效果事件；warn 正例遵循 advisory policy，不冒充 block Grant 准入通过。
 - Python合同8项与Ruff通过；HTTP定向及Go全模块race/vet、四平台编译通过，日志 `/tmp/siq-file-http-race.log`。跨重启 pending 恢复、实际平台采样调度、网络 oracle、Completion 与完整验收仍待完成。
+
+### C1 受控网络 oracle 基础
+
+- NetworkOracle 启动真正的127.0.0.1随机端口 HTTP server，随机私有接收路径；只从服务器实际接收事件生成证据。scheme/host/port/resolved_target来自监听配置，不由请求 Host 头决定。
+- 服务器 request_id、接收时间及请求组合摘要可供复核；不保留正文、URI或伪造 Host。1 MiB正文和64事件预算，超限不生成完整事件。
+- 实际 HTTP 测试验证：未收到请求时无证据、直接接收、服务器事件不可被调用方修改、localhost批准目标→302→127.0.0.1最终目标差异、资源错配和拒绝动作效果事件。网络 Evidence 进入既有签名 Store。
+- effectevidence 定向及Go全模块race/vet、四平台编译通过，日志 `/tmp/siq-network-oracle-race.log`；此为受控本地测试 oracle，不声称互联网/provider/native平台支持。网络原始事件材料的签名归档、benchmark编排及 Completion 继续待开发。
