@@ -40,7 +40,7 @@ func Open(dir string, key *signing.Key) (*Store, error) {
 	if dir == "" || key == nil {
 		return nil, failure("provenance_state_unavailable")
 	}
-	for _, name := range []string{"provenance-issuers", "provenance-issuer-revocations"} {
+	for _, name := range []string{"provenance-issuers", "provenance-issuer-revocations", "provenance-assertions"} {
 		p := filepath.Join(dir, name)
 		if err := os.MkdirAll(p, 0700); err != nil {
 			return nil, err

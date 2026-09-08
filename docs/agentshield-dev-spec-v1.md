@@ -826,3 +826,9 @@ Assertion.VerifyAuthority 接受来自管理面可信 registry 的 Issuer 与本
 `provenance.Open(stateDir,key)` 在状态目录建立 provenance-issuers 与 provenance-issuer-revocations。Registry entry 使用 provenance-issuer-record/v1 envelope，内容为 issuer，管理身份签名；撤销使用 provenance-issuer-revocation/v1 envelope，包含 issuer_id、原签名记录摘要和 revoked_at。两者均复用 canonical signing。注册 ID 不可覆盖，重试同一内容返回原记录；同 ID 改内容冲突。撤销终态，不改写原 issuer 文件；每次 GetIssuer 验证原记录和撤销记录，无法读取或篡改拒绝。进程内读写锁保证并发顺序，跨进程的排他硬链接保证文件不覆盖；单 daemon 的既有 writer lock 仍是生产写入边界。
 
 写入采用 0600 同目录临时文件、fsync 后硬链接排他发布；不支持硬链接即失败，不回退为覆盖。读取只接受普通文件、单 JSON 文档、已知字段，最大 64 KiB；最多4096个签发者。状态文件签名证明完整性，不提供对同 UID 恶意进程的防删除/整目录快照回滚隔离。
+
+### B1 声明图存储与解析
+
+声明按完整 Scope 的 canonical SHA256 分目录存于 provenance-assertions。每个 scope 最多1024节点、4096条父引用边、32父节点和64层深度。新节点发布前验证当前 issuer、全部父节点与同 scope，禁止 trust 高于任一父节点，禁止子节点有效期超出父节点；unknown 派生必须保持 unknown trust。派生 source type 只能保持父类型或显式降为 AGENT/UNKNOWN，不允许把 MCP 重标为 USER。
+
+IssueAssertion 仅供后续管理面调用，使用已注册 local-state issuer 签发；ImportAssertion 接受外部签名，必须通过 registry 公钥验证。Resolve 每次重读并验证整个父图，不保留跨请求信任缓存，故父 issuer 撤销/过期会使子图即时拒绝。未找到、环、容量、篡改均失败关闭；同 ID 同签名内容可重试，冲突不覆盖。HTTP 暂未接入，普通 decision 上报必须走后续受限入口而不能调用管理签发函数。
