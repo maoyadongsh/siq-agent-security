@@ -42,3 +42,13 @@
 ## 后续补强结果
 
 本轮已加入`runtimeaction/budget.go`前置遍历预算：64层、8192节点、单指针1024字节、累计指针1MiB；Describe在超限时返回unknown/error及空资源，Engine三模式签名拒绝、Intent matcher拒绝。上文“没有独立描述器预算”为519cf2e审计时发现，现已修复；运行证据见开发台账。剩余全范围审计结论不因此自动变为通过。
+
+## G4签名复用本地验收（基线693641d，2026-09-08）
+
+相对起点d001c4d，internal/canon与internal/signing生产代码及测试无diff。核对新增Go生产签名/序列化调用及此前索引：Context、Provenance issuer/声明/撤销、Intent全局撤销、Effect内外封装、observer撤销、pending及recovery均走SignCanonical/VerifyCanonical/VerifyWithSchema，最终复用canon.Marshal。没有新增生产签名算法或另一个canonical编码器。
+
+unsigned辅助函数只投影签名字段；JSON Marshal用于投影/磁盘编码，不是替代canonical签名字节。旧Effect Record投影保留既有float64语义，pending/recovery使用canon.Decode保留整数；不能互换两者或统一重签历史文档。Provenance payload摘要同样使用canon.Marshal，固定向量覆盖非ASCII/非BMP和整数。
+
+运行Go1.26.6：canon/signing完整包无缓存race通过；provenance、effectevidence、intent匹配Vector/Signature/Tamper/CrossLanguage/AuthorityVerifies/ContextIntegrity测试通过。trustedcontext无直接测试文件，Context端到端测试位于intent与receipt，不把no test files计为测试通过；第一轮canon名称过滤未匹配，随后已完整执行。
+
+G4据此记录为本地验收通过，范围是生产签名与规范化复用。Python离线验收工具的独立实现是跨语言验证端，不签发生产Authority；其资源预算和完整语义证明仍独立处理。G3/G5全范围审计没有因本项通过而自动关闭。

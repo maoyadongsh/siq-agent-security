@@ -48,7 +48,7 @@
 | DoD-G1 | Go race tests 全绿。 | [ci.yml](../.github/workflows/ci.yml) | 证据入口已定位；待逐项核读验收 |
 | DoD-G2 | 全仓 CI green。 | [runtime-security.yml](../.github/workflows/runtime-security.yml) | e70541e两套远端工作流success；后续本地提交仍待对应CI |
 | DoD-G3 | 没有新增无界 map。 | [capacity_test.go](../apps/agentshield/internal/provenance/capacity_test.go) | 需全范围源码审计，单文件不足证明 |
-| DoD-G4 | 没有新增第二套 signing/canonicalization。 | [signing](../apps/agentshield/internal/signing) | 需全范围源码审计，单文件不足证明 |
+| DoD-G4 | 没有新增第二套 signing/canonicalization。 | [signing](../apps/agentshield/internal/signing) | 本地验收通过；见state-audit的G4签名复用说明 |
 | DoD-G5 | 没有新增 LLM final authorization。 | [AGENTS.md](../AGENTS.md) | 需全范围源码审计，单文件不足证明 |
 | DoD-G6 | 没有把实现 evidence 写成 production supported。 | [agentshield-capability-matrix-v1.md](../docs/agentshield-capability-matrix-v1.md) | 证据入口已定位；待逐项核读验收 |
 
@@ -165,3 +165,5 @@
 | C6 | OptionalNeverBoundKeepsPolicyModes：从未绑定legacy会话普通policy保留block拒绝、warn/audit允许并附advisory；曾绑定或无效必需Authority不能采用该兼容路径 |
 
 C5验收按模板“现有核心测试”范围，不扩大成三平台原生V3全功能或生产支持。相较deeebee，适配器/安装器/CLI源码无变化；引擎后续预算变更已有本轮兼容与此前完整Go回归交叉覆盖。累计39/45项有本地验收记录；G组、最终提交CI和§0–120完整交付审计仍未完成。
+
+G4增量验收后累计40/45项有本地验收记录；693641d远端CI仍在运行/排队（本轮查询），G1/G2/G3/G5/G6与全模板最终验收继续进行。
