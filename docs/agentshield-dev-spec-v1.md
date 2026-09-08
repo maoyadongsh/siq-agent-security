@@ -850,3 +850,9 @@ Store.MatchParameters 在一次 registry 读锁内验证所有 parameter_provena
 新增管理 capability 路由：POST /v1/provenance-issuers 注册，GET /v1/provenance-issuers/{id} 读回，POST /v1/provenance-issuers/{id}/revoke 终态撤销（空 JSON 对象）；POST /v1/provenance-assertions 本地签发，POST /v1/provenance-assertions/import 外部签名导入。POST /v1/provenance-resolve 接受 provenance_id 与完整 scope，返回经过当前 issuer/父图验证的声明。管理输入严格拒绝未知字段、多 JSON 文档和超过64 KiB的正文。
 
 以上接口均为 admin，决策 token 返回403。状态错误对外只输出稳定 provenance reason_code，不暴露文件路径或底层异常。来源普通上报另设受限接口，不能复用管理签发接口。生产 Server 与 Engine 打开同一状态目录的 provenance Store；均逐次读取签名记录，不引入独立数据库或新的裁决服务。
+
+### B1 受限来源上报
+
+POST /v1/provenance-reports 使用 decision capability。正文包含 report_id、platform/session_id/agent_id、source（type/source_id/trust）和 content（JSON值）。服务从已验证且当前有效的 Intent binding 派生 task_id，不接受 caller task/issuer/signature。仅允许 MCP/WEB/TOOL/AGENT/UNKNOWN，trust 缺省为 untrusted，不能超过 untrusted；来源类型不在允许集合时直接拒绝。
+
+服务为该完整 scope 使用专用 report issuer（local-state、五类低可信来源、untrusted ceiling、到期不晚于 Intent），不允许请求选择其他 issuer。source_id 在签名声明中只保留摘要标识；content 仅存 canonical 内容摘要，不持久化原文。声明有效期最多15分钟且不晚于 Intent。report_id 在 scope 内幂等，同 ID 不同内容冲突；同 ID 的过期重试拒绝，调用方为新的采集生成新 report_id。上报是 self-reported 输入记录，不证明真实 MCP 服务身份或实际执行，不能赋予工具效果独立证据地位。

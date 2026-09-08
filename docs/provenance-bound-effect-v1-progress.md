@@ -103,3 +103,10 @@
 - 新增管理注册→V3绑定→声明签发/导入/解析→Decide→撤销→后续Decide硬拒绝链路测试。warn 正例只证明有效 Authority 进入既有 advisory policy，不作为 Grant 或真实效果证据。
 - ParameterBinding 的 JSON 边界拒绝多文档、未知字段、空/重复/非法引用和非法 JSON Pointer，避免恶意绑定生成不符合合同的回执。
 - server/receipt/provenance 三包 race 全部通过，server/provenance vet通过，四平台编译通过。使用说明见 [Provenance API V1](provenance-api-v1.md)。普通低可信上报与 MCP 路径仍待实现。
+
+### B1 受限上报增量
+
+- 新增 decision capability 的 `/v1/provenance-reports` 和请求合同；Scope 的 task_id 来自有效 Intent，客户端不得自选 issuer/task/signature，source/trust 有独立硬上限。
+- 专用 scope report issuer 仅允许五类低可信来源，内容与来源标识都只存摘要；声明最长15分钟且不超出 Intent，scope+report_id 幂等且过期不自动续期。
+- 全流程串行化 registry/声明写入，16并发重复上报得到同一签名。测试验证伪造 USER/IAM/高可信 MCP 拒绝、同 ID 内容冲突、过期拒绝、磁盘无原始内容，以及 HTTP 自报权限边界。
+- 新增 provenance/server 定向 race 与 vet 通过，Python provenance 合同测试5项与 Ruff通过。上报仍为 self-reported 输入；实际 MCP 调用、endpoint/tool 身份与确定性派生接入继续待完成。

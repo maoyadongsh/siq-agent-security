@@ -123,6 +123,9 @@ func (s *Store) loadIssuer(id string) (issuerRecord, error) {
 func (s *Store) RegisterIssuer(i Issuer) (Issuer, error) {
 	storeMu.Lock()
 	defer storeMu.Unlock()
+	return s.registerIssuer(i)
+}
+func (s *Store) registerIssuer(i Issuer) (Issuer, error) {
 	if err := i.Validate(); err != nil {
 		return Issuer{}, err
 	}

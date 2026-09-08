@@ -1,6 +1,6 @@
 # Provenance V1 本地管理 API
 
-状态：开发中。管理与 V3 决策链路已接入；普通 decision 上报、MCP 自动采集及效果证据尚未完成。以下接口使用本地服务的 admin session，决策 token 不具有这些权限。
+状态：开发中。管理、受限 decision 上报与 V3 决策链路已接入；MCP 自动采集及效果证据尚未完成。下表管理接口使用本地服务的 admin session，决策 token 不具有这些权限。
 
 | 方法与路由 | 请求 | 成功结果 |
 | --- | --- | --- |
@@ -20,3 +20,11 @@ Assertion 的 content_digest 是参数值的 canonical JSON SHA256，例如 JSON
 管理请求正文上限64 KiB，严格拒绝未知字段和尾随 JSON。错误使用 reason_code：输入/来源不合法通常400，decision token 调用管理接口403，同 ID 不同内容409，容量耗尽503；内部状态错误500且不泄露文件路径。
 
 验证入口：`internal/server/provenance_http_test.go`。其中 warn 模式的允许仅说明有效 Authority 可进入原有 advisory policy，不证明存在独立 Grant 允许或真实文件效果。真实执行安全仍需后续平台与效果证据验证。
+
+## 受限来源上报
+
+`POST /v1/provenance-reports` 使用 decision token，正文见 [上报请求合同](../packages/contracts/provenance-report-request.v1.schema.json)。请求提供 report_id、platform/session_id/agent_id、source 和 content；服务从有效 Intent binding 获取 task_id，不接受调用方选择 issuer 或签名。
+
+source 仅允许 MCP/WEB/TOOL/AGENT/UNKNOWN，trust 默认为 untrusted，不能升级为 trusted/authoritative。source_id 是自报标识，存储前转换为摘要；content 仅持久化 canonical 摘要。相同 scope+report_id+内容可重试，不同内容冲突；过期重试不会续期，新采集需要新 report_id。有效期最多15分钟且不晚于 Intent。
+
+返回201及完整签名声明，可以将 provenance_id 用作后续参数来源引用。该签名证明服务记录了低可信自报输入，不证明实际连接过该 MCP endpoint，不提供独立效果证据。

@@ -103,6 +103,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/provenance-assertions", s.auth(s.provenanceIssue, capAdmin))
 	s.mux.HandleFunc("/v1/provenance-assertions/import", s.auth(s.provenanceImport, capAdmin))
 	s.mux.HandleFunc("/v1/provenance-resolve", s.auth(s.provenanceResolve, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-reports", s.auth(s.provenanceReport, capDecision))
 	s.mux.HandleFunc("/v1/intents", s.auth(s.intentCollection, capAdmin))
 	s.mux.HandleFunc("/v1/context-assertions", s.auth(s.contextCollection, capAdmin))
 	s.mux.HandleFunc("/v1/context-assertions/", s.auth(s.contextOne, capAdmin))
