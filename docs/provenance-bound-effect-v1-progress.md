@@ -731,3 +731,10 @@
 - 使用既有完整集成报告，在无效果样本注入独立oracle自声明并重算summary：HEAD旧版verify接受，修复后报D5 requires an archived effect record；没有修改原始报告文件。
 - 新负向测试覆盖假success/假failure、跨decision借用、错误/多余refs、缺材料。19项基准测试、Ruff通过；原始报告51回执/11效果封装仍通过；check_contracts确认21对42场景20类别。
 - 后续继续C/G及剩余schema与最终工程报告；本轮不宣称所有离线策略/任务完成语义已经通用重演。
+
+## 2026-09-08：C组兼容验收
+
+- 基线6f1941b完成C1–C6核读及本地验收，累计39/45项；不是整体完成率。
+- Go1.26.6 intent/receipt相关双读/历史验签/撤销/legacy测试无缓存race通过；adapterinstall、cmd/agentshield完整包无缓存race通过。
+- OpenClaw hook审批复查通过，checkpoint兼容15项通过；Hermes adapter56项通过。原生Hermes/CodeBuddy旧夹具保持原基线与限制，不冒充本轮重跑。
+- 准备推送本批测试与验证器修复到独立开发分支，远端CI以实际最终SHA另行验收；main保持不变。

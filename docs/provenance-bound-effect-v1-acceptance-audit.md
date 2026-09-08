@@ -39,12 +39,12 @@
 | DoD-B4 | 每类攻击至少有 benign control。 | [scenarios](../benchmarks/runtime-security/scenarios) | 本地验收通过；详见Benchmark证据说明 |
 | DoD-B5 | 报告： false allow false deny benign completion unknown effect D2–D5 outcomes | [metrics.py](../benchmarks/runtime-security/metrics.py) | 本地验收通过；详见Benchmark证据说明 |
 | DoD-B6 | 没有 Oracle 的样本不得计 D5 success/failure。 | [test_metrics.py](../benchmarks/runtime-security/test_metrics.py) | 本地验收通过；详见Benchmark证据说明 |
-| DoD-C1 | Trusted Intent V2 历史 Receipt 仍可验证。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-C2 | Intent V2 dual-read 保留。 | [store_test.go](../apps/agentshield/internal/intent/store_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-C3 | OpenClaw approval execution recheck 不退化。 | [test-openclaw-adapter.cjs](../scripts/test-openclaw-adapter.cjs) | 证据入口已定位；待逐项核读验收 |
-| DoD-C4 | Binding revocation 不退化。 | [revocation_test.go](../apps/agentshield/internal/intent/revocation_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-C5 | Hermes / OpenClaw / CodeBuddy 现有核心测试通过。 | [ci.yml](../.github/workflows/ci.yml) | 本轮核心兼容检查通过，见下方命令与证据；不等于原生V3集成完成 |
-| DoD-C6 | Legacy optional authorization 继续按现有安全兼容语义工作。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 证据入口已定位；待逐项核读验收 |
+| DoD-C1 | Trusted Intent V2 历史 Receipt 仍可验证。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 本地验收通过；详见Compatibility证据说明 |
+| DoD-C2 | Intent V2 dual-read 保留。 | [store_test.go](../apps/agentshield/internal/intent/store_test.go) | 本地验收通过；详见Compatibility证据说明 |
+| DoD-C3 | OpenClaw approval execution recheck 不退化。 | [test-openclaw-adapter.cjs](../scripts/test-openclaw-adapter.cjs) | 本地验收通过；详见Compatibility证据说明 |
+| DoD-C4 | Binding revocation 不退化。 | [revocation_test.go](../apps/agentshield/internal/intent/revocation_test.go) | 本地验收通过；详见Compatibility证据说明 |
+| DoD-C5 | Hermes / OpenClaw / CodeBuddy 现有核心测试通过。 | [ci.yml](../.github/workflows/ci.yml) | 本地验收通过；详见Compatibility证据说明 |
+| DoD-C6 | Legacy optional authorization 继续按现有安全兼容语义工作。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 本地验收通过；详见Compatibility证据说明 |
 | DoD-G1 | Go race tests 全绿。 | [ci.yml](../.github/workflows/ci.yml) | 证据入口已定位；待逐项核读验收 |
 | DoD-G2 | 全仓 CI green。 | [runtime-security.yml](../.github/workflows/runtime-security.yml) | e70541e两套远端工作流success；后续本地提交仍待对应CI |
 | DoD-G3 | 没有新增无界 map。 | [capacity_test.go](../apps/agentshield/internal/provenance/capacity_test.go) | 需全范围源码审计，单文件不足证明 |
@@ -150,3 +150,18 @@
 | B6 | 无独立材料不计D5；新负向回归要求实际归档effect、当前decision关联与正确evidence ref。旧版接受伪造D5已用同一完整报告复现，修复后拒绝；正常报告仍通过 |
 
 测试：19项unittest全部通过，Ruff通过。D5在既有报告中仅11/42可评估，其余31保持not evaluated；D5 true表示独立观测到效果，不自动等于攻击成功。独立验证范围仍是归档签名/关联/指标，不是通用策略重演或外部信任锚。累计33/45项有本地验收记录，C/G及模板逐节交付要求继续核验。
+
+## Compatibility C1–C6本地验收（2026-09-08）
+
+源码基线6f1941b，工作区无生产代码修改。Go1.26.6无缓存race执行intent/receipt中V2、V3、DualRead、Revocation、RevokedBinding、BindingRevoke、OptionalNeverBound、AuthorityReceiptSamples、ReceiptBeforeOptional、CurrentHoldAuthority匹配测试通过；adapterinstall与cmd/agentshield完整包无缓存race通过。
+
+| 条目 | 核读与实际证据 |
+| --- | --- |
+| C1 | TestAuthorityReceiptSamplesAndHistoricalVerification、TestReceiptBeforeOptionalMetadataStillVerifies读取已提交历史回执并验证旧签名；新增授权字段篡改仍拒绝 |
+| C2 | TestV3ConstraintsDualReadAndSignedBinding、TestEffectRequirementsSignedDualRead及V2约束测试；V2仍可签发/读取，拒绝夹带V3字段（包括null），V3要求显式来源约束，签名样例不变 |
+| C3 | node scripts/test-openclaw-adapter.cjs通过correlation/host capability/approval recheck；checkpoint兼容脚本15项通过 |
+| C4 | BindingRevocationImmutableIdempotentAndRecovered、篡改/容量/并发及引擎撤销测试；撤销不改旧binding，重启保留终态，不能借optional降级 |
+| C5 | Hermes adapter 56项通过；OpenClaw上述核心门禁通过；Go CLI/安装器全部通过。此前归档的Hermes/CodeBuddy原生夹具结果仍以deeebee标记，本轮未重跑原生CLI，不把旧二进制结果冒充当前构建 |
+| C6 | OptionalNeverBoundKeepsPolicyModes：从未绑定legacy会话普通policy保留block拒绝、warn/audit允许并附advisory；曾绑定或无效必需Authority不能采用该兼容路径 |
+
+C5验收按模板“现有核心测试”范围，不扩大成三平台原生V3全功能或生产支持。相较deeebee，适配器/安装器/CLI源码无变化；引擎后续预算变更已有本轮兼容与此前完整Go回归交叉覆盖。累计39/45项有本地验收记录；G组、最终提交CI和§0–120完整交付审计仍未完成。
