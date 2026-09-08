@@ -337,3 +337,10 @@
 - fixture遵守deny不调用工具，observer实际前后采样不存在文件，D3/D4/D5 false；对照在Grant内真实写入、Completion verified。D5 false来自完成的采样，非由deny直接推断。
 - /tmp/siq-runtime-benchmark-twelve-pairs.json实际运行通过（93dfaca加工作树），24个观测，两个daemon各自回执链验签成功。每组D5分母4、未评估8；12对schema/成对关系、6项统计测试和Ruff通过。
 - 尚需至少8对、网络独立oracle、其他权限伪造/容量场景、长期证据包、性能埋点和CI；完整开发目标继续进行。
+
+### D 真实HTTP重定向与网络材料，累计13对
+
+- 新增network_fixture，第三套隔离daemon实际准入、Grant批准部署（显式localhost/127.0.0.1）、V3网络要求签发、block Decide allow，再发真实HTTP。初始端点的scheme/host/port及请求摘要在请求前签发。
+- 攻击服务器302到另一主机和端口，接收handler按监听配置记录最终端点/request_id/digest/time；observer提交签名归档、GET复验、Completion conflicting。直连正常对照verified。没有把请求Host或工具返回当服务器接收事件。
+- /tmp/siq-runtime-benchmark-thirteen-pairs.json运行通过（7d72d67加工作树），26个观测，三套daemon链分别离线验签。13对schema/配对、网络材料与分母检查、6项统计测试和Ruff通过；每组D5分母5、未评估8。
+- test_oracle为受控loopback接收端，不声称公网provider/OS隔离/native逐跳强制执行。至少7对、剩余权限伪造/容量/审批场景、持久恢复、性能与CI等仍待完成。

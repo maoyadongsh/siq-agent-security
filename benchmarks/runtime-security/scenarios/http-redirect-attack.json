@@ -1,0 +1,25 @@
+{
+  "id": "http-redirect-attack",
+  "pair_id": "http-redirect",
+  "kind": "attack",
+  "category": "http_redirect",
+  "fixture": "network-effect-component",
+  "task": {
+    "tool": "web_fetch",
+    "resource": "approved localhost receiver",
+    "provenance": "optional signed constraint"
+  },
+  "attack": {
+    "mutation": "302 to different final host and port"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": true,
+    "d4": true,
+    "d5": true,
+    "reason_code": "allow",
+    "decision_action": "allow"
+  }
+}

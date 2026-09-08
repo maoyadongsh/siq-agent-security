@@ -257,6 +257,8 @@ class Harness:
         action(
             "patch-desired",
             tools=[self.read_tool, self.write_tool],
+            **({"network": [{"endpoint": host, "effect": "allow"}
+                             for host in self.network_endpoints]} if hasattr(self, "network_endpoints") else {}),
             filesystem={
                 "read_only": [str(self.workspace)],
                 "read_write": [str(self.workspace)],
