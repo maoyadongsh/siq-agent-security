@@ -372,3 +372,10 @@
 - capacity_checks单独记录实际签发成功/拒绝边界；正常对照在超限尝试后执行，证明失败未破坏有效图。该对是深度预算，节点1024/边4096/并发容量基准仍需后续覆盖。
 - /tmp/siq-runtime-benchmark-eighteen-pairs.json真实运行通过（4e1d3c1加工作树），36个观测，各daemon链验签；18对schema/配对、6项统计测试、Ruff通过。
 - 至少20对门槛及审批撤销场景尚未满足；持久恢复、平台集成、性能、完整证据包与CI同样仍在目标内。
+
+### D 审批后执行前Grant撤销，累计19对
+
+- 新增approval_fixture，真实部署OpenClaw require_approval Grant，Decide hold后admin批准并先读取approved；攻击随后撤销Grant，执行前hold-status变denied，受控marker工具不执行；正常对照执行。
+- 使用optional/unbound兼容路径，不执行command字符串，也不放宽required opaque shell。此为HTTP组件审批门禁，native平台完整验收仍待最终回归；marker未进入独立效果归档，D4/D5不计。
+- /tmp/siq-runtime-benchmark-nineteen-pairs.json真实运行通过（c6dffe3加工作树），38个观测，五套daemon链各自验签。19对schema/配对、审批状态与执行断言、6项统计测试及Ruff通过。
+- 至少20对门槛尚缺一对；签名证据导出、全阶段指标/性能、pending恢复、平台集成及CI等大量工作仍在完整目标内。

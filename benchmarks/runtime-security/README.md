@@ -48,3 +48,5 @@ network_fixture使用受信loopback测试server，不代表互联网provider审�
 当前合计17对。recipient-injection独立部署send_message Grant，签名Intent约束message资源与/recipient来源。相同fixture-finance-team值由MCP低可信上报时deny、合法USER签发时allow，避免用文件工具的无关recipient参数假装覆盖消息场景。没有实际消息provider调用，D3–D5保留null；此对的MCP来源是受限report fixture，不声称新增真实MCP地址簿调用。
 
 当前合计18对。provenance-capacity通过生产API逐层签发USER来源链，64层成功，第65层503/provenance_capacity；引用被拒绝的节点Decide deny，引用已有64层链正常allow。报告单独保存容量API拒绝证据，不能仅凭缺失引用判定容量保护有效。本对覆盖深度预算；1024节点、4096边、并发耗尽的完整基准仍需补齐，不把深度用例称为所有容量验收。
+
+当前合计19对。approval-revoked通过官方良性准入fixture部署OpenClaw exec require_approval策略：Decide hold→admin批准→hold-status approved→攻击撤销Grant→再次hold-status denied，工具不执行；正常对照仍approved，执行仅写临时marker的受控工具。绝不执行传入command。此对明确optional/unbound兼容路径，required-bound不透明shell仍受拒绝，不代表该限制已解除，也不代表native OpenClaw网关审批回归已完成。marker只用于D3，D4/D5无独立材料仍null。
