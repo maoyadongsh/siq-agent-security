@@ -1,16 +1,65 @@
-# SIQ Agent Security
+<p align="center">
+  <img src="site/favicon.svg" width="64" height="64" alt="SIQ" />
+</p>
 
-**为 Agent Skills 提供可复现的运行时授权与效果核验。**
+<h1 align="center">SIQ Agent Security</h1>
 
-**简体中文** · [English](README.en.md)
+<p align="center"><strong>为 Agent Skills 提供可复现的运行时授权与效果核验。</strong></p>
+<p align="center">Trusted Intent · Parameter Provenance · Verified Effects</p>
 
-[快速开始](#快速开始) · [研究与证据](#研究与证据) · [源码发布](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1) · [贡献](CONTRIBUTING.md) · [安全报告](SECURITY.md)
+<p align="center">
+  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml/badge.svg?branch=main" alt="Research reproduction · main" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/code-Apache--2.0-001840?style=flat" alt="Project-owned code: Apache-2.0" /></a>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1"><img src="https://img.shields.io/badge/release-source%20prerelease-7c5a0c?style=flat" alt="Source prerelease" /></a>
+</p>
+
+<p align="center">
+  <strong>简体中文</strong> · <a href="README.en.md">English</a>
+</p>
+
+<p align="center">
+  <a href="#快速开始">快速开始</a> · <a href="#研究与证据">研究证据</a> · <a href="#组件与接入">组件接入</a> · <a href="#贡献与下一步">参与贡献</a>
+</p>
+
+---
 
 SIQ Agent Security 将用户授权、参数来源、工具执行和实际效果连接成可检查的证据链。Agent 负责规划任务和选择 Skills，SIQ 运行时依据受信授权检查动作，并根据独立采集的效果证据判断任务完成情况。
 
 项目面向研究者、Agent 工具与适配器开发者，以及评估智能体权限治理的平台团队。首次体验可以在普通 Linux 上使用确定性模型夹具，不需要 API 密钥、GPU 或企业控制面。
 
-首个研究版本 **[research-v0.1.0-rc.1](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1)** 已发布：**源码预发布，未签名**，附 `SOURCE-INFO.json` 和 `SHA256SUMS`。该版本不包含新编译的二进制或模型权重；摘要校验用于确认文件完整性，不代表发布者签名。发布源码固定在 [`aefab111`](https://github.com/maoyadongsh/siq-agent-security/commit/aefab111c7fcad9075c8f429f97c9eab519dcd22)，后续首页与发布回执更新不改变这一身份。
+## 核心价值
+
+**让 Agent 动态规划，让授权有依据，让交付可核验。** 项目聚焦自主 Agent 执行中的三个研究问题，将受信意图、参数来源和效果证据连接到同一条运行链路。
+
+| 研究重点 | 已实现的技术机制 | 业务用途 |
+| :--- | :--- | :--- |
+| **权限独立于模型** | Go 运行时核验 Grant / Intent、会话绑定与执行前审批；模型提议不能扩大权限 | 为自动化操作设置可审计的授权边界 |
+| **同值参数，区分来源** | 将受信 Context 与参数来源绑定到动作；相同收件人值可因可信数据库 / MCP 来源不同而获准或拒绝 | 约束被工具结果诱导的收件人替换与越权交付 |
+| **完成依赖实际效果** | 签名回执关联动作；独立观察文件与受控接收端，区分工具成功、效果发生和任务完成 | 为交付验收、故障定位与执行审计提供证据 |
+
+商业应用方向包括企业 Agent 权限治理、研究与报告交付、工具平台集成。现有基础是本地运行时、适配器与可选企业控制面；规模化部署、外部 SaaS 效果证明和商业收益仍需具体场景验证。创新性评价以[研究问题](docs/research/research-questions.md)与[技术报告](docs/research/technical-report.md)为依据，当前不宣称首创或已获同行评审认可。
+
+> [!IMPORTANT]
+> **当前发布：源码预发布 · 未签名**
+>
+> [research-v0.1.0-rc.1](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1) 附 `SOURCE-INFO.json` 与 `SHA256SUMS`，不包含新编译的二进制或模型权重。摘要校验用于确认文件完整性，不代表发布者签名。
+
+<details>
+<summary>发布源码与版本身份</summary>
+
+发布源码固定在 [`aefab111`](https://github.com/maoyadongsh/siq-agent-security/commit/aefab111c7fcad9075c8f429f97c9eab519dcd22)，后续首页与发布回执更新不改变这一身份。
+
+</details>
+
+## 从这里开始
+
+| 你的目标 | 推荐入口 | 可以获得什么 |
+| :--- | :--- | :--- |
+| 体验完整流程 | [快速开始](#快速开始) | 无需模型密钥的本地演示 |
+| 复现与评价 | [复现指南](REPRODUCIBILITY.md) · [研究导航](docs/research/README.md) | 固定案例、评价协议与证据 |
+| 接入自己的 Agent | [组件与接入](#组件与接入) | 运行时、适配器和合同入口 |
+| 参与开源研究 | [贡献指南](CONTRIBUTING.md) · [社区任务](docs/research/community-backlog.md) | 有明确范围的贡献起点 |
 
 ## 可以验证什么
 
@@ -27,6 +76,44 @@ SIQ Agent Security 将用户授权、参数来源、工具执行和实际效果�
 
 ## 工作方式
 
+### 组件与授权链路
+
+下图保留完整的本地运行时与企业控制面关系。企业控制面是可选部署；本地演示不依赖该链路。
+
+```mermaid
+flowchart TB
+    Human[操作者确认授权] --> Console[本地控制台 / 管理 API]
+    Skill[SIQ Skill：交互与操作指引] --> Agent[业务 Agent]
+    Candidate[候选 Skill / 配置] --> Admission[静态准入与能力提取]
+    Admission --> Console
+    Console --> Authority[签名 Grant / Intent / 会话绑定]
+    Agent --> Adapter[运行时适配器]
+    Adapter --> Gate[本地决策引擎]
+    Authority --> Gate
+    Gate --> Decision[allow / deny / hold / redact]
+    Decision --> Adapter
+    Adapter --> Tool[获准的工具调用]
+    Tool --> Observe[结果关联与 Observation]
+    Gate --> Receipts[签名回执链]
+    Observe --> Receipts
+    Receipts --> Console
+
+    Connectors[只读 Connector] --> Edge[Edge Agent]
+    Edge --> Control[企业 Control API / Worker]
+    EnterpriseUI[企业控制台] --> Control
+    Control --> DB[(PostgreSQL)]
+    Control --> Backend[执行后端适配 / 读回验证]
+
+    classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
+    classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
+    classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
+    class Human,Authority authority
+    class Admission,Gate,Decision runtime
+    class Observe,Receipts evidence
+```
+
+### 任务执行与效果核验
+
 ```mermaid
 flowchart LR
     Task[用户任务] --> Agent[Agent 规划与选择 Skills]
@@ -37,6 +124,12 @@ flowchart LR
     Runtime --> Receipts[签名决策回执]
     Tool --> Observer[独立效果采集]
     Observer --> Completion[SIQ 完成判定]
+    classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
+    classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
+    classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
+    class Authority authority
+    class Runtime,Completion runtime
+    class Receipts,Observer evidence
 ```
 
 - **执行前**：静态扫描 Skill，记录能力需求；通过 Grant、Intent、受信 Context 和参数来源约束动作。模型输出不能创建有效权限。
@@ -62,7 +155,8 @@ bash scripts/hackathon/pair.sh
 
 启动器会安装 Web 锁定依赖、构建本地界面和 Go 程序。打开 **http://127.0.0.1:47621/demo**，输入终端给出的一次性配对码，再选择上表中的场景。配对码和服务状态文件应留在本机。
 
-`--mode test` 必须显式给出：启动器默认的 `demo` 模式会使用配置的真实模型。需要固定首发源码时，在启动前执行 `git switch --detach research-v0.1.0-rc.1`。
+> [!NOTE]
+> `--mode test` 必须显式给出：启动器默认的 `demo` 模式会使用配置的真实模型。需要固定首发源码时，在启动前执行 `git switch --detach research-v0.1.0-rc.1`。
 
 体验完成后停止这个演示实例：
 
@@ -96,9 +190,14 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 ### 3. 可选：接入真实模型
 
+<details>
+<summary>查看 StepFun + DGX Spark 配置入口</summary>
+
 已有的实模型演示使用 **StepFun `step-3.7-flash` 远程规划**与 **DGX Spark 上的 Ornith 本地分析**。这条路径需要独立配置模型、私密凭据和硬件；与上面的无密钥路径分开运行、分开统计。
 
 从 [DGX 部署说明](deploy/dgx-spark/README.md)、[私密模型配置](docs/hackathon/step-plan.md)和[三轨复现指南](REPRODUCIBILITY.md)进入。机密分析的本地失败不能因此自动获准回退到远程模型。
+
+</details>
 
 ## 研究与证据
 
@@ -151,6 +250,11 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 引用软件请使用 **[CITATION.cff](CITATION.cff)**，并记录实际使用的版本、提交和语料摘要；[引用指南](docs/research/citation-guide.md)说明了源码与研究材料的区别。
 
-[比赛演示入口](HACKATHON.md) · [V5 冻结快照](docs/hackathon/final-submission-state.md) · [研究技术报告](docs/research/technical-report.md) · [开发约定](AGENTS.md) · [持续集成](https://github.com/maoyadongsh/siq-agent-security/actions)
+| 社区与治理 | 研究与归档 |
+| :--- | :--- |
+| [贡献指南](CONTRIBUTING.md) · [DCO](DCO) | [引用指南](docs/research/citation-guide.md) · [CITATION.cff](CITATION.cff) |
+| [治理规则](GOVERNANCE.md) · [行为准则](CODE_OF_CONDUCT.md) | [研究技术报告](docs/research/technical-report.md) · [复现指南](REPRODUCIBILITY.md) |
+| [私密安全报告](SECURITY.md) · [第三方归属](THIRD_PARTY_NOTICES.md) | [比赛演示](HACKATHON.md) · [V5 冻结快照](docs/hackathon/final-submission-state.md) |
+| [开发约定](AGENTS.md) · [持续集成](https://github.com/maoyadongsh/siq-agent-security/actions) | [开源实施记录](docs/research/operations-20260908.md) · [任务台账](docs/open-source-research-tasks-20260908.md) |
 
 比赛快照保留当时的源码、制品、视频和实验分母；本轮研究发布及后续文档更新使用各自的身份记录。

@@ -1,8 +1,20 @@
 # Contributing
 
+Reproduce an observation, improve an explanation, or propose a focused change.
+
+[简体中文首页](README.md) · [English home](README.en.md) · [Research guide](docs/research/README.md)
+
+---
+
+## Choose a contribution
+
 Start with [reproduction](REPRODUCIBILITY.md), the [research guide](docs/research/README.md), or a scoped [community task](docs/research/community-backlog.md). Reproduction failures and denominator corrections are useful contributions. Use synthetic data and preserve unsuccessful attempts. Vulnerabilities go through [SECURITY.md](SECURITY.md).
 
+## Prepare a pull request
+
 Open a branch and pull request. Describe the trigger, changed behavior, provenance of added code/data, and commands actually run. Follow the nearest AGENTS.md. Changes to security contracts start with the schema/specification and include a negative test showing the old bypass is rejected. Do not change frozen V5 numbers or replace its evidence; new runs receive new paths and identities.
+
+## Validate your change
 
 Usual checks from the repository root:
 
@@ -19,6 +31,10 @@ git diff --check
 
 Fixture and contract tests do not require model credentials, GPU access or publisher keys. Use the component-specific tests in AGENTS.md for adapters, schemas and connectors. Live model runs need explicit provider/budget configuration and must never execute in untrusted PR jobs.
 
+## Licensing and sign-off
+
 New contributions use the applicable existing file license and the [Developer Certificate of Origin 1.1](DCO). Certify only work you have the right to submit by adding your own `Signed-off-by: Name <email>` trailer (`git commit -s`). A sign-off is not copyright transfer or automatic paper authorship. Do not fabricate another contributor's sign-off or retroactively rewrite historical commits. The maintainer reviews sign-offs on new contributions; no external DCO App has been granted access. License or provenance uncertainty should be stated in the PR.
+
+## Attribution and authorship
 
 Software attribution, acknowledgments, datasets and paper authorship are separate decisions. Citation is encouraged through CITATION.cff but is not an additional software license restriction.
