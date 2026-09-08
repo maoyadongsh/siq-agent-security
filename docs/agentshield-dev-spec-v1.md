@@ -1006,3 +1006,7 @@ intent-revocation/v1不可变终态记录包含intent_id、intent_digest、revok
 pre_tool_call增加可选宿主关键字parameter_provenance与context_assertion_id，原样映射为Decide顶层引用，不从tool args/result或cwd推导可信来源，不传入内联Intent/issuer/trust。签名、scope和参数摘要仍由daemon验证。缺省不改变旧请求；显式提供引用但服务不可达、400或响应非法时必须block，包括warn/audit_only，避免引用校验失败退回legacy放行。该桥接不代表原版Hermes会自动生成这些字段；原生MCP捕获与传播仍须单独集成验证。
 
 Hermes HTTP映射在发送前用严格JSON编码（拒绝NaN/循环/非JSON对象），请求UTF-8字节不超过1MiB；失败返回无有效裁决，由引用调用的硬拒绝分支处理。响应读取最多1MiB+1字节，超限视为无效，防止无界读取。此为传输预算与错误处理，不在适配器重新实现来源验签/授权策略。
+
+### B Hermes显式MCP工具来源采集
+
+适配器配置mcp_sources是精确runtime tool_name→部署者指定server/endpoint identity的映射，默认空；不按mcp名称前缀推断server（原生名称可能歧义），不从args/result接收该映射。post_tool_call对匹配项自动向/v1/provenance-reports提交实际result，source固定MCP/untrusted，source_id为server identity+tool canonical摘要；report_id绑定platform/session/agent/tool/call。超过64KiB、不具备稳定call ID或无法JSON编码的结果不登记、不截断后当完整来源。成功后仅在有界内存缓存保留provenance_id，通过provenance_reference(session,tool,call)供宿主显式传递；缓存不保存result/token，5分钟到期，2048条满时不丢弃旧引用、不声称采集成功。引用最终由daemon复验。采集失败不伪造来源且不阻止已经发生的工具效果；后续required引用缺失必须由V3拒绝。此配置桥接仍需真实原生MCP集成验证，不能称为任意服务器零配置支持。

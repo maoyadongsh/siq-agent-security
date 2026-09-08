@@ -249,3 +249,40 @@ def test_request_budget_accepts_exact_limit_and_rejects_next_byte(server):
     assert mod._post("/v1/decide", {"payload": "x" * size})["action"] == "allow"
     assert mod._post("/v1/decide", {"payload": "x" * (size + 1)}) is None
     assert len(_Fake.seen) == 1
+
+
+def test_configured_mcp_result_capture_uses_exact_tool_and_low_trust(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    mod._CFG["mcp_sources"] = {"mcp__a__lookup": "https://fixture.invalid/mcp"}
+    _Fake.status, _Fake.decision = 201, {"provenance_id": "rep-fixture"}
+    result = {"path": "/work/report", "source": {"type": "USER", "trust": "authoritative"}}
+    mod._post_tool_call("mcp__a__lookup", result=result, session_id="s1", tool_call_id="c1")
+    reports = [body for path, _, body in _Fake.seen if path == "/v1/provenance-reports"]
+    assert len(reports) == 1
+    assert reports[0]["source"]["type"] == "MCP" and reports[0]["source"]["trust"] == "untrusted"
+    assert "https://fixture.invalid/mcp" not in json.dumps(reports[0])
+    assert reports[0]["content"] == result
+    assert mod.provenance_reference("s1", "mcp__a__lookup", "c1") == "rep-fixture"
+    assert mod.provenance_reference("other-session", "mcp__a__lookup", "c1") is None
+    mod._post_tool_call("mcp__a__lookup_unregistered", result=result, session_id="s1", tool_call_id="c2")
+    assert len([path for path, _, _ in _Fake.seen if path == "/v1/provenance-reports"]) == 1
+
+
+def test_mcp_capture_failure_and_capacity_do_not_create_or_replace_refs(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    mod._CFG["mcp_sources"] = {"mcp__a__lookup": "fixture-server"}
+    _Fake.status, _Fake.decision = 201, {"provenance_id": "rep-original"}
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "c1", "original")
+    mod._CORRELATION_MAX = 1
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "c2", "another")
+    assert mod.provenance_reference("s1", "mcp__a__lookup", "c1") == "rep-original"
+    assert mod.provenance_reference("s1", "mcp__a__lookup", "c2") is None
+    _Fake.status = 409
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "c1", "changed")
+    assert mod.provenance_reference("s1", "mcp__a__lookup", "c1") is None
+    count = len(_Fake.seen)
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "c3", "x" * (64 * 1024))
+    mod._capture_mcp_result("s1", "mcp__a__lookup", "", "no stable call")
+    assert len(_Fake.seen) == count

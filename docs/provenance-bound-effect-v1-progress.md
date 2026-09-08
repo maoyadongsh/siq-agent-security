@@ -541,3 +541,10 @@
 - _post发送前严格JSON编码、拒绝NaN/循环/不可编码对象和超1MiB请求，返回无有效裁决，显式Authority引用调用由三模式硬拒绝分支处理。响应有界读取1MiB+1，超限不接受allow；内嵌资产同步。
 - 42项Hermes适配器测试全部通过，包括恰好1MiB请求允许、+1字节不发送、超响应预算warn也block；Ruff、adapterinstall race/vet与四平台编译通过，diff检查通过。
 - 本轮是已复现的传输失败边界修复，不承担来源验签或新增原生自动采集声明；上一轮V2原生兼容证据保留，完整目标继续。
+
+### B Hermes配置化MCP结果自动上报
+
+- 检查原生post_tool_call只提供工具名/参数/结果等信息；MCP原生注册名可能歧义，未依赖名称前缀臆造server。新增mcp_sources精确工具→部署者服务器身份配置，默认空；post hook自动提交实际result，固定MCP/untrusted，服务器身份+工具仅用摘要。
+- report_id绑定平台/会话/Agent/工具/call；无稳定call、过大/不可编码结果不登记、不截断伪装完整。成功后仅缓存provenance_id，2048上限/5分钟到期；失败或重复ID报告冲突不能保留旧引用供新结果冒用。宿主可显式取回引用，后续参数派生仍需daemon选择API。
+- 44项Hermes适配器测试通过，覆盖精确映射、工具内容自报USER不升级、原内容保持、跨会话取引用失败、容量/失败/超限；Ruff、adapterinstall race/vet与四平台编译通过，内嵌资产同步。
+- 本批HTTP测试用fake服务验证映射，不称为原生MCP已接入。下一步实际daemon+MCP调用验证采集/派生/参数引用链；完整目标仍进行中。

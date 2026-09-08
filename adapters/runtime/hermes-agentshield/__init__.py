@@ -18,6 +18,7 @@ to the siq-agent-security console (spec §4.2).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sys
@@ -35,6 +36,7 @@ _DEFAULTS = {
     "timeout_s": 5,
     "platform": "hermes",
     "agent_id": "",
+    "mcp_sources": {},
 }
 
 
@@ -90,7 +92,7 @@ def _token() -> str | None:
     return _TOKEN or None
 
 
-def _post(path: str, body: dict[str, Any]) -> dict[str, Any] | None:
+def _post(path: str, body: dict[str, Any], *, expected: int = 200) -> dict[str, Any] | None:
     tok = _token()
     if not tok:
         return None
@@ -108,7 +110,7 @@ def _post(path: str, body: dict[str, Any]) -> dict[str, Any] | None:
     )
     try:
         with urllib.request.urlopen(req, timeout=float(_CFG["timeout_s"])) as resp:
-            if resp.status != 200:
+            if resp.status != expected:
                 return None
             raw = resp.read((1 << 20) + 1)
             if len(raw) > 1 << 20:
@@ -261,6 +263,48 @@ def _pre_tool_call(
     return _fail_closed("malformed decision", tool=tool_name, session_id=sid)
 
 
+_PROVENANCE_REFS: dict[tuple[str, str, str], tuple[float, str]] = {}
+_PROVENANCE_LOCK = threading.Lock()
+
+
+def provenance_reference(session_id: str, tool_name: str, tool_call_id: str) -> str | None:
+    """Return a previously captured low-trust reference; daemon still verifies it."""
+    with _PROVENANCE_LOCK:
+        value = _PROVENANCE_REFS.get((session_id, tool_name, tool_call_id))
+        return value[1] if value and value[0] > time.monotonic() else None
+
+
+def _capture_mcp_result(sid, tool, call_id, result):
+    sources = _CFG.get("mcp_sources")
+    identity = sources.get(tool) if isinstance(sources, dict) else None
+    if not call_id or not isinstance(identity, str) or not identity or len(identity) > 4096:
+        return
+    agent = _CFG["agent_id"] or os.environ.get("HERMES_PROFILE", "default")
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    try:
+        source_id = hashlib.sha256(canonical({"server": identity, "tool": tool})).hexdigest()
+        report_id = hashlib.sha256(canonical([_CFG["platform"], sid, agent, tool, call_id])).hexdigest()
+        body = {"report_id": report_id, "platform": _CFG["platform"], "session_id": sid, "agent_id": agent,
+                "source": {"type": "MCP", "source_id": source_id, "trust": "untrusted"}, "content": result}
+        if len(canonical(body)) > 60 * 1024:
+            return  # reserve space for the HTTP JSON encoder; never truncate provenance content
+    except (TypeError, ValueError, RecursionError, UnicodeError):
+        return
+    with _PROVENANCE_LOCK:
+        now = time.monotonic()
+        for key in [key for key, value in _PROVENANCE_REFS.items() if value[0] <= now]:
+            del _PROVENANCE_REFS[key]
+        key = (sid, tool, call_id)
+        # Repeated call IDs are not silently rebound to a different tool result.
+        _PROVENANCE_REFS.pop(key, None)
+        if len(_PROVENANCE_REFS) >= _CORRELATION_MAX:
+            return
+        report = _post("/v1/provenance-reports", body, expected=201)
+        if report and isinstance(report.get("provenance_id"), str) and report["provenance_id"]:
+            _PROVENANCE_REFS[key] = (now + _CORRELATION_TTL, report["provenance_id"])
+
+
 def _post_tool_call(
     tool_name: str,
     args: dict[str, Any] | None = None,
@@ -270,6 +314,7 @@ def _post_tool_call(
     tool_call_id: str = "",
     **_: Any,
 ) -> None:
+    _capture_mcp_result(session_id or task_id or "hermes-default", tool_name, tool_call_id, result)
     text = result if isinstance(result, str) else json.dumps(result, ensure_ascii=False, default=str)
     _post(
         "/v1/observe",
