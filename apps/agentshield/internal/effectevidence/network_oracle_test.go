@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -46,6 +48,39 @@ func TestNetworkOracleActualReceiptAndRedirect(t *testing.T) {
 	r, err := s.Submit(e, a, e.Source, time.Now())
 	if err != nil || r.Evidence.Result != "expected" {
 		t.Fatal(r, err)
+	}
+	material, err := oracle.Material(0, oracle.URL())
+	if err != nil {
+		t.Fatal(err)
+	}
+	archived, err := s.SubmitNetwork("network-material", material, a, e.Source, time.Now())
+	if err != nil || archived.NetworkObservation == nil {
+		t.Fatal(archived, err)
+	}
+	retry, err := s.SubmitNetwork("network-material", material, a, e.Source, time.Now())
+	if err != nil || retry.Signature != archived.Signature {
+		t.Fatal("network material retry changed evidence", err)
+	}
+	read, err := s.Get("network-material", time.Now())
+	if err != nil || read.NetworkObservation.Received != material.Received {
+		t.Fatal(read, err)
+	}
+	plain := archived.Evidence
+	plain.Signature = ""
+	if _, err = s.Submit(plain, a, e.Source, time.Now()); !errors.Is(err, ErrConflict) {
+		t.Fatal("network material removed on retry", err)
+	}
+	read.NetworkObservation.RequestedPort = "1"
+	read.Signature, err = key.SignCanonical(read.unsigned())
+	if err != nil {
+		t.Fatal(err)
+	}
+	changed, _ := json.Marshal(read)
+	if err = os.WriteFile(filepath.Join(s.dir, "network-material.json"), changed, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = s.Get("network-material", time.Now()); !errors.Is(err, ErrState) {
+		t.Fatal("altered network material rebound to old evidence", err)
 	}
 	logs := oracle.Events()
 	raw, _ := json.Marshal(logs)

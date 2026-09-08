@@ -31,14 +31,15 @@ var (
 
 // Record binds the incident projection to its evidence in one immutable file.
 type Record struct {
-	FileObservation *FileObservation `json:"file_observation,omitempty"`
-	SchemaVersion   string           `json:"schema_version"`
-	Evidence        Evidence         `json:"evidence"`
-	FindingCode     string           `json:"finding_code"`
-	RequestDigest   string           `json:"request_digest"`
-	TaskID          string           `json:"task_id"`
-	SigningSchema   string           `json:"signing_schema"`
-	Signature       string           `json:"signature"`
+	NetworkObservation *NetworkObservation `json:"network_observation,omitempty"`
+	FileObservation    *FileObservation    `json:"file_observation,omitempty"`
+	SchemaVersion      string              `json:"schema_version"`
+	Evidence           Evidence            `json:"evidence"`
+	FindingCode        string              `json:"finding_code"`
+	RequestDigest      string              `json:"request_digest"`
+	TaskID             string              `json:"task_id"`
+	SigningSchema      string              `json:"signing_schema"`
+	Signature          string              `json:"signature"`
 }
 
 func (r Record) unsigned() map[string]any {
@@ -174,16 +175,16 @@ func (s *Store) selectRecords(now time.Time, match func(Record) bool) ([]Record,
 // Submit requires an authenticated observer and a verified engine action. These
 // arguments are trusted server dependencies, never request-body fields.
 func (s *Store) Submit(input Evidence, action Action, observer Source, now time.Time) (Record, error) {
-	return s.submit(input, action, observer, now, nil)
+	return s.submit(input, action, observer, now, nil, nil)
 }
 func (s *Store) SubmitFile(id string, o FileObservation, action Action, observer Source, now time.Time) (Record, error) {
 	e, err := o.evidenceAt(id, action, observer, now)
 	if err != nil {
 		return Record{}, err
 	}
-	return s.submit(e, action, observer, now, &o)
+	return s.submit(e, action, observer, now, &o, nil)
 }
-func (s *Store) submit(input Evidence, action Action, observer Source, now time.Time, material *FileObservation) (Record, error) {
+func (s *Store) submit(input Evidence, action Action, observer Source, now time.Time, material *FileObservation, network *NetworkObservation) (Record, error) {
 	storeMu.Lock()
 	defer storeMu.Unlock()
 	if input.Signature != "" || len(action.TaskID) > 256 {
@@ -201,7 +202,7 @@ func (s *Store) submit(input Evidence, action Action, observer Source, now time.
 	digest := hex.EncodeToString(sum[:])
 	old, err := s.get(e.EvidenceID, now)
 	if err == nil {
-		if old.RequestDigest != digest || old.TaskID != action.TaskID || (old.FileObservation == nil) != (material == nil) || (material != nil && *old.FileObservation != *material) {
+		if (old.NetworkObservation == nil) != (network == nil) || (network != nil && *old.NetworkObservation != *network) || old.RequestDigest != digest || old.TaskID != action.TaskID || (old.FileObservation == nil) != (material == nil) || (material != nil && *old.FileObservation != *material) {
 			return Record{}, ErrConflict
 		}
 		return old, nil
@@ -225,7 +226,7 @@ func (s *Store) submit(input Evidence, action Action, observer Source, now time.
 	if err != nil {
 		return Record{}, ErrState
 	}
-	r := Record{FileObservation: material, SchemaVersion: "effect-evidence-record/v1", Evidence: e, FindingCode: code, RequestDigest: digest, TaskID: action.TaskID, SigningSchema: signing.SchemaLocalCanonicalV1}
+	r := Record{NetworkObservation: network, FileObservation: material, SchemaVersion: "effect-evidence-record/v1", Evidence: e, FindingCode: code, RequestDigest: digest, TaskID: action.TaskID, SigningSchema: signing.SchemaLocalCanonicalV1}
 	r.Signature, err = s.key.SignCanonical(r.unsigned())
 	if err != nil {
 		return Record{}, ErrState
@@ -257,8 +258,19 @@ func (r Record) Verify(pub ed25519.PublicKey, now time.Time) error {
 	if r.SchemaVersion != "effect-evidence-record/v1" || r.Evidence.Verify(pub, now) != nil || !digestPattern.MatchString(r.RequestDigest) || len(r.TaskID) > 256 || !member(r.FindingCode, "", "unauthorized_effect_observed", "effect_scope_mismatch") || r.SigningSchema != signing.SchemaLocalCanonicalV1 || !signing.VerifyCanonical(pub, r.unsigned(), r.Signature) {
 		return ErrState
 	}
+	if r.NetworkObservation != nil && (r.FileObservation != nil || !networkMaterialMatches(*r.NetworkObservation, r.Evidence, now)) {
+		return ErrState
+	}
 	if r.FileObservation != nil && !fileMaterialMatches(*r.FileObservation, r.Evidence, now) {
 		return ErrState
 	}
 	return nil
+}
+
+func (s *Store) SubmitNetwork(id string, o NetworkObservation, action Action, observer Source, now time.Time) (Record, error) {
+	e, err := o.evidenceAt(id, action, observer, now)
+	if err != nil {
+		return Record{}, err
+	}
+	return s.submit(e, action, observer, now, nil, &o)
 }

@@ -245,3 +245,10 @@
 - 验证前置效果拒绝、审批时刻边界允许、当前/重启/历史投影时间一致，以及Completion的审批前记录conflicting。旧秒级审批只保留原有时间精度，不能恢复未记录的亚秒先后；该历史精度限制仍须在最终报告说明。
 
 - 本批Go全模块race、vet与四平台编译通过，日志 `/tmp/siq-effect-approval-time-race.log`。pending恢复、网络材料归档和benchmark等工作继续进行。
+
+### C1 网络材料签名归档
+
+- NetworkOracle.Material 从本服务器已接收事件生成只含端点/接收元数据的材料；新增 network-observation/v1 与 Record 可选 network_observation，和文件材料互斥。
+- SubmitNetwork 将材料、效果、事件同封套签名；读回重新派生摘要、最终资源、接收时间和执行状态，普通摘要提交不能覆盖带材料记录。Source identity 与 server request_id 的完整前缀一致。
+- 实际HTTP oracle 测试覆盖材料保存/读回/幂等、去材料重试拒绝、外层重签后端口替换仍不能绑定原内层摘要；原有直接接收、重定向、预算和隐私测试继续通过。
+- Go全模块race/vet与四平台编译通过（`/tmp/siq-network-material-race.log`）；随后来源ID精确匹配加强，network定向race/vet复验通过。Python合同11项与Ruff通过。网络材料HTTP提交、网络Completion及benchmark编排仍待接入。

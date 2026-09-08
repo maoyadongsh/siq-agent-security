@@ -7,13 +7,11 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"net/url"
 	"strconv"
 	"sync"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/canon"
-	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 )
 
 // NetworkOracle is a bounded loopback test server, not a generic network monitor.
@@ -92,43 +90,17 @@ func (o *NetworkOracle) receive(w http.ResponseWriter, r *http.Request) {
 // Evidence derives from a retained server event, never from caller-supplied log
 // fields. requestedURL comes from the trusted benchmark scenario/action setup.
 func (o *NetworkOracle) Evidence(index int, id string, action Action, requestedURL string) (Evidence, error) {
+	m, err := o.Material(index, requestedURL)
+	if err != nil {
+		return Evidence{}, err
+	}
+	return m.evidenceAt(id, action, Source{Type: "test_oracle", SourceID: o.id, Independence: "external_independent"}, time.Now())
+}
+func (o *NetworkOracle) Material(index int, requestedURL string) (NetworkObservation, error) {
 	o.mu.Lock()
 	defer o.mu.Unlock()
 	if index < 0 || index >= len(o.events) {
-		return Evidence{}, ErrNotFound
+		return NetworkObservation{}, ErrNotFound
 	}
-	u, err := url.Parse(requestedURL)
-	if err != nil || u.User != nil || (u.Scheme != "http" && u.Scheme != "https") {
-		return Evidence{}, ErrInvalid
-	}
-	host, err := runtimeaction.NormalizeHost(u.Hostname())
-	if err != nil {
-		return Evidence{}, ErrInvalid
-	}
-	port := u.Port()
-	if port == "" {
-		port = "80"
-		if u.Scheme == "https" {
-			port = "443"
-		}
-	}
-	n, err := strconv.Atoi(port)
-	if err != nil || n < 1 || n > 65535 {
-		return Evidence{}, ErrInvalid
-	}
-	event := o.events[index]
-	result := "expected"
-	if event.Scheme != u.Scheme || event.Host != host || event.Port != port {
-		result = "unexpected"
-	}
-	// The event digest binds both the requested endpoint and actual listener log.
-	encoded, err := canon.Marshal(map[string]any{"requested_scheme": u.Scheme, "requested_host": host, "requested_port": port, "scheme": event.Scheme, "host": event.Host, "port": event.Port, "resolved_target": event.ResolvedTarget, "request_id": event.RequestID, "request_digest": event.RequestDigest, "received_at": event.ReceivedAt})
-	if err != nil {
-		return Evidence{}, ErrInvalid
-	}
-	digest := sha256.Sum256(encoded)
-	refs := runtimeaction.ResourceRefs([]runtimeaction.Resource{{Domain: "network", Value: event.Host}})
-	ref, _ := ResourceReference(refs[0])
-	e := Evidence{SchemaVersion: "effect-evidence/v1", EvidenceID: id, ActionID: action.ActionID, DecisionReceiptID: action.DecisionReceiptID, EffectType: "network.request", ResourceRef: ref, ExecutionState: "completed", Source: Source{Type: "test_oracle", SourceID: o.id, Independence: "external_independent"}, Coverage: "partial", Result: result, EvidenceDigest: hex.EncodeToString(digest[:]), ObservedAt: event.ReceivedAt, SigningSchema: "local_canonical/v1"}
-	return e, e.Validate(time.Now())
+	return networkMaterial(o.events[index], requestedURL)
 }

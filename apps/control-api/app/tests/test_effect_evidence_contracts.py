@@ -162,3 +162,17 @@ def test_completion_response_has_no_caller_writable_completed_flag():
     v.validate(good)
     assert list(v.iter_errors({**good, "completed": True}))
     assert list(v.iter_errors({**good, "status": "success"}))
+
+
+def test_network_material_keeps_server_event_without_request_plaintext():
+    root = Path(__file__).parents[4] / "packages/contracts"
+    schema = json.loads((root / "network-observation.v1.schema.json").read_text())
+    Draft202012Validator.check_schema(schema)
+    v = Draft202012Validator(schema)
+    received = {"scheme": "http", "host": "127.0.0.1", "port": "12345",
+                "resolved_target": "127.0.0.1:12345", "request_id": "oracle-1-1",
+                "request_digest": "a" * 64, "received_at": "2026-09-08T01:00:00Z"}
+    good = {"requested_scheme": "http", "requested_host": "localhost", "requested_port": "12344", "received": received}
+    v.validate(good)
+    for field, value in [("body", "secret"), ("url", "http://private/?token=secret"), ("host", "remote.example")]:
+        assert list(v.iter_errors({**good, "received": {**received, field: value}}))
