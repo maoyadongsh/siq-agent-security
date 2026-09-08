@@ -4,8 +4,9 @@
 
 <h1 align="center">SIQ Agent Security</h1>
 
-<p align="center"><strong>Trusted Execution and Effect Verification for Autonomous Agents</strong></p>
-<p align="center">Trusted Intent · Parameter Provenance · Verified Effects</p>
+<p align="center"><strong>Secure Runtime for Agent Skills</strong></p>
+
+<p align="center">Agent Skills define what agents can do. SIQ defines what they are allowed to do.</p>
 
 <p align="center">
   <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
@@ -30,7 +31,7 @@ The project serves researchers, Agent tool and adapter developers, and platform 
 
 ## Core value
 
-**Let Agents plan dynamically, ground permissions in authority, and verify delivery through effects.** The project addresses three research questions in autonomous Agent execution, connecting trusted intent, parameter provenance and effect evidence in one runtime path.
+**Core outcome: Trusted Agent Execution.** Agents plan dynamically; SIQ constrains permissions through trusted intent, checks actions against parameter provenance, and determines completion from observed effects.
 
 | Research focus | Implemented mechanism | Business use |
 | :--- | :--- | :--- |

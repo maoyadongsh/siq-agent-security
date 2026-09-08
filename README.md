@@ -4,8 +4,10 @@
 
 <h1 align="center">SIQ Agent Security</h1>
 
-<p align="center"><strong>面向自主 Agent 的可信执行与效果核验</strong></p>
-<p align="center">Trusted Intent · Parameter Provenance · Verified Effects</p>
+<p align="center"><strong>Secure Runtime for Agent Skills</strong><br />
+面向 Agent Skills 的可信执行安全运行时</p>
+
+<p align="center">Skills 给 Agent 能力，SIQ 给能力边界。</p>
 
 <p align="center">
   <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
@@ -30,7 +32,7 @@ SIQ Agent Security 将用户授权、参数来源、工具执行和实际效果�
 
 ## 核心价值
 
-**让 Agent 动态规划，让授权有依据，让交付可核验。** 项目聚焦自主 Agent 执行中的三个研究问题，将受信意图、参数来源和效果证据连接到同一条运行链路。
+**核心结果：Trusted Agent Execution（可信的 Agent 执行）。** Agent 动态规划，SIQ 以受信意图约束权限、以参数来源核验动作、以实际效果判定完成。
 
 | 研究重点 | 已实现的技术机制 | 业务用途 |
 | :--- | :--- | :--- |
