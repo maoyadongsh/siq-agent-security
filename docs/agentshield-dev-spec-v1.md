@@ -954,3 +954,7 @@ HistoricalEffectActions 只生成只读投影供已保存证据复核，不重�
 ### C1 网络观测材料归档
 
 Record 增加可选 network_observation：请求的scheme/host/port与真实接收事件（最终scheme/host/port/resolved_target、server request_id、请求摘要、接收时间）。不存请求路径、查询串、正文或完整URL。NetworkOracle.Material 只读取自身收到的事件；SubmitNetwork 将材料、效果和finding同封套签名，读回重新派生摘要/资源/时间/结果校验。文件/网络材料互斥；旧记录省略新字段保持签名兼容。当前只验证 loopback test_oracle，不扩展为生产公网审计。
+
+### C1 网络材料提交 API
+
+POST `/v1/network-observations` 使用capEffectObserve，正文只含observation_id、action_id、decision_receipt_id、observation。Source从已注册observer派生，必须为test_oracle/external_independent，scope精确匹配真实动作；server request_id绑定该Source。调用管理端信任的独立测试服务器上报材料，不赋予decision token上报权限，不由此宣称接受任意客户端日志为独立真相。SubmitNetwork原子保存材料/证据/事件，同ID冲突409，来源/scope错误403。
