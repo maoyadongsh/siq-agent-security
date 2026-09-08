@@ -1,16 +1,66 @@
-# SIQ Agent Security
+<p align="center">
+  <img src="site/favicon.svg" width="64" height="64" alt="SIQ" />
+</p>
 
-**Reproducible runtime authorization and effect verification for Agent Skills.**
+<h1 align="center">SIQ Agent Security</h1>
 
-[简体中文](README.md) · **English**
+<p align="center"><strong>Secure Runtime for Agent Skills</strong></p>
 
-[Quick start](#quick-start) · [Research and evidence](#research-and-evidence) · [Source release](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1) · [Contributing](CONTRIBUTING.md) · [Security reports](SECURITY.md)
+<p align="center">Agent Skills define what agents can do. SIQ defines what they are allowed to do.</p>
+
+<p align="center">
+  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml/badge.svg?branch=main" alt="Research reproduction · main" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/code-Apache--2.0-001840?style=flat" alt="Project-owned code: Apache-2.0" /></a>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1"><img src="https://img.shields.io/badge/release-source%20prerelease-7c5a0c?style=flat" alt="Source prerelease" /></a>
+</p>
+
+<p align="center">
+  <a href="README.md">简体中文</a> · <strong>English</strong>
+</p>
+
+<p align="center">
+  <a href="#quick-start">Quick start</a> · <a href="#research-and-evidence">Research evidence</a> · <a href="#components-and-integrations">Integrations</a> · <a href="#contributing-and-next-steps">Contributing</a>
+</p>
+
+---
 
 SIQ Agent Security connects user authority, parameter provenance, tool execution and observed effects into an inspectable evidence chain. The Agent plans tasks and selects Skills. The SIQ runtime checks actions against trusted authority and determines task completion from independently collected effect evidence.
 
 The project serves researchers, Agent tool and adapter developers, and platform teams evaluating agent permission controls. The initial demonstration runs on ordinary Linux with deterministic model fixtures, without API keys, a GPU or the enterprise control plane.
 
-The first research version, **[research-v0.1.0-rc.1](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1)**, is available as an **unsigned source prerelease**, with `SOURCE-INFO.json` and `SHA256SUMS`. It contains no newly compiled binaries or model weights. Checksums establish file integrity, not a publisher signature. Its source is fixed at [`aefab111`](https://github.com/maoyadongsh/siq-agent-security/commit/aefab111c7fcad9075c8f429f97c9eab519dcd22); later README and publication-record updates do not change that identity.
+## Core value
+
+**Core outcome: Trusted Agent Execution.** Agents plan dynamically; SIQ constrains permissions through trusted intent, checks actions against parameter provenance, and determines completion from observed effects.
+
+| Research focus | Implemented mechanism | Business use |
+| :--- | :--- | :--- |
+| **Authority independent of the model** | A Go runtime checks Grant / Intent, session bindings and approvals before execution; model proposals cannot expand permissions | Auditable authorization boundaries for automated operations |
+| **Same value, different provenance** | Trusted Context and parameter provenance bind to actions; identical recipient values can be allowed or denied based on trusted-database / MCP origin | Constrain recipient substitution and unauthorized delivery induced by tool results |
+| **Completion grounded in effects** | Signed receipts associate actions; independent file and controlled-receiver observers distinguish tool success, observed effects and task completion | Evidence for delivery acceptance, fault diagnosis and execution audits |
+
+Potential applications include enterprise Agent permission governance, research/report delivery and tool-platform integration. The local runtime, adapters and optional enterprise control plane provide the current foundation; scale, external SaaS effect verification and commercial returns still require validation in specific deployments. Assess research contributions through the [research questions](docs/research/research-questions.md) and [technical report](docs/research/technical-report.md); no priority or peer-reviewed novelty is claimed.
+
+> [!IMPORTANT]
+> **Current release: unsigned source prerelease**
+>
+> [research-v0.1.0-rc.1](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1) includes `SOURCE-INFO.json` and `SHA256SUMS`, with no newly compiled binaries or model weights. Checksums establish file integrity, not a publisher signature.
+
+<details>
+<summary>Release source and version identity</summary>
+
+The released source is fixed at [`aefab111`](https://github.com/maoyadongsh/siq-agent-security/commit/aefab111c7fcad9075c8f429f97c9eab519dcd22); later README and publication-record updates do not change that identity.
+
+</details>
+
+## Start here
+
+| Your goal | Entry point | What to expect |
+| :--- | :--- | :--- |
+| Try the complete flow | [Quick start](#quick-start) | A local demonstration without model keys |
+| Reproduce and evaluate | [Reproduction guide](REPRODUCIBILITY.md) · [Research index](docs/research/README.md) | Fixed cases, evaluation protocols and evidence |
+| Integrate your Agent | [Components and integrations](#components-and-integrations) | Runtime, adapter and contract entry points |
+| Contribute to research | [Contributing](CONTRIBUTING.md) · [Community tasks](docs/research/community-backlog.md) | Clearly scoped starting points |
 
 ## What you can verify
 
@@ -27,6 +77,44 @@ These demonstrations use explicit model fixtures to drive real SIQ components. T
 
 ## How it works
 
+### Components and authorization chain
+
+This diagram preserves the complete local runtime and enterprise control-plane relationships. The enterprise control plane is optional; the local demonstration does not depend on that path.
+
+```mermaid
+flowchart TB
+    Human[Operator confirms authority] --> Console[Local console / management API]
+    Skill[SIQ Skill: interaction and operating guidance] --> Agent[Application Agent]
+    Candidate[Candidate Skill / configuration] --> Admission[Static admission and capability extraction]
+    Admission --> Console
+    Console --> Authority[Signed Grant / Intent / session binding]
+    Agent --> Adapter[Runtime adapter]
+    Adapter --> Gate[Local decision engine]
+    Authority --> Gate
+    Gate --> Decision[allow / deny / hold / redact]
+    Decision --> Adapter
+    Adapter --> Tool[Authorized tool call]
+    Tool --> Observe[Result correlation and Observation]
+    Gate --> Receipts[Signed receipt chain]
+    Observe --> Receipts
+    Receipts --> Console
+
+    Connectors[Read-only Connector] --> Edge[Edge Agent]
+    Edge --> Control[Enterprise Control API / Worker]
+    EnterpriseUI[Enterprise console] --> Control
+    Control --> DB[(PostgreSQL)]
+    Control --> Backend[Execution backend adapter / readback verification]
+
+    classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
+    classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
+    classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
+    class Human,Authority authority
+    class Admission,Gate,Decision runtime
+    class Observe,Receipts evidence
+```
+
+### Task execution and effect verification
+
 ```mermaid
 flowchart LR
     Task[User task] --> Agent[Agent planning and Skill selection]
@@ -37,6 +125,12 @@ flowchart LR
     Runtime --> Receipts[Signed decision receipts]
     Tool --> Observer[Independent effect collection]
     Observer --> Completion[SIQ completion decision]
+    classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
+    classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
+    classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
+    class Authority authority
+    class Runtime,Completion runtime
+    class Receipts,Observer evidence
 ```
 
 - **Before execution**: statically scan Skills and record capability requirements. Constrain actions with Grants, Intent, trusted Context and parameter provenance. Model output cannot create effective permissions.
@@ -62,7 +156,8 @@ bash scripts/hackathon/pair.sh
 
 The launcher installs locked Web dependencies and builds the local UI and Go binary. Open **http://127.0.0.1:47621/demo**, enter the one-time pairing code printed in your terminal, and select a scenario from the table above. Keep pairing codes and service state files on your machine.
 
-Pass `--mode test` explicitly: the launcher's default `demo` mode uses configured real models. To pin the first release, run `git switch --detach research-v0.1.0-rc.1` before starting.
+> [!NOTE]
+> Pass `--mode test` explicitly: the launcher's default `demo` mode uses configured real models. To pin the first release, run `git switch --detach research-v0.1.0-rc.1` before starting.
 
 Stop this demonstration instance when finished:
 
@@ -96,9 +191,14 @@ The default cohort contains all **23 fixed control cases**. Check expectation vi
 
 ### 3. Optional: use real models
 
+<details>
+<summary>Show the StepFun + DGX Spark setup path</summary>
+
 The existing real-model demonstration uses **StepFun `step-3.7-flash` for remote planning** and **Ornith on DGX Spark for local analysis**. This path requires separate model, credential and hardware configuration. Run it separately from the key-free paths and report its results separately.
 
 Start with the [DGX deployment guide](deploy/dgx-spark/README.md), [private model configuration](docs/hackathon/step-plan.md) and [three-track reproduction guide](REPRODUCIBILITY.md). A local failure during confidential analysis must not automatically authorize fallback to a remote model.
+
+</details>
 
 ## Research and evidence
 
@@ -151,6 +251,11 @@ Project-owned software uses **[Apache-2.0](LICENSE)**. Explicitly listed origina
 
 Use **[CITATION.cff](CITATION.cff)** to cite the software, and record the version, commit and corpus digest actually used. The [citation guide](docs/research/citation-guide.md) explains source and research-material references.
 
-[Competition demonstration](HACKATHON.md) · [V5 frozen snapshot](docs/hackathon/final-submission-state.md) · [Research technical report](docs/research/technical-report.md) · [Development conventions](AGENTS.md) · [Continuous integration](https://github.com/maoyadongsh/siq-agent-security/actions)
+| Community and governance | Research and archives |
+| :--- | :--- |
+| [Contributing](CONTRIBUTING.md) · [DCO](DCO) | [Citation guide](docs/research/citation-guide.md) · [CITATION.cff](CITATION.cff) |
+| [Governance](GOVERNANCE.md) · [Code of conduct](CODE_OF_CONDUCT.md) | [Technical report](docs/research/technical-report.md) · [Reproduction](REPRODUCIBILITY.md) |
+| [Private security reports](SECURITY.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) | [Competition demo](HACKATHON.md) · [V5 frozen snapshot](docs/hackathon/final-submission-state.md) |
+| [Development conventions](AGENTS.md) · [Continuous integration](https://github.com/maoyadongsh/siq-agent-security/actions) | [Operations report](docs/research/operations-20260908.md) · [Task ledger](docs/open-source-research-tasks-20260908.md) |
 
 The competition snapshot retains its original source, artifacts, video and experimental denominators. Research releases and subsequent documentation updates carry their own identity records.
