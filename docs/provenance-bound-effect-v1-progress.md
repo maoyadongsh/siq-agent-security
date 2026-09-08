@@ -385,3 +385,10 @@
 - 新增approval-params：真实hold获批并复查approved后更改params，执行前hold-status以400/hold_identity_mismatch拒绝，受控工具不执行；正常对照参数保持一致并执行marker。
 - /tmp/siq-runtime-benchmark-twenty-pairs.json真实运行通过（7d95f72加工作树），40个基准观测、五套daemon回执链各自离线验签。20对schema/配对、参数绑定断言、6项统计测试及Ruff通过。
 - 仅达到20对数量门槛，不代表D或全目标完成：D0/D1未评估，多数D3–D5仍缺独立材料，容量仅深度边界，命名指标全阶段映射/性能埋点/长期证据包/CI待完成。全局Intent撤销不能由绑定撤销冒充，native平台验收与pending恢复同样继续待开发。
+
+### D 公共回执证据导出与独立验签起步
+
+- runner在临时状态清理前按receipts/*.jsonl白名单导出五套daemon公钥/二进制摘要/完整回执，不复制seed、token或整个状态目录。效果签名封套继续随观测保存。
+- 新增独立Python evidence.py，验回执序号/prev_hash/content hash/Ed25519、效果内外签名及动作关联，拒绝缺链。发现并兼容Go Record.unsigned的数字float64表示（size 28.0），没有改写历史签名。
+- 20对真实重跑报告 /tmp/siq-runtime-benchmark-public-evidence.json（2a21217加工作树）；daemon清理后Python独立验证46条回执、11个效果封套通过。实际报告篡改回执、篡改效果、移除链三种负例全部拒绝，Ruff通过。
+- 目前只证明签名/关联一致性；外部信任锚、完整性checkpoint、Intent/来源图归档及Completion离线语义重放尚待补齐，不能把自包含公钥当作外部可信证明。性能/CI/pending恢复等仍未完成。

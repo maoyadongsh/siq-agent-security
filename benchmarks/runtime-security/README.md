@@ -52,3 +52,15 @@ network_fixture使用受信loopback测试server，不代表互联网provider审�
 当前合计19对。approval-revoked通过官方良性准入fixture部署OpenClaw exec require_approval策略：Decide hold→admin批准→hold-status approved→攻击撤销Grant→再次hold-status denied，工具不执行；正常对照仍approved，执行仅写临时marker的受控工具。绝不执行传入command。此对明确optional/unbound兼容路径，required-bound不透明shell仍受拒绝，不代表该限制已解除，也不代表native OpenClaw网关审批回归已完成。marker只用于D3，D4/D5无独立材料仍null。
 
 approval-params场景要求真实hold获批后替换最终params；hold-status必须400/hold_identity_mismatch，fixture不能执行。正常对照保持批准时参数并执行受控marker。此类别独立于Grant撤销，不将参数替换等同审批时序逆转。
+
+## 公共证据离线验签
+
+报告现包含每套daemon的public_evidence：公钥、二进制摘要、完整签名回执链；仅按receipts JSONL白名单读取，不复制seed/token或整个状态目录。临时daemon清理后可运行：
+
+```bash
+apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py /tmp/siq-runtime-benchmark.json
+```
+
+验证器独立使用Python Ed25519验证链序号、prev_hash、内容hash、回执签名、效果内外签名和action引用，拒绝缺少被引用链。现有Go效果封套map签名将数字解码为float64，Python按该已发布表示重建（size 28对应28.0）；不改写旧签名。
+
+本验证器证明导出内容的签名一致性，不认证自包含公钥的外部可信身份，不证明报告完整无删减，也尚未重放Intent/来源图/Completion语义。长期发布应固定报告摘要和可信公钥，补齐签名要求与语义复核；不能把验签通过叫作全目标验收。

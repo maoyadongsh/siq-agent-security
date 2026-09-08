@@ -12,6 +12,7 @@ import approval_fixture
 import effect_fixture
 import network_fixture
 import recipient_fixture
+from evidence import capture
 from metrics import STAGES, summarize
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -24,10 +25,12 @@ def main():
     spec = importlib.util.spec_from_file_location("mcp_fixture", ROOT / "scripts/validate-mcp-provenance.py")
     fixture = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(fixture)
+    public_evidence = []
     with tempfile.TemporaryDirectory(prefix="siq-runtime-benchmark-") as temporary:
         harness = fixture.base.Harness(Path(temporary), SimpleNamespace())
         try:
             evidence = fixture.run(harness, extended=True)
+            public_evidence.append(capture(harness, "provenance"))
         finally:
             harness.stop()
     observations = []
@@ -54,24 +57,28 @@ def main():
         harness = fixture.base.Harness(Path(temporary), SimpleNamespace())
         try:
             effects = effect_fixture.run(harness, fixture.base)
+            public_evidence.append(capture(harness, "file"))
         finally:
             harness.stop()
     with tempfile.TemporaryDirectory(prefix="siq-network-benchmark-") as temporary:
         harness = fixture.base.Harness(Path(temporary), SimpleNamespace())
         try:
             effects.extend(network_fixture.run(harness, fixture.base))
+            public_evidence.append(capture(harness, "network"))
         finally:
             harness.stop()
     with tempfile.TemporaryDirectory(prefix="siq-recipient-benchmark-") as temporary:
         harness = fixture.base.Harness(Path(temporary), SimpleNamespace())
         try:
             effects.extend(recipient_fixture.run(harness, fixture.base))
+            public_evidence.append(capture(harness, "recipient"))
         finally:
             harness.stop()
     with tempfile.TemporaryDirectory(prefix="siq-approval-benchmark-") as temporary:
         harness = fixture.base.Harness(Path(temporary), SimpleNamespace())
         try:
             effects.extend(approval_fixture.run(harness, fixture.base))
+            public_evidence.append(capture(harness, "approval"))
         finally:
             harness.stop()
     for observation in effects:
@@ -89,7 +96,7 @@ def main():
         observation["scenario_sha256"] = hashlib.sha256(fixture.canonical(scenario)).hexdigest()
     observations.extend(effects)
     report = {"schema_version": "runtime-security-benchmark/v1", "coverage": "component_fixture",
-              "fixture_evidence": evidence, "observations": observations, "summary": summarize(observations),
+              "public_evidence": public_evidence, "fixture_evidence": evidence, "observations": observations, "summary": summarize(observations),
               "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               "limitations": ["twenty component attack/benign pairs; native coverage remains pending", "D0/D1 not evaluated",
                               "provenance pairs: D3-D5 not evaluated; file pairs: host observer only", "no internal stage timing yet"]}
