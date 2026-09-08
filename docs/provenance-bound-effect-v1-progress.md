@@ -295,3 +295,10 @@
 - 实际生产daemon返回 provenance_missing、provenance_content_mismatch、provenance_not_found，对应正常请求全部allow；跨会话场景先在另一会话合法绑定同Intent，确保拒绝来自来源引用隔离而非缺Intent绑定。
 - 4对共8条回执离线验签通过，报告 /tmp/siq-runtime-benchmark-four-pairs.json（a9ff866加本轮工作树）。全部8个场景schema与成对关系验证、4项统计测试、Ruff通过。
 - 此批D2计数真实，D3–D5仍未评估。至少20对、效果oracle、完整指标、埋点和CI仍待完成。
+
+### D 跨任务与绑定撤销，累计6对
+
+- 新增wrong-task：来源签名与请求会话、参数摘要一致，仅来源task与当前Intent task不同，实际provenance_not_found拒绝，排除跨会话不匹配掩盖任务边界的情况。
+- 新增revoked-binding：先对新合法绑定与匹配来源实际Decide allow，再通过管理API撤销绑定，后续intent_binding_revoked拒绝；原有效绑定正常对照仍allow。此处是绑定撤销，不宣称全局Intent撤销。
+- 真实报告 /tmp/siq-runtime-benchmark-six-pairs.json（146b0bb加本轮工作树），12个基准观测及额外撤销前探针回执全部离线验签；6对schema/成对关系、分母检查、4项统计测试、Ruff通过。D5仍为0分母。
+- 尚需至少14对、真实效果阶段与独立oracle、性能埋点和CI；全局撤销语义与完整DoD继续按实际功能核对。

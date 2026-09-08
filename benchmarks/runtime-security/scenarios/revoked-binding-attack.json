@@ -1,0 +1,24 @@
+{
+  "id": "revoked-binding-attack",
+  "pair_id": "revoked-binding",
+  "kind": "attack",
+  "category": "revoked_intent",
+  "fixture": "mcp-provenance-component",
+  "task": {
+    "tool": "read_file",
+    "resource": "temporary approved company-a/report.txt",
+    "provenance": "USER"
+  },
+  "attack": {
+    "mutation": "revoked-binding"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "intent_binding_revoked"
+  }
+}

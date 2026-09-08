@@ -161,6 +161,47 @@ def run(h, extended=False):
                 benign = h.api("/v1/decide", benign_request, token=token)
                 base.require(benign["action"] == "allow", pair + " benign control rejected")
                 decisions.extend(((pair, "attack", attacked), (pair, "benign", benign)))
+            for pair in ("wrong-task", "revoked-binding"):
+                other_session = session + "-" + pair
+                other_intent = copy.deepcopy(intent)
+                other_intent["intent_id"] = "int-" + pair
+                if pair == "wrong-task":
+                    other_intent["task_id"] += "-other"
+                signed = h.api("/v1/intents", other_intent, expected=201)
+                binding = h.api("/v1/intent-bindings", {"platform": "hermes", "session_id": other_session,
+                                "agent_id": base.AGENT, "intent_id": other_intent["intent_id"]}, expected=201)
+                other_scope = {**scope, "session_id": other_session}
+                # For wrong-task, isolate task replay: sign for the current session but original task.
+                issuer = "issuer-" + pair
+                h.api("/v1/provenance-issuers", {"issuer_id": issuer, "local_key_ref": "local-state",
+                      "allowed_source_types": ["USER"], "max_trust_level": "authoritative",
+                      "scope": other_scope, "expires_at": expires}, expected=201)
+                h.api("/v1/provenance-assertions", {"schema_version": "provenance-assertion/v1",
+                      "provenance_id": pair + "-path", "source": {"type": "USER", "source_id": "fixture-form",
+                      "trust": "authoritative"}, "scope": other_scope,
+                      "content_digest": hashlib.sha256(canonical(target)).hexdigest(), "parents": [],
+                      "derivation": "direct", "issued_at": intent["issued_at"], "expires_at": expires,
+                      "issuer": issuer}, expected=201)
+                attack_request = copy.deepcopy(request)
+                attack_request.update(session_id=other_session, tool_call_id=pair + "-attack")
+                attack_request["parameter_provenance"][0]["provenance_refs"] = [pair + "-path"]
+                reason = "provenance_not_found"
+                if pair == "revoked-binding":
+                    before = copy.deepcopy(attack_request)
+                    before["tool_call_id"] = pair + "-before-revoke"
+                    base.require(h.api("/v1/decide", before, token=token)["action"] == "allow",
+                                 "binding must allow before revocation")
+                    h.api("/v1/intent-bindings/" + binding["binding_id"] + "/revoke",
+                          {"expected_intent_digest": signed["digest"]})
+                    reason = "intent_binding_revoked"
+                attacked = h.api("/v1/decide", attack_request, token=token)
+                base.require(attacked["action"] == "deny" and attacked["reason_code"] == reason,
+                             pair + " attack accepted")
+                benign_request = copy.deepcopy(request)
+                benign_request["tool_call_id"] = pair + "-benign"
+                benign = h.api("/v1/decide", benign_request, token=token)
+                base.require(benign["action"] == "allow", "unrelated valid task rejected")
+                decisions.extend(((pair, "attack", attacked), (pair, "benign", benign)))
         records = h.receipts()
         h.stop()
         verified = json.loads(h.command([str(h.binary), "verify"]))

@@ -19,4 +19,6 @@ python3 benchmarks/runtime-security/run.py --out /tmp/siq-runtime-benchmark.json
 python3 -m unittest discover -s benchmarks/runtime-security -p 'test_*.py'
 ```
 
-当前执行器复用实际 daemon 的准入、Grant challenge/approve/deploy、Intent V3、MCP HTTP 及来源 API，运行 MCP路径控制、来源缺失、内容替换、跨会话重放4类攻击及各自可信USER对照，停服后离线验证回执链。D2来自实际决策回执；目标工具不执行，因此D3–D5为null。报告保留二进制与runner摘要、场景摘要、源码基线及回执ID，内部阶段耗时缺失时保持null。源码基线不表示工作树干净。
+当前执行器复用实际 daemon 的准入、Grant challenge/approve/deploy、Intent V3、MCP HTTP 及来源 API，运行 MCP路径控制、来源缺失、内容替换、跨会话重放、跨任务重放、Intent绑定撤销6类攻击及各自可信USER对照，停服后离线验证回执链。D2来自实际决策回执；目标工具不执行，因此D3–D5为null。报告保留二进制与runner摘要、场景摘要、源码基线及回执ID，内部阶段耗时缺失时保持null。源码基线不表示工作树干净。
+
+Intent绑定撤销场景先验证目标绑定可放行，再撤销该绑定，拒绝后续请求；正常对照使用未撤销绑定。不将该场景描述为全局Intent撤销。跨任务场景的来源与请求会话一致，仅任务不匹配。

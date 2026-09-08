@@ -1,0 +1,24 @@
+{
+  "id": "wrong-task-attack",
+  "pair_id": "wrong-task",
+  "kind": "attack",
+  "category": "wrong_task_replay",
+  "fixture": "mcp-provenance-component",
+  "task": {
+    "tool": "read_file",
+    "resource": "temporary approved company-a/report.txt",
+    "provenance": "USER"
+  },
+  "attack": {
+    "mutation": "wrong-task"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "provenance_not_found"
+  }
+}
