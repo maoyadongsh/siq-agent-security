@@ -38,7 +38,12 @@ def main():
             raise RuntimeError("observed stages differ from scenario expectation")
         if decision["reason_code"] != scenario["expected"]["reason_code"]:
             raise RuntimeError("observed reason differs from scenario expectation")
-        observations.append({"scenario_id": scenario["id"], "iteration": 0, "kind": decision["kind"],
+        if decision["action"] != scenario["expected"]["decision_action"]:
+            raise RuntimeError("observed action differs from scenario expectation")
+        observations.append({
+                             "decision_action": decision["action"],
+                             "expected_action": scenario["expected"]["decision_action"],
+                             "expected_reason": scenario["expected"]["reason_code"], "category": scenario["category"],"scenario_id": scenario["id"], "iteration": 0, "kind": decision["kind"],
                              "stages": stages, "decision": decision,
                              "scenario_sha256": hashlib.sha256(fixture.canonical(scenario)).hexdigest(),
                              "timings_ms": {}})
@@ -55,6 +60,11 @@ def main():
             raise RuntimeError("effect outcome differs from scenario")
         if observation["reason_code"] != scenario["expected"]["reason_code"]:
             raise RuntimeError("effect decision reason differs from scenario")
+        if observation["decision"] != scenario["expected"]["decision_action"]:
+            raise RuntimeError("effect decision action differs from scenario")
+        observation.update(decision_action=observation["decision"],
+                           expected_action=scenario["expected"]["decision_action"],
+                           expected_reason=scenario["expected"]["reason_code"], category=scenario["category"])
         observation["scenario_sha256"] = hashlib.sha256(fixture.canonical(scenario)).hexdigest()
     observations.extend(effects)
     report = {"schema_version": "runtime-security-benchmark/v1", "coverage": "component_fixture",

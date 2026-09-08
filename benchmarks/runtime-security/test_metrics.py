@@ -49,3 +49,28 @@ class MetricsTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OutcomeMetricsTest(unittest.TestCase):
+    def test_legal_attack_request_is_not_false_allow(self):
+        from metrics import outcome_metrics
+        legal = {"kind": "attack", "decision_action": "allow", "expected_action": "allow"}
+        blocked = {"kind": "attack", "decision_action": "deny", "expected_action": "deny",
+                   "expected_reason": "provenance_missing"}
+        bypass = {**blocked, "decision_action": "allow"}
+        result = outcome_metrics([legal, blocked, bypass])
+        self.assertEqual(result["false_allow_rate"], {"numerator": 1, "denominator": 2, "rate": .5})
+        self.assertEqual(result["false_deny_rate"]["denominator"], 1)
+        self.assertEqual(result["provenance_violation_block_rate"]["rate"], .5)
+        self.assertIsNone(result["benign_task_completion_rate"]["rate"])
+
+    def test_unknown_and_unobserved_have_different_denominators(self):
+        from metrics import outcome_metrics
+        missing = {"kind": "benign"}
+        observed = {"kind": "benign", "completion": {"status": "unknown"},
+                    "effect_record": {"finding_code": "", "evidence": {
+                        "result": "unknown", "execution_state": "unknown"}}}
+        result = outcome_metrics([missing, observed])
+        self.assertEqual(result["unknown_effect_rate"], {"numerator": 1, "denominator": 1, "rate": 1})
+        self.assertEqual(result["benign_task_completion_rate"]["denominator"], 1)
+        self.assertIsNone(result["resource_hijacking_block_rate"]["rate"])

@@ -316,3 +316,10 @@
 - 新增conflicting-effect：动作合法但fixture写入与签名expected_digest不符的内容，实际采样后Completion conflicting；正常对照verified。D4/D5表示实际文件效果发生，不把存在文件等同正确完成。
 - 实际执行 /tmp/siq-runtime-benchmark-nine-pairs.json（92c4427加本轮工作树）通过，两套daemon各自链验签成功；18个观测，每组D5分母3、未评估6。9对schema/成对关系与报告断言、4项统计测试、Ruff通过。
 - 仍待至少11对、外部网络oracle基准、全指标与阶段埋点、CI及其他工作包验收。未把新组件测试视为native适配器强制执行证明。
+
+### D 命名指标与显式决策预期
+
+- 场景增加expected.decision_action；runner分别比较实际action/reason/stages，假成功和内容冲突的合法动作预期仍为allow，不能仅因attack标签计成误放行。
+- 输出9项命名指标的numerator/denominator/rate，并按attack/benign分组；缺效果证据不进入效果率，缺Completion不进入正常完成率，空分母null。D0–D5阶段计数继续单独保留；命名指标按每阶段完整映射仍须后续补齐。
+- 实际9对执行通过，报告 /tmp/siq-runtime-benchmark-metrics.json（d6a57b7加工作树）：误放行0/7、误拒绝0/11、正常完成3/3；资源劫持分母0未评估。越权效果1/6来自刻意模拟deny后绕过的fixture，不描述为已被执行层阻断。
+- 6项统计测试覆盖合法攻击动作、预期分类与实际拒绝区别、缺证据/未知证据分母；Ruff通过。报告仅当前组件样本，不能外推生产准确率，未完成完整benchmark目标。
