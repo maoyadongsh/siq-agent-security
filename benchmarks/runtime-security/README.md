@@ -100,3 +100,12 @@ JSON保留全部原始毫秒样本、nearest-rank P50/P95/P99、Go/平台/CPU信
 
 
 命名指标现在同时导出sample_count、excluded_count及population说明；excluded_count包含不适用和缺少必要记录的样本，不一概称为失败或未评估。按kind统计使用该kind的样本总数。例如3个样本中只有1个benign Completion verified，指标分母为1、总数3、排除2，不能对外宣称3个样本全部完成。D0–D5继续使用独立的not_evaluated字段。旧报告的summary需以原版本验证器重放；新版本验证器要求包含新增统计字段，不能静默改写原报告后声称原始产物未变。
+
+
+恢复夹具现在归档两份签名pending原始记录，并可独立执行：
+
+```bash
+apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.py /tmp/recovery.json
+```
+
+验证pending/接管记录schema和Ed25519签名、原pending摘要、顺序、前置hash、不同owner及原始expiry；时间比较保留纳秒。验证器使用报告自带公钥，不能提供外部信任锚或证明SIGKILL事件本身，也尚未替代完整Completion及历史撤销语义验证。恢复链单测复用Go/Python固定向量，CLI输入限制16MiB。没有pending材料的旧报告不能通过此新增验收。

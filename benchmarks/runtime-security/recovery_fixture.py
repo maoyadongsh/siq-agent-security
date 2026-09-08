@@ -88,7 +88,9 @@ def run(h, base):
     h.stop()
     verified = json.loads(h.command([str(h.binary), "verify"]))
     base.require(verified["verified"], "recovery receipt chain invalid")
-    return {"schema_version": "recovery-fixture/v1", "coverage": "component_fixture",
+    pending_records = [json.loads((h.state / "effect-evidence-pending" / (body["observation_id"] + ".json")).read_text())
+                       for body in bodies]
+    return {"pending_records": pending_records, "schema_version": "recovery-fixture/v1", "coverage": "component_fixture",
             "sigkill_count": 2, "recovery_records": recoveries, "effect_record": record,
             "completion": completion, "historical_revocation_rejected": True,
             "public_evidence": capture(h, "recovery"),

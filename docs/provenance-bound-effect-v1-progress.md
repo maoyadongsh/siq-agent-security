@@ -630,3 +630,11 @@
 - Intent matcher同样将预算错误作为runtime_parameter_budget_exceeded拒绝。规范先更新；不是截断参数后继续放行，不扩展任何权限。
 - Go全模块race/vet及linux amd64/arm64、darwin arm64、windows amd64编译通过（/tmp/siq-budget-full.log）；Python合同69项及实际MCP→Hermes→daemon桥接通过、回执链验证成功（/tmp/siq-budget-mcp.json）。diff检查通过。
 - 当前只限制遍历与指针构建；总HTTP字节边界和JSON编码仍沿用既有上限，不宣称CPU/内存固定SLA。全目标其余集成/证据任务继续。
+
+
+### D 恢复链签名材料归档与独立验证
+
+- 强杀恢复夹具导出原始签名pending，新增recovery_evidence.py在无daemon情况下验证schema/签名、原pending摘要、序列/前置hash、owner更换、原始expiry，纳秒时间不截为微秒。
+- 复用固定向量的正例、缺序/乱序/超长历史、owner/expiry篡改及纳秒精度测试通过；benchmark单测共14项、Ruff通过。
+- 真实两次SIGKILL恢复重新运行成功：/tmp/siq-recovery-archive.json；离线验证2份pending/2条接管记录通过。PR/nightly均新增该验证步骤，diff检查通过。
+- 该验证仍不证明外部信任锚、SIGKILL事件真实性或完整Completion/历史撤销语义；这些剩余范围不被收缩或冒充已完成。

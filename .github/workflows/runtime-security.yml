@@ -40,6 +40,7 @@ jobs:
           apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py artifacts/runtime-security/report.json
           sha256sum artifacts/runtime-security/report.json > artifacts/runtime-security/report.sha256
           python3 benchmarks/runtime-security/recovery_fixture.py --out artifacts/runtime-security/recovery.json
+          apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.py artifacts/runtime-security/recovery.json
           sha256sum artifacts/runtime-security/recovery.json > artifacts/runtime-security/recovery.sha256
           python3 benchmarks/runtime-security/performance.py --out artifacts/runtime-security/performance.json
           python3 scripts/validate-mcp-provenance.py --hermes-bridge --out artifacts/runtime-security/hermes-mcp-bridge.json
@@ -73,6 +74,7 @@ jobs:
           apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py artifacts/runtime-security/report.json
           sha256sum artifacts/runtime-security/report.json > artifacts/runtime-security/report.sha256
           python3 benchmarks/runtime-security/recovery_fixture.py --out artifacts/runtime-security/recovery.json
+          apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.py artifacts/runtime-security/recovery.json
           sha256sum artifacts/runtime-security/recovery.json > artifacts/runtime-security/recovery.sha256
           python3 benchmarks/runtime-security/performance.py --out artifacts/runtime-security/performance.json
           python3 scripts/validate-mcp-provenance.py --hermes-bridge --out artifacts/runtime-security/hermes-mcp-bridge.json
