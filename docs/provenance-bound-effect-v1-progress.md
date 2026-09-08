@@ -576,3 +576,10 @@
 - 显式Authority引用的allow响应无法建立关联时，钩子现在返回block；不改变daemon裁决，保留未带引用legacy调用的原策略。内嵌安装资产同步，规格先行更新。
 - adapterinstall race/vet及四平台编译通过；真实MCP→Hermes hook→daemon桥接重新通过，4条回执链验证成功，报告/tmp/siq-hermes-correlation-bridge.json。报告基于54f5d32加本次工作树修改，不标为该提交干净构建；仍只证明组件桥接。
 - Hermes完整适配器56项测试与Ruff通过；diff检查通过。本次修改尚无对应远端CI结果，不能沿用54f5d32绿灯作为新提交证明。
+
+
+### B 全局Intent撤销跨语言固定向量
+
+- 新增intent-revocation.sample.json，使用公开测试seed 7及固定纳秒时间，由Python生成签名；Go使用生产intentRevocationMap/SignCanonical重建全部字段并断言签名相同，同时以生产GetIntentRevocation读取固定记录。
+- Go分别篡改摘要、纳秒时间、ID、reason/schema/signing_schema和签名，均拒绝；Python独立验证schema（启用date-time检查）及Ed25519签名，逐个签名字段篡改和零签名均拒绝。没有修改生产行为或新增自定义签名算法。
+- Python完整合同69项、Ruff通过；Intent包race/vet及diff检查通过。此证据证明合同签名对等，不替代容量/并发解析完整矩阵或全目标验收。

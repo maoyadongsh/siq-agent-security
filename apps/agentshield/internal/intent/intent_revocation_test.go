@@ -2,6 +2,7 @@ package intent
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -84,4 +85,62 @@ func TestGlobalIntentRevocationAffectsAllBindingsAndSurvivesRestart(t *testing.T
 	}
 	_, _, err = reopened.ResolveBinding(first.Platform, first.SessionID, first.AgentID)
 	assertCode(t, err, "intent_revocation_invalid")
+}
+
+func TestGlobalRevocationFixedVectorAndTampering(t *testing.T) {
+	s := testStore(t)
+	r := IntentRevocation{SchemaVersion: "intent-revocation/v1", IntentID: "int-fixed-revoked", IntentDigest: strings.Repeat("ab", 32), RevokedAt: "2026-09-08T03:00:00.123456789Z", ReasonCode: "intent_revoked", SigningSchema: "local_canonical/v1"}
+	var err error
+	r.Signature, err = s.key.SignCanonical(intentRevocationMap(r))
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile("../../testdata/contracts/intent-revocation.sample.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var fixed IntentRevocation
+	if err := json.Unmarshal(raw, &fixed); err != nil {
+		t.Fatal(err)
+	}
+	if fixed != r {
+		t.Fatal("cross-language fixed vector differs")
+	}
+	path, err := s.intentRevocationPath(r.IntentID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, raw, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if got, err := s.GetIntentRevocation(r.IntentID); err != nil || got != r {
+		t.Fatal("fixed record rejected", err)
+	}
+	for _, field := range []string{"intent_digest", "revoked_at", "intent_id", "reason_code", "signing_schema", "schema_version", "signature"} {
+		t.Run(field, func(t *testing.T) {
+			var m map[string]any
+			if err := json.Unmarshal(raw, &m); err != nil {
+				t.Fatal(err)
+			}
+			switch field {
+			case "intent_digest":
+				m[field] = strings.Repeat("cd", 32)
+			case "revoked_at":
+				m[field] = "2026-09-08T03:00:00.123456788Z"
+			case "signature":
+				m[field] = strings.Repeat("0", 128)
+			default:
+				m[field] = "changed"
+			}
+			altered, err := json.Marshal(m)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(path, altered, 0600); err != nil {
+				t.Fatal(err)
+			}
+			_, err = s.GetIntentRevocation(r.IntentID)
+			assertCode(t, err, "intent_revocation_invalid")
+		})
+	}
 }

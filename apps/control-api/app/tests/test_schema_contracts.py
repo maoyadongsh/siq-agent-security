@@ -782,3 +782,30 @@ def test_go_pending_recovery_vectors_verify_in_python():
         stamp = datetime.fromisoformat(entry["recovered_at"])
         assert last <= stamp < expiry
         previous, owner, last = digest(entry), entry["owner_digest"], stamp
+
+
+def test_global_intent_revocation_fixed_vector():
+    """Go reproduces the same signature; Python independently validates every signed field."""
+    from cryptography.exceptions import InvalidSignature
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+    from jsonschema import Draft7Validator, FormatChecker
+
+    sample = Path(__file__).parents[4] / "apps/agentshield/testdata/contracts/intent-revocation.sample.json"
+    record = json.loads(sample.read_text())
+    schema = json.loads((CONTRACTS / "intent-revocation.v1.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    Draft7Validator(schema, format_checker=FormatChecker()).validate(record)
+    public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+    unsigned = {key: value for key, value in record.items() if key != "signature"}
+
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+
+    signature = bytes.fromhex(record["signature"])
+    public.verify(signature, canonical(unsigned))
+    for field in unsigned:
+        changed = unsigned | {field: unsigned[field] + "x"}
+        with pytest.raises(InvalidSignature):
+            public.verify(signature, canonical(changed))
+    with pytest.raises(InvalidSignature):
+        public.verify(bytes(64), canonical(unsigned))
