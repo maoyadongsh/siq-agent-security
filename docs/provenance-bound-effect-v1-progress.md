@@ -799,3 +799,9 @@
 - 五类冻结枚举逐一核对相等，T27–T35的19个命名测试均在相邻源码链接中存在。运行证据沿用已归档693641d full nightly和本地独立验证，不虚构重跑。
 - 更新威胁模型的旧CI待验证描述；保留原生平台、同UID、业务语义与oracle覆盖残余风险。本轮无生产行为变更。
 - 继续§79–107与116–120指定测试/交付项，最终报告仍待定版。
+
+## 2026-09-08：§91三类合同统一固定向量
+
+- 为ContextAssertion/EffectEvidence补充冻结canonical_unsigned/unsigned_sha256文件，与已有Provenance向量一起由Go/Python统一消费。没有改写样例签名或生产canonical逻辑。
+- 新增仅测试包internal/contractvectors，使用真实三类Unsigned和既有signing验证字节/摘要/签名一致；Go1.26.6 race与vet通过。Python三向量+原Context合同共5项通过，Ruff通过。
+- runtime-security显式加入Context合同与三向量测试；§91在全模板审计表更新为已核验。后续提交仍需新的远端CI，旧693641d不覆盖新增测试。

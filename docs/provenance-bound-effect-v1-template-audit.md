@@ -97,7 +97,7 @@
 | 88 | Effect Tests | 2770 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 89 | Concurrency / Recovery | 2876 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 90 | Schema Tests | 2906 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 91 | Cross-language Vectors | 2929 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 91 | Cross-language Vectors | 2929 | 已补齐并核验；三类合同共用固定canonical bytes/摘要/签名，Go race与Python通过 |
 | 92 | Security Boundary — Same UID | 2951 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 93 | Managed Linux 预留 | 2979 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 94 | Documentation | 3015 | 待逐节复核；已有实现/测试入口见DoD索引 |
@@ -147,3 +147,7 @@ nightly证据见[evidence](evidence/provenance-v1/nightly-693641d-20260908.json)
 §69九项命名指标与D0–D5阶段结果分别报告，分母由适用样本决定；D0/D1没有观测时null。§70离线验证器禁止无归档效果/材料的D5声明，缺oracle不当失败。既有nightly三次full与第一份本地重验提供运行证据；此次文档核对未宣称重新执行全部夹具。
 
 §73–76普通转换不能提高父trust，混合聚合不得用最高trust覆盖最低trust；unknown父不变成已知转换，关键参数缺引用拒绝。低影响参数仍由已签名Intent决定，不能由模型自报可信。
+
+### §91固定向量补强
+
+Context和Effect原有签名样例可用于跨语言验签，但未单独冻结canonical bytes/unsigned SHA256。现增加对应.vector.json，与Provenance既有向量由internal/contractvectors和test_authority_effect_vectors.py统一读取。Go通过三个生产Unsigned投影与既有canon/signing复核，Python独立编码、hash、验签及确定性签名复核；样例签名与生产合同不变。公用seed仅测试材料。
