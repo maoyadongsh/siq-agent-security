@@ -583,3 +583,11 @@
 - 新增intent-revocation.sample.json，使用公开测试seed 7及固定纳秒时间，由Python生成签名；Go使用生产intentRevocationMap/SignCanonical重建全部字段并断言签名相同，同时以生产GetIntentRevocation读取固定记录。
 - Go分别篡改摘要、纳秒时间、ID、reason/schema/signing_schema和签名，均拒绝；Python独立验证schema（启用date-time检查）及Ed25519签名，逐个签名字段篡改和零签名均拒绝。没有修改生产行为或新增自定义签名算法。
 - Python完整合同69项、Ruff通过；Intent包race/vet及diff检查通过。此证据证明合同签名对等，不替代容量/并发解析完整矩阵或全目标验收。
+
+
+### B 全局撤销容量与并发解析边界
+
+- 新增容量边界：预置4095条有效签名记录（直接准备夹具，避免每次发布重复扫描），第4096条实际RevokeIntent发布成功；满容量同请求重试返回原记录，第4097条拒绝且没有落盘，目录数量保持4096。
+- 新增16读取者、两个会话的并发ResolveBinding与一次全局撤销；重叠阶段仅允许有效或intent_revoked结果，撤销调用返回后以channel同步的160次解析全部intent_revoked并保留合同/绑定摘要。
+- Intent全包race/vet与diff检查通过。未修改生产实现；该测试不声称撤销可取消已经开始的外部副作用或提供跨进程原子执行。
+- 远端92b9efe检查已实际触发，检查时仍为排队/运行中，nightly按触发条件跳过；本批新增测试尚未取得对应远端结果。

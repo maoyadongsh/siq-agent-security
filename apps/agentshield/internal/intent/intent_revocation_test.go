@@ -3,6 +3,8 @@ package intent
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -142,5 +144,100 @@ func TestGlobalRevocationFixedVectorAndTampering(t *testing.T) {
 			_, err = s.GetIntentRevocation(r.IntentID)
 			assertCode(t, err, "intent_revocation_invalid")
 		})
+	}
+}
+
+func TestGlobalRevocationCapacityBoundaryAndRetry(t *testing.T) {
+	s, b := boundForRevocation(t)
+	c := testContract()
+	c.IntentID = "int-capacity-second"
+	second, err := s.Issue(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Prepublish valid signed records to exercise the directory budget without
+	// repeatedly scanning the growing directory during fixture preparation.
+	for i := 0; i < maxRecords-1; i++ {
+		r := IntentRevocation{SchemaVersion: "intent-revocation/v1", IntentID: fmt.Sprintf("int-capacity-%04d", i), IntentDigest: strings.Repeat("a", 64), RevokedAt: "2026-09-08T03:00:00Z", ReasonCode: "intent_revoked", SigningSchema: "local_canonical/v1"}
+		r.Signature, err = s.key.SignCanonical(intentRevocationMap(r))
+		if err != nil {
+			t.Fatal(err)
+		}
+		raw, err := json.Marshal(r)
+		if err != nil {
+			t.Fatal(err)
+		}
+		path, err := s.intentRevocationPath(r.IntentID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, raw, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	first, err := s.RevokeIntent(b.IntentID, b.IntentDigest)
+	if err != nil {
+		t.Fatal("exact capacity must permit publication", err)
+	}
+	retry, err := s.RevokeIntent(b.IntentID, b.IntentDigest)
+	if err != nil || retry != first {
+		t.Fatal("full capacity broke idempotent retry", err)
+	}
+	_, err = s.RevokeIntent(second.IntentID, second.Digest)
+	assertCode(t, err, "intent_state_capacity")
+	path, _ := s.intentRevocationPath(second.IntentID)
+	if _, err := os.Stat(path); !errors.Is(err, os.ErrNotExist) {
+		t.Fatal("rejected revocation published a record", err)
+	}
+	ids, err := recordIDs(s.intentRevocationDir())
+	if err != nil || len(ids) != maxRecords {
+		t.Fatal("capacity changed", err)
+	}
+}
+
+func TestConcurrentGlobalRevocationResolution(t *testing.T) {
+	s, first := boundForRevocation(t)
+	second, err := s.Bind(Binding{Platform: first.Platform, SessionID: "concurrent-second", AgentID: first.AgentID, IntentID: first.IntentID})
+	if err != nil {
+		t.Fatal(err)
+	}
+	start, revoked := make(chan struct{}), make(chan struct{})
+	failures := make(chan error, 16)
+	var wg sync.WaitGroup
+	for i := 0; i < 16; i++ {
+		b := []Binding{first, second}[i%2]
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			<-start
+			for j := 0; j < 10; j++ {
+				_, _, err := s.ResolveBinding(b.Platform, b.SessionID, b.AgentID)
+				var v *Violation
+				if err != nil && (!errors.As(err, &v) || v.Code != "intent_revoked") {
+					failures <- fmt.Errorf("concurrent resolve: %w", err)
+					return
+				}
+			}
+			<-revoked // publication has returned before every following lookup
+			for j := 0; j < 10; j++ {
+				c, binding, err := s.ResolveBinding(b.Platform, b.SessionID, b.AgentID)
+				var v *Violation
+				if !errors.As(err, &v) || v.Code != "intent_revoked" || c == nil || binding == nil || c.Digest != b.IntentDigest {
+					failures <- fmt.Errorf("post-revocation resolution lost rejection or metadata: %v", err)
+					return
+				}
+			}
+		}()
+	}
+	close(start)
+	_, revokeErr := s.RevokeIntent(first.IntentID, first.IntentDigest)
+	close(revoked)
+	wg.Wait()
+	close(failures)
+	if revokeErr != nil {
+		t.Fatal(revokeErr)
+	}
+	for err := range failures {
+		t.Error(err)
 	}
 }
