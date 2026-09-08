@@ -10,7 +10,7 @@ D5 只有具有独立 observer 和可核验材料的样本才能计入分母。�
 
 统计必须按攻击/正常对照及D0–D5分别报告，不能通过混合分母遮蔽误拒。性能数据来自真实阶段计时，输出P50/P95/P99，不使用整体请求耗时冒充内部阶段耗时，不设置虚构SLA。
 
-当前仅开始合同与统计组件；尚无完整场景执行器、20对运行证据或CI门禁，不代表本工作包完成。
+当前已有20对组件场景执行器、公共回执证据与CI工作流；完整性能、恢复矩阵、native平台及远端CI验收仍未完成。下文增量记录中的较小场景数为历史阶段。
 
 ## 运行组件基准
 
@@ -68,3 +68,9 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py /tmp/s
 离线验证器还要求本checkout完整场景集合不缺失/不重复、场景摘要/预期一致、实际动作和reason匹配签名decision、D5独立性与材料存在性匹配签名效果，重新计算统计结果。当前仅支持每场景iteration=0的单轮报告；未来nightly多轮需先扩展该合同。
 
 可传 `--expected-sha256 <由独立可信渠道取得的报告摘要>` 检测整包替换。摘要必须另行可信保管；从同一个不可信报告现场计算再传入不提供信任锚。未提供时仍只做内部一致性验证，不能证明自包含公钥属于真实发布者。现阶段未完整重放来源图和Completion要求。
+
+## 自动门禁
+
+`.github/workflows/runtime-security.yml` 提供PR/main的runtime-security-contracts与计划/手动触发的nightly三轮独立运行。每轮构建隔离daemon，执行20对场景、离线核验公共证据并上传report.json和report.sha256；nightly保持三个独立单轮报告，不将它们伪装成统计独立样本的合并结论。
+
+依赖使用Control API的uv.lock，GitHub Actions固定commit，权限仅contents:read。PR报告保留14天，nightly保留30天。尚未包含强杀恢复矩阵或内部性能埋点，远端通过情况必须以实际workflow结果为准。

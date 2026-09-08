@@ -399,3 +399,10 @@
 - D5的独立性和文件存在性/网络材料必须与已签名封套一致；增加--expected-sha256用于调用者提供独立可信报告摘要，检测整包替换。不把报告自带公钥或同源摘要当外部信任锚。
 - 既有真实报告46回执/11效果离线复验通过；篡改action、指标、删样本、重复样本、提高独立性、翻转D5六类实际负例均拒绝。6项统计测试及Ruff通过。
 - 本校验器当前固定单轮iteration=0；nightly多轮、完整来源/Intent/Completion语义重放、性能和恢复等仍待实现。没有重新运行未改动的daemon代码。
+
+### D/G Runtime Security PR与nightly门禁接入
+
+- 新增runtime-security.yml：PR/main运行合同/配对/指标单测、20对真实场景与独立公共证据验证；nightly及手动触发额外三轮隔离全量运行，各自上传公共report/sha256，不复制私钥/token状态目录。
+- 依赖沿用Control API uv.lock，所有Action固定SHA、contents:read；upload-artifact固定SHA经官方git远端v4.6.2引用核对。check_contracts.py验证20对、全部要求类别、文件ID一致及正常对照。
+- 本地与CI相同的核心命令实际通过：20对40场景、6项统计测试，重新生成报告并Python验证46回执/11效果；Ruff、workflow YAML触发/权限/pin检查通过。报告/tmp/siq-runtime-security-ci-report.json。
+- 工作流尚未推送执行，不能宣称远端CI绿色；本地Go为已安装版本，workflow Go1.22需远端确认。nightly强杀恢复/性能埋点仍缺，pending恢复、平台与最终DoD继续进行。
