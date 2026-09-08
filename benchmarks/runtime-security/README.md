@@ -126,3 +126,5 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.
 独立验证必须使用`evidence.py --suite smoke report.json`。验证器默认full（兼容既有未带suite字段的完整报告）；report不能自行将请求覆盖降为smoke。指定套件缺少场景、重复或额外场景均拒绝；smoke改标签为full仍会因缺少完整语料而失败。
 
 PR runtime-security-contracts使用smoke；nightly/workflow_dispatch的nightly job使用默认full的21对/42场景，并保留受控网络oracle、恢复测试及三次独立重复。重复次数不是新增场景类别。单独的性能与恢复报告不混入D5分母；完整安全race门禁继续覆盖全部Go包。
+
+性能脚本额外输出`decision_total`：完整Engine.Decide调用的单调时钟耗时，含回执发布及阶段回调，不含HTTP或工具执行。它与内部8阶段分开标注，不能叠加百分位。`GOTOOLCHAIN`显式传入Go子进程并记录实际版本，允许按安全门禁选择已修补工具链。

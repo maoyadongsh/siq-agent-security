@@ -138,7 +138,18 @@ D2是尝试，D3是执行，D4是观测到效果，D5是独立核实效果；这
 | runtime_action_normalization | 0.00208 | 0.003585 | 0.00528 |
 | effect_evidence_processing | 5.800262 | 6.488183 | 6.978589 |
 
-policy_evaluation仅决策中的策略阶段，不是完整Decide端到端耗时。effect processing单独测SubmitFile，使用合成已授权Action，包含签名/发布，排除文件采集和工具执行。模板要求的完整decision口径仍须在最终报告中明确或补测，不能用policy阶段替代。
+policy_evaluation仅决策中的策略阶段，不是完整Decide端到端耗时。effect processing单独测SubmitFile，使用合成已授权Action，包含签名/发布，排除文件采集和工具执行。完整decision口径已由下述补充采样提供，不能用policy阶段替代。
+
+
+### 完整Decide补充采样
+
+实测Go1.26.6 linux/arm64，5次warmup后100次顺序采样。此次源码为e5d1455加本批性能测试修改；报告commit是工作区基线，精确测试源码以source_sha256为准，不声称e5d1455原样已包含新字段。完整原始样本见[采样报告](evidence/provenance-v1/decision-total-performance-20260908.json)。
+
+| 调用范围 | P50 ms | P95 ms | P99 ms |
+| --- | --- | --- | --- |
+| Engine.Decide完整调用 | 7.818665 | 12.52045 | 12.676101 |
+
+由调用前time.Now到返回后time.Since计时，包含内部StageTiming回调、Authority/Context/Provenance/policy及回执持久化；不含HTTP、工具或外部效果执行。测试逐样本断言每个内部阶段不超过所属完整调用耗时。decision_total是包围计时，不能与内部阶段相加。没有提高安全支持等级或宣称并发生产性能。
 
 ## I. Compatibility
 

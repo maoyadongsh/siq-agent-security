@@ -68,17 +68,25 @@ func TestRuntimeStageBaseline(t *testing.T) {
 		samples[stage] = append(samples[stage], float64(d)/float64(time.Millisecond))
 	}
 	for i := 0; i < 100; i++ {
+		started := time.Now()
 		d, err := fx.eng.Decide(r)
+		elapsed := time.Since(started)
 		if err != nil || d.Action != ActionAllow {
 			t.Fatal("baseline rejected", err)
 		}
+		samples["decision_total"] = append(samples["decision_total"], float64(elapsed)/float64(time.Millisecond))
 	}
-	if len(samples) != 7 {
+	if len(samples) != 8 {
 		t.Fatal("missing stage", samples)
 	}
 	for stage, values := range samples {
 		if len(values) != 100 {
 			t.Fatal(stage, len(values))
+		}
+		for i, value := range values {
+			if value > samples["decision_total"][i] {
+				t.Fatal("stage exceeds its enclosing Decide duration", stage, i)
+			}
 		}
 	}
 	raw, err := json.Marshal(samples)

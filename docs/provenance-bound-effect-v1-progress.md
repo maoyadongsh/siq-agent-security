@@ -752,3 +752,10 @@
 - 表格从已归档95e425c integration-summary读取实际值，未杜撰当前性能或将阶段百分位相加。发现完整decision耗时与policy_evaluation不是同一口径；最终报告必须补齐或明确端到端性能证据。
 - 远端1e162dc的ci与runtime-security工作流均success；442007b及本次文档待新CI，不沿用旧结果冒称全绿。
 - 当前继续G组、剩余schema与逐节覆盖审计，保持目标进行中。
+
+## 2026-09-08：完整Decision性能证据
+
+- 补充TestRuntimeStageBaseline的decision_total计时，包围整个Engine.Decide，保留原七个内部决策阶段；逐样本验证内部阶段不超过总调用耗时。性能脚本要求独立总计时存在，未改变benchmark结果中的阶段指标口径。
+- performance.py将显式GOTOOLCHAIN传入受限环境，报告确认Go1.26.6 linux/arm64。实际5次预热+100次采样，完整Decide P50/P95/P99=7.818665/12.52045/12.676101ms。
+- 归档完整原始数据与源码哈希，Engineering Report区分该工作区采样和95e425c历史阶段数据。不是HTTP端到端或生产SLA，不把阶段百分位相加。
+- 实际性能测试与逐样本包含关系检查通过；receipt vet、Python Ruff、diff检查通过。仅测试/脚本修改，不改生产路径。

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure eight actual Go stages; no HTTP/model latency substituted for stages."""
+"""Measure Go stages plus complete Decide calls; no HTTP/model latency substitution."""
 import argparse
 import hashlib
 import json
@@ -19,7 +19,7 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     env = {key: value for key, value in os.environ.items()
-           if key in {"PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "SYSTEMROOT"}}
+           if key in {"PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "SYSTEMROOT", "GOTOOLCHAIN"}}
     env["SIQ_STAGE_BASELINE"] = "1"
     command = ["go", "test", "-json", "-count=1", "-run", "^(TestRuntimeStageBaseline|TestEffectStageBaseline)$",
                "./internal/receipt", "./internal/effectevidence"]
@@ -40,7 +40,7 @@ def main():
             if set(value) & set(samples):
                 raise ValueError("duplicate stage output")
             samples.update(value)
-    if set(samples) != set(TIMINGS):
+    if set(samples) != set(TIMINGS) | {"decision_total"}:
         raise ValueError("missing actual stage measurements")
     percentiles = {}
     for stage, values in samples.items():
@@ -62,6 +62,8 @@ def main():
                   "apps/agentshield/internal/effectevidence/performance_test.go")},
               "limitations": ["100 sequential warm samples, not production SLA or load saturation",
                               "decision fixture uses real signed V3, context, provenance and deployed test Grant",
+                              "decision_total includes the complete Engine.Decide call and timing callbacks; excludes HTTP and tool execution",
+                              "stage percentiles overlap decision_total and must not be added to it",
                               "effect fixture separately times SubmitFile with a synthetic authorized Action",
                               "effect timing excludes file capture and tool execution; includes signing and publication",
                               "no race instrumentation; performance results are not race-test evidence"]}
