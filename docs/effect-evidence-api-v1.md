@@ -51,4 +51,17 @@ Admin 可使用：
 
 ## 当前验收边界
 
-已验证管理/决策/observer 分权、来源冒充、任务错配、撤销、到期、服务重启 token 失效且证据保留，以及拒绝后效果的事件分类。测试 observer 为受控提交者；文件前后状态观测、网络服务端 oracle 与 Completion API 尚未接入。同 UID host observer 不构成 OS 隔离。
+已验证管理/决策/observer 分权、来源冒充、任务错配、撤销、到期、服务重启 token 失效且证据保留，以及拒绝后效果的事件分类。测试 observer 为受控提交者；文件采样接口现已接入，详见下节；网络服务端 oracle 与 Completion API 尚未接入。同 UID host observer 不构成 OS 隔离。
+
+## 服务端文件采样
+
+已接入两阶段文件观察接口，使用上述 host_observer token：
+
+1. 在目标工具执行前 POST `/v1/file-observations`，正文含 observation_id、action_id、decision_receipt_id、path、expected_digest、max_bytes。path 必须精确匹配动作资源，expected_digest 来自受信任务期望；max_bytes 为1–16777216。服务实际读取并返回 before 元数据，首次201、相同重试200。
+2. 工具执行后 POST `/v1/file-observations/{observation_id}/finish`，正文仅含 path。服务再次读取，生成材料与签名封套，首次201、完成重试200。
+
+两个接口均拒绝自报 before/after/source 字段。观测只读取文件，不会执行工具或授予写权限；被拒绝动作若出现实际文件效果，记录安全事件。原始路径仅用于瞬时读取，不存入 pending 或证据。
+
+无文件为 failed/unexpected；检测到变化且匹配预期摘要为 completed/expected；相同内容和元数据不证明执行，返回 unknown。始终只标记 partial/host_independent。签名封套内 file_observation 保留前后大小、摘要、mtime 和采样时间。
+
+当前 pending 最多128条，绑定原 observer token；撤销、到期、重启后不能继续该次采样。已完成证据仍可由管理端读取；跨重启恢复 pending 尚未实现。测试中 warn 正例遵循既有 advisory policy，并不证明 block 模式 Grant 准入链路；block 用例验证拒绝后效果事件。

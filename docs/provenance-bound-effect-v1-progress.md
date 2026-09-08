@@ -185,3 +185,10 @@
 - SubmitFile 保留前后存在性、摘要、size、mtime、采样时间及预期摘要；读回重新派生 evidence_digest 并验证资源、时间、效果和执行状态关联。材料不含原始路径/文件内容。
 - 实测真实文件材料提交、幂等重试、读回、拒绝将带材料记录降级为普通摘要提交，以及外层重新签名后仍拒绝与原效果摘要不匹配的材料。
 - effectevidence 及全模块 race/vet、四平台编译、Python合同7项与Ruff通过；日志 `/tmp/siq-file-material-race.log`。API 使用流程尚未接入 SubmitFile，后续仍需可信 observer 采样生命周期、网络 oracle、Completion 和完整验收。
+
+### C1 文件采样 HTTP 接入
+
+- 新增 observer begin/finish 两阶段 API，服务实际采样，不接受客户端自报快照；验证固定 host 来源、scope、真实 file.write 动作及路径资源摘要。
+- pending 只存摘要/元数据，128上限、token 归属及到期；完成重试返回原持久化证据，避免重采样改写。已撤销 observer 的 pending 在后续 begin 清理。
+- 原始 HTTP + 真实临时文件验证路径替换、伪造 before/after、决策 token 拒绝、真实写入、缺失文件假成功和完成重试。block 用例产生拒绝后实际效果事件；warn 正例遵循 advisory policy，不冒充 block Grant 准入通过。
+- Python合同8项与Ruff通过；HTTP定向及Go全模块race/vet、四平台编译通过，日志 `/tmp/siq-file-http-race.log`。跨重启 pending 恢复、实际平台采样调度、网络 oracle、Completion 与完整验收仍待完成。

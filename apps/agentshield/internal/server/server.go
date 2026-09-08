@@ -54,6 +54,8 @@ type Deps struct {
 
 // Server is the HTTP handler set.
 type Server struct {
+	fileObservations map[string]pendingFileObservation
+
 	effects    *effectevidence.Store
 	observerMu sync.Mutex
 	observers  map[string]observerSession
@@ -104,9 +106,12 @@ func New(d Deps) (*Server, error) {
 		return nil, err
 	}
 	s.observers = map[string]observerSession{}
+	s.fileObservations = map[string]pendingFileObservation{}
 	if err := s.initPairing(d.PairingCode); err != nil {
 		return nil, err
 	}
+	s.mux.HandleFunc("/v1/file-observations", s.auth(s.beginFileObservation, capEffectObserve))
+	s.mux.HandleFunc("/v1/file-observations/", s.auth(s.finishFileObservation, capEffectObserve))
 	s.mux.HandleFunc("/v1/effect-observers", s.auth(s.effectObservers, capAdmin))
 	s.mux.HandleFunc("/v1/effect-observers/", s.auth(s.revokeEffectObserver, capAdmin))
 	s.mux.HandleFunc("/v1/effect-evidence", s.auth(s.submitEffect, capEffectObserve))
