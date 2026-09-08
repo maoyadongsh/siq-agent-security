@@ -427,3 +427,14 @@
 - DELETE observer先持久化再删除内存，状态失败不返回204；每次observer校验复核撤销存储。测试把已撤销session重新放入内存，原始HTTP仍拒绝，避免仅依赖内存删除。
 - 重建Store后终态保留、8路并发、撤销时间篡改拒绝测试通过；Go全模块race/vet和四平台编译通过（/tmp/siq-observer-revocation-race.log），schema正负样例通过。
 - 后续显式pending管理接管必须复核原owner终态；该API/强杀恢复仍未实现，完整目标继续。
+
+### C2 接管历史签名与持久存储
+
+- 新增FileRecovery链模型，绑定完整已签名pending与前一记录摘要，验证连续序号、全部签名、采样/接管时序、原deadline和64次上限。重新签名但改变序号、pending或链关系仍被拒绝。
+- 新增RecoverPendingFile/PendingFileOwner存储方法：expected_owner比较后追加、0600/fsync/排他Link发布、当前owner幂等；每次读取有效owner或追加均检查原始及全部历史owner的撤销终态。
+- 实际测试通过：8路并发同请求只返回同一签名、重建Store读回、旧owner并发请求冲突、原deadline到期、历史owner撤销后禁止新接管、存储签名篡改及64/65边界。Go全模块race/vet、四平台编译通过（/tmp/siq-recovery-history-race.log）；schema正例与四类结构负例通过，未将结构样例当验签证据。
+- 管理恢复HTTP及begin/finish接入尚未完成，强杀真实进程恢复仍待验证；这些存储方法本身不替代source/scope、动作有效性或管理权限复核。同UID整段历史删除/回滚仍不超出可信状态目录边界。
+
+### 最新整体估算（2026-09-08，接管存储增量后）
+
+整体工程进度约75%–80%，不是45项DoD通过率。前文65%–70%为历史检查点。当前已具备20对组件场景、公共回执离线验签及本地验证的PR/nightly工作流；主要剩余为恢复API与强杀测试、平台自动采集/调度、阶段性能与完整语义重放、远端及全仓验收、文档与最终报告。工作流尚未推送运行，不宣称远端CI通过。

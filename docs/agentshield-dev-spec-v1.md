@@ -984,3 +984,5 @@ DELETE effect-observers/{id}在删除内存凭据前发布effect-observer-revoca
 恢复使用file-observation-recovery/v1不可变签名链，不改原pending：observation_id、pending_digest（完整已签名pending的canonical SHA256）、sequence(1..64)、previous_hash（前一完整recovery的canonical SHA256，首条全0）、owner_digest、recovered_at与签名字段。时刻不早于原采样/前一接管且早于原deadline；相邻owner必须不同。任何断链、替换pending、损坏签名或超64次拒绝。
 
 后续管理恢复端点必须验证当前observer固定source/scope及原始和全部历史owner的持久撤销终态；原owner或历史接管owner已撤销，不允许新token继续该pending。记录先持久发布后再更新内存owner。重复当前owner幂等，不能借恢复延长原deadline。此节定义接管模型；API、存储发布及强杀测试按后续实现落地，不提前宣称可用。
+
+接管存储使用原pending旁的独立子目录，按六位sequence排他发布签名JSON；读取必须验证连续序号和完整链。存储层接管使用expected_owner进行比较后追加，防止并发不同接管者覆盖；当前owner的同内容重试幂等。读取有效owner及追加都复核全部历史撤销与原deadline，损坏状态失败关闭。存储不代替管理端的source/scope和动作有效性复核；同UID删除整个历史的回滚防护仍属于既有可信状态目录边界。
