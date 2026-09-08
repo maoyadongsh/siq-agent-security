@@ -1,13 +1,13 @@
-# Provenance-Bound Effect Security V1 — Engineering Report（验收草稿）
+# Provenance-Bound Effect Security V1 — Engineering Report
 
-日期：2026-09-08。状态：进行中，不能作为全目标完成或发布批准。按用户模板§115组织；完整模板§0–120及45项DoD仍以逐项证据验收。
+日期：2026-09-08。状态：当前实验性组件的工程验收报告，按用户模板§115组织。代码、合同与门禁基线固定为8eb4540；范围与外部平台限制见K节。此报告不构成生产部署或main合并批准。
 
 ## A. Actual Baseline
 
 - 起始SHA：`d001c4d2c1b7a1230604e8b2ecf813a39deb251c`。
-- 当前代码基线：`442007b`；最终交付SHA：尚未确定。
+- 最终功能代码SHA：`8eb45407b4b01e1cc17713574f6a07e21d34eeb5`；其后提交仅归档本报告、证据及文档状态，不混称为同一SHA。
 - 分支：`codex/provenance-bound-effect-v1`；draft PR #4，未合并main。
-- 已确认远端CI基线：`1e162dcb23fdb133e784ebf71ead7de1af7c194f`。该结果不覆盖其后的smoke/full修改。
+- 同SHA全仓CI 28/28 jobs成功，runtime-security两项PR必需job成功；workflow_dispatch三轮完整nightly全部成功，详见J节。
 
 ## B. Architecture
 
@@ -36,7 +36,7 @@ flowchart LR
 | 签发ContextAssertion | 管理端签名，校验scope、时效和workspace；caller cwd不扩大权限 |
 | 上报untrusted Provenance | decision能力调用report/select；source受限且不能自报issuer/task/signature以提权 |
 | 签发authoritative Provenance | 管理面注册的可信issuer；本地key引用或外部公钥，受scope/source/trust ceiling/有效期/撤销限制 |
-| 提交Tool Observation | decision能力的相关动作回报；success不构成独立效果证明 |
+| 提交Tool Observation | decision能力的相关动作回报；新增tool-effect-reports只允许self_reported/unknown。签名证明收录声明，不证明success属实 |
 | 提交独立EffectEvidence | 专用observer凭据，绑定source/scope/有效期；decision token及普通admin token不能直接伪装observer提交 |
 
 私钥保留daemon状态目录。管理权限本身是信任根，same-UID恶意进程不在隔离保证内。external_independent描述受控oracle的位置与凭据边界，不承诺抵御同UID系统级攻击。
@@ -72,7 +72,7 @@ flowchart LR
 | INV-6 success不证明Effect | 文件假成功、网络oracle及Completion材料检查；独立benchmark verifier拒绝无effect的D5声明 |
 | INV-7 无效Authority不降为advisory | mandatory错误三模式矩阵、绑定降级与撤销重启测试；普通policy legacy兼容独立保留 |
 
-这些是源码与测试映射；G组全范围最终审计尚未关闭。
+G1–G6及其余45项DoD的逐项证据见验收索引；这里的组件验收不把外部平台综合支持或OS隔离升级为已验证。
 
 ## F. Negative Test Table
 
@@ -94,7 +94,7 @@ flowchart LR
 
 ## G. Benchmark
 
-完整集成实测基线95e425c：21对、42场景、20类别，51条回执、11份效果封装。后续离线验证器再次验证通过，不代表重跑同一版本的所有执行。D0/D1无模型观测，全部not evaluated。
+完整集成实测基线8eb4540：三轮独立完整执行，每轮21对、42场景、20类别、51条回执、11份效果封装；三轮产物均下载后本地复验。下表为单轮口径，不将重复次数当成新增独立场景。D0/D1无模型观测，全部not evaluated。
 
 | 样本 | 阶段 | positive / 可评估 | not evaluated | positive rate |
 | --- | --- | --- | --- | --- |
@@ -125,31 +125,21 @@ D2是尝试，D3是执行，D4是观测到效果，D5是独立核实效果；这
 
 ## H. Performance
 
-以下来自95e425c真实100次顺序预热后采样，各指标单位ms，nearest-rank百分位。不是当前最终SHA性能、生产SLA或并发饱和结果；不能对各阶段P95相加得出总延迟。
+代码8eb4540，Go1.26.6，Linux arm64，5次预热后每项100次顺序采样。原始样本、工具链与源码摘要见[完整性能记录](evidence/provenance-v1/performance-8eb4540-20260908.json)。单位ms；不是生产SLA或并发饱和指标。
 
 | 阶段 | P50 | P95 | P99 |
 | --- | --- | --- | --- |
-| authority_validation | 0.007105 | 0.014176 | 0.014577 |
-| context_validation | 0.08306 | 0.148375 | 0.171752 |
-| intent_lookup | 0.261325 | 0.413348 | 0.422661 |
-| policy_evaluation | 0.002832 | 0.005072 | 0.005504 |
-| provenance_resolution | 0.145719 | 0.273469 | 0.306078 |
-| receipt_append_fsync | 7.285245 | 11.652973 | 12.42517 |
-| runtime_action_normalization | 0.00208 | 0.003585 | 0.00528 |
-| effect_evidence_processing | 5.800262 | 6.488183 | 6.978589 |
+| effect_evidence_processing | 5.812141 | 6.289349 | 6.580923 |
+| authority_validation | 0.007488 | 0.011952 | 0.015792 |
+| context_validation | 0.123298 | 0.14997 | 0.465017 |
+| decision_total | 8.1206 | 12.080642 | 12.72171 |
+| intent_lookup | 0.321574 | 0.384744 | 0.477081 |
+| policy_evaluation | 0.003057 | 0.005008 | 0.008496 |
+| provenance_resolution | 0.23618 | 0.263781 | 0.275781 |
+| receipt_append_fsync | 7.2854 | 11.453926 | 12.272662 |
+| runtime_action_normalization | 0.002848 | 0.003856 | 0.008032 |
 
-policy_evaluation仅决策中的策略阶段，不是完整Decide端到端耗时。effect processing单独测SubmitFile，使用合成已授权Action，包含签名/发布，排除文件采集和工具执行。完整decision口径已由下述补充采样提供，不能用policy阶段替代。
-
-
-### 完整Decide补充采样
-
-实测Go1.26.6 linux/arm64，5次warmup后100次顺序采样。此次源码为e5d1455加本批性能测试修改；报告commit是工作区基线，精确测试源码以source_sha256为准，不声称e5d1455原样已包含新字段。完整原始样本见[采样报告](evidence/provenance-v1/decision-total-performance-20260908.json)。
-
-| 调用范围 | P50 ms | P95 ms | P99 ms |
-| --- | --- | --- | --- |
-| Engine.Decide完整调用 | 7.818665 | 12.52045 | 12.676101 |
-
-由调用前time.Now到返回后time.Since计时，包含内部StageTiming回调、Authority/Context/Provenance/policy及回执持久化；不含HTTP、工具或外部效果执行。测试逐样本断言每个内部阶段不超过所属完整调用耗时。decision_total是包围计时，不能与内部阶段相加。没有提高安全支持等级或宣称并发生产性能。
+完整decision_total包围Engine.Decide及其内部回调、授权检查和回执持久化，不含HTTP与工具执行；各内部阶段不能与总时长相加。effect_evidence_processing单独测SubmitFile，使用合成已授权Action，包含签名/发布，不含文件采集及工具执行。测试按同一样本验证各内部阶段不超过完整调用耗时。
 
 ## I. Compatibility
 
@@ -157,11 +147,21 @@ V2/V3双读、旧回执验签、binding/global撤销与optional legacy核心测�
 
 ## J. CI
 
-1e162dc远端[ci](https://github.com/maoyadongsh/siq-agent-security/actions/runs/34187100681)与[runtime-security](https://github.com/maoyadongsh/siq-agent-security/actions/runs/34187100690)均success；之后442007b尚待对应远端验证。nightly在PR中skip不是nightly通过。
+以下运行均对应8eb4540，job与步骤详情、三轮产物摘要见[CI归档](evidence/provenance-v1/ci-8eb4540-20260908.json)。
 
-本地最近验证：Go1.26.6相关包race/vet、Control API四份合同149项、基准21项unittest、Hermes56项、OpenClaw15项及Ruff通过。完整Go1.26.6 race/vet/govulncheck历史证据见[toolchain报告](provenance-bound-effect-v1-toolchain-20260908.md)。全仓门禁最终必须对应交付SHA；此处不把局部本地验证称为当前全仓全绿。
+| 门禁 | 实际结果 |
+| --- | --- |
+| [全仓ci 34190568787](https://github.com/maoyadongsh/siq-agent-security/actions/runs/34190568787) | 28/28 jobs success：Control API Ruff/pytest/依赖审计，Web构建及依赖检查，Edge与各Connector矩阵，Go测试/跨平台构建，gitleaks及发布清单/Skill自扫描 |
+| [runtime-security 34190568771](https://github.com/maoyadongsh/siq-agent-security/actions/runs/34190568771) | contracts与patched-toolchain success；PR内nightly skipped，未计为通过 |
+| [完整nightly 34190577905](https://github.com/maoyadongsh/siq-agent-security/actions/runs/34190577905) | 5/5 jobs success，含三轮完整基准、恢复、性能及Hermes MCP bridge |
 
-## K. Residual Risks 与未关闭任务
+核心命令：`gofmt -l .`、`go vet ./...`、`go test ./...`、`go test -race ./...`、`govulncheck ./...`；严格漏洞门禁固定Go1.26.6及govulncheck v1.7.0。基础兼容job的旧Go扫描可能报告警告，不能代替patched-toolchain严格通过证据。Python合同与向量、Hermes adapter、benchmark单测、smoke、恢复及离线验签命令均在runtime-security.yml中固定。
+
+本地另完成Go1.26.6全模块race/vet和四平台编译，42场景完整运行与离线验证，三轮远端产物的report/recovery本地复验。远端三轮各验证51条回执/11个效果封装；各恢复报告验证2个pending、2个recovery、1个observer撤销、1条恢复回执和1个文件Completion。摘要仅校验同一制品一致性，不是独立外部信任锚。
+
+未修改GitHub Ruleset或main保护规则。是否将这些检查配置为main合并必需项仍由仓库管理员确认；CI成功不代表规则已强制启用。
+
+## K. Residual Risks 与外部验收
 
 - desktop-same-uid：无恶意同UID进程隔离；状态签名不阻止整目录回滚或删除。
 - 仅显式provenance，没有完整神经语义因果追踪；unknown transform仍为unknown。
@@ -169,6 +169,6 @@ V2/V3双读、旧回执验签、binding/global撤销与optional legacy核心测�
 - EffectEvidence覆盖partial；host observer不等价于OS隔离oracle。
 - 没有完整SaaS效果验证、完整Managed Linux、多智能体Delegation DAG或通用Behavioral Sandbox。
 - Windows资源语义单独未验证；交叉编译不能代替运行证明。
-- 最终待办：G1–G6全范围审计、26份新增schema的全部适用负例核验、§0–120逐节覆盖、最终性能口径与报告更新、对应最终SHA全仓CI及nightly证据。
+- 新版工具声明接口为显式调用；Hermes等平台不会因此自动获得所有工具/所有效果采集覆盖。通用网络absence证明尚未提供。
 
-当前39/45项记录为本地验收通过。报告仍为草稿，不标记开发目标完成。
+45项DoD已有注明范围与基线的验收记录；模板逐节索引另行保留全部121节交付证据。后续真实平台验收使用仓库现有validate-intent-v2-hermes.py、validate-intent-v2-codebuddy.py及相应平台fixture；这些命令只能证明指定平台/版本/场景，不能将V2原生证据替代全部V3支持。Managed Linux须先具备不同UID与可信observer/attestor部署，按ADR-0018执行边界验证；本轮未实现该部署，因此保持unverified。

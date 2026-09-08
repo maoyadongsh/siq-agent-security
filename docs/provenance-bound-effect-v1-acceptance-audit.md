@@ -177,3 +177,7 @@ G3/G5增量验收后累计42/45项有本地验收记录。693641d两套CI本轮�
 - G6：README明确Provenance/Effect实验性、显式来源及partial observer边界；能力矩阵不提升OS/native/SaaS支持；DefaultMatrix保持零supported，TestDefaultMatrixHonesty在Go1.26.6无缓存race通过。Engineering Report明确草稿、残余风险与数据基线。
 
 [CI明细归档](evidence/provenance-v1/ci-693641d-20260908.json)记录SHA、job和step结果。至此45/45 DoD均有对应范围的验收记录，其中CI针对693641d；后续文档提交不应冒充该SHA。全目标仍未关闭：§0–120逐节映射、指定测试与合同语义核验、nightly实际运行证据和最终Engineering Report定版尚待完成。不得把45项记录等同整个项目100%。
+
+## 最终功能基线验收更新
+
+8eb4540的全仓28个job、runtime-security两个PR必需job、独立workflow_dispatch三轮full均成功。三份report/recovery已逐一下载并本地验签；报告A–K、121节索引、27个新schema适用负例和最新性能均已归档。本段替代上文阶段性待办状态，不改写历史通过证据。外部平台综合V3/Managed Linux/Windows资源语义保持各自unverified，见Engineering Report K；不能把组件验收称为整个产品所有形态100%。

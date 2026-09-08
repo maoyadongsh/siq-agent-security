@@ -1,8 +1,8 @@
 # Provenance-Bound Effect V1 全模板逐节审计
 
-起点d001c4d，核对源码693641d及之后文档修改。原文模板共121个编号节（0–120）。这份表保留DoD之外的交付要求；“待逐节复核”并不表示尚无代码，只表示未完成该节全部细项与证据的对应核验。
+起点d001c4d，最终功能源码8eb4540，CI/完整nightly与本地复验均对应此基线。原文模板共121个编号节（0–120）。这份表保留DoD之外的交付要求；“待逐节复核”并不表示尚无代码，只表示未完成该节全部细项与证据的对应核验。
 
-事实源：[原文模板](templates/provenance-bound-effect-v1-development-template.md)、[DoD验收索引](provenance-bound-effect-v1-acceptance-audit.md)、[Engineering Report草稿](provenance-bound-effect-v1-engineering-report.md)。不要将45项DoD直接折算成121节完成率。
+事实源：[原文模板](templates/provenance-bound-effect-v1-development-template.md)、[DoD验收索引](provenance-bound-effect-v1-acceptance-audit.md)、[Engineering Report](provenance-bound-effect-v1-engineering-report.md)。不要将45项DoD直接折算成121节完成率。
 
 | 节 | 原文标题 | 原文行 | 本轮状态/证据入口 |
 | --- | --- | --- | --- |
@@ -88,7 +88,7 @@
 | 79 | Workstream G — Adapter 设计 | 2441 | 已核对；适配器只映射事件/参数/显式句柄，策略留在daemon；Hermes显式桥接不扩为全平台自动采集 |
 | 80 | Adapter 自报来源的限制 | 2471 | 已核对；decision report只允许受限source/trust，authoritative需可信issuer验证 |
 | 81 | OpenClaw Hold Gate 不得退化 | 2491 | 已核对；OpenClaw beforeExecute/hold-status/final params复查，C3测试通过 |
-| 82 | Intent Binding Revocation 不得退化 | 2506 | 部分核验：report/select 三模式、binding/Intent 撤销及重建服务后拒绝已由 TestProvenanceReportsRejectRevokedAuthorityAcrossRestart 验证；Effect 历史动作边界仍需归档 |
+| 82 | Intent Binding Revocation 不得退化 | 2506 | 已核验：report/select撤销与重建服务拒绝；工具/独立效果可补报历史动作但新Decide仍deny；observer终态与恢复链继续约束，逐路径边界见effect-evidence-api-v1末表 |
 | 83 | Workstream H — Enterprise Compatibility Preparation | 2522 | 已核对；Intent issuer字段可表达企业标识，不因标签授予信任；ADR-018 |
 | 84 | Issuer abstraction | 2548 | 已核对；既有Lookup/Issuer公钥接入点复用，企业trust bundle部署保留未来项；ADR-018 |
 | 85 | Workstream I — Security Testing | 2575 | 已核验P01–10：P04/P05同值跨task/session直接参数匹配及真实daemon场景均scope_mismatch；P07实际文件篡改重开验签；来源/聚合/default/expiry见matcher、graph、aggregation、defaults、authority与HTTP测试 |
@@ -108,27 +108,27 @@
 | 99 | 工程结构建议 | 3113 | 已核对；实现按现有intent/provenance/runtimeaction/runtimeauthz/effectevidence/completion拆分 |
 | 100 | Receipt Engine 重构原则 | 3134 | 已核对；单进程可信回读与现有Engine事务流，独立模块而非微服务 |
 | 101 | 不允许出现 God Engine 进一步膨胀 | 3173 | 已核对；图/效果/Context/Completion实现位于独立包，Engine仅接线与既有决策流 |
-| 102 | CI | 3194 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 103 | 新 CI Job | 3227 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 104 | Benchmark 不允许阻塞每个 PR 的项目 | 3248 | 已核对；smoke/full不同语料；nightly 34188106080三次完整运行success |
+| 102 | CI | 3194 | 已核验：8eb4540全仓ci 28/28成功，严格Go1.26.6漏洞/race/vet门禁成功，完整job/step归档见ci-8eb4540 |
+| 103 | 新 CI Job | 3227 | 已核验：runtime-security-contracts成功，固定向量、schema、hard-gate全Go测试及smoke均有实际执行步骤 |
+| 104 | Benchmark 不允许阻塞每个 PR 的项目 | 3248 | 已核验：PR smoke 5对10场景；34190577905三轮full成功且全部下载本地复验 |
 | 105 | CODEOWNERS | 3270 | 已核对；CODEOWNERS覆盖指定八类路径并使用仓库owner |
 | 106 | 不直接修改 GitHub Branch Protection | 3299 | 已核对；未操作Ruleset，报告须保留main protection独立核验要求 |
 | 107 | Commit Strategy | 3315 | 已核对；独立分支按合同/实现/测试/文档提交，未向main提交 |
-| 108 | Definition of Done — Authority | 3353 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
-| 109 | Definition of Done — Provenance | 3385 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
-| 110 | Definition of Done — RuntimeAction | 3435 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
-| 111 | Definition of Done — Effect | 3455 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
-| 112 | Definition of Done — Benchmark | 3491 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
-| 113 | Definition of Done — Compatibility | 3531 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
-| 114 | Definition of Done — Engineering | 3559 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
-| 115 | 完成后必须输出 Engineering Report | 3587 | A–K草稿已落盘；最终SHA/CI/nightly与全节审计待定版 |
-| 116 | 禁止使用的产品宣称 | 3780 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 117 | 可以使用的准确表述 | 3802 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 118 | 本轮完成后的目标架构 | 3814 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 119 | 最终安全模型 | 3868 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 120 | 开始执行 | 3909 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 108 | Definition of Done — Authority | 3353 | 对应DoD均有基线限定证据；见验收索引，最终功能SHA为8eb4540 |
+| 109 | Definition of Done — Provenance | 3385 | 对应DoD均有基线限定证据；见验收索引，最终功能SHA为8eb4540 |
+| 110 | Definition of Done — RuntimeAction | 3435 | 对应DoD均有基线限定证据；见验收索引，最终功能SHA为8eb4540 |
+| 111 | Definition of Done — Effect | 3455 | 对应DoD均有基线限定证据；见验收索引，最终功能SHA为8eb4540 |
+| 112 | Definition of Done — Benchmark | 3491 | 对应DoD均有基线限定证据；见验收索引，最终功能SHA为8eb4540 |
+| 113 | Definition of Done — Compatibility | 3531 | 对应DoD均有基线限定证据；见验收索引，最终功能SHA为8eb4540 |
+| 114 | Definition of Done — Engineering | 3559 | 对应DoD均有基线限定证据；见验收索引，最终功能SHA为8eb4540 |
+| 115 | 完成后必须输出 Engineering Report | 3587 | 已交付A–K Engineering Report，含最终功能SHA、当前42场景、9项性能实测及全部残余风险 |
+| 116 | 禁止使用的产品宣称 | 3780 | 已核验：README、矩阵、报告保留same-UID/partial/显式来源/平台unverified边界；修正README三条过时未实现说明 |
+| 117 | 可以使用的准确表述 | 3802 | 已核验：选定高影响参数绑定可验证来源、区分tool-report与独立材料；matcher+E05 HTTP+42场景证据 |
+| 118 | 本轮完成后的目标架构 | 3814 | 已核验：Engine共享RuntimeAction，联合Grant/Intent/Context/Provenance与RuntimeState，签名Decision后由历史动作关联Effect/Completion；报告B |
+| 119 | 最终安全模型 | 3868 | 已核验：交集授权与执行后证据分层，模型/外部内容/工具声明不创建Authority；报告C/E及state-audit |
+| 120 | 开始执行 | 3909 | 已实施并验收：独立分支、合同/代码/测试/基准/报告齐备；外部原生V3及OS隔离按明确排除项和平台边界保留unverified |
 
-后续按18–44、45–76、79–107、116–120分组核对具体字段、reason code、P/C/E测试、命令与交付物；发现缺口先修复，再更新对应状态。
+以上按分组核对字段、reason code、P/C/E测试、命令与交付物，发现的缺口均有实现/测试增量。以下段落保留阶段证据；最新CI与三轮下载复验见ci-8eb4540归档。用户随后明确要求合并开发分支到main，覆盖原先仅在独立分支交付的操作限制。
 
 ### §18–44细项核验补充
 

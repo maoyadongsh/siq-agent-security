@@ -853,3 +853,9 @@ P07本批已补齐：TestPersistedAssertionTamperingFailsAfterRestart 在私有�
 - Runtime MatchParameters将显式引用在当前scope无法解析统一映射为provenance_scope_mismatch。包括跨task、跨session和未知ID；不跨scope探测存在性，不增加全局索引/扫描。管理Resolve未找到仍为not_found，缺少必需引用仍为missing；坏签名/时效等不被覆盖。
 - 同步5个benchmark场景预期及真实MCP fixture，补充参数匹配跨task/session精确代码断言。实际完整42场景通过，离线验签51条回执、11个效果封装；摘要归档scope-benchmark-20260908.json，注明c36009c加工作树修改，不虚构干净提交基线。
 - Go1.26.6全模块vet/race与四平台编译通过；benchmark单测21项通过。完整nightly运行34190220726仍对应c36009c，不能覆盖本次原因码调整。
+
+### 2026-09-08：最终功能基线验收及main合并授权
+
+功能代码8eb4540的CI 34190568787共28/28 job成功；runtime-security 34190568771两项PR必需job成功；完整34190577905三轮full全部成功，三轮report/recovery均下载本地复验并核对sidecar哈希。最新性能Go1.26.6、每项100采样已归档；A–K报告、121节索引和README/矩阵更新。保留实验性组件、显式来源、partial效果及原生平台限制。
+
+用户明确要求“完成后所有改动提交远端”，随后要求“所有分支提交到main”。因此在完成报告后合并有效开发分支：当前Provenance分支与尚未包含的Cursor环境配置分支；两个其他历史开发分支已是main祖先。gh-pages为网站生成产物部署分支，保留其职责，不混入源码根目录。合并与推送结果随后记录。

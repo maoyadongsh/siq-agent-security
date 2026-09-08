@@ -98,3 +98,16 @@ observer DELETE成功204前写入不可变签名撤销记录，保存owner token
 动作和决策回执从 Engine 历史台账解析，错误关联400；管理和 observer token 不能代替 decision token。该入口沿用64KiB请求解析和8192条效果记录预算。它用于补报历史动作，即使原 Intent 已撤销也不恢复执行权限。
 
 声明 completed 单独存在时，Completion 仍为 unknown。同一动作、同一回执若另有满足独立性和覆盖要求的实际失败材料，则返回 conflicting/effect_evidence_conflicting 并保留双方引用。独立文件采样可确认输出未出现；目前不提供通用网络未收到事件的证明合同。
+
+## 撤销后的历史证据边界
+
+| 路径 | 撤销后行为与依据 |
+| --- | --- |
+| provenance-reports / provenance-select | 每次 ResolveBinding 与 Active；binding/全局Intent撤销后三模式均拒绝，包括旧report重放及服务重建 |
+| provenance issuer/assertion 管理与 Resolve | 管理操作不代表当前执行授权；issuer撤销使后续来源验证失败。签发或查询历史任务资料不能替代运行时有效binding |
+| tool-effect-reports / effect-evidence | 使用Engine历史action/rid记录；可补报已发生动作，不恢复当前Authority。独立observer另须当前有效、scope/source匹配 |
+| file-observations / network-observations | 关联历史动作、复核observer；当前Intent撤销不抹除此前授权或拒绝的事实。拒绝后实际效果保留incident |
+| file-observation-recoveries | 管理端接管原pending，复核source/scope、所有历史observer撤销和原期限；不生成新动作授权 |
+| effect-evidence GET / action列表 / task completion | 管理端读取、签名与历史动作复验；可调查撤销任务，结果不会回写Intent、Grant或有效权限 |
+
+测试依据：`TestProvenanceReportsRejectRevokedAuthorityAcrossRestart`、`TestToolSuccessConflictsWithIndependentMissingOutputHTTP`、`TestEffectObserverHTTPSeparationScopeRevocationAndIncident`、`TestFileObservationHTTPReadsRealState`及双SIGKILL恢复夹具。历史证据的允许补报与当前执行权的拒绝是不同操作；撤销不承诺原子取消已经开始的外部操作。

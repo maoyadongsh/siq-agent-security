@@ -112,7 +112,7 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 
 | 独立能力 | 组件状态 | 已验证边界 | 尚未证明 |
 | --- | --- | --- | --- |
-| Authority Hard Gate | evidenced | 无效必需Authority三模式拒绝；693641d CI与本地回归 | 全平台原生强制执行 |
+| Authority Hard Gate | evidenced | 无效必需Authority三模式拒绝；8eb4540 CI与本地回归 | 全平台原生强制执行 |
 | Context Assertion | evidenced | admin签名workspace、请求/scope/期限绑定，不能扩大Grant | 外部attestor部署、恶意同UID隔离 |
 | Provenance Assertion | evidenced | issuer registry、公钥验签、scope/期限/撤销、父图与最低trust | 来源数据真实性、企业trust bundle部署 |
 | Parameter Provenance | evidenced | Intent V3签名约束、参数摘要/引用匹配、V2双读 | 模型隐式推理lineage、所有平台自动传播 |
@@ -124,7 +124,7 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 | Pending恢复 | evidenced | 原deadline、管理接管/历史撤销/并发容量；两次Linux SIGKILL | 断电/文件系统故障矩阵、全平台原生自动调度、目录回滚隔离 |
 | Benchmark | evidenced | full 21对42场景；PR smoke 5对10场景；签名/关联/显式D0–D5分母 | D0/D1、全样本独立效果覆盖、通用离线策略重演 |
 | 性能 | evidenced | 八阶段及完整Decide各100次实测；原始数据/源码摘要 | 生产SLA、冷启动/饱和并发、全攻击与深图性能 |
-| CI与治理 | evidenced | 693641d两套PR工作流success，CODEOWNERS源码规则 | nightly完整执行尚在运行；main保护强制性须独立核验 |
+| CI与治理 | evidenced | 8eb4540全仓/运行时CI及三轮完整nightly成功，CODEOWNERS源码规则 | main保护强制性须独立核验 |
 
 `evidenced`仅指表中组件边界，不将任意平台综合状态提升。OpenClaw/CodeBuddy新增V3原生端到端保持`unverified`；Hermes显式桥接也不等于所有宿主原生事件调度已验证。性能与基准各自基线见工程报告，不能混称最新生产性能。
 
