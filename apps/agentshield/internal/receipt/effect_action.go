@@ -25,7 +25,7 @@ func (e *Engine) EffectAction(actionID, receiptID string) (effectevidence.Action
 		if err != nil {
 			return effectevidence.Action{}, effectevidence.ErrCorrelation
 		}
-		return effectevidence.Action{ActionID: d.ActionID, DecisionReceiptID: d.ReceiptID, TaskID: d.TaskID, Platform: d.Platform, SessionID: d.SessionID, AgentID: str(d.AgentID), IssuedAt: at,
+		return effectevidence.Action{IntentID: d.IntentID, IntentDigest: d.IntentDigest, ActionID: d.ActionID, DecisionReceiptID: d.ReceiptID, TaskID: d.TaskID, Platform: d.Platform, SessionID: d.SessionID, AgentID: str(d.AgentID), IssuedAt: at,
 			Authorized: d.Action == ActionAllow || d.Action == ActionRedact || (d.Action == ActionHold && a.approved),
 			Effects:    append([]string(nil), d.Effects...), Resources: append([]runtimeaction.ResourceRef(nil), d.ResourceRefs...)}, nil
 	}

@@ -2,6 +2,7 @@ package effectevidence
 
 import (
 	"bytes"
+	"crypto/ed25519"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -103,10 +104,7 @@ func (s *Store) get(id string, now time.Time) (Record, error) {
 	if d.Decode(&extra) != io.EOF {
 		return Record{}, ErrState
 	}
-	if r.SchemaVersion != "effect-evidence-record/v1" || r.Evidence.EvidenceID != id || r.Evidence.Verify(s.key.Public(), now) != nil || !digestPattern.MatchString(r.RequestDigest) || len(r.TaskID) > 256 || !member(r.FindingCode, "", "unauthorized_effect_observed", "effect_scope_mismatch") || r.SigningSchema != signing.SchemaLocalCanonicalV1 || !signing.VerifyCanonical(s.key.Public(), r.unsigned(), r.Signature) {
-		return Record{}, ErrState
-	}
-	if r.FileObservation != nil && !fileMaterialMatches(*r.FileObservation, r.Evidence, now) {
+	if r.Evidence.EvidenceID != id || r.Verify(s.key.Public(), now) != nil {
 		return Record{}, ErrState
 	}
 	return r, nil
@@ -243,4 +241,15 @@ func (s *Store) submit(input Evidence, action Action, observer Source, now time.
 		return Record{}, ErrState
 	}
 	return r, nil
+}
+
+// Verify checks both signatures and retained observation material.
+func (r Record) Verify(pub ed25519.PublicKey, now time.Time) error {
+	if r.SchemaVersion != "effect-evidence-record/v1" || r.Evidence.Verify(pub, now) != nil || !digestPattern.MatchString(r.RequestDigest) || len(r.TaskID) > 256 || !member(r.FindingCode, "", "unauthorized_effect_observed", "effect_scope_mismatch") || r.SigningSchema != signing.SchemaLocalCanonicalV1 || !signing.VerifyCanonical(pub, r.unsigned(), r.Signature) {
+		return ErrState
+	}
+	if r.FileObservation != nil && !fileMaterialMatches(*r.FileObservation, r.Evidence, now) {
+		return ErrState
+	}
+	return nil
 }

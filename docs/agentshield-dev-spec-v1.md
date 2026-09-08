@@ -926,3 +926,11 @@ NetworkOracle 仅用于本地 benchmark，绑定127.0.0.1随机端口，对外�
 Intent V3 增加可选 effect_requirements 数组（最多128项、requirement_id唯一），缺省/空数组表示没有声明效果要求，Completion返回unknown/not_required。显式null拒绝；V2拒绝该字段，包括null，旧V3缺省保持签名字节不变。
 
 第一阶段要求明确 file.write、filesystem资源摘要、预期文件内容SHA256、minimum_independence（host_independent或external_independent）和minimum_coverage（partial或full），所有字段必填，不把缺省值解释为更低要求。效果必须在 allowed_effects 中；要求不扩大运行时授权。网络要求在服务器接收材料归档后另行扩展，暂不声称已支持网络任务完成证明。
+
+### C2 Completion 聚合规则
+
+聚合器接收管理端已验证 Intent 投影（task_id/intent_id/digest/requirements）、当前验签有效的 Record、Engine 动作查询和验证公钥；任何调用方正文不能替代这些依赖。对全部输入记录先验签，再按 task 过滤；动作必须匹配 task、Intent ID/digest、action/receipt、资源和 file.write 效果。无要求为 unknown/not_required。
+
+每项要求至少需要一份 completed/expected、无 finding、独立性与coverage达到要求、FileObservation 与证据绑定且实际后文件摘要匹配签名预期的证据才能 verified。无证据或文件缺失为 incomplete；已知越权/目标内容冲突为 conflicting；验签或关联失败直接错误，材料缺失/等级不足或未知执行为 unknown。冲突优先于unknown，unknown优先于incomplete，全部满足才verified。未知证据不得被一条正例遮蔽；同任务其他资源的已知安全事件也阻止整体verified。
+
+这是确定性状态投影，不写 completed 字段、不执行模型判断。当前动作查询仍受24小时窗口限制，超窗关联不得制造完成证明；历史查询恢复另行补齐。

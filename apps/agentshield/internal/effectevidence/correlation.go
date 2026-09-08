@@ -10,6 +10,7 @@ import (
 // Action is a transient projection of the verified decision ledger. Only the
 // engine may supply it; it must never be decoded from an evidence request.
 type Action struct {
+	IntentID, IntentDigest              string
 	ActionID, DecisionReceiptID, TaskID string
 	Platform, SessionID, AgentID        string
 	IssuedAt                            time.Time

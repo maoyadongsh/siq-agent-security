@@ -205,3 +205,10 @@
 - Intent V3 可选 effect_requirements 纳入同一 canonical digest/签名，先支持 file.write 的资源摘要、预期内容摘要、最低独立性/覆盖要求。缺省/空数组不表示完成；V2拒绝新字段，V3显式null拒绝，旧V3固定签名样例保持一致。
 - 运行时验证字段完整、最多128项、ID唯一、效果在 allowed_effects 中。改变同一 Intent 的预期内容摘要会改变签名摘要，要求不会作为额外动作授权来源。
 - intent/completion 定向及Go全模块race/vet、四平台编译通过，Python合同9项及Ruff通过；日志 `/tmp/siq-completion-intent-race.log`。当前仅完成可信要求模型；状态聚合、任务查询 API 及网络完成要求尚未实现。
+
+### C2 确定性 Completion 聚合
+
+- 新增 completion.Evaluate，对 Record 内外签名及材料复验；Engine 动作投影补齐 Intent ID/digest，确保 task/Intent/action/receipt 关联一致。
+- 每项要求检查实际文件后摘要、签名预期摘要、独立性、coverage、执行状态、授权/资源/效果匹配；无证据 incomplete，无要求 unknown/not_required，弱或无材料证据 unknown，冲突/安全事件 conflicting，全项满足才 verified。
+- 真实文件→采样→SubmitFile签名记录→聚合测试通过，覆盖预期内容替换、full/external更高要求、正例混入无材料证据、外层篡改、Intent错配、重复证据和安全事件不能被正例遮蔽。
+- completion/effectevidence/receipt 三包及Go全模块race/vet、四平台编译通过，日志 `/tmp/siq-completion-aggregate-race.log`；任务HTTP查询、历史动作超24小时恢复及网络完成要求仍待接入，聚合器不等于完整业务工作流。
