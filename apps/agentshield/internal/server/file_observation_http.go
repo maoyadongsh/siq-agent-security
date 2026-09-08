@@ -110,6 +110,15 @@ func (s *Server) beginFileObservation(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if p, exists := s.fileObservations[body.ID]; exists {
+		current, ownerErr := s.effects.PendingFileOwner(body.ID, now)
+		if ownerErr != nil {
+			effectError(w, ownerErr)
+			return
+		}
+		if current != owner {
+			effectError(w, effectevidence.ErrConflict)
+			return
+		}
 		if p.Owner != owner || p.ActionID != a.ActionID || p.ReceiptID != a.DecisionReceiptID || p.Before.ResourceRef != ref || p.ExpectedDigest != body.Expected || p.MaxBytes != body.MaxBytes {
 			effectError(w, effectevidence.ErrConflict)
 			return
@@ -130,8 +139,13 @@ func (s *Server) beginFileObservation(w http.ResponseWriter, r *http.Request) {
 	}
 	persisted, pendingErr := s.effects.GetPendingFile(body.ID)
 	if pendingErr == nil {
+		current, ownerErr := s.effects.PendingFileOwner(body.ID, now)
+		if ownerErr != nil {
+			effectError(w, ownerErr)
+			return
+		}
 		expires, parseErr := time.Parse(time.RFC3339Nano, persisted.ExpiresAt)
-		if parseErr != nil || !now.Before(expires) || persisted.OwnerDigest != owner || persisted.Scope != o.Scope || persisted.Source != o.Source || persisted.ActionID != a.ActionID || persisted.ReceiptID != a.DecisionReceiptID || persisted.Before.ResourceRef != ref || persisted.ExpectedDigest != body.Expected || persisted.MaxBytes != body.MaxBytes {
+		if parseErr != nil || !now.Before(expires) || current != owner || persisted.Scope != o.Scope || persisted.Source != o.Source || persisted.ActionID != a.ActionID || persisted.ReceiptID != a.DecisionReceiptID || persisted.Before.ResourceRef != ref || persisted.ExpectedDigest != body.Expected || persisted.MaxBytes != body.MaxBytes {
 			effectError(w, effectevidence.ErrConflict)
 			return
 		}
@@ -187,7 +201,12 @@ func (s *Server) finishFileObservation(w http.ResponseWriter, r *http.Request) {
 		effectError(w, effectevidence.ErrNotFound)
 		return
 	}
-	if p.Owner != tokenDigest(token) {
+	current, ownerErr := s.effects.PendingFileOwner(id, now)
+	if ownerErr != nil {
+		effectError(w, ownerErr)
+		return
+	}
+	if current != tokenDigest(token) || p.Owner != current {
 		effectError(w, effectevidence.ErrObserver)
 		return
 	}
@@ -201,13 +220,13 @@ func (s *Server) finishFileObservation(w http.ResponseWriter, r *http.Request) {
 		effectError(w, effectevidence.ErrCorrelation)
 		return
 	}
-	if p.Completed {
-		record, err := s.effects.Get(id, now)
-		if err != nil {
-			effectError(w, err)
-			return
-		}
+	record, storedErr := s.effects.Get(id, now)
+	if storedErr == nil {
 		writeJSON(w, 200, record)
+		return
+	}
+	if p.Completed || !errors.Is(storedErr, effectevidence.ErrNotFound) {
+		effectError(w, storedErr)
 		return
 	}
 	after, err := effectevidence.CaptureFile(body.Path, p.MaxBytes)
@@ -220,7 +239,7 @@ func (s *Server) finishFileObservation(w http.ResponseWriter, r *http.Request) {
 		effectError(w, effectevidence.ErrInvalid)
 		return
 	}
-	record, err := s.effects.SubmitFile(id, material, a, o.Source, time.Now())
+	record, err = s.effects.SubmitFile(id, material, a, o.Source, time.Now())
 	if err != nil {
 		effectError(w, err)
 		return
@@ -228,4 +247,72 @@ func (s *Server) finishFileObservation(w http.ResponseWriter, r *http.Request) {
 	p.Completed = true
 	s.fileObservations[id] = p
 	writeJSON(w, 201, record)
+}
+
+func (s *Server) recoverFileObservation(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		w.WriteHeader(405)
+		return
+	}
+	var body struct {
+		ID            string `json:"observation_id"`
+		ObserverID    string `json:"observer_id"`
+		ExpectedOwner string `json:"expected_owner"`
+	}
+	if !readEffect(w, r, &body) {
+		return
+	}
+	if !fileObservationID.MatchString(body.ID) || !fileExpectedDigest.MatchString(body.ExpectedOwner) || len(body.ObserverID) != 41 || !strings.HasPrefix(body.ObserverID, "observer-") {
+		effectError(w, effectevidence.ErrInvalid)
+		return
+	}
+	s.observerMu.Lock()
+	defer s.observerMu.Unlock()
+	now := time.Now()
+	p, err := s.effects.GetPendingFile(body.ID)
+	if err != nil {
+		effectError(w, err)
+		return
+	}
+	var target observerSession
+	var owner string
+	for digest, o := range s.observers {
+		if o.ID == body.ObserverID {
+			target = o
+			owner = digest
+			break
+		}
+	}
+	if owner == "" || !now.Before(target.Expires) {
+		effectError(w, effectevidence.ErrObserver)
+		return
+	}
+	revoked, err := s.effects.ObserverRevoked(owner)
+	if err != nil {
+		effectError(w, err)
+		return
+	}
+	if revoked || target.Source != p.Source || target.Scope != p.Scope {
+		effectError(w, effectevidence.ErrObserver)
+		return
+	}
+	if _, err = s.fileAction(target, p.ActionID, p.ReceiptID); err != nil {
+		effectError(w, err)
+		return
+	}
+	if _, err = s.effects.Get(p.ID, now); !errors.Is(err, effectevidence.ErrNotFound) {
+		if err == nil {
+			err = effectevidence.ErrConflict
+		}
+		effectError(w, err)
+		return
+	}
+	recovery, err := s.effects.RecoverPendingFile(p.ID, body.ExpectedOwner, owner, now)
+	if err != nil {
+		effectError(w, err)
+		return
+	}
+	// Rebuild through begin using the original snapshot after durable publication.
+	delete(s.fileObservations, p.ID)
+	writeJSON(w, 200, map[string]any{"recovery": recovery, "expires_at": p.ExpiresAt})
 }

@@ -440,3 +440,10 @@
 整体工程进度约75%–80%，不是45项DoD通过率。前文65%–70%为历史检查点。当前已具备20对组件场景、公共回执离线验签及本地验证的PR/nightly工作流；主要剩余为恢复API与强杀测试、平台自动采集/调度、阶段性能与完整语义重放、远端及全仓验收、文档与最终报告。工作流尚未推送运行，不宣称远端CI通过。
 
 - Schema验证补充：本机jsonschema环境未启用RFC3339格式检查依赖，首次日期字符串负例没有拒绝；不计为通过。随后明确验证sequence越界、owner格式、额外token字段和signature格式四类结构负例，均通过；运行时日期由Go time.Parse及上述时序测试约束。
+
+### C2 管理接管API与begin/finish持久owner复核
+
+- POST /v1/file-observation-recoveries仅admin，接收observation_id/observer_id/expected_owner；匹配已签发observer的source/scope、期限/撤销和fileAction，持久CAS接管后清理缓存，返回签名接管记录及原deadline。已完成证据拒绝接管。
+- begin重建索引使用持久当前owner及原before；缓存命中和finish也检查全部历史owner撤销。新owner接管后旧token无法begin/finish。finish先读取已有签名材料，覆盖证据已发布但缓存Completed未更新的崩溃窗口，避免重新采样改变证据。
+- block/warn真实文件HTTP测试通过：decision凭据403、observer凭据在admin认证域401、admin接管幂等、期限不变、新owner沿用写前快照、旧owner拒绝、原owner撤销后当前owner也拒绝、完成后接管409、缓存未更新重复finish返回相同签名。首次测试误期望observer在admin域403，核对现有认证实现后改为401；权限没有放宽。
+- Go全模块race/vet与四平台编译通过（/tmp/siq-recovery-api-race.log）；新请求schema正例与四类负例通过，diff检查通过。尚未验证真实进程SIGKILL/重启恢复，平台调度、故障容量矩阵及完整目标验收继续待完成。

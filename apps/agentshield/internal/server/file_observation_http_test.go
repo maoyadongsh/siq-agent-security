@@ -80,6 +80,20 @@ func TestFileObservationHTTPReadsRealState(t *testing.T) {
 			if recovered["before"].(map[string]any)["exists"] != false {
 				t.Fatal("retry resampled after tool execution", recovered)
 			}
+
+			recoveryBody := map[string]any{"observation_id": "file-http-real", "observer_id": "observer-" + tokenDigest(other)[:32], "expected_owner": tokenDigest(observer)}
+			effectCall(t, s, "POST", "/v1/file-observation-recoveries", token, recoveryBody, 403)
+			effectCall(t, s, "POST", "/v1/file-observation-recoveries", other, recoveryBody, 401)
+			takeover := effectCall(t, s, "POST", "/v1/file-observation-recoveries", s.bootAdmin, recoveryBody, 200)
+			repeated := effectCall(t, s, "POST", "/v1/file-observation-recoveries", s.bootAdmin, recoveryBody, 200)
+			if takeover["recovery"].(map[string]any)["signature"] != repeated["recovery"].(map[string]any)["signature"] || takeover["expires_at"] != persisted.ExpiresAt {
+				t.Fatal("recovery not idempotent or extended deadline")
+			}
+			effectCall(t, s, "POST", "/v1/file-observations", observer, body, 409)
+			effectCall(t, s, "POST", "/v1/file-observations", other, body, 200)
+			effectCall(t, s, "POST", "/v1/file-observations/file-http-real/finish", observer, map[string]any{"path": path}, 403)
+			originalObserver := observer
+			observer = other
 			effectCall(t, s, "POST", "/v1/file-observations/file-http-real/finish", observer, map[string]any{"path": path + "-other"}, 400)
 			record := effectCall(t, s, "POST", "/v1/file-observations/file-http-real/finish", observer, map[string]any{"path": path}, 201)
 			material := record["file_observation"].(map[string]any)
@@ -104,10 +118,19 @@ func TestFileObservationHTTPReadsRealState(t *testing.T) {
 			if err = os.Remove(path); err != nil {
 				t.Fatal(err)
 			}
+			// Crash window: evidence published but cache completion not updated.
+			s.observerMu.Lock()
+			cached := s.fileObservations["file-http-real"]
+			cached.Completed = false
+			s.fileObservations["file-http-real"] = cached
+			s.observerMu.Unlock()
 			retry := effectCall(t, s, "POST", "/v1/file-observations/file-http-real/finish", observer, map[string]any{"path": path}, 200)
 			if retry["signature"] != record["signature"] {
 				t.Fatal("completion retry resampled/rewrote evidence")
 			}
+			effectCall(t, s, "POST", "/v1/file-observation-recoveries", s.bootAdmin, recoveryBody, 409)
+			effectCall(t, s, "DELETE", "/v1/effect-observers/observer-"+tokenDigest(originalObserver)[:32], s.bootAdmin, nil, 204)
+			effectCall(t, s, "POST", "/v1/file-observations/file-http-real/finish", observer, map[string]any{"path": path}, 409)
 			body["observation_id"] = "file-http-fake"
 			effectCall(t, s, "POST", "/v1/file-observations", observer, body, 201)
 			fake := effectCall(t, s, "POST", "/v1/file-observations/file-http-fake/finish", observer, map[string]any{"path": path}, 201)
