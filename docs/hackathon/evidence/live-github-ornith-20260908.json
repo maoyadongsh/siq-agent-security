@@ -1,0 +1,74 @@
+{
+  "schema_version": "hackathon-model-checkpoint/v1",
+  "recorded_at": "2026-09-08T08:46:52.502161+00:00",
+  "provider": "ornith",
+  "model": "Ornith-1.5-35B-A3B-NVFP4",
+  "source_mode": "live_github",
+  "repository": "pallets/flask",
+  "scope": [
+    "src/flask/signals.py"
+  ],
+  "scenario": "normal",
+  "approval_actor": null,
+  "binary_sha256": "957f371b4adea2421503c472921149a69cb86c3bb9e2912e4236ae1e84bb38cd",
+  "e2e_ms": 60346.02189998259,
+  "application_files_sha256": {
+    "apps/secure-agent/secure_agent/__init__.py": "128f0ae6e0ce861dd91223d04e16d5c780f7ca54ccdeb13b249a749ab8e8b768",
+    "apps/secure-agent/secure_agent/__main__.py": "d891c6f4cb1c9d0aedef387948b33c910485f1a2f1dd355a4c30ccfbc4546dba",
+    "apps/secure-agent/secure_agent/application.py": "71041b6a730c5896fef81f8de71eea791599448c987856f99e220d37101923c5",
+    "apps/secure-agent/secure_agent/authority.py": "e5e2e4dec9736dcf1e84959ffa59736c148151ce0d06cede28662264a00d8bfe",
+    "apps/secure-agent/secure_agent/contracts.py": "afe316d6e6580365ddaa0d51a6a906aeaf5898dc7fd64157e8bf705d208d63f4",
+    "apps/secure-agent/secure_agent/fixtures.py": "35739042ca01aa35571edb7ab2d6b99908a0e915a45eedaef15f6d89cfaa9c69",
+    "apps/secure-agent/secure_agent/gateway.py": "a2edc2e29cc79609611b1e6f72869c07923753cbaa08a34a8291b51296d04d55",
+    "apps/secure-agent/secure_agent/models.py": "77bb0c2692fd364122bc7574e7056273b1d3279a76bb396be671562cf4054fb9",
+    "apps/secure-agent/secure_agent/runtime.py": "e58f3675f0ca6454903a2da663147eaad91e0600e0c318f31747fce2995f2ee4",
+    "apps/secure-agent/secure_agent/security.py": "a338eecd718176e682787287992cec10db493071e7371cd99ef548169ec7ad87",
+    "apps/secure-agent/secure_agent/service.py": "4ed872d0f08fdf16663fafe196d95ae159e1ae15039a209b3986bee9fd887e85",
+    "apps/secure-agent/secure_agent/skills.py": "68ac4aa3003eaca38831edb64c484ce0cdf43097d1dd6d44b6078e9061140093",
+    "apps/secure-agent/secure_agent/tools.py": "5406249a782f1c935b6c2b9bbb767e30e853856fdc5b6e258f0ca76c23b30d16"
+  },
+  "result": {
+    "task": {
+      "task_id": "review-1d487b6992a64e4990839a488dcd1bc7",
+      "goal": "Analyze the repository, write a security review and deliver the report to Alice.",
+      "model_provider": "ornith",
+      "status": "failed",
+      "current_skill": null,
+      "current_step": "model planning",
+      "actions": [],
+      "timings_ms": {},
+      "completion": null,
+      "error_code": "model_request_failed"
+    },
+    "intent": null,
+    "messages": [],
+    "model_calls": [
+      {
+        "provider": "ornith",
+        "model": "Ornith-1.5-35B-A3B-NVFP4",
+        "operation": "plan",
+        "usage": {},
+        "finish_reason": null,
+        "status": "failed",
+        "error_code": "model_request_failed",
+        "elapsed_ms": 60059.63434200385
+      }
+    ]
+  },
+  "report_markdown": null,
+  "public_evidence": {
+    "fixture": "normal-ornith",
+    "public_key": "WkaAgDfNALEp8byw/YsDDklPiS1bWQNmD7aTexIiJaQ=",
+    "binary_sha256": "957f371b4adea2421503c472921149a69cb86c3bb9e2912e4236ae1e84bb38cd",
+    "receipts": []
+  },
+  "verification": {
+    "receipt_signatures_and_chains": "verified",
+    "receipt_count": 0,
+    "effect_server_readbacks": 0
+  },
+  "limitations": [
+    "One real-model task is not the twenty-task benchmark or a model quality estimate.",
+    "Contacts and delivery endpoint are controlled fixtures; source mode is explicitly recorded."
+  ]
+}

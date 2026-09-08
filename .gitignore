@@ -56,3 +56,6 @@ apps/agentshield/.state/
 # 发布私钥（只允许环境变量 SIQ_AGENT_SECURITY_RELEASE_SEED，兼容 AGENTSHIELD_RELEASE_SEED）
 *.release.seed
 secrets/
+
+# Isolated competition runtime, fixtures, model output and credentials
+.tmp/

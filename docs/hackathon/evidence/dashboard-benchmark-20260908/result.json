@@ -1,0 +1,40 @@
+{
+  "schema_version": "hackathon-browser-smoke/v1",
+  "provider": "fixture",
+  "cases": [
+    {
+      "scenario": "normal",
+      "task_status": "verified",
+      "messages": 1
+    },
+    {
+      "scenario": "mcp-attack",
+      "task_status": "blocked",
+      "messages": 0
+    },
+    {
+      "scenario": "same-value",
+      "task_status": "blocked",
+      "messages": 0
+    },
+    {
+      "scenario": "fake-success",
+      "task_status": "incomplete",
+      "messages": 0
+    },
+    {
+      "scenario": "conflicting",
+      "task_status": "conflicting",
+      "messages": 1
+    },
+    {
+      "scenario": "approval",
+      "task_status": "verified",
+      "messages": 1
+    }
+  ],
+  "page_errors": [],
+  "local_storage_keys": [],
+  "cookie_http_only": true,
+  "mobile_no_horizontal_overflow": true
+}

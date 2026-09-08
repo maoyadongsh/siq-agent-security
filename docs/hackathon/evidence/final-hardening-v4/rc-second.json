@@ -1,0 +1,62 @@
+{
+  "schema_version": "hackathon-clean-rc/v1",
+  "recorded_at": "2026-09-08T12:31:57.276661+00:00",
+  "source_sha": "cfd1fbf8ca79e3244bd1e133ea000fbc9edf5a1d",
+  "clean_before_and_after_build": true,
+  "source_identity": {
+    "schema_version": "hackathon-rc-source/v2",
+    "build_time": "2026-09-08T12:30:26.250423+00:00",
+    "git_sha": "cfd1fbf8ca79e3244bd1e133ea000fbc9edf5a1d",
+    "git_ref": "HEAD",
+    "go_version": "go1.26.6",
+    "python_version": "Python 3.13.12",
+    "node_version": "v22.22.2",
+    "target": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ]
+  },
+  "candidate": "siq-agent-security-v0.3.0-rc.1",
+  "archive_file": "siq-agent-security-v0.3.0-rc.1.tar.gz",
+  "archive_sha256": "13467d0640f304cc028eeb751c1d58b770ff788159b754029f4284ff69b62c9c",
+  "archive_bytes": 84160081,
+  "official_signature": false,
+  "published": false,
+  "tag_created": false,
+  "secret_scan": "calibrated gitleaks passed",
+  "remote_ci": "remote-ci-second.json",
+  "extracted_launch": "rc-checkpoint-second.json",
+  "artifacts": {
+    "SHA256SUMS": {
+      "sha256": "09bfd0a991216a566a33c419de33c88bcbd47a3c7b92095e80a4737e2261c26d",
+      "bytes": 227171
+    },
+    "candidate-manifest.json": {
+      "sha256": "4a89b178e4c7bff680290883942d724e9153d8e68fc9d3d972e483497b486b8a",
+      "bytes": 366671
+    },
+    "sbom.cdx.json": {
+      "sha256": "c64537d01596de892f0c99923ace180706be93718abeb290cd5a36647733f590",
+      "bytes": 2680
+    },
+    "skills-inventory.json": {
+      "sha256": "9bed6cf8f55c62862327f616ceb8ffa314ff1cc34448b5ccb49400d97f0248a3",
+      "bytes": 735
+    },
+    "source-info.json": {
+      "sha256": "e9a2648254364b87dae0e377ba26518fe4b41c5efac131d02db643b48663fd40",
+      "bytes": 372
+    },
+    "EVIDENCE_SUMMARY.md": {
+      "sha256": "5453ee51a1fed8e672b1f2d96d102ca4ec038a6f998975d3cd24b64794ca4865",
+      "bytes": 768
+    },
+    "QUICK_START.md": {
+      "sha256": "da1432f29baedafd035d86c5fdc66673a2e90d017f9c9cd19eed99f2c7701125",
+      "bytes": 1259
+    }
+  },
+  "superseded_reason": "Visual review found normal delivery effect summary rendering missing despite verified SIQ effects; UI fixed and candidate rebuilt."
+}

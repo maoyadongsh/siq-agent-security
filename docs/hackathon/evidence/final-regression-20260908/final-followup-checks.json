@@ -1,0 +1,92 @@
+{
+  "recorded_at": "2026-09-08T10:19:43.426086+00:00",
+  "scope": "local follow-up after stateful demo integration; earlier complete repository CI-equivalent checks remain in checks.json and additional-checks.json",
+  "tests": {
+    "control_api": 649,
+    "secure_agent": 79,
+    "candidate_and_proof": 10,
+    "web": 11
+  },
+  "checks": [
+    {
+      "name": "control-api-final",
+      "command": ".venv/bin/pytest -q",
+      "cwd": "apps/control-api",
+      "exit_code": 0,
+      "log": "control-api-final.log",
+      "log_sha256": "361b883dacf405299a0764c1401fe54f0f40a9cc3c1fdb062556049a32166633"
+    },
+    {
+      "name": "agent-final",
+      "command": "PYTHONPATH=apps/secure-agent python3 -m unittest discover -s apps/secure-agent/tests -v",
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "agent-final.log",
+      "log_sha256": "928f4101d488fe82a2fec9d291b6b57f99f889aeee78f3e8f32e92342a7e4635"
+    },
+    {
+      "name": "candidate-and-proof-tests",
+      "command": "apps/control-api/.venv/bin/python -m unittest discover -s scripts/hackathon -p 'test_*.py' -v",
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "candidate-and-proof-tests.log",
+      "log_sha256": "c6cf06109fa43ebfb6830a18f83c08092b9be5e6ab8e12dd8b5d31ac99104a8f"
+    },
+    {
+      "name": "go1266-vet-final",
+      "command": "GOTOOLCHAIN=go1.26.6 go vet ./...",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "go1266-vet-final.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "go1266-race-final",
+      "command": "GOTOOLCHAIN=go1.26.6 go test -race ./...",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "go1266-race-final.log",
+      "log_sha256": "67878fa29768f8988b476e0527626d7df30e62c634e57e80a217f25ce8f17aeb"
+    },
+    {
+      "name": "go122-final",
+      "command": "GOTOOLCHAIN=go1.22.12 go test ./...",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "go122-final.log",
+      "log_sha256": "78b4e5b2808383cfc8a977275bfad9e9daa55a6d37f0d6ca8a5aa9dfcc1186e5"
+    },
+    {
+      "name": "gofmt-final",
+      "command": "gofmt -l .",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "gofmt-final.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "web-local-final",
+      "command": "npm run build:local",
+      "cwd": "apps/web",
+      "exit_code": 0,
+      "log": "web-local-final.log",
+      "log_sha256": "9db250461b74c9f8293d76404cab4afab06c0efe2c7f6d9ac751983e281a4302"
+    },
+    {
+      "name": "web-control-final",
+      "command": "npm run build",
+      "cwd": "apps/web",
+      "exit_code": 0,
+      "log": "web-control-final.log",
+      "log_sha256": "506703c6ae538eac81239d049c5d10eaad76a40e725ba49f0ba1c855381c3d71"
+    },
+    {
+      "name": "web-unit-final",
+      "command": "npm test",
+      "cwd": "apps/web",
+      "exit_code": 0,
+      "log": "web-unit-final.log",
+      "log_sha256": "82934ea303786ad45da15df56b667e14dd62280cae32d23c041db5a874ae7ea5"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/report-verification-tool.v1.json",
+  "title": "VerifyReportToolParametersV1",
+  "description": "Parameters for the built-in verify_report tool. The trusted executor starts a fixed isolated Python digest checker. No shell text, executable choice, code or environment comes from these parameters. Effects are file.read and process.exec; report path requires V3 provenance. This is not an arbitrary exec alias or OS containment guarantee.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["path"],
+  "properties": {"path": {"type": "string", "minLength": 1, "pattern": "^/", "maxLength": 4096}}
+}

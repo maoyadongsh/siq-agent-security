@@ -480,13 +480,9 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	excerpt := truncate(e.analyzer.Redact(paramsText), excerptMax)
 	rec.ParamsExcerpt = &excerpt
 
-	// step 4a: taint scan of params (updates session before the decision so
-	// a secret passed to an egress tool in the same call is caught)
-	newTaints, ruleIDs := e.scanTaints(paramsText)
-	for _, t := range newTaints {
-		s.taints[t] = true
-	}
-	rec.MatchedRuleIDs = ruleIDs
+	// Accumulate parameter taints after authority validation, before policy
+	// evaluation. This lets a proven message routing field be classified without
+	// treating its mailbox as a disclosed payload; existing taints are never cleared.
 	if descriptor.Egress {
 		s.trifecta.Egress = true
 	}
@@ -500,7 +496,6 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 			s.trifecta.PrivateData = true
 		}
 	}
-	rec.TaintLabels = sortedKeys(s.taints)
 	tf := s.trifecta
 	rec.Trifecta = &tf
 
@@ -540,6 +535,16 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		}
 	}
 	rec.AuthorityStatus, rec.AuthorityReasonCode = authority.Status, authority.ReasonCode
+	piiText := paramsText
+	if authority.Valid {
+		piiText = messagePayloadPIIText(req, resolvedIntent, descriptor, paramsText)
+	}
+	newTaints, ruleIDs := e.scanTaintsWithPII(paramsText, piiText)
+	for _, t := range newTaints {
+		s.taints[t] = true
+	}
+	rec.MatchedRuleIDs = ruleIDs
+	rec.TaintLabels = sortedKeys(s.taints)
 	policy := runtimeauthz.PolicyResult{}
 	var redacted map[string]any
 	if authority.Valid {
@@ -917,12 +922,16 @@ func (e *Engine) sweepIdleLocked(now time.Time) {
 }
 
 func (e *Engine) scanTaints(text string) ([]string, []string) {
+	return e.scanTaintsWithPII(text, text)
+}
+
+func (e *Engine) scanTaintsWithPII(text, piiText string) ([]string, []string) {
 	var taints, rules []string
 	if containsSecretLiteral(e.analyzer, text) {
 		taints = append(taints, taintSecret)
 		rules = append(rules, "redaction:secret")
 	}
-	if piiRe.MatchString(text) {
+	if piiRe.MatchString(piiText) {
 		taints = append(taints, taintPII)
 		rules = append(rules, "taint:pii")
 	}
@@ -1006,6 +1015,9 @@ func toolSets(g *grant.Grant) (allow, requireApproval map[string]bool) {
 	for _, f := range g.Facts {
 		if f.Domain == "tool" && f.Effect == "allow" && (f.State == "declared" || f.State == "effective") {
 			allow[f.Resource.Value] = true
+			if f.Conditions["require_approval"] == true {
+				requireApproval[f.Resource.Value] = true
+			}
 		}
 	}
 	return allow, requireApproval

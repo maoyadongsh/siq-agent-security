@@ -1,0 +1,117 @@
+{
+  "schema_version": "hackathon-performance/v1",
+  "recorded_at": "2026-09-08T09:44:21.903494+00:00",
+  "inputs": {
+    "model": {
+      "path": "docs/hackathon/evidence/benchmark-20260908/step-plan-low.json",
+      "sha256": "248250317a07f851f45acdac8942640941607f2400c71d85cbd49bfd74649b49"
+    },
+    "stages": {
+      "path": "docs/hackathon/evidence/dgx-spark/runtime-performance-20260908.json",
+      "sha256": "c86d5f2df9d8065e0f1fe22e8f0db650f06b021a6743d579011296180c762ad6"
+    }
+  },
+  "providers": [
+    "stepfun"
+  ],
+  "models": [
+    "step-3.7-flash"
+  ],
+  "verified_receipts": 121,
+  "verified_effect_envelopes": 10,
+  "agent_measurements": {
+    "model_attempt": {
+      "samples": 15,
+      "p50_ms": 5637.628958997084,
+      "p95_ms": 19319.715071003884,
+      "p99_ms": 19319.715071003884
+    },
+    "model_planning": {
+      "samples": 5,
+      "p50_ms": 4270.394621999003,
+      "p95_ms": 5637.628958997084,
+      "p99_ms": 5637.628958997084
+    },
+    "complete_task_attempt": {
+      "samples": 5,
+      "p50_ms": 15683.071576990187,
+      "p95_ms": 33562.07706499845,
+      "p99_ms": 33562.07706499845
+    },
+    "completed_task_only": {
+      "samples": 5,
+      "p50_ms": 15683.071576990187,
+      "p95_ms": 33562.07706499845,
+      "p99_ms": 33562.07706499845
+    }
+  },
+  "component_measurements": {
+    "authority_validation": {
+      "samples": 100,
+      "p50_ms": 0.010672,
+      "p95_ms": 0.018415,
+      "p99_ms": 0.020719
+    },
+    "context_validation": {
+      "samples": 100,
+      "p50_ms": 0.123275,
+      "p95_ms": 0.151818,
+      "p99_ms": 0.171434
+    },
+    "decision_total": {
+      "samples": 100,
+      "p50_ms": 8.229571,
+      "p95_ms": 12.177994,
+      "p99_ms": 13.224642
+    },
+    "intent_lookup": {
+      "samples": 100,
+      "p50_ms": 0.333635,
+      "p95_ms": 0.430719,
+      "p99_ms": 0.807153
+    },
+    "policy_evaluation": {
+      "samples": 100,
+      "p50_ms": 0.003504,
+      "p95_ms": 0.005168,
+      "p99_ms": 0.011216
+    },
+    "provenance_resolution": {
+      "samples": 100,
+      "p50_ms": 0.244295,
+      "p95_ms": 0.312372,
+      "p99_ms": 0.400144
+    },
+    "receipt_append_fsync": {
+      "samples": 100,
+      "p50_ms": 7.549884,
+      "p95_ms": 11.35281,
+      "p99_ms": 12.444016
+    },
+    "runtime_action_normalization": {
+      "samples": 100,
+      "p50_ms": 0.004032,
+      "p95_ms": 0.008143,
+      "p99_ms": 0.031454
+    },
+    "effect_evidence_processing": {
+      "samples": 100,
+      "p50_ms": 5.876686,
+      "p95_ms": 6.343692,
+      "p99_ms": 6.673087
+    }
+  },
+  "failures": {
+    "model_attempts": 0,
+    "tasks": 0
+  },
+  "limitations": [
+    "Different recorded code snapshots and populations; do not add component and Agent percentiles.",
+    "Model timings include transport, generation and strict validation, not isolated GPU kernel time.",
+    "All task attempts include any failed attempts; completed-only figures exclude failures explicitly.",
+    "Component tests use 100 sequential warm samples and actual SIQ signing/state; exclude model, HTTP and tool execution.",
+    "Effect component measurement is SubmitFile, not file capture or external delivery latency.",
+    "Five model tasks are a descriptive local sample, not an SLA or saturation/load benchmark.",
+    "StepFun is deferred by the operator; measurements identify actual ornith and do not substitute labels."
+  ]
+}

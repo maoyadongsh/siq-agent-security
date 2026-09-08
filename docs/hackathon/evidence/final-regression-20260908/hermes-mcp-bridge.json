@@ -1,0 +1,52 @@
+{
+  "schema_version": "mcp-provenance-fixture/v1",
+  "passed": true,
+  "recorded_at": "2026-09-08T09:01:59.747438+00:00",
+  "siq_commit": "e309655915562a27cb98df851c1e46e922563d47",
+  "binary_sha256": "b38f01806b751252cf0ea2a3e8f74d5c6edf3bf017b8935c75f3f98dc1c2e445",
+  "report_rejections": [],
+  "capacity_checks": {},
+  "global_revocation_checks": {},
+  "receipt_count": 4,
+  "receipt_chain_verified": true,
+  "decision_receipt_ids": [
+    "rcp-f9ef549ce5b6-090159.672559",
+    "rcp-f9ef549ce5b6-090159.719509"
+  ],
+  "decisions": [
+    {
+      "pair_id": "mcp-parameter",
+      "kind": "attack",
+      "action": "deny",
+      "reason_code": "provenance_source_not_allowed",
+      "receipt_id": "rcp-f9ef549ce5b6-090159.672559"
+    },
+    {
+      "pair_id": "mcp-parameter",
+      "kind": "benign",
+      "action": "allow",
+      "reason_code": "allow",
+      "receipt_id": "rcp-f9ef549ce5b6-090159.719509"
+    }
+  ],
+  "hermes_adapter_bridge": true,
+  "coverage": "component_fixture",
+  "mcp_protocol": "2025-06-18",
+  "mcp_tool_calls": 1,
+  "checks": {
+    "initialized": true,
+    "real_http_tool_result": true,
+    "signed_report": true,
+    "deterministic_selection": true,
+    "untrusted_path_denied": true,
+    "same_value_trusted_path_allowed": true
+  },
+  "source_identity_digest": "648d780b51bbb7808bf7458c48fa4664a7b9955524a9b06b5f917e14dd681ff4",
+  "limitations": [
+    "local fixture server",
+    "JSON response transport only",
+    "no native platform integration",
+    "no independent effect evidence"
+  ],
+  "script_sha256": "edf3e7cb657a682e2e248d23980a51a8d0520f5eb8ccd2fa681a14db99a5312c"
+}

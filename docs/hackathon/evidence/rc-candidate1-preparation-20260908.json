@@ -1,0 +1,35 @@
+{
+  "schema_version": "hackathon-rc-preparation/v1",
+  "version": "0.3.0-rc.1",
+  "candidate": "candidate1",
+  "published": false,
+  "official_signature": false,
+  "archive_path": ".tmp/hackathon-rc/0.3.0-rc.1-candidate1.tar.gz",
+  "archive_sha256": "13d66adea3b8640f4999e366de0ab87ae61d845764c6a53dfb6f97cdaee9db6b",
+  "archive_bytes": 73439890,
+  "manifest_sha256": "56da652c73bf102c19502bbc78484b68879dcb1a82f6c6dbe5ad517f7f627d93",
+  "files": 1490,
+  "targets": [
+    "linux/amd64",
+    "linux/arm64",
+    "darwin/arm64",
+    "windows/amd64"
+  ],
+  "sbom": {
+    "spec": "CycloneDX 1.5",
+    "validated": true,
+    "schema_url": "https://raw.githubusercontent.com/CycloneDX/specification/master/schema/bom-1.5.schema.json",
+    "schema_sha256": "2d956c1d05c092695457a91f3b5c57c749793c013ec224a0935807cfc8ae4480"
+  },
+  "source": {
+    "sha": "e309655915562a27cb98df851c1e46e922563d47",
+    "dirty": true,
+    "final_commit": null
+  },
+  "launch_evidence": "docs/hackathon/evidence/rc-candidate1-launch-20260908.json",
+  "limitations": [
+    "Local unsigned preparation, not official release signing.",
+    "Source snapshot predates follow-up launcher lint cleanup and documentation; final candidate refresh remains.",
+    "Only Linux arm64 launcher/task actually executed; other targets are cross-build evidence."
+  ]
+}

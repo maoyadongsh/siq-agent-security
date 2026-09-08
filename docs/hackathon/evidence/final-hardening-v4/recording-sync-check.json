@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "case": "adjacent blocked recordings wait for their own submitted task identity",
+  "events": [
+    {
+      "scenario": "mcp-attack",
+      "task_id": "b62855fa8d8a4f08a04d8ec6d36e3069",
+      "provider": "fixture",
+      "task_status": "blocked",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 1.52
+    },
+    {
+      "scenario": "same-value",
+      "task_id": "903a5a8d5aaf4656a9aba9f700e1196a",
+      "provider": "fixture",
+      "task_status": "blocked",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 2.32
+    }
+  ]
+}

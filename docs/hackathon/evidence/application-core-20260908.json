@@ -1,0 +1,42 @@
+{
+  "recorded_at": "2026-09-08T06:17:28.066282+00:00",
+  "starting_sha": "e309655915562a27cb98df851c1e46e922563d47",
+  "branch": "codex/dgx-spark-hackathon-v3",
+  "coverage": "application_unit_and_siq_component_integration",
+  "application_tests_passed": 34,
+  "real_siq_integration_cases": 5,
+  "python_contract_tests_passed": 86,
+  "go_toolchain": "go1.26.6",
+  "go_test": "passed",
+  "go_race": "passed",
+  "go_vet": "passed",
+  "stepfun_live": "unverified",
+  "dgx_application": "unverified",
+  "full_agent_e2e": "pending",
+  "files_sha256": {
+    "apps/secure-agent/README.md": "46cf2b9cb5e59b14346e4c12e44b859988a9561f44ed18cf9010f413d72915ea",
+    "apps/secure-agent/secure_agent/__init__.py": "128f0ae6e0ce861dd91223d04e16d5c780f7ca54ccdeb13b249a749ab8e8b768",
+    "apps/secure-agent/secure_agent/contracts.py": "afe316d6e6580365ddaa0d51a6a906aeaf5898dc7fd64157e8bf705d208d63f4",
+    "apps/secure-agent/secure_agent/gateway.py": "6b479f411f01f3770fbf069dcd1be4857e78fcbcf259ba467812d74d4105b0be",
+    "apps/secure-agent/secure_agent/models.py": "9fed7175745635cbe8a206e800ebc131e96c88780ffced2f1a33b4e010ad3752",
+    "apps/secure-agent/secure_agent/runtime.py": "e58f3675f0ca6454903a2da663147eaad91e0600e0c318f31747fce2995f2ee4",
+    "apps/secure-agent/secure_agent/security.py": "14435d1b2a431d3c5982d222c06ede70a19647bcc2d34434e5e119e50df79083",
+    "apps/secure-agent/secure_agent/skills.py": "0c6e5b3e66cbb8e54b0c0a8384efe509473892c2629a7123cdfab17472b585dd",
+    "apps/secure-agent/tests/test_gateway.py": "0ce3d4997f9dfaaf203265636634fb86bf1b001fb4fd0c1bff1fd9f1ec8fd3d6",
+    "apps/secure-agent/tests/test_models.py": "af7c89deca0ff9a8bfa6e325cac339407d2930baa04d281132054c3d33f4dd8d",
+    "apps/secure-agent/tests/test_siq_integration.py": "ce33ba66dcc6ef127cc83a171e9641b489dfd047213143dd48769bec58641253",
+    "apps/secure-agent/tests/test_skills.py": "b8ba529307134648bb33c23637f7343433c9596231caba4b56e89ce45d1d12ef",
+    "skills/secure-delivery/SKILL.md": "9133aa06a48aee9c4a8212e7b304cce081dfbd65264d237e98a03e20c6e17610",
+    "skills/secure-report/SKILL.md": "40655e34cb473a335f7bd89e0f7f4e7a42501ba78a9a2dfab9c936ad53cd7108",
+    "skills/secure-research/SKILL.md": "7e2590d34703e8516dc010e6a691a298a93ceec68da26e97cbec5601ccd6573a",
+    "apps/agentshield/internal/receipt/engine.go": "4341e84f5668c32ce010dfad6198f44f953b2892f87054ab22943e96b6634d09",
+    "apps/agentshield/internal/receipt/provenance.go": "623c3d35e30edda84edd7096439e2637da98883db20f4dbaf5b47ad55f593abd",
+    "apps/agentshield/internal/receipt/message_pii_test.go": "9f61cd226932460283ffb8c8ab3383c45ec2c604473cb89d732269b13280756c"
+  },
+  "cross_compile": {
+    "linux/amd64": "passed",
+    "linux/arm64": "passed",
+    "darwin/arm64": "passed",
+    "windows/amd64": "passed"
+  }
+}

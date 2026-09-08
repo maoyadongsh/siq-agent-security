@@ -60,6 +60,28 @@ func human() Approval {
 	return Approval{ActorType: "human", ActorID: "u-admin", ApprovedAt: "2026-09-04T06:05:00Z", Channel: "console"}
 }
 
+func TestSharedAdmissionHasSeparatePolicyNamespaces(t *testing.T) {
+	ids := map[string]bool{}
+	for _, target := range []struct{ platform, subject string }{
+		{"hermes", "first"}, {"hermes", "second"}, {"openclaw", "first"},
+	} {
+		result, err := Build(sampleAdmission(), Options{Subject: Subject{Type: "agent_instance", ID: target.subject},
+			Platform: target.platform, Now: fixedNow, Key: key(t)})
+		if err != nil {
+			t.Fatal(err)
+		}
+		id := result.Grant.DesiredPolicyRef.PolicyID
+		if ids[id] || id != result.DesiredPolicy["policy_id"] {
+			t.Fatal("different Grants must not publish conflicting policy version 1")
+		}
+		ids[id] = true
+		selector := result.DesiredPolicy["selector"].(map[string]any)["agent_ids"].([]any)
+		if len(selector) != 1 || selector[0] != target.subject {
+			t.Fatal("policy selector lost its subject scope")
+		}
+	}
+}
+
 // artifact_hash produced by apps/control-api compile_policy for the same
 // desired policy + capabilities (see PR notes); Go must reproduce it.
 const pyArtifactHash = "60e90e56ea34fe46081f3c055b03e18b7a7cb135ced8edc57d5e0e9da38575b6"

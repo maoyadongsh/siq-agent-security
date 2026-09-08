@@ -63,6 +63,24 @@ func Describe(tool string, params map[string]any) Descriptor {
 	d.Resources, d.ResourceError = extractResources(tool, params)
 	d.Hosts = extractHosts(d.Egress, fileLike, text)
 	d.Paths = extractPaths(fileLike, d.ShellLike, text)
+	if !d.ShellLike && fileLike {
+		// A file's contents describe data, not additional execution targets.
+		// Keep legacy tilde hints when structured normalization is unavailable.
+		d.Hosts = nil
+		d.Paths = extractPaths(true, false, FlattenStrings(map[string]any{"path": params["path"], "file_path": params["file_path"]}))
+		if d.ResourceError == nil && len(d.Resources) > 0 {
+			d.Paths = nil
+			for _, r := range d.Resources {
+				if r.Domain == "filesystem" {
+					d.Paths = append(d.Paths, r.Value)
+				}
+			}
+		}
+	} else if !d.ShellLike && hasEffect(effects, EffectNetworkRequest) {
+		d.Hosts = extractHosts(true, false, FlattenStrings(map[string]any{"url": params["url"], "host": params["host"]}))
+	} else if !d.ShellLike && hasEffect(effects, EffectMessageSend) {
+		d.Hosts = nil
+	}
 	var walk func(any, string)
 	walk = func(value any, pointer string) {
 		switch v := value.(type) {

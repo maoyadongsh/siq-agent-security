@@ -1,0 +1,374 @@
+[
+  {
+    "module": "edge/agent",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "edge/agent",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "edge/agent",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/hermes",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/hermes",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/hermes",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/openclaw",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/openclaw",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/openclaw",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/docker",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/docker",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/docker",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/directory",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/directory",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/directory",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/systemd",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/systemd",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/systemd",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/kubernetes",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/kubernetes",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/kubernetes",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/process",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/process",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/process",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/mcp",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/mcp",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/mcp",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/piagent",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/piagent",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/piagent",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/workbuddy",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/workbuddy",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/workbuddy",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/dify",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/dify",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  },
+  {
+    "module": "connectors/dify",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "toolchain": "go1.22.12",
+    "exit_code": 0
+  }
+]

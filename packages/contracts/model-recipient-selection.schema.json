@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "model-recipient-selection v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "candidate_index"
+  ],
+  "properties": {
+    "candidate_index": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

@@ -42,6 +42,11 @@ jobs:
       - name: Install locked validation dependencies
         working-directory: apps/control-api
         run: uv sync --dev --locked
+      - name: Secure Agent contracts and real SIQ integration
+        run: |
+          apps/control-api/.venv/bin/ruff check apps/secure-agent deploy/dgx-spark/preflight.py scripts/hackathon
+          PYTHONPATH=apps/secure-agent apps/control-api/.venv/bin/python -m unittest discover -s apps/secure-agent/tests -v
+          apps/control-api/.venv/bin/python -m unittest discover -s scripts/hackathon -p 'test_*.py' -v
       - name: Validate scenario contracts and statistics
         run: |
           apps/control-api/.venv/bin/pytest -q \
@@ -51,10 +56,14 @@ jobs:
             apps/control-api/app/tests/test_effect_evidence_contracts.py \
             apps/control-api/app/tests/test_effect_schema_matrix.py \
             apps/control-api/app/tests/test_context_assertion_contract.py \
-            apps/control-api/app/tests/test_authority_effect_vectors.py
+            apps/control-api/app/tests/test_authority_effect_vectors.py \
+            apps/control-api/app/tests/test_hackathon_approval_contracts.py \
+            apps/control-api/app/tests/test_hackathon_model_contracts.py
           apps/control-api/.venv/bin/python benchmarks/runtime-security/check_contracts.py
           apps/control-api/.venv/bin/python -m unittest discover -s benchmarks/runtime-security -p 'test_*.py'
           apps/control-api/.venv/bin/ruff check benchmarks/runtime-security
+          apps/control-api/.venv/bin/ruff check benchmarks/hackathon
+          apps/control-api/.venv/bin/python -m unittest discover -s benchmarks/hackathon -p 'test_*.py' -v
       - name: Hermes adapter authority and transport regressions
         run: |
           apps/control-api/.venv/bin/pytest adapters/runtime/hermes-agentshield/tests/test_adapter.py -q
@@ -69,6 +78,17 @@ jobs:
           sha256sum artifacts/runtime-security/recovery.json > artifacts/runtime-security/recovery.sha256
           python3 benchmarks/runtime-security/performance.py --out artifacts/runtime-security/performance.json
           python3 scripts/validate-mcp-provenance.py --hermes-bridge --out artifacts/runtime-security/hermes-mcp-bridge.json
+      - name: Run complete Agent control corpus and verify public evidence
+        run: |
+          mkdir -p .tmp/hackathon-bin
+          go -C apps/agentshield build -o "$PWD/.tmp/hackathon-bin/siq-agent-security" ./cmd/agentshield
+          apps/control-api/.venv/bin/python benchmarks/hackathon/run.py \
+            --binary .tmp/hackathon-bin/siq-agent-security \
+            --state-root .tmp/hackathon-ci-controls \
+            --out artifacts/runtime-security/hackathon-controls.json
+          apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
+            artifacts/runtime-security/hackathon-controls.json \
+            --out artifacts/runtime-security/hackathon-verification.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: runtime-security-smoke

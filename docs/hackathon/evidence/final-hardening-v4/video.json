@@ -1,0 +1,270 @@
+{
+  "schema_version": "hackathon-video/v1",
+  "recorded_at": "2026-09-08T12:43:11.469517+00:00",
+  "source_sha": "4da9e9e0a04c56620d101a583307b299b8484372",
+  "duration_seconds": 170.0,
+  "file": ".tmp/final-hardening-v4/video-v3/siq-v4-demo.webm",
+  "sha256": "c2e68238c9d3c4ecefd01d4e08f786df09792cdc88fd0c5091288b0450609a4c",
+  "events": [
+    {
+      "scenario": "research-only",
+      "task_id": "44ab745ff1a34a399d28b537fd445162",
+      "provider": "stepfun",
+      "task_status": "researched",
+      "selected_skills": [
+        "secure-research"
+      ],
+      "model_calls": [
+        {
+          "elapsed_ms": 3659.6666279947385,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "max_tokens": 3072,
+            "reasoning_effort": "low",
+            "response_format": "json_object"
+          },
+          "locality": "remote",
+          "model": "step-3.7-flash",
+          "model_provider": "stepfun",
+          "operation": "plan",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "f63a14b5d11ea118187488599f75970ff7bcaf909d5f0b270839325237ba34fd",
+          "provider": "stepfun",
+          "status": "accepted",
+          "task_id": "review-6d21395be630451ca42f3cb906c24e00",
+          "usage": {
+            "completion_tokens": 436,
+            "prompt_tokens": 722,
+            "total_tokens": 1158
+          }
+        },
+        {
+          "elapsed_ms": 5243.4646250039805,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "enable_thinking": false,
+            "max_tokens": 4096,
+            "response_format": "json_schema",
+            "schema_digest": "3efc4cf15f886f1fac3666b437688605e06e459db1ba00999e05a4aaaa5dc83b",
+            "temperature": 0
+          },
+          "locality": "local_dgx",
+          "model": "Ornith-1.5-35B-A3B-NVFP4",
+          "model_provider": "ornith",
+          "operation": "research",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "f7059c6d1a6ed6db898e12f816a9918208346191de4030a21895f04f7ebbe281",
+          "provider": "ornith",
+          "status": "accepted",
+          "task_id": "review-6d21395be630451ca42f3cb906c24e00",
+          "usage": {
+            "completion_tokens": 409,
+            "prompt_tokens": 401,
+            "total_tokens": 810
+          }
+        }
+      ],
+      "at_seconds": 24.85
+    },
+    {
+      "scenario": "normal",
+      "task_id": "d9f2de4868d4436a93b66c8d492cffc0",
+      "provider": "stepfun",
+      "task_status": "verified",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [
+        {
+          "elapsed_ms": 4065.3918349999003,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "max_tokens": 3072,
+            "reasoning_effort": "low",
+            "response_format": "json_object"
+          },
+          "locality": "remote",
+          "model": "step-3.7-flash",
+          "model_provider": "stepfun",
+          "operation": "plan",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "4d2110d234f58e044f814332da998b62dcfe69bf3413c19fa7cd239c343ade3e",
+          "provider": "stepfun",
+          "status": "accepted",
+          "task_id": "review-1ba35bab98ee442f85b7652c791e1cda",
+          "usage": {
+            "completion_tokens": 537,
+            "prompt_tokens": 731,
+            "total_tokens": 1268
+          }
+        },
+        {
+          "elapsed_ms": 6178.365635976661,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "enable_thinking": false,
+            "max_tokens": 4096,
+            "response_format": "json_schema",
+            "schema_digest": "3efc4cf15f886f1fac3666b437688605e06e459db1ba00999e05a4aaaa5dc83b",
+            "temperature": 0
+          },
+          "locality": "local_dgx",
+          "model": "Ornith-1.5-35B-A3B-NVFP4",
+          "model_provider": "ornith",
+          "operation": "research",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "f7059c6d1a6ed6db898e12f816a9918208346191de4030a21895f04f7ebbe281",
+          "provider": "ornith",
+          "status": "accepted",
+          "task_id": "review-1ba35bab98ee442f85b7652c791e1cda",
+          "usage": {
+            "completion_tokens": 504,
+            "prompt_tokens": 401,
+            "total_tokens": 905
+          }
+        },
+        {
+          "elapsed_ms": 135.95274201361462,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "enable_thinking": false,
+            "max_tokens": 1024,
+            "response_format": "json_schema",
+            "schema_digest": "34444ba25093feb8d751279066268bd6d9b0050d12ce91a2afc0e6750ae3d419",
+            "temperature": 0
+          },
+          "locality": "local_dgx",
+          "model": "Ornith-1.5-35B-A3B-NVFP4",
+          "model_provider": "ornith",
+          "operation": "recipient",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "a57a11c91686363b382fa44e030e308abb7464c7b06f06f3c305c63f73a8612e",
+          "provider": "ornith",
+          "status": "accepted",
+          "task_id": "execution-1ba35bab98ee442f85b7652c791e1cda",
+          "usage": {
+            "completion_tokens": 7,
+            "prompt_tokens": 192,
+            "total_tokens": 199
+          }
+        }
+      ],
+      "at_seconds": 51.38
+    },
+    {
+      "scenario": "normal",
+      "task_id": "1f190c92b00d4835b6728b883f76e261",
+      "provider": "fixture",
+      "task_status": "verified",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 81.72
+    },
+    {
+      "scenario": "mcp-attack",
+      "task_id": "ba37f151f6404a4d94ff10dd1022823f",
+      "provider": "fixture",
+      "task_status": "blocked",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 82.51
+    },
+    {
+      "scenario": "same-value",
+      "task_id": "75b63c6863f24aa8be6f091762f745df",
+      "provider": "fixture",
+      "task_status": "blocked",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 111.46
+    },
+    {
+      "scenario": "fake-success",
+      "task_id": "3fca1286d4514f72a87333f09d287308",
+      "provider": "fixture",
+      "task_status": "incomplete",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 136.41
+    }
+  ],
+  "page_errors": [],
+  "captions_only": true,
+  "audio": "none",
+  "speed_adjustment": false,
+  "cuts": false,
+  "provider_disclosure": "Real StepFun/Ornith for research/normal; explicitly labeled FixtureProvider for deterministic attacks.",
+  "uploaded": false,
+  "passed": true,
+  "independent_review": {
+    "passed": true,
+    "stream": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "vp8",
+          "width": 1440,
+          "height": 1000
+        }
+      ],
+      "format": {
+        "duration": "169.920000"
+      }
+    },
+    "exact_source_identity": true,
+    "six_unique_tasks_and_expected_outcomes": true,
+    "signatures": [
+      {
+        "file": "video-v3-real-state-evidence.json",
+        "verified_receipts": 38,
+        "verified_effect_envelopes": 2
+      },
+      {
+        "file": "video-v3-fixture-state-evidence.json",
+        "verified_receipts": 98,
+        "verified_effect_envelopes": 5
+      }
+    ],
+    "package_unchanged_after_recording": true,
+    "visual_review": {
+      "passed": true,
+      "sampled_seconds": [
+        32,
+        65,
+        125,
+        148
+      ],
+      "observations": [
+        "Exact frozen SHA and one actual selected Skill; separate accepted remote and local calls",
+        "Normal summary success / verified / VERIFIED agrees with signed delivery requirement",
+        "Same mailbox: actual trusted ALLOW / MCP DENY",
+        "Fake success: missing delivery effect and INCOMPLETE; FixtureProvider explicitly disclosed"
+      ],
+      "credentials_visible": false
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": "hackathon-rc-preparation/v1",
+  "version": "0.3.0-rc.1",
+  "candidate": "candidate2",
+  "published": false,
+  "official_signature": false,
+  "archive_path": ".tmp/hackathon-rc/0.3.0-rc.1-candidate2.tar.gz",
+  "archive_sha256": "89856cd9c1e4af9b7179b2b4f46437eedee1a1d1599ca185b0536ed1b0e26dd3",
+  "archive_bytes": 77447294,
+  "manifest_sha256": "30062a7ffa6bd5d04de66e14888a6bae47ae31360a3e833dbda524319a22c461",
+  "files": 1575,
+  "toolchain": "go1.26.6",
+  "targets": [
+    "linux/amd64",
+    "linux/arm64",
+    "darwin/arm64",
+    "windows/amd64"
+  ],
+  "sbom": {
+    "spec": "CycloneDX 1.5",
+    "validated": true,
+    "schema_url": "https://raw.githubusercontent.com/CycloneDX/specification/master/schema/bom-1.5.schema.json",
+    "schema_sha256": "2d956c1d05c092695457a91f3b5c57c749793c013ec224a0935807cfc8ae4480"
+  },
+  "source": {
+    "sha": "e309655915562a27cb98df851c1e46e922563d47",
+    "dirty": true,
+    "final_commit": null
+  },
+  "launch_evidence": "docs/hackathon/evidence/rc-candidate2-launch-20260908.json",
+  "limitations": [
+    "Local unsigned candidate, not an official signed release.",
+    "Only Linux arm64 launcher/task executed; other targets are cross-build evidence.",
+    "Source identity is the exact packaged source-info.json inventory; post-build acceptance reports and final documentation are external to this frozen snapshot."
+  ]
+}
