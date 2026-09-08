@@ -28,6 +28,7 @@ jobs:
           python3 scripts/check_research_task_ledger.py
           apps/control-api/.venv/bin/python scripts/research/check_metadata.py
           apps/control-api/.venv/bin/ruff check scripts/research scripts/check_research_task_ledger.py
+          apps/control-api/.venv/bin/python -m unittest discover -s scripts/research -p 'test_*.py' -v
       - name: Build existing local UI and runtime
         run: |
           node --version
