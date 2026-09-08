@@ -65,6 +65,11 @@ def main():
                 summary = page.locator('.demo-effect-summary').inner_text()
                 if not all(value in summary for value in ('success', 'missing', 'INCOMPLETE')):
                     raise ValueError("actual tool report and missing effect were not shown separately")
+            if scenario in ("normal", "conflicting"):
+                summary = page.locator('.demo-effect-summary').inner_text()
+                expected_effect = 'verified' if scenario == 'normal' else 'conflicting'
+                if expected_effect not in summary or 'missing' in summary:
+                    raise ValueError("effect summary disagrees with SIQ delivery requirement evidence")
             source = "MCP" if scenario in ("mcp-attack", "same-value") else "TRUSTED_DATABASE"
             provenance = page.locator(f'[data-provenance="{source}"]').filter(has_text="收件人来源")
             if scenario == "trifecta":

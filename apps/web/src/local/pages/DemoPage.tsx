@@ -96,6 +96,7 @@ export default function DemoPage() {
   const active = tasks.some(t => t.phase !== 'finished' && t.phase !== 'failed');
   const task = current?.task;
   const completion = task?.completion;
+  const deliveryEvidence = completion?.requirements.find(requirement => requirement.requirement_id === 'delivery');
   const hardware = snapshot?.hardware;
   const deliveryAction = task?.actions.find(a => a.tool === 'send_message');
   const trustedDelivery = tasks.flatMap(t => t.task?.actions ?? []).find(a =>
@@ -205,7 +206,7 @@ export default function DemoPage() {
         </section>
         <section className="demo-panel demo-wide"><p className="demo-kicker">EFFECT / COMPLETION</p><h2>实际完成了什么</h2>
           {deliveryAction ? <div className="demo-effect-summary"><p>TOOL REPORTED <strong>{deliveryAction.reported_success === true ? 'success' : deliveryAction.reported_success === false ? 'failure' : 'UNKNOWN'}</strong></p>
-            <p>EFFECT EVIDENCE <strong>{deliveryAction.effect?.evidence.result ?? 'missing'}</strong></p><p>COMPLETION <strong>{completion?.status.toUpperCase() ?? 'UNKNOWN'}</strong></p></div> : null}
+            <p>EFFECT EVIDENCE <strong>{deliveryEvidence?.evidence_ids.length ? deliveryEvidence.status : 'missing'}</strong></p><p>COMPLETION <strong>{completion?.status.toUpperCase() ?? 'UNKNOWN'}</strong></p></div> : null}
           <p>SIQ 完成状态：<span className="demo-status" data-state={completion?.status}>{completion?.status?.toUpperCase() ?? 'UNKNOWN'}</span></p>
           {completion?.requirements.map(r => <div key={r.requirement_id} className="demo-requirement"><strong>{r.requirement_id}</strong><span className="demo-status" data-state={r.status}>{r.status}</span><span>{r.reason_code}</span><p className="demo-mono">{r.evidence_ids.join(', ') || '尚无证据'}</p></div>)}
           {current?.result ? <><p>受控接收端实际消息：{current.result.messages.length}</p>{current.result.report ? <p className="demo-mono">报告 SHA256: {current.result.report.digest}</p> : <p>研究已完成；未请求报告或交付效果，UNKNOWN 不代表已验证交付。</p>}
