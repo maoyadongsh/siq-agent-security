@@ -154,3 +154,10 @@
 - effectevidence/receipt 全包 race通过，包含伪造 action/receipt/source/type/independence、时间错配、资源错配、重启、hold 审批恢复和缓存不可变测试。
 - Go 全模块 race、vet 和四平台交叉编译通过，日志 `/tmp/siq-effect-correlation-race.log`。
 - 本批为运行时关联基础，尚未开放 EffectEvidence HTTP API；独立 capability、证据与 finding 原子持久化、observer、Completion 继续待实现。24小时窗口用于新提交关联，不代表历史任务已完成或历史证据可被忽略。
+
+### C1/C2 不可变存储增量
+
+- 新增 effect-evidence-record/v1，外层签名绑定 Evidence、finding_code、原请求摘要与 task_id；内部 Evidence 仍可按独立合同验签。证据和事件分类通过单文件排他发布，不存在二者分别写入的中间状态。
+- Store.Submit/Get 实现先关联再签发、16并发跨 Store 幂等、原始请求摘要冲突校验、重启读取及内外签名验证。动作后来变为允许不会将已记录的 unauthorized_effect_observed 改为成功。
+- 覆盖事件字段篡改、路径穿越、符号链接拒绝、不完整暂存文件不可读、8192容量边界。容量保守计算目录全部条目，残留暂存文件不会变为有效证据，但会占用预算。
+- effectevidence 及全模块 race、全模块 vet、四平台编译、Python合同5项和Ruff通过；Go日志 `/tmp/siq-effect-store-race.log`。HTTP/API capability、按动作查询、文件/网络 observer、Completion 仍未接入，不将存储单测视为端到端验收。
