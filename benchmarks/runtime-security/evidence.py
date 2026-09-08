@@ -88,6 +88,22 @@ def verify_receipt_bundles(bundles):
     return actions, count
 
 
+def verify_effect_reference(record, d5, decision_receipt_id):
+    """An observation cannot borrow another action's oracle or invent one."""
+    if record is None:
+        if d5["value"] is not None:
+            raise ValueError("D5 requires an archived effect record")
+        return
+    effect = record["evidence"]
+    if effect["decision_receipt_id"] != decision_receipt_id:
+        raise ValueError("effect belongs to another observation decision")
+    if d5["value"] is not None:
+        if d5.get("evidence_refs") != [effect["effect_evidence_id"]]:
+            raise ValueError("D5 does not reference its signed effect")
+        if record.get("file_observation") is None and record.get("network_observation") is None:
+            raise ValueError("D5 requires archived observation material")
+
+
 def verify(report):
     actions, count = verify_receipt_bundles(report["public_evidence"])
     scenarios = {s["id"]: s for path in (Path(__file__).parent / "scenarios").glob("*.json")
@@ -115,6 +131,7 @@ def verify(report):
                 or reason != decision["reason_code"]):
             raise ValueError("reported decision differs from signed receipt")
         record = observation.get("effect_record")
+        verify_effect_reference(record, observation["stages"]["d5"], refs[0])
         if record is None:
             continue
         effect = record["evidence"]

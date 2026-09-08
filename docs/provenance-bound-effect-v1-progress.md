@@ -723,3 +723,11 @@
 - content是合同允许的任意JSON，未错误地对用户内容要求封闭字段；schema不验证密码学签名、时序或父图可信性，继续由Go authority/graph测试及共享签名向量证明。未包含的schema类别记为不适用，不伪造签名字段。
 - runtime-security workflow显式执行来源合同、来源矩阵及Effect合同，避免只执行旧test_schema_contracts.py。主CI原有全量pytest继续保留。
 - 本地执行CI对应四个文件共149项通过，Ruff及diff检查通过；尚未宣称26份新增schema全部§90验收完成。后续继续其余Context/Effect/Recovery/Intent合同适用负例覆盖与B/C/G验收。
+
+## 2026-09-08：B组验收与D5离线验证缺口修复
+
+- 核读B1–B6源码与21对42场景，更新验收索引为累计33/45项本地验收；非项目完成百分比。
+- 修复evidence.verify无effect_record时直接continue导致伪造D5进入指标的问题；新增verify_effect_reference要求归档效果、当前decision关联、正确evidence ID及实际观测材料。
+- 使用既有完整集成报告，在无效果样本注入独立oracle自声明并重算summary：HEAD旧版verify接受，修复后报D5 requires an archived effect record；没有修改原始报告文件。
+- 新负向测试覆盖假success/假failure、跨decision借用、错误/多余refs、缺材料。19项基准测试、Ruff通过；原始报告51回执/11效果封装仍通过；check_contracts确认21对42场景20类别。
+- 后续继续C/G及剩余schema与最终工程报告；本轮不宣称所有离线策略/任务完成语义已经通用重演。

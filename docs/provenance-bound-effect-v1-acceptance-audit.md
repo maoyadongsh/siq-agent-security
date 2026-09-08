@@ -33,12 +33,12 @@
 | DoD-E6 | denied action 出现真实 effect 时产生 security finding。 | [correlation_test.go](../apps/agentshield/internal/effectevidence/correlation_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
 | DoD-E7 | conflicting evidence 被明确表示。 | [store_test.go](../apps/agentshield/internal/effectevidence/store_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
 | DoD-E8 | 存在 minimal CompletionStatus。 | [evaluate_test.go](../apps/agentshield/internal/completion/evaluate_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
-| DoD-B1 | 建立： benchmarks/runtime-security/ | [runtime-security](../benchmarks/runtime-security) | 证据入口已定位；待逐项核读验收 |
-| DoD-B2 | 实现 D0–D5 数据模型。 | [scenario.schema.json](../benchmarks/runtime-security/scenario.schema.json) | 证据入口已定位；待逐项核读验收 |
-| DoD-B3 | 至少 20 个 deterministic security scenarios。 | [check_contracts.py](../benchmarks/runtime-security/check_contracts.py) | 证据入口已定位；待逐项核读验收 |
-| DoD-B4 | 每类攻击至少有 benign control。 | [scenarios](../benchmarks/runtime-security/scenarios) | 证据入口已定位；待逐项核读验收 |
-| DoD-B5 | 报告： false allow false deny benign completion unknown effect D2–D5 outcomes | [metrics.py](../benchmarks/runtime-security/metrics.py) | 证据入口已定位；待逐项核读验收 |
-| DoD-B6 | 没有 Oracle 的样本不得计 D5 success/failure。 | [test_metrics.py](../benchmarks/runtime-security/test_metrics.py) | 证据入口已定位；待逐项核读验收 |
+| DoD-B1 | 建立： benchmarks/runtime-security/ | [runtime-security](../benchmarks/runtime-security) | 本地验收通过；详见Benchmark证据说明 |
+| DoD-B2 | 实现 D0–D5 数据模型。 | [scenario.schema.json](../benchmarks/runtime-security/scenario.schema.json) | 本地验收通过；详见Benchmark证据说明 |
+| DoD-B3 | 至少 20 个 deterministic security scenarios。 | [check_contracts.py](../benchmarks/runtime-security/check_contracts.py) | 本地验收通过；详见Benchmark证据说明 |
+| DoD-B4 | 每类攻击至少有 benign control。 | [scenarios](../benchmarks/runtime-security/scenarios) | 本地验收通过；详见Benchmark证据说明 |
+| DoD-B5 | 报告： false allow false deny benign completion unknown effect D2–D5 outcomes | [metrics.py](../benchmarks/runtime-security/metrics.py) | 本地验收通过；详见Benchmark证据说明 |
+| DoD-B6 | 没有 Oracle 的样本不得计 D5 success/failure。 | [test_metrics.py](../benchmarks/runtime-security/test_metrics.py) | 本地验收通过；详见Benchmark证据说明 |
 | DoD-C1 | Trusted Intent V2 历史 Receipt 仍可验证。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 证据入口已定位；待逐项核读验收 |
 | DoD-C2 | Intent V2 dual-read 保留。 | [store_test.go](../apps/agentshield/internal/intent/store_test.go) | 证据入口已定位；待逐项核读验收 |
 | DoD-C3 | OpenClaw approval execution recheck 不退化。 | [test-openclaw-adapter.cjs](../scripts/test-openclaw-adapter.cjs) | 证据入口已定位；待逐项核读验收 |
@@ -136,3 +136,17 @@
 | E7–E8 | Store冲突/重试/恢复及Completion测试：矛盾材料显式conflicting；缺材料unknown、不满足要求incomplete，授权及材料满足才verified，保留incident IDs |
 
 本表累计27/45项标记本地验收通过（A5+P10+R4+E8），这是验收记录数量，不是项目开发完成百分比。B/C/G、模板逐节要求与最终Engineering Report仍需核验。原始日志：/tmp/siq-runtime-effect-acceptance.log、/tmp/siq-effect-contract-acceptance.log；集成证据摘要见已归档integration报告。
+
+## Benchmark B1–B6本地验收（2026-09-08）
+
+核读scenario schema、check_contracts、run、效果夹具、metrics及独立evidence verifier。场景检查实际输出21对、42场景、20类别；每对均attack/benign且类别一致。原有真实集成报告经修复后的独立验证器验证51条回执、11份效果封装通过；本轮未重新运行全量夹具。
+
+| 条目 | 验收依据及限制 |
+| --- | --- |
+| B1 | benchmarks/runtime-security包含场景、受控执行器、指标、独立验证器、测试与说明 |
+| B2 | scenario.expected和实际observations均显式D0–D5；实际值来自运行记录。D0/D1没有模型观测时null，不把预期复制成观测 |
+| B3–B4 | check_contracts对全部42个JSON执行schema与配对检查，21个攻击各有正常对照；真实运行证据见integration报告 |
+| B5 | metrics输出9项指标、分子分母/排除数量/适用总体、按kind分组，以及D0–D5分层统计。benign completion只覆盖有Completion的正常样本，不代表全部21个正常场景 |
+| B6 | 无独立材料不计D5；新负向回归要求实际归档effect、当前decision关联与正确evidence ref。旧版接受伪造D5已用同一完整报告复现，修复后拒绝；正常报告仍通过 |
+
+测试：19项unittest全部通过，Ruff通过。D5在既有报告中仅11/42可评估，其余31保持not evaluated；D5 true表示独立观测到效果，不自动等于攻击成功。独立验证范围仍是归档签名/关联/指标，不是通用策略重演或外部信任锚。累计33/45项有本地验收记录，C/G及模板逐节交付要求继续核验。
