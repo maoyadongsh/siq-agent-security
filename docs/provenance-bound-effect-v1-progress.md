@@ -813,3 +813,9 @@
 - 既有HTTP文件恢复测试原期待incomplete，因同动作两份材料现应conflicting，已增强为状态+reason_code断言。未放宽签名/授权检查。
 - Go1.26.6完整go test -race ./...最终通过（未变化包有缓存）、go vet ./...通过，linux/amd64、linux/arm64、darwin/arm64、windows/amd64四平台编译通过；51项Effect/结构合同测试通过。
 - 此生产修复在693641d CI之后，须重新推送验证，旧CI/nightly不覆盖本次行为。§88具体工具自报与oracle矛盾仍按证据强度区分，不把工具自报提升为可信完成证明。
+
+## 2026-09-08：适配器/治理与Managed边界预留
+
+- 80dfff8已推送独立分支，等待对应新CI；未合并main。
+- 新增ADR-018，基于现有Lookup、外部issuer公钥与独立observer能力明确未来跨UID/企业trust bundle接入条件；不新增空接口或生产部署宣称。
+- 继续更新§79–107逐节审计：薄适配器、Context/HardGate指定测试、ADR、单进程结构、CODEOWNERS及不修改Ruleset均有对应证据。§82、85、88–90与最终CI仍继续核对，不提前关闭。

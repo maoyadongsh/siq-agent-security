@@ -85,35 +85,35 @@
 | 76 | UNKNOWN Rule | 2357 | 已核对；T27–T35控制/负例/残余风险；最低父trust与unknown传播；P8/P10 |
 | 77 | Workstream F — Capability Matrix | 2379 | 已修正文档并核对；能力矩阵九项独立能力及组件状态，不抬高平台支持 |
 | 78 | 实现 ≠ 平台证明 | 2427 | 已核对；组件evidenced与平台原生V3 unverified分开 |
-| 79 | Workstream G — Adapter 设计 | 2441 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 80 | Adapter 自报来源的限制 | 2471 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 81 | OpenClaw Hold Gate 不得退化 | 2491 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 79 | Workstream G — Adapter 设计 | 2441 | 已核对；适配器只映射事件/参数/显式句柄，策略留在daemon；Hermes显式桥接不扩为全平台自动采集 |
+| 80 | Adapter 自报来源的限制 | 2471 | 已核对；decision report只允许受限source/trust，authoritative需可信issuer验证 |
+| 81 | OpenClaw Hold Gate 不得退化 | 2491 | 已核对；OpenClaw beforeExecute/hold-status/final params复查，C3测试通过 |
 | 82 | Intent Binding Revocation 不得退化 | 2506 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 83 | Workstream H — Enterprise Compatibility Preparation | 2522 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 84 | Issuer abstraction | 2548 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 83 | Workstream H — Enterprise Compatibility Preparation | 2522 | 已核对；Intent issuer字段可表达企业标识，不因标签授予信任；ADR-018 |
+| 84 | Issuer abstraction | 2548 | 已核对；既有Lookup/Issuer公钥接入点复用，企业trust bundle部署保留未来项；ADR-018 |
 | 85 | Workstream I — Security Testing | 2575 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 86 | Context Tests | 2712 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 87 | Hard Gate Tests | 2752 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 86 | Context Tests | 2712 | 已核对；C-01–04对应cwd拒绝、合法Context、到期hard deny及跨session重放测试 |
+| 87 | Hard Gate Tests | 2752 | 已核对；三模式mandatory错误矩阵与实际Store签名/撤销集成，A组证据 |
 | 88 | Effect Tests | 2770 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 89 | Concurrency / Recovery | 2876 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 90 | Schema Tests | 2906 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 91 | Cross-language Vectors | 2929 | 已补齐并核验；三类合同共用固定canonical bytes/摘要/签名，Go race与Python通过 |
-| 92 | Security Boundary — Same UID | 2951 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 93 | Managed Linux 预留 | 2979 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 94 | Documentation | 3015 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 95 | ADR — Authority Hard Gate | 3031 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 96 | ADR — Provenance | 3055 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 97 | ADR — Effect | 3075 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 98 | README | 3095 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 99 | 工程结构建议 | 3113 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 100 | Receipt Engine 重构原则 | 3134 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 101 | 不允许出现 God Engine 进一步膨胀 | 3173 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 92 | Security Boundary — Same UID | 2951 | 已核对；README/ADR/报告明确desktop-same-uid非恶意进程隔离 |
+| 93 | Managed Linux 预留 | 2979 | 已补充ADR-018；不同UID/attestor/observer接入边界，不实现完整Managed Linux |
+| 94 | Documentation | 3015 | 已核对；ADR-015/016/017存在并对应三类决策，另有边界预留ADR-018 |
+| 95 | ADR — Authority Hard Gate | 3031 | 已核对；ADR-015明确Authority invalid不能降为advisory |
+| 96 | ADR — Provenance | 3055 | 已核对；ADR-016明确签名来源不证明数据客观真实 |
+| 97 | ADR — Effect | 3075 | 已核对；ADR-017区分自报/效果、host/OS隔离及partial覆盖 |
+| 98 | README | 3095 | 已核对；README V3与Effect实验性、真实使用入口及证据限制 |
+| 99 | 工程结构建议 | 3113 | 已核对；实现按现有intent/provenance/runtimeaction/runtimeauthz/effectevidence/completion拆分 |
+| 100 | Receipt Engine 重构原则 | 3134 | 已核对；单进程可信回读与现有Engine事务流，独立模块而非微服务 |
+| 101 | 不允许出现 God Engine 进一步膨胀 | 3173 | 已核对；图/效果/Context/Completion实现位于独立包，Engine仅接线与既有决策流 |
 | 102 | CI | 3194 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 103 | 新 CI Job | 3227 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 104 | Benchmark 不允许阻塞每个 PR 的项目 | 3248 | 已核对；smoke/full不同语料；nightly 34188106080三次完整运行success |
-| 105 | CODEOWNERS | 3270 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 106 | 不直接修改 GitHub Branch Protection | 3299 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 107 | Commit Strategy | 3315 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 105 | CODEOWNERS | 3270 | 已核对；CODEOWNERS覆盖指定八类路径并使用仓库owner |
+| 106 | 不直接修改 GitHub Branch Protection | 3299 | 已核对；未操作Ruleset，报告须保留main protection独立核验要求 |
+| 107 | Commit Strategy | 3315 | 已核对；独立分支按合同/实现/测试/文档提交，未向main提交 |
 | 108 | Definition of Done — Authority | 3353 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
 | 109 | Definition of Done — Provenance | 3385 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
 | 110 | Definition of Done — RuntimeAction | 3435 | 对应DoD均有基线限定证据；见验收索引，最终SHA仍待定 |
