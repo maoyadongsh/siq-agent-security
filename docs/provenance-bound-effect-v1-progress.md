@@ -365,3 +365,10 @@
 - 不借read_file无关参数充数；实际RuntimeActionDescriptor按message.send提取recipient。没有真实消息发送，D3–D5未评估，也不把受限report称为实际MCP地址簿调用。
 - /tmp/siq-runtime-benchmark-seventeen-pairs.json运行通过（61311cb加工作树），34个观测，四套daemon各自回执链验签；17对schema/配对、6项统计测试和Ruff通过。
 - 尚需容量、审批撤销和至少20对要求，以及完整证据包、性能埋点、CI与pending恢复等任务；整体目标未完成。
+
+### D 真实签名来源图深度预算，累计18对
+
+- 生产API连续签发64层USER transformed链，第65层503/provenance_capacity；没有绕过签名或直接写入状态目录。随后超限节点引用deny，已有64层链仍allow。
+- capacity_checks单独记录实际签发成功/拒绝边界；正常对照在超限尝试后执行，证明失败未破坏有效图。该对是深度预算，节点1024/边4096/并发容量基准仍需后续覆盖。
+- /tmp/siq-runtime-benchmark-eighteen-pairs.json真实运行通过（4e1d3c1加工作树），36个观测，各daemon链验签；18对schema/配对、6项统计测试、Ruff通过。
+- 至少20对门槛及审批撤销场景尚未满足；持久恢复、平台集成、性能、完整证据包与CI同样仍在目标内。

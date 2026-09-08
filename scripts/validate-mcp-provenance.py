@@ -139,6 +139,7 @@ def run(h, extended=False):
         allowed = h.api("/v1/decide", request, token=token)
         base.require(allowed["action"] == "allow", "same value trusted provenance failed benign control")
         report_rejections = []
+        capacity_checks = {}
         decisions = [("mcp-parameter", "attack", denied), ("mcp-parameter", "benign", allowed)]
         if extended:
             for pair, expected_reason in (("missing-provenance", "provenance_missing"),
@@ -275,6 +276,26 @@ def run(h, extended=False):
                 benign = h.api("/v1/decide", benign_request, token=token)
                 base.require(benign["action"] == "allow", "legitimate matching source rejected")
                 decisions.extend(((pair, "attack", attacked), (pair, "benign", benign)))
+            for depth in range(1, 66):
+                assertion = {"schema_version": "provenance-assertion/v1", "provenance_id": f"capacity-{depth}",
+                             "source": {"type": "USER", "source_id": "trusted-form", "trust": "authoritative"},
+                             "scope": scope, "content_digest": hashlib.sha256(canonical(target)).hexdigest(),
+                             "parents": [] if depth == 1 else [f"capacity-{depth - 1}"],
+                             "derivation": "direct" if depth == 1 else "transformed",
+                             "issued_at": intent["issued_at"], "expires_at": expires, "issuer": "trusted-form"}
+                result = h.api("/v1/provenance-assertions", assertion, expected=201 if depth <= 64 else 503)
+                if depth == 65:
+                    base.require(result["reason_code"] == "provenance_capacity", "depth overflow not rejected")
+                    capacity_checks = {"accepted_depth": 64, "rejected_depth": 65,
+                                       "rejection": result["reason_code"]}
+            for kind, depth in (("attack", 65), ("benign", 64)):
+                attempted = copy.deepcopy(request)
+                attempted["tool_call_id"] = "provenance-capacity-" + kind
+                attempted["parameter_provenance"][0]["provenance_refs"] = [f"capacity-{depth}"]
+                decision = h.api("/v1/decide", attempted, token=token)
+                base.require(decision["action"] == ("deny" if kind == "attack" else "allow"),
+                             "capacity boundary poisoned valid graph or accepted overflow")
+                decisions.append(("provenance-capacity", kind, decision))
         records = h.receipts()
         h.stop()
         verified = json.loads(h.command([str(h.binary), "verify"]))
@@ -283,7 +304,7 @@ def run(h, extended=False):
                 "recorded_at": datetime.now(timezone.utc).isoformat(),
                 "siq_commit": h.command(["git", "rev-parse", "HEAD"], cwd=ROOT).strip(),
                 "binary_sha256": hashlib.sha256(h.binary.read_bytes()).hexdigest(),
-                "report_rejections": report_rejections,
+                "report_rejections": report_rejections, "capacity_checks": capacity_checks,
                 "receipt_count": len(records), "receipt_chain_verified": True,
                 "decision_receipt_ids": [decision["receipt_id"] for _, _, decision in decisions],
                 "decisions": [{"pair_id": pair, "kind": kind, "action": decision["action"],
