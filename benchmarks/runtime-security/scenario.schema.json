@@ -96,6 +96,14 @@
         "reason_code": {
           "type": "string",
           "minLength": 1
+        },
+        "decision_action": {
+          "enum": [
+            "allow",
+            "deny",
+            "hold",
+            "redact"
+          ]
         }
       },
       "required": [
@@ -105,7 +113,8 @@
         "d3",
         "d4",
         "d5",
-        "reason_code"
+        "reason_code",
+        "decision_action"
       ]
     }
   },
