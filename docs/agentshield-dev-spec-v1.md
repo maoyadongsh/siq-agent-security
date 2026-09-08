@@ -820,3 +820,9 @@ shell、sh、bash、python/python3、node、powershell/pwsh 等解释器至少 p
 Assertion.VerifyAuthority 接受来自管理面可信 registry 的 Issuer 与本地公钥，不接受 decision 请求内嵌的 issuer。外部公钥严格 base64 解码为 32 字节 Ed25519；本地引用只识别 `local-state`。Issuer 的完整 scope 必须与 assertion、当前请求完全一致；来源类型必须被允许，trust 不得超过 issuer 上限。Issuer/Assertion 都检查时效；任何非空 revoked_at 都拒绝。声明过期不能超过 issuer 过期，未来 issued_at 拒绝。
 
 验签使用原 signing.VerifyWithSchema/canon；结构校验拒绝未知 signing_schema、空/重复/自引用父节点、超限父节点、direct 带父节点以及 transformed/aggregated 无父节点。此阶段仅验证单节点授权；父节点签名、派生信任上限与深度/容量由后续图解析器验证，单节点验签不代表完整 lineage 已验证。
+
+### B1 不可变签发者 registry
+
+`provenance.Open(stateDir,key)` 在状态目录建立 provenance-issuers 与 provenance-issuer-revocations。Registry entry 使用 provenance-issuer-record/v1 envelope，内容为 issuer，管理身份签名；撤销使用 provenance-issuer-revocation/v1 envelope，包含 issuer_id、原签名记录摘要和 revoked_at。两者均复用 canonical signing。注册 ID 不可覆盖，重试同一内容返回原记录；同 ID 改内容冲突。撤销终态，不改写原 issuer 文件；每次 GetIssuer 验证原记录和撤销记录，无法读取或篡改拒绝。进程内读写锁保证并发顺序，跨进程的排他硬链接保证文件不覆盖；单 daemon 的既有 writer lock 仍是生产写入边界。
+
+写入采用 0600 同目录临时文件、fsync 后硬链接排他发布；不支持硬链接即失败，不回退为覆盖。读取只接受普通文件、单 JSON 文档、已知字段，最大 64 KiB；最多4096个签发者。状态文件签名证明完整性，不提供对同 UID 恶意进程的防删除/整目录快照回滚隔离。

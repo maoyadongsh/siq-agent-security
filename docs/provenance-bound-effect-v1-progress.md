@@ -65,3 +65,10 @@
 - Assertion.VerifyAuthority 使用现有 canonical signing 验签，验证 assertion 与 issuer 的结构、来源授权、trust ceiling、完整 scope、双方时效及 revoked_at。支持外部 Ed25519 公钥，不把模型固定为只支持本地密钥。
 - `go test -race ./internal/provenance` 与 vet 通过，包含本地/外部正例、14 类篡改/越界/撤销负例和精确到期边界。Python provenance 合同测试现为 3 项，全部通过，Ruff 通过。
 - 该 API 只接受管理面已验证的 registry entry，尚未接入 HTTP 或持久化；这里的撤销检查只验证 entry 状态，不代表撤销发布流程已经完成。父节点验签、派生防升级、可信存储与 runtime 接入继续待实现。
+
+### B1 签发者持久化增量
+
+- 新增 provenance.Store：管理身份签名的不可变 issuer record 与绑定原记录摘要的终态撤销 sidecar；同 ID 同内容重试，改内容冲突，撤销后不能重新注册清除状态。
+- GetIssuer 每次重新验证记录及撤销签名；拒绝未知字段、多 JSON 文档、超大文件、符号链接和路径穿越。写入 0600 临时文件、fsync、排他硬链接；无覆盖回退。
+- `go test -race ./internal/provenance` 和 vet 通过；新增重启/终态撤销/原记录字节不变、16 并发注册读取及撤销、篡改撤销/多文档/符号链接负例。Python provenance 合同测试 4 项与 Ruff 通过。
+- 新增 issuer-record/v1 与 issuer-revocation/v1 合同。此批尚未接入管理 HTTP，也未实现 assertion 图存储与 runtime matcher；不把 registry 完成解释为 B1 全部完成。跨进程容量与整目录回滚防护没有超出既有单 daemon/same-UID 边界的保证。
