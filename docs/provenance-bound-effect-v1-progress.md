@@ -469,3 +469,10 @@
 - Python独立Ed25519验证三份签名、对应schema、完整signed pending摘要、前记录摘要、序号、owner变化与时序；篡改owner和把整数预算1024改为1024.0均验签失败。使用公开测试seed，不含真实凭据。
 - Python test_schema_contracts.py全部68项通过，Ruff通过；Go effectevidence包race/vet通过。仅增加测试和样例，没有修改生产行为，不重复上一轮已通过的四平台编译。
 - Runtime Security PR步骤增加该Python合同测试；远端CI尚未执行。固定样例证明跨语言合同一致，不替代真实恢复报告的完整独立重放和外部信任锚；完整目标仍进行中。
+
+### D 决策阶段单调时钟采样基础
+
+- Engine.Options新增仅宿主可注入的StageTiming回调，默认关闭，客户端不可配置；测量intent_lookup、绑定/合同authority_validation、runtime_action_normalization、context_validation、provenance_resolution、policy_evaluation和receipt_append_fsync的实际执行边界，不改签名回执合同。
+- 使用time.Now/Since单调时钟，与授权Now分离。未进入的context或被Authority拒绝后跳过的provenance/policy不产生0样本。provenance样本包含实际checkProvenance入口开销，V2/optional无来源时可能仅执行其兼容判断，不能冒充完整来源图解析。
+- 新测试冻结授权时钟仍获得实际耗时，对比开启/关闭计时的action/reason相同，并检查required缺绑定与optional路径的样本分母。Go全模块race/vet及四平台编译通过（/tmp/siq-stage-timing-race.log），diff检查通过。
+- 尚未接入效果处理计时或基准报告导出/P50/P95/P99，当前只是实际阶段埋点基础，不宣称性能目标完成。回调在引擎锁内调用，宿主须非阻塞且不可重入；不暴露到普通决策客户端。

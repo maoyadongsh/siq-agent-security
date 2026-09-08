@@ -170,6 +170,8 @@ type GrantLookup func(platform, agentID string) *grant.Grant
 
 // Options configure the engine.
 type Options struct {
+	// StageTiming is a trusted, nonblocking, non-reentrant benchmark observer.
+	StageTiming     func(stage string, elapsed time.Duration)
 	ProvenanceCheck func(map[string]any, []provenance.ParameterBinding, []provenance.Constraint, provenance.Scope, time.Time) error
 	Pack            *rulepack.Pack
 	Chain           *Chain
@@ -341,8 +343,11 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	var resolvedIntent *IntentContract
 	var authorityErr error
 	if e.opts.IntentLookup != nil {
+		finish := e.stageTimer("intent_lookup")
 		resolvedIntent, authorityErr = e.opts.IntentLookup(req.Platform, req.SessionID, req.AgentID)
+		finish()
 	}
+	finishAuthority := e.stageTimer("authority_validation")
 	// A revoked but verified binding still identifies the trusted task for its
 	// denial receipt. Retain that metadata without clearing taints or the error.
 	if authorityErr != nil && resolvedIntent != nil && resolvedIntent.Trusted != nil && s.boundIntentID == "" {
@@ -386,6 +391,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		}
 	}
 
+	finishAuthority()
 	if err := e.actionCapacity(start); err != nil {
 		return nil, err
 	}
@@ -396,7 +402,9 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	digest := sha256.Sum256(paramsJSON)
 
 	paramsDigest := hex.EncodeToString(digest[:])
+	finishNormalization := e.stageTimer("runtime_action_normalization")
 	descriptor := runtimeaction.Describe(req.Tool, req.Params)
+	finishNormalization()
 	operation, effects := descriptor.Operation, descriptor.Effects
 	taskID := s.boundTaskID
 	intentID := s.boundIntentID
@@ -494,7 +502,10 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	}
 	authority := runtimeauthz.Authority(validationCode, rec.IntentBinding == "bound")
 	if authority.Valid && req.ContextAssertionID != "" {
-		if err := e.checkContext(req, taskID, start); err != nil {
+		finish := e.stageTimer("context_validation")
+		contextErr := e.checkContext(req, taskID, start)
+		finish()
+		if err := contextErr; err != nil {
 			code := "trusted_context_invalid"
 			var v *trustedcontext.Violation
 			if errors.As(err, &v) {
@@ -504,7 +515,10 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		}
 	}
 	if authority.Valid {
-		if err := e.checkProvenance(req, resolvedIntent, start); err != nil {
+		finish := e.stageTimer("provenance_resolution")
+		provenanceErr := e.checkProvenance(req, resolvedIntent, start)
+		finish()
+		if err := provenanceErr; err != nil {
 			code := "provenance_authority_invalid"
 			var v *provenance.Violation
 			if errors.As(err, &v) {
@@ -517,6 +531,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	policy := runtimeauthz.PolicyResult{}
 	var redacted map[string]any
 	if authority.Valid {
+		finish := e.stageTimer("policy_evaluation")
 		policy.Action, policy.Reason = e.evaluate(req, s, descriptor, &rec)
 		if policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req) && containsSecretLiteral(e.analyzer, paramsText) {
 			redacted = redactParams(e.analyzer, req.Params)
@@ -528,6 +543,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 			redacted = nil
 		}
 		rec.PolicyAction = policy.Action
+		finish()
 	}
 	action, advisory := runtimeauthz.ApplyMode(authority, policy, e.opts.EnforcementMode)
 	rec.AdvisoryAction = advisory
@@ -556,7 +572,10 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	lat := int(e.opts.Now().Sub(start).Milliseconds())
 	rec.DecisionLatencyMS = &lat
 
-	if err := e.opts.Chain.Append(&rec); err != nil {
+	finishAppend := e.stageTimer("receipt_append_fsync")
+	appendErr := e.opts.Chain.Append(&rec)
+	finishAppend()
+	if err := appendErr; err != nil {
 		return nil, err
 	}
 	// issued_at is signed at whole-second precision. Use the same deadline as
@@ -1042,4 +1061,13 @@ func truncate(s string, n int) string {
 		return s
 	}
 	return string([]rune(s)[:n])
+}
+
+// stageTimer uses a monotonic performance clock, never the injected authority clock.
+func (e *Engine) stageTimer(stage string) func() {
+	if e.opts.StageTiming == nil {
+		return func() {}
+	}
+	start := time.Now()
+	return func() { e.opts.StageTiming(stage, time.Since(start)) }
 }

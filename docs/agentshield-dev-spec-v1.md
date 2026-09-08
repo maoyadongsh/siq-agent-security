@@ -988,3 +988,7 @@ DELETE effect-observers/{id}在删除内存凭据前发布effect-observer-revoca
 接管存储使用原pending旁的独立子目录，按六位sequence排他发布签名JSON；读取必须验证连续序号和完整链。存储层接管使用expected_owner进行比较后追加，防止并发不同接管者覆盖；当前owner的同内容重试幂等。读取有效owner及追加都复核全部历史撤销与原deadline，损坏状态失败关闭。存储不代替管理端的source/scope和动作有效性复核；同UID删除整个历史的回滚防护仍属于既有可信状态目录边界。
 
 管理恢复接口：POST /v1/file-observation-recoveries，仅admin；请求observation_id、observer_id（当前已签发session ID）、expected_owner（当前owner摘要）。不接收原始token或路径。验证目标observer未到期/未撤销、原pending完整source/scope一致及fileAction历史动作关联，随后执行存储CAS接管。返回200包含recovery签名记录与原expires_at；不得延长期限。已完成效果拒绝恢复409。begin/finish均复核持久owner和全部历史撤销，不能仅凭内存缓存；恢复后由新observer调用begin重建索引，复用原before。完成记录已发布而缓存Completed未更新时，finish返回已签名记录而不重新采样。
+
+### D 决策阶段性能采样
+
+Engine.Options可选StageTiming回调仅由宿主测试/基线程序注入，不接受请求参数，默认关闭。以Go单调时钟time.Now/time.Since测量实际执行的intent_lookup、authority_validation（lookup之后的绑定/合同校验）、runtime_action_normalization、context_validation、provenance_resolution、policy_evaluation和receipt_append_fsync。未进入的阶段不报0；回调在引擎锁内同步执行，宿主必须非阻塞且不可重入引擎。阶段不改变签名回执或授权时间源，耗时只用于性能统计，不作授权输入。效果处理单独由效果存储层接入，完整P50/P95/P99报告后续由真实采样聚合。
