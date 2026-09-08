@@ -104,3 +104,7 @@ func (o *NetworkOracle) Material(index int, requestedURL string) (NetworkObserva
 	}
 	return networkMaterial(o.events[index], requestedURL)
 }
+
+func (o *NetworkOracle) Source() Source {
+	return Source{Type: "test_oracle", SourceID: o.id, Independence: "external_independent"}
+}

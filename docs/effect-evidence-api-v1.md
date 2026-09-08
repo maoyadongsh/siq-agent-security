@@ -78,3 +78,11 @@ Admin GET `/v1/tasks/{task_id}/completion` 返回 [completion-status/v1](../pack
 无任务404；同 task_id 对应多个 Intent 返回409，避免选择较宽的要求；损坏签名、材料或动作关联失败返回500，不能当作 verified。响应设置 no-store，每次重新读取已发布状态。
 
 此状态反映已发生效果是否满足签名要求，不授予后续执行权限。它不是冻结任务的最终封账，也不是跨存储事务快照；新的证据可能改变下一次结果。Completion 现从完整验签回执链按引用恢复历史动作，支持超24小时已存证据；新采样/提交仍遵守原动作窗口。网络完成要求尚未开放。
+
+## 受控网络服务器材料提交
+
+管理员为受信测试服务器注册 `test_oracle/external_independent` 来源和精确任务 scope；该服务器使用独立 observer token POST `/v1/network-observations`，正文为 `observation_id`、`action_id`、`decision_receipt_id`、`observation`，结构见 [提交合同](../packages/contracts/network-observation-submit.v1.schema.json)。`NetworkOracle.Source()` 提供注册身份，`Material()` 只能从该实例实际接收事件派生材料。
+
+服务根据凭据恢复来源，校验真实动作及 scope，再签名归档。首次及相同内容重试返回201和同一记录；同 ID 不同材料409，凭据或scope错误403，伪造接收事件身份等非法材料400。decision/admin token 不能直接提交，正文不能自报 source、scope 或 authorized。管理端可通过既有证据 GET 查询，已保存记录跨重启可读；observer token 重启失效。
+
+这是受信 loopback 测试 oracle 的集成接口，独立性依赖管理员对服务器身份与凭据隔离的配置；不将任意客户端上传的日志视为独立真相，也不代表已接入生产网络审计。拒绝动作后实际接收到请求会生成 `unauthorized_effect_observed`，不会被解释为正常完成。

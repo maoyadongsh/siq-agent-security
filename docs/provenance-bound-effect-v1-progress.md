@@ -13,7 +13,7 @@
 | R | 统一 RuntimeActionDescriptor，高影响参数、shell unknown，六类消费者统一 | 六类消费者已统一；V3 高影响参数默认来源约束本地验收通过 |
 | B1 | 签名 provenance、issuer registry、范围/到期/撤销、容量、不可变存储 | 签名 registry/图存储、管理与受限上报 API 已实现；固定向量与完整验收待补齐 |
 | B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | V3 双读、来源匹配、确定性选择与 MCP 组件验收通过；native 自动采集待完成 |
-| C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 文件采样 API/签名材料与受控网络 oracle 已实现；网络材料归档、平台调度待补齐 |
+| C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 文件采样 API、网络 oracle、材料归档与提交 API 已实现；平台调度待补齐 |
 | C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | Completion API、历史动作与审批时间复核已实现；pending持久恢复待完成 |
 | D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 待完成 |
 | G | ADR 15–17、威胁27–35、能力矩阵、README、CODEOWNERS、CI smoke/nightly | ADR及API规格已增量更新；威胁/能力/README/CI与最终报告待整体验收 |
@@ -252,3 +252,11 @@
 - SubmitNetwork 将材料、效果、事件同封套签名；读回重新派生摘要、最终资源、接收时间和执行状态，普通摘要提交不能覆盖带材料记录。Source identity 与 server request_id 的完整前缀一致。
 - 实际HTTP oracle 测试覆盖材料保存/读回/幂等、去材料重试拒绝、外层重签后端口替换仍不能绑定原内层摘要；原有直接接收、重定向、预算和隐私测试继续通过。
 - Go全模块race/vet与四平台编译通过（`/tmp/siq-network-material-race.log`）；随后来源ID精确匹配加强，network定向race/vet复验通过。Python合同11项与Ruff通过。网络材料HTTP提交、网络Completion及benchmark编排仍待接入。
+
+### C1 网络材料 HTTP 接入
+
+- 实现 POST /v1/network-observations，observer capability 与固定 test_oracle/external_independent 来源、真实动作 scope 绑定；正文不允许自报授权、来源或 scope。
+- 实际 loopback HTTP 收到请求后生成材料，经 observer API 提交并签名保存。覆盖 decision/admin token 拒绝、方法/未知字段拒绝、伪造回执与服务器 request_id、跨任务凭据拒绝、同内容幂等、不同材料冲突、撤销后拒绝和重启后签名材料读取。
+- block 拒绝动作后实际收到测试请求，归档 unauthorized_effect_observed；该用例验证越权效果检测，不作为正常 Grant 放行链路。接收端来源由管理员信任配置，不声称能辨别持有受信 observer 凭据的恶意上报者。
+- Go 全模块 race、vet、linux/amd64、linux/arm64、darwin/arm64、windows/amd64 编译通过，日志 /tmp/siq-network-http-race.log；Python 效果合同12项与Ruff通过。测试准备中修正了非法材料400预期和重启管理凭据不复用的断言，未放宽生产校验。
+- 网络 Completion 要求、pending持久恢复、平台采集、D基准与G最终验收仍待完成。

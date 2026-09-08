@@ -176,3 +176,24 @@ def test_network_material_keeps_server_event_without_request_plaintext():
     v.validate(good)
     for field, value in [("body", "secret"), ("url", "http://private/?token=secret"), ("host", "remote.example")]:
         assert list(v.iter_errors({**good, "received": {**received, field: value}}))
+
+
+def test_network_submission_binds_material_without_caller_authority():
+    root = Path(__file__).parents[4] / "packages/contracts"
+    schema = json.loads((root / "network-observation-submit.v1.schema.json").read_text())
+    # Resolve the local contract without allowing remote retrieval in this test.
+    schema["properties"]["observation"] = json.loads((root / "network-observation.v1.schema.json").read_text())
+    Draft202012Validator.check_schema(schema)
+    v = Draft202012Validator(schema)
+    good = {"observation_id": "network-1", "action_id": "action-1", "decision_receipt_id": "rcp-1",
+            "observation": {"requested_scheme": "http", "requested_host": "localhost", "requested_port": "12345",
+            "received": {"scheme": "http", "host": "127.0.0.1", "port": "12345",
+            "resolved_target": "127.0.0.1:12345", "request_id": "oracle-1-1",
+            "request_digest": "a" * 64, "received_at": "2026-09-08T01:00:00Z"}}}
+    v.validate(good)
+    for field, value in [("source", {}), ("authorized", True), ("scope", {}), ("observation_id", "../escape")]:
+        assert list(v.iter_errors({**good, field: value}))
+    for field in good:
+        missing = dict(good)
+        del missing[field]
+        assert list(v.iter_errors(missing))

@@ -111,6 +111,7 @@ func New(d Deps) (*Server, error) {
 		return nil, err
 	}
 	s.mux.HandleFunc("/v1/tasks/", s.auth(s.taskCompletion, capAdmin))
+	s.mux.HandleFunc("/v1/network-observations", s.auth(s.submitNetworkObservation, capEffectObserve))
 	s.mux.HandleFunc("/v1/file-observations", s.auth(s.beginFileObservation, capEffectObserve))
 	s.mux.HandleFunc("/v1/file-observations/", s.auth(s.finishFileObservation, capEffectObserve))
 	s.mux.HandleFunc("/v1/effect-observers", s.auth(s.effectObservers, capAdmin))
