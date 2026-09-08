@@ -31,7 +31,7 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 8. `effective` 只能来自后端读回；admission 只产 `declared`，grant 只产 `declared`/`inferred`，receipt 只产 `observed`；
 9. 签名私钥只存状态目录，适配器、UI、SKILL.md 脚本永不持有；准入/签发/回执文件只追加或新建，不改写；
 10. 被扫描的 Skill 内容与钩子参数永不执行、导入或 `eval`；持久化只存 sha256 与脱敏、限长的 excerpt；
-11. `enforcement_mode=block` 下决策服务不可达即拒绝（fail-closed）；`audit_only`/`warn` 只能 allow 并记 `advisory_action`；
+11. `enforcement_mode=block` 下决策服务不可达即拒绝（fail-closed）；普通 policy 的 `audit_only`/`warn` 保留 allow + `advisory_action`。按用户当前 Provenance-Bound Effect V1 模板，无效必需 Authority 为独立 hard deny，任何模式不得放宽；
 12. 「有威胁模式」≠「隔离」：能力需求（sudo、出网、写路径、`allowed-tools`）升级为 declared 事实交 grant；只有欺骗用户、隐藏指令、提示注入、凭据外传、完整性失败才 quarantine。
 
 ## 开发约定
@@ -58,3 +58,7 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 | 本机门禁 Go 模块（`apps/agentshield`） | `gofmt -l . && go vet ./... && go test ./...` + 三 OS 交叉编译；输出样例回灌 Python schema 校验 |
 | 适配器 | 每平台一条「装 → 扫 → 授 → 越权被拒」E2E + fail-closed 负向（服务不可达时 block 模式必须拒绝） |
 | Skill 包 | 用自建二进制 `admit` 自扫描不得 quarantine；四平台安装验证 |
+
+## 当前开发模板
+
+用户指定 [Provenance-Bound Effect V1 原文模板](docs/templates/provenance-bound-effect-v1-development-template.md)，进度见 [开发台账](docs/provenance-bound-effect-v1-progress.md)。仅在 `codex/provenance-bound-effect-v1` 开发；复用现有 V2、签名和 Reference Monitor。模板要求的 Authority Hard Gate 优先于旧版 audit/warn 一律放行语义；该例外不应推广为所有普通 policy 均强制拒绝。

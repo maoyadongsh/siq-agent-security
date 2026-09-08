@@ -781,3 +781,16 @@ JSON 数值匹配的单个数字词法表示上限为 1024 字符，超过上限
 并发线性化点为本地可信绑定解析：同进程 Store 的解析持读锁、撤销持写锁；撤销返回后开始解析的请求不得使用旧授权。已经取得快照的并发请求可能先于撤销被授权；该机制不取消已发出的允许决策，不提供覆盖真实副作用的原子执行租约。原有 hold 状态重查通过同一解析器观察撤销；历史合法动作的 Observe 仍按原决策及幂等规则记录，不把撤销误作抹除已发生事实。多进程仅依赖独占发布和每次读回，不能宣称跨进程读写锁或恶意同 UID 隔离。
 
 HTTP 请求/撤销记录分别遵守 `intent-binding-revoke-request.v1.schema.json` 与 `intent-binding-revocation.v1.schema.json`。回执使用既有可选扩展与稳定 reason_code，不重签历史回执。
+
+
+## Provenance-Bound Effect V1 — A1 授权硬门禁（2026-09-08）
+
+依据用户[当前开发模板](templates/provenance-bound-effect-v1-development-template.md)与 ADR-015，覆盖此前 audit/warn 对 authority failure 转 allow 的语义。只改变新决策，历史已签回执按原字节验签，不重写历史。
+
+先分类可信 Authority 与普通 Policy。required 缺绑定、缺失/篡改/过期/撤销/身份范围错误的已绑定 Intent，以及不能识别的 resolver 错误，均为 Authority invalid，任何 mode 实际 deny、无 advisory allow。optional 从未绑定且无错误时为 unbound_legacy，继续 Grant 逻辑。合法授权中的工具/效果/资源/参数约束不满足属于 Policy deny，仍按 audit/warn/block 处理。新 context/provenance 完整性失败接入同一门禁，不复制第二个授权器。
+
+新 decision 回执使用可选签名字段 authority_status（valid/invalid/unbound_legacy）、authority_reason_code、policy_action、effective_action。Authority invalid 时不执行 Policy evaluator，policy_action 缺省；effective_action 与实际返回 action 一致。新正常观察与 hold resolution 同步实际 action，历史缺字段回执仍可读取。所有新字段沿用既有 Chain/canon/signing。
+
+### caller cwd 边界
+
+请求 Context 为 observational。删除 caller cwd 的 filesystem allow 捷径；工作区写权限必须由受信 Grant 明确授权，合法 ContextAssertion 也不能突破 Grant ∩ Intent。保持日志脱敏，不持久化额外 cwd 明文。新上下文签发/验证将在 A2 独立包实现。

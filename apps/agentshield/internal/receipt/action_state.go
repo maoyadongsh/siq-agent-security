@@ -126,6 +126,9 @@ func (e *Engine) Observe(req Request, result string) (*Receipt, error) {
 	rec.ParamsDigest = resultDigest
 	rec.ParamsExcerpt = &excerpt
 	rec.Action = ActionAllow
+	if rec.EffectiveAction != "" {
+		rec.EffectiveAction = ActionAllow
+	}
 	rec.Reason = "correlated observation of tool result"
 	rec.ReasonCode = "observation_accepted"
 	rec.TaintLabels = sortedKeys(s.taints)

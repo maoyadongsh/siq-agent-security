@@ -34,7 +34,7 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 5. **状态目录之外不写。** 路径由 `state` 包解析（`SIQ_AGENT_SECURITY_STATE_DIR` 覆盖，兼容旧名 `AGENTSHIELD_STATE_DIR`）；目录 0700、文件 0600；只追加或新建，禁止原地改写准入/签发/回执文件。
 6. **不执行被分析内容。** 不 `import` Skill、不解压嵌套压缩包、不跟随符号链接；git 来源用 `--depth 1` 并禁用 hooks。可选 `--connectors-dir` 仅 **exec** connector 二进制（规格 §3.5），禁止 import `connectors/*`。
 7. **模型不是权威。** 任何未来的 LLM 语义层只能产生 `inferred` 事实或 `info` finding，不能改 verdict / action / status。
-8. **fail-closed 表是合同。** `block` 模式下服务不可达、超时、401、非法响应 = 拒绝；`audit_only`/`warn` = allow + `advisory_action`。每个适配器必须有对应负向测试。
+8. **fail-closed 表是合同。** `block` 模式下服务不可达、超时、401、非法响应 = 拒绝；普通 policy 的 `audit_only`/`warn` 保留 allow + `advisory_action`。按当前用户开发目标（ADR-0015），无效 Authority 在所有模式下 hard deny，不得被 advisory 放宽。每个适配器必须有对应负向测试。
 9. **日志只记类别。** 拒绝原因、异常消息不得包含规则内容、参数、文件内容或密钥。
 
 ## 测试要求

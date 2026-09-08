@@ -289,6 +289,14 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp := map[string]any{"action": d.Action, "reason": d.Reason, "receipt_id": d.Receipt.ReceiptID, "action_id": d.Receipt.ActionID, "reason_code": d.Receipt.ReasonCode}
+	resp["authority_status"] = d.Receipt.AuthorityStatus
+	resp["effective_action"] = d.Receipt.EffectiveAction
+	if d.Receipt.AuthorityReasonCode != "" {
+		resp["authority_reason_code"] = d.Receipt.AuthorityReasonCode
+	}
+	if d.Receipt.PolicyAction != "" {
+		resp["policy_action"] = d.Receipt.PolicyAction
+	}
 	if d.Params != nil {
 		resp["params"] = d.Params
 	}

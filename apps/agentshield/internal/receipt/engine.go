@@ -24,6 +24,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
+	"siq-agent-security/apps/agentshield/internal/runtimeauthz"
 	"siq-agent-security/apps/agentshield/internal/threat"
 )
 
@@ -98,51 +99,55 @@ type EngineInfo struct {
 
 // Receipt is the signed, chained record (receipt.schema.json).
 type Receipt struct {
-	Principal         *runtimeaction.Principal    `json:"principal,omitempty"`
-	ResourceRefs      []runtimeaction.ResourceRef `json:"resource_refs,omitempty"`
-	ProvenanceRefs    []string                    `json:"provenance_refs,omitempty"`
-	RecordType        string                      `json:"record_type,omitempty"`
-	DecisionReceiptID string                      `json:"decision_receipt_id,omitempty"`
-	ParentActionID    string                      `json:"parent_action_id,omitempty"`
-	TaskSeq           int                         `json:"task_seq,omitempty"`
-	ReceiptID         string                      `json:"receipt_id"`
-	ChainID           string                      `json:"chain_id"`
-	Seq               int                         `json:"seq"`
-	PrevHash          string                      `json:"prev_hash"`
-	Hash              string                      `json:"hash"`
-	Sig               string                      `json:"sig"`
-	IssuedAt          string                      `json:"issued_at"`
-	Platform          string                      `json:"platform"`
-	SessionID         string                      `json:"session_id"`
-	ActionID          string                      `json:"action_id,omitempty"`
-	AgentID           *string                     `json:"agent_id"`
-	TaskID            string                      `json:"task_id,omitempty"`
-	IntentID          string                      `json:"intent_id,omitempty"`
-	IntentDigest      string                      `json:"intent_digest,omitempty"`
-	IntentBinding     string                      `json:"intent_binding,omitempty"`
-	AuthorityRevision string                      `json:"authority_revision,omitempty"`
-	Tool              string                      `json:"tool"`
-	ToolCallID        *string                     `json:"tool_call_id"`
-	Operation         string                      `json:"operation,omitempty"`
-	Effects           []string                    `json:"effects,omitempty"`
-	ParamsDigest      string                      `json:"params_digest"`
-	ParamsExcerpt     *string                     `json:"params_excerpt"`
-	Action            string                      `json:"action"`
-	AdvisoryAction    *string                     `json:"advisory_action"`
-	Reason            string                      `json:"reason"`
-	ReasonCode        string                      `json:"reason_code,omitempty"`
-	MatchedGrantID    *string                     `json:"matched_grant_id"`
-	MatchedFactIDs    []string                    `json:"matched_fact_ids"`
-	MatchedRuleIDs    []string                    `json:"matched_rule_ids"`
-	TaintLabels       []string                    `json:"taint_labels"`
-	Trifecta          *Trifecta                   `json:"trifecta"`
-	EnforcementMode   string                      `json:"enforcement_mode"`
-	PolicyRevision    *string                     `json:"policy_revision"`
-	SandboxID         *string                     `json:"sandbox_id"`
-	ModelKey          *string                     `json:"model_key"`
-	Engine            EngineInfo                  `json:"engine"`
-	DecisionLatencyMS *int                        `json:"decision_latency_ms"`
-	Hold              *Hold                       `json:"hold"`
+	AuthorityStatus     string                      `json:"authority_status,omitempty"`
+	AuthorityReasonCode string                      `json:"authority_reason_code,omitempty"`
+	PolicyAction        string                      `json:"policy_action,omitempty"`
+	EffectiveAction     string                      `json:"effective_action,omitempty"`
+	Principal           *runtimeaction.Principal    `json:"principal,omitempty"`
+	ResourceRefs        []runtimeaction.ResourceRef `json:"resource_refs,omitempty"`
+	ProvenanceRefs      []string                    `json:"provenance_refs,omitempty"`
+	RecordType          string                      `json:"record_type,omitempty"`
+	DecisionReceiptID   string                      `json:"decision_receipt_id,omitempty"`
+	ParentActionID      string                      `json:"parent_action_id,omitempty"`
+	TaskSeq             int                         `json:"task_seq,omitempty"`
+	ReceiptID           string                      `json:"receipt_id"`
+	ChainID             string                      `json:"chain_id"`
+	Seq                 int                         `json:"seq"`
+	PrevHash            string                      `json:"prev_hash"`
+	Hash                string                      `json:"hash"`
+	Sig                 string                      `json:"sig"`
+	IssuedAt            string                      `json:"issued_at"`
+	Platform            string                      `json:"platform"`
+	SessionID           string                      `json:"session_id"`
+	ActionID            string                      `json:"action_id,omitempty"`
+	AgentID             *string                     `json:"agent_id"`
+	TaskID              string                      `json:"task_id,omitempty"`
+	IntentID            string                      `json:"intent_id,omitempty"`
+	IntentDigest        string                      `json:"intent_digest,omitempty"`
+	IntentBinding       string                      `json:"intent_binding,omitempty"`
+	AuthorityRevision   string                      `json:"authority_revision,omitempty"`
+	Tool                string                      `json:"tool"`
+	ToolCallID          *string                     `json:"tool_call_id"`
+	Operation           string                      `json:"operation,omitempty"`
+	Effects             []string                    `json:"effects,omitempty"`
+	ParamsDigest        string                      `json:"params_digest"`
+	ParamsExcerpt       *string                     `json:"params_excerpt"`
+	Action              string                      `json:"action"`
+	AdvisoryAction      *string                     `json:"advisory_action"`
+	Reason              string                      `json:"reason"`
+	ReasonCode          string                      `json:"reason_code,omitempty"`
+	MatchedGrantID      *string                     `json:"matched_grant_id"`
+	MatchedFactIDs      []string                    `json:"matched_fact_ids"`
+	MatchedRuleIDs      []string                    `json:"matched_rule_ids"`
+	TaintLabels         []string                    `json:"taint_labels"`
+	Trifecta            *Trifecta                   `json:"trifecta"`
+	EnforcementMode     string                      `json:"enforcement_mode"`
+	PolicyRevision      *string                     `json:"policy_revision"`
+	SandboxID           *string                     `json:"sandbox_id"`
+	ModelKey            *string                     `json:"model_key"`
+	Engine              EngineInfo                  `json:"engine"`
+	DecisionLatencyMS   *int                        `json:"decision_latency_ms"`
+	Hold                *Hold                       `json:"hold"`
 }
 
 // Decision is what the adapter acts on.
@@ -478,44 +483,49 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	tf := s.trifecta
 	rec.Trifecta = &tf
 
-	action, reason := e.evaluate(req, s, hosts, paths, &rec)
-
-	// step 6: redact — only when the grant permits and a secret literal is in params
-	var redacted map[string]any
-	if action == ActionDeny && strings.HasPrefix(reason, "tainted egress") && e.redactAllowed(req) && containsSecretLiteral(e.analyzer, paramsText) {
-		redacted = redactParams(e.analyzer, req.Params)
-		action, reason = ActionRedact, "secret literal removed from params before egress (grant permits redaction)"
-	}
-
-	authorityCode := ""
+	validationCode := ""
 	if authorityErr != nil {
-		authorityCode = "intent_authority_invalid"
-		var v *intent.Violation
-		if errors.As(authorityErr, &v) {
-			authorityCode = v.Code
+		validationCode = "intent_authority_invalid"
+		var violation *intent.Violation
+		if errors.As(authorityErr, &violation) {
+			validationCode = violation.Code
 		}
-		action, reason, redacted = ActionDeny, authorityCode, nil
 	}
-
-	// step 7: enforcement mode
-	var hold *Hold
-	switch e.opts.EnforcementMode {
-	case "audit_only", "warn":
-		if action != ActionAllow {
-			adv := action
-			rec.AdvisoryAction = &adv
-			if e.opts.EnforcementMode == "warn" {
-				reason = "WARN: " + reason
-			}
-			action = ActionAllow
+	authority := runtimeauthz.Authority(validationCode, rec.IntentBinding == "bound")
+	rec.AuthorityStatus, rec.AuthorityReasonCode = authority.Status, authority.ReasonCode
+	policy := runtimeauthz.PolicyResult{}
+	var redacted map[string]any
+	if authority.Valid {
+		policy.Action, policy.Reason = e.evaluate(req, s, hosts, paths, &rec)
+		if policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req) && containsSecretLiteral(e.analyzer, paramsText) {
+			redacted = redactParams(e.analyzer, req.Params)
+			policy.Action, policy.Reason = ActionRedact, "secret literal removed from params before egress (grant permits redaction)"
+		}
+		policy.ReasonCode = classifyReason(policy.Reason, policy.Action)
+		if validationCode != "" {
+			policy.Action, policy.ReasonCode, policy.Reason = ActionDeny, validationCode, validationCode
 			redacted = nil
 		}
-	default:
-		if action == ActionHold {
-			hold = &Hold{Channel: e.opts.HoldChannel, TimeoutMS: e.opts.HoldTimeoutMS}
-			rec.Hold = hold
+		rec.PolicyAction = policy.Action
+	}
+	action, advisory := runtimeauthz.ApplyMode(authority, policy, e.opts.EnforcementMode)
+	rec.AdvisoryAction = advisory
+	reason := policy.Reason
+	authorityCode := policy.ReasonCode
+	if !authority.Valid {
+		reason, authorityCode = authority.ReasonCode, authority.ReasonCode
+	} else if advisory != nil {
+		redacted = nil
+		if e.opts.EnforcementMode == "warn" {
+			reason = "WARN: " + reason
 		}
 	}
+	var hold *Hold
+	if action == ActionHold {
+		hold = &Hold{Channel: e.opts.HoldChannel, TimeoutMS: e.opts.HoldTimeoutMS}
+		rec.Hold = hold
+	}
+	rec.EffectiveAction = action
 	rec.Action = action
 	rec.Reason = reason
 	rec.ReasonCode = classifyReason(reason, action)
@@ -599,10 +609,9 @@ func (e *Engine) evaluate(req Request, s *session, hosts, paths []string, rec *R
 	if shellTools[req.Tool] && netCmdRe.MatchString(paramsTextOf(req)) && len(hosts) == 0 {
 		return ActionDeny, "egress exec requires granted host"
 	}
-	// step 4c: paths must be granted or inside cwd
-	cwd, _ := req.Context["cwd"].(string)
+	// step 4c: observational caller context cannot grant filesystem access
 	for _, p := range paths {
-		if fid, ok := pathGranted(g, p, cwd); ok {
+		if fid, ok := pathGranted(g, p); ok {
 			if fid != "" {
 				rec.MatchedFactIDs = appendUnique(rec.MatchedFactIDs, fid)
 			}
@@ -612,7 +621,7 @@ func (e *Engine) evaluate(req Request, s *session, hosts, paths []string, rec *R
 			return ActionDeny, "credential path " + p + " denied (credential facts are never allow)"
 		}
 		if isWrite(req.Tool, paramsTextOf(req)) {
-			return ActionDeny, "write to " + p + " outside granted paths and cwd (default deny)"
+			return ActionDeny, "write to " + p + " outside granted paths (default deny)"
 		}
 	}
 	if requireApproval[req.Tool] {
@@ -724,6 +733,9 @@ func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Recei
 	rec.ReceiptID = resID
 	rec.IssuedAt = now.Format(time.RFC3339)
 	rec.Action, rec.Reason = action, reason
+	if rec.EffectiveAction != "" {
+		rec.EffectiveAction = action
+	}
 	rec.RecordType = "hold_resolution"
 	rec.DecisionReceiptID = held.ReceiptID
 	rec.Hold = nil
@@ -969,10 +981,7 @@ func hostGranted(g *grant.Grant, hostPort string) (string, bool) {
 	return "", false
 }
 
-func pathGranted(g *grant.Grant, p, cwd string) (string, bool) {
-	if cwd != "" && strings.HasPrefix(p, strings.TrimSuffix(cwd, "/")+"/") && !credPathRe.MatchString(p) {
-		return "", true
-	}
+func pathGranted(g *grant.Grant, p string) (string, bool) {
 	for _, f := range g.Facts {
 		if f.Domain != "filesystem" || f.Effect != "allow" {
 			continue
