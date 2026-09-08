@@ -406,3 +406,10 @@
 - 依赖沿用Control API uv.lock，所有Action固定SHA、contents:read；upload-artifact固定SHA经官方git远端v4.6.2引用核对。check_contracts.py验证20对、全部要求类别、文件ID一致及正常对照。
 - 本地与CI相同的核心命令实际通过：20对40场景、6项统计测试，重新生成报告并Python验证46回执/11效果；Ruff、workflow YAML触发/权限/pin检查通过。报告/tmp/siq-runtime-security-ci-report.json。
 - 工作流尚未推送执行，不能宣称远端CI绿色；本地Go为已安装版本，workflow Go1.22需远端确认。nightly强杀恢复/性能埋点仍缺，pending恢复、平台与最终DoD继续进行。
+
+### C2 文件pending签名存储基础
+
+- 新增file-observation-pending/v1合同与Store.SavePendingFile/GetPendingFile：服务端before快照、动作/决策、scope/source、owner摘要、预期摘要/预算/原deadline共同签名；数字使用canon.Decode保留新合同整数表示。
+- 0700目录、0600暂存、fsync+排他Link发布，禁止覆盖，独立8192归档上限。同ID同内容并发重试返回同签名；不同预期摘要冲突。原始路径、内容、token不落盘。
+- 真实文件采样→签名存储→重建Store读回测试通过，覆盖8路并发、owner篡改、路径穿越、隐私断言。Go全模块race/vet与四平台编译通过（/tmp/siq-pending-store-race.log）；schema正例及raw token/path负例通过。
+- 尚未接入begin/finish HTTP，不宣称pending跨重启已可续用。后续需管理接管、撤销终态、deadline/动作复核、强杀恢复及容量/中断故障矩阵；完整目标仍进行中。
