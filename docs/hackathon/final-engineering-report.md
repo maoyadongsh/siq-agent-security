@@ -10,8 +10,8 @@
 | --- | --- |
 | starting_sha | `e309655915562a27cb98df851c1e46e922563d47` |
 | branch | `codex/dgx-spark-hackathon-v3` |
-| current HEAD | 与 starting_sha 相同；开发改动尚未提交 |
-| final_sha | 未创建最终提交，不能将当前 HEAD 当作全部改动的提交身份 |
+| 实现提交 | `a8dfdeb85287ee2ce476f9c94127c77bde79f2a4` |
+| final_sha（实现快照） | `a8dfdeb85287ee2ce476f9c94127c77bde79f2a4`；交付记录更新另有后续文档提交 |
 | 候选版本 | `0.3.0-rc.1`，本地 candidate2，未签名、未发布 |
 | 精确源码身份 | 包内 `source-info.json` 列出复制的 dirty worktree 文件及 SHA256 |
 | 包清单 | 1,575 个文件；SHA256、字节数、可执行位，运行前后校验一致 |
@@ -20,6 +20,9 @@
 SHA256：`89856cd9c1e4af9b7179b2b4f46437eedee1a1d1599ca185b0536ed1b0e26dd3`。
 完整信息见 [候选准备记录](evidence/rc-candidate2-preparation-20260908.json)。
 构建后产生的本报告、启动验收记录及文档收尾位于冻结源码快照之外；它们不改变已记录包的身份。
+用户随后授权提交并推送全部本轮开发内容。交付分支为
+`origin/codex/dgx-spark-hackathon-v3`；精确远端 HEAD 以该分支读回为准。
+本地候选包仍对应其构建时的 dirty-source 清单，不因后来创建提交而冒称已从该提交重建。
 
 ## B. Agent、模型与 Skills
 
@@ -157,12 +160,14 @@ StepFun 前组 **4/5** 的 60 秒超时、Ornith 前组格式/截断失败均保
 - 四目标、CycloneDX 1.5 scoped SBOM、全部文件摘要与执行位、Skill inventory 均已校验；
   解压后的候选实际启动成功且运行前后清单一致。正式签名没有伪造或替换信任根。
 
-这些是本地 CI 等价检查，不是当前未提交代码在 GitHub Actions 上的 required checks。
+这些是本地 CI 等价检查，不是 GitHub Actions 上的 required checks。
+当前 `ci` 工作流仅在 main push 或 pull_request 时触发，开发分支 push 不等于远程 CI 已通过。
 完整限定见 [仓库回归](repository-regression.md)。
 
 ## H. 未验证内容与后续操作边界
 
-1. 没有创建最终提交、push、PR、tag 或发布；候选为 dirty-source、未签名准备件。
+1. 实现提交已创建，本轮按用户授权推送到开发分支；没有执行 main 合并、PR、tag 或发布。
+   候选仍为构建时的 dirty-source、未签名准备件。
    历史 v0.2.0 的签名清单不为本候选背书。
 2. 原生启动验证仅 Linux arm64；其他目标仅交叉构建。外部模型/OS/Python runtime 不在打包 SBOM 内，
    npm production lockfile 是组件上界，不是 bundle 可达性证明。

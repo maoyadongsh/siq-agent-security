@@ -18,7 +18,7 @@ provider, source mode, code snapshot and measured scope.
 | Live repository task | [Actual GitHub source checkpoint](live-source-validation.md) |
 | Existing repository regression | [Local tests, audits and native runtime harnesses](repository-regression.md); remaining acceptance scopes disclosed |
 | Limitations | [Explicit boundaries](limitations.md) |
-| Source identity | Baseline `e309655915562a27cb98df851c1e46e922563d47`, branch `codex/dgx-spark-hackathon-v3`; worktree dirty, no final commit yet |
+| Source identity | Baseline `e309655915562a27cb98df851c1e46e922563d47`; implementation commit `a8dfdeb85287ee2ce476f9c94127c77bde79f2a4` on `codex/dgx-spark-hackathon-v3`; later documentation records delivery. The candidate retains its original dirty-source inventory |
 | RC package | [Local candidate 2](rc-preparation.md): four binaries, scoped SBOM, SHA256/Skill inventories and actual Linux StepFun launch evidenced; unsigned and unpublished |
 | Release trust / governance | Candidate unsigned; GitHub readback confirms main protection disabled and account admin capability present. No settings changed; protection is a recommended separate governance action |
 | Final engineering report | [Complete local results, source identity and external boundaries](final-engineering-report.md) |
