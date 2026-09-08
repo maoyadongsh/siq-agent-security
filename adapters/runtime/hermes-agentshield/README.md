@@ -56,3 +56,12 @@ V2：有 tool_call_id 时保存服务端 action_id/receipt_id（最多 2048 项�
 宿主可通过`provenance_reference(session_id, tool_name, tool_call_id)`取回引用，并在后续pre_tool_call传入`parameter_provenance`或`context_assertion_id`。这只是显式桥接，不能直接把原结果引用绑定到变换后的参数；选择/派生必须经过daemon的对应API生成内容摘要匹配的引用。插件不推断模型隐式lineage，不签发可信声明，也不把自称USER的工具结果提升权威。
 
 内存引用缓存最多2048条、5分钟到期，满时不驱逐既有引用来假装干净；不持久化原结果或token。结果预算预留JSON编码空间，超限不截断后当完整来源。默认映射为空，原版Hermes自动配置/传播和真实原生MCP链路仍需单独验证；现有测试只证明钩子映射、受限上报及缓存边界。
+
+
+真实daemon组件桥接复现：
+
+```bash
+python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp-bridge.json
+```
+
+脚本执行真实loopback MCP initialize/tools-call，将实际结果交给本适配器post hook自动上报，经daemon确定性select后通过pre hook提交参数来源；MCP路径阻断，admin签发USER的相同路径允许。最后复验daemon回执链。此模式直接调用钩子，不包含原生Hermes MCP注册/调度器，不等同原生端到端支持；不会操作真实用户配置。

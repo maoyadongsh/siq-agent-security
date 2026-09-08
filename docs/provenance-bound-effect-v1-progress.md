@@ -548,3 +548,10 @@
 - report_id绑定平台/会话/Agent/工具/call；无稳定call、过大/不可编码结果不登记、不截断伪装完整。成功后仅缓存provenance_id，2048上限/5分钟到期；失败或重复ID报告冲突不能保留旧引用供新结果冒用。宿主可显式取回引用，后续参数派生仍需daemon选择API。
 - 44项Hermes适配器测试通过，覆盖精确映射、工具内容自报USER不升级、原内容保持、跨会话取引用失败、容量/失败/超限；Ruff、adapterinstall race/vet与四平台编译通过，内嵌资产同步。
 - 本批HTTP测试用fake服务验证映射，不称为原生MCP已接入。下一步实际daemon+MCP调用验证采集/派生/参数引用链；完整目标仍进行中。
+
+### B 真实MCP→Hermes钩子→daemon桥接验证
+
+- validate-mcp-provenance.py新增--hermes-bridge：真实MCP HTTP initialize/tools-call取得结果后，由实际适配器post hook自动上报并缓存引用；调用daemon select生成路径派生引用，检查仍MCP/untrusted。
+- 实际pre hook提交该引用，daemon V3拒绝、适配器block；admin USER同值来源经相同pre hook允许。单独HTTP决定保留明确reason断言，结束回执链verify通过。报告/tmp/siq-hermes-mcp-daemon-bridge.json，本轮运行passed=true。
+- 此模式直接调用适配器hook，不声称原生Hermes MCP注册/调度器已接入；不修改实际用户配置，不执行目标read工具或冒充独立效果。已有21对基准默认行为保持，PR/nightly新增独立桥接报告步骤。
+- Ruff、实际桥接报告断言与diff检查通过；生产代码本轮未改，不重复Go全量测试。原生生命周期和跨平台引用集成等完整目标任务继续进行。

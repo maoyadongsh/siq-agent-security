@@ -81,7 +81,7 @@ def rpc(endpoint, method, params=None, request_id=None):
     return message["result"]
 
 
-def run(h, extended=False):
+def run(h, extended=False, adapter_bridge=False):
     h.build()
     h.start()
     h.setup_authority()
@@ -113,14 +113,36 @@ def run(h, extended=False):
         identity = {"platform": "hermes", "session_id": session, "agent_id": base.AGENT}
         source_id = hashlib.sha256(canonical({"endpoint": endpoint, "server": initialized["serverInfo"],
                                            "tool": "lookup_report"})).hexdigest()
-        report = h.api("/v1/provenance-reports", {**identity, "report_id": "mcp-call-1",
-                       "source": {"type": "MCP", "source_id": source_id}, "content": result},
-                       token=token, expected=201)
+        adapter = None
+        if adapter_bridge:
+            adapter_spec = importlib.util.spec_from_file_location(
+                "hermes_provenance_bridge", ROOT / "adapters/runtime/hermes-agentshield/__init__.py")
+            adapter = importlib.util.module_from_spec(adapter_spec)
+            adapter_spec.loader.exec_module(adapter)
+            adapter._CFG.update(endpoint=h.endpoint, token_path=str(h.state / "token"),
+                                enforcement_mode="block", platform="hermes", agent_id=base.AGENT,
+                                mcp_sources={"mcp__fixture__lookup_report": source_id})
+            adapter._TOKEN = None
+            adapter._post_tool_call("mcp__fixture__lookup_report", result=result,
+                                   session_id=session, tool_call_id="mcp-call-1")
+            reference = adapter.provenance_reference(session, "mcp__fixture__lookup_report", "mcp-call-1")
+            base.require(reference is not None, "Hermes hook did not capture actual MCP result")
+            report = {"provenance_id": reference}
+        else:
+            report = h.api("/v1/provenance-reports", {**identity, "report_id": "mcp-call-1",
+                           "source": {"type": "MCP", "source_id": source_id}, "content": result},
+                           token=token, expected=201)
         selected = h.api("/v1/provenance-select", {**identity, "parent_id": report["provenance_id"],
                          "pointer": "/structuredContent/path", "content": result}, token=token, expected=201)
+        base.require(selected["source"]["type"] == "MCP" and selected["source"]["trust"] == "untrusted",
+                     "captured MCP source was upgraded")
         request = {**identity, "tool": "read_file", "tool_call_id": "mcp-controlled-path",
                    "params": {"path": target}, "parameter_provenance": [{"parameter_path": "/path",
                    "provenance_refs": [selected["provenance_id"]]}]}
+        if adapter is not None:
+            blocked = adapter._pre_tool_call("read_file", {"path": target}, session_id=session,
+                tool_call_id="bridge-mcp-denied", parameter_provenance=request["parameter_provenance"])
+            base.require(blocked and blocked["action"] == "block", "Hermes bridge allowed MCP path")
         denied = h.api("/v1/decide", request, token=token)
         base.require(denied["action"] == "deny" and denied["reason_code"] == "provenance_source_not_allowed",
                      "MCP controlled high-impact path")
@@ -136,6 +158,10 @@ def run(h, extended=False):
             "expires_at": expires, "issuer": "trusted-form"}, expected=201)
         request["tool_call_id"] = "trusted-controlled-path"
         request["parameter_provenance"][0]["provenance_refs"] = [trusted["provenance_id"]]
+        if adapter is not None:
+            accepted = adapter._pre_tool_call("read_file", {"path": target}, session_id=session,
+                tool_call_id="bridge-trusted-allowed", parameter_provenance=request["parameter_provenance"])
+            base.require(accepted is None, "Hermes bridge rejected trusted same-value control")
         allowed = h.api("/v1/decide", request, token=token)
         base.require(allowed["action"] == "allow", "same value trusted provenance failed benign control")
         report_rejections = []
@@ -345,6 +371,7 @@ def run(h, extended=False):
                 "decisions": [{"pair_id": pair, "kind": kind, "action": decision["action"],
                                "reason_code": decision["reason_code"], "receipt_id": decision["receipt_id"]}
                               for pair, kind, decision in decisions],
+                "hermes_adapter_bridge": adapter_bridge,
                 "coverage": "component_fixture", "mcp_protocol": "2025-06-18", "mcp_tool_calls": mcp.tool_calls,
                 "checks": {"initialized": True, "real_http_tool_result": True, "signed_report": True,
                            "deterministic_selection": True, "untrusted_path_denied": True,
@@ -361,11 +388,12 @@ def run(h, extended=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--hermes-bridge", action="store_true")
     args = parser.parse_args()
     with tempfile.TemporaryDirectory(prefix="siq-mcp-provenance-") as tmp:
         h = base.Harness(Path(tmp), SimpleNamespace())
         try:
-            report = run(h)
+            report = run(h, adapter_bridge=args.hermes_bridge)
         finally:
             h.stop()
     report["script_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
