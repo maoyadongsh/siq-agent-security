@@ -2,7 +2,7 @@
 
 Authorization: repository owner requested direct open-source operations on 2026-09-08. Baseline: [API snapshot](evidence/baseline.json).
 
-Apply to main: pull requests, dismiss stale reviews, CODEOWNERS review, one approving review, conversation resolution, all 28 observed ci job contexts and the two required runtime-security jobs; checks must be current. Disable force pushes and deletion. Administrators retain GitHub administrator bypass (`enforce_admins=false`): there is currently only one maintainer and no independent reviewer. This exception is explicit; do not describe current governance as independent review. Normal contributions use PRs; owner exceptions need a recorded reason and successful checks. No collaborators are added.
+Apply to main: pull requests, dismiss stale reviews, CODEOWNERS review, one approving review, conversation resolution, all 28 observed ci job contexts and the two required runtime-security jobs plus the observed passing research-reproduction job; checks must be current. Disable force pushes and deletion. Administrators retain GitHub administrator bypass (`enforce_admins=false`): there is currently only one maintainer and no independent reviewer. This exception is explicit; do not describe current governance as independent review. Normal contributions use PRs; owner exceptions need a recorded reason and successful checks. No collaborators are added.
 
 Enable private vulnerability reporting, Discussions, secret scanning and push protection, Dependabot alerts and security updates. Keep existing visibility, merge modes and Pages. Secret validity checking is not requested because it can contact providers.
 

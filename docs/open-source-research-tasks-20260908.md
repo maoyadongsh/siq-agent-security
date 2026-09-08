@@ -3,7 +3,7 @@
 [方案原文](open-source-research-plan-20260908.md) · [机器可读台账](open-source-research-tasks-20260908.json)
 
 原文 18 个阶段已拆分为 **71 项执行任务**，覆盖全部 12 节。
-当前状态：`done` 33 项；`not_applicable` 1 项；`in_progress` 10 项；`todo` 26 项；`blocked` 1 项。任务登记不等于工程实施或外部发布完成。
+当前状态：`done` 43 项；`not_applicable` 1 项；`todo` 20 项；`in_progress` 6 项；`blocked` 1 项。任务登记不等于工程实施或外部发布完成。
 
 ## 基线与执行规则
 
@@ -60,7 +60,7 @@ python3 scripts/check_research_task_ledger.py
 | O-01 | 确认授权主体、贡献来源与代码/材料边界 | 首周 | 3 | done |
 | O-02 | 第三方许可证与 vendored 内容清查 | 首周 | 3 | done |
 | O-03 | 历史 seed/凭据复核和处置结论 | 首周 | 4 | done |
-| O-04 | LICENSE、材料许可映射和归属文件 | 首周 | 4 | in_progress |
+| O-04 | LICENSE、材料许可映射和归属文件 | 首周 | 4 | done |
 | O-05 | 安全报告渠道、贡献规则、DCO、行为准则 | 首周 | 4 | done |
 | O-06 | 主分支保护和平台扫描配置 | 首周 | 4 | done |
 | O-07 | A/B/C 三轨复现说明 | 第 2 周 | 5 | in_progress |
@@ -70,7 +70,7 @@ python3 scripts/check_research_task_ledger.py
 | O-11 | 发布、归档和版本引用验证 | 第 2–4 周 | 4 | blocked |
 | O-12 | 收集两组外部复现记录 | 第 2–4 周 | 4 | in_progress |
 | O-13 | 发布研究导读与技术报告 | 第 2–4 周 | 4 | in_progress |
-| O-14 | 开放讨论与首批贡献任务 | 第 2–4 周 | 3 | in_progress |
+| O-14 | 开放讨论与首批贡献任务 | 第 2–4 周 | 3 | done |
 | O-15 | 相关工作、研究协议和 pilot | 第 2 月 | 4 | todo |
 | O-16 | 公平对照、消融和外部评估集 | 第 2–3 月 | 5 | todo |
 | O-17 | 论文及正式 artifact evaluation 材料 | 第 2–3 月 | 4 | todo |
@@ -438,10 +438,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 #### O-04.04 · 校验源码与制品的许可一致性
 
-- 状态：`in_progress`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§3.3、§9。
 - 完成依赖：O-04.02, O-04.03；待决策依赖：无。
 - 计划产物：`docs/research/evidence/license-validation.json`；`现有打包/静态检查入口（必要增量）`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -458,8 +459,8 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 - 逐项核对验收条件：不能因根 LICENSE 存在就判全仓通过；所有许可缺口已解决或被明确排除出此次分发范围；验证命令与范围记录完整。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 - 计划验证命令或方法（含占位符时不可原样执行）：核对实际分发文件与 license-map/THIRD_PARTY_NOTICES 一致；缺失许可通知或未映射文件必须拒绝通过。。执行时填入实际路径、版本与范围，保存退出码/结果和证据。
 
-实际验证：`[]`。
-实际证据：`["docs/research/operations-20260908.md"]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_source_release_scope", "evidence": ["docs/research/evidence/source-package-validation.json"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
+实际证据：`["docs/research/evidence/source-package-validation.json"]`。
 
 ### O-05 · 安全报告渠道、贡献规则、DCO、行为准则
 
@@ -701,10 +702,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 #### O-07.02 · 在普通 Linux 验证 fixture 演示路径 A
 
-- 状态：`in_progress`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§5。
 - 完成依赖：O-07.01；待决策依赖：无。
 - 计划产物：`docs/research/evidence/reproduction-a/`；`REPRODUCIBILITY.md`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -721,8 +723,8 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 - 逐项核对验收条件：无需模型密钥并且没有真实 provider 调用；fixture 标识可见；成功任务完成、攻击被拒、缺失效果不当成功，失败也归档。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 - 计划验证命令或方法（含占位符时不可原样执行）：./scripts/hackathon/start.sh --mode test；./scripts/hackathon/healthcheck.sh；复用 browser-smoke.py 的 normal/MCP/same-value/fake-success 断言，state/output 必须是新的隔离路径。。执行时填入实际路径、版本与范围，保存退出码/结果和证据。
 
-实际验证：`[]`。
-实际证据：`["docs/research/evidence/reproduction-a/", "REPRODUCIBILITY.md"]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_documented_scope", "evidence": ["docs/research/evidence/reproduction-a/hosted-linux-identity.json", "docs/research/evidence/reproduction-a/hosted-linux-browser.json"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
+实际证据：`["docs/research/evidence/reproduction-a/hosted-linux-identity.json", "docs/research/evidence/reproduction-a/hosted-linux-browser.json"]`。
 
 #### O-07.03 · 验证固定基准与离线证据路径 B
 
@@ -777,10 +779,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 #### O-07.05 · 完成三轨环境矩阵与故障说明
 
-- 状态：`in_progress`；优先级：`P1`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P1`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§5、§6.1。
 - 完成依赖：O-07.02, O-07.03；待决策依赖：无。
 - 计划产物：`docs/research/environment-matrix.md`；`REPRODUCIBILITY.md`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -796,8 +799,8 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：普通 Linux 复现不被写成全部 OS 原生验收；C 未运行不会阻塞无 GPU 的 A/B 文档，但 C 的新实测结论不得发布。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
-实际证据：`["docs/research/environment-matrix.md", "REPRODUCIBILITY.md"]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_documented_scope", "evidence": ["docs/research/environment-matrix.md"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
+实际证据：`["docs/research/environment-matrix.md"]`。
 
 ### O-08 · 研究导航、dataset card、claims-evidence 表
 
@@ -1014,10 +1017,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 #### O-10.01 · 确定研究发行范围与身份更新流程
 
-- 状态：`in_progress`；优先级：`P0`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P0`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§9、§6.1。
 - 完成依赖：O-04.04, O-07.05, O-08.05；待决策依赖：无。
 - 计划产物：`docs/research/release-scope.md`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -1033,15 +1037,16 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：新许可后的版本与旧 V5 RC 分开；不覆盖任何历史 tag；研究 work branch、基线及变更范围有记录；冻结比赛制品保持原样。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
-实际证据：`["docs/research/operations-20260908.md"]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_source_release_scope", "evidence": ["docs/research/release-scope.md"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
+实际证据：`["docs/research/release-scope.md"]`。
 
 #### O-10.02 · 按实际发行范围补齐 SBOM 与归属包
 
-- 状态：`todo`；优先级：`P0`；类型：`engineering`；责任角色：`maintainer`；负责人：未指派。
+- 状态：`done`；优先级：`P0`；类型：`engineering`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§9、§3.3。
 - 完成依赖：O-10.01, O-02.02；待决策依赖：无。
 - 计划产物：`scripts/hackathon/package_rc.py（必要增量）`；`docs/research/evidence/sbom-scope.json`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -1057,15 +1062,16 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：旧 scoped RC SBOM 不被宣称全仓供应链完整；缺少已分发组件或通知时校验失败；增量有必要的打包验证。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
-实际证据：`[]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_source_release_scope", "evidence": ["docs/research/evidence/sbom-scope.json", "scripts/research/package_source.py", "scripts/research/test_package_source.py"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
+实际证据：`["docs/research/evidence/sbom-scope.json", "scripts/research/package_source.py", "scripts/research/test_package_source.py"]`。
 
 #### O-10.03 · 完成发布者认证与构建证明方案
 
-- 状态：`todo`；优先级：`P0`；类型：`engineering`；责任角色：`maintainer`；负责人：未指派。
+- 状态：`done`；优先级：`P0`；类型：`engineering`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§9。
 - 完成依赖：O-10.01, O-06.04；待决策依赖：D-05。
 - 计划产物：`docs/research/release-authentication.md`；`docs/research/evidence/signing-readiness.json`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -1081,12 +1087,12 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：不使用 test/development/temporary key 认证正式候选；hash、GitHub 构建来源证明、现有 publisher 信任规则和实验真实性分别说明；可接受诚实 unsigned 研究候选。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
-实际证据：`[]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_source_release_scope", "evidence": ["docs/research/release-authentication.md", "docs/research/evidence/signing-readiness.json"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
+实际证据：`["docs/research/release-authentication.md", "docs/research/evidence/signing-readiness.json"]`。
 
 #### O-10.04 · 执行新研究 SHA 的 CI 与受影响回归
 
-- 状态：`todo`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：未指派。
+- 状态：`in_progress`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§9。
 - 完成依赖：O-10.02, O-10.03, O-09.02, O-03.04, O-05.02, O-06.04；待决策依赖：无。
 - 计划产物：`docs/research/evidence/release-ci.json`；`docs/research/evidence/release-regression.json`。
@@ -1107,11 +1113,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 - 计划验证命令或方法（含占位符时不可原样执行）：go test ./... / go test -race ./... / go vet ./...（仅受影响 Go module；保留实际 cwd）；复用现有 ci/runtime-security 对最终 SHA 运行；文档仅做链接/格式校验，打包增量运行现有 package tests。。执行时填入实际路径、版本与范围，保存退出码/结果和证据。
 
 实际验证：`[]`。
-实际证据：`[]`。
+实际证据：`["docs/research/release-scope.md", "docs/research/publication-plan.md"]`。
 
 #### O-10.05 · 从干净源码构建并验收研究候选
 
-- 状态：`todo`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：未指派。
+- 状态：`in_progress`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§9、§6.1。
 - 完成依赖：O-10.04；待决策依赖：无。
 - 计划产物：`docs/research/evidence/research-rc.json`；`研究候选包（Git 之外）`。
@@ -1132,7 +1138,7 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 - 计划验证命令或方法（含占位符时不可原样执行）：git status --porcelain（构建前后均为空）；python3 scripts/hackathon/package_rc.py --out <新候选目录> --verify-only；sha256sum -c SHA256SUMS（候选内和外层分别核查，记录 cwd）。执行时填入实际路径、版本与范围，保存退出码/结果和证据。
 
 实际验证：`[]`。
-实际证据：`[]`。
+实际证据：`["docs/research/release-scope.md", "docs/research/publication-plan.md"]`。
 
 ### O-11 · 发布、归档和版本引用验证
 
@@ -1140,7 +1146,7 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 #### O-11.01 · 准备可审阅的研究发布与归档材料
 
-- 状态：`todo`；优先级：`P0`；类型：`documentation`；责任角色：`maintainer`；负责人：未指派。
+- 状态：`in_progress`；优先级：`P0`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§6.2、§9、§10.1。
 - 完成依赖：O-10.05, O-09.03；待决策依赖：无。
 - 计划产物：`docs/research/release-notes.md`；`docs/research/publication-plan.md`。
@@ -1160,11 +1166,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 - 逐项核对验收条件：材料可独立审阅，版本/哈希/许可一致；没有发布授权时仍完成准备；不生成假 Release URL 或 DOI。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
 实际验证：`[]`。
-实际证据：`[]`。
+实际证据：`["docs/research/release-scope.md", "docs/research/publication-plan.md"]`。
 
 #### O-11.02 · 发布新研究版本至 GitHub
 
-- 状态：`todo`；优先级：`P0`；类型：`external_manual`；责任角色：`release_maintainer`；负责人：未指派。
+- 状态：`in_progress`；优先级：`P0`；类型：`external_manual`；责任角色：`release_maintainer`；负责人：maoyadongsh。
 - 原文依据：§9、§6.2。
 - 完成依赖：O-11.01, O-06.02, O-06.03；待决策依赖：D-06。
 - 计划产物：`docs/research/evidence/github-research-release.json`。
@@ -1184,7 +1190,7 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 - 逐项核对验收条件：实际 Release URL 和资产校验通过；不覆盖既有 tag 或旧文件；若要求集成后 main 为源码，须先回 O-10.04/05 重冻重建，不直接沿用分支包。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
 实际验证：`[]`。
-实际证据：`[]`。
+实际证据：`["docs/research/release-scope.md", "docs/research/publication-plan.md"]`。
 
 #### O-11.03 · 连接归档账号并保存实际研究制品
 
@@ -1242,10 +1248,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 #### O-12.01 · 准备外部复现模板与清洗同意说明
 
-- 状态：`in_progress`；优先级：`P1`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P1`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§8.1、§10.1、§10.2。
 - 完成依赖：O-07.05, O-08.02, O-05.03；待决策依赖：无。
 - 计划产物：`.github/ISSUE_TEMPLATE/reproduction.yml`；`docs/research/external-reproduction-guide.md`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -1261,8 +1268,8 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：不要求提交私密状态或 token；维护者和外部运行分开标识；可提交失败或部分复现，不预设全部结果必须通过。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
-实际证据：`[".github/ISSUE_TEMPLATE/reproduction.yml"]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_documented_scope", "evidence": ["docs/research/external-reproduction-template.md"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
+实际证据：`["docs/research/external-reproduction-template.md"]`。
 
 #### O-12.02 · 联系并安排两组外部复现者
 
@@ -1446,10 +1453,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 #### O-14.01 · 建立六类 Issue 与 PR 审阅模板
 
-- 状态：`in_progress`；优先级：`P1`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P1`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§8.1、§8.2。
 - 完成依赖：O-05.02, O-05.03, O-12.01；待决策依赖：无。
 - 计划产物：`.github/ISSUE_TEMPLATE/`；`.github/PULL_REQUEST_TEMPLATE.md`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -1465,15 +1473,16 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：表单可解析，复现/研究提案不强制填造安全结论；不在模板要求提供密钥或全量状态文件。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
-实际证据：`[".github/ISSUE_TEMPLATE/", ".github/PULL_REQUEST_TEMPLATE.md"]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_documented_scope", "evidence": [".github/ISSUE_TEMPLATE", ".github/PULL_REQUEST_TEMPLATE.md"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
+实际证据：`[".github/ISSUE_TEMPLATE", ".github/PULL_REQUEST_TEMPLATE.md"]`。
 
 #### O-14.02 · 准备五类首批贡献任务
 
-- 状态：`in_progress`；优先级：`P1`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P1`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§8.1、§10.1。
 - 完成依赖：O-14.01；待决策依赖：无。
 - 计划产物：`docs/research/community-backlog.md`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -1489,15 +1498,16 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：每项可独立开始并有真实验收方法；新增案例不会修改 V5 分母，安全修复必须证明旧行为被拒。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_documented_scope", "evidence": ["docs/research/community-backlog.md"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
 实际证据：`["docs/research/community-backlog.md"]`。
 
 #### O-14.03 · 开启 Discussions 并发布首批社区任务
 
-- 状态：`in_progress`；优先级：`P1`；类型：`external_manual`；责任角色：`repository_admin`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P1`；类型：`external_manual`；责任角色：`repository_admin`；负责人：maoyadongsh。
 - 原文依据：§2、§8.1、§10.1。
 - 完成依赖：O-14.02, O-05.04；待决策依赖：D-03, D-04, D-09。
 - 计划产物：`docs/research/evidence/community-launch.json`。
+- 完成时间：2026-09-08T15:06:01.179243+00:00。
 
 实施内容：
 
@@ -1513,8 +1523,8 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：平台设置有 readback，发布内容与落盘任务对应；无人维护或未获联系授权时不宣称社区运营已启动。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
-实际证据：`["docs/research/operations-20260908.md"]`。
+实际验证：`[{"method": "实际执行/文件/读取回执审核", "result": "passed_for_documented_scope", "evidence": ["docs/research/evidence/community-launch.json"], "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"}]`。
+实际证据：`["docs/research/evidence/community-launch.json"]`。
 
 ### O-15 · 相关工作、研究协议和 pilot
 

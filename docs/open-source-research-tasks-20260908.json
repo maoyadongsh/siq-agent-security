@@ -1,6 +1,6 @@
 {
   "schema_version": "siq-research-open-source-tasks/v1",
-  "updated_at": "2026-09-08T14:57:14.153352+00:00",
+  "updated_at": "2026-09-08T15:06:01.179243+00:00",
   "source_document": "docs/open-source-research-plan-20260908.md",
   "source_document_sha256": "b2e9a1e927c8e90e2994bcfe4beb4d0358e33d638486908ccbfacc5f9a601ab2",
   "repository": "maoyadongsh/siq-agent-security",
@@ -86,18 +86,26 @@
       "title": "正式签名或诚实 unsigned 发行策略",
       "owner_role": "release_maintainer",
       "first_consumer": "O-10.03",
-      "state": "unresolved",
+      "state": "resolved_for_documented_scope",
       "rule": "密钥缺位不是生成临时发布者密钥的理由；可采用明确 unsigned 研究候选。",
-      "evidence": []
+      "evidence": [
+        "docs/research/release-scope.md",
+        "docs/research/publication-plan.md",
+        "docs/research/evidence/community-launch.json"
+      ]
     },
     {
       "id": "D-06",
       "title": "对外版本/材料发布范围",
       "owner_role": "release_maintainer",
       "first_consumer": "O-11.02",
-      "state": "unresolved",
+      "state": "resolved_for_documented_scope",
       "rule": "核对发布账号、版本、资产和既有有效发布授权。",
-      "evidence": []
+      "evidence": [
+        "docs/research/release-scope.md",
+        "docs/research/publication-plan.md",
+        "docs/research/evidence/community-launch.json"
+      ]
     },
     {
       "id": "D-07",
@@ -126,9 +134,13 @@
       "title": "外部联系及社区内容发布",
       "owner_role": "research_lead",
       "first_consumer": "O-12.02",
-      "state": "unresolved",
+      "state": "resolved_for_documented_scope",
       "rule": "明确对象/渠道/内容范围后使用已有有效授权，不能自动群发。",
-      "evidence": []
+      "evidence": [
+        "docs/research/release-scope.md",
+        "docs/research/publication-plan.md",
+        "docs/research/evidence/community-launch.json"
+      ]
     },
     {
       "id": "D-10",
@@ -227,7 +239,7 @@
       "phase": "首周",
       "owner_role_from_plan": "权利人/维护者",
       "source_acceptance": "依赖 O-01/02；实际发布文件授权范围清晰",
-      "status": "in_progress",
+      "status": "done",
       "task_ids": [
         "O-04.01",
         "O-04.02",
@@ -369,7 +381,7 @@
       "phase": "第 2–4 周",
       "owner_role_from_plan": "维护者",
       "source_acceptance": "先复现、纠错和负向用例；明确贡献入口和维护能力",
-      "status": "in_progress",
+      "status": "done",
       "task_ids": [
         "O-14.01",
         "O-14.02",
@@ -1624,7 +1636,7 @@
       ],
       "priority": "P0",
       "kind": "validation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -1650,12 +1662,21 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_source_release_scope",
+          "evidence": [
+            "docs/research/evidence/source-package-validation.json"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
       "evidence": [
-        "docs/research/operations-20260908.md"
+        "docs/research/evidence/source-package-validation.json"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -2256,7 +2277,7 @@
       ],
       "priority": "P0",
       "kind": "validation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -2281,13 +2302,23 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/evidence/reproduction-a/hosted-linux-identity.json",
+            "docs/research/evidence/reproduction-a/hosted-linux-browser.json"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
       "evidence": [
-        "docs/research/evidence/reproduction-a/",
-        "REPRODUCIBILITY.md"
+        "docs/research/evidence/reproduction-a/hosted-linux-identity.json",
+        "docs/research/evidence/reproduction-a/hosted-linux-browser.json"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -2448,7 +2479,7 @@
       ],
       "priority": "P1",
       "kind": "documentation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -2474,13 +2505,21 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/environment-matrix.md"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
       "evidence": [
-        "docs/research/environment-matrix.md",
-        "REPRODUCIBILITY.md"
+        "docs/research/environment-matrix.md"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -3016,7 +3055,7 @@
       ],
       "priority": "P0",
       "kind": "documentation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -3042,12 +3081,21 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_source_release_scope",
+          "evidence": [
+            "docs/research/release-scope.md"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
       "evidence": [
-        "docs/research/operations-20260908.md"
+        "docs/research/release-scope.md"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -3069,9 +3117,9 @@
       ],
       "priority": "P0",
       "kind": "engineering",
-      "status": "todo",
+      "status": "done",
       "owner_role": "maintainer",
-      "assignee": null,
+      "assignee": "maoyadongsh",
       "depends_on": [
         "O-10.01",
         "O-02.02"
@@ -3095,10 +3143,25 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
-      "evidence": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_source_release_scope",
+          "evidence": [
+            "docs/research/evidence/sbom-scope.json",
+            "scripts/research/package_source.py",
+            "scripts/research/test_package_source.py"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
+      "evidence": [
+        "docs/research/evidence/sbom-scope.json",
+        "scripts/research/package_source.py",
+        "scripts/research/test_package_source.py"
+      ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -3119,9 +3182,9 @@
       ],
       "priority": "P0",
       "kind": "engineering",
-      "status": "todo",
+      "status": "done",
       "owner_role": "maintainer",
-      "assignee": null,
+      "assignee": "maoyadongsh",
       "depends_on": [
         "O-10.01",
         "O-06.04"
@@ -3147,10 +3210,23 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
-      "evidence": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_source_release_scope",
+          "evidence": [
+            "docs/research/release-authentication.md",
+            "docs/research/evidence/signing-readiness.json"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
+      "evidence": [
+        "docs/research/release-authentication.md",
+        "docs/research/evidence/signing-readiness.json"
+      ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -3171,9 +3247,9 @@
       ],
       "priority": "P0",
       "kind": "validation",
-      "status": "todo",
+      "status": "in_progress",
       "owner_role": "maintainer",
-      "assignee": null,
+      "assignee": "maoyadongsh",
       "depends_on": [
         "O-10.02",
         "O-10.03",
@@ -3202,7 +3278,10 @@
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
       "validation": [],
-      "evidence": [],
+      "evidence": [
+        "docs/research/release-scope.md",
+        "docs/research/publication-plan.md"
+      ],
       "blocker": null,
       "completed_at": null,
       "planned_validation": [
@@ -3234,9 +3313,9 @@
       ],
       "priority": "P0",
       "kind": "validation",
-      "status": "todo",
+      "status": "in_progress",
       "owner_role": "maintainer",
-      "assignee": null,
+      "assignee": "maoyadongsh",
       "depends_on": [
         "O-10.04"
       ],
@@ -3260,7 +3339,10 @@
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
       "validation": [],
-      "evidence": [],
+      "evidence": [
+        "docs/research/release-scope.md",
+        "docs/research/publication-plan.md"
+      ],
       "blocker": null,
       "completed_at": null,
       "planned_validation": [
@@ -3294,9 +3376,9 @@
       ],
       "priority": "P0",
       "kind": "documentation",
-      "status": "todo",
+      "status": "in_progress",
       "owner_role": "maintainer",
-      "assignee": null,
+      "assignee": "maoyadongsh",
       "depends_on": [
         "O-10.05",
         "O-09.03"
@@ -3321,7 +3403,10 @@
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
       "validation": [],
-      "evidence": [],
+      "evidence": [
+        "docs/research/release-scope.md",
+        "docs/research/publication-plan.md"
+      ],
       "blocker": null,
       "completed_at": null,
       "planned_validation": [
@@ -3345,9 +3430,9 @@
       ],
       "priority": "P0",
       "kind": "external_manual",
-      "status": "todo",
+      "status": "in_progress",
       "owner_role": "release_maintainer",
-      "assignee": null,
+      "assignee": "maoyadongsh",
       "depends_on": [
         "O-11.01",
         "O-06.02",
@@ -3374,7 +3459,10 @@
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
       "validation": [],
-      "evidence": [],
+      "evidence": [
+        "docs/research/release-scope.md",
+        "docs/research/publication-plan.md"
+      ],
       "blocker": null,
       "completed_at": null,
       "planned_validation": [
@@ -3511,7 +3599,7 @@
       ],
       "priority": "P1",
       "kind": "documentation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -3538,12 +3626,21 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/external-reproduction-template.md"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
       "evidence": [
-        ".github/ISSUE_TEMPLATE/reproduction.yml"
+        "docs/research/external-reproduction-template.md"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -3958,7 +4055,7 @@
       ],
       "priority": "P1",
       "kind": "documentation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -3985,13 +4082,23 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            ".github/ISSUE_TEMPLATE",
+            ".github/PULL_REQUEST_TEMPLATE.md"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
       "evidence": [
-        ".github/ISSUE_TEMPLATE/",
+        ".github/ISSUE_TEMPLATE",
         ".github/PULL_REQUEST_TEMPLATE.md"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -4013,7 +4120,7 @@
       ],
       "priority": "P1",
       "kind": "documentation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -4037,12 +4144,21 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/community-backlog.md"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
       "evidence": [
         "docs/research/community-backlog.md"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -4065,7 +4181,7 @@
       ],
       "priority": "P1",
       "kind": "external_manual",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "repository_admin",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -4094,12 +4210,21 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "实际执行/文件/读取回执审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/evidence/community-launch.json"
+          ],
+          "limitations": "首个发行是源码预发布，不声称新二进制分发/原生验收；托管 CI 不代表外部研究者独立复现。"
+        }
+      ],
       "evidence": [
-        "docs/research/operations-20260908.md"
+        "docs/research/evidence/community-launch.json"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:06:01.179243+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -4993,10 +5118,10 @@
     "workstreams": 18,
     "tasks": 71,
     "status_counts": {
-      "done": 33,
+      "done": 43,
       "not_applicable": 1,
-      "in_progress": 10,
-      "todo": 26,
+      "todo": 20,
+      "in_progress": 6,
       "blocked": 1
     },
     "kind_counts": {

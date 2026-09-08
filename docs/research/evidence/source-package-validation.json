@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-09-08T15:05:01.499891+00:00",
+  "candidate_kind": "source-only development candidate, not published",
+  "source_sha": "e59148344cd0c6d13e1aff41ce5da795a20e1500",
+  "archive_sha256": "1011c866ad61de01434156133c53d72695c8f7bf0ce3a55a7c5ecfed972fd37d",
+  "source_files": 2052,
+  "license_files": 98,
+  "secret_scan": "calibrated gitleaks passed on extracted source archive",
+  "negative_tests": [
+    "missing required notice rejected",
+    "escaping/symlinked notice path rejected",
+    "changed audited vendored bundle rejected"
+  ],
+  "unit_test_count": 3,
+  "unit_test_result": "passed",
+  "future_binary_distribution": "separate gate; not verified by source packaging"
+}

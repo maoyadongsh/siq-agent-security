@@ -1,0 +1,13 @@
+{
+  "scope": "first research candidate is source-only",
+  "source_inventory": "SOURCE-INFO.json source_files_sha256 enumerates actual archive members",
+  "third_party_sources": "docs/research/third-party-source-inventory.json",
+  "locked_dependency_inventory": "docs/research/third-party-dependency-inventory.json",
+  "new_binary_sbom": null,
+  "limitations": [
+    "No claim of binary bundle reachability or complete OS/container SBOM",
+    "Python dependencies and model weights not distributed",
+    "V5 scoped CycloneDX file is historical and is not this candidate inventory"
+  ],
+  "notice_gate": "scripts/research/package_source.py rejects missing required and referenced notices, changed patches/bundle/lockfiles; tested with negative cases"
+}

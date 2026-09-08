@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-09-08T14:39:39.007260+00:00",
+  "observed_at": "2026-09-08T15:04:19.032509+00:00",
   "endpoint": "repos/maoyadongsh/siq-agent-security/branches/main/protection",
   "response": {
     "url": "https://api.github.com/repos/maoyadongsh/siq-agent-security/branches/main/protection",
@@ -36,7 +36,8 @@
         "edge (1.22, connectors/piagent)",
         "edge (1.22, connectors/workbuddy)",
         "runtime-security-toolchain",
-        "runtime-security-contracts"
+        "runtime-security-contracts",
+        "research-reproduction"
       ],
       "contexts_url": "https://api.github.com/repos/maoyadongsh/siq-agent-security/branches/main/protection/required_status_checks/contexts",
       "checks": [
@@ -158,6 +159,10 @@
         },
         {
           "context": "runtime-security-contracts",
+          "app_id": 15368
+        },
+        {
+          "context": "research-reproduction",
           "app_id": 15368
         }
       ]
