@@ -1,0 +1,22 @@
+{
+  "id": "missing-provenance-benign",
+  "pair_id": "missing-provenance",
+  "kind": "benign",
+  "category": "missing_provenance",
+  "fixture": "mcp-provenance-component",
+  "task": {
+    "tool": "read_file",
+    "resource": "temporary approved company-a/report.txt",
+    "provenance": "USER"
+  },
+  "attack": {},
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "allow"
+  }
+}

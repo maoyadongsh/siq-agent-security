@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the first actual runtime benchmark pair in an isolated local fixture."""
+"""Run actual runtime benchmark pairs in an isolated local fixture."""
 import argparse
 import hashlib
 import importlib.util
@@ -23,13 +23,13 @@ def main():
     with tempfile.TemporaryDirectory(prefix="siq-runtime-benchmark-") as temporary:
         harness = fixture.base.Harness(Path(temporary), SimpleNamespace())
         try:
-            evidence = fixture.run(harness)
+            evidence = fixture.run(harness, extended=True)
         finally:
             harness.stop()
     observations = []
     for decision in evidence["decisions"]:
         scenario = json.loads((Path(__file__).parent / "scenarios" /
-                               f"mcp-parameter-{decision['kind']}.json").read_text())
+                               f"{decision['pair_id']}-{decision['kind']}.json").read_text())
         stages = {stage: {"value": None, "evidence_refs": []} for stage in STAGES}
         # A signed decision proves the attempted call. An allow does not prove execution.
         stages["d2"] = {"value": True, "evidence_refs": [decision["receipt_id"]]}
@@ -44,11 +44,11 @@ def main():
     report = {"schema_version": "runtime-security-benchmark/v1", "coverage": "component_fixture",
               "fixture_evidence": evidence, "observations": observations, "summary": summarize(observations),
               "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-              "limitations": ["one attack/benign pair only", "D0/D1 not evaluated",
+              "limitations": ["four attack/benign pairs only", "D0/D1 not evaluated",
                               "target tool not executed: D3-D5 not evaluated", "no internal stage timing yet"]}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2) + "\n")
-    print(f"Runtime pair verified; report: {args.out}")
+    print(f"Runtime pairs verified; report: {args.out}")
 
 
 if __name__ == "__main__":

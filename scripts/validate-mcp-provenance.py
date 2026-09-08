@@ -5,6 +5,7 @@ No native-platform support claim, paid provider, or user configuration mutation.
 The fixture covers the HTTP JSON response branch, not a generic MCP client.
 """
 import argparse
+import copy
 import hashlib
 import importlib.util
 import json
@@ -79,7 +80,7 @@ def rpc(endpoint, method, params=None, request_id=None):
     return message["result"]
 
 
-def run(h):
+def run(h, extended=False):
     h.build()
     h.start()
     h.setup_authority()
@@ -136,6 +137,30 @@ def run(h):
         request["parameter_provenance"][0]["provenance_refs"] = [trusted["provenance_id"]]
         allowed = h.api("/v1/decide", request, token=token)
         base.require(allowed["action"] == "allow", "same value trusted provenance failed benign control")
+        decisions = [("mcp-parameter", "attack", denied), ("mcp-parameter", "benign", allowed)]
+        if extended:
+            for pair, expected_reason in (("missing-provenance", "provenance_missing"),
+                                          ("content-tamper", "provenance_content_mismatch"),
+                                          ("cross-session", "provenance_not_found")):
+                attack_request = copy.deepcopy(request)
+                attack_request["tool_call_id"] = pair + "-attack"
+                if pair == "missing-provenance":
+                    attack_request.pop("parameter_provenance")
+                elif pair == "content-tamper":
+                    attack_request["params"]["path"] = target + ".substituted"
+                else:
+                    other_session = session + "-other"
+                    h.api("/v1/intent-bindings", {"platform": "hermes", "session_id": other_session,
+                          "agent_id": base.AGENT, "intent_id": intent["intent_id"]}, expected=201)
+                    attack_request["session_id"] = other_session
+                attacked = h.api("/v1/decide", attack_request, token=token)
+                base.require(attacked["action"] == "deny" and attacked["reason_code"] == expected_reason,
+                             pair + " did not fail closed")
+                benign_request = copy.deepcopy(request)
+                benign_request["tool_call_id"] = pair + "-benign"
+                benign = h.api("/v1/decide", benign_request, token=token)
+                base.require(benign["action"] == "allow", pair + " benign control rejected")
+                decisions.extend(((pair, "attack", attacked), (pair, "benign", benign)))
         records = h.receipts()
         h.stop()
         verified = json.loads(h.command([str(h.binary), "verify"]))
@@ -145,10 +170,10 @@ def run(h):
                 "siq_commit": h.command(["git", "rev-parse", "HEAD"], cwd=ROOT).strip(),
                 "binary_sha256": hashlib.sha256(h.binary.read_bytes()).hexdigest(),
                 "receipt_count": len(records), "receipt_chain_verified": True,
-                "decision_receipt_ids": [denied["receipt_id"], allowed["receipt_id"]],
-                "decisions": [{"kind": kind, "action": decision["action"],
+                "decision_receipt_ids": [decision["receipt_id"] for _, _, decision in decisions],
+                "decisions": [{"pair_id": pair, "kind": kind, "action": decision["action"],
                                "reason_code": decision["reason_code"], "receipt_id": decision["receipt_id"]}
-                              for kind, decision in (("attack", denied), ("benign", allowed))],
+                              for pair, kind, decision in decisions],
                 "coverage": "component_fixture", "mcp_protocol": "2025-06-18", "mcp_tool_calls": mcp.tool_calls,
                 "checks": {"initialized": True, "real_http_tool_result": True, "signed_report": True,
                            "deterministic_selection": True, "untrusted_path_denied": True,

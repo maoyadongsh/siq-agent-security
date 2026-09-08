@@ -288,3 +288,10 @@
 - 场景预期与实际决策reason_code、阶段值分别保存并比较；实际MCP路径控制deny，可信USER同值allow。目标工具没有执行，D3–D5均not_evaluated，不能从allow推导执行，也不能从deny推导独立无效果。
 - 真实执行报告 /tmp/siq-runtime-benchmark-first-pair.json（09b5452加本轮工作树），两条回执验证通过；攻击/正常各D2分母1、D5分母0。场景schema验证、4项统计测试、Ruff通过。
 - 当前仅1对组件场景；其余至少19对、D3–D5真实材料、全部指标、阶段埋点及CI仍待完成。未把现有unit test汇总冒充独立benchmark。
+
+### D 来源攻击扩展为4对
+
+- 可选extended执行模式增加来源缺失、内容替换、跨会话重放；每类单独发起可信USER正常请求作为对照，避免只重复检查先前allow结果。原MCP组件脚本默认仍运行原始一对。
+- 实际生产daemon返回 provenance_missing、provenance_content_mismatch、provenance_not_found，对应正常请求全部allow；跨会话场景先在另一会话合法绑定同Intent，确保拒绝来自来源引用隔离而非缺Intent绑定。
+- 4对共8条回执离线验签通过，报告 /tmp/siq-runtime-benchmark-four-pairs.json（a9ff866加本轮工作树）。全部8个场景schema与成对关系验证、4项统计测试、Ruff通过。
+- 此批D2计数真实，D3–D5仍未评估。至少20对、效果oracle、完整指标、埋点和CI仍待完成。
