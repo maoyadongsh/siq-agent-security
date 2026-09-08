@@ -132,3 +132,20 @@ def test_file_lifecycle_cannot_upload_fake_snapshots():
     finish = Draft202012Validator(json.loads((root / "file-observation-finish.v1.schema.json").read_text()))
     finish.validate({"path": "/work/report"})
     assert list(finish.iter_errors({"path": "/work/report", "after": {"exists": True}}))
+
+
+def test_signed_intent_effect_requirements_are_explicit_and_optional():
+    root = Path(__file__).parents[4]
+    schema = json.loads((root / "packages/contracts/intent-contract.v3.schema.json").read_text())
+    v = Draft202012Validator(schema)
+    sample = json.loads((root / "apps/agentshield/testdata/contracts/intent-contract.v3.sample.json").read_text())
+    v.validate(sample)  # historical V3 omission remains valid
+    req = {"requirement_id": "write-report", "effect_type": "file.write",
+           "resource_ref": "filesystem:sha256:" + "a" * 64, "expected_digest": "b" * 64,
+           "minimum_independence": "host_independent", "minimum_coverage": "partial"}
+    v.validate({**sample, "effect_requirements": [req]})
+    assert list(v.iter_errors({**sample, "effect_requirements": None}))
+    for field in req:
+        missing = dict(req)
+        del missing[field]
+        assert list(v.iter_errors({**sample, "effect_requirements": [missing]}))

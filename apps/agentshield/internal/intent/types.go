@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"siq-agent-security/apps/agentshield/internal/completion"
 	"siq-agent-security/apps/agentshield/internal/provenance"
 	"time"
 )
@@ -35,25 +36,26 @@ type ParameterConstraint struct {
 
 // Contract dual-reads signed intent/v2 and intent/v3. V1 remains separate.
 type Contract struct {
-	ProvenanceConstraints *[]provenance.Constraint `json:"provenance_constraints,omitempty"`
-	ProvenanceRefs        []string                 `json:"provenance_refs,omitempty"`
-	SchemaVersion         string                   `json:"schema_version"`
-	IntentID              string                   `json:"intent_id"`
-	TaskID                string                   `json:"task_id"`
-	Principal             Principal                `json:"principal"`
-	Agent                 Agent                    `json:"agent"`
-	Purpose               string                   `json:"purpose"`
-	AllowedTools          []string                 `json:"allowed_tools"`
-	AllowedEffects        []string                 `json:"allowed_effects"`
-	ResourceConstraints   []ResourceConstraint     `json:"resource_constraints"`
-	ParameterConstraints  []ParameterConstraint    `json:"parameter_constraints"`
-	IssuedAt              string                   `json:"issued_at"`
-	ValidFrom             string                   `json:"valid_from"`
-	ExpiresAt             string                   `json:"expires_at"`
-	Authority             Authority                `json:"authority"`
-	SigningSchema         string                   `json:"signing_schema"`
-	Digest                string                   `json:"digest"`
-	Signature             string                   `json:"signature"`
+	EffectRequirements    *[]completion.Requirement `json:"effect_requirements,omitempty"`
+	ProvenanceConstraints *[]provenance.Constraint  `json:"provenance_constraints,omitempty"`
+	ProvenanceRefs        []string                  `json:"provenance_refs,omitempty"`
+	SchemaVersion         string                    `json:"schema_version"`
+	IntentID              string                    `json:"intent_id"`
+	TaskID                string                    `json:"task_id"`
+	Principal             Principal                 `json:"principal"`
+	Agent                 Agent                     `json:"agent"`
+	Purpose               string                    `json:"purpose"`
+	AllowedTools          []string                  `json:"allowed_tools"`
+	AllowedEffects        []string                  `json:"allowed_effects"`
+	ResourceConstraints   []ResourceConstraint      `json:"resource_constraints"`
+	ParameterConstraints  []ParameterConstraint     `json:"parameter_constraints"`
+	IssuedAt              string                    `json:"issued_at"`
+	ValidFrom             string                    `json:"valid_from"`
+	ExpiresAt             string                    `json:"expires_at"`
+	Authority             Authority                 `json:"authority"`
+	SigningSchema         string                    `json:"signing_schema"`
+	Digest                string                    `json:"digest"`
+	Signature             string                    `json:"signature"`
 }
 
 func (c *Contract) UnmarshalJSON(raw []byte) error {
@@ -74,6 +76,9 @@ func (c *Contract) UnmarshalJSON(raw []byte) error {
 		return violation("intent_invalid_contract")
 	}
 	if _, present := fields["provenance_constraints"]; present && value.SchemaVersion == "intent/v2" {
+		return violation("intent_invalid_contract")
+	}
+	if raw, present := fields["effect_requirements"]; present && (value.SchemaVersion == "intent/v2" || bytes.Equal(bytes.TrimSpace(raw), []byte("null"))) {
 		return violation("intent_invalid_contract")
 	}
 	*c = Contract(value)

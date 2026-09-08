@@ -38,6 +38,24 @@ func (c Contract) Validate() error {
 	if c.SchemaVersion == "intent/v2" && c.ProvenanceConstraints != nil || c.SchemaVersion == "intent/v3" && c.ProvenanceConstraints == nil {
 		return violation("intent_invalid_contract")
 	}
+	if c.EffectRequirements != nil {
+		if c.SchemaVersion != "intent/v3" || len(*c.EffectRequirements) > 128 {
+			return violation("intent_invalid_contract")
+		}
+		seen := map[string]bool{}
+		for _, req := range *c.EffectRequirements {
+			allowed := false
+			for _, effect := range c.AllowedEffects {
+				if effect == req.EffectType {
+					allowed = true
+				}
+			}
+			if req.Validate() != nil || seen[req.RequirementID] || !allowed {
+				return violation("intent_invalid_constraint")
+			}
+			seen[req.RequirementID] = true
+		}
+	}
 	if c.ProvenanceConstraints != nil {
 		if len(*c.ProvenanceConstraints) > 1024 {
 			return violation("intent_invalid_constraint")

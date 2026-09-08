@@ -199,3 +199,9 @@
 - 服务器 request_id、接收时间及请求组合摘要可供复核；不保留正文、URI或伪造 Host。1 MiB正文和64事件预算，超限不生成完整事件。
 - 实际 HTTP 测试验证：未收到请求时无证据、直接接收、服务器事件不可被调用方修改、localhost批准目标→302→127.0.0.1最终目标差异、资源错配和拒绝动作效果事件。网络 Evidence 进入既有签名 Store。
 - effectevidence 定向及Go全模块race/vet、四平台编译通过，日志 `/tmp/siq-network-oracle-race.log`；此为受控本地测试 oracle，不声称互联网/provider/native平台支持。网络原始事件材料的签名归档、benchmark编排及 Completion 继续待开发。
+
+### C2 签名效果要求起步
+
+- Intent V3 可选 effect_requirements 纳入同一 canonical digest/签名，先支持 file.write 的资源摘要、预期内容摘要、最低独立性/覆盖要求。缺省/空数组不表示完成；V2拒绝新字段，V3显式null拒绝，旧V3固定签名样例保持一致。
+- 运行时验证字段完整、最多128项、ID唯一、效果在 allowed_effects 中。改变同一 Intent 的预期内容摘要会改变签名摘要，要求不会作为额外动作授权来源。
+- intent/completion 定向及Go全模块race/vet、四平台编译通过，Python合同9项及Ruff通过；日志 `/tmp/siq-completion-intent-race.log`。当前仅完成可信要求模型；状态聚合、任务查询 API 及网络完成要求尚未实现。
