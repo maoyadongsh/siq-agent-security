@@ -63,10 +63,17 @@ def main():
                 page.wait_for_timeout(min(1000,int((seconds-(time.monotonic()-started))*1000)+1))
         def run(state, scenario, expected):
             page.get_by_label('场景', exact=True).select_option(scenario)
-            page.get_by_role('button', name='开始任务', exact=True).click()
-            page.wait_for_function('expected => document.querySelector("select[aria-label=\\"查看任务\\"]")?.selectedOptions[0]?.textContent.includes(" · "+expected+" · ")',arg=expected,timeout=90000)
-            snapshot=context.request.get(state['endpoint']+'/hackathon/v1/tasks').json()
-            current=snapshot['tasks'][-1]
+            with page.expect_response(lambda response: response.request.method == 'POST'
+                                      and response.url == state['endpoint']+'/hackathon/v1/tasks') as submitted:
+                page.get_by_role('button', name='开始任务', exact=True).click()
+            identity=submitted.value.json()['id']
+            # Adjacent scenarios may have the same status. Wait for this exact
+            # submitted task so a previous blocked task cannot satisfy the gate.
+            page.wait_for_function('''([identity, expected]) => {
+              const select = document.querySelector('select[aria-label="查看任务"]');
+              return select?.value === identity && select.selectedOptions[0]?.textContent.includes(' · '+expected+' · ');
+            }''',arg=[identity,expected],timeout=90000)
+            current=context.request.get(state['endpoint']+'/hackathon/v1/tasks/'+identity).json()
             events.append({'scenario':scenario,'task_id':current['id'],'provider':current['provider'],
                            'task_status':current['task']['status'],'selected_skills':current['task']['selected_skills'],
                            'model_calls':current.get('model_calls',[]),'at_seconds':round(time.monotonic()-started,2)})
