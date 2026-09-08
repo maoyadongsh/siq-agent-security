@@ -34,6 +34,9 @@
     },
     "file_observation": {
       "$ref": "file-observation.v1.schema.json"
+    },
+    "network_observation": {
+      "$ref": "network-observation.v1.schema.json"
     }
   },
   "required": [
@@ -44,5 +47,11 @@
     "task_id",
     "signing_schema",
     "signature"
-  ]
+  ],
+  "not": {
+    "required": [
+      "file_observation",
+      "network_observation"
+    ]
+  }
 }

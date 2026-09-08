@@ -950,3 +950,7 @@ HistoricalEffectActions 只生成只读投影供已保存证据复核，不重�
 ### C2 审批生效时间
 
 动作投影增加仅服务端派生的 AuthorizedAt。普通允许动作取决策时间，hold获批取签名hold_resolution时间；新审批记录使用RFC3339Nano保留亚秒精度。当前缓存、重启恢复和历史扫描均从同一签名时间恢复。独立completed效果若observed_at早于AuthorizedAt，记录unauthorized_effect_observed；Completion也复核该关系，旧expected证据不能因后续获批变成verified。旧秒级审批记录仍只能提供秒级历史精度，不伪称能恢复当时未记录的亚秒顺序。
+
+### C1 网络观测材料归档
+
+Record 增加可选 network_observation：请求的scheme/host/port与真实接收事件（最终scheme/host/port/resolved_target、server request_id、请求摘要、接收时间）。不存请求路径、查询串、正文或完整URL。NetworkOracle.Material 只读取自身收到的事件；SubmitNetwork 将材料、效果和finding同封套签名，读回重新派生摘要/资源/时间/结果校验。文件/网络材料互斥；旧记录省略新字段保持签名兼容。当前只验证 loopback test_oracle，不扩展为生产公网审计。

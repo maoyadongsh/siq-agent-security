@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "requested_scheme": {
+      "enum": [
+        "http",
+        "https"
+      ]
+    },
+    "requested_host": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 253
+    },
+    "requested_port": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]{0,4}$"
+    },
+    "received": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "const": "http"
+        },
+        "host": {
+          "enum": [
+            "localhost",
+            "127.0.0.1"
+          ]
+        },
+        "port": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,4}$"
+        },
+        "resolved_target": {
+          "type": "string",
+          "pattern": "^127\\.0\\.0\\.1:[1-9][0-9]{0,4}$"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "scheme",
+        "host",
+        "port",
+        "resolved_target",
+        "request_id",
+        "request_digest",
+        "received_at"
+      ]
+    }
+  },
+  "required": [
+    "requested_scheme",
+    "requested_host",
+    "requested_port",
+    "received"
+  ]
+}
