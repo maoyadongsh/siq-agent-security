@@ -859,3 +859,7 @@ P07本批已补齐：TestPersistedAssertionTamperingFailsAfterRestart 在私有�
 功能代码8eb4540的CI 34190568787共28/28 job成功；runtime-security 34190568771两项PR必需job成功；完整34190577905三轮full全部成功，三轮report/recovery均下载本地复验并核对sidecar哈希。最新性能Go1.26.6、每项100采样已归档；A–K报告、121节索引和README/矩阵更新。保留实验性组件、显式来源、partial效果及原生平台限制。
 
 用户明确要求“完成后所有改动提交远端”，随后要求“所有分支提交到main”。因此在完成报告后合并有效开发分支：当前Provenance分支与尚未包含的Cursor环境配置分支；两个其他历史开发分支已是main祖先。gh-pages为网站生成产物部署分支，保留其职责，不混入源码根目录。合并与推送结果随后记录。
+
+### 用户授权的开发分支汇总合并
+
+`4a0943e`合并Provenance分支（包含最终报告3ed2d6a），`f6ccf2b`合并Cursor云开发环境配置；无冲突。历史contracts/market-survey分支均已是main祖先。新增.cursor两个脚本bash -n与环境JSON解析通过，未运行系统安装/数据库初始化。功能源码仍与已验收8eb4540一致；后续main CI独立检查集成提交。gh-pages作为自动发布产物分支保留。

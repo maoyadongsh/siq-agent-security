@@ -61,4 +61,4 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 
 ## 当前开发模板
 
-用户指定 [Provenance-Bound Effect V1 原文模板](docs/templates/provenance-bound-effect-v1-development-template.md)，进度见 [开发台账](docs/provenance-bound-effect-v1-progress.md)。仅在 `codex/provenance-bound-effect-v1` 开发；复用现有 V2、签名和 Reference Monitor。模板要求的 Authority Hard Gate 优先于旧版 audit/warn 一律放行语义；该例外不应推广为所有普通 policy 均强制拒绝。
+用户指定 [Provenance-Bound Effect V1 原文模板](docs/templates/provenance-bound-effect-v1-development-template.md)，进度见 [开发台账](docs/provenance-bound-effect-v1-progress.md)。该模板在 `codex/provenance-bound-effect-v1` 完成开发，用户随后明确授权全部开发分支合并到 `main`；后续以 `main` 为集成基线，复用现有 V2、签名和 Reference Monitor。模板要求的 Authority Hard Gate 优先于旧版 audit/warn 一律放行语义；该例外不应推广为所有普通 policy 均强制拒绝。
