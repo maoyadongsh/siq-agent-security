@@ -12,6 +12,24 @@ permissions:
   contents: read
 
 jobs:
+  runtime-security-toolchain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.26.6'
+      - name: Strict reachable vulnerability gate
+        working-directory: apps/agentshield
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@v1.7.0
+          govulncheck ./...
+      - name: Patched toolchain race and vet
+        working-directory: apps/agentshield
+        run: |
+          go vet ./...
+          go test -race ./...
   runtime-security-contracts:
     runs-on: ubuntu-latest
     timeout-minutes: 20
