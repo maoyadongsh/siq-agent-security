@@ -102,12 +102,12 @@ func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey,
 				failed = true
 				continue
 			}
-			if e.ExecutionState != "completed" || e.Result == "unknown" || r.FileObservation == nil {
+			if e.ExecutionState != "completed" || e.Result == "unknown" || (req.EffectType == "file.write" && r.FileObservation == nil) || (req.EffectType == "network.request" && r.NetworkObservation == nil) {
 				unknown = true
 				continue
 			}
 			observed, _ := time.Parse(time.RFC3339Nano, e.ObservedAt)
-			if !a.Authorized || (!a.AuthorizedAt.IsZero() && observed.Before(a.AuthorizedAt)) || e.Result != "expected" || !r.FileObservation.After.Exists || r.FileObservation.After.Digest != req.ExpectedDigest || r.FileObservation.ExpectedDigest != req.ExpectedDigest {
+			if !a.Authorized || (!a.AuthorizedAt.IsZero() && observed.Before(a.AuthorizedAt)) || e.Result != "expected" || !materialSatisfies(req, r) {
 				conflict = true
 				continue
 			}
@@ -166,4 +166,13 @@ func rank(status string) int {
 		return 1
 	}
 	return 0
+}
+
+func materialSatisfies(req Requirement, r effectevidence.Record) bool {
+	if req.EffectType == "file.write" {
+		m := r.FileObservation
+		return m != nil && m.After.Exists && m.After.Digest == req.ExpectedDigest && m.ExpectedDigest == req.ExpectedDigest
+	}
+	m, e := r.NetworkObservation, req.ExpectedEndpoint
+	return m != nil && e != nil && m.RequestedScheme == e.Scheme && m.RequestedHost == e.Host && m.RequestedPort == e.Port && m.Received.Scheme == e.Scheme && m.Received.Host == e.Host && m.Received.Port == e.Port && m.Received.RequestDigest == req.ExpectedDigest
 }

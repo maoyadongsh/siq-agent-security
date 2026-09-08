@@ -197,3 +197,22 @@ def test_network_submission_binds_material_without_caller_authority():
         missing = dict(good)
         del missing[field]
         assert list(v.iter_errors(missing))
+
+
+def test_network_completion_requires_endpoint_and_external_observer():
+    root = Path(__file__).parents[4] / "packages/contracts"
+    req = {"requirement_id": "receive", "effect_type": "network.request",
+           "resource_ref": "network:sha256:" + "a" * 64, "expected_digest": "b" * 64,
+           "minimum_independence": "external_independent", "minimum_coverage": "partial",
+           "expected_endpoint": {"scheme": "http", "host": "127.0.0.1", "port": "12345"}}
+    intent = json.loads((root / "intent-contract.v3.schema.json").read_text())
+    for schema in [json.loads((root / "effect-verification-requirement.v1.schema.json").read_text()),
+                   intent["properties"]["effect_requirements"]["items"]]:
+        v = Draft202012Validator(schema)
+        v.validate(req)  # Runtime additionally checks host digest and port range.
+        for field, value in [("expected_endpoint", None), ("minimum_independence", "host_independent"),
+                             ("resource_ref", "filesystem:sha256:" + "a" * 64), ("effect_type", "file.write")]:
+            assert list(v.iter_errors({**req, field: value}))
+        missing = dict(req)
+        del missing["expected_endpoint"]
+        assert list(v.iter_errors(missing))

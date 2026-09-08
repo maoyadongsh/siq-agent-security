@@ -77,7 +77,7 @@ Admin GET `/v1/tasks/{task_id}/completion` 返回 [completion-status/v1](../pack
 
 无任务404；同 task_id 对应多个 Intent 返回409，避免选择较宽的要求；损坏签名、材料或动作关联失败返回500，不能当作 verified。响应设置 no-store，每次重新读取已发布状态。
 
-此状态反映已发生效果是否满足签名要求，不授予后续执行权限。它不是冻结任务的最终封账，也不是跨存储事务快照；新的证据可能改变下一次结果。Completion 现从完整验签回执链按引用恢复历史动作，支持超24小时已存证据；新采样/提交仍遵守原动作窗口。网络完成要求尚未开放。
+此状态反映已发生效果是否满足签名要求，不授予后续执行权限。它不是冻结任务的最终封账，也不是跨存储事务快照；新的证据可能改变下一次结果。Completion 现从完整验签回执链按引用恢复历史动作，支持超24小时已存证据；新采样/提交仍遵守原动作窗口。网络要求现支持 network.request：签名 expected_endpoint 固定 scheme/host/port，expected_digest 固定接收请求组合摘要；只接受 external_independent。Completion 同时核验 requested/received 两端与签名要求，不能仅凭主机摘要完成。当前限于受控 loopback oracle 材料，partial 不能满足 full。
 
 ## 受控网络服务器材料提交
 

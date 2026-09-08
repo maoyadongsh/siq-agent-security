@@ -260,3 +260,10 @@
 - block 拒绝动作后实际收到测试请求，归档 unauthorized_effect_observed；该用例验证越权效果检测，不作为正常 Grant 放行链路。接收端来源由管理员信任配置，不声称能辨别持有受信 observer 凭据的恶意上报者。
 - Go 全模块 race、vet、linux/amd64、linux/arm64、darwin/arm64、windows/amd64 编译通过，日志 /tmp/siq-network-http-race.log；Python 效果合同12项与Ruff通过。测试准备中修正了非法材料400预期和重启管理凭据不复用的断言，未放宽生产校验。
 - 网络 Completion 要求、pending持久恢复、平台采集、D基准与G最终验收仍待完成。
+
+### C2 网络效果完成要求
+
+- 签名要求增加 network.request、expected_endpoint（scheme/规范化host/port）与预期请求组合摘要；网络要求必须external_independent，host与resource摘要一致，文件要求不接受网络字段，旧文件签名省略新字段保持兼容。
+- Completion 验证已签名材料的 requested/received 两端与预期端点及请求摘要一致；无材料unknown，端口/协议/摘要不同conflicting。真实loopback接收→签名Store→聚合正例verified；无证据incomplete、更高full覆盖unknown。
+- Go completion/intent定向race及全模块race、vet、四平台编译通过（/tmp/siq-network-completion-race.log）；Python合同13项通过。网络要求的完整Intent签发→HTTP Completion正例及平台编排仍待补齐，不将库级材料测试称为完整端到端验收。
+- pending持久恢复、D独立基准、平台自动采集及G最终门禁仍未完成。
