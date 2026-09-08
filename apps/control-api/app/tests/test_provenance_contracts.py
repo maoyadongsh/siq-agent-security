@@ -53,6 +53,19 @@ def test_report_cannot_select_authority():
         assert list(v.iter_errors({**good, "source": source}))
 
 
+def test_selection_cannot_supply_selected_output_or_trust():
+    v = validator("provenance-select-request")
+    good = {
+        "parent_id": "prov-1", "pointer": "/recipient", "platform": "hermes",
+        "session_id": "s1", "agent_id": "a1", "content": {"recipient": "fixture"},
+    }
+    v.validate(good)
+    for field in ["value", "trust", "issuer", "task_id"]:
+        assert list(v.iter_errors({**good, field: "forged"}))
+    for pointer in ["", "recipient", "/bad~x"]:
+        assert list(v.iter_errors({**good, "pointer": pointer}))
+
+
 def test_signed_registry_and_revocation_envelopes():
     issuer = {
         "issuer_id": "issuer-1", "local_key_ref": "local-state",

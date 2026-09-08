@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "platform": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "content": {},
+    "parent_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "pointer": {
+      "type": "string",
+      "maxLength": 1024,
+      "pattern": "^(?:/(?:[^~]|~[01])*)+$"
+    }
+  },
+  "required": [
+    "platform",
+    "session_id",
+    "agent_id",
+    "content",
+    "parent_id",
+    "pointer"
+  ]
+}
