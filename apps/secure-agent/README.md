@@ -1,9 +1,9 @@
 # Secure Agent
 
-Application layer for the [hackathon V3 target](../../docs/hackathon/master-plan-v3.md).
+Application layer for the [hackathon V4 target](../../docs/hackathon/final-hardening-goal-v4.md).
 Python standard library only; no new authorization or evidence engine.
 
-The application contract is `UserTask → ModelProvider → TaskPlan → SkillRunner
+The application contract is `UserTask → ModelRouter → TaskPlan V2 → SkillRunner
 → ToolGateway → SecurityClient → existing SIQ API → controlled tool`.
 The model receives task data and Skill descriptions, never admin, decision or
 observer credentials. It cannot create Intent, provenance, approvals or effects.
@@ -22,10 +22,11 @@ export SIQ_STEPFUN_MODEL=step-3.7-flash
 # Supply SIQ_STEPFUN_API_KEY through the environment; never commit it.
 ```
 
-The operator has now selected Step Plan as primary and local ornith as backup.
+Step Plan plans from approved public metadata; local Ornith handles research
+and recipient context by default. CONFIDENTIAL raw input never goes remote.
 The [private configuration](../../docs/hackathon/step-plan.md) is loaded without
 putting keys in the repository. Use a complete environment bundle to override it.
-Configure the backup explicitly:
+To also use local planning explicitly:
 
 ```bash
 export SIQ_MODEL_PROVIDER=ornith
@@ -145,3 +146,11 @@ arbitrary SKILL.md code. Local DGX Spark hardware and fixture-model application
 runs are [evidenced](../../docs/hackathon/evidence/agent-e2e-20260908.json).
 Dashboard scenarios are browser-tested; StepFun inference is deferred and full
 competition acceptance remains pending.
+
+V4 supports trusted `--output research|report|delivery` and
+`--source-sensitivity PUBLIC|INTERNAL|CONFIDENTIAL|SECRET`. HTTP clients cannot
+supply classification or authority overrides. The operator sets
+`SIQ_SOURCE_SENSITIVITY` for the service. `SIQ_PUBLIC_RESEARCH_LOCAL=true`,
+`SIQ_INTERNAL_REMOTE=false`, `SIQ_SECRET_LOCAL=false` are secure defaults;
+values must be literal true/false. Invalid policy and unavailable local sensitive
+inference fail closed. See the [egress contract](../../docs/hackathon/model-egress-v4.md).

@@ -4,11 +4,32 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass, field
+from enum import StrEnum
+from types import MappingProxyType
 from typing import Any
 
 
 class AgentError(RuntimeError):
     """A safe category suitable for task state; never include raw model data."""
+
+
+class DataSensitivity(StrEnum):
+    PUBLIC = "PUBLIC"
+    INTERNAL = "INTERNAL"
+    CONFIDENTIAL = "CONFIDENTIAL"
+    SECRET = "SECRET"
+
+    @classmethod
+    def parse(cls, value):
+        try:
+            return cls(value)
+        except (TypeError, ValueError):
+            raise AgentError("source_sensitivity_invalid") from None
+
+
+def highest_sensitivity(*values):
+    levels = list(DataSensitivity)
+    return max((DataSensitivity.parse(v) for v in values), key=levels.index)
 
 
 def canonical(value: Any) -> bytes:
@@ -62,8 +83,13 @@ class UserTask:
     scope: tuple[str, ...]
     report_path: str
     contact: str = "Alice"
+    source_sensitivity: DataSensitivity = DataSensitivity.PUBLIC
+    requested_output: str = "delivery"
 
     def __post_init__(self):
+        object.__setattr__(self, "source_sensitivity", DataSensitivity.parse(self.source_sensitivity))
+        if self.requested_output not in ("research", "report", "delivery"):
+            raise AgentError("task_output_invalid")
         for value in (self.prompt, self.repository, self.question, self.report_path, self.contact):
             string(value)
         if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", self.repository):
@@ -113,6 +139,8 @@ class DeliveryInput:
 
 SKILL_INPUTS = {"secure-research": ResearchInput, "secure-report": ReportInput,
                 "secure-delivery": DeliveryInput}
+SKILL_REQUIRES = MappingProxyType({"secure-research": (), "secure-report": ("secure-research",),
+                                  "secure-delivery": ("secure-report",)})
 
 
 @dataclass(frozen=True)
@@ -129,16 +157,21 @@ class TaskPlan:
     @classmethod
     def parse(cls, raw):
         fields(raw, {"goal", "skills"})
-        if not isinstance(raw["skills"], list) or len(raw["skills"]) != 3:
+        if not isinstance(raw["skills"], list) or not 1 <= len(raw["skills"]) <= 3:
             raise AgentError("plan_skills_invalid")
         calls = []
-        # The frozen research/delivery workflow has typed data dependencies.
-        # Plans cannot smuggle shell invocations or skip a required predecessor.
-        for entry, expected in zip(raw["skills"], SKILL_INPUTS):
+        selected = set()
+        for entry in raw["skills"]:
             fields(entry, {"name", "input"})
-            if entry["name"] != expected:
-                raise AgentError("plan_skill_order_invalid")
-            calls.append(SkillCall(expected, SKILL_INPUTS[expected].parse(entry["input"])))
+            name = entry["name"]
+            if not isinstance(name, str) or name not in SKILL_INPUTS:
+                raise AgentError("skill_unregistered")
+            if name in selected:
+                raise AgentError("plan_skill_duplicate")
+            if not set(SKILL_REQUIRES[name]) <= selected:
+                raise AgentError("plan_dependency_invalid")
+            calls.append(SkillCall(name, SKILL_INPUTS[name].parse(entry["input"])))
+            selected.add(name)
         return cls(string(raw["goal"]), tuple(calls))
 
 
@@ -148,6 +181,10 @@ class Source:
     revision: str
     digest: str
     content: str
+    sensitivity: DataSensitivity = DataSensitivity.PUBLIC
+
+    def __post_init__(self):
+        object.__setattr__(self, "sensitivity", DataSensitivity.parse(self.sensitivity))
 
 
 @dataclass(frozen=True)
@@ -191,3 +228,5 @@ class TaskState:
     timings_ms: dict[str, list[float]] = field(default_factory=dict)
     completion: dict | None = None
     error_code: str | None = None
+    selected_skills: list[str] = field(default_factory=list)
+    completed_skills: list[str] = field(default_factory=list)

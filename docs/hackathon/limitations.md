@@ -1,7 +1,8 @@
 # Competition scope and limitations
 
-- **Provider:** Step Plan is now primary and actual inference is evidenced;
-  local ornith is the explicit backup. Each provider has separate attempts and
+- **Provider:** Step Plan performs remote public planning; local Ornith performs
+  source analysis and recipient reasoning by default. PUBLIC input may be sent
+  remotely under policy; remote StepFun remains an external trust boundary. Each provider has separate attempts and
   results. No StepFun result is inferred from ornith or FixtureProvider.
 - **Model quality:** the latest five benign tasks completed; earlier cohorts
   include JSON-format, timeout and length failures. The sample is too small for
@@ -25,4 +26,12 @@
   descriptive, not an SLA, GPU-kernel profile or saturation benchmark.
 - **Release:** local validation is not remote required CI. Repository protection,
   official release signing, native installation on every OS and RC publication
-  remain separately tracked. No stable release, external email or push occurred.
+  remain separately tracked. No stable release or external email is claimed. V4 PR/CI and clean candidate
+  status are recorded separately in the V4 progress/report.
+
+- **Classification:** the trusted operator must classify input correctly. This
+  is an explicit transport policy, not automatic secret discovery or general
+  semantic provenance. Configuration never grants an OS isolation boundary.
+- **Product scope:** no universal MCP security, full multi-agent delegation,
+  Windows production certification, production HA or universal SaaS effect
+  verification is claimed. Python Skills and same-UID processes are not a sandbox.

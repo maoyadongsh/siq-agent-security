@@ -1,0 +1,18 @@
+{
+  "schema_version": "hackathon-skill-inventory/v1",
+  "official_signature": false,
+  "version": "0.3.0-rc.1",
+  "skills": {
+    "secure-research": {
+      "skills/secure-research/SKILL.md": "ff06388737058ec58e7ae4db85631bc9c5d86fc0b8ff88b2fd4982a1ce536286"
+    },
+    "secure-report": {
+      "skills/secure-report/SKILL.md": "95124a49a04d9b64fdafec8dbe427b7e478624513746014c6e21c4b5b6dfce10"
+    },
+    "secure-delivery": {
+      "skills/secure-delivery/SKILL.md": "9133aa06a48aee9c4a8212e7b304cce081dfbd65264d237e98a03e20c6e17610"
+    }
+  },
+  "historical_manifest": "source/skills/siq-agent-security/skill-manifest.json",
+  "limitation": "Historical signed manifest belongs to v0.2.0; it does not authorize these new binaries."
+}

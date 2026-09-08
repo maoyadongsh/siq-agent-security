@@ -1,0 +1,56 @@
+{
+  "schema_version": "hackathon-v4-validation/v1",
+  "recorded_at": "2026-09-08T12:01:32.057320+00:00",
+  "source_sha": "ab57648aff53541a0baebb5bad5fbdf0106834eb",
+  "working_tree_dirty": true,
+  "scope": "Incremental local engineering checks; exact PR source still requires remote CI.",
+  "checks": {
+    "secure_agent": {
+      "passed": 100,
+      "log": "regression/agent-final.log"
+    },
+    "model_contracts": {
+      "passed": 10,
+      "command": "apps/control-api/.venv/bin/pytest -q apps/control-api/app/tests/test_hackathon_model_contracts.py"
+    },
+    "control_api": {
+      "passed": 650,
+      "log": "regression/control-tests.log"
+    },
+    "web": {
+      "passed": 11,
+      "build": "normal and local passed"
+    },
+    "agentshield": {
+      "test": "passed",
+      "race": "passed",
+      "vet": "passed",
+      "toolchain": "go1.26.6"
+    },
+    "package": {
+      "passed": 12,
+      "log": "regression/package-tests-final.log"
+    },
+    "additional_repo_checks": {
+      "count": 55,
+      "path": "regression/remaining/checks.json"
+    },
+    "postgres_migration": {
+      "status": "passed",
+      "scope": "fresh disposable postgres:17-alpine"
+    },
+    "dependency_audits": {
+      "npm": "no vulnerabilities",
+      "pip": "no known vulnerabilities; local project not on PyPI",
+      "govulncheck": "no vulnerabilities"
+    },
+    "source_secret_scan": {
+      "findings": 0,
+      "scope": "tracked and intended untracked source, excludes ignored runtime state"
+    },
+    "working_directory_scan": {
+      "findings": 37,
+      "scope": "ignored local runtime state and caches; not published source"
+    }
+  }
+}

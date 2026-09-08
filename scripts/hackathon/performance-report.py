@@ -45,8 +45,11 @@ def main():
     report = {"schema_version": "hackathon-performance/v1", "recorded_at": datetime.now(timezone.utc).isoformat(),
         "inputs": {"model": {"path": str(args.model_report), "sha256": hashlib.sha256(args.model_report.read_bytes()).hexdigest()},
                    "stages": {"path": str(args.stage_report), "sha256": hashlib.sha256(args.stage_report.read_bytes()).hexdigest()}},
-        "providers": sorted({case["provider"] for case in model["cases"]}),
-        "models": sorted({case["model"] for case in model["cases"]}),
+        "providers": sorted({call["provider"] for call in calls}),
+        "models": sorted({call["model"] for call in calls}),
+        "planning_providers": sorted({case["provider"] for case in model["cases"]}),
+        "model_calls_by_provider": {provider: percentiles([call["elapsed_ms"] for call in calls if call["provider"] == provider])
+                                   for provider in sorted({call["provider"] for call in calls})},
         "verified_receipts": verified["verified_receipts"], "verified_effect_envelopes": verified["verified_effect_envelopes"],
         "agent_measurements": {
             "model_attempt": percentiles([call["elapsed_ms"] for call in calls]),
@@ -63,7 +66,7 @@ def main():
             "Component tests use 100 sequential warm samples and actual SIQ signing/state; exclude model, HTTP and tool execution.",
             "Effect component measurement is SubmitFile, not file capture or external delivery latency.",
             "Five model tasks are a descriptive local sample, not an SLA or saturation/load benchmark.",
-            "StepFun is deferred by the operator; measurements identify actual ornith and do not substitute labels."]}
+            "Planning and analysis may use different providers; actual call identities remain separate."]}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.open("x") as stream:
         json.dump(report, stream, indent=2)

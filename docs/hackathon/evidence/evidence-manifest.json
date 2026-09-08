@@ -1,0 +1,64 @@
+{
+  "schema_version": "hackathon-evidence-manifest/v1",
+  "source_sha": "4da9e9e0a04c56620d101a583307b299b8484372",
+  "scope": "Frozen executable runtime/UI source; subsequent presentation-only narration tooling and evidence commits retain separate identity. Earlier checkpoints retain original hashes and dirty status.",
+  "dgx": {
+    "canonical_files": [
+      "final-hardening-v4/dgx-preflight.json",
+      "final-hardening-v4/locality.json"
+    ]
+  },
+  "stepfun": {
+    "canonical_files": [
+      "final-hardening-v4/stepfun-cohort-v2.json",
+      "final-hardening-v4/stepfun-verification-v2.json",
+      "final-hardening-v4/stepfun-cohort.json"
+    ]
+  },
+  "skills": {
+    "canonical_files": [
+      "final-hardening-v4/browser-final/result.json",
+      "final-hardening-v4/locality.json"
+    ]
+  },
+  "security": {
+    "canonical_files": [
+      "final-hardening-v4/control-cohort.json",
+      "final-hardening-v4/control-verification.json",
+      "final-hardening-v4/validation.json",
+      "final-hardening-v4/remote-ci.json"
+    ]
+  },
+  "effect": {
+    "canonical_files": [
+      "final-hardening-v4/control-cohort.json",
+      "final-hardening-v4/browser-final/result.json",
+      "final-hardening-v4/rc-checkpoint.json"
+    ]
+  },
+  "benchmark": {
+    "canonical_files": [
+      "final-hardening-v4/stepfun-performance.json",
+      "final-hardening-v4/ornith-performance.json",
+      "final-hardening-v4/runtime-performance.json",
+      "final-hardening-v4/ornith-cohort-v2.json",
+      "final-hardening-v4/ornith-verification-v2.json",
+      "final-hardening-v4/ornith-cohort.json"
+    ]
+  },
+  "release": {
+    "canonical_files": [
+      "final-hardening-v4/rc.json"
+    ]
+  },
+  "video": {
+    "canonical_files": [
+      "final-hardening-v4/video.json",
+      "final-hardening-v4/video-first-attempt.json",
+      "final-hardening-v4/video-second-attempt.json",
+      "final-hardening-v4/recording-sync-check.json",
+      "final-hardening-v4/narrated-video-zh.json",
+      "final-hardening-v4/subtitles.zh-en.srt"
+    ]
+  }
+}

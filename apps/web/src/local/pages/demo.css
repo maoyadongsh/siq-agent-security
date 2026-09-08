@@ -37,3 +37,10 @@
 .demo-provenance { margin: 0.7rem 0; padding: 0.8rem; border: 1px solid #cbd9dc; border-radius: 8px; background: #f2f7f6; overflow-wrap: anywhere; }
 .demo-provenance p { margin: 0.3rem 0; }
 .demo-actions li > .demo-provenance { display: block; }
+.demo-skill-plan { padding-left: 24px; }
+.demo-skill-plan li { padding: 18px 10px; border-bottom: 1px solid #d8e1e4; font-size: 19px; overflow-wrap: anywhere; }
+.demo-skill-plan li span { margin-right: 14px; color: #145c3a; }
+.demo-hardware { margin-top: 18px; padding: 16px; background: #f2f7f6; border-radius: 8px; }
+.demo-models p { padding: 10px 14px; border-left: 3px solid #124e65; background: #f4f7f9; font-size: 13px; }
+.demo-effect-summary { display: flex; gap: 20px; flex-wrap: wrap; }
+.demo-effect-summary strong { display: block; margin-top: 8px; }

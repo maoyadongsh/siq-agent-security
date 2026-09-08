@@ -49,6 +49,16 @@ def test_plan_cannot_reorder_skip_or_add_skills():
             validator("task-plan").validate(plan)
 
 
+def test_v2_plan_permits_only_dependency_complete_prefixes():
+    check = validator("task-plan-v2")
+    for count in (1, 2, 3):
+        check.validate({**PLAN, "skills": PLAN["skills"][:count]})
+    for skills in ([], PLAN["skills"][1:], PLAN["skills"][::-1], [PLAN["skills"][0]] * 2,
+                   [{"name": "sign-intent", "input": {}}]):
+        with pytest.raises(jsonschema.ValidationError):
+            check.validate({**PLAN, "skills": skills})
+
+
 @pytest.mark.parametrize("value", [-1, True, "0", None])
 def test_recipient_selection_rejects_invalid_index(value):
     with pytest.raises(jsonschema.ValidationError):

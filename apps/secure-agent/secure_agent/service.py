@@ -20,12 +20,22 @@ from uuid import uuid4
 
 from .application import SecureApplication
 from .authority import LocalDaemon
-from .contracts import AgentError, canonical, digest, fields, strict_json, string
+from .contracts import (
+    AgentError,
+    DataSensitivity,
+    canonical,
+    digest,
+    fields,
+    strict_json,
+    string,
+)
 from .fixtures import FixtureServices
+from .hardware import HardwareStatus, source_identity
 from .models import FixtureProvider, from_environment
+from .routing import application_router
 from .skills import SkillRegistry
 
-SCENARIOS = ("normal", "mcp-attack", "same-value", "fake-success", "conflicting", "approval", "trifecta")
+SCENARIOS = ("normal", "research-only", "research-report", "mcp-attack", "same-value", "fake-success", "conflicting", "approval", "trifecta")
 API = "/hackathon/v1"
 
 
@@ -35,8 +45,11 @@ class DemoService:
         if mode not in ("demo", "test"):
             raise AgentError("service_mode_invalid")
         self.repo, self.daemon, self.fixtures, self.mode = repo, daemon, fixtures, mode
-        self.model = from_environment(mode="demo") if mode == "demo" else None
+        self.model = application_router(from_environment(mode="demo")) if mode == "demo" else None
+        self.source_sensitivity = DataSensitivity.parse(os.environ.get("SIQ_SOURCE_SENSITIVITY", "PUBLIC"))
         self.provider = self.model.name if self.model else "fixture"
+        self.hardware = HardwareStatus(self.model, daemon)
+        self.source_identity = source_identity(repo)
         self.repository, self.scope, self.github_endpoint = repository, scope, github_endpoint
         self.web = repo / "apps/agentshield/internal/ui/embedded"
         self.token, self.pairing_code = secrets.token_urlsafe(32), secrets.token_urlsafe(18)
@@ -87,6 +100,7 @@ class DemoService:
     def _run(self, task_id, body):
         model = None
         call_start = 0
+        transition_start = 0
         try:
             scenario = body["scenario"]
             mode = {"mcp-attack": "attack", "same-value": "same-value"}.get(scenario, "benign")
@@ -95,20 +109,27 @@ class DemoService:
             self.fixtures.mcp = strict_json((self.repo / "demo/fixtures/mcp" / (mode + ".json")).read_bytes())
             model = (FixtureProvider(mode="test", recipient_index=int(scenario in ("mcp-attack", "same-value")))
                      if self.mode == "test" else self.model)
+            model = application_router(model)
             call_start = len(getattr(model, "calls", []))
+            transition_start = len(model.transitions)
             result = SecureApplication(self.repo, self.daemon, self.fixtures, model).run(body["prompt"],
                 repository=self.repository, question="Review the supplied code for concrete security issues",
                 scope=self.scope, github_endpoint=self.github_endpoint,
+                source_sensitivity=self.source_sensitivity,
+                requested_output={"research-only": "research", "research-report": "report"}.get(scenario, "delivery"),
                 effect_mode=scenario if scenario in ("fake-success", "conflicting") else "normal",
-                changed=lambda value: self._snapshot(task_id, value), approval_required=scenario == "approval",
+                changed=lambda value: self._snapshot(task_id, {**value, "model_calls": model.calls[call_start:]}),
+                approval_required=scenario == "approval",
                 trifecta=scenario == "trifecta",
                 on_hold=lambda request, decision, authority: self._hold(task_id, request, decision, authority))
             self._snapshot(task_id, {"phase": "finished", "task": result["task"], "intent": result["intent"],
-                "result": result, "model_calls": result["model_calls"]})
+                "result": result, "model_calls": result["model_calls"],
+                "provider_transitions": result["provider_transitions"]})
         except Exception as exc:  # noqa: BLE001 -- private provider/tool errors never cross the HTTP boundary
             code = str(exc) if isinstance(exc, AgentError) and re.fullmatch(r"[a-z][a-z0-9_]{0,127}", str(exc)) else "agent_internal_error"
             with self._lock:
                 self._tasks[task_id].update(phase="failed", error_code=code,
+                    provider_transitions=getattr(model, "transitions", [])[transition_start:],
                     model_calls=strict_json(canonical(getattr(model, "calls", [])[call_start:])))
                 if self._tasks[task_id]["task"]:
                     self._tasks[task_id]["task"].update(status="failed", error_code=code, current_step="stopped")
@@ -208,8 +229,11 @@ class DemoService:
                     with service._lock:
                         if self.path == API + "/tasks":
                             value = {"tasks": list(service._tasks.values()), "provider": service.provider,
+                                     **service.source_identity,
                                      "scenarios": SCENARIOS, "repository": service.repository, "scope": service.scope,
                                      "skills": [skill["name"] for skill in SkillRegistry.catalog()],
+                                     "hardware": service.hardware.snapshot(),
+                                     "source_sensitivity": service.source_sensitivity.value,
                                      "contact": "Alice", "recipient": service.fixtures.contacts["Alice"]}
                         elif self.path.removeprefix(API + "/tasks/") in service._tasks:
                             value = service._tasks[self.path.removeprefix(API + "/tasks/")]

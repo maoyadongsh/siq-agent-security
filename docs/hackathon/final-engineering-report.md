@@ -1,3 +1,10 @@
+Current report: [Final Hardening V4](final-hardening-report.md).
+
+> Historical V3 record. Current V4 development and acceptance are tracked in
+> [V4 progress](final-hardening-progress-v4.md), [task ledger](final-hardening-tasks-v4.md)
+> and [canonical evidence](evidence/INDEX.md). V4 requires a clean CI-verified
+> candidate and a real 2–3 minute recording; V3 dirty-source/video exemptions do not apply.
+
 # Hackathon V3 最终工程报告
 
 日期：2026-09-08。目标：[用户原方案](master-plan-v3.md)。逐条范围核对见

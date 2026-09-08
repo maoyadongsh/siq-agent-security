@@ -28,16 +28,22 @@ class AgentRuntime:
             self._publish()
             planned = perf_counter()
             plan = self._model.plan(task, SkillRegistry.catalog())
+            self.state.selected_skills = [call.name for call in plan.skills]
             self.state.timings_ms["model_planning"] = [(perf_counter() - planned) * 1000]
             self.state.status = "running"
             for call in plan.skills:
                 self.state.current_skill, self.state.current_step = call.name, "executing skill"
                 self._publish()
                 self._runner.run(call)
+                self.state.completed_skills.append(call.name)
             self.state.current_step = "checking independent evidence"
             self._publish()
             self.state.completion = self._evidence.completion(self.state.task_id)
             self.state.status = self.state.completion["status"]
+            if len(plan.skills) == 1 and not self.state.completion.get("requirements"):
+                # Research has no committed external effect. Do not manufacture
+                # a VERIFIED effect or relabel the server's UNKNOWN completion.
+                self.state.status = "researched"
             self.state.current_step = "finished"
         except WaitingForApproval:
             self.state.status, self.state.current_step = "waiting_approval", "human approval required"

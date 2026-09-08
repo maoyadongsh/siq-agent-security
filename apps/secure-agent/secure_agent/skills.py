@@ -7,8 +7,10 @@ from typing import Protocol
 from urllib.parse import quote
 
 from .contracts import (
+    SKILL_REQUIRES,
     AgentError,
     ContactCandidate,
+    DataSensitivity,
     DeliveryInput,
     DeliveryResult,
     ReportArtifact,
@@ -22,7 +24,7 @@ from .contracts import (
     string,
 )
 from .gateway import ToolGateway
-from .models import ModelProvider
+from .models import ModelProvider, proposal_schema
 
 
 class SourceRecorder(Protocol):
@@ -35,7 +37,7 @@ class SkillRegistry:
 
     @staticmethod
     def catalog() -> list[dict]:
-        return [
+        catalog = [
             {"name": "secure-research", "description": "Review selected GitHub files at the latest commit.",
              "input": {"repository": "owner/repo", "question": "string", "scope": ["relative file path"]},
              "output": "ResearchResult"},
@@ -44,6 +46,17 @@ class SkillRegistry:
             {"name": "secure-delivery", "description": "Deliver with recipient provenance and SIQ authorization.",
              "input": {"contact": "contact name from task"}, "output": "DeliveryResult"},
         ]
+        inputs = proposal_schema("model-task-plan-v2")["properties"]["skills"]["prefixItems"]
+        allowed_tools = {"secure-research": ["web_fetch", "read_file"],
+                         "secure-report": ["write_file", "verify_report"],
+                         "secure-delivery": ["read_file", "web_fetch", "send_message"]}
+        for entry, schema in zip(catalog, inputs):
+            entry.update(requires=list(SKILL_REQUIRES[entry["name"]]),
+                         input_schema=schema["properties"]["input"],
+                         output_schema={"type": "object", "title": entry["output"]},
+                         allowed_tools=allowed_tools[entry["name"]],
+                         security_requirements=["signed_intent", "trusted_context", "parameter_provenance", "ToolGateway"])
+        return catalog
 
 
 def render_report(path: str, research: ResearchResult) -> ReportArtifact:
@@ -58,12 +71,13 @@ def render_report(path: str, research: ResearchResult) -> ReportArtifact:
 class SkillRunner:
     def __init__(self, gateway: ToolGateway, model: ModelProvider, sources: SourceRecorder,
                  *, github_endpoint: str, contacts_path: str, mcp_endpoint: str, verify_report=False,
-                 confidential_path: str | None = None):
+                 confidential_path: str | None = None, sensitivity=DataSensitivity.PUBLIC):
         self._gateway, self._model, self._sources = gateway, model, sources
         self._github = github_endpoint.rstrip("/")
         self._contacts, self._mcp = contacts_path, mcp_endpoint
         self._verify_report = verify_report
         self._confidential_path = confidential_path
+        self._sensitivity = DataSensitivity.parse(sensitivity)
         self._research: ResearchResult | None = None
         self._report: ReportArtifact | None = None
 
@@ -113,7 +127,7 @@ class SkillRunner:
                 content = raw.decode("utf-8")
             except (KeyError, TypeError, ValueError, UnicodeError) as exc:
                 raise AgentError("github_content_invalid") from exc
-            sources.append(Source(path, revision, hashlib.sha256(raw).hexdigest(), content))
+            sources.append(Source(path, revision, hashlib.sha256(raw).hexdigest(), content, self._sensitivity))
         return self._model.research(task.question, tuple(sources))
 
     def report(self, task: ReportInput, research: ResearchResult) -> ReportArtifact:
