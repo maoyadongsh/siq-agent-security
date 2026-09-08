@@ -37,6 +37,7 @@ jobs:
           sha256sum artifacts/runtime-security/report.json > artifacts/runtime-security/report.sha256
           python3 benchmarks/runtime-security/recovery_fixture.py --out artifacts/runtime-security/recovery.json
           sha256sum artifacts/runtime-security/recovery.json > artifacts/runtime-security/recovery.sha256
+          python3 benchmarks/runtime-security/performance.py --out artifacts/runtime-security/performance.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: runtime-security-smoke
@@ -68,6 +69,7 @@ jobs:
           sha256sum artifacts/runtime-security/report.json > artifacts/runtime-security/report.sha256
           python3 benchmarks/runtime-security/recovery_fixture.py --out artifacts/runtime-security/recovery.json
           sha256sum artifacts/runtime-security/recovery.json > artifacts/runtime-security/recovery.sha256
+          python3 benchmarks/runtime-security/performance.py --out artifacts/runtime-security/performance.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: runtime-security-nightly-${{ matrix.repetition }}

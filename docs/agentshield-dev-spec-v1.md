@@ -992,3 +992,5 @@ DELETE effect-observers/{id}在删除内存凭据前发布effect-observer-revoca
 ### D 决策阶段性能采样
 
 Engine.Options可选StageTiming回调仅由宿主测试/基线程序注入，不接受请求参数，默认关闭。以Go单调时钟time.Now/time.Since测量实际执行的intent_lookup、authority_validation（lookup之后的绑定/合同校验）、runtime_action_normalization、context_validation、provenance_resolution、policy_evaluation和receipt_append_fsync。未进入的阶段不报0；回调在引擎锁内同步执行，宿主必须非阻塞且不可重入引擎。阶段不改变签名回执或授权时间源，耗时只用于性能统计，不作授权输入。效果处理单独由效果存储层接入，完整P50/P95/P99报告后续由真实采样聚合。
+
+效果阶段基线在受控测试中以单调时钟直接包围Store.SubmitFile，包含材料转Evidence、相关性检查、签名及持久发布，排除调用前的采样和调用后的日志。独立构造的Action明确标注为组件微基准，不将其称为全链路性能。基线分别预热5次、采集100次，完整原始样本和nearest-rank P50/P95/P99一并导出；没有实际样本或数量不符直接失败，不填入虚构延迟。

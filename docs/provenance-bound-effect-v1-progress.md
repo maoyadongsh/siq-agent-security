@@ -476,3 +476,10 @@
 - 使用time.Now/Since单调时钟，与授权Now分离。未进入的context或被Authority拒绝后跳过的provenance/policy不产生0样本。provenance样本包含实际checkProvenance入口开销，V2/optional无来源时可能仅执行其兼容判断，不能冒充完整来源图解析。
 - 新测试冻结授权时钟仍获得实际耗时，对比开启/关闭计时的action/reason相同，并检查required缺绑定与optional路径的样本分母。Go全模块race/vet及四平台编译通过（/tmp/siq-stage-timing-race.log），diff检查通过。
 - 尚未接入效果处理计时或基准报告导出/P50/P95/P99，当前只是实际阶段埋点基础，不宣称性能目标完成。回调在引擎锁内调用，宿主须非阻塞且不可重入；不暴露到普通决策客户端。
+
+### D 八阶段实际性能基线与报告
+
+- 新增两个显式启用的Go性能fixture：真实签名V3/USER来源/上下文/Grant决策七阶段；真实文件材料的SubmitFile效果处理阶段。各预热5次、采集100次，逐次验证成功结果。效果Action为独立受控构造，明确非决策端到端执行；效果计时包含验签相关处理/签名/发布，不含采样及工具执行。
+- performance.py实际执行未插桩Go测试，导出800个原始样本、八阶段nearest-rank P50/P95/P99、环境、commit及源码摘要。修复Go JSON输出按事件分段导致长日志解析失败，重组后完整报告生成通过：/tmp/siq-stage-performance.json。
+- 性能fixture另以race执行通过，相关包vet和benchmark目录Ruff通过；race耗时不进入性能报告。仅新增测试/runner，未修改生产代码，不重复四平台编译。PR/nightly增加独立performance.json产物，尚未远端执行。
+- 该基线满足真实八阶段组件采样起点，但尚未覆盖攻击/拒绝/深图/并发/冷启动性能矩阵；不能将100个暖态样本外推SLA或拼成端到端延迟。完整目标的其他平台、证据语义重放及最终验收继续进行。

@@ -85,3 +85,13 @@ python3 benchmarks/runtime-security/recovery_fixture.py --out /tmp/siq-recovery.
 使用临时状态目录和实际构建的daemon，部署真实Grant/Intent并取得allow后，先采样两个pending，再写入受控文件。第一次SIGKILL并确认进程退出后重启：旧token拒绝、新token直接begin冲突，admin接管后保留原before，finish和Completion验证实际内容。随后撤销接管observer，再次SIGKILL并重启，第三个observer无法接管剩余pending；已归档效果签名保持不变。
 
 报告包含接管记录、效果材料、Completion和公共回执，结束时删除临时状态，不导出token或私钥。该报告格式独立于20对场景统计，不能交给只接受完整场景集的evidence.py，也不计入D0–D5分母。运行时daemon与verify命令检查持久签名；接管/Completion的完整独立离线重放仍待完成。此检查证明Linux进程强杀恢复，不证明断电持久性、原生平台自动调度或同UID隔离。
+
+## 分阶段性能基线
+
+```bash
+python3 benchmarks/runtime-security/performance.py --out /tmp/siq-performance.json
+```
+
+实际运行两个Go组件基线，各预热5次并采集100次顺序样本。决策基线使用真实签名V3 Intent、USER provenance、绑定上下文及测试Grant，验证每次allow；七个阶段由Engine内部单调时钟计量。效果基线使用真实文件采样材料和独立构造的已授权Action，对SubmitFile调用计时，覆盖相关性验证、签名和fsync发布，不包含文件采样/工具执行，也不冒充同一决策的端到端执行。
+
+JSON保留全部原始毫秒样本、nearest-rank P50/P95/P99、Go/平台/CPU信息、命令、commit和相关源码摘要。100个暖态顺序样本不是生产SLA，不代表并发饱和性能或冷启动开销；不得相加不同阶段的百分位来声称总延迟。性能运行不启用race插桩，race验证另行执行。PR/nightly会保存独立performance.json，暂不设未经证据支持的性能阈值。
