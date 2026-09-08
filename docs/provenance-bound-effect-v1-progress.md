@@ -358,3 +358,10 @@
 - 两个正常对照分别admin注册USER/TRUSTED_IAM issuer并签发同内容来源，独立签名Intent要求对应类型，实际allow。上报拒绝与runtime拒绝单独记录，不把缺来源单测冒充来源伪造链路。
 - /tmp/siq-runtime-benchmark-sixteen-pairs.json重跑通过（ce07d5a加工作树），32个观测及额外上报拒绝/前置探针，三套daemon链分别验签。16对schema/配对、6项统计测试、Ruff通过。
 - 仍需至少4对、recipient/容量/审批相关场景、完整阶段指标/性能、可离线复验证据包、恢复和CI等，未达到最终DoD。
+
+### D 消息收件人来源约束，累计17对
+
+- 独立recipient_fixture配置真实send_message Grant和Intent message资源、/recipient required USER约束，同值MCP低可信report拒绝provenance_source_not_allowed，合法USER声明allow。
+- 不借read_file无关参数充数；实际RuntimeActionDescriptor按message.send提取recipient。没有真实消息发送，D3–D5未评估，也不把受限report称为实际MCP地址簿调用。
+- /tmp/siq-runtime-benchmark-seventeen-pairs.json运行通过（61311cb加工作树），34个观测，四套daemon各自回执链验签；17对schema/配对、6项统计测试和Ruff通过。
+- 尚需容量、审批撤销和至少20对要求，以及完整证据包、性能埋点、CI与pending恢复等任务；整体目标未完成。
