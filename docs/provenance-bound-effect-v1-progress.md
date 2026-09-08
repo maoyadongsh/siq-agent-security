@@ -274,3 +274,10 @@
 - warn 普通策略用例从 incomplete 变为 verified；block 拒绝后真实效果返回 conflicting。同一 Intent ID 修改 expected_endpoint 再提交409，原任务完成结果保持不变。
 - Go server 定向race、全模块race与vet通过（/tmp/siq-network-completion-http-race.log）。此为生产HTTP handler与真实网络oracle的集成测试；显式可选 /url provenance 隔离效果检查，warn正例不代替block Grant链路，不声称native平台自动调度已经完成。
 - 后续重点仍为pending恢复、独立D0–D5基准、平台集成及G全仓验收。
+
+### D 基准合同与统计起步
+
+- 新增 benchmarks/runtime-security/scenario.schema.json，规定攻击/正常对照、pair/category/fixture/task及D0–D5显式预期，覆盖模板18类攻击并预留内容篡改、审批先后两类。
+- 新增 metrics.py，对runner实际观测按攻击/正常与阶段分别统计；null保留not_evaluated，D5声明缺独立来源/已验证材料时拒绝，零分母rate为null。分阶段真实耗时用nearest-rank P50/P95/P99，不填造缺失数据。
+- 4项统计单测、Ruff、schema合法性及正负样例校验通过。统计输入的材料验证标志必须由可信runner产生，该模块本身不验签、不接受外部布尔值作为效果证明。
+- 尚缺20对实际场景、真实运行时执行器、全部命名指标映射、阶段埋点、CI smoke/nightly与运行报告；D仅开始，未宣称验收通过。
