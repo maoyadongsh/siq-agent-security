@@ -819,3 +819,10 @@
 - 80dfff8已推送独立分支，等待对应新CI；未合并main。
 - 新增ADR-018，基于现有Lookup、外部issuer公钥与独立observer能力明确未来跨UID/企业trust bundle接入条件；不新增空接口或生产部署宣称。
 - 继续更新§79–107逐节审计：薄适配器、Context/HardGate指定测试、ADR、单进程结构、CODEOWNERS及不修改Ruleset均有对应证据。§82、85、88–90与最终CI仍继续核对，不提前关闭。
+
+### 2026-09-08：撤销 API 回归批次与最新 CI
+
+- 新增 `TestProvenanceReportsRejectRevokedAuthorityAcrossRestart`：block/warn/audit_only × binding/全局 Intent 撤销 × 重建服务前后；先验证 report/select 正常签发，再验证旧 report 重放、新 report 和旧 parent select 均返回 `provenance_authority_invalid`。共 36 次撤销后 HTTP 拒绝断言，覆盖持久状态重新加载。此处重建服务不等同于 SIGKILL 测试。
+- 验证：Go 1.26.6 focused race、整个 `internal/server` 无缓存 race、该包 vet 均通过；未改生产实现或合同。
+- 生产代码基线 `80dfff8` 的 CI 34188862724、runtime-security 34188862744 均 success；这些结果不包含本次新增测试。
+- §82 的 report/select 路径已有明确 HTTP 证据；Effect API 的历史动作观察与撤销后新授权边界仍需逐端点归档，不能据此宣称整节完成。§88 E-05 的“工具成功声明与独立未收到证据”仍需精确核对，已有同动作独立正负材料冲突测试不替代该场景。

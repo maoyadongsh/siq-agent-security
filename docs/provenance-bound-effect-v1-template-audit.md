@@ -88,7 +88,7 @@
 | 79 | Workstream G — Adapter 设计 | 2441 | 已核对；适配器只映射事件/参数/显式句柄，策略留在daemon；Hermes显式桥接不扩为全平台自动采集 |
 | 80 | Adapter 自报来源的限制 | 2471 | 已核对；decision report只允许受限source/trust，authoritative需可信issuer验证 |
 | 81 | OpenClaw Hold Gate 不得退化 | 2491 | 已核对；OpenClaw beforeExecute/hold-status/final params复查，C3测试通过 |
-| 82 | Intent Binding Revocation 不得退化 | 2506 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 82 | Intent Binding Revocation 不得退化 | 2506 | 部分核验：report/select 三模式、binding/Intent 撤销及重建服务后拒绝已由 TestProvenanceReportsRejectRevokedAuthorityAcrossRestart 验证；Effect 历史动作边界仍需归档 |
 | 83 | Workstream H — Enterprise Compatibility Preparation | 2522 | 已核对；Intent issuer字段可表达企业标识，不因标签授予信任；ADR-018 |
 | 84 | Issuer abstraction | 2548 | 已核对；既有Lookup/Issuer公钥接入点复用，企业trust bundle部署保留未来项；ADR-018 |
 | 85 | Workstream I — Security Testing | 2575 | 待逐节复核；已有实现/测试入口见DoD索引 |
