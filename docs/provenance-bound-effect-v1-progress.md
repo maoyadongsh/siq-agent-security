@@ -447,3 +447,10 @@
 - begin重建索引使用持久当前owner及原before；缓存命中和finish也检查全部历史owner撤销。新owner接管后旧token无法begin/finish。finish先读取已有签名材料，覆盖证据已发布但缓存Completed未更新的崩溃窗口，避免重新采样改变证据。
 - block/warn真实文件HTTP测试通过：decision凭据403、observer凭据在admin认证域401、admin接管幂等、期限不变、新owner沿用写前快照、旧owner拒绝、原owner撤销后当前owner也拒绝、完成后接管409、缓存未更新重复finish返回相同签名。首次测试误期望observer在admin域403，核对现有认证实现后改为401；权限没有放宽。
 - Go全模块race/vet与四平台编译通过（/tmp/siq-recovery-api-race.log）；新请求schema正例与四类负例通过，diff检查通过。尚未验证真实进程SIGKILL/重启恢复，平台调度、故障容量矩阵及完整目标验收继续待完成。
+
+### C2/D/G 真实SIGKILL双重启恢复检查
+
+- 新增recovery_fixture.py，使用生产daemon、隔离状态目录和实际Grant/Intent allow。两个pending先采样再实际写文件，SIGKILL并确认退出码后重启，旧token拒绝、新token需admin显式接管；原before保持不存在，真实after摘要正确且Completion verified。
+- 接管observer撤销后第二次SIGKILL/重启，第三个observer恢复剩余pending409；第一次已归档效果跨重启完全一致。结束执行binary verify，报告仅导出公共回执/接管/效果/Completion，临时凭据状态清理。
+- 实际命令python3 benchmarks/runtime-security/recovery_fixture.py --out /tmp/siq-recovery-process-report.json通过（4bba77f daemon）；两次确认SIGKILL，未将单纯丢缓存当进程恢复。benchmark目录Ruff、6项统计单测及diff检查通过。
+- PR/nightly追加此检查并上传独立recovery报告/摘要；工作流尚未推送执行。该报告不计入20对场景分母，现有evidence.py不支持其完整独立重放。断电、各中断点、期限/容量/并发完整矩阵和native平台调度仍待完成，目标继续进行。

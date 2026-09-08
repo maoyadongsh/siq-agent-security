@@ -73,4 +73,15 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py /tmp/s
 
 `.github/workflows/runtime-security.yml` 提供PR/main的runtime-security-contracts与计划/手动触发的nightly三轮独立运行。每轮构建隔离daemon，执行20对场景、离线核验公共证据并上传report.json和report.sha256；nightly保持三个独立单轮报告，不将它们伪装成统计独立样本的合并结论。
 
-依赖使用Control API的uv.lock，GitHub Actions固定commit，权限仅contents:read。PR报告保留14天，nightly保留30天。尚未包含强杀恢复矩阵或内部性能埋点，远端通过情况必须以实际workflow结果为准。
+依赖使用Control API的uv.lock，GitHub Actions固定commit，权限仅contents:read。PR报告保留14天，nightly保留30天。另运行下述两次强杀恢复检查；完整恢复故障矩阵和内部性能埋点仍待补齐，远端通过情况必须以实际workflow结果为准。
+
+
+## 真实进程恢复检查
+
+```bash
+python3 benchmarks/runtime-security/recovery_fixture.py --out /tmp/siq-recovery.json
+```
+
+使用临时状态目录和实际构建的daemon，部署真实Grant/Intent并取得allow后，先采样两个pending，再写入受控文件。第一次SIGKILL并确认进程退出后重启：旧token拒绝、新token直接begin冲突，admin接管后保留原before，finish和Completion验证实际内容。随后撤销接管observer，再次SIGKILL并重启，第三个observer无法接管剩余pending；已归档效果签名保持不变。
+
+报告包含接管记录、效果材料、Completion和公共回执，结束时删除临时状态，不导出token或私钥。该报告格式独立于20对场景统计，不能交给只接受完整场景集的evidence.py，也不计入D0–D5分母。运行时daemon与verify命令检查持久签名；接管/Completion的完整独立离线重放仍待完成。此检查证明Linux进程强杀恢复，不证明断电持久性、原生平台自动调度或同UID隔离。
