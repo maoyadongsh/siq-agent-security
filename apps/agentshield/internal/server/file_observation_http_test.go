@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"siq-agent-security/apps/agentshield/internal/completion"
 	"siq-agent-security/apps/agentshield/internal/effectevidence"
@@ -84,6 +85,40 @@ func TestFileObservationHTTPReadsRealState(t *testing.T) {
 			recoveryBody := map[string]any{"observation_id": "file-http-real", "observer_id": "observer-" + tokenDigest(other)[:32], "expected_owner": tokenDigest(observer)}
 			effectCall(t, s, "POST", "/v1/file-observation-recoveries", token, recoveryBody, 403)
 			effectCall(t, s, "POST", "/v1/file-observation-recoveries", other, recoveryBody, 401)
+
+			for _, mismatch := range []string{"source", "platform", "session", "agent", "task", "expired", "revoked"} {
+				source := persisted.Source
+				scope := persisted.Scope
+				switch mismatch {
+				case "source":
+					source.SourceID = "other-host"
+				case "platform":
+					scope.Platform = "other-platform"
+				case "session":
+					scope.SessionID = "other-session"
+				case "agent":
+					scope.AgentID = "other-agent"
+				case "task":
+					scope.TaskID = "other-task"
+				}
+				bad := effectCall(t, s, "POST", "/v1/effect-observers", s.bootAdmin, map[string]any{"source": source, "scope": scope, "expires_in": 60}, 201)
+				if mismatch == "expired" {
+					s.observerMu.Lock()
+					hash := tokenDigest(bad["token"].(string))
+					entry := s.observers[hash]
+					entry.Expires = time.Now().Add(-time.Second)
+					s.observers[hash] = entry
+					s.observerMu.Unlock()
+				}
+				if mismatch == "revoked" {
+					effectCall(t, s, "DELETE", "/v1/effect-observers/"+bad["observer_id"].(string), s.bootAdmin, nil, 204)
+				}
+				effectCall(t, s, "POST", "/v1/file-observation-recoveries", s.bootAdmin, map[string]any{"observation_id": "file-http-real", "observer_id": bad["observer_id"], "expected_owner": persisted.OwnerDigest}, 403)
+				current, err := s.effects.PendingFileOwner("file-http-real", time.Now())
+				if err != nil || current != persisted.OwnerDigest {
+					t.Fatal("rejected recovery changed owner", mismatch, err)
+				}
+			}
 			takeover := effectCall(t, s, "POST", "/v1/file-observation-recoveries", s.bootAdmin, recoveryBody, 200)
 			repeated := effectCall(t, s, "POST", "/v1/file-observation-recoveries", s.bootAdmin, recoveryBody, 200)
 			if takeover["recovery"].(map[string]any)["signature"] != repeated["recovery"].(map[string]any)["signature"] || takeover["expires_at"] != persisted.ExpiresAt {

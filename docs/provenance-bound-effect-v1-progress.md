@@ -454,3 +454,11 @@
 - 接管observer撤销后第二次SIGKILL/重启，第三个observer恢复剩余pending409；第一次已归档效果跨重启完全一致。结束执行binary verify，报告仅导出公共回执/接管/效果/Completion，临时凭据状态清理。
 - 实际命令python3 benchmarks/runtime-security/recovery_fixture.py --out /tmp/siq-recovery-process-report.json通过（4bba77f daemon）；两次确认SIGKILL，未将单纯丢缓存当进程恢复。benchmark目录Ruff、6项统计单测及diff检查通过。
 - PR/nightly追加此检查并上传独立recovery报告/摘要；工作流尚未推送执行。该报告不计入20对场景分母，现有evidence.py不支持其完整独立重放。断电、各中断点、期限/容量/并发完整矩阵和native平台调度仍待完成，目标继续进行。
+
+### C2 接管并发、容量与异常状态矩阵
+
+- 新增8个不同owner同时对同一expected_owner发起接管的race测试，严格只有一个成功、其余冲突，持久历史仅一条。
+- 通过实际Store连续发布64次接管，第65次ErrCapacity且当前owner不变；在容量上限重试当前owner仍返回第64条原记录。
+- 恢复历史缺首序号、未知字段、符号链接、超4096字节均失败关闭；崩溃遗留未发布临时JSON不替代当前有效记录。
+- block/warn管理HTTP覆盖source_id/platform/session/agent/task不匹配及目标凭据到期/撤销，全部拒绝，并逐次复核原owner未改变。到期子例明确直接调整测试内存session期限，真实进程时间测试另计；不将此例冒充真实等待到期。
+- Go全模块race/vet与四平台编译通过（/tmp/siq-recovery-matrix-race.log），diff检查通过。断电/文件系统故障注入、完整固定签名跨语言语料、平台自动调度及性能/最终验收仍待后续完成。
