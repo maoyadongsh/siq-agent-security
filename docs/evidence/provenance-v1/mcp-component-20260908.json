@@ -1,0 +1,32 @@
+{
+  "schema_version": "mcp-provenance-fixture/v1",
+  "passed": true,
+  "recorded_at": "2026-09-08T00:56:59.733684+00:00",
+  "siq_commit": "688abb54f2e0e22afc3bf687440edc9bf5c26400",
+  "binary_sha256": "d51a521e32f0ceb646370981c0b32a12b8e7cc8aad3f15e8e698a8b6f2f374fd",
+  "receipt_count": 2,
+  "receipt_chain_verified": true,
+  "decision_receipt_ids": [
+    "rcp-05640b667d2f-005659.693023",
+    "rcp-05640b667d2f-005659.709923"
+  ],
+  "coverage": "component_fixture",
+  "mcp_protocol": "2025-06-18",
+  "mcp_tool_calls": 1,
+  "checks": {
+    "initialized": true,
+    "real_http_tool_result": true,
+    "signed_report": true,
+    "deterministic_selection": true,
+    "untrusted_path_denied": true,
+    "same_value_trusted_path_allowed": true
+  },
+  "source_identity_digest": "d4542fc10227892518627089fe11479735648c87dbd7cd4f912fb1c57bd24291",
+  "limitations": [
+    "local fixture server",
+    "JSON response transport only",
+    "no native platform integration",
+    "no independent effect evidence"
+  ],
+  "script_sha256": "1ecdabf644fde62eeb3b187ec885186d70a6683966ebbeaea4fe5f59e78e18f9"
+}

@@ -34,3 +34,9 @@ source 仅允许 MCP/WEB/TOOL/AGENT/UNKNOWN，trust 默认为 untrusted，不能
 `POST /v1/provenance-select` 使用 decision token，请求见 [选择合同](../packages/contracts/provenance-select-request.v1.schema.json)：parent_id、pointer、platform/session_id/agent_id、content。content 必须是与父节点摘要一致的完整原始 JSON；服务自行按 pointer 选取值，不接受 caller value、trust、issuer 或 task_id。
 
 返回带父引用的签名子声明，保留低可信来源与原有效期。同一选择可重试；父节点过期或撤销会使选择失败。该入口只支持本地签发的低可信来源，不能派生可信 USER/IAM 授权。它证明确定性的字段选择，不证明模型内部语义传播。
+
+## 隔离 MCP 集成验证
+
+运行 `python3 scripts/validate-mcp-provenance.py --out /tmp/mcp-provenance.json`。需要本机 Go 与 Python 标准库；脚本创建临时状态与本地 MCP 服务，实际调用工具并将结果接入 Report/Select/V3 Decide，最后离线验证回执链。无需 Hermes 运行时或模型 API，不改用户配置。
+
+参考 [MCP transport 2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) 与 [初始化流程](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle)。脚本仅为固定 HTTP JSON 分支的协议组件验收，不作为通用 MCP 客户端发布；SSE、OAuth 和原生平台采集仍未覆盖。

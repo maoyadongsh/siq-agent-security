@@ -117,3 +117,10 @@
 - 真实签名 Report→Select→MatchParameters 测试验证 MCP 选择仍不能通过 USER/trusted 约束，显式允许 MCP/untrusted 的约束通过。覆盖原文替换、字段缺失、幂等选择、撤销父节点拒绝。
 - provenance/server 定向 race通过，provenance vet通过，Python 合同测试6项与 Ruff通过。选择请求合同和使用说明已落盘。
 - 本轮只完成确定性派生机制，尚未实际调用 MCP server；真实 transport、endpoint/tool identity 采集与 native 平台接入继续待完成。
+
+### B2 MCP 协议组件验收
+
+- 新增 `scripts/validate-mcp-provenance.py`，启动隔离 loopback MCP JSON-RPC server，实际执行 initialize/initialized/tools-call；采集 endpoint/serverInfo/tool 身份摘要与真实 HTTP 返回的 structuredContent。
+- 复用已有临时 Harness，以生产 Go daemon 完成准入、Grant challenge/approve/deploy、V3绑定、Report→Select→Decide。MCP 控制路径拒绝；同值 USER/authoritative 来源允许。不是依靠 warn 放行的正例，daemon 使用 block。
+- 实际运行成功，2条回执由离线 CLI 验证签名链；Ruff通过。[验收报告](evidence/provenance-v1/mcp-component-20260908.json) 记录源码基线、二进制/脚本哈希与身份摘要，无凭据和原始工具内容。
+- 此项覆盖 component_fixture 和固定 HTTP JSON 分支，不声称完整 MCP/SSE/OAuth 客户端或 native 平台支持；生产适配器自动采集、R高影响默认约束与后续 EffectEvidence/Benchmark 仍待完成。

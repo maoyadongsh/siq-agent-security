@@ -864,3 +864,9 @@ Store.Select 从已验证的低可信父节点中派生参数：调用方重送�
 子节点继承父节点 source type/trust、scope、issuer 和时效；source_id 记录 parent_id+pointer 的摘要，provenance_id 由该选择身份与完整 scope 确定。已知 lineage 标记 transformed；unknown 父节点继续 unknown。同一选择可幂等重试，原文和被选值不落盘，父节点撤销/过期/篡改立即拒绝。后续 MCP 集成调用此确定性方法连接工具结果与高影响参数。
 
 HTTP 入口为 POST /v1/provenance-select，使用 decision capability；请求仅含 parent_id/pointer/platform/session_id/agent_id/content。服务从当前 Intent binding 派生 task_id，严格64 KiB读取；拒绝额外输出值或权限字段。
+
+### B2 MCP 本地协议集成验收
+
+新增隔离验证脚本，通过本地 loopback MCP JSON-RPC 服务执行 initialize→notifications/initialized→tools/call，取得实际协议结果，再经生产 SIQ daemon 的 Report→Select→Intent V3→Decide。复用现有集成 Harness 的临时状态、准入、Grant 人工 challenge/approve/deploy 与绑定流程，不使用真实平台配置或付费模型。
+
+该验证固定 MCP 2025-06-18 的 HTTP JSON 响应分支；不声称实现通用 Streamable HTTP/SSE 客户端、OAuth 或 native 平台自动采集。协议依据为官方 [transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) 与 [lifecycle](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle)。报告标注 component_fixture，只存动作、reason code、哈希与检查结果，不保留原始工具内容或凭据。MCP endpoint/tool 身份由测试实际连接配置构造；上报仍不具备独立 attestor 权威。
