@@ -3,13 +3,13 @@
 [方案原文](open-source-research-plan-20260908.md) · [机器可读台账](open-source-research-tasks-20260908.json)
 
 原文 18 个阶段已拆分为 **71 项执行任务**，覆盖全部 12 节。
-当前状态：`done` 43 项；`not_applicable` 1 项；`todo` 20 项；`in_progress` 6 项；`blocked` 1 项。任务登记不等于工程实施或外部发布完成。
+当前状态：`done` 47 项；`not_applicable` 1 项；`todo` 20 项；`blocked` 1 项；`in_progress` 2 项。任务登记不等于工程实施或外部发布完成。
 
 ## 基线与执行规则
 
 - 登记基线：`e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2`；登记分支：`codex/hackathon-final-release-v5`。
 - V5 运行源码：`d1277116e8291e72b09b0462a19d0268b68bf46c`；原文档提交独立保留。
-- 研究 submission SHA：`尚未确定`。
+- 研究 submission SHA：`aefab111c7fcad9075c8f429f97c9eab519dcd22`。
 - 方案 SHA256：`b2e9a1e927c8e90e2994bcfe4beb4d0358e33d638486908ccbfacc5f9a601ab2`。
 
 - JSON 为执行状态事实源，Markdown 是同内容的阅读投影；修改状态时两者同步并重算汇总。
@@ -66,7 +66,7 @@ python3 scripts/check_research_task_ledger.py
 | O-07 | A/B/C 三轨复现说明 | 第 2 周 | 5 | in_progress |
 | O-08 | 研究导航、dataset card、claims-evidence 表 | 第 2 周 | 5 | done |
 | O-09 | CITATION.cff 与真实作者/版本元数据 | 第 2 周 | 3 | done |
-| O-10 | 从新 SHA 生成研究候选 | 第 2 周 | 5 | in_progress |
+| O-10 | 从新 SHA 生成研究候选 | 第 2 周 | 5 | done |
 | O-11 | 发布、归档和版本引用验证 | 第 2–4 周 | 4 | blocked |
 | O-12 | 收集两组外部复现记录 | 第 2–4 周 | 4 | in_progress |
 | O-13 | 发布研究导读与技术报告 | 第 2–4 周 | 4 | in_progress |
@@ -82,8 +82,8 @@ python3 scripts/check_research_task_ledger.py
 
 | 门禁 | 达成条件 | 必需任务 | 前置门禁 | 当前 |
 | --- | --- | --- | --- | --- |
-| G-01 | 许可与历史处置具备首发条件 | O-01.03, O-02.03, O-03.04, O-04.04, O-05.02 | 无 | not_met |
-| G-02 | 无需模型的复现与可核验研究候选就绪 | O-07.02, O-07.03, O-07.05, O-08.03, O-08.05, O-09.02, O-10.05 | 无 | not_met |
+| G-01 | 许可与历史处置具备首发条件 | O-01.03, O-02.03, O-03.04, O-04.04, O-05.02 | 无 | met |
+| G-02 | 无需模型的复现与可核验研究候选就绪 | O-07.02, O-07.03, O-07.05, O-08.03, O-08.05, O-09.02, O-10.05 | 无 | met |
 | G-03 | 首轮研究版公开发布与长期引用闭环 | O-06.02, O-06.03, O-11.04 | G-01, G-02 | not_met |
 | G-04 | 外部复现目标达到 | O-12.03 | G-03 | not_met |
 | G-05 | 首发传播材料与社区入口齐备 | O-13.04, O-14.03, O-18.01 | G-03 | not_met |
@@ -1092,10 +1092,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 #### O-10.04 · 执行新研究 SHA 的 CI 与受影响回归
 
-- 状态：`in_progress`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§9。
 - 完成依赖：O-10.02, O-10.03, O-09.02, O-03.04, O-05.02, O-06.04；待决策依赖：无。
 - 计划产物：`docs/research/evidence/release-ci.json`；`docs/research/evidence/release-regression.json`。
+- 完成时间：2026-09-08T15:14:39.685239+00:00。
 
 实施内容：
 
@@ -1112,15 +1113,16 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 - 逐项核对验收条件：旧 d127711 CI 不冒充新研究 SHA 的结果；最终源码变动触发相应重验；仅文档变更做链接/格式检查，打包或安全变更执行相应有意义验证，不盲目重复全部检查。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 - 计划验证命令或方法（含占位符时不可原样执行）：go test ./... / go test -race ./... / go vet ./...（仅受影响 Go module；保留实际 cwd）；复用现有 ci/runtime-security 对最终 SHA 运行；文档仅做链接/格式校验，打包增量运行现有 package tests。。执行时填入实际路径、版本与范围，保存退出码/结果和证据。
 
-实际验证：`[]`。
-实际证据：`["docs/research/release-scope.md", "docs/research/publication-plan.md"]`。
+实际验证：`[{"method": "final main 31 checks; source archive member/license checks; actual GitHub release and fresh download", "result": "passed_for_source_only_release", "evidence": ["docs/research/evidence/release-ci.json", "docs/research/evidence/release-regression.json"], "limitations": "没有新增二进制/模型权重分发或原生包启动认证；对应未来发行另行验证。"}]`。
+实际证据：`["docs/research/evidence/release-ci.json", "docs/research/evidence/release-regression.json"]`。
 
 #### O-10.05 · 从干净源码构建并验收研究候选
 
-- 状态：`in_progress`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P0`；类型：`validation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§9、§6.1。
 - 完成依赖：O-10.04；待决策依赖：无。
 - 计划产物：`docs/research/evidence/research-rc.json`；`研究候选包（Git 之外）`。
+- 完成时间：2026-09-08T15:14:39.685239+00:00。
 
 实施内容：
 
@@ -1137,8 +1139,8 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 - 逐项核对验收条件：最终 SHA 具备成功 CI；制品指向实际源码而非 dirty-source manifest；原生验收与 cross-build 区分；包内不含秘密/私密状态；启动后包未污染。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 - 计划验证命令或方法（含占位符时不可原样执行）：git status --porcelain（构建前后均为空）；python3 scripts/hackathon/package_rc.py --out <新候选目录> --verify-only；sha256sum -c SHA256SUMS（候选内和外层分别核查，记录 cwd）。执行时填入实际路径、版本与范围，保存退出码/结果和证据。
 
-实际验证：`[]`。
-实际证据：`["docs/research/release-scope.md", "docs/research/publication-plan.md"]`。
+实际验证：`[{"method": "final main 31 checks; source archive member/license checks; actual GitHub release and fresh download", "result": "passed_for_source_only_release", "evidence": ["docs/research/evidence/research-rc.json"], "limitations": "没有新增二进制/模型权重分发或原生包启动认证；对应未来发行另行验证。"}]`。
+实际证据：`["docs/research/evidence/research-rc.json"]`。
 
 ### O-11 · 发布、归档和版本引用验证
 
@@ -1146,10 +1148,11 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 #### O-11.01 · 准备可审阅的研究发布与归档材料
 
-- 状态：`in_progress`；优先级：`P0`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P0`；类型：`documentation`；责任角色：`maintainer`；负责人：maoyadongsh。
 - 原文依据：§6.2、§9、§10.1。
 - 完成依赖：O-10.05, O-09.03；待决策依赖：无。
 - 计划产物：`docs/research/release-notes.md`；`docs/research/publication-plan.md`。
+- 完成时间：2026-09-08T15:14:39.685239+00:00。
 
 实施内容：
 
@@ -1165,15 +1168,16 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：材料可独立审阅，版本/哈希/许可一致；没有发布授权时仍完成准备；不生成假 Release URL 或 DOI。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
-实际证据：`["docs/research/release-scope.md", "docs/research/publication-plan.md"]`。
+实际验证：`[{"method": "final main 31 checks; source archive member/license checks; actual GitHub release and fresh download", "result": "passed_for_source_only_release", "evidence": ["docs/research/release-notes.md", "docs/research/publication-plan.md", "docs/research/evidence/research-rc.json"], "limitations": "没有新增二进制/模型权重分发或原生包启动认证；对应未来发行另行验证。"}]`。
+实际证据：`["docs/research/release-notes.md", "docs/research/publication-plan.md", "docs/research/evidence/research-rc.json"]`。
 
 #### O-11.02 · 发布新研究版本至 GitHub
 
-- 状态：`in_progress`；优先级：`P0`；类型：`external_manual`；责任角色：`release_maintainer`；负责人：maoyadongsh。
+- 状态：`done`；优先级：`P0`；类型：`external_manual`；责任角色：`release_maintainer`；负责人：maoyadongsh。
 - 原文依据：§9、§6.2。
 - 完成依赖：O-11.01, O-06.02, O-06.03；待决策依赖：D-06。
 - 计划产物：`docs/research/evidence/github-research-release.json`。
+- 完成时间：2026-09-08T15:14:39.685239+00:00。
 
 实施内容：
 
@@ -1189,8 +1193,8 @@ G-01～G-03 为首轮研究发行；G-04 为外部复现；G-05 为传播/社区
 
 - 逐项核对验收条件：实际 Release URL 和资产校验通过；不覆盖既有 tag 或旧文件；若要求集成后 main 为源码，须先回 O-10.04/05 重冻重建，不直接沿用分支包。全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。
 
-实际验证：`[]`。
-实际证据：`["docs/research/release-scope.md", "docs/research/publication-plan.md"]`。
+实际验证：`[{"method": "final main 31 checks; source archive member/license checks; actual GitHub release and fresh download", "result": "passed_for_source_only_release", "evidence": ["docs/research/evidence/github-research-release.json"], "limitations": "没有新增二进制/模型权重分发或原生包启动认证；对应未来发行另行验证。"}]`。
+实际证据：`["docs/research/evidence/github-research-release.json"]`。
 
 #### O-11.03 · 连接归档账号并保存实际研究制品
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "siq-research-open-source-tasks/v1",
-  "updated_at": "2026-09-08T15:06:01.179243+00:00",
+  "updated_at": "2026-09-08T15:14:39.685239+00:00",
   "source_document": "docs/open-source-research-plan-20260908.md",
   "source_document_sha256": "b2e9a1e927c8e90e2994bcfe4beb4d0358e33d638486908ccbfacc5f9a601ab2",
   "repository": "maoyadongsh/siq-agent-security",
@@ -8,7 +8,7 @@
   "recording_head_sha": "e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
   "frozen_v5_runtime_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
   "frozen_v5_documentation_sha": "e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
-  "research_submission_sha": null,
+  "research_submission_sha": "aefab111c7fcad9075c8f429f97c9eab519dcd22",
   "scope": "研究开源实施：实际证据更新状态；冻结比赛制品不变，长期外部研究里程碑不因仓库设置完成而自动完成。",
   "status_definitions": {
     "todo": "尚未开始；已有历史能力不能替代本周期验收",
@@ -324,7 +324,7 @@
       "phase": "第 2 周",
       "owner_role_from_plan": "发布维护者",
       "source_acceptance": "依赖 O-03/04/07/08；精确 SHA 的 CI 与完整制品核验通过",
-      "status": "in_progress",
+      "status": "done",
       "task_ids": [
         "O-10.01",
         "O-10.02",
@@ -739,7 +739,7 @@
         "O-04.04",
         "O-05.02"
       ],
-      "state": "not_met"
+      "state": "met"
     },
     {
       "id": "G-02",
@@ -753,7 +753,7 @@
         "O-09.02",
         "O-10.05"
       ],
-      "state": "not_met"
+      "state": "met"
     },
     {
       "id": "G-03",
@@ -3247,7 +3247,7 @@
       ],
       "priority": "P0",
       "kind": "validation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -3277,13 +3277,23 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "final main 31 checks; source archive member/license checks; actual GitHub release and fresh download",
+          "result": "passed_for_source_only_release",
+          "evidence": [
+            "docs/research/evidence/release-ci.json",
+            "docs/research/evidence/release-regression.json"
+          ],
+          "limitations": "没有新增二进制/模型权重分发或原生包启动认证；对应未来发行另行验证。"
+        }
+      ],
       "evidence": [
-        "docs/research/release-scope.md",
-        "docs/research/publication-plan.md"
+        "docs/research/evidence/release-ci.json",
+        "docs/research/evidence/release-regression.json"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:14:39.685239+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -3313,7 +3323,7 @@
       ],
       "priority": "P0",
       "kind": "validation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -3338,13 +3348,21 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "final main 31 checks; source archive member/license checks; actual GitHub release and fresh download",
+          "result": "passed_for_source_only_release",
+          "evidence": [
+            "docs/research/evidence/research-rc.json"
+          ],
+          "limitations": "没有新增二进制/模型权重分发或原生包启动认证；对应未来发行另行验证。"
+        }
+      ],
       "evidence": [
-        "docs/research/release-scope.md",
-        "docs/research/publication-plan.md"
+        "docs/research/evidence/research-rc.json"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:14:39.685239+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -3376,7 +3394,7 @@
       ],
       "priority": "P0",
       "kind": "documentation",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -3402,13 +3420,25 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "final main 31 checks; source archive member/license checks; actual GitHub release and fresh download",
+          "result": "passed_for_source_only_release",
+          "evidence": [
+            "docs/research/release-notes.md",
+            "docs/research/publication-plan.md",
+            "docs/research/evidence/research-rc.json"
+          ],
+          "limitations": "没有新增二进制/模型权重分发或原生包启动认证；对应未来发行另行验证。"
+        }
+      ],
       "evidence": [
-        "docs/research/release-scope.md",
-        "docs/research/publication-plan.md"
+        "docs/research/release-notes.md",
+        "docs/research/publication-plan.md",
+        "docs/research/evidence/research-rc.json"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:14:39.685239+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -3430,7 +3460,7 @@
       ],
       "priority": "P0",
       "kind": "external_manual",
-      "status": "in_progress",
+      "status": "done",
       "owner_role": "release_maintainer",
       "assignee": "maoyadongsh",
       "depends_on": [
@@ -3458,13 +3488,21 @@
         "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
         "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
       ],
-      "validation": [],
+      "validation": [
+        {
+          "method": "final main 31 checks; source archive member/license checks; actual GitHub release and fresh download",
+          "result": "passed_for_source_only_release",
+          "evidence": [
+            "docs/research/evidence/github-research-release.json"
+          ],
+          "limitations": "没有新增二进制/模型权重分发或原生包启动认证；对应未来发行另行验证。"
+        }
+      ],
       "evidence": [
-        "docs/research/release-scope.md",
-        "docs/research/publication-plan.md"
+        "docs/research/evidence/github-research-release.json"
       ],
       "blocker": null,
-      "completed_at": null,
+      "completed_at": "2026-09-08T15:14:39.685239+00:00",
       "planned_validation": [
         {
           "method": "逐项核对验收条件",
@@ -5118,11 +5156,11 @@
     "workstreams": 18,
     "tasks": 71,
     "status_counts": {
-      "done": 43,
+      "done": 47,
       "not_applicable": 1,
       "todo": 20,
-      "in_progress": 6,
-      "blocked": 1
+      "blocked": 1,
+      "in_progress": 2
     },
     "kind_counts": {
       "engineering": 9,
@@ -5136,5 +5174,12 @@
       "recurring": 2
     }
   },
-  "execution_branch": "codex/research-open-source-r1"
+  "execution_branch": "codex/research-open-source-r1",
+  "published_research_source": {
+    "version": "research-v0.1.0-rc.1",
+    "sha": "aefab111c7fcad9075c8f429f97c9eab519dcd22",
+    "url": "https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1",
+    "kind": "source-only unsigned prerelease",
+    "recording_note": "publication receipts are committed after the release and do not replace its source SHA"
+  }
 }
