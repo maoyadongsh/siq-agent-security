@@ -37,6 +37,22 @@ def validator(name):
     return Draft202012Validator(schema)
 
 
+def test_report_cannot_select_authority():
+    v = validator("provenance-report-request")
+    good = {
+        "report_id": "r1", "platform": "hermes", "session_id": "s1", "agent_id": "a1",
+        "source": {"type": "MCP", "source_id": "endpoint/tool"}, "content": {"value": "fixture"},
+    }
+    v.validate(good)
+    for field in ["issuer", "signature", "task_id"]:
+        assert list(v.iter_errors({**good, field: "forged"}))
+    for source in [
+        {"type": "USER", "source_id": "caller"},
+        {"type": "MCP", "source_id": "caller", "trust": "trusted"},
+    ]:
+        assert list(v.iter_errors({**good, "source": source}))
+
+
 def test_signed_registry_and_revocation_envelopes():
     issuer = {
         "issuer_id": "issuer-1", "local_key_ref": "local-state",
