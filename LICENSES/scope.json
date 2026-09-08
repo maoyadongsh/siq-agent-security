@@ -1,0 +1,38 @@
+{
+  "schema_version": "siq-license-scope/v1",
+  "copyright": "2026 maoyadongsh and contributors",
+  "default_project_owned_license": "Apache-2.0",
+  "cc_by_4_documents": [
+    "docs/research/README.md",
+    "docs/research/agentshield-market-survey-2026-09.md",
+    "docs/research/artifact-layout.md",
+    "docs/research/artifact-manifest-spec.md",
+    "docs/research/citation-policy.md",
+    "docs/research/claims-evidence.md",
+    "docs/research/community-backlog.md",
+    "docs/research/data-export-policy.md",
+    "docs/research/dataset-card.md",
+    "docs/research/environment-matrix.md",
+    "docs/research/evaluation-protocol.md",
+    "docs/research/external-reproduction-template.md",
+    "docs/research/research-questions.md",
+    "docs/research/result-reproduction.md"
+  ],
+  "cc_embedded_code_license": "Apache-2.0",
+  "third_party_exceptions": {
+    "patches/openclaw/**": "MIT; patches/openclaw/LICENSE",
+    "site/vendor/mermaid-11.4.1.min.js": "MIT and bundled component licenses; see source inventory",
+    "site/vendor/mermaid-LICENSE": "upstream MIT text",
+    "site/vendor/mermaid-bundled-notices.txt": "upstream notices",
+    "LICENSES/third-party/**": "original license/notice terms",
+    "LICENSES/*.txt": "original standard license text",
+    "DCO": "verbatim copying terms in DCO"
+  },
+  "excluded_from_grant": [
+    "external models and API services",
+    "private runtime/provider state",
+    "third-party publications and quotations",
+    "trademarks",
+    "separately distributed historical media"
+  ]
+}

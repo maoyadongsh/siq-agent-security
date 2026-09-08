@@ -1,0 +1,203 @@
+{
+  "observed_at": "2026-09-08T14:38:02.253477+00:00",
+  "research_branch": "codex/research-open-source-r1",
+  "research_base_sha": "e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+  "repository": {
+    "full_name": "maoyadongsh/siq-agent-security",
+    "default_branch": "main",
+    "visibility": "public",
+    "license": null,
+    "has_issues": true,
+    "has_discussions": false,
+    "description": null,
+    "security_and_analysis": {
+      "secret_scanning": {
+        "status": "disabled"
+      },
+      "secret_scanning_push_protection": {
+        "status": "disabled"
+      },
+      "dependabot_security_updates": {
+        "status": "disabled"
+      },
+      "secret_scanning_non_provider_patterns": {
+        "status": "disabled"
+      },
+      "secret_scanning_validity_checks": {
+        "status": "disabled"
+      }
+    }
+  },
+  "main_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "main_protected": false,
+  "private_reporting": {
+    "enabled": false
+  },
+  "rulesets": [],
+  "ci_jobs": [
+    {
+      "name": "web",
+      "conclusion": "success"
+    },
+    {
+      "name": "agentshield",
+      "conclusion": "success"
+    },
+    {
+      "name": "gitleaks",
+      "conclusion": "success"
+    },
+    {
+      "name": "control-api",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/directory)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/hermes)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, edge/agent)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/kubernetes)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, edge/agent)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/dify)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/docker)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/docker)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/openclaw)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/process)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/systemd)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/process)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/systemd)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/directory)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/workbuddy)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/mcp)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/mcp)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/hermes)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/dify)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/openclaw)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/kubernetes)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (stable, connectors/piagent)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/piagent)",
+      "conclusion": "success"
+    },
+    {
+      "name": "edge (1.22, connectors/workbuddy)",
+      "conclusion": "success"
+    }
+  ],
+  "releases": [
+    {
+      "tag_name": "agentshield-v0.1.0",
+      "draft": false,
+      "prerelease": false,
+      "assets": [
+        {
+          "name": "agentshield-darwin-arm64",
+          "size": 13921362
+        },
+        {
+          "name": "agentshield-linux-amd64",
+          "size": 13975704
+        },
+        {
+          "name": "agentshield-linux-arm64",
+          "size": 13697176
+        },
+        {
+          "name": "agentshield-skill-v0.1.0.zip",
+          "size": 27816
+        },
+        {
+          "name": "agentshield-windows-amd64.exe",
+          "size": 14200832
+        }
+      ]
+    },
+    {
+      "tag_name": "siq-agent-security-v0.2.0",
+      "draft": false,
+      "prerelease": false,
+      "assets": [
+        {
+          "name": "siq-agent-security-darwin-arm64",
+          "size": 13921362
+        },
+        {
+          "name": "siq-agent-security-linux-amd64",
+          "size": 13983896
+        },
+        {
+          "name": "siq-agent-security-linux-arm64",
+          "size": 13697176
+        },
+        {
+          "name": "siq-agent-security-windows-amd64.exe",
+          "size": 14204928
+        }
+      ]
+    }
+  ]
+}

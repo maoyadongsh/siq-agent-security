@@ -1,0 +1,51 @@
+{
+  "observed_at": "2026-09-08T14:39:39.007260+00:00",
+  "operations": [
+    {
+      "method": "PUT",
+      "path": "/private-vulnerability-reporting",
+      "result": "success",
+      "error": null
+    },
+    {
+      "method": "PUT",
+      "path": "/vulnerability-alerts",
+      "result": "success",
+      "error": null
+    },
+    {
+      "method": "PATCH",
+      "path": "",
+      "result": "success",
+      "error": null
+    },
+    {
+      "method": "PUT",
+      "path": "/branches/main/protection",
+      "result": "success",
+      "error": null
+    }
+  ],
+  "security_and_analysis": {
+    "secret_scanning": {
+      "status": "enabled"
+    },
+    "secret_scanning_push_protection": {
+      "status": "enabled"
+    },
+    "dependabot_security_updates": {
+      "status": "enabled"
+    },
+    "secret_scanning_non_provider_patterns": {
+      "status": "disabled"
+    },
+    "secret_scanning_validity_checks": {
+      "status": "disabled"
+    }
+  },
+  "has_discussions": true,
+  "description": "Research artifacts for provenance-bound agent authorization, signed effect evidence, and reproducible security evaluation.",
+  "vulnerability_alerts": {
+    "success": true
+  }
+}

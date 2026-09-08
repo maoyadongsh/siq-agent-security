@@ -245,4 +245,4 @@ CI（`.github/workflows/ci.yml`）四个门禁：**gitleaks**（泄密扫描 + �
 - 部署回执的独立可信验证器与完整性证明待 Phase 4 评估（当前部署回执可信度以 Edge 完整性为上限，ADR-002 已记录残余风险）；
 - Edge mTLS / 设备证书自动轮换、Connector OS 级强隔离（低权限用户/容器/seccomp）为后续加固项；
 - SIQ Export Contract（D3-D5）等跨仓依赖决定 SIQ Connector 与委托维度联调节奏；
-- 许可证待定（开发计划决策 #1），暂未添加 LICENSE 文件。
+- 自有代码采用 Apache-2.0，第三方例外及研究文档范围见根 LICENSES/README.md（开发计划决策 #1），暂未添加 LICENSE 文件。

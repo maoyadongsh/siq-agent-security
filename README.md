@@ -1,5 +1,9 @@
 # SIQ Agent Security
 
+研究入口：[研究指南](docs/research/README.md) · [无模型密钥复现](REPRODUCIBILITY.md) · [引用](CITATION.cff) · [贡献](CONTRIBUTING.md) · [安全报告](SECURITY.md)。自有代码采用 [Apache-2.0](LICENSE)，明确列出的原创研究文档采用 [CC BY 4.0](LICENSES/README.md)，第三方许可保留。
+
+本轮研究开源操作与验证见[实施记录](docs/research/operations-20260908.md)。比赛 V5 材料保留为原始冻结快照；新实验使用独立身份。当前没有论文、DOI 或独立复现认证。
+
 ## Secure Runtime for Agent Skills
 
 > Agent Skills define what agents can do. SIQ defines what they are allowed to do.
@@ -16,7 +20,7 @@ User → StepFun Planning → Dynamic Agent Skills → DGX Local Analysis
 运行 `./scripts/hackathon/start.sh`，再运行 `./scripts/hackathon/healthcheck.sh`。
 详见 [Demo / Quick Start](HACKATHON.md)、[唯一提交状态](docs/hackathon/final-submission-state.md)、[六主题证据索引](docs/hackathon/evidence/INDEX.md)。
 
-**V5 比赛冻结：** main 源码、远端 CI、干净四平台 RC、DGX/StepFun 实机链路和视频均已按范围核验。正式发布、签名、分支保护和赛事上传仍为外部事项，见[最终清单](docs/hackathon/FINAL-SUBMISSION-CHECKLIST.md)。停止功能开发。
+**V5 历史比赛冻结：** 源码、CI、四平台 RC、DGX/StepFun 链路和视频的原始核验范围见[最终清单](docs/hackathon/FINAL-SUBMISSION-CHECKLIST.md)。其签名和赛事上传状态属于当时快照；当前研究开源与仓库治理状态见上方实施记录。
 
 SIQ Agent Security 将“谁授权、允许访问什么、可以产生哪些效果、实际发生了什么”连接成一条可检查的安全链。它以可安装的 Skill 作为交互入口，以本地 Go 程序执行确定性的授权判断，通过运行时适配器接入工具调用，并以签名回执记录决策与结果关联。企业控制面进一步提供多环境资产盘点、证据管理、策略审批和执行协调。
 

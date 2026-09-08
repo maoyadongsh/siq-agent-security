@@ -68,3 +68,7 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 本轮 submission source 固定为当前 main；V5 分支只承载收口材料和发布工具。
 未经明确 publisher / governance authorization 不发布或改仓库设置，准备可审阅材料并记录 external_manual。
 历史 V4/V3/V1 需求与证据保留，V5 原文覆盖冲突的分支、状态和提交口径。
+
+## 当前研究开源周期（2026-09-08）
+
+用户已要求直接实施研究开源，并确认自有代码和原创研究材料属于本人。研究分支 `codex/research-open-source-r1` 基于 V5 文档提交，执行 docs/open-source-research-plan-20260908.md；实际状态见 docs/research/operations-20260908.md 和任务台账。此授权覆盖许可、社区文件、仓库治理、远端提交和研究复现准备，不重复套用上方 V5 的未授权占位状态。V5 比赛源码、制品、视频与原分母仍冻结，不改 runtime 架构。新制品必须有新身份，不伪造正式签名、DOI、外部复现或论文接受。

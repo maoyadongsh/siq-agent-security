@@ -1,0 +1,5015 @@
+{
+  "schema_version": "siq-research-open-source-tasks/v1",
+  "updated_at": "2026-09-08T14:57:14.153352+00:00",
+  "source_document": "docs/open-source-research-plan-20260908.md",
+  "source_document_sha256": "b2e9a1e927c8e90e2994bcfe4beb4d0358e33d638486908ccbfacc5f9a601ab2",
+  "repository": "maoyadongsh/siq-agent-security",
+  "recording_branch": "codex/hackathon-final-release-v5",
+  "recording_head_sha": "e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+  "frozen_v5_runtime_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "frozen_v5_documentation_sha": "e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+  "research_submission_sha": null,
+  "scope": "研究开源实施：实际证据更新状态；冻结比赛制品不变，长期外部研究里程碑不因仓库设置完成而自动完成。",
+  "status_definitions": {
+    "todo": "尚未开始；已有历史能力不能替代本周期验收",
+    "in_progress": "正在执行",
+    "blocked": "有实际阻塞，blocker 写明依赖与下一步",
+    "done": "一次性任务验收通过且 evidence/validation/completed_at 完整",
+    "not_applicable": "仅条件任务或确认不适用的外部能力；有理由、证据与范围，不是跳过难题"
+  },
+  "kind_definitions": {
+    "engineering": "本地实现/工具增量",
+    "documentation": "文档或准备材料",
+    "validation": "真实验证/检查",
+    "manual": "需真实权利人/署名等事实确认",
+    "external_manual": "实际外部动作/人员结果，不以本地文件替代",
+    "conditional": "先判断条件，有依据才执行或标不适用",
+    "research": "后续研究周期任务",
+    "review": "研究结论审阅",
+    "recurring": "持续工作，每期记录，不因一次执行永久完成"
+  },
+  "decision_dependencies": [
+    {
+      "id": "D-01",
+      "title": "授权主体与权利范围",
+      "owner_role": "rights_holder",
+      "first_consumer": "O-01.03",
+      "state": "resolved_for_documented_scope",
+      "rule": "实际权利人确认；不能由提交署名推定。",
+      "evidence": [
+        "docs/research/rights-decision.md",
+        "docs/research/operations-20260908.md",
+        "docs/research/history-disposition.md"
+      ]
+    },
+    {
+      "id": "D-02",
+      "title": "代码与材料许可采纳",
+      "owner_role": "rights_holder",
+      "first_consumer": "O-04.01",
+      "state": "resolved_for_documented_scope",
+      "rule": "Apache-2.0/CC BY 4.0 是方案建议，落盘任务本身不执行许可变更。",
+      "evidence": [
+        "docs/research/rights-decision.md",
+        "docs/research/operations-20260908.md",
+        "docs/research/history-disposition.md"
+      ]
+    },
+    {
+      "id": "D-03",
+      "title": "维护/社区责任及贡献条款",
+      "owner_role": "maintainer",
+      "first_consumer": "O-05.01",
+      "state": "resolved_for_documented_scope",
+      "rule": "有真人接收和执行，响应目标、DCO/准则及权限责任得到确认。",
+      "evidence": [
+        "docs/research/rights-decision.md",
+        "docs/research/operations-20260908.md",
+        "docs/research/history-disposition.md"
+      ]
+    },
+    {
+      "id": "D-04",
+      "title": "GitHub 治理设置执行范围",
+      "owner_role": "repository_admin",
+      "first_consumer": "O-06.02",
+      "state": "resolved_for_documented_scope",
+      "rule": "沿用届时会话已有有效授权，不重复索要；无授权只完成配置准备。",
+      "evidence": [
+        "docs/research/rights-decision.md",
+        "docs/research/operations-20260908.md",
+        "docs/research/history-disposition.md"
+      ]
+    },
+    {
+      "id": "D-05",
+      "title": "正式签名或诚实 unsigned 发行策略",
+      "owner_role": "release_maintainer",
+      "first_consumer": "O-10.03",
+      "state": "unresolved",
+      "rule": "密钥缺位不是生成临时发布者密钥的理由；可采用明确 unsigned 研究候选。",
+      "evidence": []
+    },
+    {
+      "id": "D-06",
+      "title": "对外版本/材料发布范围",
+      "owner_role": "release_maintainer",
+      "first_consumer": "O-11.02",
+      "state": "unresolved",
+      "rule": "核对发布账号、版本、资产和既有有效发布授权。",
+      "evidence": []
+    },
+    {
+      "id": "D-07",
+      "title": "作者元数据与归档账号",
+      "owner_role": "research_lead",
+      "first_consumer": "O-09.01",
+      "state": "resolved_for_documented_scope",
+      "rule": "真实署名由贡献者确认；外部账号连接按实际账号权限处理。",
+      "evidence": [
+        "docs/research/rights-decision.md",
+        "docs/research/operations-20260908.md",
+        "docs/research/history-disposition.md"
+      ]
+    },
+    {
+      "id": "D-08",
+      "title": "新研究周期、设备与计算预算",
+      "owner_role": "research_lead",
+      "first_consumer": "O-15.02",
+      "state": "unresolved",
+      "rule": "研究执行与付费模型/共享设备操作的范围及预算明确；普通 A/B 路径不因此阻塞。",
+      "evidence": []
+    },
+    {
+      "id": "D-09",
+      "title": "外部联系及社区内容发布",
+      "owner_role": "research_lead",
+      "first_consumer": "O-12.02",
+      "state": "unresolved",
+      "rule": "明确对象/渠道/内容范围后使用已有有效授权，不能自动群发。",
+      "evidence": []
+    },
+    {
+      "id": "D-10",
+      "title": "真实凭据处置执行范围",
+      "owner_role": "credential_owner",
+      "first_consumer": "O-03.03",
+      "state": "resolved_for_documented_scope",
+      "rule": "只在确认需处置时适用；吊销/轮换和影响系统由所有者授权。",
+      "evidence": [
+        "docs/research/rights-decision.md",
+        "docs/research/operations-20260908.md",
+        "docs/research/history-disposition.md"
+      ]
+    },
+    {
+      "id": "D-11",
+      "title": "破坏性历史处置",
+      "owner_role": "repository_owner",
+      "first_consumer": "O-03.04",
+      "state": "resolved_for_documented_scope",
+      "rule": "只有判定必须重写/删除历史才需该决策；读取与准备不受此门禁阻塞。",
+      "evidence": [
+        "docs/research/rights-decision.md",
+        "docs/research/operations-20260908.md",
+        "docs/research/history-disposition.md"
+      ]
+    },
+    {
+      "id": "D-12",
+      "title": "论文/评审对外提交",
+      "owner_role": "corresponding_author",
+      "first_consumer": "O-17.03",
+      "state": "unresolved",
+      "rule": "作者、venue、版本、账号及实际提交权限确认，不预设接收结果。",
+      "evidence": []
+    }
+  ],
+  "global_rules": [
+    "JSON 为执行状态事实源，Markdown 是同内容的阅读投影；修改状态时两者同步并重算汇总。",
+    "assignee=null 表示尚未指派，owner_role 仅建议角色；不虚构人员承诺。",
+    "depends_on 表示完成依赖，不阻止先做无依赖的准备部分；不能越过依赖发布结果。",
+    "执行前核查会话授权；有效授权持续适用，不能因为台账列了决策便再次索要同一授权。",
+    "条件任务仅有不适用证据才能 not_applicable，未知或等待外部输入保持 todo/blocked。",
+    "recurring 每次执行单独归档证据与时间；整体任务保持持续状态，不作为首轮发行必须永久完成的条件。",
+    "新实现使用独立研究工作树/分支，不直接在 main 开发，不修改 V5 冻结包、历史 corpus 或原始失败结果。",
+    "planned_outputs 是计划路径，非现有产物证明；evidence 初始为空。",
+    "任务完成须记录验收对应的验证命令、结果及证据；不能因文件存在、任务登记或推送而自动 done。",
+    "A/B 无模型复现独立于 C 的设备/预算；C 未执行则不发布新 C 实测结论。",
+    "首轮研究发行完成不等于论文接收、正式 artifact badge 或全部持续维护任务完成。",
+    "planned_validation 仅为预定方法；validation 是实际执行记录，两者不得混淆。"
+  ],
+  "workstreams": [
+    {
+      "id": "O-01",
+      "title": "确认授权主体、贡献来源与代码/材料边界",
+      "phase": "首周",
+      "owner_role_from_plan": "项目负责人/权利人",
+      "source_acceptance": "来源清单可审阅；不从 Git 作者信息推定全部权利",
+      "status": "done",
+      "task_ids": [
+        "O-01.01",
+        "O-01.02",
+        "O-01.03"
+      ]
+    },
+    {
+      "id": "O-02",
+      "title": "第三方许可证与 vendored 内容清查",
+      "phase": "首周",
+      "owner_role_from_plan": "维护者",
+      "source_acceptance": "OpenClaw、Mermaid、字体及分发依赖均有来源/许可记录",
+      "status": "done",
+      "task_ids": [
+        "O-02.01",
+        "O-02.02",
+        "O-02.03"
+      ]
+    },
+    {
+      "id": "O-03",
+      "title": "历史 seed/凭据复核和处置结论",
+      "phase": "首周",
+      "owner_role_from_plan": "安全维护者",
+      "source_acceptance": "当前树、历史和旧制品范围明确；真实凭据有处置记录",
+      "status": "done",
+      "task_ids": [
+        "O-03.01",
+        "O-03.02",
+        "O-03.03",
+        "O-03.04"
+      ]
+    },
+    {
+      "id": "O-04",
+      "title": "LICENSE、材料许可映射和归属文件",
+      "phase": "首周",
+      "owner_role_from_plan": "权利人/维护者",
+      "source_acceptance": "依赖 O-01/02；实际发布文件授权范围清晰",
+      "status": "in_progress",
+      "task_ids": [
+        "O-04.01",
+        "O-04.02",
+        "O-04.03",
+        "O-04.04"
+      ]
+    },
+    {
+      "id": "O-05",
+      "title": "安全报告渠道、贡献规则、DCO、行为准则",
+      "phase": "首周",
+      "owner_role_from_plan": "维护者",
+      "source_acceptance": "有真实接收/执行人；不发布无人接收的地址",
+      "status": "done",
+      "task_ids": [
+        "O-05.01",
+        "O-05.02",
+        "O-05.03",
+        "O-05.04"
+      ]
+    },
+    {
+      "id": "O-06",
+      "title": "主分支保护和平台扫描配置",
+      "phase": "首周",
+      "owner_role_from_plan": "仓库管理员",
+      "source_acceptance": "经明确执行授权后设置；记录读回及 job contexts",
+      "status": "done",
+      "task_ids": [
+        "O-06.01",
+        "O-06.02",
+        "O-06.03",
+        "O-06.04"
+      ]
+    },
+    {
+      "id": "O-07",
+      "title": "A/B/C 三轨复现说明",
+      "phase": "第 2 周",
+      "owner_role_from_plan": "维护者/首批复现者",
+      "source_acceptance": "A/B 无模型密钥可运行；C 明确硬件/模型要求",
+      "status": "in_progress",
+      "task_ids": [
+        "O-07.01",
+        "O-07.02",
+        "O-07.03",
+        "O-07.04",
+        "O-07.05"
+      ]
+    },
+    {
+      "id": "O-08",
+      "title": "研究导航、dataset card、claims-evidence 表",
+      "phase": "第 2 周",
+      "owner_role_from_plan": "研究负责人",
+      "source_acceptance": "仅链接 canonical 结果；每项指标含分母、范围与失败",
+      "status": "done",
+      "task_ids": [
+        "O-08.01",
+        "O-08.02",
+        "O-08.03",
+        "O-08.04",
+        "O-08.05"
+      ]
+    },
+    {
+      "id": "O-09",
+      "title": "CITATION.cff 与真实作者/版本元数据",
+      "phase": "第 2 周",
+      "owner_role_from_plan": "研究负责人/作者",
+      "source_acceptance": "CFF 校验通过；无虚构作者、论文状态和 DOI",
+      "status": "done",
+      "task_ids": [
+        "O-09.01",
+        "O-09.02",
+        "O-09.03"
+      ]
+    },
+    {
+      "id": "O-10",
+      "title": "从新 SHA 生成研究候选",
+      "phase": "第 2 周",
+      "owner_role_from_plan": "发布维护者",
+      "source_acceptance": "依赖 O-03/04/07/08；精确 SHA 的 CI 与完整制品核验通过",
+      "status": "in_progress",
+      "task_ids": [
+        "O-10.01",
+        "O-10.02",
+        "O-10.03",
+        "O-10.04",
+        "O-10.05"
+      ]
+    },
+    {
+      "id": "O-11",
+      "title": "发布、归档和版本引用验证",
+      "phase": "第 2–4 周",
+      "owner_role_from_plan": "发布维护者",
+      "source_acceptance": "经外部发布授权；逐项验证实际归档文件和标识符",
+      "status": "blocked",
+      "task_ids": [
+        "O-11.01",
+        "O-11.02",
+        "O-11.03",
+        "O-11.04"
+      ]
+    },
+    {
+      "id": "O-12",
+      "title": "收集两组外部复现记录",
+      "phase": "第 2–4 周",
+      "owner_role_from_plan": "研究负责人/外部复现者",
+      "source_acceptance": "至少一组非作者；失败尝试也公开适当清洗后的结果",
+      "status": "in_progress",
+      "task_ids": [
+        "O-12.01",
+        "O-12.02",
+        "O-12.03",
+        "O-12.04"
+      ]
+    },
+    {
+      "id": "O-13",
+      "title": "发布研究导读与技术报告",
+      "phase": "第 2–4 周",
+      "owner_role_from_plan": "作者/维护者",
+      "source_acceptance": "依赖 O-08/11；实验不足之处明确，不冒充论文已接收",
+      "status": "in_progress",
+      "task_ids": [
+        "O-13.01",
+        "O-13.02",
+        "O-13.03",
+        "O-13.04"
+      ]
+    },
+    {
+      "id": "O-14",
+      "title": "开放讨论与首批贡献任务",
+      "phase": "第 2–4 周",
+      "owner_role_from_plan": "维护者",
+      "source_acceptance": "先复现、纠错和负向用例；明确贡献入口和维护能力",
+      "status": "in_progress",
+      "task_ids": [
+        "O-14.01",
+        "O-14.02",
+        "O-14.03"
+      ]
+    },
+    {
+      "id": "O-15",
+      "title": "相关工作、研究协议和 pilot",
+      "phase": "第 2 月",
+      "owner_role_from_plan": "研究负责人",
+      "source_acceptance": "任务/对照/统计/预算预先固定；V5 语料保持独立",
+      "status": "todo",
+      "task_ids": [
+        "O-15.01",
+        "O-15.02",
+        "O-15.03",
+        "O-15.04"
+      ]
+    },
+    {
+      "id": "O-16",
+      "title": "公平对照、消融和外部评估集",
+      "phase": "第 2–3 月",
+      "owner_role_from_plan": "研究贡献者",
+      "source_acceptance": "仅新研究周期；实验权限与基线一致，原失败可追溯",
+      "status": "todo",
+      "task_ids": [
+        "O-16.01",
+        "O-16.02",
+        "O-16.03",
+        "O-16.04",
+        "O-16.05"
+      ]
+    },
+    {
+      "id": "O-17",
+      "title": "论文及正式 artifact evaluation 材料",
+      "phase": "第 2–3 月",
+      "owner_role_from_plan": "作者/复现者",
+      "source_acceptance": "引用实际版本，补齐负面结果、威胁与可复现说明",
+      "status": "todo",
+      "task_ids": [
+        "O-17.01",
+        "O-17.02",
+        "O-17.03",
+        "O-17.04"
+      ]
+    },
+    {
+      "id": "O-18",
+      "title": "维护容量、版本支持与贡献者培养",
+      "phase": "持续",
+      "owner_role_from_plan": "维护者",
+      "source_acceptance": "定期公开支持范围；形成第二维护者后再扩大承诺",
+      "status": "in_progress",
+      "task_ids": [
+        "O-18.01",
+        "O-18.02",
+        "O-18.03"
+      ]
+    }
+  ],
+  "source_coverage": [
+    {
+      "section": "1",
+      "task_ids": [
+        "O-08.01",
+        "O-08.03",
+        "O-12.02",
+        "O-12.03",
+        "O-13.01",
+        "O-18.02"
+      ]
+    },
+    {
+      "section": "2",
+      "task_ids": [
+        "O-01.01",
+        "O-02.01",
+        "O-03.01",
+        "O-06.01",
+        "O-06.03",
+        "O-14.03"
+      ]
+    },
+    {
+      "section": "3",
+      "task_ids": [
+        "O-01.02",
+        "O-01.03",
+        "O-02.01",
+        "O-02.02",
+        "O-02.03",
+        "O-04.01",
+        "O-04.02",
+        "O-04.03",
+        "O-04.04",
+        "O-08.02",
+        "O-10.02"
+      ]
+    },
+    {
+      "section": "4",
+      "task_ids": [
+        "O-07.04",
+        "O-08.01",
+        "O-08.03",
+        "O-08.04",
+        "O-13.01",
+        "O-13.02",
+        "O-15.01",
+        "O-16.02",
+        "O-17.02"
+      ]
+    },
+    {
+      "section": "5",
+      "task_ids": [
+        "O-06.04",
+        "O-07.01",
+        "O-07.02",
+        "O-07.03",
+        "O-07.04",
+        "O-07.05"
+      ]
+    },
+    {
+      "section": "6",
+      "task_ids": [
+        "O-03.04",
+        "O-07.01",
+        "O-07.03",
+        "O-07.05",
+        "O-08.01",
+        "O-08.02",
+        "O-08.03",
+        "O-08.04",
+        "O-08.05",
+        "O-09.01",
+        "O-09.02",
+        "O-09.03",
+        "O-10.01",
+        "O-10.05",
+        "O-11.01",
+        "O-11.02",
+        "O-11.03",
+        "O-11.04",
+        "O-12.03",
+        "O-12.04",
+        "O-13.03",
+        "O-17.01",
+        "O-17.02",
+        "O-17.03",
+        "O-17.04"
+      ]
+    },
+    {
+      "section": "7",
+      "task_ids": [
+        "O-15.01",
+        "O-15.02",
+        "O-15.03",
+        "O-15.04",
+        "O-16.01",
+        "O-16.02",
+        "O-16.03",
+        "O-16.04",
+        "O-16.05"
+      ]
+    },
+    {
+      "section": "8",
+      "task_ids": [
+        "O-03.01",
+        "O-03.02",
+        "O-03.03",
+        "O-03.04",
+        "O-05.01",
+        "O-05.02",
+        "O-05.03",
+        "O-05.04",
+        "O-09.01",
+        "O-12.01",
+        "O-14.01",
+        "O-14.02",
+        "O-14.03",
+        "O-16.05",
+        "O-18.01",
+        "O-18.03"
+      ]
+    },
+    {
+      "section": "9",
+      "task_ids": [
+        "O-02.02",
+        "O-04.04",
+        "O-06.01",
+        "O-06.02",
+        "O-06.03",
+        "O-06.04",
+        "O-08.05",
+        "O-10.01",
+        "O-10.02",
+        "O-10.03",
+        "O-10.04",
+        "O-10.05",
+        "O-11.01",
+        "O-11.02",
+        "O-18.03"
+      ]
+    },
+    {
+      "section": "10",
+      "task_ids": [
+        "O-05.04",
+        "O-08.03",
+        "O-11.01",
+        "O-11.04",
+        "O-12.01",
+        "O-12.02",
+        "O-12.03",
+        "O-12.04",
+        "O-13.01",
+        "O-13.02",
+        "O-13.03",
+        "O-13.04",
+        "O-14.02",
+        "O-14.03",
+        "O-16.04",
+        "O-17.01",
+        "O-17.02",
+        "O-17.03",
+        "O-17.04",
+        "O-18.01",
+        "O-18.02",
+        "O-18.03"
+      ]
+    },
+    {
+      "section": "11",
+      "task_ids": [
+        "O-01.01",
+        "O-01.02",
+        "O-01.03",
+        "O-02.01",
+        "O-02.02",
+        "O-02.03",
+        "O-03.01",
+        "O-03.02",
+        "O-03.03",
+        "O-03.04",
+        "O-04.01",
+        "O-04.02",
+        "O-04.03",
+        "O-04.04",
+        "O-05.01",
+        "O-05.02",
+        "O-05.03",
+        "O-05.04",
+        "O-06.01",
+        "O-06.02",
+        "O-06.03",
+        "O-06.04",
+        "O-07.01",
+        "O-07.02",
+        "O-07.03",
+        "O-07.04",
+        "O-07.05",
+        "O-08.01",
+        "O-08.02",
+        "O-08.03",
+        "O-08.04",
+        "O-08.05",
+        "O-09.01",
+        "O-09.02",
+        "O-09.03",
+        "O-10.01",
+        "O-10.02",
+        "O-10.03",
+        "O-10.04",
+        "O-10.05",
+        "O-11.01",
+        "O-11.02",
+        "O-11.03",
+        "O-11.04",
+        "O-12.01",
+        "O-12.02",
+        "O-12.03",
+        "O-12.04",
+        "O-13.01",
+        "O-13.02",
+        "O-13.03",
+        "O-13.04",
+        "O-14.01",
+        "O-14.02",
+        "O-14.03",
+        "O-15.01",
+        "O-15.02",
+        "O-15.03",
+        "O-15.04",
+        "O-16.01",
+        "O-16.02",
+        "O-16.03",
+        "O-16.04",
+        "O-16.05",
+        "O-17.01",
+        "O-17.02",
+        "O-17.03",
+        "O-17.04",
+        "O-18.01",
+        "O-18.02",
+        "O-18.03"
+      ],
+      "workstream_ids": [
+        "O-01",
+        "O-02",
+        "O-03",
+        "O-04",
+        "O-05",
+        "O-06",
+        "O-07",
+        "O-08",
+        "O-09",
+        "O-10",
+        "O-11",
+        "O-12",
+        "O-13",
+        "O-14",
+        "O-15",
+        "O-16",
+        "O-17",
+        "O-18"
+      ]
+    },
+    {
+      "section": "12",
+      "task_ids": [
+        "O-01.01",
+        "O-01.03",
+        "O-05.01",
+        "O-09.01",
+        "O-17.03"
+      ]
+    }
+  ],
+  "acceptance_gates": [
+    {
+      "id": "G-01",
+      "title": "许可与历史处置具备首发条件",
+      "tasks": [
+        "O-01.03",
+        "O-02.03",
+        "O-03.04",
+        "O-04.04",
+        "O-05.02"
+      ],
+      "state": "not_met"
+    },
+    {
+      "id": "G-02",
+      "title": "无需模型的复现与可核验研究候选就绪",
+      "tasks": [
+        "O-07.02",
+        "O-07.03",
+        "O-07.05",
+        "O-08.03",
+        "O-08.05",
+        "O-09.02",
+        "O-10.05"
+      ],
+      "state": "not_met"
+    },
+    {
+      "id": "G-03",
+      "title": "首轮研究版公开发布与长期引用闭环",
+      "tasks": [
+        "O-06.02",
+        "O-06.03",
+        "O-11.04"
+      ],
+      "depends_on_gates": [
+        "G-01",
+        "G-02"
+      ],
+      "state": "not_met"
+    },
+    {
+      "id": "G-04",
+      "title": "外部复现目标达到",
+      "tasks": [
+        "O-12.03"
+      ],
+      "depends_on_gates": [
+        "G-03"
+      ],
+      "state": "not_met"
+    },
+    {
+      "id": "G-05",
+      "title": "首发传播材料与社区入口齐备",
+      "tasks": [
+        "O-13.04",
+        "O-14.03",
+        "O-18.01"
+      ],
+      "depends_on_gates": [
+        "G-03"
+      ],
+      "state": "not_met"
+    },
+    {
+      "id": "G-06",
+      "title": "新研究论文与评审材料可提交",
+      "tasks": [
+        "O-16.05",
+        "O-17.02"
+      ],
+      "depends_on_gates": [
+        "G-04"
+      ],
+      "state": "not_met"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "O-01.01",
+      "workstream_id": "O-01",
+      "title": "刷新仓库事实与研究基线",
+      "source_sections": [
+        "2",
+        "12"
+      ],
+      "priority": "P0",
+      "kind": "engineering",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/baseline-audit.md",
+        "docs/research/evidence/baseline.json"
+      ],
+      "work": [
+        "只读刷新远端 default branch、SHA、许可检测与社区设置",
+        "比对 V5 runtime SHA、文档 SHA 和原始提交包，不改写历史身份"
+      ],
+      "acceptance": [
+        "观察有 UTC 时间与 GitHub 读取证据",
+        "本轮研究工作树/分支与比赛冻结边界明确；新实现不得直接在 main 或冻结制品中进行"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/baseline-audit.md",
+            "docs/research/evidence/baseline.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/baseline-audit.md",
+        "docs/research/evidence/baseline.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "观察有 UTC 时间与 GitHub 读取证据",
+            "本轮研究工作树/分支与比赛冻结边界明确；新实现不得直接在 main 或冻结制品中进行"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "git status --short --branch",
+            "git rev-parse HEAD",
+            "env -u GITHUB_TOKEN git ls-remote origin refs/heads/main"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-01.02",
+      "workstream_id": "O-01",
+      "title": "建立自有代码和材料来源清单",
+      "source_sections": [
+        "3.1",
+        "3.3"
+      ],
+      "priority": "P0",
+      "kind": "engineering",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/rights-inventory.json"
+      ],
+      "work": [
+        "按组件及文件族登记作者/雇主/合作方来源和可核实授权材料",
+        "区分自有代码、引入片段、AI 辅助提交与第三方作品"
+      ],
+      "acceptance": [
+        "覆盖 Runtime、Secure Agent、Skills、Control API、Edge、Connectors、Web、合同、测试与研究材料",
+        "未知归属显式 unknown；commit 作者名或工具署名不被当作全部权利证明"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/rights-inventory.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/rights-inventory.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "覆盖 Runtime、Secure Agent、Skills、Control API、Edge、Connectors、Web、合同、测试与研究材料",
+            "未知归属显式 unknown；commit 作者名或工具署名不被当作全部权利证明"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-01.03",
+      "workstream_id": "O-01",
+      "title": "确认授权主体及采用许可的范围",
+      "source_sections": [
+        "3.2",
+        "3.3",
+        "12"
+      ],
+      "priority": "P0",
+      "kind": "manual",
+      "status": "done",
+      "owner_role": "rights_holder",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.02",
+        "O-02.03"
+      ],
+      "decision_dependencies": [
+        "D-01",
+        "D-02"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/rights-decision.md"
+      ],
+      "work": [
+        "将来源清单和 Apache-2.0/CC BY 4.0 建议提交有权决定的人确认",
+        "记录代码、材料、商标、历史制品和第三方例外的适用范围"
+      ],
+      "acceptance": [
+        "有实际权利确认记录及其范围；不能由代理填造签名或主体",
+        "未确认文件留在问题清单，不纳入统一授权声明"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/rights-decision.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/rights-decision.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "有实际权利确认记录及其范围；不能由代理填造签名或主体",
+            "未确认文件留在问题清单，不纳入统一授权声明"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-02.01",
+      "workstream_id": "O-02",
+      "title": "核对补丁与 vendored 静态资产",
+      "source_sections": [
+        "2",
+        "3.1",
+        "3.3"
+      ],
+      "priority": "P0",
+      "kind": "engineering",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/third-party-source-inventory.json"
+      ],
+      "work": [
+        "核对 OpenClaw patches 的上游 commit、修改内容及 MIT 原文",
+        "核对 Mermaid bundle 的来源、版本、实际 bundle 内组件和所需通知"
+      ],
+      "acceptance": [
+        "每项有路径、来源、版本/commit、摘要、许可、修改状态",
+        "原版权与许可不被新的项目许可证覆盖；未识别 bundle 内容列为待核查"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/third-party-source-inventory.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/third-party-source-inventory.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "每项有路径、来源、版本/commit、摘要、许可、修改状态",
+            "原版权与许可不被新的项目许可证覆盖；未识别 bundle 内容列为待核查"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-02.02",
+      "workstream_id": "O-02",
+      "title": "核对依赖、字体及其他可分发材料",
+      "source_sections": [
+        "3.1",
+        "3.3",
+        "9"
+      ],
+      "priority": "P0",
+      "kind": "engineering",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/third-party-dependency-inventory.json"
+      ],
+      "work": [
+        "从锁文件及实际发行内容登记 Python/Go/Web 的分发依赖与字体",
+        "区分开发依赖、运行依赖、外部模型/API/镜像以及嵌入文件"
+      ],
+      "acceptance": [
+        "不只登记顶层包；每项明确是否随制品分发及归属义务",
+        "private:true 不被误判为闭源许可；模型权重和外部服务权利不被纳入项目许可"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/third-party-dependency-inventory.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/third-party-dependency-inventory.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不只登记顶层包；每项明确是否随制品分发及归属义务",
+            "private:true 不被误判为闭源许可；模型权重和外部服务权利不被纳入项目许可"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-02.03",
+      "workstream_id": "O-02",
+      "title": "形成第三方许可兼容性与缺口报告",
+      "source_sections": [
+        "3.1",
+        "3.3"
+      ],
+      "priority": "P0",
+      "kind": "engineering",
+      "status": "done",
+      "owner_role": "rights_reviewer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-02.01",
+        "O-02.02"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/license-review.md"
+      ],
+      "work": [
+        "合并代码/资产/依赖清单，检查归属文本、来源缺失与分发范围",
+        "对无法确认的材料提出补授权、排除分发或替换的可审阅方案"
+      ],
+      "acceptance": [
+        "每项缺口有负责人和处理建议，不把未知写为通过",
+        "报告明确哪些内容可进入研究制品；建议替换不自动执行"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/license-review.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/license-review.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "每项缺口有负责人和处理建议，不把未知写为通过",
+            "报告明确哪些内容可进入研究制品；建议替换不自动执行"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-03.01",
+      "workstream_id": "O-03",
+      "title": "完成当前树、历史和既有制品的凭据复核",
+      "source_sections": [
+        "2",
+        "8.3"
+      ],
+      "priority": "P0",
+      "kind": "engineering",
+      "status": "done",
+      "owner_role": "security_maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/history-scan-summary.json",
+        "docs/research/history-review.md"
+      ],
+      "work": [
+        "检查 CI 提及的 signing-key seed 历史以及 branches/tags/旧 Release/归档范围",
+        "复用已校准扫描器；公开记录只包含路径、摘要、类型和数量"
+      ],
+      "acceptance": [
+        "当前树与历史覆盖范围分开记录；取不到的外部归档标为未核验",
+        "不输出秘密值，不自动删除或改写历史"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/evidence/history-scan-summary.json",
+            "docs/research/history-review.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/evidence/history-scan-summary.json",
+        "docs/research/history-review.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "当前树与历史覆盖范围分开记录；取不到的外部归档标为未核验",
+            "不输出秘密值，不自动删除或改写历史"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-03.02",
+      "workstream_id": "O-03",
+      "title": "判定发现项的真实性、有效性与影响",
+      "source_sections": [
+        "8.3"
+      ],
+      "priority": "P0",
+      "kind": "engineering",
+      "status": "done",
+      "owner_role": "security_maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-03.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/history-disposition.md"
+      ],
+      "work": [
+        "在受控私密渠道核对发现项属于测试材料、真实凭据或未知",
+        "记录是否曾用于正式发行、可触达系统、已知暴露和需处置的范围"
+      ],
+      "acceptance": [
+        "每项有受限证据引用与公开脱敏结论",
+        "不能因样本格式像测试 key 就直接判定安全；未知项阻止相关发布声明"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/history-disposition.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/history-disposition.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "每项有受限证据引用与公开脱敏结论",
+            "不能因样本格式像测试 key 就直接判定安全；未知项阻止相关发布声明"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-03.03",
+      "workstream_id": "O-03",
+      "title": "处置确认仍有效的真实凭据",
+      "source_sections": [
+        "8.3"
+      ],
+      "priority": "P0",
+      "kind": "conditional",
+      "status": "not_applicable",
+      "owner_role": "credential_owner",
+      "assignee": null,
+      "depends_on": [
+        "O-03.02"
+      ],
+      "decision_dependencies": [
+        "D-10"
+      ],
+      "condition": "O-03.02 确认存在需处置的真实凭据",
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/credential-remediation-summary.json"
+      ],
+      "work": [
+        "准备吊销/轮换及受影响制品评估方案",
+        "经系统所有者授权后执行并读回失效/替换状态"
+      ],
+      "acceptance": [
+        "有实际撤销/轮换与影响处置记录；删除文件不能替代凭据失效",
+        "未发现适用真实凭据时仅凭 O-03.02 证据标 not_applicable"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/history-disposition.md",
+        "docs/research/evidence/credential-remediation-summary.json"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "有实际撤销/轮换与影响处置记录；删除文件不能替代凭据失效",
+            "未发现适用真实凭据时仅凭 O-03.02 证据标 not_applicable"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ],
+      "not_applicable_reason": "用户确认仅本机开发；当前本机 key 不同，未识别外部依赖环境。"
+    },
+    {
+      "id": "O-03.04",
+      "workstream_id": "O-03",
+      "title": "确认历史保留、勘误或重写的处置结论",
+      "source_sections": [
+        "8.3",
+        "6.2"
+      ],
+      "priority": "P0",
+      "kind": "conditional",
+      "status": "done",
+      "owner_role": "security_maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-03.02",
+        "O-03.03"
+      ],
+      "decision_dependencies": [
+        "D-11"
+      ],
+      "condition": "先做处置决策；只有确需破坏性历史操作时 D-11 才适用",
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/history-resolution.md",
+        "docs/research/evidence/history-resolution.json"
+      ],
+      "work": [
+        "明确是否需协调 forks、镜像、Release 和归档，准备恢复/通知步骤",
+        "仅在确需且有授权时执行历史重写；否则记录无需重写或待外部处置的理由"
+      ],
+      "acceptance": [
+        "保留研究材料与摘要的对应关系，替代版本有勘误说明",
+        "待处置的真实风险不得用签字例外自动算通过；无须重写不要求实际 force push"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/history-resolution.md",
+            "docs/research/evidence/history-resolution.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/history-resolution.md",
+        "docs/research/evidence/history-resolution.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "保留研究材料与摘要的对应关系，替代版本有勘误说明",
+            "待处置的真实风险不得用签字例外自动算通过；无须重写不要求实际 force push"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-04.01",
+      "workstream_id": "O-04",
+      "title": "落地根代码许可与适用范围声明",
+      "source_sections": [
+        "3.2",
+        "3.3"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.03"
+      ],
+      "decision_dependencies": [
+        "D-02"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "LICENSE",
+        "README.md",
+        "skills/siq-agent-security/SKILL.md"
+      ],
+      "work": [
+        "按已确认决定添加未经改写的标准代码许可文本",
+        "同步 README、Skill 与组件适用范围，保留第三方例外"
+      ],
+      "acceptance": [
+        "根许可、组件声明与权利清单一致",
+        "不修改 V5 RC 或倒填历史许可；现有 Skill 子目录声明的变化先核对其范围"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "LICENSE",
+            "README.md",
+            "skills/siq-agent-security/SKILL.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "LICENSE",
+        "README.md",
+        "skills/siq-agent-security/SKILL.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "根许可、组件声明与权利清单一致",
+            "不修改 V5 RC 或倒填历史许可；现有 Skill 子目录声明的变化先核对其范围"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-04.02",
+      "workstream_id": "O-04",
+      "title": "建立文件级材料许可与 SPDX 映射",
+      "source_sections": [
+        "3.1",
+        "3.3"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-04.01",
+        "O-02.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "LICENSES/",
+        "docs/research/license-map.json",
+        "docs/research/license-map.md"
+      ],
+      "work": [
+        "区分原创文本/图表/清洗数据、代码示例与第三方材料",
+        "对确认范围配置 SPDX/许可引用；历史文件逐步核对，不批量覆盖含混目录"
+      ],
+      "acceptance": [
+        "新增分发文件都有许可映射或明确例外",
+        "可执行测试/脚本不误用材料许可；未授权素材不被标 CC BY"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "LICENSES/scope.json",
+            "LICENSES/README.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "LICENSES/scope.json",
+        "LICENSES/README.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "新增分发文件都有许可映射或明确例外",
+            "可执行测试/脚本不误用材料许可；未授权素材不被标 CC BY"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-04.03",
+      "workstream_id": "O-04",
+      "title": "补齐第三方归属与必要 NOTICE",
+      "source_sections": [
+        "3.3"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-04.01",
+        "O-04.02"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "THIRD_PARTY_NOTICES.md",
+        "LICENSES/",
+        "NOTICE（按核查结果有条件添加）"
+      ],
+      "work": [
+        "根据实际分发清单保留上游 copyright/license/attribution",
+        "仅在确有通知内容时加入 NOTICE，并标识修改来源"
+      ],
+      "acceptance": [
+        "OpenClaw MIT、Mermaid 与字体所需通知可追溯",
+        "第三方许可文本可在发行包中找到；不创建假归属或无理由的空 NOTICE"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "NOTICE",
+            "THIRD_PARTY_NOTICES.md",
+            "docs/research/third-party-source-inventory.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "NOTICE",
+        "THIRD_PARTY_NOTICES.md",
+        "docs/research/third-party-source-inventory.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "OpenClaw MIT、Mermaid 与字体所需通知可追溯",
+            "第三方许可文本可在发行包中找到；不创建假归属或无理由的空 NOTICE"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-04.04",
+      "workstream_id": "O-04",
+      "title": "校验源码与制品的许可一致性",
+      "source_sections": [
+        "3.3",
+        "9"
+      ],
+      "priority": "P0",
+      "kind": "validation",
+      "status": "in_progress",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-04.02",
+        "O-04.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/license-validation.json",
+        "现有打包/静态检查入口（必要增量）"
+      ],
+      "work": [
+        "校验许可映射路径、未知项、引用和打包包含关系",
+        "为漏带已要求的许可通知或未映射发行文件建立必要校验"
+      ],
+      "acceptance": [
+        "不能因根 LICENSE 存在就判全仓通过",
+        "所有许可缺口已解决或被明确排除出此次分发范围；验证命令与范围记录完整"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/operations-20260908.md"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不能因根 LICENSE 存在就判全仓通过",
+            "所有许可缺口已解决或被明确排除出此次分发范围；验证命令与范围记录完整"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "核对实际分发文件与 license-map/THIRD_PARTY_NOTICES 一致；缺失许可通知或未映射文件必须拒绝通过。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-05.01",
+      "workstream_id": "O-05",
+      "title": "起草 SECURITY 与受理流程",
+      "source_sections": [
+        "8.3",
+        "12"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.01"
+      ],
+      "decision_dependencies": [
+        "D-03"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "SECURITY.md",
+        "docs/research/security-response-process.md"
+      ],
+      "work": [
+        "列出维护版本、私密报告渠道、必要材料、清洗、协调披露和修复步骤",
+        "让真实接收者确认三工作日/十工作日等内部目标及执行责任"
+      ],
+      "acceptance": [
+        "未确认目标不写成 SLA；未启用入口不宣称可用",
+        "有实际负责人；未修复漏洞不要求提交公开 PoC"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "SECURITY.md",
+            "docs/research/security-response-process.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "SECURITY.md",
+        "docs/research/security-response-process.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "未确认目标不写成 SLA；未启用入口不宣称可用",
+            "有实际负责人；未修复漏洞不要求提交公开 PoC"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-05.02",
+      "workstream_id": "O-05",
+      "title": "启用并验证私密漏洞报告入口",
+      "source_sections": [
+        "8.3"
+      ],
+      "priority": "P0",
+      "kind": "external_manual",
+      "status": "done",
+      "owner_role": "repository_admin",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-05.01"
+      ],
+      "decision_dependencies": [
+        "D-04"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/private-reporting-readback.json",
+        "SECURITY.md"
+      ],
+      "work": [
+        "准备 GitHub private vulnerability reporting 设置",
+        "经既有有效治理授权执行并检查入口、权限及接收流程"
+      ],
+      "acceptance": [
+        "实际 API/UI readback 证明可用；不对外投递虚构漏洞",
+        "SECURITY 指向真实入口，受理者确认接收责任"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/evidence/private-reporting-readback.json",
+            "SECURITY.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/evidence/private-reporting-readback.json",
+        "SECURITY.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "实际 API/UI readback 证明可用；不对外投递虚构漏洞",
+            "SECURITY 指向真实入口，受理者确认接收责任"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-05.03",
+      "workstream_id": "O-05",
+      "title": "建立贡献规则、DCO 和贡献检查",
+      "source_sections": [
+        "8.1",
+        "8.2"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-04.01",
+        "O-07.01"
+      ],
+      "decision_dependencies": [
+        "D-03"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "CONTRIBUTING.md",
+        "DCO",
+        ".github/（DCO 校验配置，如采用）"
+      ],
+      "work": [
+        "记录按组件开发/测试命令、负向测试和复现贡献方式",
+        "采用确认后的 DCO Signed-off-by 流程，声明其不是版权转让，不补造历史签署"
+      ],
+      "acceptance": [
+        "贡献者能在无模型/发布密钥环境走通常规校验",
+        "不强加未采纳 CLA；DCO 配置如依赖外部 App 则先完成权限决策"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "CONTRIBUTING.md",
+            "DCO"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "CONTRIBUTING.md",
+        "DCO"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "贡献者能在无模型/发布密钥环境走通常规校验",
+            "不强加未采纳 CLA；DCO 配置如依赖外部 App 则先完成权限决策"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-05.04",
+      "workstream_id": "O-05",
+      "title": "建立治理、行为准则及署名规则",
+      "source_sections": [
+        "8.2",
+        "10.2"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.03"
+      ],
+      "decision_dependencies": [
+        "D-03"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "GOVERNANCE.md",
+        "CODE_OF_CONDUCT.md"
+      ],
+      "work": [
+        "说明维护者任免、研究协议评审、利益冲突、合并/发布与申诉规则",
+        "区分代码贡献、数据贡献、致谢、论文作者与推荐引用"
+      ],
+      "acceptance": [
+        "明确单维护者现实，不宣称现有独立复审",
+        "执行/申诉渠道有人负责；不在 Apache 之外追加强制论文引用条件"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "GOVERNANCE.md",
+            "CODE_OF_CONDUCT.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "GOVERNANCE.md",
+        "CODE_OF_CONDUCT.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "明确单维护者现实，不宣称现有独立复审",
+            "执行/申诉渠道有人负责；不在 Apache 之外追加强制论文引用条件"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-06.01",
+      "workstream_id": "O-06",
+      "title": "准备治理设置与所需 job contexts",
+      "source_sections": [
+        "2",
+        "9"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "repository_admin",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/repository-settings-plan.md"
+      ],
+      "work": [
+        "读取实际 CI job contexts、现有规则和 CODEOWNERS",
+        "准备 PR、status checks、conversation resolution、禁止 force push、绕过权限的逐项配置"
+      ],
+      "acceptance": [
+        "不把工作流名当作全部 required job contexts",
+        "包含配置影响、适用分支、回滚方案及读回步骤"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/repository-settings-plan.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/repository-settings-plan.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不把工作流名当作全部 required job contexts",
+            "包含配置影响、适用分支、回滚方案及读回步骤"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-06.02",
+      "workstream_id": "O-06",
+      "title": "实施并核验主分支保护",
+      "source_sections": [
+        "9"
+      ],
+      "priority": "P0",
+      "kind": "external_manual",
+      "status": "done",
+      "owner_role": "repository_admin",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-06.01"
+      ],
+      "decision_dependencies": [
+        "D-04"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/branch-protection-readback.json"
+      ],
+      "work": [
+        "按审阅后的配置实施保护和 CODEOWNERS 强制规则",
+        "核查绕过主体、force push 与合并条件"
+      ],
+      "acceptance": [
+        "有实际规则 readback，CODEOWNERS 文件本身不当作已强制",
+        "只有授权范围内设置发生变更，缺权限保持 blocked"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/evidence/branch-protection-readback.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/evidence/branch-protection-readback.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "有实际规则 readback，CODEOWNERS 文件本身不当作已强制",
+            "只有授权范围内设置发生变更，缺权限保持 blocked"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-06.03",
+      "workstream_id": "O-06",
+      "title": "实施平台扫描与依赖安全更新",
+      "source_sections": [
+        "2",
+        "9"
+      ],
+      "priority": "P0",
+      "kind": "external_manual",
+      "status": "done",
+      "owner_role": "repository_admin",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-06.01"
+      ],
+      "decision_dependencies": [
+        "D-04"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        ".github/dependabot.yml（如需）",
+        "docs/research/evidence/platform-security-readback.json"
+      ],
+      "work": [
+        "逐项规划并启用 secret scanning、push protection、依赖安全更新",
+        "检查权限/功能可用性并与现有 gitleaks/锁定依赖配合"
+      ],
+      "acceptance": [
+        "每项有开启或不可用的真实理由，不能用自建扫描替代平台读回",
+        "不可用项显式处理，不自动视为已启用；更新不跳过受影响检查"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/evidence/platform-security-readback.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/evidence/platform-security-readback.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "每项有开启或不可用的真实理由，不能用自建扫描替代平台读回",
+            "不可用项显式处理，不自动视为已启用；更新不跳过受影响检查"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-06.04",
+      "workstream_id": "O-06",
+      "title": "审计 fork PR 与模型/签名凭据边界",
+      "source_sections": [
+        "5",
+        "9"
+      ],
+      "priority": "P0",
+      "kind": "validation",
+      "status": "done",
+      "owner_role": "security_maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-06.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        ".github/workflows/（必要最小修正）",
+        "docs/research/evidence/ci-trust-boundary-review.json"
+      ],
+      "work": [
+        "检查不受信 PR 的 token 权限、事件、缓存/制品和受控执行路径",
+        "隔离真实模型、共享 DGX 与发布密钥，复用现有 CI"
+      ],
+      "acceptance": [
+        "常规 PR 无需付费模型和 GPU；不受信代码不能取得受保护执行权限",
+        "如修改流程，有针对相应越界风险的检查；未修改也记录实际审阅证据"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/evidence/ci-trust-boundary-review.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/evidence/ci-trust-boundary-review.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "常规 PR 无需付费模型和 GPU；不受信代码不能取得受保护执行权限",
+            "如修改流程，有针对相应越界风险的检查；未修改也记录实际审阅证据"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "按实际 workflow 事件与 token 权限审阅 fork PR；确认无 provider/签名密钥或共享 DGX 的不受信执行路径。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-07.01",
+      "workstream_id": "O-07",
+      "title": "编写三轨复现总入口与依赖说明",
+      "source_sections": [
+        "5",
+        "6"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "REPRODUCIBILITY.md"
+      ],
+      "work": [
+        "复用现有启动器和基准命令，列 Go/Python/Node/OS 及锁定依赖",
+        "分别写 A 演示、B 控制基准、C 实模型要求和全新 state/output 路径"
+      ],
+      "acceptance": [
+        "A/B 不要求模型 key 或 DGX；首次安装联网要求明示",
+        "功能/统计复现与逐字节构建复现区分，失败诊断可执行"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "REPRODUCIBILITY.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "REPRODUCIBILITY.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "A/B 不要求模型 key 或 DGX；首次安装联网要求明示",
+            "功能/统计复现与逐字节构建复现区分，失败诊断可执行"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-07.02",
+      "workstream_id": "O-07",
+      "title": "在普通 Linux 验证 fixture 演示路径 A",
+      "source_sections": [
+        "5"
+      ],
+      "priority": "P0",
+      "kind": "validation",
+      "status": "in_progress",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-07.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/reproduction-a/",
+        "REPRODUCIBILITY.md"
+      ],
+      "work": [
+        "以显式 test 模式运行 normal、MCP、same-value、fake-success",
+        "检查浏览器配对、真实 SIQ 结果和 receiver 读回，保留环境与命令"
+      ],
+      "acceptance": [
+        "无需模型密钥并且没有真实 provider 调用；fixture 标识可见",
+        "成功任务完成、攻击被拒、缺失效果不当成功，失败也归档"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/evidence/reproduction-a/",
+        "REPRODUCIBILITY.md"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "无需模型密钥并且没有真实 provider 调用；fixture 标识可见",
+            "成功任务完成、攻击被拒、缺失效果不当成功，失败也归档"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "./scripts/hackathon/start.sh --mode test",
+            "./scripts/hackathon/healthcheck.sh",
+            "复用 browser-smoke.py 的 normal/MCP/same-value/fake-success 断言，state/output 必须是新的隔离路径。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-07.03",
+      "workstream_id": "O-07",
+      "title": "验证固定基准与离线证据路径 B",
+      "source_sections": [
+        "5",
+        "6.1"
+      ],
+      "priority": "P0",
+      "kind": "validation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-07.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/reproduction-b/",
+        "REPRODUCIBILITY.md"
+      ],
+      "work": [
+        "复用 hackathon/runtime-security 执行器与 verifier，使用固定 corpus",
+        "记录二进制/corpus/verifier 摘要、全部尝试和验签统计"
+      ],
+      "acceptance": [
+        "全部必需场景覆盖且重算指标与原始记录一致；子集明确 partial",
+        "不将随报告公钥当外部身份保证，也不把缺失效果证据改写为无效果"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/evidence/reproduction-b/",
+            "REPRODUCIBILITY.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/evidence/reproduction-b/",
+        "REPRODUCIBILITY.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "全部必需场景覆盖且重算指标与原始记录一致；子集明确 partial",
+            "不将随报告公钥当外部身份保证，也不把缺失效果证据改写为无效果"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "依 benchmarks/hackathon/README.md 和 benchmarks/runtime-security/README.md 的现有命令运行固定 corpus；分别调用对应 verifier 重算统计。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-07.04",
+      "workstream_id": "O-07",
+      "title": "配置并验证实模型与 DGX 路径 C",
+      "source_sections": [
+        "5",
+        "4.1"
+      ],
+      "priority": "P1",
+      "kind": "validation",
+      "status": "todo",
+      "owner_role": "maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-07.01",
+        "O-06.04"
+      ],
+      "decision_dependencies": [
+        "D-08"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/reproduction-c/",
+        "REPRODUCIBILITY.md"
+      ],
+      "work": [
+        "使用批准预算和真实 provider/硬件，记录模型、时间、配置和错误",
+        "复用 canary 与本地失败测试，分别记录 StepFun 规划和 DGX 分析"
+      ],
+      "acceptance": [
+        "没有调用/硬件的部分标 unverified，不能 fixture 冒充实模型",
+        "机密 canary 不进入远程 transport，本地失败不获准 fallback；不要求输出逐字等于旧样本"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "没有调用/硬件的部分标 unverified，不能 fixture 冒充实模型",
+            "机密 canary 不进入远程 transport，本地失败不获准 fallback；不要求输出逐字等于旧样本"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "复用 scripts/hackathon/locality_checkpoint.py；采用实际本地 transport 故障，记录 CONFIDENTIAL canary 与远程请求数。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-07.05",
+      "workstream_id": "O-07",
+      "title": "完成三轨环境矩阵与故障说明",
+      "source_sections": [
+        "5",
+        "6.1"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "in_progress",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-07.02",
+        "O-07.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/environment-matrix.md",
+        "REPRODUCIBILITY.md"
+      ],
+      "work": [
+        "整合 A/B 结果和 C 的实际可用/未运行状态",
+        "列出平台、依赖安装、端口、provider、权限、verifier 错误的诊断步骤"
+      ],
+      "acceptance": [
+        "普通 Linux 复现不被写成全部 OS 原生验收",
+        "C 未运行不会阻塞无 GPU 的 A/B 文档，但 C 的新实测结论不得发布"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/environment-matrix.md",
+        "REPRODUCIBILITY.md"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "普通 Linux 复现不被写成全部 OS 原生验收",
+            "C 未运行不会阻塞无 GPU 的 A/B 文档，但 C 的新实测结论不得发布"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-08.01",
+      "workstream_id": "O-08",
+      "title": "建立研究入口、定位与问题映射",
+      "source_sections": [
+        "1",
+        "4.1",
+        "6"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/README.md",
+        "docs/research/research-questions.md"
+      ],
+      "work": [
+        "以现有项目名称和 RQ1–RQ5 建立研究导航",
+        "关联既有代码/证据及待补实验，保留企业组件为可选表面"
+      ],
+      "acceptance": [
+        "候选研究问题不标为已发表创新；不新增框架或拆仓",
+        "研究入口引用 canonical 数据，不形成第二套比赛 current truth"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/README.md",
+            "docs/research/research-questions.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/README.md",
+        "docs/research/research-questions.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "候选研究问题不标为已发表创新；不新增框架或拆仓",
+            "研究入口引用 canonical 数据，不形成第二套比赛 current truth"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-08.02",
+      "workstream_id": "O-08",
+      "title": "编制数据卡与公开清洗规则",
+      "source_sections": [
+        "3.1",
+        "6.1"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-02.03",
+        "O-03.02"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/dataset-card.md",
+        "docs/research/data-export-policy.md"
+      ],
+      "work": [
+        "登记合成/真实来源、任务分布、许可、重复/污染与限制",
+        "定义公共证据白名单、身份清洗和受限资料引用规则"
+      ],
+      "acceptance": [
+        "不公开 token/seed/原始状态或未经许可的数据",
+        "每项数据有使用范围与可追溯来源；测试 fixtures 与真实模型 cohort 分开"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/dataset-card.md",
+            "docs/research/data-export-policy.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/dataset-card.md",
+        "docs/research/data-export-policy.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不公开 token/seed/原始状态或未经许可的数据",
+            "每项数据有使用范围与可追溯来源；测试 fixtures 与真实模型 cohort 分开"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-08.03",
+      "workstream_id": "O-08",
+      "title": "建立逐项结论与证据映射",
+      "source_sections": [
+        "1",
+        "4.2",
+        "6.1",
+        "10.2"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-08.01",
+        "O-08.02"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/claims-evidence.md",
+        "docs/research/claims-evidence.json"
+      ],
+      "work": [
+        "为每条对外实证结论绑定源码、实验、指标分母和 canonical 证据",
+        "注明 missing/unknown、同 UID、受控 observer、小样本及未验证范围"
+      ],
+      "acceptance": [
+        "冻结数字和早期 4/5 失败完整保留",
+        "同值来源、Completion 和 locality 的结论有各自证据，不混用 fixture 与实模型成功率"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/claims-evidence.md",
+            "docs/research/claims-evidence.json"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/claims-evidence.md",
+        "docs/research/claims-evidence.json"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "冻结数字和早期 4/5 失败完整保留",
+            "同值来源、Completion 和 locality 的结论有各自证据，不混用 fixture 与实模型成功率"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-08.04",
+      "workstream_id": "O-08",
+      "title": "记录当前基线评价协议与复算方法",
+      "source_sections": [
+        "6.1",
+        "4.2"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-07.03",
+        "O-08.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evaluation-protocol.md",
+        "docs/research/result-reproduction.md"
+      ],
+      "work": [
+        "记录现有基线任务、排除、超时/重试、重复与分母口径",
+        "复用 verifier/指标输出生成表格，不复制第二个执行引擎"
+      ],
+      "acceptance": [
+        "历史已经运行的实验称 retrospective protocol，不伪称预注册",
+        "表格可由已归档数据复算；更强研究协议另由 O-15 建立"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/evaluation-protocol.md",
+            "docs/research/result-reproduction.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/evaluation-protocol.md",
+        "docs/research/result-reproduction.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "历史已经运行的实验称 retrospective protocol，不伪称预注册",
+            "表格可由已归档数据复算；更强研究协议另由 O-15 建立"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-08.05",
+      "workstream_id": "O-08",
+      "title": "定义研究制品身份清单及版本规则",
+      "source_sections": [
+        "6.1",
+        "6.2",
+        "9"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-08.02",
+        "O-08.04"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/artifact-manifest-spec.md",
+        "docs/research/artifact-layout.md"
+      ],
+      "work": [
+        "定义 runtime/docs/corpus/verifier/toolchain/platform/digest 的独立身份字段",
+        "规划源码、数据、视频、附件、许可、引用的归档布局及替代/勘误方式"
+      ],
+      "acceptance": [
+        "不自引用制品本身哈希；外层 checksum 单独存在",
+        "字段复用已有 source-info/evidence manifest，额外研究字段不复制原始证据"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/artifact-manifest-spec.md",
+            "docs/research/artifact-layout.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/artifact-manifest-spec.md",
+        "docs/research/artifact-layout.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不自引用制品本身哈希；外层 checksum 单独存在",
+            "字段复用已有 source-info/evidence manifest，额外研究字段不复制原始证据"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-09.01",
+      "workstream_id": "O-09",
+      "title": "确认软件与论文署名元数据",
+      "source_sections": [
+        "6.1",
+        "6.2",
+        "8.2",
+        "12"
+      ],
+      "priority": "P1",
+      "kind": "manual",
+      "status": "done",
+      "owner_role": "research_lead",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-01.02"
+      ],
+      "decision_dependencies": [
+        "D-07"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/authorship-decision.md"
+      ],
+      "work": [
+        "由实际贡献者确认姓名、角色、ORCID（如有）与软件贡献归属",
+        "将论文作者资格、软件作者、致谢分别记录"
+      ],
+      "acceptance": [
+        "不从 Git 用户名虚构真实姓名、作者顺序或 ORCID",
+        "未发表论文不填接收状态或虚构 DOI"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/authorship-decision.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/authorship-decision.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不从 Git 用户名虚构真实姓名、作者顺序或 ORCID",
+            "未发表论文不填接收状态或虚构 DOI"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-09.02",
+      "workstream_id": "O-09",
+      "title": "编制并验证 CITATION.cff",
+      "source_sections": [
+        "6.2"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-09.01",
+        "O-08.05"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "CITATION.cff",
+        "docs/research/evidence/citation-validation.json"
+      ],
+      "work": [
+        "使用已确认软件作者/版本/仓库元数据，按 CFF 规范校验",
+        "没有实际 DOI 时省略该字段，后续真实引用单独记录"
+      ],
+      "acceptance": [
+        "CFF 解析/校验通过，字段对应真实对象",
+        "不伪称 default branch 引用按钮已经生效；发行日期与版本须在发布时复核"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "CITATION.cff"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "CITATION.cff"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "CFF 解析/校验通过，字段对应真实对象",
+            "不伪称 default branch 引用按钮已经生效；发行日期与版本须在发布时复核"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "采用实施时核验的官方 CFF schema 校验解析与字段；DOI/作者/版本必须对应真实事实。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-09.03",
+      "workstream_id": "O-09",
+      "title": "设计版本引用、项目入口和 DOI 对应关系",
+      "source_sections": [
+        "6.2"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-09.02"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/citation-guide.md"
+      ],
+      "work": [
+        "给出实验引用具体版本、项目引用长期入口、论文 preferred-citation 的规则",
+        "说明注册后引用更新产生新文档提交，不回写改变冻结身份"
+      ],
+      "acceptance": [
+        "示例中的占位符明确为示例且不能进入正式发行元数据",
+        "软件、论文、源码归档和数据/视频记录不会共享虚构的同一 DOI"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/citation-guide.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/citation-guide.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "示例中的占位符明确为示例且不能进入正式发行元数据",
+            "软件、论文、源码归档和数据/视频记录不会共享虚构的同一 DOI"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-10.01",
+      "workstream_id": "O-10",
+      "title": "确定研究发行范围与身份更新流程",
+      "source_sections": [
+        "9",
+        "6.1"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "in_progress",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-04.04",
+        "O-07.05",
+        "O-08.05"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/release-scope.md"
+      ],
+      "work": [
+        "明确此次分发是本地 Runtime 研究链路还是包含企业组件",
+        "制定新 SHA/未占用 tag 的选择和 main 集成后的重新构建规则"
+      ],
+      "acceptance": [
+        "新许可后的版本与旧 V5 RC 分开；不覆盖任何历史 tag",
+        "研究 work branch、基线及变更范围有记录；冻结比赛制品保持原样"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/operations-20260908.md"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "新许可后的版本与旧 V5 RC 分开；不覆盖任何历史 tag",
+            "研究 work branch、基线及变更范围有记录；冻结比赛制品保持原样"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-10.02",
+      "workstream_id": "O-10",
+      "title": "按实际发行范围补齐 SBOM 与归属包",
+      "source_sections": [
+        "9",
+        "3.3"
+      ],
+      "priority": "P0",
+      "kind": "engineering",
+      "status": "todo",
+      "owner_role": "maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-10.01",
+        "O-02.02"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "scripts/hackathon/package_rc.py（必要增量）",
+        "docs/research/evidence/sbom-scope.json"
+      ],
+      "work": [
+        "复用已有 CycloneDX/source-info/inventory，按选定分发范围核查覆盖",
+        "若分发企业组件则补其实际依赖，若不分发则明确排除"
+      ],
+      "acceptance": [
+        "旧 scoped RC SBOM 不被宣称全仓供应链完整",
+        "缺少已分发组件或通知时校验失败；增量有必要的打包验证"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "旧 scoped RC SBOM 不被宣称全仓供应链完整",
+            "缺少已分发组件或通知时校验失败；增量有必要的打包验证"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-10.03",
+      "workstream_id": "O-10",
+      "title": "完成发布者认证与构建证明方案",
+      "source_sections": [
+        "9"
+      ],
+      "priority": "P0",
+      "kind": "engineering",
+      "status": "todo",
+      "owner_role": "maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-10.01",
+        "O-06.04"
+      ],
+      "decision_dependencies": [
+        "D-05"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/release-authentication.md",
+        "docs/research/evidence/signing-readiness.json"
+      ],
+      "work": [
+        "核对现有 publisher key 支持，形成 signed/unsigned 的准确发布状态",
+        "评估 artifact attestations 的价值与身份校验；仅采用时扩展既有工作流"
+      ],
+      "acceptance": [
+        "不使用 test/development/temporary key 认证正式候选",
+        "hash、GitHub 构建来源证明、现有 publisher 信任规则和实验真实性分别说明；可接受诚实 unsigned 研究候选"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不使用 test/development/temporary key 认证正式候选",
+            "hash、GitHub 构建来源证明、现有 publisher 信任规则和实验真实性分别说明；可接受诚实 unsigned 研究候选"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-10.04",
+      "workstream_id": "O-10",
+      "title": "执行新研究 SHA 的 CI 与受影响回归",
+      "source_sections": [
+        "9"
+      ],
+      "priority": "P0",
+      "kind": "validation",
+      "status": "todo",
+      "owner_role": "maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-10.02",
+        "O-10.03",
+        "O-09.02",
+        "O-03.04",
+        "O-05.02",
+        "O-06.04"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/release-ci.json",
+        "docs/research/evidence/release-regression.json"
+      ],
+      "work": [
+        "先完成许可/文档/打包增量审阅，按用户实际授权提交集成流程",
+        "针对最终选定 SHA 运行真实 ci/runtime-security 与必要本地检查，保留命令/job/run ID"
+      ],
+      "acceptance": [
+        "旧 d127711 CI 不冒充新研究 SHA 的结果；最终源码变动触发相应重验",
+        "仅文档变更做链接/格式检查，打包或安全变更执行相应有意义验证，不盲目重复全部检查"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "旧 d127711 CI 不冒充新研究 SHA 的结果；最终源码变动触发相应重验",
+            "仅文档变更做链接/格式检查，打包或安全变更执行相应有意义验证，不盲目重复全部检查"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "go test ./... / go test -race ./... / go vet ./...（仅受影响 Go module；保留实际 cwd）",
+            "复用现有 ci/runtime-security 对最终 SHA 运行；文档仅做链接/格式校验，打包增量运行现有 package tests。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-10.05",
+      "workstream_id": "O-10",
+      "title": "从干净源码构建并验收研究候选",
+      "source_sections": [
+        "9",
+        "6.1"
+      ],
+      "priority": "P0",
+      "kind": "validation",
+      "status": "todo",
+      "owner_role": "maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-10.04"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/research-rc.json",
+        "研究候选包（Git 之外）"
+      ],
+      "work": [
+        "用新冻结源码复用打包器，核对源码构建前后干净、版本与文件库存",
+        "验证各分发目标、内外 checksums、SBOM/许可/身份/研究导航，并解包运行无模型路径"
+      ],
+      "acceptance": [
+        "最终 SHA 具备成功 CI；制品指向实际源码而非 dirty-source manifest",
+        "原生验收与 cross-build 区分；包内不含秘密/私密状态；启动后包未污染"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "最终 SHA 具备成功 CI；制品指向实际源码而非 dirty-source manifest",
+            "原生验收与 cross-build 区分；包内不含秘密/私密状态；启动后包未污染"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "git status --porcelain（构建前后均为空）",
+            "python3 scripts/hackathon/package_rc.py --out <新候选目录> --verify-only",
+            "sha256sum -c SHA256SUMS（候选内和外层分别核查，记录 cwd）"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-11.01",
+      "workstream_id": "O-11",
+      "title": "准备可审阅的研究发布与归档材料",
+      "source_sections": [
+        "6.2",
+        "9",
+        "10.1"
+      ],
+      "priority": "P0",
+      "kind": "documentation",
+      "status": "todo",
+      "owner_role": "maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-10.05",
+        "O-09.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/release-notes.md",
+        "docs/research/publication-plan.md"
+      ],
+      "work": [
+        "准备 prerelease 说明、资产清单、精确 tag 命令、归档映射和引用元数据",
+        "列出未执行状态、缺少外部复现与已知边界"
+      ],
+      "acceptance": [
+        "材料可独立审阅，版本/哈希/许可一致",
+        "没有发布授权时仍完成准备；不生成假 Release URL 或 DOI"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "材料可独立审阅，版本/哈希/许可一致",
+            "没有发布授权时仍完成准备；不生成假 Release URL 或 DOI"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-11.02",
+      "workstream_id": "O-11",
+      "title": "发布新研究版本至 GitHub",
+      "source_sections": [
+        "9",
+        "6.2"
+      ],
+      "priority": "P0",
+      "kind": "external_manual",
+      "status": "todo",
+      "owner_role": "release_maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-11.01",
+        "O-06.02",
+        "O-06.03"
+      ],
+      "decision_dependencies": [
+        "D-06"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/github-research-release.json"
+      ],
+      "work": [
+        "按有效 publisher 授权再次核对 SHA、远端 tag 和全部资产",
+        "创建新 prerelease 并读回版本/资产摘要和签名状态"
+      ],
+      "acceptance": [
+        "实际 Release URL 和资产校验通过；不覆盖既有 tag 或旧文件",
+        "若要求集成后 main 为源码，须先回 O-10.04/05 重冻重建，不直接沿用分支包"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "实际 Release URL 和资产校验通过；不覆盖既有 tag 或旧文件",
+            "若要求集成后 main 为源码，须先回 O-10.04/05 重冻重建，不直接沿用分支包"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-11.03",
+      "workstream_id": "O-11",
+      "title": "连接归档账号并保存实际研究制品",
+      "source_sections": [
+        "6.2"
+      ],
+      "priority": "P0",
+      "kind": "external_manual",
+      "status": "blocked",
+      "owner_role": "archive_account_owner",
+      "assignee": null,
+      "depends_on": [
+        "O-11.01"
+      ],
+      "decision_dependencies": [
+        "D-06",
+        "D-07"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/archive-upload.json"
+      ],
+      "work": [
+        "审阅 Zenodo 等账号权限并在获准后连接、归档选定版本",
+        "逐项检查源码、研究数据、视频和二进制附件实际存在，必要时采用关联记录"
+      ],
+      "acceptance": [
+        "不默认 GitHub 源码快照包含 Release 所有附件",
+        "处理失败真实保留；无账号/发布授权时保持 blocked 而非生成假 DOI"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/citation-policy.md"
+      ],
+      "blocker": "当前无已连接的 Zenodo/长期归档账号或归档认证；继续其他仓库工作，不生成占位 DOI。",
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不默认 GitHub 源码快照包含 Release 所有附件",
+            "处理失败真实保留；无账号/发布授权时保持 blocked 而非生成假 DOI"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-11.04",
+      "workstream_id": "O-11",
+      "title": "核验 DOI、默认分支引用和长期下载",
+      "source_sections": [
+        "6.2",
+        "10.1"
+      ],
+      "priority": "P0",
+      "kind": "validation",
+      "status": "todo",
+      "owner_role": "release_maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-11.02",
+        "O-11.03",
+        "O-09.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/archive-verification.json",
+        "docs/research/citation-guide.md"
+      ],
+      "work": [
+        "验证 DOI 解析、版本元数据、实际归档文件与下载哈希",
+        "在获准集成 CITATION.cff 后读回默认分支引用入口，并记录该文档提交的独立身份"
+      ],
+      "acceptance": [
+        "实际评估版本与其 DOI 对应；未归档附件明确列出",
+        "仅实测通过的对象标为已归档/可引用；引用更新不改写冻结制品"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "实际评估版本与其 DOI 对应；未归档附件明确列出",
+            "仅实测通过的对象标为已归档/可引用；引用更新不改写冻结制品"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "实际下载归档的每项文件并比对已冻结哈希；验证 DOI 解析和版本关系；读取默认分支 CITATION.cff 并检查引用入口。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-12.01",
+      "workstream_id": "O-12",
+      "title": "准备外部复现模板与清洗同意说明",
+      "source_sections": [
+        "8.1",
+        "10.1",
+        "10.2"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "in_progress",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-07.05",
+        "O-08.02",
+        "O-05.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        ".github/ISSUE_TEMPLATE/reproduction.yml",
+        "docs/research/external-reproduction-guide.md"
+      ],
+      "work": [
+        "模板收集版本、环境、命令、摘要、偏差与失败原因",
+        "说明公开字段、清洗流程、身份/联系方式可选及结果使用同意"
+      ],
+      "acceptance": [
+        "不要求提交私密状态或 token；维护者和外部运行分开标识",
+        "可提交失败或部分复现，不预设全部结果必须通过"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        ".github/ISSUE_TEMPLATE/reproduction.yml"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不要求提交私密状态或 token；维护者和外部运行分开标识",
+            "可提交失败或部分复现，不预设全部结果必须通过"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-12.02",
+      "workstream_id": "O-12",
+      "title": "联系并安排两组外部复现者",
+      "source_sections": [
+        "1",
+        "10.1"
+      ],
+      "priority": "P1",
+      "kind": "external_manual",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-12.01",
+        "O-11.04"
+      ],
+      "decision_dependencies": [
+        "D-09"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/reproducer-coordination-summary.json"
+      ],
+      "work": [
+        "准备邀请文字、资源要求与可选复现轨道",
+        "获得联系授权后发送给明确对象，确认至少一组非作者与实际复现安排"
+      ],
+      "acceptance": [
+        "没有实际联系/回复不称已招募；不公开未同意身份",
+        "外部复现者不由维护者自测冒充；必要访问预算单独确认"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "没有实际联系/回复不称已招募；不公开未同意身份",
+            "外部复现者不由维护者自测冒充；必要访问预算单独确认"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-12.03",
+      "workstream_id": "O-12",
+      "title": "收集、核验并归档两组外部复现",
+      "source_sections": [
+        "1",
+        "6.2",
+        "10.2"
+      ],
+      "priority": "P1",
+      "kind": "external_manual",
+      "status": "todo",
+      "owner_role": "external_reproducer",
+      "assignee": null,
+      "depends_on": [
+        "O-12.02"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/external-reproductions/",
+        "docs/research/external-reproduction-report.md"
+      ],
+      "work": [
+        "核查运行来源、版本、报告摘要与复算结果，记录外部环境差异",
+        "保留失败和部分结果；由贡献者确认可公开材料"
+      ],
+      "acceptance": [
+        "至少两组真实外部记录，其中至少一组非作者",
+        "达不到目标保持未完成；成功率分母包括已提交失败尝试，不声称获正式 artifact badge"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "至少两组真实外部记录，其中至少一组非作者",
+            "达不到目标保持未完成；成功率分母包括已提交失败尝试，不声称获正式 artifact badge"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "采用收到的公共报告及其记录的源码/corpus/verifier 版本复算；确认独立身份与公开同意，不将维护者代跑计入外部复现。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-12.04",
+      "workstream_id": "O-12",
+      "title": "修复复现阻塞并发布可追溯勘误",
+      "source_sections": [
+        "10.2",
+        "6.2"
+      ],
+      "priority": "P1",
+      "kind": "conditional",
+      "status": "todo",
+      "owner_role": "maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-12.03"
+      ],
+      "decision_dependencies": [],
+      "condition": "外部复现中发现需修复的真实阻塞",
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/reproduction-errata.md",
+        "受影响文档/验证工具（按真实问题确定）"
+      ],
+      "work": [
+        "按依赖、配置、平台、模型和 verifier 分类处理外部反馈",
+        "做必要最小修正和相应验证，记录结果变化及新版本身份"
+      ],
+      "acceptance": [
+        "不修改旧原始数据以消除失败",
+        "若无阻塞则记录证据并标 not_applicable，不制造无意义代码改动"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不修改旧原始数据以消除失败",
+            "若无阻塞则记录证据并标 not_applicable，不制造无意义代码改动"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-13.01",
+      "workstream_id": "O-13",
+      "title": "编写英文研究导读与中文首页导航",
+      "source_sections": [
+        "1",
+        "4",
+        "10.1"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-08.01",
+        "O-08.03",
+        "O-09.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "README.md",
+        "docs/research/research-overview.md"
+      ],
+      "work": [
+        "首页突出问题、架构、fixture 入口、三个实验、边界与引用",
+        "保留企业组件入口；使用已有最终架构，不改演示 UI"
+      ],
+      "acceptance": [
+        "首次读者可定位无 key 复现与证据入口",
+        "名称/支持状态一致，不把研究原型宣传为普遍安全保证"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "README.md",
+            "docs/research/research-overview.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "README.md",
+        "docs/research/research-overview.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "首次读者可定位无 key 复现与证据入口",
+            "名称/支持状态一致，不把研究原型宣传为普遍安全保证"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-13.02",
+      "workstream_id": "O-13",
+      "title": "形成可核验的方法技术报告",
+      "source_sections": [
+        "4",
+        "10.1"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "research_lead",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-08.04",
+        "O-08.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/technical-report.md"
+      ],
+      "work": [
+        "解释独立授权、Value+Provenance 和 Effect/Completion，逐项关联结果",
+        "注明当前受控样本、历史失败、尚未补齐的相关工作与实验证据"
+      ],
+      "acceptance": [
+        "每项实证结论含总体/分母/协议/证据；未同行评审状态清楚",
+        "不以 RQ 代替已确立创新，不虚构论文接收状态"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/technical-report.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/technical-report.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "每项实证结论含总体/分母/协议/证据；未同行评审状态清楚",
+            "不以 RQ 代替已确立创新，不虚构论文接收状态"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-13.03",
+      "workstream_id": "O-13",
+      "title": "核对首发视频及其代码和署名边界",
+      "source_sections": [
+        "6.2",
+        "10.1"
+      ],
+      "priority": "P1",
+      "kind": "validation",
+      "status": "todo",
+      "owner_role": "maintainer",
+      "assignee": null,
+      "depends_on": [
+        "O-10.01",
+        "O-02.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/research-video-identity.json",
+        "docs/research/video-guide.md"
+      ],
+      "work": [
+        "优先沿用 V5 已有视频，检查哈希、可播放、录制源码与研究源码差异",
+        "仅当录制内容已失真或不可用才准备新录像方案"
+      ],
+      "acceptance": [
+        "不为轻微文案改动反复录制；UI/模型/硬件声明对应实际录像",
+        "媒体许可和署名核清，视频留在正式媒体/制品位置而非 Git 大对象"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "不为轻微文案改动反复录制；UI/模型/硬件声明对应实际录像",
+            "媒体许可和署名核清，视频留在正式媒体/制品位置而非 Git 大对象"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-13.04",
+      "workstream_id": "O-13",
+      "title": "发布导读、技术报告和演示入口",
+      "source_sections": [
+        "10.1"
+      ],
+      "priority": "P1",
+      "kind": "external_manual",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-13.01",
+        "O-13.02",
+        "O-13.03",
+        "O-11.04",
+        "O-12.01"
+      ],
+      "decision_dependencies": [
+        "D-06",
+        "D-09"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/research-announcement.json"
+      ],
+      "work": [
+        "在首发五件套齐备后准备实际发布内容与渠道",
+        "经相应公开发布授权后执行并登记链接和版本"
+      ],
+      "acceptance": [
+        "依赖的制品/归档/引用真实可访问，外部复现不足则直说等待复现",
+        "未授权不发布帖子或群发消息；截图/视频不携带私密信息"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "依赖的制品/归档/引用真实可访问，外部复现不足则直说等待复现",
+            "未授权不发布帖子或群发消息；截图/视频不携带私密信息"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-14.01",
+      "workstream_id": "O-14",
+      "title": "建立六类 Issue 与 PR 审阅模板",
+      "source_sections": [
+        "8.1",
+        "8.2"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "in_progress",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-05.02",
+        "O-05.03",
+        "O-12.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        ".github/ISSUE_TEMPLATE/",
+        ".github/PULL_REQUEST_TEMPLATE.md"
+      ],
+      "work": [
+        "覆盖复现、新案例、指标纠错、兼容性、文档和研究提案",
+        "提示漏洞走私密入口，PR 列明来源、测试和证据"
+      ],
+      "acceptance": [
+        "表单可解析，复现/研究提案不强制填造安全结论",
+        "不在模板要求提供密钥或全量状态文件"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        ".github/ISSUE_TEMPLATE/",
+        ".github/PULL_REQUEST_TEMPLATE.md"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "表单可解析，复现/研究提案不强制填造安全结论",
+            "不在模板要求提供密钥或全量状态文件"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-14.02",
+      "workstream_id": "O-14",
+      "title": "准备五类首批贡献任务",
+      "source_sections": [
+        "8.1",
+        "10.1"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "in_progress",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-14.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/community-backlog.md"
+      ],
+      "work": [
+        "落盘普通 Linux 复现、same-value 验证、fixture 诊断、分母复算、负向测试任务",
+        "为每项给出入口、完成标准和审阅人，不新增框架/沙箱"
+      ],
+      "acceptance": [
+        "每项可独立开始并有真实验收方法",
+        "新增案例不会修改 V5 分母，安全修复必须证明旧行为被拒"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/community-backlog.md"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "每项可独立开始并有真实验收方法",
+            "新增案例不会修改 V5 分母，安全修复必须证明旧行为被拒"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-14.03",
+      "workstream_id": "O-14",
+      "title": "开启 Discussions 并发布首批社区任务",
+      "source_sections": [
+        "2",
+        "8.1",
+        "10.1"
+      ],
+      "priority": "P1",
+      "kind": "external_manual",
+      "status": "in_progress",
+      "owner_role": "repository_admin",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-14.02",
+        "O-05.04"
+      ],
+      "decision_dependencies": [
+        "D-03",
+        "D-04",
+        "D-09"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/community-launch.json"
+      ],
+      "work": [
+        "按确认的讨论分类、维护责任与治理授权设置入口",
+        "经授权创建实际 Issues/讨论入口并核验链接"
+      ],
+      "acceptance": [
+        "平台设置有 readback，发布内容与落盘任务对应",
+        "无人维护或未获联系授权时不宣称社区运营已启动"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/operations-20260908.md"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "平台设置有 readback，发布内容与落盘任务对应",
+            "无人维护或未获联系授权时不宣称社区运营已启动"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-15.01",
+      "workstream_id": "O-15",
+      "title": "检索相关工作并确定可比较贡献",
+      "source_sections": [
+        "4.1",
+        "7.9"
+      ],
+      "priority": "P1",
+      "kind": "research",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-08.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/related-work.md",
+        "docs/research/comparison-matrix.json"
+      ],
+      "work": [
+        "以论文和系统一手资料核查威胁模型、策略输入、执行覆盖、效果核验与实验开放性",
+        "记录检索日期、版本、可运行条件与具体差异"
+      ],
+      "acceptance": [
+        "没有实现/协议可公平对齐的系统不进入量化比较",
+        "候选贡献措辞由实际比较支持，不写未经核查的首创声明"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "没有实现/协议可公平对齐的系统不进入量化比较",
+            "候选贡献措辞由实际比较支持，不写未经核查的首创声明"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-15.02",
+      "workstream_id": "O-15",
+      "title": "预先定义新研究评价与统计协议",
+      "source_sections": [
+        "7.1",
+        "7.3",
+        "7.4",
+        "7.5",
+        "7.8"
+      ],
+      "priority": "P1",
+      "kind": "research",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-15.01",
+        "O-08.04"
+      ],
+      "decision_dependencies": [
+        "D-08"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/protocols/r1.md",
+        "docs/research/protocols/r1.json"
+      ],
+      "work": [
+        "锁定任务族、模型版本、条件、生成参数、预算、超时/重试/排除和分析方法",
+        "定义 proposal/attempt/materialization/effect/completion、缺失数据与分组统计"
+      ],
+      "acceptance": [
+        "新协议在正式实验前有不可混淆的版本与摘要",
+        "历史 V5 结果不伪称预注册；同任务重复不当独立任务样本；新 provider 单独 cohort"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "新协议在正式实验前有不可混淆的版本与摘要",
+            "历史 V5 结果不伪称预注册；同任务重复不当独立任务样本；新 provider 单独 cohort"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-15.03",
+      "workstream_id": "O-15",
+      "title": "锁定调参集、评价集与新案例接纳规则",
+      "source_sections": [
+        "7.1",
+        "7.5",
+        "7.8"
+      ],
+      "priority": "P1",
+      "kind": "research",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-15.02",
+        "O-08.02"
+      ],
+      "decision_dependencies": [
+        "D-08"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/protocols/r1-dataset-split.json",
+        "docs/research/dataset-card.md"
+      ],
+      "work": [
+        "区分 pilot/调参、最终评价及独立未见样本",
+        "记录重复/污染检测与案例版本，保持 V5 语料身份不变"
+      ],
+      "acceptance": [
+        "分组与任务身份可追溯，测试集不随结果调优",
+        "未知新案例独立计数，不能追溯修改旧 benchmark 总体"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "分组与任务身份可追溯，测试集不随结果调优",
+            "未知新案例独立计数，不能追溯修改旧 benchmark 总体"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-15.04",
+      "workstream_id": "O-15",
+      "title": "运行 pilot 并冻结正式实验规模",
+      "source_sections": [
+        "7.5",
+        "7.7"
+      ],
+      "priority": "P1",
+      "kind": "research",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-15.03"
+      ],
+      "decision_dependencies": [
+        "D-08"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/r1-pilot/",
+        "docs/research/protocols/r1-finalization.md"
+      ],
+      "work": [
+        "在获准新研究周期和预算内运行 pilot，保留所有尝试",
+        "按观察变异、任务相关性、估计目标及预算决定正式规模与不确定性报告方法"
+      ],
+      "acceptance": [
+        "有先后时间、实际计算/预算依据和协议差异记录",
+        "不选取有利样本大小来包装 5/5，不把 pilot 重作盲测结果"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "有先后时间、实际计算/预算依据和协议差异记录",
+            "不选取有利样本大小来包装 5/5，不把 pilot 重作盲测结果"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-16.01",
+      "workstream_id": "O-16",
+      "title": "准备公平对照和受控消融条件",
+      "source_sections": [
+        "7.2",
+        "7.9"
+      ],
+      "priority": "P1",
+      "kind": "research",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-15.04",
+        "O-06.04"
+      ],
+      "decision_dependencies": [
+        "D-08"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "benchmarks/（新版本实验配置与必要小增量）",
+        "docs/research/evidence/r1-baseline-review.json"
+      ],
+      "work": [
+        "在同任务/工具/模型预算条件下定义提示约束、运行时授权、来源和效果层的比较",
+        "仅在隔离合成 fixture 中容许消融；复用现有 harness"
+      ],
+      "acceptance": [
+        "任何关闭保护的实验不能进入用户安装模式、默认安全配置或共享生产服务",
+        "对照差异与权限范围可审阅；不可运行的比较不报量化结果"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "任何关闭保护的实验不能进入用户安装模式、默认安全配置或共享生产服务",
+            "对照差异与权限范围可审阅；不可运行的比较不报量化结果"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-16.02",
+      "workstream_id": "O-16",
+      "title": "补充未见来源与效果故障实验案例",
+      "source_sections": [
+        "4.1",
+        "7.1",
+        "7.6"
+      ],
+      "priority": "P1",
+      "kind": "research",
+      "status": "todo",
+      "owner_role": "research_contributor",
+      "assignee": null,
+      "depends_on": [
+        "O-16.01"
+      ],
+      "decision_dependencies": [
+        "D-08"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "benchmarks/（新 corpus 版本）",
+        "docs/research/evidence/r1-case-review.json"
+      ],
+      "work": [
+        "围绕 provenance、observer 故障和任务范围补充批准的新案例",
+        "标明来源错误属于可信假设损坏还是实现缺陷，保持正负配对"
+      ],
+      "acceptance": [
+        "每案有明确观测 oracle、实际效果范围与成功标准",
+        "无泛化 shell/新安全框架，V5 cases 和记录原样保留"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "每案有明确观测 oracle、实际效果范围与成功标准",
+            "无泛化 shell/新安全框架，V5 cases 和记录原样保留"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-16.03",
+      "workstream_id": "O-16",
+      "title": "执行正式控制/模型 cohort 与 locality 评价",
+      "source_sections": [
+        "7.3",
+        "7.4",
+        "7.6",
+        "7.8"
+      ],
+      "priority": "P1",
+      "kind": "research",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-16.02"
+      ],
+      "decision_dependencies": [
+        "D-08"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/r1-runs/"
+      ],
+      "work": [
+        "按冻结协议分 cohort 执行并保存原始已清洗结果",
+        "分开模型拒绝、运行时拒绝、准备失败、超时和效果缺失，保留 provider/分类/硬件信息"
+      ],
+      "acceptance": [
+        "所有尝试有日志与身份，重试不覆盖第一次失败",
+        "C 轨实际调用的权限预算有效；公共日志不含秘密和未经授权数据"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "所有尝试有日志与身份，重试不覆盖第一次失败",
+            "C 轨实际调用的权限预算有效；公共日志不含秘密和未经授权数据"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-16.04",
+      "workstream_id": "O-16",
+      "title": "完成统计、成本分解与数据复算",
+      "source_sections": [
+        "7.3",
+        "7.5",
+        "7.7",
+        "10.2"
+      ],
+      "priority": "P1",
+      "kind": "research",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-16.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/r1-results.md",
+        "docs/research/evidence/r1-analysis/",
+        "benchmarks/（必要分析脚本）"
+      ],
+      "work": [
+        "按协议输出各阶段结果、分母、缺失值及任务分组的不确定性",
+        "分别统计模型、授权、回执/持久化、工具/效果耗时及实测调用成本"
+      ],
+      "acceptance": [
+        "表格可重算，不把 repeated seeds 伪装独立任务",
+        "成本使用当时实际用量/账单口径，模型输出与文件效果质量不混淆；必要分析测试覆盖缺失与分母"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "表格可重算，不把 repeated seeds 伪装独立任务",
+            "成本使用当时实际用量/账单口径，模型输出与文件效果质量不混淆；必要分析测试覆盖缺失与分母"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "用冻结原始结果重算分母、unknown/missing、重试及任务分组统计；必要的分析校验应覆盖空总体、缺失记录和重复任务。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-16.05",
+      "workstream_id": "O-16",
+      "title": "独立审阅新实验的结论与负面结果",
+      "source_sections": [
+        "7",
+        "8.2"
+      ],
+      "priority": "P1",
+      "kind": "review",
+      "status": "todo",
+      "owner_role": "research_reviewer",
+      "assignee": null,
+      "depends_on": [
+        "O-16.04"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/r1-review.md",
+        "docs/research/claims-evidence.md"
+      ],
+      "work": [
+        "核对协议偏差、数据泄漏、所有失败、消融解释与可比性",
+        "优先由非实验作者审阅，并更新结论边界和未来版本证据映射"
+      ],
+      "acceptance": [
+        "独立人员缺位时明确 self-review，不冒充已独立验证",
+        "旧结论与新结果并存，修正有版本/勘误；不覆写历史"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "独立人员缺位时明确 self-review，不冒充已独立验证",
+            "旧结论与新结果并存，修正有版本/勘误；不覆写历史"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-17.01",
+      "workstream_id": "O-17",
+      "title": "选择投稿方向并核对当前政策",
+      "source_sections": [
+        "10.1",
+        "6.2"
+      ],
+      "priority": "P1",
+      "kind": "research",
+      "status": "todo",
+      "owner_role": "research_lead",
+      "assignee": null,
+      "depends_on": [
+        "O-15.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/venue-assessment.md"
+      ],
+      "work": [
+        "在准备投稿时查验具体 venue 的当前 CFP、时间、匿名、预印本和材料政策",
+        "记录是否适合 technical report、demo、workshop 或完整论文及理由"
+      ],
+      "acceptance": [
+        "来源为实际最新一手规则；不沿用设计日假定期限",
+        "已公开源码/视频/作者信息对匿名策略的影响明确，不承诺未核查的投稿资格"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "来源为实际最新一手规则；不沿用设计日假定期限",
+            "已公开源码/视频/作者信息对匿名策略的影响明确，不承诺未核查的投稿资格"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-17.02",
+      "workstream_id": "O-17",
+      "title": "形成论文、署名确认与研究制品评审包",
+      "source_sections": [
+        "4",
+        "6.1",
+        "6.2",
+        "10.1"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "todo",
+      "owner_role": "authors",
+      "assignee": null,
+      "depends_on": [
+        "O-16.05",
+        "O-17.01",
+        "O-09.01",
+        "O-12.03"
+      ],
+      "decision_dependencies": [
+        "D-07"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/paper/",
+        "docs/research/artifact-evaluation-guide.md"
+      ],
+      "work": [
+        "根据真实实验组织方法、相关工作、结果、负面结果、威胁与复现步骤",
+        "由作者确认署名及发布权，制品绑定实际论文评估版本"
+      ],
+      "acceptance": [
+        "论文每项实证结论可追溯；当前未发表/未接收状态明确",
+        "评审包无需秘密账户材料，不能自颁 ACM 等正式 badge"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "论文每项实证结论可追溯；当前未发表/未接收状态明确",
+            "评审包无需秘密账户材料，不能自颁 ACM 等正式 badge"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-17.03",
+      "workstream_id": "O-17",
+      "title": "执行经授权的论文与 artifact 提交",
+      "source_sections": [
+        "6.2",
+        "10.1",
+        "12"
+      ],
+      "priority": "P1",
+      "kind": "external_manual",
+      "status": "todo",
+      "owner_role": "corresponding_author",
+      "assignee": null,
+      "depends_on": [
+        "O-17.02"
+      ],
+      "decision_dependencies": [
+        "D-12"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/evidence/paper-submission.json",
+        "docs/research/evidence/artifact-submission.json"
+      ],
+      "work": [
+        "在作者和账号授权、venue 规则及材料清单满足后执行提交",
+        "记录真实版本、提交回执和材料校验结果"
+      ],
+      "acceptance": [
+        "无实际回执不标已投稿，提交不等于接收/评审通过",
+        "材料隐私和匿名策略符合实际规则，不自动对外发送"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "无实际回执不标已投稿，提交不等于接收/评审通过",
+            "材料隐私和匿名策略符合实际规则，不自动对外发送"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        },
+        {
+          "method": "计划验证命令或方法（含占位符时不可原样执行）",
+          "checks": [
+            "核对实际 venue 规则与提交内容摘要，并保存真实提交编号/回执；没有外部回执不得通过。"
+          ],
+          "expected": "执行时填入实际路径、版本与范围，保存退出码/结果和证据。"
+        }
+      ]
+    },
+    {
+      "id": "O-17.04",
+      "workstream_id": "O-17",
+      "title": "记录评审结果、修订和真实引用",
+      "source_sections": [
+        "6.2",
+        "10.1"
+      ],
+      "priority": "P1",
+      "kind": "external_manual",
+      "status": "todo",
+      "owner_role": "corresponding_author",
+      "assignee": null,
+      "depends_on": [
+        "O-17.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/publication-status.md",
+        "CITATION.cff（实际发表后才更新）"
+      ],
+      "work": [
+        "收到真实评审后记录结果、修订、材料版本和获颁标识（如有）",
+        "按正式发表信息更新论文引用，不修改原软件制品身份"
+      ],
+      "acceptance": [
+        "接收、DOI 和 badge 均有外部证据；未收到则等待",
+        "拒稿/失败不隐藏，不将投稿状态改成发表"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "接收、DOI 和 badge 均有外部证据；未收到则等待",
+            "拒稿/失败不隐藏，不将投稿状态改成发表"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-18.01",
+      "workstream_id": "O-18",
+      "title": "确定维护容量和版本支持基线",
+      "source_sections": [
+        "8.2",
+        "8.3",
+        "10.2"
+      ],
+      "priority": "P1",
+      "kind": "documentation",
+      "status": "done",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-05.01",
+        "O-05.04"
+      ],
+      "decision_dependencies": [
+        "D-03"
+      ],
+      "condition": null,
+      "recurrence": null,
+      "planned_outputs": [
+        "docs/research/maintenance-plan.md",
+        "SECURITY.md",
+        "GOVERNANCE.md"
+      ],
+      "work": [
+        "确认现实维护人数、值守责任、支持版本与复审能力",
+        "定义新增维护者、权限授予/撤销与扩大承诺的条件"
+      ],
+      "acceptance": [
+        "单维护者状态诚实，支持周期和内部目标由真人接受",
+        "无第二维护者不声称双人独立审批已运行"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [
+        {
+          "method": "实际文件/来源/命令或 GitHub API readback 审核",
+          "result": "passed_for_documented_scope",
+          "evidence": [
+            "docs/research/maintenance-plan.md",
+            "SECURITY.md",
+            "GOVERNANCE.md"
+          ],
+          "limitations": "范围、未知项和未实施部分保留在各证据文档；不等于全研究计划完成。"
+        }
+      ],
+      "evidence": [
+        "docs/research/maintenance-plan.md",
+        "SECURITY.md",
+        "GOVERNANCE.md"
+      ],
+      "blocker": null,
+      "completed_at": "2026-09-08T14:57:14.153352+00:00",
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "单维护者状态诚实，支持周期和内部目标由真人接受",
+            "无第二维护者不声称双人独立审批已运行"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-18.02",
+      "workstream_id": "O-18",
+      "title": "定义并汇总研究社区指标",
+      "source_sections": [
+        "1",
+        "10.2"
+      ],
+      "priority": "P1",
+      "kind": "recurring",
+      "status": "in_progress",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-12.01",
+        "O-08.03"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": "每月汇总一期；每期有独立记录，计划持续而非永久 done",
+      "planned_outputs": [
+        "docs/research/community-metrics.md",
+        "docs/research/evidence/community-metrics/"
+      ],
+      "work": [
+        "定义外部复现成功率、结论追溯率、阻塞原因、有效贡献和引用口径",
+        "收集公开或获同意的聚合结果，Stars/下载仅作辅助"
+      ],
+      "acceptance": [
+        "分母包含已提交失败尝试，维护者自测单列",
+        "不默认采集个人环境或联系方式遥测；没有数据时报告无数据"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/community-metrics.md"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "分母包含已提交失败尝试，维护者自测单列",
+            "不默认采集个人环境或联系方式遥测；没有数据时报告无数据"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    },
+    {
+      "id": "O-18.03",
+      "workstream_id": "O-18",
+      "title": "开展版本维护、勘误和维护者培养",
+      "source_sections": [
+        "8.2",
+        "9",
+        "10.2"
+      ],
+      "priority": "P1",
+      "kind": "recurring",
+      "status": "in_progress",
+      "owner_role": "maintainer",
+      "assignee": "maoyadongsh",
+      "depends_on": [
+        "O-18.01",
+        "O-14.01"
+      ],
+      "decision_dependencies": [],
+      "condition": null,
+      "recurrence": "每月一次维护回顾，事件驱动处理真实漏洞与复现故障",
+      "planned_outputs": [
+        "docs/research/maintenance-log.md",
+        "GOVERNANCE.md",
+        "SECURITY.md"
+      ],
+      "work": [
+        "定期复查依赖漏洞、复现阻塞、Issue 受理和证据链接",
+        "培养第二维护者，按可核实贡献调整职责并保留变更记录"
+      ],
+      "acceptance": [
+        "每期记录实际处理/未解决事项，不假定没有风险",
+        "涉及新发布或权限变更继续核对有效授权；不自动恢复比赛功能开发"
+      ],
+      "evidence_required": [
+        "实际执行时间、源码 SHA、输入/输出摘要、执行命令或审阅记录、结果与限制；仅记录已发生的事实。",
+        "外部操作附真实 readback/URL/receipt；材料只做白名单导出，不公开凭据、私钥或原始私密状态。"
+      ],
+      "validation": [],
+      "evidence": [
+        "docs/research/maintenance-log.md",
+        "GOVERNANCE.md",
+        "SECURITY.md"
+      ],
+      "blocker": null,
+      "completed_at": null,
+      "planned_validation": [
+        {
+          "method": "逐项核对验收条件",
+          "checks": [
+            "每期记录实际处理/未解决事项，不假定没有风险",
+            "涉及新发布或权限变更继续核对有效授权；不自动恢复比赛功能开发"
+          ],
+          "expected": "全部适用条件满足，并写入实际 validation/evidence；未执行不算通过。"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "workstreams": 18,
+    "tasks": 71,
+    "status_counts": {
+      "done": 33,
+      "not_applicable": 1,
+      "in_progress": 10,
+      "todo": 26,
+      "blocked": 1
+    },
+    "kind_counts": {
+      "engineering": 9,
+      "manual": 2,
+      "conditional": 3,
+      "documentation": 25,
+      "validation": 9,
+      "external_manual": 11,
+      "research": 9,
+      "review": 1,
+      "recurring": 2
+    }
+  },
+  "execution_branch": "codex/research-open-source-r1"
+}
