@@ -84,6 +84,7 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 	}
 	r := Request{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, Tool: req.Tool, ToolCallID: req.ToolCallID, Params: req.Params}
 	r.ContextAssertionID = d.ContextAssertionID
+	r.ParameterProvenance = d.ParameterProvenance
 	if e.checkContext(r, d.TaskID, now) != nil {
 		return false
 	}
@@ -100,6 +101,9 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 			return false
 		}
 	} else if resolved.IntentID != d.IntentID || resolved.TaskID != d.TaskID || resolved.Digest != d.IntentDigest || resolved.AuthorityRevision != d.AuthorityRevision || resolved.validate(r, now) != nil {
+		return false
+	}
+	if e.checkProvenance(r, resolved, now) != nil {
 		return false
 	}
 	var checked Receipt

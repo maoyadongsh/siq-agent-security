@@ -838,3 +838,9 @@ IssueAssertion 仅供后续管理面调用，使用已注册 local-state issuer 
 Store.MatchParameters 在一次 registry 读锁内验证所有 parameter_provenance：路径唯一、每路径1–32个唯一引用、总路径不超过1024；路径必须实际存在，引用必须与该参数的 canonical 内容摘要相同。所有引用及父节点都验证，不能忽略未被约束的伪造引用，也不能只挑一个高可信引用。匹配期间的 issuer 撤销与写入被序列化，下次调用重新读取当前状态。
 
 每条约束先校验路径/source taxonomy/minimum_trust；required 且参数或绑定缺失返回 provenance_missing。存在绑定时每个引用都必须满足 allowed_source_types 与 minimum_trust，unknown derivation 返回 provenance_derivation_unknown。此方法只做参数来源约束，不替代 Grant/Intent 的值约束或 RuntimeActionDescriptor。V3/runtime 接线另行实施并端到端验证。
+
+### B2 Intent V3 双读与执行门禁
+
+新增 intent/v3 合同，基于 V2 字段新增必需 provenance_constraints 数组（允许显式空数组）。Go 使用指针数组区分旧版省略与 V3 空数组；V2 不得携带该新字段，历史 canonical 签名不变。每条来源约束以唯一 parameter_path 指定 allowed_source_types/minimum_trust/required，复用 provenance.Constraint.Validate。
+
+任何 V3 在参数来源检查器未配置时拒绝，不允许先签发 V3 再把它当 V2 执行。Decide 接受 parameter_provenance 的引用绑定，使用已验证 Intent 的 task_id 和请求 platform/session/agent 构成范围；由来源 Store 对所有引用与约束执行匹配。无效/缺失必需来源进入 Authority Hard Gate。回执持久化绑定引用，审批执行前用原始回执绑定和当前参数重新验证，不能在 hold-status 临时替换来源。普通 V2 无新引用时保持原行为。

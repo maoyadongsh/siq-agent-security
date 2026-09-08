@@ -22,6 +22,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/pending"
+	"siq-agent-security/apps/agentshield/internal/provenance"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"siq-agent-security/apps/agentshield/internal/runtimeauthz"
@@ -59,20 +60,21 @@ var ErrSessionCapacity = errors.New("receipt: session capacity exhausted")
 
 // Request is one tool call awaiting a decision.
 type Request struct {
-	ContextAssertionID string          `json:"context_assertion_id,omitempty"`
-	ActionID           string          `json:"action_id,omitempty"`
-	DecisionReceiptID  string          `json:"decision_receipt_id,omitempty"`
-	Platform           string          `json:"platform"`
-	SessionID          string          `json:"session_id"`
-	AgentID            string          `json:"agent_id"`
-	Tool               string          `json:"tool"`
-	ToolCallID         string          `json:"tool_call_id"`
-	Params             map[string]any  `json:"params"`
-	Context            map[string]any  `json:"context"`
-	TaskID             string          `json:"task_id,omitempty"`
-	IntentID           string          `json:"intent_id,omitempty"`
-	Principal          string          `json:"principal,omitempty"`
-	Intent             *IntentContract `json:"intent,omitempty"`
+	ParameterProvenance []provenance.ParameterBinding `json:"parameter_provenance,omitempty"`
+	ContextAssertionID  string                        `json:"context_assertion_id,omitempty"`
+	ActionID            string                        `json:"action_id,omitempty"`
+	DecisionReceiptID   string                        `json:"decision_receipt_id,omitempty"`
+	Platform            string                        `json:"platform"`
+	SessionID           string                        `json:"session_id"`
+	AgentID             string                        `json:"agent_id"`
+	Tool                string                        `json:"tool"`
+	ToolCallID          string                        `json:"tool_call_id"`
+	Params              map[string]any                `json:"params"`
+	Context             map[string]any                `json:"context"`
+	TaskID              string                        `json:"task_id,omitempty"`
+	IntentID            string                        `json:"intent_id,omitempty"`
+	Principal           string                        `json:"principal,omitempty"`
+	Intent              *IntentContract               `json:"intent,omitempty"`
 }
 
 // IntentLookup resolves authority from trusted local state. Implementations
@@ -101,56 +103,57 @@ type EngineInfo struct {
 
 // Receipt is the signed, chained record (receipt.schema.json).
 type Receipt struct {
-	ContextAssertionID  string                      `json:"context_assertion_id,omitempty"`
-	AuthorityStatus     string                      `json:"authority_status,omitempty"`
-	AuthorityReasonCode string                      `json:"authority_reason_code,omitempty"`
-	PolicyAction        string                      `json:"policy_action,omitempty"`
-	EffectiveAction     string                      `json:"effective_action,omitempty"`
-	Principal           *runtimeaction.Principal    `json:"principal,omitempty"`
-	ResourceRefs        []runtimeaction.ResourceRef `json:"resource_refs,omitempty"`
-	ProvenanceRefs      []string                    `json:"provenance_refs,omitempty"`
-	RecordType          string                      `json:"record_type,omitempty"`
-	DecisionReceiptID   string                      `json:"decision_receipt_id,omitempty"`
-	ParentActionID      string                      `json:"parent_action_id,omitempty"`
-	TaskSeq             int                         `json:"task_seq,omitempty"`
-	ReceiptID           string                      `json:"receipt_id"`
-	ChainID             string                      `json:"chain_id"`
-	Seq                 int                         `json:"seq"`
-	PrevHash            string                      `json:"prev_hash"`
-	Hash                string                      `json:"hash"`
-	Sig                 string                      `json:"sig"`
-	IssuedAt            string                      `json:"issued_at"`
-	Platform            string                      `json:"platform"`
-	SessionID           string                      `json:"session_id"`
-	ActionID            string                      `json:"action_id,omitempty"`
-	AgentID             *string                     `json:"agent_id"`
-	TaskID              string                      `json:"task_id,omitempty"`
-	IntentID            string                      `json:"intent_id,omitempty"`
-	IntentDigest        string                      `json:"intent_digest,omitempty"`
-	IntentBinding       string                      `json:"intent_binding,omitempty"`
-	AuthorityRevision   string                      `json:"authority_revision,omitempty"`
-	Tool                string                      `json:"tool"`
-	ToolCallID          *string                     `json:"tool_call_id"`
-	Operation           string                      `json:"operation,omitempty"`
-	Effects             []string                    `json:"effects,omitempty"`
-	ParamsDigest        string                      `json:"params_digest"`
-	ParamsExcerpt       *string                     `json:"params_excerpt"`
-	Action              string                      `json:"action"`
-	AdvisoryAction      *string                     `json:"advisory_action"`
-	Reason              string                      `json:"reason"`
-	ReasonCode          string                      `json:"reason_code,omitempty"`
-	MatchedGrantID      *string                     `json:"matched_grant_id"`
-	MatchedFactIDs      []string                    `json:"matched_fact_ids"`
-	MatchedRuleIDs      []string                    `json:"matched_rule_ids"`
-	TaintLabels         []string                    `json:"taint_labels"`
-	Trifecta            *Trifecta                   `json:"trifecta"`
-	EnforcementMode     string                      `json:"enforcement_mode"`
-	PolicyRevision      *string                     `json:"policy_revision"`
-	SandboxID           *string                     `json:"sandbox_id"`
-	ModelKey            *string                     `json:"model_key"`
-	Engine              EngineInfo                  `json:"engine"`
-	DecisionLatencyMS   *int                        `json:"decision_latency_ms"`
-	Hold                *Hold                       `json:"hold"`
+	ParameterProvenance []provenance.ParameterBinding `json:"parameter_provenance,omitempty"`
+	ContextAssertionID  string                        `json:"context_assertion_id,omitempty"`
+	AuthorityStatus     string                        `json:"authority_status,omitempty"`
+	AuthorityReasonCode string                        `json:"authority_reason_code,omitempty"`
+	PolicyAction        string                        `json:"policy_action,omitempty"`
+	EffectiveAction     string                        `json:"effective_action,omitempty"`
+	Principal           *runtimeaction.Principal      `json:"principal,omitempty"`
+	ResourceRefs        []runtimeaction.ResourceRef   `json:"resource_refs,omitempty"`
+	ProvenanceRefs      []string                      `json:"provenance_refs,omitempty"`
+	RecordType          string                        `json:"record_type,omitempty"`
+	DecisionReceiptID   string                        `json:"decision_receipt_id,omitempty"`
+	ParentActionID      string                        `json:"parent_action_id,omitempty"`
+	TaskSeq             int                           `json:"task_seq,omitempty"`
+	ReceiptID           string                        `json:"receipt_id"`
+	ChainID             string                        `json:"chain_id"`
+	Seq                 int                           `json:"seq"`
+	PrevHash            string                        `json:"prev_hash"`
+	Hash                string                        `json:"hash"`
+	Sig                 string                        `json:"sig"`
+	IssuedAt            string                        `json:"issued_at"`
+	Platform            string                        `json:"platform"`
+	SessionID           string                        `json:"session_id"`
+	ActionID            string                        `json:"action_id,omitempty"`
+	AgentID             *string                       `json:"agent_id"`
+	TaskID              string                        `json:"task_id,omitempty"`
+	IntentID            string                        `json:"intent_id,omitempty"`
+	IntentDigest        string                        `json:"intent_digest,omitempty"`
+	IntentBinding       string                        `json:"intent_binding,omitempty"`
+	AuthorityRevision   string                        `json:"authority_revision,omitempty"`
+	Tool                string                        `json:"tool"`
+	ToolCallID          *string                       `json:"tool_call_id"`
+	Operation           string                        `json:"operation,omitempty"`
+	Effects             []string                      `json:"effects,omitempty"`
+	ParamsDigest        string                        `json:"params_digest"`
+	ParamsExcerpt       *string                       `json:"params_excerpt"`
+	Action              string                        `json:"action"`
+	AdvisoryAction      *string                       `json:"advisory_action"`
+	Reason              string                        `json:"reason"`
+	ReasonCode          string                        `json:"reason_code,omitempty"`
+	MatchedGrantID      *string                       `json:"matched_grant_id"`
+	MatchedFactIDs      []string                      `json:"matched_fact_ids"`
+	MatchedRuleIDs      []string                      `json:"matched_rule_ids"`
+	TaintLabels         []string                      `json:"taint_labels"`
+	Trifecta            *Trifecta                     `json:"trifecta"`
+	EnforcementMode     string                        `json:"enforcement_mode"`
+	PolicyRevision      *string                       `json:"policy_revision"`
+	SandboxID           *string                       `json:"sandbox_id"`
+	ModelKey            *string                       `json:"model_key"`
+	Engine              EngineInfo                    `json:"engine"`
+	DecisionLatencyMS   *int                          `json:"decision_latency_ms"`
+	Hold                *Hold                         `json:"hold"`
 }
 
 // Decision is what the adapter acts on.
@@ -167,6 +170,7 @@ type GrantLookup func(platform, agentID string) *grant.Grant
 
 // Options configure the engine.
 type Options struct {
+	ProvenanceCheck func(map[string]any, []provenance.ParameterBinding, []provenance.Constraint, provenance.Scope, time.Time) error
 	Pack            *rulepack.Pack
 	Chain           *Chain
 	Grants          GrantLookup
@@ -418,8 +422,9 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	})
 	s.taskSeq++
 	rec := Receipt{
-		ContextAssertionID: req.ContextAssertionID,
-		RecordType:         "decision", TaskSeq: s.taskSeq, ParentActionID: s.parentActionID,
+		ParameterProvenance: req.ParameterProvenance,
+		ContextAssertionID:  req.ContextAssertionID,
+		RecordType:          "decision", TaskSeq: s.taskSeq, ParentActionID: s.parentActionID,
 		Principal: s.boundPrincipal, ResourceRefs: resourceRefs, ProvenanceRefs: append([]string(nil), s.boundProvenanceRefs...),
 		ReceiptID:         "rcp-" + hex.EncodeToString(digest[:])[:12] + "-" + start.Format("150405.000000"),
 		IssuedAt:          start.Format(time.RFC3339),
@@ -492,6 +497,16 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		if err := e.checkContext(req, taskID, start); err != nil {
 			code := "trusted_context_invalid"
 			var v *trustedcontext.Violation
+			if errors.As(err, &v) {
+				code = v.Code
+			}
+			authority = runtimeauthz.Authority(code, rec.IntentBinding == "bound")
+		}
+	}
+	if authority.Valid {
+		if err := e.checkProvenance(req, resolvedIntent, start); err != nil {
+			code := "provenance_authority_invalid"
+			var v *provenance.Violation
 			if errors.As(err, &v) {
 				code = v.Code
 			}

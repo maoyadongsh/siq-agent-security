@@ -12,7 +12,7 @@
 | A2 | 移除 caller cwd 授权、ContextAssertion、受信 workspace 与重放/到期 | 本地 admin 签发版本验收通过；外部 attestor 未实现 |
 | R | 统一 RuntimeActionDescriptor，高影响参数、shell unknown，六类消费者统一 | 现有五类消费者已统一并本地验收；Provenance 消费者随 B 接入 |
 | B1 | 签名 provenance、issuer registry、范围/到期/撤销、容量、不可变存储 | 开发中：来源合同、类型与参数路径基础已验证；签发/存储尚未接入 |
-| B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | 待完成 |
+| B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | V3 双读与 Engine 参数匹配已接入；MCP/HTTP 流程待完成 |
 | C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 待完成 |
 | C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | 待完成 |
 | D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 待完成 |
@@ -87,3 +87,11 @@
 - 来源图节点1024/1025、边4096/4097边界测试通过；混合父节点保留最低信任，unknown 父节点不能转换成已知 lineage。并发签发/解析通过，撤销完成后所有后续解析拒绝。
 - provenance 全包 race（含容量测试）通过；新增聚合/并发及修正 unknown 传播后相关定向 race 通过，vet 通过。容量测试预置有效签名记录以避免测试准备阶段重复执行二次方扫描。
 - 尚需固定签名向量、管理/上报 API、Intent V3 和 RuntimeActionDescriptor 高影响参数接入；目标保持进行中。
+
+### B2 V3 决策接入增量
+
+- 新增 intent-contract.v3 schema 和固定 Go 签名样例；V2/V3 双读，V2 不接受新约束字段（包括显式 null），V3 要求显式 provenance_constraints 数组。约束中的 required 缺省/null 不会被静默解释为 false。
+- receipt.Request/Receipt 增加参数来源引用；Decide 与 hold-status 使用绑定 Intent 的 scope 验证来源，生产 serve 已配置 Store.MatchParameters。V3 缺检查器硬拒绝；V2 无新引用保持兼容。
+- 真实签名 Store→Intent V3→Engine 测试覆盖三模式下 USER 同值允许、MCP 同值拒绝、缺必需来源拒绝；暂无管理/上报 HTTP 端到端证据。
+- Go 全模块 race、vet、四平台编译通过；随后 V2 null 字段拒绝加强，相关 intent/receipt/server 定向 race 重新验证。Python Intent/receipt 合同测试126项通过，Ruff通过；Web build通过。
+- R 中高影响参数自动约束覆盖、HTTP 发行/上报、MCP 生命周期及更多审批 provenance 失效测试继续待完成；不宣称本轮45项DoD已完成。

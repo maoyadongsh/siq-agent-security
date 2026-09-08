@@ -1,5 +1,11 @@
 package provenance
 
+import (
+	"bytes"
+	"encoding/json"
+	"io"
+)
+
 type Scope struct {
 	Platform  string `json:"platform"`
 	SessionID string `json:"session_id"`
@@ -49,3 +55,28 @@ type Violation struct{ Code string }
 
 func (v *Violation) Error() string { return v.Code }
 func failure(code string) error    { return &Violation{Code: code} }
+
+func (c *Constraint) UnmarshalJSON(raw []byte) error {
+	type wire Constraint
+	var value wire
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	dec.DisallowUnknownFields()
+	if dec.Decode(&value) != nil {
+		return failure("provenance_constraint_invalid")
+	}
+	var extra any
+	if dec.Decode(&extra) != io.EOF {
+		return failure("provenance_constraint_invalid")
+	}
+	var fields map[string]json.RawMessage
+	if json.Unmarshal(raw, &fields) != nil {
+		return failure("provenance_constraint_invalid")
+	}
+	for _, key := range []string{"parameter_path", "allowed_source_types", "minimum_trust", "required"} {
+		if v, ok := fields[key]; !ok || bytes.Equal(bytes.TrimSpace(v), []byte("null")) {
+			return failure("provenance_constraint_invalid")
+		}
+	}
+	*c = Constraint(value)
+	return c.Validate()
+}
