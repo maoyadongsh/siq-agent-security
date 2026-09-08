@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="site/favicon.svg" width="64" height="64" alt="SIQ" />
+  <img src="site/siq-shield.svg" width="96" height="96" alt="SIQ blue shield logo" />
 </p>
 
 <h1 align="center">SIQ Agent Security</h1>
