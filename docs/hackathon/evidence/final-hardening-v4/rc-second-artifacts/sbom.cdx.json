@@ -1,0 +1,108 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "SIQ Agent Security",
+      "version": "0.3.0-rc.1"
+    },
+    "properties": [
+      {
+        "name": "siq:inventory-scope",
+        "value": "Go stdlib daemon, stdlib-only Python application, and production Web lockfile dependencies. The lockfile is a dependency superset, not bundle-level reachability analysis. External Python/model/OS runtimes and build dependencies are not bundled or inventoried here."
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "application",
+      "name": "Secure Agent",
+      "version": "0.3.0-rc.1"
+    },
+    {
+      "type": "framework",
+      "name": "Go standard library",
+      "version": "go1.26.6"
+    },
+    {
+      "type": "library",
+      "name": "@fontsource/dm-serif-display",
+      "version": "5.3.0",
+      "purl": "pkg:npm/%40fontsource/dm-serif-display@5.3.0"
+    },
+    {
+      "type": "library",
+      "name": "@fontsource/inter",
+      "version": "5.3.0",
+      "purl": "pkg:npm/%40fontsource/inter@5.3.0"
+    },
+    {
+      "type": "library",
+      "name": "@fontsource/noto-serif-sc",
+      "version": "5.3.0",
+      "purl": "pkg:npm/%40fontsource/noto-serif-sc@5.3.0"
+    },
+    {
+      "type": "library",
+      "name": "@fontsource/playfair-display",
+      "version": "5.3.0",
+      "purl": "pkg:npm/%40fontsource/playfair-display@5.3.0"
+    },
+    {
+      "type": "library",
+      "name": "cookie",
+      "version": "1.1.1",
+      "purl": "pkg:npm/cookie@1.1.1"
+    },
+    {
+      "type": "library",
+      "name": "js-tokens",
+      "version": "4.0.0",
+      "purl": "pkg:npm/js-tokens@4.0.0"
+    },
+    {
+      "type": "library",
+      "name": "loose-envify",
+      "version": "1.4.0",
+      "purl": "pkg:npm/loose-envify@1.4.0"
+    },
+    {
+      "type": "library",
+      "name": "react",
+      "version": "18.3.1",
+      "purl": "pkg:npm/react@18.3.1"
+    },
+    {
+      "type": "library",
+      "name": "react-dom",
+      "version": "18.3.1",
+      "purl": "pkg:npm/react-dom@18.3.1"
+    },
+    {
+      "type": "library",
+      "name": "react-router",
+      "version": "7.18.2",
+      "purl": "pkg:npm/react-router@7.18.2"
+    },
+    {
+      "type": "library",
+      "name": "react-router-dom",
+      "version": "7.18.2",
+      "purl": "pkg:npm/react-router-dom@7.18.2"
+    },
+    {
+      "type": "library",
+      "name": "scheduler",
+      "version": "0.23.2",
+      "purl": "pkg:npm/scheduler@0.23.2"
+    },
+    {
+      "type": "library",
+      "name": "set-cookie-parser",
+      "version": "2.7.2",
+      "purl": "pkg:npm/set-cookie-parser@2.7.2"
+    }
+  ]
+}

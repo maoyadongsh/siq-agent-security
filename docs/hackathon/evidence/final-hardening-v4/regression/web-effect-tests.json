@@ -1,0 +1,5 @@
+{
+  "schema_version": "validation-log/v1",
+  "source_log_sha256": "71631a8f40b0607ebde182f8d8457150b7af45fa0e052a2d4e1049813be122d5",
+  "output": "\n> @siq-agent-security/web@0.1.0 test\n> vitest run\n\n\n RUN  v3.2.7 /home/maoyd/siq/siq-agent-security/apps/web\n\n \u2713 src/api/listMeta.test.ts (2 tests) 2ms\n \u2713 src/api/protocol.test.ts (4 tests) 2ms\n \u2713 src/ui/verification.test.ts (5 tests) 2ms\n\n Test Files  3 passed (3)\n      Tests  11 passed (11)\n   Start at  20:36:01\n   Duration  220ms (transform 97ms, setup 0ms, collect 102ms, tests 5ms, environment 0ms, prepare 139ms)\n\n"
+}

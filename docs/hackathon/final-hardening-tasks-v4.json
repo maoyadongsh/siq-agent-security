@@ -1,7 +1,7 @@
 {
   "schema_version": "hackathon-final-hardening-tasks/v1",
   "updated_at": "2026-09-08",
-  "scope": "V4 全部开发与可执行交付持续进行；状态以实际测试和证据为准。",
+  "scope": "V4 59 项工程任务已完成，4 项 external/manual 保持未执行；最终证据见 final-hardening-report.md。",
   "source_document": "docs/hackathon/final-hardening-requirements-v4.md",
   "source_document_sha256": "60ef74152619b72bcc27123067a500f02b5f861f15086edb3621b9d218df0fc4",
   "starting_sha": "9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1",
@@ -39,10 +39,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "git fetch --all --prune: exit 0; git pull --ff-only: Already up to date",
-        "starting_sha=9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1",
-        "git status --short --branch: clean before edits",
-        "git switch -c codex/hackathon-final-hardening-v4: succeeded"
+        "docs/hackathon/final-hardening-audit.md",
+        "docs/hackathon/final-hardening-goal-v4.md"
       ],
       "external_blocker": null
     },
@@ -72,7 +70,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/final-hardening-audit.md（源码/证据文件检查，未重跑应用回归）"
+        "docs/hackathon/final-hardening-audit.md",
+        "docs/hackathon/final-hardening-goal-v4.md"
       ],
       "external_blocker": null
     },
@@ -109,7 +108,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "V4 implementation in current branch; validation checkpoint docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/final-hardening-audit.md",
+        "docs/hackathon/final-hardening-goal-v4.md"
       ],
       "external_blocker": null
     },
@@ -143,8 +143,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/model-egress-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/locality.json"
       ],
       "external_blocker": null
     },
@@ -173,8 +173,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/model-egress-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/locality.json"
       ],
       "external_blocker": null
     },
@@ -208,8 +208,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/model-egress-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/locality.json"
       ],
       "external_blocker": null
     },
@@ -241,8 +241,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/model-egress-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/locality.json"
       ],
       "external_blocker": null
     },
@@ -275,8 +275,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/model-egress-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/locality.json"
       ],
       "external_blocker": null
     },
@@ -308,8 +308,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/model-egress-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/locality.json"
       ],
       "external_blocker": null
     },
@@ -342,8 +342,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/model-egress-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/locality.json"
       ],
       "external_blocker": null
     },
@@ -385,8 +385,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/model-egress-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/locality.json"
       ],
       "external_blocker": null
     },
@@ -421,8 +421,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/dynamic-plans-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -456,8 +456,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/dynamic-plans-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -488,8 +488,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/dynamic-plans-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -521,8 +521,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/dynamic-plans-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -558,8 +558,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/dynamic-plans-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -591,8 +591,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/dynamic-plans-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -634,8 +634,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/dynamic-plans-v4.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -669,8 +669,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/dgx-preflight.json",
+        "docs/hackathon/evidence/final-hardening-v4/video-v3-real-state-evidence.json"
       ],
       "external_blocker": null
     },
@@ -699,8 +699,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/dgx-preflight.json",
+        "docs/hackathon/evidence/final-hardening-v4/video-v3-real-state-evidence.json"
       ],
       "external_blocker": null
     },
@@ -730,8 +730,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/dgx-preflight.json",
+        "docs/hackathon/evidence/final-hardening-v4/video-v3-real-state-evidence.json"
       ],
       "external_blocker": null
     },
@@ -765,8 +765,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/dgx-preflight.json",
+        "docs/hackathon/evidence/final-hardening-v4/video-v3-real-state-evidence.json"
       ],
       "external_blocker": null
     },
@@ -797,8 +797,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json",
+        "docs/hackathon/evidence/final-hardening-v4/video.json"
       ],
       "external_blocker": null
     },
@@ -829,8 +829,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json",
+        "docs/hackathon/evidence/final-hardening-v4/video.json"
       ],
       "external_blocker": null
     },
@@ -859,8 +859,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json",
+        "docs/hackathon/evidence/final-hardening-v4/video.json"
       ],
       "external_blocker": null
     },
@@ -891,8 +891,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json",
+        "docs/hackathon/evidence/final-hardening-v4/video.json"
       ],
       "external_blocker": null
     },
@@ -922,8 +922,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json",
+        "docs/hackathon/evidence/final-hardening-v4/video.json"
       ],
       "external_blocker": null
     },
@@ -958,8 +958,9 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/validation.json",
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/INDEX.md"
       ],
       "external_blocker": null
     },
@@ -989,8 +990,9 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/validation.json",
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/INDEX.md"
       ],
       "external_blocker": null
     },
@@ -1026,8 +1028,9 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/validation.json",
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/INDEX.md"
       ],
       "external_blocker": null
     },
@@ -1058,8 +1061,9 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/validation.json",
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/INDEX.md"
       ],
       "external_blocker": null
     },
@@ -1091,8 +1095,9 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/validation.json",
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/INDEX.md"
       ],
       "external_blocker": null
     },
@@ -1124,8 +1129,9 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/validation.json",
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/INDEX.md"
       ],
       "external_blocker": null
     },
@@ -1158,8 +1164,9 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/evidence/final-hardening-v4/validation.json",
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/INDEX.md"
       ],
       "external_blocker": null
     },
@@ -1173,7 +1180,7 @@
       ],
       "priority": "P0",
       "phase": 4,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-I7"
@@ -1191,7 +1198,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/final-hardening-v4/rc.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1202,7 +1212,7 @@
       ],
       "priority": "P0",
       "phase": 4,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-D1"
@@ -1222,7 +1232,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/final-hardening-v4/rc.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1251,7 +1264,7 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "V4 implementation in current branch; validation checkpoint docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/repository-governance-actions.md"
       ],
       "external_blocker": null
     },
@@ -1263,7 +1276,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-D2"
@@ -1283,7 +1296,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/final-hardening-v4/rc.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1294,7 +1310,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-D4"
@@ -1312,7 +1328,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/final-hardening-v4/rc.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1323,7 +1342,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-D5"
@@ -1341,7 +1360,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/final-hardening-v4/rc.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1353,7 +1375,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-D6"
@@ -1374,7 +1396,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/final-hardening-v4/rc.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1385,7 +1410,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-D7"
@@ -1404,7 +1429,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/final-hardening-v4/remote-ci.json",
+        "docs/hackathon/evidence/final-hardening-v4/rc.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1417,7 +1445,7 @@
       ],
       "priority": "P0",
       "phase": 6,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-D8"
@@ -1434,7 +1462,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/evidence/evidence-manifest.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1446,7 +1477,7 @@
       ],
       "priority": "P0",
       "phase": 6,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-E1"
@@ -1464,7 +1495,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/evidence/evidence-manifest.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1475,7 +1509,7 @@
       ],
       "priority": "P0",
       "phase": 6,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-E2"
@@ -1494,7 +1528,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/evidence/evidence-manifest.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1505,7 +1542,7 @@
       ],
       "priority": "P0",
       "phase": 6,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-E3",
@@ -1524,7 +1561,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/evidence/evidence-manifest.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1558,8 +1598,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/demo-script.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -1589,8 +1629,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/demo-script.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -1621,8 +1661,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/demo-script.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -1652,8 +1692,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/demo-script.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -1683,8 +1723,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/demo-script.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -1714,8 +1754,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/demo-script.md",
+        "docs/hackathon/evidence/final-hardening-v4/browser-final/result.json"
       ],
       "external_blocker": null
     },
@@ -1729,7 +1769,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-G6"
@@ -1747,7 +1787,9 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/final-hardening-v4/video.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1758,7 +1800,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-H1"
@@ -1776,7 +1818,9 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/final-hardening-v4/video.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1811,8 +1855,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/final-hardening-report.md",
+        "docs/hackathon/submission-checklist.md"
       ],
       "external_blocker": null
     },
@@ -1848,8 +1892,8 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [
-        "docs/hackathon/evidence/INDEX.md",
-        "docs/hackathon/final-hardening-progress-v4.md"
+        "docs/hackathon/final-hardening-report.md",
+        "docs/hackathon/submission-checklist.md"
       ],
       "external_blocker": null
     },
@@ -1861,7 +1905,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-H2",
@@ -1881,7 +1925,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/final-hardening-report.md",
+        "docs/hackathon/submission-checklist.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1892,7 +1939,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "in_progress",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-J3",
@@ -1912,7 +1959,9 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/final-hardening-report.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1932,7 +1981,7 @@
       ],
       "priority": "P0",
       "phase": 8,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-REPORT"
@@ -1952,7 +2001,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/final-hardening-report.md",
+        "docs/hackathon/evidence/evidence-manifest.json"
+      ],
       "external_blocker": null
     },
     {
@@ -1982,7 +2034,7 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [],
-      "external_blocker": null
+      "external_blocker": "V4 specifies manual main protection. No settings change performed. See repository-governance-actions.md."
     },
     {
       "id": "V4-EXT-SIGN",
@@ -2012,7 +2064,7 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [],
-      "external_blocker": null
+      "external_blocker": "No authorized publisher signing identity supplied; RC is explicitly unsigned. Historical signatures do not sign V4."
     },
     {
       "id": "V4-EXT-RELEASE",
@@ -2042,7 +2094,7 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [],
-      "external_blocker": null
+      "external_blocker": "Local candidate prepared for review; public release/tag publication is conditional and not executed."
     },
     {
       "id": "V4-EXT-VIDEO",
@@ -2071,7 +2123,7 @@
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
       "evidence": [],
-      "external_blocker": null
+      "external_blocker": "Competition upload destination and submission credentials not supplied. Local recording is engineering scope."
     }
   ],
   "section_coverage": [

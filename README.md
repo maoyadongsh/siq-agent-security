@@ -7,8 +7,8 @@ policy. SIQ authorizes consequential actions independently of model proposals.
 
 **V4 比赛版：** 已实现模型出网策略、1/2/3 项动态 Skill 计划、真实来源裁决和效果分离。
 运行 `./scripts/hackathon/start.sh`，详见 [Hackathon 使用说明](HACKATHON.md)、
-[五主题证据索引](docs/hackathon/evidence/INDEX.md)和[开发进度](docs/hackathon/final-hardening-progress-v4.md)。
-完整比赛交付仍以精确源码、远端 CI、干净 RC 和真实视频验收为准。
+[五主题证据索引](docs/hackathon/evidence/INDEX.md)和[最终报告](docs/hackathon/final-hardening-report.md)。
+已完成 59 项工程任务、远端 CI、干净 RC 和真实视频；4 项外部治理/签名/发布/上传事项仍待处理。
 
 SIQ Agent Security 将“谁授权、允许访问什么、可以产生哪些效果、实际发生了什么”连接成一条可检查的安全链。它以可安装的 Skill 作为交互入口，以本地 Go 程序执行确定性的授权判断，通过运行时适配器接入工具调用，并以签名回执记录决策与结果关联。企业控制面进一步提供多环境资产盘点、证据管理、策略审批和执行协调。
 

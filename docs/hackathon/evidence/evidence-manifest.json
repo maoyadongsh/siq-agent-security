@@ -1,7 +1,7 @@
 {
   "schema_version": "hackathon-evidence-manifest/v1",
-  "source_sha": "ab57648aff53541a0baebb5bad5fbdf0106834eb",
-  "scope": "V4 local checkpoints; individual records retain their original source identities. CI/RC/video records pending final freeze.",
+  "source_sha": "4da9e9e0a04c56620d101a583307b299b8484372",
+  "scope": "Frozen executable source; earlier checkpoints retain their original hashes and dirty status. Later documentation commits only consolidate evidence.",
   "dgx": {
     "canonical_files": [
       "final-hardening-v4/dgx-preflight.json",
@@ -17,7 +17,7 @@
   },
   "skills": {
     "canonical_files": [
-      "final-hardening-v4/browser-v3/result.json",
+      "final-hardening-v4/browser-final/result.json",
       "final-hardening-v4/locality.json"
     ]
   },
@@ -25,13 +25,15 @@
     "canonical_files": [
       "final-hardening-v4/control-cohort.json",
       "final-hardening-v4/control-verification.json",
-      "final-hardening-v4/validation.json"
+      "final-hardening-v4/validation.json",
+      "final-hardening-v4/remote-ci.json"
     ]
   },
   "effect": {
     "canonical_files": [
       "final-hardening-v4/control-cohort.json",
-      "final-hardening-v4/browser-v3/result.json"
+      "final-hardening-v4/browser-final/result.json",
+      "final-hardening-v4/rc-checkpoint.json"
     ]
   },
   "benchmark": {
@@ -42,6 +44,19 @@
       "final-hardening-v4/ornith-cohort-v2.json",
       "final-hardening-v4/ornith-verification-v2.json",
       "final-hardening-v4/ornith-cohort.json"
+    ]
+  },
+  "release": {
+    "canonical_files": [
+      "final-hardening-v4/rc.json"
+    ]
+  },
+  "video": {
+    "canonical_files": [
+      "final-hardening-v4/video.json",
+      "final-hardening-v4/video-first-attempt.json",
+      "final-hardening-v4/video-second-attempt.json",
+      "final-hardening-v4/recording-sync-check.json"
     ]
   }
 }

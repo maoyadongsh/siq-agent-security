@@ -1,3 +1,5 @@
+Current report: [Final Hardening V4](final-hardening-report.md).
+
 > Historical V3 record. Current V4 development and acceptance are tracked in
 > [V4 progress](final-hardening-progress-v4.md), [task ledger](final-hardening-tasks-v4.md)
 > and [canonical evidence](evidence/INDEX.md). V4 requires a clean CI-verified

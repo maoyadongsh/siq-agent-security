@@ -1,0 +1,255 @@
+{
+  "schema_version": "hackathon-video/v1",
+  "recorded_at": "2026-09-08T12:34:21.101417+00:00",
+  "source_sha": "cfd1fbf8ca79e3244bd1e133ea000fbc9edf5a1d",
+  "duration_seconds": 170.0,
+  "file": ".tmp/final-hardening-v4/video-v2/siq-v4-demo.webm",
+  "sha256": "f86a325040ce94b2419c5f8f92efeb4acf73393b7cdc5451190c2e99118e5f0c",
+  "events": [
+    {
+      "scenario": "research-only",
+      "task_id": "0a51fe90a6434778a97f83dd26817d58",
+      "provider": "stepfun",
+      "task_status": "researched",
+      "selected_skills": [
+        "secure-research"
+      ],
+      "model_calls": [
+        {
+          "elapsed_ms": 3347.311441990314,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "max_tokens": 3072,
+            "reasoning_effort": "low",
+            "response_format": "json_object"
+          },
+          "locality": "remote",
+          "model": "step-3.7-flash",
+          "model_provider": "stepfun",
+          "operation": "plan",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "f63a14b5d11ea118187488599f75970ff7bcaf909d5f0b270839325237ba34fd",
+          "provider": "stepfun",
+          "status": "accepted",
+          "task_id": "review-48c1e459ea5d4aefb287c21c992ec7ff",
+          "usage": {
+            "completion_tokens": 400,
+            "prompt_tokens": 722,
+            "total_tokens": 1122
+          }
+        },
+        {
+          "elapsed_ms": 4621.011750015896,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "enable_thinking": false,
+            "max_tokens": 4096,
+            "response_format": "json_schema",
+            "schema_digest": "3efc4cf15f886f1fac3666b437688605e06e459db1ba00999e05a4aaaa5dc83b",
+            "temperature": 0
+          },
+          "locality": "local_dgx",
+          "model": "Ornith-1.5-35B-A3B-NVFP4",
+          "model_provider": "ornith",
+          "operation": "research",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "f7059c6d1a6ed6db898e12f816a9918208346191de4030a21895f04f7ebbe281",
+          "provider": "ornith",
+          "status": "accepted",
+          "task_id": "review-48c1e459ea5d4aefb287c21c992ec7ff",
+          "usage": {
+            "completion_tokens": 385,
+            "prompt_tokens": 401,
+            "total_tokens": 786
+          }
+        }
+      ],
+      "at_seconds": 24.01
+    },
+    {
+      "scenario": "normal",
+      "task_id": "508750049adf4d31b0c1505e7e0edb2c",
+      "provider": "stepfun",
+      "task_status": "verified",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [
+        {
+          "elapsed_ms": 2783.8429390103556,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "max_tokens": 3072,
+            "reasoning_effort": "low",
+            "response_format": "json_object"
+          },
+          "locality": "remote",
+          "model": "step-3.7-flash",
+          "model_provider": "stepfun",
+          "operation": "plan",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "4d2110d234f58e044f814332da998b62dcfe69bf3413c19fa7cd239c343ade3e",
+          "provider": "stepfun",
+          "status": "accepted",
+          "task_id": "review-66ef1290c23e4fefb0a2be77212c15d9",
+          "usage": {
+            "completion_tokens": 249,
+            "prompt_tokens": 731,
+            "total_tokens": 980
+          }
+        },
+        {
+          "elapsed_ms": 5023.509174003266,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "enable_thinking": false,
+            "max_tokens": 4096,
+            "response_format": "json_schema",
+            "schema_digest": "3efc4cf15f886f1fac3666b437688605e06e459db1ba00999e05a4aaaa5dc83b",
+            "temperature": 0
+          },
+          "locality": "local_dgx",
+          "model": "Ornith-1.5-35B-A3B-NVFP4",
+          "model_provider": "ornith",
+          "operation": "research",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "f7059c6d1a6ed6db898e12f816a9918208346191de4030a21895f04f7ebbe281",
+          "provider": "ornith",
+          "status": "accepted",
+          "task_id": "review-66ef1290c23e4fefb0a2be77212c15d9",
+          "usage": {
+            "completion_tokens": 420,
+            "prompt_tokens": 401,
+            "total_tokens": 821
+          }
+        },
+        {
+          "elapsed_ms": 173.885893978877,
+          "error_code": null,
+          "finish_reason": "stop",
+          "generation": {
+            "enable_thinking": false,
+            "max_tokens": 1024,
+            "response_format": "json_schema",
+            "schema_digest": "34444ba25093feb8d751279066268bd6d9b0050d12ce91a2afc0e6750ae3d419",
+            "temperature": 0
+          },
+          "locality": "local_dgx",
+          "model": "Ornith-1.5-35B-A3B-NVFP4",
+          "model_provider": "ornith",
+          "operation": "recipient",
+          "payload_classification": "PUBLIC",
+          "payload_digest": "a57a11c91686363b382fa44e030e308abb7464c7b06f06f3c305c63f73a8612e",
+          "provider": "ornith",
+          "status": "accepted",
+          "task_id": "execution-66ef1290c23e4fefb0a2be77212c15d9",
+          "usage": {
+            "completion_tokens": 8,
+            "prompt_tokens": 192,
+            "total_tokens": 200
+          }
+        }
+      ],
+      "at_seconds": 48.96
+    },
+    {
+      "scenario": "normal",
+      "task_id": "25f80b3e3a254d068039e712f454f947",
+      "provider": "fixture",
+      "task_status": "verified",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 80.89
+    },
+    {
+      "scenario": "mcp-attack",
+      "task_id": "2a8b5cc0befa4cf2bc0d6fc89b073c6c",
+      "provider": "fixture",
+      "task_status": "blocked",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 81.69
+    },
+    {
+      "scenario": "same-value",
+      "task_id": "210f9082798741738fe9110f2ab1df3f",
+      "provider": "fixture",
+      "task_status": "blocked",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 111.46
+    },
+    {
+      "scenario": "fake-success",
+      "task_id": "e618b2a651204aaf8ae92ddff5e2a6fc",
+      "provider": "fixture",
+      "task_status": "incomplete",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ],
+      "model_calls": [],
+      "at_seconds": 136.42
+    }
+  ],
+  "page_errors": [],
+  "captions_only": true,
+  "audio": "none",
+  "speed_adjustment": false,
+  "cuts": false,
+  "provider_disclosure": "Real StepFun/Ornith for research/normal; explicitly labeled FixtureProvider for deterministic attacks.",
+  "uploaded": false,
+  "passed": false,
+  "independent_review": {
+    "passed": false,
+    "stream": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "vp8",
+          "width": 1440,
+          "height": 1000
+        }
+      ],
+      "format": {
+        "duration": "169.800000"
+      }
+    },
+    "exact_source_identity": true,
+    "six_unique_tasks_and_expected_outcomes": true,
+    "signatures": [
+      {
+        "file": "video-v2-real-state-evidence.json",
+        "verified_receipts": 38,
+        "verified_effect_envelopes": 2
+      },
+      {
+        "file": "video-v2-fixture-state-evidence.json",
+        "verified_receipts": 98,
+        "verified_effect_envelopes": 5
+      }
+    ],
+    "package_unchanged_after_recording": true,
+    "visual_review": "Rejected: normal task effect summary incorrectly said missing despite signed delivery evidence and VERIFIED completion. Final candidate needs corrected UI and a new recording."
+  }
+}

@@ -2,7 +2,7 @@
 
 更新：2026-09-08。用户指定的完整要求已按原始字节保存在 [V4 原文](final-hardening-requirements-v4.md)。本文件负责当前目标与执行入口，[开发任务台账](final-hardening-tasks-v4.md)负责逐项实施和验收；[JSON 台账](final-hardening-tasks-v4.json)是可更新的任务状态事实源。
 
-用户已明确要求持续完成 V4 全部开发与可执行交付。**目标登记完成不等于 V4 工程完成。** 当前正在实施功能、回归、远端 CI、RC 和视频，实际检查结果见[开发进度](final-hardening-progress-v4.md)。原文 §81 的完整工程交付链是最终验收要求。
+用户已明确要求持续完成 V4 全部开发与可执行交付。**目标登记完成不等于 V4 工程完成。** 59 项工程任务现已完成，远端 CI、clean RC、实机验证与真实视频证据见[最终报告](final-hardening-report.md)。4 项 external/manual 保持未执行。原文 §81 的完整工程交付链是最终验收要求。
 
 ## 基线与来源
 

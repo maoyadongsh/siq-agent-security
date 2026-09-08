@@ -1,0 +1,16 @@
+{
+  "schema_version": "hackathon-video-attempt/v1",
+  "source_sha": "7256c24e4d0208dbcd86ec8e3a25edec974ccf12",
+  "passed": false,
+  "failure_category": "recording_task_identity_race",
+  "detail": "Adjacent blocked scenarios allowed the previous task status to satisfy the wait. The new task snapshot was not ready. No runtime/model result was fabricated.",
+  "fix": "cfd1fbf: bind POST task identity and wait for that exact selected task",
+  "raw_log": "regression/video-first-attempt.log",
+  "followup_check": "recording-sync-check.json",
+  "uploaded": false,
+  "partial_video": {
+    "file": ".tmp/final-hardening-v4/video-final/682eba289234d277223495e53016bab5.webm",
+    "sha256": "67663ab24aefef05612ef1aefbe2ed4a0c288abec58466c118dc71c8b84df43e",
+    "bytes": 6553600
+  }
+}

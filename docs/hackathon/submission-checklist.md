@@ -1,3 +1,22 @@
+# V4 submission checklist
+
+| Deliverable | Evidence / status |
+| --- | --- |
+| Model policy and dynamic Skills | [V4 contracts and regression](evidence/INDEX.md) |
+| Exact-source PR CI | [30 successful mandatory jobs](evidence/final-hardening-v4/remote-ci.json), PR #5 open to V3 |
+| Clean RC | [Source/hash/SBOM inventory](evidence/final-hardening-v4/rc.json); four targets, unsigned and unpublished |
+| Extracted Linux launch | [Actual model task and signed effects](evidence/final-hardening-v4/rc-checkpoint.json) |
+| Real recording and final acceptance | [V4 engineering report](final-hardening-report.md) |
+| Main protection | Manual action remains; [exact settings steps](repository-governance-actions.md) |
+| Official publisher signing / RC publication | Not performed; inspect frozen SHA and hashes before an authorized release |
+| Video upload | Not submitted; competition destination and credentials remain external |
+
+Read the [five-topic evidence index](evidence/INDEX.md) and
+[V4 task ledger](final-hardening-tasks-v4.md) before any submission claim.
+Native non-Linux certification and stable release are outside this delivery.
+
+---
+
 > Historical V3 record. Current V4 development and acceptance are tracked in
 > [V4 progress](final-hardening-progress-v4.md), [task ledger](final-hardening-tasks-v4.md)
 > and [canonical evidence](evidence/INDEX.md). V4 requires a clean CI-verified

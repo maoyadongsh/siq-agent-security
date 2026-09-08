@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/scripts/hackathon/record-demo.py", line 124, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/maoyd/siq/siq-agent-security/scripts/hackathon/record-demo.py", line 95, in main
+    run(states[1],'same-value','blocked')
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/scripts/hackathon/record-demo.py", line 71, in run
+    'task_status':current['task']['status'],'selected_skills':current['task']['selected_skills'],
+                  ~~~~~~~~~~~~~~~^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable

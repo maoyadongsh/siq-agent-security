@@ -5,8 +5,9 @@
 StepFun plans the task. DGX Spark performs local analysis. SIQ independently
 authorizes consequential actions and separates tool reports from effect evidence.
 The current target is [Final Hardening V4](docs/hackathon/final-hardening-goal-v4.md).
-Local engineering is implemented and measured; PR CI, clean RC and final video
-remain separate acceptance gates in the [progress report](docs/hackathon/final-hardening-progress-v4.md).
+V4 engineering, exact-source PR CI, clean RC launch and a real 2–3 minute video
+are complete: [final report](docs/hackathon/final-hardening-report.md). The RC is
+unsigned and unpublished; main protection and competition upload remain external.
 
 ## Run the frozen demo story
 

@@ -1,0 +1,62 @@
+{
+  "schema_version": "hackathon-clean-rc/v1",
+  "recorded_at": "2026-09-08T12:21:10.889043+00:00",
+  "source_sha": "7256c24e4d0208dbcd86ec8e3a25edec974ccf12",
+  "clean_before_and_after_build": true,
+  "source_identity": {
+    "schema_version": "hackathon-rc-source/v2",
+    "build_time": "2026-09-08T12:19:41.768174+00:00",
+    "git_sha": "7256c24e4d0208dbcd86ec8e3a25edec974ccf12",
+    "git_ref": "HEAD",
+    "go_version": "go1.26.6",
+    "python_version": "Python 3.13.12",
+    "node_version": "v22.22.2",
+    "target": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ]
+  },
+  "candidate": "siq-agent-security-v0.3.0-rc.1",
+  "archive_file": "siq-agent-security-v0.3.0-rc.1.tar.gz",
+  "archive_sha256": "c056d46504e5d8c60b70f3cb400445fd06ead7cd69c511d076de072d11e7ce45",
+  "archive_bytes": 84159906,
+  "official_signature": false,
+  "published": false,
+  "tag_created": false,
+  "secret_scan": "calibrated gitleaks passed",
+  "remote_ci": "remote-ci-first.json",
+  "extracted_launch": "rc-checkpoint-first.json",
+  "artifacts": {
+    "SHA256SUMS": {
+      "sha256": "df45a99ca1f42f1b12160167c8729df27ef25f8d1f13b2e556e3e903678d2a45",
+      "bytes": 227171
+    },
+    "candidate-manifest.json": {
+      "sha256": "d8a7e9fa76b5971cb1f586a139217ff72003fbc1d14e56875aae6b5203c9d696",
+      "bytes": 366671
+    },
+    "sbom.cdx.json": {
+      "sha256": "c64537d01596de892f0c99923ace180706be93718abeb290cd5a36647733f590",
+      "bytes": 2680
+    },
+    "skills-inventory.json": {
+      "sha256": "9bed6cf8f55c62862327f616ceb8ffa314ff1cc34448b5ccb49400d97f0248a3",
+      "bytes": 735
+    },
+    "source-info.json": {
+      "sha256": "51bdb8df7a941743f749ca77d7f4103c3e92625b78c6aef6e4cbb1f3ac698535",
+      "bytes": 372
+    },
+    "EVIDENCE_SUMMARY.md": {
+      "sha256": "fbd6a625b75ab3a279e3a2b551bb5ee020e4dfac58f0992c21d1cf4fb5a45d8b",
+      "bytes": 768
+    },
+    "QUICK_START.md": {
+      "sha256": "da1432f29baedafd035d86c5fdc66673a2e90d017f9c9cd19eed99f2c7701125",
+      "bytes": 1259
+    }
+  },
+  "superseded_reason": "Recording automation task-identity fix requires a new exact-source candidate; first archive retained."
+}

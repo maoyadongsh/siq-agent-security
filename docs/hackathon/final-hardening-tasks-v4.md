@@ -1,6 +1,6 @@
 # Final Hardening V4 开发任务台账
 
-更新：2026-09-08。开发已启动；实际结果见 [开发进度](final-hardening-progress-v4.md)。未通过最终门禁的任务保持 in_progress/todo。
+更新：2026-09-08。59 项工程任务完成；4 项 external/manual 未执行。实际结果见 [最终报告](final-hardening-report.md)。
 
 [当前开发目标](final-hardening-goal-v4.md) · [用户原文](final-hardening-requirements-v4.md) · [源码审计](final-hardening-audit.md) · [机器可读台账](final-hardening-tasks-v4.json)
 
@@ -48,31 +48,31 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 | V4-I5 | P0 | 3 | done | 独立 StepFun cohort | V4-I4 |
 | V4-I6 | P0 | 3 | done | DGX 本地敏感推理与零远程泄漏证明 | V4-I5 |
 | V4-I7 | P0 | 3 | done | 控制基准和性能 delta | V4-I6 |
-| V4-D1 | P0 | 4 | in_progress | 提交并创建 V4 → V3 PR | V4-I7 |
-| V4-D2 | P0 | 4 | in_progress | 真实 pull_request CI green | V4-D1 |
+| V4-D1 | P0 | 4 | done | 提交并创建 V4 → V3 PR | V4-I7 |
+| V4-D2 | P0 | 4 | done | 真实 pull_request CI green | V4-D1 |
 | V4-D3 | P0 | 4 | done | 仓库治理人工操作文档 | V4-AUDIT |
-| V4-D4 | P0 | 5 | in_progress | 精确提交冻结与 clean checkout 构建 | V4-D2 |
-| V4-D5 | P0 | 5 | in_progress | 精确 Candidate Source Identity | V4-D4 |
-| V4-D6 | P0 | 5 | in_progress | 准备 RC 版本与命名 | V4-D5 |
-| V4-D7 | P0 | 5 | in_progress | RC 产物清单与解包启动 | V4-D6 |
-| V4-D8 | P0 | 5 | in_progress | 复用签名机制并准确标注发布信任 | V4-D7 |
-| V4-E1 | P0 | 6 | in_progress | 五主题 Canonical Evidence Index | V4-D8 |
-| V4-E2 | P0 | 6 | in_progress | 引用式 Evidence Manifest | V4-E1 |
-| V4-E3 | P0 | 6 | in_progress | 简化入口并保留原始证据 | V4-E2 |
-| V4-E4 | P0 | 6 | in_progress | 比赛摘要与准确分母 | V4-E3, V4-I7 |
+| V4-D4 | P0 | 5 | done | 精确提交冻结与 clean checkout 构建 | V4-D2 |
+| V4-D5 | P0 | 5 | done | 精确 Candidate Source Identity | V4-D4 |
+| V4-D6 | P0 | 5 | done | 准备 RC 版本与命名 | V4-D5 |
+| V4-D7 | P0 | 5 | done | RC 产物清单与解包启动 | V4-D6 |
+| V4-D8 | P0 | 5 | done | 复用签名机制并准确标注发布信任 | V4-D7 |
+| V4-E1 | P0 | 6 | done | 五主题 Canonical Evidence Index | V4-D8 |
+| V4-E2 | P0 | 6 | done | 引用式 Evidence Manifest | V4-E1 |
+| V4-E3 | P0 | 6 | done | 简化入口并保留原始证据 | V4-E2 |
+| V4-E4 | P0 | 6 | done | 比赛摘要与准确分母 | V4-E3, V4-I7 |
 | V4-G1 | P0 | 7 | done | 冻结唯一主故事与一键演示入口 | V4-E4 |
 | V4-G2 | P0 | 7 | done | Act 1 正常动态选择与交付 | V4-G1 |
 | V4-G3 | P0 | 7 | done | Act 2 MCP Injection | V4-G2 |
 | V4-G4 | P0 | 7 | done | Act 3 同值不同来源 | V4-G3 |
 | V4-G5 | P0 | 7 | done | Act 4 Fake Success | V4-G4 |
 | V4-G6 | P0 | 7 | done | Act 5 可选 Human Approval | V4-G5 |
-| V4-H1 | P0 | 7 | in_progress | 录制最终 2–3 分钟真实视频 | V4-G6 |
-| V4-H2 | P0 | 7 | in_progress | 视频真实性与可复核性审核 | V4-H1 |
+| V4-H1 | P0 | 7 | done | 录制最终 2–3 分钟真实视频 | V4-G6 |
+| V4-H2 | P0 | 7 | done | 视频真实性与可复核性审核 | V4-H1 |
 | V4-J1 | P0 | 7 | done | 同步 README、HACKATHON 和架构叙事 | V4-E4, V4-G6 |
 | V4-J2 | P0 | 7 | done | 保留所有剩余风险并审查夸大声明 | V4-J1 |
-| V4-J3 | P0 | 7 | in_progress | 更新工程报告与提交清单 | V4-H2, V4-J2 |
-| V4-REPORT | P0 | 7 | in_progress | Final Engineering Report V4 | V4-J3, V4-D3 |
-| V4-ACCEPT | P0 | 8 | todo | V4 总验收与功能冻结 | V4-REPORT |
+| V4-J3 | P0 | 7 | done | 更新工程报告与提交清单 | V4-H2, V4-J2 |
+| V4-REPORT | P0 | 7 | done | Final Engineering Report V4 | V4-J3, V4-D3 |
+| V4-ACCEPT | P0 | 8 | done | V4 总验收与功能冻结 | V4-REPORT |
 | V4-EXT-GOV | P0 | 8 | todo / external/manual | 人工设置 main 保护 | V4-D3 |
 | V4-EXT-SIGN | P0 | 8 | todo / external/manual | 正式签名材料与签名执行（条件项） | V4-D8 |
 | V4-EXT-RELEASE | P0 | 8 | todo / external/manual | 官方 RC 发布（条件项） | V4-D8 |
@@ -94,7 +94,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：git fetch --all --prune: exit 0; git pull --ff-only: Already up to date；starting_sha=9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1；git status --short --branch: clean before edits；git switch -c codex/hackathon-final-hardening-v4: succeeded
+实际证据：docs/hackathon/final-hardening-audit.md；docs/hackathon/final-hardening-goal-v4.md
 
 ## V4-AUDIT · 重新审计当前源码与已有证据
 
@@ -112,7 +112,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/final-hardening-audit.md（源码/证据文件检查，未重跑应用回归）
+实际证据：docs/hackathon/final-hardening-audit.md；docs/hackathon/final-hardening-goal-v4.md
 
 ## V4-SCOPE · 锁定范围、不变量与执行门禁
 
@@ -131,7 +131,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：V4 implementation in current branch; validation checkpoint docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/final-hardening-audit.md；docs/hackathon/final-hardening-goal-v4.md
 
 ## V4-A1 · 可信数据分级与来源敏感度
 
@@ -149,7 +149,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/model-egress-v4.md；docs/hackathon/evidence/final-hardening-v4/locality.json
 
 ## V4-A2 · ModelProvider 能力与 locality 声明
 
@@ -166,7 +166,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/model-egress-v4.md；docs/hackathon/evidence/final-hardening-v4/locality.json
 
 ## V4-A3 · 分离远程规划与本地敏感推理
 
@@ -184,7 +184,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/model-egress-v4.md；docs/hackathon/evidence/final-hardening-v4/locality.json
 
 ## V4-A4 · 显式 Provider 切换与审计
 
@@ -202,7 +202,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/model-egress-v4.md；docs/hackathon/evidence/final-hardening-v4/locality.json
 
 ## V4-A5 · ModelRouter 研究路径强制策略
 
@@ -220,7 +220,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/model-egress-v4.md；docs/hackathon/evidence/final-hardening-v4/locality.json
 
 ## V4-A6 · Planning payload 白名单与最小化
 
@@ -238,7 +238,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/model-egress-v4.md；docs/hackathon/evidence/final-hardening-v4/locality.json
 
 ## V4-A7 · 模型出网元数据与 UI 合同
 
@@ -256,7 +256,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/model-egress-v4.md；docs/hackathon/evidence/final-hardening-v4/locality.json
 
 ## V4-A8 · Model Egress 八项正负向测试
 
@@ -280,7 +280,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/model-egress-v4.md；docs/hackathon/evidence/final-hardening-v4/locality.json
 
 ## V4-B1 · 内部 TaskPlan V2 合法子集
 
@@ -298,7 +298,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/dynamic-plans-v4.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-B2 · 闭集 Registry 元数据和依赖
 
@@ -316,7 +316,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/dynamic-plans-v4.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-B3 · 拒绝未知 Skill 与伪造 authority Skill
 
@@ -334,7 +334,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/dynamic-plans-v4.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-B4 · 依赖校验与有界重规划决策
 
@@ -352,7 +352,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/dynamic-plans-v4.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-B5 · 子集执行、Authority 和 Completion 适配
 
@@ -371,7 +371,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/dynamic-plans-v4.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-B6 · 动态计划 Demo 与服务状态
 
@@ -389,7 +389,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/dynamic-plans-v4.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-B7 · Skill Planning 八项测试
 
@@ -413,7 +413,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/dynamic-plans-v4.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-C1 · DGX 真实硬件卡与探测状态
 
@@ -431,7 +431,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/dgx-preflight.json；docs/hackathon/evidence/final-hardening-v4/video-v3-real-state-evidence.json
 
 ## V4-C2 · 逐个 Model Action 标注 locality
 
@@ -448,7 +448,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/dgx-preflight.json；docs/hackathon/evidence/final-hardening-v4/video-v3-real-state-evidence.json
 
 ## V4-C3 · 精简真实 DGX 指标
 
@@ -465,7 +465,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/dgx-preflight.json；docs/hackathon/evidence/final-hardening-v4/video-v3-real-state-evidence.json
 
 ## V4-C4 · DGX 故障 fail-closed
 
@@ -483,7 +483,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/dgx-preflight.json；docs/hackathon/evidence/final-hardening-v4/video-v3-real-state-evidence.json
 
 ## V4-F1 · 冻结四块比赛页面结构
 
@@ -500,7 +500,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/browser-final/result.json；docs/hackathon/evidence/final-hardening-v4/video.json
 
 ## V4-F2 · 实际选择的 Skills 视觉突出
 
@@ -517,7 +517,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/browser-final/result.json；docs/hackathon/evidence/final-hardening-v4/video.json
 
 ## V4-F3 · 决策和 reason_code 可读
 
@@ -534,7 +534,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/browser-final/result.json；docs/hackathon/evidence/final-hardening-v4/video.json
 
 ## V4-F4 · MCP 与同值不同来源展示
 
@@ -552,7 +552,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/browser-final/result.json；docs/hackathon/evidence/final-hardening-v4/video.json
 
 ## V4-F5 · 伪成功和效果状态展示
 
@@ -569,7 +569,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/browser-final/result.json；docs/hackathon/evidence/final-hardening-v4/video.json
 
 ## V4-I1 · Secure Agent 完整回归
 
@@ -587,7 +587,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/validation.json；docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/INDEX.md
 
 ## V4-I2 · AgentShield 安全内核回归
 
@@ -605,7 +605,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/validation.json；docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/INDEX.md
 
 ## V4-I3 · Full Repo checks 和依赖安全检查
 
@@ -623,7 +623,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/validation.json；docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/INDEX.md
 
 ## V4-I4 · Competition 九场景 E2E
 
@@ -641,7 +641,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/validation.json；docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/INDEX.md
 
 ## V4-I5 · 独立 StepFun cohort
 
@@ -659,7 +659,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/validation.json；docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/INDEX.md
 
 ## V4-I6 · DGX 本地敏感推理与零远程泄漏证明
 
@@ -677,7 +677,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/validation.json；docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/INDEX.md
 
 ## V4-I7 · 控制基准和性能 delta
 
@@ -695,11 +695,11 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/evidence/final-hardening-v4/validation.json；docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/INDEX.md
 
 ## V4-D1 · 提交并创建 V4 → V3 PR
 
-原文：§28, §29, §77。优先级：P0；状态：in_progress；类型：engineering。
+原文：§28, §29, §77。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`.github/workflows/`、`docs/hackathon/final-hardening-report.md`。
 
@@ -707,17 +707,17 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 提交所有预期文件；PR head=codex/hackathon-final-hardening-v4，base=codex/dgx-spark-hackathon-v3
-- [ ] PR 包含 Architecture changes/Security invariants/Model egress/Skill planning/Tests/Benchmark delta/Known limitations
-- [ ] 使用 env -u GITHUB_TOKEN gh/git；记录 PR URL 与 head SHA；不直接 merge 或改 main
+- [x] 提交所有预期文件；PR head=codex/hackathon-final-hardening-v4，base=codex/dgx-spark-hackathon-v3
+- [x] PR 包含 Architecture changes/Security invariants/Model egress/Skill planning/Tests/Benchmark delta/Known limitations
+- [x] 使用 env -u GITHUB_TOKEN gh/git；记录 PR URL 与 head SHA；不直接 merge 或改 main
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/final-hardening-v4/rc.json
 
 ## V4-D2 · 真实 pull_request CI green
 
-原文：§30。优先级：P0；状态：in_progress；类型：engineering。
+原文：§30。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`.github/workflows/ci.yml`、`.github/workflows/runtime-security.yml`、`docs/hackathon/final-hardening-report.md`。
 
@@ -725,14 +725,14 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] PR 触发实际 GitHub Actions，ci/runtime-security/competition tests/web build/secure-agent tests 全 green
-- [ ] 允许需求由 job/step 覆盖，但逐项映射，缺项补工作流
-- [ ] 记录 workflow run ID、commit SHA、job count、conclusion；最后源码变更后重验同一 SHA
-- [ ] 本地 CI-equivalent 不替代远端；pending/skipped/未执行不得算通过
+- [x] PR 触发实际 GitHub Actions，ci/runtime-security/competition tests/web build/secure-agent tests 全 green
+- [x] 允许需求由 job/step 覆盖，但逐项映射，缺项补工作流
+- [x] 记录 workflow run ID、commit SHA、job count、conclusion；最后源码变更后重验同一 SHA
+- [x] 本地 CI-equivalent 不替代远端；pending/skipped/未执行不得算通过
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/final-hardening-v4/rc.json
 
 ## V4-D3 · 仓库治理人工操作文档
 
@@ -750,11 +750,11 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：V4 implementation in current branch; validation checkpoint docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/repository-governance-actions.md
 
 ## V4-D4 · 精确提交冻结与 clean checkout 构建
 
-原文：§32。优先级：P0；状态：in_progress；类型：engineering。
+原文：§32。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`scripts/hackathon/package_rc.py`、`scripts/hackathon/test_package_rc.py`、`docs/hackathon/rc-preparation.md`。
 
@@ -762,18 +762,18 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 在远端 CI green 的精确 commit 上 freeze；无需自行 merge，保留审阅 PR
-- [ ] 从独立 clean checkout 构建；git diff --quiet、git diff --cached --quiet，status clean，检查未跟踪文件
-- [ ] dirty source 拒绝打包，构建后源码仍干净；不采用 dirty manifest 替代
-- [ ] 构建逻辑若需修复，回到提交和远端 CI，再冻结新 SHA
+- [x] 在远端 CI green 的精确 commit 上 freeze；无需自行 merge，保留审阅 PR
+- [x] 从独立 clean checkout 构建；git diff --quiet、git diff --cached --quiet，status clean，检查未跟踪文件
+- [x] dirty source 拒绝打包，构建后源码仍干净；不采用 dirty manifest 替代
+- [x] 构建逻辑若需修复，回到提交和远端 CI，再冻结新 SHA
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/final-hardening-v4/rc.json
 
 ## V4-D5 · 精确 Candidate Source Identity
 
-原文：§33。优先级：P0；状态：in_progress；类型：engineering。
+原文：§33。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`scripts/hackathon/package_rc.py`、`scripts/hackathon/test_package_rc.py`。
 
@@ -781,17 +781,17 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] source-info.json 至少 git_sha/git_ref/build_time/go_version/python_version/node_version/target
-- [ ] 源码身份与冻结 commit、二进制、压缩包和实际 toolchain 一致
-- [ ] 不再生成 dirty worktree manifest；旧候选不重新贴新 SHA
+- [x] source-info.json 至少 git_sha/git_ref/build_time/go_version/python_version/node_version/target
+- [x] 源码身份与冻结 commit、二进制、压缩包和实际 toolchain 一致
+- [x] 不再生成 dirty worktree manifest；旧候选不重新贴新 SHA
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/final-hardening-v4/rc.json
 
 ## V4-D6 · 准备 RC 版本与命名
 
-原文：§34。优先级：P0；状态：in_progress；类型：engineering。
+原文：§34。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`scripts/hackathon/package_rc.py`、`docs/hackathon/rc-preparation.md`。
 
@@ -799,17 +799,17 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 目标 siq-agent-security-v0.3.0-rc.1；先查已有 tag convention/冲突
-- [ ] 如冲突遵循既有规则并记录选择；不覆盖已有 tag
-- [ ] 不发布 v0.3.0 stable；正式发布单独外部动作
+- [x] 目标 siq-agent-security-v0.3.0-rc.1；先查已有 tag convention/冲突
+- [x] 如冲突遵循既有规则并记录选择；不覆盖已有 tag
+- [x] 不发布 v0.3.0 stable；正式发布单独外部动作
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/final-hardening-v4/rc.json
 
 ## V4-D7 · RC 产物清单与解包启动
 
-原文：§35, §72。优先级：P0；状态：in_progress；类型：engineering。
+原文：§35, §72。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`scripts/hackathon/package_rc.py`、`scripts/hackathon/launch_rc.py`、`scripts/hackathon/package_checkpoint.py`、`docs/hackathon/evidence/`。
 
@@ -817,18 +817,18 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] linux-arm64 binary 及已有其他受支持 targets
-- [ ] SBOM/SHA256SUMS/Skill inventory/Source identity/Hackathon quick start/Evidence summary 齐全
-- [ ] 从实际解包候选启动并跑任务，核验散列/回执/效果；不把交叉编译当原生认证
-- [ ] 保存 candidate hash、source SHA、启动证据，main 未越权修改
+- [x] linux-arm64 binary 及已有其他受支持 targets
+- [x] SBOM/SHA256SUMS/Skill inventory/Source identity/Hackathon quick start/Evidence summary 齐全
+- [x] 从实际解包候选启动并跑任务，核验散列/回执/效果；不把交叉编译当原生认证
+- [x] 保存 candidate hash、source SHA、启动证据，main 未越权修改
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/final-hardening-v4/rc.json
 
 ## V4-D8 · 复用签名机制并准确标注发布信任
 
-原文：§36。优先级：P0；状态：in_progress；类型：engineering。
+原文：§36。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`scripts/hackathon/package_rc.py`、`skills/siq-agent-security/skill-manifest.json`、`docs/hackathon/rc-preparation.md`。
 
@@ -836,17 +836,17 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 审计并复用已有 release signing/provenance；不建立第二套签名
-- [ ] 缺正式签名条件标 unsigned release candidate
-- [ ] 测试密钥、历史 v0.2.0 签名、checksum 不能冒充本候选 publisher identity
+- [x] 审计并复用已有 release signing/provenance；不建立第二套签名
+- [x] 缺正式签名条件标 unsigned release candidate
+- [x] 测试密钥、历史 v0.2.0 签名、checksum 不能冒充本候选 publisher identity
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/final-hardening-v4/remote-ci.json；docs/hackathon/evidence/final-hardening-v4/rc.json
 
 ## V4-E1 · 五主题 Canonical Evidence Index
 
-原文：§37, §38, §73。优先级：P0；状态：in_progress；类型：engineering。
+原文：§37, §38, §73。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`docs/hackathon/evidence/INDEX.md`。
 
@@ -854,17 +854,17 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 首页仅五主题：Agent Skills、NVIDIA DGX Spark、StepFun、Security、Effect & Completion
-- [ ] 分别证明实际选用 Skills、实机/本地模型/runtime、真实 StepFun inference/provider、安全和效果状态
-- [ ] HACKATHON → INDEX → canonical evidence 最多两次点击
+- [x] 首页仅五主题：Agent Skills、NVIDIA DGX Spark、StepFun、Security、Effect & Completion
+- [x] 分别证明实际选用 Skills、实机/本地模型/runtime、真实 StepFun inference/provider、安全和效果状态
+- [x] HACKATHON → INDEX → canonical evidence 最多两次点击
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/evidence/evidence-manifest.json
 
 ## V4-E2 · 引用式 Evidence Manifest
 
-原文：§39, §73。优先级：P0；状态：in_progress；类型：engineering。
+原文：§39, §73。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`docs/hackathon/evidence/evidence-manifest.json`。
 
@@ -872,18 +872,18 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 包含 source_sha/dgx/stepfun/skills/security/effect/benchmark
-- [ ] 只引用 canonical files，不复制原始证据数据
-- [ ] 验证引用存在且 source/cohort/provider 范围一致；UNKNOWN 保留
-- [ ] 最终 evidence/docs-only commit 与冻结构建 SHA 明确区分，不创建源码自引用哈希
+- [x] 包含 source_sha/dgx/stepfun/skills/security/effect/benchmark
+- [x] 只引用 canonical files，不复制原始证据数据
+- [x] 验证引用存在且 source/cohort/provider 范围一致；UNKNOWN 保留
+- [x] 最终 evidence/docs-only commit 与冻结构建 SHA 明确区分，不创建源码自引用哈希
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/evidence/evidence-manifest.json
 
 ## V4-E3 · 简化入口并保留原始证据
 
-原文：§40。优先级：P0；状态：in_progress；类型：engineering。
+原文：§40。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`README.md`、`HACKATHON.md`、`docs/hackathon/evidence/`。
 
@@ -891,17 +891,17 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] README/HACKATHON 通过 INDEX 进入证据，不直链几十个 dashboard/browser/regression 文件
-- [ ] 原始证据、早期失败和旧候选数据不删除不改写
-- [ ] 新证据独立命名，旧文档标历史版本避免混淆
+- [x] README/HACKATHON 通过 INDEX 进入证据，不直链几十个 dashboard/browser/regression 文件
+- [x] 原始证据、早期失败和旧候选数据不删除不改写
+- [x] 新证据独立命名，旧文档标历史版本避免混淆
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/evidence/evidence-manifest.json
 
 ## V4-E4 · 比赛摘要与准确分母
 
-原文：§41。优先级：P0；状态：in_progress；类型：engineering。
+原文：§41。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`HACKATHON.md`、`docs/hackathon/benchmark-report.md`。
 
@@ -909,13 +909,13 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 主页面目标摘要：23 controls、benign 5/5、unsafe target materialization 0/13、provenance blocks 8/8、latest StepFun 5/5、latest Ornith 5/5
-- [ ] 必须按本轮实际结果展示；若不达目标保留实际值并返回修复，不硬填
-- [ ] 明确 small sample、earlier failures retained；固定提案与模型 cohort 不混算
+- [x] 主页面目标摘要：23 controls、benign 5/5、unsafe target materialization 0/13、provenance blocks 8/8、latest StepFun 5/5、latest Ornith 5/5
+- [x] 必须按本轮实际结果展示；若不达目标保留实际值并返回修复，不硬填
+- [x] 明确 small sample、earlier failures retained；固定提案与模型 cohort 不混算
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/evidence/evidence-manifest.json
 
 ## V4-G1 · 冻结唯一主故事与一键演示入口
 
@@ -934,7 +934,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/demo-script.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-G2 · Act 1 正常动态选择与交付
 
@@ -951,7 +951,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/demo-script.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-G3 · Act 2 MCP Injection
 
@@ -969,7 +969,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/demo-script.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-G4 · Act 3 同值不同来源
 
@@ -986,7 +986,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/demo-script.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-G5 · Act 4 Fake Success
 
@@ -1003,7 +1003,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/demo-script.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-G6 · Act 5 可选 Human Approval
 
@@ -1020,11 +1020,11 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/demo-script.md；docs/hackathon/evidence/final-hardening-v4/browser-final/result.json
 
 ## V4-H1 · 录制最终 2–3 分钟真实视频
 
-原文：§55, §56, §75。优先级：P0；状态：in_progress；类型：engineering。
+原文：§55, §56, §75。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`docs/hackathon/demo-script.md`、`docs/hackathon/submission-checklist.md`。
 
@@ -1032,17 +1032,17 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 实际录制至少一份视频，不把脚本/截图当成已录制
-- [ ] 0:00–0:15 Problem；0:15–0:40 Skills/DGX/StepFun；0:40–1:15 normal；1:15–1:45 MCP；1:45–2:10 same-value；2:10–2:30 fake-success；2:30–2:45 conclusion
-- [ ] 记录文件路径/hash/source SHA/model config（脱敏）/DGX config/date
+- [x] 实际录制至少一份视频，不把脚本/截图当成已录制
+- [x] 0:00–0:15 Problem；0:15–0:40 Skills/DGX/StepFun；0:40–1:15 normal；1:15–1:45 MCP；1:45–2:10 same-value；2:10–2:30 fake-success；2:30–2:45 conclusion
+- [x] 记录文件路径/hash/source SHA/model config（脱敏）/DGX config/date
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/final-hardening-v4/video.json
 
 ## V4-H2 · 视频真实性与可复核性审核
 
-原文：§57。优先级：P0；状态：in_progress；类型：engineering。
+原文：§57。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`docs/hackathon/submission-checklist.md`、`docs/hackathon/final-hardening-report.md`。
 
@@ -1050,13 +1050,13 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 画面片头或片尾含 provider/task ID/source SHA
-- [ ] 不把 ALLOW 剪成 DENY、不隐藏失败而不披露、不用 fixture/Ornith 冒充 StepFun
-- [ ] 可剪等待时间并披露；核对时长、可播放性、实际录屏证据
+- [x] 画面片头或片尾含 provider/task ID/source SHA
+- [x] 不把 ALLOW 剪成 DENY、不隐藏失败而不披露、不用 fixture/Ornith 冒充 StepFun
+- [x] 可剪等待时间并披露；核对时长、可播放性、实际录屏证据
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/evidence/final-hardening-v4/video.json
 
 ## V4-J1 · 同步 README、HACKATHON 和架构叙事
 
@@ -1074,7 +1074,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/final-hardening-report.md；docs/hackathon/submission-checklist.md
 
 ## V4-J2 · 保留所有剩余风险并审查夸大声明
 
@@ -1093,11 +1093,11 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/INDEX.md；docs/hackathon/final-hardening-progress-v4.md
+实际证据：docs/hackathon/final-hardening-report.md；docs/hackathon/submission-checklist.md
 
 ## V4-J3 · 更新工程报告与提交清单
 
-原文：§65。优先级：P0；状态：in_progress；类型：engineering。
+原文：§65。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`docs/hackathon/final-engineering-report.md`、`docs/hackathon/submission-checklist.md`、`docs/hackathon/acceptance-matrix.md`。
 
@@ -1105,17 +1105,17 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 明确 V3 历史结果与 V4 新验收，不覆盖旧事实
-- [ ] 所有交付链接有效；未执行 CI/签名/发布/视频上传保持待办
-- [ ] 最终源码、构建和证据身份准确对应
+- [x] 明确 V3 历史结果与 V4 新验收，不覆盖旧事实
+- [x] 所有交付链接有效；未执行 CI/签名/发布/视频上传保持待办
+- [x] 最终源码、构建和证据身份准确对应
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/final-hardening-report.md；docs/hackathon/submission-checklist.md
 
 ## V4-REPORT · Final Engineering Report V4
 
-原文：§78。优先级：P0；状态：in_progress；类型：engineering。
+原文：§78。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`docs/hackathon/final-hardening-report.md`。
 
@@ -1123,19 +1123,19 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] A starting_sha/final_sha/branch；B StepFun/Ornith/sensitivity policy；C selected Skills/dependency validation
-- [ ] D Intent/Context/Provenance/Runtime/Effect/Completion；E DGX hardware/local model/actual tests
-- [ ] F CI run IDs/jobs/status；G tag-candidate/hash/SBOM/source identity
-- [ ] H normal/dynamic/MCP/same-value/fake-success/approval；I 仅实际重测性能；J Residual Risks
-- [ ] 区分 frozen_source_sha、最终 documentation SHA、CI head SHA；不可伪造自包含 final hash
+- [x] A starting_sha/final_sha/branch；B StepFun/Ornith/sensitivity policy；C selected Skills/dependency validation
+- [x] D Intent/Context/Provenance/Runtime/Effect/Completion；E DGX hardware/local model/actual tests
+- [x] F CI run IDs/jobs/status；G tag-candidate/hash/SBOM/source identity
+- [x] H normal/dynamic/MCP/same-value/fake-success/approval；I 仅实际重测性能；J Residual Risks
+- [x] 区分 frozen_source_sha、最终 documentation SHA、CI head SHA；不可伪造自包含 final hash
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/final-hardening-report.md
 
 ## V4-ACCEPT · V4 总验收与功能冻结
 
-原文：§70, §71, §72, §73, §74, §75, §80, §81, §82, §83。优先级：P0；状态：todo；类型：engineering。
+原文：§70, §71, §72, §73, §74, §75, §80, §81, §82, §83。优先级：P0；状态：done；类型：engineering。
 
 修改/交付位置：`docs/hackathon/final-hardening-report.md`、`docs/hackathon/final-hardening-tasks-v4.json`。
 
@@ -1143,15 +1143,15 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 验收：
 
-- [ ] 逐项验收 Model Egress、Skills、Release、Evidence、Demo、Video DoD
-- [ ] 五分钟内从实际证据回答原文七个评委问题
-- [ ] inspect → implement → test → run → benchmark → verify → PR → remote CI → clean build → RC → document 均有实绩
-- [ ] 全部验收后 STOP FEATURE DEVELOPMENT；稳定、清楚、真实、可重复、有证据
-- [ ] 外部动作无权限逐项给操作步骤，不把未执行写成完成
+- [x] 逐项验收 Model Egress、Skills、Release、Evidence、Demo、Video DoD
+- [x] 五分钟内从实际证据回答原文七个评委问题
+- [x] inspect → implement → test → run → benchmark → verify → PR → remote CI → clean build → RC → document 均有实绩
+- [x] 全部验收后 STOP FEATURE DEVELOPMENT；稳定、清楚、真实、可重复、有证据
+- [x] 外部动作无权限逐项给操作步骤，不把未执行写成完成
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：待执行，无 V4 完成声明。
+实际证据：docs/hackathon/final-hardening-report.md；docs/hackathon/evidence/evidence-manifest.json
 
 ## V4-EXT-GOV · 人工设置 main 保护
 
@@ -1318,7 +1318,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 ## 执行验证命令基线
 
-执行者先核对现有工作流和就近 AGENTS.md，以下命令作为入口；本次任务落盘未运行这些工程回归。
+以下命令已纳入本轮回归；完整结果、实际 CI 与候选身份见最终报告。
 
 ```bash
 PYTHONPATH=apps/secure-agent apps/control-api/.venv/bin/python -m unittest discover -s apps/secure-agent/tests -v

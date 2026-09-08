@@ -1,12 +1,12 @@
 # Hackathon evidence
 
-V4 local engineering evidence, 2026-09-08. Each record retains its actual source
-SHA/file hashes, provider and sample scope. Final RC, PR CI and video acceptance
-are tracked in the [V4 progress report](../final-hardening-progress-v4.md).
+V4 engineering evidence, 2026-09-08. Each record retains its actual source
+SHA/file hashes, provider and sample scope. Final acceptance and artifact locations
+are recorded in the [V4 engineering report](../final-hardening-report.md).
 
 ## 1. Agent Skills
 
-[Actual selected 1/2/3-Skill browser cases](final-hardening-v4/browser-v3/result.json)
+[Actual selected 1/2/3-Skill browser cases](final-hardening-v4/browser-final/result.json)
 and [real-model research-only runs](final-hardening-v4/locality.json) show the
 Agent selecting and executing registered Skills. The browser control uses an
 explicit FixtureProvider; the locality runs use StepFun planning and Ornith analysis.
@@ -30,15 +30,22 @@ and recipient reasoning; no fixture or fallback is labeled StepFun.
 
 [23 fixed Agent controls](final-hardening-v4/control-cohort.json),
 [independent receipt/effect verification](final-hardening-v4/control-verification.json),
-[nine browser scenarios](final-hardening-v4/browser-v3/result.json),
-[local regression checks](final-hardening-v4/validation.json).
+[nine browser scenarios](final-hardening-v4/browser-final/result.json),
+[local regression checks](final-hardening-v4/validation.json),
+[exact-source remote PR CI](final-hardening-v4/remote-ci.json).
 Controls cover MCP injection, provenance, stateful trifecta and approval; fixture
 proposals measure the runtime boundary, not real-model attack susceptibility.
 
 ## 5. Effect & Completion
 
 [Actual missing/conflicting/verified effects](final-hardening-v4/control-cohort.json)
-and [visible completion outcomes](final-hardening-v4/browser-v3/result.json).
+and [visible completion outcomes](final-hardening-v4/browser-final/result.json).
 Research-only remains `researched` with no claimed external effect; SIQ's UNKNOWN
 effect status is preserved. File and controlled receiver proofs do not establish
 universal SaaS outcomes or OS isolation.
+
+The [clean RC identity and hashes](final-hardening-v4/rc.json) and
+[extracted actual-model launch](final-hardening-v4/rc-checkpoint.json) establish
+candidate-level file/receiver effects with verified signatures. The recorded
+[real browser video metadata](final-hardening-v4/video.json) binds the frozen
+source and named providers; the video stays outside Git.

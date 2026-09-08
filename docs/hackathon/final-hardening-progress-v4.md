@@ -70,8 +70,14 @@ provenance attacks blocked 8/8. Cohort task P50/P95/P99 (ms): mixed StepFun
 7212.76/11391.61/11391.61; Ornith 5375.67/8331.98/8331.98. Sample counts are five
 per cohort; these distributions are not an SLA or semantic-quality estimate.
 
-## Remaining gates
+## Final engineering acceptance
 
-Actual PR CI, exact green-commit clean candidate build/extracted launch, recorded
-video and final engineering report remain. Local validation does not establish
-remote CI or formal release trust. No main settings, merge or publication occurs.
+Frozen source `4da9e9e0a04c56620d101a583307b299b8484372` passed both actual PR workflows (30 mandatory jobs).
+Clean RC build, extracted actual-model launch and the 170.00-second
+real browser recording passed. The recording race in the first attempt was fixed,
+revalidated and subjected to fresh CI/build; earlier artifacts and failures remain.
+
+All 59 engineering tasks are complete. Four external/manual items remain:
+main protection, official signing, public release and competition video upload.
+PR #5 is open to V3 and unmerged. See the [final report](final-hardening-report.md)
+for exact source, run IDs, artifact hashes, video and remaining risk boundaries.
