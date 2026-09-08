@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "synthetic_only": true,
+  "checks": [
+    "ordinary credential detected",
+    "new credential in allowed test path detected",
+    "new credential in hash-evidence path detected",
+    "exact fixture exception restricted to test path",
+    "private-key block detected",
+    "source hash metadata is not a secret"
+  ],
+  "raw_values_retained": false
+}

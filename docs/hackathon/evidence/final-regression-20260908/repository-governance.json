@@ -1,0 +1,16 @@
+{
+  "recorded_at": "2026-09-08T10:19:43.426238+00:00",
+  "read_only": true,
+  "repository": "maoyadongsh/siq-agent-security",
+  "branch": {
+    "name": "main",
+    "protected": false
+  },
+  "permissions": {
+    "admin": true,
+    "pull": true,
+    "push": true
+  },
+  "changes_performed": false,
+  "recommendation": "Require PR review and successful CI, disallow force pushes, and require sensitive-path review; separate repository settings action."
+}

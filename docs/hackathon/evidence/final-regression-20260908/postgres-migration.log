@@ -1,0 +1,21 @@
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Frozen baseline schema through revision 0008.
+INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, finding.resource_ref：非资产作用域的资源定位（环境/凭据等）
+INFO  [alembic.runtime.migration] Running upgrade 0002 -> 0003, agent_asset.evidence_ids：资产与证据的关联（批次上传时写入）
+INFO  [alembic.runtime.migration] Running upgrade 0003 -> 0004, classification_run：模型辅助分类运行记录（条件式迁移，同 0002 说明）
+INFO  [alembic.runtime.migration] Running upgrade 0004 -> 0005, Evidence 改为租户内稳定 ID + 不可变内容观察版本。
+INFO  [alembic.runtime.migration] Running upgrade 0005 -> 0006, Edge task 上传结果摘要与 uploaded 状态支持。
+INFO  [alembic.runtime.migration] Running upgrade 0006 -> 0007, Permission facts carry their trusted source environment.
+INFO  [alembic.runtime.migration] Running upgrade 0007 -> 0008, Bind immutable evidence observations to their source environment.
+INFO  [alembic.runtime.migration] Running upgrade 0008 -> 0009, Runtime bindings pin policy deployments to registered runtime targets (P0-1).
+INFO  [alembic.runtime.migration] Running upgrade 0009 -> 0010, 威胁检测流水线（P0-3）：finding 分析器产物列 + quarantine_case 表。
+INFO  [alembic.runtime.migration] Running upgrade 0010 -> 0011, P1-8 制品指纹入账：agent_asset 增加 artifact_digest / attributes 列。
+INFO  [alembic.runtime.migration] Running upgrade 0011 -> 0012, P1-5 Edge 任务原子领取（claim/lease）：edge_task 增加 leased_at / lease_owner / attempt 列。
+INFO  [alembic.runtime.migration] Running upgrade 0012 -> 0013, finding.matches 存量行回填（NULL → '[]'）。
+INFO  [alembic.runtime.migration] Running upgrade 0013 -> 0014, DEV12-A：break-glass 复核字段与业务 status 正交。
+INFO  [alembic.runtime.migration] Running upgrade 0014 -> 0015, DEV12-B：Outbox 领取租约与退避字段。
+INFO  [alembic.runtime.migration] Running upgrade 0015 -> 0016, DEV14-B：classification_run 可追溯元数据列。
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+0016 (head)

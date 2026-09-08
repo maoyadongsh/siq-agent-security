@@ -154,7 +154,7 @@ func Build(adm admission.Admission, opts Options) (*Result, error) {
 		OverlapConflicts: []Overlap{},
 	}
 	dp := DesiredPolicy{
-		"policy_id":        "pol-" + adm.ContentHash[:12],
+		"policy_id":        "pol-" + g.GrantID,
 		"selector":         map[string]any{"agent_ids": []any{opts.Subject.ID}},
 		"version":          1,
 		"status":           "validated",

@@ -2,6 +2,9 @@
 
 **面向本地与企业智能体的任务授权、运行时门禁与可验证审计。**
 
+**DGX Spark 比赛演示：** 三个真实 Skill 完成仓库研究、报告生成与受控交付；SIQ 校验参数来源和实际效果。现已接入本机 ornith 模型，提供现有本地 Web 内的 Demo Mode。
+运行 `./scripts/hackathon/start.sh`，按启动输出打开浏览器并配对。详见 [Hackathon 使用说明](HACKATHON.md)和[开发进度](docs/hackathon/progress.md)。人工审批演示与 23 项固定提案任务基准已通过验证；模型稳定性与发布验收仍在开发。
+
 SIQ Agent Security 将“谁授权、允许访问什么、可以产生哪些效果、实际发生了什么”连接成一条可检查的安全链。它以可安装的 Skill 作为交互入口，以本地 Go 程序执行确定性的授权判断，通过运行时适配器接入工具调用，并以签名回执记录决策与结果关联。企业控制面进一步提供多环境资产盘点、证据管理、策略审批和执行协调。
 
 项目面向使用 Hermes、OpenClaw、WorkBuddy / CodeBuddy 等智能体的开发者、平台团队与安全团队，也面向在 NVIDIA DGX Spark 等设备上部署私有 AI 工作流的组织。
@@ -10,7 +13,7 @@ SIQ Agent Security 将“谁授权、允许访问什么、可以产生哪些效�
 
 [产品介绍](https://maoyadongsh.github.io/siq-agent-security/) · [架构全景](https://maoyadongsh.github.io/siq-agent-security/architecture.html) · [CI](https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml) · [发布版本](https://github.com/maoyadongsh/siq-agent-security/releases)
 
-> **开发状态，2026-09-08：** 当前 checkout 的 `codex/provenance-bound-effect-v1` 分支在 Trusted Intent V2 基础上加入了跨模式授权硬门禁、实验性参数来源图与 Intent V3、实验性效果证据及完成判定。21 对组件基准、文件强杀恢复和八阶段性能微基准已有本地证据；分支已推送并创建[草稿 PR #4](https://github.com/maoyadongsh/siq-agent-security/pull/4)，`54f5d32` 的远端检查30项成功、nightly按触发条件跳过；尚未合并到 `main` 或发布正式 Release，后续提交须重新验证。平台自动集成、完整证据重放与最终验收仍在进行中，支持矩阵没有因此升级为 `supported`。详见[开发台账](./docs/provenance-bound-effect-v1-progress.md)和[能力矩阵](./docs/agentshield-capability-matrix-v1.md)。
+> **开发状态，2026-09-08：** 当前比赛开发分支为 `codex/dgx-spark-hackathon-v3`，基线为 `e3096559`，复用既有安全内核。67 项应用测试与 23 项 Agent 对照基准通过；真实 ornith 正常任务完成 4/5，失败保留在统计中；浏览器来源展示、六场景、重新配对和 DGX 性能另有证据。这些本地结果不代表远端 CI、最终验收或正式发布完成。详见[基准报告](docs/hackathon/benchmark-report.md)、[开发台账](docs/hackathon/progress.md)和[能力矩阵](docs/agentshield-capability-matrix-v1.md)。
 
 ## 为什么需要 SIQ Agent Security
 

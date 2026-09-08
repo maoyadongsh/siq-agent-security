@@ -1,0 +1,85 @@
+{
+  "schema_version": "dgx-spark-environment/v1",
+  "recorded_at": "2026-09-08T10:22:40.377010+00:00",
+  "hardware": {
+    "product": "NVIDIA_DGX_Spark",
+    "vendor": "NVIDIA",
+    "os": "PRETTY_NAME=\"Ubuntu 24.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.4 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
+    "kernel": "6.17.0-1014-nvidia",
+    "architecture": "aarch64",
+    "gpu": "NVIDIA GB10, 580.126.09, [N/A]",
+    "cuda": "13.0",
+    "ram_bytes": 130663591936,
+    "dgx_identity_verified": true
+  },
+  "model": {
+    "status": "reachable",
+    "http_status": 200,
+    "models": [
+      "step-3.7-flash",
+      "step-router-v1",
+      "stepaudio-2.5-chat",
+      "stepaudio-2.5-tts",
+      "stepaudio-2.5-asr",
+      "stepaudio-2.5-realtime",
+      "step-image-edit-2",
+      "step-3.5-flash-2603",
+      "step-3.5-flash"
+    ],
+    "provider": "stepfun",
+    "configured_model": "step-3.7-flash",
+    "key_present": true,
+    "inference_verification": "unverified",
+    "model_digest": "unverified"
+  },
+  "services": {
+    "siq": {
+      "status": "reachable",
+      "http_status": 200,
+      "models": []
+    },
+    "agent": {
+      "status": "reachable",
+      "http_status": 200,
+      "models": []
+    },
+    "web": {
+      "status": "reachable",
+      "http_status": 200,
+      "models": []
+    },
+    "fixtures": {
+      "status": "reachable",
+      "http_status": 200,
+      "models": []
+    }
+  },
+  "skills_present": true,
+  "fixtures_present": true,
+  "source_sha": "e309655915562a27cb98df851c1e46e922563d47",
+  "working_tree_dirty": true,
+  "application_files_sha256": {
+    "apps/secure-agent/secure_agent/__init__.py": "128f0ae6e0ce861dd91223d04e16d5c780f7ca54ccdeb13b249a749ab8e8b768",
+    "apps/secure-agent/secure_agent/__main__.py": "86ced9d30bb4534737be37fa773e1b3c51d865fdbad17013523fc9cf1bd53d18",
+    "apps/secure-agent/secure_agent/application.py": "42b5732b03acecec176f275775986ce504233a386c3b261f2575736c0396e002",
+    "apps/secure-agent/secure_agent/authority.py": "c344194f681a083f781bc332d1577a98e355999179e06c2f1433926ef36d5492",
+    "apps/secure-agent/secure_agent/confidential.py": "f1c38a911238fb214c2b22274ff7b9e5283c75e4cfe31b954e1c87f9e6987925",
+    "apps/secure-agent/secure_agent/contracts.py": "afe316d6e6580365ddaa0d51a6a906aeaf5898dc7fd64157e8bf705d208d63f4",
+    "apps/secure-agent/secure_agent/fixtures.py": "35739042ca01aa35571edb7ab2d6b99908a0e915a45eedaef15f6d89cfaa9c69",
+    "apps/secure-agent/secure_agent/gateway.py": "4b3e047524b6b55075b8e1ba9afa69a8b6078a7d32ec5288c99f5263557b55fc",
+    "apps/secure-agent/secure_agent/models.py": "9df3f19b58a4d33164bfe5dced6cdeb5e10984fd4b1b84e4b904aff3373e12d0",
+    "apps/secure-agent/secure_agent/runtime.py": "e58f3675f0ca6454903a2da663147eaad91e0600e0c318f31747fce2995f2ee4",
+    "apps/secure-agent/secure_agent/security.py": "a338eecd718176e682787287992cec10db493071e7371cd99ef548169ec7ad87",
+    "apps/secure-agent/secure_agent/service.py": "b28c5ccffb71a237791b039c00dfb05821d0c3f575d1845283956623e0dbc138",
+    "apps/secure-agent/secure_agent/skills.py": "a6820e9c6df6736146854c9ef57cf27d90881c4171e2c542d0644d2724fca630",
+    "apps/secure-agent/secure_agent/tools.py": "7a3ffb23d573e815f6b5b717f931cdf55d1c6a7c3b00ab1b2771933eb9741b39",
+    "skills/secure-research/SKILL.md": "ff06388737058ec58e7ae4db85631bc9c5d86fc0b8ff88b2fd4982a1ce536286",
+    "skills/secure-report/SKILL.md": "95124a49a04d9b64fdafec8dbe427b7e478624513746014c6e21c4b5b6dfce10",
+    "skills/secure-delivery/SKILL.md": "9133aa06a48aee9c4a8212e7b304cce081dfbd65264d237e98a03e20c6e17610"
+  },
+  "deployment_verified": false,
+  "limitations": [
+    "Hardware identity is separate from model inference and complete deployment verification.",
+    "A reachable model listing is not a successful planning or end-to-end inference result."
+  ]
+}

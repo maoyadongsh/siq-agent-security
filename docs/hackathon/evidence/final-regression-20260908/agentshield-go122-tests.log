@@ -1,0 +1,34 @@
+go: downloading go1.22.12 (linux/arm64)
+?   	siq-agent-security/apps/agentshield/cmd/perfbaseline	[no test files]
+ok  	siq-agent-security/apps/agentshield/cmd/agentshield	0.089s
+?   	siq-agent-security/apps/agentshield/internal/fileopen	[no test files]
+?   	siq-agent-security/apps/agentshield/internal/product	[no test files]
+ok  	siq-agent-security/apps/agentshield/internal/adapterinstall	0.414s
+ok  	siq-agent-security/apps/agentshield/internal/adapters	0.052s
+ok  	siq-agent-security/apps/agentshield/internal/admission	0.136s
+ok  	siq-agent-security/apps/agentshield/internal/canon	0.008s
+ok  	siq-agent-security/apps/agentshield/internal/completion	0.069s
+ok  	siq-agent-security/apps/agentshield/internal/contractvectors	0.015s
+ok  	siq-agent-security/apps/agentshield/internal/controlsync	0.017s
+ok  	siq-agent-security/apps/agentshield/internal/display	0.007s
+?   	siq-agent-security/apps/agentshield/internal/runtimeauthz	[no test files]
+?   	siq-agent-security/apps/agentshield/internal/trustedcontext	[no test files]
+ok  	siq-agent-security/apps/agentshield/internal/effectevidence	1.647s
+ok  	siq-agent-security/apps/agentshield/internal/export	0.084s
+ok  	siq-agent-security/apps/agentshield/internal/grant	0.018s
+ok  	siq-agent-security/apps/agentshield/internal/intent	1.047s
+ok  	siq-agent-security/apps/agentshield/internal/inventory	0.088s
+ok  	siq-agent-security/apps/agentshield/internal/ledger	0.135s
+ok  	siq-agent-security/apps/agentshield/internal/openshell	0.013s
+ok  	siq-agent-security/apps/agentshield/internal/pending	0.049s
+ok  	siq-agent-security/apps/agentshield/internal/perfbaseline	0.531s
+ok  	siq-agent-security/apps/agentshield/internal/provenance	8.561s
+ok  	siq-agent-security/apps/agentshield/internal/receipt	13.016s
+ok  	siq-agent-security/apps/agentshield/internal/rulepack	0.017s
+ok  	siq-agent-security/apps/agentshield/internal/runtimeaction	0.008s
+ok  	siq-agent-security/apps/agentshield/internal/server	3.719s
+ok  	siq-agent-security/apps/agentshield/internal/signing	0.012s
+ok  	siq-agent-security/apps/agentshield/internal/skillmanifest	0.630s
+ok  	siq-agent-security/apps/agentshield/internal/state	0.758s
+ok  	siq-agent-security/apps/agentshield/internal/threat	0.027s
+ok  	siq-agent-security/apps/agentshield/internal/ui	0.010s

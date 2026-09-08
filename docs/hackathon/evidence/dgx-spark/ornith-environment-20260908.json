@@ -1,0 +1,76 @@
+{
+  "schema_version": "dgx-spark-environment/v1",
+  "recorded_at": "2026-09-08T07:19:32.669136+00:00",
+  "hardware": {
+    "product": "NVIDIA_DGX_Spark",
+    "vendor": "NVIDIA",
+    "os": "PRETTY_NAME=\"Ubuntu 24.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.4 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
+    "kernel": "6.17.0-1014-nvidia",
+    "architecture": "aarch64",
+    "gpu": "NVIDIA GB10, 580.126.09, [N/A]",
+    "cuda": "13.0",
+    "ram_bytes": 130663591936,
+    "dgx_identity_verified": true
+  },
+  "model": {
+    "status": "reachable",
+    "http_status": 200,
+    "models": [
+      "Ornith-1.5-35B-A3B-NVFP4"
+    ],
+    "provider": "ornith",
+    "configured_model": "Ornith-1.5-35B-A3B-NVFP4",
+    "key_present": false,
+    "inference_verification": "unverified",
+    "model_digest": "unverified"
+  },
+  "services": {
+    "siq": {
+      "status": "reachable",
+      "http_status": 200,
+      "models": []
+    },
+    "agent": {
+      "status": "reachable",
+      "http_status": 200,
+      "models": []
+    },
+    "web": {
+      "status": "reachable",
+      "http_status": 200,
+      "models": []
+    },
+    "fixtures": {
+      "status": "reachable",
+      "http_status": 200,
+      "models": []
+    }
+  },
+  "skills_present": true,
+  "fixtures_present": true,
+  "source_sha": "e309655915562a27cb98df851c1e46e922563d47",
+  "working_tree_dirty": true,
+  "application_files_sha256": {
+    "apps/secure-agent/secure_agent/__init__.py": "128f0ae6e0ce861dd91223d04e16d5c780f7ca54ccdeb13b249a749ab8e8b768",
+    "apps/secure-agent/secure_agent/__main__.py": "d891c6f4cb1c9d0aedef387948b33c910485f1a2f1dd355a4c30ccfbc4546dba",
+    "apps/secure-agent/secure_agent/application.py": "108e45879e8e862a866800fcf0652d50bc936aab351bb7360fe23d444a5e04a0",
+    "apps/secure-agent/secure_agent/authority.py": "3ff9fbf2f92cb1a545b16c4dc91050b2df73de60db46fe66c366d1fca6425585",
+    "apps/secure-agent/secure_agent/contracts.py": "afe316d6e6580365ddaa0d51a6a906aeaf5898dc7fd64157e8bf705d208d63f4",
+    "apps/secure-agent/secure_agent/fixtures.py": "35739042ca01aa35571edb7ab2d6b99908a0e915a45eedaef15f6d89cfaa9c69",
+    "apps/secure-agent/secure_agent/gateway.py": "17843042bcb4b7ebdc9b64ab1ab3df35841d026f4c03656b557267066d40d7c4",
+    "apps/secure-agent/secure_agent/models.py": "480510ff708012dcbba4628435ab2348b09063ba45947ff66b636868f6739cfb",
+    "apps/secure-agent/secure_agent/runtime.py": "e58f3675f0ca6454903a2da663147eaad91e0600e0c318f31747fce2995f2ee4",
+    "apps/secure-agent/secure_agent/security.py": "30d39d99d1ecd726223f56216e4adb03846941491ca4e3f64091b3c2b32b78b4",
+    "apps/secure-agent/secure_agent/service.py": "c4b07c62c124e41495c9204f52b46d81df44788fbbcf063d559b523121d5f626",
+    "apps/secure-agent/secure_agent/skills.py": "464b2f1f09262b782dd17336eddfd8a8c7d242dab5d3e10da538fccbb0652e34",
+    "apps/secure-agent/secure_agent/tools.py": "589e167ed2adfb7e65fe0d3e7d49a63a0a80cfeaa6943669b90b4efdc529f42b",
+    "skills/secure-research/SKILL.md": "7e2590d34703e8516dc010e6a691a298a93ceec68da26e97cbec5601ccd6573a",
+    "skills/secure-report/SKILL.md": "40655e34cb473a335f7bd89e0f7f4e7a42501ba78a9a2dfab9c936ad53cd7108",
+    "skills/secure-delivery/SKILL.md": "9133aa06a48aee9c4a8212e7b304cce081dfbd65264d237e98a03e20c6e17610"
+  },
+  "deployment_verified": false,
+  "limitations": [
+    "Hardware identity is separate from model inference and complete deployment verification.",
+    "A reachable model listing is not a successful planning or end-to-end inference result."
+  ]
+}

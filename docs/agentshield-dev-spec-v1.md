@@ -791,6 +791,8 @@ HTTP 请求/撤销记录分别遵守 `intent-binding-revoke-request.v1.schema.js
 
 新 decision 回执使用可选签名字段 authority_status（valid/invalid/unbound_legacy）、authority_reason_code、policy_action、effective_action。Authority invalid 时不执行 Policy evaluator，policy_action 缺省；effective_action 与实际返回 action 一致。新正常观察与 hold resolution 同步实际 action，历史缺字段回执仍可读取。所有新字段沿用既有 Chain/canon/signing。
 
+比赛 Dashboard 的兼容性增量：`POST /v1/decide` 响应增加可选 `trifecta`，直接投影本次签名 Receipt 的同名对象（`private_data`、`untrusted_input`、`egress` 三个布尔值；无状态时可为 null）。不接受请求侧提供状态，不重新推断，不改变判定顺序或 Receipt 合同；历史客户端可忽略该字段。显示字段本身不替代签名回执验证。
+
 ### caller cwd 边界
 
 请求 Context 为 observational。删除 caller cwd 的 filesystem allow 捷径；工作区写权限必须由受信 Grant 明确授权，合法 ContextAssertion 也不能突破 Grant ∩ Intent。保持日志脱敏，不持久化额外 cwd 明文。新上下文签发/验证将在 A2 独立包实现。
@@ -1028,3 +1030,71 @@ POST `/v1/tool-effect-reports` 使用capDecision，合同为tool-effect-report.v
 ### Runtime 参数来源的 scope 拒绝码
 
 MatchParameters 对调用方明确提供、但无法在当前 platform/session/agent/task 目录解析的 provenance ref 返回 provenance_scope_mismatch。跨任务、跨会话及未知 ID 使用同一代码，不探测其他 scope 是否存在该 ID，不新增全局索引或目录扫描。代码含义是“引用无法绑定当前 scope”，不声称已确认该 ID 存在于其他任务。未提供必需引用仍为 provenance_missing，管理 Resolve 的未找到仍为 provenance_not_found；坏签名、过期及撤销保留各自明确代码。该调整只影响签名拒绝原因，不改变任何允许条件。
+
+## Hackathon V3 integration: trusted message routing metadata
+
+2026-09-08: the real Secure Agent integration exposed a false deny: the generic
+parameter PII scan classified the authorized recipient mailbox itself as an
+exfiltration payload. For `message.send` only, a top-level `recipient` or `to`
+string can be omitted from the **new PII scan input** after valid Intent V3,
+context and provenance validation, and only when its effective signed/default
+provenance constraint is required and minimum trust is trusted/authoritative.
+The existing provenance matcher must have verified all references, canonical
+value digests, issuer signatures, full ancestry, scope and current validity.
+
+This is routing-field classification, not data declassification. All parameters
+still participate in secret and threat scans, normalized resources, Intent/Grant
+checks, signed parameter digests and observations. The remaining message body,
+nested fields and all other parameters still undergo PII scanning. No existing
+session taint is removed. Invalid/missing/optional/untrusted provenance, V2 and
+legacy requests receive the original full scan. `Observe` remains unchanged:
+PII actually present in a tool result still taints the session. No email address,
+contact name or competition-specific allow/reason code is hard-coded.
+# Hackathon integration correction: per-Grant desired policy identity (2026-09-08)
+
+Creating Grants for two different agent instances from the same admitted Skill
+must create separate immutable desired policy namespaces. The initial policy
+ID is `pol-` + the newly built Grant ID, consistent with PatchDesired's fallback.
+It must not depend on Skill content hash alone: the selector includes the agent
+ID, so that old naming reused version 1 for different immutable content and
+failed the second creation. Existing stored Grants retain their signed policy
+references; no old policy, Grant or version is rewritten. Approval, deployment,
+selector checking and append-only publication remain unchanged. Tests must
+cover different subjects/platforms sharing one admission and sequential actual
+application tasks in one daemon.
+# Hackathon approval integration (2026-09-08)
+
+The admin-only `POST /v1/grants/{id}/require-approval` accepts the new
+`grant-tool-approval/v1` request contract. Only pending Grants may be changed,
+under their exact state revision and an identified human actor. Every named
+tool must already have an allowed declared fact; this operation never grants
+new tools. It adds signed `conditions.require_approval=true` to those facts.
+Grant v1 already carries arbitrary conditions, so its wire shape is unchanged.
+The existing receipt engine uses this condition on allowed declared/effective
+tool facts as an additional per-use HOLD requirement on every platform. Existing
+OpenClaw approval gates remain. Authority, provenance, context and data-policy
+denials still take precedence. PatchDesired preserves an existing tool approval
+condition when rebuilding that same tool. Existing challenge digests include
+facts; mutations invalidate old challenges. Changes use CommitGrant with audit.
+
+The closed built-in `verify_report` tool accepts only the versioned single-path
+parameter shape. Its descriptor is file.read plus process.exec and includes the
+filesystem target and required path provenance. Unknown parameters or invalid
+paths fail closed. The application executor starts a fixed isolated interpreter
+program to hash a bounded report file; callers cannot choose code, executable,
+arguments beyond the report path, environment, or shell syntax. This capability
+does not change normalization of exec/shell text (still includes unknown).
+Process-start and returned digest are reported observations, not independent
+process-effect evidence or OS containment. File/network Completion continues
+to use the existing observers and exact immutable execution Intent.
+### Hackathon structured resource hints (2026-09-08)
+
+Real model reviews exposed a false denial: a `write_file` report body mentioning
+`/workspace` was treated as another filesystem target. Structured file tools
+derive Grant path hints from their `path`/`file_path` parameters and validated
+filesystem resources, never from report/content strings. File payload URLs do
+not imply a network effect. Known network tools derive host hints from `url`/
+`host`; message bodies do not create extra destination hosts. Interpreter tools
+retain conservative full-command hints and unknown effects. Full parameter text
+still participates in threat/secret/PII scanning, digests and provenance checks.
+This changes resource selection, not taint policy or authority requirements.

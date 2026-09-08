@@ -1,0 +1,51 @@
+{
+  "schema_version": "hackathon-model-checkpoint/v1",
+  "recorded_at": "2026-09-08T08:03:16.069136+00:00",
+  "provider": "ornith",
+  "model": "Ornith-1.5-35B-A3B-NVFP4",
+  "source_mode": "controlled_fixture",
+  "scenario": "approval",
+  "approval_actor": "automated test operator",
+  "e2e_ms": 145.38650700706057,
+  "application_files_sha256": {
+    "apps/secure-agent/secure_agent/__init__.py": "128f0ae6e0ce861dd91223d04e16d5c780f7ca54ccdeb13b249a749ab8e8b768",
+    "apps/secure-agent/secure_agent/__main__.py": "d891c6f4cb1c9d0aedef387948b33c910485f1a2f1dd355a4c30ccfbc4546dba",
+    "apps/secure-agent/secure_agent/application.py": "0254c5c07557422ac4792a967a63e8ccbe7311e6f75437de537b982578e537ac",
+    "apps/secure-agent/secure_agent/authority.py": "0554a050fb2aa9f8a7927806ae1d1ceb7748c5852a192d9f3c4d056bdd6ef535",
+    "apps/secure-agent/secure_agent/contracts.py": "afe316d6e6580365ddaa0d51a6a906aeaf5898dc7fd64157e8bf705d208d63f4",
+    "apps/secure-agent/secure_agent/fixtures.py": "35739042ca01aa35571edb7ab2d6b99908a0e915a45eedaef15f6d89cfaa9c69",
+    "apps/secure-agent/secure_agent/gateway.py": "26cbc18850f2bd35b71a19d34af7a62018bd1b910658128ecadde4319638b5ca",
+    "apps/secure-agent/secure_agent/models.py": "77bb0c2692fd364122bc7574e7056273b1d3279a76bb396be671562cf4054fb9",
+    "apps/secure-agent/secure_agent/runtime.py": "e58f3675f0ca6454903a2da663147eaad91e0600e0c318f31747fce2995f2ee4",
+    "apps/secure-agent/secure_agent/security.py": "330b47fb7f736b7db62626ed6d2a6a8c9de3b3ebbf2b1cb1c4175c2f25ba4e2d",
+    "apps/secure-agent/secure_agent/service.py": "506b2181d1f2ead13d46a60a46b51ec55c1a22ec78b1abd47a7435f6c327eb05",
+    "apps/secure-agent/secure_agent/skills.py": "68ac4aa3003eaca38831edb64c484ce0cdf43097d1dd6d44b6078e9061140093",
+    "apps/secure-agent/secure_agent/tools.py": "5406249a782f1c935b6c2b9bbb767e30e853856fdc5b6e258f0ca76c23b30d16"
+  },
+  "result": {
+    "task": {
+      "actions": [],
+      "status": "failed",
+      "error_code": "siq_http_error"
+    },
+    "intent": null,
+    "messages": [],
+    "model_calls": []
+  },
+  "report_markdown": null,
+  "public_evidence": {
+    "fixture": "approval-ornith",
+    "public_key": "z3g5rnA8DmuLQ06d2Z5UNvKtP5SzkAibkMgv/xJ7zQE=",
+    "binary_sha256": "d26cdf66373a3a2c97a63808338ab0c98b9b1a6958a1bcef4f8a28ed9707a97a",
+    "receipts": []
+  },
+  "verification": {
+    "receipt_signatures_and_chains": "verified",
+    "receipt_count": 0,
+    "effect_server_readbacks": 0
+  },
+  "limitations": [
+    "One real-model task is not the twenty-task benchmark or a model quality estimate.",
+    "Source repository, contacts and delivery endpoint are controlled fixtures."
+  ]
+}

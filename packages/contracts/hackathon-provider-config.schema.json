@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Private hackathon provider configuration v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "primary", "backup", "providers"],
+  "properties": {
+    "schema_version": {"const": "hackathon-provider-config/v1"},
+    "primary": {"enum": ["stepfun", "ornith"]},
+    "backup": {"enum": ["stepfun", "ornith"]},
+    "providers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stepfun", "ornith"],
+      "properties": {
+        "stepfun": {"$ref": "#/definitions/provider"},
+        "ornith": {"$ref": "#/definitions/provider"}
+      }
+    }
+  },
+  "definitions": {
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["endpoint", "model", "api_key"],
+      "properties": {
+        "endpoint": {"type": "string"},
+        "model": {"type": "string"},
+        "api_key": {"type": "string"}
+      }
+    }
+  }
+}

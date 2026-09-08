@@ -21,6 +21,14 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
         with:
           fetch-depth: 0
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5
+        with:
+          go-version: "1.26.6"
+      - name: Calibrate secret scanner and fixture exceptions
+        run: |
+          mkdir -p "$RUNNER_TEMP/siq-scanner"
+          GOBIN="$RUNNER_TEMP/siq-scanner" go install github.com/zricethezav/gitleaks/v8@v8.24.2
+          python3 scripts/check_gitleaks_config.py --binary "$RUNNER_TEMP/siq-scanner/gitleaks"
       - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7  # v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,48 @@
 # gitleaks 配置：默认规则 + 测试夹具假凭据的精确放行
+[extend]
+  useDefault = true
+
 [allowlist]
   description = "测试夹具中的假凭据（非真实密钥，redactor 单测输入）"
   regexes = [
-    '''ghp_0123456789abcdefghijklmnopqrstuvwxyz''',
+    '''^ghp_0123456789abcdefghijklmnopqrstuvwxyz$''',
   ]
+
+# Exact synthetic values in reviewed security tests. Default rules remain enabled;
+# new values in these same files are still scanned.
+[[rules]]
+  id = "github-pat"
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''edge/agent/evidence_test\.go$''']
+    regexes = ['''^ghp_012345678901234567890123456789012345$''']
+
+[[rules]]
+  id = "generic-api-key"
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''(?:apps/agentshield/internal/(?:receipt/session_(?:capacity|idle)_test|server/server_test)\.go|apps/control-api/app/tests/test_(?:e2e_fresh_deploy|threat_analysis)\.py|connectors/(?:process/process|kubernetes/kubernetes|piagent/piagent|systemd/systemd)_test\.go)$''']
+    regexes = ['''^(?:sk-abcdefghijklmnopqrstuvwxyz012345|0123456789abcdef0123456789abcdef0123456789abcdef|sk-proj-secret1234567890123456|ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123|xoxb-1234567890-abcdefghij|sk-test1234567890ab|tok-ultra-secret-67890|sk-piSecretKey123456789|sk-livekey123456789)$''']
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''docs/(?:hackathon/)?evidence/[^\n]+\.json$''']
+    regexTarget = "line"
+    regexes = ['''^\s*"(?:[^"\r\n]+/)?[^"/\r\n]+\.(?:go|py|json|toml|js|ts|tsx|mjs|cjs|md|sh|ps1|yml|yaml|css|html|log)": "[a-f0-9]{64}",?\s*$''']
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''docs/hackathon/evidence/benchmark-20260908/controls-first\.json$''']
+    regexes = ['''^M0TfIyTYjfzpAaFbrhRVPm1PTlMPQ2Eei/kcYna\+y7w=$''']
+
+[[rules]]
+  id = "aws-access-token"
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''apps/control-api/app/tests/test_threat_analysis\.py$''']
+    regexes = ['''^AKIAABCDEFGHIJKLMNOP$''']
+
+[[rules]]
+  id = "jwt"
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''apps/control-api/app/tests/test_threat_analysis\.py$''']
+    regexes = ['''^eyJhbGciOiJIUzI1NiJ9\.eyJzdWIiOiIxMjM0NTY3ODkwIn0\.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U(?:\\n)?$''']

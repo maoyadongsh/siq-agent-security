@@ -1,0 +1,707 @@
+{
+  "recorded_at": "2026-09-08T09:00:59.055324+00:00",
+  "environment": "local DGX aarch64; Go 1.26.6; not remote CI",
+  "checks": [
+    {
+      "name": "check_event_envelope_core",
+      "command": [
+        "python3",
+        "scripts/check_event_envelope_core.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.064
+    },
+    {
+      "name": "check_control_api_dockerfile_lock",
+      "command": [
+        "python3",
+        "scripts/check_control_api_dockerfile_lock.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.032
+    },
+    {
+      "name": "check_web_nginx_headers",
+      "command": [
+        "python3",
+        "scripts/check_web_nginx_headers.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.032
+    },
+    {
+      "name": "check_ci_action_pins",
+      "command": [
+        "python3",
+        "scripts/check_ci_action_pins.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.033
+    },
+    {
+      "name": "check_openshell_compat_workflow",
+      "command": [
+        "python3",
+        "scripts/check_openshell_compat_workflow.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.033
+    },
+    {
+      "name": "check_site_mermaid_vendor",
+      "command": [
+        "python3",
+        "scripts/check_site_mermaid_vendor.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.065
+    },
+    {
+      "name": "check_pages_action_pins",
+      "command": [
+        "python3",
+        "scripts/check_pages_action_pins.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.033
+    },
+    {
+      "name": "check_dockerfile_digests",
+      "command": [
+        "python3",
+        "scripts/check_dockerfile_digests.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.033
+    },
+    {
+      "name": "check_threat_model_local",
+      "command": [
+        "python3",
+        "scripts/check_threat_model_local.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.032
+    },
+    {
+      "name": "check_capability_honesty",
+      "command": [
+        "python3",
+        "scripts/check_capability_honesty.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.032
+    },
+    {
+      "name": "test-openclaw-checkpoint-compat",
+      "command": [
+        "python3",
+        "scripts/test-openclaw-checkpoint-compat.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.616
+    },
+    {
+      "name": "check_perf_baseline_harness",
+      "command": [
+        "python3",
+        "scripts/check_perf_baseline_harness.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.767
+    },
+    {
+      "name": "lint",
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/ruff",
+        "check",
+        "apps/control-api/app",
+        "apps/secure-agent",
+        "scripts/hackathon",
+        "benchmarks/hackathon",
+        "benchmarks/runtime-security",
+        "deploy/dgx-spark/preflight.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.017
+    },
+    {
+      "name": "schema-contracts",
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/python",
+        "benchmarks/runtime-security/check_contracts.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.165
+    },
+    {
+      "name": "runtime-benchmark-tests",
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/runtime-security",
+        "-p",
+        "test_*.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.165
+    },
+    {
+      "name": "agent-benchmark-tests",
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/hackathon",
+        "-p",
+        "test_*.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 2.172
+    },
+    {
+      "name": "hermes-adapter-tests",
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/pytest",
+        "adapters/runtime/hermes-agentshield/tests/test_adapter.py",
+        "-q"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 26.635
+    },
+    {
+      "name": "openclaw-adapter-tests",
+      "command": [
+        "node",
+        "scripts/test-openclaw-adapter.cjs"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 1.017
+    },
+    {
+      "name": "apps-agentshield-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "elapsed_seconds": 0.415
+    },
+    {
+      "name": "apps-agentshield-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "elapsed_seconds": 0.264
+    },
+    {
+      "name": "apps-agentshield-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "elapsed_seconds": 6.631
+    },
+    {
+      "name": "edge-agent-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "edge/agent",
+      "exit_code": 0,
+      "elapsed_seconds": 0.416
+    },
+    {
+      "name": "edge-agent-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "edge/agent",
+      "exit_code": 0,
+      "elapsed_seconds": 0.164
+    },
+    {
+      "name": "edge-agent-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "edge/agent",
+      "exit_code": 0,
+      "elapsed_seconds": 1.97
+    },
+    {
+      "name": "connectors-hermes-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/hermes",
+      "exit_code": 0,
+      "elapsed_seconds": 0.265
+    },
+    {
+      "name": "connectors-hermes-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/hermes",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-hermes-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/hermes",
+      "exit_code": 0,
+      "elapsed_seconds": 1.368
+    },
+    {
+      "name": "connectors-openclaw-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/openclaw",
+      "exit_code": 0,
+      "elapsed_seconds": 0.214
+    },
+    {
+      "name": "connectors-openclaw-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/openclaw",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-openclaw-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/openclaw",
+      "exit_code": 0,
+      "elapsed_seconds": 1.317
+    },
+    {
+      "name": "connectors-docker-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/docker",
+      "exit_code": 0,
+      "elapsed_seconds": 0.215
+    },
+    {
+      "name": "connectors-docker-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/docker",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-docker-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/docker",
+      "exit_code": 0,
+      "elapsed_seconds": 1.317
+    },
+    {
+      "name": "connectors-directory-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/directory",
+      "exit_code": 0,
+      "elapsed_seconds": 0.265
+    },
+    {
+      "name": "connectors-directory-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/directory",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-directory-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/directory",
+      "exit_code": 0,
+      "elapsed_seconds": 1.367
+    },
+    {
+      "name": "connectors-systemd-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/systemd",
+      "exit_code": 0,
+      "elapsed_seconds": 0.214
+    },
+    {
+      "name": "connectors-systemd-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/systemd",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-systemd-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/systemd",
+      "exit_code": 0,
+      "elapsed_seconds": 1.367
+    },
+    {
+      "name": "connectors-kubernetes-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/kubernetes",
+      "exit_code": 0,
+      "elapsed_seconds": 0.215
+    },
+    {
+      "name": "connectors-kubernetes-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/kubernetes",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-kubernetes-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/kubernetes",
+      "exit_code": 0,
+      "elapsed_seconds": 1.368
+    },
+    {
+      "name": "connectors-process-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/process",
+      "exit_code": 0,
+      "elapsed_seconds": 0.265
+    },
+    {
+      "name": "connectors-process-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/process",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-process-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/process",
+      "exit_code": 0,
+      "elapsed_seconds": 1.317
+    },
+    {
+      "name": "connectors-mcp-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/mcp",
+      "exit_code": 0,
+      "elapsed_seconds": 0.265
+    },
+    {
+      "name": "connectors-mcp-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/mcp",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-mcp-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/mcp",
+      "exit_code": 0,
+      "elapsed_seconds": 1.318
+    },
+    {
+      "name": "connectors-piagent-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/piagent",
+      "exit_code": 0,
+      "elapsed_seconds": 0.214
+    },
+    {
+      "name": "connectors-piagent-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/piagent",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-piagent-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/piagent",
+      "exit_code": 0,
+      "elapsed_seconds": 1.367
+    },
+    {
+      "name": "connectors-workbuddy-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/workbuddy",
+      "exit_code": 0,
+      "elapsed_seconds": 0.215
+    },
+    {
+      "name": "connectors-workbuddy-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/workbuddy",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-workbuddy-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/workbuddy",
+      "exit_code": 0,
+      "elapsed_seconds": 1.317
+    },
+    {
+      "name": "connectors-dify-build",
+      "command": [
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "connectors/dify",
+      "exit_code": 0,
+      "elapsed_seconds": 0.214
+    },
+    {
+      "name": "connectors-dify-vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "connectors/dify",
+      "exit_code": 0,
+      "elapsed_seconds": 0.114
+    },
+    {
+      "name": "connectors-dify-test",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./..."
+      ],
+      "cwd": "connectors/dify",
+      "exit_code": 0,
+      "elapsed_seconds": 1.317
+    },
+    {
+      "name": "manifest-verify",
+      "command": [
+        "go",
+        "run",
+        "./cmd/agentshield",
+        "manifest-verify",
+        "../../skills/siq-agent-security/skill-manifest.json"
+      ],
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "elapsed_seconds": 0.365
+    },
+    {
+      "name": "web-build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "apps/web",
+      "exit_code": 0,
+      "elapsed_seconds": 2.87
+    },
+    {
+      "name": "web-tests",
+      "command": [
+        "npm",
+        "run",
+        "test"
+      ],
+      "cwd": "apps/web",
+      "exit_code": 0,
+      "elapsed_seconds": 0.566
+    },
+    {
+      "name": "web-dependency-audit",
+      "command": [
+        "npm",
+        "audit",
+        "--omit=dev",
+        "--audit-level=moderate"
+      ],
+      "cwd": "apps/web",
+      "exit_code": 0,
+      "elapsed_seconds": 0.716
+    },
+    {
+      "name": "python-dependency-audit",
+      "command": [
+        "uv",
+        "run",
+        "--with",
+        "pip-audit",
+        "pip-audit"
+      ],
+      "cwd": "apps/control-api",
+      "exit_code": 0,
+      "elapsed_seconds": 32.097
+    }
+  ]
+}

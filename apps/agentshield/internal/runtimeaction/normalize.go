@@ -26,6 +26,15 @@ var networkCommand = regexp.MustCompile(`(?i)\b(curl|wget|nc|ncat|netcat|ssh|scp
 func normalizeEffects(tool string, params map[string]any) (operation string, effects []string) {
 	t := strings.ToLower(strings.TrimSpace(tool))
 	switch t {
+	case "verify_report":
+		p, ok := params["path"].(string)
+		if len(params) != 1 || !ok || len(p) > 4096 {
+			return "verify", []string{EffectUnknown}
+		}
+		if _, err := NormalizeResource("filesystem", p); err != nil {
+			return "verify", []string{EffectUnknown}
+		}
+		return "verify", []string{EffectFileRead, EffectProcessExec}
 	case "read_file", "read", "cat", "search_files":
 		return "read", []string{EffectFileRead}
 	case "write_file", "write", "edit", "patch":

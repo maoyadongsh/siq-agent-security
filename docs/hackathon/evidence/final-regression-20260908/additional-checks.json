@@ -1,0 +1,46 @@
+{
+  "control_api": {
+    "command": ".venv/bin/pytest -q",
+    "cwd": "apps/control-api",
+    "exit_code": 0,
+    "collected_tests": 648,
+    "database": "isolated temporary SQLite"
+  },
+  "secure_agent": {
+    "command": "GOTOOLCHAIN=go1.26.6 PYTHONPATH=apps/secure-agent apps/control-api/.venv/bin/python -m unittest discover -s apps/secure-agent/tests -v",
+    "tests": 69,
+    "exit_code": 0
+  },
+  "direct_model_followup": {
+    "tests": 17,
+    "exit_code": 0
+  },
+  "migration": {
+    "command": ".venv/bin/alembic upgrade head; .venv/bin/alembic current",
+    "database": "new temporary PostgreSQL 17; removed after check",
+    "revision": "0016",
+    "exit_code": 0
+  },
+  "govulncheck": {
+    "command": "GOTOOLCHAIN=go1.26.6 govulncheck ./...",
+    "cwd": "apps/agentshield",
+    "version": "v1.7.0",
+    "exit_code": 0
+  },
+  "runtime_smoke_verifier": {
+    "verified_receipts": 10,
+    "verified_effect_envelopes": 8
+  },
+  "recovery_verifier": {
+    "verified_pending_records": 2,
+    "verified_recovery_records": 2,
+    "verified_observer_revocations": 1,
+    "verified_receipts": 1,
+    "verified_file_completions": 1
+  },
+  "minimum_go_agent": {
+    "command": "GOTOOLCHAIN=go1.22.12 go test ./...",
+    "cwd": "apps/agentshield",
+    "exit_code": 0
+  }
+}

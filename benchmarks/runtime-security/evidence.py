@@ -104,6 +104,21 @@ def verify_effect_reference(record, d5, decision_receipt_id):
             raise ValueError("D5 requires archived observation material")
 
 
+def verify_effect_envelope(record, actions):
+    """Shared signature/action-binding check for runtime and application suites."""
+    effect = record["evidence"]
+    decision, key = actions[effect["decision_receipt_id"]]
+    if decision["record_type"] != "decision" or decision["action_id"] != effect["action_id"]:
+        raise ValueError("effect action correlation mismatch")
+    for document in (effect, record):
+        if document["signing_schema"] != "local_canonical/v1":
+            raise ValueError("unsupported signing schema")
+        unsigned = {k: v for k, v in document.items() if k != "signature"}
+        # Record.unsigned decodes Go map[string]any numbers as float64.
+        normalized = json.loads(json.dumps(unsigned), parse_int=float)
+        key.verify(bytes.fromhex(document["signature"]), canonical(normalized))
+
+
 def verify(report, expected_suite="full"):
     if expected_suite not in ("smoke", "full") or report.get("suite", "full") != expected_suite:
         raise ValueError("benchmark suite differs from requested coverage")
@@ -142,17 +157,7 @@ def verify(report, expected_suite="full"):
         if record is None:
             continue
         effect = record["evidence"]
-        decision, key = actions[effect["decision_receipt_id"]]
-        if decision["action_id"] != effect["action_id"]:
-            raise ValueError("effect action correlation mismatch")
-        for document in (effect, record):
-            if document["signing_schema"] != "local_canonical/v1":
-                raise ValueError("unsupported signing schema")
-            unsigned = {k: v for k, v in document.items() if k != "signature"}
-            # Record.unsigned uses Go json.Unmarshal into map[string]any:
-            # JSON numbers become float64 (e.g. size 28 signs as 28.0).
-            normalized = json.loads(json.dumps(unsigned), parse_int=float)
-            key.verify(bytes.fromhex(document["signature"]), canonical(normalized))
+        verify_effect_envelope(record, actions)
         d5 = observation["stages"]["d5"]
         if d5["value"] is not None:
             if d5.get("independence") != effect["source"]["independence"]:

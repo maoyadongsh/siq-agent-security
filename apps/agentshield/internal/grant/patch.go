@@ -48,7 +48,11 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 	}
 
 	var kept []Fact
+	approvalTools := map[string]bool{}
 	for _, f := range g.Facts {
+		if f.Domain == "tool" && f.Effect == "allow" && f.Conditions["require_approval"] == true {
+			approvalTools[f.Resource.Value] = true
+		}
 		drop := false
 		switch f.Domain {
 		case "tool":
@@ -82,6 +86,9 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 				continue
 			}
 			add("tool", "tool.invoke", "tool", t, "allow", "declared", "human")
+			if approvalTools[t] {
+				kept[len(kept)-1].Conditions = map[string]any{"require_approval": true}
+			}
 		}
 	}
 	if patch.HasNetwork {

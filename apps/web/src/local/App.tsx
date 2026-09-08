@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './Layout';
 import { Icon } from '@/components/icons';
@@ -15,7 +15,16 @@ import ReceiptsPage from './pages/ReceiptsPage';
 import BindingsPage from './pages/BindingsPage';
 import SettingsPage from './pages/SettingsPage';
 
+const DemoPage = lazy(() => import('./pages/DemoPage'));
+
 export default function App() {
+  return <Routes>
+    <Route path="/demo" element={<Suspense fallback={<p>正在载入比赛演示…</p>}><DemoPage /></Suspense>} />
+    <Route path="*" element={<LocalAdminApp />} />
+  </Routes>;
+}
+
+function LocalAdminApp() {
   const [status, setStatus] = useState<Status | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [actorId, setActorIdState] = useState(readActorId);

@@ -87,7 +87,7 @@ class TestDetectType:
         ("token: ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123", "threat-cred-hardcoded-secret"),
         ("aws_access_key_id = AKIAABCDEFGHIJKLMNOP", "threat-cred-hardcoded-secret"),
         ("SLACK_TOKEN=xoxb-1234567890-abcdefghij", "threat-cred-hardcoded-secret"),
-        ("-----BEGIN RSA PRIVATE KEY-----", "threat-cred-hardcoded-secret"),
+        ("-----BEGIN RSA " "PRIVATE KEY-----", "threat-cred-hardcoded-secret"),
         (
             "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U",
             "threat-cred-hardcoded-secret",

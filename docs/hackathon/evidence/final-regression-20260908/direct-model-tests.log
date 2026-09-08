@@ -1,0 +1,22 @@
+test_authority_fields_rejected_at_every_plan_level (test_models.ModelsTest.test_authority_fields_rejected_at_every_plan_level) ... ok
+test_endpoint_and_missing_configuration_fail_without_fallback (test_models.ModelsTest.test_endpoint_and_missing_configuration_fail_without_fallback) ... ok
+test_fixture_is_explicit_test_only (test_models.ModelsTest.test_fixture_is_explicit_test_only) ... ok
+test_json_duplicate_nonfinite_and_invalid_output (test_models.ModelsTest.test_json_duplicate_nonfinite_and_invalid_output) ... ok
+test_malformed_envelopes_fail_with_safe_diagnostics (test_models.ModelsTest.test_malformed_envelopes_fail_with_safe_diagnostics) ... ok
+test_model_response_must_be_complete (test_models.ModelsTest.test_model_response_must_be_complete) ... ok
+test_ornith_uses_explicit_configuration_and_preserves_provider_identity (test_models.ModelsTest.test_ornith_uses_explicit_configuration_and_preserves_provider_identity) ... ok
+test_plan_cannot_skip_dependency_or_add_shell (test_models.ModelsTest.test_plan_cannot_skip_dependency_or_add_shell) ... ok
+test_recipient_cannot_supply_trust_or_reference (test_models.ModelsTest.test_recipient_cannot_supply_trust_or_reference) ... ok
+test_recipient_selection_preserves_same_value_origin (test_models.ModelsTest.test_recipient_selection_preserves_same_value_origin) ... ok
+test_redirect_not_followed_with_key (test_models.ModelsTest.test_redirect_not_followed_with_key) ... ok
+test_rejected_json_and_typed_proposals_count_once_without_raw_content (test_models.ModelsTest.test_rejected_json_and_typed_proposals_count_once_without_raw_content) ... ok
+test_research_preserves_host_collected_sources (test_models.ModelsTest.test_research_preserves_host_collected_sources) ... ok
+test_schema_claim_does_not_bypass_strict_parser (test_models.ModelsTest.test_schema_claim_does_not_bypass_strict_parser) ... ok
+test_stepfun_http_contract_and_typed_plan (test_models.ModelsTest.test_stepfun_http_contract_and_typed_plan) ... ok
+test_timeout_is_distinct_from_other_transport_errors (test_models.ModelsTest.test_timeout_is_distinct_from_other_transport_errors) ... ok
+test_untrusted_usage_and_finish_reason_are_not_logged (test_models.ModelsTest.test_untrusted_usage_and_finish_reason_are_not_logged) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.620s
+
+OK

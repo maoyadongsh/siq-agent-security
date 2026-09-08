@@ -329,6 +329,7 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 	resp := map[string]any{"action": d.Action, "reason": d.Reason, "receipt_id": d.Receipt.ReceiptID, "action_id": d.Receipt.ActionID, "reason_code": d.Receipt.ReasonCode}
 	resp["authority_status"] = d.Receipt.AuthorityStatus
 	resp["effective_action"] = d.Receipt.EffectiveAction
+	resp["trifecta"] = d.Receipt.Trifecta
 	if d.Receipt.AuthorityReasonCode != "" {
 		resp["authority_reason_code"] = d.Receipt.AuthorityReasonCode
 	}
@@ -701,6 +702,10 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 	g, seq, err := s.d.Store.GetGrantWithSeq(parts[0])
 	if err != nil {
 		writeJSON(w, 404, map[string]any{"error": "grant not found"})
+		return
+	}
+	if parts[1] == "require-approval" {
+		s.requireToolApproval(w, r, *g, seq)
 		return
 	}
 	var body struct {
