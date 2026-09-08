@@ -51,7 +51,7 @@ Admin 可使用：
 
 ## 当前验收边界
 
-已验证管理/决策/observer 分权、来源冒充、任务错配、撤销、到期、服务重启 token 失效且证据保留，以及拒绝后效果的事件分类。测试 observer 为受控提交者；文件采样接口现已接入，详见下节；网络服务端 oracle 与 Completion API 尚未接入。同 UID host observer 不构成 OS 隔离。
+已验证管理/决策/observer 分权、来源冒充、任务错配、撤销、到期、服务重启 token 失效且证据保留，以及拒绝后效果的事件分类。测试 observer 为受控提交者；文件采样接口现已接入，详见下节；受控网络 oracle 已提供测试库；Completion API 见下节，尚未接入网络完成要求。同 UID host observer 不构成 OS 隔离。
 
 ## 服务端文件采样
 
@@ -65,3 +65,16 @@ Admin 可使用：
 无文件为 failed/unexpected；检测到变化且匹配预期摘要为 completed/expected；相同内容和元数据不证明执行，返回 unknown。始终只标记 partial/host_independent。签名封套内 file_observation 保留前后大小、摘要、mtime 和采样时间。
 
 当前 pending 最多128条，绑定原 observer token；撤销、到期、重启后不能继续该次采样。已完成证据仍可由管理端读取；跨重启恢复 pending 尚未实现。测试中 warn 正例遵循既有 advisory policy，并不证明 block 模式 Grant 准入链路；block 用例验证拒绝后效果事件。
+
+## 查询任务效果完成状态
+
+Admin GET `/v1/tasks/{task_id}/completion` 返回 [completion-status/v1](../packages/contracts/completion-status.v1.schema.json)，不提供写入完成状态的接口。签名 Intent V3 可通过 effect_requirements 声明 file.write 的资源摘要、预期内容摘要、最低独立性及覆盖范围。
+
+- verified：每项要求都有匹配的独立签名材料，且没有遮蔽的未知、失败或冲突记录。
+- incomplete：缺少证据或已知执行失败。
+- conflicting：内容/效果冲突，或该任务存在已知安全事件。
+- unknown：无要求（not_required），或材料/独立性/覆盖不足。
+
+无任务404；同 task_id 对应多个 Intent 返回409，避免选择较宽的要求；损坏签名、材料或动作关联失败返回500，不能当作 verified。响应设置 no-store，每次重新读取已发布状态。
+
+此状态反映已发生效果是否满足签名要求，不授予后续执行权限。它不是冻结任务的最终封账，也不是跨存储事务快照；新的证据可能改变下一次结果。当前仍需24小时内可关联的动作，历史动作查询恢复正在补齐。网络完成要求尚未开放。

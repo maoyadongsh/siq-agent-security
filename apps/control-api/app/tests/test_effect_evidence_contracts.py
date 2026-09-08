@@ -149,3 +149,16 @@ def test_signed_intent_effect_requirements_are_explicit_and_optional():
         missing = dict(req)
         del missing[field]
         assert list(v.iter_errors({**sample, "effect_requirements": [missing]}))
+
+
+def test_completion_response_has_no_caller_writable_completed_flag():
+    path = Path(__file__).parents[4] / "packages/contracts/completion-status.v1.schema.json"
+    schema = json.loads(path.read_text())
+    Draft202012Validator.check_schema(schema)
+    v = Draft202012Validator(schema)
+    good = {"schema_version": "completion-status/v1", "task_id": "task-1", "status": "incomplete",
+            "reason_code": "effect_evidence_missing", "requirements": [{"requirement_id": "write-report",
+            "status": "incomplete", "reason_code": "effect_evidence_missing", "evidence_ids": []}], "incident_ids": []}
+    v.validate(good)
+    assert list(v.iter_errors({**good, "completed": True}))
+    assert list(v.iter_errors({**good, "status": "success"}))

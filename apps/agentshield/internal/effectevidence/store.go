@@ -118,11 +118,20 @@ func (s *Store) Get(id string, now time.Time) (Record, error) {
 // ForAction returns verified immutable records in filename order. Corrupt
 // records fail the query instead of silently disappearing from completion data.
 func (s *Store) ForAction(actionID string, now time.Time) ([]Record, error) {
-	storeMu.RLock()
-	defer storeMu.RUnlock()
 	if actionID == "" || len(actionID) > 256 {
 		return nil, ErrInvalid
 	}
+	return s.selectRecords(now, func(r Record) bool { return r.Evidence.ActionID == actionID })
+}
+func (s *Store) ForTask(taskID string, now time.Time) ([]Record, error) {
+	if !idPattern.MatchString(taskID) {
+		return nil, ErrInvalid
+	}
+	return s.selectRecords(now, func(r Record) bool { return r.TaskID == taskID })
+}
+func (s *Store) selectRecords(now time.Time, match func(Record) bool) ([]Record, error) {
+	storeMu.RLock()
+	defer storeMu.RUnlock()
 	if err := s.checkDir(); err != nil {
 		return nil, err
 	}
@@ -155,7 +164,7 @@ func (s *Store) ForAction(actionID string, now time.Time) ([]Record, error) {
 		if err != nil {
 			return nil, err
 		}
-		if r.Evidence.ActionID == actionID {
+		if match(r) {
 			out = append(out, r)
 		}
 	}

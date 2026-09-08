@@ -212,3 +212,10 @@
 - 每项要求检查实际文件后摘要、签名预期摘要、独立性、coverage、执行状态、授权/资源/效果匹配；无证据 incomplete，无要求 unknown/not_required，弱或无材料证据 unknown，冲突/安全事件 conflicting，全项满足才 verified。
 - 真实文件→采样→SubmitFile签名记录→聚合测试通过，覆盖预期内容替换、full/external更高要求、正例混入无材料证据、外层篡改、Intent错配、重复证据和安全事件不能被正例遮蔽。
 - completion/effectevidence/receipt 三包及Go全模块race/vet、四平台编译通过，日志 `/tmp/siq-completion-aggregate-race.log`；任务HTTP查询、历史动作超24小时恢复及网络完成要求仍待接入，聚合器不等于完整业务工作流。
+
+### C2 Completion HTTP 接入
+
+- Admin GET tasks/{id}/completion 已接入生产 Server，验证 Intent 与按task完整验签的证据集合，再调用 Engine 关联和 Completion 聚合。不缓存；无任务404、Intent归属歧义409、损坏/不可关联状态500，客户端不能POST completed。
+- 文件HTTP fixture 升级为真实签名 V3 效果要求，显式将 /path provenance 设为可选以隔离效果验收；验证无证据incomplete→服务端实际采样材料→warn正例verified，以及新增缺文件失败后incomplete。block继续验证越权效果conflicting。
+- 旧无要求Intent返回unknown/not_required；原始HTTP验证decision token拒绝、写状态拒绝、未知任务与歧义处理。warn正例仍不冒充block Grant完整准入。
+- HTTP定向及Go全模块race/vet、四平台编译、Python合同10项与Ruff通过，日志 `/tmp/siq-completion-http-race.log`。历史动作恢复、pending恢复、网络材料/完成、benchmark与最终门禁仍待开发。

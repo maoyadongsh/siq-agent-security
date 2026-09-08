@@ -20,11 +20,12 @@ type Item struct {
 	EvidenceIDs   []string `json:"evidence_ids"`
 }
 type Result struct {
-	TaskID       string   `json:"task_id"`
-	Status       string   `json:"status"`
-	ReasonCode   string   `json:"reason_code"`
-	Requirements []Item   `json:"requirements"`
-	IncidentIDs  []string `json:"incident_ids"`
+	SchemaVersion string   `json:"schema_version"`
+	TaskID        string   `json:"task_id"`
+	Status        string   `json:"status"`
+	ReasonCode    string   `json:"reason_code"`
+	Requirements  []Item   `json:"requirements"`
+	IncidentIDs   []string `json:"incident_ids"`
 }
 type ActionLookup func(string, string) (effectevidence.Action, error)
 
@@ -33,7 +34,7 @@ var ErrEvidence = errors.New("completion_evidence_invalid")
 // Evaluate expects Task to be projected from an already verified signed Intent.
 // Records are verified again here; action authority comes only from the engine.
 func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey, lookup ActionLookup, now time.Time) (Result, error) {
-	out := Result{TaskID: task.ID, Status: "unknown", ReasonCode: "not_required", Requirements: []Item{}, IncidentIDs: []string{}}
+	out := Result{SchemaVersion: "completion-status/v1", TaskID: task.ID, Status: "unknown", ReasonCode: "not_required", Requirements: []Item{}, IncidentIDs: []string{}}
 	if !identifier.MatchString(task.ID) || !identifier.MatchString(task.IntentID) || !digest.MatchString(task.IntentDigest) || len(task.Requirements) > 128 || len(records) > effectevidence.MaxRecords || lookup == nil {
 		return Result{}, ErrEvidence
 	}
