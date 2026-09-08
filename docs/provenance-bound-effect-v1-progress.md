@@ -483,3 +483,10 @@
 - performance.py实际执行未插桩Go测试，导出800个原始样本、八阶段nearest-rank P50/P95/P99、环境、commit及源码摘要。修复Go JSON输出按事件分段导致长日志解析失败，重组后完整报告生成通过：/tmp/siq-stage-performance.json。
 - 性能fixture另以race执行通过，相关包vet和benchmark目录Ruff通过；race耗时不进入性能报告。仅新增测试/runner，未修改生产代码，不重复四平台编译。PR/nightly增加独立performance.json产物，尚未远端执行。
 - 该基线满足真实八阶段组件采样起点，但尚未覆盖攻击/拒绝/深图/并发/冷启动性能矩阵；不能将100个暖态样本外推SLA或拼成端到端延迟。完整目标的其他平台、证据语义重放及最终验收继续进行。
+
+### G T27–T35、能力边界与CODEOWNERS
+
+- threat-model.md新增九项Threat→Control→Negative Test→Residual Risk映射及组合不变量，覆盖context伪造、来源伪造/重放/洗白、高影响参数、假成功、deny后效果、效果伪造和覆盖缺口；逐条链接当前测试，保留同UID、观察独立性、隐式lineage和非原子撤销等边界。
+- 能力矩阵新增当前V1组件覆盖表，不提升native平台综合支持等级；明确20对场景、八阶段微基准、两次SIGKILL与未完成平台/离线重放/远端CI的区别。
+- 新增.github/CODEOWNERS，以仓库owner @maoyadongsh覆盖模板要求的全部核心路径，并覆盖effectevidence/completion/context/适配器/基准和规则文件本身。未修改GitHub Ruleset，main protection仍需独立核验。
+- capability honesty门禁、新增文档相对链接/测试符号核对、必需CODEOWNERS路径存在性及diff检查通过。仅文档/审阅路由改动，不重复运行生产代码测试。README整合、最终逐项DoD报告及完整目标其余任务继续待完成。

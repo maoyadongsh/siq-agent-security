@@ -1,0 +1,17 @@
+# Review routing only. Enforced approval also requires repository branch protection.
+# Repository owner is the default until dedicated maintainers are assigned.
+* @maoyadongsh
+/packages/contracts/ @maoyadongsh
+/apps/agentshield/internal/intent/ @maoyadongsh
+/apps/agentshield/internal/provenance/ @maoyadongsh
+/apps/agentshield/internal/trustedcontext/ @maoyadongsh
+/apps/agentshield/internal/runtimeaction/ @maoyadongsh
+/apps/agentshield/internal/receipt/ @maoyadongsh
+/apps/agentshield/internal/effectevidence/ @maoyadongsh
+/apps/agentshield/internal/completion/ @maoyadongsh
+/apps/agentshield/internal/server/ @maoyadongsh
+/apps/control-api/app/security.py @maoyadongsh
+/adapters/runtime/ @maoyadongsh
+/benchmarks/runtime-security/ @maoyadongsh
+/.github/workflows/ @maoyadongsh
+/.github/CODEOWNERS @maoyadongsh

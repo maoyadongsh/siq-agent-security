@@ -105,3 +105,21 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 2026-09-07 23:56 新增 [旧版兼容与升级恢复证据](trusted-intent-v2-legacy-upgrade-20260907-235638.md)：旧 OpenClaw/CodeBuddy 执行授权通过，但无 ID/参数的 post 没有产生关联观察，报告 `passed=false`。保留同一状态升级到当前适配器后，重复读取和重启恢复的关联观察通过，两平台各 14 条回执验签成功。此结果证明指定版本的迁移路径，不将旧版完整兼容或综合支持状态提升为通过。
 
 2026-09-08，[最终工程验收](trusted-intent-v2-final-audit-20260908-000506.md) 按原文 T15 核对三平台原始基线 optional Grant/unbound 兼容；旧 post 完整兼容与平台综合支持仍保留独立限制。新增 [Hermes 原始基线复测](evidence/intent-v2/legacy-hermes-baseline-20260908.json) 与 `2305979` 的 28/28 CI 证据，未变更平台支持等级。
+
+## Provenance-Bound Effect V1 组件覆盖（2026-09-08）
+
+以下状态只表示当前开发分支组件，不更改上文平台综合支持等级，也不继承旧版native测试来证明新增V3采集能力。
+
+| 能力 | 已实现/验证边界 | 尚未证明 |
+| --- | --- | --- |
+| Authority Hard Gate | 无效必需Authority三模式拒绝、普通策略advisory兼容，本地Go回归 | 当前分支全仓远端CI及全部native回归 |
+| Trusted Context | admin签名workspace与请求绑定，Grant/Intent不被扩大 | 外部attestor部署、恶意同UID隔离 |
+| Parameter Provenance / Intent V3 | issuer/图签名、scope/期限/撤销、最低父trust、参数摘要和默认高影响约束；实际MCP组件流程 | 各平台自动捕获/传播完整来源，模型隐式推理lineage |
+| 文件效果与Completion | 实际前后快照、签名材料、要求摘要/历史动作；host_independent/partial | OS级独立观察、所有写路径强制经过observer、完整业务语义 |
+| 网络效果 | 受控loopback服务器接收事件、重定向最终端点与签名要求核对 | 公网provider审计、全平台每跳拦截、签名网络无效果证明 |
+| Pending恢复 | admin显式接管、原deadline、历史撤销、并发/容量/篡改；两次真实Linux SIGKILL重启 | 断电及文件系统故障矩阵、原生自动调度、状态目录回滚隔离 |
+| Benchmark | 20对组件场景，公共回执/效果离线签名验证，显式D0–D5分母 | D0/D1、完整独立效果覆盖、全局Intent撤销等完整场景语义及原生强制执行 |
+| 性能 | 八阶段各100个暖态顺序样本与P50/P95/P99，原始数据及源码摘要 | 生产SLA、冷启动/饱和并发、全攻击与深图性能矩阵 |
+| CI与治理 | PR/nightly工作流、恢复/性能报告步骤、CODEOWNERS源码规则 | 新工作流远端执行结果；CODEOWNERS不能单独证明main保护已强制 |
+
+复现入口与限制见[benchmark说明](../benchmarks/runtime-security/README.md)、[威胁T27–T35](threat-model.md)和[开发台账](provenance-bound-effect-v1-progress.md)。未修改GitHub Ruleset；main protection仍需发布前独立核验，不把源码审阅路由当作仓库管理设置已启用的证据。
