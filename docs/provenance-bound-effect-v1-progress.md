@@ -745,3 +745,10 @@
 - 验证器由调用者指定expected_suite，缺省full；拒绝report自行降级。严格要求对应场景集合完整，保留旧full报告兼容。
 - Go1.26.6实际smoke运行通过，独立验证10条回执、8份效果封装；将该报告改名full和删除一个smoke场景后重算summary均拒绝。现有full报告51回执/11效果封装仍通过。
 - 21项基准unittest与Ruff通过；没有改生产授权语义。1e162dc远端ci排队、runtime-security运行中为本轮查询时状态，新套件变更仍需下一提交CI验证。
+
+## 2026-09-08：Engineering Report A–K草稿与剩余口径缺口
+
+- 新建provenance-bound-effect-v1-engineering-report.md，汇总实际基线、架构、六类信任主体、关键文件、INV-1–7、负向结果、分母明确的基准、真实性能、兼容性、CI及残余风险。最终SHA仍未确定，文件明确为验收草稿，不当作全目标完成证明。
+- 表格从已归档95e425c integration-summary读取实际值，未杜撰当前性能或将阶段百分位相加。发现完整decision耗时与policy_evaluation不是同一口径；最终报告必须补齐或明确端到端性能证据。
+- 远端1e162dc的ci与runtime-security工作流均success；442007b及本次文档待新CI，不沿用旧结果冒称全绿。
+- 当前继续G组、剩余schema与逐节覆盖审计，保持目标进行中。
