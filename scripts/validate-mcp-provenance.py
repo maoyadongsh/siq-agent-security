@@ -138,6 +138,7 @@ def run(h, extended=False):
         request["parameter_provenance"][0]["provenance_refs"] = [trusted["provenance_id"]]
         allowed = h.api("/v1/decide", request, token=token)
         base.require(allowed["action"] == "allow", "same value trusted provenance failed benign control")
+        report_rejections = []
         decisions = [("mcp-parameter", "attack", denied), ("mcp-parameter", "benign", allowed)]
         if extended:
             for pair, expected_reason in (("missing-provenance", "provenance_missing"),
@@ -233,6 +234,47 @@ def run(h, extended=False):
                 benign = h.api("/v1/decide", benign_request, token=token)
                 base.require(benign["action"] == "allow", pair + " benign rejected")
                 decisions.extend(((pair, "attack", attacked), (pair, "benign", benign)))
+            for pair, source_type in (("forged-user", "USER"), ("forged-iam", "TRUSTED_IAM")):
+                claim_session = session + "-" + pair
+                claim_intent = copy.deepcopy(intent)
+                claim_intent["intent_id"] = "intent-" + pair
+                claim_intent["provenance_constraints"][0]["allowed_source_types"] = [source_type]
+                h.api("/v1/intents", claim_intent, expected=201)
+                claim_identity = {**identity, "session_id": claim_session}
+                claim_scope = {**claim_identity, "task_id": intent["task_id"]}
+                h.api("/v1/intent-bindings", {**claim_identity, "intent_id": claim_intent["intent_id"]}, expected=201)
+                rejected = h.api("/v1/provenance-reports", {**claim_identity, "report_id": pair,
+                                 "source": {"type": source_type, "source_id": "untrusted-caller",
+                                            "trust": "authoritative"}, "content": target}, token=token, expected=400)
+                base.require(rejected["reason_code"] == "provenance_authority_invalid",
+                             "claim rejection was not an authority boundary")
+                report_rejections.append({"pair_id": pair, "http_status": 400,
+                                          "reason_code": rejected["reason_code"]})
+                scope_digest = hashlib.sha256(canonical(claim_scope)).hexdigest()
+                report_id = "rep-" + hashlib.sha256(canonical({"report_id": pair,
+                                                               "scope_digest": scope_digest})).hexdigest()[:40]
+                attack_request = copy.deepcopy(request)
+                attack_request.update(session_id=claim_session, tool_call_id=pair + "-attack")
+                attack_request["parameter_provenance"][0]["provenance_refs"] = [report_id]
+                attacked = h.api("/v1/decide", attack_request, token=token)
+                base.require(attacked["action"] == "deny" and attacked["reason_code"] == "provenance_not_found",
+                             "rejected forged report minted authority")
+                issuer = "issuer-" + pair
+                h.api("/v1/provenance-issuers", {"issuer_id": issuer, "local_key_ref": "local-state",
+                      "allowed_source_types": [source_type], "max_trust_level": "authoritative",
+                      "scope": claim_scope, "expires_at": expires}, expected=201)
+                trusted_claim = h.api("/v1/provenance-assertions", {"schema_version": "provenance-assertion/v1",
+                      "provenance_id": pair + "-trusted", "source": {"type": source_type,
+                      "source_id": "trusted-fixture-issuer", "trust": "authoritative"}, "scope": claim_scope,
+                      "content_digest": hashlib.sha256(canonical(target)).hexdigest(), "parents": [],
+                      "derivation": "direct", "issued_at": intent["issued_at"], "expires_at": expires,
+                      "issuer": issuer}, expected=201)
+                benign_request = copy.deepcopy(attack_request)
+                benign_request["tool_call_id"] = pair + "-benign"
+                benign_request["parameter_provenance"][0]["provenance_refs"] = [trusted_claim["provenance_id"]]
+                benign = h.api("/v1/decide", benign_request, token=token)
+                base.require(benign["action"] == "allow", "legitimate matching source rejected")
+                decisions.extend(((pair, "attack", attacked), (pair, "benign", benign)))
         records = h.receipts()
         h.stop()
         verified = json.loads(h.command([str(h.binary), "verify"]))
@@ -241,6 +283,7 @@ def run(h, extended=False):
                 "recorded_at": datetime.now(timezone.utc).isoformat(),
                 "siq_commit": h.command(["git", "rev-parse", "HEAD"], cwd=ROOT).strip(),
                 "binary_sha256": hashlib.sha256(h.binary.read_bytes()).hexdigest(),
+                "report_rejections": report_rejections,
                 "receipt_count": len(records), "receipt_chain_verified": True,
                 "decision_receipt_ids": [decision["receipt_id"] for _, _, decision in decisions],
                 "decisions": [{"pair_id": pair, "kind": kind, "action": decision["action"],

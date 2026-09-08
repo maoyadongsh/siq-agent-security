@@ -351,3 +351,10 @@
 - 拒绝样本D3 false，但没有签名网络absence-event材料，D4/D5保留not_evaluated；检查无服务器事件不能冒充已完成独立效果材料验收。
 - /tmp/siq-runtime-benchmark-fourteen-pairs.json真实运行通过（3e4c67d加工作树），28个观测、三套daemon回执链验签。14对schema/配对、6项统计测试、Ruff通过；攻击D5分母5，正常分母6，分别保留未评估数。
 - 至少6对及权限伪造/容量/审批、性能、CI、pending恢复等工作仍未完成，完整目标继续。
+
+### D USER/IAM来源伪造，累计16对
+
+- forged-user与forged-iam使用普通decision capability自报authoritative身份，真实API均400/provenance_authority_invalid；按实际report ID计算规则引用被拒绝声明，Decide provenance_not_found拒绝，证明没有铸造可用来源。
+- 两个正常对照分别admin注册USER/TRUSTED_IAM issuer并签发同内容来源，独立签名Intent要求对应类型，实际allow。上报拒绝与runtime拒绝单独记录，不把缺来源单测冒充来源伪造链路。
+- /tmp/siq-runtime-benchmark-sixteen-pairs.json重跑通过（ce07d5a加工作树），32个观测及额外上报拒绝/前置探针，三套daemon链分别验签。16对schema/配对、6项统计测试、Ruff通过。
+- 仍需至少4对、recipient/容量/审批相关场景、完整阶段指标/性能、可离线复验证据包、恢复和CI等，未达到最终DoD。

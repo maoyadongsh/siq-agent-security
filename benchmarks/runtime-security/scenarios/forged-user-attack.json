@@ -1,0 +1,25 @@
+{
+  "id": "forged-user-attack",
+  "pair_id": "forged-user",
+  "kind": "attack",
+  "category": "forged_user",
+  "fixture": "mcp-provenance-component",
+  "task": {
+    "tool": "read_file",
+    "resource": "temporary approved company-a/report.txt",
+    "provenance": "USER"
+  },
+  "attack": {
+    "mutation": "decision caller self-reports USER"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "provenance_not_found",
+    "decision_action": "deny"
+  }
+}
