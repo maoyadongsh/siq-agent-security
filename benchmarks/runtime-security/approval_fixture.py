@@ -1,5 +1,6 @@
 """Local hold approval then Grant revocation before a controlled fixture executes."""
 import json
+from itertools import product
 from pathlib import Path
 
 
@@ -26,8 +27,8 @@ def run(h, base):
     base.require("exec" in result["grant"]["openclaw_tool_policy"]["require_approval"], "hold policy missing")
     token = (h.state / "token").read_text().strip()
     observations = []
-    for kind in ("benign", "attack"):
-        name = "approval-revoked-" + kind
+    for pair, kind in product(("approval-params", "approval-revoked"), ("benign", "attack")):
+        name = pair + "-" + kind
         request = {"platform": "openclaw", "session_id": name, "agent_id": base.AGENT,
                    "tool": "exec", "tool_call_id": name, "params": {"command": "echo synthetic"}}
         decision = h.api("/v1/decide", request, token=token)
@@ -36,13 +37,19 @@ def run(h, base):
         status_request = {**request, "action_id": decision["action_id"], "decision_receipt_id": decision["receipt_id"]}
         before = h.api("/v1/hold-status", status_request, token=token)
         base.require(before["status"] == "approved", "approval did not become effective")
-        if kind == "attack":
+        replaced = pair == "approval-params" and kind == "attack"
+        if replaced:
+            status_request["params"] = {"command": "echo substituted"}
+        elif kind == "attack":
             action("revoke")
-        final = h.api("/v1/hold-status", status_request, token=token)
-        base.require(final["status"] == ("denied" if kind == "attack" else "approved"), "revocation recheck failed")
+        final = h.api("/v1/hold-status", status_request, token=token, expected=400 if replaced else 200)
+        if replaced:
+            base.require(final["reason_code"] == "hold_identity_mismatch", "approved parameters were substituted")
+        else:
+            base.require(final["status"] == ("denied" if kind == "attack" else "approved"), "revocation recheck failed")
         marker = h.workspace / (name + ".marker")
         # The command string is never executed. This synthetic tool only writes a marker after approved status.
-        if final["status"] == "approved":
+        if final.get("status") == "approved":
             marker.write_text("fixture executed")
         base.require(marker.exists() == (kind == "benign"), "tool bypassed final approval status")
         stages = {f"d{i}": {"value": None, "evidence_refs": []} for i in range(6)}

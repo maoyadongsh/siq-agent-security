@@ -15,7 +15,7 @@
 | B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | V3 双读、来源匹配、确定性选择与 MCP 组件验收通过；native 自动采集待完成 |
 | C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 文件采样 API、网络 oracle、材料归档与提交 API 已实现；平台调度待补齐 |
 | C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | Completion API、历史动作与审批时间复核已实现；pending持久恢复待完成 |
-| D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 待完成 |
+| D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 20对组件场景实际运行通过；阶段性能、完整证据包及CI待完成 |
 | G | ADR 15–17、威胁27–35、能力矩阵、README、CODEOWNERS、CI smoke/nightly | ADR及API规格已增量更新；威胁/能力/README/CI与最终报告待整体验收 |
 | 验收 | 45项DoD、P01–10/C01–04/E01–05、race/全仓CI、最终工程报告 | 待完成 |
 
@@ -379,3 +379,9 @@
 - 使用optional/unbound兼容路径，不执行command字符串，也不放宽required opaque shell。此为HTTP组件审批门禁，native平台完整验收仍待最终回归；marker未进入独立效果归档，D4/D5不计。
 - /tmp/siq-runtime-benchmark-nineteen-pairs.json真实运行通过（c6dffe3加工作树），38个观测，五套daemon链各自验签。19对schema/配对、审批状态与执行断言、6项统计测试及Ruff通过。
 - 至少20对门槛尚缺一对；签名证据导出、全阶段指标/性能、pending恢复、平台集成及CI等大量工作仍在完整目标内。
+
+### D 审批后参数替换，达到20对组件场景
+
+- 新增approval-params：真实hold获批并复查approved后更改params，执行前hold-status以400/hold_identity_mismatch拒绝，受控工具不执行；正常对照参数保持一致并执行marker。
+- /tmp/siq-runtime-benchmark-twenty-pairs.json真实运行通过（7d95f72加工作树），40个基准观测、五套daemon回执链各自离线验签。20对schema/配对、参数绑定断言、6项统计测试及Ruff通过。
+- 仅达到20对数量门槛，不代表D或全目标完成：D0/D1未评估，多数D3–D5仍缺独立材料，容量仅深度边界，命名指标全阶段映射/性能埋点/长期证据包/CI待完成。全局Intent撤销不能由绑定撤销冒充，native平台验收与pending恢复同样继续待开发。
