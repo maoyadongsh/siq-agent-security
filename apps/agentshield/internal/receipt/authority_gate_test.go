@@ -125,3 +125,16 @@ func TestCallerCWDDoesNotGrantWorkspaceWrite(t *testing.T) {
 	_, err = fx.eng.Observe(correlatedRequest(r, d), "fake success")
 	assertCorrelation(t, err, "observation_action_not_authorized")
 }
+
+func TestParameterBudgetHardDeniesEveryMode(t *testing.T) {
+	for _, mode := range []string{"block", "warn", "audit_only"} {
+		t.Run(mode, func(t *testing.T) {
+			fx := newFixture(t, mode, deployedGrant(t, "hermes", false), false)
+			params := map[string]any{"path": "/home/u/proj/a.txt", "items": make([]any, 8192)}
+			d, err := fx.eng.Decide(req("hermes", "read_file", params))
+			if err != nil || d.Action != ActionDeny || d.Receipt.ReasonCode != "runtime_parameter_budget_exceeded" || d.Receipt.AdvisoryAction != nil || d.Receipt.AuthorityStatus != "invalid" {
+				t.Fatalf("budget became allow: %+v %v", d, err)
+			}
+		})
+	}
+}

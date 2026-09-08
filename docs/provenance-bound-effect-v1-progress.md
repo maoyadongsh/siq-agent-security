@@ -621,3 +621,12 @@
 - 新增[状态审计](provenance-bound-effect-v1-state-audit.md)及生产新增集合/签名调用索引；核读observer、pending、来源图/matcher、Completion、历史效果查询与oracle边界，记录具体上限和失败行为。
 - 发现RuntimeAction高影响路径临时集合目前依赖4MiB HTTP输入边界，没有独立节点/深度/输出预算；后续需评估并避免截断导致授权漏检。未把“无持久无限增长”误当完整资源防护完成。
 - 签名核读确认主要新增记录继续走既有signing/canon；完整diff和离线工具预算继续待审，不以搜索命中代替G3/G4/G5最终验收。本轮仅审计文档，diff检查通过。
+
+
+### RuntimeAction遍历预算及三模式拒绝
+
+- 补上审计发现的参数遍历边界：根深度0、最大64层/8192值节点、单指针1024字节/累计1MiB；描述器递归前预检，循环引用也在深度预算内终止。超限不返回部分资源或来源路径。
+- 修复前深度/节点/指针超限三例实际失败（/tmp/siq-budget-before.log）；修复后边界、累计预算、循环引用及三模式Engine hard deny通过。签名拒绝保留原JSON参数摘要，跳过文本扫描和policy；非JSON可编码Go输入显式报错，不再忽略Marshal错误生成空摘要。
+- Intent matcher同样将预算错误作为runtime_parameter_budget_exceeded拒绝。规范先更新；不是截断参数后继续放行，不扩展任何权限。
+- Go全模块race/vet及linux amd64/arm64、darwin arm64、windows amd64编译通过（/tmp/siq-budget-full.log）；Python合同69项及实际MCP→Hermes→daemon桥接通过、回执链验证成功（/tmp/siq-budget-mcp.json）。diff检查通过。
+- 当前只限制遍历与指针构建；总HTTP字节边界和JSON编码仍沿用既有上限，不宣称CPU/内存固定SLA。全目标其余集成/证据任务继续。

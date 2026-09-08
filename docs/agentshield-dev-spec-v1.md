@@ -1012,3 +1012,7 @@ Hermes HTTP映射在发送前用严格JSON编码（拒绝NaN/循环/非JSON对�
 适配器配置mcp_sources是精确runtime tool_name→部署者指定server/endpoint identity的映射，默认空；不按mcp名称前缀推断server（原生名称可能歧义），不从args/result接收该映射。post_tool_call对匹配项自动向/v1/provenance-reports提交实际result，source固定MCP/untrusted，source_id为server identity+tool canonical摘要；report_id绑定platform/session/agent/tool/call。超过64KiB、不具备稳定call ID或无法JSON编码的结果不登记、不截断后当完整来源。成功后仅在有界内存缓存保留provenance_id，通过provenance_reference(session,tool,call)供宿主显式传递；缓存不保存result/token，5分钟到期，2048条满时不丢弃旧引用、不声称采集成功。引用最终由daemon复验。采集失败不伪造来源且不阻止已经发生的工具效果；后续required引用缺失必须由V3拒绝。此配置桥接仍需真实原生MCP集成验证，不能称为任意服务器零配置支持。
 
 Hermes显式携带Authority引用的调用，在决策关联缓存冲突或容量耗尽时也必须block，不能因warn/audit_only退回allow。拒绝不改变daemon裁决，不声称已执行工具；未携带引用的legacy调用保留原策略表。
+
+### RuntimeAction参数遍历预算
+
+描述器预检参数树：根深度0，最多64层、8192个值节点、单JSON Pointer最多1024 UTF-8字节、全部指针累计最多1MiB。超限返回runtime_parameter_budget_exceeded及unknown描述，不产生部分资源/高影响路径。Decide保留原参数摘要和签名拒绝回执，跳过参数文本扫描、Intent参数校验和policy，三模式均hard deny。直接Intent检查同样拒绝预算异常。该预算不提高任何资源权限，不将截断结果当作完整描述。

@@ -96,6 +96,9 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 		return violation("intent_tool_not_allowed")
 	}
 	descriptor := runtimeaction.Describe(tool, params)
+	if descriptor.ResourceError == runtimeaction.ErrParameterBudget {
+		return violation("runtime_parameter_budget_exceeded")
+	}
 	for _, effect := range descriptor.Effects {
 		if effect == runtimeaction.EffectUnknown {
 			return violation("runtime_effect_unknown")

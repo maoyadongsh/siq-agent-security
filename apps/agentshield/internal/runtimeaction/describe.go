@@ -27,6 +27,9 @@ type Descriptor struct {
 var writeCommand = regexp.MustCompile(`(>>?|\b(cp|mv|tee|rm|chmod|install|mkdir)\b)`)
 
 func Describe(tool string, params map[string]any) Descriptor {
+	if err := ValidateParameters(params); err != nil {
+		return Descriptor{Tool: tool, Operation: "invoke", Effects: []string{EffectUnknown}, ResourceError: err}
+	}
 	op, effects := normalizeEffects(tool, params)
 	d := Descriptor{Tool: tool, Operation: op, Effects: effects, HighImpactParameterPaths: []string{}}
 	fileLike := false

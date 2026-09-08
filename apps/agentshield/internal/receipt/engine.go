@@ -331,6 +331,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	start := e.opts.Now()
+	parameterErr := runtimeaction.ValidateParameters(req.Params)
 	// Intent authority is resolved from trusted state; a decision client may
 	// never mint or replace it inline.
 	if req.Intent != nil {
@@ -385,20 +386,31 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 				case req.TaskID != "" && req.TaskID != resolvedIntent.TaskID:
 					authorityErr = &intent.Violation{Code: "intent_task_mismatch"}
 				default:
-					authorityErr = resolvedIntent.validate(req, start)
+					if parameterErr == nil {
+						authorityErr = resolvedIntent.validate(req, start)
+					}
 				}
 			}
 		}
 	}
 
+	if parameterErr != nil {
+		authorityErr = &intent.Violation{Code: "runtime_parameter_budget_exceeded"}
+	}
 	finishAuthority()
 	if err := e.actionCapacity(start); err != nil {
 		return nil, err
 	}
-	paramsJSON, _ := json.Marshal(req.Params)
+	paramsJSON, paramsErr := json.Marshal(req.Params)
+	if paramsErr != nil {
+		return nil, fmt.Errorf("runtime parameters are not JSON encodable")
+	}
 	// scan the raw string values, not the JSON encoding (which escapes quotes
 	// and > < & and would hide `token="..."` or `> /etc/...` from the rules)
-	paramsText := flattenStrings(req.Params)
+	paramsText := ""
+	if parameterErr == nil {
+		paramsText = flattenStrings(req.Params)
+	}
 	digest := sha256.Sum256(paramsJSON)
 
 	paramsDigest := hex.EncodeToString(digest[:])
