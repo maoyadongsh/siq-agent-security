@@ -920,3 +920,9 @@ capEffectObserve 新增 POST `/v1/file-observations`（observation_id/action_id/
 NetworkOracle 仅用于本地 benchmark，绑定127.0.0.1随机端口，对外名称仅允许 localhost/127.0.0.1；记录随机私有路径上实际收到的请求。监听器配置决定最终scheme/host/port/resolved_target，不信任客户端 Host 头对最终目标的声明。每个接收事件生成服务器 request_id，保存方法/URI/正文的组合摘要与接收时间，不记录正文或URI原文；1 MiB请求体、64事件预算，超限拒绝且不生成完整接收证据。
 
 网络证据来自该 oracle 的事件对象，source=test_oracle/external_independent、coverage=partial。requested endpoint 与 final endpoint 分开；最终资源引用复用 runtimeaction 的 network host摘要。目标scheme/host/port变化分类为 unexpected；共享主机不同端口也保持差异，不能由旧 host-only 资源匹配掩盖。此为固定本地服务证明，不推广为通用互联网、provider审计或native平台支持。
+
+### C2 签名效果验证要求
+
+Intent V3 增加可选 effect_requirements 数组（最多128项、requirement_id唯一），缺省/空数组表示没有声明效果要求，Completion返回unknown/not_required。显式null拒绝；V2拒绝该字段，包括null，旧V3缺省保持签名字节不变。
+
+第一阶段要求明确 file.write、filesystem资源摘要、预期文件内容SHA256、minimum_independence（host_independent或external_independent）和minimum_coverage（partial或full），所有字段必填，不把缺省值解释为更低要求。效果必须在 allowed_effects 中；要求不扩大运行时授权。网络要求在服务器接收材料归档后另行扩展，暂不声称已支持网络任务完成证明。
