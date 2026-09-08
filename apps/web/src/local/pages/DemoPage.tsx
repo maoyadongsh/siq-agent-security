@@ -9,6 +9,7 @@ type Action = {
   action_id: string; receipt_id: string; tool: string; skill: string;
   decision: string; reason_code: string; authority_status: string;
   d2_attempted: boolean; d3_materialized: boolean; observation: string;
+  reported_success?: boolean;
   decision_trifecta?: { private_data: boolean; untrusted_input: boolean; egress: boolean } | null;
   parameter_provenance: { parameter_path: string; provenance_refs: string[] }[];
   provenance_readbacks?: ProvenanceReadback[];
@@ -18,16 +19,20 @@ type Action = {
     source: { independence: string }; evidence_digest: string } } | null;
 };
 type Task = { id: string; scenario: string; phase: string; provider: string; error_code: string | null;
-  model_calls?: { operation: string; status: string; elapsed_ms: number; error_code: string | null }[];
+  model_calls?: { operation: string; provider: string; locality: string; payload_classification: string; task_id: string;
+    status: string; elapsed_ms: number; error_code: string | null }[];
   approval?: { action_id: string; receipt_id: string; tool: string; params_digest: string; params: {path: string}; expires_at: string; resolution: string | null };
   task: { goal: string; current_skill: string | null; current_step: string; status: string;
-    error_code: string | null; actions: Action[];
+    error_code: string | null; actions: Action[]; selected_skills?: string[]; completed_skills?: string[];
     completion: { status: string; requirements: { requirement_id: string; status: string; reason_code: string; evidence_ids: string[] }[] } | null } | null;
   intent?: { intent_id: string; digest: string; allowed_tools: string[]; allowed_effects: string[] } | null;
-  result: { report: { path: string; digest: string }; messages: { recipient: string; payload_digest: string }[]; limitations: string[] } | null;
+  result: { report: { path: string; digest: string } | null; research?: {summary: string}; messages: { recipient: string; payload_digest: string }[]; limitations: string[] } | null;
 };
-type Snapshot = { tasks: Task[]; provider: string; scenarios: string[]; skills?: string[]; repository: string; scope: string[]; contact: string; recipient: string };
-const LABELS: Record<string, string> = { normal: '正常交付', 'mcp-attack': 'MCP 收件人注入', 'same-value': '同值不同来源', 'fake-success': '工具伪成功', conflicting: '交付内容冲突', approval: '人工审批与进程校验', trifecta: '机密文件与不可信网页出网拦截' };
+type Snapshot = { tasks: Task[]; provider: string; scenarios: string[]; skills?: string[]; repository: string; scope: string[]; contact: string; recipient: string;
+  source_sha?: string; source_dirty?: boolean | null;
+  source_sensitivity?: string; hardware?: { product: string; gpu: string; model: string; local_model_status: string;
+    local_inference: string; runtime: string; checked_at: string; inference_duration_ms: number | null } };
+const LABELS: Record<string, string> = { normal: '正常交付', 'research-only': '只分析，不保存或发送', 'research-report': '分析并保存报告', 'mcp-attack': 'MCP 收件人注入', 'same-value': '同值不同来源', 'fake-success': '工具伪成功', conflicting: '交付内容冲突', approval: '人工审批与进程校验', trifecta: '机密文件与不可信网页出网拦截' };
 const TOOLS: Record<string, string> = { web_fetch: '网络请求', read_file: '读取文件', write_file: '写入报告', send_message: '交付消息', verify_report: '启动报告校验进程' };
 const API = '/hackathon/v1';
 
@@ -90,6 +95,8 @@ export default function DemoPage() {
   const active = tasks.some(t => t.phase !== 'finished' && t.phase !== 'failed');
   const task = current?.task;
   const completion = task?.completion;
+  const hardware = snapshot?.hardware;
+  const deliveryAction = task?.actions.find(a => a.tool === 'send_message');
 
   async function pair(event: FormEvent) {
     event.preventDefault(); setBusy(true); setError(null);
@@ -124,18 +131,34 @@ export default function DemoPage() {
         <button disabled={busy} type="submit">{busy ? '连接中…' : '连接'}</button></form></section> : <>
       <form onSubmit={run} className="demo-controls demo-panel">
         <label className="demo-grow">任务目标<input value={prompt} onChange={e => setPrompt(e.target.value)} maxLength={4096} required /></label>
-        <label>场景<select aria-label="场景" value={scenario} onChange={e => setScenario(e.target.value)}>{(snapshot?.scenarios ?? ['normal']).map(s => <option key={s} value={s}>{LABELS[s] ?? s}</option>)}</select></label>
+        <label>场景<select aria-label="场景" value={scenario} onChange={e => {
+          setScenario(e.target.value);
+          setPrompt(e.target.value === 'research-only' ? '只分析这个仓库，不保存报告，不要发出去。' : e.target.value === 'research-report'
+            ? '分析这个仓库并保存安全报告，不要发送。' : '分析当前仓库代码，生成安全审查报告，并发送给 Alice。');
+        }}>{(snapshot?.scenarios ?? ['normal']).map(s => <option key={s} value={s}>{LABELS[s] ?? s}</option>)}</select></label>
         <button type="submit" disabled={busy || active || Boolean(pollError)}>{active ? '任务运行中…' : busy ? '提交中…' : '开始任务'}</button>
         {tasks.length ? <label>查看任务<select aria-label="查看任务" value={current?.id ?? ''} onChange={e => setSelected(e.target.value)}>{tasks.map(t => <option key={t.id} value={t.id}>{LABELS[t.scenario]} · {t.task?.status ?? t.phase} · {t.id.slice(0, 6)}</option>)}</select></label> : null}
       </form>
       <div className="demo-grid">
         <section className="demo-panel"><p className="demo-kicker">CURRENT TASK</p><h2>{task?.goal ?? '等待提交任务'}</h2>
           <dl><dt>仓库 / 范围</dt><dd>{snapshot?.repository} / {snapshot?.scope.join(', ')}</dd>
+            <dt>任务 ID</dt><dd className="demo-mono">{current?.id ?? '—'}</dd>
+            <dt>Source SHA</dt><dd className="demo-mono">{snapshot?.source_sha ?? 'UNVERIFIED'}{snapshot?.source_dirty ? ' · uncommitted changes' : ''}</dd>
+            <dt>敏感等级</dt><dd>{snapshot?.source_sensitivity ?? 'UNVERIFIED'}</dd>
             <dt>当前 Skill</dt><dd>{task?.current_skill ?? '—'}</dd><dt>当前步骤</dt><dd>{task?.current_step ?? current?.phase ?? '—'}</dd>
             <dt>任务状态</dt><dd><span className="demo-status" data-state={task?.status}>{task?.status ?? current?.phase ?? 'idle'}</span></dd></dl>
           {task?.error_code || current?.error_code ? <p className="demo-error">{task?.error_code ?? current?.error_code}</p> : null}
-          {current?.model_calls?.length ? <details><summary>模型调用记录</summary>{current.model_calls.map((call, index) =>
-            <p key={`${call.operation}-${index}`}>{call.operation} · {call.status} · {(call.elapsed_ms / 1000).toFixed(2)} 秒{call.error_code ? ` · ${call.error_code}` : ''}</p>)}</details> : null}
+          {current?.model_calls?.length ? <div className="demo-models" aria-label="模型调用位置">{current.model_calls.map((call, index) =>
+            <p key={`${call.operation}-${index}`}><strong>{call.locality === 'remote' ? 'REMOTE' : call.locality === 'local_dgx' ? 'LOCAL · DGX Spark' : 'UNVERIFIED'} · {call.provider}</strong><br />
+              {call.operation === 'research' && call.locality === 'local_dgx' ? 'LOCAL ANALYSIS' : call.operation} · {call.payload_classification} · {call.status} · {(call.elapsed_ms / 1000).toFixed(2)} 秒{call.error_code ? ` · ${call.error_code}` : ''}</p>)}</div> : null}
+          <aside className="demo-hardware" aria-label="DGX 硬件状态"><strong>{hardware?.product ?? 'DGX · UNVERIFIED'}</strong>
+            <dl><dt>GPU</dt><dd>{hardware?.gpu ?? 'UNVERIFIED'}</dd><dt>Local Model</dt><dd>{hardware?.model ?? 'UNVERIFIED'}</dd>
+              <dt>Model Endpoint</dt><dd>{hardware?.local_model_status ?? 'UNVERIFIED'}</dd>
+              <dt>Local Inference</dt><dd>{hardware?.local_inference ?? 'UNVERIFIED'}</dd>
+              <dt>SIQ Runtime</dt><dd>{hardware?.runtime ?? 'UNVERIFIED'}</dd></dl>
+            {hardware?.local_model_status === 'UNAVAILABLE' || task?.error_code === 'dgx_local_model_unavailable' ? <p className="demo-error">DGX LOCAL MODEL UNAVAILABLE</p> : null}
+            {hardware ? <p className="demo-note">探测于 {new Date(hardware.checked_at).toLocaleTimeString()} · 模型可达与实际推理分别验证。</p> : null}
+          </aside>
           {current?.approval && task?.status === 'waiting_approval' ? <div className="demo-approval">
             <h3>审批本次报告校验</h3><p>启动固定校验进程，读取以下报告并核对摘要。</p>
             <p className="demo-mono">{current.approval.params.path}</p><p className="demo-mono">参数 SHA256: {current.approval.params_digest}</p>
@@ -146,18 +169,22 @@ export default function DemoPage() {
             </div>}
           </div> : null}
         </section>
-        <section className="demo-panel"><p className="demo-kicker">TRUSTED INTENT</p><h2>任务授权</h2>
-          {current?.intent ? <dl><dt>Intent</dt><dd className="demo-mono">{current.intent.intent_id}</dd>
-            <dt>任务 Skills</dt><dd>{snapshot?.skills?.join(' · ') ?? '—'}</dd>
+        <section className="demo-panel"><p className="demo-kicker">AGENT SKILLS</p><h2>Agent 选择的执行计划</h2>
+          {task?.selected_skills?.length ? <ol className="demo-skill-plan" aria-label="Selected Skills">{task.selected_skills.map(skill =>
+            <li key={skill} data-selected-skill={skill}><span>{task.completed_skills?.includes(skill) ? '✓' : task.current_skill === skill ? '→' : '○'}</span><strong>{skill}</strong></li>)}</ol>
+            : <p>等待模型从受信 Registry 中选择 Skills。</p>}
+          {task?.selected_skills?.length ? <p className="demo-note">未选择：{snapshot?.skills?.filter(s => !task.selected_skills?.includes(s)).join(' · ') || '无'}</p> : null}
+          <details><summary>TRUSTED INTENT · 任务授权</summary>{current?.intent ? <dl><dt>Intent</dt><dd className="demo-mono">{current.intent.intent_id}</dd>
+            <dt>任务 Skills</dt><dd>{task?.selected_skills?.join(' · ') ?? '—'}</dd>
             <dt>工具</dt><dd>{current.intent.allowed_tools.join(' · ')}</dd><dt>效果</dt><dd>{current.intent.allowed_effects.join(' · ')}</dd>
             <dt>受信收件人</dt><dd>{snapshot?.contact} · {snapshot?.recipient}</dd><dt>来源要求</dt><dd>V3 必需参数来源校验；MCP 返回值不具有受信目录权限。</dd>
-            <dt>摘要</dt><dd className="demo-mono">{current.intent.digest}</dd></dl> : <p>准备阶段仅允许读取；报告内容确定后签发执行 Intent。</p>}
+            <dt>摘要</dt><dd className="demo-mono">{current.intent.digest}</dd></dl> : <p>准备阶段仅允许读取；报告内容确定后签发执行 Intent。</p>}</details>
         </section>
-        <section className="demo-panel demo-wide"><p className="demo-kicker">LIVE ACTIONS</p><h2>执行时间线</h2>
+        <section className="demo-panel demo-wide"><p className="demo-kicker">SECURITY DECISIONS</p><h2>执行时间线</h2>
           {current?.scenario === 'trifecta' ? <p>同一会话读取受控机密样例后接收网页响应；SIQ 根据累计状态拒绝后续网络请求。样例没有真实凭据，报告与交付保持未完成。</p> : null}
           {task?.actions.length ? <ol className="demo-actions">{task.actions.map(action => <li key={action.action_id}>
             <div><strong>{TOOLS[action.tool] ?? action.tool}</strong><span className="demo-status" data-state={action.decision}>{action.decision.toUpperCase()}</span><span>{action.skill}</span></div>
-            <p>{action.decision === 'hold' ? '等待操作员审批' : action.reason_code} · Authority: {action.authority_status} · D2 请求: {String(action.d2_attempted)} · D3 执行: {String(action.d3_materialized)} · {action.observation}</p>
+            <p>{action.reason_code}{action.decision === 'hold' ? ' · 等待操作员审批' : ''} · Authority: {action.authority_status}</p>
             {current?.scenario === 'trifecta' && action.decision_trifecta ? <p data-trifecta="decision">SIQ 决策时状态：机密数据 {String(action.decision_trifecta.private_data)} · 不可信输入 {String(action.decision_trifecta.untrusted_input)} · 出网 {String(action.decision_trifecta.egress)}</p> : null}
             {action.approval_status ? <p>审批重查：{action.approval_status} · {action.approval_reason_code}</p> : null}
             {action.provenance_readbacks?.filter(p => p.parameter_path === '/recipient').map(p => <ProvenanceEvidence key={p.provenance_id} entry={p} />)}
@@ -168,10 +195,13 @@ export default function DemoPage() {
               {action.reported_process ? <p className="demo-mono">REPORTED process {action.reported_process.process_id} · exit {action.reported_process.exit_code} · SHA256 {action.reported_process.digest}</p> : null}
             </details></li>)}</ol> : <p>提交后显示实际 SIQ 决策；工具返回成功不会自动变成 VERIFIED。</p>}
         </section>
-        <section className="demo-panel demo-wide"><p className="demo-kicker">EVIDENCE / COMPLETION</p><h2>实际完成了什么</h2>
+        <section className="demo-panel demo-wide"><p className="demo-kicker">EFFECT / COMPLETION</p><h2>实际完成了什么</h2>
+          {deliveryAction ? <div className="demo-effect-summary"><p>TOOL REPORTED <strong>{deliveryAction.reported_success === true ? 'success' : deliveryAction.reported_success === false ? 'failure' : 'UNKNOWN'}</strong></p>
+            <p>EFFECT EVIDENCE <strong>{deliveryAction.effect?.evidence.result ?? 'missing'}</strong></p><p>COMPLETION <strong>{completion?.status.toUpperCase() ?? 'UNKNOWN'}</strong></p></div> : null}
           <p>SIQ 完成状态：<span className="demo-status" data-state={completion?.status}>{completion?.status?.toUpperCase() ?? 'UNKNOWN'}</span></p>
           {completion?.requirements.map(r => <div key={r.requirement_id} className="demo-requirement"><strong>{r.requirement_id}</strong><span className="demo-status" data-state={r.status}>{r.status}</span><span>{r.reason_code}</span><p className="demo-mono">{r.evidence_ids.join(', ') || '尚无证据'}</p></div>)}
-          {current?.result ? <><p>受控接收端实际消息：{current.result.messages.length}</p><p className="demo-mono">报告 SHA256: {current.result.report.digest}</p>
+          {current?.result ? <><p>受控接收端实际消息：{current.result.messages.length}</p>{current.result.report ? <p className="demo-mono">报告 SHA256: {current.result.report.digest}</p> : <p>研究已完成；未请求报告或交付效果，UNKNOWN 不代表已验证交付。</p>}
+            {current.result.research ? <p>{current.result.research.summary}</p> : null}
             <details><summary>查看本次任务记录</summary><pre>{JSON.stringify(current.result, null, 2)}</pre></details></> : null}
           <p className="demo-note">验证范围为已承诺的报告文件与受控 HTTP 接收端。同机测试 oracle 不代表独立管理的生产证明；演示不发送外部邮件。</p>
         </section>

@@ -36,6 +36,8 @@ def main():
         page.get_by_label("配对码", exact=True).fill(launch["pairing_code"])
         page.get_by_role("button", name="连接", exact=True).click()
         for scenario, label, status, count in (("normal", "正常交付", "verified", 1),
+                ("research-only", "只分析，不保存或发送", "researched", 0),
+                ("research-report", "分析并保存报告", "verified", 0),
                 ("mcp-attack", "MCP 收件人注入", "blocked", 0), ("same-value", "同值不同来源", "blocked", 0),
                 ("fake-success", "工具伪成功", "incomplete", 0), ("conflicting", "交付内容冲突", "conflicting", 1),
                 ("approval", "人工审批与进程校验", "verified", 1),
@@ -49,12 +51,20 @@ def main():
             page.wait_for_function("expected => document.querySelector('select[aria-label=\"查看任务\"]')?.selectedOptions[0]?.textContent.includes(expected)",
                                    arg=label + " · " + status, timeout=30000)
             page.get_by_text("受控接收端实际消息：" + str(count), exact=True).wait_for()
-            if "secure-research · secure-report · secure-delivery" not in page.locator('.demo-grid').inner_text():
-                raise ValueError("available task Skills missing")
+            expected_skills = ["secure-research", "secure-report", "secure-delivery"][:
+                {"research-only": 1, "research-report": 2}.get(scenario, 3)]
+            actual_skills = page.locator('[data-selected-skill]').evaluate_all(
+                'nodes => nodes.map(node => node.dataset.selectedSkill)')
+            if actual_skills != expected_skills:
+                raise ValueError("actual selected task Skills missing")
             if page.locator(f'[data-state="{status}"]').count() == 0:
                 raise ValueError("missing expected task state")
             if scenario == "fake-success" and page.locator('[data-state="verified"]').count() != 1:
                 raise ValueError("tool success falsely marked task/delivery verified")
+            if scenario == "fake-success":
+                summary = page.locator('.demo-effect-summary').inner_text()
+                if not all(value in summary for value in ('success', 'missing', 'INCOMPLETE')):
+                    raise ValueError("actual tool report and missing effect were not shown separately")
             source = "MCP" if scenario in ("mcp-attack", "same-value") else "TRUSTED_DATABASE"
             provenance = page.locator(f'[data-provenance="{source}"]').filter(has_text="收件人来源")
             if scenario == "trifecta":
@@ -67,14 +77,17 @@ def main():
                     raise ValueError("missing stateful trifecta sequence")
                 if "lethal_trifecta" not in page.locator('.demo-actions').inner_text():
                     raise ValueError("missing SIQ trifecta denial")
-            else:
+            elif scenario not in ("research-only", "research-report"):
                 provenance.wait_for()
+            else:
+                source = None
             if scenario == "same-value" and "值与受信联系人相同" not in provenance.inner_text():
                 raise ValueError("same-value provenance distinction missing")
             if scenario == "mcp-attack" and "值与受信联系人不同" not in provenance.inner_text():
                 raise ValueError("recipient substitution explanation missing")
             page.screenshot(path=str(args.out_dir / (scenario + ".png")), full_page=True)
-            outcomes.append({"scenario": scenario, "task_status": status, "messages": count, "recipient_source": source})
+            outcomes.append({"scenario": scenario, "task_status": status, "messages": count,
+                             "recipient_source": source, "selected_skills": actual_skills})
         opener = build_opener(ProxyHandler({}))
         request = Request(state["endpoint"] + "/hackathon/v1/pairing/renew", data=b"{}", headers={
             "Authorization": "Bearer " + state["token"], "Content-Type": "application/json", "X-SIQ-Demo": "1"})
