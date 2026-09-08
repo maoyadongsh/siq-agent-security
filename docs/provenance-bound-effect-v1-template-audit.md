@@ -24,33 +24,33 @@
 | 15 | ContextAssertion V1 | 647 | 已核对；A1–A5与C1/C6证据覆盖hard gate、历史回执及Context管理边界 |
 | 16 | ContextAssertion 限制 | 691 | 已核对；A1–A5与C1/C6证据覆盖hard gate、历史回执及Context管理边界 |
 | 17 | ContextAssertion 信任来源 | 713 | 已核对；A1–A5与C1/C6证据覆盖hard gate、历史回执及Context管理边界 |
-| 18 | Workstream B — Parameter-Level Provenance | 741 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 19 | Provenance 基本模型 | 772 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 20 | Source Type | 819 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 21 | Trust Level | 846 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 22 | 谁可以签什么 Trust | 875 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 23 | Trusted Provenance Issuer Registry | 914 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 24 | Provenance 不能证明内容为真 | 948 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 25 | Parameter Provenance Binding | 974 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 26 | Parameter Provenance Resolution | 1015 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 27 | IntentContract V3 | 1054 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 28 | Provenance Constraint | 1089 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 29 | High-Impact Parameter | 1103 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 30 | RuntimeActionDescriptor 重构 | 1140 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 31 | 所有安全模块消费同一个 Descriptor | 1179 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 32 | Shell 仍保持 Conservative | 1204 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 33 | Workstream B2 — MCP Provenance MVP | 1230 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 34 | MCP Provenance 生命周期 | 1242 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 35 | MCP 默认规则 | 1266 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 36 | 不做完整语义传播 | 1290 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 37 | Derivation | 1316 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 38 | Security Rule — Untrusted High-Impact Control | 1337 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 39 | 示例 | 1352 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 40 | 同值不同来源测试 | 1393 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 41 | Provenance reason codes | 1427 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 42 | Provenance 容量 | 1446 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 43 | Provenance 容量耗尽 | 1469 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 44 | Provenance 存储 | 1489 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 18 | Workstream B — Parameter-Level Provenance | 741 | 已核对；独立provenance包、Assertion/Issuer合同、taxonomy/trust与管理分权；P1–P3及固定向量 |
+| 19 | Provenance 基本模型 | 772 | 已核对；独立provenance包、Assertion/Issuer合同、taxonomy/trust与管理分权；P1–P3及固定向量 |
+| 20 | Source Type | 819 | 已核对；独立provenance包、Assertion/Issuer合同、taxonomy/trust与管理分权；P1–P3及固定向量 |
+| 21 | Trust Level | 846 | 已核对；独立provenance包、Assertion/Issuer合同、taxonomy/trust与管理分权；P1–P3及固定向量 |
+| 22 | 谁可以签什么 Trust | 875 | 已核对；独立provenance包、Assertion/Issuer合同、taxonomy/trust与管理分权；P1–P3及固定向量 |
+| 23 | Trusted Provenance Issuer Registry | 914 | 已核对；独立provenance包、Assertion/Issuer合同、taxonomy/trust与管理分权；P1–P3及固定向量 |
+| 24 | Provenance 不能证明内容为真 | 948 | 已核对；独立provenance包、Assertion/Issuer合同、taxonomy/trust与管理分权；P1–P3及固定向量 |
+| 25 | Parameter Provenance Binding | 974 | 已核对；parameter-provenance、matcher、V3双读、required/minimum_trust/source约束；P4–P6 |
+| 26 | Parameter Provenance Resolution | 1015 | 已核对；parameter-provenance、matcher、V3双读、required/minimum_trust/source约束；P4–P6 |
+| 27 | IntentContract V3 | 1054 | 已核对；parameter-provenance、matcher、V3双读、required/minimum_trust/source约束；P4–P6 |
+| 28 | Provenance Constraint | 1089 | 已核对；parameter-provenance、matcher、V3双读、required/minimum_trust/source约束；P4–P6 |
+| 29 | High-Impact Parameter | 1103 | 已核对；Describe高影响字段全表、统一语义与解释器unknown；R1–R4 |
+| 30 | RuntimeActionDescriptor 重构 | 1140 | 已核对；Describe高影响字段全表、统一语义与解释器unknown；R1–R4 |
+| 31 | 所有安全模块消费同一个 Descriptor | 1179 | 已核对；Describe高影响字段全表、统一语义与解释器unknown；R1–R4 |
+| 32 | Shell 仍保持 Conservative | 1204 | 已核对；Describe高影响字段全表、统一语义与解释器unknown；R1–R4 |
+| 33 | Workstream B2 — MCP Provenance MVP | 1230 | 已核对；实际MCP report/select/Hermes显式桥接、默认untrusted与派生枚举；P7/P8 |
+| 34 | MCP Provenance 生命周期 | 1242 | 已核对；实际MCP report/select/Hermes显式桥接、默认untrusted与派生枚举；P7/P8 |
+| 35 | MCP 默认规则 | 1266 | 已核对；实际MCP report/select/Hermes显式桥接、默认untrusted与派生枚举；P7/P8 |
+| 36 | 不做完整语义传播 | 1290 | 已核对；实际MCP report/select/Hermes显式桥接、默认untrusted与派生枚举；P7/P8 |
+| 37 | Derivation | 1316 | 已核对；实际MCP report/select/Hermes显式桥接、默认untrusted与派生枚举；P7/P8 |
+| 38 | Security Rule — Untrusted High-Impact Control | 1337 | 已核对；同值USER/MCP、默认高影响约束及十项reason code；P9/P10与provenance实现 |
+| 39 | 示例 | 1352 | 已核对；同值USER/MCP、默认高影响约束及十项reason code；P9/P10与provenance实现 |
+| 40 | 同值不同来源测试 | 1393 | 已核对；同值USER/MCP、默认高影响约束及十项reason code；P9/P10与provenance实现 |
+| 41 | Provenance reason codes | 1427 | 已核对；同值USER/MCP、默认高影响约束及十项reason code；P9/P10与provenance实现 |
+| 42 | Provenance 容量 | 1446 | 已核对；1024节点/4096边/32父/64深度，容量失败关闭、不可变摘要存储；G3与恢复测试 |
+| 43 | Provenance 容量耗尽 | 1469 | 已核对；1024节点/4096边/32父/64深度，容量失败关闭、不可变摘要存储；G3与恢复测试 |
+| 44 | Provenance 存储 | 1489 | 已核对；1024节点/4096边/32父/64深度，容量失败关闭、不可变摘要存储；G3与恢复测试 |
 | 45 | Workstream C — EffectEvidence V1 | 1511 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 46 | EffectEvidence Schema | 1535 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 47 | 不设计单一“安全等级” | 1581 | 待逐节复核；已有实现/测试入口见DoD索引 |
@@ -110,7 +110,7 @@
 | 101 | 不允许出现 God Engine 进一步膨胀 | 3173 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 102 | CI | 3194 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 103 | 新 CI Job | 3227 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 104 | Benchmark 不允许阻塞每个 PR 的项目 | 3248 | 已实现smoke/full区别；nightly运行34188106080尚未完成 |
+| 104 | Benchmark 不允许阻塞每个 PR 的项目 | 3248 | 已核对；smoke/full不同语料；nightly 34188106080三次完整运行success |
 | 105 | CODEOWNERS | 3270 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 106 | 不直接修改 GitHub Branch Protection | 3299 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 107 | Commit Strategy | 3315 | 待逐节复核；已有实现/测试入口见DoD索引 |
@@ -129,3 +129,11 @@
 | 120 | 开始执行 | 3909 | 待逐节复核；已有实现/测试入口见DoD索引 |
 
 后续按18–44、45–76、79–107、116–120分组核对具体字段、reason code、P/C/E测试、命令与交付物；发现缺口先修复，再更新对应状态。
+
+### §18–44细项核验补充
+
+核读原文每节并对应types/authority/store/graph/matcher/report/select/defaults及runtimeaction Describe。§41十个reason code均存在生产分支；缺失/非法引用不会成为可信来源。§44仅持久化内容摘要、父引用、作用域及签名，HTTP接收原文用于当次摘要/选择，不将MCP raw result长期写入provenance Store。
+
+§42原文数值为候选工程默认，实际按完整scope（含task/session/agent/platform）图限制；issuer另有4096容量。不宣称全系统磁盘配额。§34以实际HTTP MCP初始化/工具调用和确定性选择验收，不扩展为所有宿主自动追踪。
+
+nightly证据见[evidence](evidence/provenance-v1/nightly-693641d-20260908.json)：693641d三次full均success，第一份下载产物本地再次验证51回执/11效果及完整文件恢复链通过。其他两份以远端job结果为证据，不声称均已本地下载验签。

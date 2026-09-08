@@ -1,6 +1,6 @@
 # Provenance V1 本地管理 API
 
-状态：开发中。管理、受限 decision 上报与 V3 决策链路已接入；MCP 自动采集及效果证据尚未完成。下表管理接口使用本地服务的 admin session，决策 token 不具有这些权限。
+状态：实验性组件已实现管理、受限 decision 上报、V3 决策和MCP显式来源流程。Hermes支持配置化结果上报及显式引用桥接；不宣称所有平台原生MCP调度或自动语义传播已覆盖。EffectEvidence属于独立observer链路，参见[能力矩阵](agentshield-capability-matrix-v1.md)。
 
 | 方法与路由 | 请求 | 成功结果 |
 | --- | --- | --- |

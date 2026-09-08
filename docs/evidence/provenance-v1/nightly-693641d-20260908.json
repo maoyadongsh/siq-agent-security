@@ -1,0 +1,52 @@
+{
+  "run_id": 34188106080,
+  "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34188106080",
+  "head_sha": "693641d9527d79a6e3453de8b4e3566104f7101e",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "runtime-security-toolchain",
+      "conclusion": "success"
+    },
+    {
+      "name": "runtime-security-nightly (1)",
+      "conclusion": "success"
+    },
+    {
+      "name": "runtime-security-contracts",
+      "conclusion": "success"
+    },
+    {
+      "name": "runtime-security-nightly (3)",
+      "conclusion": "success"
+    },
+    {
+      "name": "runtime-security-nightly (2)",
+      "conclusion": "success"
+    }
+  ],
+  "downloaded_artifact": "runtime-security-nightly-1",
+  "artifact_sha256": {
+    "recovery.json": "9d3483e1ccd33f0a77fb2a85eb9e234b5ee872b79c811b396b57ec2fdb56c9ef",
+    "performance.json": "bc56d23b5b598fe5bad3c78144b1d5a60610327c38070b9be75941e71e699d11",
+    "report.json": "89d3d0c350dd002de156315e3ef00c1b8569d819e24e4a5014a1df0200a19a51",
+    "hermes-mcp-bridge.json": "8de71b081a604fb11245a39eb3b80c351874f4c5480966824b78072cc7bba00f"
+  },
+  "local_reverification": {
+    "benchmark": {
+      "receipts": 51,
+      "effect_envelopes": 11
+    },
+    "recovery": {
+      "pending": 2,
+      "recoveries": 2,
+      "observer_revocations": 1,
+      "receipts": 1,
+      "file_completions": 1
+    }
+  },
+  "limits": [
+    "Only repetition 1 downloaded and independently reverified locally; all three jobs succeeded remotely",
+    "Digest sidecars share the artifact trust channel; they are not an external trust anchor"
+  ]
+}

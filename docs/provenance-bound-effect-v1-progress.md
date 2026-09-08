@@ -786,3 +786,9 @@
 - G1/G2基于693641d远端job/step明细验收，归档ci-693641d-20260908.json；所有可执行job成功，nightly skipped不算通过。
 - G6完成README/能力矩阵/发布DefaultMatrix边界核对，honesty测试Go1.26.6无缓存race通过。
 - 45/45条目现有各自范围的验收记录；CI有明确SHA限定。全模板逐节交付审计与最终报告尚未定版，目标继续进行。
+
+## 2026-09-08：§18–44与nightly完整证据
+
+- 原文§18–44逐节核读并映射实现/合同/既有运行测试；更新全模板审计表。修正provenance API开头过时开发状态，保留MCP/宿主/语义传播限制。
+- workflow_dispatch运行34188106080对应693641d，toolchain/contracts与nightly三次full全部success。下载nightly-1产物校验摘要，并本地再次验证51回执/11效果封装及2 pending/2 recovery/1 observer撤销/1恢复回执/1文件Completion。
+- 归档nightly SHA/job/产物哈希与重验范围；未把同产物中的摘要侧文件当成独立信任锚。剩余§45–76、79–107与116–120继续核验，报告仍待最终定版。
