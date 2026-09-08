@@ -51,38 +51,38 @@
 | 42 | Provenance 容量 | 1446 | 已核对；1024节点/4096边/32父/64深度，容量失败关闭、不可变摘要存储；G3与恢复测试 |
 | 43 | Provenance 容量耗尽 | 1469 | 已核对；1024节点/4096边/32父/64深度，容量失败关闭、不可变摘要存储；G3与恢复测试 |
 | 44 | Provenance 存储 | 1489 | 已核对；1024节点/4096边/32父/64深度，容量失败关闭、不可变摘要存储；G3与恢复测试 |
-| 45 | Workstream C — EffectEvidence V1 | 1511 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 46 | EffectEvidence Schema | 1535 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 47 | 不设计单一“安全等级” | 1581 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 48 | execution_state | 1607 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 49 | source_type | 1621 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 50 | independence | 1636 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 51 | coverage | 1647 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 52 | result | 1657 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 53 | Tool Result 只产生 Observation | 1668 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 54 | EffectEvidence API | 1696 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 55 | Effect Observer Capability | 1718 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 56 | File Effect MVP | 1747 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 57 | Network Effect MVP | 1786 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 58 | Network 重定向测试 | 1823 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 59 | Fake Tool Success | 1842 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 60 | EffectEvidence 与 Receipt 链 | 1872 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 61 | Completion 不在本轮完全实现 | 1917 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 62 | CompletionStatus API | 1938 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 63 | CompletionStatus 第一版规则 | 1965 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 64 | Workstream D — Runtime Security Benchmark V1 | 1999 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 65 | Benchmark Endpoint Model | 2019 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 66 | Benchmark Scenario Contract | 2045 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 67 | Benchmark 必须覆盖的攻击 | 2073 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 68 | Benign Controls | 2117 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 69 | Benchmark Metrics | 2141 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 70 | 不得错误计算 ASR | 2169 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 71 | Performance Metrics | 2195 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 72 | Workstream E — Threat Model | 2222 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 73 | Provenance Laundering Threat | 2263 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 74 | Aggregation Rule | 2297 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 75 | Transformation Rule | 2333 | 待逐节复核；已有实现/测试入口见DoD索引 |
-| 76 | UNKNOWN Rule | 2357 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 45 | Workstream C — EffectEvidence V1 | 1511 | 已核对；Effect独立合同、五维冻结枚举与tool_report限制；E1/E3及合同矩阵 |
+| 46 | EffectEvidence Schema | 1535 | 已核对；Effect独立合同、五维冻结枚举与tool_report限制；E1/E3及合同矩阵 |
+| 47 | 不设计单一“安全等级” | 1581 | 已核对；Effect独立合同、五维冻结枚举与tool_report限制；E1/E3及合同矩阵 |
+| 48 | execution_state | 1607 | 已核对；Effect独立合同、五维冻结枚举与tool_report限制；E1/E3及合同矩阵 |
+| 49 | source_type | 1621 | 已核对；Effect独立合同、五维冻结枚举与tool_report限制；E1/E3及合同矩阵 |
+| 50 | independence | 1636 | 已核对；Effect独立合同、五维冻结枚举与tool_report限制；E1/E3及合同矩阵 |
+| 51 | coverage | 1647 | 已核对；Effect独立合同、五维冻结枚举与tool_report限制；E1/E3及合同矩阵 |
+| 52 | result | 1657 | 已核对；Effect独立合同、五维冻结枚举与tool_report限制；E1/E3及合同矩阵 |
+| 53 | Tool Result 只产生 Observation | 1668 | 已核对；Effect独立合同、五维冻结枚举与tool_report限制；E1/E3及合同矩阵 |
+| 54 | EffectEvidence API | 1696 | 已核对；独立capEffectObserve与管理/decision分权；E2原始HTTP测试 |
+| 55 | Effect Observer Capability | 1718 | 已核对；独立capEffectObserve与管理/decision分权；E2原始HTTP测试 |
+| 56 | File Effect MVP | 1747 | 已核对；真实文件/网络oracle、重定向、假成功及deny incident；E4–E7与nightly full |
+| 57 | Network Effect MVP | 1786 | 已核对；真实文件/网络oracle、重定向、假成功及deny incident；E4–E7与nightly full |
+| 58 | Network 重定向测试 | 1823 | 已核对；真实文件/网络oracle、重定向、假成功及deny incident；E4–E7与nightly full |
+| 59 | Fake Tool Success | 1842 | 已核对；真实文件/网络oracle、重定向、假成功及deny incident；E4–E7与nightly full |
+| 60 | EffectEvidence 与 Receipt 链 | 1872 | 已核对；真实文件/网络oracle、重定向、假成功及deny incident；E4–E7与nightly full |
+| 61 | Completion 不在本轮完全实现 | 1917 | 已核对；只读Completion、四状态、无要求not_required及材料匹配；E8 |
+| 62 | CompletionStatus API | 1938 | 已核对；只读Completion、四状态、无要求not_required及材料匹配；E8 |
+| 63 | CompletionStatus 第一版规则 | 1965 | 已核对；只读Completion、四状态、无要求not_required及材料匹配；E8 |
+| 64 | Workstream D — Runtime Security Benchmark V1 | 1999 | 已核对；独立成对语料、18类必需攻击、九指标及D0–D5分母；B1–B6 |
+| 65 | Benchmark Endpoint Model | 2019 | 已核对；独立成对语料、18类必需攻击、九指标及D0–D5分母；B1–B6 |
+| 66 | Benchmark Scenario Contract | 2045 | 已核对；独立成对语料、18类必需攻击、九指标及D0–D5分母；B1–B6 |
+| 67 | Benchmark 必须覆盖的攻击 | 2073 | 已核对；独立成对语料、18类必需攻击、九指标及D0–D5分母；B1–B6 |
+| 68 | Benign Controls | 2117 | 已核对；独立成对语料、18类必需攻击、九指标及D0–D5分母；B1–B6 |
+| 69 | Benchmark Metrics | 2141 | 已核对；独立成对语料、18类必需攻击、九指标及D0–D5分母；B1–B6 |
+| 70 | 不得错误计算 ASR | 2169 | 已核对；独立成对语料、18类必需攻击、九指标及D0–D5分母；B1–B6 |
+| 71 | Performance Metrics | 2195 | 已核对；八阶段实测百分位，额外完整Decide；报告H及原始样本 |
+| 72 | Workstream E — Threat Model | 2222 | 已核对；T27–T35控制/负例/残余风险；最低父trust与unknown传播；P8/P10 |
+| 73 | Provenance Laundering Threat | 2263 | 已核对；T27–T35控制/负例/残余风险；最低父trust与unknown传播；P8/P10 |
+| 74 | Aggregation Rule | 2297 | 已核对；T27–T35控制/负例/残余风险；最低父trust与unknown传播；P8/P10 |
+| 75 | Transformation Rule | 2333 | 已核对；T27–T35控制/负例/残余风险；最低父trust与unknown传播；P8/P10 |
+| 76 | UNKNOWN Rule | 2357 | 已核对；T27–T35控制/负例/残余风险；最低父trust与unknown传播；P8/P10 |
 | 77 | Workstream F — Capability Matrix | 2379 | 已修正文档并核对；能力矩阵九项独立能力及组件状态，不抬高平台支持 |
 | 78 | 实现 ≠ 平台证明 | 2427 | 已核对；组件evidenced与平台原生V3 unverified分开 |
 | 79 | Workstream G — Adapter 设计 | 2441 | 待逐节复核；已有实现/测试入口见DoD索引 |
@@ -137,3 +137,13 @@
 §42原文数值为候选工程默认，实际按完整scope（含task/session/agent/platform）图限制；issuer另有4096容量。不宣称全系统磁盘配额。§34以实际HTTP MCP初始化/工具调用和确定性选择验收，不扩展为所有宿主自动追踪。
 
 nightly证据见[evidence](evidence/provenance-v1/nightly-693641d-20260908.json)：693641d三次full均success，第一份下载产物本地再次验证51回执/11效果及完整文件恢复链通过。其他两份以远端job结果为证据，不声称均已本地下载验签。
+
+### §45–76细项核验补充
+
+核读全部原文条目并与Effect schema、server auth、Correlation、Completion、文件/网络夹具及metrics实现对应。五类冻结枚举逐一比对相等；推荐样例中的independence=independent没有被照抄，采用§50正式枚举。Threat Model T27–T35的19个测试名称逐个核对到相邻源码链接。
+
+§58真实302从localhost授权入口跳到127.0.0.1另一接收端，区分requested endpoint和服务端received event；受控loopback不等于通用公网拦截。§59假成功保持tool_result自报，实际after不存在导致Completion incomplete；工具自报不升级independence。§60独立完成效果若动作未授权，Correlation转换unexpected并产生unauthorized_effect_observed。
+
+§69九项命名指标与D0–D5阶段结果分别报告，分母由适用样本决定；D0/D1没有观测时null。§70离线验证器禁止无归档效果/材料的D5声明，缺oracle不当失败。既有nightly三次full与第一份本地重验提供运行证据；此次文档核对未宣称重新执行全部夹具。
+
+§73–76普通转换不能提高父trust，混合聚合不得用最高trust覆盖最低trust；unknown父不变成已知转换，关键参数缺引用拒绝。低影响参数仍由已签名Intent决定，不能由模型自报可信。

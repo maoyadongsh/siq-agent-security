@@ -116,7 +116,7 @@ T26 修复增量（2026-09-07 21:33）：[执行前本地审批门禁](trusted-i
 
 ## Provenance-Bound Effect V1 威胁增量（2026-09-08）
 
-以下控制对应开发分支上的组件实现与本地验证。平台自动采集、完整原生执行链和远端CI仍需分别验收；测试名称可在所链接源码中定位。
+以下控制对应开发分支组件与基线限定的验证。693641d的PR与三次nightly已通过，见[验收索引](provenance-bound-effect-v1-acceptance-audit.md)及[nightly证据](evidence/provenance-v1/nightly-693641d-20260908.json)。平台自动采集和完整原生执行链仍需分别验收；测试名称可在所链接源码中定位。
 
 | Threat | Control | Negative Test | Residual Risk |
 | --- | --- | --- | --- |
