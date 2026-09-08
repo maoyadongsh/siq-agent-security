@@ -10,7 +10,7 @@ SIQ Agent Security 将“谁授权、允许访问什么、可以产生哪些效�
 
 [产品介绍](https://maoyadongsh.github.io/siq-agent-security/) · [架构全景](https://maoyadongsh.github.io/siq-agent-security/architecture.html) · [CI](https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml) · [发布版本](https://github.com/maoyadongsh/siq-agent-security/releases)
 
-> **开发状态，2026-09-08：** 当前 checkout 的 `codex/provenance-bound-effect-v1` 分支在 Trusted Intent V2 基础上加入了跨模式授权硬门禁、实验性参数来源图与 Intent V3、实验性效果证据及完成判定。21 对组件基准、文件强杀恢复和八阶段性能微基准已有本地证据；当前分支尚未推送，不能将这些能力归于远端 `main`、正式 Release 或远端 CI。平台自动集成、完整证据重放与最终验收仍在进行中，支持矩阵没有因此升级为 `supported`。详见[开发台账](./docs/provenance-bound-effect-v1-progress.md)和[能力矩阵](./docs/agentshield-capability-matrix-v1.md)。
+> **开发状态，2026-09-08：** 当前 checkout 的 `codex/provenance-bound-effect-v1` 分支在 Trusted Intent V2 基础上加入了跨模式授权硬门禁、实验性参数来源图与 Intent V3、实验性效果证据及完成判定。21 对组件基准、文件强杀恢复和八阶段性能微基准已有本地证据；分支已推送并创建[草稿 PR #4](https://github.com/maoyadongsh/siq-agent-security/pull/4)，`54f5d32` 的远端检查30项成功、nightly按触发条件跳过；尚未合并到 `main` 或发布正式 Release，后续提交须重新验证。平台自动集成、完整证据重放与最终验收仍在进行中，支持矩阵没有因此升级为 `supported`。详见[开发台账](./docs/provenance-bound-effect-v1-progress.md)和[能力矩阵](./docs/agentshield-capability-matrix-v1.md)。
 
 ## 为什么需要 SIQ Agent Security
 

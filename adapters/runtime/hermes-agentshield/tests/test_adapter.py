@@ -286,3 +286,20 @@ def test_mcp_capture_failure_and_capacity_do_not_create_or_replace_refs(server):
     mod._capture_mcp_result("s1", "mcp__a__lookup", "c3", "x" * (64 * 1024))
     mod._capture_mcp_result("s1", "mcp__a__lookup", "", "no stable call")
     assert len(_Fake.seen) == count
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+@pytest.mark.parametrize("failure", ["conflict", "capacity"])
+@pytest.mark.parametrize("reference", ["context", "provenance"])
+def test_authority_correlation_failure_blocks(server, mode, failure, reference):
+    srv, token = server
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {"action": "allow", "action_id": "act-1", "receipt_id": "rcp-1"}
+    mod._CORRELATION_MAX = 1
+    refs = ({"context_assertion_id": "ctx-1"} if reference == "context" else
+            {"parameter_provenance": [{"parameter_path": "/path", "provenance_refs": ["p-1"]}]})
+    assert mod._pre_tool_call("read_file", {}, session_id="s", tool_call_id="c1", **refs) is None
+    call_id = "c1" if failure == "conflict" else "c2"
+    result = mod._pre_tool_call("read_file", {}, session_id="s", tool_call_id=call_id, **refs)
+    assert result is not None and result["action"] == "block"
+    assert mod._decision_reference("s", "read_file", call_id) == {}

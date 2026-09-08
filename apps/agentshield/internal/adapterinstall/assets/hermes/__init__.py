@@ -243,6 +243,8 @@ def _pre_tool_call(
     rid = decision.get("receipt_id", "")
     if action == "allow":
         if not _remember_decision(sid, tool_name, tool_call_id, decision):
+            if authority_refs:
+                return {"action": "block", "message": "siq-agent-security: authority decision correlation unavailable"}
             return _fail_closed("decision correlation conflict or capacity", tool=tool_name, session_id=sid)
         return None
     if action == "redact":

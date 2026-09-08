@@ -562,3 +562,17 @@
 - 增补最小用户说明：V3签名来源/最低父trust、三模式Authority硬拒绝与legacy边界、绑定/全局Intent撤销、实验性效果材料/Completion、恢复接管及四个可复现基准命令。保留同UID、partial观察、性能非SLA和平台未完整集成的限制。
 - 原生MCP执行边界复核：Hermes实际dispatcher未知mcp工具名不会自动变成可信已知effect；当前统一描述保留unknown，不能为夹具放宽bound Intent。配置化采集与直接hook桥接不代表原生注册/执行授权链完成，README已明确。
 - README相对文件链接、capability honesty及diff检查通过；仅文档改动，不重复生产测试。完整目标与最终逐项验收仍待继续。
+
+
+### 远端分支及CI核验（2026-09-08，54f5d32）
+
+- 独立开发分支已推送，草稿PR https://github.com/maoyadongsh/siq-agent-security/pull/4 保持OPEN/draft，尚未合并main；工作树起始与upstream一致。
+- gh pr view 4实际返回当前head 54f5d327ecc726058d0c7d25fff4440716227340，30项检查SUCCESS、runtime-security-nightly按触发条件SKIPPED，无失败；包括runtime-security-contracts、Control API、Web、本地daemon、Go1.22/stable Edge与全部Connector、gitleaks。不是nightly运行成功或最终45项验收完成的证明。
+- 整体工程进度当前保守估算75%–85%（中心约80%），不作为45项DoD通过率。此前65%–70%为旧基线历史估算。平台集成、完整证据语义重放、验证矩阵与最终逐项报告仍待完成。
+
+### B Hermes Authority引用关联失败拒绝
+
+- 新增三模式×context/provenance引用×缓存冲突/容量耗尽12项负例；修复前8项失败，warn/audit_only在关联失败后错误返回允许。日志/tmp/siq-hermes-correlation-before.log。
+- 显式Authority引用的allow响应无法建立关联时，钩子现在返回block；不改变daemon裁决，保留未带引用legacy调用的原策略。内嵌安装资产同步，规格先行更新。
+- adapterinstall race/vet及四平台编译通过；真实MCP→Hermes hook→daemon桥接重新通过，4条回执链验证成功，报告/tmp/siq-hermes-correlation-bridge.json。报告基于54f5d32加本次工作树修改，不标为该提交干净构建；仍只证明组件桥接。
+- Hermes完整适配器56项测试与Ruff通过；diff检查通过。本次修改尚无对应远端CI结果，不能沿用54f5d32绿灯作为新提交证明。
