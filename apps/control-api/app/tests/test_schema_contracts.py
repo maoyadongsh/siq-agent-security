@@ -625,14 +625,38 @@ def test_go_grant_samples_conform(name, status):
 
 
 @pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
-def test_go_receipt_sample_conforms():
-    r = json.loads((GO_SAMPLES / "receipt.sample.json").read_text())
+@pytest.mark.parametrize("name", [
+    "receipt.sample.json",
+    "receipt.pre-authority-gate.sample.json",
+    "receipt.authority-invalid.sample.json",
+])
+def test_go_receipt_sample_conforms(name):
+    r = json.loads((GO_SAMPLES / name).read_text())
     errors = _validate("receipt", r)
     assert not errors, [e.message for e in errors]
     assert r["seq"] == 0 and r["prev_hash"] == "0" * 64
     assert r["action"] == "deny" and r["reason"]
     assert "params" not in r, "回执不得携带参数原文"
     assert len(r["hash"]) == 64 and len(r["sig"]) == 128
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+def test_receipt_invalid_authority_requires_hard_deny(mode):
+    r = json.loads((GO_SAMPLES / "receipt.authority-invalid.sample.json").read_text())
+    r["enforcement_mode"] = mode
+    assert not _validate("receipt", r)
+    for overrides in [
+        {"action": "allow", "effective_action": "allow"},
+        {"advisory_action": "deny"},
+        {"policy_action": "allow"},
+        {"authority_reason_code": ""},
+        {"effective_action": "allow"},
+    ]:
+        assert _validate("receipt", {**r, **overrides}), overrides
+    for required in ["authority_reason_code", "effective_action"]:
+        bad = dict(r)
+        del bad[required]
+        assert _validate("receipt", bad), required
 
 
 @pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")

@@ -1,0 +1,50 @@
+{
+  "authority_status": "invalid",
+  "authority_reason_code": "intent_binding_missing",
+  "effective_action": "deny",
+  "record_type": "decision",
+  "task_seq": 1,
+  "receipt_id": "rcp-74234e98afe7-070000.002000",
+  "chain_id": "local",
+  "seq": 0,
+  "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hash": "11198d8a232b02c032ff9d3739a473ad4795ca91df8bf22197e79340830f4d0d",
+  "sig": "68c9ec82f8c0e100865f8ff878f24f0e1a3431bfd2fac442cabbe96ff7e9760bbe797e4f189638c4112212e377017c287c5332322ac8360fcfacf7bfdfff6b01",
+  "issued_at": "2026-09-04T07:00:00Z",
+  "platform": "hermes",
+  "session_id": "sess-1",
+  "action_id": "act-7562aae97dd168e1794ae86d",
+  "agent_id": "inst_1",
+  "intent_binding": "unbound",
+  "tool": "read_file",
+  "tool_call_id": "tc-1",
+  "operation": "read",
+  "effects": [
+    "file.read"
+  ],
+  "params_digest": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+  "params_excerpt": "",
+  "action": "deny",
+  "advisory_action": null,
+  "reason": "intent_binding_missing",
+  "reason_code": "intent_binding_missing",
+  "matched_grant_id": null,
+  "matched_fact_ids": [],
+  "matched_rule_ids": [],
+  "taint_labels": [],
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  },
+  "enforcement_mode": "audit_only",
+  "policy_revision": null,
+  "sandbox_id": null,
+  "model_key": null,
+  "engine": {
+    "version": "test",
+    "rulepack_version": 1
+  },
+  "decision_latency_ms": 1,
+  "hold": null
+}
