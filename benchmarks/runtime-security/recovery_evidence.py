@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Independently verify archived pending/recovery signatures and ownership chains.
 
-This does not prove SIGKILL occurrence, historical revocation or Completion semantics.
+This does not prove SIGKILL occurrence, the rejected HTTP request or Completion semantics.
 """
 import argparse
 import base64
@@ -24,15 +24,24 @@ def timestamp(value):
     return seconds * 10**9 + int((match[2] or "").ljust(9, "0"))
 
 
-def verify_chain(pending, history, key):
+def signed(record, schema_name, key):
     from jsonschema import Draft202012Validator
 
-    def signed(record, schema_name):
-        schema = json.loads((ROOT / "packages/contracts" / f"{schema_name}.v1.schema.json").read_text())
-        Draft202012Validator(schema).validate(record)
-        key.verify(bytes.fromhex(record["signature"]), canonical({k: v for k, v in record.items() if k != "signature"}))
+    schema = json.loads((ROOT / "packages/contracts" / f"{schema_name}.v1.schema.json").read_text())
+    Draft202012Validator(schema).validate(record)
+    key.verify(bytes.fromhex(record["signature"]), canonical({k: v for k, v in record.items() if k != "signature"}))
 
-    signed(pending, "file-observation-pending")
+
+def verify_revocation(revocation, recovery, key):
+    """Fixture-specific: the transferred observer was revoked after takeover."""
+    signed(revocation, "effect-observer-revocation", key)
+    if (revocation["owner_digest"] != recovery["owner_digest"]
+            or timestamp(revocation["revoked_at"]) < timestamp(recovery["recovered_at"])):
+        raise ValueError("revocation is not of the recovered owner after takeover")
+
+
+def verify_chain(pending, history, key):
+    signed(pending, "file-observation-pending", key)
     if len(history) > 64:
         raise ValueError("recovery history exceeds capacity")
     digest = hashlib.sha256(canonical(pending)).hexdigest()
@@ -43,7 +52,7 @@ def verify_chain(pending, history, key):
     if last >= expiry:
         raise ValueError("pending expiry precedes snapshot")
     for sequence, recovery in enumerate(history, 1):
-        signed(recovery, "file-observation-recovery")
+        signed(recovery, "file-observation-recovery", key)
         stamp = timestamp(recovery["recovered_at"])
         if (recovery["observation_id"] != pending["observation_id"] or recovery["pending_digest"] != digest
                 or recovery["sequence"] != sequence or recovery["previous_hash"] != previous
@@ -77,7 +86,8 @@ def verify(report):
         if envelope["expires_at"] != original["expires_at"]:
             raise ValueError("recovery extended pending expiry")
         verify_chain(original, [recovery], key)
-    return {"verified_pending_records": 2, "verified_recovery_records": 2}
+        verify_revocation(report["observer_revocation"], recovery, key)
+    return {"verified_pending_records": 2, "verified_recovery_records": 2, "verified_observer_revocations": 1}
 
 
 def main():

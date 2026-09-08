@@ -109,3 +109,6 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.
 ```
 
 验证pending/接管记录schema和Ed25519签名、原pending摘要、顺序、前置hash、不同owner及原始expiry；时间比较保留纳秒。验证器使用报告自带公钥，不能提供外部信任锚或证明SIGKILL事件本身，也尚未替代完整Completion及历史撤销语义验证。恢复链单测复用Go/Python固定向量，CLI输入限制16MiB。没有pending材料的旧报告不能通过此新增验收。
+
+
+恢复报告另归档签名effect-observer-revocation；验证器验证撤销owner与两条接管记录的owner相同、撤销时间不早于接管。有效签名但owner/时序不符仍拒绝。该检查证明撤销材料属于接管身份，不把报告中的historical_revocation_rejected布尔值当作签名HTTP拒绝证据；实际409由夹具执行验证，Completion完整语义继续独立补齐。

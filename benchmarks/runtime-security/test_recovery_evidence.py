@@ -35,3 +35,26 @@ class RecoveryEvidenceTest(unittest.TestCase):
     def test_nanosecond_expiry_precision_is_retained(self):
         self.assertEqual(timestamp("2026-09-08T00:00:00.123456789Z") -
                          timestamp("2026-09-08T00:00:00.123456788Z"), 1)
+
+
+class RevocationBindingTest(unittest.TestCase):
+    def test_valid_signature_does_not_replace_owner_or_time_binding(self):
+        from cryptography.exceptions import InvalidSignature
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+        from evidence import canonical
+        from recovery_evidence import verify_revocation
+        private = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32)
+        recovery = {"owner_digest": "a" * 64, "recovered_at": "2026-09-08T00:00:00.123456789Z"}
+        unsigned = {"schema_version": "effect-observer-revocation/v1", "owner_digest": "a" * 64,
+                    "revoked_at": "2026-09-08T00:00:01Z", "signing_schema": "local_canonical/v1"}
+
+        def seal(value):
+            return value | {"signature": private.sign(canonical(value)).hex()}
+
+        record = seal(unsigned)
+        verify_revocation(record, recovery, private.public_key())
+        for patch in ({"owner_digest": "b" * 64}, {"revoked_at": "2026-09-08T00:00:00.123456788Z"}):
+            with self.assertRaises(ValueError):
+                verify_revocation(seal(unsigned | patch), recovery, private.public_key())
+        with self.assertRaises(InvalidSignature):
+            verify_revocation(record | {"signature": "0" * 128}, recovery, private.public_key())

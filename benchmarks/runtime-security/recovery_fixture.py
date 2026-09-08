@@ -90,7 +90,9 @@ def run(h, base):
     base.require(verified["verified"], "recovery receipt chain invalid")
     pending_records = [json.loads((h.state / "effect-evidence-pending" / (body["observation_id"] + ".json")).read_text())
                        for body in bodies]
-    return {"pending_records": pending_records, "schema_version": "recovery-fixture/v1", "coverage": "component_fixture",
+    owner = hashlib.sha256(replacement["token"].encode()).hexdigest()
+    revocation = json.loads((h.state / "effect-observer-revocations" / (owner + ".json")).read_text())
+    return {"observer_revocation": revocation, "pending_records": pending_records, "schema_version": "recovery-fixture/v1", "coverage": "component_fixture",
             "sigkill_count": 2, "recovery_records": recoveries, "effect_record": record,
             "completion": completion, "historical_revocation_rejected": True,
             "public_evidence": capture(h, "recovery"),

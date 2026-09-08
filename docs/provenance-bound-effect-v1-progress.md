@@ -638,3 +638,11 @@
 - 复用固定向量的正例、缺序/乱序/超长历史、owner/expiry篡改及纳秒精度测试通过；benchmark单测共14项、Ruff通过。
 - 真实两次SIGKILL恢复重新运行成功：/tmp/siq-recovery-archive.json；离线验证2份pending/2条接管记录通过。PR/nightly均新增该验证步骤，diff检查通过。
 - 该验证仍不证明外部信任锚、SIGKILL事件真实性或完整Completion/历史撤销语义；这些剩余范围不被收缩或冒充已完成。
+
+
+### D 恢复owner撤销材料验证
+
+- 恢复夹具归档真实effect-observer-revocation签名记录，仅含owner摘要及时间；离线验证schema/签名，并关联两条接管记录owner、严格比较纳秒时序。
+- 新负例包含有效签名但错误owner、有效签名但早于接管1ns，以及无效签名；15项benchmark单测和Ruff通过。
+- 真实两次SIGKILL夹具重新运行通过（/tmp/siq-recovery-revocation.json），独立验证2份pending/2条接管/1份撤销通过；diff检查通过。
+- 验证不等于独立证明HTTP409或SIGKILL事件，也不替代完整Completion语义。生产代码未改，不重复Go全量门禁。
