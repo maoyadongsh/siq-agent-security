@@ -14,9 +14,9 @@
 | B1 | 签名 provenance、issuer registry、范围/到期/撤销、容量、不可变存储 | 签名 registry/图存储、管理与受限上报 API 已实现；固定向量与完整验收待补齐 |
 | B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | V3 双读、来源匹配、确定性选择与 MCP 组件验收通过；native 自动采集待完成 |
 | C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 文件采样 API、网络 oracle、材料归档与提交 API 已实现；平台调度待补齐 |
-| C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | Completion API、历史动作与审批时间复核已实现；pending持久恢复待完成 |
-| D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 20对组件场景实际运行通过；阶段性能、完整证据包及CI待完成 |
-| G | ADR 15–17、威胁27–35、能力矩阵、README、CODEOWNERS、CI smoke/nightly | ADR及API规格已增量更新；威胁/能力/README/CI与最终报告待整体验收 |
+| C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | Completion API、历史动作与审批时间复核已实现；pending签名持久化、admin接管及双SIGKILL恢复通过；完整故障矩阵/平台调度待完成 |
+| D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 21对组件场景与八阶段性能基线通过；完整语义证据包及远端CI待完成 |
+| G | ADR 15–17、威胁27–35、能力矩阵、README、CODEOWNERS、CI smoke/nightly | ADR/API、T27–T35、能力矩阵、CODEOWNERS及CI工作流已更新；README与最终报告待整体验收 |
 | 验收 | 45项DoD、P01–10/C01–04/E01–05、race/全仓CI、最终工程报告 | 待完成 |
 
 完成证据必须绑定具体命令/源码/回执/CI；未覆盖平台保留 unverified。
@@ -516,3 +516,13 @@
 - evidence.py将上一轮手动检查纳入自动门禁：严格撤销字段/schema/reason与带时区时间，使用各关联回执的已验证公钥复验撤销签名；要求同Intent摘要、两个不同会话、五个独立探针/场景引用、撤销前allow/撤销后intent_revoked以及无关Intent正常对照。
 - 新增持久单测覆盖有效链、摘要/时间/签名篡改、删除/重复引用、替换会话、前置未授权、后置仍允许、绑定撤销冒充全局撤销及无关对照缺失。全部9项benchmark单测和Ruff通过；现有真实报告51回执/11效果重新离线复验通过，不重复运行未改动daemon。
 - README同步自动验证边界；完整Intent/来源图/Completion语义重放、外部信任锚和其他目标任务仍待完成。测试助手接收的actions在通用验证器中先通过回执链验签，助手本身不替代回执验签。
+
+
+### 集成回归检查（2026-09-08 11:30，095396e）
+
+- Control API：.venv/bin/ruff check app通过；.venv/bin/pytest -q全量534项通过（按完整进度输出核对），没有失败。日志/tmp/siq-control-full-regression.log；既有Starlette/httpx弃用提示不影响结果，本轮没有为警告擅自升级依赖。
+- Web：npm run build通过，含TypeScript检查与Vite构建；日志/tmp/siq-web-full-regression.log。
+- Edge与全部11个Connector Go模块：每个模块go vet ./...和go test -race ./...通过。模块为edge/agent及connectors/{dify,directory,docker,hermes,kubernetes,mcp,openclaw,piagent,process,systemd,workbuddy}，逐模块日志/tmp/siq-regression-<目录以横线连接>.log。本地daemon模块沿用最近全量race/vet/四平台通过记录，本轮此后无生产Go改动。
+- CI已有11项静态脚本通过：事件信封核心、Control API Dockerfile锁、Web响应头、CI Action pin、OpenShell工作流、自托管Mermaid、Pages pin、Docker镜像digest、本地威胁模型、能力诚实性、性能基线骨架。
+- python3 scripts/test-openclaw-checkpoint-compat.py的15项测试通过；node scripts/test-openclaw-adapter.cjs通过关联/宿主能力/审批复核门禁。这些是组件/兼容测试，不等同新的原生平台V3来源自动采集验收。
+- 全部命令结束且工作树未产生非预期改动。此为本地集成检查，不称作远端CI、生产部署、真实数据库恢复或完整45项DoD验收；尚未推送分支。
