@@ -4,7 +4,7 @@
 - 模板 SHA256：`9e6d575d0f3bd1639eaa57b59c59e503849b332d86e76289ba1fbbfb998d9817`。
 - 实际起点：`d001c4d2c1b7a1230604e8b2ecf813a39deb251c`；分支：`codex/provenance-bound-effect-v1`。
 - 本轮开发目标以此模板 §0–120、INV-1–7 和 45 项 DoD 为准；旧 Provenance 优化计划仅作为背景，不覆盖本模板。
-- 状态：已设置为持续开发目标，进行中；A1/A2 本地验收通过，继续 R/B。不向 main 直接写提交，不修改 GitHub Ruleset 或实际用户平台配置。
+- 状态：已设置为持续开发目标，进行中；A/R/B 主链路与 C 效果证据、Completion 已落地；继续恢复、网络归档、平台集成与 D/G 验收。不向 main 直接写提交，不修改 GitHub Ruleset 或实际用户平台配置。
 
 | 工作包 | 范围 | 状态 |
 | --- | --- | --- |
@@ -13,13 +13,24 @@
 | R | 统一 RuntimeActionDescriptor，高影响参数、shell unknown，六类消费者统一 | 六类消费者已统一；V3 高影响参数默认来源约束本地验收通过 |
 | B1 | 签名 provenance、issuer registry、范围/到期/撤销、容量、不可变存储 | 签名 registry/图存储、管理与受限上报 API 已实现；固定向量与完整验收待补齐 |
 | B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | V3 双读、来源匹配、确定性选择与 MCP 组件验收通过；native 自动采集待完成 |
-| C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 合同、存储、capability/API 与跨语言样例通过；实际文件/网络 observer 待接入 |
-| C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | 待完成 |
+| C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 文件采样 API/签名材料与受控网络 oracle 已实现；网络材料归档、平台调度待补齐 |
+| C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | Completion API、历史动作与审批时间复核已实现；pending持久恢复待完成 |
 | D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 待完成 |
-| G | ADR 15–17、威胁27–35、能力矩阵、README、CODEOWNERS、CI smoke/nightly | 待完成 |
+| G | ADR 15–17、威胁27–35、能力矩阵、README、CODEOWNERS、CI smoke/nightly | ADR及API规格已增量更新；威胁/能力/README/CI与最终报告待整体验收 |
 | 验收 | 45项DoD、P01–10/C01–04/E01–05、race/全仓CI、最终工程报告 | 待完成 |
 
 完成证据必须绑定具体命令/源码/回执/CI；未覆盖平台保留 unverified。
+
+## 整体进度估算（2026-09-08）
+
+依据当前分支截至 `4dae986` 的代码与已记录本地验证，完整目标的工程进度约 **65%–70%**。此为结合实现、集成及验收剩余工作量的区间估算，不是45项DoD正式通过率，也不按提交数或代码行数计算。
+
+- A/R：核心能力及主要本地回归已完成；最终全仓与平台验收仍需确认。
+- B：签名来源、V3、高影响约束、受限上报、确定性派生和MCP组件链路已实现；平台自动采集及完整兼容/安全证据待补齐。
+- C：文件真实采样、独立capability、签名证据、受控网络oracle、Completion API和历史动作复核已实现；pending恢复、网络材料归档及网络完成要求仍缺。
+- D：独立D0–D5 benchmark、至少20组攻击/benign场景及指标/性能报告尚未完成，是主要剩余工作包。
+- G/验收：需要统一文档/能力矩阵、CI smoke/nightly、全部平台回归、全仓CI和最终工程报告。既有Go race/vet/四平台通过不能替代这些验收。
+
 
 ## A1 实际验证（2026-09-08）
 
