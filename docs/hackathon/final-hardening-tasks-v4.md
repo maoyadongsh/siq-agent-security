@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Final Hardening V4 开发任务台账
 
 更新：2026-09-08。59 项工程任务完成；4 项 external/manual 未执行。实际结果见 [最终报告](final-hardening-report.md)。

@@ -1,0 +1,17 @@
+{
+  "submission_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "recorded_at": "2026-09-08T13:45:46.311290+00:00",
+  "status": "verified_for_scope",
+  "fault": "loopback socket bound but not listening; real connection refusal; DGX/model service not stopped",
+  "classification": "CONFIDENTIAL",
+  "error_code": "model_request_failed",
+  "remote_transport_calls": 0,
+  "transport": [
+    {
+      "provider": "ornith",
+      "payload_digest": "b520e5ae96a3f1998815917d919fdd43b8e9e67ad708bd64b790ef7c0bec767b"
+    }
+  ],
+  "fail_closed": true,
+  "scope": "Actual application transport refusal on synthetic classified source; no remote fallback."
+}

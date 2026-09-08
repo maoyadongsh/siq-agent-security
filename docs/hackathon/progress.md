@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Hackathon V3 development progress
 
 > Historical V3 progress. The current development goal is [Final Hardening V4](final-hardening-goal-v4.md), with the complete [task ledger](final-hardening-tasks-v4.md). V4 supersedes conflicting scope and acceptance requirements; the V3 results below retain their original source identity and evidence limits.

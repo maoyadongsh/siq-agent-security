@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Local repository acceptance — 2026-09-08
 
 This is local DGX aarch64 validation of the dirty competition branch, not a

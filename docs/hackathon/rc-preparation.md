@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Local RC preparation contract
 
 The candidate is a local, unpublished `0.3.0-rc.1` preparation artifact. Its

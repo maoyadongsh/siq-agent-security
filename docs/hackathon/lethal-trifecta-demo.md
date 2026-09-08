@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Lethal Trifecta demonstration contract
 
 This implements master-plan §21 with the existing SIQ session state machine.

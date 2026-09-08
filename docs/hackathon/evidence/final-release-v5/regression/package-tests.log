@@ -1,0 +1,17 @@
+test_changed_removed_or_extra_file_is_rejected (test_package_rc.PackageTest.test_changed_removed_or_extra_file_is_rejected) ... ok
+test_clean_source_rejects_unstaged_staged_and_untracked_changes (test_package_rc.PackageTest.test_clean_source_rejects_unstaged_staged_and_untracked_changes) ... ok
+test_complete_inventory_and_supported_launch_selection (test_package_rc.PackageTest.test_complete_inventory_and_supported_launch_selection) ... ok
+test_private_state_and_platform_boundaries (test_package_rc.PackageTest.test_private_state_and_platform_boundaries) ... ok
+test_symlink_executable_mode_and_checksum_changes_rejected (test_package_rc.PackageTest.test_symlink_executable_mode_and_checksum_changes_rejected) ... ok
+test_unsigned_manifest_cannot_claim_official_signature (test_package_rc.PackageTest.test_unsigned_manifest_cannot_claim_official_signature) ... ok
+test_v2_identity_requires_exact_commit_and_no_dirty_manifest (test_package_rc.PackageTest.test_v2_identity_requires_exact_commit_and_no_dirty_manifest) ... ok
+test_actual_signed_sequence (test_trifecta_evidence.TrifectaEvidenceTest.test_actual_signed_sequence) ... ok
+test_claimed_effect_or_execution_after_deny_is_rejected (test_trifecta_evidence.TrifectaEvidenceTest.test_claimed_effect_or_execution_after_deny_is_rejected) ... ok
+test_forged_display_state_is_rejected (test_trifecta_evidence.TrifectaEvidenceTest.test_forged_display_state_is_rejected) ... ok
+test_missing_or_modified_signed_observation_is_rejected (test_trifecta_evidence.TrifectaEvidenceTest.test_missing_or_modified_signed_observation_is_rejected) ... ok
+test_reordered_or_borrowed_action_is_rejected (test_trifecta_evidence.TrifectaEvidenceTest.test_reordered_or_borrowed_action_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.060s
+
+OK

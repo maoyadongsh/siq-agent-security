@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # 当前开发目标：Final Hardening & Competition Freeze V4
 
 更新：2026-09-08。用户指定的完整要求已按原始字节保存在 [V4 原文](final-hardening-requirements-v4.md)。本文件负责当前目标与执行入口，[开发任务台账](final-hardening-tasks-v4.md)负责逐项实施和验收；[JSON 台账](final-hardening-tasks-v4.json)是可更新的任务状态事实源。

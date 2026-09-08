@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # V4 implementation progress
 
 Updated 2026-09-08. Goal: [complete V4 engineering delivery](final-hardening-goal-v4.md).

@@ -2,6 +2,7 @@
 """Prepare an unsigned RC from a clean, frozen source commit."""
 
 import argparse
+import ast
 import gzip
 import hashlib
 import json
@@ -19,6 +20,40 @@ from urllib.parse import quote
 ROOT = Path(__file__).resolve().parents[2]
 TARGETS = (("linux", "amd64"), ("linux", "arm64"), ("darwin", "arm64"), ("windows", "amd64"))
 METADATA = {"candidate-manifest.json", "SHA256SUMS"}
+
+
+def skill_inventory(source, version):
+    """Read descriptors and literal dependencies without executing Skill code."""
+    contracts = ast.parse((source / "apps/secure-agent/secure_agent/contracts.py").read_text())
+    dependency_node = next(node.value for node in contracts.body
+                        if isinstance(node, ast.Assign)
+                        and any(isinstance(target, ast.Name) and target.id == "SKILL_REQUIRES"
+                                for target in node.targets))
+    if (not isinstance(dependency_node, ast.Call) or not isinstance(dependency_node.func, ast.Name)
+            or dependency_node.func.id != "MappingProxyType" or len(dependency_node.args) != 1):
+        raise ValueError("unsupported Skill dependency descriptor")
+    dependencies = ast.literal_eval(dependency_node.args[0])
+    skills = {}
+    for name in ("siq-agent-security", "secure-research", "secure-report", "secure-delivery"):
+        directory = source / "skills" / name
+        descriptor = directory / "SKILL.md"
+        manifest = directory / "skill-manifest.json"
+        inventory = {p.relative_to(directory).as_posix(): sha(p)
+                     for p in sorted(directory.rglob("*")) if p.is_file()}
+        tool_line = re.search(r"^allowed-tools:\s*(.+)$", descriptor.read_text(), re.MULTILINE)
+        skills[name] = {
+            "version": json.loads(manifest.read_text())["skill"]["version"] if manifest.exists() else version,
+            "version_scope": "historical publisher manifest" if manifest.exists() else "candidate source version",
+            "manifest_path": str((manifest if manifest.exists() else descriptor).relative_to(source)),
+            "manifest_kind": "publisher manifest" if manifest.exists() else "SKILL.md descriptor",
+            "manifest_digest": sha(manifest if manifest.exists() else descriptor),
+            "source_digest": hashlib.sha256(json.dumps(inventory, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+            "files": inventory, "tools": tool_line[1].split() if tool_line else [],
+            "dependencies": list(dependencies.get(name, ())),
+        }
+    return {"schema_version": "hackathon-skill-inventory/v2", "skills": skills,
+            "official_signature": False, "source_digest_algorithm": "sha256 of sorted compact JSON path-to-sha256 map",
+            "limitation": "Historical v0.2.0 publisher manifest does not authenticate this candidate."}
 
 
 def sha(path):
@@ -159,6 +194,9 @@ def build(args):
                 "go_version": toolchain, "python_version": subprocess.check_output(["python3", "--version"], text=True).strip(),
                 "node_version": subprocess.check_output(["node", "--version"], text=True).strip(),
                 "target": [system + "/" + arch for system, arch in TARGETS]}
+    identity.update(repository="https://github.com/maoyadongsh/siq-agent-security",
+                    build_timestamp=identity["build_time"], targets=identity["target"],
+                    build_tool_sha256=sha(Path(__file__).resolve()))
     validate_identity(identity)
     write_json(out / "source-info.json", identity)
     binary_dir = out / "bin"
@@ -201,6 +239,7 @@ def build(args):
             for name in ("secure-research", "secure-report", "secure-delivery")},
         "historical_manifest": "source/skills/siq-agent-security/skill-manifest.json",
         "limitation": "Historical signed manifest belongs to v0.2.0; it does not authorize these new binaries."})
+    write_json(out / "skill-inventory.json", skill_inventory(source, args.version))
     subprocess.run(["python3", str(source / "scripts/check_gitleaks_config.py"), "--binary", str(args.scanner.resolve())],
                    check=True)
     with tempfile.TemporaryDirectory(prefix="siq-rc-scan-") as temp:
@@ -236,16 +275,23 @@ def build(args):
                 bundle.addfile(info)
     print(json.dumps({"candidate": str(out), "archive": str(archive), "archive_sha256": sha(archive),
                       "official_signature": False, "published": False}))
+    # An archive cannot contain its own digest. Keep the outer checksum beside it.
+    with archive.with_name(archive.name + ".SHA256SUMS").open("x") as stream:
+        stream.write(f"{sha(archive)}  {archive.name}\n")
 
 
 def main():
+    global ROOT
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--version", default="0.3.0-rc.1")
     parser.add_argument("--source-sha", help="exact frozen commit with successful remote PR CI")
     parser.add_argument("--scanner", type=Path)
     parser.add_argument("--verify-only", action="store_true")
+    parser.add_argument("--source-root", type=Path, help="separate clean checkout; build tooling digest is recorded independently")
     args = parser.parse_args()
+    if args.source_root is not None:
+        ROOT = args.source_root.resolve()
     if args.verify_only:
         result = verify_package(args.out.resolve())
         print(json.dumps({"verified_files": len(result["files"]), "official_signature": False}))

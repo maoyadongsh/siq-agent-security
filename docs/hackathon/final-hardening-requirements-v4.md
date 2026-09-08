@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # SIQ Agent Security
 
 ## DGX Spark Agent Skills Hackathon — Final Hardening & Competition Freeze V4

@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Repository governance actions · V4
 
 Read-only check on 2026-09-08: repository `maoyadongsh/siq-agent-security`,

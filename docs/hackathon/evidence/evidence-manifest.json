@@ -1,64 +1,149 @@
 {
-  "schema_version": "hackathon-evidence-manifest/v1",
-  "source_sha": "4da9e9e0a04c56620d101a583307b299b8484372",
-  "scope": "Frozen executable runtime/UI source; subsequent presentation-only narration tooling and evidence commits retain separate identity. Earlier checkpoints retain original hashes and dirty status.",
-  "dgx": {
+  "schema_version": "hackathon-evidence-manifest/v2",
+  "submission_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "recorded_at": "2026-09-08T13:52:13.037036+00:00",
+  "path_base": "docs/hackathon/evidence",
+  "scope": "Canonical references only. Historical JSON retains its actual source SHA. Prefix-only historical Markdown labelling does not alter original body bytes. V5 release tooling is separately hashed from frozen main runtime.",
+  "repository": {
+    "status": "verified_for_scope",
     "canonical_files": [
-      "final-hardening-v4/dgx-preflight.json",
-      "final-hardening-v4/locality.json"
-    ]
+      "final-release-v5/repository.json"
+    ],
+    "sha256": {
+      "final-release-v5/repository.json": "92b2b75496520ded067c4d35a4e85d73764c9b7a0f7343ba75d961d678ddd531"
+    }
+  },
+  "ci": {
+    "status": "verified_for_scope",
+    "canonical_files": [
+      "final-release-v5/ci-jobs.json",
+      "final-release-v5/runtime-security-jobs.json",
+      "final-release-v5/regression/checks.json",
+      "final-release-v5/migration.json",
+      "final-release-v5/regression/v5-tooling-tests.log"
+    ],
+    "sha256": {
+      "final-release-v5/ci-jobs.json": "95845cf5c36614478e248ec04af9cec17d6208673cbcaafd21eef3e261f16508",
+      "final-release-v5/runtime-security-jobs.json": "d26ec69271fee72eb7d70ffec23ae9e1777de52a43c186952b67e02c87bf7b92",
+      "final-release-v5/regression/checks.json": "72ec3cd2b75f1d4baf77b2b4f15561892c83bd7730cbe39e1a6ba7539b147d0a",
+      "final-release-v5/migration.json": "1f0edc2ad4709d42850ead6b2e2fc6300f51fcd74b3694b606cd936d6e396c79",
+      "final-release-v5/regression/v5-tooling-tests.log": "4549591900458cff4a69a5b2d3537d38f05e8934fee66e04c98baddbe507edb0"
+    }
+  },
+  "agent_skills": {
+    "status": "verified_for_scope",
+    "canonical_files": [
+      "final-release-v5/browser/result.json",
+      "final-release-v5/skill-verification.json"
+    ],
+    "sha256": {
+      "final-release-v5/browser/result.json": "e6505595012ac5edf526887d8517bf028a6511950484b6a0d5b25af9d94f0f95",
+      "final-release-v5/skill-verification.json": "0e0848ed1adb452b46e503c6ac1e72ecb77dd9656682e5d931021f750feb5a7c"
+    }
   },
   "stepfun": {
+    "status": "verified_for_scope",
     "canonical_files": [
+      "final-release-v5/rc-checkpoint.json",
+      "final-release-v5/locality.json",
       "final-hardening-v4/stepfun-cohort-v2.json",
-      "final-hardening-v4/stepfun-verification-v2.json",
-      "final-hardening-v4/stepfun-cohort.json"
-    ]
+      "final-hardening-v4/stepfun-verification-v2.json"
+    ],
+    "sha256": {
+      "final-release-v5/rc-checkpoint.json": "e1c7e3b50b35a30f7378976ba7419840d7b10c354f467e0718916df58dc2a044",
+      "final-release-v5/locality.json": "e1a394440ed4f2efc4626dd449d11a433ffb9a2dcddcd30336e8bddc5f493ea3",
+      "final-hardening-v4/stepfun-cohort-v2.json": "912c7fa11b2735e0171204d24dffb62fd04ff64ea29ef089ff410b17b473e152",
+      "final-hardening-v4/stepfun-verification-v2.json": "bd7ef3141846cb6b05ef4fb760810539ad93bb1118cdde77e91bf9b59a9dce96"
+    }
   },
-  "skills": {
+  "dgx_spark": {
+    "status": "verified_for_scope",
     "canonical_files": [
-      "final-hardening-v4/browser-final/result.json",
-      "final-hardening-v4/locality.json"
-    ]
+      "final-release-v5/dgx-preflight.json",
+      "final-release-v5/locality.json",
+      "final-release-v5/local-failure.json",
+      "../dgx-performance-report.md"
+    ],
+    "sha256": {
+      "final-release-v5/dgx-preflight.json": "0a1f500cf3769742bde901a19a28e7608b3beb0a512d0642b850ec11a47434db",
+      "final-release-v5/locality.json": "e1a394440ed4f2efc4626dd449d11a433ffb9a2dcddcd30336e8bddc5f493ea3",
+      "final-release-v5/local-failure.json": "578202c1557c9b8d6e585958326620690d5cdb057afa70cabc34f0239d5a9cc6",
+      "../dgx-performance-report.md": "6d257241002a7294bb37c7ce2de45927ec94f5f625bb8b87b1db95854ab36619"
+    }
   },
   "security": {
+    "status": "verified_for_scope",
     "canonical_files": [
-      "final-hardening-v4/control-cohort.json",
-      "final-hardening-v4/control-verification.json",
-      "final-hardening-v4/validation.json",
-      "final-hardening-v4/remote-ci.json"
-    ]
+      "final-release-v5/control-cohort.json",
+      "final-release-v5/control-verification.json",
+      "final-release-v5/regression/checks.json",
+      "../final-hardening-report.md"
+    ],
+    "sha256": {
+      "final-release-v5/control-cohort.json": "bd998a9ff238408f63c918ab3bd544e782b136aed955ef96b644419b57e937b1",
+      "final-release-v5/control-verification.json": "11d81418166d778e64f61cc6567379d95e794fe909f6e01daa7567d45ae570b8",
+      "final-release-v5/regression/checks.json": "72ec3cd2b75f1d4baf77b2b4f15561892c83bd7730cbe39e1a6ba7539b147d0a",
+      "../final-hardening-report.md": "09a82472700d15d8d255f67ef6a17176fdcfb64599f4e7cb84724c82121a078d"
+    }
   },
-  "effect": {
+  "effect_evidence": {
+    "status": "verified_for_scope",
     "canonical_files": [
-      "final-hardening-v4/control-cohort.json",
-      "final-hardening-v4/browser-final/result.json",
-      "final-hardening-v4/rc-checkpoint.json"
-    ]
+      "final-release-v5/control-cohort.json",
+      "final-release-v5/control-verification.json",
+      "final-release-v5/rc-checkpoint.json"
+    ],
+    "sha256": {
+      "final-release-v5/control-cohort.json": "bd998a9ff238408f63c918ab3bd544e782b136aed955ef96b644419b57e937b1",
+      "final-release-v5/control-verification.json": "11d81418166d778e64f61cc6567379d95e794fe909f6e01daa7567d45ae570b8",
+      "final-release-v5/rc-checkpoint.json": "e1c7e3b50b35a30f7378976ba7419840d7b10c354f467e0718916df58dc2a044"
+    }
   },
   "benchmark": {
+    "status": "verified_for_scope",
     "canonical_files": [
-      "final-hardening-v4/stepfun-performance.json",
-      "final-hardening-v4/ornith-performance.json",
-      "final-hardening-v4/runtime-performance.json",
+      "../benchmark-report.md",
+      "final-release-v5/control-verification.json",
       "final-hardening-v4/ornith-cohort-v2.json",
       "final-hardening-v4/ornith-verification-v2.json",
+      "final-hardening-v4/stepfun-cohort.json",
       "final-hardening-v4/ornith-cohort.json"
-    ]
+    ],
+    "sha256": {
+      "../benchmark-report.md": "d0acd6bea90e1163f87e354a792fe3b3da7b9cf61ddc7e0c2bebfe8e83635eef",
+      "final-release-v5/control-verification.json": "11d81418166d778e64f61cc6567379d95e794fe909f6e01daa7567d45ae570b8",
+      "final-hardening-v4/ornith-cohort-v2.json": "0a8baab7136e356ae1d249dc780e9d33951c66d5536c65b5f2fce82730d0b069",
+      "final-hardening-v4/ornith-verification-v2.json": "db792a8e43f89377326db99d9a760f94065808545a03a3e4e89c771c2b8d92a6",
+      "final-hardening-v4/stepfun-cohort.json": "95793d9fe9a1175d8bb99fdacae3c7ea702afe15683e4b927e07be483a30b1c4",
+      "final-hardening-v4/ornith-cohort.json": "76c3ba59323db434786e89c4301a2be144f88f1c8376e75558a8035ba96cad5a"
+    }
+  },
+  "demo_video": {
+    "status": "verified_for_scope",
+    "canonical_files": [
+      "final-release-v5/video-freeze.json",
+      "final-hardening-v4/narrated-video-zh.json",
+      "final-hardening-v4/video.json",
+      "final-hardening-v4/subtitles.zh-en.srt"
+    ],
+    "sha256": {
+      "final-release-v5/video-freeze.json": "bff1bc696a672866a6578a304a750f02ba5e120b9810cf792832f28ecf8ee10d",
+      "final-hardening-v4/narrated-video-zh.json": "98851bed09bc0a1a5b8e01198e34ec724e7bbcd06c07e2a5d374552f1f415fed",
+      "final-hardening-v4/video.json": "8f55bafb332b88b528c423abe5769ceef52ca38c4b99a2b22cdba72c39036bf3",
+      "final-hardening-v4/subtitles.zh-en.srt": "7c06079c6729c6d03d4ae29ecc441b6b0d6c2f79e74579e7072ee539ae4cf5f2"
+    }
   },
   "release": {
+    "status": "verified_for_scope",
     "canonical_files": [
-      "final-hardening-v4/rc.json"
-    ]
-  },
-  "video": {
-    "canonical_files": [
-      "final-hardening-v4/video.json",
-      "final-hardening-v4/video-first-attempt.json",
-      "final-hardening-v4/video-second-attempt.json",
-      "final-hardening-v4/recording-sync-check.json",
-      "final-hardening-v4/narrated-video-zh.json",
-      "final-hardening-v4/subtitles.zh-en.srt"
-    ]
+      "final-release-v5/rc.json",
+      "final-release-v5/rc-checkpoint.json"
+    ],
+    "sha256": {
+      "final-release-v5/rc.json": "8f65bed1092568a60914543a74815a2986bd14127d4462b8a84111718e6e0714",
+      "final-release-v5/rc-checkpoint.json": "e1c7e3b50b35a30f7378976ba7419840d7b10c354f467e0718916df58dc2a044"
+    },
+    "publication": "external_manual",
+    "publisher_signing": "unavailable"
   }
 }

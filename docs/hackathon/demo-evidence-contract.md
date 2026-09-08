@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Demo evidence readback and renewed pairing
 
 The authenticated task-list snapshot includes `skills`, the names in the

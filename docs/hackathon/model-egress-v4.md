@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # V4 model egress contract
 
 The model transport is a separate trust boundary from ToolGateway. The current

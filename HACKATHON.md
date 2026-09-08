@@ -4,10 +4,7 @@
 
 StepFun plans the task. DGX Spark performs local analysis. SIQ independently
 authorizes consequential actions and separates tool reports from effect evidence.
-The current target is [Final Hardening V4](docs/hackathon/final-hardening-goal-v4.md).
-V4 engineering, exact-source PR CI, clean RC launch and a real 2–3 minute video
-are complete: [final report](docs/hackathon/final-hardening-report.md). The RC is
-unsigned and unpublished; main protection and competition upload remain external.
+The competition runtime is frozen on main. See the [sole current submission state](docs/hackathon/final-submission-state.md) for source identity, CI, clean RC and video status. Official publication, publisher signing, branch protection and competition upload remain external actions.
 
 ## Run the frozen demo story
 
@@ -59,11 +56,11 @@ A tool reporting success with no receiver event leaves delivery INCOMPLETE.
 
 ## Evidence in two clicks
 
-Start at the [five-topic evidence index](docs/hackathon/evidence/INDEX.md): actual
-Agent Skills, NVIDIA DGX Spark, StepFun, Security, and Effect & Completion.
+Start at the [six-topic evidence index](docs/hackathon/evidence/INDEX.md): actual
+Agent Skills, NVIDIA DGX Spark, StepFun, Runtime Security, Effect & Completion, and Reproducibility / Release.
 It links directly to canonical raw files; earlier failures remain available.
 
-| Measure | Latest V4 sample |
+| Measure | Canonical frozen sample |
 | --- | --- |
 | Fixed control tasks | 23 |
 | Benign completion | 5/5 |
@@ -72,7 +69,7 @@ It links directly to canonical raw files; earlier failures remain available.
 | Latest StepFun planning + DGX analysis sample | 5/5 |
 | Latest Ornith sample | 5/5 |
 
-These are **small samples**. Earlier V4 4/5 cohorts are retained: the model chose
+These are a **small controlled sample**. Earlier failures retained. Earlier V4 4/5 cohorts are retained: the model chose
 an untrusted MCP candidate and SIQ blocked the message. The updated recipient
 planning prompt prefers the trusted directory; it does not weaken runtime checks.
 Controlled fixtures measure runtime enforcement, not real-model attack success.
@@ -84,8 +81,8 @@ model inference is labeled separately. Use `start.sh --mode test` for an explici
 labeled FixtureProvider attack proposal. No external email is sent. A real model
 may resist an injection; never turn that into a fabricated attack outcome.
 
-See [architecture](docs/hackathon/architecture.md), [demo script](docs/hackathon/demo-script.md),
-[submission checklist](docs/hackathon/submission-checklist.md), and
+See [architecture](docs/hackathon/final-architecture.md), [demo script](docs/hackathon/demo-script.md),
+[submission checklist](docs/hackathon/FINAL-SUBMISSION-CHECKLIST.md), and
 [limitations](docs/hackathon/limitations.md). Same-UID processes are not OS-isolated;
 Python ToolGateway is not an OS sandbox; remote StepFun is an external trust boundary.
 Policy-permitted PUBLIC analysis can leave the host. Effects are scoped to signed

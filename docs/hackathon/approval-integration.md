@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Approval integration checkpoint — 2026-09-08
 
 The application now pauses inside the report Skill for a real SIQ HOLD,

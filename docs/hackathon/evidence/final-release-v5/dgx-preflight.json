@@ -1,0 +1,72 @@
+{
+  "schema_version": "dgx-spark-environment/v1",
+  "recorded_at": "2026-09-08T13:43:01.211206+00:00",
+  "hardware": {
+    "product": "NVIDIA_DGX_Spark",
+    "vendor": "NVIDIA",
+    "os": "PRETTY_NAME=\"Ubuntu 24.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.4 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
+    "kernel": "6.17.0-1014-nvidia",
+    "architecture": "aarch64",
+    "gpu": "NVIDIA GB10, 580.126.09, [N/A]",
+    "cuda": "13.0",
+    "ram_bytes": 130663591936,
+    "dgx_identity_verified": true
+  },
+  "model": {
+    "status": "reachable",
+    "http_status": 200,
+    "models": [
+      "Ornith-1.5-35B-A3B-NVFP4"
+    ],
+    "provider": "ornith",
+    "configured_model": "Ornith-1.5-35B-A3B-NVFP4",
+    "key_present": false,
+    "inference_verification": "unverified",
+    "model_digest": "unverified"
+  },
+  "services": {
+    "siq": {
+      "status": "unconfigured"
+    },
+    "agent": {
+      "status": "unconfigured"
+    },
+    "web": {
+      "status": "unconfigured"
+    },
+    "fixtures": {
+      "status": "unconfigured"
+    }
+  },
+  "skills_present": true,
+  "fixtures_present": true,
+  "source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "working_tree_dirty": false,
+  "application_files_sha256": {
+    "apps/secure-agent/secure_agent/__init__.py": "128f0ae6e0ce861dd91223d04e16d5c780f7ca54ccdeb13b249a749ab8e8b768",
+    "apps/secure-agent/secure_agent/__main__.py": "bd43f81160891cc2ea6405c3874e6c0068d8ce10a6abda13b6d271430f9dc7f3",
+    "apps/secure-agent/secure_agent/application.py": "a85c928bb629fff91f8d5b15b4edc0ae9b79a514ad7b7daab8abf7e0b31916c8",
+    "apps/secure-agent/secure_agent/authority.py": "f91eaf29ac63f3e7709f06331c8cd6ab3b7b0bb328556a6627152dd808986248",
+    "apps/secure-agent/secure_agent/confidential.py": "f1c38a911238fb214c2b22274ff7b9e5283c75e4cfe31b954e1c87f9e6987925",
+    "apps/secure-agent/secure_agent/contracts.py": "6266090bb1bc3b5e04db6010b515541c4237bc55c283989e06f76cec04e83b75",
+    "apps/secure-agent/secure_agent/fixtures.py": "35739042ca01aa35571edb7ab2d6b99908a0e915a45eedaef15f6d89cfaa9c69",
+    "apps/secure-agent/secure_agent/gateway.py": "8de8aa2c2e7d7e7f6585d4778fd64823c2f215405c04bae2adce70c6b31e9c3e",
+    "apps/secure-agent/secure_agent/hardware.py": "a97f804e18f4fc0e1a352cbc8089482ff6edde7ae03535a54229eadaf68940d1",
+    "apps/secure-agent/secure_agent/model_policy.py": "86da77bcc51fc2fee0e344480e1886cb1985daf78f8c1ec99043b4e5250cabab",
+    "apps/secure-agent/secure_agent/models.py": "fa25ad369884c89bd3a416c6ab98d3c2c118d0fe7bd24ed387ab9828e502a43c",
+    "apps/secure-agent/secure_agent/routing.py": "89626091ec7d40b991337be80e46ea9dbc2e0f7f1cb9498c2fc6a2d7a171db76",
+    "apps/secure-agent/secure_agent/runtime.py": "33debe5bfe9a9782731606c7eb3f8f9e737e3adf42fad032f5ad80a2fd35e416",
+    "apps/secure-agent/secure_agent/security.py": "a338eecd718176e682787287992cec10db493071e7371cd99ef548169ec7ad87",
+    "apps/secure-agent/secure_agent/service.py": "b9162ea3972c7008cbd7b4db5229bcb8f6be35dad53b57128fa5b09726cd3347",
+    "apps/secure-agent/secure_agent/skills.py": "2bcc18b1ab070e04097f315b9c37e33ef247fb80d57c0bbe93a755e7a3df6ae8",
+    "apps/secure-agent/secure_agent/tools.py": "7a3ffb23d573e815f6b5b717f931cdf55d1c6a7c3b00ab1b2771933eb9741b39",
+    "skills/secure-research/SKILL.md": "ff06388737058ec58e7ae4db85631bc9c5d86fc0b8ff88b2fd4982a1ce536286",
+    "skills/secure-report/SKILL.md": "95124a49a04d9b64fdafec8dbe427b7e478624513746014c6e21c4b5b6dfce10",
+    "skills/secure-delivery/SKILL.md": "9133aa06a48aee9c4a8212e7b304cce081dfbd65264d237e98a03e20c6e17610"
+  },
+  "deployment_verified": false,
+  "limitations": [
+    "Hardware identity is separate from model inference and complete deployment verification.",
+    "A reachable model listing is not a successful planning or end-to-end inference result."
+  ]
+}

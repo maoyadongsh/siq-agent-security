@@ -1,0 +1,65 @@
+{
+  "recorded_at": "2026-09-08T13:45:46.520132+00:00",
+  "submission_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "source_info": {
+    "schema_version": "hackathon-rc-source/v2",
+    "build_time": "2026-09-08T13:41:06.919944+00:00",
+    "git_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+    "git_ref": "HEAD",
+    "go_version": "go1.26.6",
+    "python_version": "Python 3.13.12",
+    "node_version": "v22.22.2",
+    "target": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "repository": "https://github.com/maoyadongsh/siq-agent-security",
+    "build_timestamp": "2026-09-08T13:41:06.919944+00:00",
+    "targets": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "build_tool_sha256": "955c76ee9c6acd3ac830f99fdba57fb91198d33c1c473b035ead9f27411435c8"
+  },
+  "candidate": "siq-agent-security-v0.3.0-rc.1",
+  "archive": ".tmp/final-release-v5/rc/siq-agent-security-v0.3.0-rc.1.tar.gz",
+  "archive_sha256": "205957fbba10b1019d826232cd004c19ec2444d1519a70bd03137375075369a1",
+  "archive_bytes": 89990512,
+  "clean_before_and_after_build": true,
+  "checksums_verified": true,
+  "publisher_signing": "unavailable",
+  "publication": "external_manual",
+  "tag_created": false,
+  "build_tooling": "V5 packaging script outside frozen runtime checkout, separately hashed in source-info; candidate source tree is exact main",
+  "scoped_sbom": true,
+  "artifacts": {
+    "source-info.json": {
+      "sha256": "a4c02ee372d9cb69aa09120d3290210ef8fdfc4518fc484166b1111fe08d7709",
+      "bytes": 687
+    },
+    "sbom.cdx.json": {
+      "sha256": "c64537d01596de892f0c99923ace180706be93718abeb290cd5a36647733f590",
+      "bytes": 2680
+    },
+    "skill-inventory.json": {
+      "sha256": "b49d9d5d33accaadd9da208ed15920278ff62f97e09c4c30acbd845d3f319d71",
+      "bytes": 5967
+    },
+    "skills-inventory.json": {
+      "sha256": "9bed6cf8f55c62862327f616ceb8ffa314ff1cc34448b5ccb49400d97f0248a3",
+      "bytes": 735
+    },
+    "SHA256SUMS": {
+      "sha256": "ba9bfc7cf4465b1e50342b72320cd3756d5a7fa0c7bd5d53b2b35aac0b0bccf1",
+      "bytes": 235372
+    },
+    "candidate-manifest.json": {
+      "sha256": "a28c3a472298aefc7b00c127013e98e1924f589b9b082fb8e3b77acd795a45de",
+      "bytes": 379619
+    }
+  }
+}
