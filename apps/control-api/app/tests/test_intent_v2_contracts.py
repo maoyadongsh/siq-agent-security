@@ -57,7 +57,7 @@ def test_hold_status_wire_contract(name):
         assert list(check.iter_errors({**sample, "expires_at": "yesterday"}))
 
 
-@pytest.mark.parametrize("name", ["intent-contract.v2", "runtime-action-envelope"])
+@pytest.mark.parametrize("name", ["intent-contract.v2", "intent-contract.v3", "runtime-action-envelope"])
 def test_v2_go_fixture_and_required_fields(name):
     sample = json.loads((SAMPLES / f"{name}.sample.json").read_text())
     check = validator(name)
@@ -67,7 +67,7 @@ def test_v2_go_fixture_and_required_fields(name):
         del bad[field]
         assert list(check.iter_errors(bad)), field
     assert list(check.iter_errors({**sample, "unexpected": True}))
-    date = "issued_at" if name == "intent-contract.v2" else "occurred_at"
+    date = "issued_at" if name.startswith("intent-contract.") else "occurred_at"
     assert list(check.iter_errors({**sample, date: "yesterday"}))
 
 

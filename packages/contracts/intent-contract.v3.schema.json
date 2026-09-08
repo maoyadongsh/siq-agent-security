@@ -1,0 +1,421 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/intent-contract.v3.json",
+  "title": "TrustedIntentContractV3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "intent_id",
+    "task_id",
+    "principal",
+    "agent",
+    "purpose",
+    "allowed_tools",
+    "allowed_effects",
+    "resource_constraints",
+    "parameter_constraints",
+    "issued_at",
+    "valid_from",
+    "expires_at",
+    "authority",
+    "signing_schema",
+    "digest",
+    "signature",
+    "provenance_constraints"
+  ],
+  "properties": {
+    "provenance_refs": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+      }
+    },
+    "schema_version": {
+      "const": "intent/v3"
+    },
+    "intent_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "const": "user"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "platform"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "platform": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "allowed_tools": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "allowed_effects": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "tool.invoke",
+          "file.read",
+          "file.write",
+          "file.delete",
+          "network.request",
+          "process.exec",
+          "message.send",
+          "database.read",
+          "database.write",
+          "secret.read",
+          "unknown"
+        ]
+      }
+    },
+    "resource_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "domain",
+          "operator",
+          "value"
+        ],
+        "properties": {
+          "domain": {
+            "enum": [
+              "network",
+              "filesystem",
+              "message"
+            ]
+          },
+          "operator": {
+            "enum": [
+              "equals",
+              "one_of",
+              "prefix",
+              "suffix",
+              "host",
+              "cidr",
+              "regex"
+            ]
+          },
+          "value": {
+            "type": [
+              "string",
+              "array"
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "operator": {
+                  "const": "one_of"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "operator": {
+                  "const": "regex"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "maxLength": 1024
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "operator": {
+                  "enum": [
+                    "host",
+                    "cidr"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "domain": {
+                  "const": "network"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "parameter_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "operator"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^/(?:[^~]|~[01])*$",
+            "maxLength": 1024
+          },
+          "operator": {
+            "enum": [
+              "equals",
+              "one_of",
+              "prefix",
+              "suffix",
+              "regex"
+            ]
+          },
+          "value": {},
+          "values": {
+            "type": "array"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "operator": {
+                  "const": "one_of"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "values"
+              ],
+              "properties": {
+                "values": {
+                  "minItems": 1
+                }
+              }
+            },
+            "else": {
+              "required": [
+                "value"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "operator": {
+                  "enum": [
+                    "prefix",
+                    "suffix",
+                    "regex"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "operator": {
+                  "const": "regex"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "maxLength": 1024
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issuer",
+        "revision",
+        "evidence_ids"
+      ],
+      "properties": {
+        "issuer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    },
+    "provenance_constraints": {
+      "type": "array",
+      "maxItems": 1024,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "parameter_path",
+          "allowed_source_types",
+          "minimum_trust",
+          "required"
+        ],
+        "properties": {
+          "parameter_path": {
+            "type": "string",
+            "maxLength": 1024,
+            "pattern": "^(?:/(?:[^~]|~[01])*)+$"
+          },
+          "allowed_source_types": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 12,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "USER",
+                "SYSTEM",
+                "TRUSTED_IAM",
+                "TRUSTED_DATABASE",
+                "MCP",
+                "WEB",
+                "TOOL",
+                "MEMORY",
+                "AGENT",
+                "SECRET",
+                "CONFIDENTIAL",
+                "UNKNOWN"
+              ]
+            }
+          },
+          "minimum_trust": {
+            "enum": [
+              "authoritative",
+              "trusted",
+              "untrusted",
+              "unknown"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}
