@@ -8,6 +8,29 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).parents[4] / "packages/contracts"
 
 
+def test_issuer_requires_one_key_and_explicit_scope():
+    v = validator("trusted-source-issuer")
+    good = {
+        "issuer_id": "issuer-1", "local_key_ref": "local-state",
+        "allowed_source_types": ["USER"], "max_trust_level": "authoritative",
+        "scope": {"platform": "hermes", "session_id": "s1", "agent_id": "a1", "task_id": "t1"},
+        "expires_at": "2026-09-08T01:00:00Z",
+    }
+    v.validate(good)
+    external = dict(good)
+    del external["local_key_ref"]
+    external["public_key"] = "A" * 43 + "="
+    v.validate(external)
+    for changes in [
+        {"public_key": "A" * 43 + "="}, {"local_key_ref": "caller"},
+        {"scope": {"platform": "hermes"}}, {"allowed_source_types": ["USER", "USER"]},
+    ]:
+        assert list(v.iter_errors({**good, **changes})), changes
+    missing = dict(good)
+    del missing["local_key_ref"]
+    assert list(v.iter_errors(missing))
+
+
 def validator(name):
     schema = json.loads((ROOT / f"{name}.v1.schema.json").read_text())
     Draft202012Validator.check_schema(schema)
