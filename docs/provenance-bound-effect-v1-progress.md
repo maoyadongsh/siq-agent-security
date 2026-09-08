@@ -13,7 +13,7 @@
 | R | 统一 RuntimeActionDescriptor，高影响参数、shell unknown，六类消费者统一 | 六类消费者已统一；V3 高影响参数默认来源约束本地验收通过 |
 | B1 | 签名 provenance、issuer registry、范围/到期/撤销、容量、不可变存储 | 签名 registry/图存储、管理与受限上报 API 已实现；固定向量与完整验收待补齐 |
 | B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | V3 双读、来源匹配、确定性选择与 MCP 组件验收通过；native 自动采集待完成 |
-| C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 待完成 |
+| C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 合同、类型、验签和跨语言样例通过；存储/API/observer 待接入 |
 | C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | 待完成 |
 | D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 待完成 |
 | G | ADR 15–17、威胁27–35、能力矩阵、README、CODEOWNERS、CI smoke/nightly | 待完成 |
@@ -139,3 +139,10 @@
 - 新增 ADR-0017 与 effect-evidence/v1 schema，冻结多维证据、动作/决策引用与签名字段；tool_report/unknown 不能伪造独立性、完整覆盖或预期结果。
 - Python 合同3项与 Ruff通过；初次测试发现环境未安装 jsonschema 可选 date-time 校验器，补充时间字符串结构 pattern，运行时仍须严格解析有效时间。
 - 本批仅定义合同，尚未实现 observer capability、效果存储/API、关联校验或 Completion；示例零签名只用于结构测试。
+
+### C1 签名模型增量
+
+- `internal/effectevidence` 实现 Evidence/Source、64 KiB 严格单文档读取、结构/时间校验及现有 signing/canon 验签。拒绝未来或无效日期、自报独立性/覆盖/结果升级和明文资源引用。
+- 资源引用统一为 `<domain>:sha256:<digest>`，直接消费 RuntimeAction ResourceRefs；不重复归一化、不持久化路径/URL/收件人原文。
+- 新增 Python/Go 共享签名样例，Go 验证 Python 固定 seed 样例并断言同签名；覆盖 action/receipt/source/resource/coverage/result/digest 篡改拒绝。
+- Python 合同4项和 Ruff通过；Go effectevidence 定向及全模块 race/vet、四平台编译通过（日志 `/tmp/siq-effect-model-race.log`）。该包仅验证记录完整性，尚不能证明提交者具备 observer 权限、记录关联真实动作或任务完成；这些验收项继续待实现。

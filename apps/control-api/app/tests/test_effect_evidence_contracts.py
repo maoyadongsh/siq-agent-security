@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from jsonschema import Draft202012Validator, FormatChecker
 
 
@@ -54,3 +55,14 @@ def test_self_report_cannot_claim_verified_effect(source_type, independence):
         assert list(v.iter_errors(forged))
     for field, value in [("coverage", "full"), ("result", "expected")]:
         assert list(v.iter_errors({**good, field: value}))
+
+
+def test_shared_signed_effect_sample():
+    path = Path(__file__).parents[4] / "apps/agentshield/testdata/contracts/effect-evidence.sample.json"
+    sample = json.loads(path.read_text())
+    validator().validate(sample)
+    signature = bytes.fromhex(sample.pop("signature"))
+    canonical = json.dumps(sample, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
+    key = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32)
+    key.public_key().verify(signature, canonical)
+    assert key.sign(canonical) == signature
