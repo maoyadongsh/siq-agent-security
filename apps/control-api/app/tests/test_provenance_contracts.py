@@ -3,7 +3,7 @@ import copy
 import json
 from pathlib import Path
 
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, FormatChecker
 
 ROOT = Path(__file__).parents[4] / "packages/contracts"
 
@@ -34,7 +34,7 @@ def test_issuer_requires_one_key_and_explicit_scope():
 def validator(name):
     schema = json.loads((ROOT / f"{name}.v1.schema.json").read_text())
     Draft202012Validator.check_schema(schema)
-    return Draft202012Validator(schema)
+    return Draft202012Validator(schema, format_checker=FormatChecker())
 
 
 def test_report_cannot_select_authority():
@@ -124,3 +124,16 @@ def test_assertion_taxonomy_and_parent_budget():
         assert list(v.iter_errors(bad)), field
     v.validate({**good, "parents": [f"p-{i}" for i in range(32)]})
     assert list(v.iter_errors({**good, "parents": [f"p-{i}" for i in range(33)]}))
+
+
+def test_issuer_calendar_dates_are_actually_checked():
+    checker = FormatChecker()
+    assert "date-time" in checker.checkers
+    assert not checker.conforms("2026-02-30T00:00:00Z", "date-time")
+    v = validator("trusted-source-issuer")
+    good = {"issuer_id": "issuer-1", "local_key_ref": "local-state", "allowed_source_types": ["USER"],
+            "max_trust_level": "authoritative", "scope": {"platform": "hermes", "session_id": "s1",
+            "agent_id": "a1", "task_id": "t1"}, "expires_at": "2026-09-08T01:00:00Z"}
+    v.validate(good)
+    for stamp in ("2026-02-30T00:00:00Z", "2026-09-08T00:00:00", "2026-13-08T00:00:00Z"):
+        assert list(v.iter_errors(good | {"expires_at": stamp}))

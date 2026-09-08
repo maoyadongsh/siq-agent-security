@@ -809,3 +809,32 @@ def test_global_intent_revocation_fixed_vector():
             public.verify(signature, canonical(changed))
     with pytest.raises(InvalidSignature):
         public.verify(bytes(64), canonical(unsigned))
+
+
+@pytest.mark.parametrize("sample,schema_name,time_field", [
+    ("context-assertion.sample.json", "context-assertion.v1", "expires_at"),
+    ("effect-evidence.sample.json", "effect-evidence.v1", "observed_at"),
+    ("file-observation-pending.sample.json", "file-observation-pending.v1", "expires_at"),
+    ("file-observation-recovery-1.sample.json", "file-observation-recovery.v1", "recovered_at"),
+    ("intent-revocation.sample.json", "intent-revocation.v1", "revoked_at"),
+    ("intent-contract.v3.sample.json", "intent-contract.v3", "expires_at"),
+])
+def test_v1_signed_contract_calendar_and_closed_fields(sample, schema_name, time_field):
+    from jsonschema import FormatChecker
+    from jsonschema.validators import validator_for
+
+    checker = FormatChecker()
+    assert "date-time" in checker.checkers, "install locked dev dependency rfc3339-validator"
+    record = json.loads((GO_SAMPLES / sample).read_text())
+    schema = json.loads((CONTRACTS / f"{schema_name}.schema.json").read_text())
+    kind = Draft7Validator if "draft-07/" in schema["$schema"] else validator_for(schema)
+    kind.check_schema(schema)
+    validator = kind(schema, format_checker=checker)
+    validator.validate(record)
+    for value in ("2026-02-30T00:00:00Z", "2026-13-01T00:00:00Z", "2026-09-08T25:00:00Z",
+                  "2026-09-08T00:00:00", "not-a-time"):
+        assert list(validator.iter_errors(record | {time_field: value})), (sample, value)
+    assert list(validator.iter_errors(record | {"unexpected_field": True}))
+    for field in schema["required"]:
+        missing = {key: value for key, value in record.items() if key != field}
+        assert list(validator.iter_errors(missing)), (sample, field)

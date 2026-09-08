@@ -685,3 +685,11 @@
 - 覆盖block/warn/audit_only三模式，实际产生48次发布后允许及192次同步撤销后拒绝，另有并发重叠阶段允许/拒绝检查。使用等待屏障明确撤销完成边界，不将重叠请求顺序猜测为原子外部执行。
 - 初次race发现既有测试夹具Now推进fx.clock与签发线程读时钟竞争；改为线程启动前固定签发时间快照，未改生产锁语义。随后Go1.26.6 receipt全包无缓存race及vet通过（/tmp/siq-provenance-decision-concurrency.log）。
 - 本轮仅增加集成回归，未改生产代码；不重复四平台编译。完整目标继续进行中。
+
+
+### §90 合同真实日期校验修复
+
+- 实测原环境FormatChecker未注册date-time，2026-02-30T00:00:00Z被接受；仅声明format不足以证明日期已校验。新增开发依赖rfc3339-validator（锁定0.1.4及six1.17.0），不改变生产Go依赖。
+- provenance合同助手启用FormatChecker；6份已签名固定样例（Context/Effect/pending/recovery/global revocation/Intent V3）验证真实日历、时区缺失、非法小时/月、额外属性和每个必需字段缺失；issuer增加真实日历负例，并显式断言checker已注册防止环境静默跳过。
+- 合同相关95项通过，Control API全量542项通过及Ruff通过（/tmp/siq-calendar-contract-full.log）；17项benchmark单测通过。修正draft-07 HTTPS元模式的验证器选择后6项calendar重新通过，无该回退警告。既有Starlette弃用提示未擅自升级处理。
+- 该修复提高合同验收可信度，不声称此前生产Go日期解析失效，也不把这7份合同覆盖当作全部新schema的最终§90验收。diff检查通过。
