@@ -95,3 +95,11 @@
 - 真实签名 Store→Intent V3→Engine 测试覆盖三模式下 USER 同值允许、MCP 同值拒绝、缺必需来源拒绝；暂无管理/上报 HTTP 端到端证据。
 - Go 全模块 race、vet、四平台编译通过；随后 V2 null 字段拒绝加强，相关 intent/receipt/server 定向 race 重新验证。Python Intent/receipt 合同测试126项通过，Ruff通过；Web build通过。
 - R 中高影响参数自动约束覆盖、HTTP 发行/上报、MCP 生命周期及更多审批 provenance 失效测试继续待完成；不宣称本轮45项DoD已完成。
+
+### B1/B2 管理 API 增量
+
+- 接入 issuer 注册/读取/撤销、声明本地签发/外部导入/当前父图解析六类管理操作；统一 admin capability、严格64 KiB JSON读取、稳定错误码，生产 Server 与 Engine 共享状态目录。
+- 原始 HTTP 请求验证 decision token 对所有管理路径的 GET/POST 均403，不使用会自动替换 admin token 的旧测试辅助行为。
+- 新增管理注册→V3绑定→声明签发/导入/解析→Decide→撤销→后续Decide硬拒绝链路测试。warn 正例只证明有效 Authority 进入既有 advisory policy，不作为 Grant 或真实效果证据。
+- ParameterBinding 的 JSON 边界拒绝多文档、未知字段、空/重复/非法引用和非法 JSON Pointer，避免恶意绑定生成不符合合同的回执。
+- server/receipt/provenance 三包 race 全部通过，server/provenance vet通过，四平台编译通过。使用说明见 [Provenance API V1](provenance-api-v1.md)。普通低可信上报与 MCP 路径仍待实现。

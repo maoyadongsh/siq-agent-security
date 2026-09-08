@@ -844,3 +844,9 @@ Store.MatchParameters 在一次 registry 读锁内验证所有 parameter_provena
 新增 intent/v3 合同，基于 V2 字段新增必需 provenance_constraints 数组（允许显式空数组）。Go 使用指针数组区分旧版省略与 V3 空数组；V2 不得携带该新字段，历史 canonical 签名不变。每条来源约束以唯一 parameter_path 指定 allowed_source_types/minimum_trust/required，复用 provenance.Constraint.Validate。
 
 任何 V3 在参数来源检查器未配置时拒绝，不允许先签发 V3 再把它当 V2 执行。Decide 接受 parameter_provenance 的引用绑定，使用已验证 Intent 的 task_id 和请求 platform/session/agent 构成范围；由来源 Store 对所有引用与约束执行匹配。无效/缺失必需来源进入 Authority Hard Gate。回执持久化绑定引用，审批执行前用原始回执绑定和当前参数重新验证，不能在 hold-status 临时替换来源。普通 V2 无新引用时保持原行为。
+
+### B1 管理 HTTP 接口
+
+新增管理 capability 路由：POST /v1/provenance-issuers 注册，GET /v1/provenance-issuers/{id} 读回，POST /v1/provenance-issuers/{id}/revoke 终态撤销（空 JSON 对象）；POST /v1/provenance-assertions 本地签发，POST /v1/provenance-assertions/import 外部签名导入。POST /v1/provenance-resolve 接受 provenance_id 与完整 scope，返回经过当前 issuer/父图验证的声明。管理输入严格拒绝未知字段、多 JSON 文档和超过64 KiB的正文。
+
+以上接口均为 admin，决策 token 返回403。状态错误对外只输出稳定 provenance reason_code，不暴露文件路径或底层异常。来源普通上报另设受限接口，不能复用管理签发接口。生产 Server 与 Engine 打开同一状态目录的 provenance Store；均逐次读取签名记录，不引入独立数据库或新的裁决服务。

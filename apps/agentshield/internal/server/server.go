@@ -24,6 +24,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/product"
+	"siq-agent-security/apps/agentshield/internal/provenance"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
@@ -52,15 +53,16 @@ type Deps struct {
 
 // Server is the HTTP handler set.
 type Server struct {
-	intents *intent.Store
-	d       Deps
-	mux     *http.ServeMux
-	osMu    sync.Mutex
-	osAt    time.Time
-	osRow   PlatformInfo
-	osOK    bool
-	osCaps  *openshell.Capabilities
-	osDiag  openshell.Diagnosis
+	provenance *provenance.Store
+	intents    *intent.Store
+	d          Deps
+	mux        *http.ServeMux
+	osMu       sync.Mutex
+	osAt       time.Time
+	osRow      PlatformInfo
+	osOK       bool
+	osCaps     *openshell.Capabilities
+	osDiag     openshell.Diagnosis
 
 	pairMu       sync.Mutex
 	pairDisplay  string
@@ -89,9 +91,18 @@ func New(d Deps) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
+	s.provenance, err = provenance.Open(d.Store.Dir, d.Key)
+	if err != nil {
+		return nil, err
+	}
 	if err := s.initPairing(d.PairingCode); err != nil {
 		return nil, err
 	}
+	s.mux.HandleFunc("/v1/provenance-issuers", s.auth(s.provenanceIssuers, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-issuers/", s.auth(s.provenanceIssuer, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-assertions", s.auth(s.provenanceIssue, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-assertions/import", s.auth(s.provenanceImport, capAdmin))
+	s.mux.HandleFunc("/v1/provenance-resolve", s.auth(s.provenanceResolve, capAdmin))
 	s.mux.HandleFunc("/v1/intents", s.auth(s.intentCollection, capAdmin))
 	s.mux.HandleFunc("/v1/context-assertions", s.auth(s.contextCollection, capAdmin))
 	s.mux.HandleFunc("/v1/context-assertions/", s.auth(s.contextOne, capAdmin))

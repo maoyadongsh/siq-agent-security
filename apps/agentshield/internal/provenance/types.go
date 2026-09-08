@@ -56,6 +56,29 @@ type Violation struct{ Code string }
 func (v *Violation) Error() string { return v.Code }
 func failure(code string) error    { return &Violation{Code: code} }
 
+func (b *ParameterBinding) UnmarshalJSON(raw []byte) error {
+	type wire ParameterBinding
+	var value wire
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	dec.DisallowUnknownFields()
+	if dec.Decode(&value) != nil {
+		return failure("provenance_invalid_request")
+	}
+	var extra any
+	if dec.Decode(&extra) != io.EOF || len(value.ParameterPath) > 1024 || !pointerPattern.MatchString(value.ParameterPath) || len(value.ProvenanceRefs) == 0 || len(value.ProvenanceRefs) > 32 {
+		return failure("provenance_invalid_request")
+	}
+	seen := map[string]bool{}
+	for _, id := range value.ProvenanceRefs {
+		if !identifier.MatchString(id) || seen[id] {
+			return failure("provenance_invalid_request")
+		}
+		seen[id] = true
+	}
+	*b = ParameterBinding(value)
+	return nil
+}
+
 func (c *Constraint) UnmarshalJSON(raw []byte) error {
 	type wire Constraint
 	var value wire
