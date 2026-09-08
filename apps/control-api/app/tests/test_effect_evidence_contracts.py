@@ -66,3 +66,21 @@ def test_shared_signed_effect_sample():
     key = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32)
     key.public_key().verify(signature, canonical)
     assert key.sign(canonical) == signature
+
+
+def test_atomic_state_envelope_requires_incident_and_request_binding():
+    root = Path(__file__).parents[4] / "packages/contracts"
+    schema = json.loads((root / "effect-evidence-record.v1.schema.json").read_text())
+    # Resolve the committed local contract without network access.
+    schema["properties"]["evidence"] = json.loads((root / "effect-evidence.v1.schema.json").read_text())
+    Draft202012Validator.check_schema(schema)
+    v = Draft202012Validator(schema)
+    good = {"schema_version": "effect-evidence-record/v1", "evidence": record(),
+            "finding_code": "", "request_digest": "c" * 64, "task_id": "task-1",
+            "signing_schema": "local_canonical/v1", "signature": "0" * 128}
+    v.validate(good)
+    for field in ["finding_code", "request_digest", "task_id", "evidence"]:
+        bad = dict(good)
+        del bad[field]
+        assert list(v.iter_errors(bad))
+    assert list(v.iter_errors({**good, "finding_code": "completed"}))

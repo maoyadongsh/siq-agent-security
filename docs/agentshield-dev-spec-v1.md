@@ -888,3 +888,9 @@ C1 资源引用冻结为 `filesystem|network|message:sha256:<64小写hex>`（实
 Engine 的 EffectAction 仅从已签发或经回执链恢复的动作状态读取，要求精确 action_id+decision_receipt_id，沿用24小时动作关联窗口；未知、过期、错配引用拒绝。输出包括决策时间、task、效果集合和资源摘要，不包含参数原文；hold 只有已批准才视为动作授权。
 
 效果提交必须与管理端指定的 observer Source 完全一致，正文不能改变 source_id/type/independence。独立 completed 证据若关联未获授权动作，保留为 unexpected 并给出 unauthorized_effect_observed；效果类型或资源不匹配为 unexpected/effect_scope_mismatch，不能记为预期完成。观察时间不得早于关联决策。分类器只返回待存储记录与 finding code，后续存储/API 必须将两者作为同一不可变事实处理；本次分类器不单独写 finding。
+
+### C1 不可变证据存储
+
+`effect-evidence/` 中每个 ID 对应一个0600不可变签名封套，包含 evidence、finding_code、request_digest、task_id。外层签名将事件与证据绑定，内层签名保持 EffectEvidence 合同独立可验证；request_digest 为原始无签名提交的 canonical SHA256，用于防止分类归一化掩盖冲突。相同 ID 相同请求返回既有记录，变化请求拒绝；重试不会改写历史事件。
+
+先完整写暂存文件、fsync、关闭，再同目录 os.Link 排他发布。无覆盖回退；暂存文件不算有效记录。读取拒绝符号链接、超限、多文档、签名错误与 ID 错配。单状态目录最多8192份记录，进程内多 Store 共享锁；跨进程仍依赖 daemon writer lock。同 UID 目录整体删除/回滚和机器断电的目录项持久性不作为本实现已解决的保证。

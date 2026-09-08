@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Immutable EffectEvidence state record",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "effect-evidence-record/v1"
+    },
+    "evidence": {
+      "$ref": "effect-evidence.v1.schema.json"
+    },
+    "finding_code": {
+      "enum": [
+        "",
+        "unauthorized_effect_observed",
+        "effect_scope_mismatch"
+      ]
+    },
+    "request_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "task_id": {
+      "type": "string",
+      "maxLength": 256
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "evidence",
+    "finding_code",
+    "request_digest",
+    "task_id",
+    "signing_schema",
+    "signature"
+  ]
+}
