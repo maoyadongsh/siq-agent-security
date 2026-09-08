@@ -19,6 +19,7 @@ func (e *Engine) HistoricalEffectActions(records []effectevidence.Record) (func(
 	wanted := map[pair]bool{}
 	found := map[pair]Receipt{}
 	approved := map[pair]bool{}
+	approvedAt := map[pair]time.Time{}
 	resolved := map[pair]bool{}
 	for _, record := range records {
 		r := record.Evidence
@@ -51,6 +52,11 @@ func (e *Engine) HistoricalEffectActions(records []effectevidence.Record) (func(
 			}
 			resolved[p] = true
 			approved[p] = r.Action == ActionAllow
+			at, err := time.Parse(time.RFC3339Nano, r.IssuedAt)
+			if err != nil {
+				return effectevidence.ErrCorrelation
+			}
+			approvedAt[p] = at
 		}
 		return nil
 	})
@@ -70,7 +76,11 @@ func (e *Engine) HistoricalEffectActions(records []effectevidence.Record) (func(
 		if err != nil {
 			return nil, effectevidence.ErrCorrelation
 		}
-		out[p] = effectevidence.Action{ActionID: d.ActionID, DecisionReceiptID: d.ReceiptID, TaskID: d.TaskID, IntentID: d.IntentID, IntentDigest: d.IntentDigest, Platform: d.Platform, SessionID: d.SessionID, AgentID: str(d.AgentID), IssuedAt: at, Authorized: d.Action == ActionAllow || d.Action == ActionRedact || d.Action == ActionHold && approved[p], Effects: append([]string(nil), d.Effects...), Resources: append([]runtimeaction.ResourceRef(nil), d.ResourceRefs...)}
+		authorizedAt := at
+		if d.Action == ActionHold {
+			authorizedAt = approvedAt[p]
+		}
+		out[p] = effectevidence.Action{AuthorizedAt: authorizedAt, ActionID: d.ActionID, DecisionReceiptID: d.ReceiptID, TaskID: d.TaskID, IntentID: d.IntentID, IntentDigest: d.IntentDigest, Platform: d.Platform, SessionID: d.SessionID, AgentID: str(d.AgentID), IssuedAt: at, Authorized: d.Action == ActionAllow || d.Action == ActionRedact || d.Action == ActionHold && approved[p], Effects: append([]string(nil), d.Effects...), Resources: append([]runtimeaction.ResourceRef(nil), d.ResourceRefs...)}
 	}
 	return func(actionID, receiptID string) (effectevidence.Action, error) {
 		a, ok := out[pair{actionID, receiptID}]

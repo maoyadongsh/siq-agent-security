@@ -106,7 +106,8 @@ func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey,
 				unknown = true
 				continue
 			}
-			if !a.Authorized || e.Result != "expected" || !r.FileObservation.After.Exists || r.FileObservation.After.Digest != req.ExpectedDigest || r.FileObservation.ExpectedDigest != req.ExpectedDigest {
+			observed, _ := time.Parse(time.RFC3339Nano, e.ObservedAt)
+			if !a.Authorized || (!a.AuthorizedAt.IsZero() && observed.Before(a.AuthorizedAt)) || e.Result != "expected" || !r.FileObservation.After.Exists || r.FileObservation.After.Digest != req.ExpectedDigest || r.FileObservation.ExpectedDigest != req.ExpectedDigest {
 				conflict = true
 				continue
 			}

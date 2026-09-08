@@ -58,6 +58,9 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	}
 	check(task, nil, "incomplete")
 	check(task, []effectevidence.Record{r}, "verified")
+	a.AuthorizedAt = time.Now().Add(time.Second)
+	check(task, []effectevidence.Record{r}, "conflicting")
+	a.AuthorizedAt = time.Time{}
 	none := task
 	none.Requirements = nil
 	check(none, nil, "unknown")

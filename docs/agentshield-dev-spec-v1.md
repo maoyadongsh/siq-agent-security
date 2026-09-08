@@ -946,3 +946,7 @@ Admin GET `/v1/tasks/{task_id}/completion` 查验签名 Intent、按task读出�
 Completion 使用 HistoricalEffectActions 按本次证据引用集合单次扫描整条签名回执链，最多8192个引用；历史查询不依赖24小时内存动作缓存。要求精确decision action_id/receipt_id以及hold_resolution对原决策的引用和scope一致；重复决策/重复审批或链校验失败拒绝。扫描结束与当前进程已知链头比较，防止运行中截断被误当完整历史。
 
 HistoricalEffectActions 只生成只读投影供已保存证据复核，不重新注册动作、不延长 Observe/hold-status/新证据提交的执行窗口。新请求继续用 EffectAction。完整目录回滚后重启的保护仍取决于既有可信checkpoint，不能把内存链头比较宣称为永久防回滚。
+
+### C2 审批生效时间
+
+动作投影增加仅服务端派生的 AuthorizedAt。普通允许动作取决策时间，hold获批取签名hold_resolution时间；新审批记录使用RFC3339Nano保留亚秒精度。当前缓存、重启恢复和历史扫描均从同一签名时间恢复。独立completed效果若observed_at早于AuthorizedAt，记录unauthorized_effect_observed；Completion也复核该关系，旧expected证据不能因后续获批变成verified。旧秒级审批记录仍只能提供秒级历史精度，不伪称能恢复当时未记录的亚秒顺序。

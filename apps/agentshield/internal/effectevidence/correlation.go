@@ -10,6 +10,7 @@ import (
 // Action is a transient projection of the verified decision ledger. Only the
 // engine may supply it; it must never be decoded from an evidence request.
 type Action struct {
+	AuthorizedAt                        time.Time
 	IntentID, IntentDigest              string
 	ActionID, DecisionReceiptID, TaskID string
 	Platform, SessionID, AgentID        string
@@ -46,7 +47,7 @@ func Correlate(e Evidence, action Action, observer Source, now time.Time) (Evide
 	if !independent {
 		return e, "", nil
 	}
-	if e.ExecutionState == "completed" && !action.Authorized {
+	if e.ExecutionState == "completed" && (!action.Authorized || (!action.AuthorizedAt.IsZero() && observed.Before(action.AuthorizedAt))) {
 		e.Result = "unexpected"
 		return e, "unauthorized_effect_observed", nil
 	}

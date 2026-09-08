@@ -226,3 +226,11 @@
 - 覆盖48小时后重启历史读取、批准/拒绝hold恢复、投影切片不可变、伪造引用、回执篡改和运行中删去有效链尾拒绝；新 EffectAction 提交仍在到期后拒绝。
 - HTTP Completion/文件采样定向及Go全模块race/vet、四平台编译通过，日志 `/tmp/siq-effect-history-race.log`。历史复核以当前进程已知链头检测截断，完整状态回滚后重启仍依赖已有可信checkpoint，不宣称永久防回滚。
 - 后续还需加强审批生效时间与 observed_at 的先后关系：当前投影保留批准状态，尚未提供独立批准时刻。另有 pending 持久恢复、网络归档与benchmark待完成。
+
+### C2 审批时间边界修复
+
+- 修复前 `TestApprovalCannotRetroactivelyAuthorizeEffect` 实际失败：同一秒内07:00:00.103的效果，在约07:00:00.503审批后被接受为expected。
+- 当前动作、重启恢复、历史查询新增来自签名审批回执的AuthorizedAt；新hold_resolution使用RFC3339Nano。Correlate将审批前独立completed效果归为unauthorized_effect_observed；Completion也校验时间关系，防止旧expected记录被后续审批追认为成功。
+- 验证前置效果拒绝、审批时刻边界允许、当前/重启/历史投影时间一致，以及Completion的审批前记录conflicting。旧秒级审批只保留原有时间精度，不能恢复未记录的亚秒先后；该历史精度限制仍须在最终报告说明。
+
+- 本批Go全模块race、vet与四平台编译通过，日志 `/tmp/siq-effect-approval-time-race.log`。pending恢复、网络材料归档和benchmark等工作继续进行。

@@ -753,7 +753,7 @@ func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Recei
 	resID := holdResolutionID(held.ReceiptID)
 	rec := held
 	rec.ReceiptID = resID
-	rec.IssuedAt = now.Format(time.RFC3339)
+	rec.IssuedAt = now.Format(time.RFC3339Nano)
 	rec.Action, rec.Reason = action, reason
 	if rec.EffectiveAction != "" {
 		rec.EffectiveAction = action
@@ -769,6 +769,7 @@ func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Recei
 	}
 	if entry := e.actions[held.ActionID]; entry != nil {
 		entry.approved = approve
+		entry.approvedAt = now
 		entry.holdResolved = true
 		if approve {
 			if session := e.sessions[held.SessionID]; session != nil && session.boundTaskID == held.TaskID && session.boundIntentID == held.IntentID {
