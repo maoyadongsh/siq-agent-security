@@ -267,3 +267,10 @@
 - Completion 验证已签名材料的 requested/received 两端与预期端点及请求摘要一致；无材料unknown，端口/协议/摘要不同conflicting。真实loopback接收→签名Store→聚合正例verified；无证据incomplete、更高full覆盖unknown。
 - Go completion/intent定向race及全模块race、vet、四平台编译通过（/tmp/siq-network-completion-race.log）；Python合同13项通过。网络要求的完整Intent签发→HTTP Completion正例及平台编排仍待补齐，不将库级材料测试称为完整端到端验收。
 - pending持久恢复、D独立基准、平台自动采集及G最终门禁仍未完成。
+
+### C2 网络 Completion HTTP 验证
+
+- 补齐管理员签发 V3 网络要求→绑定→Decide→真实 loopback GET→observer 材料提交→任务 Completion 查询。预期请求摘要在发送前计算并签发，不从已发生事件倒填预期。
+- warn 普通策略用例从 incomplete 变为 verified；block 拒绝后真实效果返回 conflicting。同一 Intent ID 修改 expected_endpoint 再提交409，原任务完成结果保持不变。
+- Go server 定向race、全模块race与vet通过（/tmp/siq-network-completion-http-race.log）。此为生产HTTP handler与真实网络oracle的集成测试；显式可选 /url provenance 隔离效果检查，warn正例不代替block Grant链路，不声称native平台自动调度已经完成。
+- 后续重点仍为pending恢复、独立D0–D5基准、平台集成及G全仓验收。
