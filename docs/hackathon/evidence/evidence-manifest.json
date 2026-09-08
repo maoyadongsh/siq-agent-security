@@ -1,7 +1,7 @@
 {
   "schema_version": "hackathon-evidence-manifest/v1",
   "source_sha": "4da9e9e0a04c56620d101a583307b299b8484372",
-  "scope": "Frozen executable source; earlier checkpoints retain their original hashes and dirty status. Later documentation commits only consolidate evidence.",
+  "scope": "Frozen executable runtime/UI source; subsequent presentation-only narration tooling and evidence commits retain separate identity. Earlier checkpoints retain original hashes and dirty status.",
   "dgx": {
     "canonical_files": [
       "final-hardening-v4/dgx-preflight.json",
@@ -56,7 +56,9 @@
       "final-hardening-v4/video.json",
       "final-hardening-v4/video-first-attempt.json",
       "final-hardening-v4/video-second-attempt.json",
-      "final-hardening-v4/recording-sync-check.json"
+      "final-hardening-v4/recording-sync-check.json",
+      "final-hardening-v4/narrated-video-zh.json",
+      "final-hardening-v4/subtitles.zh-en.srt"
     ]
   }
 }

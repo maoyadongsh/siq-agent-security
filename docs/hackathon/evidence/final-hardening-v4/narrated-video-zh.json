@@ -1,0 +1,156 @@
+{
+  "schema_version": "hackathon-narrated-video/v1",
+  "source_sha": "4da9e9e0a04c56620d101a583307b299b8484372",
+  "source_video_sha256": "c2e68238c9d3c4ecefd01d4e08f786df09792cdc88fd0c5091288b0450609a4c",
+  "source_video": ".tmp/final-hardening-v4/video-v3/siq-v4-demo.webm",
+  "file": ".tmp/final-hardening-v4/video-zh/siq-v4-demo-zh.mp4",
+  "sha256": "a9e003f47051b1ddf367b50dcf3a1e7293b7f7786f241cb7028b1a5bc8ea5430",
+  "script_sha256": "91003884d7afe0961dc43a96d67f84154d71ee2678042234afb8836f42f74078",
+  "speech_provider": "Microsoft Edge speech via edge-tts",
+  "edge_tts_version": "7.2.8",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "synthetic_narration": true,
+  "language": "zh-CN",
+  "subtitles": [
+    "zh-CN",
+    "en"
+  ],
+  "subtitle_file": ".tmp/final-hardening-v4/video-zh/subtitles.zh-en.srt",
+  "segments": [
+    {
+      "start": 0.5,
+      "end": 14,
+      "zh": "智能体可以调用技能，但谁来授权真实动作？下面演示模型规划、本地分析，以及独立的运行时裁决。",
+      "en": "Skills give agents capabilities. Who authorizes their actions? Watch planning, local analysis and independent runtime decisions.",
+      "audio_duration": 9.888,
+      "audio_sha256": "d917bbed0242b7412aa8b719711e5702a703afc9f4bb9bdf096efd8540d23e2a"
+    },
+    {
+      "start": 15.5,
+      "end": 27,
+      "zh": "先提交一个只分析的请求：不保存报告，也不向外发送。",
+      "en": "First, request analysis only: no saved report and no external delivery.",
+      "audio_duration": 5.376,
+      "audio_sha256": "aff9c595f4a9822b19c8c961f2e3d486757a4667d7a0927579e71b72ac9fabd5"
+    },
+    {
+      "start": 28,
+      "end": 39.5,
+      "zh": "现在只执行研究技能。远程模型负责规划，源码分析在英伟达设备本地完成。",
+      "en": "Only the research Skill executes. StepFun plans remotely; Ornith analyzes source locally on DGX Spark.",
+      "audio_duration": 8.28,
+      "audio_sha256": "9b1e80440accd63e39bcdf43c491ef859ca1f6739659523e3f786d70ff3a1de1"
+    },
+    {
+      "start": 41,
+      "end": 53,
+      "zh": "接下来，让智能体分析仓库、生成报告，并发送给指定联系人。",
+      "en": "Next, ask the agent to review the repository, save a report and deliver it to the named contact.",
+      "audio_duration": 6.456,
+      "audio_sha256": "64fea9f6804eb2666d579d94cf28e0b5b50ba4dc7bb0a7c488a7e6b5ceab518d"
+    },
+    {
+      "start": 54,
+      "end": 66,
+      "zh": "这次选择了研究、报告和交付三个技能。报告与接收端证据都匹配，任务才被标记完成。",
+      "en": "Three Skills are selected. The task is complete only when report and receiver evidence match.",
+      "audio_duration": 8.976,
+      "audio_sha256": "e4565ffee00dd996f8f0581038ffefb0b8fd49e2854a0a88a4f62d429ed0ca0d"
+    },
+    {
+      "start": 67,
+      "end": 78.5,
+      "zh": "工具说成功，并不等于任务完成。系统还要核对文件内容，以及实际接收事件。",
+      "en": "A tool reporting success is not enough. File contents and actual receiver events must be checked.",
+      "audio_duration": 7.704,
+      "audio_sha256": "86fc8a739a9ec7e34e9cc53ff8e9dcc4c5cac901473d051c310e4e04b3d2f004"
+    },
+    {
+      "start": 81,
+      "end": 94,
+      "zh": "下面是明确标注的测试模型提出的攻击建议，用来验证真实的安全运行时。",
+      "en": "The following attack proposals use an explicitly labeled fixture model, with the real SIQ runtime.",
+      "audio_duration": 7.152,
+      "audio_sha256": "117aafd5090b37c63b55e55995470e9755f9c14da3d4d501a4a0ceca807fc3b1"
+    },
+    {
+      "start": 95,
+      "end": 108.5,
+      "zh": "MCP 建议把报告发往攻击者邮箱。因为来源不可信，这次交付被拒绝。",
+      "en": "MCP proposes an attacker mailbox. Delivery is denied because that origin is untrusted.",
+      "audio_duration": 7.368,
+      "audio_sha256": "c1f855eb3d4b2bd1a2146d33d5413c5f3aa92d661e434de14dc965ba98560b59"
+    },
+    {
+      "start": 112,
+      "end": 123.5,
+      "zh": "即使邮箱文字相同，来源也不能混淆。可信目录允许，MCP 来源仍被拒绝。",
+      "en": "The mailbox text can match, but provenance differs: trusted directory ALLOW, MCP DENY.",
+      "audio_duration": 7.944,
+      "audio_sha256": "f36f32af67e637be8015fe37e07ae3eb4eb9d41f58ca24a20b4451eac9218a93"
+    },
+    {
+      "start": 124.5,
+      "end": 134,
+      "zh": "授权取决于可验证的参数来源，而不只是字符串是否相等。",
+      "en": "Authorization depends on verifiable parameter provenance, not string equality alone.",
+      "audio_duration": 5.976,
+      "audio_sha256": "dc2d0371bfbc06047485eb116b012eaca32080afcc5a636a1699306a5f3e1699"
+    },
+    {
+      "start": 137,
+      "end": 151.5,
+      "zh": "最后，工具报告成功，但接收端没有实际消息。效果证据缺失，任务保持未完成。",
+      "en": "Finally, the tool reports success but the receiver has no message. Missing effect evidence keeps completion INCOMPLETE.",
+      "audio_duration": 8.28,
+      "audio_sha256": "7c1aff2f8b7c64b9c1301efc2388ce6b4057e08ab680fe060766f28b2ecd471c"
+    },
+    {
+      "start": 156,
+      "end": 169,
+      "zh": "模型提出建议，SIQ 独立授权，效果证据决定是否完成。演示不代表通用安全保证。",
+      "en": "The model proposes. SIQ authorizes. Evidence determines completion. This is a scoped demonstration, not a universal security guarantee.",
+      "audio_duration": 9.024,
+      "audio_sha256": "62d31415fa36f5b60dd1ca420ad549bd27d7fbf1806541b02c9b25ec8875cfd5"
+    }
+  ],
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1440,
+        "height": 1180
+      },
+      {
+        "codec_name": "aac"
+      }
+    ],
+    "format": {
+      "duration": "169.920000"
+    }
+  },
+  "source_timeline_changed": false,
+  "source_frame_cropped": false,
+  "source_ui_edited": false,
+  "subtitle_band_added_pixels": 180,
+  "uploaded": false,
+  "passed": true,
+  "visual_and_audio_review": {
+    "passed": true,
+    "sampled_seconds": [
+      6,
+      60,
+      143
+    ],
+    "subtitles_readable": true,
+    "full_original_ui_retained": true,
+    "all_original_frames_ssim": 0.998636,
+    "audio_mean_db": -18.8,
+    "audio_peak_db": -1.4,
+    "all_spoken_segments_fit_windows": true,
+    "speech_speed_changed": false,
+    "review_scope": "Subtitle rendering, timing windows, decoded audio levels, stream metadata and original-area frame similarity; no speech-recognition accuracy claim."
+  }
+}

@@ -28,3 +28,27 @@ a failed attempt. The script records source SHA, task IDs, providers, duration a
 video hash outside Git. Final recording status is tracked in the
 [V4 report](final-hardening-progress-v4.md); raw evidence has one entry:
 [Evidence index](evidence/INDEX.md).
+
+## Chinese narrated presentation
+
+The current presentation uses Mandarin synthetic narration and Chinese/English
+subtitles. [Script](demo-narration-zh.json) and [reviewed media record](evidence/final-hardening-v4/narrated-video-zh.json).
+The original accepted screen recording remains intact. A 180-pixel subtitle band
+is added below its full frame; no UI, decision, task ID or source SHA is covered.
+Speech clips keep their native speed and must fit the scene windows.
+
+Reproduce from the repository root, in an isolated media environment:
+
+```bash
+uv venv .tmp/siq-media-venv
+uv pip install --python .tmp/siq-media-venv/bin/python edge-tts==7.2.8
+.tmp/siq-media-venv/bin/python scripts/hackathon/narrate-demo-zh.py \
+  --record docs/hackathon/evidence/final-hardening-v4/video.json \
+  --script docs/hackathon/demo-narration-zh.json --out-dir .tmp/siq-video-zh-new
+```
+
+Requires ffmpeg with libass and Noto Sans CJK SC. The optional
+[edge-tts media dependency](https://github.com/rany2/edge-tts) sends only the public
+narration text to the speech service. No runtime source, confidential task data or
+credentials are sent. Narration is a presentation addition; the frozen runtime
+candidate and original screen recording retain their own hashes.

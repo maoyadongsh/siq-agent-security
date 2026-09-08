@@ -10,7 +10,7 @@ commits. Official publication, publisher signing and video upload remain externa
 - starting_sha: `9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1`.
 - final_sha / frozen executable source: `4da9e9e0a04c56620d101a583307b299b8484372`.
 - branch: `codex/hackathon-final-hardening-v4`; PR [#5](https://github.com/maoyadongsh/siq-agent-security/pull/5) targets `codex/dgx-spark-hackathon-v3` and remains unmerged.
-- Follow-up commits contain completion evidence/docs only. Main and repository settings were not changed.
+- Follow-up commits contain completion evidence/docs and a narration-only media utility; the runtime/UI remain frozen. Main and repository settings were not changed.
 
 ## B. Model routing
 
@@ -104,11 +104,11 @@ same-value, fake success, conflicting effects, approval and trifecta. The four U
 panels show actual selected Skills, hardware/locality, source identity, decisions,
 provenance and effects. Same mailbox comparison uses two actual recorded decisions.
 
-A real 170.00-second recording is saved at
+The accepted raw 170.00-second recording is saved at
 `.tmp/final-hardening-v4/video-v3/siq-v4-demo.webm`.
 Video SHA256: `c2e68238c9d3c4ecefd01d4e08f786df09792cdc88fd0c5091288b0450609a4c`.
 [Metadata and independent review](evidence/final-hardening-v4/video.json).
-No audio, cuts or speed changes; captions explain actual UI data. Video is not
+The raw capture has no audio, cuts or speed changes; captions explain actual UI data. Video is not
 uploaded. Actual stream duration and sampled visual checks are in the review.
 
 The first recording stopped on an automation race between two adjacent blocked
@@ -122,6 +122,19 @@ missing even though SIQ delivery evidence was verified. The summary now derives
 from the SIQ delivery requirement; normal/conflicting/fake-success browser checks
 cover the distinction. Fresh CI/build/recording followed.
 [Second attempt retained](evidence/final-hardening-v4/video-second-attempt.json).
+
+The requested Chinese presentation is now available at
+`.tmp/final-hardening-v4/video-zh/siq-v4-demo-zh.mp4` (169.92 seconds,
+H.264/AAC). It adds synthetic Mandarin narration and Chinese/English subtitles
+in a new band below the complete original frame; the original timeline and UI
+are retained. SHA256: `a9e003f47051b1ddf367b50dcf3a1e7293b7f7786f241cb7028b1a5bc8ea5430`.
+[Chinese video metadata and review](evidence/final-hardening-v4/narrated-video-zh.json),
+[bilingual subtitles](evidence/final-hardening-v4/subtitles.zh-en.srt),
+[public narration script](demo-narration-zh.json). All twelve speech clips fit
+their windows at native speed. Original-area frame SSIM is 0.998636 after
+H.264 encoding. Only the public narration script was sent to the speech service.
+The narration utility is a presentation companion, not part of the frozen runtime
+candidate. The raw recording and its signed evidence remain unchanged.
 
 [Runbook](demo-script.md). Real-model acts and explicit FixtureProvider attack
 controls stay labeled. Approval is available as an optional live act and passed

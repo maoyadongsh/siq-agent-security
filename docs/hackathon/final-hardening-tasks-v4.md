@@ -1038,7 +1038,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/final-hardening-v4/video.json
+实际证据：docs/hackathon/evidence/final-hardening-v4/video.json；docs/hackathon/evidence/final-hardening-v4/narrated-video-zh.json
 
 ## V4-H2 · 视频真实性与可复核性审核
 
@@ -1056,7 +1056,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/evidence/final-hardening-v4/video.json
+实际证据：docs/hackathon/evidence/final-hardening-v4/video.json；docs/hackathon/evidence/final-hardening-v4/narrated-video-zh.json
 
 ## V4-J1 · 同步 README、HACKATHON 和架构叙事
 
@@ -1111,7 +1111,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/final-hardening-report.md；docs/hackathon/submission-checklist.md
+实际证据：docs/hackathon/final-hardening-report.md；docs/hackathon/submission-checklist.md；docs/hackathon/evidence/final-hardening-v4/narrated-video-zh.json
 
 ## V4-REPORT · Final Engineering Report V4
 
@@ -1131,7 +1131,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/final-hardening-report.md
+实际证据：docs/hackathon/final-hardening-report.md；docs/hackathon/evidence/final-hardening-v4/narrated-video-zh.json
 
 ## V4-ACCEPT · V4 总验收与功能冻结
 
@@ -1151,7 +1151,7 @@ external/manual 项与独立工程并行跟踪，不是本轮已有权限的假�
 
 证据要求：记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。
 
-实际证据：docs/hackathon/final-hardening-report.md；docs/hackathon/evidence/evidence-manifest.json
+实际证据：docs/hackathon/final-hardening-report.md；docs/hackathon/evidence/evidence-manifest.json；docs/hackathon/evidence/final-hardening-v4/narrated-video-zh.json
 
 ## V4-EXT-GOV · 人工设置 main 保护
 

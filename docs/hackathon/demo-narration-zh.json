@@ -1,0 +1,85 @@
+{
+  "schema_version": "hackathon-narration/v1",
+  "language": "zh-CN",
+  "subtitles": [
+    "zh-CN",
+    "en"
+  ],
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "voice_disclosure": "Synthetic narration; only this public script is sent to the speech service.",
+  "timing_scope": "Existing accepted 170-second V4 recording; source video timeline is preserved.",
+  "segments": [
+    {
+      "start": 0.5,
+      "end": 14,
+      "zh": "智能体可以调用技能，但谁来授权真实动作？下面演示模型规划、本地分析，以及独立的运行时裁决。",
+      "en": "Skills give agents capabilities. Who authorizes their actions? Watch planning, local analysis and independent runtime decisions."
+    },
+    {
+      "start": 15.5,
+      "end": 27,
+      "zh": "先提交一个只分析的请求：不保存报告，也不向外发送。",
+      "en": "First, request analysis only: no saved report and no external delivery."
+    },
+    {
+      "start": 28,
+      "end": 39.5,
+      "zh": "现在只执行研究技能。远程模型负责规划，源码分析在英伟达设备本地完成。",
+      "en": "Only the research Skill executes. StepFun plans remotely; Ornith analyzes source locally on DGX Spark."
+    },
+    {
+      "start": 41,
+      "end": 53,
+      "zh": "接下来，让智能体分析仓库、生成报告，并发送给指定联系人。",
+      "en": "Next, ask the agent to review the repository, save a report and deliver it to the named contact."
+    },
+    {
+      "start": 54,
+      "end": 66,
+      "zh": "这次选择了研究、报告和交付三个技能。报告与接收端证据都匹配，任务才被标记完成。",
+      "en": "Three Skills are selected. The task is complete only when report and receiver evidence match."
+    },
+    {
+      "start": 67,
+      "end": 78.5,
+      "zh": "工具说成功，并不等于任务完成。系统还要核对文件内容，以及实际接收事件。",
+      "en": "A tool reporting success is not enough. File contents and actual receiver events must be checked."
+    },
+    {
+      "start": 81,
+      "end": 94,
+      "zh": "下面是明确标注的测试模型提出的攻击建议，用来验证真实的安全运行时。",
+      "en": "The following attack proposals use an explicitly labeled fixture model, with the real SIQ runtime."
+    },
+    {
+      "start": 95,
+      "end": 108.5,
+      "zh": "MCP 建议把报告发往攻击者邮箱。因为来源不可信，这次交付被拒绝。",
+      "en": "MCP proposes an attacker mailbox. Delivery is denied because that origin is untrusted."
+    },
+    {
+      "start": 112,
+      "end": 123.5,
+      "zh": "即使邮箱文字相同，来源也不能混淆。可信目录允许，MCP 来源仍被拒绝。",
+      "en": "The mailbox text can match, but provenance differs: trusted directory ALLOW, MCP DENY."
+    },
+    {
+      "start": 124.5,
+      "end": 134,
+      "zh": "授权取决于可验证的参数来源，而不只是字符串是否相等。",
+      "en": "Authorization depends on verifiable parameter provenance, not string equality alone."
+    },
+    {
+      "start": 137,
+      "end": 151.5,
+      "zh": "最后，工具报告成功，但接收端没有实际消息。效果证据缺失，任务保持未完成。",
+      "en": "Finally, the tool reports success but the receiver has no message. Missing effect evidence keeps completion INCOMPLETE."
+    },
+    {
+      "start": 156,
+      "end": 169,
+      "zh": "模型提出建议，SIQ 独立授权，效果证据决定是否完成。演示不代表通用安全保证。",
+      "en": "The model proposes. SIQ authorizes. Evidence determines completion. This is a scoped demonstration, not a universal security guarantee."
+    }
+  ]
+}

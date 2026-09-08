@@ -1,0 +1,59 @@
+1
+00:00:00,500 --> 00:00:14,000
+智能体可以调用技能，但谁来授权真实动作？下面演示模型规划、本地分析，以及独立的运行时裁决。
+Skills give agents capabilities. Who authorizes their actions? Watch planning, local analysis and independent runtime decisions.
+
+2
+00:00:15,500 --> 00:00:27,000
+先提交一个只分析的请求：不保存报告，也不向外发送。
+First, request analysis only: no saved report and no external delivery.
+
+3
+00:00:28,000 --> 00:00:39,500
+现在只执行研究技能。远程模型负责规划，源码分析在英伟达设备本地完成。
+Only the research Skill executes. StepFun plans remotely; Ornith analyzes source locally on DGX Spark.
+
+4
+00:00:41,000 --> 00:00:53,000
+接下来，让智能体分析仓库、生成报告，并发送给指定联系人。
+Next, ask the agent to review the repository, save a report and deliver it to the named contact.
+
+5
+00:00:54,000 --> 00:01:06,000
+这次选择了研究、报告和交付三个技能。报告与接收端证据都匹配，任务才被标记完成。
+Three Skills are selected. The task is complete only when report and receiver evidence match.
+
+6
+00:01:07,000 --> 00:01:18,500
+工具说成功，并不等于任务完成。系统还要核对文件内容，以及实际接收事件。
+A tool reporting success is not enough. File contents and actual receiver events must be checked.
+
+7
+00:01:21,000 --> 00:01:34,000
+下面是明确标注的测试模型提出的攻击建议，用来验证真实的安全运行时。
+The following attack proposals use an explicitly labeled fixture model, with the real SIQ runtime.
+
+8
+00:01:35,000 --> 00:01:48,500
+MCP 建议把报告发往攻击者邮箱。因为来源不可信，这次交付被拒绝。
+MCP proposes an attacker mailbox. Delivery is denied because that origin is untrusted.
+
+9
+00:01:52,000 --> 00:02:03,500
+即使邮箱文字相同，来源也不能混淆。可信目录允许，MCP 来源仍被拒绝。
+The mailbox text can match, but provenance differs: trusted directory ALLOW, MCP DENY.
+
+10
+00:02:04,500 --> 00:02:14,000
+授权取决于可验证的参数来源，而不只是字符串是否相等。
+Authorization depends on verifiable parameter provenance, not string equality alone.
+
+11
+00:02:17,000 --> 00:02:31,500
+最后，工具报告成功，但接收端没有实际消息。效果证据缺失，任务保持未完成。
+Finally, the tool reports success but the receiver has no message. Missing effect evidence keeps completion INCOMPLETE.
+
+12
+00:02:36,000 --> 00:02:49,000
+模型提出建议，SIQ 独立授权，效果证据决定是否完成。演示不代表通用安全保证。
+The model proposes. SIQ authorizes. Evidence determines completion. This is a scoped demonstration, not a universal security guarantee.

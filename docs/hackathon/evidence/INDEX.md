@@ -49,3 +49,7 @@ The [clean RC identity and hashes](final-hardening-v4/rc.json) and
 candidate-level file/receiver effects with verified signatures. The recorded
 [real browser video metadata](final-hardening-v4/video.json) binds the frozen
 source and named providers; the video stays outside Git.
+
+The current shareable presentation has [Mandarin narration and bilingual
+subtitles](final-hardening-v4/narrated-video-zh.json); the raw screen capture
+and its original signatures remain separately available above.
