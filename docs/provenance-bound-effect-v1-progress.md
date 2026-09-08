@@ -863,3 +863,5 @@ P07本批已补齐：TestPersistedAssertionTamperingFailsAfterRestart 在私有�
 ### 用户授权的开发分支汇总合并
 
 `4a0943e`合并Provenance分支（包含最终报告3ed2d6a），`f6ccf2b`合并Cursor云开发环境配置；无冲突。历史contracts/market-survey分支均已是main祖先。新增.cursor两个脚本bash -n与环境JSON解析通过，未运行系统安装/数据库初始化。功能源码仍与已验收8eb4540一致；后续main CI独立检查集成提交。gh-pages作为自动发布产物分支保留。
+
+用户随后澄清开发环境分支不必进入main。已通过revert合并提交f6ccf2b撤销其新增的.cursor/environment.json、install.sh、start.sh；保留专用远端环境分支，不重写历史，不撤销业务开发及验收文档。上段环境配置合并为历史过程，当前main不包含该配置。

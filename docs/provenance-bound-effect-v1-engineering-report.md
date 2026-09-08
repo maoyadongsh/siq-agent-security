@@ -6,7 +6,7 @@
 
 - 起始SHA：`d001c4d2c1b7a1230604e8b2ecf813a39deb251c`。
 - 最终功能代码SHA：`8eb45407b4b01e1cc17713574f6a07e21d34eeb5`；其后提交仅归档本报告、证据及文档状态，不混称为同一SHA。
-- 开发分支：`codex/provenance-bound-effect-v1`。用户明确授权后经`4a0943e`合并main；Cursor环境配置另经`f6ccf2b`合并。main集成提交与功能验收SHA分开记录，新增环境脚本未在本机执行系统安装或数据库变更。
+- 开发分支：`codex/provenance-bound-effect-v1`。用户明确授权后经`4a0943e`合并main；Cursor环境配置曾经`f6ccf2b`合并，随后按用户澄清以普通revert撤回，保留专用环境分支。main集成提交与功能验收SHA分开记录，环境脚本未在本机执行系统安装或数据库变更。
 - 同SHA全仓CI 28/28 jobs成功，runtime-security两项PR必需job成功；workflow_dispatch三轮完整nightly全部成功，详见J节。
 
 ## B. Architecture
