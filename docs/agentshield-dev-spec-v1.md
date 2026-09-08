@@ -934,3 +934,9 @@ Intent V3 增加可选 effect_requirements 数组（最多128项、requirement_i
 每项要求至少需要一份 completed/expected、无 finding、独立性与coverage达到要求、FileObservation 与证据绑定且实际后文件摘要匹配签名预期的证据才能 verified。无证据或文件缺失为 incomplete；已知越权/目标内容冲突为 conflicting；验签或关联失败直接错误，材料缺失/等级不足或未知执行为 unknown。冲突优先于unknown，unknown优先于incomplete，全部满足才verified。未知证据不得被一条正例遮蔽；同任务其他资源的已知安全事件也阻止整体verified。
 
 这是确定性状态投影，不写 completed 字段、不执行模型判断。当前动作查询仍受24小时窗口限制，超窗关联不得制造完成证明；历史查询恢复另行补齐。
+
+### C2 任务查询 API
+
+Admin GET `/v1/tasks/{task_id}/completion` 查验签名 Intent、按task读出并验签全量有界证据、关联Engine动作后返回 completion-status/v1。未知任务404，同task对应多份Intent返回409（不擅自挑选较宽要求），损坏Intent/证据或缺失动作关联返回通用500并拒绝完成判断。decision/observer凭据不能读取管理任务投影；接口仅GET，不能写 completed=true。
+
+查询反映已发生效果对已签名要求的满足情况，不是新的执行授权；当前动作关联窗口仍是24小时。状态不缓存，新的失败/冲突证据会影响后续查询。跨存储并发读不是全局快照，结果仅代表本次读到的已发布证据；任务冻结/最终封账不在本轮最小模型内。
