@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EffectEvidence unsigned observer submission",
+  "description": "Requires separately authenticated observer capability and matching action scope.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "effect-evidence/v1"
+    },
+    "effect_evidence_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "action_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "decision_receipt_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "effect_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "resource_ref": {
+      "type": "string",
+      "pattern": "^(filesystem|network|message):sha256:[0-9a-f]{64}$"
+    },
+    "execution_state": {
+      "enum": [
+        "requested",
+        "started",
+        "completed",
+        "failed",
+        "unknown"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "tool_report",
+            "host_observer",
+            "openshell",
+            "provider_audit",
+            "test_oracle",
+            "unknown"
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "independence": {
+          "enum": [
+            "self_reported",
+            "host_independent",
+            "external_independent",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "source_id",
+        "independence"
+      ]
+    },
+    "coverage": {
+      "enum": [
+        "full",
+        "partial",
+        "unknown"
+      ]
+    },
+    "result": {
+      "enum": [
+        "expected",
+        "unexpected",
+        "conflicting",
+        "unknown"
+      ]
+    },
+    "evidence_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time",
+      "maxLength": 64,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "const": ""
+    }
+  },
+  "required": [
+    "schema_version",
+    "effect_evidence_id",
+    "action_id",
+    "decision_receipt_id",
+    "effect_type",
+    "resource_ref",
+    "execution_state",
+    "source",
+    "coverage",
+    "result",
+    "evidence_digest",
+    "observed_at",
+    "signing_schema",
+    "signature"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "properties": {
+              "type": {
+                "const": "tool_report"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "properties": {
+              "independence": {
+                "const": "self_reported"
+              }
+            }
+          },
+          "coverage": {
+            "const": "unknown"
+          },
+          "result": {
+            "const": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "properties": {
+              "type": {
+                "const": "unknown"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "properties": {
+              "independence": {
+                "const": "unknown"
+              }
+            }
+          },
+          "coverage": {
+            "const": "unknown"
+          },
+          "result": {
+            "const": "unknown"
+          }
+        }
+      }
+    }
+  ]
+}

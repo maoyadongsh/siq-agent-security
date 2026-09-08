@@ -84,3 +84,20 @@ def test_atomic_state_envelope_requires_incident_and_request_binding():
         del bad[field]
         assert list(v.iter_errors(bad))
     assert list(v.iter_errors({**good, "finding_code": "completed"}))
+
+
+def test_observer_submission_and_management_contracts():
+    root = Path(__file__).parents[4] / "packages/contracts"
+    v = Draft202012Validator(json.loads((root / "effect-observer-request.v1.schema.json").read_text()))
+    good = {"source": record()["source"], "scope": {"platform": "hermes", "session_id": "s1",
+            "agent_id": "a1", "task_id": "t1"}, "expires_in": 60}
+    v.validate(good)
+    for ttl in [0, 3601]:
+        assert list(v.iter_errors({**good, "expires_in": ttl}))
+    forged = copy.deepcopy(good)
+    forged["source"]["independence"] = "external_independent"
+    assert list(v.iter_errors(forged))
+    assert list(v.iter_errors({**good, "scope": {"task_id": "t1"}}))
+    submit = Draft202012Validator(json.loads((root / "effect-evidence-submit.v1.schema.json").read_text()))
+    submit.validate({**record(), "signature": ""})
+    assert list(submit.iter_errors(record()))

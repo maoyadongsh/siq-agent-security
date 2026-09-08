@@ -894,3 +894,9 @@ Engine 的 EffectAction 仅从已签发或经回执链恢复的动作状态读�
 `effect-evidence/` 中每个 ID 对应一个0600不可变签名封套，包含 evidence、finding_code、request_digest、task_id。外层签名将事件与证据绑定，内层签名保持 EffectEvidence 合同独立可验证；request_digest 为原始无签名提交的 canonical SHA256，用于防止分类归一化掩盖冲突。相同 ID 相同请求返回既有记录，变化请求拒绝；重试不会改写历史事件。
 
 先完整写暂存文件、fsync、关闭，再同目录 os.Link 排他发布。无覆盖回退；暂存文件不算有效记录。读取拒绝符号链接、超限、多文档、签名错误与 ID 错配。单状态目录最多8192份记录，进程内多 Store 共享锁；跨进程仍依赖 daemon writer lock。同 UID 目录整体删除/回滚和机器断电的目录项持久性不作为本实现已解决的保证。
+
+### C1 observer capability 与 API
+
+Admin POST `/v1/effect-observers` 管理签发短期 observer token，请求固定 source 和完整 platform/session/agent/task scope。仅允许 host_observer/host_independent、openshell/host_independent、provider_audit/external_independent、test_oracle/external_independent；source_id由管理员指定。有效期1–3600秒，最多128个活动 token；内存仅存 token SHA256，服务重启全部失效。DELETE `/v1/effect-observers/{id}` 立即撤销。生产 observer 需管理端重新配置，不自动延续。
+
+POST `/v1/effect-evidence` 仅 capEffectObserve，scope 必须精确匹配 Engine 动作，Source 必须与 token 配置一致，提交 Evidence signature 必须为空。GET `/v1/effect-evidence/{id}` 与 GET `/v1/actions/{id}/effect-evidence` 为 admin 读取。普通 decision/admin token 均不能代替 observer 提交。撤销与提交共享 observer 锁，撤销返回后的请求不再落盘。签发响应 no-store，不记录明文 token。
