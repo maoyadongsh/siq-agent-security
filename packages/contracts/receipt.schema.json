@@ -79,6 +79,7 @@
     "authority_reason_code": {"type": "string", "minLength": 1},
     "policy_action": {"enum": ["allow", "deny", "hold", "redact"]},
     "effective_action": {"enum": ["allow", "deny", "hold", "redact"]},
+    "context_assertion_id": {"type": "string", "description": "Signed context reference; never grants additional filesystem rights"},
     "record_type": {"enum": ["decision", "observation", "hold_resolution"]},
     "decision_receipt_id": {"type": "string"},
     "parent_action_id": {"type": "string"},
