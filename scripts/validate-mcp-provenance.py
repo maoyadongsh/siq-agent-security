@@ -140,6 +140,7 @@ def run(h, extended=False):
         base.require(allowed["action"] == "allow", "same value trusted provenance failed benign control")
         report_rejections = []
         capacity_checks = {}
+        global_revocation_checks = {}
         decisions = [("mcp-parameter", "attack", denied), ("mcp-parameter", "benign", allowed)]
         if extended:
             for pair, expected_reason in (("missing-provenance", "provenance_missing"),
@@ -164,7 +165,7 @@ def run(h, extended=False):
                 benign = h.api("/v1/decide", benign_request, token=token)
                 base.require(benign["action"] == "allow", pair + " benign control rejected")
                 decisions.extend(((pair, "attack", attacked), (pair, "benign", benign)))
-            for pair in ("wrong-task", "revoked-binding"):
+            for pair in ("wrong-task", "revoked-binding", "revoked-intent"):
                 other_session = session + "-" + pair
                 other_intent = copy.deepcopy(intent)
                 other_intent["intent_id"] = "int-" + pair
@@ -197,6 +198,39 @@ def run(h, extended=False):
                     h.api("/v1/intent-bindings/" + binding["binding_id"] + "/revoke",
                           {"expected_intent_digest": signed["digest"]})
                     reason = "intent_binding_revoked"
+                if pair == "revoked-intent":
+                    secondary_scope = {**other_scope, "session_id": other_session + "-second"}
+                    h.api("/v1/intent-bindings", {**secondary_scope,
+                          "intent_id": other_intent["intent_id"]}, expected=201)
+                    h.api("/v1/provenance-issuers", {"issuer_id": issuer + "-second", "local_key_ref": "local-state",
+                          "allowed_source_types": ["USER"], "max_trust_level": "authoritative",
+                          "scope": secondary_scope, "expires_at": expires}, expected=201)
+                    h.api("/v1/provenance-assertions", {"schema_version": "provenance-assertion/v1",
+                          "provenance_id": pair + "-second-path",
+                          "source": {"type": "USER", "source_id": "fixture-form", "trust": "authoritative"},
+                          "scope": secondary_scope, "content_digest": hashlib.sha256(canonical(target)).hexdigest(),
+                          "parents": [], "derivation": "direct", "issued_at": intent["issued_at"],
+                          "expires_at": expires, "issuer": issuer + "-second"}, expected=201)
+                    second = copy.deepcopy(attack_request)
+                    second.update(session_id=secondary_scope["session_id"], tool_call_id=pair + "-second-before")
+                    second["parameter_provenance"][0]["provenance_refs"] = [pair + "-second-path"]
+                    before_ids = []
+                    for candidate in (attack_request, second):
+                        prior = h.api("/v1/decide", candidate, token=token)
+                        before_ids.append(prior["receipt_id"])
+                        base.require(prior["action"] == "allow",
+                                     "both Intent bindings must allow before global revocation")
+                    revoked = h.api("/v1/intents/" + other_intent["intent_id"] + "/revoke",
+                                    {"expected_intent_digest": signed["digest"]})
+                    base.require(revoked["reason_code"] == "intent_revoked", "not a global Intent revocation")
+                    second["tool_call_id"] = pair + "-second-after"
+                    denied = h.api("/v1/decide", second, token=token)
+                    base.require(denied["action"] == "deny" and denied["reason_code"] == "intent_revoked",
+                                 "global revocation did not affect second binding")
+                    attack_request["tool_call_id"] = pair + "-after"
+                    global_revocation_checks = {"revocation": revoked, "before_receipt_ids": before_ids,
+                                                "second_denied_receipt_id": denied["receipt_id"]}
+                    reason = "intent_revoked"
                 attacked = h.api("/v1/decide", attack_request, token=token)
                 base.require(attacked["action"] == "deny" and attacked["reason_code"] == reason,
                              pair + " attack accepted")
@@ -305,6 +339,7 @@ def run(h, extended=False):
                 "siq_commit": h.command(["git", "rev-parse", "HEAD"], cwd=ROOT).strip(),
                 "binary_sha256": hashlib.sha256(h.binary.read_bytes()).hexdigest(),
                 "report_rejections": report_rejections, "capacity_checks": capacity_checks,
+                "global_revocation_checks": global_revocation_checks,
                 "receipt_count": len(records), "receipt_chain_verified": True,
                 "decision_receipt_ids": [decision["receipt_id"] for _, _, decision in decisions],
                 "decisions": [{"pair_id": pair, "kind": kind, "action": decision["action"],

@@ -503,3 +503,10 @@
 - POST /v1/intents/{id}/revoke及GET /revocation复用capAdmin，严格expected_intent_digest请求；decision凭据403、错误摘要409、未知字段400、同内容重试及读取返回相同签名。旧GET合同保持原签名，撤销后新binding拒绝。
 - 新增required/optional × block/warn/audit_only六组合决策回归：撤销前allow，撤销后及重建Engine后均hard deny、无advisory/policy放宽且保留任务元数据。真实read_file hold批准后全局撤销，hold-status变denied；没有只测共享谓词来替代实际hold状态流。
 - Go全模块race/vet与四平台编译通过（/tmp/siq-global-revocation-api-race.log），请求schema正负例及diff检查通过。全局撤销实际daemon多会话benchmark仍待下一步加入；全目标仍进行中。
+
+### D 全局Intent撤销真实双会话场景，累计21对
+
+- 新增revoked-intent攻击/正常对照，不替换绑定撤销场景。实际daemon部署一个V3 Intent的两条会话绑定与各自有效USER来源，撤销前均allow；一次全局POST revoke后两者均intent_revoked，无关Intent正常对照allow。
+- 报告导出全局签名撤销记录、两条前置探针及第二会话拒绝ID；额外探针不重复进入场景分母。21对42个观测全部实际运行通过，报告/tmp/siq-runtime-global-revocation.json，独立evidence.py验51条回执/11个效果封套通过。
+- 另用Python Ed25519实际验证全局撤销签名与双会话前后回执关联通过；此检查尚未集成通用离线验证器，未声称完整Intent撤销语义离线重放已完成。21对schema、6项统计测试、Ruff及diff检查通过；daemon代码本轮未改动。
+- D3–D5仍未评估，不把deny推断为执行层阻断；完整平台集成、全部命名指标阶段映射、完整证据语义重放与最终验收继续进行。

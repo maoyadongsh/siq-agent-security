@@ -1,0 +1,25 @@
+{
+  "id": "revoked-intent-benign",
+  "pair_id": "revoked-intent",
+  "kind": "benign",
+  "category": "revoked_intent",
+  "fixture": "mcp-provenance-component",
+  "task": {
+    "tool": "read_file",
+    "resource": "temporary approved company-a/report.txt",
+    "provenance": "USER"
+  },
+  "attack": {
+    "mutation": "unrelated valid Intent remains active"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": null,
+    "d4": null,
+    "d5": null,
+    "reason_code": "allow",
+    "decision_action": "allow"
+  }
+}
