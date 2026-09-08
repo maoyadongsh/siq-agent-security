@@ -591,3 +591,11 @@
 - 新增16读取者、两个会话的并发ResolveBinding与一次全局撤销；重叠阶段仅允许有效或intent_revoked结果，撤销调用返回后以channel同步的160次解析全部intent_revoked并保留合同/绑定摘要。
 - Intent全包race/vet与diff检查通过。未修改生产实现；该测试不声称撤销可取消已经开始的外部副作用或提供跨进程原子执行。
 - 远端92b9efe检查已实际触发，检查时仍为排队/运行中，nightly按触发条件跳过；本批新增测试尚未取得对应远端结果。
+
+
+### 最终验收索引起步
+
+- 从用户模板逐项提取45项DoD，建立[验收索引](provenance-bound-effect-v1-acceptance-audit.md)，保留原文要求、当前源码/测试入口与待核读状态；脚本核对45项齐全且全部本地链接目标存在。
+- 明确fixture证明边界、三平台现有核心测试需求，以及新增map/signing/LLM授权须全diff审计；不把找到测试文件直接计作验收通过。
+- 核读metrics.py发现统计口径须在报告显式说明：benign completion只统计有Completion的样本，unknown effect只统计有effect_record的样本；后续报告需展示未覆盖数量，不能按42观测整体完成率宣传。
+- 本轮是验收资料落盘，无生产代码修改；diff检查通过，完整目标保持进行中。
