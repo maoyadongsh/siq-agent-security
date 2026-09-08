@@ -384,6 +384,7 @@ func cmdServe(args []string) error {
 		Pack: pack, Chain: chain, Grants: st.ActiveGrant, EnforcementMode: cfg.EnforcementMode,
 		Version: Version, HoldChannel: cfg.HoldChannel, SessionIdleTTL: cfg.SessionIdleTTL(),
 		IntentLookup:      receipt.ResolveStore(intentStore),
+		ContextLookup:     intentStore.GetContext,
 		IntentEnforcement: cfg.IntentEnforcement,
 	})
 	if err != nil {

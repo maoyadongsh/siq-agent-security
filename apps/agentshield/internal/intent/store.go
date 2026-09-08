@@ -32,7 +32,7 @@ func Open(dir string, key *signing.Key) (*Store, error) {
 	if dir == "" || key == nil {
 		return nil, errors.New("intent: directory and key required")
 	}
-	for _, name := range []string{"intents", "intent-bindings", "intent-binding-revocations"} {
+	for _, name := range []string{"intents", "intent-bindings", "intent-binding-revocations", "context-assertions"} {
 		if err := os.MkdirAll(filepath.Join(dir, name), 0700); err != nil {
 			return nil, err
 		}

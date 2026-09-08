@@ -26,6 +26,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"siq-agent-security/apps/agentshield/internal/runtimeauthz"
 	"siq-agent-security/apps/agentshield/internal/threat"
+	"siq-agent-security/apps/agentshield/internal/trustedcontext"
 )
 
 const (
@@ -58,19 +59,20 @@ var ErrSessionCapacity = errors.New("receipt: session capacity exhausted")
 
 // Request is one tool call awaiting a decision.
 type Request struct {
-	ActionID          string          `json:"action_id,omitempty"`
-	DecisionReceiptID string          `json:"decision_receipt_id,omitempty"`
-	Platform          string          `json:"platform"`
-	SessionID         string          `json:"session_id"`
-	AgentID           string          `json:"agent_id"`
-	Tool              string          `json:"tool"`
-	ToolCallID        string          `json:"tool_call_id"`
-	Params            map[string]any  `json:"params"`
-	Context           map[string]any  `json:"context"`
-	TaskID            string          `json:"task_id,omitempty"`
-	IntentID          string          `json:"intent_id,omitempty"`
-	Principal         string          `json:"principal,omitempty"`
-	Intent            *IntentContract `json:"intent,omitempty"`
+	ContextAssertionID string          `json:"context_assertion_id,omitempty"`
+	ActionID           string          `json:"action_id,omitempty"`
+	DecisionReceiptID  string          `json:"decision_receipt_id,omitempty"`
+	Platform           string          `json:"platform"`
+	SessionID          string          `json:"session_id"`
+	AgentID            string          `json:"agent_id"`
+	Tool               string          `json:"tool"`
+	ToolCallID         string          `json:"tool_call_id"`
+	Params             map[string]any  `json:"params"`
+	Context            map[string]any  `json:"context"`
+	TaskID             string          `json:"task_id,omitempty"`
+	IntentID           string          `json:"intent_id,omitempty"`
+	Principal          string          `json:"principal,omitempty"`
+	Intent             *IntentContract `json:"intent,omitempty"`
 }
 
 // IntentLookup resolves authority from trusted local state. Implementations
@@ -99,6 +101,7 @@ type EngineInfo struct {
 
 // Receipt is the signed, chained record (receipt.schema.json).
 type Receipt struct {
+	ContextAssertionID  string                      `json:"context_assertion_id,omitempty"`
 	AuthorityStatus     string                      `json:"authority_status,omitempty"`
 	AuthorityReasonCode string                      `json:"authority_reason_code,omitempty"`
 	PolicyAction        string                      `json:"policy_action,omitempty"`
@@ -183,6 +186,7 @@ type Options struct {
 	// loaded (sets trifecta.untrusted_input).
 	UntrustedSkillLoaded func(sessionID string) bool
 	IntentLookup         IntentLookup
+	ContextLookup        func(string) (*trustedcontext.Assertion, error)
 	IntentEnforcement    string // optional (legacy) or required (fail closed)
 }
 
@@ -422,7 +426,8 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	})
 	s.taskSeq++
 	rec := Receipt{
-		RecordType: "decision", TaskSeq: s.taskSeq, ParentActionID: s.parentActionID,
+		ContextAssertionID: req.ContextAssertionID,
+		RecordType:         "decision", TaskSeq: s.taskSeq, ParentActionID: s.parentActionID,
 		Principal: s.boundPrincipal, ResourceRefs: resourceRefs, ProvenanceRefs: append([]string(nil), s.boundProvenanceRefs...),
 		ReceiptID:         "rcp-" + hex.EncodeToString(digest[:])[:12] + "-" + start.Format("150405.000000"),
 		IssuedAt:          start.Format(time.RFC3339),
@@ -492,6 +497,16 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		}
 	}
 	authority := runtimeauthz.Authority(validationCode, rec.IntentBinding == "bound")
+	if authority.Valid && req.ContextAssertionID != "" {
+		if err := e.checkContext(req, taskID, start); err != nil {
+			code := "trusted_context_invalid"
+			var v *trustedcontext.Violation
+			if errors.As(err, &v) {
+				code = v.Code
+			}
+			authority = runtimeauthz.Authority(code, rec.IntentBinding == "bound")
+		}
+	}
 	rec.AuthorityStatus, rec.AuthorityReasonCode = authority.Status, authority.ReasonCode
 	policy := runtimeauthz.PolicyResult{}
 	var redacted map[string]any

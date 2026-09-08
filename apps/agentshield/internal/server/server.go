@@ -93,6 +93,8 @@ func New(d Deps) (*Server, error) {
 		return nil, err
 	}
 	s.mux.HandleFunc("/v1/intents", s.auth(s.intentCollection, capAdmin))
+	s.mux.HandleFunc("/v1/context-assertions", s.auth(s.contextCollection, capAdmin))
+	s.mux.HandleFunc("/v1/context-assertions/", s.auth(s.contextOne, capAdmin))
 	s.mux.HandleFunc("/v1/intents/", s.auth(s.intentOne, capAdmin))
 	s.mux.HandleFunc("/v1/intent-bindings", s.auth(s.bindingCollection, capAdmin))
 	s.mux.HandleFunc("/v1/intent-bindings/", s.auth(s.bindingOne, capAdmin))

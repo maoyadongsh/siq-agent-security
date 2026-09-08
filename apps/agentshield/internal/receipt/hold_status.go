@@ -82,6 +82,10 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 		return false
 	}
 	r := Request{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, Tool: req.Tool, ToolCallID: req.ToolCallID, Params: req.Params}
+	r.ContextAssertionID = d.ContextAssertionID
+	if e.checkContext(r, d.TaskID, now) != nil {
+		return false
+	}
 	var resolved *IntentContract
 	var err error
 	if e.opts.IntentLookup != nil {

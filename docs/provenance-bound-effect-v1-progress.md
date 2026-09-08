@@ -4,12 +4,12 @@
 - 模板 SHA256：`9e6d575d0f3bd1639eaa57b59c59e503849b332d86e76289ba1fbbfb998d9817`。
 - 实际起点：`d001c4d2c1b7a1230604e8b2ecf813a39deb251c`；分支：`codex/provenance-bound-effect-v1`。
 - 本轮开发目标以此模板 §0–120、INV-1–7 和 45 项 DoD 为准；旧 Provenance 优化计划仅作为背景，不覆盖本模板。
-- 状态：已设置为持续开发目标，进行中；A1 本地验收通过，继续 A2。不向 main 直接写提交，不修改 GitHub Ruleset 或实际用户平台配置。
+- 状态：已设置为持续开发目标，进行中；A1/A2 本地验收通过，继续 R/B。不向 main 直接写提交，不修改 GitHub Ruleset 或实际用户平台配置。
 
 | 工作包 | 范围 | 状态 |
 | --- | --- | --- |
 | A1 | Authority Hard Gate、回执分层、required/optional × 三模式、历史签名兼容 | 本地验收通过；全仓 CI 待最终集成 |
-| A2 | 移除 caller cwd 授权、ContextAssertion、受信 workspace 与重放/到期 | 待完成 |
+| A2 | 移除 caller cwd 授权、ContextAssertion、受信 workspace 与重放/到期 | 本地 admin 签发版本验收通过；外部 attestor 未实现 |
 | R | 统一 RuntimeActionDescriptor，高影响参数、shell unknown，六类消费者统一 | 待完成 |
 | B1 | 签名 provenance、issuer registry、范围/到期/撤销、容量、不可变存储 | 待完成 |
 | B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | 待完成 |
@@ -28,5 +28,15 @@
 - `apps/agentshield: go vet ./...`、linux/amd64、linux/arm64、darwin/arm64、windows/amd64 编译通过；产物在 `/tmp/siq-authority-*`。
 - `apps/control-api: .venv/bin/pytest app/tests/test_schema_contracts.py -q` 67 项通过；新增历史/当前/Authority invalid 三份 Go 回执与三模式非法组合测试。Ruff 对修改测试通过。
 - `apps/web: npm run build` 通过（包含 TypeScript 编译）。
-- A2 中 cwd 隐式写权限已删除，但签名 ContextAssertion 仍待实现；本条不表示 A2 完成。
+- A1 提交时已删除 cwd 隐式写权限；后续 A2 签名上下文实现与证据见下节。
 - A1 不提供断连客户端的独立授权证明；离线模式和外部平台能力仍按实际证据标注。
+
+## A2 实际验证（2026-09-08）
+
+- 新增 `context-assertion.v1.schema.json`，仅允许 workspace_root；管理端签发和读回，决策端只能引用。复用 Intent store 的不可变发布与签名实现，独立 `trustedcontext` 包验证请求绑定。
+- `TestContextIntegrityScopeReplayAndExpiry` 覆盖任务/会话/Agent/平台/调用/参数跨域重放、到期边界、未来声明、签名和 issuer 篡改、重复 ID 与重启读取；`TestContextPublicationConcurrencyAndSample` 覆盖并发签发/读取及固定向量；`TestContextCapacityAndMalformedStorageFailClosed` 验证容量上限和路径穿越。
+- `TestContextReferenceHardGateAndRecovery` 覆盖三模式决策与重启；`TestContextCannotReplaceGrantAndApprovalRechecksExpiry` 验证有效声明不能替代 Grant，并在审批后到期且重启时拒绝执行前复查。
+- `TestContextIssuanceIsAdminOnly` 使用原始 HTTP 请求验证 decision token 对签发和读回均为 403。旧 `call()` 辅助函数会自动替换 admin token，不能用作权限负例；本轮负例没有沿用该替换行为。
+- `go test -race ./...` 通过；Python 合同测试 69 项通过，包含 Go 签名由 Python Ed25519 和 canonical bytes 交叉验证、额外 claim 拒绝；修改测试 Ruff 通过。
+- `go vet ./...`、四平台编译及 Web `npm run build` 通过；本轮编译产物 `/tmp/siq-context-*`，Web 构建日志 `/tmp/siq-context-web-build.log`。
+- 同一 tool_call_id 的相同请求可在到期前重试，声明不是一次性执行租约。workspace_root 不扩大 Grant/Intent；不声称已接入外部 attestor 或支持 Windows 原生路径语义。

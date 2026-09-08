@@ -794,3 +794,11 @@ HTTP 请求/撤销记录分别遵守 `intent-binding-revoke-request.v1.schema.js
 ### caller cwd 边界
 
 请求 Context 为 observational。删除 caller cwd 的 filesystem allow 捷径；工作区写权限必须由受信 Grant 明确授权，合法 ContextAssertion 也不能突破 Grant ∩ Intent。保持日志脱敏，不持久化额外 cwd 明文。新上下文签发/验证将在 A2 独立包实现。
+
+## Provenance-Bound Effect V1：A2 可信上下文
+
+`context-assertion/v1` 仅声明 `workspace_root`，由管理 capability 签发并在状态目录 `context-assertions/` 追加保存。V1 使用本地签名身份，issuer_id 固定为 `local-admin`；不声称支持任意外部 host attestor。Decision 调用只能提交 `context_assertion_id` 引用；普通 `context` 始终是观测信息。未知引用、签名/结构错误、到期、范围或请求绑定不匹配进入 Authority Hard Gate。
+
+管理端 `POST /v1/context-assertions` 接受完整未签名合同，服务端设置 signing_schema/signature；`GET /v1/context-assertions/{id}` 读取签名记录，两者均要求 admin。请求绑定为 canon.Marshal 后的 SHA256，字段固定为 platform/session_id/agent_id/task_id/tool/tool_call_id/params。task_id 从已验证 Intent binding 派生；使用 assertion 必须存在可信 Intent 和非空 tool_call_id。不同任务、会话、工具调用、参数不能复用 assertion；同一调用在到期前允许幂等重试和审批复查。它不是一次性执行租约。
+
+签名 workspace_root 是绝对路径，不补充 Grant 权限，也不修改 Intent 约束，授权仍取现有 Grant 与 Intent。回执仅持久化 assertion_id，不增加原始工作区路径。审批执行前继续验证该引用的签名、时效、范围和完整请求绑定；历史无引用回执保留旧签名语义。状态容量 4096、单记录 64 KiB，超额失败关闭；使用同目录 fsync 临时文件后排他发布，重启直接读取验签。

@@ -89,6 +89,7 @@ export interface Grant {
 
 export interface Receipt {
   authority_status?: "valid" | "invalid" | "unbound_legacy";
+  context_assertion_id?: string;
   authority_reason_code?: string;
   policy_action?: "allow" | "deny" | "hold" | "redact";
   effective_action?: "allow" | "deny" | "hold" | "redact";
