@@ -1,5 +1,7 @@
 # DGX Spark · Secure Research & Delivery
 
+> 当前开发目标为 [Final Hardening V4](docs/hackathon/final-hardening-goal-v4.md)，全部要求已拆入[任务台账](docs/hackathon/final-hardening-tasks-v4.md)。V4 尚未完成工程验收；本页现有演示、主备模型和证据描述为 V3 已有状态，待 V4 实测后更新。
+
 用户交给 Agent 一个任务：分析选定仓库代码，写出安全审查报告，交付给 Alice。
 Agent 实际调用 `secure-research`、`secure-report` 和 `secure-delivery`；SIQ
 在每次工具动作前验证授权与参数来源，并通过文件观察器和受控接收端事件验证效果。

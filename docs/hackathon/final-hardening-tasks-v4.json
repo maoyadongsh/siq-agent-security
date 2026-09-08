@@ -1,0 +1,2573 @@
+{
+  "schema_version": "hackathon-final-hardening-tasks/v1",
+  "updated_at": "2026-09-08",
+  "scope": "V4 开发目标与任务落盘；工程执行和比赛最终验收待逐项开展。",
+  "source_document": "docs/hackathon/final-hardening-requirements-v4.md",
+  "source_document_sha256": "60ef74152619b72bcc27123067a500f02b5f861f15086edb3621b9d218df0fc4",
+  "starting_sha": "9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1",
+  "branch": "codex/hackathon-final-hardening-v4",
+  "base_branch": "codex/dgx-spark-hackathon-v3",
+  "status_definitions": {
+    "todo": "未执行或现有能力仍需 V4 验收",
+    "in_progress": "正在执行",
+    "blocked": "明确依赖阻塞，须记录原因",
+    "done": "实际完成且有对应证据",
+    "external/manual": "kind 字段；外部操作不自动视为完成"
+  },
+  "tasks": [
+    {
+      "id": "V4-BASE",
+      "title": "同步比赛基线并创建 V4 分支",
+      "source_sections": [
+        1
+      ],
+      "priority": "P0",
+      "phase": 0,
+      "status": "done",
+      "kind": "engineering",
+      "depends_on": [],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/final-hardening-goal-v4.md"
+      ],
+      "acceptance": [
+        "fetch --all --prune、比赛分支 pull --ff-only 成功",
+        "记录 starting_sha、干净工作区及最近十条提交",
+        "从最新比赛 HEAD 创建 codex/hackathon-final-hardening-v4；不改 main"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [
+        "git fetch --all --prune: exit 0; git pull --ff-only: Already up to date",
+        "starting_sha=9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1",
+        "git status --short --branch: clean before edits",
+        "git switch -c codex/hackathon-final-hardening-v4: succeeded"
+      ],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-AUDIT",
+      "title": "重新审计当前源码与已有证据",
+      "source_sections": [
+        2
+      ],
+      "priority": "P0",
+      "phase": 0,
+      "status": "done",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-BASE"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/final-hardening-audit.md"
+      ],
+      "acceptance": [
+        "覆盖原文列出的八个目录和六份文档",
+        "分类 implemented/evidenced/needs-hardening/unverified/future",
+        "旧证据保留原 SHA、provider 与范围；源码检查不冒充新回归"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [
+        "docs/hackathon/final-hardening-audit.md（源码/证据文件检查，未重跑应用回归）"
+      ],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-SCOPE",
+      "title": "锁定范围、不变量与执行门禁",
+      "source_sections": [
+        0,
+        3,
+        76,
+        77,
+        81,
+        82
+      ],
+      "priority": "P0",
+      "phase": 0,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-AUDIT"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/final-hardening-goal-v4.md",
+        "docs/hackathon/final-hardening-tasks-v4.json"
+      ],
+      "acceptance": [
+        "INV-1 至 INV-8 全程保留",
+        "不新增禁止模块、不重构冻结内核，明确 bug 除外",
+        "按 P0 顺序执行；采用建议提交序列并遵循仓库提交格式",
+        "外部动作不阻塞无依赖工程；未执行不标完成"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-A1",
+      "title": "可信数据分级与来源敏感度",
+      "source_sections": [
+        4,
+        5,
+        6
+      ],
+      "priority": "P0",
+      "phase": 1,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-SCOPE"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/contracts.py",
+        "apps/secure-agent/secure_agent/service.py",
+        "apps/secure-agent/secure_agent/confidential.py"
+      ],
+      "acceptance": [
+        "PUBLIC/INTERNAL/CONFIDENTIAL/SECRET 显式枚举",
+        "区分 public metadata、public source、private source、confidential fixture、secret",
+        "敏感度来自 operator/config；模型不得降级；公共 GitHub 源码不默认当企业私有"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-A2",
+      "title": "ModelProvider 能力与 locality 声明",
+      "source_sections": [
+        7
+      ],
+      "priority": "P0",
+      "phase": 1,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/models.py"
+      ],
+      "acceptance": [
+        "Provider 明确 locality、allowed_sensitivity、can_receive_raw_source",
+        "StepFun=remote，Ornith=local_dgx；受信配置与端点验证决定，不能取模型自报"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-A3",
+      "title": "分离远程规划与本地敏感推理",
+      "source_sections": [
+        8,
+        68,
+        69
+      ],
+      "priority": "P0",
+      "phase": 1,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A2"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/application.py",
+        "apps/secure-agent/secure_agent/models.py",
+        "docs/hackathon/architecture.md"
+      ],
+      "acceptance": [
+        "StepFun 处理非敏感理解、规划、Skill 选择",
+        "DGX 本地承担敏感源码/私有文档分析",
+        "规划和研究可使用不同 provider；模型输出保持 proposal，SIQ 独立授权"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-A4",
+      "title": "显式 Provider 切换与审计",
+      "source_sections": [
+        9
+      ],
+      "priority": "P0",
+      "phase": 1,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A2"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/models.py",
+        "apps/secure-agent/secure_agent/service.py",
+        "scripts/hackathon/manage.py"
+      ],
+      "acceptance": [
+        "超时/失败不静默换模型或迁移源码",
+        "provider_transition 包含 from_provider/to_provider/reason/task_id/sensitivity/allowed",
+        "operator 显式切换也必须重查策略并记录允许/拒绝；拒绝不发请求"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-A5",
+      "title": "ModelRouter 研究路径强制策略",
+      "source_sections": [
+        10
+      ],
+      "priority": "P0",
+      "phase": 1,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A3",
+        "V4-A4"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/skills.py",
+        "apps/secure-agent/secure_agent/application.py",
+        "apps/secure-agent/secure_agent/models.py"
+      ],
+      "acceptance": [
+        "替换直接 self._model.research 路径，含 preparation 和 CommittedProvider 复用路径",
+        "PUBLIC 可按策略远程或本地；INTERNAL 可信配置；CONFIDENTIAL 仅 DGX 本地；SECRET 本地或拒绝",
+        "未知等级/本地不可用拒绝，不回退远程；来源注入不得改变路由"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-A6",
+      "title": "Planning payload 白名单与最小化",
+      "source_sections": [
+        11
+      ],
+      "priority": "P0",
+      "phase": 1,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A1",
+        "V4-A3"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/models.py",
+        "apps/secure-agent/secure_agent/contracts.py"
+      ],
+      "acceptance": [
+        "仅允许经可信策略批准的 task goal、repo identifier、selected paths、Skill catalog、public metadata",
+        "不含 raw source、secret、机密 fixture、来源签名、SIQ 签名材料或 admin credential",
+        "用户 goal/question 自身含敏感文本也不得绕过分类直接发远程；白名单不等于自动公开"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-A7",
+      "title": "模型出网元数据与 UI 合同",
+      "source_sections": [
+        12
+      ],
+      "priority": "P0",
+      "phase": 1,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A5",
+        "V4-A6"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/models.py",
+        "apps/secure-agent/secure_agent/service.py",
+        "apps/web/src/local/pages/DemoPage.tsx"
+      ],
+      "acceptance": [
+        "每次远程调用记录 model_provider/model/operation/task_id/payload_digest/payload_classification/elapsed_ms/status",
+        "拒绝和失败也可追踪，不记录 API key/raw confidential prompt/full sensitive payload",
+        "公开 StepFun Remote Planning / Ornith DGX Local Analysis 状态；检查 recipient 等全部模型调用面"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-A8",
+      "title": "Model Egress 八项正负向测试",
+      "source_sections": [
+        13,
+        70
+      ],
+      "priority": "P0",
+      "phase": 1,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A4",
+        "V4-A5",
+        "V4-A6",
+        "V4-A7"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/tests/test_models.py",
+        "apps/secure-agent/tests/test_provider_config.py",
+        "apps/secure-agent/tests/test_skills.py"
+      ],
+      "acceptance": [
+        "ME-01 PUBLIC 配置允许 StepFun research",
+        "ME-02 CONFIDENTIAL raw-content StepFun 调用拒绝，断言零外发",
+        "ME-03 CONFIDENTIAL Ornith local 允许",
+        "ME-04 StepFun timeout 不迁移源码",
+        "ME-05 operator 显式切换有审计",
+        "ME-06 模型不能改敏感度",
+        "ME-07 source injection 不能升级远程 provider",
+        "ME-08 secret/config 不进入 diagnostics",
+        "采用 transport spy/捕获请求校验所有 payload，不能只断言错误文本"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-B1",
+      "title": "内部 TaskPlan V2 合法子集",
+      "source_sections": [
+        14,
+        15,
+        16
+      ],
+      "priority": "P0",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A8"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "packages/contracts/model-task-plan.schema.json",
+        "apps/secure-agent/secure_agent/contracts.py",
+        "apps/secure-agent/secure_agent/models.py",
+        "apps/control-api/app/tests/test_hackathon_model_contracts.py"
+      ],
+      "acceptance": [
+        "允许 research、research+report、research+report+delivery 三种选择",
+        "应用内部 V2 合同先行，同步 provider schema、fixtures 和消费者；旧合同明确兼容或版本化",
+        "prompt 不再要求三项必须全部出现，计划本身不授予权限"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-B2",
+      "title": "闭集 Registry 元数据和依赖",
+      "source_sections": [
+        17,
+        18
+      ],
+      "priority": "P0",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-B1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/skills.py",
+        "skills/secure-research/SKILL.md",
+        "skills/secure-report/SKILL.md",
+        "skills/secure-delivery/SKILL.md"
+      ],
+      "acceptance": [
+        "research requires=[]；report requires=[research]；delivery requires=[report]",
+        "包含 name/description/input_schema/output_schema/requires/allowed_tools/security_requirements",
+        "确定性 validator 使用受信内置 registry；不加载第三方可执行 Skill"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-B3",
+      "title": "拒绝未知 Skill 与伪造 authority Skill",
+      "source_sections": [
+        19
+      ],
+      "priority": "P0",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-B2"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/contracts.py",
+        "apps/secure-agent/secure_agent/skills.py"
+      ],
+      "acceptance": [
+        "unknown Skill 返回 skill_unregistered",
+        "禁止将未知名称映射成 shell/HTTP/generic tool",
+        "tool 名、approval/signing Skill 不能获得可执行入口"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-B4",
+      "title": "依赖校验与有界重规划决策",
+      "source_sections": [
+        20
+      ],
+      "priority": "P0",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-B2",
+        "V4-B3"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/contracts.py",
+        "apps/secure-agent/secure_agent/runtime.py"
+      ],
+      "acceptance": [
+        "delivery 缺 report、跳依赖、顺序错误返回 plan_dependency_invalid",
+        "重复 Skill 拒绝，除非另有明确合同",
+        "不偷偷补齐计划；可直接返回结构化错误；如采用 replan 最多两次总规划并可审计"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-B5",
+      "title": "子集执行、Authority 和 Completion 适配",
+      "source_sections": [
+        16,
+        17,
+        71
+      ],
+      "priority": "P0",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-B4"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/application.py",
+        "apps/secure-agent/secure_agent/authority.py",
+        "apps/secure-agent/secure_agent/runtime.py",
+        "apps/secure-agent/secure_agent/security.py"
+      ],
+      "acceptance": [
+        "两阶段预承诺和重读按已选 Skills 运行；research-only 不生成或交付报告",
+        "report-only 组合不触发 recipient/MCP/send_message",
+        "effect requirements 仅包含 operator 授权且实际选择的效果，研究完成不冒充交付 verified",
+        "保留签名 Intent、来源绑定、摘要承诺、撤销和所有 ToolGateway 入口，不重写核心合同"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-B6",
+      "title": "动态计划 Demo 与服务状态",
+      "source_sections": [
+        21
+      ],
+      "priority": "P0",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-B5"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/service.py",
+        "scripts/hackathon/manage.py",
+        "apps/web/src/local/pages/DemoPage.tsx"
+      ],
+      "acceptance": [
+        "支持只分析不要发出去与完整交付两条输入",
+        "每个 task 公开实际 selected Skills、执行状态及未选择项；不拿静态 catalog 冒充计划",
+        "research-only/research+report 可单命令或 dashboard action 重复"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-B7",
+      "title": "Skill Planning 八项测试",
+      "source_sections": [
+        22,
+        71
+      ],
+      "priority": "P0",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-B3",
+        "V4-B4",
+        "V4-B5",
+        "V4-B6"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/tests/test_models.py",
+        "apps/secure-agent/tests/test_skills.py",
+        "apps/secure-agent/tests/test_application.py"
+      ],
+      "acceptance": [
+        "SP-01 research only=1 Skill",
+        "SP-02 research+report=2 Skills",
+        "SP-03 full delivery=3 Skills",
+        "SP-04 delivery without report 拒绝",
+        "SP-05 unknown Skill 拒绝",
+        "SP-06 duplicate Skill 拒绝",
+        "SP-07 tool name as Skill 拒绝",
+        "SP-08 approval/signing Skill 拒绝",
+        "负向用例在工具执行前拒绝；合法子集经过真实 SIQ 与 ToolGateway"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-C1",
+      "title": "DGX 真实硬件卡与探测状态",
+      "source_sections": [
+        23,
+        24
+      ],
+      "priority": "P1",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A7",
+        "V4-B7"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "deploy/dgx-spark/preflight.py",
+        "apps/secure-agent/secure_agent/service.py",
+        "apps/web/src/local/pages/DemoPage.tsx"
+      ],
+      "acceptance": [
+        "实际 preflight/runtime 提供 DGX 名称、GPU、local model、inference/runtime 状态",
+        "GB10/READY 不硬编码；读取失败 UNVERIFIED",
+        "模型列表可达不等于 inference 成功；展示证据时间避免把历史结果当当前健康"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-C2",
+      "title": "逐个 Model Action 标注 locality",
+      "source_sections": [
+        25
+      ],
+      "priority": "P1",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-C1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/web/src/local/pages/DemoPage.tsx"
+      ],
+      "acceptance": [
+        "每个动作显示 REMOTE StepFun 或 LOCAL DGX Spark Ornith",
+        "敏感研究明确 LOCAL ANALYSIS；来源是受信配置和实际调用记录"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-C3",
+      "title": "精简真实 DGX 指标",
+      "source_sections": [
+        26
+      ],
+      "priority": "P1",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-C1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "deploy/dgx-spark/preflight.py",
+        "apps/web/src/local/pages/DemoPage.tsx"
+      ],
+      "acceptance": [
+        "仅 current model、inference duration、GPU model 和可选 GPU utilization",
+        "不堆 CUDA kernel statistics/full nvidia-smi；缺测不造数"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-C4",
+      "title": "DGX 故障 fail-closed",
+      "source_sections": [
+        27
+      ],
+      "priority": "P1",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-A8",
+        "V4-C1",
+        "V4-C2"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/secure_agent/models.py",
+        "apps/web/src/local/pages/DemoPage.tsx",
+        "apps/secure-agent/tests/test_application.py"
+      ],
+      "acceptance": [
+        "GPU/local model 不可达显示 DGX LOCAL MODEL UNAVAILABLE",
+        "CONFIDENTIAL 任务失败关闭，远程 transport 调用数为零",
+        "错误不含凭据、配置值或原始敏感 payload"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-F1",
+      "title": "冻结四块比赛页面结构",
+      "source_sections": [
+        42,
+        43
+      ],
+      "priority": "P1",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-B7"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/web/src/local/pages/DemoPage.tsx",
+        "apps/web/src/local/pages/demo.css"
+      ],
+      "acceptance": [
+        "保持 CURRENT TASK / AGENT SKILLS / SECURITY DECISIONS / EFFECT-COMPLETION",
+        "评委十秒内识别任务、选用能力、裁决和结果；不增加复杂安全后台控件"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-F2",
+      "title": "实际选择的 Skills 视觉突出",
+      "source_sections": [
+        44
+      ],
+      "priority": "P1",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-F1",
+        "V4-B6"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/web/src/local/pages/DemoPage.tsx",
+        "apps/web/src/local/pages/demo.css"
+      ],
+      "acceptance": [
+        "显示 1/2/3 项真实计划及完成/运行标记",
+        "research-only 单项明确；未选 report/delivery 不显示为已执行"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-F3",
+      "title": "决策和 reason_code 可读",
+      "source_sections": [
+        45
+      ],
+      "priority": "P1",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-F1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/web/src/local/pages/DemoPage.tsx"
+      ],
+      "acceptance": [
+        "ALLOW/DENY/HOLD 和 reason_code 默认可见",
+        "专业详情折叠；UI 不自行裁决或伪造运行结果"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-F4",
+      "title": "MCP 与同值不同来源展示",
+      "source_sections": [
+        46
+      ],
+      "priority": "P1",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-F3"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/web/src/local/pages/DemoPage.tsx",
+        "scripts/hackathon/browser-smoke.py"
+      ],
+      "acceptance": [
+        "MCP attacker@evil.example / UNTRUSTED / DENY 从真实读回显示",
+        "alice@company.example Trusted Directory ALLOW 与 MCP DENY 均可验证",
+        "不依赖字符串相同推导信任"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-F5",
+      "title": "伪成功和效果状态展示",
+      "source_sections": [
+        47
+      ],
+      "priority": "P1",
+      "phase": 2,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-F3"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/web/src/local/pages/DemoPage.tsx",
+        "scripts/hackathon/browser-smoke.py"
+      ],
+      "acceptance": [
+        "TOOL REPORTED success、EFFECT EVIDENCE missing、COMPLETION INCOMPLETE 分开",
+        "保留 verified/incomplete/conflicting；UNKNOWN 不视为成功"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-I1",
+      "title": "Secure Agent 完整回归",
+      "source_sections": [
+        58,
+        59
+      ],
+      "priority": "P0",
+      "phase": 3,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-B7",
+        "V4-C4",
+        "V4-F2",
+        "V4-F4",
+        "V4-F5"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/secure-agent/tests/"
+      ],
+      "acceptance": [
+        "全部现有测试通过",
+        "新增 model-egress/dynamic-plan/DGX-locality/provider-switch/skill-dependency 测试通过",
+        "记录实际命令、数量、失败与对应 SHA，不沿用 V3 数字"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-I2",
+      "title": "AgentShield 安全内核回归",
+      "source_sections": [
+        60
+      ],
+      "priority": "P0",
+      "phase": 3,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-I1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "apps/agentshield/"
+      ],
+      "acceptance": [
+        "go test ./...、go test -race ./...、go vet ./... 全通过",
+        "Authority Hard Gate、Intent V2/V3、Provenance、EffectEvidence、Completion、Approval、Binding Revocation 不回归",
+        "遵守就近 AGENTS.md 的格式和三 OS 交叉编译要求"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-I3",
+      "title": "Full Repo checks 和依赖安全检查",
+      "source_sections": [
+        61
+      ],
+      "priority": "P0",
+      "phase": 3,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-I2"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/runtime-security.yml",
+        "apps/control-api/",
+        "apps/web/",
+        "edge/agent/",
+        "adapters/",
+        "connectors/"
+      ],
+      "acceptance": [
+        "Control API、Web tests/build（含 local）、Agent/Edge、Contract、Adapters、runtime smoke 通过",
+        "dependency audits、gitleaks、govulncheck 实际执行并记录结果",
+        "使用锁定依赖和现有检查；修复引发的新变更重跑受影响回归"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-I4",
+      "title": "Competition 九场景 E2E",
+      "source_sections": [
+        62
+      ],
+      "priority": "P0",
+      "phase": 3,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-I3"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/",
+        "benchmarks/hackathon/"
+      ],
+      "acceptance": [
+        "重跑 normal/research-only/research+report/MCP attack/same-value/fake success/conflicting effect/approval/trifecta",
+        "使用真实工具、SIQ 回执与效果读回；标明 FixtureProvider 与实际模型",
+        "浏览器记录真实状态、无页面错误、移动布局和凭据存储检查"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-I5",
+      "title": "独立 StepFun cohort",
+      "source_sections": [
+        63
+      ],
+      "priority": "P0",
+      "phase": 3,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-I4"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "benchmarks/hackathon/run.py",
+        "benchmarks/hackathon/verify.py",
+        "docs/hackathon/evidence/"
+      ],
+      "acceptance": [
+        "重新独立运行 StepFun E2E cohort，保留所有样本",
+        "报告 attempts/completed/timeouts/format failures、provider/config、source SHA",
+        "不删失败、不暗中重试或以 Ornith/fixture 代替；签名回执与效果验证"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-I6",
+      "title": "DGX 本地敏感推理与零远程泄漏证明",
+      "source_sections": [
+        64
+      ],
+      "priority": "P0",
+      "phase": 3,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-I5"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "benchmarks/hackathon/",
+        "deploy/dgx-spark/",
+        "docs/hackathon/evidence/"
+      ],
+      "acceptance": [
+        "真实 DGX 上 public source analysis 与 confidential-local-only analysis 实际运行",
+        "记录实际 local model 与硬件；机密 raw source 未到远程 provider 有捕获/计数证据",
+        "新 cohort 与 V3 旧样本分开，保留失败与 unavailable，不从路由标签推断零泄漏"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-I7",
+      "title": "控制基准和性能 delta",
+      "source_sections": [
+        41,
+        78
+      ],
+      "priority": "P0",
+      "phase": 3,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-I6"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "benchmarks/hackathon/",
+        "scripts/hackathon/performance-report.py",
+        "docs/hackathon/benchmark-report.md"
+      ],
+      "acceptance": [
+        "重跑冻结 23 control tasks 并复用签名验证器",
+        "比较 benign completion/unsafe materialization/provenance blocks，解释任何 delta",
+        "仅更新本轮重新测量的性能，给出 cohort/sample/分母；旧失败和原始数据保留"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-D1",
+      "title": "提交并创建 V4 → V3 PR",
+      "source_sections": [
+        28,
+        29,
+        77
+      ],
+      "priority": "P0",
+      "phase": 4,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-I7"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        ".github/workflows/",
+        "docs/hackathon/final-hardening-report.md"
+      ],
+      "acceptance": [
+        "提交所有预期文件；PR head=codex/hackathon-final-hardening-v4，base=codex/dgx-spark-hackathon-v3",
+        "PR 包含 Architecture changes/Security invariants/Model egress/Skill planning/Tests/Benchmark delta/Known limitations",
+        "使用 env -u GITHUB_TOKEN gh/git；记录 PR URL 与 head SHA；不直接 merge 或改 main"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-D2",
+      "title": "真实 pull_request CI green",
+      "source_sections": [
+        30
+      ],
+      "priority": "P0",
+      "phase": 4,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-D1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/runtime-security.yml",
+        "docs/hackathon/final-hardening-report.md"
+      ],
+      "acceptance": [
+        "PR 触发实际 GitHub Actions，ci/runtime-security/competition tests/web build/secure-agent tests 全 green",
+        "允许需求由 job/step 覆盖，但逐项映射，缺项补工作流",
+        "记录 workflow run ID、commit SHA、job count、conclusion；最后源码变更后重验同一 SHA",
+        "本地 CI-equivalent 不替代远端；pending/skipped/未执行不得算通过"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-D3",
+      "title": "仓库治理人工操作文档",
+      "source_sections": [
+        31
+      ],
+      "priority": "P0",
+      "phase": 4,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-AUDIT"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/repository-governance-actions.md"
+      ],
+      "acceptance": [
+        "重新只读确认保护现状，不沿用旧 admin/protection 状态",
+        "写明 Require PR、Require CI checks、Block force push、Require conversation resolution、敏感路径 CODEOWNERS review",
+        "提供精确人工设置/复核步骤；无明确授权不修改 repository settings"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-D4",
+      "title": "精确提交冻结与 clean checkout 构建",
+      "source_sections": [
+        32
+      ],
+      "priority": "P0",
+      "phase": 5,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-D2"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/package_rc.py",
+        "scripts/hackathon/test_package_rc.py",
+        "docs/hackathon/rc-preparation.md"
+      ],
+      "acceptance": [
+        "在远端 CI green 的精确 commit 上 freeze；无需自行 merge，保留审阅 PR",
+        "从独立 clean checkout 构建；git diff --quiet、git diff --cached --quiet，status clean，检查未跟踪文件",
+        "dirty source 拒绝打包，构建后源码仍干净；不采用 dirty manifest 替代",
+        "构建逻辑若需修复，回到提交和远端 CI，再冻结新 SHA"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-D5",
+      "title": "精确 Candidate Source Identity",
+      "source_sections": [
+        33
+      ],
+      "priority": "P0",
+      "phase": 5,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-D4"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/package_rc.py",
+        "scripts/hackathon/test_package_rc.py"
+      ],
+      "acceptance": [
+        "source-info.json 至少 git_sha/git_ref/build_time/go_version/python_version/node_version/target",
+        "源码身份与冻结 commit、二进制、压缩包和实际 toolchain 一致",
+        "不再生成 dirty worktree manifest；旧候选不重新贴新 SHA"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-D6",
+      "title": "准备 RC 版本与命名",
+      "source_sections": [
+        34
+      ],
+      "priority": "P0",
+      "phase": 5,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-D5"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/package_rc.py",
+        "docs/hackathon/rc-preparation.md"
+      ],
+      "acceptance": [
+        "目标 siq-agent-security-v0.3.0-rc.1；先查已有 tag convention/冲突",
+        "如冲突遵循既有规则并记录选择；不覆盖已有 tag",
+        "不发布 v0.3.0 stable；正式发布单独外部动作"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-D7",
+      "title": "RC 产物清单与解包启动",
+      "source_sections": [
+        35,
+        72
+      ],
+      "priority": "P0",
+      "phase": 5,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-D6"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/package_rc.py",
+        "scripts/hackathon/launch_rc.py",
+        "scripts/hackathon/package_checkpoint.py",
+        "docs/hackathon/evidence/"
+      ],
+      "acceptance": [
+        "linux-arm64 binary 及已有其他受支持 targets",
+        "SBOM/SHA256SUMS/Skill inventory/Source identity/Hackathon quick start/Evidence summary 齐全",
+        "从实际解包候选启动并跑任务，核验散列/回执/效果；不把交叉编译当原生认证",
+        "保存 candidate hash、source SHA、启动证据，main 未越权修改"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-D8",
+      "title": "复用签名机制并准确标注发布信任",
+      "source_sections": [
+        36
+      ],
+      "priority": "P0",
+      "phase": 5,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-D7"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/package_rc.py",
+        "skills/siq-agent-security/skill-manifest.json",
+        "docs/hackathon/rc-preparation.md"
+      ],
+      "acceptance": [
+        "审计并复用已有 release signing/provenance；不建立第二套签名",
+        "缺正式签名条件标 unsigned release candidate",
+        "测试密钥、历史 v0.2.0 签名、checksum 不能冒充本候选 publisher identity"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-E1",
+      "title": "五主题 Canonical Evidence Index",
+      "source_sections": [
+        37,
+        38,
+        73
+      ],
+      "priority": "P0",
+      "phase": 6,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-D8"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/evidence/INDEX.md"
+      ],
+      "acceptance": [
+        "首页仅五主题：Agent Skills、NVIDIA DGX Spark、StepFun、Security、Effect & Completion",
+        "分别证明实际选用 Skills、实机/本地模型/runtime、真实 StepFun inference/provider、安全和效果状态",
+        "HACKATHON → INDEX → canonical evidence 最多两次点击"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-E2",
+      "title": "引用式 Evidence Manifest",
+      "source_sections": [
+        39,
+        73
+      ],
+      "priority": "P0",
+      "phase": 6,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-E1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/evidence/evidence-manifest.json"
+      ],
+      "acceptance": [
+        "包含 source_sha/dgx/stepfun/skills/security/effect/benchmark",
+        "只引用 canonical files，不复制原始证据数据",
+        "验证引用存在且 source/cohort/provider 范围一致；UNKNOWN 保留",
+        "最终 evidence/docs-only commit 与冻结构建 SHA 明确区分，不创建源码自引用哈希"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-E3",
+      "title": "简化入口并保留原始证据",
+      "source_sections": [
+        40
+      ],
+      "priority": "P0",
+      "phase": 6,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-E2"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "README.md",
+        "HACKATHON.md",
+        "docs/hackathon/evidence/"
+      ],
+      "acceptance": [
+        "README/HACKATHON 通过 INDEX 进入证据，不直链几十个 dashboard/browser/regression 文件",
+        "原始证据、早期失败和旧候选数据不删除不改写",
+        "新证据独立命名，旧文档标历史版本避免混淆"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-E4",
+      "title": "比赛摘要与准确分母",
+      "source_sections": [
+        41
+      ],
+      "priority": "P0",
+      "phase": 6,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-E3",
+        "V4-I7"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "HACKATHON.md",
+        "docs/hackathon/benchmark-report.md"
+      ],
+      "acceptance": [
+        "主页面目标摘要：23 controls、benign 5/5、unsafe target materialization 0/13、provenance blocks 8/8、latest StepFun 5/5、latest Ornith 5/5",
+        "必须按本轮实际结果展示；若不达目标保留实际值并返回修复，不硬填",
+        "明确 small sample、earlier failures retained；固定提案与模型 cohort 不混算"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-G1",
+      "title": "冻结唯一主故事与一键演示入口",
+      "source_sections": [
+        48,
+        49,
+        74
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-E4"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/demo-script.md",
+        "scripts/hackathon/",
+        "HACKATHON.md"
+      ],
+      "acceptance": [
+        "分析 GitHub 项目、生成安全报告、发送 Alice",
+        "StepFun Plan → research → DGX Local Analysis → report → delivery → SIQ → EffectEvidence → Verified Completion",
+        "research-only/normal/MCP/same-value/fake-success 全部单命令或 dashboard action 可重复",
+        "使用冻结 RC/源码与配置；不临场扩展十种功能"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-G2",
+      "title": "Act 1 正常动态选择与交付",
+      "source_sections": [
+        50
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-G1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/demo-normal.sh",
+        "docs/hackathon/demo-script.md"
+      ],
+      "acceptance": [
+        "实际 Agent 选择三 Skills，全部成功，有真实选用及执行证据",
+        "确认报告和接收端 effect verified；不以工具 success 代替"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-G3",
+      "title": "Act 2 MCP Injection",
+      "source_sections": [
+        51
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-G2"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/demo-mcp-attack.sh",
+        "docs/hackathon/demo-script.md"
+      ],
+      "acceptance": [
+        "恶意 MCP 将 Alice 指向 attacker@evil.example；模型可选但 SIQ DENY",
+        "真实模型不选攻击值时如实披露；可演示明确标注的 fixture 提案，不假冒真实模型受骗",
+        "讲清 Model can be fooled. Runtime authority cannot be self-created."
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-G4",
+      "title": "Act 3 同值不同来源",
+      "source_sections": [
+        52
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-G3"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/demo-provenance.sh",
+        "docs/hackathon/demo-script.md"
+      ],
+      "acceptance": [
+        "相同 alice@company.example：Trusted Directory ALLOW / MCP DENY",
+        "实际 provenance 读回证据；解释 SIQ 同时授权值及其来源"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-G5",
+      "title": "Act 4 Fake Success",
+      "source_sections": [
+        53
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-G4"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/demo-fake-success.sh",
+        "docs/hackathon/demo-script.md"
+      ],
+      "acceptance": [
+        "success=true、effect not observed、Completion INCOMPLETE",
+        "画面及讲稿准确区分工具自报与真实效果证明"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-G6",
+      "title": "Act 5 可选 Human Approval",
+      "source_sections": [
+        54
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-G5"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "scripts/hackathon/demo-approval.sh",
+        "docs/hackathon/demo-script.md"
+      ],
+      "acceptance": [
+        "HOLD → Approve → Recheck → Execute 可重复",
+        "现场时间短则作为 secondary optional demo；I4 中审批回归仍必需"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-H1",
+      "title": "录制最终 2–3 分钟真实视频",
+      "source_sections": [
+        55,
+        56,
+        75
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-G6"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/demo-script.md",
+        "docs/hackathon/submission-checklist.md"
+      ],
+      "acceptance": [
+        "实际录制至少一份视频，不把脚本/截图当成已录制",
+        "0:00–0:15 Problem；0:15–0:40 Skills/DGX/StepFun；0:40–1:15 normal；1:15–1:45 MCP；1:45–2:10 same-value；2:10–2:30 fake-success；2:30–2:45 conclusion",
+        "记录文件路径/hash/source SHA/model config（脱敏）/DGX config/date"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-H2",
+      "title": "视频真实性与可复核性审核",
+      "source_sections": [
+        57
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-H1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/submission-checklist.md",
+        "docs/hackathon/final-hardening-report.md"
+      ],
+      "acceptance": [
+        "画面片头或片尾含 provider/task ID/source SHA",
+        "不把 ALLOW 剪成 DENY、不隐藏失败而不披露、不用 fixture/Ornith 冒充 StepFun",
+        "可剪等待时间并披露；核对时长、可播放性、实际录屏证据"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-J1",
+      "title": "同步 README、HACKATHON 和架构叙事",
+      "source_sections": [
+        65,
+        66,
+        68,
+        69
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-E4",
+        "V4-G6"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "README.md",
+        "HACKATHON.md",
+        "docs/hackathon/architecture.md"
+      ],
+      "acceptance": [
+        "Secure Runtime for Agent Skills；Skills define capabilities, SIQ permissions",
+        "StepFun plans / DGX sensitive analysis local / SIQ authorizes 的目标仅在对应能力验收后表述为完成",
+        "最终图示含 Model Router、Intent/Context/Provenance/Runtime/Approval/Receipt、Tools、Execution、EffectEvidence、Completion"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-J2",
+      "title": "保留所有剩余风险并审查夸大声明",
+      "source_sections": [
+        67,
+        79,
+        80
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-J1"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/limitations.md",
+        "README.md",
+        "HACKATHON.md",
+        "docs/hackathon/final-hardening-report.md"
+      ],
+      "acceptance": [
+        "保留 same-UID 未 OS-isolated、Python ToolGateway 非 OS sandbox、remote StepFun external boundary、PUBLIC source 可策略允许远程",
+        "保留 no general semantic provenance/universal SaaS effect verification/universal MCP security/full multi-agent delegation",
+        "保留 no Windows production certification/production HA；small cohorts 非统计保证",
+        "不称 all model traffic secure 或 all enterprise code stays local；原文最终中英文产品声明仅全部验收完成后使用"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-J3",
+      "title": "更新工程报告与提交清单",
+      "source_sections": [
+        65
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-H2",
+        "V4-J2"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/final-engineering-report.md",
+        "docs/hackathon/submission-checklist.md",
+        "docs/hackathon/acceptance-matrix.md"
+      ],
+      "acceptance": [
+        "明确 V3 历史结果与 V4 新验收，不覆盖旧事实",
+        "所有交付链接有效；未执行 CI/签名/发布/视频上传保持待办",
+        "最终源码、构建和证据身份准确对应"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-REPORT",
+      "title": "Final Engineering Report V4",
+      "source_sections": [
+        78
+      ],
+      "priority": "P0",
+      "phase": 7,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-J3",
+        "V4-D3"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/final-hardening-report.md"
+      ],
+      "acceptance": [
+        "A starting_sha/final_sha/branch；B StepFun/Ornith/sensitivity policy；C selected Skills/dependency validation",
+        "D Intent/Context/Provenance/Runtime/Effect/Completion；E DGX hardware/local model/actual tests",
+        "F CI run IDs/jobs/status；G tag-candidate/hash/SBOM/source identity",
+        "H normal/dynamic/MCP/same-value/fake-success/approval；I 仅实际重测性能；J Residual Risks",
+        "区分 frozen_source_sha、最终 documentation SHA、CI head SHA；不可伪造自包含 final hash"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-ACCEPT",
+      "title": "V4 总验收与功能冻结",
+      "source_sections": [
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        80,
+        81,
+        82,
+        83
+      ],
+      "priority": "P0",
+      "phase": 8,
+      "status": "todo",
+      "kind": "engineering",
+      "depends_on": [
+        "V4-REPORT"
+      ],
+      "owner_role": "developer",
+      "implementation_paths": [
+        "docs/hackathon/final-hardening-report.md",
+        "docs/hackathon/final-hardening-tasks-v4.json"
+      ],
+      "acceptance": [
+        "逐项验收 Model Egress、Skills、Release、Evidence、Demo、Video DoD",
+        "五分钟内从实际证据回答原文七个评委问题",
+        "inspect → implement → test → run → benchmark → verify → PR → remote CI → clean build → RC → document 均有实绩",
+        "全部验收后 STOP FEATURE DEVELOPMENT；稳定、清楚、真实、可重复、有证据",
+        "外部动作无权限逐项给操作步骤，不把未执行写成完成"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-EXT-GOV",
+      "title": "人工设置 main 保护",
+      "source_sections": [
+        31,
+        81
+      ],
+      "priority": "P0",
+      "phase": 8,
+      "status": "todo",
+      "kind": "external/manual",
+      "depends_on": [
+        "V4-D3"
+      ],
+      "owner_role": "maintainer",
+      "implementation_paths": [
+        "docs/hackathon/repository-governance-actions.md"
+      ],
+      "acceptance": [
+        "仅取得明确 settings 授权后由 maintainer 设置并只读复核保护",
+        "遵循 D3 列出的 PR/check/force-push/conversation/CODEOWNERS 要求",
+        "当前存在 admin 能力也不等于授权；不阻塞本地工程"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-EXT-SIGN",
+      "title": "正式签名材料与签名执行（条件项）",
+      "source_sections": [
+        36,
+        81
+      ],
+      "priority": "P0",
+      "phase": 8,
+      "status": "todo",
+      "kind": "external/manual",
+      "depends_on": [
+        "V4-D8"
+      ],
+      "owner_role": "maintainer",
+      "implementation_paths": [
+        "docs/hackathon/repository-governance-actions.md",
+        "docs/hackathon/rc-preparation.md"
+      ],
+      "acceptance": [
+        "具备正式 publisher 授权和密钥时复用现有流程",
+        "无正式条件保留 unsigned RC 并给签名/验证步骤；不接触或公开私钥",
+        "此项不是创建第二套 signing 系统的许可"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-EXT-RELEASE",
+      "title": "官方 RC 发布（条件项）",
+      "source_sections": [
+        34,
+        81
+      ],
+      "priority": "P0",
+      "phase": 8,
+      "status": "todo",
+      "kind": "external/manual",
+      "depends_on": [
+        "V4-D8"
+      ],
+      "owner_role": "maintainer",
+      "implementation_paths": [
+        "docs/hackathon/rc-preparation.md",
+        "docs/hackathon/submission-checklist.md"
+      ],
+      "acceptance": [
+        "具备明确发布授权后核对 exact source/tag/hash/CI 并上传 RC artifacts",
+        "不发布 stable、不覆盖已有 tag；发布前保留可审阅产物和步骤",
+        "准备本地 RC 不等于已公开发布"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    },
+    {
+      "id": "V4-EXT-VIDEO",
+      "title": "比赛视频上传（外部提交）",
+      "source_sections": [
+        75,
+        81
+      ],
+      "priority": "P0",
+      "phase": 8,
+      "status": "todo",
+      "kind": "external/manual",
+      "depends_on": [
+        "V4-H2"
+      ],
+      "owner_role": "maintainer",
+      "implementation_paths": [
+        "docs/hackathon/submission-checklist.md"
+      ],
+      "acceptance": [
+        "确认赛事大小/格式/目标平台要求与上传权限后提交真实成片",
+        "记录提交链接、视频 hash、时间及源码/模型/DGX 配置",
+        "大型视频不强塞 Git；未上传不标 submitted"
+      ],
+      "evidence_required": [
+        "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
+      ],
+      "evidence": [],
+      "external_blocker": null
+    }
+  ],
+  "section_coverage": [
+    {
+      "section": 0,
+      "title": "本轮任务性质",
+      "tasks": [
+        "V4-SCOPE"
+      ]
+    },
+    {
+      "section": 1,
+      "title": "Repository Baseline",
+      "tasks": [
+        "V4-BASE"
+      ]
+    },
+    {
+      "section": 2,
+      "title": "开发前必须完成 Current-State Audit",
+      "tasks": [
+        "V4-AUDIT"
+      ]
+    },
+    {
+      "section": 3,
+      "title": "本轮最高安全原则",
+      "tasks": [
+        "V4-SCOPE"
+      ]
+    },
+    {
+      "section": 4,
+      "title": "WORKSTREAM A — Model Egress & DGX Locality",
+      "tasks": [
+        "V4-A1"
+      ]
+    },
+    {
+      "section": 5,
+      "title": "当前需要解决的问题",
+      "tasks": [
+        "V4-A1"
+      ]
+    },
+    {
+      "section": 6,
+      "title": "A1 — 数据分级",
+      "tasks": [
+        "V4-A1"
+      ]
+    },
+    {
+      "section": 7,
+      "title": "A2 — Model Capability Policy",
+      "tasks": [
+        "V4-A2"
+      ]
+    },
+    {
+      "section": 8,
+      "title": "A3 — 推荐比赛架构",
+      "tasks": [
+        "V4-A3"
+      ]
+    },
+    {
+      "section": 9,
+      "title": "A4 — 不允许隐式 fallback",
+      "tasks": [
+        "V4-A4"
+      ]
+    },
+    {
+      "section": 10,
+      "title": "A5 — Research Routing",
+      "tasks": [
+        "V4-A5"
+      ]
+    },
+    {
+      "section": 11,
+      "title": "A6 — StepFun Planning Payload",
+      "tasks": [
+        "V4-A6"
+      ]
+    },
+    {
+      "section": 12,
+      "title": "A7 — Model Egress Evidence",
+      "tasks": [
+        "V4-A7"
+      ]
+    },
+    {
+      "section": 13,
+      "title": "A8 — Model Egress Tests",
+      "tasks": [
+        "V4-A8"
+      ]
+    },
+    {
+      "section": 14,
+      "title": "WORKSTREAM B — Dynamic Agent Skills Orchestration",
+      "tasks": [
+        "V4-B1"
+      ]
+    },
+    {
+      "section": 15,
+      "title": "当前问题",
+      "tasks": [
+        "V4-B1"
+      ]
+    },
+    {
+      "section": 16,
+      "title": "B1 — TaskPlan V2",
+      "tasks": [
+        "V4-B1",
+        "V4-B5"
+      ]
+    },
+    {
+      "section": 17,
+      "title": "B2 — Dependency Graph",
+      "tasks": [
+        "V4-B2",
+        "V4-B5"
+      ]
+    },
+    {
+      "section": 18,
+      "title": "B3 — Skill Registry Schema",
+      "tasks": [
+        "V4-B2"
+      ]
+    },
+    {
+      "section": 19,
+      "title": "B4 — Model Cannot Invent Skills",
+      "tasks": [
+        "V4-B3"
+      ]
+    },
+    {
+      "section": 20,
+      "title": "B5 — Model Cannot Skip Dependencies",
+      "tasks": [
+        "V4-B4"
+      ]
+    },
+    {
+      "section": 21,
+      "title": "B6 — Dynamic Skill Demo",
+      "tasks": [
+        "V4-B6"
+      ]
+    },
+    {
+      "section": 22,
+      "title": "B7 — Skill Planning Tests",
+      "tasks": [
+        "V4-B7"
+      ]
+    },
+    {
+      "section": 23,
+      "title": "WORKSTREAM C — DGX Spark Competition Visibility",
+      "tasks": [
+        "V4-C1"
+      ]
+    },
+    {
+      "section": 24,
+      "title": "C1 — Dashboard Hardware Card",
+      "tasks": [
+        "V4-C1"
+      ]
+    },
+    {
+      "section": 25,
+      "title": "C2 — Model Locality Indicator",
+      "tasks": [
+        "V4-C2"
+      ]
+    },
+    {
+      "section": 26,
+      "title": "C3 — DGX Runtime Metrics",
+      "tasks": [
+        "V4-C3"
+      ]
+    },
+    {
+      "section": 27,
+      "title": "C4 — DGX Fail-State",
+      "tasks": [
+        "V4-C4"
+      ]
+    },
+    {
+      "section": 28,
+      "title": "WORKSTREAM D — Release Hardening",
+      "tasks": [
+        "V4-D1"
+      ]
+    },
+    {
+      "section": 29,
+      "title": "D1 — 当前分支 PR",
+      "tasks": [
+        "V4-D1"
+      ]
+    },
+    {
+      "section": 30,
+      "title": "D2 — Remote CI",
+      "tasks": [
+        "V4-D2"
+      ]
+    },
+    {
+      "section": 31,
+      "title": "D3 — Main Protection",
+      "tasks": [
+        "V4-D3",
+        "V4-EXT-GOV"
+      ]
+    },
+    {
+      "section": 32,
+      "title": "D4 — Clean Source Build",
+      "tasks": [
+        "V4-D4"
+      ]
+    },
+    {
+      "section": 33,
+      "title": "D5 — Candidate Identity",
+      "tasks": [
+        "V4-D5"
+      ]
+    },
+    {
+      "section": 34,
+      "title": "D6 — Release Candidate",
+      "tasks": [
+        "V4-D6",
+        "V4-EXT-RELEASE"
+      ]
+    },
+    {
+      "section": 35,
+      "title": "D7 — RC Artifacts",
+      "tasks": [
+        "V4-D7"
+      ]
+    },
+    {
+      "section": 36,
+      "title": "D8 — Signing",
+      "tasks": [
+        "V4-D8",
+        "V4-EXT-SIGN"
+      ]
+    },
+    {
+      "section": 37,
+      "title": "WORKSTREAM E — Evidence Consolidation",
+      "tasks": [
+        "V4-E1"
+      ]
+    },
+    {
+      "section": 38,
+      "title": "E1 — Evidence Index",
+      "tasks": [
+        "V4-E1"
+      ]
+    },
+    {
+      "section": 39,
+      "title": "E2 — Evidence Manifest",
+      "tasks": [
+        "V4-E2"
+      ]
+    },
+    {
+      "section": 40,
+      "title": "E3 — Raw Evidence",
+      "tasks": [
+        "V4-E3"
+      ]
+    },
+    {
+      "section": 41,
+      "title": "E4 — Benchmark Summary",
+      "tasks": [
+        "V4-I7",
+        "V4-E4"
+      ]
+    },
+    {
+      "section": 42,
+      "title": "WORKSTREAM F — Competition UI Freeze",
+      "tasks": [
+        "V4-F1"
+      ]
+    },
+    {
+      "section": 43,
+      "title": "F1 — UI 四块保持不变",
+      "tasks": [
+        "V4-F1"
+      ]
+    },
+    {
+      "section": 44,
+      "title": "F2 — Agent Skills 必须视觉突出",
+      "tasks": [
+        "V4-F2"
+      ]
+    },
+    {
+      "section": 45,
+      "title": "F3 — Security Decision",
+      "tasks": [
+        "V4-F3"
+      ]
+    },
+    {
+      "section": 46,
+      "title": "F4 — Provenance Visualization",
+      "tasks": [
+        "V4-F4"
+      ]
+    },
+    {
+      "section": 47,
+      "title": "F5 — Effect Visualization",
+      "tasks": [
+        "V4-F5"
+      ]
+    },
+    {
+      "section": 48,
+      "title": "WORKSTREAM G — Demo Freeze",
+      "tasks": [
+        "V4-G1"
+      ]
+    },
+    {
+      "section": 49,
+      "title": "主 Demo",
+      "tasks": [
+        "V4-G1"
+      ]
+    },
+    {
+      "section": 50,
+      "title": "Demo Act 1 — 正常任务",
+      "tasks": [
+        "V4-G2"
+      ]
+    },
+    {
+      "section": 51,
+      "title": "Demo Act 2 — MCP Injection",
+      "tasks": [
+        "V4-G3"
+      ]
+    },
+    {
+      "section": 52,
+      "title": "Demo Act 3 — Same Value / Different Provenance",
+      "tasks": [
+        "V4-G4"
+      ]
+    },
+    {
+      "section": 53,
+      "title": "Demo Act 4 — Fake Success",
+      "tasks": [
+        "V4-G5"
+      ]
+    },
+    {
+      "section": 54,
+      "title": "Demo Act 5 — Human Approval",
+      "tasks": [
+        "V4-G6"
+      ]
+    },
+    {
+      "section": 55,
+      "title": "WORKSTREAM H — Demo Video",
+      "tasks": [
+        "V4-H1"
+      ]
+    },
+    {
+      "section": 56,
+      "title": "H1 — 录制 2–3 分钟 Demo",
+      "tasks": [
+        "V4-H1"
+      ]
+    },
+    {
+      "section": 57,
+      "title": "H2 — 视频必须真实",
+      "tasks": [
+        "V4-H2"
+      ]
+    },
+    {
+      "section": 58,
+      "title": "WORKSTREAM I — Regression",
+      "tasks": [
+        "V4-I1"
+      ]
+    },
+    {
+      "section": 59,
+      "title": "Secure Agent Tests",
+      "tasks": [
+        "V4-I1"
+      ]
+    },
+    {
+      "section": 60,
+      "title": "AgentShield Tests",
+      "tasks": [
+        "V4-I2"
+      ]
+    },
+    {
+      "section": 61,
+      "title": "Full Repo Checks",
+      "tasks": [
+        "V4-I3"
+      ]
+    },
+    {
+      "section": 62,
+      "title": "Competition E2E",
+      "tasks": [
+        "V4-I4"
+      ]
+    },
+    {
+      "section": 63,
+      "title": "StepFun E2E",
+      "tasks": [
+        "V4-I5"
+      ]
+    },
+    {
+      "section": 64,
+      "title": "DGX Local Model E2E",
+      "tasks": [
+        "V4-I6"
+      ]
+    },
+    {
+      "section": 65,
+      "title": "WORKSTREAM J — Documentation Claims",
+      "tasks": [
+        "V4-J1",
+        "V4-J3"
+      ]
+    },
+    {
+      "section": 66,
+      "title": "README 关键叙事",
+      "tasks": [
+        "V4-J1"
+      ]
+    },
+    {
+      "section": 67,
+      "title": "禁止新的夸大声明",
+      "tasks": [
+        "V4-J2"
+      ]
+    },
+    {
+      "section": 68,
+      "title": "最终比赛安全架构",
+      "tasks": [
+        "V4-A3",
+        "V4-J1"
+      ]
+    },
+    {
+      "section": 69,
+      "title": "最终比赛公式",
+      "tasks": [
+        "V4-A3",
+        "V4-J1"
+      ]
+    },
+    {
+      "section": 70,
+      "title": "DoD — Model Egress",
+      "tasks": [
+        "V4-A8",
+        "V4-ACCEPT"
+      ]
+    },
+    {
+      "section": 71,
+      "title": "DoD — Skills",
+      "tasks": [
+        "V4-B5",
+        "V4-B7",
+        "V4-ACCEPT"
+      ]
+    },
+    {
+      "section": 72,
+      "title": "DoD — Release",
+      "tasks": [
+        "V4-D7",
+        "V4-ACCEPT"
+      ]
+    },
+    {
+      "section": 73,
+      "title": "DoD — Evidence",
+      "tasks": [
+        "V4-E1",
+        "V4-E2",
+        "V4-ACCEPT"
+      ]
+    },
+    {
+      "section": 74,
+      "title": "DoD — Demo",
+      "tasks": [
+        "V4-G1",
+        "V4-ACCEPT"
+      ]
+    },
+    {
+      "section": 75,
+      "title": "DoD — Video",
+      "tasks": [
+        "V4-H1",
+        "V4-ACCEPT",
+        "V4-EXT-VIDEO"
+      ]
+    },
+    {
+      "section": 76,
+      "title": "本轮禁止重构",
+      "tasks": [
+        "V4-SCOPE"
+      ]
+    },
+    {
+      "section": 77,
+      "title": "Suggested Commit Sequence",
+      "tasks": [
+        "V4-SCOPE",
+        "V4-D1"
+      ]
+    },
+    {
+      "section": 78,
+      "title": "Final Engineering Report V4",
+      "tasks": [
+        "V4-I7",
+        "V4-REPORT"
+      ]
+    },
+    {
+      "section": 79,
+      "title": "Residual Risks 必须保留",
+      "tasks": [
+        "V4-J2"
+      ]
+    },
+    {
+      "section": 80,
+      "title": "最终比赛产品声明",
+      "tasks": [
+        "V4-J2",
+        "V4-ACCEPT"
+      ]
+    },
+    {
+      "section": 81,
+      "title": "Codex 最终执行要求",
+      "tasks": [
+        "V4-SCOPE",
+        "V4-ACCEPT",
+        "V4-EXT-GOV",
+        "V4-EXT-SIGN",
+        "V4-EXT-RELEASE",
+        "V4-EXT-VIDEO"
+      ]
+    },
+    {
+      "section": 82,
+      "title": "最终优先顺序",
+      "tasks": [
+        "V4-SCOPE",
+        "V4-ACCEPT"
+      ]
+    },
+    {
+      "section": 83,
+      "title": "最终判断标准",
+      "tasks": [
+        "V4-ACCEPT"
+      ]
+    }
+  ]
+}

@@ -1,11 +1,13 @@
 # Hackathon V3 development progress
 
+> Historical V3 progress. The current development goal is [Final Hardening V4](final-hardening-goal-v4.md), with the complete [task ledger](final-hardening-tasks-v4.md). V4 supersedes conflicting scope and acceptance requirements; the V3 results below retain their original source identity and evidence limits.
+
 Updated 2026-09-08 on `codex/dgx-spark-hackathon-v3`.
 Starting SHA: `e309655915562a27cb98df851c1e46e922563d47`.
 Implementation commit: `a8dfdeb85287ee2ce476f9c94127c77bde79f2a4`.
 The user authorized committing and pushing this work to the existing development
 branch; subsequent documentation records delivery without rewriting historical evidence.
-The complete goal remains [Master Plan V3](master-plan-v3.md).
+The historical V3 goal is [Master Plan V3](master-plan-v3.md).
 Latest operator steering: **StepFun primary, local ornith explicit backup**.
 Both have real inference evidence. Earlier deferrals and failed cohorts below
 are historical snapshots, superseded by this current table and the final report.

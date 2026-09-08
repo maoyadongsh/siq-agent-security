@@ -61,4 +61,6 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 
 ## 当前开发模板
 
-用户指定 [Provenance-Bound Effect V1 原文模板](docs/templates/provenance-bound-effect-v1-development-template.md)，进度见 [开发台账](docs/provenance-bound-effect-v1-progress.md)。该模板在 `codex/provenance-bound-effect-v1` 完成开发，用户随后明确授权全部开发分支合并到 `main`；后续以 `main` 为集成基线，复用现有 V2、签名和 Reference Monitor。模板要求的 Authority Hard Gate 优先于旧版 audit/warn 一律放行语义；该例外不应推广为所有普通 policy 均强制拒绝。
+当前用户指定 [Final Hardening & Competition Freeze V4 原文](docs/hackathon/final-hardening-requirements-v4.md)为开发目标，入口见[当前目标](docs/hackathon/final-hardening-goal-v4.md)、[全部任务](docs/hackathon/final-hardening-tasks-v4.md)和[机器可读台账](docs/hackathon/final-hardening-tasks-v4.json)。本轮从最新 `codex/dgx-spark-hackathon-v3` 创建 `codex/hackathon-final-hardening-v4`，PR 目标为 V3，禁止直接修改 main 或自行 merge。V4 按 Model Egress → Dynamic Skills → Regression → PR/Remote CI → Clean RC → Evidence → Demo/Video 顺序执行；任务登记不等于工程验收完成。冲突的 V3 固定流水线、dirty-source 候选、视频非必需口径由 V4 取代。已有安全协议与历史证据继续复用。
+
+历史 [Provenance-Bound Effect V1 原文模板](docs/templates/provenance-bound-effect-v1-development-template.md)及[开发台账](docs/provenance-bound-effect-v1-progress.md)保留。该模板已完成并经此前授权集成至 main；本轮基线改按上述 V4 指定比赛分支。Authority Hard Gate 仍优先于旧版 audit/warn 一律放行语义；该例外不应推广为所有普通 policy 均强制拒绝。V4 不得无故重构 Intent、Provenance/Effect 签名、Receipt chain、Control Plane、Adapters 或 OpenShell，不得新增原文禁止的安全模块。

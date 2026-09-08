@@ -1,5 +1,7 @@
 # SIQ Agent Security
 
+> **当前开发目标（2026-09-08）：[Final Hardening V4](docs/hackathon/final-hardening-goal-v4.md)**。已落盘[完整任务台账](docs/hackathon/final-hardening-tasks-v4.md)与[现状审计](docs/hackathon/final-hardening-audit.md)，在 `codex/hackathon-final-hardening-v4` 推进模型出网、动态 Skills、CI/RC 和比赛冻结。V4 工程尚待执行；下文 V3 数字与候选状态保留为历史记录。
+
 **面向本地与企业智能体的任务授权、运行时门禁与可验证审计。**
 
 **DGX Spark 比赛演示：** 三个真实 Skill 完成仓库研究、报告生成与受控交付；SIQ 校验参数来源和实际效果。现已接入本机 ornith 模型，提供现有本地 Web 内的 Demo Mode。
