@@ -316,15 +316,6 @@ func (e *Engine) Mode() string {
 }
 
 var (
-	egressTools = map[string]bool{"web_fetch": true, "web_extract": true, "web_search": true, "http": true, "http_request": true,
-		"fetch": true, "send_message": true, "browser_navigate": true, "WebFetch": true, "WebSearch": true, "browser": true, "message": true}
-	shellTools = map[string]bool{"exec": true, "terminal": true, "Bash": true, "shell": true, "bash": true, "process": true}
-	fileTools  = map[string]bool{"read_file": true, "write_file": true, "Read": true, "Write": true, "Edit": true, "patch": true, "search_files": true}
-
-	netCmdRe   = regexp.MustCompile(`(?i)\b(curl|wget|nc|ncat|netcat|ssh|scp|rsync|ftp|telnet|Invoke-WebRequest|Invoke-RestMethod|iwr|irm)\b`)
-	urlRe      = regexp.MustCompile(`https?://([A-Za-z0-9.-]+)(?::(\d+))?`)
-	hostArgRe  = regexp.MustCompile(`\b(?:nc|ncat|netcat|ssh|scp|telnet)\s+(?:-\w+\s+)*([A-Za-z0-9.-]+\.[A-Za-z]{2,}|\d{1,3}(?:\.\d{1,3}){3})`)
-	pathRe     = regexp.MustCompile(`(?:^|[\s"'=(,])((?:~|\$HOME|/)[A-Za-z0-9_./~-]+)`)
 	credPathRe = regexp.MustCompile(`(?i)(?:^|/)(\.env(?:\.[a-z]+)?|\.ssh|\.aws|\.gnupg|\.netrc|\.docker/config\.json|\.kube/config|id_rsa|id_ed25519|credentials|auth\.json|\.npmrc|\.pypirc)(?:/|$)`)
 	piiRe      = regexp.MustCompile(`\b\d{3}-\d{2}-\d{4}\b|\b(?:\d[ -]?){13,16}\b|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}`)
 )
@@ -401,13 +392,14 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	digest := sha256.Sum256(paramsJSON)
 
 	paramsDigest := hex.EncodeToString(digest[:])
-	operation, effects := runtimeaction.Normalize(req.Tool, req.Params)
+	descriptor := runtimeaction.Describe(req.Tool, req.Params)
+	operation, effects := descriptor.Operation, descriptor.Effects
 	taskID := s.boundTaskID
 	intentID := s.boundIntentID
 	intentDigest := s.boundIntentDigest
 	authorityRevision := s.boundAuthorityRevision
 
-	resources, _ := runtimeaction.ExtractResources(req.Tool, req.Params)
+	resources := descriptor.Resources
 	resourceRefs := runtimeaction.ResourceRefs(resources)
 	chainSeq, _ := e.opts.Chain.Head()
 	actionID := runtimeaction.ActionID(runtimeaction.Envelope{
@@ -470,14 +462,13 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		s.taints[t] = true
 	}
 	rec.MatchedRuleIDs = ruleIDs
-	if isEgress(req.Tool, paramsText) {
+	if descriptor.Egress {
 		s.trifecta.Egress = true
 	}
 	if e.opts.UntrustedSkillLoaded != nil && e.opts.UntrustedSkillLoaded(req.SessionID) {
 		s.trifecta.UntrustedInput = true
 	}
-	hosts := extractHosts(req.Tool, paramsText)
-	paths := extractPaths(req.Tool, paramsText)
+	paths := descriptor.Paths
 	for _, p := range paths {
 		if credPathRe.MatchString(p) {
 			s.taints[taintPrivate] = true
@@ -511,7 +502,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	policy := runtimeauthz.PolicyResult{}
 	var redacted map[string]any
 	if authority.Valid {
-		policy.Action, policy.Reason = e.evaluate(req, s, hosts, paths, &rec)
+		policy.Action, policy.Reason = e.evaluate(req, s, descriptor, &rec)
 		if policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req) && containsSecretLiteral(e.analyzer, paramsText) {
 			redacted = redactParams(e.analyzer, req.Params)
 			policy.Action, policy.Reason = ActionRedact, "secret literal removed from params before egress (grant permits redaction)"
@@ -583,7 +574,8 @@ func classifyReason(reason, action string) string {
 }
 
 // evaluate performs steps 2–5 and returns the raw (pre-mode) action.
-func (e *Engine) evaluate(req Request, s *session, hosts, paths []string, rec *Receipt) (string, string) {
+func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt) (string, string) {
+	hosts, paths := descriptor.Hosts, descriptor.Paths
 	var g *grant.Grant
 	if e.opts.Grants != nil {
 		g = e.opts.Grants(req.Platform, req.AgentID)
@@ -604,7 +596,7 @@ func (e *Engine) evaluate(req Request, s *session, hosts, paths []string, rec *R
 	}
 
 	// step 5 first: taint / trifecta rules override everything for egress
-	if isEgress(req.Tool, "") || len(hosts) > 0 {
+	if descriptor.Egress || len(hosts) > 0 {
 		if s.taints[taintSecret] || s.taints[taintPII] {
 			return ActionDeny, "tainted egress: session carries " + strings.Join(sortedKeys(s.taints), ",") + " taint"
 		}
@@ -621,7 +613,7 @@ func (e *Engine) evaluate(req Request, s *session, hosts, paths []string, rec *R
 		}
 		rec.MatchedFactIDs = appendUnique(rec.MatchedFactIDs, fid)
 	}
-	if shellTools[req.Tool] && netCmdRe.MatchString(paramsTextOf(req)) && len(hosts) == 0 {
+	if descriptor.ShellLike && descriptor.Egress && len(hosts) == 0 {
 		return ActionDeny, "egress exec requires granted host"
 	}
 	// step 4c: observational caller context cannot grant filesystem access
@@ -635,7 +627,7 @@ func (e *Engine) evaluate(req Request, s *session, hosts, paths []string, rec *R
 		if credPathRe.MatchString(p) {
 			return ActionDeny, "credential path " + p + " denied (credential facts are never allow)"
 		}
-		if isWrite(req.Tool, paramsTextOf(req)) {
+		if descriptor.FilesystemWriteHint {
 			return ActionDeny, "write to " + p + " outside granted paths (default deny)"
 		}
 	}
@@ -1009,105 +1001,7 @@ func pathGranted(g *grant.Grant, p string) (string, bool) {
 	return "", false
 }
 
-func isEgress(tool, paramsText string) bool {
-	if egressTools[tool] {
-		return true
-	}
-	if shellTools[tool] && paramsText != "" && (netCmdRe.MatchString(paramsText) || urlRe.MatchString(paramsText)) {
-		return true
-	}
-	return false
-}
-
-var writeCmdRe = regexp.MustCompile(`(>>?|\b(cp|mv|tee|rm|chmod|install|mkdir)\b)`)
-
-func isWrite(tool, paramsText string) bool {
-	switch tool {
-	case "write_file", "Write", "Edit", "patch":
-		return true
-	}
-	return shellTools[tool] && writeCmdRe.MatchString(paramsText)
-}
-
-func paramsTextOf(req Request) string { return flattenStrings(req.Params) }
-
-// flattenStrings joins every string leaf of params (depth-first, keys sorted)
-// with newlines so line-oriented rules see the original text.
-func flattenStrings(v any) string {
-	var parts []string
-	var walk func(x any)
-	walk = func(x any) {
-		switch t := x.(type) {
-		case string:
-			parts = append(parts, t)
-		case []any:
-			for _, e := range t {
-				walk(e)
-			}
-		case map[string]any:
-			keys := make([]string, 0, len(t))
-			for k := range t {
-				keys = append(keys, k)
-			}
-			sort.Strings(keys)
-			for _, k := range keys {
-				walk(t[k])
-			}
-		case json.Number:
-			parts = append(parts, string(t))
-		}
-	}
-	walk(v)
-	return strings.Join(parts, "\n")
-}
-
-func extractHosts(tool, paramsText string) []string {
-	if !isEgress(tool, paramsText) && !fileTools[tool] {
-		return nil
-	}
-	seen := map[string]bool{}
-	var out []string
-	for _, m := range urlRe.FindAllStringSubmatch(paramsText, -1) {
-		host := strings.ToLower(m[1])
-		port := m[2]
-		if port == "" {
-			port = "80"
-			if strings.HasPrefix(strings.ToLower(m[0]), "https") {
-				port = "443"
-			}
-		}
-		hp := host + ":" + port
-		if !seen[hp] {
-			seen[hp] = true
-			out = append(out, hp)
-		}
-	}
-	for _, m := range hostArgRe.FindAllStringSubmatch(paramsText, -1) {
-		hp := strings.ToLower(m[1]) + ":0"
-		if !seen[hp] {
-			seen[hp] = true
-			out = append(out, hp)
-		}
-	}
-	return out
-}
-
-func extractPaths(tool, paramsText string) []string {
-	if !fileTools[tool] && !shellTools[tool] {
-		return nil
-	}
-	seen := map[string]bool{}
-	var out []string
-	for _, m := range pathRe.FindAllStringSubmatch(paramsText, -1) {
-		p := strings.TrimRight(m[1], ".,;)")
-		if p == "/" || seen[p] {
-			continue
-		}
-		seen[p] = true
-		out = append(out, p)
-	}
-	return out
-}
+func flattenStrings(v any) string { return runtimeaction.FlattenStrings(v) }
 
 func sortedKeys(m map[string]bool) []string {
 	out := make([]string, 0, len(m))

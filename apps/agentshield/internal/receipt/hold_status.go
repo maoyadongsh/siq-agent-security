@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"time"
 )
 
@@ -102,7 +103,7 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 		return false
 	}
 	var checked Receipt
-	text := flattenStrings(req.Params)
-	action, _ := e.evaluate(r, s, extractHosts(req.Tool, text), extractPaths(req.Tool, text), &checked)
+	descriptor := runtimeaction.Describe(req.Tool, req.Params)
+	action, _ := e.evaluate(r, s, descriptor, &checked)
 	return (action == ActionAllow || action == ActionHold) && str(checked.MatchedGrantID) == str(d.MatchedGrantID)
 }

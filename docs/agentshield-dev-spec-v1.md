@@ -802,3 +802,9 @@ HTTP 请求/撤销记录分别遵守 `intent-binding-revoke-request.v1.schema.js
 管理端 `POST /v1/context-assertions` 接受完整未签名合同，服务端设置 signing_schema/signature；`GET /v1/context-assertions/{id}` 读取签名记录，两者均要求 admin。请求绑定为 canon.Marshal 后的 SHA256，字段固定为 platform/session_id/agent_id/task_id/tool/tool_call_id/params。task_id 从已验证 Intent binding 派生；使用 assertion 必须存在可信 Intent 和非空 tool_call_id。不同任务、会话、工具调用、参数不能复用 assertion；同一调用在到期前允许幂等重试和审批复查。它不是一次性执行租约。
 
 签名 workspace_root 是绝对路径，不补充 Grant 权限，也不修改 Intent 约束，授权仍取现有 Grant 与 Intent。回执仅持久化 assertion_id，不增加原始工作区路径。审批执行前继续验证该引用的签名、时效、范围和完整请求绑定；历史无引用回执保留旧签名语义。状态容量 4096、单记录 64 KiB，超额失败关闭；使用同目录 fsync 临时文件后排他发布，重启直接读取验签。
+
+## Provenance-Bound Effect V1：R 统一动作描述
+
+`runtimeaction.Describe(tool, params)` 为工具语义的唯一入口，输出 Tool、Operation、Effects、Resources、Egress、Mutating、ShellLike 和 HighImpactParameterPaths。Normalize/ExtractResources 仅作为旧调用方的兼容入口，委托同一描述实现。Grant/taint/trifecta/审批复查消费描述中的 Hosts/Paths/FilesystemWriteHint，不再各自维护工具表或命令正则。Hosts/Paths 是保守文本提示，只能增加检查，不作为结构化资源证明；Resources 仍仅来自已识别的结构化字段，解析错误显式保留。
+
+shell、sh、bash、python/python3、node、powershell/pwsh 等解释器至少 process.exec + unknown，即使文本看似简单也不能宣称完整效果。Mutating 对解释器保守为 true；FilesystemWriteHint 表示文本发现的文件写提示，不代表无该提示就无文件副作用。高影响参数以排序 JSON Pointer 输出，覆盖 recipient/to、host/destination_host/url、文件目标、database_scope、credential_ref、deployment_target、repo/branch、command/cmd、account/identity；未知工具的这些显式参数仍参与来源约束。路径和值不写入独立日志；回执资源继续以摘要存储。

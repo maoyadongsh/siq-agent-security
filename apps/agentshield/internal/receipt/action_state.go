@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"time"
 )
 
@@ -112,7 +113,7 @@ func (e *Engine) Observe(req Request, result string) (*Receipt, error) {
 	for _, label := range labels {
 		s.taints[label] = true
 	}
-	if isEgress(req.Tool, "") || egressTools[req.Tool] {
+	if runtimeaction.Describe(req.Tool, req.Params).Egress {
 		s.trifecta.UntrustedInput = true
 		s.taints[taintUntrusted] = true
 	}
