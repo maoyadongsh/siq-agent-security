@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare an unpublished candidate from an exact copied worktree snapshot."""
+"""Prepare an unsigned RC from a clean, frozen source commit."""
 
 import argparse
 import gzip
@@ -54,8 +54,8 @@ def verify_package(root):
         raise ValueError("candidate file inventory mismatch")
     required = {"source/apps/secure-agent/secure_agent/models.py", "source/demo/fixtures/github/repository.json",
                 "source/scripts/hackathon/launch_rc.py", "source/apps/agentshield/internal/ui/embedded/index.html",
-                "source/packages/contracts/model-task-plan.schema.json", "sbom.cdx.json", "source-info.json",
-                "skills-inventory.json"}
+                "source/packages/contracts/model-task-plan-v2.schema.json", "sbom.cdx.json", "source-info.json",
+                "skills-inventory.json", "EVIDENCE_SUMMARY.md"}
     required |= {f"source/skills/{name}/SKILL.md" for name in ("secure-research", "secure-report", "secure-delivery")}
     required |= {"bin/siq-agent-security-" + os_name + "-" + arch + (".exe" if os_name == "windows" else "")
                  for os_name, arch in TARGETS}
@@ -65,7 +65,30 @@ def verify_package(root):
     checksums += f"{sha(manifest_path)}  candidate-manifest.json\n"
     if (root / "SHA256SUMS").read_text() != checksums:
         raise ValueError("candidate checksum list mismatch")
+    identity = json.loads((root / "source-info.json").read_text())
+    validate_identity(identity)
     return manifest
+
+
+def validate_identity(identity):
+    required = {"schema_version", "git_sha", "git_ref", "build_time", "go_version", "python_version", "node_version", "target"}
+    if (not isinstance(identity, dict) or not required <= identity.keys()
+            or identity["schema_version"] != "hackathon-rc-source/v2"
+            or not re.fullmatch(r"[0-9a-f]{40}", identity.get("git_sha", ""))
+            or any(not isinstance(identity[key], str) or not identity[key] for key in required - {"target"})
+            or not isinstance(identity["target"], list) or not identity["target"]
+            or any(target not in [system + "/" + arch for system, arch in TARGETS] for target in identity["target"])
+            or "dirty" in identity or "source_files" in identity):
+        raise ValueError("candidate source identity invalid")
+
+
+def clean_source(root):
+    for args in (["diff", "--quiet"], ["diff", "--cached", "--quiet"]):
+        if subprocess.run(["git", *args], cwd=root, check=False).returncode:
+            raise ValueError("candidate requires clean committed source")
+    if subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=all"], cwd=root):
+        raise ValueError("candidate requires clean committed source")
+    return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
 
 
 def sbom(source, version, toolchain):
@@ -95,6 +118,15 @@ def sbom(source, version, toolchain):
 def build(args):
     if not re.fullmatch(r"0\.3\.0-rc\.[1-9][0-9]*", args.version):
         raise ValueError("candidate version must be 0.3.0-rc.N")
+    commit = clean_source(ROOT)
+    if not args.source_sha or args.source_sha != commit:
+        raise ValueError("--source-sha must match the frozen CI-verified checkout")
+    # Build the UI from the locked clean checkout. A generated difference means
+    # the commit did not contain its actual embedded UI and must go through CI again.
+    subprocess.run(["npm", "ci"], cwd=ROOT / "apps/web", check=True, capture_output=True)
+    subprocess.run(["npm", "run", "build:local"], cwd=ROOT / "apps/web", check=True, capture_output=True)
+    if clean_source(ROOT) != commit:
+        raise ValueError("source commit changed during build")
     out = args.out.resolve()
     if out.is_relative_to(ROOT) and out.relative_to(ROOT).parts[0] != ".tmp":
         raise ValueError("in-repository candidates must use the ignored .tmp directory")
@@ -105,7 +137,7 @@ def build(args):
     source = out / "source"
     source.mkdir()
     files = {}
-    names = subprocess.check_output(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=ROOT)
+    names = subprocess.check_output(["git", "ls-files", "--cached", "-z"], cwd=ROOT)
     for name in sorted(set(names.decode().split("\0")) - {""}):
         relative = Path(name)
         if relative.is_absolute() or ".." in relative.parts or relative.parts[0] in (".git", ".tmp"):
@@ -113,22 +145,22 @@ def build(args):
         original = ROOT / relative
         if original.is_symlink() or original.name.endswith(".seed") or original.name == ".env":
             raise ValueError("symlink or private state in source selection")
-        if not original.exists():
-            continue  # deleted tracked files are not part of this worktree snapshot
         if not original.is_file():
             raise ValueError("source selection is not a regular file")
         copied = source / relative
         copied.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(original, copied)
         files[name] = sha(copied)
-    identity = {"schema_version": "hackathon-rc-source/v1", "recorded_at": datetime.now(timezone.utc).isoformat(),
-                "source_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-                "branch": subprocess.check_output(["git", "branch", "--show-current"], cwd=ROOT, text=True).strip(),
-                "dirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT)),
-                "source_files": [{"path": name, "sha256": value} for name, value in files.items()], "final_commit": None}
-    write_json(out / "source-info.json", identity)
     env = dict(os.environ, GOTOOLCHAIN="go1.26.6", CGO_ENABLED="0")
     toolchain = subprocess.check_output(["go", "env", "GOVERSION"], env=env, text=True).strip()
+    identity = {"schema_version": "hackathon-rc-source/v2", "build_time": datetime.now(timezone.utc).isoformat(),
+                "git_sha": commit, "git_ref": subprocess.check_output(
+                    ["git", "rev-parse", "--symbolic-full-name", "HEAD"], cwd=ROOT, text=True).strip(),
+                "go_version": toolchain, "python_version": subprocess.check_output(["python3", "--version"], text=True).strip(),
+                "node_version": subprocess.check_output(["node", "--version"], text=True).strip(),
+                "target": [system + "/" + arch for system, arch in TARGETS]}
+    validate_identity(identity)
+    write_json(out / "source-info.json", identity)
     binary_dir = out / "bin"
     binary_dir.mkdir()
     for os_name, arch in TARGETS:
@@ -138,9 +170,20 @@ def build(args):
                        cwd=source / "apps/agentshield", env={**env, "GOOS": os_name, "GOARCH": arch}, check=True)
         print(json.dumps({"built": name}), flush=True)
     write_json(out / "sbom.cdx.json", sbom(source, args.version, toolchain))
+    (out / "EVIDENCE_SUMMARY.md").write_text(
+        "# Candidate evidence summary\n\n"
+        f"Frozen source: `{commit}`. This candidate is unsigned. Source identity, binary/Skill inventories "
+        "and checksums are in this package.\n\n"
+        "Implementation and measured checks are recorded in source/docs/hackathon/final-hardening-progress-v4.md. "
+        "Canonical raw records are under source/docs/hackathon/evidence/final-hardening-v4/. "
+        "Final extracted-candidate launch and video records are published separately after packaging; "
+        "a package cannot contain proof of its own final archive hash.\n\n"
+        "Model cohorts are small samples; earlier failures remain in the evidence set. Checksums establish "
+        "byte integrity, not publisher identity. See the source limitations for same-UID, external-model "
+        "and controlled-effect boundaries.\n")
     (out / "QUICK_START.md").write_text(
         "# Local unpublished candidate\n\n"
-        "This is an unsigned dirty-source candidate, not an official release. Verify the archive hash from its "
+        "This is an unsigned release candidate built from a clean frozen commit, not an official release. Verify the archive hash from its "
         "separate preparation record and inspect source-info.json before use. Checksums detect changed bytes; "
         "they do not establish publisher identity. The historical v0.2.0 signed manifest does not sign this package.\n\n"
         "Requires Linux amd64/arm64 and Python >=3.12. Configure Step Plan outside this package as described in "
@@ -176,6 +219,8 @@ def build(args):
             stream.write(f"{item['sha256']}  {name}\n")
         stream.write(f"{sha(out / 'candidate-manifest.json')}  candidate-manifest.json\n")
     verify_package(out)
+    if clean_source(ROOT) != commit:
+        raise ValueError("source changed during candidate build")
     with (archive.open("xb") as target,
           gzip.GzipFile(filename="", fileobj=target, mode="wb", mtime=0) as compressed,
           tarfile.open(fileobj=compressed, mode="w") as bundle):
@@ -197,6 +242,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--version", default="0.3.0-rc.1")
+    parser.add_argument("--source-sha", help="exact frozen commit with successful remote PR CI")
     parser.add_argument("--scanner", type=Path)
     parser.add_argument("--verify-only", action="store_true")
     args = parser.parse_args()

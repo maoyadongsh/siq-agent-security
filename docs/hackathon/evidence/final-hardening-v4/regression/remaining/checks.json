@@ -1,0 +1,622 @@
+[
+  {
+    "name": "check_event_envelope_core",
+    "command": [
+      "python3",
+      "scripts/check_event_envelope_core.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.025
+  },
+  {
+    "name": "check_control_api_dockerfile_lock",
+    "command": [
+      "python3",
+      "scripts/check_control_api_dockerfile_lock.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.022
+  },
+  {
+    "name": "check_web_nginx_headers",
+    "command": [
+      "python3",
+      "scripts/check_web_nginx_headers.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.024
+  },
+  {
+    "name": "check_ci_action_pins",
+    "command": [
+      "python3",
+      "scripts/check_ci_action_pins.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.023
+  },
+  {
+    "name": "check_openshell_compat_workflow",
+    "command": [
+      "python3",
+      "scripts/check_openshell_compat_workflow.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.024
+  },
+  {
+    "name": "check_site_mermaid_vendor",
+    "command": [
+      "python3",
+      "scripts/check_site_mermaid_vendor.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.029
+  },
+  {
+    "name": "check_pages_action_pins",
+    "command": [
+      "python3",
+      "scripts/check_pages_action_pins.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.024
+  },
+  {
+    "name": "check_dockerfile_digests",
+    "command": [
+      "python3",
+      "scripts/check_dockerfile_digests.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.022
+  },
+  {
+    "name": "check_threat_model_local",
+    "command": [
+      "python3",
+      "scripts/check_threat_model_local.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.013
+  },
+  {
+    "name": "check_capability_honesty",
+    "command": [
+      "python3",
+      "scripts/check_capability_honesty.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.026
+  },
+  {
+    "name": "test-openclaw-checkpoint-compat",
+    "command": [
+      "python3",
+      "scripts/test-openclaw-checkpoint-compat.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.49
+  },
+  {
+    "name": "check_perf_baseline_harness",
+    "command": [
+      "python3",
+      "scripts/check_perf_baseline_harness.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.298
+  },
+  {
+    "name": "lint",
+    "command": [
+      "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/ruff",
+      "check",
+      "apps/control-api/app",
+      "apps/secure-agent",
+      "scripts/hackathon",
+      "benchmarks/hackathon",
+      "benchmarks/runtime-security",
+      "deploy/dgx-spark/preflight.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.009
+  },
+  {
+    "name": "schema-contracts",
+    "command": [
+      "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/python",
+      "benchmarks/runtime-security/check_contracts.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.061
+  },
+  {
+    "name": "runtime-benchmark-tests",
+    "command": [
+      "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "benchmarks/runtime-security",
+      "-p",
+      "test_*.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.076
+  },
+  {
+    "name": "agent-benchmark-tests",
+    "command": [
+      "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "benchmarks/hackathon",
+      "-p",
+      "test_*.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 1.684
+  },
+  {
+    "name": "hermes-adapter-tests",
+    "command": [
+      "/home/maoyd/siq/siq-agent-security/apps/control-api/.venv/bin/pytest",
+      "adapters/runtime/hermes-agentshield/tests/test_adapter.py",
+      "-q"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 25.901
+  },
+  {
+    "name": "openclaw-adapter-tests",
+    "command": [
+      "node",
+      "scripts/test-openclaw-adapter.cjs"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "elapsed_s": 0.952
+  },
+  {
+    "name": "edge-agent-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "edge/agent",
+    "exit_code": 0,
+    "elapsed_s": 0.395
+  },
+  {
+    "name": "edge-agent-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "edge/agent",
+    "exit_code": 0,
+    "elapsed_s": 0.076
+  },
+  {
+    "name": "edge-agent-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "edge/agent",
+    "exit_code": 0,
+    "elapsed_s": 0.081
+  },
+  {
+    "name": "connectors-hermes-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/hermes",
+    "exit_code": 0,
+    "elapsed_s": 0.2
+  },
+  {
+    "name": "connectors-hermes-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/hermes",
+    "exit_code": 0,
+    "elapsed_s": 0.053
+  },
+  {
+    "name": "connectors-hermes-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/hermes",
+    "exit_code": 0,
+    "elapsed_s": 0.061
+  },
+  {
+    "name": "connectors-openclaw-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/openclaw",
+    "exit_code": 0,
+    "elapsed_s": 0.182
+  },
+  {
+    "name": "connectors-openclaw-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/openclaw",
+    "exit_code": 0,
+    "elapsed_s": 0.053
+  },
+  {
+    "name": "connectors-openclaw-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/openclaw",
+    "exit_code": 0,
+    "elapsed_s": 0.057
+  },
+  {
+    "name": "connectors-docker-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/docker",
+    "exit_code": 0,
+    "elapsed_s": 0.195
+  },
+  {
+    "name": "connectors-docker-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/docker",
+    "exit_code": 0,
+    "elapsed_s": 0.053
+  },
+  {
+    "name": "connectors-docker-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/docker",
+    "exit_code": 0,
+    "elapsed_s": 0.055
+  },
+  {
+    "name": "connectors-directory-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/directory",
+    "exit_code": 0,
+    "elapsed_s": 0.21
+  },
+  {
+    "name": "connectors-directory-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/directory",
+    "exit_code": 0,
+    "elapsed_s": 0.054
+  },
+  {
+    "name": "connectors-directory-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/directory",
+    "exit_code": 0,
+    "elapsed_s": 0.062
+  },
+  {
+    "name": "connectors-systemd-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/systemd",
+    "exit_code": 0,
+    "elapsed_s": 0.215
+  },
+  {
+    "name": "connectors-systemd-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/systemd",
+    "exit_code": 0,
+    "elapsed_s": 0.057
+  },
+  {
+    "name": "connectors-systemd-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/systemd",
+    "exit_code": 0,
+    "elapsed_s": 0.058
+  },
+  {
+    "name": "connectors-kubernetes-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/kubernetes",
+    "exit_code": 0,
+    "elapsed_s": 0.202
+  },
+  {
+    "name": "connectors-kubernetes-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/kubernetes",
+    "exit_code": 0,
+    "elapsed_s": 0.054
+  },
+  {
+    "name": "connectors-kubernetes-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/kubernetes",
+    "exit_code": 0,
+    "elapsed_s": 0.054
+  },
+  {
+    "name": "connectors-process-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/process",
+    "exit_code": 0,
+    "elapsed_s": 0.197
+  },
+  {
+    "name": "connectors-process-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/process",
+    "exit_code": 0,
+    "elapsed_s": 0.057
+  },
+  {
+    "name": "connectors-process-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/process",
+    "exit_code": 0,
+    "elapsed_s": 0.053
+  },
+  {
+    "name": "connectors-mcp-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/mcp",
+    "exit_code": 0,
+    "elapsed_s": 0.216
+  },
+  {
+    "name": "connectors-mcp-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/mcp",
+    "exit_code": 0,
+    "elapsed_s": 0.054
+  },
+  {
+    "name": "connectors-mcp-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/mcp",
+    "exit_code": 0,
+    "elapsed_s": 0.06
+  },
+  {
+    "name": "connectors-piagent-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/piagent",
+    "exit_code": 0,
+    "elapsed_s": 0.193
+  },
+  {
+    "name": "connectors-piagent-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/piagent",
+    "exit_code": 0,
+    "elapsed_s": 0.061
+  },
+  {
+    "name": "connectors-piagent-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/piagent",
+    "exit_code": 0,
+    "elapsed_s": 0.063
+  },
+  {
+    "name": "connectors-workbuddy-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/workbuddy",
+    "exit_code": 0,
+    "elapsed_s": 0.187
+  },
+  {
+    "name": "connectors-workbuddy-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/workbuddy",
+    "exit_code": 0,
+    "elapsed_s": 0.051
+  },
+  {
+    "name": "connectors-workbuddy-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/workbuddy",
+    "exit_code": 0,
+    "elapsed_s": 0.059
+  },
+  {
+    "name": "connectors-dify-build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "cwd": "connectors/dify",
+    "exit_code": 0,
+    "elapsed_s": 0.224
+  },
+  {
+    "name": "connectors-dify-vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "connectors/dify",
+    "exit_code": 0,
+    "elapsed_s": 0.055
+  },
+  {
+    "name": "connectors-dify-test",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "cwd": "connectors/dify",
+    "exit_code": 0,
+    "elapsed_s": 0.058
+  },
+  {
+    "name": "manifest-verify",
+    "command": [
+      "go",
+      "run",
+      "./cmd/agentshield",
+      "manifest-verify",
+      "../../skills/siq-agent-security/skill-manifest.json"
+    ],
+    "cwd": "apps/agentshield",
+    "exit_code": 0,
+    "elapsed_s": 0.391
+  }
+]

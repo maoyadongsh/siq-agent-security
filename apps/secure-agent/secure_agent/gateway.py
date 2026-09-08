@@ -75,6 +75,8 @@ class ToolGateway:
                  "d2_attempted": True, "d3_materialized": False, "observation": "UNKNOWN",
                  "effect": None}
         self._state.actions.append(event)
+        if tool == "send_message" and isinstance(request["params"].get("recipient"), str):
+            event["routing_recipient"] = request["params"]["recipient"]
         if self._describe_provenance and decision["action"] != "allow":
             event["provenance_readbacks"] = self._describe_provenance(strict_json(canonical(request)))
         if self._changed:

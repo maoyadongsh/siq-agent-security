@@ -173,7 +173,9 @@ jobs:
         with:
           node-version: "22"
       - run: npm ci
+      - run: npm run test
       - run: npm run build
+      - run: npm run build:local
       - name: OpenClaw hook correlation regression
         run: node ../../scripts/test-openclaw-adapter.cjs
       - name: Production dependency audit

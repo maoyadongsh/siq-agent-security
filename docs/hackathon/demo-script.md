@@ -1,28 +1,30 @@
-# Five-minute demonstration
+# V4 frozen demonstration
 
-Before presenting, run the [quick start](../../HACKATHON.md), check service
-health, and obtain a fresh pairing code with `scripts/hackathon/pair.sh`.
-Check the visible provider label. Use StepFun for the normal task; ornith is the explicit backup. If using the
-explicit test profile for deterministic attack demonstrations, say so aloud.
-Never describe a forced fixture-model choice as real-model susceptibility.
+Main story: review selected repository sources, create a report, deliver it to
+Alice. Open the existing `/demo` page using [HACKATHON.md](../../HACKATHON.md).
+StepFun plans from public metadata, Ornith analyzes locally on DGX, and SIQ
+independently authorizes actions and evaluates observed effects.
 
-| Time | Operator action | Explain and show |
+| Time target | Actual interaction | Visible evidence |
 | --- | --- | --- |
-| 0:00–0:30 | Open `/demo`, pair, show the task and provider | “The model proposes a review and delivery. SIQ authorizes the actual actions.” |
-| 0:30–1:30 | Submit normal delivery | Three Skills, committed Intent, allowed actions, actual report and receiver effect evidence; explain the observed scope |
-| 1:30–2:30 | Run MCP attack and same-value provenance scenarios | Expand recipient provenance. Compare the trusted directory assertion with the SIQ-returned MCP assertion. Equal mailbox text does not grant authority |
-| 2:30–3:20 | Run approval scenario and approve the displayed report verifier | Show HOLD, exact parameters and expiry, operator click, SIQ recheck and actual fixed process. The process result alone is only reported evidence |
-| 3:20–4:10 | Run fake success | Tool says success; receiver has no observed delivery; Completion remains incomplete |
-| 4:10–4:40 | Run stateful egress scenario | Allowed confidential fixture read → allowed web response → denied next request, in one session; three SIQ state snapshots, zero report or delivery |
-| 4:40–5:00 | Show benchmark and limitations | 23/23 deterministic controls; latest StepFun and ornith 5/5 separate small utility cohorts; earlier failures retained; no universal security or review-quality claim |
+| 0:00–0:15 | Show task, source identity, provider and hardware card | Skills give agents capabilities. Who authorizes the consequences? |
+| 0:15–0:40 | Real-model research-only | One selected Skill; actual local inference; no delivery claim |
+| 0:40–1:20 | Real-model normal delivery | Three selected Skills; ALLOW; observed report and receiver; verified Completion |
+| 1:20–1:50 | Explicit FixtureProvider attack controls | Actual trusted baseline followed by MCP attacker routing DENY |
+| 1:50–2:15 | Same-value scenario | The actual same mailbox from trusted directory ALLOW and MCP DENY |
+| 2:15–2:35 | Fake-success scenario | Actual reported success, absent receiver effect, incomplete Completion |
+| 2:35–2:50 | Show limitations and evidence | Model proposes; SIQ authorizes; evidence determines completion |
 
-These times are presentation targets, not guaranteed execution latency. Start
-with configured StepFun (or explicitly selected warm local backup) and leave time for task completion. Approval expires
-after about 60 seconds. A failed model call remains a failed attempt; show its
-diagnostic and do not relabel it as an attack blocked by SIQ.
+The optional live approval act shows HOLD, exact parameters and expiry, operator
+approval, SIQ recheck and execution. The nine-scenario browser regression also
+covers research+report, conflicting effects and stateful trifecta. These extra
+acts need not be squeezed into the 2–3 minute recording.
 
-For reproducible recorded evidence, use the archived [seven-scenario browser
-run](evidence/browser-trifecta-20260908/result.json),
-[actual model cohorts](structured-model-output.md), and [live GitHub task](live-source-validation.md).
-Archived screenshots are evidence of their labelled run, not a substitute for
-claiming that the current live session ran successfully. No video has been recorded.
+`scripts/hackathon/record-demo.py` records browser interactions against an exact
+clean candidate with separate real-model and explicit test services. Captions
+explain the evidence; they do not replace decisions or hide waiting. No playback
+speed changes or success edits are permitted. A failed real-model attempt remains
+a failed attempt. The script records source SHA, task IDs, providers, duration and
+video hash outside Git. Final recording status is tracked in the
+[V4 report](final-hardening-progress-v4.md); raw evidence has one entry:
+[Evidence index](evidence/INDEX.md).

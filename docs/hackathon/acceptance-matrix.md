@@ -1,3 +1,8 @@
+> Historical V3 record. Current V4 development and acceptance are tracked in
+> [V4 progress](final-hardening-progress-v4.md), [task ledger](final-hardening-tasks-v4.md)
+> and [canonical evidence](evidence/INDEX.md). V4 requires a clean CI-verified
+> candidate and a real 2–3 minute recording; V3 dirty-source/video exemptions do not apply.
+
 # V3 requirement audit
 
 Scope: the user-supplied [master plan](master-plan-v3.md), local development,

@@ -10,6 +10,7 @@ type Action = {
   decision: string; reason_code: string; authority_status: string;
   d2_attempted: boolean; d3_materialized: boolean; observation: string;
   reported_success?: boolean;
+  routing_recipient?: string;
   decision_trifecta?: { private_data: boolean; untrusted_input: boolean; egress: boolean } | null;
   parameter_provenance: { parameter_path: string; provenance_refs: string[] }[];
   provenance_readbacks?: ProvenanceReadback[];
@@ -39,7 +40,7 @@ const API = '/hackathon/v1';
 function ProvenanceEvidence({ entry }: { entry: ProvenanceReadback }) {
   return <div className="demo-provenance" data-provenance={entry.assertion?.source.type ?? 'unavailable'}>
     <p><strong>{entry.parameter_path === '/recipient' ? '收件人来源' : entry.parameter_path}</strong>
-      {entry.status === 'resolved' && entry.assertion ? <>：{entry.assertion.source.type} · {entry.assertion.source.trust}</> : '：读回不可用'}</p>
+      {entry.status === 'resolved' && entry.assertion ? <>：{entry.assertion.source.type} · {entry.assertion.source.trust.toUpperCase()}</> : '：读回不可用'}</p>
     {entry.matches_operator_contact !== undefined ? <p>{entry.matches_operator_contact ? '值与受信联系人相同' : '值与受信联系人不同'}；来源资格以 SIQ 裁决为准。</p> : null}
     {entry.assertion ? <dl><dt>来源摘要</dt><dd className="demo-mono">{entry.assertion.content_digest}</dd>
       <dt>来源任务</dt><dd className="demo-mono">{entry.assertion.scope.task_id}</dd>
@@ -97,6 +98,9 @@ export default function DemoPage() {
   const completion = task?.completion;
   const hardware = snapshot?.hardware;
   const deliveryAction = task?.actions.find(a => a.tool === 'send_message');
+  const trustedDelivery = tasks.flatMap(t => t.task?.actions ?? []).find(a =>
+    a.tool === 'send_message' && a.decision === 'allow' && a.routing_recipient === deliveryAction?.routing_recipient &&
+    a.provenance_readbacks?.some(p => p.assertion?.source.type === 'TRUSTED_DATABASE'));
 
   async function pair(event: FormEvent) {
     event.preventDefault(); setBusy(true); setError(null);
@@ -181,10 +185,14 @@ export default function DemoPage() {
             <dt>摘要</dt><dd className="demo-mono">{current.intent.digest}</dd></dl> : <p>准备阶段仅允许读取；报告内容确定后签发执行 Intent。</p>}</details>
         </section>
         <section className="demo-panel demo-wide"><p className="demo-kicker">SECURITY DECISIONS</p><h2>执行时间线</h2>
+          {current?.scenario === 'same-value' && trustedDelivery && deliveryAction ? <div className="demo-provenance" data-comparison="same-value">
+            <strong>Value · {deliveryAction.routing_recipient}</strong><p>Trusted Directory → {trustedDelivery.decision.toUpperCase()} · MCP → {deliveryAction.decision.toUpperCase()}</p>
+            <p className="demo-note">比较已记录动作的实际裁决；值相同，来源不同。</p></div> : null}
           {current?.scenario === 'trifecta' ? <p>同一会话读取受控机密样例后接收网页响应；SIQ 根据累计状态拒绝后续网络请求。样例没有真实凭据，报告与交付保持未完成。</p> : null}
           {task?.actions.length ? <ol className="demo-actions">{task.actions.map(action => <li key={action.action_id}>
             <div><strong>{TOOLS[action.tool] ?? action.tool}</strong><span className="demo-status" data-state={action.decision}>{action.decision.toUpperCase()}</span><span>{action.skill}</span></div>
             <p>{action.reason_code}{action.decision === 'hold' ? ' · 等待操作员审批' : ''} · Authority: {action.authority_status}</p>
+            {action.routing_recipient ? <p>Recipient · <strong>{action.routing_recipient}</strong></p> : null}
             {current?.scenario === 'trifecta' && action.decision_trifecta ? <p data-trifecta="decision">SIQ 决策时状态：机密数据 {String(action.decision_trifecta.private_data)} · 不可信输入 {String(action.decision_trifecta.untrusted_input)} · 出网 {String(action.decision_trifecta.egress)}</p> : null}
             {action.approval_status ? <p>审批重查：{action.approval_status} · {action.approval_reason_code}</p> : null}
             {action.provenance_readbacks?.filter(p => p.parameter_path === '/recipient').map(p => <ProvenanceEvidence key={p.provenance_id} entry={p} />)}

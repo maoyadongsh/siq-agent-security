@@ -2,7 +2,7 @@
 
 更新：2026-09-08。用户指定的完整要求已按原始字节保存在 [V4 原文](final-hardening-requirements-v4.md)。本文件负责当前目标与执行入口，[开发任务台账](final-hardening-tasks-v4.md)负责逐项实施和验收；[JSON 台账](final-hardening-tasks-v4.json)是可更新的任务状态事实源。
 
-本次交付范围为设置开发目标并落盘全部任务。**目标登记完成不等于 V4 工程完成。** V4 功能、回归、远端 CI、RC 和视频尚待按台账执行。原文 §81 的完整工程交付链已拆成任务，后续开发不能只以计划文档作为最终验收。
+用户已明确要求持续完成 V4 全部开发与可执行交付。**目标登记完成不等于 V4 工程完成。** 当前正在实施功能、回归、远端 CI、RC 和视频，实际检查结果见[开发进度](final-hardening-progress-v4.md)。原文 §81 的完整工程交付链是最终验收要求。
 
 ## 基线与来源
 
@@ -18,7 +18,7 @@
 | original title | DGX Spark Agent Skills Hackathon — Final Hardening & Competition Freeze V4 |
 | original sections | §0–§83，共 84 节，全部映射至任务 |
 | task inventory | 63 项；2 项基线/审计完成，61 项待执行，其中 4 项为 external/manual |
-| implementation evidence | [Current-State Audit](final-hardening-audit.md)；本次没有重跑功能测试、模型、DGX 或 benchmark |
+| implementation evidence | [Current-State Audit](final-hardening-audit.md) 为初始审计；新实现与实际验证见[开发进度](final-hardening-progress-v4.md) |
 
 以上数量为登记快照；后续以 JSON 中的逐项状态与证据为准。V4 覆盖 V3 中固定三步计划、主备模型叙事、dirty-source 候选、视频非必需等相冲突的开发目标；V3 的源码、签名协议和历史证据继续复用，不能重贴 V4 已验收标签。`main` 集成历史不改变本轮指定的 V3 分支基线。
 

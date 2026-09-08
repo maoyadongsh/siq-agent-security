@@ -1,13 +1,9 @@
 # DGX Spark deployment profile
 
-The isolated Agent/SIQ/fixture service, existing local Web Demo Mode, start and
-health scripts are implemented and locally exercised. Full competition acceptance
-still requires improved real-model reliability and submission gates. The
-[Agent benchmark](../../docs/hackathon/benchmark-report.md) now includes 23
-control tasks and separate actual-provider cohorts. The latest ornith cohort
-completed 5/5; earlier failures remain archived.
-Approval continuation is exercised through the existing SIQ HOLD/recheck and
-the browser operator panel; see the [approval checkpoint](../../docs/hackathon/approval-integration.md).
+V4 uses StepFun for public planning and verified local Ornith for source analysis
+and recipient reasoning. The [V4 evidence index](../../docs/hackathon/evidence/INDEX.md)
+contains actual hardware, local inference, zero remote confidential transport,
+and separate small model cohorts with their earlier failures retained.
 
 From the repository root:
 
@@ -19,7 +15,7 @@ From the repository root:
 
 Per the operator's latest 2026-09-08 instruction, start defaults to Step Plan
 `step-3.7-flash`, using the [private provider configuration](../../docs/hackathon/step-plan.md)
-or a complete `SIQ_STEPFUN_*` environment bundle. Local ornith is the backup:
+or a complete `SIQ_STEPFUN_*` environment bundle. Local Ornith is the default research provider; to use it for planning too:
 after managed reset, use `start.sh --provider ornith` and the defaults in
 [env.ornith.example](env.ornith.example). Provider switches are explicit and
 recorded; there is no silent fallback. `--mode test` selects FixtureProvider.

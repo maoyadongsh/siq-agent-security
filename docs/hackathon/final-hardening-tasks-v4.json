@@ -1,7 +1,7 @@
 {
   "schema_version": "hackathon-final-hardening-tasks/v1",
   "updated_at": "2026-09-08",
-  "scope": "V4 开发目标与任务落盘；工程执行和比赛最终验收待逐项开展。",
+  "scope": "V4 全部开发与可执行交付持续进行；状态以实际测试和证据为准。",
   "source_document": "docs/hackathon/final-hardening-requirements-v4.md",
   "source_document_sha256": "60ef74152619b72bcc27123067a500f02b5f861f15086edb3621b9d218df0fc4",
   "starting_sha": "9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1",
@@ -89,7 +89,7 @@
       ],
       "priority": "P0",
       "phase": 0,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-AUDIT"
@@ -108,7 +108,9 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "V4 implementation in current branch; validation checkpoint docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -121,7 +123,7 @@
       ],
       "priority": "P0",
       "phase": 1,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-SCOPE"
@@ -140,7 +142,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -151,7 +156,7 @@
       ],
       "priority": "P0",
       "phase": 1,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A1"
@@ -167,7 +172,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -180,7 +188,7 @@
       ],
       "priority": "P0",
       "phase": 1,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A2"
@@ -199,7 +207,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -210,7 +221,7 @@
       ],
       "priority": "P0",
       "phase": 1,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A2"
@@ -229,7 +240,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -240,7 +254,7 @@
       ],
       "priority": "P0",
       "phase": 1,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A3",
@@ -260,7 +274,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -271,7 +288,7 @@
       ],
       "priority": "P0",
       "phase": 1,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A1",
@@ -290,7 +307,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -301,7 +321,7 @@
       ],
       "priority": "P0",
       "phase": 1,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A5",
@@ -321,7 +341,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -333,7 +356,7 @@
       ],
       "priority": "P0",
       "phase": 1,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A4",
@@ -361,7 +384,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -374,7 +400,7 @@
       ],
       "priority": "P0",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A8"
@@ -394,7 +420,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -406,7 +435,7 @@
       ],
       "priority": "P0",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-B1"
@@ -426,7 +455,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -437,7 +469,7 @@
       ],
       "priority": "P0",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-B2"
@@ -455,7 +487,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -466,7 +501,7 @@
       ],
       "priority": "P0",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-B2",
@@ -485,7 +520,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -498,7 +536,7 @@
       ],
       "priority": "P0",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-B4"
@@ -519,7 +557,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -530,7 +571,7 @@
       ],
       "priority": "P0",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-B5"
@@ -549,7 +590,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -561,7 +605,7 @@
       ],
       "priority": "P0",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-B3",
@@ -589,7 +633,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -601,7 +648,7 @@
       ],
       "priority": "P1",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A7",
@@ -621,7 +668,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -632,7 +682,7 @@
       ],
       "priority": "P1",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-C1"
@@ -648,7 +698,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -659,7 +712,7 @@
       ],
       "priority": "P1",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-C1"
@@ -676,7 +729,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -687,7 +743,7 @@
       ],
       "priority": "P1",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-A8",
@@ -708,7 +764,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -720,7 +779,7 @@
       ],
       "priority": "P1",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-B7"
@@ -737,7 +796,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -748,7 +810,7 @@
       ],
       "priority": "P1",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-F1",
@@ -766,7 +828,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -777,7 +842,7 @@
       ],
       "priority": "P1",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-F1"
@@ -793,7 +858,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -804,7 +872,7 @@
       ],
       "priority": "P1",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-F3"
@@ -822,7 +890,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -833,7 +904,7 @@
       ],
       "priority": "P1",
       "phase": 2,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-F3"
@@ -850,7 +921,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -862,7 +936,7 @@
       ],
       "priority": "P0",
       "phase": 3,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-B7",
@@ -883,7 +957,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -894,7 +971,7 @@
       ],
       "priority": "P0",
       "phase": 3,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-I1"
@@ -911,7 +988,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -922,7 +1002,7 @@
       ],
       "priority": "P0",
       "phase": 3,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-I2"
@@ -945,7 +1025,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -956,7 +1039,7 @@
       ],
       "priority": "P0",
       "phase": 3,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-I3"
@@ -974,7 +1057,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -985,7 +1071,7 @@
       ],
       "priority": "P0",
       "phase": 3,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-I4"
@@ -1004,7 +1090,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1015,7 +1104,7 @@
       ],
       "priority": "P0",
       "phase": 3,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-I5"
@@ -1034,7 +1123,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1046,7 +1138,7 @@
       ],
       "priority": "P0",
       "phase": 3,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-I6"
@@ -1065,7 +1157,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1078,7 +1173,7 @@
       ],
       "priority": "P0",
       "phase": 4,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-I7"
@@ -1107,7 +1202,7 @@
       ],
       "priority": "P0",
       "phase": 4,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-D1"
@@ -1138,7 +1233,7 @@
       ],
       "priority": "P0",
       "phase": 4,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-AUDIT"
@@ -1155,7 +1250,9 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "V4 implementation in current branch; validation checkpoint docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1166,7 +1263,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-D2"
@@ -1197,7 +1294,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-D4"
@@ -1226,7 +1323,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-D5"
@@ -1256,7 +1353,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-D6"
@@ -1288,7 +1385,7 @@
       ],
       "priority": "P0",
       "phase": 5,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-D7"
@@ -1320,7 +1417,7 @@
       ],
       "priority": "P0",
       "phase": 6,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-D8"
@@ -1349,7 +1446,7 @@
       ],
       "priority": "P0",
       "phase": 6,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-E1"
@@ -1378,7 +1475,7 @@
       ],
       "priority": "P0",
       "phase": 6,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-E2"
@@ -1408,7 +1505,7 @@
       ],
       "priority": "P0",
       "phase": 6,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-E3",
@@ -1440,7 +1537,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-E4"
@@ -1460,7 +1557,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1471,7 +1571,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-G1"
@@ -1488,7 +1588,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1499,7 +1602,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-G2"
@@ -1517,7 +1620,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1528,7 +1634,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-G3"
@@ -1545,7 +1651,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1556,7 +1665,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-G4"
@@ -1573,7 +1682,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1584,7 +1696,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-G5"
@@ -1601,7 +1713,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1614,7 +1729,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-G6"
@@ -1643,7 +1758,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-H1"
@@ -1675,7 +1790,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-E4",
@@ -1695,7 +1810,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1708,7 +1826,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "done",
       "kind": "engineering",
       "depends_on": [
         "V4-J1"
@@ -1729,7 +1847,10 @@
       "evidence_required": [
         "记录实际执行命令、时间、source SHA、结果及证据路径；未运行保持 unverified。"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/hackathon/evidence/INDEX.md",
+        "docs/hackathon/final-hardening-progress-v4.md"
+      ],
       "external_blocker": null
     },
     {
@@ -1740,7 +1861,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-H2",
@@ -1771,7 +1892,7 @@
       ],
       "priority": "P0",
       "phase": 7,
-      "status": "todo",
+      "status": "in_progress",
       "kind": "engineering",
       "depends_on": [
         "V4-J3",

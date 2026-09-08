@@ -1,13 +1,16 @@
 # Secure Research & Delivery architecture
 
-The user asks for a selected-source review and delivery to Alice. StepFun proposes
-plans, findings and a contact candidate. The existing SIQ daemon owns authority,
+The user asks for a selected-source review and delivery to Alice. StepFun proposes a dependency-constrained Skill plan from approved public metadata.
+Ornith on DGX Spark analyzes sources and recipient context under ModelRouter policy. The existing SIQ daemon owns authority,
 decisions, provenance and Completion. Models never receive its credentials.
 
 ```mermaid
 flowchart TD
     U[User task and paired operator] --> A[Secure Agent]
-    A <--> M[StepFun proposals / explicit local ornith backup]
+    A --> M[StepFun remote public planning]
+    A --> MR[Trusted ModelRouter and sensitivity policy]
+    MR --> DGX[Ornith local DGX research and recipient reasoning]
+    MR --> DENY[Reject unavailable or forbidden routes]
     A --> P[Read-only preparation Intent]
     P --> R[secure-research]
     R --> G[Tool Gateway]
@@ -53,3 +56,22 @@ The Dashboard is part of the existing local SPA, with loopback-only pairing and
 HttpOnly sessions. The Agent, model and UI do not implement another policy or
 Completion engine. Built-in Python Skills are not an operating-system sandbox.
 See [limits](limitations.md) and [API integration map](current-state.md).
+
+## V4 dynamic planning and data boundary
+
+TaskPlan V2 admits only the registered dependency prefixes: research;
+research → report; research → report → delivery. The trusted requested output
+bounds both the proposed plan and execution authority. Unregistered, duplicate,
+reordered, missing-dependency, excessive or incomplete plans fail before tools.
+Research-only produces findings without a report or receiver event; task status
+is `researched`, while SIQ effect Completion remains UNKNOWN.
+
+Sensitivity comes from the operator/configuration, never source text or model
+output. Private planning uses public templates and opaque aliases: free-text
+questions, repository names, paths and raw sources do not enter remote planning.
+CONFIDENTIAL raw input requires a verified local DGX route; SECRET is denied by
+default. A local outage never triggers remote fallback. Public inference may be
+remote only where policy allows it. Per-call digests, classification, provider,
+locality and transitions are visible without publishing confidential content.
+See [egress contract](model-egress-v4.md), [Skill contract](dynamic-plans-v4.md)
+and the [canonical evidence](evidence/INDEX.md).

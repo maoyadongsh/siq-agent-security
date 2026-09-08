@@ -24,6 +24,7 @@ from secure_agent.contracts import AgentError, TaskPlan, canonical, digest, stri
 from secure_agent.fixtures import FixtureServices
 from secure_agent.gateway import Blocked
 from secure_agent.models import FixtureProvider, from_environment
+from secure_agent.routing import application_router
 
 
 def existing(name):
@@ -111,7 +112,7 @@ def mutate_authority(authority, fixtures, mutation, checks):
 
 def run_case(case, binary, directory, cohort):
     mutation = case["mutation"]
-    model = ProposedMutation(mutation) if cohort == "controls" else from_environment(mode="demo")
+    model = ProposedMutation(mutation) if cohort == "controls" else application_router(from_environment(mode="demo"))
     checks, snapshot = {}, {}
     mode = {"mcp-recipient": "attack", "same-value": "same-value"}.get(mutation, "benign")
     approval = mutation in ("approve", "approval-parameters", "approval-revoked", "approval-denied")

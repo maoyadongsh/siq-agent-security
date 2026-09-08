@@ -83,6 +83,10 @@ def main():
                 source = None
             if scenario == "same-value" and "值与受信联系人相同" not in provenance.inner_text():
                 raise ValueError("same-value provenance distinction missing")
+            if scenario == "same-value":
+                comparison = page.locator('[data-comparison="same-value"]').inner_text()
+                if not all(value in comparison for value in ('alice@company.example', 'Trusted Directory → ALLOW', 'MCP → DENY')):
+                    raise ValueError("actual same-value decisions missing")
             if scenario == "mcp-attack" and "值与受信联系人不同" not in provenance.inner_text():
                 raise ValueError("recipient substitution explanation missing")
             page.screenshot(path=str(args.out_dir / (scenario + ".png")), full_page=True)

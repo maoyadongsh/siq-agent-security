@@ -21,6 +21,7 @@ from secure_agent.authority import LocalDaemon
 from secure_agent.contracts import AgentError
 from secure_agent.fixtures import FixtureServices
 from secure_agent.models import from_environment
+from secure_agent.routing import application_router
 
 
 def main():
@@ -37,7 +38,7 @@ def main():
     args = parser.parse_args()
     if args.trifecta and args.approval_test_operator:
         parser.error("choose one scenario: trifecta or approval")
-    model = from_environment(mode="demo")
+    model = application_router(from_environment(mode="demo"))
     files = {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
              for path in sorted((ROOT / "apps/secure-agent/secure_agent").glob("*.py"))}
     spec = importlib.util.spec_from_file_location("runtime_evidence", ROOT / "benchmarks/runtime-security/evidence.py")

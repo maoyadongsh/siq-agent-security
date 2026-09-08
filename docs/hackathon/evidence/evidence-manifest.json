@@ -1,0 +1,47 @@
+{
+  "schema_version": "hackathon-evidence-manifest/v1",
+  "source_sha": "ab57648aff53541a0baebb5bad5fbdf0106834eb",
+  "scope": "V4 local checkpoints; individual records retain their original source identities. CI/RC/video records pending final freeze.",
+  "dgx": {
+    "canonical_files": [
+      "final-hardening-v4/dgx-preflight.json",
+      "final-hardening-v4/locality.json"
+    ]
+  },
+  "stepfun": {
+    "canonical_files": [
+      "final-hardening-v4/stepfun-cohort-v2.json",
+      "final-hardening-v4/stepfun-verification-v2.json",
+      "final-hardening-v4/stepfun-cohort.json"
+    ]
+  },
+  "skills": {
+    "canonical_files": [
+      "final-hardening-v4/browser-v3/result.json",
+      "final-hardening-v4/locality.json"
+    ]
+  },
+  "security": {
+    "canonical_files": [
+      "final-hardening-v4/control-cohort.json",
+      "final-hardening-v4/control-verification.json",
+      "final-hardening-v4/validation.json"
+    ]
+  },
+  "effect": {
+    "canonical_files": [
+      "final-hardening-v4/control-cohort.json",
+      "final-hardening-v4/browser-v3/result.json"
+    ]
+  },
+  "benchmark": {
+    "canonical_files": [
+      "final-hardening-v4/stepfun-performance.json",
+      "final-hardening-v4/ornith-performance.json",
+      "final-hardening-v4/runtime-performance.json",
+      "final-hardening-v4/ornith-cohort-v2.json",
+      "final-hardening-v4/ornith-verification-v2.json",
+      "final-hardening-v4/ornith-cohort.json"
+    ]
+  }
+}
