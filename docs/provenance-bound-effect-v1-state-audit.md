@@ -52,3 +52,13 @@ unsigned辅助函数只投影签名字段；JSON Marshal用于投影/磁盘编�
 运行Go1.26.6：canon/signing完整包无缓存race通过；provenance、effectevidence、intent匹配Vector/Signature/Tamper/CrossLanguage/AuthorityVerifies/ContextIntegrity测试通过。trustedcontext无直接测试文件，Context端到端测试位于intent与receipt，不把no test files计为测试通过；第一轮canon名称过滤未匹配，随后已完整执行。
 
 G4据此记录为本地验收通过，范围是生产签名与规范化复用。Python离线验收工具的独立实现是跨语言验证端，不签发生产Authority；其资源预算和完整语义证明仍独立处理。G3/G5全范围审计没有因本项通过而自动关闭。
+
+## G3/G5增量验收（源码20b85b1，生产基线693641d）
+
+新增生产map按生命周期复核：固定taxonomy/unsigned字段投影不会随请求历史增长；HTTP observer/pending缓存均在持锁插入前检查128上限，finish只更新已存在项；Hermes来源/关联缓存2048并清TTL。图active/done、matcher和Completion临时map受64深度/1024节点/4096边、每参数32引用、128要求/8192记录约束。历史效果扫描只保留wanted动作集，不建立全链历史map。RuntimeAction输出集合先经过64层/8192节点/单指针1024字节/累计1MiB预算；默认provenance约束只由已验证最多1024显式约束及受预算descriptor生成。JSON解码字段map受HTTP/签名记录大小限制。G3本地验收通过。
+
+此结论不是固定CPU/磁盘总量保证：完整回执扫描仍随历史长度增加；来源图按scope限制，不宣称所有scope磁盘总量有一个统一配额。调用内map和跨请求缓存区分处理，没有把无跨请求缓存等同于零内存风险。
+
+G5生产授权流复核：cmd/agentshield/main.go只把ResolveStore、MatchParameters、GetContext接入引擎；Engine.Decide拒绝req.Intent，解析受信绑定并保留降级/撤销错误；Context/Provenance错误转为Authority invalid，ApplyMode先拒绝无效Authority，再处理普通policy。管理签发路由与decision report/select分权；Completion只读签名Intent和历史证据，没有回写binding/Grant或调用批准接口。新增工具/效果/来源数据不作为LLM最终授权输出消费，G5本地验收通过。
+
+实际验证：Go1.26.6对provenance/runtimeaction/intent/effectevidence/receipt/server运行Capacity/Budget/Bounds/Boundaries/Concurrent/Recovery匹配测试，无缓存race全部通过。此前Authority/Provenance/Effect原始HTTP正负测试为权限边界提供补充。G3/G5均以生产调用边界为范围，不声称对任意不受信Go插件提供进程隔离。

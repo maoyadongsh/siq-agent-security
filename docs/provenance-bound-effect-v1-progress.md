@@ -773,3 +773,10 @@
 - canon/signing完整包与相关模块固定向量/签名/篡改Go1.26.6无缓存race通过；Context测试位于intent，未把trustedcontext无测试文件当成证据。
 - 明确Effect旧float投影与pending/recovery整数保留兼容边界；G4本地通过，累计40/45项。G3/G5及全部模板要求继续审计，不因索引匹配就判定完成。
 - 693641d远端runtime-security运行中、ci排队（本轮读取），继续保持最终CI未验收。
+
+## 2026-09-08：状态容量与最终授权入口验收
+
+- G3/G5完成生产边界核读，见state-audit增量；区分持久缓存、调用临时map和固定投影，明确磁盘/全链扫描不在固定资源保证内。
+- 核对daemon权威依赖注入、内嵌Intent拒绝、Authority ApplyMode、管理路由分权及Completion只读行为；未新增LLM最终授权。
+- 六包Capacity/Budget/Bounds/Boundaries/Concurrent/Recovery匹配测试Go1.26.6无缓存race通过，累计42/45项本地验收。
+- 693641d远端ci运行34187693641、runtime-security运行34187693678均success；最终交付SHA及全模板审计仍待完成。
