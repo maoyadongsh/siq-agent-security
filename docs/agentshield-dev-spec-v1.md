@@ -808,3 +808,9 @@ HTTP 请求/撤销记录分别遵守 `intent-binding-revoke-request.v1.schema.js
 `runtimeaction.Describe(tool, params)` 为工具语义的唯一入口，输出 Tool、Operation、Effects、Resources、Egress、Mutating、ShellLike 和 HighImpactParameterPaths。Normalize/ExtractResources 仅作为旧调用方的兼容入口，委托同一描述实现。Grant/taint/trifecta/审批复查消费描述中的 Hosts/Paths/FilesystemWriteHint，不再各自维护工具表或命令正则。Hosts/Paths 是保守文本提示，只能增加检查，不作为结构化资源证明；Resources 仍仅来自已识别的结构化字段，解析错误显式保留。
 
 shell、sh、bash、python/python3、node、powershell/pwsh 等解释器至少 process.exec + unknown，即使文本看似简单也不能宣称完整效果。Mutating 对解释器保守为 true；FilesystemWriteHint 表示文本发现的文件写提示，不代表无该提示就无文件副作用。高影响参数以排序 JSON Pointer 输出，覆盖 recipient/to、host/destination_host/url、文件目标、database_scope、credential_ref、deployment_target、repo/branch、command/cmd、account/identity；未知工具的这些显式参数仍参与来源约束。路径和值不写入独立日志；回执资源继续以摘要存储。
+
+## Provenance-Bound Effect V1：B1 来源合同与约束基础
+
+来源 taxonomy 与 trust 独立校验；不得根据 USER/MCP 等字符串推导 authority。参数来源记录只允许 parameter_path 和 provenance_refs，路径为 RFC 6901 JSON Pointer，绑定内容以现有 canon.Marshal 的 SHA256 验证。所有引用都必须通过后续可信 store 验签、issuer/scope/时效校验后才能交给 matcher；普通调用方提交的 Assertion 不视为已验证。minimum_trust 的顺序为 unknown < untrusted < trusted < authoritative；required 缺字段或缺引用拒绝，来源集合不匹配、内容摘要不匹配或 unknown derivation 拒绝。多个引用必须全部满足约束，不能混入一份可信引用掩盖低可信引用。
+
+签发者 registry 数据模型包含 public_key（外部 Ed25519 公钥）或 local_key_ref（二选一）、allowed_source_types、max_trust_level、完整 scope、expires_at、revoked_at；具体发布与验签由管理端持久化模块实施。Decision 上报仅允许 MCP/WEB/TOOL/AGENT/UNKNOWN 且最多 untrusted，不接受 caller 指定 USER/TRUSTED_IAM 等授权来源。
