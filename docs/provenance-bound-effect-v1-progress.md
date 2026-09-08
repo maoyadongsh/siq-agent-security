@@ -700,3 +700,10 @@
 - 核读生产Authority分类/模式应用、Context受信读取和请求绑定、对应测试断言，将A1–A5在验收索引中标为本地验收通过，注明模拟错误矩阵与真实签名集成的证明边界。
 - 补齐真实签名会话required/optional×三模式×运行/重启后的降级拒绝12组合，保留bound摘要，无advisory。此前简单downgrade测试仅block，此批不再用它代表全模式恢复。
 - Go1.26.6 receipt/intent/server相关无缓存race、receipt vet与diff通过（/tmp/siq-authority-acceptance.log）。其他40项及全模板验收不因这5项通过而自动完成。
+
+
+### Provenance十项本地验收收敛
+
+- 核读签发者权限/验签、参数内容与scope绑定、图解析/聚合/unknown、受限上报及高影响默认约束，验收索引P1–P10标记本地通过，并逐项记录测试及证明边界。
+- Go1.26.6 provenance/receipt/server相关无缓存race通过（/tmp/siq-provenance-acceptance.log）；Python provenance合同7项通过；真实MCP桥接4回执离线链验证通过。
+- 与A组累计15项本地核心DoD有逐项核读与运行证据；这不是整体工程百分比或全模板通过声明。固定向量完整性、剩余DoD及最终交付仍继续。

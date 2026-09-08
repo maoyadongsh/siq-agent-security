@@ -11,16 +11,16 @@
 | DoD-A3 | Previously bound session 不得降级。 | [intent_test.go](../apps/agentshield/internal/receipt/intent_test.go) | 本地验收通过；详见Authority证据说明（全目标仍未完成） |
 | DoD-A4 | `context.cwd` 不再扩大 Authority。 | [context_test.go](../apps/agentshield/internal/receipt/context_test.go) | 本地验收通过；详见Authority证据说明（全目标仍未完成） |
 | DoD-A5 | Trusted workspace 必须来自 signed authority/assertion。 | [context_test.go](../apps/agentshield/internal/intent/context_test.go) | 本地验收通过；详见Authority证据说明（全目标仍未完成） |
-| DoD-P1 | 存在 signed ProvenanceAssertion Contract。 | [provenance-assertion.v1.schema.json](../packages/contracts/provenance-assertion.v1.schema.json) | 证据入口已定位；待逐项核读验收 |
-| DoD-P2 | Decision client 不能自报 authoritative provenance。 | [validate_test.go](../apps/agentshield/internal/provenance/validate_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-P3 | 存在 TrustedSourceIssuer registry。 | [store_test.go](../apps/agentshield/internal/provenance/store_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-P4 | Parameter → Provenance refs 可以验证。 | [matcher_test.go](../apps/agentshield/internal/provenance/matcher_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-P5 | Provenance 绑定： task session agent | [authority_test.go](../apps/agentshield/internal/provenance/authority_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-P6 | Intent V3 能定义 parameter provenance constraints。 | [provenance_test.go](../apps/agentshield/internal/receipt/provenance_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-P7 | MCP 默认 untrusted。 | [validate-mcp-provenance.py](../scripts/validate-mcp-provenance.py) | 证据入口已定位；待逐项核读验收 |
-| DoD-P8 | 普通 Agent transform 不提高 trust。 | [aggregation_test.go](../apps/agentshield/internal/provenance/aggregation_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-P9 | 相同值不同来源能产生不同授权结果。 | [matcher_test.go](../apps/agentshield/internal/provenance/matcher_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-P10 | High-impact parameter 无合法 provenance 时 fail closed / hold。 | [provenance_test.go](../apps/agentshield/internal/receipt/provenance_test.go) | 证据入口已定位；待逐项核读验收 |
+| DoD-P1 | 存在 signed ProvenanceAssertion Contract。 | [provenance-assertion.v1.schema.json](../packages/contracts/provenance-assertion.v1.schema.json) | 本地验收通过；详见Provenance证据说明 |
+| DoD-P2 | Decision client 不能自报 authoritative provenance。 | [validate_test.go](../apps/agentshield/internal/provenance/validate_test.go) | 本地验收通过；详见Provenance证据说明 |
+| DoD-P3 | 存在 TrustedSourceIssuer registry。 | [store_test.go](../apps/agentshield/internal/provenance/store_test.go) | 本地验收通过；详见Provenance证据说明 |
+| DoD-P4 | Parameter → Provenance refs 可以验证。 | [matcher_test.go](../apps/agentshield/internal/provenance/matcher_test.go) | 本地验收通过；详见Provenance证据说明 |
+| DoD-P5 | Provenance 绑定： task session agent | [authority_test.go](../apps/agentshield/internal/provenance/authority_test.go) | 本地验收通过；详见Provenance证据说明 |
+| DoD-P6 | Intent V3 能定义 parameter provenance constraints。 | [provenance_test.go](../apps/agentshield/internal/receipt/provenance_test.go) | 本地验收通过；详见Provenance证据说明 |
+| DoD-P7 | MCP 默认 untrusted。 | [validate-mcp-provenance.py](../scripts/validate-mcp-provenance.py) | 本地验收通过；详见Provenance证据说明 |
+| DoD-P8 | 普通 Agent transform 不提高 trust。 | [aggregation_test.go](../apps/agentshield/internal/provenance/aggregation_test.go) | 本地验收通过；详见Provenance证据说明 |
+| DoD-P9 | 相同值不同来源能产生不同授权结果。 | [matcher_test.go](../apps/agentshield/internal/provenance/matcher_test.go) | 本地验收通过；详见Provenance证据说明 |
+| DoD-P10 | High-impact parameter 无合法 provenance 时 fail closed / hold。 | [provenance_test.go](../apps/agentshield/internal/receipt/provenance_test.go) | 本地验收通过；详见Provenance证据说明 |
 | DoD-R1 | 存在统一 RuntimeActionDescriptor。 | [describe.go](../apps/agentshield/internal/runtimeaction/describe.go) | 证据入口已定位；待逐项核读验收 |
 | DoD-R2 | Grant/Intent/Taint/Provenance 使用同一个 Tool semantic source。 | [describe.go](../apps/agentshield/internal/runtimeaction/describe.go) | 需全范围源码审计，单文件不足证明 |
 | DoD-R3 | Shell 继续保留 unknown Effect。 | [describe_test.go](../apps/agentshield/internal/runtimeaction/describe_test.go) | 证据入口已定位；待逐项核读验收 |
@@ -99,3 +99,23 @@
 | A5 | TestContextIntegrityScopeReplayAndExpiry、TestContextReferenceHardGateAndRecovery、TestContextCannotReplaceGrantAndApprovalRechecksExpiry、TestContextIssuanceIsAdminOnly | Context必须从管理端签发、存储验签；request/scope/expiry绑定且重启复核，不能替代Grant；不声称已经部署外部attestor |
 
 这5项的本地验收状态不等于最终45项DoD通过率或工程百分比。新增测试所在最终提交仍需远端CI；其他条目仍按各自状态取证。
+
+
+## Provenance P1–P10本地验收结果（2026-09-08）
+
+源码基线862296d；核读生产authority/matcher/graph/report/defaults和对应测试。Go1.26.6在provenance/receipt/server运行匹配Provenance、Issuer、Graph、Aggregation、Report、Selection、HighImpact及Authority验证的无缓存race通过，日志/tmp/siq-provenance-acceptance.log。Python provenance合同7项通过；实际MCP→Hermes hook→daemon验证通过，4条回执链验证成功，报告/tmp/siq-provenance-acceptance-mcp.json。
+
+| 条目 | 已核读的具体证据 | 判断范围 |
+| --- | --- | --- |
+| P1 | provenance-assertion/v1 schema；Assertion.Sign/VerifyAuthority；本地/外部issuer正负例 | 签名合同和运行时验签存在；schema合法不代表来源真实 |
+| P2 | TestDecisionReportCannotMintTrustedAuthority；TestDecisionReportsCannotElevateSourceAuthority；受限Report | decision拒绝USER/authoritative、issuer/task/signature自报；管理权限边界由独立原始HTTP测试验证 |
+| P3 | TestIssuerStoreRestartRevocationAndImmutability、并发注册及恶意存储测试 | 已签名registry、外部公钥/本地key引用、终态撤销存在；不宣称已部署企业trust bundle |
+| P4 | TestSameValueDifferentProvenance、TestOptionalConstraintDoesNotIgnoreInvalidSuppliedReference | 每个引用都验签、解析父图、匹配参数canonical摘要；无约束的伪造引用也不能忽略 |
+| P5 | TestAuthorityRejectsForgeryScopeExpiryAndRevocation、真实组件跨会话/任务场景 | assertion与issuer必须匹配task/session/agent/platform；不能跨scope借用 |
+| P6 | Intent V3双读及TestV3DecisionUsesSignedParameterProvenance | required/minimum_trust/allowed_source_types生效，不改V2合同语义 |
+| P7 | Report缺省untrusted、实际MCP initialize/tools-call→上报/选择/Decide | MCP真实外部组件默认不可信，工具自报元数据不能提高trust |
+| P8 | TestGraphRejectsTrustAndSourceLaundering、TestMixedAggregationKeepsLeastTrustedParent | 派生不能提高父trust或洗白source；unknown传播不猜测；只是显式lineage |
+| P9 | 同值USER/MCP matcher与三模式Engine回归，真实MCP桥接 | 相同参数值可因签名来源不同产生allow/deny |
+| P10 | TestHighImpactDefaultsAndExplicitPermission、三模式显式/默认路径回归、参数预算拒绝 | 高影响路径默认required/trusted，缺失或不可信拒绝；仅显式签名约束可放宽 |
+
+这10项证明本地核心与MCP显式来源MVP，不等价于所有宿主自动采集或完整模型语义传播；后两者不得反向冒充本模板§33–36要求已实现的范围。§90/91全schema与固定向量完整性仍独立核验；P组通过不能替代这些条目或最终CI。
