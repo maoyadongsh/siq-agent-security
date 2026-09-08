@@ -78,6 +78,11 @@ func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey,
 		// Bounded by the already limited input records; do not mix different
 		// attempts at the same requirement into one contradictory action.
 		type actionKey struct{ action, receipt string }
+		const (
+			materialCompleted uint8 = 1 << iota
+			materialFailed
+			toolClaimedCompleted
+		)
 		outcomes := map[actionKey]uint8{}
 		for _, r := range relevant {
 			e := r.Evidence
@@ -91,6 +96,9 @@ func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey,
 				continue
 			}
 			if e.Source.Independence != "host_independent" && e.Source.Independence != "external_independent" {
+				if e.Source.Type == "tool_report" && e.ExecutionState == "completed" {
+					outcomes[actionKey{e.ActionID, e.DecisionReceiptID}] |= toolClaimedCompleted
+				}
 				unknown = true
 				continue
 			}
@@ -105,7 +113,7 @@ func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey,
 			if e.ExecutionState == "failed" {
 				failed = true
 				if req.EffectType == "file.write" && r.FileObservation != nil || req.EffectType == "network.request" && r.NetworkObservation != nil {
-					outcomes[actionKey{e.ActionID, e.DecisionReceiptID}] |= 2
+					outcomes[actionKey{e.ActionID, e.DecisionReceiptID}] |= materialFailed
 				}
 				continue
 			}
@@ -135,10 +143,10 @@ func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey,
 				return Result{}, ErrEvidence
 			}
 			good = true
-			outcomes[actionKey{e.ActionID, e.DecisionReceiptID}] |= 1
+			outcomes[actionKey{e.ActionID, e.DecisionReceiptID}] |= materialCompleted
 		}
 		for _, outcome := range outcomes {
-			if outcome == 3 {
+			if outcome&materialFailed != 0 && outcome&(materialCompleted|toolClaimedCompleted) != 0 {
 				conflict = true
 			}
 		}

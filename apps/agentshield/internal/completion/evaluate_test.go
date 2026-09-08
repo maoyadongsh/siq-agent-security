@@ -78,6 +78,17 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	check(task, []effectevidence.Record{failedRecord}, "incomplete")
 	check(task, []effectevidence.Record{r, failedRecord}, "conflicting")
 	check(task, []effectevidence.Record{failedRecord, r}, "conflicting")
+	claimSource := effectevidence.Source{Type: "tool_report", SourceID: "tool", Independence: "self_reported"}
+	claim := r.Evidence
+	claim.EvidenceID, claim.Signature = "tool-success", ""
+	claim.Source, claim.Coverage, claim.Result = claimSource, "unknown", "unknown"
+	claimRecord, err := store.Submit(claim, a, claimSource, time.Now())
+	if err != nil {
+		t.Fatal(err)
+	}
+	check(task, []effectevidence.Record{claimRecord}, "unknown")
+	check(task, []effectevidence.Record{claimRecord, failedRecord}, "conflicting")
+	check(task, []effectevidence.Record{failedRecord, claimRecord}, "conflicting")
 	otherAction := a
 	otherAction.ActionID, otherAction.DecisionReceiptID = "a2", "r2"
 	otherFailure, err := store.SubmitFile("e-other-failed", failedMaterial, otherAction, source, time.Now())
@@ -94,6 +105,10 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	if err != nil || out.Status != "incomplete" {
 		t.Fatal("different attempts became conflicting", out, err)
 	}
+	out, err = Evaluate(task, []effectevidence.Record{claimRecord, otherFailure}, key.Public(), otherLookup, time.Now())
+	if err != nil || out.Status != "unknown" {
+		t.Fatal("different attempt contradicted tool claim", out, err)
+	}
 	noMaterial := failedRecord.Evidence
 	noMaterial.Signature, noMaterial.EvidenceID = "", "e-failed-no-material"
 	unsupportedFailure, err := store.Submit(noMaterial, a, source, time.Now())
@@ -101,6 +116,7 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 		t.Fatal(err)
 	}
 	check(task, []effectevidence.Record{r, unsupportedFailure}, "incomplete")
+	check(task, []effectevidence.Record{claimRecord, unsupportedFailure}, "unknown")
 	a.AuthorizedAt = time.Now().Add(time.Second)
 	check(task, []effectevidence.Record{r}, "conflicting")
 	a.AuthorizedAt = time.Time{}

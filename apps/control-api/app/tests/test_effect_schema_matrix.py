@@ -28,6 +28,8 @@ FIXTURES = {
     "context-assertion.v1": sample("context-assertion.sample.json"),
     "effect-evidence.v1": EFFECT,
     "effect-evidence-submit.v1": EFFECT | {"signature": ""},
+    "tool-effect-report.v1": EFFECT | {"signature": "", "coverage": "unknown", "result": "unknown",
+        "source": {"type": "tool_report", "source_id": "fixture-tool", "independence": "self_reported"}},
     "effect-evidence-record.v1": ARCHIVE["effect_record"],
     "effect-observer-request.v1": {"source": PENDING["source"], "scope": PENDING["scope"], "expires_in": 60},
     "effect-observer-revocation.v1": ARCHIVE["observer_revocation"],
@@ -77,6 +79,8 @@ def validator(name):
 
 def nodes(value, schema, path=()):
     yield path, value, schema
+    for component in schema.get("allOf", []):
+        yield from nodes(value, component, path)
     if isinstance(value, dict):
         for key, child in schema.get("properties", {}).items():
             if key in value:

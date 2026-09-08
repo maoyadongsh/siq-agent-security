@@ -826,3 +826,13 @@
 - 验证：Go 1.26.6 focused race、整个 `internal/server` 无缓存 race、该包 vet 均通过；未改生产实现或合同。
 - 生产代码基线 `80dfff8` 的 CI 34188862724、runtime-security 34188862744 均 success；这些结果不包含本次新增测试。
 - §82 的 report/select 路径已有明确 HTTP 证据；Effect API 的历史动作观察与撤销后新授权边界仍需逐端点归档，不能据此宣称整节完成。§88 E-05 的“工具成功声明与独立未收到证据”仍需精确核对，已有同动作独立正负材料冲突测试不替代该场景。
+
+### 2026-09-08：E-05 工具声明与独立失败材料冲突
+
+- 先由负向测试复现旧行为：签名 tool_report completed + 同动作独立文件缺失材料返回unknown。修复 Completion，在既有有界 action/receipt 索引中保留成功声明与独立失败的冲突；声明单独存在、无材料失败、跨动作组合不升级为完成或独立冲突。
+- 发现现有 observer 管理入口有意不签发 tool_report 凭据，故新增单独 capDecision `/v1/tool-effect-reports`，不放宽 observer 合同。新版本化请求合同先提交为 `0bec5d8`。声明保持 self_reported/unknown，不允许伪造 host 独立性。
+- HTTP 测试 TestToolSuccessConflictsWithIndependentMissingOutputHTTP 使用实际文件采样：unknown→conflicting；同时覆盖管理/observer凭据拒绝、伪造独立来源拒绝、错误回执拒绝、相同重放幂等、不同重放409。
+- 验证：Go1.26.6全模块vet与race通过（日志 /tmp/siq-tool-report-api-race.log），linux/amd64、linux/arm64、darwin/arm64、windows/amd64编译通过；Python效果合同及schema矩阵53项通过，Ruff通过。最后补充409断言后再运行该HTTP focused race。
+- 范围：E-05以“工具声称产出文件、独立采样未发现输出”验证。通用网络absence证明仍不支持，不将此描述为网络全覆盖或生产隔离。
+
+补充：声明资源和效果类型必须匹配Engine动作投影，拒绝把既有动作引用用于其他效果要求。补充该检查后重新完成全Go vet/race和四平台编译；新增资源错配断言单独通过HTTP race后提交。

@@ -118,6 +118,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/effect-observers", s.auth(s.effectObservers, capAdmin))
 	s.mux.HandleFunc("/v1/effect-observers/", s.auth(s.revokeEffectObserver, capAdmin))
 	s.mux.HandleFunc("/v1/effect-evidence", s.auth(s.submitEffect, capEffectObserve))
+	s.mux.HandleFunc("/v1/tool-effect-reports", s.auth(s.toolEffectReport, capDecision))
 	s.mux.HandleFunc("/v1/effect-evidence/", s.auth(s.getEffect, capAdmin))
 	s.mux.HandleFunc("/v1/actions/", s.auth(s.actionEffects, capAdmin))
 	s.mux.HandleFunc("/v1/provenance-issuers", s.auth(s.provenanceIssuers, capAdmin))

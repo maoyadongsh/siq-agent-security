@@ -90,3 +90,11 @@ Admin GET `/v1/tasks/{task_id}/completion` 返回 [completion-status/v1](../pack
 文件begin现在先持久化签名pending快照再返回201。若内存索引丢失但同一observer token仍有效，重试begin读取原始快照并返回200，不会在文件已改变后重新采样。原始deadline不延长；不同token即使source/scope相同也返回409，不能隐式接管。Server重启会使旧token失效，因此跨重启续用仍需后续显式管理恢复接口。
 
 observer DELETE成功204前写入不可变签名撤销记录，保存owner token摘要与撤销时间，不保存token。后续observer校验读取该终态，损坏记录失败关闭，旧内存凭据无法复活。撤销记录重启保留，独立8192条预算；原owner撤销后，未来pending管理恢复也必须拒绝使用它的采样。该恢复接口仍在开发中。
+
+## 工具效果声明
+
+`POST /v1/tool-effect-reports` 使用 decision token，正文见 [tool-effect-report.v1](../packages/contracts/tool-effect-report.v1.schema.json)。复用未签名 EffectEvidence 字段；source 必须为 tool_report/self_reported，coverage 与 result 必须为 unknown，signature 必须为空。source_id 是工具自报标签，evidence_digest 是声明材料摘要；两者均不构成独立证明。返回201及签名记录。同 ID 同内容重试返回原签名，不同内容409。
+
+动作和决策回执从 Engine 历史台账解析，错误关联400；管理和 observer token 不能代替 decision token。该入口沿用64KiB请求解析和8192条效果记录预算。它用于补报历史动作，即使原 Intent 已撤销也不恢复执行权限。
+
+声明 completed 单独存在时，Completion 仍为 unknown。同一动作、同一回执若另有满足独立性和覆盖要求的实际失败材料，则返回 conflicting/effect_evidence_conflicting 并保留双方引用。独立文件采样可确认输出未出现；目前不提供通用网络未收到事件的证明合同。

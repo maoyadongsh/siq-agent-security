@@ -94,7 +94,7 @@
 | 85 | Workstream I — Security Testing | 2575 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 86 | Context Tests | 2712 | 已核对；C-01–04对应cwd拒绝、合法Context、到期hard deny及跨session重放测试 |
 | 87 | Hard Gate Tests | 2752 | 已核对；三模式mandatory错误矩阵与实际Store签名/撤销集成，A组证据 |
-| 88 | Effect Tests | 2770 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 88 | Effect Tests | 2770 | 已核验 E01–04 既有 file/network fixture；E05 由 TestToolSuccessConflictsWithIndependentMissingOutputHTTP 验证工具成功声明与独立文件输出缺失冲突；不宣称通用网络 absence 证明 |
 | 89 | Concurrency / Recovery | 2876 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 90 | Schema Tests | 2906 | 待逐节复核；已有实现/测试入口见DoD索引 |
 | 91 | Cross-language Vectors | 2929 | 已补齐并核验；三类合同共用固定canonical bytes/摘要/签名，Go race与Python通过 |

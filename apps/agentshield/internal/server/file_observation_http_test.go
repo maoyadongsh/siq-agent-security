@@ -179,3 +179,72 @@ func TestFileObservationHTTPReadsRealState(t *testing.T) {
 		})
 	}
 }
+
+func TestToolSuccessConflictsWithIndependentMissingOutputHTTP(t *testing.T) {
+	s, st := newServer(t, "warn")
+	eng, err := receipt.New(receipt.Options{Pack: s.d.Pack, Chain: s.d.Chain, Grants: st.ActiveGrant, EnforcementMode: "warn", IntentLookup: receipt.ResolveStore(s.intents), ProvenanceCheck: s.provenance.MatchParameters})
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.d.Engine = eng
+	path := filepath.Join(t.TempDir(), "missing-output")
+	sum := sha256.Sum256([]byte("expected output"))
+	expected := hex.EncodeToString(sum[:])
+	ref, err := effectevidence.ResourceReference(runtimeaction.ResourceRefs([]runtimeaction.Resource{{Domain: "filesystem", Value: path}})[0])
+	if err != nil {
+		t.Fatal(err)
+	}
+	c := apiIntent()
+	c.SchemaVersion = "intent/v3"
+	c.AllowedTools, c.AllowedEffects = []string{"write_file"}, []string{"file.write"}
+	c.ResourceConstraints[0].Value = filepath.Dir(path) + "/"
+	constraints := []provenance.Constraint{{ParameterPath: "/path", AllowedSourceTypes: []string{"USER"}, MinimumTrust: "trusted", Required: false}}
+	c.ProvenanceConstraints = &constraints
+	requirements := []completion.Requirement{{RequirementID: "output", EffectType: "file.write", ResourceRef: ref, ExpectedDigest: expected, MinimumIndependence: "host_independent", MinimumCoverage: "partial"}}
+	c.EffectRequirements = &requirements
+	effectCall(t, s, "POST", "/v1/intents", s.bootAdmin, c, 201)
+	effectCall(t, s, "POST", "/v1/intent-bindings", s.bootAdmin, map[string]any{"platform": "hermes", "session_id": "s1", "agent_id": "a-1", "intent_id": "int-api"}, 201)
+	d := effectCall(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "hermes", "session_id": "s1", "agent_id": "a-1", "tool": "write_file", "tool_call_id": "missing-call", "params": map[string]any{"path": path}}, 200)
+	if d["action"] != "allow" {
+		t.Fatal(d)
+	}
+	issueObserver := func(source effectevidence.Source) string {
+		return effectCall(t, s, "POST", "/v1/effect-observers", s.bootAdmin, map[string]any{"source": source, "scope": provenance.Scope{Platform: "hermes", SessionID: "s1", AgentID: "a-1", TaskID: "task-1"}, "expires_in": 60}, 201)["token"].(string)
+	}
+	toolSource := effectevidence.Source{Type: "tool_report", SourceID: "fixture-tool", Independence: "self_reported"}
+	claim := effectevidence.Evidence{SchemaVersion: "effect-evidence/v1", EvidenceID: "tool-success", ActionID: d["action_id"].(string), DecisionReceiptID: d["receipt_id"].(string), EffectType: "file.write", ResourceRef: ref, ExecutionState: "completed", Source: toolSource, Coverage: "unknown", Result: "unknown", EvidenceDigest: expected, ObservedAt: time.Now().UTC().Format(time.RFC3339Nano), SigningSchema: "local_canonical/v1"}
+	effectCall(t, s, "POST", "/v1/tool-effect-reports", s.bootAdmin, claim, 401)
+	bad := claim
+	bad.Source = effectevidence.Source{Type: "host_observer", SourceID: "forged", Independence: "host_independent"}
+	effectCall(t, s, "POST", "/v1/tool-effect-reports", token, bad, 400)
+	bad = claim
+	bad.DecisionReceiptID = "other-receipt"
+	effectCall(t, s, "POST", "/v1/tool-effect-reports", token, bad, 400)
+	bad = claim
+	bad.EffectType = "file.read"
+	effectCall(t, s, "POST", "/v1/tool-effect-reports", token, bad, 400)
+	bad = claim
+	bad.ResourceRef = "filesystem:sha256:" + expected
+	effectCall(t, s, "POST", "/v1/tool-effect-reports", token, bad, 400)
+	first := effectCall(t, s, "POST", "/v1/tool-effect-reports", token, claim, 201)
+	repeated := effectCall(t, s, "POST", "/v1/tool-effect-reports", token, claim, 201)
+	if first["signature"] != repeated["signature"] {
+		t.Fatal("tool report replay changed signed record")
+	}
+	bad = claim
+	bad.ExecutionState = "failed"
+	effectCall(t, s, "POST", "/v1/tool-effect-reports", token, bad, 409)
+	check := func(want string) {
+		out := effectCall(t, s, "GET", "/v1/tasks/task-1/completion", s.bootAdmin, nil, 200)
+		if out["status"] != want {
+			t.Fatal(out, want)
+		}
+	}
+	check("unknown")
+	host := issueObserver(effectevidence.Source{Type: "host_observer", SourceID: "fixture-host", Independence: "host_independent"})
+	effectCall(t, s, "POST", "/v1/tool-effect-reports", host, claim, 401)
+	effectCall(t, s, "POST", "/v1/file-observations", host, map[string]any{"observation_id": "missing", "action_id": d["action_id"], "decision_receipt_id": d["receipt_id"], "path": path, "expected_digest": expected, "max_bytes": 1024}, 201)
+	// The controlled tool claims success but creates no output; the host samples reality.
+	effectCall(t, s, "POST", "/v1/file-observations/missing/finish", host, map[string]any{"path": path}, 201)
+	check("conflicting")
+}

@@ -64,3 +64,5 @@ G5生产授权流复核：cmd/agentshield/main.go只把ResolveStore、MatchParam
 实际验证：Go1.26.6对provenance/runtimeaction/intent/effectevidence/receipt/server运行Capacity/Budget/Bounds/Boundaries/Concurrent/Recovery匹配测试，无缓存race全部通过。此前Authority/Provenance/Effect原始HTTP正负测试为权限边界提供补充。G3/G5均以生产调用边界为范围，不声称对任意不受信Go插件提供进程隔离。
 
 Completion新增每要求outcomes映射，以(action_id, decision_receipt_id)关联有效完成与带实际材料的失败记录，至多输入记录数8192；调用内生命周期，不跨请求保留。用于避免把不同尝试的结果误称同动作冲突。
+
+2026-09-08 tool-effect-report：新增入口复用既有64KiB解析与8192条签名不可变Effect记录容量；不新增长期map。Completion沿用输入记录数量限制下的action/receipt局部索引，增加工具成功声明位；只能触发冲突，不能产生verified或执行权限。
