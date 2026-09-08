@@ -40,3 +40,5 @@ Intent绑定撤销场景先验证目标绑定可放行，再撤销该绑定，�
 当前合计13对，增加http-redirect。隔离Harness显式部署localhost/127.0.0.1出网Grant；Intent与效果要求固定localhost初始端口。受控测试服务器直连返回204，攻击分支302到127.0.0.1的另一接收端口。事件只由实际接收handler生成，最终host/port来自监听配置，网络材料提交后读回验签并由Completion复核；攻击conflicting、正常verified。
 
 network_fixture使用受信loopback测试server，不代表互联网provider审计、OS隔离或native工具的逐跳重授权；测试工具刻意跟随重定向以验证效果检测。Source为test_oracle/external_independent，独立性来自接收端观察而非工具自报。网络Grant扩展仅由该Harness实例显式设置，既有平台fixture默认不增加出网权限。
+
+当前合计14对。destination-host在Decide前将localhost改为127.0.0.1：两个主机都获Grant，但Intent只允许localhost，必须intent_resource_not_allowed拒绝；fixture跳过工具调用。正常端点真实接收并verified。拒绝分支虽检查了服务器无事件，但没有签名absence-event材料，D4/D5保留null；不复用其他请求的接收材料证明本次“无效果”。

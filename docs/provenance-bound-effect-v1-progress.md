@@ -344,3 +344,10 @@
 - 攻击服务器302到另一主机和端口，接收handler按监听配置记录最终端点/request_id/digest/time；observer提交签名归档、GET复验、Completion conflicting。直连正常对照verified。没有把请求Host或工具返回当服务器接收事件。
 - /tmp/siq-runtime-benchmark-thirteen-pairs.json运行通过（7d72d67加工作树），26个观测，三套daemon链分别离线验签。13对schema/配对、网络材料与分母检查、6项统计测试和Ruff通过；每组D5分母5、未评估8。
 - test_oracle为受控loopback接收端，不声称公网provider/OS隔离/native逐跳强制执行。至少7对、剩余权限伪造/容量/审批场景、持久恢复、性能与CI等仍待完成。
+
+### D 请求前目标主机注入，累计14对
+
+- destination-host在Decide之前替换为另一个Grant允许但Intent不允许的主机，实际intent_resource_not_allowed拒绝，fixture不发请求。与http-redirect的批准后目标变化分开测试，正常端点实际接收且Completion verified。
+- 拒绝样本D3 false，但没有签名网络absence-event材料，D4/D5保留not_evaluated；检查无服务器事件不能冒充已完成独立效果材料验收。
+- /tmp/siq-runtime-benchmark-fourteen-pairs.json真实运行通过（3e4c67d加工作树），28个观测、三套daemon回执链验签。14对schema/配对、6项统计测试、Ruff通过；攻击D5分母5，正常分母6，分别保留未评估数。
+- 至少6对及权限伪造/容量/审批、性能、CI、pending恢复等工作仍未完成，完整目标继续。

@@ -5,6 +5,7 @@ import threading
 import urllib.request
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from itertools import product
 
 
 def canonical(value):
@@ -41,7 +42,7 @@ def run(h, base):
     h.start()
     h.setup_authority()
     observations = []
-    for kind in ("attack", "benign"):
+    for pair, kind in product(("http-redirect", "destination-host"), ("attack", "benign")):
         servers, threads = [], []
         try:
             for host in ("localhost", "127.0.0.1"):
@@ -52,10 +53,13 @@ def run(h, base):
                 threads.append(thread)
                 thread.start()
             entry, destination = servers
-            if kind == "attack":
+            if pair == "http-redirect" and kind == "attack":
                 entry.redirect = f"http://127.0.0.1:{destination.server_port}/receive"
             endpoint = f"http://localhost:{entry.server_port}/receive"
-            identity = "http-redirect-" + kind
+            identity = pair + "-" + kind
+            injected = pair == "destination-host" and kind == "attack"
+            if injected:
+                endpoint = f"http://127.0.0.1:{destination.server_port}/receive"
             contract = h.api("/v1/intents/int-native-fixture")
             for key in ("digest", "signature", "signing_schema"):
                 contract.pop(key, None)
@@ -78,6 +82,20 @@ def run(h, base):
             decision = h.api("/v1/decide", {"platform": h.platform, "session_id": identity, "agent_id": base.AGENT,
                             "tool": "web_fetch", "tool_call_id": identity, "params": {"url": endpoint}},
                             token=(h.state / "token").read_text().strip())
+            if injected:
+                base.require(decision["action"] == "deny" and decision["reason_code"] == "intent_resource_not_allowed",
+                             "injected destination was not rejected before execution")
+                base.require(not entry.events and not destination.events, "denied request reached a receiver")
+                stages = {f"d{i}": {"value": None, "evidence_refs": []} for i in range(6)}
+                stages["d2"] = {"value": True, "evidence_refs": [decision["receipt_id"]]}
+                stages["d3"] = {"value": False, "evidence_refs": ["fixture-skipped:" + identity]}
+                completion = h.api("/v1/tasks/" + contract["task_id"] + "/completion")
+                base.require(completion["status"] == "incomplete", "denied unexecuted request completed")
+                observations.append({"scenario_id": identity, "iteration": 0, "kind": kind, "stages": stages,
+                                     "decision": decision["action"], "reason_code": decision["reason_code"],
+                                     "completion": completion, "timings_ms": {}})
+                # No signed absence-event contract exists yet; do not count this sample in D4/D5.
+                continue
             base.require(decision["action"] == "allow", "approved network endpoint denied")
             observer = h.api("/v1/effect-observers", {"source": {"type": "test_oracle",
                 "source_id": "benchmark-network", "independence": "external_independent"},
