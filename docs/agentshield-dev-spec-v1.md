@@ -882,3 +882,9 @@ V3 对 RuntimeActionDescriptor.HighImpactParameterPaths 中每个实际出现且
 按 ADR-0017 定义 `effect-evidence/v1`，关联 action_id 与 decision_receipt_id，分离 execution_state/source/independence/coverage/result。工具自报只允许 self_reported + unknown coverage/result；unknown 来源不提升任何证据维度。签名、observer 权限、动作关联和资源匹配必须由后续运行时验证，schema 合法不代表完成任务。新增 API 和存储尚未上线；现有 Observe 保持原语义。
 
 C1 资源引用冻结为 `filesystem|network|message:sha256:<64小写hex>`（实际格式如 `filesystem:sha256:…`），直接复用 RuntimeAction ResourceRefs 的 domain/digest，不保存原始路径、收件人或 URL。EffectEvidence 结构校验必须严格解析 RFC3339 时间、拒绝未来观察、未知字段/多文档，并通过原 signing/canon 验签。单条证据验签不能替代 observer capability 与动作匹配。
+
+### C1 决策关联与效果分类
+
+Engine 的 EffectAction 仅从已签发或经回执链恢复的动作状态读取，要求精确 action_id+decision_receipt_id，沿用24小时动作关联窗口；未知、过期、错配引用拒绝。输出包括决策时间、task、效果集合和资源摘要，不包含参数原文；hold 只有已批准才视为动作授权。
+
+效果提交必须与管理端指定的 observer Source 完全一致，正文不能改变 source_id/type/independence。独立 completed 证据若关联未获授权动作，保留为 unexpected 并给出 unauthorized_effect_observed；效果类型或资源不匹配为 unexpected/effect_scope_mismatch，不能记为预期完成。观察时间不得早于关联决策。分类器只返回待存储记录与 finding code，后续存储/API 必须将两者作为同一不可变事实处理；本次分类器不单独写 finding。

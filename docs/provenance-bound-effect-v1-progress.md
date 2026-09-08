@@ -146,3 +146,11 @@
 - 资源引用统一为 `<domain>:sha256:<digest>`，直接消费 RuntimeAction ResourceRefs；不重复归一化、不持久化路径/URL/收件人原文。
 - 新增 Python/Go 共享签名样例，Go 验证 Python 固定 seed 样例并断言同签名；覆盖 action/receipt/source/resource/coverage/result/digest 篡改拒绝。
 - Python 合同4项和 Ruff通过；Go effectevidence 定向及全模块 race/vet、四平台编译通过（日志 `/tmp/siq-effect-model-race.log`）。该包仅验证记录完整性，尚不能证明提交者具备 observer 权限、记录关联真实动作或任务完成；这些验收项继续待实现。
+
+### C1 真实动作关联增量
+
+- Engine.EffectAction 从已签发/恢复动作状态获取精确 action_id+receipt_id 的最小投影，资源与效果切片复制，caller 不可改写缓存；未知、错配和24小时关联窗口到期拒绝。被拒绝动作仍可读取以接收独立越权事件。
+- Correlate 要求受信 observer Source 完全一致且观察时间不早于决策；独立 completed + 未授权动作产生 unexpected/unauthorized_effect_observed，效果或资源错配产生 unexpected/effect_scope_mismatch，自报不生成独立事件。
+- effectevidence/receipt 全包 race通过，包含伪造 action/receipt/source/type/independence、时间错配、资源错配、重启、hold 审批恢复和缓存不可变测试。
+- Go 全模块 race、vet 和四平台交叉编译通过，日志 `/tmp/siq-effect-correlation-race.log`。
+- 本批为运行时关联基础，尚未开放 EffectEvidence HTTP API；独立 capability、证据与 finding 原子持久化、observer、Completion 继续待实现。24小时窗口用于新提交关联，不代表历史任务已完成或历史证据可被忽略。
