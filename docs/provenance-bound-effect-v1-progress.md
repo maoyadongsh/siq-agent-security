@@ -599,3 +599,11 @@
 - 明确fixture证明边界、三平台现有核心测试需求，以及新增map/signing/LLM授权须全diff审计；不把找到测试文件直接计作验收通过。
 - 核读metrics.py发现统计口径须在报告显式说明：benign completion只统计有Completion的样本，unknown effect只统计有effect_record的样本；后续报告需展示未覆盖数量，不能按42观测整体完成率宣传。
 - 本轮是验收资料落盘，无生产代码修改；diff检查通过，完整目标保持进行中。
+
+
+### D 命名指标覆盖分母显式化
+
+- 每项命名指标新增sample_count、excluded_count与population，保留原分子/分母/rate；全体与按kind统计各自使用真实总数。excluded包含不适用及缺记录，明确不同于D0–D5的not_evaluated，也不能当失败。
+- 新测试覆盖混合attack/benign、缺效果记录、仅一个verified completion及空总体，11项benchmark单测、Ruff/diff通过。
+- 实际21对基准重新执行通过：/tmp/siq-runtime-population.json；evidence.py独立复验51条回执和11个效果封套通过。旧报告需使用对应旧版验证器，新统计不静默回写历史产物。
+- 核实远端92b9efe：当前可见29项SUCCESS、1项nightly SKIPPED；此结果不覆盖其后的本地提交/修改。

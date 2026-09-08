@@ -59,7 +59,8 @@ class OutcomeMetricsTest(unittest.TestCase):
                    "expected_reason": "provenance_missing"}
         bypass = {**blocked, "decision_action": "allow"}
         result = outcome_metrics([legal, blocked, bypass])
-        self.assertEqual(result["false_allow_rate"], {"numerator": 1, "denominator": 2, "rate": .5})
+        self.assertEqual({k: result["false_allow_rate"][k] for k in ("numerator", "denominator", "rate")},
+                         {"numerator": 1, "denominator": 2, "rate": .5})
         self.assertEqual(result["false_deny_rate"]["denominator"], 1)
         self.assertEqual(result["provenance_violation_block_rate"]["rate"], .5)
         self.assertIsNone(result["benign_task_completion_rate"]["rate"])
@@ -71,6 +72,30 @@ class OutcomeMetricsTest(unittest.TestCase):
                     "effect_record": {"finding_code": "", "evidence": {
                         "result": "unknown", "execution_state": "unknown"}}}
         result = outcome_metrics([missing, observed])
-        self.assertEqual(result["unknown_effect_rate"], {"numerator": 1, "denominator": 1, "rate": 1})
+        self.assertEqual({k: result["unknown_effect_rate"][k] for k in ("numerator", "denominator", "rate")},
+                         {"numerator": 1, "denominator": 1, "rate": 1})
         self.assertEqual(result["benign_task_completion_rate"]["denominator"], 1)
         self.assertIsNone(result["resource_hijacking_block_rate"]["rate"])
+
+
+class PopulationCoverageTest(unittest.TestCase):
+    def test_missing_effects_are_explicit_and_kind_totals_are_separate(self):
+        records = [observation("attack"), observation("benign", "benign"),
+                   observation("verified", "benign")]
+        records[2]["completion"] = {"status": "verified"}
+        report = summarize(records)
+        completion = report["metrics"]["benign_task_completion_rate"]
+        self.assertEqual((completion["numerator"], completion["denominator"],
+                          completion["sample_count"], completion["excluded_count"]), (1, 1, 3, 2))
+        benign = report["metrics_by_kind"]["benign"]["benign_task_completion_rate"]
+        self.assertEqual((benign["sample_count"], benign["excluded_count"]), (2, 1))
+        unknown = report["metrics"]["unknown_effect_rate"]
+        self.assertEqual(unknown["excluded_count"], 3)
+        self.assertIsNone(unknown["rate"])
+        self.assertIn("effect record", unknown["population"])
+
+    def test_empty_population_has_no_invented_rate(self):
+        for metric in summarize([])["metrics"].values():
+            self.assertEqual(metric["sample_count"], 0)
+            self.assertEqual(metric["excluded_count"], 0)
+            self.assertIsNone(metric["rate"])
