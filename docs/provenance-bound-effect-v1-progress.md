@@ -281,3 +281,10 @@
 - 新增 metrics.py，对runner实际观测按攻击/正常与阶段分别统计；null保留not_evaluated，D5声明缺独立来源/已验证材料时拒绝，零分母rate为null。分阶段真实耗时用nearest-rank P50/P95/P99，不填造缺失数据。
 - 4项统计单测、Ruff、schema合法性及正负样例校验通过。统计输入的材料验证标志必须由可信runner产生，该模块本身不验签、不接受外部布尔值作为效果证明。
 - 尚缺20对实际场景、真实运行时执行器、全部命名指标映射、阶段埋点、CI smoke/nightly与运行报告；D仅开始，未宣称验收通过。
+
+### D 首组真实运行时基准
+
+- 新增mcp_parameter_control攻击/正常两个场景与run.py执行器，复用隔离Harness实际构建daemon、准入并部署Grant、MCP HTTP调用、签名来源和V3决策，停服后离线验签回执链。
+- 场景预期与实际决策reason_code、阶段值分别保存并比较；实际MCP路径控制deny，可信USER同值allow。目标工具没有执行，D3–D5均not_evaluated，不能从allow推导执行，也不能从deny推导独立无效果。
+- 真实执行报告 /tmp/siq-runtime-benchmark-first-pair.json（09b5452加本轮工作树），两条回执验证通过；攻击/正常各D2分母1、D5分母0。场景schema验证、4项统计测试、Ruff通过。
+- 当前仅1对组件场景；其余至少19对、D3–D5真实材料、全部指标、阶段埋点及CI仍待完成。未把现有unit test汇总冒充独立benchmark。

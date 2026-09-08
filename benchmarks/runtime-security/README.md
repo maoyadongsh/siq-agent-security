@@ -11,3 +11,12 @@ D5 只有具有独立 observer 和可核验材料的样本才能计入分母。�
 统计必须按攻击/正常对照及D0–D5分别报告，不能通过混合分母遮蔽误拒。性能数据来自真实阶段计时，输出P50/P95/P99，不使用整体请求耗时冒充内部阶段耗时，不设置虚构SLA。
 
 当前仅开始合同与统计组件；尚无完整场景执行器、20对运行证据或CI门禁，不代表本工作包完成。
+
+## 运行首组组件基准
+
+```bash
+python3 benchmarks/runtime-security/run.py --out /tmp/siq-runtime-benchmark.json
+python3 -m unittest discover -s benchmarks/runtime-security -p 'test_*.py'
+```
+
+当前执行器复用实际 daemon 的准入、Grant challenge/approve/deploy、Intent V3、MCP HTTP 及来源 API，运行 MCP路径控制攻击与同值可信USER对照，停服后离线验证回执链。D2来自实际决策回执；目标工具不执行，因此D3–D5为null。报告保留二进制与runner摘要、场景摘要、源码基线及回执ID，内部阶段耗时缺失时保持null。源码基线不表示工作树干净。

@@ -146,6 +146,9 @@ def run(h):
                 "binary_sha256": hashlib.sha256(h.binary.read_bytes()).hexdigest(),
                 "receipt_count": len(records), "receipt_chain_verified": True,
                 "decision_receipt_ids": [denied["receipt_id"], allowed["receipt_id"]],
+                "decisions": [{"kind": kind, "action": decision["action"],
+                               "reason_code": decision["reason_code"], "receipt_id": decision["receipt_id"]}
+                              for kind, decision in (("attack", denied), ("benign", allowed))],
                 "coverage": "component_fixture", "mcp_protocol": "2025-06-18", "mcp_tool_calls": mcp.tool_calls,
                 "checks": {"initialized": True, "real_http_tool_result": True, "signed_report": True,
                            "deterministic_selection": True, "untrusted_path_denied": True,
