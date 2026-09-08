@@ -37,6 +37,30 @@ def validator(name):
     return Draft202012Validator(schema)
 
 
+def test_signed_registry_and_revocation_envelopes():
+    issuer = {
+        "issuer_id": "issuer-1", "local_key_ref": "local-state",
+        "allowed_source_types": ["MCP"], "max_trust_level": "untrusted",
+        "scope": {"platform": "hermes", "session_id": "s1", "agent_id": "a1", "task_id": "t1"},
+        "expires_at": "2026-09-08T01:00:00Z",
+    }
+    for name, payload in [
+        ("provenance-issuer-record", {"issuer": issuer}),
+        ("provenance-issuer-revocation", {
+            "issuer_id": "issuer-1", "issuer_digest": "a" * 64, "revoked_at": "2026-09-08T00:30:00Z",
+        }),
+    ]:
+        v = validator(name)
+        record = {"schema_version": name + "/v1", "signing_schema": "local_canonical/v1",
+                  "signature": "0" * 128, **payload}
+        v.validate(record)
+        for field in record:
+            bad = dict(record)
+            del bad[field]
+            assert list(v.iter_errors(bad)), field
+        assert list(v.iter_errors({**record, "trusted": True}))
+
+
 def test_parameter_binding_cannot_supply_trust():
     v = validator("parameter-provenance")
     good = {"parameter_path": "/recipient", "provenance_refs": ["prov-1"]}

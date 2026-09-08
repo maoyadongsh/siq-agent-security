@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "provenance-issuer-revocation/v1"
+    },
+    "issuer_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "issuer_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "revoked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "issuer_id",
+    "issuer_digest",
+    "revoked_at",
+    "signing_schema",
+    "signature"
+  ]
+}
