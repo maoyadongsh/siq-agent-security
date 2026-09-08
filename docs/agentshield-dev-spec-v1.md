@@ -1000,3 +1000,7 @@ Engine.Options可选StageTiming回调仅由宿主测试/基线程序注入，不
 intent-revocation/v1不可变终态记录包含intent_id、intent_digest、revoked_at、reason_code=intent_revoked及canonical签名；不修改原Intent或各binding。RevokeIntent(id, expected_intent_digest)在authority写锁下发布，错误摘要冲突、同摘要重试返回原记录；沿用4096条容量和私有排他发布。Bind拒绝已撤销Intent；ResolveBinding每次在同一authority读锁内复核全局终态，返回已验证Contract和Binding元数据供签名deny使用。普通Get/List保留历史合同读取，不能将历史读取当作当前有效授权。损坏/摘要不匹配撤销记录intent_revocation_invalid失败关闭。原绑定撤销优先保持既有错误码；无全局撤销记录的V2/V3不改变行为。新API与多会话fixture后续接入；检查完成前已取得的执行快照不构成原子取消保证。
 
 全局撤销管理路由：POST /v1/intents/{id}/revoke，请求仅expected_intent_digest；GET /v1/intents/{id}/revocation读取已签名终态。两者均复用现有capAdmin保护，decision/observer不得撤销或读取管理状态；方法不符405，错误摘要409，未知Intent/撤销记录404。重复POST返回同一签名与时间。原GET /v1/intents/{id}保持历史合同读取语义；runtime ResolveBinding及holdAuthorityCurrent使用当前撤销状态，三模式均hard deny。
+
+### B Hermes宿主来源引用桥接
+
+pre_tool_call增加可选宿主关键字parameter_provenance与context_assertion_id，原样映射为Decide顶层引用，不从tool args/result或cwd推导可信来源，不传入内联Intent/issuer/trust。签名、scope和参数摘要仍由daemon验证。缺省不改变旧请求；显式提供引用但服务不可达、400或响应非法时必须block，包括warn/audit_only，避免引用校验失败退回legacy放行。该桥接不代表原版Hermes会自动生成这些字段；原生MCP捕获与传播仍须单独集成验证。

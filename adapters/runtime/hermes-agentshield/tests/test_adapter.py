@@ -178,3 +178,34 @@ def test_hooks_forward_decision_identity(server):
     path, _, body = _Fake.seen[-1]
     assert path == "/v1/observe"
     assert body["action_id"] == "act-1" and body["decision_receipt_id"] == "rcp-1"
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+def test_authority_references_forwarded_without_claim_inference(server, mode):
+    srv, token = server
+    _Fake.decision = {"action": "allow", "receipt_id": "r"}
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    refs = [{"parameter_path": "/path", "provenance_refs": ["signed-reference"]}]
+    args = {"path": "/work/report", "parameter_provenance": [{"trust": "authoritative"}]}
+    assert mod._pre_tool_call("read_file", args, parameter_provenance=refs,
+                              context_assertion_id="signed-context") is None
+    body = _Fake.seen[-1][2]
+    assert body["parameter_provenance"] == refs
+    assert body["context_assertion_id"] == "signed-context"
+    assert body["params"] == args
+    assert "intent" not in body and "trust" not in body
+    assert mod._pre_tool_call("read_file", args) is None
+    assert "parameter_provenance" not in _Fake.seen[-1][2]
+    assert "context_assertion_id" not in _Fake.seen[-1][2]
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+@pytest.mark.parametrize("status,decision", [(400, {}), (503, {}), (200, {"action": "invalid"}),
+                                               (200, {"action": "deny", "reason": "provenance_not_found"})])
+def test_reference_validation_failure_never_becomes_advisory_allow(server, mode, status, decision):
+    srv, token = server
+    _Fake.status, _Fake.decision = status, decision
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    out = mod._pre_tool_call("read_file", {"path": "/work/report"},
+                             parameter_provenance=[{"parameter_path": "/path", "provenance_refs": ["missing"]}])
+    assert out["action"] == "block"

@@ -200,12 +200,20 @@ def _pre_tool_call(
     task_id: str = "",
     session_id: str = "",
     tool_call_id: str = "",
+    parameter_provenance: Any = None,
+    context_assertion_id: Any = None,
     **_: Any,
 ):
     sid = session_id or task_id or "hermes-default"
+    authority_refs = {}
+    if parameter_provenance is not None:
+        authority_refs["parameter_provenance"] = parameter_provenance
+    if context_assertion_id is not None:
+        authority_refs["context_assertion_id"] = context_assertion_id
     decision = _post(
         "/v1/decide",
         {
+            **authority_refs,
             "platform": _CFG["platform"],
             "session_id": sid,
             "agent_id": _CFG["agent_id"] or os.environ.get("HERMES_PROFILE", "default"),
@@ -215,6 +223,8 @@ def _pre_tool_call(
             "context": {"cwd": os.getcwd(), "host": "hermes"},
         },
     )
+    if decision is None and authority_refs:
+        return {"action": "block", "message": "siq-agent-security: authority references could not be verified"}
     if decision is None:
         return _fail_closed("no response", tool=tool_name, session_id=sid)
     action = decision.get("action")
@@ -237,6 +247,8 @@ def _pre_tool_call(
         }
     if action == "deny":
         return {"action": "block", "message": f"siq-agent-security denied: {reason} (receipt {rid})"}
+    if authority_refs:
+        return {"action": "block", "message": "siq-agent-security: invalid authority decision response"}
     return _fail_closed("malformed decision", tool=tool_name, session_id=sid)
 
 

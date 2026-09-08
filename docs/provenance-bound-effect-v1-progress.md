@@ -526,3 +526,11 @@
 - CI已有11项静态脚本通过：事件信封核心、Control API Dockerfile锁、Web响应头、CI Action pin、OpenShell工作流、自托管Mermaid、Pages pin、Docker镜像digest、本地威胁模型、能力诚实性、性能基线骨架。
 - python3 scripts/test-openclaw-checkpoint-compat.py的15项测试通过；node scripts/test-openclaw-adapter.cjs通过关联/宿主能力/审批复核门禁。这些是组件/兼容测试，不等同新的原生平台V3来源自动采集验收。
 - 全部命令结束且工作树未产生非预期改动。此为本地集成检查，不称作远端CI、生产部署、真实数据库恢复或完整45项DoD验收；尚未推送分支。
+
+### B Hermes宿主引用桥接与旧路径兼容
+
+- Hermes pre_tool_call新增可选parameter_provenance/context_assertion_id宿主关键字，映射到Decide顶层；不从tool args或结果猜测来源，不铸造issuer/trust。内嵌安装资产同步。
+- 显式携带Authority引用时，400/503/非法响应均block，包括warn/audit_only，避免来源未验证时退回legacy advisory允许。未携带引用的旧调用保留既有策略表；签名/范围/摘要判断仍在daemon。
+- 适配器28项测试通过（含三模式引用透传、参数内伪造不升级、验证失败拒绝），Ruff通过；adapterinstall包race/vet及四平台编译通过。
+- 原生Hermes已有V2兼容夹具实际通过：python3 scripts/validate-intent-v2-hermes.py --hermes-root /home/maoyd/siq/hermes-agent --hermes-python /home/maoyd/siq/hermes-agent/.venv/bin/python --out /tmp/siq-hermes-reference-compat.json --load-samples 20 --concurrency 4。使用隔离状态/插件配置，未修改用户实际安装；该次缩小负载验证兼容，不替代完整负载/原生V3来源集成。
+- 当前是显式宿主引用桥接；原版Hermes未自动产生这些字段，MCP结果采集与传播仍待接入。不能把fake HTTP映射测试或V2兼容通过称为native V3 provenance已完成。
