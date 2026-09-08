@@ -54,7 +54,12 @@ func (s *Server) taskCompletion(w http.ResponseWriter, r *http.Request) {
 	if selected.EffectRequirements != nil {
 		task.Requirements = *selected.EffectRequirements
 	}
-	out, err := completion.Evaluate(task, records, s.d.Key.Public(), s.d.Engine.EffectAction, now)
+	lookup, err := s.d.Engine.HistoricalEffectActions(records)
+	if err != nil {
+		writeJSON(w, 500, map[string]string{"error": "completion_action_history_invalid"})
+		return
+	}
+	out, err := completion.Evaluate(task, records, s.d.Key.Public(), lookup, now)
 	if err != nil {
 		writeJSON(w, 500, map[string]string{"error": "completion_evidence_invalid"})
 		return

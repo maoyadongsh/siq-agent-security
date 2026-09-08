@@ -940,3 +940,9 @@ Intent V3 增加可选 effect_requirements 数组（最多128项、requirement_i
 Admin GET `/v1/tasks/{task_id}/completion` 查验签名 Intent、按task读出并验签全量有界证据、关联Engine动作后返回 completion-status/v1。未知任务404，同task对应多份Intent返回409（不擅自挑选较宽要求），损坏Intent/证据或缺失动作关联返回通用500并拒绝完成判断。decision/observer凭据不能读取管理任务投影；接口仅GET，不能写 completed=true。
 
 查询反映已发生效果对已签名要求的满足情况，不是新的执行授权；当前动作关联窗口仍是24小时。状态不缓存，新的失败/冲突证据会影响后续查询。跨存储并发读不是全局快照，结果仅代表本次读到的已发布证据；任务冻结/最终封账不在本轮最小模型内。
+
+### C2 历史动作复核
+
+Completion 使用 HistoricalEffectActions 按本次证据引用集合单次扫描整条签名回执链，最多8192个引用；历史查询不依赖24小时内存动作缓存。要求精确decision action_id/receipt_id以及hold_resolution对原决策的引用和scope一致；重复决策/重复审批或链校验失败拒绝。扫描结束与当前进程已知链头比较，防止运行中截断被误当完整历史。
+
+HistoricalEffectActions 只生成只读投影供已保存证据复核，不重新注册动作、不延长 Observe/hold-status/新证据提交的执行窗口。新请求继续用 EffectAction。完整目录回滚后重启的保护仍取决于既有可信checkpoint，不能把内存链头比较宣称为永久防回滚。

@@ -219,3 +219,10 @@
 - 文件HTTP fixture 升级为真实签名 V3 效果要求，显式将 /path provenance 设为可选以隔离效果验收；验证无证据incomplete→服务端实际采样材料→warn正例verified，以及新增缺文件失败后incomplete。block继续验证越权效果conflicting。
 - 旧无要求Intent返回unknown/not_required；原始HTTP验证decision token拒绝、写状态拒绝、未知任务与歧义处理。warn正例仍不冒充block Grant完整准入。
 - HTTP定向及Go全模块race/vet、四平台编译、Python合同10项与Ruff通过，日志 `/tmp/siq-completion-http-race.log`。历史动作恢复、pending恢复、网络材料/完成、benchmark与最终门禁仍待开发。
+
+### C2 历史动作查询恢复
+
+- Completion 改用 HistoricalEffectActions，按本次记录引用单次验签扫描历史回执链，恢复精确决策及关联审批结果，不依赖24小时缓存、不重新注册执行权限。
+- 覆盖48小时后重启历史读取、批准/拒绝hold恢复、投影切片不可变、伪造引用、回执篡改和运行中删去有效链尾拒绝；新 EffectAction 提交仍在到期后拒绝。
+- HTTP Completion/文件采样定向及Go全模块race/vet、四平台编译通过，日志 `/tmp/siq-effect-history-race.log`。历史复核以当前进程已知链头检测截断，完整状态回滚后重启仍依赖已有可信checkpoint，不宣称永久防回滚。
+- 后续还需加强审批生效时间与 observed_at 的先后关系：当前投影保留批准状态，尚未提供独立批准时刻。另有 pending 持久恢复、网络归档与benchmark待完成。
