@@ -2,7 +2,7 @@
 
 本目录对应开发模板 §65–71。基准独立于检测规则单测，最终必须由真实运行时、签名回执及受控效果 oracle 产生结果；预期字段只用于比对，不能充当实际观测。
 
-场景由 `scenario.schema.json` 约束：每个攻击场景指定正常对照 `pair_id`、攻击类别、任务和确定性 fixture 标识；至少20对及模板列出的全部攻击类别仍须落实到执行器。fixture 标识不能作为任意 shell 命令执行。
+场景由 `scenario.schema.json` 约束：每个攻击场景指定正常对照 `pair_id`、攻击类别、任务和确定性 fixture 标识；当前完整语料为21对、42场景、20类别；check_contracts校验至少20对及必需类别。fixture 标识不能作为任意 shell 命令执行。
 
 阶段语义：D0 语义接受、D1 不安全承诺、D2 动作尝试、D3 工具实际执行、D4 效果观测、D5 独立核实效果。阶段结果为 true/false/null；null 表示 not evaluated，不得改成 false。D0/D1 可来自注明人工来源的 fixture；D2–D5 必须来自实际运行记录。
 
@@ -118,3 +118,11 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.
 
 
 恢复报告现包含签名Intent V3，并对该夹具的单一file.write要求重算verified Completion：核验Intent摘要/签名及决定绑定、效果双层签名和文件材料摘要、预期内容摘要、原始before保持、资源及observer身份、接管—效果—撤销时序，最后精确比较Completion。真实公开签名归档位于docs/evidence/provenance-v1/recovery-completion-20260908.json，供离线回归；它只有临时路径及合成内容摘要，不含签名私钥/token。该算法明确只接受该夹具的一条文件要求，不是全部任务/网络/冲突组合的通用Completion重放实现。
+
+## PR smoke与nightly full（模板§104）
+
+`run.py --suite smoke --out report.json`运行5对/10场景：MCP来源攻击与可信USER对照，以及fake-success、denied-effect、conflicting-effect、forged-cwd的文件效果对照。它调用实际MCP/daemon和文件observer夹具，省略扩展来源、网络、recipient和approval夹具的执行。
+
+独立验证必须使用`evidence.py --suite smoke report.json`。验证器默认full（兼容既有未带suite字段的完整报告）；report不能自行将请求覆盖降为smoke。指定套件缺少场景、重复或额外场景均拒绝；smoke改标签为full仍会因缺少完整语料而失败。
+
+PR runtime-security-contracts使用smoke；nightly/workflow_dispatch的nightly job使用默认full的21对/42场景，并保留受控网络oracle、恢复测试及三次独立重复。重复次数不是新增场景类别。单独的性能与恢复报告不混入D5分母；完整安全race门禁继续覆盖全部Go包。

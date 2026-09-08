@@ -104,10 +104,17 @@ def verify_effect_reference(record, d5, decision_receipt_id):
             raise ValueError("D5 requires archived observation material")
 
 
-def verify(report):
+def verify(report, expected_suite="full"):
+    if expected_suite not in ("smoke", "full") or report.get("suite", "full") != expected_suite:
+        raise ValueError("benchmark suite differs from requested coverage")
     actions, count = verify_receipt_bundles(report["public_evidence"])
     scenarios = {s["id"]: s for path in (Path(__file__).parent / "scenarios").glob("*.json")
                  for s in [json.loads(path.read_text())]}
+    if expected_suite == "smoke":
+        pairs = {"mcp-parameter", "fake-success", "denied-effect", "conflicting-effect", "forged-cwd"}
+        scenarios = {key: value for key, value in scenarios.items() if value["pair_id"] in pairs}
+        if len(scenarios) != 2 * len(pairs):
+            raise ValueError("smoke corpus lacks paired coverage")
     seen = set()
     effects = 0
     for observation in report["observations"]:
@@ -172,12 +179,13 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("report", type=Path)
+    parser.add_argument("--suite", choices=("smoke", "full"), default="full")
     parser.add_argument("--expected-sha256", help="Report digest obtained from a separately trusted channel")
     args = parser.parse_args()
     raw = args.report.read_bytes()
     if args.expected_sha256 and hashlib.sha256(raw).hexdigest() != args.expected_sha256:
         raise ValueError("report differs from trusted digest")
-    print(json.dumps(verify(json.loads(raw)), indent=2))
+    print(json.dumps(verify(json.loads(raw), expected_suite=args.suite), indent=2))
 
 
 if __name__ == "__main__":

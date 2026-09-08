@@ -738,3 +738,10 @@
 - Go1.26.6 intent/receipt相关双读/历史验签/撤销/legacy测试无缓存race通过；adapterinstall、cmd/agentshield完整包无缓存race通过。
 - OpenClaw hook审批复查通过，checkpoint兼容15项通过；Hermes adapter56项通过。原生Hermes/CodeBuddy旧夹具保持原基线与限制，不冒充本轮重跑。
 - 准备推送本批测试与验证器修复到独立开发分支，远端CI以实际最终SHA另行验收；main保持不变。
+
+## 2026-09-08：落实§104不同规模基准套件
+
+- 发现PR/nightly原先同为21对，只重复次数不同，不能称nightly更大语料。新增明确--suite smoke/full：PR实际执行5对10场景，nightly保留完整21对42场景及网络oracle/恢复/三次重复。
+- 验证器由调用者指定expected_suite，缺省full；拒绝report自行降级。严格要求对应场景集合完整，保留旧full报告兼容。
+- Go1.26.6实际smoke运行通过，独立验证10条回执、8份效果封装；将该报告改名full和删除一个smoke场景后重算summary均拒绝。现有full报告51回执/11效果封装仍通过。
+- 21项基准unittest与Ruff通过；没有改生产授权语义。1e162dc远端ci排队、runtime-security运行中为本轮查询时状态，新套件变更仍需下一提交CI验证。
