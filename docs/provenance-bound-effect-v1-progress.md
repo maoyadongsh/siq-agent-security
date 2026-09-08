@@ -614,3 +614,10 @@
 - 完成Hermes默认200样本/8并发原生夹具（412回执）、CodeBuddy原生CLI（13回执）及10项bootstrap故障/恢复、OpenClaw钩子与15项checkpoint兼容验证，结果全部通过；详见验收索引的命令表及公开摘要。
 - Hermes适配器56项及Ruff、Go cmd/adapterinstall/server race通过；新增Hermes Python回归CI步骤，弥补此前远端仅桥接夹具未跑完整适配器负例的缺口。
 - 所有原生测试用隔离临时配置/合成输入，不修改用户配置，不声称V3原生集成或生产支持。仅CI/文档修改，diff检查通过；本批对应远端结果待推送后确认。
+
+
+### 状态容量与签名复用源码审计
+
+- 新增[状态审计](provenance-bound-effect-v1-state-audit.md)及生产新增集合/签名调用索引；核读observer、pending、来源图/matcher、Completion、历史效果查询与oracle边界，记录具体上限和失败行为。
+- 发现RuntimeAction高影响路径临时集合目前依赖4MiB HTTP输入边界，没有独立节点/深度/输出预算；后续需评估并避免截断导致授权漏检。未把“无持久无限增长”误当完整资源防护完成。
+- 签名核读确认主要新增记录继续走既有signing/canon；完整diff和离线工具预算继续待审，不以搜索命中代替G3/G4/G5最终验收。本轮仅审计文档，diff检查通过。

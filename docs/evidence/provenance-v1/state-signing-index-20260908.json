@@ -1,0 +1,317 @@
+{
+  "baseline": "d001c4d",
+  "head": "519cf2e",
+  "scope": "Added production Go/Python/CJS collection and signing lines; excludes tests, fixture scripts, benchmarks and duplicate embedded assets; search index is not proof of correctness",
+  "files": [
+    {
+      "path": "adapters/runtime/hermes-agentshield/__init__.py",
+      "added_collection_or_signing_lines": [
+        "def _post(path: str, body: dict[str, Any], *, expected: int = 200) -> dict[str, Any] | None:",
+        "authority_refs = {}",
+        "_PROVENANCE_REFS: dict[tuple[str, str, str], tuple[float, str]] = {}"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/completion/evaluate.go",
+      "added_collection_or_signing_lines": [
+        "seenReq := map[string]bool{}",
+        "seen := map[string]bool{}",
+        "actions := map[string]effectevidence.Action{}"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/completion/requirement.go",
+      "added_collection_or_signing_lines": [
+        "var fields map[string]json.RawMessage"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/evidence.go",
+      "added_collection_or_signing_lines": [
+        "func (e Evidence) Unsigned() map[string]any {",
+        "var doc map[string]any"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/file.go",
+      "added_collection_or_signing_lines": [
+        "var raw map[string]any",
+        "encoded, err := canon.Marshal(raw)"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/network_material.go",
+      "added_collection_or_signing_lines": [
+        "encoded, err := canon.Marshal(map[string]any{\"requested_scheme\": m.RequestedScheme, \"requested_host\": m.RequestedHost, \"requested_port\": m.RequestedPort, \"scheme\": event.Scheme, \"host\": event.Host, \"port\": event.Port, \"resolved_target\": event.ResolvedTarget, \"request_id\": event.RequestID, \"request_digest\": event.RequestDigest, \"received_at\": event.ReceivedAt})"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/network_oracle.go",
+      "added_collection_or_signing_lines": [
+        "encoded, err := canon.Marshal(map[string]any{\"method\": r.Method, \"uri\": r.RequestURI, \"body_digest\": hex.EncodeToString(bodyHash[:])})"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/observer_revocation.go",
+      "added_collection_or_signing_lines": [
+        "func (r ObserverRevocation) unsigned() map[string]any {",
+        "return map[string]any{\"schema_version\": r.SchemaVersion, \"owner_digest\": r.OwnerDigest, \"revoked_at\": r.RevokedAt, \"signing_schema\": r.SigningSchema}",
+        "r.Signature, err = s.key.SignCanonical(r.unsigned())"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/pending.go",
+      "added_collection_or_signing_lines": [
+        "func (p PendingFile) unsigned() map[string]any {",
+        "value, _ := canon.Decode(raw)",
+        "m := value.(map[string]any)",
+        "a, _ := canon.Marshal(old.unsigned())",
+        "b, _ := canon.Marshal(p.unsigned())",
+        "p.Signature, err = s.key.SignCanonical(p.unsigned())"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/recovery.go",
+      "added_collection_or_signing_lines": [
+        "func recoveryMap(value any) map[string]any {",
+        "decoded, _ := canon.Decode(raw)",
+        "return decoded.(map[string]any)",
+        "raw, _ := canon.Marshal(recoveryMap(value))",
+        "func (r FileRecovery) unsigned() map[string]any {",
+        "r.Signature, err = key.SignCanonical(r.unsigned())"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/store.go",
+      "added_collection_or_signing_lines": [
+        "func (r Record) unsigned() map[string]any {",
+        "var doc map[string]any",
+        "raw, err := canon.Marshal(input.Unsigned())",
+        "e.Signature, err = s.key.SignCanonical(e.Unsigned())",
+        "r.Signature, err = s.key.SignCanonical(r.unsigned())"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/intent/context.go",
+      "added_collection_or_signing_lines": [
+        "a.Signature, err = s.key.SignCanonical(a.Unsigned())"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/intent/intent_revocation.go",
+      "added_collection_or_signing_lines": [
+        "func intentRevocationMap(r IntentRevocation) map[string]any {",
+        "var m map[string]any",
+        "r.Signature, err = s.key.SignCanonical(intentRevocationMap(r))"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/intent/types.go",
+      "added_collection_or_signing_lines": [
+        "var fields map[string]json.RawMessage"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/intent/validate.go",
+      "added_collection_or_signing_lines": [
+        "seen := map[string]bool{}",
+        "seen := map[string]bool{}"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/authority.go",
+      "added_collection_or_signing_lines": [
+        "seen := map[string]bool{}",
+        "func (a Assertion) Unsigned() map[string]any {",
+        "var m map[string]any"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/defaults.go",
+      "added_collection_or_signing_lines": [
+        "seen := map[string]bool{}"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/graph.go",
+      "added_collection_or_signing_lines": [
+        "active map[string]bool",
+        "done   map[string]graphNode",
+        "func newWalk() *graphWalk { return &graphWalk{active: map[string]bool{}, done: map[string]graphNode{}} }",
+        "a.Signature, err = s.key.SignCanonical(a.Unsigned())"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/matcher.go",
+      "added_collection_or_signing_lines": [
+        "func (s *Store) MatchParameters(params map[string]any, bindings []ParameterBinding, constraints []Constraint, scope Scope, now time.Time) error {",
+        "resolved := map[string][]Assertion{}",
+        "seen := map[string]bool{}",
+        "seen := map[string]bool{}"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/report.go",
+      "added_collection_or_signing_lines": [
+        "sourceDigest, err := ContentDigest(map[string]any{\"type\": source.Type, \"source_id\": source.SourceID})",
+        "idDigest, _ := ContentDigest(map[string]any{\"report_id\": reportID, \"scope_digest\": scopeDigest})",
+        "a.Signature, err = s.key.SignCanonical(a.Unsigned())"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/select.go",
+      "added_collection_or_signing_lines": [
+        "identity, _ := ContentDigest(map[string]any{\"parent_id\": parentID, \"pointer\": pointer, \"scope\": unsignedRecord(scope)})",
+        "child.Signature, err = s.key.SignCanonical(child.Unsigned())"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/store.go",
+      "added_collection_or_signing_lines": [
+        "func unsignedRecord(value any) map[string]any {",
+        "var m map[string]any",
+        "r.Signature, err = s.key.SignCanonical(unsignedRecord(r))",
+        "v.Signature, err = s.key.SignCanonical(unsignedRecord(v))"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/types.go",
+      "added_collection_or_signing_lines": [
+        "seen := map[string]bool{}",
+        "var fields map[string]json.RawMessage"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/validate.go",
+      "added_collection_or_signing_lines": [
+        "var sourceTypes = map[string]bool{\"USER\": true, \"SYSTEM\": true, \"TRUSTED_IAM\": true, \"TRUSTED_DATABASE\": true, \"MCP\": true, \"WEB\": true, \"TOOL\": true, \"MEMORY\": true, \"AGENT\": true, \"SECRET\": true, \"CONFIDENTIAL\": true, \"UNKNOWN\": true}",
+        "var trustRanks = map[string]int{\"unknown\": 0, \"untrusted\": 1, \"trusted\": 2, \"authoritative\": 3}",
+        "b, err := canon.Marshal(value)",
+        "case map[string]any:",
+        "seen := map[string]bool{}"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/effect_history.go",
+      "added_collection_or_signing_lines": [
+        "wanted := map[pair]bool{}",
+        "found := map[pair]Receipt{}",
+        "approved := map[pair]bool{}",
+        "approvedAt := map[pair]time.Time{}",
+        "resolved := map[pair]bool{}",
+        "out := map[pair]effectevidence.Action{}"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/engine.go",
+      "added_collection_or_signing_lines": [
+        "Params              map[string]any                `json:\"params\"`",
+        "Context             map[string]any                `json:\"context\"`",
+        "ProvenanceCheck func(map[string]any, []provenance.ParameterBinding, []provenance.Constraint, provenance.Scope, time.Time) error",
+        "var redacted map[string]any"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/describe.go",
+      "added_collection_or_signing_lines": [
+        "func Describe(tool string, params map[string]any) Descriptor {",
+        "case map[string]any:"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/hints.go",
+      "added_collection_or_signing_lines": [
+        "case map[string]any:",
+        "seen := map[string]bool{}",
+        "seen := map[string]bool{}"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/normalize.go",
+      "added_collection_or_signing_lines": [
+        "func normalizeEffects(tool string, params map[string]any) (operation string, effects []string) {",
+        "func Normalize(tool string, params map[string]any) (string, []string) {"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/resources.go",
+      "added_collection_or_signing_lines": [
+        "func extractResources(tool string, params map[string]any) ([]Resource, error) {",
+        "func ExtractResources(tool string, params map[string]any) ([]Resource, error) {"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/server/authz.go",
+      "added_collection_or_signing_lines": [
+        "writeJSON(w, 403, map[string]string{\"error\": \"effect_observer_required\"})"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/server/completion_http.go",
+      "added_collection_or_signing_lines": [
+        "writeJSON(w, 500, map[string]string{\"error\": \"completion_authority_unavailable\"})",
+        "writeJSON(w, 409, map[string]string{\"error\": \"completion_intent_ambiguous\"})",
+        "writeJSON(w, 404, map[string]string{\"error\": \"completion_task_not_found\"})",
+        "writeJSON(w, 500, map[string]string{\"error\": \"completion_evidence_unavailable\"})",
+        "writeJSON(w, 500, map[string]string{\"error\": \"completion_action_history_invalid\"})",
+        "writeJSON(w, 500, map[string]string{\"error\": \"completion_evidence_invalid\"})"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/server/context_http.go",
+      "added_collection_or_signing_lines": [
+        "writeJSON(w, status, map[string]string{\"error\": code, \"reason_code\": code})"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/server/effect_http.go",
+      "added_collection_or_signing_lines": [
+        "writeJSON(w, status, map[string]string{\"error\": code, \"reason_code\": code})",
+        "allowed := map[string]string{\"host_observer\": \"host_independent\", \"openshell\": \"host_independent\", \"provider_audit\": \"external_independent\", \"test_oracle\": \"external_independent\"}",
+        "writeJSON(w, 201, map[string]any{\"observer_id\": id, \"token\": token, \"expires_in\": body.ExpiresIn, \"scope\": \"effect_observe\"})",
+        "writeJSON(w, 200, map[string]any{\"items\": records})"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/server/file_observation_http.go",
+      "added_collection_or_signing_lines": [
+        "writeJSON(w, 200, map[string]any{\"observation_id\": body.ID, \"before\": p.Before, \"completed\": p.Completed})",
+        "writeJSON(w, 200, map[string]any{\"observation_id\": body.ID, \"before\": persisted.Before, \"completed\": false})",
+        "writeJSON(w, 201, map[string]any{\"observation_id\": body.ID, \"before\": before, \"completed\": false})",
+        "writeJSON(w, 200, map[string]any{\"recovery\": recovery, \"expires_at\": p.ExpiresAt})"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/server/provenance_http.go",
+      "added_collection_or_signing_lines": [
+        "writeJSON(w, status, map[string]string{\"error\": code, \"reason_code\": code})"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/server/provenance_report.go",
+      "added_collection_or_signing_lines": [
+        "content, err := canon.Decode(body.Content)",
+        "content, err := canon.Decode(body.Content)"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/server/server.go",
+      "added_collection_or_signing_lines": [
+        "fileObservations map[string]pendingFileObservation",
+        "observers  map[string]observerSession",
+        "s.observers = map[string]observerSession{}",
+        "s.fileObservations = map[string]pendingFileObservation{}"
+      ]
+    },
+    {
+      "path": "apps/agentshield/internal/trustedcontext/context.go",
+      "added_collection_or_signing_lines": [
+        "func RequestBinding(subject Subject, task, tool, call string, params map[string]any) (string, error) {",
+        "b, err := canon.Marshal(map[string]any{\"platform\": subject.Platform, \"session_id\": subject.SessionID, \"agent_id\": subject.AgentID, \"task_id\": task, \"tool\": tool, \"tool_call_id\": call, \"params\": params})",
+        "func (a Assertion) Unsigned() map[string]any {",
+        "var m map[string]any",
+        "func (a Assertion) Check(subject Subject, task, tool, call string, params map[string]any, now time.Time) error {"
+      ]
+    }
+  ]
+}
