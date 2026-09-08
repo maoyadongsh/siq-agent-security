@@ -900,3 +900,9 @@ Engine 的 EffectAction 仅从已签发或经回执链恢复的动作状态读�
 Admin POST `/v1/effect-observers` 管理签发短期 observer token，请求固定 source 和完整 platform/session/agent/task scope。仅允许 host_observer/host_independent、openshell/host_independent、provider_audit/external_independent、test_oracle/external_independent；source_id由管理员指定。有效期1–3600秒，最多128个活动 token；内存仅存 token SHA256，服务重启全部失效。DELETE `/v1/effect-observers/{id}` 立即撤销。生产 observer 需管理端重新配置，不自动延续。
 
 POST `/v1/effect-evidence` 仅 capEffectObserve，scope 必须精确匹配 Engine 动作，Source 必须与 token 配置一致，提交 Evidence signature 必须为空。GET `/v1/effect-evidence/{id}` 与 GET `/v1/actions/{id}/effect-evidence` 为 admin 读取。普通 decision/admin token 均不能代替 observer 提交。撤销与提交共享 observer 锁，撤销返回后的请求不再落盘。签发响应 no-store，不记录明文 token。
+
+### C1 文件观察器
+
+复用 ADR-013 的普通文件打开保证，抽为 internal/fileopen，准入扫描继续使用相同实现。文件 observer 拒绝路径任一可见符号链接、非普通文件、读取超预算以及打开/读取期间检测到的身份或 size/mtime 变化；Unix 保留 NOFOLLOW/NONBLOCK，Windows 保留已说明的残余 TOCTOU。
+
+Capture 仅输出资源摘要、存在性、内容 SHA256、size、mtime 和采样时间；文件原文及路径不落证据。前后资源必须一致，后采样时间不早于前采样；最长读取16 MiB。FileWrite 对比可信预期摘要：后文件缺失为 failed/unexpected；发生可见变化且摘要匹配为 completed/expected，不匹配为 completed/unexpected；前后无可见变化为 unknown/unknown，不能证明重复同值写已执行。coverage 固定 partial，independence 由受信 host observer 注册为 host_independent；同 UID 攻击者与采样间隔内瞬态变化仍属残余风险。

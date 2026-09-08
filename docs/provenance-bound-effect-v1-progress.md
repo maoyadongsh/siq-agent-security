@@ -169,3 +169,12 @@
 - 原始 HTTP 验收验证决策 token 管理拒绝、decision/admin 提交拒绝、来源冒充、错配回执、跨任务、撤销/过期、重启 token 失效与记录保留；测试 observer 提交被拒绝动作效果，实际保存 unauthorized_effect_observed 并读回。
 - Go 全模块 race/vet、四平台编译通过，新增重启断言后 HTTP 定向 race 通过；Python 合同6项与Ruff通过。日志 `/tmp/siq-effect-http-race.log`。
 - 尚未接入实际文件/网络 observer、Completion；查询暂为8192条有界验签扫描，分页与性能基线待完善。
+
+### C1 文件观察基础实现
+
+- 提取 ADR-013 既有文件打开逻辑为 internal/fileopen，准入扫描保留原入口与行为。Unix NOFOLLOW/NONBLOCK 与非 Unix 回退未新增平台假设。
+- CaptureFile 实际读取目标前后状态，输出存在性/内容摘要/size/mtime/采样时间与统一资源摘要；拒绝可见符号链接（含父目录）、非普通文件、超限及检测到的读取期间变化，最大16 MiB。
+- FileWrite 将实际变化+预期摘要匹配分类为 completed/expected；文件缺失为 failed/unexpected，内容不符为 unexpected，无可见变化为 unknown。生成 host_independent/partial Evidence，可进入既有签名存储。
+- 使用真实临时文件验证写入、假成功（无文件）、同值无变化、内容不符、上限/超限、符号链接、反向时间和拒绝动作产生实际效果后的事件分类。观察对象不含路径或内容原文；admission/effectevidence race通过。
+- Go 全模块 race、vet 与四平台编译通过，日志 `/tmp/siq-file-observer-race.log`。
+- 本批提供观察库，尚未完成 CLI/HTTP observer 生命周期及观测材料持久化引用；不能宣称用户安装后已自动观察文件。Windows 原生路径语义仍未支持，四平台编译不代表 Windows 实机观察验收。

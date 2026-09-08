@@ -2,10 +2,9 @@
 
 package admission
 
-import "os"
+import (
+	"os"
+	"siq-agent-security/apps/agentshield/internal/fileopen"
+)
 
-// openRegular falls back to os.Open where O_NOFOLLOW/O_NONBLOCK are unavailable.
-// Post-open Stat + SameFile remain mandatory; residual TOCTOU is documented in ADR-013.
-func openRegular(path string) (*os.File, error) {
-	return os.Open(path)
-}
+func openRegular(path string) (*os.File, error) { return fileopen.Regular(path) }
