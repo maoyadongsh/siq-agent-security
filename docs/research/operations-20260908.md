@@ -1,5 +1,7 @@
 # Research open-source operations — 2026-09-08
 
+Released source: `aefab111c7fcad9075c8f429f97c9eab519dcd22`; [source prerelease](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1). All 31 required checks passed on this exact source. Three uploaded assets were freshly downloaded and verified, including all 2,058 archive members and 98 required license/notice files. Archive SHA256: `4a741a767faae5875ab2ec765b1c91d7f0eca076f5de67cff97ea59d1d4b1779`.
+
 Implementation branch: `codex/research-open-source-r1`, based on V5 documentation commit `e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2`. This is the research-cycle operations record; V5 competition source, artifacts, video and denominators remain frozen.
 
 ## Implemented
@@ -13,8 +15,12 @@ Implementation branch: `codex/research-open-source-r1`, based on V5 documentatio
 
 ## Remote integration and remaining work
 
-PR [#7](https://github.com/maoyadongsh/siq-agent-security/pull/7) carries this implementation. Five scoped contribution issues [#8–#12](https://github.com/maoyadongsh/siq-agent-security/issues?q=is%3Aissue+is%3Aopen) were created; Discussions and research topics are enabled. No outside researcher has been contacted or represented as a reproducer. Final remote commit, PR and CI results are recorded in evidence/remote-integration.json once available. The initial API operation records are [platform security](evidence/platform-security-readback.json), [main protection](evidence/branch-protection-readback.json) and [private reporting](evidence/private-reporting-readback.json).
+PR [#7](https://github.com/maoyadongsh/siq-agent-security/pull/7) carries this implementation. Five scoped contribution issues [#8–#12](https://github.com/maoyadongsh/siq-agent-security/issues?q=is%3Aissue+is%3Aopen) were created; Discussions and research topics are enabled. No outside researcher has been contacted or represented as a reproducer. Final remote commit, merged PR and CI are recorded in [remote integration](evidence/remote-integration.json), [release-source checks](evidence/release-ci.json) and [verified release receipt](evidence/github-research-release.json). The publication record is a later documentation change; it does not alter the immutable release source. The initial API operation records are [platform security](evidence/platform-security-readback.json), [main protection](evidence/branch-protection-readback.json) and [private reporting](evidence/private-reporting-readback.json).
 
 First release scope is an unsigned source-only research prerelease; see release-scope.md. A new binary research release still requires actual-payload SBOM/notice verification, a clean finalized source build and separate release acceptance. The old unsigned V5 RC is not silently republished as a licensed research binary. No publisher key or archival account is configured. No DOI, Zenodo upload, independent external reproduction, research-community response, new confirmatory experiment or paper submission is claimed.
 
 These remaining release/research milestones are tracked explicitly in the [71-task ledger](../open-source-research-tasks-20260908.md); repository setup does not complete the multi-month research programme.
+
+## Remaining scope
+
+The source-release engineering tasks are complete for this distribution. New binary packaging/native acceptance, a connected archival account/DOI, two external reproduction groups, controlled new experiments and paper submission remain outstanding. O-11.03 is blocked on an archival account; other experimental and recurring tasks retain their true status. The project is now licensed and publicly released, but the multi-month research programme is not declared complete.

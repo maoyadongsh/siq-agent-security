@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-09-08T15:14:39.685239+00:00",
+  "scope": "source-only prerelease; no new binary native-launch claim",
+  "version": "research-v0.1.0-rc.1",
+  "source_sha": "aefab111c7fcad9075c8f429f97c9eab519dcd22",
+  "archive_sha256": "4a741a767faae5875ab2ec765b1c91d7f0eca076f5de67cff97ea59d1d4b1779",
+  "source_file_count": 2058,
+  "required_license_notice_count": 98,
+  "source_clean": true,
+  "source_checks": 31,
+  "source_checks_passed": true,
+  "archive_scan": "calibrated gitleaks passed on extracted source archive",
+  "fresh_download_verified": true,
+  "publication_receipt": "github-research-release.json",
+  "official_signature": false,
+  "private_state_bundled": false,
+  "startup_after_package": "not_applicable for source-only archive; hosted CI builds source and runs nine fixtures",
+  "binary_research_acceptance": "future separate scope"
+}

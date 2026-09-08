@@ -1,0 +1,22 @@
+{
+  "source_sha": "aefab111c7fcad9075c8f429f97c9eab519dcd22",
+  "local_packager_negative_tests": 3,
+  "local_source_archive_checks": "passed; full member hashes and required notices",
+  "hosted_ci": "31 required checks passed for exact integrated source",
+  "evidence": [
+    "release-ci.json",
+    "source-package-validation.json",
+    "research-rc.json"
+  ],
+  "unchanged_runtime_surfaces": [
+    "apps/agentshield",
+    "apps/secure-agent",
+    "apps/web",
+    "skills",
+    "packages/contracts",
+    "benchmarks/hackathon",
+    "benchmarks/runtime-security"
+  ],
+  "runtime_baseline": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "binary_distribution": "not part of this source release"
+}

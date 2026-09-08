@@ -2,6 +2,8 @@
 
 研究入口：[研究指南](docs/research/README.md) · [无模型密钥复现](REPRODUCIBILITY.md) · [引用](CITATION.cff) · [贡献](CONTRIBUTING.md) · [安全报告](SECURITY.md)。自有代码采用 [Apache-2.0](LICENSE)，明确列出的原创研究文档采用 [CC BY 4.0](LICENSES/README.md)，第三方许可保留。
 
+首个[研究源码预发布 research-v0.1.0-rc.1](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1)已上线（未签名，附来源清单与校验和）。
+
 本轮研究开源操作与验证见[实施记录](docs/research/operations-20260908.md)。比赛 V5 材料保留为原始冻结快照；新实验使用独立身份。当前没有论文、DOI 或独立复现认证。
 
 ## Secure Runtime for Agent Skills

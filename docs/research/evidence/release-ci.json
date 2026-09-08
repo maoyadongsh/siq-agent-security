@@ -1,0 +1,162 @@
+{
+  "observed_at": "2026-09-08T15:11:54.758771+00:00",
+  "source_sha": "aefab111c7fcad9075c8f429f97c9eab519dcd22",
+  "checks": [
+    {
+      "name": "web",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371282"
+    },
+    {
+      "name": "agentshield",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371743"
+    },
+    {
+      "name": "gitleaks",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371844"
+    },
+    {
+      "name": "control-api",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371779"
+    },
+    {
+      "name": "edge (1.22, connectors/directory)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372007"
+    },
+    {
+      "name": "edge (1.22, connectors/hermes)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371857"
+    },
+    {
+      "name": "edge (stable, edge/agent)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372048"
+    },
+    {
+      "name": "edge (1.22, connectors/kubernetes)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371977"
+    },
+    {
+      "name": "edge (1.22, edge/agent)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371934"
+    },
+    {
+      "name": "edge (1.22, connectors/dify)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371976"
+    },
+    {
+      "name": "edge (1.22, connectors/docker)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372073"
+    },
+    {
+      "name": "edge (stable, connectors/docker)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372145"
+    },
+    {
+      "name": "edge (1.22, connectors/openclaw)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372041"
+    },
+    {
+      "name": "edge (stable, connectors/process)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372173"
+    },
+    {
+      "name": "edge (1.22, connectors/systemd)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372250"
+    },
+    {
+      "name": "edge (1.22, connectors/process)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371908"
+    },
+    {
+      "name": "edge (stable, connectors/systemd)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372192"
+    },
+    {
+      "name": "edge (stable, connectors/directory)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372179"
+    },
+    {
+      "name": "edge (stable, connectors/workbuddy)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372015"
+    },
+    {
+      "name": "edge (1.22, connectors/mcp)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371942"
+    },
+    {
+      "name": "edge (stable, connectors/mcp)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372128"
+    },
+    {
+      "name": "edge (stable, connectors/hermes)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372092"
+    },
+    {
+      "name": "edge (stable, connectors/dify)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372161"
+    },
+    {
+      "name": "edge (stable, connectors/openclaw)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372183"
+    },
+    {
+      "name": "edge (stable, connectors/kubernetes)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372056"
+    },
+    {
+      "name": "edge (stable, connectors/piagent)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372134"
+    },
+    {
+      "name": "edge (1.22, connectors/piagent)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117371979"
+    },
+    {
+      "name": "edge (1.22, connectors/workbuddy)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906726/job/102117372063"
+    },
+    {
+      "name": "runtime-security-toolchain",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906714/job/102117371797"
+    },
+    {
+      "name": "runtime-security-contracts",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906714/job/102117371485"
+    },
+    {
+      "name": "research-reproduction",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34242906752/job/102117371310"
+    }
+  ],
+  "all_passed": true
+}
