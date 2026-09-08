@@ -86,3 +86,5 @@ Admin GET `/v1/tasks/{task_id}/completion` 返回 [completion-status/v1](../pack
 服务根据凭据恢复来源，校验真实动作及 scope，再签名归档。首次及相同内容重试返回201和同一记录；同 ID 不同材料409，凭据或scope错误403，伪造接收事件身份等非法材料400。decision/admin token 不能直接提交，正文不能自报 source、scope 或 authorized。管理端可通过既有证据 GET 查询，已保存记录跨重启可读；observer token 重启失效。
 
 这是受信 loopback 测试 oracle 的集成接口，独立性依赖管理员对服务器身份与凭据隔离的配置；不将任意客户端上传的日志视为独立真相，也不代表已接入生产网络审计。拒绝动作后实际接收到请求会生成 `unauthorized_effect_observed`，不会被解释为正常完成。
+
+文件begin现在先持久化签名pending快照再返回201。若内存索引丢失但同一observer token仍有效，重试begin读取原始快照并返回200，不会在文件已改变后重新采样。原始deadline不延长；不同token即使source/scope相同也返回409，不能隐式接管。Server重启会使旧token失效，因此跨重启续用仍需后续显式管理恢复接口。

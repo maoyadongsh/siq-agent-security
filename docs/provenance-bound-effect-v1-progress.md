@@ -413,3 +413,10 @@
 - 0700目录、0600暂存、fsync+排他Link发布，禁止覆盖，独立8192归档上限。同ID同内容并发重试返回同签名；不同预期摘要冲突。原始路径、内容、token不落盘。
 - 真实文件采样→签名存储→重建Store读回测试通过，覆盖8路并发、owner篡改、路径穿越、隐私断言。Go全模块race/vet与四平台编译通过（/tmp/siq-pending-store-race.log）；schema正例及raw token/path负例通过。
 - 尚未接入begin/finish HTTP，不宣称pending跨重启已可续用。后续需管理接管、撤销终态、deadline/动作复核、强杀恢复及容量/中断故障矩阵；完整目标仍进行中。
+
+### C2 begin API写前持久化与快照重用
+
+- 文件begin成功201前调用SavePendingFile，持久化失败不能创建内存成功状态；已有签名pending先校验owner/source/scope/action/resource/digest/budget/deadline，同内容有效重试重建索引返回原before。
+- HTTP真实文件测试在写入后删除内存索引，原token重试仍返回写前不存在快照；同source/scope新token409拒绝接管，随后finish继续得到正确真实材料与Completion。
+- Go全模块race/vet及四平台编译通过（/tmp/siq-pending-begin-race.log），diff检查通过。接口保持body/response合同兼容，状态变化先回写规格。
+- 当前只支持有效原token的索引恢复；重启token失效后仍需管理恢复、持久撤销与强杀测试，不能宣称跨重启恢复已完成。

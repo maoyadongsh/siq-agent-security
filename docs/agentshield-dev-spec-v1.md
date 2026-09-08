@@ -970,3 +970,7 @@ Completion 对已验签网络材料同时比较签名 endpoint 与 requested/rec
 新增签名 file-observation-pending/v1，保留observation/action/decision引用、完整scope、固定observer source、原owner token摘要、服务端before快照、expected_digest/max_bytes和原到期时间；不保存原始路径、文件内容或token。不可变发布到effect-evidence-pending目录，0600文件，独立8192条归档上限；同ID同内容幂等，任何字段变化冲突。
 
 该记录是恢复依据，不是新的执行授权；读取过期记录供诊断不延长采样有效期。恢复仍必须验证当前observer凭据、source/scope、动作与原deadline；跨token接管与撤销终态需后续管理API接入，在此之前持久记录不能自动被任意新observer续用。
+
+### C2 begin写前持久化与原快照重用
+
+文件begin先检查已签名pending记录。同ID且owner/source/scope/动作/预期摘要/预算/资源一致、原deadline仍有效时，仅重用原before并恢复内存索引，返回200；不重新读取文件、不延长deadline。不同owner或元数据冲突409，损坏记录失败关闭。首次采样必须SavePendingFile成功后才返回201和建立内存索引。Server重启导致原token失效，新token不能以begin隐式接管旧快照；显式管理恢复仍须后续接入。

@@ -66,6 +66,20 @@ func TestFileObservationHTTPReadsRealState(t *testing.T) {
 			if err = os.WriteFile(path, data, 0600); err != nil {
 				t.Fatal(err)
 			}
+			persisted, err := s.effects.GetPendingFile("file-http-real")
+			if err != nil || persisted.Before.Exists || persisted.OwnerDigest != tokenDigest(observer) {
+				t.Fatal("begin did not persist original snapshot", persisted, err)
+			}
+			// Discard only the cache after the file changed. A retry must reuse the signed pre-write snapshot.
+			s.observerMu.Lock()
+			delete(s.fileObservations, "file-http-real")
+			s.observerMu.Unlock()
+			other := effectCall(t, s, "POST", "/v1/effect-observers", s.bootAdmin, map[string]any{"source": effectevidence.Source{Type: "host_observer", SourceID: "server-file", Independence: "host_independent"}, "scope": provenance.Scope{Platform: "hermes", SessionID: "s1", AgentID: "a-1", TaskID: "task-1"}, "expires_in": 60}, 201)["token"].(string)
+			effectCall(t, s, "POST", "/v1/file-observations", other, body, 409)
+			recovered := effectCall(t, s, "POST", "/v1/file-observations", observer, body, 200)
+			if recovered["before"].(map[string]any)["exists"] != false {
+				t.Fatal("retry resampled after tool execution", recovered)
+			}
 			effectCall(t, s, "POST", "/v1/file-observations/file-http-real/finish", observer, map[string]any{"path": path + "-other"}, 400)
 			record := effectCall(t, s, "POST", "/v1/file-observations/file-http-real/finish", observer, map[string]any{"path": path}, 201)
 			material := record["file_observation"].(map[string]any)

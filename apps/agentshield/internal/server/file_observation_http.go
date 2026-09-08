@@ -128,9 +128,29 @@ func (s *Server) beginFileObservation(w http.ResponseWriter, r *http.Request) {
 		effectError(w, effectevidence.ErrCapacity)
 		return
 	}
+	persisted, pendingErr := s.effects.GetPendingFile(body.ID)
+	if pendingErr == nil {
+		expires, parseErr := time.Parse(time.RFC3339Nano, persisted.ExpiresAt)
+		if parseErr != nil || !now.Before(expires) || persisted.OwnerDigest != owner || persisted.Scope != o.Scope || persisted.Source != o.Source || persisted.ActionID != a.ActionID || persisted.ReceiptID != a.DecisionReceiptID || persisted.Before.ResourceRef != ref || persisted.ExpectedDigest != body.Expected || persisted.MaxBytes != body.MaxBytes {
+			effectError(w, effectevidence.ErrConflict)
+			return
+		}
+		s.fileObservations[body.ID] = pendingFileObservation{Before: persisted.Before, ActionID: persisted.ActionID, ReceiptID: persisted.ReceiptID, ExpectedDigest: persisted.ExpectedDigest, Owner: owner, MaxBytes: persisted.MaxBytes, Expires: expires}
+		writeJSON(w, 200, map[string]any{"observation_id": body.ID, "before": persisted.Before, "completed": false})
+		return
+	}
+	if !errors.Is(pendingErr, effectevidence.ErrNotFound) {
+		effectError(w, pendingErr)
+		return
+	}
 	before, err := effectevidence.CaptureFile(body.Path, body.MaxBytes)
 	if err != nil {
 		effectError(w, effectevidence.ErrInvalid)
+		return
+	}
+	_, err = s.effects.SavePendingFile(effectevidence.PendingFile{SchemaVersion: "file-observation-pending/v1", ID: body.ID, ActionID: a.ActionID, ReceiptID: a.DecisionReceiptID, Scope: o.Scope, Source: o.Source, Before: before, OwnerDigest: owner, ExpectedDigest: body.Expected, MaxBytes: body.MaxBytes, ExpiresAt: o.Expires.UTC().Format(time.RFC3339Nano), SigningSchema: "local_canonical/v1"})
+	if err != nil {
+		effectError(w, err)
 		return
 	}
 	s.fileObservations[body.ID] = pendingFileObservation{Before: before, ActionID: a.ActionID, ReceiptID: a.DecisionReceiptID, ExpectedDigest: body.Expected, Owner: owner, MaxBytes: body.MaxBytes, Expires: o.Expires}
