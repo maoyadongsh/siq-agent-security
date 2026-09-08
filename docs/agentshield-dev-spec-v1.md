@@ -958,3 +958,9 @@ Record 增加可选 network_observation：请求的scheme/host/port与真实接�
 ### C1 网络材料提交 API
 
 POST `/v1/network-observations` 使用capEffectObserve，正文只含observation_id、action_id、decision_receipt_id、observation。Source从已注册observer派生，必须为test_oracle/external_independent，scope精确匹配真实动作；server request_id绑定该Source。调用管理端信任的独立测试服务器上报材料，不赋予decision token上报权限，不由此宣称接受任意客户端日志为独立真相。SubmitNetwork原子保存材料/证据/事件，同ID冲突409，来源/scope错误403。
+
+### C2 网络完成要求
+
+Effect requirement 增加 network.request 分支：resource_ref 为 network 主机摘要，expected_digest 为受控服务器请求组合摘要（method、URI、body_digest 的 canonical SHA256），expected_endpoint 必须包含 scheme、规范化 host、十进制 port。最低独立性必须 external_independent。file.write 不接受 expected_endpoint，旧文件要求签名表示保持不变。
+
+Completion 对已验签网络材料同时比较签名 endpoint 与 requested/received 两端、request_digest 和真实动作资源；缺少材料 unknown，端点或摘要不符 conflicting。不得仅凭主机摘要匹配忽略端口/协议，也不得让上报者自行选择的 requested endpoint 替代签名要求。当前网络材料仅支持受控 loopback oracle，partial 覆盖不能满足 full 要求。

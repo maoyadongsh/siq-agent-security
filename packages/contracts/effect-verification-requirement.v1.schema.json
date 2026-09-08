@@ -8,11 +8,14 @@
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
     },
     "effect_type": {
-      "const": "file.write"
+      "enum": [
+        "file.write",
+        "network.request"
+      ]
     },
     "resource_ref": {
       "type": "string",
-      "pattern": "^filesystem:sha256:[0-9a-f]{64}$"
+      "pattern": "^(filesystem|network):sha256:[0-9a-f]{64}$"
     },
     "expected_digest": {
       "type": "string",
@@ -29,6 +32,32 @@
         "partial",
         "full"
       ]
+    },
+    "expected_endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "enum": [
+            "http",
+            "https"
+          ]
+        },
+        "host": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253
+        },
+        "port": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,4}$"
+        }
+      },
+      "required": [
+        "scheme",
+        "host",
+        "port"
+      ]
     }
   },
   "required": [
@@ -38,5 +67,41 @@
     "expected_digest",
     "minimum_independence",
     "minimum_coverage"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "effect_type": {
+            "const": "file.write"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "resource_ref": {
+            "pattern": "^filesystem:sha256:[0-9a-f]{64}$"
+          }
+        },
+        "not": {
+          "required": [
+            "expected_endpoint"
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "expected_endpoint"
+        ],
+        "properties": {
+          "resource_ref": {
+            "pattern": "^network:sha256:[0-9a-f]{64}$"
+          },
+          "minimum_independence": {
+            "const": "external_independent"
+          }
+        }
+      }
+    }
   ]
 }
