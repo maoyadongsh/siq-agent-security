@@ -693,3 +693,10 @@
 - provenance合同助手启用FormatChecker；6份已签名固定样例（Context/Effect/pending/recovery/global revocation/Intent V3）验证真实日历、时区缺失、非法小时/月、额外属性和每个必需字段缺失；issuer增加真实日历负例，并显式断言checker已注册防止环境静默跳过。
 - 合同相关95项通过，Control API全量542项通过及Ruff通过（/tmp/siq-calendar-contract-full.log）；17项benchmark单测通过。修正draft-07 HTTPS元模式的验证器选择后6项calendar重新通过，无该回退警告。既有Starlette弃用提示未擅自升级处理。
 - 该修复提高合同验收可信度，不声称此前生产Go日期解析失效，也不把这7份合同覆盖当作全部新schema的最终§90验收。diff检查通过。
+
+
+### Authority五项本地验收收敛
+
+- 核读生产Authority分类/模式应用、Context受信读取和请求绑定、对应测试断言，将A1–A5在验收索引中标为本地验收通过，注明模拟错误矩阵与真实签名集成的证明边界。
+- 补齐真实签名会话required/optional×三模式×运行/重启后的降级拒绝12组合，保留bound摘要，无advisory。此前简单downgrade测试仅block，此批不再用它代表全模式恢复。
+- Go1.26.6 receipt/intent/server相关无缓存race、receipt vet与diff通过（/tmp/siq-authority-acceptance.log）。其他40项及全模板验收不因这5项通过而自动完成。

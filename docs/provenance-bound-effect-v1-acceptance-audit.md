@@ -6,11 +6,11 @@
 
 | 条目 | 原文要求 | 首个证据入口 | 本轮审计状态 |
 | --- | --- | --- | --- |
-| DoD-A1 | Mandatory authority invalid： required + audit required + warn required + block 全部 effective deny。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-A2 | Optional legacy never-bound session 保持兼容。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-A3 | Previously bound session 不得降级。 | [intent_test.go](../apps/agentshield/internal/receipt/intent_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-A4 | `context.cwd` 不再扩大 Authority。 | [context_test.go](../apps/agentshield/internal/receipt/context_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-A5 | Trusted workspace 必须来自 signed authority/assertion。 | [context_test.go](../apps/agentshield/internal/intent/context_test.go) | 证据入口已定位；待逐项核读验收 |
+| DoD-A1 | Mandatory authority invalid： required + audit required + warn required + block 全部 effective deny。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 本地验收通过；详见Authority证据说明（全目标仍未完成） |
+| DoD-A2 | Optional legacy never-bound session 保持兼容。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 本地验收通过；详见Authority证据说明（全目标仍未完成） |
+| DoD-A3 | Previously bound session 不得降级。 | [intent_test.go](../apps/agentshield/internal/receipt/intent_test.go) | 本地验收通过；详见Authority证据说明（全目标仍未完成） |
+| DoD-A4 | `context.cwd` 不再扩大 Authority。 | [context_test.go](../apps/agentshield/internal/receipt/context_test.go) | 本地验收通过；详见Authority证据说明（全目标仍未完成） |
+| DoD-A5 | Trusted workspace 必须来自 signed authority/assertion。 | [context_test.go](../apps/agentshield/internal/intent/context_test.go) | 本地验收通过；详见Authority证据说明（全目标仍未完成） |
 | DoD-P1 | 存在 signed ProvenanceAssertion Contract。 | [provenance-assertion.v1.schema.json](../packages/contracts/provenance-assertion.v1.schema.json) | 证据入口已定位；待逐项核读验收 |
 | DoD-P2 | Decision client 不能自报 authoritative provenance。 | [validate_test.go](../apps/agentshield/internal/provenance/validate_test.go) | 证据入口已定位；待逐项核读验收 |
 | DoD-P3 | 存在 TrustedSourceIssuer registry。 | [store_test.go](../apps/agentshield/internal/provenance/store_test.go) | 证据入口已定位；待逐项核读验收 |
@@ -84,3 +84,18 @@
 | `python3 scripts/validate-codebuddy-hook-failures.py --codebuddy-root /home/maoyd/.local/share/siq-runtime-fixtures/codebuddy-2.146.0/node_modules/@tencent-ai/codebuddy-code --node /home/maoyd/.nvm/versions/node/v22.22.1/bin/node --out /tmp/siq-platform-codebuddy-failures.json` | 正常/故障/恢复10场景通过；包括legacy warn/audit兼容，不外推为required权限绕过允许 |
 
 这些结果覆盖DoD-C5的现有核心兼容命令；OpenClaw本批为钩子/兼容测试，没有重跑其全部原生网关会话。V3来源原生传播、效果调度及全目标其他项仍待继续。
+
+
+## Authority A1–A5本地验收结果（2026-09-08）
+
+核读生产`runtimeauthz/gate.go`、`receipt/engine.go`、`receipt/context.go`及签名Context存储，逐项核读以下测试，并在Go1.26.6无缓存race运行receipt/intent/server相关测试通过，日志/tmp/siq-authority-acceptance.log。receipt vet通过。
+
+| 条目 | 已核读并执行的证据 | 判断与边界 |
+| --- | --- | --- |
+| A1 | TestMandatoryAuthorityCannotBecomeAdvisoryAllow：15类错误×3模式；TestUnknownAuthorityErrorFailsClosed；真实Context与撤销集成 | 无效Authority effective deny、无advisory、不进policy，拒绝字段签名保护。错误分类矩阵部分用受信lookup注入，真实签名路径由其他集成测试交叉覆盖 |
+| A2 | TestOptionalNeverBoundKeepsPolicyModes | 从未绑定会话保留allow以及普通policy三模式行为；不把所有warn/audit策略改为hard deny |
+| A3 | 新增TestSignedBoundSessionCannotDowngradeAcrossModesAndRestart | 真实签名Store绑定建立后，required/optional×3模式×重启前后12次降级拒绝，保留Intent摘要及bound状态 |
+| A4 | TestCallerCWDDoesNotGrantWorkspaceWrite；源码无caller cwd授权入口 | 伪造/secret cwd不能授权写入，随后假Observe也拒绝；该项不要求普通policy advisory模式全部改为deny |
+| A5 | TestContextIntegrityScopeReplayAndExpiry、TestContextReferenceHardGateAndRecovery、TestContextCannotReplaceGrantAndApprovalRechecksExpiry、TestContextIssuanceIsAdminOnly | Context必须从管理端签发、存储验签；request/scope/expiry绑定且重启复核，不能替代Grant；不声称已经部署外部attestor |
+
+这5项的本地验收状态不等于最终45项DoD通过率或工程百分比。新增测试所在最终提交仍需远端CI；其他条目仍按各自状态取证。

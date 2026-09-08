@@ -138,3 +138,31 @@ func TestParameterBudgetHardDeniesEveryMode(t *testing.T) {
 		})
 	}
 }
+
+func TestSignedBoundSessionCannotDowngradeAcrossModesAndRestart(t *testing.T) {
+	for _, enforcement := range []string{"required", "optional"} {
+		for _, mode := range []string{"block", "warn", "audit_only"} {
+			t.Run(enforcement+"/"+mode, func(t *testing.T) {
+				fx, _, binding := revocableEngine(t, enforcement, mode)
+				request := req("hermes", "read_file", map[string]any{"path": "/work/report"})
+				initial, err := fx.eng.Decide(request)
+				if err != nil || initial.Action != ActionAllow || initial.Receipt.IntentDigest != binding.IntentDigest {
+					t.Fatal("signed binding not established", err)
+				}
+				fx.eng.opts.IntentLookup = func(_, _, _ string) (*IntentContract, error) { return nil, nil }
+				for _, restart := range []bool{false, true} {
+					if restart {
+						fx.eng, err = New(fx.eng.opts)
+						if err != nil {
+							t.Fatal(err)
+						}
+					}
+					d, err := fx.eng.Decide(request)
+					if err != nil || d == nil || d.Action != ActionDeny || d.Receipt.ReasonCode != "intent_downgrade_attempt" || d.Receipt.AdvisoryAction != nil || d.Receipt.IntentDigest != binding.IntentDigest || d.Receipt.IntentBinding != "bound" {
+						t.Fatalf("bound authority downgraded restart=%v: %+v %v", restart, d, err)
+					}
+				}
+			})
+		}
+	}
+}
