@@ -497,3 +497,9 @@
 - 原Intent与各binding不改写，4096上限、expected digest冲突、签名排他发布及同内容并发幂等。ResolveBinding在authority读锁内每次复核全局撤销，保留已验证合同/绑定供deny回执；Bind拒绝撤销后的新会话。Get/List仍供历史审计，不表示授权有效。
 - 实际两个会话撤销前均有效、一次全局撤销后重建Store两者都intent_revoked；8路重试同签名，新绑定拒绝、原合同字节保持、篡改全局摘要失败关闭。Go全模块race/vet及四平台编译通过（/tmp/siq-global-intent-revocation-race.log），schema正例/四类结构负例与diff检查通过。
 - 管理HTTP、三模式/hold复核与多会话实际benchmark下一步接入；不宣称全局撤销场景已在20对基准中完成。固定跨语言语料、全局撤销容量/并发解析矩阵继续待补。
+
+### B 全局Intent撤销管理API与执行前复核
+
+- POST /v1/intents/{id}/revoke及GET /revocation复用capAdmin，严格expected_intent_digest请求；decision凭据403、错误摘要409、未知字段400、同内容重试及读取返回相同签名。旧GET合同保持原签名，撤销后新binding拒绝。
+- 新增required/optional × block/warn/audit_only六组合决策回归：撤销前allow，撤销后及重建Engine后均hard deny、无advisory/policy放宽且保留任务元数据。真实read_file hold批准后全局撤销，hold-status变denied；没有只测共享谓词来替代实际hold状态流。
+- Go全模块race/vet与四平台编译通过（/tmp/siq-global-revocation-api-race.log），请求schema正负例及diff检查通过。全局撤销实际daemon多会话benchmark仍待下一步加入；全目标仍进行中。

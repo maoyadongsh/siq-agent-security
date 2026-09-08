@@ -67,6 +67,39 @@ func (s *Server) intentCollection(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func (s *Server) intentOne(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(r.URL.Path, "/v1/intents/")
+	if strings.HasSuffix(id, "/revoke") {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		var body struct {
+			ExpectedIntentDigest string `json:"expected_intent_digest"`
+		}
+		if !readAuthority(w, r, &body) {
+			return
+		}
+		revoked, err := s.intents.RevokeIntent(strings.TrimSuffix(id, "/revoke"), body.ExpectedIntentDigest)
+		if err != nil {
+			intentError(w, err)
+			return
+		}
+		writeJSON(w, 200, revoked)
+		return
+	}
+	if strings.HasSuffix(id, "/revocation") {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		revoked, err := s.intents.GetIntentRevocation(strings.TrimSuffix(id, "/revocation"))
+		if err != nil {
+			intentError(w, err)
+			return
+		}
+		writeJSON(w, 200, revoked)
+		return
+	}
 	if r.Method != http.MethodGet {
 		w.WriteHeader(405)
 		return
