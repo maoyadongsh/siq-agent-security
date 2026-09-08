@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Live GitHub validation status — 2026-09-08
 
 The earlier anonymous GitHub request exhausted the API quota. A later read of

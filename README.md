@@ -1,14 +1,26 @@
 # SIQ Agent Security
 
-**Secure Runtime for Agent Skills — Skills 给 Agent 能力，SIQ 给能力边界。**
+研究入口：[研究指南](docs/research/README.md) · [无模型密钥复现](REPRODUCIBILITY.md) · [引用](CITATION.cff) · [贡献](CONTRIBUTING.md) · [安全报告](SECURITY.md)。自有代码采用 [Apache-2.0](LICENSE)，明确列出的原创研究文档采用 [CC BY 4.0](LICENSES/README.md)，第三方许可保留。
 
-StepFun plans the task. DGX Spark keeps sensitive analysis local under trusted
-policy. SIQ authorizes consequential actions independently of model proposals.
+本轮研究开源操作与验证见[实施记录](docs/research/operations-20260908.md)。比赛 V5 材料保留为原始冻结快照；新实验使用独立身份。当前没有论文、DOI 或独立复现认证。
 
-**V4 比赛版：** 已实现模型出网策略、1/2/3 项动态 Skill 计划、真实来源裁决和效果分离。
-运行 `./scripts/hackathon/start.sh`，详见 [Hackathon 使用说明](HACKATHON.md)、
-[五主题证据索引](docs/hackathon/evidence/INDEX.md)和[最终报告](docs/hackathon/final-hardening-report.md)。
-已完成 59 项工程任务、远端 CI、干净 RC 和真实视频；4 项外部治理/签名/发布/上传事项仍待处理。
+## Secure Runtime for Agent Skills
+
+> Agent Skills define what agents can do. SIQ defines what they are allowed to do.
+
+StepFun plans the task. NVIDIA DGX Spark keeps sensitive analysis local. SIQ independently authorizes consequential actions and verifies their scoped effects.
+
+分析仓库、生成报告并交付给指定联系人：Agent 动态选择 Skills，SIQ 验证权限与参数来源，独立效果证据决定任务是否完成。
+
+```text
+User → StepFun Planning → Dynamic Agent Skills → DGX Local Analysis
+     → SIQ Runtime Authorization → Tools → EffectEvidence → Completion
+```
+
+运行 `./scripts/hackathon/start.sh`，再运行 `./scripts/hackathon/healthcheck.sh`。
+详见 [Demo / Quick Start](HACKATHON.md)、[唯一提交状态](docs/hackathon/final-submission-state.md)、[六主题证据索引](docs/hackathon/evidence/INDEX.md)。
+
+**V5 历史比赛冻结：** 源码、CI、四平台 RC、DGX/StepFun 链路和视频的原始核验范围见[最终清单](docs/hackathon/FINAL-SUBMISSION-CHECKLIST.md)。其签名和赛事上传状态属于当时快照；当前研究开源与仓库治理状态见上方实施记录。
 
 SIQ Agent Security 将“谁授权、允许访问什么、可以产生哪些效果、实际发生了什么”连接成一条可检查的安全链。它以可安装的 Skill 作为交互入口，以本地 Go 程序执行确定性的授权判断，通过运行时适配器接入工具调用，并以签名回执记录决策与结果关联。企业控制面进一步提供多环境资产盘点、证据管理、策略审批和执行协调。
 
@@ -18,7 +30,7 @@ SIQ Agent Security 将“谁授权、允许访问什么、可以产生哪些效�
 
 [产品介绍](https://maoyadongsh.github.io/siq-agent-security/) · [架构全景](https://maoyadongsh.github.io/siq-agent-security/architecture.html) · [CI](https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml) · [发布版本](https://github.com/maoyadongsh/siq-agent-security/releases)
 
-> **开发状态，2026-09-08：** 当前开发分支为 `codex/hackathon-final-hardening-v4`。本轮本地回归、模型样本和原始失败证据见[证据索引](docs/hackathon/evidence/INDEX.md)，完整任务见[V4 台账](docs/hackathon/final-hardening-tasks-v4.md)。本地通过不替代远端 CI、候选发布或最终验收。
+> **当前比赛状态：** 以[唯一提交状态](docs/hackathon/final-submission-state.md)为准；下文早期组件验证与路线图保留其历史适用范围。
 
 ## 为什么需要 SIQ Agent Security
 
@@ -471,7 +483,7 @@ Spark 可以承担业务模型的本地推理和 Agent 工作流，SIQ 在同机
 
 | 范围 | 已归档结果 | 证据 |
 | --- | --- | --- |
-| 当前 main CI | `1ffd809` 对应运行成功 | [GitHub Actions](https://github.com/maoyadongsh/siq-agent-security/actions/runs/34103966603) |
+| 当前 main CI | `d127711`：ci / runtime-security 均成功 | [提交状态与运行 ID](docs/hackathon/final-submission-state.md) |
 | 本地 V2 回归 | Go 测试 / race / vet、32 并发、进程强杀恢复、历史签名兼容；Python 501 项、Web 11 项及构建通过 | [2026-09-07 进度报告](./docs/trusted-intent-v2-progress-20260907-164919.md) |
 | 跨语言合同 | 固定签名向量与 Schema 验证；31 组共享匹配语料，其中授权匹配结论由 Go 测试执行 | [合同测试](./apps/control-api/app/tests/test_intent_v2_contracts.py) |
 | 平台实机 | 2026-09-05 Spark 上的插件 / 隔离钩子记录 | [平台证据目录](./docs/evidence/agentshield/README.md) |
@@ -525,7 +537,7 @@ go -C apps/agentshield run ./cmd/perfbaseline \
 | 所有工具调用被拒绝 | 检查模式、已部署 Grant 的主体、平台身份，以及 required 模式下的 Intent 绑定 |
 | 安装 Skill 后没有运行时回执 | 检查平台是否支持钩子、适配器状态、平台重载、状态目录与实际工具事件 |
 
-## 后续路线
+## 后续路线（比赛后，future）
 
 | 阶段 | 重点任务 | 交付目标 |
 | --- | --- | --- |

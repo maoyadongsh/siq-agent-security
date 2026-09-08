@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Agent security and utility benchmark — 2026-09-08
 
 The corpus contains **23 complete Agent task attempts**, with explicit

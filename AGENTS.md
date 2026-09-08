@@ -61,6 +61,14 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 
 ## 当前开发模板
 
-当前用户指定 [Final Hardening & Competition Freeze V4 原文](docs/hackathon/final-hardening-requirements-v4.md)为开发目标，入口见[当前目标](docs/hackathon/final-hardening-goal-v4.md)、[全部任务](docs/hackathon/final-hardening-tasks-v4.md)和[机器可读台账](docs/hackathon/final-hardening-tasks-v4.json)。本轮从最新 `codex/dgx-spark-hackathon-v3` 创建 `codex/hackathon-final-hardening-v4`，PR 目标为 V3，禁止直接修改 main 或自行 merge。V4 按 Model Egress → Dynamic Skills → Regression → PR/Remote CI → Clean RC → Evidence → Demo/Video 顺序执行；任务登记不等于工程验收完成。冲突的 V3 固定流水线、dirty-source 候选、视频非必需口径由 V4 取代。已有安全协议与历史证据继续复用。
+当前目标为 [Final Release & Submission Freeze V5 原文](docs/hackathon/final-release-requirements-v5.md)。
+从最新 main 创建 `codex/hackathon-final-release-v5`，仅允许文档、发布工具、证据与治理准备，以及有负向测试证明的真实 P0 修复。
+唯一当前状态为 [final-submission-state.md](docs/hackathon/final-submission-state.md)。
+停止功能开发；不重构 runtime security architecture，不新增 Managed Linux、委派、沙箱、框架或服务。
+本轮 submission source 固定为当前 main；V5 分支只承载收口材料和发布工具。
+未经明确 publisher / governance authorization 不发布或改仓库设置，准备可审阅材料并记录 external_manual。
+历史 V4/V3/V1 需求与证据保留，V5 原文覆盖冲突的分支、状态和提交口径。
 
-历史 [Provenance-Bound Effect V1 原文模板](docs/templates/provenance-bound-effect-v1-development-template.md)及[开发台账](docs/provenance-bound-effect-v1-progress.md)保留。该模板已完成并经此前授权集成至 main；本轮基线改按上述 V4 指定比赛分支。Authority Hard Gate 仍优先于旧版 audit/warn 一律放行语义；该例外不应推广为所有普通 policy 均强制拒绝。V4 不得无故重构 Intent、Provenance/Effect 签名、Receipt chain、Control Plane、Adapters 或 OpenShell，不得新增原文禁止的安全模块。
+## 当前研究开源周期（2026-09-08）
+
+用户已要求直接实施研究开源，并确认自有代码和原创研究材料属于本人。研究分支 `codex/research-open-source-r1` 基于 V5 文档提交，执行 docs/open-source-research-plan-20260908.md；实际状态见 docs/research/operations-20260908.md 和任务台账。此授权覆盖许可、社区文件、仓库治理、远端提交和研究复现准备，不重复套用上方 V5 的未授权占位状态。V5 比赛源码、制品、视频与原分母仍冻结，不改 runtime 架构。新制品必须有新身份，不伪造正式签名、DOI、外部复现或论文接受。

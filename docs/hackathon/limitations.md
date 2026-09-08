@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Competition scope and limitations
 
 - **Provider:** Step Plan performs remote public planning; local Ornith performs

@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Final Hardening V4 · Current-State Audit
 
 检查日期：2026-09-08。源码基线：`9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1`。目标：[V4 原文](final-hardening-requirements-v4.md)；实施：[完整任务台账](final-hardening-tasks-v4.md)。本次检查当前源码、工作流、文档和历史证据文件，未启动服务、模型推理、DGX preflight、回归或新基准；不把读取旧报告计作本轮实测通过。

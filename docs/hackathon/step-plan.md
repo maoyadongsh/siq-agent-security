@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Step Plan primary, ornith backup
 
 The user has now configured Step Plan and selected it as the primary model.

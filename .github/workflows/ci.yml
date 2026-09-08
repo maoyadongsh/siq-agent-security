@@ -81,6 +81,8 @@ jobs:
         run: python3 scripts/check_threat_model_local.py
       - name: Capability matrix + runbook honesty (DEV18-C)
         run: python3 scripts/check_capability_honesty.py
+      - name: Research task evidence ledger
+        run: python3 scripts/check_research_task_ledger.py
       - name: OpenClaw checkpoint upgrade and rollback recovery
         run: python3 scripts/test-openclaw-checkpoint-compat.py
       - name: Perf baseline harness honesty + smoke (DEV16-D)

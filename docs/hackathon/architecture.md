@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Secure Research & Delivery architecture
 
 The user asks for a selected-source review and delivery to Alice. StepFun proposes a dependency-constrained Skill plan from approved public metadata.

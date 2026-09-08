@@ -10,6 +10,7 @@ from package_rc import (
     clean_source,
     entries,
     sha,
+    skill_inventory,
     validate_identity,
     verify_package,
     write_json,
@@ -17,6 +18,18 @@ from package_rc import (
 
 
 class PackageTest(unittest.TestCase):
+    def test_final_skill_inventory_covers_descriptors_and_dependency_order(self):
+        source = Path(__file__).resolve().parents[2]
+        inventory = skill_inventory(source, "0.3.0-rc.1")["skills"]
+        self.assertEqual(set(inventory), {"siq-agent-security", "secure-research", "secure-report", "secure-delivery"})
+        self.assertEqual(inventory["secure-report"]["dependencies"], ["secure-research"])
+        self.assertEqual(inventory["secure-delivery"]["dependencies"], ["secure-report"])
+        self.assertIn("send_message", inventory["secure-delivery"]["tools"])
+        self.assertEqual(inventory["siq-agent-security"]["version"], "0.2.0")
+        for skill in inventory.values():
+            self.assertEqual(skill["manifest_digest"], sha(source / skill["manifest_path"]))
+            self.assertRegex(skill["source_digest"], r"^[0-9a-f]{64}$")
+
     def setUp(self):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)

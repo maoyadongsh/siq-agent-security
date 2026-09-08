@@ -1,0 +1,23 @@
+{
+  "observed_at": "2026-09-08T14:48:35.675339+00:00",
+  "source_sha": "e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+  "working_tree_dirty": true,
+  "platform": "Linux-6.17.0-1014-nvidia-aarch64-with-glibc2.39",
+  "python_verifier": "Python 3.13.12",
+  "go": "go version go1.26.6 linux/arm64",
+  "node": "v22.22.2",
+  "sha256": {
+    "benchmarks/hackathon/cases.json": "c4571eebd500c5934e568adff20adc92476436804c9d79163d1fb5c6a8db267c",
+    "benchmarks/hackathon/run.py": "abf75de79d0d9e6fe94061479de83fa11d80be6a78b39ceba4312603f89a07c4",
+    "benchmarks/hackathon/verify.py": "8f14967ba563b114dba44609989da2540d35930dca625bc20488be3956829d6a",
+    "benchmarks/runtime-security/evidence.py": "e5d8563314d19e88dc75f35507e82cc44e2890dc8e2675ff8efbb8197b780c98",
+    "scripts/hackathon/browser-smoke.py": "7fb4d036f3613c1afaad710e2b1bc940cd7710ceb57cb40999f654f2961d2861"
+  },
+  "binary_sha256": "b5945e29fcef81b9043a82ab1b2280024a9ef22a11c7329d492203ceb22f439d",
+  "model_provider": "fixture",
+  "model_calls": 0,
+  "limitations": [
+    "CPU fixture run on DGX host; not independent non-DGX reproduction",
+    "No new model cohort; no publisher authentication"
+  ]
+}

@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # DGX Spark performance evidence — 2026-09-08
 
 Current primary is StepFun. Its [latest separate cohort](evidence/dgx-spark/performance-step-plan-low-20260908.json)

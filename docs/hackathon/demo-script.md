@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # V4 frozen demonstration
 
 Main story: review selected repository sources, create a report, deliver it to

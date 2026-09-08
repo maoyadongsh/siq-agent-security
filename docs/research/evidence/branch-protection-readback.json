@@ -1,0 +1,207 @@
+{
+  "observed_at": "2026-09-08T15:04:19.032509+00:00",
+  "endpoint": "repos/maoyadongsh/siq-agent-security/branches/main/protection",
+  "response": {
+    "url": "https://api.github.com/repos/maoyadongsh/siq-agent-security/branches/main/protection",
+    "required_status_checks": {
+      "url": "https://api.github.com/repos/maoyadongsh/siq-agent-security/branches/main/protection/required_status_checks",
+      "strict": true,
+      "contexts": [
+        "web",
+        "agentshield",
+        "gitleaks",
+        "control-api",
+        "edge (1.22, connectors/directory)",
+        "edge (1.22, connectors/hermes)",
+        "edge (stable, edge/agent)",
+        "edge (1.22, connectors/kubernetes)",
+        "edge (1.22, edge/agent)",
+        "edge (1.22, connectors/dify)",
+        "edge (1.22, connectors/docker)",
+        "edge (stable, connectors/docker)",
+        "edge (1.22, connectors/openclaw)",
+        "edge (stable, connectors/process)",
+        "edge (1.22, connectors/systemd)",
+        "edge (1.22, connectors/process)",
+        "edge (stable, connectors/systemd)",
+        "edge (stable, connectors/directory)",
+        "edge (stable, connectors/workbuddy)",
+        "edge (1.22, connectors/mcp)",
+        "edge (stable, connectors/mcp)",
+        "edge (stable, connectors/hermes)",
+        "edge (stable, connectors/dify)",
+        "edge (stable, connectors/openclaw)",
+        "edge (stable, connectors/kubernetes)",
+        "edge (stable, connectors/piagent)",
+        "edge (1.22, connectors/piagent)",
+        "edge (1.22, connectors/workbuddy)",
+        "runtime-security-toolchain",
+        "runtime-security-contracts",
+        "research-reproduction"
+      ],
+      "contexts_url": "https://api.github.com/repos/maoyadongsh/siq-agent-security/branches/main/protection/required_status_checks/contexts",
+      "checks": [
+        {
+          "context": "web",
+          "app_id": 15368
+        },
+        {
+          "context": "agentshield",
+          "app_id": 15368
+        },
+        {
+          "context": "gitleaks",
+          "app_id": 15368
+        },
+        {
+          "context": "control-api",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/directory)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/hermes)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, edge/agent)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/kubernetes)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, edge/agent)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/dify)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/docker)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/docker)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/openclaw)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/process)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/systemd)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/process)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/systemd)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/directory)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/workbuddy)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/mcp)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/mcp)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/hermes)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/dify)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/openclaw)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/kubernetes)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (stable, connectors/piagent)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/piagent)",
+          "app_id": 15368
+        },
+        {
+          "context": "edge (1.22, connectors/workbuddy)",
+          "app_id": 15368
+        },
+        {
+          "context": "runtime-security-toolchain",
+          "app_id": 15368
+        },
+        {
+          "context": "runtime-security-contracts",
+          "app_id": 15368
+        },
+        {
+          "context": "research-reproduction",
+          "app_id": 15368
+        }
+      ]
+    },
+    "required_pull_request_reviews": {
+      "url": "https://api.github.com/repos/maoyadongsh/siq-agent-security/branches/main/protection/required_pull_request_reviews",
+      "dismiss_stale_reviews": true,
+      "require_code_owner_reviews": true,
+      "require_last_push_approval": false,
+      "required_approving_review_count": 1
+    },
+    "required_signatures": {
+      "url": "https://api.github.com/repos/maoyadongsh/siq-agent-security/branches/main/protection/required_signatures",
+      "enabled": false
+    },
+    "enforce_admins": {
+      "url": "https://api.github.com/repos/maoyadongsh/siq-agent-security/branches/main/protection/enforce_admins",
+      "enabled": false
+    },
+    "required_linear_history": {
+      "enabled": false
+    },
+    "allow_force_pushes": {
+      "enabled": false
+    },
+    "allow_deletions": {
+      "enabled": false
+    },
+    "block_creations": {
+      "enabled": false
+    },
+    "required_conversation_resolution": {
+      "enabled": true
+    },
+    "lock_branch": {
+      "enabled": false
+    },
+    "allow_fork_syncing": {
+      "enabled": false
+    }
+  }
+}

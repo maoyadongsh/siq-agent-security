@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Constrained Skill plans V4
 
 The application uses `model-task-plan-v2.schema.json`: one, two or three Skills

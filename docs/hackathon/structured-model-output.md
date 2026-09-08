@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Structured ornith generation
 
 The local SGLang service exposes JSON-schema constrained generation through its

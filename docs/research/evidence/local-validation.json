@@ -1,0 +1,36 @@
+{
+  "observed_at": "2026-09-08T14:57:56.470593+00:00",
+  "checks": [
+    {
+      "path": "CITATION.cff",
+      "sha256": "b2a8373075f0ea0f699ec5d3a19db67df1f545e15a58f012b859949e47500644",
+      "command": "CFF 1.2.0 JSON Schema validation",
+      "exit_code": 0
+    },
+    {
+      "path": "scripts/research/check_metadata.py",
+      "sha256": "992dfd37b3de94f30d1aa44f41607e75034a4e8dd0ba662ca868c57adca8cf4d",
+      "command": "apps/control-api/.venv/bin/python scripts/research/check_metadata.py",
+      "exit_code": 0
+    },
+    {
+      "path": "scripts/check_research_task_ledger.py",
+      "sha256": "2a1bf6f41109b1437939da709d3b8e8f7e134b9f31c00734d28d0e1780eef08a",
+      "command": "python3 scripts/check_research_task_ledger.py",
+      "exit_code": 0
+    },
+    {
+      "path": "scripts/research/browser_fixture.py",
+      "sha256": "29972a6c6b53cb772536482b991dada5c0f1564f9f3c5f0895a0aa8f6b35a3ce",
+      "command": "python3 scripts/research/browser_fixture.py --binary .tmp/research-open-source/bin/siq-agent-security --out-dir .tmp/research-open-source/browser-wrapper-check",
+      "exit_code": 0
+    }
+  ],
+  "additional_checks": [
+    "ruff scripts/research scripts/check_research_task_ledger.py passed",
+    "git diff --check passed",
+    "ci action pin checker passed"
+  ],
+  "fixture_result_sha256": "e6505595012ac5edf526887d8517bf028a6511950484b6a0d5b25af9d94f0f95",
+  "private_outputs_exported": false
+}

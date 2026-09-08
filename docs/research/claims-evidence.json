@@ -1,0 +1,101 @@
+{
+  "schema_version": "siq-claims-evidence/v1",
+  "claims": [
+    {
+      "id": "controls-v5",
+      "claim": "V5 fixed controls: 23/23 expectations, benign 5/5, unsafe materialization 0/13, provenance 8/8",
+      "evidence": "docs/hackathon/final-submission-state.md",
+      "evidence_sha256": "77004e70268306b85e64fd43e90ff99d8784f5e2a26c927c876bebdc4c66eff3",
+      "scope": "synthetic fixed controls; populations differ",
+      "runtime_source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+      "research_run_identity": null
+    },
+    {
+      "id": "model-stepfun",
+      "claim": "Latest retained StepFun benign cohort: 5/5",
+      "evidence": "docs/hackathon/evidence/final-hardening-v4/stepfun-cohort-v2.json",
+      "evidence_sha256": "912c7fa11b2735e0171204d24dffb62fd04ff64ea29ef089ff410b17b473e152",
+      "scope": "five benign tasks; not attack robustness",
+      "runtime_source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+      "research_run_identity": null
+    },
+    {
+      "id": "model-ornith",
+      "claim": "Latest retained Ornith benign cohort: 5/5",
+      "evidence": "docs/hackathon/benchmark-report.md",
+      "evidence_sha256": "d0acd6bea90e1163f87e354a792fe3b3da7b9cf61ddc7e0c2bebfe8e83635eef",
+      "scope": "five benign tasks; original cohort identity retained",
+      "runtime_source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+      "research_run_identity": null
+    },
+    {
+      "id": "historical-failure",
+      "claim": "Earlier model utility failures remain visible (4/5)",
+      "evidence": "docs/hackathon/benchmark-report.md",
+      "evidence_sha256": "d0acd6bea90e1163f87e354a792fe3b3da7b9cf61ddc7e0c2bebfe8e83635eef",
+      "scope": "do not replace failed cohorts with later attempts",
+      "runtime_source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+      "research_run_identity": null
+    },
+    {
+      "id": "same-value",
+      "claim": "Same recipient value: trusted database allowed, MCP provenance denied",
+      "evidence": "docs/hackathon/evidence/INDEX.md",
+      "evidence_sha256": "011ef61caf718cc614bbf7e32d2e92cc385bb084acb7757a06ffa20b86462ee8",
+      "scope": "configured source identities; not general semantic provenance",
+      "runtime_source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+      "research_run_identity": null
+    },
+    {
+      "id": "effects",
+      "claim": "Fake reported success without receiver effect remains incomplete",
+      "evidence": "docs/hackathon/evidence/INDEX.md",
+      "evidence_sha256": "011ef61caf718cc614bbf7e32d2e92cc385bb084acb7757a06ffa20b86462ee8",
+      "scope": "controlled receiver and observer; not universal external delivery",
+      "runtime_source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+      "research_run_identity": null
+    },
+    {
+      "id": "locality",
+      "claim": "V5 confidential canary excluded from remote HTTP bodies; local refusal fails closed",
+      "evidence": "docs/hackathon/evidence/final-release-v5/locality.json",
+      "evidence_sha256": "e1a394440ed4f2efc4626dd449d11a433ffb9a2dcddcd30336e8bddc5f493ea3",
+      "scope": "operator classification and observed transports only",
+      "runtime_source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+      "research_run_identity": null
+    },
+    {
+      "id": "local-failure",
+      "claim": "V5 local connection refusal produced zero StepFun transport calls",
+      "evidence": "docs/hackathon/evidence/final-release-v5/local-failure.json",
+      "evidence_sha256": "578202c1557c9b8d6e585958326620690d5cdb057afa70cabc34f0239d5a9cc6",
+      "scope": "single controlled failure path",
+      "runtime_source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+      "research_run_identity": null
+    },
+    {
+      "id": "new-controls",
+      "claim": "Research development: 23/23, 318 receipts, 20 effect envelopes verified",
+      "evidence": "docs/research/evidence/reproduction-b/verification.json",
+      "evidence_sha256": "e3343e210830745a4dace5b2d942625cd210526a1d37d3a3ebdbc60ba56f6419",
+      "scope": "dirty worktree run; not clean release acceptance",
+      "runtime_source_sha": "e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+      "research_run_identity": "docs/research/evidence/reproduction-b/identity.json"
+    },
+    {
+      "id": "new-browser",
+      "claim": "Research development: all nine fixture browser scenarios passed",
+      "evidence": "docs/research/evidence/reproduction-a/browser.json",
+      "evidence_sha256": "e6505595012ac5edf526887d8517bf028a6511950484b6a0d5b25af9d94f0f95",
+      "scope": "Linux aarch64 CPU fixtures on DGX host; no new model inference",
+      "runtime_source_sha": "e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+      "research_run_identity": "docs/research/evidence/reproduction-b/identity.json"
+    }
+  ],
+  "limitations": [
+    "same-UID is not OS isolation",
+    "public evidence keys are not independent publisher identity",
+    "missing effects remain missing/unknown",
+    "no paper acceptance, DOI or external reproduction asserted"
+  ]
+}

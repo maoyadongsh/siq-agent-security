@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Model-call diagnostics
 
 The application records one diagnostic for each attempted Chat Completions call,

@@ -1,0 +1,23 @@
+{
+  "observed_at": "2026-09-08T14:54:03.021513+00:00",
+  "scope": [
+    "ci.yml",
+    "runtime-security.yml",
+    "research.yml",
+    "openshell-compat.yml",
+    "pages.yml"
+  ],
+  "findings": [
+    "PR workflows have contents:read; no pull_request_target",
+    "Research checkout disables credential persistence; browser fixtures use --mode test",
+    "Only browser/result.json and reverified.json are uploaded by research job; private state/logs/screenshots excluded",
+    "No provider or publisher secrets referenced by PR paths; hosted Ubuntu, no self-hosted DGX",
+    "OpenShell optional gateway secret paths limited to dispatch/schedule",
+    "Pages has contents:write for branch publication, does not run on PR; original deployment branch unchanged",
+    "Existing upload-artifacts are not consumed by a privileged release workflow"
+  ],
+  "limitations": [
+    "Workflow static review and local fixture execution; hosted research job pending first PR run",
+    "Manual dispatch permissions remain repository-admin controlled; no new signing environment or live model workflow provisioned"
+  ]
+}

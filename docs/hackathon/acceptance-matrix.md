@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 Current V4 acceptance: [63-task requirement mapping](final-hardening-tasks-v4.md)
 and [final engineering report](final-hardening-report.md).
 

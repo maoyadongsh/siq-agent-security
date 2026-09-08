@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 Current report: [Final Hardening V4](final-hardening-report.md).
 
 > Historical V3 record. Current V4 development and acceptance are tracked in

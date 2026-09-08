@@ -1,0 +1,11 @@
+# research-v0.1.0-rc.1 — source research prerelease
+
+This prerelease makes SIQ Agent Security's existing research implementation explicitly licensed and easier to reproduce, inspect and cite. It includes Apache-2.0 for project-owned software, CC BY 4.0 for listed original research documents, preserved upstream notices, software citation, security/contribution/governance files, six issue forms and three-track reproduction instructions.
+
+The fixed control corpus and existing verifier remain the evaluation engine. Local development checks passed all 23 expectations (318 receipts and 20 effect envelopes verified) and all nine UI fixture cases. The hosted Linux research job adds key-free browser reproduction; its final source/run identity is recorded in the release's external SOURCE-INFO and CI record. Earlier real-model failures and V5 competition identities remain intact. No new paid model run, independent reproduction, accepted paper or DOI is asserted.
+
+Distribution: source-only, unsigned. No new native binary acceptance or publisher signature is claimed. Verify the attached SHA256SUMS against the source archive and SOURCE-INFO.json. Source/dependency license inventories are included; separately installed Python/model/OS dependencies retain their own terms. Use REPRODUCIBILITY.md to build and run locally.
+
+Main now has PR/check protection, private reporting, platform secret scanning/push protection and dependency security updates. The sole-maintainer administrator exception is disclosed. A previously exposed development-only task seed remains in history; the owner confirmed no external use, and the current local key differs. Do not reuse historical private material.
+
+Known limits: same-UID processes are not isolated, receiver evidence is scoped, source trust/classification has operator assumptions, and fixed small samples do not establish universal agent security. Binary research distribution, long-term archival and external replication remain separate milestones.

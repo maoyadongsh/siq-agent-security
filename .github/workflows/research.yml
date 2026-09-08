@@ -1,0 +1,60 @@
+name: research
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  research-reproduction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.26.6'
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86
+      - name: Locked verifier dependencies
+        working-directory: apps/control-api
+        run: uv sync --dev --locked
+      - name: Research metadata and task ledger
+        run: |
+          python3 scripts/check_research_task_ledger.py
+          apps/control-api/.venv/bin/python scripts/research/check_metadata.py
+          apps/control-api/.venv/bin/ruff check scripts/research scripts/check_research_task_ledger.py
+          apps/control-api/.venv/bin/python -m unittest discover -s scripts/research -p 'test_*.py' -v
+      - name: Build existing local UI and runtime
+        run: |
+          node --version
+          npm --prefix apps/web ci
+          npm --prefix apps/web run build:local
+          mkdir -p .tmp/research-ci
+          go -C apps/agentshield build -o "$PWD/.tmp/research-ci/siq-agent-security" ./cmd/agentshield
+      - name: Install isolated browser test dependencies
+        run: |
+          uv venv --python 3.12 .tmp/research-ci/browser-venv
+          uv pip install --python .tmp/research-ci/browser-venv/bin/python playwright==1.58.0
+          .tmp/research-ci/browser-venv/bin/python -m playwright install --with-deps chromium
+      - name: Nine browser fixtures on hosted Linux without model credentials
+        run: |
+          .tmp/research-ci/browser-venv/bin/python scripts/research/browser_fixture.py \
+            --binary .tmp/research-ci/siq-agent-security \
+            --out-dir .tmp/research-ci/private-browser
+      - name: Reverify archived public controls
+        run: |
+          apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
+            docs/research/evidence/reproduction-b/controls.json \
+            --out .tmp/research-ci/reverified.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: research-public-verification
+          path: |
+            .tmp/research-ci/private-browser/browser/result.json
+            .tmp/research-ci/reverified.json
+          if-no-files-found: error

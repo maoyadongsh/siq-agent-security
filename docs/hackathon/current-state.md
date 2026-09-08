@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # COMP-00 Repository audit and current implementation
 
 Audit date: 2026-09-08. `git fetch --all --prune`, `git checkout main`, and

@@ -1,0 +1,46 @@
+{
+  "history": {
+    "exit_code": 0,
+    "findings": []
+  },
+  "v5-package": {
+    "exit_code": 0,
+    "findings": []
+  },
+  "known_seed": {
+    "path": "apps/control-api/signing-key.seed",
+    "introduced_commit": "364dadecfad10e5739dcd514478fbf2fd640f250",
+    "removed_commit": "145e53f47731910ebb40fcdd2fddd5c4f9dbcb48",
+    "blob_sha256": "19d8114e3bbe294fa8c0c134921f1165b60efd4eb7f5dc1a76de7fdc8c356b29",
+    "bytes": 44,
+    "classification": "exposed task-signing private material; external deployment usage and revocation unknown",
+    "current_tree_present": false
+  },
+  "observed_at": "2026-09-08T14:38:47.376836+00:00",
+  "refs": [
+    "refs/heads/codex/dgx-spark-hackathon-v3 9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1",
+    "refs/heads/codex/hackathon-final-hardening-v4 4bdf7a46c93a9b6a4a5e872ee42cb919c6186c8e",
+    "refs/heads/codex/hackathon-final-release-v5 e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+    "refs/heads/codex/provenance-bound-effect-v1 3ed2d6aa13ef6d96ea7f1bd9422bc228ec2ac3ca",
+    "refs/heads/codex/research-open-source-r1 e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+    "refs/heads/cursor/agentshield-w0-contracts-8eff 2c5f79e1cc46f3b5bc2849cf839e1f7538e2c574",
+    "refs/heads/main d1277116e8291e72b09b0462a19d0268b68bf46c",
+    "refs/remotes/origin/codex/dgx-spark-hackathon-v3 2fe9ff344f6b653687582cf6717657252aa3676d",
+    "refs/remotes/origin/codex/hackathon-final-hardening-v4 4bdf7a46c93a9b6a4a5e872ee42cb919c6186c8e",
+    "refs/remotes/origin/codex/hackathon-final-release-v5 e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+    "refs/remotes/origin/codex/provenance-bound-effect-v1 3ed2d6aa13ef6d96ea7f1bd9422bc228ec2ac3ca",
+    "refs/remotes/origin/cursor/agentshield-market-survey-8eff 6aee44d7b750574609eed3acf40badad847c8e04",
+    "refs/remotes/origin/cursor/agentshield-w0-contracts-8eff 977c5eb34d66b0178c42fed80b1dbe985f1a5056",
+    "refs/remotes/origin/cursor/setup-cloud-agent-env-438b de45ff99b4e8139610154f44bb3c2f9f940b9902",
+    "refs/remotes/origin/gh-pages 3c3c1aeed02c3ee235969a4b1fcf161b7b63122c",
+    "refs/remotes/origin/main d1277116e8291e72b09b0462a19d0268b68bf46c",
+    "refs/stash 6ac5b073ba433ff412d9b2f4b82beb8945a6795d",
+    "refs/tags/agentshield-v0.1.0 f14bb0650828eadb3c1c02640eeed5cf2cd3f9bd",
+    "refs/tags/siq-agent-security-v0.2.0 b2b36025fb3b24e3dd50399622a3c2e46b037598"
+  ],
+  "limitations": [
+    "gitleaks heuristics do not detect every secret; historical seed reviewed separately",
+    "External forks, mirrors, and downloaded historical release assets not scanned",
+    "Archive scan covers extracted V5 RC; no current provider credentials exported"
+  ]
+}

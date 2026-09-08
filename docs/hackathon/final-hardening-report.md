@@ -1,3 +1,6 @@
+> Historical snapshot.
+> For the current submission state, see: [docs/hackathon/final-submission-state.md](final-submission-state.md).
+
 # Final Hardening V4 engineering report
 
 V4 implements trusted model routing and constrained Skill composition in the

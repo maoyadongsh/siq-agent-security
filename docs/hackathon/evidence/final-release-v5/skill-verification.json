@@ -1,0 +1,30 @@
+{
+  "submission_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "scope": "Native linux-arm64 RC static self-admission; four cross-build targets are not four native validations",
+  "results": [
+    {
+      "skill": "siq-agent-security",
+      "verdict": "admit_with_conditions",
+      "exit_code": 0,
+      "report_digest": "562450242ffb53912041c1aaab0bdabfa646ce078bd95be86c48bbdafc9ce928"
+    },
+    {
+      "skill": "secure-research",
+      "verdict": "admit_with_conditions",
+      "exit_code": 0,
+      "report_digest": "b112622892802b7ef1f1b4a9a209880d9be5c1c30062dfedaae37ee0b5207ad4"
+    },
+    {
+      "skill": "secure-report",
+      "verdict": "admit_with_conditions",
+      "exit_code": 0,
+      "report_digest": "00729c3c2b76f8a528a948364ee69dd571ac3616a45aa1821e54e045c75684de"
+    },
+    {
+      "skill": "secure-delivery",
+      "verdict": "admit_with_conditions",
+      "exit_code": 0,
+      "report_digest": "f4b250f415454bb168c41d6f56099bc2deb690fe51d41e08b01c9e7cbfd36eac"
+    }
+  ]
+}

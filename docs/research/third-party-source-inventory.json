@@ -1,0 +1,936 @@
+{
+  "schema_version": "siq-third-party-sources/v1",
+  "mermaid": {
+    "version": "11.4.1",
+    "source": "https://registry.npmjs.org/mermaid/-/mermaid-11.4.1.tgz",
+    "package_sha256": "ec7b61b391aaa24bf666fd20e48d0a626eeb4a95b95bc6b3016a122d7f0bc2af",
+    "upstream_sha256": "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e",
+    "local_sha256": "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e",
+    "upstream_prefix_preserved": true,
+    "modification": "globalThis.mermaid export alias appended; upstream comparison recorded",
+    "license": "MIT",
+    "path": "site/vendor/mermaid-11.4.1.min.js",
+    "license_file": "site/vendor/mermaid-LICENSE",
+    "bundled_components": [
+      {
+        "name": "@braintree/sanitize-url",
+        "version": "7.1.0",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/@braintree/sanitize-url/-/sanitize-url-7.1.0.tgz",
+        "package_sha256": "2589f991e3cbd2e102cf6587a9d5e26f1f0f607cbeb6eee7b76734f7fde62a9e",
+        "license_files": [
+          "LICENSES/third-party/@braintree__sanitize-url-7.1.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "@chevrotain/cst-dts-gen",
+        "version": "11.0.3",
+        "license": "Apache-2.0",
+        "source": "https://registry.npmjs.org/@chevrotain/cst-dts-gen/-/cst-dts-gen-11.0.3.tgz",
+        "package_sha256": "b927ad31f60a1f47233c5a683a75df3feaa639c2ef36e9eb224f06bcea1239c2",
+        "license_files": [
+          "LICENSES/third-party/@chevrotain__cst-dts-gen-11.0.3--package__LICENSE.txt"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "@chevrotain/gast",
+        "version": "11.0.3",
+        "license": "Apache-2.0",
+        "source": "https://registry.npmjs.org/@chevrotain/gast/-/gast-11.0.3.tgz",
+        "package_sha256": "6a67ec6bf65c8ed0f54e41206997f670da8f8085c17b12086a42b22677f4315e",
+        "license_files": [
+          "LICENSES/third-party/@chevrotain__gast-11.0.3--package__LICENSE.txt"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "@chevrotain/regexp-to-ast",
+        "version": "11.0.3",
+        "license": "Apache-2.0",
+        "source": "https://registry.npmjs.org/@chevrotain/regexp-to-ast/-/regexp-to-ast-11.0.3.tgz",
+        "package_sha256": "5cfc2bf73b75c31cfa59e7b244dfbd644f6349e8b5708a1a3ef478cc26c864d0",
+        "license_files": [
+          "LICENSES/third-party/@chevrotain__regexp-to-ast-11.0.3--package__LICENSE.txt"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "@chevrotain/utils",
+        "version": "11.0.3",
+        "license": "Apache-2.0",
+        "source": "https://registry.npmjs.org/@chevrotain/utils/-/utils-11.0.3.tgz",
+        "package_sha256": "e5b0ed157b2a92ec3679f1fe0d6cc9c8648c15f9813f7064b7d7e42af9f9a2af",
+        "license_files": [
+          "LICENSES/third-party/@chevrotain__utils-11.0.3--package__LICENSE.txt"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "@iconify/utils",
+        "version": "2.1.33",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/@iconify/utils/-/utils-2.1.33.tgz",
+        "package_sha256": "8e1aefd200178b254f1630ec05df9894a5b130a8cfa93bb176e5a0524027a731",
+        "license_files": [
+          "LICENSES/third-party/@iconify__utils-2.1.33--package__license.txt"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "chevrotain",
+        "version": "11.0.3",
+        "license": "Apache-2.0",
+        "source": "https://registry.npmjs.org/chevrotain/-/chevrotain-11.0.3.tgz",
+        "package_sha256": "53f0981a4592d346ab75003250a67066a8ce8c1f8973dfd52fce5517f82c4be1",
+        "license_files": [
+          "LICENSES/third-party/chevrotain-11.0.3--package__LICENSE.txt"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "chevrotain-allstar",
+        "version": "0.3.1",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/chevrotain-allstar/-/chevrotain-allstar-0.3.1.tgz",
+        "package_sha256": "51027c5355c69e6404bb6415e2cd27594569616f97daf613535b662cc5cf0763",
+        "license_files": [
+          "LICENSES/third-party/chevrotain-allstar-0.3.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "cose-base",
+        "version": "1.0.3",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/cose-base/-/cose-base-1.0.3.tgz",
+        "package_sha256": "a20640fb8c1a2cf226eb9195785e9f714ba1cce1e80cb8f48d131d1bc0909d18",
+        "license_files": [
+          "LICENSES/third-party/cose-base-1.0.3--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "cose-base",
+        "version": "2.2.0",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/cose-base/-/cose-base-2.2.0.tgz",
+        "package_sha256": "612ec91a30b7f2dc158cca4846eeea1b7f89a97fc672951da3c1932107de6da8",
+        "license_files": [
+          "LICENSES/third-party/cose-base-2.2.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "cytoscape",
+        "version": "3.30.2",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/cytoscape/-/cytoscape-3.30.2.tgz",
+        "package_sha256": "8e9bfaaf9f5f461642355b0d17c6cf1d0d58c5cb9e00ac983e2d242fd1cfb928",
+        "license_files": [
+          "LICENSES/third-party/cytoscape-3.30.2--package__LICENSE",
+          "LICENSES/third-party/cytoscape-3.30.2--package__license-update.js"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "cytoscape-cose-bilkent",
+        "version": "4.1.0",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/cytoscape-cose-bilkent/-/cytoscape-cose-bilkent-4.1.0.tgz",
+        "package_sha256": "9df46b10952452b1d2a5d4cd942f70709a037bc6b7ef25cf1d9fb70be73bb950",
+        "license_files": [
+          "LICENSES/third-party/cytoscape-cose-bilkent-4.1.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "cytoscape-fcose",
+        "version": "2.2.0",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/cytoscape-fcose/-/cytoscape-fcose-2.2.0.tgz",
+        "package_sha256": "4e1f30e1821fdd4b66f21043c8ea40a8e2ad0ba75e4ccdd2c24d289cf5595432",
+        "license_files": [
+          "LICENSES/third-party/cytoscape-fcose-2.2.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3",
+        "version": "7.9.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3/-/d3-7.9.0.tgz",
+        "package_sha256": "7e36605710a2ba54846797c8c6d888911341b215ae53257dc32a49a0b824355e",
+        "license_files": [
+          "LICENSES/third-party/d3-7.9.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-array",
+        "version": "2.12.1",
+        "license": "BSD-3-Clause",
+        "source": "https://registry.npmjs.org/d3-array/-/d3-array-2.12.1.tgz",
+        "package_sha256": "3795da9bd345fc440b82be032400c538298e021b559ca48342fe9647e44bb86b",
+        "license_files": [
+          "LICENSES/third-party/d3-array-2.12.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-array",
+        "version": "3.2.4",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-array/-/d3-array-3.2.4.tgz",
+        "package_sha256": "6dbf3f2be39e48f86775be6e166a5d3e5a585ca7144453cd6ad1912f5ae4417f",
+        "license_files": [
+          "LICENSES/third-party/d3-array-3.2.4--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-axis",
+        "version": "3.0.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-axis/-/d3-axis-3.0.0.tgz",
+        "package_sha256": "b5ca6e00b9a2503d6b473485684670564a370733cdc8565a45b63f9fb4d944f6",
+        "license_files": [
+          "LICENSES/third-party/d3-axis-3.0.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-brush",
+        "version": "3.0.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-brush/-/d3-brush-3.0.0.tgz",
+        "package_sha256": "fde88a49b16f92d067401df00abf88bf07eec3e091343eb902caf9cab02bdf2a",
+        "license_files": [
+          "LICENSES/third-party/d3-brush-3.0.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-chord",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-chord/-/d3-chord-3.0.1.tgz",
+        "package_sha256": "84c47d193e5e8c5fd3a28783a55b34f08dfaa1c8d764e96d9b49c78a3b6b40b5",
+        "license_files": [
+          "LICENSES/third-party/d3-chord-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-color",
+        "version": "3.1.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-color/-/d3-color-3.1.0.tgz",
+        "package_sha256": "d41bbcd99dd4f00e696546bffc73fed9b8fb6c3354905b6ea1721bff25f33b42",
+        "license_files": [
+          "LICENSES/third-party/d3-color-3.1.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-contour",
+        "version": "4.0.2",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-contour/-/d3-contour-4.0.2.tgz",
+        "package_sha256": "fa347e237c259a987fc3cfd890e2fcb0f2ec42ed125a2c9363854509e86db8f4",
+        "license_files": [
+          "LICENSES/third-party/d3-contour-4.0.2--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-delaunay",
+        "version": "6.0.4",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-delaunay/-/d3-delaunay-6.0.4.tgz",
+        "package_sha256": "935113ffa78d545505c8f1accf95be0e48594737eab34db8f50c9d6319907971",
+        "license_files": [
+          "LICENSES/third-party/d3-delaunay-6.0.4--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-dispatch",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-dispatch/-/d3-dispatch-3.0.1.tgz",
+        "package_sha256": "3d1a0b5c003e0e9608ad57f6ca21a0c8368031fcbe5f5317fe4e50b3f797ea23",
+        "license_files": [
+          "LICENSES/third-party/d3-dispatch-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-drag",
+        "version": "3.0.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-drag/-/d3-drag-3.0.0.tgz",
+        "package_sha256": "a3ccc9d31d85135f35a4eda3ec0fae6ac22435d4e3fe2d2e0c73b5246460d4db",
+        "license_files": [
+          "LICENSES/third-party/d3-drag-3.0.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-dsv",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-dsv/-/d3-dsv-3.0.1.tgz",
+        "package_sha256": "fdafcae0362205e2fc63fe3e87fed54822227d9370ce5150914f863ec36153cb",
+        "license_files": [
+          "LICENSES/third-party/d3-dsv-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-ease",
+        "version": "3.0.1",
+        "license": "BSD-3-Clause",
+        "source": "https://registry.npmjs.org/d3-ease/-/d3-ease-3.0.1.tgz",
+        "package_sha256": "b249afe4aa8b741beeaf2d14f625ccf49270adb645e3f1c755d11476c1fdbe2a",
+        "license_files": [
+          "LICENSES/third-party/d3-ease-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-fetch",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-fetch/-/d3-fetch-3.0.1.tgz",
+        "package_sha256": "8a3d61af2bed2b4899df1a90dfed41c0e10ad79d1bea93a18155f5d4e11a526f",
+        "license_files": [
+          "LICENSES/third-party/d3-fetch-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-force",
+        "version": "3.0.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-force/-/d3-force-3.0.0.tgz",
+        "package_sha256": "deacfa7ecb466f88717fe1863347dd65e5a5422d9f8c893d771cb2a7f987fa15",
+        "license_files": [
+          "LICENSES/third-party/d3-force-3.0.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-format",
+        "version": "3.1.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-format/-/d3-format-3.1.0.tgz",
+        "package_sha256": "5439103fc9b6f033e02bf68fbeb13ecd2c33442f77ea772a4b2b1bc4f4cee5ba",
+        "license_files": [
+          "LICENSES/third-party/d3-format-3.1.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-geo",
+        "version": "3.1.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-geo/-/d3-geo-3.1.1.tgz",
+        "package_sha256": "fe1f2dd81a87d942790c5a7786f4aab03df2b357d46d8af56b613fb8a1bb9be5",
+        "license_files": [
+          "LICENSES/third-party/d3-geo-3.1.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-hierarchy",
+        "version": "3.1.2",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-hierarchy/-/d3-hierarchy-3.1.2.tgz",
+        "package_sha256": "7681875f06440c088afda1fd834d853dd560166c945e731382ee0c636332360b",
+        "license_files": [
+          "LICENSES/third-party/d3-hierarchy-3.1.2--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-interpolate",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-interpolate/-/d3-interpolate-3.0.1.tgz",
+        "package_sha256": "7e8df78d233cd102a0bb518658dc0b7d5c38442b6f2dbc8b95ffc14ba87c7c33",
+        "license_files": [
+          "LICENSES/third-party/d3-interpolate-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-path",
+        "version": "1.0.9",
+        "license": "BSD-3-Clause",
+        "source": "https://registry.npmjs.org/d3-path/-/d3-path-1.0.9.tgz",
+        "package_sha256": "2c10702bad9be578f0827d00e45010ae59cb67165f65462e5c781913a5505db1",
+        "license_files": [
+          "LICENSES/third-party/d3-path-1.0.9--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-path",
+        "version": "3.1.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-path/-/d3-path-3.1.0.tgz",
+        "package_sha256": "94e9b69f82f113ed4ada36703c05f6b7406723c55affe2a443d69729d6d5da14",
+        "license_files": [
+          "LICENSES/third-party/d3-path-3.1.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-polygon",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-polygon/-/d3-polygon-3.0.1.tgz",
+        "package_sha256": "6a33e6b083bd596a08e6f9e973fdb0d098f9ac8348cdc86346bb3e9c15614aca",
+        "license_files": [
+          "LICENSES/third-party/d3-polygon-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-quadtree",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-quadtree/-/d3-quadtree-3.0.1.tgz",
+        "package_sha256": "d4145e9cecca8a6077e1099de96375ec9923b0de0df4004bd98aafa17c2d557f",
+        "license_files": [
+          "LICENSES/third-party/d3-quadtree-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-random",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-random/-/d3-random-3.0.1.tgz",
+        "package_sha256": "c35794d70beff4e2e2da799cd7fb0e3e763574f24c0fad38c1841770c12b99e8",
+        "license_files": [
+          "LICENSES/third-party/d3-random-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-sankey",
+        "version": "0.12.3",
+        "license": "BSD-3-Clause",
+        "source": "https://registry.npmjs.org/d3-sankey/-/d3-sankey-0.12.3.tgz",
+        "package_sha256": "6bd8cdb143d4088ff38179def70954419868d4b95f136c168ffef2dad004ff22",
+        "license_files": [
+          "LICENSES/third-party/d3-sankey-0.12.3--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-scale",
+        "version": "4.0.2",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-scale/-/d3-scale-4.0.2.tgz",
+        "package_sha256": "bf50a1f34ba0e6fa25cb7ae902abe0b9e2f85ced39fdca7b18fbe863fbaa39a7",
+        "license_files": [
+          "LICENSES/third-party/d3-scale-4.0.2--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-scale-chromatic",
+        "version": "3.1.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-scale-chromatic/-/d3-scale-chromatic-3.1.0.tgz",
+        "package_sha256": "2573f980e0acbbecc919f5c5fdf7cd3a8110eda2497da7b94ae303fab9c32aa4",
+        "license_files": [
+          "LICENSES/third-party/d3-scale-chromatic-3.1.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-selection",
+        "version": "3.0.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-selection/-/d3-selection-3.0.0.tgz",
+        "package_sha256": "a1f872f30dca23b76de89cae9e882f56c325433e7f3aee87b95fa830d12789f3",
+        "license_files": [
+          "LICENSES/third-party/d3-selection-3.0.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-shape",
+        "version": "1.3.7",
+        "license": "BSD-3-Clause",
+        "source": "https://registry.npmjs.org/d3-shape/-/d3-shape-1.3.7.tgz",
+        "package_sha256": "d19261dad8ff192357db2720d57c1786dbfb8c9f42eafe577cb7c4d5b473fd0e",
+        "license_files": [
+          "LICENSES/third-party/d3-shape-1.3.7--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-shape",
+        "version": "3.2.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-shape/-/d3-shape-3.2.0.tgz",
+        "package_sha256": "8b4b2bc9daa99a957abe17656c5944fd3f28efb88f788e6b4fdba346cb80e602",
+        "license_files": [
+          "LICENSES/third-party/d3-shape-3.2.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-time",
+        "version": "3.1.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-time/-/d3-time-3.1.0.tgz",
+        "package_sha256": "a9f2c8e177b76e7068e7c9c77722c4924c71c9e54f9b1e245d27ef11b28dbc08",
+        "license_files": [
+          "LICENSES/third-party/d3-time-3.1.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-time-format",
+        "version": "4.1.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-time-format/-/d3-time-format-4.1.0.tgz",
+        "package_sha256": "46f1492ef6be8afe04a844876a644a4a964da7f87937e90e93f9585acff9d30e",
+        "license_files": [
+          "LICENSES/third-party/d3-time-format-4.1.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-timer",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-timer/-/d3-timer-3.0.1.tgz",
+        "package_sha256": "05cdf901e1876a7f24f4c365a879252752e22e3cc52b131ca616639f07e8ed05",
+        "license_files": [
+          "LICENSES/third-party/d3-timer-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-transition",
+        "version": "3.0.1",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-transition/-/d3-transition-3.0.1.tgz",
+        "package_sha256": "260eb8eaed565581afc00634ec83c83fd3b7e830e2a6b73b49f3f744dce0254c",
+        "license_files": [
+          "LICENSES/third-party/d3-transition-3.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "d3-zoom",
+        "version": "3.0.0",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/d3-zoom/-/d3-zoom-3.0.0.tgz",
+        "package_sha256": "846d28725c4889d6a2069c6cf084ca7e7730ee917a9b87960ecc53247f840f85",
+        "license_files": [
+          "LICENSES/third-party/d3-zoom-3.0.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "dagre-d3-es",
+        "version": "7.0.11",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/dagre-d3-es/-/dagre-d3-es-7.0.11.tgz",
+        "package_sha256": "833df321d82bb20d27a4de29641092c63991c4db53b929b70260eb726c9e3a98",
+        "license_files": [
+          "LICENSES/third-party/dagre-d3-es-7.0.11--package__LICENSE.md"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "dayjs",
+        "version": "1.11.13",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/dayjs/-/dayjs-1.11.13.tgz",
+        "package_sha256": "be0396c0f91583421b68f9a034227fb552eb87d93e59add775d533a65f70e47e",
+        "license_files": [
+          "LICENSES/third-party/dayjs-1.11.13--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "debug",
+        "version": "4.3.7",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/debug/-/debug-4.3.7.tgz",
+        "package_sha256": "c803a8ca9b835b7a75f7150ee52f7f640675515bafbe8f5da78fcc0ae12914ac",
+        "license_files": [
+          "LICENSES/third-party/debug-4.3.7--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "dompurify",
+        "version": "3.2.1",
+        "license": "(MPL-2.0 OR Apache-2.0)",
+        "source": "https://registry.npmjs.org/dompurify/-/dompurify-3.2.1.tgz",
+        "package_sha256": "55b33818653977f6c37e932ac299110d2309aaa590b4a0b24802cd06c12ed215",
+        "license_files": [
+          "LICENSES/third-party/dompurify-3.2.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "internmap",
+        "version": "2.0.3",
+        "license": "ISC",
+        "source": "https://registry.npmjs.org/internmap/-/internmap-2.0.3.tgz",
+        "package_sha256": "39d1936831a4d3f2bd6e088db28a10de4458d823f652c36b2c808bf5b978c48d",
+        "license_files": [
+          "LICENSES/third-party/internmap-2.0.3--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "js-yaml",
+        "version": "4.1.0",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.0.tgz",
+        "package_sha256": "0dae332559cf22b21c26ea70e732afd8303ff99412f9c3d9d209faa8882cf2ca",
+        "license_files": [
+          "LICENSES/third-party/js-yaml-4.1.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "katex",
+        "version": "0.16.11",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/katex/-/katex-0.16.11.tgz",
+        "package_sha256": "8c5494c5f7d8e8bf73ff3fe64d4bd09a340e4878b7eec9bbd9ef8d8f3e24193f",
+        "license_files": [
+          "LICENSES/third-party/katex-0.16.11--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "khroma",
+        "version": "2.1.0",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/khroma/-/khroma-2.1.0.tgz",
+        "package_sha256": "8963d209f3a682374d7f7e45e5fa361a58fc060c8528df6656fae0fc7c508110",
+        "license_files": [
+          "LICENSES/third-party/khroma-2.1.0--package__license"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle",
+        "license_evidence": "Inspected original package/license; npm metadata omitted license"
+      },
+      {
+        "name": "langium",
+        "version": "3.0.0",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/langium/-/langium-3.0.0.tgz",
+        "package_sha256": "dade8ebcdacc9e20477f9b3234c3c2382c880977a5466cae6b2c7b94b2f711bb",
+        "license_files": [
+          "LICENSES/third-party/langium-3.0.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "layout-base",
+        "version": "1.0.2",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/layout-base/-/layout-base-1.0.2.tgz",
+        "package_sha256": "efea1306903d9d043c42c1e7931b2d97b4f519cff04b1347fa308032a52eebab",
+        "license_files": [
+          "LICENSES/third-party/layout-base-1.0.2--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "layout-base",
+        "version": "2.0.1",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/layout-base/-/layout-base-2.0.1.tgz",
+        "package_sha256": "34165e46d8c4b9d719a592e39a60fa5f7324c21a3edd02733e1116b17013defd",
+        "license_files": [
+          "LICENSES/third-party/layout-base-2.0.1--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "lodash-es",
+        "version": "4.17.21",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/lodash-es/-/lodash-es-4.17.21.tgz",
+        "package_sha256": "777598ac703f02b403ef678cd11bce2150ad788f35c774ea7c9cc241a892cb7b",
+        "license_files": [
+          "LICENSES/third-party/lodash-es-4.17.21--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "marked",
+        "version": "13.0.3",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/marked/-/marked-13.0.3.tgz",
+        "package_sha256": "d70b051b88307eea37ccccae7d3eed9bc6c1adac58b7d616afe26731f44d2b05",
+        "license_files": [
+          "LICENSES/third-party/marked-13.0.3--package__LICENSE.md"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "ms",
+        "version": "2.1.3",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
+        "package_sha256": "f6616e15e530ed552f9daa2d3ce71963947c6bc7c98c9b64fd3e673fd02622c6",
+        "license_files": [
+          "LICENSES/third-party/ms-2.1.3--package__license.md"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "roughjs",
+        "version": "4.6.6",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/roughjs/-/roughjs-4.6.6.tgz",
+        "package_sha256": "373873b2c3f1b7ddba878525c774816057c5818029780c7fba081f06018ba78c",
+        "license_files": [
+          "LICENSES/third-party/roughjs-4.6.6--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "stylis",
+        "version": "4.3.4",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/stylis/-/stylis-4.3.4.tgz",
+        "package_sha256": "033c341a4a56acde68bbd338d17624ef3ec52c9216fe2c6194fb558b22e64e67",
+        "license_files": [
+          "LICENSES/third-party/stylis-4.3.4--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "ts-dedent",
+        "version": "2.2.0",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/ts-dedent/-/ts-dedent-2.2.0.tgz",
+        "package_sha256": "f04cddc15ce3aad91287aebdcb0d6b6997b85222769c35c910038f59bfd2234d",
+        "license_files": [
+          "LICENSES/third-party/ts-dedent-2.2.0--package__LICENSE"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "uuid",
+        "version": "9.0.1",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/uuid/-/uuid-9.0.1.tgz",
+        "package_sha256": "9fa6f415a7d9f7f8ea48e45beeb567686261da85cd395901c54c3515589e3f7e",
+        "license_files": [
+          "LICENSES/third-party/uuid-9.0.1--package__LICENSE.md"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "vscode-jsonrpc",
+        "version": "8.2.0",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/vscode-jsonrpc/-/vscode-jsonrpc-8.2.0.tgz",
+        "package_sha256": "3da44531c398f1545074cb728e359a822f35b9f8ac7171c847f42f0728b9c7cb",
+        "license_files": [
+          "LICENSES/third-party/vscode-jsonrpc-8.2.0--package__License.txt"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "vscode-languageserver-textdocument",
+        "version": "1.0.12",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/vscode-languageserver-textdocument/-/vscode-languageserver-textdocument-1.0.12.tgz",
+        "package_sha256": "9f1d28814d6ee81267f52f5bc8c920bb6a0a23eb6de48960345a0a25fbf3b0db",
+        "license_files": [
+          "LICENSES/third-party/vscode-languageserver-textdocument-1.0.12--package__License.txt"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "vscode-languageserver-types",
+        "version": "3.17.5",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/vscode-languageserver-types/-/vscode-languageserver-types-3.17.5.tgz",
+        "package_sha256": "d673f9e7f8bbe51351be51c58f32d4dcfa97a670ebb86bc633368394c609cac0",
+        "license_files": [
+          "LICENSES/third-party/vscode-languageserver-types-3.17.5--package__License.txt"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      },
+      {
+        "name": "vscode-uri",
+        "version": "3.0.8",
+        "license": "MIT",
+        "source": "https://registry.npmjs.org/vscode-uri/-/vscode-uri-3.0.8.tgz",
+        "package_sha256": "a716d2fb0b5ba69c557df007f83dee43117a20faee0adc9400de03be10f475f3",
+        "license_files": [
+          "LICENSES/third-party/vscode-uri-3.0.8--package__LICENSE.md"
+        ],
+        "review": "license text retained",
+        "distribution": "embedded in pinned Mermaid bundle"
+      }
+    ],
+    "source_map_inputs": 1086
+  },
+  "patches": [
+    {
+      "path": "patches/openclaw/2026.5.12-approval-execution-recheck-v2.patch",
+      "sha256": "3739f75e28996dc3253b28ff4ff8f2d3288e937f329159be7c8b7cefee376a64",
+      "license": "MIT",
+      "license_file": "patches/openclaw/LICENSE",
+      "source": "https://github.com/openclaw/openclaw",
+      "upstream_commit": "unknown; npm distribution version and target digests pinned instead",
+      "metadata": {
+        "package": "openclaw",
+        "version": "2026.5.12",
+        "target": "dist/pi-tools.before-tool-call-BmZM4hyt.js",
+        "checkpoint_protocol_version": 1,
+        "before_sha256": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+        "after_sha256": "6ff914993889c1933f8d450e3b5111f084bdbbc69b59d33fab82ef67fd764cdc",
+        "patch_sha256": "3739f75e28996dc3253b28ff4ff8f2d3288e937f329159be7c8b7cefee376a64",
+        "adapter_source": "adapters/runtime/openclaw-agentshield/index.ts",
+        "adapter_sha256": "9e7ba73c4d9999ba5dd9f6f1cdd1af1f4c593ca3cfb4b982d49350e0248fbeb8"
+      },
+      "modified": true
+    },
+    {
+      "path": "patches/openclaw/2026.5.12-approval-execution-recheck.patch",
+      "sha256": "989ae3eb08986aa29d3166199f414a8fb41e70e8d0c2df98eec1261be1de56d3",
+      "license": "MIT",
+      "license_file": "patches/openclaw/LICENSE",
+      "source": "https://github.com/openclaw/openclaw",
+      "upstream_commit": "unknown; npm distribution version and target digests pinned instead",
+      "metadata": {
+        "package": "openclaw",
+        "version": "2026.5.12",
+        "target": "dist/pi-tools.before-tool-call-BmZM4hyt.js",
+        "before_sha256": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+        "after_sha256": "e3dff0e2d8aa0ddf3cf13fbe0e41c70001c52a33bad34d0833cb3062b8abdf64",
+        "patch_sha256": "989ae3eb08986aa29d3166199f414a8fb41e70e8d0c2df98eec1261be1de56d3",
+        "adapter": {
+          "target": "index.ts",
+          "source": "adapters/runtime/openclaw-agentshield/index.ts",
+          "before_sha256": "ef520709e165da99b85f8d57d7a7ad6281d8791a218a748655b6945310650b65",
+          "after_sha256": "732cb069f4cff5a6e07fd807b69d64691b98c044ac42429b4292c0e949fe6359",
+          "patch_sha256": "ac85a167f8d5720244b9c92d07c13981802599f99cde56ff76d499f99f0fd7a9"
+        }
+      },
+      "modified": true
+    },
+    {
+      "path": "patches/openclaw/2026.5.12-approval-recheck-adapter.patch",
+      "sha256": "ac85a167f8d5720244b9c92d07c13981802599f99cde56ff76d499f99f0fd7a9",
+      "license": "MIT",
+      "license_file": "patches/openclaw/LICENSE",
+      "source": "https://github.com/openclaw/openclaw",
+      "upstream_commit": "unknown; npm distribution version and target digests pinned instead",
+      "metadata": {
+        "version": "2026.5.12",
+        "note": "paired adapter patch: see approval-execution-recheck.json"
+      },
+      "modified": true
+    },
+    {
+      "path": "patches/openclaw/2026.5.12-idle-transcript-reset.patch",
+      "sha256": "906a7cb6a34d2db6861f36f9613339118eb038d1333e6aff70fe9f6b5c4b68df",
+      "license": "MIT",
+      "license_file": "patches/openclaw/LICENSE",
+      "source": "https://github.com/openclaw/openclaw",
+      "upstream_commit": "unknown; npm distribution version and target digests pinned instead",
+      "metadata": {
+        "package": "openclaw",
+        "version": "2026.5.12",
+        "target": "dist/agent-command-BQgTSh4F.js",
+        "before_sha256": "662d34784888289ecd133aec3ddb605de1f7076e9897e2e2e636ad246d6617f1",
+        "after_sha256": "e6d7053a410162f1745b1a9608c233276ee8ac747e0d7cfeb8230a21a749425c",
+        "patch_sha256": "906a7cb6a34d2db6861f36f9613339118eb038d1333e6aff70fe9f6b5c4b68df"
+      },
+      "modified": true
+    }
+  ]
+}

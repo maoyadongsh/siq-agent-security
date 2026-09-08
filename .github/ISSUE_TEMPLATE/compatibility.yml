@@ -1,0 +1,35 @@
+{
+  "name": "Compatibility report",
+  "description": "OS/tool/runtime versions, affected adapter, minimal reproduction and sanitized error",
+  "title": "[compatibility] ",
+  "body": [
+    {
+      "type": "markdown",
+      "attributes": {
+        "value": "Use synthetic data. Do not upload keys, pairing codes or raw state. Unpatched vulnerabilities belong in the private security entry."
+      }
+    },
+    {
+      "type": "textarea",
+      "id": "details",
+      "attributes": {
+        "label": "Compatibility report",
+        "description": "OS/tool/runtime versions, affected adapter, minimal reproduction and sanitized error"
+      },
+      "validations": {
+        "required": true
+      }
+    },
+    {
+      "type": "textarea",
+      "id": "limitations",
+      "attributes": {
+        "label": "Limitations and provenance",
+        "description": "State unknowns, failed attempts, source/license and public-sharing permission for your original evidence."
+      },
+      "validations": {
+        "required": true
+      }
+    }
+  ]
+}

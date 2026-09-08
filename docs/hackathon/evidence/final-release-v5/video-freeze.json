@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-09-08T13:43:02.162854+00:00",
+  "submission_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "video_source_sha": "4da9e9e0a04c56620d101a583307b299b8484372",
+  "canonical_metadata": "../final-hardening-v4/narrated-video-zh.json",
+  "original_task_metadata": "../final-hardening-v4/video.json",
+  "video_sha256": "a9e003f47051b1ddf367b50dcf3a1e7293b7f7786f241cb7028b1a5bc8ea5430",
+  "local_file": ".tmp/final-hardening-v4/video-zh/siq-v4-demo-zh.mp4",
+  "decode_exit_code": 0,
+  "runtime_paths_compared": [
+    "apps/secure-agent",
+    "apps/agentshield",
+    "apps/web/src/local",
+    "skills",
+    "demo/fixtures",
+    "packages/contracts"
+  ],
+  "runtime_diff_empty": true,
+  "duration": "169.920000",
+  "resolution": "1440x1180",
+  "rerecord_required": false,
+  "upload_status": "external_manual",
+  "scope": "Existing narrated video retained; executable runtime/Skills/UI/contracts match main byte-for-byte."
+}

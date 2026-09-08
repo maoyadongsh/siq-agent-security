@@ -1,0 +1,13 @@
+{
+  "recorded_at": "2026-09-08T13:44:17.637056+00:00",
+  "submission_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+  "command": [
+    "uv",
+    "run",
+    "alembic",
+    "upgrade",
+    "head"
+  ],
+  "exit_code": 0,
+  "scope": "fresh disposable postgres:17-alpine, loopback-only, destroyed after test"
+}
