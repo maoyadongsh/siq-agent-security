@@ -2,6 +2,7 @@ package receipt
 
 import (
 	"siq-agent-security/apps/agentshield/internal/provenance"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"time"
 )
 
@@ -18,7 +19,7 @@ func (e *Engine) checkProvenance(req Request, contract *IntentContract, now time
 		if contract.Trusted.ProvenanceConstraints == nil {
 			return &provenance.Violation{Code: "provenance_authority_invalid"}
 		}
-		constraints = *contract.Trusted.ProvenanceConstraints
+		constraints = provenance.ConstraintsForAction(*contract.Trusted.ProvenanceConstraints, runtimeaction.Describe(req.Tool, req.Params))
 	}
 	return e.opts.ProvenanceCheck(req.Params, req.ParameterProvenance, constraints, provenance.Scope{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, TaskID: contract.TaskID}, now)
 }

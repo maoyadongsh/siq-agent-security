@@ -10,9 +10,9 @@
 | --- | --- | --- |
 | A1 | Authority Hard Gate、回执分层、required/optional × 三模式、历史签名兼容 | 本地验收通过；全仓 CI 待最终集成 |
 | A2 | 移除 caller cwd 授权、ContextAssertion、受信 workspace 与重放/到期 | 本地 admin 签发版本验收通过；外部 attestor 未实现 |
-| R | 统一 RuntimeActionDescriptor，高影响参数、shell unknown，六类消费者统一 | 现有五类消费者已统一并本地验收；Provenance 消费者随 B 接入 |
-| B1 | 签名 provenance、issuer registry、范围/到期/撤销、容量、不可变存储 | 开发中：来源合同、类型与参数路径基础已验证；签发/存储尚未接入 |
-| B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | V3 双读与 Engine 参数匹配已接入；MCP/HTTP 流程待完成 |
+| R | 统一 RuntimeActionDescriptor，高影响参数、shell unknown，六类消费者统一 | 六类消费者已统一；V3 高影响参数默认来源约束本地验收通过 |
+| B1 | 签名 provenance、issuer registry、范围/到期/撤销、容量、不可变存储 | 签名 registry/图存储、管理与受限上报 API 已实现；固定向量与完整验收待补齐 |
+| B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | V3 双读、来源匹配、确定性选择与 MCP 组件验收通过；native 自动采集待完成 |
 | C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 待完成 |
 | C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | 待完成 |
 | D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 待完成 |
@@ -124,3 +124,12 @@
 - 复用已有临时 Harness，以生产 Go daemon 完成准入、Grant challenge/approve/deploy、V3绑定、Report→Select→Decide。MCP 控制路径拒绝；同值 USER/authoritative 来源允许。不是依靠 warn 放行的正例，daemon 使用 block。
 - 实际运行成功，2条回执由离线 CLI 验证签名链；Ruff通过。[验收报告](evidence/provenance-v1/mcp-component-20260908.json) 记录源码基线、二进制/脚本哈希与身份摘要，无凭据和原始工具内容。
 - 此项覆盖 component_fixture 和固定 HTTP JSON 分支，不声称完整 MCP/SSE/OAuth 客户端或 native 平台支持；生产适配器自动采集、R高影响默认约束与后续 EffectEvidence/Benchmark 仍待完成。
+
+### R/B2 高影响参数默认约束验收
+
+- V3 中未被显式签名约束覆盖的高影响 JSON Pointer，默认 required=true、minimum_trust=trusted，仅接受 USER/SYSTEM/TRUSTED_IAM/TRUSTED_DATABASE。显式约束按路径覆盖默认项，允许管理员有意识地授权低可信来源；V2 行为不变。
+- Provenance 直接消费 RuntimeActionDescriptor 的 HighImpactParameterPaths，完成第六类消费者接入；临时补全约束不修改签名 Intent。
+- 修复前实际运行 `TestV3DecisionUsesSignedParameterProvenance/block/default` 失败：空 constraints 的 V3 允许 MCP 控制文件路径。修复后 explicit/default × block/warn/audit 六组均通过，同值可信来源允许、不可信或缺失来源拒绝。
+- `go test -race ./...`、`go vet ./...` 与 linux/amd64、linux/arm64、darwin/arm64、windows/amd64 编译通过。另有12类高影响参数和显式覆盖回归测试通过。
+- MCP 组件重新执行通过，2条回执离线验签成功；临时报告 `/tmp/siq-mcp-defaults-validation.json`，二进制 SHA256 `e6339c3ebad64c1858909d2ca4051d184f7dd4db0e69145f5dc43caedff7ad8d`。该报告基于 e1f4093 加本次工作树修改，不将其标记为该提交的干净构建。
+- C EffectEvidence/Completion、D Benchmark、G 门禁及完整45项验收仍待开发。

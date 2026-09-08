@@ -8,8 +8,16 @@ import (
 )
 
 func TestV3DecisionUsesSignedParameterProvenance(t *testing.T) {
-	for _, mode := range []string{"block", "warn", "audit_only"} {
-		t.Run(mode, func(t *testing.T) {
+	for _, scenario := range []struct {
+		mode     string
+		explicit bool
+	}{{"block", true}, {"warn", true}, {"audit_only", true}, {"block", false}, {"warn", false}, {"audit_only", false}} {
+		mode := scenario.mode
+		name := mode + "/default"
+		if scenario.explicit {
+			name = mode + "/explicit"
+		}
+		t.Run(name, func(t *testing.T) {
 			fx, intents, _ := revocableEngine(t, "required", mode)
 			c, err := intents.Get("int-revocable")
 			if err != nil {
@@ -18,6 +26,9 @@ func TestV3DecisionUsesSignedParameterProvenance(t *testing.T) {
 			c.IntentID, c.SchemaVersion = "int-v3", "intent/v3"
 			c.Digest, c.Signature = "", ""
 			constraints := []provenance.Constraint{{ParameterPath: "/path", AllowedSourceTypes: []string{"USER"}, MinimumTrust: "trusted", Required: true}}
+			if !scenario.explicit {
+				constraints = []provenance.Constraint{}
+			}
 			c.ProvenanceConstraints = &constraints
 			if _, err := intents.Issue(c); err != nil {
 				t.Fatal(err)

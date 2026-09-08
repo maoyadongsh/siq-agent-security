@@ -870,3 +870,9 @@ HTTP 入口为 POST /v1/provenance-select，使用 decision capability；请求�
 新增隔离验证脚本，通过本地 loopback MCP JSON-RPC 服务执行 initialize→notifications/initialized→tools/call，取得实际协议结果，再经生产 SIQ daemon 的 Report→Select→Intent V3→Decide。复用现有集成 Harness 的临时状态、准入、Grant 人工 challenge/approve/deploy 与绑定流程，不使用真实平台配置或付费模型。
 
 该验证固定 MCP 2025-06-18 的 HTTP JSON 响应分支；不声称实现通用 Streamable HTTP/SSE 客户端、OAuth 或 native 平台自动采集。协议依据为官方 [transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports) 与 [lifecycle](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle)。报告标注 component_fixture，只存动作、reason code、哈希与检查结果，不保留原始工具内容或凭据。MCP endpoint/tool 身份由测试实际连接配置构造；上报仍不具备独立 attestor 权威。
+
+### B2 高影响参数默认约束
+
+V3 对 RuntimeActionDescriptor.HighImpactParameterPaths 中每个实际出现且没有显式来源约束的路径，补 required=true、minimum_trust=trusted、allowed_source_types=[USER,SYSTEM,TRUSTED_IAM,TRUSTED_DATABASE]。显式签名约束按精确 JSON Pointer 覆盖该路径的默认值，因此业务可明确许可特定 MCP/untrusted 来源；没有显式许可时不能由低可信输入控制高影响参数。
+
+默认值只作用于 V3，不静默改变 V2 历史语义。Provenance 模块直接消费 runtimeaction.Descriptor，不建立第二套工具/字段分类。默认约束为每次动作生成的新副本，不修改已签名 Intent 的数组或摘要。空 provenance_constraints 在合同上仍有效，但不表示高影响参数无需来源授权。
