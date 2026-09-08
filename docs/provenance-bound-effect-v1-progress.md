@@ -555,3 +555,10 @@
 - 实际pre hook提交该引用，daemon V3拒绝、适配器block；admin USER同值来源经相同pre hook允许。单独HTTP决定保留明确reason断言，结束回执链verify通过。报告/tmp/siq-hermes-mcp-daemon-bridge.json，本轮运行passed=true。
 - 此模式直接调用适配器hook，不声称原生Hermes MCP注册/调度器已接入；不修改实际用户配置，不执行目标read工具或冒充独立效果。已有21对基准默认行为保持，PR/nightly新增独立桥接报告步骤。
 - Ruff、实际桥接报告断言与diff检查通过；生产代码本轮未改，不重复Go全量测试。原生生命周期和跨平台引用集成等完整目标任务继续进行。
+
+### G README实验性能力与授权语义同步
+
+- README顶部改为当前开发分支状态，不把本地成果归于远端main/Release；移除“Provenance DAG未实现”和“required必须block才拒绝”的陈旧表述。
+- 增补最小用户说明：V3签名来源/最低父trust、三模式Authority硬拒绝与legacy边界、绑定/全局Intent撤销、实验性效果材料/Completion、恢复接管及四个可复现基准命令。保留同UID、partial观察、性能非SLA和平台未完整集成的限制。
+- 原生MCP执行边界复核：Hermes实际dispatcher未知mcp工具名不会自动变成可信已知effect；当前统一描述保留unknown，不能为夹具放宽bound Intent。配置化采集与直接hook桥接不代表原生注册/执行授权链完成，README已明确。
+- README相对文件链接、capability honesty及diff检查通过；仅文档改动，不重复生产测试。完整目标与最终逐项验收仍待继续。

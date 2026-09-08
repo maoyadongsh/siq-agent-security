@@ -10,7 +10,7 @@ SIQ Agent Security 将“谁授权、允许访问什么、可以产生哪些效�
 
 [产品介绍](https://maoyadongsh.github.io/siq-agent-security/) · [架构全景](https://maoyadongsh.github.io/siq-agent-security/architecture.html) · [CI](https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml) · [发布版本](https://github.com/maoyadongsh/siq-agent-security/releases)
 
-> **当前状态，2026-09-07：** 本文以 `main` 的 `1ffd809` 为代码基线，该提交的 [CI 已通过](https://github.com/maoyadongsh/siq-agent-security/actions/runs/34103966603)。Trusted Intent V2 核心授权、动作关联与恢复已实现；真实平台 V2 完整验收、受管 Linux 隔离及独立效果验证仍待完成。最新正式 Release 为 [v0.2.0](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.2.0)，早于本轮 V2 开发；体验本文 V2 能力请从 `main` 构建。支持矩阵当前没有 `supported` 行，具体能力以版本、平台和验证证据为准。
+> **开发状态，2026-09-08：** 当前 checkout 的 `codex/provenance-bound-effect-v1` 分支在 Trusted Intent V2 基础上加入了跨模式授权硬门禁、实验性参数来源图与 Intent V3、实验性效果证据及完成判定。21 对组件基准、文件强杀恢复和八阶段性能微基准已有本地证据；当前分支尚未推送，不能将这些能力归于远端 `main`、正式 Release 或远端 CI。平台自动集成、完整证据重放与最终验收仍在进行中，支持矩阵没有因此升级为 `supported`。详见[开发台账](./docs/provenance-bound-effect-v1-progress.md)和[能力矩阵](./docs/agentshield-capability-matrix-v1.md)。
 
 ## 为什么需要 SIQ Agent Security
 
@@ -162,11 +162,11 @@ NVIDIA Verified Skills 提供扫描、评测、签名和 Skill Card，覆盖能�
 
 OpenShell 可作为执行隔离与策略后端；SIQ 通过适配器协调能力探测、策略操作和读回。其官方策略区分静态与动态配置，接入时仍需按本仓实际版本和探针结果验证。[OpenShell 策略文档](https://docs.nvidia.com/openshell/sandboxes/policies)。
 
-### 面向参数来源与独立效果证据演进
+### 实验性参数来源与效果验证
 
-AuthGraph 等研究探索授权与参数来源之间的对应关系，为“参数值允许，但来源不可信”的问题提供研究方向。[AuthGraph 原作者摘要](https://arxiv.org/abs/2605.26497)。SIQ 已有签名 Intent 和 `provenance_refs` 引用字段，下一阶段计划增加受控数据来源、参数来源约束及独立效果采集。
+参数值相同不代表授权相同。Intent V3 可以要求某个高影响参数来自已注册的可信签发者：相同路径由 USER 签发时可通过，由 MCP/untrusted 提供时可被拒绝。来源图绑定任务、会话、Agent、内容摘要和期限；普通转换不提升信任，混合聚合保留最低父信任。当前验证覆盖显式来源关系，不追踪模型内部因果链。
 
-**当前尚未实现参数级 Provenance DAG、模型内部因果追踪或通用效果证明。** 相关论文仅作为设计依据，不将其攻击成功率或任务完成率写成本项目指标。工程拆分见[前沿优化开发计划](./docs/provenance-bound-effect-development-plan-20260907-180117.md)。
+EffectEvidence 将工具自报结果与独立采样材料分开。文件 observer 提供 `host_independent/partial` 证据；受控网络 oracle 验证实际接收端点。Completion 根据签名要求、材料及历史授权输出 `verified`、`incomplete`、`conflicting` 或 `unknown`。这些是实验性组件能力，不能等同任意平台的 OS 隔离或通用业务正确性证明。具体控制与残余风险见[威胁模型 T27–T35](./docs/threat-model.md)。
 
 ## 技术难点与工程取舍
 
@@ -335,16 +335,18 @@ skills/siq-agent-security/scripts/adapter.sh hermes
 }
 ```
 
-保留其他已有配置，再重新启动服务。**当前 `required` 必须结合 `block` 才对缺失绑定执行阻断。** `warn` / `audit_only` 会返回 allow，并记录 `advisory_action` 等拒绝建议；将授权有效性升级为独立硬门禁属于下一阶段合同变更。
+保留其他已有配置，再重新启动服务。**在当前开发分支中，无效的必需 Authority 在 `block`、`warn`、`audit_only` 下均硬拒绝。** `required` 缺绑定、撤销、来源无效等不能由 advisory 放宽；普通策略的建议模式保持兼容。`optional` 只允许从未绑定的旧会话沿用 Grant，已绑定会话不能通过删除或撤销绑定降级。
 
 V2 管理入口如下：
 
 | API | 用途 | 身份要求 |
 | --- | --- | --- |
-| `POST /v1/intents` | 校验并签发不可变 V2 Intent | 配对产生的管理会话 |
+| `POST /v1/intents` | 校验并签发不可变 V2/V3 Intent | 配对产生的管理会话 |
 | `GET /v1/intents`、`GET /v1/intents/{id}` | 查询授权合同 | 管理会话 |
 | `POST /v1/intent-bindings` | 将 Intent 固定绑定到平台、Agent 和会话 | 管理会话 |
 | `GET /v1/intent-bindings`、`GET /v1/intent-bindings/{id}` | 查询绑定 | 管理会话 |
+| `POST /v1/intent-bindings/{id}/revoke` | 终态撤销一条绑定，保留历史记录 | 管理会话 |
+| `POST /v1/intents/{id}/revoke` | 全局撤销 Intent，影响全部关联会话及新绑定 | 管理会话 |
 | `POST /v1/decide`、`POST /v1/observe` | 提交动作与关联结果 | 适配器决策凭据 |
 
 绑定请求示意：
@@ -361,6 +363,23 @@ V2 管理入口如下：
 先签发 Intent，再使用实际平台身份建立绑定。`intent_id` 来自签发响应，其他字段必须与适配器实际事件一致；签名和摘要由服务端生成。决策 token 不能调用以上管理接口，也不能通过把 Intent 填入工具参数完成授权。
 
 完整字段见 [V2 Schema](./packages/contracts/intent-contract.v2.schema.json)、[合同样例](./apps/agentshield/testdata/contracts/intent-contract.v2.sample.json)和[工程报告](./docs/trusted-intent-v2-report-20260907-161622.md)。测试样例中的 ID、时间和签名用于合同验证，实际使用需按任务重新签发。当前没有专用 Intent CLI 子命令，也没有 Intent 解绑、覆盖或原会话换任务接口。
+
+### 体验实验性 V3 与效果证据
+
+新任务可按[V3 合同](./packages/contracts/intent-contract.v3.schema.json)签发参数来源约束，旧 V2 合同仍可读取。管理端注册可信 issuer；普通 decision 凭据只能上报 MCP/WEB/TOOL/AGENT/UNKNOWN 的低可信内容，不能签发 USER/IAM 权威。显式派生必须经过选择接口，不能把原结果的引用直接挪给已变化的参数。接口及样例见[Provenance API](./docs/provenance-api-v1.md)。
+
+效果采样使用管理员签发、固定来源与范围的独立 observer 凭据，decision token 不能替代。文件 begin 保存原快照，finish 归档材料；跨重启由管理员显式接管，保持原期限并检查所有历史身份的撤销状态。`GET /v1/tasks/{task_id}/completion` 提供完成判定，工具返回 `success` 不会自动成为 verified。
+
+开发者可在隔离临时目录中复现组件流程：
+
+```bash
+python3 benchmarks/runtime-security/run.py --out /tmp/siq-runtime.json
+apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py /tmp/siq-runtime.json
+python3 benchmarks/runtime-security/recovery_fixture.py --out /tmp/siq-recovery.json
+python3 benchmarks/runtime-security/performance.py --out /tmp/siq-performance.json
+```
+
+需要本地 Go 和已安装开发依赖的 Control API 虚拟环境。报告中的 D0–D5 分别注明实际证据与未评估值；无独立材料的样本不进入 D5 成功/失败分母。性能报告是暖态组件微基准，不是生产 SLA。完整复现说明见[基准文档](./benchmarks/runtime-security/README.md)。Hermes 已有配置化 MCP 结果上报和显式引用桥接，但原生 MCP 注册/调度器的完整集成仍待验收；未知工具继续保留 unknown 效果限制。
 
 ## 企业控制面启动
 
@@ -425,7 +444,7 @@ Spark 可以承担业务模型的本地推理和 Agent 工作流，SIQ 在同机
 | --- | --- |
 | 同一操作系统用户 | 默认 `desktop-same-uid`。协议分权、配对和审批挑战不能阻止同 UID 恶意进程读取密钥、改写状态或执行 CLI；`managed-linux` 尚未实现 |
 | 工具中介覆盖 | 只能治理已接入并正确执行决策的入口；无钩子、替代执行路径及平台绕过需要额外隔离与验证 |
-| 运行模式 | `block` 执行拒绝；`warn` / `audit_only` 以放行和建议记录为主。目前不能把 required Intent 配置解释为跨模式硬拒绝 |
+| 运行模式 | 无效必需 Authority 在三模式均硬拒绝；普通策略的 warn/audit_only 保留 advisory 语义。未验证 Authority 不等于获得权限 |
 | 工作目录授权 | 已复现 optional、未绑定且获授相关工具权限时，自报 `context.cwd` 会影响路径放行；可信工作目录绑定列为 P0 修复项 |
 | 文件与网络资源 | 当前 V2 文件规范化采用 POSIX 路径语义；host 匹配不证明最终 DNS / 重定向目的地；路径匹配不提供 OS 对象隔离 |
 | 结果真实性 | Observation 证明结果与前置动作的协议关联；签名链不自动证明工具自报成功为真实业务效果 |
