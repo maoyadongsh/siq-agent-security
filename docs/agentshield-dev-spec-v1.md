@@ -814,3 +814,9 @@ shell、sh、bash、python/python3、node、powershell/pwsh 等解释器至少 p
 来源 taxonomy 与 trust 独立校验；不得根据 USER/MCP 等字符串推导 authority。参数来源记录只允许 parameter_path 和 provenance_refs，路径为 RFC 6901 JSON Pointer，绑定内容以现有 canon.Marshal 的 SHA256 验证。所有引用都必须通过后续可信 store 验签、issuer/scope/时效校验后才能交给 matcher；普通调用方提交的 Assertion 不视为已验证。minimum_trust 的顺序为 unknown < untrusted < trusted < authoritative；required 缺字段或缺引用拒绝，来源集合不匹配、内容摘要不匹配或 unknown derivation 拒绝。多个引用必须全部满足约束，不能混入一份可信引用掩盖低可信引用。
 
 签发者 registry 数据模型包含 public_key（外部 Ed25519 公钥）或 local_key_ref（二选一）、allowed_source_types、max_trust_level、完整 scope、expires_at、revoked_at；具体发布与验签由管理端持久化模块实施。Decision 上报仅允许 MCP/WEB/TOOL/AGENT/UNKNOWN 且最多 untrusted，不接受 caller 指定 USER/TRUSTED_IAM 等授权来源。
+
+### B1 签名验证边界
+
+Assertion.VerifyAuthority 接受来自管理面可信 registry 的 Issuer 与本地公钥，不接受 decision 请求内嵌的 issuer。外部公钥严格 base64 解码为 32 字节 Ed25519；本地引用只识别 `local-state`。Issuer 的完整 scope 必须与 assertion、当前请求完全一致；来源类型必须被允许，trust 不得超过 issuer 上限。Issuer/Assertion 都检查时效；任何非空 revoked_at 都拒绝。声明过期不能超过 issuer 过期，未来 issued_at 拒绝。
+
+验签使用原 signing.VerifyWithSchema/canon；结构校验拒绝未知 signing_schema、空/重复/自引用父节点、超限父节点、direct 带父节点以及 transformed/aggregated 无父节点。此阶段仅验证单节点授权；父节点签名、派生信任上限与深度/容量由后续图解析器验证，单节点验签不代表完整 lineage 已验证。
