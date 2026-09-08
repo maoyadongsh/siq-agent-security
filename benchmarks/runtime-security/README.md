@@ -50,3 +50,5 @@ network_fixture使用受信loopback测试server，不代表互联网provider审�
 当前合计18对。provenance-capacity通过生产API逐层签发USER来源链，64层成功，第65层503/provenance_capacity；引用被拒绝的节点Decide deny，引用已有64层链正常allow。报告单独保存容量API拒绝证据，不能仅凭缺失引用判定容量保护有效。本对覆盖深度预算；1024节点、4096边、并发耗尽的完整基准仍需补齐，不把深度用例称为所有容量验收。
 
 当前合计19对。approval-revoked通过官方良性准入fixture部署OpenClaw exec require_approval策略：Decide hold→admin批准→hold-status approved→攻击撤销Grant→再次hold-status denied，工具不执行；正常对照仍approved，执行仅写临时marker的受控工具。绝不执行传入command。此对明确optional/unbound兼容路径，required-bound不透明shell仍受拒绝，不代表该限制已解除，也不代表native OpenClaw网关审批回归已完成。marker只用于D3，D4/D5无独立材料仍null。
+
+approval-params场景要求真实hold获批后替换最终params；hold-status必须400/hold_identity_mismatch，fixture不能执行。正常对照保持批准时参数并执行受控marker。此类别独立于Grant撤销，不将参数替换等同审批时序逆转。
