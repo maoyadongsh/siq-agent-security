@@ -28,3 +28,9 @@ Assertion 的 content_digest 是参数值的 canonical JSON SHA256，例如 JSON
 source 仅允许 MCP/WEB/TOOL/AGENT/UNKNOWN，trust 默认为 untrusted，不能升级为 trusted/authoritative。source_id 是自报标识，存储前转换为摘要；content 仅持久化 canonical 摘要。相同 scope+report_id+内容可重试，不同内容冲突；过期重试不会续期，新采集需要新 report_id。有效期最多15分钟且不晚于 Intent。
 
 返回201及完整签名声明，可以将 provenance_id 用作后续参数来源引用。该签名证明服务记录了低可信自报输入，不证明实际连接过该 MCP endpoint，不提供独立效果证据。
+
+## 从原始结果选择参数
+
+`POST /v1/provenance-select` 使用 decision token，请求见 [选择合同](../packages/contracts/provenance-select-request.v1.schema.json)：parent_id、pointer、platform/session_id/agent_id、content。content 必须是与父节点摘要一致的完整原始 JSON；服务自行按 pointer 选取值，不接受 caller value、trust、issuer 或 task_id。
+
+返回带父引用的签名子声明，保留低可信来源与原有效期。同一选择可重试；父节点过期或撤销会使选择失败。该入口只支持本地签发的低可信来源，不能派生可信 USER/IAM 授权。它证明确定性的字段选择，不证明模型内部语义传播。

@@ -110,3 +110,10 @@
 - 专用 scope report issuer 仅允许五类低可信来源，内容与来源标识都只存摘要；声明最长15分钟且不超出 Intent，scope+report_id 幂等且过期不自动续期。
 - 全流程串行化 registry/声明写入，16并发重复上报得到同一签名。测试验证伪造 USER/IAM/高可信 MCP 拒绝、同 ID 内容冲突、过期拒绝、磁盘无原始内容，以及 HTTP 自报权限边界。
 - 新增 provenance/server 定向 race 与 vet 通过，Python provenance 合同测试5项与 Ruff通过。上报仍为 self-reported 输入；实际 MCP 调用、endpoint/tool 身份与确定性派生接入继续待完成。
+
+### B2 确定性选择增量
+
+- Store.Select 与 decision `/v1/provenance-select` 已接入：原始完整 JSON 与父节点内容摘要匹配后由服务提取字段，子摘要绑定结果并保留父引用、来源/trust/时效；不能自报输出值或升级 USER/IAM。
+- 真实签名 Report→Select→MatchParameters 测试验证 MCP 选择仍不能通过 USER/trusted 约束，显式允许 MCP/untrusted 的约束通过。覆盖原文替换、字段缺失、幂等选择、撤销父节点拒绝。
+- provenance/server 定向 race通过，provenance vet通过，Python 合同测试6项与 Ruff通过。选择请求合同和使用说明已落盘。
+- 本轮只完成确定性派生机制，尚未实际调用 MCP server；真实 transport、endpoint/tool identity 采集与 native 平台接入继续待完成。

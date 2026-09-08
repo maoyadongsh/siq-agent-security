@@ -197,7 +197,7 @@ func (s *Server) rejectBadOrigin(w http.ResponseWriter, r *http.Request) bool {
 }
 
 func isDecisionPath(path string) bool {
-	return path == "/v1/decide" || path == "/v1/observe" || path == "/v1/hold-status" || path == "/v1/provenance-reports"
+	return path == "/v1/decide" || path == "/v1/observe" || path == "/v1/hold-status" || path == "/v1/provenance-reports" || path == "/v1/provenance-select"
 }
 
 func (s *Server) auth(next http.HandlerFunc, caps ...capability) http.HandlerFunc {

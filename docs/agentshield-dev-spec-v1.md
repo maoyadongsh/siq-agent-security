@@ -856,3 +856,11 @@ Store.MatchParameters 在一次 registry 读锁内验证所有 parameter_provena
 POST /v1/provenance-reports 使用 decision capability。正文包含 report_id、platform/session_id/agent_id、source（type/source_id/trust）和 content（JSON值）。服务从已验证且当前有效的 Intent binding 派生 task_id，不接受 caller task/issuer/signature。仅允许 MCP/WEB/TOOL/AGENT/UNKNOWN，trust 缺省为 untrusted，不能超过 untrusted；来源类型不在允许集合时直接拒绝。
 
 服务为该完整 scope 使用专用 report issuer（local-state、五类低可信来源、untrusted ceiling、到期不晚于 Intent），不允许请求选择其他 issuer。source_id 在签名声明中只保留摘要标识；content 仅存 canonical 内容摘要，不持久化原文。声明有效期最多15分钟且不晚于 Intent。report_id 在 scope 内幂等，同 ID 不同内容冲突；同 ID 的过期重试拒绝，调用方为新的采集生成新 report_id。上报是 self-reported 输入记录，不证明真实 MCP 服务身份或实际执行，不能赋予工具效果独立证据地位。
+
+### B2 确定性低可信内容选择
+
+Store.Select 从已验证的低可信父节点中派生参数：调用方重送原始 JSON，服务先比较完整 canonical digest，再按严格 JSON Pointer 自行提取值并计算子摘要。调用方不能指定输出值、类型或 trust。V1 选择入口限于 MCP/WEB/TOOL/AGENT/UNKNOWN 且最多 untrusted、本地签发的来源，不能借低权限入口使用可信 USER/IAM issuer。
+
+子节点继承父节点 source type/trust、scope、issuer 和时效；source_id 记录 parent_id+pointer 的摘要，provenance_id 由该选择身份与完整 scope 确定。已知 lineage 标记 transformed；unknown 父节点继续 unknown。同一选择可幂等重试，原文和被选值不落盘，父节点撤销/过期/篡改立即拒绝。后续 MCP 集成调用此确定性方法连接工具结果与高影响参数。
+
+HTTP 入口为 POST /v1/provenance-select，使用 decision capability；请求仅含 parent_id/pointer/platform/session_id/agent_id/content。服务从当前 Intent binding 派生 task_id，严格64 KiB读取；拒绝额外输出值或权限字段。

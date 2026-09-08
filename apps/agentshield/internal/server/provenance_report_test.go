@@ -17,6 +17,16 @@ func TestDecisionReportCannotMintTrustedAuthority(t *testing.T) {
 	if status != 201 || out["source"].(map[string]any)["trust"] != "untrusted" {
 		t.Fatal(status, out)
 	}
+	selection := map[string]any{"parent_id": out["provenance_id"], "pointer": "/recipient", "platform": "hermes", "session_id": "s1", "agent_id": "a-1", "content": body["content"]}
+	status, child := call(t, s, "POST", "/v1/provenance-select", token, selection)
+	if status != 201 || child["derivation"] != "transformed" {
+		t.Fatal("selection failed", status, child)
+	}
+	selection["value"] = "attacker@example.test"
+	status, _ = call(t, s, "POST", "/v1/provenance-select", token, selection)
+	if status != 400 {
+		t.Fatal("caller supplied selected output", status)
+	}
 	status, _ = call(t, s, "POST", "/v1/provenance-reports", s.bootAdmin, body)
 	if status != 401 {
 		t.Fatal("admin session confused with decision credential", status)
