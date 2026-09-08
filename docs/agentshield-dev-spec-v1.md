@@ -964,3 +964,9 @@ POST `/v1/network-observations` 使用capEffectObserve，正文只含observation
 Effect requirement 增加 network.request 分支：resource_ref 为 network 主机摘要，expected_digest 为受控服务器请求组合摘要（method、URI、body_digest 的 canonical SHA256），expected_endpoint 必须包含 scheme、规范化 host、十进制 port。最低独立性必须 external_independent。file.write 不接受 expected_endpoint，旧文件要求签名表示保持不变。
 
 Completion 对已验签网络材料同时比较签名 endpoint 与 requested/received 两端、request_digest 和真实动作资源；缺少材料 unknown，端点或摘要不符 conflicting。不得仅凭主机摘要匹配忽略端口/协议，也不得让上报者自行选择的 requested endpoint 替代签名要求。当前网络材料仅支持受控 loopback oracle，partial 覆盖不能满足 full 要求。
+
+### C2 文件pending持久记录（恢复基础）
+
+新增签名 file-observation-pending/v1，保留observation/action/decision引用、完整scope、固定observer source、原owner token摘要、服务端before快照、expected_digest/max_bytes和原到期时间；不保存原始路径、文件内容或token。不可变发布到effect-evidence-pending目录，0600文件，独立8192条归档上限；同ID同内容幂等，任何字段变化冲突。
+
+该记录是恢复依据，不是新的执行授权；读取过期记录供诊断不延长采样有效期。恢复仍必须验证当前observer凭据、source/scope、动作与原deadline；跨token接管与撤销终态需后续管理API接入，在此之前持久记录不能自动被任意新observer续用。
