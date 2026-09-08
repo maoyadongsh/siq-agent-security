@@ -323,3 +323,10 @@
 - 输出9项命名指标的numerator/denominator/rate，并按attack/benign分组；缺效果证据不进入效果率，缺Completion不进入正常完成率，空分母null。D0–D5阶段计数继续单独保留；命名指标按每阶段完整映射仍须后续补齐。
 - 实际9对执行通过，报告 /tmp/siq-runtime-benchmark-metrics.json（d6a57b7加工作树）：误放行0/7、误拒绝0/11、正常完成3/3；资源劫持分母0未评估。越权效果1/6来自刻意模拟deny后绕过的fixture，不描述为已被执行层阻断。
 - 6项统计测试覆盖合法攻击动作、预期分类与实际拒绝区别、缺证据/未知证据分母；Ruff通过。报告仅当前组件样本，不能外推生产准确率，未完成完整benchmark目标。
+
+### D 资源边界与真实到期，累计11对
+
+- filesystem-hijack使用当前scope有效USER签名且内容摘要匹配company-b路径，Grant允许workspace而Intent只允许company-a，实际intent_resource_not_allowed拒绝；正常路径allow。排除因伪造/缺来源掩盖资源边界的假阳性。
+- expired-provenance先签发短期有效声明并实际Decide allow，等待3.1秒真实到期后同声明provenance_expired拒绝；未到期来源正常对照仍allow，不修改daemon时间或持久化状态。
+- /tmp/siq-runtime-benchmark-eleven-pairs.json真实运行通过（d6a57b7之后当前b3445ad工作树增量），22个观测和额外前置探针均经过各daemon回执链验签；11对schema/成对关系、6项统计测试及Ruff通过。资源劫持指标现1/1，D5每组仍分母3、未评估8。
+- 至少9对、外部网络oracle、阶段埋点、长期可复验证据与CI等仍待补齐；不按场景数量宣称整体目标完成。

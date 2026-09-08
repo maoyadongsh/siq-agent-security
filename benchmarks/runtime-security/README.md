@@ -32,3 +32,5 @@ Intent绑定撤销场景先验证目标绑定可放行，再撤销该绑定，�
 效果场景现为3对（合计9对）：补充拒绝后实际写入、错误内容写入。前者模拟工具绕过deny的真实临时文件写入，必须产生unauthorized_effect_observed；后者资源一致但内容不符，必须Completion conflicting。两者正常对照均写入签名预期内容并verified。D4/D5布尔值表示实际目标文件效果是否发生，不等价于Completion成功率，也不直接称为整体攻击成功率。
 
 指标的决策预期由场景 expected.decision_action 显式给出，不从attack标签猜测；fake-success与conflicting-effect的合法请求仍预期allow。False Allow以预期deny且确实评估决策的请求为分母，False Deny以预期allow的请求为分母；hold单独计入人工审批率。缺Completion的正常任务不进入完成率分母。未知效果与越权效果率仅在实际开展效果观测的样本计算。所有命名指标输出numerator/denominator，空分母为null，不填0。
+
+当前合计11对。新增filesystem-hijack使用有效USER签名和匹配内容摘要，请求Grant允许但Intent不允许的company-b路径，验证Intent资源边界；正常对照仍为company-a。expired-provenance先以真实短期签名来源放行，等待实际到期后重试拒绝，同时保留未到期的可信来源对照；不用改系统时间或篡改存储模拟到期。这两对不执行目标工具，D3–D5仍未评估。

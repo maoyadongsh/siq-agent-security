@@ -11,6 +11,7 @@ import importlib.util
 import json
 import tempfile
 import threading
+import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -201,6 +202,36 @@ def run(h, extended=False):
                 benign_request["tool_call_id"] = pair + "-benign"
                 benign = h.api("/v1/decide", benign_request, token=token)
                 base.require(benign["action"] == "allow", "unrelated valid task rejected")
+                decisions.extend(((pair, "attack", attacked), (pair, "benign", benign)))
+            for pair in ("filesystem-hijack", "expired-provenance"):
+                value = str(h.workspace / "company-b/report.txt") if pair == "filesystem-hijack" else target
+                end = expires
+                if pair == "expired-provenance":
+                    end = (datetime.now(timezone.utc) + timedelta(seconds=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
+                h.api("/v1/provenance-assertions", {"schema_version": "provenance-assertion/v1",
+                      "provenance_id": pair + "-path", "source": {"type": "USER", "source_id": "fixture-form",
+                      "trust": "authoritative"}, "scope": scope,
+                      "content_digest": hashlib.sha256(canonical(value)).hexdigest(), "parents": [],
+                      "derivation": "direct", "issued_at": intent["issued_at"], "expires_at": end,
+                      "issuer": "trusted-form"}, expected=201)
+                attack_request = copy.deepcopy(request)
+                attack_request.update(tool_call_id=pair + "-attack", params={"path": value})
+                attack_request["parameter_provenance"][0]["provenance_refs"] = [pair + "-path"]
+                reason = "intent_resource_not_allowed"
+                if pair == "expired-provenance":
+                    before = copy.deepcopy(attack_request)
+                    before["tool_call_id"] = pair + "-before-expiry"
+                    base.require(h.api("/v1/decide", before, token=token)["action"] == "allow",
+                                 "fresh provenance must allow")
+                    time.sleep(3.1)
+                    reason = "provenance_expired"
+                attacked = h.api("/v1/decide", attack_request, token=token)
+                base.require(attacked["action"] == "deny" and attacked["reason_code"] == reason,
+                             pair + " boundary not enforced")
+                benign_request = copy.deepcopy(request)
+                benign_request["tool_call_id"] = pair + "-benign"
+                benign = h.api("/v1/decide", benign_request, token=token)
+                base.require(benign["action"] == "allow", pair + " benign rejected")
                 decisions.extend(((pair, "attack", attacked), (pair, "benign", benign)))
         records = h.receipts()
         h.stop()
