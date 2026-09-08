@@ -780,3 +780,9 @@
 - 核对daemon权威依赖注入、内嵌Intent拒绝、Authority ApplyMode、管理路由分权及Completion只读行为；未新增LLM最终授权。
 - 六包Capacity/Budget/Bounds/Boundaries/Concurrent/Recovery匹配测试Go1.26.6无缓存race通过，累计42/45项本地验收。
 - 693641d远端ci运行34187693641、runtime-security运行34187693678均success；最终交付SHA及全模板审计仍待完成。
+
+## 2026-09-08：45项DoD证据收口（非全目标完成）
+
+- G1/G2基于693641d远端job/step明细验收，归档ci-693641d-20260908.json；所有可执行job成功，nightly skipped不算通过。
+- G6完成README/能力矩阵/发布DefaultMatrix边界核对，honesty测试Go1.26.6无缓存race通过。
+- 45/45条目现有各自范围的验收记录；CI有明确SHA限定。全模板逐节交付审计与最终报告尚未定版，目标继续进行。

@@ -45,12 +45,12 @@
 | DoD-C4 | Binding revocation 不退化。 | [revocation_test.go](../apps/agentshield/internal/intent/revocation_test.go) | 本地验收通过；详见Compatibility证据说明 |
 | DoD-C5 | Hermes / OpenClaw / CodeBuddy 现有核心测试通过。 | [ci.yml](../.github/workflows/ci.yml) | 本地验收通过；详见Compatibility证据说明 |
 | DoD-C6 | Legacy optional authorization 继续按现有安全兼容语义工作。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 本地验收通过；详见Compatibility证据说明 |
-| DoD-G1 | Go race tests 全绿。 | [ci.yml](../.github/workflows/ci.yml) | 证据入口已定位；待逐项核读验收 |
-| DoD-G2 | 全仓 CI green。 | [runtime-security.yml](../.github/workflows/runtime-security.yml) | e70541e两套远端工作流success；后续本地提交仍待对应CI |
+| DoD-G1 | Go race tests 全绿。 | [ci.yml](../.github/workflows/ci.yml) | 693641d远端验收通过；详见最终G组证据说明 |
+| DoD-G2 | 全仓 CI green。 | [runtime-security.yml](../.github/workflows/runtime-security.yml) | 693641d远端验收通过；详见最终G组证据说明 |
 | DoD-G3 | 没有新增无界 map。 | [capacity_test.go](../apps/agentshield/internal/provenance/capacity_test.go) | 本地验收通过；见state-audit的G3/G5增量说明 |
 | DoD-G4 | 没有新增第二套 signing/canonicalization。 | [signing](../apps/agentshield/internal/signing) | 本地验收通过；见state-audit的G4签名复用说明 |
 | DoD-G5 | 没有新增 LLM final authorization。 | [AGENTS.md](../AGENTS.md) | 本地验收通过；见state-audit的G3/G5增量说明 |
-| DoD-G6 | 没有把实现 evidence 写成 production supported。 | [agentshield-capability-matrix-v1.md](../docs/agentshield-capability-matrix-v1.md) | 证据入口已定位；待逐项核读验收 |
+| DoD-G6 | 没有把实现 evidence 写成 production supported。 | [agentshield-capability-matrix-v1.md](../docs/agentshield-capability-matrix-v1.md) | 本地验收通过；详见最终G组证据说明 |
 
 ## 已识别的验收边界
 
@@ -169,3 +169,11 @@ C5验收按模板“现有核心测试”范围，不扩大成三平台原生V3�
 G4增量验收后累计40/45项有本地验收记录；693641d远端CI仍在运行/排队（本轮查询），G1/G2/G3/G5/G6与全模板最终验收继续进行。
 
 G3/G5增量验收后累计42/45项有本地验收记录。693641d两套CI本轮确认success；G1/G2/G6最终取证及全部模板交付审计仍需完成。
+
+## 最终G组证据说明（2026-09-08，仍非全模板完成）
+
+- G1：693641d runtime-security-toolchain的Patched toolchain race and vet步骤success；工作流明确Go1.26.6执行go vet ./...和go test -race ./...。此前本地完整race证据为交叉补充，未用少数包代替全包结果。
+- G2：693641d的ci/runtime-security两工作流success，全部可执行job成功，包括Web、Control API、Edge/Connector矩阵、gitleaks、daemon cross compile、自扫描、固定合同、smoke/恢复/性能。严格govulncheck来自新增toolchain job，不依赖旧warning-only扫描步骤。nightly为skipped，不计通过。
+- G6：README明确Provenance/Effect实验性、显式来源及partial observer边界；能力矩阵不提升OS/native/SaaS支持；DefaultMatrix保持零supported，TestDefaultMatrixHonesty在Go1.26.6无缓存race通过。Engineering Report明确草稿、残余风险与数据基线。
+
+[CI明细归档](evidence/provenance-v1/ci-693641d-20260908.json)记录SHA、job和step结果。至此45/45 DoD均有对应范围的验收记录，其中CI针对693641d；后续文档提交不应冒充该SHA。全目标仍未关闭：§0–120逐节映射、指定测试与合同语义核验、nightly实际运行证据和最终Engineering Report定版尚待完成。不得把45项记录等同整个项目100%。
