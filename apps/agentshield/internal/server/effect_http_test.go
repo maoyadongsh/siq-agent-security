@@ -86,7 +86,14 @@ func TestEffectObserverHTTPSeparationScopeRevocationAndIncident(t *testing.T) {
 	}
 	effectCall(t, s, "GET", "/v1/effect-evidence/eff-http", token, nil, 403)
 	effectCall(t, s, "POST", "/v1/decide", observer, map[string]any{}, 401)
+	revokedSession := s.observers[tokenDigest(observer)]
 	effectCall(t, s, "DELETE", "/v1/effect-observers/"+issued["observer_id"].(string), s.bootAdmin, nil, 204)
+	revoked, revokeErr := s.effects.ObserverRevoked(tokenDigest(observer))
+	if revokeErr != nil || !revoked {
+		t.Fatal("revocation not persisted", revokeErr)
+	}
+	// Simulate a stale in-memory credential entry; the durable tombstone must still reject it.
+	s.observers[tokenDigest(observer)] = revokedSession
 	effectCall(t, s, "POST", "/v1/effect-evidence", observer, e, 403)
 	issued = effectCall(t, s, "POST", "/v1/effect-observers", s.bootAdmin, body, 201)
 	observer = issued["token"].(string)

@@ -88,3 +88,5 @@ Admin GET `/v1/tasks/{task_id}/completion` 返回 [completion-status/v1](../pack
 这是受信 loopback 测试 oracle 的集成接口，独立性依赖管理员对服务器身份与凭据隔离的配置；不将任意客户端上传的日志视为独立真相，也不代表已接入生产网络审计。拒绝动作后实际接收到请求会生成 `unauthorized_effect_observed`，不会被解释为正常完成。
 
 文件begin现在先持久化签名pending快照再返回201。若内存索引丢失但同一observer token仍有效，重试begin读取原始快照并返回200，不会在文件已改变后重新采样。原始deadline不延长；不同token即使source/scope相同也返回409，不能隐式接管。Server重启会使旧token失效，因此跨重启续用仍需后续显式管理恢复接口。
+
+observer DELETE成功204前写入不可变签名撤销记录，保存owner token摘要与撤销时间，不保存token。后续observer校验读取该终态，损坏记录失败关闭，旧内存凭据无法复活。撤销记录重启保留，独立8192条预算；原owner撤销后，未来pending管理恢复也必须拒绝使用它的采样。该恢复接口仍在开发中。

@@ -420,3 +420,10 @@
 - HTTP真实文件测试在写入后删除内存索引，原token重试仍返回写前不存在快照；同source/scope新token409拒绝接管，随后finish继续得到正确真实材料与Completion。
 - Go全模块race/vet及四平台编译通过（/tmp/siq-pending-begin-race.log），diff检查通过。接口保持body/response合同兼容，状态变化先回写规格。
 - 当前只支持有效原token的索引恢复；重启token失效后仍需管理恢复、持久撤销与强杀测试，不能宣称跨重启恢复已完成。
+
+### C2 Observer持久撤销终态
+
+- 新增effect-observer-revocation/v1签名存储：owner摘要/时间，0600/fsync/排他Link不可变发布，8192条独立上限；同owner并发重试返回原签名，不改原撤销时间。
+- DELETE observer先持久化再删除内存，状态失败不返回204；每次observer校验复核撤销存储。测试把已撤销session重新放入内存，原始HTTP仍拒绝，避免仅依赖内存删除。
+- 重建Store后终态保留、8路并发、撤销时间篡改拒绝测试通过；Go全模块race/vet和四平台编译通过（/tmp/siq-observer-revocation-race.log），schema正负样例通过。
+- 后续显式pending管理接管必须复核原owner终态；该API/强杀恢复仍未实现，完整目标继续。

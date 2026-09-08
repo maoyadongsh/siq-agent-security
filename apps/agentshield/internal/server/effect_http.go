@@ -34,6 +34,10 @@ func (s *Server) observer(token string, now time.Time) (observerSession, bool) {
 		delete(s.observers, digest)
 		return observerSession{}, false
 	}
+	revoked, err := s.effects.ObserverRevoked(digest)
+	if err != nil || revoked {
+		return observerSession{}, false
+	}
 	return o, true
 }
 func effectError(w http.ResponseWriter, err error) {
@@ -129,6 +133,10 @@ func (s *Server) revokeEffectObserver(w http.ResponseWriter, r *http.Request) {
 	defer s.observerMu.Unlock()
 	for digest, o := range s.observers {
 		if o.ID == id {
+			if _, err := s.effects.RevokeObserver(digest, time.Now()); err != nil {
+				effectError(w, err)
+				return
+			}
 			delete(s.observers, digest)
 			w.WriteHeader(204)
 			return
