@@ -1004,3 +1004,5 @@ intent-revocation/v1不可变终态记录包含intent_id、intent_digest、revok
 ### B Hermes宿主来源引用桥接
 
 pre_tool_call增加可选宿主关键字parameter_provenance与context_assertion_id，原样映射为Decide顶层引用，不从tool args/result或cwd推导可信来源，不传入内联Intent/issuer/trust。签名、scope和参数摘要仍由daemon验证。缺省不改变旧请求；显式提供引用但服务不可达、400或响应非法时必须block，包括warn/audit_only，避免引用校验失败退回legacy放行。该桥接不代表原版Hermes会自动生成这些字段；原生MCP捕获与传播仍须单独集成验证。
+
+Hermes HTTP映射在发送前用严格JSON编码（拒绝NaN/循环/非JSON对象），请求UTF-8字节不超过1MiB；失败返回无有效裁决，由引用调用的硬拒绝分支处理。响应读取最多1MiB+1字节，超限视为无效，防止无界读取。此为传输预算与错误处理，不在适配器重新实现来源验签/授权策略。

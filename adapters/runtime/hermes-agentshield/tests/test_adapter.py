@@ -209,3 +209,43 @@ def test_reference_validation_failure_never_becomes_advisory_allow(server, mode,
     out = mod._pre_tool_call("read_file", {"path": "/work/report"},
                              parameter_provenance=[{"parameter_path": "/path", "provenance_refs": ["missing"]}])
     assert out["action"] == "block"
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+@pytest.mark.parametrize("invalid", [object(), float("nan"), "x" * ((1 << 20) + 1)],
+                         ids=["object", "nan", "over-budget"])
+def test_unencodable_or_oversized_authority_reference_blocks_without_http(server, mode, invalid):
+    srv, token = server
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    out = mod._pre_tool_call("read_file", {"path": "/work/report"}, context_assertion_id=invalid)
+    assert out["action"] == "block"
+    assert _Fake.seen == []
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+def test_cyclic_authority_reference_blocks_without_hook_exception(server, mode):
+    srv, token = server
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    refs = []
+    refs.append(refs)
+    out = mod._pre_tool_call("read_file", {"path": "/work/report"}, parameter_provenance=refs)
+    assert out["action"] == "block"
+    assert _Fake.seen == []
+
+
+def test_response_budget_is_enforced_before_authority_allow(server):
+    srv, token = server
+    mod = load("warn", f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {"action": "allow", "padding": "x" * (1 << 20)}
+    out = mod._pre_tool_call("read_file", {"path": "/work/report"}, context_assertion_id="ctx")
+    assert out["action"] == "block"
+
+
+def test_request_budget_accepts_exact_limit_and_rejects_next_byte(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {"action": "allow"}
+    size = (1 << 20) - len(json.dumps({"payload": ""}).encode())
+    assert mod._post("/v1/decide", {"payload": "x" * size})["action"] == "allow"
+    assert mod._post("/v1/decide", {"payload": "x" * (size + 1)}) is None
+    assert len(_Fake.seen) == 1

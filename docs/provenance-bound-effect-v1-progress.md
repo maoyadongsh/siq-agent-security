@@ -534,3 +534,10 @@
 - 适配器28项测试通过（含三模式引用透传、参数内伪造不升级、验证失败拒绝），Ruff通过；adapterinstall包race/vet及四平台编译通过。
 - 原生Hermes已有V2兼容夹具实际通过：python3 scripts/validate-intent-v2-hermes.py --hermes-root /home/maoyd/siq/hermes-agent --hermes-python /home/maoyd/siq/hermes-agent/.venv/bin/python --out /tmp/siq-hermes-reference-compat.json --load-samples 20 --concurrency 4。使用隔离状态/插件配置，未修改用户实际安装；该次缩小负载验证兼容，不替代完整负载/原生V3来源集成。
 - 当前是显式宿主引用桥接；原版Hermes未自动产生这些字段，MCP结果采集与传播仍待接入。不能把fake HTTP映射测试或V2兼容通过称为native V3 provenance已完成。
+
+### B Hermes引用传输异常与字节预算
+
+- 先添加负例并在旧实现实际运行：12例失败，非JSON对象/循环引用异常逃出钩子，NaN/超1MiB引用未在发送前拒绝。测试日志/tmp/siq-hermes-invalid-reference-before.log；大字符串测试参数随后改为短ID，避免失败摘要膨胀。
+- _post发送前严格JSON编码、拒绝NaN/循环/不可编码对象和超1MiB请求，返回无有效裁决，显式Authority引用调用由三模式硬拒绝分支处理。响应有界读取1MiB+1，超限不接受allow；内嵌资产同步。
+- 42项Hermes适配器测试全部通过，包括恰好1MiB请求允许、+1字节不发送、超响应预算warn也block；Ruff、adapterinstall race/vet与四平台编译通过，diff检查通过。
+- 本轮是已复现的传输失败边界修复，不承担来源验签或新增原生自动采集声明；上一轮V2原生兼容证据保留，完整目标继续。

@@ -94,9 +94,15 @@ def _post(path: str, body: dict[str, Any]) -> dict[str, Any] | None:
     tok = _token()
     if not tok:
         return None
+    try:
+        encoded = json.dumps(body, allow_nan=False).encode("utf-8")
+    except (TypeError, ValueError, RecursionError, UnicodeError):
+        return None
+    if len(encoded) > 1 << 20:
+        return None
     req = urllib.request.Request(
         _CFG["endpoint"].rstrip("/") + path,
-        data=json.dumps(body).encode("utf-8"),
+        data=encoded,
         headers={"Content-Type": "application/json", "Authorization": f"Bearer {tok}"},
         method="POST",
     )
@@ -104,7 +110,10 @@ def _post(path: str, body: dict[str, Any]) -> dict[str, Any] | None:
         with urllib.request.urlopen(req, timeout=float(_CFG["timeout_s"])) as resp:
             if resp.status != 200:
                 return None
-            data = json.loads(resp.read().decode("utf-8"))
+            raw = resp.read((1 << 20) + 1)
+            if len(raw) > 1 << 20:
+                return None
+            data = json.loads(raw.decode("utf-8"))
             return data if isinstance(data, dict) else None
     except (urllib.error.URLError, TimeoutError, ValueError, OSError):
         return None
