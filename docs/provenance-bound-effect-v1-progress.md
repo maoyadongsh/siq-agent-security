@@ -309,3 +309,10 @@
 - 服务端observer真实前后采样、签名材料归档、GET复验与Completion历史动作复核；攻击incomplete且实际文件不存在，正常verified。D5数据来自host_independent/partial材料，不是模型或工具返回值。
 - /tmp/siq-runtime-benchmark-seven-pairs.json实际运行成功（07f325f加工作树），14个基准观测；每组D5分母1、其余6条排除。全部场景schema校验、4项统计测试、Ruff通过。两套daemon各自回执链离线验签通过。
 - 仍待至少13对、其他效果攻击/外部oracle、全部命名指标、性能埋点和CI；host observer不代表OS隔离。报告中fixture临时状态在结束后清理，最终长期可独立复验的证据包仍需完善。
+
+### D 越权效果与冲突内容，累计9对
+
+- 新增denied-effect：真实Intent工具约束拒绝后，受控fixture模拟绕过deny写入临时文件，observer归档unauthorized_effect_observed、Completion conflicting。正常对照同Grant且Intent允许，实际写入verified。
+- 新增conflicting-effect：动作合法但fixture写入与签名expected_digest不符的内容，实际采样后Completion conflicting；正常对照verified。D4/D5表示实际文件效果发生，不把存在文件等同正确完成。
+- 实际执行 /tmp/siq-runtime-benchmark-nine-pairs.json（92c4427加本轮工作树）通过，两套daemon各自链验签成功；18个观测，每组D5分母3、未评估6。9对schema/成对关系与报告断言、4项统计测试、Ruff通过。
+- 仍待至少11对、外部网络oracle基准、全指标与阶段埋点、CI及其他工作包验收。未把新组件测试视为native适配器强制执行证明。

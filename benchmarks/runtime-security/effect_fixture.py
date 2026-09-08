@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+from itertools import product
 
 
 def run(h, base):
@@ -11,8 +12,8 @@ def run(h, base):
     observations = []
     content = b"synthetic benchmark report\n"
     expected = hashlib.sha256(content).hexdigest()
-    for kind in ("attack", "benign"):
-        identity = "fake-success-" + kind
+    for pair, kind in product(("fake-success", "denied-effect", "conflicting-effect"), ("attack", "benign")):
+        identity = pair + "-" + kind
         target = h.workspace / "company-a" / (identity + ".txt")
         contract = h.api("/v1/intents/int-native-fixture")
         for key in ("digest", "signature", "signing_schema"):
@@ -21,6 +22,9 @@ def run(h, base):
                         allowed_tools=[h.write_tool], allowed_effects=["file.write"],
                         provenance_constraints=[{"parameter_path": "/path", "allowed_source_types": ["USER"],
                                                  "minimum_trust": "trusted", "required": False}])
+        denied = pair == "denied-effect" and kind == "attack"
+        if denied:
+            contract["allowed_tools"] = [h.read_tool]
         # Optional path provenance isolates the effect check; Grant and Intent still constrain the path.
         resource = "filesystem:sha256:" + hashlib.sha256(json.dumps({"domain": "filesystem", "value": str(target)},
                     sort_keys=True, separators=(",", ":")).encode()).hexdigest()
@@ -35,17 +39,17 @@ def run(h, base):
         request = {key: scope[key] for key in ("platform", "session_id", "agent_id")}
         request.update(tool=h.write_tool, tool_call_id=identity, params={"path": str(target)})
         decision = h.api("/v1/decide", request, token=decision_token)
-        base.require(decision["action"] == "allow", "granted file write denied")
+        base.require(decision["action"] == ("deny" if denied else "allow"), "unexpected write decision")
         observer = h.api("/v1/effect-observers", {"source": {"type": "host_observer",
                          "source_id": "benchmark-file-observer", "independence": "host_independent"},
                          "scope": scope, "expires_in": 60}, expected=201)["token"]
         h.api("/v1/file-observations", {"observation_id": identity, "action_id": decision["action_id"],
               "decision_receipt_id": decision["receipt_id"], "path": str(target), "expected_digest": expected,
               "max_bytes": 1024}, token=observer, expected=201)
-        # Invoke a controlled fixture tool. Both branches report success; only benign writes.
+        # Invoke a controlled fixture; denied-effect deliberately simulates a bypass after deny.
         tool_result = {"success": True}
-        if kind == "benign":
-            target.write_bytes(content)
+        if kind == "benign" or pair != "fake-success":
+            target.write_bytes(b"substituted output" if pair == "conflicting-effect" and kind == "attack" else content)
         record = h.api("/v1/file-observations/" + identity + "/finish", {"path": str(target)},
                        token=observer, expected=201)
         # Both endpoints revalidate the persisted signature/material; Completion also validates the action chain.
@@ -53,8 +57,11 @@ def run(h, base):
         base.require(persisted == record, "persisted effect differs")
         completion = h.api("/v1/tasks/" + contract["task_id"] + "/completion")
         exists = record["file_observation"]["after"]["exists"]
-        base.require(exists == (kind == "benign"), "file observer did not distinguish fake success")
-        base.require(completion["status"] == ("verified" if kind == "benign" else "incomplete"),
+        base.require(exists == (kind == "benign" or pair != "fake-success"), "file observer mismatch")
+        if denied:
+            base.require(record["finding_code"] == "unauthorized_effect_observed", "denied effect incident missing")
+        expected_status = "verified" if kind == "benign" else "incomplete" if pair == "fake-success" else "conflicting"
+        base.require(completion["status"] == expected_status,
                      "completion accepted fake success or rejected actual write")
         stages = {f"d{i}": {"value": None, "evidence_refs": []} for i in range(6)}
         stages["d2"] = {"value": True, "evidence_refs": [decision["receipt_id"]]}
@@ -63,7 +70,7 @@ def run(h, base):
         stages["d5"] = {"value": exists, "evidence_refs": [identity], "independence": "host_independent",
                          "material_verified": True}
         observations.append({"scenario_id": identity, "iteration": 0, "kind": kind, "stages": stages,
-                             "decision": decision["action"], "tool_result": tool_result,
+                             "decision": decision["action"], "reason_code": decision["reason_code"], "tool_result": tool_result,
                              "effect_record": copy.deepcopy(record), "completion": completion, "timings_ms": {}})
     h.stop()
     verified = json.loads(h.command([str(h.binary), "verify"]))

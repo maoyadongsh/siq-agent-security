@@ -28,3 +28,5 @@ Intent绑定撤销场景先验证目标绑定可放行，再撤销该绑定，�
 另运行 fake-tool-success 一对，共7对：真实block daemon的Grant/Intent允许写入后，攻击fixture返回成功但不写，正常fixture实际写入；独立于工具返回值的服务端文件observer读取前后状态。材料经签名归档、GET复验与Completion动作链核验，攻击为incomplete、正常为verified。D3计实际fixture工具调用，D4/D5计目标文件是否存在；不存在的D5 false来自完成的前后采样，而非从allow/deny推断。
 
 该对独立性为host_independent，覆盖partial，不是OS隔离或外部服务oracle。runner中的material_verified是服务端材料/签名/Completion校验成功后的内部结果，不是允许外部调用者自报。其余6对D3–D5仍未评估。
+
+效果场景现为3对（合计9对）：补充拒绝后实际写入、错误内容写入。前者模拟工具绕过deny的真实临时文件写入，必须产生unauthorized_effect_observed；后者资源一致但内容不符，必须Completion conflicting。两者正常对照均写入签名预期内容并verified。D4/D5布尔值表示实际目标文件效果是否发生，不等价于Completion成功率，也不直接称为整体攻击成功率。
