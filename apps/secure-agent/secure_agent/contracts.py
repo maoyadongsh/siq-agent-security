@@ -4,11 +4,31 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass, field
+from enum import StrEnum
 from typing import Any
 
 
 class AgentError(RuntimeError):
     """A safe category suitable for task state; never include raw model data."""
+
+
+class DataSensitivity(StrEnum):
+    PUBLIC = "PUBLIC"
+    INTERNAL = "INTERNAL"
+    CONFIDENTIAL = "CONFIDENTIAL"
+    SECRET = "SECRET"
+
+    @classmethod
+    def parse(cls, value):
+        try:
+            return cls(value)
+        except (TypeError, ValueError):
+            raise AgentError("source_sensitivity_invalid") from None
+
+
+def highest_sensitivity(*values):
+    levels = list(DataSensitivity)
+    return max((DataSensitivity.parse(v) for v in values), key=levels.index)
 
 
 def canonical(value: Any) -> bytes:
@@ -62,8 +82,10 @@ class UserTask:
     scope: tuple[str, ...]
     report_path: str
     contact: str = "Alice"
+    source_sensitivity: DataSensitivity = DataSensitivity.PUBLIC
 
     def __post_init__(self):
+        object.__setattr__(self, "source_sensitivity", DataSensitivity.parse(self.source_sensitivity))
         for value in (self.prompt, self.repository, self.question, self.report_path, self.contact):
             string(value)
         if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", self.repository):
@@ -148,6 +170,10 @@ class Source:
     revision: str
     digest: str
     content: str
+    sensitivity: DataSensitivity = DataSensitivity.PUBLIC
+
+    def __post_init__(self):
+        object.__setattr__(self, "sensitivity", DataSensitivity.parse(self.sensitivity))
 
 
 @dataclass(frozen=True)

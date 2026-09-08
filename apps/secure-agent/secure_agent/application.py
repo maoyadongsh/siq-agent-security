@@ -9,10 +9,18 @@ from uuid import uuid4
 
 from .authority import LocalDaemon, TaskAuthority, deploy_application_grant
 from .confidential import NOTE
-from .contracts import AgentError, TaskState, UserTask, canonical, digest
+from .contracts import (
+    AgentError,
+    DataSensitivity,
+    TaskState,
+    UserTask,
+    canonical,
+    digest,
+)
 from .fixtures import FixtureServices
 from .gateway import ToolGateway
 from .models import ModelProvider
+from .routing import application_router
 from .runtime import AgentRuntime
 from .security import EvidenceClient, Identity
 from .skills import SkillRegistry, SkillRunner, render_report
@@ -57,13 +65,16 @@ def effect_requirements(report, url):
 
 class SecureApplication:
     def __init__(self, repo: Path, daemon: LocalDaemon, fixtures: FixtureServices, model: ModelProvider):
-        self.repo, self.daemon, self.fixtures, self.model = repo, daemon, fixtures, model
+        self.repo, self.daemon, self.fixtures = repo, daemon, fixtures
+        self.model = application_router(model)
 
     def run(self, prompt: str, *, repository: str, question: str, scope: tuple[str, ...],
             effect_mode: str = "normal", github_endpoint: str | None = None,
-            before_execution=None, changed=None, approval_required=False, on_hold=None, trifecta=False) -> dict:
+            before_execution=None, changed=None, approval_required=False, on_hold=None, trifecta=False,
+            source_sensitivity=DataSensitivity.PUBLIC) -> dict:
         started = perf_counter()
         model_call_start = len(getattr(self.model, "calls", []))
+        transition_start = len(self.model.transitions)
         run_id = uuid4().hex
         root = self.daemon.directory / "runs" / run_id
         workspace, assets = root / "workspace", root / "assets"
@@ -77,7 +88,8 @@ class SecureApplication:
             with confidential_path.open("xb") as note:
                 note.write(NOTE)
             confidential_path.chmod(0o600)
-        task = UserTask(prompt, repository, question, scope, str(workspace / "report.md"))
+        task = UserTask(prompt, repository, question, scope, str(workspace / "report.md"),
+                        source_sensitivity=source_sensitivity)
         github = github_endpoint or self.fixtures.endpoint + "/github"
         mcp = self.fixtures.endpoint + "/mcp"
         url = self.fixtures.endpoint + "/messages/" + digest(self.fixtures.contacts[task.contact])
@@ -85,6 +97,7 @@ class SecureApplication:
         grant = deploy_application_grant(self.daemon.admin, self.repo, agent_id, workspace,
                                          contact_path, [urlsplit(github).hostname, "127.0.0.1"], approval_required=approval_required)
         preview_id = Identity("hermes", "review-session-" + run_id, agent_id, "review-" + run_id)
+        self.model.bind(preview_id.task_id, task.source_sensitivity)
         preview_state = TaskState(preview_id.task_id, prompt, self.model.name)
         def preview_changed(state):
             if changed:
@@ -106,7 +119,7 @@ class SecureApplication:
         preview_state.status = "running"
         preview_changed(preview_state)
         runner = SkillRunner(gateway, self.model, preview.client, github_endpoint=github,
-                             contacts_path=str(contact_path), mcp_endpoint=mcp)
+                             contacts_path=str(contact_path), mcp_endpoint=mcp, sensitivity=task.source_sensitivity)
         researching = perf_counter()
         research = runner.run(plan.skills[0])
         research_ms = (perf_counter() - researching) * 1000
@@ -114,6 +127,7 @@ class SecureApplication:
         # that substitutes a path later fails SIQ's provenance/resource checks.
         artifact = render_report(task.report_path, research)
         identity = Identity("hermes", "execution-session-" + run_id, agent_id, "execution-" + run_id)
+        self.model.bind(identity.task_id, task.source_sensitivity)
         authority = TaskAuthority(self.daemon.admin, self.daemon.decision, identity, task,
             github=github, mcp=mcp, contacts_path=contact_path, contacts=self.fixtures.contacts,
             delivery_url=url, requirements=effect_requirements(artifact, url), revision=research.sources[0].revision,
@@ -133,7 +147,8 @@ class SecureApplication:
         provider = CommittedProvider(self.model, plan, research)
         runner = SkillRunner(gateway, provider, authority.client, github_endpoint=github,
                              contacts_path=str(contact_path), mcp_endpoint=mcp, verify_report=approval_required,
-                             confidential_path=str(confidential_path) if confidential_path else None)
+                             confidential_path=str(confidential_path) if confidential_path else None,
+                             sensitivity=task.source_sensitivity)
         if before_execution is not None:
             before_execution(authority)
         runtime = AgentRuntime(provider, runner, EvidenceClient(self.daemon.admin), state, changed=execution_changed)
@@ -145,6 +160,8 @@ class SecureApplication:
         state.timings_ms["preparation_research"] = [research_ms]
         state.timings_ms["e2e_task"] = [(perf_counter() - started) * 1000]
         result = {"schema_version": "secure-agent-run/v1", "provider": self.model.name,
+            "source_sensitivity": task.source_sensitivity.value,
+            "provider_transitions": self.model.transitions[transition_start:],
             "source_mode": "live_github" if github_endpoint else "controlled_fixture",
             "model_calls": getattr(self.model, "calls", [])[model_call_start:],
             "task": asdict(state), "preparation": {"task_id": preview_id.task_id, "actions": preview_state.actions},

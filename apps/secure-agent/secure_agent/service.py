@@ -20,9 +20,18 @@ from uuid import uuid4
 
 from .application import SecureApplication
 from .authority import LocalDaemon
-from .contracts import AgentError, canonical, digest, fields, strict_json, string
+from .contracts import (
+    AgentError,
+    DataSensitivity,
+    canonical,
+    digest,
+    fields,
+    strict_json,
+    string,
+)
 from .fixtures import FixtureServices
 from .models import FixtureProvider, from_environment
+from .routing import application_router
 from .skills import SkillRegistry
 
 SCENARIOS = ("normal", "mcp-attack", "same-value", "fake-success", "conflicting", "approval", "trifecta")
@@ -35,7 +44,8 @@ class DemoService:
         if mode not in ("demo", "test"):
             raise AgentError("service_mode_invalid")
         self.repo, self.daemon, self.fixtures, self.mode = repo, daemon, fixtures, mode
-        self.model = from_environment(mode="demo") if mode == "demo" else None
+        self.model = application_router(from_environment(mode="demo")) if mode == "demo" else None
+        self.source_sensitivity = DataSensitivity.parse(os.environ.get("SIQ_SOURCE_SENSITIVITY", "PUBLIC"))
         self.provider = self.model.name if self.model else "fixture"
         self.repository, self.scope, self.github_endpoint = repository, scope, github_endpoint
         self.web = repo / "apps/agentshield/internal/ui/embedded"
@@ -95,10 +105,12 @@ class DemoService:
             self.fixtures.mcp = strict_json((self.repo / "demo/fixtures/mcp" / (mode + ".json")).read_bytes())
             model = (FixtureProvider(mode="test", recipient_index=int(scenario in ("mcp-attack", "same-value")))
                      if self.mode == "test" else self.model)
+            model = application_router(model)
             call_start = len(getattr(model, "calls", []))
             result = SecureApplication(self.repo, self.daemon, self.fixtures, model).run(body["prompt"],
                 repository=self.repository, question="Review the supplied code for concrete security issues",
                 scope=self.scope, github_endpoint=self.github_endpoint,
+                source_sensitivity=self.source_sensitivity,
                 effect_mode=scenario if scenario in ("fake-success", "conflicting") else "normal",
                 changed=lambda value: self._snapshot(task_id, value), approval_required=scenario == "approval",
                 trifecta=scenario == "trifecta",

@@ -9,6 +9,7 @@ from urllib.parse import quote
 from .contracts import (
     AgentError,
     ContactCandidate,
+    DataSensitivity,
     DeliveryInput,
     DeliveryResult,
     ReportArtifact,
@@ -58,12 +59,13 @@ def render_report(path: str, research: ResearchResult) -> ReportArtifact:
 class SkillRunner:
     def __init__(self, gateway: ToolGateway, model: ModelProvider, sources: SourceRecorder,
                  *, github_endpoint: str, contacts_path: str, mcp_endpoint: str, verify_report=False,
-                 confidential_path: str | None = None):
+                 confidential_path: str | None = None, sensitivity=DataSensitivity.PUBLIC):
         self._gateway, self._model, self._sources = gateway, model, sources
         self._github = github_endpoint.rstrip("/")
         self._contacts, self._mcp = contacts_path, mcp_endpoint
         self._verify_report = verify_report
         self._confidential_path = confidential_path
+        self._sensitivity = DataSensitivity.parse(sensitivity)
         self._research: ResearchResult | None = None
         self._report: ReportArtifact | None = None
 
@@ -113,7 +115,7 @@ class SkillRunner:
                 content = raw.decode("utf-8")
             except (KeyError, TypeError, ValueError, UnicodeError) as exc:
                 raise AgentError("github_content_invalid") from exc
-            sources.append(Source(path, revision, hashlib.sha256(raw).hexdigest(), content))
+            sources.append(Source(path, revision, hashlib.sha256(raw).hexdigest(), content, self._sensitivity))
         return self._model.research(task.question, tuple(sources))
 
     def report(self, task: ReportInput, research: ResearchResult) -> ReportArtifact:
