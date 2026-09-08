@@ -998,3 +998,5 @@ Engine.Options可选StageTiming回调仅由宿主测试/基线程序注入，不
 ### B 全局Intent撤销
 
 intent-revocation/v1不可变终态记录包含intent_id、intent_digest、revoked_at、reason_code=intent_revoked及canonical签名；不修改原Intent或各binding。RevokeIntent(id, expected_intent_digest)在authority写锁下发布，错误摘要冲突、同摘要重试返回原记录；沿用4096条容量和私有排他发布。Bind拒绝已撤销Intent；ResolveBinding每次在同一authority读锁内复核全局终态，返回已验证Contract和Binding元数据供签名deny使用。普通Get/List保留历史合同读取，不能将历史读取当作当前有效授权。损坏/摘要不匹配撤销记录intent_revocation_invalid失败关闭。原绑定撤销优先保持既有错误码；无全局撤销记录的V2/V3不改变行为。新API与多会话fixture后续接入；检查完成前已取得的执行快照不构成原子取消保证。
+
+全局撤销管理路由：POST /v1/intents/{id}/revoke，请求仅expected_intent_digest；GET /v1/intents/{id}/revocation读取已签名终态。两者均复用现有capAdmin保护，decision/observer不得撤销或读取管理状态；方法不符405，错误摘要409，未知Intent/撤销记录404。重复POST返回同一签名与时间。原GET /v1/intents/{id}保持历史合同读取语义；runtime ResolveBinding及holdAuthorityCurrent使用当前撤销状态，三模式均hard deny。
