@@ -677,3 +677,11 @@
 - §102要求govulncheck。实际Go1.26.5扫描发现5项可达标准库漏洞，原CI仅warning不能作为无漏洞证明；Go1.26.6复扫未发现漏洞。
 - 新增独立严格runtime-security-toolchain CI任务，固定修复版本并执行govulncheck/race/vet；保留旧Go兼容路径。本地Go1.26.6全模块race/vet通过，README及[工具链报告](provenance-bound-effect-v1-toolchain-20260908.md)更新，diff检查通过。
 - 未替换全局默认Go或历史产物，安全发布需修复工具链重建；未把此模块扫描外推为所有Connector无漏洞。完整目标保持进行中。
+
+
+### §89 来源签发—Decide—撤销并发
+
+- 新增真实provenance.Store与Engine集成并发测试：每模式16个线程签发独立USER来源并Decide，全部首次允许后并发Decide与issuer撤销；撤销返回后每线程4次决定全部hard deny、无advisory、provenance_issuer_untrusted。
+- 覆盖block/warn/audit_only三模式，实际产生48次发布后允许及192次同步撤销后拒绝，另有并发重叠阶段允许/拒绝检查。使用等待屏障明确撤销完成边界，不将重叠请求顺序猜测为原子外部执行。
+- 初次race发现既有测试夹具Now推进fx.clock与签发线程读时钟竞争；改为线程启动前固定签发时间快照，未改生产锁语义。随后Go1.26.6 receipt全包无缓存race及vet通过（/tmp/siq-provenance-decision-concurrency.log）。
+- 本轮仅增加集成回归，未改生产代码；不重复四平台编译。完整目标继续进行中。
