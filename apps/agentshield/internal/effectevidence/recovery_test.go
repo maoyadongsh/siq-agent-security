@@ -2,6 +2,7 @@ package effectevidence
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -28,6 +29,21 @@ func TestRecoveryHistoryBindsPendingAndRetainsEveryOwner(t *testing.T) {
 		t.Fatal(err)
 	}
 	history := []FileRecovery{first, second}
+	for name, value := range map[string]any{"file-observation-pending.sample.json": p, "file-observation-recovery-1.sample.json": first, "file-observation-recovery-2.sample.json": second} {
+		raw, err := json.MarshalIndent(value, "", "  ")
+		if err != nil {
+			t.Fatal(err)
+		}
+		path := filepath.Join("../../testdata/contracts", name)
+		fixed, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !bytes.Equal(bytes.TrimSpace(fixed), raw) {
+			t.Fatal("fixed recovery sample differs", name)
+		}
+	}
+
 	owners, err := RecoveryOwners(p, history, key.Public(), now.Add(time.Second))
 	if err != nil || len(owners) != 3 || owners[0] != p.OwnerDigest || owners[2] != second.OwnerDigest {
 		t.Fatal(owners, err)

@@ -462,3 +462,10 @@
 - 恢复历史缺首序号、未知字段、符号链接、超4096字节均失败关闭；崩溃遗留未发布临时JSON不替代当前有效记录。
 - block/warn管理HTTP覆盖source_id/platform/session/agent/task不匹配及目标凭据到期/撤销，全部拒绝，并逐次复核原owner未改变。到期子例明确直接调整测试内存session期限，真实进程时间测试另计；不将此例冒充真实等待到期。
 - Go全模块race/vet与四平台编译通过（/tmp/siq-recovery-matrix-race.log），diff检查通过。断电/文件系统故障注入、完整固定签名跨语言语料、平台自动调度及性能/最终验收仍待后续完成。
+
+### C2 Go/Python固定接管签名语料
+
+- 固定Go生成的pending及连续两次recovery样例；Go测试重新构造并签发相同对象，逐字比较固定文件，测试不自动改写语料。
+- Python独立Ed25519验证三份签名、对应schema、完整signed pending摘要、前记录摘要、序号、owner变化与时序；篡改owner和把整数预算1024改为1024.0均验签失败。使用公开测试seed，不含真实凭据。
+- Python test_schema_contracts.py全部68项通过，Ruff通过；Go effectevidence包race/vet通过。仅增加测试和样例，没有修改生产行为，不重复上一轮已通过的四平台编译。
+- Runtime Security PR步骤增加该Python合同测试；远端CI尚未执行。固定样例证明跨语言合同一致，不替代真实恢复报告的完整独立重放和外部信任锚；完整目标仍进行中。

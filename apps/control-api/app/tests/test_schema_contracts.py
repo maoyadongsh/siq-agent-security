@@ -732,3 +732,53 @@ def test_committed_skill_manifest_is_honest_and_valid():
     for r in doc["support_matrix"]:
         if "L3" in r["tiers"] and r["os"] in {"darwin", "windows"}:
             assert r.get("requires"), f"L3 on {r['os']} must declare requires"
+
+
+def test_go_pending_recovery_vectors_verify_in_python():
+    """Independent Ed25519 verification of Go's integer-preserving signed chain."""
+    import hashlib
+    from datetime import datetime
+
+    from cryptography.exceptions import InvalidSignature
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+    from jsonschema import Draft202012Validator
+
+    samples = Path(__file__).parents[4] / "apps/agentshield/testdata/contracts"
+    pending = json.loads((samples / "file-observation-pending.sample.json").read_text())
+    history = [json.loads((samples / f"file-observation-recovery-{i}.sample.json").read_text()) for i in (1, 2)]
+    # Public test seed only; never a production signing identity.
+    public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+
+    def digest(value):
+        return hashlib.sha256(canonical(value)).hexdigest()
+
+    for value, schema_name in [(pending, "file-observation-pending")] + [
+        (entry, "file-observation-recovery") for entry in history
+    ]:
+        schema = json.loads((CONTRACTS / f"{schema_name}.v1.schema.json").read_text())
+        Draft202012Validator.check_schema(schema)
+        Draft202012Validator(schema).validate(value)
+        unsigned = {key: item for key, item in value.items() if key != "signature"}
+        public.verify(bytes.fromhex(value["signature"]), canonical(unsigned))
+        with pytest.raises(InvalidSignature):
+            public.verify(bytes.fromhex(value["signature"]), canonical(unsigned | {"owner_digest": "f" * 64}))
+    # Float conversion would silently change signed bytes: the new contracts retain integers.
+    unsigned = {key: item for key, item in pending.items() if key != "signature"}
+    with pytest.raises(InvalidSignature):
+        public.verify(bytes.fromhex(pending["signature"]), canonical(unsigned | {"max_bytes": 1024.0}))
+    previous = "0" * 64
+    owner = pending["owner_digest"]
+    last = datetime.fromisoformat(pending["before"]["captured_at"])
+    expiry = datetime.fromisoformat(pending["expires_at"])
+    for sequence, entry in enumerate(history, 1):
+        assert entry["observation_id"] == pending["observation_id"]
+        assert entry["pending_digest"] == digest(pending)
+        assert entry["previous_hash"] == previous
+        assert entry["sequence"] == sequence
+        assert entry["owner_digest"] != owner
+        stamp = datetime.fromisoformat(entry["recovered_at"])
+        assert last <= stamp < expiry
+        previous, owner, last = digest(entry), entry["owner_digest"], stamp

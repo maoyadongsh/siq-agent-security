@@ -26,6 +26,7 @@ jobs:
         run: uv sync --dev --locked
       - name: Validate scenario contracts and statistics
         run: |
+          apps/control-api/.venv/bin/pytest apps/control-api/app/tests/test_schema_contracts.py -q
           apps/control-api/.venv/bin/python benchmarks/runtime-security/check_contracts.py
           apps/control-api/.venv/bin/python -m unittest discover -s benchmarks/runtime-security -p 'test_*.py'
           apps/control-api/.venv/bin/ruff check benchmarks/runtime-security
