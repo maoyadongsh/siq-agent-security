@@ -1,11 +1,46 @@
 """Closed provenance contracts; runtime issuer verification is a separate gate."""
 import copy
+import hashlib
 import json
 from pathlib import Path
 
+import pytest
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from jsonschema import Draft202012Validator, FormatChecker
 
 ROOT = Path(__file__).parents[4] / "packages/contracts"
+
+
+def test_shared_provenance_signature_bytes_digest_and_tampering():
+    fixtures = Path(__file__).parents[4] / "apps/agentshield/testdata/contracts"
+    sample = json.loads((fixtures / "provenance-assertion.sample.json").read_text())
+    vector = json.loads((fixtures / "provenance-assertion.vector.json").read_text())
+    validator("provenance-assertion").validate(sample)
+
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
+
+    signature = bytes.fromhex(sample.pop("signature"))
+    raw = canonical(sample)
+    assert raw == vector["canonical_unsigned"].encode()
+    assert hashlib.sha256(raw).hexdigest() == vector["unsigned_sha256"]
+    assert hashlib.sha256(canonical(vector["content"])).hexdigest() == sample["content_digest"]
+    key = Ed25519PrivateKey.from_private_bytes(bytes([3]) * 32)
+    key.public_key().verify(signature, raw)
+    assert key.sign(raw) == signature
+    for field in sample:
+        bad = copy.deepcopy(sample)
+        if field == "source":
+            bad[field]["source_id"] = "forged"
+        elif field == "scope":
+            bad[field]["task_id"] = "other"
+        elif field == "parents":
+            bad[field] = ["other"]
+        else:
+            bad[field] = "changed"
+        with pytest.raises(InvalidSignature):
+            key.public_key().verify(signature, canonical(bad))
 
 
 def test_issuer_requires_one_key_and_explicit_scope():

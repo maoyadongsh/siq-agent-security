@@ -707,3 +707,12 @@
 - 核读签发者权限/验签、参数内容与scope绑定、图解析/聚合/unknown、受限上报及高影响默认约束，验收索引P1–P10标记本地通过，并逐项记录测试及证明边界。
 - Go1.26.6 provenance/receipt/server相关无缓存race通过（/tmp/siq-provenance-acceptance.log）；Python provenance合同7项通过；真实MCP桥接4回执离线链验证通过。
 - 与A组累计15项本地核心DoD有逐项核读与运行证据；这不是整体工程百分比或全模板通过声明。固定向量完整性、剩余DoD及最终交付仍继续。
+
+## 2026-09-08：集中验收与Provenance跨语言向量补齐
+
+- R1–R4、E1–E8完成源码/测试核读与本地验收；五包Go1.26.6无缓存race通过，Effect Python合同13项通过。累计27/45项明确本地验收，不等于整体开发完成率。
+- 模板§91新增ProvenanceAssertion共享固定样例与向量，Python生成、Go生产canon/signing与VerifyAuthority复核：中文、非BMP字符、HTML字符、换行、整数的canonical bytes、内容摘要、unsigned摘要、确定性签名一致；逐个signed字段篡改拒绝。
+- 首次Go测试暴露测试夹具把整数解码成float64（7变7.0）；改为RawMessage与生产canon.Decode保留数字类型后复核。没有修改生产canonical规则或放宽断言。
+- 既有集成报告再次独立验证51条回执及11份效果封装，不宣称重新运行观测。远端e70541e的ci/runtime-security两工作流均success；新增本地提交仍需对应远端CI。
+- 后续集中推进B/C/G、§90全部新schema负向矩阵及§115最终Engineering Report；保持按模块整批完成，针对变更运行必要门禁，避免无变化重复全仓回归。
+- 本批最终验证：Provenance完整包Go1.26.6无缓存race与vet通过；Python来源合同8项与Ruff通过；git diff --check通过。

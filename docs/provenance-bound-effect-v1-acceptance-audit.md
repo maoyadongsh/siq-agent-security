@@ -21,18 +21,18 @@
 | DoD-P8 | 普通 Agent transform 不提高 trust。 | [aggregation_test.go](../apps/agentshield/internal/provenance/aggregation_test.go) | 本地验收通过；详见Provenance证据说明 |
 | DoD-P9 | 相同值不同来源能产生不同授权结果。 | [matcher_test.go](../apps/agentshield/internal/provenance/matcher_test.go) | 本地验收通过；详见Provenance证据说明 |
 | DoD-P10 | High-impact parameter 无合法 provenance 时 fail closed / hold。 | [provenance_test.go](../apps/agentshield/internal/receipt/provenance_test.go) | 本地验收通过；详见Provenance证据说明 |
-| DoD-R1 | 存在统一 RuntimeActionDescriptor。 | [describe.go](../apps/agentshield/internal/runtimeaction/describe.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-R2 | Grant/Intent/Taint/Provenance 使用同一个 Tool semantic source。 | [describe.go](../apps/agentshield/internal/runtimeaction/describe.go) | 需全范围源码审计，单文件不足证明 |
-| DoD-R3 | Shell 继续保留 unknown Effect。 | [describe_test.go](../apps/agentshield/internal/runtimeaction/describe_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-R4 | 现有 tool/resource/effect regression 全部通过。 | [intent_test.go](../apps/agentshield/internal/receipt/intent_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-E1 | 存在 EffectEvidence Contract。 | [effect-evidence.v1.schema.json](../packages/contracts/effect-evidence.v1.schema.json) | 证据入口已定位；待逐项核读验收 |
-| DoD-E2 | Decision token 不能伪造 external independent evidence。 | [server](../apps/agentshield/internal/server) | 证据入口已定位；待逐项核读验收 |
-| DoD-E3 | Tool success 不自动成为 verified effect。 | [evaluate_test.go](../apps/agentshield/internal/completion/evaluate_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-E4 | file.write 存在 host observer fixture。 | [file_test.go](../apps/agentshield/internal/effectevidence/file_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-E5 | network.request 存在 controlled external oracle fixture。 | [runtime-security](../benchmarks/runtime-security) | 证据入口已定位；待逐项核读验收 |
-| DoD-E6 | denied action 出现真实 effect 时产生 security finding。 | [correlation_test.go](../apps/agentshield/internal/effectevidence/correlation_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-E7 | conflicting evidence 被明确表示。 | [store_test.go](../apps/agentshield/internal/effectevidence/store_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-E8 | 存在 minimal CompletionStatus。 | [evaluate_test.go](../apps/agentshield/internal/completion/evaluate_test.go) | 证据入口已定位；待逐项核读验收 |
+| DoD-R1 | 存在统一 RuntimeActionDescriptor。 | [describe.go](../apps/agentshield/internal/runtimeaction/describe.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-R2 | Grant/Intent/Taint/Provenance 使用同一个 Tool semantic source。 | [describe.go](../apps/agentshield/internal/runtimeaction/describe.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-R3 | Shell 继续保留 unknown Effect。 | [describe_test.go](../apps/agentshield/internal/runtimeaction/describe_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-R4 | 现有 tool/resource/effect regression 全部通过。 | [intent_test.go](../apps/agentshield/internal/receipt/intent_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-E1 | 存在 EffectEvidence Contract。 | [effect-evidence.v1.schema.json](../packages/contracts/effect-evidence.v1.schema.json) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-E2 | Decision token 不能伪造 external independent evidence。 | [server](../apps/agentshield/internal/server) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-E3 | Tool success 不自动成为 verified effect。 | [evaluate_test.go](../apps/agentshield/internal/completion/evaluate_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-E4 | file.write 存在 host observer fixture。 | [file_test.go](../apps/agentshield/internal/effectevidence/file_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-E5 | network.request 存在 controlled external oracle fixture。 | [runtime-security](../benchmarks/runtime-security) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-E6 | denied action 出现真实 effect 时产生 security finding。 | [correlation_test.go](../apps/agentshield/internal/effectevidence/correlation_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-E7 | conflicting evidence 被明确表示。 | [store_test.go](../apps/agentshield/internal/effectevidence/store_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
+| DoD-E8 | 存在 minimal CompletionStatus。 | [evaluate_test.go](../apps/agentshield/internal/completion/evaluate_test.go) | 本地验收通过；详见RuntimeAction与Effect证据说明 |
 | DoD-B1 | 建立： benchmarks/runtime-security/ | [runtime-security](../benchmarks/runtime-security) | 证据入口已定位；待逐项核读验收 |
 | DoD-B2 | 实现 D0–D5 数据模型。 | [scenario.schema.json](../benchmarks/runtime-security/scenario.schema.json) | 证据入口已定位；待逐项核读验收 |
 | DoD-B3 | 至少 20 个 deterministic security scenarios。 | [check_contracts.py](../benchmarks/runtime-security/check_contracts.py) | 证据入口已定位；待逐项核读验收 |
@@ -46,7 +46,7 @@
 | DoD-C5 | Hermes / OpenClaw / CodeBuddy 现有核心测试通过。 | [ci.yml](../.github/workflows/ci.yml) | 本轮核心兼容检查通过，见下方命令与证据；不等于原生V3集成完成 |
 | DoD-C6 | Legacy optional authorization 继续按现有安全兼容语义工作。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 证据入口已定位；待逐项核读验收 |
 | DoD-G1 | Go race tests 全绿。 | [ci.yml](../.github/workflows/ci.yml) | 证据入口已定位；待逐项核读验收 |
-| DoD-G2 | 全仓 CI green。 | [runtime-security.yml](../.github/workflows/runtime-security.yml) | 92b9efe远端运行中；当前HEAD待推送验证 |
+| DoD-G2 | 全仓 CI green。 | [runtime-security.yml](../.github/workflows/runtime-security.yml) | e70541e两套远端工作流success；后续本地提交仍待对应CI |
 | DoD-G3 | 没有新增无界 map。 | [capacity_test.go](../apps/agentshield/internal/provenance/capacity_test.go) | 需全范围源码审计，单文件不足证明 |
 | DoD-G4 | 没有新增第二套 signing/canonicalization。 | [signing](../apps/agentshield/internal/signing) | 需全范围源码审计，单文件不足证明 |
 | DoD-G5 | 没有新增 LLM final authorization。 | [AGENTS.md](../AGENTS.md) | 需全范围源码审计，单文件不足证明 |
@@ -119,3 +119,20 @@
 | P10 | TestHighImpactDefaultsAndExplicitPermission、三模式显式/默认路径回归、参数预算拒绝 | 高影响路径默认required/trusted，缺失或不可信拒绝；仅显式签名约束可放宽 |
 
 这10项证明本地核心与MCP显式来源MVP，不等价于所有宿主自动采集或完整模型语义传播；后两者不得反向冒充本模板§33–36要求已实现的范围。§90/91全schema与固定向量完整性仍独立核验；P组通过不能替代这些条目或最终CI。
+
+## RuntimeAction与Effect本地验收（2026-09-08）
+
+源码基线a4a8caa。Go1.26.6无缓存race执行runtimeaction、effectevidence、completion、receipt、server五包全部通过；Python Effect合同13项通过。复核既有真实集成报告，独立验证51条回执、11份效果封装通过；本轮没有重新生成这些集成观测。
+
+| 条目 | 核验依据与边界 |
+| --- | --- |
+| R1–R2 | Describe统一入口；Engine Grant/taint/trifecta、Intent matcher、hold复查及Provenance使用同一描述，旧Normalize/ExtractResources委托该入口。文本提示只能增加检查，不能授权 |
+| R3 | TestDescriptorInterpreterAliasesRemainUnknown；shell与解释器保留unknown，不能从文本推断完整效果 |
+| R4 | 上述五包全部回归通过，覆盖tool/resource/effect及现有Intent交互；并非全仓全部测试重跑 |
+| E1–E2 | Effect schema、签名向量及原始HTTP权限测试：decision/admin token不能直接提交observer证据，host observer不能升级成external observer，错误action/rid拒绝 |
+| E3–E4 | TestActualFileWriteAndFakeSuccess及真实文件fixture；只有工具成功、没有实际材料不能verified。文件摘要、受限目标及采集预算均检查 |
+| E5 | TestNetworkOracleActualReceiptAndRedirect与受控HTTP fixture，核验实际接收事件、请求关联、重定向及预算；是受控oracle，不是通用网络隔离 |
+| E6 | Correlation对未授权或授权前已发生的独立效果生成unauthorized_effect_observed；持久化finding与证据同步。自报不构成独立事件证明 |
+| E7–E8 | Store冲突/重试/恢复及Completion测试：矛盾材料显式conflicting；缺材料unknown、不满足要求incomplete，授权及材料满足才verified，保留incident IDs |
+
+本表累计27/45项标记本地验收通过（A5+P10+R4+E8），这是验收记录数量，不是项目开发完成百分比。B/C/G、模板逐节要求与最终Engineering Report仍需核验。原始日志：/tmp/siq-runtime-effect-acceptance.log、/tmp/siq-effect-contract-acceptance.log；集成证据摘要见已归档integration报告。

@@ -1,0 +1,9 @@
+{
+  "content": {
+    "recipient": "审计@example.test",
+    "note": "<>&\n😀",
+    "count": 7
+  },
+  "canonical_unsigned": "{\"content_digest\":\"fce6c2cd3f7280952144edb7ecd50fb649272cfdbba92388de5564cb9584b764\",\"derivation\":\"direct\",\"expires_at\":\"2026-09-08T01:00:00Z\",\"issued_at\":\"2026-09-08T00:00:00Z\",\"issuer\":\"issuer-1\",\"parents\":[],\"provenance_id\":\"prov-vector-1\",\"schema_version\":\"provenance-assertion/v1\",\"scope\":{\"agent_id\":\"a1\",\"platform\":\"hermes\",\"session_id\":\"s1\",\"task_id\":\"t1\"},\"signing_schema\":\"local_canonical/v1\",\"source\":{\"source_id\":\"\\u5ba1\\u6279\\u8868\\u5355/\\ud83d\\ude00\",\"trust\":\"authoritative\",\"type\":\"USER\"}}",
+  "unsigned_sha256": "682b4b018a8f568f14a89b738f3ad075b9829eddbccfd5600861b56473964b0a"
+}
