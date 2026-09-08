@@ -79,3 +79,11 @@
 - 父节点 trust 不能被提升；派生 source type 不能将 MCP 伪装成 USER，允许保持类型或降为 AGENT/UNKNOWN；unknown 派生必须保持 unknown trust。子节点到期不能晚于父节点。
 - 读取不保留跨请求缓存，父 issuer 撤销影响后续子图解析。目录/记录符号链接、无效签名和缺失父节点失败关闭。
 - 已执行 provenance 包 race 测试，覆盖低可信升级、MCP→USER 洗白、同记录重试、重启、跨会话、到期、撤销和深度64通过/65拒绝。后续仍需补混合聚合、节点/边容量边界、并发 issue+resolve+revoke、固定签名向量与 HTTP/runtime 接入；B1 未完成。
+
+### B1/B2 匹配与边界增量
+
+- Store.MatchParameters 在同一读锁内校验全部引用及父图，绑定参数 canonical 内容摘要，随后逐引用应用来源类型、最低可信度和 required 约束。未受约束的伪造引用也不能被静默忽略。
+- 实测同一收件人值 USER/authoritative 通过、MCP/untrusted 拒绝；混入 USER 引用不能掩盖 MCP，参数值替换/缺失引用/重复引用均拒绝。此为真实签名 store+matcher 测试，尚非 Decide HTTP 端到端测试。
+- 来源图节点1024/1025、边4096/4097边界测试通过；混合父节点保留最低信任，unknown 父节点不能转换成已知 lineage。并发签发/解析通过，撤销完成后所有后续解析拒绝。
+- provenance 全包 race（含容量测试）通过；新增聚合/并发及修正 unknown 传播后相关定向 race 通过，vet 通过。容量测试预置有效签名记录以避免测试准备阶段重复执行二次方扫描。
+- 尚需固定签名向量、管理/上报 API、Intent V3 和 RuntimeActionDescriptor 高影响参数接入；目标保持进行中。

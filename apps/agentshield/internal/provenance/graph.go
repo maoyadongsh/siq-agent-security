@@ -98,6 +98,9 @@ func (s *Store) resolveNode(a Assertion, scope Scope, now time.Time, depth int, 
 		if trustRanks[a.Source.Trust] > trustRanks[p.assertion.Source.Trust] {
 			return graphNode{}, failure("provenance_trust_insufficient")
 		}
+		if p.assertion.Derivation == "unknown" && a.Derivation != "unknown" {
+			return graphNode{}, failure("provenance_derivation_unknown")
+		}
 		if a.Source.Type != p.assertion.Source.Type && a.Source.Type != "AGENT" && a.Source.Type != "UNKNOWN" {
 			return graphNode{}, failure("provenance_source_not_allowed")
 		}

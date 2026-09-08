@@ -832,3 +832,9 @@ Assertion.VerifyAuthority 接受来自管理面可信 registry 的 Issuer 与本
 声明按完整 Scope 的 canonical SHA256 分目录存于 provenance-assertions。每个 scope 最多1024节点、4096条父引用边、32父节点和64层深度。新节点发布前验证当前 issuer、全部父节点与同 scope，禁止 trust 高于任一父节点，禁止子节点有效期超出父节点；unknown 派生必须保持 unknown trust。派生 source type 只能保持父类型或显式降为 AGENT/UNKNOWN，不允许把 MCP 重标为 USER。
 
 IssueAssertion 仅供后续管理面调用，使用已注册 local-state issuer 签发；ImportAssertion 接受外部签名，必须通过 registry 公钥验证。Resolve 每次重读并验证整个父图，不保留跨请求信任缓存，故父 issuer 撤销/过期会使子图即时拒绝。未找到、环、容量、篡改均失败关闭；同 ID 同签名内容可重试，冲突不覆盖。HTTP 暂未接入，普通 decision 上报必须走后续受限入口而不能调用管理签发函数。
+
+### B2 参数联合匹配
+
+Store.MatchParameters 在一次 registry 读锁内验证所有 parameter_provenance：路径唯一、每路径1–32个唯一引用、总路径不超过1024；路径必须实际存在，引用必须与该参数的 canonical 内容摘要相同。所有引用及父节点都验证，不能忽略未被约束的伪造引用，也不能只挑一个高可信引用。匹配期间的 issuer 撤销与写入被序列化，下次调用重新读取当前状态。
+
+每条约束先校验路径/source taxonomy/minimum_trust；required 且参数或绑定缺失返回 provenance_missing。存在绑定时每个引用都必须满足 allowed_source_types 与 minimum_trust，unknown derivation 返回 provenance_derivation_unknown。此方法只做参数来源约束，不替代 Grant/Intent 的值约束或 RuntimeActionDescriptor。V3/runtime 接线另行实施并端到端验证。
