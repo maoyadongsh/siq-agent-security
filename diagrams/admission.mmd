@@ -1,0 +1,25 @@
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#fdfcf9',
+  'primaryTextColor': '#001840',
+  'primaryBorderColor': '#001840',
+  'lineColor': '#7c5a0c',
+  'secondaryColor': '#f3eee2',
+  'tertiaryColor': '#f7f4ee',
+  'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
+}}}%%
+flowchart TD
+  start["admission.Admit(path)"] --> finish["builder.finish()"]
+  finish --> def["default verdict = admit"]
+  def --> q{"finding.Disposition == quarantine"}
+  q -->|yes| quar["verdict = quarantine"]
+  q -->|no| d{"finding.Disposition == declare"}
+  d -->|yes| cond["verdict = admit_with_conditions"]
+  d -->|no| ok["verdict = admit"]
+  quar --> force["overLimit || symlinkEscape || !SKILL.md → quarantine"]
+  cond --> force
+  ok --> force
+  force --> out["stdout JSON / exit 0 or 3"]
+  out --> pe["PolicyExec switch Verdict"]
+  pe --> p_admit["admit → allow"]
+  pe --> p_admit_with_conditions["admit_with_conditions → warn"]
+  pe --> p_quarantine["quarantine → block"]

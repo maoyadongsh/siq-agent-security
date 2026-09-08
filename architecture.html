@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="从 siq-agent-security 当前源码抽出的架构图与流程图：CLI、HTTP 路由、包依赖、准入结论、决策返回路径、grant 状态机。"
+    />
+    <meta name="theme-color" content="#f7f4ee" />
+    <title>从源码生成的架构图 · siq-agent-security</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">跳到正文</a>
+    <header class="site-header">
+      <div class="wrap nav">
+        <a class="brand" href="./">
+          <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="#001840" />
+            <rect x="7.5" y="6.5" width="17" height="19" rx="1.5" stroke="#c9a227" stroke-width="1.5" />
+            <path d="M11 12h10M11 16h7M11 20h5" stroke="#f7f4ee" stroke-width="1.5" stroke-linecap="round" />
+            <rect x="20" y="19" width="5" height="6" fill="#7c5a0c" />
+          </svg>
+          <span class="brand-name">siq-agent-security</span>
+        </a>
+        <nav class="nav-links" aria-label="站点">
+          <a href="./architecture.html" aria-current="page">架构</a>
+          <a href="./#verdicts">结论</a>
+          <a href="./#spark">实测</a>
+          <a href="./#install">安装</a>
+          <a href="https://github.com/maoyadongsh/siq-agent-security">源码</a>
+          <a class="btn btn-primary" href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.2.0">v0.2.0</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="hero">
+      <div class="wrap">
+        <p class="kicker">由仓库源码扫描生成 · 不是手绘</p>
+        <h1>架构图和流程图跟着代码走。</h1>
+        <p class="lede">
+          发布 GitHub Pages 时会跑 <code>site/diagrams/from_code.py</code>，从当前 checkout 解析 CLI
+          <code>switch</code>、<code>ServeMux.HandleFunc</code>、Go <code>import</code>、<code>grant.transitions</code>、<code>builder.finish</code>
+          和 <code>Engine.evaluate</code> 的 <code>return</code>，再渲染成图。改这些源文件，图会变。
+        </p>
+        <p class="note">
+          第三方 GitDiagram 只读仓库默认分支。本仓产品在功能分支上，默认分支仍是旧的 <code>main</code>，所以不把
+          gitdiagram.com 当成事实源。
+        </p>
+        <nav class="toc-links" id="toc" aria-label="本页图"></nav>
+      </div>
+    </main>
+
+    <div class="section" id="diagrams">
+      <div class="wrap" id="diagram-root"></div>
+    </div>
+
+    <section class="section">
+      <div class="wrap">
+        <details class="extract" id="facts">
+          <summary>这次扫描抽出的标识符</summary>
+          <pre id="facts-body" tabindex="0"></pre>
+        </details>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>图中的节点名来自源码标识符。生成脚本：<a href="https://github.com/maoyadongsh/siq-agent-security/blob/cursor/agentshield-w0-contracts-8eff/site/diagrams/from_code.py">from_code.py</a></p>
+        <p><a href="./">产品页</a> · <a href="https://github.com/maoyadongsh/siq-agent-security">GitHub</a></p>
+      </div>
+    </footer>
+
+    <script src="./vendor/mermaid-11.4.1.min.js"></script>
+    <script type="module">
+      const root = document.getElementById("diagram-root");
+      const toc = document.getElementById("toc");
+      const facts = document.getElementById("facts-body");
+
+      try {
+        // Self-hosted pinned Mermaid (DEV17-C / M-C2) — no CDN import.
+        const mermaid = window.mermaid;
+        if (!mermaid) throw new Error("mermaid not loaded from vendor");
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: "strict",
+          theme: "base",
+          themeVariables: {
+            primaryColor: "#fdfcf9",
+            primaryTextColor: "#001840",
+            primaryBorderColor: "#001840",
+            lineColor: "#7c5a0c",
+            secondaryColor: "#f3eee2",
+            tertiaryColor: "#f7f4ee",
+          },
+        });
+
+        const meta = await fetch("./diagrams/index.json").then((r) => {
+          if (!r.ok) throw new Error("index.json " + r.status);
+          return r.json();
+        });
+
+        facts.textContent = [
+          "cli: " + meta.cli.join(", "),
+          "http: " + meta.http_routes.join(", "),
+          "packages: " + meta.packages.join(", "),
+          "adapters: " + meta.adapters.join(", "),
+          "grant: " + meta.grant_transitions.map((e) => e.from + "→" + e.to).join(", "),
+          "policy-exec: " + meta.policy_exec.map((e) => e.verdict + "→" + e.decision).join(", "),
+        ].join("\n\n");
+
+        const nodes = [];
+        for (const d of meta.diagrams) {
+          toc.insertAdjacentHTML(
+            "beforeend",
+            '<a href="#' + d.id + '">' + d.title + "</a>"
+          );
+          const section = document.createElement("section");
+          section.className = "section";
+          section.id = d.id;
+          section.innerHTML =
+            "<h2>" +
+            d.title +
+            "</h2>" +
+            '<p class="sources">抽出自 <code>' +
+            d.sources.join("</code>、<code>") +
+            "</code> · <a href=\"./diagrams/" +
+            d.file +
+            '">Mermaid 源</a></p>' +
+            '<div class="diagram-frame"><pre class="mermaid"></pre></div>';
+          const text = await fetch("./diagrams/" + d.file).then((r) => r.text());
+          section.querySelector(".mermaid").textContent = text;
+          root.appendChild(section);
+          nodes.push(section.querySelector(".mermaid"));
+        }
+
+        await mermaid.run({ nodes });
+      } catch (err) {
+        root.innerHTML =
+          '<p class="note" role="alert">图未能渲染：' +
+          String(err.message || err) +
+          "。可直接打开各 .mmd 源文件。</p>";
+      }
+    </script>
+  </body>
+</html>

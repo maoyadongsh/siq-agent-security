@@ -1,0 +1,21 @@
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#fdfcf9',
+  'primaryTextColor': '#001840',
+  'primaryBorderColor': '#001840',
+  'lineColor': '#7c5a0c',
+  'secondaryColor': '#f3eee2',
+  'tertiaryColor': '#f7f4ee',
+  'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
+}}}%%
+stateDiagram-v2
+  draft --> pending_approval
+  draft --> rejected
+  draft --> revoked
+  pending_approval --> approved
+  pending_approval --> rejected
+  pending_approval --> revoked
+  approved --> deployed
+  approved --> revoked
+  deployed --> effective
+  deployed --> revoked
+  effective --> revoked

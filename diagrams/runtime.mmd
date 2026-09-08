@@ -1,0 +1,22 @@
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#fdfcf9',
+  'primaryTextColor': '#001840',
+  'primaryBorderColor': '#001840',
+  'lineColor': '#7c5a0c',
+  'secondaryColor': '#f3eee2',
+  'tertiaryColor': '#f7f4ee',
+  'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
+}}}%%
+flowchart LR
+  subgraph host["this checkout"]
+    skill["skills/siq-agent-security"]
+    bin["apps/agentshield cmd"]
+    codebuddy_agentshield["codebuddy-agentshield"]
+    hermes_agentshield["hermes-agentshield"]
+    openclaw_agentshield["openclaw-agentshield"]
+  end
+  skill --> bin
+  codebuddy_agentshield --> bin
+  hermes_agentshield --> bin
+  openclaw_agentshield --> bin
+  bin --> api["/v1/decide"]
