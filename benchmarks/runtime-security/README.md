@@ -115,3 +115,6 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.
 
 
 恢复验证器复用主基准的回执链验证函数，要求pending引用同scope/action/resource的allow决定且前置采样不早于决定；决定须含valid Authority及file.write。共享回执验证限制64 bundles、65536 receipts，验证序列、前置hash、内容hash及Ed25519签名。其证明是提供的链前缀有效，缺少外部checkpoint时不能证明未删去尾部历史。
+
+
+恢复报告现包含签名Intent V3，并对该夹具的单一file.write要求重算verified Completion：核验Intent摘要/签名及决定绑定、效果双层签名和文件材料摘要、预期内容摘要、原始before保持、资源及observer身份、接管—效果—撤销时序，最后精确比较Completion。真实公开签名归档位于docs/evidence/provenance-v1/recovery-completion-20260908.json，供离线回归；它只有临时路径及合成内容摘要，不含签名私钥/token。该算法明确只接受该夹具的一条文件要求，不是全部任务/网络/冲突组合的通用Completion重放实现。

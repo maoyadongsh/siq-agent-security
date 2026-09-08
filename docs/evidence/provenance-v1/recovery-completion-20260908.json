@@ -1,0 +1,310 @@
+{
+  "signed_intent": {
+    "effect_requirements": [
+      {
+        "requirement_id": "report",
+        "effect_type": "file.write",
+        "resource_ref": "filesystem:sha256:1deaca6952971c728b70be594b7bb87b4aa8d3f9bf0a6d863f799f74c203a89b",
+        "expected_digest": "a3a26fc59060bf2b206fd9d114eccc10c923543a811673341a4ece1855c95b56",
+        "minimum_independence": "host_independent",
+        "minimum_coverage": "partial"
+      }
+    ],
+    "provenance_constraints": [
+      {
+        "parameter_path": "/path",
+        "allowed_source_types": [
+          "USER"
+        ],
+        "minimum_trust": "trusted",
+        "required": false
+      }
+    ],
+    "schema_version": "intent/v3",
+    "intent_id": "recovery-intent",
+    "task_id": "recovery-task",
+    "principal": {
+      "type": "user",
+      "id": "fixture"
+    },
+    "agent": {
+      "id": "intent-v2-fixture-agent",
+      "platform": "hermes"
+    },
+    "purpose": "read fixture company-a",
+    "allowed_tools": [
+      "write_file"
+    ],
+    "allowed_effects": [
+      "file.write"
+    ],
+    "resource_constraints": [
+      {
+        "domain": "filesystem",
+        "operator": "prefix",
+        "value": "/tmp/siq-recovery-fixture-22slg8xx/workspace/company-a"
+      }
+    ],
+    "parameter_constraints": [],
+    "issued_at": "2026-09-08T04:04:33Z",
+    "valid_from": "2026-09-08T04:04:33Z",
+    "expires_at": "2026-09-08T05:05:33Z",
+    "authority": {
+      "issuer": "local-admin",
+      "revision": "r1",
+      "evidence_ids": []
+    },
+    "signing_schema": "local_canonical/v1",
+    "digest": "7dedc5a9d33df8d4c848b4fb2fae51c67097ca42b304895400c93fb4b7c6882f",
+    "signature": "df95227f9e4cdb9ab80a163c75d281d1be9511dbca3a25cfc1be25139637e78d5996d4ad5c2f9aac0055537acee6ac0e6a5a65c1fa548448e36471e2a0ebdb04"
+  },
+  "observer_revocation": {
+    "schema_version": "effect-observer-revocation/v1",
+    "owner_digest": "cf461a15bae023ce3ca3ba72e25d365c941b126f7e1c9fd84d9651f80e4c9af2",
+    "revoked_at": "2026-09-08T04:05:33.47123611Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "326972bbb1b460725280db7568757c89bbad19d25bff3b645857fe56c6b3b55bfb00eb6a88bcdb3762563bba36c98072f1836d62da3e6c63ed09227b0e6a0309"
+  },
+  "pending_records": [
+    {
+      "schema_version": "file-observation-pending/v1",
+      "observation_id": "resume-ok",
+      "action_id": "act-ca52bfb0a7d18a8b74f52381",
+      "decision_receipt_id": "rcp-55fcb4c0f719-040533.378803",
+      "scope": {
+        "platform": "hermes",
+        "session_id": "recovery-session",
+        "agent_id": "intent-v2-fixture-agent",
+        "task_id": "recovery-task"
+      },
+      "source": {
+        "type": "host_observer",
+        "source_id": "recovery-observer",
+        "independence": "host_independent"
+      },
+      "before": {
+        "resource_ref": "filesystem:sha256:1deaca6952971c728b70be594b7bb87b4aa8d3f9bf0a6d863f799f74c203a89b",
+        "exists": false,
+        "digest": "",
+        "size": 0,
+        "mtime": "",
+        "captured_at": "2026-09-08T04:05:33.390421954Z"
+      },
+      "owner_digest": "38660deb248a00967f510eecd61deef497b5d968fdb3f389fbec1695a4a508cc",
+      "expected_digest": "a3a26fc59060bf2b206fd9d114eccc10c923543a811673341a4ece1855c95b56",
+      "max_bytes": 1024,
+      "expires_at": "2026-09-08T04:08:33.390043406Z",
+      "signing_schema": "local_canonical/v1",
+      "signature": "8c1fb8f97831292d3c75d96be3750913771c0741bf3877c2e7595a67e133e9e846e3bb626a863c084331517e3b80c860f58228e8aefe5f5adcab5aaee5c4c208"
+    },
+    {
+      "schema_version": "file-observation-pending/v1",
+      "observation_id": "resume-revoked",
+      "action_id": "act-ca52bfb0a7d18a8b74f52381",
+      "decision_receipt_id": "rcp-55fcb4c0f719-040533.378803",
+      "scope": {
+        "platform": "hermes",
+        "session_id": "recovery-session",
+        "agent_id": "intent-v2-fixture-agent",
+        "task_id": "recovery-task"
+      },
+      "source": {
+        "type": "host_observer",
+        "source_id": "recovery-observer",
+        "independence": "host_independent"
+      },
+      "before": {
+        "resource_ref": "filesystem:sha256:1deaca6952971c728b70be594b7bb87b4aa8d3f9bf0a6d863f799f74c203a89b",
+        "exists": false,
+        "digest": "",
+        "size": 0,
+        "mtime": "",
+        "captured_at": "2026-09-08T04:05:33.394078144Z"
+      },
+      "owner_digest": "38660deb248a00967f510eecd61deef497b5d968fdb3f389fbec1695a4a508cc",
+      "expected_digest": "a3a26fc59060bf2b206fd9d114eccc10c923543a811673341a4ece1855c95b56",
+      "max_bytes": 1024,
+      "expires_at": "2026-09-08T04:08:33.390043406Z",
+      "signing_schema": "local_canonical/v1",
+      "signature": "d839d684ddadddae4e9fa316a239c33bc86891673cc9e6f018dd949c7f2015f601338fd27fe1cca1546bfc5e269fe84076f09281d00c2f0fc5f6e1cd2d6d2808"
+    }
+  ],
+  "schema_version": "recovery-fixture/v1",
+  "coverage": "component_fixture",
+  "sigkill_count": 2,
+  "recovery_records": [
+    {
+      "expires_at": "2026-09-08T04:08:33.390043406Z",
+      "recovery": {
+        "schema_version": "file-observation-recovery/v1",
+        "observation_id": "resume-ok",
+        "pending_digest": "3f984e48b40f86c4352900ab74bf5139ae8172ef0249db5fd04d9b620fce9760",
+        "sequence": 1,
+        "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "owner_digest": "cf461a15bae023ce3ca3ba72e25d365c941b126f7e1c9fd84d9651f80e4c9af2",
+        "recovered_at": "2026-09-08T04:05:33.455078901Z",
+        "signing_schema": "local_canonical/v1",
+        "signature": "9ff023d52f6d73872004389b1b06a6a7b3cc569f474adbbdcc6289d29eee19cba1614541e4aeb24718b1ed7299211cb614bef3c982341e81b0eeb1d8de50c10e"
+      }
+    },
+    {
+      "expires_at": "2026-09-08T04:08:33.390043406Z",
+      "recovery": {
+        "schema_version": "file-observation-recovery/v1",
+        "observation_id": "resume-revoked",
+        "pending_digest": "7abcf484682942d79683609ae08bdb1d0dbf8680d296e757f3db1991a259ddea",
+        "sequence": 1,
+        "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "owner_digest": "cf461a15bae023ce3ca3ba72e25d365c941b126f7e1c9fd84d9651f80e4c9af2",
+        "recovered_at": "2026-09-08T04:05:33.461483107Z",
+        "signing_schema": "local_canonical/v1",
+        "signature": "497401ae5a637c1a290f05bf8d661da20b35b9b5c24f4e49c88ce4977f0a4686d02e891958b2fe6a8275bf460efda32328ef224d814745f1e2e232b61e0bcf07"
+      }
+    }
+  ],
+  "effect_record": {
+    "file_observation": {
+      "before": {
+        "resource_ref": "filesystem:sha256:1deaca6952971c728b70be594b7bb87b4aa8d3f9bf0a6d863f799f74c203a89b",
+        "exists": false,
+        "digest": "",
+        "size": 0,
+        "mtime": "",
+        "captured_at": "2026-09-08T04:05:33.390421954Z"
+      },
+      "after": {
+        "resource_ref": "filesystem:sha256:1deaca6952971c728b70be594b7bb87b4aa8d3f9bf0a6d863f799f74c203a89b",
+        "exists": true,
+        "digest": "a3a26fc59060bf2b206fd9d114eccc10c923543a811673341a4ece1855c95b56",
+        "size": 30,
+        "mtime": "2026-09-08T04:05:33.397892646Z",
+        "captured_at": "2026-09-08T04:05:33.467068757Z"
+      },
+      "expected_digest": "a3a26fc59060bf2b206fd9d114eccc10c923543a811673341a4ece1855c95b56",
+      "execution_state": "completed",
+      "result": "expected"
+    },
+    "schema_version": "effect-evidence-record/v1",
+    "evidence": {
+      "schema_version": "effect-evidence/v1",
+      "effect_evidence_id": "resume-ok",
+      "action_id": "act-ca52bfb0a7d18a8b74f52381",
+      "decision_receipt_id": "rcp-55fcb4c0f719-040533.378803",
+      "effect_type": "file.write",
+      "resource_ref": "filesystem:sha256:1deaca6952971c728b70be594b7bb87b4aa8d3f9bf0a6d863f799f74c203a89b",
+      "execution_state": "completed",
+      "source": {
+        "type": "host_observer",
+        "source_id": "recovery-observer",
+        "independence": "host_independent"
+      },
+      "coverage": "partial",
+      "result": "expected",
+      "evidence_digest": "8f717367912d96ecdc14d6c043ddf2eb1ec45ce359fecf2c16fde4bb2f78060f",
+      "observed_at": "2026-09-08T04:05:33.467068757Z",
+      "signing_schema": "local_canonical/v1",
+      "signature": "62e752bf6225ab5d926484d68dc973f03b1ea4a7a03beb3d8388fa9f56c3ee847a232bcd48f10873c4189e330d4caf16df4fae3ce9c9e1aae8b692656a02ee03"
+    },
+    "finding_code": "",
+    "request_digest": "5e7d498321cdf2feeea5f9633594ce4b7e496f3769852320dfab03c19adc9735",
+    "task_id": "recovery-task",
+    "signing_schema": "local_canonical/v1",
+    "signature": "99e0030143663894e06b2d5bdd5bab0edda5a912c1224b9d7213e6f9e7afba773fa44106659026d3944e2e8c53d3be328c0322c7753d05e0aeac99ae667c5b0f"
+  },
+  "completion": {
+    "schema_version": "completion-status/v1",
+    "task_id": "recovery-task",
+    "status": "verified",
+    "reason_code": "effects_verified",
+    "requirements": [
+      {
+        "requirement_id": "report",
+        "status": "verified",
+        "reason_code": "effect_verified",
+        "evidence_ids": [
+          "resume-ok"
+        ]
+      }
+    ],
+    "incident_ids": []
+  },
+  "historical_revocation_rejected": true,
+  "public_evidence": {
+    "fixture": "recovery",
+    "public_key": "2/4c3WBHr/DSakkayI++jwePGi8+ILqt/RukK/VP2Cs=",
+    "binary_sha256": "85e25f66d1a5bce49886d1fd9732a4096750b384f9298ddc7605b9f612df611b",
+    "receipts": [
+      {
+        "authority_status": "valid",
+        "policy_action": "allow",
+        "effective_action": "allow",
+        "principal": {
+          "type": "user",
+          "id": "fixture"
+        },
+        "resource_refs": [
+          {
+            "domain": "filesystem",
+            "digest": "1deaca6952971c728b70be594b7bb87b4aa8d3f9bf0a6d863f799f74c203a89b"
+          }
+        ],
+        "record_type": "decision",
+        "task_seq": 1,
+        "receipt_id": "rcp-55fcb4c0f719-040533.378803",
+        "chain_id": "local",
+        "seq": 0,
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "48521780e0cf179355fb7641d4797748931f552922ab403cf467de434481f6fa",
+        "sig": "c175afe2aafc68a75ce0a3c99ad3e165375e097bb612c04aa14d0bb3bdde29cf0edc1c7d1e2021a8c6078b5c097e74e4836925d594aa2f8c6c3170f983a3ce0e",
+        "issued_at": "2026-09-08T04:05:33Z",
+        "platform": "hermes",
+        "session_id": "recovery-session",
+        "action_id": "act-ca52bfb0a7d18a8b74f52381",
+        "agent_id": "intent-v2-fixture-agent",
+        "task_id": "recovery-task",
+        "intent_id": "recovery-intent",
+        "intent_digest": "7dedc5a9d33df8d4c848b4fb2fae51c67097ca42b304895400c93fb4b7c6882f",
+        "intent_binding": "bound",
+        "authority_revision": "r1",
+        "tool": "write_file",
+        "tool_call_id": "recovery-call",
+        "operation": "write",
+        "effects": [
+          "file.write"
+        ],
+        "params_digest": "55fcb4c0f7195344c2dbcbce86e8a3dd1346f3e457ba7d59fbbd779496ebf9ca",
+        "params_excerpt": "/tmp/siq-recovery-fixture-22slg8xx/workspace/company-a/recovered-report.txt",
+        "action": "allow",
+        "advisory_action": null,
+        "reason": "granted by grt-32015f33555a-102281f8",
+        "reason_code": "allow",
+        "matched_grant_id": "grt-32015f33555a-102281f8",
+        "matched_fact_ids": [
+          "pf-p-3-7aab3dd6",
+          "pf-p-2-12bb99cf"
+        ],
+        "matched_rule_ids": [],
+        "taint_labels": [],
+        "trifecta": {
+          "private_data": false,
+          "untrusted_input": false,
+          "egress": false
+        },
+        "enforcement_mode": "block",
+        "policy_revision": null,
+        "sandbox_id": null,
+        "model_key": null,
+        "engine": {
+          "version": "0.0.0-dev",
+          "rulepack_version": 1
+        },
+        "decision_latency_ms": 0,
+        "hold": null
+      }
+    ]
+  },
+  "limitations": [
+    "Linux process crash; not power-loss or OS isolation proof",
+    "controlled host observer; native platform scheduling not evaluated"
+  ]
+}

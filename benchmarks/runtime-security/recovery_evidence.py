@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Independently verify archived pending/recovery signatures and ownership chains.
 
-This does not prove SIGKILL occurrence, the rejected HTTP request or Completion semantics.
+This does not prove SIGKILL occurrence, the rejected HTTP request or arbitrary Completion policy semantics.
 """
 import argparse
 import base64
@@ -77,6 +77,60 @@ def verify_pending_action(pending, decision):
         raise ValueError("pending resource is outside decision")
 
 
+def verify_file_completion(report, pending, decision, key):
+    """Recompute this fixture's single file requirement, not arbitrary task policy."""
+    intent = report["signed_intent"]
+    from jsonschema import Draft202012Validator
+    schema = json.loads((ROOT / "packages/contracts/intent-contract.v3.schema.json").read_text())
+    Draft202012Validator(schema).validate(intent)
+    unsigned = {k: v for k, v in intent.items() if k != "signature"}
+    key.verify(bytes.fromhex(intent["signature"]), canonical(unsigned))
+    body = {k: v for k, v in unsigned.items() if k != "digest"}
+    if (hashlib.sha256(canonical(body)).hexdigest() != intent["digest"]
+            or intent["digest"] != decision["intent_digest"] or intent["intent_id"] != decision["intent_id"]
+            or intent["task_id"] != decision["task_id"] or intent["agent"]["id"] != decision["agent_id"]
+            or intent["agent"]["platform"] != decision["platform"]):
+        raise ValueError("Intent does not bind the decision")
+    requirements = intent["effect_requirements"]
+    if len(requirements) != 1:
+        raise ValueError("unsupported recovery completion requirements")
+    req = requirements[0]
+    record = report["effect_record"]
+    effect, material = record["evidence"], record["file_observation"]
+    for document in (record, effect):
+        if document["signing_schema"] != "local_canonical/v1":
+            raise ValueError("unsupported effect signing scheme")
+        normalized = json.loads(json.dumps({k: v for k, v in document.items() if k != "signature"}), parse_int=float)
+        key.verify(bytes.fromhex(document["signature"]), canonical(normalized))
+    material_digest = hashlib.sha256(canonical(json.loads(json.dumps(material), parse_int=float))).hexdigest()
+    if (req["effect_type"] != "file.write" or req["minimum_independence"] != "host_independent"
+            or req["minimum_coverage"] != "partial" or effect["effect_evidence_id"] != pending["observation_id"]
+            or effect["action_id"] != pending["action_id"] or effect["decision_receipt_id"] != pending["decision_receipt_id"]
+            or effect["source"] != pending["source"] or effect["source"]["independence"] != "host_independent"
+            or effect["coverage"] != "partial" or effect["effect_type"] != "file.write"
+            or effect["result"] != "expected" or effect["execution_state"] != "completed"
+            or effect["evidence_digest"] != material_digest or record["finding_code"] != ""
+            or record["task_id"] != intent["task_id"] or material["before"] != pending["before"]
+            or material["result"] != "expected" or material["execution_state"] != "completed"
+            or material["after"]["exists"] is not True
+            or material["after"]["digest"] != req["expected_digest"]
+            or material["expected_digest"] != req["expected_digest"] or pending["expected_digest"] != req["expected_digest"]
+            or material["after"]["resource_ref"] != req["resource_ref"] or effect["resource_ref"] != req["resource_ref"]
+            or effect["observed_at"] != material["after"]["captured_at"]
+            or not timestamp(pending["before"]["captured_at"]) <= timestamp(effect["observed_at"]) < timestamp(pending["expires_at"])):
+        raise ValueError("file material does not satisfy signed completion requirement")
+    takeover = next(x["recovery"] for x in report["recovery_records"]
+                    if x["recovery"]["observation_id"] == pending["observation_id"])
+    if not timestamp(takeover["recovered_at"]) <= timestamp(effect["observed_at"]) <= timestamp(report["observer_revocation"]["revoked_at"]):
+        raise ValueError("effect capture is outside recovered observer lifetime")
+    expected = {"schema_version": "completion-status/v1", "task_id": intent["task_id"],
+                "status": "verified", "reason_code": "effects_verified", "incident_ids": [],
+                "requirements": [{"requirement_id": req["requirement_id"], "status": "verified",
+                                  "reason_code": "effect_verified", "evidence_ids": [effect["effect_evidence_id"]]}]}
+    if report["completion"] != expected:
+        raise ValueError("reported completion differs from verified materials")
+
+
 def verify(report):
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
@@ -103,8 +157,10 @@ def verify(report):
         verify_chain(original, [recovery], key)
         verify_pending_action(original, actions[original["decision_receipt_id"]][0])
         verify_revocation(report["observer_revocation"], recovery, key)
+    original = by_id["resume-ok"]
+    verify_file_completion(report, original, actions[original["decision_receipt_id"]][0], key)
     return {"verified_pending_records": 2, "verified_recovery_records": 2, "verified_observer_revocations": 1,
-            "verified_receipts": receipt_count}
+            "verified_receipts": receipt_count, "verified_file_completions": 1}
 
 
 def main():

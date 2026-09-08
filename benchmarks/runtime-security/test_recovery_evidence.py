@@ -95,3 +95,25 @@ class PendingActionBindingTest(unittest.TestCase):
             verify_receipt_bundles([altered])
         with self.assertRaises(ValueError):
             verify_receipt_bundles([bundle, bundle])
+
+
+class ArchivedCompletionTest(unittest.TestCase):
+    def test_real_archive_and_tampered_completion_material(self):
+        from cryptography.exceptions import InvalidSignature
+        from recovery_evidence import verify
+        path = Path(__file__).resolve().parents[2] / "docs/evidence/provenance-v1/recovery-completion-20260908.json"
+        original = json.loads(path.read_text())
+        self.assertEqual(verify(original)["verified_file_completions"], 1)
+        mutations = [
+            lambda r: r["completion"].update(status="incomplete"),
+            lambda r: r["completion"]["requirements"][0].update(evidence_ids=["other"]),
+            lambda r: r["effect_record"]["file_observation"]["after"].update(digest="f" * 64),
+            lambda r: r["signed_intent"]["effect_requirements"][0].update(expected_digest="f" * 64),
+            lambda r: r["effect_record"]["evidence"].update(action_id="other"),
+            lambda r: r["public_evidence"]["receipts"].clear(),
+        ]
+        for mutate in mutations:
+            changed = copy.deepcopy(original)
+            mutate(changed)
+            with self.assertRaises((ValueError, InvalidSignature, KeyError)):
+                verify(changed)

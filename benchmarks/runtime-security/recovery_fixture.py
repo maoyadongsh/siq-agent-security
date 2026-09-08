@@ -34,7 +34,7 @@ def run(h, base):
     contract["effect_requirements"] = [{"requirement_id": "report", "effect_type": "file.write",
         "resource_ref": resource, "expected_digest": digest, "minimum_independence": "host_independent",
         "minimum_coverage": "partial"}]
-    h.api("/v1/intents", contract, expected=201)
+    signed_intent = h.api("/v1/intents", contract, expected=201)
     scope = {"platform": h.platform, "session_id": "recovery-session", "agent_id": base.AGENT,
              "task_id": contract["task_id"]}
     h.api("/v1/intent-bindings", {**scope, "intent_id": contract["intent_id"]}, expected=201)
@@ -92,7 +92,7 @@ def run(h, base):
                        for body in bodies]
     owner = hashlib.sha256(replacement["token"].encode()).hexdigest()
     revocation = json.loads((h.state / "effect-observer-revocations" / (owner + ".json")).read_text())
-    return {"observer_revocation": revocation, "pending_records": pending_records, "schema_version": "recovery-fixture/v1", "coverage": "component_fixture",
+    return {"signed_intent": signed_intent, "observer_revocation": revocation, "pending_records": pending_records, "schema_version": "recovery-fixture/v1", "coverage": "component_fixture",
             "sigkill_count": 2, "recovery_records": recoveries, "effect_record": record,
             "completion": completion, "historical_revocation_rejected": True,
             "public_evidence": capture(h, "recovery"),

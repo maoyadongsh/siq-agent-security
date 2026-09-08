@@ -654,3 +654,11 @@
 - 恢复pending须对应同task/session/agent/platform、action/receipt、filesystem资源和file.write allow决定；Authority valid且采样时间不早于决定。错配及有效链内容篡改/重复回执负例通过。
 - 16项benchmark单测、Ruff/diff通过；已有真实恢复报告离线验证1条决定回执、2pending/2接管/1撤销通过，原21对报告51回执/11效果封套重新验证通过。
 - 无需重复未变更的daemon，未把提供的完整前缀当作外部checkpoint证明；完整Completion语义与原始Intent材料仍需后续补齐。
+
+
+### D 恢复文件完成链离线复核
+
+- 归档签名Intent V3，验证原合同摘要/签名与决定的Intent/task/Agent关联；效果记录双层签名及file material摘要复验，要求资源、预期内容、原before和observer一致。
+- 单文件夹具从已验证材料重算verified Completion并精确比较输出；效果时间须处在接管之后、撤销之前且原pending未到期。公开真实报告已落盘至docs/evidence/provenance-v1/recovery-completion-20260908.json。
+- 真实两次SIGKILL恢复及离线验证通过：2pending、2接管、1撤销、1授权回执、1文件Completion；新增真实归档的完成状态/引用/内容/Intent/动作/缺回执负例，17项单测和Ruff/diff通过。
+- 这完成了该恢复夹具的文件完成链验证，不缩减为全任务通用重放；网络、多要求、conflicting/unknown组合及全目标其他工作继续待完成。
