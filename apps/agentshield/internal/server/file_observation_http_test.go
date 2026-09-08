@@ -170,8 +170,8 @@ func TestFileObservationHTTPReadsRealState(t *testing.T) {
 			effectCall(t, s, "POST", "/v1/file-observations", observer, body, 201)
 			fake := effectCall(t, s, "POST", "/v1/file-observations/file-http-fake/finish", observer, map[string]any{"path": path}, 201)
 			later := effectCall(t, s, "GET", "/v1/tasks/task-1/completion", s.bootAdmin, nil, 200)
-			if mode == "warn" && later["status"] != "incomplete" {
-				t.Fatal("new failure masked by old success", later)
+			if mode == "warn" && (later["status"] != "conflicting" || later["reason_code"] != "effect_evidence_conflicting") {
+				t.Fatal("contradictory observations of the same action were not retained", later)
 			}
 			if fake["evidence"].(map[string]any)["execution_state"] != "failed" {
 				t.Fatal("missing file treated as success", fake)

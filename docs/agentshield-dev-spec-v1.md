@@ -1016,3 +1016,7 @@ Hermes显式携带Authority引用的调用，在决策关联缓存冲突或容�
 ### RuntimeAction参数遍历预算
 
 描述器预检参数树：根深度0，最多64层、8192个值节点、单JSON Pointer最多1024 UTF-8字节、全部指针累计最多1MiB。超限返回runtime_parameter_budget_exceeded及unknown描述，不产生部分资源/高影响路径。Decide保留原参数摘要和签名拒绝回执，跳过参数文本扫描、Intent参数校验和policy，三模式均hard deny。直接Intent检查同样拒绝预算异常。该预算不提高任何资源权限，不将截断结果当作完整描述。
+
+### Completion同动作矛盾材料（2026-09-08）
+
+同一效果要求中，同一action_id与decision_receipt_id同时有满足要求的完成材料和独立失败材料时，保留双方Evidence IDs并返回conflicting/effect_evidence_conflicting。仅失败材料仍为incomplete；不同动作的成功/失败不因此自动认定矛盾。失败方必须附实际文件/网络材料且满足要求的独立性/覆盖范围，不能凭工具自报制造独立冲突。该判断表示材料不一致，不裁定先后观测变化的业务原因，不改变历史授权。

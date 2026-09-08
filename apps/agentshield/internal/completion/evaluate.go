@@ -75,6 +75,10 @@ func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey,
 	for _, req := range task.Requirements {
 		item := Item{RequirementID: req.RequirementID, Status: "incomplete", ReasonCode: "effect_evidence_missing", EvidenceIDs: []string{}}
 		good, unknown, conflict, failed := false, false, false, false
+		// Bounded by the already limited input records; do not mix different
+		// attempts at the same requirement into one contradictory action.
+		type actionKey struct{ action, receipt string }
+		outcomes := map[actionKey]uint8{}
 		for _, r := range relevant {
 			e := r.Evidence
 			if e.EffectType != req.EffectType || e.ResourceRef != req.ResourceRef {
@@ -100,6 +104,9 @@ func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey,
 			}
 			if e.ExecutionState == "failed" {
 				failed = true
+				if req.EffectType == "file.write" && r.FileObservation != nil || req.EffectType == "network.request" && r.NetworkObservation != nil {
+					outcomes[actionKey{e.ActionID, e.DecisionReceiptID}] |= 2
+				}
 				continue
 			}
 			if e.ExecutionState != "completed" || e.Result == "unknown" || (req.EffectType == "file.write" && r.FileObservation == nil) || (req.EffectType == "network.request" && r.NetworkObservation == nil) {
@@ -128,6 +135,12 @@ func Evaluate(task Task, records []effectevidence.Record, pub ed25519.PublicKey,
 				return Result{}, ErrEvidence
 			}
 			good = true
+			outcomes[actionKey{e.ActionID, e.DecisionReceiptID}] |= 1
+		}
+		for _, outcome := range outcomes {
+			if outcome == 3 {
+				conflict = true
+			}
 		}
 		sort.Strings(item.EvidenceIDs)
 		switch {

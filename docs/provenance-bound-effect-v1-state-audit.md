@@ -62,3 +62,5 @@ G4据此记录为本地验收通过，范围是生产签名与规范化复用。
 G5生产授权流复核：cmd/agentshield/main.go只把ResolveStore、MatchParameters、GetContext接入引擎；Engine.Decide拒绝req.Intent，解析受信绑定并保留降级/撤销错误；Context/Provenance错误转为Authority invalid，ApplyMode先拒绝无效Authority，再处理普通policy。管理签发路由与decision report/select分权；Completion只读签名Intent和历史证据，没有回写binding/Grant或调用批准接口。新增工具/效果/来源数据不作为LLM最终授权输出消费，G5本地验收通过。
 
 实际验证：Go1.26.6对provenance/runtimeaction/intent/effectevidence/receipt/server运行Capacity/Budget/Bounds/Boundaries/Concurrent/Recovery匹配测试，无缓存race全部通过。此前Authority/Provenance/Effect原始HTTP正负测试为权限边界提供补充。G3/G5均以生产调用边界为范围，不声称对任意不受信Go插件提供进程隔离。
+
+Completion新增每要求outcomes映射，以(action_id, decision_receipt_id)关联有效完成与带实际材料的失败记录，至多输入记录数8192；调用内生命周期，不跨请求保留。用于避免把不同尝试的结果误称同动作冲突。

@@ -58,6 +58,49 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	}
 	check(task, nil, "incomplete")
 	check(task, []effectevidence.Record{r}, "verified")
+	// Two independent observations of the same action disagree: retain conflict,
+	// instead of treating the negative record as an ordinary missing effect.
+	if err := os.Remove(path); err != nil {
+		t.Fatal(err)
+	}
+	absent, err := effectevidence.CaptureFile(path, 1024)
+	if err != nil {
+		t.Fatal(err)
+	}
+	failedMaterial, err := effectevidence.FileWrite(before, absent, expected)
+	if err != nil {
+		t.Fatal(err)
+	}
+	failedRecord, err := store.SubmitFile("e-failed", failedMaterial, a, source, time.Now())
+	if err != nil {
+		t.Fatal(err)
+	}
+	check(task, []effectevidence.Record{failedRecord}, "incomplete")
+	check(task, []effectevidence.Record{r, failedRecord}, "conflicting")
+	check(task, []effectevidence.Record{failedRecord, r}, "conflicting")
+	otherAction := a
+	otherAction.ActionID, otherAction.DecisionReceiptID = "a2", "r2"
+	otherFailure, err := store.SubmitFile("e-other-failed", failedMaterial, otherAction, source, time.Now())
+	if err != nil {
+		t.Fatal(err)
+	}
+	otherLookup := func(id, receipt string) (effectevidence.Action, error) {
+		if id == otherAction.ActionID && receipt == otherAction.DecisionReceiptID {
+			return otherAction, nil
+		}
+		return a, nil
+	}
+	out, err := Evaluate(task, []effectevidence.Record{r, otherFailure}, key.Public(), otherLookup, time.Now())
+	if err != nil || out.Status != "incomplete" {
+		t.Fatal("different attempts became conflicting", out, err)
+	}
+	noMaterial := failedRecord.Evidence
+	noMaterial.Signature, noMaterial.EvidenceID = "", "e-failed-no-material"
+	unsupportedFailure, err := store.Submit(noMaterial, a, source, time.Now())
+	if err != nil {
+		t.Fatal(err)
+	}
+	check(task, []effectevidence.Record{r, unsupportedFailure}, "incomplete")
 	a.AuthorizedAt = time.Now().Add(time.Second)
 	check(task, []effectevidence.Record{r}, "conflicting")
 	a.AuthorizedAt = time.Time{}

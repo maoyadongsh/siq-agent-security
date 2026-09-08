@@ -805,3 +805,11 @@
 - 为ContextAssertion/EffectEvidence补充冻结canonical_unsigned/unsigned_sha256文件，与已有Provenance向量一起由Go/Python统一消费。没有改写样例签名或生产canonical逻辑。
 - 新增仅测试包internal/contractvectors，使用真实三类Unsigned和既有signing验证字节/摘要/签名一致；Go1.26.6 race与vet通过。Python三向量+原Context合同共5项通过，Ruff通过。
 - runtime-security显式加入Context合同与三向量测试；§91在全模板审计表更新为已核验。后续提交仍需新的远端CI，旧693641d不覆盖新增测试。
+
+## 2026-09-08：同动作正负效果材料冲突修复
+
+- 核验指定Effect负例时发现：同一动作同时有有效完成与失败材料，Completion原本返回incomplete，未明确矛盾。新增负向测试先复现旧行为，再按规格返回conflicting/effect_evidence_conflicting并保留两份证据。
+- 按(action_id, decision_receipt_id)聚合正负材料，map受已有限制的8192记录约束；不同动作不误合并。无实际材料的失败声明不构成此独立冲突；只有失败仍incomplete，输入顺序不影响冲突。
+- 既有HTTP文件恢复测试原期待incomplete，因同动作两份材料现应conflicting，已增强为状态+reason_code断言。未放宽签名/授权检查。
+- Go1.26.6完整go test -race ./...最终通过（未变化包有缓存）、go vet ./...通过，linux/amd64、linux/arm64、darwin/arm64、windows/amd64四平台编译通过；51项Effect/结构合同测试通过。
+- 此生产修复在693641d CI之后，须重新推送验证，旧CI/nightly不覆盖本次行为。§88具体工具自报与oracle矛盾仍按证据强度区分，不把工具自报提升为可信完成证明。
