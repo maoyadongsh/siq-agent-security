@@ -57,11 +57,16 @@ def verify_global_revocation(checks, actions, primary_id, benign_id):
         raise ValueError("unrelated Intent control missing")
 
 
-def verify(report):
+def verify_receipt_bundles(bundles):
+    """Verify complete supplied chain prefixes; no external checkpoint claim."""
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
     actions = {}
     count = 0
-    for bundle in report["public_evidence"]:
+    if len(bundles) > 64:
+        raise ValueError("receipt bundle capacity exceeded")
+    for bundle in bundles:
+        if len(bundle["receipts"]) + count > 65536:
+            raise ValueError("receipt record capacity exceeded")
         key = Ed25519PublicKey.from_public_bytes(base64.b64decode(bundle["public_key"], validate=True))
         heads = {}
         for record in bundle["receipts"]:
@@ -80,6 +85,11 @@ def verify(report):
             if identity in actions:
                 raise ValueError("duplicate receipt identity")
             actions[identity] = (record, key)
+    return actions, count
+
+
+def verify(report):
+    actions, count = verify_receipt_bundles(report["public_evidence"])
     scenarios = {s["id"]: s for path in (Path(__file__).parent / "scenarios").glob("*.json")
                  for s in [json.loads(path.read_text())]}
     seen = set()

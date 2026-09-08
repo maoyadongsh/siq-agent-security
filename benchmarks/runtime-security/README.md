@@ -112,3 +112,6 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.
 
 
 恢复报告另归档签名effect-observer-revocation；验证器验证撤销owner与两条接管记录的owner相同、撤销时间不早于接管。有效签名但owner/时序不符仍拒绝。该检查证明撤销材料属于接管身份，不把报告中的historical_revocation_rejected布尔值当作签名HTTP拒绝证据；实际409由夹具执行验证，Completion完整语义继续独立补齐。
+
+
+恢复验证器复用主基准的回执链验证函数，要求pending引用同scope/action/resource的allow决定且前置采样不早于决定；决定须含valid Authority及file.write。共享回执验证限制64 bundles、65536 receipts，验证序列、前置hash、内容hash及Ed25519签名。其证明是提供的链前缀有效，缺少外部checkpoint时不能证明未删去尾部历史。

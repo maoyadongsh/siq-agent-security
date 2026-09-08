@@ -11,7 +11,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
-from evidence import canonical
+from evidence import canonical, verify_receipt_bundles
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -63,10 +63,25 @@ def verify_chain(pending, history, key):
     return owner
 
 
+def verify_pending_action(pending, decision):
+    if (decision["record_type"] != "decision" or decision["action"] != "allow"
+            or decision["action_id"] != pending["action_id"]
+            or decision["receipt_id"] != pending["decision_receipt_id"]
+            or decision.get("authority_status") != "valid"
+            or "file.write" not in decision.get("effects", [])
+            or any(decision.get(field) != value for field, value in pending["scope"].items())
+            or timestamp(decision["issued_at"]) > timestamp(pending["before"]["captured_at"])):
+        raise ValueError("pending does not reference its authorized capture scope")
+    refs = {r["domain"] + ":sha256:" + r["digest"] for r in decision.get("resource_refs", [])}
+    if pending["before"]["resource_ref"] not in refs:
+        raise ValueError("pending resource is outside decision")
+
+
 def verify(report):
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
     key = Ed25519PublicKey.from_public_bytes(base64.b64decode(report["public_evidence"]["public_key"], validate=True))
+    actions, receipt_count = verify_receipt_bundles([report["public_evidence"]])
     pending = report["pending_records"]
     recoveries = report["recovery_records"]
     # This fixture has exactly two independent pending captures and one transfer each.
@@ -86,8 +101,10 @@ def verify(report):
         if envelope["expires_at"] != original["expires_at"]:
             raise ValueError("recovery extended pending expiry")
         verify_chain(original, [recovery], key)
+        verify_pending_action(original, actions[original["decision_receipt_id"]][0])
         verify_revocation(report["observer_revocation"], recovery, key)
-    return {"verified_pending_records": 2, "verified_recovery_records": 2, "verified_observer_revocations": 1}
+    return {"verified_pending_records": 2, "verified_recovery_records": 2, "verified_observer_revocations": 1,
+            "verified_receipts": receipt_count}
 
 
 def main():

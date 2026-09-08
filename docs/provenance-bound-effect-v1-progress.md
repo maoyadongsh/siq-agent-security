@@ -646,3 +646,11 @@
 - 新负例包含有效签名但错误owner、有效签名但早于接管1ns，以及无效签名；15项benchmark单测和Ruff通过。
 - 真实两次SIGKILL夹具重新运行通过（/tmp/siq-recovery-revocation.json），独立验证2份pending/2条接管/1份撤销通过；diff检查通过。
 - 验证不等于独立证明HTTP409或SIGKILL事件，也不替代完整Completion语义。生产代码未改，不重复Go全量门禁。
+
+
+### D 恢复pending与原始签名授权动作关联
+
+- 提取共享verify_receipt_bundles，主基准和恢复验证器复用链序列/hash/Ed25519验证，增加64 bundles/65536 receipts输入预算；不另写第二套回执算法。
+- 恢复pending须对应同task/session/agent/platform、action/receipt、filesystem资源和file.write allow决定；Authority valid且采样时间不早于决定。错配及有效链内容篡改/重复回执负例通过。
+- 16项benchmark单测、Ruff/diff通过；已有真实恢复报告离线验证1条决定回执、2pending/2接管/1撤销通过，原21对报告51回执/11效果封套重新验证通过。
+- 无需重复未变更的daemon，未把提供的完整前缀当作外部checkpoint证明；完整Completion语义与原始Intent材料仍需后续补齐。
