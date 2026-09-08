@@ -101,3 +101,21 @@ def test_observer_submission_and_management_contracts():
     submit = Draft202012Validator(json.loads((root / "effect-evidence-submit.v1.schema.json").read_text()))
     submit.validate({**record(), "signature": ""})
     assert list(submit.iter_errors(record()))
+
+
+def test_file_material_retains_only_bounded_metadata():
+    root = Path(__file__).parents[4] / "packages/contracts"
+    schema = json.loads((root / "file-observation.v1.schema.json").read_text())
+    Draft202012Validator.check_schema(schema)
+    v = Draft202012Validator(schema)
+    absent = {"resource_ref": "filesystem:sha256:" + "a" * 64, "exists": False,
+              "digest": "", "size": 0, "mtime": "", "captured_at": "2026-09-08T01:00:00Z"}
+    present = {**absent, "exists": True, "digest": "b" * 64, "size": 4,
+               "mtime": "2026-09-08T01:00:01Z", "captured_at": "2026-09-08T01:00:02Z"}
+    good = {"before": absent, "after": present, "expected_digest": "b" * 64,
+            "execution_state": "completed", "result": "expected"}
+    v.validate(good)
+    for field, value in [("path", "/private/report"), ("content", "secret"),
+                         ("size", 16777217), ("digest", "plaintext")]:
+        assert list(v.iter_errors({**good, "after": {**present, field: value}}))
+    assert list(v.iter_errors({**good, "before": {**absent, "size": 1}}))

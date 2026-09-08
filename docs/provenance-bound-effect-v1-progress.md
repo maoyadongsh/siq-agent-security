@@ -178,3 +178,10 @@
 - 使用真实临时文件验证写入、假成功（无文件）、同值无变化、内容不符、上限/超限、符号链接、反向时间和拒绝动作产生实际效果后的事件分类。观察对象不含路径或内容原文；admission/effectevidence race通过。
 - Go 全模块 race、vet 与四平台编译通过，日志 `/tmp/siq-file-observer-race.log`。
 - 本批提供观察库，尚未完成 CLI/HTTP observer 生命周期及观测材料持久化引用；不能宣称用户安装后已自动观察文件。Windows 原生路径语义仍未支持，四平台编译不代表 Windows 实机观察验收。
+
+### C1 文件观测材料持久化
+
+- 新增 file-observation/v1 元数据合同，Record 可选 file_observation 与证据/事件共同签名；旧无材料记录省略新字段，保持原签名表示。
+- SubmitFile 保留前后存在性、摘要、size、mtime、采样时间及预期摘要；读回重新派生 evidence_digest 并验证资源、时间、效果和执行状态关联。材料不含原始路径/文件内容。
+- 实测真实文件材料提交、幂等重试、读回、拒绝将带材料记录降级为普通摘要提交，以及外层重新签名后仍拒绝与原效果摘要不匹配的材料。
+- effectevidence 及全模块 race/vet、四平台编译、Python合同7项与Ruff通过；日志 `/tmp/siq-file-material-race.log`。API 使用流程尚未接入 SubmitFile，后续仍需可信 observer 采样生命周期、网络 oracle、Completion 和完整验收。

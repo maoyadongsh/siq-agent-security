@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/canon"
@@ -105,7 +106,7 @@ func CaptureFile(path string, maxBytes int64) (FileSnapshot, error) {
 }
 
 func validSnapshot(s FileSnapshot) bool {
-	if !resourcePattern.MatchString(s.ResourceRef) {
+	if !resourcePattern.MatchString(s.ResourceRef) || !strings.HasPrefix(s.ResourceRef, "filesystem:") {
 		return false
 	}
 	if _, err := time.Parse(time.RFC3339Nano, s.CapturedAt); err != nil {
@@ -146,6 +147,16 @@ func FileWrite(before, after FileSnapshot, expectedDigest string) (FileObservati
 }
 
 func (o FileObservation) Evidence(id string, action Action, source Source) (Evidence, error) {
+	return o.evidenceAt(id, action, source, time.Now())
+}
+
+func fileMaterialMatches(o FileObservation, e Evidence, now time.Time) bool {
+	derived, err := o.evidenceAt(e.EvidenceID, Action{ActionID: e.ActionID, DecisionReceiptID: e.DecisionReceiptID}, e.Source, now)
+	// Correlation may downgrade the result to unexpected for an incident. The
+	// original observation result remains available in the signed material.
+	return err == nil && derived.EvidenceDigest == e.EvidenceDigest && derived.ResourceRef == e.ResourceRef && derived.ObservedAt == e.ObservedAt && derived.ExecutionState == e.ExecutionState && derived.EffectType == e.EffectType && derived.Coverage == e.Coverage
+}
+func (o FileObservation) evidenceAt(id string, action Action, source Source, now time.Time) (Evidence, error) {
 	checked, err := FileWrite(o.Before, o.After, o.ExpectedDigest)
 	if err != nil || checked != o || source.Type != "host_observer" || source.Independence != "host_independent" {
 		return Evidence{}, ErrFileObservation
@@ -159,5 +170,5 @@ func (o FileObservation) Evidence(id string, action Action, source Source) (Evid
 	}
 	sum := sha256.Sum256(encoded)
 	e := Evidence{SchemaVersion: "effect-evidence/v1", EvidenceID: id, ActionID: action.ActionID, DecisionReceiptID: action.DecisionReceiptID, EffectType: "file.write", ResourceRef: o.After.ResourceRef, ExecutionState: o.ExecutionState, Source: source, Coverage: "partial", Result: o.Result, EvidenceDigest: hex.EncodeToString(sum[:]), ObservedAt: o.After.CapturedAt, SigningSchema: "local_canonical/v1"}
-	return e, e.Validate(time.Now())
+	return e, e.Validate(now)
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -67,6 +68,37 @@ func TestActualFileWriteAndFakeSuccess(t *testing.T) {
 	wrong, err := FileWrite(before, after, strings.Repeat("a", 64))
 	if err != nil || wrong.Result != "unexpected" {
 		t.Fatal(wrong, err)
+	}
+	materialRecord, err := s.SubmitFile("file-material", observed, a, source, time.Now())
+	if err != nil || materialRecord.FileObservation == nil || *materialRecord.FileObservation != observed {
+		t.Fatal(materialRecord, err)
+	}
+	materialRetry, err := s.SubmitFile("file-material", observed, a, source, time.Now())
+	if err != nil || materialRetry.Signature != materialRecord.Signature {
+		t.Fatal("file retry changed record", err)
+	}
+	plain := materialRecord.Evidence
+	plain.Signature = ""
+	if _, err = s.Submit(plain, a, source, time.Now()); !errors.Is(err, ErrConflict) {
+		t.Fatal("material removed on retry", err)
+	}
+	reloaded, err := s.Get("file-material", time.Now())
+	if err != nil || reloaded.FileObservation == nil {
+		t.Fatal(reloaded, err)
+	}
+	// Even a valid outer signature cannot bind different observation material
+	// to the existing inner evidence digest.
+	reloaded.FileObservation.After.Size++
+	reloaded.Signature, err = key.SignCanonical(reloaded.unsigned())
+	if err != nil {
+		t.Fatal(err)
+	}
+	altered, _ := json.Marshal(reloaded)
+	if err = os.WriteFile(filepath.Join(s.dir, "file-material.json"), altered, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = s.Get("file-material", time.Now()); !errors.Is(err, ErrState) {
+		t.Fatal("unbound material accepted", err)
 	}
 	a.Authorized = false
 	e.EvidenceID = "file-denied"
