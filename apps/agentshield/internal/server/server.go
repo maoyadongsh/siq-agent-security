@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
+	"siq-agent-security/apps/agentshield/internal/effectevidence"
 	"siq-agent-security/apps/agentshield/internal/export"
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/intent"
@@ -53,6 +54,9 @@ type Deps struct {
 
 // Server is the HTTP handler set.
 type Server struct {
+	effects    *effectevidence.Store
+	observerMu sync.Mutex
+	observers  map[string]observerSession
 	provenance *provenance.Store
 	intents    *intent.Store
 	d          Deps
@@ -95,9 +99,19 @@ func New(d Deps) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
+	s.effects, err = effectevidence.NewStore(d.Store.Dir, d.Key)
+	if err != nil {
+		return nil, err
+	}
+	s.observers = map[string]observerSession{}
 	if err := s.initPairing(d.PairingCode); err != nil {
 		return nil, err
 	}
+	s.mux.HandleFunc("/v1/effect-observers", s.auth(s.effectObservers, capAdmin))
+	s.mux.HandleFunc("/v1/effect-observers/", s.auth(s.revokeEffectObserver, capAdmin))
+	s.mux.HandleFunc("/v1/effect-evidence", s.auth(s.submitEffect, capEffectObserve))
+	s.mux.HandleFunc("/v1/effect-evidence/", s.auth(s.getEffect, capAdmin))
+	s.mux.HandleFunc("/v1/actions/", s.auth(s.actionEffects, capAdmin))
 	s.mux.HandleFunc("/v1/provenance-issuers", s.auth(s.provenanceIssuers, capAdmin))
 	s.mux.HandleFunc("/v1/provenance-issuers/", s.auth(s.provenanceIssuer, capAdmin))
 	s.mux.HandleFunc("/v1/provenance-assertions", s.auth(s.provenanceIssue, capAdmin))

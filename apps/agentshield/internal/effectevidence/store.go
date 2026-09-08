@@ -9,6 +9,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -109,6 +111,53 @@ func (s *Store) Get(id string, now time.Time) (Record, error) {
 	storeMu.RLock()
 	defer storeMu.RUnlock()
 	return s.get(id, now)
+}
+
+// ForAction returns verified immutable records in filename order. Corrupt
+// records fail the query instead of silently disappearing from completion data.
+func (s *Store) ForAction(actionID string, now time.Time) ([]Record, error) {
+	storeMu.RLock()
+	defer storeMu.RUnlock()
+	if actionID == "" || len(actionID) > 256 {
+		return nil, ErrInvalid
+	}
+	if err := s.checkDir(); err != nil {
+		return nil, err
+	}
+	f, err := os.Open(s.dir)
+	if err != nil {
+		return nil, ErrState
+	}
+	entries, err := f.ReadDir(MaxRecords + 1)
+	_ = f.Close()
+	if err != nil && err != io.EOF {
+		return nil, ErrState
+	}
+	if len(entries) > MaxRecords {
+		return nil, ErrCapacity
+	}
+	ids := []string{}
+	for _, entry := range entries {
+		if strings.HasPrefix(entry.Name(), ".effect-") {
+			continue
+		}
+		if !strings.HasSuffix(entry.Name(), ".json") {
+			return nil, ErrState
+		}
+		ids = append(ids, strings.TrimSuffix(entry.Name(), ".json"))
+	}
+	sort.Strings(ids)
+	out := []Record{}
+	for _, id := range ids {
+		r, err := s.get(id, now)
+		if err != nil {
+			return nil, err
+		}
+		if r.Evidence.ActionID == actionID {
+			out = append(out, r)
+		}
+	}
+	return out, nil
 }
 
 // Submit requires an authenticated observer and a verified engine action. These

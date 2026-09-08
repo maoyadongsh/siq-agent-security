@@ -13,7 +13,7 @@
 | R | 统一 RuntimeActionDescriptor，高影响参数、shell unknown，六类消费者统一 | 六类消费者已统一；V3 高影响参数默认来源约束本地验收通过 |
 | B1 | 签名 provenance、issuer registry、范围/到期/撤销、容量、不可变存储 | 签名 registry/图存储、管理与受限上报 API 已实现；固定向量与完整验收待补齐 |
 | B2 | Intent V3 双读、参数内容/来源绑定、MCP 默认不可信、派生/聚合防升级 | V3 双读、来源匹配、确定性选择与 MCP 组件验收通过；native 自动采集待完成 |
-| C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 合同、类型、验签和跨语言样例通过；存储/API/observer 待接入 |
+| C1 | EffectEvidence、独立 capability、文件 observer、可控网络 oracle | 合同、存储、capability/API 与跨语言样例通过；实际文件/网络 observer 待接入 |
 | C2 | 幂等/冲突/越权效果事件、CompletionStatus、恢复 | 待完成 |
 | D | 独立 benchmark，至少20场景、攻击对应 benign、D0–D5 分母与阶段性能 | 待完成 |
 | G | ADR 15–17、威胁27–35、能力矩阵、README、CODEOWNERS、CI smoke/nightly | 待完成 |
@@ -161,3 +161,11 @@
 - Store.Submit/Get 实现先关联再签发、16并发跨 Store 幂等、原始请求摘要冲突校验、重启读取及内外签名验证。动作后来变为允许不会将已记录的 unauthorized_effect_observed 改为成功。
 - 覆盖事件字段篡改、路径穿越、符号链接拒绝、不完整暂存文件不可读、8192容量边界。容量保守计算目录全部条目，残留暂存文件不会变为有效证据，但会占用预算。
 - effectevidence 及全模块 race、全模块 vet、四平台编译、Python合同5项和Ruff通过；Go日志 `/tmp/siq-effect-store-race.log`。HTTP/API capability、按动作查询、文件/网络 observer、Completion 仍未接入，不将存储单测视为端到端验收。
+
+### C1 observer capability 与 HTTP 增量
+
+- 新增 capEffectObserve，管理端短期签发/撤销、完整任务 scope 和固定 Source、token 摘要内存存储、到期与重启失效。提交和撤销共享锁；普通 decision/admin 不能充当 observer。
+- 接入生产 Server：POST effect-evidence、admin GET 单记录/按动作查询；来源权限→真实动作 scope→分类→原子签名存储。接口说明见 [EffectEvidence API](effect-evidence-api-v1.md)。
+- 原始 HTTP 验收验证决策 token 管理拒绝、decision/admin 提交拒绝、来源冒充、错配回执、跨任务、撤销/过期、重启 token 失效与记录保留；测试 observer 提交被拒绝动作效果，实际保存 unauthorized_effect_observed 并读回。
+- Go 全模块 race/vet、四平台编译通过，新增重启断言后 HTTP 定向 race 通过；Python 合同6项与Ruff通过。日志 `/tmp/siq-effect-http-race.log`。
+- 尚未接入实际文件/网络 observer、Completion；查询暂为8192条有界验签扫描，分页与性能基线待完善。
