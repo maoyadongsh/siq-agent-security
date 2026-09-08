@@ -31,6 +31,9 @@
     "signature": {
       "type": "string",
       "pattern": "^[0-9a-f]{128}$"
+    },
+    "file_observation": {
+      "$ref": "file-observation.v1.schema.json"
     }
   },
   "required": [

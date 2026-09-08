@@ -906,3 +906,5 @@ POST `/v1/effect-evidence` 仅 capEffectObserve，scope 必须精确匹配 Engin
 复用 ADR-013 的普通文件打开保证，抽为 internal/fileopen，准入扫描继续使用相同实现。文件 observer 拒绝路径任一可见符号链接、非普通文件、读取超预算以及打开/读取期间检测到的身份或 size/mtime 变化；Unix 保留 NOFOLLOW/NONBLOCK，Windows 保留已说明的残余 TOCTOU。
 
 Capture 仅输出资源摘要、存在性、内容 SHA256、size、mtime 和采样时间；文件原文及路径不落证据。前后资源必须一致，后采样时间不早于前采样；最长读取16 MiB。FileWrite 对比可信预期摘要：后文件缺失为 failed/unexpected；发生可见变化且摘要匹配为 completed/expected，不匹配为 completed/unexpected；前后无可见变化为 unknown/unknown，不能证明重复同值写已执行。coverage 固定 partial，independence 由受信 host observer 注册为 host_independent；同 UID 攻击者与采样间隔内瞬态变化仍属残余风险。
+
+C1 文件材料附加：不可变 Record 增加可选 file_observation（file-observation.v1 合同），旧记录缺省时保持签名字节不变。SubmitFile 将观测材料、摘要证据与 finding 同封套保存，读回重新验证材料计算的 evidence_digest、资源、时间与执行状态。相同 ID 的普通摘要提交与带材料提交不可互换；拒绝把后来补充的材料伪装为原始记录。材料只含摘要/元数据，不含路径或文件原文。
