@@ -19,6 +19,44 @@ def capture(harness, label):
             "binary_sha256": hashlib.sha256(harness.binary.read_bytes()).hexdigest(), "receipts": records}
 
 
+def verify_global_revocation(checks, actions, primary_id, benign_id):
+    """Bind a signed global withdrawal to two previously valid session receipts."""
+    from datetime import datetime
+
+    revoked = checks["revocation"]
+    fields = {"schema_version", "intent_id", "intent_digest", "revoked_at", "reason_code",
+              "signing_schema", "signature"}
+    if (set(revoked) != fields or revoked["schema_version"] != "intent-revocation/v1"
+            or revoked["signing_schema"] != "local_canonical/v1" or revoked["reason_code"] != "intent_revoked"):
+        raise ValueError("invalid global revocation contract")
+    stamp = datetime.fromisoformat(revoked["revoked_at"])
+    if stamp.tzinfo is None:
+        raise ValueError("revocation timestamp lacks timezone")
+    before_ids = checks["before_receipt_ids"]
+    second_id = checks["second_denied_receipt_id"]
+    if len(before_ids) != 2 or len({*before_ids, second_id, primary_id, benign_id}) != 5:
+        raise ValueError("revocation probes must be distinct")
+    before = [actions[identity][0] for identity in before_ids]
+    after = [actions[identity][0] for identity in (primary_id, second_id)]
+    unsigned = {k: v for k, v in revoked.items() if k != "signature"}
+    for identity in (*before_ids, primary_id, second_id):
+        record, key = actions[identity]
+        key.verify(bytes.fromhex(revoked["signature"]), canonical(unsigned))
+        if (record["record_type"] != "decision" or record["intent_id"] != revoked["intent_id"]
+                or record["intent_digest"] != revoked["intent_digest"]):
+            raise ValueError("revocation probe references another Intent")
+    sessions_before = {r["session_id"] for r in before}
+    if len(sessions_before) != 2 or {r["session_id"] for r in after} != sessions_before:
+        raise ValueError("global revocation must cover both original sessions")
+    if any(r["action"] != "allow" for r in before):
+        raise ValueError("revocation lacks two authorized preconditions")
+    if any(r["action"] != "deny" or r["reason_code"] != "intent_revoked" for r in after):
+        raise ValueError("global revocation did not deny both sessions")
+    benign = actions[benign_id][0]
+    if benign["action"] != "allow" or benign["intent_id"] == revoked["intent_id"]:
+        raise ValueError("unrelated Intent control missing")
+
+
 def verify(report):
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
     actions = {}
@@ -92,6 +130,11 @@ def verify(report):
         effects += 1
     if seen != set(scenarios):
         raise ValueError("benchmark observations are incomplete")
+    global_pair = {o["kind"]: o for o in report["observations"] if o["scenario_id"].startswith("revoked-intent-")}
+    if global_pair:
+        verify_global_revocation(report["fixture_evidence"]["global_revocation_checks"], actions,
+                                 global_pair["attack"]["stages"]["d2"]["evidence_refs"][0],
+                                 global_pair["benign"]["stages"]["d2"]["evidence_refs"][0])
     from metrics import summarize
     if report["summary"] != summarize(report["observations"]):
         raise ValueError("reported metrics differ from observations")

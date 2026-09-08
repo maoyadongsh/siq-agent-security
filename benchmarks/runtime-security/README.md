@@ -96,4 +96,4 @@ python3 benchmarks/runtime-security/performance.py --out /tmp/siq-performance.js
 
 JSON保留全部原始毫秒样本、nearest-rank P50/P95/P99、Go/平台/CPU信息、命令、commit和相关源码摘要。100个暖态顺序样本不是生产SLA，不代表并发饱和性能或冷启动开销；不得相加不同阶段的百分位来声称总延迟。性能运行不启用race插桩，race验证另行执行。PR/nightly会保存独立performance.json，暂不设未经证据支持的性能阈值。
 
-当前累计21对。revoked-intent独立于revoked-binding：同一V3 Intent绑定两个会话，各自签发匹配scope的USER来源，撤销前两者均实际allow；管理API全局撤销后两者均intent_revoked，另一个未撤销Intent仍allow。报告保留签名撤销记录、两个撤销前回执及第二会话拒绝回执ID；主攻击和正常对照计入D2，额外探针不计入场景分母。仍不执行目标工具，D3–D5保留null。全局撤销记录的语义/签名自动离线校验还需接入通用evidence.py，当前通用验证器仅覆盖回执和效果关联。
+当前累计21对。revoked-intent独立于revoked-binding：同一V3 Intent绑定两个会话，各自签发匹配scope的USER来源，撤销前两者均实际allow；管理API全局撤销后两者均intent_revoked，另一个未撤销Intent仍allow。报告保留签名撤销记录、两个撤销前回执及第二会话拒绝回执ID；主攻击和正常对照计入D2，额外探针不计入场景分母。仍不执行目标工具，D3–D5保留null。evidence.py自动验证全局撤销签名，并将Intent ID/摘要关联至两个不同会话的撤销前allow、撤销后intent_revoked及无关Intent正常对照；缺失、重复或不同会话探针拒绝。尚未重放完整Intent/来源图语义，也不据此证明检查后的执行原子取消。
