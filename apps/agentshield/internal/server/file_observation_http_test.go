@@ -202,7 +202,7 @@ func TestToolSuccessConflictsWithIndependentMissingOutputHTTP(t *testing.T) {
 	c.ProvenanceConstraints = &constraints
 	requirements := []completion.Requirement{{RequirementID: "output", EffectType: "file.write", ResourceRef: ref, ExpectedDigest: expected, MinimumIndependence: "host_independent", MinimumCoverage: "partial"}}
 	c.EffectRequirements = &requirements
-	effectCall(t, s, "POST", "/v1/intents", s.bootAdmin, c, 201)
+	issuedIntent := effectCall(t, s, "POST", "/v1/intents", s.bootAdmin, c, 201)
 	effectCall(t, s, "POST", "/v1/intent-bindings", s.bootAdmin, map[string]any{"platform": "hermes", "session_id": "s1", "agent_id": "a-1", "intent_id": "int-api"}, 201)
 	d := effectCall(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "hermes", "session_id": "s1", "agent_id": "a-1", "tool": "write_file", "tool_call_id": "missing-call", "params": map[string]any{"path": path}}, 200)
 	if d["action"] != "allow" {
@@ -241,6 +241,15 @@ func TestToolSuccessConflictsWithIndependentMissingOutputHTTP(t *testing.T) {
 		}
 	}
 	check("unknown")
+	// Revocation stops new actions, but must not erase or block historical
+	// observations needed to diagnose effects of an already issued decision.
+	effectCall(t, s, "POST", "/v1/intents/int-api/revoke", s.bootAdmin, map[string]any{"expected_intent_digest": issuedIntent["digest"]}, 200)
+	claim.EvidenceID = "tool-success-after-revoke"
+	effectCall(t, s, "POST", "/v1/tool-effect-reports", token, claim, 201)
+	afterRevoke := effectCall(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "hermes", "session_id": "s1", "agent_id": "a-1", "tool": "write_file", "tool_call_id": "revoked-call", "params": map[string]any{"path": path}}, 200)
+	if afterRevoke["action"] != "deny" || afterRevoke["reason_code"] != "intent_revoked" {
+		t.Fatal("historical report restored execution authority", afterRevoke)
+	}
 	host := issueObserver(effectevidence.Source{Type: "host_observer", SourceID: "fixture-host", Independence: "host_independent"})
 	effectCall(t, s, "POST", "/v1/tool-effect-reports", host, claim, 401)
 	effectCall(t, s, "POST", "/v1/file-observations", host, map[string]any{"observation_id": "missing", "action_id": d["action_id"], "decision_receipt_id": d["receipt_id"], "path": path, "expected_digest": expected, "max_bytes": 1024}, 201)

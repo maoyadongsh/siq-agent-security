@@ -836,3 +836,14 @@
 - 范围：E-05以“工具声称产出文件、独立采样未发现输出”验证。通用网络absence证明仍不支持，不将此描述为网络全覆盖或生产隔离。
 
 补充：声明资源和效果类型必须匹配Engine动作投影，拒绝把既有动作引用用于其他效果要求。补充该检查后重新完成全Go vet/race和四平台编译；新增资源错配断言单独通过HTTP race后提交。
+
+### 2026-09-08：撤销后历史效果与来源到期并发验收
+
+- 扩展 HTTP E-05 测试：全局 Intent 撤销后仍可收录历史工具声明并完成独立文件采样、计算冲突；同一 session 的新 Decide 必须 deny/intent_revoked，即使 warn 模式也不恢复授权。
+- 扩展 TestConcurrentProvenanceIssueDecideAndRevoke 为三模式 × revoke/expiry。每种组合16个并发签发者/决策调用者，先证明合法来源可用；过渡阶段允许符合时间快照的结果，终态同步后每人4次必须 hard deny、无 advisory，撤销码与到期码分别校验。使用原子测试时钟，无真实时间sleep或共享时钟数据竞争。新增192次到期后拒绝断言。
+- §89 对应：Effect原子重复、冲突与重开见 TestStoreAtomicIncidentRetryConflictAndRecovery；容量见 TestStoreCapacityAndInterruptedPublication / TestGraphNodeAndEdgeCapacityBoundaries；图重开见 TestGraphRejectsTrustAndSourceLaundering；实际decision→pending→SIGKILL→effect恢复和回执验证见已归档nightly-693641d及recovery_fixture。旧nightly只作为该恢复路径的基线证据。
+- §85核验发现两个剩余细项：跨task引用安全拒绝已实现，但返回not_found而非模板指定scope_mismatch；物理Assertion文件篡改还缺专门回归。保留为待处理，未用其他通过测试替代要求。
+
+P07本批已补齐：TestPersistedAssertionTamperingFailsAfterRestart 在私有临时状态实际改写已签发文件的content_digest或signature，重开Store后均要求provenance_signature_invalid；先验证未篡改记录可读。focused race与provenance vet通过。四个关联包provenance/effectevidence/receipt/server的race全部通过（/tmp/siq-revocation-expiry-audit-race.log），receipt/server vet通过。无生产实现变更。
+
+远端功能基线1f10e9c的ci 34189914689与runtime-security 34189914681均success；本批新增测试尚待推送后的新CI，不用该基线代替新增测试证据。
