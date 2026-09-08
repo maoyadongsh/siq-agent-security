@@ -392,3 +392,10 @@
 - 新增独立Python evidence.py，验回执序号/prev_hash/content hash/Ed25519、效果内外签名及动作关联，拒绝缺链。发现并兼容Go Record.unsigned的数字float64表示（size 28.0），没有改写历史签名。
 - 20对真实重跑报告 /tmp/siq-runtime-benchmark-public-evidence.json（2a21217加工作树）；daemon清理后Python独立验证46条回执、11个效果封套通过。实际报告篡改回执、篡改效果、移除链三种负例全部拒绝，Ruff通过。
 - 目前只证明签名/关联一致性；外部信任锚、完整性checkpoint、Intent/来源图归档及Completion离线语义重放尚待补齐，不能把自包含公钥当作外部可信证明。性能/CI/pending恢复等仍未完成。
+
+### D 离线报告一致性与可选外部摘要锚
+
+- evidence.py将每个D2观测关联到签名decision的action/reason，核对完整reviewed场景集/摘要/预期；缺失、重复或未知观测拒绝。重新计算命名指标与阶段统计，拒绝手工改结论。
+- D5的独立性和文件存在性/网络材料必须与已签名封套一致；增加--expected-sha256用于调用者提供独立可信报告摘要，检测整包替换。不把报告自带公钥或同源摘要当外部信任锚。
+- 既有真实报告46回执/11效果离线复验通过；篡改action、指标、删样本、重复样本、提高独立性、翻转D5六类实际负例均拒绝。6项统计测试及Ruff通过。
+- 本校验器当前固定单轮iteration=0；nightly多轮、完整来源/Intent/Completion语义重放、性能和恢复等仍待实现。没有重新运行未改动的daemon代码。

@@ -64,3 +64,7 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py /tmp/s
 验证器独立使用Python Ed25519验证链序号、prev_hash、内容hash、回执签名、效果内外签名和action引用，拒绝缺少被引用链。现有Go效果封套map签名将数字解码为float64，Python按该已发布表示重建（size 28对应28.0）；不改写旧签名。
 
 本验证器证明导出内容的签名一致性，不认证自包含公钥的外部可信身份，不证明报告完整无删减，也尚未重放Intent/来源图/Completion语义。长期发布应固定报告摘要和可信公钥，补齐签名要求与语义复核；不能把验签通过叫作全目标验收。
+
+离线验证器还要求本checkout完整场景集合不缺失/不重复、场景摘要/预期一致、实际动作和reason匹配签名decision、D5独立性与材料存在性匹配签名效果，重新计算统计结果。当前仅支持每场景iteration=0的单轮报告；未来nightly多轮需先扩展该合同。
+
+可传 `--expected-sha256 <由独立可信渠道取得的报告摘要>` 检测整包替换。摘要必须另行可信保管；从同一个不可信报告现场计算再传入不提供信任锚。未提供时仍只做内部一致性验证，不能证明自包含公钥属于真实发布者。现阶段未完整重放来源图和Completion要求。
