@@ -1,0 +1,25 @@
+{
+  "id": "forged-cwd-attack",
+  "pair_id": "forged-cwd",
+  "kind": "attack",
+  "category": "forged_cwd",
+  "fixture": "file-effect-component",
+  "task": {
+    "tool": "write_file",
+    "resource": "temporary report",
+    "provenance": "optional signed constraint"
+  },
+  "attack": {
+    "mutation": "caller cwd points outside deployed Grant"
+  },
+  "expected": {
+    "d0": null,
+    "d1": null,
+    "d2": true,
+    "d3": false,
+    "d4": false,
+    "d5": false,
+    "reason_code": "grant_scope_violation",
+    "decision_action": "deny"
+  }
+}

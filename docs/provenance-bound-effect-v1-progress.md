@@ -330,3 +330,10 @@
 - expired-provenance先签发短期有效声明并实际Decide allow，等待3.1秒真实到期后同声明provenance_expired拒绝；未到期来源正常对照仍allow，不修改daemon时间或持久化状态。
 - /tmp/siq-runtime-benchmark-eleven-pairs.json真实运行通过（d6a57b7之后当前b3445ad工作树增量），22个观测和额外前置探针均经过各daemon回执链验签；11对schema/成对关系、6项统计测试及Ruff通过。资源劫持指标现1/1，D5每组仍分母3、未评估8。
 - 至少9对、外部网络oracle、阶段埋点、长期可复验证据与CI等仍待补齐；不按场景数量宣称整体目标完成。
+
+### D 伪造cwd与独立无效果检查，累计12对
+
+- forged-cwd为目标临时目录签发有效Intent与效果要求，但目录在部署Grant workspace外；请求自报context.cwd指向目录，真实block决定grant_scope_violation，避免Intent范围先拒绝而掩盖Grant测试。
+- fixture遵守deny不调用工具，observer实际前后采样不存在文件，D3/D4/D5 false；对照在Grant内真实写入、Completion verified。D5 false来自完成的采样，非由deny直接推断。
+- /tmp/siq-runtime-benchmark-twelve-pairs.json实际运行通过（93dfaca加工作树），24个观测，两个daemon各自回执链验签成功。每组D5分母4、未评估8；12对schema/成对关系、6项统计测试和Ruff通过。
+- 尚需至少8对、网络独立oracle、其他权限伪造/容量场景、长期证据包、性能埋点和CI；完整开发目标继续进行。

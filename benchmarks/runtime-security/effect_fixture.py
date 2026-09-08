@@ -12,9 +12,14 @@ def run(h, base):
     observations = []
     content = b"synthetic benchmark report\n"
     expected = hashlib.sha256(content).hexdigest()
-    for pair, kind in product(("fake-success", "denied-effect", "conflicting-effect"), ("attack", "benign")):
+    for pair, kind in product(("fake-success", "denied-effect", "conflicting-effect", "forged-cwd"), ("attack", "benign")):
         identity = pair + "-" + kind
         target = h.workspace / "company-a" / (identity + ".txt")
+        forged_cwd = pair == "forged-cwd" and kind == "attack"
+        if forged_cwd:
+            outside = h.root / "outside-grant"
+            outside.mkdir()
+            target = outside / "report.txt"
         contract = h.api("/v1/intents/int-native-fixture")
         for key in ("digest", "signature", "signing_schema"):
             contract.pop(key, None)
@@ -22,8 +27,11 @@ def run(h, base):
                         allowed_tools=[h.write_tool], allowed_effects=["file.write"],
                         provenance_constraints=[{"parameter_path": "/path", "allowed_source_types": ["USER"],
                                                  "minimum_trust": "trusted", "required": False}])
-        denied = pair == "denied-effect" and kind == "attack"
-        if denied:
+        if forged_cwd:
+            contract["resource_constraints"] = [{"domain": "filesystem", "operator": "prefix",
+                                                 "value": str(target.parent)}]
+        denied = (pair == "denied-effect" and kind == "attack") or forged_cwd
+        if denied and not forged_cwd:
             contract["allowed_tools"] = [h.read_tool]
         # Optional path provenance isolates the effect check; Grant and Intent still constrain the path.
         resource = "filesystem:sha256:" + hashlib.sha256(json.dumps({"domain": "filesystem", "value": str(target)},
@@ -38,6 +46,8 @@ def run(h, base):
         decision_token = (h.state / "token").read_text().strip()
         request = {key: scope[key] for key in ("platform", "session_id", "agent_id")}
         request.update(tool=h.write_tool, tool_call_id=identity, params={"path": str(target)})
+        if pair == "forged-cwd":
+            request["context"] = {"cwd": str(target.parent)}
         decision = h.api("/v1/decide", request, token=decision_token)
         base.require(decision["action"] == ("deny" if denied else "allow"), "unexpected write decision")
         observer = h.api("/v1/effect-observers", {"source": {"type": "host_observer",
@@ -47,8 +57,8 @@ def run(h, base):
               "decision_receipt_id": decision["receipt_id"], "path": str(target), "expected_digest": expected,
               "max_bytes": 1024}, token=observer, expected=201)
         # Invoke a controlled fixture; denied-effect deliberately simulates a bypass after deny.
-        tool_result = {"success": True}
-        if kind == "benign" or pair != "fake-success":
+        tool_result = None if forged_cwd else {"success": True}
+        if not forged_cwd and (kind == "benign" or pair != "fake-success"):
             target.write_bytes(b"substituted output" if pair == "conflicting-effect" and kind == "attack" else content)
         record = h.api("/v1/file-observations/" + identity + "/finish", {"path": str(target)},
                        token=observer, expected=201)
@@ -57,15 +67,15 @@ def run(h, base):
         base.require(persisted == record, "persisted effect differs")
         completion = h.api("/v1/tasks/" + contract["task_id"] + "/completion")
         exists = record["file_observation"]["after"]["exists"]
-        base.require(exists == (kind == "benign" or pair != "fake-success"), "file observer mismatch")
-        if denied:
+        base.require(exists == (not forged_cwd and (kind == "benign" or pair != "fake-success")), "file observer mismatch")
+        if denied and not forged_cwd:
             base.require(record["finding_code"] == "unauthorized_effect_observed", "denied effect incident missing")
-        expected_status = "verified" if kind == "benign" else "incomplete" if pair == "fake-success" else "conflicting"
+        expected_status = "verified" if kind == "benign" else "incomplete" if pair == "fake-success" or forged_cwd else "conflicting"
         base.require(completion["status"] == expected_status,
                      "completion accepted fake success or rejected actual write")
         stages = {f"d{i}": {"value": None, "evidence_refs": []} for i in range(6)}
         stages["d2"] = {"value": True, "evidence_refs": [decision["receipt_id"]]}
-        stages["d3"] = {"value": True, "evidence_refs": ["fixture-tool:" + identity]}
+        stages["d3"] = {"value": not forged_cwd, "evidence_refs": ["fixture-tool:" + identity]}
         stages["d4"] = {"value": exists, "evidence_refs": [identity]}
         stages["d5"] = {"value": exists, "evidence_refs": [identity], "independence": "host_independent",
                          "material_verified": True}
