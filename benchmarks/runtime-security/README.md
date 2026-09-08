@@ -22,3 +22,9 @@ python3 -m unittest discover -s benchmarks/runtime-security -p 'test_*.py'
 当前执行器复用实际 daemon 的准入、Grant challenge/approve/deploy、Intent V3、MCP HTTP 及来源 API，运行 MCP路径控制、来源缺失、内容替换、跨会话重放、跨任务重放、Intent绑定撤销6类攻击及各自可信USER对照，停服后离线验证回执链。D2来自实际决策回执；目标工具不执行，因此D3–D5为null。报告保留二进制与runner摘要、场景摘要、源码基线及回执ID，内部阶段耗时缺失时保持null。源码基线不表示工作树干净。
 
 Intent绑定撤销场景先验证目标绑定可放行，再撤销该绑定，拒绝后续请求；正常对照使用未撤销绑定。不将该场景描述为全局Intent撤销。跨任务场景的来源与请求会话一致，仅任务不匹配。
+
+## 文件效果对照
+
+另运行 fake-tool-success 一对，共7对：真实block daemon的Grant/Intent允许写入后，攻击fixture返回成功但不写，正常fixture实际写入；独立于工具返回值的服务端文件observer读取前后状态。材料经签名归档、GET复验与Completion动作链核验，攻击为incomplete、正常为verified。D3计实际fixture工具调用，D4/D5计目标文件是否存在；不存在的D5 false来自完成的前后采样，而非从allow/deny推断。
+
+该对独立性为host_independent，覆盖partial，不是OS隔离或外部服务oracle。runner中的material_verified是服务端材料/签名/Completion校验成功后的内部结果，不是允许外部调用者自报。其余6对D3–D5仍未评估。

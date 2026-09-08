@@ -302,3 +302,10 @@
 - 新增revoked-binding：先对新合法绑定与匹配来源实际Decide allow，再通过管理API撤销绑定，后续intent_binding_revoked拒绝；原有效绑定正常对照仍allow。此处是绑定撤销，不宣称全局Intent撤销。
 - 真实报告 /tmp/siq-runtime-benchmark-six-pairs.json（146b0bb加本轮工作树），12个基准观测及额外撤销前探针回执全部离线验签；6对schema/成对关系、分母检查、4项统计测试、Ruff通过。D5仍为0分母。
 - 尚需至少14对、真实效果阶段与独立oracle、性能埋点和CI；全局撤销语义与完整DoD继续按实际功能核对。
+
+### D 首组D3–D5文件效果基准，累计7对
+
+- 新增独立effect_fixture：真实block daemon准入、Grant批准部署、V3效果要求签发和Decide allow后运行受控fixture工具；攻击返回success但不写，正常分支实际写文件。
+- 服务端observer真实前后采样、签名材料归档、GET复验与Completion历史动作复核；攻击incomplete且实际文件不存在，正常verified。D5数据来自host_independent/partial材料，不是模型或工具返回值。
+- /tmp/siq-runtime-benchmark-seven-pairs.json实际运行成功（07f325f加工作树），14个基准观测；每组D5分母1、其余6条排除。全部场景schema校验、4项统计测试、Ruff通过。两套daemon各自回执链离线验签通过。
+- 仍待至少13对、其他效果攻击/外部oracle、全部命名指标、性能埋点和CI；host observer不代表OS隔离。报告中fixture临时状态在结束后清理，最终长期可独立复验的证据包仍需完善。
