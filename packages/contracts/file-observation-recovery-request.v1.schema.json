@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "observation_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "observer_id": {
+      "type": "string",
+      "pattern": "^observer-[0-9a-f]{32}$"
+    },
+    "expected_owner": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "observation_id",
+    "observer_id",
+    "expected_owner"
+  ]
+}
