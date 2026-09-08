@@ -32,7 +32,7 @@ func Open(dir string, key *signing.Key) (*Store, error) {
 	if dir == "" || key == nil {
 		return nil, errors.New("intent: directory and key required")
 	}
-	for _, name := range []string{"intents", "intent-bindings", "intent-binding-revocations", "context-assertions"} {
+	for _, name := range []string{"intents", "intent-bindings", "intent-binding-revocations", "intent-revocations", "context-assertions"} {
 		if err := os.MkdirAll(filepath.Join(dir, name), 0700); err != nil {
 			return nil, err
 		}
@@ -309,6 +309,9 @@ func (s *Store) ResolveBinding(platform, sessionID, agentID string) (*Contract, 
 	}
 	if c.TaskID != found.TaskID || c.Agent.ID != agentID || c.Agent.Platform != platform {
 		return nil, found, violation("intent_agent_mismatch")
+	}
+	if err := s.checkIntentRevocation(c); err != nil {
+		return &c, found, err
 	}
 	if err := c.Active(time.Now()); err != nil {
 		return nil, found, err

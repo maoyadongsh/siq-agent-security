@@ -490,3 +490,10 @@
 - 能力矩阵新增当前V1组件覆盖表，不提升native平台综合支持等级；明确20对场景、八阶段微基准、两次SIGKILL与未完成平台/离线重放/远端CI的区别。
 - 新增.github/CODEOWNERS，以仓库owner @maoyadongsh覆盖模板要求的全部核心路径，并覆盖effectevidence/completion/context/适配器/基准和规则文件本身。未修改GitHub Ruleset，main protection仍需独立核验。
 - capability honesty门禁、新增文档相对链接/测试符号核对、必需CODEOWNERS路径存在性及diff检查通过。仅文档/审阅路由改动，不重复运行生产代码测试。README整合、最终逐项DoD报告及完整目标其余任务继续待完成。
+
+### B 全局Intent撤销存储与绑定解析
+
+- 核查发现既有revoked_intent类别实际只有绑定撤销；新增intent-revocation/v1终态合同与RevokeIntent/GetIntentRevocation，不以循环撤销当前binding替代全局终态。
+- 原Intent与各binding不改写，4096上限、expected digest冲突、签名排他发布及同内容并发幂等。ResolveBinding在authority读锁内每次复核全局撤销，保留已验证合同/绑定供deny回执；Bind拒绝撤销后的新会话。Get/List仍供历史审计，不表示授权有效。
+- 实际两个会话撤销前均有效、一次全局撤销后重建Store两者都intent_revoked；8路重试同签名，新绑定拒绝、原合同字节保持、篡改全局摘要失败关闭。Go全模块race/vet及四平台编译通过（/tmp/siq-global-intent-revocation-race.log），schema正例/四类结构负例与diff检查通过。
+- 管理HTTP、三模式/hold复核与多会话实际benchmark下一步接入；不宣称全局撤销场景已在20对基准中完成。固定跨语言语料、全局撤销容量/并发解析矩阵继续待补。

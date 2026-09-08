@@ -49,6 +49,9 @@ func (s *Store) Bind(b Binding) (Binding, error) {
 	if err != nil {
 		return b, err
 	}
+	if err = s.checkIntentRevocation(c); err != nil {
+		return b, err
+	}
 	if err = c.Active(time.Now()); err != nil {
 		return b, err
 	}
