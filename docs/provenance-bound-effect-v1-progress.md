@@ -759,3 +759,10 @@
 - performance.py将显式GOTOOLCHAIN传入受限环境，报告确认Go1.26.6 linux/arm64。实际5次预热+100次采样，完整Decide P50/P95/P99=7.818665/12.52045/12.676101ms。
 - 归档完整原始数据与源码哈希，Engineering Report区分该工作区采样和95e425c历史阶段数据。不是HTTP端到端或生产SLA，不把阶段百分位相加。
 - 实际性能测试与逐样本包含关系检查通过；receipt vet、Python Ruff、diff检查通过。仅测试/脚本修改，不改生产路径。
+
+## 2026-09-08：剩余19份合同结构矩阵
+
+- 新增test_effect_schema_matrix.py覆盖Context、Effect/observer/requirement/Completion、文件begin/finish/pending/recovery、网络材料/提交、Intent V3及全局撤销，共19份；结合此前7份来源合同，26份新增合同均已有结构正负矩阵入口。
+- 正例复用共享固定向量及已归档真实恢复/Completion记录；对受约束嵌套对象逐项删除必填字段和注入额外权限字段，检查非法ID/签名格式/摘要/时间/taxonomy/字符串与数值容量/数组上限。只解析同目录已提交schema引用，不访问网络。
+- 矩阵不等于全部安全语义：例如超长重复数组可能同时违反唯一性，不能替代Go的精确容量上限测试；签名格式通过不等于密码学签名有效，schema也不验证issuer/父图/时序关系。对应Go/HTTP负向及固定向量仍是独立验收依据。
+- runtime-security显式纳入新矩阵。五份合同测试共187项通过；Ruff、diff检查通过。生产代码和schema未改动。
