@@ -177,7 +177,7 @@ class ModelsTest(unittest.TestCase):
             body = plan()
             for call, name in zip(body["skills"], names):
                 call["name"] = name
-            with self.assertRaisesRegex(AgentError, "plan_skill_order_invalid"):
+            with self.assertRaisesRegex(AgentError, "plan_dependency_invalid|skill_unregistered"):
                 TaskPlan.parse(strict_json(canonical(body)))
 
     def test_model_response_must_be_complete(self):

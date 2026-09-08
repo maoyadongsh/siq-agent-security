@@ -7,6 +7,7 @@ from typing import Protocol
 from urllib.parse import quote
 
 from .contracts import (
+    SKILL_REQUIRES,
     AgentError,
     ContactCandidate,
     DataSensitivity,
@@ -23,7 +24,7 @@ from .contracts import (
     string,
 )
 from .gateway import ToolGateway
-from .models import ModelProvider
+from .models import ModelProvider, proposal_schema
 
 
 class SourceRecorder(Protocol):
@@ -36,7 +37,7 @@ class SkillRegistry:
 
     @staticmethod
     def catalog() -> list[dict]:
-        return [
+        catalog = [
             {"name": "secure-research", "description": "Review selected GitHub files at the latest commit.",
              "input": {"repository": "owner/repo", "question": "string", "scope": ["relative file path"]},
              "output": "ResearchResult"},
@@ -45,6 +46,17 @@ class SkillRegistry:
             {"name": "secure-delivery", "description": "Deliver with recipient provenance and SIQ authorization.",
              "input": {"contact": "contact name from task"}, "output": "DeliveryResult"},
         ]
+        inputs = proposal_schema("model-task-plan-v2")["properties"]["skills"]["prefixItems"]
+        allowed_tools = {"secure-research": ["web_fetch", "read_file"],
+                         "secure-report": ["write_file", "verify_report"],
+                         "secure-delivery": ["read_file", "web_fetch", "send_message"]}
+        for entry, schema in zip(catalog, inputs):
+            entry.update(requires=list(SKILL_REQUIRES[entry["name"]]),
+                         input_schema=schema["properties"]["input"],
+                         output_schema={"type": "object", "title": entry["output"]},
+                         allowed_tools=allowed_tools[entry["name"]],
+                         security_requirements=["signed_intent", "trusted_context", "parameter_provenance", "ToolGateway"])
+        return catalog
 
 
 def render_report(path: str, research: ResearchResult) -> ReportArtifact:

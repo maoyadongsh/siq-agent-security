@@ -27,7 +27,7 @@ class ApplicationTest(unittest.TestCase):
                        cwd=ROOT / "apps/agentshield", check=True, capture_output=True)
 
     def run_application(self, *, mode="benign", index=0, effect="normal", model=None, before=None, source=None,
-                        approval=False, hold=None, trifecta=False):
+                        approval=False, hold=None, trifecta=False, output="delivery"):
         directory = self.root / self._testMethodName
         with LocalDaemon(self.binary, directory) as daemon, FixtureServices(ROOT / "demo/fixtures", mcp_mode=mode) as fixtures:
             if source is not None:
@@ -36,6 +36,7 @@ class ApplicationTest(unittest.TestCase):
             result = application.run("Review and deliver the approved repository to Alice",
                 repository="fixture/secure-project", question="Review code", scope=("README.md",), effect_mode=effect,
                 approval_required=approval, on_hold=hold, trifecta=trifecta,
+                requested_output=output,
                 before_execution=(lambda authority: before(authority, fixtures)) if before else None)
             # Readback via SIQ revalidates signed evidence and historical action binding.
             for action in result["task"]["actions"]:
@@ -51,6 +52,29 @@ class ApplicationTest(unittest.TestCase):
                 self.assertEqual(action["decision_trifecta"], signed["trifecta"])
                 self.assertEqual(action["action_id"], signed["action_id"])
             return result
+
+    def test_research_only_executes_no_write_or_delivery_and_does_not_invent_effect(self):
+        result = self.run_application(output="research")
+        self.assertEqual(result["task"]["status"], "researched")
+        self.assertEqual(result["task"]["selected_skills"], ["secure-research"])
+        self.assertEqual(result["task"]["completed_skills"], ["secure-research"])
+        self.assertIsNone(result["report"])
+        self.assertFalse(result["messages"])
+        self.assertTrue(result["research"]["summary"])
+        self.assertEqual({a["tool"] for a in result["task"]["actions"]}, {"web_fetch"})
+        self.assertEqual(result["task"]["completion"]["requirements"], [])
+        self.assertNotEqual(result["task"]["completion"]["status"], "verified")
+        self.assertEqual(result["intent"]["allowed_tools"], ["web_fetch"])
+
+    def test_report_subset_commits_only_report_and_does_not_lookup_recipient(self):
+        result = self.run_application(output="report")
+        self.assertEqual(result["task"]["status"], "verified")
+        self.assertEqual(result["task"]["selected_skills"], ["secure-research", "secure-report"])
+        self.assertEqual([r["requirement_id"] for r in result["task"]["completion"]["requirements"]], ["report"])
+        self.assertTrue(Path(result["report"]["path"]).is_file())
+        self.assertFalse(result["messages"])
+        self.assertEqual({a["tool"] for a in result["task"]["actions"]}, {"web_fetch", "write_file"})
+        self.assertNotIn("send_message", result["intent"]["allowed_tools"])
 
     def test_normal_has_actual_file_sink_and_two_verified_requirements(self):
         result = self.run_application()

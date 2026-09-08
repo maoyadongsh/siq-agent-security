@@ -102,7 +102,7 @@ class TaskAuthority:
     def __init__(self, admin: JsonAPI, decision: JsonAPI, identity: Identity, task: UserTask,
                  *, github: str, mcp: str, contacts_path: Path, contacts: dict[str, str],
                  delivery_url: str, requirements: list[dict] | None = None, revision: str | None = None,
-                 approval_required=False, confidential_path: Path | None = None):
+                 approval_required=False, confidential_path: Path | None = None, selected_skills=None):
         self.admin, self.identity, self.task = admin, identity, task
         self.client = SecurityClient(decision, identity)
         self.github, self.mcp, self.contacts_path, self.contacts = github.rstrip("/"), mcp, contacts_path, dict(contacts)
@@ -111,6 +111,21 @@ class TaskAuthority:
             raise AgentError("confidential_fixture_path_invalid")
         self.confidential_path = confidential_path
         self.read_only = requirements is None
+        self.selected_skills = tuple(selected_skills or ("secure-research", "secure-report", "secure-delivery"))
+        tools, effects = ["web_fetch"], ["network.request"]
+        if requirements is not None:
+            if "secure-report" in self.selected_skills:
+                tools.append("write_file")
+                effects.append("file.write")
+            if "secure-delivery" in self.selected_skills or confidential_path is not None:
+                tools.append("read_file")
+                effects.append("file.read")
+            if "secure-delivery" in self.selected_skills:
+                tools.append("send_message")
+                effects.append("message.send")
+            if approval_required and "secure-report" in self.selected_skills:
+                tools.append("verify_report")
+                effects.append("process.exec")
         now = datetime.now(timezone.utc)
         self.issued = (now - timedelta(seconds=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
         self.expires = (now + timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -121,8 +136,8 @@ class TaskAuthority:
             "schema_version": "intent/v3", "intent_id": "intent-" + identity.task_id, "task_id": identity.task_id,
             "principal": {"type": "user", "id": "hackathon-operator"},
             "agent": {"id": identity.agent_id, "platform": identity.platform}, "purpose": task.prompt,
-            "allowed_tools": (["web_fetch", "read_file", "write_file", "send_message"] + (["verify_report"] if approval_required else [])) if requirements else ["web_fetch"],
-            "allowed_effects": (["network.request", "file.read", "file.write", "message.send"] + (["process.exec"] if approval_required else [])) if requirements else ["network.request"],
+            "allowed_tools": tools,
+            "allowed_effects": effects,
             # Existing resource constraints are conjunctive, including missing
             # domains. Across heterogeneous tools use V3's required per-action
             # provenance constraints plus the restricted issuer and Grant scope.
@@ -175,7 +190,8 @@ class TaskAuthority:
 
     def approved_url(self, value):
         root = self.github + "/repos/" + quote(self.task.repository, safe="/")
-        if value == root + "/commits/HEAD" or (not self.read_only and value in (self.mcp, self.delivery_url)):
+        if value == root + "/commits/HEAD" or (not self.read_only and "secure-delivery" in self.selected_skills
+                                                and value in (self.mcp, self.delivery_url)):
             return True
         for path in self.task.scope:
             prefix = root + "/contents/" + quote(path, safe="/") + "?ref="

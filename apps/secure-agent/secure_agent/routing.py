@@ -1,9 +1,16 @@
 """Constrained model routing; transitions are explicit, with no failure fallback."""
 
 import os
-from dataclasses import replace
+from dataclasses import asdict, replace
 
-from .contracts import AgentError, DataSensitivity, TaskPlan, highest_sensitivity
+from .contracts import (
+    AgentError,
+    DataSensitivity,
+    TaskPlan,
+    canonical,
+    highest_sensitivity,
+    strict_json,
+)
 from .model_policy import CALL_CONTEXT, CallContext, ModelPolicy
 from .models import from_environment
 
@@ -79,13 +86,22 @@ class ModelRouter:
         # workloads even paths, repository name and free text stay off remote APIs.
         safe = task
         if task.source_sensitivity != DataSensitivity.PUBLIC and self.planner.capabilities.locality == "remote":
-            safe = replace(task, prompt="Analyze selected files, save a report and deliver it to Alice.",
+            description = {"research": "Only analyze selected files. Do not save or deliver a report.",
+                "report": "Analyze selected files and save a report. Do not deliver it.",
+                "delivery": "Analyze selected files, save a report and deliver it to Alice."}[task.requested_output]
+            safe = replace(task, prompt=description,
                 question="Review selected files for security issues", repository="private/repository",
                 scope=tuple(f"source-{i}" for i in range(len(task.scope))), report_path="report.md",
                 contact="Alice", source_sensitivity=DataSensitivity.PUBLIC)
         elif self.planner.capabilities.locality == "remote":
             safe = replace(task, report_path="report.md")
         plan = self._invoke(self.planner, "plan", safe, catalog, sensitivity=safe.source_sensitivity)
+        plan = TaskPlan.parse(strict_json(canonical(asdict(plan))))
+        limit = {"research": 1, "report": 2, "delivery": 3}[task.requested_output]
+        if len(plan.skills) > limit:
+            raise AgentError("plan_exceeds_task_scope")
+        if len(plan.skills) < limit:
+            raise AgentError("plan_goal_incomplete")
         # Bind only the exact operator-provided aliases, never repair arbitrary
         # model substitutions. The resulting proposal still faces SIQ authorization.
         calls = []

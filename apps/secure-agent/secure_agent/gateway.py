@@ -129,6 +129,8 @@ class ToolGateway:
                                                        strict_json(canonical(decision)))
             if not isinstance(result, dict):
                 raise AgentError("tool_result_invalid")
+            if type(result.get("success")) is bool:
+                event["reported_success"] = result["success"]
             # Observe the actual result for SIQ's stateful taint processing.
             observed = self._observation(request, decision, result) if self._observation else result
             self._security.observe(request, decision, observed)
