@@ -5,7 +5,7 @@
 **模型不判断 Skill 是否安全。** 裁决只由 `siq-agent-security` 二进制产出。产品说明见根 [`README.md`](./README.md)；本文件是本机操作与夹具步骤。企业控制面见 [`docs/control-plane.md`](./docs/control-plane.md)。本地模式只需 `serve`，不必启动 PostgreSQL / `:8600`。
 
 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)  
-分支：`main`（本地产品与 Trusted Intent V2 核心已合入）。完整产品说明、能力边界和最新源码安装步骤以根 README 为准。
+分支：`main`（本地产品与 Trusted Intent V2 核心已合入）。研究演示与发布入口见根 README；本地源码构建及 Skill 接入步骤见下文。
 
 ## 三步（本机复现）
 
@@ -28,7 +28,7 @@ export SIQ_AGENT_SECURITY_STATE_DIR="${SIQ_AGENT_SECURITY_STATE_DIR:-$(pwd)/.sta
 
 浏览器打开 `http://127.0.0.1:47611`，在页面输入终端打印的**管理配对码**（5 分钟内单次有效）。适配器决策 token 在 `$SIQ_AGENT_SECURITY_STATE_DIR/token`（0600），不要贴进聊天或截图。当前是同 UID 桌面模式：不能防止同一用户下的 Agent 直接跑 CLI。
 
-把 Skill 装进 Hermes / OpenClaw / WorkBuddy 的步骤见根 README [快速开始](./README.md#快速开始)。以下在仓库根目录执行，并保持与 `serve` 相同的状态目录环境变量：
+以下是已构建本地二进制后，将 Skill 接入 Hermes / OpenClaw / WorkBuddy 的步骤。在仓库根目录执行，并保持与 `serve` 相同的状态目录环境变量：
 
 ```bash
 export SIQ_AGENT_SECURITY_BIN="$(pwd)/apps/agentshield/siq-agent-security"
