@@ -1,3 +1,9 @@
 # Preserve captured verification logs byte-for-byte, including their final blank line.
 docs/hackathon/evidence/final-regression-20260908/web-tests.log whitespace=-blank-at-eof
 docs/hackathon/evidence/final-regression-20260908/web-unit-final.log whitespace=-blank-at-eof
+# Preserve upstream license/notice formatting without changing imported bytes.
+LICENSES/third-party/chevrotain-allstar-0.3.1--package__LICENSE whitespace=cr-at-eol
+LICENSES/third-party/cookie-1.1.1--LICENSE whitespace=-blank-at-eof
+LICENSES/third-party/debug-4.3.7--package__LICENSE whitespace=-blank-at-eof
+LICENSES/third-party/dompurify-3.2.1--package__LICENSE whitespace=-blank-at-eof
+site/vendor/mermaid-bundled-notices.txt whitespace=-blank-at-eol
