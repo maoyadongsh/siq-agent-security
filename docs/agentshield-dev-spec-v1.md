@@ -974,3 +974,7 @@ Completion 对已验签网络材料同时比较签名 endpoint 与 requested/rec
 ### C2 begin写前持久化与原快照重用
 
 文件begin先检查已签名pending记录。同ID且owner/source/scope/动作/预期摘要/预算/资源一致、原deadline仍有效时，仅重用原before并恢复内存索引，返回200；不重新读取文件、不延长deadline。不同owner或元数据冲突409，损坏记录失败关闭。首次采样必须SavePendingFile成功后才返回201和建立内存索引。Server重启导致原token失效，新token不能以begin隐式接管旧快照；显式管理恢复仍须后续接入。
+
+### C2 observer撤销持久终态
+
+DELETE effect-observers/{id}在删除内存凭据前发布effect-observer-revocation/v1签名记录，字段仅owner_digest、revoked_at和签名元数据，独立effect-observer-revocations目录8192条预算。撤销记录不可覆盖，同owner重试返回原记录；损坏状态失败关闭。后续pending恢复必须检查原owner与接管owner的终态，不能通过注册相同source的新token复活被撤销采样。新token注册本身不撤销旧终态，也不自动获得旧pending。

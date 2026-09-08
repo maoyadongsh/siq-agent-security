@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "effect-observer-revocation/v1"
+    },
+    "owner_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "revoked_at": {
+      "type": "string",
+      "format": "date-time",
+      "maxLength": 64
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "owner_digest",
+    "revoked_at",
+    "signing_schema",
+    "signature"
+  ]
+}
