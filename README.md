@@ -4,7 +4,7 @@
 
 <h1 align="center">SIQ Agent Security</h1>
 
-<p align="center"><strong>为 Agent Skills 提供可复现的运行时授权与效果核验。</strong></p>
+<p align="center"><strong>面向自主 Agent 的可信执行与效果核验</strong></p>
 <p align="center">Trusted Intent · Parameter Provenance · Verified Effects</p>
 
 <p align="center">

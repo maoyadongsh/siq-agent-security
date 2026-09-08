@@ -4,7 +4,7 @@
 
 <h1 align="center">SIQ Agent Security</h1>
 
-<p align="center"><strong>Reproducible runtime authorization and effect verification for Agent Skills.</strong></p>
+<p align="center"><strong>Trusted Execution and Effect Verification for Autonomous Agents</strong></p>
 <p align="center">Trusted Intent · Parameter Provenance · Verified Effects</p>
 
 <p align="center">
