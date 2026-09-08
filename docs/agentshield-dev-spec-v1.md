@@ -1024,3 +1024,7 @@ Hermes显式携带Authority引用的调用，在决策关联缓存冲突或容�
 E-05补充：已签名记录中的tool_report/self_reported、execution_state=completed表示工具的成功声明，仍要求coverage/result为unknown，不能证明实际成功。若同一动作和决策回执存在满足上述独立性与覆盖要求的实际失败材料，则声明与材料构成冲突，Completion返回conflicting并保留双方引用。成功声明单独存在仍为unknown；仅有无材料的失败声明不构成此类冲突；不同动作不混合比较。本轮以独立文件采样确认输出未出现验证该分支，不宣称具备通用网络未接收证明。
 
 POST `/v1/tool-effect-reports` 使用capDecision，合同为tool-effect-report.v1（复用effect-evidence-submit/v1字段）。仅允许tool_report/self_reported、coverage/result=unknown、空signature；source_id是未验证的工具声明标签。动作与回执必须由Engine历史台账解析并匹配，其他source拒绝，不能提交独立采样材料。沿用64KiB解析预算、8192条不可变效果存储预算与重放冲突规则。返回签名effect-evidence-record/v1记录，签名仅证明收录该声明，不证明声明属实。该历史效果记录入口允许撤销后补报已发生动作，不创建或恢复执行授权；无有效历史动作的声明拒绝。管理或observer凭据不能代替decision凭据。
+
+### Runtime 参数来源的 scope 拒绝码
+
+MatchParameters 对调用方明确提供、但无法在当前 platform/session/agent/task 目录解析的 provenance ref 返回 provenance_scope_mismatch。跨任务、跨会话及未知 ID 使用同一代码，不探测其他 scope 是否存在该 ID，不新增全局索引或目录扫描。代码含义是“引用无法绑定当前 scope”，不声称已确认该 ID 存在于其他任务。未提供必需引用仍为 provenance_missing，管理 Resolve 的未找到仍为 provenance_not_found；坏签名、过期及撤销保留各自明确代码。该调整只影响签名拒绝原因，不改变任何允许条件。

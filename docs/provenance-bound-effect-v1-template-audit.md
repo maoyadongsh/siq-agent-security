@@ -91,12 +91,12 @@
 | 82 | Intent Binding Revocation 不得退化 | 2506 | 部分核验：report/select 三模式、binding/Intent 撤销及重建服务后拒绝已由 TestProvenanceReportsRejectRevokedAuthorityAcrossRestart 验证；Effect 历史动作边界仍需归档 |
 | 83 | Workstream H — Enterprise Compatibility Preparation | 2522 | 已核对；Intent issuer字段可表达企业标识，不因标签授予信任；ADR-018 |
 | 84 | Issuer abstraction | 2548 | 已核对；既有Lookup/Issuer公钥接入点复用，企业trust bundle部署保留未来项；ADR-018 |
-| 85 | Workstream I — Security Testing | 2575 | 部分核验：P01–03、P05–10已有直接测试；P07补充 TestPersistedAssertionTamperingFailsAfterRestart 物理摘要/签名篡改并重开验证；P04跨scope引用当前因分目录查询返回provenance_not_found，与原文期望scope_mismatch不同，待处理 |
+| 85 | Workstream I — Security Testing | 2575 | 已核验P01–10：P04/P05同值跨task/session直接参数匹配及真实daemon场景均scope_mismatch；P07实际文件篡改重开验签；来源/聚合/default/expiry见matcher、graph、aggregation、defaults、authority与HTTP测试 |
 | 86 | Context Tests | 2712 | 已核对；C-01–04对应cwd拒绝、合法Context、到期hard deny及跨session重放测试 |
 | 87 | Hard Gate Tests | 2752 | 已核对；三模式mandatory错误矩阵与实际Store签名/撤销集成，A组证据 |
 | 88 | Effect Tests | 2770 | 已核验 E01–04 既有 file/network fixture；E05 由 TestToolSuccessConflictsWithIndependentMissingOutputHTTP 验证工具成功声明与独立文件输出缺失冲突；不宣称通用网络 absence 证明 |
 | 89 | Concurrency / Recovery | 2876 | 已核验：Issue/Decide并发、issuer撤销与assertion到期三模式并发拒绝；Effect重复/冲突/容量；Graph重开与签名pending恢复；实际双SIGKILL证据见nightly-693641d归档。新断言见本批race日志 |
-| 90 | Schema Tests | 2906 | 待逐节复核；已有实现/测试入口见DoD索引 |
+| 90 | Schema Tests | 2906 | 已核验：7个Provenance + 20个Context/Effect/Intent请求与记录schema矩阵，包含新版tool-effect-report；required/闭合对象/ID/签名/摘要/时间/分类/范围/parent/容量按适用字段变异，另有真实固定向量及运行时负向测试 |
 | 91 | Cross-language Vectors | 2929 | 已补齐并核验；三类合同共用固定canonical bytes/摘要/签名，Go race与Python通过 |
 | 92 | Security Boundary — Same UID | 2951 | 已核对；README/ADR/报告明确desktop-same-uid非恶意进程隔离 |
 | 93 | Managed Linux 预留 | 2979 | 已补充ADR-018；不同UID/attestor/observer接入边界，不实现完整Managed Linux |

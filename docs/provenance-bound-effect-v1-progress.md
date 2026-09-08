@@ -847,3 +847,9 @@
 P07本批已补齐：TestPersistedAssertionTamperingFailsAfterRestart 在私有临时状态实际改写已签发文件的content_digest或signature，重开Store后均要求provenance_signature_invalid；先验证未篡改记录可读。focused race与provenance vet通过。四个关联包provenance/effectevidence/receipt/server的race全部通过（/tmp/siq-revocation-expiry-audit-race.log），receipt/server vet通过。无生产实现变更。
 
 远端功能基线1f10e9c的ci 34189914689与runtime-security 34189914681均success；本批新增测试尚待推送后的新CI，不用该基线代替新增测试证据。
+
+### 2026-09-08：P04 scope拒绝原因统一
+
+- Runtime MatchParameters将显式引用在当前scope无法解析统一映射为provenance_scope_mismatch。包括跨task、跨session和未知ID；不跨scope探测存在性，不增加全局索引/扫描。管理Resolve未找到仍为not_found，缺少必需引用仍为missing；坏签名/时效等不被覆盖。
+- 同步5个benchmark场景预期及真实MCP fixture，补充参数匹配跨task/session精确代码断言。实际完整42场景通过，离线验签51条回执、11个效果封装；摘要归档scope-benchmark-20260908.json，注明c36009c加工作树修改，不虚构干净提交基线。
+- Go1.26.6全模块vet/race与四平台编译通过；benchmark单测21项通过。完整nightly运行34190220726仍对应c36009c，不能覆盖本次原因码调整。

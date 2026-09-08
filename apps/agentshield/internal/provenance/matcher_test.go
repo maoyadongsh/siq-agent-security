@@ -46,7 +46,20 @@ func TestSameValueDifferentProvenance(t *testing.T) {
 	check([]string{user.ProvenanceID}, "")
 	check([]string{mcp.ProvenanceID}, "provenance_source_not_allowed")
 	check([]string{user.ProvenanceID, mcp.ProvenanceID}, "provenance_source_not_allowed")
-	check([]string{user.ProvenanceID, "missing"}, "provenance_not_found")
+	check([]string{user.ProvenanceID, "missing"}, "provenance_scope_mismatch")
+	for _, boundary := range []string{"task", "session"} {
+		other := a.Scope
+		if boundary == "task" {
+			other.TaskID = "other-task"
+		} else {
+			other.SessionID = "other-session"
+		}
+		err := s.MatchParameters(params, []ParameterBinding{{ParameterPath: "/recipient", ProvenanceRefs: []string{user.ProvenanceID}}}, constraints, other, now)
+		var violation *Violation
+		if !errors.As(err, &violation) || violation.Code != "provenance_scope_mismatch" {
+			t.Fatal("reference escaped scope", boundary, err)
+		}
+	}
 	check([]string{user.ProvenanceID, user.ProvenanceID}, "provenance_authority_invalid")
 	params["recipient"] = "attacker@example.test"
 	check([]string{user.ProvenanceID}, "provenance_content_mismatch")

@@ -171,7 +171,7 @@ def run(h, extended=False, adapter_bridge=False):
         if extended:
             for pair, expected_reason in (("missing-provenance", "provenance_missing"),
                                           ("content-tamper", "provenance_content_mismatch"),
-                                          ("cross-session", "provenance_not_found")):
+                                          ("cross-session", "provenance_scope_mismatch")):
                 attack_request = copy.deepcopy(request)
                 attack_request["tool_call_id"] = pair + "-attack"
                 if pair == "missing-provenance":
@@ -215,7 +215,7 @@ def run(h, extended=False, adapter_bridge=False):
                 attack_request = copy.deepcopy(request)
                 attack_request.update(session_id=other_session, tool_call_id=pair + "-attack")
                 attack_request["parameter_provenance"][0]["provenance_refs"] = [pair + "-path"]
-                reason = "provenance_not_found"
+                reason = "provenance_scope_mismatch"
                 if pair == "revoked-binding":
                     before = copy.deepcopy(attack_request)
                     before["tool_call_id"] = pair + "-before-revoke"
@@ -318,7 +318,7 @@ def run(h, extended=False, adapter_bridge=False):
                 attack_request.update(session_id=claim_session, tool_call_id=pair + "-attack")
                 attack_request["parameter_provenance"][0]["provenance_refs"] = [report_id]
                 attacked = h.api("/v1/decide", attack_request, token=token)
-                base.require(attacked["action"] == "deny" and attacked["reason_code"] == "provenance_not_found",
+                base.require(attacked["action"] == "deny" and attacked["reason_code"] == "provenance_scope_mismatch",
                              "rejected forged report minted authority")
                 issuer = "issuer-" + pair
                 h.api("/v1/provenance-issuers", {"issuer_id": issuer, "local_key_ref": "local-state",

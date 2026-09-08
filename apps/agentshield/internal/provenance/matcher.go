@@ -1,6 +1,9 @@
 package provenance
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 // MatchParameters verifies every supplied binding before applying constraints.
 // The read lock gives this decision one registry snapshot, including revocations.
@@ -39,6 +42,12 @@ func (s *Store) MatchParameters(params map[string]any, bindings []ParameterBindi
 			seen[ref] = true
 			a, err := s.loadAssertion(ref, scope)
 			if err != nil {
+				var violation *Violation
+				if errors.As(err, &violation) && violation.Code == "provenance_not_found" {
+					// Do not probe other scopes to distinguish replay from an
+					// unknown ID: neither reference is bound to this request.
+					return failure("provenance_scope_mismatch")
+				}
 				return err
 			}
 			node, err := s.resolveNode(a, scope, now, 1, walk)
