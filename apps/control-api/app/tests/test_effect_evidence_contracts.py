@@ -19,7 +19,7 @@ def record():
     return {
         "schema_version": "effect-evidence/v1", "effect_evidence_id": "eff-1",
         "action_id": "action-1", "decision_receipt_id": "rcp-1",
-        "effect_type": "file.write", "resource_ref": "file:sha256:fixture",
+        "effect_type": "file.write", "resource_ref": "filesystem:sha256:" + "b" * 64,
         "execution_state": "completed",
         "source": {"type": "host_observer", "source_id": "observer-1", "independence": "host_independent"},
         "coverage": "partial", "result": "expected", "evidence_digest": "a" * 64,

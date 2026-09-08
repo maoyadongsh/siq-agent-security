@@ -29,8 +29,7 @@
     },
     "resource_ref": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 4096
+      "pattern": "^(filesystem|network|message):sha256:[0-9a-f]{64}$"
     },
     "execution_state": {
       "enum": [

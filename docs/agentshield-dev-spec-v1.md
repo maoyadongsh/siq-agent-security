@@ -880,3 +880,5 @@ V3 对 RuntimeActionDescriptor.HighImpactParameterPaths 中每个实际出现且
 ### C1 EffectEvidence 合同（运行时待接入）
 
 按 ADR-0017 定义 `effect-evidence/v1`，关联 action_id 与 decision_receipt_id，分离 execution_state/source/independence/coverage/result。工具自报只允许 self_reported + unknown coverage/result；unknown 来源不提升任何证据维度。签名、observer 权限、动作关联和资源匹配必须由后续运行时验证，schema 合法不代表完成任务。新增 API 和存储尚未上线；现有 Observe 保持原语义。
+
+C1 资源引用冻结为 `filesystem|network|message:sha256:<64小写hex>`（实际格式如 `filesystem:sha256:…`），直接复用 RuntimeAction ResourceRefs 的 domain/digest，不保存原始路径、收件人或 URL。EffectEvidence 结构校验必须严格解析 RFC3339 时间、拒绝未来观察、未知字段/多文档，并通过原 signing/canon 验签。单条证据验签不能替代 observer capability 与动作匹配。
