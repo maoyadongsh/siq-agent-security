@@ -716,3 +716,10 @@
 - 既有集成报告再次独立验证51条回执及11份效果封装，不宣称重新运行观测。远端e70541e的ci/runtime-security两工作流均success；新增本地提交仍需对应远端CI。
 - 后续集中推进B/C/G、§90全部新schema负向矩阵及§115最终Engineering Report；保持按模块整批完成，针对变更运行必要门禁，避免无变化重复全仓回归。
 - 本批最终验证：Provenance完整包Go1.26.6无缓存race与vet通过；Python来源合同8项与Ruff通过；git diff --check通过。
+
+## 2026-09-08：§90来源合同矩阵及CI覆盖
+
+- 新增test_provenance_schema_matrix.py，覆盖7份来源schema：Assertion、TrustedSourceIssuer、issuer record/revocation、report/select request、parameter binding。53项参数化测试包含每层受约束对象必填字段删除、额外权限字段注入、坏ID/签名格式/摘要/日历时间/source/trust/scope/parent及容量正负边界。
+- content是合同允许的任意JSON，未错误地对用户内容要求封闭字段；schema不验证密码学签名、时序或父图可信性，继续由Go authority/graph测试及共享签名向量证明。未包含的schema类别记为不适用，不伪造签名字段。
+- runtime-security workflow显式执行来源合同、来源矩阵及Effect合同，避免只执行旧test_schema_contracts.py。主CI原有全量pytest继续保留。
+- 本地执行CI对应四个文件共149项通过，Ruff及diff检查通过；尚未宣称26份新增schema全部§90验收完成。后续继续其余Context/Effect/Recovery/Intent合同适用负例覆盖与B/C/G验收。
