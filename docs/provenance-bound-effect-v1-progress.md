@@ -607,3 +607,10 @@
 - 新测试覆盖混合attack/benign、缺效果记录、仅一个verified completion及空总体，11项benchmark单测、Ruff/diff通过。
 - 实际21对基准重新执行通过：/tmp/siq-runtime-population.json；evidence.py独立复验51条回执和11个效果封套通过。旧报告需使用对应旧版验证器，新统计不静默回写历史产物。
 - 核实远端92b9efe：当前可见29项SUCCESS、1项nightly SKIPPED；此结果不覆盖其后的本地提交/修改。
+
+
+### 三平台核心兼容集中核验与CI补漏
+
+- 完成Hermes默认200样本/8并发原生夹具（412回执）、CodeBuddy原生CLI（13回执）及10项bootstrap故障/恢复、OpenClaw钩子与15项checkpoint兼容验证，结果全部通过；详见验收索引的命令表及公开摘要。
+- Hermes适配器56项及Ruff、Go cmd/adapterinstall/server race通过；新增Hermes Python回归CI步骤，弥补此前远端仅桥接夹具未跑完整适配器负例的缺口。
+- 所有原生测试用隔离临时配置/合成输入，不修改用户配置，不声称V3原生集成或生产支持。仅CI/文档修改，diff检查通过；本批对应远端结果待推送后确认。

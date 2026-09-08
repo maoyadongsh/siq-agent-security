@@ -30,6 +30,10 @@ jobs:
           apps/control-api/.venv/bin/python benchmarks/runtime-security/check_contracts.py
           apps/control-api/.venv/bin/python -m unittest discover -s benchmarks/runtime-security -p 'test_*.py'
           apps/control-api/.venv/bin/ruff check benchmarks/runtime-security
+      - name: Hermes adapter authority and transport regressions
+        run: |
+          apps/control-api/.venv/bin/pytest adapters/runtime/hermes-agentshield/tests/test_adapter.py -q
+          apps/control-api/.venv/bin/ruff check adapters/runtime/hermes-agentshield
       - name: Run real component benchmark and verify public evidence
         run: |
           python3 benchmarks/runtime-security/run.py --out artifacts/runtime-security/report.json

@@ -43,7 +43,7 @@
 | DoD-C2 | Intent V2 dual-read 保留。 | [store_test.go](../apps/agentshield/internal/intent/store_test.go) | 证据入口已定位；待逐项核读验收 |
 | DoD-C3 | OpenClaw approval execution recheck 不退化。 | [test-openclaw-adapter.cjs](../scripts/test-openclaw-adapter.cjs) | 证据入口已定位；待逐项核读验收 |
 | DoD-C4 | Binding revocation 不退化。 | [revocation_test.go](../apps/agentshield/internal/intent/revocation_test.go) | 证据入口已定位；待逐项核读验收 |
-| DoD-C5 | Hermes / OpenClaw / CodeBuddy 现有核心测试通过。 | [ci.yml](../.github/workflows/ci.yml) | 待单列三平台核心命令与结果 |
+| DoD-C5 | Hermes / OpenClaw / CodeBuddy 现有核心测试通过。 | [ci.yml](../.github/workflows/ci.yml) | 本轮核心兼容检查通过，见下方命令与证据；不等于原生V3集成完成 |
 | DoD-C6 | Legacy optional authorization 继续按现有安全兼容语义工作。 | [authority_gate_test.go](../apps/agentshield/internal/receipt/authority_gate_test.go) | 证据入口已定位；待逐项核读验收 |
 | DoD-G1 | Go race tests 全绿。 | [ci.yml](../.github/workflows/ci.yml) | 证据入口已定位；待逐项核读验收 |
 | DoD-G2 | 全仓 CI green。 | [runtime-security.yml](../.github/workflows/runtime-security.yml) | 92b9efe远端运行中；当前HEAD待推送验证 |
@@ -67,3 +67,20 @@
 2. 三平台核心兼容命令、全范围map与签名路径审计。
 3. 基准完整报告的逐阶段分母、证据归档及最终报告要求映射。
 4. 将未满足项作为开发任务完成后，再形成最终Engineering Report；当前目标继续保持进行中。
+
+
+## 三平台核心兼容核验（2026-09-08）
+
+源码基线deeebee，本轮仅增加CI/文档。结果摘要与原报告SHA见[evidence](evidence/provenance-v1/platform-core-20260908.json)。日志中的Go cached结果是测试工具复用有效缓存，server为本次执行；不能称所有包均无缓存重跑。
+
+| 命令（仓库根目录，Go命令在apps/agentshield） | 结果与范围 |
+| --- | --- |
+| `node scripts/test-openclaw-adapter.cjs` | correlation、宿主capability、approval recheck通过 |
+| `python3 scripts/test-openclaw-checkpoint-compat.py` | 15项兼容测试通过 |
+| `go test -race ./cmd/agentshield ./internal/adapterinstall ./internal/server` | 三包通过，包含CodeBuddy bootstrap及配置生命周期 |
+| `apps/control-api/.venv/bin/pytest adapters/runtime/hermes-agentshield/tests/test_adapter.py -q` | 56项通过；Ruff通过，新增CI门禁 |
+| `python3 scripts/validate-intent-v2-hermes.py --hermes-root /home/maoyd/siq/hermes-agent --hermes-python /home/maoyd/siq/hermes-agent/.venv/bin/python --out /tmp/siq-platform-hermes.json` | 默认200样本/8并发，14类检查、412回执通过 |
+| `python3 scripts/validate-intent-v2-codebuddy.py --codebuddy-root /home/maoyd/.local/share/siq-runtime-fixtures/codebuddy-2.146.0/node_modules/@tencent-ai/codebuddy-code --node /home/maoyd/.nvm/versions/node/v22.22.1/bin/node --out /tmp/siq-platform-codebuddy.json` | 10类原生CLI流程、13回执通过 |
+| `python3 scripts/validate-codebuddy-hook-failures.py --codebuddy-root /home/maoyd/.local/share/siq-runtime-fixtures/codebuddy-2.146.0/node_modules/@tencent-ai/codebuddy-code --node /home/maoyd/.nvm/versions/node/v22.22.1/bin/node --out /tmp/siq-platform-codebuddy-failures.json` | 正常/故障/恢复10场景通过；包括legacy warn/audit兼容，不外推为required权限绕过允许 |
+
+这些结果覆盖DoD-C5的现有核心兼容命令；OpenClaw本批为钩子/兼容测试，没有重跑其全部原生网关会话。V3来源原生传播、效果调度及全目标其他项仍待继续。

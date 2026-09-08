@@ -1,0 +1,195 @@
+{
+  "description": "Selected public validation fields, not a signed receipt archive",
+  "baseline": "deeebee",
+  "reports": {
+    "hermes": {
+      "passed": true,
+      "siq_commit": "deeebee782e7f5ca08edb40cceaf389d75c3805a",
+      "recorded_at": "2026-09-08T03:54:54.221252+00:00",
+      "checks": [
+        "decision_token_cannot_read_authority",
+        "native_read_and_bound_observation",
+        "resource_scope_denied",
+        "path_prefix_boundary_denied",
+        "native_write_not_executed",
+        "required_missing_binding_denied",
+        "native_offline_block_with_pending",
+        "daemon_kill_restart_binding_and_pending_recovery",
+        "http_post_replay_idempotent_and_conflict_after_restart",
+        "http_concurrent_post_restart_replay_single_observation",
+        "bounded_http_load_all_actions_correlated",
+        "optional_unbound_native_compatibility",
+        "bound_cannot_downgrade_in_optional",
+        "offline_cli_receipt_chain_verified"
+      ],
+      "receipt_count": 412,
+      "binary_sha256": "d753ef1f8b6e6506e8262b81ed9a419d44d6597f6fb8289380da6b27d62f51d1",
+      "adapter_sha256": "bfd0dec6b5d4771358d0c26898f339c55be35a6ba93b13d7ca8176f2d043a2a0",
+      "limitations": [
+        "synthetic calls and operator; no LLM session or human approval proof",
+        "no Hermes native approval/hold journey",
+        "no OpenClaw or CodeBuddy runtime",
+        "no OS isolation or full platform support claim"
+      ],
+      "original_report_sha256": "7203f75194a2b810a12d31386e2c21e7eabf70660800e1000fc3d14ed5785c13"
+    },
+    "codebuddy": {
+      "passed": true,
+      "siq_commit": "deeebee782e7f5ca08edb40cceaf389d75c3805a",
+      "recorded_at": "2026-09-08T03:55:19.695296+00:00",
+      "checks": [
+        "cli_custom_config_install_reinstall_backup_and_native_pregrant_denial",
+        "decision_token_cannot_read_authority",
+        "native_allowed_read_and_correlated_post",
+        "native_resource_and_prefix_denial",
+        "native_denied_write_has_no_effect",
+        "native_new_session_does_not_inherit_binding",
+        "native_resume_daemon_kill_and_pending_recovery",
+        "native_optional_unbound_and_bound_no_downgrade",
+        "bound_action_sequence_and_parent_survive_native_resume",
+        "cli_uninstall_preserves_settings_and_native_control_executes"
+      ],
+      "receipt_count": 13,
+      "offline_verified": true,
+      "binary_sha256": "d753ef1f8b6e6506e8262b81ed9a419d44d6597f6fb8289380da6b27d62f51d1",
+      "source_sha256": {
+        "scripts/validate-intent-v2-codebuddy.py": "5e096dd5ca97cbc5739253d82f4ceb7baae2fe9f5a845ca34666fc6fd997da2d",
+        "scripts/codebuddy-fixture-guard.mjs": "ce85ecc4285fcc57a3ef24b2bca200265d3af2be788e53a8224df324486aea7c",
+        "scripts/validate-intent-v2-hermes.py": "a7f0f06b7b674613a902f141e05a33428f1c4b11d64390986218c88c47aeb5ac",
+        "apps/agentshield/internal/adapters/adapters.go": "2ef8eafaf6453728b16657037f1247b0fb471522cbf595b89959cf3e39987ec1",
+        "apps/agentshield/internal/adapterinstall/install.go": "d29d0ec44ecd13ff00575ddab5c5761ab64eab05376ca3a80f6931aa391b5e94"
+      },
+      "limitations": [
+        "synthetic operator and local deterministic model",
+        "installer/native CLI E2E only in a temporary config and state directory",
+        "no GUI, real human approval, hold/redact or channel proof",
+        "Node IO guard is not OS isolation",
+        "no overall supported claim"
+      ],
+      "original_report_sha256": "2ff1b1d764a5852c1d970b88ece4a8ad8e2fbc144b6f15637d2110ce5e49fa1d"
+    },
+    "codebuddy-failures": {
+      "passed": true,
+      "siq_commit": "deeebee782e7f5ca08edb40cceaf389d75c3805a",
+      "recorded_at": "2026-09-08T03:55:48.112913+00:00",
+      "cases": [
+        {
+          "name": "normal",
+          "expected": "execute",
+          "executed": true,
+          "passed": true
+        },
+        {
+          "name": "malformed-config",
+          "expected": "block",
+          "executed": false,
+          "fail_closed_reason": true,
+          "online_receipts": 0,
+          "pending_added": 1,
+          "passed": true
+        },
+        {
+          "name": "partially-invalid-config",
+          "expected": "block",
+          "executed": false,
+          "fail_closed_reason": true,
+          "online_receipts": 0,
+          "pending_added": 1,
+          "passed": true
+        },
+        {
+          "name": "short-token-block",
+          "expected": "block",
+          "executed": false,
+          "fail_closed_reason": true,
+          "online_receipts": 0,
+          "pending_added": 1,
+          "passed": true
+        },
+        {
+          "name": "short-token-warn",
+          "expected": "execute_advisory",
+          "executed": true,
+          "fail_closed_reason": false,
+          "online_receipts": 0,
+          "pending_added": 1,
+          "passed": true
+        },
+        {
+          "name": "short-token-audit",
+          "expected": "execute_advisory",
+          "executed": true,
+          "fail_closed_reason": false,
+          "online_receipts": 0,
+          "pending_added": 1,
+          "passed": true
+        },
+        {
+          "name": "state-is-file",
+          "expected": "block",
+          "executed": false,
+          "fail_closed_reason": true,
+          "online_receipts": 0,
+          "pending_added": 0,
+          "passed": true
+        },
+        {
+          "name": "missing-token",
+          "expected": "block",
+          "executed": false,
+          "fail_closed_reason": true,
+          "online_receipts": 0,
+          "pending_added": 1,
+          "passed": true
+        },
+        {
+          "name": "token-directory",
+          "expected": "block",
+          "executed": false,
+          "fail_closed_reason": true,
+          "online_receipts": 0,
+          "pending_added": 1,
+          "passed": true
+        },
+        {
+          "name": "recovered",
+          "expected": "execute",
+          "executed": true,
+          "passed": true
+        }
+      ],
+      "receipt_count": 11,
+      "offline_verified": true,
+      "pending_recovery_verified": true,
+      "binary_sha256": "841a1aa359f1276db5a0bd2644367e82877764264f4a9f6c8b2178f9f44855a1",
+      "source_sha256": {
+        "scripts/validate-codebuddy-hook-failures.py": "8493545e14f3643d64e7c91d85ec24ec122caa57a6b0a370a6c49eeb6393c05f",
+        "scripts/validate-intent-v2-codebuddy.py": "5e096dd5ca97cbc5739253d82f4ceb7baae2fe9f5a845ca34666fc6fd997da2d",
+        "scripts/codebuddy-fixture-guard.mjs": "ce85ecc4285fcc57a3ef24b2bca200265d3af2be788e53a8224df324486aea7c",
+        "apps/agentshield/cmd/agentshield/main.go": "f7994ef3b8339d54da32c6b8f636fe497a65e12a3ede2fe9dcd36ffa798ddb22",
+        "apps/agentshield/internal/adapters/adapters.go": "2ef8eafaf6453728b16657037f1247b0fb471522cbf595b89959cf3e39987ec1"
+      },
+      "limitations": [
+        "synthetic operator and loopback model",
+        "runtime hook process crash/kill and missing binary are not covered",
+        "no redaction or approval proof",
+        "no OS isolation"
+      ],
+      "original_report_sha256": "d93d3a3e2efd5eb679f336c5f84178ff042a14254129601541f03d35d4555e4b"
+    }
+  },
+  "logs": {
+    "go": {
+      "sha256": "b08fa7bf0734082206bb2434b96b4043041af03b0516e33e0e9c2f4ff21d572e",
+      "output": "ok  \tsiq-agent-security/apps/agentshield/cmd/agentshield\t(cached)\nok  \tsiq-agent-security/apps/agentshield/internal/adapterinstall\t(cached)\nok  \tsiq-agent-security/apps/agentshield/internal/server\t4.653s\n"
+    },
+    "openclaw": {
+      "sha256": "6a91b70d2815815a539621589b26a665c62a82efa847eed4b35fdd3653c60a01",
+      "output": "OpenClaw correlation, host capability and approval recheck gates passed\n...............\n----------------------------------------------------------------------\nRan 15 tests in 0.452s\n\nOK\n"
+    },
+    "hermes-unit": {
+      "sha256": "62c18dfe7d417c35a1e493bce031b7dc7675aed4b182466a44bba2aea7892e93",
+      "output": "........................................................                 [100%]\n56 passed in 26.27s\n"
+    }
+  }
+}
