@@ -133,3 +133,9 @@
 - `go test -race ./...`、`go vet ./...` 与 linux/amd64、linux/arm64、darwin/arm64、windows/amd64 编译通过。另有12类高影响参数和显式覆盖回归测试通过。
 - MCP 组件重新执行通过，2条回执离线验签成功；临时报告 `/tmp/siq-mcp-defaults-validation.json`，二进制 SHA256 `e6339c3ebad64c1858909d2ca4051d184f7dd4db0e69145f5dc43caedff7ad8d`。该报告基于 e1f4093 加本次工作树修改，不将其标记为该提交的干净构建。
 - C EffectEvidence/Completion、D Benchmark、G 门禁及完整45项验收仍待开发。
+
+### C1 合同起步
+
+- 新增 ADR-0017 与 effect-evidence/v1 schema，冻结多维证据、动作/决策引用与签名字段；tool_report/unknown 不能伪造独立性、完整覆盖或预期结果。
+- Python 合同3项与 Ruff通过；初次测试发现环境未安装 jsonschema 可选 date-time 校验器，补充时间字符串结构 pattern，运行时仍须严格解析有效时间。
+- 本批仅定义合同，尚未实现 observer capability、效果存储/API、关联校验或 Completion；示例零签名只用于结构测试。

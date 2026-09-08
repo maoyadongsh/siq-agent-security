@@ -876,3 +876,7 @@ HTTP 入口为 POST /v1/provenance-select，使用 decision capability；请求�
 V3 对 RuntimeActionDescriptor.HighImpactParameterPaths 中每个实际出现且没有显式来源约束的路径，补 required=true、minimum_trust=trusted、allowed_source_types=[USER,SYSTEM,TRUSTED_IAM,TRUSTED_DATABASE]。显式签名约束按精确 JSON Pointer 覆盖该路径的默认值，因此业务可明确许可特定 MCP/untrusted 来源；没有显式许可时不能由低可信输入控制高影响参数。
 
 默认值只作用于 V3，不静默改变 V2 历史语义。Provenance 模块直接消费 runtimeaction.Descriptor，不建立第二套工具/字段分类。默认约束为每次动作生成的新副本，不修改已签名 Intent 的数组或摘要。空 provenance_constraints 在合同上仍有效，但不表示高影响参数无需来源授权。
+
+### C1 EffectEvidence 合同（运行时待接入）
+
+按 ADR-0017 定义 `effect-evidence/v1`，关联 action_id 与 decision_receipt_id，分离 execution_state/source/independence/coverage/result。工具自报只允许 self_reported + unknown coverage/result；unknown 来源不提升任何证据维度。签名、observer 权限、动作关联和资源匹配必须由后续运行时验证，schema 合法不代表完成任务。新增 API 和存储尚未上线；现有 Observe 保持原语义。
