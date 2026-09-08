@@ -908,3 +908,9 @@ POST `/v1/effect-evidence` 仅 capEffectObserve，scope 必须精确匹配 Engin
 Capture 仅输出资源摘要、存在性、内容 SHA256、size、mtime 和采样时间；文件原文及路径不落证据。前后资源必须一致，后采样时间不早于前采样；最长读取16 MiB。FileWrite 对比可信预期摘要：后文件缺失为 failed/unexpected；发生可见变化且摘要匹配为 completed/expected，不匹配为 completed/unexpected；前后无可见变化为 unknown/unknown，不能证明重复同值写已执行。coverage 固定 partial，independence 由受信 host observer 注册为 host_independent；同 UID 攻击者与采样间隔内瞬态变化仍属残余风险。
 
 C1 文件材料附加：不可变 Record 增加可选 file_observation（file-observation.v1 合同），旧记录缺省时保持签名字节不变。SubmitFile 将观测材料、摘要证据与 finding 同封套保存，读回重新验证材料计算的 evidence_digest、资源、时间与执行状态。相同 ID 的普通摘要提交与带材料提交不可互换；拒绝把后来补充的材料伪装为原始记录。材料只含摘要/元数据，不含路径或文件原文。
+
+### C1 文件采样 HTTP 生命周期
+
+capEffectObserve 新增 POST `/v1/file-observations`（observation_id/action_id/decision_receipt_id/path/expected_digest/max_bytes），服务端验证固定 host_observer、完整 scope、file.write 效果和路径资源摘要匹配真实动作后，实际 CaptureFile。POST `/v1/file-observations/{id}/finish`（path）再次读真实文件并 SubmitFile，客户端不得上传前后快照。前置采样不授权执行，deny 动作仍可观测并记事件。
+
+待采样记录仅保留摘要快照、动作引用、预期摘要和 token 归属，不保存明文路径。最多128条，随 observer token 到期/撤销失效；服务重启失效并要求重新开始，禁止把丢失的前置采样补成成功。完成后的持久化证据仍可读回；同 token 完成重试返回原证据，不重新采样改写结果。持久化 pending 与跨重启继续采样尚待后续恢复实现。

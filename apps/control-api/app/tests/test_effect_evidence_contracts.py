@@ -119,3 +119,16 @@ def test_file_material_retains_only_bounded_metadata():
                          ("size", 16777217), ("digest", "plaintext")]:
         assert list(v.iter_errors({**good, "after": {**present, field: value}}))
     assert list(v.iter_errors({**good, "before": {**absent, "size": 1}}))
+
+
+def test_file_lifecycle_cannot_upload_fake_snapshots():
+    root = Path(__file__).parents[4] / "packages/contracts"
+    v = Draft202012Validator(json.loads((root / "file-observation-begin.v1.schema.json").read_text()))
+    good = {"observation_id": "file-1", "action_id": "action-1", "decision_receipt_id": "rcp-1",
+            "path": "/work/report", "expected_digest": "a" * 64, "max_bytes": 1024}
+    v.validate(good)
+    for field, value in [("before", {}), ("source", {}), ("max_bytes", 16777217), ("observation_id", "../file")]:
+        assert list(v.iter_errors({**good, field: value}))
+    finish = Draft202012Validator(json.loads((root / "file-observation-finish.v1.schema.json").read_text()))
+    finish.validate({"path": "/work/report"})
+    assert list(finish.iter_errors({"path": "/work/report", "after": {"exists": True}}))
