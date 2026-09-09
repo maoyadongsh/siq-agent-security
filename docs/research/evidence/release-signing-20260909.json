@@ -1,0 +1,65 @@
+{
+  "schema_version": "siq-release-signing/v1",
+  "observed_at": "2026-09-09T05:29:51.553192+00:00",
+  "release_tag": "research-v0.1.0-rc.1",
+  "source_sha": "aefab111c7fcad9075c8f429f97c9eab519dcd22",
+  "signature_type": "Sigstore Cosign keyless blob signature over SHA256SUMS",
+  "repository_identity_signature": true,
+  "historical_skill_publisher_key_signature": false,
+  "github_build_provenance_attestation": false,
+  "cosign_version": "v3.1.3",
+  "certificate_identity": "https://github.com/maoyadongsh/siq-agent-security/.github/workflows/release-signing.yml@refs/heads/main",
+  "certificate_oidc_issuer": "https://token.actions.githubusercontent.com",
+  "workflow_run": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/34314920961",
+  "workflow_sha": "f393bb7c9f2ad89ac6fd19442be950aed0a5baeb",
+  "workflow_conclusion": "success",
+  "original_assets_unchanged": true,
+  "initial_packaging_official_signature_field": false,
+  "local_verification": {
+    "signature": "passed",
+    "checksums": "passed",
+    "reviewed_publication_record": "passed",
+    "tampered_content": "rejected",
+    "wrong_signer": "rejected"
+  },
+  "assets": [
+    {
+      "name": "SHA256SUMS",
+      "sha256": "9735cb87b5a56c9b08761ec0e727a0c3c8f068a65c9a66b495fbf4ce5b5b95e3",
+      "bytes": 196,
+      "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/research-v0.1.0-rc.1/SHA256SUMS"
+    },
+    {
+      "name": "SOURCE-INFO.json",
+      "sha256": "262f5f25242553adb80e67de7d248a184e3ece87bb975653609791c898fbfaaf",
+      "bytes": 289045,
+      "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/research-v0.1.0-rc.1/SOURCE-INFO.json"
+    },
+    {
+      "name": "siq-agent-security-research-v0.1.0-rc.1.tar.gz",
+      "sha256": "4a741a767faae5875ab2ec765b1c91d7f0eca076f5de67cff97ea59d1d4b1779",
+      "bytes": 52347840,
+      "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/research-v0.1.0-rc.1/siq-agent-security-research-v0.1.0-rc.1.tar.gz"
+    },
+    {
+      "name": "SHA256SUMS.sigstore.json",
+      "sha256": "80dfe08cc8a8d8d034b1ca788030f9f1cb657f9e4e238664f8c8ec58262fba98",
+      "bytes": 10808,
+      "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/research-v0.1.0-rc.1/SHA256SUMS.sigstore.json"
+    }
+  ],
+  "transparency_log_entries": [
+    {
+      "logIndex": "2765531641",
+      "logId": {
+        "keyId": "wNI9atQGlz+VWfO6LRygH4QUfY/8W4RFwiT5i5WRgB0="
+      },
+      "kindVersion": {
+        "kind": "hashedrekord",
+        "version": "0.0.1"
+      },
+      "integratedTime": "1788931644"
+    }
+  ],
+  "scope": "Post-publication authentication of original source archive and metadata through the signed checksum manifest; no rebuild, binary, copyright-ownership or scientific-validity claim."
+}
