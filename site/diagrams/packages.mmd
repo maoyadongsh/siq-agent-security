@@ -1,10 +1,10 @@
 %%{init: {'theme': 'base', 'themeVariables': {
-  'primaryColor': '#fdfcf9',
-  'primaryTextColor': '#001840',
-  'primaryBorderColor': '#001840',
-  'lineColor': '#7c5a0c',
-  'secondaryColor': '#f3eee2',
-  'tertiaryColor': '#f7f4ee',
+  'primaryColor': '#eaf1fb',
+  'primaryTextColor': '#132d50',
+  'primaryBorderColor': '#43658f',
+  'lineColor': '#43658f',
+  'secondaryColor': '#f6f8fc',
+  'tertiaryColor': '#ffffff',
   'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
 }}}%%
 flowchart LR
@@ -12,36 +12,60 @@ flowchart LR
   adapters["adapters"]
   admission["admission"]
   canon["canon"]
+  completion["completion"]
+  contractvectors["contractvectors"]
   controlsync["controlsync"]
+  display["display"]
+  effectevidence["effectevidence"]
   export["export"]
+  fileopen["fileopen"]
   grant["grant"]
+  intent["intent"]
   inventory["inventory"]
   ledger["ledger"]
   openshell["openshell"]
+  pending["pending"]
+  perfbaseline["perfbaseline"]
   product["product"]
+  provenance["provenance"]
   receipt["receipt"]
   rulepack["rulepack"]
+  runtimeaction["runtimeaction"]
+  runtimeauthz["runtimeauthz"]
   server["server"]
   signing["signing"]
   skillmanifest["skillmanifest"]
   state["state"]
   threat["threat"]
+  trustedcontext["trustedcontext"]
   ui["ui"]
   adapterinstall --> product
   adapterinstall --> state
   adapters --> admission
+  adapters --> pending
   adapters --> product
   adapters --> receipt
   adapters --> rulepack
   adapters --> signing
   admission --> canon
+  admission --> display
+  admission --> fileopen
   admission --> rulepack
   admission --> signing
   admission --> threat
+  completion --> effectevidence
+  completion --> runtimeaction
   controlsync --> admission
   controlsync --> canon
   controlsync --> inventory
   controlsync --> signing
+  effectevidence --> canon
+  effectevidence --> fileopen
+  effectevidence --> provenance
+  effectevidence --> runtimeaction
+  effectevidence --> signing
+  export --> canon
+  export --> display
   export --> ledger
   export --> receipt
   export --> signing
@@ -49,6 +73,12 @@ flowchart LR
   grant --> admission
   grant --> canon
   grant --> signing
+  intent --> canon
+  intent --> completion
+  intent --> provenance
+  intent --> runtimeaction
+  intent --> signing
+  intent --> trustedcontext
   inventory --> admission
   inventory --> canon
   inventory --> product
@@ -60,24 +90,48 @@ flowchart LR
   ledger --> receipt
   ledger --> signing
   ledger --> state
+  perfbaseline --> export
+  perfbaseline --> intent
+  perfbaseline --> ledger
+  perfbaseline --> receipt
+  perfbaseline --> signing
+  provenance --> canon
+  provenance --> runtimeaction
+  provenance --> signing
   receipt --> canon
+  receipt --> effectevidence
   receipt --> grant
+  receipt --> intent
+  receipt --> pending
+  receipt --> provenance
   receipt --> rulepack
+  receipt --> runtimeaction
+  receipt --> runtimeauthz
   receipt --> signing
   receipt --> threat
+  receipt --> trustedcontext
   rulepack --> canon
+  runtimeaction --> canon
   server --> adapterinstall
   server --> admission
+  server --> canon
+  server --> completion
+  server --> effectevidence
   server --> export
   server --> grant
+  server --> intent
   server --> inventory
   server --> ledger
   server --> openshell
+  server --> pending
   server --> product
+  server --> provenance
   server --> receipt
   server --> rulepack
+  server --> runtimeaction
   server --> signing
   server --> state
+  server --> trustedcontext
   signing --> canon
   signing --> product
   skillmanifest --> admission
@@ -87,5 +141,10 @@ flowchart LR
   skillmanifest --> signing
   state --> admission
   state --> grant
+  state --> intent
   state --> product
+  state --> signing
   threat --> rulepack
+  trustedcontext --> canon
+  trustedcontext --> runtimeaction
+  trustedcontext --> signing

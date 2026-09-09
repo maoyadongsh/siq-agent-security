@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Scan this repo's source and emit Mermaid diagrams for GitHub Pages.
 
-Nothing here is hand-laid-out architecture. Nodes and edges come from:
+Static summaries combine parsed identifiers with fixed wiring templates, not
+complete control-flow analysis. Extraction inputs:
   - CLI subcommands in cmd/agentshield/main.go
   - http.ServeMux registrations in internal/server/server.go
   - Go imports among apps/agentshield/internal/*
@@ -16,6 +17,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 from collections import defaultdict
 from pathlib import Path
 
@@ -32,12 +34,12 @@ ADAPTERS_GO = INTERNAL / "adapters" / "adapters.go"
 ADAPTERS_DIR = REPO / "adapters" / "runtime"
 
 THEME = """%%{init: {'theme': 'base', 'themeVariables': {
-  'primaryColor': '#fdfcf9',
-  'primaryTextColor': '#001840',
-  'primaryBorderColor': '#001840',
-  'lineColor': '#7c5a0c',
-  'secondaryColor': '#f3eee2',
-  'tertiaryColor': '#f7f4ee',
+  'primaryColor': '#eaf1fb',
+  'primaryTextColor': '#132d50',
+  'primaryBorderColor': '#43658f',
+  'lineColor': '#43658f',
+  'secondaryColor': '#f6f8fc',
+  'tertiaryColor': '#ffffff',
   'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
 }}}%%
 """
@@ -291,6 +293,9 @@ def diagram_runtime(cmds: list[str], routes: list[tuple[str, str]], adapters: li
 
 
 def main() -> None:
+    source_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+    source_dirty = bool(subprocess.check_output(
+        ["git", "status", "--porcelain", "--untracked-files=no"], cwd=REPO, text=True).strip())
     main_src = read(MAIN)
     server_src = read(SERVER)
     grant_src = read(GRANT)
@@ -362,7 +367,9 @@ def main() -> None:
 
     meta = {
         "generated_from": "site/diagrams/from_code.py",
-        "note": "Nodes and edges are parsed from the current checkout, not drawn by hand.",
+        "note": "Static source extraction with fixed wiring templates; not complete control-flow analysis.",
+        "source_sha": source_sha,
+        "source_dirty": source_dirty,
         "cli": cmds,
         "http_routes": [p for p, _ in routes],
         "packages": pkgs,
