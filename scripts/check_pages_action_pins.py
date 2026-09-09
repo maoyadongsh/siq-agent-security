@@ -20,7 +20,8 @@ BAD_TAG_RE = re.compile(
 
 EXPECTED = {
     "actions/checkout": "11d5960a326750d5838078e36cf38b85af677262",
-    "peaceiris/actions-gh-pages": "84c30a85c19949d7eee79c4ff27748b70285e453",
+    "actions/upload-pages-artifact": "7b1f4a764d45c48632c6b24a0339c27f5614fb0b",
+    "actions/deploy-pages": "d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e",
 }
 
 

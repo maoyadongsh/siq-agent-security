@@ -1,6 +1,8 @@
 {
   "generated_from": "site/diagrams/from_code.py",
-  "note": "Nodes and edges are parsed from the current checkout, not drawn by hand.",
+  "note": "Static source extraction with fixed wiring templates; not complete control-flow analysis.",
+  "source_sha": "537e38546ee41d47588e8f422e7554f7abbd6ed6",
+  "source_dirty": true,
   "cli": [
     "version",
     "rulepack",
@@ -18,12 +20,38 @@
     "grant",
     "openshell",
     "release-manifest",
-    "manifest-verify"
+    "manifest-verify",
+    "incomplete"
   ],
   "http_routes": [
+    "/v1/tasks/",
+    "/v1/network-observations",
+    "/v1/file-observation-recoveries",
+    "/v1/file-observations",
+    "/v1/file-observations/",
+    "/v1/effect-observers",
+    "/v1/effect-observers/",
+    "/v1/effect-evidence",
+    "/v1/tool-effect-reports",
+    "/v1/effect-evidence/",
+    "/v1/actions/",
+    "/v1/provenance-issuers",
+    "/v1/provenance-issuers/",
+    "/v1/provenance-assertions",
+    "/v1/provenance-assertions/import",
+    "/v1/provenance-resolve",
+    "/v1/provenance-reports",
+    "/v1/provenance-select",
+    "/v1/intents",
+    "/v1/context-assertions",
+    "/v1/context-assertions/",
+    "/v1/intents/",
+    "/v1/intent-bindings",
+    "/v1/intent-bindings/",
     "/v1/status",
     "/v1/decide",
     "/v1/observe",
+    "/v1/hold-status",
     "/v1/hold/",
     "/v1/receipts",
     "/v1/admit",
@@ -47,6 +75,7 @@
     "/v1/findings/",
     "/v1/audit",
     "/v1/export",
+    "/v1/pair",
     "/ui-config.json",
     "/",
     "/"
@@ -56,20 +85,32 @@
     "adapters",
     "admission",
     "canon",
+    "completion",
+    "contractvectors",
     "controlsync",
+    "display",
+    "effectevidence",
     "export",
+    "fileopen",
     "grant",
+    "intent",
     "inventory",
     "ledger",
     "openshell",
+    "pending",
+    "perfbaseline",
     "product",
+    "provenance",
     "receipt",
     "rulepack",
+    "runtimeaction",
+    "runtimeauthz",
     "server",
     "signing",
     "skillmanifest",
     "state",
     "threat",
+    "trustedcontext",
     "ui"
   ],
   "package_imports": [
@@ -87,6 +128,10 @@
     },
     {
       "from": "adapters",
+      "to": "pending"
+    },
+    {
+      "from": "adapters",
       "to": "product"
     },
     {
@@ -107,6 +152,14 @@
     },
     {
       "from": "admission",
+      "to": "display"
+    },
+    {
+      "from": "admission",
+      "to": "fileopen"
+    },
+    {
+      "from": "admission",
       "to": "rulepack"
     },
     {
@@ -116,6 +169,14 @@
     {
       "from": "admission",
       "to": "threat"
+    },
+    {
+      "from": "completion",
+      "to": "effectevidence"
+    },
+    {
+      "from": "completion",
+      "to": "runtimeaction"
     },
     {
       "from": "controlsync",
@@ -132,6 +193,34 @@
     {
       "from": "controlsync",
       "to": "signing"
+    },
+    {
+      "from": "effectevidence",
+      "to": "canon"
+    },
+    {
+      "from": "effectevidence",
+      "to": "fileopen"
+    },
+    {
+      "from": "effectevidence",
+      "to": "provenance"
+    },
+    {
+      "from": "effectevidence",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "effectevidence",
+      "to": "signing"
+    },
+    {
+      "from": "export",
+      "to": "canon"
+    },
+    {
+      "from": "export",
+      "to": "display"
     },
     {
       "from": "export",
@@ -162,6 +251,30 @@
       "to": "signing"
     },
     {
+      "from": "intent",
+      "to": "canon"
+    },
+    {
+      "from": "intent",
+      "to": "completion"
+    },
+    {
+      "from": "intent",
+      "to": "provenance"
+    },
+    {
+      "from": "intent",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "intent",
+      "to": "signing"
+    },
+    {
+      "from": "intent",
+      "to": "trustedcontext"
+    },
+    {
       "from": "inventory",
       "to": "admission"
     },
@@ -206,8 +319,44 @@
       "to": "state"
     },
     {
+      "from": "perfbaseline",
+      "to": "export"
+    },
+    {
+      "from": "perfbaseline",
+      "to": "intent"
+    },
+    {
+      "from": "perfbaseline",
+      "to": "ledger"
+    },
+    {
+      "from": "perfbaseline",
+      "to": "receipt"
+    },
+    {
+      "from": "perfbaseline",
+      "to": "signing"
+    },
+    {
+      "from": "provenance",
+      "to": "canon"
+    },
+    {
+      "from": "provenance",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "provenance",
+      "to": "signing"
+    },
+    {
       "from": "receipt",
       "to": "canon"
+    },
+    {
+      "from": "receipt",
+      "to": "effectevidence"
     },
     {
       "from": "receipt",
@@ -215,7 +364,27 @@
     },
     {
       "from": "receipt",
+      "to": "intent"
+    },
+    {
+      "from": "receipt",
+      "to": "pending"
+    },
+    {
+      "from": "receipt",
+      "to": "provenance"
+    },
+    {
+      "from": "receipt",
       "to": "rulepack"
+    },
+    {
+      "from": "receipt",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "receipt",
+      "to": "runtimeauthz"
     },
     {
       "from": "receipt",
@@ -226,7 +395,15 @@
       "to": "threat"
     },
     {
+      "from": "receipt",
+      "to": "trustedcontext"
+    },
+    {
       "from": "rulepack",
+      "to": "canon"
+    },
+    {
+      "from": "runtimeaction",
       "to": "canon"
     },
     {
@@ -239,11 +416,27 @@
     },
     {
       "from": "server",
+      "to": "canon"
+    },
+    {
+      "from": "server",
+      "to": "completion"
+    },
+    {
+      "from": "server",
+      "to": "effectevidence"
+    },
+    {
+      "from": "server",
       "to": "export"
     },
     {
       "from": "server",
       "to": "grant"
+    },
+    {
+      "from": "server",
+      "to": "intent"
     },
     {
       "from": "server",
@@ -259,7 +452,15 @@
     },
     {
       "from": "server",
+      "to": "pending"
+    },
+    {
+      "from": "server",
       "to": "product"
+    },
+    {
+      "from": "server",
+      "to": "provenance"
     },
     {
       "from": "server",
@@ -271,11 +472,19 @@
     },
     {
       "from": "server",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "server",
       "to": "signing"
     },
     {
       "from": "server",
       "to": "state"
+    },
+    {
+      "from": "server",
+      "to": "trustedcontext"
     },
     {
       "from": "signing",
@@ -315,11 +524,31 @@
     },
     {
       "from": "state",
+      "to": "intent"
+    },
+    {
+      "from": "state",
       "to": "product"
+    },
+    {
+      "from": "state",
+      "to": "signing"
     },
     {
       "from": "threat",
       "to": "rulepack"
+    },
+    {
+      "from": "trustedcontext",
+      "to": "canon"
+    },
+    {
+      "from": "trustedcontext",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "trustedcontext",
+      "to": "signing"
     }
   ],
   "grant_transitions": [
@@ -399,7 +628,7 @@
     },
     {
       "action": "deny",
-      "reason": "\"write to \" + p + \" outside granted paths and cwd (default deny)\""
+      "reason": "\"write to \" + p + \" outside granted paths (default deny)\""
     },
     {
       "action": "hold",
@@ -410,11 +639,7 @@
       "reason": "\"granted by \" + g.GrantID"
     }
   ],
-  "enforcement_modes_in_decide": [
-    "audit_only",
-    "warn",
-    "default"
-  ],
+  "enforcement_modes_in_decide": [],
   "policy_exec": [
     {
       "verdict": "admit",

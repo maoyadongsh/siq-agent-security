@@ -1,288 +1,392 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="siq-agent-security 是本机智能体的门禁：装 Skill 前给出结论，人批准最小权限，每次工具调用留下签名回执。模型不能当裁判。"
-    />
-    <meta name="theme-color" content="#f7f4ee" />
-    <title>siq-agent-security · 本机智能体的门禁</title>
-    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <a class="skip" href="#main">跳到正文</a>
-    <header class="site-header">
-      <div class="wrap nav">
-        <a class="brand" href="./">
-          <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <rect width="32" height="32" rx="6" fill="#001840" />
-            <rect x="7.5" y="6.5" width="17" height="19" rx="1.5" stroke="#c9a227" stroke-width="1.5" />
-            <path d="M11 12h10M11 16h7M11 20h5" stroke="#f7f4ee" stroke-width="1.5" stroke-linecap="round" />
-            <rect x="20" y="19" width="5" height="6" fill="#7c5a0c" />
-          </svg>
-          <span class="brand-name">siq-agent-security</span>
-        </a>
-        <nav class="nav-links" aria-label="站点">
-          <a href="./architecture.html">架构</a>
-          <a href="#verdicts">结论</a>
-          <a href="#spark">实测</a>
-          <a href="#install">安装</a>
-          <a href="https://github.com/maoyadongsh/siq-agent-security">源码</a>
-          <a class="btn btn-primary" href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.2.0">v0.2.0</a>
-        </nav>
-      </div>
-    </header>
-
-    <main id="main">
-      <section class="hero">
-        <div class="wrap hero-grid">
-          <div>
-            <p class="kicker">本机门禁 · 当前 v0.2.0</p>
-            <h1>先看清本机智能体，再决定能不能装、能不能调工具。</h1>
-            <p class="lede">
-              把它当成可安装的 Skill 放进 Hermes、OpenClaw、WorkBuddy / CodeBuddy；真正做判断的是本机上的
-              <strong>siq-agent-security</strong> 程序，不是模型。模型不能宣布「这个 Skill 安全」，也不能代你点批准。
-            </p>
-            <div class="btn-row">
-              <a class="btn btn-primary" href="https://github.com/maoyadongsh/siq-agent-security">查看源码</a>
-              <a class="btn" href="https://github.com/maoyadongsh/siq-agent-security/blob/cursor/agentshield-w0-contracts-8eff/README.md">使用说明</a>
-            </div>
-          </div>
-          <aside class="receipt" aria-label="回执示例">
-            <h2>回执 · 示例</h2>
-            <p class="receipt-meta">未授予的能力默认拒绝，并留下可核验签名。下表是示意，不是真实主机数据。</p>
-            <dl class="kv">
-              <dt>结论</dt>
-              <dd><span class="badge badge-deny">deny</span></dd>
-              <dt>能力</dt>
-              <dd>web_fetch</dd>
-              <dt>原因</dt>
-              <dd>未批准出网</dd>
-              <dt>操作者</dt>
-              <dd>须人类签字</dd>
-              <dt>核验</dt>
-              <dd><span class="badge badge-pass">verify 通过</span></dd>
-            </dl>
-          </aside>
-        </div>
-      </section>
-
-      <section class="section" id="problem">
-        <div class="wrap">
-          <h2>它解决什么问题</h2>
-          <p class="section-intro">
-            能干活的智能体同时握着 Skill 目录、工具、网址、文件路径和密钥引用。来历不明的 Skill 一旦拷进目录，往往已经开始执行。市场上扫描、网关、沙箱、企业台通常是拆开的。本机缺的是一条链：发现 → 审查 → 人授权 → 调用时拦截 → 出事能核对。
-          </p>
-          <ol class="steps">
-            <li>
-              <div>
-                <h3>发现</h3>
-                <p>先盘点本机有哪些 Agent、Skill 和配置。</p>
-              </div>
-            </li>
-            <li>
-              <div>
-                <h3>审查</h3>
-                <p>装之前给出结论。静态分析，不执行被扫描内容。</p>
-              </div>
-            </li>
-            <li>
-              <div>
-                <h3>人授权</h3>
-                <p>批准权限必须留下操作者姓名。模型建议，人签字。</p>
-              </div>
-            </li>
-            <li>
-              <div>
-                <h3>拦截</h3>
-                <p>未授予的能力默认拒绝，例如没批上网就挡住 web_fetch。</p>
-              </div>
-            </li>
-            <li>
-              <div>
-                <h3>核对</h3>
-                <p>每次放行或拒绝都有签名回执，可以复核。</p>
-              </div>
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      <section class="section" id="architecture">
-        <div class="wrap">
-          <h2>架构图从源码生成</h2>
-          <p class="section-intro">
-            CLI 子命令、HTTP 路由、包依赖、准入结论、运行时返回路径和 grant 状态机，都由扫描当前仓库抽出来，而不是手绘。源码一改，图跟着改。
-          </p>
-          <div class="btn-row">
-            <a class="btn btn-primary" href="./architecture.html">打开从代码生成的图</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="verdicts">
-        <div class="wrap">
-          <h2>日常会看到三种结论</h2>
-          <p class="section-intro">「会用工具」和「是恶意」分开。带工具清单的官方风格 Skill 走附条件准入；隔离留给欺骗和外传。</p>
-          <div class="cards">
-            <article class="card card-quarantine">
-              <h3>隔离</h3>
-              <p>欺骗、藏指令、偷凭据再外传、文件被篡改——停，不要装。</p>
-            </article>
-            <article class="card card-conditions">
-              <h3>附条件准入</h3>
-              <p>声明了要上网、写文件、装软件——记下这些能力，等人签发，而不是一律当病毒。</p>
-            </article>
-            <article class="card card-pass">
-              <h3>通过</h3>
-              <p>能力声明干净。仍须人授权后，运行时才放行。</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="scope">
-        <div class="wrap">
-          <h2>本机程序和企业控制面分开</h2>
-          <p class="section-intro">规则和字段约定共用，运行时分开。不另做一套账号，不自己造沙箱，也不做 HTTPS 中间人。只监听本机地址。</p>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col">siq-agent-security（本机）</th>
-                  <th scope="col">企业控制面</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">给谁</th>
-                  <td>个人电脑上的智能体</td>
-                  <td>多台机器、多个团队</td>
-                </tr>
-                <tr>
-                  <th scope="row">干什么</th>
-                  <td>装 Skill 前先审查，每次调用工具留签字据</td>
-                  <td>资产台账、审批、采集、策略下发</td>
-                </tr>
-                <tr>
-                  <th scope="row">怎么跑</th>
-                  <td>一个本地程序，不用登录、不用数据库</td>
-                  <td>控制台 + API + PostgreSQL</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="note">
-            当前能力表里还没有一行「已正式支持」——没有核验过的档位就不宣称。没有工具钩子就写明拦不住。文件系统和进程策略在沙箱创建时锁定，签发不得把它们标成有效。
-          </p>
-        </div>
-      </section>
-
-      <section class="section" id="spark">
-        <div class="wrap">
-          <h2>在 NVIDIA DGX Spark 上走过的路径</h2>
-          <p class="section-intro">
-            开发机是 NVIDIA DGX Spark（aarch64，Ubuntu 24.04，GPU NVIDIA GB10）。程序为原生 linux/arm64，<code>siq-agent-security 0.2.0</code>。安装脚本不从网上下载二进制。批准人均为人类，模型未代批。能力表没有改成「正式支持」。
-          </p>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col">接入面</th>
-                  <th scope="col">实际做了什么</th>
-                  <th scope="col">明确没做 / 不宣称</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">Hermes</th>
-                  <td>恶意夹具隔离；官方风格附条件准入；人批准后未授予的 web_fetch 被拒；回执核验通过</td>
-                  <td>未配置网络沙箱时不宣称该档</td>
-                </tr>
-                <tr>
-                  <th scope="row">OpenClaw</th>
-                  <td>隔离 HOME 里写入策略与插件后可还原；恶意夹具 block、官方风格 warn</td>
-                  <td>未挂到本机正在跑的 OpenClaw 网关进程</td>
-                </tr>
-                <tr>
-                  <th scope="row">WorkBuddy / CodeBuddy</th>
-                  <td>隔离 HOME 上的真实 PreToolUse 钩子</td>
-                  <td>未驱动图形界面</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="note">
-            脱敏记录在仓库
-            <a href="https://github.com/maoyadongsh/siq-agent-security/tree/cursor/agentshield-w0-contracts-8eff/docs/evidence/agentshield">docs/evidence/agentshield/</a>
-            。当前代码在分支
-            <a href="https://github.com/maoyadongsh/siq-agent-security/tree/cursor/agentshield-w0-contracts-8eff">cursor/agentshield-w0-contracts-8eff</a>
-            ，尚未合入默认分支。
-          </p>
-        </div>
-      </section>
-
-      <section class="section" id="install">
-        <div class="wrap">
-          <h2>从本仓库安装</h2>
-          <p class="section-intro">
-            目前尚未上架各平台 Skill 市场。需要 Go 1.22+ 编译本机程序。安装脚本不会从网上下载程序；找不到本机二进制就退出。
-          </p>
-          <div class="install">
-            <pre id="install-cmd" tabindex="0"><code>git clone https://github.com/maoyadongsh/siq-agent-security.git
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="SIQ Agent Security：面向 Agent Skills 的可信执行安全运行时。连接用户授权、参数来源、工具执行与效果证据，提供可复现案例和带 Sigstore 签名的源码预发布。" />
+<meta name="theme-color" content="#f6f8fc" />
+<title>SIQ Agent Security · 让 Agent 行动有边界，完成有依据</title>
+<link rel="canonical" href="https://maoyadongsh.github.io/siq-agent-security/" />
+<link rel="icon" href="./siq-shield.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="./styles.css" />
+<script src="./site.js" defer>
+</script>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header class="site-header">
+<div class="wrap nav">
+<a class="brand" href="./">
+<img class="brand-mark" src="./siq-shield.svg" width="36" height="36" alt="" />
+<span class="brand-name">SIQ Agent Security</span>
+</a>
+<nav class="nav-links" aria-label="站点导航">
+<a href="#how-it-works">工作方式</a>
+<a href="#evidence">研究证据</a>
+<a href="./architecture.html">源码架构</a>
+<a href="#release">签名发布</a>
+<a href="#install">快速开始</a>
+<a href="https://github.com/maoyadongsh/siq-agent-security">GitHub ↗</a>
+</nav>
+</div>
+</header>
+<main id="main">
+<section class="hero">
+<div class="wrap hero-grid">
+<div>
+<p class="eyebrow">SECURE RUNTIME FOR AGENT SKILLS</p>
+<h1>让 Agent 行动有边界，<br />完成有依据。</h1>
+<p class="lede">SIQ 将用户授权、参数来源、工具执行和实际效果连接成可检查的证据链。Agent 规划任务，运行时核验动作，独立观察为任务完成提供依据。</p>
+<p class="hero-statement">Skills 给 Agent 能力，SIQ 给能力边界。</p>
+<div class="btn-row">
+<a class="btn btn-primary" href="#install">运行无密钥演示</a>
+<a class="btn" href="https://github.com/maoyadongsh/siq-agent-security">查看开源项目 ↗</a>
+</div>
+<p class="note">面向研究者、工具与适配器开发者，以及评估 Agent 权限治理的平台团队。</p>
+</div>
+<aside class="execution-chain" aria-label="授权与效果证据链示意">
+<div class="panel-heading">
+<span>TRUSTED AGENT EXECUTION</span>
+<span class="badge">流程示意</span>
+</div>
+<ol class="chain">
+<li>
+<span class="chain-index">01</span>
+<div>
+<h2>受信授权</h2>
+<p>明确任务、权限与可使用的上下文。</p>
+<code>Grant · Intent · Context</code>
+</div>
+</li>
+<li>
+<span class="chain-index">02</span>
+<div>
+<h2>动作核验</h2>
+<p>检查工具动作及其参数来源。</p>
+<code>allow · deny · hold · redact</code>
+</div>
+</li>
+<li>
+<span class="chain-index">03</span>
+<div>
+<h2>效果与完成</h2>
+<p>关联签名回执与独立效果证据。</p>
+<code>verified · blocked · incomplete</code>
+</div>
+</li>
+</ol>
+<p class="panel-note">工具自报成功、效果已发生和任务已完成，分别记录与核验。</p>
+</aside>
+</div>
+</section>
+<div class="release-strip">
+<div class="wrap release-strip-inner">
+<span>
+<strong>research-v0.1.0-rc.1</strong> · 源码预发布</span>
+<span class="signed-label">已提供 Sigstore 数字签名</span>
+<a href="#release">版本身份与验证方法 →</a>
+</div>
+</div>
+<section class="section" id="how-it-works">
+<div class="wrap">
+<p class="eyebrow">01 / AUTHORIZATION · PROVENANCE · EFFECTS</p>
+<h2>执行前、执行时、执行后，都有可核对的依据</h2>
+<p class="section-intro">以运行时检查约束已接入的执行路径，将授权事实与模型提议、结果声明分别处理。</p>
+<div class="cards">
+<article class="card">
+<span class="card-index">01 / 执行前</span>
+<h3>权限来自受信授权</h3>
+<p>静态扫描 Skill 并记录能力需求。Grant、Intent 与受信 Context 约束动作；模型输出不能自行创建有效权限。</p>
+</article>
+<article class="card">
+<span class="card-index">02 / 执行时</span>
+<h3>相同参数，仍要核验来源</h3>
+<p>在工具入口检查任务授权与参数来源，需要审批的动作在执行前重新核验。相同收件人值，也可能因来源不同得到不同决策。</p>
+</article>
+<article class="card">
+<span class="card-index">03 / 执行后</span>
+<h3>完成依赖效果证据</h3>
+<p>签名回执关联动作，独立观察文件或受控接收端的效果。缺失或冲突的证据不能被工具的“成功”返回替代。</p>
+</article>
+</div>
+</div>
+</section>
+<section class="section section-tinted" id="scenarios">
+<div class="wrap">
+<p class="eyebrow">02 / OBSERVABLE SCENARIOS</p>
+<h2>从四个可观察场景开始</h2>
+<p class="section-intro">任务是“分析仓库、生成报告并交付给指定联系人”。显式模型夹具驱动真实 SIQ 组件，可直接观察以下检查结果。</p>
+<div class="scenario-grid">
+<article class="card">
+<span class="badge badge-pass">verified</span>
+<h3>正常交付</h3>
+<p>任务授权、受信联系人以及文件和接收端效果均满足要求，完成状态通过核验。</p>
+</article>
+<article class="card">
+<span class="badge badge-deny">blocked</span>
+<h3>MCP 收件人注入</h3>
+<p>不可信工具结果提出更换收件人，运行时阻止超出授权的交付动作。</p>
+</article>
+<article class="card">
+<span class="badge">来源决定授权结果</span>
+<h3>同值、不同来源</h3>
+<p>相同收件人值分别来自可信数据库与 MCP；可信路径获准，MCP 路径被拒绝。</p>
+</article>
+<article class="card">
+<span class="badge badge-caution">incomplete</span>
+<h3>工具伪成功</h3>
+<p>工具返回成功，受控接收端却没有对应事件。任务保持未完成，等待所需效果证据。</p>
+</article>
+</div>
+<p class="note">这些场景验证指定安全路径，不是实模型遭受提示注入时的攻击成功率测量。<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/research/evaluation-protocol.md">阅读评价协议 ↗</a>
+</p>
+</div>
+</section>
+<section class="section" id="evidence">
+<div class="wrap">
+<p class="eyebrow">03 / REPRODUCIBLE EVIDENCE</p>
+<h2>结果有来源，分母有边界</h2>
+<p class="section-intro">以下是已归档的特定运行结果；每项指标保留自己的语料、环境和证据记录。</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="归档研究结果">
+<table>
+<thead>
+<tr>
+<th scope="col">归档观察</th>
+<th scope="col">结果</th>
+<th scope="col">证据与范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">固定控制案例</th>
+<td>
+<strong>23 / 23</strong> 满足预期</td>
+<td>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/research/result-reproduction.md">开发期间的受控夹具报告</a>，不是干净发布验收。</td>
+</tr>
+<tr>
+<th scope="row">正常任务完成</th>
+<td>
+<strong>5 / 5</strong>
+</td>
+<td>同一控制报告中的全部正常任务。</td>
+</tr>
+<tr>
+<th scope="row">不安全目标实际执行</th>
+<td>
+<strong>0 / 13</strong>
+</td>
+<td>注册了不安全目标的案例，分母与正常任务不同。</td>
+</tr>
+<tr>
+<th scope="row">回执与效果封装</th>
+<td>
+<strong>318</strong> 条回执 · <strong>20</strong> 个效果封装</td>
+<td>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/research/evidence/reproduction-b/verification.json">独立验证程序的输出</a>。</td>
+</tr>
+<tr>
+<th scope="row">普通 Linux 浏览器复现</th>
+<td>
+<strong>9 / 9</strong> 场景通过</td>
+<td>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/research/evidence/reproduction-a/hosted-linux-identity.json">托管 Ubuntu 记录</a>；无需 GPU 或模型密钥。</td>
+</tr>
+<tr>
+<th scope="row">首发源码 CI</th>
+<td>
+<strong>31</strong> 项必需检查通过</td>
+<td>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/research/evidence/release-ci.json">对应首发提交 aefab111</a>，不是实时 CI 状态。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="note">历史实模型实验的成功与失败均保留在<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/hackathon/benchmark-report.md">原始报告</a>中，不与固定夹具合并分母。托管 CI 复现不等于外部研究者的独立复现；当前未宣称已发表论文、DOI 或独立制品认证。</p>
+<div class="text-links">
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/research/technical-report.md">技术报告 ↗</a>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/research/dataset-card.md">数据卡 ↗</a>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/research/claims-evidence.md">逐项结论与证据 ↗</a>
+</div>
+</div>
+</section>
+<section class="section section-tinted" id="install">
+<div class="wrap">
+<p class="eyebrow">04 / QUICK START</p>
+<h2>在普通 Linux 上，运行无模型密钥演示</h2>
+<p class="section-intro">准备 Git、Go <strong>1.26.6</strong>、Python <strong>3.12+</strong>、Node.js <strong>22 / npm</strong>。首次安装依赖需要联网；演示无需 GPU、PostgreSQL 或企业登录。</p>
+<div class="split">
+<div>
+<p>打开 <code>http://127.0.0.1:47621/demo</code>，输入终端给出的一次性配对码，选择上述场景。</p>
+<p class="note">请使用新克隆的目录，并显式保留 <code>--mode test</code>；默认 <code>demo</code> 模式会使用已配置的真实模型。需要复现首发源码时，在启动前执行 <code>git switch --detach research-v0.1.0-rc.1</code>。</p>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/REPRODUCIBILITY.md">环境诊断、固定基准与三轨复现指南 ↗</a>
+</div>
+<div>
+<div class="code-heading">
+<span>演示启动命令</span>
+<button class="btn copy-btn" type="button" data-copy="#install-cmd" aria-label="复制演示启动命令" hidden>复制命令</button>
+</div>
+<pre id="install-cmd" tabindex="0">
+<code>git clone https://github.com/maoyadongsh/siq-agent-security.git
 cd siq-agent-security
-git fetch origin cursor/agentshield-w0-contracts-8eff
-git checkout cursor/agentshield-w0-contracts-8eff
 
-cd apps/agentshield
-go test ./...
-go build -trimpath -ldflags "-s -w -X main.Version=0.2.0" -o siq-agent-security ./cmd/agentshield
-mkdir -p "$HOME/.local/bin"
-install -m 0755 ./siq-agent-security "$HOME/.local/bin/siq-agent-security"</code></pre>
-            <button class="btn copy-btn" type="button" data-copy="#install-cmd">复制命令</button>
-          </div>
-          <p class="note">
-            完整步骤、适配器与演示夹具见
-            <a href="https://github.com/maoyadongsh/siq-agent-security/blob/cursor/agentshield-w0-contracts-8eff/README.md">README</a>
-            与
-            <a href="https://github.com/maoyadongsh/siq-agent-security/blob/cursor/agentshield-w0-contracts-8eff/AGENTSHIELD.md">本机操作</a>。
-            发布物：
-            <a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.2.0">siq-agent-security-v0.2.0</a>。
-          </p>
-        </div>
-      </section>
-    </main>
+bash scripts/hackathon/start.sh --mode test --port 47621
+bash scripts/hackathon/healthcheck.sh
+bash scripts/hackathon/pair.sh</code>
+</pre>
+<p class="note">体验完成后停止该实例：<code>bash scripts/hackathon/stop.sh</code>。再次启动前按复现指南归档旧状态；配对码和私密状态留在本机。</p>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="components">
+<div class="wrap">
+<p class="eyebrow">05 / COMPONENTS &amp; INTEGRATION</p>
+<h2>从本地执行，到可选企业控制面</h2>
+<p class="section-intro">本地演示独立运行。更广的接入与部署范围，分别以适配器能力矩阵和企业运行手册为依据。</p>
+<div class="cards">
+<article class="card">
+<h3>Agent、Skills 与本地运行时</h3>
+<p>Secure Agent 规划任务并选择研究、报告和交付 Skills；Go 运行时负责准入、授权、管理 API、签名回执与效果核验。</p>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/AGENTSHIELD.md">本地操作指南 →</a>
+</article>
+<article class="card">
+<h3>工具入口与运行时适配</h3>
+<p>Hermes、OpenClaw 与 CodeBuddy 的具体工具入口接入。存在适配器不代表所有版本、所有调用路径都受保护。</p>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/agentshield-capability-matrix-v1.md">接入能力矩阵 →</a>
+</article>
+<article class="card">
+<h3>企业控制面、Edge 与采集</h3>
+<p>多租户资产、证据、策略审批和 Edge 协调。Connectors 采集配置、目录、框架、进程、容器及集群信息。</p>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/enterprise-production-runbook-v1.md">企业部署与验证条件 →</a>
+</article>
+</div>
+<div class="architecture-link">
+<div>
+<h3>查看当前源码结构</h3>
+<p>CLI、HTTP 路由、包依赖与状态转换，由发布工作流重新扫描生成。</p>
+</div>
+<a class="btn" href="./architecture.html">打开源码架构图 →</a>
+</div>
+</div>
+</section>
+<section class="section section-tinted" id="release">
+<div class="wrap">
+<p class="eyebrow">06 / SOURCE RELEASE &amp; AUTHENTICATION</p>
+<h2>源码预发布，已提供 Sigstore 数字签名</h2>
+<p class="section-intro">
+<a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1">research-v0.1.0-rc.1</a> 包含源码归档、版本信息和校验清单，不包含新编译的二进制或模型权重。</p>
+<div class="release-files">
+<a href="https://github.com/maoyadongsh/siq-agent-security/releases/download/research-v0.1.0-rc.1/siq-agent-security-research-v0.1.0-rc.1.tar.gz">
+<strong>源码归档</strong>
+<span>固定首发源码 · .tar.gz</span>
+</a>
+<a href="https://github.com/maoyadongsh/siq-agent-security/releases/download/research-v0.1.0-rc.1/SOURCE-INFO.json">
+<strong>SOURCE-INFO.json</strong>
+<span>版本身份与源码清单</span>
+</a>
+<a href="https://github.com/maoyadongsh/siq-agent-security/releases/download/research-v0.1.0-rc.1/SHA256SUMS">
+<strong>SHA256SUMS</strong>
+<span>源码与版本信息的文件摘要</span>
+</a>
+<a href="https://github.com/maoyadongsh/siq-agent-security/releases/download/research-v0.1.0-rc.1/SHA256SUMS.sigstore.json">
+<strong>Sigstore 签名包</strong>
+<span>签名、证书与透明日志证据</span>
+</a>
+</div>
+<p>签名绑定本仓库 GitHub Actions 发布工作流的身份，签署 <code>SHA256SUMS</code>，从而覆盖源码归档和 <code>SOURCE-INFO.json</code>。验证时必须同时核对签名身份与文件摘要。</p>
+<details class="extract">
+<summary>使用 Cosign 与 GitHub CLI 验证发布文件</summary>
+<p>安装 Cosign（已验证版本 v3.1.3）与 GitHub CLI，创建一个新的下载目录：</p>
+<div class="code-heading">
+<span>发布签名验证命令</span>
+<button class="btn copy-btn" type="button" data-copy="#verify-cmd" aria-label="复制发布签名验证命令" hidden>复制命令</button>
+</div>
+<pre id="verify-cmd" tabindex="0">
+<code>mkdir siq-release-verify
+cd siq-release-verify
+gh release download research-v0.1.0-rc.1 --repo maoyadongsh/siq-agent-security \
+  --pattern SHA256SUMS --pattern SHA256SUMS.sigstore.json \
+  --pattern SOURCE-INFO.json --pattern siq-agent-security-research-v0.1.0-rc.1.tar.gz
 
-    <footer class="site-footer">
-      <div class="wrap">
-        <p>siq-agent-security · 本机智能体门禁。数据与口径对齐仓库公开说明，不是实时扫描结果。</p>
-        <p>
-          <a href="https://github.com/maoyadongsh/siq-agent-security">GitHub</a>
-          ·
-          <a href="https://github.com/maoyadongsh/siq-agent-security/releases">Releases</a>
-        </p>
-      </div>
-    </footer>
-    <script>
-      (function () {
-        var button = document.querySelector("[data-copy]");
-        if (!button || !navigator.clipboard) return;
-        button.addEventListener("click", function () {
-          var target = document.querySelector(button.getAttribute("data-copy"));
-          if (!target) return;
-          navigator.clipboard.writeText(target.textContent).then(function () {
-            var previous = button.textContent;
-            button.textContent = "已复制";
-            window.setTimeout(function () {
-              button.textContent = previous;
-            }, 1600);
-          });
-        });
-      })();
-    </script>
-  </body>
+cosign verify-blob --bundle SHA256SUMS.sigstore.json \
+  --certificate-identity &#x27;https://github.com/maoyadongsh/siq-agent-security/.github/workflows/release-signing.yml@refs/heads/main&#x27; \
+  --certificate-oidc-issuer &#x27;https://token.actions.githubusercontent.com&#x27; \
+  SHA256SUMS &amp;&amp; sha256sum --check --strict SHA256SUMS</code>
+</pre>
+</details>
+<p class="note">源码固定在 <a href="https://github.com/maoyadongsh/siq-agent-security/commit/aefab111c7fcad9075c8f429f97c9eab519dcd22">
+<code>aefab111</code>
+</a>。2026-09-09 为原附件补充独立签名，未改写原附件；<code>official_signature=false</code> 保留首次打包的历史状态。<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/research/release-authentication.md">完整验证说明与签名范围 ↗</a>
+</p>
+</div>
+</section>
+<section class="section" id="boundaries">
+<div class="wrap">
+<p class="eyebrow">07 / SECURITY BOUNDARIES</p>
+<h2>能力与证明范围一起说明</h2>
+<p class="section-intro">结合威胁模型与证据范围评估适用场景。</p>
+<div class="boundary-grid">
+<article>
+<h3>同一操作系统用户下不隔离</h3>
+<p>当前桌面模式不能阻止同 UID 恶意进程读取密钥或改写状态；Python ToolGateway 不是 OS 沙箱。</p>
+</article>
+<article>
+<h3>授权检查有接入范围</h3>
+<p>只覆盖正确接入的执行路径。来源注册与敏感级别分类仍依赖可信操作者。</p>
+</article>
+<article>
+<h3>效果观察有环境边界</h3>
+<p>文件与受控接收端的效果观察，不代表所有外部 SaaS 的交付证明；普通结果关联与独立效果证据的证明范围不同。</p>
+</article>
+<article>
+<h3>实验结果有适用范围</h3>
+<p>固定小语料与模型夹具不构成通用提示注入防护或生产安全认证；跨平台编译不等于原生平台验收。</p>
+</article>
+</div>
+<div class="text-links">
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/docs/threat-model.md">威胁模型 ↗</a>
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/SECURITY.md">私密报告安全问题 ↗</a>
+</div>
+</div>
+</section>
+<section class="section section-tinted" id="contribute">
+<div class="wrap">
+<p class="eyebrow">BUILD · REPRODUCE · REVIEW</p>
+<h2>从一条可复核的贡献开始</h2>
+<p class="section-intro">欢迎普通 Linux 复现、来源解释、夹具诊断、指标纠错，以及有来源依据的负向案例。</p>
+<div class="split">
+<div>
+<p>后续研究重点包括独立复现、长期归档和预先确定协议的新实验。</p>
+<div class="text-links">
+<a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/CONTRIBUTING.md">贡献指南 ↗</a>
+<a href="https://github.com/maoyadongsh/siq-agent-security/discussions">参与讨论 ↗</a>
+</div>
+</div>
+<div class="license-panel">
+<h3>许可与引用</h3>
+<p>自有软件采用 <a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/LICENSE">Apache-2.0</a>；明确列出的原创研究文档采用 <a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/LICENSES/README.md">CC BY 4.0</a>。第三方材料保留各自许可。</p>
+<p>引用请使用 <a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/CITATION.cff">CITATION.cff</a>，并记录实际版本、提交与语料摘要。</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="site-footer">
+<div class="wrap footer-inner">
+<div>
+<strong>SIQ Agent Security</strong>
+<p>面向 Agent Skills 的可信执行安全运行时</p>
+</div>
+<div>
+<p>内容核对：2026-09-09 · 站点与源码预发布分别记录版本身份</p>
+<p>
+<a href="https://github.com/maoyadongsh/siq-agent-security">GitHub</a> · <a href="https://github.com/maoyadongsh/siq-agent-security/blob/main/README.en.md">English documentation</a> · <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/pages.yml">站点发布记录</a>
+</p>
+</div>
+</div>
+</footer>
+<p class="sr-only" id="copy-status" role="status" aria-live="polite">
+</p>
+</body>
 </html>

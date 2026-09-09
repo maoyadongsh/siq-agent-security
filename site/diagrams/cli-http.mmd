@@ -1,10 +1,10 @@
 %%{init: {'theme': 'base', 'themeVariables': {
-  'primaryColor': '#fdfcf9',
-  'primaryTextColor': '#001840',
-  'primaryBorderColor': '#001840',
-  'lineColor': '#7c5a0c',
-  'secondaryColor': '#f3eee2',
-  'tertiaryColor': '#f7f4ee',
+  'primaryColor': '#eaf1fb',
+  'primaryTextColor': '#132d50',
+  'primaryBorderColor': '#43658f',
+  'lineColor': '#43658f',
+  'secondaryColor': '#f6f8fc',
+  'tertiaryColor': '#ffffff',
   'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
 }}}%%
 flowchart TB
@@ -26,11 +26,37 @@ flowchart TB
     cli_openshell["openshell"]
     cli_release_manifest["release-manifest"]
     cli_manifest_verify["manifest-verify"]
+    cli_incomplete["incomplete"]
   end
   subgraph http["internal/server New() ServeMux"]
+    rt__v1_tasks_["/v1/tasks/"]
+    rt__v1_network_observations["/v1/network-observations"]
+    rt__v1_file_observation_recoveries["/v1/file-observation-recoveries"]
+    rt__v1_file_observations["/v1/file-observations"]
+    rt__v1_file_observations_["/v1/file-observations/"]
+    rt__v1_effect_observers["/v1/effect-observers"]
+    rt__v1_effect_observers_["/v1/effect-observers/"]
+    rt__v1_effect_evidence["/v1/effect-evidence"]
+    rt__v1_tool_effect_reports["/v1/tool-effect-reports"]
+    rt__v1_effect_evidence_["/v1/effect-evidence/"]
+    rt__v1_actions_["/v1/actions/"]
+    rt__v1_provenance_issuers["/v1/provenance-issuers"]
+    rt__v1_provenance_issuers_["/v1/provenance-issuers/"]
+    rt__v1_provenance_assertions["/v1/provenance-assertions"]
+    rt__v1_provenance_assertions_import["/v1/provenance-assertions/import"]
+    rt__v1_provenance_resolve["/v1/provenance-resolve"]
+    rt__v1_provenance_reports["/v1/provenance-reports"]
+    rt__v1_provenance_select["/v1/provenance-select"]
+    rt__v1_intents["/v1/intents"]
+    rt__v1_context_assertions["/v1/context-assertions"]
+    rt__v1_context_assertions_["/v1/context-assertions/"]
+    rt__v1_intents_["/v1/intents/"]
+    rt__v1_intent_bindings["/v1/intent-bindings"]
+    rt__v1_intent_bindings_["/v1/intent-bindings/"]
     rt__v1_status["/v1/status"]
     rt__v1_decide["/v1/decide"]
     rt__v1_observe["/v1/observe"]
+    rt__v1_hold_status["/v1/hold-status"]
     rt__v1_hold_["/v1/hold/"]
     rt__v1_receipts["/v1/receipts"]
     rt__v1_admit["/v1/admit"]
@@ -54,6 +80,7 @@ flowchart TB
     rt__v1_findings_["/v1/findings/"]
     rt__v1_audit["/v1/audit"]
     rt__v1_export["/v1/export"]
+    rt__v1_pair["/v1/pair"]
     rt__ui_config_json["/ui-config.json"]
     rt__["/"]
     rt__["/"]
