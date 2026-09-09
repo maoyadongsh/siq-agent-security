@@ -1,0 +1,98 @@
+name: release-signing
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Reviewed research release to sign
+        required: true
+        default: research-v0.1.0-rc.1
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-signing
+  cancel-in-progress: false
+
+jobs:
+  sign-release:
+    if: github.repository == 'maoyadongsh/siq-agent-security' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: maoyadongsh/siq-agent-security
+      RELEASE_TAG: ${{ inputs.tag }}
+      SIGNER: https://github.com/maoyadongsh/siq-agent-security/.github/workflows/release-signing.yml@refs/heads/main
+      ISSUER: https://token.actions.githubusercontent.com
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate reviewed release identity before network access
+        run: |
+          python3 - <<'PY'
+          import json, os
+          record = json.load(open('docs/research/evidence/github-research-release.json'))
+          if os.environ['RELEASE_TAG'] != record['tag']:
+              raise SystemExit('Release must have a reviewed publication record before signing')
+          PY
+      - name: Download and validate original release bytes
+        run: |
+          mkdir -p "$RUNNER_TEMP/siq-release"
+          gh release download "$RELEASE_TAG" --dir "$RUNNER_TEMP/siq-release" \
+            --pattern SHA256SUMS --pattern SOURCE-INFO.json \
+            --pattern "siq-agent-security-$RELEASE_TAG.tar.gz"
+          git fetch --no-tags origin "refs/tags/$RELEASE_TAG"
+          SOURCE_SHA=$(git rev-parse 'FETCH_HEAD^{commit}')
+          python3 scripts/research/verify_release_assets.py \
+            --directory "$RUNNER_TEMP/siq-release" \
+            --record docs/research/evidence/github-research-release.json \
+            --tag "$RELEASE_TAG" --source-sha "$SOURCE_SHA"
+          echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+      - uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
+        with:
+          cosign-release: v3.1.3
+      - name: Sign checksum manifest with GitHub OIDC identity
+        working-directory: ${{ runner.temp }}/siq-release
+        run: cosign sign-blob --yes --bundle SHA256SUMS.sigstore.json SHA256SUMS
+      - name: Verify signature and reject tampering and wrong identity
+        working-directory: ${{ runner.temp }}/siq-release
+        run: |
+          cosign verify-blob --bundle SHA256SUMS.sigstore.json \
+            --certificate-identity "$SIGNER" --certificate-oidc-issuer "$ISSUER" SHA256SUMS
+          cp SHA256SUMS tampered
+          echo tampered >> tampered
+          if cosign verify-blob --bundle SHA256SUMS.sigstore.json \
+            --certificate-identity "$SIGNER" --certificate-oidc-issuer "$ISSUER" tampered; then
+            echo '::error::Tampered content passed verification'
+            exit 1
+          fi
+          if cosign verify-blob --bundle SHA256SUMS.sigstore.json \
+            --certificate-identity "$SIGNER-untrusted" --certificate-oidc-issuer "$ISSUER" SHA256SUMS; then
+            echo '::error::Wrong signer passed verification'
+            exit 1
+          fi
+          sha256sum --check --strict SHA256SUMS
+      - name: Attach signature without overwriting existing release assets
+        run: gh release upload "$RELEASE_TAG" "$RUNNER_TEMP/siq-release/SHA256SUMS.sigstore.json"
+      - name: Independently download and verify published assets
+        run: |
+          mkdir -p "$RUNNER_TEMP/siq-release-readback"
+          gh release download "$RELEASE_TAG" --dir "$RUNNER_TEMP/siq-release-readback" \
+            --pattern SHA256SUMS --pattern SOURCE-INFO.json --pattern SHA256SUMS.sigstore.json \
+            --pattern "siq-agent-security-$RELEASE_TAG.tar.gz"
+          python3 scripts/research/verify_release_assets.py \
+            --directory "$RUNNER_TEMP/siq-release-readback" \
+            --record docs/research/evidence/github-research-release.json \
+            --tag "$RELEASE_TAG" --source-sha "$SOURCE_SHA"
+          cd "$RUNNER_TEMP/siq-release-readback"
+          cosign verify-blob --bundle SHA256SUMS.sigstore.json \
+            --certificate-identity "$SIGNER" --certificate-oidc-issuer "$ISSUER" SHA256SUMS
+          sha256sum --check --strict SHA256SUMS
+          echo "Signed and freshly verified $RELEASE_TAG at source $SOURCE_SHA" >> "$GITHUB_STEP_SUMMARY"
