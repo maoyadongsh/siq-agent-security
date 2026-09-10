@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
+import FormDialog from '@/components/FormDialog';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
 import type { Finding, FindingSeverity, FindingStatus } from '@/api/types';
@@ -84,6 +85,8 @@ export default function FindingsPage() {
   const findings = useApiList<Finding>('/findings', PLACEHOLDER_FINDINGS);
   const [actionError, setActionError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  /** 解决模态目标（替代原生 prompt + confirm 两步） */
+  const [resolveTarget, setResolveTarget] = useState<Finding | null>(null);
 
   /** 执行写操作；成功后重新拉取列表与后端同步 */
   const runAction = async (fn: () => Promise<unknown>): Promise<boolean> => {
@@ -104,18 +107,15 @@ export default function FindingsPage() {
     setBusyId(null);
   };
 
-  /** 解决不可逆（无 reopen 路径），点击前二次确认 */
-  const handleResolve = async (f: Finding) => {
-    const evidenceRef = window.prompt('请输入修复证据或工单引用（例如 repair-ticket:SEC-123）');
-    if (!evidenceRef) {
-      return;
-    }
-    if (!window.confirm(`解决风险「${f.rule_id}」（${f.impact ?? ''}）？\n解决后不可撤销。`)) {
-      return;
-    }
+  /** 解决不可逆（无 reopen 路径）：模态内必填修复证据并以危险确认语义提交 */
+  const handleResolveSubmit = async (values: Record<string, string>) => {
+    const f = resolveTarget;
+    const evidenceRef = values.evidence?.trim();
+    if (!f || !evidenceRef) return;
     setBusyId(f.id);
-    await runAction(() => api.resolveFinding(f.id, evidenceRef));
+    const ok = await runAction(() => api.resolveFinding(f.id, evidenceRef));
     setBusyId(null);
+    if (ok) setResolveTarget(null);
   };
 
   const columns: TableColumn<Finding>[] = [
@@ -166,7 +166,7 @@ export default function FindingsPage() {
               type="button"
               className="btn btn-sm"
               disabled={busyId === f.id}
-              onClick={() => void handleResolve(f)}
+              onClick={() => setResolveTarget(f)}
             >
               解决
             </button>
@@ -216,6 +216,25 @@ export default function FindingsPage() {
           </button>
         </div>
       ) : null}
+
+      <FormDialog
+        open={resolveTarget !== null}
+        title={`解决风险「${resolveTarget?.rule_id ?? ''}」`}
+        description={`${resolveTarget?.impact ?? ''}；解决后不可撤销，请确认修复已完成。`}
+        fields={[
+          {
+            key: 'evidence',
+            label: '修复证据或工单引用',
+            required: true,
+            placeholder: '例如 repair-ticket:SEC-123',
+          },
+        ]}
+        submitLabel="确认解决"
+        danger
+        busy={busyId !== null}
+        onSubmit={(values) => void handleResolveSubmit(values)}
+        onClose={() => setResolveTarget(null)}
+      />
     </section>
   );
 }

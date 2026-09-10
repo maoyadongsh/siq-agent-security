@@ -5,19 +5,42 @@ import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon, type IconName } from '@/components/icons';
 
-/** 侧边导航项（对齐设计文档 §20.1 信息架构） */
-const NAV_ITEMS: { to: string; label: string; icon: IconName }[] = [
-  { to: '/overview', label: '总览', icon: 'overview' },
-  { to: '/agents', label: '智能体资产', icon: 'agents' },
-  { to: '/permissions', label: '权限视图', icon: 'permissions' },
-  { to: '/findings', label: '风险中心', icon: 'findings' },
-  { to: '/policies', label: '策略中心', icon: 'policies' },
-  { to: '/changes', label: '变更中心', icon: 'changes' },
-  { to: '/runtime-bindings', label: '运行时绑定', icon: 'bindings' },
-  { to: '/environments', label: '环境与 Connector', icon: 'environments' },
-  { to: '/audit', label: '审计', icon: 'audit' },
-  { to: '/settings', label: '设置', icon: 'settings' },
+/** 侧边导航分组（对齐设计文档 §20.1 信息架构；组名折叠态隐藏） */
+interface NavItem {
+  to: string;
+  label: string;
+  icon: IconName;
+}
+
+const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
+  {
+    label: '监测',
+    items: [
+      { to: '/overview', label: '总览', icon: 'overview' },
+      { to: '/agents', label: '智能体资产', icon: 'agents' },
+      { to: '/permissions', label: '权限视图', icon: 'permissions' },
+      { to: '/findings', label: '风险中心', icon: 'findings' },
+    ],
+  },
+  {
+    label: '治理',
+    items: [
+      { to: '/policies', label: '策略中心', icon: 'policies' },
+      { to: '/changes', label: '变更中心', icon: 'changes' },
+      { to: '/runtime-bindings', label: '运行时绑定', icon: 'bindings' },
+    ],
+  },
+  {
+    label: '系统',
+    items: [
+      { to: '/environments', label: '环境与 Connector', icon: 'environments' },
+      { to: '/audit', label: '审计', icon: 'audit' },
+      { to: '/settings', label: '设置', icon: 'settings' },
+    ],
+  },
 ];
+
+const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((group) => group.items);
 
 /** 非敏感 UI 偏好：侧边栏收起状态（版本化前缀 siq.as.*） */
 const NAV_COLLAPSED_KEY = 'siq.as.nav-collapsed';
@@ -89,19 +112,26 @@ export default function Layout() {
           </span>
         </div>
         <nav className="nav">
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-              title={collapsed ? item.label : undefined}
-            >
-              <span className="nav-icon" aria-hidden="true">
-                <Icon name={item.icon} />
+          {NAV_GROUPS.map((group) => (
+            <div className="nav-group" key={group.label}>
+              <span className="nav-group-label" aria-hidden={collapsed}>
+                {group.label}
               </span>
-              <span className="nav-label">{item.label}</span>
-            </NavLink>
+              {group.items.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+                  title={collapsed ? item.label : undefined}
+                >
+                  <span className="nav-icon" aria-hidden="true">
+                    <Icon name={item.icon} />
+                  </span>
+                  <span className="nav-label">{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="sidebar-foot">

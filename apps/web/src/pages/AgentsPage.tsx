@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
+import FormDialog from '@/components/FormDialog';
 import { Icon } from '@/components/icons';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
@@ -117,6 +118,9 @@ export default function AgentsPage() {
   const [scanMessage, setScanMessage] = useState<string | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
   const [scanEnvironmentId, setScanEnvironmentId] = useState('');
+  /** 候选确认 / 驳回模态目标（替代原生 prompt） */
+  const [confirmTarget, setConfirmTarget] = useState<AgentAsset | null>(null);
+  const [dismissTarget, setDismissTarget] = useState<AgentAsset | null>(null);
 
   const agents = useApiList<AgentAsset>('/agents', PLACEHOLDER_AGENTS);
   const candidates = useApiList<AgentAsset>('/candidates', PLACEHOLDER_CANDIDATES);
@@ -167,40 +171,38 @@ export default function AgentsPage() {
     }
   };
 
-  /** 确认候选：prompt 输入 role / owner（均可选，回车跳过）；成功后候选移入资产列表 */
-  const handleConfirm = async (c: AgentAsset) => {
-    const role = window.prompt(
-      `确认候选「${c.name}」为纳管资产\n输入业务角色（可选，直接回车跳过）：`,
-    );
-    if (role === null) return; // 取消
-    const owner = window.prompt('输入负责人 user id（可选，直接回车跳过）：');
-    if (owner === null) return; // 取消
-
+  /** 确认候选：模态输入 role / owner（均可选）；成功后候选移入资产列表 */
+  const handleConfirmSubmit = async (values: Record<string, string>) => {
+    const c = confirmTarget;
+    if (!c) return;
     setBusyId(c.id);
     const ok = await runAction(() =>
       api.confirmCandidate(c.id, {
-        role: role.trim() || undefined,
-        owner_user_id: owner.trim() || undefined,
+        role: values.role?.trim() || undefined,
+        owner_user_id: values.owner?.trim() || undefined,
       }),
     );
     setBusyId(null);
 
     if (ok) {
+      setConfirmTarget(null);
       candidates.mutate((rows) => rows.filter((r) => r.id !== c.id));
       agents.refresh();
     }
   };
 
-  /** 驳回候选：prompt 输入原因（必填） */
-  const handleDismiss = async (c: AgentAsset) => {
-    const reason = window.prompt(`驳回候选「${c.name}」\n输入驳回原因（必填）：`);
-    if (reason === null || reason.trim() === '') return;
+  /** 驳回候选：模态输入原因（必填） */
+  const handleDismissSubmit = async (values: Record<string, string>) => {
+    const c = dismissTarget;
+    const reason = values.reason?.trim();
+    if (!c || !reason) return;
 
     setBusyId(c.id);
-    const ok = await runAction(() => api.dismissCandidate(c.id, { reason: reason.trim() }));
+    const ok = await runAction(() => api.dismissCandidate(c.id, { reason }));
     setBusyId(null);
 
     if (ok) {
+      setDismissTarget(null);
       candidates.mutate((rows) => rows.filter((r) => r.id !== c.id));
     }
   };
@@ -239,7 +241,7 @@ export default function AgentsPage() {
             type="button"
             className="btn btn-sm btn-ghost"
             disabled={busyId === c.id}
-            onClick={() => void handleConfirm(c)}
+            onClick={() => setConfirmTarget(c)}
           >
             确认
           </button>
@@ -247,7 +249,7 @@ export default function AgentsPage() {
             type="button"
             className="btn btn-sm btn-danger"
             disabled={busyId === c.id}
-            onClick={() => void handleDismiss(c)}
+            onClick={() => setDismissTarget(c)}
           >
             驳回
           </button>
@@ -368,6 +370,30 @@ export default function AgentsPage() {
           </button>
         </div>
       ) : null}
+
+      <FormDialog
+        open={confirmTarget !== null}
+        title={`确认候选「${confirmTarget?.name ?? ''}」为纳管资产`}
+        description="确认后候选将移入资产列表；业务角色与负责人均可稍后补充。"
+        fields={[
+          { key: 'role', label: '业务角色', placeholder: '如 contract-review' },
+          { key: 'owner', label: '负责人 user id', placeholder: '如 u-admin' },
+        ]}
+        submitLabel="确认纳管"
+        busy={busyId !== null}
+        onSubmit={(values) => void handleConfirmSubmit(values)}
+        onClose={() => setConfirmTarget(null)}
+      />
+      <FormDialog
+        open={dismissTarget !== null}
+        title={`驳回候选「${dismissTarget?.name ?? ''}」`}
+        fields={[{ key: 'reason', label: '驳回原因', required: true, placeholder: '必填，说明驳回依据' }]}
+        submitLabel="确认驳回"
+        danger
+        busy={busyId !== null}
+        onSubmit={(values) => void handleDismissSubmit(values)}
+        onClose={() => setDismissTarget(null)}
+      />
     </section>
   );
 }

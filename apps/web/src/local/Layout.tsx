@@ -5,16 +5,37 @@ import { Icon, type IconName } from '@/components/icons';
 import { useLocalSession } from './session';
 import { platformTierText, hasOpenShellL3 } from './format';
 
-const NAV_ITEMS: { to: string; label: string; icon: IconName }[] = [
-  { to: '/overview', label: '总览', icon: 'overview' },
-  { to: '/agents', label: '智能体资产', icon: 'agents' },
-  { to: '/permissions', label: '权限视图', icon: 'permissions' },
-  { to: '/findings', label: '风险中心', icon: 'findings' },
-  { to: '/grants', label: '签发', icon: 'policies' },
-  { to: '/receipts', label: '回执', icon: 'audit' },
-  { to: '/bindings', label: '运行时绑定', icon: 'bindings' },
-  { to: '/settings', label: '设置', icon: 'settings' },
+interface NavItem {
+  to: string;
+  label: string;
+  icon: IconName;
+}
+
+const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
+  {
+    label: '监测',
+    items: [
+      { to: '/overview', label: '总览', icon: 'overview' },
+      { to: '/agents', label: '智能体资产', icon: 'agents' },
+      { to: '/permissions', label: '权限视图', icon: 'permissions' },
+      { to: '/findings', label: '风险中心', icon: 'findings' },
+    ],
+  },
+  {
+    label: '治理',
+    items: [
+      { to: '/grants', label: '签发', icon: 'policies' },
+      { to: '/receipts', label: '回执', icon: 'audit' },
+      { to: '/bindings', label: '运行时绑定', icon: 'bindings' },
+    ],
+  },
+  {
+    label: '系统',
+    items: [{ to: '/settings', label: '设置', icon: 'settings' }],
+  },
 ];
+
+const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((group) => group.items);
 
 const NAV_COLLAPSED_KEY = 'siq.as.local.nav-collapsed';
 
@@ -86,19 +107,26 @@ export default function Layout() {
           </span>
         </div>
         <nav className="nav">
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-              title={collapsed ? item.label : undefined}
-            >
-              <span className="nav-icon" aria-hidden="true">
-                <Icon name={item.icon} />
+          {NAV_GROUPS.map((group) => (
+            <div className="nav-group" key={group.label}>
+              <span className="nav-group-label" aria-hidden={collapsed}>
+                {group.label}
               </span>
-              <span className="nav-label">{item.label}</span>
-            </NavLink>
+              {group.items.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+                  title={collapsed ? item.label : undefined}
+                >
+                  <span className="nav-icon" aria-hidden="true">
+                    <Icon name={item.icon} />
+                  </span>
+                  <span className="nav-label">{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="sidebar-foot">

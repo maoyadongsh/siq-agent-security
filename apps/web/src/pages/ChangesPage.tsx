@@ -204,7 +204,7 @@ export default function ChangesPage() {
         connection={status}
         connectionError={error}
       />
-      <div className="form-row" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+      <div className="form-row">
         <label>
           部署环境
           <select

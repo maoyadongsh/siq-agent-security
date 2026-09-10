@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
+import ConfirmDialog from '@/components/ConfirmDialog';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
 import type { AgentAsset, AgentInstance, Environment, RuntimeBindingRow } from '@/api/types';
@@ -44,6 +45,8 @@ export default function RuntimeBindingsPage() {
 
   const [actionError, setActionError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  /** 吊销确认模态目标（替代原生 confirm） */
+  const [revokeTarget, setRevokeTarget] = useState<RuntimeBindingRow | null>(null);
 
   // 展开表单时才拉取环境/资产下拉数据，避免页面首次加载即多打三个请求
   useEffect(() => {
@@ -98,19 +101,14 @@ export default function RuntimeBindingsPage() {
     }
   };
 
-  const onRevoke = async (b: RuntimeBindingRow) => {
-    if (
-      !window.confirm(
-        `吊销运行时绑定「${b.backend}:${b.backend_target_id}」？\n` +
-          '吊销后不可恢复（需重新登记新绑定），且依赖该绑定的部署会被拦截。',
-      )
-    ) {
-      return;
-    }
+  const onRevoke = async () => {
+    const b = revokeTarget;
+    if (!b) return;
     setBusyId(b.id);
     setActionError(null);
     try {
       await api.revokeRuntimeBinding(b.id, 'web-console-manual-revoke');
+      setRevokeTarget(null);
       bindings.refresh();
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : '吊销失败');
@@ -161,7 +159,7 @@ export default function RuntimeBindingsPage() {
               type="button"
               className="btn btn-sm btn-danger"
               disabled={busyId === b.id}
-              onClick={() => void onRevoke(b)}
+              onClick={() => setRevokeTarget(b)}
             >
               吊销
             </button>
@@ -274,6 +272,17 @@ export default function RuntimeBindingsPage() {
       ) : (
         <SimpleTable columns={columns} rows={bindings.rows} rowKey={(b) => b.id} emptyText="暂无运行时绑定" />
       )}
+
+      <ConfirmDialog
+        open={revokeTarget !== null}
+        title={`吊销运行时绑定「${revokeTarget?.backend ?? ''}:${revokeTarget?.backend_target_id ?? ''}」`}
+        description="吊销后不可恢复（需重新登记新绑定），且依赖该绑定的部署会被拦截。"
+        confirmLabel="确认吊销"
+        danger
+        busy={busyId !== null}
+        onConfirm={() => void onRevoke()}
+        onClose={() => setRevokeTarget(null)}
+      />
     </section>
   );
 }

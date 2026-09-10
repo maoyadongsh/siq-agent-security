@@ -318,8 +318,8 @@ a,
 
 .brand-title {
   font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-weight: 600;
+  letter-spacing: 0.012em;
   color: var(--ink-strong);
   font-family: var(--font-display);
 }
@@ -337,6 +337,27 @@ a,
   gap: 2px;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/* 导航分组：组内保持与平铺一致的 2px 间距 */
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* 导航分组标签：12px muted 小字，组间拉开层级；折叠态隐藏（见桌面 media query） */
+.nav-group-label {
+  padding: 14px 12px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.nav-group:first-child > .nav-group-label {
+  padding-top: 2px;
 }
 
 /* 导航项：衬线 15px；激活态左侧 4px 全圆金色竖条（伪元素）+ 文字变深金，不加背景色 */
@@ -433,6 +454,7 @@ a,
 
   .sidebar.collapsed .brand-text,
   .sidebar.collapsed .nav-label,
+  .sidebar.collapsed .nav-group-label,
   .sidebar.collapsed .sidebar-version {
     display: none;
   }
@@ -817,7 +839,7 @@ a,
 /* 指标数字：DM Serif Display 骨架粗壮醒目（DM 仅 400 一档，展示尺寸下已足够挺括） */
 .stat-card .stat-value {
   font-family: var(--font-numeric);
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1.15;
@@ -835,7 +857,8 @@ a,
 
 .stat-card .stat-label {
   color: var(--text-secondary);
-  font-size: 12.5px;
+  font-size: 12px;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1010,9 +1033,9 @@ a,
 }
 
 .state-tag.observed {
-  background: rgb(29 78 216 / 0.08);
-  border-color: rgb(29 78 216 / 0.22);
-  color: #1d4ed8;
+  background: rgb(0 24 64 / 0.06);
+  border-color: rgb(0 24 64 / 0.22);
+  color: var(--ink);
 }
 
 .verification-cell {
@@ -1027,29 +1050,34 @@ a,
   display: inline-block;
   width: fit-content;
   padding: 1px 8px;
-  border-radius: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
   font-size: 12px;
   font-weight: 600;
 }
 
+/* 语义色调与 .tag 一族同公式：6-8% 底 + 25-30% 描边 + 深色文字 */
 .verification-badge.tone-ok {
-  background: #e6f4ea;
-  color: #137333;
+  background: rgb(21 128 61 / 0.08);
+  border-color: rgb(21 128 61 / 0.25);
+  color: var(--approve);
 }
 
 .verification-badge.tone-warn {
-  background: #fef7e0;
-  color: #8a6d00;
+  background: rgb(180 83 9 / 0.08);
+  border-color: rgb(180 83 9 / 0.3);
+  color: var(--caution);
 }
 
 .verification-badge.tone-err {
-  background: #fce8e6;
-  color: #c5221f;
+  background: rgb(168 16 24 / 0.07);
+  border-color: rgb(168 16 24 / 0.25);
+  color: var(--reject);
 }
 
 .verification-badge.tone-neutral {
-  background: #f1f3f4;
-  color: #3c4043;
+  background: var(--card);
+  color: var(--text-secondary);
 }
 
 .verification-meta {
@@ -1567,8 +1595,8 @@ a,
   margin: 0;
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-weight: 600;
+  letter-spacing: 0.012em;
   color: var(--ink-strong);
 }
 
@@ -1636,7 +1664,7 @@ a,
 
 .not-found h1 {
   font-size: 44px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0;
   margin: 0 0 8px;
   color: var(--text);
@@ -1761,6 +1789,95 @@ a,
   .sync-group select {
     min-height: 44px;
   }
+}
+
+/* ---------------- 模态（藏蓝幕布 + 轻模糊 + 16px 圆角浮层） ----------------
+ * 契约：Esc 关闭、点幕布关闭、焦点圈定、关闭还原焦点、背景滚动锁定（由 Modal.tsx 实现）。 */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--overlay);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border: none;
+  animation: siq-modal-fade 160ms ease-out;
+}
+
+.modal {
+  width: min(28rem, 100%);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-modal);
+  background: var(--card);
+  box-shadow: var(--shadow-pop);
+  padding: 24px;
+  animation: siq-modal-rise 200ms ease-out;
+}
+
+@keyframes siq-modal-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes siq-modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.modal-title {
+  margin: 0;
+  color: var(--ink-strong);
+}
+
+.modal-desc {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.modal-body {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.modal-body .action-error {
+  margin: 0;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+@media (max-width: 767.98px) {
+  .modal-overlay {
+    padding: 16px;
+  }
+
+  .modal {
+    padding: 20px;
+  }
+}
+
+/* 横向表单行（替代表单区内联 flex 样式） */
+.form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
 }
 
 /* ---------------- AgentShield 本地控制台（serve embed；企业 Layout 不使用） ---------------- */
