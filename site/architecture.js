@@ -60,7 +60,36 @@ try {
 
   const mermaid = window.mermaid;
   if (!mermaid) throw new Error('Mermaid 未能加载，请使用源文件链接');
-  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', flowchart: { useMaxWidth: false }, state: { useMaxWidth: false } });
+  // 暖纸编辑风主题：象牙底、米色节点、墨蓝文字、深金连线
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'strict',
+    theme: 'base',
+    themeVariables: {
+      background: '#fdfcf9',
+      mainBkg: '#f3eee2',
+      secondBkg: '#faf7f0',
+      tertiaryColor: '#f7f4ee',
+      primaryColor: '#f3eee2',
+      primaryBorderColor: '#d8d0c6',
+      primaryTextColor: '#12203e',
+      secondaryColor: '#faf7f0',
+      secondaryBorderColor: '#e8e1d4',
+      secondaryTextColor: '#12203e',
+      tertiaryBorderColor: '#e8e1d4',
+      tertiaryTextColor: '#12203e',
+      lineColor: '#7c5a0c',
+      textColor: '#12203e',
+      nodeTextColor: '#12203e',
+      edgeLabelBackground: '#fdfcf9',
+      clusterBkg: '#faf7f0',
+      clusterBorder: '#e8e1d4',
+      titleColor: '#001840',
+      fontFamily: 'Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif',
+    },
+    flowchart: { useMaxWidth: false },
+    state: { useMaxWidth: false },
+  });
   await mermaid.run({ nodes });
 } catch (error) {
   if (identity.textContent.startsWith('正在')) identity.textContent = '暂时无法读取源码身份。';
