@@ -57,26 +57,25 @@ function localDevSpaFallback(): Plugin {
     name: 'agentshield-local-spa',
     configureServer(server) {
       if (!isLocal) return;
-      return () => {
-        server.middlewares.use((req, _res, next) => {
-          const url = (req.url ?? '').split('?')[0] ?? '';
-          if (
-            url.startsWith('/src/') ||
-            url.startsWith('/@') ||
-            url.startsWith('/node_modules') ||
-            url.startsWith('/v1') ||
-            url === '/ui-config.json' ||
-            url === '/index.local.html' ||
-            url === '/favicon.ico' ||
-            /\.[a-zA-Z0-9]+$/.test(url)
-          ) {
-            next();
-            return;
-          }
-          req.url = '/index.local.html';
+      // Register before Vite's SPA fallback rewrites routes to /index.html.
+      server.middlewares.use((req, _res, next) => {
+        const url = (req.url ?? '').split('?')[0] ?? '';
+        if (
+          url.startsWith('/src/') ||
+          url.startsWith('/@') ||
+          url.startsWith('/node_modules') ||
+          url.startsWith('/v1') ||
+          url === '/ui-config.json' ||
+          url === '/index.local.html' ||
+          url === '/favicon.ico' ||
+          /\.[a-zA-Z0-9]+$/.test(url)
+        ) {
           next();
-        });
-      };
+          return;
+        }
+        req.url = '/index.local.html';
+        next();
+      });
     },
   };
 }
