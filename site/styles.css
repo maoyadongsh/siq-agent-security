@@ -258,9 +258,16 @@ pre code { font-size: inherit; overflow-wrap: normal; }
 .toc-links { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin-top: 1.5rem; }
 .toc-links a { display: inline-flex; align-items: center; min-height: 44px; }
 .sources { color: var(--muted); font-size: .8rem; overflow-wrap: anywhere; }
-.diagram-frame { overflow: auto; max-height: 44rem; padding: 1.2rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-card); }
-.diagram-frame pre { padding: 0; background: transparent; color: var(--text); border-radius: 0; }
-.diagram-frame svg { max-width: none; }
+.diagram-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem 1rem; margin: 1rem 0 .65rem; }
+.diagram-presets, .diagram-zoom { display: inline-flex; align-items: center; gap: .5rem; }
+.diagram-controls button { min-height: 44px; padding: .45rem .85rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: .85rem; cursor: pointer; }
+.diagram-controls button:hover { border-color: var(--accent); }
+.diagram-controls button:disabled { opacity: .45; cursor: default; }
+.diagram-scale { min-width: 3.5rem; text-align: center; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.diagram-frame { overflow: auto; max-height: min(70vh, 44rem); padding: 1rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-card); }
+.diagram-canvas { width: max-content; min-width: 100%; overflow: visible; font-family: var(--font); line-height: 1.5; }
+.diagram-canvas svg { display: block; max-width: none; margin-inline: auto; font-family: var(--font); }
+.diagram-hint { margin: .6rem 0 0; color: var(--muted); font-size: .8rem; }
 #diagrams .section { padding: 0 0 3rem; }
 
 @media (max-width: 1050px) { .nav { flex-wrap: wrap; padding-block: .75rem; gap: .25rem; } .nav-links { gap: .2rem 1.2rem; } }
