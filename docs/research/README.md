@@ -15,6 +15,7 @@ SIQ Agent Security studies how agent tool proposals are constrained by trusted i
 | Research design | [Questions](research-questions.md) · [Evaluation protocol](evaluation-protocol.md) | Hypotheses, task units and retrospective scope |
 | Data and claims | [Dataset card](dataset-card.md) · [Claims and evidence](claims-evidence.md) | Corpus origins, denominators and supported conclusions |
 | Reproduction | [Run guide](../../REPRODUCIBILITY.md) · [Archived results](result-reproduction.md) | Reproduce fixed controls and inspect verification records |
+| Contributor fixture run | [Four core scenarios, 2026-09-11](core-scenarios-reproduction-20260911.md) | Linux CPU run of all 23 controls with new evidence and setup failures recorded; no external-reproduction claim |
 | Community | [Contribution guide](../../CONTRIBUTING.md) · [Starter tasks](community-backlog.md) | Select a scoped contribution |
 | Reuse and citation | [License scope](../../LICENSES/README.md) · [CITATION.cff](../../CITATION.cff) | Attribute software and research materials correctly |
 
