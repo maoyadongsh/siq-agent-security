@@ -258,14 +258,20 @@ pre code { font-size: inherit; overflow-wrap: normal; }
 .toc-links { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin-top: 1.5rem; }
 .toc-links a { display: inline-flex; align-items: center; min-height: 44px; }
 .sources { color: var(--muted); font-size: .8rem; overflow-wrap: anywhere; }
-.diagram-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem 1rem; margin: 1rem 0 .65rem; }
-.diagram-presets, .diagram-zoom { display: inline-flex; align-items: center; gap: .5rem; }
-.diagram-controls button { min-height: 44px; padding: .45rem .85rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: .85rem; cursor: pointer; }
-.diagram-controls button:hover { border-color: var(--accent); }
+.diagram-viewer { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-card); }
+.diagram-controls { position: absolute; right: .75rem; bottom: .75rem; z-index: 1; display: flex; align-items: center; padding: .2rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card); box-shadow: var(--shadow-card); }
+.diagram-presets, .diagram-zoom { display: inline-flex; align-items: center; }
+.diagram-presets { border-left: 1px solid var(--border); margin-left: .2rem; padding-left: .2rem; }
+.diagram-controls button { display: inline-grid; place-items: center; width: 44px; height: 44px; padding: .5rem; border: 0; border-radius: 4px; background: transparent; color: var(--ink); font: inherit; font-size: .8rem; cursor: pointer; }
+.diagram-controls button:hover { background: var(--surface); }
+.diagram-controls svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .diagram-controls button:disabled { opacity: .45; cursor: default; }
-.diagram-scale { min-width: 3.5rem; text-align: center; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
-.diagram-frame { overflow: auto; max-height: min(70vh, 44rem); padding: 1rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-card); }
-.diagram-canvas { width: max-content; min-width: 100%; overflow: visible; font-family: var(--font); line-height: 1.5; }
+.diagram-scale { min-width: 3rem; text-align: center; color: var(--muted); font-size: .8rem; font-variant-numeric: tabular-nums; }
+.diagram-frame { overflow: auto; height: var(--diagram-height, 24rem); min-height: 16rem; max-height: min(65vh, 38rem); padding: 1.25rem 1.25rem 4.75rem; }
+.diagram-frame:focus-visible { outline-offset: -3px; }
+.diagram-frame.is-pannable { cursor: grab; }
+.diagram-frame.is-dragging { cursor: grabbing; user-select: none; }
+.diagram-canvas { display: grid; place-items: center; width: max-content; min-width: 100%; min-height: 100%; overflow: visible; font-family: var(--font); line-height: 1.5; }
 .diagram-canvas svg { display: block; max-width: none; margin-inline: auto; font-family: var(--font); }
 .diagram-hint { margin: .6rem 0 0; color: var(--muted); font-size: .8rem; }
 #diagrams .section { padding: 0 0 3rem; }
