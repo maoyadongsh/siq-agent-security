@@ -59,7 +59,7 @@
 
 ## CI
 
-- 本批不推送远端；ci / runtime-security / research 对新提交的真实运行结果为待办，状态 awaiting_ci（需用户授权推送后回填 run/job 链接）。
+- 分支已推送：`origin/kimicode/personal-k001-baseline-repair`（首个推送对象）。ci / runtime-security / research 的触发条件是 push 到 main 或 pull_request，分支推送本身不触发；远端真实运行结果待 PR 建立后回填 run/job 链接，状态保持 awaiting_ci。
 - 预期注意点：runtime-security toolchain job 的 govulncheck 严格门在 CI 固定的 Go 1.26.6 下通过；本地 Go 1.26.5 报 5 项 stdlib 可达发现（1.26.6 已修），属工具链版本差，不属本批改动。
 
 ## 未验证边界与外部阻塞
