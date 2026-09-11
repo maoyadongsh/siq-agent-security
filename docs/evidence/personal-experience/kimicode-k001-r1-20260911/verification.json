@@ -1,0 +1,45 @@
+{
+  "schema_version": "kimicode-k001-r1-verification/v1",
+  "batch": "KIMI-001-R1",
+  "base": "c1a4b0f9d6074dfccdbf15841bafe79defd74f45 (含审阅方 90bd14e/c1a4b0f)",
+  "candidate_commits": ["790a9e2", "44f2a2a", "d54370d", "22c3792"],
+  "environment": {"os_arch": "linux/arm64", "go": ["1.26.5", "go1.26.6 (govulncheck)"], "node": "v22.22.2", "python": "3.13.12 (venv 锁定)", "note": "CI 为 linux/amd64；架构差异保留"},
+  "commands": [
+    {"cmd": "cmp adapters/runtime/hermes-agentshield/__init__.py apps/agentshield/internal/adapterinstall/assets/hermes/__init__.py", "exit": 0},
+    {"cmd": "gofmt -l . && go vet ./...", "cwd": "apps/agentshield", "exit": 0},
+    {"cmd": "go test -count=1 ./...", "cwd": "apps/agentshield", "exit": 0, "note": "33 packages ok"},
+    {"cmd": "go test -race -count=1 ./...", "cwd": "apps/agentshield", "exit": 0, "note": "33 ok, 无 DATA RACE", "evidence": "go-race-summary.txt"},
+    {"cmd": "go test -race ./internal/server -run TestGrantDraft -count=20", "exit": 0},
+    {"cmd": "go test ./internal/state -run TestInflightCommitBlocksDuplicateUntilSettled -count=20 + -race 全包", "exit": 0},
+    {"cmd": "unittest discover apps/secure-agent/tests", "exit": 0, "note": "104 tests OK", "evidence": "secure-agent-summary.log"},
+    {"cmd": "ruff check apps/secure-agent adapters/runtime/hermes-agentshield", "exit": 0},
+    {"cmd": "pytest adapters/runtime/hermes-agentshield/tests/ -q", "exit": 0, "note": "103 passed"},
+    {"cmd": "scripts/research 全部 4 步 + scripts/hackathon 13 项", "exit": 0},
+    {"cmd": "control-api 情景合同 pytest 9 文件", "exit": 0},
+    {"cmd": "control-api uv run ruff check app && uv run pytest -x -q", "exit": 0},
+    {"cmd": "benchmarks/runtime-security smoke+evidence+recovery+performance+mcp-provenance+check_contracts", "exit": 0},
+    {"cmd": "benchmarks/hackathon run+verify（清旧 state/产物后复跑）", "exit": 0},
+    {"cmd": "browser_fixture 九场景（系统 chromium）", "exit": 0, "evidence": "browser-result.json", "note": "trifecta 场景按新语义断言：一次 read_file deny、无私有内容读取、无 lethal_trifecta 文本"},
+    {"cmd": "apps/web: npm test -- --run && npm run build && npm run build:local", "exit": 0, "note": "内嵌产物重建已提交 d54370d"},
+    {"cmd": "四目标交叉编译 / manifest-verify / admit 自扫描", "exit": 0, "note": "admit_with_conditions"},
+    {"cmd": "govulncheck ./... (GOTOOLCHAIN=go1.26.6)", "exit": 0, "note": "No vulnerabilities found"},
+    {"cmd": "ci.yml gitleaks job 12 个本地脚本 + openclaw 两项", "exit": 0},
+    {"cmd": "gitleaks git --log-opts=b9e8ec6..HEAD --redact", "exit": 0, "note": "no leaks found（覆盖 K001 与 R1 全部提交）"}
+  ],
+  "r1b_mutation_experiment": {
+    "procedure": "worktree 内注入 commit.go 的 grant→done 窗口暂停（50ms）+ 工作树专用错峰请求测试（不提交）；变异体=grant_draft.go 回退为对 ErrIncompleteCommit 直接 409",
+    "mutant_result": "3/3 失败：409 grant_draft_unavailable（与 CI 原症状一致）",
+    "fixed_result": "同一加宽窗口下 5/5 通过（含全部 TestGrantDraftHTTP*）",
+    "committed": "仅 state 层确定性测试 commit_inflight_test.go；worktree 变异与错峰测试均未提交"
+  },
+  "corrections_to_k001_record": [
+    "K001 交接中『并发 409 本机未自然复现、经 CI 日志与源码走查定位』保持准确；最终回复中『均已先复现』的概括不适用于该并发项，R1 经窗口加宽变异实验获得确定性复现证据",
+    "K001 verification.json 的 gitleaks git 条目当时为占位，实际结果已在本文件记录为 no leaks found"
+  ],
+  "not_run": [
+    {"item": "远端 CI（PR #27 对应 job）", "reason": "推送后触发，结果以实际 run 为准"},
+    {"item": "control-api alembic 干净 PostgreSQL 回放", "reason": "本机无隔离 PostgreSQL；本批未动 control-api 模型/迁移"},
+    {"item": "playwright --with-deps 的 apt 系统依赖", "reason": "需要 sudo；使用系统已有 chromium 通过"},
+    {"item": "linux/amd64 原生环境", "reason": "本机 arm64，登记为架构差异"}
+  ]
+}
