@@ -10,10 +10,17 @@
 <p align="center">Skills 给 Agent 能力，SIQ 给能力边界。</p>
 
 <p align="center">
-  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
-  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml/badge.svg?branch=main" alt="Research reproduction · main" /></a>
+  <strong>主分支 main：</strong>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml?query=branch%3Amain"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml/badge.svg?branch=main" alt="Research reproduction · main" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/code-Apache--2.0-001840?style=flat" alt="Project-owned code: Apache-2.0" /></a>
   <a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1"><img src="https://img.shields.io/badge/release-source%20prerelease-7c5a0c?style=flat" alt="Source prerelease" /></a>
+</p>
+
+<p align="center">
+  CI / research 动态徽章仅反映 <code>main</code> 的工作流结果，不代表尚未合并的开发分支。<br />
+  本轮基线修复：<a href="https://github.com/maoyadongsh/siq-agent-security/pull/27">PR #27 审阅</a> · <a href="https://github.com/maoyadongsh/siq-agent-security/pull/27/checks">开发分支检查</a>。<br />
+  开发分支检查通过不等于主分支通过；修复合并后，徽章仍以 <code>main</code> 的实际运行结果为准。
 </p>
 
 <p align="center">
