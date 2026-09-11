@@ -42,7 +42,12 @@
 
 ## 远端 CI（推送后回填，不借用 47a9809 绿灯）
 
-- 待推送后填写 run/job。
+推送前远端出现审阅方 README 徽章提交 `7df8fa1`（与本批零文件重叠），经用户裁决以合并提交整合，双方提交身份均保留。最终 HEAD `7c43817`（合并提交）触发的实跑结果：
+
+- ci run 34585126455：success
+- runtime-security run 34585126468：success（nightly 按事件条件不运行，登记为条件性跳过）
+- research run 34585126464：success
+- pages run 34585126476：success（非本批范围，无回归）
 
 ## 未验证边界
 
