@@ -52,7 +52,9 @@ func (e *IncompleteCommitError) Is(target error) bool { return target == ErrInco
 // hold AcquireWriter, as serve, offline grant and recovery do.
 var commitMu sync.Mutex
 
-// Set only by the isolated subprocess fault-injection test, never via runtime input.
+// Set only by tests (isolated subprocess fault injection, and the in-process
+// in-flight window test that always restores and never blocks indefinitely),
+// never via runtime input.
 var commitBoundary = func(string) {}
 
 const maxCommitBytes = 8 << 20
