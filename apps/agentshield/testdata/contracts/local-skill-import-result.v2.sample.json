@@ -1,0 +1,88 @@
+{
+  "schema_version": "local-skill-import-result/v2",
+  "import": {
+    "remote": {
+      "archive_sha256": "59a172a03865a928df312d88ea5e3b07a8d91c07c6e22af7c5efab4278352f79",
+      "archive_bytes": 682,
+      "final_locator_digest": "a990e30bb1c2cbee8028a1f27fcc2e95069493468dbd810005391524981442bf",
+      "archive_path": "repo/skills/report",
+      "expected_sha256": "59a172a03865a928df312d88ea5e3b07a8d91c07c6e22af7c5efab4278352f79"
+    },
+    "schema_version": "local-skill-import/v2",
+    "import_id": "si-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "source_kind": "https_zip",
+    "source_locator_digest": "2373d5e711a5b7178dc4645961f10f09b61f1afcc6e7ab3128b715f4464d02a7",
+    "actor_id": "fixture-human",
+    "created_at": "2026-09-11T01:00:00Z",
+    "artifact_digest": "6cbfa07b945bb252ac8284e7d662c1abf35b0182bd43f7704b6eb2a6855d0317",
+    "analysis_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "directories": [],
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "0ac8c470279eb5b0816ec4b5f60d60bd9ef65dc15196cb1c932a7d80e16efb04",
+        "bytes": 92,
+        "executable": false
+      },
+      {
+        "path": "run.sh",
+        "sha256": "94862798bf9da87e10a2abb45cd2647fd9c59dfcd15e106c5aee5e00de234976",
+        "bytes": 17,
+        "executable": true
+      }
+    ],
+    "excluded_git_metadata": true,
+    "signature": "58e80029b9d71ac113c23f795dd58f9f1e4b9ef9aa3fc6d3aa2872abdc2ce374a09c333984be347a9d7f191293093835ee89b2012114c4fab31999987b4d5103"
+  },
+  "admission": {
+    "admission_id": "adm-7382d02cfada",
+    "skill_id": "zip:import-fixture@7382d02cfada",
+    "skill_name": "import-fixture",
+    "skill_version": null,
+    "source": {
+      "type": "zip",
+      "locator": "skill-import:si-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "trust_level": "unknown",
+      "ref": null
+    },
+    "content_hash": "7382d02cfada1442f74ea93335522f2acf77f16daeb85fa074a98f970a3af073",
+    "file_manifest": [
+      {
+        "path": "SKILL.md",
+        "sha256": "0ac8c470279eb5b0816ec4b5f60d60bd9ef65dc15196cb1c932a7d80e16efb04",
+        "bytes": 92
+      },
+      {
+        "path": "run.sh",
+        "sha256": "94862798bf9da87e10a2abb45cd2647fd9c59dfcd15e106c5aee5e00de234976",
+        "bytes": 17
+      }
+    ],
+    "verdict": "admit",
+    "decided_at": "2026-09-11T01:00:00Z",
+    "engine": {
+      "name": "agentshield-go",
+      "version": "fixture",
+      "rulepack_version": 1,
+      "rulepack_sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051"
+    },
+    "declared_facts": [],
+    "findings": [],
+    "integrity": {
+      "file_count": 2,
+      "total_bytes": 109,
+      "symlink_escape": false,
+      "binary_files": 0,
+      "over_limit": false,
+      "frontmatter_valid": true
+    },
+    "skill_card_ref": null,
+    "evidence_ids": [
+      "ev-db14edc15ed6b5d6"
+    ],
+    "signing_schema": "local_canonical/v1",
+    "signature": "86d19eca8e79a07a5aa625f9046a89755f55ac65a5555e7a03b1b43b4a677d52e0e7327b56acf43c4bd2b30ec1f980739d7d10386f8135d1bf34492945f1b003"
+  },
+  "reused": false,
+  "installed": false
+}

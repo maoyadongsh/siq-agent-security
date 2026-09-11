@@ -79,3 +79,56 @@ func TestPutAdmissionIsIdempotentForSameSkill(t *testing.T) {
 		t.Fatalf("re-admit of the same skill must be idempotent: %v", err)
 	}
 }
+
+func TestAdmissionStoragePreservesSignatureAndStrictLegacyCompatibility(t *testing.T) {
+	s, err := Open(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	k, err := signing.FromSeed(bytes.Repeat([]byte{7}, 32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	pack, _ := rulepack.Builtin()
+	res, err := admission.Admit(filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like"), admission.Options{Key: k, Pack: pack, Version: "test"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !admission.Verify(k.Public(), res.Admission) {
+		t.Fatal("fixture not signed")
+	}
+	if err := s.PutAdmission(res); err != nil {
+		t.Fatal(err)
+	}
+	stored, err := s.GetAdmission(res.Admission.AdmissionID)
+	if err != nil || !admission.Verify(k.Public(), *stored) {
+		t.Fatal("storage mutated signed admission", err)
+	}
+	legacy := *stored
+	path := filepath.Join(s.Dir, "admissions", legacy.AdmissionID+".skill-card.md")
+	legacy.SkillCardRef = &path
+	if admission.Verify(k.Public(), legacy) {
+		t.Fatal("legacy reproduction unexpectedly valid")
+	}
+	if !s.VerifyAdmission(k.Public(), legacy) {
+		t.Fatal("known legacy projection rejected")
+	}
+	other := "/foreign/card.md"
+	changed := legacy
+	changed.SkillCardRef = &other
+	if s.VerifyAdmission(k.Public(), changed) {
+		t.Fatal("arbitrary path normalized")
+	}
+	changed = legacy
+	changed.Verdict = "quarantine"
+	if s.VerifyAdmission(k.Public(), changed) {
+		t.Fatal("changed verdict verified")
+	}
+	wrong, _ := signing.FromSeed(bytes.Repeat([]byte{8}, 32))
+	if s.VerifyAdmission(wrong.Public(), legacy) {
+		t.Fatal("wrong key accepted")
+	}
+	if legacy.SkillCardRef == nil || *legacy.SkillCardRef != path {
+		t.Fatal("verification mutated source")
+	}
+}

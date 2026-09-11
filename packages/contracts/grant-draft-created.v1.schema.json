@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/grant-draft-created.v1.schema.json",
+  "title": "Independent permission draft with source and current revision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source_grant_id",
+    "source_revision",
+    "grant",
+    "state_revision",
+    "reused"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "grant-draft-created/v1"
+    },
+    "source_grant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "grant": {
+      "$ref": "grant.schema.json"
+    },
+    "state_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reused": {
+      "type": "boolean"
+    }
+  }
+}

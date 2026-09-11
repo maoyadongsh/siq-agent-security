@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-import-permission-create.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "artifact_digest",
+    "analysis_sha256",
+    "instance_id",
+    "actor_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-import-permission-create/v1"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^ip-[a-f0-9]{32}$"
+    },
+    "artifact_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "analysis_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    }
+  }
+}

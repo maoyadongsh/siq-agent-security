@@ -1,0 +1,22 @@
+{
+  "schema_version": "personal-managed-instance-browser/v1",
+  "recorded_at": "2026-09-10T19:31:29.029607+00:00",
+  "passed": true,
+  "binary_sha256": "e4bc842fbc3d86f0726f4463bfc4571ea8b78f6e22ab09ed19eb37a019aa6f76",
+  "harness_sha256": "dd0a5392a97825d1663635fa83dee408964a5d86616b54f0c81b928fd40b2e65",
+  "checks": {
+    "open_and_cancel_do_not_create_authority_or_host_files": true,
+    "editor_replaces_focus_trap_and_only_saves_pending_permissions": true,
+    "concurrent_grant_change_requires_refresh_and_new_confirmation": true,
+    "explicit_approval_deploys_without_installing": true,
+    "session_duration_and_preview_are_explicit": true,
+    "reopening_reuses_issued_identity": true,
+    "mobile_confirmation_visible_without_horizontal_overflow": true,
+    "installation_blocks_competing_permission_actions_and_close": true,
+    "confirmed_install_writes_only_selected_profile": true,
+    "explicit_withdrawal_revokes_identity_and_invalidates_install_preview": true,
+    "uninstall_restores_registration_and_preserves_unrelated_settings": true,
+    "no_browser_runtime_errors": true
+  },
+  "scope": "Linux Chromium and isolated Hermes profile using actual public native enable CLI; synthetic operator and Skill"
+}

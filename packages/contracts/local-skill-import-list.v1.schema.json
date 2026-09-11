@@ -1,0 +1,156 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-import-list.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-import-list/v1"
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "import_id",
+          "record_status",
+          "payload_status",
+          "summary"
+        ],
+        "properties": {
+          "import_id": {
+            "type": "string",
+            "pattern": "^si-[a-f0-9]{32}$"
+          },
+          "record_status": {
+            "enum": [
+              "metadata_verified",
+              "unavailable"
+            ]
+          },
+          "payload_status": {
+            "const": "unchecked"
+          },
+          "summary": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "created_at",
+                  "source_kind",
+                  "actor_id",
+                  "artifact_digest",
+                  "file_count",
+                  "total_bytes"
+                ],
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "source_kind": {
+                    "enum": [
+                      "local_dir",
+                      "local_zip"
+                    ]
+                  },
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "artifact_digest": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "file_count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2000
+                  },
+                  "total_bytes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 67108864
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "oneOf": [
+          {
+            "properties": {
+              "record_status": {
+                "const": "metadata_verified"
+              },
+              "summary": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "created_at",
+                  "source_kind",
+                  "actor_id",
+                  "artifact_digest",
+                  "file_count",
+                  "total_bytes"
+                ],
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "source_kind": {
+                    "enum": [
+                      "local_dir",
+                      "local_zip"
+                    ]
+                  },
+                  "actor_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "artifact_digest": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "file_count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2000
+                  },
+                  "total_bytes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 67108864
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "record_status": {
+                "const": "unavailable"
+              },
+              "summary": {
+                "type": "null"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

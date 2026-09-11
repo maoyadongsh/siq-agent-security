@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-import-remote-create.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "import_id",
+    "url",
+    "archive_path",
+    "expected_sha256",
+    "actor_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-import-remote-create/v1"
+    },
+    "import_id": {
+      "type": "string",
+      "pattern": "^si-[0-9a-f]{32}$"
+    },
+    "url": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "archive_path": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "expected_sha256": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{64})?$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    }
+  }
+}

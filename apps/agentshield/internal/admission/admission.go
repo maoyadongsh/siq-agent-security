@@ -129,13 +129,14 @@ type Evidence struct {
 
 // Options for Admit.
 type Options struct {
-	Source   Source
-	Limits   Limits
-	Now      time.Time
-	Version  string // binary version for engine.version
-	Key      *signing.Key
-	Pack     *rulepack.Pack
-	CardPath *string // recorded as skill_card_ref
+	SourceIsOpaque bool // locator is an identifier, not a source directory name
+	Source         Source
+	Limits         Limits
+	Now            time.Time
+	Version        string // binary version for engine.version
+	Key            *signing.Key
+	Pack           *rulepack.Pack
+	CardPath       *string // recorded as skill_card_ref
 }
 
 // Result bundles the admission with its evidence and generated skill card.
@@ -239,7 +240,7 @@ func (b *builder) run() (*Result, error) {
 				&declaredCapability{"process", "process.exec", "tool", "frontmatter-hooks"}})
 		}
 		dir := baseName(b.opts.Source.Locator)
-		if name := b.fm.Fields["name"]; name != "" && dir != "" && dir != "." && dir != name {
+		if name := b.fm.Fields["name"]; !b.opts.SourceIsOpaque && name != "" && dir != "" && dir != "." && dir != name {
 			b.addHit(rawHit{"adm-name-mismatch", catInfo, "info", 1.0, dispInfo, "SKILL.md", 1, "frontmatter name differs from directory", nil})
 		}
 	}

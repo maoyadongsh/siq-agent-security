@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-import-permission-source.v1.schema.json",
+  "title": "Fixed import permission source",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "import_id",
+    "artifact_digest",
+    "analysis_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-import-permission-source/v1"
+    },
+    "import_id": {
+      "type": "string",
+      "pattern": "^si-[a-f0-9]{32}$"
+    },
+    "artifact_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "analysis_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

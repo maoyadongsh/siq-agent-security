@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-import-permission-created.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "import_id",
+    "source",
+    "grant",
+    "state_revision",
+    "reused",
+    "installed"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-import-permission-created/v1"
+    },
+    "import_id": {
+      "type": "string",
+      "pattern": "^si-[a-f0-9]{32}$"
+    },
+    "source": {
+      "$ref": "https://siq.dev/contracts/local-skill-import-permission-source.v1.schema.json"
+    },
+    "grant": {
+      "$ref": "https://siq.dev/contracts/grant.schema.json"
+    },
+    "state_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reused": {
+      "type": "boolean"
+    },
+    "installed": {
+      "const": false
+    }
+  }
+}

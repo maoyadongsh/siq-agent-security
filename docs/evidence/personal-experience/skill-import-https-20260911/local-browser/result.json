@@ -1,0 +1,32 @@
+{
+  "schema_version": "personal-skill-import-browser/v1",
+  "recorded_at": "2026-09-10T16:37:33.800117+00:00",
+  "candidate_sha256": "359a5f9912206ec9666c6203a85037dcd56f77b0299d23fd23cc8bbdf03edb85",
+  "harness_sha256": "3f1980069a647a80c34a108e1a8415b1f793c63c9f0dd60c4ba9b072d5e59930",
+  "method": "real_isolated_linux_daemon_and_chromium_with_explicit_response_loss_delay_and_disconnect_injections",
+  "checks": {
+    "asset_entry_and_read_only_empty_page": true,
+    "directory_import_and_duplicate_submit_guard": true,
+    "permission_needs_are_unapproved_and_no_false_name_warning": true,
+    "full_file_manifest_available": true,
+    "reload_restores_saved_candidate_without_source_path": true,
+    "source_path_absent_from_url_and_web_storage": true,
+    "mobile_result_and_no_horizontal_overflow": true,
+    "zip_input_uses_same_review_flow": true,
+    "lost_response_explicit_retry_uses_identical_request": true,
+    "tamper_removes_previous_verified_result": true,
+    "damaged_record_is_visible_without_unverified_fields": true,
+    "quarantined_untrusted_text_is_not_executed": true,
+    "leave_during_import_drops_late_result_and_recovers_by_id": true,
+    "disconnection_hides_old_result_and_recovers_without_write": true,
+    "logout_drops_pending_result_and_no_browser_errors": true,
+    "review_never_approves_or_installs": true
+  },
+  "passed": true,
+  "limitations": [
+    "Local path input only; no browser upload or URL fetching",
+    "No platform installation or runtime execution",
+    "No Windows/macOS native acceptance",
+    "Disconnect fixtures affect only browser requests"
+  ]
+}

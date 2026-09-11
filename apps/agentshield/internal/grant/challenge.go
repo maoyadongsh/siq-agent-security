@@ -133,6 +133,16 @@ func IssueChallenge(g Grant, expectedRevision int, now time.Time) (*ApprovalChal
 	if now.IsZero() {
 		now = time.Now().UTC()
 	}
+	if err := ValidateLifetime(g, now); err != nil {
+		return nil, err
+	}
+	expires := now.Add(ChallengeTTL)
+	if g.ExpiresAt != nil {
+		deadline, _ := time.Parse(time.RFC3339Nano, *g.ExpiresAt)
+		if deadline.Before(expires) {
+			expires = deadline
+		}
+	}
 	digest, err := BindingDigest(g)
 	if err != nil {
 		return nil, err
@@ -158,7 +168,7 @@ func IssueChallenge(g Grant, expectedRevision int, now time.Time) (*ApprovalChal
 		Platform:         g.Platform,
 		ScopeDigest:      scope,
 		Nonce:            hex.EncodeToString(nonceRaw[:]),
-		ExpiresAt:        now.Add(ChallengeTTL).Format(time.RFC3339),
+		ExpiresAt:        expires.Format(time.RFC3339Nano),
 		CreatedAt:        now.Format(time.RFC3339),
 	}, nil
 }
@@ -182,6 +192,9 @@ func ValidateChallenge(ch ApprovalChallenge, g Grant, expectedRevision int, nonc
 	}
 	if now.IsZero() {
 		now = time.Now().UTC()
+	}
+	if err := ValidateLifetime(g, now); err != nil {
+		return err
 	}
 	exp, err := time.Parse(time.RFC3339, ch.ExpiresAt)
 	if err != nil || !now.Before(exp) {

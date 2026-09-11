@@ -1,0 +1,28 @@
+{
+  "schema_version": "personal-skill-import-smoke/v1",
+  "recorded_at": "2026-09-10T16:06:50.188216+00:00",
+  "method": "isolated_real_linux_daemon_cli_http_synthetic_skills",
+  "candidate_sha256": "0be2a553465672274530c530087007b97b48ad9df02c96e8a0186850d2333c19",
+  "harness_sha256": "5b621ff512bffcd284f60914414889593b46f4f045341d59bbc9228640390462",
+  "checks": {
+    "cli_candidate_and_signatures": true,
+    "cli_respects_daemon_writer": true,
+    "http_management_credential_required": true,
+    "http_full_manifest_and_analysis_independently_verified": true,
+    "independent_copy_and_git_metadata_excluded": true,
+    "no_execution_or_raw_source_response": true,
+    "zip_and_directory_artifacts_match": true,
+    "same_id_fixed_retry_and_operator_conflict": true,
+    "restart_revalidates_original_signed_record": true,
+    "unsafe_zip_rejected_without_published_candidate": true,
+    "tamper_blocks_read_and_retry": true,
+    "only_three_unique_signed_import_audits_no_grant_or_install": true
+  },
+  "passed": true,
+  "limitations": [
+    "No platform installation or runtime execution",
+    "No URL fetch or browser UI",
+    "No Windows/macOS native verification",
+    "Request timeout boundaries use separate Go tests"
+  ]
+}

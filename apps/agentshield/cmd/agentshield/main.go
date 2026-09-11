@@ -59,12 +59,18 @@ func main() {
 		err = cmdScan(os.Args[2:])
 	case "admit":
 		err = cmdAdmit(os.Args[2:])
+	case "import-skill":
+		err = cmdImportSkill(os.Args[2:], os.Stdout)
 	case "pubkey":
 		err = cmdPubkey()
 	case "verify":
 		err = cmdVerify(os.Args[2:])
 	case "serve":
 		err = cmdServe(os.Args[2:])
+	case "status":
+		err = cmdLocalSession("status", os.Args[2:])
+	case "pair":
+		err = cmdLocalSession("pair", os.Args[2:])
 	case "inventory":
 		err = cmdInventory(os.Args[2:])
 	case "export":
@@ -105,6 +111,8 @@ func usage() {
   %[1]s scan <file>...      # static threat scan, one JSON result per line
   %[1]s admit <skill-dir> [--trust trusted|community|unknown] [--out <dir>] [--card]
                                   # pre-install verdict (JSON); exit 3 = quarantine
+  %[1]s import-skill --path PATH --kind local_dir|local_zip --actor ACTOR [--id si-...]
+                                  # fix and scan a candidate under the state writer lock; does not install
   %[1]s pubkey              # local signing public key (base64)
   %[1]s verify [--chain local]
                                   # recompute the receipt hash chain and signatures; exit 4 on first break
@@ -126,6 +134,8 @@ func usage() {
                                   # L3: CLI-only network policy set + readback (never create_generation)
   %[1]s serve [--port N] [--mode audit_only|warn|block]
                                   # loopback console; adapters use <state>/token; UI requires pairing code
+  %[1]s status [--port N]   # verify the local service identity and readiness (JSON)
+  %[1]s pair [--port N]     # print a new one-time admin pairing code without restarting serve
   %[1]s release-manifest [--build] [--bin-dir DIR] [--skill-dir DIR]
                                   # sign skill-manifest.json (requires SIQ_AGENT_SECURITY_RELEASE_SEED)
   %[1]s manifest-verify [path]
@@ -372,6 +382,10 @@ func cmdServe(args []string) error {
 	if err != nil {
 		return err
 	}
+	recovery, err := st.RecoveryToken()
+	if err != nil {
+		return err
+	}
 	chain, err := receipt.OpenChain(dir, "local", key)
 	if err != nil {
 		return err
@@ -411,9 +425,10 @@ func cmdServe(args []string) error {
 	}
 	addr := fmt.Sprintf("127.0.0.1:%d", cfg.Port)
 	srv, err := server.New(server.Deps{
-		Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: tok,
+		Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: tok, RecoveryToken: recovery,
 		Version: Version, Mode: cfg.EnforcementMode, UI: ui.Handler(),
 		Home: home, Binary: bin, Endpoint: "http://" + addr,
+		HermesHome: os.Getenv("HERMES_HOME"), HermesCLI: os.Getenv("SIQ_AGENT_SECURITY_HERMES_CLI"), LocalAppData: os.Getenv("LOCALAPPDATA"),
 		Openshell:  openshell.New(openshell.Options{ProbeTimeout: 5 * time.Second}),
 		ListenHost: "127.0.0.1", ListenPort: cfg.Port,
 	})
@@ -421,6 +436,11 @@ func cmdServe(args []string) error {
 		return err
 	}
 	ln, err := net.Listen("tcp", addr)
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_ = srv.CloseRuntimeChecks(ctx)
+	}()
 	if err != nil {
 		return err
 	}
@@ -550,7 +570,6 @@ func cmdAdmit(args []string) error {
 	if *out != "" {
 		base := filepath.Join(*out, res.Admission.AdmissionID)
 		cardPath := base + ".skill-card.md"
-		res.Admission.SkillCardRef = &cardPath
 		if err := os.WriteFile(cardPath, []byte(res.SkillCard), 0o600); err != nil {
 			return err
 		}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "grant-expiry-browser-smoke/v1",
+  "recorded_at": "2026-09-10T10:36:05.695852+00:00",
+  "binary_sha256": "e26ca189c2b9874ec3b1a3dce4e1adbb930c0905149c810059470dd54b7d865c",
+  "harness_sha256": "160934794386300c1d1bffef26fd75beb0111c3d1bc66e8524d78d6f0aa514f3",
+  "scope": "isolated daemon and Chromium; synthetic pending grant, no real platform execution",
+  "checks": {
+    "server_deadline_saved_before_approval": true,
+    "explicit_unlimited_saved": true,
+    "stale_editor_cannot_replace_deadline": true,
+    "human_approval_preserves_deadline": true,
+    "approved_deadline_cannot_be_extended": true,
+    "deployment_does_not_claim_effective": true,
+    "mobile_navigation_opens_and_closes": true,
+    "mobile_main_content_not_clipped": true,
+    "mobile_no_page_overflow": true,
+    "no_page_errors": true
+  },
+  "passed": true
+}

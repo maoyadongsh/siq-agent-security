@@ -1,0 +1,33 @@
+{
+  "schema_version": "personal-cross-builds/v1",
+  "recorded_at": "2026-09-10T09:05:36.775295+00:00",
+  "stage": "M4-adapter-change-and-recovery",
+  "source": "current working tree; uncommitted development build",
+  "checks": [
+    {
+      "target": "linux/amd64",
+      "build": "passed",
+      "sha256": "8eb5abda529c8526998fce34e7b5dd51356a952ed6e4210173c82e04fb92cd41",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "linux/arm64",
+      "build": "passed",
+      "sha256": "353ef3ddd2249ffa2bbd20b7cc2a68df72dcfab56e7e73c82caed3f63d148f6b",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "darwin/arm64",
+      "build": "passed",
+      "sha256": "d26537b21ef5e3310c2e6879acf7d5c484485a308832dce2417769c431bf5400",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "windows/amd64",
+      "build": "passed",
+      "sha256": "3fad35c94b649defd6950bc552d16a9c7cbb65449a8a3e44dc59b0463e9fa4a8",
+      "native_runtime_test": "not_claimed"
+    }
+  ],
+  "signed_release": false
+}

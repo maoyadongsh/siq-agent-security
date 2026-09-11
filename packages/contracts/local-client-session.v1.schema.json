@@ -1,0 +1,187 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-client-session.v1.schema.json",
+  "title": "Local client session and health contracts v1",
+  "oneOf": [
+    {
+      "$ref": "#/definitions/health"
+    },
+    {
+      "$ref": "#/definitions/session"
+    },
+    {
+      "$ref": "#/definitions/pairing"
+    },
+    {
+      "$ref": "#/definitions/logout"
+    },
+    {
+      "$ref": "#/definitions/uiConfig"
+    }
+  ],
+  "definitions": {
+    "pairRequest": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "remember": {
+          "type": "boolean"
+        }
+      }
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "product",
+        "version",
+        "local_mode",
+        "status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-service-health/v1"
+        },
+        "product": {
+          "const": "siq-agent-security"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "local_mode": {
+          "const": true
+        },
+        "status": {
+          "const": "ready"
+        }
+      }
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "session",
+        "expires_in",
+        "scope"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-admin-session/v1"
+        },
+        "session": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "expires_in": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 43200
+        },
+        "scope": {
+          "const": "admin"
+        }
+      }
+    },
+    "pairing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "code",
+        "expires_in"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-pairing/v1"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{4}(-[a-f0-9]{4}){3}$"
+        },
+        "expires_in": {
+          "const": 300
+        }
+      }
+    },
+    "logout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "signed_out"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-logout/v1"
+        },
+        "signed_out": {
+          "const": true
+        }
+      }
+    },
+    "uiConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "product",
+        "version",
+        "enforcement_mode",
+        "local_mode",
+        "single_user",
+        "trust_profile",
+        "session_recovery",
+        "pairing_available",
+        "pairing_required"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-ui-config/v1"
+        },
+        "product": {
+          "const": "siq-agent-security"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "enforcement_mode": {
+          "enum": [
+            "audit_only",
+            "warn",
+            "block"
+          ]
+        },
+        "local_mode": {
+          "const": true
+        },
+        "single_user": {
+          "const": true
+        },
+        "trust_profile": {
+          "const": "desktop-same-uid"
+        },
+        "session_recovery": {
+          "const": true
+        },
+        "pairing_available": {
+          "type": "boolean"
+        },
+        "pairing_required": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

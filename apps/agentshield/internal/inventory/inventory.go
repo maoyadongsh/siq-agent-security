@@ -23,6 +23,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/canon"
+	"siq-agent-security/apps/agentshield/internal/hermeshome"
 	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
@@ -62,22 +63,27 @@ type Subject struct {
 
 // Report is one inventory run.
 type Report struct {
-	GeneratedAt string               `json:"generated_at"`
-	Home        string               `json:"home"`
-	Platforms   []string             `json:"platforms"`
-	Candidates  []Candidate          `json:"candidates"`
-	Evidence    []admission.Evidence `json:"evidence"`
-	Facts       []Fact               `json:"facts"`
-	Skipped     []string             `json:"skipped"` // paths that could not be read (category only)
+	GeneratedAt   string               `json:"generated_at"`
+	Home          string               `json:"home"`
+	Platforms     []string             `json:"platforms"`
+	Candidates    []Candidate          `json:"candidates"`
+	Evidence      []admission.Evidence `json:"evidence"`
+	Facts         []Fact               `json:"facts"`
+	Skipped       []string             `json:"skipped"` // paths that could not be read (category only)
+	Relationships []Relationship       `json:"relationships"`
 }
 
 // Options for Run.
 type Options struct {
-	Home    string // defaults to os.UserHomeDir
-	Cwd     string // project-level skill dirs are discovered under Cwd
-	Now     time.Time
-	Version string
-	Key     *signing.Key
+	HermesHome   string
+	LocalAppData string
+	Home         string   // defaults to os.UserHomeDir
+	Cwd          string   // project-level skill dirs are discovered under Cwd
+	ProjectDirs  []string // persisted explicit project roots
+	SkillDirs    []string // persisted explicit Skill roots (individual or collection)
+	Now          time.Time
+	Version      string
+	Key          *signing.Key
 	// HasAdmission tells whether a skill content_hash already has an admission.
 	HasAdmission func(contentHash string) (verdict string, ok bool)
 	Limits       admission.Limits
@@ -119,6 +125,12 @@ func Run(opts Options) (*Report, error) {
 			return nil, err
 		}
 		opts.Home = h
+		if opts.HermesHome == "" {
+			opts.HermesHome = os.Getenv("HERMES_HOME")
+		}
+		if opts.LocalAppData == "" {
+			opts.LocalAppData = os.Getenv("LOCALAPPDATA")
+		}
 	}
 	if opts.Now.IsZero() {
 		opts.Now = time.Now().UTC()
@@ -129,9 +141,22 @@ func Run(opts Options) (*Report, error) {
 	r.report.Evidence = []admission.Evidence{}
 	r.report.Facts = []Fact{}
 	r.report.Skipped = []string{}
+	r.report.Relationships = []Relationship{}
+	r.skillIDs = map[string]string{}
+	r.rootOwners = map[string][]rootOwner{}
 
 	seenSkillDir := map[string]bool{}
+	projects := append([]string{}, opts.ProjectDirs...)
+	if opts.Cwd != "" && !containsStr(projects, opts.Cwd) {
+		projects = append(projects, opts.Cwd)
+	}
 	for _, p := range platforms {
+		if p.name == "hermes" {
+			if r.hermesInstances(seenSkillDir) {
+				r.report.Platforms = append(r.report.Platforms, "hermes")
+			}
+			continue
+		}
 		present := false
 		for _, c := range p.configs {
 			full := filepath.Join(opts.Home, c)
@@ -141,24 +166,29 @@ func Run(opts Options) (*Report, error) {
 		}
 		for _, d := range p.skillDirs {
 			full := filepath.Join(opts.Home, d)
+			r.addRootOwners(full, r.platformOwners(p.name), "platform_directory")
 			if r.skillDir(p, full, seenSkillDir) {
 				present = true
 			}
 		}
-		if opts.Cwd != "" {
+		for _, project := range projects {
 			for _, d := range p.projectDir {
-				r.skillDir(p, filepath.Join(opts.Cwd, d), seenSkillDir)
+				r.skillDir(p, filepath.Join(project, d), seenSkillDir)
 			}
 		}
 		if present {
 			r.report.Platforms = append(r.report.Platforms, p.name)
 		}
 	}
-	if r.hermesProfiles(filepath.Join(opts.Home, ".hermes", "profiles")) {
-		if !containsStr(r.report.Platforms, "hermes") {
-			r.report.Platforms = append(r.report.Platforms, "hermes")
-		}
+	for _, dir := range opts.SkillDirs {
+		r.skillDir(platformSpec{name: "local", framework: "unknown"}, dir, seenSkillDir)
 	}
+
+	for _, root := range r.workspaceRoots {
+		r.addRootOwners(root.dir, []string{root.owner}, "workspace_config")
+		r.skillDir(platformSpec{name: "openclaw", framework: "openclaw"}, root.dir, seenSkillDir)
+	}
+	r.buildRelationships()
 	r.mcpConfigs()
 	r.mergeConnectors()
 	sort.Strings(r.report.Platforms)
@@ -168,20 +198,22 @@ func Run(opts Options) (*Report, error) {
 }
 
 type run struct {
-	opts   Options
-	now    string
-	report *Report
+	opts           Options
+	now            string
+	report         *Report
+	skillIDs       map[string]string
+	rootOwners     map[string][]rootOwner
+	workspaceRoots []workspaceRoot
+	dirsVisited    int
 }
 
 func (r *run) platformConfig(p platformSpec, full, rel string) bool {
-	info, err := os.Stat(full)
-	if err != nil || info.IsDir() {
-		return false
-	}
-	raw, err := os.ReadFile(full)
+	raw, err := r.readConfig(full)
 	if err != nil {
-		r.report.Skipped = append(r.report.Skipped, "unreadable:"+p.name+":"+rel)
-		return true
+		if !os.IsNotExist(err) {
+			r.report.Skipped = append(r.report.Skipped, "unreadable:"+p.name+":"+rel)
+		}
+		return false
 	}
 	sum := sha256.Sum256(raw)
 	locator := p.name + "://" + rel
@@ -198,6 +230,12 @@ func (r *run) platformConfig(p platformSpec, full, rel string) bool {
 		r.fact(locator, "control_plane", "tool.hook", "platform", p.name, evID, "observed")
 	}
 	if p.name == "hermes" {
+		r.report.Candidates = append(r.report.Candidates, Candidate{
+			CandidateID: "agent:hermes:default", SourceType: "hermes_profile", SourceLocator: "hermes://profiles/default",
+			DiscoveredAt: r.now, Name: "default", Framework: "hermes", ArtifactDigest: hex.EncodeToString(sum[:]),
+			Attributes:  map[string]string{"platform": "hermes", "profile": "default", "config": "config.yaml"},
+			EvidenceIDs: []string{evID}, Confidence: 1, Status: "candidate",
+		})
 		_, _, toolsets := extractConfigFacts(raw)
 		modes := extractToolsetModeKeys(raw)
 		if len(toolsets) > 0 {
@@ -253,29 +291,7 @@ func adapterInstalled(platform string, raw []byte) (installGate, toolHook bool) 
 }
 
 func (r *run) skillDir(p platformSpec, dir string, seen map[string]bool) bool {
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return false
-	}
-	abs, _ := filepath.Abs(dir)
-	found := false
-	for _, e := range entries {
-		if !e.IsDir() {
-			continue
-		}
-		skillPath := filepath.Join(dir, e.Name())
-		absSkill := filepath.Join(abs, e.Name())
-		if seen[absSkill] {
-			continue
-		}
-		if _, err := os.Stat(filepath.Join(skillPath, "SKILL.md")); err != nil {
-			continue
-		}
-		seen[absSkill] = true
-		found = true
-		r.skill(p, skillPath, e.Name())
-	}
-	return found
+	return r.walkSkills(p, filepath.Clean(dir), seen, 0)
 }
 
 func (r *run) skill(p platformSpec, path, dirName string) {
@@ -302,10 +318,14 @@ func (r *run) skill(p platformSpec, path, dirName string) {
 			attrs["admission_verdict"] = "none"
 		}
 	}
-	locator := p.name + "://skills/" + redactHome(path, r.opts.Home)
+	locator := "local://skills/" + redactHome(filepath.Clean(path), r.opts.Home)
+	installationID := InstallationID(locator)
+	attrs["installation_id"] = installationID
+	attrs["identity_version"] = "directory/v1"
+	r.skillIDs[filepath.Clean(path)] = installationID
 	evID := r.evidence("skill_dir", locator, hash)
 	r.report.Candidates = append(r.report.Candidates, Candidate{
-		CandidateID: "skill:" + p.name + ":" + name + "@" + hash[:12], SourceType: "skill_dir", SourceLocator: locator,
+		CandidateID: installationID, SourceType: "skill_dir", SourceLocator: locator,
 		DiscoveredAt: r.now, Name: name, Framework: p.framework, ArtifactDigest: hash, Attributes: attrs,
 		EvidenceIDs: []string{evID}, Confidence: 1.0, Status: "candidate",
 	})
@@ -343,62 +363,77 @@ func (r *run) declaredTools(locator string, tools []string, evID string) {
 	}
 }
 
-func (r *run) hermesProfiles(dir string) bool {
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return false
+func (r *run) hermesInstances(seen map[string]bool) bool {
+	scan := hermeshome.Scan(hermeshome.Options{Home: r.opts.Home, Override: r.opts.HermesHome, LocalAppData: r.opts.LocalAppData})
+	for _, issue := range scan.Issues {
+		r.report.Skipped = append(r.report.Skipped, "hermes:"+issue)
 	}
 	found := false
-	for _, e := range entries {
-		if !e.IsDir() {
-			continue
+	for _, root := range scan.Roots {
+		discovered := false
+		if root.CandidateID == "agent:hermes:default" {
+			discovered = r.platformConfig(platformSpec{name: "hermes", framework: "hermes"}, filepath.Join(root.Path, "config.yaml"), ".hermes/config.yaml")
 		}
-		name := e.Name()
-		if name == "" || strings.HasPrefix(name, ".") {
-			continue
+		if !discovered {
+			discovered = r.hermesProfile(root)
 		}
-		cfg := filepath.Join(dir, name, "config.yaml")
-		soul := filepath.Join(dir, name, "SOUL.md")
-		var raw []byte
-		srcFile := ""
-		if b, err := os.ReadFile(cfg); err == nil {
-			raw = b
-			srcFile = "config.yaml"
-		} else if b, err := os.ReadFile(soul); err == nil {
-			raw = b
-			srcFile = "SOUL.md"
-		} else {
-			continue
+		for i := range r.report.Candidates {
+			candidate := &r.report.Candidates[i]
+			if candidate.CandidateID == root.CandidateID {
+				candidate.Attributes["instance_id"] = root.ID
+				candidate.Attributes["config_dir"] = redactHome(root.Path, r.opts.Home)
+			}
 		}
-		sum := sha256.Sum256(raw)
-		locator := "hermes://profiles/" + name
-		evID := r.evidence("platform_config", locator, hex.EncodeToString(sum[:]))
-		attrs := map[string]string{"platform": "hermes", "profile": name, "config": srcFile}
-		_, _, toolsets := extractConfigFacts(raw)
-		modes := extractToolsetModeKeys(raw)
-		if len(toolsets) > 0 {
-			attrs["toolsets"] = joinCSV(toolsets)
-			r.declaredTools(locator, toolsets, evID)
+		skills := filepath.Join(root.Path, "skills")
+		if discovered {
+			r.addRootOwners(skills, []string{root.CandidateID}, "profile_directory")
 		}
-		if len(modes) > 0 {
-			attrs["platform_toolset_modes"] = joinCSV(modes)
-		}
-		r.report.Candidates = append(r.report.Candidates, Candidate{
-			CandidateID: "agent:hermes:" + name, SourceType: "hermes_profile", SourceLocator: locator,
-			DiscoveredAt: r.now, Name: name, Framework: "hermes", ArtifactDigest: hex.EncodeToString(sum[:]),
-			Attributes: attrs, EvidenceIDs: []string{evID}, Confidence: 1.0, Status: "candidate",
-		})
-		found = true
+		hasSkills := r.skillDir(platformSpec{name: "hermes", framework: "hermes"}, skills, seen)
+		found = found || discovered || hasSkills
 	}
 	return found
+}
+
+func (r *run) hermesProfile(root hermeshome.Root) bool {
+	var raw []byte
+	srcFile := ""
+	for _, name := range []string{"config.yaml", "SOUL.md"} {
+		if content, err := r.readConfig(filepath.Join(root.Path, name)); err == nil {
+			raw = content
+			srcFile = name
+			break
+		}
+	}
+	if srcFile == "" {
+		return false
+	}
+	sum := sha256.Sum256(raw)
+	locator := "hermes://instances/" + root.ID
+	if strings.HasPrefix(root.CandidateID, "agent:hermes:") && !strings.HasPrefix(root.CandidateID, "agent:hermes:root:") {
+		locator = "hermes://profiles/" + strings.TrimPrefix(root.CandidateID, "agent:hermes:")
+	}
+	evID := r.evidence("platform_config", locator, hex.EncodeToString(sum[:]))
+	attrs := map[string]string{"platform": "hermes", "profile": root.Name, "config": srcFile, "instance_id": root.ID, "config_dir": redactHome(root.Path, r.opts.Home)}
+	_, _, toolsets := extractConfigFacts(raw)
+	modes := extractToolsetModeKeys(raw)
+	if len(toolsets) > 0 {
+		attrs["toolsets"] = joinCSV(toolsets)
+		r.declaredTools(locator, toolsets, evID)
+	}
+	if len(modes) > 0 {
+		attrs["platform_toolset_modes"] = joinCSV(modes)
+	}
+	r.report.Candidates = append(r.report.Candidates, Candidate{CandidateID: root.CandidateID, SourceType: "hermes_profile", SourceLocator: locator, DiscoveredAt: r.now, Name: root.Name, Framework: "hermes", ArtifactDigest: hex.EncodeToString(sum[:]), Attributes: attrs, EvidenceIDs: []string{evID}, Confidence: 1, Status: "candidate"})
+	return true
 }
 
 func (r *run) openclawAgents(raw []byte, configEv string) {
 	var doc struct {
 		Agents struct {
 			List []struct {
-				ID   string `json:"id"`
-				Name string `json:"name"`
+				ID        string `json:"id"`
+				Name      string `json:"name"`
+				Workspace string `json:"workspace"`
 			} `json:"list"`
 		} `json:"agents"`
 	}
@@ -427,6 +462,12 @@ func (r *run) openclawAgents(raw []byte, configEv string) {
 			evID = r.evidence("platform_config", locator, hex.EncodeToString(sum[:]))
 		}
 		attrs := map[string]string{"platform": "openclaw", "agent_id": id}
+		if workspace, ok := r.configuredDirectory(a.Workspace); ok {
+			attrs["workspace"] = redactHome(workspace, r.opts.Home)
+			for _, sub := range []string{"skills", ".agents/skills"} {
+				r.workspaceRoots = append(r.workspaceRoots, workspaceRoot{dir: filepath.Join(workspace, sub), owner: "agent:openclaw:" + id})
+			}
+		}
 		r.report.Candidates = append(r.report.Candidates, Candidate{
 			CandidateID: "agent:openclaw:" + id, SourceType: "openclaw_agent", SourceLocator: locator,
 			DiscoveredAt: r.now, Name: name, Framework: "openclaw",
@@ -460,8 +501,9 @@ func signDoc(key *signing.Key, v any) string {
 // the user name.
 func redactHome(p, home string) string {
 	p = filepath.ToSlash(p)
-	if home != "" && strings.HasPrefix(p, filepath.ToSlash(home)) {
-		return "~" + strings.TrimPrefix(p, filepath.ToSlash(home))
+	home = strings.TrimSuffix(filepath.ToSlash(home), "/")
+	if home != "" && (p == home || strings.HasPrefix(p, home+"/")) {
+		return "~" + strings.TrimPrefix(p, home)
 	}
 	return p
 }

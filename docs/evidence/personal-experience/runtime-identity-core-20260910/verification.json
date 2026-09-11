@@ -1,0 +1,141 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T13:14:34.318111+00:00",
+  "batch": "M11 runtime identity and automatic session core",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "candidate": {
+    "target": "linux/arm64",
+    "path": ".tmp/personal-experience/m11-core-linux-arm64",
+    "sha256": "54d8cc9034439d07f25f57ddffde9db4ddc27afbaa78b933b15e8815e7a73b54",
+    "passed": true,
+    "log": "build-linux-arm64.log"
+  },
+  "checks": [
+    {
+      "command": "go test ./...",
+      "passed": true,
+      "log": "go-test.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "go-vet.log"
+    },
+    {
+      "command": "uv run ruff check app/tests/test_schema_contracts.py",
+      "passed": true,
+      "log": "python-lint.log"
+    },
+    {
+      "command": "gofmt -l .",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "git diff --check",
+      "passed": true,
+      "log": "diff-check.log"
+    },
+    {
+      "command": "go test -race ./internal/runtimeidentity ./internal/intent ./internal/grant ./internal/receipt",
+      "passed": true,
+      "log": "go-race.log",
+      "capture": "copied verbatim from completed exec session 80515 output"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "passed": true,
+      "test_count": 100,
+      "capture": "completed exec result dc6764; 72 + 28 passing cases; no log file retained"
+    }
+  ],
+  "source_sha256": {
+    "apps/agentshield/internal/intent/grant_selection.go": "b8ef586cfe4107e42c81381aa2b31a211c4241a2eccdad7224380209280e2107",
+    "apps/agentshield/internal/intent/store.go": "6bd7059b514331c607537d759544126424fbf25c4ca923e7bf67c6e92774d8df",
+    "apps/agentshield/internal/intent/binding.go": "dbc578e3003ee4fa4e0bfab0d50daf16e0dc1a3bba7128c41fb368b23e2dea6d",
+    "apps/agentshield/internal/grant/runtime_tools.go": "5d3d4c88730cad000967893626994dd2c05280fce75eeffa22dac15428265601",
+    "apps/agentshield/internal/grant/permission_digest.go": "6a5ec51db5a5ecec2866cab28f224aab25ea768d93c7d7f72045a2ea91944c58",
+    "apps/agentshield/internal/receipt/engine.go": "8cfca140b92aac5b6952d51fe9243cb286bc213d29b09d8f5ae6dac90ab6f75f",
+    "apps/control-api/app/tests/test_schema_contracts.py": "11d17cb0422d1e42bdaf0f564c00e7ffcf8057a49056e5f22f3207a7fdff60ca",
+    "docs/adr/0028-personal-runtime-identities.md": "3a9f54f07bf3fee021a7c48ee3cf44eac37e8d9ecafb99474f107ab7c9f24bcb",
+    "docs/agentshield-dev-spec-v1.md": "40af05d8d6670f8dad2c70c281984bbdd20793d0153bb85bcd4276be2b572361",
+    "docs/personal-experience-development-progress-20260910.md": "c2df1880e13eaf952f545e83d5c70f840a2afce1baf8aea73c56f1099a2796ba",
+    "scripts/personal-experience/session-grant-selection-native-smoke.py": "5d2f07017f833e234753ea8c0c546fbeab05db3fa84ea8ba2501a14eb2c75aec",
+    "apps/agentshield/internal/runtimeidentity/files.go": "ffb41af24e7ba0605c1f7ebb37a31f63b48a4b272bff811cbd71d94a34d6cc73",
+    "apps/agentshield/internal/runtimeidentity/session.go": "9647ec3aad8aa9f3337cccaf81485e686117b36e2b9f06708b53837ffe1ea16d",
+    "apps/agentshield/internal/runtimeidentity/session_test.go": "d09bc172407bfbae474a3d6af3b8bcd989617fc81cc2d8aad8ccd046dba8bd57",
+    "apps/agentshield/internal/runtimeidentity/store.go": "be4f9e5b404b15fac8cdda3ef3cc20116980afbd265d8b95b5f533e58eefd946",
+    "apps/agentshield/internal/runtimeidentity/store_test.go": "b98e00baf6c304d95159b9138416a9cf7d09e39a7142f3b462f14185f10cb2b2",
+    "packages/contracts/local-runtime-identity-create.v1.schema.json": "a8e2d23ba12a80c9c14e7b7738d118c93f67d9790a326718307c28905901bed2",
+    "apps/agentshield/testdata/contracts/local-runtime-identity-create.json": "e335df9dfe29f00de72e48697cb3bda4af6f72aa6aca0dcafe24fa29fa7bd57a",
+    "packages/contracts/local-runtime-identity.v1.schema.json": "291adb70e024302098888f85310b211214a8db930d76c10ac0e982ea57014397",
+    "apps/agentshield/testdata/contracts/local-runtime-identity.json": "915e677fbe449deaa730d2ef483282b4434dfcee0f1d88edbcaec804d5688ab6",
+    "packages/contracts/local-runtime-identity-revocation.v1.schema.json": "1f12e3de5c2d11de2d16afd334e1a1adf37d5bff24b73030a9d4530b1341943f",
+    "apps/agentshield/testdata/contracts/local-runtime-identity-revocation.json": "ea135c7fcf4690f795b832af9508fdc53ea7cf652252147616de7d170f405279",
+    "packages/contracts/local-runtime-session-enroll.v1.schema.json": "79426b32ace130ab152324c62bec63f37df418ad42947ce0001804979aba4985",
+    "apps/agentshield/testdata/contracts/local-runtime-session-enroll.json": "1e98f1654f9da427959d057a4e19457d8164856a1063508ed32ec9f6d0212f49"
+  },
+  "cross_builds": [
+    {
+      "target": "linux/amd64",
+      "path": ".tmp/personal-experience/m11-core-linux-amd64",
+      "sha256": "39e82e2adc1e5250a452709c217eb72c3efefd93b8989252f3e45ddda6c8d5be",
+      "passed": true,
+      "log": "build-linux-amd64.log"
+    },
+    {
+      "target": "linux/arm64",
+      "path": ".tmp/personal-experience/m11-core-linux-arm64",
+      "sha256": "54d8cc9034439d07f25f57ddffde9db4ddc27afbaa78b933b15e8815e7a73b54",
+      "passed": true,
+      "log": "build-linux-arm64.log"
+    },
+    {
+      "target": "darwin/arm64",
+      "path": ".tmp/personal-experience/m11-core-darwin-arm64",
+      "sha256": "6620f5f408cc25c6994c701f91e6840b92f0af5d0cd0234f5345dad2d430073a",
+      "passed": true,
+      "log": "build-darwin-arm64.log"
+    },
+    {
+      "target": "windows/amd64",
+      "path": ".tmp/personal-experience/m11-core-windows-amd64.exe",
+      "sha256": "d2c1bb8f3a060143e3da2335309515a2cce2046bd3b85aaad7b5d11d3fe43f4f",
+      "passed": true,
+      "log": "build-windows-amd64.log"
+    }
+  ],
+  "reports": [
+    {
+      "path": "legacy-selfcheck-native.json",
+      "passed": true,
+      "checks": 7,
+      "receipt_count": 5,
+      "scope": "Existing product self-check regression only. Does not exercise new identity credentials through HTTP."
+    }
+  ],
+  "limitations": [
+    "The runtimeidentity package is implemented and tested, but is not wired into server routes or decision authentication. Existing global credentials remain unchanged.",
+    "Hermes ordinary-task hook enrollment, instance config transactions, UI enablement, and self-check scoped-credential migration remain incomplete.",
+    "The native report exercises the existing M10 self-check with the new regression candidate; it is not evidence of new runtime identity integration.",
+    "Only Linux arm64 tests ran. Cross-builds are not Windows/macOS native filesystem or credential protection validation.",
+    "The permission envelope represents the confirmed instance Grant, not trusted task-purpose capture or actual loaded Skill attribution.",
+    "Filesystem checks and process locks do not constitute hostile same-UID isolation. No power-loss durability acceptance is claimed.",
+    "UX-007 and the full personal/LAN taskbook remain incomplete. No commit, push, or release performed."
+  ],
+  "artifact_sha256": {
+    "build-darwin-arm64.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-linux-amd64.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-linux-arm64.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-windows-amd64.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checks.json": "0e909aea8ddf671aa1b78cdcc100001dacc2447bdc13b2514d0665b54e0e0a2d",
+    "diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-race.log": "62d5686aec214103a87f3d13e064016e18636331a646474adb56492971c42c1e",
+    "go-test.log": "fdf0f24b669760699e5cfd42abefa259a176a1c71d550afcbcb07cde5d849ff0",
+    "go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "legacy-selfcheck-native.json": "7bf89b44e062c2738af69e25f41291aa76c96ed2ac27e8ac923f5dfc304c2412",
+    "python-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  }
+}

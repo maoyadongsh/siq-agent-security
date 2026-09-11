@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-removal-result.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "install_id",
+    "removal_claim_signature",
+    "status",
+    "grant_id",
+    "grant_revision",
+    "grant_signature",
+    "grant_revoked",
+    "retained_install_id",
+    "actor_id",
+    "recorded_at",
+    "target_absent",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-removal-result/v1"
+    },
+    "install_id": {
+      "type": "string",
+      "pattern": "^sin-[a-f0-9]{64}$"
+    },
+    "removal_claim_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "status": {
+      "const": "removed"
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "grant_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "grant_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "grant_revoked": {
+      "type": "boolean"
+    },
+    "retained_install_id": {
+      "type": "string",
+      "pattern": "^(sin-[a-f0-9]{64})?$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "target_absent": {
+      "const": true
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  }
+}

@@ -5,12 +5,14 @@ import (
 	"reflect"
 	"time"
 
+	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 )
 
 // IntentContract binds a tool call to the user's purpose and task.
 type IntentContract struct {
+	SelectedGrant        *grant.Grant     `json:"-"`
 	Trusted              *intent.Contract `json:"-"`
 	IntentID             string           `json:"intent_id"`
 	TaskID               string           `json:"task_id"`
@@ -96,10 +98,14 @@ func (i *IntentContract) validate(req Request, now time.Time) error {
 // ResolveStore adapts a verified V2 authority for the legacy receipt consumer.
 func ResolveStore(store *intent.Store) IntentLookup {
 	return func(platform, session, agent string) (*IntentContract, error) {
-		c, _, err := store.ResolveBinding(platform, session, agent)
+		c, binding, err := store.ResolveBinding(platform, session, agent)
 		if c == nil {
 			return nil, err
 		}
-		return &IntentContract{Trusted: c, IntentID: c.IntentID, TaskID: c.TaskID, Principal: c.Principal.ID, AgentID: c.Agent.ID, Purpose: c.Purpose, Digest: c.Digest, AuthorityRevision: c.Authority.Revision}, err
+		resolved := &IntentContract{Trusted: c, IntentID: c.IntentID, TaskID: c.TaskID, Principal: c.Principal.ID, AgentID: c.Agent.ID, Purpose: c.Purpose, Digest: c.Digest, AuthorityRevision: c.Authority.Revision}
+		if binding != nil {
+			resolved.SelectedGrant = binding.SelectedGrant
+		}
+		return resolved, err
 	}
 }

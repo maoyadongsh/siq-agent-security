@@ -37,7 +37,7 @@ func TestMandatoryAuthorityCannotBecomeAdvisoryAllow(t *testing.T) {
 func TestOptionalNeverBoundKeepsPolicyModes(t *testing.T) {
 	for _, mode := range []string{"block", "warn", "audit_only"} {
 		fx := newFixture(t, mode, deployedGrant(t, "hermes", false), false)
-		allowed, err := fx.eng.Decide(req("hermes", "read_file", nil))
+		allowed, err := fx.eng.Decide(req("hermes", "read_file", map[string]any{"path": "/home/u/proj/report"}))
 		if err != nil || allowed.Action != ActionAllow || allowed.Receipt.AuthorityStatus != "unbound_legacy" || allowed.Receipt.PolicyAction != ActionAllow {
 			t.Fatal("optional legacy authorization changed", mode, err)
 		}

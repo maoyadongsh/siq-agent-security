@@ -1,13 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { Icon } from '@/components/icons';
 import { LocalApiError, localApi } from '../api';
 import type { LedgerAsset } from '../types';
 import { useLocalSession } from '../session';
+import DiscoveryPanel from '../components/DiscoveryPanel';
 import {
   assetStatusLabel,
+  assetSourceLabel,
   assetStatusTag,
   grantStatusLabel,
   grantTag,
@@ -20,7 +22,6 @@ export default function AgentsPage() {
   const navigate = useNavigate();
   const { reload: reloadStatus } = useLocalSession();
   const [rows, setRows] = useState<LedgerAsset[]>([]);
-  const [cwd, setCwd] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [framework, setFramework] = useState('');
@@ -29,11 +30,11 @@ export default function AgentsPage() {
   const [admitResult, setAdmitResult] = useState<{ name: string; verdict: string } | null>(null);
   const [admitErr, setAdmitErr] = useState<string | null>(null);
 
-  const load = () => {
+  const load = useCallback(() => {
     setLoading(true);
     setError(null);
     localApi
-      .assets(cwd.trim() || undefined)
+      .assets()
       .then((data) => {
         setRows(data.assets ?? []);
         setLoading(false);
@@ -44,12 +45,11 @@ export default function AgentsPage() {
         setError(err instanceof Error ? err.message : '盘点失败');
         setLoading(false);
       });
-  };
+  }, [reloadStatus]);
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [load]);
 
   const runAdmit = (path: string) => {
     setAdmitResult(null);
@@ -82,7 +82,7 @@ export default function AgentsPage() {
   const emptyText = loading
     ? '盘点中…'
     : error
-      ? '决策 API 不可达，暂时无法读取资产。'
+      ? '暂时无法读取资产，请检查本地服务后重试。'
       : rows.length > 0
         ? '当前筛选无匹配资产，可放宽平台 / 状态条件。'
         : '未发现资产。确认本机装有 Agent 平台，或在下方粘贴 Skill 目录做准入。';
@@ -91,18 +91,20 @@ export default function AgentsPage() {
     {
       key: 'name',
       header: '名称',
-      render: (r) => (
-        <span className="cell-ellipsis" title={r.id}>
-          {r.name || r.id}
-        </span>
-      ),
+      render: (r) => <span title={r.source_locator}>{r.name || r.id}<br />
+        <small className="muted-text">{r.source_locator.replace(/^.*:\/\/skills\//, '')}</small>
+      </span>,
     },
     {
       key: 'fw',
       header: '平台',
       render: (r) => <span className="cell-nowrap">{platformLabel(r.framework)}</span>,
     },
-    { key: 'type', header: '来源', render: (r) => <span className="cell-nowrap">{r.source_type}</span> },
+    { key: 'type', header: '来源', render: (r) => <span className="cell-nowrap">{assetSourceLabel(r.source_type)}</span> },
+    { key: 'relationships', header: '发现的关联', render: (r) => {
+      const linked = new Set((r.relationships ?? []).map((relation) => r.source_type === 'skill_dir' ? relation.source_id : relation.skill_id));
+      return linked.size ? `${linked.size} ${r.source_type === 'skill_dir' ? '个可能使用者' : '个 Skill'}` : '尚未确认';
+    } },
     {
       key: 'status',
       header: '状态',
@@ -167,25 +169,18 @@ export default function AgentsPage() {
         kicker="AGENTSHIELD"
         icon="agents"
         title="智能体资产"
-        description="本机盘点投影：平台配置与 Skill 目录。点进详情看证据与声明工具。不启动 MCP、不读取凭据文件。"
+        description="查看本机平台实例、Skill 安装位置、内容版本与配置关联。发现后由你选择保护范围。"
         connection={loading ? 'loading' : error ? 'disconnected' : 'connected'}
         connectionError={error}
-        actions={
+        actions={<>
+          <Link className="btn btn-sm btn-primary" to="/skill-imports">导入 Skill</Link>
           <button type="button" className="btn btn-sm" onClick={load}>
-            <Icon name="refresh" size={14} /> 重新盘点
+            <Icon name="refresh" size={14} /> 刷新列表
           </button>
-        }
+        </>}
       />
+      <DiscoveryPanel onCompleted={load} />
       <div className="toolbar">
-        <div className="field field-flush">
-          <label htmlFor="inv-cwd">额外扫描目录（可选）</label>
-          <input
-            id="inv-cwd"
-            value={cwd}
-            onChange={(e) => setCwd(e.target.value)}
-            placeholder="项目根，例如 ~/src/app"
-          />
-        </div>
         <div className="field field-flush">
           <label htmlFor="fw-filter">平台</label>
           <select id="fw-filter" value={framework} onChange={(e) => setFramework(e.target.value)}>

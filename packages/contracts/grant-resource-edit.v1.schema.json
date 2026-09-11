@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/grant-resource-edit.v1.schema.json",
+  "title": "Explicit pending Grant resource replacement",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "expected_revision",
+    "actor_id",
+    "tools",
+    "network",
+    "filesystem",
+    "models"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "grant-resource-edit/v1"
+    },
+    "expected_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "tools": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:/-]*$"
+      }
+    },
+    "models": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:/-]*$"
+      }
+    },
+    "network": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "endpoint",
+          "effect"
+        ],
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "effect": {
+            "enum": [
+              "allow",
+              "deny"
+            ]
+          }
+        }
+      }
+    },
+    "filesystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read_only",
+        "read_write"
+      ],
+      "properties": {
+        "read_only": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^/"
+          }
+        },
+        "read_write": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^/"
+          }
+        }
+      }
+    }
+  }
+}

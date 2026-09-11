@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-view.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "install_id",
+    "plan",
+    "claim_signature",
+    "status",
+    "operation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-view/v1"
+    },
+    "install_id": {
+      "type": "string",
+      "pattern": "^sin-[a-f0-9]{64}$"
+    },
+    "plan": {
+      "$ref": "local-skill-install-plan.v1.schema.json"
+    },
+    "claim_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "status": {
+      "enum": [
+        "installed_unverified",
+        "rolled_back",
+        "recovery_required"
+      ]
+    },
+    "operation": {
+      "anyOf": [
+        {
+          "$ref": "local-skill-install-operation.v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "type": "null"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "const": "recovery_required"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { LocalApiError, localApi } from '../api';
 import type { Grant, LedgerAssetDetail, LedgerEvidence } from '../types';
 import { useLocalSession } from '../session';
+import GrantResourceDialog from '../components/GrantResourceDialog';
 import {
   assetStatusLabel,
+  assetSourceLabel,
   assetStatusTag,
   grantStatusLabel,
   grantTag,
@@ -34,10 +36,8 @@ export default function AgentDetailPage() {
   const [subject, setSubject] = useState(actorId);
   const [reason, setReason] = useState('');
   const [until, setUntil] = useState('');
-  const [tools, setTools] = useState('');
-  const [network, setNetwork] = useState('');
-  const [fsRw, setFsRw] = useState('');
-  const [models, setModels] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const closeEditor = useCallback(() => setEditingId(null), []);
 
   const fail = (err: unknown, fallback: string) =>
     setFlash({ kind: 'err', text: err instanceof Error ? err.message : fallback });
@@ -129,36 +129,6 @@ export default function AgentDetailPage() {
       .catch((err: unknown) => fail(err, '驳回失败'));
   };
 
-  const patchPending = (grantId: string) => {
-    const bodyBase: Record<string, unknown> = { actor_id: actorId };
-    if (tools.trim()) bodyBase.tools = tools.split(/[\s,]+/).filter(Boolean);
-    if (network.trim()) {
-      bodyBase.network = network
-        .split(/\n+/)
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .map((endpoint) => ({ endpoint, effect: 'allow' }));
-    }
-    if (fsRw.trim()) {
-      bodyBase.filesystem = { read_only: [], read_write: fsRw.split(/[\s,]+/).filter(Boolean) };
-    }
-    if (models.trim()) bodyBase.models = models.split(/[\s,]+/).filter(Boolean);
-    setFlash(null);
-    localApi
-      .grant(grantId)
-      .then(({ state_revision }) =>
-        localApi.grantAction(grantId, 'patch-desired', {
-          ...bodyBase,
-          expected_revision: state_revision,
-        }),
-      )
-      .then(() => {
-        ok('已写入五域补丁，仍须人类批准');
-        load();
-      })
-      .catch((err: unknown) => fail(err, '补丁失败'));
-  };
-
   const evidenceCols: TableColumn<LedgerEvidence>[] = [
     {
       key: 'id',
@@ -196,8 +166,8 @@ export default function AgentDetailPage() {
       <PageHeader
         kicker="AGENTSHIELD"
         icon="agents"
-        title={asset?.name ?? '智能体详情'}
-        description="证据、声明工具、准入与签发。确认/驳回写入本地 assets/；批准前可补丁五域。"
+        title={asset?.name ?? '资产详情'}
+        description="查看安装位置、内容版本、配置关联和权限状态。目录关联尚不代表实际调用或权限生效。"
         connection={loading ? 'loading' : error ? 'disconnected' : 'connected'}
         connectionError={error}
       />
@@ -238,7 +208,7 @@ export default function AgentDetailPage() {
               <dt>平台</dt>
               <dd>{platformLabel(asset.framework)}</dd>
               <dt>来源类型</dt>
-              <dd>{asset.source_type}</dd>
+              <dd>{assetSourceLabel(asset.source_type)}</dd>
               <dt>来源定位</dt>
               <dd>
                 <span className="mono">{asset.source_locator}</span>
@@ -251,6 +221,7 @@ export default function AgentDetailPage() {
               <dd>
                 <span className="mono">{shortHash(asset.content_hash, 16)}</span>
               </dd>
+              {asset.source_type === 'skill_dir' ? <><dt>安装身份</dt><dd><code>{asset.id}</code></dd></> : null}
               <dt>声明工具</dt>
               <dd>
                 {asset.declared_tools && asset.declared_tools.length > 0
@@ -291,7 +262,7 @@ export default function AgentDetailPage() {
                 </button>
               ) : null}
               <button type="button" className="btn" onClick={confirm}>
-                确认纳管
+                确认此资产
               </button>
             </div>
             <h3 className="block-gap">驳回该资产</h3>
@@ -314,6 +285,16 @@ export default function AgentDetailPage() {
                 驳回
               </button>
             </div>
+          </div>
+          <div className="card">
+            <h2>{asset.source_type === 'skill_dir' ? '配置关联的可能使用者' : '配置关联的 Skill'}</h2>
+            <p className="page-desc">依据目录位置或平台配置推导。平台允许列表、版本覆盖和会话加载可能影响实际可用性；实际使用以运行证据为准。</p>
+            {asset.relationships?.length ? <ul>{asset.relationships.map((relation) => {
+              const other = relation.source_id === asset.id ? relation.skill_id : relation.source_id;
+              const related = asset.related_assets?.find((item) => item.id === other);
+              const basis = { platform_directory: '平台目录', profile_directory: 'Profile 目录', workspace_config: '工作目录配置' }[relation.basis];
+              return <li key={relation.relationship_id}><Link to={`/agents/${encodeURIComponent(other)}`}>{related?.name || other}</Link> · {related ? platformLabel(related.framework) : ''} · {basis} · 尚未验证运行</li>;
+            })}</ul> : <p className="page-desc">尚未发现可确认的关联。不会根据同名 Skill 推定使用者。</p>}
           </div>
           <div className="card">
             <h2>关联证据（{asset.evidence?.length ?? 0}）</h2>
@@ -359,42 +340,10 @@ export default function AgentDetailPage() {
             ) : (
               <p className="page-desc block-gap">先准入再签发。</p>
             )}
-            {pendingGrant ? (
-              <div className="block-gap">
-                <h3>五域补丁（仅 pending_approval）</h3>
-                <p className="page-desc">
-                  filesystem / process 是静态域：写入后也不会显示为有效，仍须人批。补丁后到签发页批准。
-                </p>
-                <div className="field">
-                  <label htmlFor="p-tools">工具（逗号分隔）</label>
-                  <input id="p-tools" value={tools} onChange={(e) => setTools(e.target.value)} />
-                </div>
-                <div className="field">
-                  <label htmlFor="p-net">网络 allow（每行 host:port）</label>
-                  <textarea
-                    id="p-net"
-                    rows={3}
-                    value={network}
-                    onChange={(e) => setNetwork(e.target.value)}
-                  />
-                </div>
-                <div className="field">
-                  <label htmlFor="p-fs">文件系统读写路径（逗号分隔，静态域不生效）</label>
-                  <input id="p-fs" value={fsRw} onChange={(e) => setFsRw(e.target.value)} />
-                </div>
-                <div className="field">
-                  <label htmlFor="p-models">模型</label>
-                  <input id="p-models" value={models} onChange={(e) => setModels(e.target.value)} />
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => patchPending(pendingGrant.grant_id)}
-                >
-                  写入补丁
-                </button>
-              </div>
-            ) : null}
+            {pendingGrant ? <div className="block-gap">
+              <button type="button" className="btn" onClick={() => setEditingId(pendingGrant.grant_id)}>编辑权限范围</button>
+              <p className="page-desc">查看当前范围后修改，保存仍须到签发页重新批准。</p>
+            </div> : null}
           </div>
           {card ? (
             <div className="card">
@@ -404,6 +353,9 @@ export default function AgentDetailPage() {
           ) : null}
         </>
       ) : null}
+      {editingId ? <GrantResourceDialog grantId={editingId} onClose={closeEditor} onSaved={() => {
+        setEditingId(null); ok('权限范围已保存，请到签发页检查并重新批准。'); load();
+      }} /> : null}
     </section>
   );
 }

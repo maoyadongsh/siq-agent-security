@@ -1,0 +1,27 @@
+{
+  "schema_version": "personal-native-discovery/v1",
+  "recorded_at": "2026-09-10T07:59:07.343254+00:00",
+  "scope": "read-only discovery on the current Linux arm64 home; no runtime enforcement claim",
+  "platforms": [
+    "claude_code",
+    "codebuddy",
+    "codex",
+    "hermes",
+    "mcp",
+    "openclaw"
+  ],
+  "candidate_counts": {
+    "hermes_profile": 12,
+    "openclaw_agent": 9,
+    "mcp_server": 10,
+    "platform_config": 5,
+    "skill_dir": 794
+  },
+  "relationship_count": 1330,
+  "skip_categories": {
+    "symlink": 100
+  },
+  "candidate_ids_unique": true,
+  "configuration_files_unchanged": true,
+  "private_names_paths_and_content_omitted": true
+}

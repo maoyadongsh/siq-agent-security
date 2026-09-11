@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-removal-claim.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "install_id",
+    "installation_claim_signature",
+    "operation_signature",
+    "grant_id",
+    "grant_revision",
+    "grant_signature",
+    "binding_signature",
+    "retained_install_id",
+    "revoke_grant",
+    "actor_id",
+    "created_at",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-removal-claim/v1"
+    },
+    "install_id": {
+      "type": "string",
+      "pattern": "^sin-[a-f0-9]{64}$"
+    },
+    "installation_claim_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "operation_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "grant_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "grant_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "binding_signature": {
+      "type": "string",
+      "pattern": "^([a-f0-9]{128})?$"
+    },
+    "retained_install_id": {
+      "type": "string",
+      "pattern": "^(sin-[a-f0-9]{64})?$"
+    },
+    "revoke_grant": {
+      "type": "boolean"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "revoke_grant": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "retained_install_id": {
+            "const": ""
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "retained_install_id": {
+            "type": "string",
+            "pattern": "^sin-[a-f0-9]{64}$"
+          },
+          "binding_signature": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{128}$"
+          }
+        }
+      }
+    }
+  ]
+}

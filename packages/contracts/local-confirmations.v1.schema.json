@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-confirmations.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-confirmations/v1"
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 8192,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action_id",
+          "decision_receipt_id",
+          "decision_hash",
+          "params_digest",
+          "platform",
+          "agent_id",
+          "session_id",
+          "tool",
+          "tool_call_id",
+          "grant_id",
+          "issued_at",
+          "expires_at",
+          "status",
+          "params_excerpt"
+        ],
+        "properties": {
+          "action_id": {
+            "type": "string"
+          },
+          "decision_receipt_id": {
+            "type": "string"
+          },
+          "decision_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "params_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "agent_id": {
+            "type": "string"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "tool": {
+            "type": "string"
+          },
+          "tool_call_id": {
+            "type": "string"
+          },
+          "grant_id": {
+            "type": "string"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "approved",
+              "denied",
+              "expired",
+              "consumed",
+              "unavailable"
+            ]
+          },
+          "params_excerpt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 512
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "personal-cross-builds/v1",
+  "recorded_at": "2026-09-10T09:55:56.410863+00:00",
+  "stage": "M5-hermes-instance-native-configuration",
+  "source": "current working tree; uncommitted development build",
+  "checks": [
+    {
+      "target": "linux/amd64",
+      "build": "passed",
+      "sha256": "488f87b450d185be9676784316eb09278c1ada8fff9466196ac9f71362ff041a",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "linux/arm64",
+      "build": "passed",
+      "sha256": "dbc695ff586e794f49461ca077367cf81fa9ed60e9e1cc6ef994fbad73311223",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "darwin/arm64",
+      "build": "passed",
+      "sha256": "600cf44b2ecd9f5ab1a381f7ad26458dcb3a566fd1946288f292dcb5bb2f2421",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "windows/amd64",
+      "build": "passed",
+      "sha256": "1c9a7924163e2e4a7631040bbcbeee431d2b49e23f02ea56d6438e03f8291a47",
+      "native_runtime_test": "not_claimed"
+    }
+  ],
+  "signed_release": false
+}

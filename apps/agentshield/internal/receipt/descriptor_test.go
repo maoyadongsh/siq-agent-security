@@ -13,7 +13,7 @@ func TestFileAliasesCannotBypassGrantedWriteScope(t *testing.T) {
 			if err != nil || d.Action != ActionDeny {
 				t.Fatal("alias bypassed filesystem policy", d, err)
 			}
-			d, err = fx.eng.Decide(req("hermes", tool, map[string]any{"path": "~/work/out/report"}))
+			d, err = fx.eng.Decide(req("hermes", tool, map[string]any{"path": "/home/u/work/out/report"}))
 			if err != nil || d.Action != ActionAllow {
 				t.Fatal("explicitly granted path lost compatibility", d, err)
 			}

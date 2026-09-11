@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-09-10T18:39:13.151912+00:00",
+  "status": "passed",
+  "checks": {
+    "approved_grant_prefills_portable_skill_directory": true,
+    "explicit_confirmation_required": true,
+    "committed_response_loss_reads_result_without_second_apply": true,
+    "refresh_reads_existing_target_without_activation": true,
+    "mobile_installation_result_wraps": true,
+    "target_change_removes_old_verified_state": true,
+    "revoked_source_unavailable_recovery_preserves_user_content": true,
+    "lost_recovery_response_and_refresh_read_immutable_result": true,
+    "no_platform_configuration_or_runtime_authority_change": true
+  },
+  "binary_sha256": "99ba418dad3140c9ef59bb818d2893f35bb874fed764008be040eb10b9d88019",
+  "scope": "Real isolated daemon/browser and filesystem writes. Synthetic approval/profile; recovery interrupted-state fixture. No native host or payload execution; no cross-OS acceptance."
+}

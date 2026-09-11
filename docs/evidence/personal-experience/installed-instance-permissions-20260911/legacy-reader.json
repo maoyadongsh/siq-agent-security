@@ -1,0 +1,12 @@
+{
+  "schema_version": "installed-permission-legacy-reader/v1",
+  "passed": true,
+  "candidate_sha256": "0cbdb4167c4c9c3f7e3a48c8ba8d6a3052a3c4e4ae5c539d89b0068e384ddceb",
+  "legacy_sha256": "99ba418dad3140c9ef59bb818d2893f35bb874fed764008be040eb10b9d88019",
+  "checks": [
+    "unrevoked_identity_grant_unavailable",
+    "old_enrollment_rejected",
+    "no_runtime_intent_created"
+  ],
+  "scope": "Previous M25 binary reads new approved-content binding in temporary state; no host task execution. Not a universal state-format downgrade guard."
+}

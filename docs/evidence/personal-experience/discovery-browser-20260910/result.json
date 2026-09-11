@@ -1,0 +1,28 @@
+{
+  "schema_version": "personal-session-smoke/v1",
+  "recorded_at": "2026-09-10T08:12:17.936064+00:00",
+  "binary_sha256": "2fe908f634deb8474baffa3a6e2a624ef35d3a5fa3f55bbf5dbf5d7c4b909bf7",
+  "scope": "isolated daemon and real Chromium; no real agent integration claimed",
+  "discovery_fixtures": true,
+  "checks": {
+    "cli_health_identity": true,
+    "pair_without_restart": true,
+    "cookie_scope": true,
+    "no_script_credential": true,
+    "refresh_restores_session": true,
+    "second_tab_restores_session": true,
+    "same_name_installations_distinct": true,
+    "shared_skill_multiple_consumers": true,
+    "explicit_rescan_updates_content_without_changing_identity": true,
+    "manual_scope_preview_and_scan": true,
+    "repeat_scan_no_duplicate_installation": true,
+    "mobile_navigation_opens_and_closes": true,
+    "discovery_mobile_no_overflow": true,
+    "logout_revokes_across_tabs": true,
+    "restart_requires_pairing": true,
+    "manual_scope_survives_daemon_restart": true,
+    "connection_retry_recovers": true,
+    "pairing_mobile_no_overflow": true,
+    "no_page_errors": true
+  }
+}

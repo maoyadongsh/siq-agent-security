@@ -1,0 +1,420 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-update-comparison.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record",
+    "candidate_source",
+    "previous_grant",
+    "previous_revision",
+    "candidate_grant",
+    "candidate_revision",
+    "checked_at",
+    "comparison_basis",
+    "platform_changes",
+    "runtime_verified",
+    "requires_confirmation",
+    "content_changes",
+    "content_changes_total",
+    "content_changes_truncated",
+    "permission_changes",
+    "permission_changes_total",
+    "permission_changes_truncated",
+    "settings_changed"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-update-comparison/v1"
+    },
+    "record": {
+      "$ref": "local-skill-install-record.v1.schema.json"
+    },
+    "candidate_source": {
+      "$ref": "local-skill-import-permission-source.v1.schema.json"
+    },
+    "previous_grant": {
+      "$ref": "grant.schema.json"
+    },
+    "previous_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "candidate_grant": {
+      "$ref": "grant.schema.json"
+    },
+    "candidate_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "comparison_basis": {
+      "const": "signed_installation_manifest"
+    },
+    "platform_changes": {
+      "const": false
+    },
+    "runtime_verified": {
+      "const": false
+    },
+    "requires_confirmation": {
+      "const": true
+    },
+    "content_changes": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path_display",
+          "path_digest",
+          "before",
+          "after"
+        ],
+        "properties": {
+          "path_display": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "path_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "before": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "sha256",
+                  "bytes",
+                  "executable"
+                ],
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "file",
+                      "directory"
+                    ]
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^([a-f0-9]{64})?$"
+                  },
+                  "bytes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8388608
+                  },
+                  "executable": {
+                    "type": "boolean"
+                  }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "kind": {
+                          "const": "directory"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "sha256": {
+                          "const": ""
+                        },
+                        "bytes": {
+                          "const": 0
+                        },
+                        "executable": {
+                          "const": false
+                        }
+                      }
+                    },
+                    "else": {
+                      "properties": {
+                        "sha256": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "after": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "sha256",
+                  "bytes",
+                  "executable"
+                ],
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "file",
+                      "directory"
+                    ]
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^([a-f0-9]{64})?$"
+                  },
+                  "bytes": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8388608
+                  },
+                  "executable": {
+                    "type": "boolean"
+                  }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "kind": {
+                          "const": "directory"
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "sha256": {
+                          "const": ""
+                        },
+                        "bytes": {
+                          "const": 0
+                        },
+                        "executable": {
+                          "const": false
+                        }
+                      }
+                    },
+                    "else": {
+                      "properties": {
+                        "sha256": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "not": {
+          "properties": {
+            "before": {
+              "type": "null"
+            },
+            "after": {
+              "type": "null"
+            }
+          }
+        }
+      }
+    },
+    "content_changes_total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "content_changes_truncated": {
+      "type": "boolean"
+    },
+    "permission_changes": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "change",
+          "rule"
+        ],
+        "properties": {
+          "change": {
+            "enum": [
+              "added",
+              "removed"
+            ]
+          },
+          "rule": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "domain",
+              "action",
+              "resource",
+              "effect",
+              "conditions",
+              "state"
+            ],
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "resource": {
+                "type": "object"
+              },
+              "effect": {
+                "enum": [
+                  "allow",
+                  "deny"
+                ]
+              },
+              "conditions": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "state": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "permission_changes_total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "permission_changes_truncated": {
+      "type": "boolean"
+    },
+    "settings_changed": {
+      "type": "array",
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "default_effect",
+          "enforcement_mode",
+          "expires_at",
+          "hermes_toolset_allowlist",
+          "openclaw_tool_policy"
+        ]
+      }
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "record": {
+          "properties": {
+            "recorded_status": {
+              "const": "installed_unverified"
+            },
+            "operation": {
+              "type": "object"
+            }
+          }
+        },
+        "previous_grant": {
+          "properties": {
+            "status": {
+              "enum": [
+                "approved",
+                "revoked"
+              ]
+            }
+          }
+        },
+        "candidate_grant": {
+          "properties": {
+            "status": {
+              "enum": [
+                "draft",
+                "pending_approval",
+                "approved"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "content_changes_truncated": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "content_changes_total": {
+            "minimum": 201
+          },
+          "content_changes": {
+            "minItems": 200
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "content_changes_total": {
+            "maximum": 200
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "permission_changes_truncated": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permission_changes_total": {
+            "minimum": 201
+          },
+          "permission_changes": {
+            "minItems": 200
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "permission_changes_total": {
+            "maximum": 200
+          }
+        }
+      }
+    }
+  ]
+}

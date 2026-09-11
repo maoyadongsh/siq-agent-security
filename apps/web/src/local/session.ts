@@ -25,6 +25,7 @@ export interface LocalSession {
   actorId: string;
   setActorId: (id: string) => void;
   reload: () => void;
+  signOut: () => Promise<void>;
 }
 
 export const LocalSessionContext = createContext<LocalSession | null>(null);

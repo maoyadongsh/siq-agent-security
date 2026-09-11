@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-09-10T22:58:15.640266+00:00",
+  "status": "passed",
+  "checks": {
+    "unapproved_candidate_is_review_only_with_content_and_permission_diff": true,
+    "prepared_refresh_is_read_only_and_requires_review_again": true,
+    "desktop_and_mobile_review_keep_confirmation_visible": true,
+    "lost_commit_and_read_responses_clear_execution_without_replay": true,
+    "query_recovers_success_with_old_revoked_and_new_not_activated": true,
+    "completed_refresh_and_new_permission_link_are_correct": true,
+    "pending_refresh_and_explicit_recovery_preserve_previous_version": true
+  },
+  "binary_sha256": "ddfd984a4faf9016f5ff4cf8b53d41792dbd65016a8e2844dfb66e24c9707646",
+  "harness_sha256": "bfc91e9cca79315ae71da164a9458451a9b0a3e60a0528ac528215a630e81a0c",
+  "scope": "Real Chromium and isolated daemon/profile with synthetic Skills. Update review, explicit commit, lost response and abort recovery. No native platform update execution or cross-OS acceptance."
+}

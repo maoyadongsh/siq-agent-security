@@ -1,0 +1,21 @@
+{
+  "schema_version": "local-confirmations/v1",
+  "items": [
+    {
+      "action_id": "act-fixture",
+      "decision_receipt_id": "rcpt-fixture",
+      "decision_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "params_digest": "051712e1a8a813f589091f20bfaa69d3ddd73d7a3eb24915f9775f69c36cf0e2",
+      "platform": "openclaw",
+      "agent_id": "inst_1",
+      "session_id": "sess-1",
+      "tool": "exec",
+      "tool_call_id": "tc-1",
+      "grant_id": "grt-fixture",
+      "issued_at": "2026-09-10T01:00:00Z",
+      "expires_at": "2026-09-10T01:05:00Z",
+      "status": "pending",
+      "params_excerpt": "printf fixture"
+    }
+  ]
+}

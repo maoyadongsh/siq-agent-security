@@ -1,0 +1,47 @@
+{
+  "action": "install",
+  "changes": [
+    {
+      "action": "create",
+      "after_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "before_sha256": "",
+      "path": "~/.hermes/profiles/work/plugins/siq-agent-security/plugin.yaml",
+      "purpose": "安装当前版本的工具调用适配器文件"
+    },
+    {
+      "action": "create",
+      "after_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "before_sha256": "",
+      "path": "~/.hermes/profiles/work/plugins/siq-agent-security/__init__.py",
+      "purpose": "安装当前版本的工具调用适配器文件"
+    },
+    {
+      "action": "create",
+      "after_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "before_sha256": "",
+      "path": "~/.hermes/profiles/work/plugins/siq-agent-security/config.json",
+      "purpose": "连接当前本地服务，使用决策凭据引用和当前执行模式"
+    },
+    {
+      "action": "create",
+      "after_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "before_sha256": "",
+      "path": "~/.hermes/profiles/work/bin/hermes-skills-install",
+      "purpose": "安装先检查后调用 Hermes 的 Skill 安装入口"
+    }
+  ],
+  "expires_at": "2026-09-10T09:00:00Z",
+  "instance_id": "hi-00000000000000000000000000000002",
+  "instance_name": "work",
+  "native_enable": false,
+  "next_steps": [
+    "仍需在目标 Hermes profile 启用插件；本次不自动重启会话。",
+    "配置应用后检查诊断，并在方便时重启目标会话、验证实际调用；此操作不产生运行验证结论。"
+  ],
+  "plan_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "plan_id": "ap-00000000000000000000000000000000",
+  "platform": "hermes",
+  "restart_required": true,
+  "runtime_verified": false,
+  "schema_version": "local-adapter-plan/v2"
+}

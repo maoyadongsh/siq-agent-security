@@ -3,6 +3,7 @@ package ledger
 import (
 	"encoding/json"
 	"errors"
+	"sort"
 	"strings"
 	"time"
 
@@ -84,6 +85,12 @@ func loadAssetRecords(st *state.Store) ([]AssetRecord, error) {
 		}
 		out = append(out, rec)
 	}
+	sort.SliceStable(out, func(i, j int) bool {
+		if out[i].UpdatedAt != out[j].UpdatedAt {
+			return out[i].UpdatedAt > out[j].UpdatedAt
+		}
+		return strings.HasPrefix(out[i].CandidateID, "skill-installation:") && !strings.HasPrefix(out[j].CandidateID, "skill-installation:")
+	})
 	return out, nil
 }
 
@@ -131,6 +138,9 @@ func needsPersist(rec AssetRecord) bool {
 }
 
 func stableKey(sourceType, locator, id string) string {
+	if sourceType == "skill_dir" && inventory.SkillLocation(locator) != "" {
+		return "skill_dir|" + inventory.SkillLocation(locator)
+	}
 	if locator != "" && (sourceType == "skill_dir" || sourceType == "hermes_profile" || sourceType == "openclaw_agent" || sourceType == "platform_config") {
 		return sourceType + "|" + locator
 	}
@@ -214,7 +224,11 @@ func overlayLive(row Asset, stored AssetRecord, hasStored bool, c inventory.Cand
 		rec.Status = "needs_review"
 		revoke = true
 	}
-	if stored.CandidateID != c.CandidateID && stored.SourceType == "skill_dir" {
+	identityMigration := c.SourceType == "skill_dir" && c.CandidateID == inventory.InstallationID(c.SourceLocator) &&
+		!strings.HasPrefix(stored.CandidateID, "skill-installation:") &&
+		stableKey(c.SourceType, c.SourceLocator, c.CandidateID) == stableKey(stored.SourceType, stored.SourceLocator, stored.CandidateID) &&
+		stored.ContentHash == c.ArtifactDigest
+	if stored.CandidateID != c.CandidateID && stored.SourceType == "skill_dir" && !identityMigration {
 		rec.Status = "needs_review"
 		revoke = true
 	}
@@ -246,9 +260,15 @@ func Refresh(st *state.Store, key *signing.Key, snap *Snapshot, now time.Time) e
 	byStable := map[string]AssetRecord{}
 	for _, rec := range prev {
 		byID[rec.CandidateID] = rec
-		byStable[stableKey(rec.SourceType, rec.SourceLocator, rec.CandidateID)] = rec
+		key := stableKey(rec.SourceType, rec.SourceLocator, rec.CandidateID)
+		if _, exists := byStable[key]; !exists {
+			byStable[key] = rec
+		}
 	}
 	liveIDs := map[string]bool{}
+	liveLocations := map[string]bool{}
+	liveByLocation := map[string]string{}
+	snap.Aliases = map[string]string{}
 	var next []AssetRecord
 	grants := snap.Grants
 	byHash := map[string]admission.Admission{}
@@ -269,6 +289,8 @@ func Refresh(st *state.Store, key *signing.Key, snap *Snapshot, now time.Time) e
 	if snap.Report != nil {
 		for _, c := range snap.Report.Candidates {
 			liveIDs[c.CandidateID] = true
+			liveLocations[stableKey(c.SourceType, c.SourceLocator, c.CandidateID)] = true
+			liveByLocation[stableKey(c.SourceType, c.SourceLocator, c.CandidateID)] = c.CandidateID
 			row := projectAsset(c, byHash, grantsByAdm, snap.Report.GeneratedAt)
 			stored, ok := byID[c.CandidateID]
 			if !ok {
@@ -299,7 +321,10 @@ func Refresh(st *state.Store, key *signing.Key, snap *Snapshot, now time.Time) e
 	}
 
 	for _, stored := range prev {
-		if liveIDs[stored.CandidateID] {
+		if canonical := liveByLocation[stableKey(stored.SourceType, stored.SourceLocator, stored.CandidateID)]; canonical != "" && canonical != stored.CandidateID {
+			snap.Aliases[stored.CandidateID] = canonical
+		}
+		if liveIDs[stored.CandidateID] || liveLocations[stableKey(stored.SourceType, stored.SourceLocator, stored.CandidateID)] {
 			continue
 		}
 		rec := stored

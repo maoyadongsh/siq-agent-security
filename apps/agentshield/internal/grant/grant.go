@@ -15,6 +15,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/canon"
+	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
 
@@ -105,10 +106,12 @@ type DesiredPolicy = map[string]any
 
 // Options for Build.
 type Options struct {
+	importGrantID   string
 	Subject         Subject
 	Platform        string
 	EnforcementMode string
 	Now             time.Time
+	ExpiresAt       *time.Time // optional deadline, evaluated using Now
 	Key             *signing.Key
 	// RedactSecrets is recorded in conditions of credential deny facts so the
 	// decide engine knows redaction is permitted (spec §3.8.2 step 6).
@@ -126,6 +129,12 @@ var validPlatforms = map[string]bool{"openclaw": true, "hermes": true, "codebudd
 // Build derives a draft/pending grant from an admission. Quarantined
 // admissions cannot be granted.
 func Build(adm admission.Admission, opts Options) (*Result, error) {
+	if importsource.Reserved(adm.AdmissionID) {
+		return nil, ErrImportPreparationRequired
+	}
+	return buildGrant(adm, opts)
+}
+func buildGrant(adm admission.Admission, opts Options) (*Result, error) {
 	if opts.Key == nil {
 		return nil, errors.New("grant: signing key required")
 	}
@@ -152,6 +161,16 @@ func Build(adm admission.Admission, opts Options) (*Result, error) {
 		Status:           "draft",
 		CreatedAt:        now,
 		OverlapConflicts: []Overlap{},
+	}
+	if opts.importGrantID != "" {
+		g.GrantID = opts.importGrantID
+	}
+	if opts.ExpiresAt != nil {
+		value := opts.ExpiresAt.UTC().Format(time.RFC3339Nano)
+		g.ExpiresAt = &value
+		if err := ValidateLifetime(g, opts.Now); err != nil {
+			return nil, err
+		}
 	}
 	dp := DesiredPolicy{
 		"policy_id":        "pol-" + g.GrantID,
@@ -382,6 +401,9 @@ func Approve(g Grant, actor Approval, key *signing.Key) (Grant, error) {
 	if actor.ActorType != "human" || actor.ActorID == "" {
 		return g, errors.New("grant: only a human actor may approve (ADR-003)")
 	}
+	if err := ValidateLifetime(g, time.Now().UTC()); err != nil {
+		return g, err
+	}
 	for _, o := range g.OverlapConflicts {
 		if o.Resolution == "unresolved" {
 			return g, errors.New("grant: unresolved overlap conflicts block approval")
@@ -401,7 +423,15 @@ func Reject(g Grant, key *signing.Key) (Grant, error) { return transition(g, "re
 func Revoke(g Grant, key *signing.Key) (Grant, error) { return transition(g, "revoked", key) }
 
 // MarkDeployed records that platform files / OpenShell policy were written.
-func MarkDeployed(g Grant, key *signing.Key) (Grant, error) { return transition(g, "deployed", key) }
+func MarkDeployed(g Grant, key *signing.Key) (Grant, error) {
+	if importsource.Reserved(g.AdmissionID) {
+		return g, ErrImportInstallationRequired
+	}
+	if err := ValidateLifetime(g, time.Now().UTC()); err != nil {
+		return g, err
+	}
+	return transition(g, "deployed", key)
+}
 
 func transition(g Grant, to string, key *signing.Key) (Grant, error) {
 	if !canTransition(g.Status, to) {
@@ -417,6 +447,12 @@ func transition(g Grant, to string, key *signing.Key) (Grant, error) {
 // effective (with the backend revision). Facts in static-unavailable domains
 // are never promoted.
 func MarkEffective(g Grant, rb Readback, factReadbacks map[string]string, key *signing.Key) (Grant, error) {
+	if importsource.Reserved(g.AdmissionID) {
+		return g, ErrImportInstallationRequired
+	}
+	if err := ValidateLifetime(g, time.Now().UTC()); err != nil {
+		return g, err
+	}
 	if !canTransition(g.Status, "effective") {
 		return g, fmt.Errorf("grant: cannot mark effective from %s", g.Status)
 	}

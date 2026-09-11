@@ -322,6 +322,10 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 | `GET /v1/inventory` | 盘点（POST 仍可用，body.cwd 或 `?cwd=`）|
 | `GET`/`PUT /v1/config` | 读/写 `enforcement_mode`（热更新 Engine）|
 | `GET /v1/adapter/status` `POST /v1/adapter/install` `POST /v1/adapter/uninstall` | 控制台装/卸适配器 |
+| `GET /v1/adapter/diagnostics` | admin 只读接入配置诊断，合同 `local-adapter-diagnostics/v1`；见 ADR-021，文件存在不再授予运行验证档位 |
+| `POST /v1/adapter/preview` | admin 接入安装/卸载变更预览；`local-adapter-plan/v1`，后续应用必须绑定该会话的 plan_id/digest；ADR-022 |
+| GET | `/v1/adapter/instances?platform=hermes` | 管理会话只读列举具体 Hermes profile，自定义根与默认根分别定位，返回 `local-adapter-instances/v1`（ADR-023）。 |
+| POST | `/v1/adapter/recover` | 管理会话显式恢复中断的配置操作；仅回滚仍匹配本操作写入的文件，保留外部修改，不继续安装（ADR-022）。 |
 | `GET /v1/openshell/probe` | OpenShell L3 探测；失败时附 `doctor` |
 | `GET /v1/openshell/doctor` | OpenShell 诊断（不启动网关；`started_gateway` 恒 false） |
 | `POST /v1/openshell/apply` | 仅网络段 `policy set` + 读回 |
@@ -375,6 +379,8 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 | `dismiss_until` 过期 | 回到 `candidate` / `unadmitted` |
 
 `POST /v1/openshell/drift-check`：仅已验明 L3。对 `deployed`/`effective` grant 的 network 段做 `policy get --full` 比对；不一致写入 `findings/`（`source=drift`）。CLI/网关失败 **5xx**，**不得**写「无漂移」finding。
+
+个人体验增量（ADR-021）：上述旧平台档位展示由实际证据限定；插件文件存在只说明安装痕迹。平台 HTTP 响应附 diagnosis，未获得当前实例正常/执行前拒绝自检证据时保持运行状态 unverified 和 L0，不以 installed 自动提升到 L2。此变化不改写历史 Grant 或回执，也不等同于自动撤销权限；具体配置漂移触发与运行验证生命周期继续按 UX-006 实施。
 
 #### 3.8.1.3 脱敏导出（P3）
 
@@ -476,6 +482,23 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 - 所有写操作走 §3.8.1 端点并带**管理会话**；UI 无私钥。会话由配对进入内存，禁止 `localStorage` / 地址栏 `?token=`。`GET /ui-config.json` 不含凭据。
 
 ---
+
+### 3.10.1 个人发现增量（2026-09-10）
+
+按 [ADR-020](adr/0020-personal-discovery-and-skill-identity.md) 实施 UX-005：Skill 安装身份按本机规范化目录稳定生成，内容版本独立保留摘要；支持有界分类目录、profile Skills 和基于配置的多个消费者关系。新增关系仅为 inferred，不改变权限事实来源。台账兼容旧 locator/ID，路径与内容不变的迁移不撤权，内容变化保持原有复核与撤权语义。新个人扫描入口触发真实扫描并展示范围和结果；手动范围独立版本化保存，不能以缓存读取伪装重新扫描。接口和关系合同见 `packages/contracts/local-discovery.v1.schema.json`。
+
+### 3.11 个人客户端 M1：启动识别与管理会话恢复（2026-09-10）
+
+依据 [ADR-019](adr/0019-local-session-recovery.md) 和 [个人体验任务书](personal-experience-lan-team-development-taskbook-20260910-145507.md)。本节是当前已授权个人开发周期增量，历史发布/比赛快照不变。
+
+- `GET /healthz` 为无 secret 的版本化服务识别响应；`status [--port N]` 严格校验产品和协议，不以 TCP 连通认定健康。
+- `/ui-config.json` 增加 `product`、`schema_version`、`session_recovery`、`pairing_available`，不返回 Cookie、token 或配对码。
+- 新 UI 配对时提交 `remember:true` 与 `X-SIQ-Session:1`；access token 仍只在内存。HttpOnly/SameSite Strict/限定路径 Cookie 只用于 `POST /v1/session/restore`，有效期不超过原会话 12 小时，daemon 重启失效。
+- `POST /v1/session/logout` 经现有 admin bearer 校验，注销该会话和对应恢复凭据；Cookie 不能直接调用其他管理接口。
+- `<state>/admin-recovery.token` 是独立的本机恢复凭据，不提供给适配器；仅允许无浏览器 Origin/Fetch Metadata 的 `POST /v1/session/pairing`。该接口重发单次 5 分钟配对码、记录无 secret 审计，不返回通用管理会话、不更改 Grant。
+- `pair [--port N]` 通过上述本机恢复路径生成新码，用户无需重启决策服务。该路径仍属 desktop-same-uid，不宣称能阻止恶意同 UID 进程。
+- 会话相关响应 no-store，Host/Origin 检查、硬拒绝、单写者与回执语义不变。原文记录仍未开启。
+- 本节响应和请求定义见 `packages/contracts/local-client-session.v1.schema.json`；既有客户端 `{code}` 配对方式保持兼容。
 
 ## 4. 平台适配器规格
 
@@ -1098,3 +1121,159 @@ not imply a network effect. Known network tools derive host hints from `url`/
 retain conservative full-command hints and unknown effects. Full parameter text
 still participates in threat/secret/PII scanning, digests and provenance checks.
 This changes resource selection, not taint policy or authority requirements.
+
+### 个人实例接入增量（ADR-023）
+
+带 `instance_id` 的接入预览返回 `local-adapter-plan/v2`，应用与恢复绑定同一实例，按实例隔离操作记录；旧默认预览继续 v1。原生 CLI 只处理配置副本，由已有事务应用用户确认的输出。原生配置解析证据不能替代实际工具调用自检。
+
+### 个人运行自检与授权期限增量（ADR-024）
+
+运行自检采用真实宿主会话，不以工具 registry 的直接调用替代钩子链路；控制器与临时授权边界见 ADR-024。公开 Hermes CLI 先以隔离实例验证，尚未接入用户实例前不得写入成功状态。
+
+授权期限的前置实现：管理接口 `POST /v1/grants/{id}/expiry` 接收 `grant-expiry-edit/v1`，仅允许 pending_approval Grant 在精确 revision 下修改期限。duration_seconds 为 60–2592000 的整数，按服务器当前时间计算到期点；null 明确表示不设期限。期限写入已有 signed Grant.expires_at，与审计同事务。变更使既有批准 challenge 失效，不延长已批准或已部署 Grant，不产生 effective。
+
+期限为半开区间：当前时间达到 expires_at 即不再可用；非法非空期限按无效处理，null 保持旧版无期限行为。挑战生成/消费、批准、部署及每次决策/hold 执行前重查均检查期限。旧回执继续可验证，不因后来到期否认历史已发生的操作。期限检查保持原 policy 模式语义：block 拒绝，warn/audit_only 只给出拒绝建议；无效或过期的必需 Intent Authority 仍在所有模式 hard deny。自检临时授权必须同时绑定独立短期 Intent，不能仅靠 Grant 字段保证撤权。
+
+产品自检增量采用 `local-runtime-check.v1`：管理接口 `POST /v1/runtime-checks/preview`、`POST /v1/runtime-checks/start`、`GET /v1/runtime-checks/{id}`、`POST /v1/runtime-checks/{id}/cancel`；独立启动凭据接口 `POST /v1/runtime-checks/attach` 只绑定服务预定的检查身份与真实宿主会话，不能查询或修改通用授权。具体容量、确认、120 秒期限、摘要失效及崩溃恢复规则见 ADR-024。旧 adapter diagnostics v1 不回填运行成功状态。
+
+管理查询 `GET /v1/runtime-checks?instance_id=...` 返回 `local-runtime-check-list/v1`，items 只含该实例最近一条检查或空数组，恢复前端刷新后的检查入口；读取 passed 结果时重新核对摘要。所有结果保留“仅本次调用边界”的含义，不能提升整个平台或 Skill 的保护等级。正常服务退出先取消并等待自检清理；崩溃恢复在既有 state writer 独占锁下进行。若绑定已提交而检查记录尚未保存其 ID，按该检查的独立 Intent 找回并撤销，不处理其他 Intent 的绑定。
+
+清理失败可经管理接口 `POST /v1/runtime-checks/{id}/cleanup` 重试，始终不恢复执行或批准。所有自检 JSON 请求拒绝未知字段、尾随文档和超过 16 KiB 的正文；管理凭据与独立启动凭据不能互相替代。共享 Go 输出样例 `runtime-check-{plan,started,passed,attached,list}.json` 由 Python 合同测试校验，passed 必须具备结束时间、完整清理、五条关联回执与五项检查通过。
+
+### 个人权限资源边界修正（ADR-025）
+
+Grant 工具层文件读取与写入均 default-deny，必须解析到明确目标并匹配对应 fs.read/fs.write 范围；fs.read 不授予修改，fs.write 包含读取。deny 优先，凭据路径检查不能被目录 allow 绕过。网络按主机与端口精确匹配，不能丢弃端口或把含路径规则降低为整主机权限。未知资源拒绝；普通 warn/audit_only 仍只建议拒绝。原签名事实不改写，旧授权缺范围时需重新起草并人批，不自动扩大兼容范围。此修正及可信 Skill 归属缺口见 ADR-025。
+
+`POST /v1/grants/{id}/resources` 按 `grant-resource-edit/v1` 编辑待批准授权，完整列表明确替换，空数组清空，精确 revision 与审计后发布；文件 deny、凭据/进程保护和保留工具的人批条件不因编辑丢失。工具 deny 优先于 allow/hold。界面与兼容语义见 ADR-026，不把编辑成功显示为已生效或可信 Skill 归属。
+
+### 会话固定授权选择（ADR-027）
+
+`POST /v1/intent-bindings` 的 `intent-grant-bind/v1` 管理请求明确 Grant ID 和其预览版本，生成含 grant_ref 的签名绑定。每次解析验证所选 Grant，失效不回退其他授权；旧无 grant_ref 绑定保持兼容。绑定选择不由决定请求携带，具体摘要、期限、降级和可信 Skill 归属边界见 ADR-027。普通 Grant 策略仍保留模式语义；被固定的授权选择失效属于 Authority 错误。
+
+### 个人实例身份与自动接入（ADR-028，实施中）
+
+管理接口 `/v1/runtime-identities` 发行/查询实例身份，`/{id}/revoke` 追加撤销；`POST /v1/runtime-sessions` 只接受实例凭据，为真实宿主 session 自动创建固定 Grant 的权限包络。凭据元数据和撤销记录签名追加，秘密文件独立保存，不从 HTTP 返回。保留 `hri-` 主体用于实例身份，`rca-` 用于自检短期凭据；全局决策凭据不能冒用。管理状态不提升为接入成功，具体期限、旧配置兼容、JSON 身份字段、重启与原生验证边界见 ADR-028。
+
+ADR-028 核心存储约束：实例记录最多 512 项、单条 16 KiB；`runtime-identities/<ri>.json` 为签名发行记录，`runtime-identity-revocations/<ri>.json` 为签名终止记录，`runtime-identity-secrets/<ri>.token` 单独存客户端凭据。目录 0700、文件 0600；标准库完整写入、fsync 后独占链接发布，禁止覆盖。认证每次重读发行/撤销/Grant；拒绝软链接祖先、字段别名、重复键、缺省/null 替代和不安全权限（Windows 权限由后续原生交付验证）。崩溃遗留的秘密文件没有签名发行记录时不产生认证能力。全进程写互斥配合既有 daemon state writer 锁，不宣称防御同 UID 竞态。
+
+自动会话核心按 identity ID 与原生 session ID 派生稳定 Intent/task ID；权限包络复用 Grant 工具允许/人批集合并保留 deny 优先，列举已知效果但不允许 unknown，具体资源与条件仍由所选 Grant 裁决。首次签发与绑定分步追加，中断后只复用完全匹配且未过期的原包络；重试不延长期限，撤销或新身份不能重新接管旧会话。此处核心包实现不等于 HTTP 路由、适配器、安装事务或 UI 已接通；须由后续证据分别确认。
+
+ADR-028 HTTP 接入增量：`GET/POST /v1/runtime-identities` 仅管理会话访问，发行返回脱敏身份摘要和客户端凭据路径（不读回秘密），查询返回 issued/revoked/grant_unavailable，runtime_state 始终 unverified。`POST /v1/runtime-identities/{ri}/revoke` 要求版本和操作者。`POST /v1/runtime-sessions` 只接受实例凭据和真实 session_id；派生身份由服务端输出。新增请求严格拒绝缺省、null、重复/未知字段、大小写别名及超过 16 KiB 正文。既有六类决策端点在解析平台/主体/会话后验证凭据范围；身份字段大小写别名或重复拒绝。全局决策凭据保留旧主体兼容，但不得访问 hri-/rca- 保留主体。运行自检的短期启动凭据只认证活动检查已绑定的真实 session；失效即拒绝，不能代替普通实例或管理权限。
+
+### 已管理实例安装整合（ADR-029，实施中）
+
+接入预览支持 runtime_identity_id，响应 `local-adapter-plan/v3` 绑定该身份；凭据引用由本地服务派生。修复不能降级到全局凭据；安装计划固定身份元数据与未撤销状态，应用时重查身份/Grant。归属记录保存引用，自检/诊断识别该配置。已管理实例卸载先追加身份撤销，再执行文件事务，失败不复活凭据；恢复只恢复文件，不恢复权限。具体兼容、确认与验证边界见 ADR-029。
+
+### 权限修订草稿（ADR-030，实施中）
+
+`POST /v1/grants/{id}/draft` 通过 `grant-draft-create/v1` 在精确源版本下创建独立待批准授权与策略；保留范围/拒绝/人批条件/期限，清除批准与生效证明。客户端请求标识绑定源版本和操作者提供幂等读回；源检查与新草稿发布使用同一 state commit 锁，审计失败不显示可用。响应 `grant-draft-created/v1`。实例换发先准备并人工批准新草稿，再明确撤销旧身份、发行新身份和确认配置；失败不复活旧权限，原会话不能被新身份接管。具体边界见 ADR-030。
+
+ADR-030 准入存储修正：禁止在签名后补写 skill_card_ref；卡片按既有同名文件位置保存。旧记录只允许识别精确的本机派生卡片路径，再将此非授权字段还原为原 null 验证原签名，其余字段不可忽略，历史不改写。通用 admission.Verify 保持严格。源准入无法验证或 quarantine 时不得新建修订草稿。
+
+### 个人统一确认待办增量（2026-09-10，ADR-031）
+
+按 ADR-031 与 `local-confirmations.v1` / `local-confirmation-resolve.v1` 合同新增管理会话专属列表和严格摘要绑定的单次处理入口。列表是既有 action 窗口内的状态投影，不能批准；处理须锁内检查未处理、签名回执摘要和参数摘要，一次性写入 hold_resolution。截止时刻拒绝；客户端收到冲突后读回，不自动重放。旧 hold API 的幂等不产生新增审批权限。前端统一运行确认和长期授权的审阅入口，保留平台继续执行能力限制，不宣称系统通知或 Hermes 自动恢复已完成。
+
+### 个人浏览器通知增量（2026-09-10，ADR-032）
+
+复用 `/v1/confirmations` 与 `/v1/grants` 只读管理合同，合并个人外壳的待办刷新、导航计数及通知。通知默认关闭、人工开启；同源 Web Locks 协调、请求 ID 摘要去重、500ms 合并与 15 秒限流。Notification 点击只定位待办，不修改授权。状态目录和签名回执无新增通知原文。浏览器生命周期内的提醒不代替后台启动器；Hermes 缺少最终参数执行前复核的原生接入维持阻断。
+
+### Skill 固定导入副本（2026-09-10，ADR-033）
+
+按 `local-skill-import-create.v1` 和 `local-skill-import.v1` 新增共用导入存储核心。所有来源最终在状态目录形成有完整文件/目录/执行位清单的副本，仅在副本上准入；签名导入记录最后排他发布，绑定载荷与分析摘要。`.git` 不复制；拒绝链接、危险路径及超限内容；任何后续使用必须重新读回验签和比对全部载荷。既有 admission.content_hash 继续原有规则，不能替代完整 artifact_digest。本地目录/ZIP 是首批获取方式，后续 HTTPS/Git、产品 API/UI、权限批准和平台安装事务仍属于完整 UX-009 目标。
+
+ADR-033 管理入口：`POST /v1/skill-imports` 与 `GET /v1/skill-imports/{id}` 使用管理会话和 `local-skill-import-result.v1`；前者首次 201、同 ID 重试 200，后者完整副本校验后 200。固定大小写必需请求字段、绝对本机来源路径、16 KiB 正文；单并发、60 秒请求期限，繁忙 429，取消/期限 408，内容变化或冲突 409，超限 413。返回不代表批准或安装，错误不暴露路径或原文，具体审计、重试与边界见 ADR-033。
+
+### Skill 导入记录与个人审阅（ADR-034）
+
+新增管理 GET `/v1/skill-imports` 和 `local-skill-import-list.v1`：最多 64 条，读取签名元数据及清单摘要，payload_status 固定 unchecked；单条损坏仅返回 ID 与 unavailable，详情仍需完整内容复核。记录目录最多 128 条目；不发布暂存内容。个人 `/skill-imports?import=si-…` 页面使用随机请求 ID、原请求重试、历史查询及不可信文本展示，不自动批准、安装或重试写入。前端仅导入相关调用使用 70 秒预算，并支持离开页面取消；其余细节及验收边界见 ADR-034。
+
+ADR-034 准入显示修正：固定导入使用不透明 source.locator，内部 SourceIsOpaque 标识跳过目录名信息比较，保留名称格式、正文威胁与其他检查；默认路径来源行为和历史签名不变。
+
+### HTTPS Skill ZIP 获取（ADR-035）
+
+管理 POST `/v1/skill-imports/remote` 接受 remote-create/v1 的 URL、归档目录、预期 SHA256 和操作者，下载后复用固定副本/准入流程。只允许公网 HTTPS/443、每跳 DNS 校验与 IP 固定，禁代理/凭据/Referer，最多三次重定向、45 秒、32 MiB；路径和解包预算继续按 ADR-033。记录和结果 v2 绑定归档摘要/字节数/目录及最终 URL 摘要，不保存 URL；本地 v1 签名和结果不变，混合历史用 list/v2。CLI 和前端都只保存候选，不产生批准或安装，具体边界与兼容见 ADR-035。
+
+### 固定导入候选的权限准备（ADR-036，M20）
+
+以 local-skill-import-permission-source/v1 的完整导入身份派生独立 admission，source.ref 保存规范化来源对象，adm-si- 全 SHA256 ID 经 Grant 签名与批准挑战绑定。原始扫描记录不回写；派生 admission 使用严格同值持久化。权限草稿使用独立 grt-si- 请求身份，仍复用原 Grant/CAS/人工批准与审计，不自动授权或安装。当前核心拒绝导入权限进入 deployed/effective，后续必须以安装事务和实际目标内容读回证据完成转换；具体阶段、API 计划及兼容限制见 ADR-036。
+
+### 安装预览的私有暂存（ADR-037，实施中）
+
+新 skillinstall 模块在状态目录形成已批准候选的独立待安装副本和签名计划，绑定 ADR-036 来源、Grant revision/签名/权限摘要、实际 Hermes 实例和单层目标目录。仅规划尚不存在的目标，目标目录不写入；五分钟期限、同请求不续期、64 个暂存上限，Load 必须重新验证源/授权/目标/副本。沿用固定导入的完整文件清单与预算，不使用旧 admission.content_hash 代替。合同 local-skill-install-stage-create/v1、local-skill-install-plan/v1；目标发布与恢复、安装后保护验证继续实施，不解除 M20 的部署限制。
+
+### 安装预览的管理入口（ADR-038，实施中）
+
+管理 POST `/v1/skill-installations/plans` 严格接收 stage-create/v1，返回 plan-created/v1；管理 GET `/v1/skill-installations/plans/{id}` 完整复验后返回 plan/v1。与导入共享单并发工作锁及 60/65 秒处理/写出预算，决策凭据不能访问。目标只由 Hermes 实例解析器解析。签发页从已批准的来源绑定授权进入，响应丢失保留原请求，刷新只按计划 ID 复验；生成预览不安装、不部署、不激活运行身份。
+
+### Skill 文件发布与恢复（ADR-039，实施中）
+
+实际安装须绑定明确确认的计划签名，重新校验当前批准权限、候选与暂存；独占创建目标，逐文件排他发布，完成状态以目标完整读回为依据。平台目标不使用无条件覆盖或 RemoveAll。归属不明、用户修改或恢复不完整须保留并报告，不能假装已回滚。目录创建与归属记录之间的崩溃窗口不得通过猜测归属来清理。
+
+skillimport 的 InstallationSnapshot 为安装器提供只读固定清单句柄：打开时完整校验，逐文件按固定清单检查类型/摘要/大小/执行位，Metadata 返回独立副本，批次结束 Verify 完整复验来源签名与分析。该接口不写外部路径、不执行内容、不授予权限；具体安装提交/恢复合同与实现继续按 ADR-039 推进。
+
+安装提交 apply/v1 绑定计划 ID/签名、同一操作者及显式 confirm_install=true。claim/v1 在任何 profile 写入前排他落盘，绑定计划与完整清单；operation/v1 分别记录 installed_unverified/rolled_back/recovery_required，runtime_verified 始终 false。owner/v1 的签名与硬链接文件身份用于目录归属；同一计划不重复提交。成功结果需当前完整目标读回；恢复可独立于当前授权/候选执行，但不能删除未知或修改过的对象。首个结果与后续恢复记录均不可变，不通过恢复激活权限。具体目录、保留名称及跨进程崩溃窗口见 ADR-039。
+
+### 安装确认与恢复管理入口（ADR-040）
+
+管理 POST `/v1/skill-installations/apply` 接受 apply/v1；GET `/v1/skill-installations/operations/{sin-id}` 返回 view/v1；POST 同一路径 `/recover` 接受 recover/v1（schema_version、actor_id、confirm_recovery=true）。均管理会话限定、no-store、共享导入互斥及 60/65 秒预算。成功处理返回 200 view/v1，实际安装结果由 status 区分，失败已回滚不能解释为安装成功；没有可验证操作证据时返回固定错误类别。view 包含已验签 claim 的计划和签名摘要，不返回完整文件清单；无最终记录时 operation=null、status=recovery_required，禁止伪造已签名结果。已安装状态必须当前完整目标读回；已回滚是历史记录。恢复无当前 Grant/候选依赖，不得借此卸载成功安装。
+
+前端明确勾选确认并提交，提交前保留确定性的 sin-id，响应丢失/刷新只查询，不自动重放写入。尚无操作记录时可显式回到原计划重新核验确认。结果及恢复界面独立于授权是否仍批准、候选是否可读；错误时撤下旧成功状态。恢复需单独明确确认，只处理归属可证且未被修改的失败安装对象。保护状态不提升，导入授权的 deployed/effective 限制保持。
+
+### 安装内容绑定的实例权限准备（ADR-041）
+
+导入 Grant 的通用 deploy/effective 入口仍拒绝。仅安装器的 activate/v1 操作可在完整安装读回、原批准版本/签名/权限、源候选和实例一致时准备实例权限：先排他发布 runtime-binding/v1，再以现有 GrantCommit/CAS/审计追加相同批准内容的新版本，状态保留 approved。该操作不签发运行身份、不修改适配器、不代表宿主保护或可信 Skill 调用归属；需要显式 confirm_instance_scope=true，表示所选权限约束实例会话。管理 POST `/v1/skill-installations/operations/{sin-id}/activate` 返回 activated/v1，重复请求只读回原绑定，不重新授权或延长期限。计划的安装预览期限只限制安装提交，不限制已安装对象的后续人工权限准备；Grant 本身期限始终验证。
+
+状态目录 `skill-installations/runtime-bindings/sab-<sha256(grant_id)>.json` 保存签名安装/授权绑定，包含原计划与操作签名、原批准版本与签名、权限摘要、来源、实例、操作者和时间。每个 Grant 只能绑定一次安装。绑定落盘但对应批准版本未提交时无运行权限；审计/提交失败保持不可用，沿用已有状态提交恢复。准备后的读回和运行验证均检查目标完整内容、原候选与来源准入、当前批准权限摘要、签名和期限。
+
+state.IntentAuthority 的 Grant 读取对导入来源默认拒绝；只有 daemon 注册的完整安装验证器成功才可选择/使用。未配置验证器的离线读取不能启用导入权限。实例凭据发行、认证、会话登记、固定绑定决策和既有审批复核都通过该读取路径重新验证，不缓存成功结论。未选择固定 Grant 的旧隐式路径不得使用导入 Grant，所有模式拒绝该 Authority 缺口。普通非导入授权保持既有行为。此处文件完整性检查不宣称防御恶意同 UID 或宿主执行前竞态，不将模型自报 Skill ID 升级为可信归属。
+
+
+ADR-041 兼容边界：安装绑定不把旧格式 Grant 标成 deployed/effective。相同的已批准内容经 CAS/审计追加一个新版本，runtime-binding 的 approved_revision+1 必须与当前版本精确相同。只有注册内容验证器的固定 Grant 读取路径承认该批准版本可供实例会话使用；旧二进制的固定选择和隐式查找都拒绝 approved，因此不能因读到新安装权限而绕过内容绑定。旧版行为实测与新版本运行测试分开登记。通用部署/effective 仍拒绝；前端后续按绑定结果显示“实例权限已准备”，不能把普通 approved 当作已运行保护。
+
+
+ADR-041 校验预算：所有运行内容复核共用单并发槽，服务端每次验证的排队与读取总预算为五秒；过期/取消时拒绝，成功结果不缓存。普通 Intent.Open 默认不接纳 approved 导入 Grant，只有 state 的显式安装验证读取入口可以；该入口在未注册安装验证器时仍默认拒绝。隐式 Grant fallback 遇到导入权限属于 Authority 缺口，不能在 warn/audit_only 下放行，普通非导入模式保持原语义。
+
+### 安装权限只读准备状态（ADR-042）
+
+安装结果与管理实例界面使用管理 GET `/v1/skill-installations/operations/{sin-id}/runtime` 和 `/v1/skill-installations/grants/{grant-id}/runtime`，输出 `local-skill-install-runtime-readiness/v1`。后者仅从已验签安装绑定解析，不扫描或猜测安装目标。前者完整验证目标、导入来源、批准内容和期限；状态 not_prepared（无绑定、原批准版本）、incomplete（已发布绑定、仍为原批准版本）、prepared（绑定完整、当前版本为原批准版本+1），仅允许精确对应的签名和版本。返回完整签名 Grant、当前 state_revision 和可选绑定；不修改任何权限状态。空可运行工具集显示 no_tools，activate 与身份发行在任何绑定/凭据发布前拒绝，旧空工具绑定不能用于运行。查询沿用管理分权、no-store、安装工作锁和时间预算。刷新只 GET，恢复写操作必须明确确认；prepared 不等同运行验证或 Skill 归属证明。
+
+### 已安装 Skill 的历史记录与内容检查（ADR-043）
+
+管理 GET `/v1/skill-installations/operations` 以 catalog/v1 返回至多 64 份已验签 record/v1，包含计划、声明签名和历史结果，recorded_status 不表示当前目标/权限状态。损坏项只报告不含未验证正文的 issue；状态目录超过 256 项显式拒绝。GET `/v1/skill-installations/operations/{id}/inspection` 按原签名清单检查当前目标，输出 inspection/v1 的 matched/changed/missing/unavailable、检查时间、完成标志及变化条目。未知目录不递归、未知文件不读取；只读取原清单中的普通文件并检查大小、执行位、摘要与归属，不执行或修改目标。观察目录项总预算 8192，原清单内容最多 64 MiB，单文件 8 MiB，返回最多 200 条变化，截断明确标注；读取失败/取消/预算不足不能返回 matched。列表和检查均不恢复操作或启用权限；原 ReadView/运行校验的拒绝规则保持。个人界面提供记录入口、按安装选择的检查和原操作跳转；可见页面每 30 秒更新所选检查，隐藏时停止请求。检查只针对安装基线，不声称远端新版检查、更新或卸载已实现。
+
+### 明确移除与恢复（ADR-044）
+
+`remove/v1` 绑定成功安装的 operation_signature、expected_grant_revision、expected_binding_signature（无绑定为空串）、actor_id 和 confirm_remove=true。管理 GET/POST `/v1/skill-installations/operations/{sin-id}/removal` 分别查询/执行；复用管理权限、安装工作锁、取消和时间预算。移除声明先以 removal-claim/v1 签名发布到 `skill-installations/removals/{sin-id}.claim.json`，只有原确认内容可继续重试。待撤销 Grant 和目标不得重新 Activate；运行验证器拒绝已开始移除的目标。
+
+当前 Grant 必须签名有效并与原安装的主体、来源和权限摘要一致。其运行绑定属于另一安装时保留 Grant，并固定该绑定；否则经既有 GrantCommit/CAS/审计撤销，确认完整撤销后才清理外部目标。源内容损坏/过期不阻止撤销，不影响其他实例或目标。清理复用完整归属预检，未知/修改对象保留并进入 cleanup_pending。Grant 处理尚未完成为 revocation_pending。只在目标缺失且权限处理已完成时签名追加 removal-result/v1；已完成请求重试只读历史结果，不清理后来出现的新目录。
+
+查询 removal-view/v1 返回原签名历史记录、可选声明/结果及当前 Grant/版本（完成终态可为空）。无声明为 not_requested，已有声明且尚未撤销为 revocation_pending，权限处理完成但未有最终结果为 cleanup_pending，结果存在为 removed。不能读取/校验当前权限时返回错误，不能把未知状态解释为完成。移除记录只追加，枚举至多 256 项。目录标记删除与 rmdir 之间崩溃留下归属不明空目录时保留，不自动猜测删除；用户核对处理后重试。该路径不代表自动更新、完整共享资源清理或通用旧状态写入防护已实现。
+
+### 个人移除确认与恢复窗口（ADR-044，M30）
+
+已安装 Skill 页顺序读取 removal-view 与 inspection；历史 removed 单独显示。确认窗口冻结安装选择及背景检查，展示文件目标与 Grant 撤销/保留范围。所有写入须明确勾选与点击，原声明重试固定签名/版本/操作者。响应丢失只读查询，未知状态撤下执行按钮；恢复继续明确确认，完成后只保留历史结果。客户端校验合同及记录关联，不据 UI 校验宣称密码学验签。关闭窗口不代表服务端取消。
+
+### Skill 更新候选比较（ADR-045）
+
+新增 `local-skill-update-compare/v1` 请求和 `local-skill-update-comparison/v1` 响应，管理 POST `/v1/skill-installations/operations/{sin-id}/update-comparison` 只读比较原签名安装清单与绑定新 Grant 的完整导入候选。固定原 operation_signature 与新 Grant 版本，验签、校验实例/平台/准入/来源与期限；原 Grant 权限摘要须仍匹配原安装。新候选允许未批准以支持批准前审阅，不因此生效。结束复验双方 Grant 版本/签名及移除状态。
+
+内容和规则差异各最多返回 200 项并记录完整总数/截断状态；规则忽略 ID/证据来源但保留条件、资源与状态，另比较默认效果、执行模式、期限和工具策略。不推断权限扩大或缩小。比较不检查现存目标、不执行内容、不写状态或平台文件，也不批准或续权。响应始终要求后续明确确认，不宣称版本已切换；现存目标完整性、更新提交/恢复与远端检查另行实施。
+
+### 保留旧版本的更新准备（ADR-046）
+
+新增 local-skill-update-stage-create/v1、local-skill-update-plan/v1、local-skill-update-plan-created/v1。创建请求固定原操作签名、两份 Grant 版本、原运行绑定签名、操作者和 up-request ID。只接受已批准的新 Grant；旧目标完整归属检查、新来源和新暂存副本检查通过后，才签名排他发布 5 分钟计划。状态与副本分别置于 update-plans 和 update-stages，普通安装接口不可消费。相同请求复用而不续期，输入变化拒绝；64 份暂存、128 项计划枚举上限，中断孤立副本不隐式接管。
+
+POST /v1/skill-installations/operations/{id}/update-plans 创建，GET /v1/skill-installations/update-plans/{id} 重新核验。全过程不变更原目标、权限或身份，plan 标记 platform_changes=false、runtime_verified=false、requires_confirmation=true。确认切换、事务恢复和产品界面在后续批次接通。
+
+### 明确确认的更新事务（ADR-047）
+
+新增 update-commit/v1、update-recover/v1、update-claim/v1、update-result/v1、update-view/v1。更新声明固定原签名更新计划和同期限的新安装计划，排他保存到 skill-installations/update-operations；新普通计划仅在原移除完成后发布。先验证新副本，再按原范围撤旧权限/清理旧目标，最后复用排他安装。继续不续期；已成功安装的历史结果可在过期后补记更新结果。恢复须明确确认声明签名，未开始移除可终止且保留旧版本，已开始则完成撤权/清理；失败新安装仅做归属可证的清理，不复活权限或自动重装。查询不写入，终态为历史结果，不代表当前运行保护。核心先实施，HTTP 与前端接入另行登记。
+
+ADR-047 管理入口：POST /v1/skill-installations/updates 提交 update-commit/v1；GET /v1/skill-installations/updates/{sup-id} 读取 update-view/v1；POST 同一路径 /recover 接收 update-recover/v1，正文 update_id 必须与路径一致。只允许管理会话，严格字段/正文、no-store、共享安装互斥及 60/65 秒预算。写入发生错误时返回稳定错误类别，客户端只能先 GET 查询持久进度，不消费错误前的状态快照、不自动重放。成功返回 200 的实际结果仍以 status 区分；不因 API 可用而宣称前端或原生平台更新验收完成。
+
+### 个人更新差异与恢复页面（ADR-047，M34）
+
+个人版从已安装记录进入 /skill-updates，固定 install_id；候选列表限同平台/实例的独立导入授权。比较展示原签名安装基线与新候选的内容、规则和设置差异，未批准候选仅可审阅，准备前须人工批准并重新比较。准备明确固定当前移除范围及原比较签名，更新操作以 update_id 深链保存；刷新先 GET 查询事务，尚无事务才 GET 复验计划，不自动写入或重新批准。计划刷新后须人工重新比较才可勾选首次更新确认。
+
+新页面对比较、计划、事务及请求范围做字段和关系检查，不把客户端形状检查称为密码学验签。确认提交使用原计划签名与操作者；已开始事务继续使用原声明，恢复另需明确勾选。写响应丢失先 GET 查询，查询失败清空可执行状态并保留原操作链接，绝不自动重发 POST。更新成功只显示新版文件发布的历史记录，并引导单独准备实例权限；终止不代表旧版本仍可运行，按实际移除证据说明。跨系统通知、远端新版轮询及真实平台支持声明不随本页面提升。

@@ -1,0 +1,33 @@
+{
+  "schema_version": "personal-cross-builds/v1",
+  "recorded_at": "2026-09-10T08:12:14.458685+00:00",
+  "stage": "M2-discovery",
+  "source": "current working tree; uncommitted development build",
+  "checks": [
+    {
+      "target": "linux/amd64",
+      "build": "passed",
+      "sha256": "96fafae18089f97fa3502b6afe0597b4a6815fc4854dfd545d178ebedf107bc0",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "linux/arm64",
+      "build": "passed",
+      "sha256": "2fe908f634deb8474baffa3a6e2a624ef35d3a5fa3f55bbf5dbf5d7c4b909bf7",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "darwin/arm64",
+      "build": "passed",
+      "sha256": "e36ddf3c341273e1e3cfba492c42ba1530f53e89d3ce744a5f433b7622d70cbb",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "windows/amd64",
+      "build": "passed",
+      "sha256": "449a1709a286916f5d136f17998639a885f88464080aa12129757fda33c74900",
+      "native_runtime_test": "not_claimed"
+    }
+  ],
+  "signed_release": false
+}

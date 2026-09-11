@@ -5,6 +5,7 @@ package ledger
 
 import (
 	"net/url"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -30,6 +31,7 @@ type Snapshot struct {
 	Receipts       []receipt.Receipt
 	Records        []AssetRecord
 	FindingRecords []FindingRecord
+	Aliases        map[string]string
 }
 
 // FactRow is one permission-fact projection for GET /v1/permissions.
@@ -55,34 +57,43 @@ type FactRow struct {
 
 // Asset is a list-row projection of an inventory candidate.
 type Asset struct {
-	ID               string            `json:"id"`
-	Name             string            `json:"name"`
-	Framework        string            `json:"framework"`
-	SourceType       string            `json:"source_type"`
-	SourceLocator    string            `json:"source_locator"`
-	Status           string            `json:"status"`
-	AdmissionID      string            `json:"admission_id,omitempty"`
-	AdmissionVerdict string            `json:"admission_verdict,omitempty"`
-	GrantID          string            `json:"grant_id,omitempty"`
-	GrantStatus      string            `json:"grant_status,omitempty"`
-	DeclaredTools    []string          `json:"declared_tools,omitempty"`
-	EvidenceIDs      []string          `json:"evidence_ids"`
-	AdmitPath        string            `json:"admit_path,omitempty"`
-	ContentHash      string            `json:"content_hash,omitempty"`
-	Attributes       map[string]string `json:"attributes,omitempty"`
-	UpdatedAt        string            `json:"updated_at,omitempty"`
-	DismissReason    string            `json:"dismiss_reason,omitempty"`
-	DismissUntil     string            `json:"dismiss_until,omitempty"`
-	HookLost         bool              `json:"hook_lost,omitempty"`
-	ActorID          string            `json:"actor_id,omitempty"`
+	ID               string                   `json:"id"`
+	Name             string                   `json:"name"`
+	Framework        string                   `json:"framework"`
+	SourceType       string                   `json:"source_type"`
+	SourceLocator    string                   `json:"source_locator"`
+	Status           string                   `json:"status"`
+	AdmissionID      string                   `json:"admission_id,omitempty"`
+	AdmissionVerdict string                   `json:"admission_verdict,omitempty"`
+	GrantID          string                   `json:"grant_id,omitempty"`
+	GrantStatus      string                   `json:"grant_status,omitempty"`
+	DeclaredTools    []string                 `json:"declared_tools,omitempty"`
+	EvidenceIDs      []string                 `json:"evidence_ids"`
+	AdmitPath        string                   `json:"admit_path,omitempty"`
+	ContentHash      string                   `json:"content_hash,omitempty"`
+	Attributes       map[string]string        `json:"attributes,omitempty"`
+	UpdatedAt        string                   `json:"updated_at,omitempty"`
+	DismissReason    string                   `json:"dismiss_reason,omitempty"`
+	DismissUntil     string                   `json:"dismiss_until,omitempty"`
+	HookLost         bool                     `json:"hook_lost,omitempty"`
+	ActorID          string                   `json:"actor_id,omitempty"`
+	Relationships    []inventory.Relationship `json:"relationships,omitempty"`
 }
 
 // AssetDetail is GET /v1/assets/{id}.
 type AssetDetail struct {
 	Asset
-	Evidence  []admission.Evidence `json:"evidence"`
-	Admission *admission.Admission `json:"admission,omitempty"`
-	Grants    []grant.Grant        `json:"grants,omitempty"`
+	Evidence      []admission.Evidence `json:"evidence"`
+	Admission     *admission.Admission `json:"admission,omitempty"`
+	Grants        []grant.Grant        `json:"grants,omitempty"`
+	RelatedAssets []AssetReference     `json:"related_assets,omitempty"`
+}
+
+type AssetReference struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	Framework  string `json:"framework"`
+	SourceType string `json:"source_type"`
 }
 
 // FindingRow is a read-only admission finding.
@@ -271,20 +282,33 @@ func Assets(s Snapshot) []Asset {
 	}
 	out := make([]Asset, 0, 8)
 	seen := map[string]bool{}
+	seenLocations := map[string]bool{}
 	if s.Report != nil {
 		out = make([]Asset, 0, len(s.Report.Candidates)+len(s.Records))
 		for _, c := range s.Report.Candidates {
+			location := stableKey(c.SourceType, c.SourceLocator, c.CandidateID)
+			if seenLocations[location] {
+				continue
+			}
 			row := projectAsset(c, byHash, grantsByAdm, s.Report.GeneratedAt)
 			row = applyRecord(row, s.Records)
+			for _, relationship := range s.Report.Relationships {
+				if relationship.SourceID == row.ID || relationship.SkillID == row.ID {
+					row.Relationships = append(row.Relationships, relationship)
+				}
+			}
 			seen[row.ID] = true
+			seenLocations[location] = true
 			out = append(out, row)
 		}
 	}
 	for _, rec := range s.Records {
-		if seen[rec.CandidateID] {
+		location := stableKey(rec.SourceType, rec.SourceLocator, rec.CandidateID)
+		if seen[rec.CandidateID] || seenLocations[location] {
 			continue
 		}
 		out = append(out, assetFromRecord(rec))
+		seenLocations[location] = true
 	}
 	return out
 }
@@ -292,10 +316,7 @@ func Assets(s Snapshot) []Asset {
 func applyRecord(row Asset, recs []AssetRecord) Asset {
 	now := time.Now().UTC()
 	for _, rec := range recs {
-		if rec.CandidateID != row.ID && !(rec.SourceType == row.SourceType && rec.SourceLocator == row.SourceLocator && rec.SourceLocator != "") {
-			continue
-		}
-		if rec.CandidateID != row.ID && rec.SourceLocator != row.SourceLocator {
+		if rec.CandidateID != row.ID && stableKey(rec.SourceType, rec.SourceLocator, rec.CandidateID) != stableKey(row.SourceType, row.SourceLocator, row.ID) {
 			continue
 		}
 		status := rec.Status
@@ -337,10 +358,14 @@ func assetFromRecord(rec AssetRecord) Asset {
 }
 
 func projectAsset(c inventory.Candidate, byHash map[string]admission.Admission, grantsByAdm map[string]grant.Grant, generatedAt string) Asset {
+	attributes := map[string]string{}
+	for key, value := range c.Attributes {
+		attributes[key] = value
+	}
 	row := Asset{
 		ID: c.CandidateID, Name: c.Name, Framework: c.Framework, SourceType: c.SourceType,
 		SourceLocator: c.SourceLocator, EvidenceIDs: c.EvidenceIDs, ContentHash: c.ArtifactDigest,
-		Attributes: c.Attributes, UpdatedAt: firstNonEmpty(c.DiscoveredAt, generatedAt),
+		Attributes: attributes, UpdatedAt: firstNonEmpty(c.DiscoveredAt, generatedAt),
 		AdmitPath: admitPath(c.SourceLocator),
 	}
 	if tools := c.Attributes["allowed_tools"]; tools != "" {
@@ -385,7 +410,7 @@ func admitPath(locator string) string {
 	if !ok {
 		return ""
 	}
-	if strings.HasPrefix(rest, "~") || strings.HasPrefix(rest, "/") {
+	if strings.HasPrefix(rest, "~") || filepath.IsAbs(rest) {
 		return rest
 	}
 	return ""
@@ -431,11 +456,31 @@ func AssetByID(s Snapshot, id string) (AssetDetail, bool) {
 	if decoded, err := url.PathUnescape(id); err == nil {
 		id = decoded
 	}
-	for _, row := range Assets(s) {
-		if row.ID != id {
+	if canonical := s.Aliases[id]; canonical != "" {
+		id = canonical
+	}
+	rows := Assets(s)
+	for _, row := range rows {
+		alias := false
+		for _, rec := range s.Records {
+			if rec.CandidateID == id && stableKey(rec.SourceType, rec.SourceLocator, rec.CandidateID) == stableKey(row.SourceType, row.SourceLocator, row.ID) {
+				alias = true
+			}
+		}
+		if row.ID != id && !alias {
 			continue
 		}
 		d := AssetDetail{Asset: row}
+		wanted := map[string]bool{}
+		for _, relationship := range row.Relationships {
+			wanted[relationship.SourceID] = true
+			wanted[relationship.SkillID] = true
+		}
+		for _, related := range rows {
+			if related.ID != row.ID && wanted[related.ID] {
+				d.RelatedAssets = append(d.RelatedAssets, AssetReference{ID: related.ID, Name: related.Name, Framework: related.Framework, SourceType: related.SourceType})
+			}
+		}
 		if s.Report != nil {
 			want := map[string]bool{}
 			for _, e := range row.EvidenceIDs {

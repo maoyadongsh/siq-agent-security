@@ -72,7 +72,7 @@ func (r *run) mcpFile(full, rel, client string) bool {
 		r.report.Skipped = append(r.report.Skipped, "oversize:mcp:"+rel)
 		return false
 	}
-	raw, err := os.ReadFile(full)
+	raw, err := r.readConfig(full)
 	if err != nil {
 		r.report.Skipped = append(r.report.Skipped, "unreadable:mcp:"+rel)
 		return false

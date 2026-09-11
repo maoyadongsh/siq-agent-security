@@ -1,0 +1,24 @@
+{
+  "schema_version": "grant-resource-browser-smoke/v1",
+  "recorded_at": "2026-09-10T12:20:18.701918+00:00",
+  "binary_sha256": "ad529a5491b3146b7a3ce4bbdc33099a8cda63ba7ad71cbe1645c0b1d54e41bd",
+  "harness_sha256": "f38e125ec0e0968ddf15ee24d1e1cd1a48dd554afce427c4ff4a8ba13f157735",
+  "scope": "isolated daemon and Chromium; synthetic pending grant, no real platform execution",
+  "checks": {
+    "existing_resource_lists_prefilled": true,
+    "typing_actor_preserves_focus": true,
+    "per_use_approval_condition_visible": true,
+    "cancel_does_not_write": true,
+    "readonly_template_saved_pending": true,
+    "stale_edit_preserves_input_and_external_change": true,
+    "explicit_reload_reads_current_scope": true,
+    "failed_reload_disables_save": true,
+    "mobile_no_page_overflow": true,
+    "mobile_actions_visible": true,
+    "save_preserves_external_expiry": true,
+    "clear_removes_all_editable_allows_preserves_network_deny": true,
+    "approved_grant_not_editable": true,
+    "no_page_errors": true
+  },
+  "passed": true
+}

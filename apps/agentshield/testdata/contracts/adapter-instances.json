@@ -1,0 +1,58 @@
+{
+  "instances": [
+    {
+      "active": true,
+      "config_dir": "~/.hermes",
+      "default": true,
+      "detected": true,
+      "diagnosis": {
+        "checks": [
+          {
+            "code": "adapter_files",
+            "message": "尚未发现当前适配器文件",
+            "status": "unknown"
+          }
+        ],
+        "configuration_state": "not_installed",
+        "next_steps": [
+          "查看接入所需改动并安装适配器，随后验证宿主加载和工具调用。"
+        ],
+        "platform": "hermes",
+        "runtime_state": "unverified"
+      },
+      "instance_id": "hi-00000000000000000000000000000001",
+      "name": "default",
+      "platform": "hermes",
+      "source": "default_directory"
+    },
+    {
+      "active": false,
+      "config_dir": "~/.hermes/profiles/work",
+      "default": false,
+      "detected": true,
+      "diagnosis": {
+        "checks": [
+          {
+            "code": "adapter_files",
+            "message": "尚未发现当前适配器文件",
+            "status": "unknown"
+          }
+        ],
+        "configuration_state": "not_installed",
+        "next_steps": [
+          "查看接入所需改动并安装适配器，随后验证宿主加载和工具调用。"
+        ],
+        "platform": "hermes",
+        "runtime_state": "unverified"
+      },
+      "instance_id": "hi-00000000000000000000000000000002",
+      "name": "work",
+      "platform": "hermes",
+      "source": "named_profile"
+    }
+  ],
+  "issues": [],
+  "native_available": false,
+  "platform_changes": false,
+  "schema_version": "local-adapter-instances/v1"
+}

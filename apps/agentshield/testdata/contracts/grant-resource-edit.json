@@ -1,0 +1,9 @@
+{
+  "schema_version": "grant-resource-edit/v1",
+  "expected_revision": 0,
+  "actor_id": "fixture-operator",
+  "tools": ["read_file", "write_file", "web_fetch"],
+  "network": [{"endpoint": "api.example.test:443", "effect": "allow"}, {"endpoint": "private.example.test:443", "effect": "deny"}],
+  "filesystem": {"read_only": ["/work/reports with spaces,commas"], "read_write": ["/work/output"]},
+  "models": []
+}

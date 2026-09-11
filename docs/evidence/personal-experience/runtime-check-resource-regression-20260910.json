@@ -1,0 +1,17 @@
+{
+  "schema_version": "product-runtime-check-native-smoke/v1",
+  "recorded_at": "2026-09-10T11:50:09.898380+00:00",
+  "passed": true,
+  "binary_sha256": "44b70cbf22cb93fd7095e24c1929c09e902cfb7d7e627e3ab97fd61c7a13b745",
+  "harness_sha256": "e9694d135c0ac588acabed9f62d113822121cafe8d91c619d90d3d0850f8eaf4",
+  "checks": {
+    "preview_does_not_create_authority": true,
+    "product_native_check_passes": true,
+    "grant_revoked": true,
+    "materials_cleaned": true,
+    "host_config_preserved": true,
+    "configuration_drift_invalidates_result": true
+  },
+  "receipt_count": 5,
+  "scope": "product API and native Hermes CLI; isolated profile and synthetic operator"
+}

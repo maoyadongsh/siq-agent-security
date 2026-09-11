@@ -1,0 +1,18 @@
+=== RUN   TestNativeYAMLGuardRefusesAliasesAndTags
+--- PASS: TestNativeYAMLGuardRefusesAliasesAndTags (0.00s)
+=== RUN   TestNativeEnableMissingProgramDoesNotWrite
+--- PASS: TestNativeEnableMissingProgramDoesNotWrite (0.00s)
+=== RUN   TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings
+--- PASS: TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings (1.71s)
+=== RUN   TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites
+=== RUN   TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites/wrong-plugin-list
+=== RUN   TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites/invalid-yaml
+=== RUN   TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites/alias-graph
+--- PASS: TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites (0.29s)
+    --- PASS: TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites/wrong-plugin-list (0.15s)
+    --- PASS: TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites/invalid-yaml (0.14s)
+    --- PASS: TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites/alias-graph (0.00s)
+=== RUN   TestHermesNativeCLIFreshConfig
+--- PASS: TestHermesNativeCLIFreshConfig (0.58s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/adapterinstall	2.586s

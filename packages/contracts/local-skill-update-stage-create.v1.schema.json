@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-update-stage-create.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "operation_signature",
+    "candidate_grant_id",
+    "expected_candidate_revision",
+    "expected_previous_revision",
+    "expected_binding_signature",
+    "actor_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-update-stage-create/v1"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^up-[a-f0-9]{32}$"
+    },
+    "operation_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "candidate_grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "expected_candidate_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expected_previous_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expected_binding_signature": {
+      "type": "string",
+      "pattern": "^([a-f0-9]{128})?$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    }
+  }
+}

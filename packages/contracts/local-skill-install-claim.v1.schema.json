@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-claim.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "install_id",
+    "plan",
+    "directories",
+    "files",
+    "actor_id",
+    "created_at",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-claim/v1"
+    },
+    "install_id": {
+      "type": "string",
+      "pattern": "^sin-[a-f0-9]{64}$"
+    },
+    "plan": {
+      "$ref": "https://siq.dev/contracts/local-skill-install-plan.v1.schema.json"
+    },
+    "directories": {
+      "$ref": "https://siq.dev/contracts/local-skill-import.v1.schema.json#/properties/directories"
+    },
+    "files": {
+      "$ref": "https://siq.dev/contracts/local-skill-import.v1.schema.json#/properties/files"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  }
+}

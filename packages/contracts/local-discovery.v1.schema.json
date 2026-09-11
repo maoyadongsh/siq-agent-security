@@ -1,0 +1,424 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-discovery.v1.schema.json",
+  "title": "Personal local discovery v1",
+  "definitions": {
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relationship_id",
+        "source_id",
+        "skill_id",
+        "basis",
+        "state",
+        "evidence_ids"
+      ],
+      "properties": {
+        "relationship_id": {
+          "type": "string",
+          "pattern": "^rel-[a-f0-9]{32}$"
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "skill_id": {
+          "type": "string",
+          "pattern": "^skill-installation:[a-f0-9]{32}$"
+        },
+        "basis": {
+          "enum": [
+            "platform_directory",
+            "profile_directory",
+            "workspace_config"
+          ]
+        },
+        "state": {
+          "const": "inferred"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "root": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "kind",
+        "platform",
+        "status"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "platform_config",
+            "skill_directory",
+            "profile_directory",
+            "mcp_config"
+          ]
+        },
+        "platform": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "available",
+            "missing",
+            "unreadable"
+          ]
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "asset_count",
+        "skill_count",
+        "issue_count"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "idle",
+            "running",
+            "succeeded",
+            "partial",
+            "failed"
+          ]
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^scan-[a-f0-9]{16}$"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "finished_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "asset_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skill_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "issue_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "error": {
+          "type": "string"
+        },
+        "issues": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "run",
+        "roots",
+        "platform_changes"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-discovery/v1"
+        },
+        "run": {
+          "$ref": "#/definitions/run"
+        },
+        "roots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/root"
+          }
+        },
+        "platform_changes": {
+          "const": false
+        }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "roots",
+        "platform_changes"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-discovery-preview/v1"
+        },
+        "roots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/root"
+          }
+        },
+        "platform_changes": {
+          "const": false
+        }
+      }
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_dir": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "skill_dir": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "roots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "project_dirs",
+        "skill_dirs"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-discovery-roots/v1"
+        },
+        "project_dirs": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "skill_dirs": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 0
+            },
+            "skill_dirs": {
+              "maxItems": 16
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 1
+            },
+            "skill_dirs": {
+              "maxItems": 15
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 2
+            },
+            "skill_dirs": {
+              "maxItems": 14
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 3
+            },
+            "skill_dirs": {
+              "maxItems": 13
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 4
+            },
+            "skill_dirs": {
+              "maxItems": 12
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 5
+            },
+            "skill_dirs": {
+              "maxItems": 11
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 6
+            },
+            "skill_dirs": {
+              "maxItems": 10
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 7
+            },
+            "skill_dirs": {
+              "maxItems": 9
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 8
+            },
+            "skill_dirs": {
+              "maxItems": 8
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 9
+            },
+            "skill_dirs": {
+              "maxItems": 7
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 10
+            },
+            "skill_dirs": {
+              "maxItems": 6
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 11
+            },
+            "skill_dirs": {
+              "maxItems": 5
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 12
+            },
+            "skill_dirs": {
+              "maxItems": 4
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 13
+            },
+            "skill_dirs": {
+              "maxItems": 3
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 14
+            },
+            "skill_dirs": {
+              "maxItems": 2
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 15
+            },
+            "skill_dirs": {
+              "maxItems": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "project_dirs": {
+              "maxItems": 16
+            },
+            "skill_dirs": {
+              "maxItems": 0
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/definitions/relationship"
+    },
+    {
+      "$ref": "#/definitions/status"
+    },
+    {
+      "$ref": "#/definitions/preview"
+    },
+    {
+      "$ref": "#/definitions/roots"
+    }
+  ]
+}

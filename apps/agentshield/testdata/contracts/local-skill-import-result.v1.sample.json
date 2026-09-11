@@ -1,0 +1,70 @@
+{
+  "schema_version": "local-skill-import-result/v1",
+  "import": {
+    "schema_version": "local-skill-import/v1",
+    "import_id": "si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_kind": "local_dir",
+    "source_locator_digest": "3597921727a349af784149d958ca48f755593e49436acc44eb588c4746ebb7fb",
+    "actor_id": "fixture-human",
+    "created_at": "2026-09-10T01:00:00Z",
+    "artifact_digest": "bda671ae22cab71a2cede6e2f1201b7dc6b084c67717380b407f95094aac2da2",
+    "analysis_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "directories": [],
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "0ac8c470279eb5b0816ec4b5f60d60bd9ef65dc15196cb1c932a7d80e16efb04",
+        "bytes": 92,
+        "executable": false
+      }
+    ],
+    "excluded_git_metadata": false,
+    "signature": "e7209caace3245fb293c58c69b3f20ad0b94c1e121f3255e3664a9801be920ad311684f5e22ee4012a2c164e8ac19f244f27217f89da732783f38481076d3b01"
+  },
+  "admission": {
+    "admission_id": "adm-b11fef63279d",
+    "skill_id": "local_dir:import-fixture@b11fef63279d",
+    "skill_name": "import-fixture",
+    "skill_version": null,
+    "source": {
+      "type": "local_dir",
+      "locator": "skill-import:si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "trust_level": "unknown",
+      "ref": null
+    },
+    "content_hash": "b11fef63279d8612267614b2ffa8f90200cdfe076e5645c3e8c9e4714c554d15",
+    "file_manifest": [
+      {
+        "path": "SKILL.md",
+        "sha256": "0ac8c470279eb5b0816ec4b5f60d60bd9ef65dc15196cb1c932a7d80e16efb04",
+        "bytes": 92
+      }
+    ],
+    "verdict": "admit",
+    "decided_at": "2026-09-10T01:00:00Z",
+    "engine": {
+      "name": "agentshield-go",
+      "version": "fixture",
+      "rulepack_version": 1,
+      "rulepack_sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051"
+    },
+    "declared_facts": [],
+    "findings": [],
+    "integrity": {
+      "file_count": 1,
+      "total_bytes": 92,
+      "symlink_escape": false,
+      "binary_files": 0,
+      "over_limit": false,
+      "frontmatter_valid": true
+    },
+    "skill_card_ref": null,
+    "evidence_ids": [
+      "ev-d88376ea20128000"
+    ],
+    "signing_schema": "local_canonical/v1",
+    "signature": "7c67f700529adabd68d4b59dd9a56fffb87664020969d754624f2636f0d8163e24402cc9f694540f84a1b700b09521435d25a9a66c545a87d0f42c5c2e3fe80b"
+  },
+  "reused": false,
+  "installed": false
+}

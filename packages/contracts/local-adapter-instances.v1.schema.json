@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-adapter-instances.v1.schema.json",
+  "title": "Local adapter instances",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "platform_changes",
+    "native_available",
+    "instances",
+    "issues"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-adapter-instances/v1"
+    },
+    "platform_changes": {
+      "const": false
+    },
+    "native_available": {
+      "type": "boolean"
+    },
+    "instances": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "instance_id",
+          "platform",
+          "name",
+          "config_dir",
+          "source",
+          "default",
+          "active",
+          "detected",
+          "diagnosis"
+        ],
+        "properties": {
+          "instance_id": {
+            "type": "string",
+            "pattern": "^hi-[a-f0-9]{32}$"
+          },
+          "platform": {
+            "const": "hermes"
+          },
+          "name": {
+            "type": "string"
+          },
+          "config_dir": {
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "default_directory",
+              "environment",
+              "named_profile"
+            ]
+          },
+          "default": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "detected": {
+            "type": "boolean"
+          },
+          "diagnosis": {
+            "$ref": "#/definitions/diagnosis"
+          }
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "definitions": {
+    "diagnosis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "configuration_state",
+        "runtime_state",
+        "checks",
+        "next_steps"
+      ],
+      "properties": {
+        "platform": {
+          "enum": [
+            "openclaw",
+            "hermes",
+            "codebuddy",
+            "workbuddy",
+            "trae"
+          ]
+        },
+        "configuration_state": {
+          "enum": [
+            "not_installed",
+            "incomplete",
+            "ready",
+            "needs_verification",
+            "unsupported"
+          ]
+        },
+        "runtime_state": {
+          "const": "unverified"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/check"
+          }
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 512
+          }
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "status",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z_]+$"
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 512
+        }
+      }
+    }
+  }
+}

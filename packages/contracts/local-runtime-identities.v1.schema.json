@@ -1,0 +1,100 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-runtime-identities/v1"
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "identity_id",
+          "instance_id",
+          "agent_id",
+          "platform",
+          "grant_ref",
+          "actor_id",
+          "created_at",
+          "session_ttl_seconds",
+          "status",
+          "runtime_state"
+        ],
+        "properties": {
+          "identity_id": {
+            "type": "string",
+            "pattern": "^ri-[a-f0-9]{32}$"
+          },
+          "instance_id": {
+            "type": "string",
+            "pattern": "^hi-[a-f0-9]{32}$"
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^hri-[a-f0-9]{32}$"
+          },
+          "platform": {
+            "const": "hermes"
+          },
+          "grant_ref": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "grant_id",
+              "admission_id",
+              "permission_digest"
+            ],
+            "properties": {
+              "grant_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "admission_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "permission_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "actor_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "session_ttl_seconds": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 86400
+          },
+          "status": {
+            "enum": [
+              "issued",
+              "revoked",
+              "grant_unavailable"
+            ]
+          },
+          "runtime_state": {
+            "const": "unverified"
+          }
+        }
+      }
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

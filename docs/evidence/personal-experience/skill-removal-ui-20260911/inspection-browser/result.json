@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-09-10T20:36:51.205102+00:00",
+  "status": "passed",
+  "checks": {
+    "approved_grant_prefills_portable_skill_directory": true,
+    "explicit_confirmation_required": true,
+    "committed_response_loss_reads_result_without_second_apply": true,
+    "refresh_reads_existing_target_without_activation": true,
+    "installation_link_finds_signed_history_and_current_baseline": true,
+    "deep_link_refresh_is_read_only": true,
+    "visible_page_automatically_detects_modified_file": true,
+    "visibility_event_pauses_polling_and_rechecks_on_return": true,
+    "missing_and_unknown_entries_reported_without_traversal_or_execution": true,
+    "mobile_change_details_and_actions_fit": true,
+    "read_failure_removes_stale_matched_state": true,
+    "missing_target_is_not_reported_as_successful_uninstall": true,
+    "source_corruption_does_not_hide_signed_installation_baseline": true,
+    "history_returns_to_original_installation_and_permission_flow": true
+  },
+  "binary_sha256": "62cee1c341faf5dd31ecd009fcf18409a544c3190050271e3559eea57b776ebd",
+  "scope": "Real isolated daemon, browser and synthetic installation. Visible-page polling plus fixture visibility events, controlled target/source changes and simulated read failure. Unknown payload never executed, no runtime authority or host configuration change. No remote update, uninstall or cross-OS acceptance."
+}

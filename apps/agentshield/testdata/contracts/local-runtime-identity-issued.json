@@ -1,0 +1,20 @@
+{
+  "credential_path": "/fixture/state/runtime-identity-secrets/ri-33333333333333333333333333333333.token",
+  "identity": {
+    "actor_id": "operator",
+    "agent_id": "hri-11111111111111111111111111111111",
+    "created_at": "2026-09-10T00:00:00Z",
+    "grant_ref": {
+      "admission_id": "adm-runtime-fixture",
+      "grant_id": "grt-runtime-fixture",
+      "permission_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "identity_id": "ri-33333333333333333333333333333333",
+    "instance_id": "hi-11111111111111111111111111111111",
+    "platform": "hermes",
+    "runtime_state": "unverified",
+    "session_ttl_seconds": 28800,
+    "status": "issued"
+  },
+  "schema_version": "local-runtime-identity-issued/v1"
+}

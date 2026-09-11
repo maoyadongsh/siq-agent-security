@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/grant-expiry-edit.v1.schema.json",
+  "title": "Edit pending Grant lifetime before human approval",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "expected_revision", "actor_id", "duration_seconds"],
+  "properties": {
+    "schema_version": {"const": "grant-expiry-edit/v1"},
+    "expected_revision": {"type": "integer", "minimum": 0},
+    "actor_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "duration_seconds": {"type": ["integer", "null"], "minimum": 60, "maximum": 2592000}
+  }
+}

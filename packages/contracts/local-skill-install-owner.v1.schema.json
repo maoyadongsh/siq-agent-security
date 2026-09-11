@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-owner.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "install_id",
+    "claim_signature",
+    "relative_directory",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-owner/v1"
+    },
+    "install_id": {
+      "type": "string",
+      "pattern": "^sin-[a-f0-9]{64}$"
+    },
+    "claim_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "relative_directory": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  }
+}

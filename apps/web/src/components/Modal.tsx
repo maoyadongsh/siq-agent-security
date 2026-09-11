@@ -11,10 +11,11 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   description?: string;
+  className?: string;
   children: ReactNode;
 }
 
-export default function Modal({ open, onClose, title, description, children }: ModalProps) {
+export default function Modal({ open, onClose, title, description, className, children }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -68,7 +69,7 @@ export default function Modal({ open, onClose, title, description, children }: M
       }}
     >
       <div
-        className="modal"
+        className={className ? `modal ${className}` : 'modal'}
         role="dialog"
         aria-modal="true"
         aria-label={title}

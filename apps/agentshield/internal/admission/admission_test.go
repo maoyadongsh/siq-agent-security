@@ -431,3 +431,35 @@ func TestContractSamplesAreCurrent(t *testing.T) {
 		t.Fatal("contract samples drifted from implementation; review and regenerate with AGENTSHIELD_UPDATE_SAMPLES=1")
 	}
 }
+
+func TestOpaqueSourceDoesNotBecomeDirectoryName(t *testing.T) {
+	path := filepath.Join("testdata", "skills", "benign", "official-like")
+	plain := testOpts(t, "skill-import:si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "unknown")
+	normal, err := Admit(path, plain)
+	if err != nil {
+		t.Fatal(err)
+	}
+	plain.SourceIsOpaque = true
+	opaque, err := Admit(path, plain)
+	if err != nil {
+		t.Fatal(err)
+	}
+	hasMismatch := func(r *Result) bool {
+		for _, f := range r.Admission.Findings {
+			if f.RuleID == "adm-name-mismatch" {
+				return true
+			}
+		}
+		return false
+	}
+	if !hasMismatch(normal) || hasMismatch(opaque) {
+		t.Fatal("opaque source compared as directory name")
+	}
+	if !Verify(plain.Key.Public(), opaque.Admission) || opaque.Admission.Verdict != normal.Admission.Verdict {
+		t.Fatal("changed authority or signature")
+	}
+	malicious, err := Admit(filepath.Join("testdata", "skills", "malicious", "env-webhook"), plain)
+	if err != nil || malicious.Admission.Verdict != "quarantine" {
+		t.Fatal("opaque source bypassed threat analysis", err)
+	}
+}

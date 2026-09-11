@@ -1,0 +1,20 @@
+{
+  "schema_version": "grant-resource-native-smoke/v1",
+  "recorded_at": "2026-09-10T12:20:24.364240+00:00",
+  "passed": true,
+  "expected_old_bypass": false,
+  "checks": [
+    "native_cli_started",
+    "native_generated_session_bound",
+    "allowed_read",
+    "write_denied_before_execution",
+    "allowed_after_denial",
+    "receipt_chain_verified",
+    "write_capable_intent_still_limited_by_readonly_grant"
+  ],
+  "binary_sha256": "ad529a5491b3146b7a3ce4bbdc33099a8cda63ba7ad71cbe1645c0b1d54e41bd",
+  "harness_sha256": "d956ac5711de6365684717a94c93001edbda51536087c3ef4e5310a27c656e21",
+  "public_cli_fixture_sha256": "a0ca6517336249e8b29e2f81fffac64debd2558ad711d8a8b4f9c2002f249bc3",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "scope": "public Hermes CLI, normal hooks, isolated generated profile/files and synthetic operator; not Skill attribution or OS isolation"
+}

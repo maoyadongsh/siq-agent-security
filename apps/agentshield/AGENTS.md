@@ -31,7 +31,7 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 2. **规则包是共享文件。** `internal/rulepack/data/threat_rules.v1.json` 必须与 `apps/control-api/app/data/threat_rules.v1.json` 逐字节一致（`TestEmbeddedPackMatchesControlPlaneCopy` 锁定）。改模式：RE2 可编译、CPython 语义等价、附边界用例、两侧测试都跑。
 3. **对等优先于"更好"。** `threat` 的输出（sha256 / rule_id / line / excerpt_sha256 / excerpt）必须与 Python 相同；想改行为先在 Python 侧改并同步语料，再移植。
 4. **签名只签规范化字节。** 所有文档签名 = `Ed25519(canon.Marshal(doc 去掉 signature))`，十六进制 128 位；回执链签 `hash` 字符串字节。任何新文档类型都走 `signing`，不得自建序列化。
-5. **状态目录之外不写。** 路径由 `state` 包解析（`SIQ_AGENT_SECURITY_STATE_DIR` 覆盖，兼容旧名 `AGENTSHIELD_STATE_DIR`）；目录 0700、文件 0600；只追加或新建，禁止原地改写准入/签发/回执文件。
+5. **状态目录之外不写。** 路径由 `state` 包解析（`SIQ_AGENT_SECURITY_STATE_DIR` 覆盖，兼容旧名 `AGENTSHIELD_STATE_DIR`）；目录 0700、文件 0600；只追加或新建，禁止原地改写准入/签发/回执文件。 本用户个人体验开发周期按 ADR-039/ADR-044/ADR-047 增加限定例外：经明确确认并复验的安装、移除或更新操作可写对应 Skill 目标及同 profile 私有操作目录，采用排他发布、权限失效与归属校验恢复；不得执行候选内容或覆盖/删除未知用户对象。
 6. **不执行被分析内容。** 不 `import` Skill、不解压嵌套压缩包、不跟随符号链接；git 来源用 `--depth 1` 并禁用 hooks。可选 `--connectors-dir` 仅 **exec** connector 二进制（规格 §3.5），禁止 import `connectors/*`。
 7. **模型不是权威。** 任何未来的 LLM 语义层只能产生 `inferred` 事实或 `info` finding，不能改 verdict / action / status。
 8. **fail-closed 表是合同。** `block` 模式下服务不可达、超时、401、非法响应 = 拒绝；普通 policy 的 `audit_only`/`warn` 保留 allow + `advisory_action`。按当前用户开发目标（ADR-0015），无效 Authority 在所有模式下 hard deny，不得被 advisory 放宽。每个适配器必须有对应负向测试。

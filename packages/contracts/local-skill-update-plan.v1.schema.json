@@ -1,0 +1,166 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-update-plan.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "update_id",
+    "request_id",
+    "record",
+    "candidate_source",
+    "candidate_grant_id",
+    "candidate_revision",
+    "candidate_signature",
+    "candidate_permission_digest",
+    "previous_revision",
+    "previous_signature",
+    "binding_signature",
+    "retained_install_id",
+    "revoke_previous_grant",
+    "actor_id",
+    "created_at",
+    "expires_at",
+    "file_count",
+    "total_bytes",
+    "platform_changes",
+    "runtime_verified",
+    "requires_confirmation",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-update-plan/v1"
+    },
+    "update_id": {
+      "type": "string",
+      "pattern": "^sup-[a-f0-9]{64}$"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^up-[a-f0-9]{32}$"
+    },
+    "record": {
+      "$ref": "local-skill-install-record.v1.schema.json"
+    },
+    "candidate_source": {
+      "$ref": "local-skill-import-permission-source.v1.schema.json"
+    },
+    "candidate_grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "candidate_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "candidate_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "candidate_permission_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "previous_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "previous_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "binding_signature": {
+      "type": "string",
+      "pattern": "^([a-f0-9]{128})?$"
+    },
+    "retained_install_id": {
+      "type": "string",
+      "pattern": "^(sin-[a-f0-9]{64})?$"
+    },
+    "revoke_previous_grant": {
+      "type": "boolean"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "file_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2000
+    },
+    "total_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 67108864
+    },
+    "platform_changes": {
+      "const": false
+    },
+    "runtime_verified": {
+      "const": false
+    },
+    "requires_confirmation": {
+      "const": true
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "record": {
+          "properties": {
+            "recorded_status": {
+              "const": "installed_unverified"
+            },
+            "operation": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "revoke_previous_grant": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "retained_install_id": {
+            "const": ""
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "retained_install_id": {
+            "type": "string",
+            "pattern": "^sin-[a-f0-9]{64}$"
+          },
+          "binding_signature": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{128}$"
+          }
+        }
+      }
+    }
+  ]
+}

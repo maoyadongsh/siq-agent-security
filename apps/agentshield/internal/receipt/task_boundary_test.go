@@ -74,7 +74,7 @@ func TestConcurrentDecisionsHaveOneOrderedTaskChain(t *testing.T) {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			r := req("hermes", "read_file", nil)
+			r := req("hermes", "read_file", map[string]any{"path": "/home/u/proj/report"})
 			r.ToolCallID = fmt.Sprint(i)
 			d, err := fx.eng.Decide(r)
 			if err != nil || d.Action != ActionAllow {

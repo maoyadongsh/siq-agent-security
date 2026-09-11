@@ -1,0 +1,123 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T10:37:08.048064+00:00",
+  "batch": "M6 Grant lifetime and public CLI session",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "checks": [
+    {
+      "command": "go test ./...",
+      "passed": true,
+      "log": "go-test.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "go-vet.log"
+    },
+    {
+      "command": "gofmt -l .",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "go test -race ./internal/grant ./internal/receipt ./internal/server",
+      "passed": true,
+      "log": "go-race.log"
+    },
+    {
+      "command": "go test ./internal/state ./internal/receipt",
+      "passed": true,
+      "log": "expiry-additional-tests.log"
+    },
+    {
+      "command": "go test -race ./internal/state ./internal/receipt",
+      "passed": true,
+      "log": "expiry-additional-race.log"
+    },
+    {
+      "command": "npm test -- --run",
+      "passed": true,
+      "test_count": 20
+    },
+    {
+      "command": "npm run build:local",
+      "passed": true,
+      "log": "web-local-build.log"
+    },
+    {
+      "command": "npm run build",
+      "passed": true,
+      "log": "web-enterprise-build.log"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "passed": true,
+      "test_count": 87
+    },
+    {
+      "command": "uv run ruff check app/tests/test_schema_contracts.py and both new personal smoke scripts",
+      "passed": true
+    }
+  ],
+  "source_sha256": {
+    "apps/agentshield/internal/grant/grant.go": "7bcd90f03577a74f36998bfbfcbb6cfd13ce8a2cedc4b3b15b001122c69a625a",
+    "apps/agentshield/internal/grant/challenge.go": "007eb553afc3827b1382d2c8fa89112d2190913804327d3867e615fcdd084b9a",
+    "apps/agentshield/internal/grant/expiry.go": "bf1462d963e370aabcd9159d100b6caa334550d9e61c32a90f6300373cda3875",
+    "apps/agentshield/internal/grant/expiry_test.go": "3edcd9f41fe7bf43b99efda80477ab2c5fcbf093ef0b7ed2bf66627fa058a4f6",
+    "apps/agentshield/internal/receipt/engine.go": "42e89d44e62eeea8e18777ec54b2ace5e0a0abd38045bfe0b02584aa28e814b9",
+    "apps/agentshield/internal/receipt/hold_status.go": "2abaa81957efa14728957c9edb7f592b2a9ebd2de6b36034efc696d4e57c28a1",
+    "apps/agentshield/internal/receipt/grant_expiry_test.go": "4237cf36ac19117c36b6f83a3541d3313a7ed2eb62dcb3a2f05fd843f001539e",
+    "apps/agentshield/internal/state/grant_expiry_test.go": "0d93a55d0fd8279cf6c66675bf654f48b3599135b9876cd4625f0f163bff347e",
+    "apps/agentshield/internal/server/server.go": "6120939b851ec756749958d07b90c92b75fd26eecdaf61d94c5c494dc3332cb7",
+    "apps/agentshield/internal/server/grant_expiry.go": "f304a8c15b05771caa8422c1d12091777231a1efa0f1736e18b7efa313e8a541",
+    "apps/agentshield/internal/server/grant_expiry_test.go": "c5bef4931605af4508c31229aa9e0aa214eb9fc2cb18b3bf4ba6afebfed51c03",
+    "apps/web/src/local/pages/GrantsPage.tsx": "453a668827315ff739c227564645bad683bf7dc80229ac4f40df905446e29aec",
+    "apps/web/src/local/api.ts": "f42d1bc2b4dca857c3f39392660c1f7e144fbb88381c1452104caff3996ebb7e",
+    "apps/web/src/local/types.ts": "5e4bcc2dd2ab209b7d4a21cf50712593919c86a6adf0d6ededd54092489a838f",
+    "apps/web/src/index.css": "a8763cff26a28dedb1a19639a40160b465cd3932fa98a66b0570cfbd75d3f15c",
+    "packages/contracts/grant-expiry-edit.v1.schema.json": "8328da5878c99f3aacfe1f8a4978b751e2482be76998a94f3158fab367ef8d4c",
+    "apps/agentshield/testdata/contracts/grant-expiry-edit.json": "0c75562a012ccdb36ba8e0d0d1c95206ffeed38c2b445c6921a5fb68ad7e89b9",
+    "apps/control-api/app/tests/test_schema_contracts.py": "2e6b9559667d937f45c09e5739f60d06d80c0b0e81759fa1f207743d397815e2",
+    "scripts/personal-experience/hermes-cli-runtime-smoke.py": "a0ca6517336249e8b29e2f81fffac64debd2558ad711d8a8b4f9c2002f249bc3",
+    "scripts/personal-experience/grant-expiry-browser-smoke.py": "160934794386300c1d1bffef26fd75beb0111c3d1bc66e8524d78d6f0aa514f3",
+    "docs/adr/0024-native-runtime-check.md": "5788667e665fdb06c399a9a13abe6f1005310c0a55d0c4f951f5292e79ba9a3f"
+  },
+  "cross_builds": [
+    {
+      "target": "linux/amd64",
+      "sha256": "320c72e76f2278d99f38b3a05cc24bb4807ed98a60b2c37e57c74be1e0c6e8f3",
+      "passed": true
+    },
+    {
+      "target": "linux/arm64",
+      "sha256": "e26ca189c2b9874ec3b1a3dce4e1adbb930c0905149c810059470dd54b7d865c",
+      "passed": true
+    },
+    {
+      "target": "darwin/arm64",
+      "sha256": "31917eec635d4fcd6ff902eae221526d8a53ca9c1ba909bbe36785fee380bad4",
+      "passed": true
+    },
+    {
+      "target": "windows/amd64",
+      "sha256": "177043a7cbb15bdce66f464f1a706a268878f0a18a7815472ffa15eec975c38a",
+      "passed": true
+    }
+  ],
+  "browser": {
+    "path": "../grant-expiry-browser-20260910/result.json",
+    "checks": 10
+  },
+  "hermes_public_cli": {
+    "path": "../hermes-cli-runtime-expiry-20260910.json",
+    "checks": 6,
+    "receipts": 5
+  },
+  "limitations": [
+    "Linux arm64 execution only; cross builds do not verify Windows or macOS runtime",
+    "Synthetic profile, model and operator; no user-instance self-check controller yet",
+    "Grant lifetime preserves policy advisory modes; temporary self-check still requires expiring Intent Authority",
+    "No WorkBuddy or LAN acceptance; no release or code signing performed"
+  ]
+}

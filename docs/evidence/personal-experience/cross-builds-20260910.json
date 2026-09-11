@@ -1,0 +1,34 @@
+{
+  "schema_version": "personal-cross-builds/v1",
+  "recorded_at": "2026-09-10T07:32:47.320791+00:00",
+  "builds": [
+    {
+      "os": "linux",
+      "arch": "amd64",
+      "build": "passed",
+      "runtime_acceptance": "not implied",
+      "sha256": "f20a198d5f2f8d35ab192203dbd112176e0d1680b9e95a83126b4f06fc76ecb8"
+    },
+    {
+      "os": "linux",
+      "arch": "arm64",
+      "build": "passed",
+      "runtime_acceptance": "not implied",
+      "sha256": "44bee4bbd285bf1680ad64fb883637ddbc1ebe36200e4ad7cf2acbddb20fbfe3"
+    },
+    {
+      "os": "darwin",
+      "arch": "arm64",
+      "build": "passed",
+      "runtime_acceptance": "not implied",
+      "sha256": "c2c555b516d10ffe8fca902cc4521027cf3c60bfaa838e58b3b6aefe6d50fa0f"
+    },
+    {
+      "os": "windows",
+      "arch": "amd64",
+      "build": "passed",
+      "runtime_acceptance": "not implied",
+      "sha256": "c48c8b2d785fa7cad3bf39686322244d055b73d8a2a90bd4bbf8659804a86a39"
+    }
+  ]
+}

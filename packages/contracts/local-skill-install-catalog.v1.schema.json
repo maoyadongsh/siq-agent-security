@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-catalog.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "checked_at",
+    "platform_changes",
+    "items",
+    "issues"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-catalog/v1"
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "platform_changes": {
+      "const": false
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "$ref": "local-skill-install-record.v1.schema.json"
+      }
+    },
+    "issues": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "install_id",
+          "code"
+        ],
+        "properties": {
+          "install_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^sin-[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code": {
+            "const": "record_unavailable"
+          }
+        }
+      }
+    }
+  }
+}

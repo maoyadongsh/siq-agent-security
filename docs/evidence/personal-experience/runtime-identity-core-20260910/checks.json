@@ -1,0 +1,27 @@
+[
+  {
+    "command": "go test ./...",
+    "passed": true,
+    "log": "go-test.log"
+  },
+  {
+    "command": "go vet ./...",
+    "passed": true,
+    "log": "go-vet.log"
+  },
+  {
+    "command": "uv run ruff check app/tests/test_schema_contracts.py",
+    "passed": true,
+    "log": "python-lint.log"
+  },
+  {
+    "command": "gofmt -l .",
+    "passed": true,
+    "log": "gofmt.log"
+  },
+  {
+    "command": "git diff --check",
+    "passed": true,
+    "log": "diff-check.log"
+  }
+]

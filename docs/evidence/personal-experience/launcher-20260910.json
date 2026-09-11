@@ -1,0 +1,11 @@
+{
+  "schema_version": "personal-launcher-smoke/v1",
+  "recorded_at": "2026-09-10T07:31:06.982783+00:00",
+  "scope": "Linux arm64, local development build; occupied-port case uses a test health stub",
+  "checks": {
+    "first_start_waits_for_real_health": true,
+    "second_start_reuses_daemon": true,
+    "daemon_remains_alive": true,
+    "occupied_port_refused_without_spawn": true
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "grant": {
+    "grant_id": "grt-si-2abb934fb2e68699bdb301610e0239ab332987e754d0c7c74dcf28ba0f1af775",
+    "admission_id": "adm-si-9fe8ea37590109e64c652ef48122b1161817b4b1d1189dc6540ef009a1f41c1b",
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-cccccccccccccccccccccccccccccccc"
+    },
+    "platform": "hermes",
+    "facts": [],
+    "default_effect": "deny",
+    "hermes_toolset_allowlist": [],
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-si-2abb934fb2e68699bdb301610e0239ab332987e754d0c7c74dcf28ba0f1af775",
+      "version": 1,
+      "static_domains_unavailable": []
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "pending_approval",
+    "approved_by": null,
+    "effective_readback": null,
+    "created_at": "2026-09-11T02:00:00Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "signature": "3d66c4ff05231415235eb75ecebcf05908e6f07ea7d539220b66b7d31de6ef33141464388fa48ec27ca4fdf848b2e6a8a37c08ce204c83448523029e5acde509"
+  },
+  "import_id": "si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "installed": false,
+  "reused": false,
+  "schema_version": "local-skill-import-permission-created/v1",
+  "source": {
+    "schema_version": "local-skill-import-permission-source/v1",
+    "import_id": "si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "artifact_digest": "bda671ae22cab71a2cede6e2f1201b7dc6b084c67717380b407f95094aac2da2",
+    "analysis_sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "state_revision": 0
+}

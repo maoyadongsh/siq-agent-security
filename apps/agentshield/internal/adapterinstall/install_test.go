@@ -13,6 +13,9 @@ func testOpts(t *testing.T, platform string) Options {
 	t.Helper()
 	home := t.TempDir()
 	state := t.TempDir()
+	if err := os.Chmod(state, 0700); err != nil {
+		t.Fatal(err)
+	}
 	bin := filepath.Join(home, "bin", "agentshield")
 	_ = os.MkdirAll(filepath.Dir(bin), 0o755)
 	_ = os.WriteFile(bin, []byte("#!/bin/sh\n"), 0o700)

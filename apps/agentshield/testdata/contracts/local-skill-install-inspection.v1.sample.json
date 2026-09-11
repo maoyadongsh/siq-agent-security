@@ -1,0 +1,56 @@
+{
+  "schema_version": "local-skill-install-inspection/v1",
+  "record": {
+    "schema_version": "local-skill-install-record/v1",
+    "install_id": "sin-01d7465d5778637c6f5c0cda159cb4c29ebaa7d3a12c4c62bfb34853c7e44ca6",
+    "plan": {
+      "schema_version": "local-skill-install-plan/v1",
+      "plan_id": "sip-01d7465d5778637c6f5c0cda159cb4c29ebaa7d3a12c4c62bfb34853c7e44ca6",
+      "request_id": "is-dddddddddddddddddddddddddddddddd",
+      "source": {
+        "schema_version": "local-skill-import-permission-source/v1",
+        "import_id": "si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "artifact_digest": "5616f02435c352c063ab2587f17c78c40012548318a44dd1c52a88a7e387d459",
+        "analysis_sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "grant_id": "grt-si-3333333333333333333333333333333333333333333333333333333333333333",
+      "grant_revision": 0,
+      "grant_signature": "44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444",
+      "grant_permission_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+      "platform": "hermes",
+      "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "directory_name": "example",
+      "target_locator_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+      "target_display": "Hermes work/skills/example",
+      "actor_id": "human",
+      "created_at": "2026-09-11T03:00:00Z",
+      "expires_at": "2026-09-11T03:05:00Z",
+      "file_count": 2,
+      "total_bytes": 135,
+      "installed": false,
+      "runtime_verified": false,
+      "signature": "328365742dee97ebaf36ffdc02770de4323e834a8d5b5f936d0feb1e0e4a9d9575541f7e08884918115445e2d672244ec9877681501fb4a0d13fc8e1e7d3d801"
+    },
+    "claim_signature": "7721670ec1149c682ee978a11b326a8a3d989a907cd51b1e309b484d845ccf800fac14eb352d7e211e6ad8934b808ecf0edff61c74a07695fa3ab094dbad3104",
+    "recorded_status": "installed_unverified",
+    "operation": {
+      "schema_version": "local-skill-install-operation/v1",
+      "install_id": "sin-01d7465d5778637c6f5c0cda159cb4c29ebaa7d3a12c4c62bfb34853c7e44ca6",
+      "plan_id": "sip-01d7465d5778637c6f5c0cda159cb4c29ebaa7d3a12c4c62bfb34853c7e44ca6",
+      "claim_signature": "7721670ec1149c682ee978a11b326a8a3d989a907cd51b1e309b484d845ccf800fac14eb352d7e211e6ad8934b808ecf0edff61c74a07695fa3ab094dbad3104",
+      "status": "installed_unverified",
+      "actor_id": "human",
+      "recorded_at": "2026-09-11T03:00:02Z",
+      "runtime_verified": false,
+      "signature": "92987784467c83b119cca252bbd9d947f1044ed60301b162a8ece8b6975863329fbaf8b58cd0ad5067805a49db70eec2c5bf1e6ef84a804f591293855145e902"
+    }
+  },
+  "checked_at": "2026-09-11T04:00:00Z",
+  "platform_changes": false,
+  "target_state": "matched",
+  "comparison_complete": true,
+  "changes": [],
+  "changes_total": 0,
+  "changes_truncated": false,
+  "issue_code": null
+}

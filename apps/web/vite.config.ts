@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import { localProxy } from './dev/localProxy';
 
 const isLocal = process.env.VITE_APP === 'agentshield';
 const localOutDir = fileURLToPath(new URL('../agentshield/internal/ui/embedded', import.meta.url));
@@ -65,6 +66,7 @@ function localDevSpaFallback(): Plugin {
           url.startsWith('/@') ||
           url.startsWith('/node_modules') ||
           url.startsWith('/v1') ||
+          url === '/healthz' ||
           url === '/ui-config.json' ||
           url === '/index.local.html' ||
           url === '/favicon.ico' ||
@@ -88,13 +90,15 @@ export default defineConfig({
   base: isLocal ? '/' : process.env.SIQ_AS_WEB_BASE || '/',
   plugins: [react(), dropLegacyWoff(), renameLocalIndex(), localDevSpaFallback()],
   server: {
+    host: isLocal ? '127.0.0.1' : undefined,
     headers: {
       'Cache-Control': 'no-store, max-age=0',
     },
     proxy: isLocal
       ? {
-          '/v1': { target: 'http://127.0.0.1:47611', changeOrigin: true },
-          '/ui-config.json': { target: 'http://127.0.0.1:47611', changeOrigin: true },
+          '/v1': localProxy(),
+          '/healthz': localProxy(),
+          '/ui-config.json': localProxy(),
         }
       : {
           '/api/iam': {

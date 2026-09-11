@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-import.v2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "import_id",
+    "source_kind",
+    "source_locator_digest",
+    "actor_id",
+    "created_at",
+    "artifact_digest",
+    "analysis_sha256",
+    "directories",
+    "files",
+    "excluded_git_metadata",
+    "signature",
+    "remote"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-import/v2"
+    },
+    "import_id": {
+      "type": "string",
+      "pattern": "^si-[0-9a-f]{32}$"
+    },
+    "source_kind": {
+      "const": "https_zip"
+    },
+    "source_locator_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "artifact_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "analysis_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "directories": {
+      "type": "array",
+      "maxItems": 2000,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256",
+          "bytes",
+          "executable"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8388608
+          },
+          "executable": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "excluded_git_metadata": {
+      "type": "boolean"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    },
+    "remote": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "archive_sha256",
+        "archive_bytes",
+        "final_locator_digest",
+        "archive_path",
+        "expected_sha256"
+      ],
+      "properties": {
+        "archive_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "archive_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 33554432
+        },
+        "final_locator_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "archive_path": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "expected_sha256": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{64})?$"
+        }
+      }
+    }
+  }
+}

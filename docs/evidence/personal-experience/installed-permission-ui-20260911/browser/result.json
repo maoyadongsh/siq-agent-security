@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-09-10T19:31:23.191831+00:00",
+  "status": "passed",
+  "checks": {
+    "approved_grant_prefills_portable_skill_directory": true,
+    "explicit_confirmation_required": true,
+    "committed_response_loss_reads_result_without_second_apply": true,
+    "refresh_reads_existing_target_without_activation": true,
+    "explicit_preparation_response_loss_recovers_via_read_only_query": true,
+    "refresh_preserves_prepared_state_without_write": true,
+    "mobile_preparation_and_actions_fit": true,
+    "different_existing_grant_requires_explicit_revocation": true,
+    "locked_instance_grant_and_explicit_identity_confirmation": true,
+    "browser_applies_existing_managed_adapter_flow": true,
+    "selfcheck_targets_same_instance_without_auto_execution": true,
+    "target_drift_removes_prepared_actions": true
+  },
+  "binary_sha256": "e4bc842fbc3d86f0726f4463bfc4571ea8b78f6e22ab09ed19eb37a019aa6f76",
+  "scope": "Isolated real daemon and browser; synthetic operator and profile. Explicit installation, permission preparation, runtime identity and adapter configuration. No native host or Skill payload execution; separate native harness verifies execution. No cross-OS acceptance."
+}

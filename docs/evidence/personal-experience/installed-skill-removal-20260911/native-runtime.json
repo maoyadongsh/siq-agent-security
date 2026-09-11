@@ -1,0 +1,103 @@
+{
+  "schema_version": "personal-installed-skill-runtime-native/v1",
+  "recorded_at": "2026-09-10T20:22:12.612465+00:00",
+  "passed": true,
+  "binary_sha256": "08ace2529f0cc4c58efaffdd11b29c25dc1271d59cbae9de5f67fb6a7d7a971b",
+  "harness_sha256": "5cb1adb6330b0f51f4a4d6f0f4fad24ab68a47945238f3e2d56893c148fe81d4",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "native_entrypoint": "public hermes chat --oneshot; normal Agent loop and plugin lifecycle",
+  "session_id_source": "native pre_tool_call; actual SIQ adapter automatically enrolls; not injected",
+  "checks": [
+    "managed_preview_does_not_mutate_host",
+    "managed_install_uses_issued_identity",
+    "native_enable_preserves_other_profile_and_settings",
+    "diagnosis_keeps_runtime_unverified",
+    "managed_profile_product_selfcheck_uses_separate_authority",
+    "native_cli_started",
+    "native_generated_session_automatically_bound",
+    "instance_credential_used_without_manual_intent",
+    "environment_cannot_override_managed_agent",
+    "allowed_read",
+    "write_denied_before_execution",
+    "allowed_after_denial",
+    "receipt_chain_verified",
+    "revoked_identity_blocks_new_native_session",
+    "revoked_calls_record_unsigned_denials",
+    "product_skill_import_approval_installation",
+    "installed_content_bound_instance_permission"
+  ],
+  "receipt_count": 10,
+  "authority_withdrawal": {
+    "method": "identity_revocation",
+    "check": "revoked_identity_blocks_new_native_session"
+  },
+  "installation": {
+    "method": "managed_v3_preview_apply_and_public_cli_native_enable",
+    "changed_file_count": 6,
+    "runtime_state": "unverified"
+  },
+  "managed_selfcheck": {
+    "status": "passed",
+    "cleanup": "complete",
+    "receipt_count": 5,
+    "ordinary_identity_retained": true,
+    "separate_grant_binding": true
+  },
+  "model_requests": [
+    {
+      "tool_result_count": 0,
+      "stream": true
+    },
+    {
+      "tool_result_count": 1,
+      "stream": true
+    },
+    {
+      "tool_result_count": 2,
+      "stream": true
+    },
+    {
+      "tool_result_count": 3,
+      "stream": true
+    }
+  ],
+  "revoked_model_requests": [
+    {
+      "tool_result_count": 0,
+      "stream": true
+    },
+    {
+      "tool_result_count": 1,
+      "stream": true
+    },
+    {
+      "tool_result_count": 2,
+      "stream": true
+    },
+    {
+      "tool_result_count": 3,
+      "stream": true
+    }
+  ],
+  "revoked_pending_denials": 3,
+  "auxiliary_requests": [
+    {
+      "stream": false
+    },
+    {
+      "stream": false
+    }
+  ],
+  "profile_config_unchanged": true,
+  "limitations": [
+    "isolated profile configured through product installer; browser workflow is separate evidence",
+    "synthetic model and operator; no real-user approval, Skill attribution or OS isolation proof",
+    "native startup may produce host history/cache; network isolation is not claimed"
+  ],
+  "skill_installation": {
+    "install_id": "sin-d6e9b817ab59f5bfb864547a35276f6fff24ea57ad4cfc0f196ba2acd15d5b56",
+    "binding_id": "sab-4f1636c60862afe3faba0cc024c53aa3d7ceeab476d335c5a2344c0faab84a96",
+    "source_digest": "63a2a8a4b9c46a9b174cabb1c53fb163d723ef0c34afa07036a93d4bbd02ca70",
+    "runtime_verified": false
+  }
+}

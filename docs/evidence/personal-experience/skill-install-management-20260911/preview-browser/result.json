@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-09-10T18:38:23.898113+00:00",
+  "status": "passed",
+  "checks": {
+    "approved_grant_prefills_portable_skill_directory": true,
+    "committed_response_loss_reuses_exact_request_and_single_plan": true,
+    "refresh_revalidates_existing_plan_without_new_write": true,
+    "mobile_target_and_digest_wrap": true,
+    "tampered_stage_removes_old_verified_preview": true,
+    "revoked_authority_invalidates_preview_and_hides_new_preparation": true,
+    "no_platform_write_or_runtime_activation": true
+  },
+  "binary_sha256": "99ba418dad3140c9ef59bb818d2893f35bb874fed764008be040eb10b9d88019",
+  "scope": "Real isolated daemon/browser; synthetic human approval via API; no native host execution or Skill installation."
+}

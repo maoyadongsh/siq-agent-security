@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-update-view.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-update-view/v1"
+    },
+    "update_id": {
+      "type": "string",
+      "pattern": "^sup-[a-f0-9]{64}$"
+    },
+    "claim": {
+      "$ref": "https://siq.dev/contracts/local-skill-update-claim.v1.schema.json"
+    },
+    "result": {
+      "anyOf": [
+        {
+          "$ref": "https://siq.dev/contracts/local-skill-update-result.v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "removal": {
+      "anyOf": [
+        {
+          "$ref": "https://siq.dev/contracts/local-skill-install-removal-view.v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "installation": {
+      "anyOf": [
+        {
+          "$ref": "https://siq.dev/contracts/local-skill-install-operation.v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "enum": [
+        "confirmed",
+        "removing_previous",
+        "installing_candidate",
+        "recovery_required",
+        "updated_unverified",
+        "aborted"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "update_id",
+    "claim",
+    "result",
+    "removal",
+    "installation",
+    "status"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "aborted",
+              "updated_unverified"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "updated_unverified"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "removal": {
+            "type": "object"
+          },
+          "installation": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ]
+}

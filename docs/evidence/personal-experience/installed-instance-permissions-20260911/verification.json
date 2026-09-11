@@ -1,0 +1,3184 @@
+{
+  "schema_version": "personal-experience-verification/v1",
+  "batch": "M26",
+  "created_at": "2026-09-10T19:07:31.190861+00:00",
+  "head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "goal_status": "active",
+  "ux_007_status": "doing",
+  "ux_009_status": "doing",
+  "scope": "Installed-content-bound instance permission core/API, public Hermes inventory and native Agent CLI validation, plus previous-binary refusal.",
+  "validation": [
+    {
+      "command": "go test ./...",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "go-all.log"
+    },
+    {
+      "command": "go vet ./...",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "vet.log"
+    },
+    {
+      "command": "gofmt -l .",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "go test -race -json ./internal/skillinstall ./internal/runtimeidentity ./internal/intent ./internal/receipt ./internal/state ./internal/server",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "race.jsonl"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "cwd": "apps/control-api",
+      "exit_code": 0,
+      "log": "contracts.log"
+    },
+    {
+      "command": "uv run ruff check app/tests/test_schema_contracts.py ../../scripts/personal-experience/skill-install-hermes-recognition-smoke.py ../../scripts/personal-experience/installed-skill-runtime-native-smoke.py",
+      "cwd": "apps/control-api",
+      "exit_code": 0,
+      "log": "lint.log"
+    },
+    {
+      "command": "python scripts/personal-experience/installed-skill-runtime-native-smoke.py --binary .tmp/personal-experience/m26-linux-arm64 --hermes-cli /home/maoyd/siq/hermes-agent/venv/bin/hermes --out docs/evidence/personal-experience/installed-instance-permissions-20260911/native-runtime.json",
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "native.log"
+    },
+    {
+      "command": "python scripts/personal-experience/installed-skill-runtime-native-smoke.py --binary .tmp/personal-experience/m26-linux-arm64 --hermes-cli /home/maoyd/siq/hermes-agent/venv/bin/hermes --legacy-binary .tmp/personal-experience/m25-linux-arm64 --out docs/evidence/personal-experience/installed-instance-permissions-20260911/legacy-reader.json",
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "legacy.log"
+    },
+    {
+      "command": "python scripts/personal-experience/skill-install-hermes-recognition-smoke.py --binary .tmp/personal-experience/m26-linux-arm64 --hermes-cli /home/maoyd/siq/hermes-agent/venv/bin/hermes --out-dir docs/evidence/personal-experience/installed-instance-permissions-20260911/native-recognition",
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "recognition.log"
+    }
+  ],
+  "python_contract_tests": 132,
+  "cross_compilation": [
+    {
+      "target": "linux/amd64",
+      "command": "go build -o <candidate> ./cmd/agentshield",
+      "exit_code": 0,
+      "stderr": "",
+      "path": "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m26-linux-amd64",
+      "sha256": "1768c31c38fbefa0d2469cf97f9e74306c176297568721c8009dcd53199c8c0e"
+    },
+    {
+      "target": "linux/arm64",
+      "command": "go build -o <candidate> ./cmd/agentshield",
+      "exit_code": 0,
+      "stderr": "",
+      "path": "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m26-linux-arm64",
+      "sha256": "0cbdb4167c4c9c3f7e3a48c8ba8d6a3052a3c4e4ae5c539d89b0068e384ddceb"
+    },
+    {
+      "target": "darwin/arm64",
+      "command": "go build -o <candidate> ./cmd/agentshield",
+      "exit_code": 0,
+      "stderr": "",
+      "path": "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m26-darwin-arm64",
+      "sha256": "887c6382d7658c2dc97cdf1da46f6d08333b9036ba8eb5ba2d20239128a09f23"
+    },
+    {
+      "target": "windows/amd64",
+      "command": "go build -o <candidate> ./cmd/agentshield",
+      "exit_code": 0,
+      "stderr": "",
+      "path": "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m26-windows-amd64.exe",
+      "sha256": "b30bb73b6babe58a2a725a59ec0d20385b3a0255e9400d84a6ec98deda292723"
+    }
+  ],
+  "frontend": {
+    "changed": false,
+    "evidence_reference": "docs/evidence/personal-experience/skill-install-management-20260911/verification.json",
+    "reference_sha256": "d013730767331035be6ce564d69074d9322b7af34fee57739621c7f20df80e61",
+    "scope": "Unchanged M25 embedded frontend; new activation API has no new personal button yet."
+  },
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "dd94cce900fdbc985c453e265f5da93d3fcb74397ad6088c85d94762f26160d0"
+    },
+    {
+      "path": "apps/agentshield/AGENTS.md",
+      "sha256": "1c7b582074edc6bcb6c89c0144e7c886a3f76d8defe7b329d057c6b29811ba2d"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/adapter.go",
+      "sha256": "40001ebf08830d4d8e1bfcc6fbaf85834d6c73b15b10765cbb3a35fb1ee242f8"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/admission_signature_test.go",
+      "sha256": "69b5ec59537bedee2e0a52dac43b22fd6c2040c6108d8c60f73d2d5050ad29ea"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/codebuddy_hook_test.go",
+      "sha256": "532790aa2b5e6e61c9cd760497c0b3e3c446ac3dc2105dcf08d2ce62cfc32c01"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/export.go",
+      "sha256": "02d56a02eaa9c9c34f9c8ecb049bb4aa014eff29c2ce1313de23fc3289a6b28f"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/grant.go",
+      "sha256": "c63e621a4bfb1b20f46c23e0646a78b5f68464656c868708f5bfced8c789dcbb"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/grant_parse_test.go",
+      "sha256": "2b1726385be1d73aa51911055952825902efc27714e86774df4964e49f0b4b96"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/import_permission_test.go",
+      "sha256": "52f43fa1869c432fb59e924805b09d0f87dcd6fe56a79e618fc4353486c669c3"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/inventory_run.go",
+      "sha256": "4d26ba18f3a6c97dc25227c455a104a7f6e8cb9e58f493164edfd8da9505f3e2"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/local_session.go",
+      "sha256": "1d9e5fa3d8f9011d50e15263f9a702794eda55568104e11d7f9a0ce45b7999e0"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/local_session_test.go",
+      "sha256": "2e2378dd751fe717f7503a44eab1f8084bfc33a3e0067ef1d4c24aa2ea3a1d4b"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/main.go",
+      "sha256": "feb9e26d759ecbd559553e5fb0feb6d5e3736a20f81df0068a8f05818fe56435"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/openshell.go",
+      "sha256": "5e1162b697bd48063dc37a23c42f83225a24e32fe04c146efd71195d73a476da"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/p3_cli_test.go",
+      "sha256": "c9e7800299a00ebf28c45d9a7d4631c96e66a0a638ade67910fc9518b7395f39"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/release.go",
+      "sha256": "a67789b2b746d8ea0cc7b8005e1e9852187979351b059ecf9cc1284e5e9a447c"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/skill_import.go",
+      "sha256": "ff85db41a45022a80e8ee1a7774d84c58fa5070d94c071e5705c39c88b19fd37"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/skill_import_test.go",
+      "sha256": "3057a90badd5f8ab3f3f71b49ae01c6728375fbb150fd763ad25409880d4a5f1"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/sync.go",
+      "sha256": "2bae9ed4b9822e637088fbea5fc1b6d05f4b1b2ec7171cebfa2877ac2d125f66"
+    },
+    {
+      "path": "apps/agentshield/cmd/perfbaseline/main.go",
+      "sha256": "9ffa3765a63f1224e763ba2302e6023069731d154e10d576e5954fa663846c08"
+    },
+    {
+      "path": "apps/agentshield/go.mod",
+      "sha256": "76d4db76c1f3cac2668814e3159de6cdabf9ee6947095f0bb387b194012beb6a"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/assets/hermes/__init__.py",
+      "sha256": "66f6838d3ced6f1bfb5ff4f636ec17a5c71d046282e9d4d343826f70bc4d3442"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/assets/hermes/plugin.yaml",
+      "sha256": "2d037f71f97afe2a84874d1bda83e109fbed926e83f5bcdef6d2945f0e2957c6"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/assets/openclaw/index.ts",
+      "sha256": "9e7ba73c4d9999ba5dd9f6f1cdd1af1f4c593ca3cfb4b982d49350e0248fbeb8"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/assets/openclaw/openclaw.plugin.json",
+      "sha256": "66923bad3ae69253cbfde9d05d16a5fbdb237f8173afdf35249067589e1ea875"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/assets/openclaw/package.json",
+      "sha256": "7f691dc20746538898ce6b0841ee270195802cac2c16f0f4dbc8823461e622c5"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/codebuddy_config_test.go",
+      "sha256": "8eb4a67145c3198333d289110b3bd9e73548aab49594d7c15f30bb89550d2625"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/diagnostics.go",
+      "sha256": "f4cd2747ce2a340030f32e4cb4e116822152555eed239b57e931335bca986be0"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/diagnostics_test.go",
+      "sha256": "3616a04d4243c3ae8e37e0feb30ec24a9fe51afe367ff959985c08cdf86ce7cb"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/hermes_native.go",
+      "sha256": "1f5503a6afc790474e5a4fb18dc4a097cb7433c42522256c25ff156f48063079"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/hermes_native_test.go",
+      "sha256": "7e193c6247ca3a2c3475452057695c365f96f65f71ac0b31c8296ef599367f99"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/install.go",
+      "sha256": "5259411942e2c1366803d1388ceaa44f3a7918afe7b3c9b332ee21054dd73d6f"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/install_test.go",
+      "sha256": "38ccda9249be502a8616a1bfab8558a7ce94870e80f6e0864eca12569a8f0ef8"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/instance.go",
+      "sha256": "ffb5ff2a2d321bac38d8fe3bb8e9c99c725aad85d24607cd879fb373c6a5378a"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/instance_test.go",
+      "sha256": "0149cddff9239c657ef9df8613a0a34e6858bcdf36a97fd52c25a4de128e34d4"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/openclaw_config.go",
+      "sha256": "77d84c8d27e06eba9dea91b32e10d9557e3c59650c7f447459d9c4b829059480"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/openclaw_config_test.go",
+      "sha256": "f07171e0c5535559a78c8441ff9aef3602b9af617a7f7d34c8e009c6578b776d"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/plan.go",
+      "sha256": "8de40af2b9c70ca5514e76aaff1ea8d8cc563bb3412570494cf9388e58d2d509"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/plan_uninstall.go",
+      "sha256": "7d00d34778864d5b59ebdfdd9bf02467eecb2a38f78f845624fe78edb8fa5c84"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/runtime_identity.go",
+      "sha256": "f8077ab0b755b9a4f453b8e75dc7e3973304b0c239ce106493d1e9171cf3afd3"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/runtime_identity_test.go",
+      "sha256": "cf7cf61535a8a8c085b9334434b7e615128ef1f2a1820349a4d47cd7c2c65261"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/runtime_target.go",
+      "sha256": "6711aaf0a0b3504c4d8fcb4012f7f44936fe2d808dcca480b345653696d7cf9e"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/runtime_target_test.go",
+      "sha256": "95543d391a2742aa0abca68c7fb60b8e49d5fded786581d23234169737ad998a"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/transaction.go",
+      "sha256": "3396d4cf54e5f5c8fc7771962bef6eb4289330e1568cb0371bbd6d02db0d364c"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/transaction_test.go",
+      "sha256": "894a1355a64cb526dc1b21366a4e49d2179a1345abd4beb6405b9cbe90b895f9"
+    },
+    {
+      "path": "apps/agentshield/internal/adapters/adapters.go",
+      "sha256": "2ef8eafaf6453728b16657037f1247b0fb471522cbf595b89959cf3e39987ec1"
+    },
+    {
+      "path": "apps/agentshield/internal/adapters/adapters_test.go",
+      "sha256": "0cc90473f5dd5e54f9f854a8f7f6f04d586d48426a08c3be23af5dc99e7151fb"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/admission.go",
+      "sha256": "0c3b2e020db321df55146a22b1028313727cd9122e64250bbe9cbc8cb053bf29"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/admission_test.go",
+      "sha256": "f7c1a21bfff2562b5efe073a558a635428f7b1f9ba9fd5d0d1b510d057d58153"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/budget_cancel_test.go",
+      "sha256": "af9af0aebf0dc38322f3c08226109242c779c073384e11b961608f016c9b00d1"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/card.go",
+      "sha256": "ead6684b4582a886679b56cb0205c5a82561ab9f90b090343496ec388c87f7eb"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/card_test.go",
+      "sha256": "572494ae8907624d35b88e52b838be92fe67c494bbbb7d309bf654722f16d38e"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/checks.go",
+      "sha256": "aad9daeccfb75252073a5d561c7bd84dcc6b8034b8d1bb4dd2e18b7003830120"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/dispositions.go",
+      "sha256": "5df6b53752c8d59266e04b8a64550b3cc97360d2fb37a9ce28cd2bde5c554fe6"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/dispositions_matrix_test.go",
+      "sha256": "3ff61a47aaeff794cb148a22fe44e5b02a42a721361dfcecd30f0b6b21c04735"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/frontmatter.go",
+      "sha256": "67c944c503c2af5db8d5b69d0a566cf49a273099392dae86dff34bf8f16197f0"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/open_regular_unix.go",
+      "sha256": "ebd3d4b6fda9785c5ec22a97ff3572811e6d71caa5a35b929cdd0dbef6a4edc0"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/reading_test.go",
+      "sha256": "92db497c4400065f92aa90389294678a39b49a6228ad92002eea1ba2700a217a"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/skillpack_eval_test.go",
+      "sha256": "6c607291631451444a0fa76d636e754461d5b7b758d41be1b4b76b101ff2be99"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/walk.go",
+      "sha256": "7c612098cc9bdc88b303c34a3aab07e3a97f2b7734043348bed0dd67f104fc40"
+    },
+    {
+      "path": "apps/agentshield/internal/canon/canon.go",
+      "sha256": "75f2bf733e047589f3c4645290428067386ffd6d4cfc3c194c6d3c883c10f422"
+    },
+    {
+      "path": "apps/agentshield/internal/canon/canon_test.go",
+      "sha256": "4457cd6fd7e2d30ce26e9dc943a7fbdb911d0049e35b55ffdfae0732ea20f5b8"
+    },
+    {
+      "path": "apps/agentshield/internal/completion/evaluate.go",
+      "sha256": "3a4e05222e357de4693b4f72601eff1758fb19071c55e8d717f8326c4e529ce4"
+    },
+    {
+      "path": "apps/agentshield/internal/completion/evaluate_test.go",
+      "sha256": "12d5eb959edb9b2f95d8012a79aa814d5d71d19cd775d86c90f68f6d0add71ee"
+    },
+    {
+      "path": "apps/agentshield/internal/completion/network_test.go",
+      "sha256": "27e4560e8919f4a9df106993bd1872c89b55709f1f82eab51e196f87670f9dd7"
+    },
+    {
+      "path": "apps/agentshield/internal/completion/requirement.go",
+      "sha256": "0b02dd0c90ae91438919a992dc6583c78542bba7a2ee21b57be959f2b9d87037"
+    },
+    {
+      "path": "apps/agentshield/internal/contractvectors/vectors_test.go",
+      "sha256": "ce1bf85cb1c1bf5e6369839e59952e51c0dafa7a07d10f568b61fa096e632808"
+    },
+    {
+      "path": "apps/agentshield/internal/controlsync/sync.go",
+      "sha256": "5f61065da12a73c62372c9e991f8f63731a0f00ff1fe8c04e64cf4731b5911eb"
+    },
+    {
+      "path": "apps/agentshield/internal/controlsync/sync_test.go",
+      "sha256": "add2200a2811cdcc0a6ec8cde2433b6dce7d74339654f972e699d1978c19e430"
+    },
+    {
+      "path": "apps/agentshield/internal/display/escape.go",
+      "sha256": "5e2143580b33cebc7e57986ec10faef26e7556c0a405d9353284d3797ba32d20"
+    },
+    {
+      "path": "apps/agentshield/internal/display/escape_test.go",
+      "sha256": "f71b48a51417525d1c284b0e8c5c9cbb4d651bbe10bbef18b5d9ede54b987d65"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/correlation.go",
+      "sha256": "03bf4985ac798f34b6e78fb9a9a0649b1e94856a9ec69425aea60e3630019e77"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/correlation_test.go",
+      "sha256": "9e18afe19b7f17dbcf8a0464fc03b5b63ea18a58be7459dd97d8b69ab434e5a3"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/evidence.go",
+      "sha256": "489219c166a131b55420d071371f59240d5225db3d836a05d39779106ef6cf13"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/evidence_test.go",
+      "sha256": "5aec18b3bd7e393383c07ee3b249ee87c92a8568443e077381d875bfcd4e253a"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/file.go",
+      "sha256": "306b43c9e9c515c25188344a8f01d6f47931804b58d760227b271613b1007f7c"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/file_test.go",
+      "sha256": "cd549955669ed1073332bd5021a3fd823291fe7314fc75e809b9a8f9ba45e462"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/network_material.go",
+      "sha256": "d8073e6745537168d29fe22472c7b5fa96de15768021e2213b9bf1ea948cc8ef"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/network_oracle.go",
+      "sha256": "20449cce4a7b2a03bda84b6f6d0d21fc68a793cdef6b370c15c110274cd780b3"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/network_oracle_test.go",
+      "sha256": "c4d2386e2669e12650c10e059339377d7fbb74746aeb2264c9b6997444c2def0"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/observer_revocation.go",
+      "sha256": "c662a3bb01381b293922a2ba551595625c8b026cd70043649cd1cd822c60aa10"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/observer_revocation_test.go",
+      "sha256": "15fdff7ff3d418eb6916be908e1f3fac37a599b3e6637c186e3941691c5b8606"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/pending.go",
+      "sha256": "bea6fa152f203e487a14db0e32c366ab74957bdf6dc5e3f3e95fe752be004df0"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/pending_test.go",
+      "sha256": "13891b97585660fcabb17de9688cd2828e6015e30a2bf5d4380b50e904f005c0"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/performance_test.go",
+      "sha256": "8a54c1eed5a480556d440cf1bdebd9ef47ce5d425da107f849a79d37914d0c30"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/recovery.go",
+      "sha256": "facb95654bb6076da05631e11f8ac49801f42cc76b87016c2341cfa039175c76"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/recovery_store.go",
+      "sha256": "c9afbe4083f9ab17faa6375fe20351cc9b8de9e2f1c1c414ea810c43748f65ba"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/recovery_store_test.go",
+      "sha256": "4798a7a7a008fb62883326a5dfab544d653963d6526f9d808e5103b13533c4cc"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/recovery_test.go",
+      "sha256": "87bc69b06146be22e92275de7a0f7ea95b8f9dbffbe9adb374e94b93c8b0a3ea"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/store.go",
+      "sha256": "e20750fe112a417c8bbbec821aa0c8aa88a61057d45cc5e15fa920fd071bdfe6"
+    },
+    {
+      "path": "apps/agentshield/internal/effectevidence/store_test.go",
+      "sha256": "e53d1184f3de9d8f8e31c7a0e30273f96a4d22aff89db7803bde529a71620c89"
+    },
+    {
+      "path": "apps/agentshield/internal/export/budget.go",
+      "sha256": "2c0e4a384044547b38a7e8e8f59760430a4bda9da5dbb64e1b9bbd71ff0ef6ba"
+    },
+    {
+      "path": "apps/agentshield/internal/export/budget_test.go",
+      "sha256": "70c31809b1d42f9b4b7da83d80f49afcae508455c04314870d9dea8f6d9c961b"
+    },
+    {
+      "path": "apps/agentshield/internal/export/export.go",
+      "sha256": "e0704b33637e6be2fbbf2c3b7822f27f17456289784a97850ff2cc3c95a95026"
+    },
+    {
+      "path": "apps/agentshield/internal/export/export_test.go",
+      "sha256": "3eb58a19192be229349bce6831d192c607cc5461df3b69b900eb13cc96ab0540"
+    },
+    {
+      "path": "apps/agentshield/internal/export/privacy.go",
+      "sha256": "c3c03d37eadebd1f9329c1fb5a14a0178b3ca5c4a8902a2e163da46aabdcb293"
+    },
+    {
+      "path": "apps/agentshield/internal/export/privacy_test.go",
+      "sha256": "6c18107ab3e7290759567b98ef6afbe1cfc23504798b6b971f8a359cbbbbca26"
+    },
+    {
+      "path": "apps/agentshield/internal/export/seal.go",
+      "sha256": "4ba802f9fb602058480346869e123618b04bd6b1cac08fd7cc36096112193a94"
+    },
+    {
+      "path": "apps/agentshield/internal/export/seal_test.go",
+      "sha256": "e77ccfbab0b56af440f0ddb21140801df1f72eef73d529750bbfd9fbf23637f7"
+    },
+    {
+      "path": "apps/agentshield/internal/fileopen/open_regular_unix.go",
+      "sha256": "69f61125211dd54546a0d9bfd8aade9d78a3562e93dd556caf9335b5c36216b1"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/challenge.go",
+      "sha256": "007eb553afc3827b1382d2c8fa89112d2190913804327d3867e615fcdd084b9a"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/challenge_test.go",
+      "sha256": "7b4caa0ccd0ddb6048ed81761f7bcdd94a90b973d89e898802082ae83783b2d3"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/draft.go",
+      "sha256": "8a580075ff6a8dbac2d66b760d9cfb328055f287c002315c35450eb25338212b"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/draft_test.go",
+      "sha256": "c217509556c6fd2a128285a8b792e9dc8eb8157d46f7d8ec784fa1d4973cb311"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/expiry.go",
+      "sha256": "bf1462d963e370aabcd9159d100b6caa334550d9e61c32a90f6300373cda3875"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/expiry_test.go",
+      "sha256": "3edcd9f41fe7bf43b99efda80477ab2c5fcbf093ef0b7ed2bf66627fa058a4f6"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/grant.go",
+      "sha256": "4bd7db290307a3ebc070fad2939c4abd44c7c5fcdd7ac67cda9fc6a6b4a831be"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/grant_test.go",
+      "sha256": "49a08e38c57eb93963b302bb8764e553c7157296b3a58e675d72f5b89612e3f6"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/import.go",
+      "sha256": "df286cf9f89d12abebadc247b602dd16da90446f0802ea85b38cd9755af6062c"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/patch.go",
+      "sha256": "ad31f6da96c385a12b72dc1d3e51dd4e884c81c2153ce6a421f45afdca35984f"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/patch_approval_test.go",
+      "sha256": "b4c602395a0788239273bddb7f485eccf71f33b725d73023c571b9880cdf9f88"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/permission_digest.go",
+      "sha256": "6a5ec51db5a5ecec2866cab28f224aab25ea768d93c7d7f72045a2ea91944c58"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/permission_digest_test.go",
+      "sha256": "af330910b4e575fcaba49a9eacec1fdb7a4465de5fa6b314fd43e214c1ac7db7"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/policy.go",
+      "sha256": "c6fcfcfefeb1c20abe948911deae5b4766b720b241502c5ef2cc226946faad77"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/policy_vectors_test.go",
+      "sha256": "22f83045ba2d022c9d950c65c62896021b5ab2ae31018e52d0f0018245e61e51"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/resources.go",
+      "sha256": "ca22aca7794c2947b287232b8cfee210b779515be4f4eff8495e8adcf35551d4"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/resources_test.go",
+      "sha256": "2f3bc110777905d8eaf879f04ede54a5f42c28454407e05dec83fa0f0c569f0e"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/runtime_tools.go",
+      "sha256": "5d3d4c88730cad000967893626994dd2c05280fce75eeffa22dac15428265601"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/tool_approval.go",
+      "sha256": "293b06f7152f5c7874b2b93dd2828fa837494ca846a9d57b8c2042a377341f71"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/tool_approval_test.go",
+      "sha256": "e606af63e98ab6955e1677969f46dd0aed03bb4e7bf8d9992f29f5d4ae2c6458"
+    },
+    {
+      "path": "apps/agentshield/internal/hermeshome/roots.go",
+      "sha256": "3221dafb241c7d655199b50889c89db5698f0390da8fe6dbaf56a030aa00cac9"
+    },
+    {
+      "path": "apps/agentshield/internal/hermeshome/roots_test.go",
+      "sha256": "17293fa87c99f5fdb9af5a37bba142c04e11fd0d0321c3e0e9663fe1c878e2e1"
+    },
+    {
+      "path": "apps/agentshield/internal/importsource/source.go",
+      "sha256": "40348faf2bab19d329e6f2d07cba7d1806a12bc45d494320beb12ce3b60df0c3"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/binding.go",
+      "sha256": "dbc578e3003ee4fa4e0bfab0d50daf16e0dc1a3bba7128c41fb368b23e2dea6d"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/completion_test.go",
+      "sha256": "ef6008434d9ee255fa0828dc0a40be9aa023469f7e60f6f9ed7c7eee496c691d"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/context.go",
+      "sha256": "bd834517c4bb451f296767460d439427987ac0288b79d0b0b46f3a5aa85128a3"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/context_test.go",
+      "sha256": "9765f3c85047c0339383ed01971982ca5378d1f67fa4cfd2912c78b49e2d7e2d"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/grant_selection.go",
+      "sha256": "d098aabceefa7f24c4102937201a58260a11e7de10f3cc11e04cdd6bf001fe39"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/grant_selection_test.go",
+      "sha256": "8310009ad48a47b71597731bb2a1c32bd4114a92122cdc1bb487c0d4e0f7bd19"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/intent_revocation.go",
+      "sha256": "0bd5136fbf6aba5301fa87b205e86faa77da9f5a8e7a3ccd67eb0b642e8d1b1f"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/intent_revocation_test.go",
+      "sha256": "3e18d7f7636c5cd74d1a986443edc5109eab2b79af49a878b049b0886839e73a"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/json_equal.go",
+      "sha256": "f17b7234ad725652819e4270e04e53ff5149e972db98a63644749089471114b4"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/matcher.go",
+      "sha256": "7e57befb9bd7f8d7a856ec4baf76c63847ecd8ae0721d37f5781594d858c8fe0"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/matcher_vectors_test.go",
+      "sha256": "4949dd0f7d9096a0b4aa67979f1c2b427280680259ab5a6be3d8c0b8b6fdde1a"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/revocation.go",
+      "sha256": "e29d1369b89edbfff5661700f69591e97ee372ee650d19a6af74fe2f9bdda0c6"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/revocation_test.go",
+      "sha256": "3a9b9e81c34f0014f76378c8f1d52ed90dddbc8d944232df863e8bf913301701"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/store.go",
+      "sha256": "4793edb66f58093985d2b814972359cc6e4115cb2b7b96645fc66d78593b6777"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/store_test.go",
+      "sha256": "4fc1f830f53780b9575a65e24c9324f3f5933dfb56bebe266767794c98f18cc6"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/types.go",
+      "sha256": "b2c7b521dbbb9d55a9f426a45b5b984c3a2c9120c10fd5e727aca613cabbb3f9"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/v3_test.go",
+      "sha256": "dcb8438d78010a3256c061bcfdb2b65f3a79ec9f8bb5fd4acdd6d500c8803a7c"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/validate.go",
+      "sha256": "73501c1ed42a032f932333537a6c9b402b37620954391a05fa088d4fc132f9d0"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/vector_test.go",
+      "sha256": "b1e42adc78680151e681fa92ec95db9956164ed39049da6dccdb16a2dd4477f7"
+    },
+    {
+      "path": "apps/agentshield/internal/inventory/connectors.go",
+      "sha256": "8c4c456c4f1b0f768bdecbe1cbd5a968d2a5d29e93e793bd24f3d8898cdb5242"
+    },
+    {
+      "path": "apps/agentshield/internal/inventory/discovery.go",
+      "sha256": "4d61033aeb5cef91ac08be8ee6e599f803c9d28a3b0b26270644e863477951aa"
+    },
+    {
+      "path": "apps/agentshield/internal/inventory/discovery_test.go",
+      "sha256": "63c20f106302563e708a33898aecf986d6cbf8493f3cbb6d054a09c66d48c727"
+    },
+    {
+      "path": "apps/agentshield/internal/inventory/inventory.go",
+      "sha256": "2a095e9adb0592c856cdc842492b954066f3075495c83ada336ef002da4e7665"
+    },
+    {
+      "path": "apps/agentshield/internal/inventory/inventory_test.go",
+      "sha256": "093f0b40303dc3c5861bd6c8bf699c438fc4bac1f2f41006968b3be629ee0b4f"
+    },
+    {
+      "path": "apps/agentshield/internal/inventory/mcp.go",
+      "sha256": "5184b16b70ac96f51faa86181f26c729b23b29879b7f36649db643df42f1d706"
+    },
+    {
+      "path": "apps/agentshield/internal/inventory/preview.go",
+      "sha256": "9a815c2e8e8cd6d1203e17be305260a370b280b99a5f641030c42dfeb96bba26"
+    },
+    {
+      "path": "apps/agentshield/internal/inventory/yamlfacts.go",
+      "sha256": "b3b093dab1ce7e637af2ba55beadb965603c90fca119c2ca22b5db5b7883e159"
+    },
+    {
+      "path": "apps/agentshield/internal/ledger/discovery_migration_test.go",
+      "sha256": "4cdbbfc75538f5d1a8bb9a56e4b11b9ee90d6094e86fa2c057a942330a95c93b"
+    },
+    {
+      "path": "apps/agentshield/internal/ledger/integrity_test.go",
+      "sha256": "2c7ebdbcfbf740d178cc0d9d8097c846befe742068bea0009cf65eddf1b87701"
+    },
+    {
+      "path": "apps/agentshield/internal/ledger/ledger.go",
+      "sha256": "57ef95881d0a06d7ca2658df0c83a8d7dbe449ef1b86a2f9ef76b32c73c2691e"
+    },
+    {
+      "path": "apps/agentshield/internal/ledger/ledger_test.go",
+      "sha256": "d9de00bc2b66fbb854bf6d7883109875327fe0615dad2d12fbb3f00c5d79a0d6"
+    },
+    {
+      "path": "apps/agentshield/internal/ledger/lifecycle.go",
+      "sha256": "6e8cc6449f33de3f79cdee35d053c6513138395bb0f0edcc939e0522de66f97d"
+    },
+    {
+      "path": "apps/agentshield/internal/ledger/lifecycle_test.go",
+      "sha256": "dda70f474dcfde0284395e7622d70ec50967dd17f905a166f8ddc659b73c5366"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/client.go",
+      "sha256": "35212a45c509577c58ed13c93f8bdcf2dfe574ccae6d499b4ac7586a817255c7"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/client_test.go",
+      "sha256": "3210deedf9cee0f2bf6e5a5f853c4773ad5ee9b8333d3023449e1c358e3a68a7"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/command.go",
+      "sha256": "42bb9a4ab2cfbb4a3256efa3102a7869c4b7881a33763b6414e65981a7a39352"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/diagnose.go",
+      "sha256": "138ce249544a77f939bf0166cd79d47cb664d92fc382969d0f57851b2b127ca3"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/diagnose_test.go",
+      "sha256": "e363e025fa59f16ddb49bb92483d1f4f72b4cb2c7270fcf8cf33d904e8967317"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/identity.go",
+      "sha256": "8c608afd2dde76edeb35864101dcafdb69b3d9fddb23542031803bba28fe8f19"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/policy.go",
+      "sha256": "4bd6fc3420714f49635f899727e211b13afa231b1b1078f8596e6de462e80142"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/types.go",
+      "sha256": "57e68613dd738a7c4b7aedd58faa201eb563b7a40223ef6e36e100aaad3f1443"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/yamlkit.go",
+      "sha256": "e2b6c108a414d464f30df802bf14f31ad154f3931d657ffeb5e000824a923e01"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/yamlkit_test.go",
+      "sha256": "20690ff15c7e58e767971e819d093571202ead243f4c03a53812d686fde48e1d"
+    },
+    {
+      "path": "apps/agentshield/internal/pending/pending.go",
+      "sha256": "6967629aa94794f3d53325aea6782dd2f71f3b3c3d78ba3b54f89e8d535f4610"
+    },
+    {
+      "path": "apps/agentshield/internal/pending/pending_test.go",
+      "sha256": "229fbddeef09286fe61b0863eed4237a90f92aea7ac535c0c03a10738343ac19"
+    },
+    {
+      "path": "apps/agentshield/internal/pending/promote.go",
+      "sha256": "4d23cd8eae528c6014af80caf33cdf07f94b2f55d583aa09ef6243d7a8f0974a"
+    },
+    {
+      "path": "apps/agentshield/internal/pending/promote_test.go",
+      "sha256": "e077f58a57ad778a6ce4015450f1c16b2fe1c2584cba59b2c9bc4f5c4633673e"
+    },
+    {
+      "path": "apps/agentshield/internal/perfbaseline/intent.go",
+      "sha256": "6f594259911124e664bba6c86f2cae4a023cb577e45b6331ca718b199bcbbf93"
+    },
+    {
+      "path": "apps/agentshield/internal/perfbaseline/intent_test.go",
+      "sha256": "4fdbcd7c3ffc78cb0ead159211bbb727bfbc01f9acd90a17111f0cc6cc02e6c4"
+    },
+    {
+      "path": "apps/agentshield/internal/perfbaseline/perfbaseline.go",
+      "sha256": "05f9a886dcaad876baded84f46e25822b2ce2da9376fc14d6aa1ee2e7f82d4b4"
+    },
+    {
+      "path": "apps/agentshield/internal/perfbaseline/perfbaseline_test.go",
+      "sha256": "2df5c84298bd5bdd8e91fb8affa3b99d960f732db0a8b0b70912e456b7d8cdd5"
+    },
+    {
+      "path": "apps/agentshield/internal/product/product.go",
+      "sha256": "2c39c5f829c6c1d98ce9ebc2553f7044d4ef727e6cfaed6064ca4906542e0dc3"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/aggregation_test.go",
+      "sha256": "ec3beb6bff9b88ba40f8182342000d53697b254f03fd71a244a306ca3330d61f"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/authority.go",
+      "sha256": "a05679b35bf6baeac097f1b9ee979902d606ba07419f7aab8273009f66bda1c0"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/authority_test.go",
+      "sha256": "9cd2b9a0d384bb311af49b26ce1ae96f04e9b50a218895cacfa16f729719fb68"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/capacity_test.go",
+      "sha256": "16e5207ad8e246f8e0ed48aba4948bf8c59281c4f09c648e34308cd7514acb23"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/defaults.go",
+      "sha256": "278fde9b20ad1d9c1f4beb3628a8ef3a67b85863a8baa426f77dfea42356f426"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/defaults_test.go",
+      "sha256": "71f371ceb5ea244b63f116bcb9814333ebec6923effcad4044ad6f2e449e3255"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/graph.go",
+      "sha256": "d73c25840040bd5ed83a6017c7049f25d77555ef379182a313612027144fd324"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/graph_integrity_test.go",
+      "sha256": "5f432e2ef51ef460b5c85ae19e58b7617b9882431113240c0434c9599852a6d3"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/graph_test.go",
+      "sha256": "453a615ea3a06da70603cfbea1d4e6791e7db33cb1c360e3010c4afa42ec5196"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/matcher.go",
+      "sha256": "7068d88024a7c783248f32d4adb4f6bc91ecf98b11d0d260bb5693a44c834dc6"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/matcher_test.go",
+      "sha256": "242bde5e43f5899947f441c65ffb347294135d2d0d3fa7c782af499571f9c93e"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/report.go",
+      "sha256": "fb0af08685ce2969fdd3775d7bcd4b259abad3e9b920d79ce128bb7e136fc1e7"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/report_test.go",
+      "sha256": "b607d3e4e0cd1806cc4a78c737fa112c75f9eb99efe9f50a70c61e74fa65feec"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/select.go",
+      "sha256": "fb7c877e545a075fc5b354f623eb92a3028b58ae7540697ffe3e9470bcfef6e4"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/select_test.go",
+      "sha256": "83151cf71142e3f8ee9345390d8ad869ff81dca68134c58c64ee2c452ceeb6d0"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/store.go",
+      "sha256": "418b36ccd82dafa1c5493066062be56adca7fbb492301905ee05988eb06bd64a"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/store_test.go",
+      "sha256": "d0a94e73aa10f51e4f729ae9b915323e67b49262c00f8530eab7c1ba6d3cea86"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/types.go",
+      "sha256": "75a5bf5cc8fde7b03985bf7497f1aaddc94a3ddb0df8f6c3b691f0d51f2bd220"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/validate.go",
+      "sha256": "4019e1e8d27e8405b745b29a625d65e53344c0d14af1f30d6ec0bcc2d1affa08"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/validate_test.go",
+      "sha256": "00d687bb8afe031aa13346284f30dbe812d03a58d8b1dd20b385c1a2fed8d608"
+    },
+    {
+      "path": "apps/agentshield/internal/provenance/vector_test.go",
+      "sha256": "3ef63c8e4b9f4079901cf144384356eea61fedcf1df3583cc08c75698ec5e026"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/action_expiry_test.go",
+      "sha256": "e004b5762e3bd9b7c723ff9c90ae4fd05394882f45e2bc6455d35f663470612e"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/action_state.go",
+      "sha256": "b0ad87e634fbd5eb0c82b72b479f2292457bb45300bcb035901d393637a02fc7"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/action_state_test.go",
+      "sha256": "abd4d915368903af9a2cfd8853a81c8102199b6713cbe1ee869b7026db76d519"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/authority_gate_test.go",
+      "sha256": "8d417f12b022966d61f78bac7df23cffb9ef68f52a327d336e5506624a2d342f"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/binding_revocation_test.go",
+      "sha256": "b942b1f065a2f9152fedff46f852e63605b8d0dc8ed16eea514a77f86d3820ab"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/chain.go",
+      "sha256": "5f95d61af1203dce8fa5dc2061132268ab7ac2a7915accfa1cfaf7f41e0efb99"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/checkpoint.go",
+      "sha256": "3a7d6401363b10aec441cf6e344ac17c1f441ae7f0dbe193d623f52a84eaf056"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/checkpoint_test.go",
+      "sha256": "756c4a84545e12ee9804a7601df8477ed06cb763592b87d3e41ec72984fbfa48"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/confirmations.go",
+      "sha256": "4d5ec67b9b1b51a3e2cccd86cf52d2135f27cd895343772b05f02313c1700622"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/confirmations_test.go",
+      "sha256": "e8b6c7a4e47e68bd1fb99ec606f01e6c42337b2fa3f172ea2ef79b099322138b"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/context.go",
+      "sha256": "85de9f5aebd7915abb812cc3c589c36e9ff1ffa93ce5514f48faf993bfcade83"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/context_test.go",
+      "sha256": "ee878443f009cb2ee743cf6769e1ec3c9088b18228b5fd31832d8e8711c7fb23"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/crash_recovery_test.go",
+      "sha256": "6797ad1e5cd78887ff4307343fda4223330be0c34d0a4280b60c8716f3e74a18"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/descriptor_test.go",
+      "sha256": "f072f0cc3a97cccf642306dccdac1dd7ebf429f16468df5559c45d342ffe3ad2"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/effect_action.go",
+      "sha256": "4b3bd2ad2c03a94dce2fca33b7433c2b9fab9cc5f23004851932af5a941e4cd8"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/effect_action_test.go",
+      "sha256": "44d363edf2d902ef127ea82533f2fe057e846b9c0b8beb2e831550433f299579"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/effect_approval_time_test.go",
+      "sha256": "8f38477475adf9803ad23723407f4d0fdb6ba63e53e684565875de7f458c71a7"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/effect_history.go",
+      "sha256": "eb86ba56039496c9092dab315734a52a09b9506a09fb75f7c5a532cacc6424ff"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/effect_history_test.go",
+      "sha256": "77212cda1b67347b302088d40ed58008dd5cac51b3403033869c0576540fba97"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/engine.go",
+      "sha256": "46eb30db5b9f535b222e96a72a228b60cfbca1d010a27ca6121c08ae382c39e5"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/grant_expiry_test.go",
+      "sha256": "4237cf36ac19117c36b6f83a3541d3313a7ed2eb62dcb3a2f05fd843f001539e"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/grant_selection_test.go",
+      "sha256": "7524d6420c25e02e5567348abf78d95099b5ebf6c6deecc170132248b1e7c06c"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/hold_status.go",
+      "sha256": "f8844f2a706b5ab313ed5123722584f697357ed60ace76a7f9bd43932ddc63f8"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/hold_status_test.go",
+      "sha256": "7ca02cd083e0628cb6d867be12ee26a3973de4fe0411234a59411f51120bf9e5"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/hold_test.go",
+      "sha256": "4b8c6ae80db8178e2a9ddddcca4f35362e7f4d444c7f59481e250d44aafb9409"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/intent.go",
+      "sha256": "62b4c7ed3493a805cf12656567aecdc2e3c88e8fdb8bf8b1c681d1ede700b0df"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/intent_revocation_test.go",
+      "sha256": "1fd6f7239fee38c9d61faaf3cd80e4a09eef6b4cc28378e278e65175dba9a879"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/intent_test.go",
+      "sha256": "61cd57bcfb83632e322adaa7eb3beafd754b4d0f3fc00611ce82a7b5376879f3"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/message_pii_test.go",
+      "sha256": "9f61cd226932460283ffb8c8ab3383c45ec2c604473cb89d732269b13280756c"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/patch_approval_test.go",
+      "sha256": "ebde54de989ea4f337a78afe70cb1ac3d5f0068fe0eb3f3bbcbaa625e72f2780"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/pending_promote_test.go",
+      "sha256": "aa61c367ca89098ac02d2cc9e7593e5a9ac5c0ff637ae32c1e33939e9df198c9"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/performance_test.go",
+      "sha256": "7653e0ef9f298cc62d262830929102e3906d550b788b13e4d8173fc59f9940df"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/provenance.go",
+      "sha256": "623c3d35e30edda84edd7096439e2637da98883db20f4dbaf5b47ad55f593abd"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/provenance_concurrency_test.go",
+      "sha256": "928c3a148f83510fe0326f8cc7e442ce3f4eba9c6daeef939683f0ff8682035c"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/provenance_test.go",
+      "sha256": "5d05c18be44f6db21c4d51d31850d35cffa26e396f2f946b78043d53e0fb0fc8"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/read_limited.go",
+      "sha256": "5a1a19297bc06c5102357f2cc8b2bedfa8389546e446226e4372a5a9a4f1d0e2"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/read_limited_test.go",
+      "sha256": "2ae0816503db5bd94b564bd6ef8dcd7edb06535b5ddfe0a54614cb93f843ec7b"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/receipt_test.go",
+      "sha256": "365635fbff7a3916890a75328df91bae42fcb8901a0486db03218990602526d8"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/resource_scope.go",
+      "sha256": "a55e6ed7fe211821dbcd03cb2268aa702cd08f42fb89e3c1316445edba8178d9"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/resource_scope_test.go",
+      "sha256": "f580d4c441ddc76ee4a779e712db37462a003e167edf1cbe3845207d1bf42827"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/session_capacity_test.go",
+      "sha256": "e00ee32d657dafc18940578b545919342c03d323568b66a28a564e4abf220f56"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/session_idle_test.go",
+      "sha256": "b74d65d932e2875b3bcebb1f0e65abf82ff649426dcd64e46ce4c99f03a85347"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/task_boundary_test.go",
+      "sha256": "fc5e7f40b70a0fce5aa597e63b4f05fd012839e06e8e3711f887537aa55a18d0"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/timing_test.go",
+      "sha256": "78899c8804f75593b5ac531009d90a6f3e0855ea7e48d6e7ca3d8e6a167ab59e"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/tool_approval_test.go",
+      "sha256": "76d2c898cbe4925a4d1242c2d275f7ebb8620e98a05f3b024389a8c93490433d"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/tool_deny_test.go",
+      "sha256": "fddb1360f7b763a2b2ad876fe1cc159e0d0b1aecb1114c7179b1cc0f28c623ab"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/vectors_test.go",
+      "sha256": "ff1cb337257a014ab429ebf92aa45956c2d220d417c11de643b0130c9f4a0fea"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/verify_scope_test.go",
+      "sha256": "9766362a90e11796d13fca80f8bc090cfc88f4bc8755f3fa0a81bab3a347888b"
+    },
+    {
+      "path": "apps/agentshield/internal/rulepack/data/threat_rules.v1.json",
+      "sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051"
+    },
+    {
+      "path": "apps/agentshield/internal/rulepack/rulepack.go",
+      "sha256": "4976295bfac873d6bcf33efc40e31fdba9c38cd5edf8cec5a8a2d93126e8f96b"
+    },
+    {
+      "path": "apps/agentshield/internal/rulepack/rulepack_test.go",
+      "sha256": "bdf6e14a482fc66dfe5583929386c4016b4bf6f73e639a456e269daf9ed2f479"
+    },
+    {
+      "path": "apps/agentshield/internal/rulepack/rulepack_vectors_test.go",
+      "sha256": "5d42439c34e4b50bf514e236e316a4d6f53a2017ea77a914783556c8a867823b"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/actionid.go",
+      "sha256": "feb7dcb184daba3443554f6018525d7028f51f7b1cdb024c37e21ad64ea17555"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/budget.go",
+      "sha256": "a51918b21f7eb8beedeb66061c28b33407734c8651a087fc231d455e8a3cd566"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/budget_test.go",
+      "sha256": "a7c270692f4a4da7cd702e85e7d22bfa6c257534c0389b9b59584236a5a67f3b"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/describe.go",
+      "sha256": "1557138fb4ec71c7f833de87a2237accebeb991efbf0605483b13a699085c442"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/describe_test.go",
+      "sha256": "253e119337e6146abf2dfbe16971eddb4ee8a4a71a8832927b572ff2e2c732e0"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/hints.go",
+      "sha256": "3f5746152e38c6618f4b901cf7df69ed53079eef5125f7626e7e893cdb31f87c"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/normalize.go",
+      "sha256": "7ae10d2ce7a18ab8a1e0d50972def53f0a0b5b5f08337052a6306a0ae1da7890"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/normalize_test.go",
+      "sha256": "a77ef2d278cd3407524aeeb34328041d6383a53d402e51a9b11cedbe4d3f0047"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/payload_targets_test.go",
+      "sha256": "977ba62ab6d8c9eaf94d76d6a41f75962ac3151c2a62a30f417d7d90b645e91f"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/report_verification_test.go",
+      "sha256": "7d9ebfbd4a91fbf08cca810d34113a0c6e40830359f2a55c8e9d3193f2fdac97"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/resources.go",
+      "sha256": "450012560547395e7f46787c40cc01c83decfdaa2ad69e923e9d6e1e7670c1db"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/resources_test.go",
+      "sha256": "da8538d0e27a89f3584a127a8a04a2553c228eb857c2d0391f07928f842f6fa1"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/types.go",
+      "sha256": "0ec86605f253404f501c8547d67b28288d9f5be315f601fa115b0352409634e1"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/vector_test.go",
+      "sha256": "c9b0bc5a4388f8768540b30892db04b8ae24f1c27a84822e2de14a99ae6bf3f1"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeauthz/gate.go",
+      "sha256": "a1a93919990b4d85ec5f33ad9de4996716e20ab7b40bc24cfdc52bdb73ce1347"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimecheck/authority.go",
+      "sha256": "3cd3a2a4d588ab2ee26e93334114a8fb016f596b391d7ac4e2b4a2ceb7dbba4b"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimecheck/contracts_test.go",
+      "sha256": "9e408319193fa14da7c53b2fdb82b1b6095fcc52adba444183d16edc7164874f"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimecheck/execute.go",
+      "sha256": "0a3b4cf12a62f6108d7c30b2caae905ec4e3312e2c6f6a190866941e07435358"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimecheck/manager.go",
+      "sha256": "65c7065eec56e518225d666110b488eea670ece4fa48100ae5b1a3efe05c2ca7"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimecheck/manager_test.go",
+      "sha256": "bd63f3be5fe5f702084703c0c5386851ad6f4a39fbff96a56eca093e6159ab36"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimecheck/native.go",
+      "sha256": "18bc9bae61943b422969dfe84f781b735eff8afd0f00eadaba40d29321394668"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimecheck/records.go",
+      "sha256": "5c4bd01fab6e83877ac19e9030e4c31a4db95b4eadb15a138df30fdeed57edd9"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimecheck/recovery_test.go",
+      "sha256": "c2e5e4ab5ed9779d571fbda96d0d5a37ae3a6f5020b29ba5738ce22cb93343f8"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimecheck/types.go",
+      "sha256": "091bf036b56af1b3c0fd9f91f2b56d2424e60b760c96feb99bcd582e5f0ba92f"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeidentity/files.go",
+      "sha256": "ffb41af24e7ba0605c1f7ebb37a31f63b48a4b272bff811cbd71d94a34d6cc73"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeidentity/session.go",
+      "sha256": "9647ec3aad8aa9f3337cccaf81485e686117b36e2b9f06708b53837ffe1ea16d"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeidentity/session_test.go",
+      "sha256": "d09bc172407bfbae474a3d6af3b8bcd989617fc81cc2d8aad8ccd046dba8bd57"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeidentity/store.go",
+      "sha256": "be4f9e5b404b15fac8cdda3ef3cc20116980afbd265d8b95b5f533e58eefd946"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeidentity/store_test.go",
+      "sha256": "b98e00baf6c304d95159b9138416a9cf7d09e39a7142f3b462f14185f10cb2b2"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeidentity/summary.go",
+      "sha256": "a8d4405133c1e453f963ffbf55dace12b591fc7c6ab8baa2e1c8777ae6b32e30"
+    },
+    {
+      "path": "apps/agentshield/internal/server/adapter_diagnostics.go",
+      "sha256": "fb6d4b29de8717e9e9fbaf96f6c00586be529079cb9281ce33261fdb98f37e63"
+    },
+    {
+      "path": "apps/agentshield/internal/server/adapter_diagnostics_test.go",
+      "sha256": "9deae886bcb2a56094dff88a8f487594f9855db779f65dcdbef14af16c3086c1"
+    },
+    {
+      "path": "apps/agentshield/internal/server/adapter_http.go",
+      "sha256": "e2a510c61f771e62a164e60de24486285af099911f26bd54a6588bdada320834"
+    },
+    {
+      "path": "apps/agentshield/internal/server/adapter_instances.go",
+      "sha256": "fc2106b508e756c711ef4ca17b649ec151038f90ff6a049c28481193dc5b5208"
+    },
+    {
+      "path": "apps/agentshield/internal/server/adapter_instances_test.go",
+      "sha256": "3804b5c8964f292835bc7ca22cf8c8a5578220d93e1078188caa8618a315dbd7"
+    },
+    {
+      "path": "apps/agentshield/internal/server/adapter_plan_test.go",
+      "sha256": "fd6c7caab21080635fc01aefde710142a5b38eb9c5a8b22883791f6fddbf1f65"
+    },
+    {
+      "path": "apps/agentshield/internal/server/authz.go",
+      "sha256": "9b8ef36908fcde1114efb70d7f78b3620a9542cb9efa399db2db46607a12f2cc"
+    },
+    {
+      "path": "apps/agentshield/internal/server/authz_test.go",
+      "sha256": "f3d24a39a48dac9fcb6db92a3f4beb7d4e26d0934ec04a5f25e99cbacb51ebc2"
+    },
+    {
+      "path": "apps/agentshield/internal/server/binding_revocation_test.go",
+      "sha256": "360f10cff5205c8820edc8d2e8c22f6a642aa048b9cc0e16e70eb5f3e64c5048"
+    },
+    {
+      "path": "apps/agentshield/internal/server/cas_test.go",
+      "sha256": "f6da2de0db9c65fcc010e4a8e4cb8fff1990876eba1249f7557baff2055100b0"
+    },
+    {
+      "path": "apps/agentshield/internal/server/challenge_test.go",
+      "sha256": "e2762dedaf0adc4cf65103d9f8bb34c6e5073bea2155e9c80022b39f6fddd554"
+    },
+    {
+      "path": "apps/agentshield/internal/server/codebuddy_config_test.go",
+      "sha256": "c64242f3ef7ba42ddfc26d52dd5655f6462ed3e3d2563d59398b785d86edddc5"
+    },
+    {
+      "path": "apps/agentshield/internal/server/completion_http.go",
+      "sha256": "8c2c8f92508c629ce6366e59f931f7b4122f8746525783818cb5e6fff084d9d7"
+    },
+    {
+      "path": "apps/agentshield/internal/server/completion_http_test.go",
+      "sha256": "d9bf4b4651fe9b94f6f6dd84bce2bb7c639cbe635e6444384f44ef7aede0c34e"
+    },
+    {
+      "path": "apps/agentshield/internal/server/confirmations.go",
+      "sha256": "3809dd98078c1cca5095373f54db83146451132d23c61cf67672c36b17392ed2"
+    },
+    {
+      "path": "apps/agentshield/internal/server/confirmations_test.go",
+      "sha256": "9d5aa98a30d540a7167e847e644510bb6f2b2c6accd09e8c8561cafa0c562ffe"
+    },
+    {
+      "path": "apps/agentshield/internal/server/context_http.go",
+      "sha256": "7dcbcd7bcea57801c99c7f9f92482523eb4cc3a66e603dd4802b0aa5d8f50f16"
+    },
+    {
+      "path": "apps/agentshield/internal/server/context_http_test.go",
+      "sha256": "553b8eb2ad343c28c3b715b48b7522d7a7b06098609b5f2cb65f0307d1187fc6"
+    },
+    {
+      "path": "apps/agentshield/internal/server/discovery_http.go",
+      "sha256": "246d1e239ed471395ec2dcd733a33ae68a0cd966abac34c3da0e071f231f0ac5"
+    },
+    {
+      "path": "apps/agentshield/internal/server/discovery_http_test.go",
+      "sha256": "0189f724c3211073670783b8f4e884c1c2cabe8a95c08eacc815af1bffe32946"
+    },
+    {
+      "path": "apps/agentshield/internal/server/effect_http.go",
+      "sha256": "208c1fa9a4f6467a35667a502acbf6b7c08c0f4d5eb4858c5e8deab523fcd770"
+    },
+    {
+      "path": "apps/agentshield/internal/server/effect_http_test.go",
+      "sha256": "55db74d7211160c58a40ffdd31ec424d97acd9c13dbff9767389053c45db5c62"
+    },
+    {
+      "path": "apps/agentshield/internal/server/file_observation_http.go",
+      "sha256": "1909e73e322f27c6085cb8de616968b5e9d02ca9dd337071d9d61486b0ccc65c"
+    },
+    {
+      "path": "apps/agentshield/internal/server/file_observation_http_test.go",
+      "sha256": "57413b6c33227d0eeeda1bdbebf739ff9ca363fedb85bd3ae5bf7740347120a0"
+    },
+    {
+      "path": "apps/agentshield/internal/server/grant_binding_test.go",
+      "sha256": "23c449f682b6d494d9ee031bc0923b49130a5b90a8bb3edc1c17bf551faeefa7"
+    },
+    {
+      "path": "apps/agentshield/internal/server/grant_draft.go",
+      "sha256": "67a31edf58e1df23d53d1b4e08b21c30da4c9de0435ad70a29eb38d313a44a67"
+    },
+    {
+      "path": "apps/agentshield/internal/server/grant_draft_test.go",
+      "sha256": "3cac4afee67cb739824f1a5e4737a5fcb954dfcdae2585ab518ce15ce8a1f7ed"
+    },
+    {
+      "path": "apps/agentshield/internal/server/grant_expiry.go",
+      "sha256": "f304a8c15b05771caa8422c1d12091777231a1efa0f1736e18b7efa313e8a541"
+    },
+    {
+      "path": "apps/agentshield/internal/server/grant_expiry_test.go",
+      "sha256": "c5bef4931605af4508c31229aa9e0aa214eb9fc2cb18b3bf4ba6afebfed51c03"
+    },
+    {
+      "path": "apps/agentshield/internal/server/grant_resources.go",
+      "sha256": "ef5e9f6adbc48f348789d107a9675e4b64cf661a72e9390750dc2cf08efc5dd5"
+    },
+    {
+      "path": "apps/agentshield/internal/server/grant_resources_test.go",
+      "sha256": "6d42f6973fc5360ae757a6e8a08d4612f58af2b1c2b6aefe743d59b1b1cccc13"
+    },
+    {
+      "path": "apps/agentshield/internal/server/hold_status.go",
+      "sha256": "555ea3671f39b3e8fd97f3eb97f2c9744b61e6e59c7c12007b2d916d907c67da"
+    },
+    {
+      "path": "apps/agentshield/internal/server/integrity_test.go",
+      "sha256": "a2118b6a2bf16722877fb145fe2d282798fad2709afe526f144a7ea07cd4f9a2"
+    },
+    {
+      "path": "apps/agentshield/internal/server/intent_hold_test.go",
+      "sha256": "096a22b28e8e34d0d6d54ba782b27809928f1a4c1cf0e1cc9beb5c54900fb9b3"
+    },
+    {
+      "path": "apps/agentshield/internal/server/intent_http.go",
+      "sha256": "1bb698701ecd19c500152f98a4133aa3bd9aec4cbc63f555b520df7409b6c142"
+    },
+    {
+      "path": "apps/agentshield/internal/server/intent_http_test.go",
+      "sha256": "368564593bc4a3978a5633c1fd322caa6f4f2ed3213252335aa69d9903b2e538"
+    },
+    {
+      "path": "apps/agentshield/internal/server/intent_revocation_http_test.go",
+      "sha256": "b8db30c6421ebbce9a1db9e9ef1ad0710ef7c2f06faa865509a856e61f75ed27"
+    },
+    {
+      "path": "apps/agentshield/internal/server/ledger_http.go",
+      "sha256": "c87e42eb276b1d8f9e5c2b22366c685121d8e724c5b99a2ea3d422e9cc84d1e7"
+    },
+    {
+      "path": "apps/agentshield/internal/server/network_observation_http.go",
+      "sha256": "207aa6a093a68c3d9031a3fd01e5299408c5a374502c103eb69c26efe1c7fa0d"
+    },
+    {
+      "path": "apps/agentshield/internal/server/network_observation_http_test.go",
+      "sha256": "099f2908c813934d7802e278af95874fe9326d6bd0cee19b7db9823aca70ac19"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_http.go",
+      "sha256": "6cee5bc157c6e750492565fc14d61da321b36cd746a8898be832500b672706b0"
+    },
+    {
+      "path": "apps/agentshield/internal/server/platforms.go",
+      "sha256": "feab7d04e046ef2c67518f1542dd03e63fa94ed6a47e3832a7cc5a2f40e9cf42"
+    },
+    {
+      "path": "apps/agentshield/internal/server/projection_cache_test.go",
+      "sha256": "50b7b68b9a6dc34d00899711ff7b22a41f967314eced2a997f5a1e9687260a0a"
+    },
+    {
+      "path": "apps/agentshield/internal/server/provenance_http.go",
+      "sha256": "8f65279199a985f4fba1cbc93c4ece858588550a8f6f3a93c265d7c9869d4ad1"
+    },
+    {
+      "path": "apps/agentshield/internal/server/provenance_http_test.go",
+      "sha256": "4502b50883dab0680830c5c42fb4a39a52389b70a8bfc89b90ba12db9f2f5645"
+    },
+    {
+      "path": "apps/agentshield/internal/server/provenance_report.go",
+      "sha256": "b494de6215aa5e748ab01822c3729d838afc366c072b9e46ac3e9d33c30e383f"
+    },
+    {
+      "path": "apps/agentshield/internal/server/provenance_report_test.go",
+      "sha256": "6ae117b6b5d1cad667b4fb075e77b952b0a6f330f69375744799ffd452dbf34a"
+    },
+    {
+      "path": "apps/agentshield/internal/server/runtime_check.go",
+      "sha256": "dabc149935185899ad3a29a36a520207e890a4bea03d809f5ddfdb25c221acd7"
+    },
+    {
+      "path": "apps/agentshield/internal/server/runtime_check_test.go",
+      "sha256": "5b0abc22f0c7eac5401f824d768373fce03efd8e350a5e147bccc92ea6246fc0"
+    },
+    {
+      "path": "apps/agentshield/internal/server/runtime_identity.go",
+      "sha256": "dfda20e9533c54c3217fea23b198c177b0f1582cc8daa36cdf4d856c0c91baf8"
+    },
+    {
+      "path": "apps/agentshield/internal/server/runtime_identity_auth.go",
+      "sha256": "3a076eac26baf16e4def7066cfd311c24362e52076f8fa1c3b13c558c475fbb2"
+    },
+    {
+      "path": "apps/agentshield/internal/server/runtime_identity_install_test.go",
+      "sha256": "23f677162cf4c9442d93c97c945b38fdb8c083722bab2dbfeec3e8804dcf02a1"
+    },
+    {
+      "path": "apps/agentshield/internal/server/runtime_identity_test.go",
+      "sha256": "1dc137488652151214b57021cbf2288fa2d1f38d26af9c2f230507aa6bcb03b7"
+    },
+    {
+      "path": "apps/agentshield/internal/server/server.go",
+      "sha256": "4580e6648bdadaf012a63b0c0b75e534f82b08ec205c8daa52644f39f579ef97"
+    },
+    {
+      "path": "apps/agentshield/internal/server/server_test.go",
+      "sha256": "905052040bf98a803a2f591acc0d29a215f7ebcd66ecd6952868455f3bc07aba"
+    },
+    {
+      "path": "apps/agentshield/internal/server/session.go",
+      "sha256": "e9c6e3179552cf539768b59322fa0d1a1f5637205b934557eab51d7cad569003"
+    },
+    {
+      "path": "apps/agentshield/internal/server/session_test.go",
+      "sha256": "d373306b84977076c7356f0cdfad9c6355cb5aeac6db996e99158b1a62ca32c5"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_import.go",
+      "sha256": "c925a9f2ef85abb4fbd93980e3077c3662d8be43017c25d14eebc70b737a9253"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_import_permissions.go",
+      "sha256": "d38b8f78696deb6922611e2493ef94115475cbfc0b338bbeb540163b95d771cb"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_import_permissions_test.go",
+      "sha256": "748335fb271b77b633fbb0e5c0861876e7967defbad56ef610b68b1a90279d3d"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_import_test.go",
+      "sha256": "3d2d2c6c2424cdf367e2fcb74ed61d82d45888ce79151e3cf296add9bad8fdc5"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_install.go",
+      "sha256": "d1dc0acc76cac3c08b3327a2ca03b833ef62888377880cfed1acba3bf43c61ab"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_install_test.go",
+      "sha256": "abb8de9a65ed13204ae179d8e0db0b49f87be1e912ca98d4fa13854a04945c20"
+    },
+    {
+      "path": "apps/agentshield/internal/server/tool_approval.go",
+      "sha256": "b9cd2f2c88b2afe4cadfbc391b289611a8e451382f77d377367907c9cac43da2"
+    },
+    {
+      "path": "apps/agentshield/internal/server/tool_approval_test.go",
+      "sha256": "a8083d494d4e61bb8fb430a90b16fad70297193ac54befa8f90b0a9a134455cd"
+    },
+    {
+      "path": "apps/agentshield/internal/server/tool_effect_report.go",
+      "sha256": "316eb43bfca0a31a201e7fdfcb48b3ffe2c64d41fa72b87a52f8736838590a0a"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/document.go",
+      "sha256": "a44d0eb4a2445e42de59e06d881af8c65e756559345c3db9d52c4febf0db4021"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/document_test.go",
+      "sha256": "c7122477372705af54a0fc9c6bd7d3c3a73351e56c7d8f62b0b3ac711042169f"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/local_doc_vectors_test.go",
+      "sha256": "c9dc07905e4d0cb466e3c2d4426faaada48173b6df26901a829a6b80e3f58690"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/schema.go",
+      "sha256": "3f3ffdf5fd7201f50b00e817d9a65754303c2fa243c377fa42825a845be3334a"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/signing.go",
+      "sha256": "dc1f156377601d0e6c8fd576c2ad3d5fbe28b9c93995ec7016e6c6431ef842ef"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/signing_test.go",
+      "sha256": "f6e906c8f61cfd6e5f6a09573a640683d9d9ee941ca53c39705fd7eb6308617f"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/download.go",
+      "sha256": "a6cc5bcae2d22e483b322f71afd590ae18409e8ffcdee54eb464ebfbddaf24c3"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/download_test.go",
+      "sha256": "f2b04fd73b1c273d122d79488bb70494681a231f6ce6ae57618afc7729d1e2bf"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/install_copy.go",
+      "sha256": "7590d9418a5b32e11852b1d165a178ed952dcb40aa27d709d7719461b763c2bd"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/list.go",
+      "sha256": "39a28567864446662f7ada2d3591553372cbe81f08f844e486c8803c065ecdbc"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/list_test.go",
+      "sha256": "915e373b37443339d9379a4e9a38040cbbdb10441895da56d49d5e65e18cb9a1"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/permissions.go",
+      "sha256": "1a42886d53285aa93748ec238b154f1cd4d45f87f68f6e42cb291ddc5d07061f"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/permissions_test.go",
+      "sha256": "21a783c557014ec5165b8632774e969604e95f7b7a48e19dc06b1292701cc305"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/remote.go",
+      "sha256": "ee232ce12d51df6b2114a10dc002007a1b96727e11fe7a1369c632acd4d26ce9"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/remote_test.go",
+      "sha256": "8f4527341a4227f75c6abf331672e3e62aa62f371235a5c62050f1467cbfb532"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/result.go",
+      "sha256": "522d2b3dfdd3b2dc11060b66ab3ccf4d3c3bde8ed054dd58d441a1093d114e5d"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/snapshot.go",
+      "sha256": "a7b88fa5ac88826aa5ff10acd11687f928a0c7d06b1becfb193e0e440136d224"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/snapshot_test.go",
+      "sha256": "df9ac468e5882544eabd8f364e4d0b1581145a568298bc70640a55746f236ba8"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/store.go",
+      "sha256": "8136bb3a857412514d2c664557a042cca5050d67f879b4f24af4eceb16aa79ec"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/store_test.go",
+      "sha256": "3973618fc798cecebd68dc90c73bbd03fe3f1a0ce41ad8c88b81e6476ca2a6ce"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/tree.go",
+      "sha256": "354149b03b849cfb80b3a5b39ded7dce7cc2f65bddd264ec74798c731c630c35"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/zip.go",
+      "sha256": "c369b7e07c3509f60e00b74d3d99de41b32dfb9bba2ab973f6cc53405ad86d4a"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/crash_test.go",
+      "sha256": "010ab1040026ac2106831948fc8679ab2fc372c6d355c54b06851334277200d8"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/operation.go",
+      "sha256": "7f014711b4f38b61c190e95701d4952b4c60d63fdcf0023cc3d46cb2178cd145"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/operation_contract_test.go",
+      "sha256": "720149bc6fd1cdbe75bcdbcd45cd78847bbd3e36e21915756b2f7973aa275d4b"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/operation_test.go",
+      "sha256": "5663be59aaaf9d6033214612909859b53830b88f703e1e53d863872573f4bf97"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/publication.go",
+      "sha256": "534e11208d63ecbe6efcbd280182a8bc7b1f7c6875dbf600b8d44694ea69a616"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/record.go",
+      "sha256": "f1b14c4cdec6338283f6c35510ed39299dc7cdc59195dfc455775b065b12fc55"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/runtime.go",
+      "sha256": "18b38e3b081b44919088a7979b55e1edb2b77f94dd726dc9d18f2b479a995972"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/runtime_test.go",
+      "sha256": "0074440d73cbe2e8e405dc4ae417c029252c058c664804c026512318b0b9c54f"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/stage.go",
+      "sha256": "bc6f4c14e60cb254ef1d93a9c3ffee813fee1ea437cf0de2d38956b4eb6cbe02"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/stage_test.go",
+      "sha256": "cf758cd1580cc1862205427ff6f57b6834eb100392c2116b7f4aca2cd9d1a33b"
+    },
+    {
+      "path": "apps/agentshield/internal/skillinstall/target.go",
+      "sha256": "dd14a3d258ec9715c07996f1a890596b5ccfde9bdbd51ac6024fe8ba3bdb8eb4"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/bootstrap.go",
+      "sha256": "41748ca265c16ea8930cbbea9eb34bf5dab3ccb95d9678f6b1cd4aa456859181"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/content_hash_python_test.go",
+      "sha256": "f4107c5925637359f100203b1bc469e60130c643890e58e0a3f2110a173d3445"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/fetch.go",
+      "sha256": "de54b84aa2f7be19771132414d520239010699bde71668dd89de126144501786"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/fetch_test.go",
+      "sha256": "f1cd592c7535fabad629e20172b0f38aec755c22e9141c77b619e31e90dbddff"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/manifest.go",
+      "sha256": "b4ae722a161548eba75502811aec60cc796f951dbddfe44341170c8a29731c51"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/manifest_test.go",
+      "sha256": "9fe5e16a0c29e014ea758e4d91fb79faa24cf8a5397ffe7db49a944511ac996a"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/matrix.go",
+      "sha256": "a2a54beb918e57f7ebc900dcca9d54c592166a8d5255ed24407022ef1470fc67"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/paths.go",
+      "sha256": "9ddb2678a587f8b4e3fd2714abf73de0520a79a2926b07f9387ccbda98e2a20c"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/stage.go",
+      "sha256": "4fbd0cab9cedfcce380b09f150f99b23bc1c0b9816195b55db527c0895760dba"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/stage_test.go",
+      "sha256": "557d530ad3736b1ada4a65ae93119a6079533ce6eb86a3a97d05119e51a325f2"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/trust_test.go",
+      "sha256": "454df81752406ff336c5293972d446e9e59ce0bd493fd344b0e977df780076a0"
+    },
+    {
+      "path": "apps/agentshield/internal/skillmanifest/verify_script_test.go",
+      "sha256": "ae944340e6e44ec9c47b35e8604ab841f4a0294e2b4f1c11491514519fdf8dc3"
+    },
+    {
+      "path": "apps/agentshield/internal/state/admission_signature.go",
+      "sha256": "e0d26fad2c4128818200fcde60379e36d472f2204bf6f1917ef6f5846bf7a664"
+    },
+    {
+      "path": "apps/agentshield/internal/state/admissions_test.go",
+      "sha256": "00da08808fe748c4bd23539c22c36911a7a04d76e174af828a90e9ba5ef74afc"
+    },
+    {
+      "path": "apps/agentshield/internal/state/cas_test.go",
+      "sha256": "f7b0a2ce898a775644b2bf14b1081f6c9f8985283e0b8baa961febc67a021211"
+    },
+    {
+      "path": "apps/agentshield/internal/state/commit.go",
+      "sha256": "4fa047d80889ea883b0f6609cb94470b8637be310f40a280988d65bcd642750f"
+    },
+    {
+      "path": "apps/agentshield/internal/state/commit_test.go",
+      "sha256": "60b39f5fb8ebf25eb87849d2211570fc1f47c5bca17175b76a89dee4641d8c94"
+    },
+    {
+      "path": "apps/agentshield/internal/state/credential_recovery_test.go",
+      "sha256": "ffa2d4e8d47c420b841eb576628bf716f1f24fbda4761519817ea1c325bced18"
+    },
+    {
+      "path": "apps/agentshield/internal/state/discovery_roots.go",
+      "sha256": "5fbc8be3f6a58e5b147f70c377c909e0491700b4444c14675b0c05a0a577aa76"
+    },
+    {
+      "path": "apps/agentshield/internal/state/discovery_roots_test.go",
+      "sha256": "f0a6885a77b17a5b6eb5ec1c91b15faf4a79d5ffafac200aab40bd0c67edfb57"
+    },
+    {
+      "path": "apps/agentshield/internal/state/grant_draft_test.go",
+      "sha256": "d6cf6af74b74c3f11115b72f0f20b3830fc19ab96cbb4b960610542aa6e1224e"
+    },
+    {
+      "path": "apps/agentshield/internal/state/grant_expiry_test.go",
+      "sha256": "0d93a55d0fd8279cf6c66675bf654f48b3599135b9876cd4625f0f163bff347e"
+    },
+    {
+      "path": "apps/agentshield/internal/state/grant_policy.go",
+      "sha256": "b730fe9be384d4ff47c66e1694c846969e634ad3c00acc71cb806f6e40f37071"
+    },
+    {
+      "path": "apps/agentshield/internal/state/import_admission.go",
+      "sha256": "67f15eabced11dcf25d13bbda9e8559172ee405efc5e6452a6c3b161127797d2"
+    },
+    {
+      "path": "apps/agentshield/internal/state/intent_authority.go",
+      "sha256": "285a2b9bcb3f5716075a896fdbc687e08c7b312dcb6d5a0ca45ac4a2f4f8146f"
+    },
+    {
+      "path": "apps/agentshield/internal/state/ledgerstore.go",
+      "sha256": "ea1551fa6f71cdc0c4eb8a10f606391dd7de20f4f3cbe203cca3844b437fa59c"
+    },
+    {
+      "path": "apps/agentshield/internal/state/recovery.go",
+      "sha256": "775393686ab82615315f68d419a0beb0544ee1205bdf01c7199898c5f408d8b5"
+    },
+    {
+      "path": "apps/agentshield/internal/state/recovery_test.go",
+      "sha256": "3a8ffa7b5183dd29ad982982d824de8eefc1a7ce356f5f992c49f86fe18f9d95"
+    },
+    {
+      "path": "apps/agentshield/internal/state/state.go",
+      "sha256": "43d1bb9a3691118b11ce0017911375ff4eba46b20b590bf414aa1fa94d69b35e"
+    },
+    {
+      "path": "apps/agentshield/internal/state/versions_test.go",
+      "sha256": "337cb3894b631d260468912c85e922cd1ef56758f3019115e9843287bf5c483d"
+    },
+    {
+      "path": "apps/agentshield/internal/state/writer.go",
+      "sha256": "d79f12427fa53bc2928bff9fe769feef2ad29420187883944d0e1be14f8d4ae2"
+    },
+    {
+      "path": "apps/agentshield/internal/threat/threat.go",
+      "sha256": "1ae8dac1f7ef0307f7ebff2de9e810db884bbd3299faaa6d51f4831925347a29"
+    },
+    {
+      "path": "apps/agentshield/internal/threat/threat_test.go",
+      "sha256": "7f83f13d08da7f45180bdc47febf032955a87aff27e03a5d4eb6b73005edb099"
+    },
+    {
+      "path": "apps/agentshield/internal/trustedcontext/context.go",
+      "sha256": "23be76a01ef67d0c5baf96444d45d8b691cc4c061cf8b607fbd70bd75b508366"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/README.md",
+      "sha256": "bc2539331ba16e3d5ed9677f9f2b8a7196c95eff8012224f987bd428371bf98b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/DemoPage-B1PAW_1P.js",
+      "sha256": "e1749133f9342e34b3357f94b32bfbad217cff44e60ee7cb24a65766db0470a9"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/DemoPage-OjGN14LE.css",
+      "sha256": "5f1e0a71e1c693e739b097f240ba7266c6a94bbbd8b1235be9230327287ee1f4"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/SkillImportsPage-sF5UNM6B.js",
+      "sha256": "c23c307d221ea37522c824163936c8a099da3da2df4796a9d3c53eba22c8f1e2"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/dm-serif-display-latin-400-normal-C5_t9oOD.woff2",
+      "sha256": "fdf61e20fd2c0108e0ea28da4daca0035205b4b7fc031a3974b865b704de160a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/index-4sPOG0KL.css",
+      "sha256": "904634b7aaba8b3c77a03853b4edc6a71b34eabe49ba3e966a6791759581c9e4"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/index.local-ZuiOGQ-d.js",
+      "sha256": "feb0a06139007908db6e41fe75b5f1f184e296e04d68ec7f84bcd72d89e0e66f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/inter-latin-400-normal-C38fXH4l.woff2",
+      "sha256": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/inter-latin-500-normal-Cerq10X2.woff2",
+      "sha256": "f3779f1efccc4bdcdf9c0a02ab95bf6bd092ed09c48c08cedc725889edd1d19f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/inter-latin-600-normal-LgqL8muc.woff2",
+      "sha256": "f9a06e79cd3a2a20951c0f0e28f66dd0e6d3fda73911d640a2125c8fcb78f21a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-100-400-normal-B08sJxsw.woff2",
+      "sha256": "5209f425a967af6bd798702015dce9ffecc6d46817385ecd8c4cd5796db02de0"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-100-600-normal-uh_IoJFx.woff2",
+      "sha256": "eb6af6dc00145072781fbb47869a5ddf507c2ddfbdb491e09f761a996f52597e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-101-400-normal-BHVnbrAJ.woff2",
+      "sha256": "fb801f29c9aaacdf009804efe33ce3124f68e7fe4317452c66fa09f0ccd917df"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-101-600-normal-Ys4oPPtJ.woff2",
+      "sha256": "30932f4b259fe1d3fed1495d7b14d85810005db63f3c237836e6a35d9da9ac19"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-102-400-normal-No9wpYJV.woff2",
+      "sha256": "e07bb10e282b122ac725d75cdbdc482f89680cdce71ad773083413f667c42b3b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-102-600-normal-BmVzeMTm.woff2",
+      "sha256": "c6b1d3ef96b1ee698217d79b4df2e80762e053c94672a547e48ca15c8987cdb2"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-103-400-normal-b3eASUCI.woff2",
+      "sha256": "155371bb76e3093a5872ac26fa1b094490d6e707609c703880c9ce5e85372858"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-103-600-normal-DpH6oHB8.woff2",
+      "sha256": "b0076c1daa3bc7e9f1335a750f546dc39f4c89bc4e5f437609cf64be51f7065e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-104-400-normal-CpyjTWhh.woff2",
+      "sha256": "b7c1d975242591387cebb09a4b96f799270d14430122ae849378b939a465d67c"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-104-600-normal-3k-EiYVy.woff2",
+      "sha256": "5ae71e3aa15ac9e69504fc4191e438e7fc681b321522e55d2815e16f64901899"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-105-400-normal-BHHNimkF.woff2",
+      "sha256": "b05da70aec9bf352fb77b3a07e5477c95587eb836a720943460a49d8fffc84d2"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-105-600-normal-CCTiQ5qX.woff2",
+      "sha256": "312ee5b0ed4f818e10f3f1bc665dd677983f42474bff7fb915d9fd175907779d"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-106-400-normal-Y8T38z4b.woff2",
+      "sha256": "d422930c709712dd04b9b96bd17c256d38cc87baf2834cf11e73805d396517d4"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-106-600-normal-BJ7RqBay.woff2",
+      "sha256": "41befcffb91186e9913348be3f02f502b40a1baf86a6808126aee8dc2751abe8"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-107-400-normal-DgdGrCd2.woff2",
+      "sha256": "03dcbdce956242b7442533a0b4846c2fac6d93a11253bdb05ce0397a927fbbdb"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-107-600-normal-D0j9nGe7.woff2",
+      "sha256": "5561091d310da2199decf964a4ba957ad1c6f5bb4e130e2df2fcfcdb200b05c4"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-108-400-normal-DCLtaPv5.woff2",
+      "sha256": "a9d450627989c9e65347e9ea95146034f15d168b74285e84e8a23d256c3ef28c"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-108-600-normal-CwDLTI0X.woff2",
+      "sha256": "e4b905149dab510012571decdc222428a977a53db118da993dc9b0c93bd9fef9"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-109-400-normal-D28QVX73.woff2",
+      "sha256": "e16a579d7e3f6ce1bf4244544955cc9960cd2f12f359b279303e68b9f94108f3"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-109-600-normal-DdK0MDGP.woff2",
+      "sha256": "0ac54db05e7582f3a8209c3f49c101246e284c814a45df2d343f41b735679be8"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-110-400-normal-DjH-orF3.woff2",
+      "sha256": "cd4f2bb208b10081fac6d57cb1bc470faa60b3914f1f6ffa56840bc72709e8ce"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-110-600-normal-cKCRFN_s.woff2",
+      "sha256": "9d63726301d99aedf968e51d6b23105ae56d6dd6a8ffca0db00325fd6db80c72"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-111-400-normal-B4UjboLF.woff2",
+      "sha256": "781006ca8d5463354fb6fde2b118875a6da699b1796ce22be3abc003777b6b71"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-111-600-normal-XLxRoWaL.woff2",
+      "sha256": "1d21817a759b192a761be78e33782a81abc648f4e75d2222099520d9f0780a46"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-112-400-normal-Bjzy25E6.woff2",
+      "sha256": "8b2392a29608a069b9636467ec19a0aed362671d8a4f3dd403b5dd13926cbc2a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-112-600-normal-Duud2wIz.woff2",
+      "sha256": "fc220e62b67c3b495ed0c89958001abfc1c3bd50a149a187a89dfc4bf3b62cfd"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-113-400-normal-mBNpFg1t.woff2",
+      "sha256": "a39469f99e4d3b6e269ff700d8b2edc0bea839d0c46cf43d0c1a1c8a71ad8dc7"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-113-600-normal-YtVfFfTz.woff2",
+      "sha256": "a940bc1424abfcc6079c512d1dc3065d0695e9bcee740385e505dc455f1bc1e2"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-114-400-normal-BByM65_k.woff2",
+      "sha256": "70c38bdf292733a2167b8091110fc650442b9888cece984552ec6c90775b0e22"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-114-600-normal-C-hrBGSG.woff2",
+      "sha256": "48bb9e0f2872b868939f0dede6fa97ae154d7efc1abe2bb548dc2022ea9164dc"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-115-400-normal-CuUHU_AH.woff2",
+      "sha256": "748c49190e86b707a177ae62ee0de98f0dbbe53f4e72347f09e530d3df50eaf8"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-115-600-normal-D69YZdgh.woff2",
+      "sha256": "a67774ba113f6ff3619164bb98ae3adfb83dd46fb307c388cc85c9e655728836"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-116-400-normal-7vFEeE2h.woff2",
+      "sha256": "e4e121ebf09a9d498d52965c0b85e404426fdfc94cbf633f2a51f65df3b0be6c"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-116-600-normal-49kpVL2K.woff2",
+      "sha256": "27a8e9a3fed7148e1b777070b972e151cee03b8e9968361d8a7f325739867511"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-117-400-normal-D2dRkkMi.woff2",
+      "sha256": "f59d441e134db8751d4438ed90daebae7488c1b514037f738cbf5c0068c5af55"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-117-600-normal-C8g97LXR.woff2",
+      "sha256": "929b721346d2f8f21e18d0f0ccebf59769c9f273b04bf1a5464e2233de68e578"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-118-400-normal-Bfp6vhGl.woff2",
+      "sha256": "4c4cd6ef1dbb4d83c22b0b63664c73f1420c3457c625a5757fc3e591b127bac4"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-118-600-normal-DwffOh3i.woff2",
+      "sha256": "c310104843633b5e7c6844596d6e662910e070220b38e63d81c944e9916e9af5"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-119-400-normal-DAVjKato.woff2",
+      "sha256": "7d438466bfc51d35d4a7a0076c428dee5fc5de927f3534456994d46848306077"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-119-600-normal-D5qeL6rC.woff2",
+      "sha256": "dfde74d4ac59d840660817ac8651d7ef7a205c349bf0de676a33efdcc371075b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-21-400-normal-JNqf8ldM.woff2",
+      "sha256": "198318a26fef917346dd6ed4c78da03f1c5760a04ca865b70f414183890ebba0"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-21-600-normal-_PQd8BN_.woff2",
+      "sha256": "7be70c755719e2f212d223a884aa476a8f9e2cffae756e641afe673254e8db91"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-22-400-normal-BA2TjkoN.woff2",
+      "sha256": "68cf19eb70c5a1cad04ba1eb7b89231843e12aab918963c898b7e744e87e726f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-22-600-normal-D5jlEshw.woff2",
+      "sha256": "31afca110b27b8b40a8ff1d585bf7beeecdec94805f7588b5d086332d8e0b07f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-23-400-normal-CAhTnGkw.woff2",
+      "sha256": "31deec0c69ec5cb783a3a7746bc03e4cb9fec134303cb5a02170ad1eb65cbd4c"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-23-600-normal-uiZnJP_P.woff2",
+      "sha256": "8fa2b42b74158f6b1c0eed8d998552a38ace2b0f4200c0a539fbf2431ca41236"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-24-400-normal-DWWywIBv.woff2",
+      "sha256": "74edac9ceae09ba64ec6c5029a45a768dcfa40a4b6cce51c8b0418150b18c384"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-24-600-normal-CwutompM.woff2",
+      "sha256": "1fbe1b12d7763054e27fd016e74dbae44c13325cacdec70ad2799ab93468617b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-25-400-normal-aJ-D48u6.woff2",
+      "sha256": "20b2e93a5303c61e6b0e44dfa042f994d82c3ad07f516cf597ed9dcd7beec66e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-25-600-normal-BrYZKcM-.woff2",
+      "sha256": "a28bcad99cefaa966eb5a9a01bb70c8fc5e7b601179e233b37b5b11483a6e518"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-26-400-normal-BSzuGlng.woff2",
+      "sha256": "ee1c7471882eaf5709ad479d849bcc70eef214803732bdfb8dd56fd502e132dd"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-26-600-normal-cWrhG_Uf.woff2",
+      "sha256": "07253b10134948ec7860a49eb27898cd83bb62da9ea12622fb7a91adf67cabd5"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-27-400-normal-Y6AvStvM.woff2",
+      "sha256": "04a269894c40bda831579d523c916d592937a71c81be01cc5334368c7b5d5bca"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-27-600-normal-DkUFPCZd.woff2",
+      "sha256": "71e92fb0b23f3fdcfb0d187e141afb63747f851a572ef90e707faa9395bf4541"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-28-400-normal-CKZqodJm.woff2",
+      "sha256": "6d6246c6fd7a03e5eee9ccbbae5a0bf67ff9624535575e2a34a7bb1d10b3d862"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-28-600-normal-XaL8GGeQ.woff2",
+      "sha256": "95cc6941e481e6f755137c6a97b2b775a0aef8d15e3ecc882024d06efedaa261"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-29-400-normal-lQml1r-l.woff2",
+      "sha256": "2b99bfe3ebbbee489e29e6e7261bd43911b4fef73f567c40fb046726d6e1fba5"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-29-600-normal-8lGnoht7.woff2",
+      "sha256": "36c08a8fb6b188b01c21667ade3f5714265ab4687e57f06429e21eca1290a7a0"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-30-400-normal-O7SnWSLf.woff2",
+      "sha256": "d64a121cdd32be0a6e82bec5a9c918893ea9537f07a8bb2f10e6a6654bb2f598"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-30-600-normal-C9Y_cE8D.woff2",
+      "sha256": "1efcbb8be423a652aff8d6f5ee36c3f8c992daf0b2d18c9ccaeed9145eb361d2"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-31-400-normal-BnWU33m3.woff2",
+      "sha256": "a888b15fb48d49247cfbaee526993f75b6c118573b4a1664560f34998940274c"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-31-600-normal-2BmGlKeS.woff2",
+      "sha256": "0f51bf0a36b751b9dd8b54739807751b48c2eb27665243d63aeb01b51a68ca17"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-32-400-normal-CO8YV2jx.woff2",
+      "sha256": "286168fa3f8c3ff0393f7be781beedb78d319703458e84233d490b91427cb064"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-32-600-normal-DP-j0Lfs.woff2",
+      "sha256": "72f8148186e4e687aff4c92b8e262bcab2e04a3b4830f26721d81462f16bf6e4"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-33-400-normal-D957xGZn.woff2",
+      "sha256": "668cb1a991576f49da8bb311efb227e888752b05d4a5983d39fab70b5e056d6f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-33-600-normal-Cv7tiXLq.woff2",
+      "sha256": "2e8d21662c631e74f616ea829dd8ee1d64d21753a91f67194954e91dc16f54ad"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-34-400-normal-D9Gw4Yxs.woff2",
+      "sha256": "66c35dc76153487b017608264634ea093981271548c59aaa394772ed08c81e73"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-34-600-normal-DKigZWC6.woff2",
+      "sha256": "1929961d6031fa1176a005cbc573ef16ce9855afd761126fe2404506143b520b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-35-400-normal-CzfTX1U2.woff2",
+      "sha256": "550c508b2da2f686ad407094fc61abb8ca4955579a2a651296e4687df991eebd"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-35-600-normal-DQYFY9nS.woff2",
+      "sha256": "359cb28bbb1665d5c678d437625a029d66d239ef0123b57d1d93dcf57d0da2da"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-36-400-normal-DEHcJKlW.woff2",
+      "sha256": "e3e327821de43568afbf311b9a52234c28e34a5eac2969d7bde522704dd11ce7"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-36-600-normal-Ducnbglz.woff2",
+      "sha256": "7c5180e852dc33dca4a90b556420dd0f4954688e82915058454b558b7d01d105"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-37-400-normal-4EafqbAq.woff2",
+      "sha256": "53b49f61dc76d9ec3e302fc4d2e64f1cdf81ec61902f7216e58d68f348972973"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-37-600-normal-McTCeQzZ.woff2",
+      "sha256": "5edef44a71459a1f39fe0aaf5e66b6be428ca4ce941c3139f8a50c364903b0f6"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-38-400-normal-LeDesBQa.woff2",
+      "sha256": "0ed19348b9acc0d78251a9358dfcd406f1e68d86ed3d3080dcf2352042e37131"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-38-600-normal-CJ3lCqLY.woff2",
+      "sha256": "13b1d45feb94c60beb0f3b7ebb2d4f4a89640e8d9b5260ed1953e7dada6f39a7"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-39-400-normal-DBlVs41-.woff2",
+      "sha256": "27e6d1a3e8135ddcd1bcac7dd2de96fb40a43efc38d84e414b802e2bafcb66a2"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-39-600-normal-D0Q8YpL5.woff2",
+      "sha256": "1c2d435458b8ea785358084d7acb75f0b0828a007d2d106d72ac091a0899321a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-40-400-normal-BILW2C8W.woff2",
+      "sha256": "1b5b7e6eba0a7a95f142349a9a214f55c30b025183a5ddc64e364ac6e5472b1e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-40-600-normal-fcME6L_n.woff2",
+      "sha256": "cc73d607db2d199244411952b78e8d5d05721aa41999dc3c26afc6790d3150e6"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-41-400-normal-2yGRlUJ3.woff2",
+      "sha256": "f97119290ab53f15ddcf931c20f89ac822787b59fcbde8439bca09ff9ba77405"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-41-600-normal-YeKaF0XT.woff2",
+      "sha256": "287033f108a23d6d5797f315e496bdf66d5479928f57428e0f6cc766e7eaa1e1"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-42-400-normal-CB0Lgo3r.woff2",
+      "sha256": "cb42250607c16ac6644ad2bfcb783c3355ede2fd3834cc2d5cd9c2e343d2ce6d"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-42-600-normal-DNL8lEL-.woff2",
+      "sha256": "1da0b895ca1cf4120080691963bd6ba5c01ce55313f8ba54ca795620d86bbfa8"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-43-400-normal-Dz2xm4_C.woff2",
+      "sha256": "b5b61d6a1157229150ff66d1d2997ff72d0e6722e92e05ba7b3ebe716b36a2da"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-43-600-normal-fdH3n3TW.woff2",
+      "sha256": "b19552cc2a7ad9d4c15c1c267c6eb21c535cb7a40f5a76aac52cf89e6eec6c1f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-44-400-normal-KrwQkVb4.woff2",
+      "sha256": "c79ebadffcbc63731481f32fb59c3690e776cd0dea07bc3bc920c9f58573f6ea"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-44-600-normal-DAMFuI24.woff2",
+      "sha256": "10c50b2f8bbe631896efbf3cc5c2262bb4f545c1797e8d2dca336acbec28bcf7"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-45-400-normal-BBf5fyo-.woff2",
+      "sha256": "674be02327f6b5489cbe5d5cc9c8fddba0604b359523d25d3cc6c98d11742a28"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-45-600-normal-w-zsCBKj.woff2",
+      "sha256": "1b537b0c50413a12d9a5e61d7a37aab0933bd6ac1bf62075cc121eb08de24725"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-46-400-normal-Cbp-mPea.woff2",
+      "sha256": "0931bf8ea722d78f80595729507547f67e4b45344ef8b21381c20cdcd32be2bf"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-46-600-normal-BYbgSWBW.woff2",
+      "sha256": "4cfd117c48adfcf6e831e7f0bcb6d984bc387eee13f842d80fee79fda33b3afd"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-47-400-normal-BImRhQuH.woff2",
+      "sha256": "32e1b98d5994e97170930a6f8b833715ea3965dd2a1415fcd6046e96c7055433"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-47-600-normal-Dt6vpqbe.woff2",
+      "sha256": "1b1f7eab67cfd2a86c1e214ad43b4a2c2c641be9e93974687c52b694d8604aa3"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-48-400-normal-BL8ILOHO.woff2",
+      "sha256": "087d91daec02168b3fbfc2d4cbd9dcf9e7b6edf262c2e58abc12ceee4da9253a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-48-600-normal-Cgzk7A-m.woff2",
+      "sha256": "c418d6728fccd0f89dd09df0bcb97e7510773e9a99a6f8eb8a76b3826bb1f402"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-49-400-normal-DzLACwr8.woff2",
+      "sha256": "85ac5231f9a586452eeb6b5b23198e547dcc18fc6903755d7ff87a2af5bdc7ef"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-49-600-normal-vldr0UIr.woff2",
+      "sha256": "febeebe4bb705714bb8c617a0bbd8328b001830044f923fdf3a70b5b8b9af3b9"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-5-400-normal-CK3rtlrp.woff2",
+      "sha256": "2aadb8d018f6b5fed489dd9c9ee9c34dee849807504988b806c28122928a78e4"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-5-600-normal-D3i69n09.woff2",
+      "sha256": "9001fc3cd97637a35342df4c3aef95d4272921ef2439165211c7d1502f7844ff"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-50-400-normal-CL92OsA_.woff2",
+      "sha256": "a914664a32e633cb38770d83feb472e90e4ace016ccafb0634f3e4f9ded0d6ec"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-50-600-normal-DKHiFV3R.woff2",
+      "sha256": "44a0ff23a2fa16d43a508d972372ec03a118324d8017e1043cb8c632dc49ac56"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-51-400-normal-K2vB_amj.woff2",
+      "sha256": "dadb6d424a9bd9264082a0fcb522cd1b92b74126f6508d125a549c6a52a2f306"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-51-600-normal-nHUiYj73.woff2",
+      "sha256": "7d30a7b6acd143a27efd4cfe1e2b3366d86bf23a46366045e97c0f39a089d307"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-52-400-normal-wKOWPyMs.woff2",
+      "sha256": "8fbd3b1114a2d94c6166d85dc093f43487def661be2fdc369c4207d1ad681344"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-52-600-normal-9RNk20kp.woff2",
+      "sha256": "3685a1cf8d586c1109cd8170e0a848392fa4f97195df0c90f9510366d3fddc59"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-53-400-normal-DdrtXsQA.woff2",
+      "sha256": "d02835c0c38db449e5bdc5d02e3cdee9a98c5a83668db45ea4c3ceedeb26ad98"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-53-600-normal-gS-rjJhY.woff2",
+      "sha256": "00272115b8df7efe03640ce6b9595df8d8db85ec967fbf9d5d8499cef890869a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-54-400-normal-fnBxYYH4.woff2",
+      "sha256": "60e16a0fc5c4b5b056334b1217802a9e06d2a56cd37a1b75ac9ed72c63246e8f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-54-600-normal-B_o-8ntD.woff2",
+      "sha256": "c53e975a40fcdccce199fd859379a9a458f3643187de0d2260162e7e300b0796"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-55-400-normal-OR21fGsv.woff2",
+      "sha256": "9335e5aa92ad3ef8b200e7816cc4a09848be9ead6178319db16c22cd3d63da02"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-55-600-normal-BGp_sKT8.woff2",
+      "sha256": "f3faa09cc15ce2d4f7b8ce453f8b5a7d418fae6dcc932d69308effba280d35be"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-56-400-normal-VKrJZN4n.woff2",
+      "sha256": "32064b13723da0ce323148eabc3aead3cd3123d41cb6f020f08c0d818a0d6a5c"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-56-600-normal-DT8nGt-C.woff2",
+      "sha256": "f7f9c6f7ddea51d6d568ef9f2bd5ea12fc693bf1ad5252ebc4aa0d4c32783098"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-57-400-normal-C6PkFoaO.woff2",
+      "sha256": "c719a170320a936006435ef3b866396ccb3240f095e6192cd1a9676a45364913"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-57-600-normal-Cgb0wYNl.woff2",
+      "sha256": "0fd342c682a2b3a7fdcad1c9b659ad693d5ee9694c8f3750e3f8960c18e269e9"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-58-400-normal-DVaM_vK5.woff2",
+      "sha256": "7db027f41d886ba883186df4149118bf2bd67d209fa20e6b35cead28ec00b2ef"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-58-600-normal-BqYlXKg9.woff2",
+      "sha256": "873c7d18ffee45bea09660fb358fc6a2da115fc5cb55034dc4a3d15ce93d7562"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-59-400-normal-CeSjNpXe.woff2",
+      "sha256": "0a274c73d62090bcd19ce602b70333b65a2949ffff0fb58a9c0764c28b14eea6"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-59-600-normal-Cira1fIq.woff2",
+      "sha256": "0c5a20782e6c93a428f385bd328cb24c2e089c205ebc81a3a06844d26f8d7e4d"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-6-400-normal-DeDrdmIV.woff2",
+      "sha256": "7fab1516bb96d2bfd65f2d67eadb3ba14fe745232f613ea7e7afe7d713556dbf"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-6-600-normal-BD86pU7T.woff2",
+      "sha256": "1f67fc23825a0f0c669552db2a0dcb9c5e1893667ae2ed22cc472c633ca9975b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-60-400-normal-DR2IcHGH.woff2",
+      "sha256": "c4d16a9a50ff199e3fb1f724e4de1554d988125d5b9f82e2141cd96d8a099009"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-60-600-normal-D7VLrwpW.woff2",
+      "sha256": "3a79efd176e36d51d0df9a11846a6ef433d76e9831cb7fe1ff1e7197fbda3ddd"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-61-400-normal-LGTmzE8I.woff2",
+      "sha256": "bc969adb767ff5c0da99b82efc653ea11200cfec96a7acd21202ad780c24ffdb"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-61-600-normal-BqnnDMe4.woff2",
+      "sha256": "67358a3a19e1aea34fdd1a51be01735e487ebcf2331c43a700a270d2ea096bf9"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-62-400-normal-gHAN3JT1.woff2",
+      "sha256": "1d36caa852ee220398f9a65ad101a67b24fcc7a113146a0d1db6aa0b1d5d7313"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-62-600-normal-jrKoNELA.woff2",
+      "sha256": "6d9b93962e7599488d1be7496b9c00913a6c0ce666030b3f9c35358f85aa460b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-63-400-normal-Cwyt48md.woff2",
+      "sha256": "7dbf09a682a4e05cc0de4c5fe93a79d3bdc6053147f29a21f295da532e5e26e5"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-63-600-normal-DS1bP-c2.woff2",
+      "sha256": "d3042790639f22bd9b17175dc8380b0c0f01150c69b6b56cc028debc5ab39af3"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-64-400-normal-CD7LrdzK.woff2",
+      "sha256": "1bd4082ecf77eca7a90b0d8f2bed3757ea13268fb0fc693d6b46653aec202e72"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-64-600-normal-BQ4G_liA.woff2",
+      "sha256": "2e461a54e44cad2b4f02a22483abe1a768e34d5380cfc05e0cd78ad7690d3760"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-65-400-normal-Bk8SN5Oo.woff2",
+      "sha256": "8c63cc77c1d220108f47708b6806eddb56da5fddc877d2e8f8bed9f592e82719"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-65-600-normal-Bd9BN6aw.woff2",
+      "sha256": "a712b3e342d121346960025927dc39243d9bcaca67f8b8cf6cc091cb546fff1d"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-66-400-normal-ZUojjDZW.woff2",
+      "sha256": "c4afcce8095fbb98cdfee097ffaeacd4f5bf6692d4b655ff3fc82651a8199937"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-66-600-normal-DSrxtfqE.woff2",
+      "sha256": "a32149a455fc8661150219c4404093c134b256819fe9e6592867876428f42061"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-67-400-normal-C1Oz0pFt.woff2",
+      "sha256": "4984939cfbdf151cde1a5108c294d310e749def5d91af0f3b1b3495eb963a5fa"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-67-600-normal-DhJqqc0a.woff2",
+      "sha256": "f01d4a26879645748f1bb2a5f1d6a9861ca0872b0df3a8098fc4d064c314f360"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-68-400-normal-S26xQ_RE.woff2",
+      "sha256": "28302b1b4d060e430cf017b32df943740cdfb5a9bc34e4e7f9998db0f5aeb051"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-68-600-normal-Cu5PSJ9e.woff2",
+      "sha256": "edec42ac94ed36fbd7d80e513ed07eb38bb65a97aa0401011586d967e6d5ae95"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-69-400-normal-DrCsa2Sr.woff2",
+      "sha256": "d4be17011f92b819855d0fc092230c0eb13baad1be4bd17d9b6bd9b0ee8ebd6b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-69-600-normal-rb2BrEVf.woff2",
+      "sha256": "8f00466823d3f69eb5e853e81ac17ee0ea1ddbd2bf0212b6c73a06516e9400e9"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-70-400-normal-DGgPTQo8.woff2",
+      "sha256": "c257f9abfc8b90cae12396c85fdb0bd69f3feb09ab1935faab7bbc67e4b89512"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-70-600-normal-B3KIj-92.woff2",
+      "sha256": "d6f71efbeb94437c080d736e663cba8b4c07aae26ceb264e04e84cd26b550a6f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-71-400-normal-D7w4Y-ST.woff2",
+      "sha256": "99b09b56badaabbd842d58a0b48905b2b62eb8dc91514081264247c1eebaf102"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-71-600-normal-IpCSs6ls.woff2",
+      "sha256": "dfd000675bb0fc0c66cff51a2f0839c21b39c2de0158f43ab55fb91ee0fd90cf"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-72-400-normal-B61Z4Jd8.woff2",
+      "sha256": "ce64b49d6f171ff84ab32e47a8846dd08c2492fd51ee1f4a010f86e5cd07ef2e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-72-600-normal-CFJRieib.woff2",
+      "sha256": "d90b05d9aee110263de410ba4ce7a85ba93157142a8c9ad22ea6219ba76e8ef6"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-73-400-normal-CzLG5u1x.woff2",
+      "sha256": "4f7bc6b6b51b96c5d7107a4b1476e4d6136ff0b019a0adf5c028eec37d3175b7"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-73-600-normal-CbYPXTWi.woff2",
+      "sha256": "285ace59bd082f3cd840ed1e10a1f6dc7aeb239f1766d284dca5cb92a95882d1"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-74-400-normal-BwgdtHTO.woff2",
+      "sha256": "7b8dd20a7927cc71bee8cfea0555909a93172423e62b18c84b3dcf9dd173d34b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-74-600-normal-CB3LHEvz.woff2",
+      "sha256": "cfcc7baaaf6feafbe50249c3c8f584ffefd234597fe8a4b8c9d3b70c416b3b31"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-75-400-normal-C3rovZtN.woff2",
+      "sha256": "cd9fa7f2609359dd37475cf265ea8d0e2faa146aff777d0068290e9747ef3017"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-75-600-normal-DsXXCaJ8.woff2",
+      "sha256": "75402d8015550aca7b4d9f0986841e4cf73f51961159fbfbd8f634339dd79e2f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-76-400-normal-DcB08CFh.woff2",
+      "sha256": "9513ffe226cad7bee226ef503eeb32733443530882cd9dbd628fcc54ab066533"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-76-600-normal-CtcmdgJ2.woff2",
+      "sha256": "940298ce0e8b1a8a6b352a866f5bab12ca13a528ba18189450c2ac71932a913e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-77-400-normal-DXmeg5Qd.woff2",
+      "sha256": "9d298d19de6fa484d53e9fc566a784320d3a34b9dac7f96e60a8e7afd97f28dc"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-77-600-normal-DttXU36r.woff2",
+      "sha256": "8a8f0e6becae2e34c91a7d6ae1a5dc23ad1ace16badc0ed514f6b92d20f21b5e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-78-400-normal-Ciy80LJH.woff2",
+      "sha256": "f1b0994f0406bf6f01cd31ea312cbf2f7e114e224053f6040a57a3720066bbce"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-78-600-normal-BusMfsVJ.woff2",
+      "sha256": "5ef4ae3b3354e9907630a23c2c0cc5d837a03295c23720e1f1fb1fdd847e5410"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-79-400-normal-CAkm9YG8.woff2",
+      "sha256": "f08743b215770a2dc231e056d0128b8a5b607985e2aabbeb76a19a8d0df455ad"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-79-600-normal-DVfmjx1b.woff2",
+      "sha256": "ee7f8bd592fc0219fbd6da404d1ec80686092a66f314b46822a8df1a22f1ad5a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-80-400-normal-2KipuDMA.woff2",
+      "sha256": "032133d339d581d98340adf3ee80873501ce838abfc0ad9b8d2e87d90cf2f273"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-80-600-normal-CDfycluH.woff2",
+      "sha256": "e96a0926949178e1b0b62f6ea3da2e33812044a96dc184bbbe58f3a954ecb0f8"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-81-400-normal-CtmR2MQs.woff2",
+      "sha256": "72b8d3706a36345da7281d52b8e1402646541a2a873059443a825e6ac21fe0c9"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-81-600-normal-a7j_jqcg.woff2",
+      "sha256": "e8aa0c142a6d6cf6076a1d7ea4270f1149e1a82d686d6a71a2106f8589505787"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-82-400-normal-BYIYywsb.woff2",
+      "sha256": "f2fd134835797badf5edb26ff2513507cf67827b0503b53493c4a07a3543acb1"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-82-600-normal-qWSV0sqg.woff2",
+      "sha256": "eefc15eee1dea3025be72e824722377a02bf2b65271bbea2914b2ebd3c24c06e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-83-400-normal-B4MQ4cnu.woff2",
+      "sha256": "4e65935907a097807dcbc71ab80d0ac87ece0c60e09437c85e79546cc0e3c966"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-83-600-normal-CxNt5b9H.woff2",
+      "sha256": "0d60f49b555a97180bceb542bc297d2e0b0c558b0e2378cc029ac0b147d809e6"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-84-400-normal-Cm-NqSUF.woff2",
+      "sha256": "1402df11d4b72efc3d38950afb081a291f789972c6b50a61ac5e58f880b71a44"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-84-600-normal-C9alyfXE.woff2",
+      "sha256": "cff80f1f9f6dea13662678a5edab0fbc497da624fe5823ac11f49c5fd17a3d16"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-85-400-normal-D6KUxyVS.woff2",
+      "sha256": "5f82871e558477f3b479dad534993f2bc5b41aa99cf8bb867a2bbe7ccc3b5569"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-85-600-normal-Cia0LasY.woff2",
+      "sha256": "3101728641955d8194336be836be4648ba0886a47e354b1a8093a52771b34bb9"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-86-400-normal-kyGCK9Xe.woff2",
+      "sha256": "7fb9b4a84d1f9cfbee518496d70c9623218791a07f95ac2a1d4980b46232fc1c"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-86-600-normal-5CAU0Sus.woff2",
+      "sha256": "49293ab2f7e6a448d2c11f102ab7e3d0e578bcb2160eaa532ca9d5e8499307ed"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-87-400-normal-Bvr1WGbA.woff2",
+      "sha256": "038988b9ce055fe20e1fb309fa28e21dd1667460940f492349f3aa3ff4ae37a0"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-87-600-normal-DV5DGk8Y.woff2",
+      "sha256": "f6f444f6e74c4147808f3e908f222cf7c2468549b2f793a8c1e2536009cdc6ae"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-88-400-normal-w_viLXV3.woff2",
+      "sha256": "2b9a72a0157f70b1e4b257d0aa13d701597c6ea375063fd3d07f24e4c37673b8"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-88-600-normal-DkXoJX-V.woff2",
+      "sha256": "5faa638a6735ac9a4ba8e21266227ffc4a120e0868b96eecd5fa3e376677c16a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-89-400-normal-lCxVBzmS.woff2",
+      "sha256": "5bd78eaa1e1a17f42075daf692695bb13f9f246b56283ac1933d79d1f4a5b80f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-89-600-normal-BDhAhJVX.woff2",
+      "sha256": "d26ebdce63dd0a31cbde7c841351b5f3cdbb147985a45e57456ab442af3bbbf8"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-90-400-normal-B4B7KpSz.woff2",
+      "sha256": "092b908aedd7b6519bde9089c1ac420741875099f8289c0f82d546f8324592e9"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-90-600-normal-DEC_HMBk.woff2",
+      "sha256": "f56f3d2ae62a89b11c313029f264838aa3f26dce39aacf196af2d851c16adedf"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-91-400-normal-GiFB0QDv.woff2",
+      "sha256": "b143c83177a86fd18baa9eb9565803a8853406a0d52144d88a0e88ebd632a620"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-91-600-normal-IHzbmDKb.woff2",
+      "sha256": "2b191ab82ce1d48baed0541bdc16ac5720c5c4a117e3b6045e0e33f0c304a884"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-99-400-normal-CcCfmhcb.woff2",
+      "sha256": "648e7d3f5a03ba9f9b49804e474220dd155d31e1b2b5b3ee7bd4772717cf3bcf"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-99-600-normal-BU9QyKIb.woff2",
+      "sha256": "cfe9db1a38b549a5d0aa8c4d12772456825cfd006b45fa73dfd6c517c0b9374f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-cyrillic-400-normal-E6O3Ay2Z.woff2",
+      "sha256": "22c78938835f757b4b1d2a99cde0fc731c206d5681eb98dd5199bfd600cd9fff"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-cyrillic-600-normal-C3MRdUTw.woff2",
+      "sha256": "42cc1b8b036b2d925152f5a4ef9657426616d6373b9bbf282e1de12f0f2c630b"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-latin-400-normal-bWtu-bD9.woff2",
+      "sha256": "af0c95a3e897cfab6a319a789f203dc64b8f81574f8113c7d46240db68c8ff8f"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-latin-600-normal-B99s59ZT.woff2",
+      "sha256": "3d7ce0ff551c2c3ab3a4647a4e69dd166b0bf251ce766b3cfcc6955c19c1ce18"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-latin-ext-400-normal-gIH_qXVp.woff2",
+      "sha256": "ff6d9a53e368c9cb7ef501c7c71bcbc00349c7eb0d7fad0d1ca806f8faa26c7e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-latin-ext-600-normal-CKIGwhVt.woff2",
+      "sha256": "7b5befa8d430414f703d167b4ccb9795225aa88eb1beda44ebbec1355476790a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-vietnamese-400-normal-BDvw8C8Z.woff2",
+      "sha256": "992ce1137e064f4ba4384533d84f0a07af2b7ed72e447f632be14cea07c63436"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/noto-serif-sc-vietnamese-600-normal-IATmd2p1.woff2",
+      "sha256": "ec9c5d54912928d9c2af96a0e51e07c41586d6f2a9f42d24685f91cc123de7ff"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/playfair-display-latin-500-normal-DIxvyhka.woff2",
+      "sha256": "1e3429a2122b4171bf393c8de5c501820e17ca2074c498d7080e2326975d825c"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/playfair-display-latin-600-normal-CZLGqjJe.woff2",
+      "sha256": "5d2286941a6b02a29387efa94809a064f8917598eafa67b938261cf13bb887cd"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/playfair-display-latin-700-normal-CuDiGg7c.woff2",
+      "sha256": "28453852ea165c47b5a941be00e418402e1407002ed87507f062a1e316328fe6"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/fonts/dm-serif-display-latin-400-normal.woff2",
+      "sha256": "fdf61e20fd2c0108e0ea28da4daca0035205b4b7fc031a3974b865b704de160a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/index.html",
+      "sha256": "c9bfcb0e584db9cce2ea3ccc17ee40bf3d274fb227656702d21fbb8d32bcf511"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/ui.go",
+      "sha256": "54a26545c71a227864f8c85f0efba7045145a7f14e02aaf88ad4d56b843e0e26"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/ui_test.go",
+      "sha256": "dccc626c861fa700d0016a040f2d43b6505641329872b6fa39e6b3fa07bc976a"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-activate.v1.sample.json",
+      "sha256": "374488a690ff256ed91fcf31bef70a5faac551a161dd9baeafd9f028e437a753"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-activated.v1.sample.json",
+      "sha256": "94c86b7f22e27c030dc5edbfbb5abb65ecc38cc4b94541a43dca0a0f7b26ab44"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-apply.v1.sample.json",
+      "sha256": "896f223503a76fe59dbae3c8b3e8a55ebf85bfa7f97f53b8d74e23cadaca922d"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-claim.v1.sample.json",
+      "sha256": "ab6c1a09a06497673c6c5661a59fc020d5d5fd308b63ea47400e9b33f853e2ef"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-operation.v1.sample.json",
+      "sha256": "b4fa50f0d06c7d34ddb1ab7127a193668bd603bef986b888068066bf13634b3d"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-owner.v1.sample.json",
+      "sha256": "a3e25c35f50238ef7f50b15294eefe2f7495cf08f01f6cecb211b50bc190f3ee"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-plan-created.v1.sample.json",
+      "sha256": "8fbf347ab603ce32ed71a977adf9184b132064f8f4e912efe9ee5964dc67af42"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-plan.v1.sample.json",
+      "sha256": "5de3d8e5475ba84b69e3ae926250f87cc8acc4c7eab1b456fea2e936557917fd"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-recover.v1.sample.json",
+      "sha256": "81f6c955dd90ccd314f847ad873e203d64282afe9f5bce490ad3649207fac1b3"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-runtime-binding.v1.sample.json",
+      "sha256": "8ed701784ca1ba90eb8267decb7413e0fe51f96988f238caf82b732f2534bd7c"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-stage-create.v1.sample.json",
+      "sha256": "79ddc8e29808c63ed1ef08c657748eea3b0bd6da71399a8c642296297252f20b"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-install-view.v1.sample.json",
+      "sha256": "7a1f618e7f36080b9bf307033ac56e192d683ddb5acc38d2226d56283c57d64d"
+    },
+    {
+      "path": "apps/control-api/app/tests/test_schema_contracts.py",
+      "sha256": "79671e441aed96b238cec4489dc5a802c8d6df51515a1bb4a196cfeb90c1b92f"
+    },
+    {
+      "path": "apps/web/package-lock.json",
+      "sha256": "d27d6b9bd7676209d9279a74821bea733b94e2151f68868b085a69c808c5cba7"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "edcb1792c1e8aa7d42167466214974e1a68b2b4de5d1d83d5ae4cd129937b57d"
+    },
+    {
+      "path": "apps/web/src/App.tsx",
+      "sha256": "cb11393585dad102d45ef9a0536e4adddf4497a1726236cd5ef3d960311dd075"
+    },
+    {
+      "path": "apps/web/src/api/client.ts",
+      "sha256": "0a06bc1862bfa95ee37b2b28ab8ca9da6afcf3e2023c2a617b3aab966f8e1e06"
+    },
+    {
+      "path": "apps/web/src/api/listMeta.test.ts",
+      "sha256": "3a03a0766c4dedd801cd4a0f41d93c92b6de088b9323c5ead31051e19adeead7"
+    },
+    {
+      "path": "apps/web/src/api/listMeta.ts",
+      "sha256": "520fa1833a89040174a1669a675c0bd49e5a577a39084d0e728e21b31c33c09e"
+    },
+    {
+      "path": "apps/web/src/api/protocol.test.ts",
+      "sha256": "305cfe571d278e924b4488cee63683063760da5f6867bf18eb1be5267ff508a9"
+    },
+    {
+      "path": "apps/web/src/api/protocol.ts",
+      "sha256": "ecb81009ca50743a07741172a3661e8f0688293219f1ca948436c243d7388fef"
+    },
+    {
+      "path": "apps/web/src/api/session.ts",
+      "sha256": "88e88f62456047d27e0ec58da8fb69c8599ad572d1bcd4660ca64c368fae7b2f"
+    },
+    {
+      "path": "apps/web/src/api/types.ts",
+      "sha256": "92421e2c00b64662a057b53dd71b1a11e393e55b55916db9937795e29a7d4e33"
+    },
+    {
+      "path": "apps/web/src/components/AuthGate.tsx",
+      "sha256": "25164a560222a739e9ab96b4e37835e5a2c670ac332e7dce341b7ca1643c7553"
+    },
+    {
+      "path": "apps/web/src/components/ConfirmDialog.tsx",
+      "sha256": "159aec682175bf3c1d464c9da65064c6ad20fa1f5700dd63c9197add49b3643a"
+    },
+    {
+      "path": "apps/web/src/components/DisconnectedNotice.tsx",
+      "sha256": "08a60205d71c9763f834108887fdb503128e5894716cae0241d77f02e277b83c"
+    },
+    {
+      "path": "apps/web/src/components/FormDialog.tsx",
+      "sha256": "97af7fc6401c15947a05eacad0663300e1885babb8b4f57dfad0031d8b9fbf70"
+    },
+    {
+      "path": "apps/web/src/components/Layout.tsx",
+      "sha256": "8595883a7c5b04152cfd813b67c961ca8505d7ada86dd155595b539155a683b3"
+    },
+    {
+      "path": "apps/web/src/components/Modal.tsx",
+      "sha256": "63dd007c6e96d27d62088ca62627fb85d7be87e3009f2d290d6ff7ef4cec3f08"
+    },
+    {
+      "path": "apps/web/src/components/PageHeader.tsx",
+      "sha256": "f3826ef8a5ba8d98beb65418fb671865b8ec0006615788e4325b237a7406f4c8"
+    },
+    {
+      "path": "apps/web/src/components/SimpleTable.tsx",
+      "sha256": "d4777e324ba22bfb6e0e9eace30f6a11882fa013312808243c6339e6be83f8f9"
+    },
+    {
+      "path": "apps/web/src/components/icons.tsx",
+      "sha256": "0e241565fcef41cacca7a502451213840fd883aec0ceeb62d2d7dcfc6faf88dd"
+    },
+    {
+      "path": "apps/web/src/hooks/useApiList.ts",
+      "sha256": "9049954ae8aaf6c8ed5e909da4853ecb66682e96957824a9bbc2dbf68344dd5e"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "sha256": "e833826cf78a6d2df5a95e1e4a2bcb8e1322343f87d4ddcce32cb8b3d3a2bac7"
+    },
+    {
+      "path": "apps/web/src/local/App.tsx",
+      "sha256": "acf4f0bd802f7fef7443866119be875d038817837e1ab0c23e071ffd460b8ced"
+    },
+    {
+      "path": "apps/web/src/local/Layout.tsx",
+      "sha256": "c67801c2c236c0e4d2da3c3aa1fab2e71676edd7c94ead2d64717ca10820c969"
+    },
+    {
+      "path": "apps/web/src/local/api.test.ts",
+      "sha256": "fe7c13c349d90a40766aafc29b6988dd4601b90cff77c96d1d75cfaef5d900ba"
+    },
+    {
+      "path": "apps/web/src/local/api.ts",
+      "sha256": "184f73359331ea16fdbb04791a0a535354c9ead4881a63eaf5bc49fa1b89f0e4"
+    },
+    {
+      "path": "apps/web/src/local/components/AdapterChangeDialog.tsx",
+      "sha256": "bf548ea133537f7d48bf01901e7efa36b47c69f71f0c257d0ad28f185e4dabc3"
+    },
+    {
+      "path": "apps/web/src/local/components/AdapterDiagnosisPanel.tsx",
+      "sha256": "3aa62e1c1eccd83e48ba7fa073138edf257e73dcc6fbea41e233b361e1dc6d71"
+    },
+    {
+      "path": "apps/web/src/local/components/ConfirmationNotifications.tsx",
+      "sha256": "72f0fca94e4b1473502aa5959dbf036fb5953a2359ba11c8f0bf0c8fc8de038c"
+    },
+    {
+      "path": "apps/web/src/local/components/DiscoveryPanel.tsx",
+      "sha256": "0299c7b89e5f36a30e2748170196f4d0c1071d6b81a0da5d460b4bd469417db9"
+    },
+    {
+      "path": "apps/web/src/local/components/GrantResourceDialog.tsx",
+      "sha256": "59fbe44af6b79e8a188633fa54538adb434298046fd888f3c31394af79c9e45d"
+    },
+    {
+      "path": "apps/web/src/local/components/ImportGrantSource.tsx",
+      "sha256": "fa7e0a5f3b7cce9137a4109ee2a69c6f73258c1bd3af3e2988fce478b3918d37"
+    },
+    {
+      "path": "apps/web/src/local/components/ImportPermissionPanel.tsx",
+      "sha256": "04570c592e5224f07d7e64d9df21ddb67802332b3457f3347afd9b57b9441b63"
+    },
+    {
+      "path": "apps/web/src/local/components/RuntimeCheckDialog.tsx",
+      "sha256": "599636d795d12bb24b57a63d538713ce68583ebafc3405c7fb55e05fb87e9ab6"
+    },
+    {
+      "path": "apps/web/src/local/components/SkillInstallPreview.tsx",
+      "sha256": "151873af550a371afdb917dd805a00ad91ec56f9ce18cbdd2f18764dd67b81bc"
+    },
+    {
+      "path": "apps/web/src/local/components/SkillInstallationResult.tsx",
+      "sha256": "497c4d7c3722723c65fb43567d713052af0a8a0de5499649d110cf4546dad981"
+    },
+    {
+      "path": "apps/web/src/local/components/useInstancePermissions.tsx",
+      "sha256": "0707e773eadc32f178044584c75e4ad6b2efb11cc7d6526625fcc1f591127a0b"
+    },
+    {
+      "path": "apps/web/src/local/confirmations.tsx",
+      "sha256": "a1cc144590b49a73664156583e2cd07a1cfb16ffc17b305d7fe496885d8367cf"
+    },
+    {
+      "path": "apps/web/src/local/format.ts",
+      "sha256": "839ca5891dda223bbd97efa11354113e74c2ad7debfa997031aa2c562f54515d"
+    },
+    {
+      "path": "apps/web/src/local/importPermissions.test.ts",
+      "sha256": "909d10435b506e4343ac9d2428d8d8b53e50a41e46d6b988f6286ad52ef21a9b"
+    },
+    {
+      "path": "apps/web/src/local/importPermissions.ts",
+      "sha256": "40496c19adf65df1fea59c277db9cf95d00c17e12d3c260b0396c575463330bd"
+    },
+    {
+      "path": "apps/web/src/local/main.tsx",
+      "sha256": "cea8f1386f790238d2345e9a33a222eef19caf27253977ce81e8af5e7be66b1b"
+    },
+    {
+      "path": "apps/web/src/local/notificationState.test.ts",
+      "sha256": "6017a9fc873037f7c1c33dd41b08939b5af7769ebaa0884906631ca947785dce"
+    },
+    {
+      "path": "apps/web/src/local/notificationState.ts",
+      "sha256": "276b38b1731c846dd0ca5fa310805f63014c3f5841b57662342c1f0149709131"
+    },
+    {
+      "path": "apps/web/src/local/pages/AgentDetailPage.tsx",
+      "sha256": "a7463cbeb5c8899fa9dad493b998181fda5696cb64875defbdd3b5953a2a4e9c"
+    },
+    {
+      "path": "apps/web/src/local/pages/AgentsPage.tsx",
+      "sha256": "9285d733c15d2e566ea3ecfcd43389572669cc03faafc08b94bd8f3ba3e93b49"
+    },
+    {
+      "path": "apps/web/src/local/pages/BindingsPage.tsx",
+      "sha256": "729c751e8716988fd248b164ff0d2255d76fcfc58d8ced7bb1f93a7f4bdc56ff"
+    },
+    {
+      "path": "apps/web/src/local/pages/ConfirmationsPage.tsx",
+      "sha256": "99aba3921b9d8723b5680f11ab2f09dea5c8671eb5d8f8b497dd7ad0f0ea76a4"
+    },
+    {
+      "path": "apps/web/src/local/pages/DemoPage.tsx",
+      "sha256": "b3e3bc7fce3681b34495a0635fd31677e2bc714370da0d7168cece25f972da3e"
+    },
+    {
+      "path": "apps/web/src/local/pages/FindingsPage.tsx",
+      "sha256": "f292935d4735c2bece7a2d94f31f0ccdeac70e7744973e469f4c860ec4e3893e"
+    },
+    {
+      "path": "apps/web/src/local/pages/GrantsPage.tsx",
+      "sha256": "94e7201187ff63aea1d0ff01c498399992946c7ef20a79193e5885d81bb0b818"
+    },
+    {
+      "path": "apps/web/src/local/pages/OverviewPage.tsx",
+      "sha256": "64fd468f797bb704f654b0537aa3d5f844d2a1829969f4465924834290fe702b"
+    },
+    {
+      "path": "apps/web/src/local/pages/PermissionsPage.tsx",
+      "sha256": "6f65a3da24ba34426743cabc05ccd6ce087c96ab34573d7b80a87df58c730fe5"
+    },
+    {
+      "path": "apps/web/src/local/pages/ReceiptsPage.tsx",
+      "sha256": "7069cc68495fc00e9b8123a15edb80ff0d390e7a3d01ddd6b03b8ba268cbd919"
+    },
+    {
+      "path": "apps/web/src/local/pages/SettingsPage.tsx",
+      "sha256": "200d0f8d443d3feed297f51f910322e0ca17af7db86c247fbfe5ba0114758fba"
+    },
+    {
+      "path": "apps/web/src/local/pages/SkillImportsPage.tsx",
+      "sha256": "cdf807b50831215aa5f7482e6a21c0003d0b032999cff125d03f81b09b2706d4"
+    },
+    {
+      "path": "apps/web/src/local/pages/demo.css",
+      "sha256": "e8ff18ceffacac182f9349c290a7e693d07442cf56685e6432f1ae7ce26fc377"
+    },
+    {
+      "path": "apps/web/src/local/session.ts",
+      "sha256": "4c0ac346dc69cd82cadcdb299e11ae92b393e74402152f5e2c3de36313c3b796"
+    },
+    {
+      "path": "apps/web/src/local/skillImports.test.ts",
+      "sha256": "06c02fad2bea8197d85a9f537cb3f0e4be0909f641c5e22260687f7aa3f5b074"
+    },
+    {
+      "path": "apps/web/src/local/skillImports.ts",
+      "sha256": "8eb902931774f9c1fd46abc4ff47ef1bf5a4e4d77d02ecda73dc0a076ebe1faf"
+    },
+    {
+      "path": "apps/web/src/local/skillInstall.test.ts",
+      "sha256": "74a0f105545827701368720e0b1b771dace00731fd2ba9062c1e00432788b33e"
+    },
+    {
+      "path": "apps/web/src/local/skillInstall.ts",
+      "sha256": "8feeab28b1703ada2af2965e1500c23843c0c3f5ccc000b450c539267dd8c307"
+    },
+    {
+      "path": "apps/web/src/local/types.ts",
+      "sha256": "415a2556d63ff6ef86526461c1c9f4ee04ef1f6786a99fb1a0dea4151df7ace5"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "306050a26cb03a112620088b51a86dbc2d18fd22637dbd7a97852f89dd8d3f3a"
+    },
+    {
+      "path": "apps/web/src/pages/AgentDetailPage.tsx",
+      "sha256": "54b8cdb4314c5bff3380bd423585a2798e5d76d71e52996160753cd8d1b1c234"
+    },
+    {
+      "path": "apps/web/src/pages/AgentsPage.tsx",
+      "sha256": "adeae21ba7fb4375ef7d5c070bb9d1d028188d1093200a3255b24f93173c2980"
+    },
+    {
+      "path": "apps/web/src/pages/AuditPage.tsx",
+      "sha256": "328ef9b61599e893feb4386de07dc1aca1acc5380836415c62b3d28c4e2a5b3f"
+    },
+    {
+      "path": "apps/web/src/pages/ChangesPage.tsx",
+      "sha256": "421ec8555d65f6a86978822651d8bec22f14e2eb0abcff2d0a31c11f0aa8aeaf"
+    },
+    {
+      "path": "apps/web/src/pages/EnvironmentsPage.tsx",
+      "sha256": "b9d5b6a0d2b89c25d079eeb453547145a69da73cdae1e585886f87077a77cd68"
+    },
+    {
+      "path": "apps/web/src/pages/FindingsPage.tsx",
+      "sha256": "37bc25839f999e236effc28eab876e9e0b65fd8c4d9082cb5fe5bb3cdd3a4f47"
+    },
+    {
+      "path": "apps/web/src/pages/LoginPage.tsx",
+      "sha256": "42bdf7b1fcfd2cfc34c6cf623eb18682d0b1d18dd115b5fce93e5da7eccd5fb9"
+    },
+    {
+      "path": "apps/web/src/pages/NotFoundPage.tsx",
+      "sha256": "d2f3d5c04b58fb599fbf9402f769a76c9732a4a5e91ea66dbe4a8c6e7a35e177"
+    },
+    {
+      "path": "apps/web/src/pages/OverviewPage.tsx",
+      "sha256": "fe5d5d3468d9ce1141e92b571d633e94d63b43823cc05741b6c3dd5948139864"
+    },
+    {
+      "path": "apps/web/src/pages/PermissionsPage.tsx",
+      "sha256": "2ee8e483578bb81a6c5292e1227fcde532bd763aeff7ff7fea19f727666edcbf"
+    },
+    {
+      "path": "apps/web/src/pages/PoliciesPage.tsx",
+      "sha256": "84ff019e86f3e4d866373d0298ef178f8bd4bdb56e0f7dfa61b3c8a2fc95c971"
+    },
+    {
+      "path": "apps/web/src/pages/RuntimeBindingsPage.tsx",
+      "sha256": "a19783ae45a7798637c572c1869a8c7d0ae67277fcfa09cd01b1b640890a2236"
+    },
+    {
+      "path": "apps/web/src/pages/SettingsPage.tsx",
+      "sha256": "53debc3ae4bc43418ba5ffb93ff85a9cc220dfef3206f305e1f556a107cf5e1f"
+    },
+    {
+      "path": "apps/web/src/ui/verification.test.ts",
+      "sha256": "62e74afbd30f396854665c98d169a00156f86361bedc95c31f0fd92227f04c83"
+    },
+    {
+      "path": "apps/web/src/ui/verification.ts",
+      "sha256": "9b72e1cef530909d6151523f92c34af9567474d8705708bc1aac2fbaf3479dad"
+    },
+    {
+      "path": "apps/web/src/vite-env.d.ts",
+      "sha256": "f9ecad389bbf8fefae9b3cffb056ea6632a831298a7bcb999f80a30084de7d84"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "001792c2210abe3b1083d9f8892953bfb8655ffe74c10cb12f55aaa62d9bb790"
+    },
+    {
+      "path": "docs/adr/0040-skill-install-management.md",
+      "sha256": "284d8b0e22779cff29667080cbdde33b85087e9afaf72d436d5f974c197ddf36"
+    },
+    {
+      "path": "docs/adr/0041-installed-instance-permission-binding.md",
+      "sha256": "8a7bab50971feff586314c42d4b2c2d3bbd6093977fd8325965f406ddab7d4da"
+    },
+    {
+      "path": "docs/agentshield-dev-spec-v1.md",
+      "sha256": "311bba07f3eb09e4c1d344ff6f908e8cc67373f48e2b544cf0be68f838efdf88"
+    },
+    {
+      "path": "docs/personal-experience-development-progress-20260910.md",
+      "sha256": "3e62e43d0777f88fbd92c576794afd9a73c6be42118cc7514fb027493d19d71c"
+    },
+    {
+      "path": "docs/personal-experience-lan-team-development-taskbook-20260910-145507.md",
+      "sha256": "1d90fd679fdb2da8f5ac137c559d951e5cabbdde3b77948d68730ad08db25401"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-create.v1.schema.json",
+      "sha256": "d4e462a94f1ba1ceea445c4223d93ae9d063e42c75c190955c4b6a2c344744f8"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-list.v1.schema.json",
+      "sha256": "630e5a828873a6a2f79145a89e3fe7f4106439173e41f8773af7f4371d1e47f3"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-list.v2.schema.json",
+      "sha256": "1623fcbaff46a638fcb9d19b834e1917e58223f1ce8afab9eb90237c882e573a"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-permission-create.v1.schema.json",
+      "sha256": "65af0ceb4d7a6e9916d528ab0034664f122e10a40d3e1065691494e466e73b59"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-permission-created.v1.schema.json",
+      "sha256": "3d8de50cae51b49f9d26e2bc675c45f2180e826de75e3836e049ce1a254597be"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-permission-source.v1.schema.json",
+      "sha256": "b157c329405e7e97d6777c342f3ce8bc316b8bdd2f7f9ff09f5ff7777c9e0246"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-remote-create.v1.schema.json",
+      "sha256": "398c714a35962a2d7de7e1b6ddb481d4c88d09dc0e27880724f064c58d23d189"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-result.v1.schema.json",
+      "sha256": "2946d6e33364a33953d66d0f027b38c09b600ce0c460c394e33a5572f3315db0"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-result.v2.schema.json",
+      "sha256": "e730b3599483aeca934bc6f0575e862aa52f98f6418ff33b9ead8036c5e519c0"
+    },
+    {
+      "path": "packages/contracts/local-skill-import.v1.schema.json",
+      "sha256": "e679664fb22bfc214c053fc1a6b8fb332998112dbc2a02f46ed4842c6a7b8a48"
+    },
+    {
+      "path": "packages/contracts/local-skill-import.v2.schema.json",
+      "sha256": "51bc183c6184753f0ccd2ee4afdd6c32438e515e5c791427161bc62fd762f5e4"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-activate.v1.schema.json",
+      "sha256": "e109d0a000a557f00196d9f90a48bfebbb9280847963d41f3c29f8806eabf821"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-activated.v1.schema.json",
+      "sha256": "8beb84b53e4f2b9dd5f05c7cae7e617f407e9c0faace3afba865b7dd0f344241"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-apply.v1.schema.json",
+      "sha256": "787cd07a557ff1ea313a50aaf43fd4ece6be58b70880a1ff1a3315f6ef2e8d15"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-claim.v1.schema.json",
+      "sha256": "7b2326dc47d6759f8e326e2df44b9e0ec6a2516a0965416352088201588525a4"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-operation.v1.schema.json",
+      "sha256": "8b99b024da8201e43974beae150107f8aa7817cb482289c3e536ca531182fb59"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-owner.v1.schema.json",
+      "sha256": "965ac41c0b74b468fd00e3278bddeafb4821b12a40d3efea737db45b7c5f3fdf"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-plan-created.v1.schema.json",
+      "sha256": "ae952857c63979787de942b08e134c64900e14d1787d8878d8b1f81eae5bfae2"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-plan.v1.schema.json",
+      "sha256": "77132f3e3b96eaaa061a48999ae746e91bc9c7266c652039e375f41190b4d59a"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-recover.v1.schema.json",
+      "sha256": "81bfa6106783e4d99ebe60ea0e88e3b27bfc09a8bb702c4891ed73e139659a40"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-runtime-binding.v1.schema.json",
+      "sha256": "32879e1939c61261955f7439bee8bef6c177c9a6c02cc1674d383f207787170f"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-stage-create.v1.schema.json",
+      "sha256": "e782f07833ab4a040bcfdd0e8378b5a67efba79c7fb9dc71f04a2fd31269bd22"
+    },
+    {
+      "path": "packages/contracts/local-skill-install-view.v1.schema.json",
+      "sha256": "5943a0da778c0674b8370f5a0aa4a0a3d6ce2642a96534e0abe6729844776fd3"
+    },
+    {
+      "path": "scripts/personal-experience/installed-skill-runtime-native-smoke.py",
+      "sha256": "4a3b0ab74d6a2f7b9d5323b04271b1348718f965a922e3e4e15f6181ab86d251"
+    },
+    {
+      "path": "scripts/personal-experience/managed-instance-native-smoke.py",
+      "sha256": "799f651f38db598e401574a17713bf93af5be818ab1d54dc429b6e8c38fe1b38"
+    },
+    {
+      "path": "scripts/personal-experience/skill-install-hermes-recognition-smoke.py",
+      "sha256": "3398dfbff29fb06b1184e1ec1af0c94e433c95754e51bd54d000e6f1e9eed394"
+    },
+    {
+      "path": "scripts/personal-experience/skill-install-management-browser-smoke.py",
+      "sha256": "16d3089580881563a57efccd53e6be3a1fb859c0ba6e0d3c99f2581e3ab741e1"
+    },
+    {
+      "path": "scripts/personal-experience/skill-install-preview-browser-smoke.py",
+      "sha256": "10f405fed95235f9773b98196f53cf3caf240902ec4cd1e3fd20e990462b67eb"
+    },
+    {
+      "path": "scripts/validate-intent-v2-hermes.py",
+      "sha256": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "contracts.log",
+      "sha256": "00375218693f36e16e16cae71657725d57cad04f91f0a20259754cb32c0d9f5b"
+    },
+    {
+      "path": "cross-builds.json",
+      "sha256": "7c4f72e179df2e3ada4e53a2cb46345cd1f592fec3f893a996d2d43cc6fb82e5"
+    },
+    {
+      "path": "go-all.log",
+      "sha256": "ac1ed03f9b34c5606d044c8c98f2e4c211197d5a7f494a1bc1d0ba6471d923f0"
+    },
+    {
+      "path": "gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "legacy-reader.json",
+      "sha256": "7f4e477bc0991f06b646aed72e6533cb216b3ff7f260f71561a59c45a5af9675"
+    },
+    {
+      "path": "legacy.log",
+      "sha256": "6392040b976ab2b367449ab97fb5c933e7f37c5a7cb30d2b5330190fe274d1e5"
+    },
+    {
+      "path": "lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "native-recognition/result.json",
+      "sha256": "b13400c1364e468b5310ad899b7f30516542ddbd266d02cd21f8afef874eab99"
+    },
+    {
+      "path": "native-recognition/skills-all.txt",
+      "sha256": "fadfbb1c4a9009763d0df8403e5f371514c948a3ecf6bc0d4fa143d63070c27b"
+    },
+    {
+      "path": "native-recognition/skills-local.txt",
+      "sha256": "fadfbb1c4a9009763d0df8403e5f371514c948a3ecf6bc0d4fa143d63070c27b"
+    },
+    {
+      "path": "native-runtime.json",
+      "sha256": "a3aaa451ca3809a640d3c34b32b44523372de4a561d8719ebde6374adc48f985"
+    },
+    {
+      "path": "native.log",
+      "sha256": "96f314ac3e14889b4d780bcd846d4130a971919f4e8e14d61bce2b73a899575b"
+    },
+    {
+      "path": "race.jsonl",
+      "sha256": "229ebbb5288eac7a30a36870f2e8e8c334deb0dfd28ded48e59335c65e4f7950"
+    },
+    {
+      "path": "recognition.log",
+      "sha256": "05e3d28829b61e6d1cedbb146d77c80c81dcb9ed23be1d3fd8ccf3e665104819"
+    },
+    {
+      "path": "vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "limitations": [
+    "Actual tool-call Skill attribution remains unverified; the installed content binding constrains the selected instance permission envelope.",
+    "Public native CLI uses a synthetic model/operator and temporary profile, not user tasks or Skill script execution.",
+    "Windows/macOS runtime and WorkBuddy remain unverified; cross builds do not substitute for them.",
+    "The M25-reader probe only proves refusal of this new permission representation, not a universal old-state writer guard.",
+    "A permission set with no callable tools cannot produce a usable session; improve its user-facing preparation error with the next UI integration.",
+    "Full lifecycle, privacy, task evidence UI, distribution and LAN tasks remain active.",
+    "No existing user daemon restart, commit, push, release or remote mutation."
+  ]
+}

@@ -26,16 +26,18 @@ type ProcessPatch struct {
 
 // DesiredPatch is POST /v1/grants/{id}/patch-desired (pending_approval only).
 type DesiredPatch struct {
-	HasTools      bool
-	Tools         []string
-	HasNetwork    bool
-	Network       []NetworkPatch
-	HasFilesystem bool
-	Filesystem    *FilesystemPatch
-	HasProcess    bool
-	Process       *ProcessPatch
-	HasModels     bool
-	Models        []string
+	PreserveFilesystemDenies bool
+	PreserveModelDenies      bool
+	HasTools                 bool
+	Tools                    []string
+	HasNetwork               bool
+	Network                  []NetworkPatch
+	HasFilesystem            bool
+	Filesystem               *FilesystemPatch
+	HasProcess               bool
+	Process                  *ProcessPatch
+	HasModels                bool
+	Models                   []string
 }
 
 // PatchDesired rebuilds facts + allowlists + DesiredPolicy for a pending grant.
@@ -49,6 +51,11 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 
 	var kept []Fact
 	approvalTools := map[string]bool{}
+	if g.OpenClawToolPolicy != nil {
+		for _, tool := range g.OpenClawToolPolicy.RequireApproval {
+			approvalTools[tool] = true
+		}
+	}
 	for _, f := range g.Facts {
 		if f.Domain == "tool" && f.Effect == "allow" && f.Conditions["require_approval"] == true {
 			approvalTools[f.Resource.Value] = true
@@ -60,11 +67,11 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 		case "network":
 			drop = patch.HasNetwork
 		case "filesystem":
-			drop = patch.HasFilesystem
+			drop = patch.HasFilesystem && !(patch.PreserveFilesystemDenies && f.Effect == "deny")
 		case "process":
 			drop = patch.HasProcess
 		case "model":
-			drop = patch.HasModels
+			drop = patch.HasModels && !(patch.PreserveModelDenies && f.Effect == "deny")
 		}
 		if !drop {
 			kept = append(kept, f)
@@ -132,6 +139,24 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 
 	hermes := map[string]bool{}
 	ocAllow, ocReq := map[string]bool{}, map[string]bool{}
+	deniedTools, deniedModels := map[string]bool{}, map[string]bool{}
+	// Older signed Grants may carry restrictions only in the platform policy.
+	// Rebuilding facts must not erase those existing execution gates.
+	if g.OpenClawToolPolicy != nil {
+		for _, tool := range g.OpenClawToolPolicy.Deny {
+			deniedTools[tool] = true
+		}
+	}
+	for _, f := range g.Facts {
+		if f.Effect == "deny" {
+			if f.Domain == "tool" {
+				deniedTools[f.Resource.Value] = true
+			}
+			if f.Domain == "model" {
+				deniedModels[f.Resource.Value] = true
+			}
+		}
+	}
 	var netRules []any
 	fsRO, fsRW := map[string]bool{}, map[string]bool{}
 	var models []any
@@ -140,7 +165,7 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 	for _, f := range g.Facts {
 		switch f.Domain {
 		case "tool":
-			if f.Effect == "allow" {
+			if f.Effect == "allow" && !deniedTools[f.Resource.Value] && !deniedTools["*"] {
 				hermes[f.Resource.Value] = true
 				ocAllow[f.Resource.Value] = true
 				tools = append(tools, f.Resource.Value)
@@ -150,6 +175,9 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 				netRules = append(netRules, map[string]any{"endpoint": f.Resource.Value, "effect": "allow"})
 			}
 		case "filesystem":
+			if f.Effect != "allow" {
+				continue
+			}
 			if f.Action == "fs.read" {
 				fsRO[f.Resource.Value] = true
 			} else {
@@ -163,7 +191,9 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 			// domain must not turn an approval-gated exec into plain allow.
 			ocReq["exec"] = true
 		case "model":
-			models = append(models, f.Resource.Value)
+			if f.Effect == "allow" && !deniedModels[f.Resource.Value] && !deniedModels["*"] {
+				models = append(models, f.Resource.Value)
+			}
 		}
 	}
 
@@ -212,7 +242,12 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 		al := keysSorted(hermes)
 		g.HermesToolsetAllowlist = &al
 	case "openclaw":
-		g.OpenClawToolPolicy = &OpenClawToolPolicy{Allow: keysSorted(ocAllow), Deny: []string{}, RequireApproval: keysSorted(ocReq)}
+		for tool := range ocReq {
+			if deniedTools[tool] || deniedTools["*"] {
+				delete(ocReq, tool)
+			}
+		}
+		g.OpenClawToolPolicy = &OpenClawToolPolicy{Allow: keysSorted(ocAllow), Deny: keysSorted(deniedTools), RequireApproval: keysSorted(ocReq)}
 	}
 
 	g.Signature = "" // cleared before resign

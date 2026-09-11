@@ -1,0 +1,194 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T11:34:28.201676+00:00",
+  "batch": "M7 Hermes product runtime check",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "checks": [
+    {
+      "command": "go test ./...",
+      "passed": true,
+      "log": "go-test.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "go-vet.log"
+    },
+    {
+      "command": "gofmt -l .",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "go test -race ./internal/runtimecheck ./internal/server ./internal/adapterinstall",
+      "passed": true,
+      "log": "go-race.log"
+    },
+    {
+      "command": "go vet ./internal/adapterinstall && go test ./internal/adapterinstall ./internal/ui",
+      "passed": true,
+      "log": "go-additional-tests.log"
+    },
+    {
+      "command": "SIQ_HERMES_NATIVE_CLI=<installed CLI> go test -race ./internal/adapterinstall -run Test.*(RuntimeTarget|NativeCLI)",
+      "passed": true,
+      "log": "native-target-test.log"
+    },
+    {
+      "command": "npm run build:local",
+      "passed": true,
+      "log": "web-local-build.log"
+    },
+    {
+      "command": "npm run build",
+      "passed": true,
+      "log": "web-enterprise-build.log"
+    },
+    {
+      "command": "npm test -- --run",
+      "passed": true,
+      "log": "web-test.log"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "passed": true,
+      "log": "contract-test.log"
+    },
+    {
+      "command": "uv run pytest ../../adapters/runtime/hermes-agentshield/tests -q",
+      "passed": true,
+      "log": "adapter-test.log"
+    },
+    {
+      "command": "uv run ruff check <Hermes adapter and runtime-check tests> --ignore UP017",
+      "passed": true,
+      "log": "adapter-lint.log"
+    },
+    {
+      "command": "uv run ruff check <schema tests and both runtime-check scripts>",
+      "passed": true,
+      "log": "python-lint.log"
+    }
+  ],
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/__init__.py": "6251c60ba6adb78cdd36d5bbcb32a83a74d6d21b739d349c2601348e9a76a0c4",
+    "adapters/runtime/hermes-agentshield/tests/test_adapter.py": "ca49a626fc7df46bb87e24f385ca775c52a59ab1584d26952fa844893a71d215",
+    "adapters/runtime/hermes-agentshield/tests/test_runtime_check.py": "1465adeadf6742d2296edf4c01422e2f39aca611ba2b32d46a589ee7da46b624",
+    "apps/agentshield/cmd/agentshield/main.go": "e4d9c7258d76b65081f53b2c3d9eba64023ca5520fe63b8893e10133150d5c2a",
+    "apps/agentshield/internal/adapterinstall/assets/hermes/__init__.py": "6251c60ba6adb78cdd36d5bbcb32a83a74d6d21b739d349c2601348e9a76a0c4",
+    "apps/agentshield/internal/adapterinstall/diagnostics.go": "e9bec6ff3b4563ce93805863226fd62f4dcb6787ebf70280c7b3e01ade11a7b8",
+    "apps/agentshield/internal/adapterinstall/runtime_target.go": "6711aaf0a0b3504c4d8fcb4012f7f44936fe2d808dcca480b345653696d7cf9e",
+    "apps/agentshield/internal/adapterinstall/runtime_target_test.go": "95543d391a2742aa0abca68c7fb60b8e49d5fded786581d23234169737ad998a",
+    "apps/agentshield/internal/runtimecheck/authority.go": "3cd3a2a4d588ab2ee26e93334114a8fb016f596b391d7ac4e2b4a2ceb7dbba4b",
+    "apps/agentshield/internal/runtimecheck/contracts_test.go": "9e408319193fa14da7c53b2fdb82b1b6095fcc52adba444183d16edc7164874f",
+    "apps/agentshield/internal/runtimecheck/execute.go": "0a3b4cf12a62f6108d7c30b2caae905ec4e3312e2c6f6a190866941e07435358",
+    "apps/agentshield/internal/runtimecheck/manager.go": "7d86e5231fac90d8290358078da2c2817c5f143aa2d0b3a2308e22cc5155a610",
+    "apps/agentshield/internal/runtimecheck/manager_test.go": "e4234dcc301f459b5035ed066dd1934eacf2a950015979e1492219562c6789c9",
+    "apps/agentshield/internal/runtimecheck/native.go": "18bc9bae61943b422969dfe84f781b735eff8afd0f00eadaba40d29321394668",
+    "apps/agentshield/internal/runtimecheck/records.go": "5c4bd01fab6e83877ac19e9030e4c31a4db95b4eadb15a138df30fdeed57edd9",
+    "apps/agentshield/internal/runtimecheck/recovery_test.go": "c2e5e4ab5ed9779d571fbda96d0d5a37ae3a6f5020b29ba5738ce22cb93343f8",
+    "apps/agentshield/internal/runtimecheck/types.go": "091bf036b56af1b3c0fd9f91f2b56d2424e60b760c96feb99bcd582e5f0ba92f",
+    "apps/agentshield/internal/server/runtime_check.go": "dabc149935185899ad3a29a36a520207e890a4bea03d809f5ddfdb25c221acd7",
+    "apps/agentshield/internal/server/runtime_check_test.go": "5b0abc22f0c7eac5401f824d768373fce03efd8e350a5e147bccc92ea6246fc0",
+    "apps/agentshield/internal/server/server.go": "640c77910224a64da26c07dd88b4d2e44349e4f1a2263206f1b769da1d82c3ef",
+    "apps/agentshield/internal/ui/embedded/index.html": "f8f079aa608e3e1cd029daa0785cc9f35878e8133411894128c8c95372218bb8",
+    "apps/agentshield/testdata/contracts/runtime-check-attached.json": "d8008cb6f7b27af2db0794904e8ab368f5e39ecb0c860f035c5f9e77c74363a7",
+    "apps/agentshield/testdata/contracts/runtime-check-list.json": "7ed11ed9fbf573cf3a0e416c21b1b910b8663587d1fa9f9615a90823fe1831a4",
+    "apps/agentshield/testdata/contracts/runtime-check-passed.json": "161f84bc715512871b046e06b6d2b37c799ef7ec91f9bd4ac1e2ab4e65b38258",
+    "apps/agentshield/testdata/contracts/runtime-check-plan.json": "5f047291da2933a59301c4e0bdce8f65f122a9ba927247c00268d746b2b4cbd4",
+    "apps/agentshield/testdata/contracts/runtime-check-started.json": "51db3cd470ac3e1bed72c2df0698d23d893dd0b83d22ad27dfe293577c9dcbd7",
+    "apps/control-api/app/tests/test_schema_contracts.py": "2a513cdb35e19c2296fb31ec0d5e50102ed26904d3d138a1bac93a7cca5fc5e6",
+    "apps/web/src/index.css": "a5634c6a7dc971a664781d5c8709ef3e3f3fe3007cddc2cd40710d7bfcd924ec",
+    "apps/web/src/local/api.ts": "46422e846d33c76e819d242399b4e1ed4db2e20f79598261eb0ef170e5276a10",
+    "apps/web/src/local/components/RuntimeCheckDialog.tsx": "599636d795d12bb24b57a63d538713ce68583ebafc3405c7fb55e05fb87e9ab6",
+    "apps/web/src/local/pages/BindingsPage.tsx": "729c751e8716988fd248b164ff0d2255d76fcfc58d8ced7bb1f93a7f4bdc56ff",
+    "apps/web/src/local/pages/SettingsPage.tsx": "200d0f8d443d3feed297f51f910322e0ca17af7db86c247fbfe5ba0114758fba",
+    "apps/web/src/local/types.ts": "cb1bfb765da1a35dd4d5cbfd27a38edc6331519ddb5dd054bbe76e95643999a1",
+    "docs/adr/0024-native-runtime-check.md": "0d2b2878b8c0b28c639264e718d360af72989ee25acbd890c020abd02f3f5a3b",
+    "docs/agentshield-dev-spec-v1.md": "090bb5b160852c4aed21b8521620c0cc94fb9b6ab294bcf1e4bb74436cf60aed",
+    "docs/personal-experience-development-progress-20260910.md": "105284191f59ed7dc5a3bcb52910cea6bfde58dc5f302739ad5d32569a304d44",
+    "docs/personal-experience-requirements-baseline-20260910.md": "164373ab0ca3408a02a2c70f1110caa5996c926e5f279da9700978e073397a48",
+    "packages/contracts/local-runtime-check.v1.schema.json": "c4ae3476f484552921bd7d5e3c6882d3ffaae68d1f94ed462ba14a68e60ebbbf",
+    "scripts/personal-experience/runtime-check-browser-smoke.py": "e139a5361f2038f7fbcce5a75d9c62499b2cd9bad83987f3c0711eeba70b254a",
+    "scripts/personal-experience/runtime-check-native-smoke.py": "e9694d135c0ac588acabed9f62d113822121cafe8d91c619d90d3d0850f8eaf4",
+    "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f"
+  },
+  "cross_builds": [
+    {
+      "target": "linux-amd64",
+      "path": ".tmp/personal-experience/m7-linux-amd64",
+      "sha256": "48a0c78e703eea2e4b565ed1ac0cb43a696958b274dc15ce734202537c36f701",
+      "cross_build_passed": true,
+      "native_execution_verified": false
+    },
+    {
+      "target": "linux-arm64",
+      "path": ".tmp/personal-experience/m7-linux-arm64",
+      "sha256": "0aca1911886d9c7a9a04c58587f102e3f77d9fcf54058e74c3152a9e6f76eb06",
+      "cross_build_passed": true,
+      "native_execution_verified": true
+    },
+    {
+      "target": "darwin-arm64",
+      "path": ".tmp/personal-experience/m7-darwin-arm64",
+      "sha256": "bdb7ecef3fbfa9cb12eb897096f324e45f386ee73dc70ce7c26031530c1a88d7",
+      "cross_build_passed": true,
+      "native_execution_verified": false
+    },
+    {
+      "target": "windows-amd64",
+      "path": ".tmp/personal-experience/m7-windows-amd64",
+      "sha256": "f6cc5f2987359cb3cce2bcf0e9da2af9beefbc973d9f0be12703aedbdf571b7f",
+      "cross_build_passed": true,
+      "native_execution_verified": false
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/evidence/personal-experience/runtime-check-native-20260910.json",
+      "sha256": "182bc2d5d2783cdb112d9bddf567cb92351e56a932b49f73c228b70225d6b3e1",
+      "binary_sha256": "0aca1911886d9c7a9a04c58587f102e3f77d9fcf54058e74c3152a9e6f76eb06"
+    },
+    {
+      "path": "docs/evidence/personal-experience/runtime-check-browser-20260910/result.json",
+      "sha256": "aca4ddad844a1f0735f9cd0693a7df3d44da0f96cae51bb1c806cdcd7152d5d0",
+      "binary_sha256": "0aca1911886d9c7a9a04c58587f102e3f77d9fcf54058e74c3152a9e6f76eb06"
+    },
+    {
+      "path": "docs/evidence/personal-experience/hermes-runtime-check-regression-20260910.json",
+      "sha256": "46d5efd3b9b08509cdd4f93c2933d94d3046ff9cd51a9babcf81a4cb5acb059d",
+      "binary_sha256": "b721cb6bcbb7093daf6c722c06bc98db8f9b4e4faae99e6bda293243f7d36e92"
+    }
+  ],
+  "limitations": [
+    "Linux arm64 only for native runtime; cross-builds do not prove Windows/macOS behavior.",
+    "Product native checks use isolated profiles and synthetic operators, not existing user sessions.",
+    "Restart recovery of runtime-check journals is tested at controller/storage level; multi-OS process crash recovery remains pending.",
+    "No complete Skill attribution, OS isolation, full personal acceptance, team acceptance, or release claim."
+  ],
+  "artifact_sha256": {
+    "docs/evidence/personal-experience/runtime-check-20260910/adapter-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "docs/evidence/personal-experience/runtime-check-20260910/adapter-test.log": "31cb46ee6f83144dcc4afd86f95218d20badb053bbbb9be53397069fca105d13",
+    "docs/evidence/personal-experience/runtime-check-20260910/contract-test.log": "95e12cced10e3f863ab3ebea62e66284a36c0a89b996b5ab1ae283e23895e13a",
+    "docs/evidence/personal-experience/runtime-check-20260910/go-additional-tests.log": "19aa1a2440425729eae35957e3f43a24b4b7dc34da4104bd1cc6ec0b37da02ce",
+    "docs/evidence/personal-experience/runtime-check-20260910/go-race.log": "829b5e46bab279c8771ad9f7a4a9835d6ff12b9a6172ef6dd7d4047157b3130a",
+    "docs/evidence/personal-experience/runtime-check-20260910/go-test.log": "112db1aac2fbf936619efbbbb43c894e3fbc6b28891edb2f786d8c298f503e84",
+    "docs/evidence/personal-experience/runtime-check-20260910/go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/evidence/personal-experience/runtime-check-20260910/gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/evidence/personal-experience/runtime-check-20260910/native-target-test.log": "58eb0885c6393ed1a06437ffcd6f9052b6289faa7ac4fb7eab3c61bf3518ff96",
+    "docs/evidence/personal-experience/runtime-check-20260910/python-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "docs/evidence/personal-experience/runtime-check-20260910/web-enterprise-build.log": "22a41596d6be5e8a1aeb19091eb8f31b0f9f02ec5227ebc7f5119971c5ea78d4",
+    "docs/evidence/personal-experience/runtime-check-20260910/web-local-build.log": "0077790f06e240af87074dfcdd42521e008d8d3b2a231a5636ab741776750d26",
+    "docs/evidence/personal-experience/runtime-check-20260910/web-test.log": "ad002833121836693ae5f048492791b8410366ceff2f7408b57c96f39d7e6a22",
+    "docs/evidence/personal-experience/runtime-check-browser-20260910/runtime-check-mobile-actions.png": "d721d527be5b10f462e3fa6d482b0a1bbbec56e58d40e0c600fce59f48a8a016",
+    "docs/evidence/personal-experience/runtime-check-browser-20260910/runtime-check-mobile.png": "4c3bad7ae07782b8fdbae360b92b84d1fb2b14cec167105640d0a009c488ed9c",
+    "docs/evidence/personal-experience/runtime-check-browser-20260910/runtime-check-passed.png": "546717d1f8754640afc760c8d179e3cc82bf80a770177461c10c590b178892eb"
+  },
+  "review": {
+    "source_and_evidence_hashes_match": true,
+    "incremental_document_links_resolve": true,
+    "mobile_screenshot_visually_reviewed": true,
+    "historical_evidence_preserved": true
+  }
+}

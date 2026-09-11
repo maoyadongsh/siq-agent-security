@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { Icon } from '@/components/icons';
 import { localApi } from '../api';
 import type { Receipt } from '../types';
-import { useLocalSession } from '../session';
 import { actionLabel, actionTag, platformLabel, shortHash } from '../format';
 
 function shortTime(iso: string): string {
@@ -12,13 +12,11 @@ function shortTime(iso: string): string {
 }
 
 export default function ReceiptsPage() {
-  const { actorId } = useLocalSession();
   const [rows, setRows] = useState<Receipt[]>([]);
   const [verified, setVerified] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState<string | null>(null);
-  const [holdErr, setHoldErr] = useState<string | null>(null);
 
   const load = (announce = false) => {
     setLoading(true);
@@ -43,16 +41,6 @@ export default function ReceiptsPage() {
     load(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const resolve = (receiptId: string, approve: boolean) => {
-    setHoldErr(null);
-    localApi
-      .resolveHold(receiptId, approve, actorId)
-      .then(() => load(false))
-      .catch((err: unknown) => {
-        setHoldErr(err instanceof Error ? err.message : '签核失败');
-      });
-  };
 
   const columns: TableColumn<Receipt>[] = [
     { key: 'seq', header: 'seq', render: (r) => String(r.seq) },
@@ -95,28 +83,7 @@ export default function ReceiptsPage() {
       header: '',
       render: (r) =>
         r.action === 'hold' ? (
-          <span className="row-actions">
-            <button
-              type="button"
-              className="btn btn-sm btn-primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                resolve(r.receipt_id, true);
-              }}
-            >
-              放行
-            </button>
-            <button
-              type="button"
-              className="btn btn-sm btn-danger"
-              onClick={(e) => {
-                e.stopPropagation();
-                resolve(r.receipt_id, false);
-              }}
-            >
-              拒绝
-            </button>
-          </span>
+          <Link to={`/confirmations?request=${encodeURIComponent(r.receipt_id)}`}>查看确认状态</Link>
         ) : null,
     },
   ];
@@ -144,11 +111,6 @@ export default function ReceiptsPage() {
       {verified === false ? (
         <p className="action-error" role="alert">
           验签失败：{msg ?? '链断裂或签名不匹配。'}
-        </p>
-      ) : null}
-      {holdErr ? (
-        <p className="action-error" role="alert">
-          {holdErr}
         </p>
       ) : null}
       {error ? (

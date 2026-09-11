@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "identity_id",
+    "revoked"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-runtime-identity-revoked/v1"
+    },
+    "identity_id": {
+      "type": "string",
+      "pattern": "^ri-[a-f0-9]{32}$"
+    },
+    "revoked": {
+      "const": true
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

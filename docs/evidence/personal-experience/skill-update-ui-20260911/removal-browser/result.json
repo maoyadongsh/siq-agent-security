@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-09-10T22:59:23.408620+00:00",
+  "status": "passed",
+  "checks": {
+    "approved_grant_prefills_portable_skill_directory": true,
+    "explicit_confirmation_required": true,
+    "committed_response_loss_reads_result_without_second_apply": true,
+    "refresh_reads_existing_target_without_activation": true,
+    "open_review_cancel_never_removes_or_revokes": true,
+    "lost_write_and_read_failure_clear_old_actions_without_repost": true,
+    "pending_recovery_requires_new_confirmation_and_preserves_user_files": true,
+    "reload_restores_original_pending_operation_without_write": true,
+    "explicit_retry_uses_original_request_and_completes": true,
+    "completed_history_never_cleans_reused_path": true
+  },
+  "binary_sha256": "ddfd984a4faf9016f5ff4cf8b53d41792dbd65016a8e2844dfb66e24c9707646",
+  "harness_sha256": "4fc81f8aec4dd8ebbc29be193929a8ee17759f5fcf1475b3ee555a605f76449c",
+  "scope": "Real browser and isolated daemon/profile, synthetic owner and Skill. Explicit removal, lost responses, pending recovery and reused target. No OS/Skill-attribution acceptance; actual process crashes are separate Go evidence."
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-remove.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "operation_signature",
+    "expected_grant_revision",
+    "expected_binding_signature",
+    "actor_id",
+    "confirm_remove"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-remove/v1"
+    },
+    "operation_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "expected_grant_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expected_binding_signature": {
+      "type": "string",
+      "pattern": "^([a-f0-9]{128})?$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "confirm_remove": {
+      "const": true
+    }
+  }
+}

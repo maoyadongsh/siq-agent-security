@@ -1,0 +1,31 @@
+{
+  "schema_version": "personal-session-smoke/v1",
+  "recorded_at": "2026-09-10T08:29:16.261060+00:00",
+  "binary_sha256": "ed915630f345d872fb55d61488c9d4d50b7f651c2f900d6d770e5a881bfc9e6a",
+  "scope": "isolated daemon and real Chromium; no real agent integration claimed",
+  "discovery_fixtures": true,
+  "checks": {
+    "cli_health_identity": true,
+    "pair_without_restart": true,
+    "cookie_scope": true,
+    "no_script_credential": true,
+    "refresh_restores_session": true,
+    "second_tab_restores_session": true,
+    "same_name_installations_distinct": true,
+    "shared_skill_multiple_consumers": true,
+    "explicit_rescan_updates_content_without_changing_identity": true,
+    "manual_scope_preview_and_scan": true,
+    "repeat_scan_no_duplicate_installation": true,
+    "mobile_navigation_opens_and_closes": true,
+    "discovery_mobile_no_overflow": true,
+    "installed_files_do_not_claim_runtime_protection": true,
+    "workbuddy_keeps_separate_verification_status": true,
+    "disabled_plugin_reports_configuration_failure": true,
+    "logout_revokes_across_tabs": true,
+    "restart_requires_pairing": true,
+    "manual_scope_survives_daemon_restart": true,
+    "connection_retry_recovers": true,
+    "pairing_mobile_no_overflow": true,
+    "no_page_errors": true
+  }
+}

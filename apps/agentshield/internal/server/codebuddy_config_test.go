@@ -22,7 +22,7 @@ func TestCodeBuddyCustomConfigThroughAdminAPI(t *testing.T) {
 	if _, err := os.Stat(dir); !os.IsNotExist(err) {
 		t.Fatal("denied install touched config")
 	}
-	code, res := call(t, s, "POST", "/v1/adapter/install", token, body)
+	code, res := adapterApplyCall(t, s, "codebuddy", "install")
 	if code != 200 {
 		t.Fatalf("install: %d %v", code, res)
 	}
@@ -47,7 +47,7 @@ func TestCodeBuddyCustomConfigThroughAdminAPI(t *testing.T) {
 	if !found {
 		t.Fatal("API status did not use custom config")
 	}
-	code, res = call(t, s, "POST", "/v1/adapter/uninstall", token, body)
+	code, res = adapterApplyCall(t, s, "codebuddy", "uninstall")
 	if code != 200 || res["action"] != "uninstall" {
 		t.Fatalf("uninstall: %d %v", code, res)
 	}
@@ -57,11 +57,11 @@ func TestCodeBuddyCustomConfigThroughAdminAPI(t *testing.T) {
 	}
 	counts := map[string]int{}
 	for _, event := range events {
-		if event.Target == "codebuddy" {
-			counts[event.Event]++
+		if event.Event == "adapter_files_applied" {
+			counts[event.Note]++
 		}
 	}
-	if counts["adapter_install"] != 1 || counts["adapter_uninstall"] != 1 {
+	if counts["codebuddy:install"] != 1 || counts["codebuddy:uninstall"] != 1 {
 		t.Fatalf("expected only successful admin mutations in audit: %v", counts)
 	}
 }

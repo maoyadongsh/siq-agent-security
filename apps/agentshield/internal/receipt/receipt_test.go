@@ -36,7 +36,11 @@ func deployedGrant(t *testing.T, platform string, redact bool) *grant.Grant {
 			f("tool", "tool.invoke", "tool", "web_fetch"),
 			f("tool", "tool.invoke", "tool", "exec"),
 			f("network", "http.request", "endpoint", "api.github.com:443"),
-			f("filesystem", "fs.write", "path", "~/work/out"),
+			f("filesystem", "fs.write", "path", "/home/u/work/out"),
+			// Correlation/taint fixtures intentionally grant these read targets;
+			// read_file alone no longer implies access to every file.
+			f("filesystem", "fs.read", "path", "/home/u/proj"),
+			f("filesystem", "fs.read", "path", "/work"),
 			f("credential", "credential.read", "credential_ref", ".env"),
 		}}
 	res, err := grant.Build(adm, grant.Options{Subject: grant.Subject{Type: "agent_instance", ID: "inst_1"}, Platform: platform, Key: key(t), RedactSecrets: redact})
@@ -150,7 +154,7 @@ func TestCredentialPathAndOutsideWriteDenied(t *testing.T) {
 	if !contains(d.Receipt.TaintLabels, taintPrivate) || !d.Receipt.Trifecta.PrivateData {
 		t.Fatalf("private_mount taint must be recorded: %+v", d.Receipt)
 	}
-	d, _ = fx.eng.Decide(req("hermes", "exec", map[string]any{"command": "cp report.txt ~/work/out/r.txt"}))
+	d, _ = fx.eng.Decide(req("hermes", "exec", map[string]any{"command": "cp report.txt /home/u/work/out/r.txt"}))
 	if d.Action != ActionAllow {
 		t.Fatalf("write inside granted path must pass: %+v", d)
 	}

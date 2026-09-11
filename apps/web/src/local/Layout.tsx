@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon, type IconName } from '@/components/icons';
 import { useLocalSession } from './session';
+import { ConfirmationProvider, useConfirmations } from './confirmations';
+import { ConfirmationNotificationProvider } from './components/ConfirmationNotifications';
 import { platformTierText, hasOpenShellL3 } from './format';
 
 interface NavItem {
@@ -24,6 +26,9 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: '治理',
     items: [
+      { to: '/confirmations', label: '确认待办', icon: 'shield' },
+      { to: '/skill-imports', label: '导入 Skill', icon: 'shield' },
+      { to: '/installed-skills', label: '已安装 Skill', icon: 'shield' },
       { to: '/grants', label: '签发', icon: 'policies' },
       { to: '/receipts', label: '回执', icon: 'audit' },
       { to: '/bindings', label: '运行时绑定', icon: 'bindings' },
@@ -48,14 +53,22 @@ function readCollapsed(): boolean {
 }
 
 function currentTitle(pathname: string): string {
+  if (pathname === '/skill-updates') return '更新 Skill';
   if (pathname.startsWith('/agents/')) return '智能体详情';
   const exact = NAV_ITEMS.find((item) => item.to === pathname);
   return exact?.label ?? '总览';
 }
 
 export default function Layout() {
+  return <ConfirmationProvider><ConfirmationNotificationProvider><LocalLayout /></ConfirmationNotificationProvider></ConfirmationProvider>;
+}
+
+function LocalLayout() {
   const location = useLocation();
-  const { status } = useLocalSession();
+  const inbox = useConfirmations();
+  const pendingCount = inbox.error ? null : inbox.items.filter((item) => item.status === 'pending' && item.expires_at && Date.parse(item.expires_at) > Date.now()).length + inbox.grants.filter((grant) => grant.status === 'pending_approval').length;
+  const { status, error, signOut } = useLocalSession();
+  const [signingOut, setSigningOut] = useState(false);
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(readCollapsed);
 
@@ -123,7 +136,7 @@ export default function Layout() {
                   <span className="nav-icon" aria-hidden="true">
                     <Icon name={item.icon} />
                   </span>
-                  <span className="nav-label">{item.label}</span>
+                  <span className="nav-label">{item.label}{item.to === '/confirmations' && pendingCount !== null && pendingCount > 0 ? `（${pendingCount}）` : ''}</span>
                 </NavLink>
               ))}
             </div>
@@ -172,8 +185,13 @@ export default function Layout() {
               ))
             )}
           </span>
+          <button type="button" className="btn" disabled={signingOut} onClick={() => {
+            setSigningOut(true);
+            void signOut().finally(() => setSigningOut(false));
+          }}>{signingOut ? '正在退出…' : '退出管理'}</button>
         </header>
         <main className="content">
+          {error ? <p className="action-error" role="alert">{error}</p> : null}
           <div key={location.pathname} className="siq-page-enter content-page">
             <Outlet />
           </div>

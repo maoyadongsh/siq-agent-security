@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/intent-grant-binding.v1.schema.json",
+  "title": "Signed session binding with fixed Grant selection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "binding_id",
+    "platform",
+    "session_id",
+    "agent_id",
+    "task_id",
+    "intent_id",
+    "intent_digest",
+    "bound_at",
+    "expires_at",
+    "authority_revision",
+    "signature",
+    "grant_ref"
+  ],
+  "properties": {
+    "binding_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "platform": {
+      "type": "string",
+      "minLength": 1
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "intent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "intent_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "bound_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expires_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authority_revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    },
+    "grant_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grant_id",
+        "admission_id",
+        "permission_digest"
+      ],
+      "properties": {
+        "grant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "admission_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "permission_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

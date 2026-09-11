@@ -1,0 +1,33 @@
+{
+  "schema_version": "personal-confirmation-notifications-browser/v1",
+  "recorded_at": "2026-09-10T15:12:44.958088+00:00",
+  "passed": true,
+  "binary_sha256": "c1ddc61be0b8de614ed91fc7c6bf89cce69c62f70ecf8cdc5e744d8950d57df9",
+  "harness_sha256": "a960c0d873cc44e057d6574527cfa3b10d8db716eb660e5308018b221e248ac7",
+  "checks": {
+    "opening_inbox_does_not_approve": true,
+    "explicit_review_records_one_approval_and_hides_controls": true,
+    "approval_replay_conflicts": true,
+    "denial_visible_to_runtime_and_no_approve_control": true,
+    "concurrent_resolution_conflict_refreshes_state": true,
+    "disconnect_disables_actions_and_refresh_recovers": true,
+    "mobile_details_and_actions_fit_viewport": true,
+    "long_term_permissions_open_exact_unapproved_grant": true,
+    "receipt_history_links_to_confirmation_details": true,
+    "no_browser_runtime_errors": true,
+    "only_three_expected_signed_resolution_receipts": true,
+    "notification_permission_denial_does_not_block_inbox": true,
+    "notifications_are_opt_in_and_only_contain_generic_counts": true,
+    "notification_click_only_opens_inbox": true,
+    "same_origin_windows_deduplicate_notifications": true,
+    "new_requests_merge_into_one_rate_limited_notice": true,
+    "notification_metadata_has_no_credentials_or_raw_operation_identifiers": true,
+    "disable_propagates_to_all_windows_and_stops_delivery": true,
+    "notification_construction_failure_recovers_without_losing_request": true,
+    "single_new_request_notification_locates_exact_detail": true,
+    "notifications_never_modify_permission_or_resolution_state": true,
+    "client_deadline_disables_stale_approval_without_waiting_for_poll": true,
+    "logout_cancels_inflight_notification_preparation": true
+  },
+  "scope": "Linux Chromium with isolated real daemon; synthetic legacy optional-Intent OpenClaw HTTP calls, Notification API double validates browser delivery requests/events only; no OS display or native tool execution"
+}

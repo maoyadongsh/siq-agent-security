@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "schema_version": "local-runtime-check-result/v1",
+      "check_id": "rc-00000000000000000000000000000000",
+      "instance_id": "hi-0123456789abcdef0123456789abcdef",
+      "status": "passed",
+      "reason_code": "runtime_check_passed",
+      "started_at": "2026-09-10T09:00:00Z",
+      "finished_at": "2026-09-10T09:00:10Z",
+      "expires_at": "2026-09-10T09:02:00Z",
+      "snapshot_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "cleanup": "complete",
+      "receipt_ids": [
+        "receipt-1",
+        "receipt-2",
+        "receipt-3",
+        "receipt-4",
+        "receipt-5"
+      ],
+      "checks": {
+        "allowed_after_denial": true,
+        "allowed_read": true,
+        "native_session_bound": true,
+        "receipt_chain_verified": true,
+        "write_denied_before_execution": true
+      },
+      "limitations": [
+        "检查新的合成测试会话，不覆盖已运行会话或可信 Skill 归属。",
+        "宿主可能写入自身历史、缓存并运行已配置插件；不声明网络或操作系统隔离。",
+        "摘要仅覆盖被核对的配置、适配器、CLI 入口和 SIQ 服务，不代表完整 Python 依赖身份。"
+      ]
+    }
+  ],
+  "schema_version": "local-runtime-check-list/v1"
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": "personal-import-permission-browser/v1",
+  "recorded_at": "2026-09-10T17:38:07.156662+00:00",
+  "candidate_sha256": "05fe2d2144deab8e54389314c918ea6dbc727e8261cfd560122e0254e82ee4a6",
+  "harness_sha256": "334a47217321d7e4f3bed63d8a4b41b13b2379743a16ede25829f7eef2a684af",
+  "checks": {
+    "import_stays_unapproved_until_explicit_preparation": true,
+    "lost_response_reuses_one_real_draft_and_exact_target": true,
+    "grant_review_shows_full_immutable_source": true,
+    "human_approval_cannot_activate_before_installation": true,
+    "mobile_source_digest_wraps": true,
+    "content_changed_after_challenge_blocks_browser_approval": true,
+    "damaged_source_can_still_be_revoked": true,
+    "single_audit_per_draft_no_platform_change_or_runtime_identity": true
+  },
+  "passed": true,
+  "method": "real_isolated_linux_daemon_and_chromium; response_loss_and_tamper_injections",
+  "limitations": [
+    "Hermes target is an isolated configuration fixture, no host runtime is executed",
+    "No platform installation or deployed/effective permission",
+    "No Windows/macOS/WorkBuddy acceptance"
+  ]
+}

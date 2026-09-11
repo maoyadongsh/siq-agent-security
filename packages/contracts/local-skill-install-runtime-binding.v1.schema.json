@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-runtime-binding.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "binding_id",
+    "install_id",
+    "plan_signature",
+    "operation_signature",
+    "grant_id",
+    "approved_revision",
+    "approved_signature",
+    "permission_digest",
+    "instance_id",
+    "source",
+    "actor_id",
+    "created_at",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-runtime-binding/v1"
+    },
+    "binding_id": {
+      "type": "string",
+      "pattern": "^sab-[a-f0-9]{64}$"
+    },
+    "install_id": {
+      "type": "string",
+      "pattern": "^sin-[a-f0-9]{64}$"
+    },
+    "plan_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "operation_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "approved_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "approved_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "permission_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "source": {
+      "$ref": "local-skill-import-permission-source.v1.schema.json"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  }
+}

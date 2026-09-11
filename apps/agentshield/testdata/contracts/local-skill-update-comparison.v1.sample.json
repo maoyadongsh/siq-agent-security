@@ -1,0 +1,249 @@
+{
+  "schema_version": "local-skill-update-comparison/v1",
+  "record": {
+    "schema_version": "local-skill-install-record/v1",
+    "install_id": "sin-5a50c2ff7199e7bfe41d3e31d1e9359dec09c6e59e2a2a6d8ff9989ccd263c89",
+    "plan": {
+      "schema_version": "local-skill-install-plan/v1",
+      "plan_id": "sip-5a50c2ff7199e7bfe41d3e31d1e9359dec09c6e59e2a2a6d8ff9989ccd263c89",
+      "request_id": "is-dddddddddddddddddddddddddddddddd",
+      "source": {
+        "schema_version": "local-skill-import-permission-source/v1",
+        "import_id": "si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "artifact_digest": "5616f02435c352c063ab2587f17c78c40012548318a44dd1c52a88a7e387d459",
+        "analysis_sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "grant_id": "grt-si-4444444444444444444444444444444444444444444444444444444444444444",
+      "grant_revision": 0,
+      "grant_signature": "ca180991de79c7f73b523ac74546402569694f7127fbac45bb468ed0575689e73001d2f1f883e9f5c627496c5409907e8f6377533098268dffdc6313943f9506",
+      "grant_permission_digest": "433cf318f1221ca9588abd2076344791e2cd9f86d9c7e6c87cbf7dddb2856193",
+      "platform": "hermes",
+      "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "directory_name": "example",
+      "target_locator_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "target_display": "Hermes work/skills/example",
+      "actor_id": "human",
+      "created_at": "2026-09-11T05:00:02Z",
+      "expires_at": "2026-09-11T05:05:02Z",
+      "file_count": 2,
+      "total_bytes": 135,
+      "installed": false,
+      "runtime_verified": false,
+      "signature": "4ba8727555e3c8fab9df31919bcf7627917e1504dd6692acb825e375d082b94a20785926b07d95688ab2b193a8e6cb7140d1470706b3ad57e387e07abe08fb09"
+    },
+    "claim_signature": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "recorded_status": "installed_unverified",
+    "operation": {
+      "schema_version": "local-skill-install-operation/v1",
+      "install_id": "sin-5a50c2ff7199e7bfe41d3e31d1e9359dec09c6e59e2a2a6d8ff9989ccd263c89",
+      "plan_id": "sip-5a50c2ff7199e7bfe41d3e31d1e9359dec09c6e59e2a2a6d8ff9989ccd263c89",
+      "claim_signature": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "status": "installed_unverified",
+      "actor_id": "human",
+      "recorded_at": "2026-09-11T05:00:03Z",
+      "runtime_verified": false,
+      "signature": "39c1e50afd9a38f52304853f1add337c4838766601a7cf9070be7b1d2d45b8ecd75f9e742379fbcc71b9749fd20a1e14d296dd2f19c9a30d58848d8a687b9a0c"
+    }
+  },
+  "candidate_source": {
+    "schema_version": "local-skill-import-permission-source/v1",
+    "import_id": "si-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "artifact_digest": "038902ec12dd2548fa50651765a45499ad67326380199cdd32fd18c635af9c92",
+    "analysis_sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+  },
+  "previous_grant": {
+    "grant_id": "grt-si-4444444444444444444444444444444444444444444444444444444444444444",
+    "admission_id": "adm-si-09863f7bc0b8e794c0b49f7bf1536fc0371e77bacf465501b7a629d4c2a85c0b",
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "platform": "hermes",
+    "facts": [
+      {
+        "fact_id": "fact-0",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "ev-0"
+        ]
+      }
+    ],
+    "default_effect": "deny",
+    "hermes_toolset_allowlist": [
+      "read_file"
+    ],
+    "desired_policy_ref": {
+      "policy_id": "pol-4444444444444444444444444444444444444444444444444444444444444444",
+      "version": 1,
+      "static_domains_unavailable": []
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "approved",
+    "approved_by": {
+      "actor_type": "human",
+      "actor_id": "human",
+      "approved_at": "2026-09-11T05:00:01Z"
+    },
+    "effective_readback": null,
+    "created_at": "2026-09-11T05:00:00Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "signature": "ca180991de79c7f73b523ac74546402569694f7127fbac45bb468ed0575689e73001d2f1f883e9f5c627496c5409907e8f6377533098268dffdc6313943f9506"
+  },
+  "previous_revision": 0,
+  "candidate_grant": {
+    "grant_id": "grt-si-5555555555555555555555555555555555555555555555555555555555555555",
+    "admission_id": "adm-si-6cfa4bfe4b06fc8d286f1c5ba676bcffb3ba43c015fa6dde61b6ee34c43b8791",
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "platform": "hermes",
+    "facts": [
+      {
+        "fact_id": "fact-0",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "ev-0"
+        ]
+      },
+      {
+        "fact_id": "fact-1",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "ev-1"
+        ]
+      }
+    ],
+    "default_effect": "deny",
+    "hermes_toolset_allowlist": [
+      "read_file",
+      "write_file"
+    ],
+    "desired_policy_ref": {
+      "policy_id": "pol-5555555555555555555555555555555555555555555555555555555555555555",
+      "version": 1,
+      "static_domains_unavailable": []
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "pending_approval",
+    "approved_by": null,
+    "effective_readback": null,
+    "created_at": "2026-09-11T05:00:00Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "signature": "9eaf75e2b721b026bcd7ae86e85373b015f31be9cb547736dfd264c67356e41f29fc3b54710bcedb521501f2e72f651f4600e88aced50df98fdffd82af00fc07"
+  },
+  "candidate_revision": 0,
+  "checked_at": "2026-09-11T05:00:04Z",
+  "comparison_basis": "signed_installation_manifest",
+  "platform_changes": false,
+  "runtime_verified": false,
+  "requires_confirmation": true,
+  "content_changes": [
+    {
+      "path_display": "SKILL.md",
+      "path_digest": "0e95f5a3666031d6fac42bc6ca698b40b61648f4974c8ec355181ed4888c5c26",
+      "before": {
+        "kind": "file",
+        "sha256": "12b52e3a22d384e3cd4776d636abf309d498b3b7cfbc3f874b6d1e94df8a9d97",
+        "bytes": 110,
+        "executable": false
+      },
+      "after": {
+        "kind": "file",
+        "sha256": "e94623bc7541e3acbf6479a29148cd76e4e9beb6e6475d78d5da6b609a853b6e",
+        "bytes": 120,
+        "executable": false
+      }
+    },
+    {
+      "path_display": "references",
+      "path_digest": "07a0b0962107485c3c1375cffa0f2ed9254efe640801713a6c4a358af3d8aa00",
+      "before": null,
+      "after": {
+        "kind": "directory",
+        "sha256": "",
+        "bytes": 0,
+        "executable": false
+      }
+    },
+    {
+      "path_display": "references/guide.md",
+      "path_digest": "c6aa121458e653f2cae4c7ed6cced4eb36c52d30a12257da6e8fb523bacdca07",
+      "before": null,
+      "after": {
+        "kind": "file",
+        "sha256": "42906b7cf0624ddaa963f5227e927c3fd534ce00f60eb08e7e05726c4f8c77df",
+        "bytes": 13,
+        "executable": false
+      }
+    },
+    {
+      "path_display": "skill-manifest.json",
+      "path_digest": "c60d07e903d85a555194cdc5d5e27c020418b19a4ac1dcd9d0251a6d31cf061c",
+      "before": {
+        "kind": "file",
+        "sha256": "e40c684663e89527ace642a7aeb1b8c86352b583612bdbdb44bde37f1c90177f",
+        "bytes": 25,
+        "executable": false
+      },
+      "after": null
+    }
+  ],
+  "content_changes_total": 4,
+  "content_changes_truncated": false,
+  "permission_changes": [
+    {
+      "change": "added",
+      "rule": {
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "conditions": null,
+        "state": "declared"
+      }
+    }
+  ],
+  "permission_changes_total": 1,
+  "permission_changes_truncated": false,
+  "settings_changed": [
+    "hermes_toolset_allowlist"
+  ]
+}

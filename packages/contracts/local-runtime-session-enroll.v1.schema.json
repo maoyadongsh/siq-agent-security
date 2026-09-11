@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "Native runtime session enrollment request",
+  "required": [
+    "schema_version",
+    "session_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-runtime-session-enroll/v1"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    }
+  }
+}

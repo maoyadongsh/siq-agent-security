@@ -1,0 +1,18 @@
+{
+  "schema_version": "personal-adapter-upgrade-smoke/v1",
+  "recorded_at": "2026-09-10T09:52:04.836447+00:00",
+  "passed": true,
+  "previous_binary_sha256": "353ef3ddd2249ffa2bbd20b7cc2a68df72dcfab56e7e73c82caed3f63d148f6b",
+  "binary_sha256": "dbc695ff586e794f49461ca077367cf81fa9ed60e9e1cc6ef994fbad73311223",
+  "harness_sha256": "76dde6897cc276d0887af19ddaab44856adff5581f8496985142b2a997586851",
+  "os": "Linux",
+  "architecture": "aarch64",
+  "checks": [
+    "previous_binary_installed_default_profile",
+    "current_binary_read_previous_encrypted_record_and_upgraded",
+    "default_uninstall_preserved_named_profile_and_original_configuration",
+    "original_legacy_wrapper_content_and_mode_restored",
+    "named_profile_uninstalled_independently"
+  ],
+  "scope": "real binary upgrade and encrypted ownership compatibility; isolated profiles; no host runtime claim"
+}

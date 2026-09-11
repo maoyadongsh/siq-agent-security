@@ -17,6 +17,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
@@ -77,7 +78,11 @@ type Config struct {
 }
 
 // Store is an opened state directory.
-type Store struct{ Dir string }
+type Store struct {
+	Dir               string
+	runtimeGrantMu    sync.RWMutex
+	runtimeGrantCheck func(*grant.Grant) error
+}
 
 // Open creates the directory tree with 0700 and returns the store.
 func Open(dir string) (*Store, error) {
@@ -179,7 +184,6 @@ func (s *Store) Token() (string, error) {
 func (s *Store) PutAdmission(res *admission.Result) error {
 	base := filepath.Join(s.Dir, "admissions", res.Admission.AdmissionID)
 	cardPath := base + ".skill-card.md"
-	res.Admission.SkillCardRef = &cardPath
 	if err := writeNewCompatible(cardPath, []byte(res.SkillCard), func([]byte) bool {
 		return true
 	}); err != nil {

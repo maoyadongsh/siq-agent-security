@@ -4,13 +4,21 @@
 
 ## 安装
 
+在本地管理页的设置中选择 **Hermes → 管理实例**，选择目标 profile，再预览并确认接入。安装前先展示文件清单；取消不改平台配置。
+
 ```bash
-siq-agent-security adapter install hermes
-# copies plugin.yaml + __init__.py into ~/.hermes/plugins/siq-agent-security/
-# and writes ~/.local/bin/hermes-skills-install (admit-then-install wrapper)
+siq-agent-security adapter instances hermes
+siq-agent-security adapter preview hermes install --instance <返回的实例ID> --enable-native
+siq-agent-security adapter install hermes --instance <返回的实例ID> --enable-native
 ```
 
-Hermes 在下次会话启动时发现插件（`hermes_cli/plugins.py` 从 `~/.hermes/plugins/` 扫描）。工具边界仍由 grant 写入的 `platform_toolset_modes: allowlist` 承担；本插件负责运行时回执与阻断（L2）。
+实例目录解析覆盖 `HERMES_HOME`、默认目录和命名 profile。CLI 中的 `<返回的实例ID>` 需替换为第一条命令给出的 ID。新实例包装器放在 `<profile>/bin/hermes-skills-install`，固定该 profile 的 `HERMES_HOME`；不会覆盖其他实例的包装器。CLI `install` 是直接授权动作，会重新准备并应用计划；浏览器确认则严格绑定先前预览的 ID 和摘要。
+
+选择原生启用时，安装器调用已安装 Hermes 的公开 CLI，在私有临时副本上执行启用并验证其他配置未变，再由文件事务应用已确认的内容。Hermes 会规范化 YAML 格式；不授予内置工具覆盖权限。CLI 不在 PATH 时，可在启动 SIQ 前将 `SIQ_AGENT_SECURITY_HERMES_CLI` 设置为可信 Hermes CLI 的绝对路径。该路径仅用于定位已安装程序，不能指向 Skill 脚本。
+
+原生命令缺失或配置不兼容时可以仅安装文件，再在目标 profile 中通过 `hermes plugins enable siq-agent-security --no-allow-tool-override` 启用并开启新会话。未带 `--instance` 的旧 `adapter install hermes` 保留原有默认目录和仅文件安装行为。参见 [Hermes 官方插件说明](https://hermes-agent.nousresearch.com/docs/user-guide/features/built-in-plugins)。
+
+插件文件存在不证明宿主已加载。设置页的“接入诊断”会分别显示文件、连接配置和运行验证状态；CLI `adapter status` 的 installed 仅表示发现安装文件。完成目标实例正常调用与执行前拒绝验证后，才可声明相应工具层保护。Grant 与运行时阻断仍复用原有引擎，不由诊断产生权限。
 
 ## 行为映射
 
@@ -32,9 +40,11 @@ Hermes 在下次会话启动时发现插件（`hermes_cli/plugins.py` 从 `~/.he
 ## 卸载
 
 ```bash
-rm -rf ~/.hermes/plugins/siq-agent-security
-# or: siq-agent-security adapter uninstall hermes   (restores any pre-existing files from <state>/backups/adapters/)
+siq-agent-security adapter preview hermes uninstall --instance <返回的实例ID>
+siq-agent-security adapter uninstall hermes --instance <返回的实例ID>
 ```
+
+也可在“管理实例”中选择卸载。只移除本实例拥有的文件与登记，原生启用过的实例恢复接入前启用状态，并保留后来新增的其他设置。记录不足、文件被外部修改或原生 CLI 不兼容时停止并保留现场；中断操作可通过 `adapter recover hermes --instance <返回的实例ID>` 恢复。旧默认目录安装可继续使用不带实例参数的卸载命令。
 
 ## 已知限制
 
@@ -65,3 +75,24 @@ python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp
 ```
 
 脚本执行真实loopback MCP initialize/tools-call，将实际结果交给本适配器post hook自动上报，经daemon确定性select后通过pre hook提交参数来源；MCP路径阻断，admin签发USER的相同路径允许。最后复验daemon回执链。此模式直接调用钩子，不包含原生Hermes MCP注册/调度器，不等同原生端到端支持；不会操作真实用户配置。
+
+## 个人实例会话接入（ADR-028、ADR-029）
+
+新配置可引用由本机管理 API 发行的独立实例身份：`runtime_identity_id`、固定 `agent_id` 和 `token_path`。凭据只在本机文件保存，发行响应提供路径，不返回秘密正文。`pre_tool_call` 使用 Hermes 的真实 `session_id` 调用 `/v1/runtime-sessions`；服务根据身份自动创建权限包络并固定已批准 Grant，适配器不自行生成或签发权限。没有原生 session 时不会用任务 ID 或默认值替代。
+
+已管理实例在登记、认证、授权读取失败时，所有模式均阻止调用；正常资源策略仍保留 warn/audit_only 的建议语义。环境不能替换已配置的实例主体。管理 API、其他实例/会话不能共用该凭据；撤销后新旧会话均失去访问能力。连接失败的本机 pending 记录明确为未签名拒绝，不能当作服务端回执或结果证据。
+
+产品运行自检的决定/观察请求改用该次自检的短期启动凭据，只能访问已绑定的真实会话；不读取全局或个人实例凭据来代替它。所有普通 API 请求也限制为明确端口的 loopback HTTP，禁用代理和重定向转发。`localhost` 固定连接到 `127.0.0.1`；IPv6 使用显式 `[::1]` 地址。
+
+旧的全局凭据配置保持兼容。设置页“管理实例”现在可以从已有检查结果起草权限、编辑范围、人工批准、选择会话期限，再预览和确认实例接入。配置计划 v3 绑定已发行身份，修复保留凭据引用；配置变化、授权撤销或过期后不能继续应用旧计划。诊断核对身份所属实例，但配置成功仍不代表运行验证通过。
+
+停用权限会撤销实例身份。卸载经管理界面先撤权，再执行可恢复文件事务；卸载失败不恢复旧授权。直接 CLI 卸载已管理实例必须先在管理界面或 API 撤销身份，再带明确 `--instance` 操作；CLI 暂不提供完整身份发行流程。Hermes 原生命令会规范化 YAML，卸载恢复本产品原有登记语义并保留其他设置，不承诺原文件格式逐字恢复。
+
+`scripts/personal-experience/managed-instance-native-smoke.py` 在隔离 profile 中通过正式安装 API 与公开 Hermes CLI 验证自动会话、只读范围、撤销和独立产品自检；`managed-instance-browser-smoke.py` 验证从起草到接入/撤销/卸载的界面流程。具体证据见 [M13 开发记录](../../../docs/evidence/personal-experience/managed-instance-20260910/verification.json)。实际 Skill 加载归属、用户已有会话迁移、跨 OS 和其他平台仍需独立验收。
+
+
+### 调整已接入实例的权限
+
+“管理实例 → 调整当前权限”会创建独立待批准草稿，保留原范围、拒绝、逐次审批条件和到期时间；编辑与批准期间仍使用旧身份。可在同一窗口显式保存新有效期。准备完成后确认停用旧身份，再使用新授权并确认接入；切换期间工具调用会被阻止，应重新开启原平台会话。新身份不能接管旧会话，切换失败不会复活旧凭据。原 Grant、策略和回执保留可追溯。
+
+接口和幂等/并发边界见 [ADR-030](../../../docs/adr/0030-permission-revision-drafts.md)。[权限换发验证](../../../docs/evidence/personal-experience/permission-revision-20260910/verification.json)分别记录浏览器流程、真实 Hermes CLI 新会话及 HTTP 负向；不能据此推定实际 Skill 版本归属已可信。

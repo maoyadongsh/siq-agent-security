@@ -8,6 +8,7 @@ import (
 	"os"
 	"siq-agent-security/apps/agentshield/internal/intent"
 	"strings"
+	"unicode/utf8"
 )
 
 func intentError(w http.ResponseWriter, err error) {
@@ -122,17 +123,39 @@ func (s *Server) bindingCollection(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 200, map[string]any{"items": items})
 	case http.MethodPost:
 		var body struct {
-			Platform  string `json:"platform"`
-			SessionID string `json:"session_id"`
-			AgentID   string `json:"agent_id"`
-			TaskID    string `json:"task_id"`
-			IntentID  string `json:"intent_id"`
-			ExpiresAt string `json:"expires_at"`
+			SchemaVersion         json.RawMessage `json:"schema_version"`
+			GrantID               json.RawMessage `json:"grant_id"`
+			ExpectedGrantRevision json.RawMessage `json:"expected_grant_revision"`
+			Platform              string          `json:"platform"`
+			SessionID             string          `json:"session_id"`
+			AgentID               string          `json:"agent_id"`
+			TaskID                string          `json:"task_id"`
+			IntentID              string          `json:"intent_id"`
+			ExpiresAt             string          `json:"expires_at"`
 		}
 		if !readAuthority(w, r, &body) {
 			return
 		}
-		b, err := s.intents.Bind(intent.Binding{Platform: body.Platform, SessionID: body.SessionID, AgentID: body.AgentID, TaskID: body.TaskID, IntentID: body.IntentID, ExpiresAt: body.ExpiresAt})
+		input := intent.Binding{Platform: body.Platform, SessionID: body.SessionID, AgentID: body.AgentID, TaskID: body.TaskID, IntentID: body.IntentID, ExpiresAt: body.ExpiresAt}
+		var b intent.Binding
+		var err error
+		if len(body.SchemaVersion) > 0 || len(body.GrantID) > 0 || len(body.ExpectedGrantRevision) > 0 {
+			var version, grantID string
+			var revision *int
+			if json.Unmarshal(body.SchemaVersion, &version) != nil || json.Unmarshal(body.GrantID, &grantID) != nil || json.Unmarshal(body.ExpectedGrantRevision, &revision) != nil || version != "intent-grant-bind/v1" || grantID == "" || revision == nil || *revision < 0 {
+				intentError(w, &intent.Violation{Code: "intent_invalid_grant_selection"})
+				return
+			}
+			for _, value := range []string{body.Platform, body.SessionID, body.AgentID, body.IntentID, grantID, body.TaskID, body.ExpiresAt} {
+				if utf8.RuneCountInString(value) > 256 {
+					intentError(w, &intent.Violation{Code: "intent_invalid_grant_selection"})
+					return
+				}
+			}
+			b, err = s.intents.BindWithGrant(input, grantID, *revision)
+		} else {
+			b, err = s.intents.Bind(input)
+		}
 		if err != nil {
 			intentError(w, err)
 			return

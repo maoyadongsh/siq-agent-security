@@ -1,0 +1,42 @@
+{
+  "collected_at": "2026-09-10T07:08:54.477542+00:00",
+  "os": "Linux",
+  "arch": "aarch64",
+  "tools": {
+    "openclaw": true,
+    "hermes": true,
+    "workbuddy": false,
+    "codebuddy": false,
+    "go": true,
+    "node": true,
+    "npm": true,
+    "systemctl": true,
+    "xdg-open": true,
+    "powershell": false,
+    "pwsh": false,
+    "xcrun": false
+  },
+  "verification": {
+    "linux_arm64": "available",
+    "windows": "not_available",
+    "macos": "not_available",
+    "workbuddy_gui": "not_available"
+  },
+  "note": "Tool discovery is not platform enforcement verification; no user configuration contents collected.",
+  "openclaw": {
+    "version_candidates": [
+      "2026.5.12"
+    ],
+    "exit_code": 0,
+    "native_enforcement_verified": false
+  },
+  "hermes": {
+    "version_candidates": [
+      "2026.8.31",
+      "3.11.15",
+      "2.24.0"
+    ],
+    "exit_code": 0,
+    "native_enforcement_verified": false
+  }
+}

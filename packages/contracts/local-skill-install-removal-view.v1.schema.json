@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-removal-view.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record",
+    "claim",
+    "result",
+    "grant",
+    "state_revision",
+    "status",
+    "will_revoke_grant",
+    "retained_install_id",
+    "binding_signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-removal-view/v1"
+    },
+    "record": {
+      "$ref": "local-skill-install-record.v1.schema.json"
+    },
+    "claim": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "local-skill-install-removal-claim.v1.schema.json"
+        }
+      ]
+    },
+    "result": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "local-skill-install-removal-result.v1.schema.json"
+        }
+      ]
+    },
+    "grant": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "grant.schema.json"
+        }
+      ]
+    },
+    "state_revision": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        }
+      ]
+    },
+    "status": {
+      "enum": [
+        "not_requested",
+        "revocation_pending",
+        "cleanup_pending",
+        "removed"
+      ]
+    },
+    "will_revoke_grant": {
+      "type": "boolean"
+    },
+    "retained_install_id": {
+      "type": "string",
+      "pattern": "^(sin-[a-f0-9]{64})?$"
+    },
+    "binding_signature": {
+      "type": "string",
+      "pattern": "^([a-f0-9]{128})?$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "removed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "claim": {
+            "type": "object"
+          },
+          "result": {
+            "type": "object"
+          },
+          "grant": {
+            "type": "null"
+          },
+          "state_revision": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "null"
+          },
+          "grant": {
+            "type": "object"
+          },
+          "state_revision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "not_requested"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "claim": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "claim": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ]
+}

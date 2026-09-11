@@ -1,0 +1,32 @@
+[
+  {
+    "command": "go test ./...",
+    "passed": true,
+    "log": "go-test.log"
+  },
+  {
+    "command": "go vet ./...",
+    "passed": true,
+    "log": "go-vet.log"
+  },
+  {
+    "command": "go test -race ./internal/runtimeidentity ./internal/runtimecheck ./internal/server ./internal/intent ./internal/receipt ./internal/adapterinstall",
+    "passed": true,
+    "log": "go-race.log"
+  },
+  {
+    "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+    "passed": true,
+    "log": "contract-test.log"
+  },
+  {
+    "command": "uv run ruff check app/tests/test_schema_contracts.py ../../adapters/runtime/hermes-agentshield ../../scripts/personal-experience/runtime-identity-native-smoke.py",
+    "passed": true,
+    "log": "python-lint.log"
+  },
+  {
+    "command": "gofmt -l .",
+    "passed": true,
+    "log": "gofmt.log"
+  }
+]

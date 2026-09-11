@@ -92,8 +92,7 @@ func TestOpenClawReinstallRefusesCorruptOwnershipRecord(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	stamp := opts.Now.UTC().Format("20060102T150405Z")
-	record := filepath.Join(opts.StateDir, "backups", "adapters", "openclaw."+stamp+".json")
+	record := filepath.Join(opts.StateDir, "adapter-operations", "openclaw.0.json")
 	if err := os.WriteFile(record, []byte("{"), 0o600); err != nil {
 		t.Fatal(err)
 	}

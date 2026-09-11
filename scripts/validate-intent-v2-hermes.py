@@ -24,7 +24,7 @@ import time
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -108,17 +108,33 @@ class Harness:
                 "TERMINAL_CWD": str(self.workspace),
             }
         )
+        self.build_env = self.env.copy()
+        self.install_evidence = {"method": "fixture_copy"}
+        if getattr(args, "installer_managed_profile", False):
+            isolated_home = root / "home"
+            isolated_home.mkdir(mode=0o700)
+            self.env.update(
+                {
+                    "HOME": str(isolated_home),
+                    "USERPROFILE": str(isolated_home),
+                    "LOCALAPPDATA": str(isolated_home / "AppData/Local"),
+                    "HERMES_HOME": str(root / "hermes/profiles/work"),
+                    "SIQ_AGENT_SECURITY_HERMES_CLI": str(args.hermes_cli),
+                }
+            )
         (root / "empty-plugins").mkdir()
-        hermes_home = root / "hermes"
+        hermes_home = Path(self.env["HERMES_HOME"])
+        hermes_home.mkdir(parents=True, exist_ok=True)
+        if getattr(args, "installer_managed_profile", False):
+            (hermes_home / "config.yaml").write_text("terminal:\n  env: local\nfixture_setting: retain\n")
+            (root / "hermes/config.yaml").write_text("fixture_default: unchanged\n")
+            self.config("required")
+            return
         plugin = hermes_home / "plugins" / "siq-agent-security"
         plugin.mkdir(parents=True)
         for name in ("__init__.py", "plugin.yaml"):
-            shutil.copyfile(
-                REPO / "adapters/runtime/hermes-agentshield" / name, plugin / name
-            )
-        (hermes_home / "config.yaml").write_text(
-            "plugins:\n  enabled: [siq-agent-security]\nterminal:\n  env: local\n"
-        )
+            shutil.copyfile(REPO / "adapters/runtime/hermes-agentshield" / name, plugin / name)
+        (hermes_home / "config.yaml").write_text("plugins:\n  enabled: [siq-agent-security]\nterminal:\n  env: local\n")
         # A short timeout bounds the disconnected native hook scenario.
         (plugin / "config.json").write_text(json.dumps({"timeout_s": 1}))
         self.config("required")
@@ -151,7 +167,52 @@ class Harness:
             ["go", "build", "-trimpath", "-o", str(self.binary), "./cmd/agentshield"],
             cwd=REPO / "apps/agentshield",
             timeout=180,
+            env=self.build_env,
         )
+
+    def install_profile(self):
+        catalog = self.api("/v1/adapter/instances?platform=hermes")
+        target = next(item for item in catalog["instances"] if item["active"])
+        require(target["name"] == "work", "named native fixture was not resolved")
+        config = Path(self.env["HERMES_HOME"]) / "config.yaml"
+        before = config.read_bytes()
+        plan = self.api(
+            "/v1/adapter/preview",
+            {
+                "platform": "hermes",
+                "action": "install",
+                "instance_id": target["instance_id"],
+                "native_enable": True,
+            },
+        )
+        require(config.read_bytes() == before, "native preview changed host config")
+        require(plan["schema_version"] == "local-adapter-plan/v2", "instance plan contract missing")
+        self.api(
+            "/v1/adapter/install",
+            {
+                "platform": "hermes",
+                "instance_id": target["instance_id"],
+                "plan_id": plan["plan_id"],
+                "plan_digest": plan["plan_digest"],
+            },
+        )
+        require("fixture_setting: retain" in config.read_text(), "native enable lost user settings")
+        require(
+            (self.root / "hermes/config.yaml").read_text() == "fixture_default: unchanged\n", "default profile changed"
+        )
+        catalog = self.api("/v1/adapter/instances?platform=hermes")
+        diagnosis = next(
+            item["diagnosis"] for item in catalog["instances"] if item["instance_id"] == target["instance_id"]
+        )
+        require(diagnosis["runtime_state"] == "unverified", "configuration must not claim runtime proof")
+        self.checks.append("instance_preview_native_enable_and_default_isolation")
+        self.install_evidence = {
+            "method": "instance_preview_apply_with_public_native_cli",
+            "plan_schema": plan["schema_version"],
+            "changed_file_count": len(plan["changes"]),
+            "native_cli_sha256": hashlib.sha256(self.args.hermes_cli.read_bytes()).hexdigest(),
+            "runtime_before_test": diagnosis["runtime_state"],
+        }
 
     def start(self):
         with socket.socket() as sock:
@@ -171,9 +232,7 @@ class Harness:
         while time.monotonic() < deadline:
             require(self.proc.poll() is None, "daemon exited before readiness")
             self.log.seek(0)
-            found = re.search(
-                r"admin pairing code \(single use, 5 min\): (\S+)", self.log.read()
-            )
+            found = re.search(r"admin pairing code \(single use, 5 min\): (\S+)", self.log.read())
             if found:
                 try:
                     pair = self.api("/v1/pair", {"code": found[1]}, token="")
@@ -257,8 +316,11 @@ class Harness:
         action(
             "patch-desired",
             tools=[self.read_tool, self.write_tool],
-            **({"network": [{"endpoint": host, "effect": "allow"}
-                             for host in self.network_endpoints]} if hasattr(self, "network_endpoints") else {}),
+            **(
+                {"network": [{"endpoint": host, "effect": "allow"} for host in self.network_endpoints]}
+                if hasattr(self, "network_endpoints")
+                else {}
+            ),
             filesystem={
                 "read_only": [str(self.workspace)],
                 "read_write": [str(self.workspace)],
@@ -268,15 +330,14 @@ class Harness:
             if overlap["resolution"] == "unresolved":
                 action("resolve-overlap", index=index)
         challenge = action("challenge")["challenge"]
-        action(
-            "approve", challenge_id=challenge["challenge_id"], nonce=challenge["nonce"]
-        )
-        require(
-            result["grant"]["status"] == "approved", "grant approval did not transition"
-        )
+        action("approve", challenge_id=challenge["challenge_id"], nonce=challenge["nonce"])
+        require(result["grant"]["status"] == "approved", "grant approval did not transition")
         action("deploy")
-        now = datetime.now(timezone.utc)
-        stamp = lambda t: t.strftime("%Y-%m-%dT%H:%M:%SZ")
+        now = datetime.now(UTC)
+
+        def stamp(t):
+            return t.strftime("%Y-%m-%dT%H:%M:%SZ")
+
         intent = self.api(
             "/v1/intents",
             {
@@ -380,9 +441,7 @@ class Harness:
             call_id + ": unexpected binding",
         )
         if bound:
-            require(
-                decision["intent_digest"] == self.digest, call_id + ": wrong authority"
-            )
+            require(decision["intent_digest"] == self.digest, call_id + ": wrong authority")
             require(
                 decision["intent_id"] == "int-native-fixture"
                 and decision["task_id"] == "task-native-fixture"
@@ -429,6 +488,8 @@ class Harness:
     def run(self):
         self.build()
         self.start()
+        if getattr(self.args, "installer_managed_profile", False):
+            self.install_profile()
         self.setup_authority()
         forbidden_write = self.workspace / "company-a" / "must-not-exist.txt"
         calls = [
@@ -452,9 +513,7 @@ class Harness:
         )
         require(not forbidden_write.exists(), "denied native write executed")
         for output in outputs[1:]:
-            require(
-                "fixture-visible-" not in output["result"], "denied read leaked fixture"
-            )
+            require("fixture-visible-" not in output["result"], "denied read leaked fixture")
             require(
                 "siq-agent-security" in output["result"],
                 "native rejection missing adapter reason",
@@ -486,9 +545,7 @@ class Harness:
         self.checks.append("native_offline_block_with_pending")
         self.start()
         restarted = self.native([self.read("after-restart")])[0]["result"]
-        require(
-            "fixture-visible-company-a" in restarted, "native read failed after restart"
-        )
+        require("fixture-visible-company-a" in restarted, "native read failed after restart")
         records = self.receipts()
         self.assert_call(records, "after-restart", "allow")
         promoted = [r for r in records if "pending" in str(r.get("matched_rule_ids"))]
@@ -521,11 +578,7 @@ class Harness:
         self.assert_call(self.receipts(), "allowed", "allow")
         self.checks.append("http_post_replay_idempotent_and_conflict_after_restart")
         with ThreadPoolExecutor(max_workers=8) as pool:
-            replayed = list(
-                pool.map(
-                    lambda _: self.api("/v1/observe", observe, token=token), range(32)
-                )
-            )
+            replayed = list(pool.map(lambda _: self.api("/v1/observe", observe, token=token), range(32)))
         require(
             all(r == replayed[0] for r in replayed),
             "concurrent replay returned different receipts",
@@ -537,12 +590,8 @@ class Harness:
         self.stop()
         self.config("optional")
         self.start()
-        legacy = self.native(
-            [self.read("optional-unbound", session="unbound-fixture")]
-        )[0]["result"]
-        require(
-            "fixture-visible-company-a" in legacy, "optional unbound native read failed"
-        )
+        legacy = self.native([self.read("optional-unbound", session="unbound-fixture")])[0]["result"]
+        require("fixture-visible-company-a" in legacy, "optional unbound native read failed")
         self.assert_call(self.receipts(), "optional-unbound", "allow", bound=False)
         self.native([self.read("bound-still-denied", "company-b")])
         self.assert_call(self.receipts(), "bound-still-denied", "deny")
@@ -560,11 +609,9 @@ class Harness:
         return {
             "schema": f"intent-v2-native-{self.platform}-validation/v1",
             "passed": True,
-            "recorded_at": datetime.now(timezone.utc).isoformat(),
+            "recorded_at": datetime.now(UTC).isoformat(),
             "siq_commit": self.command(["git", "rev-parse", "HEAD"], cwd=REPO).strip(),
-            "siq_dirty": bool(
-                self.command(["git", "status", "--porcelain"], cwd=REPO).strip()
-            ),
+            "siq_dirty": bool(self.command(["git", "status", "--porcelain"], cwd=REPO).strip()),
             "harness_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             "server_sha256": hashlib.sha256(
                 (REPO / "apps/agentshield/internal/server/server.go").read_bytes()
@@ -576,6 +623,7 @@ class Harness:
             "architecture": platform.machine(),
             "checks": self.checks,
             "receipt_count": len(records),
+            "installation": self.install_evidence,
             "measurements": measurements,
             "scope": "installed native plugin loader and tool dispatcher; actual Go HTTP and signed receipt chain",
             "limitations": [
@@ -598,20 +646,11 @@ class Harness:
                 (REPO / "adapters/runtime/hermes-agentshield/__init__.py").read_bytes()
             ).hexdigest(),
             "hermes_source_sha256": {
-                p: hashlib.sha256((self.args.hermes_root / p).read_bytes()).hexdigest()
-                for p in sources
+                p: hashlib.sha256((self.args.hermes_root / p).read_bytes()).hexdigest() for p in sources
             },
-            "hermes_commit": self.command(
-                ["git", "rev-parse", "HEAD"], cwd=self.args.hermes_root
-            ).strip(),
-            "hermes_dirty": bool(
-                self.command(
-                    ["git", "status", "--porcelain"], cwd=self.args.hermes_root
-                ).strip()
-            ),
-            "hermes_python_version": self.command(
-                [str(self.args.hermes_python), "--version"]
-            ).strip(),
+            "hermes_commit": self.command(["git", "rev-parse", "HEAD"], cwd=self.args.hermes_root).strip(),
+            "hermes_dirty": bool(self.command(["git", "status", "--porcelain"], cwd=self.args.hermes_root).strip()),
+            "hermes_python_version": self.command([str(self.args.hermes_python), "--version"]).strip(),
         }
 
     def load(self, token):
@@ -658,10 +697,7 @@ class Harness:
 
         def percentiles(values):
             ordered = sorted(values)
-            return {
-                f"p{q}_ms": ordered[max(0, math.ceil(len(ordered) * q / 100) - 1)]
-                for q in (50, 95, 99)
-            }
+            return {f"p{q}_ms": ordered[max(0, math.ceil(len(ordered) * q / 100) - 1)] for q in (50, 95, 99)}
 
         return {
             "samples": len(samples),
@@ -680,6 +716,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--hermes-root", type=Path)
     parser.add_argument("--hermes-python", type=Path)
+    parser.add_argument("--hermes-cli", type=Path)
+    parser.add_argument(
+        "--installer-managed-profile",
+        action="store_true",
+        help="install an isolated named profile through SIQ preview/apply and the public Hermes CLI",
+    )
     parser.add_argument("--out", type=Path)
     parser.add_argument("--load-samples", type=int, default=200)
     parser.add_argument("--concurrency", type=int, default=8)
@@ -693,6 +735,9 @@ def main():
     require(1 <= args.concurrency <= 32, "--concurrency must be 1..32")
     args.hermes_root = args.hermes_root.resolve()
     args.hermes_python = args.hermes_python or args.hermes_root / "venv/bin/python"
+    args.hermes_cli = (args.hermes_cli or args.hermes_python.parent / "hermes").resolve()
+    if args.installer_managed_profile:
+        require(args.hermes_cli.is_file(), "installed Hermes CLI not found; use --hermes-cli")
     require(
         args.hermes_python.is_file(),
         "installed Hermes Python not found; use --hermes-python",

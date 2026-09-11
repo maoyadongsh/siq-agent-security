@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-update-result.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-update-result/v1"
+    },
+    "update_id": {
+      "type": "string",
+      "pattern": "^sup-[a-f0-9]{64}$"
+    },
+    "claim_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "status": {
+      "enum": [
+        "updated_unverified",
+        "aborted"
+      ]
+    },
+    "removal_signature": {
+      "type": "string",
+      "pattern": "^([a-f0-9]{128})?$"
+    },
+    "installation_signature": {
+      "type": "string",
+      "pattern": "^([a-f0-9]{128})?$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "runtime_verified": {
+      "const": false
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "update_id",
+    "claim_signature",
+    "status",
+    "removal_signature",
+    "installation_signature",
+    "actor_id",
+    "recorded_at",
+    "runtime_verified",
+    "signature"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "updated_unverified"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "removal_signature": {
+            "minLength": 128
+          },
+          "installation_signature": {
+            "minLength": 128
+          }
+        }
+      }
+    }
+  ]
+}

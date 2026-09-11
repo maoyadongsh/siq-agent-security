@@ -1,0 +1,72 @@
+{
+  "schema": "intent-v2-native-openclaw-validation/v1",
+  "passed": true,
+  "recorded_at": "2026-09-10T12:42:05.696181+00:00",
+  "siq_commit": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "siq_dirty": true,
+  "harness_sha256": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+  "server_sha256": "2da446ffaa859707bb351f8d9a7294e154d3a88851678b5378aa8c41c2e62cde",
+  "binary_sha256": "79ae659105f5f7e897552f79a20afe5e34b64fe2a284c7446ad911b8d57f1325",
+  "openclaw_runtime": {
+    "sources": {
+      "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+      "dist/pi-tools.before-tool-call-BmZM4hyt.js": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+      "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61",
+      "node_modules/@earendil-works/pi-coding-agent/dist/index.js": "8fa80bd4e39e73b03914eab8c49247d31d29b1baf3b0a7761835a23de7c4a30f"
+    },
+    "openclaw_version": "2026.5.12"
+  },
+  "node_version": "v22.22.1",
+  "adapter_sha256": "9e7ba73c4d9999ba5dd9f6f1cdd1af1f4c593ca3cfb4b982d49350e0248fbeb8",
+  "worker_sha256": "7f69ae98a9e22e5408ae8e546b585916a46c5143c2f222f6502513c37af17b7e",
+  "openclaw_harness_sha256": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+  "go_version": "go version go1.26.5 linux/arm64",
+  "os": "Linux",
+  "architecture": "aarch64",
+  "checks": [
+    "decision_token_cannot_read_authority",
+    "native_read_and_bound_observation",
+    "resource_scope_denied",
+    "path_prefix_boundary_denied",
+    "native_write_not_executed",
+    "required_missing_binding_denied",
+    "native_offline_block_with_pending",
+    "daemon_kill_restart_binding_and_pending_recovery",
+    "http_post_replay_idempotent_and_conflict_after_restart",
+    "http_concurrent_post_restart_replay_single_observation",
+    "bounded_http_load_all_actions_correlated",
+    "optional_unbound_native_compatibility",
+    "bound_cannot_downgrade_in_optional",
+    "offline_cli_receipt_chain_verified"
+  ],
+  "receipt_count": 412,
+  "installation": {
+    "method": "fixture_copy"
+  },
+  "measurements": {
+    "samples": 200,
+    "concurrency": 8,
+    "elapsed_seconds": 4.396281106979586,
+    "pairs_per_second": 45.49299626961472,
+    "decide": {
+      "p50_ms": 85.7627679943107,
+      "p95_ms": 110.572803998366,
+      "p99_ms": 122.70307401195168
+    },
+    "observe": {
+      "p50_ms": 85.65463899867609,
+      "p95_ms": 109.07689901068807,
+      "p99_ms": 125.22217200603336
+    },
+    "thresholds": null,
+    "scope": "loopback HTTP, binding validation, signing, receipt persistence; synthetic results",
+    "limitations": "bounded run, not long-duration soak, native tool latency or SLA"
+  },
+  "scope": "installed OpenClaw plugin loader, native before wrapper, Pi file tools and native after relay; actual Go HTTP and signed receipts",
+  "limitations": [
+    "synthetic calls and operator; no LLM session or human approval proof",
+    "after relay is invoked by this harness, not a full agent session",
+    "no live gateway, platform approval journey or CodeBuddy runtime",
+    "no OS isolation or full platform support claim"
+  ]
+}

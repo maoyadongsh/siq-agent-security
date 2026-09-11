@@ -1,0 +1,34 @@
+[
+  {
+    "target": "linux/amd64",
+    "command": "go build -o <candidate> ./cmd/agentshield",
+    "exit_code": 0,
+    "stderr": "",
+    "path": "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m28-linux-amd64",
+    "sha256": "72d1798fdc2c48714e606b7016673002dda936d7fd5ba8d0c88a4cc53744de57"
+  },
+  {
+    "target": "linux/arm64",
+    "command": "go build -o <candidate> ./cmd/agentshield",
+    "exit_code": 0,
+    "stderr": "",
+    "path": "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m28-linux-arm64",
+    "sha256": "56dc664827461fd142b431a5a2dd4d6d5514011415e1e0534bc3e91b638b9d10"
+  },
+  {
+    "target": "darwin/arm64",
+    "command": "go build -o <candidate> ./cmd/agentshield",
+    "exit_code": 0,
+    "stderr": "",
+    "path": "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m28-darwin-arm64",
+    "sha256": "89577d78753a429a1355d00a73981945d3f8c214b3cbab7ce91bf949336360b0"
+  },
+  {
+    "target": "windows/amd64",
+    "command": "go build -o <candidate> ./cmd/agentshield",
+    "exit_code": 0,
+    "stderr": "",
+    "path": "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m28-windows-amd64.exe",
+    "sha256": "4b475e1934c0ab8d3f928e6448a864b2f0032ee387e458ff00323e5f9c516f36"
+  }
+]

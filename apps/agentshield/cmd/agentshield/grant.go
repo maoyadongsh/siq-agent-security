@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -10,8 +11,10 @@ import (
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/signing"
+	"siq-agent-security/apps/agentshield/internal/skillimport"
 	"siq-agent-security/apps/agentshield/internal/state"
 )
 
@@ -132,6 +135,28 @@ func cmdGrantAction(st *state.Store, key *signing.Key, verb string, args []strin
 	g, seq, err := st.GetGrantWithSeq(id)
 	if err != nil {
 		return fmt.Errorf("grant: %w", err)
+	}
+	if importsource.Reserved(g.AdmissionID) && (verb == "challenge" || verb == "approve") {
+		if !grant.Verify(key.Public(), *g) {
+			return skillimport.ErrChanged
+		}
+		adm, err := st.GetAdmission(g.AdmissionID)
+		if err != nil {
+			return skillimport.ErrChanged
+		}
+		pack, err := loadPack()
+		if err != nil {
+			return err
+		}
+		imports, err := skillimport.Open(st.Dir, key, pack, Version)
+		if err != nil {
+			return err
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+		defer cancel()
+		if err := imports.ValidatePermissionAdmission(ctx, *adm); err != nil {
+			return err
+		}
 	}
 	now := time.Now().UTC()
 	enc := json.NewEncoder(os.Stdout)

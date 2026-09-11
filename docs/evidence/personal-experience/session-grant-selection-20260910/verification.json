@@ -1,0 +1,149 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T12:44:47.772260+00:00",
+  "batch": "M10 session Grant selection",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "candidate": {
+    "path": ".tmp/personal-experience/m10-linux-arm64",
+    "sha256": "2d912f5a5f35c0893afa7430ae9add6df8ab8fd50d79fcbd53754ab7e082f330",
+    "evidence": [
+      "selection-native.json",
+      "legacy-hermes-native.json",
+      "openclaw-native.json"
+    ]
+  },
+  "checks": [
+    {
+      "command": "go test ./...",
+      "passed": true,
+      "log": "go-test.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "go-vet.log"
+    },
+    {
+      "command": "go test -race ./internal/grant ./internal/intent ./internal/receipt ./internal/server ./internal/runtimecheck ./internal/state",
+      "passed": true,
+      "log": "go-race.log"
+    },
+    {
+      "command": "gofmt -l .",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "passed": true,
+      "log": "contract-test.log"
+    },
+    {
+      "command": "uv run ruff check app/tests/test_schema_contracts.py ../../scripts/personal-experience/session-grant-selection-native-smoke.py",
+      "passed": true,
+      "log": "python-lint.log"
+    }
+  ],
+  "source_sha256": {
+    "apps/agentshield/internal/grant/permission_digest.go": "6a5ec51db5a5ecec2866cab28f224aab25ea768d93c7d7f72045a2ea91944c58",
+    "apps/agentshield/internal/grant/permission_digest_test.go": "af330910b4e575fcaba49a9eacec1fdb7a4465de5fa6b314fd43e214c1ac7db7",
+    "apps/agentshield/internal/intent/grant_selection.go": "e24e3b241b32beec165eea58211be92b9365a2586dfa6b1796fd4851a664e164",
+    "apps/agentshield/internal/intent/grant_selection_test.go": "8310009ad48a47b71597731bb2a1c32bd4114a92122cdc1bb487c0d4e0f7bd19",
+    "apps/agentshield/internal/intent/binding.go": "dbc578e3003ee4fa4e0bfab0d50daf16e0dc1a3bba7128c41fb368b23e2dea6d",
+    "apps/agentshield/internal/intent/store.go": "6bd7059b514331c607537d759544126424fbf25c4ca923e7bf67c6e92774d8df",
+    "apps/agentshield/internal/state/intent_authority.go": "0b6d7873580267d0e2e93f9f0dc250b597726a971f0eaa261ed2d55785298170",
+    "apps/agentshield/internal/receipt/intent.go": "62b4c7ed3493a805cf12656567aecdc2e3c88e8fdb8bf8b1c681d1ede700b0df",
+    "apps/agentshield/internal/receipt/engine.go": "191ed4ba3884f4fd49d61851416df7613b3a42f95c9056efdec8d137bc24494d",
+    "apps/agentshield/internal/receipt/hold_status.go": "f8844f2a706b5ab313ed5123722584f697357ed60ace76a7f9bd43932ddc63f8",
+    "apps/agentshield/internal/receipt/grant_selection_test.go": "7524d6420c25e02e5567348abf78d95099b5ebf6c6deecc170132248b1e7c06c",
+    "apps/agentshield/internal/server/intent_http.go": "1bb698701ecd19c500152f98a4133aa3bd9aec4cbc63f555b520df7409b6c142",
+    "apps/agentshield/internal/server/grant_binding_test.go": "23c449f682b6d494d9ee031bc0923b49130a5b90a8bb3edc1c17bf551faeefa7",
+    "apps/agentshield/internal/runtimecheck/manager.go": "783232566b42cd5a53a4aa3cb41dfd6202bb5fca6f10c4780fc902bd4b96249b",
+    "apps/agentshield/internal/runtimecheck/manager_test.go": "b2c8c9e9224256b567925e9bc71e5b93ca41781fc37307990fc612f7141219fa",
+    "apps/agentshield/testdata/contracts/intent-grant-bind.json": "b0be652ae73c588e4ed790f314738f68ac6532787d18125ceb912965a2839aad",
+    "apps/agentshield/testdata/contracts/intent-grant-binding.json": "12a3bd21d66f4fb237da2cf4bf6982c8f4fe5fc7bca9687fdea1c61cbbfbb974",
+    "apps/control-api/app/tests/test_schema_contracts.py": "ccaccd671b3d1910c7f3a1cb08430b5f145cfcba3cc2603308dd61d4859843dc",
+    "packages/contracts/intent-grant-bind.v1.schema.json": "a392fa471f1b9d7e40340e86289850c02fe4bc82a1958b6a154e155fad382731",
+    "packages/contracts/intent-grant-binding.v1.schema.json": "c95e835548750930f7f874958a7fb5a4a5f2adbdeedcea9e40eb41a2d27e10e7",
+    "scripts/personal-experience/session-grant-selection-native-smoke.py": "5d2f07017f833e234753ea8c0c546fbeab05db3fa84ea8ba2501a14eb2c75aec",
+    "scripts/personal-experience/grant-resource-native-smoke.py": "d956ac5711de6365684717a94c93001edbda51536087c3ef4e5310a27c656e21",
+    "scripts/personal-experience/hermes-cli-runtime-smoke.py": "a0ca6517336249e8b29e2f81fffac64debd2558ad711d8a8b4f9c2002f249bc3",
+    "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+    "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+    "docs/adr/0027-session-grant-selection.md": "6a75def83a54740284587d12098246734ba6d7b057170677995b45e75892d331",
+    "docs/agentshield-dev-spec-v1.md": "fa39cc9c4647727ec37f053f4e3bb9e9f1e7cddc496b227066b998304cbea5e2",
+    "docs/personal-experience-development-progress-20260910.md": "013813cd05b5e7d3b35f812ed99babc7c387a727c39164fc571cec6c030d6902",
+    "docs/personal-experience-requirements-baseline-20260910.md": "43c0657384f5d69626b067beac8fb3656eaf459e59ca518619ca67916988924c"
+  },
+  "cross_builds": [
+    {
+      "target": "linux-amd64",
+      "path": ".tmp/personal-experience/m10-linux-amd64",
+      "sha256": "96a89967c6e78f7befc36fe902676e06635062e4b9cde15d229285d23abc7348",
+      "passed": true,
+      "native_runtime_verified": false
+    },
+    {
+      "target": "linux-arm64",
+      "path": ".tmp/personal-experience/m10-linux-arm64",
+      "sha256": "2d912f5a5f35c0893afa7430ae9add6df8ab8fd50d79fcbd53754ab7e082f330",
+      "passed": true,
+      "native_runtime_verified": true
+    },
+    {
+      "target": "darwin-arm64",
+      "path": ".tmp/personal-experience/m10-darwin-arm64",
+      "sha256": "aaf3f7c1f5d75ea813250f71cb6920197dc7332cfa5ebc792b14c908135b6ad9",
+      "passed": true,
+      "native_runtime_verified": false
+    },
+    {
+      "target": "windows-amd64",
+      "path": ".tmp/personal-experience/m10-windows-amd64",
+      "sha256": "f8fb3e60b6d9d9ff58b6a0dafc0d34a1795930a0a4e42fb7fc4e0cf4316f3866",
+      "passed": true,
+      "native_runtime_verified": false
+    }
+  ],
+  "reports": [
+    {
+      "path": "selection-native.json",
+      "sha256": "bf6480a276fae4e5846821c1713fe5777628aa8866e120ce631e9f1932a0bc94",
+      "passed": true,
+      "binary_sha256": "2d912f5a5f35c0893afa7430ae9add6df8ab8fd50d79fcbd53754ab7e082f330"
+    },
+    {
+      "path": "legacy-hermes-native.json",
+      "sha256": "4338b5d8b07a0a084ee4fd08fc96ce471cbe64590ba563dbbe50b7f0696ece54",
+      "passed": true,
+      "binary_sha256": "2d912f5a5f35c0893afa7430ae9add6df8ab8fd50d79fcbd53754ab7e082f330"
+    },
+    {
+      "path": "openclaw-native.json",
+      "sha256": "1cf0c5c0d8ebfa4daa5bf23734ece0637d41cef244458bcd2f4cfd836b8eeb5f",
+      "passed": true,
+      "binary_sha256": "79ae659105f5f7e897552f79a20afe5e34b64fe2a284c7446ad911b8d57f1325"
+    }
+  ],
+  "artifact_sha256": {
+    "python-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-test.log": "c78cae829c0d1959933cbd9a931d8471868437f73bdeca9227049f99b0d5061d",
+    "selection-native.json": "bf6480a276fae4e5846821c1713fe5777628aa8866e120ce631e9f1932a0bc94",
+    "gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "contract-test.log": "a34bf9652d486d405c57abedcddfc446d66ff67e11631b53b0a026ff4df98c50",
+    "openclaw-native.json": "1cf0c5c0d8ebfa4daa5bf23734ece0637d41cef244458bcd2f4cfd836b8eeb5f",
+    "go-race.log": "8ff02c51c2dd470f8b0a0980c4f92b616346f5f431c27a65403957377eeff9d5",
+    "legacy-hermes-native.json": "4338b5d8b07a0a084ee4fd08fc96ce471cbe64590ba563dbbe50b7f0696ece54"
+  },
+  "limitations": [
+    "Linux arm64 runtime only; four cross-builds do not establish native Windows/macOS support.",
+    "Fixed Grant selection is used by the product self-check. Ordinary task enrollment and trusted platform instance credentials are not completed.",
+    "A selected admission does not prove which Skill content the host loaded. Actual Skill version attribution remains unverified.",
+    "Legacy bindings without grant_ref retain implicit newest-active-Grant selection; their fallback risk has not been globally removed.",
+    "OpenClaw regression builds a separate binary and retains that identity. Hermes native tests use isolated profiles and synthetic operators.",
+    "No frontend source changed in this batch; M9 embedded frontend reused. No new ordinary-task browser journey is claimed.",
+    "UX-007 remains ongoing; later personal tasks and LAN work remain incomplete."
+  ]
+}

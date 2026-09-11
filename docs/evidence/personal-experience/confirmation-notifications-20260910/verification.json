@@ -1,0 +1,136 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T15:13:50.566659+00:00",
+  "batch": "M16 browser notification delivery and shared inbox state",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "candidate": {
+    "target": "linux/arm64",
+    "path": ".tmp/personal-experience/m16-linux-arm64",
+    "sha256": "c1ddc61be0b8de614ed91fc7c6bf89cce69c62f70ecf8cdc5e744d8950d57df9",
+    "passed": true
+  },
+  "checks": [
+    {
+      "command": "go test ./...",
+      "passed": true,
+      "log": "go-test.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "go-vet.log"
+    },
+    {
+      "command": "uv run ruff check ../../scripts/personal-experience/confirmation-notifications-browser-smoke.py",
+      "passed": true,
+      "log": "python-lint.log"
+    },
+    {
+      "command": "npm test",
+      "passed": true,
+      "log": "web-test.log"
+    },
+    {
+      "command": "npm run build:local",
+      "passed": true,
+      "log": "web-local-build.log"
+    },
+    {
+      "command": "npm run build",
+      "passed": true,
+      "log": "web-enterprise-build.log"
+    },
+    {
+      "command": "gofmt -l apps/agentshield",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "git diff --check",
+      "passed": true,
+      "log": "diff-check.log"
+    }
+  ],
+  "test_counts": {
+    "web": 24,
+    "browser": 23
+  },
+  "builds": [
+    {
+      "target": "linux/amd64",
+      "command": "GOOS=linux GOARCH=amd64 go build -trimpath -o ../../.tmp/personal-experience/m16-linux-amd64 ./cmd/agentshield",
+      "path": ".tmp/personal-experience/m16-linux-amd64",
+      "exit_code": 0,
+      "sha256": "e3541ca1821eca14928cb05dd52d0fbfc860c7c1b317b68b40238a9eabecfbbc"
+    },
+    {
+      "target": "linux/arm64",
+      "command": "GOOS=linux GOARCH=arm64 go build -trimpath -o ../../.tmp/personal-experience/m16-linux-arm64 ./cmd/agentshield",
+      "path": ".tmp/personal-experience/m16-linux-arm64",
+      "exit_code": 0,
+      "sha256": "c1ddc61be0b8de614ed91fc7c6bf89cce69c62f70ecf8cdc5e744d8950d57df9"
+    },
+    {
+      "target": "darwin/arm64",
+      "command": "GOOS=darwin GOARCH=arm64 go build -trimpath -o ../../.tmp/personal-experience/m16-darwin-arm64 ./cmd/agentshield",
+      "path": ".tmp/personal-experience/m16-darwin-arm64",
+      "exit_code": 0,
+      "sha256": "5dae4ceb63e71781b93e282e3e08a158a1bc0617c94ecef8f02edf28dca010c3"
+    },
+    {
+      "target": "windows/amd64",
+      "command": "GOOS=windows GOARCH=amd64 go build -trimpath -o ../../.tmp/personal-experience/m16-windows-amd64 ./cmd/agentshield",
+      "path": ".tmp/personal-experience/m16-windows-amd64",
+      "exit_code": 0,
+      "sha256": "c3cdf08b54ac61dc8010fe30407028759dbde1cc250f48e40eea029bb3968961"
+    }
+  ],
+  "source_sha256": {
+    "apps/agentshield/internal/receipt/confirmations.go": "4d5ec67b9b1b51a3e2cccd86cf52d2135f27cd895343772b05f02313c1700622",
+    "apps/agentshield/internal/server/confirmations.go": "3809dd98078c1cca5095373f54db83146451132d23c61cf67672c36b17392ed2",
+    "apps/agentshield/internal/ui/README.md": "0c205a21ed60ac6bf60dffdf91af1c8c5b10b4245c86ffa7e1c2a58a79d2bd54",
+    "apps/agentshield/internal/ui/embedded/assets/index.local-NP27FKEv.js": "838937f25b673b82cab0527cd7599bf223d545444236e00073a87e918e80ab57",
+    "apps/agentshield/internal/ui/embedded/index.html": "33bf534bcc856af7ff47988c1b13cae9b243d1ce06dc2653b40b13d94c25cf54",
+    "apps/web/src/local/App.tsx": "a0dbe0947cb71d3c4ea37009574a23759783a5fcde5b608bae5d6d4183db2c73",
+    "apps/web/src/local/Layout.tsx": "0b074dfcecd3662ad001d043c1f1a3bf370fb44e5231585f11e8320fde46ad2b",
+    "apps/web/src/local/api.ts": "d86dd6c2d2bf4697f43c2c307acdd4955e2a7b8f669f6be912a689c7e11a0e52",
+    "apps/web/src/local/components/ConfirmationNotifications.tsx": "72f0fca94e4b1473502aa5959dbf036fb5953a2359ba11c8f0bf0c8fc8de038c",
+    "apps/web/src/local/confirmations.tsx": "a1cc144590b49a73664156583e2cd07a1cfb16ffc17b305d7fe496885d8367cf",
+    "apps/web/src/local/notificationState.test.ts": "6017a9fc873037f7c1c33dd41b08939b5af7769ebaa0884906631ca947785dce",
+    "apps/web/src/local/notificationState.ts": "276b38b1731c846dd0ca5fa310805f63014c3f5841b57662342c1f0149709131",
+    "apps/web/src/local/pages/ConfirmationsPage.tsx": "99aba3921b9d8723b5680f11ab2f09dea5c8671eb5d8f8b497dd7ad0f0ea76a4",
+    "apps/web/src/local/pages/GrantsPage.tsx": "4cecfe8593483dacdafc83643779c27fd1c3f768073c204156239d2d6f08462e",
+    "apps/web/src/local/types.ts": "1961a46d1681eb7ed68b0a4f25f8e7af6b3455c3962df5bd1988a0038d34ab5e",
+    "docs/adr/0032-personal-notification-delivery.md": "1386eb987aeda315e5fe3c4fc88a778baca1a646ea5d7b1397286daa8a34905e",
+    "docs/agentshield-dev-spec-v1.md": "07498b39765ddcb0273050730b9842457d6c60af51b6295b9fabe45e76f32d1f",
+    "docs/evidence/personal-experience/hermes-approval-capability-20260910.json": "d68996a02bbda51475f047a7eba63823af2f35a2e5109ee43daa7046e615fa9b",
+    "docs/personal-experience-development-progress-20260910.md": "86c13656e2262d0833ea9c9f60a2085a10d161c96ee3949c2cd9e1e6ea992eb4",
+    "packages/contracts/local-confirmation-resolve.v1.schema.json": "ae4f2e21894870227923d4b4ebe1c85709ad2434c9ce75a2456e52cbce4bee12",
+    "packages/contracts/local-confirmations.v1.schema.json": "5c7274a56bc656fbdd732f6f85804f02cd860447d9c02f0cb1b4f64e3235d7fa",
+    "scripts/personal-experience/confirmation-notifications-browser-smoke.py": "a960c0d873cc44e057d6574527cfa3b10d8db716eb660e5308018b221e248ac7",
+    "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f"
+  },
+  "artifacts_sha256": {
+    "browser/inbox-desktop.png": "94c674503faa1a06b1650e14541f35cce7cfaa82a221629d7fb376447890f997",
+    "browser/inbox-mobile.png": "adc94600fe146f7223a9625223d16c05a8474dc867075ee1e4d233cdf3a11311",
+    "browser/notification-preferences.png": "b1c5ada152bf4851068bba78222d9592c0b575939251b7585df8b25ac882b19f",
+    "browser/result.json": "884f7d1f3d34ad49aa531334a500e96f81e90aaafb4decf1e8ce20dd6eb6efb7",
+    "browser.log": "1fbe0397b5084dda8588120befcb4a42a0069998662403e38b434aaa810b0bf0",
+    "diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-test.log": "ed48326a470ee5d36aebca8406fde2b9f8b697294ba2646309386f0180aa2ae7",
+    "go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "python-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "web-enterprise-build.log": "774fb90f2e9093e9d21398808b76bd7ae1314517647591ddb0d25b6ceddf4828",
+    "web-local-build.log": "ccebd452a32a037d63dc92990df1a545d7683e74c96a063e2e9f57610d7fdf80",
+    "web-test.log": "a2c4683c72f2af45a90e884452a7be7b008d418e04971e944eede123ad6fd267"
+  },
+  "limitations": [
+    "Browser Notification API double verifies construction, failure retry, click and cancellation behavior; OS actual display remains unverified",
+    "Web page must stay open; background launcher and three OS notification delivery remain pending",
+    "Hermes native automatic resume remains unsupported by current SIQ integration pending final-parameter execution recheck",
+    "No backend decision or adapter code changed in M16; prior native evidence is not represented as notification validation",
+    "Cross-compilation does not constitute Windows/macOS product acceptance"
+  ]
+}

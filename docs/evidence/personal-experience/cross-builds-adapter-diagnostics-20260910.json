@@ -1,0 +1,33 @@
+{
+  "schema_version": "personal-cross-builds/v1",
+  "recorded_at": "2026-09-10T08:29:11.584296+00:00",
+  "stage": "M3-adapter-diagnostics",
+  "source": "current working tree; uncommitted development build",
+  "checks": [
+    {
+      "target": "linux/amd64",
+      "build": "passed",
+      "sha256": "6a0af1368a2f5117aaeb0f6a530364ad24acfa818ed4eb38605c1f1e031af39c",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "linux/arm64",
+      "build": "passed",
+      "sha256": "ed915630f345d872fb55d61488c9d4d50b7f651c2f900d6d770e5a881bfc9e6a",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "darwin/arm64",
+      "build": "passed",
+      "sha256": "ade1784dd355213e1b027c4626ca8653fa07bcf3e9f70f5606dc556e8d0520fe",
+      "native_runtime_test": "not_claimed"
+    },
+    {
+      "target": "windows/amd64",
+      "build": "passed",
+      "sha256": "1ece6758767072d4934efa294aae4c39e3c3efffc2848d3ea3359713d9d93433",
+      "native_runtime_test": "not_claimed"
+    }
+  ],
+  "signed_release": false
+}

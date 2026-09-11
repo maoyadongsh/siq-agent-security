@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-update-claim.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-update-claim/v1"
+    },
+    "update_id": {
+      "type": "string",
+      "pattern": "^sup-[a-f0-9]{64}$"
+    },
+    "plan": {
+      "$ref": "https://siq.dev/contracts/local-skill-update-plan.v1.schema.json"
+    },
+    "replacement_plan": {
+      "$ref": "https://siq.dev/contracts/local-skill-install-plan.v1.schema.json"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "update_id",
+    "plan",
+    "replacement_plan",
+    "actor_id",
+    "created_at",
+    "signature"
+  ]
+}

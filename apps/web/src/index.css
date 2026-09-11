@@ -1945,12 +1945,36 @@ a,
 }
 
 /* 卡片内次级区块/说明的上间距 */
+.discovery-paths {
+  overflow-wrap: anywhere;
+}
+
 .block-gap {
   margin-top: 12px;
 }
 
 /* 本地台账表格列多：窄屏横向滚动优于逐字断行（只作用于本地壳，企业台保持原样） */
 @media (max-width: 767.98px) {
+  .local-shell .topbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .local-shell .topbar-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .local-shell .topbar-tags {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
   .local-shell .table {
     min-width: 620px;
   }
@@ -1966,3 +1990,99 @@ a,
     white-space: normal;
   }
 }
+
+.adapter-change-body { overflow-wrap: anywhere; }
+.runtime-check-actions { flex-wrap: wrap; }
+.grant-resource-modal {
+  width: min(44rem, 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.grant-resource-modal > .modal-body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px;
+}
+.grant-resource-modal > .modal-title,
+.grant-resource-modal > .modal-desc,
+.grant-resource-modal > .modal-actions { flex-shrink: 0; }
+.local-grants-page { overflow-wrap: anywhere; }
+.adapter-change-list { list-style: none; margin: 0; padding: 0; }
+.adapter-change-list li { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.adapter-change-list p { margin: 6px 0; }
+.adapter-change-list code { font-size: 12px; white-space: normal; }
+.adapter-change-list details { color: var(--text-secondary); font-size: 12px; }
+.adapter-change-body .field select { max-width: 100%; min-width: 0; }
+.adapter-native-option { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+.adapter-native-option input { flex: 0 0 auto; margin-top: 3px; }
+
+.local-imports-page { overflow-wrap: anywhere; }
+.import-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.import-panel { min-width: 0; padding: 24px; margin-bottom: 20px; }
+.import-panel h2 { margin-top: 0; font-size: 18px; }
+.import-panel h3 { margin-top: 24px; font-size: 15px; }
+.import-fields { border: 0; padding: 0; margin: 20px 0; min-width: 0; }
+.import-fields .field { margin-bottom: 16px; }
+.import-fields input, .import-fields select { width: 100%; min-width: 0; }
+.import-fields small { display: block; margin-top: 6px; }
+.import-actions, .import-result-heading { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.import-result-heading h2 { margin: 0; }
+.import-identity { font-size: 12px; }
+.import-history, .import-files, .import-facts { padding: 0; list-style: none; }
+.import-history { max-height: 400px; overflow-y: auto; }
+.import-history-button { display: flex; flex-direction: column; gap: 5px; text-align: left; width: 100%; padding: 12px; background: transparent; color: var(--text-primary); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; overflow-wrap: anywhere; }
+.import-history li { margin: 8px 0; }
+.import-history-button[aria-current="true"] { border-color: var(--accent, #b88943); }
+.import-history-button:disabled { cursor: default; opacity: 0.65; }
+.import-history-button span, .import-history-button code { font-size: 12px; }
+.import-facts li { margin: 12px 0; }
+.import-result details { margin-top: 24px; }
+.import-result summary { cursor: pointer; }
+.import-files { max-height: 480px; overflow-y: auto; }
+.import-files li { display: flex; flex-direction: column; gap: 5px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.import-files span, .import-files code { font-size: 12px; }
+@media (max-width: 900px) { .import-columns { grid-template-columns: minmax(0, 1fr); } .import-panel { padding: 18px; } }
+
+.import-permission-panel { margin-block: 1.5rem; padding-block: 1rem; border-block: 1px solid var(--border); }
+.import-grant-source { margin-block: 1rem; overflow-wrap: anywhere; }
+.import-grant-source code { word-break: break-all; }
+
+.skill-install-preview { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+.install-plan-result dd { margin: .25rem 0 1rem; overflow-wrap: anywhere; }
+.install-plan-result code { white-space: normal; overflow-wrap: anywhere; }
+
+.skill-install-preview .field label.install-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  cursor: pointer;
+  line-height: 1.6;
+}
+.skill-install-preview .install-confirmation input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  min-height: 0;
+  flex: 0 0 1.15rem;
+  margin: 0.2rem 0 0;
+  padding: 0;
+}
+.skill-install-preview details { margin: 0.75rem 0; }
+.skill-install-preview summary { cursor: pointer; }
+
+.skill-removal-dialog { width: min(680px, calc(100vw - 32px)); overflow-wrap: anywhere; }
+.skill-removal-dialog .install-confirmation { display: flex; align-items: flex-start; gap: 8px; margin: 16px 0; }
+.skill-removal-dialog .install-confirmation input { width: 18px; flex: 0 0 18px; margin-top: 3px; }
+
+.skill-removal-dialog .import-actions { margin-top: 12px; }
+
+/* Skill update review keeps immutable scope readable at narrow widths. */
+.skill-updates-page { display: grid; gap: 20px; }
+.skill-updates-page .panel { min-width: 0; overflow-wrap: anywhere; }
+.skill-updates-page .import-files li { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+.update-scope-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.update-candidate-label { display: grid; gap: 8px; margin-top: 16px; }
+.update-candidate-label select { max-width: 100%; width: 100%; padding: 10px; }
+.update-confirmation .install-confirmation { display: flex; align-items: flex-start; gap: 8px; margin: 20px 0 12px; }
+.update-confirmation .install-confirmation input { width: 18px; flex: 0 0 18px; margin-top: 3px; }
+@media (max-width: 640px) { .update-scope-columns { grid-template-columns: 1fr; } }

@@ -5,6 +5,7 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,6 +21,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/effectevidence"
 	"siq-agent-security/apps/agentshield/internal/export"
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/inventory"
 	"siq-agent-security/apps/agentshield/internal/openshell"
@@ -28,33 +30,49 @@ import (
 	"siq-agent-security/apps/agentshield/internal/provenance"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
+	"siq-agent-security/apps/agentshield/internal/runtimecheck"
+	"siq-agent-security/apps/agentshield/internal/runtimeidentity"
 	"siq-agent-security/apps/agentshield/internal/signing"
+	"siq-agent-security/apps/agentshield/internal/skillimport"
+	"siq-agent-security/apps/agentshield/internal/skillinstall"
 	"siq-agent-security/apps/agentshield/internal/state"
 )
 
 // Deps wires the server.
 type Deps struct {
-	Store       *state.Store
-	Engine      *receipt.Engine
-	Chain       *receipt.Chain
-	Pack        *rulepack.Pack
-	Key         *signing.Key
-	Token       string
-	Version     string
-	Mode        string
-	UI          http.Handler // optional embedded console
-	Home        string       // override os.UserHomeDir (tests + adapter HTTP)
-	Binary      string       // agentshield path written into adapter configs
-	Endpoint    string       // decision API URL written into adapter configs
-	Openshell   *openshell.Client
-	ListenHost  string // bind address advertised for Host allowlisting (default 127.0.0.1)
-	ListenPort  int    // must match the actual listen port
-	PairingCode string // tests only; production serve generates a random code
+	HermesOS      string // optional platform path policy injection for deterministic tests
+	HermesHome    string // explicit native profile root override, captured by launcher
+	HermesCLI     string // optional absolute Hermes executable
+	LocalAppData  string // native Windows home base, injected for deterministic tests
+	Store         *state.Store
+	Engine        *receipt.Engine
+	Chain         *receipt.Chain
+	Pack          *rulepack.Pack
+	Key           *signing.Key
+	Token         string
+	RecoveryToken string // local launcher only; never distributed to adapters
+	Version       string
+	Mode          string
+	UI            http.Handler // optional embedded console
+	Home          string       // override os.UserHomeDir (tests + adapter HTTP)
+	Binary        string       // agentshield path written into adapter configs
+	Endpoint      string       // decision API URL written into adapter configs
+	Openshell     *openshell.Client
+	ListenHost    string // bind address advertised for Host allowlisting (default 127.0.0.1)
+	ListenPort    int    // must match the actual listen port
+	PairingCode   string // tests only; production serve generates a random code
 }
 
 // Server is the HTTP handler set.
 type Server struct {
-	fileObservations map[string]pendingFileObservation
+	skillInstallations *skillinstall.Store
+	skillImports       *skillimport.Store
+	skillImportMu      sync.Mutex
+	runtimeIdentities  *runtimeidentity.Store
+	runtimeChecks      *runtimecheck.Manager
+	adapterPlanMu      sync.Mutex
+	adapterPlans       map[string]pendingAdapterPlan
+	fileObservations   map[string]pendingFileObservation
 
 	effects    *effectevidence.Store
 	observerMu sync.Mutex
@@ -70,17 +88,21 @@ type Server struct {
 	osCaps     *openshell.Capabilities
 	osDiag     openshell.Diagnosis
 
-	pairMu       sync.Mutex
-	pairDisplay  string
-	pairHash     [32]byte
-	pairDeadline time.Time
-	pairAttempts int
-	pairConsumed bool
-	sessMu       sync.Mutex
-	sessions     map[string]time.Time
-	bootAdmin    string // test harness after RedeemPairing
+	pairMu          sync.Mutex
+	pairDisplay     string
+	pairHash        [32]byte
+	pairDeadline    time.Time
+	pairAttempts    int
+	pairConsumed    bool
+	sessMu          sync.Mutex
+	sessions        map[string]time.Time
+	refreshSessions map[[32]byte]refreshSession
+	bootAdmin       string // test harness after RedeemPairing
 
-	pendingMu sync.Mutex
+	pendingMu    sync.Mutex
+	refreshMu    sync.Mutex
+	discoveryMu  sync.Mutex
+	discoveryRun DiscoveryRun
 
 	// GET ledger projection cache (DEV16-B): Refresh/ticker write; assets/permissions/findings/export read.
 	proj projectionCache
@@ -91,10 +113,16 @@ func New(d Deps) (*Server, error) {
 	if d.Store == nil || d.Engine == nil || d.Chain == nil || d.Pack == nil || d.Key == nil || len(d.Token) < 32 {
 		return nil, errors.New("server: incomplete dependencies")
 	}
+	if d.RecoveryToken != "" && (len(d.RecoveryToken) != 64 || d.RecoveryToken == d.Token) {
+		return nil, errors.New("server: invalid recovery credential")
+	}
 	s := &Server{d: d, mux: http.NewServeMux()}
 	var err error
 	s.intents, err = d.Store.IntentAuthority(d.Key)
 	if err != nil {
+		return nil, err
+	}
+	if err := s.initRuntimeIdentities(); err != nil {
 		return nil, err
 	}
 	s.provenance, err = provenance.Open(d.Store.Dir, d.Key)
@@ -110,6 +138,36 @@ func New(d Deps) (*Server, error) {
 	if err := s.initPairing(d.PairingCode); err != nil {
 		return nil, err
 	}
+	if err := s.initRuntimeChecks(); err != nil {
+		return nil, err
+	}
+	s.skillImports, err = skillimport.Open(d.Store.Dir, d.Key, d.Pack, d.Version)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.initSkillInstallations(); err != nil {
+		return nil, err
+	}
+	s.mux.HandleFunc("/v1/skill-installations/update-plans/", s.auth(s.skillUpdatePlanRead, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installations/updates", s.auth(s.skillUpdateCommit, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installations/updates/", s.auth(s.skillUpdateOperation, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installations/plans", s.auth(s.skillInstallPlanCreate, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installations/plans/", s.auth(s.skillInstallPlanRead, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installations/apply", s.auth(s.skillInstallApply, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installations/operations", s.auth(s.skillInstallCatalog, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installations/operations/", s.auth(s.skillInstallOperation, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installations/grants/", s.auth(s.skillInstallGrantRuntime, capAdmin))
+	s.mux.HandleFunc("/v1/skill-imports", s.auth(s.skillImportCreate, capAdmin))
+	s.mux.HandleFunc("/v1/skill-imports/remote", s.auth(s.skillImportRemoteCreate, capAdmin))
+	s.mux.HandleFunc("/v1/skill-imports/", s.auth(s.skillImportRead, capAdmin))
+	s.mux.HandleFunc("/v1/runtime-identities", s.auth(s.runtimeIdentityCollection, capAdmin))
+	s.mux.HandleFunc("/v1/runtime-identities/", s.auth(s.runtimeIdentityOne, capAdmin))
+	s.mux.HandleFunc("/v1/runtime-sessions", s.runtimeSessionEnroll)
+	s.mux.HandleFunc("/v1/runtime-checks/preview", s.auth(s.runtimeCheckPreview, capAdmin))
+	s.mux.HandleFunc("/v1/runtime-checks", s.auth(s.runtimeCheckLatest, capAdmin))
+	s.mux.HandleFunc("/v1/runtime-checks/start", s.auth(s.runtimeCheckStart, capAdmin))
+	s.mux.HandleFunc("/v1/runtime-checks/attach", s.runtimeCheckAttach)
+	s.mux.HandleFunc("/v1/runtime-checks/", s.auth(s.runtimeCheckOne, capAdmin))
 	s.mux.HandleFunc("/v1/tasks/", s.auth(s.taskCompletion, capAdmin))
 	s.mux.HandleFunc("/v1/network-observations", s.auth(s.submitNetworkObservation, capEffectObserve))
 	s.mux.HandleFunc("/v1/file-observation-recoveries", s.auth(s.recoverFileObservation, capAdmin))
@@ -137,6 +195,8 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/status", s.auth(s.status))
 	s.mux.HandleFunc("/v1/decide", s.auth(s.decide, capDecision))
 	s.mux.HandleFunc("/v1/observe", s.auth(s.observe, capDecision))
+	s.mux.HandleFunc("/v1/confirmations", s.auth(s.confirmations, capAdmin))
+	s.mux.HandleFunc("/v1/confirmations/", s.auth(s.confirmationResolve, capAdmin))
 	s.mux.HandleFunc("/v1/hold-status", s.auth(s.holdStatus, capDecision))
 	s.mux.HandleFunc("/v1/hold/", s.auth(s.hold))
 	s.mux.HandleFunc("/v1/receipts", s.auth(s.receipts))
@@ -144,10 +204,17 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/admissions", s.auth(s.admissions))
 	s.mux.HandleFunc("/v1/admissions/", s.auth(s.admissionOne))
 	s.mux.HandleFunc("/v1/inventory", s.auth(s.inventory))
+	s.mux.HandleFunc("/v1/discovery", s.auth(s.discoveryStatus))
+	s.mux.HandleFunc("/v1/discovery/preview", s.auth(s.discoveryPreview))
+	s.mux.HandleFunc("/v1/discovery/scan", s.auth(s.discoveryScan))
+	s.mux.HandleFunc("/v1/adapter/diagnostics", s.auth(s.adapterDiagnostics, capAdmin))
 	s.mux.HandleFunc("/v1/grants", s.auth(s.grants))
 	s.mux.HandleFunc("/v1/grants/", s.auth(s.grantAction))
 	s.mux.HandleFunc("/v1/config", s.auth(s.config))
 	s.mux.HandleFunc("/v1/adapter/status", s.auth(s.adapterStatus))
+	s.mux.HandleFunc("/v1/adapter/instances", s.auth(s.adapterInstances, capAdmin))
+	s.mux.HandleFunc("/v1/adapter/preview", s.auth(s.adapterPreview, capAdmin))
+	s.mux.HandleFunc("/v1/adapter/recover", s.auth(s.adapterRecover, capAdmin))
 	s.mux.HandleFunc("/v1/adapter/install", s.auth(s.adapterInstall))
 	s.mux.HandleFunc("/v1/adapter/uninstall", s.auth(s.adapterUninstall))
 	s.mux.HandleFunc("/v1/openshell/probe", s.auth(s.openshellProbe))
@@ -162,6 +229,10 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/audit", s.auth(s.auditLog))
 	s.mux.HandleFunc("/v1/export", s.auth(s.exportBundle))
 	s.mux.HandleFunc("/v1/pair", s.pair)
+	s.mux.HandleFunc("/healthz", s.health)
+	s.mux.HandleFunc("/v1/session/restore", s.restoreSession)
+	s.mux.HandleFunc("/v1/session/logout", s.auth(s.logoutSession))
+	s.mux.HandleFunc("/v1/session/pairing", s.renewPairing)
 	s.mux.HandleFunc("/ui-config.json", s.uiConfig)
 	if d.UI != nil {
 		s.mux.Handle("/", d.UI)
@@ -244,16 +315,20 @@ func (s *Server) uiConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.pairMu.Lock()
-	pairingOpen := !s.pairConsumed && time.Now().Before(s.pairDeadline)
+	pairingOpen := !s.pairConsumed && s.pairAttempts < pairingMaxAttempts && time.Now().Before(s.pairDeadline)
 	s.pairMu.Unlock()
 	w.Header().Set("Cache-Control", "no-store")
 	writeJSON(w, 200, map[string]any{
-		"version":          s.d.Version,
-		"enforcement_mode": s.currentMode(),
-		"local_mode":       true,
-		"single_user":      true,
-		"trust_profile":    "desktop-same-uid",
-		"pairing_required": pairingOpen,
+		"schema_version":    "local-ui-config/v1",
+		"product":           "siq-agent-security",
+		"session_recovery":  true,
+		"pairing_available": pairingOpen,
+		"version":           s.d.Version,
+		"enforcement_mode":  s.currentMode(),
+		"local_mode":        true,
+		"single_user":       true,
+		"trust_profile":     "desktop-same-uid",
+		"pairing_required":  pairingOpen,
 	})
 }
 
@@ -512,12 +587,17 @@ func (s *Server) runInventory(cwd string) (*inventory.Report, error) {
 	if cwd != "" {
 		cwd = expandHome(cwd, s.d.Home)
 	}
+	roots, _, err := s.d.Store.LoadDiscoveryRoots()
+	if err != nil {
+		return nil, err
+	}
 	admissions, _ := s.d.Store.ListAdmissions()
 	byHash := map[string]string{}
 	for _, a := range admissions {
 		byHash[a.ContentHash] = a.Verdict
 	}
-	return inventory.Run(inventory.Options{Home: s.d.Home, Cwd: cwd, Version: s.d.Version, Key: s.d.Key,
+	return inventory.Run(inventory.Options{HermesHome: s.d.HermesHome, LocalAppData: s.d.LocalAppData, Home: s.d.Home, Cwd: cwd, Version: s.d.Version, Key: s.d.Key,
+		ProjectDirs: roots.ProjectDirs, SkillDirs: roots.SkillDirs,
 		ConnectorsDir: strings.TrimSpace(os.Getenv("SIQ_AS_CONNECTORS_DIR")),
 		HasAdmission:  func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
 }
@@ -704,8 +784,32 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 404, map[string]any{"error": "grant not found"})
 		return
 	}
+	if importsource.Reserved(g.AdmissionID) && (parts[1] == "challenge" || parts[1] == "approve" || parts[1] == "draft") {
+		if !s.skillImportSlot(w) {
+			return
+		}
+		defer s.skillImportMu.Unlock()
+		ctx, cancel := context.WithTimeout(r.Context(), 60*time.Second)
+		defer cancel()
+		if err := s.validateImportedGrant(ctx, *g); err != nil {
+			skillImportError(w, err)
+			return
+		}
+	}
+	if parts[1] == "draft" {
+		s.createGrantDraft(w, r, *g, seq)
+		return
+	}
 	if parts[1] == "require-approval" {
 		s.requireToolApproval(w, r, *g, seq)
+		return
+	}
+	if parts[1] == "expiry" {
+		s.editGrantExpiry(w, r, *g, seq)
+		return
+	}
+	if parts[1] == "resources" {
+		s.editGrantResources(w, r, *g, seq)
 		return
 	}
 	var body struct {

@@ -1,0 +1,378 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-runtime-check.v1.schema.json",
+  "title": "Explicit personal instance runtime check",
+  "oneOf": [
+    {
+      "$ref": "#/definitions/previewRequest"
+    },
+    {
+      "$ref": "#/definitions/startRequest"
+    },
+    {
+      "$ref": "#/definitions/attachRequest"
+    },
+    {
+      "$ref": "#/definitions/attached"
+    },
+    {
+      "$ref": "#/definitions/plan"
+    },
+    {
+      "$ref": "#/definitions/result"
+    },
+    {
+      "$ref": "#/definitions/list"
+    }
+  ],
+  "definitions": {
+    "id": {
+      "type": "string",
+      "pattern": "^rc-[a-f0-9]{32}$"
+    },
+    "instance": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "attached": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "check_id",
+        "session_id",
+        "attached"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-runtime-check-attached/v1"
+        },
+        "check_id": {
+          "$ref": "#/definitions/id"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "attached": {
+          "const": true
+        }
+      }
+    },
+    "previewRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "instance_id"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-runtime-check-preview/v1"
+        },
+        "instance_id": {
+          "$ref": "#/definitions/instance"
+        }
+      }
+    },
+    "startRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "check_id",
+        "plan_digest",
+        "actor_id",
+        "confirm"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-runtime-check-start/v1"
+        },
+        "check_id": {
+          "$ref": "#/definitions/id"
+        },
+        "plan_digest": {
+          "$ref": "#/definitions/hash"
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "confirm": {
+          "const": true
+        }
+      }
+    },
+    "attachRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "check_id",
+        "instance_id",
+        "agent_id",
+        "session_id"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-runtime-check-attach/v1"
+        },
+        "check_id": {
+          "$ref": "#/definitions/id"
+        },
+        "instance_id": {
+          "$ref": "#/definitions/instance"
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^rca-[a-f0-9]{32}$"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "check_id",
+        "instance_id",
+        "plan_digest",
+        "snapshot_digest",
+        "expires_at",
+        "duration_seconds",
+        "effects",
+        "limitations"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-runtime-check-plan/v1"
+        },
+        "check_id": {
+          "$ref": "#/definitions/id"
+        },
+        "instance_id": {
+          "$ref": "#/definitions/instance"
+        },
+        "plan_digest": {
+          "$ref": "#/definitions/hash"
+        },
+        "snapshot_digest": {
+          "$ref": "#/definitions/hash"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "duration_seconds": {
+          "const": 120
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "check_id",
+        "instance_id",
+        "status",
+        "reason_code",
+        "started_at",
+        "finished_at",
+        "expires_at",
+        "snapshot_digest",
+        "cleanup",
+        "receipt_ids",
+        "checks",
+        "limitations"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-runtime-check-result/v1"
+        },
+        "check_id": {
+          "$ref": "#/definitions/id"
+        },
+        "instance_id": {
+          "$ref": "#/definitions/instance"
+        },
+        "status": {
+          "enum": [
+            "preparing",
+            "waiting_host",
+            "running",
+            "passed",
+            "failed",
+            "cancelled",
+            "invalidated"
+          ]
+        },
+        "reason_code": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "finished_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "snapshot_digest": {
+          "$ref": "#/definitions/hash"
+        },
+        "cleanup": {
+          "enum": [
+            "pending",
+            "complete",
+            "failed"
+          ]
+        },
+        "receipt_ids": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "string"
+          }
+        },
+        "checks": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "cancelled",
+                  "invalidated"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "finished_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "passed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "cleanup": {
+                "const": "complete"
+              },
+              "receipt_ids": {
+                "minItems": 5,
+                "maxItems": 5
+              },
+              "checks": {
+                "required": [
+                  "native_session_bound",
+                  "allowed_read",
+                  "write_denied_before_execution",
+                  "allowed_after_denial",
+                  "receipt_chain_verified"
+                ],
+                "properties": {
+                  "native_session_bound": {
+                    "const": true
+                  },
+                  "allowed_read": {
+                    "const": true
+                  },
+                  "write_denied_before_execution": {
+                    "const": true
+                  },
+                  "allowed_after_denial": {
+                    "const": true
+                  },
+                  "receipt_chain_verified": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "list": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "items"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-runtime-check-list/v1"
+        },
+        "items": {
+          "type": "array",
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/definitions/result"
+          }
+        }
+      }
+    }
+  }
+}

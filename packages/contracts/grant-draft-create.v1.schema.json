@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/grant-draft-create.v1.schema.json",
+  "title": "Create an independent pending Grant from an exact signed source",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "expected_revision",
+    "actor_id",
+    "request_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "grant-draft-create/v1"
+    },
+    "expected_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^gd-[a-f0-9]{32}$"
+    }
+  }
+}

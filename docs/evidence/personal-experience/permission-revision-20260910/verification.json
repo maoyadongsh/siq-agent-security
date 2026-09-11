@@ -1,0 +1,210 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T14:35:27.483211+00:00",
+  "batch": "M14 permission revision drafts and managed identity replacement",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "candidate": {
+    "target": "linux/arm64",
+    "path": ".tmp/personal-experience/m14-linux-arm64",
+    "sha256": "9bb6ca7595200381d1c10b4892ab609a75ec251a7dd20197c9500936a0d9b7c2",
+    "passed": true,
+    "log": "build-linux-arm64.log"
+  },
+  "checks": [
+    {
+      "command": "go test ./...",
+      "passed": true,
+      "log": "go-test.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "go-vet.log"
+    },
+    {
+      "command": "go test -race ./internal/grant ./internal/state ./internal/server ./internal/runtimeidentity ./internal/runtimecheck ./cmd/agentshield",
+      "passed": true,
+      "log": "go-race.log"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "passed": true,
+      "log": "contract-test.log",
+      "test_count": 107
+    },
+    {
+      "command": "uv run ruff check app/tests/test_schema_contracts.py ../../scripts/personal-experience/permission-revision-browser-smoke.py ../../scripts/personal-experience/permission-revision-native-smoke.py",
+      "passed": true,
+      "log": "python-lint.log"
+    },
+    {
+      "command": "npm test",
+      "passed": true,
+      "log": "web-test.log",
+      "test_count": 20
+    },
+    {
+      "command": "npm run build",
+      "passed": true,
+      "log": "web-enterprise-build.log"
+    },
+    {
+      "command": "npm run build:local",
+      "passed": true,
+      "log": "web-local-build.log"
+    },
+    {
+      "command": "gofmt -l apps/agentshield",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "git diff --check",
+      "passed": true,
+      "log": "diff-check.log"
+    }
+  ],
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/README.md": "b9fc8942a2d5184afabe98ecdfe769a25c3701e91484f4dfb7b366d7a2583daf",
+    "adapters/runtime/hermes-agentshield/__init__.py": "66f6838d3ced6f1bfb5ff4f636ec17a5c71d046282e9d4d343826f70bc4d3442",
+    "apps/agentshield/cmd/agentshield/admission_signature_test.go": "69b5ec59537bedee2e0a52dac43b22fd6c2040c6108d8c60f73d2d5050ad29ea",
+    "apps/agentshield/cmd/agentshield/main.go": "b61186eccb5da147d5fe4880f6449b1f0ace21037aa9a172f6f60730916769dc",
+    "apps/agentshield/internal/admission/admission.go": "799dfa0ebab1358d09e9a997b31ac70b2555547318b3bcad1991828cd417b15d",
+    "apps/agentshield/internal/grant/draft.go": "8a580075ff6a8dbac2d66b760d9cfb328055f287c002315c35450eb25338212b",
+    "apps/agentshield/internal/grant/draft_test.go": "c217509556c6fd2a128285a8b792e9dc8eb8157d46f7d8ec784fa1d4973cb311",
+    "apps/agentshield/internal/grant/expiry.go": "bf1462d963e370aabcd9159d100b6caa334550d9e61c32a90f6300373cda3875",
+    "apps/agentshield/internal/grant/grant.go": "7bcd90f03577a74f36998bfbfcbb6cfd13ce8a2cedc4b3b15b001122c69a625a",
+    "apps/agentshield/internal/grant/patch.go": "ad31f6da96c385a12b72dc1d3e51dd4e884c81c2153ce6a421f45afdca35984f",
+    "apps/agentshield/internal/grant/resources.go": "ca22aca7794c2947b287232b8cfee210b779515be4f4eff8495e8adcf35551d4",
+    "apps/agentshield/internal/grant/runtime_tools.go": "5d3d4c88730cad000967893626994dd2c05280fce75eeffa22dac15428265601",
+    "apps/agentshield/internal/runtimeidentity/files.go": "ffb41af24e7ba0605c1f7ebb37a31f63b48a4b272bff811cbd71d94a34d6cc73",
+    "apps/agentshield/internal/runtimeidentity/session.go": "9647ec3aad8aa9f3337cccaf81485e686117b36e2b9f06708b53837ffe1ea16d",
+    "apps/agentshield/internal/runtimeidentity/session_test.go": "d09bc172407bfbae474a3d6af3b8bcd989617fc81cc2d8aad8ccd046dba8bd57",
+    "apps/agentshield/internal/runtimeidentity/store.go": "be4f9e5b404b15fac8cdda3ef3cc20116980afbd265d8b95b5f533e58eefd946",
+    "apps/agentshield/internal/runtimeidentity/store_test.go": "b98e00baf6c304d95159b9138416a9cf7d09e39a7142f3b462f14185f10cb2b2",
+    "apps/agentshield/internal/runtimeidentity/summary.go": "a8d4405133c1e453f963ffbf55dace12b591fc7c6ab8baa2e1c8777ae6b32e30",
+    "apps/agentshield/internal/server/adapter_http.go": "e2a510c61f771e62a164e60de24486285af099911f26bd54a6588bdada320834",
+    "apps/agentshield/internal/server/grant_draft.go": "67a31edf58e1df23d53d1b4e08b21c30da4c9de0435ad70a29eb38d313a44a67",
+    "apps/agentshield/internal/server/grant_draft_test.go": "3cac4afee67cb739824f1a5e4737a5fcb954dfcdae2585ab518ce15ce8a1f7ed",
+    "apps/agentshield/internal/server/runtime_identity.go": "eccfdc8889e0e2e6d650b76e1fa33ca07635beee3fe68993d923981807e27fc2",
+    "apps/agentshield/internal/server/runtime_identity_auth.go": "3a076eac26baf16e4def7066cfd311c24362e52076f8fa1c3b13c558c475fbb2",
+    "apps/agentshield/internal/server/server.go": "117c1abce6fa231e945217da1dd06af3c8e563cfb38e7d868bbe123b3b54aaad",
+    "apps/agentshield/internal/state/admission_signature.go": "e0d26fad2c4128818200fcde60379e36d472f2204bf6f1917ef6f5846bf7a664",
+    "apps/agentshield/internal/state/admissions_test.go": "00da08808fe748c4bd23539c22c36911a7a04d76e174af828a90e9ba5ef74afc",
+    "apps/agentshield/internal/state/commit.go": "4fa047d80889ea883b0f6609cb94470b8637be310f40a280988d65bcd642750f",
+    "apps/agentshield/internal/state/grant_draft_test.go": "d6cf6af74b74c3f11115b72f0f20b3830fc19ab96cbb4b960610542aa6e1224e",
+    "apps/agentshield/internal/state/grant_policy.go": "b730fe9be384d4ff47c66e1694c846969e634ad3c00acc71cb806f6e40f37071",
+    "apps/agentshield/internal/state/state.go": "c0ae961bfbec268eae1574dcf07895a63494111632a1c9af9ccf7a7c2f0c4be1",
+    "apps/agentshield/internal/ui/embedded/assets/index-DivgnG8S.css": "a9c5589396e5320bcbfde4705a5afe2f8f415b7695f23422f65272ce03f4b0a7",
+    "apps/agentshield/internal/ui/embedded/assets/index.local-sNxFbAQK.js": "ebd5a3ce5b6a40336ce65b1f6afed6e29042bb4540f586953520c417278f460b",
+    "apps/agentshield/internal/ui/embedded/index.html": "21b6ae404183325e2f04b0b35b40dd9c359b5921cf0b97a84ed96695386791b5",
+    "apps/agentshield/testdata/contracts/grant-draft-create.json": "3d3aa089f4d4d48ee8e20e0c4cc1fb79dad463355270ff1d377c352b0531fa7c",
+    "apps/agentshield/testdata/contracts/grant-draft-created.json": "cbdbca5e1b77f97d2e7b2afeffebc89e24e7db731e21b965bca165a750fc1f03",
+    "apps/control-api/app/tests/test_schema_contracts.py": "81f4191c925a736ff0946d265faaa5897696553e6c971edeb27e2e5520a59664",
+    "apps/web/src/components/Modal.tsx": "63dd007c6e96d27d62088ca62627fb85d7be87e3009f2d290d6ff7ef4cec3f08",
+    "apps/web/src/index.css": "f453723ba7b1ff4abaa565f084092e36ea5b883398deea76d5129cd148856217",
+    "apps/web/src/local/api.ts": "5a7a62dcfc160648b0ff66d8df5a9c4ba99de5333f88f3875415266bef9145ee",
+    "apps/web/src/local/components/AdapterChangeDialog.tsx": "bf548ea133537f7d48bf01901e7efa36b47c69f71f0c257d0ad28f185e4dabc3",
+    "apps/web/src/local/components/GrantResourceDialog.tsx": "59fbe44af6b79e8a188633fa54538adb434298046fd888f3c31394af79c9e45d",
+    "apps/web/src/local/components/useInstancePermissions.tsx": "0707e773eadc32f178044584c75e4ad6b2efb11cc7d6526625fcc1f591127a0b",
+    "apps/web/src/local/types.ts": "f1600b75115ac3376b9a072c068c43fc4d2c00a35bad44d46cb7e0f02c396c3d",
+    "docs/adr/0030-permission-revision-drafts.md": "985ff1721fa42877d25dcabdf97b89686aa6b51690061f3857914a1cada956ce",
+    "docs/agentshield-dev-spec-v1.md": "a6b888ea751099be8dcc48d2d4078bd6db952fc756ed871332982fb2f0c77da0",
+    "docs/personal-experience-development-progress-20260910.md": "ed70a15d97e51958874f9a27619a9b1eddc7a09608d519f43ab2781f478d52b8",
+    "packages/contracts/grant-draft-create.v1.schema.json": "57cf6af5d68f3e08c3efd409254039c97bce58cd3885c7345bed8a09d0a916b9",
+    "packages/contracts/grant-draft-created.v1.schema.json": "13e22bb138021261c2bbc7358678b3c752437bb916c4fe3354204c6b0c30e612",
+    "packages/contracts/grant.schema.json": "c7e0fe2f432aac5304d562c6adfa3ea16b6161b764be97b6f6d0b0b4eb43ccbc",
+    "scripts/personal-experience/permission-revision-browser-smoke.py": "2de12271abe1b98940e797feeb03af061aab3b9c9218464d8bfab8b130439baa",
+    "scripts/personal-experience/permission-revision-native-smoke.py": "bac995443b5cab4d7012c4de9534f385ddc8e0bc2fff36348adc4387cff5ceed",
+    "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+    "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e"
+  },
+  "builds": [
+    {
+      "target": "linux/arm64",
+      "path": ".tmp/personal-experience/m14-linux-arm64",
+      "sha256": "9bb6ca7595200381d1c10b4892ab609a75ec251a7dd20197c9500936a0d9b7c2",
+      "passed": true,
+      "log": "build-linux-arm64.log"
+    },
+    {
+      "target": "linux/amd64",
+      "path": ".tmp/personal-experience/m14-linux-amd64",
+      "sha256": "04094405cfe8058180218d3856af5be477e89f6711355c34a9c92db61777ebce",
+      "passed": true,
+      "log": "build-linux-amd64.log"
+    },
+    {
+      "target": "darwin/arm64",
+      "path": ".tmp/personal-experience/m14-darwin-arm64",
+      "sha256": "f43143a04267627bba6f87c81b5c4c251310319bf43de06777f994b6fd119149",
+      "passed": true,
+      "log": "build-darwin-arm64.log"
+    },
+    {
+      "target": "windows/amd64",
+      "path": ".tmp/personal-experience/m14-windows-amd64.exe",
+      "sha256": "8cac2c0bce9c396a126889d9619370a1d847e9c70b5ec8a8f2c8dc335a5d7631",
+      "passed": true,
+      "log": "build-windows-amd64.log"
+    }
+  ],
+  "evidence": {
+    "revision_native": {
+      "path": "revision-native.json",
+      "checks": 20,
+      "runtime_receipts": 14,
+      "promoted_pending_denials": 3,
+      "total_signed_chain_entries": 17,
+      "unsigned_source_denials": 3
+    },
+    "browser": {
+      "path": "browser/result.json",
+      "checks": 16,
+      "screenshots_inspected": [
+        "browser/replacement-ready.png",
+        "browser/replacement-new-permissions.png"
+      ]
+    },
+    "openclaw_regression": {
+      "path": "openclaw-native.json",
+      "checks": 14,
+      "build": "independently built before the final Web wording update; original binary hash retained"
+    }
+  },
+  "limitations": [
+    "Linux isolated profiles with synthetic operator/model; no current user conversations or OS isolation proof.",
+    "Actual Skill loaded identity/version, native MCP attribution, Windows/macOS and WorkBuddy remain unverified.",
+    "Old stored admission compatibility restores only the exact historical local card path to null for signature verification; arbitrary paths and other changed fields are rejected. Historical records are not rewritten.",
+    "The original Grant remains available as history/template; replacement revokes the old instance credential, not all unrelated grants. New identity cannot take over the old bound session.",
+    "Pending denial promotion is an audit import, not a newly authorized tool execution or independent result evidence.",
+    "Backend and Web unit checks preceded the final presentation-only wording rebuild; final candidate passed browser and native journeys.",
+    "UX-007 and the full taskbook remain active. No commit, push or release."
+  ],
+  "artifact_sha256": {
+    "browser/managed-mobile.png": "3ae5c3500603f439109dcda725cc670ba594fb60dfa026210947de7ccd55fe1f",
+    "browser/managed-preview.png": "08257850b36e5ec3e222dab244b5ddc662a01e67165e7eafdbd5c8f2a904eb33",
+    "browser/replacement-new-permissions.png": "4d8fa68697aeb82d7c4329e56bf64c53d215e0e06b06b689056044cbe3aa97ea",
+    "browser/replacement-ready.png": "3cef4e7b19019e82bd1cbebdfec3475c21896824b153ab2e49b5488ba3b57465",
+    "browser/result.json": "5de1b095cd107f02837ebc25d94efd91a4f411c6b37244cc640313f535febf08",
+    "build-darwin-arm64.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-linux-amd64.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-linux-arm64.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-windows-amd64.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "contract-test.log": "89b1a75d32e3da91e3fb295cb3d8cf7c2db4ce5962def41d9323dc5df77bfc20",
+    "diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "draft-http-test.log": "36c0213ed49e1359ce490e8f513c19ba7504522187cfaf278120559eade4aa87",
+    "focused-go-test.log": "1f5241c4d1e1f1acc51a140b02c9ac35ad1613fe45ee7ef20624c8930587237f",
+    "go-race.log": "a3b03d072ab9000e4e22f7cd557d85b17fffd59c01e71aa3ed8dc6bede4dd9a4",
+    "go-test.log": "760c656d449cf11a93b44dd8a6bae5a37d6c9e2ea8ae93e7cf99ffaaaa18d1d3",
+    "go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "openclaw-native.json": "c817cbfb5a4ce19176fb869a3edcc39049ccc46ed6e71747665b2dc19a1ba834",
+    "python-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "revision-native.json": "853be4f3c31ec0bd9f4c8e13c1d1472f55f507a3a076373bed2a9db6548ee7ab",
+    "web-enterprise-build.log": "5e8f6eb47904a62957e30fcbdb126827a436577754a916d488b49ac77bfacfba",
+    "web-local-build.log": "c103d060ea14d2e50c47ba7e12d73b02980a91eab967ccfafae03116f3375083",
+    "web-test.log": "4af1d7df4dcf01eb0fcdb26bd5f29d07ebebc7f7f39d515b6e6e1179a6e8c644"
+  }
+}

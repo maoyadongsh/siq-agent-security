@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-adapter-plan.v2.schema.json",
+  "title": "Adapter instance change preview",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "plan_digest",
+    "platform",
+    "action",
+    "expires_at",
+    "changes",
+    "next_steps",
+    "restart_required",
+    "runtime_verified",
+    "instance_id",
+    "instance_name",
+    "native_enable"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-adapter-plan/v2"
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^ap-[a-f0-9]{32}$"
+    },
+    "plan_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "platform": {
+      "enum": [
+        "openclaw",
+        "hermes",
+        "codebuddy",
+        "trae"
+      ]
+    },
+    "action": {
+      "enum": [
+        "install",
+        "uninstall"
+      ]
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "restart_required": {
+      "type": "boolean"
+    },
+    "runtime_verified": {
+      "const": false
+    },
+    "next_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "changes": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "$ref": "#/definitions/change"
+      }
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "instance_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "native_enable": {
+      "type": "boolean"
+    }
+  },
+  "definitions": {
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "action",
+        "purpose",
+        "before_sha256",
+        "after_sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "create",
+            "replace",
+            "remove"
+          ]
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "before_sha256": {
+          "type": "string",
+          "pattern": "^([a-f0-9]{64})?$"
+        },
+        "after_sha256": {
+          "type": "string",
+          "pattern": "^([a-f0-9]{64})?$"
+        }
+      }
+    }
+  }
+}

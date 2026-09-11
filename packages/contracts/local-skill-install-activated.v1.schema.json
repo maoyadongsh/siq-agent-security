@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-activated.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "binding",
+    "grant_id",
+    "state_revision",
+    "runtime_verified"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-activated/v1"
+    },
+    "binding": {
+      "$ref": "local-skill-install-runtime-binding.v1.schema.json"
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "state_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "runtime_verified": {
+      "const": false
+    }
+  }
+}

@@ -4,7 +4,10 @@ import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { localApi } from '../api';
 import type { PlatformInfo } from '../types';
 import { useLocalSession } from '../session';
-import { adapterLabel, adapterTag, platformLabel } from '../format';
+import { adapterLabel, adapterTag, configurationLabel, platformLabel } from '../format';
+import RuntimeCheckDialog from '../components/RuntimeCheckDialog';
+import AdapterChangeDialog, { type AdapterChangeRequest } from '../components/AdapterChangeDialog';
+import AdapterDiagnosisPanel from '../components/AdapterDiagnosisPanel';
 
 const MODES = ['block', 'warn', 'audit_only'] as const;
 
@@ -55,17 +58,11 @@ export default function SettingsPage() {
       .finally(() => setBusy(null));
   };
 
+  const [runtimeCheckOpen, setRuntimeCheckOpen] = useState(false);
+  const [adapterChange, setAdapterChange] = useState<AdapterChangeRequest | null>(null);
   const mutate = (platform: string, action: 'install' | 'uninstall') => {
-    setBusy(`${action}:${platform}`);
     setMsg(null);
-    const op = action === 'install' ? localApi.adapterInstall : localApi.adapterUninstall;
-    op(platform)
-      .then((res) => {
-        report(`${platformLabel(res.platform)}：${res.action}${res.note ? ` — ${res.note}` : ''}`);
-        reload();
-      })
-      .catch((err: unknown) => report(err instanceof Error ? err.message : '适配器操作失败', true))
-      .finally(() => setBusy(null));
+    setAdapterChange({ platform, action });
   };
 
   const probeOpenshell = () => {
@@ -125,19 +122,21 @@ export default function SettingsPage() {
       header: '平台',
       render: (p) => <span className="cell-nowrap">{platformLabel(p.name)}</span>,
     },
-    { key: 'tier', header: '档位', render: (p) => <span className="cell-nowrap">{p.tier}</span> },
+    { key: 'tier', header: '接入状态', render: (p) => p.diagnosis ? configurationLabel(p.diagnosis.configuration_state) : p.tier },
     {
       key: 'adapter',
       header: '适配器',
       render: (p) => <span className={adapterTag(p.adapter)}>{adapterLabel(p.adapter)}</span>,
     },
-    { key: 'note', header: '说明', render: (p) => p.note || '—' },
+    { key: 'note', header: '说明', render: (p) => <>{p.note || '—'}<AdapterDiagnosisPanel diagnosis={p.diagnosis} /></> },
     {
       key: 'act',
       header: '',
       render: (p) => {
         if (p.name === 'trae') return <span className="muted-text">审计模式 · 无法阻断</span>;
         if (p.name === 'openshell') return <span className="muted-text">CLI 探针，无安装钩子</span>;
+        if (p.name === 'workbuddy') return <span className="muted-text">桌面接入待实测</span>;
+        if (p.name === 'hermes') return <div className="toolbar"><button type="button" className="btn btn-sm" disabled={!!busy} onClick={() => mutate(p.name, 'install')}>管理实例</button><button type="button" className="btn btn-sm" disabled={!!busy} onClick={() => setRuntimeCheckOpen(true)}>运行自检</button></div>;
         const installed = p.adapter === 'installed';
         return (
           <span className="row-actions">
@@ -175,6 +174,9 @@ export default function SettingsPage() {
 
   return (
     <section>
+      {runtimeCheckOpen ? <RuntimeCheckDialog onClose={() => setRuntimeCheckOpen(false)} /> : null}
+      {adapterChange ? <AdapterChangeDialog request={adapterChange} onClose={() => setAdapterChange(null)} onApplied={(text) => { setAdapterChange(null); report(text); reload(); }} /> : null}
+
       <PageHeader
         kicker="AGENTSHIELD"
         icon="settings"
@@ -231,7 +233,7 @@ export default function SettingsPage() {
       </div>
       <div className="card">
         <h2>平台适配器</h2>
-        <p className="page-desc">安装会先备份再写钩子。Trae 没有工具钩子，操作为 skipped。</p>
+        <p className="page-desc">先查看配置诊断，再选择接入操作。安装文件、宿主启用、运行验证分别显示；安装完成后仍需验证实际调用。</p>
         <SimpleTable
           columns={adapterCols}
           rows={status?.platforms ?? []}
@@ -245,7 +247,7 @@ export default function SettingsPage() {
           接入已在运行、已验明的 OpenShell 网关（显式 SIQ_AS_* 优先，其次 ENV_SH，再 PATH）。probe
           必须验明网关是 OpenShell；连到 OpenClaw / Hermes 会失败。siq-agent-security 不会执行 gateway
           start。apply 只提交网络段；filesystem / process 保持当前读回，禁止
-          create_generation。无 L3 时产品仍完整，控制台显示「仅工具层拦截」。
+          create_generation。平台工具接入是否生效，按各自诊断与运行验证结果显示。
         </p>
         <div className="toolbar toolbar-end">
           <button

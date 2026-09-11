@@ -1,0 +1,122 @@
+{
+  "schema_version": "personal-installed-skill-removal-native/v1",
+  "recorded_at": "2026-09-10T22:58:20.993699+00:00",
+  "passed": true,
+  "binary_sha256": "ddfd984a4faf9016f5ff4cf8b53d41792dbd65016a8e2844dfb66e24c9707646",
+  "harness_sha256": "5cb1adb6330b0f51f4a4d6f0f4fad24ab68a47945238f3e2d56893c148fe81d4",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "native_entrypoint": "public hermes chat --oneshot; normal Agent loop and plugin lifecycle",
+  "session_id_source": "native pre_tool_call; actual SIQ adapter automatically enrolls; not injected",
+  "checks": [
+    "managed_preview_does_not_mutate_host",
+    "managed_install_uses_issued_identity",
+    "native_enable_preserves_other_profile_and_settings",
+    "diagnosis_keeps_runtime_unverified",
+    "managed_profile_product_selfcheck_uses_separate_authority",
+    "native_cli_started",
+    "native_generated_session_automatically_bound",
+    "instance_credential_used_without_manual_intent",
+    "environment_cannot_override_managed_agent",
+    "allowed_read",
+    "write_denied_before_execution",
+    "allowed_after_denial",
+    "receipt_chain_verified",
+    "skill_removal_blocks_still_issued_identity_in_new_native_session",
+    "revoked_calls_record_unsigned_denials",
+    "product_skill_import_approval_installation",
+    "installed_content_bound_instance_permission"
+  ],
+  "receipt_count": 10,
+  "authority_withdrawal": {
+    "method": "explicit_installed_skill_removal",
+    "check": "skill_removal_blocks_still_issued_identity_in_new_native_session",
+    "identity_status_before": "issued",
+    "identity_status_after": "grant_unavailable",
+    "identity_revoke_endpoint_called": false,
+    "removal_result": {
+      "schema_version": "local-skill-install-removal-result/v1",
+      "install_id": "sin-9b09464e7f20cecc17b272ccdfe158f25fbc76f6f4fc2aa5d25c9a6f2826fdd9",
+      "removal_claim_signature": "801394d2181a3ccf931cb39bb660f4cd5ef63c5f77173917a61956b2e20b09cf04b371329f5ec872610100cc582b28bd58d9028ff2415443fabf33fed6dc4005",
+      "status": "removed",
+      "grant_id": "grt-si-754f22c266dcc1ca9c12715e1b9a0ff849dcbd2bc2b9a8a29a5f618a90cc554e",
+      "grant_revision": 4,
+      "grant_signature": "5bf99532a9f90f756da0003d15a7b5e3e8fdf4e71aa86ead9cb9b684a3fb6517466105fe69f9c643eeeb4d2ddf3051ec83d65b8bc31a459dfd87071cbc99e30e",
+      "grant_revoked": true,
+      "retained_install_id": "",
+      "actor_id": "automated-fixture-operator",
+      "recorded_at": "2026-09-10T22:58:18.901555322Z",
+      "target_absent": true,
+      "signature": "bf401490c13ae2957e73c31a9fd937b6f529f21e3426abea8da77482653f4edcbba18ddcf2ffbb872daa47916c6ea63948bf49532bef6a78ec9f46d5ad899c03"
+    },
+    "target_absent": true
+  },
+  "installation": {
+    "method": "managed_v3_preview_apply_and_public_cli_native_enable",
+    "changed_file_count": 6,
+    "runtime_state": "unverified"
+  },
+  "managed_selfcheck": {
+    "status": "passed",
+    "cleanup": "complete",
+    "receipt_count": 5,
+    "ordinary_identity_retained": true,
+    "separate_grant_binding": true
+  },
+  "model_requests": [
+    {
+      "tool_result_count": 0,
+      "stream": true
+    },
+    {
+      "tool_result_count": 1,
+      "stream": true
+    },
+    {
+      "tool_result_count": 2,
+      "stream": true
+    },
+    {
+      "tool_result_count": 3,
+      "stream": true
+    }
+  ],
+  "revoked_model_requests": [
+    {
+      "tool_result_count": 0,
+      "stream": true
+    },
+    {
+      "tool_result_count": 1,
+      "stream": true
+    },
+    {
+      "tool_result_count": 2,
+      "stream": true
+    },
+    {
+      "tool_result_count": 3,
+      "stream": true
+    }
+  ],
+  "revoked_pending_denials": 3,
+  "auxiliary_requests": [
+    {
+      "stream": false
+    },
+    {
+      "stream": false
+    }
+  ],
+  "profile_config_unchanged": true,
+  "limitations": [
+    "isolated profile configured through product installer; browser workflow is separate evidence",
+    "synthetic model and operator; no real-user approval, Skill attribution or OS isolation proof",
+    "native startup may produce host history/cache; network isolation is not claimed"
+  ],
+  "skill_installation": {
+    "install_id": "sin-9b09464e7f20cecc17b272ccdfe158f25fbc76f6f4fc2aa5d25c9a6f2826fdd9",
+    "binding_id": "sab-c58b4fa5bfc679c2091b547c681ab17658153b4f18756432cc3e1c5f3a448095",
+    "source_digest": "63a2a8a4b9c46a9b174cabb1c53fb163d723ef0c34afa07036a93d4bbd02ca70",
+    "runtime_verified": false
+  }
+}

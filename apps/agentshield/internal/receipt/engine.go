@@ -20,6 +20,7 @@ import (
 	"unicode/utf8"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/pending"
 	"siq-agent-security/apps/agentshield/internal/provenance"
@@ -60,6 +61,7 @@ var ErrSessionCapacity = errors.New("receipt: session capacity exhausted")
 
 // Request is one tool call awaiting a decision.
 type Request struct {
+	selectedGrant       *grant.Grant                  // resolved internally; never accepted from JSON
 	ParameterProvenance []provenance.ParameterBinding `json:"parameter_provenance,omitempty"`
 	ContextAssertionID  string                        `json:"context_assertion_id,omitempty"`
 	ActionID            string                        `json:"action_id,omitempty"`
@@ -331,6 +333,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	start := e.opts.Now()
+	req.selectedGrant = nil
 	parameterErr := runtimeaction.ValidateParameters(req.Params)
 	// Intent authority is resolved from trusted state; a decision client may
 	// never mint or replace it inline.
@@ -346,6 +349,9 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	if e.opts.IntentLookup != nil {
 		finish := e.stageTimer("intent_lookup")
 		resolvedIntent, authorityErr = e.opts.IntentLookup(req.Platform, req.SessionID, req.AgentID)
+		if resolvedIntent != nil {
+			req.selectedGrant = resolvedIntent.SelectedGrant
+		}
 		finish()
 	}
 	finishAuthority := e.stageTimer("authority_validation")
@@ -549,10 +555,30 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	var redacted map[string]any
 	if authority.Valid {
 		finish := e.stageTimer("policy_evaluation")
-		policy.Action, policy.Reason = e.evaluate(req, s, descriptor, &rec)
-		if policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req) && containsSecretLiteral(e.analyzer, paramsText) {
-			redacted = redactParams(e.analyzer, req.Params)
-			policy.Action, policy.Reason = ActionRedact, "secret literal removed from params before egress (grant permits redaction)"
+		policy.Action, policy.Reason = e.evaluate(req, s, descriptor, &rec, start)
+		if policy.Reason == "intent_grant_installation_binding_required" {
+			authority = runtimeauthz.Authority(policy.Reason, rec.IntentBinding == "bound")
+			rec.AuthorityStatus, rec.AuthorityReasonCode = authority.Status, authority.ReasonCode
+		}
+		if policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req, start) && containsSecretLiteral(e.analyzer, paramsText) {
+			candidate := redactParams(e.analyzer, req.Params)
+			// Redaction is a data transform, never authority to skip host/path
+			// constraints or a per-tool human approval requirement.
+			checked := req
+			checked.Params = candidate
+			cleanSession := *s
+			cleanSession.taints = map[string]bool{}
+			for label, present := range s.taints {
+				if label != taintSecret {
+					cleanSession.taints[label] = present
+				}
+			}
+			checkedReceipt := rec
+			if action, _ := e.evaluate(checked, &cleanSession, runtimeaction.Describe(req.Tool, candidate), &checkedReceipt, start); action == ActionAllow && checkedReceipt.MatchedGrantID != nil && rec.MatchedGrantID != nil && *checkedReceipt.MatchedGrantID == *rec.MatchedGrantID {
+				redacted = candidate
+				rec.MatchedFactIDs = checkedReceipt.MatchedFactIDs
+				policy.Action, policy.Reason = ActionRedact, "secret literal removed from params before egress (grant permits redaction)"
+			}
 		}
 		policy.ReasonCode = classifyReason(policy.Reason, policy.Action)
 		if validationCode != "" {
@@ -609,6 +635,10 @@ func classifyReason(reason, action string) string {
 	switch {
 	case strings.Contains(r, "no deployed grant"):
 		return "grant_missing"
+	case r == "grant permission expired":
+		return "grant_expired"
+	case r == "grant expiration invalid":
+		return "grant_expiration_invalid"
 	case strings.Contains(r, "not granted") || strings.Contains(r, "outside granted"):
 		return "grant_scope_violation"
 	case strings.Contains(r, "intent"):
@@ -625,17 +655,27 @@ func classifyReason(reason, action string) string {
 }
 
 // evaluate performs steps 2–5 and returns the raw (pre-mode) action.
-func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt) (string, string) {
+func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt, now time.Time) (string, string) {
 	hosts, paths := descriptor.Hosts, descriptor.Paths
-	var g *grant.Grant
-	if e.opts.Grants != nil {
+	g := req.selectedGrant
+	if g == nil && e.opts.Grants != nil {
 		g = e.opts.Grants(req.Platform, req.AgentID)
 	}
-	if g == nil || (g.Status != "deployed" && g.Status != "effective") {
+	if g == nil || (g.Status != "deployed" && g.Status != "effective" && !(req.selectedGrant != nil && g.Status == "approved" && importsource.Reserved(g.AdmissionID))) {
 		return ActionDeny, "no deployed grant for agent (default deny)"
+	}
+
+	if req.selectedGrant == nil && importsource.Reserved(g.AdmissionID) {
+		return ActionDeny, "intent_grant_installation_binding_required"
 	}
 	gid := g.GrantID
 	rec.MatchedGrantID = &gid
+	if err := grant.ValidateLifetime(*g, now); err != nil {
+		if errors.Is(err, grant.ErrExpired) {
+			return ActionDeny, "grant permission expired"
+		}
+		return ActionDeny, "grant expiration invalid"
+	}
 
 	allow, requireApproval := toolSets(g)
 	switch {
@@ -657,6 +697,13 @@ func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Desc
 	}
 
 	// step 4b: hosts must be granted
+	if descriptor.Operation == "request" && !descriptor.ShellLike {
+		var ok bool
+		hosts, ok = structuredGrantEndpoints(req.Params)
+		if !ok {
+			return ActionDeny, "network target not granted (unavailable resource)"
+		}
+	}
 	for _, h := range hosts {
 		fid, ok := hostGranted(g, h)
 		if !ok {
@@ -668,18 +715,27 @@ func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Desc
 		return ActionDeny, "egress exec requires granted host"
 	}
 	// step 4c: observational caller context cannot grant filesystem access
+	fileOperation := false
+	for _, effect := range descriptor.Effects {
+		if effect == runtimeaction.EffectFileRead || effect == runtimeaction.EffectFileWrite || effect == runtimeaction.EffectFileDelete {
+			fileOperation = true
+		}
+	}
+	if fileOperation && (len(paths) == 0 || descriptor.ResourceError != nil) {
+		return ActionDeny, "filesystem target not granted (unavailable resource)"
+	}
 	for _, p := range paths {
-		if fid, ok := pathGranted(g, p); ok {
+		if credPathRe.MatchString(p) {
+			return ActionDeny, "credential path " + p + " denied (credential facts are never allow)"
+		}
+		if fid, ok := pathGranted(g, p, descriptor.FilesystemWriteHint); ok {
 			if fid != "" {
 				rec.MatchedFactIDs = appendUnique(rec.MatchedFactIDs, fid)
 			}
 			continue
 		}
-		if credPathRe.MatchString(p) {
-			return ActionDeny, "credential path " + p + " denied (credential facts are never allow)"
-		}
-		if descriptor.FilesystemWriteHint {
-			return ActionDeny, "write to " + p + " outside granted paths (default deny)"
+		if fileOperation || descriptor.FilesystemWriteHint {
+			return ActionDeny, "filesystem target " + p + " outside granted paths (default deny)"
 		}
 	}
 	if requireApproval[req.Tool] {
@@ -758,17 +814,33 @@ func (e *Engine) AppendPendingObserved(p pending.Record) (*Receipt, error) {
 // ResolveHold records a human decision on a held call as a new receipt.
 // Same decision is idempotent; opposite decision conflicts; expired holds refuse.
 func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Receipt, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.resolveHoldLocked(held, approve, actorID)
+}
+
+func (e *Engine) resolveHoldLocked(held Receipt, approve bool, actorID string) (*Receipt, error) {
 	if actorID == "" {
 		return nil, errors.New("receipt: actor required to resolve hold")
 	}
 	if held.Action != ActionHold {
 		return nil, errors.New("receipt: not a held call")
 	}
-	e.mu.Lock()
-	defer e.mu.Unlock()
 	now := e.opts.Now()
 	if err := holdExpired(held, now); err != nil {
 		return nil, err
+	}
+	if approve && held.IntentBinding == "bound" {
+		if e.opts.IntentLookup == nil {
+			return nil, correlationError("hold_authority_changed")
+		}
+		current, err := e.opts.IntentLookup(held.Platform, held.SessionID, str(held.AgentID))
+		if err != nil || current == nil || current.IntentID != held.IntentID || current.TaskID != held.TaskID || current.Digest != held.IntentDigest || current.AuthorityRevision != held.AuthorityRevision {
+			return nil, correlationError("hold_authority_changed")
+		}
+		if current.SelectedGrant != nil && current.SelectedGrant.GrantID != str(held.MatchedGrantID) {
+			return nil, correlationError("hold_authority_changed")
+		}
 	}
 	want := ActionDeny
 	if approve {
@@ -853,7 +925,7 @@ func holdExpired(held Receipt, now time.Time) error {
 		return fmt.Errorf("receipt: held issued_at unreadable: %w", err)
 	}
 	deadline := issued.Add(time.Duration(held.Hold.TimeoutMS) * time.Millisecond)
-	if now.After(deadline) {
+	if !now.Before(deadline) {
 		return fmt.Errorf("%w at %s", ErrHoldExpired, deadline.UTC().Format(time.RFC3339))
 	}
 	return nil
@@ -947,12 +1019,12 @@ func (e *Engine) scanTaintsWithPII(text, piiText string) ([]string, []string) {
 
 func containsSecretLiteral(a *threat.Analyzer, text string) bool { return a.Redact(text) != text }
 
-func (e *Engine) redactAllowed(req Request) bool {
-	if e.opts.Grants == nil {
-		return false
+func (e *Engine) redactAllowed(req Request, now time.Time) bool {
+	g := req.selectedGrant
+	if g == nil && e.opts.Grants != nil {
+		g = e.opts.Grants(req.Platform, req.AgentID)
 	}
-	g := e.opts.Grants(req.Platform, req.AgentID)
-	if g == nil {
+	if g == nil || (g.Status != "deployed" && g.Status != "effective" && !(req.selectedGrant != nil && g.Status == "approved" && importsource.Reserved(g.AdmissionID))) || grant.ValidateLifetime(*g, now) != nil {
 		return false
 	}
 	for _, f := range g.Facts {
@@ -994,70 +1066,7 @@ func redactParams(a *threat.Analyzer, params map[string]any) map[string]any {
 }
 
 func toolSets(g *grant.Grant) (allow, requireApproval map[string]bool) {
-	allow, requireApproval = map[string]bool{}, map[string]bool{}
-	if g.HermesToolsetAllowlist != nil {
-		for _, t := range *g.HermesToolsetAllowlist {
-			allow[t] = true
-		}
-	}
-	if g.OpenClawToolPolicy != nil {
-		for _, t := range g.OpenClawToolPolicy.Allow {
-			allow[t] = true
-		}
-		for _, t := range g.OpenClawToolPolicy.RequireApproval {
-			requireApproval[t] = true
-		}
-		for _, t := range g.OpenClawToolPolicy.Deny {
-			delete(allow, t)
-		}
-	}
-	// facts are the ground truth for platforms without a list output
-	for _, f := range g.Facts {
-		if f.Domain == "tool" && f.Effect == "allow" && (f.State == "declared" || f.State == "effective") {
-			allow[f.Resource.Value] = true
-			if f.Conditions["require_approval"] == true {
-				requireApproval[f.Resource.Value] = true
-			}
-		}
-	}
-	return allow, requireApproval
-}
-
-func hostGranted(g *grant.Grant, hostPort string) (string, bool) {
-	host := hostPort
-	if i := strings.LastIndex(host, ":"); i >= 0 {
-		host = host[:i]
-	}
-	for _, f := range g.Facts {
-		if f.Domain != "network" || f.Effect != "allow" {
-			continue
-		}
-		v := f.Resource.Value
-		vh := v
-		if i := strings.LastIndex(vh, ":"); i >= 0 {
-			vh = vh[:i]
-		}
-		switch {
-		case v == hostPort, vh == host:
-			return f.FactID, true
-		case strings.HasPrefix(vh, "*.") && strings.HasSuffix(host, vh[1:]):
-			return f.FactID, true
-		}
-	}
-	return "", false
-}
-
-func pathGranted(g *grant.Grant, p string) (string, bool) {
-	for _, f := range g.Facts {
-		if f.Domain != "filesystem" || f.Effect != "allow" {
-			continue
-		}
-		v := strings.TrimSuffix(f.Resource.Value, "/")
-		if p == v || strings.HasPrefix(p, v+"/") {
-			return f.FactID, true
-		}
-	}
-	return "", false
+	return grant.RuntimeToolSets(g)
 }
 
 func flattenStrings(v any) string { return runtimeaction.FlattenStrings(v) }

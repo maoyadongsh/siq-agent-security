@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-stage-create.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "grant_id",
+    "expected_revision",
+    "instance_id",
+    "directory_name",
+    "actor_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-stage-create/v1"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^is-[a-f0-9]{32}$"
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "expected_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "directory_name": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    }
+  }
+}

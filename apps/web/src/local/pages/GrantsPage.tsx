@@ -1,9 +1,14 @@
-import { useEffect, useState } from 'react';
+import { skillImportErrorText } from "../skillImports";
+import SkillInstallationResult from "../components/SkillInstallationResult";
+import ImportGrantSource from "../components/ImportGrantSource";
+import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { localApi } from '../api';
 import type { Grant, GrantFact } from '../types';
 import { useLocalSession } from '../session';
+import GrantResourceDialog from '../components/GrantResourceDialog';
 import {
   domainLabel,
   factStateLabel,
@@ -14,6 +19,12 @@ import {
 } from '../format';
 
 export default function GrantsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [installSubmitting, setInstallSubmitting] = useState(false);
+  const [installEpoch, setInstallEpoch] = useState(0);
+  const [installMessage, setInstallMessage] = useState<string | undefined>();
+  const onOperation = useCallback((message?: string, pending = false) => { setInstallSubmitting(pending); setInstallMessage(message); setInstallEpoch((value) => value + 1); }, []);
+  const requestedGrant = searchParams.get('grant');
   const { actorId, setActorId } = useLocalSession();
   const [rows, setRows] = useState<Grant[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -21,6 +32,29 @@ export default function GrantsPage() {
   const [selected, setSelected] = useState<Grant | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [msgErr, setMsgErr] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [duration, setDuration] = useState('600');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const closeEditor = useCallback(() => setEditingId(null), []);
+
+  const saveExpiry = async () => {
+    if (!selected || selected.state_revision === undefined || busy) return;
+    setBusy(true);
+    setMsg(null);
+    setMsgErr(false);
+    try {
+      const res = await localApi.setGrantExpiry(selected.grant_id, selected.state_revision,
+        actorId, duration === 'unlimited' ? null : Number(duration));
+      setSelected({ ...res.grant, state_revision: res.state_revision });
+      setMsg('授权期限已保存，请检查权限后人工批准。');
+      load();
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : '期限保存失败');
+      setMsgErr(true);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const load = () => {
     setLoading(true);
@@ -41,7 +75,19 @@ export default function GrantsPage() {
     load();
   }, []);
 
+  useEffect(() => {
+    if (!requestedGrant) return;
+    let cancelled = false;
+    localApi.grant(requestedGrant).then(({ grant }) => {
+      if (!cancelled) setSelected(grant);
+    }).catch((err: unknown) => {
+      if (!cancelled) setError(err instanceof Error ? err.message : '无法读取指定授权');
+    });
+    return () => { cancelled = true; };
+  }, [requestedGrant]);
+
   const act = (id: string, action: string, extra: Record<string, unknown> = {}) => {
+    if (busy) return;
     setMsg(null);
     setMsgErr(false);
     const current = selected?.grant_id === id ? selected : rows.find((g) => g.grant_id === id);
@@ -51,6 +97,7 @@ export default function GrantsPage() {
       return;
     }
     const rev = current.state_revision;
+    setBusy(true);
     const run = (payload: Record<string, unknown>) =>
       localApi
         .grantAction(id, action, {
@@ -66,9 +113,10 @@ export default function GrantsPage() {
           load();
         })
         .catch((err: unknown) => {
-          setMsg(err instanceof Error ? err.message : '操作失败');
+          setMsg(grantErrorText(err, '操作失败'));
           setMsgErr(true);
-        });
+        })
+        .finally(() => setBusy(false));
 
     if (action === 'approve') {
       localApi
@@ -81,8 +129,9 @@ export default function GrantsPage() {
           return run({ challenge_id: ch.challenge_id, nonce: ch.nonce });
         })
         .catch((err: unknown) => {
-          setMsg(err instanceof Error ? err.message : '挑战签发失败');
+          setMsg(grantErrorText(err, '挑战签发失败'));
           setMsgErr(true);
+          setBusy(false);
         });
       return;
     }
@@ -102,6 +151,7 @@ export default function GrantsPage() {
       ),
     },
     { key: 'sub', header: '主体', render: (r) => r.subject?.id },
+    { key: 'expiry', header: '到期时间', render: (r) => expiryLabel(r.expires_at) },
   ];
 
   const factCols: TableColumn<GrantFact>[] = [
@@ -130,7 +180,7 @@ export default function GrantsPage() {
   const staticUnavailable = selected?.desired_policy_ref?.static_domains_unavailable ?? [];
 
   return (
-    <section>
+    <section className="local-grants-page">
       <PageHeader
         kicker="AGENTSHIELD"
         icon="permissions"
@@ -166,9 +216,10 @@ export default function GrantsPage() {
                 ? '决策 API 不可达，暂时无法读取签发。'
                 : '还没有 grant。从智能体详情对非隔离 Skill 起草签发。'
           }
-          onRowClick={setSelected}
+          onRowClick={(row) => { if (!busy) { setSelected(row); setSearchParams({ grant: row.grant_id }); setDuration('600'); setMsg(null); } }}
         />
       </div>
+      <SkillInstallationResult key={searchParams.get('install_id') ?? 'none'} epoch={installEpoch} submissionMessage={installMessage} processing={installSubmitting} />
       {selected ? (
         <div className="card">
           <h2>
@@ -180,6 +231,27 @@ export default function GrantsPage() {
           <p className="page-desc">
             {platformLabel(selected.platform)} · {selected.subject?.type}:{selected.subject?.id}
           </p>
+          {selected.admission_id.startsWith('adm-si-') ? <ImportGrantSource key={selected.admission_id} grant={selected} onOperation={onOperation} /> : null}
+          <p>到期时间：<time dateTime={selected.expires_at ?? undefined}>{expiryLabel(selected.expires_at)}</time></p>
+          {selected.status === 'pending_approval' ? (
+            <div className="toolbar">
+              <div className="field field-flush">
+                <label htmlFor="grant-duration">授权期限（从保存时开始）</label>
+                <select id="grant-duration" value={duration} onChange={(e) => setDuration(e.target.value)} disabled={busy}>
+                  <option value="600">10 分钟</option>
+                  <option value="3600">1 小时</option>
+                  <option value="86400">1 天</option>
+                  <option value="604800">7 天</option>
+                  <option value="2592000">30 天</option>
+                  <option value="unlimited">不设期限</option>
+                </select>
+              </div>
+              <button type="button" className="btn" onClick={saveExpiry} disabled={busy || !actorId.trim()}>
+                保存期限
+              </button>
+              <p className="page-desc">保存后需要重新批准。阻断模式到期后拒绝新的操作，监测模式记录拒绝建议。</p>
+            </div>
+          ) : <p className="page-desc">已批准的授权不能直接延长期限；需要时请重新起草并批准。</p>}
           {unresolved.length > 0 ? (
             <div className="notice" role="status">
               <p className="notice-title">未解决的权限重叠，批准前必须人工确认</p>
@@ -190,6 +262,7 @@ export default function GrantsPage() {
                     <button
                       type="button"
                       className="btn btn-sm"
+                      disabled={busy}
                       onClick={() => act(selected.grant_id, 'resolve-overlap', { index: i })}
                     >
                       确认为人工决议
@@ -206,11 +279,13 @@ export default function GrantsPage() {
             </p>
           ) : null}
           <div className="toolbar toolbar-end">
+            <button type="button" className="btn" disabled={busy || selected.status !== 'pending_approval'}
+              onClick={() => setEditingId(selected.grant_id)}>编辑权限范围</button>
             <button
               type="button"
               className="btn btn-primary"
               onClick={() => act(selected.grant_id, 'approve')}
-              disabled={selected.status !== 'pending_approval'}
+              disabled={busy || selected.status !== 'pending_approval' || !actorId.trim()}
               title={
                 selected.status !== 'pending_approval'
                   ? '只有待批准（pending_approval）的 grant 能批准'
@@ -223,6 +298,7 @@ export default function GrantsPage() {
               type="button"
               className="btn"
               onClick={() => act(selected.grant_id, 'deploy')}
+              disabled={busy || selected.status !== 'approved' || selected.admission_id.startsWith('adm-si-')}
               title="标记已下发到适配器；不等于沙箱读回有效"
             >
               标记已部署
@@ -231,6 +307,7 @@ export default function GrantsPage() {
               type="button"
               className="btn btn-danger"
               onClick={() => act(selected.grant_id, 'reject')}
+              disabled={busy}
             >
               拒绝
             </button>
@@ -238,6 +315,7 @@ export default function GrantsPage() {
               type="button"
               className="btn btn-danger"
               onClick={() => act(selected.grant_id, 'revoke')}
+              disabled={busy}
             >
               吊销
             </button>
@@ -260,6 +338,22 @@ export default function GrantsPage() {
           />
         </div>
       ) : null}
+      {editingId ? <GrantResourceDialog grantId={editingId} onClose={closeEditor} onSaved={(updated) => {
+        setSelected(updated); setEditingId(null); setMsgErr(false); setMsg('权限范围已保存，请检查后重新批准。'); load();
+      }} /> : null}
     </section>
   );
+}
+
+function expiryLabel(value?: string | null): string {
+  if (value == null) return '不设期限';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '期限无效，请重新起草' : date.toLocaleString();
+}
+
+function grantErrorText(error: unknown, fallback: string): string {
+  if (!(error instanceof Error)) return fallback;
+  if (error.message.startsWith('skill_import_')) return skillImportErrorText(error);
+  if (error.message === 'grant_import_installation_required') return '此候选尚未完成安装和内容读回，不能激活运行权限。';
+  return error.message;
 }

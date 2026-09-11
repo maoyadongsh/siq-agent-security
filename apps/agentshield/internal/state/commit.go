@@ -85,6 +85,28 @@ func validateCommit(c GrantCommit) error {
 func (s *Store) CommitGrant(c GrantCommit) (int, error) {
 	commitMu.Lock()
 	defer commitMu.Unlock()
+	return s.commitGrantLocked(c)
+}
+
+// CommitGrantFrom checks the exact source under the same lock as publication.
+// The source remains untouched; the new commit has its own policy and audit.
+func (s *Store) CommitGrantFrom(c GrantCommit, sourceID string, revision int, signature string) (int, error) {
+	commitMu.Lock()
+	defer commitMu.Unlock()
+	if c.Grant.GrantID == sourceID || c.ExpectedRevision != -1 || c.Audit == nil {
+		return -1, errors.New("state: invalid derived grant commit")
+	}
+	source, actual, err := s.GetGrantWithSeq(sourceID)
+	if err != nil {
+		return -1, err
+	}
+	if actual != revision || source.Signature != signature {
+		return -1, ErrRevisionConflict
+	}
+	return s.commitGrantLocked(c)
+}
+
+func (s *Store) commitGrantLocked(c GrantCommit) (int, error) {
 	if err := validateCommit(c); err != nil {
 		return -1, err
 	}

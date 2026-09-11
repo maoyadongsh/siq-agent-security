@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-runtime-readiness.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "install_id",
+    "grant",
+    "state_revision",
+    "status",
+    "binding"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-runtime-readiness/v1"
+    },
+    "install_id": {
+      "type": "string",
+      "pattern": "^sin-[a-f0-9]{64}$"
+    },
+    "grant": {
+      "$ref": "grant.schema.json"
+    },
+    "state_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "enum": [
+        "not_prepared",
+        "incomplete",
+        "prepared",
+        "no_tools"
+      ]
+    },
+    "binding": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "local-skill-install-runtime-binding.v1.schema.json"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "incomplete",
+              "prepared"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "binding": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "not_prepared"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "binding": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

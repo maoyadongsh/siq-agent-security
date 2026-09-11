@@ -150,6 +150,11 @@ export default function OverviewPage() {
           </button>
         }
       />
+      {connected ? <div className="card">
+        <h2>{overview?.assets ? '检查已有智能体与 Skill' : '从发现已有智能体开始'}</h2>
+        <p className="page-desc">查看本机安装、内容版本与配置关联，再选择要保护的对象和权限。</p>
+        <Link className="btn btn-primary" to="/agents">发现与管理</Link>
+      </div> : null}
       {error && !connected ? (
         <div className="notice" role="status">
           <p className="notice-title">决策 API 暂不可达</p>
@@ -179,8 +184,8 @@ export default function OverviewPage() {
       <div className="card">
         <h2>平台档位</h2>
         <p className="page-desc">
-          管控默认是 L0–L2（准入、授权、工具调用回执）。OpenShell 是可选 L3：probe
-          成功后才显示。无 L3 时顶栏写「仅工具层拦截」。Trae 没有工具钩子，只能审计。filesystem /
+          发现与静态检查可直接使用；工具保护需完成平台接入与实际调用验证。OpenShell 是可选 L3，探测
+          成功后才显示。插件文件存在不代表保护已生效。Trae 没有工具钩子，只能审计。filesystem /
           process 永远不会标有效。
         </p>
         <SimpleTable

@@ -1,0 +1,217 @@
+{
+  "schema_version": "personal-experience-verification/v1",
+  "batch": "M23",
+  "created_at": "2026-09-10T17:55:05.401099+00:00",
+  "head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "goal_status": "active",
+  "ux_009_status": "doing",
+  "scope": "Read-only fixed-manifest installation snapshot and documented publication/recovery design; actual install transaction still pending.",
+  "validation": [
+    {
+      "command": "go test ./internal/skillimport -run InstallationSnapshot -count=1",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "snapshot-focused.log"
+    },
+    {
+      "command": "go test ./...",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "go-all.log"
+    },
+    {
+      "command": "go vet ./...",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "vet.log"
+    },
+    {
+      "command": "go test -race ./internal/skillimport ./internal/skillinstall",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "log": "race.log"
+    }
+  ],
+  "cross_compilation": [
+    {
+      "target": "linux/amd64",
+      "command": "go build ./...",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "target": "linux/arm64",
+      "command": "go build ./...",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "target": "darwin/arm64",
+      "command": "go build ./...",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "target": "windows/amd64",
+      "command": "go build ./...",
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "sources": [
+    {
+      "path": "apps/agentshield/go.mod",
+      "sha256": "76d4db76c1f3cac2668814e3159de6cdabf9ee6947095f0bb387b194012beb6a"
+    },
+    {
+      "path": "apps/agentshield/internal/canon/canon.go",
+      "sha256": "75f2bf733e047589f3c4645290428067386ffd6d4cfc3c194c6d3c883c10f422"
+    },
+    {
+      "path": "apps/agentshield/internal/canon/canon_test.go",
+      "sha256": "4457cd6fd7e2d30ce26e9dc943a7fbdb911d0049e35b55ffdfae0732ea20f5b8"
+    },
+    {
+      "path": "apps/agentshield/internal/fileopen/open_regular_other.go",
+      "sha256": "f3054404edf352ba32e19f4c359bbd005815d628c97f485b3cc2895f0f017196"
+    },
+    {
+      "path": "apps/agentshield/internal/fileopen/open_regular_unix.go",
+      "sha256": "69f61125211dd54546a0d9bfd8aade9d78a3562e93dd556caf9335b5c36216b1"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/document.go",
+      "sha256": "a44d0eb4a2445e42de59e06d881af8c65e756559345c3db9d52c4febf0db4021"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/document_test.go",
+      "sha256": "c7122477372705af54a0fc9c6bd7d3c3a73351e56c7d8f62b0b3ac711042169f"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/local_doc_vectors_test.go",
+      "sha256": "c9dc07905e4d0cb466e3c2d4426faaada48173b6df26901a829a6b80e3f58690"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/schema.go",
+      "sha256": "3f3ffdf5fd7201f50b00e817d9a65754303c2fa243c377fa42825a845be3334a"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/signing.go",
+      "sha256": "dc1f156377601d0e6c8fd576c2ad3d5fbe28b9c93995ec7016e6c6431ef842ef"
+    },
+    {
+      "path": "apps/agentshield/internal/signing/signing_test.go",
+      "sha256": "f6e906c8f61cfd6e5f6a09573a640683d9d9ee941ca53c39705fd7eb6308617f"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/download.go",
+      "sha256": "a6cc5bcae2d22e483b322f71afd590ae18409e8ffcdee54eb464ebfbddaf24c3"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/download_test.go",
+      "sha256": "f2b04fd73b1c273d122d79488bb70494681a231f6ce6ae57618afc7729d1e2bf"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/install_copy.go",
+      "sha256": "7590d9418a5b32e11852b1d165a178ed952dcb40aa27d709d7719461b763c2bd"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/list.go",
+      "sha256": "39a28567864446662f7ada2d3591553372cbe81f08f844e486c8803c065ecdbc"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/list_test.go",
+      "sha256": "915e373b37443339d9379a4e9a38040cbbdb10441895da56d49d5e65e18cb9a1"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/permissions.go",
+      "sha256": "1a42886d53285aa93748ec238b154f1cd4d45f87f68f6e42cb291ddc5d07061f"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/permissions_test.go",
+      "sha256": "21a783c557014ec5165b8632774e969604e95f7b7a48e19dc06b1292701cc305"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/remote.go",
+      "sha256": "ee232ce12d51df6b2114a10dc002007a1b96727e11fe7a1369c632acd4d26ce9"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/remote_test.go",
+      "sha256": "8f4527341a4227f75c6abf331672e3e62aa62f371235a5c62050f1467cbfb532"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/result.go",
+      "sha256": "522d2b3dfdd3b2dc11060b66ab3ccf4d3c3bde8ed054dd58d441a1093d114e5d"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/snapshot.go",
+      "sha256": "a7b88fa5ac88826aa5ff10acd11687f928a0c7d06b1becfb193e0e440136d224"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/snapshot_test.go",
+      "sha256": "df9ac468e5882544eabd8f364e4d0b1581145a568298bc70640a55746f236ba8"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/store.go",
+      "sha256": "8136bb3a857412514d2c664557a042cca5050d67f879b4f24af4eceb16aa79ec"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/store_test.go",
+      "sha256": "3973618fc798cecebd68dc90c73bbd03fe3f1a0ce41ad8c88b81e6476ca2a6ce"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/tree.go",
+      "sha256": "354149b03b849cfb80b3a5b39ded7dce7cc2f65bddd264ec74798c731c630c35"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/zip.go",
+      "sha256": "c369b7e07c3509f60e00b74d3d99de41b32dfb9bba2ab973f6cc53405ad86d4a"
+    },
+    {
+      "path": "docs/adr/0039-skill-install-publication-recovery.md",
+      "sha256": "201303765829a711369a1b8e4051611c06784992333671b41bec9ee9f8948df0"
+    },
+    {
+      "path": "docs/agentshield-dev-spec-v1.md",
+      "sha256": "f4beab3bf51bed05d3f7bad81de15a115936aef711370904ae0aff6e957b4cf6"
+    },
+    {
+      "path": "docs/personal-experience-development-progress-20260910.md",
+      "sha256": "65c9331a211f4d245882ad622f58554ca07f11effa1dcbaaa31019d1accb1a6c"
+    },
+    {
+      "path": "docs/personal-experience-lan-team-development-taskbook-20260910-145507.md",
+      "sha256": "1d90fd679fdb2da8f5ac137c559d951e5cabbdde3b77948d68730ad08db25401"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/evidence/personal-experience/skill-install-snapshot-20260911/cross-packages.json",
+      "sha256": "6d303bcd020625ac8a314f7242a366462d26672490ff9c13c0a446f132fa7824"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-install-snapshot-20260911/go-all.log",
+      "sha256": "cac236f2fab8923552e0e80c51ca340bc4841449b1ee5f34f76dfc1d12c12e2a"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-install-snapshot-20260911/race.log",
+      "sha256": "d3749af4452d59b0bb2075026cd7fb02d0fd6c7e7176fb20fb88bc4db9b77162"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-install-snapshot-20260911/snapshot-focused.log",
+      "sha256": "2596e1817fa2478f64ef961e8d8a06f86b62c02b68d9da2ffe7b2df3fb7bbafa"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-install-snapshot-20260911/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "limitations": [
+    "The new read-only interface is not an installation endpoint and does not authorize platform writes.",
+    "Actual file publication, durable ownership/operation journal, install confirmation and cross-restart recovery remain pending.",
+    "Individual reads do not validate unrelated analysis/current Grant; batch Verify and separate authority/target checks are required.",
+    "No frontend change or new public JSON/HTTP contract; M22 UI/browser evidence remains historical.",
+    "Cross-compilation is not native Windows/macOS filesystem acceptance; full personal/LAN goal remains active.",
+    "No commit, push, release, user daemon restart or platform target mutation."
+  ]
+}

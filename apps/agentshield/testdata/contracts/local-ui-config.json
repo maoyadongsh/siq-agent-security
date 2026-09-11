@@ -1,0 +1,12 @@
+{
+  "schema_version": "local-ui-config/v1",
+  "product": "siq-agent-security",
+  "version": "test",
+  "enforcement_mode": "block",
+  "local_mode": true,
+  "single_user": true,
+  "trust_profile": "desktop-same-uid",
+  "session_recovery": true,
+  "pairing_available": true,
+  "pairing_required": true
+}

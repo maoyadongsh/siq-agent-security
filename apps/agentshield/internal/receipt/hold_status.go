@@ -92,6 +92,9 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 	var err error
 	if e.opts.IntentLookup != nil {
 		resolved, err = e.opts.IntentLookup(req.Platform, req.SessionID, req.AgentID)
+		if resolved != nil {
+			r.selectedGrant = resolved.SelectedGrant
+		}
 	}
 	if err != nil {
 		return false
@@ -108,6 +111,6 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 	}
 	var checked Receipt
 	descriptor := runtimeaction.Describe(req.Tool, req.Params)
-	action, _ := e.evaluate(r, s, descriptor, &checked)
+	action, _ := e.evaluate(r, s, descriptor, &checked, now)
 	return (action == ActionAllow || action == ActionHold) && str(checked.MatchedGrantID) == str(d.MatchedGrantID)
 }

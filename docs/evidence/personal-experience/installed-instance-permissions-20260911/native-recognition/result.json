@@ -1,0 +1,40 @@
+{
+  "schema_version": "skill-install-hermes-recognition/v1",
+  "generated_at": "2026-09-10T19:02:34.690018+00:00",
+  "status": "passed",
+  "checks": {
+    "product_installs_exact_candidate_into_named_profile": true,
+    "public_cli_all_enabled_inventory_recognizes_skill": true,
+    "public_cli_local_enabled_inventory_recognizes_skill": true,
+    "inventory_keeps_target_configuration_and_authority_unchanged": true
+  },
+  "commands": [
+    {
+      "command": [
+        "hermes",
+        "skills",
+        "list",
+        "--source",
+        "all",
+        "--enabled-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "fadfbb1c4a9009763d0df8403e5f371514c948a3ecf6bc0d4fa143d63070c27b"
+    },
+    {
+      "command": [
+        "hermes",
+        "skills",
+        "list",
+        "--source",
+        "local",
+        "--enabled-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "fadfbb1c4a9009763d0df8403e5f371514c948a3ecf6bc0d4fa143d63070c27b"
+    }
+  ],
+  "binary_sha256": "0cbdb4167c4c9c3f7e3a48c8ba8d6a3052a3c4e4ae5c539d89b0068e384ddceb",
+  "hermes_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "scope": "Real public Hermes skills list; synthetic SIQ-installed Skill and isolated profile. No Skill script, model task or runtime protection verification."
+}

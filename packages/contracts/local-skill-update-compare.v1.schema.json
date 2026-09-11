@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-update-compare.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "operation_signature",
+    "candidate_grant_id",
+    "expected_candidate_revision"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-update-compare/v1"
+    },
+    "operation_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "candidate_grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "expected_candidate_revision": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

@@ -1,4 +1,5 @@
 /** siq-agent-security 本地控制台展示助手：状态 → 中文标签 / 语义 tag 类名。 */
+import type { AdapterDiagnosis } from './types';
 
 export function verdictTag(v: string): string {
   if (v === 'quarantine') return 'tag tag-err';
@@ -123,10 +124,11 @@ export function hasOpenShellL3(platforms: { name: string; tier: string }[] | und
 }
 
 export function platformTierText(
-  p: { name: string; tier: string },
+  p: { name: string; tier: string; diagnosis?: AdapterDiagnosis },
   openShellL3: boolean,
 ): string {
   if (p.name === 'trae') return `${platformLabel(p.name)} · 审计模式 · 无法阻断`;
+  if (p.diagnosis?.runtime_state === 'unverified') return `${platformLabel(p.name)} · ${configurationLabel(p.diagnosis.configuration_state)}`;
   const base = `${platformLabel(p.name)} · ${p.tier}`;
   if (p.tier === 'L2' && !openShellL3) {
     return `${base} · 仅工具层拦截`;
@@ -142,35 +144,55 @@ export function platformLabel(name: string): string {
       return 'Hermes';
     case 'codebuddy':
       return 'CodeBuddy';
+    case 'workbuddy':
+      return 'WorkBuddy';
     case 'trae':
       return 'Trae';
     case 'openshell':
       return 'OpenShell';
+    case 'unknown':
+      return '未确定';
     default:
       return name;
   }
+}
+
+export function assetSourceLabel(source: string): string {
+  const labels: Record<string, string> = {
+    hermes_profile: '智能体实例', openclaw_agent: '智能体实例', workbuddy_profile: '智能体实例',
+    platform_config: '平台配置', skill_dir: 'Skill 安装', mcp_server: 'MCP 服务',
+    directory_manifest: '目录清单', human: '手动登记',
+  };
+  return labels[source] || '其他来源';
 }
 
 /** 适配器状态（Go adapterinstall.Status 的 note 原值）→ 中文。 */
 export function adapterLabel(adapter: string): string {
   switch (adapter) {
     case 'installed':
-      return '已安装';
+      return '发现安装文件';
     case 'not installed':
       return '未安装';
     case 'audit_only':
       return '仅审计';
     case 'unknown':
       return '未知';
+    case 'unverified':
+      return '待验证';
     default:
       return adapter || '未知';
   }
 }
 
 export function adapterTag(adapter: string): string {
-  if (adapter === 'installed') return 'tag tag-ok';
+  if (adapter === 'installed') return 'tag tag-info';
   if (adapter === 'audit_only') return 'tag tag-info';
   return 'tag';
+}
+
+export function configurationLabel(state: AdapterDiagnosis['configuration_state']): string {
+  return { not_installed: '未接入', incomplete: '配置待修复', ready: '配置就绪，待验证',
+    needs_verification: '接入待验证', unsupported: '接入能力待验证' }[state];
 }
 
 export function shortHash(h: string | undefined, n = 12): string {

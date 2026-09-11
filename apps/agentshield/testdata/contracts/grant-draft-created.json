@@ -1,0 +1,167 @@
+{
+  "grant": {
+    "admission_id": "adm-4af17a9f9719",
+    "approved_by": null,
+    "created_at": "2026-09-10T09:00:00Z",
+    "default_effect": "deny",
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-d-f81ff52072907b8d87e93758beaca33a7820e3a5fd4c344ccd8e84e74b836f28",
+      "static_domains_unavailable": [
+        "process"
+      ],
+      "version": 1
+    },
+    "effective_readback": null,
+    "enforcement_mode": "block",
+    "expires_at": null,
+    "facts": [
+      {
+        "action": "http.request",
+        "authority": "agentshield",
+        "authority_revision": null,
+        "domain": "network",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-035dd13970fd43c3"
+        ],
+        "fact_id": "pf-1-aa748b8b",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "endpoint",
+          "value": "api.github.com:443"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "http.request",
+        "authority": "agentshield",
+        "authority_revision": null,
+        "domain": "network",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-4b9f0f846e53a1a6"
+        ],
+        "fact_id": "pf-2-ec32c7d9",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "endpoint",
+          "value": "astral.sh:443"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "process.exec",
+        "authority": "agentshield",
+        "authority_revision": null,
+        "domain": "process",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-c80e4020c487933e"
+        ],
+        "fact_id": "pf-3-8c755530",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "tool",
+          "value": "shell"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "tool.invoke",
+        "authority": "agentshield",
+        "authority_revision": null,
+        "domain": "tool",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-90493065360a9bb6"
+        ],
+        "fact_id": "pf-4-811cbc58",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "tool.invoke",
+        "authority": "agentshield",
+        "authority_revision": null,
+        "domain": "tool",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-90493065360a9bb6"
+        ],
+        "fact_id": "pf-5-aa79ee81",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "tool",
+          "value": "terminal"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "tool.invoke",
+        "authority": "agentshield",
+        "authority_revision": null,
+        "domain": "tool",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-90493065360a9bb6"
+        ],
+        "fact_id": "pf-6-df3ab44f",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "tool",
+          "value": "web_extract"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "process.privilege_escalation",
+        "authority": "agentshield",
+        "authority_revision": null,
+        "domain": "process",
+        "effect": "deny",
+        "evidence_ids": [
+          "ev-035dd13970fd43c3",
+          "ev-13d6f30956854a09",
+          "ev-48127ad5abceb928",
+          "ev-4b9f0f846e53a1a6",
+          "ev-6e7bc46407545492",
+          "ev-90493065360a9bb6",
+          "ev-c80e4020c487933e",
+          "ev-da1ee1aa3038d38d",
+          "ev-e56634446122c6e6"
+        ],
+        "fact_id": "pf-inf-a9836a0d",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "capability",
+          "value": "setuid/sudo"
+        },
+        "state": "inferred"
+      }
+    ],
+    "grant_id": "grt-d-f81ff52072907b8d87e93758beaca33a7820e3a5fd4c344ccd8e84e74b836f28",
+    "hermes_toolset_allowlist": [
+      "read_file",
+      "terminal",
+      "web_extract"
+    ],
+    "overlap_conflicts": [],
+    "platform": "hermes",
+    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "signing_schema": "local_canonical/v1",
+    "status": "pending_approval",
+    "subject": {
+      "id": "expiry-agent",
+      "type": "agent_instance"
+    }
+  },
+  "reused": false,
+  "schema_version": "grant-draft-created/v1",
+  "source_grant_id": "grt-4af17a9f9719-1f77e7d4",
+  "source_revision": 2,
+  "state_revision": 0
+}

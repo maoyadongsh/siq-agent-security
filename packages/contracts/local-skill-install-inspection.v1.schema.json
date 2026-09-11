@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-inspection.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record",
+    "checked_at",
+    "platform_changes",
+    "target_state",
+    "comparison_complete",
+    "changes",
+    "changes_total",
+    "changes_truncated",
+    "issue_code"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-inspection/v1"
+    },
+    "record": {
+      "$ref": "local-skill-install-record.v1.schema.json"
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "platform_changes": {
+      "const": false
+    },
+    "target_state": {
+      "enum": [
+        "matched",
+        "changed",
+        "missing",
+        "unavailable"
+      ]
+    },
+    "comparison_complete": {
+      "type": "boolean"
+    },
+    "changes": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path_display",
+          "path_digest",
+          "kind",
+          "change"
+        ],
+        "properties": {
+          "path_display": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "path_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "kind": {
+            "enum": [
+              "file",
+              "directory",
+              "other"
+            ]
+          },
+          "change": {
+            "enum": [
+              "added",
+              "modified",
+              "removed",
+              "type_changed",
+              "ownership_changed"
+            ]
+          }
+        }
+      }
+    },
+    "changes_total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "changes_truncated": {
+      "type": "boolean"
+    },
+    "issue_code": {
+      "enum": [
+        null,
+        "target_unavailable",
+        "comparison_budget_exceeded"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "target_state": {
+            "const": "matched"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "changes": {
+            "maxItems": 0
+          },
+          "changes_total": {
+            "const": 0
+          },
+          "changes_truncated": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "target_state": {
+            "const": "unavailable"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "comparison_complete": {
+            "const": false
+          },
+          "issue_code": {
+            "type": "string"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "comparison_complete": {
+            "const": true
+          },
+          "issue_code": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "target_state": {
+            "enum": [
+              "changed",
+              "missing"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "changes": {
+            "minItems": 1
+          },
+          "changes_total": {
+            "minimum": 1
+          }
+        }
+      }
+    }
+  ]
+}

@@ -25,6 +25,9 @@ const token = "0123456789abcdef0123456789abcdef0123456789abcdef"
 func newServer(t *testing.T, mode string) (*Server, *state.Store) {
 	t.Helper()
 	dir := t.TempDir()
+	if err := os.Chmod(dir, 0700); err != nil {
+		t.Fatal(err)
+	}
 	st, err := state.Open(dir)
 	if err != nil {
 		t.Fatal(err)
@@ -43,8 +46,12 @@ func newServer(t *testing.T, mode string) (*Server, *state.Store) {
 	if err := os.MkdirAll(home, 0o700); err != nil {
 		t.Fatal(err)
 	}
+	bin := filepath.Join(home, "agentshield-test")
+	if err := os.WriteFile(bin, []byte("test program fixture"), 0o700); err != nil {
+		t.Fatal(err)
+	}
 	s, err := New(Deps{Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: token, Version: "test", Mode: mode,
-		Home: home, Binary: "agentshield-test", UI: ui.Handler(),
+		Home: home, Binary: bin, UI: ui.Handler(),
 		ListenHost: "127.0.0.1", ListenPort: 47611, PairingCode: testPairingCode})
 	if err != nil {
 		t.Fatal(err)
@@ -60,6 +67,9 @@ func newServer(t *testing.T, mode string) (*Server, *state.Store) {
 func newUnpairedServer(t *testing.T, mode string) *Server {
 	t.Helper()
 	dir := t.TempDir()
+	if err := os.Chmod(dir, 0700); err != nil {
+		t.Fatal(err)
+	}
 	st, err := state.Open(dir)
 	if err != nil {
 		t.Fatal(err)
@@ -461,7 +471,7 @@ func TestInventoryGETConfigPutAndAdapterHTTP(t *testing.T) {
 	if code != 200 {
 		t.Fatalf("adapter status: %d %v", code, ad)
 	}
-	code, ins := call(t, s, "POST", "/v1/adapter/install", token, map[string]any{"platform": "hermes"})
+	code, ins := adapterApplyCall(t, s, "hermes", "install")
 	if code != 200 {
 		t.Fatalf("install: %d %v", code, ins)
 	}
@@ -472,22 +482,22 @@ func TestInventoryGETConfigPutAndAdapterHTTP(t *testing.T) {
 	found := false
 	for _, p := range ad["platforms"].([]any) {
 		m := p.(map[string]any)
-		if m["name"] == "hermes" && m["adapter"] == "installed" && m["tier"] == "L2" {
+		if m["name"] == "hermes" && m["adapter"] == "installed" && m["tier"] == "L0" {
 			found = true
-			note, _ := m["note"].(string)
-			if !strings.Contains(note, "仅工具层拦截") {
-				t.Fatalf("L2 without OpenShell L3 must say tool-layer only: %v", m)
+			diagnosis, _ := m["diagnosis"].(map[string]any)
+			if diagnosis["runtime_state"] != "unverified" {
+				t.Fatalf("installed files must not imply runtime verification: %v", m)
 			}
 		}
 	}
 	if !found {
-		t.Fatalf("hermes not L2 after install: %v", ad)
+		t.Fatalf("hermes file installation should remain runtime-unverified: %v", ad)
 	}
-	code, un := call(t, s, "POST", "/v1/adapter/uninstall", token, map[string]any{"platform": "hermes"})
+	code, un := adapterApplyCall(t, s, "hermes", "uninstall")
 	if code != 200 || un["action"] != "uninstall" {
 		t.Fatalf("uninstall: %d %v", code, un)
 	}
-	code, trae := call(t, s, "POST", "/v1/adapter/install", token, map[string]any{"platform": "trae"})
+	code, trae := adapterApplyCall(t, s, "trae", "install")
 	if code != 200 || trae["action"] != "skipped" {
 		t.Fatalf("trae must skip: %d %v", code, trae)
 	}

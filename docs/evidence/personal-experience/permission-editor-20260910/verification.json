@@ -1,0 +1,184 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T12:21:10.849643+00:00",
+  "batch": "M9 personal permission editor",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "candidate": {
+    "path": ".tmp/personal-experience/m9-linux-arm64",
+    "sha256": "ad529a5491b3146b7a3ce4bbdc33099a8cda63ba7ad71cbe1645c0b1d54e41bd",
+    "evidence": [
+      "grant-resource-native.json",
+      "runtime-check-native.json",
+      "openclaw-native.json",
+      "browser/result.json"
+    ]
+  },
+  "checks": [
+    {
+      "command": "go test ./...",
+      "passed": true,
+      "log": "go-test.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "go-vet.log"
+    },
+    {
+      "command": "go test -race ./internal/grant ./internal/receipt ./internal/server",
+      "passed": true,
+      "log": "go-race.log"
+    },
+    {
+      "command": "gofmt -l .",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "passed": true,
+      "log": "contract-test.log"
+    },
+    {
+      "command": "uv run ruff check app/tests/test_schema_contracts.py ../../scripts/personal-experience/grant-resource-browser-smoke.py",
+      "passed": true,
+      "log": "python-lint.log"
+    },
+    {
+      "command": "npm run build:local",
+      "passed": true,
+      "log": "local-build.log"
+    },
+    {
+      "command": "npm run build",
+      "passed": true,
+      "log": "enterprise-build.log"
+    },
+    {
+      "command": "npm test -- --run",
+      "passed": true,
+      "log": "web-test.log"
+    }
+  ],
+  "source_sha256": {
+    "apps/agentshield/internal/grant/resources.go": "ca22aca7794c2947b287232b8cfee210b779515be4f4eff8495e8adcf35551d4",
+    "apps/agentshield/internal/grant/resources_test.go": "2f3bc110777905d8eaf879f04ede54a5f42c28454407e05dec83fa0f0c569f0e",
+    "apps/agentshield/internal/grant/patch.go": "ad31f6da96c385a12b72dc1d3e51dd4e884c81c2153ce6a421f45afdca35984f",
+    "apps/agentshield/internal/receipt/engine.go": "59056d1e298bda650a5c5b08284a2d26a32f7f1bad9ffa856b8dc033729faba0",
+    "apps/agentshield/internal/receipt/resource_scope.go": "a55e6ed7fe211821dbcd03cb2268aa702cd08f42fb89e3c1316445edba8178d9",
+    "apps/agentshield/internal/receipt/tool_deny_test.go": "fddb1360f7b763a2b2ad876fe1cc159e0d0b1aecb1114c7179b1cc0f28c623ab",
+    "apps/agentshield/internal/server/server.go": "2da446ffaa859707bb351f8d9a7294e154d3a88851678b5378aa8c41c2e62cde",
+    "apps/agentshield/internal/server/grant_resources.go": "ef5e9f6adbc48f348789d107a9675e4b64cf661a72e9390750dc2cf08efc5dd5",
+    "apps/agentshield/internal/server/grant_resources_test.go": "6d42f6973fc5360ae757a6e8a08d4612f58af2b1c2b6aefe743d59b1b1cccc13",
+    "apps/agentshield/testdata/contracts/grant-resource-edit.json": "45a0f3a7adfdedf6b8dd9a63ffd1ef444577c093f81ce95c9a50f6aeb047764f",
+    "apps/control-api/app/tests/test_schema_contracts.py": "ec6b24e2a721cd9648482b4888ce0f86be44fb3bc4e6929716bd225646f4bc4a",
+    "apps/web/src/local/types.ts": "8fe4371c4bb209e65cb4733fa5a3c9f9f06aa34ce1b55c4935509e790e3dbe2d",
+    "apps/web/src/local/api.ts": "793e4018cbf83b817fec450a250ca45c75221b21811f1a91a889056a7e25c1f7",
+    "apps/web/src/local/components/GrantResourceDialog.tsx": "59fbe44af6b79e8a188633fa54538adb434298046fd888f3c31394af79c9e45d",
+    "apps/web/src/local/pages/GrantsPage.tsx": "29e098d3d4ab0388d6f5ed10f220e63424c6893babfd78f4aeff4bc913d2163a",
+    "apps/web/src/local/pages/AgentDetailPage.tsx": "a7463cbeb5c8899fa9dad493b998181fda5696cb64875defbdd3b5953a2a4e9c",
+    "apps/web/src/components/Modal.tsx": "63dd007c6e96d27d62088ca62627fb85d7be87e3009f2d290d6ff7ef4cec3f08",
+    "apps/web/src/index.css": "f453723ba7b1ff4abaa565f084092e36ea5b883398deea76d5129cd148856217",
+    "packages/contracts/grant-resource-edit.v1.schema.json": "b788d387e03043640b982bb6fffa9d59e74aca14a54db5b8d0c873df9fb80bb0",
+    "scripts/personal-experience/grant-resource-browser-smoke.py": "f38e125ec0e0968ddf15ee24d1e1cd1a48dd554afce427c4ff4a8ba13f157735",
+    "scripts/personal-experience/grant-resource-native-smoke.py": "d956ac5711de6365684717a94c93001edbda51536087c3ef4e5310a27c656e21",
+    "scripts/personal-experience/hermes-cli-runtime-smoke.py": "a0ca6517336249e8b29e2f81fffac64debd2558ad711d8a8b4f9c2002f249bc3",
+    "scripts/personal-experience/runtime-check-native-smoke.py": "e9694d135c0ac588acabed9f62d113822121cafe8d91c619d90d3d0850f8eaf4",
+    "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+    "apps/agentshield/internal/ui/embedded/index.html": "7c03cdc590f6b05c53c0a20291c43dc00248934ba61c599f5aad778c8d4d853d",
+    "docs/adr/0026-personal-permission-editor.md": "8bd3d52294a16475542560d7f91beecc343ea220ca34b0a95b9dccf625cfa9dc",
+    "docs/agentshield-dev-spec-v1.md": "8c0e6f413ee30b612e72fbce43c4bb5346a315828f571f6aa7333cb2bf7aa5af",
+    "docs/personal-experience-development-progress-20260910.md": "469c5345e7a0eb688a71ad6d78567296dd88e0e6c22fb69c28b381f45162df76",
+    "docs/personal-experience-requirements-baseline-20260910.md": "4b1538cd5455234335781c0d20db1755b70686ee87d9351e14548cd2581bb974",
+    "apps/agentshield/internal/ui/embedded/assets/index-DivgnG8S.css": "a9c5589396e5320bcbfde4705a5afe2f8f415b7695f23422f65272ce03f4b0a7",
+    "apps/agentshield/internal/ui/embedded/assets/DemoPage-OjGN14LE.css": "5f1e0a71e1c693e739b097f240ba7266c6a94bbbd8b1235be9230327287ee1f4",
+    "apps/agentshield/internal/ui/embedded/assets/DemoPage-DxTXTkzS.js": "d17bb1044717c9785a37a15fbbb733680142917cbbb4c068cdc2eac69ba98197",
+    "apps/agentshield/internal/ui/embedded/assets/index.local-CqejMDVi.js": "5c5a81549f1fa502188394e02962b3a583efe58a19f64ae0b0d597857ce72fe7"
+  },
+  "cross_builds": [
+    {
+      "target": "linux-amd64",
+      "path": ".tmp/personal-experience/m9-linux-amd64",
+      "sha256": "85e97c06f04f313c9f16e599a4dee53cff53ad81c1c9389635bad9a2ab49d491",
+      "passed": true,
+      "native_runtime_verified": false
+    },
+    {
+      "target": "linux-arm64",
+      "path": ".tmp/personal-experience/m9-linux-arm64",
+      "sha256": "ad529a5491b3146b7a3ce4bbdc33099a8cda63ba7ad71cbe1645c0b1d54e41bd",
+      "passed": true,
+      "native_runtime_verified": true
+    },
+    {
+      "target": "darwin-arm64",
+      "path": ".tmp/personal-experience/m9-darwin-arm64",
+      "sha256": "084fb3662b974ac6b395c1a8e8273bb41719ecd248790df9132e60f888b9eab1",
+      "passed": true,
+      "native_runtime_verified": false
+    },
+    {
+      "target": "windows-amd64",
+      "path": ".tmp/personal-experience/m9-windows-amd64",
+      "sha256": "f0c055fe9e7dbd38960b5254b823a240f4ed2c4f54b1688be78c049c4554e3da",
+      "passed": true,
+      "native_runtime_verified": false
+    }
+  ],
+  "reports": [
+    {
+      "path": "grant-resource-native.json",
+      "sha256": "a1424ac338890f2ef1d0c9bb5d3620211efc1da99316cb62abc10c25355056fe",
+      "passed": true,
+      "binary_sha256": "ad529a5491b3146b7a3ce4bbdc33099a8cda63ba7ad71cbe1645c0b1d54e41bd"
+    },
+    {
+      "path": "runtime-check-native.json",
+      "sha256": "2bc6864e96b4176bcec112f42fed7285bada5319144ea79351927430d1575f73",
+      "passed": true,
+      "binary_sha256": "ad529a5491b3146b7a3ce4bbdc33099a8cda63ba7ad71cbe1645c0b1d54e41bd"
+    },
+    {
+      "path": "openclaw-native.json",
+      "sha256": "b842aa44a4d495d417ff67c0421c9b87d14bb03c73b5a771889478cac4bcb8ec",
+      "passed": true,
+      "binary_sha256": "c84f562e15e9f78bf3ab7cad58fe5acf6006bd1c984c9f47457f471799e798a8"
+    },
+    {
+      "path": "browser/result.json",
+      "sha256": "fa3bded74d5363a1e874c1b671cd041a2400cb2ec7b49207de89ac95449e4c40",
+      "passed": true,
+      "binary_sha256": "ad529a5491b3146b7a3ce4bbdc33099a8cda63ba7ad71cbe1645c0b1d54e41bd"
+    }
+  ],
+  "artifact_sha256": {
+    "enterprise-build.log": "aada329705bcf34bd859c1feb037b00b9ce765babf4867408d4b44586eb6cdd9",
+    "web-test.log": "9d94bb3f2a381083f1e4a5b66aa2fbceb1acf89a7e19835a8e34485cd3748050",
+    "python-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "local-build.log": "0c752c8ef3e0df33f0e932c8d33377218d016490ae4800edd3405b9c9634dec0",
+    "go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-test.log": "076e7b27c079a0249d2bd89839a20d38b9c17e62951ed8479a3fba6b40c95924",
+    "runtime-check-native.json": "2bc6864e96b4176bcec112f42fed7285bada5319144ea79351927430d1575f73",
+    "gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "contract-test.log": "39bec940edb43464f21b9c17fee54eabf55d458551ea8ddc2b189267d1343e30",
+    "openclaw-native.json": "b842aa44a4d495d417ff67c0421c9b87d14bb03c73b5a771889478cac4bcb8ec",
+    "grant-resource-native.json": "a1424ac338890f2ef1d0c9bb5d3620211efc1da99316cb62abc10c25355056fe",
+    "go-race.log": "819c96c2260e141fd79fbff92668e15fe823db1522c78b63aa42552d661a1720",
+    "browser/grant-resources.png": "c025c0055b136b25c969a54002bce48b86841a653760a8407f16d4c9ea7be757",
+    "browser/result.json": "fa3bded74d5363a1e874c1b671cd041a2400cb2ec7b49207de89ac95449e4c40",
+    "browser/grant-resources-mobile.png": "8011cd006e2515ca6eb893e6453ecee9488953c42e0f1edbe9f58fc7c0c4f119"
+  },
+  "visual_review": {
+    "desktop": true,
+    "mobile_390x844": true,
+    "result": "Header and actions visible, scrollable fields, no horizontal overflow."
+  },
+  "limitations": [
+    "Linux arm64 runtime and Chromium only; cross-builds are not native OS acceptance.",
+    "Browser journey starts on Grants page; asset detail reuses component but its entire journey is not separately accepted.",
+    "Native Hermes checks use isolated profiles and synthetic actors; OpenClaw fixture builds its own separately hashed binary.",
+    "No trusted per-Skill execution attribution or OS isolation; model/process declarations are not proof of enforcement.",
+    "UX-007 remains in progress; Windows/macOS, WorkBuddy, later personal tasks and LAN work remain incomplete."
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": "product-runtime-check-browser-smoke/v1",
+  "recorded_at": "2026-09-10T11:31:33.000966+00:00",
+  "passed": true,
+  "binary_sha256": "0aca1911886d9c7a9a04c58587f102e3f77d9fcf54058e74c3152a9e6f76eb06",
+  "harness_sha256": "e139a5361f2038f7fbcce5a75d9c62499b2cd9bad83987f3c0711eeba70b254a",
+  "checks": {
+    "active_instance_selected_without_authority": true,
+    "confirmed_native_check_survives_closed_view": true,
+    "cleanup_and_five_receipts_visible": true,
+    "all_probe_evidence_visible": true,
+    "reopening_does_not_duplicate_launch": true,
+    "mobile_dialog_content_fits": true,
+    "mobile_confirmation_reachable": true,
+    "keyboard_focus_stays_in_dialog": true,
+    "configuration_drift_invalidates_display": true,
+    "unreconciled_configuration_blocks_launch": true,
+    "cancel_revokes_and_cleans": true,
+    "no_page_errors": true,
+    "no_credentials_in_web_storage": true
+  },
+  "scope": "Linux Chromium, product UI/API, real public Hermes CLI, isolated profile and synthetic operator"
+}

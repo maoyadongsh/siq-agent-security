@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-recover.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "actor_id",
+    "confirm_recovery"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-recover/v1"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "confirm_recovery": {
+      "const": true
+    }
+  }
+}

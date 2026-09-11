@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-plan.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "request_id",
+    "source",
+    "grant_id",
+    "grant_revision",
+    "grant_signature",
+    "grant_permission_digest",
+    "platform",
+    "instance_id",
+    "directory_name",
+    "target_locator_digest",
+    "target_display",
+    "actor_id",
+    "created_at",
+    "expires_at",
+    "file_count",
+    "total_bytes",
+    "installed",
+    "runtime_verified",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-plan/v1"
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^sip-[a-f0-9]{64}$"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^is-[a-f0-9]{32}$"
+    },
+    "source": {
+      "$ref": "https://siq.dev/contracts/local-skill-import-permission-source.v1.schema.json"
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "grant_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "grant_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "grant_permission_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "platform": {
+      "const": "hermes"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "directory_name": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "target_locator_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "target_display": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "file_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2000
+    },
+    "total_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 67108864
+    },
+    "installed": {
+      "const": false
+    },
+    "runtime_verified": {
+      "const": false
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  }
+}

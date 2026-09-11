@@ -1,0 +1,50 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "identity_id",
+    "platform",
+    "agent_id",
+    "session_id",
+    "binding_id",
+    "intent_id",
+    "expires_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-runtime-session-enrolled/v1"
+    },
+    "identity_id": {
+      "type": "string",
+      "pattern": "^ri-[a-f0-9]{32}$"
+    },
+    "platform": {
+      "const": "hermes"
+    },
+    "agent_id": {
+      "type": "string",
+      "pattern": "^hri-[a-f0-9]{32}$"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "binding_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "intent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

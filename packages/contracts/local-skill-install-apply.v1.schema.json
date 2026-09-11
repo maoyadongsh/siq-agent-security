@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-apply.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "plan_signature",
+    "actor_id",
+    "confirm_install"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-apply/v1"
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^sip-[a-f0-9]{64}$"
+    },
+    "plan_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "confirm_install": {
+      "const": true
+    }
+  }
+}

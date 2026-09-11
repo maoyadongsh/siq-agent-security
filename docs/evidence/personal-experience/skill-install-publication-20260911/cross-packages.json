@@ -1,0 +1,26 @@
+[
+  {
+    "target": "linux/amd64",
+    "command": "go build ./...",
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "target": "linux/arm64",
+    "command": "go build ./...",
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "target": "darwin/arm64",
+    "command": "go build ./...",
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "target": "windows/amd64",
+    "command": "go build ./...",
+    "exit_code": 0,
+    "output": ""
+  }
+]

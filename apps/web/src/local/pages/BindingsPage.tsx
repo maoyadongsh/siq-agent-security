@@ -6,6 +6,9 @@ import { Icon } from '@/components/icons';
 import { localApi } from '../api';
 import type { PlatformInfo } from '../types';
 import { useLocalSession } from '../session';
+import RuntimeCheckDialog from '../components/RuntimeCheckDialog';
+import AdapterChangeDialog, { type AdapterChangeRequest } from '../components/AdapterChangeDialog';
+import AdapterDiagnosisPanel from '../components/AdapterDiagnosisPanel';
 import {
   adapterLabel,
   adapterTag,
@@ -24,7 +27,6 @@ export default function BindingsPage() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState<string | null>(null);
   const [msgErr, setMsgErr] = useState(false);
-  const [busy, setBusy] = useState<string | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -54,21 +56,12 @@ export default function BindingsPage() {
 
   const l3 = hasOpenShellL3(platforms);
 
+  const [runtimeCheckOpen, setRuntimeCheckOpen] = useState(false);
+  const [adapterChange, setAdapterChange] = useState<AdapterChangeRequest | null>(null);
+  const busy = adapterChange ? `${adapterChange.action}:${adapterChange.platform}` : null;
   const mutate = (platform: string, action: 'install' | 'uninstall') => {
-    setBusy(`${action}:${platform}`);
     setMsg(null);
-    setMsgErr(false);
-    const op = action === 'install' ? localApi.adapterInstall : localApi.adapterUninstall;
-    op(platform)
-      .then((res) => {
-        setMsg(`${platformLabel(res.platform)}：${res.action}${res.note ? ` — ${res.note}` : ''}`);
-        load();
-      })
-      .catch((err: unknown) => {
-        setMsg(err instanceof Error ? err.message : '适配器操作失败');
-        setMsgErr(true);
-      })
-      .finally(() => setBusy(null));
+    setAdapterChange({ platform, action });
   };
 
   const columns: TableColumn<PlatformInfo>[] = [
@@ -79,7 +72,7 @@ export default function BindingsPage() {
     },
     {
       key: 'tier',
-      header: '档位',
+      header: '接入状态',
       render: (p) => <span className="cell-nowrap">{platformTierText(p, l3)}</span>,
     },
     {
@@ -87,7 +80,7 @@ export default function BindingsPage() {
       header: '适配器',
       render: (p) => <span className={adapterTag(p.adapter)}>{adapterLabel(p.adapter)}</span>,
     },
-    { key: 'note', header: '说明', render: (p) => p.note || '—' },
+    { key: 'note', header: '说明', render: (p) => <>{p.note || '—'}<AdapterDiagnosisPanel diagnosis={p.diagnosis} /></> },
     {
       key: 'act',
       header: '',
@@ -98,6 +91,8 @@ export default function BindingsPage() {
         if (p.name === 'openshell') {
           return <span className="muted-text">CLI 探针，无安装钩子</span>;
         }
+        if (p.name === 'workbuddy') return <span className="muted-text">桌面接入待实测</span>;
+        if (p.name === 'hermes') return <div className="toolbar"><button type="button" className="btn btn-sm" disabled={!!busy} onClick={() => mutate(p.name, 'install')}>管理实例</button><button type="button" className="btn btn-sm" disabled={!!busy} onClick={() => setRuntimeCheckOpen(true)}>运行自检</button></div>;
         const installed = p.adapter === 'installed';
         return (
           <span className="row-actions">
@@ -127,6 +122,9 @@ export default function BindingsPage() {
 
   return (
     <section>
+      {runtimeCheckOpen ? <RuntimeCheckDialog onClose={() => setRuntimeCheckOpen(false)} /> : null}
+      {adapterChange ? <AdapterChangeDialog request={adapterChange} onClose={() => setAdapterChange(null)} onApplied={(text) => { setAdapterChange(null); setMsg(text); setMsgErr(false); load(); }} /> : null}
+
       <PageHeader
         kicker="AGENTSHIELD"
         icon="bindings"
@@ -179,8 +177,7 @@ export default function BindingsPage() {
           <div className="notice" role="status">
             <p className="notice-title">探针不可达</p>
             <p className="notice-detail">
-              {probeErr}。无 L3 时顶栏写「仅工具层拦截」，产品仍完整：准入、签发、工具回执都不依赖
-              OpenShell。
+              {probeErr}。仍可使用静态检查与授权管理；工具调用是否已接入，请查看对应平台的诊断与验证状态。
             </p>
           </div>
         ) : probe ? (
@@ -200,7 +197,7 @@ export default function BindingsPage() {
           <p className="page-desc">尚未取得探针结果。</p>
         )}
         <p className="page-desc block-gap">
-          siq-agent-security 不执行 gateway start。无 L3 时顶栏写「仅工具层拦截」，产品仍完整。
+          工具层接入需单独验证，OpenShell 的状态不能代替智能体平台自检。
         </p>
       </div>
     </section>

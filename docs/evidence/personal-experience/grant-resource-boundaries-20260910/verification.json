@@ -1,0 +1,135 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T11:52:19.114717+00:00",
+  "batch": "M8 explicit Grant resource boundaries",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "checks": [
+    {
+      "command": "go test ./...",
+      "passed": true,
+      "log": "go-test.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "go-vet.log"
+    },
+    {
+      "command": "go test -race ./internal/receipt ./internal/runtimecheck ./internal/server",
+      "passed": true,
+      "log": "go-race.log"
+    },
+    {
+      "command": "gofmt -l .",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "passed": true,
+      "log": "contract-test.log"
+    },
+    {
+      "command": "uv run ruff check ../../scripts/personal-experience/grant-resource-native-smoke.py",
+      "passed": true,
+      "log": "python-lint.log"
+    }
+  ],
+  "source_sha256": {
+    "apps/agentshield/internal/receipt/engine.go": "1d067120ac45b0ad14d84eadfd6159ec0ddeb8f1501ef3519ffa66a054290274",
+    "apps/agentshield/internal/receipt/resource_scope.go": "97cc47d8b3a70385da62dc208cf9b0c4461ebdea93e37b305d17143706a8b7c6",
+    "apps/agentshield/internal/receipt/resource_scope_test.go": "b09f43996981a0dab182e0f75fe1f0c8faf5554c3ef86d4de5f6a20fe2933085",
+    "apps/agentshield/internal/receipt/receipt_test.go": "365635fbff7a3916890a75328df91bae42fcb8901a0486db03218990602526d8",
+    "apps/agentshield/internal/receipt/authority_gate_test.go": "8d417f12b022966d61f78bac7df23cffb9ef68f52a327d336e5506624a2d342f",
+    "apps/agentshield/internal/receipt/descriptor_test.go": "f072f0cc3a97cccf642306dccdac1dd7ebf429f16468df5559c45d342ffe3ad2",
+    "apps/agentshield/internal/receipt/task_boundary_test.go": "fc5e7f40b70a0fce5aa597e63b4f05fd012839e06e8e3711f887537aa55a18d0",
+    "scripts/personal-experience/grant-resource-native-smoke.py": "d956ac5711de6365684717a94c93001edbda51536087c3ef4e5310a27c656e21",
+    "scripts/personal-experience/hermes-cli-runtime-smoke.py": "a0ca6517336249e8b29e2f81fffac64debd2558ad711d8a8b4f9c2002f249bc3",
+    "scripts/personal-experience/runtime-check-native-smoke.py": "e9694d135c0ac588acabed9f62d113822121cafe8d91c619d90d3d0850f8eaf4",
+    "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+    "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+    "docs/adr/0025-explicit-grant-resource-boundaries.md": "67e765b30dfeb871bdf2e8e4c6b7b920ce612897259b8b8d33df9ef642cd31ce",
+    "docs/agentshield-dev-spec-v1.md": "7bd629ed995c5fea9b225eb435f352866389d8653902bda5239070d030b61521",
+    "docs/personal-experience-development-progress-20260910.md": "4f27c5ec5a3bcb21ffda7f7b9673cb98fc52e8b6298fae038236ca4305431f45",
+    "docs/personal-experience-requirements-baseline-20260910.md": "6dd6b5a22d879b6e34e42e284ec17ee1e364cbeb74a755d1fcac879f257db2ca",
+    "apps/agentshield/internal/ui/embedded/index.html": "f8f079aa608e3e1cd029daa0785cc9f35878e8133411894128c8c95372218bb8"
+  },
+  "artifact_sha256": {
+    "docs/evidence/personal-experience/grant-resource-boundaries-20260910/python-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "docs/evidence/personal-experience/grant-resource-boundaries-20260910/go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/evidence/personal-experience/grant-resource-boundaries-20260910/go-test.log": "92779676df7843c80db2c8d763ea22f3c6c944bfd92f65da5c8f0f282f6e781f",
+    "docs/evidence/personal-experience/grant-resource-boundaries-20260910/gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/evidence/personal-experience/grant-resource-boundaries-20260910/contract-test.log": "95e12cced10e3f863ab3ebea62e66284a36c0a89b996b5ab1ae283e23895e13a",
+    "docs/evidence/personal-experience/grant-resource-boundaries-20260910/go-race.log": "ea3e29e9c307fa910652e2de88421f9d5262290f64d4c53a25616234c581fb89"
+  },
+  "cross_builds": [
+    {
+      "target": "linux-amd64",
+      "path": ".tmp/personal-experience/m8-linux-amd64",
+      "sha256": "ab07ed3f6bdf49168a6c93e6d5e09f266e2efedb49d159bd29e1e6704ba38210",
+      "cross_build_passed": true,
+      "native_execution_verified": false
+    },
+    {
+      "target": "linux-arm64",
+      "path": ".tmp/personal-experience/m8-linux-arm64",
+      "sha256": "44b70cbf22cb93fd7095e24c1929c09e902cfb7d7e627e3ab97fd61c7a13b745",
+      "cross_build_passed": true,
+      "native_execution_verified": true
+    },
+    {
+      "target": "darwin-arm64",
+      "path": ".tmp/personal-experience/m8-darwin-arm64",
+      "sha256": "3411f512000b6e00bfa49286a8a374f82b8c04337a513536c0954f27354661bb",
+      "cross_build_passed": true,
+      "native_execution_verified": false
+    },
+    {
+      "target": "windows-amd64",
+      "path": ".tmp/personal-experience/m8-windows-amd64",
+      "sha256": "9b6e9626abbaa760eb18b9357e08275fe400f334c630684276afec7e7a128c26",
+      "cross_build_passed": true,
+      "native_execution_verified": false
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/evidence/personal-experience/grant-resource-native-20260910.json",
+      "sha256": "fd2206c57815d59979ec4e591a49b6f3fd13940565a066fee42e11bc6c71a830",
+      "binary_sha256": "44b70cbf22cb93fd7095e24c1929c09e902cfb7d7e627e3ab97fd61c7a13b745",
+      "purpose": "positive regression or fixed behavior"
+    },
+    {
+      "path": "docs/evidence/personal-experience/grant-resource-old-bypass-20260910.json",
+      "sha256": "2cb9e96152b4d2703aacd1d4035e914a43f5bbfdd48a8734b838c63e9ceb3521",
+      "binary_sha256": "0aca1911886d9c7a9a04c58587f102e3f77d9fcf54058e74c3152a9e6f76eb06",
+      "purpose": "expected old bypass reproduction"
+    },
+    {
+      "path": "docs/evidence/personal-experience/runtime-check-resource-regression-20260910.json",
+      "sha256": "e62cbce53fce39ca157e38d2aa020a9a98ffe86a164416c1559810f619d5ac71",
+      "binary_sha256": "44b70cbf22cb93fd7095e24c1929c09e902cfb7d7e627e3ab97fd61c7a13b745",
+      "purpose": "positive regression or fixed behavior"
+    },
+    {
+      "path": "docs/evidence/personal-experience/hermes-resource-regression-20260910.json",
+      "sha256": "d7d5ecd8614da199be4b0f35a68c47b129037c3c0744cc8428cb3acced2ffe5b",
+      "binary_sha256": "9da0ef36d2ba41f0ab17a097f64bd3c4d2c823f787a6f401bec1d0cf8917447c",
+      "purpose": "positive regression or fixed behavior"
+    },
+    {
+      "path": "docs/evidence/personal-experience/openclaw-resource-regression-20260910.json",
+      "sha256": "708d9ba5dd6c1a81cef124fab01c97f3028e798ae19cc1312faa12f1e513018f",
+      "binary_sha256": "9da0ef36d2ba41f0ab17a097f64bd3c4d2c823f787a6f401bec1d0cf8917447c",
+      "purpose": "positive regression or fixed behavior"
+    }
+  ],
+  "limitations": [
+    "Old bypass report is expected vulnerability reproduction, not protection acceptance.",
+    "Runtime path scope is lexical tool-layer enforcement, not universal symlink prevention or OS isolation.",
+    "Old grants with tool-only read permissions require explicit resource authoring; no signed history is rewritten.",
+    "Full permission UI, trusted Skill attribution, and Windows/macOS native verification remain incomplete.",
+    "No frontend changes; embedded frontend remains M7."
+  ]
+}

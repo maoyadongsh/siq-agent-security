@@ -24,6 +24,8 @@ class _Fake(BaseHTTPRequestHandler):
     decision: ClassVar[dict] = {"action": "allow", "reason": "ok", "receipt_id": "rcp-1"}
     status = 200
     seen: ClassVar[list] = []
+    attach: ClassVar[dict | None] = None
+    enroll: ClassVar[dict | None] = None
 
     def do_POST(self):
         n = int(self.headers.get("Content-Length", 0))
@@ -32,7 +34,10 @@ class _Fake(BaseHTTPRequestHandler):
         self.send_response(_Fake.status)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
-        self.wfile.write(json.dumps(_Fake.decision).encode())
+        value = _Fake.attach if self.path == "/v1/runtime-checks/attach" else _Fake.decision
+        if self.path == "/v1/runtime-sessions":
+            value = _Fake.enroll
+        self.wfile.write(json.dumps(value).encode())
 
     def log_message(self, *a):  # silence
         pass
@@ -47,6 +52,8 @@ def server(tmp_path):
     token.write_text("t" * 64)
     _Fake.seen = []
     _Fake.status = 200
+    _Fake.attach = None
+    _Fake.enroll = None
     yield srv, token
     srv.shutdown()
 

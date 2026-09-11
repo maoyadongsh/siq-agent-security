@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-adapter-diagnostics.v1.schema.json",
+  "title": "Read-only adapter configuration diagnosis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "platform_changes", "platforms"],
+  "properties": {
+    "schema_version": {"const": "local-adapter-diagnostics/v1"},
+    "platform_changes": {"const": false},
+    "platforms": {"type": "array", "items": {"$ref": "#/definitions/diagnosis"}}
+  },
+  "definitions": {
+    "diagnosis": {
+      "type": "object", "additionalProperties": false,
+      "required": ["platform", "configuration_state", "runtime_state", "checks", "next_steps"],
+      "properties": {
+        "platform": {"enum": ["openclaw", "hermes", "codebuddy", "workbuddy", "trae"]},
+        "configuration_state": {"enum": ["not_installed", "incomplete", "ready", "needs_verification", "unsupported"]},
+        "runtime_state": {"const": "unverified"},
+        "checks": {"type": "array", "items": {"$ref": "#/definitions/check"}},
+        "next_steps": {"type": "array", "items": {"type": "string", "maxLength": 512}}
+      }
+    },
+    "check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "status", "message"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[a-z_]+$"},
+        "status": {"enum": ["pass", "fail", "unknown", "not_applicable"]},
+        "message": {"type": "string", "maxLength": 512}
+      }
+    }
+  }
+}

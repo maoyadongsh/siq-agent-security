@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-update-plan-created.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan",
+    "reused"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-update-plan-created/v1"
+    },
+    "plan": {
+      "$ref": "local-skill-update-plan.v1.schema.json"
+    },
+    "reused": {
+      "type": "boolean"
+    }
+  }
+}

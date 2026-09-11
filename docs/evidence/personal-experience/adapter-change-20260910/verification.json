@@ -1,0 +1,41 @@
+{
+  "schema_version": "personal-adapter-change-verification/v1",
+  "recorded_at": "2026-09-10T09:05:36.775747+00:00",
+  "scope": "isolated fixtures; real process death; real OpenClaw loader only, not full agent session or cross-OS runtime acceptance",
+  "checks": {
+    "go_test_all": true,
+    "go_vet_all": true,
+    "race_adapterinstall_server": true,
+    "web_vitest_20": true,
+    "typescript": true,
+    "web_enterprise_build": true,
+    "web_local_build": true,
+    "python_contracts_85": true,
+    "python_lint": true,
+    "native_openclaw_loader": true,
+    "browser_27": true,
+    "cross_builds_4": true
+  },
+  "files": {
+    "apps/agentshield/internal/adapterinstall/install.go": "24c95be13395884e10316796daf6884f781ad95591939bf908c8c54cc144dc0a",
+    "apps/agentshield/internal/adapterinstall/plan.go": "aac4e7a4a7a4fb376b63306f721de471e00a1059b65c199f0ebd9d9e63aaff58",
+    "apps/agentshield/internal/adapterinstall/plan_uninstall.go": "08b0710413fb474bbc846d77487da916fffb45665deaeef97b57e25fb427a2f9",
+    "apps/agentshield/internal/adapterinstall/transaction.go": "afc0bbf55c7d6c854ee905c8c98400d4031c3a180e9610c1d098956bb1bb93ab",
+    "apps/agentshield/internal/adapterinstall/transaction_test.go": "2936a50e0cc0ad6e5b42cd57880b0abab53fd94b3b9a7313f0a1cc9feeabc114",
+    "apps/agentshield/internal/server/adapter_http.go": "944691a94ca89303f5f9a19d370477078a9455fa1ad944a7ad101fadd1b83446",
+    "apps/agentshield/internal/server/adapter_plan_test.go": "fd6c7caab21080635fc01aefde710142a5b38eb9c5a8b22883791f6fddbf1f65",
+    "apps/agentshield/cmd/agentshield/adapter.go": "ac4fd131f37156c6f22006129f60194f52acb580ac0797067ef3e635a6b88513",
+    "apps/web/src/local/components/AdapterChangeDialog.tsx": "105cf8b812f98b26d3ca879d3f898b3ca6949b07a888c2a7b72d6e2ad303bf2b",
+    "apps/web/src/local/api.ts": "406cc508688d5515012ddc61e19108d5ba17f8bebaf06b0efbeb2bc25fba9e26",
+    "apps/web/src/local/types.ts": "8e355e5878fd4f8e10b856d6d66052d0a33926d6e6d2f4d114414c283bc2660a",
+    "packages/contracts/local-adapter-plan.v1.schema.json": "8e535037e28e781fe2ef75a611911a690b002e18578d82fd20f65b3eed718c8d",
+    "apps/agentshield/testdata/contracts/adapter-plan.json": "2aaa6aac2aeb58a7af435b0eeebf6b39b2c75477eb2ecc6021c83633866ed726"
+  },
+  "remaining": [
+    "Hermes native enable per profile",
+    "revocable per-instance runtime self-check",
+    "historical records without file digests migration",
+    "Windows and macOS native file operations and crash recovery"
+  ],
+  "browser_binary_sha256": "353ef3ddd2249ffa2bbd20b7cc2a68df72dcfab56e7e73c82caed3f63d148f6b"
+}

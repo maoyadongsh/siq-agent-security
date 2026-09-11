@@ -31,6 +31,7 @@ const (
 
 func (s *Server) initPairing(supplied string) error {
 	s.sessions = map[string]time.Time{}
+	s.refreshSessions = map[[32]byte]refreshSession{}
 	if strings.TrimSpace(supplied) != "" {
 		norm := normalizePairing(supplied)
 		if norm == "" {
@@ -41,12 +42,10 @@ func (s *Server) initPairing(supplied string) error {
 		s.pairDeadline = time.Now().Add(pairingTTL)
 		return nil
 	}
-	var raw [8]byte
-	if _, err := rand.Read(raw[:]); err != nil {
+	display, err := newPairingCode()
+	if err != nil {
 		return err
 	}
-	hexed := hex.EncodeToString(raw[:])
-	display := hexed[0:4] + "-" + hexed[4:8] + "-" + hexed[8:12] + "-" + hexed[12:16]
 	s.pairDisplay = display
 	s.pairHash = sha256.Sum256([]byte(normalizePairing(display)))
 	s.pairDeadline = time.Now().Add(pairingTTL)
@@ -223,8 +222,7 @@ func (s *Server) auth(next http.HandlerFunc, caps ...capability) http.HandlerFun
 				return
 			}
 		case capDecision:
-			if subtle.ConstantTimeCompare([]byte(presented), []byte(s.d.Token)) != 1 {
-				writeJSON(w, 401, map[string]any{"error": "unauthorized"})
+			if !s.authorizeDecision(w, r, presented) {
 				return
 			}
 		default:
@@ -248,21 +246,45 @@ func (s *Server) pair(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var body struct {
-		Code string `json:"code"`
+		Code     string `json:"code"`
+		Remember bool   `json:"remember"`
 	}
-	if err := readJSON(r, &body, 4<<10); err != nil || strings.TrimSpace(body.Code) == "" {
+	if err := readJSON(r, &body, 4<<10); err != nil || strings.TrimSpace(body.Code) == "" || len(body.Code) > 256 {
 		writeJSON(w, 400, map[string]any{"error": "code required"})
 		return
+	}
+	if body.Remember && r.Header.Get("X-SIQ-Session") != "1" {
+		writeJSON(w, 403, map[string]any{"error": "session header required"})
+		return
+	}
+	// Allocate before consuming the one-time pairing code.
+	var refresh string
+	if body.Remember {
+		var err error
+		refresh, err = newSessionToken()
+		if err != nil {
+			writeJSON(w, 500, map[string]any{"error": "session unavailable"})
+			return
+		}
 	}
 	session, err := s.RedeemPairing(body.Code)
 	if err != nil {
 		writeJSON(w, 401, map[string]any{"error": err.Error()})
 		return
 	}
+	if body.Remember {
+		s.sessMu.Lock()
+		s.pruneSessionsLocked(time.Now())
+		expires := s.sessions[session]
+		s.refreshSessions[sha256.Sum256([]byte(refresh))] = refreshSession{Access: session, Expires: expires}
+		s.sessMu.Unlock()
+		s.setSessionCookie(w, r, refresh, int(adminSessionTTL.Seconds()))
+	}
 	w.Header().Set("Cache-Control", "no-store")
 	writeJSON(w, 200, map[string]any{
-		"session":    session,
-		"expires_in": int(adminSessionTTL.Seconds()),
-		"scope":      "admin",
+		"schema_version": "local-admin-session/v1",
+		"session":        session,
+		"expires_in":     int(adminSessionTTL.Seconds()),
+		"scope":          "admin",
 	})
 }

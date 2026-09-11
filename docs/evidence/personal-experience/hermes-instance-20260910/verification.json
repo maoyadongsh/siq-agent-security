@@ -1,0 +1,86 @@
+{
+  "schema_version": "personal-implementation-verification/v1",
+  "recorded_at": "2026-09-10T09:55:56.412030+00:00",
+  "stage": "M5-hermes-instance-native-configuration",
+  "source": "uncommitted current working tree",
+  "binary_sha256": "dbc695ff586e794f49461ca077367cf81fa9ed60e9e1cc6ef994fbad73311223",
+  "checks": {
+    "gofmt": "passed",
+    "go_vet_all": "passed",
+    "go_test_all": "passed",
+    "race_packages": [
+      "hermeshome",
+      "inventory",
+      "adapterinstall",
+      "server"
+    ],
+    "native_cli_tests": "passed; opt-in actual installed Hermes CLI",
+    "web_tests": 20,
+    "python_schema_tests": 86,
+    "browser_checks": 30,
+    "hermes_native_checks": 15,
+    "hermes_receipts_verified": 92,
+    "openclaw_native_regression_checks": 14,
+    "openclaw_receipts_verified": 92,
+    "real_binary_upgrade_checks": 5,
+    "cross_build_targets": 4,
+    "web_builds": [
+      "local",
+      "enterprise"
+    ],
+    "related_python_lint": "passed",
+    "launcher_regression_tests": 4
+  },
+  "source_sha256": {
+    "apps/agentshield/cmd/agentshield/adapter.go": "40001ebf08830d4d8e1bfcc6fbaf85834d6c73b15b10765cbb3a35fb1ee242f8",
+    "apps/agentshield/cmd/agentshield/main.go": "9abe00cf9832839b7bd93cbdcd45a4096ceb548cc16abe50639da0a7cce03ece",
+    "apps/agentshield/internal/hermeshome/roots.go": "3221dafb241c7d655199b50889c89db5698f0390da8fe6dbaf56a030aa00cac9",
+    "apps/agentshield/internal/inventory/inventory.go": "2a095e9adb0592c856cdc842492b954066f3075495c83ada336ef002da4e7665",
+    "apps/agentshield/internal/inventory/preview.go": "9a815c2e8e8cd6d1203e17be305260a370b280b99a5f641030c42dfeb96bba26",
+    "apps/agentshield/internal/adapterinstall/install.go": "abb0133fb9890aa080c117285e6973679a2d72480bf3957cf730cb4c5af674ae",
+    "apps/agentshield/internal/adapterinstall/plan.go": "99b12812003c76dc63ed5bfe38a24d048a442490b1de709d189aa250eee7593e",
+    "apps/agentshield/internal/adapterinstall/plan_uninstall.go": "7d00d34778864d5b59ebdfdd9bf02467eecb2a38f78f845624fe78edb8fa5c84",
+    "apps/agentshield/internal/adapterinstall/transaction.go": "9da94c035deaf8f5d9263d8488c538546963aa65b98742ddcc224740f17b6731",
+    "apps/agentshield/internal/adapterinstall/instance.go": "ffb5ff2a2d321bac38d8fe3bb8e9c99c725aad85d24607cd879fb373c6a5378a",
+    "apps/agentshield/internal/adapterinstall/hermes_native.go": "1f5503a6afc790474e5a4fb18dc4a097cb7433c42522256c25ff156f48063079",
+    "apps/agentshield/internal/adapterinstall/diagnostics.go": "d1e622a54920a2f46c2d3f658697f95e7194a71b0a80d431f732da48d10d0abe",
+    "apps/agentshield/internal/server/adapter_http.go": "4d5a9601190e5d29a6e827c8f293815a1df160b7fd0fa9996d5f5ed8cf6fb0ef",
+    "apps/agentshield/internal/server/adapter_instances.go": "25bc516b52fe01693adbfa8c40fce3fe9894ef60f08bb40422d3c7e1a33a4ba4",
+    "apps/agentshield/internal/server/server.go": "024f853ffedc896c80260801bd4292437b05b6fcaf05378bc4d9579ce0aba475",
+    "apps/agentshield/internal/server/discovery_http.go": "246d1e239ed471395ec2dcd733a33ae68a0cd966abac34c3da0e071f231f0ac5",
+    "apps/web/src/local/api.ts": "5cc6f93df8d6e5ff33eb5ef789fd4914fb87a34307bf12bda63d4eeae4bdc71b",
+    "apps/web/src/local/types.ts": "e8fc62b6d88f006a96be4c0230fa4f0cc20b98f7f8bde9dea2897ce36668d5d4",
+    "apps/web/src/local/components/AdapterChangeDialog.tsx": "6a59b9034836eb9e2bbba413814a900947bd50b8ee059dc874ad43df38ee0ad8",
+    "apps/web/src/local/pages/SettingsPage.tsx": "a8d0f09764fa1528c430f7d05d54d6408a0d7466de1cb1e91e96791d0d02c51c",
+    "apps/web/src/local/pages/BindingsPage.tsx": "814617f208f99e33d3c516d5c85b3fa1ee453e4f2822bbaab12a2920ff4e311c",
+    "apps/web/src/index.css": "167a516a4bc9e6e7de859fb398117d45bf8cf3d3d8f449aff094487829b1e312",
+    "packages/contracts/local-adapter-instances.v1.schema.json": "4d5f411dca6ad7156eec50e7502b26f7f99fb0d7f21e7645ae012e0fb30cc001",
+    "packages/contracts/local-adapter-plan.v2.schema.json": "6e5e7932b3d5b73c57c25340e95ee957bd32dd8cac5ca768afdac69d53893022",
+    "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+    "scripts/personal-experience/session-browser-smoke.py": "5df5ff507bc1056407ceded9e4b9fb867e2f042f213d38f0941bdb6d078ba770",
+    "scripts/personal-experience/adapter-upgrade-smoke.py": "76dde6897cc276d0887af19ddaab44856adff5581f8496985142b2a997586851",
+    "scripts/personal-experience/start-local.py": "8e93fb8cc0043a9c8c46c3c9fa178a1ece5b4d3addeab7bb44ad73ce32ccf600",
+    "scripts/personal-experience/test_start_local.py": "cc1d0a2ebc326c89b7906e4e77587678830888647da6ddc84e54737af89acbaf"
+  },
+  "log_sha256": {
+    "go-test.log": "375d6c294ecd179cb6e73900bbaa888ce09ea61b5321b3b0248f2a9ef29bd52b",
+    "go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-race.log": "d77fb254a50098c8cecc52ec54094385b66e7b2e56081181350726adde0b2269",
+    "hermes-native-cli.log": "14de36529b2ec51d1cafd70e592eb6940436b575e34d5665e9e4b09071eac7fc",
+    "web-local-build.log": "294f99a42f9d3c11113c47bec0702666b4975e7ccc00f97a67bea285336986d9",
+    "web-enterprise-build.log": "a3e7db4e70a65b05241c5687eede2908fedf75178a9a47b29abd112d0ca85617"
+  },
+  "evidence_sha256": {
+    "hermes-instance-native-20260910.json": "3438eeed887426ffa42ee6b3b9688fa29d32771887e9fc27e1a6820f609367cc",
+    "hermes-instance-upgrade-20260910.json": "1a0e0f44b63cffd521d0ec4e72ecfb876cdcac981e6dec7e90bd813ac4da84c2",
+    "openclaw-instance-regression-20260910.json": "dd838fc59d4f43c129fbb004ba5c1915cfb576f164de637150feaf7db43b2cf8",
+    "hermes-instance-browser-20260910/result.json": "a4787d79750a4b21e01f3f695c5c973c4f24320a469a5721a2b79e741331d8ad"
+  },
+  "limitations": [
+    "Linux arm64 runtime evidence only; cross builds are not native OS acceptance",
+    "synthetic profiles and operators; no user session self-check or human approval proof",
+    "runtime_state remains unverified; configuration readback does not create permissions",
+    "current installed Hermes CLI compatibility only; entrypoint hash is not the full dependency identity",
+    "WorkBuddy, OS isolation, automatic host restart and Windows crash-lock reclamation remain pending"
+  ]
+}

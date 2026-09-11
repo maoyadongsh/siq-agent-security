@@ -1,0 +1,165 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T14:57:07.488416+00:00",
+  "batch": "M15 unified confirmation inbox",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "candidate": {
+    "target": "linux/arm64",
+    "path": ".tmp/personal-experience/m15-linux-arm64",
+    "sha256": "fc3af1e959a930247e961768632609b0b6bbac33eac1f3f02f7a97a79c768b93",
+    "passed": true
+  },
+  "checks": [
+    {
+      "command": "go test ./...",
+      "passed": true,
+      "log": "go-test.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "go-vet.log"
+    },
+    {
+      "command": "go test -race ./internal/receipt ./internal/server",
+      "passed": true,
+      "log": "go-race.log"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "passed": true,
+      "log": "contract-test.log"
+    },
+    {
+      "command": "uv run ruff check app/tests/test_schema_contracts.py ../../scripts/personal-experience/confirmation-inbox-browser-smoke.py",
+      "passed": true,
+      "log": "python-lint.log"
+    },
+    {
+      "command": "npm test",
+      "passed": true,
+      "log": "web-test.log"
+    },
+    {
+      "command": "npm run build:local",
+      "passed": true,
+      "log": "web-local-build.log"
+    },
+    {
+      "command": "npm run build",
+      "passed": true,
+      "log": "web-enterprise-build.log"
+    },
+    {
+      "command": "gofmt -l apps/agentshield",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "git diff --check",
+      "passed": true,
+      "log": "diff-check.log"
+    }
+  ],
+  "test_counts": {
+    "contracts": 109,
+    "web": 20,
+    "browser": 13,
+    "hermes_native_regression": 20,
+    "openclaw_native_regression": 14
+  },
+  "builds": [
+    {
+      "target": "linux/amd64",
+      "command": "GOOS=linux GOARCH=amd64 go build -trimpath -o ../../.tmp/personal-experience/m15-linux-amd64 ./cmd/agentshield",
+      "path": ".tmp/personal-experience/m15-linux-amd64",
+      "exit_code": 0,
+      "sha256": "95cafb1c8c3b05f21ed630af422d64e3137bea3a93da560aa0a40fdc41647837"
+    },
+    {
+      "target": "linux/arm64",
+      "command": "GOOS=linux GOARCH=arm64 go build -trimpath -o ../../.tmp/personal-experience/m15-linux-arm64 ./cmd/agentshield",
+      "path": ".tmp/personal-experience/m15-linux-arm64",
+      "exit_code": 0,
+      "sha256": "fc3af1e959a930247e961768632609b0b6bbac33eac1f3f02f7a97a79c768b93"
+    },
+    {
+      "target": "darwin/arm64",
+      "command": "GOOS=darwin GOARCH=arm64 go build -trimpath -o ../../.tmp/personal-experience/m15-darwin-arm64 ./cmd/agentshield",
+      "path": ".tmp/personal-experience/m15-darwin-arm64",
+      "exit_code": 0,
+      "sha256": "dfc2a345ef1ef5fc313531470c214a84ac2fccdd8dc0f7b77bba7b35214b2cde"
+    },
+    {
+      "target": "windows/amd64",
+      "command": "GOOS=windows GOARCH=amd64 go build -trimpath -o ../../.tmp/personal-experience/m15-windows-amd64 ./cmd/agentshield",
+      "path": ".tmp/personal-experience/m15-windows-amd64",
+      "exit_code": 0,
+      "sha256": "6252dd32d512b4ab8325085e270d8e10ee72e96bd006621fb679aca03cb05d89"
+    }
+  ],
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/__init__.py": "66f6838d3ced6f1bfb5ff4f636ec17a5c71d046282e9d4d343826f70bc4d3442",
+    "apps/agentshield/internal/grant/expiry.go": "bf1462d963e370aabcd9159d100b6caa334550d9e61c32a90f6300373cda3875",
+    "apps/agentshield/internal/receipt/action_state.go": "b0ad87e634fbd5eb0c82b72b479f2292457bb45300bcb035901d393637a02fc7",
+    "apps/agentshield/internal/receipt/chain.go": "5f95d61af1203dce8fa5dc2061132268ab7ac2a7915accfa1cfaf7f41e0efb99",
+    "apps/agentshield/internal/receipt/confirmations.go": "4d5ec67b9b1b51a3e2cccd86cf52d2135f27cd895343772b05f02313c1700622",
+    "apps/agentshield/internal/receipt/confirmations_test.go": "e8b6c7a4e47e68bd1fb99ec606f01e6c42337b2fa3f172ea2ef79b099322138b",
+    "apps/agentshield/internal/receipt/engine.go": "df2bc4a6d8a206c539779ea105ff57f5af85a5750e85a2fbb97ff219e91058a0",
+    "apps/agentshield/internal/receipt/hold_status.go": "f8844f2a706b5ab313ed5123722584f697357ed60ace76a7f9bd43932ddc63f8",
+    "apps/agentshield/internal/receipt/intent.go": "62b4c7ed3493a805cf12656567aecdc2e3c88e8fdb8bf8b1c681d1ede700b0df",
+    "apps/agentshield/internal/server/confirmations.go": "3809dd98078c1cca5095373f54db83146451132d23c61cf67672c36b17392ed2",
+    "apps/agentshield/internal/server/confirmations_test.go": "9d5aa98a30d540a7167e847e644510bb6f2b2c6accd09e8c8561cafa0c562ffe",
+    "apps/agentshield/internal/server/runtime_identity.go": "eccfdc8889e0e2e6d650b76e1fa33ca07635beee3fe68993d923981807e27fc2",
+    "apps/agentshield/internal/server/runtime_identity_auth.go": "3a076eac26baf16e4def7066cfd311c24362e52076f8fa1c3b13c558c475fbb2",
+    "apps/agentshield/internal/server/server.go": "03e4088b58e722e22f8a266897c2ffa7e7dc9c150d2ea082c686672c919dca86",
+    "apps/agentshield/internal/ui/README.md": "76b0dd708bae3a790299f82a4f1e224963f4c78fcf0775e2baf72c877a4cd1c8",
+    "apps/agentshield/internal/ui/embedded/assets/index.local-BVXt01Rv.js": "805e7ea684001ae1276ff72b367ca5555df0cc380c182f9031f5b7a606112ffd",
+    "apps/agentshield/internal/ui/embedded/index.html": "23abce419b474bb869b5388a91d3c196285b23d06402aa930b8c2344224a066d",
+    "apps/agentshield/testdata/contracts/local-confirmation-resolve.v1.sample.json": "5980bf8cae5fa85ea5c7c3b57b8f5e4e0d590fdc585078dcf038b796e82c8022",
+    "apps/agentshield/testdata/contracts/local-confirmations.v1.sample.json": "7f2392f63c1f9a321d47db62ab900facc488c62e35db2cb184d51429e8b786a5",
+    "apps/control-api/app/tests/test_schema_contracts.py": "5d68ffecbad88cf3b4ae68bcb4c1881667ec441fae3d4c20105732bc9d54d2d2",
+    "apps/web/src/local/App.tsx": "a0dbe0947cb71d3c4ea37009574a23759783a5fcde5b608bae5d6d4183db2c73",
+    "apps/web/src/local/Layout.tsx": "925ac5bc7d3bd4f08a5a091e20fdef912e2c1a835ca69ef01936427108b2383a",
+    "apps/web/src/local/api.ts": "d86dd6c2d2bf4697f43c2c307acdd4955e2a7b8f669f6be912a689c7e11a0e52",
+    "apps/web/src/local/pages/ConfirmationsPage.tsx": "f30c6f4af8f4ecdb3ee16ea16f34771917e5f62c350e0cba662a27dcf5396d97",
+    "apps/web/src/local/pages/GrantsPage.tsx": "4cecfe8593483dacdafc83643779c27fd1c3f768073c204156239d2d6f08462e",
+    "apps/web/src/local/pages/ReceiptsPage.tsx": "7069cc68495fc00e9b8123a15edb80ff0d390e7a3d01ddd6b03b8ba268cbd919",
+    "apps/web/src/local/types.ts": "1961a46d1681eb7ed68b0a4f25f8e7af6b3455c3962df5bd1988a0038d34ab5e",
+    "docs/adr/0031-local-confirmation-inbox.md": "99bb58826350f696647bb0d2b7cb07c7d6479d15fbdaa78990c210bdf770a6d5",
+    "docs/agentshield-dev-spec-v1.md": "0c3f3acffc9c5ff55dcc9b4f966fcbbda68e85f0ec5b496d65d34d455c707de1",
+    "docs/personal-experience-development-progress-20260910.md": "4a01c19b32506200cf0545bbb5d5e70f4102953453b5fe3bd14e39ca812146fd",
+    "packages/contracts/local-confirmation-resolve.v1.schema.json": "ae4f2e21894870227923d4b4ebe1c85709ad2434c9ce75a2456e52cbce4bee12",
+    "packages/contracts/local-confirmations.v1.schema.json": "5c7274a56bc656fbdd732f6f85804f02cd860447d9c02f0cb1b4f64e3235d7fa",
+    "scripts/personal-experience/confirmation-inbox-browser-smoke.py": "e74343eff92e1e0091d555a43103deeea896361c296256333c0d037a107a9bbe",
+    "scripts/personal-experience/permission-revision-native-smoke.py": "bac995443b5cab4d7012c4de9534f385ddc8e0bc2fff36348adc4387cff5ceed",
+    "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+    "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e"
+  },
+  "artifacts_sha256": {
+    "browser/inbox-desktop.png": "f3363689dbe1ac923c8ebe4a228d77a9b438bd78c228aaf3fde57dadfd2fd967",
+    "browser/inbox-mobile.png": "36d25420a061d2d83bc3a96f2a8c6792ea9c8938727ec4c1aac0891d1b9797fe",
+    "browser/result.json": "af18f2325944690dd9156df30793e1aa619b236608f18798da3d7d41ec0989df",
+    "browser.log": "8f6ac832baa0b4af430770812a23ac93d1616ff137ccb89ac50171330d7ac866",
+    "contract-test.log": "517b7823177682fc1346658cf4730545ce103c6b112f13bac71603047071c222",
+    "diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-race.log": "00d8be9e9cfcbe2452dfdd960953e08a864c277b5d72eff75f88bc020329c0a2",
+    "go-test.log": "43b9db9ed6621427c02f40584741033641a2c9b1f6831f03733c49ffb64d3ac2",
+    "go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "hermes-native.json": "d69f7da7300c4814296b890db23690581ec798573d01e7cd33057e1f4aaa6c52",
+    "openclaw-native.json": "117d56324994c0c781b1dd2994f4850667b586f7b41dba530989d2bc19ea2412",
+    "python-lint.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "web-enterprise-build.log": "6fea840b6e380147a30db82455195fd2e9fcee9265ec3c29fb347818f938ed92",
+    "web-local-build.log": "52fe675cd72754d7dd30d9ade767f190eb1d06e3a7b978297a5e8726b087c74f",
+    "web-test.log": "a78c6665ed9f3b793bb3ca5665a670ff23f1c3cb57f1edc3ca4df4c0898dfa74"
+  },
+  "limitations": [
+    "Web inbox implemented; system notification delivery/merging and background launcher remain pending",
+    "Browser requests are synthetic legacy optional-Intent HTTP; no native execution is claimed for inbox test",
+    "Browser virtual clock only tests client expiry; server exact deadline, withdrawal, concurrent approval and audit failure are Go negative tests",
+    "Hermes approval does not yet resume a blocked original tool call",
+    "Windows/macOS and WorkBuddy native product acceptance remain pending; cross-compilation is not OS validation"
+  ]
+}

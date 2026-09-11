@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/intent-grant-bind.v1.schema.json",
+  "title": "Explicit session Grant selection request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "platform",
+    "session_id",
+    "agent_id",
+    "intent_id",
+    "grant_id",
+    "expected_grant_revision"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "intent-grant-bind/v1"
+    },
+    "expected_grant_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "platform": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "intent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "expires_at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    }
+  }
+}

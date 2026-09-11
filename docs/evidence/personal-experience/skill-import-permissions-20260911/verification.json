@@ -1,0 +1,636 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "recorded_at": "2026-09-10T17:03:43.981396+00:00",
+  "batch": "M20 immutable import source, permission draft and human approval",
+  "git_head": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_changes": true,
+  "candidate": {
+    "target": "linux/arm64",
+    "path": ".tmp/personal-experience/m20-linux-arm64",
+    "sha256": "e908f4b6661eea2020a412324677ab9d84dce1b5c845d2d0c7244243afaf72fd",
+    "command": [
+      "go",
+      "build",
+      "-o",
+      "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m20-linux-arm64",
+      "./cmd/agentshield"
+    ],
+    "passed": true,
+    "log": "build-linux-arm64.log"
+  },
+  "checks": [
+    {
+      "command": "gofmt -l .",
+      "passed": true,
+      "log": "gofmt.log"
+    },
+    {
+      "command": "go vet ./...",
+      "passed": true,
+      "log": "vet.log"
+    },
+    {
+      "command": "go test ./... -count=1",
+      "passed": true,
+      "log": "go-all.log"
+    },
+    {
+      "command": "go test -race ./internal/skillimport ./internal/server ./internal/grant ./internal/state ./cmd/agentshield -count=1",
+      "passed": true,
+      "log": "race.log"
+    },
+    {
+      "command": "go test ./internal/server ./cmd/agentshield ./internal/skillimport -run 'TestImportedPermission|TestOfflineGrantActions|TestPermissionSource' -count=1",
+      "passed": true,
+      "log": "permissions-tests-final.log"
+    },
+    {
+      "command": "uv run pytest app/tests/test_schema_contracts.py -q",
+      "passed": true,
+      "log": "contracts.log"
+    },
+    {
+      "command": "uv run ruff check app/tests/test_schema_contracts.py ../../scripts/personal-experience/skill-import-permissions-browser-smoke.py ../../scripts/personal-experience/skill-import-browser-smoke.py",
+      "passed": true,
+      "log": "python-lint.log"
+    },
+    {
+      "command": "npm test",
+      "passed": true,
+      "log": "web-tests.log"
+    },
+    {
+      "command": "npm run build:local",
+      "passed": true,
+      "log": "web-local.log"
+    },
+    {
+      "command": "npm run build",
+      "passed": true,
+      "log": "web-enterprise.log"
+    },
+    {
+      "command": "python3 scripts/personal-experience/skill-import-permissions-browser-smoke.py --binary .tmp/personal-experience/m20-linux-arm64 --out-dir docs/evidence/personal-experience/skill-import-permissions-20260911/browser",
+      "passed": true,
+      "log": "permission-browser.log"
+    },
+    {
+      "command": "python3 scripts/personal-experience/skill-import-browser-smoke.py --binary .tmp/personal-experience/m20-linux-arm64 --out-dir docs/evidence/personal-experience/skill-import-permissions-20260911/local-browser",
+      "passed": true,
+      "log": "local-browser.log"
+    },
+    {
+      "command": "python3 scripts/personal-experience/skill-import-remote-browser-smoke.py --binary .tmp/personal-experience/m20-linux-arm64 --out-dir docs/evidence/personal-experience/skill-import-permissions-20260911/remote-browser",
+      "passed": true,
+      "log": "remote-browser.log"
+    },
+    {
+      "command": "python3 scripts/personal-experience/skill-import-smoke.py --binary .tmp/personal-experience/m20-linux-arm64 --out-dir docs/evidence/personal-experience/skill-import-permissions-20260911/cli-http",
+      "passed": true,
+      "log": "cli-http.log"
+    }
+  ],
+  "builds": [
+    {
+      "target": "linux/arm64",
+      "path": ".tmp/personal-experience/m20-linux-arm64",
+      "sha256": "e908f4b6661eea2020a412324677ab9d84dce1b5c845d2d0c7244243afaf72fd",
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m20-linux-arm64",
+        "./cmd/agentshield"
+      ],
+      "passed": true,
+      "log": "build-linux-arm64.log"
+    },
+    {
+      "target": "linux/amd64",
+      "path": ".tmp/personal-experience/m20-linux-amd64",
+      "sha256": "4456abd5f756c8753ee18ee8e51e0d8e771de1c97f161c5419de078c7ba56932",
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m20-linux-amd64",
+        "./cmd/agentshield"
+      ],
+      "passed": true,
+      "log": "build-linux-amd64.log"
+    },
+    {
+      "target": "darwin/arm64",
+      "path": ".tmp/personal-experience/m20-darwin-arm64",
+      "sha256": "2e36a15929d485765a2c5ee2df0ebc52423b756406192b7cce384d5eeaad7a8e",
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m20-darwin-arm64",
+        "./cmd/agentshield"
+      ],
+      "passed": true,
+      "log": "build-darwin-arm64.log"
+    },
+    {
+      "target": "windows/amd64",
+      "path": ".tmp/personal-experience/m20-windows-amd64.exe",
+      "sha256": "3e26c1c41cd2ec119922e9a322a06c39de75aa6a5f434a198ab163da7c7b3762",
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "/home/maoyd/siq/siq-agent-security/.tmp/personal-experience/m20-windows-amd64.exe",
+        "./cmd/agentshield"
+      ],
+      "passed": true,
+      "log": "build-windows-amd64.log"
+    }
+  ],
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "dd94cce900fdbc985c453e265f5da93d3fcb74397ad6088c85d94762f26160d0"
+    },
+    {
+      "path": "apps/agentshield/AGENTS.md",
+      "sha256": "e505ccf7d2a4b6540950bc4a6983f85034ac2e1aa8cfb06ff2fd0f0e722a1e82"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/grant.go",
+      "sha256": "c63e621a4bfb1b20f46c23e0646a78b5f68464656c868708f5bfced8c789dcbb"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/import_permission_test.go",
+      "sha256": "52f43fa1869c432fb59e924805b09d0f87dcd6fe56a79e618fc4353486c669c3"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/skill_import.go",
+      "sha256": "ff85db41a45022a80e8ee1a7774d84c58fa5070d94c071e5705c39c88b19fd37"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/skill_import_test.go",
+      "sha256": "3057a90badd5f8ab3f3f71b49ae01c6728375fbb150fd763ad25409880d4a5f1"
+    },
+    {
+      "path": "apps/agentshield/go.mod",
+      "sha256": "76d4db76c1f3cac2668814e3159de6cdabf9ee6947095f0bb387b194012beb6a"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/admission.go",
+      "sha256": "0c3b2e020db321df55146a22b1028313727cd9122e64250bbe9cbc8cb053bf29"
+    },
+    {
+      "path": "apps/agentshield/internal/admission/admission_test.go",
+      "sha256": "f7c1a21bfff2562b5efe073a558a635428f7b1f9ba9fd5d0d1b510d057d58153"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/challenge.go",
+      "sha256": "007eb553afc3827b1382d2c8fa89112d2190913804327d3867e615fcdd084b9a"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/grant.go",
+      "sha256": "4bd7db290307a3ebc070fad2939c4abd44c7c5fcdd7ac67cda9fc6a6b4a831be"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/import.go",
+      "sha256": "df286cf9f89d12abebadc247b602dd16da90446f0802ea85b38cd9755af6062c"
+    },
+    {
+      "path": "apps/agentshield/internal/importsource/source.go",
+      "sha256": "40348faf2bab19d329e6f2d07cba7d1806a12bc45d494320beb12ce3b60df0c3"
+    },
+    {
+      "path": "apps/agentshield/internal/server/server.go",
+      "sha256": "21855061b1bcefeecc4527d34a68593b4cf2f57384852b47527a57e918d35394"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_import.go",
+      "sha256": "c925a9f2ef85abb4fbd93980e3077c3662d8be43017c25d14eebc70b737a9253"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_import_permissions.go",
+      "sha256": "d38b8f78696deb6922611e2493ef94115475cbfc0b338bbeb540163b95d771cb"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_import_permissions_test.go",
+      "sha256": "748335fb271b77b633fbb0e5c0861876e7967defbad56ef610b68b1a90279d3d"
+    },
+    {
+      "path": "apps/agentshield/internal/server/skill_import_test.go",
+      "sha256": "3d2d2c6c2424cdf367e2fcb74ed61d82d45888ce79151e3cf296add9bad8fdc5"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/download.go",
+      "sha256": "a6cc5bcae2d22e483b322f71afd590ae18409e8ffcdee54eb464ebfbddaf24c3"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/download_test.go",
+      "sha256": "f2b04fd73b1c273d122d79488bb70494681a231f6ce6ae57618afc7729d1e2bf"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/list.go",
+      "sha256": "39a28567864446662f7ada2d3591553372cbe81f08f844e486c8803c065ecdbc"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/list_test.go",
+      "sha256": "915e373b37443339d9379a4e9a38040cbbdb10441895da56d49d5e65e18cb9a1"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/permissions.go",
+      "sha256": "1a42886d53285aa93748ec238b154f1cd4d45f87f68f6e42cb291ddc5d07061f"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/permissions_test.go",
+      "sha256": "21a783c557014ec5165b8632774e969604e95f7b7a48e19dc06b1292701cc305"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/remote.go",
+      "sha256": "ee232ce12d51df6b2114a10dc002007a1b96727e11fe7a1369c632acd4d26ce9"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/remote_test.go",
+      "sha256": "8f4527341a4227f75c6abf331672e3e62aa62f371235a5c62050f1467cbfb532"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/result.go",
+      "sha256": "522d2b3dfdd3b2dc11060b66ab3ccf4d3c3bde8ed054dd58d441a1093d114e5d"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/store.go",
+      "sha256": "8136bb3a857412514d2c664557a042cca5050d67f879b4f24af4eceb16aa79ec"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/store_test.go",
+      "sha256": "3973618fc798cecebd68dc90c73bbd03fe3f1a0ce41ad8c88b81e6476ca2a6ce"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/tree.go",
+      "sha256": "354149b03b849cfb80b3a5b39ded7dce7cc2f65bddd264ec74798c731c630c35"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/zip.go",
+      "sha256": "c369b7e07c3509f60e00b74d3d99de41b32dfb9bba2ab973f6cc53405ad86d4a"
+    },
+    {
+      "path": "apps/agentshield/internal/state/commit.go",
+      "sha256": "4fa047d80889ea883b0f6609cb94470b8637be310f40a280988d65bcd642750f"
+    },
+    {
+      "path": "apps/agentshield/internal/state/import_admission.go",
+      "sha256": "67f15eabced11dcf25d13bbda9e8559172ee405efc5e6452a6c3b161127797d2"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/README.md",
+      "sha256": "62c4b63d69ce6a052682ed300e14e171a0df5fd886908411ecd05bf9345e5061"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/DemoPage-DXBHecL7.js",
+      "sha256": "120fde986d412cba05dcde06dbd70ebb134f1e3c4b684a5128785c6b343ec9c2"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/DemoPage-OjGN14LE.css",
+      "sha256": "5f1e0a71e1c693e739b097f240ba7266c6a94bbbd8b1235be9230327287ee1f4"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/SkillImportsPage-CAX3rDz9.js",
+      "sha256": "58678f4068ce621219690d5d4e69b9b430cc298da2aa3a5675ecaac8c870b2dd"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/index-oIYcd-1M.css",
+      "sha256": "9247178afce4e6aefdf6e7366455455167ba6215a7873137e50e3e02263e0e9e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/index.local-1Owjp_h8.js",
+      "sha256": "b1e10dd1a95434fd9899684f60d7e2f51bdf36d9989b99e496eef41d3db9903e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/index.html",
+      "sha256": "d3a41268c798a75b3c8442578be4b8fce4659f8e94d4c6539f01e1e4354de0ab"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import-create.v1.sample.json",
+      "sha256": "87cd6468d8dcf44e553b068804c9bdf3b3de8e9e05facf5e4afecb7cbdf77d17"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import-list.v1.sample.json",
+      "sha256": "935dab98baf13742ff4e79cf01329d1e6cc42b76a44204408a45239721d0219c"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import-list.v2.sample.json",
+      "sha256": "22032b0a607d61a03f565f57a0147a3a3c30499f66f4ea90beca367a8e28b91a"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import-permission-create.v1.sample.json",
+      "sha256": "7991dd6998dbb1d81c1d3e2cc1700d0fa39bf4637043a9d624ed8e44dfb8d9a0"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import-permission-created.v1.sample.json",
+      "sha256": "e1eda0794cdc1762d379b83749c0f7219481bc7ccd95d40d2525842ebb93fbe9"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import-permission-source.v1.sample.json",
+      "sha256": "1df4302ce823e75adbd4ea30f9889321ec1be57014d2e36835de4fed0c018f20"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import-remote-create.v1.sample.json",
+      "sha256": "a63f8ddcc6d20fa926560e37d56b11c7d24b68069d368f38d12660b094fbeb46"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import-result.v1.sample.json",
+      "sha256": "064f32f5cae5d5f3afbe2e8b47f81e2173e19010bae7db9adb1a959780649ccf"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import-result.v2.sample.json",
+      "sha256": "e60cbdc6f920f7aa243711895c25c4d65874f535e3293b3eb6092c9ff28dff18"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import.v1.sample.json",
+      "sha256": "1f505add6176cde79ee1076ff652247138136e1c933d294da8b89e07f7b08ddb"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/local-skill-import.v2.sample.json",
+      "sha256": "58e4c77c0f545f390a8f56833b530568a5080bda63069de4ea9edc31954a727c"
+    },
+    {
+      "path": "apps/control-api/app/tests/test_schema_contracts.py",
+      "sha256": "7371f4ffacc96872bad0b5c346bc0bf9794621eb86c22e2ed211d7a4d887e28b"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "sha256": "819440b42e5f69b8bc8ff73b88b515d94c7f4d83556d9866bdabb04f6678fdc2"
+    },
+    {
+      "path": "apps/web/src/local/App.tsx",
+      "sha256": "acf4f0bd802f7fef7443866119be875d038817837e1ab0c23e071ffd460b8ced"
+    },
+    {
+      "path": "apps/web/src/local/Layout.tsx",
+      "sha256": "c67801c2c236c0e4d2da3c3aa1fab2e71676edd7c94ead2d64717ca10820c969"
+    },
+    {
+      "path": "apps/web/src/local/api.test.ts",
+      "sha256": "fe7c13c349d90a40766aafc29b6988dd4601b90cff77c96d1d75cfaef5d900ba"
+    },
+    {
+      "path": "apps/web/src/local/api.ts",
+      "sha256": "a04f93ecaefc247ffcd1f8a15dc45d33db7436b28cb3314da9130bd92745d186"
+    },
+    {
+      "path": "apps/web/src/local/components/ImportGrantSource.tsx",
+      "sha256": "fb3db319f408cadca63b8b705c6eaadd5a99b5a4b0f22a035a9348e5f7897989"
+    },
+    {
+      "path": "apps/web/src/local/components/ImportPermissionPanel.tsx",
+      "sha256": "04570c592e5224f07d7e64d9df21ddb67802332b3457f3347afd9b57b9441b63"
+    },
+    {
+      "path": "apps/web/src/local/importPermissions.test.ts",
+      "sha256": "909d10435b506e4343ac9d2428d8d8b53e50a41e46d6b988f6286ad52ef21a9b"
+    },
+    {
+      "path": "apps/web/src/local/importPermissions.ts",
+      "sha256": "40496c19adf65df1fea59c277db9cf95d00c17e12d3c260b0396c575463330bd"
+    },
+    {
+      "path": "apps/web/src/local/pages/AgentsPage.tsx",
+      "sha256": "9285d733c15d2e566ea3ecfcd43389572669cc03faafc08b94bd8f3ba3e93b49"
+    },
+    {
+      "path": "apps/web/src/local/pages/GrantsPage.tsx",
+      "sha256": "84d0d1c7b7769cdd7f60467d57c306836a88c2e4b6e761078d26542d6a7a46a0"
+    },
+    {
+      "path": "apps/web/src/local/pages/SkillImportsPage.tsx",
+      "sha256": "cdf807b50831215aa5f7482e6a21c0003d0b032999cff125d03f81b09b2706d4"
+    },
+    {
+      "path": "apps/web/src/local/skillImports.test.ts",
+      "sha256": "06c02fad2bea8197d85a9f537cb3f0e4be0909f641c5e22260687f7aa3f5b074"
+    },
+    {
+      "path": "apps/web/src/local/skillImports.ts",
+      "sha256": "8eb902931774f9c1fd46abc4ff47ef1bf5a4e4d77d02ecda73dc0a076ebe1faf"
+    },
+    {
+      "path": "apps/web/src/local/types.ts",
+      "sha256": "b62f79ad2fa3a50ed21b8457929f01cb372ed7d15a0035fe9a04f02a9193c0b0"
+    },
+    {
+      "path": "docs/adr/0034-skill-import-review.md",
+      "sha256": "e0436be36d1f675626f3a3b60e26cec0cc9e7948018094b0cfa97b802e9aab79"
+    },
+    {
+      "path": "docs/adr/0035-https-skill-import.md",
+      "sha256": "a1056c4d96ca3ff1cffbf5b8b0cb7d2cfe1fb9bedf217f09376cb09f74c98980"
+    },
+    {
+      "path": "docs/adr/0036-import-permission-preparation.md",
+      "sha256": "3e0e6a20b838cc9cc13145dc971f7fa74008cce3267162dee7103015919b98ec"
+    },
+    {
+      "path": "docs/agentshield-dev-spec-v1.md",
+      "sha256": "d514cf7fe1c599a5fbc7feca76fb2e75e41a4410de19fa8d1b481fd99af804c6"
+    },
+    {
+      "path": "docs/personal-experience-development-progress-20260910.md",
+      "sha256": "926f0178b8455583b6cf25917b1026fce86de2aab9d20e2d9819d58406fd20bd"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-create.v1.schema.json",
+      "sha256": "d4e462a94f1ba1ceea445c4223d93ae9d063e42c75c190955c4b6a2c344744f8"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-list.v1.schema.json",
+      "sha256": "630e5a828873a6a2f79145a89e3fe7f4106439173e41f8773af7f4371d1e47f3"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-list.v2.schema.json",
+      "sha256": "1623fcbaff46a638fcb9d19b834e1917e58223f1ce8afab9eb90237c882e573a"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-permission-create.v1.schema.json",
+      "sha256": "65af0ceb4d7a6e9916d528ab0034664f122e10a40d3e1065691494e466e73b59"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-permission-created.v1.schema.json",
+      "sha256": "3d8de50cae51b49f9d26e2bc675c45f2180e826de75e3836e049ce1a254597be"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-permission-source.v1.schema.json",
+      "sha256": "b157c329405e7e97d6777c342f3ce8bc316b8bdd2f7f9ff09f5ff7777c9e0246"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-remote-create.v1.schema.json",
+      "sha256": "398c714a35962a2d7de7e1b6ddb481d4c88d09dc0e27880724f064c58d23d189"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-result.v1.schema.json",
+      "sha256": "2946d6e33364a33953d66d0f027b38c09b600ce0c460c394e33a5572f3315db0"
+    },
+    {
+      "path": "packages/contracts/local-skill-import-result.v2.schema.json",
+      "sha256": "e730b3599483aeca934bc6f0575e862aa52f98f6418ff33b9ead8036c5e519c0"
+    },
+    {
+      "path": "packages/contracts/local-skill-import.v1.schema.json",
+      "sha256": "e679664fb22bfc214c053fc1a6b8fb332998112dbc2a02f46ed4842c6a7b8a48"
+    },
+    {
+      "path": "packages/contracts/local-skill-import.v2.schema.json",
+      "sha256": "51bc183c6184753f0ccd2ee4afdd6c32438e515e5c791427161bc62fd762f5e4"
+    },
+    {
+      "path": "scripts/personal-experience/skill-import-browser-smoke.py",
+      "sha256": "de25ed2a90abef014cb47890ad667261cec1933eb0b1afd0cd63dce1b82f5bd4"
+    },
+    {
+      "path": "scripts/personal-experience/skill-import-permissions-browser-smoke.py",
+      "sha256": "334a47217321d7e4f3bed63d8a4b41b13b2379743a16ede25829f7eef2a684af"
+    },
+    {
+      "path": "scripts/personal-experience/skill-import-remote-browser-smoke.py",
+      "sha256": "33259e1625810d17273047a57612a7ce94bde3b49ca916f55a250767038290df"
+    },
+    {
+      "path": "scripts/personal-experience/skill-import-smoke.py",
+      "sha256": "5b621ff512bffcd284f60914414889593b46f4f045341d59bbc9228640390462"
+    },
+    {
+      "path": "scripts/validate-intent-v2-hermes.py",
+      "sha256": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/browser/permission-approved-desktop.png",
+      "sha256": "32c89531f1c79bd1f368938703b9459c89cba40a725698aa1fc5dca0a7bb3194"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/browser/permission-source-mobile.png",
+      "sha256": "3da9d53a59bd6a29a6be1e45ee8fc47c7720e6c3a0a1f1bff0f5533bc384c509"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/browser/result.json",
+      "sha256": "ebb54b16d9954e3ce67f739e7122223fb90a089094d796ba0325ccb353f9b09f"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/build-darwin-arm64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/build-linux-amd64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/build-linux-arm64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/build-windows-amd64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/cli-http/result.json",
+      "sha256": "bfe1fcad90a42d11d536808aebc1a86cfbc77dcfcbcaf7e7baadbc5e79314c5c"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/cli-http.log",
+      "sha256": "20cad602474a5b8fe0204fb9d0e47851cb6a4208e4c1c345fe639b96d76ff07d"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/contracts.log",
+      "sha256": "847821bbcb26f94e35d5df44c22018882767404cef6e2d26518e7dd189f7687a"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/go-all.log",
+      "sha256": "ba74c435c52ad3b18b34ea7ce580cb33667de562ff493c9966cff87d006b2bee"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/local-browser/import-desktop.png",
+      "sha256": "6081ad27251de2f9e1999a20faff968e8aca3a8c6e615c9ac8475499179f01f8"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/local-browser/import-mobile.png",
+      "sha256": "ccdf151fa496af818fb92cb307080867a3ba3a252151197d01f8e77dc704e08e"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/local-browser/quarantine-text.png",
+      "sha256": "c7cafeb6fbe2669a81e1135e8ed7beab7c05d587302d338c88e98b306e4dc45e"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/local-browser/result.json",
+      "sha256": "54e63b583ae1eac4570e90b0b827b274890612e42934f6570342706e52ab4908"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/local-browser.log",
+      "sha256": "47492fa52852c75a2d27a3d58347082b737295031347eeddfa81512df33772dc"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/permission-browser.log",
+      "sha256": "1fea6ac5cee103a1e848c9f4542e7d36ee9ffe45f94c33880cd13e0d6bd509be"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/permissions-tests-final.log",
+      "sha256": "707425c499be12d3fda242d10a542a7b8110326d1d946ea45d42a70bd28fc44d"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/python-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/race.log",
+      "sha256": "88bbb57b15c819610151b11ee34178037d7e6fa9b6168000d410fc342c20bf9b"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/remote-browser/remote-form-desktop.png",
+      "sha256": "f79c85301c3f0d6dc8f12eda8fa0100c76403e2deecdf16a741b1365ac7f674a"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/remote-browser/remote-form-mobile.png",
+      "sha256": "ac4d39ed6ba02f2624b972a6d6456a15b826529c4981330497e087cb6c4afa8d"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/remote-browser/remote-result-fixture.png",
+      "sha256": "f2f0d61c5abbd01b8d85223a696987bfe19d6383289b2e47bf315b6882b1cfec"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/remote-browser/result.json",
+      "sha256": "5c98c48ce7ed3c88543a6457410c287025d706156a5a2ec3b2c606304ba21a4d"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/remote-browser.log",
+      "sha256": "3b8a679ccc540095dc5f8d54a7dca83be0fa2b56789b79478c224304a02bc70d"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/web-enterprise.log",
+      "sha256": "08d27f1084e6a60bd526d352dc5e2819df0c54980fa238d34645f81655a1afd7"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/web-local.log",
+      "sha256": "e284654c36ad53dba50683286caba69aa10c0c3fda80c1c2da9bf8eff9e06e0d"
+    },
+    {
+      "path": "docs/evidence/personal-experience/skill-import-permissions-20260911/web-tests.log",
+      "sha256": "761710e61fe853af1a909e0d926e42b52d142bb0b0f8ee308bd83bb11e9e57a6"
+    }
+  ],
+  "limitations": [
+    "Permission target is resolved from an isolated Hermes configuration; no native host execution or Skill installation",
+    "Imported permission remains undeployable until installation and target readback are implemented; no effective/runtime credential claim",
+    "Remote browser successful response uses explicit Go DTO fixture, as in M19; new permission browser flow uses real daemon commits",
+    "No Windows/macOS/WorkBuddy acceptance; cross builds do not prove OS runtime support",
+    "No complete downgrade protection for older binaries yet; release/upgrade gates remain pending",
+    "Current user daemon and real platform configuration untouched",
+    "Goal active; UX-007/009 incomplete; LAN phase not started"
+  ]
+}

@@ -1,8 +1,11 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './Layout';
+const SkillUpdatesPage = lazy(() => import('./pages/SkillUpdatesPage'));
+const InstalledSkillsPage = lazy(() => import('./pages/InstalledSkillsPage'));
+const SkillImportsPage = lazy(() => import('./pages/SkillImportsPage'));
 import { Icon } from '@/components/icons';
-import { boot, localApi, pair, LocalApiError } from './api';
+import { boot, localApi, pair, restoreSession, logout, onSessionExpired, LocalApiError } from './api';
 import { LocalSessionContext, readActorId, writeActorId, type LocalSession } from './session';
 import type { Status } from './types';
 import OverviewPage from './pages/OverviewPage';
@@ -11,6 +14,7 @@ import AgentDetailPage from './pages/AgentDetailPage';
 import PermissionsPage from './pages/PermissionsPage';
 import FindingsPage from './pages/FindingsPage';
 import GrantsPage from './pages/GrantsPage';
+import ConfirmationsPage from './pages/ConfirmationsPage';
 import ReceiptsPage from './pages/ReceiptsPage';
 import BindingsPage from './pages/BindingsPage';
 import SettingsPage from './pages/SettingsPage';
@@ -32,6 +36,8 @@ function LocalAdminApp() {
   const [needsPairing, setNeedsPairing] = useState(false);
   const [pairingCode, setPairingCode] = useState('');
   const [pairingBusy, setPairingBusy] = useState(false);
+  const [bootFailed, setBootFailed] = useState(false);
+  const [bootAttempt, setBootAttempt] = useState(0);
 
   const setActorId = useCallback((id: string) => {
     const next = id.trim() || 'local';
@@ -50,7 +56,7 @@ function LocalAdminApp() {
         setStatus(null);
         if (err instanceof LocalApiError && err.status === 401) {
           setNeedsPairing(true);
-          setError('管理会话仅保存在本页内存。刷新后请重启 serve 以获取新的配对码。');
+          setError('管理会话已失效。请运行 siq-agent-security pair 获取新配对码，无需重启服务。');
           return;
         }
         setError(err instanceof Error ? err.message : '决策 API 不可达');
@@ -58,19 +64,43 @@ function LocalAdminApp() {
   }, []);
 
   useEffect(() => {
-    boot()
-      .then((cfg) => {
-        setNeedsPairing(Boolean(cfg.pairing_required));
+    let cancelled = false;
+    setReady(false);
+    setBootFailed(false);
+    setError(null);
+    boot().then(async (cfg) => cfg.session_recovery && await restoreSession())
+      .then((restored) => {
+        if (cancelled) return;
+        setNeedsPairing(!restored);
         setReady(true);
-        if (!cfg.pairing_required) {
-          reload();
-        }
+        if (restored) reload();
       })
       .catch((err: unknown) => {
+        if (cancelled) return;
         setReady(true);
+        setBootFailed(true);
         setError(err instanceof Error ? err.message : '无法启动本地控制台');
       });
-  }, [reload]);
+    return () => { cancelled = true; };
+  }, [reload, bootAttempt]);
+
+  useEffect(() => onSessionExpired(() => {
+    setStatus(null);
+    setNeedsPairing(true);
+    setError('管理会话已失效。请运行 siq-agent-security pair 获取新配对码。');
+  }), []);
+
+  const signOut = useCallback(async () => {
+    try {
+      await logout();
+      setStatus(null);
+      setError(null);
+      setNeedsPairing(true);
+      setPairingCode('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '退出失败，请重试');
+    }
+  }, []);
 
   const submitPairing = (event: FormEvent) => {
     event.preventDefault();
@@ -78,6 +108,7 @@ function LocalAdminApp() {
     setError(null);
     pair(pairingCode)
       .then(() => {
+        setPairingCode('');
         setNeedsPairing(false);
         reload();
       })
@@ -88,8 +119,8 @@ function LocalAdminApp() {
   };
 
   const session = useMemo<LocalSession>(
-    () => ({ status, error, actorId, setActorId, reload }),
-    [status, error, actorId, setActorId, reload],
+    () => ({ status, error, actorId, setActorId, reload, signOut }),
+    [status, error, actorId, setActorId, reload, signOut],
   );
 
   if (!ready) {
@@ -99,10 +130,19 @@ function LocalAdminApp() {
           <span className="icon-spin" aria-hidden="true">
             <Icon name="loading" size={18} />
           </span>
-          正在连接本地决策 API…
+          正在连接本地服务…
         </div>
       </div>
     );
+  }
+
+  if (bootFailed) {
+    return <main className="login-shell"><section className="login-card">
+      <h1>暂时无法打开本地管理</h1>
+      <p className="login-desc" role="alert">{error}</p>
+      <p className="login-desc">运行 <code>siq-agent-security status</code> 检查服务；尚未启动时，运行 <code>siq-agent-security serve</code>。</p>
+      <button type="button" className="btn btn-primary" onClick={() => setBootAttempt((attempt) => attempt + 1)}>重新连接</button>
+    </section></main>;
   }
 
   if (needsPairing) {
@@ -123,11 +163,10 @@ function LocalAdminApp() {
               <Icon name="shield" size={14} />
               管理配对
             </p>
-            <h1>输入启动配对码</h1>
+            <h1>连接你的本地管理台</h1>
             <p className="login-desc">
-              配对码打印在 <span className="mono">siq-agent-security serve</span> 的终端上，5
-              分钟内单次有效。同 UID 进程仍可读状态目录；这不能防止被注入的 Agent 直接执行
-              CLI。
+              输入启动服务时显示的配对码，或运行 <span className="mono">siq-agent-security pair</span> 获取新码。
+              配对码 5 分钟内单次有效。配对后可在 12 小时内刷新页面继续使用；服务重启后需重新配对。
             </p>
           </div>
           <form className="login-form" onSubmit={submitPairing}>
@@ -150,6 +189,9 @@ function LocalAdminApp() {
               {pairingBusy ? '配对中…' : '建立管理会话'}
             </button>
           </form>
+          <details className="login-desc"><summary>本机安全边界</summary>
+            同一系统用户下的进程可能读取本地状态或执行 CLI。管理配对隔离浏览器访问与智能体决策接口；更强的进程隔离需相应运行环境支持。
+          </details>
         </section>
       </main>
     );
@@ -165,6 +207,10 @@ function LocalAdminApp() {
           <Route path="/agents/:id" element={<AgentDetailPage />} />
           <Route path="/permissions" element={<PermissionsPage />} />
           <Route path="/findings" element={<FindingsPage />} />
+          <Route path="/confirmations" element={<ConfirmationsPage />} />
+          <Route path="/skill-updates" element={<Suspense fallback={<p role="status">正在打开 Skill 更新…</p>}><SkillUpdatesPage /></Suspense>} />
+          <Route path="/installed-skills" element={<Suspense fallback={<p role="status">正在打开安装记录…</p>}><InstalledSkillsPage /></Suspense>} />
+          <Route path="/skill-imports" element={<Suspense fallback={<p role="status">正在打开 Skill 导入…</p>}><SkillImportsPage /></Suspense>} />
           <Route path="/grants" element={<GrantsPage />} />
           <Route path="/receipts" element={<ReceiptsPage />} />
           <Route path="/bindings" element={<BindingsPage />} />

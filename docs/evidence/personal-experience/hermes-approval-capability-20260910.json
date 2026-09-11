@@ -1,0 +1,21 @@
+{
+  "schema_version": "personal-platform-capability-inspection/v1",
+  "recorded_at": "2026-09-10T15:01:55.750137+00:00",
+  "platform": "hermes",
+  "method": "read-only inspection of installed source; no native execution",
+  "sources": {
+    "/home/maoyd/siq/hermes-agent/hermes_cli/plugins.py": "63cef01ae81a23c859170d36860c9ac257f320266a88640a8b9690952728bba6",
+    "/home/maoyd/siq/hermes-agent/model_tools.py": "5227bfe30f7c3f6eb20d064f648420138031e038d38eac2829d25b749739ad11"
+  },
+  "observations": [
+    "pre_tool_call callback default timeout 30 seconds; timeout returns block",
+    "hook result aggregation accepts modify directives and accumulates modified_args",
+    "model_tools applies modified_args after hook aggregation",
+    "inspected protocol has no SIQ final-parameter execution recheck callback"
+  ],
+  "conclusion": "Do not implement blocking wait followed by unconditional allow in the current SIQ Hermes pre-hook. Native resume requires final-parameter recheck or a separately verified controlled execution path.",
+  "limitations": [
+    "Source inspection only; does not prove behavior for other installed versions or other extension mechanisms",
+    "No sibling source or user profile modified"
+  ]
+}

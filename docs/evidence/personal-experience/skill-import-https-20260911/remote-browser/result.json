@@ -1,0 +1,23 @@
+{
+  "schema_version": "personal-remote-import-browser/v1",
+  "recorded_at": "2026-09-10T16:37:31.136881+00:00",
+  "candidate_sha256": "359a5f9912206ec9666c6203a85037dcd56f77b0299d23fd23cc8bbdf03edb85",
+  "harness_sha256": "33259e1625810d17273047a57612a7ce94bde3b49ca916f55a250767038290df",
+  "fixture_sha256": "e60cbdc6f920f7aa243711895c25c4d65874f535e3293b3eb6092c9ff28dff18",
+  "checks": {
+    "real_daemon_blocks_loopback_url_without_publication": true,
+    "source_specific_fields_and_pin_validation": true,
+    "mobile_remote_form_no_horizontal_overflow": true,
+    "explicit_response_loss_retry_preserves_exact_remote_request": true,
+    "v2_download_metadata_display_without_installation_claim": true,
+    "download_url_absent_from_location_and_storage": true,
+    "no_browser_errors_or_authority_mutations": true
+  },
+  "passed": true,
+  "method": "real_isolated_daemon_for_denial; explicit_Go_DTO_browser_responses_for_remote_success",
+  "limitations": [
+    "Successful browser response is an explicit DTO fixture, not a downloaded daemon record",
+    "TLS download and signed persistence are verified separately by Go integration tests",
+    "No public network, platform installation, or Windows/macOS acceptance"
+  ]
+}

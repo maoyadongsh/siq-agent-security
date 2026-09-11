@@ -24,11 +24,13 @@ const maxRecordBytes = 1 << 20
 
 // Store uses immutable signed documents as authority and issuance audit records.
 type Store struct {
-	dir string
-	key *signing.Key
+	dir                  string
+	key                  *signing.Key
+	grants               GrantLookup
+	installedGrantLookup bool
 }
 
-func Open(dir string, key *signing.Key) (*Store, error) {
+func Open(dir string, key *signing.Key, grantLookups ...GrantLookup) (*Store, error) {
 	if dir == "" || key == nil {
 		return nil, errors.New("intent: directory and key required")
 	}
@@ -37,8 +39,30 @@ func Open(dir string, key *signing.Key) (*Store, error) {
 			return nil, err
 		}
 	}
-	return &Store{dir: filepath.Join(dir, "intents"), key: key}, nil
+	if len(grantLookups) > 1 {
+		return nil, errors.New("intent: at most one grant resolver")
+	}
+	s := &Store{dir: filepath.Join(dir, "intents"), key: key}
+	if len(grantLookups) == 1 {
+		s.grants = grantLookups[0]
+	}
+	return s, nil
 }
+
+// OpenWithInstalledGrantLookup requires a trusted lookup that revalidates the
+// committed installation binding on every call. Ordinary Open cannot select
+// approved imported Grants, even if supplied a raw metadata lookup.
+func OpenWithInstalledGrantLookup(dir string, key *signing.Key, lookup GrantLookup) (*Store, error) {
+	if lookup == nil {
+		return nil, errors.New("intent: verified installed grant lookup required")
+	}
+	s, err := Open(dir, key, lookup)
+	if err == nil {
+		s.installedGrantLookup = true
+	}
+	return s, err
+}
+
 func (s *Store) path(id string) (string, error) {
 	if !validID(id) {
 		return "", violation("intent_invalid_id")
@@ -315,6 +339,10 @@ func (s *Store) ResolveBinding(platform, sessionID, agentID string) (*Contract, 
 	}
 	if err := c.Active(time.Now()); err != nil {
 		return nil, found, err
+	}
+	found.SelectedGrant, err = s.resolveGrantSelection(*found)
+	if err != nil {
+		return &c, found, err
 	}
 	return &c, found, nil
 }

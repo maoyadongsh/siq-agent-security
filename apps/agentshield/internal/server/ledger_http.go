@@ -91,6 +91,8 @@ func (s *Server) publishProjection(cwd string, snap ledger.Snapshot, buildErr er
 
 // Refresh rebuilds the projection (serve ticker, tests, explicit rebuild).
 func (s *Server) Refresh(cwd string) error {
+	s.refreshMu.Lock()
+	defer s.refreshMu.Unlock()
 	snap, err := s.buildSnapshot(cwd)
 	s.publishProjection(cwd, snap, err)
 	return err
@@ -157,6 +159,8 @@ func (s *Server) readProjection(cwd string) (ledger.Snapshot, ProjectionMeta, er
 
 // snapshotForWrite rebuilds for mutations (confirm/dismiss/accept) and publishes.
 func (s *Server) snapshotForWrite(cwd string) (ledger.Snapshot, error) {
+	s.refreshMu.Lock()
+	defer s.refreshMu.Unlock()
 	snap, err := s.buildSnapshot(cwd)
 	s.publishProjection(cwd, snap, err)
 	return snap, err
