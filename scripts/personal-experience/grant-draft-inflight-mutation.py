@@ -15,9 +15,8 @@ TestGrantDraftHTTPInflightWriterConverges，核对失败签名；随后恢复正
 import argparse
 import json
 import os
-from pathlib import Path
 import subprocess
-import sys
+from pathlib import Path
 
 TEST_NAME = "TestGrantDraftHTTPInflightWriterConverges"
 TEST_RUN = ["go", "test", "./internal/server", "-run", TEST_NAME, "-count=2", "-v"]
@@ -31,7 +30,7 @@ FORBIDDEN_SIGNATURES = ("build failed", "panic:", "test timed out")
 
 
 def run(cmd, cwd, timeout):
-    proc = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
+    proc = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout, check=False)
     return proc.returncode, proc.stdout + proc.stderr
 
 
@@ -81,7 +80,7 @@ def main():
             args.out.write_text(json.dumps(summary, indent=1) + "\n")
     finally:
         subprocess.run(["git", "worktree", "remove", "--force", str(worktree)], cwd=root,
-                       capture_output=True, timeout=120)
+                       capture_output=True, timeout=120, check=False)
 
 
 if __name__ == "__main__":
