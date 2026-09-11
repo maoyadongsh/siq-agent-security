@@ -25,6 +25,12 @@ type grantDraftRequest struct {
 
 var draftRequestPattern = regexp.MustCompile(`^gd-[a-f0-9]{32}$`)
 
+// grantDraftIncompleteRead is a package-private test observation point after a
+// real incomplete draft read. Production leaves it a no-op; no runtime input
+// installs it, and it supplies neither errors nor authorization decisions.
+// Tests install/restore it only while their HTTP handlers are quiescent.
+var grantDraftIncompleteRead = func() {}
+
 func (s *Server) createGrantDraft(w http.ResponseWriter, r *http.Request, source grant.Grant, seq int) {
 	w.Header().Set("Cache-Control", "no-store")
 	var body grantDraftRequest
@@ -55,6 +61,8 @@ func (s *Server) createGrantDraft(w http.ResponseWriter, r *http.Request, source
 	} else if !errors.Is(err, os.ErrNotExist) && !errors.Is(err, state.ErrIncompleteCommit) {
 		writeJSON(w, 409, map[string]string{"error": "grant_draft_unavailable"})
 		return
+	} else if errors.Is(err, state.ErrIncompleteCommit) {
+		grantDraftIncompleteRead()
 	}
 	// ErrIncompleteCommit means a concurrent commit for this draft id has published
 	// the grant but not its done marker. The serialized CommitGrantFrom below waits
