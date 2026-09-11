@@ -52,10 +52,15 @@ func (s *Server) createGrantDraft(w http.ResponseWriter, r *http.Request, source
 		}
 		response(*current, revision, true)
 		return
-	} else if !errors.Is(err, os.ErrNotExist) {
+	} else if !errors.Is(err, os.ErrNotExist) && !errors.Is(err, state.ErrIncompleteCommit) {
 		writeJSON(w, 409, map[string]string{"error": "grant_draft_unavailable"})
 		return
 	}
+	// ErrIncompleteCommit means a concurrent commit for this draft id has published
+	// the grant but not its done marker. The serialized CommitGrantFrom below waits
+	// for that commit via the store lock, then the revision-conflict re-read returns
+	// the settled draft. A torn commit from a crashed writer still refuses: the
+	// commit conflicts on the existing journal and the re-read stays incomplete.
 	adm, err := s.d.Store.GetAdmission(source.AdmissionID)
 	if err != nil || adm.Verdict == "quarantine" || !s.d.Store.VerifyAdmission(s.d.Key.Public(), *adm) {
 		writeJSON(w, 409, map[string]string{"error": "grant_draft_admission_unavailable"})

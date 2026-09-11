@@ -1,7 +1,11 @@
 package server
 
 import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http/httptest"
 	"os"
@@ -9,6 +13,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/state"
@@ -163,5 +168,82 @@ func TestGrantDraftContractSamples(t *testing.T) {
 		if err != nil || string(raw) != string(expected) {
 			t.Fatal("draft contract drift", name, err)
 		}
+	}
+}
+
+// A draft id whose commit journal and grant file exist but whose done marker is
+// missing is a torn or in-flight commit. The create route must never 200 over it,
+// must not overwrite or re-audit it, and must resolve to the committed draft once
+// the commit settles. This deterministically exercises the commit visibility
+// window that CI hit with 409 grant_draft_unavailable under parallel creates.
+func TestGrantDraftHTTPTornCommitRefusedThenSettled(t *testing.T) {
+	s, store, id, rev := draftSource(t)
+	source, _, err := store.GetGrantWithSeq(id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy, err := store.GrantPolicy(*source)
+	if err != nil {
+		t.Fatal(err)
+	}
+	requestID := "gd-" + strings.Repeat("b", 32)
+	digest := sha256.Sum256([]byte(fmt.Sprintf("%s\x00%d\x00%s\x00%s", id, rev, "operator", requestID)))
+	draftID := "grt-d-" + hex.EncodeToString(digest[:])
+	won, err := grant.DraftFrom(*source, policy, draftID, time.Date(2026, 9, 11, 1, 0, 0, 0, time.UTC), s.d.Key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	journal, err := json.Marshal(map[string]any{"schema": "grant_commit/v1", "commit": state.GrantCommit{
+		Grant:            won.Grant,
+		ExpectedRevision: -1,
+		DesiredPolicy:    won.DesiredPolicy,
+		Audit:            &state.AuditEvent{At: "2026-09-11T01:00:00Z", Event: "grant_draft", ActorID: "operator", Target: draftID, Note: "source=" + id},
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	grantRaw, err := json.MarshalIndent(won.Grant, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	commits := filepath.Join(store.Dir, "commits")
+	if err := os.MkdirAll(commits, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(store.Dir, "grants"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(commits, draftID+".0.prepare.json"), journal, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	grantPath := filepath.Join(store.Dir, "grants", draftID+".0.json")
+	if err := os.WriteFile(grantPath, grantRaw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	body := map[string]any{"schema_version": "grant-draft-create/v1", "expected_revision": rev, "actor_id": "operator", "request_id": requestID}
+	code, out := call(t, s, "POST", "/v1/grants/"+id+"/draft", token, body)
+	if code != 409 {
+		t.Fatal("torn commit accepted", code, out)
+	}
+	if raw, _ := os.ReadFile(grantPath); !bytes.Equal(raw, grantRaw) {
+		t.Fatal("torn commit overwritten")
+	}
+	if _, err := os.Lstat(filepath.Join(store.Dir, "commit-audit", draftID+".0.json")); !errors.Is(err, os.ErrNotExist) {
+		t.Fatal("refused request wrote commit audit")
+	}
+	sum := sha256.Sum256(journal)
+	if err := os.WriteFile(filepath.Join(commits, draftID+".0.done.json"), []byte(hex.EncodeToString(sum[:])+"\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	code, out = call(t, s, "POST", "/v1/grants/"+id+"/draft", token, body)
+	if code != 200 || out["reused"] != true {
+		t.Fatal("settled commit not reused", code, out)
+	}
+	got := out["grant"].(map[string]any)
+	if got["grant_id"] != draftID || got["created_at"] != "2026-09-11T01:00:00Z" {
+		t.Fatal("retry did not return the committed draft", got)
+	}
+	if stateRevision(t, out) != 0 {
+		t.Fatal("unexpected draft revision", out)
 	}
 }
