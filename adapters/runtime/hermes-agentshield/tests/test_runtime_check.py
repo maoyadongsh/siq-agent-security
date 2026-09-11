@@ -2,7 +2,6 @@
 
 import pytest
 from test_adapter import _Fake, load
-from test_adapter import server as server
 
 
 def configure(monkeypatch, mod):
