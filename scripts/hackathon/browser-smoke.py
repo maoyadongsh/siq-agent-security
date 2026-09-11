@@ -41,7 +41,7 @@ def main():
                 ("mcp-attack", "MCP 收件人注入", "blocked", 0), ("same-value", "同值不同来源", "blocked", 0),
                 ("fake-success", "工具伪成功", "incomplete", 0), ("conflicting", "交付内容冲突", "conflicting", 1),
                 ("approval", "人工审批与进程校验", "verified", 1),
-                ("trifecta", "机密文件与不可信网页出网拦截", "blocked", 0)):
+                ("trifecta", "凭据路径边界拒绝与保守会话状态", "blocked", 0)):
             page.get_by_label("场景", exact=True).select_option(scenario)
             page.get_by_role("button", name="开始任务", exact=True).click()
             if scenario == "approval":
@@ -75,13 +75,17 @@ def main():
             if scenario == "trifecta":
                 source = None
                 states = page.locator('[data-trifecta="decision"]').all_inner_texts()
-                if states != [
-                    "SIQ 决策时状态：机密数据 true · 不可信输入 false · 出网 false",
-                    "SIQ 决策时状态：机密数据 true · 不可信输入 false · 出网 true",
-                    "SIQ 决策时状态：机密数据 true · 不可信输入 true · 出网 true"]:
-                    raise ValueError("missing stateful trifecta sequence")
-                if "lethal_trifecta" not in page.locator('.demo-actions').inner_text():
-                    raise ValueError("missing SIQ trifecta denial")
+                # ADR-025: the credential-path read is denied at the boundary before
+                # the tool runs; the single recorded decision must show the session
+                # conservatively marked, and the page must not claim a trifecta
+                # egress denial that was never reached.
+                if states != ["SIQ 决策时状态：机密数据 true · 不可信输入 false · 出网 false"]:
+                    raise ValueError("missing conservative state on the denied credential read")
+                actions = page.locator('.demo-actions li')
+                if actions.count() != 1 or actions.first.locator('[data-state="deny"]').count() != 1:
+                    raise ValueError("missing boundary denial of the credential read")
+                if "lethal_trifecta" in page.locator('.demo-actions').inner_text():
+                    raise ValueError("unreached trifecta denial claimed")
             elif scenario not in ("research-only", "research-report"):
                 provenance.wait_for()
             else:
