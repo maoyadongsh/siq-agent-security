@@ -2,9 +2,10 @@
 
 ```text
 任务：KIMI-001-R1
-状态：ready_for_review / awaiting_ci（CI 通过不等于审阅通过）
+状态：ready_for_review（CI 通过不等于审阅通过；远端三工作流已对候选实跑通过）
 实际基线：c1a4b0f9d6074dfccdbf15841bafe79defd74f45（含审阅方 90bd14e、c1a4b0f，本机只读核对+快进同步，未覆盖任何改动）
-最终分支 HEAD：见本批最后一个 docs 提交（提交后在回复与 PR 中给出）
+被测代码候选：32be3b353d8b26082b4492638afe8abcbf0da267（全部代码/测试/构建产物冻结于此；CI 运行对象）
+最终分支 HEAD：本交接的 docs 回填提交（仅文档，不改被测代码；SHA 在最终回复与 PR 中给出）
 新增提交和逐文件目的：
 - 790a9e2 agent: R1-A 语义分离（skills.py 移除 reason 前缀兜底恢复原 fail-closed；gateway.Blocked 还原纯 reason_code；test_application.py 重写三类场景；README 与 DemoPage 文案按当前语义；新增 docs/adr/0048 提案登记设计阻塞）
 - 44f2a2a agentshield: R1-B 确定性在途提交并发测试 internal/state/commit_inflight_test.go；commit.go 的 commitBoundary 注释更新为测试用途约定
@@ -33,10 +34,19 @@
 
 ## 未验证范围
 
-- 远端 CI（PR #27）：推送后触发，结果回填，本文件不预支通过。
-- control-api alembic 干净 PostgreSQL 回放：本机无隔离 PostgreSQL 服务（本批未改其模型/迁移）。
-- playwright `--with-deps` 的 apt 步骤需 sudo 未执行；浏览器夹具用系统已有 chromium 通过。
-- 本机 linux/arm64，CI 为 amd64；架构差异保留登记。
+- 远端 CI 已回填，见下节。
+- control-api alembic 干净 PostgreSQL 回放：本机无隔离 PostgreSQL 服务（本批未改其模型/迁移）；CI control-api job 含该步骤且通过。
+- playwright `--with-deps` 的 apt 步骤需 sudo 未执行；浏览器夹具用系统已有 chromium 通过，CI hosted chromium 步骤亦通过。
+- 本机 linux/arm64，CI 为 amd64；远端运行已覆盖 amd64。
+
+## 远端 CI（推送后实跑回填）
+
+候选 HEAD `32be3b353d8b26082b4492638afe8abcbf0da267`（推送后 PR #27 触发）：
+
+- ci run 34573854493：success（agentshield、gitleaks、web、control-api、edge 双版本 × 12 模块全部 success）
+- runtime-security run 34573854583：success（runtime-security-contracts、runtime-security-toolchain 均 success；nightly 按事件条件不运行，登记为条件性跳过而非通过）
+- research run 34573854590：success（research-reproduction）
+- pages run 34573854646：success（非本批范围，无回归）
 
 ## 记录更正
 
