@@ -73,6 +73,11 @@ class SecureApplication:
             before_execution=None, changed=None, approval_required=False, on_hold=None, trifecta=False,
             source_sensitivity=DataSensitivity.PUBLIC, requested_output="delivery",
             confidential_name: str = ".env") -> dict:
+        # Only the two operator-owned fixtures are supported. Validate before
+        # allocating a run, touching files, issuing authority or calling a model.
+        # Path normalization after open() would be too late to prevent escape.
+        if not isinstance(confidential_name, str) or confidential_name not in (".env", "confidential-note.txt"):
+            raise AgentError("confidential_fixture_path_invalid")
         started = perf_counter()
         model_call_start = len(getattr(self.model, "calls", []))
         transition_start = len(self.model.transitions)

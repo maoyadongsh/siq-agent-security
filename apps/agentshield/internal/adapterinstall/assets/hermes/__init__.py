@@ -69,11 +69,11 @@ def _load_config() -> dict[str, Any]:
             raise ValueError("invalid config")
         value = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(value, dict):
-            raise ValueError("invalid config")
+            raise TypeError("invalid config")
         cfg.update(value)
     except FileNotFoundError:
         pass  # Retain the supported legacy environment-only configuration.
-    except (OSError, ValueError):
+    except (OSError, ValueError, TypeError):
         cfg["_config_error"] = True
     for key, envs in (
         ("endpoint", ("SIQ_AGENT_SECURITY_ENDPOINT", "AGENTSHIELD_ENDPOINT")),
@@ -217,7 +217,7 @@ def _fail_closed(reason: str, *, tool: str = "", session_id: str = "") -> dict[s
 def _utcnow() -> str:
     from datetime import datetime, timezone
 
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")  # noqa: UP017 -- Python 3.10 compatibility
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")  # Python 3.10 compatibility
 
 
 def _append_pending(rec: dict[str, Any]) -> None:
