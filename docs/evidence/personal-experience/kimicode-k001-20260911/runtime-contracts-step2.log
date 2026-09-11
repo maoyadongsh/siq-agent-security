@@ -1,0 +1,61 @@
+{
+  "pairs": 21,
+  "scenarios": 42,
+  "categories": 20
+}
+Ran 21 tests in 0.040s
+
+OK
+All checks passed!
+All checks passed!
+Ran 6 tests in 1.618s
+
+OK
+........................................................                 [100%]
+56 passed in 26.54s
+TRY004 Prefer `TypeError` exception for invalid type
+  --> adapters/runtime/hermes-agentshield/__init__.py:72:13
+   |
+70 |         value = json.loads(path.read_text(encoding="utf-8"))
+71 |         if not isinstance(value, dict):
+72 |             raise ValueError("invalid config")
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+73 |         cfg.update(value)
+74 |     except FileNotFoundError:
+   |
+
+RUF100 [*] Unused `noqa` directive (unused: `UP017`)
+   --> adapters/runtime/hermes-agentshield/__init__.py:220:74
+    |
+218 |     from datetime import datetime, timezone
+219 |
+220 |     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")  # noqa: UP017 -- Python 3.10 compatibility
+    |                                                                          ^^^^^^^^^^^^^
+help: Remove unused `noqa` directive
+    |
+219 |
+    -     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")  # noqa: UP017 -- Python 3.10 compatibility
+220 +     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+221 |
+    |
+
+PLC0414 Import alias does not rename original package
+ --> adapters/runtime/hermes-agentshield/tests/test_runtime_check.py:5:26
+  |
+3 | import pytest
+4 | from test_adapter import _Fake, load
+5 | from test_adapter import server as server
+  |                          ^^^^^^^^^^^^^^^^
+help: Remove import alias
+
+PLC0414 Import alias does not rename original package
+ --> adapters/runtime/hermes-agentshield/tests/test_runtime_identity.py:9:26
+  |
+7 | import pytest
+8 | from test_adapter import _Fake, load
+9 | from test_adapter import server as server
+  |                          ^^^^^^^^^^^^^^^^
+help: Remove import alias
+
+Found 4 errors.
+[*] 1 fixable with the `--fix` option (2 hidden fixes can be enabled with the `--unsafe-fixes` option).
