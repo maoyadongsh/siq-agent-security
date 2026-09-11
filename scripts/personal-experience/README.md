@@ -132,3 +132,12 @@ python3 scripts/personal-experience/grant-draft-inflight-mutation.py
 ```
 
 脚本只在 HEAD 的临时 worktree 内精确恢复旧分支片段（基线片段缺失或非唯一即拒绝），核对旧代码失败签名为预期的 409/幂等断言（而非编译失败、超时或其他错误），恢复后验证通过；不修改用户工作区，不提交任何恢复旧行为的代码。输出为含命令与退出码的 JSON 摘要。
+
+## 平台发现与 Hermes 批准边界原生探针（K002）
+
+```bash
+python3 scripts/personal-experience/discovery-native-smoke.py --binary .tmp/personal-experience/siq-agent-security --out .tmp/personal-experience/discovery-native.json
+python3 scripts/personal-experience/hermes-approval-gap-native-smoke.py --hermes-cli /path/to/hermes --binary .tmp/personal-experience/siq-agent-security --out .tmp/personal-experience/hermes-approval-gap.json
+```
+
+发现探针在隔离 HOME 中构造两个不同名 Hermes profile（含同名不同版本合成 Skill）与 OpenClaw 状态目录，驱动候选 daemon 真实扫描：实例身份与 Skill 安装分开、归属正确、正文与私人目录内容不进入响应。批准缺口探针用公开 Hermes CLI 与真实 daemon 验证：需批准工具在 Hermes 保持 hold→block（不执行）、控制台批准后无原生恢复路径、拒绝后重试仍不执行；它记录当前缺口，不代表批准恢复已实现。两者均用合成操作者与临时状态，不读取用户配置、不调用真实模型。
