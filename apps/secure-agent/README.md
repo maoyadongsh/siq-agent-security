@@ -63,8 +63,10 @@ permission. See the [Demo evidence contract](../../docs/hackathon/demo-evidence-
 confidential-fixture scenario. Under the current ADR-025 resource boundary,
 credential paths (e.g. `.env`) are never grantable: the read is denied at the
 SIQ boundary before the tool runs, no bytes are read or observed, and the denied
-attempt still conservatively marks the session as private-data contact; the task
-stops before any network use. The engine-level "private data + untrusted input +
+attempt still conservatively marks the session as private-data contact; the
+execution session stops before its dependent steps (including its network
+calls), while the preparation phase's granted read-only retrieval has already
+completed in an earlier, separate session. The engine-level "private data + untrusted input +
 egress" denial is locked by Go `TestLethalTrifectaDenied`
 (apps/agentshield/internal/receipt), and the earlier read-allowed flow is kept
 only as [historical evidence](../../docs/hackathon/lethal-trifecta-demo.md).

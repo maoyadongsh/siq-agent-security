@@ -163,7 +163,8 @@ class ApplicationTest(unittest.TestCase):
     def test_confidential_credential_read_denied_before_network(self):
         # ADR-025: credential paths are never grantable. The operator fixture read
         # is denied at the SIQ boundary: the tool never runs, no bytes are read or
-        # observed, and the task stops before any network use. The engine still
+        # observed, and the execution session stops before its dependent steps
+        # (the earlier preparation phase's granted read-only retrieval is separate). The engine still
         # marks the denied attempt as private-data contact (conservative state);
         # the resulting private+untrusted+egress denial is covered at engine level
         # by Go TestLethalTrifectaDenied (apps/agentshield/internal/receipt).
