@@ -107,7 +107,12 @@ class TaskAuthority:
         self.client = SecurityClient(decision, identity)
         self.github, self.mcp, self.contacts_path, self.contacts = github.rstrip("/"), mcp, contacts_path, dict(contacts)
         self.delivery_url, self.revision = delivery_url, revision
-        if confidential_path is not None and (requirements is None or confidential_path != contacts_path.parent / ".env"):
+        # The confidential fixture is operator-created state living beside the
+        # contacts file; nothing model-influenced may point the read elsewhere.
+        if confidential_path is not None and (requirements is None
+                                              or confidential_path.parent != contacts_path.parent
+                                              or confidential_path == contacts_path
+                                              or confidential_path.name in ("", ".", "..")):
             raise AgentError("confidential_fixture_path_invalid")
         self.confidential_path = confidential_path
         self.read_only = requirements is None

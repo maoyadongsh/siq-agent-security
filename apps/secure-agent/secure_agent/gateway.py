@@ -16,7 +16,9 @@ class EffectObserver(Protocol):
 
 
 class Blocked(AgentError):
-    pass
+    def __init__(self, reason_code: str, reason: str = ""):
+        super().__init__(reason_code)
+        self.reason = reason
 
 
 class WaitingForApproval(AgentError):
@@ -82,7 +84,7 @@ class ToolGateway:
         if self._changed:
             self._changed(self._state)
         if decision["action"] == "deny":
-            raise Blocked(decision["reason_code"])
+            raise Blocked(decision["reason_code"], decision.get("reason", ""))
         # A transformed payload requires a new proposal/authorization, not silent
         # execution of either the old or the redacted payload under another digest.
         if "params" in decision and canonical(decision["params"]) != canonical(request["params"]):

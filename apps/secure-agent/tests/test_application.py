@@ -27,7 +27,7 @@ class ApplicationTest(unittest.TestCase):
                        cwd=ROOT / "apps/agentshield", check=True, capture_output=True)
 
     def run_application(self, *, mode="benign", index=0, effect="normal", model=None, before=None, source=None,
-                        approval=False, hold=None, trifecta=False, output="delivery"):
+                        approval=False, hold=None, trifecta=False, output="delivery", confidential_name=".env"):
         directory = self.root / self._testMethodName
         with LocalDaemon(self.binary, directory) as daemon, FixtureServices(ROOT / "demo/fixtures", mcp_mode=mode) as fixtures:
             if source is not None:
@@ -36,7 +36,7 @@ class ApplicationTest(unittest.TestCase):
             result = application.run("Review and deliver the approved repository to Alice",
                 repository="fixture/secure-project", question="Review code", scope=("README.md",), effect_mode=effect,
                 approval_required=approval, on_hold=hold, trifecta=trifecta,
-                requested_output=output,
+                requested_output=output, confidential_name=confidential_name,
                 before_execution=(lambda authority: before(authority, fixtures)) if before else None)
             # Readback via SIQ revalidates signed evidence and historical action binding.
             for action in result["task"]["actions"]:
@@ -166,9 +166,12 @@ class ApplicationTest(unittest.TestCase):
         self.assertEqual(result["task"]["error_code"], "lethal_trifecta")
         actions = result["task"]["actions"]
         self.assertEqual([a["tool"] for a in actions], ["read_file", "web_fetch", "web_fetch"])
-        self.assertEqual([a["decision"] for a in actions], ["allow", "allow", "deny"])
-        self.assertEqual([a["d3_materialized"] for a in actions], [True, True, False])
-        self.assertEqual([a["observation"] for a in actions], ["REPORTED", "REPORTED", "UNKNOWN"])
+        # ADR-025: credential paths are never grantable, so the .env read is
+        # denied at the boundary; the denied attempt still marks the session as
+        # having touched private data, and the later egress hits the trifecta.
+        self.assertEqual([a["decision"] for a in actions], ["deny", "allow", "deny"])
+        self.assertEqual([a["d3_materialized"] for a in actions], [False, True, False])
+        self.assertEqual([a["observation"] for a in actions], ["UNKNOWN", "REPORTED", "UNKNOWN"])
         self.assertEqual([a["decision_trifecta"] for a in actions], [
             {"private_data": True, "untrusted_input": False, "egress": False},
             {"private_data": True, "untrusted_input": False, "egress": True},
@@ -180,7 +183,10 @@ class ApplicationTest(unittest.TestCase):
     def test_changed_confidential_fixture_stops_before_network(self):
         def change(authority, _fixtures):
             authority.confidential_path.write_bytes(b"Substituted fixture bytes")
-        result = self.run_application(trifecta=True, before=change)
+        # A non-credential fixture name keeps the read engine-reachable (ADR-025
+        # denies credential paths outright), so the tool-side integrity check is
+        # the layer under test.
+        result = self.run_application(trifecta=True, before=change, confidential_name="confidential-note.txt")
         self.assertEqual(result["task"]["error_code"], "tool_confidential_fixture_invalid")
         self.assertEqual([a["tool"] for a in result["task"]["actions"]], ["read_file"])
         self.assertFalse(result["messages"])
@@ -189,7 +195,7 @@ class ApplicationTest(unittest.TestCase):
         def change(authority, _fixtures):
             authority.confidential_path.unlink()
             authority.confidential_path.symlink_to(authority.contacts_path)
-        result = self.run_application(trifecta=True, before=change)
+        result = self.run_application(trifecta=True, before=change, confidential_name="confidential-note.txt")
         self.assertEqual(result["task"]["error_code"], "tool_confidential_fixture_invalid")
         self.assertEqual([a["tool"] for a in result["task"]["actions"]], ["read_file"])
         self.assertFalse(result["messages"])

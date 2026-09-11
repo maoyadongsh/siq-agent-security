@@ -23,7 +23,7 @@ from .contracts import (
     fields,
     string,
 )
-from .gateway import ToolGateway
+from .gateway import Blocked, ToolGateway
 from .models import ModelProvider, proposal_schema
 
 
@@ -103,7 +103,14 @@ class SkillRunner:
         if self._confidential_path is not None:
             # Operator-only fixture: no model path or content is accepted here.
             # Observe retains session state; the confidential bytes stay local.
-            self._gateway.call("read_file", {"path": self._confidential_path})
+            # Credential paths are never grantable (ADR-025): the boundary denial
+            # still marks the session as having touched private data, which is
+            # the session marker this step exists to establish.
+            try:
+                self._gateway.call("read_file", {"path": self._confidential_path})
+            except Blocked as denied:
+                if not denied.reason.startswith("credential path "):
+                    raise
         # URL encoding prevents the candidate repository/path from changing the
         # endpoint syntax. Actual scope authorization is still performed by SIQ.
         repository = quote(task.repository, safe="/")
