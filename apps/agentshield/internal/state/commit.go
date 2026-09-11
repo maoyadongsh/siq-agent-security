@@ -52,8 +52,25 @@ func (e *IncompleteCommitError) Is(target error) bool { return target == ErrInco
 // hold AcquireWriter, as serve, offline grant and recovery do.
 var commitMu sync.Mutex
 
-// Set only by the isolated subprocess fault-injection test, never via runtime input.
+// Set only by tests (isolated subprocess fault injection, and the in-process
+// in-flight window tests that always restore and never block indefinitely),
+// never via runtime input.
 var commitBoundary = func(string) {}
+
+// SetCommitBoundaryHook replaces the commit phase observer and returns a
+// restore function. It is test support for cross-package regression tests (the
+// server package's in-flight draft test needs the real publication window): it
+// is not reachable from HTTP, CLI, flags or environment input, and production
+// binaries never install an observer. The caller must not restore while any
+// commit is still running.
+func SetCommitBoundaryHook(fn func(string)) (restore func()) {
+	prev := commitBoundary
+	if fn == nil {
+		fn = func(string) {}
+	}
+	commitBoundary = fn
+	return func() { commitBoundary = prev }
+}
 
 const maxCommitBytes = 8 << 20
 

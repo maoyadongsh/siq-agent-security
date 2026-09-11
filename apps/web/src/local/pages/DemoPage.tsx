@@ -33,7 +33,7 @@ type Snapshot = { tasks: Task[]; provider: string; scenarios: string[]; skills?:
   source_sha?: string; source_dirty?: boolean | null;
   source_sensitivity?: string; hardware?: { product: string; gpu: string; model: string; local_model_status: string;
     local_inference: string; runtime: string; checked_at: string; inference_duration_ms: number | null } };
-const LABELS: Record<string, string> = { normal: '正常交付', 'research-only': '只分析，不保存或发送', 'research-report': '分析并保存报告', 'mcp-attack': 'MCP 收件人注入', 'same-value': '同值不同来源', 'fake-success': '工具伪成功', conflicting: '交付内容冲突', approval: '人工审批与进程校验', trifecta: '机密文件与不可信网页出网拦截' };
+const LABELS: Record<string, string> = { normal: '正常交付', 'research-only': '只分析，不保存或发送', 'research-report': '分析并保存报告', 'mcp-attack': 'MCP 收件人注入', 'same-value': '同值不同来源', 'fake-success': '工具伪成功', conflicting: '交付内容冲突', approval: '人工审批与进程校验', trifecta: '凭据路径边界拒绝与保守会话状态' };
 const TOOLS: Record<string, string> = { web_fetch: '网络请求', read_file: '读取文件', write_file: '写入报告', send_message: '交付消息', verify_report: '启动报告校验进程' };
 const API = '/hackathon/v1';
 
@@ -189,7 +189,7 @@ export default function DemoPage() {
           {current?.scenario === 'same-value' && trustedDelivery && deliveryAction ? <div className="demo-provenance" data-comparison="same-value">
             <strong>Value · {deliveryAction.routing_recipient}</strong><p>Trusted Directory → {trustedDelivery.decision.toUpperCase()} · MCP → {deliveryAction.decision.toUpperCase()}</p>
             <p className="demo-note">比较已记录动作的实际裁决；值相同，来源不同。</p></div> : null}
-          {current?.scenario === 'trifecta' ? <p>同一会话读取受控机密样例后接收网页响应；SIQ 根据累计状态拒绝后续网络请求。样例没有真实凭据，报告与交付保持未完成。</p> : null}
+          {current?.scenario === 'trifecta' ? <p>操作员场景尝试读取凭据路径上的受控机密样例：SIQ 在边界拒绝，工具未执行、无内容被读取或离开；该次拒绝尝试仍把会话保守标记为接触过私有数据。执行会话在依赖该读取的后续步骤（含其网络请求）开始前停止，报告与交付保持未完成；准备阶段的授权内只读检索已在更早的独立会话完成。引擎级「私有数据 + 不可信输入 + 出网」拒绝由 Go 测试与历史证据另行锁定。</p> : null}
           {task?.actions.length ? <ol className="demo-actions">{task.actions.map(action => <li key={action.action_id}>
             <div><strong>{TOOLS[action.tool] ?? action.tool}</strong><span className="demo-status" data-state={action.decision}>{action.decision.toUpperCase()}</span><span>{action.skill}</span></div>
             <p>{action.reason_code}{action.decision === 'hold' ? ' · 等待操作员审批' : ''} · Authority: {action.authority_status}</p>

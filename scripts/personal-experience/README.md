@@ -120,3 +120,15 @@ python3 scripts/personal-experience/skill-update-browser-smoke.py \
 ```
 
 使用真实 Chromium、临时 daemon/profile 和合成 Skill，检查候选差异、未批准禁止准备、刷新只读、明确确认与双击去重、提交和查询响应丢失、恢复历史及容量失败后的终止。脚本在临时私有暂存目录制造容量限制；不修改用户平台。截图检查桌面和移动确认入口。此脚本不执行原生智能体更新后的工具调用，不代表跨 OS 或可信 Skill 归属验收。原移除浏览器回归在关闭触发内容检查后等待 aria-busy=false，再重新打开窗口。
+
+## 草稿在途提交 HTTP 门控回归与变异复跑（KIMI-001-R1-B1）
+
+`apps/agentshield` 的 `TestGrantDraftHTTPInflightWriterConverges` 经真实 HTTP handler 覆盖草稿创建的在途提交窗口（grant 已发布、done 未发布）：窗口内第二请求必须等待并收敛到同一草稿。该测试随 `go test ./...` 与 CI 常规回归执行。
+
+同一测试对旧行为（handler 对 ErrIncompleteCommit 立即 409）必须确定性失败的变异检查，在隔离 worktree 中复跑：
+
+```bash
+python3 scripts/personal-experience/grant-draft-inflight-mutation.py
+```
+
+脚本只在 HEAD 的临时 worktree 内精确恢复旧分支片段（基线片段缺失或非唯一即拒绝），核对旧代码失败签名为预期的 409/幂等断言（而非编译失败、超时或其他错误），恢复后验证通过；不修改用户工作区，不提交任何恢复旧行为的代码。输出为含命令与退出码的 JSON 摘要。

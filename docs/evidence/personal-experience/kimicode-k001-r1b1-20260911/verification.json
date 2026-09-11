@@ -1,0 +1,44 @@
+{
+  "schema_version": "kimicode-k001-r1b1-verification/v1",
+  "batch": "KIMI-001-R1-B1",
+  "base": "47a9809e62f2d03765a6ba7a7aeebe9028c98a69",
+  "tested_code_identity": "分支 kimicode/personal-k001-baseline-repair 工作树（提交 4ad9773 测试与钩子、49a8bf7 文案与内嵌、e445434 脚本 lint；文档批次另计）",
+  "environment": {"os_arch": "linux/arm64", "go": "1.26.5（另以 GOTOOLCHAIN=go1.22.12 验证兼容）", "node": "v22.22.2", "python": "3.13.12", "ci_note": "CI 为 linux/amd64 + Go 1.22/1.26.6"},
+  "new_test": {
+    "path": "apps/agentshield/internal/server/grant_draft_inflight_test.go",
+    "name": "TestGrantDraftHTTPInflightWriterConverges",
+    "mechanism": "state.SetCommitBoundaryHook（仅模块内 Go 测试可达；不经 HTTP/CLI/环境暴露；无二进制开关）在 grant 已发布、done 未发布的真实窗口暂停真实写者",
+    "proof_points": [
+      "窗口真实性：测试自身在窗口内 GetGrantWithSeq 得 ErrIncompleteCommit",
+      "第二请求在窗口保持期间未返回（其唯一驻留点为 commit 锁，只有读到 ErrIncompleteCommit 后才会到达）",
+      "释放后两请求均 200、同一 grant_id、reused=false/true、pending_approval、签名有效、创建审计一次、源文档与 revision 不变",
+      "有界失败出口：全部接收 30s 超时；失败路径释放写者、回收 goroutine、在无提交使用时恢复钩子"
+    ]
+  },
+  "mutation_check": {
+    "entry": "python3 scripts/personal-experience/grant-draft-inflight-mutation.py [--out PATH]",
+    "rules": "临时 worktree（HEAD 分离检出）内精确恢复旧 handler 分支；基线片段缺失或非唯一即拒绝；核对失败签名为预期 409 幂等断言而非编译失败/超时/panic；恢复后同条件通过；不修改用户工作区、不提交变异代码",
+    "result_file": "mutation-result.json",
+    "result": "mutant exit=1（含预期失败签名 duplicate returned inside the window instead of waiting: 409），fixed exit=0（--- PASS）"
+  },
+  "commands": [
+    {"cmd": "gofmt -l . && go vet ./...", "cwd": "apps/agentshield", "exit": 0},
+    {"cmd": "go test -count=1 ./...", "cwd": "apps/agentshield", "exit": 0, "note": "33 packages ok"},
+    {"cmd": "go test -race -count=1 ./...", "cwd": "apps/agentshield", "exit": 0, "note": "33 ok，无 DATA RACE"},
+    {"cmd": "go test ./internal/server -run TestGrantDraftHTTPInflightWriterConverges -count=20", "exit": 0},
+    {"cmd": "go test -race ./internal/server -run TestGrantDraftHTTPInflightWriterConverges -count=20", "exit": 0},
+    {"cmd": "go test -race ./internal/server -run TestGrantDraft -count=20", "exit": 0, "note": "含既有撕裂负向/编辑后重试/陈旧源/非管理凭据负向"},
+    {"cmd": "GOTOOLCHAIN=go1.22.12 go test -count=1 ./internal/server ./internal/state", "exit": 0, "note": "Go 1.22 路径兼容"},
+    {"cmd": "unittest discover apps/secure-agent/tests", "exit": 0, "note": "104 tests OK"},
+    {"cmd": "ruff check apps/secure-agent scripts/personal-experience/grant-draft-inflight-mutation.py scripts/hackathon", "exit": 0},
+    {"cmd": "apps/web: npm test -- --run && npm run build && npm run build:local", "exit": 0, "note": "内嵌产物重建随 49a8bf7 提交"},
+    {"cmd": "四目标交叉编译 / manifest-verify / admit 自扫描", "exit": 0, "note": "admit_with_conditions"},
+    {"cmd": "benchmarks/hackathon run+verify（清旧 state 后）", "exit": 0},
+    {"cmd": "browser_fixture 九场景", "exit": 0, "evidence": "browser-result.json"}
+  ],
+  "not_run": [
+    {"item": "远端 CI（本批新 HEAD）", "reason": "推送后回填，不借用 47a9809 结果"},
+    {"item": "control-api 全量 pytest / alembic 回放 / benchmarks/runtime-security / edge 矩阵", "reason": "本批未改其代码面；R1 候选已全绿；最终候选的 CI 覆盖以远端为准"},
+    {"item": "linux/amd64 原生", "reason": "本机 arm64，保留架构差异登记"}
+  ]
+}

@@ -1,0 +1,121 @@
+Runtime pairs verified; report: artifacts/runtime-security/report.json
+{
+  "verified_receipts": 10,
+  "verified_effect_envelopes": 8
+}
+PASS: two SIGKILL restarts, original snapshot, recovered completion, durable revocation
+{
+  "verified_pending_records": 2,
+  "verified_recovery_records": 2,
+  "verified_observer_revocations": 1,
+  "verified_receipts": 1,
+  "verified_file_completions": 1
+}
+{
+  "authority_validation": {
+    "samples": 100,
+    "p50_ms": 0.008992,
+    "p95_ms": 0.016544,
+    "p99_ms": 0.017232
+  },
+  "context_validation": {
+    "samples": 100,
+    "p50_ms": 0.069985,
+    "p95_ms": 0.145233,
+    "p99_ms": 0.162593
+  },
+  "decision_total": {
+    "samples": 100,
+    "p50_ms": 11.397028,
+    "p95_ms": 12.328793,
+    "p99_ms": 12.49577
+  },
+  "intent_lookup": {
+    "samples": 100,
+    "p50_ms": 0.239457,
+    "p95_ms": 0.41245,
+    "p99_ms": 0.448019
+  },
+  "policy_evaluation": {
+    "samples": 100,
+    "p50_ms": 0.004048,
+    "p95_ms": 0.006576,
+    "p99_ms": 0.007841
+  },
+  "provenance_resolution": {
+    "samples": 100,
+    "p50_ms": 0.138145,
+    "p95_ms": 0.268561,
+    "p99_ms": 0.296786
+  },
+  "receipt_append_fsync": {
+    "samples": 100,
+    "p50_ms": 10.69376,
+    "p95_ms": 11.739781,
+    "p99_ms": 12.050616
+  },
+  "runtime_action_normalization": {
+    "samples": 100,
+    "p50_ms": 0.002656,
+    "p95_ms": 0.00512,
+    "p99_ms": 0.005728
+  },
+  "effect_evidence_processing": {
+    "samples": 100,
+    "p50_ms": 5.796915,
+    "p95_ms": 6.39751,
+    "p99_ms": 6.663544
+  }
+}
+{
+  "schema_version": "mcp-provenance-fixture/v1",
+  "passed": true,
+  "recorded_at": "2026-09-11T03:27:03.243359+00:00",
+  "siq_commit": "b9e8ec6e1cb5f59c3346a2f5bdefd1582cc1b6f8",
+  "binary_sha256": "f4575de899b0c12e22b0d9e522cecd2766f7cbb8e402c5398827e528bdd0a3ef",
+  "report_rejections": [],
+  "capacity_checks": {},
+  "global_revocation_checks": {},
+  "receipt_count": 4,
+  "receipt_chain_verified": true,
+  "decision_receipt_ids": [
+    "rcp-029447720102-032703.178949",
+    "rcp-029447720102-032703.215965"
+  ],
+  "decisions": [
+    {
+      "pair_id": "mcp-parameter",
+      "kind": "attack",
+      "action": "deny",
+      "reason_code": "provenance_source_not_allowed",
+      "receipt_id": "rcp-029447720102-032703.178949"
+    },
+    {
+      "pair_id": "mcp-parameter",
+      "kind": "benign",
+      "action": "allow",
+      "reason_code": "allow",
+      "receipt_id": "rcp-029447720102-032703.215965"
+    }
+  ],
+  "hermes_adapter_bridge": true,
+  "coverage": "component_fixture",
+  "mcp_protocol": "2025-06-18",
+  "mcp_tool_calls": 1,
+  "checks": {
+    "initialized": true,
+    "real_http_tool_result": true,
+    "signed_report": true,
+    "deterministic_selection": true,
+    "untrusted_path_denied": true,
+    "same_value_trusted_path_allowed": true
+  },
+  "source_identity_digest": "77075a5e69140d7fa8e024c127e28b8acaf74c21a78c057e996bf056d1122ddd",
+  "limitations": [
+    "local fixture server",
+    "JSON response transport only",
+    "no native platform integration",
+    "no independent effect evidence"
+  ],
+  "script_sha256": "edf3e7cb657a682e2e248d23980a51a8d0520f5eb8ccd2fa681a14db99a5312c"
+}

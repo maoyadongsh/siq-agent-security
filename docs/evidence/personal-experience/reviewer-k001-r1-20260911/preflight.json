@@ -1,0 +1,27 @@
+{
+  "schema_version": "reviewer-k001-r1-preflight/v1",
+  "baseline_sha": "8b53ddff0463efed2fe56d62954d382f3dbb163e",
+  "application_code_commit": "90bd14ed7a1aa812107bde2826f94da605ee3901",
+  "application_before_git_blob": "2cda33c05af7690b8839055df7870cadc4a829aa",
+  "application_after_sha256": "af6399fadef50f9ec563851cabd579c986bbcb6cb3069cc85284a7f253a06c97",
+  "adapter_source_and_embed_git_blob": "581932d05dfdfac84b605259f89f66985b81677e",
+  "local_checks": {
+    "scope": "AST-extracted run method with a post-validation tripwire; not full application or daemon execution",
+    "invalid_name_subcases": 52,
+    "supported_name_subcases": 4,
+    "old_source_missing_preflight_confirmed": true,
+    "python_syntax_files": 2,
+    "status": "passed"
+  },
+  "first_ci_attempt": {
+    "commit_sha": "90bd14ed7a1aa812107bde2826f94da605ee3901",
+    "runtime_security_run": 34569709056,
+    "contracts_job": 103169025183,
+    "status": "failed",
+    "reason": "New supported-name test used nested with statements (SIM117); corrected in the subsequent test/documentation commit. No assertion removed."
+  },
+  "not_run_locally": ["complete repository build", "full Go tests", "full Secure Agent suite", "native platform acceptance"],
+  "local_environment_limit": "github.com DNS resolution failed during clone",
+  "review_status": "semantic_review_blocked",
+  "limitations": ["CI status for the final candidate must be read separately", "Green CI does not resolve the confidential-read scenario review", "No claim of OS isolation or actual confidential-data read evidence"]
+}

@@ -25,6 +25,12 @@ type grantDraftRequest struct {
 
 var draftRequestPattern = regexp.MustCompile(`^gd-[a-f0-9]{32}$`)
 
+// grantDraftIncompleteRead is a package-private test observation point after a
+// real incomplete draft read. Production leaves it a no-op; no runtime input
+// installs it, and it supplies neither errors nor authorization decisions.
+// Tests install/restore it only while their HTTP handlers are quiescent.
+var grantDraftIncompleteRead = func() {}
+
 func (s *Server) createGrantDraft(w http.ResponseWriter, r *http.Request, source grant.Grant, seq int) {
 	w.Header().Set("Cache-Control", "no-store")
 	var body grantDraftRequest
@@ -52,10 +58,17 @@ func (s *Server) createGrantDraft(w http.ResponseWriter, r *http.Request, source
 		}
 		response(*current, revision, true)
 		return
-	} else if !errors.Is(err, os.ErrNotExist) {
+	} else if !errors.Is(err, os.ErrNotExist) && !errors.Is(err, state.ErrIncompleteCommit) {
 		writeJSON(w, 409, map[string]string{"error": "grant_draft_unavailable"})
 		return
+	} else if errors.Is(err, state.ErrIncompleteCommit) {
+		grantDraftIncompleteRead()
 	}
+	// ErrIncompleteCommit means a concurrent commit for this draft id has published
+	// the grant but not its done marker. The serialized CommitGrantFrom below waits
+	// for that commit via the store lock, then the revision-conflict re-read returns
+	// the settled draft. A torn commit from a crashed writer still refuses: the
+	// commit conflicts on the existing journal and the re-read stays incomplete.
 	adm, err := s.d.Store.GetAdmission(source.AdmissionID)
 	if err != nil || adm.Verdict == "quarantine" || !s.d.Store.VerifyAdmission(s.d.Key.Public(), *adm) {
 		writeJSON(w, 409, map[string]string{"error": "grant_draft_admission_unavailable"})

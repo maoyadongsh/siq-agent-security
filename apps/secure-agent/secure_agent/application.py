@@ -71,7 +71,13 @@ class SecureApplication:
     def run(self, prompt: str, *, repository: str, question: str, scope: tuple[str, ...],
             effect_mode: str = "normal", github_endpoint: str | None = None,
             before_execution=None, changed=None, approval_required=False, on_hold=None, trifecta=False,
-            source_sensitivity=DataSensitivity.PUBLIC, requested_output="delivery") -> dict:
+            source_sensitivity=DataSensitivity.PUBLIC, requested_output="delivery",
+            confidential_name: str = ".env") -> dict:
+        # Only the two operator-owned fixtures are supported. Validate before
+        # allocating a run, touching files, issuing authority or calling a model.
+        # Path normalization after open() would be too late to prevent escape.
+        if not isinstance(confidential_name, str) or confidential_name not in (".env", "confidential-note.txt"):
+            raise AgentError("confidential_fixture_path_invalid")
         started = perf_counter()
         model_call_start = len(getattr(self.model, "calls", []))
         transition_start = len(self.model.transitions)
@@ -83,7 +89,7 @@ class SecureApplication:
         contact_path = assets / "contacts.json"
         contact_path.write_bytes(canonical(self.fixtures.contacts))
         contact_path.chmod(0o600)
-        confidential_path = assets / ".env" if trifecta else None
+        confidential_path = assets / confidential_name if trifecta else None
         if confidential_path is not None:
             with confidential_path.open("xb") as note:
                 note.write(NOTE)
@@ -94,8 +100,14 @@ class SecureApplication:
         mcp = self.fixtures.endpoint + "/mcp"
         url = self.fixtures.endpoint + "/messages/" + digest(self.fixtures.contacts[task.contact])
         agent_id = "secure-agent-" + run_id
+        # Grant network scope names explicit host:port endpoints; ports match
+        # exactly (ADR-025), so the fixture's dynamic port must be granted as-is.
+        def granted_endpoint(target):
+            parts = urlsplit(target)
+            return f"{parts.hostname}:{parts.port or (443 if parts.scheme == 'https' else 80)}"
         grant = deploy_application_grant(self.daemon.admin, self.repo, agent_id, workspace,
-                                         contact_path, [urlsplit(github).hostname, "127.0.0.1"], approval_required=approval_required)
+                                         contact_path, [granted_endpoint(github), granted_endpoint(self.fixtures.endpoint)],
+                                         approval_required=approval_required)
         preview_id = Identity("hermes", "review-session-" + run_id, agent_id, "review-" + run_id)
         self.model.bind(preview_id.task_id, task.source_sensitivity)
         preview_state = TaskState(preview_id.task_id, prompt, self.model.name)

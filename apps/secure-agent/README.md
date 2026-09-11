@@ -59,9 +59,19 @@ tasks or sessions. Action snapshots include actual SIQ provenance readbacks,
 including source type/trust and task/session scope; display metadata never grants
 permission. See the [Demo evidence contract](../../docs/hackathon/demo-evidence-contract.md).
 
-`./scripts/hackathon/demo-trifecta.sh` demonstrates a confidential fixture read,
-an actual untrusted web response and subsequent egress denial in one execution
-session. See the [stateful demonstration contract](../../docs/hackathon/lethal-trifecta-demo.md).
+`./scripts/hackathon/demo-trifecta.sh` exercises the operator-selected
+confidential-fixture scenario. Under the current ADR-025 resource boundary,
+credential paths (e.g. `.env`) are never grantable: the read is denied at the
+SIQ boundary before the tool runs, no bytes are read or observed, and the denied
+attempt still conservatively marks the session as private-data contact; the
+execution session stops before its dependent steps (including its network
+calls), while the preparation phase's granted read-only retrieval has already
+completed in an earlier, separate session. The engine-level "private data + untrusted input +
+egress" denial is locked by Go `TestLethalTrifectaDenied`
+(apps/agentshield/internal/receipt), and the earlier read-allowed flow is kept
+only as [historical evidence](../../docs/hackathon/lethal-trifecta-demo.md).
+A trusted classification entry for non-credential private files does not exist
+yet; that capability is a registered design gap, not a current claim.
 
 The [official StepFun API](https://platform.stepfun.com/docs/zh/api-reference/chat/chat-completion-create)
 supports Chat Completions and JSON mode. Endpoint redirects are rejected so a

@@ -17,7 +17,10 @@ import (
 func expiryFixture(t *testing.T) (*Server, *state.Store, string, int) {
 	t.Helper()
 	s, store := newServer(t, "block")
-	path, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like"))
+	// Keep the locator relative so admission evidence IDs (scoped to the source
+	// locator by design) stay stable across checkout roots; contract samples
+	// derived from this fixture must not embed the machine-specific abs path.
+	path := filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like")
 	_, admitted := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": path})
 	code, created := call(t, s, "POST", "/v1/grants", token, map[string]any{"admission_id": admitted["admission"].(map[string]any)["admission_id"], "platform": "hermes", "subject_id": "expiry-agent"})
 	if code != 200 {

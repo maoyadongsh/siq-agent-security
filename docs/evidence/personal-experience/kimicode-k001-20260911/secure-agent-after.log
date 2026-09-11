@@ -1,0 +1,41 @@
+F.FF................................................................................................
+======================================================================
+FAIL: test_changed_confidential_fixture_stops_before_network (test_application.ApplicationTest.test_changed_confidential_fixture_stops_before_network)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/apps/secure-agent/tests/test_application.py", line 184, in test_changed_confidential_fixture_stops_before_network
+    self.assertEqual(result["task"]["error_code"], "tool_confidential_fixture_invalid")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'runtime_denied' != 'tool_confidential_fixture_invalid'
+- runtime_denied
++ tool_confidential_fixture_invalid
+
+
+======================================================================
+FAIL: test_confidential_fixture_symlink_is_rejected (test_application.ApplicationTest.test_confidential_fixture_symlink_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/apps/secure-agent/tests/test_application.py", line 193, in test_confidential_fixture_symlink_is_rejected
+    self.assertEqual(result["task"]["error_code"], "tool_confidential_fixture_invalid")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'runtime_denied' != 'tool_confidential_fixture_invalid'
+- runtime_denied
++ tool_confidential_fixture_invalid
+
+
+======================================================================
+FAIL: test_confidential_read_then_untrusted_web_denies_next_egress (test_application.ApplicationTest.test_confidential_read_then_untrusted_web_denies_next_egress)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/apps/secure-agent/tests/test_application.py", line 166, in test_confidential_read_then_untrusted_web_denies_next_egress
+    self.assertEqual(result["task"]["error_code"], "lethal_trifecta")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'runtime_denied' != 'lethal_trifecta'
+- runtime_denied
++ lethal_trifecta
+
+
+----------------------------------------------------------------------
+Ran 100 tests in 36.172s
+
+FAILED (failures=3)

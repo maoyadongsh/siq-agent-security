@@ -30,6 +30,20 @@ jobs:
         run: |
           go vet ./...
           go test -race ./...
+      - name: Repeated HTTP draft publication regression
+        working-directory: apps/agentshield
+        run: go test -race ./internal/server -run '^TestGrantDraftHTTPInflightWriterConverges$' -count=20
+      - name: Verify old HTTP draft handler is rejected by the same test
+        run: |
+          mkdir -p artifacts/grant-draft-inflight
+          python3 scripts/personal-experience/grant-draft-inflight-mutation.py --out artifacts/grant-draft-inflight/mutation-result.json
+          sha256sum apps/agentshield/internal/server/grant_draft.go apps/agentshield/internal/server/grant_draft_inflight_test.go scripts/personal-experience/grant-draft-inflight-mutation.py > artifacts/grant-draft-inflight/source-sha256.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: grant-draft-inflight-mutation
+          path: artifacts/grant-draft-inflight/
+          if-no-files-found: error
+          retention-days: 14
   runtime-security-contracts:
     runs-on: ubuntu-latest
     timeout-minutes: 20
