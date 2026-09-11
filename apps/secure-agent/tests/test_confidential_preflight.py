@@ -46,8 +46,10 @@ class ConfidentialPreflightTest(unittest.TestCase):
         app = object.__new__(SecureApplication)
         for trifecta in (False, True):
             for name in (".env", "confidential-note.txt"):
-                with self.subTest(trifecta=trifecta, name=name):
-                    with patch("secure_agent.application.perf_counter", side_effect=RuntimeError("past preflight")):
-                        with self.assertRaisesRegex(RuntimeError, "^past preflight$"):
-                            app.run("fixture", repository="fixture/project", question="review", scope=("README.md",),
-                                    trifecta=trifecta, confidential_name=name)
+                with (
+                    self.subTest(trifecta=trifecta, name=name),
+                    patch("secure_agent.application.perf_counter", side_effect=RuntimeError("past preflight")),
+                    self.assertRaisesRegex(RuntimeError, "^past preflight$"),
+                ):
+                    app.run("fixture", repository="fixture/project", question="review", scope=("README.md",),
+                            trifecta=trifecta, confidential_name=name)
