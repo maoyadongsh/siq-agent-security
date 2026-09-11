@@ -160,25 +160,59 @@ class ApplicationTest(unittest.TestCase):
         self.assertFalse(result["messages"])
         self.assertNotEqual(result["task"]["completion"]["status"], "verified")
 
-    def test_confidential_read_then_untrusted_web_denies_next_egress(self):
+    def test_confidential_credential_read_denied_before_network(self):
+        # ADR-025: credential paths are never grantable. The operator fixture read
+        # is denied at the SIQ boundary: the tool never runs, no bytes are read or
+        # observed, and the task stops before any network use. The engine still
+        # marks the denied attempt as private-data contact (conservative state);
+        # the resulting private+untrusted+egress denial is covered at engine level
+        # by Go TestLethalTrifectaDenied (apps/agentshield/internal/receipt).
         result = self.run_application(trifecta=True)
         self.assertEqual(result["task"]["status"], "blocked")
-        self.assertEqual(result["task"]["error_code"], "lethal_trifecta")
+        self.assertEqual(result["task"]["error_code"], "runtime_denied")
         actions = result["task"]["actions"]
-        self.assertEqual([a["tool"] for a in actions], ["read_file", "web_fetch", "web_fetch"])
-        # ADR-025: credential paths are never grantable, so the .env read is
-        # denied at the boundary; the denied attempt still marks the session as
-        # having touched private data, and the later egress hits the trifecta.
-        self.assertEqual([a["decision"] for a in actions], ["deny", "allow", "deny"])
-        self.assertEqual([a["d3_materialized"] for a in actions], [False, True, False])
-        self.assertEqual([a["observation"] for a in actions], ["UNKNOWN", "REPORTED", "UNKNOWN"])
-        self.assertEqual([a["decision_trifecta"] for a in actions], [
-            {"private_data": True, "untrusted_input": False, "egress": False},
-            {"private_data": True, "untrusted_input": False, "egress": True},
-            {"private_data": True, "untrusted_input": True, "egress": True}])
+        self.assertEqual([a["tool"] for a in actions], ["read_file"])
+        self.assertEqual(actions[0]["decision"], "deny")
+        self.assertFalse(actions[0]["d3_materialized"])
+        self.assertEqual(actions[0]["observation"], "UNKNOWN")
+        self.assertEqual(actions[0]["decision_trifecta"],
+                         {"private_data": True, "untrusted_input": False, "egress": False})
         self.assertFalse(Path(result["report"]["path"]).exists())
         self.assertFalse(result["messages"])
         self.assertEqual(result["task"]["completion"]["status"], "incomplete")
+
+    def test_confidential_read_denied_for_unrelated_reason_still_terminates(self):
+        def revoke(authority, _fixtures):
+            authority.admin.request("/v1/intents/" + authority.intent["intent_id"] + "/revoke",
+                                    {"expected_intent_digest": authority.intent["digest"]})
+        # The refusal need not come from the credential boundary: any denial of
+        # the operator fixture read terminates the flow; it is never tolerated
+        # or classified by human-readable reason text.
+        result = self.run_application(trifecta=True, before=revoke)
+        self.assertEqual(result["task"]["status"], "blocked")
+        actions = result["task"]["actions"]
+        self.assertEqual([a["tool"] for a in actions], ["read_file"])
+        self.assertEqual(actions[0]["decision"], "deny")
+        self.assertFalse(actions[0]["d3_materialized"])
+        self.assertFalse(Path(result["report"]["path"]).exists())
+        self.assertFalse(result["messages"])
+
+    def test_confidential_note_read_allowed_without_private_classification(self):
+        # The non-credential fixture is read for real through ToolAdapters and its
+        # exact bytes are verified by the tool. The current engine has no trusted
+        # entry that classifies a non-credential file as private data: the allowed
+        # read does not set private_data and the task completes the ordinary
+        # granted flow. The missing "private read -> egress restriction" path is a
+        # registered design gap (docs/adr/0048), not silently claimed here.
+        result = self.run_application(trifecta=True, confidential_name="confidential-note.txt")
+        self.assertEqual(result["task"]["status"], "verified")
+        actions = result["task"]["actions"]
+        self.assertEqual(actions[0]["tool"], "read_file")
+        self.assertEqual(actions[0]["decision"], "allow")
+        self.assertTrue(actions[0]["d3_materialized"])
+        self.assertTrue(all(a["decision_trifecta"] is not None and not a["decision_trifecta"]["private_data"]
+                            for a in actions))
+        self.assertEqual(len(result["messages"]), 1)
 
     def test_changed_confidential_fixture_stops_before_network(self):
         def change(authority, _fixtures):
