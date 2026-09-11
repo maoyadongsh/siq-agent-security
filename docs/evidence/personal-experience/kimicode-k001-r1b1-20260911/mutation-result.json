@@ -1,0 +1,26 @@
+{
+ "test": "TestGrantDraftHTTPInflightWriterConverges",
+ "head": "e4454346430fe771d644595a473e3b633e770479",
+ "go_version": "go version go1.26.5 linux/arm64",
+ "worktree": "/home/maoyd/siq/siq-agent-security/.tmp/k001-r1b1-mutation-1481557",
+ "steps": [
+  {
+   "cmd": "git worktree add --detach HEAD",
+   "exit": 0
+  },
+  {
+   "cmd": "go test ./internal/server -run TestGrantDraftHTTPInflightWriterConverges -count=2 -v",
+   "variant": "mutant(old 409 handler)",
+   "exit": 1,
+   "failure_signature_found": true,
+   "forbidden_signatures_found": []
+  },
+  {
+   "cmd": "go test ./internal/server -run TestGrantDraftHTTPInflightWriterConverges -count=2 -v",
+   "variant": "fixed handler",
+   "exit": 0,
+   "passed": true
+  }
+ ],
+ "result": "passed: mutant fails deterministically with the expected signature, fixed handler passes"
+}
