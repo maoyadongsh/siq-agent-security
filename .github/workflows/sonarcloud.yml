@@ -1,0 +1,72 @@
+name: sonarcloud
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notice:
+    name: SonarCloud setup status (not a quality gate)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Explain optional analysis
+        env:
+          SCAN_ENABLED: ${{ vars.SONAR_ENABLED }}
+        run: |
+          if [ "$SCAN_ENABLED" != "true" ]; then
+            echo 'SonarCloud is not enabled. No scan or quality-gate result is claimed.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'SonarCloud is configured as optional. The analysis job checks event eligibility and project settings; this notice is not a successful quality gate.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo 'Fork PRs, Dependabot and non-main manual runs do not receive the Sonar token. Same-repository PR analysis requires its own enable flag.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Maintainer setup: docs/research/code-review-services.md' >> "$GITHUB_STEP_SUMMARY"
+
+  sonarcloud:
+    name: SonarCloud Code Analysis
+    if: >-
+      github.repository == 'maoyadongsh/siq-agent-security' &&
+      vars.SONAR_ENABLED == 'true' &&
+      github.actor != 'dependabot[bot]' &&
+      (
+        ((github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+         github.ref == 'refs/heads/main') ||
+        (github.event_name == 'pull_request' &&
+         vars.SONAR_PR_ANALYSIS_ENABLED == 'true' &&
+         github.event.pull_request.user.login != 'dependabot[bot]' &&
+         github.event.pull_request.head.repo.full_name == github.repository &&
+         github.event.pull_request.base.ref == 'main')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate non-secret Cloud settings
+        id: config
+        env:
+          SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+          SONAR_REGION: ${{ vars.SONAR_REGION }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+        run: python3 scripts/research/sonarcloud_config.py
+      - name: Analyze and wait for the actual quality gate
+        uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
+        with:
+          skipSignatureVerification: 'false'
+          args: >-
+            -Dsonar.organization=${{ steps.config.outputs.organization }}
+            -Dsonar.projectKey=${{ steps.config.outputs.project_key }}
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=300
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_REGION: ${{ steps.config.outputs.region }}

@@ -59,3 +59,6 @@ secrets/
 
 # Isolated competition runtime, fixtures, model output and credentials
 .tmp/
+
+# Local SonarScanner output (not source or review evidence).
+.scannerwork/
