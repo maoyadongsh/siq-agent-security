@@ -1967,15 +1967,18 @@ def test_client_release_v2_go_fixture() -> None:
     Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key().verify(signature, canonical)
 
 
-def test_service_switch_go_fixture() -> None:
+@pytest.mark.parametrize(
+    "version,fixture", [("v1", "local-service-switch.json"), ("v2", "local-service-switch-v2.json")]
+)
+def test_service_switch_go_fixture(version: str, fixture: str) -> None:
     import hashlib
 
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-    schema = json.loads((CONTRACTS / "local-service-switch.v1.schema.json").read_text())
+    schema = json.loads((CONTRACTS / f"local-service-switch.{version}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema)
-    data = json.loads((GO_SAMPLES / "local-service-switch.json").read_text())
+    data = json.loads((GO_SAMPLES / fixture).read_text())
     validator.validate(data)
     key = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
     for document in [data, data["source_record"], data["target_record"]]:
@@ -1987,3 +1990,53 @@ def test_service_switch_go_fixture() -> None:
     for field in schema["required"]:
         assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
     assert list(validator.iter_errors({**data, "status": "running"}))
+
+    if version == "v2":
+        for field in ("source_sha256", "target_sha256"):
+            for invalid in ("", "A" * 64, "g" * 64, "a" * 63, None):
+                bad = {**data, "binary_bindings": {**data["binary_bindings"], field: invalid}}
+                assert list(validator.iter_errors(bad))
+
+
+def test_launch_agent_go_plist_fixture() -> None:
+    import plistlib
+
+    data = plistlib.loads((GO_SAMPLES / "launch-agent.sample.plist").read_bytes())
+    assert data == {
+        "Label": "dev.siq.agent-security." + "a" * 64,
+        "ProgramArguments": ['/Users/example/SIQ & tools/agent "quoted" $bin', "serve"],
+        "EnvironmentVariables": {
+            "SIQ_AGENT_SECURITY_STATE_DIR": "/Users/example/Library/Application Support/SIQ <local> 中文",
+        },
+        "RunAtLoad": False,
+        "KeepAlive": False,
+        "Umask": 0o077,
+        "ExitTimeOut": 30,
+        "StandardOutPath": "/dev/null",
+        "StandardErrorPath": "/dev/null",
+    }
+
+
+def test_launch_agent_record_go_fixture() -> None:
+    import hashlib
+    import plistlib
+
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+    schema = json.loads((CONTRACTS / "local-launch-agent-record.v1.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    record = json.loads((GO_SAMPLES / "local-launch-agent-record.json").read_text())
+    validator.validate(record)
+    plist = (GO_SAMPLES / "launch-agent.sample.plist").read_bytes()
+    assert record["plist_sha256"] == hashlib.sha256(plist).hexdigest()
+    assert record["label"] == plistlib.loads(plist)["Label"]
+    unsigned = {k: v for k, v in record.items() if k != "signature"}
+    canonical = json.dumps(unsigned, sort_keys=True, separators=(",", ":")).encode()
+    key = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+    key.verify(bytes.fromhex(record["signature"]), canonical)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in record.items() if k != field}))
+    for field in ("instance_id", "state_directory_id", "plist_sha256", "label", "signature"):
+        assert list(validator.iter_errors({**record, field: "invalid"}))
+    assert list(validator.iter_errors({**record, "unit_name": "linux.service"}))
