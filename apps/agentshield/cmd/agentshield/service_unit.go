@@ -62,46 +62,9 @@ func cmdServiceUnit(args []string, out io.Writer) error {
 	if runtime.GOOS != "linux" {
 		return errors.New("service-unit: systemd export is only available on Linux")
 	}
-	dir, err := state.DefaultDir()
+	dir, bin, err := currentServicePaths()
 	if err != nil {
 		return err
-	}
-	dir, err = filepath.Abs(dir)
-	if err == nil {
-		dir, err = filepath.EvalSymlinks(dir)
-	}
-	if err != nil {
-		return errors.New("service-unit: initialize the selected state directory first")
-	}
-	st := &state.Store{Dir: dir}
-	if _, err := st.ReadLocalInstance(); err != nil {
-		return errors.New("service-unit: valid initialized instance required")
-	}
-	// Initialize has already validated this file, but export must not accept a
-	// deleted configuration as the loader's implicit defaults.
-	info, err := os.Lstat(filepath.Join(dir, "config.json"))
-	if err != nil || !info.Mode().IsRegular() || info.Size() > 65536 {
-		return errors.New("service-unit: valid configuration required")
-	}
-	f, err := os.Open(filepath.Join(dir, "config.json"))
-	if err != nil {
-		return errors.New("service-unit: configuration unavailable")
-	}
-	raw, readErr := io.ReadAll(io.LimitReader(f, 65537))
-	_ = f.Close()
-	var object map[string]json.RawMessage
-	if readErr != nil || len(raw) > 65536 || json.Unmarshal(raw, &object) != nil || object == nil {
-		return errors.New("service-unit: invalid configuration")
-	}
-	if _, err := st.LoadConfig(); err != nil {
-		return errors.New("service-unit: invalid configuration")
-	}
-	bin, err := os.Executable()
-	if err == nil {
-		bin, err = filepath.EvalSymlinks(bin)
-	}
-	if err != nil {
-		return errors.New("service-unit: current executable unavailable")
 	}
 	unit, err := renderUserUnit(bin, dir)
 	if err != nil {
@@ -109,4 +72,51 @@ func cmdServiceUnit(args []string, out io.Writer) error {
 	}
 	_, err = io.WriteString(out, unit)
 	return err
+}
+
+// currentServicePaths is read-only and shared by platform service renderers.
+func currentServicePaths() (string, string, error) {
+	dir, err := state.DefaultDir()
+	if err != nil {
+		return "", "", err
+	}
+	dir, err = filepath.Abs(dir)
+	if err == nil {
+		dir, err = filepath.EvalSymlinks(dir)
+	}
+	if err != nil {
+		return "", "", errors.New("service-unit: initialize the selected state directory first")
+	}
+	st := &state.Store{Dir: dir}
+	if _, err := st.ReadLocalInstance(); err != nil {
+		return "", "", errors.New("service-unit: valid initialized instance required")
+	}
+	// Initialize has already validated this file, but export must not accept a
+	// deleted configuration as the loader's implicit defaults.
+	info, err := os.Lstat(filepath.Join(dir, "config.json"))
+	if err != nil || !info.Mode().IsRegular() || info.Size() > 65536 {
+		return "", "", errors.New("service-unit: valid configuration required")
+	}
+	f, err := os.Open(filepath.Join(dir, "config.json"))
+	if err != nil {
+		return "", "", errors.New("service-unit: configuration unavailable")
+	}
+	raw, readErr := io.ReadAll(io.LimitReader(f, 65537))
+	_ = f.Close()
+	var object map[string]json.RawMessage
+	if readErr != nil || len(raw) > 65536 || json.Unmarshal(raw, &object) != nil || object == nil {
+		return "", "", errors.New("service-unit: invalid configuration")
+	}
+	if _, err := st.LoadConfig(); err != nil {
+		return "", "", errors.New("service-unit: invalid configuration")
+	}
+	bin, err := os.Executable()
+	if err == nil {
+		bin, err = filepath.EvalSymlinks(bin)
+	}
+	if err != nil {
+		return "", "", errors.New("service-unit: current executable unavailable")
+	}
+
+	return dir, bin, nil
 }

@@ -6,12 +6,19 @@
 - 用户授权：在本仓增量实现并验证；不自动提交、推送、发布。
 - 既有改动：Vitest 4.1.11 的 `apps/web/package.json`、`package-lock.json`，以及原任务书，继续保留。
 
-### 当前续开发基线（2026-09-12）
+### 历史续开发基线（2026-09-12，M36 时点）
 
 - 用户再次指定任务书为持续开发目标，目标已登记为 active；先个人 UX，再 LAN。
 - 当前分支 `codex/personal-k002-platform-readiness`，HEAD `a195faba41d128d21222f819ebf96a766fb9cd01`。上方 main 和 Vitest 工作区描述为 2026-09-10 历史记录。
 - 本轮开始仅任务书有未提交修改，保持原样；未合并 PR、切换分支、提交、推送或发布。在当前 K002 后继工作区先完成可审阅增量；任务书 §11.1 的主线合入步骤尚未执行。
 - 最新批次 M36：状态目录健康绑定、配置初始化与稳定本地实例 ID 已实现并通过隔离 Linux arm64 实测；团队设备身份、安装包和三系统用户级后台仍待完成，UX-003 不标完成。
+
+### 当前落盘基线（2026-09-12，M67）
+
+- main 已合入 PR #28，合并提交 69d9c59，包含截至 M47 的验证增量。
+- 当前分支 codex/personal-client-upgrade-recovery，M48–M67 为本批待提交合入增量；用户已于本轮授权提交并合并 main，实际远端结果以 Git/PR 为准。
+- Linux 生命周期已具备升级/恢复/回退、快照恢复、setup/ui/自启/teardown；其原生证据仅隔离 Linux arm64，正式发行安装与真实重新登录仍未闭环。
+- macOS 已完成 plist 导出、签名准备、用户目录链接注册及只读加载状态查询；launchctl 加载/启动与实机证据尚未完成。Windows 后台生命周期待实现。
 
 ## 任务状态
 
@@ -22,7 +29,7 @@
 | UX-000 | complete | [需求验收映射与基线](personal-experience-requirements-baseline-20260910.md)覆盖 D01–D11、实施位置、证据、未知项和阶段边界；具体功能状态继续逐任务跟踪 |
 | UX-001 | doing / native subset verified | Linux arm64：OpenClaw 原生链路 14 项、Hermes 经实例安装后的原生链路 15 项检查通过；完整会话/审批、Windows/macOS 与 WorkBuddy 桌面仍待验收 |
 | UX-002 | doing | ADR-019–047 覆盖会话、发现、诊断、接入变更、Hermes 实例、自检、资源编辑和固定授权选择；安装预览/提交/恢复合同已接通；可信 Skill 运行归属仍需完成 |
-| UX-003 | doing | 状态目录匹配、本地重新配对、配置初始化与稳定实例 ID 已实现；M35/M36 隔离 Linux arm64 启动复用、错误目录拒绝、并发初始化和重启验证通过；完整安装器、系统后台生命周期和跨 OS 制品尚待实现 |
+| UX-003 | doing / Linux native subset verified | Linux 初始化、后台注册/控制、setup、ui、自启链接管理和 teardown 已实现，隔离 runtime 全链复用/恢复通过；macOS plist 与签名准备已落盘，launchctl 接入/实机、Windows 后台及正式安装器仍待完成 |
 | UX-004 | implemented / Linux verified | 会话恢复、注销、到期重新配对、CLI 配对恢复及错误分类已落盘；Linux Chromium 11 项检查通过，跨 OS 运行验证归 UX-015 |
 | UX-005 | doing / core implemented | 显式扫描、范围预览、手动目录、稳定安装身份和共享关系已实现；Hermes 自定义根与 profile 使用同一实例解析器。同名实例隔离通过；其他平台根、过滤优先级、全量覆盖与跨 OS 实机仍待验证 |
 | UX-006 | doing / Hermes runtime check implemented | 接入预览、确认、恢复、卸载、Hermes 实例选择/原生启用及产品运行自检已落盘；Linux 独立 profile 的 UI/API/真实 CLI 通过。其他平台自检、自动重启和跨 OS 恢复仍待完成 |
@@ -33,7 +40,7 @@
 | UX-011 | todo | 任务聚合与结果证据 |
 | UX-012 | doing | 随 M1 改进连接与配对状态，后续继续整合页面 |
 | UX-013 | todo | 隐私、保留期和独立原文存储 |
-| UX-014 | todo | 三系统安装制品与升级 |
+| UX-014 | doing / Linux core implemented | 发行 v2 兼容验证、稳定路径暂存、升级/回退/快照恢复、清单复用与 client-install 已实现；正式发行安装成功路径、不同版本与跨 OS 制品验收仍待完成 |
 | UX-015 | todo | 真实组合综合验收 |
 | LAN-001–006 | todo | 个人阶段完成后推进，未创建额外团队服务 |
 
@@ -475,6 +482,30 @@
 - Go 全量/vet/state/CLI race、156 项 Python 合同、Ruff、四目标构建和实际 Linux pending 启动拒绝通过，见 [M47 证据](evidence/personal-experience/service-switch-20260912.md)。故障为文件阶段夹具，不冒充断电验收。
 - 下一步将该事务与发行验签、manager 停止/reload/启动健康组合为产品升级命令；本批没有开放任意 unit 写入入口。完整目标 active。
 
+## M48：Linux 产品升级命令与前滚恢复（UX-003/014）
+
+- PR #28 已合并到 main `69d9c59`，新分支恢复升级草稿并接入 service-upgrade：先验签/暂存，再停止、事务切换、重载、目标启动和版本/目录健康确认；失败保留 ID，同目标恢复及已运行复用可用。
+- Go 全量/vet/race、四目标构建、真实 Linux 配置/进程切换与开发发行者拒绝通过，见 [M48 证据](evidence/personal-experience/service-upgrade-20260912.md)。原生正向使用同构建路径副本，不冒充跨发行版本验收。
+- 下一步继续失败回退与跨 OS/安装交付边界，其他个人任务及 LAN 原目标保留。本批未提交或推送，完整目标 active。
+
+## M49：修复候选启动失败后无法恢复（UX-003/014）
+
+- 回归证明原 Result=success 条件阻断 failed/MainPID=0 的候选恢复；修复为同事务下先验证无 manager 主进程，再由主 Writer 校验写入归属。正常停止口径不放宽，未知 PID/过渡状态/活跃锁拒绝。
+- Go 全量/vet/race、四目标构建及两项真实 Linux 正常切换/端口冲突失败后恢复通过，见 [M49 证据](evidence/personal-experience/upgrade-failed-start-20260912.md)。没有扩大为跨发行版本支持声明。
+- 继续失败回退与安装交付、跨 OS 验收；完整目标 active。
+
+## M50：显式源配置回退（UX-003/014）
+
+- 新增 service-rollback，验证旧候选发行声明及原事务源配置绑定，复用切换事务恢复原服务配置；失败候选无主进程时可处理，未知目标不操作，授权台账不回滚。
+- Go 全量/vet/race、四目标构建、两项真实 Linux 切换/故障恢复后回退通过，见 [M50 证据](evidence/personal-experience/service-rollback-20260912.md)。保留历史构建摘要缺失和原路径要求的边界，不声明正式跨版本验收完成。
+- 下一步补齐旧制品留存与安装交付，跨 OS/其他个人项目/LAN 目标保留，整体 active。
+
+## M51：升级前保留本地程序副本（UX-003/014）
+
+- 初次升级停止服务前复制当前 CLI 可执行文件至独立摘要目录，限流/源二次一致性校验/私有排他发布；恢复已有事务不重新取旧版本。副本不成为可信发行制品。
+- Go 全量/vet/race、四目标构建、实际测试程序副本及源删除后保留/漂移拒绝验证通过，见 [M51 证据](evidence/personal-experience/client-snapshot-20260912.md)。
+- 下一步将原程序摘要绑定签名历史并实现原路径恢复，避免把本地副本误作完整历史回退能力；整体目标 active。
+
 ## 未关闭的验证限制
 
 - `desktop-same-uid` 不构成恶意同 UID 隔离。恢复凭据不改善该残余风险，也不应扩大到网络管理入口。
@@ -482,3 +513,99 @@
 - 当前签名 Skill 的脚本参与内容哈希；旧包保持可验证。新后台启动入口先在开发工具中实现，待 UX-014 新制品发布准备时整合，不在旧清单上冒用签名。
 - 原文记录仍维持关闭，待独立设计后实现；不直接修改既有脱敏审计。
 - 任务书的完整目标保持进行中；本机可完成的实现持续推进，外部验证缺口保持明确状态。
+
+## M52：程序摘要签名切换合同（UX-003/014 仍未闭环）
+
+- 增加 local-service-switch/v2 和 PrepareServiceSwitchWithBinaries，源/目标摘要纳入规范化签名；v1 原签名与历史日志保持兼容，不补写虚构历史身份。
+- v2 创建、读取、重复应用与摘要篡改负向通过；Go 固定样例由 Python 校验合同/签名，157 项合同通过，四目标交叉构建通过。
+- [本批证据](evidence/personal-experience/service-switch-binary-bindings-20260912.md)。CLI 仍写 v1，下一步接入实际程序摘要核对、v2 写入与回退历史摘要绑定。本批不计作升级回退完整验收。
+
+## M53：升级/回退命令接通历史程序摘要（UX-003/014）
+
+- 新升级写 v2，持锁停止前、事务准备前和 start 前核对内容；回退候选必须匹配原 source 摘要，反向日志保留交换绑定。旧 v1 只保留前滚恢复能力，产品回退拒绝无历史摘要的日志。
+- 源/目标同路径替换、停止后漂移和恢复改绑定负向通过；损坏新程序回退正向通过。Go 全量/vet、CLI/clientrelease race、四目标构建及两项隔离 Linux systemd 原生升级/恢复/回退通过。
+- [M53 证据](evidence/personal-experience/service-binary-identity-20260912.md)。同构建双路径测试不代表正式跨版本升级；原路径缺失恢复、安装器与跨 OS 验收仍待完成。
+
+## M54：明确恢复缺失的历史程序（UX-003/014）
+
+- 回退增加 --restore-missing-binary，原路径/历史摘要/发行清单双重验证后，在生命周期锁内排他恢复缺失程序；已有内容、符号链接、缺失父目录均拒绝覆盖/创建。
+- Go 全量/vet、CLI/clientrelease race、四目标构建通过；隔离 Linux systemd 故障恢复后删除旧程序，再从合成测试快照恢复并回退启动通过。
+- [证据](evidence/personal-experience/service-snapshot-restore-20260912.md)。测试 pin 不是发行信任，尚未正式跨版本验收；后续继续发行清单留存与安装交付。
+
+## M55：回退复用发行清单与源材料留存（UX-003/014）
+
+- 回退可省略 --manifest，从原摘要对应的本机目录有界查找并重新验签唯一兼容清单；多个匹配不猜测，无匹配要求提供。新升级可用 --source-manifest 保存首次源发行材料。
+- 唯一选择、v1 不可升级、测试发行根拒绝、清单/程序漂移、符号链接、枚举预算与多清单歧义测试通过；Go 全量/vet/race、四目标构建通过。
+- [M55 证据](evidence/personal-experience/retained-release-manifest-20260912.md)。没有新原生或正式跨发行版本证据。下一步整合安装与首次启动入口，个人生命周期仍未完成。
+
+## M56：首次后台启动整合入口（UX-003/004）
+
+- 新 setup --confirm-setup 合并初始化、用户服务注册、启动健康检查；支持初始端口和 runtime 注册。重复调用签名/健康/manager/scope 核对后复用，不重启或改配置。成功显示管理 URL 与独立配对提示。
+- Go 全量/vet/race、四目标构建通过；完整 Linux CLI 的隔离首次 setup、重复同 PID/同配置和错误 scope 拒绝实测通过。
+- [证据](evidence/personal-experience/setup-entry-20260912.md)。尚非安装包，不自动登录自启/打开浏览器，Windows/macOS 后台入口仍待完成。
+
+## M57：打开本机管理页面（UX-003/004/012）
+
+- 新 ui / ui --print 先验证当前实例健康再打开或输出管理 URL；setup --open-ui 复用入口。固定 loopback 地址不带凭据、不自动配对，浏览器失败可手动访问。
+- Go 全量/vet/race、四目标构建通过；隔离真实 Linux 服务与 CLI 的 ui --print 通过。浏览器调用采用测试回调，未计为三系统桌面原生证据。
+- [证据](evidence/personal-experience/local-ui-entry-20260912.md)。安装包、登录自启、Windows/macOS 后台仍待完成。
+
+## M58：稳定路径客户端安装入口（UX-003/014）
+
+- 新 client-install 串联发行/v2 校验、Stage 留存、稳定路径二次校验、子进程 setup 和运行版本/目录/服务归属复验，明确确认后执行，不修改 PATH/自启/智能体权限。
+- Go 全量/vet/race、四目标构建通过；无确认/无效候选拒绝且不创建状态，准备阶段多种漂移/失败拒绝、子进程状态目录固定测试通过。
+- [证据](evidence/personal-experience/client-install-entry-20260912.md)。尚无正式发行候选完成安装正向验证，不将测试回调或既有 setup 原生结果计为完整安装验收。
+
+## M59：用户登录自启入口（UX-003）
+
+- service-login --enable --confirm-enable / --disable 精确管理当前已签名实例的 default.target.wants 链接，保留未知对象，不重启/停止服务。生命周期校验支持 enabled scope 且复核链接；注销先关闭自启。
+- Go 全量/vet/race、四目标构建、链接恢复/未知对象负向通过；隔离 Linux runtime 完整 CLI 启用/状态/重复 setup/关闭均保持同 PID 和配置。
+- [证据](evidence/personal-experience/service-login-startup-20260912.md)。真实退出登录后再登录未验收；Windows/macOS 自启与后台仍待完成。
+
+## M60：后台退出与重装复用（UX-003）
+
+- teardown --confirm-teardown 统一关闭自启、正常停止、精确注销，持生命周期锁及最终主 Writer，保留程序/配置/身份/历史。已退出可复用，中断注销支持只读回恢复。
+- Go 全量/vet/race、四目标构建通过；负向覆盖未确认、外来 source、活动 Writer；删除注册后 reload 故障恢复测试通过。隔离 Linux 完整 setup/自启/teardown/重复/再次 setup 链通过。
+- [证据](evidence/personal-experience/teardown-entry-20260912.md)。并非清除数据或卸载平台钩子，正式跨 OS 安装验收保持待办。
+
+## M61：macOS LaunchAgent 配置基础（UX-003）
+
+- 新 launch-agent-plist 只读导出当前实例配置，标签/argv/状态目录绑定，XML 正确转义，不隐式 RunAtLoad/KeepAlive。复用 Linux 原配置预检，不更改其模板语义。
+- Go/Python plist 样例交叉解析、路径与 ID 负向通过；Go 全量/vet/race、158 项合同及四目标构建通过。共用代码提取后 Linux 完整生命周期回归通过。
+- [证据](evidence/personal-experience/launch-agent-plist-20260912.md)。仅配置导出，macOS 注册/启动/恢复与真实运行证据尚未完成，下一步推进专属签名归属和发布。
+
+## M62：macOS 签名配置准备（UX-003）
+
+- 新 local-launch-agent-record/v1 与 launch-agent-prepare，绑定实例/目录/label/plist 摘要，先签名意图后排他发布。重复准备和缺失文件恢复可复验，未知内容/漂移/克隆目录/签名篡改拒绝。
+- Go 全量/vet、state/CLI race、159 项 Python 合同/签名/样例检查及四目标构建通过。
+- [证据](evidence/personal-experience/launch-agent-ownership-20260912.md)。只有状态目录内准备，未注册到 Library/LaunchAgents 或运行 launchctl；macOS 原生验收保持待办。
+
+## M63：macOS 用户目录配置注册发布（UX-003）
+
+- launch-agent-register 在签名准备和双锁内向 Library/LaunchAgents 排他发布精确实例源链接，重复复验，不覆盖未知文件/异目标/相对别名，不跟随两级目录重定向。
+- Go 全量/vet/race、四目标构建、隔离临时 home 正负向文件层测试通过。
+- [证据](evidence/personal-experience/launch-agent-registration-20260912.md)。尚未调用 launchctl 或进行 macOS 实机加载/启动；下一步补用户域加载与同 label 归属读回。
+
+## M64：macOS 已加载配置只读核对（UX-003）
+
+- 新 launch-agent-status 使用 manageruid/managername 和 list -x XML，验证当前 GUI 用户域、全部签名源字段与有限运行元数据；有正 PID 才继续目录 API 健康检查。解析有大小/深度/节点预算，拒绝重复字段与额外配置。
+- Go 全量/vet/race、四目标构建与模拟查询/解析正负向通过。[证据](evidence/personal-experience/launch-agent-loaded-status-20260912.md)。
+- 兼容入口依据 Apple 历史开源实现，当前 macOS 支持情况未实测，失败不当作任务不存在；尚未实现 bootstrap/kickstart 或原生启动验收。
+
+## M65：macOS 区分未加载与查询未确认（UX-003）
+
+- launch-agent-status 接通当前 GUI 域完整任务枚举：精确标签缺席才报告已注册但未加载；存在则继续 XML 归属和健康核对。拒绝截断/重复/污染输出，查询间消失保持错误，不推断不存在。
+- Go 全量/vet/CLI race、四目标构建通过；24 项列表解析及 9 项查询流程场景覆盖正负向与输出预算边界。[证据](evidence/personal-experience/launch-agent-presence-20260912.md)。
+- 没有 macOS 实机，不声明兼容验收；加载、启动、退出和恢复仍待实施。本批只读，不改变系统任务；目标保持进行中，M48–M65 尚未提交合并。
+
+## M66：macOS 显式加载与配置读回（UX-003）
+
+- 新 launch-agent-load --confirm-load：要求既有签名源和精确注册链接，在生命周期锁与当前 GUI 域状态复验后加载单个实例。重复已加载任务不占主 Writer、不重启；缺席加载持主 Writer，成功后核对完整 XML，失败保留现场。
+- Go 全量/vet/CLI race、四目标构建通过；12 个模拟加载场景和确认参数负向通过。[证据](evidence/personal-experience/launch-agent-load-20260912.md)。
+- 没有真实 macOS 加载证据；本命令未请求启动，后续 kickstart、健康、退出和恢复仍待实现/验收。目标保持进行中，未提交或合并远端。
+
+## M67：macOS 显式启动与当前批次合入准备（UX-003）
+
+- 新 launch-agent-start --confirm-start，复用加载和生命周期锁、签名/链接/XML 归属，释放主 Writer 后只对未报告 PID 的任务 kickstart；已有进程不重启，正 PID 与目录 API 健康一致才成功。
+- Go 全量/vet、CLI/state/clientrelease race、159 项 Python 合同、Ruff 和四目标构建通过。8 项启动场景及确认参数负向通过。[证据](evidence/personal-experience/launch-agent-start-20260912.md)。
+- macOS 实机、退出/恢复及其他个人任务仍待完成。用户要求先将已开发内容提交并合入 main，本轮按此授权收拢 M48–M67，不扩展到其他窗口的独立远端 PR。

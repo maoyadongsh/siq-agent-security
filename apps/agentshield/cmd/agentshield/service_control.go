@@ -27,7 +27,7 @@ func ownedService(st *state.Store, unit []byte, control userSystemctl) (state.Us
 	if err != nil {
 		return record, nil, err
 	}
-	err = verifyUserUnit(props, filepath.Join(st.Dir, record.UnitName), props["UnitFileState"] == "linked-runtime")
+	err = verifyUserUnit(props, filepath.Join(st.Dir, record.UnitName), runtimeUserUnit(props))
 	return record, props, err
 }
 

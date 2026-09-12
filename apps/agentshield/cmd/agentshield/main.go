@@ -67,16 +67,42 @@ func main() {
 		err = cmdVerify(os.Args[2:])
 	case "serve":
 		err = cmdServe(os.Args[2:])
+	case "ui":
+		err = cmdUI(os.Args[2:], os.Stdout)
+	case "teardown":
+		err = cmdTeardown(os.Args[2:], os.Stdout)
+	case "setup":
+		err = cmdSetup(os.Args[2:], os.Stdout)
 	case "init":
 		err = cmdInitialize(os.Args[2:], os.Stdout)
 	case "start":
 		err = startLocal(os.Args[2:], os.Stdout, cmdServe)
+	case "service-login":
+		err = cmdServiceLogin(os.Args[2:], os.Stdout)
+	case "launch-agent-status":
+		err = cmdLaunchAgentStatus(os.Args[2:], os.Stdout)
+	case "launch-agent-load":
+		err = cmdLaunchAgentLoad(os.Args[2:], os.Stdout)
+	case "launch-agent-start":
+		err = cmdLaunchAgentStart(os.Args[2:], os.Stdout)
+	case "launch-agent-register":
+		err = cmdLaunchAgentRegister(os.Args[2:], os.Stdout)
+	case "launch-agent-prepare":
+		err = cmdLaunchAgentPrepare(os.Args[2:], os.Stdout)
+	case "launch-agent-plist":
+		err = cmdLaunchAgentPlist(os.Args[2:], os.Stdout)
 	case "service-unit":
 		err = cmdServiceUnit(os.Args[2:], os.Stdout)
 	case "service-start", "service-stop", "service-status":
 		err = cmdServiceControl(strings.TrimPrefix(os.Args[1], "service-"), os.Args[2:], os.Stdout)
 	case "client-upgrade-check":
 		err = cmdClientUpgradeCheck(os.Args[2:], os.Stdout)
+	case "service-rollback":
+		err = cmdServiceRollback(os.Args[2:], os.Stdout)
+	case "service-upgrade":
+		err = cmdServiceUpgrade(os.Args[2:], os.Stdout)
+	case "client-install":
+		err = cmdClientInstall(os.Args[2:], os.Stdout)
 	case "client-stage":
 		err = cmdClientStage(os.Args[2:], os.Stdout)
 	case "service-unregister":
@@ -150,13 +176,26 @@ func usage() {
   %[1]s openshell doctor    # diagnose CLI/gateway; never starts a gateway
   %[1]s openshell apply --target NAME [--allow host:port] [--deny host:port]
                                   # L3: CLI-only network policy set + readback (never create_generation)
+  %[1]s setup --confirm-setup [--port N] [--runtime] [--open-ui] # initialize, register and start Linux user service
+  %[1]s client-install --manifest FILE --binary FILE --confirm-install [--port N] [--runtime] [--open-ui]
+  %[1]s teardown --confirm-teardown # disable startup, stop, unregister; preserve data
+  %[1]s ui [--print]       # open verified local management page, or print its URL
   %[1]s init [--port N]     # initialize local configuration and instance identity; does not start protection
   %[1]s start [--port N]    # initialize and serve in foreground, or reuse a matching running instance
+  %[1]s service-login --enable --confirm-enable | --disable # control user login startup
+  %[1]s launch-agent-status # verify loaded macOS configuration and local API
+  %[1]s launch-agent-load --confirm-load # load registered macOS configuration without starting
+  %[1]s launch-agent-start --confirm-start # start owned macOS task and verify local API
+  %[1]s launch-agent-register # publish owned macOS user configuration; does not load/start
+  %[1]s launch-agent-prepare # prepare signed macOS configuration without loading it
+  %[1]s launch-agent-plist # export macOS LaunchAgent configuration; read-only
   %[1]s service-unit        # export Linux user service configuration (read-only, requires init)
   %[1]s service-start|service-status # start or inspect the owned Linux service
   %[1]s service-stop --confirm-stop # stop protection explicitly
   %[1]s service-unregister --confirm-unregister # remove stopped service registration, keep data
   %[1]s client-upgrade-check --manifest FILE --binary FILE # read-only signed compatibility preflight
+  %[1]s service-rollback --transaction ID --manifest OLD --binary OLD --confirm-rollback [--recover ID]
+  %[1]s service-upgrade --manifest FILE --binary FILE --confirm-upgrade [--recover ID]
   %[1]s client-stage --manifest FILE --binary FILE # verify and stage a release without activation
   %[1]s service-register [--runtime] # register Linux user service without starting it
   %[1]s service-prepare     # publish signed service configuration under the state writer lock

@@ -574,6 +574,150 @@ CLI 成功以人类可读文本报告“已注册、尚未启动”；签名配�
 
 恢复重新验签和绑定后前滚到同一 target；不得通过恢复重签新目标或覆盖未知对象。此事务只完成配置文件切换，不代表 manager reload/启动/健康通过；上层尚需对应阶段恢复。强制停止旧任意版本不在该标记保证内，主 Writer 仍是防混跑前提。无需迁移状态的发行候选仍需上层逐次复验。
 
+### 3.11.12 Linux 产品升级与前滚恢复（UX-003/014）
+
+`service-upgrade --manifest FILE --binary FILE --confirm-upgrade [--recover ID]` 仅 Linux。先检查 v2 发行签名/兼容声明与候选 pin，再暂存并重新校验暂存内容；随后持生命周期锁复验当前源 unit 和系统归属。显式确认覆盖停止保护提示；未确认或候选无效时不停止服务。正常停止后获取主 Writer，准备并打印切换 ID，应用 §3.11.11，释放主锁后 reload、复验 target 配置、启动；active/正数 MainPID/目录健康绑定/发行版本一致才报告成功。
+
+失败保留候选、日志和旧配置，不自动回滚台账。`--recover ID` 重新验签候选并要求目标 unit 与日志逐字节一致，加载同一已签名事务；停止状态下恢复文件阶段后继续 reload/start。若该目标已运行且配置/健康/版本一致，则只读复用；其他运行状态拒绝恢复，不误停未知版本。任意阶段错误不声称升级完成；失败消息保留已知事务 ID。恢复不是新授权，也不接受替换目标。自动回退和跨 OS 系统集成仍是后续工作。
+
+失败启动恢复补充：同一已验证事务可在 manager 为 inactive 或 failed 且 MainPID=0 时重试，不要求上一尝试的 Result=success。不得把这种情况描述为正常停止；恢复写入前仍须 AcquireWriter 复验主锁，活跃/损坏锁拒绝，已证明死亡的旧锁仅按既有隔离规则处理。activating/deactivating、非零/未知 PID、未健康的 active 目标都不自动恢复或停止。首次升级仍要求正常停止读回，停止命令的成功语义保持不变。
+
+### 3.11.13 显式回退至原事务源配置（UX-003/014）
+
+`service-rollback --transaction ID --manifest OLD --binary OLD --confirm-rollback [--recover ID]` 只用于已完成配置切换的 Linux 用户服务。先只读验签原事务，校验旧版本 v2 发行清单/兼容声明/当前平台 pin，规范化 OLD 路径渲染结果必须逐字节等于原事务 SourceUnit；不能把任意旧版本当作该次回退目标。原程序位置与内容必须保留且通过验签，不覆盖未知程序；缺失时仅按 §3.11.16 明确恢复。
+
+回退从原 TargetUnit 到原 SourceUnit 创建新的签名切换事务，保留原记录；恢复回退须使用新的事务 ID，并重复原事务/旧候选绑定检查。显式确认覆盖短暂停止保护；已失败且无主进程的源可回退，仍须主 Writer 验证，未知进程状态不操作。成功要求旧发行版本/目录健康及 manager active/MainPID 读回一致。授权、撤销与台账均不回滚，旧任意二进制不获得新权限。
+
+正在恢复的原配置事务必须先完成前滚；当前不逆转半写入事务，旧二进制缺失仅按 §3.11.16 明确恢复，也不默默使用 v1 代替缺失的无迁移兼容声明。回退是用户显式动作，不在失败时自动触发。原 v1 切换日志保存的是源配置而非源可执行文件摘要；程序身份由操作者提供的已验签清单证明，不能自动推断或宣称恢复了历史构建的逐字节快照。后续制品安装需确保可恢复旧程序与清单可用；本入口不代表跨发行版本已通过原生验收。
+
+### 3.11.14 升级前本地程序副本留存（UX-003/014）
+
+首次 service-upgrade 在候选发行验证和暂存后、停止源服务前，保存当前 CLI 可执行文件的本地副本至 `client-snapshots/<sha256>/siq-agent-security[.exe]`，打印摘要路径；恢复既有事务不把当前调用者再次记作原版本。只处理 os.Executable 规范化后的普通文件，上限 128 MiB；流式复制并二次读取源核对内容稳定，排他发布、0700，复用已有 privateDirectory/publish。独立子目录 Writer 允许 daemon 运行中留存，失败不停止保护，不覆盖漂移对象。
+
+此副本属于本地观测材料，与发行验签通过的 client-releases 分开。它不授予执行信任，不替代回退的发行清单或历史事务摘要绑定，也不证明 daemon 内存映像与当前路径文件相同。本批只保证副本留存，尚不自动将缺失的原路径文件恢复为副本；后续需把原程序摘要绑定到新的签名切换合同。
+
+### 3.11.15 切换日志中的程序摘要（UX-003/014）
+
+新增 local-service-switch/v2，保留 v1 的原始签名兼容，额外必需 binary_bindings，严格包含 source_sha256 与 target_sha256 两个小写 SHA-256。新 PrepareServiceSwitchWithBinaries 入口将调用者已经核对的程序摘要纳入本地规范化签名；空值、非规范摘要及 v1 混入该字段均拒绝。底层仍只处理配置事务，不把摘要当作发行签名或运行进程身份证明。v2 的恢复、完成标记和目录绑定规则与 v1 相同。
+
+历史 v1 不补写、不推断程序摘要。CLI 后续接入须在停止前与启动前复核候选内容、在新升级日志记录旧快照/新候选摘要，并让回退核对原 source 摘要；本合同底层完成本身不代表 CLI 已具备这些保证。
+
+M53 命令接入：首次升级使用 v2，源摘要来自留存快照，源路径必须仍与当前 CLI 渲染的已归属 unit 一致且内容匹配；目标摘要来自通过发行验签的暂存文件。持生命周期锁后、停止前复核源与目标，取得主 Writer 后准备日志前再次核对源；目标在配置应用后、启动前复核。恢复 v2 必须提供与签名日志完全相同的摘要绑定，并复核实际目标，不要求旧源仍存在。历史 v1 可继续前滚恢复，但不伪造摘要。
+
+产品回退命令要求原事务为 v2，已验证旧候选摘要必须等于原 source_sha256；v1 原事务明确报告缺少历史程序身份，拒绝发起新的回退。反向事务交换源/目标摘要并保存为 v2；恢复反向事务仍须与原事务反向绑定一致。故障新版本允许损坏或丢失，只在回退目标上要求可执行文件内容完整，不把反向 source 摘要描述成新观测。所有摘要属于磁盘内容核对，仍不证明内存映像，也不抵抗同用户持续竞态改写。发行验签和无迁移声明要求保持。
+
+### 3.11.16 明确恢复缺失的历史程序（UX-003/014）
+
+Linux service-rollback 增加 --restore-missing-binary，与 --confirm-rollback 同时使用；--binary 仍指定原 source unit 的绝对程序路径。先验签原 v2 事务，规范化父目录并渲染 source unit，逐字节匹配才允许写入。已有普通文件沿用完整内容与发行校验；符号链接和其他对象拒绝，未知内容不覆盖。父目录必须存在，不创建外部目录。
+
+仅在目标缺失且明确选择恢复时，从当前状态目录 client-snapshots/<原 source_sha256>/siq-agent-security 读取完整快照；私有目录、普通文件、128 MiB 上限与历史摘要校验，并通过操作者提供的 v2 发行清单校验。持生命周期锁后重新验证快照和目标，复制至原路径同目录临时文件，核对复制摘要、0700、fsync，再以 os.Link 排他发布并同步父目录；竞态出现任何目标均拒绝，不覆盖。临时文件失败清理，已发布程序在后续回退失败时保留供重试。随后回退继续原有签名、锁、摘要和启动验证。
+
+这是已授权生命周期的受限外部文件写入：只恢复已签名源配置指向的缺失程序，候选必须同时匹配历史摘要与发行签名。快照本身不提供发行信任；不下载、不执行未验证副本、不回滚台账。无明确 flag 时缺失程序仍拒绝。跨 OS 实机与正式不同版本发行验收仍独立进行。
+
+### 3.11.17 复用本机已留存的发行清单（UX-003/014）
+
+回退可省略 --manifest：从原 source_sha256 对应的 client-releases/<摘要>/ 中只读选择已留存 manifest-<原文摘要>.json。不得遍历其他版本或网络获取；私有普通目录、清单普通文件与原文字节哈希必须匹配。最多读取目录 32 项、候选清单 8 份，各最多 1 MiB；超限或候选损坏拒绝。每份候选重新验证发行签名、v2 无迁移声明与实际旧程序内容，必须恰好有一份合格清单；多份合格时要求显式 --manifest，不能猜测发行版本。v1 等不满足兼容要求的历史清单不作为合格候选。没有合格清单时明确提示提供 --manifest。
+
+原程序缺失且显式 --restore-missing-binary 时，使用已核对的源快照进行清单匹配，随后按 §3.11.16 恢复，停止前仍复验清单和程序。无恢复选择时不读取快照来掩盖缺失程序。
+
+升级可选 --source-manifest FILE，用于首次从非暂存位置升级时留存旧发行材料：源快照必须通过该清单 v2 发行校验，然后复用 Stage 保存源程序和清单。失败不停止源服务。后续从已暂存候选升级时，其清单已经留存。此选项不放宽新候选或旧候选的发行信任，不自动制造清单；首次安装器自动登记仍是后续交付事项。
+
+### 3.11.18 Linux 首次后台启动入口（UX-003/004）
+
+`setup --confirm-setup [--port N] [--runtime]` 复用初始化、签名用户服务准备/注册和启动健康检查。明确确认表示初始化本机状态并启动当前程序的用户后台服务；不安装任何智能体钩子、不签发权限、不启用登录自启。无确认、无效参数和非 Linux 在写入前拒绝；systemd 用户管理器不可用则在初始化前报告失败。
+
+已有健康实例时先复验目录健康、当前程序 unit 的签名归属及 manager active/PID/注册 scope，再复用，不申请主 Writer、不换配对码或重启。其他情况复用 init 的不覆盖语义，然后 service-register、service-start；部分失败保留已完成步骤，重试仍逐步复验，不删除未知对象。显式端口与已有配置冲突由初始化/复用检查拒绝。成功输出实际端口的管理页面 URL 和独立 pair 操作提示；URL 不带令牌或配对码。没有真正权限生效证据时只报告管理服务就绪。
+
+`--runtime` 仅当前登录会话的注册，适合隔离测试；默认持久注册仍不隐式登录自启。本批只整合已有 Linux 生命周期，Windows/macOS 继续使用前台 start，后续完成对应系统后台入口和安装制品。
+
+### 3.11.19 本机管理页面入口（UX-003/004/012）
+
+`ui [--print]` 从当前状态配置取端口，固定 http://127.0.0.1:<端口>/，复用无代理、不跟随重定向的目录绑定健康检查后才输出或请求打开。默认调用系统浏览器入口，--print 仅输出 URL；不读取配对凭据、不生成配对码、不把令牌放 URL、不自动启动服务。参数只允许 --print，不接受任意地址。
+
+浏览器调用不经 shell：Linux xdg-open、macOS open、Windows rundll32.exe url.dll,FileProtocolHandler，传递固定生成的 loopback URL，10 秒超时、丢弃子进程输出。启动失败仍输出可手动访问的地址，并报告浏览器打开失败，不声称页面已渲染。命令成功只代表 OS 接受打开请求；浏览器/跨 OS 实机另验收。
+
+setup 新增 --open-ui，仅在既有初始化/注册/启动/健康成功后调用同一入口；已有健康服务也可打开。不改变登录自启、权限审批或配对策略。UI 打开失败不停止已启动服务，用户可手动访问输出 URL。
+
+### 3.11.20 已签名发行程序安装入口（UX-003/014）
+
+Linux `client-install --manifest FILE --binary FILE --confirm-install [--port N] [--runtime] [--open-ui]` 先验证候选发行签名与 v2 无迁移声明，再复用 Stage 保存稳定程序及清单。重新验证暂存文件，固定 SHA-256 目录身份和发行版本；只从该已验证路径执行 setup --confirm-setup，不从下载位置执行。子进程无 shell，明确传递同一状态目录，120 秒超时、输出丢弃；错误提示检查状态，不声称超时取消所有后台影响。
+
+setup 完成后父进程重新核对目录健康、发行版本、签名 unit 指向暂存程序以及 manager 活跃进程，再报告安装成功并输出稳定程序路径和管理地址。可选打开页面发生在上述验证之后。不同已有 unit 不被安装入口覆盖，升级使用 service-upgrade；重复同版本安装可复用，原下载文件移动不会影响后台程序路径。安装入口不修改 PATH、不启用登录自启、不授予智能体权限，不把交叉构建称为跨系统安装验收。无确认/非法参数/非 Linux 在落盘和执行前拒绝。
+
+### 3.11.21 明确启用和关闭用户登录自启（UX-003）
+
+Linux service-login --enable --confirm-enable 或 service-login --disable，在当前程序 unit 签名/manager 归属复验与生命周期锁内，只管理实际注册符号链接同目录下 default.target.wants/<当前 unit 名>。必须保留已归属注册链接，父目录普通且规范化；不存在 wants 目录可创建 0700，已存在只允许普通目录。新增链接排他指向当前已签名 source unit，已有链接只在目标完全一致时复用；关闭只删该精确匹配链接，未知对象/异目标拒绝，不执行广泛 systemctl disable。
+
+变更后同步目录、daemon-reload、读回 enabled/linked（runtime 对应 enabled-runtime/linked-runtime），与链接实际存在/缺失共同确认。启用不启动/重启当前服务，关闭不停止运行进程；运行权限不变。所有已归属生命周期读取支持 enabled 状态，但额外检查精确自启链接归属。注销仍要求先关闭自启，再正常停止，避免悄然保留第二入口。运行中可修改自启，不申请主 Writer。
+
+持久 registered 服务启用后作用于下次用户登录；runtime 注册的链接仅本登录会话有效，明确提示不代表持久登录自启。失败保留已操作链接，可按相同命令复验重试；不修改其他 wants 依赖。跨 OS 后台自启仍独立实施。
+
+### 3.11.22 保留数据的后台入口卸载（UX-003）
+
+Linux teardown --confirm-teardown 统一关闭当前实例自启、正常停止、注销注册入口，保留程序、源 unit、配置、身份、权限和历史文件。提示停止后 block 模式受控操作拒绝；不宣称卸载了智能体钩子或清除了数据。无确认/非法参数在状态写入前拒绝。
+
+全程生命周期锁，先验签当前程序 unit 与实例记录、拒绝未完成切换。已注册时调用精确关闭启动链接，再正常停止并确认 inactive/MainPID=0/Result=success；随后获取主 Writer，复验源归属并复用精确注销。已注销且 manager 明确 not-found/inactive/PID0 时仍取主锁确认无活动写入，再只读复用成功。未知注册/自启对象、异常进程状态或活动 Writer 不删除。
+
+中断保留步骤，可重复命令复验。若注册符号链接已删除但 reload 未完成，仅在 manager 正常停止且无自启链接时允许复用注销的 reload 恢复，不猜测删除未知入口。故障停止未符合原正常停止合同则拒绝注销，要求先排查；不擅自 reset-failed 或强杀。
+
+### 3.11.23 macOS LaunchAgent 配置导出（UX-003）
+
+macOS launch-agent-plist 只读导出当前已初始化实例的 plist，不写 Library/LaunchAgents，不 bootstrap、启动或隐式自启。复用 Linux 服务导出的配置普通文件/大小/JSON/实例身份与规范化程序路径检查；标签为 dev.siq.agent-security.<完整实例 ID>，不是全局共享服务名。
+
+配置按 Apple launchd 字段生成：ProgramArguments 为当前程序与 serve 两个字符串；EnvironmentVariables 只设置 SIQ_AGENT_SECURITY_STATE_DIR；RunAtLoad=false、KeepAlive=false、Umask=63、ExitTimeOut=30、stdout/stderr=/dev/null。路径必须规范绝对 POSIX 路径、合法 UTF-8、无控制字符；XML 特殊字符由标准库转义，空格/引号/dollar 等按路径原文保留，不经 shell，不扩大程序权限。
+
+固定 plist 样例由 Go 生成并由 Python plistlib 独立解析，验证 argv、环境和安全默认值；这不是 launchctl 实机证据。后续需增加 macOS 专属签名归属记录、bootstrap/readback/停止/恢复与安装路径控制，不复用 Linux unit_name 合同冒充跨平台注册。
+
+参考：[Apple LaunchAgent 编程指南](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html)、[Apple launchd.plist 字段定义](https://github.com/apple-oss-distributions/launchd/blob/main/man/launchd.plist.5)。
+
+### 3.11.24 macOS 配置签名归属与准备恢复（UX-003）
+
+新增 local-launch-agent-record/v1：instance_id、state_directory_id、label、plist_sha256、signature。label 固定 dev.siq.agent-security.<完整实例ID>，签名走本机规范化 Ed25519。记录存 launch-agent.json，配置存 <label>.plist，均只在状态目录发布，不改变既有 Linux user-service.json 合同。
+
+launch-agent-prepare 仅 macOS，复用只读 plist 渲染；持生命周期与主 Writer 后，先签名排他发布归属记录再排他发布配置。若记录存在须验签并完整匹配当前实例/目录/渲染内容；配置缺失可按相同签名意图重发，内容漂移或未知配置拒绝覆盖。底层只固定调用方渲染的配置字节，不解释任意 plist，不把记录当作 launchctl 已加载证据。VerifyLaunchAgent 只读且不修复。
+
+准备成功只输出签名记录，不注册、启动、自启或写用户 Library。下一阶段系统入口发布/归属读回复用该记录；跨 OS 路径、克隆目录身份、记录签名、配置漂移与中断恢复必须负向验证。
+
+### 3.11.25 macOS 用户目录注册发布（UX-003）
+
+launch-agent-register 仅 macOS，复用已签名 plist 准备，在生命周期与主 Writer 内向规范化当前用户 home/Library/LaunchAgents/<label>.plist 排他发布符号链接，指向状态目录内已验证 plist。home 必须存在；Library 与 LaunchAgents 可创建 0700，已存在必须普通目录，不跟随这两级目录符号链接。注册前后复验签名源内容。
+
+目标不存在时 os.Symlink 排他创建；已存在仅允许同一绝对源路径的精确符号链接，普通文件、悬空异目标、相对别名及其他链接不接管。同步新目录和链接所在目录并读回。失败保留签名配置供同命令重试，不自动删除未知对象或撤销其他服务。
+
+本入口只发布用户目录配置，不执行 launchctl、不保证当前登录会话已加载，更不代表保护已启用。模板 RunAtLoad/KeepAlive 保持 false。后续 bootstrap/readback 必须独立验证当前 GUI 用户域与同 label 配置归属；当前仅文件层验证，缺少 macOS 实机仍标待验收。
+
+### 3.11.26 macOS 已加载配置只读核对（UX-003）
+
+launch-agent-status 仅 macOS。先读取/验证当前程序渲染的 plist 签名归属和当前用户 Library/LaunchAgents 精确链接，不创建或修复文件。绝对 /bin/launchctl 在 15 秒/64 KiB 输出预算下执行；移除 LAUNCHD_SOCKET 环境覆盖，manageruid 必须等于非 root 当前 uid，managername 必须 Aqua，才查询当前域 list -x <已验证 label>。
+
+XML plist 使用标准库递归解析，限制 64 KiB/16 层/2048 元素，拒绝重复 key、命名空间、未知结构和非整数数值。逐项比较全部原渲染字段，ProgramArguments/EnvironmentVariables/label 等必须一致；额外字段仅允许整数 LastExitStatus、PID、OnDemand=true、LimitLoadToSessionType=Aqua；其他额外字段（含 Program/RootDirectory/WorkingDirectory/UserName/GroupName）视为未知配置并拒绝，不推断系统默认值。PID 若存在必须正整数；存在进程时再要求本实例目录健康才报告已运行，否则只报告已加载且未报告运行 PID。launchctl 失败不解释为任务不存在，禁止用无结构 print 文本替代。
+
+此兼容路径依据 Apple 开源 launchctl 的 list -x 实现，当前 macOS 是否提供该接口须实机验证。尚未支持的版本拒绝并保留现场，不隐式调用旧 load/unload 或不经验证启动。状态核对不证明完整进程内存身份，尚不启用 bootstrap/kickstart；后续加载动作依赖该只读前置。
+
+### 3.11.27 macOS 未加载状态的显式判定（UX-003）
+
+launch-agent-status 在签名源和注册链接核对后，先验证 GUI 用户域，再查询不带参数的 launchctl list。仅接受成功退出、完整换行结尾、64 KiB 内的 TSV：首行精确 PID/Status/Label，后续每行三列；PID 为正十进制整数或 -，Status 为规范有符号整数、- 或 Apple 历史实现的 ???，label 为非空无控制字符 UTF-8。拒绝重复 label、额外诊断、空行、缺列和截断；必须解析全部行才可判定目标 label 缺席。其他任务的名称和输出不落盘、不进入错误消息。
+
+目标缺席只表示查询时当前域未加载，状态命令输出“配置已注册，当前用户域未加载”，不代表后台停止、全系统不存在或授权后续覆盖。目标存在时仍执行 §3.11.26 的 XML 全字段归属核对，后续查询失败（包括两次查询间任务消失）保持未确认，不降格为缺席。列表中的 PID/Status 不用于归属或健康判断。此增量只读、不新增持久合同；未来加载必须重新核对域、源、链接及即时存在状态，不能复用历史查询结果。
+
+格式依据 Apple 公开历史 launchctl 源码 list_cmd/print_jobs；真实 macOS 兼容性仍待验收，不以模拟输出证明原生支持。
+
+### 3.11.28 macOS 显式加载（UX-003）
+
+launch-agent-load --confirm-load 仅 macOS，要求既有签名源和当前用户 Library/LaunchAgents 精确链接；不自动准备或修复。持 service-control 生命周期锁，复用完整 GUI 域枚举与已加载 XML 归属核对。已加载且归属一致时只复验文件并返回，不启动或重启。缺席时持主 Writer，立即再核对域、列表、签名源和链接，仅对仍缺席的实例执行 /bin/launchctl bootstrap gui/<当前 uid> <精确注册链接>；不使用 sudo、force、enable、旧 load 或目录批量加载。
+
+bootstrap 返回后重新核对源、链接和加载状态，只有当前域目标存在且完整 XML 与签名源相符才确认加载。命令失败或读回失败保持未确认，保留配置供用户检查和同命令重试，不自动 bootout 或删链接。主 Writer 与模板 RunAtLoad=false/KeepAlive=false 共同保留加载与启动边界；不因加载成功宣称保护运行。重复命令允许已运行且归属一致的任务，不占用该任务的主 Writer。文件复验不等于抵御同用户恶意并发替换，系统加载仍可能受外部会话操作影响；后续启动必须再验证归属。
+
+bootstrap GUI 域用法参考 CircleCI 官方 macOS runner 安装文档；当前 Linux 仅使用模拟控制器与临时目录验证流程，真实 macOS 加载和接口兼容性仍待验收。本命令不新增持久合同。
+
+### 3.11.29 macOS 显式启动与健康读回（UX-003）
+
+launch-agent-start --confirm-start 在生命周期锁内复用已注册配置加载流程。已加载配置报告正 PID 时只等待/检查当前实例健康，不重启；无 PID 时先获取并释放主 Writer 确认没有已知台账写者，再立即复验签名源、精确链接、GUI 域和加载配置。仍无 PID 才执行 kickstart gui/<uid>/<label>，不带 -k、不 enable 或替换任务。启动必须在释放主 Writer 后执行，让 serve 自行获取单写者锁；外部启动竞争由该锁拒绝，不声称消除同用户并发竞争。
+
+命令返回成功要求签名源/链接一致、已加载 XML 完整核对、正 PID 和当前目录健康 API 全部通过，并在健康返回后复核源/链接。健康最多轮询 10 秒（单次 manager/HTTP 请求另有自身超时），100 ms 间隔；配置/查询错误立即失败，无 PID 或健康未就绪可继续等候。超时和启动命令失败保留现场，不强制重启、结束进程或自动卸载。API 健康复用既有目录身份验证，不把 PID 声明当作 API 身份。
+
+Linux 模拟控制器测试不作为 macOS 原生启动证据；当前不声明 GUI 通知、退出恢复、自启或正式安装器完成。
+
 ## 4. 平台适配器规格
 
 ### 4.1 OpenClaw（P0）
