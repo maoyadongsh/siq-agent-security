@@ -1,0 +1,102 @@
+{
+  "record_id": "core-scenarios-20260911-sunbos-attempt-01",
+  "recorded_at_utc": "2026-09-10T16:09:46.635422+00:00",
+  "run_started_at_utc": "2026-09-10T16:05:59.186247+00:00",
+  "local_date": "2026-09-11",
+  "timezone": "Asia/Shanghai",
+  "contributor_account": "sunbos",
+  "execution": "Codex-assisted automated fixture reproduction requested by the contributor",
+  "independent_external_reproduction": "not claimed; no external milestone updated",
+  "source_sha": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "working_tree_dirty": false,
+  "track": "B",
+  "coverage": "full",
+  "cohort": "controls",
+  "case_count": 23,
+  "environment": {
+    "host": "macOS 26.6.2 x86_64",
+    "os": "Ubuntu 24.04.4 LTS",
+    "kernel": "6.12.76-linuxkit",
+    "architecture": "x86_64",
+    "container_image": "langgenius/dify-plugin-daemon:0.5.4-local",
+    "container_image_id": "sha256:484a708e50633f378eb6979892ea20fc948aadd83da0e1f718fddcc8054dfb08",
+    "container_entrypoint": "/bin/bash (application entrypoint was not used)",
+    "runner_network": "Docker --network none; only container loopback fixtures",
+    "go": "go1.26.6 linux/amd64",
+    "python": "3.12.3",
+    "uv": "0.10.10",
+    "git": "2.43.0",
+    "cryptography": "50.0.0",
+    "jsonschema": "4.26.0",
+    "source_mount": "/workspace",
+    "private_state_root": "/output/state",
+    "ui_built": false,
+    "gpu_used": false,
+    "model_provider": "fixture",
+    "model_api_calls": 0,
+    "model_api_cost": 0,
+    "docker_engine": "29.4.2",
+    "docker_client": "29.4.2"
+  },
+  "go_archive": {
+    "filename": "go1.26.6.linux-amd64.tar.gz",
+    "os": "linux",
+    "arch": "amd64",
+    "version": "go1.26.6",
+    "sha256": "708effb774be8237570d0add163225abbdfaf4fca28b2611df167beba4feef89",
+    "size": 66890545,
+    "kind": "archive"
+  },
+  "binary_sha256": "4af46a0d85312789e35035ee31f132bbaaeec36bfbdfe2e1f435128383d650f4",
+  "binary_published": false,
+  "gitleaks": {
+    "module": "github.com/zricethezav/gitleaks/v8",
+    "version": "v8.24.2",
+    "binary_sha256": "f678c848f3faa1f693ffbd909c513e3094cf5d2b7b5da7597f35590bf5d37a26",
+    "version_note": "Built using go install; CLI version text is not stamped."
+  },
+  "source_files_sha256": {
+    "benchmarks/hackathon/cases.json": "c4571eebd500c5934e568adff20adc92476436804c9d79163d1fb5c6a8db267c",
+    "benchmarks/hackathon/corpus.schema.json": "a0beccde799d8386366fbceecfc530c705970f75ffba41c9272761e70dc044b0",
+    "benchmarks/hackathon/run.py": "abf75de79d0d9e6fe94061479de83fa11d80be6a78b39ceba4312603f89a07c4",
+    "benchmarks/hackathon/verify.py": "8f14967ba563b114dba44609989da2540d35930dca625bc20488be3956829d6a",
+    "benchmarks/runtime-security/evidence.py": "e5d8563314d19e88dc75f35507e82cc44e2890dc8e2675ff8efbb8197b780c98",
+    "benchmarks/runtime-security/metrics.py": "0309f991c466c55dc1cc9cbda84840fa6125426a2407eeb3ac464150093606b8",
+    "apps/control-api/uv.lock": "146e8615916b50f9bd81305490cee7ab041be2aa83cba5f05c55d65ff3ccee5e",
+    ".gitleaks.toml": "bdc3fed891ebbf26127fc1643fb8cb7189af06edbece2275ba57f15e848c1099",
+    "scripts/check_gitleaks_config.py": "5555c8cc704e4e2c9f1b77f48e74f747276a5605e778bb3992546f07e944245d"
+  },
+  "verification": {
+    "runner_exit_code": 0,
+    "verifier_exit_code": 0,
+    "expectation_passes": 23,
+    "verified_receipts": 318,
+    "verified_effect_envelopes": 20
+  },
+  "limitations": [
+    "Fixed synthetic fixtures, not real-model injection success-rate measurement.",
+    "No browser/UI, native macOS runtime, platform adapter or enterprise deployment validation.",
+    "Container loopback receiver, not independent SaaS delivery attestation.",
+    "Bundled public keys establish internal signature consistency, not publisher identity.",
+    "New evidence has its own identity and does not replace or enlarge frozen V5 results.",
+    "The pre-existing local image was used as a tool environment; its upstream reproducibility was not validated."
+  ],
+  "public_files": [
+    {
+      "path": "controls.json",
+      "sha256": "da98c2b23e0af9b69e7891842f4669be7466ad00f963254ce94cb87a96f14fa1"
+    },
+    {
+      "path": "scan-calibration.json",
+      "sha256": "a2ebdedb03bc085f55439b21788d6a1a2ead90ccfd9afeebed94b70be8b144d9"
+    },
+    {
+      "path": "secret-scan.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "3521aa1ab554e884180c0bdc19cab4dffff3427583a4fadf3cfb2f6dfb00181d"
+    }
+  ]
+}
