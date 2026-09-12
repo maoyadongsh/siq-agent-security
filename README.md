@@ -18,9 +18,8 @@
 </p>
 
 <p align="center">
-  CI / research 动态徽章仅反映 <code>main</code> 的工作流结果，不代表尚未合并的开发分支。<br />
-  本轮基线修复：<a href="https://github.com/maoyadongsh/siq-agent-security/pull/27">PR #27 审阅</a> · <a href="https://github.com/maoyadongsh/siq-agent-security/pull/27/checks">开发分支检查</a>。<br />
-  开发分支检查通过不等于主分支通过；修复合并后，徽章仍以 <code>main</code> 的实际运行结果为准。
+  CI / research 徽章仅反映 <code>main</code>，不代表未合并分支或已发布版本。<br />
+  个人客户端的实现与验收状态见<a href="docs/personal-experience-development-progress-20260910.md">开发台账</a>。
 </p>
 
 <p align="center">
@@ -37,6 +36,22 @@ SIQ Agent Security 将用户授权、参数来源、工具执行和实际效果�
 
 项目面向研究者、Agent 工具与适配器开发者，以及评估智能体权限治理的平台团队。首次体验可以在普通 Linux 上使用确定性模型夹具，不需要 API 密钥、GPU 或企业控制面。
 
+## 当前产品方向与支持状态
+
+当前优先完善个人用户体验：发现已有智能体与 Skill、由用户确认权限后启用保护、安全安装和更新 Skill，并记录授权与执行证据。SIQ Skill 提供交互与操作指引；实际裁决依赖本机 Go 运行时与平台适配器，安装 Skill 本身不会自动保护所有智能体。管理界面由本地服务提供，可在浏览器打开。
+
+**截至 2026-09-12 的仓库状态：** 远端 `main` 已合入 [PR #28](https://github.com/maoyadongsh/siq-agent-security/pull/28)，包含个人控制台、发现与权限管理、Skill 安装/更新流程及本地生命周期基础。[PR #31](https://github.com/maoyadongsh/siq-agent-security/pull/31) 的客户端升级恢复和后台生命周期仍待合并；后续 macOS / Windows 增量仍在本地开发。研究源码标签与早期二进制发行版不包含这些后续开发成果。
+
+| 范围 | 当前可核验状态 | 尚待完成 |
+| --- | --- | --- |
+| Linux 个人管理 | 本地控制台和部分原生接入已有隔离 Linux 验证；开发分支已有后台安装、升级与恢复验证 | 正式发行安装、真实重新登录及完整用户旅程验收 |
+| macOS | 开发分支已实现 LaunchAgent 生命周期，完成模拟测试与交叉编译 | macOS 实机验收与分发 |
+| Windows | 本地开发已实现任务 XML 导出与签名准备 | 任务注册、后台生命周期及 Windows 实机验收 |
+| OpenClaw / Hermes / WorkBuddy | OpenClaw、Hermes 的部分 Linux 原生路径已验证 | WorkBuddy 桌面端及三系统完整组合；CodeBuddy 适配器不等于 WorkBuddy 已验收 |
+| 局域网团队多设备管理 | 仓库已有可选企业 Control API、Edge 与 Connectors | 个人体验完成后再建设团队设备接入、统一管控与验收流程 |
+
+具体范围以[开发任务书](docs/personal-experience-lan-team-development-taskbook-20260910-145507.md)、[开发台账与证据](docs/personal-experience-development-progress-20260910.md)为准。发现资产不等于已启用保护；保护范围取决于实际接入的工具路径。
+
 ## 核心价值
 
 **核心结果：Trusted Agent Execution（可信的 Agent 执行）。** Agent 动态规划，SIQ 以受信意图约束权限、以参数来源核验动作、以实际效果判定完成。
@@ -50,7 +65,7 @@ SIQ Agent Security 将用户授权、参数来源、工具执行和实际效果�
 商业应用方向包括企业 Agent 权限治理、研究与报告交付、工具平台集成。现有基础是本地运行时、适配器与可选企业控制面；规模化部署、外部 SaaS 效果证明和商业收益仍需具体场景验证。创新性评价以[研究问题](docs/research/research-questions.md)与[技术报告](docs/research/technical-report.md)为依据，当前不宣称首创或已获同行评审认可。
 
 > [!IMPORTANT]
-> **当前发布：源码预发布 · 已提供 Sigstore 数字签名**
+> **研究源码预发布：已提供 Sigstore 数字签名**
 >
 > [research-v0.1.0-rc.1](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1) 附 `SOURCE-INFO.json`、`SHA256SUMS` 与 `SHA256SUMS.sigstore.json`，不包含新编译的二进制或模型权重。签名绑定本仓库的 GitHub Actions 发布工作流身份，通过校验清单覆盖源码包和版本信息文件。请先验证签名，再核对文件摘要：[验证方法与签名范围](docs/research/release-authentication.md)。
 
@@ -67,6 +82,7 @@ SIQ Agent Security 将用户授权、参数来源、工具执行和实际效果�
 
 | 你的目标 | 推荐入口 | 可以获得什么 |
 | :--- | :--- | :--- |
+| 管理本机智能体与 Skill | [个人管理端](#个人管理端linux-源码体验) · [操作指南](AGENTSHIELD.md) | 启动本地服务、配对后管理；按平台验证范围启用保护 |
 | 体验完整流程 | [快速开始](#快速开始) | 无需模型密钥的本地演示 |
 | 复现与评价 | [复现指南](REPRODUCIBILITY.md) · [研究导航](docs/research/README.md) | 固定案例、评价协议与证据 |
 | 接入自己的 Agent | [组件与接入](#组件与接入) | 运行时、适配器和合同入口 |
@@ -151,7 +167,44 @@ flowchart LR
 
 ## 快速开始
 
-### 1. 启动无需模型密钥的演示
+### 个人管理端：Linux 源码体验
+
+以下使用当前 `main` 的前台启动入口，准备 Git、Go **1.26.6**、Node.js **22 / npm**；不需要企业 Control API 或 PostgreSQL。在仓库根目录运行（尚未克隆时先执行下方演示中的 `git clone` 和 `cd`）：
+
+```bash
+npm --prefix apps/web ci
+npm --prefix apps/web run build:local
+mkdir -p .tmp/personal-bin
+GOTOOLCHAIN=go1.26.6 go -C apps/agentshield build \
+  -o "$PWD/.tmp/personal-bin/siq-agent-security" ./cmd/agentshield
+
+export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/.tmp/personal-state"
+.tmp/personal-bin/siq-agent-security start --port 47611
+```
+
+保持终端运行，打开 **http://127.0.0.1:47611/overview**，使用服务打印的一次性配对码。配对码过期时，在另一终端进入同一仓库根目录运行：
+
+```bash
+export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/.tmp/personal-state"
+.tmp/personal-bin/siq-agent-security pair --port 47611
+```
+
+`start` 会初始化或复用该目录的配置；按 `Ctrl+C` 停止前台服务。示例状态保存在 `.tmp/personal-state`，再次使用时保持同一路径，清理 `.tmp` 前先保留需要的数据。后台安装、升级与恢复命令及其平台限制见[本地操作指南](AGENTSHIELD.md)，使用前核对所在分支是否包含对应实现。
+
+<details>
+<summary>前端开发与「未连接」排查</summary>
+
+先保持上述 Go 服务运行，再在另一终端执行：
+
+```bash
+npm --prefix apps/web run dev:local
+```
+
+使用 Vite 打印的地址访问个人界面。开发代理固定连接 `http://127.0.0.1:47611`；`dev:local` 只启动前端，不会启动后端。若显示「未连接」或「决策 API 不可达」，先检查本地 Go 服务与端口，再完成配对。企业前端使用独立的 Control API 配置，不能与个人入口混用。正式嵌入式界面由 Go 服务直接提供，无需同时运行 Vite。
+
+</details>
+
+### 1. 启动无需模型密钥的研究演示
 
 已验证的入门环境为 Linux；准备 Git、Go **1.26.6**、Python **3.12+**、Node.js **22 / npm**。首次安装依赖和工具链需要联网。请使用新克隆的目录：启动器会拒绝覆盖已有演示状态。
 
@@ -253,7 +306,9 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 欢迎普通 Linux 复现、同值来源解释、夹具诊断、指标纠错和有来源依据的负向案例。先阅读[贡献指南](CONTRIBUTING.md)，再选择[首批任务](docs/research/community-backlog.md)、[Issues](https://github.com/maoyadongsh/siq-agent-security/issues)或 [Discussions](https://github.com/maoyadongsh/siq-agent-security/discussions)。
 
-后续重点是长期归档与 DOI、外部独立复现、预先确定协议的新实验，以及论文与制品评审。新二进制研究版本仍需单独的分发与原生验收。实际进展见[开源实施记录](docs/research/operations-20260908.md)与[任务台账](docs/open-source-research-tasks-20260908.md)。贡献签署与评审遵循 [DCO](DCO) 和[治理规则](GOVERNANCE.md)，社区交流遵循[行为准则](CODE_OF_CONDUCT.md)。
+产品开发按“个人体验 → 局域网团队多设备管理”推进，优先补齐跨系统后台生命周期、可信 Skill 运行归属、审批后恢复执行、任务追溯与隐私控制，再完成真实平台综合验收。具体任务见[个人与团队开发任务书](docs/personal-experience-lan-team-development-taskbook-20260910-145507.md)。
+
+研究方向继续推进长期归档与 DOI、外部独立复现、预先确定协议的新实验，以及论文与制品评审。新二进制研究版本仍需单独的分发与原生验收。实际进展见[开源实施记录](docs/research/operations-20260908.md)与[任务台账](docs/open-source-research-tasks-20260908.md)。贡献签署与评审遵循 [DCO](DCO) 和[治理规则](GOVERNANCE.md)，社区交流遵循[行为准则](CODE_OF_CONDUCT.md)。
 
 ## 许可、引用与历史材料
 

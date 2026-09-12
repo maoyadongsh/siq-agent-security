@@ -29,6 +29,22 @@ SIQ Agent Security connects user authority, parameter provenance, tool execution
 
 The project serves researchers, Agent tool and adapter developers, and platform teams evaluating agent permission controls. The initial demonstration runs on ordinary Linux with deterministic model fixtures, without API keys, a GPU or the enterprise control plane.
 
+## Product direction and support status
+
+The current priority is the personal experience: discover existing agents and Skills, enable protection after the user confirms permissions, install and update Skills safely, and record authorization and execution evidence. The SIQ Skill provides interaction and operating guidance; actual decisions depend on the local Go runtime and platform adapters. Installing the Skill alone does not protect every agent. The local service provides a browser-based management console.
+
+**Repository snapshot, 2026-09-12:** remote `main` includes [PR #28](https://github.com/maoyadongsh/siq-agent-security/pull/28), covering the personal console, discovery and permissions, Skill installation/update flows, and local lifecycle foundations. [PR #31](https://github.com/maoyadongsh/siq-agent-security/pull/31), covering client upgrade recovery and background lifecycle, is still awaiting merge. Further macOS / Windows work remains in local development. The research source tag and earlier binary releases do not include these subsequent changes. CI badges describe `main`, not unmerged branches or released artifacts.
+
+| Scope | Current evidence | Remaining work |
+| --- | --- | --- |
+| Linux personal management | Console and selected native integrations validated in isolated Linux environments; background setup, upgrade and recovery validated on a development branch | Official release installation, actual re-login and complete user acceptance |
+| macOS | LaunchAgent lifecycle implemented on development branches, with simulated tests and cross-compilation | Native macOS acceptance and distribution |
+| Windows | Task XML export and signed preparation implemented locally | Task registration, background lifecycle and native Windows acceptance |
+| OpenClaw / Hermes / WorkBuddy | Selected native Linux paths verified for OpenClaw and Hermes | WorkBuddy desktop and the complete OS/platform matrix; a CodeBuddy adapter does not establish WorkBuddy acceptance |
+| LAN team management | Optional enterprise Control API, Edge and Connectors already exist | Team device onboarding, unified management and acceptance after the personal phase |
+
+See the [development taskbook](docs/personal-experience-lan-team-development-taskbook-20260910-145507.md) and [progress ledger with evidence](docs/personal-experience-development-progress-20260910.md) for exact scope. Discovery does not mean protection is enabled; enforcement depends on the integrated tool paths.
+
 ## Core value
 
 **Core outcome: Trusted Agent Execution.** Agents plan dynamically; SIQ constrains permissions through trusted intent, checks actions against parameter provenance, and determines completion from observed effects.
@@ -42,7 +58,7 @@ The project serves researchers, Agent tool and adapter developers, and platform 
 Potential applications include enterprise Agent permission governance, research/report delivery and tool-platform integration. The local runtime, adapters and optional enterprise control plane provide the current foundation; scale, external SaaS effect verification and commercial returns still require validation in specific deployments. Assess research contributions through the [research questions](docs/research/research-questions.md) and [technical report](docs/research/technical-report.md); no priority or peer-reviewed novelty is claimed.
 
 > [!IMPORTANT]
-> **Current release: source prerelease with a Sigstore digital signature**
+> **Research source prerelease with a Sigstore digital signature**
 >
 > [research-v0.1.0-rc.1](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1) includes `SOURCE-INFO.json`, `SHA256SUMS` and `SHA256SUMS.sigstore.json`, with no newly compiled binaries or model weights. The signature binds the checksum manifest to this repository's GitHub Actions release workflow identity, covering the source archive and metadata. Verify the signature before checking file hashes: [verification instructions and signature scope](docs/research/release-authentication.md).
 
@@ -59,6 +75,7 @@ A detached signature was added on 2026-09-09 without modifying the original asse
 
 | Your goal | Entry point | What to expect |
 | :--- | :--- | :--- |
+| Manage local agents and Skills | [Personal console](#personal-console-linux-source-build) · [Operations guide](AGENTSHIELD.md) | Start the local service, pair the browser and enable protection within verified platform scope |
 | Try the complete flow | [Quick start](#quick-start) | A local demonstration without model keys |
 | Reproduce and evaluate | [Reproduction guide](REPRODUCIBILITY.md) · [Research index](docs/research/README.md) | Fixed cases, evaluation protocols and evidence |
 | Integrate your Agent | [Components and integrations](#components-and-integrations) | Runtime, adapter and contract entry points |
@@ -143,7 +160,44 @@ Ordinary Observation correlation and independent EffectEvidence establish differ
 
 ## Quick start
 
-### 1. Run the demonstration without model keys
+### Personal console: Linux source build
+
+This uses the foreground entry point available on current `main`. Prepare Git, Go **1.26.6**, and Node.js **22 / npm**; no enterprise Control API or PostgreSQL is required. Run from the repository root (if needed, first use the `git clone` and `cd` commands in the demonstration below):
+
+```bash
+npm --prefix apps/web ci
+npm --prefix apps/web run build:local
+mkdir -p .tmp/personal-bin
+GOTOOLCHAIN=go1.26.6 go -C apps/agentshield build \
+  -o "$PWD/.tmp/personal-bin/siq-agent-security" ./cmd/agentshield
+
+export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/.tmp/personal-state"
+.tmp/personal-bin/siq-agent-security start --port 47611
+```
+
+Keep the terminal running, open **http://127.0.0.1:47611/overview**, and enter the one-time pairing code printed by the service. If the code expires, open another terminal at the same repository root and run:
+
+```bash
+export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/.tmp/personal-state"
+.tmp/personal-bin/siq-agent-security pair --port 47611
+```
+
+`start` initializes or reuses this directory's configuration. Press `Ctrl+C` to stop the foreground service. This example stores state in `.tmp/personal-state`; reuse the same path and preserve any needed data before cleaning `.tmp`. See the [operations guide](AGENTSHIELD.md) for background setup, upgrade and recovery commands and platform limitations; check that your branch contains the implementation before using them.
+
+<details>
+<summary>Frontend development and disconnected-state troubleshooting</summary>
+
+Keep the Go service above running, then use another terminal:
+
+```bash
+npm --prefix apps/web run dev:local
+```
+
+Open the address printed by Vite. The development proxy targets `http://127.0.0.1:47611`; `dev:local` starts only the frontend. If the console reports a disconnected or unreachable decision API, check the local Go service and port, then pair the browser. The enterprise frontend uses separate Control API configuration. The embedded UI is served directly by Go and does not require Vite.
+
+</details>
+
+### 1. Run the research demonstration without model keys
 
 The validated entry environment is Linux with Git, Go **1.26.6**, Python **3.12+**, and Node.js **22 / npm**. Initial dependency and toolchain installation needs network access. Use a fresh clone: the launcher refuses to overwrite existing demonstration state.
 
@@ -245,7 +299,9 @@ See the [threat model](docs/threat-model.md), [capability matrix](docs/agentshie
 
 Contributions are welcome for ordinary Linux reproduction, same-value provenance explanations, fixture diagnostics, metric corrections and negative cases with documented origins. Read [CONTRIBUTING.md](CONTRIBUTING.md), then choose a [starter task](docs/research/community-backlog.md), [Issue](https://github.com/maoyadongsh/siq-agent-security/issues) or [Discussion](https://github.com/maoyadongsh/siq-agent-security/discussions).
 
-Next priorities are long-term archival and a DOI, independent external reproduction, new experiments with protocols defined in advance, and paper/artifact review. A new binary research release still needs separate distribution and native acceptance checks. Actual progress is recorded in the [operations report](docs/research/operations-20260908.md) and [task ledger](docs/open-source-research-tasks-20260908.md). Contributions follow the [DCO](DCO) and [governance rules](GOVERNANCE.md); community participation follows the [code of conduct](CODE_OF_CONDUCT.md).
+Product development proceeds from the personal experience to LAN team management. Priorities include cross-platform background lifecycle, trusted Skill attribution during execution, resuming approved actions, task traceability, privacy controls and native platform acceptance. See the [personal and team development taskbook](docs/personal-experience-lan-team-development-taskbook-20260910-145507.md).
+
+Research priorities remain long-term archival and a DOI, independent external reproduction, new experiments with protocols defined in advance, and paper/artifact review. A new binary research release still needs separate distribution and native acceptance checks. Actual progress is recorded in the [operations report](docs/research/operations-20260908.md) and [task ledger](docs/open-source-research-tasks-20260908.md). Contributions follow the [DCO](DCO) and [governance rules](GOVERNANCE.md); community participation follows the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Licensing, citation and historical material
 
