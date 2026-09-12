@@ -1,0 +1,47 @@
+name: skills-distribution-compat
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'skills/siq-agent-security/**'
+      - 'scripts/research/*distribution*'
+      - 'scripts/research/skills-upstream.json'
+      - '.github/workflows/skills-compat.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'skills/siq-agent-security/**'
+      - 'scripts/research/*distribution*'
+      - 'scripts/research/skills-upstream.json'
+      - '.github/workflows/skills-compat.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  distribution:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.21.0'
+      - name: Offline distribution negative tests
+        run: python3 -m unittest discover -s scripts/research -p 'test_*distribution*.py' -v
+      - name: Pinned CLI copy install and remove in temporary projects
+        run: python3 scripts/research/skills_distribution_smoke.py --out-dir .tmp/skills-compat/ci
+      - name: Preserve this attempt, including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: skills-distribution-${{ matrix.os }}-${{ github.run_attempt }}
+          path: .tmp/skills-compat/ci/result.json
+          if-no-files-found: warn

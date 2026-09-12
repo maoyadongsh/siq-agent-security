@@ -20,6 +20,8 @@ SIQ Agent Security studies how agent tool proposals are constrained by trusted i
 
 ## Source and historical identity
 
+Optional Skill distribution: [pinned vercel-labs/skills compatibility checks](skills-distribution.md). These verify project copy installation and removal; they do not establish runtime enforcement or alter frozen evaluation populations.
+
 The [V5 competition snapshot](../hackathon/final-submission-state.md) remains frozen at its recorded source and denominators. Research work starts on `codex/research-open-source-r1`, based on `e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2`. New measurements live under this directory and do not replace V5 results.
 
 ## Evidence boundaries

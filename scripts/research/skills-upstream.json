@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "upstream": {
+    "repository": "https://github.com/vercel-labs/skills",
+    "commit": "d667282815248da03a08a18272b5d2eef9caf77c",
+    "version": "1.5.26",
+    "license": "MIT"
+  },
+  "dependency_resolution": "Exact runtime versions from upstream pnpm-lock.yaml; registry SRI and downloaded SHA-256 verified. No npm lifecycle scripts.",
+  "packages": [
+    {
+      "name": "skills",
+      "version": "1.5.26",
+      "integrity": "sha512-D5jnWoMPDRQ3fJM3RpQH8SBrAS9tmVlTC7OdOB2tk7D6nORbRnw8RLwjVj81IIGlxwWuBthEgUChM7SOZGvTHQ==",
+      "sha256": "bc93cd403104ab859abdfbe692ba1fb4429fd2e47c38abb27449a4e8e6ba943c",
+      "url": "https://registry.npmjs.org/skills/-/skills-1.5.26.tgz"
+    },
+    {
+      "name": "tar",
+      "version": "7.5.20",
+      "integrity": "sha512-9FcyK4PA6+WbzlTM9WhQm6vB5W7cP7dUiPsv1g7YDwEQnQ1CGpK3MGlKk/ITVWMk05kHZuBhmVhiv8LZoy/PFQ==",
+      "sha256": "2382f1b186959c031d834805f7676f8dd8d203d2ead5f6c1365ee346e5b48c0f",
+      "url": "https://registry.npmjs.org/tar/-/tar-7.5.20.tgz"
+    },
+    {
+      "name": "yaml",
+      "version": "2.9.0",
+      "integrity": "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==",
+      "sha256": "008fa204cb1ba700e0272ba045abbf09a6ffe63456e8146ba97cac6c2ad1ef91",
+      "url": "https://registry.npmjs.org/yaml/-/yaml-2.9.0.tgz"
+    },
+    {
+      "name": "@isaacs/fs-minipass",
+      "version": "4.0.1",
+      "integrity": "sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==",
+      "sha256": "7ac286e3cccc1ea8980e79e2039def6bb97d3182e17951cd9094f0400ed98236",
+      "url": "https://registry.npmjs.org/@isaacs/fs-minipass/-/fs-minipass-4.0.1.tgz"
+    },
+    {
+      "name": "chownr",
+      "version": "3.0.0",
+      "integrity": "sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==",
+      "sha256": "4c24f5daa630142252da89de655f7df090ea479450a8825897751d78321b1360",
+      "url": "https://registry.npmjs.org/chownr/-/chownr-3.0.0.tgz"
+    },
+    {
+      "name": "minipass",
+      "version": "7.1.3",
+      "integrity": "sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==",
+      "sha256": "52ac61be743755e3fdc98e560086d0d4a1e2c7fd3643387792db38e322d27d12",
+      "url": "https://registry.npmjs.org/minipass/-/minipass-7.1.3.tgz"
+    },
+    {
+      "name": "minizlib",
+      "version": "3.1.0",
+      "integrity": "sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==",
+      "sha256": "99bf2e29618172dd71f0654737490c68f71bc7e2379d473e38f9fef2dbece2e3",
+      "url": "https://registry.npmjs.org/minizlib/-/minizlib-3.1.0.tgz"
+    },
+    {
+      "name": "yallist",
+      "version": "5.0.0",
+      "integrity": "sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==",
+      "sha256": "7c9d43dbab7cab3b3133b0e6a5af14014482285316b39ec9f508efadd9ebce95",
+      "url": "https://registry.npmjs.org/yallist/-/yallist-5.0.0.tgz"
+    }
+  ]
+}

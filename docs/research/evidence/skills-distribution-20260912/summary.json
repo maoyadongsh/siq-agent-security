@@ -1,0 +1,76 @@
+{
+  "schema_version": "siq-skills-distribution-evidence/v1",
+  "experiment_id": "skills-distribution-20260912",
+  "final_attempt": "attempt-4.json",
+  "attempts": [
+    {
+      "file": "attempt-1.json",
+      "sha256": "7397f5d2a76db83350162a7d2ea3a51bbfad41b75eecfa85a3c6a1c0f2dc0034",
+      "result": "failed",
+      "is_final_tool_evidence": false
+    },
+    {
+      "file": "attempt-2.json",
+      "sha256": "cd07a696a46d0207fcf735fd67e09c3e00f961aca8f8c188c4937f2d9ee91b75",
+      "result": "passed",
+      "is_final_tool_evidence": false
+    },
+    {
+      "file": "attempt-3.json",
+      "sha256": "133e88e38ee998777cf76d99fd13b0a08b58d6dbd96fccc7a3a74a1a9f21c872",
+      "result": "passed",
+      "is_final_tool_evidence": false
+    },
+    {
+      "file": "attempt-4.json",
+      "sha256": "862eada0dd9479de4926daefc29fd19f771678c53146d2b12060f67a31f03750",
+      "result": "passed",
+      "is_final_tool_evidence": true
+    }
+  ],
+  "source": {
+    "commit": "1e20635843c0966e24d73d149e3d7bcd080f89c4",
+    "skill_path": "skills/siq-agent-security",
+    "materialization": "git archive HEAD; includes no uncommitted Skill changes"
+  },
+  "upstream": {
+    "repository": "https://github.com/vercel-labs/skills",
+    "commit": "d667282815248da03a08a18272b5d2eef9caf77c",
+    "version": "1.5.26",
+    "license": "MIT"
+  },
+  "environment": {
+    "os": "Darwin",
+    "architecture": "x86_64",
+    "python": "3.13.3",
+    "node": "v24.21.0"
+  },
+  "unit_tests": {
+    "command": "python3 -m unittest discover -s scripts/research -p 'test_*.py' -v",
+    "passed": 46,
+    "distribution_tests": 36,
+    "existing_research_tests": 10
+  },
+  "local_copy_targets_passed": [
+    "openclaw",
+    "hermes-agent",
+    "codebuddy",
+    "trae"
+  ],
+  "files_per_target": 28,
+  "node_permission_negative_probes": {
+    "home_read": "ERR_ACCESS_DENIED/FileSystemRead",
+    "outside_write": "ERR_ACCESS_DENIED/FileSystemWrite",
+    "child_process": "ERR_ACCESS_DENIED/ChildProcess"
+  },
+  "source_unchanged": true,
+  "linux_ci_executed": false,
+  "github_actions_executed": false,
+  "runtime_enforcement_tested": false,
+  "skill_scripts_executed": false,
+  "signature_verification_tested": false,
+  "network_isolation_verified": false,
+  "official_signature": false,
+  "published": false,
+  "frozen_v5_denominator_changed": false
+}
