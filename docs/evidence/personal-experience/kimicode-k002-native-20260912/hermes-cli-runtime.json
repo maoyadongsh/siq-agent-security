@@ -1,0 +1,48 @@
+{
+  "schema_version": "personal-hermes-cli-runtime-smoke/v1",
+  "recorded_at": "2026-09-11T15:37:23.757256+00:00",
+  "passed": true,
+  "binary_sha256": "897ec40be05cf60a2c8235457106bf79f3d8f0797dc657149a9057531fce9307",
+  "harness_sha256": "a0ca6517336249e8b29e2f81fffac64debd2558ad711d8a8b4f9c2002f249bc3",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "native_entrypoint": "public hermes chat --oneshot; normal Agent loop and plugin lifecycle",
+  "session_id_source": "native pre_llm_call; fixture observer only; not injected",
+  "checks": [
+    "native_cli_started",
+    "native_generated_session_bound",
+    "allowed_read",
+    "write_denied_before_execution",
+    "allowed_after_denial",
+    "receipt_chain_verified"
+  ],
+  "receipt_count": 5,
+  "model_requests": [
+    {
+      "tool_result_count": 0,
+      "stream": true
+    },
+    {
+      "tool_result_count": 1,
+      "stream": true
+    },
+    {
+      "tool_result_count": 2,
+      "stream": true
+    },
+    {
+      "tool_result_count": 3,
+      "stream": true
+    }
+  ],
+  "auxiliary_requests": [
+    {
+      "stream": false
+    }
+  ],
+  "profile_config_unchanged": true,
+  "limitations": [
+    "isolated fixture profile and observer; not a product self-check endpoint",
+    "synthetic model and operator; no real-user approval, Skill attribution or OS isolation proof",
+    "native startup may produce host history/cache; network isolation is not claimed"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "schema_version": "personal-discovery-native-smoke/v1",
+  "recorded_at": "2026-09-11T15:37:56.046502+00:00",
+  "passed": true,
+  "binary_sha256": "897ec40be05cf60a2c8235457106bf79f3d8f0797dc657149a9057531fce9307",
+  "harness_sha256": "2e126619dc185d96534ebd5cbb97306bc547ddb4bc4d6b666e0a10ea1b5d4242",
+  "checks": [
+    "preview_roots_match_isolated_layout",
+    "discovery_scan_async_lifecycle_succeeded",
+    "named_hermes_instances_discovered_with_separate_identities",
+    "same_name_skill_versions_discovered_as_separate_installations",
+    "skills_attributed_to_owning_instance",
+    "openclaw_state_agent_and_workspace_skill_discovered",
+    "inventory_readback_agrees_with_ledger_projection",
+    "skill_bodies_and_config_content_never_serialized",
+    "unregistered_private_directory_not_discovered",
+    "responses_confined_to_redacted_isolated_home"
+  ],
+  "discovery_run": {
+    "run_id": "scan-ff59b25900c8a7d2",
+    "state": "succeeded",
+    "asset_count": 7,
+    "skill_count": 3,
+    "issue_count": 0
+  },
+  "preview_root_count": 26,
+  "observed_platforms": [
+    "hermes",
+    "openclaw"
+  ],
+  "observed_instances": [
+    {
+      "candidate_id": "agent:hermes:fixture-alpha",
+      "name": "fixture-alpha",
+      "framework": "hermes",
+      "source_type": "hermes_profile",
+      "instance_id": "hi-555f18a0f5cc93d4e25689ed7c53c120",
+      "config_dir": "~/.hermes/profiles/fixture-alpha"
+    },
+    {
+      "candidate_id": "agent:hermes:fixture-beta",
+      "name": "fixture-beta",
+      "framework": "hermes",
+      "source_type": "hermes_profile",
+      "instance_id": "hi-747509745c7e3a69817f8743340c0f2e",
+      "config_dir": "~/.hermes/profiles/fixture-beta"
+    },
+    {
+      "candidate_id": "agent:openclaw:fixture-openclaw-agent",
+      "name": "fixture-openclaw-agent",
+      "framework": "openclaw",
+      "source_type": "openclaw_agent",
+      "instance_id": null,
+      "config_dir": null
+    },
+    {
+      "candidate_id": "platform:openclaw",
+      "name": "openclaw",
+      "framework": "openclaw",
+      "source_type": "platform_config",
+      "instance_id": null,
+      "config_dir": null
+    }
+  ],
+  "observed_skills": [
+    {
+      "candidate_id": "skill-installation:1bbb8ef524582572830b77f788d2dcda",
+      "name": "fixture-shared-skill",
+      "framework": "hermes",
+      "source_locator": "local://skills/~/.hermes/profiles/fixture-alpha/skills/fixture-shared-skill",
+      "content_hash": "7840fce1c3110ecf04aaf2464c53781ce825cc87351acfdbc81a66369d2607fe",
+      "identity_version": "directory/v1",
+      "declared_version_in_fixture": "1.0.0",
+      "related_instances": [
+        "agent:hermes:fixture-alpha"
+      ]
+    },
+    {
+      "candidate_id": "skill-installation:4ccfb48181d31e6a5a74a31ec1ff5414",
+      "name": "fixture-shared-skill",
+      "framework": "hermes",
+      "source_locator": "local://skills/~/.hermes/profiles/fixture-beta/skills/fixture-shared-skill",
+      "content_hash": "b9b217abc6a97fae660afd3ca6db0c1c2a59aa5b0eedc16acfc7a55b864f652e",
+      "identity_version": "directory/v1",
+      "declared_version_in_fixture": "2.0.0",
+      "related_instances": [
+        "agent:hermes:fixture-beta"
+      ]
+    },
+    {
+      "candidate_id": "skill-installation:8c4c49e72a602c0df94382941d4560b9",
+      "name": "fixture-openclaw-skill",
+      "framework": "openclaw",
+      "source_locator": "local://skills/~/.openclaw/workspaces/fixture-agent/skills/fixture-openclaw-skill",
+      "content_hash": "a6624d55695a3e4bf993885aa95412750c583a710120d0c748d67ffb2225f20a",
+      "identity_version": "directory/v1",
+      "declared_version_in_fixture": "3.1.4",
+      "related_instances": [
+        "agent:openclaw:fixture-openclaw-agent"
+      ]
+    }
+  ],
+  "fixture": {
+    "hermes_profiles": [
+      {
+        "name": "fixture-alpha",
+        "skill_name": "fixture-shared-skill",
+        "skill_version": "1.0.0"
+      },
+      {
+        "name": "fixture-beta",
+        "skill_name": "fixture-shared-skill",
+        "skill_version": "2.0.0"
+      }
+    ],
+    "openclaw": {
+      "agent": "fixture-openclaw-agent",
+      "skill_name": "fixture-openclaw-skill",
+      "skill_version": "3.1.4"
+    }
+  },
+  "sentinel_leak_check": {
+    "sentinel_count": 8,
+    "leaked": []
+  },
+  "skill_detail_readbacks": 3,
+  "limitations": [
+    "synthetic profiles, Skills and operator in a temporary HOME; no real user configuration was read",
+    "discovery metadata only; no runtime execution, admission, grant or approval journey is claimed",
+    "path confinement is asserted from redacted API responses, not from syscall tracing",
+    "single Linux host; no cross-OS or other-platform discovery claim"
+  ]
+}

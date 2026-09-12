@@ -1,0 +1,10 @@
+K002 install_interception 源码核查说明（openclaw / linux arm64 native，候选 32b086ec18e15ead1e4c39a076e0863a22e5ccf2，核查日期 2026-09-12）
+
+结论：OpenClaw 的原生插件/Skill 安装入口当前不能在实际写入/执行前进入 SIQ 裁决，登记为 blocked/not_implemented。
+
+依据（源码位置，均为当前候选内容）：
+1. adapters/runtime/openclaw-agentshield/index.ts 只注册 before_tool_call / after_tool_call 钩子（决策映射 allow/deny/hold/redact），不存在对插件或 Skill 安装入口的钩子。
+2. apps/agentshield/internal/inventory/ 与 discovery_http.go 的发现是对既有安装的只读事后盘点（discovery-preview/scan 语义），不等于写入前拦截。
+3. M34 的 Skill 安装流程（apps/agentshield/internal/skillinstall/）是 SIQ 自有安装路径（预览、确认、恢复），并非对 OpenClaw 原生安装命令的前置拦截。
+
+边界：本说明只覆盖当前 OpenClaw 桌面/CLI 与 SIQ 的接合面；不证明上游永远不提供可拦截入口。WorkBuddy 的情况另行单列。
