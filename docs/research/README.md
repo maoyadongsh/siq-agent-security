@@ -29,3 +29,5 @@ There is no published paper, DOI, independent reproduction badge or statisticall
 ## Progress and release operations
 
 The [execution ledger](../open-source-research-tasks-20260908.md) distinguishes completed repository engineering from pending experimental, external reproduction, archival and publication work. The [operations report](operations-20260908.md) records actual remote changes and release blockers.
+
+Optional repository review services: [CodeFlow and SonarCloud setup](code-review-services.md). Configuration tests do not establish that external services are authorized or scanning.
