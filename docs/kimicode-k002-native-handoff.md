@@ -58,7 +58,13 @@
 
 ## CI
 
-推送后回填新 HEAD 的 ci/runtime-security/research/pages/personal-experience 实际 run/job；nightly 条件性跳过单列。
+推送后新 HEAD `90f9d16`（含全部代码与证据）实跑结果：
+
+- ci run 34661065172：success
+- runtime-security run 34661065169：success（nightly 按事件条件不运行，登记为条件性跳过）
+- research run 34661065167：success
+- personal-experience run 34661065181：success（三系统工具单测与合同、lint）
+- pages：未触发——其 pull_request 触发带 paths 过滤（site/、apps/agentshield/、adapters/runtime/ 等），本批改动不在其路径内，属条件性不运行而非通过。
 
 ## 剩余产品决策（交审阅方）
 
