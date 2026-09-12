@@ -1,0 +1,18 @@
+{
+  "schema_version": "session-grant-selection-native-smoke/v1",
+  "recorded_at": "2026-09-11T15:37:40.687506+00:00",
+  "passed": true,
+  "binary_sha256": "897ec40be05cf60a2c8235457106bf79f3d8f0797dc657149a9057531fce9307",
+  "harness_sha256": "5d2f07017f833e234753ea8c0c546fbeab05db3fa84ea8ba2501a14eb2c75aec",
+  "checks": {
+    "preview_does_not_create_authority": true,
+    "product_native_check_passes": true,
+    "grant_revoked": true,
+    "native_session_selected_own_grant": true,
+    "materials_cleaned": true,
+    "host_config_preserved": true,
+    "configuration_drift_invalidates_result": true
+  },
+  "receipt_count": 5,
+  "scope": "product API and native Hermes CLI; isolated profile and synthetic operator"
+}

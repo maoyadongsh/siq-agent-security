@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-service-instance-health.v1.schema.json",
+  "title": "Local service state directory health v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "product", "version", "local_mode", "status", "state_directory_id"],
+  "properties": {
+    "schema_version": {"const": "local-service-instance-health/v1"},
+    "product": {"const": "siq-agent-security"},
+    "version": {"type": "string", "minLength": 1},
+    "local_mode": {"const": true},
+    "status": {"const": "ready"},
+    "state_directory_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

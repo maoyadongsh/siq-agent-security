@@ -1,0 +1,281 @@
+{
+  "schema_version": "personal-platform-acceptance-report/v1",
+  "candidate_sha": "32b086ec18e15ead1e4c39a076e0863a22e5ccf2",
+  "status": "needs_native_evidence",
+  "support_claim": "not_assessed",
+  "evidence_files_checked": 11,
+  "cases": [
+    {
+      "target": "openclaw/windows/amd64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "openclaw/windows/amd64/wsl2",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "openclaw/macos/arm64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "openclaw/macos/amd64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "openclaw/linux/amd64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "openclaw/linux/arm64/native",
+      "native_checks_recorded": [
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution"
+      ],
+      "gaps": [
+        "discovery",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "hermes/windows/amd64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "hermes/windows/amd64/wsl2",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "hermes/macos/arm64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "hermes/macos/amd64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "hermes/linux/amd64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "hermes/linux/arm64/native",
+      "native_checks_recorded": [
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "skill_attribution"
+      ],
+      "gaps": [
+        "discovery",
+        "approval_resume",
+        "final_parameter_recheck",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "workbuddy/windows/amd64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "workbuddy/windows/amd64/wsl2",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "workbuddy/macos/arm64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "workbuddy/macos/amd64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "workbuddy/linux/amd64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    },
+    {
+      "target": "workbuddy/linux/arm64/native",
+      "native_checks_recorded": [],
+      "gaps": [
+        "discovery",
+        "normal_execution",
+        "pre_execution_denial",
+        "service_unavailable_denial",
+        "approval_resume",
+        "final_parameter_recheck",
+        "skill_attribution",
+        "install_interception"
+      ],
+      "status": "needs_native_evidence"
+    }
+  ]
+}

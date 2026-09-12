@@ -1,0 +1,19 @@
+K002 WorkBuddy 官方资料核查（访问日期 2026-09-12，Asia/Shanghai；本机 linux/arm64 无桌面会话）
+
+任务书给定线索逐条核查结果：
+
+1. https://www.workbuddy.cn/docs/workbuddy/Overview
+   官网概述：WorkBuddy 是腾讯全场景 AI 办公工作台（任务规划执行、本地授权文件夹读取、文档/表格/PPT/数据分析）。未提及 Linux 版本。
+
+2. https://www.workbuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Plug-In
+   插件页：插件可打包 技能(Skills)/MCP 连接/快捷指令/自动化规则(Hooks)/智能体(Agents)。Hooks 仅描述为“在特定时机自动执行操作（如生成文件后自动检查格式）”，未公开任何可被外部安全裁决使用的阻断/前置拦截合同。不能据此认定 WorkBuddy 存在可用的执行前阻断合同。
+
+3. 安装指南（workbuddy.cn Installation-Win-Guide / Installation-Mac-Guide 与腾讯云文档 product/1831/134387）：
+   官方桌面端仅 Windows 10+（x64）与 macOS 12+（ARM64/X64）；不满足将无法启动。官方资料未见 Linux（含 WSL）运行形态。
+
+4. https://www.codebuddy.cn/docs/cli/hooks （仅对照用，非 WorkBuddy 证据）：
+   CodeBuddy Code v1.16.0+ 文档记载 27+ Hook 事件、PreToolUse 的 permissionDecision(allow/deny/ask)、退出码 2 阻断语义等；这是 CodeBuddy Code CLI 的合同，不能外推到 WorkBuddy 桌面端。
+
+5. 第三方页面（如 php.cn 条目）出现 Ubuntu 20.04/22.04 限定等说法，非官方来源且内容可信度低，登记为未核实传闻，不作为任何结论依据。
+
+结论：WorkBuddy 行全部登记 blocked；Linux 行另加 upstream_runtime_unconfirmed（官方无 Linux 运行形态）；本机无 Windows/macOS 桌面环境，native_desktop 探测保留为 environment_unavailable。此外 WorkBuddy 需账号登录且任务走云端模型，即使获得桌面环境，也缺少确定性无付费执行路径，届时须另行确认测试条件。

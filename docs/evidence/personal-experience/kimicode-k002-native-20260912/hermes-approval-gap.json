@@ -1,0 +1,80 @@
+{
+  "schema_version": "personal-hermes-approval-gap-native-smoke/v1",
+  "recorded_at": "2026-09-11T15:38:04.825671+00:00",
+  "passed": true,
+  "binary_sha256": "897ec40be05cf60a2c8235457106bf79f3d8f0797dc657149a9057531fce9307",
+  "harness_sha256": "4bf90a19baa6054a43df37f8cd96e4b7284a4c9f3922dd24a2c901dcfb6ece5d",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "native_entrypoint": "public hermes chat --oneshot; normal Agent loop and plugin lifecycle",
+  "session_id_source": "native pre_llm_call; fixture observer only; not injected",
+  "checks": [
+    "grant_require_approval_applied",
+    "decision_token_cannot_read_authority_or_confirmations",
+    "native_cli_runs_completed",
+    "hold_degrades_to_block_without_execution",
+    "block_message_points_to_console",
+    "console_approval_recorded",
+    "no_native_resume_path_observed",
+    "console_denial_recorded",
+    "denied_retry_blocked_without_execution",
+    "held_calls_have_no_execution_observations",
+    "receipt_chain_verified"
+  ],
+  "attempts": [
+    {
+      "label": "initial",
+      "tool_call_id": "write-initial",
+      "decision_action": "hold",
+      "decision_reason_code": "runtime_denied",
+      "intent_binding": "bound",
+      "console_guidance_in_block": true,
+      "target_file_created": false,
+      "execution_observations": 0
+    },
+    {
+      "label": "after-approve",
+      "tool_call_id": "write-after-approve",
+      "decision_action": "hold",
+      "decision_reason_code": "runtime_denied",
+      "intent_binding": "bound",
+      "console_guidance_in_block": true,
+      "target_file_created": false,
+      "execution_observations": 0
+    },
+    {
+      "label": "after-deny",
+      "tool_call_id": "write-after-deny",
+      "decision_action": "hold",
+      "decision_reason_code": "runtime_denied",
+      "intent_binding": "bound",
+      "console_guidance_in_block": true,
+      "target_file_created": false,
+      "execution_observations": 0
+    }
+  ],
+  "console_resolutions": [
+    {
+      "for_tool_call_id": "write-initial",
+      "approve": true,
+      "resolve_action": "allow",
+      "hold_status_after": "approved",
+      "inbox_status_after": "approved"
+    },
+    {
+      "for_tool_call_id": "write-after-approve",
+      "approve": false,
+      "resolve_action": "deny",
+      "hold_status_after": "denied",
+      "inbox_status_after": "denied"
+    }
+  ],
+  "receipt_count": 5,
+  "auxiliary_requests": 3,
+  "profile_config_unchanged": true,
+  "limitations": [
+    "evidences only the current Hermes adapter boundary: hold degrades to block and the installed plugin never calls /v1/hold-status, so a console approval has no native resume channel",
+    "synthetic model, operator and target; no real user data, contacts or external services",
+    "isolated fixture profile and daemon state; no claim about other platforms or adapter versions",
+    "each CLI retry is a fresh host session; in-process resume was not exercised"
+  ]
+}

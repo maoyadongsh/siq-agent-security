@@ -146,6 +146,37 @@ def test_local_client_session_go_fixtures(kind: str) -> None:
             assert list(validator.iter_errors({**data, **invalid}))
 
 
+@pytest.mark.parametrize("kind", ["local-instance", "local-initialization"])
+def test_local_initialization_go_fixtures(kind: str) -> None:
+    schema = json.loads((CONTRACTS / "local-client-initialization.v1.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / f"{kind}.json"
+    data = json.loads(fixture.read_text())
+    validator.validate(data)
+    for identity in ["", "a" * 63, "A" * 64, None]:
+        assert list(validator.iter_errors({**data, "instance_id": identity}))
+    for invalid in [{"token": "no-credentials"}, {"schema_version": "unexpected/v99"}, {"status": "ready"}]:
+        assert list(validator.iter_errors({**data, **invalid}))
+    if kind == "local-initialization":
+        for port in [0, 65536, True, "47611"]:
+            assert list(validator.iter_errors({**data, "port": port}))
+
+
+def test_local_instance_health_go_fixture() -> None:
+    schema = json.loads((CONTRACTS / "local-service-instance-health.v1.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / "local-instance-health.json"
+    data = json.loads(fixture.read_text())
+    validator.validate(data)
+    for identity in ["", "a" * 63, "a" * 65, "A" * 64, None]:
+        assert list(validator.iter_errors({**data, "state_directory_id": identity}))
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+    assert list(validator.iter_errors({**data, "state_directory": "/private/path"}))
+
+
 def test_local_pair_request_requires_explicit_typed_remember() -> None:
     schema = json.loads((CONTRACTS / "local-client-session.v1.schema.json").read_text())
     validator = Draft7Validator(schema["definitions"]["pairRequest"])
@@ -1896,3 +1927,63 @@ def test_skill_update_transaction_go_samples(kind: str) -> None:
     assert replacement["request_id"] == "is-" + request_digest[:32]
     public.verify(bytes.fromhex(replacement["signature"]),
                   canonical({k: v for k, v in replacement.items() if k != "signature"}))
+
+
+def test_user_service_record_go_fixture() -> None:
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+    schema = json.loads((CONTRACTS / "local-user-service-record.v1.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    data = json.loads((GO_SAMPLES / "local-user-service-record.json").read_text())
+    validator.validate(data)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+        assert list(validator.iter_errors({**data, field: None}))
+    assert list(validator.iter_errors({**data, "status": "running"}))
+    assert list(validator.iter_errors({**data, "unit_name": "../foreign.service"}))
+    assert data["unit_name"] == f"siq-agent-security-{data['instance_id'][:32]}.service"
+    signature = bytes.fromhex(data.pop("signature"))
+    canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    Ed25519PrivateKey.from_private_bytes(bytes(32)).public_key().verify(signature, canonical)
+
+
+def test_client_release_v2_go_fixture() -> None:
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+    schema = json.loads((CONTRACTS / "skill-manifest.v2.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    data = json.loads((GO_SAMPLES / "skill-manifest.v2.sample.json").read_text())
+    validator.validate(data)
+    assert list(validator.iter_errors({k: v for k, v in data.items() if k != "client_compatibility"}))
+    for field in ("state_profile", "service_protocol", "migration"):
+        changed = {**data, "client_compatibility": {**data["client_compatibility"], field: "unknown"}}
+        assert list(validator.iter_errors(changed))
+    legacy = Draft7Validator(json.loads((CONTRACTS / "skill-manifest.schema.json").read_text()))
+    assert list(legacy.iter_errors(data))
+    signature = bytes.fromhex(data.pop("signature"))
+    canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
+    Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key().verify(signature, canonical)
+
+
+def test_service_switch_go_fixture() -> None:
+    import hashlib
+
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+    schema = json.loads((CONTRACTS / "local-service-switch.v1.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    data = json.loads((GO_SAMPLES / "local-service-switch.json").read_text())
+    validator.validate(data)
+    key = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+    for document in [data, data["source_record"], data["target_record"]]:
+        unsigned = {k: v for k, v in document.items() if k != "signature"}
+        canonical = json.dumps(unsigned, sort_keys=True, separators=(",", ":")).encode()
+        key.verify(bytes.fromhex(document["signature"]), canonical)
+    for side in ("source", "target"):
+        assert data[f"{side}_record"]["unit_sha256"] == hashlib.sha256(data[f"{side}_unit"].encode()).hexdigest()
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+    assert list(validator.iter_errors({**data, "status": "running"}))

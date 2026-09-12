@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-client-initialization.v1.schema.json",
+  "title": "Personal client initialization v1",
+  "oneOf": [{"$ref": "#/definitions/instance"}, {"$ref": "#/definitions/result"}],
+  "definitions": {
+    "id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "instance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "instance_id"],
+      "properties": {
+        "schema_version": {"const": "local-client-instance/v1"},
+        "instance_id": {"$ref": "#/definitions/id"}
+      }
+    },
+    "result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "status", "instance_id", "state_directory_id", "port"],
+      "properties": {
+        "schema_version": {"const": "local-client-initialization/v1"},
+        "status": {"const": "initialized"},
+        "instance_id": {"$ref": "#/definitions/id"},
+        "state_directory_id": {"$ref": "#/definitions/id"},
+        "port": {"type": "integer", "minimum": 1, "maximum": 65535}
+      }
+    }
+  }
+}

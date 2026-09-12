@@ -1,17 +1,66 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"siq-agent-security/apps/agentshield/internal/state"
 )
 
-const healthResponse = `{"schema_version":"local-service-health/v1","product":"siq-agent-security","version":"test","local_mode":true,"status":"ready"}`
+const healthResponse = `{"schema_version":"local-service-instance-health/v1","product":"siq-agent-security","version":"test","local_mode":true,"status":"ready","state_directory_id":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}`
+
+func TestLocalInstanceRejectsWrongDirectoryBeforePairing(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("SIQ_AGENT_SECURITY_STATE_DIR", dir)
+	id, err := (&state.Store{Dir: dir}).DirectoryID()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		name, identity, schema string
+		accepted               bool
+	}{
+		{"matching", id, "local-service-instance-health/v1", true},
+		{"other directory", strings.Repeat("0", 64), "local-service-instance-health/v1", false},
+		{"missing identity", "", "local-service-instance-health/v1", false},
+		{"legacy service", id, "local-service-health/v1", false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Header.Get("Authorization") != "" || r.URL.Path != "/healthz/instance" {
+					t.Error("instance check sent credentials or attempted pairing")
+				}
+				w.Header().Set("Content-Type", "application/json")
+				_ = json.NewEncoder(w).Encode(localHealth{SchemaVersion: tc.schema, Product: "siq-agent-security", Version: "test", LocalMode: true, Status: "ready", StateDirectoryID: tc.identity})
+			}))
+			defer srv.Close()
+			client := localClient()
+			defer client.CloseIdleConnections()
+			_, err := probeLocalInstance(client, srv.URL, &state.Store{Dir: dir})
+			if (err == nil) != tc.accepted {
+				t.Fatalf("unexpected result: %v", err)
+			}
+			if !tc.accepted {
+				port := strings.TrimPrefix(srv.URL, "http://127.0.0.1:")
+				if err := cmdLocalSession("pair", []string{"--port", port}); err == nil {
+					t.Fatal("mismatched instance allowed pairing")
+				}
+			}
+		})
+	}
+}
 
 func TestLocalServiceIdentity(t *testing.T) {
+	st := &state.Store{Dir: t.TempDir()}
+	id, err := st.DirectoryID()
+	if err != nil {
+		t.Fatal(err)
+	}
 	for _, tc := range []struct {
 		name, body, contentType string
 		accepted                bool
@@ -30,12 +79,12 @@ func TestLocalServiceIdentity(t *testing.T) {
 					t.Error("health received credential")
 				}
 				w.Header().Set("Content-Type", tc.contentType)
-				_, _ = w.Write([]byte(tc.body))
+				_, _ = w.Write([]byte(strings.ReplaceAll(tc.body, strings.Repeat("a", 64), id)))
 			}))
 			defer srv.Close()
 			client := localClient()
 			defer client.CloseIdleConnections()
-			_, err := probeLocalService(client, srv.URL)
+			_, err := probeLocalInstance(client, srv.URL, st)
 			if (err == nil) != tc.accepted {
 				t.Fatal("unexpected identity result")
 			}

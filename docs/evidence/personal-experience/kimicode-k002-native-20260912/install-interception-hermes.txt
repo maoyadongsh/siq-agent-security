@@ -1,0 +1,10 @@
+K002 install_interception 源码核查说明（hermes / linux arm64 native，候选 32b086ec18e15ead1e4c39a076e0863a22e5ccf2，核查日期 2026-09-12）
+
+结论：Hermes 的原生 Skill 安装入口（如 hermes skills install）当前不能在实际写入/执行前进入 SIQ 裁决，登记为 blocked/not_implemented。
+
+依据（源码位置，均为当前候选内容）：
+1. adapters/runtime/hermes-agentshield/__init__.py 只实现 pre_tool_call/post 观察类钩子（含 hold 降级 block 与凭据路径边界），不存在对 Skill 安装命令的前置钩子。
+2. Hermes 侧 Skill 安装由其自身 tools/skills_hub.py 等完成；SIQ 只在事后经 inventory/discovery 发现安装结果。
+3. SIQ 自有安装路径（internal/skillinstall/，含预览/确认/恢复）是 SIQ 作为安装方的流程，不是对 hermes skills install 的拦截。
+
+边界：本说明只覆盖当前 Hermes 版本（0.21.0）与 SIQ 的接合面；不证明上游永远不提供可拦截入口。

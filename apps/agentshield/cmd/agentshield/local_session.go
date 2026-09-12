@@ -16,11 +16,12 @@ import (
 )
 
 type localHealth struct {
-	SchemaVersion string `json:"schema_version"`
-	Product       string `json:"product"`
-	Version       string `json:"version"`
-	LocalMode     bool   `json:"local_mode"`
-	Status        string `json:"status"`
+	SchemaVersion    string `json:"schema_version"`
+	Product          string `json:"product"`
+	Version          string `json:"version"`
+	LocalMode        bool   `json:"local_mode"`
+	Status           string `json:"status"`
+	StateDirectoryID string `json:"state_directory_id,omitempty"`
 }
 
 func localClient() *http.Client {
@@ -40,22 +41,6 @@ func decodeLocalResponse(resp *http.Response, out any) error {
 		return errors.New("local service returned an invalid response")
 	}
 	return nil
-}
-
-func probeLocalService(client *http.Client, endpoint string) (localHealth, error) {
-	var health localHealth
-	resp, err := client.Get(endpoint + "/healthz")
-	if err != nil {
-		return health, errors.New("local service is unreachable; start siq-agent-security serve, then retry")
-	}
-	if err := decodeLocalResponse(resp, &health); err != nil {
-		return health, err
-	}
-	if health.SchemaVersion != "local-service-health/v1" || health.Product != "siq-agent-security" ||
-		!health.LocalMode || health.Status != "ready" || health.Version == "" {
-		return localHealth{}, errors.New("this port is not a compatible SIQ local service")
-	}
-	return health, nil
 }
 
 func requestLocalPairing(client *http.Client, endpoint, credential string) (string, error) {
@@ -82,6 +67,29 @@ func requestLocalPairing(client *http.Client, endpoint, credential string) (stri
 		return "", errors.New("local service returned an invalid pairing response")
 	}
 	return result.Code, nil
+}
+
+func probeLocalInstance(client *http.Client, endpoint string, st *state.Store) (localHealth, error) {
+	var health localHealth
+	expected, err := st.DirectoryID()
+	if err != nil {
+		return health, err
+	}
+	resp, err := client.Get(endpoint + "/healthz/instance")
+	if err != nil {
+		return health, errors.New("local service is unreachable; start siq-agent-security serve, then retry")
+	}
+	if err := decodeLocalResponse(resp, &health); err != nil {
+		return localHealth{}, err
+	}
+	if health.SchemaVersion != "local-service-instance-health/v1" || health.Product != "siq-agent-security" ||
+		!health.LocalMode || health.Status != "ready" || health.Version == "" {
+		return localHealth{}, errors.New("this port does not provide compatible SIQ instance health; check the port or upgrade the service")
+	}
+	if health.StateDirectoryID != expected {
+		return localHealth{}, errors.New("local service uses a different state directory; select the matching directory or a different port")
+	}
+	return health, nil
 }
 
 func cmdLocalSession(command string, args []string) error {
@@ -111,7 +119,7 @@ func cmdLocalSession(command string, args []string) error {
 	endpoint := fmt.Sprintf("http://127.0.0.1:%d", *port)
 	client := localClient()
 	defer client.CloseIdleConnections()
-	health, err := probeLocalService(client, endpoint)
+	health, err := probeLocalInstance(client, endpoint, st)
 	if err != nil {
 		return err
 	}

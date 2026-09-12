@@ -101,24 +101,43 @@ type Row struct {
 
 // Manifest is the signed document. Signature covers canon.Marshal of the
 // document with the signature field omitted.
+type ClientCompatibility struct {
+	StateProfile    string `json:"state_profile"`
+	ServiceProtocol string `json:"service_protocol"`
+	Migration       string `json:"migration"`
+}
+
+func CurrentClientCompatibility() *ClientCompatibility {
+	return &ClientCompatibility{StateProfile: "agentshield-local-ledger/v1", ServiceProtocol: "local-service-instance-health/v1", Migration: "none"}
+}
+
+func CheckClientCompatibility(m *Manifest) error {
+	if m == nil || m.ManifestVersion != 2 || m.ClientCompatibility == nil || *m.ClientCompatibility != *CurrentClientCompatibility() {
+		return fmt.Errorf("skillmanifest: signed client compatibility declaration missing or unsupported")
+	}
+	return nil
+}
+
 type Manifest struct {
-	ManifestVersion int      `json:"manifest_version"`
-	Skill           Skill    `json:"skill"`
-	Binary          Binary   `json:"binary"`
-	Rulepack        Rulepack `json:"rulepack"`
-	SupportMatrix   []Row    `json:"support_matrix"`
-	SignedBy        string   `json:"signed_by"`
-	Signature       string   `json:"signature"`
+	ClientCompatibility *ClientCompatibility `json:"client_compatibility,omitempty"`
+	ManifestVersion     int                  `json:"manifest_version"`
+	Skill               Skill                `json:"skill"`
+	Binary              Binary               `json:"binary"`
+	Rulepack            Rulepack             `json:"rulepack"`
+	SupportMatrix       []Row                `json:"support_matrix"`
+	SignedBy            string               `json:"signed_by"`
+	Signature           string               `json:"signature"`
 }
 
 // Options for Build.
 type Options struct {
-	Version     string
-	Description string
-	ContentHash string
-	Artifacts   []Artifact
-	Matrix      []Row
-	SignedBy    string
+	ClientCompatible bool
+	Version          string
+	Description      string
+	ContentHash      string
+	Artifacts        []Artifact
+	Matrix           []Row
+	SignedBy         string
 }
 
 // Build constructs an unsigned manifest. Signature is left empty.
@@ -150,7 +169,7 @@ func Build(opts Options) (*Manifest, error) {
 	if err := ValidateMatrix(matrix); err != nil {
 		return nil, err
 	}
-	return &Manifest{
+	m := &Manifest{
 		ManifestVersion: 1,
 		Skill: Skill{
 			Name:        product.Name,
@@ -171,7 +190,12 @@ func Build(opts Options) (*Manifest, error) {
 		},
 		SupportMatrix: matrix,
 		SignedBy:      opts.SignedBy,
-	}, nil
+	}
+	if opts.ClientCompatible {
+		m.ManifestVersion = 2
+		m.ClientCompatibility = CurrentClientCompatibility()
+	}
+	return m, nil
 }
 
 // Sign fills Signature using the release key. signed_by and the rulepack
@@ -208,6 +232,18 @@ func Verify(m *Manifest) error {
 func VerifyWithPublicKey(m *Manifest, trusted ed25519.PublicKey) error {
 	if m == nil {
 		return fmt.Errorf("skillmanifest: nil manifest")
+	}
+	if m.ManifestVersion == 2 {
+		if err := CheckClientCompatibility(m); err != nil {
+			return err
+		}
+		for _, a := range m.Binary.Artifacts {
+			if a.Bytes < 1 || a.Bytes > 128<<20 {
+				return fmt.Errorf("skillmanifest: invalid v2 artifact size")
+			}
+		}
+	} else if m.ManifestVersion != 1 || m.ClientCompatibility != nil {
+		return fmt.Errorf("skillmanifest: unsupported manifest version")
 	}
 	if len(trusted) != ed25519.PublicKeySize {
 		return fmt.Errorf("skillmanifest: invalid trusted public key")

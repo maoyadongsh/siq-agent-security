@@ -15,6 +15,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -158,4 +159,39 @@ func VerifyBytes(pub ed25519.PublicKey, msg []byte, sigHex string) bool {
 		return false
 	}
 	return ed25519.Verify(pub, msg, sig)
+}
+
+// LoadExisting reads an established identity without creating state or keys.
+func LoadExisting(stateDir string) (*Key, error) {
+	if b64 := product.Env(product.EnvSigningSeed, product.EnvSigningSeedOld); b64 != "" {
+		seed, err := base64.StdEncoding.Strict().DecodeString(b64)
+		if err != nil {
+			return nil, errors.New("signing: invalid environment seed")
+		}
+		return FromSeed(seed)
+	}
+	if stateDir == "" {
+		return nil, errors.New("signing: state directory required")
+	}
+	path := filepath.Join(stateDir, "keys", "signing.seed")
+	info, err := os.Lstat(path)
+	if err != nil {
+		return nil, err
+	}
+	if !info.Mode().IsRegular() || info.Size() > 1024 {
+		return nil, errors.New("signing: invalid existing identity file")
+	}
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	raw, err := io.ReadAll(io.LimitReader(f, 1025))
+	if err != nil {
+		return nil, err
+	}
+	if len(raw) > 1024 {
+		return nil, errors.New("signing: identity too large")
+	}
+	return decodeSeedFile(path, raw)
 }

@@ -1,0 +1,1179 @@
+{
+  "schema_version": "personal-platform-acceptance/v1",
+  "candidate_sha": "32b086ec18e15ead1e4c39a076e0863a22e5ccf2",
+  "source_dirty": false,
+  "cases": [
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "wsl2",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "macos",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "macos",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": "Ubuntu 24.04.4 LTS",
+      "host_version": "OpenClaw 2026.5.12 f066dd2",
+      "guest_version": null,
+      "binary_sha256": "897ec40be05cf60a2c8235457106bf79f3d8f0797dc657149a9057531fce9307",
+      "checks": {
+        "discovery": {
+          "status": "pass",
+          "method": "component_fixture",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "discovery-openclaw.json",
+              "sha256": "5e5ceca95935608ae218cc19cb341106c9920d640fedbf2e81a21faec183b8c2"
+            }
+          ]
+        },
+        "normal_execution": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "openclaw-core.json",
+              "sha256": "20fdb747049861721f9e89e3842b21e969f55e8832aba7b819830bcd0acd50e6"
+            }
+          ]
+        },
+        "pre_execution_denial": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "openclaw-core.json",
+              "sha256": "20fdb747049861721f9e89e3842b21e969f55e8832aba7b819830bcd0acd50e6"
+            }
+          ]
+        },
+        "service_unavailable_denial": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "openclaw-core.json",
+              "sha256": "20fdb747049861721f9e89e3842b21e969f55e8832aba7b819830bcd0acd50e6"
+            }
+          ]
+        },
+        "approval_resume": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "openclaw-approval-integration.json",
+              "sha256": "13c97855085245b366e3ce8c1e4ab27630cc4ac7e617f260938e1b2e9877d55b"
+            }
+          ]
+        },
+        "final_parameter_recheck": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "openclaw-approval-integration.json",
+              "sha256": "13c97855085245b366e3ce8c1e4ab27630cc4ac7e617f260938e1b2e9877d55b"
+            }
+          ]
+        },
+        "skill_attribution": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "openclaw-core.json",
+              "sha256": "20fdb747049861721f9e89e3842b21e969f55e8832aba7b819830bcd0acd50e6"
+            }
+          ]
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "not_implemented",
+          "evidence": [
+            {
+              "path": "install-interception-openclaw.txt",
+              "sha256": "15dd39d519f381276a9cdc5b1d6f99cf97238ff70ec1009289d512378e9fbbd0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "wsl2",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "macos",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "macos",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": "Ubuntu 24.04.4 LTS",
+      "host_version": "Hermes Agent 0.21.0 2026.8.31",
+      "guest_version": null,
+      "binary_sha256": "897ec40be05cf60a2c8235457106bf79f3d8f0797dc657149a9057531fce9307",
+      "checks": {
+        "discovery": {
+          "status": "pass",
+          "method": "component_fixture",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "discovery-hermes.json",
+              "sha256": "4926fe1337c0b47965dbb4b1dfc18e125cd23ef619455a0397cd2da6d75fb011"
+            }
+          ]
+        },
+        "normal_execution": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "hermes-cli-runtime.json",
+              "sha256": "2f3ea3228c69d6381a6944f1c397239a3fbd736ec2bc055c26cbf200fb46edca"
+            },
+            {
+              "path": "hermes-core.json",
+              "sha256": "a8ecc80f196025ba5591ee4f9d1556485697ce619e5fe0b914686eb2dbe58f7d"
+            }
+          ]
+        },
+        "pre_execution_denial": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "hermes-core.json",
+              "sha256": "a8ecc80f196025ba5591ee4f9d1556485697ce619e5fe0b914686eb2dbe58f7d"
+            },
+            {
+              "path": "hermes-grant-resource.json",
+              "sha256": "ae0440781ceed14e765f5ef8baaab04a4eecab2d5ef21faa2eb1170721fabf50"
+            }
+          ]
+        },
+        "service_unavailable_denial": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "hermes-core.json",
+              "sha256": "a8ecc80f196025ba5591ee4f9d1556485697ce619e5fe0b914686eb2dbe58f7d"
+            }
+          ]
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "native_cli",
+          "reason": "host_capability_missing",
+          "evidence": [
+            {
+              "path": "hermes-approval-gap.json",
+              "sha256": "2c53519b319a485c853d49498c33801959bf13c940a4f862591b2e3448a8ba68"
+            }
+          ]
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "native_cli",
+          "reason": "host_capability_missing",
+          "evidence": [
+            {
+              "path": "hermes-approval-gap.json",
+              "sha256": "2c53519b319a485c853d49498c33801959bf13c940a4f862591b2e3448a8ba68"
+            }
+          ]
+        },
+        "skill_attribution": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "hermes-runtime-identity.json",
+              "sha256": "1ebd5a8027b39979a75df280f211c97638119b9f0daaad02d4bd2a939d1236e4"
+            },
+            {
+              "path": "hermes-core.json",
+              "sha256": "a8ecc80f196025ba5591ee4f9d1556485697ce619e5fe0b914686eb2dbe58f7d"
+            }
+          ]
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "not_implemented",
+          "evidence": [
+            {
+              "path": "install-interception-hermes.txt",
+              "sha256": "e993f0704dc5d304913fbdadff40a96277a762f0277a22e107357b7fa2befd5d"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "wsl2",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "macos",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "macos",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "environment_unavailable",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "linux",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "linux",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "source_review",
+          "reason": "upstream_runtime_unconfirmed",
+          "evidence": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+name: personal-experience
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-tool:
+    name: evidence-tool (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86
+      - name: Verifier unit tests only, not native Agent acceptance
+        run: uv run --no-project --python 3.12 python -m unittest discover -s scripts/personal-experience/tests -p test_platform_acceptance.py -v
+  evidence-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86
+      - name: Install existing locked validation dependencies
+        working-directory: apps/control-api
+        run: uv sync --dev --locked
+      - name: Schema, producer and lint
+        run: |
+          apps/control-api/.venv/bin/ruff check scripts/personal-experience/platform_acceptance.py scripts/personal-experience/tests
+          apps/control-api/.venv/bin/python -m unittest discover -s scripts/personal-experience/tests -v
+      - name: Untested inventory must remain incomplete
+        run: |
+          mkdir -p .tmp/platform-acceptance-empty
+          python3 scripts/personal-experience/platform_acceptance.py init --candidate "$GITHUB_SHA" --out .tmp/platform-acceptance-empty/matrix.json
+          result=0
+          python3 scripts/personal-experience/platform_acceptance.py verify .tmp/platform-acceptance-empty/matrix.json --evidence-root .tmp/platform-acceptance-empty --candidate "$GITHUB_SHA" --require-native --out .tmp/platform-acceptance-empty/report.json || result=$?
+          test "$result" = 3
