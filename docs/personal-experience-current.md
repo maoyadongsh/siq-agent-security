@@ -63,3 +63,45 @@ M47 已完成服务配置成对切换事务及文件阶段恢复，serve 会拒�
 ## 2026-09-12 主分支整合
 
 用户已明确要求先提交并合并 main，本批整合 K002 既有六次提交及 M35–M47 已验证增量。完整个人/LAN 开发目标保持 active；本次合并不代表任务书全部完成。升级命令草稿尚未验证、未接入 CLI，已另存于工作区外 `/home/maoyd/siq/.siq-upgrade-draft-20260912/`，不纳入本次主分支代码；后续恢复该草稿时重新复核当前状态。实际提交和合并状态以 PR #28/Git 为准。
+
+## 合并后的升级开发 M48
+
+PR #28 已按用户授权合入 main `69d9c59`。当前新分支 codex/personal-client-upgrade-recovery 恢复并验证升级草稿，新增 service-upgrade 与同事务前滚恢复。见 [M48 证据](evidence/personal-experience/service-upgrade-20260912.md)；尚未验收真实跨发行版本/正式签名升级，失败回退和完整个人/LAN 目标继续待办。
+
+M49 已修复目标启动失败时的恢复门槛，真实 Linux 端口占用→候选失败→释放端口→同事务恢复通过。活跃锁及未知进程状态仍拒绝，见 [M49 证据](evidence/personal-experience/upgrade-failed-start-20260912.md)。
+
+M50 新增显式 service-rollback 并通过 Linux 源配置回退实测；旧程序与 v2 清单需保留，v1 日志不含历史二进制摘要，后续继续旧制品留存/身份绑定与安装交付，见 [M50 证据](evidence/personal-experience/service-rollback-20260912.md)。
+
+M51 在首次升级停止前保留当前 CLI 程序本地副本，独立于发行制品目录。签名历史绑定和缺失原路径恢复仍待实现，见 [M51 证据](evidence/personal-experience/client-snapshot-20260912.md)。
+
+M52 已落盘程序摘要签名切换 v2 合同与状态层：兼容 v1、拒绝摘要篡改、Go/Python 签名样例与四目标构建通过。CLI 的实际摘要校验和 v2 写入仍待接入，未提升 UX-003/014 验收状态。证据见 [M52](evidence/personal-experience/service-switch-binary-bindings-20260912.md)。
+
+M53 已接通新升级 v2 程序摘要写入与回退历史内容校验；同路径替换负向、Go 全量/vet/race、四目标构建及隔离 Linux systemd 升级/故障恢复/回退通过。未验证正式不同发行版本，原路径缺失的快照恢复仍待实现；UX-003/014 保持未完成。[证据](evidence/personal-experience/service-binary-identity-20260912.md)。
+
+M54 已接通明确 --restore-missing-binary 的历史程序恢复，校验签名原路径、摘要与发行清单后排他发布。Go 全量/vet/race、四目标构建及隔离 Linux 删除旧程序后恢复回退实测通过；正式不同发行版本仍待验收。[证据](evidence/personal-experience/service-snapshot-restore-20260912.md)。
+
+M55 已支持回退复用唯一匹配的本机已留存发行清单，新升级可指定 --source-manifest 保存原发行材料；所有使用均重新校验发行信任和历史程序内容。Go 全量/vet/race 与四目标构建通过；正式发行/跨 OS 验收保持待办。[证据](evidence/personal-experience/retained-release-manifest-20260912.md)。
+
+M56 已新增 Linux setup --confirm-setup，将初始化/后台注册/启动检查整合为一条命令；重复执行保持同进程与配置。Go 全量/vet/race、四目标构建及完整 CLI 隔离实测通过。尚非正式安装包，不提升跨 OS 后台支持声明。[证据](evidence/personal-experience/setup-entry-20260912.md)。
+
+M57 已增加 ui / ui --print 与 setup --open-ui，核对目录健康后访问本机管理页面。Go 全量/vet/race、四目标构建及隔离 Linux CLI 地址验证通过；实际桌面浏览器与跨 OS 验收保持待办。[证据](evidence/personal-experience/local-ui-entry-20260912.md)。
+
+M58 已实现 Linux client-install 的发行校验、稳定路径留存与后台 setup 串联，启动后复验运行版本/目录/签名归属。Go 全量/vet/race、四目标构建通过；正式发行安装正向和跨 OS 安装验收仍待完成。[证据](evidence/personal-experience/client-install-entry-20260912.md)。
+
+M59 已实现明确启用/关闭用户启动入口与 enabled 状态的归属校验。Go 全量/vet/race、四目标构建及隔离 Linux runtime CLI 实测通过，保持运行进程/配置。尚无真实重新登录或跨 OS 证据。[证据](evidence/personal-experience/service-login-startup-20260912.md)。
+
+M60 已新增 teardown --confirm-teardown 整合后台退出，数据保留与再次 setup 通过隔离 Linux 完整 CLI 验证；Go 全量/vet/race、四目标构建通过。跨 OS 与正式制品验收仍未闭环。[证据](evidence/personal-experience/teardown-entry-20260912.md)。
+
+M61 开始 macOS LaunchAgent：只读 plist 导出与共享路径预检已落盘；Go/Python 交叉解析、158 项合同、Go 全量/vet/race、四目标构建及 Linux 生命周期回归通过。macOS 尚未注册/启动或实机验收。[证据](evidence/personal-experience/launch-agent-plist-20260912.md)。
+
+M62 已完成 macOS plist 签名归属与状态目录内准备/恢复。Go 全量/vet/race、159 项合同与四目标构建通过；尚未系统注册或原生启动。开发台账首页已更新 main M47、本地 M48–M62 及 UX-003/014 的真实部分实现状态。[证据](evidence/personal-experience/launch-agent-ownership-20260912.md)。
+
+M63 已接通 macOS 用户配置目录的排他链接发布，签名源与路径归属前后复验。Go 全量/vet/race、四目标构建及临时 home 文件层测试通过；尚未 launchctl 加载/启动或 macOS 实机验收。[证据](evidence/personal-experience/launch-agent-registration-20260912.md)。
+
+M64 已新增 macOS 只读已加载配置核对，严格 XML 和当前用户域验证；Go 全量/vet/race、四目标构建和模拟正负向通过。list -x 当前系统兼容性、加载和启动仍待实测/实施，不计为 macOS 原生支持。[证据](evidence/personal-experience/launch-agent-loaded-status-20260912.md)。
+
+M65 已补齐只读未加载判定：完整用户域列表确认缺席与查询失败分离，存在仍需 XML 归属核对。Go 全量/vet/race、四目标构建及 33 项模拟场景通过；macOS 实机与加载/启动仍待完成。[证据](evidence/personal-experience/launch-agent-presence-20260912.md)。
+
+M66 已实现 macOS 显式加载及完整配置读回；已加载复用、未知配置拒绝、失败保留现场。Go 全量/vet/race、四目标构建和模拟场景通过；macOS 实机、启动与退出仍待完成。[证据](evidence/personal-experience/launch-agent-load-20260912.md)。
+
+M67 已接通 macOS 显式启动与目录健康验证，已有进程不强制重启，失败保留现场；Go/合同/构建验证通过，原生 macOS 验收仍缺。用户已要求先提交合并当前已实现的 M48–M67，实际合入状态见 Git/PR。[证据](evidence/personal-experience/launch-agent-start-20260912.md)。

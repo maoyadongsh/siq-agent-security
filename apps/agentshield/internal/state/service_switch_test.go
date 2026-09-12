@@ -152,3 +152,137 @@ func TestServiceSwitchContract(t *testing.T) {
 		t.Fatal("fixture drift")
 	}
 }
+
+func TestServiceSwitchV2Contract(t *testing.T) {
+	key, _ := signing.FromSeed(bytes.Repeat([]byte{7}, 32))
+	s, err := Open(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	w, err := AcquireWriter(s.Dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Release()
+	if _, err = s.Initialize(w, 0); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = s.PrepareUserService(w, key, []byte("old unit")); err != nil {
+		t.Fatal(err)
+	}
+	id, err := s.PrepareServiceSwitchWithBinaries(w, key, []byte("old unit"), []byte("new unit"), ServiceBinaryBindings{SourceSHA256: strings.Repeat("c", 64), TargetSHA256: strings.Repeat("d", 64)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	journal, err := os.ReadFile(filepath.Join(s.Dir, "service-switches", id+".json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := s.validateServiceSwitch(key, journal)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, r := range []*UserServiceRecord{&p.SourceRecord, &p.TargetRecord} {
+		r.InstanceID = strings.Repeat("a", 64)
+		r.DirectoryID = strings.Repeat("b", 64)
+		r.UnitName = "siq-agent-security-" + strings.Repeat("a", 32) + ".service"
+		r.Signature, err = key.SignCanonical(r.unsigned())
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	doc, _ := p.unsigned()
+	p.Signature, err = key.SignCanonical(doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := json.MarshalIndent(p, "", "  ")
+	raw = append(raw, '\n')
+	path := "../../testdata/contracts/local-service-switch-v2.json"
+	if os.Getenv("SIQ_UPDATE_SERVICE_SWITCH_FIXTURE") == "1" {
+		if err := os.WriteFile(path, raw, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	expected, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(raw, expected) {
+		t.Fatal("fixture drift")
+	}
+}
+
+func TestServiceSwitchBinaryBindingValidation(t *testing.T) {
+	key, _ := signing.FromSeed(bytes.Repeat([]byte{7}, 32))
+	s, err := Open(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	w, err := AcquireWriter(s.Dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Release()
+	if _, err = s.Initialize(w, 0); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = s.PrepareUserService(w, key, []byte("old")); err != nil {
+		t.Fatal(err)
+	}
+	good := ServiceBinaryBindings{SourceSHA256: strings.Repeat("c", 64), TargetSHA256: strings.Repeat("d", 64)}
+	for _, bad := range []string{"", strings.Repeat("A", 64), strings.Repeat("g", 64), strings.Repeat("a", 63)} {
+		for _, binding := range []ServiceBinaryBindings{{bad, good.TargetSHA256}, {good.SourceSHA256, bad}} {
+			if _, err := s.PrepareServiceSwitchWithBinaries(w, key, []byte("old"), []byte("new"), binding); err == nil {
+				t.Fatal("invalid digest accepted")
+			}
+			if err := s.CheckServiceSwitchPending(); err != nil {
+				t.Fatal("invalid digest published pending")
+			}
+		}
+	}
+	id, err := s.PrepareServiceSwitchWithBinaries(w, key, []byte("old"), []byte("new"), good)
+	if err != nil {
+		t.Fatal(err)
+	}
+	plan, err := s.ReadServiceSwitch(key, id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if plan.BinaryBindings == nil || *plan.BinaryBindings != good {
+		t.Fatal("bindings lost")
+	}
+	changed := plan
+	changed.BinaryBindings = &ServiceBinaryBindings{strings.Repeat("e", 64), good.TargetSHA256}
+	raw, _ := json.Marshal(changed)
+	if _, err := s.validateServiceSwitch(key, raw); err == nil {
+		t.Fatal("tampered digest accepted")
+	}
+	for _, version := range []string{"local-service-switch/v1", "local-service-switch/v3"} {
+		changed = plan
+		changed.SchemaVersion = version
+		doc, _ := changed.unsigned()
+		changed.Signature, _ = key.SignCanonical(doc)
+		raw, _ = json.Marshal(changed)
+		if _, err := s.validateServiceSwitch(key, raw); err == nil {
+			t.Fatal("invalid version/bindings accepted")
+		}
+	}
+	changed = plan
+	changed.BinaryBindings = nil
+	doc, _ := changed.unsigned()
+	changed.Signature, _ = key.SignCanonical(doc)
+	raw, _ = json.Marshal(changed)
+	if _, err := s.validateServiceSwitch(key, raw); err == nil {
+		t.Fatal("missing v2 binding accepted")
+	}
+	if err := s.ApplyServiceSwitch(w, key, id); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.ApplyServiceSwitch(w, key, id); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.VerifyUserService(key, []byte("new")); err != nil {
+		t.Fatal(err)
+	}
+}

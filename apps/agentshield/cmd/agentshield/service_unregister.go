@@ -29,14 +29,14 @@ func unregisterUserUnit(control userSystemctl, path, name string) error {
 	}
 	fragment := p["FragmentPath"]
 	if p["LoadState"] != "loaded" || p["DropInPaths"] != "" || (p["UnitFileState"] != "linked" && p["UnitFileState"] != "linked-runtime") || !filepath.IsAbs(fragment) || filepath.Base(fragment) != name {
-		return errors.New("service-unregister: unexpected unit or overrides; refusing removal")
+		return errors.New("service-unregister: unexpected unit or overrides; disable login startup with service-login --disable before removal")
 	}
 	info, err := os.Lstat(fragment)
 	if err == nil {
 		if info.Mode()&os.ModeSymlink == 0 {
 			return errors.New("service-unregister: registration is not a symlink; refusing removal")
 		}
-		if err = verifyUserUnit(p, path, p["UnitFileState"] == "linked-runtime"); err != nil {
+		if err = verifyUserUnit(p, path, runtimeUserUnit(p)); err != nil {
 			return err
 		}
 		if err = os.Remove(fragment); err != nil {

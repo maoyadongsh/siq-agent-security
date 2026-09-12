@@ -17,13 +17,29 @@ import (
 
 const serviceSwitchPending = "service-switch.pending.json"
 
+type ServiceBinaryBindings struct {
+	SourceSHA256 string `json:"source_sha256"`
+	TargetSHA256 string `json:"target_sha256"`
+}
+
+func (b ServiceBinaryBindings) valid() bool {
+	for _, value := range []string{b.SourceSHA256, b.TargetSHA256} {
+		raw, err := hex.DecodeString(value)
+		if err != nil || len(raw) != 32 || hex.EncodeToString(raw) != value {
+			return false
+		}
+	}
+	return true
+}
+
 type ServiceSwitch struct {
-	SchemaVersion string            `json:"schema_version"`
-	SourceRecord  UserServiceRecord `json:"source_record"`
-	TargetRecord  UserServiceRecord `json:"target_record"`
-	SourceUnit    string            `json:"source_unit"`
-	TargetUnit    string            `json:"target_unit"`
-	Signature     string            `json:"signature"`
+	BinaryBindings *ServiceBinaryBindings `json:"binary_bindings,omitempty"`
+	SchemaVersion  string                 `json:"schema_version"`
+	SourceRecord   UserServiceRecord      `json:"source_record"`
+	TargetRecord   UserServiceRecord      `json:"target_record"`
+	SourceUnit     string                 `json:"source_unit"`
+	TargetUnit     string                 `json:"target_unit"`
+	Signature      string                 `json:"signature"`
 }
 
 func (p ServiceSwitch) unsigned() (map[string]any, error) {
@@ -56,6 +72,18 @@ func (s *Store) CheckServiceSwitchPending() error {
 	return errors.New("state: service configuration switch pending; recover it before starting")
 }
 func (s *Store) PrepareServiceSwitch(w *Writer, key *signing.Key, source, target []byte) (string, error) {
+	return s.prepareServiceSwitch(w, key, source, target, nil)
+}
+
+// PrepareServiceSwitchWithBinaries binds caller-verified content digests.
+// It does not inspect executable files or establish release authenticity.
+func (s *Store) PrepareServiceSwitchWithBinaries(w *Writer, key *signing.Key, source, target []byte, bindings ServiceBinaryBindings) (string, error) {
+	if !bindings.valid() {
+		return "", errors.New("state: invalid service binary bindings")
+	}
+	return s.prepareServiceSwitch(w, key, source, target, &bindings)
+}
+func (s *Store) prepareServiceSwitch(w *Writer, key *signing.Key, source, target []byte, bindings *ServiceBinaryBindings) (string, error) {
 	if err := s.serviceWriter(w); err != nil {
 		return "", err
 	}
@@ -78,6 +106,10 @@ func (s *Store) PrepareServiceSwitch(w *Writer, key *signing.Key, source, target
 		return "", err
 	}
 	plan := ServiceSwitch{SchemaVersion: "local-service-switch/v1", SourceRecord: before, TargetRecord: after, SourceUnit: string(source), TargetUnit: string(target)}
+	if bindings != nil {
+		plan.SchemaVersion = "local-service-switch/v2"
+		plan.BinaryBindings = bindings
+	}
 	doc, err := plan.unsigned()
 	if err != nil {
 		return "", err
@@ -104,8 +136,18 @@ func (s *Store) validateServiceSwitch(key *signing.Key, raw []byte) (ServiceSwit
 	var p ServiceSwitch
 	dec := json.NewDecoder(bytes.NewReader(raw))
 	dec.DisallowUnknownFields()
-	if key == nil || dec.Decode(&p) != nil || dec.Decode(new(any)) != io.EOF || p.SchemaVersion != "local-service-switch/v1" {
+	if key == nil || dec.Decode(&p) != nil || dec.Decode(new(any)) != io.EOF {
 		return p, errors.New("state: invalid service switch")
+	}
+	var fields map[string]json.RawMessage
+	if json.Unmarshal(raw, &fields) != nil {
+		return p, errors.New("state: invalid service switch")
+	}
+	_, hasBindings := fields["binary_bindings"]
+	if (p.SchemaVersion == "local-service-switch/v1" && hasBindings) ||
+		(p.SchemaVersion == "local-service-switch/v2" && (p.BinaryBindings == nil || !p.BinaryBindings.valid())) ||
+		(p.SchemaVersion != "local-service-switch/v1" && p.SchemaVersion != "local-service-switch/v2") {
+		return p, errors.New("state: invalid service switch binary bindings")
 	}
 	doc, err := p.unsigned()
 	if err != nil || !signing.VerifyCanonical(key.Public(), doc, p.Signature) {
@@ -245,4 +287,22 @@ func syncServiceDirectory(path string) error {
 	}
 	defer d.Close()
 	return d.Sync()
+}
+
+// ReadServiceSwitch returns an authenticated immutable journal for recovery.
+func (s *Store) ReadServiceSwitch(key *signing.Key, id string) (ServiceSwitch, error) {
+	var empty ServiceSwitch
+	decoded, err := hex.DecodeString(id)
+	if err != nil || len(decoded) != 32 || hex.EncodeToString(decoded) != id {
+		return empty, errors.New("state: invalid service switch id")
+	}
+	raw, err := readInitializationFile(filepath.Join(s.Dir, "service-switches", id+".json"))
+	if err != nil {
+		return empty, err
+	}
+	hash := sha256.Sum256(raw)
+	if hex.EncodeToString(hash[:]) != id {
+		return empty, errors.New("state: service switch identity mismatch")
+	}
+	return s.validateServiceSwitch(key, raw)
 }

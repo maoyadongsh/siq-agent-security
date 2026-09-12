@@ -7,6 +7,8 @@
 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)  
 分支：`main`（本地产品与 Trusted Intent V2 核心已合入）。研究演示与发布入口见根 README；本地源码构建及 Skill 接入步骤见下文。
 
+Linux 个人体验开发版可在构建后使用 `./siq-agent-security setup --confirm-setup` 一次完成初始化、用户后台注册和启动；加 `--open-ui` 可在就绪后请求打开浏览器。再执行 `./siq-agent-security pair` 获取配对码，打开输出的管理地址。可选 `--port N` 指定初始端口；重复执行复用同一健康服务。需要 systemd 用户会话，尚不启用登录自启；Windows/macOS 或无 systemd 时使用下面的前台 `start`。
+
 ## 三步（本机复现）
 
 需要 Go 1.22+；从当前前端源码构建完整本地控制台使用 Node.js 22 / npm。Skill 引导脚本另需 Python 3 和 OpenSSL 3。
@@ -175,3 +177,39 @@ Linux 已注册服务可用 `siq-agent-security service-start` 启动，`siq-age
 
 
 升级前可执行 `siq-agent-security client-upgrade-check --manifest FILE --binary FILE`。它要求发行方签名的 v2 无迁移兼容声明并检查候选内容；v1 仍可暂存，但不能通过该预检。成功不代表已批准或切换版本。发行准备工具只有显式 `release-manifest --client-compatible` 才生成 v2；旧 Skill 引导脚本与冻结 v1 包保持原协议。
+
+
+Linux 已注册服务可执行 `siq-agent-security service-upgrade --manifest FILE --binary FILE --confirm-upgrade`。候选必须通过 v2 发行签名/兼容预检；确认后会短暂停止保护，block 模式下受控操作暂时拒绝。失败输出的事务 ID 可配合同一候选及 `--recover ID` 前滚恢复；不得替换目标。该流程不回滚台账，自动回退仍待实施。
+
+若候选因端口冲突等原因启动失败，先排除冲突，再使用同一候选和事务 ID 执行 `service-upgrade ... --confirm-upgrade --recover ID`。只有已停止/失败且无主进程的单位可恢复；活跃写锁或无法确认的进程状态会被拒绝，勿手工删除锁。
+
+
+显式恢复原升级事务的源配置可使用 `siq-agent-security service-rollback --transaction ID --manifest OLD --binary OLD --confirm-rollback`。原升级事务必须含 v2 程序摘要绑定；旧程序必须在原路径、匹配原 source 摘要并通过 v2 发行校验；失败时保留原参数并使用回退输出的新事务 ID 加 `--recover ID`。此操作不回滚授权或台账，也不下载历史程序。
+
+首次升级会在停止服务前把当前 CLI 程序复制到状态目录的 `client-snapshots/<sha256>/`。这是本地观测副本，不是发行信任证明；回退仍需已验证的旧清单；若原程序缺失，可在回退命令上明确加 `--restore-missing-binary`，从匹配历史摘要的本地快照恢复原路径。已有文件不覆盖，父目录必须存在；快照或发行校验失败时不恢复。
+
+新升级事务记录源快照与目标程序的签名摘要，停止前与启动前核对实际文件。旧 v1 切换日志可继续前滚恢复，但缺少历史程序摘要，不能用于新的产品回退。
+
+回退时可省略 `--manifest`：程序会在本机已留存的历史版本目录中寻找唯一匹配的发行清单，并重新验证发行签名、兼容声明与程序摘要。找不到或有多份匹配时会提示显式提供清单。首次从外部程序路径升级时，可加 `--source-manifest OLD.json` 保存当前程序的发行清单与副本，供后续回退使用；该选项不适用于 `--recover`。
+
+日常可运行 `siq-agent-security ui` 打开当前实例的管理页面，或 `ui --print` 仅输出地址。两者都会先验证服务身份和状态目录，不生成配对码；首次连接仍需单独执行 `pair`。浏览器无法打开时可手动访问输出地址，服务继续运行。
+
+Linux 正式发行安装入口为 `siq-agent-security client-install --manifest RELEASE.json --binary DOWNLOADED --confirm-install`，可加 `--port N`、`--open-ui`。它先校验发行签名与兼容声明，再保存到状态目录的稳定程序路径，由该程序执行后台 setup；安装成功显示后续管理应使用的程序路径。已有其他版本请走 `service-upgrade`，此入口不替换未知服务、不修改 PATH 或启用登录自启。当前为源码开发能力，正式签名制品安装验收仍待完成。
+
+Linux 可用 `service-login --enable --confirm-enable` 明确启用当前实例的用户登录自启，`service-login --disable` 关闭。操作不启动/停止当前进程；默认 setup 的持久注册可用于后续登录，`--runtime` 注册只在本登录会话有效。注销前先关闭自启，再正常停止并注销服务；未知启动入口不会被覆盖或删除。
+
+需要退出本机后台运行时，可执行 `teardown --confirm-teardown`，一次关闭当前实例自启、正常停止并注销后台入口。配置、身份、程序和历史数据保留，之后可重新 `setup`。该命令不会卸载智能体钩子；服务停止后，block 模式下的受控操作会拒绝。重复执行会复验已退出状态。
+
+macOS 开发版新增 `launch-agent-plist`，只读导出当前已初始化实例的 LaunchAgent 配置。当前仅完成导出与跨解析器校验，尚未接通自动注册、启动或 macOS 实机验收；不要将此命令视为后台安装成功。
+
+macOS `launch-agent-prepare` 可在状态目录中准备签名归属记录与 plist，重复执行复验内容，并恢复签名记录存在但 plist 缺失的中断。尚不写入 Library/LaunchAgents 或加载任务，不能据此认为后台服务已启动。
+
+macOS `launch-agent-register` 会复验/准备签名配置，并向当前用户 `Library/LaunchAgents` 排他发布实例链接。只复用同一源的精确链接，不覆盖未知文件或跟随被重定向的目录。当前尚不执行 launchctl，不代表已经加载或启动；实机验收待完成。
+
+macOS `launch-agent-status` 只读核对当前 GUI 用户域的已加载 XML 配置，与签名源字段及用户目录链接匹配后区分已加载/报告 PID/API 就绪。该兼容入口基于 `launchctl list -x`，尚缺当前 macOS 实机验证；命令或格式不支持时返回未确认，不会自动加载或替换任务。
+
+`launch-agent-status` 现在会先核对当前 GUI 用户域的完整任务列表；明确缺席时提示“已注册，当前用户域未加载”。查询失败、格式不支持或查询中任务变化均保持“未确认”，不会自动加载或重装。此查询只反映当时的当前用户域，不证明全系统没有服务。
+
+macOS 可在 `launch-agent-register` 后运行 `launch-agent-load --confirm-load`，将已签名的当前实例配置加载到当前 GUI 用户域。重复执行会核对并复用已加载配置；失败时先运行 `launch-agent-status` 检查再重试。该命令不请求启动，不能仅凭加载成功判断保护就绪。当前仍缺 macOS 实机验收。
+
+macOS `launch-agent-start --confirm-start` 会复用上述加载流程，启动当前实例并检查目录健康；已有进程时仅验证，不强制重启。失败后保留现场，请使用 `launch-agent-status` 检查。当前属于待实机验收的开发能力。

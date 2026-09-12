@@ -68,13 +68,20 @@ func verifyUserUnit(props map[string]string, path string, runtimeOnly bool) erro
 	if runtimeOnly {
 		expected = "linked-runtime"
 	}
-	if props["LoadState"] != "loaded" || props["DropInPaths"] != "" || props["UnitFileState"] != expected {
+	enabled := "enabled"
+	if runtimeOnly {
+		enabled = "enabled-runtime"
+	}
+	if props["LoadState"] != "loaded" || props["DropInPaths"] != "" || (props["UnitFileState"] != expected && props["UnitFileState"] != enabled) {
 		return errors.New("service-register: unexpected unit state, scope or overrides; refusing to modify it")
 	}
 	actual, err := filepath.EvalSymlinks(props["FragmentPath"])
 	wanted, wantErr := filepath.EvalSymlinks(path)
 	if err != nil || wantErr != nil || actual != wanted {
 		return errors.New("service-register: unit belongs to another configuration")
+	}
+	if props["UnitFileState"] == enabled {
+		return verifyLoginLink(props["FragmentPath"], path)
 	}
 	return nil
 }
@@ -119,7 +126,7 @@ func cmdServiceRegister(args []string, out io.Writer) error {
 		if err := registerUserUnit(runUserSystemctl, path, record.UnitName, runtimeOnly); err != nil {
 			return err
 		}
-		_, err := fmt.Fprintf(out, "已注册用户服务 %s；尚未启动，未启用登录自启。\n", record.UnitName)
+		_, err := fmt.Fprintf(out, "已确认用户服务注册 %s；保留现有运行与登录自启状态。\n", record.UnitName)
 		return err
 	})
 }

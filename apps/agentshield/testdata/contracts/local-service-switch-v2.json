@@ -1,0 +1,26 @@
+{
+  "binary_bindings": {
+    "source_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "target_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+  },
+  "schema_version": "local-service-switch/v2",
+  "source_record": {
+    "schema_version": "local-user-service-record/v1",
+    "instance_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "state_directory_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "unit_name": "siq-agent-security-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.service",
+    "unit_sha256": "c6fc5878e152ac69431b0f620c5f378c1d9db82d7fb71567214fc54e8669f951",
+    "signature": "a18d9a8b4e453b43a94287ca034415ed6bd9491e9211f8ae646cc38e4b05c29ffc6aa298e106f8f28d27cd03600171998f4e7d41a1d4f5928907cfd6c68b3b0e"
+  },
+  "target_record": {
+    "schema_version": "local-user-service-record/v1",
+    "instance_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "state_directory_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "unit_name": "siq-agent-security-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.service",
+    "unit_sha256": "d599dc023e20789b9afb2055a2965329234783efe58d5060b8e21225bd194bf3",
+    "signature": "02b5f10821b63f07c2299ae529b676044cd753956b48c3ab48296539ee84ec5a9d3d5b0ed7628cf7730e92aa8f6f9620583fcb2ff07a2bd992e98da61cb4b106"
+  },
+  "source_unit": "old unit",
+  "target_unit": "new unit",
+  "signature": "b3eeec0b0531f393a815bce1eb1d8e84c4f50c1797e01d5047c0b3eb9aeb90a880597b07e1697f137445bd919fe14f6d8d246ab0400e4b8bc6ac1cf17ee2e004"
+}
