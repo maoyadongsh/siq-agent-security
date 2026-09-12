@@ -99,16 +99,22 @@ func Open(dir string) (*Store, error) {
 
 // LoadConfig returns config.json or defaults (block / 47611 / console).
 func (s *Store) LoadConfig() (Config, error) {
-	cfg := Config{IntentEnforcement: "optional", EnforcementMode: "block", Port: 47611, HoldChannel: "console"}
 	raw, err := os.ReadFile(filepath.Join(s.Dir, "config.json"))
 	if errors.Is(err, os.ErrNotExist) {
-		return cfg, nil
+		return decodeConfig(nil)
 	}
 	if err != nil {
-		return cfg, err
+		return Config{}, err
 	}
-	if err := json.Unmarshal(raw, &cfg); err != nil {
-		return cfg, fmt.Errorf("state: config.json malformed: %w", err)
+	return decodeConfig(raw)
+}
+
+func decodeConfig(raw []byte) (Config, error) {
+	cfg := Config{IntentEnforcement: "optional", EnforcementMode: "block", Port: 47611, HoldChannel: "console"}
+	if raw != nil {
+		if err := json.Unmarshal(raw, &cfg); err != nil {
+			return cfg, fmt.Errorf("state: config.json malformed: %w", err)
+		}
 	}
 	if cfg.IntentEnforcement != "optional" && cfg.IntentEnforcement != "required" {
 		return cfg, fmt.Errorf("state: invalid intent_enforcement")

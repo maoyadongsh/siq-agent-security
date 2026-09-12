@@ -492,6 +492,7 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 依据 [ADR-019](adr/0019-local-session-recovery.md) 和 [个人体验任务书](personal-experience-lan-team-development-taskbook-20260910-145507.md)。本节是当前已授权个人开发周期增量，历史发布/比赛快照不变。
 
 - `GET /healthz` 为无 secret 的版本化服务识别响应；`status [--port N]` 严格校验产品和协议，不以 TCP 连通认定健康。
+- 2026-09-12 UX-003/004 增量：`GET /healthz/instance` 使用独立 `local-service-instance-health/v1` 合同，附 `state_directory_id`。该值为 `sha256("local-state-directory/v1\0" + EvalSymlinks(Abs(state_dir)))` 的小写十六进制摘要；仅识别当前规范化目录，不是永久设备 ID、认证凭据或防同 UID 伪装证明。目录迁移改变摘要，符号链接别名复用同一摘要；不返回目录原文。服务启动时固定摘要，目录解析失败拒绝启动。`status`/`pair` 必须核对本地只读计算结果后才报告 ready 或发送恢复凭据；旧服务缺失新接口时明确要求升级，不回退为匹配。开发启动器只接受新合同。现有 `/healthz`、UI 会话与历史合同保持兼容。独立合同见 `packages/contracts/local-service-instance-health.v1.schema.json`。
 - `/ui-config.json` 增加 `product`、`schema_version`、`session_recovery`、`pairing_available`，不返回 Cookie、token 或配对码。
 - 新 UI 配对时提交 `remember:true` 与 `X-SIQ-Session:1`；access token 仍只在内存。HttpOnly/SameSite Strict/限定路径 Cookie 只用于 `POST /v1/session/restore`，有效期不超过原会话 12 小时，daemon 重启失效。
 - `POST /v1/session/logout` 经现有 admin bearer 校验，注销该会话和对应恢复凭据；Cookie 不能直接调用其他管理接口。
@@ -499,6 +500,79 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 - `pair [--port N]` 通过上述本机恢复路径生成新码，用户无需重启决策服务。该路径仍属 desktop-same-uid，不宣称能阻止恶意同 UID 进程。
 - 会话相关响应 no-store，Host/Origin 检查、硬拒绝、单写者与回执语义不变。原文记录仍未开启。
 - 本节响应和请求定义见 `packages/contracts/local-client-session.v1.schema.json`；既有客户端 `{code}` 配对方式保持兼容。
+
+### 3.11.1 个人客户端初始化（2026-09-12，UX-003）
+
+`init [--port N]` 复用当前状态目录和单写者锁，不启动服务、扫描资产、修改适配器或生成授权。成功输出 `local-client-initialization/v1`、`status:initialized`、实例 ID、目录摘要和实际配置端口，不能据此显示已保护。
+
+- `config.json` 缺失时排他发布 block/optional/console 默认配置，默认端口 47611。显式 `--port` 仅供首次初始化；已有配置保持原字节，端口不一致拒绝，不能静默修改受管理适配器连接地址。
+- `local-instance.json` 使用 `local-client-instance/v1` 与随机 256-bit 十六进制 `instance_id`，是当前本地安装的稳定标识，不是权限或团队注册身份。重复初始化、正常重启和迁移保留记录；复制目录会复制标识，未来团队注册不得直接把它当作可信唯一设备身份。缺失可在锁内创建，损坏/未知版本不得重建或覆盖。
+- 配置与实例记录只接受有界普通文件（64 KiB），拒绝符号链接、目录、无效 JSON、null 和不支持版本。实例记录严格字段，已有配置允许保留额外设置。先验证两个现有文件再写缺失文件，复用同目录 fsync + 排他发布；中断后重试补齐缺失文件，不重置已发布配置/身份，也不删除残留或活跃锁。
+- 写入必须持有真实 Writer（PID、nonce 和目录一致）；相同进程的并发调用也只能有一个 Writer。已有服务占锁时明确拒绝，操作者可先 `status` 检查。初始化不改旧状态/事实记录，不将历史未初始化状态自动升级为新写者兼容承诺。
+- `serve` 对缺失配置先提示运行 `init`，不先产生密钥或凭据。已有配置仍可按原方式运行，稳定实例记录不是旧服务运行的强制迁移条件。开发启动器确认端口空闲后调用 `init --port N`，成功才启动；端口已被匹配实例使用时直接复用，不触发初始化写入。
+- 合同见 `packages/contracts/local-client-initialization.v1.schema.json`。本增量不等于二进制来源校验、安装包分发、系统后台注册或跨 OS 原生验收完成。
+
+### 3.11.2 原生单命令启动（UX-003）
+
+`start [--port N]` 在同一 Go 二进制内组合初始化和前台服务运行，无 Python 依赖。省略端口时沿用配置或默认 47611；显式端口与已有配置冲突拒绝。先只读验证配置与端口：匹配 `/healthz/instance` 时输出原健康合同并退出，不换配对码、不改文件；其他服务或不兼容响应占用端口时拒绝，不初始化或终止进程。端口空闲时调用既有 `init` 和 `serve`；预检不能消除竞争，最终仍由 writer 锁和 listen 排他判定，竞争失败不删除锁、不杀进程。
+
+新启动保持前台运行，关闭终端可能停止服务；该命令不声明后台注册或注销保活。操作者在新终端用 `pair` 恢复配对。首版不提供 mode 覆盖、浏览器自动打开或 stop，避免复用已有服务时静默忽略配置变更。系统后台机制将在独立增量中接入。
+
+### 3.11.3 停止时的请求排空与写锁（UX-003）
+
+前台及后续系统服务的停止使用同一语义：收到停止信号后停止接受新业务请求，在途 HTTP handler 完成之前不返回 serve、不释放状态 Writer。默认给予 HTTP 连接 3 秒正常排空时间，超时后关闭连接以取消请求上下文；仍须等待已经进入的 handler 结束，不能以连接关闭推导磁盘事务已结束。忽略取消的操作可能延长退出，不能为满足停止时间而提前解除写锁。晚到请求返回 503，不进入原处理器。正常退出撤销 signal 注册，异常监听退出同样排空在途 handler。外部系统强杀仍按原状态恢复合同处理，不能宣称优雅退出。
+
+### 3.11.4 Linux 用户服务配置导出（UX-003）
+
+`service-unit` 只读已初始化状态和当前二进制位置，输出 systemd 用户服务配置。执行路径和状态目录固定为规范化绝对路径，拒绝控制字符；二进制路径中的 `$` 在首版明确拒绝，避免 systemd 命令替换歧义；`%` 按 systemd 规则转义。配置使用 `serve`，不能用会复用其他进程后退出的 `start` 作为服务主进程。用户先显式 init；缺失或损坏实例/配置时不输出配置。
+
+服务以当前用户运行，不 sudo、不写系统目录；默认不自动重启，以免永久配置错误形成循环。SIGTERM 停止，30 秒后系统可强杀，强杀不能记为优雅排空。stdout/stderr 为 null，避免 serve 的一次性配对码进入 journal；管理配对另行使用 `pair`。配置包含 UMask=0077。本命令不执行 systemctl 或注册开机启动，不声称安装完成；后续自动安装事务须校验文件归属、处理重载失败和卸载恢复。其他 OS 明确拒绝使用 Linux 导出命令，不能以交叉构建推定支持。
+
+M40 原生验证增量：systemd 255 实际拒绝含双引号的可执行文件路径；导出现在提前拒绝二进制路径中的双引号和反斜杠，连同美元符号给出可操作错误。空格/百分号二进制路径以及含美元符号/百分号/双引号的状态目录已通过真实运行验证。此限制只约束导出的可执行路径，不把允许状态目录的转义误作非法可执行路径支持。
+
+### 3.11.5 用户服务配置发布记录（UX-003）
+
+后台安装先在状态目录发布签名配置记录，再排他发布对应单元文件。记录绑定 local instance、目录摘要和完整 unit SHA-256；重试必须通过签名与全部绑定校验，配置变化要求新的迁移流程，不能覆盖旧记录。首次发布前目标已存在则拒绝，即使字节相同也不接管；已持有签名记录时可补发缺失单元，存在但内容改变拒绝。沿用 state Writer 与同目录原子发布，不删除未知文件。记录表达配置发布意图，不表示系统服务已注册、运行或权限已生效。此为后续 systemctl 注册/失败恢复的持久前置条件，不直接执行系统命令。
+
+### 3.11.6 Linux 用户服务注册（UX-003）
+
+`service-register [--runtime]` 在当前用户 systemd 中注册已归属配置；默认持久 link，`--runtime` 仅当前登录管理器生命周期。命令本身不启动服务或启用登录自启。沿用 §3.11.5 准备和 Writer，注册期间保持锁；只调用无 shell 的 `systemctl --user`，不使用 force/sudo。每次外部调用有超时和输出上限，错误不回显系统原始输出。
+
+注册前读回 LoadState、FragmentPath、DropInPaths、UnitFileState：缺失可 link；已有单位必须 loaded、无 drop-in、规范化 FragmentPath 指向本实例已验证文件，且 linked/linked-runtime 与本次范围相同，否则拒绝。link 后 daemon-reload，再复验上述字段才返回成功。中断或 reload 失败保留配置和链接，不报告成功；重试再次核对归属并 reload。不删除未知链接、未知 drop-in 或失败时盲目回滚。当前不提供范围变更、升级或卸载，独立后续事务处理。
+
+CLI 成功以人类可读文本报告“已注册、尚未启动”；签名配置记录保持原意图语义，不新增运行状态字段。真实 manager 读回与文件归属用于防误操作，不抵抗恶意同 UID 竞争。
+
+### 3.11.7 Linux 用户服务启停与状态（UX-003）
+
+`service-status` 只读核验已存在签名身份、配置归属、manager 来源与状态；不创建密钥/目录或补发文件。`service-start` 核验后请求 manager 启动，只有 active、正数 MainPID 与本目录健康检查共同通过才报告就绪。`service-stop --confirm-stop` 为显式停止确认；未带确认不修改任何状态，提示 block 模式下智能体后续操作将被拒绝。停止后须读回 inactive、MainPID=0、Result=success 且 serve.lock 已消失才报告正常停止；超时/强杀/锁残留均报不完整，不删除锁或杀未知 PID。
+
+运行时不获取 daemon 的主 Writer；服务管理变更共用状态子目录 `service-control/` 的既有 Writer 格式，串行化 prepare/register/start/stop。状态查询只读；此锁不修改授权与台账。登记与启停均核验签名配置和无 drop-in 的 manager 来源，未知配置失败关闭。现有签名身份以只读加载方式读取，缺失不生成。三 OS 通用加载器仍保留已有环境种子优先语义。
+
+### 3.11.8 Linux 服务注销（UX-003）
+
+`service-unregister --confirm-unregister` 仅移除当前实例的系统注册链接，保留状态配置、签名记录、密钥、授权和历史。运行中拒绝，用户先显式确认停止。获取生命周期锁及主 Writer，核验已存在签名配置；manager 必须 inactive/MainPID=0/Result=success、无 drop-in、linked 范围、FragmentPath 对应同名单元链接且规范化目标为本实例文件。仅删除该符号链接，不使用会扩散移除其他链接的 disable，不删除普通文件或未知用户对象。该服务链接写入例外与注册同属本轮授权生命周期范围。
+
+删除后 daemon-reload，读回 not-found、空 FragmentPath/DropInPaths/UnitFileState、inactive/MainPID=0 才报告注销；失败不清理状态记录。删除成功但 reload 前中断时，重试仅在已停止且 FragmentPath 已缺失的条件下 reload 后复验，不假装删除其他文件。已注销可重复确认，未曾注册的有效准备实例也报告“当前未注册”。注销不等于程序或数据卸载，数据删除是独立显式操作。
+
+### 3.11.9 原生客户端制品暂存（UX-003/014）
+
+`client-stage --manifest FILE --binary FILE` 复用既有 skill-manifest/v1 的内置发行根验签，不接受候选提供的信任根或 CLI 跳过验签。严格解码、清单上限 1 MiB；要求 manifest_version=1、正确产品名/非空版本、当前 GOOS/GOARCH 唯一制品、有效 SHA-256 与大小 1–128 MiB。候选必须普通文件，不执行；按已签名字节数限流复制并校验摘要，再发布到状态目录 `client-releases/<binary-sha256>/siq-agent-security[.exe]`（0700）和 `manifest-<manifest-sha256>.json`（0600）。目录 0700，仅采用同目录暂存/排他硬链接发布，不替换既有对象。
+
+暂存不获取 daemon 主 Writer，使用独立 `client-releases` 子目录既有 Writer 格式，允许运行中准备候选；不改 config/unit/签名身份/授权，不下载或启动候选，不停止服务。签名验证必须发生在创建状态之前。重试复核已存在普通文件内容，缺失对象可补齐；漂移、symlink、大小/哈希冲突均拒绝，不覆盖。磁盘不足/发布失败保留可复验独立对象，不报告升级完成。清单仅作为候选来源证明，不代表版本兼容、OS 代码签名或真实平台支持；升级切换还需单独状态兼容与停止/恢复协议。
+
+### 3.11.10 签名客户端兼容声明与升级预检（UX-003/014）
+
+新增独立 `skill-manifest.v2`，保留 v1 字节/签名/合同。v2 必须签入 client_compatibility：state_profile=`agentshield-local-ledger/v1`（本项目现有本地台账格式族，含已实施个人状态对象）、service_protocol=`local-service-instance-health/v1`、migration=`none`。本实现只接受该精确组合，不自动迁移状态。每项 binary artifact 的 bytes 必须为正数且不超过 128 MiB。发行者声明兼容不替代目标真实集成验收，也不证明旧任意二进制会拒绝未来格式。
+
+`release-manifest --client-compatible` 显式产生 v2，否则仍 v1；该参数只能用于已验证保持现有状态格式的候选。旧 Skill bootstrap 继续使用旧 v1，不擅自重签冻结制品或假装支持 v2。新增原生 `client-upgrade-check --manifest FILE --binary FILE`：只读验证发行签名、唯一当前平台 pin、候选大小/摘要和上述精确兼容声明，不执行候选、不创建状态、不停止/切换服务。旧 v1 可暂存但升级预检明确拒绝。通过仅意味着来源/完整性/声明预检通过，切换前还需重新校验及独立事务；不将它作为旧写者隔离或升级成功证明。
+
+### 3.11.11 服务配置成对切换事务（UX-003/014）
+
+服务配置与签名归属记录切换采用 `local-service-switch/v1` 本地签名日志，保存 source/target 记录和 unit 字节，全部绑定当前实例/目录/同一 unit 名与各自 SHA-256。日志只允许 Writer 持有者准备，候选发行验签与 manager 停止是上层切换命令的前置条件；底层不执行 systemctl、不选择或启动候选。
+
+先排他发布 `service-switches/<日志sha256>.json`，再发布 `service-switch.pending.json`（相同签名字节）。任何不一致的 pending 拒绝；未完成时本版本 serve 拒绝启动。应用前验证当前两文件分别等于 source 或 target，未知字节或缺失拒绝；再分别以同目录已 fsync 临时文件替换仅已验证旧内容，重试只完成未达 target 的文件。完成后排他发布同内容 `.done.json`，再核对并移除 pending。日志/旧版本材料保留，配置和其他台账不回滚。
+
+恢复重新验签和绑定后前滚到同一 target；不得通过恢复重签新目标或覆盖未知对象。此事务只完成配置文件切换，不代表 manager reload/启动/健康通过；上层尚需对应阶段恢复。强制停止旧任意版本不在该标记保证内，主 Writer 仍是防混跑前提。无需迁移状态的发行候选仍需上层逐次复验。
 
 ## 4. 平台适配器规格
 

@@ -6,6 +6,13 @@
 - 用户授权：在本仓增量实现并验证；不自动提交、推送、发布。
 - 既有改动：Vitest 4.1.11 的 `apps/web/package.json`、`package-lock.json`，以及原任务书，继续保留。
 
+### 当前续开发基线（2026-09-12）
+
+- 用户再次指定任务书为持续开发目标，目标已登记为 active；先个人 UX，再 LAN。
+- 当前分支 `codex/personal-k002-platform-readiness`，HEAD `a195faba41d128d21222f819ebf96a766fb9cd01`。上方 main 和 Vitest 工作区描述为 2026-09-10 历史记录。
+- 本轮开始仅任务书有未提交修改，保持原样；未合并 PR、切换分支、提交、推送或发布。在当前 K002 后继工作区先完成可审阅增量；任务书 §11.1 的主线合入步骤尚未执行。
+- 最新批次 M36：状态目录健康绑定、配置初始化与稳定本地实例 ID 已实现并通过隔离 Linux arm64 实测；团队设备身份、安装包和三系统用户级后台仍待完成，UX-003 不标完成。
+
 ## 任务状态
 
 `doing` 仅表示正在实施；没有真实平台证据时不得提升为完整验收。
@@ -15,7 +22,7 @@
 | UX-000 | complete | [需求验收映射与基线](personal-experience-requirements-baseline-20260910.md)覆盖 D01–D11、实施位置、证据、未知项和阶段边界；具体功能状态继续逐任务跟踪 |
 | UX-001 | doing / native subset verified | Linux arm64：OpenClaw 原生链路 14 项、Hermes 经实例安装后的原生链路 15 项检查通过；完整会话/审批、Windows/macOS 与 WorkBuddy 桌面仍待验收 |
 | UX-002 | doing | ADR-019–047 覆盖会话、发现、诊断、接入变更、Hermes 实例、自检、资源编辑和固定授权选择；安装预览/提交/恢复合同已接通；可信 Skill 运行归属仍需完成 |
-| UX-003 | doing | 首批实现只读服务身份检查与本地重新配对；完整安装器、后台生命周期和跨 OS 制品尚待实现 |
+| UX-003 | doing | 状态目录匹配、本地重新配对、配置初始化与稳定实例 ID 已实现；M35/M36 隔离 Linux arm64 启动复用、错误目录拒绝、并发初始化和重启验证通过；完整安装器、系统后台生命周期和跨 OS 制品尚待实现 |
 | UX-004 | implemented / Linux verified | 会话恢复、注销、到期重新配对、CLI 配对恢复及错误分类已落盘；Linux Chromium 11 项检查通过，跨 OS 运行验证归 UX-015 |
 | UX-005 | doing / core implemented | 显式扫描、范围预览、手动目录、稳定安装身份和共享关系已实现；Hermes 自定义根与 profile 使用同一实例解析器。同名实例隔离通过；其他平台根、过滤优先级、全量覆盖与跨 OS 实机仍待验证 |
 | UX-006 | doing / Hermes runtime check implemented | 接入预览、确认、恢复、卸载、Hermes 实例选择/原生启用及产品运行自检已落盘；Linux 独立 profile 的 UI/API/真实 CLI 通过。其他平台自检、自动重启和跨 OS 恢复仍待完成 |
@@ -387,7 +394,88 @@
 - 47 项 Web 测试、个人/企业构建、Go 全量/vet/gofmt、相关脚本 lint 与四目标交叉构建通过。[源码/制品/证据清单](evidence/personal-experience/skill-update-ui-20260911/verification.json)绑定最终候选；合同无变化，本批未重复运行 Python 合同及 Go race，M33 历史证据保留。
 - 下一步验证真实 Hermes 更新后旧会话撤权与新版本显式启用，再补充远端新版检查及更新历史入口。三系统/三平台、可信 Skill 归属、任务追溯/隐私、安装器与 LAN 仍未完成。持续目标 active，未提交、推送、发布或重启用户服务。
 
-## 待验证的限制
+## M35：状态目录健康绑定与误复用拒绝（2026-09-12，UX-003/004 增量）
+
+- 先更新规格 §3.11 和独立 `local-service-instance-health.v1` 合同，复用现有 Go state/server/CLI 与开发启动器。保留旧健康接口及管理/决策分权。
+- 新接口返回启动时固定的规范化目录摘要；CLI 只读核对后才输出 ready 或发起配对。不同目录、缺失身份、旧协议、HTML、重定向与异常响应均不复用。目录别名可匹配，不输出目录原文；摘要不是认证或永久设备 ID。
+- [验证记录](evidence/personal-experience/instance-health-20260912.md)：Go 全量、vet、相关 race、合同及启动器 157 项检查、Ruff、四目标构建通过。隔离 Linux arm64 真实二进制完成启动、重复复用、别名复用、错目录拒绝、正确目录配对；测试创建的子进程已回收，没有重启用户服务。
+- 本批未改变 UI/适配器，不重复记为浏览器或真实智能体平台验收；Windows/macOS 仍仅交叉编译。接下来补安装初始化、稳定实例身份和用户级后台生命周期，再推进任务书 §11.2 其余任务。整体目标保持 active。
+
+## M36：客户端初始化与稳定实例记录（2026-09-12，UX-003 增量）
+
+- 增加 `init [--port N]` 和 `local-client-initialization.v1` 合同；先回写规格 §3.11.1，复用 state 的单写者与排他发布，不增加第三方依赖。默认 block 配置、稳定随机实例 ID 均仅在缺失时创建；已有配置字节、额外字段和原 ID 保留。初始化不发授权、不扫描或接入平台、不启动服务、不生成管理/决策凭据。
+- 64 KiB 文件预算、普通文件和严格实例版本/字段校验；损坏/null/超限/符号链接均拒绝，不覆盖错误文件。显式端口与既有配置冲突拒绝；Writer 的目录、PID 与 nonce 均复验，活跃锁和释放后的句柄不能写入。部分元数据存在时重试只补缺失文件。
+- 裸 `serve` 提示先运行 `init`，不先产生状态目录/密钥。开发启动器确认端口空闲后初始化，再启动；匹配的运行实例直接复用。失败不启动新 daemon；重复调用不改变实例身份。
+- [验证与制品](evidence/personal-experience/initialization-20260912.md)：Go 全量/vet、state/server/CLI race、153 项合同、8 项启动器检查、Ruff 及四目标构建通过。真实 Linux arm64 从空目录启动、运行中初始化拒绝、停止重启保留身份、两个子进程并发初始化均通过；测试进程已回收。部分元数据恢复为文件故障夹具，未冒充断电恢复实测。
+- 安装包校验/分发、系统用户级后台注册、升级/卸载、Windows/macOS 原生运行仍待实施或验证；稳定本地 ID 不是可信团队设备身份。下一批继续 ADR-050 的系统生命周期方案与可运行入口。整体目标 active，无提交、推送、发布或用户服务重启。
+
+## M37：原生单命令启动入口（UX-003）
+
+- 新增 `start [--port N]`，复用初始化和 serve，普通用户不需要 Python 启动脚本。默认读配置端口，首次初始化默认 block；匹配实例只读返回既有健康合同。其他目录、错误服务、无效参数、端口冲突和活跃 writer 均拒绝，不终止已有进程或删除锁。
+- 新启动为前台服务，终端输出沿用 serve 的配对流程；已有服务复用不换配对码，可另行 pair。没有后台保活、系统注册、浏览器自动打开或安装包交付声明。
+- 验证与边界见 [M37 原生启动验证](evidence/personal-experience/native-start-20260912.md)。保留工作区 M35/M36 增量。后续继续用户级后台注册与可恢复卸载；完整目标保持 active。
+
+## M38：停止时排空请求并保留写锁（UX-003）
+
+- 修复原 serve 在监听退出后先返回、Shutdown 尚在其他 goroutine 排空请求的窗口。停止后拒绝新业务请求，等待既有 HTTP handler 完成才退出；连接宽限期结束会取消连接，但不以此推定状态写入结束。退出前取消并等待定时刷新，撤销信号注册。
+- 先更新规格 §3.11.3；新增停止/排空测试覆盖新请求 503、不进入业务层、连接关闭后 handler 仍未结束时不能返回、无请求正常停止。没有更改授权、回执或数据合同。
+- Go 全量、vet、相关 race、停止专项 race ×10、Linux 原生启动器 9 项及四目标构建通过，见 [M38 验证](evidence/personal-experience/stop-drain-20260912.md)。实际宿主运行、系统后台注册与其他 OS 原生停止仍待验收。完整目标 active。
+
+## M39：Linux 用户服务配置导出（UX-003）
+
+- 已新增 `service-unit`，只读已初始化状态并固定当前可执行文件和目录。配置使用 serve 主进程、私有 umask、显式停止期限，关闭 stdout/stderr 防止配对码进入 journal。路径中百分号/引号/空格正确转义，非法控制字符与有替换歧义的二进制路径拒绝。其他 OS 明确拒绝执行 Linux 导出。
+- Go 全量/vet、CLI race、四目标构建通过；Linux 实际二进制导出含空格/百分号目录的配置，经 `systemd-analyze --user verify` exit 0。未注册或启动任何系统服务，没有修改用户已有配置。
+- [M39 验证](evidence/personal-experience/service-unit-20260912.md)记录候选与构建；下一步在此基础上实现独立安装记录、归属检查、显式启停与失败恢复，随后补跨 OS 后台路径。配置导出不计为后台安装完成，完整目标保持 active。
+
+## M40：Linux 用户服务真实运行与路径边界修复
+
+- 新增 opt-in `test_systemd_user_service.py`，测试生成随机单位并仅 runtime link，真实执行 start、重复 start、restart、pair、stop、disable 和 reload；验证 MainPID、健康、身份/配置保留、writer 释放及链接清除。
+- 实测发现 systemd 拒绝双引号可执行路径，导出提前拒绝该路径及反斜杠；状态目录中的引号、美元符号和百分号仍正常处理。首轮 FragmentPath 返回运行时链接而非源路径，测试改为解析并核对目标身份，原临时链接已清除。
+- Go 全量/vet/CLI race、四目标构建、Ruff 及最终候选原生 systemd 测试通过。[M40 验证](evidence/personal-experience/systemd-native-20260912.md)记录候选与失败修复。无残留测试单位、无登录自启或生产服务改动。下一步仍为产品自动安装归属、失败恢复和卸载；完整个人/LAN 目标 active。
+
+## M41：用户服务配置归属与中断恢复（UX-003）
+
+- 新增 `service-prepare` 与 `local-user-service-record.v1` 合同；单写者下先发布签名意图，再排他发布实例专属 unit。重复执行复验实例、目录、配置摘要与签名；缺失文件可恢复，未知文件及漂移拒绝覆盖。
+- Go 全量/vet/race、154 项 Python 合同、Ruff、四目标构建和 Linux 实际 CLI 验证通过，见 [M41 证据](evidence/personal-experience/service-prepare-20260912.md)。没有调用 systemd 或改变用户服务。
+- 该记录只表示配置发布意图；系统注册/启停/升级迁移/卸载仍待接入。跨 OS 原生证据与完整个人/LAN 目标保持未完成，持续目标 active。
+
+## M42：产品 Linux 用户服务注册（UX-003）
+
+- 新增 `service-register [--runtime]`，共享签名配置准备并持锁完成 manager 归属检查、link、reload 与读回。拒绝未知单位/drop-in/范围变化，不启动服务或开启登录自启；失败可复验重试。
+- Go 全量/vet/race、四目标构建及 Linux 实际产品命令注册/重复注册/范围冲突拒绝、随后系统启停清理通过。[M42 证据](evidence/personal-experience/service-register-20260912.md)区分 runtime 原生测试与未实测持久路径。
+- 下一步接入产品服务启停、状态、卸载与迁移。完整任务书目标 active，本批未提交或推送。
+
+## M43：产品服务启停与只读状态（UX-003）
+
+- 新增 service-start、service-status、service-stop --confirm-stop，复验签名配置、manager 归属与真实 API 就绪。只读查询不生成身份/修复文件，停止需显式确认并核对主锁释放。
+- 分离生命周期操作锁与 daemon Writer，避免运行时停止被主锁阻塞。Go 全量/vet/race、四目标构建和真实 Linux 产品启停/确认拒绝/状态/清理通过，见 [M43 证据](evidence/personal-experience/service-control-20260912.md)。
+- 继续产品卸载、升级迁移及个人任务书其余项目；不将 Linux CLI 增量计为完整安装器或跨 OS 验收。完整目标 active。
+
+## M44：产品服务注销与数据保留（UX-003）
+
+- 新增 `service-unregister --confirm-unregister`，要求停止并核验签名配置与系统归属，仅删除同名注册链接；保留状态与未知别名。链接删除后中断可重载复验，重复注销可用。
+- Go 全量/vet/CLI race、四目标构建和 Linux 实际完整注册/启停/注销旅程通过；运行中注销拒绝、注销后关键文件字节不变，见 [M44 证据](evidence/personal-experience/service-unregister-20260912.md)。
+- 应用升级、完整卸载/安装交付和跨 OS 生命周期继续待办；不是完成全部 UX-003。完整目标 active，未提交/推送。
+
+## M45：复用发行清单的原生候选暂存（UX-003/014）
+
+- 新增 `client-stage --manifest FILE --binary FILE`；内置发行根验签、平台唯一 pin、限流摘要校验、私有独立版本目录排他发布。候选不执行，不切换服务；主 daemon 运行时仍可准备。
+- Go 全量/vet/相关 race、四目标构建及 Linux unsigned 清单拒绝验证通过；正向为包内开发签名夹具，不冒充发行验收，见 [M45 证据](evidence/personal-experience/client-stage-20260912.md)。
+- 下一步继续状态兼容及升级停止/恢复事务，完整安装交付/跨 OS 原生验收仍未完成。目标 active，无提交/推送/发布。
+
+## M46：发行签名兼容声明与原生升级预检（UX-003/014）
+
+- 独立 skill-manifest.v2 签入精确状态格式族/服务协议/无迁移声明，旧 v1 合同与发布快照保留。新增 client-upgrade-check，只读验证来源、兼容声明和候选 pin；v1 只能暂存，不能通过升级预检。
+- Go 全量/vet/相关 race、155 项 Python 合同、独立跨语言验签、Ruff 与四目标构建通过，见 [M46 证据](evidence/personal-experience/client-compatibility-20260912.md)。没有正式发行签名新制品或真实切换声明。
+- 继续升级停止/切换/恢复事务与完整个人目标；兼容声明不能冒充旧写者隔离，完整目标 active。
+
+## M47：配置切换日志与部分写入恢复（UX-003/014）
+
+- 新增签名 local-service-switch.v1 和 state 成对切换事务；日志/pending/完成标记与源/目标绑定，未知内容不覆盖，恢复只完成已签名目标。serve 在主 Writer 下检查 pending 并拒绝不一致启动。
+- Go 全量/vet/state/CLI race、156 项 Python 合同、Ruff、四目标构建和实际 Linux pending 启动拒绝通过，见 [M47 证据](evidence/personal-experience/service-switch-20260912.md)。故障为文件阶段夹具，不冒充断电验收。
+- 下一步将该事务与发行验签、manager 停止/reload/启动健康组合为产品升级命令；本批没有开放任意 unit 写入入口。完整目标 active。
+
+## 未关闭的验证限制
 
 - `desktop-same-uid` 不构成恶意同 UID 隔离。恢复凭据不改善该残余风险，也不应扩大到网络管理入口。
 - Vite 开发代理的 Origin 映射已做正负向测试；正式 embed 的会话旅程已实测。完整 Vite + 新 daemon 浏览器联合验证仍待补充，后端白名单没有扩大。

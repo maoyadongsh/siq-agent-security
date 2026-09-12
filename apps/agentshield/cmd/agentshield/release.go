@@ -19,6 +19,7 @@ func cmdReleaseManifest(args []string) error {
 	out := fs.String("out", "", "output path (default: <skill-dir>/skill-manifest.json)")
 	version := fs.String("version", skillmanifest.DefaultVersion, "skill and binary version")
 	urlBase := fs.String("url-base", skillmanifest.DefaultURLBase, "unpublished GitHub Release URL prefix")
+	clientCompatible := fs.Bool("client-compatible", false, "emit v2 signed declaration for a verified no-migration client release")
 	doBuild := fs.Bool("build", false, "cross-compile four targets into --bin-dir before hashing")
 	writeBootstrap := fs.Bool("write-bootstrap", false, "embed the signing public key in bootstrap.sh and bootstrap.ps1")
 	if err := fs.Parse(args); err != nil {
@@ -75,10 +76,11 @@ func cmdReleaseManifest(args []string) error {
 		return err
 	}
 	m, err := skillmanifest.Build(skillmanifest.Options{
-		Version:     *version,
-		ContentHash: contentHash,
-		Artifacts:   arts,
-		SignedBy:    key.PublicBase64(),
+		ClientCompatible: *clientCompatible,
+		Version:          *version,
+		ContentHash:      contentHash,
+		Artifacts:        arts,
+		SignedBy:         key.PublicBase64(),
 	})
 	if err != nil {
 		return err

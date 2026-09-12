@@ -53,3 +53,10 @@ for t in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do GOOS=${t%/*} GOA
 ## 提交
 
 `agentshield: <主题>`；规则包改动用 `rulepack:`；涉及合同同时改 `packages/contracts/` 并用 `contracts:` 单独提交。安全修复必须带证明旧行为被拒绝的负向测试。
+
+
+## Linux 用户服务注册增量（2026-09-12）
+
+按当前个人客户端生命周期开发授权及规格 §3.11.6，`service-register` 可通过 `systemctl --user link` 写入当前用户的服务搜索路径链接；签名配置仍仅写状态目录。限定实例专属名称、归属读回、无 force/sudo、无隐式自启，不得修改未知单位/覆盖配置。测试只注册隔离状态实例的 runtime 链接并复验后清理；不能修改用户生产服务。
+
+M44 按规格 §3.11.8 增加服务注销：仅在已停止、双 Writer 与签名/manager 归属复验后删除实际加载的同名用户服务符号链接；不得广泛 disable 或删除源配置、密钥与历史。此为用户已授权生命周期开发的受限系统链接写入例外。

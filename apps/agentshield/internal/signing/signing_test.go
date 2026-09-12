@@ -125,3 +125,25 @@ func TestSignVerifyBytes(t *testing.T) {
 		t.Fatal("bytes signature roundtrip broken")
 	}
 }
+
+func TestLoadExistingNeverCreates(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "missing")
+	t.Setenv(SeedEnv, "")
+	if _, err := LoadExisting(dir); err == nil {
+		t.Fatal("missing identity accepted")
+	}
+	if _, err := os.Stat(dir); !os.IsNotExist(err) {
+		t.Fatal("read created state")
+	}
+	key, err := Load(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	existing, err := LoadExisting(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if key.PublicBase64() != existing.PublicBase64() {
+		t.Fatal("identity changed")
+	}
+}

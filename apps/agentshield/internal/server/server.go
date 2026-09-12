@@ -65,6 +65,7 @@ type Deps struct {
 
 // Server is the HTTP handler set.
 type Server struct {
+	stateDirectoryID   string
 	skillInstallations *skillinstall.Store
 	skillImports       *skillimport.Store
 	skillImportMu      sync.Mutex
@@ -118,6 +119,10 @@ func New(d Deps) (*Server, error) {
 	}
 	s := &Server{d: d, mux: http.NewServeMux()}
 	var err error
+	s.stateDirectoryID, err = d.Store.DirectoryID()
+	if err != nil {
+		return nil, err
+	}
 	s.intents, err = d.Store.IntentAuthority(d.Key)
 	if err != nil {
 		return nil, err
@@ -230,6 +235,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/export", s.auth(s.exportBundle))
 	s.mux.HandleFunc("/v1/pair", s.pair)
 	s.mux.HandleFunc("/healthz", s.health)
+	s.mux.HandleFunc("/healthz/instance", s.instanceHealth)
 	s.mux.HandleFunc("/v1/session/restore", s.restoreSession)
 	s.mux.HandleFunc("/v1/session/logout", s.auth(s.logoutSession))
 	s.mux.HandleFunc("/v1/session/pairing", s.renewPairing)

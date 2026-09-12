@@ -1,0 +1,224 @@
+{
+  "client_compatibility": {
+    "state_profile": "agentshield-local-ledger/v1",
+    "service_protocol": "local-service-instance-health/v1",
+    "migration": "none"
+  },
+  "manifest_version": 2,
+  "skill": {
+    "name": "siq-agent-security",
+    "version": "0.3.0",
+    "description": "Admits unknown skills and signs each tool-call receipt.",
+    "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "sub_skills": [
+      "agent-asset-inventory",
+      "skill-admission",
+      "least-privilege-grant",
+      "runtime-receipt"
+    ]
+  },
+  "binary": {
+    "name": "siq-agent-security",
+    "version": "0.3.0",
+    "artifacts": [
+      {
+        "os": "linux",
+        "arch": "arm64",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "url": "https://example.invalid/siq",
+        "bytes": 123
+      }
+    ]
+  },
+  "rulepack": {
+    "version": 1,
+    "sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051",
+    "public_key_b64": "6kpsY+KcUgq+9VB7Ey7F+ZVHdq6+vnuSQh7qaRRG0iw="
+  },
+  "support_matrix": [
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "L0–L2 evidenced on Spark 2026-09-05; L3 optional (verified OpenShell gateway), not claimed"
+    },
+    {
+      "platform": "hermes",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "L1–L2 evidenced Spark 2026-09-05 isolated HOME; L3 optional, not claimed"
+    },
+    {
+      "platform": "openclaw",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L2 hook evidenced Spark 2026-09-05 isolated HOME, not GUI"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "trae",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "claude_code",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    }
+  ],
+  "signed_by": "6kpsY+KcUgq+9VB7Ey7F+ZVHdq6+vnuSQh7qaRRG0iw=",
+  "signature": "981442899563b428c4cfb1211e06d2780aaeaff85a90dce1eee04d26cc2f57eb9db85cffeec36eb6b222efc71fe375441bf70f9656acef5cdcceb363add47502"
+}

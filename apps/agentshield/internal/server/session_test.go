@@ -236,3 +236,25 @@ func TestLocalSessionContractFixtures(t *testing.T) {
 		}
 	}
 }
+
+func TestInstanceHealthContract(t *testing.T) {
+	s := newUnpairedServer(t, "block")
+	w := sessionRequest(t, s, "GET", "/healthz/instance", nil, "", nil, nil)
+	body := sessionBody(t, w)
+	expected, err := s.d.Store.DirectoryID()
+	if err != nil || body["state_directory_id"] != expected || w.Header().Get("Cache-Control") != "no-store" {
+		t.Fatal("instance health did not bind the state directory")
+	}
+	body["state_directory_id"] = strings.Repeat("a", 64)
+	raw, err := os.ReadFile(filepath.Join("..", "..", "testdata", "contracts", "local-instance-health.json"))
+	var fixture map[string]any
+	if err != nil || json.Unmarshal(raw, &fixture) != nil || !reflect.DeepEqual(body, fixture) {
+		t.Fatal("instance health differs from contract fixture")
+	}
+	if sessionRequest(t, s, "POST", "/healthz/instance", nil, "", nil, nil).Code != 405 {
+		t.Fatal("health accepted mutation method")
+	}
+	if sessionRequest(t, s, "GET", "/healthz/instance", nil, "", nil, map[string]string{"Origin": "https://untrusted.example"}).Code != 403 {
+		t.Fatal("cross-origin health accepted")
+	}
+}

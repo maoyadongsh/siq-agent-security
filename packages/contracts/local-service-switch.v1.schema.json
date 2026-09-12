@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-service-switch.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source_record",
+    "target_record",
+    "source_unit",
+    "target_unit",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-service-switch/v1"
+    },
+    "source_record": {
+      "title": "Local user service ownership intent v1",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "instance_id",
+        "state_directory_id",
+        "unit_name",
+        "unit_sha256",
+        "signature"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-user-service-record/v1"
+        },
+        "instance_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "state_directory_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "unit_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "unit_name": {
+          "type": "string",
+          "pattern": "^siq-agent-security-[a-f0-9]{32}\\.service$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{128}$"
+        }
+      }
+    },
+    "target_record": {
+      "title": "Local user service ownership intent v1",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "instance_id",
+        "state_directory_id",
+        "unit_name",
+        "unit_sha256",
+        "signature"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-user-service-record/v1"
+        },
+        "instance_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "state_directory_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "unit_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "unit_name": {
+          "type": "string",
+          "pattern": "^siq-agent-security-[a-f0-9]{32}\\.service$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{128}$"
+        }
+      }
+    },
+    "source_unit": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16384
+    },
+    "target_unit": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16384
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    }
+  }
+}

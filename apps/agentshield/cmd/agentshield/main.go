@@ -67,6 +67,24 @@ func main() {
 		err = cmdVerify(os.Args[2:])
 	case "serve":
 		err = cmdServe(os.Args[2:])
+	case "init":
+		err = cmdInitialize(os.Args[2:], os.Stdout)
+	case "start":
+		err = startLocal(os.Args[2:], os.Stdout, cmdServe)
+	case "service-unit":
+		err = cmdServiceUnit(os.Args[2:], os.Stdout)
+	case "service-start", "service-stop", "service-status":
+		err = cmdServiceControl(strings.TrimPrefix(os.Args[1], "service-"), os.Args[2:], os.Stdout)
+	case "client-upgrade-check":
+		err = cmdClientUpgradeCheck(os.Args[2:], os.Stdout)
+	case "client-stage":
+		err = cmdClientStage(os.Args[2:], os.Stdout)
+	case "service-unregister":
+		err = cmdServiceUnregister(os.Args[2:], os.Stdout)
+	case "service-register":
+		err = cmdServiceRegister(os.Args[2:], os.Stdout)
+	case "service-prepare":
+		err = cmdServicePrepare(os.Args[2:], os.Stdout)
 	case "status":
 		err = cmdLocalSession("status", os.Args[2:])
 	case "pair":
@@ -132,6 +150,16 @@ func usage() {
   %[1]s openshell doctor    # diagnose CLI/gateway; never starts a gateway
   %[1]s openshell apply --target NAME [--allow host:port] [--deny host:port]
                                   # L3: CLI-only network policy set + readback (never create_generation)
+  %[1]s init [--port N]     # initialize local configuration and instance identity; does not start protection
+  %[1]s start [--port N]    # initialize and serve in foreground, or reuse a matching running instance
+  %[1]s service-unit        # export Linux user service configuration (read-only, requires init)
+  %[1]s service-start|service-status # start or inspect the owned Linux service
+  %[1]s service-stop --confirm-stop # stop protection explicitly
+  %[1]s service-unregister --confirm-unregister # remove stopped service registration, keep data
+  %[1]s client-upgrade-check --manifest FILE --binary FILE # read-only signed compatibility preflight
+  %[1]s client-stage --manifest FILE --binary FILE # verify and stage a release without activation
+  %[1]s service-register [--runtime] # register Linux user service without starting it
+  %[1]s service-prepare     # publish signed service configuration under the state writer lock
   %[1]s serve [--port N] [--mode audit_only|warn|block]
                                   # loopback console; adapters use <state>/token; UI requires pairing code
   %[1]s status [--port N]   # verify the local service identity and readiness (JSON)
@@ -338,6 +366,11 @@ func cmdServe(args []string) error {
 	if err != nil {
 		return err
 	}
+	if _, err := os.Lstat(filepath.Join(dir, "config.json")); errors.Is(err, os.ErrNotExist) {
+		return errors.New("serve: configuration missing; run siq-agent-security init with the same state directory first")
+	} else if err != nil {
+		return errors.New("serve: configuration unavailable; check the selected state directory")
+	}
 	st, err := state.Open(dir)
 	if err != nil {
 		return err
@@ -362,6 +395,9 @@ func cmdServe(args []string) error {
 		return fmt.Errorf("serve: %w", err)
 	}
 	defer func() { _ = writer.Release() }()
+	if err := st.CheckServiceSwitchPending(); err != nil {
+		return err
+	}
 	if _, err := st.RecoverGrantCommits(writer); err != nil {
 		return err
 	}
@@ -453,9 +489,15 @@ func cmdServe(args []string) error {
 	hs := &http.Server{Handler: srv.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second}
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	defer signal.Stop(stop)
 	refreshCtx, refreshCancel := context.WithCancel(context.Background())
-	defer refreshCancel()
+	refreshDone := make(chan struct{})
+	defer func() {
+		refreshCancel()
+		<-refreshDone
+	}()
 	go func() {
+		defer close(refreshDone)
 		ticker := time.NewTicker(5 * time.Minute)
 		defer ticker.Stop()
 		for {
@@ -467,17 +509,7 @@ func cmdServe(args []string) error {
 			}
 		}
 	}()
-	go func() {
-		<-stop
-		refreshCancel()
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-		defer cancel()
-		_ = hs.Shutdown(ctx)
-	}()
-	if err := hs.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		return err
-	}
-	return nil
+	return serveLocalHTTP(hs, ln, stop, 3*time.Second)
 }
 
 func cmdVerify(args []string) error {

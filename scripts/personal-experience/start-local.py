@@ -9,6 +9,7 @@ integration is tracked separately in UX-014.
 import argparse
 import json
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -33,13 +34,33 @@ def healthy(binary, port, env):
         if not isinstance(data, dict):
             return False
         return (
-            data.get("schema_version") == "local-service-health/v1"
+            data.get("schema_version") == "local-service-instance-health/v1"
             and data.get("product") == "siq-agent-security"
             and data.get("status") == "ready"
             and data.get("local_mode") is True
         )
     except (OSError, subprocess.TimeoutExpired, ValueError):
         return False
+
+
+def initialize(binary, port, env):
+    try:
+        result = subprocess.run(
+            [str(binary), "init", "--port", str(port)], env=env,
+            capture_output=True, text=True, timeout=15, check=False,
+        )
+        data = json.loads(result.stdout) if result.returncode == 0 else None
+        if (
+            not isinstance(data, dict)
+            or data.get("schema_version") != "local-client-initialization/v1"
+            or data.get("status") != "initialized"
+            or data.get("port") != port
+            or re.fullmatch(r"[0-9a-f]{64}", str(data.get("instance_id", ""))) is None
+            or re.fullmatch(r"[0-9a-f]{64}", str(data.get("state_directory_id", ""))) is None
+        ):
+            raise ValueError("invalid initialization response")
+    except (OSError, subprocess.TimeoutExpired, ValueError) as exc:
+        raise RuntimeError("SIQ 初始化失败；请运行 init 检查已有配置端口、实例记录与写锁。未启动服务。") from exc
 
 
 def ensure_started(binary, state_dir, port, timeout=15):
@@ -49,12 +70,16 @@ def ensure_started(binary, state_dir, port, timeout=15):
         return {"status": "ready", "reused": True, "endpoint": endpoint}
     try:
         with socket.create_connection(("127.0.0.1", port), timeout=1):
-            raise RuntimeError("端口被其他服务或旧版 SIQ 占用；请检查端口或升级对应服务。未终止任何进程。")
+            raise RuntimeError(
+                "端口被其他服务、不同状态目录的 SIQ 或旧版 SIQ 占用；"
+                "请检查状态目录、端口或升级对应服务。未终止任何进程。"
+            )
     except ConnectionRefusedError:
         pass  # An empty port may be used. Other network errors are not proof it is free.
     except OSError as exc:
         raise RuntimeError("无法确认本地端口可用；请检查网络设置后重试。") from exc
 
+    initialize(binary, port, env)
     options = (
         {"start_new_session": True}
         if os.name != "nt"

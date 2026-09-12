@@ -2,9 +2,15 @@
 
 日期：2026-09-11。状态：**设计提案，尚未实现安装器，也未关闭 UX-002/Q03**。
 
+2026-09-12 实施增量：M35 已实现状态目录健康绑定；M36 在原 Go CLI/state 内实现 `init`、默认配置排他发布及稳定本地实例记录，开发启动器在空闲端口启动前调用初始化。合同与恢复边界见开发规格 §3.11.1。此部分已采用并验证 Linux arm64；系统后台注册、安装包、升级和卸载仍是待实施/待原生验收部分，不将本 ADR 整体提升为完成。
+
 依据：[原任务书](../personal-experience-lan-team-development-taskbook-20260910-145507.md) D01/D02/D03/D06/D08、UX-002/003/014；现有 [开发规格](../agentshield-dev-spec-v1.md) §2.3、§3.11；[当前状态](../personal-experience-current.md)。这是工程建议，不把建议方案改写为用户原先指定。
 
 ## 当前可复用基础
+
+M39 采用 Linux systemd 用户服务配置导出作为后台集成的首个构件：`service-unit` 只读输出配置，使用 serve 固定进程所有权、不自动重启、不记录配对输出。规格 §3.11.4 与单元测试定义路径转义、初始化前置条件和失败行为；本机 systemd-analyze 验证通过。实际安装、重载、启用和卸载事务尚待实施。命令语义参考 [systemd 官方 service 文档源码](https://github.com/systemd/systemd/blob/main/man/systemd.service.xml)，不借用其他 OS 的配置语义。
+
+M37 增量：采用已有 Go CLI 内 `start` 作为原生前台入口，组合 M35 健康检查、M36 初始化和 `serve`，匹配实例只读复用；预检后仍依赖 writer/listen 排他处理竞争。不需要 Python、不另起子进程或引入平台专属进程 API。后台注册和桌面通知继续独立实施，不能把前台命令计为系统服务完成。
 
 `apps/agentshield` 的 serve/status/pair、管理/决策凭据分权、writer 锁、不可变版本与恢复协议继续复用。`apps/web/src/local` 仍经 Go embed 正式提供，Vite 仅开发使用。`scripts/personal-experience/start-local.py` 是需要 Python/受信本地构建的开发辅助工具，不是已交付的原生安装器，不能计 AC01。
 
@@ -29,3 +35,6 @@
 按系统列用户级后台机制、需要的权限、配置/卸载归属、路径与编码、重启和故障恢复验证办法；至少在可用系统验证生命周期设计假设。缺少系统保持明确外部验证阻塞，允许独立模块设计继续。会话协议不另起一套；如需新 API/安装记录，先给版本化合同、迁移与负向样例。
 
 本提案未解决 WorkBuddy 原生钩子/最终参数/Skill 身份的真实性，也不自动启用受控启动。需要后者时先给每平台的依据、体验影响和残余风险。ADR-0048 保持未实现；UX-013 原文仍关闭；团队服务仍不启动。
+
+
+M42 实施：采用 `service-register [--runtime]`，在配置所有权基础上执行当前用户 link/reload/readback，不自动启动或登录自启。依据规格 §3.11.6，系统用户配置链接为本轮已授权生命周期写入的限定范围；实际命令以无 force 的 systemctl 创建。Linux 临时注册及系统启停原生验证见 M42 证据；持久路径验收、产品启停/卸载和其他 OS 继续待办。

@@ -154,3 +154,16 @@ func (s *Server) health(w http.ResponseWriter, r *http.Request) {
 		"version": s.d.Version, "local_mode": true, "status": "ready",
 	})
 }
+
+func (s *Server) instanceHealth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-store")
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		writeJSON(w, 405, map[string]any{"error": "GET required"})
+		return
+	}
+	writeJSON(w, 200, map[string]any{
+		"schema_version": "local-service-instance-health/v1", "product": "siq-agent-security",
+		"version": s.d.Version, "local_mode": true, "status": "ready",
+		"state_directory_id": s.stateDirectoryID,
+	})
+}
