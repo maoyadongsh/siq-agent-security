@@ -33,17 +33,6 @@ ENGINE = INTERNAL / "receipt" / "engine.go"
 ADAPTERS_GO = INTERNAL / "adapters" / "adapters.go"
 ADAPTERS_DIR = REPO / "adapters" / "runtime"
 
-THEME = """%%{init: {'theme': 'base', 'themeVariables': {
-  'primaryColor': '#eaf1fb',
-  'primaryTextColor': '#132d50',
-  'primaryBorderColor': '#43658f',
-  'lineColor': '#43658f',
-  'secondaryColor': '#f6f8fc',
-  'tertiaryColor': '#ffffff',
-  'fontFamily': 'ui-sans-serif, system-ui, sans-serif'
-}}}%%
-"""
-
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
@@ -182,7 +171,7 @@ def extract_adapters() -> list[str]:
 
 def write_mmd(name: str, body: str) -> Path:
     path = OUT / name
-    path.write_text(THEME + body.strip() + "\n", encoding="utf-8")
+    path.write_text(body.strip() + "\n", encoding="utf-8")
     return path
 
 
@@ -196,14 +185,30 @@ def diagram_packages(pkgs: list[str], edges: list[tuple[str, str]]) -> str:
 
 
 def diagram_cli_http(cmds: list[str], routes: list[tuple[str, str]], adapters: list[str]) -> str:
-    lines = ["flowchart TB"]
+    lines = ["flowchart LR"]
+
+    def inventory_rows(prefix: str, entries: list[tuple[str, str]]) -> None:
+        # Mermaid reuses a node ID for duplicate registrations. Deduplicate before
+        # assigning rows so the same node never belongs to multiple subgraphs.
+        nodes = list(dict(entries).items())
+        lines.append("    %% Invisible links below arrange inventory rows only; they are not code relationships.")
+        for offset in range(0, len(nodes), 4):
+            row = nodes[offset:offset + 4]
+            row_id = f"{prefix}_row_{offset // 4}"
+            lines.append(f'    subgraph {row_id}[" "]')
+            lines.append("      direction LR")
+            for node_id, label in row:
+                lines.append(f'      {node_id}["{label}"]')
+            if len(row) > 1:
+                lines.append("      " + " ~~~ ".join(node_id for node_id, _ in row))
+            lines.append("    end")
+            lines.append(f"    style {row_id} fill:transparent,stroke:transparent")
+
     lines.append('  subgraph cli["cmd/agentshield switch os.Args[1]"]')
-    for c in cmds:
-        lines.append(f'    cli_{mermaid_id(c)}["{c}"]')
+    inventory_rows("cli", [(f"cli_{mermaid_id(c)}", c) for c in cmds])
     lines.append("  end")
     lines.append('  subgraph http["internal/server New() ServeMux"]')
-    for path, _ in routes:
-        lines.append(f'    rt_{mermaid_id(path)}["{path}"]')
+    inventory_rows("http", [(f"rt_{mermaid_id(path)}", path) for path, _ in routes])
     lines.append("  end")
     if adapters:
         lines.append('  subgraph adp["adapters/runtime"]')
