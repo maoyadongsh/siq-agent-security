@@ -1,0 +1,151 @@
+{
+  "kind": "read_only_source_hash_index",
+  "paths_and_identity_values_omitted": true,
+  "files": [
+    {
+      "role": "frozen_review/acl-preparation.private.json",
+      "bytes": 1121,
+      "sha256": "f7badb6553f28807f80a189d06c62f2b213fff0beb0df45950d60bbeec8fb386"
+    },
+    {
+      "role": "frozen_review/controller.py",
+      "bytes": 17737,
+      "sha256": "94d8c27dd1fa39cde3ec6b696920b43facf763b05c8b7667a32eb5c7e4421274"
+    },
+    {
+      "role": "frozen_review/final-static-review-v2.private.json",
+      "bytes": 1144,
+      "sha256": "454514a5cc42530ce5309abacffc906e20eeba45643eb58423e9fa239f6efb54"
+    },
+    {
+      "role": "frozen_review/plan.private.json",
+      "bytes": 3607,
+      "sha256": "6892ae0a67cf70e089659e19e8e2e259b79fe51314db5eccbf003be13d755c48"
+    },
+    {
+      "role": "frozen_review/powershell-static-review.private.json",
+      "bytes": 230,
+      "sha256": "1262b430f74b45a2e77396085bb478d3cbb9736dd4715d02d4ccbbe7037ea061"
+    },
+    {
+      "role": "frozen_review/README-review.md",
+      "bytes": 9453,
+      "sha256": "c7c278f89086cac48e536cb158178ca352c8ece079420fe2abe8a936cc3e5c64"
+    },
+    {
+      "role": "frozen_review/run-identity.ps1",
+      "bytes": 9472,
+      "sha256": "500c6353b29d55e42be710f4dcf3b083522ecb7eacc0350bf31229a59fe998af"
+    },
+    {
+      "role": "frozen_review/sitecustomize.py",
+      "bytes": 6498,
+      "sha256": "ce10e7fcd6f396413d456a189ac5e4d9e782bc0472e695dac65de957a732647b"
+    },
+    {
+      "role": "frozen_review/static-review.private.json",
+      "bytes": 737,
+      "sha256": "9900c06fd5463b60326c9bbe698b5859b3ab98c618d32f5bba3dcc7628cfaac2"
+    },
+    {
+      "role": "frozen_review/static-review.py",
+      "bytes": 6507,
+      "sha256": "5020eb0c584e85987e22e18684c0c9a5b5be2e35e53d90551ae73ccda7e1d225"
+    },
+    {
+      "role": "frozen_review/win32_identity.py",
+      "bytes": 6468,
+      "sha256": "31763092a170cc0cf0f60de7dd0f4ccf00379e36e50252591e3fe31f0f29c055"
+    },
+    {
+      "role": "frozen_review/manifest.private.json",
+      "bytes": 1989,
+      "sha256": "6b9905d90963db368e1775b783f844620de656a8690b76a4942c908fa99b3962"
+    },
+    {
+      "role": "private_runtime/acl-before.private.json",
+      "bytes": 3746,
+      "sha256": "66e442fd89af66ab980d5c25b89c8616bbdfb2eaedbd7c99ee455f005273a1f0"
+    },
+    {
+      "role": "private_runtime/actual-identity.private.json",
+      "bytes": 448,
+      "sha256": "410a8d2b8f3d6217dd07715ff1a5f0cfa007bf332146f82eca8ab1e7a8f97966"
+    },
+    {
+      "role": "private_runtime/controller-output.private.json",
+      "bytes": 196,
+      "sha256": "455868b1608499e51a541407bf2ce017621998a51760f47d81f82397ebd72fa1"
+    },
+    {
+      "role": "private_runtime/guard-events.private.jsonl",
+      "bytes": 216,
+      "sha256": "8b09bc07bc0c86cf286401c44dbe1d681df9075511a86b2c2f4c285805e5df6e"
+    },
+    {
+      "role": "private_runtime/guard/sitecustomize.py",
+      "bytes": 6498,
+      "sha256": "ce10e7fcd6f396413d456a189ac5e4d9e782bc0472e695dac65de957a732647b"
+    },
+    {
+      "role": "private_runtime/identity-stacks.private.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "private_runtime/result.private.json",
+      "bytes": 5869,
+      "sha256": "5a9f09b713f23b52072fd4efe83fbc2aeb72d65723318e998cef8af92b8757e3"
+    },
+    {
+      "role": "private_runtime/stderr.private.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "private_runtime/stdin.private.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "private_runtime/stdout.private.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "private_runtime/wrapper.private.json",
+      "bytes": 2701,
+      "sha256": "63f9adf40a6e45920d91bce9aada32528c5602e801c7b01b7d60cba84b3c7a2e"
+    },
+    {
+      "role": "independent_acl_readback",
+      "bytes": 2479,
+      "sha256": "27165403806c23a17541bd9aa10e41420a17e24826e5ff9d4e5fa8b3f0aa1b9b"
+    },
+    {
+      "role": "derivation_code",
+      "bytes": 14611,
+      "sha256": "a147dab9008c19f91883c6b3f99372456a62a2f7cdda429bfeac91e8bf06d06a"
+    },
+    {
+      "role": "installed_source/controller_python",
+      "bytes": 105816,
+      "sha256": "d932e5e2f324d57f392e8fd063dcf6d0185be8a664c57c6d24e7762ed02c28ca"
+    },
+    {
+      "role": "installed_source/venv_launcher",
+      "bytes": 47104,
+      "sha256": "e1189fc39481bdb0949aa4eb2b2ad26b849e4d2d8f88c36cf0db3164ae222f5d"
+    },
+    {
+      "role": "installed_source/base_python",
+      "bytes": 91648,
+      "sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a"
+    },
+    {
+      "role": "installed_source/pyvenv_config",
+      "bytes": 207,
+      "sha256": "fdf672de85c510c6a658b769a739e39b74a5a56098e4bec56f67936aeded6453"
+    }
+  ]
+}
