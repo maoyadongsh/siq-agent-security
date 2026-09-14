@@ -1,0 +1,210 @@
+{
+  "schema": "same-machine-readonly-pr48-review/v1",
+  "reviewed_at_utc": "2026-09-14T05:47:36.0504438Z",
+  "conclusion": "no_required_correction",
+  "base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "final_candidate": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+  "scope": "Two test-file diff and r1/r2 public evidence only",
+  "source_files": [
+    {
+      "path": "apps/agentshield/internal/adapterinstall/backup_restore_test.go",
+      "sha256": "0dab67ca9fea830dba574afdc1abe9a8c998c1a5081fd966c7c0dddf28160c08"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/install_entry_test.go",
+      "sha256": "f30829f44d6c5a753a01051540acee03cf9344db8508fdf7d267868eab48d372"
+    }
+  ],
+  "diff": {
+    "test_files_changed": 2,
+    "insertions": 54,
+    "deletions": 13,
+    "production_files_changed": 0,
+    "new_skip_added": false,
+    "windows_absence_and_unknown_assertions_retained": true,
+    "posix_existing_assertions_retained": true,
+    "sibling_configuration_and_plugin_assertions_retained": true,
+    "finding": "Platform-specific tests match existing unsupported Windows wrapper behavior; no runtime/security capability added."
+  },
+  "packages": [
+    {
+      "name": "hermes-test-fix",
+      "candidate": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+      "manifest_sha256": "87d5dacf696ea50acc5367477905bdeda5ce2c9f9d671b7bbe356962b75cb2cd",
+      "payload_count": 16,
+      "payload_bytes": 209961,
+      "payload_hashes_and_bytes_matched": true,
+      "unindexed_files": 0,
+      "patch_matches_candidate_diff": true,
+      "phases": [
+        {
+          "phase": "focused",
+          "exit_code": 0,
+          "event_count": 36,
+          "top_level_counts": {
+            "pass": 4,
+            "fail": 0,
+            "skip": 0
+          },
+          "subtest_counts": {
+            "pass": 4,
+            "fail": 0,
+            "skip": 0
+          },
+          "derived_jsonl_sha256": "0f4b3acec5caff2c8ad6cc347a6d6084f9f9ffe80cfea9e23be2c33733b6fb11",
+          "no_timeout": true,
+          "direct_go_process_reaped": true
+        },
+        {
+          "phase": "package",
+          "exit_code": 1,
+          "event_count": 494,
+          "top_level_counts": {
+            "pass": 58,
+            "fail": 1,
+            "skip": 12
+          },
+          "subtest_counts": {
+            "pass": 42,
+            "fail": 0,
+            "skip": 5
+          },
+          "derived_jsonl_sha256": "5c6629d9b2cb8ddd901fd9fbd05fc5df90b1b63e7c0954f86e969c430b991bd1",
+          "no_timeout": true,
+          "direct_go_process_reaped": true
+        },
+        {
+          "phase": "vet",
+          "exit_code": 0,
+          "event_count": 0,
+          "top_level_counts": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "subtest_counts": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "derived_jsonl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "no_timeout": true,
+          "direct_go_process_reaped": true
+        }
+      ]
+    },
+    {
+      "name": "hermes-test-fix-r2",
+      "candidate": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+      "manifest_sha256": "e7356634d9b63f87e12e655014118d520db5cfa076959a8aff6d57e77173161e",
+      "payload_count": 16,
+      "payload_bytes": 212023,
+      "payload_hashes_and_bytes_matched": true,
+      "unindexed_files": 0,
+      "patch_matches_candidate_diff": true,
+      "phases": [
+        {
+          "phase": "focused",
+          "exit_code": 0,
+          "event_count": 40,
+          "top_level_counts": {
+            "pass": 5,
+            "fail": 0,
+            "skip": 0
+          },
+          "subtest_counts": {
+            "pass": 4,
+            "fail": 0,
+            "skip": 0
+          },
+          "derived_jsonl_sha256": "19b1d959bd5e055c0858dc9f078546869f1bc0c0ecd257848c0c63375ca6ce33",
+          "no_timeout": true,
+          "direct_go_process_reaped": true
+        },
+        {
+          "phase": "package",
+          "exit_code": 0,
+          "event_count": 493,
+          "top_level_counts": {
+            "pass": 59,
+            "fail": 0,
+            "skip": 12
+          },
+          "subtest_counts": {
+            "pass": 42,
+            "fail": 0,
+            "skip": 5
+          },
+          "derived_jsonl_sha256": "549115ba6dd2ca23aa8221fa9bbe0eb61502c012e608aea24fae03df11ab8745",
+          "no_timeout": true,
+          "direct_go_process_reaped": true
+        },
+        {
+          "phase": "vet",
+          "exit_code": 0,
+          "event_count": 0,
+          "top_level_counts": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "subtest_counts": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "derived_jsonl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "no_timeout": true,
+          "direct_go_process_reaped": true
+        }
+      ]
+    }
+  ],
+  "event_review": {
+    "independent_public_jsonl_reparse_completed": true,
+    "phases_checked": 6,
+    "jsonl_bytes_sha_counts_matched": true,
+    "phase_and_aggregate_summaries_matched": true,
+    "each_run_has_one_terminal_event": true,
+    "package_terminal_states_matched": true,
+    "r1_only_failed_test": "TestUninstallOfOneInstanceRestoresOnlyThatInstance",
+    "r1_failure_preserved": true,
+    "r2_package_pass_verified": true,
+    "skip_name_sets_identical": true,
+    "skip_counted_as_pass": false,
+    "top_level_and_subtest_counts_added_together": false,
+    "vet_counted_as_test_cases": false
+  },
+  "claims_review": {
+    "native_host_or_security_fix_overclaim_found": false,
+    "windows_component_scope_clear": true,
+    "frozen_gate_status_not_rewritten": true,
+    "cleanup_snapshot_limits_clear": true,
+    "original_and_derived_hash_semantics_distinguished": true
+  },
+  "privacy_review": {
+    "public_files_checked": 34,
+    "decoded_jsonl_outputs_checked": true,
+    "static_personal_identity_path_and_common_secret_pattern_matches": 0,
+    "patterns_scope": [
+      "current workstation username and personal directory patterns",
+      "Windows absolute paths and UNC",
+      "common credential formats, JWT and private-key headers"
+    ],
+    "limits": "Static public-material review only; not a complete secret scanner or validation of unread private originals."
+  },
+  "required_corrections": [],
+  "actions": {
+    "test_or_harness_executed": false,
+    "ci_requeried": false,
+    "private_original_stdout_read": false,
+    "credentials_read": false,
+    "source_or_packages_modified": false,
+    "remote_actions": false
+  },
+  "limits": [
+    "Same-machine independent review, not an independent-machine rerun.",
+    "Only the two public packages and final test diff were reviewed.",
+    "No acceptance matrix promotion or full-module gate claimed here."
+  ]
+}

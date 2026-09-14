@@ -1,0 +1,38 @@
+{
+  "candidate": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+  "source_dirty_at_final_review": false,
+  "phase_checks": [
+    {
+      "phase": "focused",
+      "source_fixed_and_clean": true,
+      "event_hash_and_counts_match": true,
+      "no_timeouts": true,
+      "exit_matches_recorded_scope": true
+    },
+    {
+      "phase": "package",
+      "source_fixed_and_clean": true,
+      "event_hash_and_counts_match": true,
+      "no_timeouts": true,
+      "exit_matches_recorded_scope": true
+    },
+    {
+      "phase": "vet",
+      "source_fixed_and_clean": true,
+      "event_hash_and_counts_match": true,
+      "no_timeouts": true,
+      "exit_matches_recorded_scope": true
+    }
+  ],
+  "gofmt_entire_module": {
+    "command": "gofmt -l .",
+    "cwd": "apps/agentshield",
+    "exit_code": 0,
+    "output_empty": true
+  },
+  "independent_review": {
+    "scope": "Same-machine independent static review of runner, single-file diff and focused derived evidence; no independent rerun",
+    "finding": "No required correction; final source/event/package checks performed here; offline environment is not OS network isolation; direct Go wait is not full-tree historical cleanup proof"
+  },
+  "scope": "r1 retained with real full-package failure; not native host acceptance"
+}
