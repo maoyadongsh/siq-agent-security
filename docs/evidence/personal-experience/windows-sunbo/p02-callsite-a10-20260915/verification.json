@@ -1,0 +1,145 @@
+{
+  "schema": "windows-openclaw-a10-public-verification/v1",
+  "reviewed_manifest_sha256": "0eff6eba3300afd793a9d004c0a75bf91f2e93ad383dd9384755e2f8680fafcc",
+  "frozen_controller_and_review_files_verified_by_root": 22,
+  "source_artifact_identities": [
+    {
+      "role": "actual_run",
+      "bytes": 1161275,
+      "sha256": "bc528cad7d5b88a6a4d119fe1fd6051da2c78ba86a917f8d1e193605081db132"
+    },
+    {
+      "role": "successful_plan",
+      "bytes": 39424,
+      "sha256": "85187c8efb28a3e54799926e4ec7c3216797a29dfba3f3dd34d32f869ecb140a"
+    },
+    {
+      "role": "owned_files_postflight",
+      "bytes": 15608,
+      "sha256": "fe692a438cf96d3260510b0c6b46b7916b16d82809451895a64af3ac048b5c7e"
+    },
+    {
+      "role": "independent_root_verification",
+      "bytes": 7522,
+      "sha256": "902e40642875f60453c4f8f81248e09fb0025e2353c32776d278067624e63613"
+    }
+  ],
+  "independent_root_receipt": {
+    "bytes": 7522,
+    "sha256": "902e40642875f60453c4f8f81248e09fb0025e2353c32776d278067624e63613",
+    "all_checks_passed": true,
+    "scope": [
+      "22 frozen controller/review files",
+      "actual Run runtime plan differs from reviewed Plan only in two owned ephemeral endpoint values and one private frame binding value",
+      "16 original streams: 12 Windows, 2 namespace, 2 Node",
+      "two frames independently parsed as JSON",
+      "25 named files, 2 absent paths, workspace control only",
+      "7 network events and one write SSE response with two chunks and DONE",
+      "second request contains failed tool result",
+      "22 installed source files plus Node unchanged",
+      "namespace security and cleanup readback"
+    ]
+  },
+  "raw_stream_integrity": {
+    "count": 16,
+    "Windows_Plan_streams": 4,
+    "Windows_Run_streams": 4,
+    "Windows_postflight_streams": 4,
+    "namespace_streams": 2,
+    "Node_streams": 2,
+    "byte_counts_and_SHA256_verified": true,
+    "nested_base64_and_text_verified": true,
+    "complete_to_EOF": true,
+    "Windows_transport_stderr_decode_replacement_records": 3,
+    "replacement_record_bytes_each": 132,
+    "replacement_records_original_bytes_preserved": true
+  },
+  "source_identity": {
+    "installed_source_file_count": 22,
+    "Node_file_count": 1,
+    "before_after_equal": true,
+    "Node_sha256": "bc17c508ffeed0ec622934f9b7fa72f8e78da65350e63c3eceb56fa688aa5e12",
+    "observed_source_sha256": {
+      "errors": "6187c0aff86970d3b39039c9a6e1a19e2f55f967c87351745b4c71a71b30ee6f",
+      "pinned_write": "c8de6b4e90f48e60ea8888b80cd1afa8302ecb76ef43e4d414cf177b9640d693"
+    },
+    "observed_transformed_sha256": {
+      "errors": "c654a4840230370df2cbb57c5e0898e76e44784104abd6e530ced481edc4c09e",
+      "pinned_write": "3f2e28be542c6bca7fbefa44ed794965570d0ef167f905ac6933825d215b1378"
+    },
+    "instrumented_execution_has_new_source_identity": true
+  },
+  "postflight": {
+    "named_files_verified": 25,
+    "all_named_file_sizes_and_hashes_match_retained_result": true,
+    "absent_paths_verified": 2,
+    "only_regular_control_file_in_workspace": true,
+    "read_only_postflight_invoked_host": false,
+    "Windows_evidence_root_ACL_unchanged": true,
+    "scope_is_named_files_and_root_ACL_only": true,
+    "read_only_guest_postflight_mutated_guest_filesystem": false
+  },
+  "network_observation": {
+    "events": 7,
+    "event_counts": {
+      "connect-attempt": 2,
+      "connect-error": 2,
+      "connect-success": 2,
+      "native-permissions": 1
+    },
+    "connect_error_codes": [
+      "UND_ERR_INFO",
+      "UND_ERR_INFO"
+    ],
+    "guard_denials": 0,
+    "decision_connections_observed": false,
+    "selected_public_Node_API_guard_only": true,
+    "OS_network_isolation_claimed": false
+  },
+  "limits_seconds": {
+    "agent_parameter": 45,
+    "Node_budget_including_cleanup": 75,
+    "Node_cleanup_reserve": 5,
+    "namespace_budget_including_cleanup": 110,
+    "namespace_cleanup_reserve": 5,
+    "Windows_inventory_budget": 10,
+    "Windows_inventory_cleanup_reserve": 3,
+    "Windows_main_transport_budget": 150,
+    "Windows_main_transport_cleanup_reserve": 10,
+    "Windows_budgets_separate": true,
+    "hard_OS_syscall_preemption_claimed": false
+  },
+  "verification_parser_note": "Initial root helper used whitespace-sensitive SSE string matching; structured JSON parsing passed. No host rerun or evidence modification.",
+  "limits": [
+    "No raw stream, provider prompt, private frame binding value, environment endpoint value or private filesystem identity is exported.",
+    "Association is to the exact expression and same Error object in the new instrumented process, not a kernel syscall or unique tool call.",
+    "Resource was not collected; empty permission is present, not absent.",
+    "A09 supports compatibility classification, not historical A08 causality.",
+    "No SIQ decision was exercised; no native Windows or complete A/B acceptance.",
+    "Original 18-case matrix is unchanged."
+  ],
+  "additional_reviewer_receipts": {
+    "report": {
+      "bytes": 10060,
+      "sha256": "90ecb13656d8116c36fd3c2ffb6ca88674fe883b64951d38c73b73490300724d"
+    },
+    "structured_receipt": {
+      "bytes": 8813,
+      "sha256": "248845a932830947c6b744a7e2e9158e8cd9f075fe1cdfea84993a9a80e53752"
+    },
+    "scope": "independent readback of 8 Run streams; excludes root later 16-stream and 25-file postflight scope",
+    "reviewer_authored_two_JS_sources": true,
+    "independent_authorship_review_claimed": false,
+    "root_separately_reviewed_JS": true
+  },
+  "CLI_stdout_structurally_parsed": true,
+  "CLI_export_whitelist": [
+    "toolSummary.calls",
+    "toolSummary.tools",
+    "toolSummary.failures",
+    "error.kind",
+    "HTTP 400",
+    "fixed synthetic fixture rejection phrase"
+  ],
+  "same_manifest_and_driver_for_successful_Plan_then_failed_Run": true
+}
