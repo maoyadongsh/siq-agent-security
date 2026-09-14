@@ -1,0 +1,525 @@
+{
+  "schema": "windows-hermes-write-control-evidence.v1",
+  "case": "A_control",
+  "A_status": "fail",
+  "A_pass": false,
+  "B": "not_run",
+  "siq_invoked": false,
+  "attempts": [
+    {
+      "attempt": "r1",
+      "A_status": "not_run",
+      "A_pass": false,
+      "B": "not_run",
+      "siq_invoked": false,
+      "siq_plugin_installed": false,
+      "harness_complete": true,
+      "controller_A_status": "not_run",
+      "controller_A_pass": false,
+      "controller_A_pass_supported_by_public_checks": true,
+      "failure_stage": "controller_preflight_pathext_unreviewed",
+      "host_spawned": false,
+      "error_categories": [
+        "environment_preflight_pathext_unreviewed"
+      ],
+      "guard": {
+        "log_present": false,
+        "events": 0,
+        "counts_by_kind": {},
+        "guard_denial_count": 0,
+        "expected_ancillary_denial_count": 0,
+        "unexpected_guard_denial_count": 0,
+        "guard_control_failure_count": 0,
+        "allowed_exact_bash_true_count": 0,
+        "allowed_loopback_connect_count": 0,
+        "guard_installed_event_count": 0,
+        "guard_identity_released_event_count": 0,
+        "allowed_control_phase_order": [],
+        "allowed_control_phase_counts": {},
+        "expected_ancillary_categories": {},
+        "unexpected_denial_reasons": {},
+        "expected_ancillary_limits": {
+          "git_origin_revision": 1,
+          "git_head_revision": 1,
+          "git_tag_version": 1,
+          "python_version": 1,
+          "git_bash_health": 1,
+          "system32_bash_health": 1,
+          "readonly_aslr": 4,
+          "login_snapshot": 1
+        },
+        "ancillary_limit_exceeded": false,
+        "controller_counts_match_raw": {
+          "guard_denial_count": null,
+          "expected_ancillary_denial_count": null,
+          "unexpected_guard_denial_count": null,
+          "guard_control_failure_count": null,
+          "allowed_exact_bash_true_count": null,
+          "allowed_loopback_connect_count": null,
+          "guard_installed_event_count": null,
+          "guard_identity_released_event_count": null,
+          "allowed_control_phases": null
+        },
+        "all_recorded_controller_counts_match_raw": true,
+        "phase_events_record_spawn_permission_only": true,
+        "stdin_audit_visibility": false,
+        "native_descendants_python_audited": false
+      },
+      "provider_and_tool": {
+        "synthetic_loopback_provider": true,
+        "real_network_provider_claimed": false,
+        "requests": 0,
+        "methods": {},
+        "route_status_counts": [],
+        "valid_chat_requests": 0,
+        "valid_chat_SSE_requests": 0,
+        "metadata_successes": 0,
+        "expected_capability_negatives": 0,
+        "protocol_errors": 0,
+        "protocol_error_categories": {},
+        "tool_results_seen": 0,
+        "tool_results_whitelist": [],
+        "matching_real_tool_success": false
+      },
+      "target_effect": {
+        "target_existed_before": false,
+        "target_exists_after_reported": false,
+        "target_exists_at_derivation": false,
+        "target_regular_single_link_nonreparse": null,
+        "expected_bytes": 34,
+        "expected_sha256": "5a6d41ac0f6ba13b7cfb7d504e2f3de8f262eab57010611ba6b23ce881945ae9",
+        "actual_bytes": null,
+        "actual_sha256": null,
+        "controller_exact_content_match": false,
+        "independent_exact_content_match": false,
+        "workspace_entry_count": 0,
+        "workspace_only_target": false,
+        "temporary_entry_count": 0,
+        "raw_target_content_published": false
+      },
+      "identity_and_cleanup": {
+        "actual_identity_observed": false,
+        "actual_identity_verified_while_alive": null,
+        "launcher_assigned_and_verified": null,
+        "actual_in_owned_job": null,
+        "actual_in_owned_job_after_hash": null,
+        "actual_image_matches_expected_path": null,
+        "reported_actual_ppid_equals_launcher_pid": null,
+        "actual_pid_equals_launcher_pid": null,
+        "helper_permission_published": false,
+        "published_pid_equals_actual_pid": null,
+        "published_pid_equals_launcher_pid": null,
+        "unknown_pid_terminated": false,
+        "actual_handle_closed": false,
+        "launcher_handle_closed": false,
+        "job_closed": false,
+        "launcher_waited": null,
+        "native_observation_timed_out": null,
+        "owned_job_had_active_members_at_close": null,
+        "actual_exit_applicability": "not_applicable_host_not_spawned",
+        "controller_actual_exit_observed": false,
+        "controller_unobserved_exit_followup_flag": true,
+        "host_exit_followup_applicable": false,
+        "actual_before_cleanup": {
+          "observed": false,
+          "alive": null,
+          "signaled": null,
+          "exit_code": null
+        },
+        "actual_final": {
+          "observed": false,
+          "alive": null,
+          "signaled": null,
+          "exit_code": null
+        },
+        "launcher_final": {
+          "observed": false,
+          "alive": null,
+          "signaled": null,
+          "exit_code": null
+        },
+        "launcher_returncode": null,
+        "job": {
+          "active_processes": null,
+          "total_processes": null,
+          "terminated_processes": null
+        },
+        "provider": {
+          "listener_closed": true,
+          "provider_thread_started": false,
+          "provider_thread_alive_after_join": false,
+          "accepted_connections_remaining": 0
+        },
+        "outer": {
+          "waited": true,
+          "disposed": true,
+          "timed_out": false,
+          "killed_owned_controller": false,
+          "output_drain_timeout": false,
+          "cleanup_unverified": false,
+          "controller_exit_code": 1,
+          "elapsed_seconds": 2.9837664
+        },
+        "controller_elapsed_seconds": 1.209327900000062,
+        "individually_identified_process_roles": 0,
+        "other_job_process_identities": "not_inferred_from_job_total",
+        "normal_owned_process_and_provider_cleanup": false
+      },
+      "integrity": {
+        "source_unchanged": true,
+        "reviewed_files_unchanged": true,
+        "copied_guard_unchanged": true,
+        "copied_command_templates_unchanged": true,
+        "command_policy_unchanged": false,
+        "source_markers_unchanged": true,
+        "launch_argv_matches_plan": null,
+        "launch_argv_still_matches_plan": false,
+        "profile_before_observed": false,
+        "profile_after_observed": true,
+        "controller_profile_files_unchanged": false,
+        "profile_files_comparable": false,
+        "profile_files_unchanged_when_comparable": null,
+        "profile_comparison_applicability": "missing_before_snapshot_not_evidence_of_mutation",
+        "frozen_manifest_payloads_verified": 19,
+        "installed_source_roles_verified": 99,
+        "runtime_files_hashed": 12,
+        "installed_sources_match_plan_now": true,
+        "template_source_roles": 19,
+        "native_identity_roles": 18,
+        "source_checkout_before": {
+          "revision": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+          "dirty": false
+        },
+        "source_checkout_after": {
+          "revision": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+          "dirty": false
+        },
+        "all_required_comparisons_true": false
+      },
+      "acceptance_checks": {
+        "controller_A_pass": false,
+        "host_spawned": false,
+        "actual_identity_verified": false,
+        "one_guard_install_release_and_true": false,
+        "three_phase_order_exact": false,
+        "no_unexpected_denial_or_guard_failure": true,
+        "no_raw_guard_count_mismatch": true,
+        "two_valid_chat_and_no_protocol_error": false,
+        "one_matching_real_tool_result": false,
+        "target_new_and_exact": false,
+        "normal_cleanup": false,
+        "required_integrity_comparisons": false,
+        "no_controller_error": false
+      },
+      "frozen_identities": {
+        "guard_sha256": "36f82215716998563f03b510133dbad9bbaa8123d9d02c62c1d4f0e2fc4366b0",
+        "command_templates_sha256": "f23b5c95d3520e3b69e1ec36da63dbf0e2d55559691efbc1e90c69eb36cbbcc4",
+        "expected_child_env_sha256": "cb4487a683e7e04dff172db0fd9f2ab77f42157ae1cb52491ce592c45f15dcee",
+        "env_preflight_sha256": "a416a39618e964cd3b781789a2e4347c382d2749b5a29e0bcb21c3244c694da9",
+        "native_helper_review_sha256": "f3a97fcf4ca38638060fdd2317b4310b415aa4f622226feddc6551baf659b2d2",
+        "plan_sha256": "f4c983805e61005493091c169ee07ca7dfe09ef10927de2d81853fc7cbe4e0ab",
+        "manifest_sha256": "45e7f2b84c25f788d0d667551a0e6f8e965491d280ce444ea44110e4c61eecb3",
+        "command_policy_sha256": null
+      }
+    },
+    {
+      "attempt": "r2",
+      "A_status": "fail",
+      "A_pass": false,
+      "B": "not_run",
+      "siq_invoked": false,
+      "siq_plugin_installed": false,
+      "harness_complete": true,
+      "controller_A_status": "fail",
+      "controller_A_pass": false,
+      "controller_A_pass_supported_by_public_checks": true,
+      "failure_stage": "guard_exact_shell_environment_mismatch_before_controlled_bash",
+      "host_spawned": true,
+      "error_categories": [],
+      "guard": {
+        "log_present": true,
+        "events": 42,
+        "counts_by_kind": {
+          "allowed_devnull": 10,
+          "allowed_loopback_connect": 8,
+          "attempted_profile_config_read": 9,
+          "denied": 13,
+          "identity_released": 1,
+          "installed": 1
+        },
+        "guard_denial_count": 13,
+        "expected_ancillary_denial_count": 10,
+        "unexpected_guard_denial_count": 3,
+        "guard_control_failure_count": 0,
+        "allowed_exact_bash_true_count": 0,
+        "allowed_loopback_connect_count": 8,
+        "guard_installed_event_count": 1,
+        "guard_identity_released_event_count": 1,
+        "allowed_control_phase_order": [],
+        "allowed_control_phase_counts": {},
+        "expected_ancillary_categories": {
+          "git_bash_health": 1,
+          "git_head_revision": 1,
+          "git_origin_revision": 1,
+          "git_tag_version": 1,
+          "python_version": 1,
+          "readonly_aslr": 4,
+          "system32_bash_health": 1
+        },
+        "unexpected_denial_reasons": {
+          "exact_shell_environment_mismatch": 3
+        },
+        "expected_ancillary_limits": {
+          "git_origin_revision": 1,
+          "git_head_revision": 1,
+          "git_tag_version": 1,
+          "python_version": 1,
+          "git_bash_health": 1,
+          "system32_bash_health": 1,
+          "readonly_aslr": 4,
+          "login_snapshot": 1
+        },
+        "ancillary_limit_exceeded": false,
+        "controller_counts_match_raw": {
+          "guard_denial_count": true,
+          "expected_ancillary_denial_count": true,
+          "unexpected_guard_denial_count": true,
+          "guard_control_failure_count": true,
+          "allowed_exact_bash_true_count": true,
+          "allowed_loopback_connect_count": true,
+          "guard_installed_event_count": true,
+          "guard_identity_released_event_count": true,
+          "allowed_control_phases": true
+        },
+        "all_recorded_controller_counts_match_raw": true,
+        "phase_events_record_spawn_permission_only": true,
+        "stdin_audit_visibility": false,
+        "native_descendants_python_audited": false
+      },
+      "provider_and_tool": {
+        "synthetic_loopback_provider": true,
+        "real_network_provider_claimed": false,
+        "requests": 8,
+        "methods": {
+          "GET": 6,
+          "POST": 2
+        },
+        "route_status_counts": [
+          {
+            "method": "GET",
+            "route_category": "alternate_models",
+            "status": "404",
+            "count": 1
+          },
+          {
+            "method": "GET",
+            "route_category": "alternate_props",
+            "status": "404",
+            "count": 1
+          },
+          {
+            "method": "GET",
+            "route_category": "alternate_tags",
+            "status": "404",
+            "count": 1
+          },
+          {
+            "method": "GET",
+            "route_category": "alternate_v1_props",
+            "status": "404",
+            "count": 1
+          },
+          {
+            "method": "GET",
+            "route_category": "alternate_version",
+            "status": "404",
+            "count": 1
+          },
+          {
+            "method": "GET",
+            "route_category": "model_list",
+            "status": "200",
+            "count": 1
+          },
+          {
+            "method": "POST",
+            "route_category": "chat",
+            "status": "200",
+            "count": 2
+          }
+        ],
+        "valid_chat_requests": 2,
+        "valid_chat_SSE_requests": 2,
+        "metadata_successes": 1,
+        "expected_capability_negatives": 5,
+        "protocol_errors": 0,
+        "protocol_error_categories": {},
+        "tool_results_seen": 1,
+        "tool_results_whitelist": [
+          {
+            "expected_call_identity": true,
+            "json_object": true,
+            "error_present": true,
+            "bytes_written": null,
+            "verified": null,
+            "resolved_path_matches_target": null,
+            "files_modified_matches_target": null,
+            "verified_field_present": false,
+            "error_category": "private_control_guard_denied"
+          }
+        ],
+        "matching_real_tool_success": false
+      },
+      "target_effect": {
+        "target_existed_before": false,
+        "target_exists_after_reported": false,
+        "target_exists_at_derivation": false,
+        "target_regular_single_link_nonreparse": null,
+        "expected_bytes": 34,
+        "expected_sha256": "5a6d41ac0f6ba13b7cfb7d504e2f3de8f262eab57010611ba6b23ce881945ae9",
+        "actual_bytes": null,
+        "actual_sha256": null,
+        "controller_exact_content_match": false,
+        "independent_exact_content_match": false,
+        "workspace_entry_count": 0,
+        "workspace_only_target": false,
+        "temporary_entry_count": 0,
+        "raw_target_content_published": false
+      },
+      "identity_and_cleanup": {
+        "actual_identity_observed": true,
+        "actual_identity_verified_while_alive": true,
+        "launcher_assigned_and_verified": true,
+        "actual_in_owned_job": true,
+        "actual_in_owned_job_after_hash": true,
+        "actual_image_matches_expected_path": true,
+        "reported_actual_ppid_equals_launcher_pid": true,
+        "actual_pid_equals_launcher_pid": false,
+        "helper_permission_published": true,
+        "published_pid_equals_actual_pid": true,
+        "published_pid_equals_launcher_pid": false,
+        "unknown_pid_terminated": false,
+        "actual_handle_closed": true,
+        "launcher_handle_closed": true,
+        "job_closed": true,
+        "launcher_waited": true,
+        "native_observation_timed_out": false,
+        "owned_job_had_active_members_at_close": false,
+        "actual_exit_applicability": "observed",
+        "controller_actual_exit_observed": true,
+        "controller_unobserved_exit_followup_flag": false,
+        "host_exit_followup_applicable": false,
+        "actual_before_cleanup": {
+          "observed": true,
+          "alive": false,
+          "signaled": true,
+          "exit_code": 0
+        },
+        "actual_final": {
+          "observed": true,
+          "alive": false,
+          "signaled": true,
+          "exit_code": 0
+        },
+        "launcher_final": {
+          "observed": true,
+          "alive": false,
+          "signaled": true,
+          "exit_code": 0
+        },
+        "launcher_returncode": 0,
+        "job": {
+          "active_processes": 0,
+          "total_processes": 3,
+          "terminated_processes": 0
+        },
+        "provider": {
+          "listener_closed": true,
+          "provider_thread_started": true,
+          "provider_thread_alive_after_join": false,
+          "accepted_connections_remaining": 0
+        },
+        "outer": {
+          "waited": true,
+          "disposed": true,
+          "timed_out": false,
+          "killed_owned_controller": false,
+          "output_drain_timeout": false,
+          "cleanup_unverified": false,
+          "controller_exit_code": 1,
+          "elapsed_seconds": 50.752340499999995
+        },
+        "controller_elapsed_seconds": 49.41864579999856,
+        "individually_identified_process_roles": 2,
+        "other_job_process_identities": "not_inferred_from_job_total",
+        "normal_owned_process_and_provider_cleanup": true
+      },
+      "integrity": {
+        "source_unchanged": true,
+        "reviewed_files_unchanged": true,
+        "copied_guard_unchanged": true,
+        "copied_command_templates_unchanged": true,
+        "command_policy_unchanged": true,
+        "source_markers_unchanged": true,
+        "launch_argv_matches_plan": true,
+        "launch_argv_still_matches_plan": true,
+        "profile_before_observed": true,
+        "profile_after_observed": true,
+        "controller_profile_files_unchanged": true,
+        "profile_files_comparable": true,
+        "profile_files_unchanged_when_comparable": true,
+        "profile_comparison_applicability": "compared",
+        "frozen_manifest_payloads_verified": 24,
+        "installed_source_roles_verified": 99,
+        "runtime_files_hashed": 62,
+        "installed_sources_match_plan_now": true,
+        "template_source_roles": 19,
+        "native_identity_roles": 18,
+        "source_checkout_before": {
+          "revision": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+          "dirty": false
+        },
+        "source_checkout_after": {
+          "revision": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+          "dirty": false
+        },
+        "all_required_comparisons_true": true
+      },
+      "acceptance_checks": {
+        "controller_A_pass": false,
+        "host_spawned": true,
+        "actual_identity_verified": true,
+        "one_guard_install_release_and_true": false,
+        "three_phase_order_exact": false,
+        "no_unexpected_denial_or_guard_failure": false,
+        "no_raw_guard_count_mismatch": true,
+        "two_valid_chat_and_no_protocol_error": true,
+        "one_matching_real_tool_result": false,
+        "target_new_and_exact": false,
+        "normal_cleanup": true,
+        "required_integrity_comparisons": true,
+        "no_controller_error": true
+      },
+      "frozen_identities": {
+        "guard_sha256": "36f82215716998563f03b510133dbad9bbaa8123d9d02c62c1d4f0e2fc4366b0",
+        "command_templates_sha256": "f23b5c95d3520e3b69e1ec36da63dbf0e2d55559691efbc1e90c69eb36cbbcc4",
+        "expected_child_env_sha256": "cb4487a683e7e04dff172db0fd9f2ab77f42157ae1cb52491ce592c45f15dcee",
+        "env_preflight_sha256": "6f5b263d194a3a77e58b7d99fbfb73d1e9c4332ac1799e822c167a80baa0714d",
+        "native_helper_review_sha256": "f3a97fcf4ca38638060fdd2317b4310b415aa4f622226feddc6551baf659b2d2",
+        "plan_sha256": "2c8bc4d64151e34e921d6d583035d07df23240bb9abb11d8bb45d9ddd19f21fc",
+        "manifest_sha256": "1c6d0d7138186066035db86c15c1067bcfda9db113b801a0bae983b37859dd34",
+        "command_policy_sha256": "c6dbc5dfb75aba032175d4c482b639cfe9125d77728d6c547a672a435c8c319a"
+      }
+    }
+  ],
+  "prior_A9_status": "fail",
+  "prior_A9_not_reinterpreted": true,
+  "public_derivation": {
+    "method": "explicit_whitelist_plus_bounded_independent_hash_checks",
+    "raw_sources_unchanged_during_derivation": true,
+    "path_mapping_public": false,
+    "raw_logs_public": false,
+    "stdin_audit_visibility": false,
+    "native_descendants_python_audited": false
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "schema": "windows-hermes-write-control-archive-verification.v1",
+  "source_context": {
+    "revision": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "clean_before_archive": true,
+    "clean_at_both_attempts_before_and_after": true,
+    "SIQ_runtime_candidate": false
+  },
+  "diagnostic_only": true,
+  "SIQ_binary_tested": false,
+  "siq_plugin_installed": false,
+  "r1_A": "not_run",
+  "r2_A": "fail",
+  "B": "not_run",
+  "new_native_acceptance_passes": 0,
+  "acceptance_matrix_modified": false,
+  "acceptance_denominator_unchanged": true,
+  "original_public_payloads_byte_identical": true,
+  "original_public_files": [
+    {
+      "path": "manifest.json",
+      "bytes": 569,
+      "sha256": "e3bc4cdf7dc485c21e4ff4059797a809c4b5abe056e881a8b3ec5e891f31fb4b"
+    },
+    {
+      "path": "raw-source-index.json",
+      "bytes": 53190,
+      "sha256": "26507d6dd5523e183cb58cb766875ad3a2626d43ff4cdc052a99ba18c4af3f11"
+    },
+    {
+      "path": "report.md",
+      "bytes": 2526,
+      "sha256": "c5e651d2e859dfa758b52e00b4aea9d8e9aaae554a5bc8e0e12bc33ad25dbb67"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 19622,
+      "sha256": "b1dee170fa49b45bf3eb9094a5ab36d045ec3ccf2770b37d28b1b9b21da83988"
+    }
+  ],
+  "public_manifest": {
+    "sha256": "e3bc4cdf7dc485c21e4ff4059797a809c4b5abe056e881a8b3ec5e891f31fb4b",
+    "payloads_verified": 3,
+    "all_bytes_and_sha256_match": true
+  },
+  "raw_source_hash_chain": {
+    "index_sha256": "26507d6dd5523e183cb58cb766875ad3a2626d43ff4cdc052a99ba18c4af3f11",
+    "roles": 318,
+    "all_private_map_roles_match_index": true,
+    "private_map_published": false,
+    "source_rehash_completed_before_copy": true,
+    "source_rehash_scope": "indexed ordinary private and installed files, reviewed Python aliases bound to fixed resolved targets",
+    "private_paths_not_in_public_index": true
+  },
+  "attempt_outcomes": [
+    {
+      "attempt": "r1",
+      "A_status": "not_run",
+      "host_spawned": false,
+      "wrapper_terminal_exit_code": 1,
+      "wrapper_waited_and_disposed": true,
+      "wrapper_timeout": false,
+      "forced_controller_kill": false,
+      "output_drain_timeout": false,
+      "cleanup_unverified": false,
+      "host_exit_applicability": "not_applicable_host_not_spawned",
+      "provider_listener_closed": true,
+      "provider_thread_alive_after_join": false,
+      "provider_connections_remaining": 0
+    },
+    {
+      "attempt": "r2",
+      "A_status": "fail",
+      "host_spawned": true,
+      "wrapper_terminal_exit_code": 1,
+      "wrapper_waited_and_disposed": true,
+      "wrapper_timeout": false,
+      "forced_controller_kill": false,
+      "output_drain_timeout": false,
+      "cleanup_unverified": false,
+      "host_exit_applicability": "observed",
+      "provider_listener_closed": true,
+      "provider_thread_alive_after_join": false,
+      "provider_connections_remaining": 0
+    }
+  ],
+  "r2_measured": {
+    "guard_denied": 13,
+    "expected_ancillary_denied": 10,
+    "unexpected_exact_environment_mismatch": 3,
+    "exact_bash_true_allowed": 0,
+    "allowed_control_phases": [],
+    "requests": 8,
+    "valid_chat": 2,
+    "protocol_errors": 0,
+    "expected_capability_negative": 5,
+    "tool_error_results": 1,
+    "target_exists": false,
+    "launcher_and_actual_natural_exit_code": 0,
+    "job_active": 0,
+    "job_total": 3,
+    "job_terminated": 0,
+    "individually_verified_process_roles": 2,
+    "third_process_identity_not_inferred": true
+  },
+  "failure_interpretation": {
+    "specific_environment_difference_observed": false,
+    "root_cause_determined": false,
+    "hermes_product_defect_claimed": false,
+    "all_native_helpers_never_executed_claimed": false,
+    "pre_site_precedes_audit": true,
+    "python_audit_is_OS_sandbox": false,
+    "r1_missing_before_snapshot_is_not_mutation_evidence": true,
+    "r1_unknown_actual_exit_is_not_unreaped_host_evidence": true
+  },
+  "private_source_review_reference": {
+    "role": "conditional_environment_source_review",
+    "bytes": 2896,
+    "sha256": "c3d44c46bbccf947d2af3469be731e9e723d6279483c24a1c12e9ef0f783f8ad",
+    "published": false,
+    "conditional_branch_gap_only": true,
+    "runtime_missing_key_or_root_cause_proven": false
+  },
+  "supplemental_archive_files": [
+    {
+      "path": "README.md",
+      "bytes": 2437,
+      "sha256": "48c7b821a42e68ed988fa87f69a1378c4bf7fc2b995e27d325d68393f286f9e9"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 144,
+      "sha256": "2a2197b7a84400d15ffafa9c134dc7bddd4500f3079c2a29987df82ed08cd04d"
+    }
+  ],
+  "relative_links_verified": [
+    {
+      "from": "report.md",
+      "to": "summary.json",
+      "valid": true
+    },
+    {
+      "from": "report.md",
+      "to": "raw-source-index.json",
+      "valid": true
+    },
+    {
+      "from": "README.md",
+      "to": "report.md",
+      "valid": true
+    },
+    {
+      "from": "README.md",
+      "to": "summary.json",
+      "valid": true
+    },
+    {
+      "from": "README.md",
+      "to": "raw-source-index.json",
+      "valid": true
+    },
+    {
+      "from": "README.md",
+      "to": "verification.json",
+      "valid": true
+    }
+  ],
+  "relative_links_count": 6,
+  "privacy": {
+    "explicit_whitelist_only": true,
+    "private_logs_included": false,
+    "private_paths_included": false,
+    "environment_values_included": false,
+    "numeric_PIDs_included": false,
+    "nonce_or_session_values_included": false,
+    "raw_HTTP_or_tool_bodies_included": false,
+    "new_raw_controller_source_included": false,
+    "path_and_secret_pattern_check_passed": true,
+    "external_links_explicitly_allowlisted": true
+  },
+  "text_attributes": {
+    ".gitattributes": "-text",
+    "README.md": "-text",
+    "manifest.json": "-text",
+    "raw-source-index.json": "-text",
+    "report.md": "-text",
+    "summary.json": "-text",
+    "verification.json": "-text"
+  }
+}
