@@ -1,0 +1,17 @@
+{
+  "method": "native_ntfs_setup",
+  "source_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty": false,
+  "binary_candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "root_file_id": "23f6e969:000a000000175ec7",
+  "root_sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+  "root_attributes": 16,
+  "parent_acl_protected": true,
+  "child_acl_inherits_only_current_user_system_administrators_fullcontrol": true,
+  "administrator_elevated": false,
+  "lexical_parent_refused": true,
+  "outside_child_refused": true,
+  "cleanup_policy": "No fixture cleanup; no existing instance or lock touched",
+  "snapshot_method": "CreateFile OPEN_REPARSE_POINT|BACKUP_SEMANTICS + GetFileInformationByHandle/GetSecurityInfo; enumerate without following reparse directories; exact byte equality held privately"
+}

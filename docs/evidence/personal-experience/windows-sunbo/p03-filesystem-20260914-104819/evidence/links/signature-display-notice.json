@@ -1,0 +1,62 @@
+{
+  "method": "derived_signed_display_disclosure",
+  "source_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty": false,
+  "binary_candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "originals_retained_only_in_private_raw": true,
+  "no_cli_reexecution": true,
+  "no_resigning": true,
+  "signature_verification_boundary": "The signature binds the original unredacted admission. Verify only the retained private original; the public source.locator has been redacted and the signature text is retained without claiming validity over that display object.",
+  "outputs": [
+    {
+      "label": "admit-ordinary-skill",
+      "private_original_raw_envelope_sha256": "6d149844e7e1fc471dcf64b63f39aeba7275a9e5172761828a59be3f1946add0",
+      "private_original_stdout_utf8_sha256": "7aec4a5074b67858b9fdc3196e8a71ec3e425be00507e1881c17b5808a133f3f",
+      "public_display_stdout_utf8_sha256": "cfc0dbc1f5c74231479c78f08c69d6e79a33194014fee7e83008f3fdd226f3be",
+      "stdout_hash_encoding": "UTF-8 without BOM, original captured newlines preserved",
+      "signed_object_changed_fields": [
+        "source.locator"
+      ],
+      "replacement": "Actual absolute test-root prefix, including nested JSON escapes, replaced with <LINK_TEST_ROOT>; suffix retained",
+      "signature_string_unchanged": true,
+      "all_other_parsed_admission_fields_unchanged": true,
+      "private_signed_original_unchanged": true,
+      "resigned": false,
+      "public_object_purpose": "Redacted display and behavioral evidence only; do not use this modified object for signature verification"
+    },
+    {
+      "label": "admit-hardlink-regular-file",
+      "private_original_raw_envelope_sha256": "c79e3ca2f1960748c040a60a00fccd119f0fc9d6b64cbe1f13511cffab95d2fd",
+      "private_original_stdout_utf8_sha256": "30e636da54e2cb9344db45da3b29746777153fff3e69a6435de2708682625be1",
+      "public_display_stdout_utf8_sha256": "94fd1efe60bf7cc0e7cfd1869f5a6885fea21f5dd31071daa76f523df3687901",
+      "stdout_hash_encoding": "UTF-8 without BOM, original captured newlines preserved",
+      "signed_object_changed_fields": [
+        "source.locator"
+      ],
+      "replacement": "Actual absolute test-root prefix, including nested JSON escapes, replaced with <LINK_TEST_ROOT>; suffix retained",
+      "signature_string_unchanged": true,
+      "all_other_parsed_admission_fields_unchanged": true,
+      "private_signed_original_unchanged": true,
+      "resigned": false,
+      "public_object_purpose": "Redacted display and behavioral evidence only; do not use this modified object for signature verification"
+    },
+    {
+      "label": "admit-junction-escape-quarantine",
+      "private_original_raw_envelope_sha256": "d2fe3d17b63632a30b38cec5f8077832f84acd28242c584ae3263574a687217a",
+      "private_original_stdout_utf8_sha256": "9c94b8565d8f79fb91bf1db5340ada010ed2c021f49641740a7ee04b434fc9bd",
+      "public_display_stdout_utf8_sha256": "157a8fd97a7c17d069760babfb4949e352ca028a4168cf5b0051223da97266a7",
+      "stdout_hash_encoding": "UTF-8 without BOM, original captured newlines preserved",
+      "signed_object_changed_fields": [
+        "source.locator"
+      ],
+      "replacement": "Actual absolute test-root prefix, including nested JSON escapes, replaced with <LINK_TEST_ROOT>; suffix retained",
+      "signature_string_unchanged": true,
+      "all_other_parsed_admission_fields_unchanged": true,
+      "private_signed_original_unchanged": true,
+      "resigned": false,
+      "public_object_purpose": "Redacted display and behavioral evidence only; do not use this modified object for signature verification"
+    }
+  ],
+  "disclosure_script_sha256": "4ab7cec24b5494b267b29a3a0a526715aa3eaac2edc66122b73667be3306d142"
+}
