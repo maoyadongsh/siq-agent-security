@@ -1,0 +1,67 @@
+{
+  "schema": "public-openclaw-group-manifest/v1",
+  "scope": "Historical five public files plus single A04 result; no Windows-native or SIQ acceptance pass",
+  "manifest_self_excluded": true,
+  "files": [
+    {
+      "path": "a04/manifest.json",
+      "bytes": 771,
+      "sha256": "6cf6e9fc37c6eef1cc72bc2d2ce0ea4990a73c75253d0742a4055c97f5d67ba3"
+    },
+    {
+      "path": "a04/report.md",
+      "bytes": 2102,
+      "sha256": "cf47ac71295d912db3a455c2cc0a5475e82733bc796eb7f88509f065ce3e8ca1"
+    },
+    {
+      "path": "a04/scan-summary.json",
+      "bytes": 1218,
+      "sha256": "66cd382067f959c516a5a5b62f0109a1fb4c3d39a3d72322480230ddd9d6ec76"
+    },
+    {
+      "path": "a04/summary.derived.json",
+      "bytes": 10585,
+      "sha256": "dabcc3daac0d3dde2c7c95034bb812ca4b53dc61ac395ce29d7117bb3745e8ee"
+    },
+    {
+      "path": "a04/summary.schema.json",
+      "bytes": 15597,
+      "sha256": "331126ec84cfef6f34c4cb18c69b35d085af31d7a5fa09902519f6fbb5a6e99f"
+    },
+    {
+      "path": "history/manifest.json",
+      "bytes": 806,
+      "sha256": "eeefd756806f28e3e48579b58892329ed6cb542d8a637a9d5899c4c028cc48c7"
+    },
+    {
+      "path": "history/scan-summary.json",
+      "bytes": 1810,
+      "sha256": "c4361a86dc3fdcf023b47f70a379e5a5986c8f30d9193f3786f9ec4416027284"
+    },
+    {
+      "path": "history/summary.derived.json",
+      "bytes": 27429,
+      "sha256": "5e28afeeb83a9dc8ca72892d36be6d6645b69a6abea53643bac4cebbbab2a345"
+    },
+    {
+      "path": "history/SUMMARY.md",
+      "bytes": 2368,
+      "sha256": "dc78a59b492f24c654835a1b9f7167b71712921202af443535b6ef6e9af7f965"
+    },
+    {
+      "path": "history/summary.schema.json",
+      "bytes": 56182,
+      "sha256": "bfb3daf025de329062e59fc6b30babda3a99353eda6b78e81f87cbe7b539a820"
+    },
+    {
+      "path": "report.md",
+      "bytes": 2221,
+      "sha256": "11e3d7298a337dea1ba978fb40d91fcdd2359bc6e2b27e06ef5eb510fd73b340"
+    },
+    {
+      "path": "scan-summary.json",
+      "bytes": 826,
+      "sha256": "53381082eec2f7071e67793994fb0d9a6b7cfb67c3ef5edad07efaca70164ae1"
+    }
+  ]
+}

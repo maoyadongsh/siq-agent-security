@@ -1,0 +1,291 @@
+{
+  "schema": "windows-shared-core-evidence-verification/v1",
+  "prepared_at_utc": "2026-09-14T04:29:17.344012+00:00",
+  "scope": "固定 PR45 源提交的 Windows 组件证据归档准备；只复制、组织与核对，未重新执行测试。",
+  "source_head": "9cc18630be584692905e1ce612b91a9ba5aee610",
+  "source_clean_before_after_reported": true,
+  "publication_context": {
+    "pr": 45,
+    "state": "MERGED",
+    "merged_at_utc": "2026-09-14T03:19:44Z",
+    "merge_commit": "4464dfbc8e66c8ec1fb2590b286351595fcd9667",
+    "tests_ran_after_merge": true,
+    "merge_commit_retested": false
+  },
+  "results_by_group": {
+    "stage_review": {
+      "top_level": {
+        "pass": 2,
+        "fail": 1,
+        "skip": 0
+      },
+      "exit_code": 1,
+      "json_events": 17,
+      "boundary": "Windows wrapper absent; later permission and ordering assertions were not reached."
+    },
+    "n03_review": {
+      "top_level": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtests": {
+        "pass": 10,
+        "fail": 0,
+        "skip": 0
+      },
+      "exit_code": 0,
+      "json_events": 56,
+      "boundary": "Ten subtests belong within three top-level tests; do not sum these layers."
+    },
+    "n03_cold_cache": {
+      "outer_timeout_seconds": 180,
+      "outer_timed_out": true,
+      "json_events": 0,
+      "top_level_not_run": 3,
+      "test_semantic_failure_observed": false,
+      "exit_code": 1
+    }
+  },
+  "no_combined_pass_total": true,
+  "files": [
+    {
+      "path": "stage-review/adapterinstall-tests.jsonl",
+      "bytes": 4442,
+      "sha256": "8712724ecd1dcf1f73b87e6f74f2ed5d9c0cd4207e544406148d2dc68e128ee5",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "stage-review/pr45-comment.md",
+      "bytes": 1955,
+      "sha256": "35cc9d11fcf2de17ae60e5b285568f063def6138be20cf4dba0e37506fa35d91",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "stage-review/report.md",
+      "bytes": 3285,
+      "sha256": "3ef61956d3b76911015790c16d59d7d64c30a8d6eec9f1c0a8b9af56c046c6cf",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "stage-review/summary.json",
+      "bytes": 2511,
+      "sha256": "cc2542d4aae75e4c1ca200236e579fa65b3bd8beb669172a0c106ab682b074c9",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/cold-cache-summary.json",
+      "bytes": 3319,
+      "sha256": "6550c931046e3c7568b72cc02e14223b21ed3bfa28d7f1e4a97b0cf4c123dbd3",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/cold-cache-tests.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/cold-cleanup-observation.json",
+      "bytes": 835,
+      "sha256": "586609a5ba9a01db23297ff342add2d922e7745cb9974fe22c7faa7ad671d1df",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/go-toolchain-build.txt",
+      "bytes": 212,
+      "sha256": "2b5a7d46c43063427d1af06e019a82c3fbb0ef59e7033cd9c940ff0faa154a31",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/manifest.json",
+      "bytes": 1858,
+      "sha256": "af9adf8b2214f201af1a4b59f256636e9d17ff6f420067f014e093e8880b77d5",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/process-observation.json",
+      "bytes": 856,
+      "sha256": "7d262c48eee5576141d8a3f70e407dba08354740cad7a7210f0fc3064962b518",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/report.md",
+      "bytes": 7392,
+      "sha256": "57cb2bdce0236c9a466bb2416d3f6229913a5575ae0df3e6a5cd17c4dad1525c",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/run-n03-cold.py",
+      "bytes": 6964,
+      "sha256": "757dfe8810f156ec2cc760173c815bd9f566bfa974d85d2285999511a12d88a4",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/run-n03.py",
+      "bytes": 8017,
+      "sha256": "4cdc7821fe1737f82c0b5696c64fda240bfde33cf5c1db822dd9c8cf271169cf",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/summary.json",
+      "bytes": 5421,
+      "sha256": "c8396d19108a4bf20523e2e60afb3e7b888afd48b7844eb5997547354b6c827e",
+      "matches_original_preparation_bytes": true
+    },
+    {
+      "path": "n03-review/tests.jsonl",
+      "bytes": 14331,
+      "sha256": "75ae97a26e1a359ecc5a3f5587e0fcf13e9c112036b2b1e35298e53c22503f86",
+      "matches_original_preparation_bytes": true
+    }
+  ],
+  "aggregate_report": {
+    "path": "report.md",
+    "bytes": 2900,
+    "sha256": "7a8b0adc3fbbd3cdd30ec3659890e063efd8f9e895130fbc9bac5e111e2934d5"
+  },
+  "verification_excludes_its_own_hash": true,
+  "copy_validation": {
+    "groups": {
+      "stage-review": 4,
+      "n03-review": 11
+    },
+    "all_15_subfiles_byte_identical": true,
+    "original_materials_modified": false
+  },
+  "nested_manifest_validation": {
+    "group": "n03-review",
+    "listed_files": 10,
+    "manifest_self_excluded": true,
+    "all_lengths_and_sha256_match": true
+  },
+  "event_and_summary_validation": {
+    "stage_counts_match": true,
+    "n03_counts_match": true,
+    "cold_timeout_kept_separate": true,
+    "public_log_hashes_match": true
+  },
+  "independent_reviews": [
+    {
+      "group": "stage-review",
+      "method": "独立同机只读比较原始 JSONL、公开记录、源码、SHA 与 PR 合并时间；新增执行目录说明另经协调者审阅。",
+      "limits": "未独立重跑，未做独立机器宿主验收。"
+    },
+    {
+      "group": "n03-review",
+      "method": "另一位协作者同机独立审阅 report/summary 和 runner 的执行、超时、环境源码；核对 manifest 十文件长度与 SHA；独立解析 56 事件为 3 顶层 pass、10 子例 pass、0 fail/skip。",
+      "limits": "未独立重跑或重新核验全部底层 fixture 断言。"
+    }
+  ],
+  "privacy_validation": {
+    "text_files_scanned": 16,
+    "findings": [],
+    "gitleaks_n03_prior_independent_scan": {
+      "version": "8.24.2",
+      "command_class": "dir",
+      "exit_code": 0,
+      "bytes_covered": 49205,
+      "source": "协调者独立运行并报告；打包步骤未重复此扫描。"
+    },
+    "scope": "私人绝对路径、个人 SID、凭据字面量、未填占位；原始本机日志仍私有。"
+  },
+  "relative_link_validation": {
+    "links": [
+      {
+        "from": "report.md",
+        "target": "stage-review/report.md",
+        "valid": true
+      },
+      {
+        "from": "report.md",
+        "target": "n03-review/report.md",
+        "valid": true
+      },
+      {
+        "from": "report.md",
+        "target": "verification.json",
+        "valid": true
+      },
+      {
+        "from": "stage-review/report.md",
+        "target": "summary.json",
+        "valid": true
+      },
+      {
+        "from": "stage-review/report.md",
+        "target": "adapterinstall-tests.jsonl",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "summary.json",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "tests.jsonl",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "go-toolchain-build.txt",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "summary.json",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "tests.jsonl",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "cold-cache-summary.json",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "cold-cache-tests.jsonl",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "cold-cleanup-observation.json",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "process-observation.json",
+        "valid": true
+      },
+      {
+        "from": "n03-review/report.md",
+        "target": "manifest.json",
+        "valid": true
+      }
+    ],
+    "all_valid": true
+  },
+  "preparation_root_acl": {
+    "protected": true,
+    "ace_count": 3,
+    "principal_classes": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "rights": "FullControl",
+    "parent_acl_modified": false
+  },
+  "limits": [
+    "仅 Windows 同机组件证据，不提升三宿主原生矩阵，不视为外部复现或签核。",
+    "未启动真实宿主、SIQ CLI 或真实模型；没有新 SIQ CLI 发行制品或旧二进制改标。",
+    "保留首次超时及部分后代清理失败；范围内进程快照不等于持续跟踪或每个后代均逐个成功终止。",
+    "本次不改受测源码、tracked docs，不提交、不推送、不发远端。"
+  ],
+  "archive_preparation_status": "ready_for_parent_archive_review"
+}

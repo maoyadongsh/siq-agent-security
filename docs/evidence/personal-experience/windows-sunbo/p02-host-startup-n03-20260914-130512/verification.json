@@ -1,0 +1,258 @@
+{
+  "artifact_kind": "public evidence byte index; not a runtime or acceptance contract",
+  "assembled_at_utc": "2026-09-14T05:11:48.813226+00:00",
+  "evidence_branch_base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "shared_component_source": "9cc18630be584692905e1ce612b91a9ba5aee610",
+  "hermes_diagnostic_checkout": "3cbbd1dcec7eae5691de465de0ea6fbc459243ae",
+  "siq_cli_executed_in_host_startup_groups": false,
+  "new_native_acceptance_passes": 0,
+  "originals_modified": false,
+  "raw_private_artifacts_included": false,
+  "initial_35_file_copy_identity_rechecked": true,
+  "nested_manifest_entries_matched": 54,
+  "relative_markdown_links_resolved": 29,
+  "payload_file_count": 46,
+  "verification_self_excluded": true,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 584,
+      "sha256": "0a313ee9bb9cc1a7413f45b7e81007853f5dde34ad0bc262a9e93588f21d8cee"
+    },
+    {
+      "path": "designs/issue42-windows-private-read-comment.md",
+      "bytes": 1412,
+      "sha256": "2c2f4a0898faddac60e83849279dd9c1581b8a3343ca38b29c79f1e31bc0ca1b"
+    },
+    {
+      "path": "designs/issue42-windows-private-read-design.md",
+      "bytes": 14498,
+      "sha256": "4cfa2e8a8265c26069c89978d4f67b41219ae2fc0c6df7869d101f16bde09b8c"
+    },
+    {
+      "path": "designs/issue43-comment.md",
+      "bytes": 1711,
+      "sha256": "69b53d91c5d37d6f00960605e8f4d465b064cf2f0b0738815ac321f7cae987ff"
+    },
+    {
+      "path": "designs/issue43-windows-state-path-design.md",
+      "bytes": 9119,
+      "sha256": "912982a30722b458204559b1845b656ef95e87ed44783e166194227e67b663db"
+    },
+    {
+      "path": "environment.md",
+      "bytes": 1566,
+      "sha256": "a194109781054a371971bcc1554b55745677f9ceb7e99e5bbd50b1ec1932f5af"
+    },
+    {
+      "path": "hermes/hermes-startup-v2-v6-r3/check-devnull.py",
+      "bytes": 1740,
+      "sha256": "4e32211363b955467912dcafeafb51da81870f5bfaf1e1ba501ef737b88d7cd1"
+    },
+    {
+      "path": "hermes/hermes-startup-v2-v6-r3/devnull-device-check.json",
+      "bytes": 630,
+      "sha256": "1b5bc2ebf18f454e615cb6cfb06a23c75498f16d1a9b4237b358d2b78b39c65f"
+    },
+    {
+      "path": "hermes/hermes-startup-v2-v6-r3/report.md",
+      "bytes": 6481,
+      "sha256": "6118c6d9d1fcd53ac79b56b5481e26a48a88a6d7bb777d8368fa3bf118210f4e"
+    },
+    {
+      "path": "hermes/hermes-startup-v2-v6-r3/review.json",
+      "bytes": 2835,
+      "sha256": "349b1cc331f93877c2f0099eac9f176902ef05054bf2804ec5192190f2f6cf5e"
+    },
+    {
+      "path": "hermes/hermes-startup-v2-v6-r3/summary.json",
+      "bytes": 19358,
+      "sha256": "7451a504f8c7f97a5873cb7d70c733b0df89fb8f71dc0ddf8beef3abef092f02"
+    },
+    {
+      "path": "hermes/hermes-startup-v7-v8/report.md",
+      "bytes": 4922,
+      "sha256": "ac7d693380fdd521ebe91cf56c43e029717eb2c2e350ce2a2cabcc8d78e1775d"
+    },
+    {
+      "path": "hermes/hermes-startup-v7-v8/summary.json",
+      "bytes": 13192,
+      "sha256": "c8a55698569f1a9fbb33e4673f70114329b1438e4477030f676ffc196a4f5e32"
+    },
+    {
+      "path": "hermes/report.md",
+      "bytes": 2394,
+      "sha256": "dec90abcb4dcb0bd2e8920771344e147f64118a80239173552b0d203cc90dc51"
+    },
+    {
+      "path": "hermes/verification.json",
+      "bytes": 3600,
+      "sha256": "fa75bbd29684824cb43e319be3a1197adcf2a45ef80fc1156e3d812dacc417c1"
+    },
+    {
+      "path": "openclaw/a04/manifest.json",
+      "bytes": 771,
+      "sha256": "6cf6e9fc37c6eef1cc72bc2d2ce0ea4990a73c75253d0742a4055c97f5d67ba3"
+    },
+    {
+      "path": "openclaw/a04/report.md",
+      "bytes": 2102,
+      "sha256": "cf47ac71295d912db3a455c2cc0a5475e82733bc796eb7f88509f065ce3e8ca1"
+    },
+    {
+      "path": "openclaw/a04/scan-summary.json",
+      "bytes": 1218,
+      "sha256": "66cd382067f959c516a5a5b62f0109a1fb4c3d39a3d72322480230ddd9d6ec76"
+    },
+    {
+      "path": "openclaw/a04/summary.derived.json",
+      "bytes": 10585,
+      "sha256": "dabcc3daac0d3dde2c7c95034bb812ca4b53dc61ac395ce29d7117bb3745e8ee"
+    },
+    {
+      "path": "openclaw/a04/summary.schema.json",
+      "bytes": 15597,
+      "sha256": "331126ec84cfef6f34c4cb18c69b35d085af31d7a5fa09902519f6fbb5a6e99f"
+    },
+    {
+      "path": "openclaw/history/manifest.json",
+      "bytes": 806,
+      "sha256": "eeefd756806f28e3e48579b58892329ed6cb542d8a637a9d5899c4c028cc48c7"
+    },
+    {
+      "path": "openclaw/history/scan-summary.json",
+      "bytes": 1810,
+      "sha256": "c4361a86dc3fdcf023b47f70a379e5a5986c8f30d9193f3786f9ec4416027284"
+    },
+    {
+      "path": "openclaw/history/summary.derived.json",
+      "bytes": 27429,
+      "sha256": "5e28afeeb83a9dc8ca72892d36be6d6645b69a6abea53643bac4cebbbab2a345"
+    },
+    {
+      "path": "openclaw/history/SUMMARY.md",
+      "bytes": 2368,
+      "sha256": "dc78a59b492f24c654835a1b9f7167b71712921202af443535b6ef6e9af7f965"
+    },
+    {
+      "path": "openclaw/history/summary.schema.json",
+      "bytes": 56182,
+      "sha256": "bfb3daf025de329062e59fc6b30babda3a99353eda6b78e81f87cbe7b539a820"
+    },
+    {
+      "path": "openclaw/manifest.json",
+      "bytes": 2141,
+      "sha256": "3bae6d814ff1e1d66beb509a0c37387ebdbf85d39d291c54d072630788b2e2e4"
+    },
+    {
+      "path": "openclaw/report.md",
+      "bytes": 2221,
+      "sha256": "11e3d7298a337dea1ba978fb40d91fcdd2359bc6e2b27e06ef5eb510fd73b340"
+    },
+    {
+      "path": "openclaw/scan-summary.json",
+      "bytes": 826,
+      "sha256": "53381082eec2f7071e67793994fb0d9a6b7cfb67c3ef5edad07efaca70164ae1"
+    },
+    {
+      "path": "report.md",
+      "bytes": 4917,
+      "sha256": "f981ffe71f94b556cfe3113dddeac9ecd6f872f9c948dff779bb09a687098fd6"
+    },
+    {
+      "path": "shared-core/n03-review/cold-cache-summary.json",
+      "bytes": 3319,
+      "sha256": "6550c931046e3c7568b72cc02e14223b21ed3bfa28d7f1e4a97b0cf4c123dbd3"
+    },
+    {
+      "path": "shared-core/n03-review/cold-cache-tests.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "shared-core/n03-review/cold-cleanup-observation.json",
+      "bytes": 835,
+      "sha256": "586609a5ba9a01db23297ff342add2d922e7745cb9974fe22c7faa7ad671d1df"
+    },
+    {
+      "path": "shared-core/n03-review/go-toolchain-build.txt",
+      "bytes": 212,
+      "sha256": "2b5a7d46c43063427d1af06e019a82c3fbb0ef59e7033cd9c940ff0faa154a31"
+    },
+    {
+      "path": "shared-core/n03-review/manifest.json",
+      "bytes": 1858,
+      "sha256": "af9adf8b2214f201af1a4b59f256636e9d17ff6f420067f014e093e8880b77d5"
+    },
+    {
+      "path": "shared-core/n03-review/process-observation.json",
+      "bytes": 856,
+      "sha256": "7d262c48eee5576141d8a3f70e407dba08354740cad7a7210f0fc3064962b518"
+    },
+    {
+      "path": "shared-core/n03-review/report.md",
+      "bytes": 7392,
+      "sha256": "57cb2bdce0236c9a466bb2416d3f6229913a5575ae0df3e6a5cd17c4dad1525c"
+    },
+    {
+      "path": "shared-core/n03-review/run-n03-cold.py",
+      "bytes": 6964,
+      "sha256": "757dfe8810f156ec2cc760173c815bd9f566bfa974d85d2285999511a12d88a4"
+    },
+    {
+      "path": "shared-core/n03-review/run-n03.py",
+      "bytes": 8017,
+      "sha256": "4cdc7821fe1737f82c0b5696c64fda240bfde33cf5c1db822dd9c8cf271169cf"
+    },
+    {
+      "path": "shared-core/n03-review/summary.json",
+      "bytes": 5421,
+      "sha256": "c8396d19108a4bf20523e2e60afb3e7b888afd48b7844eb5997547354b6c827e"
+    },
+    {
+      "path": "shared-core/n03-review/tests.jsonl",
+      "bytes": 14331,
+      "sha256": "75ae97a26e1a359ecc5a3f5587e0fcf13e9c112036b2b1e35298e53c22503f86"
+    },
+    {
+      "path": "shared-core/report.md",
+      "bytes": 2900,
+      "sha256": "7a8b0adc3fbbd3cdd30ec3659890e063efd8f9e895130fbc9bac5e111e2934d5"
+    },
+    {
+      "path": "shared-core/stage-review/adapterinstall-tests.jsonl",
+      "bytes": 4442,
+      "sha256": "8712724ecd1dcf1f73b87e6f74f2ed5d9c0cd4207e544406148d2dc68e128ee5"
+    },
+    {
+      "path": "shared-core/stage-review/pr45-comment.md",
+      "bytes": 1955,
+      "sha256": "35cc9d11fcf2de17ae60e5b285568f063def6138be20cf4dba0e37506fa35d91"
+    },
+    {
+      "path": "shared-core/stage-review/report.md",
+      "bytes": 3285,
+      "sha256": "3ef61956d3b76911015790c16d59d7d64c30a8d6eec9f1c0a8b9af56c046c6cf"
+    },
+    {
+      "path": "shared-core/stage-review/summary.json",
+      "bytes": 2511,
+      "sha256": "cc2542d4aae75e4c1ca200236e579fa65b3bd8beb669172a0c106ab682b074c9"
+    },
+    {
+      "path": "shared-core/verification.json",
+      "bytes": 9135,
+      "sha256": "1450555c0646f5c4c544eb50de2892eb7e277b118de44a8653fd8e288bd81c3b"
+    }
+  ],
+  "git_whitespace_initial_exit_code": 2,
+  "crlf_byte_preserving_attributes": [
+    "openclaw/manifest.json",
+    "openclaw/scan-summary.json",
+    "shared-core/n03-review/cold-cache-summary.json",
+    "shared-core/n03-review/cold-cleanup-observation.json",
+    "shared-core/n03-review/manifest.json",
+    "shared-core/n03-review/process-observation.json",
+    "shared-core/n03-review/summary.json"
+  ]
+}
