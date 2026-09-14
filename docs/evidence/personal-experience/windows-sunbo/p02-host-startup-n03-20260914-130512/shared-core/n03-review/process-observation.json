@@ -1,0 +1,17 @@
+{
+  "run_id": "owned-cache-retry-2",
+  "raw_observation_sha256": "189e5ef63585ff401d1cdc050d95e4e8bc596ae92ed62484e518f45f1d46d554",
+  "observations": [
+    {
+      "observed_utc": "2026-09-14T04:08:41.6526743Z",
+      "phase": "no_process_observed",
+      "process_count": 0,
+      "process_names": [],
+      "jsonl_bytes": 14331,
+      "line_count": 56
+    }
+  ],
+  "method": "Read-only Win32_Process CIM snapshot from the recorded owned Go PID and recursively its descendants; count only, no account identifiers or absolute paths",
+  "derivation": "Normalize PowerShell [null] process_names to [] when process_count is zero; all other observation fields unchanged",
+  "limitations": "The first snapshot happened after test completion; no observed live compilation stage is claimed. This is a scoped snapshot, not continuous tracing."
+}

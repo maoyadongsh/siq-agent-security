@@ -1,0 +1,10 @@
+<GO_EXE>: go1.27.1
+	path	cmd/go
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	-gcflags=cmd/...=-dwarf=false
+	build	-trimpath=true
+	build	CGO_ENABLED=0
+	build	GOARCH=amd64
+	build	GOOS=windows
+	build	GOAMD64=v1

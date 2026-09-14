@@ -1,0 +1,288 @@
+{
+  "schema_version": "derived-openclaw-wsl-a04-allowlist/v1",
+  "artifact_kind": "public_allowlist_derived",
+  "batch": "A04",
+  "scope": {
+    "windows_native_runtime_evidence": false,
+    "single_completed_run_in_scope": true,
+    "result": "failed_before_observed_provider_or_tool_turn",
+    "previous_batches_imported": false,
+    "later_batches_imported": false,
+    "execution_environment": "WSL2/Linux on Windows host"
+  },
+  "derivation": {
+    "original_published": false,
+    "original_modified": false,
+    "source_labels_are_normalized": true,
+    "private_paths_and_identity_values_removed": true,
+    "raw_bytes_hash_semantics": "原始 wrapper 摘要对原文件字节计算。",
+    "decoded_text_hash_semantics": "各 stdout/stderr 摘要对原始 wrapper 内已存储字符串的 UTF-8 编码计算；不是未解码进程字节流的摘要。",
+    "omitted": [
+      "完整 argv/env 与请求",
+      "私有路径、端口、OS 身份、PID、namespace 编号与 inode",
+      "原始警告、日志、堆栈、签名和凭据"
+    ],
+    "public_resource_constant": "/tmp"
+  },
+  "source_hashes": [
+    {
+      "label": "a04_original_private_wrapper",
+      "sha256": "7a1a355815840828087fc794e9615eb7ed1711a2b9eaf04abc6adb77e580bc69"
+    },
+    {
+      "label": "windows_transport_driver",
+      "sha256": "37e4f0f2d4bde09c50a288ae92d748c5b9e88a4032b4683b1d013a1a132fc45d"
+    },
+    {
+      "label": "namespace_parent_harness",
+      "sha256": "de4d78094506632bf6117cf283789298b67448893d948c20201be2fe4377f481"
+    },
+    {
+      "label": "namespace_child_harness",
+      "sha256": "0d57fce1814f0adfcfc6243a8ae2613c50f6cc5d836dc7e92347456f6b651a52"
+    },
+    {
+      "label": "runtime_harness",
+      "sha256": "1261d7c63fedec9557f8b7bc96f8672c8a121f3bae536b7e89eaf859b0c495e6"
+    },
+    {
+      "label": "loopback_guard",
+      "sha256": "c105681c91205b5c00f409fd93e492cbdec16f590c67a111ca0409e52027fa23"
+    },
+    {
+      "label": "node_binary",
+      "sha256": "bc17c508ffeed0ec622934f9b7fa72f8e78da65350e63c3eceb56fa688aa5e12"
+    },
+    {
+      "label": "unshare_binary_after",
+      "sha256": "7863536428c7c77526e21b8b5eaf4744bae48f660c15cf75bf23dee69711ca08"
+    },
+    {
+      "label": "openclaw_package_metadata",
+      "sha256": "a234b616a049b4dedaad49ba0e95ff31afd3f19935e446199e75f78b589d1c21"
+    },
+    {
+      "label": "openclaw_public_entrypoint",
+      "sha256": "97464647c50a1420d530db948cb203826306ef6b3a84810b6801c338366cecaf"
+    },
+    {
+      "label": "openclaw_distribution_entrypoint",
+      "sha256": "1bbc3921048304d7c25a3d882276c1300c453873af390731c63ec53bbe4abcfd"
+    },
+    {
+      "label": "openclaw_resource_loader",
+      "sha256": "62b6668ee808bdcedb6a7fc149aee940005c7fafb55427a0a0a313f38a0cc2d8"
+    },
+    {
+      "label": "openclaw_before_tool_call_wrapper",
+      "sha256": "809c4545e65460961c9cb3e43fcfa506a4829c1a0f6c83889b689ff266903274"
+    },
+    {
+      "label": "openclaw_completion_stream",
+      "sha256": "94fcb8422e4055a977cdd21a8581ec9dc88f57d9e70660369e5286400b6be96d"
+    }
+  ],
+  "execution": {
+    "windows_transport": {
+      "process_started": true,
+      "exit_code": 1,
+      "waited_and_reaped": true,
+      "timeout_field_in_original": null,
+      "stdout": {
+        "sha256": "f602f2f3f3d70f330253a15f9e5cbfdf7477233d4afe910ed44fe38ea3ab9514",
+        "stored_text_characters": 102348,
+        "empty": false,
+        "derived_semantics": "原始父级 JSON 报告，未公开载荷。"
+      },
+      "stderr": {
+        "sha256": "54cbf66986b07c80bf2026411b2799fb4dc82c6da7ca94d20ae1b1c7c8417977",
+        "stored_text_characters": 132,
+        "empty": false,
+        "derived_semantics": "WSL 传输提示非空，含 localhost/NAT 标记及混合编码；不是 Node stderr。"
+      }
+    },
+    "namespace_child": {
+      "process_started": true,
+      "exit_code": 1,
+      "timeout": false,
+      "waited_and_reaped": true,
+      "stdout": {
+        "sha256": "25f5385b86fb3859ef2fd5e74dd279132d9dd00cc62c1f26479695b6cbdc07ec",
+        "stored_text_characters": 42625,
+        "empty": false,
+        "derived_semantics": "子报告包含 namespace 设置成功及 A runtime 失败；整体 pass=false。"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stored_text_characters": 0,
+        "empty": true,
+        "derived_semantics": "namespace 子进程 stderr 为空。"
+      }
+    },
+    "runtime_report": {
+      "return_code": 1,
+      "pass": false,
+      "stdout": {
+        "sha256": "bbc9beab42f56e7ca810e3387025862ca1c407dc54ac23d4583f20098f7deefc",
+        "stored_text_characters": 19536,
+        "empty": false,
+        "derived_semantics": "嵌套 runtime JSON 报告；其回传码不是额外子进程退出记录。"
+      }
+    },
+    "node_cli": {
+      "operation": "OpenClaw agent --local",
+      "process_started": true,
+      "exit_code": 1,
+      "timeout": false,
+      "waited_and_reaped": true,
+      "stdout": {
+        "sha256": "9a9da94a612293580096e886a3f80c49a543d8fcc7a1dcf6443a05451404621f",
+        "stored_text_characters": 117,
+        "empty": false,
+        "derived_semantics": "ok=false、error.type=cli_error，仅给出 generic restricted API 消息。"
+      },
+      "stderr": {
+        "sha256": "381de5e86c649a65ad270ae61e8ec2e7ddeab5a6f9d06e923c4baa334c71e295",
+        "stored_text_characters": 485,
+        "empty": false,
+        "derived_semantics": "报告 generic restricted API 失败，另有日志追加失败警告及一般诊断提示；无致命 resource 或堆栈。"
+      }
+    }
+  },
+  "runtime_observations": {
+    "public_cli_invoked": true,
+    "agent_command_attempted": true,
+    "agent_turn_invoked": null,
+    "agent_turn_observation": "not_observed",
+    "native_tool_exchange_observed": false,
+    "synthetic_provider_started": true,
+    "synthetic_provider_requests": 0,
+    "provider_event_count": 0,
+    "provider_failure_count": 0,
+    "real_model_requests": 0,
+    "siq_plugin_loaded": false,
+    "siq_server_started": false,
+    "siq_invoked": false,
+    "gateway_started": false,
+    "gateway_operation_scope": "本轮未启动/停止 Gateway；不推断既有 Gateway 的运行状态。"
+  },
+  "network_observations": {
+    "recorded_event_count": 1,
+    "event_types": [
+      "native-permissions"
+    ],
+    "provider_actual_connect_count": 0,
+    "provider_request_count": 0,
+    "decision_actual_connect_count": 0,
+    "network_guard_denial_count": 0,
+    "decision_socket_listening": false,
+    "native_permission_readback": {
+      "fixtureRead": true,
+      "fixtureWrite": true,
+      "oldProfileRead": false,
+      "oldProfileWrite": false,
+      "child": false,
+      "worker": false,
+      "addons": false
+    },
+    "limits": "只描述本批守卫记录；不能据此宣称完整 OS 网络隔离。"
+  },
+  "effect_observations": {
+    "openclaw_target_exists_before": false,
+    "openclaw_target_exists_after": false,
+    "openclaw_effect_exact_bytes": false,
+    "runtime_control_unchanged": true,
+    "namespace_probe_effect_exists": true,
+    "namespace_probe_effect_exact": true,
+    "namespace_probe_sentinel_unchanged": true,
+    "namespace_effect_is_openclaw_tool_effect": false,
+    "other_fixture_state_artifacts_present": true,
+    "limits": "namespace 合成探针文件已正确创建；OpenClaw 目标始终不存在。私有树有状态/锁数据库制品，因此不把目标缺失写成完全没有文件写入。"
+  },
+  "namespace_observations": {
+    "fixture_setup_passed": true,
+    "mount_attempted": true,
+    "bind_confirmed": true,
+    "capabilities_dropped": true,
+    "synthetic_tmp_write": true,
+    "parent_threads_before_spawn": 1,
+    "child_threads_before_capset": 1,
+    "child_security_after": {
+      "recorded_threads": 1,
+      "inheritable_zero": true,
+      "permitted_zero": true,
+      "effective_zero": true,
+      "ambient_zero": true,
+      "no_new_privileges": true
+    },
+    "node_security_after_spawn": {
+      "recorded_threads": 1,
+      "inheritable_zero": true,
+      "permitted_zero": true,
+      "effective_zero": true,
+      "ambient_zero": true,
+      "no_new_privileges": true
+    },
+    "child_and_node_user_group_identity_equal": true,
+    "node_parent_relation_verified": true,
+    "node_security_verified": true,
+    "mount_shared_or_master_tags_count": 0,
+    "parent_namespaces_unchanged": true,
+    "parent_tmp_metadata_unchanged": true,
+    "unshare_binary_unchanged": true,
+    "limits": "安全读回是被核对时刻的观察；不能外推整个多线程运行期间。父 /tmp 仅比较前后元数据，未公开或读取其内容。"
+  },
+  "integrity_and_cleanup": {
+    "fixed_sources_and_node_unchanged": true,
+    "windows_transport_waited": true,
+    "namespace_child_waited": true,
+    "node_waited": true,
+    "provider_thread_joined": true,
+    "provider_socket_closed": true,
+    "decision_socket_closed": true,
+    "owned_resources_closed_check": true,
+    "fixture_retained": true
+  },
+  "failure_attribution": {
+    "classification": "generic_restricted_api_only",
+    "fatal_resource_observed": null,
+    "filesystem_error_observer_present": false,
+    "prior_diag03_tmp_cause_applied": false,
+    "log_append_warning_observed": true,
+    "log_append_warning_proven_fatal_cause": false,
+    "siq_block_observed": false,
+    "reason": "本次缺少具体 resource 与致命堆栈；日志追加失败独立记为警告，不能升级为致命原因或嫁接旧 diag03 的 /tmp 归因。"
+  },
+  "not_tested": {
+    "b_case": "not_run",
+    "offline_fail_closed": "not_observed",
+    "provider_tool_roundtrip": "not_observed",
+    "siq_service_authority_chain": "not_run",
+    "full_platform_journey": "not_passed",
+    "windows_native_openclaw": "not_tested"
+  },
+  "original_parent_checks": {
+    "child_success": false,
+    "bounded_and_reaped": true,
+    "parent_namespaces_unchanged": true,
+    "parent_tmp_metadata_unchanged": true,
+    "owned_effect_exact": true,
+    "owned_sentinel_unchanged": true,
+    "unshare_unchanged": true,
+    "runtime_a_success": false
+  },
+  "original_runtime_checks": {
+    "cli_completed": false,
+    "two_native_provider_exchanges": false,
+    "effect_exact_bytes": false,
+    "control_unchanged": true,
+    "provider_actual_connect": false,
+    "no_decision_connect": true,
+    "native_permissions_recorded": true,
+    "no_guard_denial": true,
+    "owned_resources_closed": true,
+    "no_harness_error": true,
+    "source_unchanged": true,
+    "owned_node_security_verified": true
+  }
+}

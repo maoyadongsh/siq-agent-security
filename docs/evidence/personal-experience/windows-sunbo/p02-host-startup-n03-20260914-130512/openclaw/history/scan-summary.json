@@ -1,0 +1,53 @@
+{
+  "schema_version": "derived-public-scan-summary/v1",
+  "scope": "Only this historical public allowlist export; excludes private originals, private scanner calibration and later runtime batches.",
+  "scanner": {
+    "name": "Gitleaks",
+    "version": "8.24.2",
+    "sha256": "e2b9ba6baa1cd385033b37572b084188f351d48ec586eb2cfbc5af10c72bfeb9"
+  },
+  "configuration": {
+    "name": "existing repository configuration",
+    "sha256": "e7ee7c9969928bf97590c038ef98e2eddc34fd506932a2ad1c760b64ac8a5a89",
+    "new_exceptions_added": false
+  },
+  "calibration": {
+    "scope": "One newly generated synthetic GitHub PAT in a plain file; not full repository/history calibration.",
+    "expected_detection": true,
+    "exit_code": 1,
+    "finding_count": 1,
+    "passed": true,
+    "raw_values_published": false
+  },
+  "first_scan": {
+    "exit_code": 0,
+    "finding_count": 0,
+    "passed": true,
+    "subject_file_count": 3,
+    "subjects": [
+      "SUMMARY.md",
+      "summary.derived.json before provenance-only expansion",
+      "summary.schema.json"
+    ]
+  },
+  "static_privacy_review": {
+    "passed": true,
+    "pattern_findings": {
+      "user_home_path": 0,
+      "loopback_endpoint": 0,
+      "raw_identity": 0,
+      "credential_or_private_key": 0,
+      "raw_argument_or_environment_map": 0
+    },
+    "scope": "Checks common private paths, OS identity keys, raw argv/env/request/signature values and common credential formats; manual field whitelist review also performed.",
+    "not_a_complete_secret_detector": true
+  },
+  "schema_validation_passed": true,
+  "content_rescan": {
+    "exit_code": 0,
+    "finding_count": 0,
+    "passed": true,
+    "subject_file_count": 4,
+    "meaning": "Updated content plus the then-existing scan summary; final export scan is separately retained privately."
+  }
+}

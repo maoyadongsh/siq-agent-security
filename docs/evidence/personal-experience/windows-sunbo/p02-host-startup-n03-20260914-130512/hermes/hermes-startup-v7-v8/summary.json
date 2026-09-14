@@ -1,0 +1,280 @@
+{
+  "schema": "windows-hermes-startup-observation-v7-v8/v1",
+  "derivation": "Explicit allowlist from original report and private event/request logs; originals are not changed. No argv, absolute user paths, environment values, nonce values or raw source snippets are included.",
+  "native_matrix_promotion": false,
+  "python_audit_guard_is_os_sandbox": false,
+  "job_is_lifecycle_only": true,
+  "all_rows_are_A_diagnostics_without_SIQ": true,
+  "rows": [
+    {
+      "diagnostic_version": 7,
+      "original_report_sha256": "14f032c0ad080007966000b12d0a1e59c07a35bc32d525a7841efd8090c63987",
+      "local_ignored_report_reference": ".tmp/win-p03-next/hermes-public-cli-startup-v7/startup-private-qv1zh826/report.json",
+      "harness_sha256": "ab2f537fd2523cdc7c8216f22fd44e459f7be4e94362a24dd9443bfde84f769c",
+      "parent_harness_sha256": "adb369f2945a5ecab4147499a37fe9a1003047a2bbd872501bb0606b7307d1d7",
+      "owned_job_helper_sha256": "f22ca2e3a25c8d98eedfc27be11c03f41256bee1ddf643103ea25cff035f13ee",
+      "checkout_head": "3cbbd1dcec7eae5691de465de0ea6fbc459243ae",
+      "source_dirty": false,
+      "source_files_before": {
+        "hermes_cli/main.py": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3",
+        "hermes_constants.py": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162",
+        "hermes_cli/plugins.py": "1b5aae9a34e97c9922b5ab7e76c4bd3562a6ab715a983bf9c4dfe6031c457942",
+        "agent/tool_executor.py": "9634ebdc01b12591753fa9a1653f4aa8937edde7130175bbd69be8a0e5895ab7",
+        "model_tools.py": "c99620c824ab59f341ac7d0e22cde016b0c469d0643e7a5a5a82e0d63176e4b5",
+        "hermes_cli/runtime_provider_backends.py": "b1c31df03b9f1b57bc06d57123e89a94371a5839ab91510b3460a76d5da80d05"
+      },
+      "source_files_unchanged": true,
+      "source_marker_presence_checked_without_contents": {
+        ".env": false,
+        ".update-incomplete": false,
+        ".lazy-refresh-incomplete": false
+      },
+      "siq_candidate_identity_checked_only": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+      "siq_binary_sha256_checked_only": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+      "siq_binary_executed": false,
+      "siq_plugin_installed_or_loaded": false,
+      "B_executed": false,
+      "host_version_from_prior_source_inventory": "0.21.2",
+      "public_entrypoint": "installed venv Python -m hermes_cli.main chat; public CLI, unchanged host dispatcher",
+      "invoked_venv_python_entry_sha256": "e1189fc39481bdb0949aa4eb2b2ad26b849e4d2d8f88c36cf0db3164ae222f5d",
+      "actual_guard_interpreter_pid_or_image_proved": false,
+      "backend_static_identity": [
+        {
+          "program_files_relative": "Git/bin/bash.exe",
+          "sha256": "a32755c3fe6b70dbd1fb19c0ac074fe23b0f603da3f15123f1106d740b6341e3",
+          "file_version": "2.51.0.windows.1",
+          "product_version": "2.51.0.windows.1",
+          "bytes": 47008
+        },
+        {
+          "program_files_relative": "Git/usr/bin/bash.exe",
+          "sha256": "fc362aae1f217d34d02237d99527839dd6cf85b37c7a0277109400bfa0faa594",
+          "file_version": null,
+          "product_version": null,
+          "bytes": 2553064
+        }
+      ],
+      "backend_execution_observed": false,
+      "observation_limit_seconds": 180,
+      "periodic_stack_seconds": 30,
+      "harness_total_elapsed_seconds": 40.814,
+      "case_elapsed_semantics": "Before Popen through communicate, provider and job cleanup, and raw log handling; includes overhead and is not an exact process lifetime.",
+      "result": {
+        "case": "A_startup_diagnostic",
+        "status": "blocked",
+        "exit_code": 0,
+        "host_pid": 16376,
+        "process_reaped": true,
+        "elapsed_seconds": 39.75,
+        "timed_out": false,
+        "guard_loaded": true,
+        "full_tool_result_seen": true,
+        "target_exists": false,
+        "expected_control_content_written": false
+      },
+      "independent_later_exact_entry_pid_query_absent": true,
+      "owned_job": {
+        "purpose": "descendant lifecycle only; not a sandbox",
+        "unnamed_own_job": true,
+        "assigned": true,
+        "verified_in_own_job": true,
+        "closed": true,
+        "handle_inheritable": false,
+        "before_cleanup": {
+          "active_processes": 0,
+          "total_processes": 3,
+          "terminated_processes": 0
+        },
+        "before_handle_close": {
+          "active_processes": 0,
+          "total_processes": 3,
+          "terminated_processes": 0
+        }
+      },
+      "owned_job_limitations": "Job totals do not identify each process. No separate per-descendant image or absent check was recorded. The handshake targets Popen.pid; the actual guard os.getpid was not recorded.",
+      "guard_denied_popen_count": 19,
+      "allowed_devnull_count": 16,
+      "allowed_exact_bash_true_count": 0,
+      "passive_gate_observation_count": 0,
+      "gate_observation_stages": [],
+      "attempted_profile_config_read_observed": true,
+      "configuration_effective_value": "unknown; read attempt does not prove successful parsing or application",
+      "lazy_installer_attempt_observed": false,
+      "recorded_provider_request_count": 12,
+      "recorded_metadata_get_count": 10,
+      "recorded_chat_post_count": 2,
+      "provider_protocol_error_count": 2,
+      "provider_protocol_error_types": [
+        "AssertionError",
+        "AssertionError"
+      ],
+      "provider_count_limitation": "Assertions before requests.append can exclude HTTP requests from the list. This is a recorded-list count, not total HTTP traffic or model-call count.",
+      "private_raw_byte_identities": {
+        "stdout.private.log": {
+          "sha256": "6c2b02412d9532146895ec8418da9afc588fabd5b302769481246a6b9c2bd176",
+          "bytes": 453
+        },
+        "stderr.private.log": {
+          "sha256": "2d23afd8b7a7a28d14f460200ab6fccb2d0a73d87a828b19b6f6f191df59e8f4",
+          "bytes": 38
+        },
+        "startup-stacks.private.log": {
+          "sha256": "2be23440ae9b90c5051f52eefe41e22642e93bac8339a35fa715c026e4f1e499",
+          "bytes": 4562
+        },
+        "guard-events.private.jsonl": {
+          "sha256": "645e0f90977a7797277782a6402195c4721eb65c6085dc7e6bbe43d3a05b7461",
+          "bytes": 76921
+        },
+        "provider-requests.private.json": {
+          "sha256": "95ba3620452f9c181d942cda569fce645e4012544c67a87ee9841be003800bb1",
+          "bytes": 1122
+        },
+        "job-handshake.private.json": {
+          "sha256": "ec00e6e2cbecf0f29039cf7adc4016faafdd68c54d45eeae7380683b00ed2109",
+          "bytes": 135
+        },
+        "job-cleanup.private.json": {
+          "sha256": "c7938b9e62c5b8e8d84c13c3040eced8a97b4e0d28a6da7e7f53bc0a3f71bfa6",
+          "bytes": 412
+        }
+      }
+    },
+    {
+      "diagnostic_version": 8,
+      "original_report_sha256": "72f32e58d264cbd862d5ba0df3496201c492bf27027a2544d7f4ec0f6af089ea",
+      "local_ignored_report_reference": ".tmp/win-p03-next/hermes-public-cli-startup-v8/startup-private-919q6id7/report.json",
+      "harness_sha256": "7e79b7c10341b8fffcb06b8bc231c84f215be709f032ada6e2b995dcd4045663",
+      "parent_harness_sha256": "ab2f537fd2523cdc7c8216f22fd44e459f7be4e94362a24dd9443bfde84f769c",
+      "owned_job_helper_sha256": "f22ca2e3a25c8d98eedfc27be11c03f41256bee1ddf643103ea25cff035f13ee",
+      "checkout_head": "3cbbd1dcec7eae5691de465de0ea6fbc459243ae",
+      "source_dirty": false,
+      "source_files_before": {
+        "hermes_cli/main.py": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3",
+        "hermes_constants.py": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162",
+        "hermes_cli/plugins.py": "1b5aae9a34e97c9922b5ab7e76c4bd3562a6ab715a983bf9c4dfe6031c457942",
+        "agent/tool_executor.py": "9634ebdc01b12591753fa9a1653f4aa8937edde7130175bbd69be8a0e5895ab7",
+        "model_tools.py": "c99620c824ab59f341ac7d0e22cde016b0c469d0643e7a5a5a82e0d63176e4b5",
+        "hermes_cli/runtime_provider_backends.py": "b1c31df03b9f1b57bc06d57123e89a94371a5839ab91510b3460a76d5da80d05"
+      },
+      "source_files_unchanged": true,
+      "source_marker_presence_checked_without_contents": {
+        ".env": false,
+        ".update-incomplete": false,
+        ".lazy-refresh-incomplete": false
+      },
+      "siq_candidate_identity_checked_only": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+      "siq_binary_sha256_checked_only": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+      "siq_binary_executed": false,
+      "siq_plugin_installed_or_loaded": false,
+      "B_executed": false,
+      "host_version_from_prior_source_inventory": "0.21.2",
+      "public_entrypoint": "installed venv Python -m hermes_cli.main chat; public CLI, unchanged host dispatcher",
+      "invoked_venv_python_entry_sha256": "e1189fc39481bdb0949aa4eb2b2ad26b849e4d2d8f88c36cf0db3164ae222f5d",
+      "actual_guard_interpreter_pid_or_image_proved": false,
+      "backend_static_identity": [
+        {
+          "program_files_relative": "Git/bin/bash.exe",
+          "sha256": "a32755c3fe6b70dbd1fb19c0ac074fe23b0f603da3f15123f1106d740b6341e3",
+          "file_version": "2.51.0.windows.1",
+          "product_version": "2.51.0.windows.1",
+          "bytes": 47008
+        },
+        {
+          "program_files_relative": "Git/usr/bin/bash.exe",
+          "sha256": "fc362aae1f217d34d02237d99527839dd6cf85b37c7a0277109400bfa0faa594",
+          "file_version": null,
+          "product_version": null,
+          "bytes": 2553064
+        }
+      ],
+      "backend_execution_observed": false,
+      "observation_limit_seconds": 180,
+      "periodic_stack_seconds": 30,
+      "harness_total_elapsed_seconds": 39.158,
+      "case_elapsed_semantics": "Before Popen through communicate, provider and job cleanup, and raw log handling; includes overhead and is not an exact process lifetime.",
+      "result": {
+        "case": "A_startup_diagnostic",
+        "status": "blocked",
+        "exit_code": 3221225477,
+        "host_pid": 7796,
+        "process_reaped": true,
+        "elapsed_seconds": 38.023,
+        "timed_out": false,
+        "guard_loaded": true,
+        "full_tool_result_seen": false,
+        "target_exists": false,
+        "expected_control_content_written": false
+      },
+      "independent_later_exact_entry_pid_query_absent": true,
+      "owned_job": {
+        "purpose": "descendant lifecycle only; not a sandbox",
+        "unnamed_own_job": true,
+        "assigned": true,
+        "verified_in_own_job": true,
+        "closed": true,
+        "handle_inheritable": false,
+        "before_cleanup": {
+          "active_processes": 0,
+          "total_processes": 3,
+          "terminated_processes": 0
+        },
+        "before_handle_close": {
+          "active_processes": 0,
+          "total_processes": 3,
+          "terminated_processes": 0
+        }
+      },
+      "owned_job_limitations": "Job totals do not identify each process. No separate per-descendant image or absent check was recorded. The handshake targets Popen.pid; the actual guard os.getpid was not recorded.",
+      "guard_denied_popen_count": 10,
+      "allowed_devnull_count": 7,
+      "allowed_exact_bash_true_count": 0,
+      "passive_gate_observation_count": 10,
+      "gate_observation_stages": [
+        "command_or_executable_mismatch"
+      ],
+      "attempted_profile_config_read_observed": true,
+      "configuration_effective_value": "unknown; read attempt does not prove successful parsing or application",
+      "lazy_installer_attempt_observed": false,
+      "recorded_provider_request_count": 10,
+      "recorded_metadata_get_count": 10,
+      "recorded_chat_post_count": 0,
+      "provider_protocol_error_count": 2,
+      "provider_protocol_error_types": [
+        "AssertionError",
+        "AssertionError"
+      ],
+      "provider_count_limitation": "Assertions before requests.append can exclude HTTP requests from the list. This is a recorded-list count, not total HTTP traffic or model-call count.",
+      "private_raw_byte_identities": {
+        "stdout.private.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr.private.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "startup-stacks.private.log": {
+          "sha256": "7ab05a2836cd726ed88f5f950e93b46270e2980b54e8b8df6d87e0c95128fe81",
+          "bytes": 4741
+        },
+        "guard-events.private.jsonl": {
+          "sha256": "51276b717e550ad847fdfe2dd8328c64d33c3becdd08f84b7c175b2030ac5a63",
+          "bytes": 43283
+        },
+        "provider-requests.private.json": {
+          "sha256": "6d3692b8fa5aad6dbdc8366766ade63afab3cfb78416dc26b0b10a91386b9068",
+          "bytes": 603
+        },
+        "job-handshake.private.json": {
+          "sha256": "4866d992677baa6bfe45a0631719db7e34e5078b68872406cf1381c60a16829d",
+          "bytes": 134
+        },
+        "job-cleanup.private.json": {
+          "sha256": "c7938b9e62c5b8e8d84c13c3040eced8a97b4e0d28a6da7e7f53bc0a3f71bfa6",
+          "bytes": 412
+        }
+      }
+    }
+  ]
+}
