@@ -18,6 +18,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 
@@ -57,6 +58,9 @@ func Load(stateDir string) (*Key, error) {
 	}
 	if stateDir == "" {
 		return nil, errors.New("signing: state directory required (fail closed)")
+	}
+	if err := stateformat.ValidatePath(stateDir); err != nil {
+		return nil, err
 	}
 	dir := filepath.Join(stateDir, "keys")
 	if err := statefs.MkdirAll(dir, 0o700); err != nil {
@@ -173,6 +177,9 @@ func LoadExisting(stateDir string) (*Key, error) {
 	}
 	if stateDir == "" {
 		return nil, errors.New("signing: state directory required")
+	}
+	if err := stateformat.ValidatePath(stateDir); err != nil {
+		return nil, err
 	}
 	path := filepath.Join(stateDir, "keys", "signing.seed")
 	info, err := os.Lstat(path)

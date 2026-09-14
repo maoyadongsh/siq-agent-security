@@ -1,0 +1,244 @@
+{
+  "schema_version": "windows-state-path-old-entrypoint-review/v1",
+  "source_candidate": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+  "old_production_base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "scope": {
+    "old_production_entrypoint_overlay": true,
+    "added_helpers_and_new_tests_retained": true,
+    "entire_old_checkout": false,
+    "whole_module_test_run": false,
+    "review_executed_go_or_host": false,
+    "new_native_host_acceptance_pass": false
+  },
+  "source_integrity": {
+    "before_run": "clean_candidate_enforced_by_frozen_runner_assertion_before_output_creation",
+    "recorded_after_clean": true,
+    "independent_current_readback_clean": true,
+    "candidate_unchanged": true
+  },
+  "overlay": {
+    "production_blob_count": 14,
+    "all_modified_existing_production_go_files_included": true,
+    "all_archived_bytes_match_base_git_objects": true,
+    "mapping_exact_no_added_files_overridden": true,
+    "sha256": "cf01dcfdebdb65d2a767526d7288bd3aa8ef1ee1ff8b53f37bdb236dee06d57d"
+  },
+  "cases": [
+    {
+      "name": "environment",
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "selected_test": "TestWindowsStatePathEnvironment",
+      "test_nodes_run": [
+        "TestWindowsStatePathEnvironment"
+      ],
+      "test_nodes_failed": [
+        "TestWindowsStatePathEnvironment"
+      ],
+      "selected_test_elapsed_seconds": 0.04,
+      "package_elapsed_seconds": 8.062,
+      "go_command_elapsed_seconds": 203.74145480000152,
+      "go_exit_code": 1,
+      "assertion_failure_counts": {
+        "invalid primary must fail without fallback": 6,
+        "invalid legacy must fail without default fallback": 1,
+        "invalid default base accepted": 3,
+        "invalid home fallback accepted": 1
+      },
+      "stdout": {
+        "bytes": 4518,
+        "sha256": "8d468d607bbe37837d32ca51df99fb4b06ab3484bb044516f55653e50cfbd42f"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "selected_test_executed": true,
+      "only_expected_assertion_errors_observed": true,
+      "build_fixture_panic_timeout_failure_observed": false,
+      "expected_old_behavior_reproduced": true
+    },
+    {
+      "name": "init-trailing-space",
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "selected_test": "TestWindowsStatePathAliasCommandsRejectBeforeMutation/init/trailing-space",
+      "test_nodes_run": [
+        "TestWindowsStatePathAliasCommandsRejectBeforeMutation",
+        "TestWindowsStatePathAliasCommandsRejectBeforeMutation/init",
+        "TestWindowsStatePathAliasCommandsRejectBeforeMutation/init/trailing-space"
+      ],
+      "test_nodes_failed": [
+        "TestWindowsStatePathAliasCommandsRejectBeforeMutation/init/trailing-space",
+        "TestWindowsStatePathAliasCommandsRejectBeforeMutation/init",
+        "TestWindowsStatePathAliasCommandsRejectBeforeMutation"
+      ],
+      "selected_test_elapsed_seconds": 2.13,
+      "package_elapsed_seconds": 11.89,
+      "go_command_elapsed_seconds": 50.96287740000116,
+      "go_exit_code": 1,
+      "assertion_failure_counts": {
+        "invalid raw environment did not return the path rejection category": 1,
+        "invalid raw environment produced a successful initialization or status payload": 1,
+        "rejected path changed an alias, fallback, or parent fixture": 1
+      },
+      "stdout": {
+        "bytes": 4777,
+        "sha256": "379bda057fb76a4d3243b9b86c3b230d43d77134884e81ef7b7e18d448b74578"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "selected_test_executed": true,
+      "only_expected_assertion_errors_observed": true,
+      "build_fixture_panic_timeout_failure_observed": false,
+      "expected_old_behavior_reproduced": true
+    }
+  ],
+  "effects": {
+    "environment_fixture_persistent_change_assertion_observed": false,
+    "init_fixture_persistent_change_assertion_observed": true,
+    "init_output_nonempty_assertion_observed": true,
+    "init_error_not_err_corrupt_assertion_observed": true,
+    "exact_changed_files_and_counts_recorded": false,
+    "transient_filesystem_operations_observed": false
+  },
+  "timeout_scope": {
+    "go_test_timeout_seconds": 180,
+    "python_subprocess_global_timeout_configured": false,
+    "observed_timeout_failure": false,
+    "command_elapsed_includes_build_and_launch": true
+  },
+  "base_production_blobs": [
+    {
+      "role": "old-production:apps/agentshield/cmd/agentshield/serve_state_directory.go",
+      "git_blob_id": "aede933f04cfda33f22c168d6e2bbaa03ac552a5",
+      "bytes": 649,
+      "sha256": "6b54c9ad58770f0bf9763fc625dec39de723220be8c305e3d992cbb8404dce30"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/adapterinstall/transaction.go",
+      "git_blob_id": "b20a9358826bde09ab0c2ecd25096c479816f858",
+      "bytes": 16251,
+      "sha256": "1c9b9be0f38ddd97437dc1fb5af70b89f4acd375565a5a5988b5c4572a26276f"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/signing/signing.go",
+      "git_blob_id": "4800ea603a51e6dfdcaab5801b3fc23008343e60",
+      "bytes": 6395,
+      "sha256": "e327948db403b5c550df2d74ab8af992403124a46a5b9c2a92ec52171c09b7f1"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/commit.go",
+      "git_blob_id": "f3e924ba1bb0b4695f9ffa26b4634ba52d9044b8",
+      "bytes": 14477,
+      "sha256": "a17415a3a6ce4f8d1562e88cc7b9dd51384a1846ce13cc5aa7ca6d4ba68723cc"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/compatibility.go",
+      "git_blob_id": "e0e6fa5be96ab1a88a5d19d3a1608ad150d8dad9",
+      "bytes": 11157,
+      "sha256": "aa60265490e2c0bc8bb3d2a3137750151f3ce66345e1f54a61373146632a3355"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/identity.go",
+      "git_blob_id": "58eca6499c8343859f080193cbd1a99a1b100d28",
+      "bytes": 879,
+      "sha256": "aa2fdd5dddb5e1d17b685daed6ca5e53b862080a722c2c98a722ba06eb68756e"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/initialize.go",
+      "git_blob_id": "f1ead3d3a0fee5a5c72321f1a655c0b9956a7dae",
+      "bytes": 5369,
+      "sha256": "f0e870f38e41d59e54b43d07758464d11c961b1123ff7b412d447ca94c9781a7"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/migration.go",
+      "git_blob_id": "8fa3144b13c1c09c6ea5e33bd555f229b8017f98",
+      "bytes": 17448,
+      "sha256": "05263922326db462385fc14ba6ddb563695a91f4c7b2be99310f1da032798159"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/recovery.go",
+      "git_blob_id": "20c834951bcb125e4339ae48fca815f1205794fa",
+      "bytes": 1510,
+      "sha256": "2f6edfe73b4f41876c11bfa5726bfb8d6d51c4e1f2898beb84454b0ea5383779"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/service_switch.go",
+      "git_blob_id": "abfd19f03183aa187b035543eab7cc901d81b58c",
+      "bytes": 10015,
+      "sha256": "84470ee33e1f5981af858dec64ad94b128f81e0df88a611a74ae3b2a3761fc88"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/state.go",
+      "git_blob_id": "c71b59a0e6b82527e6d32e065fec4fda00e09dc3",
+      "bytes": 20178,
+      "sha256": "7abf5d2cd1b3a5b36560901af7eba02e222a761e030a7ed4fab4f0d0ffd488fe"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/user_service.go",
+      "git_blob_id": "75dc11944f5049f36f14d56e6e3fad7eea80458b",
+      "bytes": 4418,
+      "sha256": "ce340cf1235b465fbadda87f61ef37591e652fb77dfe3ed5b867edcb41200056"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/state/writer.go",
+      "git_blob_id": "d29b726be670c86059cd323d5a6c2db84b578022",
+      "bytes": 5025,
+      "sha256": "4a3b7ad8996787f4adc750af569c1c2cdb545c450bc6cb01698d4a7fa59c898b"
+    },
+    {
+      "role": "old-production:apps/agentshield/internal/stateformat/format.go",
+      "git_blob_id": "55cc8d0455bd760cd911f79a8b0702921a7fea5c",
+      "bytes": 8255,
+      "sha256": "64673f8f81d88542e34e250113f0264c0d0d9d427f04438460f0454b1f411123"
+    }
+  ],
+  "source_index": [
+    {
+      "role": "private-run-summary",
+      "bytes": 6653,
+      "sha256": "d110e0b1dcad643d8e4412a0b7e1113a017f65b5b0c1a246e7be3979fdee64e7"
+    },
+    {
+      "role": "overlay-mapping",
+      "bytes": 5650,
+      "sha256": "cf01dcfdebdb65d2a767526d7288bd3aa8ef1ee1ff8b53f37bdb236dee06d57d"
+    },
+    {
+      "role": "frozen-runner",
+      "bytes": 6430,
+      "sha256": "e3f79baf8ef1d3262c51e1d42526d8454c7c23a641750475b21516c838dab1b8"
+    },
+    {
+      "role": "environment-metadata",
+      "bytes": 1106,
+      "sha256": "d1e6f962c3f82c361c1c904ca7b1f8817eae4df06895e7c80cf241d2e41e713a"
+    },
+    {
+      "role": "environment-stdout",
+      "bytes": 4518,
+      "sha256": "8d468d607bbe37837d32ca51df99fb4b06ab3484bb044516f55653e50cfbd42f"
+    },
+    {
+      "role": "environment-stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "init-trailing-space-metadata",
+      "bytes": 1160,
+      "sha256": "2d618ebf0dbada51035b711a89310ab31ece3a12d573992f35e43cf5364a3178"
+    },
+    {
+      "role": "init-trailing-space-stdout",
+      "bytes": 4777,
+      "sha256": "379bda057fb76a4d3243b9b86c3b230d43d77134884e81ef7b7e18d448b74578"
+    },
+    {
+      "role": "init-trailing-space-stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

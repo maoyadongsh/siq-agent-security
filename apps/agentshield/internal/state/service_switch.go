@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 
 	"siq-agent-security/apps/agentshield/internal/canon"
@@ -57,6 +58,14 @@ func (p ServiceSwitch) unsigned() (map[string]any, error) {
 	return doc, nil
 }
 func (s *Store) serviceWriter(w *Writer) error {
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return err
+	}
+	if w != nil {
+		if err := stateformat.ValidatePath(w.Dir); err != nil {
+			return err
+		}
+	}
 	if w == nil || filepath.Clean(w.Dir) != filepath.Clean(s.Dir) {
 		return ErrWriterBusy
 	}

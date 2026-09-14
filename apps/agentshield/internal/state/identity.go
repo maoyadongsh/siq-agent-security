@@ -6,11 +6,15 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
 // DirectoryID identifies a canonical existing directory without creating state.
 // It is a locator digest, not an authentication or permanent device identity.
 func (s *Store) DirectoryID() (string, error) {
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return "", err
+	}
 	if s.Dir == "" {
 		return "", errors.New("state: directory required")
 	}

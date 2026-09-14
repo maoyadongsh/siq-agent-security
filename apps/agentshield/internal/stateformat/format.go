@@ -116,6 +116,9 @@ func Digest(s string) bool {
 }
 func Hash(b []byte) string { h := sha256.Sum256(b); return hex.EncodeToString(h[:]) }
 func CheckParents(dir string) error {
+	if err := ValidatePath(dir); err != nil {
+		return err
+	}
 	if dir == "" {
 		return ErrCorrupt
 	}
@@ -139,6 +142,9 @@ func CheckParents(dir string) error {
 	}
 }
 func ReadRegular(path string, limit int64) ([]byte, error) {
+	if err := ValidatePath(path); err != nil {
+		return nil, err
+	}
 	i, e := os.Lstat(path)
 	if e != nil {
 		return nil, e
@@ -163,6 +169,9 @@ func ReadRegular(path string, limit int64) ([]byte, error) {
 	return b, nil
 }
 func DirectoryID(dir string) (string, error) {
+	if err := ValidatePath(dir); err != nil {
+		return "", err
+	}
 	p, e := filepath.Abs(dir)
 	if e != nil {
 		return "", e
@@ -174,6 +183,9 @@ func DirectoryID(dir string) (string, error) {
 	return Hash([]byte("local-state-directory/v1\x00" + p)), nil
 }
 func ReadMarker(dir string) (Marker, error) {
+	if err := ValidatePath(dir); err != nil {
+		return Marker{}, err
+	}
 	b, e := ReadRegular(filepath.Join(dir, MarkerName), Budget)
 	if e != nil {
 		return Marker{}, e
@@ -271,6 +283,9 @@ func checkMigration(dir string) error {
 // A nested artifact/backup marker cannot shadow an incompatible outer state.
 // Paths outside any state root retain their existing owner-specific validation.
 func RequirePath(path string, write bool) error {
+	if err := ValidatePath(path); err != nil {
+		return Fail(err)
+	}
 	if path == "" {
 		return nil
 	}

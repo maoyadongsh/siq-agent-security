@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 	"strings"
@@ -485,6 +486,9 @@ func recoverOperation(dir, platform, key string) (*Result, error) {
 }
 
 func validateTransactionStore(dir string) error {
+	if err := stateformat.ValidatePath(dir); err != nil {
+		return err
+	}
 	if !filepath.IsAbs(dir) {
 		return errors.New("adapter: absolute state directory required")
 	}
