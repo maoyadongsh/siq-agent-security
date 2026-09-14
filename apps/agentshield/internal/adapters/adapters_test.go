@@ -2,6 +2,7 @@ package adapters
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
@@ -32,8 +33,16 @@ func TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean(t *testing.T) {
 		"benign/pure-doc":       "allow",
 	}
 	for rel, want := range cases {
-		in := `{"targetType":"skill","target":{"name":"x"},"source":{"kind":"clawhub","locator":"clawhub:x"},"stagedPath":"` + fixture(rel) + `"}`
-		out := PolicyExec(strings.NewReader(in), deps(t))
+		in, err := json.Marshal(map[string]any{
+			"targetType": "skill",
+			"target":     map[string]string{"name": "x"},
+			"source":     map[string]string{"kind": "clawhub", "locator": "clawhub:x"},
+			"stagedPath": fixture(rel),
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		out := PolicyExec(bytes.NewReader(in), deps(t))
 		if out.Decision != want {
 			t.Fatalf("%s: got %s (%s)", rel, out.Decision, out.Reason)
 		}
@@ -44,14 +53,27 @@ func TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean(t *testing.T) {
 }
 
 func TestPolicyExecFailsClosed(t *testing.T) {
-	for name, in := range map[string]string{
-		"malformed":    `{not json`,
-		"no path":      `{"targetType":"skill"}`,
-		"missing dir":  `{"targetType":"skill","stagedPath":"/nonexistent/skill"}`,
-		"file not dir": `{"targetType":"skill","stagedPath":"` + fixture("benign/pure-doc/SKILL.md") + `"}`,
+	filePath := fixture("benign/pure-doc/SKILL.md")
+	info, err := os.Stat(filePath)
+	if err != nil || !info.Mode().IsRegular() {
+		t.Fatalf("file-not-directory fixture must be an existing regular file: %v", err)
+	}
+	fileRequest, err := json.Marshal(map[string]string{
+		"targetType": "skill",
+		"stagedPath": filePath,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for name, test := range map[string]struct{ input, reason string }{
+		"malformed":    {`{not json`, "malformed install policy request"},
+		"no path":      {`{"targetType":"skill"}`, "no staged path to analyse"},
+		"missing dir":  {`{"targetType":"skill","stagedPath":"/nonexistent/skill"}`, "staged path is not a readable directory"},
+		"file not dir": {string(fileRequest), "staged path is not a readable directory"},
 	} {
-		if out := PolicyExec(strings.NewReader(in), deps(t)); out.Decision != "block" {
-			t.Fatalf("%s: must block, got %s", name, out.Decision)
+		out := PolicyExec(strings.NewReader(test.input), deps(t))
+		if out.Decision != "block" || !strings.Contains(out.Reason, test.reason) {
+			t.Fatalf("%s: must block with reason %q, got %+v", name, test.reason, out)
 		}
 	}
 	if out := PolicyExec(strings.NewReader(`{"targetType":"plugin","stagedPath":"/x"}`), deps(t)); out.Decision != "warn" {
