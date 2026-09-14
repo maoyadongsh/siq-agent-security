@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 	"strconv"
@@ -32,7 +33,11 @@ const DirEnv = product.EnvStateDir
 
 // DefaultDir resolves the per-OS state directory (spec §2.1).
 func DefaultDir() (string, error) {
-	if d := product.Env(product.EnvStateDir, product.EnvStateDirOld); d != "" {
+	d, err := stateDirOverride()
+	if err != nil {
+		return "", err
+	}
+	if d != "" {
 		return d, nil
 	}
 	home, err := os.UserHomeDir()
@@ -44,7 +49,13 @@ func DefaultDir() (string, error) {
 	case "windows":
 		base := os.Getenv("LOCALAPPDATA")
 		if base == "" {
+			if err := stateformat.ValidatePath(home); err != nil {
+				return "", err
+			}
 			base = filepath.Join(home, "AppData", "Local")
+		}
+		if err := stateformat.ValidatePath(base); err != nil {
+			return "", err
 		}
 		newer = filepath.Join(base, product.Name)
 		older = filepath.Join(base, product.LegacyName)
@@ -116,6 +127,9 @@ func Open(dir string) (*Store, error) {
 
 // LoadConfig returns config.json or defaults (block / 47611 / console).
 func (s *Store) LoadConfig() (Config, error) {
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return Config{}, err
+	}
 	raw, err := statefs.ReadFile(filepath.Join(s.Dir, "config.json"))
 	if errors.Is(err, os.ErrNotExist) {
 		return decodeConfig(nil)

@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"strconv"
 	"strings"
 	"time"
@@ -37,6 +38,9 @@ func AcquireWriter(dir string) (*Writer, error) {
 // AcquireScopedWriter keeps independent maintenance locks tied to the actual
 // state root. Never infer the root from a caller-chosen directory basename.
 func AcquireScopedWriter(stateDir, scope string) (*Writer, error) {
+	if err := stateformat.ValidatePath(stateDir); err != nil {
+		return nil, err
+	}
 	switch scope {
 	case "service-control", "adapter-write", "client-releases", "client-snapshots":
 	default:
@@ -50,6 +54,12 @@ func acquireWriter(dir, compatDir string) (*Writer, error) {
 }
 
 func acquireWriterChecked(dir, compatDir string, check func() error) (*Writer, error) {
+	if err := stateformat.ValidatePath(dir); err != nil {
+		return nil, err
+	}
+	if err := stateformat.ValidatePath(compatDir); err != nil {
+		return nil, err
+	}
 	if dir == "" || compatDir == "" {
 		return nil, errors.New("state: directory required")
 	}
@@ -124,6 +134,9 @@ func (w *Writer) Release() error {
 
 // WriterHeld reports whether a live process currently owns serve.lock.
 func WriterHeld(dir string) (bool, int, error) {
+	if err := stateformat.ValidatePath(dir); err != nil {
+		return false, 0, err
+	}
 	path := filepath.Join(dir, LockFile)
 	pid, _, err := readLockFile(path)
 	if errors.Is(err, os.ErrNotExist) {

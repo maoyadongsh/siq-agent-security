@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 )
 
@@ -15,6 +16,9 @@ const recoveryFile = "admin-recovery.token"
 // ReadRecoveryToken never creates state. CLI callers use it only after checking
 // the loopback service identity. This credential is not an adapter token.
 func (s *Store) ReadRecoveryToken() (string, error) {
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return "", err
+	}
 	p := filepath.Join(s.Dir, recoveryFile)
 	info, err := os.Lstat(p)
 	if err != nil {
