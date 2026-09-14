@@ -1,0 +1,152 @@
+{
+  "phase": "baseline",
+  "source_before": {
+    "source": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "source_dirty": false
+  },
+  "source_after": {
+    "source": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "source_dirty": false
+  },
+  "argv": [
+    "test",
+    "-json",
+    "-count=1",
+    "-timeout=120s",
+    "./internal/adapters"
+  ],
+  "cwd": "apps/agentshield",
+  "go_version": "go version go1.27.1 windows/amd64",
+  "go_identity": {
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "windows",
+    "GOOS": "windows",
+    "GOTELEMETRY": "off",
+    "GOTOOLCHAIN": "local",
+    "GOVERSION": "go1.27.1"
+  },
+  "go_exe_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+  "check_executable_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+  "runner_sha256": "ab366c3eb362d1e3f3d39f2743562ac9e1d71b73ab0422486934aa9a780f88d1",
+  "root_acl_before": {
+    "ace_count": 3,
+    "broad_aces": false,
+    "protected": true,
+    "full_control": true,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ]
+  },
+  "root_acl_after": {
+    "full_control": true,
+    "ace_count": 3,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "protected": true,
+    "broad_aces": false
+  },
+  "cache_parent_acl": {
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "ace_count": 3,
+    "full_control": true,
+    "protected": true,
+    "broad_aces": false
+  },
+  "cache_policy": "Reuse earlier owned private N03 build cache; prior raw evidence unchanged",
+  "started_utc": "2026-09-14T06:15:38.654723+00:00",
+  "finished_utc": "2026-09-14T06:16:26.386475+00:00",
+  "exit_code": 1,
+  "outer_timeout_seconds": 300,
+  "outer_timed_out": false,
+  "cleanup_exit": null,
+  "direct_process_reaped": true,
+  "raw_bytes": 5406,
+  "raw_sha256": "ef83a9c99901c677bb718cb7cdd3cd1fd5fc3720c80d61634c9f3e0f8fc3eafe",
+  "derived_jsonl_bytes": 5637,
+  "derived_jsonl_sha256": "bf87351c0a4aeaa31098bb7a5db6b753409d8e7d6ee4ad0b5c262b495e7b4a94",
+  "event_count": 25,
+  "non_json_lines": 0,
+  "top_level_counts": {
+    "pass": 4,
+    "fail": 1,
+    "skip": 0
+  },
+  "subtest_counts": {
+    "pass": 0,
+    "fail": 0,
+    "skip": 0
+  },
+  "terminal_tests": [
+    {
+      "Package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "Test": "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean",
+      "Action": "fail",
+      "Elapsed": 0.01
+    },
+    {
+      "Package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "Test": "TestPolicyExecFailsClosed",
+      "Action": "pass",
+      "Elapsed": 0.02
+    },
+    {
+      "Package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "Test": "TestCodeBuddyHookMapping",
+      "Action": "pass",
+      "Elapsed": 0.04
+    },
+    {
+      "Package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "Test": "TestCodeBuddyHookFailClosedTable",
+      "Action": "pass",
+      "Elapsed": 0.28
+    },
+    {
+      "Package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "Test": "TestCodeBuddyPostToolUseObservesAndNeverBlocks",
+      "Action": "pass",
+      "Elapsed": 0.02
+    }
+  ],
+  "package_terminal_events": [
+    {
+      "Time": "2026-09-14T14:16:24.9439614+08:00",
+      "Action": "fail",
+      "Package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "Elapsed": 4.917
+    }
+  ],
+  "expected_top_level_tests": [
+    "TestCodeBuddyHookFailClosedTable",
+    "TestCodeBuddyHookMapping",
+    "TestCodeBuddyPostToolUseObservesAndNeverBlocks",
+    "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean",
+    "TestPolicyExecFailsClosed"
+  ],
+  "expected_test_set_matches": true,
+  "source_unchanged_clean": true,
+  "redaction": "Exact case-insensitive owned path prefixes, repeated slash/backslash separators including nested JSON; account SID pattern. Raw bytes retained privately.",
+  "environment": {
+    "child_allowlist": true,
+    "synthetic_home_profile_appdata_tmp": true,
+    "go_proxy_sumdb_off": true,
+    "no_host_optins_or_credentials": true,
+    "test_path_roles": [
+      "Go bin",
+      "Windows System32"
+    ],
+    "controller_git_acl_queries_inherit_controller_environment": true
+  },
+  "scope": "Native Windows component tests/checks, no real host acceptance, no release SIQ binary created"
+}
