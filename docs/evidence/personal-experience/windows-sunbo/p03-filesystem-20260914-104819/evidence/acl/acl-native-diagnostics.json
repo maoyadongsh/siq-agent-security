@@ -1,0 +1,916 @@
+{
+  "schema_version": "windows-acl-native-diagnostics/v1",
+  "observed_at_utc": "2026-09-14T02:24:50.0618920Z",
+  "candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "worktree_head_start": "973541733ccdb25d4578e56033901e4829ff257c",
+  "worktree_head_end": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty_start": false,
+  "source_dirty_end": false,
+  "method": "Windows native candidate init/pubkey plus DACL trustee observation and public-marker attribute fixture",
+  "generated_random_secrets_only_under_verified_private_acl": true,
+  "broad_fixture_secret_files_absent_after_init": true,
+  "broad_seed_type": "Public deterministic 32-zero-byte seed; no server or signed business object; not a real secret",
+  "broad_random_secret_generation_tested": false,
+  "public_seed_bytes_and_dacl_preserved": true,
+  "explicit_create_denial_dacl_preserved": true,
+  "explicit_create_denial_no_files": true,
+  "readonly_attribute_observation": {
+    "method": "Win32 ReadOnly attribute via .NET; Go Chmod mapping separately source-reviewed",
+    "file_write_rejected": true,
+    "write_error_hresult": -2147024891,
+    "file_append_succeeded_after_attribute_restore": true,
+    "dacl_unchanged": true,
+    "directory_readonly_attribute_retained": true,
+    "directory_dacl_unchanged": true
+  },
+  "outer_acl_before": {
+    "path": ".",
+    "directory": true,
+    "attributes": "Directory",
+    "owner": "current_user",
+    "inheritance_protected": true,
+    "descriptor_sha256": "02d1e25fe5c20e44957ae228f582eb4c81632222bee01c884a0134aff67a480f",
+    "entries": [
+      {
+        "trustee": "SYSTEM",
+        "type": "Allow",
+        "rights": "FullControl",
+        "mask": 2032127,
+        "inherited": false,
+        "inheritance": "ContainerInherit, ObjectInherit",
+        "propagation": "None"
+      },
+      {
+        "trustee": "Administrators",
+        "type": "Allow",
+        "rights": "FullControl",
+        "mask": 2032127,
+        "inherited": false,
+        "inheritance": "ContainerInherit, ObjectInherit",
+        "propagation": "None"
+      },
+      {
+        "trustee": "current_user",
+        "type": "Allow",
+        "rights": "FullControl",
+        "mask": 2032127,
+        "inherited": false,
+        "inheritance": "ContainerInherit, ObjectInherit",
+        "propagation": "None"
+      }
+    ],
+    "everyone_effective_rights": {
+      "api": "GetEffectiveRightsFromAclW",
+      "win32_error": 0,
+      "mask": "0x00000000",
+      "file_read_data": false,
+      "file_write_data": false,
+      "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+    }
+  },
+  "outer_acl_after": {
+    "path": ".",
+    "directory": true,
+    "attributes": "Directory",
+    "owner": "current_user",
+    "inheritance_protected": true,
+    "descriptor_sha256": "02d1e25fe5c20e44957ae228f582eb4c81632222bee01c884a0134aff67a480f",
+    "entries": [
+      {
+        "trustee": "SYSTEM",
+        "type": "Allow",
+        "rights": "FullControl",
+        "mask": 2032127,
+        "inherited": false,
+        "inheritance": "ContainerInherit, ObjectInherit",
+        "propagation": "None"
+      },
+      {
+        "trustee": "Administrators",
+        "type": "Allow",
+        "rights": "FullControl",
+        "mask": 2032127,
+        "inherited": false,
+        "inheritance": "ContainerInherit, ObjectInherit",
+        "propagation": "None"
+      },
+      {
+        "trustee": "current_user",
+        "type": "Allow",
+        "rights": "FullControl",
+        "mask": 2032127,
+        "inherited": false,
+        "inheritance": "ContainerInherit, ObjectInherit",
+        "propagation": "None"
+      }
+    ],
+    "everyone_effective_rights": {
+      "api": "GetEffectiveRightsFromAclW",
+      "win32_error": 0,
+      "mask": "0x00000000",
+      "file_read_data": false,
+      "file_write_data": false,
+      "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+    }
+  },
+  "outer_acl_preserved": true,
+  "commands": [
+    {
+      "case": "private-init",
+      "command": [
+        "init"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 257,
+      "stderr_bytes": 0,
+      "access_denied_diagnostic": false,
+      "error_raw_archived": false,
+      "initialization_status": "initialized"
+    },
+    {
+      "case": "private-pubkey-generation",
+      "command": [
+        "pubkey"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 45,
+      "stderr_bytes": 0,
+      "access_denied_diagnostic": false,
+      "error_raw_archived": false,
+      "public_key_decodes_to_32_bytes": true
+    },
+    {
+      "case": "broad-init-no-secret-generation",
+      "command": [
+        "init"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 257,
+      "stderr_bytes": 0,
+      "access_denied_diagnostic": false,
+      "error_raw_archived": false,
+      "initialization_status": "initialized"
+    },
+    {
+      "case": "broad-preexisting-public-seed-load",
+      "command": [
+        "pubkey"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 45,
+      "stderr_bytes": 0,
+      "access_denied_diagnostic": false,
+      "error_raw_archived": false,
+      "public_key_decodes_to_32_bytes": true
+    },
+    {
+      "case": "explicit-dacl-deny-create-init",
+      "command": [
+        "init"
+      ],
+      "exit_code": 1,
+      "timeout": false,
+      "stdout_bytes": 0,
+      "stderr_bytes": 141,
+      "access_denied_diagnostic": true,
+      "error_raw_archived": false
+    },
+    {
+      "case": "readonly-directory-attribute-init",
+      "command": [
+        "init"
+      ],
+      "exit_code": 0,
+      "timeout": false,
+      "stdout_bytes": 257,
+      "stderr_bytes": 0,
+      "access_denied_diagnostic": false,
+      "error_raw_archived": false,
+      "initialization_status": "initialized"
+    }
+  ],
+  "acl_observations": [
+    {
+      "path": "private-generated/state/",
+      "directory": true,
+      "attributes": "Directory",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "fc748e717c593ac68193306d1fa9c1881cd34545a8c44852d80d7bafcfdd59fe",
+      "entries": [
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x00000000",
+        "file_read_data": false,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "private-generated/state/keys",
+      "directory": true,
+      "attributes": "Directory",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "fc748e717c593ac68193306d1fa9c1881cd34545a8c44852d80d7bafcfdd59fe",
+      "entries": [
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x00000000",
+        "file_read_data": false,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "private-generated/state/keys/signing.seed",
+      "directory": false,
+      "attributes": "Archive",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "09213aa8bef4f79d8eb302c4c3f00cf094e106e56ea615c41e559d6cbc472ede",
+      "entries": [
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x00000000",
+        "file_read_data": false,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "private-generated/state/backups",
+      "directory": true,
+      "attributes": "Directory",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "fc748e717c593ac68193306d1fa9c1881cd34545a8c44852d80d7bafcfdd59fe",
+      "entries": [
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x00000000",
+        "file_read_data": false,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "public-broad-parent/state/",
+      "directory": true,
+      "attributes": "Directory",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "9a87ab825da281d37b88b4348a1ae71eed31e391e4588574643b111a8fecaf06",
+      "entries": [
+        {
+          "trustee": "Everyone",
+          "type": "Allow",
+          "rights": "ReadAndExecute, Synchronize",
+          "mask": 1179817,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x001200a9",
+        "file_read_data": true,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "public-broad-parent/state/keys",
+      "directory": true,
+      "attributes": "Directory",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "9a87ab825da281d37b88b4348a1ae71eed31e391e4588574643b111a8fecaf06",
+      "entries": [
+        {
+          "trustee": "Everyone",
+          "type": "Allow",
+          "rights": "ReadAndExecute, Synchronize",
+          "mask": 1179817,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x001200a9",
+        "file_read_data": true,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "public-broad-parent/state/config.json",
+      "directory": false,
+      "attributes": "Archive",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "d73f93c621b346cdf66d426597f0540ebfd5cb874a220f88244fb689a4665d41",
+      "entries": [
+        {
+          "trustee": "Everyone",
+          "type": "Allow",
+          "rights": "ReadAndExecute, Synchronize",
+          "mask": 1179817,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x001200a9",
+        "file_read_data": true,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "public-broad-parent/state/state-format.json",
+      "directory": false,
+      "attributes": "Archive",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "d73f93c621b346cdf66d426597f0540ebfd5cb874a220f88244fb689a4665d41",
+      "entries": [
+        {
+          "trustee": "Everyone",
+          "type": "Allow",
+          "rights": "ReadAndExecute, Synchronize",
+          "mask": 1179817,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x001200a9",
+        "file_read_data": true,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "public-broad-parent/state/backups",
+      "directory": true,
+      "attributes": "Directory",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "9a87ab825da281d37b88b4348a1ae71eed31e391e4588574643b111a8fecaf06",
+      "entries": [
+        {
+          "trustee": "Everyone",
+          "type": "Allow",
+          "rights": "ReadAndExecute, Synchronize",
+          "mask": 1179817,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x001200a9",
+        "file_read_data": true,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "public-broad-parent/state/keys/signing.seed",
+      "directory": false,
+      "attributes": "Archive",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "d73f93c621b346cdf66d426597f0540ebfd5cb874a220f88244fb689a4665d41",
+      "entries": [
+        {
+          "trustee": "Everyone",
+          "type": "Allow",
+          "rights": "ReadAndExecute, Synchronize",
+          "mask": 1179817,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x001200a9",
+        "file_read_data": true,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "public-broad-parent/state/backups/public-marker.txt",
+      "directory": false,
+      "attributes": "Archive",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "d73f93c621b346cdf66d426597f0540ebfd5cb874a220f88244fb689a4665d41",
+      "entries": [
+        {
+          "trustee": "Everyone",
+          "type": "Allow",
+          "rights": "ReadAndExecute, Synchronize",
+          "mask": 1179817,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x001200a9",
+        "file_read_data": true,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "deny-create",
+      "directory": true,
+      "attributes": "Directory",
+      "owner": "current_user",
+      "inheritance_protected": true,
+      "descriptor_sha256": "8b717a6d131be386796d27bd6d6199936719c31890b8145eb508759fd22876cb",
+      "entries": [
+        {
+          "trustee": "current_user",
+          "type": "Deny",
+          "rights": "CreateFiles, CreateDirectories",
+          "mask": 6,
+          "inherited": false,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": false,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": false,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": false,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x00000000",
+        "file_read_data": false,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "attribute-marker/public-marker.txt",
+      "directory": false,
+      "attributes": "ReadOnly, Archive",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "09213aa8bef4f79d8eb302c4c3f00cf094e106e56ea615c41e559d6cbc472ede",
+      "entries": [
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "None",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x00000000",
+        "file_read_data": false,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    },
+    {
+      "path": "attribute-directory",
+      "directory": true,
+      "attributes": "ReadOnly, Directory",
+      "owner": "current_user",
+      "inheritance_protected": false,
+      "descriptor_sha256": "fc748e717c593ac68193306d1fa9c1881cd34545a8c44852d80d7bafcfdd59fe",
+      "entries": [
+        {
+          "trustee": "SYSTEM",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "Administrators",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        },
+        {
+          "trustee": "current_user",
+          "type": "Allow",
+          "rights": "FullControl",
+          "mask": 2032127,
+          "inherited": true,
+          "inheritance": "ContainerInherit, ObjectInherit",
+          "propagation": "None"
+        }
+      ],
+      "everyone_effective_rights": {
+        "api": "GetEffectiveRightsFromAclW",
+        "win32_error": 0,
+        "mask": "0x00000000",
+        "file_read_data": false,
+        "file_write_data": false,
+        "scope": "DACL trustee calculation only; no second-user logon or access-token test"
+      }
+    }
+  ],
+  "second_user_access_tested": false,
+  "backup_acl_preservation_tested": false,
+  "system_users_created": 0,
+  "elevation_requested": false,
+  "system_tasks_created": 0,
+  "parent_acl_modified": false,
+  "production_host_configuration_modified": false,
+  "original_logs_archived": false,
+  "limits": [
+    "GetEffectiveRightsFromAclW observes DACL trustee rights, not a real second-user token, privilege or logon session",
+    "Private outer directory is not assumed to prevent child access when traversal checks can be bypassed",
+    "Broad-ACL fresh random key generation remains source-based inference; only a known public fixture seed is loaded there",
+    "Backup directory/marker ACL observation is not real migration or backup permission-preservation acceptance",
+    "No live decision service, model call, approval or tool execution"
+  ]
+}

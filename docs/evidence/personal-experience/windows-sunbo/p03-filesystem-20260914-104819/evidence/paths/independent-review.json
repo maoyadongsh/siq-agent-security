@@ -1,0 +1,227 @@
+{
+  "schema_version": "windows-path-sharing-independent-review/v1",
+  "recorded_at_utc": "2026-09-14T02:36:15.2244778Z",
+  "review_type": "Independent source/result review plus already-completed read-only native metadata observations",
+  "candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "checkout_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "input_files": [
+    {
+      "path": "probe.py",
+      "sha256": "76cb271f9975d109d5063935ddbce6969b9d8758156815881a6289f04a656724"
+    },
+    {
+      "path": "results-20260914.json",
+      "sha256": "f2ee1ac82c691b39ffe5f552fbc0d3004de182c30e7e7af01f81249f5bccf82c"
+    },
+    {
+      "path": "sharing-recheck.py",
+      "sha256": "dae2dc365a91ab0dfe4d092d8cd12eff9a134f34ea6b1071df08b887b095ed35"
+    },
+    {
+      "path": "sharing-results-20260914.json",
+      "sha256": "79cd0d8376fdba29b5da518de4871620691c3416ab04f8fb67227d865ac763a7"
+    }
+  ],
+  "input_links_verified": {
+    "initial_probe_hash_matches": true,
+    "sharing_helper_hash_matches": true,
+    "sharing_probe_hash_matches": true,
+    "initial_result_hash_matches": true,
+    "candidate_consistent": true,
+    "binary_consistent": true
+  },
+  "original_v1_counts": {
+    "total": 14,
+    "pass": 9,
+    "fail": 5,
+    "original_results_unchanged": true
+  },
+  "path_status_and_snapshot_assertions": [
+    {
+      "case": "unicode_spaces",
+      "state_status_exit_code": 0,
+      "state_status_exit_zero": true,
+      "after_init_tree_sha256": "85383d3e7e2e1756bec2eac9b1f42adc3bedd82514eed2b21528a2b921fc8e03",
+      "after_status_tree_sha256": "85383d3e7e2e1756bec2eac9b1f42adc3bedd82514eed2b21528a2b921fc8e03",
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "lower_drive",
+      "state_status_exit_code": 0,
+      "state_status_exit_zero": true,
+      "after_init_tree_sha256": "b5882a314dade8186e301163fed08738693c26186608227bebd1fce6573165fb",
+      "after_status_tree_sha256": "b5882a314dade8186e301163fed08738693c26186608227bebd1fce6573165fb",
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "trailing_dot",
+      "state_status_exit_code": 0,
+      "state_status_exit_zero": true,
+      "after_init_tree_sha256": "ff27c7ad0c93924ad9ac1142127566966137f75359050cca875a9d654cf7ea47",
+      "after_status_tree_sha256": "ff27c7ad0c93924ad9ac1142127566966137f75359050cca875a9d654cf7ea47",
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "trailing_space",
+      "state_status_exit_code": 0,
+      "state_status_exit_zero": true,
+      "after_init_tree_sha256": "3674082f064b0dd49f1bba78e7fcb7182886e5ba275d706d5fa3ad29c093c3e4",
+      "after_status_tree_sha256": "3674082f064b0dd49f1bba78e7fcb7182886e5ba275d706d5fa3ad29c093c3e4",
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "reserved_nul",
+      "state_status_exit_code": 0,
+      "state_status_exit_zero": true,
+      "after_init_tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+      "after_status_tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "reserved_con_extension",
+      "state_status_exit_code": 0,
+      "state_status_exit_zero": true,
+      "after_init_tree_sha256": "5ccec859839b447e4fb5503801b245599e221906328a06af2dd6287cd382b851",
+      "after_status_tree_sha256": "5ccec859839b447e4fb5503801b245599e221906328a06af2dd6287cd382b851",
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "ads_component",
+      "state_status_exit_code": 0,
+      "state_status_exit_zero": true,
+      "after_init_tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+      "after_status_tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "long_path",
+      "state_status_exit_code": 0,
+      "state_status_exit_zero": true,
+      "after_init_tree_sha256": "e95e737d06c410b693695165aecf843d5a45430520e064fe1f239bd54454de5c",
+      "after_status_tree_sha256": "e95e737d06c410b693695165aecf843d5a45430520e064fe1f239bd54454de5c",
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "extended_path",
+      "state_status_exit_code": 0,
+      "state_status_exit_zero": true,
+      "after_init_tree_sha256": "0ddac1c5edb693b42756d4edbdc1fdaafbde3a827277ab6f9d70e57a3c37600f",
+      "after_status_tree_sha256": "0ddac1c5edb693b42756d4edbdc1fdaafbde3a827277ab6f9d70e57a3c37600f",
+      "diagnostic_snapshot_unchanged": true
+    }
+  ],
+  "native_sharing_recheck_assertions": [
+    {
+      "case": "exclusive_config",
+      "recorded_status": "pass",
+      "native_second_open_error": 32,
+      "init_while_locked_exit": 1,
+      "exclusive_handle_closed": true,
+      "init_after_release_exit": 0,
+      "before_tree_sha256": "bb021daa788074ea54a23ac8987dfa3d3371b90f85964e335ce929dc20f92777",
+      "after_release_tree_sha256": "bb021daa788074ea54a23ac8987dfa3d3371b90f85964e335ce929dc20f92777",
+      "after_recovery_tree_sha256": "bb021daa788074ea54a23ac8987dfa3d3371b90f85964e335ce929dc20f92777",
+      "all_persistent_snapshots_equal": true,
+      "verified_pass": true
+    },
+    {
+      "case": "exclusive_marker",
+      "recorded_status": "pass",
+      "native_second_open_error": 32,
+      "init_while_locked_exit": 1,
+      "exclusive_handle_closed": true,
+      "init_after_release_exit": 0,
+      "before_tree_sha256": "a86c94edc9d43274d4fc2632f67c4bf81eb68aa225d1e36834f52fbaae430622",
+      "after_release_tree_sha256": "a86c94edc9d43274d4fc2632f67c4bf81eb68aa225d1e36834f52fbaae430622",
+      "after_recovery_tree_sha256": "a86c94edc9d43274d4fc2632f67c4bf81eb68aa225d1e36834f52fbaae430622",
+      "all_persistent_snapshots_equal": true,
+      "verified_pass": true
+    },
+    {
+      "case": "exclusive_instance",
+      "recorded_status": "pass",
+      "native_second_open_error": 32,
+      "init_while_locked_exit": 1,
+      "exclusive_handle_closed": true,
+      "init_after_release_exit": 0,
+      "before_tree_sha256": "b2f7e1c52d471de5179832ded1a94331f9843882ed410530880bb736fa3f9b8f",
+      "after_release_tree_sha256": "b2f7e1c52d471de5179832ded1a94331f9843882ed410530880bb736fa3f9b8f",
+      "after_recovery_tree_sha256": "b2f7e1c52d471de5179832ded1a94331f9843882ed410530880bb736fa3f9b8f",
+      "all_persistent_snapshots_equal": true,
+      "verified_pass": true
+    }
+  ],
+  "snapshot_scope": "Entry names, default and named-stream content hashes, modes, link counts, Windows attributes, owner/group/DACL descriptor hashes; endpoint snapshots only, no timestamps or transient-write tracing",
+  "native_alias_metadata": {
+    "method": "Read-only os.scandir with extended-path spelling plus native CreateFileW access=0/share=7/OPEN_EXISTING and GetFileInformationByHandle; all acquired handles closed",
+    "observation_recorded_before_this_artifact": true,
+    "reexecuted_for_this_artifact": false,
+    "observed_clock_timestamp_not_retained": true,
+    "private_paths_omitted": true,
+    "raw_file_ids_and_volume_ids_omitted": true,
+    "observations": [
+      {
+        "case": "trailing_dot",
+        "requested_leaf": "target.",
+        "enumerated_exact_child_names": [
+          "target"
+        ],
+        "normal_requested_open_error": 0,
+        "normal_requested_is_directory": true,
+        "normal_requested_is_reparse": false,
+        "extended_exact_requested_open_error": 2,
+        "extended_exact_trimmed_leaf": "target",
+        "extended_exact_trimmed_open_error": 0,
+        "extended_exact_trimmed_is_directory": true,
+        "extended_exact_trimmed_is_reparse": false,
+        "normal_request_and_trimmed_same_file_id": true,
+        "literal_exact_object_exists": false
+      },
+      {
+        "case": "trailing_space",
+        "requested_leaf": "target ",
+        "enumerated_exact_child_names": [
+          "target"
+        ],
+        "normal_requested_open_error": 0,
+        "normal_requested_is_directory": true,
+        "normal_requested_is_reparse": false,
+        "extended_exact_requested_open_error": 2,
+        "extended_exact_trimmed_leaf": "target",
+        "extended_exact_trimmed_open_error": 0,
+        "extended_exact_trimmed_is_directory": true,
+        "extended_exact_trimmed_is_reparse": false,
+        "normal_request_and_trimmed_same_file_id": true,
+        "literal_exact_object_exists": false
+      }
+    ]
+  },
+  "alias_conclusion": "Product accepted trailing-dot/trailing-space inputs and operations resolved to the OS-trimmed target directory. Exact extended-path enumeration/opening confirmed the exact requested literal objects do not exist; this is not merely observer normalization. No claim that product code itself strips characters, or that an escape/authorization bypass occurred.",
+  "original_lock_measurement_reason": {
+    "raw_field": "sharing-results-20260914.json:initial_lock_reason",
+    "raw_statement_is_not_independently_proven_by_v1": true,
+    "old_observed_boolean": "sharing_violation_proved=false",
+    "missing_old_fields": [
+      "CRT errno",
+      "CRT winerror",
+      "whether read succeeded versus raised a non-32 exception"
+    ],
+    "source_review": "probe.py maps both a successful read and an OSError whose winerror is not 32 to false",
+    "authoritative_interpretation": "v1未取得原生冲突码，补充验证已确认，旧测量具体原因unknown",
+    "old_measurement_specific_cause": "unknown",
+    "raw_json_modified": false
+  },
+  "final_conclusions": [
+    "Preserve v1 14 cases: 9 pass and 5 fail; do not relabel its three sharing failures",
+    "Three supplemental native sharing cases pass for existing initialization metadata reads only",
+    "All nine initial path cases returned state-status exit 0 and retained identical after-init/after-status persistent snapshots",
+    "Two trailing-character aliases remain actual failures under the taskbook exact-path boundary requirement"
+  ],
+  "limits": [
+    "No new product tests were run during this independent review or artifact creation",
+    "No raw stdout/stderr or signing private-key contents were read",
+    "No signed publication, rename race, cross-user access, host integration, or transient-zero-write acceptance claim",
+    "Readonly/native metadata conclusions rely on already-observed booleans and Win32 error values; no missing numeric file identifiers were reconstructed"
+  ]
+}

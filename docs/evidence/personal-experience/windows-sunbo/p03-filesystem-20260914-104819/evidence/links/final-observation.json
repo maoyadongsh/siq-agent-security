@@ -1,0 +1,1201 @@
+{
+  "method": "native_ntfs_readback_and_cli_evidence_review",
+  "source_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty": false,
+  "binary_candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "measured_utc": "2026-09-14T02:32:13.9178121Z",
+  "executed_cli_commands": 17,
+  "cli_expectations_met": 17,
+  "expected_nonzero_exits": 5,
+  "native_symlink_creation_failed": true,
+  "native_symlink_win32_error": 1314,
+  "symlink_only_commands_not_run": [
+    "admit-in-root-symlink",
+    "admit-symlink-escape-quarantine",
+    "symlink-marker-state-init",
+    "symlink-marker-status",
+    "symlink-marker-init-denied"
+  ],
+  "hardlink_native_identity_and_link_count_verified": true,
+  "hardlink_content_hash_matches_synthetic_external_alias": true,
+  "junction_quarantine_finding_present": true,
+  "junction_external_sentinel_absent_from_admission_manifest": true,
+  "all_rejected_commands_preserved_full_tree_file_bytes_and_native_acl_attributes": true,
+  "all_scan_inputs_and_external_synthetic_sentinels_preserved": true,
+  "snapshot_excludes_last_access_and_directory_modification_times": true,
+  "sacl_not_requested_or_tested": true,
+  "cleanup_performed": false,
+  "all_fixtures_retained": true,
+  "existing_instances_or_locks_removed": false,
+  "scheduled_tasks_registered": false,
+  "services_started": false,
+  "models_or_hosts_executed": false,
+  "limitations": [
+    "Native CLI and synthetic NTFS fixtures; not host end-to-end acceptance",
+    "Symlink creation denied with Win32 1314; no elevation or policy changes",
+    "Replacement was completed before CLI execution; no concurrent TOCTOU resistance claimed",
+    "Hardlinks remain regular files; no guarantee of rejecting every additional external directory entry",
+    "No inherited-ACL-to-other-user access test, SACL, arbitrary reparse tags, network filesystem or crash-recovery claim"
+  ],
+  "cases": [
+    {
+      "label": "admit-hardlink-regular-file",
+      "argv": [
+        "admit",
+        "<LINK_TEST_ROOT>\\fixtures\\skills\\hardlink-external-alias",
+        "--trust",
+        "trusted"
+      ],
+      "exit_code": 0,
+      "expected_status": "admit",
+      "expectation_met": true,
+      "changed_paths": [
+        "fixtures\\states\\scanner-state\\admissions\\adm-79089bd61c64.json",
+        "fixtures\\states\\scanner-state\\admissions\\adm-79089bd61c64.skill-card.md",
+        "fixtures\\states\\scanner-state\\evidence\\ev-8a32cc5ed4f6bc8c.json"
+      ],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "admit-junction-escape-quarantine",
+      "argv": [
+        "admit",
+        "<LINK_TEST_ROOT>\\fixtures\\skills\\junction-escape",
+        "--trust",
+        "trusted"
+      ],
+      "exit_code": 3,
+      "expected_status": "quarantine",
+      "expectation_met": true,
+      "changed_paths": [
+        "fixtures\\states\\scanner-state\\admissions\\adm-77f35726df0d.json",
+        "fixtures\\states\\scanner-state\\admissions\\adm-77f35726df0d.skill-card.md",
+        "fixtures\\states\\scanner-state\\evidence\\ev-024bc938bd4cbcbc.json",
+        "fixtures\\states\\scanner-state\\evidence\\ev-71a9e1a97142bea9.json"
+      ],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "admit-ordinary-skill",
+      "argv": [
+        "admit",
+        "<LINK_TEST_ROOT>\\fixtures\\skills\\ordinary-中文 空格",
+        "--trust",
+        "trusted"
+      ],
+      "exit_code": 0,
+      "expected_status": "admit",
+      "expectation_met": true,
+      "changed_paths": [
+        "fixtures\\states\\scanner-state\\admissions\\adm-f2d8b8324b86.json",
+        "fixtures\\states\\scanner-state\\admissions\\adm-f2d8b8324b86.skill-card.md",
+        "fixtures\\states\\scanner-state\\evidence\\ev-7555a59748ef4885.json",
+        "fixtures\\states\\scanner-state\\keys\\signing.seed"
+      ],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "hardlink-marker-repeat-init",
+      "argv": [
+        "init",
+        "--port",
+        "47831"
+      ],
+      "exit_code": 0,
+      "expected_status": "",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "hardlink-marker-status",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "expected_status": "ok",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "junction-core-init-denied",
+      "argv": [
+        "init",
+        "--port",
+        "47832"
+      ],
+      "exit_code": 1,
+      "expected_status": "",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "junction-core-status",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "expected_status": "corrupt",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "junction-state-ancestor-pubkey-denied",
+      "argv": [
+        "pubkey"
+      ],
+      "exit_code": 1,
+      "expected_status": "",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "junction-state-ancestor-status",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "expected_status": "corrupt",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "junction-state-root-init-denied",
+      "argv": [
+        "init",
+        "--port",
+        "47831"
+      ],
+      "exit_code": 1,
+      "expected_status": "",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "junction-state-root-status",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "expected_status": "corrupt",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "ordinary-state-init",
+      "argv": [
+        "init",
+        "--port",
+        "47831"
+      ],
+      "exit_code": 0,
+      "expected_status": "",
+      "expectation_met": true,
+      "changed_paths": [
+        "fixtures\\targets\\valid-state-中文 空格",
+        "fixtures\\targets\\valid-state-中文 空格\\action-correlation",
+        "fixtures\\targets\\valid-state-中文 空格\\admissions",
+        "fixtures\\targets\\valid-state-中文 空格\\assets",
+        "fixtures\\targets\\valid-state-中文 空格\\backups",
+        "fixtures\\targets\\valid-state-中文 空格\\challenges",
+        "fixtures\\targets\\valid-state-中文 空格\\checkpoints",
+        "fixtures\\targets\\valid-state-中文 空格\\commits",
+        "fixtures\\targets\\valid-state-中文 空格\\config.json",
+        "fixtures\\targets\\valid-state-中文 空格\\evidence",
+        "fixtures\\targets\\valid-state-中文 空格\\findings",
+        "fixtures\\targets\\valid-state-中文 空格\\grants",
+        "fixtures\\targets\\valid-state-中文 空格\\intent-bindings",
+        "fixtures\\targets\\valid-state-中文 空格\\intents",
+        "fixtures\\targets\\valid-state-中文 空格\\inventory",
+        "fixtures\\targets\\valid-state-中文 空格\\keys",
+        "fixtures\\targets\\valid-state-中文 空格\\local-instance.json",
+        "fixtures\\targets\\valid-state-中文 空格\\logs",
+        "fixtures\\targets\\valid-state-中文 空格\\policies",
+        "fixtures\\targets\\valid-state-中文 空格\\receipts",
+        "fixtures\\targets\\valid-state-中文 空格\\state-format.json"
+      ],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "ordinary-state-repeat-init",
+      "argv": [
+        "init",
+        "--port",
+        "47831"
+      ],
+      "exit_code": 0,
+      "expected_status": "",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "ordinary-state-status",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "expected_status": "ok",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "replaced-marker-init-denied",
+      "argv": [
+        "init",
+        "--port",
+        "47831"
+      ],
+      "exit_code": 1,
+      "expected_status": "",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "replaced-marker-status",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "expected_status": "corrupt",
+      "expectation_met": true,
+      "changed_paths": [],
+      "unexpected_changed_paths": []
+    },
+    {
+      "label": "scanner-state-init",
+      "argv": [
+        "init",
+        "--port",
+        "47834"
+      ],
+      "exit_code": 0,
+      "expected_status": "",
+      "expectation_met": true,
+      "changed_paths": [
+        "fixtures\\states\\scanner-state",
+        "fixtures\\states\\scanner-state\\action-correlation",
+        "fixtures\\states\\scanner-state\\admissions",
+        "fixtures\\states\\scanner-state\\assets",
+        "fixtures\\states\\scanner-state\\backups",
+        "fixtures\\states\\scanner-state\\challenges",
+        "fixtures\\states\\scanner-state\\checkpoints",
+        "fixtures\\states\\scanner-state\\commits",
+        "fixtures\\states\\scanner-state\\config.json",
+        "fixtures\\states\\scanner-state\\evidence",
+        "fixtures\\states\\scanner-state\\findings",
+        "fixtures\\states\\scanner-state\\grants",
+        "fixtures\\states\\scanner-state\\intent-bindings",
+        "fixtures\\states\\scanner-state\\intents",
+        "fixtures\\states\\scanner-state\\inventory",
+        "fixtures\\states\\scanner-state\\keys",
+        "fixtures\\states\\scanner-state\\local-instance.json",
+        "fixtures\\states\\scanner-state\\logs",
+        "fixtures\\states\\scanner-state\\policies",
+        "fixtures\\states\\scanner-state\\receipts",
+        "fixtures\\states\\scanner-state\\state-format.json"
+      ],
+      "unexpected_changed_paths": []
+    }
+  ],
+  "final_tree": [
+    {
+      "path": "fixtures",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0009000000175ecc",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\links",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0009000000177f1a",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\links\\parent-junction",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets"
+      ],
+      "file_id": "23f6e969:000a00000017cb8f",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\links\\state-root-junction",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets\\valid-state-中文 空格"
+      ],
+      "file_id": "23f6e969:000900000017b49b",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\skills",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:001100000017d13f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\skills\\hardlink-external-alias",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000b00000018d95f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\skills\\hardlink-external-alias\\note.txt",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000800000018d95a",
+      "link_count": 2,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "5958c1ac324f61a644fdca2df722a81cdad959d82f2c911f2bb30faad3b09e82"
+    },
+    {
+      "path": "fixtures\\skills\\hardlink-external-alias\\SKILL.md",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000b00000018d966",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "133f96b356f2126e79a4c39d85afc8095577957f923e933c154d3a4fd5ca3911"
+    },
+    {
+      "path": "fixtures\\skills\\junction-escape",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000b00000018d990",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\skills\\junction-escape\\external-folder",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets\\skill-external"
+      ],
+      "file_id": "23f6e969:000700000018d997",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\skills\\junction-escape\\SKILL.md",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000800000018d996",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "133f96b356f2126e79a4c39d85afc8095577957f923e933c154d3a4fd5ca3911"
+    },
+    {
+      "path": "fixtures\\skills\\ordinary-中文 空格",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000c00000018d2f6",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\skills\\ordinary-中文 空格\\note.txt",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:001800000018d4ef",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "b71baf233b44568192550cf7be5ef3ae060ccc4427eeba31c99b8528e3646ba9"
+    },
+    {
+      "path": "fixtures\\skills\\ordinary-中文 空格\\SKILL.md",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:002100000018d49b",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "133f96b356f2126e79a4c39d85afc8095577957f923e933c154d3a4fd5ca3911"
+    },
+    {
+      "path": "fixtures\\skills\\symlink-inside",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:001400000018d9a8",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\skills\\symlink-inside\\note.txt",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000a00000018d9aa",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "d5ee28d0eaae58d0ba11adc58ae3c1f778942dcf6a3de067a7b25cfc42091aa6"
+    },
+    {
+      "path": "fixtures\\skills\\symlink-inside\\SKILL.md",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000700000018d9a9",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "133f96b356f2126e79a4c39d85afc8095577957f923e933c154d3a4fd5ca3911"
+    },
+    {
+      "path": "fixtures\\states",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f1d",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\core-junction-state",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000b00000017cc2a",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\core-junction-state\\keys",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets\\core-external-sentinel"
+      ],
+      "file_id": "23f6e969:000e00000017d0fd",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000f00000017d15f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\action-correlation",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000500000018bb28",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\admissions",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000b00000017d194",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\admissions\\adm-77f35726df0d.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000a00000018d99e",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "cb488f521a7414d86342314adc04a70b05c9da751e5da85a51ca289c69ae9f8c"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\admissions\\adm-77f35726df0d.skill-card.md",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:00090000001771e5",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "4927b897304f1573e9c0cac34dc79d116531b46f69077dd0bd395a870e93721b"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\admissions\\adm-79089bd61c64.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000900000018d969",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "f353eefbf7884f08c7eebef42391bdba83788110eb51af45bdc566e1d09d7906"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\admissions\\adm-79089bd61c64.skill-card.md",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000c00000018d967",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "f118a9aa4696879baeacaa114928dfa7969e9ae3a4db94de55051db60e167698"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\admissions\\adm-f2d8b8324b86.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:002f00000018d6ff",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "56b613901efe5479f9fc34426cd56031f609a67a2c7c9c55f6078cfc5545c456"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\admissions\\adm-f2d8b8324b86.skill-card.md",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:001c00000018d670",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "3dd2f7ad30e7291f6b4c0c4c4640e62070877702ca9c647cde1d7dcd97613e12"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\assets",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000d00000017d3f4",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\backups",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000900000017d1b2",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\challenges",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:00a200000018b28f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\checkpoints",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000800000017d1a9",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\commits",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:02c600000018b119",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\config.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000500000018be9f",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "fce3e8523ea33a39a884b3095c6b568d94a8fcc7222faaa074507ac6d0afa4b5"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\evidence",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000800000017d1a1",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\evidence\\ev-024bc938bd4cbcbc.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000900000018d99f",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "840d31c544573857b380a37b27dde40d3bc72a5948120c9ccb11b48c29ec3a26"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\evidence\\ev-71a9e1a97142bea9.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000900000018d9a0",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "300de1cec103e664f54d07e1d4e7aba8ee885da844f20d2d77931f1e0eb92cca"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\evidence\\ev-7555a59748ef4885.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:008c00000018d948",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "33a474228d89f50e3e6f60553c9c63e898f8a89e5d60bf1cd87770a4e43d8de5"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\evidence\\ev-8a32cc5ed4f6bc8c.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000d00000018d96c",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "52ca9ca379d866ed9b4e53514479ad314e03cd63ab38106282805908b7d8bc8c"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\findings",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:01cb00000018715b",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\grants",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:001900000017d19a",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\intent-bindings",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000a00000018b878",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\intents",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000500000018b735",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\inventory",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000800000017d1aa",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\keys",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000900000017d193",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\keys\\signing.seed",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000c00000017b64d",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "be9b7375888bfe66cf809a035269948897d98ace02c4584a276c28e5ec78e4e9"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\local-instance.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:001b00000018c774",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "ef2d54efe98e35d5faafa0fa0bf686bce91f84f78f3cdc844f8228e214f4d27d"
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\logs",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000900000017d1b3",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\policies",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000800000017d1a0",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\receipts",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000c00000017d1a5",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\scanner-state\\state-format.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:001700000018cbfb",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "03a0737cdaeed83ce53045148a30dce7bd1f67c1368d47c0200b4b26ab2d1dad"
+    },
+    {
+      "path": "fixtures\\targets",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f14",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\core-external-sentinel",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000c00000017cd5e",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\core-external-sentinel\\sentinel.txt",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000900000017d0f4",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "a0fd9a4f77d2e1a30e58eb6e3edd771673ec96b36354f720571ce86011c10982"
+    },
+    {
+      "path": "fixtures\\targets\\hardlink-marker-external.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb7",
+      "link_count": 2,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "712ea624c0f61fd072aad70234bebc7639d70ff0299ed8b437e0395e33268eb5"
+    },
+    {
+      "path": "fixtures\\targets\\replaced-marker-original.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb7",
+      "link_count": 2,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "712ea624c0f61fd072aad70234bebc7639d70ff0299ed8b437e0395e33268eb5"
+    },
+    {
+      "path": "fixtures\\targets\\skill-external",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:001700000018d959",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\skill-external\\external-sentinel.txt",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000800000018d95a",
+      "link_count": 2,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "5958c1ac324f61a644fdca2df722a81cdad959d82f2c911f2bb30faad3b09e82"
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f42",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\action-correlation",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fac",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\admissions",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f68",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\assets",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f98",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\backups",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f93",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\challenges",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fa8",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\checkpoints",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f87",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\commits",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fa5",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\config.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb3",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "e5f2802c8f94c6e28263f307e4eeb622aa27dcfcc6e2ec9c2797df2f33d75cd0"
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\evidence",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f7f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\findings",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f9f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\grants",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0009000000177f6c",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\intent-bindings",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fab",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\intents",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fa9",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\inventory",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f8b",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\keys",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f5b",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\local-instance.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb5",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "298b29822186264d92a4cf08fd77644178e738aa83be3c8f3c6de377d2acd925"
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\logs",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f95",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\policies",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f77",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\receipts",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f82",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\state-format.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000a00000017d13e",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "3a7f7e33cc1af8717fba11570ecf641186974db3a2b7474bfe72a4b7cc4f8369"
+    }
+  ]
+}
