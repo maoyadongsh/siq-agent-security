@@ -1,0 +1,404 @@
+{
+  "kind": "whitelisted stage observations",
+  "stages": [
+    {
+      "phase": "v1-approved",
+      "facts": {
+        "grant": {
+          "versions": [
+            {
+              "version": 0,
+              "status": "pending_approval",
+              "bytes": 1609,
+              "sha256": "ee2cab1e9f544facebd465f9fd536935c270e824498733281a796e1480cd0a95"
+            },
+            {
+              "version": 1,
+              "status": "approved",
+              "bytes": 1741,
+              "sha256": "a43b8da963927f0e53cebf5f4e091f72a2ad9a695b4f9a63a6ca547ed32e5e26"
+            }
+          ],
+          "latest_status": "approved"
+        },
+        "target_absent": true
+      },
+      "profile_config": [
+        {
+          "role": "config.yaml",
+          "present": true,
+          "bytes": 65,
+          "sha256": "332d5741a73d09808e1e4f9725f4028bb8da8d31716133aa107dc64cf402e1f6"
+        },
+        {
+          "role": "SOUL.md",
+          "present": false
+        }
+      ],
+      "runtime_identity_absent": true
+    },
+    {
+      "phase": "v1-installed",
+      "facts": {
+        "target": [
+          {
+            "path": ".siq-install-owner",
+            "kind": "file",
+            "bytes": 449,
+            "sha256": "579e0356a5c860af3305ceabd53b8e2caf9caea473f67ff9257bf442e373abca"
+          },
+          {
+            "path": "SKILL.md",
+            "kind": "file",
+            "bytes": 141,
+            "sha256": "4ac13c62e6a56bfc5edf28c181674cef10a13b30539828c4baf0856c44e01aa0"
+          }
+        ],
+        "grant": {
+          "versions": [
+            {
+              "version": 0,
+              "status": "pending_approval",
+              "bytes": 1609,
+              "sha256": "ee2cab1e9f544facebd465f9fd536935c270e824498733281a796e1480cd0a95"
+            },
+            {
+              "version": 1,
+              "status": "approved",
+              "bytes": 1741,
+              "sha256": "a43b8da963927f0e53cebf5f4e091f72a2ad9a695b4f9a63a6ca547ed32e5e26"
+            }
+          ],
+          "latest_status": "approved"
+        },
+        "operation": {
+          "status": "installed_unverified",
+          "runtime_verified": false
+        }
+      },
+      "profile_config": [
+        {
+          "role": "config.yaml",
+          "present": true,
+          "bytes": 65,
+          "sha256": "332d5741a73d09808e1e4f9725f4028bb8da8d31716133aa107dc64cf402e1f6"
+        },
+        {
+          "role": "SOUL.md",
+          "present": false
+        }
+      ],
+      "runtime_identity_absent": true
+    },
+    {
+      "phase": "v2-prepared-before-cancel",
+      "facts": {
+        "content_changes_total": 1,
+        "permission_changes_total": 0,
+        "old_target": [
+          {
+            "path": ".siq-install-owner",
+            "kind": "file",
+            "bytes": 449,
+            "sha256": "579e0356a5c860af3305ceabd53b8e2caf9caea473f67ff9257bf442e373abca"
+          },
+          {
+            "path": "SKILL.md",
+            "kind": "file",
+            "bytes": 141,
+            "sha256": "4ac13c62e6a56bfc5edf28c181674cef10a13b30539828c4baf0856c44e01aa0"
+          }
+        ],
+        "old_grant": {
+          "versions": [
+            {
+              "version": 0,
+              "status": "pending_approval",
+              "bytes": 1609,
+              "sha256": "ee2cab1e9f544facebd465f9fd536935c270e824498733281a796e1480cd0a95"
+            },
+            {
+              "version": 1,
+              "status": "approved",
+              "bytes": 1741,
+              "sha256": "a43b8da963927f0e53cebf5f4e091f72a2ad9a695b4f9a63a6ca547ed32e5e26"
+            }
+          ],
+          "latest_status": "approved"
+        }
+      },
+      "profile_config": [
+        {
+          "role": "config.yaml",
+          "present": true,
+          "bytes": 65,
+          "sha256": "332d5741a73d09808e1e4f9725f4028bb8da8d31716133aa107dc64cf402e1f6"
+        },
+        {
+          "role": "SOUL.md",
+          "present": false
+        }
+      ],
+      "runtime_identity_absent": true
+    },
+    {
+      "phase": "v2-cancelled",
+      "facts": {
+        "old_grant": {
+          "versions": [
+            {
+              "version": 0,
+              "status": "pending_approval",
+              "bytes": 1609,
+              "sha256": "ee2cab1e9f544facebd465f9fd536935c270e824498733281a796e1480cd0a95"
+            },
+            {
+              "version": 1,
+              "status": "approved",
+              "bytes": 1741,
+              "sha256": "a43b8da963927f0e53cebf5f4e091f72a2ad9a695b4f9a63a6ca547ed32e5e26"
+            }
+          ],
+          "latest_status": "approved"
+        },
+        "old_target": [
+          {
+            "path": ".siq-install-owner",
+            "kind": "file",
+            "bytes": 449,
+            "sha256": "579e0356a5c860af3305ceabd53b8e2caf9caea473f67ff9257bf442e373abca"
+          },
+          {
+            "path": "SKILL.md",
+            "kind": "file",
+            "bytes": 141,
+            "sha256": "4ac13c62e6a56bfc5edf28c181674cef10a13b30539828c4baf0856c44e01aa0"
+          }
+        ],
+        "update_claim_absent": true,
+        "signed_preview_retained": true,
+        "preview_sha256": "60d15c7833702e6b6f8fc935436a194681eea3178453fb743dc194f5acce6627",
+        "cancellation_kind": "left_before_confirmation"
+      },
+      "profile_config": [
+        {
+          "role": "config.yaml",
+          "present": true,
+          "bytes": 65,
+          "sha256": "332d5741a73d09808e1e4f9725f4028bb8da8d31716133aa107dc64cf402e1f6"
+        },
+        {
+          "role": "SOUL.md",
+          "present": false
+        }
+      ],
+      "runtime_identity_absent": true
+    },
+    {
+      "phase": "v2-updated",
+      "facts": {
+        "target": [
+          {
+            "path": ".siq-install-owner",
+            "kind": "file",
+            "bytes": 449,
+            "sha256": "eae19f0fa8f1c50a9656433273efe05c02e663afbee4f907d0367ff6ca75c27e"
+          },
+          {
+            "path": "SKILL.md",
+            "kind": "file",
+            "bytes": 168,
+            "sha256": "ce065c4d54f36f398461a452c2bb0b3fbb0ce8041d5bceeada3a8b6f3c2f64af"
+          }
+        ],
+        "old_grant": {
+          "versions": [
+            {
+              "version": 0,
+              "status": "pending_approval",
+              "bytes": 1609,
+              "sha256": "ee2cab1e9f544facebd465f9fd536935c270e824498733281a796e1480cd0a95"
+            },
+            {
+              "version": 1,
+              "status": "approved",
+              "bytes": 1741,
+              "sha256": "a43b8da963927f0e53cebf5f4e091f72a2ad9a695b4f9a63a6ca547ed32e5e26"
+            },
+            {
+              "version": 2,
+              "status": "revoked",
+              "bytes": 1740,
+              "sha256": "794fd4dedb7a20c90d9238fc5ba8f7b6e29f222bd8ea07a9d1585ec3a22864e5"
+            }
+          ],
+          "latest_status": "revoked"
+        },
+        "new_grant": {
+          "versions": [
+            {
+              "version": 0,
+              "status": "pending_approval",
+              "bytes": 1609,
+              "sha256": "1b46fac6d9731b696770091b2b862f186df9ba52307e2e8a69cb316da588a7a5"
+            },
+            {
+              "version": 1,
+              "status": "approved",
+              "bytes": 1741,
+              "sha256": "fea5cb0a838e29019e193be04ceb7628048e5e6576f5d9844c85a4f2603dd986"
+            }
+          ],
+          "latest_status": "approved"
+        },
+        "update_status": "updated_unverified"
+      },
+      "profile_config": [
+        {
+          "role": "config.yaml",
+          "present": true,
+          "bytes": 65,
+          "sha256": "332d5741a73d09808e1e4f9725f4028bb8da8d31716133aa107dc64cf402e1f6"
+        },
+        {
+          "role": "SOUL.md",
+          "present": false
+        }
+      ],
+      "runtime_identity_absent": true
+    },
+    {
+      "phase": "removal-cleanup-pending",
+      "facts": {
+        "target": [
+          {
+            "path": ".siq-install-owner",
+            "kind": "file",
+            "bytes": 449,
+            "sha256": "eae19f0fa8f1c50a9656433273efe05c02e663afbee4f907d0367ff6ca75c27e"
+          },
+          {
+            "path": "SKILL.md",
+            "kind": "file",
+            "bytes": 168,
+            "sha256": "ce065c4d54f36f398461a452c2bb0b3fbb0ce8041d5bceeada3a8b6f3c2f64af"
+          },
+          {
+            "path": "user-note.txt",
+            "kind": "file",
+            "bytes": 45,
+            "sha256": "447a6b8a41e502f71551994dc5fb60e5132fe227f08a356af728c62b47602f2a"
+          }
+        ],
+        "grant": {
+          "versions": [
+            {
+              "version": 0,
+              "status": "pending_approval",
+              "bytes": 1609,
+              "sha256": "1b46fac6d9731b696770091b2b862f186df9ba52307e2e8a69cb316da588a7a5"
+            },
+            {
+              "version": 1,
+              "status": "approved",
+              "bytes": 1741,
+              "sha256": "fea5cb0a838e29019e193be04ceb7628048e5e6576f5d9844c85a4f2603dd986"
+            },
+            {
+              "version": 2,
+              "status": "revoked",
+              "bytes": 1740,
+              "sha256": "7d52957c3e313d9f4a6458cc1ea01a73f65019dd9bbfedbe0befbf36c2dd266a"
+            }
+          ],
+          "latest_status": "revoked"
+        },
+        "removal_status": "cleanup_pending",
+        "note_sha256": "447a6b8a41e502f71551994dc5fb60e5132fe227f08a356af728c62b47602f2a",
+        "original_files_preserved": true
+      },
+      "profile_config": [
+        {
+          "role": "config.yaml",
+          "present": true,
+          "bytes": 65,
+          "sha256": "332d5741a73d09808e1e4f9725f4028bb8da8d31716133aa107dc64cf402e1f6"
+        },
+        {
+          "role": "SOUL.md",
+          "present": false
+        }
+      ],
+      "runtime_identity_absent": true
+    },
+    {
+      "phase": "removed",
+      "facts": {
+        "removal_status": "removed",
+        "same_removal_claim": true,
+        "target_absent": true,
+        "preserved_note_sha256": "447a6b8a41e502f71551994dc5fb60e5132fe227f08a356af728c62b47602f2a",
+        "old_grant": {
+          "versions": [
+            {
+              "version": 0,
+              "status": "pending_approval",
+              "bytes": 1609,
+              "sha256": "ee2cab1e9f544facebd465f9fd536935c270e824498733281a796e1480cd0a95"
+            },
+            {
+              "version": 1,
+              "status": "approved",
+              "bytes": 1741,
+              "sha256": "a43b8da963927f0e53cebf5f4e091f72a2ad9a695b4f9a63a6ca547ed32e5e26"
+            },
+            {
+              "version": 2,
+              "status": "revoked",
+              "bytes": 1740,
+              "sha256": "794fd4dedb7a20c90d9238fc5ba8f7b6e29f222bd8ea07a9d1585ec3a22864e5"
+            }
+          ],
+          "latest_status": "revoked"
+        },
+        "new_grant": {
+          "versions": [
+            {
+              "version": 0,
+              "status": "pending_approval",
+              "bytes": 1609,
+              "sha256": "1b46fac6d9731b696770091b2b862f186df9ba52307e2e8a69cb316da588a7a5"
+            },
+            {
+              "version": 1,
+              "status": "approved",
+              "bytes": 1741,
+              "sha256": "fea5cb0a838e29019e193be04ceb7628048e5e6576f5d9844c85a4f2603dd986"
+            },
+            {
+              "version": 2,
+              "status": "revoked",
+              "bytes": 1740,
+              "sha256": "7d52957c3e313d9f4a6458cc1ea01a73f65019dd9bbfedbe0befbf36c2dd266a"
+            }
+          ],
+          "latest_status": "revoked"
+        },
+        "historical_install_results_retained": true
+      },
+      "profile_config": [
+        {
+          "role": "config.yaml",
+          "present": true,
+          "bytes": 65,
+          "sha256": "332d5741a73d09808e1e4f9725f4028bb8da8d31716133aa107dc64cf402e1f6"
+        },
+        {
+          "role": "SOUL.md",
+          "present": false
+        }
+      ],
+      "runtime_identity_absent": true
+    }
+  ]
+}

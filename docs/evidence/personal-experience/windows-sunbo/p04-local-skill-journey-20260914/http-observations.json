@@ -1,0 +1,232 @@
+{
+  "kind": "UI response counts; no response bodies or per-request timestamps captured",
+  "business_write_actions": 16,
+  "business_writes_all_2xx": true,
+  "non_2xx": [
+    {
+      "method": "GET",
+      "path_template": "/v1/grants",
+      "status": 500,
+      "count": 1
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations/<operation>/removal",
+      "status": 429,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations/<operation>/update-source",
+      "status": 429,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/updates/<operation>",
+      "status": 404,
+      "count": 2
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/session/restore",
+      "status": 401,
+      "count": 1
+    }
+  ],
+  "api_response_counts": [
+    {
+      "method": "GET",
+      "path_template": "/v1/adapter/instances",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/admissions/<admission>",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/confirmations",
+      "status": 200,
+      "count": 27
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/grants",
+      "status": 200,
+      "count": 34
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/grants",
+      "status": 500,
+      "count": 1
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/grants/<grant>",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/raw-task-content/status",
+      "status": 200,
+      "count": 7
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-imports",
+      "status": 200,
+      "count": 5
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-imports/<import>",
+      "status": 200,
+      "count": 3
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations/<operation>",
+      "status": 200,
+      "count": 1
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations/<operation>/inspection",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations/<operation>/removal",
+      "status": 200,
+      "count": 6
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations/<operation>/removal",
+      "status": 429,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations/<operation>/update-source",
+      "status": 429,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/plans/<operation>",
+      "status": 200,
+      "count": 1
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/update-plans/<operation>",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/updates/<operation>",
+      "status": 404,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/status",
+      "status": 200,
+      "count": 5
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/grants/<grant>/approve",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/grants/<grant>/challenge",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/pair",
+      "status": 200,
+      "count": 1
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/session/restore",
+      "status": 200,
+      "count": 4
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/session/restore",
+      "status": 401,
+      "count": 1
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/skill-imports",
+      "status": 201,
+      "count": 2
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/skill-imports/<import>/permissions",
+      "status": 201,
+      "count": 2
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/skill-installations/apply",
+      "status": 200,
+      "count": 1
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/skill-installations/operations/<operation>/removal",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/skill-installations/operations/<operation>/update-comparison",
+      "status": 200,
+      "count": 3
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/skill-installations/operations/<operation>/update-plans",
+      "status": 201,
+      "count": 2
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/skill-installations/plans",
+      "status": 201,
+      "count": 1
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/skill-installations/updates",
+      "status": 200,
+      "count": 1
+    }
+  ],
+  "classification": "Initial restore401 expected for fresh context; read500/429 retained as unresolved observations, no root cause inferred."
+}
