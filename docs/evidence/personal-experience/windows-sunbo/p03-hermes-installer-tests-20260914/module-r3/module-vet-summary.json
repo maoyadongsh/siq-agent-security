@@ -1,0 +1,44 @@
+{
+  "name": "module-vet",
+  "argv": [
+    "vet",
+    "-p=2",
+    "./..."
+  ],
+  "cwd": "apps/agentshield",
+  "started_utc": "2026-09-14T05:33:45.583954+00:00",
+  "finished_utc": "2026-09-14T05:34:21.228738+00:00",
+  "exit_code": 0,
+  "outer_timeout_seconds": 300,
+  "outer_timed_out": false,
+  "cleanup_exit": null,
+  "go_process_reaped": true,
+  "source_before": {
+    "source": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+    "source_dirty": false
+  },
+  "source_after": {
+    "source": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+    "source_dirty": false
+  },
+  "event_count": 0,
+  "top_level_counts": {
+    "pass": 0,
+    "fail": 0,
+    "skip": 0
+  },
+  "subtest_counts": {
+    "pass": 0,
+    "fail": 0,
+    "skip": 0
+  },
+  "top_level_results": [],
+  "subtest_results": [],
+  "package_terminal_events": [],
+  "raw_log_bytes": 0,
+  "raw_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "derived_jsonl_bytes": 0,
+  "derived_jsonl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "non_json_lines": 0,
+  "panic_test_timed_out": false
+}
