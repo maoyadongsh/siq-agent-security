@@ -1,0 +1,12 @@
+{"Time": "2026-09-14T14:21:01.951318+08:00", "Action": "start", "Package": "siq-agent-security/apps/agentshield/internal/adapters"}
+{"Time": "2026-09-14T14:21:11.8248162+08:00", "Action": "run", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Test": "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean"}
+{"Time": "2026-09-14T14:21:11.8313188+08:00", "Action": "output", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Test": "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean", "Output": "=== RUN   TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean\n", "OutputType": "frame"}
+{"Time": "2026-09-14T14:21:12.4676836+08:00", "Action": "output", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Test": "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean", "Output": "--- PASS: TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean (0.64s)\n", "OutputType": "frame"}
+{"Time": "2026-09-14T14:21:12.4676836+08:00", "Action": "pass", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Test": "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean", "Elapsed": 0.64}
+{"Time": "2026-09-14T14:21:12.4689905+08:00", "Action": "run", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Test": "TestPolicyExecFailsClosed"}
+{"Time": "2026-09-14T14:21:12.4696482+08:00", "Action": "output", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Test": "TestPolicyExecFailsClosed", "Output": "=== RUN   TestPolicyExecFailsClosed\n", "OutputType": "frame"}
+{"Time": "2026-09-14T14:21:12.4942677+08:00", "Action": "output", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Test": "TestPolicyExecFailsClosed", "Output": "--- PASS: TestPolicyExecFailsClosed (0.03s)\n", "OutputType": "frame"}
+{"Time": "2026-09-14T14:21:12.4948408+08:00", "Action": "pass", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Test": "TestPolicyExecFailsClosed", "Elapsed": 0.03}
+{"Time": "2026-09-14T14:21:12.4948408+08:00", "Action": "output", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Output": "PASS\n", "OutputType": "frame"}
+{"Time": "2026-09-14T14:21:12.5101794+08:00", "Action": "output", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Output": "ok  \tsiq-agent-security/apps/agentshield/internal/adapters\t10.554s\n"}
+{"Time": "2026-09-14T14:21:12.5108077+08:00", "Action": "pass", "Package": "siq-agent-security/apps/agentshield/internal/adapters", "Elapsed": 10.559}
