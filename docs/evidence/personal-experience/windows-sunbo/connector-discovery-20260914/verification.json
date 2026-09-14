@@ -1,0 +1,963 @@
+{
+  "schema": "windows-connector-public-evidence.v1",
+  "publication_status": "public_evidence_reviewed",
+  "candidate_sha": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+  "base_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "pr": 56,
+  "scope": "组件发现适配；Windows本机正式5阶段、开发期overlay、Ubuntu CI分别记载；Windows全Go失败并保留未完成测试。",
+  "candidate_checks": {
+    "phases": [
+      {
+        "phase": "setup",
+        "candidate_before": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "candidate_after": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "before_clean": true,
+        "after_clean": true,
+        "source_unchanged": true,
+        "runner_sha256": null
+      },
+      {
+        "phase": "checks",
+        "candidate_before": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "candidate_after": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "before_clean": true,
+        "after_clean": true,
+        "source_unchanged": true,
+        "runner_sha256": "eb4cf25b5072e08c5ea1dc064dcdbd13916e6ebd9a1ba3eb3e0d7e844d9a5c90"
+      },
+      {
+        "phase": "schema",
+        "candidate_before": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "candidate_after": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "before_clean": true,
+        "after_clean": true,
+        "source_unchanged": true,
+        "runner_sha256": "eb4cf25b5072e08c5ea1dc064dcdbd13916e6ebd9a1ba3eb3e0d7e844d9a5c90"
+      },
+      {
+        "phase": "native-inventory",
+        "candidate_before": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "candidate_after": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "before_clean": true,
+        "after_clean": true,
+        "source_unchanged": true,
+        "runner_sha256": "eb4cf25b5072e08c5ea1dc064dcdbd13916e6ebd9a1ba3eb3e0d7e844d9a5c90"
+      },
+      {
+        "phase": "full-go",
+        "candidate_before": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "candidate_after": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+        "before_clean": true,
+        "after_clean": true,
+        "source_unchanged": true,
+        "runner_sha256": "eb4cf25b5072e08c5ea1dc064dcdbd13916e6ebd9a1ba3eb3e0d7e844d9a5c90"
+      }
+    ],
+    "setup_runner_hash_recorded": false
+  },
+  "evidence_verification": {
+    "command_records_matched": 14,
+    "raw_streams_matched": 28,
+    "binary_records_matched": 5,
+    "phase_summaries_matched": 5,
+    "comparison": "命令JSON与summary记录逐项相同；binary字段在命令完成后加入summary，另与实际制品逐项比对；源stdout/stderr仅核字节与SHA并解析必要结果。",
+    "go_and_uv_hashes_match_records": true,
+    "recorded_runner_hashes_match_current_file": true,
+    "setup_missing_runner_hash_not_backfilled": true,
+    "independent_review_method": "只读原件与字节摘要复算，没有重跑测试",
+    "raw_output_published": false,
+    "prior_four_phase_verification_reused": true,
+    "current_review_addition": "Independently verified one final full-go command record, its summary and two raw stream hashes; prior four-phase audit remains attributed to preserved draft."
+  },
+  "phases": [
+    {
+      "phase": "setup",
+      "records": [
+        {
+          "role": "uv-version",
+          "exit_code": 0,
+          "elapsed_seconds": 3.198015400001168,
+          "executable_basename": "uv.exe",
+          "stdout": {
+            "bytes": 57,
+            "sha256": "6212f188fd682f342d2a8b8ebfec807741678f0ac4f00875318e3666c64cd7d3"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "role": "uv-sync-locked",
+          "exit_code": 0,
+          "elapsed_seconds": 30.981547399998817,
+          "executable_basename": "uv.exe",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 2010,
+            "sha256": "6b7991112e1549a87777d34827b6c72a0e4487d50248dbef0275c82244bed4d9"
+          }
+        }
+      ]
+    },
+    {
+      "phase": "checks",
+      "records": [
+        {
+          "role": "go-version",
+          "exit_code": 0,
+          "elapsed_seconds": 0.699570799999492,
+          "executable_basename": "go.exe",
+          "stdout": {
+            "bytes": 34,
+            "sha256": "e37270413fda49039b4f31dd90726df0e94c163cf9bca2f62fd40a47d12b5db1"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "role": "gofmt",
+          "exit_code": 0,
+          "elapsed_seconds": 2.3189590999973007,
+          "executable_basename": "gofmt.exe",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "role": "go-vet",
+          "exit_code": 0,
+          "elapsed_seconds": 88.51485129999855,
+          "executable_basename": "go.exe",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "role": "build-linux-amd64",
+          "exit_code": 0,
+          "elapsed_seconds": 77.35548440000275,
+          "executable_basename": "go.exe",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "binary": {
+            "bytes": 24602145,
+            "sha256": "d5d79b5b8f79bd200598106ff8c559ae689583a96be4c84abb7d263f5241ca7d"
+          }
+        },
+        {
+          "role": "build-linux-arm64",
+          "exit_code": 0,
+          "elapsed_seconds": 64.3434613999998,
+          "executable_basename": "go.exe",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "binary": {
+            "bytes": 23164984,
+            "sha256": "30e7e03a4cd55d5005047add5d920d2fbb52b959c8f322abb693ac788e33dd54"
+          }
+        },
+        {
+          "role": "build-darwin-arm64",
+          "exit_code": 0,
+          "elapsed_seconds": 77.3438814000001,
+          "executable_basename": "go.exe",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "binary": {
+            "bytes": 23485458,
+            "sha256": "b69d077d1423f911f95ee3c0389935e566ab3883b177e513a0fda123dd8c4d0b"
+          }
+        },
+        {
+          "role": "build-windows-amd64",
+          "exit_code": 0,
+          "elapsed_seconds": 13.72192460000224,
+          "executable_basename": "go.exe",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "binary": {
+            "bytes": 24717824,
+            "sha256": "8ce8b85590bef0d574ca0afb58d612ee17fdffdf46f5a3338b22bd6e30bb5a27"
+          }
+        }
+      ]
+    },
+    {
+      "phase": "schema",
+      "records": [
+        {
+          "role": "schema-standard",
+          "exit_code": 4,
+          "elapsed_seconds": 77.30692569999883,
+          "executable_basename": "uv.exe",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 568,
+            "sha256": "19db3736a25cf120d3426c5832c06c57399c599e220a5bd20c9b92b7d7c2d8c4"
+          }
+        },
+        {
+          "role": "schema-isolated",
+          "exit_code": 0,
+          "elapsed_seconds": 54.546555400000216,
+          "executable_basename": "uv.exe",
+          "stdout": {
+            "bytes": 265,
+            "sha256": "e105339000ad874395ead14d5b42d838e18a23526e92d2a77f928ccfc8381fe6"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "phase": "native-inventory",
+      "records": [
+        {
+          "role": "compile-inventory-test",
+          "exit_code": 0,
+          "elapsed_seconds": 9.633599500000855,
+          "executable_basename": "go.exe",
+          "stdout": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "binary": {
+            "bytes": 6883840,
+            "sha256": "76302ee6a11fc9927fcb25d5e41a67af2197e4af11d7406c11c970ec5f742c5f"
+          }
+        },
+        {
+          "role": "inventory-native-all",
+          "exit_code": 1,
+          "elapsed_seconds": 20.264797799998632,
+          "executable_basename": "inventory.test.exe",
+          "stdout": {
+            "bytes": 4371,
+            "sha256": "3565d297851d03e53a7cf532496e784d01d8c0fd1b10ccc6d71a3cde4c619207"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "phase": "full-go",
+      "records": [
+        {
+          "role": "go-test-all",
+          "exit_code": 1,
+          "elapsed_seconds": 1800.6087021999992,
+          "executable_basename": "go.exe",
+          "stdout": {
+            "bytes": 2412447,
+            "sha256": "6f828005409c3f54faa564624c5b5ffd4af66d4fc44d6bfe9e4c23968be935a3"
+          },
+          "stderr": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    }
+  ],
+  "native_inventory": {
+    "compile_exit_code": 0,
+    "execution_exit_code": 1,
+    "top_level_counts": {
+      "pass": 23,
+      "fail": 2,
+      "skip": 1
+    },
+    "original_connector_tests": "均pass",
+    "symlink_failures": "2项，均为实际创建权限前置失败；不改写成pass或skip"
+  },
+  "schema_checks": {
+    "standard": {
+      "exit_code": 4,
+      "status": "fail",
+      "observed_error": "ModuleNotFoundError: No module named 'fcntl'",
+      "scope": "标准conftest入口未完成"
+    },
+    "isolated": {
+      "exit_code": 0,
+      "status": "pass",
+      "passed": 206,
+      "elapsed_seconds_reported_by_pytest": 45.26,
+      "scope": "--noconftest 下的单一 Schema 测试文件；不替代完整 Control API 测试"
+    }
+  },
+  "cross_builds": [
+    {
+      "role": "build-linux-amd64.binary",
+      "os": "linux",
+      "arch": "amd64",
+      "exit_code": 0,
+      "bytes": 24602145,
+      "sha256": "d5d79b5b8f79bd200598106ff8c559ae689583a96be4c84abb7d263f5241ca7d"
+    },
+    {
+      "role": "build-linux-arm64.binary",
+      "os": "linux",
+      "arch": "arm64",
+      "exit_code": 0,
+      "bytes": 23164984,
+      "sha256": "30e7e03a4cd55d5005047add5d920d2fbb52b959c8f322abb693ac788e33dd54"
+    },
+    {
+      "role": "build-darwin-arm64.binary",
+      "os": "darwin",
+      "arch": "arm64",
+      "exit_code": 0,
+      "bytes": 23485458,
+      "sha256": "b69d077d1423f911f95ee3c0389935e566ab3883b177e513a0fda123dd8c4d0b"
+    },
+    {
+      "role": "build-windows-amd64.binary",
+      "os": "windows",
+      "arch": "amd64",
+      "exit_code": 0,
+      "bytes": 24717824,
+      "sha256": "8ce8b85590bef0d574ca0afb58d612ee17fdffdf46f5a3338b22bd6e30bb5a27"
+    }
+  ],
+  "development_evidence": {
+    "formal_clean_candidate": false,
+    "description": "提交前的开发期 fixture 与旧find函数 Go overlay 对照；不是运行完整旧发布物",
+    "targeted": {
+      "exit_code": 0,
+      "top_level_pass": 8
+    },
+    "old_find_overlay": {
+      "only_replaces_windows_find_helper": true,
+      "preserved_original_function_text_matches": true,
+      "checkout_changed_by_overlay": false,
+      "three_test_run_exit_code": 1,
+      "original_two_test_run_exit_code": 1
+    },
+    "symlink_prerequisite": {
+      "exit_code": 1,
+      "failed_tests": 2
+    },
+    "logs": [
+      {
+        "role": "development.targeted-windows.log",
+        "bytes": 1518,
+        "sha256": "081131058a056f6bab2454d45c307b3b9665ac54ccef9abbdd1a757915295aac",
+        "top_level_results": [
+          {
+            "status": "pass",
+            "test": "TestFindConnectorBinWindowsLayouts"
+          },
+          {
+            "status": "pass",
+            "test": "TestFindConnectorBinWindowsPriority"
+          },
+          {
+            "status": "pass",
+            "test": "TestFindConnectorBinWindowsRejectsDirectories"
+          },
+          {
+            "status": "pass",
+            "test": "TestFindConnectorBinWindowsRejectsScriptsAndPATHEXT"
+          },
+          {
+            "status": "pass",
+            "test": "TestFindConnectorBinWindowsExplicitDotRootDoesNotUsePATH"
+          },
+          {
+            "status": "pass",
+            "test": "TestConnectorsStartFailureKeepsNative"
+          },
+          {
+            "status": "pass",
+            "test": "TestConnectorsMergeWithoutDroppingNative"
+          },
+          {
+            "status": "pass",
+            "test": "TestConnectorsNetworkAccessSkipped"
+          }
+        ]
+      },
+      {
+        "role": "development.baseline-find-regression.log",
+        "bytes": 3124,
+        "sha256": "7c16a751c351ffd464092e3f52808401068daa33098b17e43be0fc49c12ba9cf",
+        "top_level_results": [
+          {
+            "status": "fail",
+            "test": "TestFindConnectorBinWindowsLayouts"
+          },
+          {
+            "status": "fail",
+            "test": "TestFindConnectorBinWindowsExplicitDotRootDoesNotUsePATH"
+          },
+          {
+            "status": "fail",
+            "test": "TestConnectorsMergeWithoutDroppingNative"
+          }
+        ]
+      },
+      {
+        "role": "development.baseline-original-two.log",
+        "bytes": 1020,
+        "sha256": "221201938c7a06cc1d69f02445f828cac68306b4ba0f3a68e5ee09ca04ec1d11",
+        "top_level_results": [
+          {
+            "status": "fail",
+            "test": "TestConnectorsMergeWithoutDroppingNative"
+          },
+          {
+            "status": "fail",
+            "test": "TestConnectorsNetworkAccessSkipped"
+          }
+        ]
+      },
+      {
+        "role": "development.symlink-prerequisite.log",
+        "bytes": 1179,
+        "sha256": "bc3fe74bf65946e80ea82fbf55bf24982010a95fc684f64b0fb40fb2e1558f4c",
+        "top_level_results": [
+          {
+            "status": "fail",
+            "test": "TestFindConnectorBinWindowsRejectsSymlink"
+          },
+          {
+            "status": "fail",
+            "test": "TestMCPSymlinkIsSkipped"
+          }
+        ]
+      }
+    ]
+  },
+  "ci": {
+    "candidate_sha": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+    "checkout_sha": "5b36f7859ee2c0a913c2e7c1d1d7335495dcef67",
+    "checkout_kind": "PR合成merge",
+    "os": "Ubuntu 24.04.5",
+    "checks": {
+      "success": 38,
+      "skipped": 3,
+      "total": 41
+    },
+    "compatibility": {
+      "go": "1.22.12 linux/amd64",
+      "passed_packages": 39,
+      "no_test_packages": 6,
+      "four_cross_builds": "pass",
+      "reachable_stdlib_vulnerabilities": 33,
+      "cve_clear": false
+    },
+    "strict": {
+      "go": "1.26.6 linux/amd64",
+      "passed_race_packages": 39,
+      "no_test_packages": 6,
+      "govulncheck_output": "No vulnerabilities found."
+    },
+    "scope": "CI摘要已由实际两个Go日志独立核验；不代替Windows测试",
+    "merge_parent_proof": {
+      "merge_sha": "5b36f7859ee2c0a913c2e7c1d1d7335495dcef67",
+      "base_parent": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+      "head_parent": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+      "exact_parent_pair_verified": true
+    }
+  },
+  "full_go": {
+    "status": "fail",
+    "source_read": true,
+    "exit_code": 1,
+    "summary_file": "full-go-summary.json",
+    "observed_package_terminal_counts": {
+      "pass": 23,
+      "fail": 16,
+      "skip": 6
+    },
+    "observed_packages_without_terminal": 0,
+    "top_level_terminal_counts": {
+      "pass": 954,
+      "fail": 62,
+      "skip": 48
+    },
+    "unfinished_top_level_tests": 2,
+    "unfinished_test_nodes_including_subtests": 3,
+    "package_timeout_count": 2,
+    "runner_subprocess_timeout_configured": false,
+    "all_tests_completed": false,
+    "windows_full_go_pass": false,
+    "required_terminal_record_obtained": true
+  },
+  "release_checks": {
+    "selected_public_pattern_scan": "pass",
+    "secret_scan": "reviewed_payload_scan_passed_8.24.2_exit_0; final_directory_scan_recorded_in_delivery_audit",
+    "final_public_review": "passed_root_and_independent",
+    "ready_for_delivery": true
+  },
+  "sources": [
+    {
+      "role": "setup.summary",
+      "bytes": 2423,
+      "sha256": "2631891121e669afef562b44d876e469b3702bb2ff795e53f39ac7b53070d5e0"
+    },
+    {
+      "role": "setup.uv-version.command-record",
+      "bytes": 624,
+      "sha256": "5a1f6a417c1a24b9ffc8232f22dbde53a4cfcdf35b130f08cf342ba03504a923"
+    },
+    {
+      "role": "setup.uv-version.stdout",
+      "bytes": 57,
+      "sha256": "6212f188fd682f342d2a8b8ebfec807741678f0ac4f00875318e3666c64cd7d3"
+    },
+    {
+      "role": "setup.uv-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "setup.uv-sync-locked.command-record",
+      "bytes": 708,
+      "sha256": "da1170ae43b578736fb6fe1414d59fc01a75513996a95a4c94e8b9f629b4d732"
+    },
+    {
+      "role": "setup.uv-sync-locked.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "setup.uv-sync-locked.stderr",
+      "bytes": 2010,
+      "sha256": "6b7991112e1549a87777d34827b6c72a0e4487d50248dbef0275c82244bed4d9"
+    },
+    {
+      "role": "checks.summary",
+      "bytes": 7764,
+      "sha256": "ac427e42b82b0ba49834fdfad2eda5c186f4281ee827dcf40fe1aabfe6b2da7f"
+    },
+    {
+      "role": "checks.go-version.command-record",
+      "bytes": 659,
+      "sha256": "e65d194bbfcec4a269b0ed387799c2e5bdcd39b6239bc57c8d4068fb0b217112"
+    },
+    {
+      "role": "checks.go-version.stdout",
+      "bytes": 34,
+      "sha256": "e37270413fda49039b4f31dd90726df0e94c163cf9bca2f62fd40a47d12b5db1"
+    },
+    {
+      "role": "checks.go-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "checks.gofmt.command-record",
+      "bytes": 662,
+      "sha256": "002a2e6ae9f7fbeaa568872692788ba548b81be0eda1214915379ce80a830471"
+    },
+    {
+      "role": "checks.gofmt.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "checks.gofmt.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "checks.go-vet.command-record",
+      "bytes": 664,
+      "sha256": "98fd21bf875f74eeab93f782afb4064f0b2d57b4feaaf4d9050004474dec4c02"
+    },
+    {
+      "role": "checks.go-vet.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "checks.go-vet.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "checks.build-linux-amd64.command-record",
+      "bytes": 892,
+      "sha256": "0efe225a18ea33d56ead4bbcb4f2a617dade3b80a772af24943ff6d3b1981f72"
+    },
+    {
+      "role": "checks.build-linux-amd64.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "checks.build-linux-amd64.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "build-linux-amd64.binary",
+      "bytes": 24602145,
+      "sha256": "d5d79b5b8f79bd200598106ff8c559ae689583a96be4c84abb7d263f5241ca7d"
+    },
+    {
+      "role": "checks.build-linux-arm64.command-record",
+      "bytes": 891,
+      "sha256": "7c7180083138bbde35a90bcd0b358d6c56e367dca729ce5a73e02aa39a467fd7"
+    },
+    {
+      "role": "checks.build-linux-arm64.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "checks.build-linux-arm64.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "build-linux-arm64.binary",
+      "bytes": 23164984,
+      "sha256": "30e7e03a4cd55d5005047add5d920d2fbb52b959c8f322abb693ac788e33dd54"
+    },
+    {
+      "role": "checks.build-darwin-arm64.command-record",
+      "bytes": 893,
+      "sha256": "f3ec2ef1dfe73dce341d0dd0861efc3a02d494ccf5eb5ee8ea76f0475e809fc3"
+    },
+    {
+      "role": "checks.build-darwin-arm64.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "checks.build-darwin-arm64.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "build-darwin-arm64.binary",
+      "bytes": 23485458,
+      "sha256": "b69d077d1423f911f95ee3c0389935e566ab3883b177e513a0fda123dd8c4d0b"
+    },
+    {
+      "role": "checks.build-windows-amd64.command-record",
+      "bytes": 900,
+      "sha256": "d6a0c435a02964b90c99190e891f6be370c1a7dddf226c4cc5311bdb55f25dc7"
+    },
+    {
+      "role": "checks.build-windows-amd64.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "checks.build-windows-amd64.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "build-windows-amd64.binary",
+      "bytes": 24717824,
+      "sha256": "8ce8b85590bef0d574ca0afb58d612ee17fdffdf46f5a3338b22bd6e30bb5a27"
+    },
+    {
+      "role": "schema.summary",
+      "bytes": 2628,
+      "sha256": "7a370f1c125a7bf6f66b7537250fe6a7d90c07ae122fbba78979b1a39b8bb203"
+    },
+    {
+      "role": "schema.schema-standard.command-record",
+      "bytes": 699,
+      "sha256": "3cccdc653be8fe32059d1587a0bc9883cc4f4379c1b66fdb1a6e759d007100ba"
+    },
+    {
+      "role": "schema.schema-standard.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "schema.schema-standard.stderr",
+      "bytes": 568,
+      "sha256": "19db3736a25cf120d3426c5832c06c57399c599e220a5bd20c9b92b7d7c2d8c4"
+    },
+    {
+      "role": "schema.schema-isolated.command-record",
+      "bytes": 721,
+      "sha256": "778bb40f855a29198b3f7e57a0585c9257422ab55aba626e9493b2826c8ba052"
+    },
+    {
+      "role": "schema.schema-isolated.stdout",
+      "bytes": 265,
+      "sha256": "e105339000ad874395ead14d5b42d838e18a23526e92d2a77f928ccfc8381fe6"
+    },
+    {
+      "role": "schema.schema-isolated.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "native-inventory.summary",
+      "bytes": 3089,
+      "sha256": "3f96ef64ae6f9f9848c665f158a750333a31ef0121c72a2dfa6e8d1c4f509a5a"
+    },
+    {
+      "role": "native-inventory.compile-inventory-test.command-record",
+      "bytes": 905,
+      "sha256": "f238f0510130b21fb79b026310c17b98b18fb1c727ba51130557ce3ac796544c"
+    },
+    {
+      "role": "native-inventory.compile-inventory-test.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "native-inventory.compile-inventory-test.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "compile-inventory-test.binary",
+      "bytes": 6883840,
+      "sha256": "76302ee6a11fc9927fcb25d5e41a67af2197e4af11d7406c11c970ec5f742c5f"
+    },
+    {
+      "role": "native-inventory.inventory-native-all.command-record",
+      "bytes": 828,
+      "sha256": "0b4e7ecf9ca13dff5d7eca6a6b8a6536133c5e50dd49e6ea2fb86feab3a3eb1f"
+    },
+    {
+      "role": "native-inventory.inventory-native-all.stdout",
+      "bytes": 4371,
+      "sha256": "3565d297851d03e53a7cf532496e784d01d8c0fd1b10ccc6d71a3cde4c619207"
+    },
+    {
+      "role": "native-inventory.inventory-native-all.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "development.targeted-windows-result.json",
+      "bytes": 517,
+      "sha256": "56447f4e45bbabae7d80ecac2df4926748649bdeac692cb2d66945ddcb1e118c"
+    },
+    {
+      "role": "development.baseline-find-regression-result.json",
+      "bytes": 296,
+      "sha256": "6b21ffda7781e4219a8a223bf8d086df5ce51f3428c2d18b14e6f620a03f2b28"
+    },
+    {
+      "role": "development.baseline-original-two-result.json",
+      "bytes": 252,
+      "sha256": "018ce4aca8a8f4e1337379199d4998a83fd709284a062babf1033ea486ea8445"
+    },
+    {
+      "role": "development.symlink-prerequisite-result.json",
+      "bytes": 196,
+      "sha256": "3a8b76d7bfb1629ea1f3142f5aab85f91f1d641d2584621d1a2ecf002f598859"
+    },
+    {
+      "role": "development.targeted-windows.log",
+      "bytes": 1518,
+      "sha256": "081131058a056f6bab2454d45c307b3b9665ac54ccef9abbdd1a757915295aac"
+    },
+    {
+      "role": "development.baseline-find-regression.log",
+      "bytes": 3124,
+      "sha256": "7c16a751c351ffd464092e3f52808401068daa33098b17e43be0fc49c12ba9cf"
+    },
+    {
+      "role": "development.baseline-original-two.log",
+      "bytes": 1020,
+      "sha256": "221201938c7a06cc1d69f02445f828cac68306b4ba0f3a68e5ee09ca04ec1d11"
+    },
+    {
+      "role": "development.symlink-prerequisite.log",
+      "bytes": 1179,
+      "sha256": "bc3fe74bf65946e80ea82fbf55bf24982010a95fc684f64b0fb40fb2e1558f4c"
+    },
+    {
+      "role": "go-toolchain",
+      "bytes": 17508352,
+      "sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490"
+    },
+    {
+      "role": "uv-toolchain",
+      "bytes": 41556784,
+      "sha256": "e43cc6ca110540ad845ad6aa1e468e224813eb1da76e145413a262d7073d05e7"
+    },
+    {
+      "role": "formal-validation-runner",
+      "bytes": 6072,
+      "sha256": "eb4cf25b5072e08c5ea1dc064dcdbd13916e6ebd9a1ba3eb3e0d7e844d9a5c90"
+    },
+    {
+      "role": "independent-static-review",
+      "bytes": 3533,
+      "sha256": "827f90e2340f2c97b832cfb67cc14aae6729904f5354a37f41caba43fdc9642e"
+    },
+    {
+      "role": "old-find-overlay-implementation",
+      "bytes": 458,
+      "sha256": "515d159b64a6255d1bae65eea6f2448d114eea157509c8f3be6520bdab5fa9b7"
+    },
+    {
+      "role": "old-find-overlay-map",
+      "bytes": 348,
+      "sha256": "06cce17a1fb0a70b1235e664cee4dfc1249aa764e49811cfcaa86053ef9076f7"
+    },
+    {
+      "role": "ci.summary.md",
+      "bytes": 3811,
+      "sha256": "100f11b3bf2acd620b9c0c788f6085245e515afe25ea81c81e4fe893e7e009ff"
+    },
+    {
+      "role": "ci.summary.json",
+      "bytes": 3999,
+      "sha256": "86897d1e94e6be9250cef5277bdd0c29128aeaf240ada9c771b5bd33a5eb3878"
+    },
+    {
+      "role": "ci.evidence-index.json",
+      "bytes": 1316,
+      "sha256": "053850de8755e0ec02a6617c31bd6306d7307bfe174f82b8d379dc757bb6b638"
+    },
+    {
+      "role": "full-go.summary",
+      "bytes": 1876,
+      "sha256": "d7b93123c1e47b9fdc3426128fa8d6667c69ccf3b81b549ce70e29501430ad04"
+    },
+    {
+      "role": "full-go.go-test-all.command-record",
+      "bytes": 750,
+      "sha256": "60e0e43b343eb20379e54664b3cc1aa740f675a2d1e276d9ee165afdd387552e"
+    },
+    {
+      "role": "full-go.go-test-all.stdout",
+      "bytes": 2412447,
+      "sha256": "6f828005409c3f54faa564624c5b5ffd4af66d4fc44d6bfe9e4c23968be935a3"
+    },
+    {
+      "role": "full-go.go-test-all.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "windows.environment-observation",
+      "bytes": 357,
+      "sha256": "2e334d9b8c25d9f0f16d9cf5cfbd31330d0c6049abdddbeca0d485d509ebe71b"
+    },
+    {
+      "role": "windows.postflight",
+      "bytes": 1044,
+      "sha256": "81a89a4c5f7848492cbaf1725df87be45b46b27dd7473f737b8d26c0a2247b90"
+    },
+    {
+      "role": "ci.merge-parent-proof",
+      "bytes": 149,
+      "sha256": "f0d1b7e9ffa66fe4b1ffa5d3d355d2e738f29bfd1ddf73db29a64ad53e34b3ae"
+    },
+    {
+      "role": "full-go.public-final-parser",
+      "bytes": 21265,
+      "sha256": "19c1c7a82f0e427767f9427c4cf2275a05dd5da0a5ce45038135f17ec14b8c05"
+    },
+    {
+      "role": "prior-public-draft.report.md",
+      "bytes": 4020,
+      "sha256": "2d92afca7557c9cb7505585b023eae1f61431606f1a7d7bb4c223156d4748b26"
+    },
+    {
+      "role": "prior-public-draft.environment.md",
+      "bytes": 2009,
+      "sha256": "d4539d0d936b41d9da9d6fc28278b7111e5ee1f27ee20ce928cc581957fc20d0"
+    },
+    {
+      "role": "prior-public-draft.verification.json",
+      "bytes": 26434,
+      "sha256": "5ad1966fac508f67e99cdee6bd49c30e19c52cb6e373f798913c28a709ad5c85"
+    },
+    {
+      "role": "prior-public-draft.native-inventory-summary.json",
+      "bytes": 5166,
+      "sha256": "e1b356246386f2f1ea520c2685513ffe30bef86b01dcdf9f8e1661958c904ce9"
+    }
+  ],
+  "windows_environment": {
+    "caption": "Microsoft Windows 11 专业工作站版",
+    "version": "10.0.26200",
+    "build_number": "26200",
+    "os_architecture": "64 位",
+    "process_architecture": "X64",
+    "powershell_version": "7.6.5",
+    "observed_utc": "2026-09-14T12:25:49.7196752Z",
+    "observation_timing": "after checks/schema/native-inventory; full-go still running"
+  },
+  "postflight": {
+    "observed_utc": "2026-09-14T12:37:17.2476546+00:00",
+    "candidate_sha": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+    "source_clean": true,
+    "child_acl_unchanged": true,
+    "parent_acl_unchanged": true,
+    "allowed_ace_count": 3,
+    "matching_process_count": 0,
+    "process_observation_scope": "ExecutablePath within the private evidence root OR CommandLine containing that root; observing PowerShell excluded.",
+    "global_process_absence_claimed": false,
+    "no_processes_stopped": true,
+    "no_files_deleted": true,
+    "scope_note": "Recorded bounded postflight observation; does not prove OS-wide isolation or deletion of retained fixtures."
+  },
+  "independent_public_review": {
+    "bytes": 4344,
+    "sha256": "ff6c6087e3357f19d07519a590765a9f8405920482826fb69c416d09a8410281",
+    "method": "只读保留证据与公开白名单，不重跑测试。"
+  },
+  "public_manifest_sha256": "1c42f69632342da6c8a70863d309873f26a76b078db35e2fcaa1443e228e83cd"
+}
