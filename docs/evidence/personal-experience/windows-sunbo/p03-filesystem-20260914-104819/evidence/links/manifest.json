@@ -1,0 +1,140 @@
+{
+  "source_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty": false,
+  "binary_candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "files": [
+    {
+      "file": "admit-hardlink-regular-file.json",
+      "bytes": 62162,
+      "sha256": "3f71258b08452cea6e1ae6ca30337bdd31025575641ddb50d82dd8a5aa4c6987"
+    },
+    {
+      "file": "admit-junction-escape-quarantine.json",
+      "bytes": 68628,
+      "sha256": "809c71a3399817802cf17d5975e324b15f7c6c575abbab905aa9e7c8490da5ac"
+    },
+    {
+      "file": "admit-ordinary-skill.json",
+      "bytes": 54431,
+      "sha256": "86f9ff2b9d1eade7847950f804f03881132ace31126c4829aaa4e5f6de6c67fb"
+    },
+    {
+      "file": "filesystem-observation.json",
+      "bytes": 649,
+      "sha256": "21f82759db48ef34f6b44532483b46b30fb84db5b24a9433a768c8043a0f156b"
+    },
+    {
+      "file": "final-observation.json",
+      "bytes": 45214,
+      "sha256": "6adc0003d6a30a7fa6fc08160900b59cbe5ba3ec6e9192dd05447e8c16556c1a"
+    },
+    {
+      "file": "hardlink-marker-repeat-init.json",
+      "bytes": 28601,
+      "sha256": "123d4a0b51fb0899e3ebba1088a56e7a3a72fd8e3fb4d95b422ff5e6fd4da63f"
+    },
+    {
+      "file": "hardlink-marker-status.json",
+      "bytes": 28441,
+      "sha256": "d15f14f0f2535606111f1c780b9ae525faad2eb1db98cff6b98982811a16b4eb"
+    },
+    {
+      "file": "hardlink-target-replacement-setup.json",
+      "bytes": 28736,
+      "sha256": "3078311055fcc14fe00b61caac563bdfe9bc9bdd44d62fb6c4ddd3f73ee83c69"
+    },
+    {
+      "file": "harness-provenance.json",
+      "bytes": 1051,
+      "sha256": "958b9fc3b941f11901f5c2f38a67b71908ef4eaaae72136f6f55ae22492f87db"
+    },
+    {
+      "file": "junction-core-init-denied.json",
+      "bytes": 27745,
+      "sha256": "1768ca4cb6ef3531e4bf2f0f1df77e76c6b12e93f3616ab46ed6f4fa5b0b1549"
+    },
+    {
+      "file": "junction-core-status.json",
+      "bytes": 27783,
+      "sha256": "2cbe64d9ff677f3466df72689f63c95d78820fb781f7c8694bcb00318cd4bd55"
+    },
+    {
+      "file": "junction-state-ancestor-pubkey-denied.json",
+      "bytes": 24230,
+      "sha256": "49a6de06a42347b4bc09d6d29e8bf57dc975aaadf9658de8e18a71a228501a7d"
+    },
+    {
+      "file": "junction-state-ancestor-status.json",
+      "bytes": 24293,
+      "sha256": "dbcf7add718182b53aebc21688fb4df42a29b8cca3ef1290c7e66b8017a04c4b"
+    },
+    {
+      "file": "junction-state-root-init-denied.json",
+      "bytes": 23328,
+      "sha256": "5157324781a238d56357243750f08dc73270fe068cdc098d35f4ad5a80aea627"
+    },
+    {
+      "file": "junction-state-root-status.json",
+      "bytes": 23366,
+      "sha256": "c4cefa96a423fba67aec5a95b8a6e30239ff4e8b654bce10a2d63a226493d20f"
+    },
+    {
+      "file": "ordinary-state-init.json",
+      "bytes": 14722,
+      "sha256": "8b1916ef7a01d04faf418f48e635c76cb9d65544ed755c7f366284b9e508caa8"
+    },
+    {
+      "file": "ordinary-state-repeat-init.json",
+      "bytes": 22290,
+      "sha256": "c909b7b2ae55431f18fca038b6159fb091d4bd18cc7a72e86d76b57a8e7e93ba"
+    },
+    {
+      "file": "ordinary-state-status.json",
+      "bytes": 22130,
+      "sha256": "04f01250d6cf8922d161faaf06a1e64809361927c7017d97a5f240af0c670cd5"
+    },
+    {
+      "file": "packaging-provenance.json",
+      "bytes": 1532,
+      "sha256": "300482129128100eb62e626b330f66df337a0d0736baf10a98fc4edf3728fb35"
+    },
+    {
+      "file": "replaced-marker-init-denied.json",
+      "bytes": 29643,
+      "sha256": "04bbf8c9bd8facb3f42bdc6f630162efe6c417c5526b3f4bec784c4071819604"
+    },
+    {
+      "file": "replaced-marker-status.json",
+      "bytes": 29644,
+      "sha256": "95dbbaa4b71065f1886c9362da8aa1cb77b1cb733095044b99c96724578e8bf2"
+    },
+    {
+      "file": "report.md",
+      "bytes": 6023,
+      "sha256": "77e5ecef2799416da96764105cea14e5c88cb9b86f945211f5131838c60e62ff"
+    },
+    {
+      "file": "scanner-state-init.json",
+      "bytes": 40052,
+      "sha256": "1ff07da584b7b07c19efe287fbcecc5e510b440825770facec6fdff01e026740"
+    },
+    {
+      "file": "setup.json",
+      "bytes": 996,
+      "sha256": "fecfbde6ecc30544feb23de88ec0a8951a79a7448afe54cf56f05de84a260bc4"
+    },
+    {
+      "file": "signature-display-notice.json",
+      "bytes": 3876,
+      "sha256": "21c13934649c6f701be42f68707e59b09dbccff9403e715e65422a947f8969ab"
+    },
+    {
+      "file": "symlink-capability.json",
+      "bytes": 460,
+      "sha256": "888073bfd3c33f71f86898d7aeddc82d00cdde7b4169819318805bf7a74c4007"
+    }
+  ],
+  "scope": "17 native CLI checks expected; symlink privilege unavailable; partial Win-P03; no host acceptance",
+  "signed_display_notice": "signature-display-notice.json"
+}

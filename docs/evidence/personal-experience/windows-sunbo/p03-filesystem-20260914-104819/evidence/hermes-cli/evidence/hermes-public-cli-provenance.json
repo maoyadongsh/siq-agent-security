@@ -1,0 +1,67 @@
+{
+  "schema_version": "hermes-public-cli-archive-provenance/v1",
+  "scope": "public CLI attempt blocked before a valid file-tool control; not a product fail-closed result",
+  "artifacts": {
+    "evidence/hermes-public-cli-probe.py": {
+      "sha256": "ff1acd6063513bcaa5f4c8ddb61c738ee836ab5ebfc0323b46313703ed1c2924",
+      "original_bytes": true,
+      "role": "review-only frozen original harness; do not run directly from archive"
+    },
+    "evidence/hermes-public-cli-observations.json": {
+      "sha256": "f51c7e6f542ca6532498d49318da17c0aba0f36de191e39aa7955fed8b3cfbc4",
+      "original_bytes": true,
+      "role": "original sanitized observations"
+    }
+  },
+  "cases": [
+    {
+      "case": "A_control",
+      "status": "blocked",
+      "reason": "No provider request or target write before 90-second timeout; audit guard recorded denials"
+    },
+    {
+      "case": "B_siq_offline",
+      "status": "not_run",
+      "reason": "A did not establish a working actual-tool positive control; SIQ plugin was not installed or loaded in this run"
+    }
+  ],
+  "guard_event_classification": [
+    {
+      "event": "subprocess.Popen",
+      "count": 3,
+      "subcategory": "unknown",
+      "reason": "Raw events contain no argument, command, or stack metadata; empty stdout/stderr"
+    },
+    {
+      "event": "open",
+      "count": 1,
+      "subcategory": "unknown",
+      "reason": "Raw event contains no path, access mode, or stack metadata; cannot distinguish dependency/cache/user configuration"
+    }
+  ],
+  "private_empty_log_metadata": {
+    "stdout.private.log": {
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archived": false
+    },
+    "stderr.private.log": {
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archived": false
+    }
+  },
+  "cleanup": {
+    "host_pid": 35664,
+    "process_reaped_in_original_report": true,
+    "subsequent_process_query_found_pid": false,
+    "server_shutdown_and_socket_close_executed_by_harness": true
+  },
+  "limitations": [
+    "Python audit guard is not an OS sandbox and limits the test environment",
+    "No installed package capability failure inferred",
+    "No SIQ denial or native acceptance pass inferred",
+    "Original report checks contain A only; B not_run is a supplemental explicit interpretation",
+    "Raw profile configuration, guard-loaded marker, raw logs and actual private paths are excluded"
+  ]
+}
