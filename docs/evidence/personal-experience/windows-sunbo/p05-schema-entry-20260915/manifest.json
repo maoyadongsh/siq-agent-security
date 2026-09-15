@@ -1,0 +1,28 @@
+{
+  "schema": "public-evidence-manifest/v1",
+  "candidate_head": "810e8e93df747ac91c9e1a9eccd3294c1a20490c",
+  "files": [
+    {
+      "file": "report.md",
+      "bytes": 2521,
+      "sha256": "a5f48cf5ea093ceacafbd8e1f02a1aca190fded5f6a08a292775eb8f16d85a87"
+    },
+    {
+      "file": "development-baseline.json",
+      "bytes": 10812,
+      "sha256": "82394cdfdd091033571e81c775c20e9c94afff979816c9d73ad880413c69a557"
+    },
+    {
+      "file": "clean-validation.json",
+      "bytes": 8965,
+      "sha256": "fddad3da5bc00fd304f0020cdc759b133972bd0ee9399e2f79ef049fbf94c66b"
+    },
+    {
+      "file": "verification.json",
+      "bytes": 4922,
+      "sha256": "8cf6d87a39bd9b895228b7d285f362703127fca1de9d22cde77ea055c85b7ba8"
+    }
+  ],
+  "total_bytes_excluding_manifest": 27220,
+  "note": "Manifest covers the other four files; private raw streams are represented only by role, byte count and SHA256."
+}
