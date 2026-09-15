@@ -1959,3 +1959,7 @@ Grant/Revoke 管理采用 §3.12.25 的严格、管理会话专用入口，列�
 ## 2026-09-14 个人来源调度与受控 Git 阶段增量
 
 N03 来源签名记录、HTTP 合同及 daemon 调度见 [专项规格](personal-experience-n03-update-source-spec.md)。取数结果写回必须比较取数前的记录签名；未来状态禁止覆盖。N02 HTTPS 组件见 ADR-0051，生产入口仍关闭，真实联网验收前不能启用。接入诊断的本机探测仅拨号已验证的 loopback 字面地址。可信 Skill 归属及审批重试链另行完成，保留既有拒绝边界。
+
+## 2026-09-16 Windows 文件资源解释候选（#39）
+
+按 [Windows 本地盘符资源专项规格](windows-resource-profile-spec-v1.md) 准备明确签名的新 managed 权限解释。旧 Intent v2/v3、Grant、identity 和会话保持 POSIX 原义；不得全局放宽 NormalizeResource。首片只建立新版合同和显式纯词法入口，在 Windows 文件事实层与批准/身份/裁决全链完成前不启用新 Authority，也不声明 Hermes B 已通过。
