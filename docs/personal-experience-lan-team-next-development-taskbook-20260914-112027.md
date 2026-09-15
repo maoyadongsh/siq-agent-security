@@ -1,5 +1,8 @@
 # 个人体验与局域网团队管理后续开发任务书 v4.1
 
+> 当前执行入口已更新为 [v5 后续任务书](personal-experience-lan-team-next-development-taskbook-20260915-232155.md)。本文件保留原需求与历史记录；后续起点、顺序、提交状态以 v5 为准。
+
+
 生成时间：2026-09-14 11:20:27（Asia/Shanghai）。适用仓库：`maoyadongsh/siq-agent-security`。
 
 **执行基线：main `4464dfbc8e66c8ec1fb2590b286351595fcd9667`，已包含 [PR #45](https://github.com/maoyadongsh/siq-agent-security/pull/45) 的独立验收修复。** 本书取代 v3 的后续执行顺序；原需求及历史证据不删除。目标继续为三个系统上的个人智能体与 Skill 安全管理，然后局域网团队多设备管理。

@@ -1,5 +1,8 @@
 # 个人体验闭环接续进度（2026-09-13）
 
+2026-09-15 基线提交：`53155b10c276fe41e71c47757e58e7e56d5d75d4` 已在当前分支本地提交 R06/R04/R07 修复与证据；未推送/合并。后续执行见 [v5 任务书](personal-experience-lan-team-next-development-taskbook-20260915-232155.md) 与 [GLM 提示词](glm-personal-next-execution-prompt-20260915-232155.md)。下方复核叙述及原报告中的“未提交”是当时快照，不代表当前 Git 状态。
+
+
 2026-09-15 R06/R04/R07 独立复核（当前状态）：[修复与复测报告](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)。修复管理页面请求失效后不重新加载、适配器同值选择卡死；纠正 HTTP 201 被误算拒绝，增加有效签名下真实暂存内容漂移负例；浏览器使用单次导航、同一文档经历重启与重新配对；原文任务授权/撤销、未到期密文与回执保留采用实测断言；systemd 使用保留状态重新注册启动并清理。原 GLM 报告和摘要文件保留，但“LC01–LC09 全部通过”“完整用户旅程已关闭”不再作为当前结论。本批含 Web 源码和 embed 更新，候选身份已变化，全部新改动未提交/未推送/未合并。
 
 GLM 历史交付见原 [R06](evidence/personal-experience/r06-linux-lifecycle-20260915-161515/report.md)、[R04](evidence/personal-experience/r04-openclaw-native-update-20260915-171614/report.md)、[R07](evidence/personal-experience/r07-linux-user-journey-20260915-211053/report.md)。当前状态以本段、任务书第 8.4/9.2/10.2 节及复核矩阵为准。
