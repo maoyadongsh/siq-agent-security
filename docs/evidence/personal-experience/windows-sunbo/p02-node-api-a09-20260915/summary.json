@@ -1,0 +1,186 @@
+{
+  "schema": "windows-owned-node-api-diagnostic-summary/v1",
+  "batch": "A09-r3",
+  "observed_run_utc": "2026-09-14T22:12:01.0426335Z",
+  "method": "component_fixture",
+  "environment": "Windows host / existing WSL2 Linux x86_64 / ordinary UID1000",
+  "node_version": "24.19.0",
+  "node_identity": {
+    "bytes": 125989464,
+    "sha256": "bc17c508ffeed0ec622934f9b7fa72f8e78da65350e63c3eceb56fa688aa5e12"
+  },
+  "package_metadata_identity": {
+    "bytes": 136186,
+    "sha256": "a234b616a049b4dedaad49ba0e95ff31afd3f19935e446199e75f78b589d1c21"
+  },
+  "unshare_identity": {
+    "sha256": "a23c8863860669003dc4660039fe642f5795c8c2195898ebc5d01afa1ac3d11c",
+    "matches_after": true
+  },
+  "scope": "Three self-written Node filesystem API probes; no OpenClaw host execution, provider or SIQ. Not native Windows acceptance.",
+  "hypothesis_status": "supported",
+  "diagnostic_completed": true,
+  "expectations_met": true,
+  "cases": [
+    {
+      "case_id": "D0",
+      "real_process_exit": 0,
+      "api": {
+        "name": "none",
+        "reached": false,
+        "returned": false
+      },
+      "operation_succeeded": true,
+      "error_stage": null,
+      "target_exists": true,
+      "staging_exists": false,
+      "retained_content_bytes": 29,
+      "retained_content_sha256": "d247dfc7677cd2275a573f10f64300b86e68cb0744c3c15ef1cef0b96ec2c3fc",
+      "close_succeeded": true,
+      "node_stdout_bytes": 508,
+      "node_stderr_bytes": 0,
+      "elapsed_seconds": 0.40729289800219703,
+      "result_file": "D0-probe.json"
+    },
+    {
+      "case_id": "D1",
+      "real_process_exit": 1,
+      "api": {
+        "name": "FileHandle.chmod",
+        "reached": true,
+        "returned": false
+      },
+      "operation_succeeded": false,
+      "error_stage": "fd-chmod",
+      "target_exists": false,
+      "staging_exists": true,
+      "retained_content_bytes": 29,
+      "retained_content_sha256": "d247dfc7677cd2275a573f10f64300b86e68cb0744c3c15ef1cef0b96ec2c3fc",
+      "close_succeeded": true,
+      "node_stdout_bytes": 874,
+      "node_stderr_bytes": 0,
+      "elapsed_seconds": 0.4166463820001809,
+      "result_file": "D1-probe.json"
+    },
+    {
+      "case_id": "D2",
+      "real_process_exit": 0,
+      "api": {
+        "name": "fs.promises.chmod",
+        "reached": true,
+        "returned": true
+      },
+      "operation_succeeded": true,
+      "error_stage": null,
+      "target_exists": true,
+      "staging_exists": false,
+      "retained_content_bytes": 29,
+      "retained_content_sha256": "d247dfc7677cd2275a573f10f64300b86e68cb0744c3c15ef1cef0b96ec2c3fc",
+      "close_succeeded": true,
+      "node_stdout_bytes": 532,
+      "node_stderr_bytes": 0,
+      "elapsed_seconds": 0.4150007829957758,
+      "result_file": "D2-probe.json"
+    }
+  ],
+  "cleanup": {
+    "all_three_node_children_reaped": true,
+    "namespace_child_reaped": true,
+    "reserved_two_bound_sockets_closed": true,
+    "provider_listeners_started": 0,
+    "timeouts": 0,
+    "kills": 0,
+    "windows_transport_complete": true,
+    "windows_disposed": true,
+    "linux_cleanup_ack": "confirmed_by_guest_report",
+    "fixtures_retained": true
+  },
+  "security": {
+    "new_user_and_mount_namespace": true,
+    "uid_gid_map_only_original_1000": true,
+    "private_mount_propagation": true,
+    "owned_tmp_inode_match": true,
+    "capabilities_zero_before_each_node": true,
+    "no_new_privileges_each_node": true,
+    "read_roots": [
+      "OPENCLAW_PACKAGE",
+      "OWNED_RUNTIME",
+      "PRIVATE_MOUNT_TMP"
+    ],
+    "write_roots": [
+      "OWNED_RUNTIME",
+      "PRIVATE_MOUNT_TMP"
+    ],
+    "child_worker_addons_allowed": false,
+    "guard_events": [
+      {
+        "case_id": "D0",
+        "event_count": 1,
+        "event": "native-permissions",
+        "permissions": {
+          "fixtureRead": true,
+          "fixtureWrite": true,
+          "oldProfileRead": false,
+          "oldProfileWrite": false,
+          "child": false,
+          "worker": false,
+          "addons": false
+        }
+      },
+      {
+        "case_id": "D1",
+        "event_count": 1,
+        "event": "native-permissions",
+        "permissions": {
+          "fixtureRead": true,
+          "fixtureWrite": true,
+          "oldProfileRead": false,
+          "oldProfileWrite": false,
+          "child": false,
+          "worker": false,
+          "addons": false
+        }
+      },
+      {
+        "case_id": "D2",
+        "event_count": 1,
+        "event": "native-permissions",
+        "permissions": {
+          "fixtureRead": true,
+          "fixtureWrite": true,
+          "oldProfileRead": false,
+          "oldProfileWrite": false,
+          "child": false,
+          "worker": false,
+          "addons": false
+        }
+      }
+    ],
+    "network_observation_scope": "Selected Node public APIs only; not OS network isolation proof"
+  },
+  "unchanged": {
+    "node_package_assets": true,
+    "control_and_tmp_sentinel": true,
+    "parent_namespace_and_tmp_metadata": true,
+    "windows_evidence_root_acl": true
+  },
+  "limits_seconds": {
+    "each_node_total": 10,
+    "each_node_cleanup_reserve": 3,
+    "batch": 75,
+    "namespace_total": 110,
+    "namespace_cleanup_reserve": 5,
+    "windows_total": 150,
+    "windows_cleanup_reserve": 10
+  },
+  "limitations": [
+    "API controls reproduce fd-chmod denial, but A08 actual backend/API remains unidentified.",
+    "No new OpenClaw A success, no B, no WorkBuddy desktop, no native Windows host execution.",
+    "R2 refused before probes after installed util-linux changed; historical refusal retained.",
+    "No fourth Node probe or alternate permission mode tested.",
+    "Do not infer operation safety or replace handle chmod with path chmod from these results.",
+    "Guard may log before stdin token; probe fixture operations wait for token.",
+    "Wait budgets do not guarantee preemption of every blocking OS call.",
+    "Original platform18-row matrix and research denominators unchanged."
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "schema": "openclaw-a05-public-source-index.v1",
+  "description": "仅发布功能角色、字节数和SHA；不提供私有存储路径或原始内容。",
+  "source_count": 36,
+  "bytes_null_meaning": "两份运行后新增源码的已有读取证据只记录整文件SHA，未记录整文件字节数；不以切片响应大小代替。",
+  "post_run_source_identity_note": "两个新数据库源码SHA属于运行后有界只读身份，不倒填A05运行前pins；本批公开结论只引用实际stack，不推测具体resource。",
+  "sources": [
+    {
+      "role": "冻结.Windows传输控制器",
+      "bytes": 17811,
+      "sha256": "7a06e627d7b6da10f6474b7815a1894de23e3e2d60948a48687a26441440e91f"
+    },
+    {
+      "role": "冻结.namespace父控制器",
+      "bytes": 12271,
+      "sha256": "c182c5e084e63a9c551324337870578f906b2c251024b1f57a33569089a491bf"
+    },
+    {
+      "role": "冻结.namespace子控制器",
+      "bytes": 9516,
+      "sha256": "4a5f9b008d1b0eb2110e623ead33434c6c33f577d327dc1f4add7ac8c4b697c0"
+    },
+    {
+      "role": "冻结.OpenClaw运行控制器",
+      "bytes": 24555,
+      "sha256": "a350ebe24b38402300afeecf300a76704e7162bd6a40bc0816d117e7782315c6"
+    },
+    {
+      "role": "冻结.loopback守卫",
+      "bytes": 4409,
+      "sha256": "c105681c91205b5c00f409fd93e492cbdec16f590c67a111ca0409e52027fa23"
+    },
+    {
+      "role": "冻结.方案说明",
+      "bytes": 2622,
+      "sha256": "bbe1ea3d6c3f292cb6367fa0e20326c15ff9d6e386220d1cd9dae7e042291d51"
+    },
+    {
+      "role": "冻结.差异说明",
+      "bytes": 3808,
+      "sha256": "9468c13110d12f79e20343a14d3f63d129a901d71b60ff7d0431b29f1752d84e"
+    },
+    {
+      "role": "冻结.源码背景",
+      "bytes": 667,
+      "sha256": "79c604cebdad206a86487238d228f33071b7e79cb696c72dfac236871ef08511"
+    },
+    {
+      "role": "冻结.payload静态复核",
+      "bytes": 1699,
+      "sha256": "7a15e63a5e25b658732ba81c9c465865732a979dbcccf8c8b84ca10aab5be7d9"
+    },
+    {
+      "role": "冻结.Windows控制器复核",
+      "bytes": 6154,
+      "sha256": "b27d2340e7dad2a17e6136c97d90a494de2dd868c84ce176d9485ff8793bf85d"
+    },
+    {
+      "role": "冻结.独立复核",
+      "bytes": 4748,
+      "sha256": "19d898462c30ce10663f8585755e381d99170a2abd83c3d762f5bf2156cf41f4"
+    },
+    {
+      "role": "冻结.合成验证脚本",
+      "bytes": 6268,
+      "sha256": "bcb4b2aadfb6a825a7ef907c1f94866d0342a9fbe67dd009a02679b39e85d916"
+    },
+    {
+      "role": "冻结.合成子进程",
+      "bytes": 660,
+      "sha256": "8acdc66bcab8e0fd1c253d8f068792b291ef958e5bacb57eeff7eb969497c758"
+    },
+    {
+      "role": "冻结.Windows证据目录预检",
+      "bytes": 682,
+      "sha256": "dc0d5d687f2cf4c9871dd13ebf89e6d0cbacddbdf63cd1ab4c75c3cc5a886e86"
+    },
+    {
+      "role": "冻结.Plan包装结果",
+      "bytes": 29914,
+      "sha256": "7ef8568827c60e40e1cce1a10df55a35f5744db4a5497760058be9e8a5432ed8"
+    },
+    {
+      "role": "冻结.Plan传输标准输出",
+      "bytes": 10753,
+      "sha256": "0829a23659449a2ede6f7709b0c99c4ecb7d92b02d904a3394ee026ec921ce62"
+    },
+    {
+      "role": "冻结.Plan传输标准错误",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca"
+    },
+    {
+      "role": "冻结.Plan盘点标准输出",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0"
+    },
+    {
+      "role": "冻结.Plan盘点标准错误",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "运行前冻结清单",
+      "bytes": 4070,
+      "sha256": "4a1406f20dc0fb49b52a1c3bfdf96ffd36cba4a4fa2f73a2f9ba6fe1cc66dc74"
+    },
+    {
+      "role": "实际Run.Windows包装结果",
+      "bytes": 455584,
+      "sha256": "232e43e554ff02c3c470a17a5fc6abc1ad1e8d328f1a7f778a631a593452a33f"
+    },
+    {
+      "role": "实际Run.独立结果复核",
+      "bytes": 4923,
+      "sha256": "48c85e941657b3e959da090223d97fdbaa57e4088e307554e01b83dcf2b1f363"
+    },
+    {
+      "role": "WSL运行盘点.标准输出",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0"
+    },
+    {
+      "role": "WSL运行盘点.标准错误",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "WSL主传输.标准输出",
+      "bytes": 204539,
+      "sha256": "c7489e9c76d1c13b73896a838129a9adc9e0576debb9fcd6882de0a4ef945f23"
+    },
+    {
+      "role": "WSL主传输.标准错误",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca"
+    },
+    {
+      "role": "namespace子进程.标准输出",
+      "bytes": 55634,
+      "sha256": "99ec9d04212554af85efb591e35dea0ea7bbd209f0e44ff32d8b9447bd76f35d"
+    },
+    {
+      "role": "namespace子进程.标准错误",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "Node进程.标准输出",
+      "bytes": 117,
+      "sha256": "9a9da94a612293580096e886a3f80c49a543d8fcc7a1dcf6443a05451404621f"
+    },
+    {
+      "role": "Node进程.标准错误",
+      "bytes": 2032,
+      "sha256": "e02801422dce73d3ed9037bac6b63a02299c9c271b8e26877fc79daba3324c8e"
+    },
+    {
+      "role": "官方debug入口.来源索引",
+      "bytes": 4146,
+      "sha256": "73a99e22c2e8f363391c661b5baef2b9f8889cd2d6084bd2512629c2472b9a47"
+    },
+    {
+      "role": "官方debug入口.静态报告",
+      "bytes": 5100,
+      "sha256": "0cb0328a00ee0b7364da26963ebc12f90556090944d327f883cbdf61f2841f19"
+    },
+    {
+      "role": "运行后数据库帧.来源索引",
+      "bytes": 6624,
+      "sha256": "5c709e8ad7126cc0aa1e8ac4201d662537d655aebb82e75ff6cb6810bcd03f3a"
+    },
+    {
+      "role": "运行后数据库帧.静态报告",
+      "bytes": 8129,
+      "sha256": "6097bfabf525be797aa6af3844e48e737888e8b997035b1a2b9c357ab44abe54"
+    },
+    {
+      "role": "运行后新增源码.数据库路径注册",
+      "bytes": null,
+      "sha256": "51ac28680ec08ba0b27fc97cdfcae45a90114f34b4086b96a7dc84fa06f7aa7c"
+    },
+    {
+      "role": "运行后新增源码.数据库打开",
+      "bytes": null,
+      "sha256": "e72e2a6e9990543194c1d3ab1e4c8d013f2957a97cc4c16639ad3e6fe47abcab"
+    }
+  ]
+}

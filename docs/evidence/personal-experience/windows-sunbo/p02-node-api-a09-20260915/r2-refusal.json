@@ -1,0 +1,15 @@
+{
+  "schema": "a09-r2-preflight-refusal-public/v1",
+  "status": "run_refused_before_linux_fixture_or_probe_creation",
+  "plan_exit": 0,
+  "run_exit": 1,
+  "probe_cases_started": 0,
+  "linux_root_absent_after_refusal": true,
+  "linux_cleanup_ack": "unknown",
+  "unshare_expected_sha256": "7863536428c7c77526e21b8b5eaf4744bae48f660c15cf75bf23dee69711ca08",
+  "unshare_actual_sha256": "a23c8863860669003dc4660039fe642f5795c8c2195898ebc5d01afa1ac3d11c",
+  "package_version": "2.39.3-9ubuntu6.6",
+  "package_update_observed": "dpkg log6.4→6.6; current unshare matches installed package md5",
+  "revision": "r3 changes only parent unshare SHA; all other five executable source bytes identical; new Windows evidence directory",
+  "scope": "Local provenance does not independently verify archive signature or identify updater. Original r2 remains failure; not a failed Node API case."
+}

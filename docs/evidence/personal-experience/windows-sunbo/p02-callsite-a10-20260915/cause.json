@@ -1,0 +1,36 @@
+{
+  "name": {
+    "status": "absent",
+    "value": null,
+    "truncated": false
+  },
+  "code": {
+    "status": "present",
+    "value": "ERR_ACCESS_DENIED",
+    "truncated": false
+  },
+  "permission": {
+    "status": "present",
+    "value": "",
+    "truncated": false
+  },
+  "resource": {
+    "status": "not_collected",
+    "value": null,
+    "truncated": false,
+    "classification": "not_collected"
+  },
+  "syscall": {
+    "status": "absent",
+    "value": null,
+    "truncated": false
+  },
+  "stack_status": "skipped_unverified_lazy_stack",
+  "callsite_association": {
+    "same_error_object_at_exact_callsite": true,
+    "backend": "node_fallback",
+    "branch": "staging",
+    "operation": "FileHandle.chmod_expression",
+    "target_role": "planned_target"
+  }
+}
