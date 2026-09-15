@@ -1,0 +1,494 @@
+{
+  "schema_version": "windows-p04-file-lock-attempts/v1",
+  "scope": "Windows本机合成Hermes profile的管理UI文件事务；未运行Hermes或provider",
+  "source_commit": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "product_binary_sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470",
+  "attempts": [
+    {
+      "attempt": "R1",
+      "outcome": "未完成：harness断言失败，未恢复",
+      "controller_reported_ok": false,
+      "ui_phase": "locked-update",
+      "ui_failed_check": "claim_disk_matches_api",
+      "assertions": {
+        "paired_through_ui": true,
+        "v1_installed_unverified": true,
+        "locked_readable_delete_denied": true,
+        "update_http_409": true,
+        "persistent_partial_removal_observed": false,
+        "old_grant_revoked_once": false,
+        "candidate_grant_bytes_unchanged": false,
+        "pool_old_bytes_preserved": false,
+        "same_claim_recovery_aborted": false,
+        "target_absent_after_recovery": false,
+        "immutable_history_retained": false,
+        "sources_and_profile_unchanged": false,
+        "runtime_identity_absent": false
+      },
+      "true_assertion_count": 4,
+      "assertion_count": 13,
+      "false_assertions_mean": "R1后续步骤未完成，不据此判产品失败",
+      "recovery_completed": false,
+      "ui_process": {
+        "exit_code": 1,
+        "held_direct_process_reaped": true,
+        "held_process_handle_closed": true,
+        "forced_held_process_kill": false,
+        "observation_timeout": false,
+        "capture_overflow": false,
+        "capture_threads_ended": true,
+        "input_thread_ended": true,
+        "capture_error_types": [],
+        "cleanup_unverified": false,
+        "elapsed_seconds": 84.79
+      },
+      "browser_job": {
+        "assigned_before_fixture_input": true,
+        "forced_job_termination": false,
+        "handle_closed": true,
+        "cleanup_error_types": [],
+        "before_close": {
+          "total_processes": 6,
+          "active_processes": 0,
+          "terminated_by_limits": 0
+        },
+        "final_accounting_before_handle_close": {
+          "total_processes": 6,
+          "active_processes": 0,
+          "terminated_by_limits": 0
+        }
+      },
+      "lock": {
+        "acquired": true,
+        "share_read": true,
+        "share_write": true,
+        "share_delete": false,
+        "non_inheritable": true,
+        "readable_while_held": true,
+        "delete_probe_error": 32,
+        "closed": true,
+        "release_delete_access_succeeded": false,
+        "probe_handles_closed": true
+      },
+      "service": {
+        "exit_code": 0,
+        "held_direct_process_reaped": true,
+        "held_process_handle_closed": true,
+        "forced_held_process_kill": false,
+        "observation_timeout": false,
+        "capture_overflow": false,
+        "capture_threads_ended": true,
+        "input_thread_ended": true,
+        "capture_error_types": [],
+        "cleanup_unverified": false,
+        "elapsed_seconds": 89.379,
+        "signed_stop_attempted": true,
+        "drained": true,
+        "normal_stop_verified": true,
+        "watchdog_ended": true
+      },
+      "command_observations": {
+        "count": 28,
+        "exit_code_counts": {
+          "0": 21,
+          "1": 7
+        },
+        "nonzero_labels": {
+          "instance-status": 7
+        },
+        "all_held_direct_processes_reaped": true,
+        "forced_kills": 0,
+        "timeouts": 0
+      },
+      "ui_response_status_counts": {
+        "200": 184,
+        "201": 6,
+        "401": 1,
+        "404": 1,
+        "409": 1,
+        "429": 2
+      },
+      "ui_response_total": 195,
+      "ui_flags": {
+        "all_product_mutations_via_ui": true,
+        "mock_responses": false,
+        "hermes_executed": false,
+        "runtime_verified": false,
+        "browser_closed": true,
+        "external_requests_blocked": 0,
+        "websockets_blocked": 0,
+        "page_error_count": 0
+      },
+      "source_clean_before_and_after": true,
+      "fixed_inputs_unchanged": true,
+      "capture_scope": "仅Node UI与管理服务四条流的内存捕获长度/摘要；无原始流文件复制，不覆盖全部命令流",
+      "memory_capture_streams": [
+        {
+          "role": "node_ui_stdout",
+          "bytes": 627,
+          "sha256": "06124f79645e49c18d15d3070df479e44331028c4cfb67c28311d7228d31d416",
+          "complete_to_eof": true
+        },
+        {
+          "role": "node_ui_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete_to_eof": true
+        },
+        {
+          "role": "management_service_stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete_to_eof": true
+        },
+        {
+          "role": "management_service_stderr",
+          "bytes": 496,
+          "sha256": "22468e2aa45aeae37d5718ec3266caf964770cb7f56d90d1531ff71c6b66ab38",
+          "complete_to_eof": true
+        }
+      ],
+      "filtered_private_logs": [
+        {
+          "role": "ui_stdout",
+          "bytes": 627,
+          "sha256": "06124f79645e49c18d15d3070df479e44331028c4cfb67c28311d7228d31d416"
+        },
+        {
+          "role": "ui_stderr",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "role": "serve_stdout",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "role": "serve_stderr",
+          "bytes": 289,
+          "sha256": "58c108c71bb840bdf52f1230c62cefac0916bb4817bfeff9525e96d52ed0a793"
+        }
+      ],
+      "evidence_sources": [
+        {
+          "role": "journey_result",
+          "bytes": 6269,
+          "sha256": "f8e19ee2b0c0b9699befa5d0160cc5a7d49d8afddefafc9c40051b6700df4a2e"
+        },
+        {
+          "role": "harness_summary",
+          "bytes": 28744,
+          "sha256": "f46bc4d7116056015e2427577154640e8cefd0dc17e1bc96a18127889a2f6513"
+        },
+        {
+          "role": "ui_result",
+          "bytes": 29461,
+          "sha256": "6b7d92528060a5ec371defdfe689a59a844c152c188f5d82289108245a3ef998"
+        }
+      ]
+    },
+    {
+      "attempt": "R2",
+      "outcome": "通过：受控占用失败后按原claim恢复并终止更新",
+      "controller_reported_ok": true,
+      "ui_phase": "complete",
+      "ui_failed_check": "",
+      "assertions": {
+        "paired_through_ui": true,
+        "v1_installed_unverified": true,
+        "locked_readable_delete_denied": true,
+        "update_http_409": true,
+        "persistent_partial_removal_observed": true,
+        "old_grant_revoked_once": true,
+        "candidate_grant_bytes_unchanged": true,
+        "pool_old_bytes_preserved": true,
+        "same_claim_recovery_aborted": true,
+        "target_absent_after_recovery": true,
+        "immutable_history_retained": true,
+        "sources_and_profile_unchanged": true,
+        "runtime_identity_absent": true
+      },
+      "true_assertion_count": 13,
+      "assertion_count": 13,
+      "false_assertions_mean": "无false项",
+      "recovery_completed": true,
+      "ui_process": {
+        "exit_code": 0,
+        "held_direct_process_reaped": true,
+        "held_process_handle_closed": true,
+        "forced_held_process_kill": false,
+        "observation_timeout": false,
+        "capture_overflow": false,
+        "capture_threads_ended": true,
+        "input_thread_ended": true,
+        "capture_error_types": [],
+        "cleanup_unverified": false,
+        "elapsed_seconds": 85.66
+      },
+      "browser_job": {
+        "assigned_before_fixture_input": true,
+        "forced_job_termination": false,
+        "handle_closed": true,
+        "cleanup_error_types": [],
+        "before_close": {
+          "total_processes": 6,
+          "active_processes": 0,
+          "terminated_by_limits": 0
+        },
+        "final_accounting_before_handle_close": {
+          "total_processes": 6,
+          "active_processes": 0,
+          "terminated_by_limits": 0
+        }
+      },
+      "lock": {
+        "acquired": true,
+        "share_read": true,
+        "share_write": true,
+        "share_delete": false,
+        "non_inheritable": true,
+        "readable_while_held": true,
+        "delete_probe_error": 32,
+        "closed": true,
+        "release_delete_access_succeeded": true,
+        "probe_handles_closed": true
+      },
+      "service": {
+        "exit_code": 0,
+        "held_direct_process_reaped": true,
+        "held_process_handle_closed": true,
+        "forced_held_process_kill": false,
+        "observation_timeout": false,
+        "capture_overflow": false,
+        "capture_threads_ended": true,
+        "input_thread_ended": true,
+        "capture_error_types": [],
+        "cleanup_unverified": false,
+        "elapsed_seconds": 90.262,
+        "signed_stop_attempted": true,
+        "drained": true,
+        "normal_stop_verified": true,
+        "watchdog_ended": true
+      },
+      "command_observations": {
+        "count": 28,
+        "exit_code_counts": {
+          "0": 21,
+          "1": 7
+        },
+        "nonzero_labels": {
+          "instance-status": 7
+        },
+        "all_held_direct_processes_reaped": true,
+        "forced_kills": 0,
+        "timeouts": 0
+      },
+      "ui_response_status_counts": {
+        "200": 183,
+        "201": 6,
+        "401": 1,
+        "404": 1,
+        "409": 1,
+        "429": 2
+      },
+      "ui_response_total": 194,
+      "ui_flags": {
+        "all_product_mutations_via_ui": true,
+        "mock_responses": false,
+        "hermes_executed": false,
+        "runtime_verified": false,
+        "browser_closed": true,
+        "external_requests_blocked": 0,
+        "websockets_blocked": 0,
+        "page_error_count": 0
+      },
+      "source_clean_before_and_after": true,
+      "fixed_inputs_unchanged": true,
+      "capture_scope": "仅Node UI与管理服务四条流的内存捕获长度/摘要；无原始流文件复制，不覆盖全部命令流",
+      "memory_capture_streams": [
+        {
+          "role": "node_ui_stdout",
+          "bytes": 607,
+          "sha256": "bf562f874377fd5947db08319b63d3e4457abb9235e0cff729d2246b1fc73cb4",
+          "complete_to_eof": true
+        },
+        {
+          "role": "node_ui_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete_to_eof": true
+        },
+        {
+          "role": "management_service_stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete_to_eof": true
+        },
+        {
+          "role": "management_service_stderr",
+          "bytes": 496,
+          "sha256": "384a36d590f761977b72ee3b57030464b4763026a9fdb28c8593b95c8eed653e",
+          "complete_to_eof": true
+        }
+      ],
+      "filtered_private_logs": [
+        {
+          "role": "ui_stdout",
+          "bytes": 607,
+          "sha256": "bf562f874377fd5947db08319b63d3e4457abb9235e0cff729d2246b1fc73cb4"
+        },
+        {
+          "role": "ui_stderr",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "role": "serve_stdout",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "role": "serve_stderr",
+          "bytes": 289,
+          "sha256": "e15eedb962baec4a4a684892ae25634e36940e8ffcfdeb84bc5bd89eaa196e43"
+        }
+      ],
+      "evidence_sources": [
+        {
+          "role": "journey_result",
+          "bytes": 6516,
+          "sha256": "fcc7b96586c838f7b5a416c6d4b67513a2aa75c0b6094c3eb99f6d9eb66bcfb4"
+        },
+        {
+          "role": "harness_summary",
+          "bytes": 28729,
+          "sha256": "d907b598a29ef9305ba20d0c5ea0534877ad3bf7ddeb84680381180199227021"
+        },
+        {
+          "role": "ui_result",
+          "bytes": 76284,
+          "sha256": "5cb32c7e257e00494d05207f16720dfdb5277e1b8b01fe060168cdae0c8d83e6"
+        }
+      ],
+      "business_readback": {
+        "old_grant_revision_before": 1,
+        "old_grant_revision_after": 2,
+        "old_grant_status_after": "revoked",
+        "old_existing_versions_unchanged": true,
+        "new_revoked_versions_appended": 1,
+        "old_grant_unchanged_during_recovery": true,
+        "candidate_revision": 1,
+        "candidate_status": "approved",
+        "candidate_all_version_bytes_unchanged": true,
+        "candidate_installation": null,
+        "candidate_runtime_activation_performed": false,
+        "partial_SKILL_md_absent": true,
+        "partial_z_lock_txt_present": true,
+        "partial_target_files": [
+          {
+            "path": ".siq-install-owner",
+            "bytes": 449,
+            "sha256": "32ba1abf3e4689fb19aab02ea2e62b4bbe717d9f549089d92977c1f026ea20fa"
+          },
+          {
+            "path": "z-lock.txt",
+            "bytes": 52,
+            "sha256": "03224620717014aa5d6fa820d071cc18d2f24013ed2db9d1ac504a6a562b791a"
+          }
+        ],
+        "partial_update_status": "removing_previous",
+        "partial_removal_status": "cleanup_pending",
+        "stable_GET_equal": true,
+        "same_update_claim_after_recovery": true,
+        "same_removal_claim_after_recovery": true,
+        "recovery_update_status": "aborted",
+        "recovery_removal_status": "removed",
+        "target_absent_after_recovery": true,
+        "pool_unchanged_all_stages": true,
+        "pool_file_count": 2,
+        "pool_files": [
+          {
+            "path": "SKILL.md",
+            "bytes": 138,
+            "sha256": "91a691c82fcec2a4a0b1d84cac93b5c99b15a2157153d58feb89b1591fb0998c"
+          },
+          {
+            "path": "z-lock.txt",
+            "bytes": 52,
+            "sha256": "03224620717014aa5d6fa820d071cc18d2f24013ed2db9d1ac504a6a562b791a"
+          }
+        ],
+        "signed_document_comparisons": [
+          {
+            "observation": "claim-first",
+            "equal": true,
+            "sources": [
+              {
+                "role": "disk-signed-document-original-bytes",
+                "bytes": 5780,
+                "sha256": "3046adb2da46a2413a0525cfffacdad77bd2befba03ebc0e1f2f25de5282d2b5"
+              },
+              {
+                "role": "parsed-api-document-reserialized",
+                "bytes": 6578,
+                "sha256": "e92d38dc59e7b39faa216b93ef9e7a00c7d6db3f663c46d35cf1d887adbe6159"
+              }
+            ]
+          },
+          {
+            "observation": "claim-stable",
+            "equal": true,
+            "sources": [
+              {
+                "role": "disk-signed-document-original-bytes",
+                "bytes": 5780,
+                "sha256": "3046adb2da46a2413a0525cfffacdad77bd2befba03ebc0e1f2f25de5282d2b5"
+              },
+              {
+                "role": "parsed-api-document-reserialized",
+                "bytes": 6578,
+                "sha256": "e92d38dc59e7b39faa216b93ef9e7a00c7d6db3f663c46d35cf1d887adbe6159"
+              }
+            ]
+          },
+          {
+            "observation": "recover-result",
+            "equal": true,
+            "sources": [
+              {
+                "role": "disk-signed-document-original-bytes",
+                "bytes": 730,
+                "sha256": "0e4636902492385555899ea174b41a357b603369bda338832bb1dd197e7566c9"
+              },
+              {
+                "role": "parsed-api-document-reserialized",
+                "bytes": 772,
+                "sha256": "d822304ba143c3a1382f7b18152f8f2c0c8be366d2f4977bba2c0252eadf89a5"
+              }
+            ]
+          }
+        ],
+        "stage_sources": [
+          {
+            "role": "prepared",
+            "bytes": 9058,
+            "sha256": "fe81a4b03a278068212ba388393234fc7381793a6548ac2b89f90bb39d841139"
+          },
+          {
+            "role": "locked-partial-failure",
+            "bytes": 18880,
+            "sha256": "e60f5abd93215a919a12fb2c39bacad156aa2465024878dcd37e3276bf370173"
+          },
+          {
+            "role": "recovered-aborted",
+            "bytes": 18075,
+            "sha256": "bc6241dc076d5dab9be20699f1ac4d12f0831abb01a0ddc3af9c78ed7537a852"
+          }
+        ]
+      }
+    }
+  ],
+  "log_limit": "原始stdout/stderr仅在运行时内存捕获并记录bytes/SHA/EOF，私有落盘文本经过敏感过滤；公开包不含这些文本，过滤日志不等于原始字节流",
+  "does_not_update_host_AB_matrix": true
+}

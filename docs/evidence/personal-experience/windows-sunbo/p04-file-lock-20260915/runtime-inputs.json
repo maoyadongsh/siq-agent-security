@@ -1,0 +1,200 @@
+{
+  "schema_version": "windows-p04-file-lock-runtime-inputs/v1",
+  "source_commit": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "product_binary_sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470",
+  "scope": "只发布两轮manifest、五运行脚本及既定工具/Playwright元数据角色摘要；不公开本机绑定runner或私有路径，不声称完整依赖树冻结",
+  "attempts": [
+    {
+      "attempt": "R1",
+      "frozen_manifest": {
+        "bytes": 1563,
+        "sha256": "577a94eca5bcdd7ed4a2e207fc23308535ba059a4e3948a7037f8a2629650412"
+      },
+      "runtime_scripts": [
+        {
+          "role": "run-journey.py",
+          "bytes": 21598,
+          "sha256": "dee440067bd3859b7adc632be75f670402b1d54d509dba048bd526a7524281ed"
+        },
+        {
+          "role": "harness.py",
+          "bytes": 30597,
+          "sha256": "6079d59fd9db54e73a9a9ecc42b5bc07904ca961a294e226ca6be42f110ba013"
+        },
+        {
+          "role": "owned_job.py",
+          "bytes": 6419,
+          "sha256": "ec9c2a97a3a091e09690d4f4a2717c43cf43582094630d3b13fef92670a2ba35"
+        },
+        {
+          "role": "win32_lock.py",
+          "bytes": 6516,
+          "sha256": "b67540d0d1bcd87f9d1e6690dd1f766fd1acebfebf12c42a3247b292690941eb"
+        },
+        {
+          "role": "ui-journey.cjs",
+          "bytes": 38690,
+          "sha256": "413a0577055b388ef91ef3652fbfbd109481e0ab385b67445b1f8b94c561a595"
+        }
+      ],
+      "native_tool_pins": [
+        {
+          "role": "python",
+          "bytes": 105816,
+          "sha256": "d932e5e2f324d57f392e8fd063dcf6d0185be8a664c57c6d24e7762ed02c28ca"
+        },
+        {
+          "role": "go",
+          "bytes": 17508352,
+          "sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490"
+        },
+        {
+          "role": "git",
+          "bytes": 46480,
+          "sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2"
+        },
+        {
+          "role": "powershell",
+          "bytes": 454656,
+          "sha256": "7600ffe12da441fe89d035b13801e8e91d064bc544a27b19a5cf49f6ab8b18f5"
+        },
+        {
+          "role": "node",
+          "bytes": 85588976,
+          "sha256": "fdddbf4581e046b8102815d56208d6a248950bb554570b81519a8a5dacfee95d"
+        },
+        {
+          "role": "headless_browser",
+          "bytes": 181659136,
+          "sha256": "ed19d88b4486c39c0265b0c07cbf1d6835d06069e600bede1adb09db0df46c8e"
+        },
+        {
+          "role": "product_binary",
+          "bytes": 24623104,
+          "sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470"
+        }
+      ],
+      "playwright_metadata_pins": [
+        {
+          "role": "playwright/package.json",
+          "bytes": 1416,
+          "sha256": "ca170ec143a88ed3043ac953eb3b2377b2b97304104f4e1e23316684ce2c35af",
+          "version": "1.62.1"
+        },
+        {
+          "role": "playwright-core/package.json",
+          "bytes": 876,
+          "sha256": "07c47543631fef9508760365dee9fbe958c562093ec8d122543949ed231f233f",
+          "version": "1.62.1"
+        },
+        {
+          "role": "playwright/index.js",
+          "bytes": 648,
+          "sha256": "4e98f65f0a9d9bcab8cffc0c5cfdd87fd3f5b0be74fc494ff166a466b204cd44"
+        }
+      ],
+      "private_metadata_source": {
+        "bytes": 5066,
+        "sha256": "804d14e335cfc6ac8eba426bbe6775bf101f5e283353ae9f09e0dc62b5f0e4b4"
+      },
+      "full_dependency_tree_frozen": false
+    },
+    {
+      "attempt": "R2",
+      "frozen_manifest": {
+        "bytes": 1931,
+        "sha256": "ec64750ba71c63198e7aed595c014693d6c6233c42c945e53681de58d7538934"
+      },
+      "runtime_scripts": [
+        {
+          "role": "run-journey.py",
+          "bytes": 21598,
+          "sha256": "dee440067bd3859b7adc632be75f670402b1d54d509dba048bd526a7524281ed"
+        },
+        {
+          "role": "harness.py",
+          "bytes": 30597,
+          "sha256": "6079d59fd9db54e73a9a9ecc42b5bc07904ca961a294e226ca6be42f110ba013"
+        },
+        {
+          "role": "owned_job.py",
+          "bytes": 6419,
+          "sha256": "ec9c2a97a3a091e09690d4f4a2717c43cf43582094630d3b13fef92670a2ba35"
+        },
+        {
+          "role": "win32_lock.py",
+          "bytes": 6516,
+          "sha256": "b67540d0d1bcd87f9d1e6690dd1f766fd1acebfebf12c42a3247b292690941eb"
+        },
+        {
+          "role": "ui-journey.cjs",
+          "bytes": 41077,
+          "sha256": "07c5a71f0c35107e36cab72c6edc48ae51d395216901181dd8d8a20047b9bed5"
+        }
+      ],
+      "native_tool_pins": [
+        {
+          "role": "python",
+          "bytes": 105816,
+          "sha256": "d932e5e2f324d57f392e8fd063dcf6d0185be8a664c57c6d24e7762ed02c28ca"
+        },
+        {
+          "role": "go",
+          "bytes": 17508352,
+          "sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490"
+        },
+        {
+          "role": "git",
+          "bytes": 46480,
+          "sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2"
+        },
+        {
+          "role": "powershell",
+          "bytes": 454656,
+          "sha256": "7600ffe12da441fe89d035b13801e8e91d064bc544a27b19a5cf49f6ab8b18f5"
+        },
+        {
+          "role": "node",
+          "bytes": 85588976,
+          "sha256": "fdddbf4581e046b8102815d56208d6a248950bb554570b81519a8a5dacfee95d"
+        },
+        {
+          "role": "headless_browser",
+          "bytes": 181659136,
+          "sha256": "ed19d88b4486c39c0265b0c07cbf1d6835d06069e600bede1adb09db0df46c8e"
+        },
+        {
+          "role": "product_binary",
+          "bytes": 24623104,
+          "sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470"
+        }
+      ],
+      "playwright_metadata_pins": [
+        {
+          "role": "playwright/package.json",
+          "bytes": 1416,
+          "sha256": "ca170ec143a88ed3043ac953eb3b2377b2b97304104f4e1e23316684ce2c35af",
+          "version": "1.62.1"
+        },
+        {
+          "role": "playwright-core/package.json",
+          "bytes": 876,
+          "sha256": "07c47543631fef9508760365dee9fbe958c562093ec8d122543949ed231f233f",
+          "version": "1.62.1"
+        },
+        {
+          "role": "playwright/index.js",
+          "bytes": 648,
+          "sha256": "4e98f65f0a9d9bcab8cffc0c5cfdd87fd3f5b0be74fc494ff166a466b204cd44"
+        }
+      ],
+      "private_metadata_source": {
+        "bytes": 5368,
+        "sha256": "3b9a95de0d26980fde81223e6b7122c727397b9305ca3e4a0c1daf2947a9583b"
+      },
+      "full_dependency_tree_frozen": false
+    }
+  ],
+  "R2_only_changed_runtime_script": "ui-journey.cjs",
+  "R2_other_four_runtime_scripts_byte_identical_to_R1": true
+}
