@@ -2104,3 +2104,7 @@ D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-priv
 ### v6 CI 补充：执行端点绑定
 
 任务执行、加载校验与实例读回要求 ResolveInvocation 成功且来源为显式 CLI/endpoint 对。缓存指纹可包含未配置或错误状态，非空指纹不能替代端点绑定。无配置、PATH、脚本、缺半对或非法 endpoint 均在后端 I/O 前拒绝。
+
+## 2026-09-16 Windows 文件资源解释候选（#39）
+
+按 [Windows 本地盘符资源专项规格](windows-resource-profile-spec-v1.md) 准备明确签名的新 managed 权限解释。旧 Intent v2/v3、Grant、identity 和会话保持 POSIX 原义；不得全局放宽 NormalizeResource。首片只建立新版合同和显式纯词法入口，在 Windows 文件事实层与批准/身份/裁决全链完成前不启用新 Authority，也不声明 Hermes B 已通过。
