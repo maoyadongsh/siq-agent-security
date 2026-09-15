@@ -13,7 +13,7 @@ export function isImportPermissionResult(v: unknown, id: string, req: ImportPerm
     v.source.analysis_sha256 !== req.analysis_sha256 || !object(v.grant)) return false;
   const g = v.grant;
   return typeof g.grant_id === 'string' && /^grt-si-[a-f0-9]{64}$/.test(g.grant_id) &&
-    typeof g.admission_id === 'string' && /^adm-si-[a-f0-9]{64}$/.test(g.admission_id) && g.platform === 'hermes' &&
+    typeof g.admission_id === 'string' && /^adm-si-[a-f0-9]{64}$/.test(g.admission_id) && ['hermes', 'openclaw'].includes(String(g.platform)) &&
     object(g.subject) && g.subject.type === 'agent_instance' && g.subject.id === req.instance_id.replace(/^hi-/, 'hri-') &&
     ['pending_approval', 'approved', 'rejected', 'revoked'].includes(String(g.status));
 }

@@ -221,9 +221,7 @@ def test_edge_cannot_assert_effective_permission(client, tenant_a, env_a):
     assert good.status_code == 200
     assert good.json()["permission_facts"] == 1
     asset = next(
-        item
-        for item in client.get("/api/v1/candidates", headers=tenant_a).json()
-        if item["name"] == "pf-test"
+        item for item in client.get("/api/v1/candidates", headers=tenant_a).json() if item["name"] == "pf-test"
     )
     facts = client.get(f"/api/v1/agents/{asset['id']}/permissions", headers=tenant_a).json()
     assert len(facts) == 1
@@ -281,10 +279,14 @@ def test_edge_evidence_and_permissions_are_bound_to_source_environment(client, t
         assert facts[0]["environment_id"] == env["id"]
 
     with session_scope() as session:
-        observations = session.query(Evidence).filter(
-            Evidence.tenant_id == "tnt-A",
-            Evidence.evidence_id == "ev-shared-across-environments",
-        ).all()
+        observations = (
+            session.query(Evidence)
+            .filter(
+                Evidence.tenant_id == "tnt-A",
+                Evidence.evidence_id == "ev-shared-across-environments",
+            )
+            .all()
+        )
         assert {item.environment_id for item in observations} == {env["id"] for env in envs}
 
 
@@ -354,9 +356,7 @@ def test_finding_lifecycle_acknowledge_resolve(client, tenant_a):
     assert ack.status_code == 200
     assert ack.json()["status"] == "acknowledged"
 
-    missing_evidence = client.post(
-        f"/api/v1/findings/{finding['id']}/resolve", json={}, headers=tenant_a
-    )
+    missing_evidence = client.post(f"/api/v1/findings/{finding['id']}/resolve", json={}, headers=tenant_a)
     assert missing_evidence.status_code == 422
 
     res = client.post(
@@ -373,16 +373,17 @@ def test_finding_lifecycle_acknowledge_resolve(client, tenant_a):
             "resolved_by": "user-a",
             "evidence_ref": "repair-ticket:SEC-123",
         }
-        audit_row = session.query(AuditEvent).filter(AuditEvent.resource_id == finding["id"]).order_by(
-            AuditEvent.created_at.desc()
-        ).first()
+        audit_row = (
+            session.query(AuditEvent)
+            .filter(AuditEvent.resource_id == finding["id"])
+            .order_by(AuditEvent.created_at.desc())
+            .first()
+        )
         assert audit_row is not None
         assert audit_row.summary == {"evidence_ref": "repair-ticket:SEC-123"}
         event = next(
             row
-            for row in session.query(OutboxEvent)
-            .filter(OutboxEvent.event_type == "agent.finding.resolved.v1")
-            .all()
+            for row in session.query(OutboxEvent).filter(OutboxEvent.event_type == "agent.finding.resolved.v1").all()
             if row.payload.get("resource_ref") == finding["id"]
         )
         assert event.payload["payload"]["finding_id"] == finding["id"]
@@ -410,11 +411,15 @@ def test_scan_quota_per_tenant(client, tenant_a, env_a):
     quota = load_settings().scan_quota_per_tenant
     with session_scope() as s:
         env_ids = list(s.scalars(select(Environment.id).where(Environment.tenant_id == "tnt-A")))
-        pre = s.query(EdgeTask).filter(
-            EdgeTask.task_type == "scan",
-            EdgeTask.status == "pending",
-            EdgeTask.environment_id.in_(env_ids),
-        ).count()
+        pre = (
+            s.query(EdgeTask)
+            .filter(
+                EdgeTask.task_type == "scan",
+                EdgeTask.status == "pending",
+                EdgeTask.environment_id.in_(env_ids),
+            )
+            .count()
+        )
     remaining = max(quota - pre, 0)
     created_task_ids = []
     for i in range(remaining):
@@ -538,10 +543,14 @@ def test_sync_openshell_writes_effective_facts(client, tenant_a, env_a, monkeypa
     with session_scope() as session:
         from app.models import PermissionFact
 
-        facts = session.query(PermissionFact).filter(
-            PermissionFact.authority == "openshell",
-            PermissionFact.environment_id == env_a["id"],
-        ).all()
+        facts = (
+            session.query(PermissionFact)
+            .filter(
+                PermissionFact.authority == "openshell",
+                PermissionFact.environment_id == env_a["id"],
+            )
+            .all()
+        )
         assert all(f.state == "effective" for f in facts)
         assert any(f.domain == "filesystem" and f.resource_value == "/usr" for f in facts)
         assert any(f.domain == "process" and f.resource_value == "sandbox:sandbox" for f in facts)
@@ -590,9 +599,7 @@ def test_permissions_list_tenant_isolation_and_filters(client, tenant_a, tenant_
         )
         s.commit()
 
-    resp = client.get(
-        "/api/v1/permissions", params={"authority": "openshell", "state": "effective"}, headers=tenant_a
-    )
+    resp = client.get("/api/v1/permissions", params={"authority": "openshell", "state": "effective"}, headers=tenant_a)
     assert resp.status_code == 200
     rows = resp.json()
     assert any(r["resource_value"] == "api.example.com:443" for r in rows)
@@ -779,9 +786,7 @@ def test_permissions_diff_declared_vs_effective(client, tenant_a):
             )
         s.commit()
 
-    resp = client.get(
-        "/api/v1/permissions/diff", params={"subject_id": "inst-diff"}, headers=tenant_a
-    )
+    resp = client.get("/api/v1/permissions/diff", params={"subject_id": "inst-diff"}, headers=tenant_a)
     assert resp.status_code == 200
     body = resp.json()
     assert any(r["resource"] == "api.example.com:443" for r in body["declared_not_effective"])
@@ -907,9 +912,11 @@ def test_get_scan_task_status(client, tenant_a, tenant_b, env_a):
     quota = load_settings().scan_quota_per_tenant
     with session_scope() as s:
         env_ids = list(s.scalars(select(Environment.id).where(Environment.tenant_id == "tnt-A")))
-        pre = s.query(EdgeTask).filter(
-            EdgeTask.task_type == "scan", EdgeTask.status == "pending", EdgeTask.environment_id.in_(env_ids)
-        ).count()
+        pre = (
+            s.query(EdgeTask)
+            .filter(EdgeTask.task_type == "scan", EdgeTask.status == "pending", EdgeTask.environment_id.in_(env_ids))
+            .count()
+        )
     if pre >= quota:
         pytest.skip("共享库扫描配额已满（quota 测试占用）")
     created = client.post(
@@ -983,7 +990,13 @@ def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypa
         json={
             "name": f"bind-policy-{_uuid.uuid4().hex[:8]}",
             "selector": {"agent_ids": [agent["id"]]},
-            "network": [{"endpoint": "bind.example.com:443", "effect": "allow"}],
+            "network": [
+                {
+                    "endpoint": "bind.example.com:443",
+                    "effect": "allow",
+                    "binary_paths": ["/usr/bin/curl"],
+                }
+            ],
             "enforcement_mode": "block",
         },
         headers=tenant_a,
@@ -999,9 +1012,7 @@ def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypa
     from app.models import AgentInstance
 
     with session_scope() as s:
-        inst = AgentInstance(
-            tenant_id="tnt-A", asset_id=agent["id"], environment_id=env_a["id"], runtime="hermes"
-        )
+        inst = AgentInstance(tenant_id="tnt-A", asset_id=agent["id"], environment_id=env_a["id"], runtime="hermes")
         s.add(inst)
         s.flush()
         inst_id = inst.id
@@ -1079,16 +1090,16 @@ def test_smart_scan_creates_standard_tasks(client, tenant_a, env_a):
     quota = load_settings().scan_quota_per_tenant
     with session_scope() as s:
         env_ids = list(s.scalars(select(Environment.id).where(Environment.tenant_id == "tnt-A")))
-        pre = s.query(EdgeTask).filter(
-            EdgeTask.task_type == "scan", EdgeTask.status == "pending", EdgeTask.environment_id.in_(env_ids)
-        ).count()
+        pre = (
+            s.query(EdgeTask)
+            .filter(EdgeTask.task_type == "scan", EdgeTask.status == "pending", EdgeTask.environment_id.in_(env_ids))
+            .count()
+        )
     remaining = quota - pre
     if remaining < 9:
         pytest.skip("配额不足，无法测试智能扫描")
 
-    resp = client.post(
-        "/api/v1/scans/smart", params={"environment_id": env_a["id"]}, headers=tenant_a
-    )
+    resp = client.post("/api/v1/scans/smart", params={"environment_id": env_a["id"]}, headers=tenant_a)
     assert resp.status_code == 200, resp.text
     tasks = resp.json()["tasks"]
     assert [t["connector"] for t in tasks] == [

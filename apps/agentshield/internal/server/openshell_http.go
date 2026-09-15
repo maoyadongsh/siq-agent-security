@@ -95,8 +95,8 @@ func (s *Server) openshellApply(w http.ResponseWriter, r *http.Request) {
 		ExpectAllow      []string                `json:"expect_allow"`
 		ExpectDeny       []string                `json:"expect_deny"`
 	}
-	if err := readJSON(r, &body, 64<<10); err != nil || strings.TrimSpace(body.Target) == "" {
-		writeJSON(w, 400, map[string]any{"error": "target required"})
+	if err := readJSONStrict(r, &body, 64<<10); err != nil || strings.TrimSpace(body.Target) == "" || strings.TrimSpace(body.ExpectedRevision) == "" {
+		writeJSON(w, 400, map[string]any{"error": "target and expected_revision required"})
 		return
 	}
 	result, err := s.d.Openshell.ApplyAndVerify(body.Target, body.Network, body.ExpectedRevision, body.ExpectAllow, body.ExpectDeny)
@@ -122,7 +122,8 @@ func (s *Server) openshellApply(w http.ResponseWriter, r *http.Request) {
 	}
 	ev := map[string]any{
 		"backend": "openshell", "revision": result.Receipt.BackendRevision,
-		"snapshot_hash": result.Receipt.Evidence["snapshot_hash"],
+		"policy_digest": result.Receipt.AppliedPolicyDigest,
+		"operation_id":  result.Receipt.OperationID,
 		"verify_level":  result.Report.Level, "target": body.Target,
 	}
 	_ = s.d.Store.PutEvidence(result.Readback.EvidenceID, ev)

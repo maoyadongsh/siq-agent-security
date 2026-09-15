@@ -1,0 +1,7 @@
+[
+  {"name":"empty","stdout":"","stderr":"","limit":1,"allowed":true},
+  {"name":"shared_exact","stdout":"abcd","stderr":"efgh","limit":8,"allowed":true},
+  {"name":"shared_overflow","stdout":"abcd","stderr":"efghi","limit":8,"allowed":false},
+  {"name":"utf8_exact","stdout":"界","stderr":"面","limit":6,"allowed":true},
+  {"name":"utf8_overflow","stdout":"界","stderr":"面","limit":5,"allowed":false}
+]

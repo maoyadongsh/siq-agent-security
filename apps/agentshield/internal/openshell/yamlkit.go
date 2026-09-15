@@ -2,10 +2,16 @@ package openshell
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"unicode"
+)
+
+var (
+	canonicalYAMLInt    = regexp.MustCompile(`^-?(0|[1-9][0-9]*)$`)
+	ambiguousYAMLScalar = regexp.MustCompile(`(?i)^(yes|no|on|off|y|n|null|~|true|false|[-+]?(0[0-9]+|0x[0-9a-f]+|0o[0-7]+|0b[01]+|([0-9][0-9_]*)?\.[0-9_]+|[0-9][0-9_]*(e[-+]?[0-9]+)|\.inf|\.nan)|[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}([tT ].*)?|[0-9]+:[0-9]+(:[0-9]+)?)$`)
 )
 
 // parseYAML loads the indent-based subset emitted by `policy get --full`.
@@ -79,6 +85,9 @@ func (p *yamlParser) parseMap(parentIndent int) (map[string]any, error) {
 		if !ok {
 			return nil, failf("策略 YAML 解析失败（fail-closed）: expected mapping key (line %d)", n.no)
 		}
+		if _, duplicate := m[key]; duplicate {
+			return nil, failf("策略 YAML 包含重复 mapping key（line %d，fail-closed）", n.no)
+		}
 		p.i++
 		if rest == "" {
 			next := p.peek()
@@ -101,7 +110,11 @@ func (p *yamlParser) parseMap(parentIndent int) (map[string]any, error) {
 			}
 			continue
 		}
-		m[key] = parseYAMLScalar(rest)
+		value, err := parseYAMLScalar(rest)
+		if err != nil {
+			return nil, err
+		}
+		m[key] = value
 	}
 	return m, nil
 }
@@ -139,7 +152,11 @@ func (p *yamlParser) parseSeq(parentIndent int) ([]any, error) {
 		if key, rest, ok := splitYAMLKey(item); ok {
 			inner := map[string]any{key: nil}
 			if rest != "" {
-				inner[key] = parseYAMLScalar(rest)
+				value, err := parseYAMLScalar(rest)
+				if err != nil {
+					return nil, err
+				}
+				inner[key] = value
 			} else {
 				next := p.peek()
 				if next != nil && next.indent > expected {
@@ -156,13 +173,20 @@ func (p *yamlParser) parseSeq(parentIndent int) ([]any, error) {
 					return nil, err
 				}
 				for k, v := range more {
+					if _, duplicate := inner[k]; duplicate {
+						return nil, failf("策略 YAML 包含重复 sequence mapping key（line %d，fail-closed）", n.no)
+					}
 					inner[k] = v
 				}
 			}
 			seq = append(seq, inner)
 			continue
 		}
-		seq = append(seq, parseYAMLScalar(item))
+		value, err := parseYAMLScalar(item)
+		if err != nil {
+			return nil, err
+		}
+		seq = append(seq, value)
 	}
 	return seq, nil
 }
@@ -181,6 +205,10 @@ func yamlLines(src string) ([]yamlLine, error) {
 		}
 		if strings.TrimSpace(s) == "" {
 			continue
+		}
+		trimmed := strings.TrimSpace(s)
+		if trimmed == "---" || trimmed == "..." || strings.HasPrefix(trimmed, "%") || hasUnsupportedYAMLSyntax(trimmed) {
+			return nil, failf("策略 YAML 使用不受支持或歧义的语法（line %d，fail-closed）", i+1)
 		}
 		indent := 0
 		for _, r := range s {
@@ -237,7 +265,7 @@ func splitYAMLKey(s string) (key, rest string, ok bool) {
 	}
 	key = s[:i]
 	for _, r := range key {
-		if unicode.IsSpace(r) {
+		if unicode.IsSpace(r) || !(unicode.IsLetter(r) || unicode.IsDigit(r) || strings.ContainsRune("_.-", r)) {
 			return "", "", false
 		}
 	}
@@ -245,28 +273,85 @@ func splitYAMLKey(s string) (key, rest string, ok bool) {
 	return key, rest, true
 }
 
-func parseYAMLScalar(s string) any {
-	if s == "~" || s == "null" || s == "Null" || s == "NULL" {
-		return nil
+func parseYAMLScalar(s string) (any, error) {
+	if s == "null" {
+		return nil, nil
 	}
 	switch s {
-	case "true", "True", "TRUE", "yes", "Yes", "YES":
-		return true
-	case "false", "False", "FALSE", "no", "No", "NO":
-		return false
+	case "true":
+		return true, nil
+	case "false":
+		return false, nil
+	case "{}":
+		return map[string]any{}, nil
+	case "[]":
+		return []any{}, nil
 	}
 	if len(s) >= 2 {
-		if (s[0] == '\'' && s[len(s)-1] == '\'') || (s[0] == '"' && s[len(s)-1] == '"') {
-			return s[1 : len(s)-1]
+		if s[0] == '\'' && s[len(s)-1] == '\'' {
+			return strings.ReplaceAll(s[1:len(s)-1], "''", "'"), nil
+		}
+		if s[0] == '"' && s[len(s)-1] == '"' {
+			value, err := strconv.Unquote(s)
+			if err != nil {
+				return nil, fail("策略 YAML quoted scalar 无法无损解析（fail-closed）")
+			}
+			return value, nil
 		}
 	}
-	if n, err := strconv.ParseInt(s, 10, 64); err == nil {
+	if canonicalYAMLInt.MatchString(s) {
+		n, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			return nil, fail("策略 YAML 整数超出无损范围（fail-closed）")
+		}
 		if n >= int64(int(n)) && n == int64(int(n)) {
-			return int(n)
+			return int(n), nil
 		}
-		return n
+		return n, nil
 	}
-	return s
+	if ambiguousYAMLScalar.MatchString(s) || strings.ContainsAny(s, "\r\n\t") || strings.HasPrefix(s, "-") || strings.HasPrefix(s, "?") || strings.HasPrefix(s, ":") {
+		return nil, fail("策略 YAML 包含歧义 implicit scalar（fail-closed）")
+	}
+	return s, nil
+}
+
+func hasUnsupportedYAMLSyntax(s string) bool {
+	inSingle, inDouble, escape := false, false, false
+	for i := 0; i < len(s); i++ {
+		ch := s[i]
+		if escape {
+			escape = false
+			continue
+		}
+		if inDouble && ch == '\\' {
+			escape = true
+			continue
+		}
+		if !inDouble && ch == '\'' {
+			inSingle = !inSingle
+			continue
+		}
+		if !inSingle && ch == '"' {
+			inDouble = !inDouble
+			continue
+		}
+		if inSingle || inDouble {
+			continue
+		}
+		if strings.ContainsRune("&*!|>{}", rune(ch)) {
+			if (ch == '{' || ch == '}') && (s == "{}" || strings.HasSuffix(s, ": {}")) {
+				continue
+			}
+			return true
+		}
+		if ch == '[' || ch == ']' {
+			if s == "[]" || strings.HasSuffix(s, ": []") {
+				continue
+			}
+			return true
+		}
+	}
+	return false
 }
 
 func dumpYAML(v any) string {
@@ -394,6 +479,9 @@ func quoteYAMLString(s string) string {
 	need := strings.ContainsAny(s, ":#{}[]&*!|>'\"%@`") || strings.Contains(s, " ") ||
 		s == "true" || s == "false" || s == "null" || s == "yes" || s == "no"
 	if _, err := strconv.Atoi(s); err == nil {
+		need = true
+	}
+	if ambiguousYAMLScalar.MatchString(s) || strings.HasPrefix(s, "-") || strings.HasPrefix(s, "?") {
 		need = true
 	}
 	if !need {

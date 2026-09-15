@@ -1,4 +1,4 @@
-import { isSkillUpdateCheckResult, isSkillUpdateScheduleView, type SkillUpdateCheckRequest, type SkillUpdateSourceRequest } from './skillUpdateCheck';
+import { isSkillUpdateCheckResult, isSkillUpdateScheduleView, type SkillUpdateCheckRequest, type SkillUpdateSourceDisableRequest, type SkillUpdateSourceRequest } from './skillUpdateCheck';
 import { isActivitySources } from './taskSources';
 import { isRawContentActivation, isRawContentPurgeResult, isRawContentStatus } from './rawTaskContent';
 import {
@@ -302,6 +302,10 @@ export const localApi = {
     if (!isSkillUpdateScheduleView(data, id)) throw new LocalApiError(502, 'skill_install_incompatible_response');
     return data;
   }),
+  disableSkillUpdateSource: (id: string, body: SkillUpdateSourceDisableRequest, signal?: AbortSignal) => request<unknown>(`/v1/skill-installations/operations/${encodeURIComponent(id)}/update-source/disable`, { method: 'POST', body: JSON.stringify(body), signal }).then((data) => {
+    if (!isSkillUpdateScheduleView(data, id) || data.enabled) throw new LocalApiError(502, 'skill_install_incompatible_response');
+    return data;
+  }),
   inspectSkillInstallation: (id: string, signal?: AbortSignal) => request<unknown>(`/v1/skill-installations/operations/${encodeURIComponent(id)}/inspection`, { signal }).then((data) => {
     if (!isSkillInstallationInspection(data, id)) throw new LocalApiError(502, 'skill_install_incompatible_response');
     return data;
@@ -556,13 +560,21 @@ export const localApi = {
       grant: { ...data.grant, state_revision: data.state_revision },
       state_revision: data.state_revision,
     })),
-  confirmations: () => request<{ schema_version: 'local-confirmations/v1'; items: Confirmation[] }>('/v1/confirmations'),
+  confirmations: () => request<{ schema_version: 'local-confirmations/v2'; items: Confirmation[] }>('/v1/confirmations'),
   resolveConfirmation: (item: Confirmation, approve: boolean, actorId: string) =>
     request<{ receipt_id: string; action: string }>(`/v1/confirmations/${encodeURIComponent(item.action_id)}/resolve`, {
       method: 'POST', body: JSON.stringify({ schema_version: 'local-confirmation-resolve/v1',
         decision_receipt_id: item.decision_receipt_id, decision_hash: item.decision_hash,
         params_digest: item.params_digest, approve, actor_id: actorId }),
     }),
+  reconcileHoldExecution: (item: Confirmation, outcome: 'occurred' | 'not_occurred', actorId: string) =>
+    request<{ schema_version: 'hold-execution-status/v1'; status: 'completed' | 'cancelled'; reconciliation_receipt_id: string }>(
+      '/v1/hold-executions/reconcile', {
+        method: 'POST', body: JSON.stringify({ schema_version: 'hold-execution-reconcile/v1',
+          action_id: item.action_id, decision_receipt_id: item.decision_receipt_id,
+          reservation_receipt_id: item.reservation_receipt_id, reservation_hash: item.reservation_hash,
+          outcome, actor_id: actorId }),
+      }),
   effectEvidence: async (id: string, taskId: string, signal?: AbortSignal) => {
     const data = await request<unknown>(`/v1/effect-evidence/${encodeURIComponent(id)}`, { signal, cache: 'no-store' });
     const summary = readEffectEvidence(data, id, taskId);
@@ -637,8 +649,8 @@ export const localApi = {
     }>('/v1/openshell/probe'),
   openshellApply: (body: {
     target: string;
-    network: { endpoint: string; effect?: string }[];
-    expected_revision?: string;
+    network: { endpoint: string; effect: 'allow'; binary_paths: string[] }[];
+    expected_revision: string;
     expect_allow?: string[];
     expect_deny?: string[];
   }) =>

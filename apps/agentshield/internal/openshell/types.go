@@ -61,8 +61,8 @@ type Capabilities struct {
 // NetworkRule is the product-shaped allow rule submitted on apply.
 type NetworkRule struct {
 	Endpoint    string   `json:"endpoint"`
-	Effect      string   `json:"effect,omitempty"`
-	BinaryPaths []string `json:"binary_paths,omitempty"`
+	Effect      string   `json:"effect"`
+	BinaryPaths []string `json:"binary_paths"`
 	RuleName    string   `json:"rule_name,omitempty"`
 }
 
@@ -70,6 +70,9 @@ type NetworkRule struct {
 type Snapshot struct {
 	Target          string         `json:"target"`
 	Revision        string         `json:"revision"`
+	Policy          map[string]any `json:"policy"`
+	PolicyDigest    string         `json:"policy_digest"`
+	StaticDigest    string         `json:"static_digest"`
 	Filesystem      map[string]any `json:"filesystem"`
 	Network         []NetworkRule  `json:"network"`
 	Process         map[string]any `json:"process"`
@@ -78,8 +81,14 @@ type Snapshot struct {
 
 // DeploymentReceipt is the gateway's policy-set acknowledgement.
 type DeploymentReceipt struct {
-	BackendRevision string            `json:"backend_revision"`
-	Evidence        map[string]string `json:"evidence"`
+	OperationID         string            `json:"operation_id"`
+	Target              string            `json:"target"`
+	BaseRevision        string            `json:"base_revision"`
+	BasePolicyDigest    string            `json:"base_policy_digest"`
+	BackendRevision     string            `json:"backend_revision"`
+	AppliedPolicyDigest string            `json:"applied_policy_digest"`
+	Result              string            `json:"result"`
+	Evidence            map[string]string `json:"evidence"`
 }
 
 // Check is one config-readback assertion (not a behavioural fixture).
@@ -104,8 +113,23 @@ type VerificationReport struct {
 // RollbackReceipt is a successful restore.
 type RollbackReceipt struct {
 	RestoredRevision string            `json:"restored_revision"`
+	RestoredDigest   string            `json:"restored_digest"`
+	Result           string            `json:"result"`
 	Evidence         map[string]string `json:"evidence"`
 }
+
+// RollbackAuthorization is derived from the private operation record and live
+// readback. It is never populated from a rollback request body.
+type RollbackAuthorization struct {
+	OperationID string
+	Target      string
+	Current     Snapshot
+	Restore     Snapshot
+}
+
+// RollbackAuthorizer revalidates current authority immediately before a
+// rollback write. A nil authorizer fails closed for every changed rollback.
+type RollbackAuthorizer func(RollbackAuthorization) error
 
 // EffectiveReadback is the grant-facing proof (dev-spec §3.7 / §3.9).
 type EffectiveReadback struct {

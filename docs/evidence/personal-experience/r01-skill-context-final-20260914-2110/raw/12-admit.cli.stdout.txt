@@ -1,0 +1,130 @@
+{
+  "admission_id": "adm-e32c4cd6a52b",
+  "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+  "skill_name": "r01-sec-fixture",
+  "skill_version": null,
+  "source": {
+    "type": "local_dir",
+    "locator": "/tmp/siq-r01-sec-live-s6d1r04m/skill",
+    "trust_level": "unknown",
+    "ref": null
+  },
+  "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+  "file_manifest": [
+    {
+      "path": "SKILL.md",
+      "sha256": "b41a41c82a3ea214d4c508b3dab547075da47f8f92ec2ab1120c3250cddd6206",
+      "bytes": 129
+    },
+    {
+      "path": "helper.txt",
+      "sha256": "a695db33de1dfec4e3737abcfcc020624fdb40509028dced603b2fc3fd71460b",
+      "bytes": 19
+    }
+  ],
+  "verdict": "admit_with_conditions",
+  "decided_at": "2026-09-14T12:52:29Z",
+  "engine": {
+    "name": "agentshield-go",
+    "version": "0.0.0-dev",
+    "rulepack_version": 1,
+    "rulepack_sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051"
+  },
+  "declared_facts": [
+    {
+      "domain": "tool",
+      "action": "tool.invoke",
+      "resource": {
+        "type": "tool",
+        "value": "read_file"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "skill_manifest",
+      "source_field": "frontmatter.allowed-tools",
+      "evidence_ids": [
+        "ev-331e3231235696f2"
+      ]
+    },
+    {
+      "domain": "tool",
+      "action": "tool.invoke",
+      "resource": {
+        "type": "tool",
+        "value": "write_file"
+      },
+      "effect": "allow",
+      "state": "declared",
+      "authority": "skill_manifest",
+      "source_field": "frontmatter.allowed-tools",
+      "evidence_ids": [
+        "ev-331e3231235696f2"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "f-5a4a13e31a221e57",
+      "rule_id": "adm-allowed-tools",
+      "category": "capability_declaration",
+      "severity": "low",
+      "confidence": 1,
+      "disposition": "declare",
+      "location": {
+        "path": "SKILL.md",
+        "line": 1
+      },
+      "excerpt": "allowed-tools: read_file",
+      "evidence_ids": [
+        "ev-331e3231235696f2"
+      ]
+    },
+    {
+      "finding_id": "f-5f5325a9c5dedec0",
+      "rule_id": "adm-allowed-tools",
+      "category": "capability_declaration",
+      "severity": "low",
+      "confidence": 1,
+      "disposition": "declare",
+      "location": {
+        "path": "SKILL.md",
+        "line": 1
+      },
+      "excerpt": "allowed-tools: write_file",
+      "evidence_ids": [
+        "ev-331e3231235696f2"
+      ]
+    },
+    {
+      "finding_id": "f-37a47f16460dbb14",
+      "rule_id": "adm-name-mismatch",
+      "category": "info",
+      "severity": "info",
+      "confidence": 1,
+      "disposition": "info",
+      "location": {
+        "path": "SKILL.md",
+        "line": 1
+      },
+      "excerpt": "frontmatter name differs from directory",
+      "evidence_ids": [
+        "ev-6239e78bb912684b"
+      ]
+    }
+  ],
+  "integrity": {
+    "file_count": 2,
+    "total_bytes": 148,
+    "symlink_escape": false,
+    "binary_files": 0,
+    "over_limit": false,
+    "frontmatter_valid": true
+  },
+  "skill_card_ref": null,
+  "evidence_ids": [
+    "ev-331e3231235696f2",
+    "ev-6239e78bb912684b"
+  ],
+  "signing_schema": "local_canonical/v1",
+  "signature": "aa4cc69059f8b1bba30e9815acbec03a4d93a30acc51d9556823a7b35b5caf30ab300481327bd937d00cf71c950a9662f2b41f8fafc51aeae006816bf732120a"
+}

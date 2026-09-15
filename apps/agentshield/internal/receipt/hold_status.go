@@ -19,6 +19,12 @@ type HoldStatusRequest struct {
 	ActionID          string         `json:"action_id"`
 	DecisionReceiptID string         `json:"decision_receipt_id"`
 	Params            map[string]any `json:"params"`
+	// TaskID re-presents the host task identity so a task-bound skill
+	// execution context (N05/R01) still matches at hold-resolution time.
+	TaskID string `json:"task_id,omitempty"`
+	// RuntimeTaskID binds the approval to the host runtime task without
+	// weakening the separate trusted Intent task binding in TaskID.
+	RuntimeTaskID string `json:"runtime_task_id,omitempty"`
 }
 
 type HoldStatus struct {
@@ -48,7 +54,7 @@ func (e *Engine) ReadHoldStatus(req HoldStatusRequest) (*HoldStatus, error) {
 		return nil, correlationError("hold_identity_mismatch")
 	}
 	digest := sha256.Sum256(raw)
-	if d.ReceiptID != req.DecisionReceiptID || d.Platform != req.Platform || d.SessionID != req.SessionID || str(d.AgentID) != req.AgentID || d.Tool != req.Tool || str(d.ToolCallID) != req.ToolCallID || d.ParamsDigest != hex.EncodeToString(digest[:]) {
+	if d.ReceiptID != req.DecisionReceiptID || d.Platform != req.Platform || d.SessionID != req.SessionID || str(d.AgentID) != req.AgentID || d.TaskID != req.TaskID || receiptRuntimeTaskID(d) != holdRequestRuntimeTaskID(req.TaskID, req.RuntimeTaskID) || d.Tool != req.Tool || str(d.ToolCallID) != req.ToolCallID || d.ParamsDigest != hex.EncodeToString(digest[:]) {
 		return nil, correlationError("hold_identity_mismatch")
 	}
 	if d.Action != ActionHold || d.Hold == nil || d.Hold.TimeoutMS <= 0 {
@@ -66,6 +72,11 @@ func (e *Engine) ReadHoldStatus(req HoldStatusRequest) (*HoldStatus, error) {
 		result.Status, result.ReasonCode = "expired", "hold_expired"
 	case a.observation != nil:
 		result.Status, result.ReasonCode = "consumed", "hold_consumed"
+	case a.reservation != nil:
+		// The approval has already been consumed into a durable execution
+		// reservation. Legacy status readers must never interpret it as a fresh
+		// approved lease and execute again.
+		result.Status, result.ReasonCode = "consumed", "hold_consumed"
 	case a.holdResolved && !a.approved:
 		result.Status, result.ReasonCode = "denied", "hold_denied"
 	case a.approved:
@@ -79,13 +90,25 @@ func (e *Engine) ReadHoldStatus(req HoldStatusRequest) (*HoldStatus, error) {
 
 func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time.Time) bool {
 	s := e.sessions[req.SessionID]
-	if s == nil || s.boundIntentID != d.IntentID || s.boundTaskID != d.TaskID {
+	if s == nil {
 		return false
 	}
-	r := Request{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, Tool: req.Tool, ToolCallID: req.ToolCallID, Params: req.Params}
+	if d.IntentBinding == "bound" && (s.boundIntentID != d.IntentID || s.boundTaskID != d.TaskID) {
+		return false
+	}
+	if d.IntentBinding != "bound" && s.boundIntentID != "" {
+		return false
+	}
+	r := Request{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, Tool: req.Tool, ToolCallID: req.ToolCallID, Params: req.Params, TaskID: req.TaskID, RuntimeTaskID: req.RuntimeTaskID}
 	r.ContextAssertionID = d.ContextAssertionID
 	r.ParameterProvenance = d.ParameterProvenance
 	if e.checkContext(r, d.TaskID, now) != nil {
+		return false
+	}
+	// A skill execution context that applied at decision time must still apply
+	// here; an invalidated SEC denies the resume instead of silently widening.
+	sec := e.resolveSkillContext(r)
+	if sec != nil && sec.Invalid {
 		return false
 	}
 	var resolved *IntentContract
@@ -99,6 +122,12 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 	if err != nil {
 		return false
 	}
+	if sec != nil {
+		if r.selectedGrant != nil && r.selectedGrant.GrantID != sec.Grant.GrantID {
+			return false
+		}
+		r.selectedGrant = sec.Grant
+	}
 	if resolved == nil {
 		if d.IntentBinding == "bound" || e.opts.IntentEnforcement == "required" {
 			return false
@@ -111,6 +140,13 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 	}
 	var checked Receipt
 	descriptor := runtimeaction.Describe(req.Tool, req.Params)
-	action, _ := e.evaluate(r, s, descriptor, &checked, now)
+	action, _ := e.evaluate(r, s, descriptor, &checked, now, sec)
 	return (action == ActionAllow || action == ActionHold) && str(checked.MatchedGrantID) == str(d.MatchedGrantID)
+}
+
+func holdRequestRuntimeTaskID(taskID, runtimeTaskID string) string {
+	if runtimeTaskID != "" {
+		return runtimeTaskID
+	}
+	return taskID
 }

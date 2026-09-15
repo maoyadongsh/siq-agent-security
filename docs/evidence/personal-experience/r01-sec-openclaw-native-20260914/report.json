@@ -1,0 +1,34 @@
+{
+  "schema_version": "personal-r01-sec-openclaw-native/v1",
+  "recorded_at": "2026-09-14T16:42:41.397141+00:00",
+  "passed": true,
+  "binary_sha256": "b6e7650f9ab35f6b259cbd64fe9be5a19347b3689ed3dab0be38874d4bda6708",
+  "harness_sha256": "04ddce9f930ac426a0c23f304f12f7e7e8125c1c3c52916b8b01cb4deb1d72e7",
+  "native_cli_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733",
+  "openclaw_version": "2026.5.12",
+  "native_entrypoint": "public openclaw agent --local; real plugin hook and file tool lifecycle",
+  "checks": [
+    "product_skill_import_install_and_activation",
+    "managed_adapter_uses_installation_bound_identity",
+    "native_session_enrolled_without_manual_intent",
+    "missing_sec_denied_before_file_read",
+    "admin_issues_controlled_session_sec",
+    "native_read_allowed_with_verified_attribution",
+    "controlled_session_call_binding_recomputed",
+    "revoked_sec_denied_in_same_native_session",
+    "installed_skill_present_in_native_catalog",
+    "receipt_chain_verified"
+  ],
+  "receipt_count": 4,
+  "skill_installation": {
+    "install_id": "sin-549fb49c45b54290f1e5ca9c299785086a6d87e2d11956b3ea4387cceba062e0",
+    "source_digest": "95f50e61780d220232e92928fd6a13f0e130583c106c1454f10d104d2177462f",
+    "grant_id": "grt-si-2fc77c4ddb18e7a758629882661115ec2e62cd0573dce9ca7248bf7f7283fb96"
+  },
+  "limitations": [
+    "OpenClaw exposes no trustworthy per-Skill tool-causality field; evidence level is controlled_session",
+    "native catalog discovery proves availability, not that one model tool call was caused by the Skill instructions",
+    "local deterministic model and automated fixture operator; no external or paid model",
+    "same-UID compromise and OS sandbox isolation remain outside the SEC threat boundary"
+  ]
+}

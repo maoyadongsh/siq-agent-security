@@ -102,8 +102,16 @@ def main() -> None:
                     "read_write": ["~/work/out"],
                 },
                 "network": [
-                    {"endpoint": "api.github.com:443", "effect": "allow"},
-                    {"endpoint": "astral.sh:443", "effect": "allow"},
+                    {
+                        "endpoint": "api.github.com:443",
+                        "effect": "allow",
+                        "binary_paths": ["/usr/bin/curl"],
+                    },
+                    {
+                        "endpoint": "astral.sh:443",
+                        "effect": "allow",
+                        "binary_paths": ["/usr/bin/curl"],
+                    },
                 ],
                 "process": {"forbid_privilege_escalation": True},
                 "model_routing": {"allowed_models": ["nemotron-local"]},
@@ -128,7 +136,9 @@ def main() -> None:
             "network_static_when_no_dynamic",
             {
                 "policy_id": "pol-net",
-                "network": [{"endpoint": "a:443", "effect": "allow"}],
+                "network": [
+                    {"endpoint": "a:443", "effect": "allow", "binary_paths": ["/bin/tool"]}
+                ],
                 "enforcement_mode": "audit_only",
             },
             caps(

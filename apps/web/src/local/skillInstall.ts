@@ -13,7 +13,7 @@ export function isSkillInstallPlan(v: unknown): v is SkillInstallPlan {
     !pattern(v.plan_id, /^sip-[a-f0-9]{64}$/) || !pattern(v.request_id, /^is-[a-f0-9]{32}$/) ||
     !isImportPermissionSource(v.source) || typeof v.grant_id !== 'string' || !v.grant_id || v.grant_id.length > 256 ||
     !Number.isInteger(v.grant_revision) || Number(v.grant_revision) < 0 || !signature(v.grant_signature) ||
-    !digest(v.grant_permission_digest) || v.platform !== 'hermes' || !pattern(v.instance_id, /^hi-[a-f0-9]{32}$/) ||
+    !digest(v.grant_permission_digest) || !['hermes', 'openclaw'].includes(String(v.platform)) || !pattern(v.instance_id, /^hi-[a-f0-9]{32}$/) ||
     typeof v.directory_name !== 'string' || !installDirectoryValid(v.directory_name) || !digest(v.target_locator_digest) ||
     typeof v.target_display !== 'string' || !v.target_display || v.target_display.length > 4096 ||
     typeof v.actor_id !== 'string' || !v.actor_id.trim() || v.actor_id.length > 128 ||
@@ -30,7 +30,7 @@ export function isSkillInstallCreated(v: unknown, req: SkillInstallRequest): v i
     p.instance_id === req.instance_id && p.directory_name === req.directory_name && p.actor_id === req.actor_id;
 }
 export function matchesInstallAuthority(p: SkillInstallPlan, g: Grant, source: ImportPermissionSource): boolean {
-  return g.status === 'approved' && g.platform === 'hermes' && g.subject.type === 'agent_instance' &&
+  return g.status === 'approved' && g.platform === p.platform && g.subject.type === 'agent_instance' &&
     g.subject.id === p.instance_id.replace(/^hi-/, 'hri-') && g.grant_id === p.grant_id &&
     g.state_revision === p.grant_revision && g.signature === p.grant_signature &&
     source.import_id === p.source.import_id && source.artifact_digest === p.source.artifact_digest && source.analysis_sha256 === p.source.analysis_sha256;

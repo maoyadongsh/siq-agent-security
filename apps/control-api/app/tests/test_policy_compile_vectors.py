@@ -8,13 +8,7 @@ from pathlib import Path
 from app.adapters.openshell.contracts import BackendCapabilities, CapabilityItem, UnsupportedCapability
 from app.adapters.openshell.policy_compiler import compile_policy
 
-FIXTURE = (
-    Path(__file__).resolve().parents[4]
-    / "packages"
-    / "contracts"
-    / "fixtures"
-    / "policy_compile_vectors_v1.json"
-)
+FIXTURE = Path(__file__).resolve().parents[4] / "packages" / "contracts" / "fixtures" / "policy_compile_vectors_v1.json"
 
 
 def _caps(raw: dict) -> BackendCapabilities:

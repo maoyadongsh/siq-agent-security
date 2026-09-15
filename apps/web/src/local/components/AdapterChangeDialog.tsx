@@ -25,11 +25,13 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
   const [busy, setBusy] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [catalogAttempt, setCatalogAttempt] = useState(0);
-  const permissions = useInstancePermissions(request.platform === 'hermes' && action === 'install' && connectionMode === 'permissions' ? instanceId : '', busy, request.grantId);
+  const managedPlatform = request.platform === 'hermes' || request.platform === 'openclaw' ? request.platform : null;
+  const managedInstance = !!managedPlatform;
+  const permissions = useInstancePermissions(managedPlatform ?? 'hermes', managedInstance && action === 'install' && connectionMode === 'permissions' ? instanceId : '', busy, request.grantId);
   const working = busy || permissions.busy;
   const close = useCallback(() => { if (!working) onClose(); }, [working, onClose]);
   useEffect(() => {
-    if (request.platform !== 'hermes') return;
+    if (!managedInstance) return;
     let active = true;
     setLoading(true); setError('');
     localApi.adapterInstances(request.platform).then((result) => {
@@ -38,13 +40,13 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
       const target = request.instanceId ? result.instances.find((item) => item.instance_id === request.instanceId) : result.instances.find((item) => item.active) ?? result.instances[0];
       setInstanceId(target?.instance_id ?? '');
       if (!target) { setError('未找到此安装对应的实例，请重新发现后重试。'); setLoading(false); }
-      setNativeEnable(result.native_available);
+      setNativeEnable(request.platform === 'hermes' && result.native_available);
       if (result.instances.length === 0) { setError('未找到可接入实例，请检查目录并重新发现。'); setLoading(false); }
     }).catch((err: unknown) => { if (active) { setError(err instanceof Error ? err.message : '无法读取实例'); setLoading(false); } });
     return () => { active = false; };
-  }, [request.platform, request.instanceId, catalogAttempt]);
+  }, [request.platform, request.instanceId, catalogAttempt, managedInstance]);
   useEffect(() => {
-    if (request.platform === 'hermes' && (!instanceId || action === 'install' && connectionMode === 'permissions' && !permissions.identityId)) {
+    if (managedInstance && (!instanceId || action === 'install' && connectionMode === 'permissions' && !permissions.identityId)) {
       setPlan(null); setLoading(false); return;
     }
     let active = true;
@@ -58,7 +60,7 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
 
   const apply = async () => {
     if (!plan || working || loading || plan.instance_id !== (instanceId || undefined) || plan.action !== action) return;
-    if (action === 'install' && request.platform === 'hermes' && connectionMode === 'permissions' && plan.runtime_identity_id !== permissions.identityId) return;
+    if (action === 'install' && managedInstance && connectionMode === 'permissions' && plan.runtime_identity_id !== permissions.identityId) return;
     setBusy(true); setError('');
     try {
       await localApi.adapterApply(plan, actorId);
@@ -71,7 +73,7 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
     } finally { setBusy(false); }
   };
   const recover = async () => {
-    if (request.platform === 'hermes' && !instanceId) return;
+    if (managedInstance && !instanceId) return;
     setBusy(true); setError('');
     try {
       const result = await localApi.adapterRecover(request.platform, instanceId || undefined);
@@ -86,7 +88,7 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
     <div className="modal-body adapter-change-body" aria-busy={loading || working}>
       {catalog ? <>
         <div className="field field-flush">
-          <label htmlFor="adapter-instance">Hermes 实例 / profile</label>
+          <label htmlFor="adapter-instance">{platformLabel(request.platform)} 实例</label>
           <select id="adapter-instance" disabled={working || !!request.instanceId} value={instanceId} onChange={(event) => { setPlan(null); setLoading(true); setInstanceId(event.target.value); }}>
             {catalog.instances.map((item) => <option key={item.instance_id} value={item.instance_id}>{item.name} · {item.config_dir}</option>)}
           </select>
@@ -109,11 +111,11 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
           </div>
           {connectionMode === 'permissions' ? permissions.panel : <p>此步骤仅配置平台钩子，不建立新的日常会话授权；已有实例身份会保留。</p>}
         </> : null}
-        {action === 'install' ? <label className="adapter-native-option">
+        {action === 'install' && request.platform === 'hermes' ? <label className="adapter-native-option">
           <input type="checkbox" checked={nativeEnable} disabled={working || !catalog.native_available} onChange={(event) => { setPlan(null); setLoading(true); setNativeEnable(event.target.checked); }} />
           由 Hermes 同步启用本实例插件
         </label> : null}
-        {!catalog.native_available ? <p>未找到 Hermes CLI，可先安装接入文件，再在原平台启用插件。</p> : null}
+        {request.platform === 'hermes' && !catalog.native_available ? <p>未找到 Hermes CLI，可先安装接入文件，再在原平台启用插件。</p> : null}
         {catalog.issues.length > 0 ? <p role="status">部分实例目录未能读取，请检查扫描结果与目录权限。</p> : null}
       </> : null}
       {loading ? <p role="status">正在检查配置并准备变更清单…</p> : null}
@@ -129,11 +131,11 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
       </> : null}
       {error ? <>
         <button type="button" className="btn" disabled={working || loading} onClick={() => {
-          if (request.platform === 'hermes' && !instanceId) setCatalogAttempt((n) => n + 1);
+          if (managedInstance && !instanceId) setCatalogAttempt((n) => n + 1);
           else setAttempt((n) => n + 1);
         }}>重新预览</button>
         <p>如果上次操作中断，可尝试恢复；遇到其他程序改动的文件会停止并保留，恢复不会继续安装。</p>
-        <button type="button" className="btn" disabled={working || (request.platform === 'hermes' && !instanceId)} onClick={recover}>恢复中断操作</button>
+        <button type="button" className="btn" disabled={working || (managedInstance && !instanceId)} onClick={recover}>恢复中断操作</button>
       </> : null}
     </div>
     <div className="modal-actions">

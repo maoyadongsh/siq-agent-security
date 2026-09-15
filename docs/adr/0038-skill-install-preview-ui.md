@@ -4,7 +4,7 @@
 
 ## 管理接口
 
-管理会话或管理凭据可调用 `POST /v1/skill-installations/plans`，严格接收 ADR-037 的 stage-create/v1 七个必需字段；未知字段、重复键、null 和客户端绝对目标路径均拒绝。实际目标通过现有 Hermes 实例解析器查找，必须 detected，使用对应 profile 的 skills 子目录。只生成私有暂存和签名计划，不调用 Grant approve/deploy，不写平台目录。
+管理会话或管理凭据可调用 `POST /v1/skill-installations/plans`，严格接收 ADR-037 的 stage-create/v1 七个必需字段；未知字段、重复键、null 和客户端绝对目标路径均拒绝。实际目标通过服务端 Hermes/OpenClaw 唯一实例解析器查找，必须 detected，使用对应实例的 skills 子目录；歧义、缺失和链接根拒绝。只生成私有暂存和签名计划，不调用 Grant approve/deploy，不写平台目录。
 
 响应为 `local-skill-install-plan-created/v1`：plan（ADR-037 合同）、reused。首次 201，原请求成功复验 200。管理 `GET /v1/skill-installations/plans/{plan_id}` 返回通过完整 Load 复验的 plan/v1，不提供未经复验的“可安装”状态。与导入共享 daemon 单并发工作锁，竞争返回 429/Retry-After；处理上下文 60 秒、响应写期限 65 秒、浏览器预算 70 秒。响应 no-store；未授权 401、决策凭据 403。
 
@@ -12,7 +12,9 @@
 
 ## 个人界面
 
-沿用签发页，绑定导入来源的 Hermes 实例授权在 approved 时显示安装预览入口。来源卡片读取已签名 admission 的 Skill 名称供目录名预填；用户可改名，目录规则由前后端共同校验。目标实例由授权绑定，不能在预览中更换主体。
+沿用签发页，绑定导入来源的 Hermes 或 OpenClaw 实例授权在 approved 时显示安装预览入口。来源卡片读取已签名 admission 的 Skill 名称供目录名预填；用户可改名，目录规则由前后端共同校验。目标实例和平台由授权绑定，不能在预览中更换主体。
+
+2026-09-14 补充：安装结果页可对两个平台继续完成权限准备、运行身份签发和适配器接入；前端必须验证计划、Grant、运行准备和候选更新的平台完全一致。OpenClaw 暂不展示 Hermes 专用的图形化运行自检，原生 SEC 证据单独归档。
 
 用户点击“生成安装预览”才写私有暂存。展示目标位置、文件数/大小、候选与权限摘要、计划期限，并明确尚未安装。操作中禁止重复提交；失败保留原请求供显式重试，重新准备才产生新请求 ID。成功后位置栏只保存 Grant/plan 的不透明 ID，刷新通过 GET 重新验证。目录、操作者或客户端摘要不作为读取权限依据。
 

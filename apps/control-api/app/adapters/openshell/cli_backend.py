@@ -25,7 +25,7 @@ from __future__ import annotations
 import contextlib
 import os
 import re
-import subprocess
+import secrets
 from collections.abc import Callable, Iterator
 from ipaddress import ip_address
 from pathlib import Path
@@ -34,6 +34,7 @@ from urllib.parse import urlparse
 import yaml
 
 from app.adapters.openshell.base import EnforcementAdapter
+from app.adapters.openshell.bounded_command import MAX_OUTPUT, run_bounded
 from app.adapters.openshell.contracts import (
     VERIFY_LEVEL_FAILED,
     VERIFY_LEVEL_READBACK,
@@ -45,13 +46,29 @@ from app.adapters.openshell.contracts import (
     DeploymentReceipt,
     EventBatch,
     PolicySnapshot,
+    RollbackAuthorization,
+    RollbackAuthorizer,
     RollbackReceipt,
     SandboxPage,
     ValidationReport,
     VerificationFailed,
     VerificationReport,
 )
+from app.adapters.openshell.operation_registry import (
+    PROCESS_POLICY_OPERATIONS,
+    PolicyOperation,
+    PolicyOperationRegistry,
+)
 from app.adapters.openshell.policy_compiler import compile_policy, validate_compiled
+from app.adapters.openshell.policy_safety import (
+    clone_policy,
+    gateway_network_to_rules,
+    network_rules_to_gateway,
+    parse_policy_output,
+    policy_digest,
+    static_policy_digest,
+    validate_revision,
+)
 
 _ANSI_RE = re.compile(r"\x1b\[[0-9;]*[mK]")
 
@@ -106,18 +123,14 @@ def _cli_capability_document() -> dict[str, CapabilityItem]:
             status="unsupported", semantics="none", basis="实测：端点模型仅 host:port，path 级规则编译拒绝"
         ),
         # interceptor 未经任何版本实测 → unknown（fail-closed，不猜测）
-        "tools_mcp": CapabilityItem(
-            status="unknown", semantics="none", basis="interceptor/工具治理未经实测（不猜测）"
-        ),
+        "tools_mcp": CapabilityItem(status="unknown", semantics="none", basis="interceptor/工具治理未经实测（不猜测）"),
         "model_routing": CapabilityItem(
             status="unsupported", semantics="none", basis="provider 凭据注入未经实测（保守拒绝）"
         ),
         "secrets": CapabilityItem(
             status="unsupported", semantics="none", basis="凭据注入能力未经实测（保守拒绝，§15.2 由 Provider 侧承担）"
         ),
-        "resources": CapabilityItem(
-            status="unknown", semantics="none", basis="资源配额语义未经实测"
-        ),
+        "resources": CapabilityItem(status="unknown", semantics="none", basis="资源配额语义未经实测"),
         # 网关无已实测行为事件流；stream_events 仅能回读 policy list 文本（非行为事件）
         "audit_events": CapabilityItem(
             status="unknown", semantics="none", basis="无已实测事件流；stream_events 仅 policy list 回读（非行为事件）"
@@ -133,6 +146,7 @@ def _cli_capability_document() -> dict[str, CapabilityItem]:
             status="unsupported", semantics="none", basis="CLI 路径无 audit_only 执行语义的实测依据"
         ),
     }
+
 
 Runner = Callable[[list[str]], tuple[int, str, str]]
 
@@ -159,6 +173,7 @@ class OpenShellCliBackend(EnforcementAdapter):
         runner: Runner | None = None,
         env_script: str | None = None,
         docker_runner: Runner | None = None,
+        operation_registry: PolicyOperationRegistry | None = None,
     ):
         self._env_script = env_script if env_script is not None else _default_env_script()
         self._runner = runner or self._subprocess_runner
@@ -166,6 +181,7 @@ class OpenShellCliBackend(EnforcementAdapter):
         self._artifacts: dict[str, CompiledPolicy] = {}  # compile 注册，apply 引用
         # 版本探测缓存：None = 未探测；"unknown" = 探测失败/输出不可解析
         self._detected_version: str | None = None
+        self._operations = operation_registry or PROCESS_POLICY_OPERATIONS
 
     # ------------------------------------------------------------ 子进程
 
@@ -222,41 +238,22 @@ class OpenShellCliBackend(EnforcementAdapter):
                 *args,
             ]
         else:
-            raise AdapterError(
-                "OpenShell CLI 未配置：设置 CLI_BIN + GATEWAY_ENDPOINT，或显式设置 OPENSHELL_ENV_SH"
-            )
+            raise AdapterError("OpenShell CLI 未配置：设置 CLI_BIN + GATEWAY_ENDPOINT，或显式设置 OPENSHELL_ENV_SH")
         return cmd
 
     def _subprocess_runner(self, args: list[str]) -> tuple[int, str, str]:
         cmd = self._build_command(args)
-        # B4 环境变量白名单加固：过滤宿主敏感凭据，仅透传基础环境变量与显式配置
-        safe_keys = {"PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "USER", "TERM"}
-        clean_env = {
-            k: v for k, v in os.environ.items()
-            if k in safe_keys or k.startswith("SIQ_AS_") or k.startswith("OPENSHELL_")
-        }
-        clean_env.setdefault("PATH", os.environ.get("PATH", "/usr/bin:/bin"))
-        try:
-            proc = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=30,
-                env=clean_env,
-            )
-        except subprocess.TimeoutExpired as exc:
-            raise AdapterError(f"openshell CLI 超时（fail-closed）: {exc}") from exc
-        except OSError as exc:
-            raise AdapterError(f"无法执行 openshell CLI（fail-closed）: {exc}") from exc
-        return proc.returncode, proc.stdout, proc.stderr
+        return run_bounded(cmd)
 
     def _cli(self, *args: str) -> str:
         """执行 CLI；成功输出可能落在 stdout 或 stderr（实测 policy set 的 ✓ 回执在 stderr）。"""
         rc, stdout, stderr = self._runner(list(args))
+        if len(stdout.encode("utf-8")) + len(stderr.encode("utf-8")) > MAX_OUTPUT:
+            raise AdapterError("openshell_output_limit")
         clean_out = _ANSI_RE.sub("", stdout)
         clean_err = _ANSI_RE.sub("", stderr)
         if rc != 0:
-            raise AdapterError(f"openshell {' '.join(args)} 失败(rc={rc}): {(clean_err or clean_out).strip()[:300]}")
+            raise AdapterError("openshell_command_failed")
         return clean_out + "\n" + clean_err
 
     # ------------------------------------------------------------ 合同实现
@@ -338,22 +335,12 @@ class OpenShellCliBackend(EnforcementAdapter):
         """
         if self._docker_runner is not None:
             rc, out, error = self._docker_runner(["docker", "ps", "--format", "{{.Names}}"])
-            if rc != 0:
-                raise AdapterError(f"docker 目标发现失败(rc={rc}): {error.strip()[:200]}")
         else:
-            try:
-                proc = subprocess.run(
-                    ["docker", "ps", "--format", "{{.Names}}"], capture_output=True, text=True, timeout=10
-                )
-                if proc.returncode != 0:
-                    raise AdapterError(
-                        f"docker 目标发现失败(rc={proc.returncode}): {proc.stderr.strip()[:200]}"
-                    )
-                out = proc.stdout
-            except subprocess.TimeoutExpired as exc:
-                raise AdapterError("docker 目标发现超时（fail-closed）") from exc
-            except OSError as exc:
-                raise AdapterError(f"无法执行 docker 目标发现（fail-closed）: {exc}") from exc
+            rc, out, error = run_bounded(["docker", "ps", "--format", "{{.Names}}"], timeout=10)
+        if len(out.encode("utf-8")) + len(error.encode("utf-8")) > MAX_OUTPUT:
+            raise AdapterError("openshell_output_limit")
+        if rc != 0:
+            raise AdapterError("openshell_command_failed")
         names = []
         for line in out.splitlines():
             line = line.strip()
@@ -364,13 +351,15 @@ class OpenShellCliBackend(EnforcementAdapter):
 
     def read_effective_policy(self, target: str) -> PolicySnapshot:
         out = self._cli("policy", "get", target, "--full")
-        doc = self._parse_policy_yaml(out)
-        meta = self._parse_policy_meta(out)
+        doc, revision = parse_policy_output(out)
         return PolicySnapshot(
             target=target,
-            revision=str(meta.get("Active", meta.get("Version", "1"))),
+            revision=revision,
+            policy=clone_policy(doc),
+            policy_digest=policy_digest(doc),
+            static_digest=static_policy_digest(doc),
             filesystem=doc.get("filesystem_policy") or {},
-            network=self._network_rules(doc.get("network_policies") or {}),
+            network=gateway_network_to_rules(doc.get("network_policies")),
             process=doc.get("process") or {},
             # P1-11：`policy get --full` 输出不含执行模式字段，无法从后端输出确定
             # 模式时如实填 "unknown"，不得无条件硬编码 "block"
@@ -388,43 +377,172 @@ class OpenShellCliBackend(EnforcementAdapter):
 
     def plan_change(self, target: str, compiled: CompiledPolicy) -> ChangePlan:
         current = self.read_effective_policy(target)
-        kind = "generation" if compiled.needs_generation else "dynamic"
+        static_changed = any(
+            key in compiled.artifact
+            and (
+                not isinstance(current.policy.get(key), dict)
+                or any(current.policy[key].get(field) != value for field, value in compiled.artifact[key].items())
+            )
+            for key in ("filesystem_policy", "process")
+        )
+        kind = "generation" if static_changed else "dynamic"
         return ChangePlan(
             target=target,
             kind=kind,
             expected_revision=current.revision,
             artifact_hash=compiled.artifact_hash,
+            base_policy_digest=current.policy_digest,
+            base_static_digest=current.static_digest,
             steps=[f"policy set {target}（动态）" if kind == "dynamic" else f"sandbox create {target}（重建）"],
         )
 
     def apply_dynamic(self, target: str, plan: ChangePlan, expected_revision: str) -> DeploymentReceipt:
-        """实测语义：合并当前策略（静态段必须原样）+ 替换网络段 → policy set。"""
-        current = self.read_effective_policy(target)
-        if current.revision != expected_revision:
-            from app.adapters.openshell.contracts import RevisionConflict
+        """Patch only network_policies under a process-local target lock."""
+        validate_revision(expected_revision)
+        if plan.target != target or plan.expected_revision != expected_revision or plan.kind != "dynamic":
+            raise AdapterError("openshell_change_plan_mismatch")
+        with self._operations.target_lock(target):
+            current = self.read_effective_policy(target)
+            if current.revision != expected_revision:
+                from app.adapters.openshell.contracts import RevisionConflict
 
-            raise RevisionConflict(expected=expected_revision, actual=current.revision)
-        compiled = self._artifacts.get(plan.artifact_hash)
-        if compiled is None:
-            raise AdapterError("未知制品哈希，拒绝发布（fail-closed）")
-        merged = {
-            "version": 1,
-            "filesystem_policy": current.filesystem,
-            "landlock": {"compatibility": "best_effort"},
-            "process": current.process,
-            "network_policies": self._network_rules_to_gateway(compiled.artifact.get("network_policies") or []),
-        }
-        with self._policy_yaml_file(merged) as policy_file:
-            out = self._cli("policy", "set", target, "--policy", policy_file)
-        match = _VERSION_SUBMITTED_RE.search(out) or _VERSION_UNCHANGED_RE.search(out)
-        if not match:
-            raise AdapterError(f"无法解析 policy set 回执（fail-closed）: {out.strip()[:200]}")
-        new_revision = match.group(1)
+                raise RevisionConflict(expected=expected_revision, actual=current.revision)
+            if current.policy_digest != plan.base_policy_digest or current.static_digest != plan.base_static_digest:
+                raise AdapterError("openshell_prewrite_policy_drift")
+            compiled = self._artifacts.get(plan.artifact_hash)
+            if compiled is None:
+                raise AdapterError("openshell_unknown_compiled_artifact")
+            if "network_policies" not in compiled.artifact:
+                raise AdapterError("openshell_network_intent_missing")
+            merged = clone_policy(current.policy)
+            merged["network_policies"] = network_rules_to_gateway(compiled.artifact["network_policies"])
+            expected_digest = policy_digest(merged)
+            operation_id = f"opo-{secrets.token_hex(24)}"
+            if expected_digest == current.policy_digest:
+                receipt = self._deployment_receipt(
+                    operation_id=operation_id,
+                    target=target,
+                    base=current,
+                    applied_revision=current.revision,
+                    applied_digest=current.policy_digest,
+                    result="no_op",
+                )
+                self._operations.remember(
+                    PolicyOperation(
+                        operation_id=operation_id,
+                        target=target,
+                        base=current,
+                        applied_revision=current.revision,
+                        applied_digest=current.policy_digest,
+                        no_op=True,
+                    )
+                )
+                return receipt
+            prewrite = self.read_effective_policy(target)
+            if prewrite.revision != current.revision or prewrite.policy_digest != current.policy_digest:
+                raise AdapterError("openshell_prewrite_policy_drift")
+            with self._policy_yaml_file(merged) as policy_file:
+                out = self._cli("policy", "set", target, "--policy", policy_file)
+            new_revision, gateway_hash = self._parse_set_receipt(out)
+            readback = self._read_after_write(prewrite, new_revision, expected_digest)
+            receipt = self._deployment_receipt(
+                operation_id=operation_id,
+                target=target,
+                base=current,
+                applied_revision=new_revision,
+                applied_digest=expected_digest,
+                result="applied",
+                gateway_hash=gateway_hash,
+            )
+            self._operations.remember(
+                PolicyOperation(
+                    operation_id=operation_id,
+                    target=target,
+                    base=current,
+                    applied_revision=new_revision,
+                    applied_digest=readback.policy_digest,
+                    no_op=False,
+                )
+            )
+            return receipt
+
+    def _deployment_receipt(
+        self,
+        *,
+        operation_id: str,
+        target: str,
+        base: PolicySnapshot,
+        applied_revision: str,
+        applied_digest: str,
+        result: str,
+        gateway_hash: str = "",
+    ) -> DeploymentReceipt:
         return DeploymentReceipt(
-            backend_revision=new_revision,
-            evidence={"snapshot_hash": match.group(2), "submitted": new_revision},
+            backend_revision=applied_revision,
+            operation_id=operation_id,
+            target=target,
+            base_revision=base.revision,
+            base_policy_digest=base.policy_digest,
+            applied_policy_digest=applied_digest,
+            result=result,
+            evidence={
+                "snapshot_hash": gateway_hash,
+                "gateway_policy_hash": gateway_hash,
+                "full_policy_digest": applied_digest,
+            },
             applied_at=None,
         )
+
+    def _parse_set_receipt(self, out: str) -> tuple[str, str]:
+        match = _VERSION_SUBMITTED_RE.search(out) or _VERSION_UNCHANGED_RE.search(out)
+        if not match:
+            raise AdapterError("openshell_policy_set_receipt_invalid")
+        revision = validate_revision(match.group(1))
+        return revision, match.group(2)
+
+    def _read_after_write(
+        self,
+        base: PolicySnapshot,
+        expected_revision: str,
+        expected_digest: str,
+    ) -> PolicySnapshot:
+        import time
+
+        last = base
+        for attempt in range(10):
+            snapshot = self.read_effective_policy(base.target)
+            last = snapshot
+            if snapshot.revision == expected_revision and snapshot.policy_digest == expected_digest:
+                return snapshot
+            if snapshot.revision not in {base.revision, expected_revision}:
+                raise VerificationFailed("openshell_postwrite_revision_drift")
+            if snapshot.revision == expected_revision:
+                raise VerificationFailed("openshell_postwrite_policy_digest_mismatch")
+            if attempt < 9:
+                time.sleep(1)
+        if last.revision == expected_revision:
+            raise VerificationFailed("openshell_postwrite_policy_digest_mismatch")
+        raise VerificationFailed("openshell_postwrite_revision_not_active")
+
+    def _validate_receipt_binding(
+        self,
+        target: str,
+        receipt: DeploymentReceipt,
+        operation: PolicyOperation,
+    ) -> None:
+        expected_result = "no_op" if operation.no_op else "applied"
+        if (
+            not receipt.operation_id
+            or receipt.operation_id != operation.operation_id
+            or receipt.target != target
+            or operation.target != target
+            or receipt.base_revision != operation.base.revision
+            or receipt.base_policy_digest != operation.base.policy_digest
+            or receipt.backend_revision != operation.applied_revision
+            or receipt.applied_policy_digest != operation.applied_digest
+            or receipt.result != expected_result
+        ):
+            raise VerificationFailed("openshell_rollback_receipt_mismatch")
 
     def create_generation(self, target: str, compiled: CompiledPolicy) -> DeploymentReceipt:
         raise AdapterError(
@@ -451,6 +569,8 @@ class OpenShellCliBackend(EnforcementAdapter):
         failures: list[str] = []
         if snapshot.revision != receipt.backend_revision:
             failures.append(f"revision mismatch: {snapshot.revision} != {receipt.backend_revision}")
+        if not receipt.applied_policy_digest or snapshot.policy_digest != receipt.applied_policy_digest:
+            failures.append("full policy digest mismatch")
         allowed = {r.get("endpoint") for r in snapshot.network if r.get("effect") != "deny"}
         allow_checks = [
             {
@@ -480,8 +600,6 @@ class OpenShellCliBackend(EnforcementAdapter):
         for check in deny_checks:
             if check["endpoint"] in allowed:
                 failures.append(f"deny check failed: {check['endpoint']}")
-        if not allow_checks or not deny_checks:
-            failures.append("正负向验证必须各至少一项（§15.3）")
         passed = not failures
         return VerificationReport(
             passed=passed,
@@ -491,25 +609,64 @@ class OpenShellCliBackend(EnforcementAdapter):
             failures=failures,
         )
 
-    def rollback(self, target: str, receipt: DeploymentReceipt) -> RollbackReceipt:
-        raw_rev = str(receipt.backend_revision or "").strip()
-        if not raw_rev:
-            raise AdapterError("回执缺少 backend_revision，无法计算回滚目标（fail-closed）")
-        try:
-            prev_rev = int(raw_rev) - 1
-        except ValueError:
-            raise AdapterError(f"backend_revision 非法（无法解析为整数，fail-closed）: {raw_rev!r}") from None
-        if prev_rev < 1:
-            raise VerificationFailed("无可回滚的上一 revision")
-        out = self._cli("policy", "get", target, "--rev", str(prev_rev), "--full")
-        prev_doc = self._parse_policy_yaml(out)
-        with self._policy_yaml_file(prev_doc) as policy_file:
-            applied = self._cli("policy", "set", target, "--policy", policy_file)
-        match = _VERSION_SUBMITTED_RE.search(applied) or _VERSION_UNCHANGED_RE.search(applied)
-        if not match:
-            # 回执不可解析即失败（fail-closed），不伪造 restored_revision
-            raise AdapterError(f"无法解析回滚 policy set 回执（fail-closed）: {applied.strip()[:200]}")
-        return RollbackReceipt(restored_revision=match.group(1), evidence={"applied": applied.strip()[:120]})
+    def rollback(
+        self,
+        target: str,
+        receipt: DeploymentReceipt,
+        authorizer: RollbackAuthorizer | None = None,
+    ) -> RollbackReceipt:
+        with self._operations.target_lock(target):
+            operation = self._operations.get(receipt.operation_id)
+            if operation is None:
+                raise VerificationFailed("openshell_rollback_operation_unknown")
+            self._validate_receipt_binding(target, receipt, operation)
+            current = self.read_effective_policy(target)
+            if current.revision != operation.applied_revision or current.policy_digest != operation.applied_digest:
+                raise VerificationFailed("openshell_rollback_external_drift")
+            if operation.no_op:
+                self._operations.consume(operation.operation_id)
+                return RollbackReceipt(
+                    restored_revision=current.revision,
+                    restored_digest=current.policy_digest,
+                    result="no_op",
+                    evidence={"operation_id": operation.operation_id},
+                )
+            if authorizer is None:
+                raise VerificationFailed("openshell_rollback_authorizer_required")
+            try:
+                authorized = authorizer(
+                    RollbackAuthorization(
+                        operation_id=operation.operation_id,
+                        target=target,
+                        current=current,
+                        restore=operation.base,
+                    )
+                )
+            except Exception:
+                raise VerificationFailed("openshell_rollback_authorization_failed") from None
+            if authorized is not True:
+                raise VerificationFailed("openshell_rollback_authorization_failed")
+            prewrite = self.read_effective_policy(target)
+            if prewrite.revision != operation.applied_revision or prewrite.policy_digest != operation.applied_digest:
+                raise VerificationFailed("openshell_rollback_prewrite_drift")
+            with self._policy_yaml_file(operation.base.policy) as policy_file:
+                applied = self._cli("policy", "set", target, "--policy", policy_file)
+            restored_revision, gateway_hash = self._parse_set_receipt(applied)
+            readback = self._read_after_write(
+                prewrite,
+                restored_revision,
+                operation.base.policy_digest,
+            )
+            self._operations.consume(operation.operation_id)
+            return RollbackReceipt(
+                restored_revision=restored_revision,
+                restored_digest=readback.policy_digest,
+                result="restored",
+                evidence={
+                    "operation_id": operation.operation_id,
+                    "gateway_policy_hash": gateway_hash,
+                },
+            )
 
     def stream_events(self, cursor: str | None = None) -> EventBatch:
         """注意：这不是行为事件流（P1-2）。
@@ -536,56 +693,17 @@ class OpenShellCliBackend(EnforcementAdapter):
 
     def _parse_policy_yaml(self, out: str) -> dict:
         """`policy get --full` 输出 = 元信息块 + '---' + YAML 策略体。"""
-        marker = out.find("---")
-        body = out[marker + 3 :] if marker != -1 else out
-        try:
-            doc = yaml.safe_load(body) or {}
-        except yaml.YAMLError as exc:
-            raise AdapterError(f"策略 YAML 解析失败（fail-closed）: {exc}") from exc
-        return doc
+        return parse_policy_output(out)[0]
 
     def _parse_policy_meta(self, out: str) -> dict:
-        meta: dict = {}
-        for line in out.splitlines():
-            line = line.strip()
-            if ":" in line and not line.startswith("-"):
-                key, _, value = line.partition(":")
-                meta[key.strip()] = value.strip()
-        return meta
+        return {"Active": parse_policy_output(out)[1]}
 
     def _network_rules(self, gateway_network: dict) -> list[dict]:
         """网关网络策略 → 产品 Permission Fact 形状的网络规则列表。"""
-        rules = []
-        for key, rule in (gateway_network or {}).items():
-            if not isinstance(rule, dict):
-                continue
-            for ep in rule.get("endpoints") or []:
-                rules.append(
-                    {
-                        "endpoint": f"{ep.get('host')}:{ep.get('port')}",
-                        "effect": "allow",
-                        "binary_paths": [b.get("path") for b in rule.get("binaries") or []],
-                        "rule_name": rule.get("name", key),
-                    }
-                )
-        return rules
+        return gateway_network_to_rules(gateway_network)
 
     def _network_rules_to_gateway(self, rules: list[dict]) -> dict:
-        gateway: dict = {}
-        for idx, rule in enumerate(rules):
-            endpoint = rule.get("endpoint", "")
-            host, _, rest = endpoint.partition(":")
-            port_str, _, path = rest.partition("/")
-            # v0.0.83 端点模型为 host:port；"/**" 全通配等价于无路径限制可剥离，
-            # 其他 path 粒度按 §15.2 "未知语义拒绝"（不静默弱化）
-            if path and path != "**":
-                raise AdapterError(f"path 级网络规则不被 v0.0.83 支持（拒绝编译）: {endpoint}")
-            gateway[f"siq_as_rule_{idx}"] = {
-                "name": rule.get("rule_name", f"siq-as-rule-{idx}"),
-                "endpoints": [{"host": host, "port": int(port_str or 443)}],
-                "binaries": [{"path": bp} for bp in rule.get("binary_paths") or ["/usr/bin/curl"]],
-            }
-        return gateway
+        return network_rules_to_gateway(rules)
 
     @contextlib.contextmanager
     def _policy_yaml_file(self, doc: dict) -> Iterator[str]:

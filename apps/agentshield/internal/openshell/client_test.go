@@ -1,6 +1,7 @@
 package openshell
 
 import (
+	"errors"
 	"os"
 	"strings"
 	"testing"
@@ -37,6 +38,32 @@ func fake(responses map[string]struct {
 }
 
 func k(args ...string) string { return strings.Join(args, "\x00") }
+
+func policyOutput(revision, body string) string {
+	return "Version:      " + revision + "\nStatus:       Active\nActive:       " + revision + "\n---\n" + body
+}
+
+func policyBody(t *testing.T, output string) string {
+	t.Helper()
+	parts := strings.SplitN(output, "---\n", 2)
+	if len(parts) != 2 {
+		t.Fatal("policy fixture missing marker")
+	}
+	return parts[1]
+}
+
+func policyFixtureDigest(t *testing.T, output string) string {
+	t.Helper()
+	doc, err := parsePolicyYAML(output)
+	if err != nil {
+		t.Fatal(err)
+	}
+	digest, err := policyDigest(doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return digest
+}
 
 func backend(t *testing.T, responses map[string]struct {
 	rc     int
@@ -265,9 +292,10 @@ func Test127001IsNotParsedAsVersion(t *testing.T) {
 func TestApplyNetworkMergesStaticAndReplacesNetwork(t *testing.T) {
 	var setPath string
 	full := testdata(t, "policy_get_full.txt")
+	active := full
 	c := New(Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
 		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
-			return 0, full, ""
+			return 0, active, ""
 		}
 		if len(args) >= 5 && args[0] == "policy" && args[1] == "set" {
 			setPath = args[4]
@@ -295,6 +323,7 @@ func TestApplyNetworkMergesStaticAndReplacesNetwork(t *testing.T) {
 			if _, err := os.Stat(setPath); err != nil {
 				t.Fatal("tempfile must exist while CLI reads it")
 			}
+			active = policyOutput("2", string(raw))
 			return 0, policySetOK, ""
 		}
 		if eq(args, "gateway", "info") {
@@ -308,7 +337,7 @@ func TestApplyNetworkMergesStaticAndReplacesNetwork(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rec.BackendRevision != "2" || rec.Evidence["snapshot_hash"] != "5385cd2cf66f" {
+	if rec.BackendRevision != "2" || rec.Evidence["gateway_policy_hash"] != "5385cd2cf66f" || rec.AppliedPolicyDigest == "" || rec.OperationID == "" {
 		t.Fatalf("%+v", rec)
 	}
 	if setPath == "" {
@@ -332,7 +361,7 @@ func TestApplyNetworkTempfileCleanedOnCLIError(t *testing.T) {
 		}
 		return 1, "", "unexpected"
 	}})
-	if _, err := c.ApplyNetwork("s1", nil, "1"); err == nil {
+	if _, err := c.ApplyNetwork("s1", []NetworkRule{{Endpoint: "api.example.com:443", Effect: "allow", BinaryPaths: []string{"/usr/bin/curl"}}}, "1"); err == nil {
 		t.Fatal("expected adapter error")
 	}
 	if setPath == "" {
@@ -351,48 +380,56 @@ func TestApplyNetworkRevisionConflict(t *testing.T) {
 	}{
 		k("policy", "get", "s1", "--full"): {0, testdata(t, "policy_get_full.txt"), ""},
 	})
-	_, err := c.ApplyNetwork("s1", nil, "0")
+	_, err := c.ApplyNetwork("s1", []NetworkRule{}, "2")
 	if _, ok := err.(*RevisionConflict); !ok {
 		t.Fatalf("want RevisionConflict, got %v", err)
 	}
 }
 
 func TestApplyNetworkIdempotentUnchanged(t *testing.T) {
-	full := testdata(t, "policy_get_full.txt")
+	full := testdata(t, "policy_get_full_v2.txt")
+	setCalls := 0
 	c := New(Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
 		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
 			return 0, full, ""
 		}
 		if len(args) >= 2 && args[0] == "policy" && args[1] == "set" {
+			setCalls++
 			return 0, "· Policy unchanged (version 5, hash: 12f756c6915d)\n", ""
 		}
 		return 1, "", "unexpected"
 	}})
-	rec, err := c.ApplyNetwork("s1", nil, "1")
+	rec, err := c.ApplyNetwork("s1", []NetworkRule{{Endpoint: "api.example.com:443", Effect: "allow", BinaryPaths: []string{"/usr/bin/curl"}, RuleName: "siq-as-rule-0"}}, "2")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rec.BackendRevision != "5" || rec.Evidence["snapshot_hash"] != "12f756c6915d" {
+	if rec.BackendRevision != "2" || rec.Result != "no_op" || setCalls != 0 {
 		t.Fatalf("%+v", rec)
 	}
 }
 
 func TestApplyNeverCallsCreateGeneration(t *testing.T) {
 	full := testdata(t, "policy_get_full.txt")
+	active := full
 	c := New(Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
 		joined := strings.Join(args, " ")
 		if strings.Contains(joined, "create") || strings.Contains(joined, "generation") {
 			t.Fatalf("create_generation must not be invoked: %v", args)
 		}
 		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
-			return 0, full, ""
+			return 0, active, ""
 		}
 		if len(args) >= 2 && args[0] == "policy" && args[1] == "set" {
+			raw, err := os.ReadFile(args[4])
+			if err != nil {
+				t.Fatal(err)
+			}
+			active = policyOutput("2", string(raw))
 			return 0, policySetOK, ""
 		}
 		return 1, "", "unexpected"
 	}})
-	if _, err := c.ApplyNetwork("s1", nil, "1"); err != nil {
+	if _, err := c.ApplyNetwork("s1", []NetworkRule{{Endpoint: "api.example.com:443", Effect: "allow", BinaryPaths: []string{"/usr/bin/curl"}}}, "1"); err != nil {
 		t.Fatal(err)
 	}
 	if err := c.CreateGeneration("s1"); err == nil {
@@ -411,7 +448,7 @@ func TestFSChangeRejectedByGateway(t *testing.T) {
 		}
 		return 1, "", "unexpected"
 	}})
-	if _, err := c.ApplyNetwork("s1", nil, "1"); err == nil {
+	if _, err := c.ApplyNetwork("s1", []NetworkRule{{Endpoint: "api.example.com:443", Effect: "allow", BinaryPaths: []string{"/usr/bin/curl"}}}, "1"); err == nil {
 		t.Fatal("expected adapter error")
 	}
 }
@@ -424,21 +461,22 @@ func TestPathLevelNetworkRuleRejected(t *testing.T) {
 	}{
 		k("policy", "get", "s1", "--full"): {0, testdata(t, "policy_get_full.txt"), ""},
 	})
-	_, err := c.ApplyNetwork("s1", []NetworkRule{{Endpoint: "api.example.com:443/admin"}}, "1")
-	if err == nil || !strings.Contains(err.Error(), "path") {
+	_, err := c.ApplyNetwork("s1", []NetworkRule{{Endpoint: "api.example.com:443/admin", Effect: "allow", BinaryPaths: []string{"/usr/bin/curl"}}}, "1")
+	if err == nil || !strings.Contains(err.Error(), "host:port") {
 		t.Fatalf("%v", err)
 	}
 }
 
 func TestVerifyPassIsReadbackNotEnforcement(t *testing.T) {
+	full := testdata(t, "policy_get_full_v2.txt")
 	c := backend(t, map[string]struct {
 		rc     int
 		stdout string
 		stderr string
 	}{
-		k("policy", "get", "s1", "--full"): {0, testdata(t, "policy_get_full_v2.txt"), ""},
+		k("policy", "get", "s1", "--full"): {0, full, ""},
 	})
-	report := c.Verify("s1", DeploymentReceipt{BackendRevision: "2"},
+	report := c.Verify("s1", DeploymentReceipt{BackendRevision: "2", AppliedPolicyDigest: policyFixtureDigest(t, full)},
 		[]string{"api.example.com:443"}, []string{"10.255.255.255:1"})
 	if !report.Passed || report.Level != VerifyReadback {
 		t.Fatalf("%+v", report)
@@ -456,14 +494,15 @@ func TestVerifyPassIsReadbackNotEnforcement(t *testing.T) {
 }
 
 func TestVerifyFailureLevelIsFailed(t *testing.T) {
+	full := testdata(t, "policy_get_full_v2.txt")
 	c := backend(t, map[string]struct {
 		rc     int
 		stdout string
 		stderr string
 	}{
-		k("policy", "get", "s1", "--full"): {0, testdata(t, "policy_get_full_v2.txt"), ""},
+		k("policy", "get", "s1", "--full"): {0, full, ""},
 	})
-	report := c.Verify("s1", DeploymentReceipt{BackendRevision: "3"},
+	report := c.Verify("s1", DeploymentReceipt{BackendRevision: "3", AppliedPolicyDigest: policyFixtureDigest(t, full)},
 		[]string{"api.example.com:443"}, []string{"10.255.255.255:1"})
 	if report.Passed || report.Level != VerifyFailed {
 		t.Fatalf("%+v", report)
@@ -479,71 +518,138 @@ func TestVerifyFailureLevelIsFailed(t *testing.T) {
 	}
 }
 
-func TestVerifyRequiresBothAllowAndDeny(t *testing.T) {
+func TestVerifyFullDigestDoesNotRequireInventedDeny(t *testing.T) {
+	full := testdata(t, "policy_get_full_v2.txt")
 	c := backend(t, map[string]struct {
 		rc     int
 		stdout string
 		stderr string
 	}{
-		k("policy", "get", "s1", "--full"): {0, testdata(t, "policy_get_full_v2.txt"), ""},
+		k("policy", "get", "s1", "--full"): {0, full, ""},
 	})
-	report := c.Verify("s1", DeploymentReceipt{BackendRevision: "2"}, []string{"api.example.com:443"}, nil)
-	if report.Passed {
-		t.Fatal("one-sided verify must fail")
+	report := c.Verify("s1", DeploymentReceipt{BackendRevision: "2", AppliedPolicyDigest: policyFixtureDigest(t, full)}, []string{"api.example.com:443"}, nil)
+	if !report.Passed || len(report.DenyChecks) != 0 {
+		t.Fatalf("full digest plus declared allow must pass without invented deny: %+v", report)
 	}
 }
 
-func TestRollbackUsesGatewayRevisionAndCleansTempfile(t *testing.T) {
-	var setPath string
-	full := testdata(t, "policy_get_full.txt")
+func TestRollbackUsesTrustedSnapshotAndNonContinuousRevisions(t *testing.T) {
+	base := testdata(t, "policy_get_full.txt")
+	active := base
+	setCalls := 0
+	usedHistoryLookup := false
 	c := New(Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
-		if len(args) >= 2 && args[0] == "policy" && args[1] == "get" {
-			return 0, full, ""
+		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
+			if args[3] == "--rev" {
+				usedHistoryLookup = true
+			}
+			return 0, active, ""
 		}
 		if len(args) >= 2 && args[0] == "policy" && args[1] == "set" {
-			setPath = args[4]
-			return 0, "✓ Policy version 3 submitted (hash: 3f3f3f3f)\n", ""
+			setCalls++
+			raw, err := os.ReadFile(args[4])
+			if err != nil {
+				t.Fatal(err)
+			}
+			revision := "9"
+			if setCalls == 2 {
+				revision = "15"
+			}
+			active = policyOutput(revision, string(raw))
+			return 0, "✓ Policy version " + revision + " submitted (hash: 3f3f3f3f)\n", ""
 		}
 		return 1, "", "unexpected"
 	}})
-	rr, err := c.Rollback("s1", DeploymentReceipt{BackendRevision: "2"})
+	receipt, err := c.ApplyNetwork("s1", []NetworkRule{{Endpoint: "api.example.com:443", Effect: "allow", BinaryPaths: []string{"/usr/bin/curl"}}}, "1")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rr.RestoredRevision != "3" {
-		t.Fatalf("got %s, must use gateway-reported revision", rr.RestoredRevision)
+	authorized := false
+	rr, err := c.RollbackAuthorized("s1", receipt, func(request RollbackAuthorization) error {
+		authorized = request.Restore.PolicyDigest == receipt.BasePolicyDigest && request.Target == "s1"
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
 	}
-	if setPath == "" {
-		t.Fatal("set not called")
+	if !authorized || rr.RestoredRevision != "15" || rr.RestoredDigest != receipt.BasePolicyDigest || rr.Result != "restored" {
+		t.Fatalf("rollback=%+v authorized=%v", rr, authorized)
 	}
-	if _, err := os.Stat(setPath); !os.IsNotExist(err) {
-		t.Fatal("tempfile leaked")
+	if usedHistoryLookup {
+		t.Fatal("rollback must not calculate or fetch revision-1")
+	}
+	if _, err := c.RollbackAuthorized("s1", receipt, func(RollbackAuthorization) error { return nil }); err == nil {
+		t.Fatal("consumed operation must reject replay")
 	}
 }
 
-func TestRollbackUnparseableReceiptFailsClosed(t *testing.T) {
-	full := testdata(t, "policy_get_full.txt")
+func TestRollbackRejectsForgedUnknownDriftedAndRevokedOperations(t *testing.T) {
+	base := testdata(t, "policy_get_full.txt")
+	active := base
+	setCalls := 0
 	c := New(Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
-		if len(args) >= 2 && args[0] == "policy" && args[1] == "get" {
-			return 0, full, ""
+		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
+			return 0, active, ""
 		}
 		if len(args) >= 2 && args[0] == "policy" && args[1] == "set" {
-			return 0, "unexpected output without version receipt\n", ""
+			setCalls++
+			raw, _ := os.ReadFile(args[4])
+			active = policyOutput("7", string(raw))
+			return 0, "Policy version 7 submitted (hash: abcd1234)", ""
 		}
 		return 1, "", "unexpected"
 	}})
-	if _, err := c.Rollback("s1", DeploymentReceipt{BackendRevision: "2"}); err == nil || !strings.Contains(err.Error(), "回执") {
-		t.Fatalf("%v", err)
+	receipt, err := c.ApplyNetwork("s1", []NetworkRule{{Endpoint: "api.example.com:443", Effect: "allow", BinaryPaths: []string{"/usr/bin/curl"}}}, "1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	forged := receipt
+	forged.BasePolicyDigest = strings.Repeat("0", 64)
+	if _, err := c.RollbackAuthorized("s1", forged, func(RollbackAuthorization) error { return nil }); err == nil {
+		t.Fatal("forged receipt must be rejected")
+	}
+	if setCalls != 1 {
+		t.Fatal("forged rollback must not write")
+	}
+	restarted := New(Options{Runner: c.Runner, PollInterval: -1, policyCoordinator: newPolicyCoordinator()})
+	if _, err := restarted.RollbackAuthorized("s1", receipt, func(RollbackAuthorization) error { return nil }); err == nil {
+		t.Fatal("missing registry after restart must reject")
+	}
+	if _, err := c.RollbackAuthorized("s1", receipt, func(RollbackAuthorization) error { return errors.New("revoked") }); err == nil {
+		t.Fatal("revoked current authorization must reject")
+	}
+	if setCalls != 1 {
+		t.Fatal("revoked rollback must not write")
+	}
+	active = policyOutput("8", policyBody(t, base))
+	if _, err := c.RollbackAuthorized("s1", receipt, func(RollbackAuthorization) error { return nil }); err == nil {
+		t.Fatal("external drift must reject")
+	}
+	if setCalls != 1 {
+		t.Fatal("drifted rollback must not write")
 	}
 }
 
-func TestRollbackMissingAndInvalidRevision(t *testing.T) {
-	c := backend(t, nil)
-	if _, err := c.Rollback("s1", DeploymentReceipt{BackendRevision: ""}); err == nil || !strings.Contains(err.Error(), "backend_revision") {
-		t.Fatalf("%v", err)
+func TestRollbackNoOpIsZeroWrite(t *testing.T) {
+	active := testdata(t, "policy_get_full_v2.txt")
+	setCalls := 0
+	c := New(Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
+		if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
+			return 0, active, ""
+		}
+		if len(args) >= 2 && args[0] == "policy" && args[1] == "set" {
+			setCalls++
+			return 1, "", "must not write"
+		}
+		return 1, "", "unexpected"
+	}})
+	receipt, err := c.ApplyNetwork("s1", []NetworkRule{{Endpoint: "api.example.com:443", Effect: "allow", BinaryPaths: []string{"/usr/bin/curl"}, RuleName: "siq-as-rule-0"}}, "2")
+	if err != nil || receipt.Result != "no_op" {
+		t.Fatalf("receipt=%+v err=%v", receipt, err)
 	}
-	if _, err := c.Rollback("s1", DeploymentReceipt{BackendRevision: "12abc"}); err == nil || !strings.Contains(err.Error(), "backend_revision") {
-		t.Fatalf("%v", err)
+	rollback, err := c.Rollback("s1", receipt)
+	if err != nil || rollback.Result != "no_op" || setCalls != 0 {
+		t.Fatalf("rollback=%+v err=%v writes=%d", rollback, err, setCalls)
 	}
 }
 
@@ -605,7 +711,7 @@ func TestSandboxListV104RetiresDockerFallback(t *testing.T) {
 	if _, err := c.Probe(); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := c.ListTargets(); err == nil || !strings.Contains(err.Error(), "sandbox list") {
+	if _, err := c.ListTargets(); err == nil || err.Error() != errCommandFailed {
 		t.Fatalf("%v", err)
 	}
 	if dockerCalls != 0 {

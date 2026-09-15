@@ -39,10 +39,11 @@ func cmdOpenshell(args []string) error {
 	case "apply":
 		fs := flag.NewFlagSet("openshell apply", flag.ContinueOnError)
 		target := fs.String("target", "", "sandbox / policy name")
-		expected := fs.String("expected-revision", "", "compare-and-swap revision (empty = current)")
-		var allows, denies repeatedString
+		expected := fs.String("expected-revision", "", "required compare-and-swap revision")
+		var allows, denies, binaries repeatedString
 		fs.Var(&allows, "allow", "host:port to allow (repeatable)")
 		fs.Var(&denies, "deny", "host:port that must stay denied in readback (repeatable)")
+		fs.Var(&binaries, "binary", "absolute executable path allowed to use each endpoint (repeatable)")
 		if err := fs.Parse(args[1:]); err != nil {
 			return err
 		}
@@ -52,9 +53,15 @@ func cmdOpenshell(args []string) error {
 		if len(allows) == 0 {
 			return fmt.Errorf("openshell apply: at least one --allow host:port is required")
 		}
+		if strings.TrimSpace(*expected) == "" {
+			return fmt.Errorf("openshell apply: --expected-revision is required")
+		}
+		if len(binaries) == 0 {
+			return fmt.Errorf("openshell apply: at least one --binary absolute path is required")
+		}
 		var rules []openshell.NetworkRule
 		for _, a := range allows {
-			rules = append(rules, openshell.NetworkRule{Endpoint: a, Effect: "allow"})
+			rules = append(rules, openshell.NetworkRule{Endpoint: a, Effect: "allow", BinaryPaths: binaries})
 		}
 		dir, err := stateDir()
 		if err != nil {
@@ -68,7 +75,8 @@ func cmdOpenshell(args []string) error {
 		if result.Readback.EvidenceID != "" {
 			_ = st.PutEvidence(result.Readback.EvidenceID, map[string]any{
 				"backend": "openshell", "revision": result.Receipt.BackendRevision,
-				"snapshot_hash": result.Receipt.Evidence["snapshot_hash"], "target": *target,
+				"policy_digest": result.Receipt.AppliedPolicyDigest, "target": *target,
+				"operation_id": result.Receipt.OperationID,
 				"verify_level": result.Report.Level,
 			})
 		}

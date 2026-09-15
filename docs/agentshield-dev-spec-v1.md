@@ -325,6 +325,8 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 | `POST /v1/decide` | 工具调用决策（同步）|
 | `POST /v1/observe` | 工具结果观测（after/post 钩子；用于污点更新，不做决策）|
 | `POST /v1/hold/{receipt_id}` | 人工签核（body: `{"approve": bool, "actor_id": ...}`；拒绝未知字段）。同一决议幂等返回已有回执；相反决议 409；超过 `hold.timeout_ms` 拒绝。 |
+| `POST /v1/hold-executions/reserve` / `status` | decision credential 在批准后申请唯一签名执行预留，或以完整调用身份只读查询；后续无 observation 一律投影 uncertain。 |
+| `POST /v1/hold-executions/reconcile` | 管理会话绑定 reservation ID/hash 记录人工核对的 occurred/not_occurred；只追加签名结案，不调用工具、不复活旧预留。 |
 | `GET /v1/receipts?chain=&since_seq=` | 分页读回执 |
 | `GET /v1/status` | 版本、enforcement_mode、平台档位、链头 |
 | `POST /v1/admit` / `POST /v1/grant/...` | 控制台与 CLI 复用；同 §3.6/§3.7 |
@@ -462,8 +464,16 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 
 ### 3.9 `internal/openshell`（规格）
 
+2026-09-15 P0 修订以 `packages/contracts/openshell-policy-safety.v2.md` 为准：网络修改保留完整静态策略；转换器拒绝无法表达的限制；revision 不可缺省；完整策略摘要读回；回滚绑定本次变更前快照及当前授权，未知历史拒绝。CLI 输出运行中共享限额、环境精确白名单、错误不含原文。进程内互斥不宣称跨外部写者 CAS，配置读回不提升为真实执行验证。R01/R02 复用当前 SEC 和签名 reservation 实现。
+
+- O01 快照保存完整已解析 policy、`policy_digest=sha256(canonical_json(policy))` 和移除 `network_policies` 后的 `static_digest`；filesystem/network/process 只作兼容投影。元信息必须有且只有一个规范正十进制 `Active`，不得用 `Version` 或 `1` 补缺。Go/Python 共同拒绝重复键、alias/anchor/tag/merge、多文档、非空 flow collection、非字符串键与歧义隐式标量，使用根目录 `testdata/openshell-policy-safety.v2.json` 锁定子集和摘要。
+- 动态网络输入只接受 `effect=allow`、单个 host:port 端点和至少一个显式绝对 binary path；deny、method/path/provider/protocol/purpose 及未知字段在写前拒绝。更新只替换完整当前 policy 的 `network_policies`。计划仅在调用方明确给出的 filesystem/process 与当前真实值不同才标 generation；字段存在但相同仍是 dynamic。
+- O02 apply/rollback 按 target 进程内串行。apply 生成不可预测 `operation_id`，私有有界注册表保存精确 base snapshot/revision/digest 与 applied revision/digest；公开回执只是索引和可审计摘要，不能自行证明操作。P0 不新增持久化状态：进程重启、逐出、未知或已消费记录一律拒绝回滚。
+- no-op 回滚核对 live revision/digest 后零写入。实际恢复还必须调用由认证服务端状态派生的当前授权器，并在授权后再次读回检测漂移；成功后消费操作记录。写后必须同时核对网关 revision 与完整 policy digest。无后端原子 CAS，因此只声明进程内串行及已观察漂移检测，不声明跨进程事务原子性。
+
 - 后端只用 CLI。显式环境变量与 Python `cli_backend.py` 相同：`SIQ_AS_OPENSHELL_CLI_BIN` 与 `SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT`（必须成对）或 `SIQ_AS_OPENSHELL_ENV_SH`。`ENV_SH` 在 `source` 之后优先 `exec $SIQ_OPENSHELL_BIN`（research-engine `env.sh` 约定），否则 PATH 上的 `openshell`。
-- siq-agent-security 额外发现 PATH 上的 `openshell`，走用户 CLI 配置（`HOME` / XDG / `OPENSHELL_*`），不注入 `--gateway-endpoint`。显式 `SIQ_AS_*` 优先于 PATH。Python 控制面后端不跟随此发现。
+- siq-agent-security 额外发现 PATH 上的 `openshell`，走用户 CLI 配置（`HOME` / XDG），不注入 `--gateway-endpoint`。显式 CLI/endpoint 配置在父进程解析为 argv，优先于 PATH；不批量透传 `SIQ_AS_*` 或 `OPENSHELL_*` 环境变量。Python 控制面后端不跟随 PATH 发现。
+- O03 子进程边界：stdout/stderr 共享默认 2 MiB 字节预算，在读取时检查；超限/超时/非零退出丢弃输出，公开错误仅稳定类别。基础 env 精确白名单含 PATH/HOME、locale、XDG 和 Windows 用户/系统目录，不继承凭据前缀、BASH_ENV、代理或动态加载器配置。显式 env.sh 是用户信任的可执行配置，可自行注入环境，此机制不承诺隔离恶意脚本。CLI 与旧 Docker 发现均走有界执行；退出后管道排空最多 200ms，只终止当前拥有的直接子进程，不宣称终止所有后代。Windows Python 管道语义仍须实机验证，能力不支持则拒绝执行，不回退无界 capture_output。
 - `probe()`：`gateway info` 只表示调用了 OpenShell CLI（本地配置打印，端口上即使是 OpenClaw 也可能 rc=0）。必须以 `status`（或等价的会真正连网关的命令）做握手。`status` 出现 `InvalidContentType` / OpenClaw / Hermes 特征则 fail-closed。不按版本号假设能力。禁止猜测端口，禁止改别人的网关。
 - **禁止** `openshell gateway start`。bootstrap、doctor、serve 都不启动网关。缺 CLI、网关没起、连错进程时 L0–L2 照常，并给出人类可执行修复。
 - `siq-agent-security openshell doctor` 与 `GET /v1/openshell/doctor`：报告 CLI 路径、覆盖来源（`env_pair` / `env_sh` / `path` / `none`）、探针、身份、`human_next`；`started_gateway` 恒为 `false`。
@@ -1407,13 +1417,17 @@ make -C apps/agentshield ui
 新回执增加 `record_type`、`decision_receipt_id`、`parent_action_id`、`task_seq`（均为可选扩展，不重签历史回执）。服务端将单次决策链序号纳入 action ID；同一 task/session 的 task_seq 单调增加，parent 指向上一条允许或 redact 的动作。
 Observe 显式携带 action_id 与 decision_receipt_id；旧适配器可用相同 platform/session/agent/tool/tool_call_id 唯一定位。缺 tool_call_id 时必须携带相同参数，若有多个候选则拒绝，不能猜测。
 只有 allow/redact 或已由本地管理面批准的 hold 可观测。同一动作相同结果摘要幂等返回原回执，不同摘要返回 409。结果超过 64 KiB 拒绝，避免截断掩盖冲突。
-关联状态从签名回执恢复，内存最多 8192 项，默认 24h 窗口；溢出拒绝新决策，过期动作不再接受 Observe。过期仅清理动作关联，不清理 bound/tainted 会话安全状态。
+关联状态从签名回执恢复，内存最多 8192 项，默认 24h 窗口；溢出拒绝新决策，过期动作不再接受 Observe。过期仅清理动作关联，不清理 bound/tainted 会话安全状态。唯一例外是已有 `hold_reservation` 且没有 observation 或 `hold_reconciliation` 的动作：它代表外部副作用可能已经发生，必须跨 24h 和重启保留为 `uncertain`，计入容量且保持失败关闭，直到管理员核对结案；不能用通用过期清理删除。
 
 24h 窗口从签名 decision 的 `issued_at`（当前秒精度）计算，到达边界即拒绝；内存运行期与重启恢复使用相同精度。较晚的 observation 不延长原动作窗口，也不使 bound/tainted 会话变回 clean。
 
 ### 10.2 V2 完整性补齐（2026-09-07）
 
 执行前 hold 检查：`POST /v1/hold-status` 使用 capDecision，只读，不接受批准字段。请求严格限定 platform/session_id/agent_id/tool/tool_call_id/action_id/decision_receipt_id/params，必须提供完整服务端动作身份和原参数。返回合同 `hold-status/v1`：status 为 pending/approved/denied/expired/consumed，带原 action_id、decision_receipt_id、expires_at 和 reason_code；不返回参数或管理身份。身份/参数不匹配、未知动作或非 hold 返回 400，匿名返回 401。状态由已有签名 decision/resolution/observation 恢复，不新增授权记录；查询不续期。原 hold 到期（含边界）、已观察或当前授权不再匹配时不得报告 approved。
+
+N06 可信重试（2026-09-14）：管理端的 `hold_resolution(allow)` 只记录人已批准，不能直接作为外部工具执行权。不能暂停原调用的宿主在用户重试时必须通过 `POST /v1/hold-executions/reserve` 重呈原 action/decision、平台、主体、会话、任务、工具、原调用 ID、最终参数并绑定新的调用 ID。服务端在同一互斥区重验当前 Intent/Grant/SEC/安装内容和期限，先追加签名 `hold_reservation` 再返回 `hold-execution-status/v1:reserved`。同一 hold 的第二次或并发预留一律冲突；`Observe` 必须引用 reservation receipt，引用原 hold decision 不再接受。旧 `hold-status/v1` 在 reservation 存在时投影为 consumed，防止旧客户端把已预留的批准再次当作新执行权。
+
+`POST /v1/hold-executions/status` 是强身份绑定的只读查询。`reserved` 只在原子预留成功的直接响应中出现；任何后续读取仍无 observation 都必须为 uncertain，因为服务端无法证明响应是否到达宿主或副作用是否开始。预留前授权变化为 denied、未预留超时为 expired；预留后即使授权撤销或原审批期限经过，也不能掩盖 uncertain。管理员在外部核对后通过 `POST /v1/hold-executions/reconcile` 提交绑定 reservation ID/hash 的 `occurred` 或 `not_occurred`，追加签名 `hold_reconciliation`，分别投影 completed/cancelled；相同结论幂等，相反结论或已有 observation 冲突，且永不重新执行旧预留。外部副作用和本地链不能原子提交，因此产品不得宣称 exactly-once。完整状态机和原生边界见 [N06 可信重试规格](personal-experience-n06-trusted-retry-spec.md)。
 
 OpenClaw hold 按顺序执行：先等待上述本地批准，再返回原生 requireApproval。默认本地等待上限 10 秒（配置 holdWaitMs，范围 100–10000ms），每次 HTTP 仍受 timeoutMs 与总剩余等待时间限制；上限为适配原生 15 秒 hook 预算而设，不能把等待挂起为无限期。管理端需在等待期间处理当前 hold，超时后该次调用阻断，迟到批准不会自动重新执行。平台审批超时不超过原 hold 剩余有效期；本地拒绝、异常响应、断连和取消均在 block 下阻断。warn/audit_only 仍由服务端产生 allow/advisory，不把该模式升级成强制阻断。本地状态查询是执行前检查快照，不是外部工具执行完成证明；平台等待期间的外部状态变化仍须单独验证。
 
@@ -1431,7 +1445,7 @@ JSON 数值匹配的单个数字词法表示上限为 1024 字符，超过上限
 
 ### 审批后执行检查点候选（2026-09-07，未进入默认安装）
 
-当前 OpenClaw 本地 hold 预检与平台批准之间存在可复现的 Grant 撤销窗口。候选通过配套宿主扩展 `requireApproval.beforeExecute(finalParams, signal)` 在平台允许后等待适配器重新校验；宿主仅接受严格 true，异常、拒绝、取消和五秒预算超限均 veto，适配器以一秒预算查询现有强关联 hold-status。此项不是官方 API 或默认产品已支持合同，只在固定源指纹的临时副本验证；仅改一侧不生效。当前八场景覆盖与未覆盖故障见 [撤销验收报告](trusted-intent-v2-approval-revocation-20260907-220037.md)。检查点不构成与外部副作用原子提交的租约。
+OpenClaw 本地 hold 预检与平台批准之间曾存在可复现的 Grant 撤销窗口。配套宿主扩展 `requireApproval.beforeExecute(finalParams, signal)` 在平台允许后等待适配器重新校验；宿主仅接受严格 true，异常、拒绝、取消和五秒预算超限均 veto。当前适配器在一秒预算内用最终参数重查强关联 hold-status，并原子取得签名 `hold_reservation` 后才返回 true；after hook 以派生的执行尝试 ID 绑定 observation。此项不是官方 API，只在固定源指纹的临时副本验证；仅改一侧不生效。当前 18 场景证据见 [R02-F 报告](evidence/personal-experience/r02f-openclaw-approved-retry-20260915/report.md)。签名预留仍不构成与外部副作用的跨系统原子事务。
 
 候选检查点增量（2026-09-07 22:08）：[原生故障验收](trusted-intent-v2-checkpoint-faults-20260907-220834.md) 已覆盖正常批准、同步异常、Promise 拒绝、undefined/真值字符串、五秒预算、取消后返回 true、最终参数改写和审批后失联。最终参数不匹配由真实 hold-status 返回 400，只有正常对照产生执行及 observation。此增量不改变候选未进入默认安装的状态。
 
@@ -1439,7 +1453,7 @@ JSON 数值匹配的单个数字词法表示上限为 1024 字符，超过上限
 
 适配器的 hold 路径要求本次原生 hook context 提供整数 `approvalExecutionRecheckVersion: 1`，表示宿主在平台批准后等待 `requireApproval.beforeExecute(finalParams, signal)` 并执行严格 true/异常/取消/超时否决。该值由配套宿主执行包装器生成，不能从工具参数、事件、自定义插件配置或环境变量读取。缺失、未知版本、字符串或布尔值均视为不支持；block 模式明确阻断当前 hold，不能回退到已知存在撤销窗口的旧审批路径。allow/deny/redact 的既有映射保留；warn/audit 的失效处理仍按原模式表执行。
 
-当前适配器及内嵌安装资产应携带实际 `beforeExecute` 回调，在一秒预算内用原动作身份与最终参数重新查询 hold-status，仅仍 approved 且未取消时返回 true。配套宿主补丁 v2 增加上述 context 能力标记，原版和旧候选 v1 不具备该标记。协议标记属于同一受信宿主执行边界，不是对恶意同进程插件的密码证明。原版升级适配器后，hold 需要配套宿主支持才能完成；不得把这种明确的兼容性要求写成无缝兼容。
+当前适配器及内嵌安装资产应携带实际 `beforeExecute` 回调，在一秒预算内用原动作身份与最终参数重查 hold-status，并调用 `hold-execution-reserve/v1`；仅严格匹配、未过期的 201 reserved 响应可返回 true。配套宿主补丁 v2 增加上述 context 能力标记，原版和旧候选 v1 不具备该标记。协议标记属于同一受信宿主执行边界，不是对恶意同进程插件的密码证明。原版升级适配器后，hold 需要配套宿主支持才能完成；不得把这种明确的兼容性要求写成无缝兼容。
 
 宿主兼容工具提供 `inspect/apply/restore`，只支持固定包版本和源码指纹。修改操作要求显式指定运行时与独立备份目录，先持有 POSIX 文件锁、持久化原始字节和恢复记录，再同目录原子替换目标；保留原文件权限和属主。恢复只接受已记录的目标身份及预期补丁后字节，拒绝覆盖后续改动。记录与完成标记只新建，不原地覆盖；替换后但完成标记前中断可通过相同命令幂等收尾。工具不更新用户配置、插件或自动重启服务；磁盘文件状态不代表运行进程已加载新代码。Windows 修改路径暂不支持，不能绕过文件锁运行。
 
@@ -1618,13 +1632,13 @@ Admin GET `/v1/tasks/{task_id}/completion` 查验签名 Intent、按task读出�
 
 ### C2 历史动作复核
 
-Completion 使用 HistoricalEffectActions 按本次证据引用集合单次扫描整条签名回执链，最多8192个引用；历史查询不依赖24小时内存动作缓存。要求精确decision action_id/receipt_id以及hold_resolution对原决策的引用和scope一致；重复决策/重复审批或链校验失败拒绝。扫描结束与当前进程已知链头比较，防止运行中截断被误当完整历史。
+Completion 使用 HistoricalEffectActions 按本次证据引用集合单次扫描整条签名回执链，最多8192个引用；历史查询不依赖24小时内存动作缓存。要求精确 decision action_id/receipt_id；hold 还必须有 scope 一致且顺序正确的 hold_resolution 与唯一 hold_reservation。重复决策、重复审批、重复预留或链校验失败均拒绝。扫描结束与当前进程已知链头比较，防止运行中截断被误当完整历史。
 
 HistoricalEffectActions 只生成只读投影供已保存证据复核，不重新注册动作、不延长 Observe/hold-status/新证据提交的执行窗口。新请求继续用 EffectAction。完整目录回滚后重启的保护仍取决于既有可信checkpoint，不能把内存链头比较宣称为永久防回滚。
 
 ### C2 审批生效时间
 
-动作投影增加仅服务端派生的 AuthorizedAt。普通允许动作取决策时间，hold获批取签名hold_resolution时间；新审批记录使用RFC3339Nano保留亚秒精度。当前缓存、重启恢复和历史扫描均从同一签名时间恢复。独立completed效果若observed_at早于AuthorizedAt，记录unauthorized_effect_observed；Completion也复核该关系，旧expected证据不能因后续获批变成verified。旧秒级审批记录仍只能提供秒级历史精度，不伪称能恢复当时未记录的亚秒顺序。
+动作投影增加仅服务端派生的 AuthorizedAt。普通允许动作取决策时间；hold 取签名 hold_reservation 时间，单有审批不再授权副作用。新审批和预留记录使用 RFC3339Nano 保留亚秒精度。当前缓存、重启恢复和历史扫描均从同一签名时间恢复。独立 completed 效果若 observed_at 早于 AuthorizedAt，记录 unauthorized_effect_observed；Completion 也复核该关系，旧 expected 证据不能因后续获批变成 verified。旧的批准但未预留记录升级后安全降级为未授权，不伪造当时不存在的执行预留。
 
 ### C1 网络观测材料归档
 
@@ -1788,7 +1802,7 @@ This changes resource selection, not taint policy or authority requirements.
 
 期限为半开区间：当前时间达到 expires_at 即不再可用；非法非空期限按无效处理，null 保持旧版无期限行为。挑战生成/消费、批准、部署及每次决策/hold 执行前重查均检查期限。旧回执继续可验证，不因后来到期否认历史已发生的操作。期限检查保持原 policy 模式语义：block 拒绝，warn/audit_only 只给出拒绝建议；无效或过期的必需 Intent Authority 仍在所有模式 hard deny。自检临时授权必须同时绑定独立短期 Intent，不能仅靠 Grant 字段保证撤权。
 
-产品自检增量采用 `local-runtime-check.v1`：管理接口 `POST /v1/runtime-checks/preview`、`POST /v1/runtime-checks/start`、`GET /v1/runtime-checks/{id}`、`POST /v1/runtime-checks/{id}/cancel`；独立启动凭据接口 `POST /v1/runtime-checks/attach` 只绑定服务预定的检查身份与真实宿主会话，不能查询或修改通用授权。具体容量、确认、120 秒期限、摘要失效及崩溃恢复规则见 ADR-024。旧 adapter diagnostics v1 不回填运行成功状态。
+产品自检增量采用 `local-runtime-check.v1`：管理接口 `POST /v1/runtime-checks/preview`、`POST /v1/runtime-checks/start`、`GET /v1/runtime-checks/{id}`、`POST /v1/runtime-checks/{id}/cancel`；独立启动凭据接口 `POST /v1/runtime-checks/attach` 只绑定服务预定的检查身份与真实宿主会话，不能查询或修改通用授权。自检 Intent 使用服务预生成的 `rct-*` 任务范围。决策协议中 `task_id` 专指服务端可信 Intent 任务；Hermes 在 turn 开始后生成的随机 task ID 及其他宿主任务标识必须透传为 `runtime_task_id`，供 SEC 与审批重试边界核对，不能覆盖 Intent 范围。回执同时签名两者，旧客户端未提供 `runtime_task_id` 时才回落到 `task_id`。具体容量、确认、120 秒期限、摘要失效及崩溃恢复规则见 ADR-024。旧 adapter diagnostics v1 不回填运行成功状态。
 
 管理查询 `GET /v1/runtime-checks?instance_id=...` 返回 `local-runtime-check-list/v1`，items 只含该实例最近一条检查或空数组，恢复前端刷新后的检查入口；读取 passed 结果时重新核对摘要。所有结果保留“仅本次调用边界”的含义，不能提升整个平台或 Skill 的保护等级。正常服务退出先取消并等待自检清理；崩溃恢复在既有 state writer 独占锁下进行。若绑定已提交而检查记录尚未保存其 ID，按该检查的独立 Intent 找回并撤销，不处理其他 Intent 的绑定。
 
@@ -1826,7 +1840,7 @@ ADR-030 准入存储修正：禁止在签名后补写 skill_card_ref；卡片按
 
 ### 个人统一确认待办增量（2026-09-10，ADR-031）
 
-按 ADR-031 与 `local-confirmations.v1` / `local-confirmation-resolve.v1` 合同新增管理会话专属列表和严格摘要绑定的单次处理入口。列表是既有 action 窗口内的状态投影，不能批准；处理须锁内检查未处理、签名回执摘要和参数摘要，一次性写入 hold_resolution。截止时刻拒绝；客户端收到冲突后读回，不自动重放。旧 hold API 的幂等不产生新增审批权限。前端统一运行确认和长期授权的审阅入口，保留平台继续执行能力限制，不宣称系统通知或 Hermes 自动恢复已完成。
+按 ADR-031 与 `local-confirmations.v1` / `local-confirmation-resolve.v1` 合同新增管理会话专属列表和严格摘要绑定的单次处理入口。列表是既有 action 窗口内的状态投影，不能批准；处理须锁内检查未处理、签名回执摘要和参数摘要，一次性写入 hold_resolution。截止时刻拒绝；客户端收到冲突后读回，不自动重放。旧 hold API 的幂等不产生新增审批权限。N06 再以唯一签名 reservation 消费已批准状态；确认列表在预留后显示 consumed。前端统一运行确认和长期授权的审阅入口，保留平台继续执行能力限制；Hermes 组件已支持“阻止原调用—用户批准—精确重试—预留后执行”，原生宿主和真实副作用证据未完成前不得宣称 N06 关闭。
 
 ### 个人浏览器通知增量（2026-09-10，ADR-032）
 
@@ -1854,11 +1868,11 @@ ADR-034 准入显示修正：固定导入使用不透明 source.locator，内部
 
 ### 安装预览的私有暂存（ADR-037，实施中）
 
-新 skillinstall 模块在状态目录形成已批准候选的独立待安装副本和签名计划，绑定 ADR-036 来源、Grant revision/签名/权限摘要、实际 Hermes 实例和单层目标目录。仅规划尚不存在的目标，目标目录不写入；五分钟期限、同请求不续期、64 个暂存上限，Load 必须重新验证源/授权/目标/副本。沿用固定导入的完整文件清单与预算，不使用旧 admission.content_hash 代替。合同 local-skill-install-stage-create/v1、local-skill-install-plan/v1；目标发布与恢复、安装后保护验证继续实施，不解除 M20 的部署限制。
+新 skillinstall 模块在状态目录形成已批准候选的独立待安装副本和签名计划，绑定 ADR-036 来源、Grant revision/签名/权限摘要、服务端唯一解析的 Hermes/OpenClaw 实例和单层目标目录。仅规划尚不存在的目标，目标目录不写入；五分钟期限、同请求不续期、64 个暂存上限，Load 必须重新验证源/授权/目标/副本。沿用固定导入的完整文件清单与预算，不使用旧 admission.content_hash 代替。合同 local-skill-install-stage-create/v1、local-skill-install-plan/v1；目标发布与恢复、安装后保护验证继续实施，不解除 M20 的部署限制。
 
 ### 安装预览的管理入口（ADR-038，实施中）
 
-管理 POST `/v1/skill-installations/plans` 严格接收 stage-create/v1，返回 plan-created/v1；管理 GET `/v1/skill-installations/plans/{id}` 完整复验后返回 plan/v1。与导入共享单并发工作锁及 60/65 秒处理/写出预算，决策凭据不能访问。目标只由 Hermes 实例解析器解析。签发页从已批准的来源绑定授权进入，响应丢失保留原请求，刷新只按计划 ID 复验；生成预览不安装、不部署、不激活运行身份。
+管理 POST `/v1/skill-installations/plans` 严格接收 stage-create/v1，返回 plan-created/v1；管理 GET `/v1/skill-installations/plans/{id}` 完整复验后返回 plan/v1。与导入共享单并发工作锁及 60/65 秒处理/写出预算，决策凭据不能访问。目标只由 Hermes/OpenClaw 服务端发现结果唯一解析，同 ID 跨平台歧义、缺失和链接根拒绝。签发页从已批准的来源绑定授权进入，响应丢失保留原请求，刷新只按计划 ID 复验；生成预览不安装、不部署、不激活运行身份。
 
 ### Skill 文件发布与恢复（ADR-039，实施中）
 
@@ -1959,3 +1973,9 @@ Grant/Revoke 管理采用 §3.12.25 的严格、管理会话专用入口，列�
 ## 2026-09-14 个人来源调度与受控 Git 阶段增量
 
 N03 来源签名记录、HTTP 合同及 daemon 调度见 [专项规格](personal-experience-n03-update-source-spec.md)。取数结果写回必须比较取数前的记录签名；未来状态禁止覆盖。N02 HTTPS 组件见 ADR-0051，生产入口仍关闭，真实联网验收前不能启用。接入诊断的本机探测仅拨号已验证的 loopback 字面地址。可信 Skill 归属及审批重试链另行完成，保留既有拒绝边界。
+
+## 2026-09-14 N05 可信 Skill 执行上下文（R01）
+
+可信 Skill 归属的信任边界、平台能力核实结论与最小方案见 [N05 专项规格](personal-experience-n05-trusted-skill-execution-spec.md)。本节为不变量摘要，冲突时以专项规格为准。
+
+Skill 执行上下文（SEC，`skill-execution-context/v1`）是归属从 unknown 提升为 verified 的唯一路径。SEC 仅由持有状态目录私钥的本地管理进程签发，签发前必须重读 runtime identity、签名 session binding、安装记录与 skill grant，grant_digest 由签发方现场计算，期限不得超过 session binding。验证在每次决策时全量重做：验签、有效期、实例与 session binding、subject（platform/instance/agent/session[/task]）、grant 现场 digest、安装记录和目标内容；任一失败即拒绝且零副作用，不回落 baseline。grant live 判据与引擎安装绑定语义一致：deployed/effective，或 approved 且准入为 import 保留记录（安装流水线真实终态，须有匹配安装记录）。import 保留准入的已安装 Skill Grant 无 verified SEC 时一律拒绝，不受旧 attribution 开关影响。SEC 命中时有效权限为 SEC grant 与该 agent 现行 baseline grant 的交集（deny > hold > allow），由引擎后端现场合成；无 baseline grant 时交集退化为 SEC grant 自身。SEC 存在期间去掉 skill claim 不降级：归属由服务端按 subject 命中，不来自调用方引用。回执追加 evidence_level（controlled_task/controlled_session）、context_id 与精确 call_binding，UI 只对字段完整的 verified 显示可信及等级，controlled_session 必须明示「会话级、不含逐调用因果」。威胁范围仅覆盖模型可控输入与调用层伪造；不抵御已攻陷宿主或同 UID 恶意本地代码。OpenClaw 2026.5.12 与 Hermes v0.21.0 实机核实均无逐调用 Skill 归属能力（§2 证据），不得把钩子安装表述为可信宿主。

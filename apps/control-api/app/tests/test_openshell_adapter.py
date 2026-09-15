@@ -20,10 +20,9 @@ def _network_policy(policy_id="pol-1", **overrides):
         "selector": {"agent_ids": ["agt_1"]},
         "network": [
             {
-                "endpoint": "api.example.com:443/orders/**",
+                "endpoint": "api.example.com:443",
                 "effect": "allow",
-                "methods": ["GET"],
-                "purpose": "order-read",
+                "binary_paths": ["/usr/bin/curl"],
             }
         ],
         "enforcement_mode": "block",
@@ -57,6 +56,25 @@ def test_compile_rejects_unknown_semantics():
         backend.compile(_network_policy(evil_field={"x": 1}))
 
 
+@pytest.mark.parametrize(
+    "rule",
+    [
+        {"endpoint": "api.example.com:443", "effect": "deny", "binary_paths": ["/bin/tool"]},
+        {
+            "endpoint": "api.example.com:443",
+            "effect": "allow",
+            "binary_paths": ["/bin/tool"],
+            "methods": ["GET"],
+        },
+        {"endpoint": "api.example.com:443", "effect": "allow"},
+    ],
+)
+def test_compile_rejects_unrepresentable_network_rules(rule):
+    backend = FakeOpenShellBackend(dynamic_network_update=True)
+    with pytest.raises(UnsupportedCapability):
+        backend.compile(_network_policy(network=[rule]))
+
+
 def test_validate_checks_artifact_hash():
     backend = FakeOpenShellBackend()
     compiled = backend.compile(_network_policy())
@@ -86,13 +104,13 @@ def test_dynamic_apply_verify_and_rollback():
     # 正负向验证（§15.3：各至少一项）
     report = backend.verify(
         "sandbox-2",
-        checks={"expect_allow": ["api.example.com:443/orders/**"], "expect_deny": ["evil.example.com"]},
+        checks={"expect_allow": ["api.example.com:443"], "expect_deny": ["evil.example.com:443"]},
         receipt=receipt,
     )
     assert report.passed is True, report.failures
 
     # 回滚恢复上一 revision
-    rollback = backend.rollback("sandbox-2", receipt)
+    rollback = backend.rollback("sandbox-2", receipt, authorizer=lambda _auth: True)
     assert rollback.restored_revision == "0"
     assert backend.read_effective_policy("sandbox-2").revision == "0"
 
@@ -120,14 +138,14 @@ def test_read_effective_policy_is_backend_state_not_desired():
     assert snapshot.enforcement_mode == "unknown"
 
 
-def test_verify_requires_both_allow_and_deny():
+def test_verify_full_digest_does_not_invent_a_deny_probe():
     backend = FakeOpenShellBackend(dynamic_network_update=True)
     compiled = backend.compile(_network_policy())
     receipt = backend.apply_dynamic("sandbox-4", backend.plan_change("sandbox-4", compiled), "0")
-    report = backend.verify("sandbox-4", checks={"expect_allow": ["api.example.com:443/orders/**"]}, receipt=receipt)
-    assert report.passed is False
-    assert report.level == "failed"  # P1-2：失败时 level 如实 failed
-    assert any("正负向" in f for f in report.failures)
+    report = backend.verify("sandbox-4", checks={"expect_allow": ["api.example.com:443"]}, receipt=receipt)
+    assert report.passed is True
+    assert report.level == "readback_verified"
+    assert report.deny_checks == []
 
 
 # ------------------------------------------------------------ P1-1/P1-2/P1-11 合同测试
@@ -177,7 +195,7 @@ def test_verify_report_level_is_readback_not_enforcement():
     receipt = backend.apply_dynamic("sandbox-5", backend.plan_change("sandbox-5", compiled), "0")
     report = backend.verify(
         "sandbox-5",
-        checks={"expect_allow": ["api.example.com:443/orders/**"], "expect_deny": ["evil.example.com"]},
+        checks={"expect_allow": ["api.example.com:443"], "expect_deny": ["evil.example.com:443"]},
         receipt=receipt,
     )
     assert report.passed is True

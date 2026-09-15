@@ -18,6 +18,11 @@ describe('installation preview binding', () => {
       status: 'approved', platform: 'hermes', subject: { type: 'agent_instance', id: p.instance_id.replace(/^hi-/, 'hri-') },
       admission_id: 'adm-si-' + 'a'.repeat(64), enforcement_mode: 'block', created_at: p.created_at };
     expect(matchesInstallAuthority(p, g, p.source)).toBe(true);
+    const openClawPlan = { ...p, platform: 'openclaw' };
+    expect(isSkillInstallPlan(openClawPlan)).toBe(true);
+    expect(matchesInstallAuthority(openClawPlan, { ...g, platform: 'openclaw' }, p.source)).toBe(true);
+    expect(matchesInstallAuthority(openClawPlan, g, p.source)).toBe(false);
+    expect(isSkillInstallPlan({ ...p, platform: 'workbuddy' })).toBe(false);
     expect(matchesInstallAuthority(p, { ...g, status: 'revoked' }, p.source)).toBe(false);
     expect(matchesInstallAuthority(p, { ...g, signature: 'f'.repeat(128) }, p.source)).toBe(false);
     expect(matchesInstallAuthority(p, g, { ...p.source, artifact_digest: 'f'.repeat(64) })).toBe(false);

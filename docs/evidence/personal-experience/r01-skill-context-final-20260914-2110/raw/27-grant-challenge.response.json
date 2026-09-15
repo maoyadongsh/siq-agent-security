@@ -1,0 +1,18 @@
+{
+  "capability_note": "desktop-same-uid: challenge does not prevent a same-UID agent from issuing and consuming its own challenge",
+  "challenge": {
+    "challenge_id": "chl-f091620c4769c41bc6f1315f54c3b885",
+    "grant_id": "grt-si-95b3b0fabe1d8c3efffbc0e051dda34cec71bb04e64db414edf1607bb5880507",
+    "grant_digest": "b8478223962e426e677f6638bfed3ba3f410d3d8a5f8032d543e79fd6f60ad3c",
+    "expected_revision": 1,
+    "subject_type": "agent_instance",
+    "subject_id": "hri-a7d91215aaf9e85ff287a44a1c29570d",
+    "platform": "hermes",
+    "scope_digest": "3b7f83278a949e555218c9981662fdb85b5b81e79d6fce674b085148dbb5ae7e",
+    "nonce": "29555cd741e87916b8417e3d83354a48",
+    "expires_at": "2026-09-14T12:57:29.87901602Z",
+    "created_at": "2026-09-14T12:52:29Z"
+  },
+  "note": "approve must present challenge_id + nonce; body changes invalidate the digest",
+  "state_revision": 1
+}

@@ -32,6 +32,7 @@ type Client struct {
 	mu              sync.Mutex
 	detectedVersion string
 	probedGateway   string
+	policy          *policyCoordinator
 }
 
 // New builds a Client. A nil Runner uses a filtered subprocess.
@@ -47,6 +48,10 @@ func New(opts Options) *Client {
 		MaxOutput:    opts.MaxOutput,
 		lookup:       opts.LookupEnv,
 		lookPath:     opts.LookPath,
+		policy:       processPolicyCoordinator,
+	}
+	if opts.policyCoordinator != nil {
+		c.policy = opts.policyCoordinator
 	}
 	if c.Timeout <= 0 {
 		c.Timeout = 30 * time.Second
@@ -70,17 +75,21 @@ func New(opts Options) *Client {
 
 func (c *Client) cli(args ...string) (string, error) {
 	rc, stdout, stderr := c.Runner(args)
+	if len(stdout) > c.MaxOutput || len(stderr) > c.MaxOutput-len(stdout) {
+		return "", fail(errOutputLimit)
+	}
 	cleanOut := ansiRe.ReplaceAllString(stdout, "")
 	cleanErr := ansiRe.ReplaceAllString(stderr, "")
 	if rc != 0 {
-		msg := strings.TrimSpace(cleanErr)
-		if msg == "" {
-			msg = strings.TrimSpace(cleanOut)
+		if looksLikeForeignGateway(cleanOut+cleanErr) || cleanErr == errNotOpenShell {
+			return "", fail(errNotOpenShell)
 		}
-		if len(msg) > 300 {
-			msg = msg[:300]
+		switch cleanErr {
+		case errOutputLimit, errCommandTimeout, errPipeTimeout:
+			return "", fail(cleanErr)
+		default:
+			return "", fail(errCommandFailed)
 		}
-		return "", failf("openshell %s 失败(rc=%d): %s", strings.Join(args, " "), rc, msg)
 	}
 	return cleanOut + "\n" + cleanErr, nil
 }
@@ -274,12 +283,11 @@ func (c *Client) listTargetsDockerFallback() (SandboxPage, error) {
 	} else {
 		rc, out, errOut = runDockerPS(10 * time.Second)
 	}
+	if len(out) > c.MaxOutput || len(errOut) > c.MaxOutput-len(out) {
+		return SandboxPage{}, fail(errOutputLimit)
+	}
 	if rc != 0 {
-		msg := strings.TrimSpace(errOut)
-		if len(msg) > 200 {
-			msg = msg[:200]
-		}
-		return SandboxPage{}, failf("docker 目标发现失败(rc=%d): %s", rc, msg)
+		return SandboxPage{}, fail(errCommandFailed)
 	}
 	names := map[string]struct{}{}
 	const prefix, uuidLen = "openshell-", 36

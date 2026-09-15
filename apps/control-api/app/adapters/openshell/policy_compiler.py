@@ -19,6 +19,7 @@ from app.adapters.openshell.contracts import (
     UnsupportedCapability,
     ValidationReport,
 )
+from app.adapters.openshell.policy_safety import validate_network_rules
 
 # §15.2 通用权限 → OpenShell 映射
 _DOMAIN_MAP = {
@@ -85,28 +86,35 @@ def compile_policy(desired_policy: dict, capabilities: BackendCapabilities) -> C
     needs_generation = False
 
     fs = desired_policy.get("filesystem")
-    if fs:
+    if fs is not None:
+        if not isinstance(fs, dict):
+            raise UnsupportedCapability("filesystem_policy_invalid")
         artifact["filesystem_policy"] = {
             "read_only": fs.get("read_only") or [],
             "read_write": fs.get("read_write") or [],
         }
-        needs_generation = True  # 静态边界：创建时锁定（§15.2）
+        # 这里只标记制品携带静态意图；plan_change 必须与 live static
+        # 内容比较，相同内容不得仅因字段存在而要求 generation。
+        needs_generation = True
     process = desired_policy.get("process")
-    if process:
+    if process is not None:
+        if not isinstance(process, dict):
+            raise UnsupportedCapability("process_policy_invalid")
         artifact["process"] = process
         needs_generation = True
 
     network = desired_policy.get("network")
-    if network:
+    if network is not None:
+        validated_network = validate_network_rules(network)
         # dynamic_network_update 只在 probe 实测为 True 时置真（默认 False 即
         # fail-closed 静态路径），与能力文档 network_l34 同源自实测结论
         if not capabilities.dynamic_network_update:
             # v0.0.83 现状：编译期固定集合，动态更新为版本依赖项（ADR-005/009）
             unsupported.append("network.dynamic_update")
-            artifact["network_policies"] = network  # 落为静态制品，由 generation 路径生效
+            artifact["network_policies"] = validated_network  # 落为静态制品，由 generation 路径生效
             needs_generation = True
         else:
-            artifact["network_policies"] = network
+            artifact["network_policies"] = validated_network
 
     if desired_policy.get("model_routing"):
         routing_item = capabilities.capability("model_routing")

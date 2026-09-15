@@ -6,6 +6,7 @@ import { Icon } from '@/components/icons';
 import { localApi } from '../api';
 import type { Receipt } from '../types';
 import { actionLabel, actionTag, platformLabel, shortHash } from '../format';
+import { skillAttributionLabel } from '../skillAttribution';
 import { useLoadGuard } from '../staleGuard';
 
 function shortTime(iso: string): string {
@@ -63,6 +64,23 @@ export default function ReceiptsPage() {
     { key: 'tool', header: '工具', render: (r) => r.tool },
     { key: 'plat', header: '平台', render: (r) => platformLabel(r.platform) },
     { key: 'reason', header: '原因', render: (r) => r.reason },
+    {
+      key: 'skill',
+      header: 'Skill 归属',
+      render: (r) => {
+        const label = skillAttributionLabel(r.skill_attribution);
+        if (!r.skill_attribution) return '—';
+        if (label.trusted) {
+          return (
+            <span className="tag tag-allow" title={label.detail}>
+              {label.text}
+            </span>
+          );
+        }
+        if (r.skill_attribution.status === 'mismatch') return <span className="tag tag-deny">{label.text}</span>;
+        return <span title="无可信来源，未经验证">{label.text}</span>;
+      },
+    },
     {
       key: 'advisory',
       header: '建议动作',

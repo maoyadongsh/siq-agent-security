@@ -9,7 +9,8 @@ ROOT = Path(__file__).parents[4]
 
 
 @pytest.mark.parametrize('kind', [
-    'local-skill-update-source-save', 'local-skill-update-schedule-view',
+    'local-skill-update-source-save', 'local-skill-update-source-disable',
+    'local-skill-update-schedule-view',
     'local-skill-update-schedule', 'local-skill-update-schedule-run',
     'local-skill-update-schedule-run-result',
 ])

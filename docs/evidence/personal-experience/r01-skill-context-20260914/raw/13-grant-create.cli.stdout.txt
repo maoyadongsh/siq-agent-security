@@ -1,0 +1,87 @@
+{
+  "desired_policy": {
+    "enforcement_mode": "block",
+    "policy_id": "pol-grt-e32c4cd6a52b-20128b73",
+    "selector": {
+      "agent_ids": [
+        "hri-0fe6e47d6a3222f038b3535dbece7df8"
+      ]
+    },
+    "status": "validated",
+    "tools": [
+      "read_file",
+      "write_file"
+    ],
+    "version": 1
+  },
+  "grant": {
+    "grant_id": "grt-e32c4cd6a52b-20128b73",
+    "admission_id": "adm-e32c4cd6a52b",
+    "skill": {
+      "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+      "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8"
+    },
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-0fe6e47d6a3222f038b3535dbece7df8"
+    },
+    "platform": "hermes",
+    "facts": [
+      {
+        "fact_id": "pf-1-811cbc58",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "ev-1c62901df443ff8d"
+        ]
+      },
+      {
+        "fact_id": "pf-2-12bb99cf",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "ev-1c62901df443ff8d"
+        ]
+      }
+    ],
+    "default_effect": "deny",
+    "hermes_toolset_allowlist": [
+      "read_file",
+      "write_file"
+    ],
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-e32c4cd6a52b-20128b73",
+      "version": 1,
+      "static_domains_unavailable": []
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "pending_approval",
+    "approved_by": null,
+    "effective_readback": null,
+    "created_at": "2026-09-14T11:26:16Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "signature": "1caf31281b506d92c24dd4ca7beed2e90f32f6af8aac1f761afc22db5e2483f0c21bd1d7ac19252685651c537a14a170b29eaa7506d6c3186594e8a88da4ac07"
+  },
+  "note": "model must not approve; a human runs: siq-agent-security grant challenge grt-e32c4cd6a52b-20128b73 then siq-agent-security grant approve grt-e32c4cd6a52b-20128b73 --approve-as \u003cactor\u003e --challenge-id \u003cid\u003e --nonce \u003cnonce\u003e",
+  "state_revision": 0
+}

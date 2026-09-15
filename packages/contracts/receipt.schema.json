@@ -81,12 +81,13 @@
     "effective_action": {"enum": ["allow", "deny", "hold", "redact"]},
     "parameter_provenance": {"type": "array", "maxItems": 1024, "items": {"type": "object", "additionalProperties": false, "properties": {"parameter_path": {"type": "string", "maxLength": 1024, "pattern": "^(?:/(?:[^~]|~[01])*)+$"}, "provenance_refs": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}}, "required": ["parameter_path", "provenance_refs"]}},
     "context_assertion_id": {"type": "string", "description": "Signed context reference; never grants additional filesystem rights"},
-    "record_type": {"enum": ["decision", "observation", "hold_resolution"]},
+    "record_type": {"enum": ["decision", "observation", "hold_resolution", "hold_reservation", "hold_reconciliation"]},
     "decision_receipt_id": {"type": "string"},
     "parent_action_id": {"type": "string"},
     "task_seq": {"type": "integer", "minimum": 1},
     "action_id": {"type": ["string", "null"]},
-    "task_id": {"type": ["string", "null"]},
+    "task_id": {"type": ["string", "null"], "description": "可信 Intent 的任务标识；绑定 Intent 时由服务端解析，不能由宿主运行时替代。"},
+    "runtime_task_id": {"type": ["string", "null"], "maxLength": 256, "description": "宿主运行时的每任务标识；用于 SEC、确认重试与本机追溯边界，不单独授予 Intent 权限。"},
     "intent_id": {"type": ["string", "null"]},
     "intent_digest": {"type": ["string", "null"]},
     "authority_revision": {"type": ["string", "null"]},
@@ -163,12 +164,15 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["status"],
-      "description": "运行时 Skill 归属的可信裁决（UX-007 / Q05）：verified 仅由受信本地状态精确匹配 skill_id+content_hash(+版本) 得出；模型/运行时自报永不视为 verified。仅当调用携带 Skill 声明时存在；unclaimed 调用本字段缺省。",
+      "description": "运行时 Skill 归属的可信裁决（UX-007 / Q05 / N05-R01）：verified 仅由有效 skill-execution-context/v1（SEC）服务端命中得出；模型/运行时自报、可复制的安装摘要或 grantID 永不视为 verified。仅当调用携带 Skill 声明或主体被 SEC 覆盖时存在。",
       "properties": {
         "skill_id": { "type": "string", "maxLength": 128 },
         "version": { "type": "string", "maxLength": 64 },
         "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-        "status": { "type": "string", "enum": ["verified", "mismatch", "unknown"] }
+        "status": { "type": "string", "enum": ["verified", "mismatch", "unknown"] },
+        "evidence_level": { "type": "string", "enum": ["controlled_task", "controlled_session"], "description": "归属证据等级：仅 verified 时存在；controlled_session 为会话粒度，不含逐调用因果。" },
+        "context_id": { "type": "string", "pattern": "^sec-[0-9a-f]{32}$", "description": "产生 verified 的 Skill 执行上下文 ID，仅 verified 时存在。" },
+        "call_binding": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "对平台、会话、主体、任务、工具、调用 ID 与最终参数 canonical 编码的 SHA-256；仅 verified 时存在。" }
       },
       "allOf": [
         {
@@ -182,8 +186,30 @@
           "then": {
             "required": [
               "skill_id",
-              "content_hash"
+              "content_hash",
+              "evidence_level",
+              "context_id",
+              "call_binding"
             ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": ["mismatch", "unknown"]
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["evidence_level"] },
+                { "required": ["context_id"] },
+                { "required": ["call_binding"] }
+              ]
+            }
           }
         }
       ]

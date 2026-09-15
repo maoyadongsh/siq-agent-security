@@ -136,7 +136,7 @@ func (s *Store) pendingGrantRemoval(ctx context.Context, grantID string) error {
 }
 func (s *Store) removalAuthority(ctx context.Context, c *Claim) (*grant.Grant, int, string, string, error) {
 	g, revision, err := s.authority.GetGrantWithSeq(c.Plan.GrantID)
-	if err != nil || g == nil || !grant.Verify(s.key.Public(), *g) || (g.Status != "approved" && g.Status != "revoked") || g.Platform != "hermes" || g.Subject.Type != "agent_instance" || g.Subject.ID != "hri-"+strings.TrimPrefix(c.Plan.InstanceID, "hi-") {
+	if err != nil || g == nil || !grant.Verify(s.key.Public(), *g) || (g.Status != "approved" && g.Status != "revoked") || g.Platform != c.Plan.Platform || !supportedPlatform(g.Platform) || g.Subject.Type != "agent_instance" || g.Subject.ID != subjectForInstance(c.Plan.InstanceID) {
 		return nil, 0, "", "", ErrChanged
 	}
 	admissionID, err := c.Plan.Source.AdmissionID()

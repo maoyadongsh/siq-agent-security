@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -120,6 +121,9 @@ class PolicySnapshot:
 
     target: str
     revision: str
+    policy: dict[str, Any] = field(default_factory=dict)
+    policy_digest: str = ""
+    static_digest: str = ""
     filesystem: dict[str, Any] = field(default_factory=dict)
     network: list[dict[str, Any]] = field(default_factory=list)
     process: dict[str, Any] = field(default_factory=dict)
@@ -159,6 +163,8 @@ class ChangePlan:
     kind: str  # dynamic | generation
     expected_revision: str
     artifact_hash: str
+    base_policy_digest: str = ""
+    base_static_digest: str = ""
     steps: list[str] = field(default_factory=list)
     requires_verification: bool = True
 
@@ -168,13 +174,19 @@ class DeploymentReceipt:
     """发布回执。evidence 必须可机器校验（§21.1 不变量 #5），禁止凭据。"""
 
     backend_revision: str
+    operation_id: str = ""
+    target: str = ""
+    base_revision: str = ""
+    base_policy_digest: str = ""
+    applied_policy_digest: str = ""
+    result: str = ""
     evidence: dict[str, Any] = field(default_factory=dict)  # snapshot_hash 等
     applied_at: str | None = None
 
 
 @dataclass(frozen=True)
 class VerificationReport:
-    """verify() 结果：至少一项预期允许 + 一项预期拒绝。
+    """verify() 结果：完整策略摘要必验，host/port 检查为可选补充。
 
     level 如实标注验证强度：
     - readback_verified：仅配置读回一致（不证明行为执行）；
@@ -196,8 +208,23 @@ class RollbackReceipt:
     """回滚回执。"""
 
     restored_revision: str
+    restored_digest: str = ""
+    result: str = ""
     evidence: dict[str, Any] = field(default_factory=dict)
     rolled_back_at: str | None = None
+
+
+@dataclass(frozen=True)
+class RollbackAuthorization:
+    """仅由私有操作记录和实时读回构造，不接受请求正文覆盖。"""
+
+    operation_id: str
+    target: str
+    current: PolicySnapshot
+    restore: PolicySnapshot
+
+
+RollbackAuthorizer = Callable[[RollbackAuthorization], bool]
 
 
 @dataclass(frozen=True)

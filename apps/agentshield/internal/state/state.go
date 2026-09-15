@@ -449,6 +449,41 @@ func (s *Store) ActiveGrant(platform, agentID string) *grant.Grant {
 	return nil
 }
 
+// GrantByID returns the newest stored version of one grant whatever its
+// state, or nil. Verification callers re-check status, lifetime and digests.
+func (s *Store) GrantByID(id string) *grant.Grant {
+	if !safeID(id) {
+		return nil
+	}
+	all, err := s.ListGrants()
+	if err != nil {
+		return nil
+	}
+	for i := range all {
+		if all[i].GrantID == id {
+			return &all[i]
+		}
+	}
+	return nil
+}
+
+// BaselineGrant returns the newest deployed/effective grant without a skill
+// scope for (platform, agent): the second leg of the SEC permission
+// intersection (N05/R01). nil means no baseline exists.
+func (s *Store) BaselineGrant(platform, agentID string) *grant.Grant {
+	all, err := s.ListGrants()
+	if err != nil {
+		return nil
+	}
+	for i := range all {
+		g := all[i]
+		if g.Platform == platform && g.Subject.ID == agentID && g.Skill == nil && (g.Status == "deployed" || g.Status == "effective") {
+			return &g
+		}
+	}
+	return nil
+}
+
 // SkillAttribution is the receipt.SkillAttributionLookup: it resolves a
 // runtime skill claim against approved grant records (deployed/effective,
 // lifetime valid) for the same platform and agent. A metadata match cannot
