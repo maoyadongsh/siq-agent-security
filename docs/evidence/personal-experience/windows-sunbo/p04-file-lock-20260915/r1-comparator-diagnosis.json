@@ -1,0 +1,131 @@
+{
+  "schema_version": "windows-p04-comparator-diagnosis/v1",
+  "conclusion": "R1比较器将对象键序差异误认文档不等，不能记为产品失败",
+  "failed_check": "claim_disk_matches_api",
+  "phase": "locked-update",
+  "saved_plan_structural_equal": true,
+  "saved_plan_ordered_serialization_equal": false,
+  "saved_plan_structural_difference_fields": [],
+  "comparison_only_sorted_plan_sha256": "b86975135348512a98af5c92afa735503ad49d6008089202c1d642ee68616280",
+  "comparison_digest_is_not_product_signature_proof": true,
+  "pending_GET_full_claim_saved": false,
+  "pending_GET_full_claim_field_difference_count": null,
+  "limit": "只能实证保留的prepared plan同值而键序不同；未保存R1完整pending GET claim，不倒推其全字段相等或整轮通过",
+  "R2_change": "仅claim_disk_matches_api与recovered_result_disk两处用node:util.isDeepStrictEqual；对象键序无关、字段类型严格、数组有序；全局equal与13业务条件及grant字节不变",
+  "R2_private_comparison_evidence": "首次claim、稳定claim、recover result三组，双方2MiB+元数据4096B，secret扫描与独占保存；API为解析文档再序列化，非HTTP原流",
+  "pure_comparison_test": {
+    "status": "pass",
+    "positive_count": 3,
+    "negative_count": 10,
+    "positive": [
+      {
+        "name": "top_level_key_reorder",
+        "old_ordered_equal": false,
+        "new_structural_equal": true
+      },
+      {
+        "name": "nested_key_reorder",
+        "old_ordered_equal": false,
+        "new_structural_equal": true
+      },
+      {
+        "name": "R1_retained_prepared_plan_key_reorder",
+        "old_ordered_equal": false,
+        "new_structural_equal": true
+      }
+    ],
+    "negative": [
+      {
+        "name": "changed_signature",
+        "new_structural_equal": false
+      },
+      {
+        "name": "changed_revision",
+        "new_structural_equal": false
+      },
+      {
+        "name": "extra_field",
+        "new_structural_equal": false
+      },
+      {
+        "name": "missing_field",
+        "new_structural_equal": false
+      },
+      {
+        "name": "number_to_string",
+        "new_structural_equal": false
+      },
+      {
+        "name": "boolean_to_number",
+        "new_structural_equal": false
+      },
+      {
+        "name": "null_to_missing",
+        "new_structural_equal": false
+      },
+      {
+        "name": "null_to_object",
+        "new_structural_equal": false
+      },
+      {
+        "name": "array_order",
+        "new_structural_equal": false
+      },
+      {
+        "name": "array_length",
+        "new_structural_equal": false
+      }
+    ],
+    "source_result": {
+      "bytes": 1986,
+      "sha256": "e89dc586e9d1ee673b046b1d7ab8f5efe7dd98de3f5c8b981db1911de974537f"
+    }
+  },
+  "sources": [
+    {
+      "role": "r1_update_claim",
+      "bytes": 5782,
+      "sha256": "c68eaf723b6d5e53d0783386634247a1b1fe9f49283dc187310a392e9cafd7fb"
+    },
+    {
+      "role": "r1_ui_result",
+      "bytes": 29461,
+      "sha256": "6b7d92528060a5ec371defdfe689a59a844c152c188f5d82289108245a3ef998"
+    },
+    {
+      "role": "r1_ui_prepared",
+      "bytes": 9060,
+      "sha256": "0ec6a2673f4fe95c1a8c72aefc2a5ca54b2e83e46ff7245d874580798b85c590"
+    },
+    {
+      "role": "r1_ui_script",
+      "bytes": 38690,
+      "sha256": "413a0577055b388ef91ef3652fbfbd109481e0ab385b67445b1f8b94c561a595"
+    },
+    {
+      "role": "update_operation",
+      "bytes": 18645,
+      "sha256": "fff9f3791b2b13bc72242e1753dbda20635e91faa53663ac2490323718d85223"
+    },
+    {
+      "role": "signed_document_io",
+      "bytes": 17124,
+      "sha256": "3afc0111abedc76c46db8e8f8e0244b1265352f2b71b319a5e914cfa1945522c"
+    },
+    {
+      "role": "document_conversion",
+      "bytes": 7193,
+      "sha256": "573669603b5ca5dc50acebc61ee3a6fb9d2be676e16d30d0f82fd5ad4dfecacc"
+    },
+    {
+      "role": "update_handler",
+      "bytes": 2163,
+      "sha256": "8441888c6af327d5235bd31e395661a0f83d972c78de645eeeb0d3e66dc194bc"
+    },
+    {
+      "role": "json_encoder",
+      "bytes": 41550,
+      "sha256": "4e762cd52c1b7240ec22cb341ebc5b7be54f235be0b76d33932d291d3aa261bc"
+    }
+  ]
+}
