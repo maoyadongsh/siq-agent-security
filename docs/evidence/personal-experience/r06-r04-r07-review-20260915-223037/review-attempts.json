@@ -1,0 +1,32 @@
+[
+  {
+    "run": "guard-1",
+    "class": "environment",
+    "result": "missing Playwright in control-api venv; used existing system Python with Playwright"
+  },
+  {
+    "run": "guard-2",
+    "class": "test-selector",
+    "result": "empty table fixture has table-empty, no table element; corrected selector"
+  },
+  {
+    "run": "guard-old-candidate",
+    "class": "expected-product-regression",
+    "result": "old candidate retains 加载中 after guard invalidation; negative reproduced"
+  },
+  {
+    "run": "r04-1/2",
+    "class": "existing-acceptance-false-positive",
+    "result": "strict refusal exposed HTTP 201 previously counted as rejection; updated snapshot semantics tests"
+  },
+  {
+    "run": "r07-1",
+    "class": "existing-evidence-gap",
+    "result": "no ciphertext existed; old successful purge label proved no data boundary; added real native opt-in and capture"
+  },
+  {
+    "run": "r07-2",
+    "class": "test-session-selection",
+    "result": "new post-revoke call initially used default session without SEC; corrected to the same authorized session"
+  }
+]

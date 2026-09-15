@@ -224,6 +224,10 @@ uncertain。
 
 [R04-E Linux/Hermes 原生更新验收](evidence/personal-experience/r04e-hermes-native-update-20260914/report.md)以当前未提交候选完成 15 项真实宿主检查：V1 明确预载和真实读取、pending 候选比较后取消保持 V1、批准后重新比较与签名计划、明确更新、旧 Grant 撤销与旧身份失效、V2 重新激活/换身份/换 SEC、V2 明确预载和真实读取、内容归属摘要切换、回执链验签及最终安全移除。该批完成 R04 第 1 项的 Linux/Hermes 原生门槛；V2 为明确导入的本地目录，当前网络环境的公网调度取数仍 blocked，其他平台与 OS 不由此代替，因此 N03/N08 整体保持 partial。
 
+### 8.4 2026-09-15 Linux/OpenClaw 更新复核
+
+[GLM 原报告](evidence/personal-experience/r04-openclaw-native-update-20260915-171614/report.md)保留为历史记录，其中 UP07 把 HTTP 201 创建成功误作拒绝，UP03 只改请求签名而未修改候选，不能沿用其全部负例结论。[复核报告](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)以修复候选重新运行真实 OpenClaw 更新链：分别验证错误摘要拒绝、已导入快照不随外部源消失而变化、有效签名下暂存内容被篡改返回 409 且原目标/两侧 Grant 不变，保留取消、重启提交、版本切换、撤权、移除及回执验签。UP07 的未来/损坏/陈旧签名状态仍不能用摘要负例替代；UP05 多操作员并发和 UP10 公网中断仍待补。R04/N03/N08 保持 partial。
+
 ## 9. R05/R06：平台能力、生命周期与协作（N04/N07/N08）
 
 R05 先登记本机可用宿主版本、配置根、profile、CLI 路径及运行方式，核对原平台安装、工具调用前后、暂停/恢复和归属能力。每个能力记录“检测到什么、配置了什么、实际阻止了什么、还缺什么”。WorkBuddy Linux 若无上游运行时，明确 blocked，继续可完成模块；不能用目录探测代替桌面运行。
@@ -239,6 +243,12 @@ R06 与 sunbo/Luke 并行推进。两人按其任务书在真实 OS 完成下载
 ### 9.1 2026-09-14 Linux 主机只读盘点
 
 [R05 Linux 宿主能力报告](evidence/personal-experience/r05-linux-host-capabilities-20260914/report.md)固定了当前 Linux/aarch64 主机与版本；[R05-C 最终候选双宿主合同](evidence/personal-experience/r05c-final-host-runtime-contract-20260914/report.md)证明真实 OpenClaw 运行时加载两个 SIQ 工具钩子，真实 Hermes Plugin Doctor 对候选安装资产无警告导入并注册两个钩子，二者卸载均保留所测无关配置。后续 [OpenClaw 管理接入原生验收](evidence/personal-experience/r05d-openclaw-managed-native-20260914/report.json)完成真实工具调用前拒绝、正常读取、原文按需采集、回执链及身份撤销失败关闭；R01 的 Hermes/OpenClaw SEC 报告又分别证明任务级与会话级 Skill 归属门槛。WorkBuddy CLI/配置根不存在，保持 blocked；OpenShell CLI 存在但所选 `nemoclaw` 网关拒绝连接，身份未验证且仅为 L0。R05/N04 仍为 partial，下一步是 Linux/WorkBuddy 上游运行时与 Windows/macOS 实机覆盖，不能用当前两宿主结果代替。
+
+### 9.2 2026-09-15 Linux 生命周期复核
+
+[原生命周期报告](evidence/personal-experience/r06-linux-lifecycle-20260915-161515/report.md)不足以关闭 LC01–LC09：若干安装输出未归档，版本标签不足以证明对应源码/状态兼容，LC04 撤权重启覆盖不完整，LC09 删除状态后再安装不能证明保留状态重入，旧失败日志曾被覆盖。原文件保持原样。
+
+[复核报告](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)新增真实 systemd 用户服务保留状态重入：特殊字符二进制/状态路径、精确实例注册、幂等启动、停止与重启、注销后保留配置和身份、在同一状态重新注册启动、最终产品 teardown 清理；签名密钥仅比较摘要，不输出内容。该证据属于 runtime 用户服务生命周期，不代表正式发行包升级、真实登录/重启整机或 R06 安装实例直接承载 R07。GLM 遗留两个测试单位已核实归属并 teardown，原状态保留。R06/Linux 保持 partial；sunbo/Luke 原任务不变。
 
 ## 10. R07：N09 逐行验收及个人阶段关闭
 
@@ -274,6 +284,12 @@ R06 与 sunbo/Luke 并行推进。两人按其任务书在真实 OS 完成下载
 该矩阵没有任何 `complete_acceptance` 行。Linux 两宿主只对已实际执行的行为登记 `controlled_start`；OpenClaw 批准恢复仍依赖临时配套检查点与测试执行器，Linux 通知只证明真实 GNOME 会话总线接受。J1 完整产品安装、J6 生产公网来源、完整卸载/隐私旅程、Linux/WorkBuddy、Windows/macOS 及通知视觉确认仍未完成，因此 N09 保持 partial，T01–T06 继续受门禁约束。
 
 交付报告说明所有 N/UX 对应的验收、仍有限制、外部发布事项及支持矩阵。只有原目标要求的组合全部有可复查证据，或用户明确批准变更范围后，才能关闭 N09。不能把 unavailable 当完成。未经此门槛，不执行 T01–T06 产品开发。
+
+### 10.2 2026-09-15 旅程复核及当前候选矩阵
+
+[原 GLM 矩阵](evidence/personal-experience/n09-glm-batch-20260915/report.md)是旧候选历史证据，不承接为修复候选的验证。[复核报告](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)与[新矩阵](evidence/personal-experience/r06-r04-r07-review-20260915-223037/n09/report.md)登记同一新候选的 R04/R07 腿。修复四个页面加载竞态及适配器同值选择卡死，取消页面重试；在同一浏览器文档内重启服务验证 401、UI 失效、历史保留及重新配对；补真实原文任务授权、采集、撤销和未到期密文/回执的逐字节保留检查。
+
+仍未串联“正式安装包→安装实例的 systemd 服务→浏览器旅程”；审批腿是 HTTP/UI 验证，不证明原生 hold 消费。真实到期删除、任务导出生命周期、J8 原生必要调用故障腿、桌面通知视觉确认和其他平台仍待。九格 × J1–J11 没有 complete_acceptance，N09 保持 partial；T01–T06 门槛不变。
 
 ## 11. 个人门槛关闭后的团队目标（T01–T06）
 
@@ -391,9 +407,9 @@ O01/O02 不得用“网关会拒绝”替代客户端拒绝。未实现原子 CA
 
 - R01/R02：已完成组件与部分 Linux 原生证据按第 5.4/6.4 节继承。O05 只补 backend/session/最终参数/策略修订绑定和失联恢复，不新造另一套批准令牌。
 - R03：生产 Git 仍待合规直连网络；不改 SSRF/DNS 防护以制造正向证据。
-- R04：继续 OpenClaw 原生 Skill V1→V2、来源关闭/确认变化、移除及隐私控制；Hermes 已有证据作为回归基线。
-- R05/R06：本机补安装→配对→后台服务→重启/故障恢复→升级→保留数据卸载；Linux WorkBuddy 无真实运行时则保留 blocked。
-- R07：补浏览器与真实宿主串联旅程、原文开启/到期/撤销/导出、通知实际可见性。重建最终候选后逐行补证据，不修改旧报告的二进制身份。
+- R04：继续 OpenClaw 原生 Skill V1→V2、来源关闭/确认变化、移除及隐私控制；Hermes 已有证据作为回归基线。2026-09-15 glm-linux 批次已完成 Linux/OpenClaw 原生 V1→取消→确认更新 V2→重授权→移除（见第 8.4 节）。
+- R05/R06：本机补安装→配对→后台服务→重启/故障恢复→升级→保留数据卸载；Linux WorkBuddy 无真实运行时则保留 blocked。2026-09-15 复核补齐 runtime 服务保留状态重入，正式包升级与串联验收仍待（见第 9.2 节）。
+- R07：补浏览器与真实宿主串联旅程、原文开启/到期/撤销/导出、通知实际可见性。2026-09-15 复核以新候选修复 UI 竞态并重跑真实浏览器/宿主旅程，覆盖边界与新矩阵见第 10.2 节；重建最终候选后逐行补证据，不修改旧报告的二进制身份。
 - sunbo/Luke：继续原 Windows/macOS 三宿主任务，原生/WSL2/容器和架构分别登记。OpenShell 可选模式另列运行环境和证据；没有该环境不阻止原任务开发，也不得标该模式支持。
 - T01–T06：仍严格服从第 10/11 节门槛；可选 P3 的缺席不自动阻塞团队，原 N09 缺项也不因 O 批次完成自动通过。
 

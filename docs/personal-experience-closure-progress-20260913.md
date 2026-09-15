@@ -1,5 +1,9 @@
 # 个人体验闭环接续进度（2026-09-13）
 
+2026-09-15 R06/R04/R07 独立复核（当前状态）：[修复与复测报告](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)。修复管理页面请求失效后不重新加载、适配器同值选择卡死；纠正 HTTP 201 被误算拒绝，增加有效签名下真实暂存内容漂移负例；浏览器使用单次导航、同一文档经历重启与重新配对；原文任务授权/撤销、未到期密文与回执保留采用实测断言；systemd 使用保留状态重新注册启动并清理。原 GLM 报告和摘要文件保留，但“LC01–LC09 全部通过”“完整用户旅程已关闭”不再作为当前结论。本批含 Web 源码和 embed 更新，候选身份已变化，全部新改动未提交/未推送/未合并。
+
+GLM 历史交付见原 [R06](evidence/personal-experience/r06-linux-lifecycle-20260915-161515/report.md)、[R04](evidence/personal-experience/r04-openclaw-native-update-20260915-171614/report.md)、[R07](evidence/personal-experience/r07-linux-user-journey-20260915-211053/report.md)。当前状态以本段、任务书第 8.4/9.2/10.2 节及复核矩阵为准。
+
 2026-09-15 复核修复（当前状态）：O04/O00 本机阶段已完成修复与复测，[完整报告](evidence/personal-experience/openshell-o04-review-20260915/report.md)。配置能力与历史证据分离并用于实际编译判断；两语言共享 status 校验；PATH/env.sh 缓存禁复用、显式配置/TLS 漂移拒绝、失败刷新清空旧证据；指定目标只读诊断返回 revision/digest，前端过期自动降级；RSS 格式升级 v2，不可得为 null。D 故障返回 p95=200.886ms、max=201.261ms，原 300/500ms 门槛不变。原生真实 HTTP 验证包含授权前拒绝、准入/确认/部署、允许、撤销后拒绝和回执验签；每轮 422 个请求，OpenShell/Docker Runner 调用为零。独立 archive 的 O04 增量对照满足 p95 增幅≤10%，并记录 CPU/RSS/磁盘写入及请求计数。此基线在 O01–O03 之后，不能冒充完整轻量化前 B0；B2/B3、Win/mac、WorkBuddy 和 O05 仍需后续真实环境验收。全部仅落盘，未提交/推送/合并/发布。
 
 下段为 **GLM 原始交付记录，非当前验收结论**；其中“D 未达标”已通过修复复测关闭，“禁止 reset 导致不能做对照”是错误归因，已用独立 archive 补 O04 增量对照。“组件级完成”不表示所有 O04 状态或真实环境验收完成，最新状态以上段和总体任务书为准。原始证据文件保持原样。
@@ -17,13 +21,13 @@
 | N00 基线 | UX-000 | verified | 55 个捕获引用均已纳入主线；旧树展开 469 条，7 份历史文档/证据已归档，无遗漏业务源码；原工作树/index 保留 |
 | N01 状态兼容/迁移/回退 | UX-003/010/014 | verified（Linux 最低门槛） | 已完成状态 v2、实例绑定、递归备份和恢复、发行预检及真实双二进制拒写；其余 OS 原生见 N07/N09 |
 | N02 安全 Git 获取 | UX-009/010 | partial（组件已验，生产关闭） | 固定 commit HTTPS 组件与负向验收完成；[R03 网络复核](evidence/personal-experience/r03-hosted-git-network-20260914/report.md)仍解析到 198.18/15 保留地址，真实 GitHub 联测 blocked，生产入口继续 503 |
-| N03 自动新版检查 | UX-010 | partial（Linux/Hermes 原生更新已验） | 来源存储、调度器、daemon、HTTP/Web、签名迟到写入防护及 R04-B 一键停用已验；[R04-E](evidence/personal-experience/r04e-hermes-native-update-20260914/report.md)完成 V1→V2 原生使用、取消、确认、权限切换与移除，公网来源及其他平台/OS 仍待 |
+| N03 自动新版检查 | UX-010 | partial（Linux/Hermes/OpenClaw 原生更新已验） | 来源调度与 Hermes 历史腿保留；[OpenClaw 复核](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)验证更新链及真实暂存漂移拒绝，UP05/UP07/公网故障和其他 OS 待补 |
 | N04 平台能力与接入 | UX-001/002/005/006/009 | partial（Linux Hermes/OpenClaw 原生工具边界已验） | [R05 Linux 盘点](evidence/personal-experience/r05-linux-host-capabilities-20260914/report.md)、[OpenClaw 管理接入原生验收](evidence/personal-experience/r05d-openclaw-managed-native-20260914/report.json)及 R01 Hermes/OpenClaw SEC 证据覆盖两宿主；WorkBuddy 缺运行时、OpenShell 网关不可达，其余系统继续 |
 | N05 可信 Skill 归属 | UX-007/011 | partial（Linux 两宿主原生通过） | SEC 签名上下文、安装 Grant 强制归属、调用绑定与权限交集已落盘；[Hermes `controlled_task`](evidence/personal-experience/r01-sec-hermes-native-20260914/report.json)与 [OpenClaw `controlled_session`](evidence/personal-experience/r01-sec-openclaw-native-20260914/report.json)真实工具链通过；WorkBuddy 和其他 OS 待补 |
 | N06 审批后的继续执行/通知 | UX-008 | partial（Linux 双宿主重试及通知传输通过） | 签名预留、并发唯一消费、uncertain 管理结案、[Hermes 原生批准重试](evidence/personal-experience/r02-hermes-approved-retry-20260914/report.json)、[OpenClaw 18 场景原生控制链](evidence/personal-experience/r02f-openclaw-approved-retry-20260915/report.md)及 [Linux GNOME 通知总线传输](evidence/personal-experience/r02g-linux-desktop-notify-20260915/report.md)已验；WorkBuddy、上游 OpenClaw 支持、Linux 视觉确认及 Windows/macOS 通知待补 |
-| N07 三系统安装与生命周期 | UX-003/014 | partial（各 OS 持续开发） | Linux 与 Windows 增量已合入此前 PR；sunbo 尚未完成 Windows，Luke 负责 macOS；不宣称三系统通过 |
-| N08 完整个人用户旅程 | UX-004/005/009/011/012/013 | partial（Linux/Hermes 更新原生闭环已验） | 迟到响应与会话清理、93 项前端测试；30 项会话/断连及 7 项更新事务浏览器检查通过；R04-E 又完成 15 项真实 Hermes 工具链更新验收，跨平台完整旅程仍待 |
-| N09 综合验收 | UX-015 | partial（当前候选逐行矩阵有效，未完成） | [当前候选矩阵](evidence/personal-experience/n09-current-candidate-20260915/report.md)将 6 条 Linux 腿统一到 `b6e7650f…6708` 并通过 v2 完整性/coverage 校验；无 complete_acceptance 行。旧矩阵保留为[历史独立复核](evidence/personal-experience/n09-independent-review-20260914/report.md)；WorkBuddy、生产真网、完整产品生命周期及 Windows/macOS 仍待实机，团队前置门槛未关闭 |
+| N07 三系统安装与生命周期 | UX-003/014 | partial（各 OS 持续开发） | [Linux 复核](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)通过 runtime 用户服务保留状态重入；原 LC01–LC09 全通过声明撤回，正式发行包升级与安装实例串联仍待；sunbo/Luke 继续原任务 |
+| N08 完整个人用户旅程 | UX-004/005/009/011/012/013 | partial（Linux/Hermes 更新原生闭环已验） | 历史 Hermes 腿保留；[新候选复核](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)通过单次导航与会话重启旅程，完整安装串联、真实到期/任务导出等仍待 |
+| N09 综合验收 | UX-015 | partial（当前候选逐行矩阵有效，未完成） | [新矩阵](evidence/personal-experience/r06-r04-r07-review-20260915-223037/n09/report.md)只登记同一修复候选的 R04/R07 两条腿；旧候选矩阵为历史，零 complete_acceptance；外部平台与本机缺口未关闭 |
 | T01 局域网控制面部署 | LAN-001 | todo | 依赖 N09；本轮无新增交付证据 |
 | T02 团队加入与设备身份 | LAN-002 | todo | 依赖 N09；本轮无新增交付证据 |
 | T03 多设备资产与隐私 | LAN-003 | todo | 依赖 N09；本轮无新增交付证据 |
@@ -50,10 +54,10 @@
 | R01 | N05 | 阶段门槛完成：规格/合同/实现/并发测试/Web、57 步服务活体、Linux/Hermes `controlled_task` 及 Linux/OpenClaw `controlled_session` 原生工具链通过；N05 跨平台整体仍 partial |
 | R02 | N06 | partial：[可信重试组件复核](evidence/personal-experience/r02-trusted-retry-review-20260914.md)、[Linux/Hermes 原生批准重试](evidence/personal-experience/r02-hermes-approved-retry-20260914/report.json)、[Linux/OpenClaw 原生控制链](evidence/personal-experience/r02f-openclaw-approved-retry-20260915/report.md)及 [Linux 通知传输](evidence/personal-experience/r02g-linux-desktop-notify-20260915/report.md)通过；WorkBuddy、上游 OpenClaw 支持、通知视觉确认及其他 OS 待补 |
 | R03 | N02 | partial：组件已合入，真网验收及生产启用待办 |
-| R04 | N03/N08 | partial：R04-B 一键停用与浏览器更新 7 项完成；[R04-E](evidence/personal-experience/r04e-hermes-native-update-20260914/report.md)完成 Linux/Hermes 原生 V1→V2 使用、权限/身份切换、回执和移除 15 项；真网上游及其他平台/OS 待办 |
+| R04 | N03/N08 | partial：OpenClaw 更新链与完整性负例见[复核](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)，UP05/UP07/公网故障未关闭 |
 | R05 | N04 | partial：Linux/OpenClaw 与 Hermes 已完成真实工具边界；WorkBuddy 缺运行时、OpenShell 网关不可达，Windows/macOS 由协作者继续 |
-| R06 | N07 | partial：sunbo/Luke 继续对应 OS 实机与适配 |
-| R07 | N09 | partial：同一当前候选 6 条 Linux 腿已逐行登记并通过 v2 校验；无 complete_acceptance，外部平台和完整旅程未完成 |
+| R06 | N07 | partial：runtime 用户服务保留状态重入通过；正式包升级与安装实例串联仍待，sunbo/Luke 继续 |
+| R07 | N09 | partial：单次导航、当前页面重启恢复、真实原文授权/撤销见[复核](evidence/personal-experience/r06-r04-r07-review-20260915-223037/report.md)；非正式安装到旅程的完整验收 |
 | O01 | OpenShell P0-A/B/F | 实现、组件验证和隔离真网验收完成：完整策略保留、严格 revision、受限 YAML、未知/L7/deny 零写拒绝、实际静态差异规划与完整摘要读回均已落盘；真实 `7→8→9` 更新/恢复和摘要一致；[报告](evidence/personal-experience/openshell-o01-o02-20260915/report.md)；提交状态以 Git 历史为准 |
 | O02 | OpenShell P0-C | 实现、组件验证和隔离真网验收完成：私有操作绑定、精确 base 快照、no-op 零写、目标串行、前后漂移检查、撤权复核、伪造回执和重启未知记录拒绝已落盘；仅保证同进程协调，不宣称跨进程 CAS；提交状态以 Git 历史为准 |
 | O03 | OpenShell P0-E | 本地实现/验收完成：[报告](evidence/personal-experience/openshell-o03-20260915/report.md)；跨 OS 实机待补；提交状态以 Git 历史为准 |

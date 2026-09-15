@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "<repository>/scripts/personal-experience/r07-linux-user-journey-smoke.py", line 710, in <module>
+    main()
+    ~~~~^^
+  File "<repository>/scripts/personal-experience/r07-linux-user-journey-smoke.py", line 694, in main
+    report = harness.guard_reload_regression()
+  File "<repository>/scripts/personal-experience/r07-linux-user-journey-smoke.py", line 185, in guard_reload_regression
+    expect(page.get_by_text("加载中…", exact=True)).to_have_count(0, timeout=6000)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "<user-home>/miniconda3/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 19651, in to_have_count
+    self._sync(self._impl_obj.to_have_count(count=count, timeout=timeout))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<user-home>/miniconda3/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "<user-home>/miniconda3/lib/python3.13/site-packages/playwright/_impl/_assertions.py", line 382, in to_have_count
+    await self._expect_impl(
+    ...<5 lines>...
+    )
+  File "<user-home>/miniconda3/lib/python3.13/site-packages/playwright/_impl/_assertions.py", line 85, in _expect_impl
+    raise AssertionError(
+        f"{out_message}\nActual value: {actual}{error_message} {format_call_log(result.get('log'))}"
+    )
+AssertionError: Locator expected to have count '0'
+Actual value: 1 
+Call log:
+  - Expect "to_have_count" with timeout 6000ms
+  - waiting for get_by_text("加载中…", exact=True)
+    10 × locator resolved to 1 element
+       - unexpected value "1"
+

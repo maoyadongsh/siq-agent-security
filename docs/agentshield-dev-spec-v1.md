@@ -1983,3 +1983,11 @@ N03 来源签名记录、HTTP 合同及 daemon 调度见 [专项规格](personal
 可信 Skill 归属的信任边界、平台能力核实结论与最小方案见 [N05 专项规格](personal-experience-n05-trusted-skill-execution-spec.md)。本节为不变量摘要，冲突时以专项规格为准。
 
 Skill 执行上下文（SEC，`skill-execution-context/v1`）是归属从 unknown 提升为 verified 的唯一路径。SEC 仅由持有状态目录私钥的本地管理进程签发，签发前必须重读 runtime identity、签名 session binding、安装记录与 skill grant，grant_digest 由签发方现场计算，期限不得超过 session binding。验证在每次决策时全量重做：验签、有效期、实例与 session binding、subject（platform/instance/agent/session[/task]）、grant 现场 digest、安装记录和目标内容；任一失败即拒绝且零副作用，不回落 baseline。grant live 判据与引擎安装绑定语义一致：deployed/effective，或 approved 且准入为 import 保留记录（安装流水线真实终态，须有匹配安装记录）。import 保留准入的已安装 Skill Grant 无 verified SEC 时一律拒绝，不受旧 attribution 开关影响。SEC 命中时有效权限为 SEC grant 与该 agent 现行 baseline grant 的交集（deny > hold > allow），由引擎后端现场合成；无 baseline grant 时交集退化为 SEC grant 自身。SEC 存在期间去掉 skill claim 不降级：归属由服务端按 subject 命中，不来自调用方引用。回执追加 evidence_level（controlled_task/controlled_session）、context_id 与精确 call_binding，UI 只对字段完整的 verified 显示可信及等级，controlled_session 必须明示「会话级、不含逐调用因果」。威胁范围仅覆盖模型可控输入与调用层伪造；不抵御已攻陷宿主或同 UID 恶意本地代码。OpenClaw 2026.5.12 与 Hermes v0.21.0 实机核实均无逐调用 Skill 归属能力（§2 证据），不得把钩子安装表述为可信宿主。
+
+### R06/R04/R07 复核增量（2026-09-15）
+
+- 管理页面加载绑定 `useLoadGuard` 身份。连接、签名公钥或 actor 变化后，失效旧响应的同时必须重新请求；旧授权详情不得沿用。重复选择相同适配器操作不得清空有效预览。
+- 浏览器验收只允许一次导航，禁止刷新至成功掩盖竞态；重启验收保持同一已登录文档，断言旧凭据 401、UI 失效及持久状态保留。
+- 负例只接受预期 HTTP 状态与错误码；候选漂移必须实际改变隔离候选内容并保留有效计划签名。签名篡改与旧状态兼容分别记账。
+- 诊断仅保存类别与完成项计数；临时目录 0700、文件 0600。不保存配对码、daemon 原文、DOM 或网络响应体。原始证据不覆盖；修复候选独立记录摘要与结果。
+- 原文清理区分实机未到期内容保留与组件时钟下过期删除。systemd 生命周期、直接启动旅程、正式版本升级不能相互替代。

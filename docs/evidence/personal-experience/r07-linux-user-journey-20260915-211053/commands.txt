@@ -1,0 +1,91 @@
+== R07 full user journey — run inventory (2026-09-15) ==
+
+Run command (identical for all runs):
+  python3 scripts/personal-experience/r07-linux-user-journey-smoke.py \
+    --openclaw-root /home/maoyd/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw \
+    --node /home/maoyd/.nvm/versions/node/v22.22.1/bin/node \
+    --binary /tmp/siq-batch-20260915/bin/agentshield \
+    --out /tmp/siq-r07-journey-report.json
+
+Run 19 (final): exit 0, passed=true, 23 journey checks + nested r04 leg 29/29.
+  log: /tmp/siq-r07-run19.log — output: {"passed": true, "checks": 23}
+
+== Failed runs kept (redacted; never deleted to record all-green) ==
+
+--- run 17 (step-11b failure, exit 1) stderr tail ---
+  File "/home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914/scripts/personal-experience/r07-linux-user-journey-smoke.py", line 538, in journey
+    expect(apply_button).to_be_enabled(timeout=30000)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/maoyd/miniconda3/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 20416, in to_be_enabled
+    self._sync(self._impl_obj.to_be_enabled(enabled=enabled, timeout=timeout))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/miniconda3/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/maoyd/miniconda3/lib/python3.13/site-packages/playwright/_impl/_assertions.py", line 720, in to_be_enabled
+    await self._expect_impl(
+    ...<5 lines>...
+    )
+  File "/home/maoyd/miniconda3/lib/python3.13/site-packages/playwright/_impl/_assertions.py", line 85, in _expect_impl
+    raise AssertionError(
+        f"{out_message}\nActual value: {actual}{error_message} {format_call_log(result.get('log'))}"
+    )
+AssertionError: Locator expected to be enabled
+Actual value: disabled 
+Call log:
+  - Expect "to_be_enabled" with timeout 30000ms
+  - waiting for get_by_role("dialog").get_by_role("button", name="确认应用", exact=True)
+
+--- run 18 (step-11b failure, exit 1) stderr tail ---
+  File "/home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914/scripts/personal-experience/r07-linux-user-journey-smoke.py", line 604, in journey
+    expect(apply_button).to_be_enabled(timeout=60000)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/maoyd/miniconda3/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 20416, in to_be_enabled
+    self._sync(self._impl_obj.to_be_enabled(enabled=enabled, timeout=timeout))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/miniconda3/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/maoyd/miniconda3/lib/python3.13/site-packages/playwright/_impl/_assertions.py", line 720, in to_be_enabled
+    await self._expect_impl(
+    ...<5 lines>...
+    )
+  File "/home/maoyd/miniconda3/lib/python3.13/site-packages/playwright/_impl/_assertions.py", line 85, in _expect_impl
+    raise AssertionError(
+        f"{out_message}\nActual value: {actual}{error_message} {format_call_log(result.get('log'))}"
+    )
+AssertionError: Locator expected to be enabled
+Actual value: disabled 
+Call log:
+  - Expect "to_be_enabled" with timeout 60000ms
+  - waiting for get_by_role("dialog").get_by_role("button", name="确认应用", exact=True)
+
+== Run 18 phase-c diagnostic artifacts (the decisive evidence) ==
+-- /v1 probes at dump time (daemon alive; session valid; instance authority fail is EXPECTED after r04 removal) --
+"instances": [{"instance_id": "hi-773c8ec435b8d6582089157b79cd7900", "platform": "openclaw", "name": "default", "config_dir": "~/.openclaw", "source": "default", "default": true, "active": true, "detected": true, "diagnosis": {"platform": "openclaw", "configuration_state": "incomplete", "runtime_state": "unverified", "checks": [{"code": "adapter_files", "status": "pass", "message": "适配器文�
+  (full probe: /v1/adapter/status -> openclaw detected, adapter installed, instance_authority check fail — the expected post-r04-removal state)
+
+-- JS-side fetch log tail (authoritative page-side record; Playwright response listener demonstrably misses responses) --
+200 /v1/adapter/status
+200 /v1/adapter/status
+200 /v1/adapter/instances?platform=openclaw
+200 /v1/adapter/preview
+  key fact: exactly ONE '200 /v1/adapter/preview' (the dialog-open uninstall preview); NO second preview fetch and NO ERR line —
+  the redundant select_option never triggered a re-preview, while onChange had cleared plan and set loading=true.
+
+-- run 18 error.txt --
+AssertionError: Locator expected to be enabled
+Actual value: disabled 
+Call log:
+
+== Redaction scan ==
+/tmp/siq-r07-run19.log pre-redaction sensitive-pattern lines: 0
+0 (all such lines either excluded above or REDACTED in place)
+/tmp/siq-r07-run17.log pre-redaction sensitive-pattern lines: 0
+0 (all such lines either excluded above or REDACTED in place)
+/tmp/siq-r07-run18.log pre-redaction sensitive-pattern lines: 0
+0 (all such lines either excluded above or REDACTED in place)
+/tmp/r07-debug/phase-c.fetchlog.txt pre-redaction sensitive-pattern lines: 0
+0 (all such lines either excluded above or REDACTED in place)
+/tmp/r07-debug/phase-c.probe.txt pre-redaction sensitive-pattern lines: 0
+0 (all such lines either excluded above or REDACTED in place)

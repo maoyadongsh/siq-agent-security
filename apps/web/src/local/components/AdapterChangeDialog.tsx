@@ -89,13 +89,13 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
       {catalog ? <>
         <div className="field field-flush">
           <label htmlFor="adapter-instance">{platformLabel(request.platform)} 实例</label>
-          <select id="adapter-instance" disabled={working || !!request.instanceId} value={instanceId} onChange={(event) => { setPlan(null); setLoading(true); setInstanceId(event.target.value); }}>
+          <select id="adapter-instance" disabled={working || !!request.instanceId} value={instanceId} onChange={(event) => { if (event.target.value === instanceId) return; setPlan(null); setLoading(true); setInstanceId(event.target.value); }}>
             {catalog.instances.map((item) => <option key={item.instance_id} value={item.instance_id}>{item.name} · {item.config_dir}</option>)}
           </select>
         </div>
         <div className="field field-flush">
           <label htmlFor="adapter-action">操作</label>
-          <select id="adapter-action" disabled={working || !!request.grantId} value={action} onChange={(event) => { setPlan(null); setLoading(true); setAction(event.target.value as 'install' | 'uninstall'); }}>
+          <select id="adapter-action" disabled={working || !!request.grantId} value={action} onChange={(event) => { if (event.target.value === action) return; setPlan(null); setLoading(true); setAction(event.target.value as 'install' | 'uninstall'); }}>
             <option value="install">安装或修复接入</option><option value="uninstall">卸载此实例接入</option>
           </select>
         </div>
@@ -105,14 +105,14 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
         </> : null}
         {action === 'install' ? <>
           <div className="field"><label htmlFor="instance-connection-mode">接入方式</label>
-            <select id="instance-connection-mode" value={connectionMode} disabled={working || !!request.grantId} onChange={(event) => { setPlan(null); setConnectionMode(event.target.value as 'permissions' | 'connection'); }}>
+            <select id="instance-connection-mode" value={connectionMode} disabled={working || !!request.grantId} onChange={(event) => { if (event.target.value === connectionMode) return; setPlan(null); setConnectionMode(event.target.value as 'permissions' | 'connection'); }}>
               <option value="permissions">配置实例权限并接入</option><option value="connection">仅安装连接组件</option>
             </select>
           </div>
           {connectionMode === 'permissions' ? permissions.panel : <p>此步骤仅配置平台钩子，不建立新的日常会话授权；已有实例身份会保留。</p>}
         </> : null}
         {action === 'install' && request.platform === 'hermes' ? <label className="adapter-native-option">
-          <input type="checkbox" checked={nativeEnable} disabled={working || !catalog.native_available} onChange={(event) => { setPlan(null); setLoading(true); setNativeEnable(event.target.checked); }} />
+          <input type="checkbox" checked={nativeEnable} disabled={working || !catalog.native_available} onChange={(event) => { if (event.target.checked === nativeEnable) return; setPlan(null); setLoading(true); setNativeEnable(event.target.checked); }} />
           由 Hermes 同步启用本实例插件
         </label> : null}
         {request.platform === 'hermes' && !catalog.native_available ? <p>未找到 Hermes CLI，可先安装接入文件，再在原平台启用插件。</p> : null}

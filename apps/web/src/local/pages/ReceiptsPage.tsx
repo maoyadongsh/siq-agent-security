@@ -43,7 +43,7 @@ export default function ReceiptsPage() {
   useEffect(() => {
     load(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [guard]);
 
   const columns: TableColumn<Receipt>[] = [
     { key: 'seq', header: 'seq', render: (r) => String(r.seq) },
