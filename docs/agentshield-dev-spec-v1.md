@@ -464,9 +464,11 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 
 ### 3.9 `internal/openshell`（规格）
 
+O04 复核修订以 `packages/contracts/openshell-capability-evidence.v3.md` 为准。配置表达能力与历史/当前执行证据分离，编译器只使用明确的配置能力映射；PATH/env.sh 不复用握手缓存，显式配置包含 TLS 模式和 CLI 身份并在探测前后检查漂移。失败刷新清空旧证据。doctor 可显式只读指定目标，返回 revision/digest，不产生行为验证；无目标只做握手。UI 按状态和时效展示。RSS 缺失编码 null，历史原报告不覆盖。子进程管道排空等待上限为 min(200ms, command timeout)，不扩大停止权限或放宽输出/授权检查。
+
 2026-09-15 P0 修订以 `packages/contracts/openshell-policy-safety.v2.md` 为准：网络修改保留完整静态策略；转换器拒绝无法表达的限制；revision 不可缺省；完整策略摘要读回；回滚绑定本次变更前快照及当前授权，未知历史拒绝。CLI 输出运行中共享限额、环境精确白名单、错误不含原文。进程内互斥不宣称跨外部写者 CAS，配置读回不提升为真实执行验证。R01/R02 复用当前 SEC 和签名 reservation 实现。
 
-- O01 快照保存完整已解析 policy、`policy_digest=sha256(canonical_json(policy))` 和移除 `network_policies` 后的 `static_digest`；filesystem/network/process 只作兼容投影。元信息必须有且只有一个规范正十进制 `Active`，不得用 `Version` 或 `1` 补缺。Go/Python 共同拒绝重复键、alias/anchor/tag/merge、多文档、非空 flow collection、非字符串键与歧义隐式标量，使用根目录 `testdata/openshell-policy-safety.v2.json` 锁定子集和摘要。
+- O01 快照保存完整已解析 policy、`policy_digest=sha256(canonical_json(policy))` 和移除 `network_policies` 后的 `static_digest`；filesystem/network/process 只作兼容投影。元信息接受已覆盖的 `Active` 或 `Version` 规范正十进制 revision；同时出现必须一致，缺失、重复、冲突或默认补 `1` 均拒绝。此处修正文档遗留描述，与现有 Go/Python 实现及共享向量一致。两语言共同拒绝重复键、alias/anchor/tag/merge、多文档、非空 flow collection、非字符串键与歧义隐式标量，使用根目录 `testdata/openshell-policy-safety.v2.json` 锁定子集和摘要。
 - 动态网络输入只接受 `effect=allow`、单个 host:port 端点和至少一个显式绝对 binary path；deny、method/path/provider/protocol/purpose 及未知字段在写前拒绝。更新只替换完整当前 policy 的 `network_policies`。计划仅在调用方明确给出的 filesystem/process 与当前真实值不同才标 generation；字段存在但相同仍是 dynamic。
 - O02 apply/rollback 按 target 进程内串行。apply 生成不可预测 `operation_id`，私有有界注册表保存精确 base snapshot/revision/digest 与 applied revision/digest；公开回执只是索引和可审计摘要，不能自行证明操作。P0 不新增持久化状态：进程重启、逐出、未知或已消费记录一律拒绝回滚。
 - no-op 回滚核对 live revision/digest 后零写入。实际恢复还必须调用由认证服务端状态派生的当前授权器，并在授权后再次读回检测漂移；成功后消费操作记录。写后必须同时核对网关 revision 与完整 policy digest。无后端原子 CAS，因此只声明进程内串行及已观察漂移检测，不声明跨进程事务原子性。
@@ -474,7 +476,9 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 - 后端只用 CLI。显式环境变量与 Python `cli_backend.py` 相同：`SIQ_AS_OPENSHELL_CLI_BIN` 与 `SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT`（必须成对）或 `SIQ_AS_OPENSHELL_ENV_SH`。`ENV_SH` 在 `source` 之后优先 `exec $SIQ_OPENSHELL_BIN`（research-engine `env.sh` 约定），否则 PATH 上的 `openshell`。
 - siq-agent-security 额外发现 PATH 上的 `openshell`，走用户 CLI 配置（`HOME` / XDG），不注入 `--gateway-endpoint`。显式 CLI/endpoint 配置在父进程解析为 argv，优先于 PATH；不批量透传 `SIQ_AS_*` 或 `OPENSHELL_*` 环境变量。Python 控制面后端不跟随 PATH 发现。
 - O03 子进程边界：stdout/stderr 共享默认 2 MiB 字节预算，在读取时检查；超限/超时/非零退出丢弃输出，公开错误仅稳定类别。基础 env 精确白名单含 PATH/HOME、locale、XDG 和 Windows 用户/系统目录，不继承凭据前缀、BASH_ENV、代理或动态加载器配置。显式 env.sh 是用户信任的可执行配置，可自行注入环境，此机制不承诺隔离恶意脚本。CLI 与旧 Docker 发现均走有界执行；退出后管道排空最多 200ms，只终止当前拥有的直接子进程，不宣称终止所有后代。Windows Python 管道语义仍须实机验证，能力不支持则拒绝执行，不回退无界 capture_output。
-- `probe()`：`gateway info` 只表示调用了 OpenShell CLI（本地配置打印，端口上即使是 OpenClaw 也可能 rc=0）。必须以 `status`（或等价的会真正连网关的命令）做握手。`status` 出现 `InvalidContentType` / OpenClaw / Hermes 特征则 fail-closed。不按版本号假设能力。禁止猜测端口，禁止改别人的网关。
+- `probe()`：`gateway info` 只表示调用了 OpenShell CLI（本地配置打印，端口上即使是 OpenClaw 也可能 rc=0）。必须以 `status`（或等价的会真正连网关的命令）做握手。`status` 出现 `InvalidContentType` / OpenClaw / Hermes 特征则 fail-closed；`status` rc=0 但输出缺少 `Server Status` 标题或 `Gateway:` 名称行同样 fail-closed（空输出/无关服务不构成握手成功）。不按版本号假设能力。禁止猜测端口，禁止改别人的网关。
+- O04 能力事实（2026-09-15 修订，见 `packages/contracts/openshell-policy-safety.v2.md` O04 节）：probe 输出区分 `client_expressible` / `documented`（带观测日期与实例范围）/ `configured` / `handshake_verified` / `readback_verified` / `enforcement_reserved` 六类事实，不合并为单个 supported/connected。`cli_version`（`--version`/info 文本）与 `gateway_version`（仅当握手输出声明时）分离；CLI 版本不提升任何能力级别，仅产出描述性 `schema_version`（网关版本未知时为 `unknown-policy-v1`）。历史"实测"布尔保留为兼容字段，语义标注为历史文档视图；当前实例主张必须用证据字段与能力文档。版本/网关名缓存绑定 endpoint 指纹与观测时间，跨 endpoint 或过期即失效。`max_filesystem_paths` 恒为合同默认值，报告为未实测上限。
+- 已实现诊断态：`unconfigured` / `configured_unreachable` / `identity_unconfirmed` / `handshake_verified`（仅协议响应）/ `policy_readable`（指定目标策略读回，执行限制未验证）/ `evidence_expired`。`behavior_verified` 仅保留，当前无生产者。doctor 与 HTTP 输出相同状态语义；指定目标诊断要求显式 CLI/endpoint 绑定，附 revision/digest/有效期且零写入。UI 每秒复核证据有效期并降级过期显示。严格 status 形状由 Go/Python 共享 `testdata/openshell-status-shape.v1.json` 锁定，不声称加密身份认证。
 - **禁止** `openshell gateway start`。bootstrap、doctor、serve 都不启动网关。缺 CLI、网关没起、连错进程时 L0–L2 照常，并给出人类可执行修复。
 - `siq-agent-security openshell doctor` 与 `GET /v1/openshell/doctor`：报告 CLI 路径、覆盖来源（`env_pair` / `env_sh` / `path` / `none`）、探针、身份、`human_next`；`started_gateway` 恒为 `false`。
 - `apply(network)`：`policy set` 只提交网络段；`policy get --full` 读回 → 比对 → 产出 `effective_readback{backend:"openshell", revision}` 与 evidence。

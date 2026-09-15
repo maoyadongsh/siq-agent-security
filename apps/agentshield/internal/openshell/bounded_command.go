@@ -53,6 +53,9 @@ func runBoundedCommand(argv, env []string, timeout time.Duration, limit int) (in
 	cmd := exec.CommandContext(ctx, argv[0], argv[1:]...)
 	cmd.Env = env
 	cmd.WaitDelay = 200 * time.Millisecond
+	if timeout < cmd.WaitDelay {
+		cmd.WaitDelay = timeout
+	}
 	cmd.Stdout, cmd.Stderr = out, diagnostic
 	err := cmd.Run()
 	if budget.exceeded {

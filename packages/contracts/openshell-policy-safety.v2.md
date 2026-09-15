@@ -6,15 +6,16 @@ API envelopes remain compatible; v2 operation bindings live in receipt evidence.
 Implementation tracking: the 2026-09-15 O01/O02/O03 batches implement the
 policy-fidelity, process-local rollback and bounded CLI transport requirements.
 Their component checks are recorded separately from real-gateway/native
-acceptance. O04 capability requirements below remain targets. See the overall
+acceptance. O04 details are superseded by openshell-capability-evidence.v3.md. See the overall
 taskbook v4.1 section 15 for the current acceptance status.
 
 ## O01 snapshot and policy fidelity
 
 `policy get <target> --full` is accepted only when it has exactly one YAML
-document delimiter and exactly one canonical positive decimal `Active` revision
-in the metadata preceding that delimiter. `Version` is descriptive metadata and
-must not be substituted for a missing `Active`. Duplicate metadata keys,
+document delimiter and a canonical positive decimal `Active` or `Version` revision
+in the metadata preceding that delimiter (both CLI output forms are covered by
+the shared vectors). When both occur they must agree; neither may default to 1.
+Missing revision, conflicting values, duplicate metadata keys,
 duplicate YAML mapping keys, aliases/anchors/tags, merge keys, non-empty flow
 collections, multi-document input, non-string mapping keys and ambiguous
 implicit scalars are rejected before a write.
@@ -94,3 +95,50 @@ forged, drifted or currently unauthorized operations fail closed.
 
 Real backend enforcement and cross-process atomicity remain separate acceptance
 requirements. New persistent operation storage or backend execution is out of P0.
+
+## O04 capability facts and evidence levels (implemented 2026-09-15)
+
+A probe result must never collapse distinct facts into one `supported` or
+`connected` boolean. Adapters report these fact categories separately:
+
+1. `client_expressible` — what this client adapter version can express in a
+   policy document (compile-time fact about the adapter itself).
+2. `documented` — what OpenShell docs or historical evidence records, always
+   tagged with the observation date and instance scope. Historical observations
+   never describe the current endpoint unless reconfirmed against it.
+3. `configured` — what the local configuration currently points to (endpoint,
+   gateway name from `gateway info`, CLI binary). `gateway info` is a local
+   config print and proves nothing about reachability.
+4. `handshake_verified` — a live `status` invocation succeeded AND its output
+   structurally matched the expected OpenShell server-status shape (a
+   `Server Status` heading plus a `Gateway:` name line). Empty, unrelated or
+   rc=0-but-wrong-protocol output never upgrades this level.
+5. `readback_verified` — `policy get --full` returned a parseable snapshot for
+   a named target with revision and digest.
+6. `enforcement_verified` — reserved. Only real behavioral fixtures observed
+   against the current endpoint may set it; component tests must not.
+
+Derived fields carry their own provenance:
+
+- `cli_version` (from `--version` or gateway-info text) and `gateway_version`
+  (only when the live `status`/handshake output states it) are separate fields.
+  A CLI version alone never fills `gateway_version`, never upgrades any
+  capability level, and only feeds a descriptive `schema_version` hint
+  (`unknown-policy-v1` while the gateway version is unknown).
+- Version and gateway-name caches require an explicit CLI/endpoint fingerprint
+  including TLS mode and CLI file identity, plus observation time. Indirect
+  PATH/env.sh selection is not reusable; failed refresh clears cached evidence.
+- Legacy boolean fields (`dynamic_network_update`, `static_filesystem`,
+  `static_process`, `landlock`, `revision_support`) remain for compatibility
+  and keep their historical-documentation semantics; consumers that need a
+  current-instance claim must use the evidence fields and capability document
+  instead. New fields are additive; existing JSON keys keep their meanings.
+- `max_filesystem_paths` remains the contract default and is reported as
+  unmeasured (not as a tested limit).
+
+Diagnostics implement: `unconfigured`, `configured_unreachable`,
+`identity_unconfirmed` (protocol mismatch or handshake shape wrong),
+`handshake_verified` (protocol response only),
+`policy_readable` (readback verified, enforcement unverified),
+`evidence_expired`. `behavior_verified` is reserved without a current producer. Each state carries a
+short actionable next step.

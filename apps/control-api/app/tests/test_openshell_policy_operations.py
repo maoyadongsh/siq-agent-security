@@ -39,6 +39,8 @@ class StatefulRunner:
     def __call__(self, args: list[str]) -> tuple[int, str, str]:
         if tuple(args) == ("gateway", "info"):
             return 0, "Gateway Info\n  Gateway version: 0.0.104\n", ""
+        if tuple(args) == ("status",):
+            return 0, "Server Status\n  Gateway: siq-openshell-dev\n  Gateway version: 0.0.104\n", ""
         if tuple(args) == ("policy", "get", "s1", "--full"):
             with self._lock:
                 self.get_calls += 1

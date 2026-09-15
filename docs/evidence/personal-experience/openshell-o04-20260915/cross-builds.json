@@ -1,0 +1,12 @@
+{
+  "built_at": "2026-09-15",
+  "package": "cmd/agentshield",
+  "flags": "CGO_ENABLED=0 go build -trimpath",
+  "targets": {
+    "linux/amd64": "bee99ea10ff6b065775d55ed80662b54b403401a02de536c3710f88152fd7f92",
+    "linux/arm64": "c3e565c5343f031fdc4ddd0bd3ce6a5741fe891b991ba5f118af6bfc51f47112",
+    "darwin/arm64": "19af936114c9ac00f4d9eb6eb154c64a3bb7c7e1dc39f52249757cf4c17dc526",
+    "windows/amd64": "f90fe5f7b9ef28cfc69528e19b451c47becf897e39dad2b5cc04904363616ed8"
+  },
+  "note": "交叉构建成功不代表 Windows/macOS 实机通过；来源为 HEAD 6e34f3ad82033b0b5ffe49cd82bc042c84414429 加当时未提交修改。"
+}

@@ -15,12 +15,16 @@ func (s *Server) openshellPlatform(refresh bool) PlatformInfo {
 	if s.d.Openshell == nil {
 		s.osMu.Lock()
 		s.osDiag = openshell.UnconfiguredDiagnosis()
+		s.osCaps, s.osOK, s.osRow = nil, false, row
 		s.osMu.Unlock()
 		return row
 	}
 	s.osMu.Lock()
 	defer s.osMu.Unlock()
-	if !refresh && !s.osAt.IsZero() && time.Since(s.osAt) < 15*time.Second {
+	if !refresh && !s.osAt.IsZero() && time.Since(s.osAt) < 15*time.Second &&
+		s.osCaps != nil && s.osCaps.EndpointFingerprint != "" && s.osCaps.EndpointFingerprint == s.d.Openshell.InvocationFingerprint() {
+		// O04: a cached row is only valid while the invocation (endpoint /
+		// env-script) is unchanged; otherwise re-probe.
 		return s.osRow
 	}
 	d := s.d.Openshell.Diagnose()
@@ -34,6 +38,7 @@ func (s *Server) openshellPlatform(refresh bool) PlatformInfo {
 			row.Note += "；非 Linux 无 Docker/WSL2 时 L3 不可用"
 		}
 		s.osRow, s.osAt, s.osOK = row, time.Now(), false
+		s.osCaps = nil
 		return row
 	}
 	caps := *d.Capabilities
@@ -50,18 +55,28 @@ func (s *Server) openshellProbe(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 405, map[string]any{"error": "GET required"})
 		return
 	}
-	row := s.openshellPlatform(true)
+	s.openshellPlatform(true)
+	s.osMu.Lock()
+	row := s.osRow
 	out := map[string]any{
 		"ok": row.Tier == "L3", "tier": row.Tier, "backend": "openshell",
 		"detected": row.Detected, "adapter": row.Adapter, "note": row.Note,
 	}
-	s.osMu.Lock()
 	out["doctor"] = s.osDiag
 	if s.osOK && s.osCaps != nil {
 		out["schema_version"] = s.osCaps.SchemaVersion
 		out["dynamic_network_update"] = s.osCaps.DynamicNetworkUpdate
 		out["revision_support"] = s.osCaps.RevisionSupport
 		out["capabilities"] = s.osCaps.Capabilities
+		out["configuration_capabilities"] = s.osCaps.ConfigurationCapabilities
+		// O04 evidence fields: current-instance facts, each with its own level.
+		out["evidence_level"] = s.osCaps.EvidenceLevel
+		out["handshake_verified"] = s.osCaps.HandshakeVerified
+		out["handshake_gateway"] = s.osCaps.HandshakeGateway
+		out["observed_at"] = s.osCaps.ObservedAt
+		out["cli_version"] = s.osCaps.CLIVersion
+		out["gateway_version"] = s.osCaps.GatewayVersion
+		out["max_filesystem_paths_measured"] = s.osCaps.MaxFilesystemPathsMeasured
 	}
 	s.osMu.Unlock()
 	writeJSON(w, 200, out)
@@ -74,6 +89,10 @@ func (s *Server) openshellDoctor(w http.ResponseWriter, r *http.Request) {
 	}
 	if s.d.Openshell == nil {
 		writeJSON(w, 200, openshell.UnconfiguredDiagnosis())
+		return
+	}
+	if target := r.URL.Query().Get("target"); target != "" {
+		writeJSON(w, 200, s.d.Openshell.DiagnoseTarget(target))
 		return
 	}
 	writeJSON(w, 200, s.d.Openshell.Diagnose())

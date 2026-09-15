@@ -106,9 +106,9 @@ def compile_policy(desired_policy: dict, capabilities: BackendCapabilities) -> C
     network = desired_policy.get("network")
     if network is not None:
         validated_network = validate_network_rules(network)
-        # dynamic_network_update 只在 probe 实测为 True 时置真（默认 False 即
-        # fail-closed 静态路径），与能力文档 network_l34 同源自实测结论
-        if not capabilities.dynamic_network_update:
+        # Configuration expressibility must be explicit; historical booleans
+        # cannot authorize compilation or prove current enforcement.
+        if not capabilities.can_configure("network.dynamic_update"):
             # v0.0.83 现状：编译期固定集合，动态更新为版本依赖项（ADR-005/009）
             unsupported.append("network.dynamic_update")
             artifact["network_policies"] = validated_network  # 落为静态制品，由 generation 路径生效
@@ -118,7 +118,7 @@ def compile_policy(desired_policy: dict, capabilities: BackendCapabilities) -> C
 
     if desired_policy.get("model_routing"):
         routing_item = capabilities.capability("model_routing")
-        if capabilities.provider_credential_injection and routing_item.status == "supported":
+        if capabilities.can_configure("model_routing") and routing_item.status == "supported":
             artifact["inference_routing"] = desired_policy["model_routing"]
         elif routing_item.status == "unknown":
             # fail-closed：能力未知视为不可执行
@@ -147,7 +147,7 @@ def compile_policy(desired_policy: dict, capabilities: BackendCapabilities) -> C
     # （unknown 按 fail-closed 视为不可执行），部署路由据此拒绝或显式展示
     mode = desired_policy.get("enforcement_mode", "audit_only")
     mode_item = capabilities.capability(f"enforcement_mode.{mode}")
-    if mode_item.status != "supported":
+    if mode_item.status != "supported" or not capabilities.can_configure(f"enforcement_mode.{mode}"):
         unsupported.append(f"enforcement_mode.{mode}: capability {mode_item.status}: {mode_item.basis}")
 
     artifact_bytes = _canonical(artifact)

@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 const (
@@ -154,6 +155,8 @@ func TestProbeReportsMeasuredCapabilities(t *testing.T) {
 	}
 }
 
+// O04: `gateway info` text is CLI-side config; it may fill cli_version but
+// never gateway_version, and schema_version stays the unknown hint.
 func TestProbeSchemaVersionFromGatewayInfo(t *testing.T) {
 	c := backend(t, map[string]struct {
 		rc     int
@@ -166,11 +169,27 @@ func TestProbeSchemaVersionFromGatewayInfo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if caps.SchemaVersion != "v0.0.104-policy-v1" {
+	if caps.CLIVersion != "0.0.104" {
+		t.Fatalf("cli_version %s", caps.CLIVersion)
+	}
+	if caps.GatewayVersion != "unknown" {
+		t.Fatalf("gateway_version must stay unknown without handshake proof, got %s", caps.GatewayVersion)
+	}
+	if caps.SchemaVersion != "unknown-policy-v1" {
 		t.Fatalf("schema %s", caps.SchemaVersion)
+	}
+	if caps.EvidenceLevel != EvidenceHandshake || !caps.HandshakeVerified {
+		t.Fatalf("evidence: %s %v", caps.EvidenceLevel, caps.HandshakeVerified)
+	}
+	if caps.MaxFilesystemPathsMeasured {
+		t.Fatal("contract default must not be reported as measured")
+	}
+	if caps.ObservedAt == "" || caps.EndpointFingerprint != "" {
+		t.Fatal("env.sh observation must be dated and non-cacheable")
 	}
 }
 
+// O04: CLI version via --version also never upgrades schema_version.
 func TestProbeVersionFallsBackToCLI(t *testing.T) {
 	c := backend(t, map[string]struct {
 		rc     int
@@ -184,8 +203,37 @@ func TestProbeVersionFallsBackToCLI(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if caps.CLIVersion != "0.0.104" {
+		t.Fatalf("cli_version %s", caps.CLIVersion)
+	}
+	if caps.GatewayVersion != "unknown" || caps.SchemaVersion != "unknown-policy-v1" {
+		t.Fatalf("gateway %s schema %s", caps.GatewayVersion, caps.SchemaVersion)
+	}
+}
+
+// O04: only live handshake output (`status`) may set gateway_version, and then
+// schema_version follows it.
+func TestProbeGatewayVersionFromStatusHandshake(t *testing.T) {
+	c := backend(t, map[string]struct {
+		rc     int
+		stdout string
+		stderr string
+	}{
+		k("gateway", "info"): {0, gatewayInfo, ""},
+		k("status"):          {0, "Server Status\n  Gateway: siq-openshell-dev\n  Gateway version: 0.0.104\n", ""},
+	})
+	caps, err := c.Probe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if caps.GatewayVersion != "0.0.104" {
+		t.Fatalf("gateway_version %s", caps.GatewayVersion)
+	}
 	if caps.SchemaVersion != "v0.0.104-policy-v1" {
 		t.Fatalf("schema %s", caps.SchemaVersion)
+	}
+	if caps.HandshakeGateway != "siq-openshell-dev" {
+		t.Fatalf("handshake_gateway %s", caps.HandshakeGateway)
 	}
 }
 
@@ -280,6 +328,148 @@ func TestProbeStatusHandshakeRejectsForeignGateway(t *testing.T) {
 	_, err := c.Probe()
 	if err == nil || !strings.Contains(err.Error(), "不是 OpenShell") {
 		t.Fatalf("status handshake: %v", err)
+	}
+}
+
+// O04 acceptance item 3: status rc=0 with empty output must not upgrade
+// identity, reachability or tier.
+func TestProbeStatusEmptyOutputFailsClosed(t *testing.T) {
+	c := backend(t, map[string]struct {
+		rc     int
+		stdout string
+		stderr string
+	}{
+		k("gateway", "info"): {0, gatewayInfo, ""},
+		k("status"):          {0, "", ""},
+	})
+	caps, err := c.Probe()
+	if err == nil || !strings.Contains(err.Error(), "身份/协议未确认") {
+		t.Fatalf("empty status must fail closed: %v", err)
+	}
+	if caps.EvidenceLevel != "" {
+		t.Fatalf("no evidence may be reported: %+v", caps)
+	}
+	d := c.Diagnose()
+	if d.State != StateIdentityUnconfirmed || d.Tier == "L3" {
+		t.Fatalf("diagnosis state/tier: %+v", d)
+	}
+}
+
+// O04 acceptance item 3: irrelevant rc=0 output (wrong protocol) fails closed.
+func TestProbeStatusIrrelevantOutputFailsClosed(t *testing.T) {
+	for _, out := range []string{"OK\n", "Server Status\n", "  Gateway: siq-openshell-dev\n", "{\"status\":\"up\"}\n"} {
+		c := backend(t, map[string]struct {
+			rc     int
+			stdout string
+			stderr string
+		}{
+			k("gateway", "info"): {0, gatewayInfo, ""},
+			k("status"):          {0, out, ""},
+		})
+		if _, err := c.Probe(); err == nil || !strings.Contains(err.Error(), "身份/协议未确认") {
+			t.Fatalf("irrelevant status %q must fail closed: %v", out, err)
+		}
+	}
+}
+
+// O04 acceptance item 4: a wrong-protocol service is reported as identity
+// unconfirmed and never reaches any policy write.
+func TestProbeWrongProtocolNeverWritesPolicy(t *testing.T) {
+	policySetCalled := false
+	c := New(Options{
+		Runner: func(args []string) (int, string, string) {
+			if len(args) >= 2 && args[0] == "policy" && args[1] == "set" {
+				policySetCalled = true
+			}
+			if len(args) >= 2 && args[0] == "gateway" && args[1] == "info" {
+				return 0, gatewayInfo, ""
+			}
+			if len(args) == 1 && args[0] == "status" {
+				return 0, "Hermes agent ready\n", ""
+			}
+			return 1, "", "unexpected args"
+		},
+		EnvScript:    "/nonexistent/env.sh",
+		PollInterval: -1,
+	})
+	// Hermes signature: foreign gateway fail-closed.
+	if _, err := c.Probe(); err == nil {
+		t.Fatal("foreign status must fail")
+	}
+	if policySetCalled {
+		t.Fatal("no policy write may happen from a probe")
+	}
+}
+
+// O04 acceptance item 8/9: caches are bound to the invocation fingerprint and
+// expire; a changed endpoint invalidates the detected version immediately.
+func TestVersionCacheBoundToEndpointAndFresh(t *testing.T) {
+	env := map[string]string{
+		"SIQ_AS_OPENSHELL_CLI_BIN":          "/opt/openshell",
+		"SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT": "https://127.0.0.1:17671",
+	}
+	cliVersionCalls := 0
+	c := New(Options{
+		LookupEnv: func(key string) (string, bool) { v, ok := env[key]; return v, ok },
+		Runner: func(args []string) (int, string, string) {
+			if len(args) >= 2 && args[0] == "gateway" && args[1] == "info" {
+				return 0, gatewayInfo, ""
+			}
+			if len(args) == 1 && args[0] == "status" {
+				return 0, "Server Status\n  Gateway: siq-openshell-dev\n", ""
+			}
+			if len(args) == 1 && args[0] == "--version" {
+				cliVersionCalls++
+				return 0, versionOutputV104, ""
+			}
+			return 1, "", "unexpected args"
+		},
+		PollInterval: -1,
+	})
+	if _, err := c.Probe(); err != nil {
+		t.Fatal(err)
+	}
+	if cliVersionCalls != 1 {
+		t.Fatalf("first probe should resolve CLI version once, got %d", cliVersionCalls)
+	}
+	if _, err := c.Probe(); err != nil {
+		t.Fatal(err)
+	}
+	if cliVersionCalls != 1 {
+		t.Fatalf("same-endpoint probe must reuse the cached version, got %d calls", cliVersionCalls)
+	}
+	env["SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT"] = "https://127.0.0.1:17672"
+	if _, err := c.Probe(); err != nil {
+		t.Fatal(err)
+	}
+	if cliVersionCalls != 2 {
+		t.Fatalf("endpoint change must invalidate the version cache, got %d calls", cliVersionCalls)
+	}
+	c.mu.Lock()
+	c.detectedAt = time.Now().Add(-versionCacheTTL - time.Minute)
+	c.mu.Unlock()
+	if _, err := c.Probe(); err != nil {
+		t.Fatal(err)
+	}
+	if cliVersionCalls != 3 {
+		t.Fatalf("expired observation must re-resolve, got %d calls", cliVersionCalls)
+	}
+}
+
+func TestLooksLikeOpenShellStatusShape(t *testing.T) {
+	if !looksLikeOpenShellStatus("Server Status\n  Gateway: siq-openshell-dev\n") {
+		t.Fatal("real status shape must validate")
+	}
+	for _, out := range []string{"", "Server Status\n", "Gateway: x\n", "Server Status\nGateway: not a valid name!!\n"} {
+		if looksLikeOpenShellStatus(out) {
+			t.Fatalf("%q must not validate", out)
+		}
+	}
+	if v := parseGatewayVersion("Server Status\n  Gateway version: 0.0.104\n"); v != "0.0.104" {
+		t.Fatalf("gateway version %q", v)
+	}
+	if v := parseGatewayVersion("Gateway Info\n  Gateway version: 0.0.104\n"); v != "0.0.104" {
+		t.Fatalf("gateway version from info text: %q", v)
 	}
 }
 

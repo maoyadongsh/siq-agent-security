@@ -29,6 +29,17 @@ func cmdOpenshell(args []string) error {
 	enc.SetIndent("", "  ")
 	switch args[0] {
 	case "doctor":
+		fs := flag.NewFlagSet("openshell doctor", flag.ContinueOnError)
+		target := fs.String("target", "", "optional target for a read-only policy observation")
+		if err := fs.Parse(args[1:]); err != nil {
+			return err
+		}
+		if fs.NArg() != 0 {
+			return fmt.Errorf("openshell doctor: unexpected arguments")
+		}
+		if *target != "" {
+			return enc.Encode(c.DiagnoseTarget(*target))
+		}
 		return enc.Encode(c.Diagnose())
 	case "probe":
 		caps, err := c.Probe()

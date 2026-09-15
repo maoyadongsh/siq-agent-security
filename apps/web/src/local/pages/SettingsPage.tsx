@@ -10,6 +10,7 @@ import RuntimeCheckDialog from '../components/RuntimeCheckDialog';
 import AdapterChangeDialog, { type AdapterChangeRequest } from '../components/AdapterChangeDialog';
 import AdapterDiagnosisPanel from '../components/AdapterDiagnosisPanel';
 import RawContentPrivacyPanel from '../components/RawContentPrivacyPanel';
+import { openshellDiagnosisLabel, type OpenShellDiagnosis } from '../openshellDiagnosis';
 
 const MODES = ['block', 'warn', 'audit_only'] as const;
 
@@ -31,6 +32,13 @@ export default function SettingsPage() {
   const [osAllow, setOsAllow] = useState('');
   const [osRevision, setOsRevision] = useState('');
   const [osBinaries, setOsBinaries] = useState('/usr/bin/curl');
+  const [osDiagnosis, setOsDiagnosis] = useState<OpenShellDiagnosis>();
+  const [diagnosisClock, setDiagnosisClock] = useState(Date.now());
+  useEffect(() => {
+    if (!osDiagnosis?.expires_at) return;
+    const timer = window.setInterval(() => setDiagnosisClock(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [osDiagnosis]);
   const [audit, setAudit] = useState<AuditEvent[]>([]);
 
   useEffect(() => {
@@ -73,15 +81,17 @@ export default function SettingsPage() {
   };
 
   const probeOpenshell = () => {
+    setOsDiagnosis(undefined);
     setBusy('openshell:probe');
     setMsg(null);
     localApi
       .openshellProbe()
       .then((res) => {
+        setOsDiagnosis(res.doctor);
         const next = res.doctor?.human_next;
         report(
           res.ok
-            ? `OpenShell L3 · ${res.schema_version ?? ''} — ${res.note ?? 'probe 成功'}`
+            ? `OpenShell：${openshellDiagnosisLabel(res.doctor)}。${next ?? ''}`
             : `OpenShell 不可用（${res.tier}）：${next || res.note || 'probe 失败'}`,
           !res.ok,
         );
@@ -255,13 +265,14 @@ export default function SettingsPage() {
         />
       </div>
       <div className="card">
-        <h2>OpenShell（L3）</h2>
+        <h2>OpenShell 当前能力</h2>
         <p className="page-desc">
-          接入已在运行、已验明的 OpenShell 网关（显式 SIQ_AS_* 优先，其次 ENV_SH，再 PATH）。probe
-          必须验明网关是 OpenShell；连到 OpenClaw / Hermes 会失败。siq-agent-security 不会执行 gateway
-          start。apply 只替换网络段；filesystem、process、Landlock 与扩展字段保持完整读回，禁止
-          create_generation。平台工具接入是否生效，按各自诊断与运行验证结果显示。
+          检查已配置网关的协议响应；检查成功不代表执行限制已验证。
+          网络策略更新后会读回核对，平台工具接入效果以各自运行验证结果为准。
         </p>
+        {osDiagnosis && (
+          <p role="status">{openshellDiagnosisLabel(osDiagnosis, diagnosisClock)}</p>
+        )}
         <div className="toolbar toolbar-end">
           <button
             type="button"

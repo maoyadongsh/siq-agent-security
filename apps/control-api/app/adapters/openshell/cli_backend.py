@@ -13,6 +13,12 @@
 - probe 版本探测：从 `gateway info` 输出 / `--version` 真实解析版本（保守正则，
   解析不到记为 unknown，绝不编造）；schema_version 由探测结果组成，
   不再硬编码 v0.0.83 假设。
+- probe 身份握手（O04）：`gateway info` 只是本地配置打印，成功不证明后端在线；
+  probe 必须真实调用 `status` 并通过结构校验（"Server Status" 标题行 + 非空
+  "Gateway:" 名）。空输出/无关输出/异构协议 rc=0 一律 fail-closed；
+  gateway_version 只来自 live status 输出，CLI 版本不再上调 schema_version。
+  版本/握手缓存绑定调用指纹（CLI+endpoint 或 env.sh 路径+size+mtime），配置
+  一变即失效。
 
 安全约束：
 - 仅接受显式的 CLI+网关或绝对 env.sh 路径配置，不隐式依赖相邻仓库；
@@ -23,10 +29,14 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import os
 import re
 import secrets
+import time
 from collections.abc import Callable, Iterator
+from dataclasses import replace
+from datetime import UTC, datetime
 from ipaddress import ip_address
 from pathlib import Path
 from urllib.parse import urlparse
@@ -82,6 +92,44 @@ _VERSION_UNCHANGED_RE = re.compile(r"Policy unchanged \(version (\d+), hash: ([0
 _VERSION_LINE_RE = re.compile(r"(?im)^[^\n]*\bversion\b[^\n0-9]{0,16}v?(\d+\.\d+\.\d+)")
 _CLI_VERSION_RE = re.compile(r"(?im)^\s*openshell(?:\s+version)?[\s:v-]{0,4}(\d+\.\d+\.\d+)")
 
+# ---- O04 身份握手（与 Go 侧 internal/openshell 同一判定语义）----
+# status 结构校验：首个非空行必须是 "Server Status"，且存在 "Gateway:" 行、
+# 网关名非空且不含控制字符。空输出/无关输出/异构协议 rc=0 全部拒绝。
+_ERR_IDENTITY_UNCONFIRMED = (
+    "endpoint 有响应，但 status 输出无法识别为 OpenShell 服务端（身份/协议未确认）"
+)
+_STATUS_HEADING = "Server Status"
+_GATEWAY_LINE_RE = re.compile(r"^Gateway:\s*(\S.*)$")
+_GATEWAY_NAME_RE = re.compile(r"[A-Za-z0-9_.-]{1,64}")
+_GATEWAY_VERSION_RE = re.compile(r"(?m)^\s*Gateway version:\s*v?(\d+\.\d+\.\d+)\s*$")
+
+# 版本/握手缓存 TTL：与调用指纹共同构成证据作用域（配置一变即失效）。
+_VERSION_CACHE_TTL_SECONDS = 300.0
+
+
+def _looks_like_openshell_status(text: str) -> bool:
+    """status 输出结构校验（fail-closed）：空/无关/异构协议输出一律 False。"""
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if not lines or lines[0] != _STATUS_HEADING:
+        return False
+    names = [line.removeprefix("Gateway:").strip() for line in lines[1:]
+             if line.startswith("Gateway:")]
+    return len(names) == 1 and bool(_GATEWAY_NAME_RE.fullmatch(names[0]))
+
+
+def _parse_gateway_name(text: str) -> str:
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    for line in lines[1:]:
+        match = _GATEWAY_LINE_RE.match(line)
+        if match:
+            return match.group(1).strip()
+    return ""
+
+
+def _parse_gateway_version(text: str) -> str | None:
+    match = _GATEWAY_VERSION_RE.search(text)
+    return match.group(1) if match else None
+
 
 def _parse_version(text: str) -> str | None:
     """从 CLI 输出中保守解析 OpenShell 版本号；无法确定时返回 None（绝不编造）。"""
@@ -99,7 +147,7 @@ def _cli_capability_document() -> dict[str, CapabilityItem]:
     basis 注明依据，不得猜 supported。与上方布尔字段保持一致（布尔字段是
     同一实测结论的便捷视图）。
     """
-    return {
+    items = {
         # 实测：v0.0.83 网关 SandboxResponse 解码缺陷致 create/list 经 CLI 不可用
         # （v0.0.104 已确认修复但本探测路径未对 create 实测，保守 unsupported）
         "sandbox_lifecycle": CapabilityItem(
@@ -148,6 +196,11 @@ def _cli_capability_document() -> dict[str, CapabilityItem]:
     }
 
 
+    return {key: replace(item, evidence_level="documented",
+                         scope="historical_adapter_observations_2026-08-13; not_current_target")
+            for key, item in items.items()}
+
+
 Runner = Callable[[list[str]], tuple[int, str, str]]
 
 
@@ -179,8 +232,11 @@ class OpenShellCliBackend(EnforcementAdapter):
         self._runner = runner or self._subprocess_runner
         self._docker_runner = docker_runner  # None = 原始 docker 子进程
         self._artifacts: dict[str, CompiledPolicy] = {}  # compile 注册，apply 引用
-        # 版本探测缓存：None = 未探测；"unknown" = 探测失败/输出不可解析
+        # 版本探测缓存：None = 未探测；"unknown" = 探测失败/输出不可解析。
+        # O04：缓存绑定调用指纹 + TTL，配置变更或过期后一律重新解析（不复活旧结论）。
         self._detected_version: str | None = None
+        self._detected_fingerprint: str = ""
+        self._detected_at: float = 0.0
         self._operations = operation_registry or PROCESS_POLICY_OPERATIONS
 
     # ------------------------------------------------------------ 子进程
@@ -258,21 +314,77 @@ class OpenShellCliBackend(EnforcementAdapter):
 
     # ------------------------------------------------------------ 合同实现
 
-    def probe(self) -> BackendCapabilities:
-        """可达性 + 真实版本探测；能力值只反映已实测验证的语义。
+    def _invocation_fingerprint(self) -> str:
+        """调用指纹（O04）：探测/缓存证据的作用域。
 
-        - `gateway info` 失败 → fail-closed（可达性是探测前提，保持现状）；
-        - 版本探测失败仅令 schema_version 退化为 "unknown-policy-v1"，不让 probe
-          整体失败（可达性已由 gateway info 证明），也绝不编造版本号；
-        - 能力值不因检测到新版本而上调：布尔字段依据见下方逐行注释，
-          版本化能力文档（capabilities）逐项标注 status/semantics/basis，
-          未实测的能力一律 unknown 或 unsupported（P1-1，不得猜 supported）。
+        - CLI_BIN + GATEWAY_ENDPOINT 直连 → 绑定 (cli, endpoint)；
+        - 显式配置包含 TLS 模式和 CLI 文件身份；
+        - env.sh 可间接切换目标，返回空指纹，禁止复用缓存。
         """
-        info_out = self._cli("gateway", "info")  # 探测网关可达性；失败 fail-closed
-        version = self._detect_version(info_out)
+        cli_bin = os.getenv("SIQ_AS_OPENSHELL_CLI_BIN") or ""
+        endpoint = os.getenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT") or ""
+        env_sh = self._env_script or ""
+        if cli_bin and endpoint:
+            try:
+                stat = os.stat(cli_bin)
+                identity = f"{stat.st_size}:{stat.st_mtime_ns}:{stat.st_ino}"
+            except OSError:
+                identity = "unavailable"
+            parts: tuple[str, ...] = (
+                "env_pair", cli_bin, endpoint,
+                os.getenv("SIQ_AS_OPENSHELL_GATEWAY_INSECURE", "0"), identity,
+            )
+        elif env_sh:
+            # A script can source other files or select a different gateway.
+            # No stable destination identity exists without running it.
+            return ""
+        else:
+            parts = ("none",)
+        digest = hashlib.sha256()
+        for part in parts:
+            digest.update(part.encode("utf-8", "replace"))
+            digest.update(b"\x00")
+        return digest.hexdigest()
+
+    def probe(self) -> BackendCapabilities:
+        try:
+            return self._probe_current()
+        except AdapterError:
+            self._detected_version = None
+            self._detected_fingerprint = ""
+            self._detected_at = 0.0
+            raise
+
+    def _probe_current(self) -> BackendCapabilities:
+        """协议响应 + 版本观察；历史能力字段不代表当前目标已执行验证。
+
+        O04 语义修正：
+        - `gateway info` 只是本地配置打印，成功 ≠ 后端在线；probe 必须真实
+          调用 `status` 并通过结构校验，空输出/无关输出/异构协议 rc=0 一律
+          fail-closed（身份/协议未确认），绝不伪装成可达；
+        - cli_version 来自 `gateway info` / `--version`；gateway_version 只来自
+          live `status` 输出；schema_version 由 gateway_version 组成（CLI 版本
+          不再上调 schema，与 Go 侧一致）；
+        - 旧布尔/能力文档保留历史出处；编译只使用本适配器显式声明的配置能力。
+          配置表达能力不代表执行权限，不因版本或握手而上调执行证据。
+        """
+        before = self._invocation_fingerprint()
+        info_out = self._cli("gateway", "info")  # CLI 可用性前提；失败 fail-closed
+        status_out = self._cli("status")  # 身份握手前提；rc!=0 fail-closed
+        if not _looks_like_openshell_status(status_out):
+            raise AdapterError(_ERR_IDENTITY_UNCONFIRMED)
+        fingerprint = self._invocation_fingerprint()
+        if before != fingerprint:
+            raise AdapterError("openshell_configuration_changed")
+        cli_version = self._detect_version(info_out)
+        if before != self._invocation_fingerprint():
+            raise AdapterError("openshell_configuration_changed")
+        gateway_version = _parse_gateway_version(status_out) or "unknown"
         caps = BackendCapabilities(
             backend="openshell",
-            schema_version=f"v{version}-policy-v1" if version != "unknown" else "unknown-policy-v1",
+            schema_version=(
+                f"v{gateway_version}-policy-v1" if gateway_version != "unknown" else "unknown-policy-v1"
+            ),
             dynamic_network_update=True,  # 2026-08-13 实测：网络段热更新成功（静态段锁定）
             static_filesystem=True,  # 实测：活沙箱 filesystem 变更被拒绝
             static_process=True,  # 实测：process 段同属静态边界（创建时锁定）
@@ -282,6 +394,16 @@ class OpenShellCliBackend(EnforcementAdapter):
             revision_support=True,  # 实测：policy list / --rev 回读可用
             max_filesystem_paths=1024,  # 合同默认值，未经网关实测上限
             capabilities=_cli_capability_document(),
+            # ---- O04 证据字段（增量）：只声明 status 握手能证明的事实 ----
+            evidence_level="handshake_verified",
+            handshake_verified=True,
+            handshake_gateway=_parse_gateway_name(status_out),
+            observed_at=datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            endpoint_fingerprint=fingerprint,
+            cli_version=cli_version,
+            gateway_version=gateway_version,
+            max_filesystem_paths_measured=False,
+            configuration_capabilities={"network.dynamic_update": True, "enforcement_mode.block": True},
         )
         return caps
 
@@ -289,9 +411,18 @@ class OpenShellCliBackend(EnforcementAdapter):
         """真实版本探测：先解析 gateway info 输出，再回退 `--version`。
 
         解析基于保守正则；任何一步失败都返回 "unknown" 且不抛错
-        （版本缺失不掩盖可达性事实，也不编造版本号）。结果缓存供
-        list_targets 的 docker 回退退役判定使用。
+        （版本缺失不掩盖握手事实，也不编造版本号）。结果缓存绑定调用
+        指纹 + TTL，供 list_targets 的 docker 回退退役判定使用。
         """
+        fingerprint = self._invocation_fingerprint()
+        now = time.monotonic()
+        if (
+            self._detected_version is not None
+            and bool(fingerprint)
+            and self._detected_fingerprint == fingerprint
+            and now - self._detected_at <= _VERSION_CACHE_TTL_SECONDS
+        ):
+            return self._detected_version
         version = _parse_version(gateway_info_output)
         if version is None:
             try:
@@ -299,11 +430,21 @@ class OpenShellCliBackend(EnforcementAdapter):
             except AdapterError:
                 version = None
         self._detected_version = version or "unknown"
+        if version and tuple(int(p) for p in version.split(".")) >= (0, 0, 104):
+            self._docker_fallback_retired = True
+        self._detected_fingerprint = fingerprint
+        self._detected_at = now
         return self._detected_version
 
     def _detected_version_at_least(self, minimum: tuple[int, int, int]) -> bool:
-        """已探测版本 >= minimum？未知/未探测一律 False（保守，不放宽行为）。"""
-        if not self._detected_version or self._detected_version == "unknown":
+        """已探测版本 >= minimum？未知/未探测/指纹变化/过期一律 False（保守，不放宽行为）。"""
+        if (
+            not self._detected_version
+            or self._detected_version == "unknown"
+            or not self._detected_fingerprint
+            or self._detected_fingerprint != self._invocation_fingerprint()
+            or time.monotonic() - self._detected_at > _VERSION_CACHE_TTL_SECONDS
+        ):
             return False
         try:
             parts = tuple(int(p) for p in self._detected_version.split("."))
@@ -318,7 +459,8 @@ class OpenShellCliBackend(EnforcementAdapter):
             # SandboxResponse 解码缺陷在 v0.0.104 已实测确认修复（docs/compatibility.md
             # 2026-08-13 隔离网关验证）：探测版本 >= v0.0.104 时 CLI 报错是真实故障，
             # 如实抛出而非静默走 docker 回退；版本未知或低于 v0.0.104 保持兜底。
-            if self._detected_version_at_least((0, 0, 104)):
+            # A one-way fallback retirement never becomes a version/capability fact.
+            if getattr(self, "_docker_fallback_retired", False) or self._detected_version_at_least((0, 0, 104)):
                 raise
             return self._list_targets_docker_fallback()
         targets = []

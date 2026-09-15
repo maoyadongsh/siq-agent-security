@@ -51,6 +51,8 @@ class CapabilityItem:
     status: str  # supported | unsupported | unknown
     semantics: str = "none"  # enforce | observe | advisory | none
     basis: str = ""  # 依据（实测日期/网关行为/未实测说明），禁止空泛猜测
+    evidence_level: str = "unspecified"
+    scope: str = ""
 
 
 # ------------------------------------------------------------ verify 分级（P1-2）
@@ -102,6 +104,23 @@ class BackendCapabilities:
     max_filesystem_paths: int = 1024
     # 版本化能力文档（P1-1）：键为 CAP_* 能力域，未报告的项按 unknown fail-closed
     capabilities: dict[str, CapabilityItem] = field(default_factory=dict)
+    # ---- O04 能力证据字段（增量，向后兼容）----
+    # evidence_level: none | handshake_verified（enforcement_verified 保留给行为
+    # fixture 通道，CLI 路径禁止产出）；legacy 布尔字段维持历史实测结论的便捷
+    # 视图语义（见各项注释），不因握手成功而上调。
+    evidence_level: str = "none"
+    handshake_verified: bool = False  # status 输出通过 Server Status/Gateway 结构校验
+    handshake_gateway: str = ""  # 握手确认的网关名（来自 live status，非本地配置打印）
+    observed_at: str | None = None  # 观察时间（UTC）
+    endpoint_fingerprint: str = ""  # 调用指纹：证据作用域，配置一变即失效
+    cli_version: str = ""  # CLI 版本（gateway info / --version），≠网关版本
+    gateway_version: str = ""  # 网关版本（仅来自 live status 输出，unknown 如实报告）
+    max_filesystem_paths_measured: bool = False  # max_filesystem_paths 是否实测（False=合同默认值）
+    configuration_capabilities: dict[str, bool] = field(default_factory=dict)
+
+    def can_configure(self, name: str) -> bool:
+        """Explicit adapter expressibility; never infer it from historical booleans."""
+        return self.configuration_capabilities.get(name) is True
 
     def capability(self, name: str) -> CapabilityItem:
         """查询能力项；文档未报告 → unknown（fail-closed，绝不当作 supported）。"""

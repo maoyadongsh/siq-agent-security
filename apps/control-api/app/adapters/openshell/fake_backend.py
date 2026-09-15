@@ -91,6 +91,12 @@ class FakeOpenShellBackend(EnforcementAdapter):
             provider_credential_injection=False,
             landlock=True,
             capabilities=_fake_capability_document(dynamic_network_update, interceptor),
+            configuration_capabilities={
+                "network.dynamic_update": dynamic_network_update,
+                "enforcement_mode.block": True,
+                "enforcement_mode.warn": True,
+                "enforcement_mode.audit_only": True,
+            },
         )
         self._lock = threading.Lock()
         # target -> {"revision": int, "snapshot": PolicySnapshot, "history": [PolicySnapshot]}

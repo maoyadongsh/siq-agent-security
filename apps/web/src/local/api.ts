@@ -640,6 +640,8 @@ export const localApi = {
       dynamic_network_update?: boolean;
       revision_support?: boolean;
       doctor?: {
+        state?: string;
+        expires_at?: string;
         source?: string;
         human_next?: string;
         cli_found?: boolean;

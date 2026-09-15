@@ -37,7 +37,7 @@ def main() -> None:
         fail(f"missing {README.relative_to(ROOT)}")
 
     src = PKG.read_text(encoding="utf-8")
-    if 'Format = "agentshield.perf_baseline.v1"' not in src:
+    if 'Format = "agentshield.perf_baseline.v2"' not in src:
         fail("perfbaseline Format constant missing")
     if "HonestyNote" not in src or "Observations only" not in src:
         fail("HonestyNote must refuse SLA framing")
@@ -76,7 +76,7 @@ def main() -> None:
         if proc.returncode != 0:
             fail(f"smoke run failed: {proc.stderr or proc.stdout}")
         doc = json.loads(out.read_text(encoding="utf-8"))
-        if doc.get("format") != "agentshield.perf_baseline.v1":
+        if doc.get("format") != "agentshield.perf_baseline.v2":
             fail(f"bad format: {doc.get('format')!r}")
         if doc.get("thresholds") is not None:
             fail("thresholds must be JSON null")

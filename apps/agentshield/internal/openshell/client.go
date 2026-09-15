@@ -1,6 +1,9 @@
 package openshell
 
 import (
+	"crypto/sha256"
+	"fmt"
+	"os"
 	"regexp"
 	"sort"
 	"strings"
@@ -16,6 +19,11 @@ var (
 	cliVersionRe       = regexp.MustCompile(`(?im)^\s*openshell(?:\s+version)?[\s:v-]{0,4}(\d+\.\d+\.\d+)`)
 )
 
+// versionCacheTTL bounds how long a detected CLI version or gateway name may
+// be reused. Caches are additionally bound to the invocation fingerprint: a
+// changed endpoint/env-script invalidates them immediately.
+const versionCacheTTL = 5 * time.Minute
+
 // Client talks to OpenShell only through the CLI (never create_generation).
 type Client struct {
 	EnvScript    string
@@ -29,10 +37,15 @@ type Client struct {
 	lookup       func(string) (string, bool)
 	lookPath     func(string) (string, error)
 
-	mu              sync.Mutex
-	detectedVersion string
-	probedGateway   string
-	policy          *policyCoordinator
+	mu                    sync.Mutex
+	dockerFallbackRetired bool // conservative latch; never authorizes a capability
+	detectedVersion       string
+	detectedKey           string
+	detectedAt            time.Time
+	probedGateway         string
+	probedKey             string
+	probedAt              time.Time
+	policy                *policyCoordinator
 }
 
 // New builds a Client. A nil Runner uses a filtered subprocess.
@@ -105,7 +118,7 @@ func parseVersion(text string) string {
 }
 
 func capabilityDocument() map[string]CapabilityItem {
-	return map[string]CapabilityItem{
+	items := map[string]CapabilityItem{
 		"sandbox_lifecycle": {Status: "unsupported", Semantics: "none",
 			Basis: "实测：SandboxResponse 解码缺陷，create_generation 经 CLI 拒绝（v0.0.104 修复未在本路径实测）"},
 		"filesystem": {Status: "supported", Semantics: "enforce",
@@ -133,15 +146,95 @@ func capabilityDocument() map[string]CapabilityItem {
 		"enforcement_mode.audit_only": {Status: "unsupported", Semantics: "none",
 			Basis: "CLI 路径无 audit_only 执行语义的实测依据"},
 	}
+	for key, item := range items {
+		item.EvidenceLevel, item.Scope = "documented", "historical_adapter_observations_2026-08-13; not_current_target"
+		items[key] = item
+	}
+	return items
 }
 
-// Probe checks gateway reachability and reports already-measured capabilities.
-// `gateway info` only prints local CLI config and can succeed against a
-// non-OpenShell process on the same port; `status` is the live handshake.
-// Either command looking like OpenClaw/Hermes is fail-closed. An unparseable
-// version becomes "unknown" and never invents a version string. Capability
-// booleans are not raised for a newer parsed version.
-func (c *Client) Probe() (Capabilities, error) {
+// invocationFingerprint identifies the current CLI/endpoint configuration so
+// cached observations never leak across endpoints. It is a one-way digest and
+// never exposes the raw endpoint or script path.
+func (c *Client) invocationFingerprint() string {
+	inv, err := c.ResolveInvocation()
+	h := sha256.New()
+	if err != nil {
+		return fmt.Sprintf("%x", sha256.Sum256([]byte("invalid:"+err.Error())))
+	}
+	switch inv.Source {
+	case SourceEnvPair:
+		fmt.Fprintf(h, "env_pair\x00%s\x00%s\x00%v", inv.CLIPath, inv.Endpoint, inv.Insecure)
+		if st, err := os.Stat(inv.CLIPath); err == nil {
+			fmt.Fprintf(h, "\x00%d\x00%d", st.Size(), st.ModTime().UnixNano())
+		}
+	case SourceEnvSH:
+		return "" // scripts can select destinations through arbitrary external config
+	case SourcePath:
+		return "" // active gateway/config can change independently of CLI path
+	default:
+		return fmt.Sprintf("%x", sha256.Sum256([]byte("unconfigured")))
+	}
+	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+// InvocationFingerprint exposes the one-way digest of the current CLI/endpoint
+// configuration so callers can invalidate cached probe observations.
+func (c *Client) InvocationFingerprint() string { return c.invocationFingerprint() }
+
+func (c *Client) cachedVersion(key string) string {
+	if key == "" {
+		return ""
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if key == "" || c.detectedKey != key || time.Since(c.detectedAt) > versionCacheTTL {
+		return ""
+	}
+	return c.detectedVersion
+}
+
+func (c *Client) storeVersion(key, version string) {
+	c.mu.Lock()
+	c.detectedVersion, c.detectedKey, c.detectedAt = version, key, time.Now()
+	c.mu.Unlock()
+}
+
+func (c *Client) cachedGateway(key string) string {
+	if key == "" {
+		return ""
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if key == "" || c.probedKey != key || time.Since(c.probedAt) > versionCacheTTL {
+		return ""
+	}
+	return c.probedGateway
+}
+
+func (c *Client) storeGateway(key, name string) {
+	c.mu.Lock()
+	c.probedGateway, c.probedKey, c.probedAt = name, key, time.Now()
+	c.mu.Unlock()
+}
+
+// Probe checks gateway reachability and reports capability facts with explicit
+// evidence levels. `gateway info` only prints local CLI config and can succeed
+// against a non-OpenShell process on the same port; `status` is the live
+// handshake and must structurally match the OpenShell server-status shape.
+// Either command looking like OpenClaw/Hermes is fail-closed. `cli_version`
+// comes from CLI text only; `gateway_version` only from the live handshake
+// output, and schema_version follows the gateway version alone. Capability
+// booleans are never raised for a newer parsed version.
+func (c *Client) Probe() (caps Capabilities, probeErr error) {
+	defer func() {
+		if probeErr != nil {
+			c.mu.Lock()
+			c.detectedVersion, c.detectedKey, c.probedGateway, c.probedKey = "", "", "", ""
+			c.mu.Unlock()
+		}
+	}()
+	before := c.invocationFingerprint()
 	infoOut, err := c.cli("gateway", "info")
 	if err != nil {
 		if looksLikeForeignGateway(err.Error()) {
@@ -162,32 +255,70 @@ func (c *Client) Probe() (Capabilities, error) {
 	if looksLikeForeignGateway(statusOut) {
 		return Capabilities{}, fail(errNotOpenShell)
 	}
-	if name := parseGatewayName(statusOut); name != "" {
-		c.mu.Lock()
-		c.probedGateway = name
-		c.mu.Unlock()
+	if !looksLikeOpenShellStatus(statusOut) {
+		// rc=0 but empty/irrelevant output proves nothing about identity.
+		return Capabilities{}, fail(errIdentityUnconfirmed)
 	}
-	version := c.detectVersion(infoOut)
+	key := c.invocationFingerprint()
+	if key != before {
+		return Capabilities{}, fail("openshell_configuration_changed")
+	}
+	name := parseGatewayName(statusOut)
+	if name != "" {
+		c.storeGateway(key, name)
+	}
+	cliVersion := c.detectVersion(infoOut)
+	if key != c.invocationFingerprint() {
+		return Capabilities{}, fail("openshell_configuration_changed")
+	}
+	if parts := strings.Split(cliVersion, "."); len(parts) == 3 {
+		major, _ := atoi(parts[0])
+		minor, _ := atoi(parts[1])
+		patch, _ := atoi(parts[2])
+		if major > 0 || minor > 0 || patch >= 104 {
+			c.mu.Lock()
+			c.dockerFallbackRetired = true
+			c.mu.Unlock()
+		}
+	}
+	gatewayVersion := parseGatewayVersion(statusOut)
+	if gatewayVersion == "" {
+		gatewayVersion = "unknown"
+	}
 	schema := "unknown-policy-v1"
-	if version != "unknown" {
-		schema = "v" + version + "-policy-v1"
+	if gatewayVersion != "unknown" {
+		schema = "v" + gatewayVersion + "-policy-v1"
 	}
 	return Capabilities{
 		Backend:                     BackendName,
 		SchemaVersion:               schema,
-		DynamicNetworkUpdate:        true,  // 2026-08-13 实测：网络段热更新成功（静态段锁定）
-		StaticFilesystem:            true,  // 实测：活沙箱 filesystem 变更被拒绝
-		StaticProcess:               true,  // 实测：process 段同属静态边界
-		Landlock:                    true,  // SIQ landlock patch / 上游内置（ADR-009）
-		Interceptor:                 false, // 未经实测
-		ProviderCredentialInjection: false, // 未经实测
-		RevisionSupport:             true,  // 实测：policy list / --rev 回读可用
-		MaxFilesystemPaths:          1024,  // 合同默认，未经网关实测上限
+		DynamicNetworkUpdate:        true, // 2026-08-13 实测（历史依据，非本 endpoint 当前验证）
+		StaticFilesystem:            true, // 实测：活沙箱 filesystem 变更被拒绝（历史依据）
+		StaticProcess:               true, // 实测：process 段同属静态边界（历史依据）
+		Landlock:                    true, // SIQ landlock patch / 上游内置（ADR-009）
+		Interceptor:                 false,
+		ProviderCredentialInjection: false,
+		RevisionSupport:             true, // 实测：policy list / --rev 回读可用（历史依据）
+		MaxFilesystemPaths:          1024, // 合同默认，未经网关实测上限
 		Capabilities:                capabilityDocument(),
+
+		EvidenceLevel:              EvidenceHandshake,
+		HandshakeVerified:          true,
+		HandshakeGateway:           name,
+		CLIVersion:                 cliVersion,
+		GatewayVersion:             gatewayVersion,
+		EndpointFingerprint:        key,
+		ObservedAt:                 time.Now().UTC().Format(time.RFC3339),
+		MaxFilesystemPathsMeasured: false,
+		ConfigurationCapabilities:  map[string]bool{"network.dynamic_update": true, "enforcement_mode.block": true},
 	}, nil
 }
 
 func (c *Client) detectVersion(gatewayInfo string) string {
+	key := c.invocationFingerprint()
+	if v := c.cachedVersion(key); v != "" {
+		return v
+	}
 	version := parseVersion(gatewayInfo)
 	if version == "" {
 		out, err := c.cli("--version")
@@ -198,17 +329,20 @@ func (c *Client) detectVersion(gatewayInfo string) string {
 	if version == "" {
 		version = "unknown"
 	}
-	c.mu.Lock()
-	c.detectedVersion = version
-	c.mu.Unlock()
+	c.storeVersion(key, version)
 	return version
 }
 
 func (c *Client) detectedVersionAtLeast(major, minor, patch int) bool {
 	c.mu.Lock()
-	v := c.detectedVersion
+	v, key, at := c.detectedVersion, c.detectedKey, c.detectedAt
 	c.mu.Unlock()
 	if v == "" || v == "unknown" {
+		return false
+	}
+	// O04: the cached version is only valid for the same invocation and while
+	// fresh; a changed endpoint or an expired observation fails closed.
+	if key == "" || key != c.invocationFingerprint() || time.Since(at) > versionCacheTTL {
 		return false
 	}
 	parts := strings.Split(v, ".")
@@ -251,7 +385,10 @@ func atoi(s string) (int, error) {
 func (c *Client) ListTargets() (SandboxPage, error) {
 	out, err := c.cli("sandbox", "list")
 	if err != nil {
-		if c.detectedVersionAtLeast(0, 0, 104) {
+		c.mu.Lock()
+		retired := c.dockerFallbackRetired
+		c.mu.Unlock()
+		if retired || c.detectedVersionAtLeast(0, 0, 104) {
 			return SandboxPage{}, err
 		}
 		return c.listTargetsDockerFallback()

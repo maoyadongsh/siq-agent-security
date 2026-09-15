@@ -297,6 +297,8 @@ def _fake_cli_backend(monkeypatch, *, revision="1", apply_error=None, verify_err
         def _r(self, args):
             if tuple(args[:2]) == ("gateway", "info"):
                 return 0, GATEWAY_INFO, ""
+            if tuple(args[:2]) == ("status",):
+                return 0, "Server Status\n  Gateway: siq-openshell-dev\n  Gateway version: 0.0.104\n", ""
             if tuple(args[:2]) == ("policy", "get") and "--full" in args:
                 # 有状态：set 后回读必须反映新 revision 与新网络规则（真实网关语义）
                 import yaml as _yaml

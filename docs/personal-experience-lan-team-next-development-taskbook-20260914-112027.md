@@ -377,11 +377,11 @@ python3 scripts/personal-experience/n09-baseline-check.py --matrix /absolute/pat
 
 | 批次 | 来源与依赖 | 精确工作范围 | 完成条件 | 初始状态 |
 | --- | --- | --- | --- | --- |
-| O00 基线与合同 | P0-0；无外部前置 | 固定源码状态、现有测试、Go/Python 差异、B0 测量；保留方案来源、定义 v2 安全语义 | 可复跑命令、环境和测量原始数据；不把旧二进制证据用于新候选 | doing：文档、测试与原生决策组件 100 样本已落盘；完整 B0 对照待补 |
+| O00 基线与合同 | P0-0；无外部前置 | 固定源码状态、现有测试、Go/Python 差异、B0 测量；保留方案来源、定义 v2 安全语义 | 可复跑命令、环境和测量原始数据；不把旧二进制证据用于新候选 | doing：A–E 组件预算复测全部通过；新增独立 git archive 的 O04 增量真实 HTTP 对照，每版本允许/撤销后拒绝各 600 样本、增幅≤10%通过，记录 CPU/RSS/磁盘写入/请求数。基线为 O01–O03 后的 6e34f3a，不等价完整优化前 B0。完整 B1−B0、真实 OpenShell B2/B3 仍待；禁止 reset 不阻止独立基线工作。[复核报告](evidence/personal-experience/openshell-o04-review-20260915/report.md) |
 | O01 策略保真 | P0-A/B/F；O00 | Go `policy.go/yamlkit.go`、Python `cli_backend.py/policy_compiler.py`：完整静态字段保留，严格 revision，拒绝 deny/L7/未知语义损失，按实际静态差异规划 | 两语言共享向量；强 Landlock/扩展字段不降级；缺失 revision/重复键/未知限制零写入；全策略摘要读回一致 | 实现、组件验证和隔离 OpenShell 0.0.83 真网验收完成：[O01/O02 报告](evidence/personal-experience/openshell-o01-o02-20260915/report.md)；真实 revision `7→8→9`、base/final 完整摘要一致；提交状态以 Git 历史为准 |
 | O02 事务与回滚 | P0-C；O01 | 真实 base snapshot/revision/full digest、不可伪造操作绑定、目标串行、前后读回；回滚复核当前授权和漂移 | no-op 零写；非连续 revision 正确；伪造/重启后未知记录/外部漂移拒绝；撤销权限不复活 | 实现、组件验证和隔离真网验收完成：[O01/O02 报告](evidence/personal-experience/openshell-o01-o02-20260915/report.md)；仅进程内串行，后端无原子 CAS，不宣称跨进程原子事务；提交状态以 Git 历史为准 |
 | O03 子进程边界 | P0-E；O00，可独立于 O01 | Go/Python CLI 及 Docker 发现共享输出字节上限、运行中限流、超时/管道等待有界、精确 env 白名单、稳定脱敏错误 | stdout+stderr 合并恰限通过/+1拒绝；持续输出、管道占用、超时、秘密 canary 负向；四目标构建 | 本地实现/验收完成：[报告](evidence/personal-experience/openshell-o03-20260915/report.md)；跨 OS 实机待补；提交状态以 Git 历史为准 |
-| O04 当前能力与性能 | P0-D/性能；O01–O03 | 历史能力依据与当前身份/版本/行为证据分离；冻结 B1−B0 预算并采样 | 伪网关/旧文档不提升能力；未启用零后端进程；测量尾延迟、失败率和资源，记录缺项 | todo |
+| O04 当前能力与性能 | P0-D/性能；O01–O03 | 历史能力依据与当前身份/版本/行为证据分离；冻结 B1−B0 预算并采样 | 伪网关/旧文档不提升能力；未启用零后端进程；测量尾延迟、失败率和资源，记录缺项 | 本机复核修复完成，整体 doing：配置能力替代旧布尔编译判断；两语言共享 11 条 status 向量；缓存漂移/失败降级；目标只读 doctor 和 UI 过期显示；RSS v2 不可得为 null。D 180 样本 p95=200.886ms、max=201.261ms，原预算不变且通过。新增服务级 fixture 原生 HTTP 旅程，OpenShell/Docker Runner 调用为零；不宣称真实宿主或 OS 进程树验证。完整 B0、B2/B3 和跨 OS 实机待补。[复核证据](evidence/personal-experience/openshell-o04-review-20260915/report.md) |
 | O05 可选已配置实例会话 | P2，继承 P1；O01–O04＋真实后端 | 固定一个实际可用版本和 Linux 驱动；预览/确认、实例身份、策略摘要和会话绑定；复用 SEC/预留；停止与不确定恢复；UI 解释保护边界 | 真实允许/拒绝及副作用证明；required 失联无 fallback；会话不可越界复用；native 无回归；只操纵明确归属实例 | blocked：当前网关不可达，版本/驱动待实测 |
 | O06 凭据与指定目标出站 | P3；O05＋明确产品需求 | 现有 provider 的凭据引用和目标/动作绑定，必要时可选 L7 桥；不存明文，不用通用 exec 绕过结构化工具约束 | 合成 canary 不出现在错误/日志/导出/非法目标；DNS、重定向、代理及方法变更真实负向；覆盖范围明确 | conditional：不作为首版强制项 |
 

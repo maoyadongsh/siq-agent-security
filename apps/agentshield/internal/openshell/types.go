@@ -13,6 +13,22 @@ const (
 	VerifyReadback = "readback_verified"
 	VerifyFailed   = "failed"
 	BackendName    = "openshell"
+
+	// Evidence levels (O04 contract). enforcement_verified is reserved for
+	// real behavioral fixtures against the current endpoint; component tests
+	// must never set it.
+	EvidenceNone        = "none"
+	EvidenceHandshake   = "handshake_verified"
+	EvidenceEnforcement = "enforcement_verified"
+	// Diagnostic states (O04 contract; policy_readable/behavior_verified are
+	// reached only by per-target apply/verify flows, never by probe alone).
+	StateUnconfigured        = "unconfigured"
+	StateUnreachable         = "configured_unreachable"
+	StateIdentityUnconfirmed = "identity_unconfirmed"
+	StateHandshake           = "handshake_verified"
+	StatePolicyReadable      = "policy_readable"
+	StateBehaviorVerified    = "behavior_verified"
+	StateEvidenceExpired     = "evidence_expired"
 )
 
 // AdapterError is a fail-closed CLI / gateway failure. Messages must not
@@ -36,14 +52,17 @@ func (e *RevisionConflict) Error() string {
 
 // CapabilityItem is one row of the versioned capability document (P1-1).
 type CapabilityItem struct {
-	Status    string `json:"status"`
-	Semantics string `json:"semantics"`
-	Basis     string `json:"basis"`
+	Status        string `json:"status"`
+	Semantics     string `json:"semantics"`
+	Basis         string `json:"basis"`
+	EvidenceLevel string `json:"evidence_level,omitempty"`
+	Scope         string `json:"scope,omitempty"`
 }
 
-// Capabilities is the probe result. Boolean fields are a convenience view of
-// already-measured semantics; they must not be raised just because a newer
-// version string was parsed.
+// Capabilities is the probe result. Legacy boolean fields are a compatibility
+// view of historical/documented semantics (O04 contract); current-instance
+// claims must use the evidence fields below. New fields are additive; existing
+// JSON keys keep their published meanings.
 type Capabilities struct {
 	Backend                     string                    `json:"backend"`
 	SchemaVersion               string                    `json:"schema_version"`
@@ -56,6 +75,17 @@ type Capabilities struct {
 	RevisionSupport             bool                      `json:"revision_support"`
 	MaxFilesystemPaths          int                       `json:"max_filesystem_paths"`
 	Capabilities                map[string]CapabilityItem `json:"capabilities"`
+
+	// Evidence fields: facts about the CURRENT endpoint only.
+	EvidenceLevel              string          `json:"evidence_level"`
+	HandshakeVerified          bool            `json:"handshake_verified"`
+	HandshakeGateway           string          `json:"handshake_gateway,omitempty"`
+	ObservedAt                 string          `json:"observed_at,omitempty"` // RFC3339 UTC
+	EndpointFingerprint        string          `json:"endpoint_fingerprint,omitempty"`
+	CLIVersion                 string          `json:"cli_version,omitempty"`         // from --version / gateway-info text only
+	GatewayVersion             string          `json:"gateway_version,omitempty"`     // only when the live handshake output states it; "unknown" otherwise
+	MaxFilesystemPathsMeasured bool            `json:"max_filesystem_paths_measured"` // always false: contract default, not a tested limit
+	ConfigurationCapabilities  map[string]bool `json:"configuration_capabilities"`
 }
 
 // NetworkRule is the product-shaped allow rule submitted on apply.
