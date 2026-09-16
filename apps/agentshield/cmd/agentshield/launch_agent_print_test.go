@@ -111,3 +111,42 @@ func TestVerifyLaunchPrintRejectsDrift(t *testing.T) {
 		t.Fatal("argv drift accepted")
 	}
 }
+
+// Darwin 25 shows state = xpcproxy between kickstart and exec. Its PID is the
+// xpcproxy process about to exec into the service, so it is reportable as the
+// running PID; health is still required by callers before declaring readiness.
+func TestVerifyLaunchPrintAcceptsXPCProxyTransition(t *testing.T) {
+	expected, err := os.ReadFile("../../testdata/contracts/launch-agent.sample.plist")
+	if err != nil {
+		t.Fatal(err)
+	}
+	source := filepath.Join(t.TempDir(), "source.plist")
+	if err := os.WriteFile(source, []byte(expected), 0600); err != nil {
+		t.Fatal(err)
+	}
+	wanted, err := decodeLaunchPlist(string(expected))
+	if err != nil {
+		t.Fatal(err)
+	}
+	good := mustLaunchPrint(t, string(expected), source, 0, "", "")
+	transition := strings.Replace(good, "state = not running", "state = xpcproxy", 1)
+	tree, err := decodeLaunchPrint(transition, 501, wanted["Label"].(string))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := verifyLaunchPrint(wanted, tree, 501, mustResolve(t, source)); err == nil {
+		t.Fatal("xpcproxy without PID accepted")
+	}
+	withPID := strings.Replace(transition, "state = xpcproxy\n", "state = xpcproxy\n\tpid = 123\n", 1)
+	tree, err = decodeLaunchPrint(withPID, 501, wanted["Label"].(string))
+	if err != nil {
+		t.Fatal(err)
+	}
+	rt, err := verifyLaunchPrint(wanted, tree, 501, mustResolve(t, source))
+	if err != nil {
+		t.Fatalf("xpcproxy transition rejected: %v", err)
+	}
+	if rt.PID != 123 {
+		t.Fatalf("transition PID = %d, want 123", rt.PID)
+	}
+}

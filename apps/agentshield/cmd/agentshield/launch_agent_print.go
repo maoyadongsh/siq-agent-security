@@ -34,6 +34,7 @@ var launchPrintAllowedKeys = map[string]struct{}{
 	"exit timeout":                   {},
 	"runs":                           {},
 	"last exit code":                 {},
+	"last terminating signal":        {},
 	"spawn type":                     {},
 	"jetsam priority":                {},
 	"jetsam memory limit (active)":   {},
@@ -306,6 +307,16 @@ func verifyLaunchPrint(wanted, tree map[string]any, uid int, source string) (lau
 		if _, present := tree["pid"]; present {
 			return zero, errors.New("launch-agent: invalid running PID")
 		}
+	case "xpcproxy":
+		// Darwin 25 transition: kickstart passes through an xpcproxy state
+		// whose PID is the xpcproxy process about to exec into the service.
+		// Treat a positive PID as running; callers still require health.
+		pidText, ok := tree["pid"].(string)
+		pid, err := strconv.ParseInt(pidText, 10, 64)
+		if !ok || err != nil || pid <= 0 || strconv.FormatInt(pid, 10) != pidText {
+			return zero, errors.New("launch-agent: invalid running PID")
+		}
+		runtime.PID = pid
 	default:
 		return zero, errors.New("launch-agent: invalid or unsupported loaded configuration response")
 	}
@@ -319,6 +330,13 @@ func verifyLaunchPrint(wanted, tree map[string]any, uid int, source string) (lau
 			return zero, errors.New("launch-agent: invalid exit status")
 		}
 		runtime.LastExit = &status
+	}
+	// Darwin 25 keeps "last terminating signal" on jobs that were SIGTERM-stopped
+	// in this boot while running; only the closed observed shape is accepted.
+	if text, present := tree["last terminating signal"]; present {
+		if text != "Terminated: 15" && text != "Killed: 9" {
+			return zero, errors.New("launch-agent: unexpected termination signal")
+		}
 	}
 	return runtime, nil
 }

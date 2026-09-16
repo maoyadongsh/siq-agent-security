@@ -708,7 +708,7 @@ Darwin 25（本机实机：`launchctl help list` 为 `list [service-name]`）上
 
 必须与签名源及规范化源路径一致的字段：`type=LaunchAgent`、`path` 等于已验证 plist 的 EvalSymlinks 路径、`program` 与 `arguments` 等于 ProgramArguments、`stdout path`/`stderr path` 等于 `/dev/null`、`umask` 为 Umask 的八进制、`exit timeout` 等于 ExitTimeOut、`domain` 为 `gui/<uid>` 或以其后空格引导的当前域、`environment` 含精确 `SIQ_AGENT_SECURITY_STATE_DIR`。环境块额外键仅允许 launchd 注入的 `OSLogRateLimit` 与等于 label 的 `XPC_SERVICE_NAME`。签名源 KeepAlive/RunAtLoad 必须为 false；print 若出现 keep alive、run at load、username、working directory、root directory 等非允许顶层键则拒绝。允许的运行时顶层键为封闭名单（jetsam/coalition/asid/pid 等 Darwin 25 实测字段）；未知顶层键 fail-closed。
 
-`state` 仅接受 `running`（必须有正整数 `pid`）或 `not running`（不得有 `pid`）。`last exit code` 为 `(never exited)` 或规范有符号整数。有正 PID 时再要求本实例目录健康才报告已运行，否则只报告已加载且未报告运行 PID。launchctl 失败或格式不支持不解释为任务不存在，也不回退到 `list -x` 或未约束的人类文本。状态核对不证明完整进程内存身份。
+`state` 仅接受 `running`（必须有正整数 `pid`）、`not running`（不得有 `pid`）或 `xpcproxy`（Darwin 25 实测的 kickstart→exec 过渡态，必须有正整数 `pid`，即即将 exec 为服务进程的 xpcproxy 进程；调用方仍要求健康检查通过才报告就绪）。`last exit code` 为 `(never exited)` 或规范有符号整数。有正 PID 时再要求本实例目录健康才报告已运行，否则只报告已加载且未报告运行 PID。launchctl 失败或格式不支持不解释为任务不存在，也不回退到 `list -x` 或未约束的人类文本。状态核对不证明完整进程内存身份。
 
 ### 3.11.27 macOS 未加载状态的显式判定（UX-003）
 
