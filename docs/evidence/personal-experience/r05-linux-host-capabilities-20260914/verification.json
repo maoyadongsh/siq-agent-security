@@ -1,0 +1,51 @@
+{
+  "schema_version": "siq-r05-linux-host-capabilities/v1",
+  "observed_at": "2026-09-14T20:02:18+08:00",
+  "repository_head": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "candidate_sha256": "5ed4dc82bbb300b94155561f91322b818c32b8cc42109e068258162f42d8b961",
+  "host": {
+    "os": "linux",
+    "kernel": "6.17.0-1014-nvidia",
+    "architecture": "aarch64"
+  },
+  "platforms": {
+    "openclaw": {
+      "cli_found": true,
+      "version": "2026.5.12 (f066dd2)",
+      "config_root_found": true,
+      "config_root_symlink": false,
+      "adapter_files_found": true,
+      "runtime_verified": false
+    },
+    "hermes": {
+      "cli_found": true,
+      "version": "0.21.0 (2026.8.31)",
+      "config_root_found": true,
+      "config_root_symlink": false,
+      "adapter_files_found": true,
+      "runtime_verified": false
+    },
+    "workbuddy": {
+      "cli_found": false,
+      "config_root_found": false,
+      "adapter_supported": false,
+      "runtime_verified": false,
+      "status": "blocked"
+    }
+  },
+  "openshell": {
+    "cli_found": true,
+    "active_gateway": "nemoclaw",
+    "probe_ok": false,
+    "identity_ok": false,
+    "tier": "L0",
+    "started_gateway": false
+  },
+  "mutations": {
+    "host_configuration_changed": false,
+    "gateway_started": false,
+    "model_started": false,
+    "tool_call_executed": false
+  },
+  "result": "partial"
+}

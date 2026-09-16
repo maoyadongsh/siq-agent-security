@@ -166,6 +166,8 @@ func main() {
 		err = cmdPolicyExec()
 	case "hook":
 		err = cmdHook(os.Args[2:])
+	case "skill-context":
+		err = cmdSkillContext(os.Args[2:], os.Stdout)
 	case "adapter":
 		err = cmdAdapter(os.Args[2:])
 	case "grant":
@@ -553,6 +555,10 @@ func cmdServe(args []string) error {
 	if err != nil {
 		return err
 	}
+	skillContexts, err := openSkillContexts(st, key, intentStore)
+	if err != nil {
+		return err
+	}
 	eng, err := receipt.New(receipt.Options{
 		Pack: pack, Chain: chain, Grants: st.ActiveGrant, EnforcementMode: cfg.EnforcementMode,
 		Version: Version, HoldChannel: cfg.HoldChannel, SessionIdleTTL: cfg.SessionIdleTTL(),
@@ -562,6 +568,8 @@ func cmdServe(args []string) error {
 		IntentEnforcement:        cfg.IntentEnforcement,
 		SkillAttribution:         st.SkillAttribution,
 		SkillAttributionEnforced: cfg.SkillAttributionEnforcement,
+		SkillContexts:            skillContexts.VerifyForEngine,
+		BaselineGrants:           st.BaselineGrant,
 	})
 	if err != nil {
 		return err
@@ -594,6 +602,7 @@ func cmdServe(args []string) error {
 		HermesHome: os.Getenv("HERMES_HOME"), HermesCLI: os.Getenv("SIQ_AGENT_SECURITY_HERMES_CLI"), LocalAppData: os.Getenv("LOCALAPPDATA"),
 		Openshell:  openshell.New(openshell.Options{ProbeTimeout: 5 * time.Second}),
 		ListenHost: "127.0.0.1", ListenPort: cfg.Port,
+		SkillContexts: skillContexts,
 	})
 	if err != nil {
 		return err

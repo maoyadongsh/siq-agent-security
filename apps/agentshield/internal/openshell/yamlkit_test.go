@@ -44,7 +44,10 @@ func TestParseRealPolicyGetFullV2Network(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	rules := networkRules(asMap(doc["network_policies"]))
+	rules, err := networkRules(doc["network_policies"])
+	if err != nil {
+		t.Fatal(err)
+	}
 	if len(rules) != 1 || rules[0].Endpoint != "api.example.com:443" {
 		t.Fatalf("network: %+v", rules)
 	}

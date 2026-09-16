@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { localApi } from '../api';
 import { useLocalSession } from '../session';
 import { newImportId } from '../skillImports';
+import { platformLabel } from '../format';
 import { installDirectoryValid, matchesInstallAuthority, skillInstallErrorText } from '../skillInstall';
 import type { Grant, ImportPermissionSource, SkillInstallPlan, SkillInstallRequest } from '../types';
 
@@ -86,8 +87,8 @@ export default function SkillInstallPreview({ grant, source, skillName, onOperat
   if (installId) return busy ? <p role="status">正在提交安装，请稍候。结果可按原操作编号重新查询。</p> : null;
   return <section className="skill-install-preview" aria-labelledby="install-preview-heading">
     <h3 id="install-preview-heading">安装预览</h3>
-    <p className="page-desc">权限已批准。先核对安装位置与内容；生成预览会准备本机暂存副本，尚未安装到 Hermes。</p>
-    <p className="page-desc">目标为此授权绑定的 Hermes 实例；操作者沿用上方填写的批准人。</p>
+    <p className="page-desc">权限已批准。先核对安装位置与内容；生成预览会准备本机暂存副本，尚未安装到 {platformLabel(grant.platform)}。</p>
+    <p className="page-desc">目标为此授权绑定的 {platformLabel(grant.platform)} 实例；操作者沿用上方填写的批准人。</p>
     <div className="field"><label htmlFor="install-directory">Skill 安装目录名</label>
       <input id="install-directory" value={directory} onChange={(event) => setDirectory(event.target.value)} maxLength={64}
         disabled={working || !!pending || !!planId} aria-describedby="install-directory-help" />

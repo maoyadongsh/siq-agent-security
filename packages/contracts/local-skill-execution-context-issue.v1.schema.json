@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/local-skill-execution-context-issue.v1.schema.json",
+  "title": "Local skill execution context issue request V1",
+  "description": "管理员为已纳管、已绑定会话中的已安装 Skill 请求有限期 SEC。Skill、Grant、平台和 agent 身份全部由 daemon 重读，调用方不得提供。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "local-skill-execution-context-issue/v1"},
+    "instance_id": {"type": "string", "pattern": "^hi-[0-9a-f]{32}$"},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "task_id": {"type": "string", "maxLength": 256},
+    "install_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "ttl_seconds": {"type": "integer", "minimum": 60, "maximum": 86400},
+    "actor_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "confirm_issue": {"const": true}
+  },
+  "required": [
+    "schema_version",
+    "instance_id",
+    "session_id",
+    "task_id",
+    "install_id",
+    "ttl_seconds",
+    "actor_id",
+    "confirm_issue"
+  ]
+}

@@ -624,7 +624,7 @@ func TestOpenshellProbeL3AndNetworkApply(t *testing.T) {
 	s.d.Openshell = cli2
 	code, applied := call(t, s, "POST", "/v1/openshell/apply", token, map[string]any{
 		"target": "s1", "expected_revision": "2",
-		"network":      []any{map[string]any{"endpoint": "api.example.com:443", "effect": "allow"}},
+		"network":      []any{map[string]any{"endpoint": "api.example.com:443", "effect": "allow", "binary_paths": []string{"/usr/bin/curl"}}},
 		"expect_allow": []string{"api.example.com:443"},
 		"expect_deny":  []string{"192.0.2.1:1"},
 	})
@@ -655,10 +655,31 @@ func TestOpenshellApplyRejectsCreatePathAndRevisionConflict(t *testing.T) {
 	s.d.Openshell = cli
 	code, out := call(t, s, "POST", "/v1/openshell/apply", token, map[string]any{
 		"target": "s1", "expected_revision": "99",
-		"network": []any{map[string]any{"endpoint": "api.example.com:443"}},
+		"network": []any{map[string]any{"endpoint": "api.example.com:443", "effect": "allow", "binary_paths": []string{"/usr/bin/curl"}}},
 	})
 	if code != 409 {
 		t.Fatalf("conflict: %d %v", code, out)
+	}
+}
+
+func TestOpenshellApplyRejectsUnknownNetworkConstraintBeforeBackendCall(t *testing.T) {
+	calls := 0
+	cli := openshell.New(openshell.Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
+		calls++
+		return 1, "", "backend must not be called"
+	}})
+	s, _ := newServer(t, "block")
+	s.d.Openshell = cli
+
+	code, out := call(t, s, "POST", "/v1/openshell/apply", token, map[string]any{
+		"target": "s1", "expected_revision": "2",
+		"network": []any{map[string]any{
+			"endpoint": "api.example.com:443", "effect": "allow",
+			"binary_paths": []string{"/usr/bin/curl"}, "methods": []string{"GET"},
+		}},
+	})
+	if code != 400 || calls != 0 {
+		t.Fatalf("unknown L7 constraint must fail before backend call: %d calls=%d %v", code, calls, out)
 	}
 }
 

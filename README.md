@@ -191,7 +191,7 @@ export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/.tmp/personal-state"
 .tmp/personal-bin/siq-agent-security pair --port 47611
 ```
 
-`start` 会初始化或复用该目录的配置；按 `Ctrl+C` 停止前台服务。示例状态保存在 `.tmp/personal-state`，再次使用时保持同一路径，清理 `.tmp` 前先保留需要的数据。后台安装、升级与恢复命令及其平台限制见[本地操作指南](AGENTSHIELD.md)，使用前核对所在分支是否包含对应实现。
+`start` 会初始化或复用该目录的配置；按 `Ctrl+C` 停止前台服务。示例状态保存在 `.tmp/personal-state`，再次使用时保持同一路径，清理 `.tmp` 前先保留需要的数据。后台安装、升级与恢复命令及其平台限制见[本地操作指南](AGENTSHIELD.md)，使用前核对所在分支是否包含对应实现。 完整的配对、权限确认、Skill 更新、原文与导出、保留退出流程见[个人客户端操作手册](docs/personal-client-operation-guide-20260916.md)。
 
 <details>
 <summary>前端开发与「未连接」排查</summary>

@@ -1,0 +1,14 @@
+{
+  "schema_version": "closure-b02-environment/v1",
+  "platform": "linux/arm64",
+  "openclaw_root": "/home/maoyd/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw",
+  "node": "/home/maoyd/.local/bin/node",
+  "port": 25183,
+  "service_driver": "installed_user_service",
+  "direct_leg": true,
+  "home_isolation": {
+    "method": "systemctl --user set-environment HOME（作用域化，快照/还原）",
+    "scope": "仅覆盖 client-install / service-start 启动动作",
+    "daemon_home": "/tmp/siq-closure-b02/journey-root/home"
+  }
+}

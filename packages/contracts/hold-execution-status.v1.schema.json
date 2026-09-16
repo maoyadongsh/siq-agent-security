@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/hold-execution-status.v1.schema.json",
+  "title": "Held execution reservation status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "action_id", "decision_receipt_id", "reservation_receipt_id", "expires_at", "reason_code"],
+  "properties": {
+    "schema_version": {"const": "hold-execution-status/v1"},
+    "status": {"enum": ["reserved", "completed", "cancelled", "uncertain", "denied", "expired"]},
+    "action_id": {"type": "string", "minLength": 1},
+    "decision_receipt_id": {"type": "string", "minLength": 1},
+    "reservation_receipt_id": {"type": "string", "minLength": 1},
+    "reconciliation_receipt_id": {"type": "string", "minLength": 1},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "reason_code": {"enum": ["hold_execution_reserved", "hold_execution_completed", "hold_execution_confirmed_occurred", "hold_execution_confirmed_not_occurred", "hold_execution_uncertain", "hold_authority_changed", "hold_expired"]}
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "reserved"}}, "required": ["status"]}, "then": {"properties": {"reason_code": {"const": "hold_execution_reserved"}}}},
+    {"if": {"properties": {"status": {"const": "completed"}}, "required": ["status"]}, "then": {"properties": {"reason_code": {"enum": ["hold_execution_completed", "hold_execution_confirmed_occurred"]}}}},
+    {"if": {"properties": {"reason_code": {"const": "hold_execution_confirmed_occurred"}}, "required": ["reason_code"]}, "then": {"required": ["reconciliation_receipt_id"]}},
+    {"if": {"properties": {"status": {"const": "cancelled"}}, "required": ["status"]}, "then": {"properties": {"reason_code": {"const": "hold_execution_confirmed_not_occurred"}, "reconciliation_receipt_id": {"type": "string"}}, "required": ["reconciliation_receipt_id"]}},
+    {"if": {"properties": {"status": {"const": "uncertain"}}, "required": ["status"]}, "then": {"properties": {"reason_code": {"const": "hold_execution_uncertain"}}}},
+    {"if": {"properties": {"status": {"const": "denied"}}, "required": ["status"]}, "then": {"properties": {"reason_code": {"const": "hold_authority_changed"}}}},
+    {"if": {"properties": {"status": {"const": "expired"}}, "required": ["status"]}, "then": {"properties": {"reason_code": {"const": "hold_expired"}}}}
+  ]
+}

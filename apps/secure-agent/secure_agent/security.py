@@ -105,6 +105,11 @@ class SecurityClient:
 
     def recheck_hold(self, request: dict, decision: dict) -> dict:
         body = {k: request[k] for k in ("platform", "session_id", "agent_id", "tool", "tool_call_id", "params")}
+        # Re-present the committed task; the server still validates it against
+        # the signed decision. Never infer task identity from model parameters.
+        body["task_id"] = request.get("task_id", self.identity.task_id)
+        if "runtime_task_id" in request:
+            body["runtime_task_id"] = request["runtime_task_id"]
         result = self._api.request("/v1/hold-status", {
             **body, "action_id": decision["action_id"], "decision_receipt_id": decision["receipt_id"]})
         if (result.get("schema_version") != "hold-status/v1"
@@ -114,6 +119,23 @@ class SecurityClient:
             raise AgentError("siq_hold_response_invalid")
         for name in ("reason_code", "expires_at"):
             string(result.get(name), maximum=128)
+        return result
+
+    def reserve_hold(self, request: dict, decision: dict, retry_id: str) -> dict:
+        body = {k: request[k] for k in ("platform", "session_id", "agent_id", "tool", "params")}
+        body["task_id"] = request.get("task_id", self.identity.task_id)
+        if "runtime_task_id" in request:
+            body["runtime_task_id"] = request["runtime_task_id"]
+        result = self._api.request("/v1/hold-executions/reserve", {
+            **body, "schema_version": "hold-execution-reserve/v1",
+            "original_tool_call_id": request["tool_call_id"], "retry_tool_call_id": retry_id,
+            "action_id": decision["action_id"], "decision_receipt_id": decision["receipt_id"]}, expected=201)
+        if (result.get("schema_version") != "hold-execution-status/v1"
+                or result.get("status") != "reserved"
+                or result.get("action_id") != decision["action_id"]
+                or result.get("decision_receipt_id") != decision["receipt_id"]):
+            raise AgentError("siq_hold_reservation_invalid")
+        string(result.get("reservation_receipt_id"), maximum=256)
         return result
 
     def report_source(self, report_id: str, content: dict, source_id: str):

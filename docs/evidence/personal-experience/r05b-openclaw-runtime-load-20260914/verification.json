@@ -1,0 +1,37 @@
+{
+  "schema_version": "siq-r05b-openclaw-runtime-load/v1",
+  "observed_at": "2026-09-14T20:46:00+08:00",
+  "host": {
+    "os": "linux",
+    "architecture": "aarch64"
+  },
+  "candidate_sha256": "10dedfb776d736c838593b28d24cac77e06eb2788615a74cd4c5f3ae9f46d617",
+  "openclaw_version": "2026.5.12 (f066dd2)",
+  "isolated_home": true,
+  "runtime_inspect": {
+    "exit_code": 0,
+    "plugin_id": "siq-agent-security",
+    "plugin_version": "0.3.0",
+    "enabled": true,
+    "activated": true,
+    "status": "loaded",
+    "imported": true,
+    "shape": "hook-only",
+    "typed_hooks": [
+      "after_tool_call",
+      "before_tool_call"
+    ],
+    "compatibility_code": "hook-only-plugin-shape"
+  },
+  "uninstall_readback": {
+    "exit_code": 0,
+    "plugin_entry_exists": false,
+    "config_mentions_product": false,
+    "unrelated_gateway_mode_preserved": true
+  },
+  "model_started": false,
+  "gateway_started": false,
+  "tool_call_executed": false,
+  "daily_profile_changed": false,
+  "result": "pass_with_native_tool_call_pending"
+}

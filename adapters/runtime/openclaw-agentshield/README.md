@@ -19,10 +19,10 @@ siq-agent-security adapter install openclaw
 | --- | --- |
 | `allow` | 无决策 |
 | `deny` | `{ block: true, blockReason }` |
-| `hold` | 要求宿主检查点协议版本 1；先取得本地批准，再进入平台审批，执行前按最终参数重查授权；缺能力、拒绝、过期或失败在 block 或托管身份下阻断 |
+| `hold` | 要求宿主检查点协议版本 1；本地批准、平台批准、最终参数重查后原子取得签名执行预留；缺能力、拒绝、过期、预留失败或响应丢失时阻断 |
 | `redact` | `{ params }`（改写后的参数） |
 
-`after_tool_call` 把结果截断 64 KiB 发 `/v1/observe`（服务端脱敏、更新污点）。
+`after_tool_call` 把结果截断 64 KiB 发 `/v1/observe`（服务端脱敏、更新污点）。普通调用绑定原决策；批准后的 hold 使用适配器派生的执行尝试 ID，并绑定签名 reservation 回执。预留已写但响应丢失时状态为 uncertain，不能盲目再执行。
 
 插件目录包含 `openclaw.plugin.json` 和 package 的 `openclaw.extensions` 入口。安装器登记加载路径并启用本插件 entry；保留其他插件的配置，已有 allow 列表时追加本插件。全局插件禁用、本插件在 deny 列表或相关配置类型错误时拒绝安装。重装保留卸载归属；卸载删除本插件的运行时登记和自建文件。
 
@@ -45,7 +45,7 @@ siq-agent-security adapter install openclaw
 - `policy-exec`：Go 单测 + linux 隔离 HOME 证据（隐藏注释 Skill → block；官方风格 Skill → warn）。见 [`docs/evidence/agentshield/openclaw-linux-2026-09-05/`](../../../docs/evidence/agentshield/openclaw-linux-2026-09-05/)。
 - 插件 TS：按 OpenClaw 2026-09 `before_tool_call` 合同编写（`block` 终止、`requireApproval` 首个生效、`params` 改写）。同一证据目录用插件会发出的 `/v1/decide` 请求体做了授前/授后 deny；**仍未**把插件加载进本机正在跑的 OpenClaw 网关进程。矩阵不标 `supported`。
 
-V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多 2048 项、TTL 300 秒，重复 ID 冲突不绑定旧动作。hold 的 execution observation 还必须有本地管理面批准记录；平台自身弹窗不自动创建本地批准。`node scripts/test-openclaw-adapter.cjs` 提供隔离的 mock hook 回归，真实平台 V2 归档仍为 unverified。
+V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多 2048 项、TTL 300 秒，重复 ID 冲突不绑定旧动作。hold 的 execution observation 必须绑定本地批准后生成的签名 reservation；平台自身弹窗不创建本地批准。`node scripts/test-openclaw-adapter.cjs` 提供隔离 hook 回归，原生宿主验收见本节后续记录。
 
 2026-09-07 21:11 的[原生失败证据](../../../docs/trusted-intent-v2-native-approval-gap-20260907-211105.md) 保留为历史基线。21:33 的[修复验收](../../../docs/trusted-intent-v2-approval-gate-validation-20260907-213332.md) 已通过六个原生场景：当前插件在进入平台审批前按完整动作身份和原参数确认本地批准，未批准或已拒绝时工具不执行。
 
@@ -76,6 +76,6 @@ Managed 安装器写入 camelCase 配置 `runtimeIdentityId` / `agentId` / `toke
 - **原生原文捕获（best effort，250ms 预算）**：allow 后把参数按 JSON pointer 展平（`/tool/name` + `/tool/arguments/...`），observe 带决策引用时把结果按 `/tool/result/...` 捕获，POST `/v1/raw-task-content/native-captures`（期望 201）。层级 ≤32、路径 ≤256、字段 ≤1024、单值 ≤1MiB，超界即放弃本次捕获。daemon 拥有原文采集策略与 secret 过滤，适配器不读原文开关。
 - 非托管（legacy）路径行为不变：不注册、不捕获。
 
-验证：`node --experimental-strip-types --test tests/managed-bridge.test.mjs`（8 个场景：legacy 不注册不捕获、托管 allow 注册+参数捕获、注册失败 fail-closed、异平台注册拒绝、旧 token 拒绝、observe 引用+输出捕获、捕获超时 best effort、托管 deny 带回执）。测试通过 resolution hook 替换 OpenClaw SDK 入口并用 mock 本地服务驱动真实 hook handler，**不是**真实 OpenClaw 网关验收；`native_available` 在真实原生捕获验证前仍为 false。
+验证：`node --experimental-strip-types --test tests/managed-bridge.test.mjs`（50 个场景，覆盖 legacy/托管注册、身份与 URL 边界、三种模式、参数/输出捕获、hold 相关性、签名预留拒绝/畸形响应/响应丢失及重复回调）。测试通过 resolution hook 替换 OpenClaw SDK 入口并用 mock 本地服务驱动真实 hook handler，**不是**真实 OpenClaw 网关验收；原生范围另见对应证据报告。
 
 凭据仅发送至显式端口的 HTTP loopback，localhost 固定为 127.0.0.1，不跟随重定向。托管模式要求真实会话、有效身份凭据及带 action/receipt 的允许裁决。输出原文仅在允许执行或 hold 最终复验通过后按精确调用关联采集一次；重复调用保持失效至关联过期。

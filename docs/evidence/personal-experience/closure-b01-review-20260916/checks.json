@@ -1,0 +1,437 @@
+{
+  "schema": "closure-b01-checks/v1",
+  "baseline": "personal-acceptance-baseline/v2",
+  "checks": [
+    {
+      "id": "b01_artifacts",
+      "desc": "独立 archive 双版本构建与签署",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "old": {
+          "commit": "efad840",
+          "tree": "2216f4a0e9eef3e750c13673da8e158d4e84a6a3",
+          "version": "0.2.0-b01-old"
+        },
+        "new": {
+          "commit": "53155b1",
+          "tree": "9ff0c7e9c50c48fcc249adfbe48df76b82d19c51",
+          "version": "0.2.0-b01-new"
+        },
+        "trust_layer": {
+          "test_public_key_b64": "d4Wha8wbIf4IUUzpbE33CcKxNADSMJaY1vxvC40Y9Ns=",
+          "seed_location": "run_dir/release-seed.b64 (0600, 不入证据)",
+          "patched_files": [
+            {
+              "file": "apps/agentshield/internal/skillmanifest/manifest.go",
+              "production": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
+              "test": "d4Wha8wbIf4IUUzpbE33CcKxNADSMJaY1vxvC40Y9Ns="
+            },
+            {
+              "file": "apps/agentshield/internal/skillmanifest/manifest.go",
+              "production": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
+              "test": "d4Wha8wbIf4IUUzpbE33CcKxNADSMJaY1vxvC40Y9Ns="
+            }
+          ],
+          "note": "测试构建内嵌单一固定测试公钥（fail-closed pin）；生产信任根未触碰；正式发行 leg 保持 blocked，解锁条件=维护者以正式种子签署 manifest"
+        },
+        "manifests": {
+          "old": "36ea5eda26f24ab6588992688d5694b51d4b794b15d725381451c51071811bf1",
+          "old_v2nocompat": "b4164eab5eb6c69e8f7fb3721732419b5f7d991e31e97b62e68f348578433c3d",
+          "new": "6ed138124de76c8ab6dbf52792e8cfae1102762d940a55ab68b57dd7a4e18b7a"
+        }
+      },
+      "ts": "10:16:59"
+    },
+    {
+      "id": "lc01_no_confirm",
+      "desc": "缺 --confirm-install 拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "cli_output_omitted"
+      },
+      "ts": "10:16:59"
+    },
+    {
+      "id": "lc01_bad_signature",
+      "desc": "篡改 manifest 签名拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "cli_output_omitted"
+      },
+      "ts": "10:16:59"
+    },
+    {
+      "id": "lc01_digest_mismatch",
+      "desc": "manifest 摘要与二进制不符拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "cli_output_omitted"
+      },
+      "ts": "10:16:59"
+    },
+    {
+      "id": "lc01_state_incompatible",
+      "desc": "无状态兼容声明（v2 manifest，marker v2）拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "cli_output_omitted"
+      },
+      "ts": "10:16:59"
+    },
+    {
+      "id": "lc01_no_side_effect",
+      "desc": "拒绝前后状态目录与用户单位不变",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "before": "882b72243b9edd300556da802c3d3641cf708afcf8a5934ef0c1fb86c05ad6d2",
+        "after": "882b72243b9edd300556da802c3d3641cf708afcf8a5934ef0c1fb86c05ad6d2",
+        "units_before": [],
+        "units_after": []
+      },
+      "ts": "10:17:00"
+    },
+    {
+      "id": "lc03_port_occupied",
+      "desc": "端口占用保留真实失败且不停止占用者",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "cli_output_omitted",
+        "occupier_alive": true,
+        "units_before": [],
+        "units_after": [],
+        "note": "client-install 对子进程失败仅报 installation not confirmed（设计面）"
+      },
+      "ts": "10:17:00"
+    },
+    {
+      "id": "lc01_install_ok",
+      "desc": "通过 client-install 安装旧版并启动",
+      "ok": true,
+      "level": "observed",
+      "detail": {},
+      "ts": "10:17:01"
+    },
+    {
+      "id": "lc01_identity",
+      "desc": "安装后身份面完整",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "identity": {
+          "port": 25241,
+          "state_directory_id": "032f2cc20ca686fb1b3ea8cf67a8917ba3af2533ba465afac4781e290a364cbe",
+          "version": "0.2.0-b01-old",
+          "unit_name": "siq-agent-security-305896a07a5ff82812c3d63762765efb.service",
+          "main_pid": "34571",
+          "fragment_path": "/run/user/1000/systemd/user/siq-agent-security-305896a07a5ff82812c3d63762765efb.service",
+          "binary_digest": "0b085b7d7d47c61a95ff78434dcacfd03a75bed843815fad2643734bd8365a45"
+        },
+        "signing_pubkey": "vL8mZOQ6Aic6iePF7c6y33hMXRn1KT93Q37qQOaxxaA="
+      },
+      "ts": "10:17:01"
+    },
+    {
+      "id": "lc03_special_path",
+      "desc": "中文/空格/% 状态路径实际运行（ExecStart 运行路径归属到特殊路径状态目录）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "state_dir": "/tmp/siq-takeover-review-20260916/b01-run/state 中文 空格%25实例",
+        "fragment_path": "/run/user/1000/systemd/user/siq-agent-security-305896a07a5ff82812c3d63762765efb.service",
+        "exec_start": "{ path=/tmp/siq-takeover-review-20260916/b01-run/state 中文 空格%25实例/client-releases/0b085b7d7d47c61a95ff78434dcacfd03a75bed843815fad2643734bd8365a45/siq-agent-security ; argv[]=/tmp/siq-takeover-review-20260916/b01-run/state 中文 空格%25实例/client-releases/0b085b7d7d47c61a95ff78434dcacfd03a75bed843815fad2643734bd8365a45/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 10:17:01 CST] ; stop_time=[n/a] ; pid=34571 ; code=(null) ; status=0/0 }"
+      },
+      "ts": "10:17:01"
+    },
+    {
+      "id": "lc02_pair_invalid",
+      "desc": "新码尚未消费时错误配对码拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 401
+      },
+      "ts": "10:17:01"
+    },
+    {
+      "id": "lc02_pair_valid",
+      "desc": "错误码重试后同一正确码换得管理会话",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 200
+      },
+      "ts": "10:17:01"
+    },
+    {
+      "id": "lc02_pair_replay",
+      "desc": "真实已消费配对码重放拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 401
+      },
+      "ts": "10:17:01"
+    },
+    {
+      "id": "lc02_expired_code",
+      "desc": "真实未消费配对码自然过期拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "elapsed_seconds": 301.0001133509213,
+        "status": 401
+      },
+      "ts": "10:22:02"
+    },
+    {
+      "id": "lc02_after_expiry_repair",
+      "desc": "过期后新码重新配对成功",
+      "ok": true,
+      "level": "observed",
+      "detail": {},
+      "ts": "10:22:02"
+    },
+    {
+      "id": "lc04_unit_precise",
+      "desc": "精确 runtime 用户单位加载并运行（FragmentPath 解析到本批源文件；ExecStart 指向 staged 程序）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "unit": "siq-agent-security-305896a07a5ff82812c3d63762765efb.service",
+        "fragment_path": "/run/user/1000/systemd/user/siq-agent-security-305896a07a5ff82812c3d63762765efb.service",
+        "installed_fragment": "/tmp/siq-takeover-review-20260916/b01-run/state 中文 空格%25实例/siq-agent-security-305896a07a5ff82812c3d63762765efb.service",
+        "state_unit_rendered": true,
+        "props": {
+          "MainPID": "34571",
+          "ActiveState": "active",
+          "UnitFileState": "linked-runtime"
+        }
+      },
+      "ts": "10:22:02"
+    },
+    {
+      "id": "lc04_no_second_process",
+      "desc": "重复启动无第二进程（MainPID 稳定）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "pid_before": "34571",
+        "pid_after": "34571"
+      },
+      "ts": "10:22:02"
+    },
+    {
+      "id": "lc04_stop_needs_confirm",
+      "desc": "service-stop 缺确认拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1
+      },
+      "ts": "10:22:02"
+    },
+    {
+      "id": "lc04_restart",
+      "desc": "stop→start 后服务恢复",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "stopped": "inactive",
+        "active": "active"
+      },
+      "ts": "10:22:03"
+    },
+    {
+      "id": "lc04_session_after_restart",
+      "desc": "重启后旧管理会话不再有效",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 401
+      },
+      "ts": "10:22:03"
+    },
+    {
+      "id": "lc06_upgrade_tx",
+      "desc": "双版本升级完成并记录事务号",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "stdout_bytes": 468
+      },
+      "ts": "10:22:03"
+    },
+    {
+      "id": "lc06_identity_kept",
+      "desc": "升级后身份/端口/单位保持",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "digest_old": "0b085b7d7d47c61a95ff78434dcacfd03a75bed843815fad2643734bd8365a45",
+        "digest_new": "1f702fc5bb7ee46bc27fb96840bb130af24e611443ae44fd61dc355d7cf63157"
+      },
+      "ts": "10:22:03"
+    },
+    {
+      "id": "lc07_rollback_wrong_path",
+      "desc": "回滚二进制与历史摘要不符拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "cli_output_omitted"
+      },
+      "ts": "10:22:03"
+    },
+    {
+      "id": "lc07_rollback",
+      "desc": "精确历史路径回滚完成",
+      "ok": true,
+      "level": "observed",
+      "detail": {},
+      "ts": "10:22:04"
+    },
+    {
+      "id": "lc07_rollback_identity",
+      "desc": "回滚后运行旧摘要且身份保持",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "digest": "0b085b7d7d47c61a95ff78434dcacfd03a75bed843815fad2643734bd8365a45"
+      },
+      "ts": "10:22:04"
+    },
+    {
+      "id": "lc07_recover",
+      "desc": "中断事务经 --recover 恢复完成",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "tx": "8e0da2924d7476e72df7c7dbfa0054d5a9ff846979f23b85ce8962477b055d33"
+      },
+      "ts": "10:22:05"
+    },
+    {
+      "id": "lc08_unknown_preserved",
+      "desc": "状态目录未知文件/链接/单位源文件不被覆盖删除（非 manager 单位）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "file": true,
+        "link": true,
+        "unit_kept": true
+      },
+      "ts": "10:22:05"
+    },
+    {
+      "id": "lc09_teardown_unit_gone",
+      "desc": "teardown 后单位已注销",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "load_state": "not-found"
+      },
+      "ts": "10:22:06"
+    },
+    {
+      "id": "lc09_state_retained",
+      "desc": "teardown 保留状态目录（身份/配置条目仍在）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "state_dir_kept": true,
+        "retained_entry_count": 34,
+        "retained_sample": [
+          "admin-recovery.token",
+          "admissions/adm-128ff50e8ad0.json",
+          "admissions/adm-128ff50e8ad0.skill-card.md",
+          "audit.jsonl",
+          "b01-unknown-user-file.txt",
+          "b01-unknown-user-link",
+          "b01-unknown-user-unit.service",
+          "client-releases/0b085b7d7d47c61a95ff78434dcacfd03a75bed843815fad2643734bd8365a45/manifest-36ea5eda26f24ab6588992688d5694b51d4b794b15d725381451c51071811bf1.json",
+          "client-releases/0b085b7d7d47c61a95ff78434dcacfd03a75bed843815fad2643734bd8365a45/siq-agent-security",
+          "client-releases/1f702fc5bb7ee46bc27fb96840bb130af24e611443ae44fd61dc355d7cf63157/manifest-6ed138124de76c8ab6dbf52792e8cfae1102762d940a55ab68b57dd7a4e18b7a.json"
+        ],
+        "entries_before": 35,
+        "entries_after": 34
+      },
+      "ts": "10:22:06"
+    },
+    {
+      "id": "lc09_reentry_install",
+      "desc": "保留状态上经 client-install 重入成功",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 0,
+        "stderr": "no_cli_output"
+      },
+      "ts": "10:22:06"
+    },
+    {
+      "id": "lc09_identity_reused",
+      "desc": "重入未重新生成身份（同 directory_id）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "directory_id": "032f2cc20ca686fb1b3ea8cf67a8917ba3af2533ba465afac4781e290a364cbe"
+      },
+      "ts": "10:22:07"
+    },
+    {
+      "id": "lc09_old_session_invalid",
+      "desc": "重入拒绝原来的真实管理会话",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 401
+      },
+      "ts": "10:22:07"
+    },
+    {
+      "id": "lc09_grant_revocation",
+      "desc": "重入后真实已撤 Grant 的签名、状态和 revision 保留",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 200
+      },
+      "ts": "10:22:07"
+    },
+    {
+      "id": "lc09_revoked_deploy_refused",
+      "desc": "撤销的 Grant 不能在重入后重新部署",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 400
+      },
+      "ts": "10:22:07"
+    },
+    {
+      "id": "b01_final_teardown",
+      "desc": "收尾 teardown 完成（单位注销）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "unit": "siq-agent-security-305896a07a5ff82812c3d63762765efb.service"
+      },
+      "ts": "10:22:07"
+    }
+  ],
+  "failures": [],
+  "complete": true
+}

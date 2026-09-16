@@ -11,6 +11,8 @@ import (
 	"runtime"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/export"
@@ -19,7 +21,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
 
-const Format = "agentshield.perf_baseline.v1"
+const Format = "agentshield.perf_baseline.v2"
 
 // HonestyNote is embedded in every report so consumers cannot treat this as SLA.
 const HonestyNote = "Observations only. No SLA pass/fail. Do not prefill millisecond guarantees; compare like-for-like hardware/version later."
@@ -76,7 +78,18 @@ type Metrics struct {
 	AppendPerReceiptUS float64       `json:"append_per_receipt_us"`
 	ReadLimitedMS      PercentileSet `json:"read_limited_ms"`
 	ExportBuildSealMS  PercentileSet `json:"export_build_seal_ms"`
-	RSSBytesAfter      uint64        `json:"rss_bytes_after"`
+	// RSSBytesAfter is the OS resident set size (see RSSSource), NOT Go heap
+	// Sys. The historical value here was runtime.MemStats.Sys, which is Go
+	// virtual-memory bookkeeping and can exceed or undershoot real RSS —
+	// consumers must read rss_source before interpreting this number.
+	RSSBytesAfter *uint64 `json:"rss_bytes_after"`
+	// RSSSource is "os_vm_rss" when RSSBytesAfter came from the OS
+	// (/proc/self/status VmRSS) or "unavailable" when the OS reading could
+	// not be taken; null + unavailable means not measured.
+	RSSSource string `json:"rss_source"`
+	// GoSysBytes is runtime.MemStats.Sys, kept as a Go-runtime observation
+	// only. It is not OS RSS and must not be compared against RSS budgets.
+	GoSysBytes uint64 `json:"go_memstats_sys_bytes"`
 }
 
 // PercentileSet is computed from measured samples (milliseconds).
@@ -228,6 +241,11 @@ func Run(o Options) (Report, error) {
 
 	var ms runtime.MemStats
 	runtime.ReadMemStats(&ms)
+	rssBytes, rssOK := osRSSBytes()
+	rssSource := "unavailable"
+	if rssOK {
+		rssSource = "os_vm_rss"
+	}
 
 	perUS := float64(0)
 	if o.Receipts > 0 {
@@ -255,7 +273,9 @@ func Run(o Options) (Report, error) {
 			AppendPerReceiptUS: perUS,
 			ReadLimitedMS:      percentiles(readSamples),
 			ExportBuildSealMS:  percentiles(exportSamples),
-			RSSBytesAfter:      ms.Sys,
+			RSSBytesAfter:      rssValue(rssBytes, rssOK),
+			RSSSource:          rssSource,
+			GoSysBytes:         ms.Sys,
 		},
 		Notes:      HonestyNote,
 		Thresholds: nil,
@@ -266,6 +286,39 @@ func Run(o Options) (Report, error) {
 // MarshalJSON encodes the report with indent for evidence archives.
 func MarshalJSON(r Report) ([]byte, error) {
 	return json.MarshalIndent(r, "", "  ")
+}
+
+// osRSSBytes reads the current OS resident set size. On Linux it parses
+// VmRSS from /proc/self/status (reported in kB); on other platforms or on
+// any read/parse failure it returns ok=false so the report can record
+// rss_source "unavailable" instead of a wrong number.
+func osRSSBytes() (uint64, bool) {
+	raw, err := os.ReadFile("/proc/self/status")
+	if err != nil {
+		return 0, false
+	}
+	for _, line := range strings.Split(string(raw), "\n") {
+		if !strings.HasPrefix(line, "VmRSS:") {
+			continue
+		}
+		fields := strings.Fields(strings.TrimPrefix(line, "VmRSS:"))
+		if len(fields) < 2 || fields[1] != "kB" {
+			return 0, false
+		}
+		kb, err := strconv.ParseUint(fields[0], 10, 64)
+		if err != nil || kb == 0 || kb > ^uint64(0)/1024 {
+			return 0, false
+		}
+		return kb * 1024, true
+	}
+	return 0, false
+}
+
+func rssValue(value uint64, ok bool) *uint64 {
+	if !ok {
+		return nil
+	}
+	return &value
 }
 
 func hostnameHash() string {

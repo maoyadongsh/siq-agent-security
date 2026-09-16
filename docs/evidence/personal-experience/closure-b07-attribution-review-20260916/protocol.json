@@ -1,0 +1,20 @@
+{
+  "purpose": "diagnostic only; does not replace official failed relative gate",
+  "order": [
+    "b0",
+    "b1",
+    "b1",
+    "b0"
+  ],
+  "cases": [
+    "A_allow",
+    "B_allow",
+    "B_revoked"
+  ],
+  "warmup": 5,
+  "samples_per_case": 200,
+  "exclusions": "none",
+  "production_changes": "none",
+  "timing_hook": "existing Engine.Options.StageTiming",
+  "no_threshold_adjustment": true
+}

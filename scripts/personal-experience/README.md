@@ -125,6 +125,17 @@ python3 scripts/personal-experience/skill-update-browser-smoke.py \
 
 使用真实 Chromium、临时 daemon/profile 和合成 Skill，检查候选差异、未批准禁止准备、刷新只读、明确确认与双击去重、提交和查询响应丢失、恢复历史及容量失败后的终止。脚本在临时私有暂存目录制造容量限制；不修改用户平台。截图检查桌面和移动确认入口。此脚本不执行原生智能体更新后的工具调用，不代表跨 OS 或可信 Skill 归属验收。原移除浏览器回归在关闭触发内容检查后等待 aria-busy=false，再重新打开窗口。
 
+## Linux/Hermes 原生 Skill 更新（R04-E）
+
+```bash
+python3 scripts/personal-experience/r04-hermes-native-update-smoke.py \
+  --binary .tmp/personal-experience/siq-agent-security \
+  --hermes-cli /path/to/hermes \
+  --out .tmp/personal-experience/r04-hermes-native-update.json
+```
+
+脚本在隔离 profile 中经产品入口安装并明确预载 V1，执行真实文件读取；随后验证 pending 候选比较和取消零写入、V2 批准/复比/确认更新、旧 Grant 与身份失效、新 Grant 激活与新身份/SEC、V2 明确预载后的真实读取及最终安全移除。模型为本机确定性夹具。V2 是明确导入的本地目录，该结果不代表公网更新源、其他平台或其他 OS 已验收。
+
 ## 草稿在途提交 HTTP 门控回归与变异复跑（KIMI-001-R1-B1）
 
 `apps/agentshield` 的 `TestGrantDraftHTTPInflightWriterConverges` 经真实 HTTP handler 覆盖草稿创建的在途提交窗口（grant 已发布、done 未发布）：窗口内第二请求必须等待并收敛到同一草稿。该测试随 `go test ./...` 与 CI 常规回归执行。
@@ -141,10 +152,43 @@ python3 scripts/personal-experience/grant-draft-inflight-mutation.py
 
 ```bash
 python3 scripts/personal-experience/discovery-native-smoke.py --binary .tmp/personal-experience/siq-agent-security --out .tmp/personal-experience/discovery-native.json
-python3 scripts/personal-experience/hermes-approval-gap-native-smoke.py --hermes-cli /path/to/hermes --binary .tmp/personal-experience/siq-agent-security --out .tmp/personal-experience/hermes-approval-gap.json
+python3 scripts/personal-experience/hermes-approval-gap-native-smoke.py --hermes-cli /path/to/hermes --binary .tmp/personal-experience/siq-agent-security --out .tmp/personal-experience/hermes-approved-retry.json
 ```
 
 发现探针在隔离 HOME 中构造两个不同名 Hermes profile（含同名不同版本合成 Skill）与 OpenClaw 状态目录，驱动候选 daemon 真实扫描：实例身份与 Skill 安装分开、归属正确、正文与私人目录内容不进入响应。批准缺口探针用公开 Hermes CLI 与真实 daemon 验证：需批准工具在 Hermes 保持 hold→block（不执行）、控制台批准后无原生恢复路径、拒绝后重试仍不执行；它记录当前缺口，不代表批准恢复已实现。两者均用合成操作者与临时状态，不读取用户配置、不调用真实模型。
+
+## OpenClaw 可信 Skill 上下文原生验证（R01）
+
+```bash
+python3 scripts/personal-experience/r01-sec-openclaw-native-smoke.py \
+  --openclaw-root /path/to/openclaw/source \
+  --node /path/to/node \
+  --binary .tmp/personal-experience/siq-agent-security \
+  --out .tmp/personal-experience/r01-sec-openclaw-native.json
+```
+
+脚本使用隔离 HOME、公开 `openclaw agent --local` 入口、本机确定性模型夹具和真实文件工具，依次走产品导入、权限、安装、激活、适配器身份和原生会话。它验证无 SEC 拒绝、session 级签名 SEC 放行、调用绑定、撤销后同会话拒绝，并用 `openclaw skills list --json` 确认独立发布的 Skill 可被原生加载器发现。该目录发现不能单独证明某次模型调用由指定 Skill 因果触发；不调用外部或付费模型，也不代替 Windows、macOS 与 WorkBuddy 验收。
+
+## Linux 桌面通知总线验证（R02-G）
+
+```bash
+python3 scripts/personal-experience/r02-linux-desktop-notify-smoke.py \
+  --out .tmp/personal-experience/r02-linux-desktop-notify.json
+```
+
+脚本启动隔离候选 daemon，创建真实签名 pending hold，并用 `dbus-monitor` 验证产品 count-only 通知经 `notify-send` 到达当前 GNOME session bus。它断言总线消息不含工具调用、action、receipt 或参数，随后明确拒绝 hold 并验签。需要 Linux、`notify-send`、`dbus-monitor` 和可用的 session D-Bus；总线接受不等于能从远程终端证明屏幕渲染或用户注意。
+
+## 当前候选 N09 逐行矩阵
+
+```bash
+python3 scripts/personal-experience/n09-current-candidate-matrix.py
+python3 scripts/personal-experience/n09-baseline-check.py \
+  --repo . \
+  --matrix docs/evidence/personal-experience/n09-current-candidate-20260915/matrix.json \
+  --summary docs/evidence/personal-experience/n09-current-candidate-20260915/summary.json
+```
+
+生成器要求六条输入报告全部通过且使用同一个候选二进制，再按报告实际检查项生成 9 格 × J1–J11 coverage。输出没有 `complete_acceptance` 行；校验通过只证明证据摘要、同候选绑定及声明范围有效，不表示 N09 或发行验收完成。
 # Linux 用户服务原生验证
 
 在已有 Linux 用户 systemd 管理器的隔离测试环境，从 `apps/control-api` 执行：

@@ -1,0 +1,20 @@
+{
+  "action": "deny",
+  "action_id": "act-cae462cb1c78fffa91570a9b",
+  "authority_reason_code": "intent_task_mismatch",
+  "authority_status": "invalid",
+  "effective_action": "deny",
+  "reason": "intent_task_mismatch",
+  "reason_code": "intent_task_mismatch",
+  "receipt_id": "rcp-55db6e68566a-124146.777120",
+  "skill_attribution": {
+    "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+    "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+    "status": "unknown"
+  },
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  }
+}

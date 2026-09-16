@@ -25,7 +25,7 @@ export default function ImportGrantSource({ grant, onOperation }: { grant: Grant
       <Link to={`/skill-imports?import=${source.import_id}`}>查看绑定的 Skill 候选</Link>
       <p>副本摘要 <code>{source.artifact_digest}</code></p>
       <p>检查摘要 <code>{source.analysis_sha256}</code></p>
-      {grant.status === 'approved' && grant.platform === 'hermes' && /^hri-[a-f0-9]{32}$/.test(grant.subject.id) ? <SkillInstallPreview key={`${grant.grant_id}:${grant.state_revision}`} grant={grant} source={source} skillName={skillName} onOperation={onOperation} /> : null}
+      {grant.status === 'approved' && ['hermes', 'openclaw'].includes(grant.platform) && /^hri-[a-f0-9]{32}$/.test(grant.subject.id) ? <SkillInstallPreview key={`${grant.grant_id}:${grant.state_revision}`} grant={grant} source={source} skillName={skillName} onOperation={onOperation} /> : null}
     </> : failed ? <p role="alert" className="action-error">无法读取候选来源，请重新打开此授权。批准时服务还会完整复验副本。</p> : <p role="status">正在读取候选来源…</p>}
   </div>;
 }

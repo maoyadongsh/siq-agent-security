@@ -55,6 +55,16 @@ func RequestBinding(subject Subject, task, tool, call string, params map[string]
 	h := sha256.Sum256(b)
 	return hex.EncodeToString(h[:]), nil
 }
+
+// CallBinding is the RequestBinding shape with task optional: skill execution
+// contexts at session granularity bind no task. A recorded call binding lets an
+// auditor re-prove which exact call a verified attribution was issued for.
+func CallBinding(platform, sessionID, agentID, taskID, tool, toolCallID string, params map[string]any) (string, error) {
+	if taskID == "" {
+		taskID = "-"
+	}
+	return RequestBinding(Subject{Platform: platform, SessionID: sessionID, AgentID: agentID}, taskID, tool, toolCallID, params)
+}
 func (a Assertion) Validate() error {
 	if a.SchemaVersion != "context-assertion/v1" || !idPattern.MatchString(a.AssertionID) || a.IssuerID != "local-admin" || a.SigningSchema != signing.SchemaLocalCanonicalV1 || !digestPattern.MatchString(a.RequestBinding) {
 		return invalid()

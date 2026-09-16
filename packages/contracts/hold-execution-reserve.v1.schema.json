@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/hold-execution-reserve.v1.schema.json",
+  "title": "Reserve one approved held execution",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "platform", "session_id", "agent_id", "tool", "original_tool_call_id", "retry_tool_call_id", "action_id", "decision_receipt_id", "params"],
+  "properties": {
+    "schema_version": {"const": "hold-execution-reserve/v1"},
+    "platform": {"type": "string", "minLength": 1, "maxLength": 64},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "agent_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "task_id": {"type": "string", "maxLength": 256},
+    "runtime_task_id": {"type": "string", "maxLength": 256},
+    "tool": {"type": "string", "minLength": 1, "maxLength": 256},
+    "original_tool_call_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "retry_tool_call_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "action_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "decision_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "params": {"type": "object"}
+  }
+}
