@@ -288,6 +288,57 @@ func TestWorkBuddyLegacyMixedRootsUninstallAllOwnedConfigs(t *testing.T) {
 	}
 }
 
+func TestWorkBuddyUninstallIgnoresMetadataOnlyConfig(t *testing.T) {
+	opts := testOpts(t, WorkBuddy)
+	ownedDir := t.TempDir()
+	unownedDir := t.TempDir()
+	t.Setenv("WORKBUDDY_CONFIG_DIR", ownedDir)
+	owned := filepath.Join(ownedDir, "settings.json")
+	command := hookCommand(opts.Binary, WorkBuddy, opts.StateDir)
+	doc := map[string]any{"hooks": map[string]any{
+		"PreToolUse":  upsertHook(nil, command, WorkBuddy),
+		"PostToolUse": upsertHook(nil, command, WorkBuddy),
+	}}
+	installed := encodePlanJSON(doc)
+	if err := os.WriteFile(owned, installed, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	rec := Record{
+		Platform: WorkBuddy, InstalledAt: opts.Now.UTC().Format(time.RFC3339),
+		Binary: opts.Binary, Modified: map[string]string{},
+		Written: map[string]string{}, OriginalModes: map[string]uint32{},
+	}
+	rec.Created = []string{owned}
+	rec.Written[owned] = imageHash(fileImage{Exists: true, Data: installed, Mode: 0o600})
+	unowned := filepath.Join(unownedDir, "settings.json")
+	sentinel := []byte(`{"hooks":{"PreToolUse":[{"hooks":[{"type":"command","command":"siq-agent-security hook workbuddy"}]}]},"user_setting":true}`)
+	if err := os.WriteFile(unowned, sentinel, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	rec.Written[unowned] = imageHash(fileImage{Exists: true, Data: sentinel, Mode: 0o600})
+	rec.OriginalModes[unowned] = 0o600
+	// A legacy backup can contain digest metadata for an unrelated file.
+	// Metadata alone must not enlarge the set of files this install owns.
+	backupDir := filepath.Join(opts.StateDir, "backups", "adapters")
+	if err := os.MkdirAll(backupDir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := json.Marshal(rec)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(backupDir, "workbuddy.20260916.json"), raw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	got, err := os.ReadFile(unowned)
+	if err != nil || string(got) != string(sentinel) {
+		t.Fatal("metadata-only config was modified")
+	}
+}
+
 func TestWorkBuddyHookQuotesBinaryAndStatePaths(t *testing.T) {
 	if os.PathSeparator == '\\' {
 		t.Skip("POSIX shell quoting test")

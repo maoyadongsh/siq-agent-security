@@ -160,16 +160,6 @@ func hostConfigPaths(rec Record) []string {
 			set[path] = struct{}{}
 		}
 	}
-	for path := range rec.Written {
-		if filepath.Base(path) == "settings.json" {
-			set[path] = struct{}{}
-		}
-	}
-	for path := range rec.OriginalModes {
-		if filepath.Base(path) == "settings.json" {
-			set[path] = struct{}{}
-		}
-	}
 	paths := make([]string, 0, len(set))
 	for path := range set {
 		paths = append(paths, path)
