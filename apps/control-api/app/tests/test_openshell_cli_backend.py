@@ -250,6 +250,8 @@ def test_probe_status_rc_nonzero_fails_closed():
 def test_version_cache_bound_to_endpoint_and_fresh(monkeypatch):
     """O04：版本缓存绑定调用指纹；endpoint 变更立即失效，过期后重新解析。"""
     cli_version_calls = 0
+    now = [10.0]  # Simulate a freshly booted CI host; uptime is not a TTL oracle.
+    monkeypatch.setattr("app.adapters.openshell.cli_backend.time.monotonic", lambda: now[0])
 
     def runner(args):
         nonlocal cli_version_calls
@@ -257,8 +259,6 @@ def test_version_cache_bound_to_endpoint_and_fresh(monkeypatch):
             return 0, GATEWAY_INFO, ""
         if tuple(args) == ("status",):
             return 0, STATUS_OK, ""
-        if tuple(args) == ("status",):
-            return 0, STATUS_NO_VERSION, ""
         if tuple(args) == ("--version",):
             cli_version_calls += 1
             return 0, VERSION_OUTPUT_V104, ""
@@ -274,7 +274,7 @@ def test_version_cache_bound_to_endpoint_and_fresh(monkeypatch):
     monkeypatch.setenv("SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT", "http://127.0.0.1:17672")
     backend.probe()  # endpoint 变化 → 指纹失效，重新解析
     assert cli_version_calls == 2
-    backend._detected_at = 0.0  # 过期
+    now[0] += 301.0  # Advance beyond TTL, independent of host uptime.
     backend.probe()
     assert cli_version_calls == 3
 
