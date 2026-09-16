@@ -1,0 +1,52 @@
+{
+  "schema_version": "personal-macos-workbuddy-native/v1",
+  "recorded_at": "2026-09-16T21:39:00+08:00",
+  "candidate_sha": "39e8ef5561021b4f96a579fff506b36ca802c08b",
+  "binary_sha256": "d9f4b381a488cf95b58914a8a590974a69759d2415edae87d00707dc3e435155",
+  "host": "WorkBuddy 5.5.6 native macOS desktop",
+  "environment": "macOS 26.6.2 arm64, Apple M4, isolated WorkBuddy configuration, state and workspace",
+  "method": "native_desktop",
+  "checks": {
+    "discovery": {
+      "result": "pass",
+      "observation": "The isolated WorkBuddy 5.5.6 desktop loaded the installed product hook."
+    },
+    "pre_execution_denial": {
+      "result": "pass",
+      "observation": "The native desktop Read call was denied before the isolated out-of-grant file could be read."
+    },
+    "final_parameter_recheck": {
+      "result": "pass",
+      "observation": "A grant limited to safe/ did not authorize the final Read argument resolving to workspace/outside.txt; signed receipt seq 15 reports deny/grant_scope_violation."
+    }
+  },
+  "receipt": {
+    "chain": "local",
+    "verified": true,
+    "receipts": 16,
+    "head_seq": 15,
+    "head_hash": "43265b1ed08111a6356274541b5aa4151712413d00e076c8149ff91c515fac68",
+    "denied_seq": 15,
+    "platform": "workbuddy",
+    "tool": "Read",
+    "action": "deny",
+    "reason_code": "grant_scope_violation"
+  },
+  "side_effect_check": {
+    "outside_file_sha256_before": "2c130edb6409ed676b7d4a0de5502170a746386b4fb58ed0ec5ec9d9f2d95789",
+    "outside_file_sha256_after": "2c130edb6409ed676b7d4a0de5502170a746386b4fb58ed0ec5ec9d9f2d95789",
+    "forbidden_write_present": false
+  },
+  "cleanup": {
+    "isolated_daemon_stopped": true,
+    "adapter_uninstalled": true,
+    "both_isolated_configs_without_product_hook": true,
+    "daily_workbuddy_config_sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+    "daily_workbuddy_config_without_product_hook": true
+  },
+  "limitations": [
+    "This run did not recheck normal execution or service-unavailable denial on this candidate; earlier P08 evidence belongs to an older candidate.",
+    "No trusted host hold/resume, same-call Skill provenance or pre-install interception capability was observed.",
+    "An isolated desktop interaction is not a production rollout or formal signing/notarization proof."
+  ]
+}
