@@ -182,6 +182,43 @@ func TestWorkBuddyChangedConfigDoesNotUninstallOtherInstance(t *testing.T) {
 	}
 }
 
+func TestWorkBuddyReinstallRefusesDifferentConfigRoot(t *testing.T) {
+	opts := testOpts(t, WorkBuddy)
+	first := t.TempDir()
+	second := t.TempDir()
+	t.Setenv("WORKBUDDY_CONFIG_DIR", first)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	firstConfig := filepath.Join(first, "settings.json")
+	installed, err := os.ReadFile(firstConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Setenv("WORKBUDDY_CONFIG_DIR", second)
+	if _, err := Install(opts); err == nil || !strings.Contains(err.Error(), "host config directory differs") {
+		t.Fatalf("different config root must be rejected, got %v", err)
+	}
+	if exists(filepath.Join(second, "settings.json")) {
+		t.Fatal("rejected install wrote the second config root")
+	}
+	current, err := os.ReadFile(firstConfig)
+	if err != nil || string(current) != string(installed) {
+		t.Fatal("rejected install changed the first config root")
+	}
+
+	t.Setenv("WORKBUDDY_CONFIG_DIR", first)
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	if data, err := os.ReadFile(firstConfig); err == nil && strings.Contains(string(data), "hook workbuddy") {
+		t.Fatal("original config root could not be cleanly uninstalled")
+	} else if err != nil && !os.IsNotExist(err) {
+		t.Fatal(err)
+	}
+}
+
 func TestWorkBuddyInvalidConfigOverrideNeverFallsBack(t *testing.T) {
 	for _, kind := range []string{"relative", "symlink", "ancestor-symlink", "file"} {
 		t.Run(kind, func(t *testing.T) {

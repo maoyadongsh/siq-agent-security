@@ -15,6 +15,7 @@ import (
 	"runtime"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
+	"slices"
 	"strings"
 	"time"
 
@@ -275,6 +276,12 @@ func Prepare(opts Options, action string) (*Plan, error) {
 	err = nil
 	if action == "uninstall" && prior == nil && opts.Platform != Trae {
 		return nil, errNoInstallRecord
+	}
+	if prior != nil && (opts.Platform == CodeBuddy || opts.Platform == WorkBuddy) {
+		path := filepath.Join(opts.configRoot(), "settings.json")
+		if prior.Modified[path] == "" && prior.Written[path] == "" && !slices.Contains(prior.Created, path) {
+			return nil, errors.New("adapter: host config directory differs from latest install record")
+		}
 	}
 	if prior != nil && prior.RuntimeIdentityID != "" {
 		if action == "uninstall" && opts.RuntimeIdentityID != "" && opts.RuntimeIdentityID != prior.RuntimeIdentityID {
