@@ -101,7 +101,7 @@
     "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
     "sig": { "type": "string", "pattern": "^[0-9a-f]{128}$", "description": "Ed25519 对 hash 的签名（hex）" },
     "issued_at": { "type": "string", "format": "date-time" },
-    "platform": { "type": "string", "enum": ["openclaw", "hermes", "codebuddy", "trae", "claude_code", "codex", "other"] },
+    "platform": { "type": "string", "enum": ["openclaw", "hermes", "codebuddy", "workbuddy", "trae", "claude_code", "codex", "other"] },
     "session_id": { "type": "string", "description": "平台会话键（脱敏）；污点与 trifecta 以此为作用域" },
     "agent_id": { "type": ["string", "null"] },
     "tool": { "type": "string", "description": "平台工具名，如 exec / terminal / web_fetch / send_message" },
