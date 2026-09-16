@@ -71,6 +71,14 @@ class ApprovalHarness(native.OpenClawHarness):
             "exec hold gate missing",
         )
 
+    def _dump_worker_log(self) -> None:
+        # Reopen from disk: the subprocess writes straight to the fd, so the
+        # buffered Python handle cannot see worker output.
+        try:
+            print((self.root / "worker.log").read_text(), file=sys.stderr, flush=True)
+        except OSError as exc:
+            print(f"worker log unreadable: {exc}", file=sys.stderr, flush=True)
+
     def wait_file(self, path, process, timeout=90):
         deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
@@ -82,7 +90,16 @@ class ApprovalHarness(native.OpenClawHarness):
                 raise RuntimeError(
                     f"native worker failed at {failure['stage']}: {failure['category']}"
                 )
-            require(process.poll() is None, "native worker exited before result")
+            try:
+                require(
+                    process.poll() is None,
+                    "native worker exited before result; on OpenClaw 2026.9+ the "
+                    "worker-side gateway may load 0 plugins (plugin approval "
+                    "runtime changed) and finish cases without holds",
+                )
+            except RuntimeError:
+                self._dump_worker_log()
+                raise
             time.sleep(0.025)
         raise RuntimeError("native worker result timeout")
 
@@ -109,7 +126,8 @@ class ApprovalHarness(native.OpenClawHarness):
                     "controlUi": {"enabled": False},
                 },
                 "browser": {"enabled": False},
-                "canvasHost": {"enabled": False},
+                # canvasHost/canvas was removed upstream in 2026.9; omitting it
+                # is valid on both old and new schemas.
                 "discovery": {"mdns": {"mode": "off"}},
                 "cron": {"enabled": False},
                 "update": {"checkOnStart": False},
@@ -128,6 +146,7 @@ class ApprovalHarness(native.OpenClawHarness):
         self.env.update(
             {
                 "OPENCLAW_HOME": str(self.root / "native-home"),
+                "OPENCLAW_CONFIG_PATH": str(config_path),
                 "PI_CODING_AGENT_DIR": str(self.root / "pi"),
                 "OPENCLAW_SKIP_CHANNELS": "1",
                 "OPENCLAW_SKIP_CRON": "1",
@@ -181,7 +200,8 @@ class ApprovalHarness(native.OpenClawHarness):
             str(ROOT / "scripts/openclaw-approval-gate-worker.mjs"),
             str(spec),
         ]
-        with tempfile.TemporaryFile(mode="w+t") as log:
+        log_path = self.root / "worker.log"
+        with open(log_path, "w+t") as log:
             process = subprocess.Popen(
                 command, cwd=self.workspace, env=self.env, stdout=log, stderr=log
             )
@@ -190,9 +210,13 @@ class ApprovalHarness(native.OpenClawHarness):
                     call_id = case["id"]
                     deadline = time.monotonic() + 90
                     while True:
-                        require(
-                            process.poll() is None, "native worker exited before hold"
-                        )
+                        try:
+                            require(
+                                process.poll() is None, "native worker exited before hold"
+                            )
+                        except (AssertionError, RuntimeError):
+                            self._dump_worker_log()
+                            raise
                         current = [
                             r
                             for r in self.receipts()
