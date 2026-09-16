@@ -38,6 +38,7 @@ type Options struct {
 	RuntimeIdentityID string          `json:"runtime_identity_id,omitempty"`
 	Instance          *InstanceTarget `json:"instance,omitempty"`
 	NativeEnable      bool            `json:"native_enable,omitempty"`
+	InstallPolicy     bool            `json:"install_policy,omitempty"`
 	NativeCLI         string          `json:"native_cli,omitempty"`
 	Platform          string          // required
 	Home              string          // override os.UserHomeDir (tests)

@@ -2,12 +2,14 @@ package adapters
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
@@ -32,9 +34,9 @@ func TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean(t *testing.T) {
 		"benign/pure-doc":       "allow",
 	}
 	for rel, want := range cases {
-		in := `{"targetType":"skill","target":{"name":"x"},"source":{"kind":"clawhub","locator":"clawhub:x"},"stagedPath":"` + fixture(rel) + `"}`
+		in := `{"protocolVersion":1,"targetType":"skill","targetName":"x","source":{"kind":"clawhub","locator":"clawhub:x"},"sourcePathKind":"directory","sourcePath":"` + fixture(rel) + `"}`
 		out := PolicyExec(strings.NewReader(in), deps(t))
-		if out.Decision != want {
+		if out.ProtocolVersion != 1 || out.Decision != want {
 			t.Fatalf("%s: got %s (%s)", rel, out.Decision, out.Reason)
 		}
 		if out.AdmissionID == "" || out.Verdict == "" {
@@ -45,17 +47,44 @@ func TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean(t *testing.T) {
 
 func TestPolicyExecFailsClosed(t *testing.T) {
 	for name, in := range map[string]string{
-		"malformed":    `{not json`,
-		"no path":      `{"targetType":"skill"}`,
-		"missing dir":  `{"targetType":"skill","stagedPath":"/nonexistent/skill"}`,
-		"file not dir": `{"targetType":"skill","stagedPath":"` + fixture("benign/pure-doc/SKILL.md") + `"}`,
+		"malformed":       `{not json`,
+		"no path":         `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory"}`,
+		"old protocol":    `{"targetType":"skill","stagedPath":"` + fixture("benign/pure-doc") + `"}`,
+		"future protocol": `{"protocolVersion":2,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"` + fixture("benign/pure-doc") + `"}`,
+		"missing dir":     `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"/nonexistent/skill"}`,
+		"file not dir":    `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"` + fixture("benign/pure-doc/SKILL.md") + `"}`,
+		"wrong kind":      `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"file","sourcePath":"` + fixture("benign/pure-doc") + `"}`,
+		"trailing object": `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"` + fixture("benign/pure-doc") + `"}{}`,
 	} {
 		if out := PolicyExec(strings.NewReader(in), deps(t)); out.Decision != "block" {
 			t.Fatalf("%s: must block, got %s", name, out.Decision)
 		}
 	}
-	if out := PolicyExec(strings.NewReader(`{"targetType":"plugin","stagedPath":"/x"}`), deps(t)); out.Decision != "warn" {
-		t.Fatalf("plugin targets are out of scope and must warn, got %s", out.Decision)
+	if out := PolicyExec(strings.NewReader(`{"protocolVersion":1,"targetType":"plugin","targetName":"x","sourcePathKind":"directory","sourcePath":"/x"}`), deps(t)); out.Decision != "block" {
+		t.Fatalf("plugin targets are out of scope and must block, got %s", out.Decision)
+	}
+	deps := deps(t)
+	deps.Persist = func(*admission.Result) error { return errors.New("disk unavailable") }
+	good := `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"` + fixture("benign/pure-doc") + `"}`
+	if out := PolicyExec(strings.NewReader(good), deps); out.Decision != "block" {
+		t.Fatalf("persistence failure must block, got %s", out.Decision)
+	}
+}
+
+func TestPolicyExecRejectsSymlinkedStagedRoot(t *testing.T) {
+	link := filepath.Join(t.TempDir(), "staged")
+	if err := os.Symlink(fixture("benign/pure-doc"), link); err != nil {
+		t.Fatal(err)
+	}
+	in, err := json.Marshal(map[string]any{
+		"protocolVersion": 1, "targetType": "skill", "targetName": "x",
+		"sourcePathKind": "directory", "sourcePath": link,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := PolicyExec(bytes.NewReader(in), deps(t)); got.Decision != "block" {
+		t.Fatalf("symlink root must block, got %s", got.Decision)
 	}
 }
 

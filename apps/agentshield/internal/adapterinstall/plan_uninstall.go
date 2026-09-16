@@ -77,7 +77,7 @@ func (p *Plan) prepareUninstall() error {
 		if sec, ok := doc["security"].(map[string]any); ok {
 			oldSec, _ := original["security"].(map[string]any)
 			if policy, exists := sec["installPolicy"]; exists && !reflect.DeepEqual(policy, oldSec["installPolicy"]) {
-				if !sameOpenClawLegacyPolicy(policy, rec.Binary) {
+				if !sameOpenClawLegacyPolicy(policy, rec.Binary) && !sameOpenClawCurrentPolicy(policy, Options{Binary: rec.Binary, StateDir: o.StateDir}) {
 					return conflictRecovery(path, rec.Modified[path], errors.New("installation policy changed outside this operation"))
 				}
 				delete(sec, "installPolicy")

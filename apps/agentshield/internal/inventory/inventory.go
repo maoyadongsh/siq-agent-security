@@ -269,8 +269,8 @@ func adapterInstalled(platform string, raw []byte) (installGate, toolHook bool) 
 	}
 	switch platform {
 	case "openclaw":
-		// Top-level security.installPolicy is unsupported by the verified
-		// public host. Its presence cannot prove an active installation gate.
+		// OpenClaw 2026.9.4 can run security.installPolicy, but a static
+		// config read cannot prove that the installed host accepted or ran it.
 		if plugins, ok := doc["plugins"].(map[string]any); ok {
 			b, _ := json.Marshal(plugins)
 			toolHook = product.Mentions(string(b))

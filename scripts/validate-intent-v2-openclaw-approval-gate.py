@@ -9,6 +9,7 @@ Security failures are reported as passed=false and exit 1, not a success gate.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import importlib.util
 import json
@@ -66,13 +67,18 @@ class ApprovalHarness(native.OpenClawHarness):
             "exec hold gate missing",
         )
 
-    def _dump_worker_log(self) -> None:
-        # Reopen from disk: the subprocess writes straight to the fd, so the
-        # buffered Python handle cannot see worker output.
-        try:
-            print((self.root / "worker.log").read_text(), file=sys.stderr, flush=True)
-        except OSError as exc:
-            print(f"worker log unreadable: {exc}", file=sys.stderr, flush=True)
+    def _early_worker_failure(self, process) -> None:
+        if process.poll() is None:
+            return
+        result = self.root / "control/result.json"
+        if result.is_file():
+            outcomes = json.loads(result.read_text()).get("outputs", [])
+            if outcomes and all(item.get("blocked") and not item.get("platform_requested") for item in outcomes):
+                raise RuntimeError(
+                    "native worker finished with all hold calls blocked before platform approval; "
+                    "installed host lacks the required approval execution recheck checkpoint"
+                )
+        raise RuntimeError("native worker exited before approval result")
 
     def wait_file(self, path, process, timeout=90):
         deadline = time.monotonic() + timeout
@@ -85,16 +91,7 @@ class ApprovalHarness(native.OpenClawHarness):
                 raise RuntimeError(
                     f"native worker failed at {failure['stage']}: {failure['category']}"
                 )
-            try:
-                require(
-                    process.poll() is None,
-                    "native worker exited before result; on OpenClaw 2026.9+ the "
-                    "worker-side gateway may load 0 plugins (plugin approval "
-                    "runtime changed) and finish cases without holds",
-                )
-            except RuntimeError:
-                self._dump_worker_log()
-                raise
+            self._early_worker_failure(process)
             time.sleep(0.025)
         raise RuntimeError("native worker result timeout")
 
@@ -203,13 +200,7 @@ class ApprovalHarness(native.OpenClawHarness):
                     call_id = case["id"]
                     deadline = time.monotonic() + 90
                     while True:
-                        try:
-                            require(
-                                process.poll() is None, "native worker exited before hold"
-                            )
-                        except (AssertionError, RuntimeError):
-                            self._dump_worker_log()
-                            raise
+                        self._early_worker_failure(process)
                         current = [
                             r
                             for r in self.receipts()
@@ -344,10 +335,17 @@ def main():
     parser.add_argument("--openclaw-root", type=Path, required=True)
     parser.add_argument("--node", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--private-workdir", type=Path, help="retain an isolated private fixture directory for failure diagnosis")
     args = parser.parse_args()
     args.openclaw_root = args.openclaw_root.resolve()
     args.node = args.node.absolute()
-    with tempfile.TemporaryDirectory(prefix="siq-openclaw-approval-") as temporary:
+    if args.private_workdir:
+        args.private_workdir = args.private_workdir.absolute()
+        args.private_workdir.mkdir(mode=0o700, parents=True, exist_ok=False)
+        temporary_context = contextlib.nullcontext(str(args.private_workdir))
+    else:
+        temporary_context = tempfile.TemporaryDirectory(prefix="siq-openclaw-approval-")
+    with temporary_context as temporary:
         harness = ApprovalHarness(Path(temporary), args)
         try:
             report = harness.run()

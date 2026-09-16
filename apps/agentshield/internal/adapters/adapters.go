@@ -23,30 +23,27 @@ import (
 // ---------------------------------------------------------------- OpenClaw
 
 // PolicyExecRequest is the subset of OpenClaw's security.installPolicy stdin
-// document we rely on (docs 2026-09: targetType, staged path, optional
-// skill.installSpec). Unknown fields are ignored.
+// document we rely on (OpenClaw 2026.9.4). Unknown metadata is ignored, but
+// the protocol and source-path discriminator are mandatory.
 type PolicyExecRequest struct {
-	TargetType string `json:"targetType"`
-	Target     struct {
-		Name string `json:"name"`
-	} `json:"target"`
-	Source struct {
+	ProtocolVersion int    `json:"protocolVersion"`
+	TargetType      string `json:"targetType"`
+	TargetName      string `json:"targetName"`
+	SourcePath      string `json:"sourcePath"`
+	SourcePathKind  string `json:"sourcePathKind"`
+	Source          struct {
 		Kind    string `json:"kind"`
 		Locator string `json:"locator"`
 	} `json:"source"`
-	StagedPath string `json:"stagedPath"`
-	Skill      *struct {
-		InstallID   string          `json:"installId"`
-		InstallSpec json.RawMessage `json:"installSpec"`
-	} `json:"skill"`
 }
 
 // PolicyExecResponse is OpenClaw's expected stdout: decision allow|warn|block.
 type PolicyExecResponse struct {
-	Decision    string `json:"decision"`
-	Reason      string `json:"reason"`
-	AdmissionID string `json:"admissionId,omitempty"`
-	Verdict     string `json:"verdict,omitempty"`
+	ProtocolVersion int    `json:"protocolVersion"`
+	Decision        string `json:"decision"`
+	Reason          string `json:"reason"`
+	AdmissionID     string `json:"admissionId,omitempty"`
+	Verdict         string `json:"verdict,omitempty"`
 }
 
 // PolicyExecDeps are what the install policy needs.
@@ -61,35 +58,42 @@ type PolicyExecDeps struct {
 // analyse is block (OpenClaw itself fails closed when the exec errors, so we
 // keep the contract symmetric).
 func PolicyExec(in io.Reader, d PolicyExecDeps) PolicyExecResponse {
+	block := func(reason string) PolicyExecResponse {
+		return PolicyExecResponse{ProtocolVersion: 1, Decision: "block", Reason: product.Name + ": " + reason}
+	}
 	var req PolicyExecRequest
-	if err := json.NewDecoder(in).Decode(&req); err != nil {
-		return PolicyExecResponse{Decision: "block", Reason: product.Name + ": malformed install policy request"}
+	decoder := json.NewDecoder(io.LimitReader(in, 262145))
+	if err := decoder.Decode(&req); err != nil {
+		return block("malformed install policy request")
 	}
-	if req.TargetType != "" && req.TargetType != "skill" {
-		return PolicyExecResponse{Decision: "warn", Reason: product.Name + ": only skill targets are analysed; plugin installs are not covered by this policy"}
+	var extra any
+	if err := decoder.Decode(&extra); err != io.EOF {
+		return block("malformed install policy request")
 	}
-	if req.StagedPath == "" {
-		return PolicyExecResponse{Decision: "block", Reason: product.Name + ": no staged path to analyse"}
+	if req.ProtocolVersion != 1 || req.TargetType != "skill" || req.SourcePathKind != "directory" || req.TargetName == "" || req.SourcePath == "" {
+		return block("unsupported install policy request")
 	}
-	st, err := os.Stat(req.StagedPath)
+	st, err := os.Lstat(req.SourcePath)
 	if err != nil || !st.IsDir() {
-		return PolicyExecResponse{Decision: "block", Reason: product.Name + ": staged path is not a readable directory"}
+		return block("staged path is not a readable directory")
 	}
 	trust := "unknown"
 	if strings.Contains(strings.ToLower(req.Source.Kind), "clawhub") {
 		trust = "community"
 	}
-	res, err := admission.Admit(req.StagedPath, admission.Options{
-		Source:  admission.Source{Type: "marketplace", Locator: firstNonEmpty(req.Source.Locator, req.Target.Name, req.StagedPath), TrustLevel: trust},
+	res, err := admission.Admit(req.SourcePath, admission.Options{
+		Source:  admission.Source{Type: "marketplace", Locator: firstNonEmpty(req.Source.Locator, req.TargetName, req.SourcePath), TrustLevel: trust},
 		Version: d.Version, Key: d.Key, Pack: d.Pack,
 	})
 	if err != nil {
-		return PolicyExecResponse{Decision: "block", Reason: product.Name + ": admission failed (fail-closed)"}
+		return block("admission failed (fail-closed)")
 	}
 	if d.Persist != nil {
-		_ = d.Persist(res)
+		if err := d.Persist(res); err != nil {
+			return block("admission persistence failed (fail-closed)")
+		}
 	}
-	out := PolicyExecResponse{AdmissionID: res.Admission.AdmissionID, Verdict: res.Admission.Verdict}
+	out := PolicyExecResponse{ProtocolVersion: 1, AdmissionID: res.Admission.AdmissionID, Verdict: res.Admission.Verdict}
 	switch res.Admission.Verdict {
 	case "admit":
 		out.Decision, out.Reason = "allow", product.Name+": no capability declarations or threats found"

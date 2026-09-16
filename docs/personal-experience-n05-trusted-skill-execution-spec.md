@@ -43,6 +43,8 @@
 
 ### 2.3 结论
 
+2026-09-17 macOS arm64 对已安装 OpenClaw 2026.9.4 的公开 `PluginHookBeforeToolCallEvent` 类型及原生包装器再次核实：工具事件新增 `toolKind`、`toolInputKind`、`derivedPaths` 等，但仍无模型不可伪造的「本次工具调用由哪个 Skill 造成」字段。`derivedPaths` 仅为非权威路径提示；`skillName` 仅在宿主自身 Skill Workshop/斜杠命令等内部路径出现，未作为每次工具调用的因果事实进入钩子。本批仍只可认定 SEC 的 `controlled_session` / `controlled_task`，不得提升为逐调用 Skill 因果归属。[OpenClaw 官方工具钩子合同](https://docs.openclaw.ai/plugins/hooks/tool-policy)与本机分发物均如此；其他宿主仍需各自原生证据。
+
 当前两个已装宿主在工具调用边界**都不能**提供模型不可自行赋值的 Skill 归属。能力缺口成立；按任务书 §5.2.2 选择现有受控启动路径（managed 实例 + runtime identity + 签名 binding）上的最小可执行方案，即 §3 的 SEC。不得把「已安装钩子」表述为「可信宿主归属」。
 
 ## 3. Skill 执行上下文（SEC），合同 `skill-execution-context/v1`

@@ -1202,6 +1202,10 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 
 **安装检查入口**：使用 SIQ 的 Skill 导入、检查与确认安装流程。已验证的 OpenClaw 2026.5.12 不接受顶层 `security.installPolicy`，安装器不得注入该字段，也不得据此声称原生安装已被拦截。`policy-exec` 保留为具备明确调用合同的外部宿主接口。历史本产品写入的字段仅在安装记录归属及完整内容匹配后移除；未知用户配置保留。
 
+**2026-09-17 OpenClaw 2026.9.4 增量**：该宿主已提供 `security.installPolicy` 的正式 operator-owned 装前入口，覆盖受支持的 Skill/Plugin 安装与更新；它与仅在已加载插件流程触发的 `before_install` 不等价。仅在显式 `--enable-install-policy` 的 OpenClaw 单实例预览/安装中，安装器才可写入本产品精确配置，并且必须拒绝已有未知策略、保留无关字段、卸载只剥离记录归属且完整匹配的本产品配置；旧版本默认仍不注入。策略只声明 `targets:["skill"]`，不声称覆盖 Plugin；可执行文件是经宿主校验的绝对普通文件，策略子进程用显式状态目录环境变量，不依赖终端 PATH。`policy-exec` 严格接受 `protocolVersion:1`、`targetType:"skill"`、`sourcePathKind:"directory"` 和非空 `sourcePath`，仅在静态 admission 成功且持久化成功时返回含 `protocolVersion:1` 的 `allow`/`warn`/`block`；缺字段、未知版本/类型、不可读目录、分析或持久化失败均返回 block。warn 必须经宿主独立确认；不把通过准入等同于运行授权。必须用本机公开安装入口证明 block 时目标未发布、allow 时发布，随后外科卸载并核对原配置。未经此原生证明不得提升 `install_interception`。
+
+同版批准钩子的公开类型仅有 `onResolution`，没有等待式、可否决的 `beforeExecute(finalParams)`；分发实现异步通知 `onResolution` 而不等待其 Promise。固定本机版本的原生 worker 真实运行结果为所有 hold 在平台审批前 fail-closed，原因为缺 `approvalExecutionRecheckVersion=1`。不得以修改夹具超时、给配置补能力字段或在异步回调内预留来声称安全继续；`approval_resume`/最终参数复验仍 blocked，待宿主提供执行前等待式检查点或产品实施并实测符合 N06 的原生可信重试。来源（2026-09-17 核对）：[OpenClaw 安装策略](https://docs.openclaw.ai/tools/skills-config#operator-install-policy-securityinstallpolicy)、[工具调用策略钩子](https://docs.openclaw.ai/plugins/hooks/tool-policy)及本机 2026.9.4 分发物 `plugin-entry` 类型/`agent-tools.before-tool-call` 实现。
+
 **运行时（L2）**：插件 `adapters/runtime/openclaw-agentshield/`（TypeScript，`definePluginEntry`）：
 
 - 安装资产包含 `openclaw.plugin.json`（插件 ID、无凭据配置 schema）和 package 的 `openclaw.extensions` 入口。安装器把插件绝对目录加入 `plugins.load.paths`，启用本插件 entry；已有 allow 列表时仅追加本插件，保留其他插件。显式全局禁用或 deny 本插件、配置类型错误时安装拒绝，不擅自打开全局插件开关。卸载只移除本插件的路径/entry/allow 项。

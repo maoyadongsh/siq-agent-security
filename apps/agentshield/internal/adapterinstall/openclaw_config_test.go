@@ -80,6 +80,57 @@ func TestOpenClawPreservesForeignInstallPolicy(t *testing.T) {
 	}
 }
 
+func TestOpenClawExplicitInstallPolicyRoundTrip(t *testing.T) {
+	opts := testOpts(t, OpenClaw)
+	opts.InstallPolicy = true
+	oc := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+	if err := os.MkdirAll(filepath.Dir(oc), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	original := `{"security":{"other":true},"gateway":{"mode":"local"}}`
+	if err := os.WriteFile(oc, []byte(original), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	plan, err := Prepare(opts, "install")
+	if err != nil || plan.View().InstallPolicy == nil || !*plan.View().InstallPolicy {
+		t.Fatalf("explicit policy missing from preview: %v", err)
+	}
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	doc, err := readJSONObject(oc)
+	if err != nil || !sameOpenClawCurrentPolicy(doc["security"].(map[string]any)["installPolicy"], opts) {
+		t.Fatal("installed policy differs from reviewed contract")
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(oc)
+	if err != nil || string(raw) != original {
+		t.Fatalf("explicit policy uninstall did not restore original config: %v", err)
+	}
+}
+
+func TestOpenClawExplicitInstallPolicyRefusesForeignPolicyBeforeWrite(t *testing.T) {
+	opts := testOpts(t, OpenClaw)
+	opts.InstallPolicy = true
+	oc := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+	if err := os.MkdirAll(filepath.Dir(oc), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	original := `{"security":{"installPolicy":{"enabled":true,"exec":{"command":"/foreign/policy"}}}}`
+	if err := os.WriteFile(oc, []byte(original), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Install(opts); err == nil {
+		t.Fatal("foreign install policy was overwritten")
+	}
+	raw, err := os.ReadFile(oc)
+	if err != nil || string(raw) != original {
+		t.Fatalf("foreign policy changed after rejected install: %v", err)
+	}
+}
+
 func TestOpenClawLegacyPolicyRequiresFullMatch(t *testing.T) {
 	policy := openClawInstallPolicy(Options{Binary: "/owned/siq"})
 	var decoded map[string]any

@@ -37,6 +37,7 @@ type PlanView struct {
 	InstanceID        string          `json:"instance_id,omitempty"`
 	InstanceName      string          `json:"instance_name,omitempty"`
 	NativeEnable      *bool           `json:"native_enable,omitempty"`
+	InstallPolicy     *bool           `json:"install_policy,omitempty"`
 	SchemaVersion     string          `json:"schema_version"`
 	PlanID            string          `json:"plan_id"`
 	PlanDigest        string          `json:"plan_digest"`
@@ -324,6 +325,10 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		rec.InstanceID = opts.Instance.ID
 		rec.ConfigDir = opts.Instance.ConfigDir
 	}
+	if opts.Platform == OpenClaw && action == "install" {
+		enabled := opts.InstallPolicy
+		view.InstallPolicy = &enabled
+	}
 	if opts.RuntimeIdentityID != "" {
 		view.SchemaVersion = "local-adapter-plan/v3"
 		view.RuntimeIdentityID = opts.RuntimeIdentityID
@@ -495,6 +500,16 @@ func (p *Plan) prepareInstall() error {
 				}
 			}
 		}
+		if o.InstallPolicy {
+			if sec == nil {
+				sec = map[string]any{}
+			}
+			if previous, exists := sec["installPolicy"]; exists && !sameOpenClawCurrentPolicy(previous, o) {
+				return errors.New("adapter: existing OpenClaw install policy is not owned by this operation")
+			}
+			sec["installPolicy"] = openClawCurrentPolicy(o)
+			doc["security"] = sec
+		}
 		return p.write(path, encodePlanJSON(doc), 0o600, "登记本插件的加载路径与启用项；保留其他平台设置")
 	case CodeBuddy, WorkBuddy:
 		path := filepath.Join(root, "settings.json")
@@ -532,6 +547,20 @@ func openClawInstallPolicy(o Options) map[string]any {
 	return map[string]any{"enabled": true, "targets": []any{"skill", "plugin"}, "exec": map[string]any{"source": "exec", "command": o.Binary, "args": []any{"policy-exec"}, "timeoutMs": 10000, "trustedDirs": []any{filepath.Dir(o.Binary)}, "passEnv": []any{product.EnvStateDir, product.EnvStateDirOld, "HOME", "PATH"}}}
 }
 
+func openClawCurrentPolicy(o Options) map[string]any {
+	return map[string]any{"enabled": true, "targets": []any{"skill"}, "exec": map[string]any{
+		"source": "exec", "command": o.Binary, "args": []any{"policy-exec"},
+		"timeoutMs": 10000, "trustedDirs": []any{filepath.Dir(o.Binary)},
+		"env": map[string]any{product.EnvStateDir: o.StateDir},
+	}}
+}
+
+func sameOpenClawCurrentPolicy(value any, o Options) bool {
+	var expected any
+	_ = json.Unmarshal(encodePlanJSON(openClawCurrentPolicy(o)), &expected)
+	return o.Binary != "" && o.StateDir != "" && reflect.DeepEqual(value, expected)
+}
+
 func sameOpenClawLegacyPolicy(value any, binary string) bool {
 	// Compare JSON-normalized numbers, since planJSON decodes numbers as float64.
 	var expected any
@@ -567,6 +596,11 @@ func installEntryStep(o Options) string {
 		return "平台安装入口未被接管，Windows 暂无受控安装命令；通过发现与诊断做事后检查。"
 	case Trae:
 		return "平台没有工具钩子，安装入口未被接管；通过静态检查、盘点与诊断做事后检查。"
+	case OpenClaw:
+		if o.InstallPolicy {
+			return "已显式配置 OpenClaw 原生 Skill 装前策略；仍须用受支持的宿主版本和真实安装入口验证，不覆盖 Plugin。"
+		}
+		return "OpenClaw 平台安装入口未被接管；经确认宿主版本后可在单实例预览并显式 --enable-install-policy。"
 	default:
 		return "平台安装入口未被接管，也不注入其不支持的安装拦截配置；通过发现与诊断做事后检查。"
 	}

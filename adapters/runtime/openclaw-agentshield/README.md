@@ -4,15 +4,15 @@
 
 ## Skill 安装检查
 
-请通过 SIQ 的 Skill 导入、检查和确认安装流程安装 Skill。已验证的 OpenClaw 2026.5.12 不接受顶层 `security.installPolicy`；安装器不再写入该字段，盘点也不把它视为有效安装门禁。尚未证明 OpenClaw 原生安装入口可被本插件拦截。
+请通过 SIQ 的 Skill 导入、检查和确认安装流程安装 Skill。已验证的 OpenClaw 2026.5.12 不接受顶层 `security.installPolicy`；默认安装器仍不写入该字段。OpenClaw 2026.9.4 已支持 operator-owned `security.installPolicy`，可在确认目标实例版本后显式执行 `siq-agent-security adapter preview openclaw install --enable-install-policy`、审阅后执行 `adapter install openclaw --enable-install-policy`。此策略只覆盖原生 Skill 安装/更新，不覆盖 Plugin；未知既有策略不得覆盖。
 
-`policy-exec` 保留供有明确调用合同的外部宿主使用。历史本产品配置仅在归属记录和完整策略内容匹配后迁移；未知用户配置保留。
+`policy-exec` 使用 OpenClaw 协议 v1 的 `sourcePath`/`sourcePathKind` 和 `protocolVersion`，错误或持久化失败时阻断。历史本产品配置仅在归属记录和完整策略内容匹配后迁移；卸载剥离本产品精确策略，未知用户配置保留。本机 2026.9.4 的公开 `skills install` 已在隔离 HOME/profile 上实测恶意 Skill 安装前被拒、干净 Skill 安装成功及卸载还原；这不证明其他宿主或旧版支持。
 
 ## L2 运行时
 
 ```bash
 siq-agent-security adapter install openclaw
-# writes plugin assets/manifest, registers plugins.load.paths + entry, without injecting unsupported installPolicy (backup first)
+# 默认只登记插件，不启用装前策略；旧版/未知版保持这个默认
 ```
 
 | 决策 API `action` | 插件返回 |
