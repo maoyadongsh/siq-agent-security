@@ -95,10 +95,10 @@ func (p *Plan) prepareUninstall() error {
 		if err := p.surgicalWrite(path, doc); err != nil {
 			return err
 		}
-	case CodeBuddy:
+	case CodeBuddy, WorkBuddy:
 		path := filepath.Join(root, "settings.json")
 		if !p.owns(path) {
-			return errors.New("adapter: CodeBuddy config directory differs from latest install record")
+			return errors.New("adapter: host config directory differs from latest install record")
 		}
 		doc, err := p.planJSON(path)
 		if err != nil {
@@ -131,12 +131,13 @@ func (p *Plan) prepareUninstall() error {
 						continue
 					}
 					remaining := []any{}
-					for _, command := range commands {
-						cmd, _ := command.(map[string]any)
-						if cmd["type"] == "command" && cmd["command"] == rec.Binary+" hook codebuddy" {
+					for _, cmdValue := range commands {
+						cmd, _ := cmdValue.(map[string]any)
+						text, _ := cmd["command"].(string)
+						if cmd["type"] == "command" && isProductToolHook(text, o.Platform) {
 							continue
 						}
-						remaining = append(remaining, command)
+						remaining = append(remaining, cmdValue)
 					}
 					if len(remaining) > 0 || len(commands) == 0 {
 						entry["hooks"] = remaining
@@ -196,12 +197,19 @@ func (p *Plan) prepareUninstall() error {
 }
 
 func (p *Plan) surgicalWrite(path string, doc map[string]any) error {
-	after := fileImage{Exists: true, Data: encodePlanJSON(doc), Mode: 0o600}
+	data := encodePlanJSON(doc)
+	mode := uint32(0o600)
 	// A configuration this install modified keeps the mode it had before the
 	// install touched it, matching the snapshot restore path below.
-	if mode, ok := p.payload.Record.OriginalModes[path]; ok {
-		after.Mode = mode
+	if originalMode, ok := p.payload.Record.OriginalModes[path]; ok {
+		mode = originalMode
 	}
+	if orig, err := p.input(path + originalSuffix); err != nil {
+		return err
+	} else if orig.Exists && jsonDocumentsEqual(orig.Data, data) {
+		data = append([]byte(nil), orig.Data...)
+	}
+	after := fileImage{Exists: true, Data: data, Mode: mode}
 	if len(doc) == 0 && p.payload.Record.Modified[path] == "" {
 		after = fileImage{}
 	}

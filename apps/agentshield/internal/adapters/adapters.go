@@ -1,7 +1,7 @@
 // Package adapters holds the host-side halves of platform adapters that run as
 // agentshield subcommands (dev-spec §4): OpenClaw's operator install policy
-// (`agentshield policy-exec`) and CodeBuddy's PreToolUse hook
-// (`agentshield hook codebuddy`). They translate platform I/O contracts to
+// (`agentshield policy-exec`) and CodeBuddy/WorkBuddy PreToolUse hooks
+// (`agentshield hook codebuddy|workbuddy`). They translate platform I/O contracts to
 // admission / decision calls and apply the fail-closed table; no policy lives here.
 package adapters
 
@@ -147,17 +147,29 @@ type Decider interface {
 	Observe(receipt.Request, string) error
 }
 
-// CodeBuddyHook maps one hook event. mode is the enforcement mode used for the
-// fail-closed table when the decider errors. stateDir receives unsigned pending
-// records on fail-closed (dev-spec §3.8.4); empty skips the log.
+// CodeBuddyHook maps one CodeBuddy hook event. WorkBuddy uses the same JSON
+// contract via HostToolHook with platform "workbuddy".
 func CodeBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (CodeBuddyOutput, error) {
+	return HostToolHook(in, d, agentID, mode, stateDir, "codebuddy")
+}
+
+// HostToolHook maps one CodeBuddy or WorkBuddy hook event. mode is the
+// enforcement mode used for the fail-closed table when the decider errors.
+// stateDir receives unsigned pending records on fail-closed (dev-spec §3.8.4);
+// empty skips the log. Receipts must carry the host platform; CodeBuddy CLI
+// must not be recorded as WorkBuddy.
+func HostToolHook(in io.Reader, d Decider, agentID, mode, stateDir, platform string) (CodeBuddyOutput, error) {
+	if platform != "codebuddy" && platform != "workbuddy" {
+		return failClosed(CodeBuddyOutput{}, "PreToolUse", mode, stateDir, platform, "", "", "unsupported hook platform")
+	}
 	var out CodeBuddyOutput
 	var ev CodeBuddyInput
 	if err := json.NewDecoder(in).Decode(&ev); err != nil {
-		return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", "", "", "malformed hook input")
+		return failClosed(out, "PreToolUse", mode, stateDir, platform, "", "", "malformed hook input")
 	}
 	out.HookSpecificOutput.HookEventName = ev.HookEventName
-	req := receipt.Request{Platform: "codebuddy", SessionID: firstNonEmpty(ev.SessionID, "codebuddy-default"), AgentID: agentID,
+	sessionDefault := platform + "-default"
+	req := receipt.Request{Platform: platform, SessionID: firstNonEmpty(ev.SessionID, sessionDefault), AgentID: agentID,
 		Tool: ev.ToolName, ToolCallID: ev.ToolUseID, Params: ev.ToolInput, Context: map[string]any{"cwd": ev.Cwd, "permission_mode": ev.PermissionMode}}
 	switch ev.HookEventName {
 	case "PostToolUse":
@@ -181,11 +193,11 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (Cod
 	case "PreToolUse", "":
 		out.HookSpecificOutput.HookEventName = "PreToolUse"
 		if d == nil {
-			return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", ev.ToolName, req.SessionID, "local hook initialization unavailable")
+			return failClosed(out, "PreToolUse", mode, stateDir, platform, ev.ToolName, req.SessionID, "local hook initialization unavailable")
 		}
 		dec, err := d.Decide(req)
 		if err != nil || dec == nil {
-			return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", ev.ToolName, req.SessionID, "decision service unavailable")
+			return failClosed(out, "PreToolUse", mode, stateDir, platform, ev.ToolName, req.SessionID, "decision service unavailable")
 		}
 		switch dec.Action {
 		case receipt.ActionAllow:
@@ -195,7 +207,7 @@ func CodeBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (Cod
 		case receipt.ActionHold, receipt.ActionRedact: // input rewrite is not integrated in this adapter → ask
 			out.HookSpecificOutput.PermissionDecision = "ask"
 		default:
-			return failClosed(out, "PreToolUse", mode, stateDir, "codebuddy", ev.ToolName, req.SessionID, "malformed decision")
+			return failClosed(out, "PreToolUse", mode, stateDir, platform, ev.ToolName, req.SessionID, "malformed decision")
 		}
 		out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": " + dec.Reason + " (receipt " + dec.Receipt.ReceiptID + ")"
 		return out, nil

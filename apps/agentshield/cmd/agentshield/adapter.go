@@ -94,10 +94,10 @@ func cmdAdapter(args []string) error {
 	if len(rest) == 0 || rest[0] == "auto" {
 		platforms = adapterinstall.Detect(home)
 		if action != "status" && len(platforms) == 0 {
-			return fmt.Errorf("adapter: no platform config dirs found under %s; pass openclaw|hermes|codebuddy|trae", home)
+			return fmt.Errorf("adapter: no platform config dirs found under %s; pass openclaw|hermes|codebuddy|workbuddy|trae", home)
 		}
 		if action == "status" && len(platforms) == 0 {
-			platforms = []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.Trae}
+			platforms = []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.WorkBuddy, adapterinstall.Trae}
 		}
 	} else {
 		platforms = []string{rest[0]}

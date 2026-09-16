@@ -201,7 +201,7 @@ func (p *Plan) write(path string, raw []byte, mode uint32, purpose string) error
 		if err != nil {
 			return err
 		}
-		if snapshot.Exists && !bytes.Equal(snapshot.Data, before.Data) {
+		if snapshot.Exists && !bytes.Equal(snapshot.Data, before.Data) && !jsonDocumentsEqual(snapshot.Data, before.Data) {
 			return errors.New("adapter: existing original snapshot needs review")
 		}
 		if !snapshot.Exists {
@@ -235,6 +235,14 @@ func (p *Plan) planJSON(path string) (map[string]any, error) {
 func encodePlanJSON(doc map[string]any) []byte {
 	raw, _ := json.MarshalIndent(doc, "", "  ")
 	return append(raw, '\n')
+}
+
+func jsonDocumentsEqual(a, b []byte) bool {
+	var da, db any
+	if json.Unmarshal(a, &da) != nil || json.Unmarshal(b, &db) != nil {
+		return false
+	}
+	return reflect.DeepEqual(da, db)
 }
 
 func Prepare(opts Options, action string) (*Plan, error) {
@@ -480,7 +488,7 @@ func (p *Plan) prepareInstall() error {
 			}
 		}
 		return p.write(path, encodePlanJSON(doc), 0o600, "登记本插件的加载路径与启用项；保留其他平台设置")
-	case CodeBuddy:
+	case CodeBuddy, WorkBuddy:
 		path := filepath.Join(root, "settings.json")
 		doc, err := p.planJSON(path)
 		if err != nil {
@@ -488,21 +496,26 @@ func (p *Plan) prepareInstall() error {
 		}
 		hooks, ok := doc["hooks"].(map[string]any)
 		if _, exists := doc["hooks"]; exists && !ok {
-			return errors.New("adapter: invalid CodeBuddy hooks object")
+			return errors.New("adapter: invalid host hooks object")
 		}
 		if hooks == nil {
 			hooks = map[string]any{}
 		}
+		command := hookCommand(o.Binary, o.Platform, o.StateDir)
 		for _, event := range []string{"PreToolUse", "PostToolUse"} {
 			if v, exists := hooks[event]; exists {
 				if _, ok := v.([]any); !ok {
-					return errors.New("adapter: invalid CodeBuddy hook list")
+					return errors.New("adapter: invalid host hook list")
 				}
 			}
-			hooks[event] = upsertHook(hooks[event], o.Binary+" hook codebuddy")
+			hooks[event] = upsertHook(hooks[event], command, o.Platform)
 		}
 		doc["hooks"] = hooks
-		return p.write(path, encodePlanJSON(doc), 0o600, "登记工具执行前和执行后的 SIQ 钩子；保留其他设置")
+		purpose := "登记工具执行前和执行后的 SIQ 钩子；保留其他设置"
+		if o.Platform == WorkBuddy {
+			purpose = "登记 WorkBuddy 桌面工具钩子；保留 enabledPlugins 及其他设置，不沿用 CodeBuddy 安装"
+		}
+		return p.write(path, encodePlanJSON(doc), 0o600, purpose)
 	}
 	return nil
 }

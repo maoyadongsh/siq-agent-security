@@ -222,6 +222,13 @@ func TestBuildRefusesQuarantine(t *testing.T) {
 	}
 }
 
+func TestBuildAcceptsWorkBuddy(t *testing.T) {
+	g := build(t, "workbuddy", sampleAdmission()).Grant
+	if g.Platform != "workbuddy" {
+		t.Fatalf("platform %s", g.Platform)
+	}
+}
+
 func TestDenyOverridesAllowOnOverlap(t *testing.T) {
 	adm := sampleAdmission()
 	adm.DeclaredFacts = []admission.DeclaredFact{

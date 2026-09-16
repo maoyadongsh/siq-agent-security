@@ -179,7 +179,7 @@ Linux 已注册服务可用 `siq-agent-security service-start` 启动，`siq-age
 升级前可执行 `siq-agent-security client-upgrade-check --manifest FILE --binary FILE`。它要求发行方签名的 v2 无迁移兼容声明并检查候选内容；v1 仍可暂存，但不能通过该预检。成功不代表已批准或切换版本。发行准备工具只有显式 `release-manifest --client-compatible` 才生成 v2；旧 Skill 引导脚本与冻结 v1 包保持原协议。
 
 
-Linux 已注册服务可执行 `siq-agent-security service-upgrade --manifest FILE --binary FILE --confirm-upgrade`。候选必须通过 v2 发行签名/兼容预检；确认后会短暂停止保护，block 模式下受控操作暂时拒绝。失败输出的事务 ID 可配合同一候选及 `--recover ID` 前滚恢复；不得替换目标。该流程不回滚台账，自动回退仍待实施。
+Linux 已注册服务与 macOS 已注册 LaunchAgent 可执行 `siq-agent-security service-upgrade --manifest FILE --binary FILE --confirm-upgrade`。候选必须通过 v2 发行签名/兼容预检；确认后会短暂停止保护，block 模式下受控操作暂时拒绝。失败输出的事务 ID 可配合同一候选及 `--recover ID` 前滚恢复；不得替换目标。该流程不回滚台账。显式 `service-rollback` 可把已完成切换恢复到原事务源配置。macOS 使用独立的 `local-launch-agent-switch/v1` 日志切换 `<label>.plist` 与 `launch-agent.json`，随后对同一注册链接 `bootout`→`bootstrap`→`kickstart` 使 launchd 读到新程序。
 
 若候选因端口冲突等原因启动失败，先排除冲突，再使用同一候选和事务 ID 执行 `service-upgrade ... --confirm-upgrade --recover ID`。只有已停止/失败且无主进程的单位可恢复；活跃写锁或无法确认的进程状态会被拒绝，勿手工删除锁。
 

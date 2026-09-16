@@ -63,6 +63,37 @@ func TestCodeBuddyCustomConfigLifecycle(t *testing.T) {
 	}
 }
 
+func TestCodeBuddyReinstallAfterSurgicalUninstall(t *testing.T) {
+	opts := testOpts(t, CodeBuddy)
+	dir := filepath.Join(t.TempDir(), "custom config")
+	t.Setenv("CODEBUDDY_CONFIG_DIR", dir)
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	target := filepath.Join(dir, "settings.json")
+	original := []byte(`{"env":{"FIXTURE":"preserve"}}`)
+	if err := os.WriteFile(target, original, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	got, err := os.ReadFile(target)
+	if err != nil || string(got) != string(original) {
+		t.Fatalf("uninstall must restore orig bytes, got %s", got)
+	}
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	status, err := Status(opts)
+	if err != nil || status.Note != "installed" {
+		t.Fatalf("reinstall status: %+v %v", status, err)
+	}
+}
+
 func TestCodeBuddyChangedConfigDoesNotUninstallOtherInstance(t *testing.T) {
 	opts := testOpts(t, CodeBuddy)
 	first := t.TempDir()

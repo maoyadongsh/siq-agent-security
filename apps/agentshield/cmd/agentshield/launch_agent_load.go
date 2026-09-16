@@ -33,15 +33,23 @@ func withLaunchAgentCommand(args []string, confirmation string, apply func(*stat
 	if err != nil {
 		return err
 	}
-	home, err := os.UserHomeDir()
+	home, uid, err := currentLaunchSession()
 	if err != nil {
 		return err
+	}
+	return apply(&state.Store{Dir: dir}, key, plist.Bytes(), home, uid, runUserLaunchctl)
+}
+
+func currentLaunchSession() (string, int, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", 0, err
 	}
 	home, err = filepath.EvalSymlinks(home)
 	if err != nil {
-		return err
+		return "", 0, err
 	}
-	return apply(&state.Store{Dir: dir}, key, plist.Bytes(), home, os.Getuid(), runUserLaunchctl)
+	return home, os.Getuid(), nil
 }
 
 func cmdLaunchAgentLoad(args []string, out io.Writer) error {
@@ -54,6 +62,10 @@ func cmdLaunchAgentLoad(args []string, out io.Writer) error {
 
 // Caller holds the lifecycle lock. Reusing a loaded job does not need its writer.
 func loadRegisteredLaunchAgent(st *state.Store, key *signing.Key, plist []byte, home string, uid int, control userSystemctl) (resultErr error) {
+	// A half-applied configuration switch must never be bootstrapped.
+	if err := st.CheckServiceSwitchPending(); err != nil {
+		return err
+	}
 	record, err := st.VerifyLaunchAgent(key, plist)
 	if err != nil {
 		return err

@@ -60,12 +60,16 @@ func TestPolicyExecFailsClosed(t *testing.T) {
 }
 
 type fakeDecider struct {
-	dec *receipt.Decision
-	err error
-	obs []string
+	dec  *receipt.Decision
+	err  error
+	obs  []string
+	last receipt.Request
 }
 
-func (f *fakeDecider) Decide(receipt.Request) (*receipt.Decision, error) { return f.dec, f.err }
+func (f *fakeDecider) Decide(r receipt.Request) (*receipt.Decision, error) {
+	f.last = r
+	return f.dec, f.err
+}
 func (f *fakeDecider) Observe(_ receipt.Request, s string) error {
 	f.obs = append(f.obs, s)
 	return nil
@@ -108,11 +112,37 @@ func TestCodeBuddyHookFailClosedTable(t *testing.T) {
 	}
 }
 
+func TestHostToolHookRecordsWorkBuddyPlatform(t *testing.T) {
+	in := `{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{}}`
+	state := t.TempDir()
+	out, err := HostToolHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "block", state, "workbuddy")
+	if err != nil || out.HookSpecificOutput.PermissionDecision != "deny" {
+		t.Fatalf("%+v %v", out, err)
+	}
+	raw, err := os.ReadFile(filepath.Join(state, "pending", "decisions.jsonl"))
+	if err != nil || !strings.Contains(string(raw), `"platform":"workbuddy"`) || strings.Contains(string(raw), `"platform":"codebuddy"`) {
+		t.Fatalf("workbuddy pending must not reuse codebuddy: %v %s", err, raw)
+	}
+}
+
 func TestCodeBuddyPostToolUseObservesAndNeverBlocks(t *testing.T) {
 	fd := &fakeDecider{}
 	in := `{"hook_event_name":"PostToolUse","tool_name":"WebFetch","tool_response":"` + strings.Repeat("x", 70*1024) + `"}`
 	out, err := CodeBuddyHook(strings.NewReader(in), fd, "a", "block", t.TempDir())
 	if err != nil || out.HookSpecificOutput.PermissionDecision != "" || len(fd.obs) != 1 || len(fd.obs[0]) != 64*1024 {
 		t.Fatalf("%+v %v %d", out, err, len(fd.obs))
+	}
+}
+
+func TestWorkBuddyHookStampsPlatformAndFailClosedDeny(t *testing.T) {
+	in := `{"session_id":"wb","cwd":"/p","hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"ls"}}`
+	fd := &fakeDecider{dec: &receipt.Decision{Action: receipt.ActionAllow, Reason: "r", Receipt: receipt.Receipt{ReceiptID: "rcp-wb"}}}
+	out, err := HostToolHook(strings.NewReader(in), fd, "a", "block", t.TempDir(), "workbuddy")
+	if err != nil || out.HookSpecificOutput.PermissionDecision != "allow" || fd.last.Platform != "workbuddy" {
+		t.Fatalf("platform stamp lost: %+v %+v %v", out, fd.last, err)
+	}
+	denied, _ := HostToolHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "block", t.TempDir(), "workbuddy")
+	if denied.HookSpecificOutput.PermissionDecision != "deny" {
+		t.Fatal("workbuddy block mode must deny when service is down")
 	}
 }

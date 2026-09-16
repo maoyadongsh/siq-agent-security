@@ -42,7 +42,7 @@ func (s *Server) adapterDiagnostics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rows := []adapterinstall.Diagnosis{}
-	for _, platform := range []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, "workbuddy", adapterinstall.Trae} {
+	for _, platform := range []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.WorkBuddy, adapterinstall.Trae} {
 		rows = append(rows, s.diagnoseAdapter(platform))
 	}
 	w.Header().Set("Cache-Control", "no-store")
@@ -84,6 +84,9 @@ func (s *Server) backendReachability(opts adapterinstall.Options) adapterinstall
 	if !ok {
 		if opts.Platform == adapterinstall.CodeBuddy {
 			return adapterinstall.DiagnosticCheck{Code: "backend_reachability", Status: "unknown", Message: "CodeBuddy 的服务连接需在其目标进程内验证；此处不读取其运行配置"}
+		}
+		if opts.Platform == adapterinstall.WorkBuddy {
+			return adapterinstall.DiagnosticCheck{Code: "backend_reachability", Status: "unknown", Message: "WorkBuddy 的服务连接需在桌面会话内验证；此处不读取其运行配置，CodeBuddy CLI 不能代替"}
 		}
 		return adapterinstall.DiagnosticCheck{Code: "backend_reachability", Status: "unknown", Message: "无法读取适配器配置中的服务地址"}
 	}

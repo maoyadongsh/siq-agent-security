@@ -26,6 +26,12 @@ var ErrCorrupt = errors.New("state: invalid state format marker or directory")
 var ErrFuture = errors.New("state: format requires a newer program")
 var ErrMigration = errors.New("state: migration incomplete; run state-migrate --confirm with the compatible program")
 
+// ErrBinding marks a marker that decodes but is bound to a different
+// canonical directory path (case, Unicode normalization or alias spelling on
+// insensitive volumes, or a moved directory). It is always joined with
+// ErrCorrupt so existing fail-closed callers are unchanged.
+var ErrBinding = errors.New("state: directory binding differs from the current path spelling")
+
 type Marker struct {
 	Schema         string `json:"schema"`
 	ProgramVersion string `json:"program_version"`
@@ -225,8 +231,11 @@ func ValidateBinding(dir string, m Marker) error {
 		return nil
 	}
 	id, e := DirectoryID(dir)
-	if e != nil || id != m.DirectoryID {
+	if e != nil {
 		return ErrCorrupt
+	}
+	if id != m.DirectoryID {
+		return errors.Join(ErrCorrupt, ErrBinding)
 	}
 	raw, e := ReadRegular(filepath.Join(dir, "local-instance.json"), 65536)
 	if e != nil {
@@ -337,4 +346,13 @@ func RequirePath(path string, write bool) error {
 }
 func RecoveryMessage() string {
 	return "状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。"
+}
+
+// RecoveryMessageFor selects the operator hint for a compatibility failure.
+// A binding mismatch is a path spelling problem, not marker corruption.
+func RecoveryMessageFor(err error) string {
+	if errors.Is(err, ErrBinding) {
+		return "状态目录绑定与当前路径拼写不一致（大小写、Unicode 规范化、卷别名或目录已移动）。请使用初始化时的规范路径重新指定状态目录；不要复制、改名或重新初始化该目录。"
+	}
+	return RecoveryMessage()
 }

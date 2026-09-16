@@ -12,6 +12,10 @@ import (
 
 func testOpts(t *testing.T, platform string) Options {
 	t.Helper()
+	// Live shells may export WORKBUDDY_CONFIG_DIR / CODEBUDDY_CONFIG_DIR.
+	// Tests must not inherit those roots; cases that need an override call t.Setenv after this.
+	t.Setenv("WORKBUDDY_CONFIG_DIR", "")
+	t.Setenv("CODEBUDDY_CONFIG_DIR", "")
 	home := t.TempDir()
 	state := t.TempDir()
 	if _, err := statepkg.Open(state); err != nil {
@@ -269,6 +273,78 @@ func TestCodeBuddySurgicalUninstallKeepsUserSettings(t *testing.T) {
 	}
 	if strings.Contains(string(restored), "hook codebuddy") {
 		t.Fatal("product hooks must be removed")
+	}
+}
+
+func TestWorkBuddyPreservesEnabledPluginsAndDoesNotTouchCodeBuddy(t *testing.T) {
+	opts := testOpts(t, WorkBuddy)
+	settings := filepath.Join(opts.Home, ".workbuddy", "settings.json")
+	if err := os.MkdirAll(filepath.Dir(settings), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	original := []byte(`{"enabledPlugins":{"sheetagent@builtin":true},"sandbox":{"mode":"workspace"}}`)
+	if err := os.WriteFile(settings, original, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(settings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Count(string(raw), "hook workbuddy") != 2 {
+		t.Fatalf("expected one workbuddy command per event, got %s", raw)
+	}
+	if strings.Contains(string(raw), "hook codebuddy") {
+		t.Fatal("workbuddy install must not register codebuddy hooks")
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		t.Fatal(err)
+	}
+	plugins, _ := doc["enabledPlugins"].(map[string]any)
+	if plugins["sheetagent@builtin"] != true {
+		t.Fatal("enabledPlugins must be preserved")
+	}
+	if exists(filepath.Join(opts.Home, ".codebuddy")) {
+		t.Fatal("workbuddy install must not write CodeBuddy config")
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	restored, err := os.ReadFile(settings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(restored), "hook workbuddy") {
+		t.Fatal("product hooks must be removed")
+	}
+	var after map[string]any
+	if err := json.Unmarshal(restored, &after); err != nil {
+		t.Fatal(err)
+	}
+	plugins, _ = after["enabledPlugins"].(map[string]any)
+	if plugins["sheetagent@builtin"] != true {
+		t.Fatal("enabledPlugins lost after uninstall")
+	}
+}
+
+func TestWorkBuddyIsIdempotentAndFailClosedUninstallWithoutRecord(t *testing.T) {
+	opts := testOpts(t, WorkBuddy)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := os.ReadFile(filepath.Join(opts.Home, ".workbuddy", "settings.json"))
+	if strings.Count(string(raw), "hook workbuddy") != 2 {
+		t.Fatalf("expected one command per event, got %s", raw)
+	}
+	fresh := testOpts(t, WorkBuddy)
+	if _, err := Uninstall(fresh); err == nil {
+		t.Fatal("uninstall without a record must fail")
 	}
 }
 
