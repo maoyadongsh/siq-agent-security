@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"sort"
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/product"
@@ -100,61 +101,12 @@ func (p *Plan) prepareUninstall() error {
 		if !p.owns(path) {
 			return errors.New("adapter: host config directory differs from latest install record")
 		}
-		doc, err := p.planJSON(path)
-		if err != nil {
-			return conflictRecovery(path, rec.Modified[path], err)
-		}
-		hooks, ok := doc["hooks"].(map[string]any)
-		if _, exists := doc["hooks"]; exists && !ok {
-			return conflictRecovery(path, rec.Modified[path], errors.New("invalid hooks object"))
-		}
-		if hooks != nil {
-			for _, event := range []string{"PreToolUse", "PostToolUse"} {
-				value, exists := hooks[event]
-				if !exists {
-					continue
-				}
-				list, ok := value.([]any)
-				if !ok {
-					return conflictRecovery(path, rec.Modified[path], errors.New("invalid hooks list"))
-				}
-				kept := []any{}
-				for _, item := range list {
-					entry, ok := item.(map[string]any)
-					if !ok {
-						kept = append(kept, item)
-						continue
-					}
-					commands, ok := entry["hooks"].([]any)
-					if !ok {
-						kept = append(kept, item)
-						continue
-					}
-					remaining := []any{}
-					for _, cmdValue := range commands {
-						cmd, _ := cmdValue.(map[string]any)
-						text, _ := cmd["command"].(string)
-						if cmd["type"] == "command" && isProductToolHook(text, o.Platform) {
-							continue
-						}
-						remaining = append(remaining, cmdValue)
-					}
-					if len(remaining) > 0 || len(commands) == 0 {
-						entry["hooks"] = remaining
-						kept = append(kept, entry)
-					}
-				}
-				if len(kept) == 0 {
-					delete(hooks, event)
-				} else {
-					hooks[event] = kept
-				}
-			}
-			if len(hooks) == 0 {
-				delete(doc, "hooks")
+		for _, owned := range hostConfigPaths(rec) {
+			if err := p.prepareHostConfigUninstall(owned); err != nil {
+				return err
 			}
 		}
-		return p.surgicalWrite(path, doc)
+		return nil
 	}
 	for _, path := range paths {
 		owned := p.owns(path)
@@ -194,6 +146,95 @@ func (p *Plan) prepareUninstall() error {
 		}
 	}
 	return nil
+}
+
+func hostConfigPaths(rec Record) []string {
+	set := map[string]struct{}{}
+	for _, path := range rec.Created {
+		if filepath.Base(path) == "settings.json" {
+			set[path] = struct{}{}
+		}
+	}
+	for path := range rec.Modified {
+		if filepath.Base(path) == "settings.json" {
+			set[path] = struct{}{}
+		}
+	}
+	for path := range rec.Written {
+		if filepath.Base(path) == "settings.json" {
+			set[path] = struct{}{}
+		}
+	}
+	for path := range rec.OriginalModes {
+		if filepath.Base(path) == "settings.json" {
+			set[path] = struct{}{}
+		}
+	}
+	paths := make([]string, 0, len(set))
+	for path := range set {
+		paths = append(paths, path)
+	}
+	sort.Strings(paths)
+	return paths
+}
+
+func (p *Plan) prepareHostConfigUninstall(path string) error {
+	rec := p.payload.Record
+	doc, err := p.planJSON(path)
+	if err != nil {
+		return conflictRecovery(path, rec.Modified[path], err)
+	}
+	hooks, ok := doc["hooks"].(map[string]any)
+	if _, exists := doc["hooks"]; exists && !ok {
+		return conflictRecovery(path, rec.Modified[path], errors.New("invalid hooks object"))
+	}
+	if hooks != nil {
+		for _, event := range []string{"PreToolUse", "PostToolUse"} {
+			value, exists := hooks[event]
+			if !exists {
+				continue
+			}
+			list, ok := value.([]any)
+			if !ok {
+				return conflictRecovery(path, rec.Modified[path], errors.New("invalid hooks list"))
+			}
+			kept := []any{}
+			for _, item := range list {
+				entry, ok := item.(map[string]any)
+				if !ok {
+					kept = append(kept, item)
+					continue
+				}
+				commands, ok := entry["hooks"].([]any)
+				if !ok {
+					kept = append(kept, item)
+					continue
+				}
+				remaining := []any{}
+				for _, cmdValue := range commands {
+					cmd, _ := cmdValue.(map[string]any)
+					text, _ := cmd["command"].(string)
+					if cmd["type"] == "command" && isProductToolHook(text, p.payload.Options.Platform) {
+						continue
+					}
+					remaining = append(remaining, cmdValue)
+				}
+				if len(remaining) > 0 || len(commands) == 0 {
+					entry["hooks"] = remaining
+					kept = append(kept, entry)
+				}
+			}
+			if len(kept) == 0 {
+				delete(hooks, event)
+			} else {
+				hooks[event] = kept
+			}
+		}
+		if len(hooks) == 0 {
+			delete(doc, "hooks")
+		}
+	}
+	return p.surgicalWrite(path, doc)
 }
 
 func (p *Plan) surgicalWrite(path string, doc map[string]any) error {

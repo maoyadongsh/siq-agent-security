@@ -3,10 +3,13 @@ package adapterinstall
 import (
 	"encoding/json"
 	"os"
+	"os/exec"
 	"path/filepath"
+	statepkg "siq-agent-security/apps/agentshield/internal/state"
 	"slices"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestWorkBuddyCustomConfigLifecycle(t *testing.T) {
@@ -215,6 +218,127 @@ func TestWorkBuddyReinstallRefusesDifferentConfigRoot(t *testing.T) {
 	if data, err := os.ReadFile(firstConfig); err == nil && strings.Contains(string(data), "hook workbuddy") {
 		t.Fatal("original config root could not be cleanly uninstalled")
 	} else if err != nil && !os.IsNotExist(err) {
+		t.Fatal(err)
+	}
+}
+
+func TestWorkBuddyLegacyMixedRootsUninstallAllOwnedConfigs(t *testing.T) {
+	opts := testOpts(t, WorkBuddy)
+	first := t.TempDir()
+	second := t.TempDir()
+	record := Record{
+		Platform:      WorkBuddy,
+		InstalledAt:   opts.Now.UTC().Format(time.RFC3339),
+		Binary:        opts.Binary,
+		Created:       []string{},
+		Modified:      map[string]string{},
+		Written:       map[string]string{},
+		OriginalModes: map[string]uint32{},
+	}
+	for i, dir := range []string{first, second} {
+		path := filepath.Join(dir, "settings.json")
+		original := encodePlanJSON(map[string]any{"workspace": i + 1})
+		doc := map[string]any{"workspace": i + 1, "hooks": map[string]any{}}
+		hooks := doc["hooks"].(map[string]any)
+		command := hookCommand(opts.Binary, WorkBuddy, opts.StateDir)
+		for _, event := range []string{"PreToolUse", "PostToolUse"} {
+			hooks[event] = upsertHook(nil, command, WorkBuddy)
+		}
+		installed := encodePlanJSON(doc)
+		if err := os.WriteFile(path, installed, 0o600); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path+originalSuffix, original, 0o600); err != nil {
+			t.Fatal(err)
+		}
+		record.Modified[path] = path + originalSuffix
+		record.Written[path] = imageHash(fileImage{Exists: true, Data: installed, Mode: 0o600})
+		record.OriginalModes[path] = 0o600
+	}
+	backupDir := filepath.Join(opts.StateDir, "backups", "adapters")
+	if err := os.MkdirAll(backupDir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := json.Marshal(record)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(backupDir, "workbuddy.20260916.json"), raw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Setenv("WORKBUDDY_CONFIG_DIR", first)
+	res, err := Uninstall(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Paths) != 2 {
+		t.Fatalf("mixed-root recovery must update both owned configs, got %+v", res.Paths)
+	}
+	for i, dir := range []string{first, second} {
+		path := filepath.Join(dir, "settings.json")
+		data, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		want := string(encodePlanJSON(map[string]any{"workspace": i + 1}))
+		if string(data) != want || strings.Contains(string(data), "hook workbuddy") {
+			t.Fatalf("owned config %d was not surgically restored: %s", i+1, data)
+		}
+	}
+}
+
+func TestWorkBuddyHookQuotesBinaryAndStatePaths(t *testing.T) {
+	if os.PathSeparator == '\\' {
+		t.Skip("POSIX shell quoting test")
+	}
+	opts := testOpts(t, WorkBuddy)
+	root := t.TempDir()
+	opts.Binary = filepath.Join(root, "bin with ' quote", "siq-agent-security")
+	opts.StateDir = filepath.Join(root, "state with ' quote")
+	if _, err := statepkg.Open(opts.StateDir); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(opts.StateDir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Dir(opts.Binary), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(opts.Binary, []byte("#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$SIQ_CAPTURE\"\n"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	configDir := filepath.Join(root, "workbuddy config")
+	t.Setenv("WORKBUDDY_CONFIG_DIR", configDir)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(filepath.Join(configDir, "settings.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		t.Fatal(err)
+	}
+	hooks := doc["hooks"].(map[string]any)["PreToolUse"].([]any)
+	commands := hooks[0].(map[string]any)["hooks"].([]any)
+	command := commands[0].(map[string]any)["command"].(string)
+	capture := filepath.Join(root, "captured args")
+	cmd := exec.Command("/bin/sh", "-c", command)
+	cmd.Env = append(os.Environ(), "SIQ_CAPTURE="+capture)
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("quoted hook command failed: %v", err)
+	}
+	args, err := os.ReadFile(capture)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := "hook\nworkbuddy\n--state-dir\n" + opts.StateDir + "\n"
+	if string(args) != want {
+		t.Fatalf("hook argv mismatch: got %q want %q", args, want)
+	}
+	if _, err := Uninstall(opts); err != nil {
 		t.Fatal(err)
 	}
 }

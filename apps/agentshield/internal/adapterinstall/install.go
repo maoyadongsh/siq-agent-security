@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
@@ -182,7 +183,7 @@ func hookCommand(binary, platform, stateDir string) string {
 	if platform == WorkBuddy {
 		name = "workbuddy"
 	}
-	cmd := binary + " hook " + name
+	cmd := hookArg(binary) + " hook " + name
 	// Desktop Electron children do not inherit SIQ_AGENT_SECURITY_STATE_DIR.
 	if platform == WorkBuddy && filepath.IsAbs(stateDir) {
 		cmd += " --state-dir " + hookArg(stateDir)
@@ -191,6 +192,9 @@ func hookCommand(binary, platform, stateDir string) string {
 }
 
 func hookArg(path string) string {
+	if runtime.GOOS == "windows" {
+		return `"` + path + `"`
+	}
 	return "'" + strings.ReplaceAll(path, "'", `'"'"'`) + "'"
 }
 

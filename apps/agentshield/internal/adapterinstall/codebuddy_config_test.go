@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 	"testing"
 )
 
@@ -120,6 +121,38 @@ func TestCodeBuddyChangedConfigDoesNotUninstallOtherInstance(t *testing.T) {
 			t.Fatal("uninstall modified another config")
 		}
 	}
+	t.Setenv("CODEBUDDY_CONFIG_DIR", first)
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCodeBuddyReinstallRefusesDifferentConfigRoot(t *testing.T) {
+	opts := testOpts(t, CodeBuddy)
+	first := t.TempDir()
+	second := t.TempDir()
+	t.Setenv("CODEBUDDY_CONFIG_DIR", first)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	firstConfig := filepath.Join(first, "settings.json")
+	installed, err := os.ReadFile(firstConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Setenv("CODEBUDDY_CONFIG_DIR", second)
+	if _, err := Install(opts); err == nil || !strings.Contains(err.Error(), "host config directory differs") {
+		t.Fatalf("different config root must be rejected, got %v", err)
+	}
+	if exists(filepath.Join(second, "settings.json")) {
+		t.Fatal("rejected install wrote the second config root")
+	}
+	current, err := os.ReadFile(firstConfig)
+	if err != nil || string(current) != string(installed) {
+		t.Fatal("rejected install changed the first config root")
+	}
+
 	t.Setenv("CODEBUDDY_CONFIG_DIR", first)
 	if _, err := Uninstall(opts); err != nil {
 		t.Fatal(err)

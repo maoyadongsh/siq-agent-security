@@ -277,9 +277,10 @@ func Prepare(opts Options, action string) (*Plan, error) {
 	if action == "uninstall" && prior == nil && opts.Platform != Trae {
 		return nil, errNoInstallRecord
 	}
-	if prior != nil && (opts.Platform == CodeBuddy || opts.Platform == WorkBuddy) {
+	if prior != nil && action == "install" && (opts.Platform == CodeBuddy || opts.Platform == WorkBuddy) {
 		path := filepath.Join(opts.configRoot(), "settings.json")
-		if prior.Modified[path] == "" && prior.Written[path] == "" && !slices.Contains(prior.Created, path) {
+		paths := hostConfigPaths(*prior)
+		if len(paths) != 1 || paths[0] != path || prior.Modified[path] == "" && prior.Written[path] == "" && !slices.Contains(prior.Created, path) {
 			return nil, errors.New("adapter: host config directory differs from latest install record")
 		}
 	}
