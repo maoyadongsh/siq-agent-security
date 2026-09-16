@@ -334,11 +334,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--openclaw-root", type=Path, required=True)
     parser.add_argument("--node", type=Path, required=True)
+    parser.add_argument("--binary", type=Path, help="use a fixed candidate binary instead of building HEAD")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--private-workdir", type=Path, help="retain an isolated private fixture directory for failure diagnosis")
     args = parser.parse_args()
     args.openclaw_root = args.openclaw_root.resolve()
     args.node = args.node.absolute()
+    if args.binary:
+        args.binary = args.binary.resolve(strict=True)
     if args.private_workdir:
         args.private_workdir = args.private_workdir.absolute()
         args.private_workdir.mkdir(mode=0o700, parents=True, exist_ok=False)
