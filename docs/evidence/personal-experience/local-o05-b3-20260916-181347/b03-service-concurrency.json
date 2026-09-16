@@ -1,0 +1,302 @@
+{
+  "generated_at": "2026-09-16T14:33:13Z",
+  "binary": "/home/maoyd/siq/worktrees/siq-release-openshell-20260916-142706/dist/siq-agent-security-0.3.0-rc.3/siq-agent-security-linux-arm64",
+  "binary_sha256": "4866f307cf0328caa6c9f127d0a56f8034ead6bbc511b95fae042da223e0bd5c",
+  "entry_kind": "real isolated daemon (own HOME + state dir), actual HTTP entry",
+  "not": "in-process httptest server (see skill_update_concurrency_test.go)",
+  "legs": {
+    "up07-refusals": {
+      "seeded": [
+        "up07-future",
+        "up07-corrupt",
+        "up07-unmarked-incomplete"
+      ],
+      "refused": [
+        true,
+        true,
+        true
+      ],
+      "state_untouched": [
+        true,
+        true,
+        true
+      ],
+      "boundary_note": "compatibility.go checkUnmarkedState, observed at the real entry: a marker-less state dir is accepted as legacy_unversioned whenever it is either the complete core scaffold (up07-unmarked-legacy) OR still carries a parseable config.json even with keys/ removed (up07-keys-missing observation). ErrMissingMarker refuses only an unrecognizable nonempty state (marker + keys + config.json gone, up07-unmarked-incomplete). EnforceStateCompatibility never mutates or migrates; a legacy-accepted serve does not rewrite the marker.",
+      "up07-future": {
+        "refused": true,
+        "state_untouched": true,
+        "exit_code": 1
+      },
+      "up07-corrupt": {
+        "refused": true,
+        "state_untouched": true,
+        "exit_code": 1
+      },
+      "up07-unmarked-incomplete": {
+        "refused": true,
+        "state_untouched": true,
+        "exit_code": 1
+      },
+      "up07-unmarked-legacy": {
+        "serve_accepted": true,
+        "marker_still_absent": true,
+        "created_files": [
+          "admin-recovery.token",
+          "context-assertions",
+          "effect-evidence",
+          "intent-binding-revocations",
+          "intent-revocations",
+          "keys/signing.seed",
+          "provenance-assertions",
+          "provenance-issuer-revocations",
+          "provenance-issuers",
+          "receipts/local",
+          "runtime-check-materials",
+          "runtime-checks",
+          "runtime-identities",
+          "runtime-identity-revocations",
+          "runtime-identity-secrets",
+          "serve.lock",
+          "skill-context-revocations",
+          "skill-contexts",
+          "skill-imports",
+          "skill-imports/blobs",
+          "skill-imports/records",
+          "skill-installations",
+          "skill-installations/operations",
+          "skill-installations/plans",
+          "skill-installations/removals",
+          "skill-installations/runtime-bindings",
+          "skill-installations/stages",
+          "skill-installations/update-installations",
+          "skill-installations/update-operations",
+          "skill-installations/update-plans",
+          "skill-installations/update-stages",
+          "token"
+        ]
+      },
+      "up07-keys-missing": {
+        "serve_accepted": true,
+        "marker_still_absent": true,
+        "keys_signing_seed_present_after_serve": true,
+        "created_files": [
+          "admin-recovery.token",
+          "context-assertions",
+          "effect-evidence",
+          "intent-binding-revocations",
+          "intent-revocations",
+          "keys",
+          "keys/signing.seed",
+          "provenance-assertions",
+          "provenance-issuer-revocations",
+          "provenance-issuers",
+          "receipts/local",
+          "runtime-check-materials",
+          "runtime-checks",
+          "runtime-identities",
+          "runtime-identity-revocations",
+          "runtime-identity-secrets",
+          "serve.lock",
+          "skill-context-revocations",
+          "skill-contexts",
+          "skill-imports",
+          "skill-imports/blobs",
+          "skill-imports/records",
+          "skill-installations",
+          "skill-installations/operations",
+          "skill-installations/plans",
+          "skill-installations/removals",
+          "skill-installations/runtime-bindings",
+          "skill-installations/stages",
+          "skill-installations/update-installations",
+          "skill-installations/update-operations",
+          "skill-installations/update-plans",
+          "skill-installations/update-stages",
+          "token"
+        ]
+      },
+      "status": "pass"
+    },
+    "up05-same-plan": {
+      "daemon_version": "0.3.0-rc.3",
+      "sessions": 3,
+      "sessions_independent": true,
+      "comparison": {
+        "requires_confirmation": true,
+        "content_changes_total": 1,
+        "platform_changes": false,
+        "runtime_verified": false
+      },
+      "flights": [
+        {
+          "label": "commit",
+          "status": 200,
+          "error": null,
+          "attempts": [
+            {
+              "attempt": 0,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "result_signature": "3ba06153770fcf1435c01eb151c4765717b37971d9f287369f510af919e4305495326a564ef593546320c2dd1afce221d641a74124d29ff2ca9779f7194b9c02"
+        },
+        {
+          "label": "commit",
+          "status": 200,
+          "error": null,
+          "attempts": [
+            {
+              "attempt": 0,
+              "status": 429,
+              "error": "skill_install_busy"
+            },
+            {
+              "attempt": 1,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "result_signature": "3ba06153770fcf1435c01eb151c4765717b37971d9f287369f510af919e4305495326a564ef593546320c2dd1afce221d641a74124d29ff2ca9779f7194b9c02"
+        },
+        {
+          "label": "commit",
+          "status": 200,
+          "error": null,
+          "attempts": [
+            {
+              "attempt": 0,
+              "status": 429,
+              "error": "skill_install_busy"
+            },
+            {
+              "attempt": 1,
+              "status": 429,
+              "error": "skill_install_busy"
+            },
+            {
+              "attempt": 2,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "result_signature": "3ba06153770fcf1435c01eb151c4765717b37971d9f287369f510af919e4305495326a564ef593546320c2dd1afce221d641a74124d29ff2ca9779f7194b9c02"
+        }
+      ],
+      "successes": 3,
+      "outcomes": [
+        "success",
+        "success",
+        "success"
+      ],
+      "winning_signatures_agree": true,
+      "update_view_status": "updated_unverified",
+      "removal_status": "removed",
+      "grant_frozen_revision": 3,
+      "update_operations_artifacts_exact": true,
+      "receipts_count": 0,
+      "receipts_have_signature_field": true,
+      "status": "pass",
+      "stale_revision_stage": {
+        "status": 409,
+        "error": "skill_install_removal_pending"
+      },
+      "tampered_signature_commit": {
+        "status": 409,
+        "error": "skill_install_conflict"
+      },
+      "serve_exit": 0
+    },
+    "up05-update-removal": {
+      "daemon_version": "0.3.0-rc.3",
+      "flights": [
+        {
+          "label": "update",
+          "status": 200,
+          "error": null,
+          "attempts": [
+            {
+              "attempt": 0,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "result_signature": "c85fbb10f9bb6da7c5aee8cf5396a8a0a5f775c617c9f24cf0dba1613b58f9985da3470c5679594dc4d644a07680d27366f429219b5d6dbde5916aa6a2ca7108"
+        },
+        {
+          "label": "removal",
+          "status": 200,
+          "error": null,
+          "attempts": [
+            {
+              "attempt": 0,
+              "status": 429,
+              "error": "skill_install_busy"
+            },
+            {
+              "attempt": 1,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "result_signature": "a0a61de389e4a3769ae78ccf010803f85f634d8a87861abb969f0535f62732820d077821dd83ec0c4d044af0fe5b21bc12fff90421775b29729c931040d15c06"
+        }
+      ],
+      "update_won": true,
+      "update_outcome": "success",
+      "removal_outcome": "success",
+      "update_view_after": {
+        "status_code": 200,
+        "status": "updated_unverified"
+      },
+      "grant_frozen_revision": 3,
+      "status": "pass",
+      "serve_exit": 0
+    },
+    "up05-diff-plan": {
+      "daemon_version": "0.3.0-rc.3",
+      "flights": [
+        {
+          "label": "commit-a",
+          "status": 200,
+          "error": null,
+          "attempts": [
+            {
+              "attempt": 0,
+              "status": 200,
+              "error": null
+            }
+          ],
+          "result_signature": "6771577f67e32567b659a1d05e81ad2904ecfa2b558745273808e6ddcc725209b9352d47ccb5ddfac8db95ba58ac1cd9ef7e81e4eb3bdc317c8856ae883b280f"
+        },
+        {
+          "label": "commit-b",
+          "status": 409,
+          "error": "skill_install_removal_pending",
+          "attempts": [
+            {
+              "attempt": 0,
+              "status": 429,
+              "error": "skill_install_busy"
+            },
+            {
+              "attempt": 1,
+              "status": 409,
+              "error": "skill_install_removal_pending"
+            }
+          ],
+          "result_signature": null
+        }
+      ],
+      "successes": 1,
+      "outcomes": [
+        "success",
+        "contract_error"
+      ],
+      "winning_plan": "commit-a",
+      "status": "pass",
+      "serve_exit": 0
+    }
+  },
+  "overall": "pass"
+}

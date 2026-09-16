@@ -1,0 +1,78 @@
+[
+  {
+    "name": "gofmt",
+    "command": [
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "exit_code": 0,
+    "duration_seconds": 0.09
+  },
+  {
+    "name": "vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "duration_seconds": 0.41
+  },
+  {
+    "name": "test",
+    "command": [
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 0,
+    "duration_seconds": 42.07
+  },
+  {
+    "name": "race",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./internal/openshell",
+      "./internal/server",
+      "./internal/receipt"
+    ],
+    "exit_code": 0,
+    "duration_seconds": 60.48
+  },
+  {
+    "name": "python_openshell_contracts",
+    "command": [
+      "uv",
+      "run",
+      "pytest",
+      "-o",
+      "addopts=",
+      "-q",
+      "app/tests/test_openshell_adapter.py",
+      "app/tests/test_openshell_bounded_command.py",
+      "app/tests/test_openshell_cli_backend.py",
+      "app/tests/test_openshell_client.py",
+      "app/tests/test_openshell_evidence.py",
+      "app/tests/test_openshell_policy_operations.py",
+      "app/tests/test_openshell_policy_safety_vectors.py",
+      "app/tests/test_policy_flow.py",
+      "app/tests/test_schema_contracts.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "ruff",
+    "command": [
+      "uv",
+      "run",
+      "ruff",
+      "check",
+      "app/adapters/openshell/cli_backend.py",
+      "app/tests/test_openshell_policy_operations.py"
+    ],
+    "exit_code": 0
+  }
+]

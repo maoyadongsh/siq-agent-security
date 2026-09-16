@@ -1,5 +1,11 @@
 # 个人体验闭环接续进度（2026-09-13）
 
+> **2026-09-16 策略加载修复后更新**：见 [修复与复测报告](openshell-policy-load-wait-repair-20260916.md)。L01 旧 `arrivals=1` 失败已定位到未等待沙箱加载；应用及回滚增加有界加载确认，3 轮真实复测均为 HTTP 403 + 零到达，rc.6 策略 HTTP 旅程 57/57。Python 同类路径同步修复并完成组件回归。旧失败证据保留；L02 完整任务/UI、新候选性能及外部实机仍未完成。此更新优先于下方历史状态。
+
+
+> **2026-09-16 收尾复核更新**：以 [最新复核报告](local-o05-closure-review-20260916.md) 为准。rc.5 身份保护原生验证 4/4、策略 HTTP 旅程 57/57；L01 严格实测发现违规请求到达 1 次，保持未通过。L02 非完整任务执行；L04 的旧 0.9967 只对应 doctor_readback，B3 未测，新候选性能未测；L05 部分完成。旧绿色勾选仅保留为历史声明。
+
+
 2026-09-15 基线提交：`53155b10c276fe41e71c47757e58e7e56d5d75d4` 已在当前分支本地提交 R06/R04/R07 修复与证据；未推送/合并。后续执行见 [v5 任务书](personal-experience-lan-team-next-development-taskbook-20260915-232155.md) 与 [GLM 提示词](glm-personal-next-execution-prompt-20260915-232155.md)。下方复核叙述及原报告中的“未提交”是当时快照，不代表当前 Git 状态。
 
 
@@ -85,3 +91,25 @@ T01–T06 保持 todo，依赖 R07/N09 关闭；本次未发布产品制品。
 | B10 | partial：本机文档/负向回归/矩阵更新；不代表 B02、N09 或正式发布验收关闭，最终矩阵 closure-b10-final-review-20260916 使用 B05 r3；脚本回归 33/33；复核以 personal-v5-takeover-review-20260916.md 为准 |
 
 T01–T06 仍 todo，依赖 N09；本批未 commit/push/merge，落盘状态以工作区为准。
+
+## 发行候选准备批次（2026-09-16，release-openshell-20260916-142706）
+
+| 项 | 状态/交付边界 |
+| --- | --- |
+| 发行候选 | rc.1 保留历史；安全修复后 rc.2 独立构建并绑定源文件/差异/制品摘要，详见修复报告；未正式签名，不代表发行就绪 |
+| 环境预检 | 旧候选 policy_readable 已观察；协议匹配不是会话绑定或当前网关能力证明；新候选复核以修复报告为准 |
+| B2/B3 真网 | partial（复核）：撤回全部通过；旧 doctor 样本未逐次校验状态，同 CLI 控制项不能归因候选，测试驱动不是候选 B3；v2 工具已修复，正式复测待专用目标 |
+| O05 真后端 | partial（复核）：有策略控制面证据；会话身份/撤销/执行关联未证明，行为阻止负例根因未确认；撤回 7/8 与 interceptor 归因 |
+| 正式签名 | blocked：官方种子未设置；解锁见 readiness 文档 §9 |
+| 跨平台 | external_manual：sunbo (Windows) / Luke (macOS) 不代做不标记通过 |
+| 资源 | 批次沙箱 siq-relcand-20260916-154423 用毕删除；原始日志存私有 /tmp；未 commit/push/merge |
+
+证据: docs/evidence/personal-experience/release-openshell-20260916-142706/{candidate,b01-lifecycle,openshell-live}/（均含 SHA256SUMS）；
+报告: openshell-real-environment-readiness-20260916.md 与 release-openshell-execution-report-20260916.md。
+
+2026-09-16 最新复核：[release-openshell-review-fixes-20260916.md](release-openshell-review-fixes-20260916.md)。限制字段再下发零写拒绝、端点检查不误判、验收工具与签名指引修复；原始证据只读保留。
+
+
+### 2026-09-16 OpenShell L01/L02 本地安全复核
+
+本批状态以 [GLM 进度的复核修正](local-o05-b3-progress-20260916-181347.md) 和 [安全修复规格](openshell-l01-l02-repair-spec-20260916.md) 为准。阻断分类与策略恢复、完整批准参数绑定、当前签名 Grant 复核、写前撤权检查、证据失败响应已修复。L01 真实行为复测仍待；L02 仅策略控制面原型，无沙箱任务执行。L03/L04/L05/L07 未因这些修复自动完成；跨平台实机、正式签名与发布状态保持原边界。新源变更不追溯替换冻结 rc.2。

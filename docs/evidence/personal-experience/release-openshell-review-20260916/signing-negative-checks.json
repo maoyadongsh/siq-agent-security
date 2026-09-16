@@ -1,0 +1,21 @@
+[
+  {
+    "command": "sha256sum -c dist rc.2 SHA256SUMS (cwd=artifact directory)",
+    "exit_code": 0,
+    "artifacts": 4
+  },
+  {
+    "command": "candidate manifest-verify unsigned draft",
+    "exit_code": 1,
+    "expected": "reject missing signature"
+  },
+  {
+    "command": "candidate release-manifest (both seed env names absent)",
+    "exit_code": 1,
+    "expected": "reject; zero output files"
+  },
+  {
+    "command": "bash -n signing example (syntax only; not executed)",
+    "exit_code": 0
+  }
+]

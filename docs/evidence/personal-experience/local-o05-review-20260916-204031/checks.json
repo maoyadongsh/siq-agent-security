@@ -1,0 +1,76 @@
+[
+  {
+    "name": "gofmt",
+    "command": [
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "test",
+    "command": [
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "race",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./internal/openshell",
+      "./internal/server",
+      "./internal/receipt"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "python_existing_schema_contracts",
+    "command": [
+      "uv",
+      "run",
+      "pytest",
+      "-q",
+      "app/tests/test_schema_contracts.py"
+    ],
+    "cwd": "apps/control-api",
+    "exit_code": 0,
+    "note": "Existing schema regression; new experimental session contract is prose, not a new schema fixture."
+  },
+  {
+    "name": "live_opt_in_guard",
+    "exit_code": 0,
+    "result": "SKIP",
+    "note": "SIQ_O05_ENFORCE_LIVE=0; not live acceptance"
+  },
+  {
+    "name": "targeted_server_security",
+    "exit_code": 0,
+    "command": [
+      "go",
+      "test",
+      "./internal/server",
+      "-run",
+      "TestOpenShell(Policy|Session)",
+      "-count=1"
+    ]
+  },
+  {
+    "name": "diff_check",
+    "exit_code": 0
+  }
+]

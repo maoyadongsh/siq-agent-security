@@ -1,0 +1,8 @@
+== POLICY A (agentshield shape, NO protocol/enforcement) version 2, allow 127.0.0.1:18443 for /usr/local/bin/python3 ==
+-- allowed target 18443 --
+RESULT corr_id=polA-allowed-1789555257 status=200 body=ok-corr=polA-allowed-1789555257
+-- violating target 18098 --
+RESULT corr_id=polA-violating-1789555257 status=200 body=ok-corr=polA-violating-1789555257
+-- receiver logs (arrival proof) --
+/sandbox/recv-18443.log:ARRIVED corr_id=polA-allowed-1789555257 path=/?corr_id=polA-allowed-1789555257 from=127.0.0.1
+/sandbox/recv-18098.log:ARRIVED corr_id=polA-violating-1789555257 path=/?corr_id=polA-violating-1789555257 from=127.0.0.1

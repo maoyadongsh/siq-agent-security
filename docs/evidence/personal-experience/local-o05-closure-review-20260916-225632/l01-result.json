@@ -1,0 +1,15 @@
+{
+  "command": [
+    "go",
+    "test",
+    "./internal/openshell",
+    "-run",
+    "^TestO05LiveCrossBoundaryEnforcement$",
+    "-count=1",
+    "-v"
+  ],
+  "exit_code": 1,
+  "target": "siq-review-20260916-225159",
+  "explicit_live_opt_in": true,
+  "output": "=== RUN   TestO05LiveCrossBoundaryEnforcement\n    o05_enforcement_live_test.go:150: unknown fetch outcome; cannot claim policy behavior: unknown\n--- FAIL: TestO05LiveCrossBoundaryEnforcement (1.23s)\nFAIL\nFAIL\tsiq-agent-security/apps/agentshield/internal/openshell\t1.238s\nFAIL\n"
+}

@@ -1,0 +1,11 @@
+[
+  {"name": "gofmt", "command": ["gofmt", "-l", "."], "cwd": "apps/agentshield", "exit_code": 0, "output": ""},
+  {"name": "vet", "command": ["go", "vet", "./..."], "cwd": "apps/agentshield", "exit_code": 0},
+  {"name": "test", "command": ["go", "test", "./..."], "cwd": "apps/agentshield", "exit_code": 0, "packages_ok": 40},
+  {"name": "race", "command": ["go", "test", "-race", "./internal/openshell", "./internal/server", "./internal/receipt"], "cwd": "apps/agentshield", "exit_code": 0},
+  {"name": "l01-enforcement-live-test", "command": ["go", "test", "./internal/openshell/", "-run", "TestO05EnforcementLive", "-v", "-tags", "o05_live"], "cwd": "apps/agentshield", "exit_code": 0, "note": "opt-in live test; requires SIQ_O05_LIVE=1 and sandbox; PASS when run with sandbox siq-l01-o05-181930; log l01-private/o05-enforcement-live-test.log"},
+  {"name": "l03-product-journey", "command": ["python3", "scripts/personal-experience/closure-o05-product-journey.py"], "exit_code": 0, "assertions": 57, "evidence": "l03-journey.json"},
+  {"name": "l04-perf-protocol", "command": ["python3", "scripts/personal-experience/perf-protocol-driver.py"], "exit_code": 0, "note": "exclusive measurement window; all budgets pass, aggregate ratio 0.9967; evidence b2b3-perf.json + b2b3-perf.samples.jsonl"},
+  {"name": "b03-service-concurrency", "command": ["python3", "scripts/personal-experience/closure-b03-service-concurrency.py"], "exit_code": 0, "legs": {"up07-refusals": "pass", "up05-same-plan": "pass", "up05-update-removal": "pass", "up05-diff-plan": "pass"}, "evidence": "b03-service-concurrency.json", "note": "real isolated rc.3 daemon (own HOME + state dir), actual HTTP entry + admin pairing; not httptest"},
+  {"name": "b05-r4-smoke", "exit_code": null, "status": "external_blocker", "note": "openclaw externally downgraded 2026.5.12 -> 2026.3.11; zero receipts; smoke.py:263 run_cli failure identical on rc.2; see b05-r4-blocked.md"}
+]

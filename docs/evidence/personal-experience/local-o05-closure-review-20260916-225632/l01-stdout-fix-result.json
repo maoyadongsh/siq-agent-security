@@ -1,0 +1,16 @@
+{
+  "command": [
+    "go",
+    "test",
+    "./internal/openshell",
+    "-run",
+    "^TestO05LiveCrossBoundaryEnforcement$",
+    "-count=1",
+    "-v"
+  ],
+  "exit_code": 1,
+  "target": "siq-review-20260916-225159",
+  "explicit_live_opt_in": true,
+  "reason_for_rerun": "separate structured stdout from CLI stderr diagnostics",
+  "output": "=== RUN   TestO05LiveCrossBoundaryEnforcement\n    o05_enforcement_live_test.go:160: allow propagation_ms=2807\n    o05_enforcement_live_test.go:160: allow propagation_ms=253\n    o05_enforcement_live_test.go:160: allow propagation_ms=271\n    o05_enforcement_live_test.go:176: policy denial not proven: need explicit HTTP 403 and zero arrivals\n--- FAIL: TestO05LiveCrossBoundaryEnforcement (5.44s)\nFAIL\nFAIL\tsiq-agent-security/apps/agentshield/internal/openshell\t5.445s\nFAIL\n"
+}

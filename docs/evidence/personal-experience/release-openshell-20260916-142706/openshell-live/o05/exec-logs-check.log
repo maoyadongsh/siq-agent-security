@@ -1,0 +1,18 @@
+/bin/bash: /home/sandbox/.profile: Permission denied
+ev.txt
+h8098.log
+h8099.log
+siq-pycache
+uv-d00477d01347e1f7.lock
+uv-setuptools-d00477d01347e1f7.lock
+--- /tmp/h8098.log
+127.0.0.1 - - [16/Sep/2026 07:48:23] code 404, message No permission to list directory
+127.0.0.1 - - [16/Sep/2026 07:48:23] "GET / HTTP/1.1" 404 -
+127.0.0.1 - - [16/Sep/2026 07:49:00] code 404, message File not found
+127.0.0.1 - - [16/Sep/2026 07:49:00] "GET /h8098.log HTTP/1.1" 404 -
+--- /tmp/h8099.log
+127.0.0.1 - - [16/Sep/2026 07:48:23] "GET / HTTP/1.1" 404 -
+127.0.0.1 - - [16/Sep/2026 07:48:23] code 404, message No permission to list directory
+127.0.0.1 - - [16/Sep/2026 07:48:23] "GET / HTTP/1.1" 404 -
+127.0.0.1 - - [16/Sep/2026 07:48:59] code 404, message File not found
+127.0.0.1 - - [16/Sep/2026 07:48:59] "GET /h8099.log HTTP/1.1" 404 -
