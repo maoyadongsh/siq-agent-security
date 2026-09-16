@@ -58,6 +58,20 @@ func DefaultCommand(goos string) ([]string, bool) {
 		}
 		return nil, false
 	}
+	if goos == "darwin" {
+		// osascript "display notification" delivers into Notification Center
+		// from any terminal-origin process without a signed bundle. It cannot
+		// provide click navigation: notifications are count-only and clicking
+		// them never reaches this process. Navigation to the pending inbox
+		// stays on the local console UI; this gap is documented, not hidden.
+		if _, err := exec.LookPath("/usr/bin/osascript"); err == nil {
+			return []string{"/usr/bin/osascript", "-e",
+				`on run argv
+display notification (item 2 of argv) with title (item 1 of argv)
+end run`}, true
+		}
+		return nil, false
+	}
 	return nil, false
 }
 
