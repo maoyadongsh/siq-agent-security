@@ -10,7 +10,7 @@ import { skillInstallErrorText } from '../skillInstall';
 import type { SkillRuntimeReadiness } from '../types';
 
 // Keep editor state above the preview Modal, so only one focus trap is open.
-export function useInstancePermissions(instanceId: string, operationBusy = false, requiredGrantId?: string) {
+export function useInstancePermissions(platform: 'hermes' | 'openclaw', instanceId: string, operationBusy = false, requiredGrantId?: string) {
   const { actorId, setActorId } = useLocalSession();
   const [actor, setActor] = useState(actorId);
   const [grants, setGrants] = useState<Grant[]>([]);
@@ -36,8 +36,9 @@ export function useInstancePermissions(instanceId: string, operationBusy = false
   const [error, setError] = useState('');
   const closeEditor = useCallback(() => setEditingId(null), []);
   const subject = instanceId ? `hri-${instanceId.slice(3)}` : '';
-  const identity = loadedFor === instanceId ? identities.find((item) => item.instance_id === instanceId && item.status !== 'revoked') : undefined;
-  const eligible = grants.filter((item) => item.platform === 'hermes' && item.subject.type === 'agent_instance' && item.subject.id === subject
+  const scopeKey = instanceId ? `${platform}:${instanceId}` : '';
+  const identity = loadedFor === scopeKey ? identities.find((item) => item.platform === platform && item.instance_id === instanceId && item.status !== 'revoked') : undefined;
+  const eligible = grants.filter((item) => item.platform === platform && item.subject.type === 'agent_instance' && item.subject.id === subject
     && ['pending_approval', 'approved', 'deployed', 'effective'].includes(item.status));
   const currentGrant = grants.find((item) => item.grant_id === identity?.grant_ref.grant_id);
   const changing = preparing || !!(requiredGrantId && identity && identity.grant_ref.grant_id !== requiredGrantId);
@@ -45,7 +46,7 @@ export function useInstancePermissions(instanceId: string, operationBusy = false
   const imported = selected?.admission_id.startsWith('adm-si-') ?? false;
   const importPrepared = imported && importReadiness?.status === 'prepared' && importReadiness.grant.grant_id === selected?.grant_id && importReadiness.state_revision === selected?.state_revision;
   const reviewKey = selected ? `${selected.grant_id}:${selected.state_revision}` : '';
-  useEffect(() => { setPreparing(false); }, [instanceId]);
+  useEffect(() => { setPreparing(false); }, [instanceId, platform]);
   const refresh = () => { setReviewed(''); setWithdraw(false); setAttempt((n) => n + 1); };
   useEffect(() => {
     setLoadedFor(''); setReviewed(''); setWithdraw(false); setEditingId(null);
@@ -55,24 +56,24 @@ export function useInstancePermissions(instanceId: string, operationBusy = false
     Promise.all([localApi.grants(), localApi.admissions(), localApi.runtimeIdentities()]).then(([g, a, i]) => {
       if (!active) return;
       setGrants(g.grants); setAdmissions(a.admissions.filter((item) => item.verdict !== 'quarantine' && !item.admission_id.startsWith('adm-si-')));
-      setIdentities(i.items); setLoadedFor(instanceId);
-      setSelectedId((current) => requiredGrantId ?? (g.grants.some((item) => item.grant_id === current && item.subject.id === subject) ? current
-        : g.grants.find((item) => item.subject.id === subject && ['pending_approval', 'approved', 'deployed', 'effective'].includes(item.status))?.grant_id ?? ''));
+      setIdentities(i.items); setLoadedFor(scopeKey);
+      setSelectedId((current) => requiredGrantId ?? (g.grants.some((item) => item.grant_id === current && item.platform === platform && item.subject.id === subject) ? current
+        : g.grants.find((item) => item.platform === platform && item.subject.id === subject && ['pending_approval', 'approved', 'deployed', 'effective'].includes(item.status))?.grant_id ?? ''));
       setAdmissionId((current) => a.admissions.some((item) => item.admission_id === current && item.verdict !== 'quarantine' && !item.admission_id.startsWith('adm-si-')) ? current
         : a.admissions.find((item) => item.verdict !== 'quarantine' && !item.admission_id.startsWith('adm-si-'))?.admission_id ?? '');
     }).catch((err: unknown) => { if (active) setError(err instanceof Error ? err.message : '无法读取实例权限'); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [instanceId, subject, attempt, requiredGrantId]);
+  }, [instanceId, subject, scopeKey, platform, attempt, requiredGrantId]);
   useEffect(() => {
     setImportReadiness(null); setImportError('');
-    if (!imported || !selected || loadedFor !== instanceId) return;
+    if (!imported || !selected || loadedFor !== scopeKey) return;
     const controller = new AbortController();
     localApi.skillGrantReadiness(selected.grant_id, controller.signal).then((result) => {
       if (!controller.signal.aborted) setImportReadiness(result);
     }).catch((err: unknown) => { if (!controller.signal.aborted) setImportError(skillInstallErrorText(err)); });
     return () => controller.abort();
-  }, [imported, selected?.grant_id, selected?.state_revision, loadedFor, instanceId, attempt]);
+  }, [imported, selected?.grant_id, selected?.state_revision, loadedFor, scopeKey, attempt]);
   const keepGrant = (grant: Grant) => {
     setGrants((current) => [...current.filter((item) => item.grant_id !== grant.grant_id), grant]);
     setSelectedId(grant.grant_id); setReviewed('');
@@ -102,7 +103,7 @@ export function useInstancePermissions(instanceId: string, operationBusy = false
   });
   const createDraft = () => run(async () => {
     if (!admissionId || !instanceId) return;
-    const out = await localApi.createGrant({ admission_id: admissionId, platform: 'hermes', subject_id: subject, redact_secrets: true });
+    const out = await localApi.createGrant({ admission_id: admissionId, platform, subject_id: subject, redact_secrets: true });
     const created = { ...out.grant, state_revision: out.state_revision };
     if (created.status !== 'pending_approval') { await fork(created); return; }
     keepGrant(created); setEditingId(created.grant_id);
@@ -140,7 +141,7 @@ export function useInstancePermissions(instanceId: string, operationBusy = false
     <h3>实例权限</h3>
     <p>先核对权限，再确认接入。这里配置实例可用范围，实际调用的 Skill 归属仍待验证。</p>
     {loading ? <p role="status">正在读取检查结果和权限…</p> : null}
-    {loadedFor === instanceId && identity ? <>
+    {loadedFor === scopeKey && identity ? <>
       <p role="status">{identity.status === 'issued' ? (changing ? '当前仍使用旧授权，新权限尚未接入。' : imported && !importPrepared ? '正在核验安装权限，暂不能预览接入。' : '已有可用授权，可以预览接入配置。') : '原有授权已失效，请先停用旧身份，再重新设置。'}</p>
       {scope(currentGrant, '当前实例权限')}
       {imported && !changing && importError ? <p role="alert">{importError}</p> : null}
@@ -150,7 +151,7 @@ export function useInstancePermissions(instanceId: string, operationBusy = false
       <label><input type="checkbox" checked={withdraw} disabled={busy} onChange={(event) => setWithdraw(event.target.checked)} />确认停用，后续工具调用将被阻止</label>
       <button type="button" className="btn" disabled={busy || !withdraw || !actor.trim()} onClick={stop}>停用此实例权限</button>
     </> : null}
-    {loadedFor === instanceId && (!identity || changing) ? <>
+    {loadedFor === scopeKey && (!identity || changing) ? <>
       {eligible.length ? <div className="field"><label htmlFor="instance-grant">已有实例授权</label>
         <select id="instance-grant" value={requiredGrantId ?? selectedId} disabled={busy || !!requiredGrantId} onChange={(event) => { setSelectedId(event.target.value); setReviewed(''); }}>
           <option value="">选择授权</option>{eligible.map((grant) => <option key={grant.grant_id} value={grant.grant_id}>{admissions.find((a) => a.admission_id === grant.admission_id)?.skill_name ?? '实例授权'} · {grantStatusLabel(grant.status)}</option>)}

@@ -163,6 +163,32 @@ describe('remote Skill import routing', () => {
   });
 });
 
+describe('uncertain execution reconciliation', () => {
+  beforeEach(() => { vi.resetModules(); vi.stubGlobal('fetch', vi.fn()); });
+  afterEach(() => { vi.unstubAllGlobals(); });
+  it('binds the administrator finding to the exact signed reservation without sending raw results', async () => {
+    const { localApi } = await import('./api');
+    const item = {
+      action_id: 'act-fixture', decision_receipt_id: 'rcpt-fixture', decision_hash: '1'.repeat(64),
+      reservation_receipt_id: 'rcpt-fixture-exec', reservation_hash: '2'.repeat(64), params_digest: '3'.repeat(64),
+      platform: 'hermes', agent_id: 'agent-fixture', session_id: 'session-fixture', task_id: 'task-fixture',
+      tool: 'write_file', tool_call_id: 'call-fixture', operation: 'filesystem.write', effects: ['filesystem.write'],
+      resource_refs: [], approval_scope: 'once' as const, resume_mode: 'retry_required' as const, grant_id: 'grant-fixture',
+      issued_at: '2026-09-14T10:00:00Z', expires_at: '2026-09-14T10:05:00Z', status: 'uncertain' as const,
+      params_excerpt: 'path:<redacted>',
+    };
+    vi.mocked(fetch).mockResolvedValueOnce(response({ schema_version: 'hold-execution-status/v1', status: 'cancelled',
+      reconciliation_receipt_id: 'rcpt-fixture-exec-rec' }));
+    await expect(localApi.reconcileHoldExecution(item, 'not_occurred', 'reviewer')).resolves.toMatchObject({ status: 'cancelled' });
+    expect(vi.mocked(fetch).mock.calls[0][0]).toBe('/v1/hold-executions/reconcile');
+    expect(JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body))).toEqual({
+      schema_version: 'hold-execution-reconcile/v1', action_id: item.action_id,
+      decision_receipt_id: item.decision_receipt_id, reservation_receipt_id: item.reservation_receipt_id,
+      reservation_hash: item.reservation_hash, outcome: 'not_occurred', actor_id: 'reviewer',
+    });
+  });
+});
+
 describe('update source save and schedule view', () => {
   beforeEach(() => { vi.resetModules(); vi.stubGlobal('fetch', vi.fn()); });
   afterEach(() => { vi.unstubAllGlobals(); });
@@ -180,5 +206,18 @@ describe('update source save and schedule view', () => {
     vi.mocked(fetch).mockResolvedValueOnce(response({ ...view, install_id: 'sin-' + '0'.repeat(64) }));
     await expect(localApi.readSkillUpdateSource(view.install_id)).rejects.toMatchObject({ status: 502 });
     expect(vi.mocked(fetch).mock.calls[1][0]).toBe(`/v1/skill-installations/operations/${view.install_id}/update-source`);
+  });
+  it('disables a saved source without sending its URL and rejects an enabled response', async () => {
+    const { localApi } = await import('./api');
+    const view = JSON.parse(readFileSync(new URL('../../../agentshield/testdata/contracts/local-skill-update-schedule-view.json', import.meta.url), 'utf8'));
+    const disabled = { ...view, enabled: false };
+    delete disabled.next_check_at;
+    vi.mocked(fetch).mockResolvedValueOnce(response(disabled));
+    await expect(localApi.disableSkillUpdateSource(view.install_id, { schema_version: 'local-skill-update-source-disable/v1', actor_id: 'fixture' })).resolves.toMatchObject({ enabled: false });
+    expect(vi.mocked(fetch).mock.calls[0][0]).toBe(`/v1/skill-installations/operations/${view.install_id}/update-source/disable`);
+    expect(JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body))).toEqual({ schema_version: 'local-skill-update-source-disable/v1', actor_id: 'fixture' });
+    expect(String(vi.mocked(fetch).mock.calls[0][1]?.body)).not.toContain('url');
+    vi.mocked(fetch).mockResolvedValueOnce(response(view));
+    await expect(localApi.disableSkillUpdateSource(view.install_id, { schema_version: 'local-skill-update-source-disable/v1', actor_id: 'fixture' })).rejects.toMatchObject({ status: 502 });
   });
 });

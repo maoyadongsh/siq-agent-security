@@ -14,7 +14,7 @@ Grant 继续使用现有合同，其签名与批准挑战中的 admission_id 通
 
 ## 接入顺序与运行边界
 
-先接通已拥有稳定实例解析和 hri 身份映射的 Hermes 实例选择；OpenClaw、WorkBuddy 目标解析仍按任务书继续实现，不以平台名字符串或任意目录冒充真实目标。UI 从导入结果选目标实例、准备权限，再进入已有 Grant 编辑与批准页。
+Hermes 与 OpenClaw 均使用服务端发现所得的稳定实例 ID 和 hri 身份映射；同一 ID 同时命中多个平台、目标消失或 OpenClaw 根为符号链接时拒绝。WorkBuddy 目标解析仍按任务书继续实现，不以平台名字符串或任意目录冒充真实目标。UI 从两个已支持平台的发现结果选择目标实例、准备权限，再进入已有 Grant 编辑与批准页。
 
 安装与可信 Skill 调用归属尚未完成，因此本增量只提供准备/批准，不将其转为实例运行权限。核心 MarkDeployed/MarkEffective 对保留导入 admission 明确返回 `grant_import_installation_required`；后续安装事务验证目标、批准摘要、写入内容与读回后再实现受证据约束的转换。不能使用既有通用 deploy 按钮或离线 CLI 提前激活，也不能将实例级权限包声明为已验证的 Skill 隔离。
 
@@ -22,7 +22,11 @@ Grant 继续使用现有合同，其签名与批准挑战中的 admission_id 通
 
 ## 管理请求
 
-管理 POST `/v1/skill-imports/{id}/permissions`：`local-skill-import-permission-create/v1` 包含 schema_version、request_id（ip-32hex）、artifact_digest、analysis_sha256、instance_id（hi-32hex）、actor_id。服务解析实际 Hermes 实例并派生 hri 主体；客户端不能指定任意平台、主体或目录。完整 Load 后验证请求摘要，发布派生 admission、默认拒绝草稿、策略和审计，返回 `local-skill-import-permission-created/v1`：import_id、source、grant、state_revision、reused、installed=false。失败的派生 admission 不产生权限；最终 Grant 仍由既有 commit journal 控制可见性与恢复。重试按相同请求确定 ID，保留已编辑/已批准的当前版本，不重置或复活终态记录。
+管理 POST `/v1/skill-imports/{id}/permissions`：`local-skill-import-permission-create/v1` 包含 schema_version、request_id（ip-32hex）、artifact_digest、analysis_sha256、instance_id（hi-32hex）、actor_id。服务从 Hermes/OpenClaw 发现目录中解析唯一实际实例并派生 hri 主体；客户端不能指定任意平台、主体或目录。完整 Load 后验证请求摘要，发布派生 admission、默认拒绝草稿、策略和审计，返回 `local-skill-import-permission-created/v1`：import_id、source、grant、state_revision、reused、installed=false。失败的派生 admission 不产生权限；最终 Grant 仍由既有 commit journal 控制可见性与恢复。重试按相同请求确定 ID，保留已编辑/已批准的当前版本，不重置或复活终态记录。
+
+## 2026-09-14 OpenClaw 扩展
+
+权限准备、安装、权限准备后接入与运行身份链路已扩展到 OpenClaw。平台仍由服务端唯一目标解析结果决定，计划、Grant、运行身份和适配器预览必须逐层同平台。Linux 隔离 HOME 的 OpenClaw 2026.5.12 原生验收发现其 Skill loader 拒绝硬链接载荷；OpenClaw 发布改为排他创建独立文件，并以签名归属标记、完整摘要、模式和读回校验所有权。Hermes 保留原 inode 绑定证明。该证据不代替 Windows、macOS 或 WorkBuddy 实机验收。
 
 ## 验证要求
 

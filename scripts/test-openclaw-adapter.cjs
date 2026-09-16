@@ -1,5 +1,6 @@
 // Isolated hook contract tests; never read the developer's platform config/token.
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
@@ -41,6 +42,7 @@ const sandbox = {
     };
     if (name === 'node:os') return { homedir: () => '/isolated-test' };
     if (name === 'node:path') return path;
+    if (name === 'node:crypto') return crypto;
     throw Error('unexpected import: ' + name);
   },
   fetch: async (url, options) => {
@@ -58,6 +60,21 @@ const sandbox = {
       if (approvalMode === 'stale') Object.assign(status, { status: 'approved', reason_code: 'hold_approved', expires_at: new Date(0).toISOString() });
       if (approvalMode === 'invalid-time') Object.assign(status, { status: 'approved', reason_code: 'hold_approved', expires_at: '2099' });
       return { status: 200, json: async () => status };
+    }
+    if (url.endsWith('/v1/hold-executions/reserve')) {
+      const request = JSON.parse(options.body);
+      return {
+        status: 201,
+        json: async () => ({
+          schema_version: 'hold-execution-status/v1',
+          status: 'reserved',
+          action_id: request.action_id,
+          decision_receipt_id: request.decision_receipt_id,
+          reservation_receipt_id: `${request.decision_receipt_id}-exec`,
+          expires_at: new Date(Date.now() + 60000).toISOString(),
+          reason_code: 'hold_execution_reserved',
+        }),
+      };
     }
     return { status: 200, json: async () => decision };
   },
@@ -107,7 +124,12 @@ exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } 
       assert.equal(typeof result.requireApproval.beforeExecute, 'function');
       approvalMode = 'approved';
       assert.equal(await result.requireApproval.beforeExecute(event.params), true);
-      assert.equal(seen.at(-1).body.action_id, decision.action_id);
+      const reserve = seen.filter(item => item.url.endsWith('/v1/hold-executions/reserve')).at(-1);
+      assert.equal(reserve.body.action_id, decision.action_id);
+      assert.equal(reserve.body.decision_receipt_id, decision.receipt_id);
+      assert.equal(reserve.body.original_tool_call_id, 'hold-' + mode);
+      assert.notEqual(reserve.body.retry_tool_call_id, reserve.body.original_tool_call_id);
+      assert.deepEqual(reserve.body.params, event.params);
       for (const changed of ['denied', 'expired', 'consumed', 'wrong-action', 'stale', 'offline']) {
         approvalMode = changed;
         assert.equal(await result.requireApproval.beforeExecute(event.params), false, changed);

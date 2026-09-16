@@ -1,0 +1,407 @@
+{
+  "schema": "closure-b01-checks/v1",
+  "baseline": "personal-acceptance-baseline/v2",
+  "checks": [
+    {
+      "id": "b01_artifacts",
+      "desc": "独立 archive 双版本构建与签署",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "old": {
+          "commit": "efad840",
+          "tree": "2216f4a0e9eef3e750c13673da8e158d4e84a6a3",
+          "version": "0.2.0-b01-old"
+        },
+        "new": {
+          "commit": "53155b1",
+          "tree": "9ff0c7e9c50c48fcc249adfbe48df76b82d19c51",
+          "version": "0.2.0-b01-new"
+        },
+        "trust_layer": {
+          "test_public_key_b64": "cK7JKn4hiEM+GwtkCZK8xCmzUtNQCFOqOz77qUcVO5k=",
+          "seed_location": "run_dir/release-seed.b64 (0600, 不入证据)",
+          "patched_files": [
+            {
+              "file": "apps/agentshield/internal/skillmanifest/manifest.go",
+              "production": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
+              "test": "cK7JKn4hiEM+GwtkCZK8xCmzUtNQCFOqOz77qUcVO5k="
+            },
+            {
+              "file": "apps/agentshield/internal/skillmanifest/manifest.go",
+              "production": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
+              "test": "cK7JKn4hiEM+GwtkCZK8xCmzUtNQCFOqOz77qUcVO5k="
+            }
+          ],
+          "note": "测试构建内嵌单一固定测试公钥（fail-closed pin）；生产信任根未触碰；正式发行 leg 保持 blocked，解锁条件=维护者以正式种子签署 manifest"
+        },
+        "manifests": {
+          "old": "2ac113a72014c33ad5429f19646fa556ea85e3f26cff3f2ad613c9d868c23cf1",
+          "old_v2nocompat": "5b069f0997336e3bb14ab2d76ae462a81d9338fdd0554ed9c1ae2a8c1b326b25",
+          "new": "ccf743bbb3ef37fbdda2ebdf74d1a4adfb79907e5c8fd683e09c4dda88ea3a69"
+        }
+      },
+      "ts": "00:30:09"
+    },
+    {
+      "id": "lc01_no_confirm",
+      "desc": "缺 --confirm-install 拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "siq-agent-security: client-install: --manifest FILE --binary FILE --confirm-install and optional valid --port required"
+      },
+      "ts": "00:30:09"
+    },
+    {
+      "id": "lc01_bad_signature",
+      "desc": "篡改 manifest 签名拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "siq-agent-security: client-upgrade-check: invalid manifest"
+      },
+      "ts": "00:30:09"
+    },
+    {
+      "id": "lc01_digest_mismatch",
+      "desc": "manifest 摘要与二进制不符拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "siq-agent-security: client-upgrade-check: candidate integrity mismatch"
+      },
+      "ts": "00:30:09"
+    },
+    {
+      "id": "lc01_state_incompatible",
+      "desc": "无状态兼容声明（v2 manifest，marker v2）拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "siq-agent-security: skillmanifest: signed client compatibility declaration missing or unsupported"
+      },
+      "ts": "00:30:09"
+    },
+    {
+      "id": "lc01_no_side_effect",
+      "desc": "拒绝前后状态目录与用户单位不变",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "before": "fa07172862b19c1a881f30f9053eb71cd799624b5632c741e18f88c278169780",
+        "after": "fa07172862b19c1a881f30f9053eb71cd799624b5632c741e18f88c278169780",
+        "units_before": [],
+        "units_after": []
+      },
+      "ts": "00:30:09"
+    },
+    {
+      "id": "lc03_port_occupied",
+      "desc": "端口占用保留真实失败且不停止占用者",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "siq-agent-security: client-install: installation not confirmed; staged program retained, inspect service-status before retrying",
+        "occupier_alive": true,
+        "units_before": [],
+        "units_after": [],
+        "note": "client-install 对子进程失败仅报 installation not confirmed（设计面）"
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc01_install_ok",
+      "desc": "通过 client-install 安装旧版并启动",
+      "ok": true,
+      "level": "observed",
+      "detail": {},
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc01_identity",
+      "desc": "安装后身份面完整",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "identity": {
+          "port": 25173,
+          "state_directory_id": "d7525b93b89b668689ed4eddacee81eec95abf45654ce3d9ff248e6363d930ce",
+          "version": "0.2.0-b01-old",
+          "unit_name": "siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service",
+          "main_pid": "462211",
+          "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service",
+          "binary_digest": "85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0"
+        },
+        "signing_pubkey": "/Qv0Turf67MrjsM+2wIwm7hRTFbrW+4uBoZCrQxRVGU="
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc03_special_path",
+      "desc": "中文/空格/% 状态路径实际运行（ExecStart 运行路径归属到特殊路径状态目录）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "state_dir": "/tmp/siq-closure-20260915/b01r5/state 中文 空格%25实例",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service",
+        "exec_start": "{ path=/tmp/siq-closure-20260915/b01r5/state 中文 空格%25实例/client-releases/85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0/siq-agent-security ; argv[]=/tmp/siq-closure-20260915/b01r5/state 中文 空格%25实例/client-releases/85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 00:30:10 CST] ; stop_time=[n/a] ; pid=462211 ; code=(null) ; status=0/0 }"
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc02_pair_valid",
+      "desc": "有效配对码换得管理会话",
+      "ok": true,
+      "level": "observed",
+      "detail": {},
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc02_pair_invalid",
+      "desc": "无效配对码拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 401
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc02_pair_replay",
+      "desc": "同一无效码重放仍拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 401
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc02_expired_code",
+      "desc": "配对码真实过期（5 分钟窗口）未在本轮等待验证；由 requestLocalPairing ExpiresIn=300 组件合同覆盖",
+      "ok": true,
+      "level": "not_exercised",
+      "detail": {
+        "expires_in_component": 300
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc04_unit_precise",
+      "desc": "精确用户单位加载并运行（FragmentPath=安装副本；ExecStart 指向状态目录 staged 程序）",
+      "ok": false,
+      "level": "observed",
+      "detail": {
+        "unit": "siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service",
+        "installed_fragment": "/home/maoyd/.config/systemd/user/siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service",
+        "state_unit_rendered": true,
+        "props": {
+          "MainPID": "462211",
+          "ActiveState": "active",
+          "UnitFileState": "linked"
+        }
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc04_no_second_process",
+      "desc": "重复启动无第二进程（MainPID 稳定）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "pid_before": "462211",
+        "pid_after": "462211"
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc04_stop_needs_confirm",
+      "desc": "service-stop 缺确认拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc04_restart",
+      "desc": "stop→start 后服务恢复",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "stopped": "inactive",
+        "active": "active"
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc04_session_after_restart",
+      "desc": "重启后旧管理会话不再有效",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "status": 401
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "lc06_upgrade_tx",
+      "desc": "双版本升级完成并记录事务号",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "stdout_tail": "前 CLI 程序的本地副本：/tmp/siq-closure-20260915/b01r5/state 中文 空格%25实例/client-snapshots/85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0/siq-agent-security\n正在停止保护并切换已校验候选；block 模式下受控操作将暂时被拒绝。\n切换事务：007d5349a20a40d966af0ae6cd1a5c2debda234a14eaa01025599c5593655ddf\n已切换到校验通过的目标版本，本实例 API 健康检查通过。\n"
+      },
+      "ts": "00:30:11"
+    },
+    {
+      "id": "lc06_identity_kept",
+      "desc": "升级后身份/端口/单位保持",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "digest_old": "85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0",
+        "digest_new": "afb6642e554f3db4eea033a6588b944ef25a234f1e3da09c758dcfd3e784425a"
+      },
+      "ts": "00:30:11"
+    },
+    {
+      "id": "lc07_rollback_wrong_path",
+      "desc": "回滚二进制与历史摘要不符拒绝",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "siq-agent-security: service-rollback: binary path differs from historical source"
+      },
+      "ts": "00:30:11"
+    },
+    {
+      "id": "phase_lc07",
+      "desc": "lc07_rollback_recover 阶段异常",
+      "ok": false,
+      "level": "observed",
+      "detail": {
+        "error": "CLI failed (['siq-agent-security', 'service-rollback', '--transaction', '007d5349a20a40d966af0ae6cd1a5c2debda234a14eaa01025599c5593655ddf', '--binary', '/tmp/siq-closure-20260915/b01r5/bin-old/siq-agent-security-linux-arm64', '--confirm-rollback', '--manifest', '/tmp/siq-closure-20260915/b01r5/manifest-old.json']) exit=1: siq-agent-security: service-rollback: binary path differs from historical so"
+      },
+      "ts": "00:30:11"
+    },
+    {
+      "id": "lc08_unknown_preserved",
+      "desc": "未知文件/链接/单位不被覆盖删除",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "file": true,
+        "link": true,
+        "unit_kept": true
+      },
+      "ts": "00:30:11"
+    },
+    {
+      "id": "lc09_teardown_unit_gone",
+      "desc": "teardown 后单位已注销",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "load_state": "not-found"
+      },
+      "ts": "00:30:12"
+    },
+    {
+      "id": "lc09_state_retained",
+      "desc": "teardown 保留状态目录（身份/配置条目仍在）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "state_dir_kept": true,
+        "retained_entry_count": 18,
+        "retained_sample": [
+          "admin-recovery.token",
+          "audit.jsonl",
+          "b01-unknown-user-file.txt",
+          "b01-unknown-user-link",
+          "client-releases/85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0/manifest-2ac113a72014c33ad5429f19646fa556ea85e3f26cff3f2ad613c9d868c23cf1.json",
+          "client-releases/85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0/siq-agent-security",
+          "client-releases/afb6642e554f3db4eea033a6588b944ef25a234f1e3da09c758dcfd3e784425a/manifest-ccf743bbb3ef37fbdda2ebdf74d1a4adfb79907e5c8fd683e09c4dda88ea3a69.json",
+          "client-releases/afb6642e554f3db4eea033a6588b944ef25a234f1e3da09c758dcfd3e784425a/siq-agent-security",
+          "client-snapshots/85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0/siq-agent-security",
+          "config.json"
+        ],
+        "entries_before": 19,
+        "entries_after": 18
+      },
+      "ts": "00:30:12"
+    },
+    {
+      "id": "lc09_reentry_install",
+      "desc": "保留状态上经 client-install 重入成功",
+      "ok": false,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "siq-agent-security: client-install: installation not confirmed; staged program retained, inspect service-status before retrying"
+      },
+      "ts": "00:30:12"
+    },
+    {
+      "id": "b01_final_teardown",
+      "desc": "收尾 teardown 完成（单位注销）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "unit": "siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service"
+      },
+      "ts": "00:30:12"
+    }
+  ],
+  "failures": [
+    {
+      "id": "lc04_unit_precise",
+      "desc": "精确用户单位加载并运行（FragmentPath=安装副本；ExecStart 指向状态目录 staged 程序）",
+      "ok": false,
+      "level": "observed",
+      "detail": {
+        "unit": "siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service",
+        "installed_fragment": "/home/maoyd/.config/systemd/user/siq-agent-security-5ef30c58482bb110e71b827eba95b59a.service",
+        "state_unit_rendered": true,
+        "props": {
+          "MainPID": "462211",
+          "ActiveState": "active",
+          "UnitFileState": "linked"
+        }
+      },
+      "ts": "00:30:10"
+    },
+    {
+      "id": "phase_lc07",
+      "desc": "lc07_rollback_recover 阶段异常",
+      "ok": false,
+      "level": "observed",
+      "detail": {
+        "error": "CLI failed (['siq-agent-security', 'service-rollback', '--transaction', '007d5349a20a40d966af0ae6cd1a5c2debda234a14eaa01025599c5593655ddf', '--binary', '/tmp/siq-closure-20260915/b01r5/bin-old/siq-agent-security-linux-arm64', '--confirm-rollback', '--manifest', '/tmp/siq-closure-20260915/b01r5/manifest-old.json']) exit=1: siq-agent-security: service-rollback: binary path differs from historical so"
+      },
+      "ts": "00:30:11"
+    },
+    {
+      "id": "lc09_reentry_install",
+      "desc": "保留状态上经 client-install 重入成功",
+      "ok": false,
+      "level": "observed",
+      "detail": {
+        "exit": 1,
+        "stderr": "siq-agent-security: client-install: installation not confirmed; staged program retained, inspect service-status before retrying"
+      },
+      "ts": "00:30:12"
+    }
+  ]
+}

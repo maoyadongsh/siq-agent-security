@@ -11,6 +11,7 @@ from app.adapters.openshell.contracts import (
     DeploymentReceipt,
     EventBatch,
     PolicySnapshot,
+    RollbackAuthorizer,
     RollbackReceipt,
     SandboxPage,
     ValidationReport,
@@ -24,8 +25,7 @@ class EnforcementAdapter(ABC):
         """返回实际能力、限制和 Schema 版本。"""
 
     @abstractmethod
-    def list_targets(self, cursor: str | None = None) -> SandboxPage:
-        ...
+    def list_targets(self, cursor: str | None = None) -> SandboxPage: ...
 
     @abstractmethod
     def read_effective_policy(self, target: str) -> PolicySnapshot:
@@ -36,12 +36,10 @@ class EnforcementAdapter(ABC):
         """对不支持字段失败或显式返回未覆盖项。"""
 
     @abstractmethod
-    def validate(self, compiled: CompiledPolicy) -> ValidationReport:
-        ...
+    def validate(self, compiled: CompiledPolicy) -> ValidationReport: ...
 
     @abstractmethod
-    def plan_change(self, target: str, compiled: CompiledPolicy) -> ChangePlan:
-        ...
+    def plan_change(self, target: str, compiled: CompiledPolicy) -> ChangePlan: ...
 
     @abstractmethod
     def apply_dynamic(self, target: str, plan: ChangePlan, expected_revision: str) -> DeploymentReceipt:
@@ -61,8 +59,12 @@ class EnforcementAdapter(ABC):
         """
 
     @abstractmethod
-    def rollback(self, target: str, receipt: DeploymentReceipt) -> RollbackReceipt:
-        ...
+    def rollback(
+        self,
+        target: str,
+        receipt: DeploymentReceipt,
+        authorizer: RollbackAuthorizer | None = None,
+    ) -> RollbackReceipt: ...
 
     @abstractmethod
     def stream_events(self, cursor: str | None = None) -> EventBatch:

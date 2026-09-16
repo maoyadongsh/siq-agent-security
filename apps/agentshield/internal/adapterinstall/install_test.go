@@ -431,5 +431,12 @@ func TestEmbeddedAssetsMatchRuntimeTree(t *testing.T) {
 		if string(got) != string(want) {
 			t.Fatalf("embed drifted from adapters/runtime/%s — copy the runtime file into adapterinstall/assets", p[1])
 		}
+		if p[0] == "assets/hermes/plugin.yaml" {
+			for _, declaration := range []string{"provides_hooks:\n", "  - pre_tool_call\n", "  - post_tool_call\n"} {
+				if !strings.Contains(string(got), declaration) {
+					t.Fatalf("Hermes manifest does not declare registered hook %q", strings.TrimSpace(declaration))
+				}
+			}
+		}
 	}
 }

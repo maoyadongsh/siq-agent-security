@@ -15,6 +15,7 @@ import importlib.util
 import json
 import re
 import sqlite3
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -57,6 +58,15 @@ class Harness(native.fixture.Harness):
                 "OPENCLAW_CONFIG_PATH": str(self.oc / "openclaw.json"),
             }
         )
+
+    def build(self):
+        # The inherited fixture build() compiles HEAD and ignores --binary.
+        # This leg must execute the caller-selected accepted candidate exactly.
+        selected = self.args.binary.resolve(strict=True)
+        digest = hashlib.sha256(selected.read_bytes()).hexdigest()
+        shutil.copy2(selected, self.binary)
+        require(hashlib.sha256(self.binary.read_bytes()).hexdigest() == digest,
+                "selected candidate changed during copy")
 
     def setup_authority(self):
         require(not (self.oc / "siq-agent-security.json").exists(), "fixture preinstalled managed adapter")

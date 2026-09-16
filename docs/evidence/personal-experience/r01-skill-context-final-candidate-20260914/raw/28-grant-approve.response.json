@@ -1,0 +1,89 @@
+{
+  "grant": {
+    "grant_id": "grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+    "admission_id": "adm-si-4a3804829c9306baf95ba1d53d3fa245eeb0d231e69933297142aabf779e1e32",
+    "skill": {
+      "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+      "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8"
+    },
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-5bc1056da0d3598bb975a212b0e573c4"
+    },
+    "platform": "hermes",
+    "facts": [
+      {
+        "fact_id": "pf-p-1-811cbc58",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-2-12bb99cf",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-3-f1ed39d6",
+        "domain": "filesystem",
+        "action": "fs.read",
+        "resource": {
+          "type": "path",
+          "value": "/tmp/siq-r01-sec-live-xjgb87vm/workspace"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      }
+    ],
+    "default_effect": "deny",
+    "hermes_toolset_allowlist": [
+      "read_file",
+      "write_file"
+    ],
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "version": 2,
+      "static_domains_unavailable": [
+        "filesystem"
+      ]
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "approved",
+    "approved_by": {
+      "actor_type": "human",
+      "actor_id": "r01-live-operator",
+      "approved_at": "2026-09-14T12:41:46Z",
+      "channel": "console"
+    },
+    "effective_readback": null,
+    "created_at": "2026-09-14T12:41:46Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "signature": "3fd8b0f04b7e23d2dca306b90ef641751edc225478d85d0a7576ab625922c311d458ede43f34d7e4e28a480fa1417a3344c67a29aaf142c6f61307916ea68e0a"
+  },
+  "state_revision": 2
+}

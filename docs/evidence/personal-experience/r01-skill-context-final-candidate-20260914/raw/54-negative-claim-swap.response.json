@@ -1,0 +1,19 @@
+{
+  "action": "deny",
+  "action_id": "act-e7d5a8e74fa125c0fbd29799",
+  "authority_reason_code": "skill_context_mismatch",
+  "authority_status": "invalid",
+  "effective_action": "deny",
+  "reason": "skill_context_mismatch",
+  "reason_code": "skill_context_mismatch",
+  "receipt_id": "rcp-55db6e68566a-124146.805371",
+  "skill_attribution": {
+    "skill_id": "local_dir:other-skill@0000deadbeef",
+    "status": "unknown"
+  },
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  }
+}

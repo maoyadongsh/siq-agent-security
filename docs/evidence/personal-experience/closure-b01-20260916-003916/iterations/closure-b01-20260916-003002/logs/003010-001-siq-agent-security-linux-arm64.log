@@ -1,0 +1,9 @@
+$ /tmp/siq-closure-20260915/b01r5/bin-old/siq-agent-security-linux-arm64 client-install --manifest /tmp/siq-closure-20260915/b01r5/manifest-old.json --binary /tmp/siq-closure-20260915/b01r5/bin-old/siq-agent-security-linux-arm64 --confirm-install --port 25173
+# exit recorded separately; redacted=True
+--- stdout ---
+已安装并启动本机管理服务。
+程序：/tmp/siq-closure-20260915/b01r5/state 中文 空格%25实例/client-releases/85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0/siq-agent-security
+管理页面：http://127.0.0.1:25173/
+首次连接请使用已安装程序的 pair 命令。
+
+--- stderr ---

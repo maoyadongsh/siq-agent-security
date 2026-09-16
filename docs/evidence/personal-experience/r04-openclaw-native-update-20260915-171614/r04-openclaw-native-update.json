@@ -1,0 +1,272 @@
+{
+  "schema_version": "personal-r04-openclaw-native-update/v1",
+  "recorded_at": "2026-09-15T09:15:37.340530+00:00",
+  "passed": true,
+  "binary_sha256": "15d688fdd4652e9efb544ece769142b60725bc0a5d2deae233062f6b910e0701",
+  "harness_sha256": "a1f6a904c23d61cd3be82c4e4e11955d4d0f00a9566e47c357f26767b038d22a",
+  "native_cli_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733",
+  "openclaw_version": "2026.5.12",
+  "native_entrypoint": "public openclaw agent --local; real plugin hook and file tool lifecycle",
+  "results": [
+    {
+      "id": "missing_sec_denied_before_v1_read",
+      "expectation": "pre-SEC native read denied fail-closed",
+      "actual": "action=deny",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v1_native_read_allowed_with_verified_session_attribution",
+      "expectation": "V1 native read allowed with verified controlled_session attribution bound to the issued SEC",
+      "actual": "action=allow attribution={\"skill_id\": \"local_dir:intent-fixture@ed97c76d53f8\", \"content_hash\": \"ed97c76d53f887fc01ca4f22f33f921a009c81aedfef96c3c2552b2412eac456\", \"status\": \"verified\", \"evidence_level\": \"controlled_session\", \"context_id\": \"sec-3",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v1_call_binding_recomputed",
+      "expectation": "controlled-session call binding matches the canonical hash of the real call",
+      "actual": "call_binding=961ae791592c2339…",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v1_attribution_correlates_grant_install_sec",
+      "expectation": "decision correlates the real call with Grant, install content digest and SEC",
+      "actual": "matched_grant_id=grt-si-0af9063379f97ad34a56838708819214db277541a271fc6b72eb6f4eac3ca3d2 content_hash=ed97c76d53f887fc… install_digest=95f50e61780d2202…",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up01_import_generates_check_data_only",
+      "expectation": "importing a candidate creates only import/analysis data: no install, no permission change, no confirmation",
+      "actual": "installations=1 grant_revision=3 target_unchanged=True v2_in_catalog=False removal_status=not_requested",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "comparison_requires_confirmation_with_content_and_permission_diff",
+      "expectation": "update-comparison demands explicit confirmation, reports content changes and shows the added permission",
+      "actual": "requires_confirmation=True content_changes_total=1 permission_displayed=True",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "comparison_is_read_only",
+      "expectation": "comparison changes neither the installed target nor V1 authority",
+      "actual": "target_unchanged=True v1_revision=3 expected_revision=3 candidate_revision=1",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up02_cancel_and_repeated_requests_keep_v1",
+      "expectation": "cancel (no confirmation) and duplicate comparison cause no update; V1 keeps running with unchanged permissions",
+      "actual": "duplicate_compare_match=True v1_still_allows=allow target_unchanged=True",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up07_stale_candidate_digest_refused",
+      "expectation": "permission analysis with a digest from before the source mutation is refused",
+      "actual": "HTTP /v1/skill-imports/si-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/permissions: expected 200, got 201; ",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up10_source_unavailable_recorded",
+      "expectation": "source removal leads to a safe, recorded outcome",
+      "actual": "comparison proceeded from the imported artifact: requires_confirmation=True",
+      "status": "pass",
+      "evidence_level": "observed"
+    },
+    {
+      "id": "approved_candidate_recomparison_and_removal_view",
+      "expectation": "re-comparison after approval succeeds and removal view reports not_requested with a binding signature",
+      "actual": "requires_confirmation=True removal_status=not_requested binding=52688e6b37dd34d8…",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up06_user_modified_target_not_silently_overwritten",
+      "expectation": "prepare or commit refuses when the installed target was modified after installation",
+      "actual": "refused at prepare: HTTP /v1/skill-installations/operations/sin-4eb515840c2117e2181003736c5837ac83a36afab6f35c873b5af187154dcd2c/update-plans: expected 201, got 409; skill_install_changed",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "prepared_update_leaves_v1_in_place_before_confirmation",
+      "expectation": "staging the update changes nothing on the host before explicit confirmation",
+      "actual": "target_unchanged=True",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up04_new_permissions_require_fresh_confirmation",
+      "expectation": "widening permissions after approval is refused by the state machine; added permissions must re-enter pending approval and a fresh confirmation",
+      "actual": "HTTP /v1/grants/grt-si-f89e52661cf393798d7c864a4f9aa719c47452b1544b785e0287299a0ddaefa6/patch-desired: expected 200, got 400; grant: patch-desired only allowed in pending_approval (got approved)",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up03_candidate_drift_after_approval_refused",
+      "expectation": "commit refuses any plan payload that no longer matches the signed prepared plan (no TOCTOU pass between staging and commit)",
+      "actual": "HTTP /v1/skill-installations/updates: expected 200, got 409; skill_install_changed",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up08_commit_after_daemon_restart_from_recorded_plan",
+      "expectation": "after restart the prepared update commits from the durable transaction record, without blind rewrites",
+      "actual": "commit_status=updated_unverified",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "update_replaces_target_bytes",
+      "expectation": "confirmed update writes V2 content to the installed target",
+      "actual": "target_matches_v2=True",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "update_revokes_v1_grant",
+      "expectation": "V1 Grant becomes revoked after the update commits",
+      "actual": "v1_grant_status=revoked",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v1_runtime_identity_becomes_unavailable",
+      "expectation": "V1 runtime identity drops to grant_unavailable and is retired explicitly",
+      "actual": "v1_identity_status=grant_unavailable",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up09_old_context_cannot_authorize_new_version",
+      "expectation": "the pre-update session SEC no longer authorizes reads after the update; denial has no tool side effect",
+      "actual": "hook refused the stale session SEC before attribution (no decision receipt written, receipts 5->5); tool content: siq-agent-security: decision service unavailable (instance session could not be verified); blocked (fail-closed)",
+      "status": "pass",
+      "evidence_level": "observed"
+    },
+    {
+      "id": "v2_activation_identity_and_adapter_rebind",
+      "expectation": "V2 needs new activation, identity and adapter binding; the adapter config points at the new identity",
+      "actual": "runtimeIdentityId=ri-9018762821e89…",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v2_new_session_pre_sec_denied",
+      "expectation": "the new session enrolls under the V2 identity and is denied before any SEC exists",
+      "actual": "pre_sec_denied=True session=agent:intent-v2-fixture-agent:explicit:r04-v2-session-e8b2defbf81c",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v2_native_read_allowed_with_new_sec",
+      "expectation": "V2 native read allowed only through the freshly issued SEC bound to the new installation",
+      "actual": "action=allow context_matches=True content_changed=True",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v2_loaded_in_native_catalog",
+      "expectation": "the updated Skill is present in the real OpenClaw catalog after the update",
+      "actual": "catalog_contains_v2=True",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "removal_revokes_authority_and_removes_target",
+      "expectation": "explicit removal revokes the V2 grant and removes the installed target",
+      "actual": "status=removed grant_revoked=True target_gone=True",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v2_identity_survives_nothing_after_removal",
+      "expectation": "the V2 runtime identity is grant_unavailable after removal",
+      "actual": "v2_identity_status=grant_unavailable",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "unknown_user_files_preserved",
+      "expectation": "user files outside the managed install target survive update and removal byte-for-byte",
+      "actual": "{\"/tmp/siq-r04-openclaw-update-_t9h_khv/home/.openclaw/skills/user-own-skill/NOTES.txt\": true, \"/tmp/siq-r04-openclaw-update-_t9h_khv/home/.openclaw/skills/README-user.txt\": true, \"/tmp/siq-r04-openclaw-update-_t9h_khv/user-data.txt\": true}",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "host_config_final_state_preserved",
+      "expectation": "OpenClaw host config keeps the plugin wiring and adapter state file remains after skill removal",
+      "actual": "openclaw_json_present=True adapter_state_present=True openclaw_config_sha256_before=d50dd154bb4776b2…",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "receipt_chain_verified",
+      "expectation": "signed receipt chain verifies",
+      "actual": "verified=True",
+      "status": "pass",
+      "evidence_level": "controlled"
+    }
+  ],
+  "checks": [
+    "missing_sec_denied_before_v1_read",
+    "v1_native_read_allowed_with_verified_session_attribution",
+    "v1_call_binding_recomputed",
+    "v1_attribution_correlates_grant_install_sec",
+    "up01_import_generates_check_data_only",
+    "comparison_requires_confirmation_with_content_and_permission_diff",
+    "comparison_is_read_only",
+    "up02_cancel_and_repeated_requests_keep_v1",
+    "up07_stale_candidate_digest_refused",
+    "up10_source_unavailable_recorded",
+    "approved_candidate_recomparison_and_removal_view",
+    "up06_user_modified_target_not_silently_overwritten",
+    "prepared_update_leaves_v1_in_place_before_confirmation",
+    "up04_new_permissions_require_fresh_confirmation",
+    "up03_candidate_drift_after_approval_refused",
+    "up08_commit_after_daemon_restart_from_recorded_plan",
+    "update_replaces_target_bytes",
+    "update_revokes_v1_grant",
+    "v1_runtime_identity_becomes_unavailable",
+    "up09_old_context_cannot_authorize_new_version",
+    "v2_activation_identity_and_adapter_rebind",
+    "v2_new_session_pre_sec_denied",
+    "v2_native_read_allowed_with_new_sec",
+    "v2_loaded_in_native_catalog",
+    "removal_revokes_authority_and_removes_target",
+    "v2_identity_survives_nothing_after_removal",
+    "unknown_user_files_preserved",
+    "host_config_final_state_preserved",
+    "receipt_chain_verified"
+  ],
+  "up_coverage": {
+    "UP01": "pass",
+    "UP02": "pass",
+    "UP03": "pass",
+    "UP04": "pass",
+    "UP05": "partial (stale-binding refusals exercised; concurrent operator interleaving out of scope here)",
+    "UP06": "pass",
+    "UP07": "pass",
+    "UP08": "pass",
+    "UP09": "pass",
+    "UP10": "observed"
+  },
+  "receipt_count": 9,
+  "v1_install_id": "sin-4eb515840c2117e2181003736c5837ac83a36afab6f35c873b5af187154dcd2c",
+  "v2_install_id": "sin-51d4adbca45254a25b925caa9d8b4c22a2707c37408532d9f2d4c572909a6e4f",
+  "v1_content_hash": "ed97c76d53f887fc01ca4f22f33f921a009c81aedfef96c3c2552b2412eac456",
+  "v2_content_hash": "fe3af450a9deecb80cf0a1a7a04f779e76e64f93747f0fa6fd33c0b24fba6256",
+  "session_attribution_limitation": "OpenClaw exposes no trustworthy per-task Skill tool-causality field; evidence level is controlled_session throughout, not controlled_task",
+  "limitations": [
+    "local deterministic model and synthetic operator; no external or paid model",
+    "candidate V2 is an explicitly imported local directory; public-network scheduled fetch is separate (does not close J6)",
+    "session-level attribution only (controlled_session); same-UID compromise and OS sandbox isolation remain outside the SEC threat boundary",
+    "UP05 covers stale-binding refusals, not two live operators racing; UP10 records the product's chosen safe behaviour",
+    "a session enrolled under the V1 identity can never be re-bound to the V2 identity (runtimeidentity.Store refuses the switch; SEC issuance then fails with skill_context_session_unbound), so the post-update journey uses an explicit new OpenClaw session (--session-id) — a supported CLI path, not a manual production-state replacement",
+    "update flows here are local-dir journeys; production Git obeys R03 and is unchanged"
+  ]
+}

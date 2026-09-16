@@ -12,7 +12,8 @@ func TestApprovalCannotRetroactivelyAuthorizeEffect(t *testing.T) {
 	g := deployedGrant(t, "openclaw", false)
 	g.OpenClawToolPolicy.RequireApproval = append(g.OpenClawToolPolicy.RequireApproval, "web_fetch")
 	fx := newFixture(t, "block", g, false)
-	d, err := fx.eng.Decide(req("openclaw", "web_fetch", map[string]any{"url": "https://api.github.com/report"}))
+	r := req("openclaw", "web_fetch", map[string]any{"url": "https://api.github.com/report"})
+	d, err := fx.eng.Decide(r)
 	if err != nil || d.Action != ActionHold {
 		t.Fatal(d, err)
 	}
@@ -21,6 +22,7 @@ func TestApprovalCannotRetroactivelyAuthorizeEffect(t *testing.T) {
 	if _, err = fx.eng.ResolveHold(d.Receipt, true, "admin"); err != nil {
 		t.Fatal(err)
 	}
+	reserveForRetry(t, fx, r, d, "effect-time-retry")
 	for _, engine := range []*Engine{fx.eng, mustRestartEffectEngine(t, fx.eng)} {
 		a, err := engine.EffectAction(d.Receipt.ActionID, d.Receipt.ReceiptID)
 		if err != nil || !a.Authorized || len(a.Resources) != 1 {

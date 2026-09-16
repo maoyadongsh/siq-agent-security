@@ -21,9 +21,9 @@ export default function ImportPermissionPanel({ result }: { result: SkillImportR
   useEffect(() => {
     let canceled = false;
     setLoading(true); setError(null);
-    localApi.adapterInstances('hermes').then((data) => {
+    Promise.all([localApi.adapterInstances('hermes'), localApi.adapterInstances('openclaw')]).then((catalogs) => {
       if (!canceled) {
-        const found = data.instances.filter((item) => item.detected);
+        const found = catalogs.flatMap((data) => data.instances).filter((item) => item.detected);
         setInstances(found); setInstance((previous) => found.some((item) => item.instance_id === previous) ? previous : '');
       }
     }).catch((err: unknown) => {
@@ -49,17 +49,17 @@ export default function ImportPermissionPanel({ result }: { result: SkillImportR
   };
   return <section className="import-permission-panel" aria-labelledby="prepare-permissions-heading">
     <h3 id="prepare-permissions-heading">为目标智能体准备权限</h3>
-    <p className="page-desc">选择已有 Hermes 实例，生成待审阅的权限草稿。下一页可调整权限和期限，再由你批准；当前尚未接通安装，批准后也不会自动获得运行权限。</p>
-    <p className="page-desc">OpenClaw、WorkBuddy 的安装目标接入仍在开发中。</p>
-    <div className="field"><label htmlFor="import-target-instance">目标 Hermes 实例</label>
+    <p className="page-desc">选择已有 Hermes 或 OpenClaw 实例，生成待审阅的权限草稿。下一页可调整权限和期限，再由你批准；批准后仍需确认安装与实例权限。</p>
+    <p className="page-desc">WorkBuddy 的安装目标接入仍在开发中。</p>
+    <div className="field"><label htmlFor="import-target-instance">目标智能体实例</label>
       <select id="import-target-instance" value={instance} disabled={loading || busy || !!pending}
         onChange={(event) => setInstance(event.target.value)}>
         <option value="">请选择目标实例</option>
-        {instances.map((item) => <option key={item.instance_id} value={item.instance_id}>{item.name} · {item.config_dir}</option>)}
+        {instances.map((item) => <option key={`${item.platform}:${item.instance_id}`} value={item.instance_id}>{item.platform} · {item.name} · {item.config_dir}</option>)}
       </select></div>
     <div className="field"><label htmlFor="import-permission-actor">权限准备操作者</label>
       <input id="import-permission-actor" value={actorId} onChange={(event) => setActorId(event.target.value)} maxLength={128} disabled={busy || !!pending} /></div>
-    {loading ? <p role="status">正在读取实例…</p> : !instances.length ? <p className="page-desc">未发现可选 Hermes 实例。请先在 Hermes 中创建实例，再刷新列表。</p> : null}
+    {loading ? <p role="status">正在读取实例…</p> : !instances.length ? <p className="page-desc">未发现可选 Hermes 或 OpenClaw 实例。请先完成平台初始化，再刷新列表。</p> : null}
     {error ? <p role="alert" className="action-error">{error}</p> : null}
     {busy ? <p role="status">正在复验候选并准备权限…</p> : null}
     <div className="import-actions">

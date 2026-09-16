@@ -959,9 +959,9 @@ def test_go_inventory_sample_conforms():
 
 
 @pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
-def test_go_desired_policy_sample_compiles_like_python():
-    """Go 产出的 DesiredPolicy 既要过 schema，也要能被 Python 编译器接受（双实现共用合同）。"""
-    from app.adapters.openshell.contracts import BackendCapabilities, CapabilityItem
+def test_go_desired_policy_sample_without_binary_fails_openshell_compile():
+    """Grant 无法推断执行文件；样例可过通用 schema，但 OpenShell 必须安全拒绝。"""
+    from app.adapters.openshell.contracts import BackendCapabilities, CapabilityItem, UnsupportedCapability
     from app.adapters.openshell.policy_compiler import compile_policy
 
     dp = json.loads((GO_SAMPLES / "desired-policy.sample.json").read_text())
@@ -973,9 +973,8 @@ def test_go_desired_policy_sample_compiles_like_python():
         dynamic_network_update=True,
         capabilities={"enforcement_mode.block": CapabilityItem("supported", "enforce", "test")},
     )
-    compiled = compile_policy(dp, caps)
-    assert compiled.needs_generation, "含 filesystem/process 的策略必须标记需重建"
-    assert "network_policies" in compiled.artifact
+    with pytest.raises(UnsupportedCapability, match="binary_required"):
+        compile_policy(dp, caps)
 
 
 RELEASE_MANIFEST = Path(__file__).parents[4] / "skills" / "siq-agent-security" / "skill-manifest.json"
@@ -1076,8 +1075,11 @@ def test_local_runtime_check_go_outputs(sample):
         assert list(validator.iter_errors({key: value for key, value in record.items() if key != field}))
     if sample == "passed":
         for change in (
-            {"cleanup": "pending"}, {"cleanup": "failed"}, {"finished_at": None},
-            {"receipt_ids": record["receipt_ids"][:-1]}, {"checks": {}},
+            {"cleanup": "pending"},
+            {"cleanup": "failed"},
+            {"finished_at": None},
+            {"receipt_ids": record["receipt_ids"][:-1]},
+            {"checks": {}},
             {"checks": record["checks"] | {"write_denied_before_execution": False}},
             {"expires_at": "2026-02-30T09:00:00Z"},
         ):
@@ -1097,10 +1099,20 @@ def test_local_runtime_check_requests_require_confirmation_and_closed_scope():
     validator = Draft7Validator(schema)
     check_id, instance_id = "rc-" + "0" * 32, "hi-" + "1" * 32
     preview = {"schema_version": "local-runtime-check-preview/v1", "instance_id": instance_id}
-    start = {"schema_version": "local-runtime-check-start/v1", "check_id": check_id,
-             "plan_digest": "2" * 64, "actor_id": "synthetic-operator", "confirm": True}
-    attach = {"schema_version": "local-runtime-check-attach/v1", "check_id": check_id,
-              "instance_id": instance_id, "agent_id": "rca-" + "0" * 32, "session_id": "host-session"}
+    start = {
+        "schema_version": "local-runtime-check-start/v1",
+        "check_id": check_id,
+        "plan_digest": "2" * 64,
+        "actor_id": "synthetic-operator",
+        "confirm": True,
+    }
+    attach = {
+        "schema_version": "local-runtime-check-attach/v1",
+        "check_id": check_id,
+        "instance_id": instance_id,
+        "agent_id": "rca-" + "0" * 32,
+        "session_id": "host-session",
+    }
     for record in (preview, start, attach):
         validator.validate(record)
         for field in record:
@@ -1141,6 +1153,88 @@ def test_global_intent_revocation_fixed_vector():
         public.verify(bytes(64), canonical(unsigned))
 
 
+def test_skill_execution_context_fixed_vector():
+    """SEC sample (N05/R01): Python independently validates schema and every signed field."""
+    from cryptography.exceptions import InvalidSignature
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+    from jsonschema import Draft7Validator, FormatChecker
+    from jsonschema.validators import validator_for
+
+    sample = Path(__file__).parents[4] / "apps/agentshield/testdata/contracts/skill-execution-context.sample.json"
+    record = json.loads(sample.read_text())
+    schema = json.loads((CONTRACTS / "skill-execution-context.v1.schema.json").read_text())
+    kind = Draft7Validator if "draft-07/" in schema["$schema"] else validator_for(schema)
+    kind.check_schema(schema)
+    kind(schema, format_checker=FormatChecker()).validate(record)
+    public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+    unsigned = {key: value for key, value in record.items() if key != "signature"}
+
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+
+    signature = bytes.fromhex(record["signature"])
+    public.verify(signature, canonical(unsigned))
+    for field, value in unsigned.items():
+        tampered = value + "x" if isinstance(value, str) else {"tampered": True}
+        changed = unsigned | {field: tampered}
+        with pytest.raises(InvalidSignature):
+            public.verify(signature, canonical(changed))
+    with pytest.raises(InvalidSignature):
+        public.verify(bytes(64), canonical(unsigned))
+
+
+@pytest.mark.parametrize(
+    "kind",
+    ["local-skill-execution-context-issue", "local-skill-execution-context-revoke"],
+)
+def test_skill_execution_context_management_requests(kind: str) -> None:
+    """R01 online management requests stay closed, confirmed, and authority-free."""
+    from jsonschema.validators import validator_for
+
+    schema = json.loads((CONTRACTS / f"{kind}.v1.schema.json").read_text())
+    validator_type = validator_for(schema)
+    validator_type.check_schema(schema)
+    validator = validator_type(schema)
+    sample = json.loads((GO_SAMPLES / f"{kind}.json").read_text())
+    validator.validate(sample)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({key: value for key, value in sample.items() if key != field}))
+        assert list(validator.iter_errors(sample | {field: None}))
+    assert list(validator.iter_errors(sample | {"grant_id": "caller-must-not-select-authority"}))
+    if kind.endswith("issue"):
+        for ttl in [60, 86400]:
+            validator.validate(sample | {"ttl_seconds": ttl})
+        for ttl in [59, 86401, 60.5, "60", True]:
+            assert list(validator.iter_errors(sample | {"ttl_seconds": ttl}))
+        assert list(validator.iter_errors(sample | {"confirm_issue": False}))
+    else:
+        assert list(validator.iter_errors(sample | {"confirm_revoke": False}))
+        assert list(validator.iter_errors(sample | {"expected_context_signature": "a" * 127}))
+
+
+def test_verified_receipt_skill_attribution_requires_exact_call_binding():
+    """A verified SEC receipt is closed and always binds the final call."""
+    from jsonschema import Draft7Validator
+
+    schema = json.loads((CONTRACTS / "receipt.schema.json").read_text())
+    validator = Draft7Validator(schema)
+    sample = Path(__file__).parents[4] / "apps/agentshield/testdata/contracts/receipt.sample.json"
+    receipt = json.loads(sample.read_text())
+    attribution = {
+        "status": "verified",
+        "skill_id": "marketplace:skill:report-gen@0a1b2c3d4e5f",
+        "content_hash": "1" * 64,
+        "evidence_level": "controlled_task",
+        "context_id": "sec-" + "2" * 32,
+        "call_binding": "3" * 64,
+    }
+    validator.validate(receipt | {"skill_attribution": attribution})
+    assert list(validator.iter_errors(receipt | {"skill_attribution": attribution | {"call_binding": "bad"}}))
+    without_binding = {key: value for key, value in attribution.items() if key != "call_binding"}
+    assert list(validator.iter_errors(receipt | {"skill_attribution": without_binding}))
+    assert list(validator.iter_errors(receipt | {"skill_attribution": {"status": "unknown", "call_binding": "3" * 64}}))
+
+
 @pytest.mark.parametrize(
     "sample,schema_name,time_field",
     [
@@ -1150,6 +1244,8 @@ def test_global_intent_revocation_fixed_vector():
         ("file-observation-recovery-1.sample.json", "file-observation-recovery.v1", "recovered_at"),
         ("intent-revocation.sample.json", "intent-revocation.v1", "revoked_at"),
         ("intent-contract.v3.sample.json", "intent-contract.v3", "expires_at"),
+        ("skill-execution-context.sample.json", "skill-execution-context.v1", "expires_at"),
+        ("skill-execution-context-revocation.sample.json", "skill-execution-context-revocation.v1", "revoked_at"),
     ],
 )
 def test_v1_signed_contract_calendar_and_closed_fields(sample, schema_name, time_field):
@@ -1185,8 +1281,13 @@ def test_managed_adapter_plan_contract() -> None:
     data = json.loads(fixture.read_text())
     validator = Draft7Validator(schema)
     validator.validate(data)
-    for key, value in [("runtime_identity_id", None), ("runtime_identity_id", "../token"),
-                       ("platform", "openclaw"), ("runtime_verified", True), ("credential", "secret")]:
+    for key, value in [
+        ("runtime_identity_id", None),
+        ("runtime_identity_id", "../token"),
+        ("platform", "openclaw"),
+        ("runtime_verified", True),
+        ("credential", "secret"),
+    ]:
         assert list(validator.iter_errors({**data, key: value}))
     missing = dict(data)
     del missing["runtime_identity_id"]
@@ -1214,8 +1315,13 @@ def test_grant_revision_draft_contracts() -> None:
             del missing[required]
             assert list(validator.iter_errors(missing))
         if name == "grant-draft-create":
-            for key, value in [("request_id", "../escape"), ("request_id", None),
-                               ("actor_id", ""), ("expected_revision", -1), ("expected_revision", None)]:
+            for key, value in [
+                ("request_id", "../escape"),
+                ("request_id", None),
+                ("actor_id", ""),
+                ("expected_revision", -1),
+                ("expected_revision", None),
+            ]:
                 assert list(validator.iter_errors({**data, key: value}))
         else:
             assert data["grant"]["status"] == "pending_approval"
@@ -1238,12 +1344,73 @@ def test_confirmation_go_samples(kind: str) -> None:
     assert list(validator.iter_errors({**data, "token": "not-permitted"}))
     if kind == "local-confirmation-resolve":
         for key, value in [
-            ("approve", "true"), ("decision_hash", "wrong"), ("params_digest", "wrong"), ("actor_id", "")
+            ("approve", "true"),
+            ("decision_hash", "wrong"),
+            ("params_digest", "wrong"),
+            ("actor_id", ""),
         ]:
             assert list(validator.iter_errors({**data, key: value}))
     else:
         invalid = {**data, "items": [{**data["items"][0], "params": {"raw": "not-permitted"}}]}
         assert list(validator.iter_errors(invalid))
+
+
+def test_confirmation_v2_go_sample() -> None:
+    from jsonschema import Draft202012Validator, FormatChecker
+
+    schema = json.loads((CONTRACTS / "local-confirmations.v2.schema.json").read_text())
+    Draft202012Validator.check_schema(schema)
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    fixture = (
+        CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / "local-confirmations.v2.sample.json"
+    )
+    data = json.loads(fixture.read_text())
+    validator.validate(data)
+    item = data["items"][0]
+    for field in schema["properties"]["items"]["items"]["required"]:
+        invalid = {**data, "items": [{key: value for key, value in item.items() if key != field}]}
+        assert list(validator.iter_errors(invalid))
+    assert list(validator.iter_errors({**data, "items": [{**item, "approval_scope": "forever"}]}))
+    assert list(validator.iter_errors({**data, "items": [{**item, "params": {"raw": "never"}}]}))
+
+
+def test_hold_execution_reconciliation_contracts() -> None:
+    from jsonschema import Draft202012Validator, FormatChecker
+
+    request_schema = json.loads((CONTRACTS / "hold-execution-reconcile.v1.schema.json").read_text())
+    status_schema = json.loads((CONTRACTS / "hold-execution-status.v1.schema.json").read_text())
+    for schema in [request_schema, status_schema]:
+        Draft202012Validator.check_schema(schema)
+    request_validator = Draft202012Validator(request_schema)
+    request = {
+        "schema_version": "hold-execution-reconcile/v1",
+        "action_id": "act-fixture",
+        "decision_receipt_id": "rcpt-fixture",
+        "reservation_receipt_id": "rcpt-fixture-exec",
+        "reservation_hash": "1" * 64,
+        "outcome": "not_occurred",
+        "actor_id": "reviewer",
+    }
+    request_validator.validate(request)
+    for field in request_schema["required"]:
+        assert list(request_validator.iter_errors({key: value for key, value in request.items() if key != field}))
+    for patch in [{"reservation_hash": "A" * 64}, {"outcome": "retry"}, {"actor_id": "\n"}, {"raw_result": "secret"}]:
+        assert list(request_validator.iter_errors({**request, **patch}))
+
+    status_validator = Draft202012Validator(status_schema, format_checker=FormatChecker())
+    common = {
+        "schema_version": "hold-execution-status/v1",
+        "action_id": "act-fixture",
+        "decision_receipt_id": "rcpt-fixture",
+        "reservation_receipt_id": "rcpt-fixture-exec",
+        "reconciliation_receipt_id": "rcpt-fixture-exec-rec",
+        "expires_at": "2026-09-14T10:00:00Z",
+    }
+    status_validator.validate({**common, "status": "completed", "reason_code": "hold_execution_confirmed_occurred"})
+    status_validator.validate({**common, "status": "cancelled", "reason_code": "hold_execution_confirmed_not_occurred"})
+    assert list(
+        status_validator.iter_errors({**common, "status": "cancelled", "reason_code": "hold_execution_completed"})
+    )
 
 
 @pytest.mark.parametrize("kind", ["local-skill-import-create", "local-skill-import", "local-skill-import-result"])
@@ -1272,8 +1439,12 @@ def test_skill_import_go_samples(kind: str) -> None:
         for key, value in [("import_id", "../escape"), ("actor_id", ""), ("source_kind", "https"), ("path", "")]:
             assert list(validator.iter_errors({**data, key: value}))
     elif kind == "local-skill-import":
-        for key, value in [("artifact_digest", "wrong"), ("created_at", "2026-02-30T00:00:00Z"),
-                           ("files", []), ("signature", "unsigned")]:
+        for key, value in [
+            ("artifact_digest", "wrong"),
+            ("created_at", "2026-02-30T00:00:00Z"),
+            ("files", []),
+            ("signature", "unsigned"),
+        ]:
             assert list(validator.iter_errors({**data, key: value}))
         file = data["files"][0]
         for key, value in [("bytes", 8388609), ("executable", "true"), ("content", "raw")]:
@@ -1293,15 +1464,26 @@ def test_skill_import_list_go_sample() -> None:
     data = json.loads((GO_SAMPLES / "local-skill-import-list.v1.sample.json").read_text())
     validator.validate(data)
     first, damaged = data["items"]
-    for item in [first | {"payload_status": "verified"}, damaged | {"summary": first["summary"]},
-                 first | {"record_status": "unavailable"}, first | {"source_path": "/private"}]:
+    for item in [
+        first | {"payload_status": "verified"},
+        damaged | {"summary": first["summary"]},
+        first | {"record_status": "unavailable"},
+        first | {"source_path": "/private"},
+    ]:
         assert list(validator.iter_errors(data | {"items": [item]}))
     assert list(validator.iter_errors(data | {"items": [first] * 65}))
     assert list(validator.iter_errors(data | {"items": [first | {"summary": None}]}))
 
 
-@pytest.mark.parametrize("name", ["local-skill-import-remote-create.v1", "local-skill-import.v2",
-                                 "local-skill-import-result.v2", "local-skill-import-list.v2"])
+@pytest.mark.parametrize(
+    "name",
+    [
+        "local-skill-import-remote-create.v1",
+        "local-skill-import.v2",
+        "local-skill-import-result.v2",
+        "local-skill-import-list.v2",
+    ],
+)
 def test_remote_skill_import_go_samples(name: str) -> None:
     from jsonschema import FormatChecker
     from referencing import Registry, Resource
@@ -1328,8 +1510,13 @@ def test_remote_skill_import_go_samples(name: str) -> None:
             assert list(validator.iter_errors(data | {key: value}))
         validator.validate(data | {"archive_path": "", "expected_sha256": ""})
     elif name == "local-skill-import.v2":
-        for key, value in [("archive_sha256", "bad"), ("archive_bytes", 0), ("archive_bytes", 33554433),
-                           ("final_locator_digest", "bad"), ("url", "private")]:
+        for key, value in [
+            ("archive_sha256", "bad"),
+            ("archive_bytes", 0),
+            ("archive_bytes", 33554433),
+            ("final_locator_digest", "bad"),
+            ("url", "private"),
+        ]:
             assert list(validator.iter_errors(data | {"remote": data["remote"] | {key: value}}))
         assert list(validator.iter_errors(data | {"source_kind": "local_zip"}))
         legacy = json.loads((GO_SAMPLES / "local-skill-import.v1.sample.json").read_text())
@@ -1355,8 +1542,9 @@ def test_skill_import_permission_go_samples(kind: str) -> None:
     registry = Registry()
     for name in ["grant", "local-skill-import-permission-source.v1"]:
         schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{name}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{name}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     name = f"local-skill-import-permission-{kind}.v1"
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
@@ -1376,16 +1564,21 @@ def test_skill_import_permission_go_samples(kind: str) -> None:
         import hashlib
 
         def digest(value: dict) -> str:
-            return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"),
-                                             ensure_ascii=False).encode()).hexdigest()
+            return hashlib.sha256(
+                json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+            ).hexdigest()
 
         assert data["grant"]["admission_id"] == "adm-si-" + digest(data["source"])
         request = json.loads((GO_SAMPLES / "local-skill-import-permission-create.v1.sample.json").read_text())
-        assert data["grant"]["grant_id"] == "grt-si-" + digest({
-            "source": data["source"], "platform": data["grant"]["platform"],
-            "subject": data["grant"]["subject"], "actor_id": request["actor_id"],
-            "request_id": request["request_id"],
-        })
+        assert data["grant"]["grant_id"] == "grt-si-" + digest(
+            {
+                "source": data["source"],
+                "platform": data["grant"]["platform"],
+                "subject": data["grant"]["subject"],
+                "actor_id": request["actor_id"],
+                "request_id": request["request_id"],
+            }
+        )
     else:
         assert list(validator.iter_errors(data | {"analysis_sha256": "bad"}))
 
@@ -1401,8 +1594,9 @@ def test_skill_install_stage_go_samples(name: str) -> None:
 
     source_name = "local-skill-import-permission-source.v1"
     source = json.loads((CONTRACTS / f"{source_name}.schema.json").read_text())
-    registry = Registry().with_resource(f"https://siq.dev/contracts/{source_name}.schema.json",
-                                        Resource(contents=source, specification=DRAFT7))
+    registry = Registry().with_resource(
+        f"https://siq.dev/contracts/{source_name}.schema.json", Resource(contents=source, specification=DRAFT7)
+    )
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema, registry=registry, format_checker=FormatChecker())
@@ -1416,15 +1610,29 @@ def test_skill_install_stage_go_samples(name: str) -> None:
         assert list(validator.iter_errors(data | {"directory_name": directory}))
     validator.validate(data | {"directory_name": "a" * 64})
     if name == "local-skill-install-plan.v1":
+        validator.validate(data | {"platform": "openclaw"})
         for field in ["installed", "runtime_verified"]:
             assert list(validator.iter_errors(data | {field: True}))
-        for field, value in [("file_count", 2001), ("total_bytes", 67108865),
-                             ("platform", "workbuddy"), ("grant_signature", "bad")]:
+        for field, value in [
+            ("file_count", 2001),
+            ("total_bytes", 67108865),
+            ("platform", "workbuddy"),
+            ("grant_signature", "bad"),
+        ]:
             assert list(validator.iter_errors(data | {field: value}))
         request = json.loads((GO_SAMPLES / "local-skill-install-stage-create.v1.sample.json").read_text())
-        identity = {"request": request, **{field: data[field] for field in [
-            "source", "target_locator_digest", "grant_signature", "grant_permission_digest",
-        ]}}
+        identity = {
+            "request": request,
+            **{
+                field: data[field]
+                for field in [
+                    "source",
+                    "target_locator_digest",
+                    "grant_signature",
+                    "grant_permission_digest",
+                ]
+            },
+        }
         canonical = json.dumps(identity, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
         assert data["plan_id"] == "sip-" + hashlib.sha256(canonical).hexdigest()
         lifetime = datetime.fromisoformat(data["expires_at"]) - datetime.fromisoformat(data["created_at"])
@@ -1439,8 +1647,9 @@ def test_skill_install_plan_created_go_sample() -> None:
     registry = Registry()
     for name in ["local-skill-import-permission-source.v1", "local-skill-install-plan.v1"]:
         schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{name}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{name}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     schema = json.loads((CONTRACTS / "local-skill-install-plan-created.v1.schema.json").read_text())
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema, registry=registry, format_checker=FormatChecker())
@@ -1465,11 +1674,15 @@ def test_skill_install_operation_go_samples(kind: str) -> None:
     from referencing.jsonschema import DRAFT7
 
     registry = Registry()
-    for dependency in ["local-skill-import.v1", "local-skill-import-permission-source.v1",
-                       "local-skill-install-plan.v1"]:
+    for dependency in [
+        "local-skill-import.v1",
+        "local-skill-import-permission-source.v1",
+        "local-skill-install-plan.v1",
+    ]:
         schema = json.loads((CONTRACTS / f"{dependency}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{dependency}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{dependency}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     name = f"local-skill-install-{kind}.v1"
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
@@ -1480,8 +1693,10 @@ def test_skill_install_operation_go_samples(kind: str) -> None:
         assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
         assert list(validator.iter_errors(data | {field: None}))
     assert list(validator.iter_errors(data | {"target_path": "/escape"}))
+
     def canonical(value: dict) -> bytes:
         return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+
     if kind == "apply":
         assert list(validator.iter_errors(data | {"confirm_install": False}))
         plan = json.loads((GO_SAMPLES / "local-skill-install-plan.v1.sample.json").read_text())
@@ -1513,11 +1728,15 @@ def test_skill_install_management_go_samples(kind: str) -> None:
     from referencing.jsonschema import DRAFT7
 
     registry = Registry()
-    for dependency in ["local-skill-import-permission-source.v1", "local-skill-install-plan.v1",
-                       "local-skill-install-operation.v1"]:
+    for dependency in [
+        "local-skill-import-permission-source.v1",
+        "local-skill-install-plan.v1",
+        "local-skill-install-operation.v1",
+    ]:
         schema = json.loads((CONTRACTS / f"{dependency}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{dependency}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{dependency}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     name = f"local-skill-install-{kind}.v1"
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
@@ -1556,8 +1775,9 @@ def test_installed_runtime_binding_go_samples(kind: str) -> None:
     registry = Registry()
     for dependency in ["local-skill-import-permission-source.v1", "local-skill-install-runtime-binding.v1"]:
         schema = json.loads((CONTRACTS / f"{dependency}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{dependency}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{dependency}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     name = f"local-skill-install-{kind}.v1"
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
@@ -1601,8 +1821,9 @@ def test_installed_runtime_readiness_go_sample() -> None:
     registry = Registry()
     for name in ["grant", "local-skill-install-runtime-binding.v1", "local-skill-import-permission-source.v1"]:
         schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{name}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{name}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     schema = json.loads((CONTRACTS / "local-skill-install-runtime-readiness.v1.schema.json").read_text())
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema, registry=registry)
@@ -1622,10 +1843,15 @@ def test_installed_runtime_readiness_go_sample() -> None:
     assert binding["approved_signature"] == data["grant"]["signature"]
     assert data["state_revision"] == binding["approved_revision"] + 1
     for document in [binding, data["grant"]]:
-        raw = json.dumps({k: v for k, v in document.items() if k != "signature"},
-                         sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+        raw = json.dumps(
+            {k: v for k, v in document.items() if k != "signature"},
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode()
         Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key().verify(
-            bytes.fromhex(document["signature"]), raw)
+            bytes.fromhex(document["signature"]), raw
+        )
 
 
 @pytest.mark.parametrize("kind", ["record", "catalog", "inspection"])
@@ -1634,11 +1860,16 @@ def test_installed_skill_inspection_go_samples(kind: str) -> None:
     from referencing.jsonschema import DRAFT7
 
     registry = Registry()
-    for name in ["local-skill-import-permission-source.v1", "local-skill-install-plan.v1",
-                 "local-skill-install-operation.v1", "local-skill-install-record.v1"]:
+    for name in [
+        "local-skill-import-permission-source.v1",
+        "local-skill-install-plan.v1",
+        "local-skill-install-operation.v1",
+        "local-skill-install-record.v1",
+    ]:
         schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{name}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{name}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     name = f"local-skill-install-{kind}.v1"
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
@@ -1664,8 +1895,11 @@ def test_installed_skill_inspection_go_samples(kind: str) -> None:
         assert data["target_state"] == "matched" and data["changes"] == []
         assert list(validator.iter_errors(data | {"comparison_complete": False}))
         assert list(validator.iter_errors(data | {"target_state": "changed"}))
-        unavailable = data | {"target_state": "unavailable", "comparison_complete": False,
-                              "issue_code": "target_unavailable"}
+        unavailable = data | {
+            "target_state": "unavailable",
+            "comparison_complete": False,
+            "issue_code": "target_unavailable",
+        }
         validator.validate(unavailable)
         change = {"path_display": "SKILL.md", "path_digest": "a" * 64, "kind": "file", "change": "modified"}
         changed = data | {"target_state": "changed", "changes": [change], "changes_total": 1}
@@ -1682,12 +1916,19 @@ def test_installed_skill_removal_go_samples(kind: str) -> None:
     from referencing.jsonschema import DRAFT7
 
     registry = Registry()
-    for dependency in ["grant", "local-skill-import-permission-source.v1", "local-skill-install-plan.v1",
-                       "local-skill-install-operation.v1", "local-skill-install-record.v1",
-                       "local-skill-install-removal-claim.v1", "local-skill-install-removal-result.v1"]:
+    for dependency in [
+        "grant",
+        "local-skill-import-permission-source.v1",
+        "local-skill-install-plan.v1",
+        "local-skill-install-operation.v1",
+        "local-skill-install-record.v1",
+        "local-skill-install-removal-claim.v1",
+        "local-skill-install-removal-result.v1",
+    ]:
         schema = json.loads((CONTRACTS / f"{dependency}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{dependency}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{dependency}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     name = f"local-skill-install-{kind}.v1"
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
@@ -1730,8 +1971,11 @@ def test_installed_skill_removal_go_samples(kind: str) -> None:
             assert data["installation_claim_signature"] == record["claim_signature"]
             assert data["operation_signature"] == record["operation"]["signature"]
             assert list(validator.iter_errors(data | {"revoke_grant": False}))
-            retained = data | {"revoke_grant": False, "retained_install_id": "sin-" + "b" * 64,
-                               "binding_signature": "c" * 128}
+            retained = data | {
+                "revoke_grant": False,
+                "retained_install_id": "sin-" + "b" * 64,
+                "binding_signature": "c" * 128,
+            }
             validator.validate(retained)
             assert list(validator.iter_errors(retained | {"binding_signature": ""}))
             assert list(validator.iter_errors(retained | {"revoke_grant": True}))
@@ -1751,11 +1995,17 @@ def test_skill_update_comparison_go_samples(kind: str) -> None:
     from referencing.jsonschema import DRAFT7
 
     registry = Registry()
-    for name in ["grant", "local-skill-install-record.v1", "local-skill-install-plan.v1",
-                 "local-skill-install-operation.v1", "local-skill-import-permission-source.v1"]:
+    for name in [
+        "grant",
+        "local-skill-install-record.v1",
+        "local-skill-install-plan.v1",
+        "local-skill-install-operation.v1",
+        "local-skill-import-permission-source.v1",
+    ]:
         schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{name}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{name}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     name = f"local-skill-update-{kind}.v1"
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
@@ -1787,8 +2037,12 @@ def test_skill_update_comparison_go_samples(kind: str) -> None:
     assert list(validator.iter_errors(data | {"content_changes_truncated": True}))
     assert list(validator.iter_errors(data | {"content_changes_total": 201}))
     for doc in [data["previous_grant"], data["candidate_grant"], data["record"]["plan"], data["record"]["operation"]]:
-        raw = json.dumps({k: v for k, v in doc.items() if k != "signature"},
-                         sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+        raw = json.dumps(
+            {k: v for k, v in doc.items() if k != "signature"},
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode()
         Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key().verify(bytes.fromhex(doc["signature"]), raw)
 
 
@@ -1802,11 +2056,17 @@ def test_skill_update_preparation_go_samples(kind: str) -> None:
     from referencing.jsonschema import DRAFT7
 
     registry = Registry()
-    for name in ["local-skill-update-plan.v1", "local-skill-install-record.v1", "local-skill-install-plan.v1",
-                 "local-skill-install-operation.v1", "local-skill-import-permission-source.v1"]:
+    for name in [
+        "local-skill-update-plan.v1",
+        "local-skill-install-record.v1",
+        "local-skill-install-plan.v1",
+        "local-skill-install-operation.v1",
+        "local-skill-import-permission-source.v1",
+    ]:
         schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{name}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{name}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     name = f"local-skill-update-{kind}.v1"
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
@@ -1835,21 +2095,30 @@ def test_skill_update_preparation_go_samples(kind: str) -> None:
     assert data["candidate_source"] == comparison["candidate_source"]
     assert data["previous_signature"] == comparison["previous_grant"]["signature"]
     assert data["candidate_revision"] == comparison["candidate_revision"] + 1
+
     def canonical(value):
         return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+
     public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
     public.verify(bytes.fromhex(data["signature"]), canonical({k: v for k, v in data.items() if k != "signature"}))
     candidate = comparison["candidate_grant"] | {
-        "status": "approved", "approved_by": {"actor_type": "human", "actor_id": "human",
-                                                "approved_at": "2026-09-11T05:10:00Z"}}
-    public.verify(bytes.fromhex(data["candidate_signature"]),
-                  canonical({k: v for k, v in candidate.items() if k != "signature"}))
-    identity = {"request": request, "installation_claim_signature": data["record"]["claim_signature"],
-                "installation_plan_signature": data["record"]["plan"]["signature"],
-                "candidate_source": data["candidate_source"], "candidate_signature": data["candidate_signature"],
-                "candidate_permission_digest": data["candidate_permission_digest"],
-                "previous_signature": data["previous_signature"], "retained_install_id": data["retained_install_id"],
-                "revoke_previous_grant": data["revoke_previous_grant"]}
+        "status": "approved",
+        "approved_by": {"actor_type": "human", "actor_id": "human", "approved_at": "2026-09-11T05:10:00Z"},
+    }
+    public.verify(
+        bytes.fromhex(data["candidate_signature"]), canonical({k: v for k, v in candidate.items() if k != "signature"})
+    )
+    identity = {
+        "request": request,
+        "installation_claim_signature": data["record"]["claim_signature"],
+        "installation_plan_signature": data["record"]["plan"]["signature"],
+        "candidate_source": data["candidate_source"],
+        "candidate_signature": data["candidate_signature"],
+        "candidate_permission_digest": data["candidate_permission_digest"],
+        "previous_signature": data["previous_signature"],
+        "retained_install_id": data["retained_install_id"],
+        "revoke_previous_grant": data["revoke_previous_grant"],
+    }
     assert data["update_id"] == "sup-" + hashlib.sha256(canonical(identity)).hexdigest()
 
 
@@ -1863,14 +2132,17 @@ def test_skill_update_transaction_go_samples(kind: str) -> None:
     from referencing.jsonschema import DRAFT7
 
     names = ["grant", "local-skill-import-permission-source.v1"]
-    names += [f"local-skill-install-{name}.v1" for name in [
-        "record", "plan", "operation", "removal-view", "removal-claim", "removal-result"]]
+    names += [
+        f"local-skill-install-{name}.v1"
+        for name in ["record", "plan", "operation", "removal-view", "removal-claim", "removal-result"]
+    ]
     names += [f"local-skill-update-{name}.v1" for name in ["plan", "claim", "result"]]
     registry = Registry()
     for name in names:
         schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
-        registry = registry.with_resource(f"https://siq.dev/contracts/{name}.schema.json",
-                                          Resource(contents=schema, specification=DRAFT7))
+        registry = registry.with_resource(
+            f"https://siq.dev/contracts/{name}.schema.json", Resource(contents=schema, specification=DRAFT7)
+        )
     name = f"local-skill-update-{kind}.v1"
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text())
     Draft7Validator.check_schema(schema)
@@ -1925,8 +2197,9 @@ def test_skill_update_transaction_go_samples(kind: str) -> None:
         assert replacement[field] == plan["record"]["plan"][field]
     request_digest = hashlib.sha256(("update-install:" + data["update_id"]).encode()).hexdigest()
     assert replacement["request_id"] == "is-" + request_digest[:32]
-    public.verify(bytes.fromhex(replacement["signature"]),
-                  canonical({k: v for k, v in replacement.items() if k != "signature"}))
+    public.verify(
+        bytes.fromhex(replacement["signature"]), canonical({k: v for k, v in replacement.items() if k != "signature"})
+    )
 
 
 def test_user_service_record_go_fixture() -> None:
@@ -2049,12 +2322,8 @@ def test_windows_task_go_xml_fixture() -> None:
     ns = {"t": "http://schemas.microsoft.com/windows/2004/02/mit/task"}
     assert root.tag == f"{{{ns['t']}}}Task"
     assert root.attrib == {"version": "1.3"}
-    assert [child.tag.split("}")[-1] for child in root] == [
-        "RegistrationInfo", "Principals", "Settings", "Actions"
-    ]
-    assert root.findtext("t:RegistrationInfo/t:URI", namespaces=ns) == (
-        "\\SIQ-Agent-Security-" + "a" * 64
-    )
+    assert [child.tag.split("}")[-1] for child in root] == ["RegistrationInfo", "Principals", "Settings", "Actions"]
+    assert root.findtext("t:RegistrationInfo/t:URI", namespaces=ns) == ("\\SIQ-Agent-Security-" + "a" * 64)
     principal = root.find("t:Principals/t:Principal", ns)
     assert principal is not None and principal.attrib == {"id": "LocalUser"}
     assert {node.tag.split("}")[-1]: node.text for node in principal} == {
@@ -2082,9 +2351,7 @@ def test_windows_task_go_xml_fixture() -> None:
     }
     idle = settings.find("t:IdleSettings", ns)
     assert idle is not None
-    assert {node.tag.split("}")[-1]: node.text for node in idle} == {
-        "StopOnIdleEnd": "false", "RestartOnIdle": "false"
-    }
+    assert {node.tag.split("}")[-1]: node.text for node in idle} == {"StopOnIdleEnd": "false", "RestartOnIdle": "false"}
     actions = root.find("t:Actions", ns)
     assert actions is not None and actions.attrib == {"Context": "LocalUser"}
     assert len(actions) == 1
@@ -2492,16 +2759,12 @@ def test_raw_task_content_authority_signatures_go_python() -> None:
     assert revocation["expected_grant_signature"] == grant["signature"]
 
 
-@pytest.mark.parametrize(
-    "kind", ["capture-permit-create", "capture", "native-capture", "capture-result"]
-)
+@pytest.mark.parametrize("kind", ["capture-permit-create", "capture", "native-capture", "capture-result"])
 def test_raw_task_content_capture_protocol_go_samples(kind: str) -> None:
     from referencing import Registry, Resource
 
     schema = json.loads((CONTRACTS / f"local-raw-task-content-{kind}.v1.schema.json").read_text())
-    permit_schema = json.loads(
-        (CONTRACTS / "local-raw-task-content-capture-permit.v1.schema.json").read_text()
-    )
+    permit_schema = json.loads((CONTRACTS / "local-raw-task-content-capture-permit.v1.schema.json").read_text())
     Draft7Validator.check_schema(schema)
     registry = Registry().with_resource(permit_schema["$id"], Resource.from_contents(permit_schema))
     validator = Draft7Validator(schema, registry=registry)
@@ -2521,23 +2784,12 @@ def test_raw_task_content_capture_protocol_go_samples(kind: str) -> None:
             assert list(validator.iter_errors(data | patch))
     elif kind in {"capture", "native-capture"}:
         if kind == "capture":
-            assert data["permit"] == json.loads(
-                (root / "local-raw-task-content-capture-permit.json").read_text()
-            )
+            assert data["permit"] == json.loads((root / "local-raw-task-content-capture-permit.json").read_text())
         assert list(validator.iter_errors(data | {"fields": []}))
+        assert list(validator.iter_errors(data | {"fields": [{"path": "/prompt", "value": "value"}]}))
         assert list(
             validator.iter_errors(
-                data | {"fields": [{"path": "/prompt", "value": "value"}]}
-            )
-        )
-        assert list(
-            validator.iter_errors(
-                data
-                | {
-                    "fields": [
-                        {"path": "/prompt", "value": "value", "secret": False, "token": "bad"}
-                    ]
-                }
+                data | {"fields": [{"path": "/prompt", "value": "value", "secret": False, "token": "bad"}]}
             )
         )
     else:
@@ -2582,11 +2834,7 @@ def test_raw_task_content_management_access_go_samples(kind: str) -> None:
     elif kind == "record-content":
         assert data["contains_plaintext"] is True
         assert list(validator.iter_errors(data | {"contains_plaintext": False}))
-        assert list(
-            validator.iter_errors(
-                data | {"fields": [{"path": "/prompt", "value": "value", "secret": False}]}
-            )
-        )
+        assert list(validator.iter_errors(data | {"fields": [{"path": "/prompt", "value": "value", "secret": False}]}))
     elif kind == "record-delete":
         assert list(validator.iter_errors(data | {"confirm_record_id": "raw-invalid"}))
     elif kind == "record-deleted":
@@ -2655,8 +2903,7 @@ def test_raw_task_content_grant_views_go_samples() -> None:
 
     names = ["grant", "revocation", "grant-view", "grants"]
     schemas = {
-        name: json.loads((CONTRACTS / f"local-raw-task-content-{name}.v1.schema.json").read_text())
-        for name in names
+        name: json.loads((CONTRACTS / f"local-raw-task-content-{name}.v1.schema.json").read_text()) for name in names
     }
     registry = Registry().with_resources(
         [(schema["$id"], Resource.from_contents(schema)) for schema in schemas.values()]
@@ -2692,16 +2939,32 @@ def test_update_check_contracts(name: str) -> None:
         assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
     assert list(validator.iter_errors(data | {"unknown": True}))
     if name.endswith("-result"):
-        for patch in [{"requires_confirmation": False}, {"status": "up_to_date"},
-                      {"content_changes": []}, {"content_changes_total": 0},
-                      {"content_changes_truncated": True}, {"upstream_commit_sha": "a" * 40},
-                      {"checked_at": "not a date"}, {"permission_comparison": "approved"}]:
+        for patch in [
+            {"requires_confirmation": False},
+            {"status": "up_to_date"},
+            {"content_changes": []},
+            {"content_changes_total": 0},
+            {"content_changes_truncated": True},
+            {"upstream_commit_sha": "a" * 40},
+            {"checked_at": "not a date"},
+            {"permission_comparison": "approved"},
+        ]:
             assert list(validator.iter_errors(data | patch))
-        clean = data | {"status": "up_to_date", "content_changes": [], "content_changes_total": 0,
-                        "requires_confirmation": False}
+        clean = data | {
+            "status": "up_to_date",
+            "content_changes": [],
+            "content_changes_total": 0,
+            "requires_confirmation": False,
+        }
         validator.validate(clean)
-        validator.validate(data | {"content_changes": data["content_changes"] * 200,
-                                  "content_changes_total": 201, "content_changes_truncated": True})
+        validator.validate(
+            data
+            | {
+                "content_changes": data["content_changes"] * 200,
+                "content_changes_total": 201,
+                "content_changes_truncated": True,
+            }
+        )
         assert list(validator.iter_errors(data | {"content_changes": data["content_changes"] * 201}))
     else:
         assert list(validator.iter_errors(data | {"actor_id": " "}))
@@ -2720,23 +2983,31 @@ def test_local_state_format_marker_contract() -> None:
         assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
         assert list(validator.iter_errors({**data, field: None}))
     for patch in (
-        {"format_version": -1}, {"format_version": 1.5}, {"format_version": True},
-        {"format_version": "1"}, {"schema": "state-format/v2"},
-        {"program_version": ""}, {"program_version": "x" * 129},
-        {"published_at": "invalid"}, {"migration": "automatically-allowed"},
+        {"format_version": -1},
+        {"format_version": 1.5},
+        {"format_version": True},
+        {"format_version": "1"},
+        {"schema": "state-format/v2"},
+        {"program_version": ""},
+        {"program_version": "x" * 129},
+        {"published_at": "invalid"},
+        {"migration": "automatically-allowed"},
     ):
         assert list(validator.iter_errors({**data, **patch}))
     # Representing a future format is distinct from the runtime accepting it.
     validator.validate({**data, "format_version": 999})
 
 
-@pytest.mark.parametrize(("schema_name", "sample"), [
-    ("local-state-format.v2", "local-state-format-v2"),
-    ("local-state-status.v1", "local-state-status"),
-    ("local-state-migration-result.v1", "local-state-migration-result"),
-    ("local-state-migration-plan.v1", "local-state-migration-plan"),
-    ("skill-manifest.v3", "skill-manifest.v3.sample"),
-])
+@pytest.mark.parametrize(
+    ("schema_name", "sample"),
+    [
+        ("local-state-format.v2", "local-state-format-v2"),
+        ("local-state-status.v1", "local-state-status"),
+        ("local-state-migration-result.v1", "local-state-migration-result"),
+        ("local-state-migration-plan.v1", "local-state-migration-plan"),
+        ("skill-manifest.v3", "skill-manifest.v3.sample"),
+    ],
+)
 def test_n01_state_protocol_contracts(schema_name: str, sample: str) -> None:
     from jsonschema import FormatChecker
 

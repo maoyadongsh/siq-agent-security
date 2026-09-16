@@ -1,0 +1,1211 @@
+{
+  "schema_version": "personal-acceptance-baseline/v2",
+  "batch": "closure-b10-review-20260916",
+  "recorded_at": "2026-09-16T02:27:04.752371+00:00",
+  "legs": [
+    {
+      "leg_id": "B04_HTTP",
+      "platform": "openclaw",
+      "os": "linux",
+      "binary_sha256": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942",
+      "report_ref": "docs/evidence/personal-experience/closure-b04-export-review-20260916-r2/report.json",
+      "report_sha256": "e6c29a0090d4d4359b9426da738d099c068c5ba9e151d4c45c09f0a8ecc22fa7",
+      "checks_passed": 192,
+      "started_at": "2026-09-16T02:18:16.941152+00:00",
+      "finished_at": "2026-09-16T02:18:16.941152+00:00"
+    },
+    {
+      "leg_id": "B05_NATIVE",
+      "platform": "openclaw",
+      "os": "linux",
+      "binary_sha256": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942",
+      "report_ref": "docs/evidence/personal-experience/closure-b05-review-20260916-r2/report.json",
+      "report_sha256": "668b7882cf4122d103032ac68dd3cbdcb2ea83f0a84e5d8d8b091b2cf6dac113",
+      "checks_passed": 16,
+      "started_at": "2026-09-16T02:26:28.692294+00:00",
+      "finished_at": "2026-09-16T02:26:28.692294+00:00"
+    }
+  ],
+  "cells": [
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "unverified",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "Not fully exercised by this batch.",
+          "required_evidence": "Clean product package installation, service start, pairing, and management UI evidence."
+        },
+        {
+          "item": "J2",
+          "status": "unverified",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "Not fully exercised by this batch.",
+          "required_evidence": "Complete default and nondefault Agent/Skill discovery with instance relationships."
+        },
+        {
+          "item": "J3",
+          "status": "unverified",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "Not fully exercised by this batch.",
+          "required_evidence": "Confirmed attachment to the selected native instance with unrelated settings preserved."
+        },
+        {
+          "item": "J4",
+          "status": "unverified",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "Not fully exercised by this batch.",
+          "required_evidence": "Final-candidate native permission matrix covering relevant tools and zero denied effects."
+        },
+        {
+          "item": "J5",
+          "status": "unverified",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "Not fully exercised by this batch.",
+          "required_evidence": "Human approval, visible notification, trusted native retry, replay, outage, and recovery evidence."
+        },
+        {
+          "item": "J6",
+          "status": "unverified",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "Not fully exercised by this batch.",
+          "required_evidence": "Native install/update/removal using an enabled production remote source and permission review."
+        },
+        {
+          "item": "J7",
+          "status": "unverified",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "Not fully exercised by this batch.",
+          "required_evidence": "Host-provided causal binding from one specific Skill to the actual native tool call."
+        },
+        {
+          "item": "J8",
+          "status": "controlled_start",
+          "classification": "native_machine",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/closure-b05-review-20260916-r2/report.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "B05_NATIVE",
+              "checks": [
+                "positive_control_marker_write_executed_with_service_up",
+                "service_down_denies_file_write_before_execution",
+                "service_down_denies_read_without_content_leak",
+                "service_down_zero_loopback_egress_from_denied_exec",
+                "managed_audit_only_override_still_fails_closed"
+              ]
+            }
+          ],
+          "note": "Real OpenClaw local entrypoint; deterministic local model; denied file/network effects independently observed. No OS sandbox or paid-model claim."
+        },
+        {
+          "item": "J9",
+          "status": "unverified",
+          "classification": "native_machine",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/closure-b05-review-20260916-r2/report.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "B05_NATIVE",
+              "checks": [
+                "same_port_restart_recovers_pairing",
+                "pending_lines_promoted_onto_signed_receipt_chain",
+                "recovered_service_allows_authorized_read",
+                "receipt_chain_verified_after_promotion"
+              ]
+            }
+          ],
+          "note": "Same-port restart and signed pending promotion verified; the full restart/old-authority/uncertain-operation matrix remains open.",
+          "required_evidence": "Service and native-session restart recovery with old authority constrained and no duplicate effect."
+        },
+        {
+          "item": "J10",
+          "status": "unverified",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "Not fully exercised by this batch.",
+          "required_evidence": "Full product and adapter uninstall with authority revocation and user-data preservation."
+        },
+        {
+          "item": "J11",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/closure-b04-export-review-20260916-r2/report.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "B04_HTTP",
+              "checks": [
+                "after_purge_0_bounded_detail",
+                "after_purge_0_export_auth_decision_403",
+                "after_purge_0_export_auth_missing_401",
+                "after_purge_0_export_auth_runtime_401",
+                "after_purge_0_export_injected_scope",
+                "after_purge_0_export_private_data_absent",
+                "after_purge_0_export_scope",
+                "after_purge_0_export_signature",
+                "after_purge_0_nonempty",
+                "after_purge_0_trace-export_auth_decision_403",
+                "after_purge_0_trace-export_auth_missing_401",
+                "after_purge_0_trace-export_auth_runtime_401",
+                "after_purge_0_trace-export_injected_scope",
+                "after_purge_0_trace-export_private_data_absent",
+                "after_purge_0_trace-export_scope",
+                "after_purge_0_trace-export_signature",
+                "after_purge_0_trace-export_sources",
+                "after_purge_1_bounded_detail",
+                "after_purge_1_export_auth_decision_403",
+                "after_purge_1_export_auth_missing_401",
+                "after_purge_1_export_auth_runtime_401",
+                "after_purge_1_export_injected_scope",
+                "after_purge_1_export_private_data_absent",
+                "after_purge_1_export_scope",
+                "after_purge_1_export_signature",
+                "after_purge_1_nonempty",
+                "after_purge_1_trace-export_auth_decision_403",
+                "after_purge_1_trace-export_auth_missing_401",
+                "after_purge_1_trace-export_auth_runtime_401",
+                "after_purge_1_trace-export_injected_scope",
+                "after_purge_1_trace-export_private_data_absent",
+                "after_purge_1_trace-export_scope",
+                "after_purge_1_trace-export_signature",
+                "after_purge_1_trace-export_sources",
+                "after_purge_disjoint",
+                "after_purge_two_tasks",
+                "before_0_bounded_detail",
+                "before_0_export_auth_decision_403",
+                "before_0_export_auth_missing_401",
+                "before_0_export_auth_runtime_401",
+                "before_0_export_injected_scope",
+                "before_0_export_private_data_absent",
+                "before_0_export_scope",
+                "before_0_export_signature",
+                "before_0_nonempty",
+                "before_0_trace-export_auth_decision_403",
+                "before_0_trace-export_auth_missing_401",
+                "before_0_trace-export_auth_runtime_401",
+                "before_0_trace-export_injected_scope",
+                "before_0_trace-export_private_data_absent",
+                "before_0_trace-export_scope",
+                "before_0_trace-export_signature",
+                "before_0_trace-export_sources",
+                "before_1_bounded_detail",
+                "before_1_export_auth_decision_403",
+                "before_1_export_auth_missing_401",
+                "before_1_export_auth_runtime_401",
+                "before_1_export_injected_scope",
+                "before_1_export_private_data_absent",
+                "before_1_export_scope",
+                "before_1_export_signature",
+                "before_1_nonempty",
+                "before_1_trace-export_auth_decision_403",
+                "before_1_trace-export_auth_missing_401",
+                "before_1_trace-export_auth_runtime_401",
+                "before_1_trace-export_injected_scope",
+                "before_1_trace-export_private_data_absent",
+                "before_1_trace-export_scope",
+                "before_1_trace-export_signature",
+                "before_1_trace-export_sources",
+                "before_disjoint",
+                "before_two_tasks",
+                "cross_task_raw_read_rejected",
+                "default_disabled",
+                "delete_only_selected_record",
+                "deleted_0_bounded_detail",
+                "deleted_0_export_auth_decision_403",
+                "deleted_0_export_auth_missing_401",
+                "deleted_0_export_auth_runtime_401",
+                "deleted_0_export_injected_scope",
+                "deleted_0_export_private_data_absent",
+                "deleted_0_export_scope",
+                "deleted_0_export_signature",
+                "deleted_0_nonempty",
+                "deleted_0_trace-export_auth_decision_403",
+                "deleted_0_trace-export_auth_missing_401",
+                "deleted_0_trace-export_auth_runtime_401",
+                "deleted_0_trace-export_injected_scope",
+                "deleted_0_trace-export_private_data_absent",
+                "deleted_0_trace-export_scope",
+                "deleted_0_trace-export_signature",
+                "deleted_0_trace-export_sources",
+                "deleted_1_bounded_detail",
+                "deleted_1_export_auth_decision_403",
+                "deleted_1_export_auth_missing_401",
+                "deleted_1_export_auth_runtime_401",
+                "deleted_1_export_injected_scope",
+                "deleted_1_export_private_data_absent",
+                "deleted_1_export_scope",
+                "deleted_1_export_signature",
+                "deleted_1_nonempty",
+                "deleted_1_trace-export_auth_decision_403",
+                "deleted_1_trace-export_auth_missing_401",
+                "deleted_1_trace-export_auth_runtime_401",
+                "deleted_1_trace-export_injected_scope",
+                "deleted_1_trace-export_private_data_absent",
+                "deleted_1_trace-export_scope",
+                "deleted_1_trace-export_signature",
+                "deleted_1_trace-export_sources",
+                "deleted_disjoint",
+                "deleted_two_tasks",
+                "export-a_capture",
+                "export-b_capture",
+                "refreshed_0_bounded_detail",
+                "refreshed_0_export_auth_decision_403",
+                "refreshed_0_export_auth_missing_401",
+                "refreshed_0_export_auth_runtime_401",
+                "refreshed_0_export_injected_scope",
+                "refreshed_0_export_private_data_absent",
+                "refreshed_0_export_scope",
+                "refreshed_0_export_signature",
+                "refreshed_0_nonempty",
+                "refreshed_0_trace-export_auth_decision_403",
+                "refreshed_0_trace-export_auth_missing_401",
+                "refreshed_0_trace-export_auth_runtime_401",
+                "refreshed_0_trace-export_injected_scope",
+                "refreshed_0_trace-export_private_data_absent",
+                "refreshed_0_trace-export_scope",
+                "refreshed_0_trace-export_signature",
+                "refreshed_0_trace-export_sources",
+                "refreshed_1_bounded_detail",
+                "refreshed_1_export_auth_decision_403",
+                "refreshed_1_export_auth_missing_401",
+                "refreshed_1_export_auth_runtime_401",
+                "refreshed_1_export_injected_scope",
+                "refreshed_1_export_private_data_absent",
+                "refreshed_1_export_scope",
+                "refreshed_1_export_signature",
+                "refreshed_1_nonempty",
+                "refreshed_1_trace-export_auth_decision_403",
+                "refreshed_1_trace-export_auth_missing_401",
+                "refreshed_1_trace-export_auth_runtime_401",
+                "refreshed_1_trace-export_injected_scope",
+                "refreshed_1_trace-export_private_data_absent",
+                "refreshed_1_trace-export_scope",
+                "refreshed_1_trace-export_signature",
+                "refreshed_1_trace-export_sources",
+                "refreshed_disjoint",
+                "refreshed_two_tasks",
+                "revoked_0_bounded_detail",
+                "revoked_0_export_auth_decision_403",
+                "revoked_0_export_auth_missing_401",
+                "revoked_0_export_auth_runtime_401",
+                "revoked_0_export_injected_scope",
+                "revoked_0_export_private_data_absent",
+                "revoked_0_export_scope",
+                "revoked_0_export_signature",
+                "revoked_0_nonempty",
+                "revoked_0_trace-export_auth_decision_403",
+                "revoked_0_trace-export_auth_missing_401",
+                "revoked_0_trace-export_auth_runtime_401",
+                "revoked_0_trace-export_injected_scope",
+                "revoked_0_trace-export_private_data_absent",
+                "revoked_0_trace-export_scope",
+                "revoked_0_trace-export_signature",
+                "revoked_0_trace-export_sources",
+                "revoked_1_bounded_detail",
+                "revoked_1_export_auth_decision_403",
+                "revoked_1_export_auth_missing_401",
+                "revoked_1_export_auth_runtime_401",
+                "revoked_1_export_injected_scope",
+                "revoked_1_export_private_data_absent",
+                "revoked_1_export_scope",
+                "revoked_1_export_signature",
+                "revoked_1_nonempty",
+                "revoked_1_trace-export_auth_decision_403",
+                "revoked_1_trace-export_auth_missing_401",
+                "revoked_1_trace-export_auth_runtime_401",
+                "revoked_1_trace-export_injected_scope",
+                "revoked_1_trace-export_private_data_absent",
+                "revoked_1_trace-export_scope",
+                "revoked_1_trace-export_signature",
+                "revoked_1_trace-export_sources",
+                "revoked_disjoint",
+                "revoked_history_readable",
+                "revoked_new_capture_rejected",
+                "revoked_two_tasks",
+                "stale_export_0",
+                "stale_export_1",
+                "stale_trace-export_0",
+                "stale_trace-export_1",
+                "unexpired_purge_zero_write"
+              ]
+            }
+          ],
+          "note": "Real daemon HTTP tasks with synthetic capture: signature, export/trace-export scope, revocation, deletion and snapshot checks. Native capture and full real expiry remain separate; this row is not complete.",
+          "required_evidence": "Redaction, explicit raw capture, expiry/revocation, and isolated export lifecycle evidence."
+        }
+      ]
+    },
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Clean product package installation, service start, pairing, and management UI evidence.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J2",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Complete default and nondefault Agent/Skill discovery with instance relationships.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J3",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Confirmed attachment to the selected native instance with unrelated settings preserved.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J4",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Final-candidate native permission matrix covering relevant tools and zero denied effects.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J5",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Human approval, visible notification, trusted native retry, replay, outage, and recovery evidence.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J6",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Native install/update/removal using an enabled production remote source and permission review.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J7",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Host-provided causal binding from one specific Skill to the actual native tool call.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J8",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Native required call blocked before side effect while the SIQ service is unavailable.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J9",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Service and native-session restart recovery with old authority constrained and no duplicate effect.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J10",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Full product and adapter uninstall with authority revocation and user-data preservation.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        },
+        {
+          "item": "J11",
+          "status": "unverified",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "required_evidence": "Redaction, explicit raw capture, expiry/revocation, and isolated export lifecycle evidence.",
+          "note": "No same-candidate native leg in this review; historical results are retained separately."
+        }
+      ]
+    },
+    {
+      "platform": "workbuddy",
+      "os": "linux",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "upstream_runtime_unconfirmed"
+        }
+      ]
+    },
+    {
+      "platform": "hermes",
+      "os": "macos",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "openclaw",
+      "os": "macos",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "workbuddy",
+      "os": "macos",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "workbuddy",
+      "os": "windows",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "coverage": [],
+          "evidence_refs": [],
+          "note": "No same-candidate native leg in this review; historical results are retained separately.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    }
+  ],
+  "evidence_sha256": {
+    "docs/evidence/personal-experience/closure-b04-export-review-20260916-r2/report.json": "e6c29a0090d4d4359b9426da738d099c068c5ba9e151d4c45c09f0a8ecc22fa7",
+    "docs/evidence/personal-experience/closure-b05-review-20260916-r2/report.json": "668b7882cf4122d103032ac68dd3cbdcb2ea83f0a84e5d8d8b091b2cf6dac113"
+  },
+  "notes": [
+    "No complete_acceptance rows; validation checks integrity and declared coverage only.",
+    "B01 test-release old/new binaries are deliberately not mixed into this candidate matrix.",
+    "Leg timestamps are report completion times, not measured execution durations.",
+    "B04 is component integration, B05 is real OpenClaw with a deterministic model.",
+    "N09 remains partial; T01-T06 are not unlocked; sunbo/Luke responsibilities are unchanged."
+  ]
+}

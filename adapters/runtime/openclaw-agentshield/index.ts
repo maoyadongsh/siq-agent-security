@@ -8,7 +8,7 @@
  * Decision mapping:
  *   allow  → undefined (no decision)
  *   deny   → { block: true, blockReason }
- *   hold   → wait for local approval, then require native platform approval
+ *   hold   → local + native approval, then atomically reserve one execution
  *   redact → { params }  (host-owned params rewritten with secrets removed)
  *
  * Fail-closed table (§3.8.4): in `block` mode an unreachable / timed-out / 401 /
@@ -29,6 +29,7 @@
  * content is actually stored; the adapter never sees raw-content settings).
  */
 import { appendFileSync, closeSync, constants, fstatSync, lstatSync, mkdirSync, openSync, readFileSync, readSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
@@ -55,8 +56,20 @@ interface Decision {
   reason: string;
   receipt_id: string;
   action_id?: string;
+  task_id?: string;
+  runtime_task_id?: string;
   params?: Record<string, unknown>;
   hold?: { channel: string; timeout_ms: number };
+}
+
+interface HoldExecutionReservation {
+  schema_version: "hold-execution-status/v1";
+  status: "reserved";
+  action_id: string;
+  decision_receipt_id: string;
+  reservation_receipt_id: string;
+  expires_at: string;
+  reason_code: "hold_execution_reserved";
 }
 
 function env(...keys: string[]): string {
@@ -194,7 +207,11 @@ async function waitForLocalApproval(decision: Decision, call: Record<string, unk
   const deadline = Math.min(Date.now() + cfg.holdWaitMs, hookDeadline);
   while (!signal?.aborted && Date.now() < deadline) {
     const status = await post<Record<string, unknown>>("/v1/hold-status", {
-      ...call, action_id: decision.action_id, decision_receipt_id: decision.receipt_id,
+      ...call,
+      task_id: decision.task_id ?? "",
+      runtime_task_id: decision.runtime_task_id ?? "",
+      action_id: decision.action_id,
+      decision_receipt_id: decision.receipt_id,
     }, signal, deadline - Date.now());
     if (signal?.aborted) return { state: "rejected" };
     if (!status || status.schema_version !== "hold-status/v1" || status.action_id !== decision.action_id ||
@@ -209,6 +226,88 @@ async function waitForLocalApproval(decision: Decision, call: Record<string, unk
     await pause(Math.min(250, deadline - Date.now(), expires - Date.now()), signal);
   }
   return { state: "rejected" };
+}
+
+function retryToolCallId(decision: Decision, originalToolCallId: string): string {
+  const digest = createHash("sha256")
+    .update(`${decision.action_id}\u0000${decision.receipt_id}\u0000${originalToolCallId}`)
+    .digest("hex");
+  return `siq-retry-${digest}`;
+}
+
+async function reserveHoldExecution(
+  decision: Decision,
+  call: Record<string, unknown>,
+  finalParams: Record<string, unknown>,
+  deadline: number,
+  signal?: AbortSignal,
+): Promise<{
+  retryToolCallId: string;
+  reservationReceiptId: string;
+  params: Record<string, unknown>;
+} | null> {
+  if (
+    typeof decision.action_id !== "string" ||
+    !decision.action_id ||
+    typeof decision.receipt_id !== "string" ||
+    !decision.receipt_id ||
+    typeof call.tool_call_id !== "string" ||
+    !call.tool_call_id ||
+    deadline <= Date.now()
+  ) {
+    return null;
+  }
+  let params: Record<string, unknown>;
+  try {
+    const snapshot = JSON.parse(JSON.stringify(finalParams));
+    if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) return null;
+    params = snapshot as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+  const retry = retryToolCallId(decision, call.tool_call_id);
+  if (retry === call.tool_call_id) return null;
+  const reservation = await post<HoldExecutionReservation>(
+    "/v1/hold-executions/reserve",
+    {
+      schema_version: "hold-execution-reserve/v1",
+      platform: call.platform,
+      session_id: call.session_id,
+      agent_id: call.agent_id,
+      task_id: decision.task_id ?? "",
+      runtime_task_id: decision.runtime_task_id ?? "",
+      tool: call.tool,
+      original_tool_call_id: call.tool_call_id,
+      retry_tool_call_id: retry,
+      action_id: decision.action_id,
+      decision_receipt_id: decision.receipt_id,
+      params,
+    },
+    signal,
+    deadline - Date.now(),
+    201,
+  );
+  if (
+    !reservation ||
+    reservation.schema_version !== "hold-execution-status/v1" ||
+    reservation.status !== "reserved" ||
+    reservation.action_id !== decision.action_id ||
+    reservation.decision_receipt_id !== decision.receipt_id ||
+    typeof reservation.reservation_receipt_id !== "string" ||
+    !reservation.reservation_receipt_id ||
+    reservation.reason_code !== "hold_execution_reserved" ||
+    typeof reservation.expires_at !== "string" ||
+    !Number.isFinite(Date.parse(reservation.expires_at)) ||
+    Date.parse(reservation.expires_at) <= Date.now() ||
+    signal?.aborted
+  ) {
+    return null;
+  }
+  return {
+    retryToolCallId: retry,
+    reservationReceiptId: reservation.reservation_receipt_id,
+    params,
+  };
 }
 
 function failClosed(reason: string, tool = "", sessionId = "") {
@@ -244,7 +343,18 @@ function appendPending(rec: Record<string, unknown>): void {
   }
 }
 
-type Correlation = { expires: number; action_id: string; decision_receipt_id: string; executable?: boolean; consumed?: boolean };
+type Correlation = {
+  expires: number;
+  action_id: string;
+  decision_receipt_id: string;
+  executable?: boolean;
+  consumed?: boolean;
+  execution?: {
+    tool_call_id: string;
+    decision_receipt_id: string;
+    params: Record<string, unknown>;
+  };
+};
 const correlations = new Map<string, Correlation>();
 const correlationKey = (session: string, tool: string, call: string) => JSON.stringify([session, tool, call]);
 function rememberDecision(session: string, tool: string, call: string, decision: Decision): boolean {
@@ -261,11 +371,21 @@ function rememberDecision(session: string, tool: string, call: string, decision:
     executable: decision.action === "allow" || (decision.action === "redact" && !!decision.params) });
   return true;
 }
-function decisionReference(session: string, tool: string, call: string): Record<string, string> {
+function decisionReference(session: string, tool: string, call: string): {
+  action_id?: string;
+  decision_receipt_id?: string;
+  tool_call_id?: string;
+  params?: Record<string, unknown>;
+} {
   const value = correlations.get(correlationKey(session, tool, call));
   if (!value || !value.action_id || !value.executable || value.consumed || value.expires <= Date.now()) return {};
   value.consumed = true;
-  return { action_id: value.action_id, decision_receipt_id: value.decision_receipt_id };
+  return {
+    action_id: value.action_id,
+    decision_receipt_id: value.execution?.decision_receipt_id ?? value.decision_receipt_id,
+    tool_call_id: value.execution?.tool_call_id,
+    params: value.execution?.params,
+  };
 }
 
 // Managed mode: every native session proves its runtime identity once per
@@ -435,14 +555,35 @@ export default definePluginEntry({
                 timeoutMs: Math.max(1, approval.expires - Date.now()),
                 timeoutBehavior: "deny",
                 beforeExecute: async (finalParams: Record<string, unknown>, signal?: AbortSignal) => {
+                  const deadline = Date.now() + 1000;
                   const checked = await waitForLocalApproval(
-                    decision, { ...call, params: finalParams }, Date.now() + 1000, signal,
+                    decision, { ...call, params: finalParams }, deadline, signal,
                   );
                   const ref = correlations.get(correlationKey(call.session_id, call.tool, call.tool_call_id));
-                  const approved = checked.state === "approved" && !signal?.aborted &&
+                  const approved = checked.state === "approved" && !signal?.aborted && deadline > Date.now() &&
                     !!ref && ref.action_id === decision.action_id && !ref.consumed && !ref.executable && ref.expires > Date.now();
-                  if (ref) ref.executable = approved;
-                  return approved;
+                  if (!approved || !ref) {
+                    if (ref) ref.executable = false;
+                    return false;
+                  }
+                  const reservation = await reserveHoldExecution(decision, call, finalParams, deadline, signal);
+                  const executable = !!reservation && !signal?.aborted;
+                  ref.executable = executable;
+                  ref.execution = executable
+                    ? {
+                        tool_call_id: reservation.retryToolCallId,
+                        decision_receipt_id: reservation.reservationReceiptId,
+                        params: reservation.params,
+                      }
+                    : undefined;
+                  if (executable) {
+                    await captureNativeRawContent("parameters", call.session_id, event.toolName, reservation.params);
+                  }
+                  if (signal?.aborted) {
+                    ref.executable = false;
+                    return false;
+                  }
+                  return executable;
                 },
               },
             };
@@ -459,14 +600,17 @@ export default definePluginEntry({
       const result = (event as { result?: unknown }).result;
       const text = typeof result === "string" ? result : JSON.stringify(result ?? "");
       const reference = decisionReference(session, event.toolName, event.toolCallId ?? "");
+      const observedToolCallID = reference.tool_call_id ?? event.toolCallId ?? "";
+      const observedParams = reference.params ?? event.params ?? {};
       await post("/v1/observe", {
         platform: "openclaw",
         session_id: session,
         agent_id: reportedAgentId(ctx as { agentId?: string } | undefined),
         tool: event.toolName,
-        tool_call_id: event.toolCallId ?? "",
-        params: event.params ?? {},
-        ...reference,
+        tool_call_id: observedToolCallID,
+        params: observedParams,
+        action_id: reference.action_id,
+        decision_receipt_id: reference.decision_receipt_id,
         result: text.slice(0, 64 * 1024),
       });
       if (reference.action_id) {

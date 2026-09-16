@@ -1,0 +1,12 @@
+== identity ==
+date: 2026-09-15T21:11:24+08:00
+host: Linux 6.17.0-1014-nvidia aarch64 / Linux 6.17.0-1014-nvidia
+binary: /tmp/siq-batch-20260915/bin/agentshield
+15d688fdd4652e9efb544ece769142b60725bc0a5d2deae233062f6b910e0701  /tmp/siq-batch-20260915/bin/agentshield
+script: scripts/personal-experience/r07-linux-user-journey-smoke.py
+e987865aaa9d0ec9caf23c50a595935dceaedf0f61938bf8992f9b0d3c95da5d  scripts/personal-experience/r07-linux-user-journey-smoke.py
+report json: r07-linux-user-journey.json
+python: Python 3.13.12
+node: v22.22.1
+openclaw: 2026.5.12
+binary copy policy: batch candidate copied to per-run tempdir, never rebuilt

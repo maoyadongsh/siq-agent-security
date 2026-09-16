@@ -1,0 +1,6 @@
+$ '/tmp/siq-closure-20260915/b01r6/state 中文 空格%25实例/client-releases/be2fe3e5abd78b4f7e5143b3284ea94c84331297cd941e204e146dcf3f672cbf/siq-agent-security' service-rollback --transaction cc288fbad746fcd2582666a054905850bc4d03afa758fcafb1fe23f2b3dc1e62 --binary /tmp/siq-closure-20260915/b01r6/bin-new/siq-agent-security-linux-arm64 --confirm-rollback --manifest /tmp/siq-closure-20260915/b01r6/manifest-old.json
+# exit recorded separately; redacted=True
+--- stdout ---
+
+--- stderr ---
+siq-agent-security: service-rollback: binary path differs from historical source

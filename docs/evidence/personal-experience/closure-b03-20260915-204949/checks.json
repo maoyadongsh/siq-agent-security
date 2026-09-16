@@ -1,0 +1,17 @@
+{
+  "task": "B03 / UP05 并发 + UP07 状态兼容",
+  "statuses": {"PASS": "verified by test in this evidence dir", "not_exercised": "declared gap with解除条件"},
+  "checks": [
+    {"id": "UP05-comp", "area": "skillinstall 并发契约", "result": "PASS", "evidence": "internal/skillinstall/up05_concurrency_contract_test.go (7 tests, plain + -race), up05-up07-targeted-test.log"},
+    {"id": "UP05-http", "area": "skill-installations update 并发 (HTTP 层)", "result": "PASS", "evidence": "internal/server/skill_update_concurrency_test.go (2 tests), up05-up07-targeted-test.log"},
+    {"id": "UP07-future", "area": "未来格式标记: 写入口全部拒绝且零变更", "result": "PASS", "evidence": "internal/server/up07_state_compat_write_test.go TestUP07FutureFormatBlocksWriteEntrypointsAndMutatesNothing (503 state_incompatible x5, snapshot unchanged, marker not repaired)"},
+    {"id": "UP07-corrupt", "area": "破损签名/破损标记: 拒绝且不迁移/不隔离锁/不改写", "result": "PASS", "evidence": "TestUP07CorruptMarkerBlocksWriteEntrypointsAndMutatesNothing; TestUP07BrokenStoredSignatureRefusedWithoutRewrite (blob bytes unchanged)"},
+    {"id": "UP07-stale-rev", "area": "陈旧 revision: 409 拒绝且不推进 revision", "result": "PASS", "evidence": "TestUP07StaleRevisionWriteRefusedLeavesGrantUntouched (stale -> 409, correct rev -> 200)"},
+    {"id": "UP07-real-binary", "area": "旧/新程序真实二进制拒写 + 诊断豁免", "result": "PASS", "evidence": "TestUP07RealBinaryRefusesFutureStateBeforeSideEffects (admit exit 1 + RecoveryMessage + 零副作用; state-status exit 0 只读)"},
+    {"id": "UP07-entrypoints", "area": "路由与 CLI 写入口枚举", "result": "PASS", "evidence": "write-entrypoints.json (110 routes, 59 write/mixed, 6 up07-direct; 57 CLI commands, exempt list recorded)"},
+    {"id": "regression", "area": "全量回归 skillinstall+server+state+cmd", "result": "PASS", "evidence": "up07-full-regression.log (exit 0)"},
+    {"id": "vet", "area": "go vet ./...", "result": "PASS", "evidence": "go-vet.log (empty, exit 0)"},
+    {"id": "UP07-real-old-binary", "area": "真实旧版本二进制对未来状态的拒写对照", "result": "not_exercised", "evidence": "仅单二进制(当前构建)验证; 解除条件: 落地一个真实旧版本 release 二进制并在其上重放同一 fixture"},
+    {"id": "UP07-per-method-matrix", "area": "(route, HTTP method) 级写矩阵逐条点火", "result": "not_exercised", "evidence": "依赖 central-gate 结构论证; 解除条件: 生成器化逐路由方法矩阵并循环点火"}
+  ]
+}

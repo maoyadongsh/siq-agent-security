@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/local-skill-execution-context-revoke.v1.schema.json",
+  "title": "Local skill execution context revoke request V1",
+  "description": "管理员撤销一个精确 SEC。expected_context_signature 将确认绑定到刚刚读取的不可变上下文，避免陈旧或被替换的目标被误操作。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "local-skill-execution-context-revoke/v1"},
+    "expected_context_signature": {"type": "string", "pattern": "^[0-9a-f]{128}$"},
+    "actor_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "confirm_revoke": {"const": true}
+  },
+  "required": [
+    "schema_version",
+    "expected_context_signature",
+    "actor_id",
+    "confirm_revoke"
+  ]
+}

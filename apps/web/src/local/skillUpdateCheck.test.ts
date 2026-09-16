@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { isSkillUpdateCheckResult, isSkillUpdateScheduleView, updateCheckErrorText } from './skillUpdateCheck';
+import { isCurrentSkillUpdateRequest, isSkillUpdateCheckResult, isSkillUpdateScheduleView, planSkillUpdateSourceToggle, updateCheckErrorText } from './skillUpdateCheck';
 const sample = () => JSON.parse(readFileSync(new URL('../../../agentshield/testdata/contracts/local-skill-update-check-result.json', import.meta.url), 'utf8'));
 const scheduleSample = () => JSON.parse(readFileSync(new URL('../../../agentshield/testdata/contracts/local-skill-update-schedule-view.json', import.meta.url), 'utf8'));
 describe('upstream checks never authorize an update', () => {
@@ -51,5 +51,27 @@ describe('update schedule view never leaks the saved locator or scheduling inter
     const local = { ...withoutNext, source_kind: 'local_dir', display: '', enabled: false, source_state: 'unsupported', status: 'unsupported' };
     expect(isSkillUpdateScheduleView(local, v.install_id)).toBe(true);
     expect(isSkillUpdateScheduleView({ ...local, display: v.display }, v.install_id)).toBe(false);
+  });
+  it('plans URL-free disable while retaining explicit enable binding rules', () => {
+    const v = scheduleSample();
+    expect(planSkillUpdateSourceToggle({ ...v, source_kind: 'https_zip', enabled: true }, '')).toEqual({ kind: 'disable' });
+    expect(planSkillUpdateSourceToggle({ ...v, enabled: false }, '')).toEqual({ kind: 'save', remoteURL: '' });
+    expect(planSkillUpdateSourceToggle({ ...v, source_kind: 'git', source_state: 'needs_source', display: '', enabled: false }, '')).toEqual({ kind: 'save', remoteURL: '' });
+    expect(planSkillUpdateSourceToggle({ ...v, source_kind: 'https_zip', enabled: false }, '')).toMatchObject({ kind: 'error' });
+    expect(planSkillUpdateSourceToggle({ ...v, source_kind: 'https_zip', enabled: false }, '  https://download.example/skill.zip  ')).toEqual({ kind: 'save', remoteURL: 'https://download.example/skill.zip' });
+    expect(planSkillUpdateSourceToggle({ ...v, source_state: 'stale', display: '', enabled: false }, 'https://download.example/skill.zip')).toMatchObject({ kind: 'error' });
+    expect(planSkillUpdateSourceToggle({ ...v, source_kind: 'local_dir', source_state: 'unsupported', display: '', enabled: false, status: 'unsupported' }, '')).toMatchObject({ kind: 'error' });
+  });
+  it('rejects a late result after the installation identity changes', async () => {
+    let current = 'install-a/session-a';
+    let release: (value: string) => void = () => {};
+    const owner = current;
+    const pending = new Promise<string>((resolve) => { release = resolve; }).then((value) =>
+      isCurrentSkillUpdateRequest(owner, current, false) ? value : undefined);
+    current = 'install-b/session-a';
+    release('old-view');
+    await expect(pending).resolves.toBeUndefined();
+    expect(isCurrentSkillUpdateRequest(current, current, false)).toBe(true);
+    expect(isCurrentSkillUpdateRequest(current, current, true)).toBe(false);
   });
 });

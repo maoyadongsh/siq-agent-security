@@ -29,7 +29,7 @@ export function isSkillRemovalView(v: unknown, installId: string): v is SkillRem
   }
   const g = v.grant;
   if (v.result !== null || !rev(v.state_revision) || !object(g) || g.grant_id !== record.plan.grant_id || !sig(g.signature) ||
-    !['approved', 'revoked'].includes(String(g.status)) || g.platform !== 'hermes' || !object(g.subject) || g.subject.type !== 'agent_instance' ||
+    !['approved', 'revoked'].includes(String(g.status)) || g.platform !== record.plan.platform || !object(g.subject) || g.subject.type !== 'agent_instance' ||
     g.subject.id !== record.plan.instance_id.replace(/^hi-/, 'hri-') || !Array.isArray(g.facts) ||
     !g.facts.every((f: unknown) => object(f) && text(f.fact_id, 256) && text(f.domain) && text(f.action) && ['allow', 'deny'].includes(String(f.effect)) &&
       object(f.resource) && text(f.resource.value, 16384) && (f.conditions == null || object(f.conditions))) || (g.expires_at != null && !time(g.expires_at))) return false;

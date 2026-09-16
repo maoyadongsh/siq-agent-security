@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/local-confirmations.v2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "items"],
+  "properties": {
+    "schema_version": {"const": "local-confirmations/v2"},
+    "items": {
+      "type": "array",
+      "maxItems": 8192,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action_id", "decision_receipt_id", "decision_hash", "reservation_receipt_id", "reservation_hash", "params_digest", "platform", "agent_id", "session_id", "task_id", "tool", "tool_call_id", "operation", "effects", "resource_refs", "approval_scope", "resume_mode", "grant_id", "issued_at", "expires_at", "status", "params_excerpt"],
+        "properties": {
+          "action_id": {"type": "string", "minLength": 1},
+          "decision_receipt_id": {"type": "string", "minLength": 1},
+          "decision_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "reservation_receipt_id": {"type": "string"},
+          "reservation_hash": {"type": "string", "pattern": "^(?:[0-9a-f]{64})?$"},
+          "params_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "platform": {"type": "string", "minLength": 1},
+          "agent_id": {"type": "string"},
+          "session_id": {"type": "string", "minLength": 1},
+          "task_id": {"type": "string"},
+          "runtime_task_id": {"type": "string", "maxLength": 256},
+          "tool": {"type": "string", "minLength": 1},
+          "tool_call_id": {"type": "string"},
+          "operation": {"type": "string"},
+          "effects": {"type": "array", "maxItems": 64, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "resource_refs": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["domain", "digest"],
+              "properties": {
+                "domain": {"enum": ["filesystem", "network", "message"]},
+                "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+              }
+            }
+          },
+          "approval_scope": {"const": "once"},
+          "resume_mode": {"enum": ["retry_required", "native_resume", "unsupported"]},
+          "grant_id": {"type": "string"},
+          "issued_at": {"type": "string", "format": "date-time"},
+          "expires_at": {"type": ["string", "null"], "format": "date-time"},
+          "status": {"enum": ["pending", "approved", "denied", "expired", "consumed", "reserved", "completed", "cancelled", "uncertain", "unavailable"]},
+          "params_excerpt": {"type": ["string", "null"], "maxLength": 512}
+        }
+      }
+    }
+  }
+}

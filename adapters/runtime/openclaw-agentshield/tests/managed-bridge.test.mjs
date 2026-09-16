@@ -17,7 +17,15 @@ const SCENARIOS = [
   "managed-deny-blocks-with-receipt",
   ...["block", "warn", "audit_only"].flatMap(mode =>
     ["enroll", "decide", "missing-reference", "bad-identity", "bad-config", "no-session", "remote", "credentials-url", "query-url", "redirect", "expired"].map(failure => `boundary-${mode}-${failure}`)),
-  ...["duplicate-post", "duplicate-pre", "blocked-hold", "approved-hold"].map(flow => `correlation-${flow}`),
+  ...[
+    "duplicate-post",
+    "duplicate-pre",
+    "blocked-hold",
+    "approved-hold",
+    "reserve-rejected",
+    "reserve-malformed",
+    "reserve-response-loss",
+  ].map(flow => `correlation-${flow}`),
 ];
 
 for (const name of SCENARIOS) {

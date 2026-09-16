@@ -12,20 +12,21 @@ from app.tests.binding_helpers import make_binding
 from app.tests.edge_helpers import edge_public_key_pem
 
 
-def _create_policy(client, headers, name=None, enforcement_mode="audit_only", agent_ids=None):
+def _create_policy(client, headers, name=None, enforcement_mode="audit_only", agent_ids=None, network=None):
     name = name or f"policy-{uuid.uuid4().hex[:8]}"
     resp = client.post(
         "/api/v1/policies",
         json={
             "name": name,
             "selector": {"agent_ids": agent_ids or ["agt_1"]},
-            "network": [
+            "network": network
+            if network is not None
+            else [
                 {
-                "endpoint": "api.example.com:443",
-                "effect": "allow",
-                "methods": ["GET"],
-                "purpose": "order-read",
-            }
+                    "endpoint": "api.example.com:443",
+                    "effect": "allow",
+                    "binary_paths": ["/usr/bin/curl"],
+                }
             ],
             "enforcement_mode": enforcement_mode,
         },
@@ -169,9 +170,7 @@ def _approved_deployment(client, tenant_a, env_a):
 
 
 def _edge_headers(client, tenant_a, env_a, identity):
-    enr = client.post(
-        f"/api/v1/environments/{env_a['id']}/edge-enrollment", json={}, headers=tenant_a
-    ).json()
+    enr = client.post(f"/api/v1/environments/{env_a['id']}/edge-enrollment", json={}, headers=tenant_a).json()
     reg = client.post(
         "/edge/v1/register",
         json={
@@ -257,9 +256,7 @@ def test_edge_publish_policy_receipt_constant_fail_closed(client, tenant_a, env_
         assert (d.receipt or {}).get("status") == "success"  # 回执保留原始状态
         failed_events = [
             e
-            for e in session.query(OutboxEvent)
-            .filter(OutboxEvent.event_type == "policy.deployment.failed.v1")
-            .all()
+            for e in session.query(OutboxEvent).filter(OutboxEvent.event_type == "policy.deployment.failed.v1").all()
             if e.payload.get("resource_ref") == dep["id"]
         ]
         assert failed_events, "失败事件必须已发出"
@@ -283,7 +280,7 @@ def test_deployment_compiles_with_fake_backend(client, tenant_a, env_a, monkeypa
     assert "network.dynamic_update" in compiled["unsupported_by_backend"]
 
 
-def _fake_cli_backend(monkeypatch, *, revision="1", apply_error=None):
+def _fake_cli_backend(monkeypatch, *, revision="1", apply_error=None, verify_error=False):
     """真实闭环测试夹具：审批→编译→plan→apply→verify 全链路的可控 CLI 后端。"""
     from app.adapters.openshell.cli_backend import OpenShellCliBackend
     from app.tests.test_openshell_cli_backend import GATEWAY_INFO, REAL_POLICY_GET_FULL
@@ -293,32 +290,44 @@ def _fake_cli_backend(monkeypatch, *, revision="1", apply_error=None):
             super().__init__(runner=self._r, env_script="/nonexistent")
             self.applied = []
             self.active_rev = 1
+            import yaml as _yaml
+
+            self.active_policy = _yaml.safe_load(REAL_POLICY_GET_FULL.split("---", 1)[1])
 
         def _r(self, args):
             if tuple(args[:2]) == ("gateway", "info"):
                 return 0, GATEWAY_INFO, ""
+            if tuple(args[:2]) == ("status",):
+                return 0, "Server Status\n  Gateway: siq-openshell-dev\n  Gateway version: 0.0.104\n", ""
             if tuple(args[:2]) == ("policy", "get") and "--full" in args:
                 # 有状态：set 后回读必须反映新 revision 与新网络规则（真实网关语义）
                 import yaml as _yaml
 
-                body = _yaml.safe_load(REAL_POLICY_GET_FULL.split("---", 1)[1])
-                if self.active_rev >= 2:
-                    body["network_policies"] = {
-                        "siq_as_rule_0": {
-                            "name": "siq-as-rule-0",
-                            "endpoints": [{"host": "api.example.com", "port": 443}],
-                            "binaries": [{"path": "/usr/bin/curl"}],
-                        }
-                    }
-                meta = f"Version:      1\nHash:         h\nStatus:       Loaded\nActive:       {self.active_rev}\n---\n"
+                body = self.active_policy
+                # OpenShell 0.0.83 reports the effective revision as Version.
+                # Do not synthesize a conflicting Active field: production
+                # parsing must reject two different revision authorities.
+                meta = f"Version:      {self.active_rev}\nHash:         h\nStatus:       Loaded\n---\n"
                 return 0, meta + _yaml.safe_dump(body, sort_keys=False), ""
             if tuple(args[:2]) == ("policy", "set"):
                 if apply_error:
                     return 1, apply_error, ""
+                from pathlib import Path
+
+                import yaml as _yaml
+
+                self.active_policy = _yaml.safe_load(Path(args[4]).read_text(encoding="utf-8"))
                 self.applied.append(args)
                 self.active_rev += 1
                 return 0, f"✓ Policy version {self.active_rev} submitted (hash: 5385cd2cf66f)\n", ""
             return 1, "", f"unexpected: {args}"
+
+        def verify(self, target, checks, receipt):
+            if verify_error:
+                from app.adapters.openshell.contracts import VerificationReport
+
+                return VerificationReport(passed=False, failures=["synthetic post-apply failure"])
+            return super().verify(target, checks, receipt)
 
     fake = FakeCli()
     monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: fake)
@@ -352,9 +361,79 @@ def test_deployment_openshell_cli_closed_loop(client, tenant_a, env_a, monkeypat
     assert body["verification"]["level"] == "readback_verified"
     assert body["verification"]["method"] == "config_readback"
     assert body["verification"]["allow_checks"]
-    assert body["verification"]["deny_checks"]
+    assert body["verification"]["deny_checks"] == []
     assert fake.applied, "policy set 必须真实发生"
     assert fake.applied[0][2] == target
+
+
+def test_deployment_does_not_invent_conflicting_deny_probe(client, tenant_a, env_a, monkeypatch):
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    fake = _fake_cli_backend(monkeypatch)
+    target = f"siq-as-probe-{uuid.uuid4().hex[:8]}"
+    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli", target=target)
+    policy = _create_policy(
+        client,
+        tenant_a,
+        enforcement_mode="block",
+        agent_ids=[asset_id],
+        network=[
+            {
+                "endpoint": "10.255.255.255:1",
+                "effect": "allow",
+                "binary_paths": ["/usr/bin/curl"],
+            }
+        ],
+    )
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+
+    dep = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        headers=tenant_a,
+    )
+    assert dep.status_code == 201, dep.text
+    assert dep.json()["status"] == "effective"
+    assert fake.applied
+
+
+def test_post_apply_verification_failure_preserves_safe_rollback_binding(client, tenant_a, env_a, monkeypatch):
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    _fake_cli_backend(monkeypatch, verify_error=True)
+    target = f"siq-as-verify-fail-{uuid.uuid4().hex[:8]}"
+    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli", target=target)
+    policy = _create_policy(client, tenant_a, enforcement_mode="block", agent_ids=[asset_id])
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+
+    failed = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        headers=tenant_a,
+    )
+    assert failed.status_code == 502
+    with session_scope() as session:
+        from app.models import Deployment
+
+        row = session.query(Deployment).filter(Deployment.change_request_id == cr["id"]).one()
+        deployment_id = row.id
+        assert row.status == "failed"
+        assert (row.receipt or {}).get("operation_id")
+        assert (row.verification or {}).get("backend_mutated") is True
+
+    rollback = client.post(f"/api/v1/deployments/{deployment_id}/rollback", json={}, headers=tenant_a)
+    assert rollback.status_code == 200, rollback.text
+    assert rollback.json()["status"] == "rolled_back"
 
 
 def test_deployment_openshell_cli_rejects_non_block_mode_422(client, tenant_a, env_a, monkeypatch):
@@ -409,10 +488,14 @@ def test_deployment_openshell_apply_failure_fails_closed(client, tenant_a, env_a
         assert (d.receipt or {}).get("error_code") == "AdapterError"
         assert len((d.receipt or {}).get("error_digest", "")) == 64
         assert "include_workdir" not in str(d.receipt)
-        failure_audit = session.query(AuditEvent).filter(
-            AuditEvent.action == "deployment.fail",
-            AuditEvent.resource_id == d.id,
-        ).one()
+        failure_audit = (
+            session.query(AuditEvent)
+            .filter(
+                AuditEvent.action == "deployment.fail",
+                AuditEvent.resource_id == d.id,
+            )
+            .one()
+        )
         assert "include_workdir" not in str(failure_audit.summary)
         assert failure_audit.summary["error_digest"] == d.receipt["error_digest"]
 
@@ -437,14 +520,15 @@ def test_list_endpoints_tenant_isolated(client, tenant_a, tenant_b):
     assert all(c["id"] != cr["id"] for c in crs_b)
 
 
-def test_rollback_invokes_real_backend(client, tenant_a, env_a, monkeypatch):
-    """§14.4：openshell-cli 模式下回滚调用真实后端（--rev 回读 + policy set）。"""
+def test_rollback_invokes_bound_backend_operation(client, tenant_a, env_a, monkeypatch):
+    """§14.4：回滚传递完整操作绑定，并执行当前授权重验。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     from app.adapters.openshell.cli_backend import OpenShellCliBackend
     from app.adapters.openshell.contracts import (
         BackendCapabilities,
         DeploymentReceipt,
         PolicySnapshot,
+        RollbackAuthorization,
         RollbackReceipt,
         VerificationReport,
     )
@@ -455,9 +539,7 @@ def test_rollback_invokes_real_backend(client, tenant_a, env_a, monkeypatch):
             self.rollbacks: list[str] = []
 
         def probe(self):
-            return BackendCapabilities(
-                backend="openshell", schema_version="v1", dynamic_network_update=True
-            )
+            return BackendCapabilities(backend="openshell", schema_version="v1", dynamic_network_update=True)
 
         def read_effective_policy(self, target):
             return PolicySnapshot(target=target, revision="1", network=[])
@@ -470,7 +552,16 @@ def test_rollback_invokes_real_backend(client, tenant_a, env_a, monkeypatch):
             )
 
         def apply_dynamic(self, target, plan, expected_revision):
-            return DeploymentReceipt(backend_revision="2", evidence={"snapshot_hash": "h"})
+            return DeploymentReceipt(
+                backend_revision="9",
+                operation_id="opo-route-test",
+                target=target,
+                base_revision="1",
+                base_policy_digest="a" * 64,
+                applied_policy_digest="b" * 64,
+                result="applied",
+                evidence={"gateway_policy_hash": "h"},
+            )
 
         def verify(self, target, checks, receipt):
             return VerificationReport(
@@ -480,9 +571,18 @@ def test_rollback_invokes_real_backend(client, tenant_a, env_a, monkeypatch):
                 deny_checks=[{"endpoint": e, "result": "deny"} for e in checks.get("expect_deny", [])],
             )
 
-        def rollback(self, target, receipt):
+        def rollback(self, target, receipt, authorizer=None):
+            assert receipt.operation_id == "opo-route-test"
+            assert receipt.base_revision == "1"
+            assert authorizer is not None
+            current = PolicySnapshot(target=target, revision="9", policy_digest="b" * 64)
+            restore = PolicySnapshot(target=target, revision="1", policy_digest="a" * 64)
+            if authorizer(RollbackAuthorization(receipt.operation_id, target, current, restore)) is not True:
+                from app.adapters.openshell.contracts import VerificationFailed
+
+                raise VerificationFailed("openshell_rollback_authorization_failed")
             self.rollbacks.append(target)
-            return RollbackReceipt(restored_revision="1", evidence={"ok": True})
+            return RollbackReceipt(restored_revision="15", restored_digest="a" * 64, result="restored")
 
     fake = FakeCli()
     monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: fake)
@@ -508,8 +608,50 @@ def test_rollback_invokes_real_backend(client, tenant_a, env_a, monkeypatch):
     assert resp.status_code == 200, resp.text
     body = resp.json()
     assert body["status"] == "rolled_back"
-    assert body["verification"]["rollback"]["restored_revision"] == "1"
+    assert body["verification"]["rollback"]["restored_revision"] == "15"
     assert fake.rollbacks == [target]
+
+
+def test_rollback_rejects_revoked_runtime_binding(client, tenant_a, env_a, monkeypatch):
+    """回滚写前必须重查 RuntimeBinding；撤销后零后端写入拒绝。"""
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    fake = _fake_cli_backend(monkeypatch)
+    target = f"s-revoked-{uuid.uuid4().hex[:8]}"
+    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli", target=target)
+    policy = _create_policy(client, tenant_a, enforcement_mode="block", agent_ids=[asset_id])
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    approver = {
+        "X-Dev-Tenant-Id": "tnt-A",
+        "X-Dev-User-Id": "user-approver",
+        "X-Dev-Roles": "reviewer",
+    }
+    client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+    dep = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        headers=tenant_a,
+    ).json()
+    assert dep["status"] == "effective"
+
+    with session_scope() as session:
+        from app.models import RuntimeBinding
+
+        live_binding = session.get(RuntimeBinding, binding["id"])
+        live_binding.status = "revoked"
+        session.commit()
+
+    writes_before = len(fake.applied)
+    response = client.post(f"/api/v1/deployments/{dep['id']}/rollback", json={}, headers=tenant_a)
+    assert response.status_code == 502
+    assert len(fake.applied) == writes_before
+    with session_scope() as session:
+        from app.models import Deployment
+
+        assert session.get(Deployment, dep["id"]).status == "effective"
 
 
 def test_enforcement_mode_downgrade_requires_high_risk(client, tenant_a):
@@ -668,16 +810,8 @@ def test_break_glass_review_due_preserves_business_status(client, tenant_a, env_
         row = session.query(ChangeRequest).filter(ChangeRequest.id == cr["id"]).one()
         assert row.review_status == "due"
         assert row.status == business_before  # 业务终态保持
-        events = (
-            session.query(OutboxEvent)
-            .filter(OutboxEvent.event_type == "policy.change.review_due.v1")
-            .all()
-        )
-        matching = [
-            e
-            for e in events
-            if (e.payload.get("payload") or {}).get("change_request_id") == cr["id"]
-        ]
+        events = session.query(OutboxEvent).filter(OutboxEvent.event_type == "policy.change.review_due.v1").all()
+        matching = [e for e in events if (e.payload.get("payload") or {}).get("change_request_id") == cr["id"]]
         assert len(matching) == 1
         assert matching[0].payload["payload"]["business_status"] == business_before
 
@@ -689,9 +823,7 @@ def test_break_glass_review_due_preserves_business_status(client, tenant_a, env_
         assert row.review_status == "due"
         matching = [
             e
-            for e in session.query(OutboxEvent)
-            .filter(OutboxEvent.event_type == "policy.change.review_due.v1")
-            .all()
+            for e in session.query(OutboxEvent).filter(OutboxEvent.event_type == "policy.change.review_due.v1").all()
             if (e.payload.get("payload") or {}).get("change_request_id") == cr["id"]
         ]
         assert len(matching) == 1

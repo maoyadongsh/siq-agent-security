@@ -17,6 +17,8 @@ describe('installed permission readiness', () => {
     expect(isSkillRuntimeReadiness({ ...r, status: 'incomplete', state_revision: r.binding.approved_revision })).toBe(true);
     expect(isSkillRuntimeReadiness({ ...r, status: 'incomplete' })).toBe(false);
     expect(isSkillRuntimeReadiness({ ...r, binding: null, status: 'no_tools' })).toBe(true);
+    const openClaw = { ...r, grant: { ...r.grant, platform: 'openclaw' } };
+    expect(isSkillRuntimeReadiness(openClaw, r.install_id, r.grant.grant_id)).toBe(true);
   });
   it('matches exact installation, source, instance, permissions and approved revision', () => {
     const r = sample('runtime-readiness'), b = r.binding, v = sample('view');
@@ -29,6 +31,10 @@ describe('installed permission readiness', () => {
       expect(matchesInstalledReadiness(r, { ...v, plan: { ...v.plan, ...patch } })).toBe(false);
     }
     expect(matchesInstalledReadiness(r, { ...v, operation: null })).toBe(false);
+    const openClawReadiness = { ...r, grant: { ...r.grant, platform: 'openclaw' } };
+    const openClawView = { ...v, plan: { ...v.plan, platform: 'openclaw' } };
+    expect(matchesInstalledReadiness(openClawReadiness, openClawView)).toBe(true);
+    expect(matchesInstalledReadiness(openClawReadiness, v)).toBe(false);
   });
   it('accepts an activation only for its original operation and explicit actor', () => {
     const out = sample('activated'), req = sample('activate');

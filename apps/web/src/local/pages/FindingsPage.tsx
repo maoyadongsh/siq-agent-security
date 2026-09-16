@@ -52,7 +52,7 @@ export default function FindingsPage() {
 
   useEffect(() => {
     load();
-  }, []);
+  }, [guard]);
 
   const accept = (findingId: string) => {
     if (!reason.trim() || !until.trim()) {

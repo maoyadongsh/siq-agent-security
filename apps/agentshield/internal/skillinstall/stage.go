@@ -53,6 +53,15 @@ type Request struct {
 	ActorID          string `json:"actor_id"`
 }
 type Target struct{ InstanceID, Platform, Root, Display string }
+
+func supportedPlatform(platform string) bool {
+	return platform == "hermes" || platform == "openclaw"
+}
+
+func subjectForInstance(id string) string {
+	return "hri-" + strings.TrimPrefix(id, "hi-")
+}
+
 type Plan struct {
 	SchemaVersion         string              `json:"schema_version"`
 	PlanID                string              `json:"plan_id"`
@@ -151,7 +160,7 @@ func (s *Store) inspect(ctx context.Context, r Request) (Plan, error) {
 		return p, err
 	}
 	target, err := s.resolve(ctx, r.InstanceID)
-	if err != nil || target.InstanceID != r.InstanceID || target.Platform != "hermes" || target.Display == "" || len(target.Display) > 4096 {
+	if err != nil || target.InstanceID != r.InstanceID || !supportedPlatform(target.Platform) || target.Display == "" || len(target.Display) > 4096 {
 		return p, ErrChanged
 	}
 	destination, err := targetPath(target, r.DirectoryName)
@@ -159,7 +168,7 @@ func (s *Store) inspect(ctx context.Context, r Request) (Plan, error) {
 		return p, err
 	}
 	current, revision, err := s.authority.GetGrantWithSeq(r.GrantID)
-	if err != nil || current == nil || revision != r.ExpectedRevision || !grant.Verify(s.key.Public(), *current) || current.Status != "approved" || current.Platform != "hermes" || current.Subject.Type != "agent_instance" || current.Subject.ID != "hri-"+strings.TrimPrefix(r.InstanceID, "hi-") || grant.ValidateLifetime(*current, s.now()) != nil {
+	if err != nil || current == nil || revision != r.ExpectedRevision || !grant.Verify(s.key.Public(), *current) || current.Status != "approved" || current.Platform != target.Platform || current.Subject.Type != "agent_instance" || current.Subject.ID != subjectForInstance(r.InstanceID) || grant.ValidateLifetime(*current, s.now()) != nil {
 		return p, ErrChanged
 	}
 	adm, err := s.authority.GetAdmission(current.AdmissionID)

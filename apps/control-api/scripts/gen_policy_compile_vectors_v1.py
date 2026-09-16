@@ -13,8 +13,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from app.adapters.openshell.contracts import BackendCapabilities, CapabilityItem, UnsupportedCapability
-from app.adapters.openshell.policy_compiler import compile_policy
+from app.adapters.openshell.contracts import BackendCapabilities, CapabilityItem, UnsupportedCapability  # noqa: E402
+from app.adapters.openshell.policy_compiler import compile_policy  # noqa: E402
 
 OUT = Path(__file__).resolve().parents[3] / "packages" / "contracts" / "fixtures" / "policy_compile_vectors_v1.json"
 
@@ -29,6 +29,13 @@ def caps(**kwargs) -> BackendCapabilities:
         capabilities={k: CapabilityItem(**v) if isinstance(v, dict) else v for k, v in items.items()},
     )
     base.update(kwargs)
+    # Frozen vectors describe a simulated adapter, not live backend evidence.
+    base["configuration_capabilities"] = {
+        "network.dynamic_update": base["dynamic_network_update"],
+        "model_routing": base["provider_credential_injection"],
+        **{key: item.status == "supported" for key, item in base["capabilities"].items()
+           if key.startswith("enforcement_mode.")},
+    }
     return BackendCapabilities(**base)
 
 
@@ -63,7 +70,7 @@ def err_vector(name: str, desired: dict, capabilities: BackendCapabilities, err_
     except UnsupportedCapability as e:
         msg = str(e)
         if err_substr not in msg:
-            raise SystemExit(f"{name}: unexpected error {msg!r}")
+            raise SystemExit(f"{name}: unexpected error {msg!r}") from e
         return {
             "name": name,
             "expect": "reject_unknown_keys",
@@ -102,8 +109,16 @@ def main() -> None:
                     "read_write": ["~/work/out"],
                 },
                 "network": [
-                    {"endpoint": "api.github.com:443", "effect": "allow"},
-                    {"endpoint": "astral.sh:443", "effect": "allow"},
+                    {
+                        "endpoint": "api.github.com:443",
+                        "effect": "allow",
+                        "binary_paths": ["/usr/bin/curl"],
+                    },
+                    {
+                        "endpoint": "astral.sh:443",
+                        "effect": "allow",
+                        "binary_paths": ["/usr/bin/curl"],
+                    },
                 ],
                 "process": {"forbid_privilege_escalation": True},
                 "model_routing": {"allowed_models": ["nemotron-local"]},
@@ -128,7 +143,9 @@ def main() -> None:
             "network_static_when_no_dynamic",
             {
                 "policy_id": "pol-net",
-                "network": [{"endpoint": "a:443", "effect": "allow"}],
+                "network": [
+                    {"endpoint": "a:443", "effect": "allow", "binary_paths": ["/bin/tool"]}
+                ],
                 "enforcement_mode": "audit_only",
             },
             caps(
@@ -206,7 +223,9 @@ def main() -> None:
     out = {
         "schema": "policy_compile_vectors/v1",
         "producer": "apps/control-api/app/adapters/openshell/policy_compiler.compile_policy",
-        "contract": "Go grant.CompilePolicy must match artifact_hash / unsupported / needs_generation; unknown keys refuse.",
+        "contract": (
+            "Go grant.CompilePolicy must match artifact_hash / unsupported / needs_generation; unknown keys refuse."
+        ),
         "known_keys": known_keys,
         "vectors": vectors,
     }

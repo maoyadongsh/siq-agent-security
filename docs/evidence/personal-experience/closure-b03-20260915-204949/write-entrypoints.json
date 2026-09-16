@@ -1,0 +1,1068 @@
+{
+  "schema": "siq/up07-write-entrypoints/v1",
+  "generated_at_utc": "2026-09-15T20:49:49Z",
+  "task": "UP07 状态兼容 — 从路由与 CLI 枚举相关写入口",
+  "source_of_truth": {
+    "routes": "apps/agentshield/internal/server/server.go (110 mux.HandleFunc registrations, grep 's.mux.HandleFunc')",
+    "cli": "apps/agentshield/cmd/agentshield/main.go command switch + cmd/agentshield/state_compatibility.go checkCommandState exempt list"
+  },
+  "gates": {
+    "http_request_time": "internal/server/server.go ~L316: mux wrapper runs state.RequireStateCompatibility(s.d.Store.Dir) on every /v1 request; failure -> 503 {\"error\":\"state_incompatible\"}. Structurally covers ALL routes below regardless of per-route test coverage.",
+    "store_open": "internal/state (stateformat.Check + state.CheckStateCompatibility via state.Open): the shared chokepoint behind every HTTP and CLI write.",
+    "cli_pre_command": "cmd/agentshield/state_compatibility.go checkCommandState: runs before the command switch for every command except the exempt list; failure -> stderr + stateformat.RecoveryMessage + exit 1.",
+    "cli_exempt": [
+      "state-status",
+      "state-migrate",
+      "version",
+      "rulepack",
+      "manifest-verify",
+      "serve",
+      "hook",
+      "help"
+    ]
+  },
+  "counts": {
+    "routes_total": 110,
+    "routes_write_or_mixed": 59,
+    "routes_up07_direct": 6,
+    "routes_up05_direct_or_related": 3,
+    "routes_central_gate": 49,
+    "cli_total": 57,
+    "cli_up07_direct": 2
+  },
+  "coverage_model": {
+    "up07-direct": "entrypoint actually fired in internal/server/up07_state_compat_write_test.go under a tampered state dir; refusal + zero mutation proven",
+    "up07-related": "entrypoint exercised as a supporting step of a UP07 leg (read refusal, grant creation feeding the stale-revision proof)",
+    "up05-direct": "entrypoint fired by UP05 concurrency tests (skill_update_concurrency_test.go)",
+    "up05-related": "covered by UP05 at component level (internal/skillinstall/up05_concurrency_contract_test.go)",
+    "central-gate": "not individually fired under tampered state; covered by the structural argument: the request-time gate wraps every /v1 route and the store-level gate sits behind every write. Known limitation, see gaps.",
+    "non-write": "read-only or no state mutation; UP07's invariant (no mutation on refuse) does not apply"
+  },
+  "http_write_entrypoints": [
+    {
+      "route": "/v1/raw-task-content/status",
+      "handler": "rawTaskContentStatus",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/raw-task-content/activation",
+      "handler": "rawTaskContentActivation",
+      "kind": "write",
+      "coverage": "up07-direct",
+      "note": "future-format + corrupt-marker legs fire this entrypoint"
+    },
+    {
+      "route": "/v1/raw-task-content/grants",
+      "handler": "rawTaskContentGrants",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/raw-task-content/grants/",
+      "handler": "rawTaskContentGrant",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/raw-task-content/capture-permits",
+      "handler": "rawTaskContentCapturePermit",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/raw-task-content/captures",
+      "handler": "rawTaskContentCapture",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/raw-task-content/native-captures",
+      "handler": "rawTaskContentNativeCapture",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/raw-task-content/records/search",
+      "handler": "rawTaskContentRecordSearch",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/raw-task-content/records/",
+      "handler": "rawTaskContentRecord",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/raw-task-content/purge-expired",
+      "handler": "rawTaskContentPurgeExpired",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/skill-installations/update-plans/",
+      "handler": "skillUpdatePlanRead",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/skill-installations/updates",
+      "handler": "skillUpdateCommit",
+      "kind": "write",
+      "coverage": "up05-direct",
+      "note": "UP05 HTTP concurrency leg commits update plans here"
+    },
+    {
+      "route": "/v1/skill-installations/updates/",
+      "handler": "skillUpdateOperation",
+      "kind": "write",
+      "coverage": "up05-related",
+      "note": "UP05 HTTP leg polls/cancels operations"
+    },
+    {
+      "route": "/v1/skill-installations/plans",
+      "handler": "skillInstallPlanCreate",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/skill-installations/plans/",
+      "handler": "skillInstallPlanRead",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/skill-installations/apply",
+      "handler": "skillInstallApply",
+      "kind": "write",
+      "coverage": "up05-related",
+      "note": "UP05 component contract covers apply-adjacent install commit"
+    },
+    {
+      "route": "/v1/skill-installations/operations",
+      "handler": "skillInstallCatalog",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/skill-installations/operations/",
+      "handler": "skillInstallOperation",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/skill-installations/grants/",
+      "handler": "skillInstallGrantRuntime",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/skill-imports",
+      "handler": "skillImportCreate",
+      "kind": "write",
+      "coverage": "up07-direct",
+      "note": "future-format + corrupt-marker legs; broken-stored-signature reuse leg"
+    },
+    {
+      "route": "/v1/skill-imports/remote",
+      "handler": "skillImportRemoteCreate",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/skill-imports/git",
+      "handler": "skillImportGitCreate",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/skill-imports/",
+      "handler": "skillImportRead",
+      "kind": "read",
+      "coverage": "up07-related",
+      "note": "broken-stored-signature read refusal (non-2xx, no rewrite)"
+    },
+    {
+      "route": "/v1/runtime-identities",
+      "handler": "runtimeIdentityCollection",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/runtime-identities/",
+      "handler": "runtimeIdentityOne",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/runtime-sessions",
+      "handler": "runtimeSessionEnroll",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/skill-contexts",
+      "handler": "skillContextCollection",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/skill-contexts/",
+      "handler": "skillContextOne",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/runtime-checks/preview",
+      "handler": "runtimeCheckPreview",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/runtime-checks",
+      "handler": "runtimeCheckLatest",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/runtime-checks/start",
+      "handler": "runtimeCheckStart",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/runtime-checks/attach",
+      "handler": "runtimeCheckAttach",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/runtime-checks/",
+      "handler": "runtimeCheckOne",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/tasks/",
+      "handler": "taskCompletion",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/network-observations",
+      "handler": "submitNetworkObservation",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/file-observation-recoveries",
+      "handler": "recoverFileObservation",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/file-observations",
+      "handler": "beginFileObservation",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/file-observations/",
+      "handler": "finishFileObservation",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/effect-observers",
+      "handler": "effectObservers",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/effect-observers/",
+      "handler": "revokeEffectObserver",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/effect-evidence",
+      "handler": "submitEffect",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/tool-effect-reports",
+      "handler": "toolEffectReport",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/effect-evidence/",
+      "handler": "getEffect",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/actions/",
+      "handler": "actionEffects",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/provenance-issuers",
+      "handler": "provenanceIssuers",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/provenance-issuers/",
+      "handler": "provenanceIssuer",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/provenance-assertions",
+      "handler": "provenanceIssue",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/provenance-assertions/import",
+      "handler": "provenanceImport",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/provenance-resolve",
+      "handler": "provenanceResolve",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/provenance-reports",
+      "handler": "provenanceReport",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/provenance-select",
+      "handler": "provenanceSelect",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/intents",
+      "handler": "intentCollection",
+      "kind": "mixed",
+      "coverage": "up07-direct",
+      "note": "future-format + corrupt-marker legs fire POST /v1/intents"
+    },
+    {
+      "route": "/v1/context-assertions",
+      "handler": "contextCollection",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/context-assertions/",
+      "handler": "contextOne",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/intents/",
+      "handler": "intentOne",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/intent-bindings",
+      "handler": "bindingCollection",
+      "kind": "mixed",
+      "coverage": "up07-direct",
+      "note": "future-format + corrupt-marker legs fire POST /v1/intent-bindings"
+    },
+    {
+      "route": "/v1/intent-bindings/",
+      "handler": "bindingOne",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/status",
+      "handler": "status",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/decide",
+      "handler": "decide",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/observe",
+      "handler": "observe",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/confirmations",
+      "handler": "confirmations",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/confirmations/",
+      "handler": "confirmationResolve",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/hold-status",
+      "handler": "holdStatus",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/hold-executions/reserve",
+      "handler": "holdExecutionReserve",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/hold-executions/status",
+      "handler": "holdExecutionStatus",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/hold-executions/reconcile",
+      "handler": "holdExecutionReconcile",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/hold/",
+      "handler": "hold",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/task-activities/",
+      "handler": "taskActivityDetail",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/task-activities/search",
+      "handler": "taskActivitySearch",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/task-activities",
+      "handler": "taskActivities",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/receipts",
+      "handler": "receipts",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/admit",
+      "handler": "admit",
+      "kind": "write",
+      "coverage": "up07-direct",
+      "note": "future-format + corrupt-marker legs (HTTP) and real-binary CLI leg"
+    },
+    {
+      "route": "/v1/admissions",
+      "handler": "admissions",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/admissions/",
+      "handler": "admissionOne",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/inventory",
+      "handler": "inventory",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/discovery",
+      "handler": "discoveryStatus",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/discovery/preview",
+      "handler": "discoveryPreview",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/discovery/scan",
+      "handler": "discoveryScan",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/adapter/diagnostics",
+      "handler": "adapterDiagnostics",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/grant-scenarios",
+      "handler": "grantScenarios",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/grants",
+      "handler": "grants",
+      "kind": "write",
+      "coverage": "up07-related",
+      "note": "stale-revision leg creates its grant through this entrypoint"
+    },
+    {
+      "route": "/v1/grants/",
+      "handler": "grantAction",
+      "kind": "write",
+      "coverage": "up07-direct",
+      "note": "stale-revision leg: /challenge with stale expected_revision -> 409, refusal consumes nothing"
+    },
+    {
+      "route": "/v1/config",
+      "handler": "config",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/adapter/status",
+      "handler": "adapterStatus",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/adapter/instances",
+      "handler": "adapterInstances",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/adapter/preview",
+      "handler": "adapterPreview",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/adapter/recover",
+      "handler": "adapterRecover",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/adapter/install",
+      "handler": "adapterInstall",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/adapter/uninstall",
+      "handler": "adapterUninstall",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/openshell/probe",
+      "handler": "openshellProbe",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/openshell/doctor",
+      "handler": "openshellDoctor",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/openshell/apply",
+      "handler": "openshellApply",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/openshell/drift-check",
+      "handler": "openshellDriftCheck",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/assets",
+      "handler": "assets",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/assets/",
+      "handler": "assets",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/permissions",
+      "handler": "permissions",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/findings",
+      "handler": "findings",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/findings/",
+      "handler": "findings",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/audit",
+      "handler": "auditLog",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/export",
+      "handler": "exportBundle",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/pair",
+      "handler": "pair",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/healthz",
+      "handler": "health",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/service-control/challenge",
+      "handler": "serviceControlChallenge",
+      "kind": "mixed",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/service-control/stop",
+      "handler": "serviceControlStop",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/healthz/instance",
+      "handler": "instanceHealth",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/v1/session/restore",
+      "handler": "restoreSession",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/session/logout",
+      "handler": "logoutSession",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/v1/session/pairing",
+      "handler": "renewPairing",
+      "kind": "write",
+      "coverage": "central-gate"
+    },
+    {
+      "route": "/ui-config.json",
+      "handler": "uiConfig",
+      "kind": "read",
+      "coverage": "non-write"
+    },
+    {
+      "route": "/",
+      "handler": "(fallback)",
+      "kind": "non-write",
+      "coverage": "non-write",
+      "note": "catch-all 404"
+    }
+  ],
+  "cli_write_entrypoints": [
+    {
+      "command": "admit",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "up07-direct",
+      "note": "real-binary leg: future-format state -> exit 1 + RecoveryMessage, zero side effects"
+    },
+    {
+      "command": "import-skill",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "scan",
+      "kind": "mixed",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "pubkey",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "verify",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "ui",
+      "kind": "mixed",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "teardown",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "setup",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "init",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "stop",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "stop-request",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "start",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "service-login",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "launch-agent-status",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "task-xml",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "task-unregister",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "task-stop",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "task-runtime",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "task-start",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "task-register",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "task-presence",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "task-query",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "task-prepare",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "launch-agent-load",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "launch-agent-start",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "launch-agent-stop",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "launch-agent-unregister",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "launch-agent-register",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "launch-agent-prepare",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "launch-agent-plist",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "service-unit",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "service-start",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "service-stop",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "service-status",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "client-upgrade-check",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "service-rollback",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "service-upgrade",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "client-install",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "client-stage",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "service-unregister",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "service-register",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "service-prepare",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "status",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "pair",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "inventory",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "export",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "sync",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "policy-exec",
+      "kind": "mixed",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "skill-context",
+      "kind": "mixed",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "adapter",
+      "kind": "mixed",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "grant",
+      "kind": "write",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "openshell",
+      "kind": "mixed",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "release-manifest",
+      "kind": "read",
+      "gate_exempt": false,
+      "coverage": "non-write"
+    },
+    {
+      "command": "manifest-verify",
+      "kind": "read",
+      "gate_exempt": true,
+      "coverage": "non-write"
+    },
+    {
+      "command": "incomplete",
+      "kind": "mixed",
+      "gate_exempt": false,
+      "coverage": "central-gate"
+    },
+    {
+      "command": "state-status",
+      "kind": "read",
+      "gate_exempt": true,
+      "coverage": "up07-direct",
+      "note": "exempt diagnostic: real-binary leg proves it still exits 0 under future-format state without mutating"
+    },
+    {
+      "command": "state-migrate",
+      "kind": "write",
+      "gate_exempt": true,
+      "coverage": "central-gate",
+      "note": "explicit migration exemption by design (gate exempt list)"
+    }
+  ],
+  "gaps": [
+    "Method-level granularity: classification is per-route (handler knows its mutating methods), not per (route, HTTP method) pair; a per-method matrix was not enumerated this round.",
+    "Only 6 write routes were fired individually under tampered state (skill-imports, intents, intent-bindings, admit, raw-task-content/activation, grants/{id} action); the remaining write routes rely on the central-gate structural argument plus the shared store chokepoint. Removing the mux wrapper would NOT be caught per-route — mitigated by the store-level gate and the real-binary CLI leg.",
+    "CLI side: only 'admit' (refused) and 'state-status' (exempt, still works) were exercised against a real future-format state dir; other gated CLI commands rely on checkCommandState running before the switch for all non-exempt commands (single code path).",
+    "isolation: UP07 negative fixtures only tamper content inside t.TempDir-owned state dirs / imported blobs; the real ~/.config/siq-agent-security and ~/.openclaw were never read or modified."
+  ]
+}
