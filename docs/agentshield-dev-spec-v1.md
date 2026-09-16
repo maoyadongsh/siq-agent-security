@@ -1993,3 +1993,7 @@ Skill 执行上下文（SEC，`skill-execution-context/v1`）是归属从 unknow
 - 负例只接受预期 HTTP 状态与错误码；候选漂移必须实际改变隔离候选内容并保留有效计划签名。签名篡改与旧状态兼容分别记账。
 - 诊断仅保存类别与完成项计数；临时目录 0700、文件 0600。不保存配对码、daemon 原文、DOM 或网络响应体。原始证据不覆盖；修复候选独立记录摘要与结果。
 - 原文清理区分实机未到期内容保留与组件时钟下过期删除。systemd 生命周期、直接启动旅程、正式版本升级不能相互替代。
+
+
+### Secure Agent 审批消费者兼容修复（2026-09-16）
+Secure Agent 复用现有 hold-status/v1 与 hold-execution-reserve/v1 合同：复查携带已提交的 Intent task_id 和原有 runtime_task_id；approved 仅表示可申请预留。消费本地 pending 后，用唯一新 retry_tool_call_id 请求持久化预留，完整匹配回读 action/原 decision/reservation，成功才执行；观察与效果记录使用预留 receipt 和 retry ID。拒绝、冲突、未知或丢失响应都不得执行或盲目重试；不放宽后端身份、Authority 与参数绑定。原 hold receipt 保留用于 UI 审批追溯。
