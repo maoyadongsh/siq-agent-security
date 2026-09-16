@@ -1,0 +1,9 @@
+$ '/tmp/siq-closure-20260915/b01r5/state 中文 空格%25实例/client-releases/85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0/siq-agent-security' service-upgrade --manifest /tmp/siq-closure-20260915/b01r5/manifest-new.json --binary /tmp/siq-closure-20260915/b01r5/bin-new/siq-agent-security-linux-arm64 --confirm-upgrade --source-manifest /tmp/siq-closure-20260915/b01r5/manifest-old.json
+# exit recorded separately; redacted=True
+--- stdout ---
+已留存当前 CLI 程序的本地副本：/tmp/siq-closure-20260915/b01r5/state 中文 空格%25实例/client-snapshots/85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0/siq-agent-security
+正在停止保护并切换已校验候选；block 模式下受控操作将暂时被拒绝。
+切换事务：007d5349a20a40d966af0ae6cd1a5c2debda234a14eaa01025599c5593655ddf
+已切换到校验通过的目标版本，本实例 API 健康检查通过。
+
+--- stderr ---

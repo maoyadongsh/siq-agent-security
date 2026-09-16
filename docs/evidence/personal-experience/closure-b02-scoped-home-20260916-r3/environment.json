@@ -1,0 +1,14 @@
+{
+  "schema_version": "closure-b02-environment/v1",
+  "platform": "linux/arm64",
+  "openclaw_root": "/home/maoyd/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw",
+  "node": "/home/maoyd/.nvm/versions/node/v22.22.1/bin/node",
+  "port": 25283,
+  "service_driver": "installed_user_service",
+  "direct_leg": true,
+  "home_isolation": {
+    "method": "read-only dedicated manager HOME prerequisite",
+    "scope": "no manager environment mutations",
+    "daemon_home": "/tmp/siq-b02-scoped-home-20260916-r3/journey-root/home"
+  }
+}

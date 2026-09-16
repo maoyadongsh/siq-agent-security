@@ -307,3 +307,36 @@ python3 scripts/personal-experience/n09-baseline-check.py --matrix <新矩阵路
 ## 19. 初始状态
 
 维护者已提交基线；B00–B10 为本书后续执行任务，尚未因本文生成而完成。B09 外部开发状态由各协作者实际交付决定。O06 conditional，T01–T06 等待 N09。GLM 从 B00 开始，优先交付 B01/B02 的最小可复查闭环，随后继续其余具备条件的任务。
+
+## 20. 执行状态回写（GLM，2026-09-16）
+
+逐批状态（详细边界见 `personal-experience-closure-progress-20260913.md` v5 节与 `personal-v5-takeover-review-20260916.md`；证据在 `docs/evidence/personal-experience/`）：
+
+| 批次 | 状态 | 说明 |
+| --- | --- | --- |
+| B00 | done | closure-b00-20260915-233905 |
+| B01 | partial | test_release 生命周期复核 35/35（closure-b01-review-20260916，含真实消费码、301 秒自然过期、撤销 Grant 保留重入）及显式崩溃恢复 8/8；正式发行信任腿未关闭 |
+| B02 | partial | 实例 HOME 隔离已实现并完成 Linux test_release 实测（closure-b02-scoped-home-20260916-r3：批次 15/15、安装服务旅程 26/26、直接进程 25/25）；复核修正见 closure-b02-home-validation-20260916。正式发行信任腿仍未关闭，旧共享 manager HOME 方案仍不采纳 |
+| B03 | partial | 双 CLI 合成未来/损坏状态拒写 44/44；独立管理员配对、loopback HTTP 并发与签名 409 是另行 Go 回归，不能混称 44 项实机覆盖 |
+| B04 | partial | 真实墙钟到期 19/19；两个独立 HTTP export 复核各 192/192。合成捕获不冒充宿主原生采集，保留证据等级边界 |
+| B05 | partial | 当前指定候选 53619668…，共享 harness 修复后 r3 16/16；已修复忽略 --binary 而重建 HEAD 的问题。通知视觉及其他 OS/宿主未关闭 |
+| B06 | conditional | DNS 重查仍 198.18/15，未绕过 SSRF |
+| B07 | partial | 原声称干净的 022051 B1 实与 Go race 重叠，022225 对比已标 INVALID；最终对照 closure-b07-final-review-20260916：绝对预算全过，仅 diagnose_unconfigured 的相对 +15.79% 超 10%，其余等工作量项通过。C 工作量变化、E 无 B0，不计等工作量通过；B2/B3 仍待真实后端，fsync 占比不能证明回退由噪声造成 |
+| B08 | conditional | 真实后端/固定驱动不可用 |
+| B09 | external_manual | sunbo（Windows）/Luke（macOS） |
+| B10 | partial | 本机文档/负向回归/矩阵更新；不代表 B02、N09 或正式发布验收关闭，最终矩阵 closure-b10-final-review-20260916 使用 B05 r3；脚本回归 33/33；复核以 personal-v5-takeover-review-20260916.md 为准 |
+
+本批未 commit/push/merge/publish。
+
+## 20. 2026-09-16 接管复核增量
+
+本次由 Codex 接续中断执行。当前复核、验证结果及未关闭项统一见
+[接管复核](personal-v5-takeover-review-20260916.md)和[收尾台账](personal-experience-closure-progress-20260913.md#v5-执行批次2026-09-1516进行中)。原验收分母与 sunbo/Luke 职责不变。
+
+- `not_exercised` 不得记 PASS；进程退出 0 仅表明已执行步骤未失败，不表示任务书全部完成。
+- B01 的配对重放须使用真实已消费码；重入须验证真正已撤 Grant 的签名、revision 和部署拒绝。隔离 Linux 实测用 `--runtime` 注册；不得向真实用户配置目录写固定名称“未知 unit”测试文件。
+- B02 禁止修改共享 `systemctl --user` manager 的 HOME，包括设置后立即还原。现有签名 unit 拒绝未知 drop-in，不能绕过该归属校验。缺少受支持的实例 HOME 或专用用户管理器时保留 blocked。
+- B03 的不同管理员会话必须分别配对取得凭据；HTTP 测试应清楚标记 loopback 测试服务器与安装 daemon 的区别。
+- B04 的未知 activity ID 404 只证明不存在；真正隔离需两个有效任务的回执集合互斥、raw record 错误 task 拒绝，以及 export/trace-export 的撤销/删除/旧快照行为。当前 raw-record 错配 task 的合同错误是 503 `raw_task_content_unavailable`，不得随意改为 404 以适配测试。
+- B07 冻结输入原样保留；继承注释的错误用新复核报告纠正。B0 D 无新版管道排空上界；三轮 3×(3+60)×30 秒约 94.5 分钟。C 冷探测跨版本工作量不同，E 没有 B0 实现，分别登记，不计算为等工作量门槛通过。
+- CLI 原文只在调用内存中处理，证据日志仅输出类别与字节计数。测试签名种子通过 stdin 传递，不进入进程 argv 或公开证据。

@@ -1,0 +1,417 @@
+{
+  "schema_version": "personal-acceptance-baseline/v2",
+  "task": "B02",
+  "task_layer": "test_release",
+  "official_release_note": "正式发行信任腿未关闭：本批 manifest 由每轮测试种子签署；解锁条件 = 维护者以正式发布种子签署 manifest 后重跑本 runner。",
+  "checks": [
+    {
+      "id": "b02_build_and_manifest",
+      "desc": "测试信任构建 + manifest 签署（test_release 层）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "version": "0.2.0-b02-main",
+        "pubkey": "N/RPOi6TZM+5MGg6aGK+PSjm+H0Y6N0USJ/wAr5r3z4=",
+        "binary_sha256": "57755471479d0b7a261400be23df5b5d89ab189f39ea0d54c60d854ca316cb2c"
+      },
+      "ts": "02:56:38"
+    },
+    {
+      "id": "b02_install_via_client_install",
+      "desc": "客户端安装注册并启动 systemd 用户服务（受支持入口）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "identity": {
+          "port": 25183,
+          "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+          "version": "0.2.0-b02-main",
+          "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+          "main_pid": "1404657",
+          "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+          "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:56:43 CST] ; stop_time=[n/a] ; pid=1404657 ; code=(null) ; status=0/0 }",
+          "active_state": "active",
+          "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+          "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+        }
+      },
+      "ts": "02:56:43"
+    },
+    {
+      "id": "b02_no_second_daemon",
+      "desc": "旅程开始时唯一 serve 进程来自本批状态目录",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "our_state_dir": 1,
+        "our_pids": [
+          1404657
+        ],
+        "foreign_preexisting": [
+          2540314
+        ]
+      },
+      "ts": "02:56:43"
+    },
+    {
+      "id": "b02_discovery_binds_fixture_instance",
+      "desc": "daemon 实例发现指向隔离 HOME 的 fixture 实例（非日常 profile）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "config_dir": "~/.openclaw",
+        "detected": true,
+        "instance_id": "hi-10c8ae36b391742119d12fdeb3994c13",
+        "rows": 1
+      },
+      "ts": "02:56:43"
+    },
+    {
+      "id": "b02_journey_installed",
+      "desc": "installed systemd 服务承载 r07 完整浏览器旅程（含 R04 嵌套腿）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "checks": 26,
+        "failed": [
+          "r07_step10a_raw_content_store_default_disabled",
+          "b02_installed_journey_start",
+          "r07_step1_daemon_health_paired",
+          "r07_step2_ui_pairing_with_wrong_code_retry",
+          "r07_step2_ui_bindings_discovers_openclaw",
+          "r07_step3_ui_grants_shows_v1_grant",
+          "r07_step5_missing_authority_denied_fail_closed",
+          "r07_step5_ui_receipts_consistent_with_deny",
+          "r07_step4_sec_issued_for_real_session",
+          "r07_step4_allow_read_with_session_attribution",
+          "r07_step4_call_binding_recomputed",
+          "r07_step4_attribution_correlates_grant_install_sec",
+          "r07_step10_native_capture_opt_in_and_revoke",
+          "r07_step6_hold_lands_in_siq_confirmations",
+          "r07_step6_ui_approval_records_confirmation",
+          "r07_step6_replayed_approval_rejected",
+          "r07_step7_update_leg_v1_cancel_confirm_v2_remove",
+          "r07_step8_interrupt_invalidates_ui_session",
+          "r07_step8_retry_and_keyboard_repair",
+          "r07_step9_receipts_activities_render_after_recovery",
+          "r07_step10_raw_content_opt_in_ui_and_per_task_gating",
+          "r07_step10_purge_preserves_unexpired_records_and_receipts",
+          "r07_step10_default_export_excludes_raw_store",
+          "r07_step11_mobile_confirmations_usable",
+          "r07_step11_adapter_uninstall_preserves_host_config",
+          "r07_step12_logout_ends_session"
+        ]
+      },
+      "ts": "02:57:48"
+    },
+    {
+      "id": "b02_identity_preserved_across_restarts",
+      "desc": "重启前后 state_directory_id/unit/端口/摘要/加载源不变且 MainPID 变化",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "events": [
+          "installed_start",
+          "pre_restart",
+          "post_stop",
+          "post_restart",
+          "post_stop",
+          "pre_restart",
+          "post_restart",
+          "pre_restart",
+          "post_stop",
+          "post_restart",
+          "journey_done"
+        ]
+      },
+      "ts": "02:57:48"
+    },
+    {
+      "id": "b02_stop_via_service_stop",
+      "desc": "journey 后 service-stop 正常停止且幂等路径确认",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "receipt_count": 16
+      },
+      "ts": "02:57:48"
+    },
+    {
+      "id": "b02_teardown_unit_gone",
+      "desc": "teardown 后 unit 注销（加载源消失）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "unit": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service"
+      },
+      "ts": "02:57:48"
+    },
+    {
+      "id": "b02_state_retained_after_teardown",
+      "desc": "teardown 后状态目录与记录保留（含签名 user-service 记录）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "entries": 51,
+        "subset_of_before": true
+      },
+      "ts": "02:57:48"
+    },
+    {
+      "id": "b02_reentry_same_state",
+      "desc": "同状态重入：state_directory_id/版本不变，回执历史保留",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "state_directory_id_equal": true,
+        "version": "0.2.0-b02-main",
+        "unit": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service"
+      },
+      "ts": "02:57:49"
+    },
+    {
+      "id": "b02_reentry_receipts_preserved",
+      "desc": "重入后回执链历史完整（历史保留）",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "before": 16,
+        "after": 16
+      },
+      "ts": "02:57:49"
+    },
+    {
+      "id": "b02_final_teardown",
+      "desc": "最终 teardown：unit 再次注销",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "unit": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service"
+      },
+      "ts": "02:57:49"
+    },
+    {
+      "id": "b02_ownership_reverified",
+      "desc": "ownership 复验：无遗留本产品 unit，状态目录仍归本批",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "unit_files": "",
+        "state_entries": 51
+      },
+      "ts": "02:57:49"
+    },
+    {
+      "id": "b02_direct_regression",
+      "desc": "direct_process 腿回归：r07 main() 原样通过",
+      "ok": true,
+      "level": "observed",
+      "detail": {
+        "report": "/home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914/docs/evidence/personal-experience/closure-b02-20260916-025638/direct-process-report.json"
+      },
+      "ts": "02:58:54"
+    }
+  ],
+  "failures": [],
+  "identity_events": [
+    {
+      "stage": "installed_start",
+      "ts": "2026-09-16T02:56:43+08:00",
+      "identity": {
+        "port": 25183,
+        "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+        "version": "0.2.0-b02-main",
+        "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "main_pid": "1404657",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:56:43 CST] ; stop_time=[n/a] ; pid=1404657 ; code=(null) ; status=0/0 }",
+        "active_state": "active",
+        "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+        "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+      }
+    },
+    {
+      "stage": "pre_restart",
+      "ts": "2026-09-16T02:57:29+08:00",
+      "identity": {
+        "port": 25183,
+        "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+        "version": "0.2.0-b02-main",
+        "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "main_pid": "1404657",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:56:43 CST] ; stop_time=[n/a] ; pid=1404657 ; code=(null) ; status=0/0 }",
+        "active_state": "active",
+        "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+        "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+      }
+    },
+    {
+      "stage": "post_stop",
+      "ts": "2026-09-16T02:57:30+08:00",
+      "unit_props": {
+        "MainPID": "0",
+        "Result": "success",
+        "ActiveState": "inactive"
+      }
+    },
+    {
+      "stage": "post_restart",
+      "ts": "2026-09-16T02:57:30+08:00",
+      "identity": {
+        "port": 25183,
+        "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+        "version": "0.2.0-b02-main",
+        "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "main_pid": "1409986",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:57:30 CST] ; stop_time=[n/a] ; pid=1409986 ; code=(null) ; status=0/0 }",
+        "active_state": "active",
+        "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+        "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+      },
+      "pid_changed": true
+    },
+    {
+      "stage": "post_stop",
+      "ts": "2026-09-16T02:57:44+08:00",
+      "unit_props": {
+        "MainPID": "0",
+        "Result": "success",
+        "ActiveState": "inactive"
+      }
+    },
+    {
+      "stage": "pre_restart",
+      "ts": "2026-09-16T02:57:44+08:00",
+      "identity": {
+        "port": 25183,
+        "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+        "version": "0.2.0-b02-main",
+        "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "main_pid": "1409986",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:57:30 CST] ; stop_time=[n/a] ; pid=1409986 ; code=(null) ; status=0/0 }",
+        "active_state": "active",
+        "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+        "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+      },
+      "entry_state": "stopped"
+    },
+    {
+      "stage": "post_restart",
+      "ts": "2026-09-16T02:57:44+08:00",
+      "identity": {
+        "port": 25183,
+        "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+        "version": "0.2.0-b02-main",
+        "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "main_pid": "1411779",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:57:44 CST] ; stop_time=[n/a] ; pid=1411779 ; code=(null) ; status=0/0 }",
+        "active_state": "active",
+        "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+        "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+      },
+      "pid_changed": true
+    },
+    {
+      "stage": "pre_restart",
+      "ts": "2026-09-16T02:57:45+08:00",
+      "identity": {
+        "port": 25183,
+        "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+        "version": "0.2.0-b02-main",
+        "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "main_pid": "1411779",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:57:44 CST] ; stop_time=[n/a] ; pid=1411779 ; code=(null) ; status=0/0 }",
+        "active_state": "active",
+        "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+        "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+      }
+    },
+    {
+      "stage": "post_stop",
+      "ts": "2026-09-16T02:57:45+08:00",
+      "unit_props": {
+        "MainPID": "0",
+        "Result": "success",
+        "ActiveState": "inactive"
+      }
+    },
+    {
+      "stage": "post_restart",
+      "ts": "2026-09-16T02:57:45+08:00",
+      "identity": {
+        "port": 25183,
+        "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+        "version": "0.2.0-b02-main",
+        "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "main_pid": "1411991",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:57:45 CST] ; stop_time=[n/a] ; pid=1411991 ; code=(null) ; status=0/0 }",
+        "active_state": "active",
+        "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+        "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+      },
+      "pid_changed": true
+    },
+    {
+      "stage": "journey_done",
+      "ts": "2026-09-16T02:57:48+08:00",
+      "identity": {
+        "port": 25183,
+        "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+        "version": "0.2.0-b02-main",
+        "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "main_pid": "1411991",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:57:45 CST] ; stop_time=[n/a] ; pid=1411991 ; code=(null) ; status=0/0 }",
+        "active_state": "active",
+        "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+        "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+      }
+    },
+    {
+      "stage": "post_stop",
+      "ts": "2026-09-16T02:57:48+08:00",
+      "unit_props": {
+        "MainPID": "0",
+        "Result": "success",
+        "ActiveState": "inactive"
+      }
+    },
+    {
+      "stage": "reentry",
+      "ts": "2026-09-16T02:57:49+08:00",
+      "identity": {
+        "port": 25183,
+        "state_directory_id": "3784a4caf3bc6b161cca9a5e477d02420954ae822571973edf19bab927fa15ab",
+        "version": "0.2.0-b02-main",
+        "unit_name": "siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "main_pid": "1412889",
+        "fragment_path": "/home/maoyd/.config/systemd/user/siq-agent-security-4b6dee3820cf8698e1c537554880635a.service",
+        "exec_start": "{ path=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security ; argv[]=/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve ; ignore_errors=no ; start_time=[Wed 2026-09-16 02:57:49 CST] ; stop_time=[n/a] ; pid=1412889 ; code=(null) ; status=0/0 }",
+        "active_state": "active",
+        "running_binary_path": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security",
+        "binary_digest": "e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623"
+      }
+    }
+  ],
+  "serve_scans": [
+    {
+      "ts": "2026-09-16T02:56:43+08:00",
+      "rows": [
+        {
+          "pid": 1404657,
+          "argv": "/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security serve"
+        },
+        {
+          "pid": 2540314,
+          "argv": "/home/maoyd/siq/siq-agent-security/.tmp/hackathon-profile/siq-agent-security serve --port 58151 --mode block"
+        }
+      ]
+    }
+  ]
+}

@@ -66,3 +66,22 @@ GLM 历史交付见原 [R06](evidence/personal-experience/r06-linux-lifecycle-20
 | O03 | OpenShell P0-E | 本地实现/验收完成：[报告](evidence/personal-experience/openshell-o03-20260915/report.md)；跨 OS 实机待补；提交状态以 Git 历史为准 |
 
 T01–T06 保持 todo，依赖 R07/N09 关闭；本次未发布产品制品。
+
+## v5 执行批次（2026-09-15/16，进行中）
+
+基线 `dafb4cd`（含 O01–O03 与 O04 修复链）；执行书 `personal-experience-lan-team-next-development-taskbook-20260915-232155.md`。
+
+| 批次 | 状态/交付边界 |
+| --- | --- |
+| B00 | done：基线/环境/发行材料/资源归属清单见 [closure-b00](evidence/personal-experience/closure-b00-20260915-233905/) |
+| B01 | partial：test_release 生命周期复核 35/35（closure-b01-review-20260916，含真实消费码、301 秒自然过期、撤销 Grant 保留重入）及显式崩溃恢复 8/8；正式发行信任腿未关闭 |
+| B02 | partial：实例 HOME 隔离已实现并完成 Linux test_release 实测（closure-b02-scoped-home-20260916-r3：批次 15/15、安装服务旅程 26/26、直接进程 25/25）；复核修正见 closure-b02-home-validation-20260916。正式发行信任腿仍未关闭，旧共享 manager HOME 方案仍不采纳 |
+| B03 | partial：双 CLI 合成未来/损坏状态拒写 44/44；独立管理员配对、loopback HTTP 并发与签名 409 是另行 Go 回归，不能混称 44 项实机覆盖 |
+| B04 | partial：真实墙钟到期 19/19；两个独立 HTTP export 复核各 192/192。合成捕获不冒充宿主原生采集，保留证据等级边界 |
+| B05 | partial：当前指定候选 53619668…，共享 harness 修复后 r3 16/16；已修复忽略 --binary 而重建 HEAD 的问题。通知视觉及其他 OS/宿主未关闭 |
+| B07 | partial：原声称干净的 022051 B1 实与 Go race 重叠，022225 对比已标 INVALID；最终对照 closure-b07-final-review-20260916：绝对预算全过，仅 diagnose_unconfigured 的相对 +15.79% 超 10%，其余等工作量项通过。C 工作量变化、E 无 B0，不计等工作量通过；B2/B3 仍待真实后端，fsync 占比不能证明回退由噪声造成 |
+| B06/B08 | conditional：本次 DNS 重查 GitHub/codeload 仍为 198.18/15，未绕过 SSRF。OpenShell PATH doctor 为 configured_unreachable；历史 17671/17672 有监听，只证明端口开放，未证明本批可用且归属确认的后端 |
+| B09 | external_manual：sunbo（Windows）/Luke（macOS）继续；不代发消息不代提交 |
+| B10 | partial：本机文档/负向回归/矩阵更新；不代表 B02、N09 或正式发布验收关闭，最终矩阵 closure-b10-final-review-20260916 使用 B05 r3；脚本回归 33/33；复核以 personal-v5-takeover-review-20260916.md 为准 |
+
+T01–T06 仍 todo，依赖 N09；本批未 commit/push/merge，落盘状态以工作区为准。
