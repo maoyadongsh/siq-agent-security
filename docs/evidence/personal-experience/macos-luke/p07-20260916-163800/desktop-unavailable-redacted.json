@@ -1,0 +1,16 @@
+{
+  "schema_version": "personal-macos-workbuddy-desktop-unavailable/v1",
+  "source": "isolated pending/decisions.jsonl",
+  "method": "native_desktop",
+  "spawn": {
+    "wrapper_log": "2026-09-16T09:25:08Z pid=89630 event=PreToolUse tool=Read",
+    "deeplink": "workbuddy://conversation/open?autoSend=true"
+  },
+  "platform": "workbuddy",
+  "outcome": "deny",
+  "reason": "decision service unavailable",
+  "signed": false,
+  "tool": "Read",
+  "forbidden_created": false,
+  "omitted": ["pairing", "token", "keys"]
+}

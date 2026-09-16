@@ -1,0 +1,8 @@
+=== RUN   TestDarwinPathSpellingAndExclusivePublish
+    macos_fs_boundary_test.go:54: unicode_alias nfd_lstat=<nil> same_file=true nfc_utf8=true
+--- PASS: TestDarwinPathSpellingAndExclusivePublish (0.12s)
+=== RUN   TestDarwinReadOnlyCaseSensitiveAndCrossVolume
+    macos_fs_boundary_test.go:293: capacity write refused write /var/folders/[REDACTED] no space left on device
+--- PASS: TestDarwinReadOnlyCaseSensitiveAndCrossVolume (4.20s)
+PASS
+ok  	siq-agent-security/apps/agentshield/cmd/agentshield	4.732s
