@@ -3,6 +3,7 @@ package openshell
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"testing"
@@ -227,5 +228,144 @@ func TestExplicitPairWinsOverPATH(t *testing.T) {
 	}
 	if cmd[0] != "/opt/os104/openshell" || !contains(cmd, "--gateway-endpoint") {
 		t.Fatalf("explicit pair must win: %v", cmd)
+	}
+}
+
+// 回归：YAML 指示符只在节点起始位置有语义。真实网关策略含值中部的 glob
+// 通配符（如 path: /research/**），不得因值内出现 * 而被误判为不受支持语法。
+func TestYAMLAcceptsIndicatorsInsidePlainScalars(t *testing.T) {
+	cases := []struct {
+		src  string
+		key  string
+		want any
+	}{
+		{"path: /research/**\n", "path", "/research/**"},
+		{"cmd: /usr/bin/curl -x http://a*b\n", "cmd", "/usr/bin/curl -x http://a*b"},
+		{"note: a|b&c!d>e\n", "note", "a|b&c!d>e"},
+		{"glob: /logs/**/*.log\n", "glob", "/logs/**/*.log"},
+		{"glob: \"**/*.log\"\n", "glob", "**/*.log"},
+		{"q: \"*alias not real\"\n", "q", "*alias not real"},
+		{"empty: {}\n", "empty", map[string]any{}},
+		{"empty: []\n", "empty", []any{}},
+	}
+	for _, tc := range cases {
+		v, err := parseYAML(tc.src)
+		if err != nil {
+			t.Fatalf("parseYAML(%q) = %v, want ok", tc.src, err)
+		}
+		got := v.(map[string]any)[tc.key]
+		if !reflect.DeepEqual(got, tc.want) {
+			t.Fatalf("parseYAML(%q)[%s] = %#v, want %#v", tc.src, tc.key, got, tc.want)
+		}
+	}
+}
+
+// 负向回归：真正的 YAML 锚点/别名/标签/块标量/流集合仍必须 fail-closed。
+func TestYAMLRejectsNodeStartIndicators(t *testing.T) {
+	bad := []string{
+		"key: *alias\n",
+		"key: &anchor value\n",
+		"key: !!str value\n",
+		"key: !tag value\n",
+		"key: |\n  block\n",
+		"key: >\n  folded\n",
+		"key: |2\n  block\n",
+		"- *alias\n",
+		"- &anchor key: v\n",
+		"key: {a: b}\n",
+		"key: [1, 2]\n",
+		"key: ,leading\n",
+		"key: ]leading\n",
+		"key: `reserved\n",
+		"*alias\n",
+		"&anchor key: v\n",
+	}
+	for _, src := range bad {
+		if _, err := parseYAML(src); err == nil {
+			t.Fatalf("parseYAML(%q) must fail closed, got nil error", src)
+		}
+	}
+}
+
+// 回归：网关 0.0.83 的网络策略形状（rest allow 限制 + allowed_ips）必须可保真读回。
+func TestNetworkRulesReadbackGatewayV0083Shapes(t *testing.T) {
+	src := `network_policies:
+  rest_provider:
+    name: rest-provider
+    endpoints:
+    - host: api.example.com
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: GET
+          path: /v1/models
+      - allow:
+          method: POST
+          path: /v1/messages/**
+    binaries:
+    - path: /usr/bin/curl
+  ip_allowlist:
+    name: ip-allowlist
+    endpoints:
+    - host: host.openshell.internal
+      port: 8000
+      allowed_ips:
+      - '172.23.0.1/32'
+    binaries:
+    - path: /usr/bin/curl
+`
+	doc, err := parseYAML(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rules, err := networkRules(doc.(map[string]any)["network_policies"])
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(rules) != 3 {
+		t.Fatalf("rules: %+v", rules)
+	}
+	// provider keys are summarized in sorted order: ip_allowlist < rest_provider
+	ip := rules[0]
+	if ip.Endpoint != "host.openshell.internal:8000" || len(ip.AllowedIPs) != 1 || ip.AllowedIPs[0] != "172.23.0.1/32" {
+		t.Fatalf("ip: %+v", ip)
+	}
+	rest := rules[1]
+	if rest.Endpoint != "api.example.com:443" || rest.Method != "GET" || rest.Path != "/v1/models" {
+		t.Fatalf("rest[0]: %+v", rest)
+	}
+	if rules[2].Method != "POST" || rules[2].Path != "/v1/messages/**" {
+		t.Fatalf("rest[1]: %+v", rules[2])
+	}
+}
+
+// 负向回归：0.0.83 形状之外的限制仍必须 fail-closed，不得静默丢弃后夸大有效权限。
+func TestNetworkRulesReadbackFailClosedBeyondV0083(t *testing.T) {
+	base := func(endpointExtra, rule string) string {
+		return "network_policies:\n  p:\n    name: p\n    endpoints:\n    - host: a.example.com\n      port: 443\n" +
+			endpointExtra + "    binaries:\n    - path: /usr/bin/curl\n" + rule
+	}
+	cases := map[string]string{
+		"enforcement-monitor":  base("      enforcement: monitor\n", ""),
+		"protocol-tcp":         base("      protocol: tcp\n", ""),
+		"rewrite-string":       base("      request_body_credential_rewrite: \"true\"\n", ""),
+		"unknown-endpoint-key": base("      future_restriction: x\n", ""),
+		"malformed-cidr":       base("      allowed_ips:\n      - '172.23.0.1/33'\n", ""),
+		"empty-allowed-ips":    base("      allowed_ips: []\n", ""),
+		"deny-rule":            base("      rules:\n      - deny:\n          method: GET\n          path: /x\n", ""),
+		"rules-empty-list":     base("      rules: []\n", ""),
+		"allow-missing-path":   base("      rules:\n      - allow:\n          method: GET\n", ""),
+		"allow-extra-key":      base("      rules:\n      - allow:\n          method: GET\n          path: /x\n          future: z\n", ""),
+	}
+	for name, src := range cases {
+		doc, err := parseYAML(src)
+		if err != nil {
+			t.Fatalf("%s: fixture itself must parse: %v", name, err)
+		}
+		if _, err := networkRules(doc.(map[string]any)["network_policies"]); err == nil {
+			t.Fatalf("%s: networkRules must fail closed, got nil error", name)
+		}
 	}
 }
