@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 
@@ -188,7 +189,14 @@ func ConfiguredEndpoint(opts Options) (string, bool) {
 func inspectRead(home, path string) ([]byte, error) {
 	for current := filepath.Clean(path); ; current = filepath.Dir(current) {
 		info, err := os.Lstat(current)
-		if err != nil || info.Mode()&os.ModeSymlink != 0 {
+		if err != nil {
+			return nil, errors.New("adapter: diagnostic file unavailable")
+		}
+		leaf := current == filepath.Clean(path)
+		if leaf && info.Mode()&os.ModeSymlink != 0 {
+			return nil, errors.New("adapter: diagnostic file unavailable")
+		}
+		if !leaf && !stateformat.AcceptDirectory(info, current) {
 			return nil, errors.New("adapter: diagnostic file unavailable")
 		}
 		if current == filepath.Clean(home) || filepath.Dir(current) == current {

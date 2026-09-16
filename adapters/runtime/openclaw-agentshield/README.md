@@ -79,3 +79,5 @@ Managed 安装器写入 camelCase 配置 `runtimeIdentityId` / `agentId` / `toke
 验证：`node --experimental-strip-types --test tests/managed-bridge.test.mjs`（8 个场景：legacy 不注册不捕获、托管 allow 注册+参数捕获、注册失败 fail-closed、异平台注册拒绝、旧 token 拒绝、observe 引用+输出捕获、捕获超时 best effort、托管 deny 带回执）。测试通过 resolution hook 替换 OpenClaw SDK 入口并用 mock 本地服务驱动真实 hook handler，**不是**真实 OpenClaw 网关验收；`native_available` 在真实原生捕获验证前仍为 false。
 
 凭据仅发送至显式端口的 HTTP loopback，localhost 固定为 127.0.0.1，不跟随重定向。托管模式要求真实会话、有效身份凭据及带 action/receipt 的允许裁决。输出原文仅在允许执行或 hold 最终复验通过后按精确调用关联采集一次；重复调用保持失效至关联过期。
+
+macOS Homebrew OpenClaw 2026.9.4 的默认会话仓是 `agents/<id>/agent/openclaw-agent.sqlite`（`session_nodes.session_key`），不再写 `sessions/sessions.json`。本插件仍只使用 hook 提供的 `sessionKey`，不读取宿主会话文件。实测夹具若要对账原生会话身份，必须读当前版本实际存储，不能假定 2026.5.12 的 JSON 路径。

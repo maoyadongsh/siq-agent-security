@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 	"unicode"
@@ -14,7 +15,7 @@ import (
 func checkDirectories(path string) error {
 	for {
 		info, err := os.Lstat(path)
-		if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		if err != nil || !stateformat.AcceptDirectory(info, path) {
 			return ErrInvalid
 		}
 		parent := filepath.Dir(path)

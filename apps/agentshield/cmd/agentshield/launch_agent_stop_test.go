@@ -43,7 +43,7 @@ func TestStopRegisteredLaunchAgent(t *testing.T) {
 				t.Fatal(err)
 			}
 			home := t.TempDir()
-			source := filepath.Join(st.Dir, record.Label+".plist")
+			source := mustResolve(t, filepath.Join(st.Dir, record.Label+".plist"))
 			if _, err := publishLaunchRegistration(home, source, record.Label); err != nil {
 				t.Fatal(err)
 			}
@@ -69,25 +69,24 @@ func TestStopRegisteredLaunchAgent(t *testing.T) {
 						raw += "-\t0\t" + record.Label + "\n"
 					}
 					return raw, nil
-				case "list -x " + record.Label:
+				case "print " + launchPrintTarget(501, record.Label):
 					if stopped && mode == "disappeared" {
 						return "", errors.New("missing")
 					}
 					if mode == "foreign" {
-						return strings.Replace(rendered, "<string>serve</string>", "<string>other</string>", 1), nil
+						return mustLaunchPrint(t, rendered, source, 0, "", "other"), nil
 					}
-					extra := ""
 					if running {
-						extra = "<key>PID</key><integer>123</integer>"
-					} else if stopped && mode != "missing exit" {
-						status := "0"
-						if mode == "exit error" {
-							status = "15"
-						}
-						extra = "<key>LastExitStatus</key><integer>" + status + "</integer>"
+						return mustLaunchPrint(t, rendered, source, 123, "(never exited)", ""), nil
 					}
-					at := strings.LastIndex(rendered, "</dict>")
-					return rendered[:at] + extra + rendered[at:], nil
+					lastExit := "(never exited)"
+					if stopped && mode != "missing exit" {
+						lastExit = "0"
+						if mode == "exit error" {
+							lastExit = "15"
+						}
+					}
+					return mustLaunchPrint(t, rendered, source, 0, lastExit, ""), nil
 				case "stop " + record.Label:
 					stops++
 					stopped = true

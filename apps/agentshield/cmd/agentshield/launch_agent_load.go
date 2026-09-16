@@ -58,7 +58,7 @@ func loadRegisteredLaunchAgent(st *state.Store, key *signing.Key, plist []byte, 
 	if err != nil {
 		return err
 	}
-	source, err := filepath.Abs(filepath.Join(st.Dir, record.Label+".plist"))
+	source, err := launchAgentSource(st.Dir, record.Label)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func loadRegisteredLaunchAgent(st *state.Store, key *signing.Key, plist []byte, 
 	if err := verify(); err != nil {
 		return err
 	}
-	loaded, _, err := inspectLaunchAgent(control, uid, record.Label, plist)
+	loaded, _, err := inspectLaunchAgent(control, uid, record.Label, plist, source)
 	if err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func loadRegisteredLaunchAgent(st *state.Store, key *signing.Key, plist []byte, 
 		return err
 	}
 	defer func() { resultErr = errors.Join(resultErr, writer.Release()) }()
-	loaded, _, err = inspectLaunchAgent(control, uid, record.Label, plist)
+	loaded, _, err = inspectLaunchAgent(control, uid, record.Label, plist, source)
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func loadRegisteredLaunchAgent(st *state.Store, key *signing.Key, plist []byte, 
 	if err := verify(); err != nil {
 		return err
 	}
-	loaded, _, err = inspectLaunchAgent(control, uid, record.Label, plist)
+	loaded, _, err = inspectLaunchAgent(control, uid, record.Label, plist, source)
 	if err != nil {
 		return err
 	}

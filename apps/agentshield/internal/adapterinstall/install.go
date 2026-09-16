@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 	"time"
@@ -136,7 +137,7 @@ func validateCodeBuddyConfigDir() error {
 		if err != nil && !errors.Is(err, os.ErrNotExist) {
 			return errors.New("adapter: cannot inspect CODEBUDDY_CONFIG_DIR")
 		}
-		if err == nil && (!info.IsDir() || info.Mode()&os.ModeSymlink != 0) {
+		if err == nil && !stateformat.AcceptDirectory(info, p) {
 			return errors.New("adapter: CODEBUDDY_CONFIG_DIR requires directory ancestors without symlinks")
 		}
 		if filepath.Dir(p) == p {
@@ -371,6 +372,19 @@ func newestRecord(stateDir, platform string) (*Record, error) {
 func exists(p string) bool {
 	_, err := os.Stat(p)
 	return err == nil
+}
+
+func removeEmptyProductPluginDir(root string) {
+	plugin := filepath.Join(root, "plugins", product.PluginDir())
+	info, err := os.Lstat(plugin)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return
+	}
+	entries, err := os.ReadDir(plugin)
+	if err != nil || len(entries) != 0 {
+		return
+	}
+	_ = os.Remove(plugin)
 }
 
 func appendUnique(ss []string, v string) []string {

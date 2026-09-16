@@ -11,6 +11,17 @@ import (
 	"time"
 )
 
+func caseInsensitiveDir(t *testing.T, dir string) bool {
+	t.Helper()
+	a := filepath.Join(dir, "CaseProbe")
+	if err := os.Mkdir(a, 0700); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(a)
+	_, err := os.Lstat(filepath.Join(dir, "caseprobe"))
+	return err == nil
+}
+
 func readyInstall(t *testing.T) (fixture, *Plan, ApplyRequest) {
 	t.Helper()
 	f := setup(t)
@@ -109,6 +120,11 @@ func TestInstallationFailureRollbackAndUnknownOwnership(t *testing.T) {
 				t.Fatal("failure accepted or unrecorded", result, err)
 			}
 			conflict := mode == "foreign-file" || mode == "modified-file" || mode == "missing-owner"
+			if mode == "case-alias" && caseInsensitiveDir(t, f.root) {
+				// APFS and similar volumes collapse EXAMPLE/example into one
+				// directory, so the planted file is inside the install target.
+				conflict = true
+			}
 			if conflict {
 				if result.Status != "recovery_required" {
 					t.Fatal("unknown/modified contents removed", result)

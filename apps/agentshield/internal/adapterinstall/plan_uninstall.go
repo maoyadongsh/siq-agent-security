@@ -91,6 +91,7 @@ func (p *Plan) prepareUninstall() error {
 		if err := restoreOpenClawRegistration(doc, original, plugin); err != nil {
 			return conflictRecovery(path, rec.Modified[path], err)
 		}
+		pruneEmptyOpenClawPlugins(doc, original)
 		if err := p.surgicalWrite(path, doc); err != nil {
 			return err
 		}
@@ -270,5 +271,29 @@ func restoreOpenClawRegistration(doc, original map[string]any, root string) erro
 		return errors.New("invalid entries object")
 	}
 	return nil
+}
+
+func pruneEmptyOpenClawPlugins(doc, original map[string]any) {
+	plugins, ok := doc["plugins"].(map[string]any)
+	if !ok || plugins == nil {
+		return
+	}
+	if load, ok := plugins["load"].(map[string]any); ok {
+		if paths, ok := load["paths"].([]any); ok && len(paths) == 0 {
+			delete(load, "paths")
+		}
+		if len(load) == 0 {
+			delete(plugins, "load")
+		}
+	}
+	if allow, ok := plugins["allow"].([]any); ok && len(allow) == 0 {
+		delete(plugins, "allow")
+	}
+	if entries, ok := plugins["entries"].(map[string]any); ok && len(entries) == 0 {
+		delete(plugins, "entries")
+	}
+	if _, had := original["plugins"]; !had && len(plugins) == 0 {
+		delete(doc, "plugins")
+	}
 }
 func asList(raw any) []any { list, _ := raw.([]any); return list }

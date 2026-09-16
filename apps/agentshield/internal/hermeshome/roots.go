@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 	"strings"
@@ -183,15 +184,23 @@ func safe(home, path string) error {
 	if !filepath.IsAbs(path) || !utf8.ValidString(path) {
 		return errors.New("absolute root required")
 	}
-	for current := filepath.Clean(path); ; current = filepath.Dir(current) {
+	path = filepath.Clean(path)
+	home = filepath.Clean(home)
+	for current := path; ; current = filepath.Dir(current) {
 		info, err := os.Lstat(current)
 		if err != nil && !os.IsNotExist(err) {
 			return err
 		}
-		if err == nil && (!info.IsDir() || info.Mode()&os.ModeSymlink != 0) {
-			return errors.New("unsafe root")
+		if err == nil {
+			leaf := current == path
+			if leaf && (!info.IsDir() || info.Mode()&os.ModeSymlink != 0) {
+				return errors.New("unsafe root")
+			}
+			if !leaf && !stateformat.AcceptDirectory(info, current) {
+				return errors.New("unsafe root")
+			}
 		}
-		if current == filepath.Clean(home) || filepath.Dir(current) == current {
+		if current == home || filepath.Dir(current) == current {
 			return nil
 		}
 	}

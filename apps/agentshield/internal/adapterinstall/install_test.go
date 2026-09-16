@@ -53,7 +53,10 @@ func TestHermesInstallUninstallRoundTrip(t *testing.T) {
 		t.Fatal(err)
 	}
 	if exists(plugin) {
-		t.Fatal("uninstall must remove the plugin directory it created")
+		t.Fatal("uninstall must remove the plugin files it created")
+	}
+	if exists(filepath.Join(opts.Home, ".hermes", "plugins", "siq-agent-security")) {
+		t.Fatal("empty product plugin directory remained")
 	}
 }
 
@@ -85,16 +88,45 @@ func TestOpenClawRegistersRuntimeWithoutUnsupportedInstallPolicy(t *testing.T) {
 	if _, err := Uninstall(opts); err != nil {
 		t.Fatal(err)
 	}
-	restored, _ := os.ReadFile(oc)
-	if err := json.Unmarshal(restored, &doc); err != nil {
+	restored, err := os.ReadFile(oc)
+	if err != nil {
 		t.Fatal(err)
 	}
-	sec = doc["security"].(map[string]any)
+	var after map[string]any
+	if err := json.Unmarshal(restored, &after); err != nil {
+		t.Fatal(err)
+	}
+	sec = after["security"].(map[string]any)
 	if sec["extra"] != true {
 		t.Fatal("extra must remain after surgical uninstall")
 	}
 	if _, ok := sec["installPolicy"]; ok {
 		t.Fatal("installPolicy must be stripped")
+	}
+	if _, ok := after["plugins"]; ok {
+		t.Fatal("empty plugins registration remained after uninstall")
+	}
+	if exists(filepath.Join(opts.Home, ".openclaw", "plugins", "siq-agent-security")) {
+		t.Fatal("empty OpenClaw plugin directory remained")
+	}
+}
+
+func TestUninstallKeepsUnknownPluginFiles(t *testing.T) {
+	opts := testOpts(t, Hermes)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	dir := filepath.Join(opts.Home, ".hermes", "plugins", "siq-agent-security")
+	user := filepath.Join(dir, "user-keep.txt")
+	if err := os.WriteFile(user, []byte("keep\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(user)
+	if err != nil || string(raw) != "keep\n" {
+		t.Fatal("unknown plugin file was removed")
 	}
 }
 

@@ -125,7 +125,7 @@ func CheckParents(dir string) error {
 	}
 	for {
 		i, e := os.Lstat(p)
-		if e == nil && !i.IsDir() {
+		if e == nil && !AcceptDirectory(i, p) {
 			return ErrCorrupt
 		}
 		if e != nil && !errors.Is(e, os.ErrNotExist) {
@@ -137,6 +137,46 @@ func CheckParents(dir string) error {
 		}
 		p = parent
 	}
+}
+
+// AcceptDirectory reports whether path is a directory. Darwin volume aliases
+// such as /var -> /private/var sit directly under the volume root and must not
+// make an otherwise ordinary temp or /tmp path look corrupt. User-created
+// intermediate symlinks stay rejected.
+func AcceptDirectory(info os.FileInfo, path string) bool {
+	if info.IsDir() {
+		return true
+	}
+	if info.Mode()&os.ModeSymlink == 0 || filepath.Dir(path) != filepath.Dir(filepath.Dir(path)) {
+		return false
+	}
+	resolved, err := os.Stat(path)
+	return err == nil && resolved.IsDir()
+}
+
+// LeafDirectory requires path itself to be a real directory, not a symlink.
+// EvalSymlinks may rewrite ancestor volume aliases; the resolved object must
+// still be the same directory.
+func LeafDirectory(path string) error {
+	if path == "" || filepath.Clean(path) != path {
+		return ErrCorrupt
+	}
+	info, err := os.Lstat(path)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return ErrCorrupt
+	}
+	canonical, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return err
+	}
+	resolved, err := os.Stat(canonical)
+	if err != nil || !os.SameFile(info, resolved) {
+		return ErrCorrupt
+	}
+	return nil
 }
 func ReadRegular(path string, limit int64) ([]byte, error) {
 	i, e := os.Lstat(path)

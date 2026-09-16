@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 	"time"
@@ -102,8 +103,14 @@ func readImage(home, path string) (fileImage, error) {
 		if err != nil && !os.IsNotExist(err) {
 			return fileImage{}, errors.New("adapter: file inspection failed")
 		}
-		if err == nil && (info.Mode()&os.ModeSymlink != 0 || current != filepath.Clean(path) && !info.IsDir()) {
-			return fileImage{}, errors.New("adapter: symlink or invalid ancestor refused")
+		if err == nil {
+			leaf := current == filepath.Clean(path)
+			if leaf && info.Mode()&os.ModeSymlink != 0 {
+				return fileImage{}, errors.New("adapter: symlink or invalid ancestor refused")
+			}
+			if !leaf && !stateformat.AcceptDirectory(info, current) {
+				return fileImage{}, errors.New("adapter: symlink or invalid ancestor refused")
+			}
 		}
 		if current == filepath.Clean(home) || filepath.Dir(current) == current {
 			break

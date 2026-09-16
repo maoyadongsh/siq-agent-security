@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 )
@@ -21,7 +22,7 @@ func checkAncestors(dir string) error {
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		if !stateformat.AcceptDirectory(info, dir) {
 			return ErrInvalid
 		}
 		parent := filepath.Dir(dir)

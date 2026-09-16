@@ -44,7 +44,7 @@ func TestStartRegisteredLaunchAgent(t *testing.T) {
 				t.Fatal(err)
 			}
 			home := t.TempDir()
-			source := filepath.Join(st.Dir, record.Label+".plist")
+			source := mustResolve(t, filepath.Join(st.Dir, record.Label+".plist"))
 			if _, err := publishLaunchRegistration(home, source, record.Label); err != nil {
 				t.Fatal(err)
 			}
@@ -65,15 +65,14 @@ func TestStartRegisteredLaunchAgent(t *testing.T) {
 					return "Aqua", nil
 				case "list":
 					return "PID\tStatus\tLabel\n-\t0\t" + record.Label + "\n", nil
-				case "list -x " + record.Label:
+				case "print " + launchPrintTarget(501, record.Label):
 					if mode == "foreign" {
-						return strings.Replace(rendered, "<string>serve</string>", "<string>other</string>", 1), nil
+						return mustLaunchPrint(t, rendered, source, 0, "", "other"), nil
 					}
 					if running {
-						at := strings.LastIndex(rendered, "</dict>")
-						return rendered[:at] + "<key>PID</key><integer>123</integer>" + rendered[at:], nil
+						return mustLaunchPrint(t, rendered, source, 123, "", ""), nil
 					}
-					return rendered, nil
+					return mustLaunchPrint(t, rendered, source, 0, "", ""), nil
 				case "kickstart gui/501/" + record.Label:
 					starts++
 					lock, err := state.AcquireWriter(st.Dir)

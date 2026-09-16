@@ -11,6 +11,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/clientrelease"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
 func cmdServiceRollback(args []string, out io.Writer) error {
@@ -137,11 +138,9 @@ func prepareRollbackBinary(st *state.Store, plan state.ServiceSwitch, binary, ma
 	if err != nil {
 		return "", "", err
 	}
-	parent, err := filepath.EvalSymlinks(filepath.Dir(path))
-	if err != nil {
-		return "", "", err
+	if err := stateformat.LeafDirectory(filepath.Dir(path)); err != nil {
+		return "", "", errors.New("service-rollback: binary parent is not a canonical directory")
 	}
-	path = filepath.Join(parent, filepath.Base(path))
 	unit, err := renderUserUnit(path, st.Dir)
 	if err != nil || unit != plan.SourceUnit {
 		return "", "", errors.New("service-rollback: binary path differs from historical source")

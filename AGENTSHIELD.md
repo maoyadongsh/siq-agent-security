@@ -206,7 +206,7 @@ macOS `launch-agent-prepare` 可在状态目录中准备签名归属记录与 pl
 
 macOS `launch-agent-register` 会复验/准备签名配置，并向当前用户 `Library/LaunchAgents` 排他发布实例链接。只复用同一源的精确链接，不覆盖未知文件或跟随被重定向的目录。当前尚不执行 launchctl，不代表已经加载或启动；实机验收待完成。
 
-macOS `launch-agent-status` 只读核对当前 GUI 用户域的已加载 XML 配置，与签名源字段及用户目录链接匹配后区分已加载/报告 PID/API 就绪。该兼容入口基于 `launchctl list -x`，尚缺当前 macOS 实机验证；命令或格式不支持时返回未确认，不会自动加载或替换任务。
+macOS `launch-agent-status` 只读核对当前 GUI 用户域：先用 `launchctl list` 判定本实例是否出现，再用 `launchctl print gui/<uid>/<label>` 核对已加载源路径、程序参数、状态目录环境和 umask。当前 Darwin 没有 `list -x` XML 开关；命令或格式不支持时返回未确认，不会自动加载或替换任务。
 
 `launch-agent-status` 现在会先核对当前 GUI 用户域的完整任务列表；明确缺席时提示“已注册，当前用户域未加载”。查询失败、格式不支持或查询中任务变化均保持“未确认”，不会自动加载或重装。此查询只反映当时的当前用户域，不证明全系统没有服务。
 

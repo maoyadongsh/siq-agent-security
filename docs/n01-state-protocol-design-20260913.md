@@ -32,6 +32,8 @@ Linux 对文件和相关目录 Sync；Windows 只声明可验证的进程崩溃�
 
 Windows 原生补验发现的诊断增量（2026-09-14）：`state-status` 同时检查所选目录和全部祖先的兼容标记/迁移屏障。内层实例兼容而外层要求未来版本时，返回 `compatible=false` 与 `status=future`；外层标记损坏时返回 `status=corrupt`，保持只读与路径脱敏。成功输出诊断的退出码仍为 0，不改变既有读写拒绝或迁移合同。
 
+macOS 原生补验发现的祖先检查增量（2026-09-15）：Darwin 的 `/var`、`/tmp` 是指向 `/private/...` 的卷别名。`stateformat.AcceptDirectory` / `LeafDirectory` 只把「位于卷根下且 Stat 为目录」的符号链接当作合法路径分量；状态根本身与用户在中间路径创建的符号链接仍拒绝，标记文件仍拒绝符号链接。未区分卷别名时，空的 `t.TempDir` / `TMPDIR` 状态会被标为 `corrupt`，`init`/`serve`、Runtime Identity 目录、Skill 导入/安装祖先检查和 `--state-dir` 字符串规范比较都会失败。同一祖先规则适用于 inventory 发现、adapter 配置镜像读取，以及 Hermes profile 根（含 HOME 之外的 Override）；被检查的叶路径仍拒绝符号链接。DirectoryID 仍绑定规范路径。
+
 
 ## 实现预算与恢复范围
 

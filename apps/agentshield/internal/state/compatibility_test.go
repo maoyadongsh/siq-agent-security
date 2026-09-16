@@ -210,6 +210,9 @@ func TestCompatibilityRejectsSymlinks(t *testing.T) {
 			t.Fatalf("symlink accepted: %v", err)
 		}
 	}
+	if _, err := os.Lstat(filepath.Join(link, "new")); !errors.Is(err, os.ErrNotExist) {
+		t.Fatal("rejected alias child created state")
+	}
 	dir := t.TempDir()
 	outside := filepath.Join(target, "marker")
 	_ = os.WriteFile(outside, []byte("do not read"), 0600)
