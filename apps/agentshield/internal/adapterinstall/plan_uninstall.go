@@ -204,7 +204,7 @@ func (p *Plan) prepareHostConfigUninstall(path string) error {
 				for _, cmdValue := range commands {
 					cmd, _ := cmdValue.(map[string]any)
 					text, _ := cmd["command"].(string)
-					if cmd["type"] == "command" && isProductToolHook(text, p.payload.Options.Platform) {
+					if cmd["type"] == "command" && isRecordedToolHook(text, p.payload.Options.Platform, rec.Binary, p.payload.Options.StateDir) {
 						continue
 					}
 					remaining = append(remaining, cmdValue)

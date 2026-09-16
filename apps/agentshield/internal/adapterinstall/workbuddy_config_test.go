@@ -242,7 +242,7 @@ func TestWorkBuddyLegacyMixedRootsUninstallAllOwnedConfigs(t *testing.T) {
 		hooks := doc["hooks"].(map[string]any)
 		command := hookCommand(opts.Binary, WorkBuddy, opts.StateDir)
 		for _, event := range []string{"PreToolUse", "PostToolUse"} {
-			hooks[event] = upsertHook(nil, command, WorkBuddy)
+			hooks[event] = upsertHook(nil, command, WorkBuddy, opts.Binary, opts.StateDir)
 		}
 		installed := encodePlanJSON(doc)
 		if err := os.WriteFile(path, installed, 0o600); err != nil {
@@ -296,8 +296,8 @@ func TestWorkBuddyUninstallIgnoresMetadataOnlyConfig(t *testing.T) {
 	owned := filepath.Join(ownedDir, "settings.json")
 	command := hookCommand(opts.Binary, WorkBuddy, opts.StateDir)
 	doc := map[string]any{"hooks": map[string]any{
-		"PreToolUse":  upsertHook(nil, command, WorkBuddy),
-		"PostToolUse": upsertHook(nil, command, WorkBuddy),
+		"PreToolUse":  upsertHook(nil, command, WorkBuddy, opts.Binary, opts.StateDir),
+		"PostToolUse": upsertHook(nil, command, WorkBuddy, opts.Binary, opts.StateDir),
 	}}
 	installed := encodePlanJSON(doc)
 	if err := os.WriteFile(owned, installed, 0o600); err != nil {
@@ -336,6 +336,81 @@ func TestWorkBuddyUninstallIgnoresMetadataOnlyConfig(t *testing.T) {
 	got, err := os.ReadFile(unowned)
 	if err != nil || string(got) != string(sentinel) {
 		t.Fatal("metadata-only config was modified")
+	}
+}
+
+func TestDesktopInstallUninstallPreservesUserHookQuotingProduct(t *testing.T) {
+	for _, platform := range []string{CodeBuddy, WorkBuddy} {
+		t.Run(platform, func(t *testing.T) {
+			opts := testOpts(t, platform)
+			dir := t.TempDir()
+			if platform == WorkBuddy {
+				t.Setenv("WORKBUDDY_CONFIG_DIR", dir)
+			} else {
+				t.Setenv("CODEBUDDY_CONFIG_DIR", dir)
+			}
+			userCommand := "printf 'siq-agent-security hook " + platform + "'"
+			original := encodePlanJSON(map[string]any{"hooks": map[string]any{
+				"PreToolUse":  []any{map[string]any{"matcher": ".*", "hooks": []any{map[string]any{"type": "command", "command": userCommand}}}},
+				"PostToolUse": []any{map[string]any{"matcher": ".*", "hooks": []any{map[string]any{"type": "command", "command": userCommand}}}},
+			}})
+			path := filepath.Join(dir, "settings.json")
+			if err := os.WriteFile(path, original, 0o600); err != nil {
+				t.Fatal(err)
+			}
+			for i := 0; i < 2; i++ {
+				if _, err := Install(opts); err != nil {
+					t.Fatal(err)
+				}
+			}
+			raw, err := os.ReadFile(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var doc map[string]any
+			if err := json.Unmarshal(raw, &doc); err != nil {
+				t.Fatal(err)
+			}
+			for _, event := range []string{"PreToolUse", "PostToolUse"} {
+				list := doc["hooks"].(map[string]any)[event].([]any)
+				if len(list) != 2 {
+					t.Fatalf("%s: user command was replaced or product hook duplicated: %d", event, len(list))
+				}
+			}
+			if _, err := Uninstall(opts); err != nil {
+				t.Fatal(err)
+			}
+			got, err := os.ReadFile(path)
+			if err != nil || string(got) != string(original) {
+				t.Fatalf("uninstall removed or changed user hook: %q, %v", got, err)
+			}
+			status, err := Status(opts)
+			if err != nil || status.Note != "not installed" {
+				t.Fatalf("user command falsely reported as product installation: %+v, %v", status, err)
+			}
+		})
+	}
+}
+
+func TestRecordedToolHookAcceptsOnlyGeneratedCommands(t *testing.T) {
+	for _, platform := range []string{CodeBuddy, WorkBuddy} {
+		opts := testOpts(t, platform)
+		current := hookCommand(opts.Binary, platform, opts.StateDir)
+		if !isRecordedToolHook(current, platform, opts.Binary, opts.StateDir) {
+			t.Fatal("current recorded command not recognised")
+		}
+		legacy := opts.Binary + " hook " + platform
+		if platform == WorkBuddy {
+			legacy += " --state-dir '" + strings.ReplaceAll(opts.StateDir, "'", `'"'"'`) + "'"
+		}
+		if !isRecordedToolHook(legacy, platform, opts.Binary, opts.StateDir) {
+			t.Fatal("legacy recorded command not recognised")
+		}
+		for _, user := range []string{"printf '" + current + "'", current + " --unrelated", "echo " + legacy} {
+			if isRecordedToolHook(user, platform, opts.Binary, opts.StateDir) {
+				t.Fatalf("user command misidentified as product hook: %q", user)
+			}
+		}
 	}
 }
 

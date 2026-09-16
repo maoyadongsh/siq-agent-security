@@ -516,7 +516,7 @@ func (p *Plan) prepareInstall() error {
 					return errors.New("adapter: invalid host hook list")
 				}
 			}
-			hooks[event] = upsertHook(hooks[event], command, o.Platform)
+			hooks[event] = upsertHook(hooks[event], command, o.Platform, p.payload.Record.Binary, o.StateDir)
 		}
 		doc["hooks"] = hooks
 		purpose := "登记工具执行前和执行后的 SIQ 钩子；保留其他设置"

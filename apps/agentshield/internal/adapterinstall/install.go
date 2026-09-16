@@ -198,12 +198,25 @@ func hookArg(path string) string {
 	return "'" + strings.ReplaceAll(path, "'", `'"'"'`) + "'"
 }
 
-func isProductToolHook(command, platform string) bool {
+// A config file can contain user commands that merely quote a product command.
+// Mutation requires the exact command generated for the recorded binary and
+// state directory, including the pre-quoting legacy form.
+func isRecordedToolHook(command, platform, binary, stateDir string) bool {
+	if binary == "" {
+		return false
+	}
+	if command == hookCommand(binary, platform, stateDir) {
+		return true
+	}
 	name := "codebuddy"
 	if platform == WorkBuddy {
 		name = "workbuddy"
 	}
-	return product.Mentions(command) && strings.Contains(command, "hook "+name)
+	legacy := binary + " hook " + name
+	if platform == WorkBuddy && filepath.IsAbs(stateDir) {
+		legacy += " --state-dir '" + strings.ReplaceAll(stateDir, "'", `'"'"'`) + "'"
+	}
+	return command == legacy
 }
 
 // Install writes adapter files for one platform. Trae is audit-only: no files.
@@ -314,7 +327,7 @@ func (o *Options) normalise() error {
 	return nil
 }
 
-func upsertHook(existing any, command, platform string) []any {
+func upsertHook(existing any, command, platform, recordedBinary, stateDir string) []any {
 	entry := map[string]any{
 		"matcher": ".*",
 		"hooks": []any{
@@ -327,7 +340,7 @@ func upsertHook(existing any, command, platform string) []any {
 		inner, _ := m["hooks"].([]any)
 		for _, h := range inner {
 			hm, _ := h.(map[string]any)
-			if c, _ := hm["command"].(string); isProductToolHook(c, platform) {
+			if c, _ := hm["command"].(string); c == command || isRecordedToolHook(c, platform, recordedBinary, stateDir) {
 				hm["command"] = command
 				return list
 			}
@@ -507,14 +520,43 @@ func Status(opts Options) (*Result, error) {
 	case CodeBuddy, WorkBuddy:
 		p := filepath.Join(opts.configRoot(), "settings.json")
 		if exists(p) {
-			raw, _ := statefs.ReadFile(p)
-			if isProductToolHook(string(raw), opts.Platform) {
-				note = "installed"
-				paths = []string{p}
+			rec, err := newestInstanceRecord(opts)
+			if err != nil && !errors.Is(err, errNoInstallRecord) {
+				return nil, err
+			}
+			if rec != nil {
+				raw, err := statefs.ReadFile(p)
+				if err != nil {
+					return nil, err
+				}
+				var doc map[string]any
+				if json.Unmarshal(raw, &doc) == nil && hasRecordedToolHook(doc, opts.Platform, rec.Binary, opts.StateDir) {
+					note = "installed"
+					paths = []string{p}
+				}
 			}
 		}
 	case Trae:
 		note = "audit_only"
 	}
 	return &Result{Platform: opts.Platform, Action: "status", Paths: paths, Note: note}, nil
+}
+
+func hasRecordedToolHook(doc map[string]any, platform, binary, stateDir string) bool {
+	hooks, _ := doc["hooks"].(map[string]any)
+	for _, event := range []string{"PreToolUse", "PostToolUse"} {
+		list, _ := hooks[event].([]any)
+		for _, entry := range list {
+			group, _ := entry.(map[string]any)
+			commands, _ := group["hooks"].([]any)
+			for _, item := range commands {
+				command, _ := item.(map[string]any)
+				text, _ := command["command"].(string)
+				if command["type"] == "command" && isRecordedToolHook(text, platform, binary, stateDir) {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
