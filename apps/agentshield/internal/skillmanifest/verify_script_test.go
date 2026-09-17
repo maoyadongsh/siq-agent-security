@@ -90,7 +90,8 @@ func TestAdapterAndBootstrapShareVerifiedResolve(t *testing.T) {
 		t.Fatal("bootstrap.sh must call shared resolve_verified_bin.sh")
 	}
 	// Pinned mode must refuse a wrong binary hash (same contract for adapter path).
-	tmpBin := filepath.Join(t.TempDir(), "fake-bin")
+	// Git/MSYS sh uses the executable suffix on Windows; this file is never run.
+	tmpBin := filepath.Join(t.TempDir(), "fake-bin.exe")
 	if err := os.WriteFile(tmpBin, []byte("not-a-release-binary"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -106,8 +107,12 @@ func TestAdapterAndBootstrapShareVerifiedResolve(t *testing.T) {
 	if err == nil {
 		t.Fatalf("pinned resolve must reject mismatched binary\n%s", out)
 	}
-	if !strings.Contains(string(out), "verification failed") && !strings.Contains(string(out), "sha256") && !strings.Contains(string(out), "does not match") && !strings.Contains(string(out), "staging failed") {
-		t.Fatalf("expected hash/verify failure, got:\n%s", out)
+	if !strings.Contains(string(out), "binary sha256 does not match skill-manifest.json") {
+		t.Fatalf("expected binary hash rejection (shell must be installed on PATH), error=%v, output:\n%s", err, out)
+	}
+	entries, err := os.ReadDir(stage)
+	if err != nil || len(entries) != 0 {
+		t.Fatalf("rejected binary must not be staged: entries=%d, error=%v", len(entries), err)
 	}
 }
 
