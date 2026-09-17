@@ -1,6 +1,6 @@
 # Windows 两宿主运行增量（2026-09-17）
 
-本批完成 OpenClaw WSL2 的 A04 限定读取与越权写入拒绝，以及 WorkBuddy Windows 桌面的单次基础写入。不是三宿主完整验收，不关闭 N09。唯一任务台账固定分母不变：通过 50/303、失败 3、受阻 8、未测 242；另有用户排除的注销、重启、睡眠 3 项。
+本批完成 OpenClaw WSL2 的 A04 限定读取与越权写入拒绝、A05 失联/故障拒绝与恢复，以及 WorkBuddy Windows 桌面的单次基础写入。不是三宿主完整验收，不关闭 N09。唯一任务台账固定分母不变：通过 54/303、失败 3、受阻 8、未测 238；另有用户排除的注销、重启、睡眠 3 项。
 
 ## 候选和方法
 
@@ -38,7 +38,24 @@
 - OpenClaw 两轮全部自有 Node、SIQ、provider、namespace/transport 进程均已等待回收，socket/thread 关闭；父 namespace 与父 `/tmp` 元数据未变，未停止日常 Gateway/Companion。
 - 测试目录、原始证据和 WorkBuddy 基础文件/已完成测试任务保留用于复核，不自动删除。没有变更日常实例配置、系统防护或仓库治理；没有系统重启、注销、睡眠。
 - namespace 仅为测试 `/tmp` 隔离；不宣称 OS 文件/网络沙箱。测试 guard 仅限制所覆盖的 Node 公共网络 API。
-- 未测失联拒绝、审批重试、可信 Skill 归属、安装/更新/移除、完整隐私旅程或最终集成候选；独立证据复核尚待完成。
+- 失联拒绝后续批次见下方 A05；审批重试、可信 Skill 归属、安装/更新/移除、完整隐私旅程或最终集成候选仍未完成；独立证据复核尚待完成。
 - [矩阵](matrix.json)保留 18 个组合、每行 8 项；只对 OpenClaw/windows/amd64/wsl2 的 normal_execution 与 pre_execution_denial 填 pass。其他检查保持 not_run，WorkBuddy 基础文件写入不冒充 SIQ 执行。
 
 材料验证：首次 guest_version 含合同不允许的分号，普通/require-native 均实际退出 2（invalid_version）。仅将版本标签中的分号改为连字符，未改验收状态或合同；重验普通 verify 退出 0、require-native 退出 3。0 只证明结构和摘要，3 如实表示原生覆盖仍有缺口。未改产品源码，本批未重跑产品全套测试。
+
+## A05 增量：真实宿主失联、恢复及端点故障
+
+候选、二进制、宿主安装均与上方一致，每批使用全新隔离根，真实 CLI 与插件未改。两批各 warmup 一次，再做三次工具调用，都是本地合成模型；每批七次 provider 交互不是七次付费模型调用。
+
+| 台账项 | 操作与实际证据 |
+| --- | --- |
+| P02-OC-A05-01 | 正常签发 read/write Grant 与 Intent、绑定真实会话后，只停止自有 SIQ。保留原端口但不 listen，实际连接得到 ECONNREFUSED，插件返回 fail-closed，`denied.txt` 不存在。不是网络 guard 抢先拦截，guard-denied 为零。 |
+| P02-OC-A05-04 | 在原端口、原状态和原二进制恢复 SIQ，验证 token 摘要与签名 Intent 字节对象不变；真实 write 创建 `restored.txt`，24 字节精确匹配，SHA256 `61ce1f719a6e665277382aaf1d375351c112fcac8f1d03a503febd0010beca87`。随后撤销 Intent，再停止/恢复自有 SIQ，验证撤销记录保持；真实 write 被 `intent_revoked` 拒绝，`revoked.txt` 不存在。最终回执链四条，verified=true；失联调用不存在伪造的在线 decision。 |
+| P02-OC-A05-02 | 停止自有 SIQ 后，以明确标识的 loopback 故障端点替代该端口，真实宿主发 `/v1/decide`；端点延迟实测约 3000ms，适配器 timeoutMs=1000，客户端断开并 fail-closed，`timeout.txt` 不存在。 |
+| P02-OC-A05-03 | 同一受控故障端点分别返回 HTTP 401，或 HTTP 200 + `{"action":"allow"}`（缺少合法决策关联字段）。真实宿主两次均 fail-closed；畸形响应明确为 malformed decision reference；`unauthorized.txt` 和 `malformed.txt` 均不存在。 |
+
+对应[失联/恢复证据](a05-recovery.json)与[故障注入证据](a05-faults.json)。故障服务器只用于模拟传输/协议故障，不是合法签名裁决或真实 SIQ 故障输出；宿主、工具、前置插件和磁盘副作用检查均为真实链路。两批外层与 guest 均 exit 0，每个实际 Node exit 0 且完整回收。自有 SIQ 的各次生命周期、provider、故障端点、namespace/transport 全部关闭，父 namespace 与 `/tmp` 元数据不变；测试目录保留。
+
+冻结 r1 输入的离线项带有未消费的 `expected_reason=allow` 元数据遗留；实际离线断言使用明确的 fail-closed 工具结果、ECONNREFUSED 和目标不存在，离线没有在线 receipt。该遗留没有被当作 allow 结果，原文件不回写。恢复与撤销的在线断言分别精确校验 allow/intent_revoked。
+
+新增[矩阵快照](matrix-a05.json)保留原矩阵，新增 service_unavailable_denial 一项，仍是18组合×8能力。三个矩阵能力通过不等于全部 A02–A11 通过。旧 PR head `a30378a` 的远端检查曾为38 success、2 skipped；新证据提交的检查需按新 head 单独核实，不能沿用旧 CI。
