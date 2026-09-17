@@ -1,0 +1,185 @@
+{
+  "schema": "windows-p04-output-schema-validation/v1",
+  "candidate": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "python_version": "3.13.7",
+  "jsonschema_version": "4.26.0",
+  "app_runtime_imported": false,
+  "local_only_contract_registry": true,
+  "format_checker_enabled": true,
+  "passed": 8,
+  "total": 8,
+  "rows": [
+    {
+      "role": "locked-partial-failure_update_view",
+      "source_bytes": 18880,
+      "source_sha256": "e60f5abd93215a919a12fb2c39bacad156aa2465024878dcd37e3276bf370173",
+      "schema": "local-skill-update-view.v1.schema.json",
+      "validator": "Draft7Validator",
+      "error_count": 0,
+      "error_rules": []
+    },
+    {
+      "role": "recovered-aborted_update_view",
+      "source_bytes": 18075,
+      "source_sha256": "bc6241dc076d5dab9be20699f1ac4d12f0831abb01a0ddc3af9c78ed7537a852",
+      "schema": "local-skill-update-view.v1.schema.json",
+      "validator": "Draft7Validator",
+      "error_count": 0,
+      "error_rules": []
+    },
+    {
+      "role": "claim-first_disk",
+      "source_bytes": 5780,
+      "source_sha256": "3046adb2da46a2413a0525cfffacdad77bd2befba03ebc0e1f2f25de5282d2b5",
+      "schema": "local-skill-update-claim.v1.schema.json",
+      "validator": "Draft7Validator",
+      "error_count": 0,
+      "error_rules": []
+    },
+    {
+      "role": "claim-first_api",
+      "source_bytes": 6578,
+      "source_sha256": "e92d38dc59e7b39faa216b93ef9e7a00c7d6db3f663c46d35cf1d887adbe6159",
+      "schema": "local-skill-update-claim.v1.schema.json",
+      "validator": "Draft7Validator",
+      "error_count": 0,
+      "error_rules": []
+    },
+    {
+      "role": "claim-stable_disk",
+      "source_bytes": 5780,
+      "source_sha256": "3046adb2da46a2413a0525cfffacdad77bd2befba03ebc0e1f2f25de5282d2b5",
+      "schema": "local-skill-update-claim.v1.schema.json",
+      "validator": "Draft7Validator",
+      "error_count": 0,
+      "error_rules": []
+    },
+    {
+      "role": "claim-stable_api",
+      "source_bytes": 6578,
+      "source_sha256": "e92d38dc59e7b39faa216b93ef9e7a00c7d6db3f663c46d35cf1d887adbe6159",
+      "schema": "local-skill-update-claim.v1.schema.json",
+      "validator": "Draft7Validator",
+      "error_count": 0,
+      "error_rules": []
+    },
+    {
+      "role": "recover-result_disk",
+      "source_bytes": 730,
+      "source_sha256": "0e4636902492385555899ea174b41a357b603369bda338832bb1dd197e7566c9",
+      "schema": "local-skill-update-result.v1.schema.json",
+      "validator": "Draft7Validator",
+      "error_count": 0,
+      "error_rules": []
+    },
+    {
+      "role": "recover-result_api",
+      "source_bytes": 772,
+      "source_sha256": "d822304ba143c3a1382f7b18152f8f2c0c8be366d2f4977bba2c0252eadf89a5",
+      "schema": "local-skill-update-result.v1.schema.json",
+      "validator": "Draft7Validator",
+      "error_count": 0,
+      "error_rules": []
+    }
+  ],
+  "contract_sources": [
+    {
+      "file": "grant.schema.json",
+      "bytes": 9862,
+      "sha256": "df119060dee0f90f3e7f1c9c942ade6a93cafd7ac2ed4bbab8273ce4af94cbff"
+    },
+    {
+      "file": "local-skill-import-permission-source.v1.schema.json",
+      "bytes": 729,
+      "sha256": "b157c329405e7e97d6777c342f3ce8bc316b8bdd2f7f9ff09f5ff7777c9e0246"
+    },
+    {
+      "file": "local-skill-install-operation.v1.schema.json",
+      "bytes": 1195,
+      "sha256": "8b99b024da8201e43974beae150107f8aa7817cb482289c3e536ca531182fb59"
+    },
+    {
+      "file": "local-skill-install-plan.v1.schema.json",
+      "bytes": 2452,
+      "sha256": "77132f3e3b96eaaa061a48999ae746e91bc9c7266c652039e375f41190b4d59a"
+    },
+    {
+      "file": "local-skill-install-record.v1.schema.json",
+      "bytes": 1298,
+      "sha256": "b01f4628dd52bfd976f7a0245755170e31b78e99fc00e88ff75277547044bbc4"
+    },
+    {
+      "file": "local-skill-install-removal-claim.v1.schema.json",
+      "bytes": 2248,
+      "sha256": "45c7ab79c69d3beef9858b2bbf07432f72b09e33d512f3596b391300177970e4"
+    },
+    {
+      "file": "local-skill-install-removal-result.v1.schema.json",
+      "bytes": 1555,
+      "sha256": "6b5c0d6baf66a9bcd90f2c45e5bdc8a65e386d4aeeb5dbabc1f1f7cc67b7ddbb"
+    },
+    {
+      "file": "local-skill-install-removal-view.v1.schema.json",
+      "bytes": 2816,
+      "sha256": "5b6fd314a2f4a7160dda9d53d6556ba6e6916173155f294b960cd22b9a964922"
+    },
+    {
+      "file": "local-skill-update-claim.v1.schema.json",
+      "bytes": 997,
+      "sha256": "f5364b500fcb51dc56d083a8b3ce32281992c0db15ad163bb3b1b1409e97aa95"
+    },
+    {
+      "file": "local-skill-update-plan.v1.schema.json",
+      "bytes": 3560,
+      "sha256": "6252108ea7297815864742c0eea08e98be02e22b18571749363e06a187b7e71b"
+    },
+    {
+      "file": "local-skill-update-result.v1.schema.json",
+      "bytes": 1676,
+      "sha256": "520aec45a116bbec63941bb182d8573e23662d862793a686fc6506d3028fd9bb"
+    },
+    {
+      "file": "local-skill-update-view.v1.schema.json",
+      "bytes": 2236,
+      "sha256": "3bb88661405d08fe378abe37ef0b2dd5e09076d914edb52065e9ff0be746898c"
+    }
+  ],
+  "limit": "Two saved actual update views and six signed-document sources; API claim/result sources are parsed and reserialized. This is not a pytest run, signature verification, or native host acceptance.",
+  "validation_record_source": {
+    "bytes": 5202,
+    "sha256": "0b3c6ab461f22ce21df81ad9b94d3da47382b9d9de01eab6456fd0163adb7ff7"
+  },
+  "helper_history": {
+    "scope": "Post-run read-only output validation helpers, separate from the two actual UI attempts.",
+    "attempts": [
+      {
+        "file": "validate-p04-outputs-20260915.py",
+        "bytes": 4187,
+        "sha256": "1f4f5b1a3f9c35cd5c7141f4c56ea5a301937f7d675f6566467c01ee8161a40e",
+        "outcome": "setup_failed",
+        "reason": "The local resolver expected the grant filename URI to equal its historical $id.",
+        "local_tool_receipt": "26d4ea"
+      },
+      {
+        "file": "validate-p04-outputs-v2-20260915.py",
+        "bytes": 4393,
+        "sha256": "fa74c3a6c618e66998f39be8ab04f6c88385806af7566935f151e035c7f02565",
+        "outcome": "setup_failed",
+        "reason": "Automatic dialect detection did not recognize the grant schema HTTPS draft-07 spelling.",
+        "local_tool_receipt": "233565"
+      },
+      {
+        "file": "validate-p04-outputs-v3-20260915.py",
+        "bytes": 4570,
+        "sha256": "0bccac2f123b4d65e42c9a8a6849d5a8a29b97971acebaebde495eb578f75a56",
+        "outcome": "passed",
+        "reason": "Explicit grant URI alias and Draft7 resource/validator match the existing transaction contract test; eight actual sources passed.",
+        "local_tool_receipt": "299a38"
+      }
+    ],
+    "product_or_UI_rerun": false,
+    "contracts_modified": false,
+    "network_retrieval": false,
+    "reference_convention_source": "apps/control-api/app/tests/test_schema_contracts.py:test_skill_update_transaction_go_samples"
+  }
+}
