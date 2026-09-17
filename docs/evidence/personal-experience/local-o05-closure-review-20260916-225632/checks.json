@@ -1,0 +1,82 @@
+[
+  {
+    "name": "format-final",
+    "command": [
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "vet-final",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "test-final",
+    "command": [
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "race-final",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./internal/signing",
+      "./internal/openshell",
+      "./internal/server",
+      "./internal/receipt"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "script_unit_tests",
+    "command": "python3 -m unittest discover -s scripts/personal-experience -p 'test_openshell*py' -q",
+    "exit_code": 0,
+    "tests": 13
+  },
+  {
+    "name": "script_lint",
+    "command": "uv run --project apps/control-api ruff check scripts/personal-experience/openshell-b3-candidate-journey.py scripts/personal-experience/test_openshell_candidate_scope.py",
+    "exit_code": 0
+  },
+  {
+    "name": "python_contracts",
+    "cwd": "apps/control-api",
+    "command": "uv run pytest -q app/tests/test_schema_contracts.py app/tests/test_openshell_policy_safety_vectors.py",
+    "exit_code": 0
+  },
+  {
+    "name": "native_identity",
+    "evidence": "identity-native.json",
+    "passed": true
+  },
+  {
+    "name": "candidate_policy_journey",
+    "evidence": "policy-journey-verified/l03-journey.json",
+    "exit_code": 0,
+    "scope": "policy_apply_http_journey",
+    "assertions": 57
+  },
+  {
+    "name": "live_enforcement",
+    "evidence": "l01-final-source.json",
+    "exit_code": 1,
+    "scope": "test_driver_only",
+    "result": "deny probe arrived; immediate enforcement not proven"
+  },
+  {
+    "name": "new_candidate_performance",
+    "status": "not_run"
+  }
+]

@@ -470,6 +470,8 @@ O04 复核修订以 `packages/contracts/openshell-capability-evidence.v3.md` 为
 
 - O01 快照保存完整已解析 policy、`policy_digest=sha256(canonical_json(policy))` 和移除 `network_policies` 后的 `static_digest`；filesystem/network/process 只作兼容投影。元信息接受已覆盖的 `Active` 或 `Version` 规范正十进制 revision；同时出现必须一致，缺失、重复、冲突或默认补 `1` 均拒绝。此处修正文档遗留描述，与现有 Go/Python 实现及共享向量一致。两语言共同拒绝重复键、alias/anchor/tag/merge、多文档、非空 flow collection、非字符串键与歧义隐式标量，使用根目录 `testdata/openshell-policy-safety.v2.json` 锁定子集和摘要。
 - 动态网络输入只接受 `effect=allow`、单个 host:port 端点和至少一个显式绝对 binary path；deny、method/path/provider/protocol/purpose 及未知字段在写前拒绝。更新只替换完整当前 policy 的 `network_policies`。计划仅在调用方明确给出的 filesystem/process 与当前真实值不同才标 generation；字段存在但相同仍是 dynamic。
+- 2026-09-16 读回投影修复：method/path/allowed_ips/protocol/enforcement/request_body_credential_rewrite 均保留在 NetworkRule 只读投影（布尔值保留 false 与缺席的区别）；任何带上述字段的 Apply 输入在写前拒绝，禁止读回后再提交时降格为无条件 host:port。端点级 Verify 对带限制的同端点返回 restricted，不把限制规则认作无条件 allow 或 deny；完整 Policy 仍是摘要与精确回滚事实源。
+- 验收工具修复：doctor 退出 0 不代表在线；性能样本必须结构化核对状态、target、revision/digest。绝对或相对预算任一失败均返回非零。相同外部 CLI 是环境对照，不算候选相对性能；工作树 Go 测试驱动是辅助控制面验证，不算候选二进制 B3 或会话授权/执行隔离验收。
 - O02 apply/rollback 按 target 进程内串行。apply 生成不可预测 `operation_id`，私有有界注册表保存精确 base snapshot/revision/digest 与 applied revision/digest；公开回执只是索引和可审计摘要，不能自行证明操作。P0 不新增持久化状态：进程重启、逐出、未知或已消费记录一律拒绝回滚。
 - no-op 回滚核对 live revision/digest 后零写入。实际恢复还必须调用由认证服务端状态派生的当前授权器，并在授权后再次读回检测漂移；成功后消费操作记录。写后必须同时核对网关 revision 与完整 policy digest。无后端原子 CAS，因此只声明进程内串行及已观察漂移检测，不声明跨进程事务原子性。
 
@@ -2029,3 +2031,23 @@ Skill 执行上下文（SEC，`skill-execution-context/v1`）是归属从 unknow
 Secure Agent 复用现有 hold-status/v1 与 hold-execution-reserve/v1 合同：复查携带已提交的 Intent task_id 和原有 runtime_task_id；approved 仅表示可申请预留。消费本地 pending 后，用唯一新 retry_tool_call_id 请求持久化预留，完整匹配回读 action/原 decision/reservation，成功才执行；观察与效果记录使用预留 receipt 和 retry ID。拒绝、冲突、未知或丢失响应都不得执行或盲目重试；不放宽后端身份、Authority 与参数绑定。原 hold receipt 保留用于 UI 审批追溯。
 
 2026-09-17 Mac 阶段合并复核：OpenClaw 外科卸载仅移除本安装添加的注册与空容器；原始快照已有的空 allow、load、paths、entries 及本插件空 entry 必须保留，不能把缺省与显式空值合并。用户其他插件/设置保持不变。阶段合并不提升 P19 实机矩阵，修复候选仍需平台复测。
+
+### 2026-09-16 L01/L02 安全复核增量
+
+未发布 OpenShell 会话策略原型按 [修复规格](openshell-l01-l02-repair-spec-20260916.md) 与 [独立 v1 合同](../packages/contracts/openshell-session-policy-apply.v1.md) 收紧授权。仅 policy_apply，不能标记 O05 真实任务执行完成；L01 旧 PASS 需用修正后的判定与恢复流程复测。
+
+
+### 2026-09-16 缺失本地签名身份保护
+
+磁盘 signing.seed 缺失时，仅首次使用的引导状态可生成身份：config.json、local-instance.json、state-format.json、当前 serve.lock 与空目录。任何其他文件、符号链接、不可读取目录或已有历史均拒绝自动补建，返回 signing: identity_missing_restore_required；恢复原密钥须由维护者从可信备份完成，不能清空历史。有效既有密钥继续使用，损坏或非 ENOENT 读取错误直接拒绝；显式 SeedEnv 的既有合同不改变。此检查不能区分所有历史均被删除后的目录与全新目录，不声明防本机任意文件篡改。serve 在恢复 Grant 事务前加载身份。
+
+
+### 2026-09-16 策略加载确认修复
+
+policy set 的提交成功和 policy get 的配置读回不等于沙箱已加载。所有实际网络策略写入与授权回滚须使用当前 CLI 提供的 `--wait --timeout N`，等待沙箱确认加载后才返回成功，再保留原完整修订/摘要读回。N 使用已有 CLI Timeout 的秒数减去 2 秒余量，最少 1 秒；外层已有进程超时仍是硬上限。失败、超时、旧 CLI 不支持选项均报错，不回退为不等待写入；可能已提交的写入保持 uncertain。no_op 仍只表示未写入，不升级为行为证明。CLI 加载确认本身仍不产生 enforcement_verified；行为测试保持显式 403+零到达，不重试到通过。依据：本机 0.0.83 CLI help 与 https://docs.nvidia.com/openshell/sandboxes/policies 。
+
+同一策略安全合同的 Python Control API CLI 后端同步：30 秒进程上限内等待 28 秒，应用和回滚均禁止无等待降级；本批 Python 仅组件验证，不继承 Go 的真实网关行为结论。实测与证据见 [加载等待修复](openshell-policy-load-wait-repair-20260916.md)。
+
+### 2026-09-17 会话策略基线恢复前置检查
+
+会话 policy_apply 在消费 hold 前复验当前完整网络基线能否按既有 rollback 权限恢复。超出 Grant 端点、批准程序路径或无程序限制的基线，返回 403 / openshell_base_not_restorable，保留批准与网关原策略。在 Client 目标锁内，以捕获到的真实基线再次运行相同检查，避免预检与实际写入基线不同。回滚授权仍按当前 Grant/程序范围与操作摘要验签，不能为方便恢复放宽权限。无法解析/读取的基线先返回 503 / openshell_base_unreadable，同样零写入且不消费批准。该检查仅拒绝已知不可恢复的起点，不承诺跨进程原子性或撤权后仍可回滚。

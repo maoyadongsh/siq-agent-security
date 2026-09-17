@@ -1,0 +1,17 @@
+{
+  "head": "052c81617438d1eabf94a5e0166338312366c491",
+  "branch": "glm/release-openshell-readiness-20260916-142706",
+  "dirty_tree": true,
+  "scope": "local repair verification, not release or live enforcement acceptance",
+  "files": {
+    "apps/agentshield/internal/openshell/policy.go": "1e793e2392f903be1fa43a0521152fc56434fa2454e9d2073c666e7844628932",
+    "apps/agentshield/internal/openshell/o05_enforcement_live_test.go": "870e561888810e8ef4b9f3bfddab914bec4780955c03f5ed7f8efeff9ff8ef0c",
+    "apps/agentshield/internal/openshell/o05_enforcement_regression_test.go": "fae754afc64018c5e1ce6e8cfc3251e694710c1230e81e920eddcccb4761d8ab",
+    "apps/agentshield/internal/receipt/hold_execution_recheck.go": "74533efff01ad49a2967d6c006323cbacfba9194554f74f14640538a4ade94e9",
+    "apps/agentshield/internal/server/server.go": "50fd5eae088e1b0371c616204cb9e83b89ce7b0f7d1d5b7c0f26df63a95ef863",
+    "apps/agentshield/internal/server/openshell_session_binding.go": "52d3b4760eee6e573b897a14931315954ba9db3148e07e966244d201914b2cda",
+    "apps/agentshield/internal/server/openshell_session_exec.go": "280b3aa0014ff467199e60bea7ca790890e839e7bf6a27842fc1578ecc02fc17",
+    "apps/agentshield/internal/server/openshell_session_exec_test.go": "8258cd93ec5d4812c59d9df1e72d9acea9d69f14821a11be50df03400f7715c5",
+    "apps/agentshield/internal/server/openshell_session_security_test.go": "e588cd1ddebe1f2ccfe5ffe1d88100df7c5965cddcdb02ac11aa51fa15683e92"
+  }
+}

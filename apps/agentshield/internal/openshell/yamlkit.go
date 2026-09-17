@@ -315,43 +315,51 @@ func parseYAMLScalar(s string) (any, error) {
 	return s, nil
 }
 
+// YAML indicators (&anchor, *alias, !tag, |, >, flow collections) are only
+// meaningful at the START of a node. The same characters inside a plain
+// scalar value (e.g. the glob "/research/**") are unambiguous valid YAML, so
+// rejecting them is an over-strict false positive that blocks policy
+// readback from real gateways. This check therefore only inspects the first
+// byte of each node token: the line itself, content after "- " sequence
+// indicators, and the value after "key:" mapping indicators. Anything else
+// that this subset parser cannot represent still fails closed.
 func hasUnsupportedYAMLSyntax(s string) bool {
-	inSingle, inDouble, escape := false, false, false
-	for i := 0; i < len(s); i++ {
-		ch := s[i]
-		if escape {
-			escape = false
-			continue
-		}
-		if inDouble && ch == '\\' {
-			escape = true
-			continue
-		}
-		if !inDouble && ch == '\'' {
-			inSingle = !inSingle
-			continue
-		}
-		if !inSingle && ch == '"' {
-			inDouble = !inDouble
-			continue
-		}
-		if inSingle || inDouble {
-			continue
-		}
-		if strings.ContainsRune("&*!|>{}", rune(ch)) {
-			if (ch == '{' || ch == '}') && (s == "{}" || strings.HasSuffix(s, ": {}")) {
-				continue
-			}
+	tok := s
+	for {
+		if unsupportedNodeToken(tok) {
 			return true
 		}
-		if ch == '[' || ch == ']' {
-			if s == "[]" || strings.HasSuffix(s, ": []") {
-				continue
+		for strings.HasPrefix(tok, "- ") {
+			tok = strings.TrimSpace(tok[2:])
+			if unsupportedNodeToken(tok) {
+				return true
 			}
-			return true
 		}
+		if tok == "-" {
+			return false
+		}
+		_, value, ok := splitYAMLKey(tok)
+		if !ok || value == "" {
+			return false
+		}
+		tok = value
 	}
-	return false
+}
+
+func unsupportedNodeToken(tok string) bool {
+	if tok == "" {
+		return false
+	}
+	// Anchors, aliases, tags, block scalars, directives, reserved and
+	// flow-indicator characters may not begin a plain scalar; quoted scalars
+	// begin with a quote and are handled by parseYAMLScalar.
+	if strings.ContainsRune("&*!|>%`,]}", rune(tok[0])) {
+		return true
+	}
+	if tok == "{}" || tok == "[]" {
+		return false
+	}
+	return strings.ContainsRune("{[", rune(tok[0]))
 }
 
 func dumpYAML(v any) string {

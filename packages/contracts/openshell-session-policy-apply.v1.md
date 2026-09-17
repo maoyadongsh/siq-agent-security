@@ -1,0 +1,16 @@
+# Experimental OpenShell session policy apply v1
+
+Status: unreleased prototype; no sandbox command execution.
+
+- L02 当前仅为 policy_apply 控制面操作，不执行命令、不完成 O05/B3。保留未发布路由但响应必须标 scope=policy_apply、task_executed=false。
+- 输入必须与已批准 hold 的 params 全量绑定：固定 command=siq-openshell-policy-apply，openshell_policy 对象包含 target、endpoints、binary_paths、expected_revision、grant_id、grant_digest、endpoint_fingerprint。顶层 authorization_urls 必须严格等于 endpoints 按顺序生成的 https://host:port 描述，只供既有 exec 资源解析器检查全部授权目标，不发送 HTTP 请求，不声明后端协议。不能由调用者另选 URL。对解析器无法识别的目标保留拒绝。
+- 不允许把任意已批准 exec 的参数用于另一个策略操作。此 command 仅作协议标记，从不交给 shell。
+- 以签名决策的 matched_grant_id 选择唯一 Grant，重新验签、状态、有效期、platform/subject，匹配 permission digest；禁止合并同 target 的其他 Grant。目标必须等于当前 agent/Grant subject；尚无可信异名映射时拒绝，不猜测绑定。
+- 二进制路径至少一条，绝对、规范、无控制字符；端点严格 host:port。所有额外字段/变更在消费预留前拒绝。后端配置指纹必须非空且与批准一致。
+- 预留后、实际策略写入前重新验证 Grant/批准参数及会话授权；策略写前授权器只是本进程检查，不宣称与网关跨进程原子事务。
+- 写后证据或审计/observation 失败不能返回 ok=true。已发生的副作用不得伪称取消，保留 reservation 和未知/待记录状态，不自动重试。
+- 回滚须重验签名链、操作绑定、当前 Grant 及恢复网络规则权限范围。回滚记录写入失败返回非成功并保留实际恢复事实。原始证据不改写，旧 L01 PASS 暂不能作为修复后验收。
+
+Routes: POST `/v1/openshell/session-executions` (capDecision); `/preview` and `/rollback` (capAdmin). Existing strict JSON and credential separation apply. No new runtime Authority or grant source is introduced. Preview is advisory and cannot authorize a write. Reservation uncertainty persists on storage/transport failures.
+
+2026-09-17 集成修复：会话策略应用会替换完整 network_policies，故必须在消费批准前确认基线能够在当前 Grant 和批准 binary_paths 范围内恢复；不满足返回 403 / openshell_base_not_restorable，零写入且不消费 hold。在目标锁内对真正捕获的基线再次检查，拒绝预检后替换基线的竞态。规则必须为 allow 且具有非空、已批准的 binary_paths；空路径列表不能被当成有限权限。恢复仍复验当前权限，撤权或漂移后允许拒绝；不承诺永久可回滚，不自动授予恢复旧权限的权力。

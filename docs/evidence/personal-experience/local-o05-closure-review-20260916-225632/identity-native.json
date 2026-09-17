@@ -1,0 +1,25 @@
+{
+  "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+  "scope": "native_candidate_identity_lifecycle",
+  "checks": [
+    {
+      "id": "init",
+      "passed": true
+    },
+    {
+      "id": "first_serve_creates_identity",
+      "passed": true
+    },
+    {
+      "id": "lost_seed_with_signed_history_refuses_without_mutation",
+      "passed": true,
+      "exit_code": 1
+    },
+    {
+      "id": "original_key_restore_usable",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "owned_resources_cleaned": true
+}

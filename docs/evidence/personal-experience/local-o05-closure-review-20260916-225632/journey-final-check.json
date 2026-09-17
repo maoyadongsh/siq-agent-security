@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "scripts/personal-experience/openshell-b3-candidate-journey.py",
+    "--binary",
+    "<candidate>/siq-agent-security-linux-arm64",
+    "--expected-sha256",
+    "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+    "--env-script",
+    "<private-env-script>",
+    "--target",
+    "siq-review-r5-225905",
+    "--out",
+    "<evidence>/policy-journey-final"
+  ],
+  "exit_code": 1,
+  "rerun_reason": "final driver adds cancellation/version checks and public path redaction",
+  "script_sha256": "cdfb178588b7694c5b6cdbf4cf7c749c034d67c78c8ce97c85e5d25411d706e1"
+}

@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "scripts/personal-experience/openshell-b3-candidate-journey.py",
+    "--binary",
+    "<candidate>/siq-agent-security-linux-arm64",
+    "--expected-sha256",
+    "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+    "--env-script",
+    "<private-env-script>",
+    "--target",
+    "siq-review-r5-225905",
+    "--out",
+    "<evidence>/policy-journey-verified"
+  ],
+  "exit_code": 0,
+  "rerun_reason": "use actual version subcommand instead of previously unchecked unsupported --version",
+  "script_sha256": "3623a058b5e1e67ad64047ac7b23e3dc3152a5ef36a1ffe761d40067562c84a1"
+}

@@ -1,0 +1,42 @@
+{
+  "version": "0.3.0-rc.6",
+  "head": "052c81617438d1eabf94a5e0166338312366c491",
+  "dirty_source": true,
+  "source_digest": "edbd7011b2ccedf3e42cfe07164d4e2184f1c8c5d860883cced91b6d3fdcfcbe",
+  "source_file_count": 1116,
+  "source_archive_sha256": "0b4120f2750b4901de5315270db2d3a376d0a289d72e23e1449efbf7e2024857",
+  "go_version": "go version go1.26.5 linux/arm64",
+  "build_flags": [
+    "-trimpath",
+    "-ldflags",
+    "-X main.Version=0.3.0-rc.6"
+  ],
+  "cgo_enabled": false,
+  "signed": false,
+  "builds": [
+    {
+      "target": "linux/amd64",
+      "file": "siq-agent-security-linux-amd64",
+      "sha256": "36cdd48f5244066871411c9b2fe0e03b4dbe14eccb0276bce5edcdb98d036703",
+      "exit_code": 0
+    },
+    {
+      "target": "linux/arm64",
+      "file": "siq-agent-security-linux-arm64",
+      "sha256": "7fd9ca0469b3fcf57d76579e6e96db79db6846041a3d4735c4dcfb2f3076870f",
+      "exit_code": 0
+    },
+    {
+      "target": "darwin/arm64",
+      "file": "siq-agent-security-darwin-arm64",
+      "sha256": "0c08f7de1138d291285ee23b5590f5488294d697cb19f698a187c2c8d9538dd8",
+      "exit_code": 0
+    },
+    {
+      "target": "windows/amd64",
+      "file": "siq-agent-security-windows-amd64.exe",
+      "sha256": "7d9142ba8ae870e6fc05e58461c407df0564ad549411593967a3745baa7a343b",
+      "exit_code": 0
+    }
+  ]
+}

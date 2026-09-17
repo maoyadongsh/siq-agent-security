@@ -142,3 +142,23 @@ Diagnostics implement: `unconfigured`, `configured_unreachable`,
 `policy_readable` (readback verified, enforcement unverified),
 `evidence_expired`. `behavior_verified` is reserved without a current producer. Each state carries a
 short actionable next step.
+
+
+### 2026-09-16 readback projection safety clarification
+
+Go readback retains method/path, allowed_ips, protocol, enforcement and the
+presence/value of request_body_credential_rewrite (including false).
+These are read-only details, not additional supported dynamic write inputs.
+The host:port writer rejects any such nonzero/present field before mutation.
+Endpoint-only verification reports a restricted endpoint as inconclusive for
+both unconditional allow and deny expectations. The complete policy, not this
+projection, remains the source for digest checks and authorized exact rollback.
+Python's stricter readback subset remains fail-closed for unsupported rich rules;
+this clarification does not widen its write contract.
+
+
+### Policy load acknowledgement (2026-09-16 safety correction)
+
+Changed network apply and authorized rollback require `policy set --wait` with a bounded `--timeout`, then the existing exact revision/digest readback. Failure to confirm loading is an error with potentially committed side effects, not permission to retry without waiting. An unsupported CLI must fail closed. A load acknowledgement is not behavioral enforcement evidence and does not upgrade no-op or readback-only verification levels.
+
+Python Control API CLI 后端遵循相同加载确认要求：现有 30 秒进程上限内等待 28 秒；应用和回滚加载失败均抛 AdapterError，不产生成功回执、不自动重试写入。此路径本批只有组件验收，不继承 Go 活体行为测试结论。

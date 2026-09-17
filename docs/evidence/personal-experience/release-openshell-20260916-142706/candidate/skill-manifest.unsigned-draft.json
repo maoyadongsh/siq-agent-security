@@ -1,0 +1,251 @@
+{
+  "state_compatibility": {
+    "reader_version": 2,
+    "writer_version": 2,
+    "min_format": 1,
+    "max_format": 2
+  },
+  "client_compatibility": {
+    "state_profile": "agentshield-local-ledger/v1",
+    "service_protocol": "local-service-instance-health/v1",
+    "migration": "none"
+  },
+  "manifest_version": 3,
+  "skill": {
+    "name": "siq-agent-security",
+    "version": "0.3.0-rc.1",
+    "description": "Admits unknown skills and signs each tool-call receipt.",
+    "content_hash": "e69b1486c4dda3b6c8be242a80ab610ca04988a59dd5e3bb5c142e157e0a7098",
+    "sub_skills": [
+      "agent-asset-inventory",
+      "skill-admission",
+      "least-privilege-grant",
+      "runtime-receipt"
+    ]
+  },
+  "binary": {
+    "name": "siq-agent-security",
+    "version": "0.3.0-rc.1",
+    "artifacts": [
+      {
+        "os": "linux",
+        "arch": "amd64",
+        "sha256": "3741cb2a8327fc01db58548c20489d1b6df3ab2808c5cbe89aac7f3cf585f2c3",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.0-rc.1/siq-agent-security-linux-amd64",
+        "bytes": 19202210
+      },
+      {
+        "os": "linux",
+        "arch": "arm64",
+        "sha256": "e93b70ba0dd0d11d4df4dd9d9f1ad2d170d1dc96fd7bfd5f07adc1652d700537",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.0-rc.1/siq-agent-security-linux-arm64",
+        "bytes": 18088098
+      },
+      {
+        "os": "darwin",
+        "arch": "arm64",
+        "sha256": "3255c48d298d9017e594694191949c6a8e18b7407e5983833a20cfc7b691dc1e",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.0-rc.1/siq-agent-security-darwin-arm64",
+        "bytes": 18248706
+      },
+      {
+        "os": "windows",
+        "arch": "amd64",
+        "sha256": "210e605525d576a4bd487613b761ec2405a4cde8815fde709972dd4c27d507ab",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.0-rc.1/siq-agent-security-windows-amd64.exe",
+        "bytes": 19418624
+      }
+    ]
+  },
+  "rulepack": {
+    "version": 1,
+    "sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051",
+    "public_key_b64": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY="
+  },
+  "support_matrix": [
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "L0–L2 evidenced on Spark 2026-09-05; L3 optional (verified OpenShell gateway), not claimed"
+    },
+    {
+      "platform": "hermes",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "L1–L2 evidenced Spark 2026-09-05 isolated HOME; L3 optional, not claimed"
+    },
+    {
+      "platform": "openclaw",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L2 hook evidenced Spark 2026-09-05 isolated HOME, not GUI"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "trae",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "claude_code",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    }
+  ],
+  "signed_by": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
+  "signature": ""
+}

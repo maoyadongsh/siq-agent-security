@@ -227,3 +227,52 @@ def test_static_plan_compares_values_not_field_presence():
         }
     )
     assert backend.plan_change("s1", changed).kind == "generation"
+
+
+def test_apply_and_rollback_require_policy_load_acknowledgement():
+    runner = StatefulRunner()
+    writes = []
+
+    def checked(args):
+        if args[:2] == ["policy", "set"]:
+            assert args[5:] == ["--wait", "--timeout", "28"]
+            writes.append(args)
+        return runner(args)
+
+    backend = OpenShellCliBackend(runner=checked, operation_registry=PolicyOperationRegistry())
+    compiled = _compiled(backend)
+    receipt = backend.apply_dynamic("s1", backend.plan_change("s1", compiled), "4")
+    restored = backend.rollback("s1", receipt, authorizer=lambda _auth: True)
+    assert restored.result == "restored"
+    assert len(writes) == 2
+    assert runner.policy == BASE_POLICY
+
+
+@pytest.mark.parametrize("rc", [1, 124])
+@pytest.mark.parametrize("operation", ["apply", "rollback"])
+def test_unconfirmed_policy_load_never_returns_success_or_retries(rc, operation):
+    runner = StatefulRunner()
+    registry = PolicyOperationRegistry()
+    backend = OpenShellCliBackend(runner=runner, operation_registry=registry)
+    compiled = _compiled(backend)
+    plan = backend.plan_change("s1", compiled)
+    receipt = None
+    if operation == "rollback":
+        receipt = backend.apply_dynamic("s1", plan, "4")
+    before_writes = runner.set_calls
+
+    def failed_load(args):
+        if args[:2] == ["policy", "set"]:
+            assert args[5:] == ["--wait", "--timeout", "28"]
+            runner(args)  # Submission can commit even when load acknowledgement fails.
+            return rc, "Policy version 14 submitted (hash: abcdef)", "load not confirmed"
+        return runner(args)
+
+    backend._runner = failed_load
+    with pytest.raises(AdapterError, match="openshell_command_failed"):
+        if operation == "apply":
+            backend.apply_dynamic("s1", plan, "4")
+        else:
+            backend.rollback("s1", receipt, authorizer=lambda _auth: True)
+    assert runner.set_calls == before_writes + 1
+    assert len(registry._records) == (1 if operation == "rollback" else 0)

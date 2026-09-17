@@ -1,0 +1,193 @@
+Version:      2
+Hash:         bfab36349780fedaf097c03cce46788fb39629712277768cb420e54ea223ff21
+Status:       Effective
+Source:       sandbox
+Config rev:   6068780568357259510
+---
+version: 1
+filesystem_policy:
+  include_workdir: false
+  read_only:
+  - /dev/urandom
+  - /etc/alternatives
+  - /etc/ca-certificates
+  - /etc/ca-certificates.conf
+  - /etc/debian_version
+  - /etc/fonts
+  - /etc/gai.conf
+  - /etc/group
+  - /etc/host.conf
+  - /etc/hostname
+  - /etc/hosts
+  - /etc/inputrc
+  - /etc/ld.so.cache
+  - /etc/ld.so.conf
+  - /etc/ld.so.conf.d
+  - /etc/localtime
+  - /etc/netconfig
+  - /etc/networks
+  - /etc/nsswitch.conf
+  - /etc/os-release
+  - /etc/passwd
+  - /etc/profile
+  - /etc/protocols
+  - /etc/resolv.conf
+  - /etc/services
+  - /etc/ssl
+  - /etc/terminfo
+  - /home/maoyd/siq-research-engine
+  - /home/sandbox/.bashrc
+  - /home/sandbox/.profile
+  - /lib
+  - /opt/hermes-agent
+  - /opt/siq
+  - /proc
+  - /usr
+  - /etc
+  - /var/log
+  read_write:
+  - /dev/null
+  - /home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/cache
+  - /home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/checkpoints
+  - /home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/cron
+  - /home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/logs
+  - /home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/memories
+  - /home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/sessions
+  - /home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/workspace
+  - /home/maoyd/siq-research-engine/data/wiki/companies/600104-上汽集团/analysis
+  - /sandbox
+  - /tmp
+landlock:
+  compatibility: hard_requirement
+process:
+  run_as_user: sandbox
+  run_as_group: sandbox
+network_policies:
+  _provider_siq_kimi_coding:
+    name: _provider_siq_kimi_coding
+    endpoints:
+    - host: api.kimi.com
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: GET
+          path: /coding/v1/models
+      - allow:
+          method: POST
+          path: /coding/v1/messages
+      - allow:
+          method: POST
+          path: /coding/v1/chat/completions
+    binaries:
+    - path: /opt/siq/hermes/venv/bin/python
+  _provider_siq_minimax_cn_pool:
+    name: _provider_siq_minimax_cn_pool
+    endpoints:
+    - host: api.minimax.chat
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: GET
+          path: /v1/models
+      - allow:
+          method: POST
+          path: /v1/messages
+      - allow:
+          method: POST
+          path: /v1/v1/messages
+      - allow:
+          method: POST
+          path: /v1/chat/completions
+    binaries:
+    - path: /opt/siq/hermes/venv/bin/python
+  _provider_siq_stepfun:
+    name: _provider_siq_stepfun
+    endpoints:
+    - host: api.stepfun.com
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: GET
+          path: /v1/models
+      - allow:
+          method: POST
+          path: /v1/chat/completions
+    binaries:
+    - path: /opt/siq/hermes/venv/bin/python
+  _provider_siq_tavily_search:
+    name: _provider_siq_tavily_search
+    endpoints:
+    - host: api.tavily.com
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: POST
+          path: /search
+      - allow:
+          method: POST
+          path: /extract
+      - allow:
+          method: POST
+          path: /crawl
+      - allow:
+          method: POST
+          path: /map
+      - allow:
+          method: POST
+          path: /research
+      - allow:
+          method: GET
+          path: /research/**
+      request_body_credential_rewrite: true
+    binaries:
+    - path: /opt/siq/hermes/venv/bin/python
+  siq_data_broker:
+    name: siq-data-broker
+    endpoints:
+    - host: host.openshell.internal
+      port: 18793
+      allowed_ips:
+      - '172.23.0.1/32'
+    binaries:
+    - path: /opt/siq/hermes/venv/bin/python
+  siq_egress_guard:
+    name: siq-egress-guard
+    endpoints:
+    - host: host.openshell.internal
+      port: 18792
+      allowed_ips:
+      - '172.23.0.1/32'
+    binaries:
+    - path: /opt/siq/hermes/venv/bin/python
+    - path: /usr/bin/curl
+    - path: /usr/bin/git
+    - path: /usr/local/node/bin/node
+  siq_internal_services:
+    name: siq-internal-services
+    endpoints:
+    - host: host.openshell.internal
+      port: 8004
+      allowed_ips:
+      - '172.23.0.1/32'
+    - host: host.openshell.internal
+      port: 8006
+      allowed_ips:
+      - '172.23.0.1/32'
+    - host: host.openshell.internal
+      port: 8007
+      allowed_ips:
+      - '172.23.0.1/32'
+    - host: host.openshell.internal
+      port: 8013
+      allowed_ips:
+      - '172.23.0.1/32'
+    binaries:
+    - path: /opt/siq/hermes/venv/bin/python
