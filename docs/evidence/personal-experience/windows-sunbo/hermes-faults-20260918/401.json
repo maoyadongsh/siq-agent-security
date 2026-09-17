@@ -1,0 +1,47 @@
+{
+  "scope": "real Windows native Hermes CLI / actual SIQ plugin with injected decision transport failure",
+  "fault_mode": "401",
+  "candidate": "e68af01a3753a3d39845b7e1f4c9d01673c5f690",
+  "native_cli_exit": 0,
+  "controller_exit": 0,
+  "wrapper_exit": 0,
+  "acceptance_pass": true,
+  "real_tool_block_result_count": 1,
+  "exact_decision_request": {
+    "path": "/v1/decide",
+    "exact_tool_params": true,
+    "mode": "401",
+    "header_values_retained": false,
+    "response_sent": true
+  },
+  "tool_execution_subprocess_count": 0,
+  "write_effect_exists": false,
+  "guard_denials": 0,
+  "native_identity_verified": true,
+  "cleanup": {
+    "job_active": 0,
+    "job_terminated": 0,
+    "handles_closed": true,
+    "provider_closed": true,
+    "decision_endpoint_closed": true
+  },
+  "paid_model_calls": 0,
+  "plugin_sha256": {
+    "__init__.py": {
+      "bytes": 29575,
+      "sha256": "36b03a9d5dd92fe6e872adf50c8a6dab92a6731ee31905c0e8db7284279501c2"
+    },
+    "plugin.yaml": {
+      "bytes": 479,
+      "sha256": "0f6a898c187c592f2a48270fc8d7fe3c1d77c896e36169028c7e0491004707bc"
+    }
+  },
+  "raw_sha256": {
+    "result.private.json": "3e8e98d92544fe0709ed8aba30671f1f2742477ee382c9b51ea8d1bbfecaaf3a",
+    "wrapper.private.json": "1672a0d0df6212ed9cf3f55c36356fd7c5d4a4b38b1b4d0330bde0e18b89299d",
+    "provider-requests.private.json": "dcb3ee46fa65279964f86895840c51e3c6a5d5691d6977e4d896597e9f4eb3a9",
+    "guard-events.private.jsonl": "8cfd156f67ca5bde3729e6d0d90e8bbfe3fb899665d44d34bff707d3d3cf13e2"
+  },
+  "manifest_sha256": "b63f9b4205754e4680fb86cef13db3f3e395c528886de9d55c701d26588cf42b",
+  "limits": "Controlled HTTP failure injection; not real SIQ authorization success, healthy-daemon restart/recovery, or desktop evidence."
+}
