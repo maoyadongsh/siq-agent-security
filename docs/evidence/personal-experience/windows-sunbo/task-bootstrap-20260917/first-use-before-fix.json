@@ -1,0 +1,47 @@
+{
+  "method": "native_cli_and_task_scheduler",
+  "candidate": {
+    "binary_sha256": "c86c7b500d479d208adf8419fd0796e74545d33209dbb25cff823241779b04ae",
+    "source_sha": "3b37589bd5e670401bfa255311573a883fec8749",
+    "source_dirty": false,
+    "protected_acl": true,
+    "private_root_ace_count": 3
+  },
+  "private_transport_sha256": "21f2bf65e26288c91823c88ae46e0693c80aea44716b8309fab83a7e15f6b44e",
+  "checks": {
+    "export_read_only_and_system_absent": true,
+    "completed": false,
+    "failure_type": "AssertionError",
+    "failure": "prepare"
+  },
+  "commands": [
+    {
+      "label": "init",
+      "args": [
+        "init",
+        "--port",
+        "52974"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.602118699986022
+    },
+    {
+      "label": "export",
+      "args": [
+        "task-xml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.2616232000000309
+    },
+    {
+      "label": "prepare",
+      "args": [
+        "task-prepare"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.9310802999825682
+    }
+  ],
+  "scope": "Windows common lifecycle only; not a host protection journey or final integrated candidate",
+  "observed_error": "siq-agent-security: signing: identity_missing_restore_required; restore the original signing key from a trusted backup\n"
+}

@@ -1,0 +1,38 @@
+{
+  "build": {
+    "binary_sha256": "5776d67d784c7131a7eb88faef1c26a8dbe939e5140fd2634603d4625fce9d2c",
+    "source_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+    "private_root_ace_count": 3,
+    "protected_acl": true,
+    "source_dirty": false
+  },
+  "own_restore_statuses": [
+    200,
+    200
+  ],
+  "foreign_secret_under_target_cookie_name_rejected": true,
+  "cross_instance_bearer_and_restore_rejected": true,
+  "wrong_service_no_credential_sent": true,
+  "negative_states_unchanged": true,
+  "owned_servers_not_stopped_by_negative_calls": true,
+  "test_admin_sessions_revoked": true,
+  "cleanup": [
+    {
+      "state": "A",
+      "exit": 0,
+      "listener_closed": true
+    },
+    {
+      "state": "B",
+      "exit": 0,
+      "listener_closed": true
+    }
+  ],
+  "wrong_service_closed": true,
+  "raw_sha256": "122317b3f2a5b5cb03b55cf47ea85d95f67de754f93144b714b53711b233a931",
+  "cli_checks": 20,
+  "limitations": [
+    "r2 正确实例恢复连接曾出现 WinError10054；原因未知，r3/r4 未复现，原结果保留。",
+    "CLI 与真实 HTTP API 证据，不涵盖浏览器刷新、新标签页、12 小时过期或最终候选全量验收。"
+  ]
+}

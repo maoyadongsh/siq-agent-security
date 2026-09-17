@@ -1,0 +1,10 @@
+{
+  "failed_attempt_sha256": "7f57b333e794d5826382d06dbd5a934d560dcbc580a9adbfcc439f4e75f17e55",
+  "diagnostic_attempt_sha256": "861da5c3bc532fbeeb705c5cf18ce7d42cf938586604fdd87c904e039e7d0e18",
+  "candidate_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+  "failure_stage": "read-only COM identity guard before any tamper",
+  "cause": "COM returned an account name; the probe compared it directly with a SID",
+  "correction": "Translate the COM account to SecurityIdentifier before exact SID comparison; preserve path, arguments, instance and idle guards",
+  "both_attempts_task_absent_after_cleanup": true,
+  "product_failure": false
+}

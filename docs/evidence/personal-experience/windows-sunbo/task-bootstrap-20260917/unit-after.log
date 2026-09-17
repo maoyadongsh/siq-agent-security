@@ -1,0 +1,18 @@
+=== RUN   TestWindowsTaskPrepareFirstIdentity
+--- PASS: TestWindowsTaskPrepareFirstIdentity (4.06s)
+=== RUN   TestWindowsTaskPrepareMissingIdentityRefusesHistory
+=== RUN   TestWindowsTaskPrepareMissingIdentityRefusesHistory/grants/history.json
+=== RUN   TestWindowsTaskPrepareMissingIdentityRefusesHistory/unknown-state.json
+--- PASS: TestWindowsTaskPrepareMissingIdentityRefusesHistory (2.93s)
+    --- PASS: TestWindowsTaskPrepareMissingIdentityRefusesHistory/grants/history.json (1.30s)
+    --- PASS: TestWindowsTaskPrepareMissingIdentityRefusesHistory/unknown-state.json (1.63s)
+=== RUN   TestWindowsTaskPrepareLostEstablishedIdentity
+--- PASS: TestWindowsTaskPrepareLostEstablishedIdentity (2.52s)
+=== RUN   TestWindowsTaskPrepareBootstrapWriterConflict
+=== RUN   TestWindowsTaskPrepareBootstrapWriterConflict/primary
+=== RUN   TestWindowsTaskPrepareBootstrapWriterConflict/lifecycle
+--- PASS: TestWindowsTaskPrepareBootstrapWriterConflict (1.58s)
+    --- PASS: TestWindowsTaskPrepareBootstrapWriterConflict/primary (0.63s)
+    --- PASS: TestWindowsTaskPrepareBootstrapWriterConflict/lifecycle (0.95s)
+PASS
+ok  	siq-agent-security/apps/agentshield/cmd/agentshield	13.390s

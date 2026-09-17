@@ -1,0 +1,145 @@
+{
+  "method": "native_windows_console_and_task_scheduler",
+  "candidate": {
+    "binary_sha256": "5776d67d784c7131a7eb88faef1c26a8dbe939e5140fd2634603d4625fce9d2c",
+    "source_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+    "private_root_ace_count": 3,
+    "protected_acl": true,
+    "source_dirty": false
+  },
+  "checks": {
+    "exclusive_native_console_started_task": true,
+    "console_class": "ConsoleWindowClass",
+    "console_closed_and_controller_reaped": true,
+    "same_service_and_listener_survived_console_close": true,
+    "instance_health_revalidated_after_console_close": true,
+    "state_preserved_after_unregister": true,
+    "completed": true,
+    "cleanup_console_reaped": true,
+    "cleanup_task_absent": true,
+    "cleanup_processes": {
+      "listener_pids": [],
+      "pids": []
+    }
+  },
+  "commands": [
+    {
+      "label": "init",
+      "args": [
+        "init",
+        "--port",
+        "<isolated-port>"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6678388000000268
+    },
+    {
+      "label": "prepare",
+      "args": [
+        "task-prepare"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.177868699975079
+    },
+    {
+      "label": "register",
+      "args": [
+        "task-register",
+        "--confirm-register"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 15.897476300015114
+    },
+    {
+      "label": "runtime-before-close",
+      "args": [
+        "task-runtime"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.323457100021187
+    },
+    {
+      "label": "runtime-after-console-close",
+      "args": [
+        "task-runtime"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.323004800011404
+    },
+    {
+      "label": "health-after-console-close",
+      "args": [
+        "task-start",
+        "--confirm-start"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.943640800018329
+    },
+    {
+      "label": "stop",
+      "args": [
+        "task-stop",
+        "--confirm-stop"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 15.324002399982419
+    },
+    {
+      "label": "stopped-runtime",
+      "args": [
+        "task-runtime"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 12.194599899987224
+    },
+    {
+      "label": "unregister",
+      "args": [
+        "task-unregister",
+        "--confirm-unregister"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 12.1937559999933
+    },
+    {
+      "label": "final-absence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.887161400023615
+    },
+    {
+      "label": "cleanup-presence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.823839399992721
+    },
+    {
+      "label": "cleanup-final-absence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.9497707999835256
+    }
+  ],
+  "private_transport_sha256": "5cd86784ecebb4dacef701976cb098efc484f1681f5b841a881089525a80bf30",
+  "console_lifecycle": {
+    "launch": "CREATE_NEW_CONSOLE, STARTF_USESHOWWINDOW=SW_HIDE; native Python controller",
+    "ownership": "controller PID equals process handle PID; GetConsoleProcessList contains only that PID; supplied HWND is ConsoleWindowClass",
+    "close": "WM_CLOSE sent only to that owned HWND; controller exit and IsWindow=false verified",
+    "after_close": "same SIQ service PID and listener; task-runtime running/1; task-start identity/health recheck succeeds without new process",
+    "scope": "actual dedicated Windows Console close, hidden window; not a manual Windows Terminal GUI tab action or OS logoff"
+  },
+  "probe_correction": {
+    "first_attempt_sha256": "64da0222c444ff97ef7c7a319f6bdfbf9be8e2a03be1a71ca9182a0d4be80f08",
+    "diagnostic_sha256": "9727324355d6f28683360bf11eaa8a4badd8bb3815733bf2a6ebe56ba87fe653",
+    "cause": "Windows venv redirector adds a second console process; exclusive-controller guard rejected before close",
+    "change": "native interpreter avoids redirector; keep single-process and HWND ownership guards",
+    "first_attempt_cleaned": true
+  },
+  "files_unchanged_scope": "relative file paths and SHA256, not all metadata/ACLs"
+}

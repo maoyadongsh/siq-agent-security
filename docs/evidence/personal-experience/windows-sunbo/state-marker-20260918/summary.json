@@ -1,0 +1,77 @@
+{
+  "build": {
+    "binary_sha256": "5776d67d784c7131a7eb88faef1c26a8dbe939e5140fd2634603d4625fce9d2c",
+    "source_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+    "private_root_ace_count": 3,
+    "protected_acl": true,
+    "source_dirty": false
+  },
+  "cases": [
+    {
+      "case": "broken",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: state: incompatible state directory: state: incompatible state directory\nstate: invalid state format marker or directory\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "trailing_json",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: state: incompatible state directory: state: incompatible state directory\nstate: invalid state format marker or directory\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "duplicate_version",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: state: incompatible state directory: state: incompatible state directory\nstate: invalid state format marker or directory\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "unknown_field",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: state: incompatible state directory: state: incompatible state directory\nstate: invalid state format marker or directory\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "null_version",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: state: incompatible state directory: state: incompatible state directory\nstate: invalid state format marker or directory\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "string_version",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: state: incompatible state directory: state: incompatible state directory\nstate: invalid state format marker or directory\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "invalid_timestamp",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: state: incompatible state directory: state: incompatible state directory\nstate: invalid state format marker or directory\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "invalid_directory_id",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: state: incompatible state directory: state: incompatible state directory\nstate: invalid state format marker or directory\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "missing_schema",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: state: incompatible state directory: state: incompatible state directory\nstate: invalid state format marker or directory\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。",
+      "state_tree_unchanged": true
+    }
+  ],
+  "original_marker_restored": true,
+  "raw_sha256": "3c6c0430f81de641327f4b54ecbc4a806e770a07e735ff9d4b01e2560b82d76f",
+  "scope": "native CLI init rejection; dedicated initialized state; no existing Grant migration claim"
+}

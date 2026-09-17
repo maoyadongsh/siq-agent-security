@@ -1,0 +1,306 @@
+=== RUN   TestWindowsTeardownRecovery
+=== RUN   TestWindowsTeardownRecovery/running
+=== RUN   TestWindowsTeardownRecovery/drain_failed
+=== RUN   TestWindowsTeardownRecovery/idle
+=== RUN   TestWindowsTeardownRecovery/absent
+=== RUN   TestWindowsTeardownRecovery/query_failed
+=== RUN   TestWindowsTeardownRecovery/stop_failed
+=== RUN   TestWindowsTeardownRecovery/delete_failed
+=== RUN   TestWindowsTeardownRecovery/busy
+=== RUN   TestWindowsTeardownRecovery/lifecycle_busy
+--- PASS: TestWindowsTeardownRecovery (14.09s)
+    --- PASS: TestWindowsTeardownRecovery/running (2.68s)
+    --- PASS: TestWindowsTeardownRecovery/drain_failed (1.44s)
+    --- PASS: TestWindowsTeardownRecovery/idle (2.26s)
+    --- PASS: TestWindowsTeardownRecovery/absent (1.24s)
+    --- PASS: TestWindowsTeardownRecovery/query_failed (0.91s)
+    --- PASS: TestWindowsTeardownRecovery/stop_failed (1.02s)
+    --- PASS: TestWindowsTeardownRecovery/delete_failed (2.47s)
+    --- PASS: TestWindowsTeardownRecovery/busy (1.33s)
+    --- PASS: TestWindowsTeardownRecovery/lifecycle_busy (0.74s)
+=== RUN   TestWindowsTaskPrepareFirstIdentity
+--- PASS: TestWindowsTaskPrepareFirstIdentity (1.90s)
+=== RUN   TestWindowsTaskPrepareMissingIdentityRefusesHistory
+=== RUN   TestWindowsTaskPrepareMissingIdentityRefusesHistory/grants/history.json
+=== RUN   TestWindowsTaskPrepareMissingIdentityRefusesHistory/unknown-state.json
+--- PASS: TestWindowsTaskPrepareMissingIdentityRefusesHistory (1.37s)
+    --- PASS: TestWindowsTaskPrepareMissingIdentityRefusesHistory/grants/history.json (0.64s)
+    --- PASS: TestWindowsTaskPrepareMissingIdentityRefusesHistory/unknown-state.json (0.73s)
+=== RUN   TestWindowsTaskPrepareLostEstablishedIdentity
+--- PASS: TestWindowsTaskPrepareLostEstablishedIdentity (1.68s)
+=== RUN   TestWindowsTaskPrepareBootstrapWriterConflict
+=== RUN   TestWindowsTaskPrepareBootstrapWriterConflict/primary
+=== RUN   TestWindowsTaskPrepareBootstrapWriterConflict/lifecycle
+--- PASS: TestWindowsTaskPrepareBootstrapWriterConflict (1.25s)
+    --- PASS: TestWindowsTaskPrepareBootstrapWriterConflict/primary (0.44s)
+    --- PASS: TestWindowsTaskPrepareBootstrapWriterConflict/lifecycle (0.81s)
+=== RUN   TestWindowsTaskNativeDefinitionRoundtrip
+--- PASS: TestWindowsTaskNativeDefinitionRoundtrip (5.53s)
+=== RUN   TestWindowsTaskNativeAbsentAndStrictTransport
+--- PASS: TestWindowsTaskNativeAbsentAndStrictTransport (5.27s)
+=== RUN   TestWindowsTaskPresenceProtocol
+--- PASS: TestWindowsTaskPresenceProtocol (0.00s)
+=== RUN   TestWindowsOwnedTaskPresence
+=== RUN   TestWindowsOwnedTaskPresence/present
+=== RUN   TestWindowsOwnedTaskPresence/absent
+=== RUN   TestWindowsOwnedTaskPresence/failed
+=== RUN   TestWindowsOwnedTaskPresence/unowned
+=== RUN   TestWindowsOwnedTaskPresence/foreign_task
+=== RUN   TestWindowsOwnedTaskPresence/query_failed
+=== RUN   TestWindowsOwnedTaskPresence/source_changed
+--- PASS: TestWindowsOwnedTaskPresence (4.19s)
+    --- PASS: TestWindowsOwnedTaskPresence/present (0.78s)
+    --- PASS: TestWindowsOwnedTaskPresence/absent (0.65s)
+    --- PASS: TestWindowsOwnedTaskPresence/failed (0.59s)
+    --- PASS: TestWindowsOwnedTaskPresence/unowned (0.35s)
+    --- PASS: TestWindowsOwnedTaskPresence/foreign_task (0.61s)
+    --- PASS: TestWindowsOwnedTaskPresence/query_failed (0.59s)
+    --- PASS: TestWindowsOwnedTaskPresence/source_changed (0.62s)
+=== RUN   TestWindowsTaskOutputEncoding
+=== RUN   TestWindowsTaskOutputEncoding/UTF8_BOM
+=== RUN   TestWindowsTaskOutputEncoding/UTF16LE
+=== RUN   TestWindowsTaskOutputEncoding/UTF16BE
+=== RUN   TestWindowsTaskOutputEncoding/UTF8
+=== RUN   TestWindowsTaskOutputEncoding/high_surrogate
+=== RUN   TestWindowsTaskOutputEncoding/UTF8_invalid
+=== RUN   TestWindowsTaskOutputEncoding/UTF8_declaration_mismatch
+=== RUN   TestWindowsTaskOutputEncoding/empty
+=== RUN   TestWindowsTaskOutputEncoding/oversized
+=== RUN   TestWindowsTaskOutputEncoding/odd_bytes
+=== RUN   TestWindowsTaskOutputEncoding/low_surrogate
+=== RUN   TestWindowsTaskOutputEncoding/wrong_pair
+=== RUN   TestWindowsTaskOutputEncoding/UTF16_declaration_mismatch
+--- PASS: TestWindowsTaskOutputEncoding (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/UTF8_BOM (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/UTF16LE (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/UTF16BE (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/UTF8 (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/high_surrogate (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/UTF8_invalid (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/UTF8_declaration_mismatch (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/empty (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/oversized (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/odd_bytes (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/low_surrogate (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/wrong_pair (0.00s)
+    --- PASS: TestWindowsTaskOutputEncoding/UTF16_declaration_mismatch (0.00s)
+=== RUN   TestWindowsOwnedTaskQuery
+=== RUN   TestWindowsOwnedTaskQuery/match
+=== RUN   TestWindowsOwnedTaskQuery/UTF16
+=== RUN   TestWindowsOwnedTaskQuery/failed
+=== RUN   TestWindowsOwnedTaskQuery/drift
+=== RUN   TestWindowsOwnedTaskQuery/source_changed
+=== RUN   TestWindowsOwnedTaskQuery/unowned
+--- PASS: TestWindowsOwnedTaskQuery (3.48s)
+    --- PASS: TestWindowsOwnedTaskQuery/match (0.69s)
+    --- PASS: TestWindowsOwnedTaskQuery/UTF16 (0.61s)
+    --- PASS: TestWindowsOwnedTaskQuery/failed (0.60s)
+    --- PASS: TestWindowsOwnedTaskQuery/drift (0.56s)
+    --- PASS: TestWindowsOwnedTaskQuery/source_changed (0.66s)
+    --- PASS: TestWindowsOwnedTaskQuery/unowned (0.36s)
+=== RUN   TestWindowsTaskLegacyPreparedSourceIsNotRewritten
+--- PASS: TestWindowsTaskLegacyPreparedSourceIsNotRewritten (0.71s)
+=== RUN   TestWindowsTaskRegisterConfirmation
+--- PASS: TestWindowsTaskRegisterConfirmation (0.00s)
+=== RUN   TestWindowsTaskExclusiveRegistration
+=== RUN   TestWindowsTaskExclusiveRegistration/create
+=== RUN   TestWindowsTaskExclusiveRegistration/reuse
+=== RUN   TestWindowsTaskExclusiveRegistration/unknown_presence
+=== RUN   TestWindowsTaskExclusiveRegistration/foreign_existing
+=== RUN   TestWindowsTaskExclusiveRegistration/creation_race
+=== RUN   TestWindowsTaskExclusiveRegistration/readback_failed
+=== RUN   TestWindowsTaskExclusiveRegistration/created_drift
+=== RUN   TestWindowsTaskExclusiveRegistration/source_changed
+=== RUN   TestWindowsTaskExclusiveRegistration/unowned
+--- PASS: TestWindowsTaskExclusiveRegistration (7.26s)
+    --- PASS: TestWindowsTaskExclusiveRegistration/create (0.85s)
+    --- PASS: TestWindowsTaskExclusiveRegistration/reuse (0.74s)
+    --- PASS: TestWindowsTaskExclusiveRegistration/unknown_presence (0.72s)
+    --- PASS: TestWindowsTaskExclusiveRegistration/foreign_existing (0.81s)
+    --- PASS: TestWindowsTaskExclusiveRegistration/creation_race (0.88s)
+    --- PASS: TestWindowsTaskExclusiveRegistration/readback_failed (1.14s)
+    --- PASS: TestWindowsTaskExclusiveRegistration/created_drift (1.06s)
+    --- PASS: TestWindowsTaskExclusiveRegistration/source_changed (0.65s)
+    --- PASS: TestWindowsTaskExclusiveRegistration/unowned (0.41s)
+=== RUN   TestWindowsTaskRuntimeProtocol
+--- PASS: TestWindowsTaskRuntimeProtocol (0.00s)
+=== RUN   TestWindowsOwnedTaskRuntime
+=== RUN   TestWindowsOwnedTaskRuntime/ready
+=== RUN   TestWindowsOwnedTaskRuntime/running
+=== RUN   TestWindowsOwnedTaskRuntime/queued
+=== RUN   TestWindowsOwnedTaskRuntime/initial_drift
+=== RUN   TestWindowsOwnedTaskRuntime/final_drift
+=== RUN   TestWindowsOwnedTaskRuntime/runtime_failed
+--- PASS: TestWindowsOwnedTaskRuntime (4.86s)
+    --- PASS: TestWindowsOwnedTaskRuntime/ready (0.94s)
+    --- PASS: TestWindowsOwnedTaskRuntime/running (0.99s)
+    --- PASS: TestWindowsOwnedTaskRuntime/queued (0.81s)
+    --- PASS: TestWindowsOwnedTaskRuntime/initial_drift (0.60s)
+    --- PASS: TestWindowsOwnedTaskRuntime/final_drift (0.76s)
+    --- PASS: TestWindowsOwnedTaskRuntime/runtime_failed (0.76s)
+=== RUN   TestWindowsTaskStartConfirmationAndTemplates
+--- PASS: TestWindowsTaskStartConfirmationAndTemplates (0.00s)
+=== RUN   TestWindowsTaskStartAndDirectoryHealth
+=== RUN   TestWindowsTaskStartAndDirectoryHealth/start
+=== RUN   TestWindowsTaskStartAndDirectoryHealth/reuse
+=== RUN   TestWindowsTaskStartAndDirectoryHealth/writer_busy
+=== RUN   TestWindowsTaskStartAndDirectoryHealth/query_failed
+=== RUN   TestWindowsTaskStartAndDirectoryHealth/foreign_task
+=== RUN   TestWindowsTaskStartAndDirectoryHealth/start_failed
+=== RUN   TestWindowsTaskStartAndDirectoryHealth/health_timeout
+=== RUN   TestWindowsTaskStartAndDirectoryHealth/final_drift
+--- PASS: TestWindowsTaskStartAndDirectoryHealth (7.67s)
+    --- PASS: TestWindowsTaskStartAndDirectoryHealth/start (1.28s)
+    --- PASS: TestWindowsTaskStartAndDirectoryHealth/reuse (0.84s)
+    --- PASS: TestWindowsTaskStartAndDirectoryHealth/writer_busy (0.80s)
+    --- PASS: TestWindowsTaskStartAndDirectoryHealth/query_failed (0.66s)
+    --- PASS: TestWindowsTaskStartAndDirectoryHealth/foreign_task (0.68s)
+    --- PASS: TestWindowsTaskStartAndDirectoryHealth/start_failed (1.02s)
+    --- PASS: TestWindowsTaskStartAndDirectoryHealth/health_timeout (1.17s)
+    --- PASS: TestWindowsTaskStartAndDirectoryHealth/final_drift (1.24s)
+=== RUN   TestWindowsTaskStop
+=== RUN   TestWindowsTaskStop/running
+=== RUN   TestWindowsTaskStop/idle
+=== RUN   TestWindowsTaskStop/queued
+=== RUN   TestWindowsTaskStop/foreign
+=== RUN   TestWindowsTaskStop/request_failed
+=== RUN   TestWindowsTaskStop/drain_failed
+=== RUN   TestWindowsTaskStop/still_running
+=== RUN   TestWindowsTaskStop/exit_failed
+=== RUN   TestWindowsTaskStop/final_drift
+=== RUN   TestWindowsTaskStop/writer_busy
+--- PASS: TestWindowsTaskStop (14.39s)
+    --- PASS: TestWindowsTaskStop/running (2.15s)
+    --- PASS: TestWindowsTaskStop/idle (1.69s)
+    --- PASS: TestWindowsTaskStop/queued (1.04s)
+    --- PASS: TestWindowsTaskStop/foreign (0.75s)
+    --- PASS: TestWindowsTaskStop/request_failed (0.93s)
+    --- PASS: TestWindowsTaskStop/drain_failed (1.26s)
+    --- PASS: TestWindowsTaskStop/still_running (1.88s)
+    --- PASS: TestWindowsTaskStop/exit_failed (1.79s)
+    --- PASS: TestWindowsTaskStop/final_drift (1.56s)
+    --- PASS: TestWindowsTaskStop/writer_busy (1.36s)
+=== RUN   TestWindowsTaskStopConfirmation
+--- PASS: TestWindowsTaskStopConfirmation (0.00s)
+=== RUN   TestWindowsTaskFixtureAndBoundaries
+--- PASS: TestWindowsTaskFixtureAndBoundaries (0.01s)
+=== RUN   TestWindowsTaskUnregister
+=== RUN   TestWindowsTaskUnregister/idle
+=== RUN   TestWindowsTaskUnregister/absent
+=== RUN   TestWindowsTaskUnregister/running
+=== RUN   TestWindowsTaskUnregister/queued
+=== RUN   TestWindowsTaskUnregister/foreign
+=== RUN   TestWindowsTaskUnregister/presence_failed
+=== RUN   TestWindowsTaskUnregister/delete_failed
+=== RUN   TestWindowsTaskUnregister/still_present
+=== RUN   TestWindowsTaskUnregister/final_query_failed
+=== RUN   TestWindowsTaskUnregister/reappeared
+--- PASS: TestWindowsTaskUnregister (9.81s)
+    --- PASS: TestWindowsTaskUnregister/idle (1.16s)
+    --- PASS: TestWindowsTaskUnregister/absent (0.82s)
+    --- PASS: TestWindowsTaskUnregister/running (1.10s)
+    --- PASS: TestWindowsTaskUnregister/queued (1.05s)
+    --- PASS: TestWindowsTaskUnregister/foreign (0.80s)
+    --- PASS: TestWindowsTaskUnregister/presence_failed (0.75s)
+    --- PASS: TestWindowsTaskUnregister/delete_failed (1.16s)
+    --- PASS: TestWindowsTaskUnregister/still_present (1.08s)
+    --- PASS: TestWindowsTaskUnregister/final_query_failed (1.11s)
+    --- PASS: TestWindowsTaskUnregister/reappeared (0.77s)
+=== RUN   TestWindowsTaskUnregisterConfirmation
+--- PASS: TestWindowsTaskUnregisterConfirmation (0.00s)
+=== RUN   TestWindowsTaskReadbackConfiguration
+=== RUN   TestWindowsTaskReadbackConfiguration/attribute_order
+=== RUN   TestWindowsTaskReadbackConfiguration/setting_order
+=== RUN   TestWindowsTaskReadbackConfiguration/identical
+=== RUN   TestWindowsTaskReadbackConfiguration/formatting
+=== RUN   TestWindowsTaskReadbackConfiguration/comments
+=== RUN   TestWindowsTaskReadbackConfiguration/other_user
+=== RUN   TestWindowsTaskReadbackConfiguration/extra_action
+=== RUN   TestWindowsTaskReadbackConfiguration/missing_setting
+=== RUN   TestWindowsTaskReadbackConfiguration/duplicate_attribute
+=== RUN   TestWindowsTaskReadbackConfiguration/leaf_whitespace
+=== RUN   TestWindowsTaskReadbackConfiguration/instruction
+=== RUN   TestWindowsTaskReadbackConfiguration/trailing_data
+=== RUN   TestWindowsTaskReadbackConfiguration/trigger
+=== RUN   TestWindowsTaskReadbackConfiguration/DTD
+=== RUN   TestWindowsTaskReadbackConfiguration/truncated
+=== RUN   TestWindowsTaskReadbackConfiguration/force_stop
+=== RUN   TestWindowsTaskReadbackConfiguration/unknown_setting
+=== RUN   TestWindowsTaskReadbackConfiguration/unknown_attribute
+=== RUN   TestWindowsTaskReadbackConfiguration/argument_change
+=== RUN   TestWindowsTaskReadbackConfiguration/mixed_content
+=== RUN   TestWindowsTaskReadbackConfiguration/elevation
+=== RUN   TestWindowsTaskReadbackConfiguration/logon_type
+=== RUN   TestWindowsTaskReadbackConfiguration/duplicate_setting
+=== RUN   TestWindowsTaskReadbackConfiguration/namespace
+=== RUN   TestWindowsTaskReadbackConfiguration/second_root
+=== RUN   TestWindowsTaskReadbackConfiguration/size
+--- PASS: TestWindowsTaskReadbackConfiguration (0.01s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/attribute_order (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/setting_order (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/identical (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/formatting (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/comments (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/other_user (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/extra_action (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/missing_setting (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/duplicate_attribute (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/leaf_whitespace (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/instruction (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/trailing_data (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/trigger (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/DTD (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/truncated (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/force_stop (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/unknown_setting (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/unknown_attribute (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/argument_change (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/mixed_content (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/elevation (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/logon_type (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/duplicate_setting (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/namespace (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/second_root (0.00s)
+    --- PASS: TestWindowsTaskReadbackConfiguration/size (0.00s)
+=== RUN   TestWindowsTaskXMLBudgets
+--- PASS: TestWindowsTaskXMLBudgets (0.00s)
+=== RUN   TestWindowsTaskNativeReadbackDefaults
+=== RUN   TestWindowsTaskNativeReadbackDefaults/setting_child
+=== RUN   TestWindowsTaskNativeReadbackDefaults/duplicate_default
+=== RUN   TestWindowsTaskNativeReadbackDefaults/elevation_alongside_defaults
+=== RUN   TestWindowsTaskNativeReadbackDefaults/setting_attribute
+=== RUN   TestWindowsTaskNativeReadbackDefaults/unknown_default
+=== RUN   TestWindowsTaskNativeReadbackDefaults/login_trigger
+=== RUN   TestWindowsTaskNativeReadbackDefaults/trigger_attribute
+=== RUN   TestWindowsTaskNativeReadbackDefaults/trigger_text
+=== RUN   TestWindowsTaskNativeReadbackDefaults/remote_app_changed
+=== RUN   TestWindowsTaskNativeReadbackDefaults/unified_engine_changed
+--- PASS: TestWindowsTaskNativeReadbackDefaults (0.01s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/setting_child (0.00s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/duplicate_default (0.00s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/elevation_alongside_defaults (0.00s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/setting_attribute (0.00s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/unknown_default (0.00s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/login_trigger (0.00s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/trigger_attribute (0.00s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/trigger_text (0.00s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/remote_app_changed (0.00s)
+    --- PASS: TestWindowsTaskNativeReadbackDefaults/unified_engine_changed (0.00s)
+=== RUN   TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding
+=== RUN   TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/UTF16_declaration_without_conversion
+=== RUN   TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/second_declaration
+=== RUN   TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/foreign_leaf
+=== RUN   TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/unbound_prefix
+=== RUN   TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/namespaced_extra_attribute
+=== RUN   TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/duplicate_namespace
+=== RUN   TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/invalid_UTF8
+--- PASS: TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding (0.00s)
+    --- PASS: TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/UTF16_declaration_without_conversion (0.00s)
+    --- PASS: TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/second_declaration (0.00s)
+    --- PASS: TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/foreign_leaf (0.00s)
+    --- PASS: TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/unbound_prefix (0.00s)
+    --- PASS: TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/namespaced_extra_attribute (0.00s)
+    --- PASS: TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/duplicate_namespace (0.00s)
+    --- PASS: TestWindowsTaskXMLRejectsAmbiguousNamespaceAndEncoding/invalid_UTF8 (0.00s)
+PASS
+ok  	siq-agent-security/apps/agentshield/cmd/agentshield	83.826s

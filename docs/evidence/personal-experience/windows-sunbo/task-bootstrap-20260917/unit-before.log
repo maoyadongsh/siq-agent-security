@@ -1,0 +1,20 @@
+=== RUN   TestWindowsTaskPrepareFirstIdentity
+    windows_task_bootstrap_windows_test.go:36: signing: identity_missing_restore_required; restore the original signing key from a trusted backup
+--- FAIL: TestWindowsTaskPrepareFirstIdentity (1.07s)
+=== RUN   TestWindowsTaskPrepareMissingIdentityRefusesHistory
+=== RUN   TestWindowsTaskPrepareMissingIdentityRefusesHistory/grants/history.json
+=== RUN   TestWindowsTaskPrepareMissingIdentityRefusesHistory/unknown-state.json
+--- PASS: TestWindowsTaskPrepareMissingIdentityRefusesHistory (1.83s)
+    --- PASS: TestWindowsTaskPrepareMissingIdentityRefusesHistory/grants/history.json (0.88s)
+    --- PASS: TestWindowsTaskPrepareMissingIdentityRefusesHistory/unknown-state.json (0.96s)
+=== RUN   TestWindowsTaskPrepareLostEstablishedIdentity
+--- PASS: TestWindowsTaskPrepareLostEstablishedIdentity (1.99s)
+=== RUN   TestWindowsTaskPrepareBootstrapWriterConflict
+=== RUN   TestWindowsTaskPrepareBootstrapWriterConflict/primary
+=== RUN   TestWindowsTaskPrepareBootstrapWriterConflict/lifecycle
+--- PASS: TestWindowsTaskPrepareBootstrapWriterConflict (0.96s)
+    --- PASS: TestWindowsTaskPrepareBootstrapWriterConflict/primary (0.52s)
+    --- PASS: TestWindowsTaskPrepareBootstrapWriterConflict/lifecycle (0.44s)
+FAIL
+FAIL	siq-agent-security/apps/agentshield/cmd/agentshield	7.694s
+FAIL
