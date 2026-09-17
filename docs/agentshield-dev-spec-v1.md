@@ -106,6 +106,10 @@ DefaultDir、Open、兼容诊断、Writer、目录身份、初始化/迁移、�
 ### 2.3 并发
 
 - 单写者：`serve` 通过 `state.AcquireWriter` 持有 `<state>/serve.lock`（O_EXCL；内含 pid/owner；启动时若 pid 不存活则将旧锁 rename 为 `serve.lock.stale.*` 后接管，禁止无条件删除）。离线 `grant` 子命令须取得同一写锁；锁被存活 `serve` 占用时拒绝直写。
+
+Windows Writer 恢复增量（2026-09-18，Issue #79）：Windows 专属实现通过标准库 Win32 封装，以 SYNCHRONIZE 权限、不可继承句柄打开锁中 PID，再以零等待检查进程对象。只有 OpenProcess 明确返回 ERROR_INVALID_PARAMETER（不存在的非零 DWORD PID），或等待返回 WAIT_OBJECT_0，才能认定死亡；活动进程、权限拒绝、未知错误、等待异常及超出 DWORD 范围的 PID 均保持 busy，禁止截断 PID。句柄必须关闭；不发送信号、不提权、不凭 OpenProcess 成功推断存活。
+
+Windows 回收在同一个 DELETE + 只读、禁止共享的文件句柄内读取有界锁内容、验证普通单链接且非重解析点、确认死亡，并通过 SetFileInformationByHandle 将该对象排他重命名到同目录唯一 stale 名。不能先读路径再按路径 rename；并发回收失败应拒绝，不得移动新持有者的锁。锁文件格式及新锁 O_EXCL 发布不变，旧锁保留原始字节；stale 目标已存在时不得覆盖。此保证限定于已打开的锁对象与合作 Writer，并非防任意同用户替换父目录的沙箱。非 Windows 恢复行为不在本增量中改写。
 - 子命令（`admit`/`grant`）与 `serve` 同时运行时，通过 HTTP 提交给 `serve` 写入；`serve` 未运行则子命令在写锁下直接写文件。
 - 回执链：`serve` 内存持有 `(seq, hash)`；写入顺序 = 先 append 行、`fsync`、再更新 `HEAD`。恢复时以文件最后一行为准，`HEAD` 只是加速。
 - 不可变版本按 ADR-012 先在同目录私有暂存文件完成写入/Sync，再排他发布最终版本名；版本占用只允许重试下一序号，不能返回伪成功。读者不得看见未完成暂存或把损坏最新版本忽略为空。

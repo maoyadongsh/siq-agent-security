@@ -6,9 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"runtime"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"strconv"
 	"strings"
@@ -99,16 +97,8 @@ func acquireWriterChecked(dir, compatDir string, check func() error) (*Writer, e
 		if !errors.Is(err, os.ErrExist) {
 			return nil, err
 		}
-		heldPID, _, readErr := readLockFile(path)
-		if readErr != nil {
-			return nil, fmt.Errorf("state: serve.lock unreadable: %w", readErr)
-		}
-		if processAlive(heldPID) {
-			return nil, fmt.Errorf("%w (pid %d); submit writes through serve HTTP or wait", ErrWriterBusy, heldPID)
-		}
-		stale := fmt.Sprintf("%s.stale.%d", path, time.Now().UnixNano())
-		if err := os.Rename(path, stale); err != nil {
-			return nil, fmt.Errorf("state: cannot quarantine stale serve.lock: %w", err)
+		if err := quarantineStaleLock(path); err != nil {
+			return nil, err
 		}
 	}
 	return nil, ErrWriterBusy
@@ -156,6 +146,10 @@ func readLockFile(path string) (pid int, owner string, err error) {
 	if err != nil {
 		return 0, "", err
 	}
+	return parseLockFile(raw)
+}
+
+func parseLockFile(raw []byte) (pid int, owner string, err error) {
 	lines := strings.Split(string(raw), "\n")
 	if len(lines) == 0 || strings.TrimSpace(lines[0]) == "" {
 		return 0, "", errors.New("empty lock")
@@ -168,24 +162,6 @@ func readLockFile(path string) (pid int, owner string, err error) {
 		owner = strings.TrimSpace(lines[1])
 	}
 	return pid, owner, nil
-}
-
-func processAlive(pid int) bool {
-	if pid <= 0 {
-		return false
-	}
-	if pid == os.Getpid() {
-		return true
-	}
-	if _, err := os.Stat(fmt.Sprintf("/proc/%d", pid)); err == nil {
-		return true
-	}
-	if runtime.GOOS == "windows" {
-		// Stdlib cannot prove death without Win32 APIs; stay conservative.
-		return true
-	}
-	cmd := exec.Command("kill", "-0", strconv.Itoa(pid))
-	return cmd.Run() == nil
 }
 
 func randomOwner() (string, error) {
