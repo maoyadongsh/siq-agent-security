@@ -25,7 +25,7 @@ func unregisterLaunchAgent(st *state.Store, key *signing.Key, plist []byte, home
 	if err != nil {
 		return err
 	}
-	source, err := filepath.Abs(filepath.Join(st.Dir, record.Label+".plist"))
+	source, err := launchAgentSource(st.Dir, record.Label)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func unregisterLaunchAgent(st *state.Store, key *signing.Key, plist []byte, home
 	if err != nil {
 		return err
 	}
-	loaded, pid, err := inspectLaunchAgent(control, uid, record.Label, plist)
+	loaded, pid, err := inspectLaunchAgent(control, uid, record.Label, plist, source)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func unregisterLaunchAgent(st *state.Store, key *signing.Key, plist []byte, home
 	if err != nil {
 		return err
 	}
-	loaded, pid, err = inspectLaunchAgent(control, uid, record.Label, plist)
+	loaded, pid, err = inspectLaunchAgent(control, uid, record.Label, plist, source)
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func unregisterLaunchAgent(st *state.Store, key *signing.Key, plist []byte, home
 			return errors.New("launch-agent: unload failed or timed out; configuration preserved, inspect status before retrying")
 		}
 	}
-	loaded, _, err = inspectLaunchAgent(control, uid, record.Label, plist)
+	loaded, _, err = inspectLaunchAgent(control, uid, record.Label, plist, source)
 	if err != nil {
 		return err
 	}

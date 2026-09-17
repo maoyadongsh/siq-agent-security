@@ -9,6 +9,7 @@ Security failures are reported as passed=false and exit 1, not a success gate.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import importlib.util
 import json
@@ -66,6 +67,19 @@ class ApprovalHarness(native.OpenClawHarness):
             "exec hold gate missing",
         )
 
+    def _early_worker_failure(self, process) -> None:
+        if process.poll() is None:
+            return
+        result = self.root / "control/result.json"
+        if result.is_file():
+            outcomes = json.loads(result.read_text()).get("outputs", [])
+            if outcomes and all(item.get("blocked") and not item.get("platform_requested") for item in outcomes):
+                raise RuntimeError(
+                    "native worker finished with all hold calls blocked before platform approval; "
+                    "installed host lacks the required approval execution recheck checkpoint"
+                )
+        raise RuntimeError("native worker exited before approval result")
+
     def wait_file(self, path, process, timeout=90):
         deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
@@ -74,8 +88,10 @@ class ApprovalHarness(native.OpenClawHarness):
             error = path.parent / "error.json"
             if error.is_file():
                 failure = json.loads(error.read_text())
-                raise RuntimeError(f"native worker failed at {failure['stage']}: {failure['category']}")
-            require(process.poll() is None, "native worker exited before result")
+                raise RuntimeError(
+                    f"native worker failed at {failure['stage']}: {failure['category']}"
+                )
+            self._early_worker_failure(process)
             time.sleep(0.025)
         raise RuntimeError("native worker result timeout")
 
@@ -102,7 +118,8 @@ class ApprovalHarness(native.OpenClawHarness):
                     "controlUi": {"enabled": False},
                 },
                 "browser": {"enabled": False},
-                "canvasHost": {"enabled": False},
+                # canvasHost/canvas was removed upstream in 2026.9; omitting it
+                # is valid on both old and new schemas.
                 "discovery": {"mdns": {"mode": "off"}},
                 "cron": {"enabled": False},
                 "update": {"checkOnStart": False},
@@ -119,6 +136,7 @@ class ApprovalHarness(native.OpenClawHarness):
         self.env.update(
             {
                 "OPENCLAW_HOME": str(self.root / "native-home"),
+                "OPENCLAW_CONFIG_PATH": str(config_path),
                 "PI_CODING_AGENT_DIR": str(self.root / "pi"),
                 "OPENCLAW_SKIP_CHANNELS": "1",
                 "OPENCLAW_SKIP_CRON": "1",
@@ -172,14 +190,17 @@ class ApprovalHarness(native.OpenClawHarness):
             str(ROOT / "scripts/openclaw-approval-gate-worker.mjs"),
             str(spec),
         ]
-        with tempfile.TemporaryFile(mode="w+t") as log:
-            process = subprocess.Popen(command, cwd=self.workspace, env=self.env, stdout=log, stderr=log)
+        log_path = self.root / "worker.log"
+        with open(log_path, "w+t") as log:
+            process = subprocess.Popen(
+                command, cwd=self.workspace, env=self.env, stdout=log, stderr=log
+            )
             try:
                 for case in cases:
                     call_id = case["id"]
                     deadline = time.monotonic() + 90
                     while True:
-                        require(process.poll() is None, "native worker exited before hold")
+                        self._early_worker_failure(process)
                         current = [
                             r
                             for r in self.receipts()
@@ -313,11 +334,21 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--openclaw-root", type=Path, required=True)
     parser.add_argument("--node", type=Path, required=True)
+    parser.add_argument("--binary", type=Path, help="use a fixed candidate binary instead of building HEAD")
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--private-workdir", type=Path, help="retain an isolated private fixture directory for failure diagnosis")
     args = parser.parse_args()
     args.openclaw_root = args.openclaw_root.resolve()
     args.node = args.node.absolute()
-    with tempfile.TemporaryDirectory(prefix="siq-openclaw-approval-") as temporary:
+    if args.binary:
+        args.binary = args.binary.resolve(strict=True)
+    if args.private_workdir:
+        args.private_workdir = args.private_workdir.absolute()
+        args.private_workdir.mkdir(mode=0o700, parents=True, exist_ok=False)
+        temporary_context = contextlib.nullcontext(str(args.private_workdir))
+    else:
+        temporary_context = tempfile.TemporaryDirectory(prefix="siq-openclaw-approval-")
+    with temporary_context as temporary:
         harness = ApprovalHarness(Path(temporary), args)
         try:
             report = harness.run()

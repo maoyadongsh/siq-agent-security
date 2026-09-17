@@ -1,0 +1,43 @@
+{
+  "schema_version": "personal-macos-candidate-verification/v1",
+  "recorded_at": "2026-09-16T21:46:34+08:00",
+  "candidate_sha": "39e8ef5561021b4f96a579fff506b36ca802c08b",
+  "source_dirty_at_build": false,
+  "binary_sha256": "d9f4b381a488cf95b58914a8a590974a69759d2415edae87d00707dc3e435155",
+  "build": {
+    "os": "darwin",
+    "arch": "arm64",
+    "go": "1.27.1 isolated toolchain",
+    "cgo_enabled": false,
+    "trimpath": true
+  },
+  "checks": {
+    "gofmt_l_empty": true,
+    "gofmt_exit": 0,
+    "go_vet_all_exit": 0,
+    "go_test_all_count_1_exit": 0,
+    "adapterinstall_race": "passed in this implementation batch",
+    "cross_build_linux_amd64_exit": 0,
+    "cross_build_linux_arm64_exit": 0,
+    "cross_build_darwin_arm64_exit": 0,
+    "cross_build_windows_amd64_exit": 0,
+    "openclaw_native_smoke_passed": true,
+    "openclaw_native_smoke_checks": 17,
+    "hermes_native_smoke_passed": true,
+    "hermes_native_smoke_checks": 6,
+    "workbuddy_native_deny_receipt_seq": 15,
+    "workbuddy_receipt_chain_verified": true,
+    "matrix_structure_exit": 0,
+    "matrix_require_native_exit": 3,
+    "matrix_rows": 18,
+    "matrix_evidence_files_checked": 3
+  },
+  "constraints_preserved": {
+    "sudo_used": false,
+    "global_path_changed": false,
+    "security_policy_changed": false,
+    "daily_workbuddy_config_changed": false,
+    "push_or_publish_performed": false,
+    "secrets_or_pairing_codes_in_evidence": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": "personal-macos-native-rebaseline-evidence/v1",
+  "candidate_sha": "720ea397ca189669516b474e6f549c52d91a8dcc",
+  "binary_sha256": "b245897b994dcd23bae30c80933407d4663340bc0e894cd4e226c297895d42f0",
+  "platform": "openclaw",
+  "host_version": "2026.9.4",
+  "entrypoint": "public openclaw agent --local; installed managed plugin; isolated profile and deterministic local model",
+  "native_passed_checks": ["discovery", "normal_execution", "pre_execution_denial", "service_unavailable_denial"],
+  "base_smoke": {"passed": true, "checks": 17, "signed_receipts": 3, "private_raw_sha256": "971f4e27a116e0400c3b53d6deda7cee30897ec7b7b2ad3d7dfe60cfa9f966d3"},
+  "offline_smoke": {"passed": true, "checks": 15, "signed_receipts": 2, "allowed_read_observation_recorded": false, "native_write_blocked_while_service_down": true, "private_raw_sha256": "e6b63cfe61dc3805fc44bc03bc1c180a0ef1402a177f4e604cbb9cbb3f6386db"},
+  "skill_context_probe": {"passed": true, "checks": 10, "evidence_level": "controlled_session", "native_read_allowed_after_admin_issued_context": true, "revoked_context_denied": true, "causal_skill_attribution_proven": false, "private_raw_sha256": "699fcfbb6521ee5e9242089942e9810ae60702216678a4fa8da276672e710e69"},
+  "approval_probe": {"exit_code": 1, "outcome": "native worker exited before approval result on installed 2026.9.4; no approval-resume pass", "approval_result_verified": false},
+  "limitations": [
+    "A synthetic local model and operator were used; no external paid model was called.",
+    "The controlled_session Skill context was admin-issued after session enrollment; native catalog presence does not prove that Skill instructions caused one tool call.",
+    "The offline test intentionally killed the isolated decision service before the second tool call. The earlier allowed read reached the model, but its post-tool observation was not persisted.",
+    "Approval resume, approved-parameter recheck, trusted per-Skill causality and native install interception remain unverified."
+  ]
+}

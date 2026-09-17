@@ -56,7 +56,7 @@ func main() {
 	if err := checkCommandState(os.Args[1]); err != nil {
 		fmt.Fprintln(os.Stderr, product.Name+":", err)
 		if errors.Is(err, state.ErrIncompatibleState) {
-			fmt.Fprintln(os.Stderr, stateformat.RecoveryMessage())
+			fmt.Fprintln(os.Stderr, stateformat.RecoveryMessageFor(err))
 		}
 		os.Exit(1)
 	}
@@ -187,7 +187,7 @@ func main() {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, product.Name+":", err)
 		if errors.Is(err, state.ErrIncompatibleState) {
-			fmt.Fprintln(os.Stderr, stateformat.RecoveryMessage())
+			fmt.Fprintln(os.Stderr, stateformat.RecoveryMessageFor(err))
 		}
 		os.Exit(1)
 	}
@@ -214,9 +214,10 @@ func usage() {
   %[1]s sync --control-api URL [--identity ID] [--secret-file PATH] [--task-id ID]
                                   # optional Edge upload; skip (exit 0) without creds; never auto-runs from serve
   %[1]s policy-exec         # OpenClaw security.installPolicy exec: stdin request → {decision,reason}
-  %[1]s hook codebuddy      # CodeBuddy PreToolUse/PostToolUse hook: stdin event → hookSpecificOutput
+  %[1]s hook codebuddy|workbuddy [--state-dir DIR]
+                                  # CodeBuddy/WorkBuddy PreToolUse/PostToolUse hook: stdin event → hookSpecificOutput
   %[1]s adapter install|uninstall|status [platform]
-                                  # write/restore host adapter files (openclaw|hermes|codebuddy|trae)
+                                  # write/restore host adapter files (openclaw|hermes|codebuddy|workbuddy|trae)
   %[1]s grant <admission_id> --platform P --subject ID
   %[1]s grant approve|deploy|reject|revoke <grant_id> [--approve-as ACTOR]
                                   # least-privilege grant; approve requires a human --approve-as
@@ -410,15 +411,40 @@ func (h *httpDecider) Observe(r receipt.Request, result string) error {
 }
 
 func cmdHook(args []string) error {
-	if len(args) < 1 || args[0] != "codebuddy" {
-		return fmt.Errorf("hook: supported platforms: codebuddy")
+	if len(args) < 1 || (args[0] != "codebuddy" && args[0] != "workbuddy") {
+		return fmt.Errorf("hook: supported platforms: codebuddy, workbuddy")
 	}
-	return runCodeBuddyHook(os.Stdin, os.Stdout)
+	fs := flag.NewFlagSet("hook", flag.ContinueOnError)
+	selected := fs.String("state-dir", "", "explicit canonical initialized state directory (overrides environment)")
+	_ = fs.Bool("observe", false, "ignored; PostToolUse is selected from stdin hook_event_name")
+	if err := fs.Parse(args[1:]); err != nil {
+		return runUnavailableHostHook(args[0], os.Stdin, os.Stdout)
+	}
+	if fs.NArg() != 0 {
+		return runUnavailableHostHook(args[0], os.Stdin, os.Stdout)
+	}
+	explicit := false
+	fs.Visit(func(f *flag.Flag) {
+		if f.Name == "state-dir" {
+			explicit = true
+		}
+	})
+	if explicit {
+		dir, err := serveStateDirectory(*selected, true)
+		if err != nil {
+			return runUnavailableHostHook(args[0], os.Stdin, os.Stdout)
+		}
+		if err := os.Setenv(product.EnvStateDir, dir); err != nil {
+			return runUnavailableHostHook(args[0], os.Stdin, os.Stdout)
+		}
+	}
+	return runHostHook(args[0], os.Stdin, os.Stdout)
 }
 
-// A command-hook exit status of 1 is non-blocking in CodeBuddy. Initialization
-// failures must still reach the adapter's structured pre/post failure mapping.
-func codeBuddyClient() (adapters.Decider, string, string) {
+// A command-hook exit status of 1 is non-blocking in CodeBuddy and WorkBuddy.
+// Initialization failures must still reach the adapter's structured pre/post
+// failure mapping.
+func hostHookClient() (adapters.Decider, string, string) {
 	dir, err := stateDir()
 	if err != nil {
 		return nil, "block", ""
@@ -442,17 +468,32 @@ func codeBuddyClient() (adapters.Decider, string, string) {
 	return d, cfg.EnforcementMode, dir
 }
 
-func runCodeBuddyHook(in io.Reader, out io.Writer) error {
-	d, mode, dir := codeBuddyClient()
+func runHostHook(platform string, in io.Reader, out io.Writer) error {
+	d, mode, dir := hostHookClient()
+	return writeHostHook(platform, in, out, d, mode, dir)
+}
+
+// runUnavailableHostHook preserves fail-closed behavior when the hook cannot
+// even select a trustworthy state directory. These hosts do not treat exit 1
+// as a blocking decision, so returning a CLI error would be unsafe.
+func runUnavailableHostHook(platform string, in io.Reader, out io.Writer) error {
+	return writeHostHook(platform, in, out, nil, "block", "")
+}
+
+func writeHostHook(platform string, in io.Reader, out io.Writer, d adapters.Decider, mode, dir string) error {
 	agentID := product.Env(product.EnvAgentID, product.EnvAgentIDOld)
 	if agentID == "" {
 		agentID = "default"
 	}
-	result, err := adapters.CodeBuddyHook(in, d, agentID, mode, dir)
+	result, err := adapters.HostToolHook(in, d, agentID, mode, dir, platform)
 	if err != nil {
 		return err
 	}
 	return json.NewEncoder(out).Encode(result)
+}
+
+func runCodeBuddyHook(in io.Reader, out io.Writer) error {
+	return runHostHook("codebuddy", in, out)
 }
 
 func cmdServe(args []string) error {

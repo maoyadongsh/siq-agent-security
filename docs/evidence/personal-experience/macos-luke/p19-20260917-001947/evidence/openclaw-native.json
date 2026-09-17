@@ -1,0 +1,49 @@
+{
+  "schema_version": "personal-macos-openclaw-p19-evidence/v1",
+  "candidate_sha": "8fe579ad7ef916837f8656bfa9a4488060864038",
+  "binary_sha256": "e86646f245225f0dce93658469df098f400a6193d71cb33ae1665944001201d3",
+  "host_version": "2026.9.4",
+  "native_entrypoints": [
+    "public openclaw agent --local with installed plugin and isolated local model",
+    "public openclaw skills install with explicit operator install policy in isolated HOME/profile"
+  ],
+  "checks_passed_this_candidate": [
+    "discovery",
+    "normal_execution",
+    "pre_execution_denial",
+    "install_interception"
+  ],
+  "runtime_probe": {
+    "exit_code": 0,
+    "checks": 17,
+    "signed_receipts": 3,
+    "allowed_read_reached_model": true,
+    "out_of_scope_write_absent": true,
+    "private_raw_sha256": "96b60256fc0b53927bf3428926f0e258e3d4d1d68486b12d02db02d02c19122b"
+  },
+  "install_probe": {
+    "exit_code": 0,
+    "checks": 13,
+    "malicious_skill_blocked_before_target_publication": true,
+    "warning_refused_without_explicit_acknowledgement": true,
+    "warning_accepted_only_after_explicit_acknowledgement": true,
+    "clean_skill_installed": true,
+    "adapter_uninstalled_and_original_config_restored": true,
+    "private_raw_sha256": "a72f9738b441fa6242f6b5ec8cb8a8af2c9afebb708cb5568c83a1a29603f813"
+  },
+  "approval_probe": {
+    "exit_code": 1,
+    "hold_decisions": 6,
+    "native_platform_approval_requests": 0,
+    "tool_executions": 0,
+    "signed_chain_verified": true,
+    "reason": "installed OpenClaw lacks a waiting, vetoable approval execution recheck checkpoint; adapter fails closed"
+  },
+  "limits": [
+    "No external paid model or daily OpenClaw instance was used.",
+    "Install interception was proved for local Skill install and warning acknowledgement; Plugin policy and other source families were not claimed.",
+    "Service-down denial passed on the earlier P18 candidate but was not re-executed on this candidate.",
+    "The host hook has no trusted per-tool-call causal Skill origin; controlled-session SEC is not that proof.",
+    "Approval resume and post-approval final-parameter recheck remain blocked, not passed."
+  ]
+}

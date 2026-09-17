@@ -14,6 +14,7 @@ import hashlib
 import importlib.util
 import json
 import re
+import sqlite3
 import shutil
 import subprocess
 import sys
@@ -266,12 +267,32 @@ class Harness(native.fixture.Harness):
         )
 
     def session_key(self):
-        store = self.oc / "agents" / fixture.AGENT / "sessions/sessions.json"
-        entries = json.loads(store.read_text())
-        require(bool(entries), "expected at least one native session")
-        key, entry = next(iter(entries.items()))
-        require(bool(entry.get("sessionId")), "native session ID missing")
-        return key
+        # OpenClaw 2026.5.x wrote agents/<id>/sessions/sessions.json.
+        # Homebrew 2026.9.4 persists the same routing key in the agent sqlite.
+        json_store = self.oc / "agents" / fixture.AGENT / "sessions/sessions.json"
+        if json_store.is_file():
+            entries = json.loads(json_store.read_text())
+            require(bool(entries), "expected at least one native session")
+            key, entry = next(iter(entries.items()))
+            require(bool(entry.get("sessionId")), "native session ID missing")
+            return key
+        db = self.oc / "agents" / fixture.AGENT / "agent/openclaw-agent.sqlite"
+        require(db.is_file(), "native session store missing")
+        con = sqlite3.connect(str(db), timeout=5)
+        try:
+            rows = list(
+                con.execute(
+                    "SELECT session_key, current_session_id FROM session_nodes "
+                    "WHERE session_key IS NOT NULL AND TRIM(session_key) != ''"
+                )
+            )
+        finally:
+            con.close()
+        require(bool(rows), "expected at least one native session")
+        preferred = "agent:" + fixture.AGENT + ":main"
+        chosen = next((row for row in rows if row[0] == preferred), rows[0])
+        require(bool(chosen[1]), "native session ID missing")
+        return chosen[0]
 
     def assert_call(self, records, call_id, outcome):
         own = [row for row in records if row.get("tool_call_id") == call_id]

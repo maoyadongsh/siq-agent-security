@@ -4,15 +4,15 @@
 
 ## Skill 安装检查
 
-请通过 SIQ 的 Skill 导入、检查和确认安装流程安装 Skill。已验证的 OpenClaw 2026.5.12 不接受顶层 `security.installPolicy`；安装器不再写入该字段，盘点也不把它视为有效安装门禁。尚未证明 OpenClaw 原生安装入口可被本插件拦截。
+请通过 SIQ 的 Skill 导入、检查和确认安装流程安装 Skill。已验证的 OpenClaw 2026.5.12 不接受顶层 `security.installPolicy`；默认安装器仍不写入该字段。OpenClaw 2026.9.4 已支持 operator-owned `security.installPolicy`，可在确认目标实例版本后显式执行 `siq-agent-security adapter preview openclaw install --enable-install-policy`、审阅后执行 `adapter install openclaw --enable-install-policy`。此策略只覆盖原生 Skill 安装/更新，不覆盖 Plugin；未知既有策略不得覆盖。
 
-`policy-exec` 保留供有明确调用合同的外部宿主使用。历史本产品配置仅在归属记录和完整策略内容匹配后迁移；未知用户配置保留。
+`policy-exec` 使用 OpenClaw 协议 v1 的 `sourcePath`/`sourcePathKind` 和 `protocolVersion`，错误或持久化失败时阻断。历史本产品配置仅在归属记录和完整策略内容匹配后迁移；卸载剥离本产品精确策略，未知用户配置保留。本机 2026.9.4 的公开 `skills install` 已在隔离 HOME/profile 上实测恶意 Skill 安装前被拒、干净 Skill 安装成功及卸载还原；这不证明其他宿主或旧版支持。
 
 ## L2 运行时
 
 ```bash
 siq-agent-security adapter install openclaw
-# writes plugin assets/manifest, registers plugins.load.paths + entry, without injecting unsupported installPolicy (backup first)
+# 默认只登记插件，不启用装前策略；旧版/未知版保持这个默认
 ```
 
 | 决策 API `action` | 插件返回 |
@@ -79,3 +79,5 @@ Managed 安装器写入 camelCase 配置 `runtimeIdentityId` / `agentId` / `toke
 验证：`node --experimental-strip-types --test tests/managed-bridge.test.mjs`（50 个场景，覆盖 legacy/托管注册、身份与 URL 边界、三种模式、参数/输出捕获、hold 相关性、签名预留拒绝/畸形响应/响应丢失及重复回调）。测试通过 resolution hook 替换 OpenClaw SDK 入口并用 mock 本地服务驱动真实 hook handler，**不是**真实 OpenClaw 网关验收；原生范围另见对应证据报告。
 
 凭据仅发送至显式端口的 HTTP loopback，localhost 固定为 127.0.0.1，不跟随重定向。托管模式要求真实会话、有效身份凭据及带 action/receipt 的允许裁决。输出原文仅在允许执行或 hold 最终复验通过后按精确调用关联采集一次；重复调用保持失效至关联过期。
+
+macOS Homebrew OpenClaw 2026.9.4 的默认会话仓是 `agents/<id>/agent/openclaw-agent.sqlite`（`session_nodes.session_key`），不再写 `sessions/sessions.json`。本插件仍只使用 hook 提供的 `sessionKey`，不读取宿主会话文件。实测夹具若要对账原生会话身份，必须读当前版本实际存储，不能假定 2026.5.12 的 JSON 路径。

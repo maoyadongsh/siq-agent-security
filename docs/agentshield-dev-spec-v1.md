@@ -115,7 +115,7 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 
 本增量只实现受支持格式的入口防护，不实现跨格式迁移。`state-format.json` 的合同为 `state-format/v1`，字段见 `packages/contracts/local-state-format.v1.schema.json`：程序版本只作说明，格式版本才决定兼容性；目前仅支持 1。小于 1 的显式版本、未来版本、未知 schema/字段、重复键、多个 JSON 值、无效 UTF-8、缺失必需字段、超预算、非普通文件或符号链接一律拒绝，不自动改标记、迁移或修复。不输出文件原文或私有路径。
 
-检查顺序：CLI 分派前只读预检（version/help 等不访问状态的命令除外；serve 使用解析后的 --state-dir，CodeBuddy hook 走结构化 deny，不能仅退出 1）；`state.Open` 必须在 MkdirAll 前检查；`AcquireWriter` 必须在创建/隔离锁前检查并在取得锁后复验，维护锁使用显式 `AcquireScopedWriter(stateDir, scope)`，service-control/adapter-write/client-releases/client-snapshots 先检查传入的真实根状态，不能按目录 basename 猜父状态；`Initialize` 在任何配置/身份写入前复验。完整父路径静态符号链接拒绝，读取标记在打开前/后校验普通文件身份并限读 4097 字节。它不是抵抗任意同 UID 并发篡改的 OS 隔离保证。
+检查顺序：CLI 分派前只读预检（version/help 等不访问状态的命令除外；serve 使用解析后的 --state-dir，CodeBuddy hook 走结构化 deny，不能仅退出 1）；`state.Open` 必须在 MkdirAll 前检查；`AcquireWriter` 必须在创建/隔离锁前检查并在取得锁后复验，维护锁使用显式 `AcquireScopedWriter(stateDir, scope)`，service-control/adapter-write/client-releases/client-snapshots 先检查传入的真实根状态，不能按目录 basename 猜父状态；`Initialize` 在任何配置/身份写入前复验。状态根本身必须是真实目录，不得为符号链接。已存在祖先必须是目录；仅 Darwin 的 `/var`→`/private/var`、`/tmp`→`/private/tmp`、`/etc`→`/private/etc` 三个固定系统别名允许作为祖先路径分量；Readlink 目标必须精确解析到对应位置，目标本身必须是真实目录。Linux/Windows 与未知根级别名维持符号链接拒绝，否则 Go 测试目录和 Darwin 临时状态会被误判 corrupt。用户在中间路径创建的符号链接仍拒绝。inventory 发现、adapter 配置镜像读取、Hermes profile 根（含 HOME 之外的 Override）走同一祖先规则，被检查的叶路径仍拒绝符号链接。读取标记在打开前/后校验普通文件身份并限读 4097 字节。DirectoryID / v2 `state_directory_id` 继续绑定 `EvalSymlinks` 后的规范路径。它不是抵抗任意同 UID 并发篡改的 OS 隔离保证。
 
 缺失标记不是自动认定格式 0：不存在/空目录（锁文件除外）允许初始化；已具有本版本 `state.Open` 建立的完整核心目录结构，或具有可解码合法本地 config.json、有效本地 signing.seed 的历史目录；根条目只含既有独立子存储 client-releases/client-snapshots/skill-imports/adapter-write/service-control 的真实目录也保留兼容，以 `legacy_unversioned` 兼容原有格式族，但不因打开/serve 就重打标记。未知非空目录拒绝。目录识别不意味着其中 Grant/回执可信，各模块仍逐对象验签、校验。HTTP 分派、Server 构造、原文清理及核心 Store 写入也复验格式；这不等于所有独立子存储已有统一事务或任意旧二进制都能拒写。明确 `init` 在既有初始化检查通过后，以不可变排他发布增加格式 1 标记；不覆盖已有标记，不改写历史授权、回执或已有配置。
 
@@ -604,7 +604,7 @@ CLI 成功以人类可读文本报告“已注册、尚未启动”；签名配�
 
 ### 3.11.12 Linux 产品升级与前滚恢复（UX-003/014）
 
-`service-upgrade --manifest FILE --binary FILE --confirm-upgrade [--recover ID]` 仅 Linux。先检查 v2 发行签名/兼容声明与候选 pin，再暂存并重新校验暂存内容；随后持生命周期锁复验当前源 unit 和系统归属。显式确认覆盖停止保护提示；未确认或候选无效时不停止服务。正常停止后获取主 Writer，准备并打印切换 ID，应用 §3.11.11，释放主锁后 reload、复验 target 配置、启动；active/正数 MainPID/目录健康绑定/发行版本一致才报告成功。
+`service-upgrade --manifest FILE --binary FILE --confirm-upgrade [--recover ID]` 在 Linux 走用户 systemd（本节）。macOS LaunchAgent 组合见 §3.11.54，不把 systemd 的 stop/reload/start 语义套到 launchd。Linux 先检查 v2 发行签名/兼容声明与候选 pin，再暂存并重新校验暂存内容；随后持生命周期锁复验当前源 unit 和系统归属。显式确认覆盖停止保护提示；未确认或候选无效时不停止服务。正常停止后获取主 Writer，准备并打印切换 ID，应用 §3.11.11，释放主锁后 reload、复验 target 配置、启动；active/正数 MainPID/目录健康绑定/发行版本一致才报告成功。
 
 失败保留候选、日志和旧配置，不自动回滚台账。`--recover ID` 重新验签候选并要求目标 unit 与日志逐字节一致，加载同一已签名事务；停止状态下恢复文件阶段后继续 reload/start。若该目标已运行且配置/健康/版本一致，则只读复用；其他运行状态拒绝恢复，不误停未知版本。任意阶段错误不声称升级完成；失败消息保留已知事务 ID。恢复不是新授权，也不接受替换目标。自动回退和跨 OS 系统集成仍是后续工作。
 
@@ -612,7 +612,7 @@ CLI 成功以人类可读文本报告“已注册、尚未启动”；签名配�
 
 ### 3.11.13 显式回退至原事务源配置（UX-003/014）
 
-`service-rollback --transaction ID --manifest OLD --binary OLD --confirm-rollback [--recover ID]` 只用于已完成配置切换的 Linux 用户服务。先只读验签原事务，校验旧版本 v2 发行清单/兼容声明/当前平台 pin，规范化 OLD 路径渲染结果必须逐字节等于原事务 SourceUnit；不能把任意旧版本当作该次回退目标。原程序位置与内容必须保留且通过验签，不覆盖未知程序；缺失时仅按 §3.11.16 明确恢复。
+`service-rollback --transaction ID --manifest OLD --binary OLD --confirm-rollback [--recover ID]` 只用于已完成配置切换的 Linux 用户服务。macOS 回退见 §3.11.54。先只读验签原事务，校验旧版本 v2 发行清单/兼容声明/当前平台 pin，规范化 OLD 路径渲染结果必须逐字节等于原事务 SourceUnit；不能把任意旧版本当作该次回退目标。原程序位置与内容必须保留且通过验签，不覆盖未知程序；缺失时仅按 §3.11.16 明确恢复。
 
 回退从原 TargetUnit 到原 SourceUnit 创建新的签名切换事务，保留原记录；恢复回退须使用新的事务 ID，并重复原事务/旧候选绑定检查。显式确认覆盖短暂停止保护；已失败且无主进程的源可回退，仍须主 Writer 验证，未知进程状态不操作。成功要求旧发行版本/目录健康及 manager active/MainPID 读回一致。授权、撤销与台账均不回滚，旧任意二进制不获得新权限。
 
@@ -716,25 +716,29 @@ launch-agent-register 仅 macOS，复用已签名 plist 准备，在生命周期
 
 ### 3.11.26 macOS 已加载配置只读核对（UX-003）
 
-launch-agent-status 仅 macOS。先读取/验证当前程序渲染的 plist 签名归属和当前用户 Library/LaunchAgents 精确链接，不创建或修复文件。绝对 /bin/launchctl 在 15 秒/64 KiB 输出预算下执行；移除 LAUNCHD_SOCKET 环境覆盖，manageruid 必须等于非 root 当前 uid，managername 必须 Aqua，才查询当前域 list -x <已验证 label>。
+launch-agent-status 仅 macOS。先读取/验证当前程序渲染的 plist 签名归属和当前用户 Library/LaunchAgents 精确链接，不创建或修复文件。绝对 /bin/launchctl 在 15 秒/64 KiB 输出预算下执行；移除 LAUNCHD_SOCKET 环境覆盖，manageruid 必须等于非 root 当前 uid，managername 必须 Aqua。
 
-XML plist 使用标准库递归解析，限制 64 KiB/16 层/2048 元素，拒绝重复 key、命名空间、未知结构和非整数数值。逐项比较全部原渲染字段，ProgramArguments/EnvironmentVariables/label 等必须一致；额外字段仅允许整数 LastExitStatus、PID、OnDemand=true、LimitLoadToSessionType=Aqua；其他额外字段（含 Program/RootDirectory/WorkingDirectory/UserName/GroupName）视为未知配置并拒绝，不推断系统默认值。PID 若存在必须正整数；存在进程时再要求本实例目录健康才报告已运行，否则只报告已加载且未报告运行 PID。launchctl 失败不解释为任务不存在，禁止用无结构 print 文本替代。
+Darwin 25（本机实机：`launchctl help list` 为 `list [service-name]`）上 `list -x <label>` 不是 XML 开关：`-x` 被当成服务名，查询失败且不能当作缺席。禁止调用 `list -x`。`list <label>` 返回的 OpenStep 文本缺少 EnvironmentVariables、Umask、ExitTimeOut 和已加载源路径，不能单独作为归属证明。
 
-此兼容路径依据 Apple 开源 launchctl 的 list -x 实现，当前 macOS 是否提供该接口须实机验证。尚未支持的版本拒绝并保留现场，不隐式调用旧 load/unload 或不经验证启动。状态核对不证明完整进程内存身份，尚不启用 bootstrap/kickstart；后续加载动作依赖该只读前置。
+目标在当前域列表中出现后，只查询 `launchctl print gui/<当前 uid>/<已验证 label>`。解析器限制 64 KiB、UTF-8、完整换行结尾、8 层/2048 节点，按制表符缩进识别 `key = value`、`key = {`、`key => value` 与参数数组行，拒绝重复 key、空 key、控制字符和尾随内容。输出不得写入错误消息或证据正文。
+
+必须与签名源及规范化源路径一致的字段：`type=LaunchAgent`、`path` 等于已验证 plist 的 EvalSymlinks 路径、`program` 与 `arguments` 等于 ProgramArguments、`stdout path`/`stderr path` 等于 `/dev/null`、`umask` 为 Umask 的八进制、`exit timeout` 等于 ExitTimeOut、`domain` 为 `gui/<uid>` 或以其后空格引导的当前域、`environment` 含精确 `SIQ_AGENT_SECURITY_STATE_DIR`。环境块额外键仅允许 launchd 注入的 `OSLogRateLimit` 与等于 label 的 `XPC_SERVICE_NAME`。签名源 KeepAlive/RunAtLoad 必须为 false；print 若出现 keep alive、run at load、username、working directory、root directory 等非允许顶层键则拒绝。允许的运行时顶层键为封闭名单（jetsam/coalition/asid/pid 等 Darwin 25 实测字段）；未知顶层键 fail-closed。
+
+`state` 仅接受 `running`（必须有正整数 `pid`）、`not running`（不得有 `pid`）或 `xpcproxy`（Darwin 25 实测的 kickstart→exec 过渡态，必须有正整数 `pid`，即即将 exec 为服务进程的 xpcproxy 进程；调用方仍要求健康检查通过才报告就绪）。`last exit code` 为 `(never exited)` 或规范有符号整数。有正 PID 时再要求本实例目录健康才报告已运行，否则只报告已加载且未报告运行 PID。launchctl 失败或格式不支持不解释为任务不存在，也不回退到 `list -x` 或未约束的人类文本。状态核对不证明完整进程内存身份。
 
 ### 3.11.27 macOS 未加载状态的显式判定（UX-003）
 
 launch-agent-status 在签名源和注册链接核对后，先验证 GUI 用户域，再查询不带参数的 launchctl list。仅接受成功退出、完整换行结尾、64 KiB 内的 TSV：首行精确 PID/Status/Label，后续每行三列；PID 为正十进制整数或 -，Status 为规范有符号整数、- 或 Apple 历史实现的 ???，label 为非空无控制字符 UTF-8。拒绝重复 label、额外诊断、空行、缺列和截断；必须解析全部行才可判定目标 label 缺席。其他任务的名称和输出不落盘、不进入错误消息。
 
-目标缺席只表示查询时当前域未加载，状态命令输出“配置已注册，当前用户域未加载”，不代表后台停止、全系统不存在或授权后续覆盖。目标存在时仍执行 §3.11.26 的 XML 全字段归属核对，后续查询失败（包括两次查询间任务消失）保持未确认，不降格为缺席。列表中的 PID/Status 不用于归属或健康判断。此增量只读、不新增持久合同；未来加载必须重新核对域、源、链接及即时存在状态，不能复用历史查询结果。
+目标缺席只表示查询时当前域未加载，状态命令输出“配置已注册，当前用户域未加载”，不代表后台停止、全系统不存在或授权后续覆盖。目标存在时仍执行 §3.11.26 的 print 归属核对，后续查询失败（包括两次查询间任务消失）保持未确认，不降格为缺席。列表中的 PID/Status 不用于归属或健康判断。此增量只读、不新增持久合同；未来加载必须重新核对域、源、链接及即时存在状态，不能复用历史查询结果。
 
 格式依据 Apple 公开历史 launchctl 源码 list_cmd/print_jobs；真实 macOS 兼容性仍待验收，不以模拟输出证明原生支持。
 
 ### 3.11.28 macOS 显式加载（UX-003）
 
-launch-agent-load --confirm-load 仅 macOS，要求既有签名源和当前用户 Library/LaunchAgents 精确链接；不自动准备或修复。持 service-control 生命周期锁，复用完整 GUI 域枚举与已加载 XML 归属核对。已加载且归属一致时只复验文件并返回，不启动或重启。缺席时持主 Writer，立即再核对域、列表、签名源和链接，仅对仍缺席的实例执行 /bin/launchctl bootstrap gui/<当前 uid> <精确注册链接>；不使用 sudo、force、enable、旧 load 或目录批量加载。
+launch-agent-load --confirm-load 仅 macOS，要求既有签名源和当前用户 Library/LaunchAgents 精确链接；不自动准备或修复。持 service-control 生命周期锁，复用完整 GUI 域枚举与 §3.11.26 print 归属核对。已加载且归属一致时只复验文件并返回，不启动或重启。缺席时持主 Writer，立即再核对域、列表、签名源和链接，仅对仍缺席的实例执行 /bin/launchctl bootstrap gui/<当前 uid> <精确注册链接>；不使用 sudo、force、enable、旧 load 或目录批量加载。
 
-bootstrap 返回后重新核对源、链接和加载状态，只有当前域目标存在且完整 XML 与签名源相符才确认加载。命令失败或读回失败保持未确认，保留配置供用户检查和同命令重试，不自动 bootout 或删链接。主 Writer 与模板 RunAtLoad=false/KeepAlive=false 共同保留加载与启动边界；不因加载成功宣称保护运行。重复命令允许已运行且归属一致的任务，不占用该任务的主 Writer。文件复验不等于抵御同用户恶意并发替换，系统加载仍可能受外部会话操作影响；后续启动必须再验证归属。
+bootstrap 返回后重新核对源、链接和加载状态，只有当前域目标存在且 print 归属与签名源相符才确认加载。命令失败或读回失败保持未确认，保留配置供用户检查和同命令重试，不自动 bootout 或删链接。主 Writer 与模板 RunAtLoad=false/KeepAlive=false 共同保留加载与启动边界；不因加载成功宣称保护运行。重复命令允许已运行且归属一致的任务，不占用该任务的主 Writer。文件复验不等于抵御同用户恶意并发替换，系统加载仍可能受外部会话操作影响；后续启动必须再验证归属。
 
 bootstrap GUI 域用法参考 CircleCI 官方 macOS runner 安装文档；当前 Linux 仅使用模拟控制器与临时目录验证流程，真实 macOS 加载和接口兼容性仍待验收。本命令不新增持久合同。
 
@@ -742,21 +746,21 @@ bootstrap GUI 域用法参考 CircleCI 官方 macOS runner 安装文档；当前
 
 launch-agent-start --confirm-start 在生命周期锁内复用已注册配置加载流程。已加载配置报告正 PID 时只等待/检查当前实例健康，不重启；无 PID 时先获取并释放主 Writer 确认没有已知台账写者，再立即复验签名源、精确链接、GUI 域和加载配置。仍无 PID 才执行 kickstart gui/<uid>/<label>，不带 -k、不 enable 或替换任务。启动必须在释放主 Writer 后执行，让 serve 自行获取单写者锁；外部启动竞争由该锁拒绝，不声称消除同用户并发竞争。
 
-命令返回成功要求签名源/链接一致、已加载 XML 完整核对、正 PID 和当前目录健康 API 全部通过，并在健康返回后复核源/链接。健康最多轮询 10 秒（单次 manager/HTTP 请求另有自身超时），100 ms 间隔；配置/查询错误立即失败，无 PID 或健康未就绪可继续等候。超时和启动命令失败保留现场，不强制重启、结束进程或自动卸载。API 健康复用既有目录身份验证，不把 PID 声明当作 API 身份。
+命令返回成功要求签名源/链接一致、已加载 print 归属核对、正 PID 和当前目录健康 API 全部通过，并在健康返回后复核源/链接。健康最多轮询 10 秒（单次 manager/HTTP 请求另有自身超时），100 ms 间隔；配置/查询错误立即失败，无 PID 或健康未就绪可继续等候。超时和启动命令失败保留现场，不强制重启、结束进程或自动卸载。API 健康复用既有目录身份验证，不把 PID 声明当作 API 身份。
 
 Linux 模拟控制器测试不作为 macOS 原生启动证据；当前不声明 GUI 通知、退出恢复、自启或正式安装器完成。
 
 ### 3.11.30 macOS 显式停止（UX-003）
 
-launch-agent-stop --confirm-stop 在生命周期锁内验证既有签名源、当前用户目录精确注册链接、GUI 域和已加载 XML。目标缺席不执行任何系统命令，只有主 Writer 可获取且归属文件复验一致才报告当前域未加载。目标有 PID 才执行当前已验证域的 stop <label>（Apple 历史 launchctl 接口），不 bootout、不 kill PID、不 disable、不删除配置；模板 KeepAlive=false，仍须真实系统验证停止语义。
+launch-agent-stop --confirm-stop 在生命周期锁内验证既有签名源、当前用户目录精确注册链接、GUI 域和已加载 print 归属。目标缺席不执行任何系统命令，只有主 Writer 可获取且归属文件复验一致才报告当前域未加载。目标有 PID 才执行当前已验证域的 stop <label>（Apple 现行 `launchctl stop <service-name>`），不 bootout、不 kill PID、不 disable、不删除配置；模板 KeepAlive=false，仍须真实系统验证停止语义。
 
-停止后最多轮询 35 秒（单次 manager 超时另计），每 100 ms 复验源/链接及完整 XML，直到 PID 消失。主动停止的任务必须存在整数 LastExitStatus=0，随后在主 Writer 内复验文件和最后一次 XML/PID，才能报告正常停止。进程仍存在、任务查询失败、异常退出或 Writer 冲突均返回未确认并保留现场；不将删除任务、查询失败或失联推断成正常退出。最初已无 PID 的任务仅报告无运行进程且台账可用，不捏造退出状态。此状态是瞬时读回，不保证外部程序不会随后重启服务。
+停止后最多轮询 35 秒（单次 manager 超时另计），每 100 ms 复验源/链接及 print 归属，直到 PID 消失。主动停止的任务必须存在整数 `last exit code=0`，随后在主 Writer 内复验文件和最后一次 print/PID，才能报告正常停止。进程仍存在、任务查询失败、异常退出或 Writer 冲突均返回未确认并保留现场；不将删除任务、查询失败或失联推断成正常退出。最初已无 PID 的任务仅报告无运行进程且台账可用，不捏造退出状态。此状态是瞬时读回，不保证外部程序不会随后重启服务。
 
 状态文件和用户注册链接保持原样，后续 launch-agent-start 可复用已加载配置。没有 macOS 实机时只用临时状态与模拟控制器验证，不计为原生停止或排空验收。
 
 ### 3.11.31 macOS 注销与中断恢复（UX-003）
 
-launch-agent-unregister --confirm-unregister 复用生命周期锁，验证当前实例签名源、普通用户目录及精确注册链接，完整枚举/已加载 XML 核对后拒绝任何正 PID，提示先 stop。主 Writer 可获取后再次复验；已加载且无 PID 时只 bootout gui/<uid>/<label>，随后必须完整枚举证明目标缺席，才删除已复验的单个注册链接并同步其目录。保留 plist、签名归属、配置、密钥及历史，不删除目录或修改其他服务。
+launch-agent-unregister --confirm-unregister 复用生命周期锁，验证当前实例签名源、普通用户目录及精确注册链接，完整枚举/已加载 print 核对后拒绝任何正 PID，提示先 stop。主 Writer 可获取后再次复验；已加载且无 PID 时只 bootout gui/<uid>/<label>，随后必须完整枚举证明目标缺席，才删除已复验的单个注册链接并同步其目录。保留 plist、签名归属、配置、密钥及历史，不删除目录或修改其他服务。
 
 bootout 返回失败、目标仍存在、域/源/链接漂移均失败保留现场。链接缺失只有当前域也缺席时才视为注销重试，仍须主 Writer 可获取；链接缺失但任务存在拒绝接管。bootout 成功而删除链接前中断可重试，删除后重复操作不再调用系统变更。未知普通文件/异目标链接不删除。注销只证明当前用户域未加载、没有该注册链接及写者冲突；不声称历史异常退出正常排空，也不抵御其他同用户进程在最终检查后重新注册。
 
@@ -780,7 +784,7 @@ teardown --confirm-teardown 在 macOS 通过既有生命周期锁包装一次停
 
 ### 3.11.34 后台启动的显式状态目录（UX-003，Windows 前置）
 
-serve 增加 --state-dir <已存在规范绝对目录>。显式指定优先于新旧状态目录环境变量，仅绑定当前 serve 使用的 Store/锁/密钥/台账/健康响应，不修改进程环境或全局默认目录。不指定时保留原环境/平台默认行为。显式空值、相对路径、非规范路径、目录符号链接别名、非目录或不存在路径在状态写入前拒绝；serve 多余位置参数拒绝。
+serve 增加 --state-dir <已存在规范绝对目录>。显式指定优先于新旧状态目录环境变量，仅绑定当前 serve 使用的 Store/锁/密钥/台账/健康响应，不修改进程环境或全局默认目录。不指定时保留原环境/平台默认行为。显式空值、相对路径、非规范路径、状态根本身是符号链接别名、非目录或不存在路径在状态写入前拒绝；祖先卷别名（macOS `/var`→`/private/var`）不单独构成拒绝，因为 `EvalSymlinks` 字符串与调用路径不同但 `SameFile` 仍指向同一目录。serve 多余位置参数拒绝。
 
 Windows Task Scheduler 的 Exec 动作将通过该参数绑定实例目录，避免依赖任务引擎缓存的环境变量；不经过 cmd.exe/PowerShell 设置环境。该参数本身不实现 Windows 任务注册或原生生命周期。测试须证明显式目录不会写入环境指向的另一实例，且健康响应属于选定目录；Linux 子进程证据不能算 Windows 原生验收。
 
@@ -915,6 +919,24 @@ setup --confirm-setup [--port N] [--open-ui] 在 Windows 接入既有初始化�
 teardown --confirm-teardown 在 Windows 持生命周期锁贯穿正常停止和注销；先拒绝 pending 切换、核对签名归属与定点存在性。存在时复用 task-stop 核心，停止未确认不注销；已缺席跳过停止，进入注销核心的幂等缺席复验。停止后取得主 Writer，再复用 task-unregister 完整归属/空闲/缺席检查，锁忙即拒绝。
 
 任何失败保留现场，重试可恢复已经完成注销但响应中断的状态；不重建任务，不移除程序、配置、身份、历史或智能体钩子。成功说明后台入口已移除，钩子仍在且 block 模式服务不可达会拒绝。各平台原生验收仍按真实宿主证据单独登记。
+
+### 3.11.53 macOS LaunchAgent 配置成对切换事务（UX-003/014）
+
+新增 `local-launch-agent-switch/v1` 本地签名日志，与 §3.11.11/§3.11.15 的 Linux 日志并列而非复用：保存 source/target 的 `LaunchAgentRecord` 与 plist 字节、必需 `binary_bindings`（source/target 小写 SHA-256），签名绑定当前实例、目录标识与同一 Label；无 bindings 的 v1 形态不存在，混入 Linux 字段或 `.service` 记录一律拒绝。日志仍写入 `service-switches/<sha256>.json` 并共享 `service-switch.pending.json` 门闸，因此 `serve`、setup/teardown、Windows/Linux 切换与 macOS 加载都会在 pending 时拒绝；`ReadServiceSwitch` 读到 macOS 日志按 schema 不符拒绝，反向同理。
+
+应用只替换 `<label>.plist` 与 `launch-agent.json` 两个归属文件，前置验证、部分完成恢复、`.done.json` 与 pending 移除规则与 §3.11.11 相同；不执行 launchctl，不改配置、私钥或台账。macOS 显式加载（§3.11.28）在核对签名归属前先检查 pending 门闸，半写入配置不得被 bootstrap。
+
+### 3.11.54 macOS 产品升级、失败恢复与显式回退（UX-003/014）
+
+`service-upgrade --manifest FILE --binary FILE --confirm-upgrade [--source-manifest OLD] [--recover ID]` 在 macOS 沿 §3.11.12 的步骤执行，差异只在系统管理器：候选 v2/v3 发行验签、兼容声明、当前平台 pin、暂存与二次校验、当前程序副本留存（§3.11.14）、摘要绑定与 os.Executable 与源 plist 一致性检查全部相同；目标配置为 `renderLaunchAgent(暂存路径, 规范目录, instance_id)`。持生命周期锁复验源 plist 签名归属、`~/Library/LaunchAgents/<label>.plist` 符号链接归属与 GUI 域；未注册的实例拒绝升级。
+
+已加载且有 PID 时先 `launchctl stop <label>`，按 §3.11.30 等待 PID=0 且 `last exit code=0`，再取主 Writer（证明旧进程已释放台账）；随后准备并打印切换 ID、应用 §3.11.53，释放主 Writer。launchd 在 bootstrap 时缓存 plist，故文件切换后必须对已加载任务 `bootout gui/<uid>/<label>` 并确认从 `list` 消失，再以同一注册链接 `bootstrap gui/<uid>`、以目标 plist 做 §3.11.26 print 归属核对、复验目标签名归属与候选摘要，最后 `kickstart`；PID>0、目录健康绑定与发行版本一致才报告成功，12 秒内未就绪或读回 `last exit code≠0` 且 PID=0 视为失败，消息保留事务 ID。
+
+失败保留候选、日志、副本与旧配置，不自动回退。`--recover ID` 重新验签候选，要求目标 plist 与日志逐字节一致且 bindings 相同；先按目标、再按源 plist 尝试 print 归属，两者都不匹配即拒绝（未知加载配置不 bootout）。目标已加载、PID>0 且健康版本一致则只读复用；任何 PID>0 的其他状态拒绝恢复，不误停；PID=0 时复验主 Writer 后继续文件阶段（幂等）→ 已加载则 bootout → bootstrap → kickstart。
+
+`service-rollback --transaction ID --binary OLD [--manifest OLD] [--restore-missing-binary] --confirm-rollback [--recover ID]` 在 macOS 读取 `local-launch-agent-switch/v1` 原事务，旧程序路径渲染的 plist 必须逐字节等于原 `source_plist`，程序内容必须等于 `binary_bindings.source_sha256`，缺失时仅按 §3.11.16 从本地副本显式恢复；旧发行清单可显式提供或按 §3.11.17 从留存清单唯一解析。回退创建新的 `local-launch-agent-switch/v1` 事务（bindings 对调），沿上一段相同的 stop → Writer → 切换 → bootout → bootstrap → kickstart → 健康/版本读回流程；已失败且 PID=0 的目标可直接回退，正在运行的目标需先正常停止。授权、撤销与台账不回滚。
+
+本入口的原生验收以 opt-in 测试与实机脚本在真实 launchd GUI 域完成：同一受信构建复制到两个路径完成升级→健康→回退，注入端口占用产生失败启动后 `--recover` 前滚，以及产品 CLI 对开发签发者的拒绝不中断运行中的源进程。这些证明的是进程/配置切换与恢复语义，不是不同发行版本间兼容或正式签名发行；跨发行版本升级仍需真实签名清单后单独验收。
 
 ### 3.12 个人任务活动追溯（UX-011）
 
@@ -1160,7 +1182,7 @@ SkillClaim 中的 Skill ID、摘要、Grant ID 是调用方声明；即使匹配
 
 POST /v1/grants 只有既有 live Grant 的场景 ID/版本与本次请求一致时才能返回 reused。不同场景（包括基线与场景互换）返回 409 grant_scenario_conflict、当前版本及场景，指引显式处理既有授权；不改变现有状态、签名、DesiredPolicy 或审计序列，不自动覆盖/撤销有效权限。未知场景仍为 400。场景目录接口为管理面只读 GET，返回既有 scenarios 数组形状。只读工具仍须满足原有路径授权，选择场景不会隐式增加文件读取权限。
 
-桌面通知默认关闭；正文只含待确认数量。失败投递维护独立的下次重试时刻，15 秒内不重复启动通知子进程；成功合并、归零和失败重试分别处理，归零不能清除尚未到期的失败退避。命令直接 argv 执行、最长 5 秒，stdout/stderr 直接丢弃，不收集进内存，不把命令路径、参数、输出或底层异常写日志。日志仅可使用固定失败/超时/不可用类别。Linux notify-send 是当前默认通知器，其他 OS 和真实桌面投递继续独立验收。
+桌面通知默认关闭；正文只含待确认数量。失败投递维护独立的下次重试时刻，15 秒内不重复启动通知子进程；成功合并、归零和失败重试分别处理，归零不能清除尚未到期的失败退避。命令直接 argv 执行、最长 5 秒，stdout/stderr 直接丢弃，不收集进内存，不把命令路径、参数、输出或底层异常写日志。日志仅可使用固定失败/超时/不可用类别。Linux notify-send 与 macOS `/usr/bin/osascript`（固定两参 `on run` handler，`display notification (item 2 of argv) with title (item 1 of argv)`）是当前默认通知器，其他 OS 继续独立验收。macOS 已知缺口：`display notification` 无点击导航回调，通知只提供计数，点击不会打开本地控制台待办页；该导航缺口如实保留，不以退出 0 冒称可点击跳转。免打扰/通知权限拒绝时 osascript 仍可退出 0，投递不可证明；真实 GUI 投递须在通知中心可见并单独立证。
 
 ### 3.12.35 M131/M132 获取边界与新版检查合同
 
@@ -1180,6 +1202,10 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 
 **安装检查入口**：使用 SIQ 的 Skill 导入、检查与确认安装流程。已验证的 OpenClaw 2026.5.12 不接受顶层 `security.installPolicy`，安装器不得注入该字段，也不得据此声称原生安装已被拦截。`policy-exec` 保留为具备明确调用合同的外部宿主接口。历史本产品写入的字段仅在安装记录归属及完整内容匹配后移除；未知用户配置保留。
 
+**2026-09-17 OpenClaw 2026.9.4 增量**：该宿主已提供 `security.installPolicy` 的正式 operator-owned 装前入口，覆盖受支持的 Skill/Plugin 安装与更新；它与仅在已加载插件流程触发的 `before_install` 不等价。仅在显式 `--enable-install-policy` 的 OpenClaw 单实例预览/安装中，安装器才可写入本产品精确配置，并且必须拒绝已有未知策略、保留无关字段、卸载只剥离记录归属且完整匹配的本产品配置；旧版本默认仍不注入。策略只声明 `targets:["skill"]`，不声称覆盖 Plugin；可执行文件是经宿主校验的绝对普通文件，策略子进程用显式状态目录环境变量，不依赖终端 PATH。`policy-exec` 严格接受 `protocolVersion:1`、`targetType:"skill"`、`sourcePathKind:"directory"` 和非空 `sourcePath`，仅在静态 admission 成功且持久化成功时返回含 `protocolVersion:1` 的 `allow`/`warn`/`block`；缺字段、未知版本/类型、不可读目录、分析或持久化失败均返回 block。warn 必须经宿主独立确认；不把通过准入等同于运行授权。必须用本机公开安装入口证明 block 时目标未发布、allow 时发布，随后外科卸载并核对原配置。未经此原生证明不得提升 `install_interception`。
+
+同版批准钩子的公开类型仅有 `onResolution`，没有等待式、可否决的 `beforeExecute(finalParams)`；分发实现异步通知 `onResolution` 而不等待其 Promise。固定本机版本的原生 worker 真实运行结果为所有 hold 在平台审批前 fail-closed，原因为缺 `approvalExecutionRecheckVersion=1`。不得以修改夹具超时、给配置补能力字段或在异步回调内预留来声称安全继续；`approval_resume`/最终参数复验仍 blocked，待宿主提供执行前等待式检查点或产品实施并实测符合 N06 的原生可信重试。来源（2026-09-17 核对）：[OpenClaw 安装策略](https://docs.openclaw.ai/tools/skills-config#operator-install-policy-securityinstallpolicy)、[工具调用策略钩子](https://docs.openclaw.ai/plugins/hooks/tool-policy)及本机 2026.9.4 分发物 `plugin-entry` 类型/`agent-tools.before-tool-call` 实现。
+
 **运行时（L2）**：插件 `adapters/runtime/openclaw-agentshield/`（TypeScript，`definePluginEntry`）：
 
 - 安装资产包含 `openclaw.plugin.json`（插件 ID、无凭据配置 schema）和 package 的 `openclaw.extensions` 入口。安装器把插件绝对目录加入 `plugins.load.paths`，启用本插件 entry；已有 allow 列表时仅追加本插件，保留其他插件。显式全局禁用或 deny 本插件、配置类型错误时安装拒绝，不擅自打开全局插件开关。卸载只移除本插件的路径/entry/allow 项。
@@ -1190,9 +1216,9 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 - 超时：插件侧 5 s；OpenClaw 钩子 15 s fail-closed 兜底。
 - 配置：`~/.openclaw/siq-agent-security.json` 保存 `endpoint`、`tokenPath`、`enforcementMode`；托管配置增加 `runtimeIdentityId` 和固定 `agentId`。
 
-**卸载**：`siq-agent-security adapter uninstall openclaw` 按归属移除本插件注册及自建文件，保留无关配置；不整文件覆盖用户改动。
-- **安装首备（DEV07-A）：** 改写已有用户配置前，以 `*.siq-agent-security.orig`（O_EXCL、0600）保存首次见到的原文；重装不得覆盖。坏 JSON、指向配置的 symlink、未知 `enforcement_mode` 拒绝且不改写。配置写入同目录暂存+Rename。
-- **外科卸载（DEV07-B）：** OpenClaw/CodeBuddy 在活配置上剥离本产品 `installPolicy`/hooks，保留安装后用户字段；冲突（坏 JSON 等）返回 `RecoveryPlan`，不静默整文件回滚。首备仅供人工恢复参考。
+**卸载**：`siq-agent-security adapter uninstall openclaw` 按归属移除本插件注册及自建文件，保留无关配置；不整文件覆盖用户改动。卸载在移除本产品插件文件后，若 `plugins/<product>` 为真实空目录（非符号链接、无未知条目）则删除该目录；含未知文件时保留目录。OpenClaw 外科卸载后，若接入前无 `plugins` 且剥离本产品登记后仅剩空 allow/entries/load.paths 容器，删除 `plugins` 键，避免把空登记写回用户配置。
+- **安装首备（DEV07-A）：** 改写已有用户配置前，以 `*.siq-agent-security.orig`（O_EXCL、0600）保存首次见到的原文；重装不得覆盖。坏 JSON、指向配置的 symlink、未知 `enforcement_mode` 拒绝且不改写。配置写入同目录暂存+Rename。重装与首备比较按 JSON 语义，不把缩进或键序差异当成“原文已改需人工审阅”。
+- **外科卸载（DEV07-B）：** OpenClaw/CodeBuddy/WorkBuddy 在活配置上剥离本产品 `installPolicy`/hooks，保留安装后用户字段；冲突（坏 JSON 等）返回 `RecoveryPlan`，不静默整文件回滚。剩余文档若与首备语义相同，写回快照原文。首备仅供人工恢复参考。
 - OpenClaw 重装记录保留先前由本产品创建的插件目录/文件及本产品配置的归属；损坏的既有安装记录拒绝继续。卸载同时移除本插件运行时注册，不把“安装资产存在”当作原生运行时已验收。
 
 ### 4.2 Hermes（P0）
@@ -1210,7 +1236,9 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 
 ### 4.3 CodeBuddy / WorkBuddy（P1）
 
-**配置目录（2026-09-07 增量）**：安装、状态、自动发现与卸载统一读取进程环境 `CODEBUDDY_CONFIG_DIR`，未设置或为空时保留 `~/.codebuddy`。覆盖值须为绝对路径，现存路径及祖先不得为符号链接；非法覆盖明确拒绝操作，自动发现忽略该平台，不静默回退默认目录。CLI 与管理 API 使用相同解析逻辑；管理 API 不接受请求正文指定配置目录。卸载须核对最新安装记录中的目标路径，环境改变导致记录与当前配置目录不符时拒绝，避免误删另一实例的钩子。多实例建议分别使用独立 SIQ 状态目录；本增量不扩展 inventory 的扫描范围。
+**配置目录（2026-09-07 增量）**：安装、状态、自动发现与卸载统一读取进程环境 `CODEBUDDY_CONFIG_DIR`，未设置或为空时保留 `~/.codebuddy`。覆盖值须为绝对路径，现存路径及祖先不得为符号链接；非法覆盖明确拒绝操作，自动发现忽略该平台，不静默回退默认目录。CLI 与管理 API 使用相同解析逻辑；管理 API 不接受请求正文指定配置目录。新安装须核对最新安装记录中的唯一目标路径，环境改变或历史记录已混入多个配置根时在写入前拒绝，避免继续污染归属。卸载仍要求当前配置根属于该记录；对旧版本已认证记录中的多个 `settings.json`，同一事务逐一外科移除本产品 hook，任一配置冲突则整批不开始写入。多实例建议分别使用独立 SIQ 状态目录；本增量不扩展 inventory 的扫描范围。
+
+**桌面 hook 所有权增量**：重装只替换本次欲写入的完全相同命令，或最新安装记录中二进制路径、平台及状态目录组合生成的当前/旧版命令；卸载同样只移除记录能精确证明的命令。状态只在可信安装记录与真实 hook 命令吻合时标记已安装。仅包含产品名和 `hook <platform>` 字样的用户命令（例如 `printf` 输出）不得被覆盖、删除或误报为安装。旧记录中无法精确复原的变体保留现场并要求人工恢复，不用子串猜测归属；该规则不把宿主缺失的可信 Skill/安装拦截能力伪称为已支持。
 
 **钩子启动失败（2026-09-07 增量）**：CodeBuddy 将普通非零退出视为非阻断错误，不能用进程退出码 1 代替 pre hook 的拒绝。状态目录、完整配置或 decision token 读取失败时，钩子仍读取事件并输出结构化 PreToolUse 结果；无有效完整配置时按 block，已验证 warn/audit_only 配置但 token 不可用时按 advisory allow。PostToolUse 在客户端不可用时只返回非阻断结果，不制造 observation。状态目录可用时沿用 pending 记录；目录不可用时拒绝仍生效，但不声称已持久化。返回原因仅使用固定类别，不含底层路径、配置内容或凭据。此机制不覆盖二进制未启动、被杀、超时或 stdout 管道不可写的宿主行为。
 
@@ -1230,6 +1258,8 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 `hold → ask`、`deny → deny`、`redact` → 当前适配器尚未接入原生改参，退化为 `ask`。
 
 不使用 Skill frontmatter hooks（仅 fork Skill 且默认关闭）。
+
+**WorkBuddy 桌面（与 CodeBuddy CLI 分列）**：macOS/Windows 桌面应用的配置根为 `WORKBUDDY_CONFIG_DIR`（须为无符号链接祖先的绝对路径），未设置时为 `~/.workbuddy`。SIQ 不把 `CODEBUDDY_CONFIG_DIR` 当作 WorkBuddy 配置根，也不静默回退。安装、状态、自动发现、卸载与 inventory 读取该根下的 `settings.json`；不读取 `config.yaml`、`workbuddy.db`、`claw` 或 pairing 凭据。`adapter install workbuddy` 在 `settings.json` 的 `hooks.PreToolUse` / `hooks.PostToolUse` 追加 `` `<abs>/siq-agent-security hook workbuddy --state-dir <abs-state>` ``（先备份、可卸载），保留 `enabledPlugins` 及其他未知键。命令中的二进制和状态目录都按目标 OS 的单参数规则引用，空格、单引号、中文不得改变 argv。Electron 子进程通常不继承 SIQ 环境变量，因此 WorkBuddy 钩子命令必须带绝对 `--state-dir`；`siq-agent-security hook workbuddy [--state-dir DIR]` 与 CodeBuddy 使用同一 JSON 合同，但回执与 pending 的 `platform` 必须为 `workbuddy`。WorkBuddy 与 CodeBuddy 使用上一段的单根新安装和历史混合记录整批外科卸载规则。`POST /v1/grants` 与 CLI `grant --platform workbuddy` 必须接受该平台；ActiveGrant 按 platform+agent_id 匹配，WorkBuddy 的 allow 不得签发到 `codebuddy` 或其他平台。CodeBuddy CLI 的 `~/.codebuddy` 与 `hook codebuddy` 不得替代 WorkBuddy 桌面证据。原生桌面验收使用隔离 `WORKBUDDY_CONFIG_DIR` 或项目级 `.workbuddy/settings.json`，不得改写日常 `~/.workbuddy` 的 claw/db。桌面安装入口（插件市场）未被接管，`install_interception` 保持 host_capability_missing，直到有受支持的装前拦截。`block` 下决策不可达必须输出结构化 `permissionDecision=deny`；宿主把退出码 1 视为非阻断错误，不能用 exit 1 代替拒绝。
 
 ### 4.4 Trae / TraeWork（P2，审计）
 
@@ -1997,3 +2027,5 @@ Skill 执行上下文（SEC，`skill-execution-context/v1`）是归属从 unknow
 
 ### Secure Agent 审批消费者兼容修复（2026-09-16）
 Secure Agent 复用现有 hold-status/v1 与 hold-execution-reserve/v1 合同：复查携带已提交的 Intent task_id 和原有 runtime_task_id；approved 仅表示可申请预留。消费本地 pending 后，用唯一新 retry_tool_call_id 请求持久化预留，完整匹配回读 action/原 decision/reservation，成功才执行；观察与效果记录使用预留 receipt 和 retry ID。拒绝、冲突、未知或丢失响应都不得执行或盲目重试；不放宽后端身份、Authority 与参数绑定。原 hold receipt 保留用于 UI 审批追溯。
+
+2026-09-17 Mac 阶段合并复核：OpenClaw 外科卸载仅移除本安装添加的注册与空容器；原始快照已有的空 allow、load、paths、entries 及本插件空 entry 必须保留，不能把缺省与显式空值合并。用户其他插件/设置保持不变。阶段合并不提升 P19 实机矩阵，修复候选仍需平台复测。

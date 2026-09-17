@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
 func serveStateDirectory(selected string, explicit bool) (string, error) {
@@ -18,8 +19,7 @@ func serveStateDirectory(selected string, explicit bool) (string, error) {
 	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
 		return "", invalid
 	}
-	canonical, err := filepath.EvalSymlinks(selected)
-	if err != nil || canonical != selected {
+	if err := stateformat.LeafDirectory(selected); err != nil {
 		return "", invalid
 	}
 	return selected, nil

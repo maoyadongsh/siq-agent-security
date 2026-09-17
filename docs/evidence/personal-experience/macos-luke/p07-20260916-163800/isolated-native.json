@@ -1,0 +1,49 @@
+{
+  "schema_version": "personal-macos-workbuddy-isolated-native/v1",
+  "recorded_at": "2026-09-16T08:38:48Z",
+  "binary_sha256": "82b8f45c6a3698fe872c4058de87f43871561035688423e712634fc311d39597",
+  "file": "Mach-O 64-bit executable arm64",
+  "go": "go1.27.1",
+  "cgo": "0",
+  "port": 47614,
+  "did_not_kill_existing_daemons": true,
+  "isolated_port_closed": true,
+  "daily_settings_unchanged": true,
+  "preview_did_not_mutate": true,
+  "install_preserved_enabledPlugins": true,
+  "hook_command_has_state_dir": true,
+  "inventory_platforms_real_home_readonly": [
+    "claude_code",
+    "codex",
+    "hermes",
+    "openclaw",
+    "workbuddy"
+  ],
+  "pre_execution_denial": {
+    "exit": 0,
+    "permissionDecision": "deny",
+    "hookEventName": "PreToolUse",
+    "leaked_state_dir": false,
+    "leaked_home": false,
+    "stderr_len": 0,
+    "reason_category": "decision"
+  },
+  "service_unavailable_denial": {
+    "exit": 0,
+    "permissionDecision": "deny",
+    "hookEventName": "PreToolUse",
+    "leaked_state_dir": false,
+    "leaked_home": false,
+    "stderr_len": 0,
+    "reason_category": "fail-closed"
+  },
+  "live_app_still_running": true,
+  "opened_isolated_workspace": true,
+  "limitations": [
+    "isolated WORKBUDDY_CONFIG_DIR; daily ~/.workbuddy claw/db/settings were not write targets",
+    "hook allow/deny used the same command the installer registers; desktop chat did not spawn the hook in this batch",
+    "inventory used the real HOME read-only and therefore listed existing platform configs; adapter writes used WORKBUDDY_CONFIG_DIR only",
+    "install_interception remains host_capability_missing",
+    "approval_resume / skill_attribution not claimed"
+  ]
+}

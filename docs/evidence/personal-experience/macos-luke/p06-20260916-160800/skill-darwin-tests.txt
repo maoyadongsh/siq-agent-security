@@ -1,0 +1,16 @@
+=== RUN   TestDarwinSkillUnicodeCasePermissionClockAndOccupancy
+=== RUN   TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/unicode-filename-occupant
+=== RUN   TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/case-alias-directory
+=== RUN   TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/permission-denied-parent
+=== RUN   TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/clock-expiry
+=== RUN   TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/occupied-directory-after-first-file
+=== RUN   TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/revoke-during-publish
+--- PASS: TestDarwinSkillUnicodeCasePermissionClockAndOccupancy (0.97s)
+    --- PASS: TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/unicode-filename-occupant (0.17s)
+    --- PASS: TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/case-alias-directory (0.15s)
+    --- PASS: TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/permission-denied-parent (0.16s)
+    --- PASS: TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/clock-expiry (0.11s)
+    --- PASS: TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/occupied-directory-after-first-file (0.19s)
+    --- PASS: TestDarwinSkillUnicodeCasePermissionClockAndOccupancy/revoke-during-publish (0.18s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/skillinstall	1.322s

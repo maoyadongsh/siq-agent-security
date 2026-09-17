@@ -44,7 +44,7 @@ func TestUnregisterLaunchAgent(t *testing.T) {
 				t.Fatal(err)
 			}
 			home := t.TempDir()
-			source := filepath.Join(st.Dir, record.Label+".plist")
+			source := mustResolve(t, filepath.Join(st.Dir, record.Label+".plist"))
 			if _, err := publishLaunchRegistration(home, source, record.Label); err != nil {
 				t.Fatal(err)
 			}
@@ -84,15 +84,14 @@ func TestUnregisterLaunchAgent(t *testing.T) {
 						raw += "-\t0\t" + record.Label + "\n"
 					}
 					return raw, nil
-				case "list -x " + record.Label:
+				case "print " + launchPrintTarget(501, record.Label):
 					if mode == "foreign" {
-						return strings.Replace(rendered, "<string>serve</string>", "<string>other</string>", 1), nil
+						return mustLaunchPrint(t, rendered, source, 0, "", "other"), nil
 					}
 					if mode == "running" {
-						at := strings.LastIndex(rendered, "</dict>")
-						return rendered[:at] + "<key>PID</key><integer>123</integer>" + rendered[at:], nil
+						return mustLaunchPrint(t, rendered, source, 123, "", ""), nil
 					}
-					return rendered, nil
+					return mustLaunchPrint(t, rendered, source, 0, "", ""), nil
 				case "bootout gui/501/" + record.Label:
 					bootouts++
 					if lock, err := state.AcquireWriter(st.Dir); err == nil {
