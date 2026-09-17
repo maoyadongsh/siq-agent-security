@@ -174,6 +174,8 @@ Ornith 未提交实现中的自动 `ApplyMigration`/整树备份/可覆写标记
 
 **实现方式（2026-09-04 修正）**：`connectors/*` 全部是 `package main` 的 NDJSON 子进程，不能作为库导入。inventory 用 Go **原生只读发现**，产出 `platform_config` / `skill_dir` / `hermes_profile` / `openclaw_agent` / `mcp_server` 候选。可选 `--connectors-dir`（或 `SIQ_AS_CONNECTORS_DIR`）：对 `hermes` / `openclaw` / `directory` / `mcp` **exec** `--serve`，超时 60s、stdout 上限 8MB；`describe.network_access=true` 或失败记入 `skipped`，不阻断原生结果。合同：`candidate.source_type` 已含上述枚举。
 
+**Windows Connector 发现（2026-09-14，#51）**：对每个固定名称 `name`，在显式 Connector 根目录内依次检查 `name/name-connector.exe`、`name/name.exe`、`name-connector.exe`、`name.exe`；仅选普通 `.exe` 文件，不以 POSIX 执行位判断，目录和符号链接文件不作为二进制候选。返回选中文件的绝对路径，根目录为 `.` 时也不得退化为裸文件名或经 PATH 查找；不使用 PATHEXT、shell 或 shebang 回退。文件被发现不代表可成功启动，启动失败仍按 `connector_failed:<name>` 处理。非 Windows 保留原四级无后缀名称及 `0111` 执行位判断；NDJSON、环境、限额、网络声明拒绝、合并与 effective 过滤不变。
+
 **实现状态（相对本表）**：
 
 | 项 | 状态 |
