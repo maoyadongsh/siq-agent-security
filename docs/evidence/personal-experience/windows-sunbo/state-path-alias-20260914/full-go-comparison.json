@@ -1,0 +1,992 @@
+{
+  "schema": "windows-state-path-full-go-comparison/v1",
+  "publication_status": "recorded_component_evidence",
+  "previous_candidate_sha": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+  "current_candidate_sha": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+  "shared_base_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "same_candidate_baseline": false,
+  "current_includes_previous_connector_fix": false,
+  "comparison_kind": "same package and top-level test name only",
+  "same_name_failed_in_both": [
+    {
+      "package": "cmd/agentshield",
+      "test": "TestCmdSyncHTTPFailureUnchanged"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestPrepareRollbackMissingBinary"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestServeStateDirectorySelection"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestUnregisterExactLinkAndRetry"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestUnregisterRejectsUnknownAndFailedReload"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestHermesControlledInstallPathChecksBeforeNativeInstall"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestUninstallOfOneInstanceRestoresOnlyThatInstance"
+    },
+    {
+      "package": "internal/adapters",
+      "test": "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestAddFileDetectsReplacedInode"
+    },
+    {
+      "package": "internal/completion",
+      "test": "TestCompletionRequiresActualSignedMaterialAndRetainsConflicts"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestActualFileWriteAndFakeSuccess"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestFileCaptureBoundsAndUnsafeTargets"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestPendingFileImmutableRestartAndTamper"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestRecoveryConcurrentDifferentOwnersHaveOneWinner"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestRecoveryStoredCapacityAndFailureIsolation"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestStoreRejectsUnsafeStateAndInput"
+    },
+    {
+      "package": "internal/inventory",
+      "test": "TestMCPSymlinkIsSkipped"
+    },
+    {
+      "package": "internal/pending",
+      "test": "TestAppendWritesUnsignedJSONL"
+    },
+    {
+      "package": "internal/receipt",
+      "test": "TestStageTimingFollowsExecutedBranchesAndPreservesDecisions"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestAuditFailureNeverStartsHostOrReportsPass"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestCancelStopsLaunchAndRevokesAuthority"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestCheckTemporaryAuthorityAndVerifiedCleanup"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestCleanupRefusesSymlinkAndCanBeRetriedAfterRepair"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestRecoveryFindsBindingPublishedBeforeJournalUpdate"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestRuntimeCheckContractFixtures"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestTamperedOrTrailingRecordCannotBeReadAsPassed"
+    },
+    {
+      "package": "internal/runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed"
+    },
+    {
+      "package": "internal/runtimeidentity",
+      "test": "TestIdentityIssuanceRestartRevocationAndReplacement"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestDiscoveryContractFixtures"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestFileObservationHTTPReadsRealState"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestGrantDraftContractSamples"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestInstanceAndPlanV2ContractFixtures"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestManagedPlanV3ContractFixture"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestToolSuccessConflictsWithIndependentMissingOutputHTTP"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestGitImportClonesFixedCopyWithoutHooks"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestGitImportSubDirectorySelectsSubtree"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestImportLocalSymlinksAndWrongSigningKey"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestImportTamperAndAnalysisBinding"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestRemoteImportContractSamples"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestUpstreamCheckGitSeesAdvancedHeadWithoutTouchingRecord"
+    },
+    {
+      "package": "internal/skillinstall",
+      "test": "TestInspectionSeparatesHistoricalRecordAndCurrentContents"
+    },
+    {
+      "package": "internal/skillinstall",
+      "test": "TestInstallationFailureRollbackAndUnknownOwnership"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestAdapterAndBootstrapShareVerifiedResolve"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestDownloadVerifiedArtifactHappyAndNegatives"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestFetchAndStage"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestPythonFetchArtifact"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestPythonHashSkillDirRejectsEscape"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestStageVerifiedBinaryHappyPath"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestStageVerifiedBinarySelfConsistencyWithoutPin"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestAcquireWriterBlocksSecondAndTakesOverDead"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestCommitRecoveryAfterProcessKill"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestIndependentProcessesPublishUniqueVersions"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestMigrationFullBackupAndEveryCheckpointRecovery"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestMigrationRecoversMissingMarkerOnlyAfterPreparedBackup"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestUnmarkedMigrationPreservesPrivateReadonlyTree"
+    }
+  ],
+  "current_failures_not_previously_failed": [
+    {
+      "package": "internal/inventory",
+      "test": "TestConnectorsMergeWithoutDroppingNative",
+      "previous_status": "not_listed_in_previous_nonpass_reference"
+    },
+    {
+      "package": "internal/inventory",
+      "test": "TestConnectorsNetworkAccessSkipped",
+      "previous_status": "not_listed_in_previous_nonpass_reference"
+    }
+  ],
+  "previous_failures_not_currently_failed": [
+    {
+      "package": "internal/inventory",
+      "test": "TestFindConnectorBinWindowsRejectsSymlink",
+      "current_status": "not_observed"
+    }
+  ],
+  "nonpass_transition_rows": [
+    {
+      "package": "cmd/agentshield",
+      "test": "TestCmdSyncHTTPFailureUnchanged",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestLaunchRegistrationExclusiveReuseAndPreservation",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestNativeServeExplicitDirectory",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestNativeServeSignedStop",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestNativeSetupAndReuse",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestNativeStopCLI",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestNativeStopRequestCLI",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestNativeUserServiceUpgrade",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestNativeUserServiceUpgradeTransientFailure",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestPrepareRollbackMissingBinary",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestServeStateDirectorySelection",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestServiceUnitRequiresInitializationAndDoesNotWrite",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestServiceUpgradeRequiresConfirmation",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestTeardownResumesAfterRegistrationRemoval",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestUnregisterExactLinkAndRetry",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestUnregisterRejectsUnknownAndFailedReload",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestUserLoginExactLinkAndInterruptedDisable",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "cmd/agentshield",
+      "test": "TestUserUnitQuotingAndNoJournalCredentials",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestAdapterRealProcessDeathRecovery",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestDefaultInstanceUpgradeRestoresLegacyWrapper",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestDiagnosticsRejectUnsafeFilesWithoutLeakingContents",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestHermesControlledInstallPathChecksBeforeNativeInstall",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestHermesNativeCLIFreshConfig",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestHermesWrapperQuotesPathsAndRefusesFailedAdmission",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestNativeRuntimeTargetPinsConfigurationServiceAndCLI",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestOpenClawInstalledPluginLoadsNatively",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestPlanRejectsInstanceRootSymlink",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestRecoveryRejectsTamperedCiphertext",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestSymlinkConfigRefused",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/adapterinstall",
+      "test": "TestUninstallOfOneInstanceRestoresOnlyThatInstance",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/adapters",
+      "test": "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestAddFileDetectsReplacedInode",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestAddFileDetectsSymlinkSwap",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestFIFOIsRefusedWithoutOpening",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestHashDirRejectsSymlinkEscape",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestInRootSymlinkIsNotAnEscape",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestOpenRegularFIFODoesNotHang",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestOpenRegularRefusesSymlink",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestRootSymlinkHashesTheSameTree",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/admission",
+      "test": "TestSymlinkEscapeIsQuarantined",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/clientrelease",
+      "test": "TestDigestRejectsInvalidSources",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/completion",
+      "test": "TestCompletionRequiresActualSignedMaterialAndRetainsConflicts",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestActualFileWriteAndFakeSuccess",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestEffectStageBaseline",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestFileCaptureBoundsAndUnsafeTargets",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestPendingFileImmutableRestartAndTamper",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestRecoveryConcurrentDifferentOwnersHaveOneWinner",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestRecoveryStoredCapacityAndFailureIsolation",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/effectevidence",
+      "test": "TestStoreRejectsUnsafeStateAndInput",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/hermeshome",
+      "test": "TestRejectsUntrustedRootsAndLimitsEnumeration",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/inventory",
+      "test": "TestConnectorsMergeWithoutDroppingNative",
+      "previous_status": "not_listed_in_previous_nonpass_reference",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/inventory",
+      "test": "TestConnectorsNetworkAccessSkipped",
+      "previous_status": "not_listed_in_previous_nonpass_reference",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/inventory",
+      "test": "TestDiscoveryRejectsSymlinkAndOversizedConfig",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/inventory",
+      "test": "TestFindConnectorBinWindowsRejectsSymlink",
+      "previous_status": "fail",
+      "current_status": "not_observed"
+    },
+    {
+      "package": "internal/inventory",
+      "test": "TestMCPSymlinkIsSkipped",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/pending",
+      "test": "TestAppendWritesUnsignedJSONL",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/provenance",
+      "test": "TestIssuerMalformedAndSymlinkRecordsRejected",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/receipt",
+      "test": "TestRuntimeStageBaseline",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/receipt",
+      "test": "TestStageTimingFollowsExecutedBranchesAndPreservesDecisions",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestAuditFailureNeverStartsHostOrReportsPass",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestCancelStopsLaunchAndRevokesAuthority",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestCheckTemporaryAuthorityAndVerifiedCleanup",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestCleanupRefusesSymlinkAndCanBeRetriedAfterRepair",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestRecoveryFindsBindingPublishedBeforeJournalUpdate",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestRuntimeCheckContractFixtures",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/runtimecheck",
+      "test": "TestTamperedOrTrailingRecordCannotBeReadAsPassed",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/runtimeidentity",
+      "test": "TestIdentityIssuanceRestartRevocationAndReplacement",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestFileObservationHTTPReadsRealState",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestGrantDraftContractSamples",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestInstanceAndPlanV2ContractFixtures",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestManagedPlanV3ContractFixture",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestSkillInstallHTTPOperationStrictness",
+      "previous_status": "not_listed_in_previous_nonpass_reference",
+      "current_status": "unfinished"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestSkillRemovalHTTPAdminAndStrictRequest",
+      "previous_status": "unfinished",
+      "current_status": "not_observed"
+    },
+    {
+      "package": "internal/server",
+      "test": "TestToolSuccessConflictsWithIndependentMissingOutputHTTP",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestGitImportClonesFixedCopyWithoutHooks",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestGitImportSubDirectorySelectsSubtree",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestImportLocalSymlinksAndWrongSigningKey",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestImportPublicationFailureRemovesOnlyOwnedCandidate",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestImportTamperAndAnalysisBinding",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestRemoteImportContractSamples",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestReviewerGitFetchRejectsPrivateDNSBeforeTransport",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/skillimport",
+      "test": "TestUpstreamCheckGitSeesAdvancedHeadWithoutTouchingRecord",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillinstall",
+      "test": "TestInspectionSeparatesHistoricalRecordAndCurrentContents",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillinstall",
+      "test": "TestInstallationFailureRollbackAndUnknownOwnership",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillinstall",
+      "test": "TestInstalledRuntimeBindingAndImmediateInvalidation",
+      "previous_status": "unfinished",
+      "current_status": "not_observed"
+    },
+    {
+      "package": "internal/skillinstall",
+      "test": "TestPendingRemovalPreventsReactivationAndAuditFailurePreservesFiles",
+      "previous_status": "not_listed_in_previous_nonpass_reference",
+      "current_status": "unfinished"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestAdapterAndBootstrapShareVerifiedResolve",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestDownloadVerifiedArtifactHappyAndNegatives",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestFetchAndStage",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestPythonFetchArtifact",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestPythonHashSkillDirRejectsEscape",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestResolveStagesVerifiedBinary",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestStageVerifiedBinaryHappyPath",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/skillmanifest",
+      "test": "TestStageVerifiedBinarySelfConsistencyWithoutPin",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestAcquireWriterBlocksSecondAndTakesOverDead",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestCommitRecoveryAfterProcessKill",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestCompatibilityCoreDirectorySymlinkNoPartialOpen",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestCompatibilityRejectsSymlinks",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestDirectoryIdentity",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestHistoricalAdmissionRejectsLinks",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestIndependentProcessesPublishUniqueVersions",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestInitializationRequiresWriterAndRejectsSymlinks",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestMigrationFullBackupAndEveryCheckpointRecovery",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestMigrationRecoversMissingMarkerOnlyAfterPreparedBackup",
+      "previous_status": "fail",
+      "current_status": "fail"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestRecoveryCredentialRefusesCorruptionAndSymlink",
+      "previous_status": "skip",
+      "current_status": "skip"
+    },
+    {
+      "package": "internal/state",
+      "test": "TestUnmarkedMigrationPreservesPrivateReadonlyTree",
+      "previous_status": "fail",
+      "current_status": "fail"
+    }
+  ],
+  "limits": [
+    "The previous branch contains the Connector fix; the current branch contains the state-path fix.",
+    "Identical failing names do not prove identical causes or pre-existing failures for this candidate.",
+    "A name absent from the previous non-pass reference might have passed, not run, or not existed; no previous pass is inferred.",
+    "Current full-Go ran concurrently with cross-build, schema, CLI and race validation as reported by the executor; no performance or causal attribution is made.",
+    "Not observed, unfinished, skipped, failed and passed remain separate states."
+  ],
+  "sources": [
+    {
+      "role": "previous-nonpass-reference",
+      "bytes": 23591,
+      "sha256": "3444b369c1dbb2c94902f26b11db1e83341704791361dc66184f2ec6a1ced3f1"
+    },
+    {
+      "role": "current-full-go.stdout",
+      "bytes": 2421749,
+      "sha256": "8a580ac3abdad85545ca90b0ca8cfaa7add60b1c5a9ab6a1efe5418b631b15c2"
+    }
+  ]
+}

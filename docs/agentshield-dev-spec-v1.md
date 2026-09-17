@@ -74,6 +74,12 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 | macOS | `~/Library/Application Support/siq-agent-security` | 同上 |
 | Windows | `%LOCALAPPDATA%\siq-agent-security` | 同上 |
 
+Windows 状态目录的原始输入须在 `TrimSpace`、`Clean`、`Abs`、`Join` 或文件访问前校验：实际路径组件以 ASCII 空格或点结尾时明确拒绝，不静默截断、改写目标或转用另一个实例。主变量 `SIQ_AGENT_SECURITY_STATE_DIR` 与旧变量 `AGENTSHIELD_STATE_DIR` 只在值确实为空时顺次回退；选中的非空值原样校验和保留，非法主值不得回退。默认目录实际采用的基目录也在拼接前校验。全局产品环境变量读取及非 Windows 行为不变。
+
+该输入规则区分完整 `.`、`..` 导航组件与普通名称，保留中文、内部空格以及原入口已有的相对路径、长路径前缀规则，不扩大支持范围。UNC host 属于 authority（例如 FQDN 尾点），不套用目录尾字符规则；UNC share 根与其后的目录组件按此状态目录输入政策拒绝尾 ASCII 空格/点。这是状态路径政策，不是对 SMB 别名行为的实测结论。显式 `serve --state-dir` 仍另外要求已存在、规范绝对目录，且优先于环境变量。
+
+DefaultDir、Open、兼容诊断、Writer、目录身份、初始化/迁移、签名文件入口、适配器事务状态验证以及核心配置/凭据访问须保留原始根参数并先校验；grant 恢复、服务切换及用户服务准备等拥有者辅助入口在比较或访问前也检查 Store/Writer 原始目录。statefs 经同一词法检查保护其收到的路径。调用方已清理而丢失的原文不能由底层恢复。拒绝沿既有固定错误类别或 hook 结构化 block 返回，不能创建目录、锁、token、密钥、状态或启动服务。本规则不替代 ACL、reparse、设备名、ADS 或 runtime 资源绑定校验。
+
 ### 2.2 布局
 
 ```

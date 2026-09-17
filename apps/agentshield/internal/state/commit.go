@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 	"strings"
@@ -345,6 +346,14 @@ func (s *Store) ListIncompleteCommits() ([]IncompleteCommit, error) {
 
 // RecoverGrantCommits requires real ownership, including nonce, not just a PID.
 func (s *Store) RecoverGrantCommits(w *Writer) (int, error) {
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return 0, err
+	}
+	if w != nil {
+		if err := stateformat.ValidatePath(w.Dir); err != nil {
+			return 0, err
+		}
+	}
 	if err := RequireStateCompatibility(s.Dir); err != nil {
 		return 0, err
 	}
