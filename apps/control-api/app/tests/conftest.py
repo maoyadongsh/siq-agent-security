@@ -20,11 +20,12 @@ os.environ["SIQ_AS_ENFORCEMENT_BACKEND"] = "fake"
 import pytest
 from fastapi.testclient import TestClient
 
-from app.main import app
-
 
 @pytest.fixture(scope="session")
 def client():
+    # Contract-only tests do not require the API runtime or its OS dependencies.
+    from app.main import app
+
     with TestClient(app) as c:
         yield c
 

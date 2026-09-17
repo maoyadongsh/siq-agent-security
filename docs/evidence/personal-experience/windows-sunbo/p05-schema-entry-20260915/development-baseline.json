@@ -1,0 +1,360 @@
+{
+  "schema": "windows-schema-development-baseline/v1",
+  "candidate_base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "stage": "development_dirty_one_file",
+  "change": "defer from app.main import app into existing client fixture",
+  "source": {
+    "base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "branch": "codex/windows-schema-test-entry-20260915",
+    "clean_before": true,
+    "clean_after_sync_before_patch": true,
+    "dirty_after": true,
+    "changed_tracked_files": [
+      "apps/control-api/app/tests/conftest.py"
+    ],
+    "commit_created": false,
+    "pushed": false,
+    "after_patch_raw_sha256": "302ef2b8bb1785f39b8d8ee0c2481586bf1c44775edfba90204c6bfd12252adf",
+    "after_patch_raw_bytes": 1976,
+    "after_patch_lf_sha256": "586655d47e4d855b3323ba970f45e244e5431869c4ffbf9021be613a6c16dc12",
+    "after_patch_lf_bytes": 1909,
+    "only_import_move_ast": true,
+    "uv_lock_unchanged": true,
+    "pyproject_unchanged": true
+  },
+  "environment": {
+    "os": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64",
+    "python_version": "3.13.7",
+    "non_admin": true
+  },
+  "tools": {
+    "uv_version": "0.12.13",
+    "python_version": "3.13.7",
+    "tool_identities": {
+      "git": {
+        "bytes": 46480,
+        "sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2",
+        "nlink": 2
+      },
+      "uv": {
+        "bytes": 41556784,
+        "sha256": "e43cc6ca110540ad845ad6aa1e468e224813eb1da76e145413a262d7073d05e7",
+        "nlink": 1
+      },
+      "python": {
+        "bytes": 105816,
+        "sha256": "d932e5e2f324d57f392e8fd063dcf6d0185be8a664c57c6d24e7762ed02c28ca",
+        "nlink": 1
+      }
+    },
+    "new_venv_python_sha256": "200d001707ed494066ef00e31e38330e32490c2a74a450ca5d66d2179396fd0e",
+    "editable_bound_to_new_tree": true,
+    "same_batch_fresh_venv": true
+  },
+  "standard_command": "uv run --locked pytest app/tests/test_schema_contracts.py",
+  "baseline": {
+    "exit_code": 4,
+    "tests_started": false,
+    "tests_executed": 0,
+    "failure_category": "ModuleNotFoundError: fcntl",
+    "failure_phase": "top-level conftest import before collection"
+  },
+  "patched_development": {
+    "exit_code": 0,
+    "passed": 206,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "test_reported_seconds": 16.87,
+    "source_clean": false,
+    "noconftest": false,
+    "client_fixture_requested": false
+  },
+  "ruff": {
+    "command": "uv run --locked ruff check app/tests/conftest.py app/tests/test_schema_contracts.py",
+    "exit_code": 0
+  },
+  "controller_observation": "Initial exact-LF-byte assertion stopped after successful patch application because Git emitted CRLF. The preserved CRLF bytes normalize to the reviewed LF/AST; patch was not reapplied and no product failure is inferred.",
+  "commands": [
+    {
+      "label": "after-sync-status",
+      "exit_code": 0,
+      "elapsed_seconds": 0.38210760000220034,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "patch-apply",
+      "exit_code": 0,
+      "elapsed_seconds": 0.3258592999991379,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "patch-check",
+      "exit_code": 0,
+      "elapsed_seconds": 0.2934142999947653,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "python-version",
+      "exit_code": 0,
+      "elapsed_seconds": 0.4622594999964349,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "ruff-related",
+      "exit_code": 0,
+      "elapsed_seconds": 2.6892136999958893,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "source-after-diff",
+      "exit_code": 0,
+      "elapsed_seconds": 0.4473288999943179,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "source-after-diffcheck",
+      "exit_code": 0,
+      "elapsed_seconds": 0.643154900004447,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "source-after-head",
+      "exit_code": 0,
+      "elapsed_seconds": 0.26178160000563366,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "source-after-status",
+      "exit_code": 0,
+      "elapsed_seconds": 0.45131799999944633,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "source-before-head",
+      "exit_code": 0,
+      "elapsed_seconds": 0.21093690000270726,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "source-before-status",
+      "exit_code": 0,
+      "elapsed_seconds": 0.3734771000017645,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "standard-schema-after",
+      "exit_code": 0,
+      "elapsed_seconds": 24.716870800002653,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "standard-schema-before",
+      "exit_code": 4,
+      "elapsed_seconds": 16.35180770000443,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "uv-sync-locked",
+      "exit_code": 0,
+      "elapsed_seconds": 46.545035799994366,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "uv-version",
+      "exit_code": 0,
+      "elapsed_seconds": 2.3482393999947817,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    }
+  ],
+  "raw_sources": [
+    {
+      "role": "after-sync-status_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "after-sync-status_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "patch-apply_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "patch-apply_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "patch-check_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "patch-check_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "python-version_stdout",
+      "bytes": 15,
+      "sha256": "f5472f7961ebcf2d6e0c1b66763a502fecc39672e3cdf4faa3fb74a423a642ff"
+    },
+    {
+      "role": "python-version_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "ruff-related_stdout",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "role": "ruff-related_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "source-after-diff_stdout",
+      "bytes": 587,
+      "sha256": "dcf1ede0a22324249af85e160fb1d81f0dabe1f953b24ff67f1c15e8f388617a"
+    },
+    {
+      "role": "source-after-diff_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "source-after-diffcheck_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "source-after-diffcheck_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "source-after-head_stdout",
+      "bytes": 41,
+      "sha256": "9ffad9bd9672bc958c423604d0a4ac0050cdf31d1c90ead599fbd52594e88cb8"
+    },
+    {
+      "role": "source-after-head_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "source-after-status_stdout",
+      "bytes": 42,
+      "sha256": "b2d8a33ade562dbbe3a0456d6fb632f557a91ce47ec84a290c5c4d7600f1d9fe"
+    },
+    {
+      "role": "source-after-status_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "source-before-head_stdout",
+      "bytes": 41,
+      "sha256": "9ffad9bd9672bc958c423604d0a4ac0050cdf31d1c90ead599fbd52594e88cb8"
+    },
+    {
+      "role": "source-before-head_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "source-before-status_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "source-before-status_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "standard-schema-after_stdout",
+      "bytes": 832,
+      "sha256": "b262848d2ba5c803326c079b48cb07ec1d77d572a1e3d5f414539aa5f310b633"
+    },
+    {
+      "role": "standard-schema-after_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "standard-schema-before_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "standard-schema-before_stderr",
+      "bytes": 566,
+      "sha256": "ed6d6931e337187571460b94dfb210de4fa2aa817219c2fb3da10b20f7c00ef2"
+    },
+    {
+      "role": "uv-sync-locked_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "uv-sync-locked_stderr",
+      "bytes": 2005,
+      "sha256": "d57f3aa95ddf3d89981b3f9a9b214b144710e0688d9b911c79d1a1f0da13107b"
+    },
+    {
+      "role": "uv-version_stdout",
+      "bytes": 57,
+      "sha256": "6212f188fd682f342d2a8b8ebfec807741678f0ac4f00875318e3666c64cd7d3"
+    },
+    {
+      "role": "uv-version_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "limits": [
+    "Development success is separate from the clean candidate formal result.",
+    "No production signing/fcntl, schemas, dependency locks or denominator changes.",
+    "Historical baseline and CRLF artifacts retained."
+  ]
+}

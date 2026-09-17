@@ -1,0 +1,279 @@
+{
+  "schema": "windows-schema-clean-validation/v1",
+  "recorded_utc": "2026-09-15T00:19:05.216517+00:00",
+  "status": "passed",
+  "candidate": {
+    "head": "810e8e93df747ac91c9e1a9eccd3294c1a20490c",
+    "base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "branch": "codex/windows-schema-test-entry-20260915",
+    "clean_before": true,
+    "clean_after": true,
+    "source_files_before": {
+      "app/tests/conftest.py": {
+        "bytes": 1909,
+        "sha256": "586655d47e4d855b3323ba970f45e244e5431869c4ffbf9021be613a6c16dc12"
+      },
+      "app/tests/test_schema_contracts.py": {
+        "bytes": 140914,
+        "sha256": "dcdc7cd5d1f08708759de6317eb3456151d799142861afd8e4b709d0b35d8ac1"
+      },
+      "uv.lock": {
+        "bytes": 256422,
+        "sha256": "146e8615916b50f9bd81305490cee7ab041be2aa83cba5f05c55d65ff3ccee5e"
+      },
+      "pyproject.toml": {
+        "bytes": 1186,
+        "sha256": "30773f0939352f5ca672c23989f82a0080c63166a4854d3919a5c769a99695f8"
+      },
+      "app/signing.py": {
+        "bytes": 4550,
+        "sha256": "351edb485e0abf5ffb6aefd9ca0a78d556fb1232d52f9a210ed480afbdaf1ae2"
+      }
+    },
+    "source_files_after": {
+      "app/tests/conftest.py": {
+        "bytes": 1909,
+        "sha256": "586655d47e4d855b3323ba970f45e244e5431869c4ffbf9021be613a6c16dc12"
+      },
+      "app/tests/test_schema_contracts.py": {
+        "bytes": 140914,
+        "sha256": "dcdc7cd5d1f08708759de6317eb3456151d799142861afd8e4b709d0b35d8ac1"
+      },
+      "uv.lock": {
+        "bytes": 256422,
+        "sha256": "146e8615916b50f9bd81305490cee7ab041be2aa83cba5f05c55d65ff3ccee5e"
+      },
+      "pyproject.toml": {
+        "bytes": 1186,
+        "sha256": "30773f0939352f5ca672c23989f82a0080c63166a4854d3919a5c769a99695f8"
+      },
+      "app/signing.py": {
+        "bytes": 4550,
+        "sha256": "351edb485e0abf5ffb6aefd9ca0a78d556fb1232d52f9a210ed480afbdaf1ae2"
+      }
+    },
+    "files_unchanged": true
+  },
+  "environment": {
+    "reuse_scope": "same newly-created isolated venv from this batch; no old worktree venv",
+    "new_editable_still_bound_to_this_tree": true,
+    "editable_metadata_unchanged": true,
+    "new_venv_python_sha256": "200d001707ed494066ef00e31e38330e32490c2a74a450ca5d66d2179396fd0e",
+    "environment_record_sha256": "a9dcfea9fe17a4e9f4314ba254de44eacd76f81a60f681e48d5c8557718f26f6",
+    "setup_or_baseline_rerun": false
+  },
+  "pytest": {
+    "command": "uv run --locked pytest app/tests/test_schema_contracts.py",
+    "exit_code": 0,
+    "passed": 206,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "test_reported_seconds": 5.44,
+    "command_elapsed_seconds": 9.251794800002244,
+    "warning_category": "StarletteDeprecationWarning",
+    "warning_summary": "Using httpx with starlette.testclient is deprecated; install httpx2 instead.",
+    "noconftest": false
+  },
+  "ruff": {
+    "command": "uv run --locked ruff check app/tests/conftest.py app/tests/test_schema_contracts.py",
+    "exit_code": 0,
+    "elapsed_seconds": 0.3993334000042523
+  },
+  "cleanup": {
+    "held_command_processes_reaped": true,
+    "timeouts": 0,
+    "kills": 0,
+    "raw_records_preserved": true
+  },
+  "coordination": {
+    "issue_url": "https://github.com/maoyadongsh/siq-agent-security/issues/59",
+    "source": "root reported issue registration; not queried again during formal run"
+  },
+  "scope": [
+    "One formal standard schema command and one related ruff command on this clean exact candidate.",
+    "No setup/baseline rerun, source edits, commits, pushes, production API server, WSL or host execution.",
+    "Does not establish Windows production signing support or Linux client-fixture lifecycle regression; later exact-head CI may supply Linux evidence.",
+    "Old development CRLF and baseline raw artifacts were not overwritten."
+  ],
+  "commands": [
+    {
+      "label": "formal-after-head",
+      "exit_code": 0,
+      "elapsed_seconds": 0.18350759999884758,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "formal-after-status",
+      "exit_code": 0,
+      "elapsed_seconds": 0.25724840000475524,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "formal-before-branch",
+      "exit_code": 0,
+      "elapsed_seconds": 0.21056189999944763,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "formal-before-head",
+      "exit_code": 0,
+      "elapsed_seconds": 0.18879279999964638,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "formal-before-parent",
+      "exit_code": 0,
+      "elapsed_seconds": 0.20065769999928307,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "formal-before-status",
+      "exit_code": 0,
+      "elapsed_seconds": 0.2998184999960358,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "formal-ruff",
+      "exit_code": 0,
+      "elapsed_seconds": 0.3993334000042523,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    },
+    {
+      "label": "formal-standard-schema",
+      "exit_code": 0,
+      "elapsed_seconds": 9.251794800002244,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true
+    }
+  ],
+  "raw_sources": [
+    {
+      "role": "formal-after-head_stdout",
+      "bytes": 41,
+      "sha256": "88e72e7d77fa2bbdc1c7ca145cc38f787004c57577f72e6e7a19d8ab9aa4bd98"
+    },
+    {
+      "role": "formal-after-head_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "formal-after-status_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "formal-after-status_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "formal-before-branch_stdout",
+      "bytes": 41,
+      "sha256": "d3ddafe2b954cae9a7c29f11ff37d83e3d92603675cc528224230c4e1548c46c"
+    },
+    {
+      "role": "formal-before-branch_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "formal-before-head_stdout",
+      "bytes": 41,
+      "sha256": "88e72e7d77fa2bbdc1c7ca145cc38f787004c57577f72e6e7a19d8ab9aa4bd98"
+    },
+    {
+      "role": "formal-before-head_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "formal-before-parent_stdout",
+      "bytes": 41,
+      "sha256": "9ffad9bd9672bc958c423604d0a4ac0050cdf31d1c90ead599fbd52594e88cb8"
+    },
+    {
+      "role": "formal-before-parent_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "formal-before-status_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "formal-before-status_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "formal-ruff_stdout",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "role": "formal-ruff_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "formal-standard-schema_stdout",
+      "bytes": 831,
+      "sha256": "16f27e6e7e3c34cd256b2d2dfc9ef49fe162dc1aff772859a6e655102d1583a6"
+    },
+    {
+      "role": "formal-standard-schema_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "evidence_sources": [
+    {
+      "role": "formal_preflight",
+      "bytes": 1252,
+      "sha256": "242805a789b9bfdd9154bdc16ec3fcb52061be552c040b917d96420a99d2e89f"
+    },
+    {
+      "role": "formal_postflight",
+      "bytes": 928,
+      "sha256": "dcd7641901b560d1b74f56a0ac7b177ca964d09842e75e77c50ddfb03d1532ac"
+    },
+    {
+      "role": "same_execution_environment",
+      "bytes": 1420,
+      "sha256": "a9dcfea9fe17a4e9f4314ba254de44eacd76f81a60f681e48d5c8557718f26f6"
+    },
+    {
+      "role": "new_venv_provenance",
+      "bytes": 525,
+      "sha256": "9f449c31c63d025c6e94889df9da41c70a9fc327caa0b58e23aecec71e325435"
+    },
+    {
+      "role": "tool_identities",
+      "bytes": 425,
+      "sha256": "c6f70efc1929899866eb1e4d8050bc96fdd3d2bdc857931405f877189e07eaaf"
+    },
+    {
+      "role": "development_summary",
+      "bytes": 11787,
+      "sha256": "d81f9f7ef1af5c87f0845bae7fffa34c479dacbb0947898f78bff52c02f7c698"
+    }
+  ]
+}
