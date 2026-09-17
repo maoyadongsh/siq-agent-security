@@ -1,0 +1,61 @@
+{
+  "scenario": "session-newkey-r1",
+  "candidate": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+  "host": "OpenClaw 2026.9.4 / Windows WSL2 OpenClawGateway",
+  "binary": "62d820f30f3e39628a81939683132d4f7f9e87678e14b5afce0452401b01ec41",
+  "raw_evidence_sha256": "e27ace3bcda021ecae98287c26246cc1badda29bc8402e7e89e4c1fe6a341b75",
+  "manifest_sha256": "69330f444fc5131194b148184c4299b169be947fa5bc28b0ce10a60aca5e7b96",
+  "outer_exit": 0,
+  "guest_exit": 0,
+  "native_exit": 0,
+  "harness_error": null,
+  "session_isolation": {
+    "key_changed": true,
+    "id_changed": true,
+    "old_binding_reused": false
+  },
+  "receipts": {
+    "verified": true,
+    "selected": [
+      {
+        "tool_call_id": "siqfixturereadallowed20260916",
+        "action": "deny",
+        "reason_code": "intent_binding_missing",
+        "action_id": "act-2c2a6a049172bbf7c52fb271",
+        "intent_binding": "unbound"
+      },
+      {
+        "tool_call_id": "siqfixturewritedenied20260916",
+        "action": "deny",
+        "reason_code": "intent_binding_missing",
+        "action_id": "act-5886807837dafe45aa554b93",
+        "intent_binding": "unbound"
+      }
+    ],
+    "receipt_count": 2
+  },
+  "target_after": {
+    "exists": false
+  },
+  "control_unchanged": true,
+  "siq_cleanup": {
+    "owned_process_reaped": true,
+    "log_closed": true,
+    "killed": false,
+    "exit_code": 0
+  },
+  "provider_cleanup": {
+    "stop_requested": true,
+    "join_attempted": true,
+    "join_timeout": false,
+    "errors": {},
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true,
+    "cleanup_deadline_exhausted": false
+  },
+  "linux_cleanup_ack": "confirmed_by_guest_report",
+  "paid_model_calls": 0,
+  "scope_limit": "New routing key only; same-key rollover remains unverified.",
+  "result": "New routing key and UUID; both actual native tools denied with signed unbound receipts; no write effect."
+}
