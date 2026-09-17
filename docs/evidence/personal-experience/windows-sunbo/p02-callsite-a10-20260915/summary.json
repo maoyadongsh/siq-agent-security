@@ -1,0 +1,124 @@
+{
+  "schema": "windows-openclaw-a10-public-summary/v1",
+  "batch": "A10",
+  "execution_environment": "WSL2 Linux on Windows",
+  "instrumented_host_run_count": 1,
+  "diagnostic_completed": true,
+  "callsite_association_confirmed": true,
+  "instrumented_A_pass": false,
+  "uninstrumented_A_acceptance_claimed": false,
+  "full_SIQ_A_B_acceptance": false,
+  "native_Windows_host_acceptance": false,
+  "original_matrix_cases": 18,
+  "original_matrix_changed": false,
+  "classification": "current_host_Node_and_owned_permission_boundary_compatibility_limitation",
+  "SIQ_defect_or_product_denial_claimed": false,
+  "exit_codes": {
+    "Node_CLI": 1,
+    "runtime": 1,
+    "namespace": 1,
+    "WSL_transport": 1,
+    "Windows_wrapper": 1
+  },
+  "elapsed_seconds": {
+    "Node_command_and_cleanup": 7.022610629996052,
+    "runtime": 7.382941469993966,
+    "namespace_parent": 7.935850980000396
+  },
+  "target": {
+    "absent_before": true,
+    "absent_after": true,
+    "workspace_control_unchanged": true
+  },
+  "provider": {
+    "synthetic_requests": 2,
+    "external_model_requests": 0,
+    "offered_tools": [
+      "read",
+      "write"
+    ],
+    "fixed_write_calls_sent": 1,
+    "second_request_tool_message_count": 1,
+    "second_request_contains_failed_write_result": true,
+    "second_request_fixture_rejection": "expected_write_effect_absent",
+    "two_successful_native_exchanges": false,
+    "native_success_result_consumed": false,
+    "second_success_response_file_absent": true
+  },
+  "SIQ": {
+    "plugin_loaded": false,
+    "server_started": false
+  },
+  "diagnostic": {
+    "association_scope": "same_owned_process",
+    "unique_call_id_binding": false,
+    "operation": "FileHandle.chmod_expression",
+    "backend": "node_fallback",
+    "branch": "staging",
+    "same_error_object": true,
+    "code": "ERR_ACCESS_DENIED",
+    "permission_field_status": "present",
+    "permission_field_value": "",
+    "resource_field_status": "not_collected",
+    "syscall_field_status": "absent",
+    "name_field_status": "absent",
+    "stack_read": false,
+    "frames": {
+      "cause": {
+        "count": 1,
+        "bytes": 643,
+        "sha256": "7de0c57b9c638f713df531da889117d3fe25c695ec7eb381e2bd2d79d24d7c80",
+        "complete": true
+      },
+      "status": {
+        "count": 1,
+        "bytes": 1188,
+        "sha256": "8c4f5b890dd85da94aab4f04bb818ccc2d2c2868613d349d41cdb24b3e4da8f1",
+        "complete": true
+      }
+    }
+  },
+  "cleanup": {
+    "guest_report": "confirmed_by_guest_report",
+    "Node_reaped": true,
+    "namespace_reaped": true,
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true,
+    "Node_timeout": false,
+    "Node_kill_attempted": false,
+    "namespace_timeout": false,
+    "namespace_kill_attempted": false,
+    "runtime_budget_exhausted": false,
+    "namespace_budget_exhausted": false
+  },
+  "postflight": {
+    "owned_named_files_verified": 25,
+    "absent_paths_verified": 2,
+    "workspace_regular_control_files": 1,
+    "installed_source_files_unchanged": 22,
+    "Node_unchanged": true,
+    "Windows_root_ACL_unchanged": true
+  },
+  "next_step": "stop_equivalent_diagnostics; require_clean_standard_test_environment_or_confirmed_compatible_upstream_combination_before_host_A_B",
+  "SIQ_B_executed": false,
+  "cli_observation": {
+    "tool_summary": {
+      "calls": 1,
+      "tools": [
+        "write"
+      ],
+      "failures": 1
+    },
+    "error_kind": "incomplete_turn",
+    "HTTP_status": 400,
+    "fixture_rejection": "Synthetic fixture rejected request"
+  },
+  "timekeeping": {
+    "Windows_and_guest_wallclock_labels_consistent": false,
+    "cross_clock_synchronization_verified": false,
+    "cross_clock_order_or_exact_offset_claimed": false,
+    "elapsed_values_use_per_layer_monotonic_clock": true,
+    "system_clock_changed": false
+  }
+}

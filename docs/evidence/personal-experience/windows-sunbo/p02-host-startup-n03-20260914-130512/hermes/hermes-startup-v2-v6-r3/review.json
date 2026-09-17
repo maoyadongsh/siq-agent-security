@@ -1,0 +1,62 @@
+{
+  "schema": "windows-evidence-incremental-review/v1",
+  "reviewed_at_utc": "2026-09-14T04:22:29.061134+00:00",
+  "scope": "对 r3 修订及新增空设备检查材料的独立只读增量复核；未重复执行产品或诊断测试。",
+  "inputs": [
+    {
+      "file": "report.md",
+      "sha256": "6118c6d9d1fcd53ac79b56b5481e26a48a88a6d7bb777d8368fa3bf118210f4e"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "7451a504f8c7f97a5873cb7d70c733b0df89fb8f71dc0ddf8beef3abef092f02"
+    },
+    {
+      "file": "check-devnull.py",
+      "sha256": "4e32211363b955467912dcafeafb51da81870f5bfaf1e1ba501ef737b88d7cd1"
+    },
+    {
+      "file": "devnull-device-check.json",
+      "sha256": "1b5bc2ebf18f454e615cb6cfb06a23c75498f16d1a9b4237b358d2b78b39c65f"
+    }
+  ],
+  "status": "no_new_blocking_findings",
+  "checks": [
+    {
+      "item": "耗时口径",
+      "result": "pass",
+      "detail": "表格使用单轮 case 记录耗时，并解释包含启动、通信、provider 回收和日志开销；与父 harness 总耗时分列，不推断 v6 在 45 秒退出。"
+    },
+    {
+      "item": "协议错误与请求分母",
+      "result": "pass",
+      "detail": "v4/v6 各两次 AssertionError 与原报告一致，其他三轮为零；请求列表计数明确排除 append 前错误，错误具体原因保留 unknown。"
+    },
+    {
+      "item": "进程清理断言",
+      "result": "pass",
+      "detail": "已移除所有后续 PID 查询均 absent 的归档断言，只保留原 harness 已回收主进程的结果，不回填后续轮次能力。"
+    },
+    {
+      "item": "新增设备检查",
+      "result": "pass",
+      "detail": "结果中的脚本 SHA 与 check-devnull.py 原字节一致；源码以 os.O_RDWR 打开空设备，GetFileType 返回值与结果的字符设备类型 2 一致，并在关闭后检查 EBADF。材料明确采用独立工作区 Python 3.13.7，不是 Hermes 或 guard 重放。"
+    },
+    {
+      "item": "验收与证据边界",
+      "result": "pass",
+      "detail": "A 全部 blocked、B 未执行；SIQ 二进制仅核验身份，没有执行或加载插件。配置读取 audit 不升级为 effective，不使用 v3 原因解释 v1，不提升真实宿主矩阵。"
+    },
+    {
+      "item": "公开材料检查",
+      "result": "pass",
+      "detail": "四份输入未发现私人绝对路径、个人 SID、凭据字面量或未填占位。"
+    }
+  ],
+  "blocking_findings": [],
+  "limits": [
+    "审阅者本轮未重新执行 Win32 设备调用；核验的是新增源码、结果文件和边界陈述的一致性。",
+    "本轮不重复前次原始调用栈及 helper 全量复核；相关描述继续沿用前次只读复核与原执行者确认。",
+    "本记录不代替真实宿主写入对照、SIQ 服务失联或完整生命周期验收。"
+  ]
+}

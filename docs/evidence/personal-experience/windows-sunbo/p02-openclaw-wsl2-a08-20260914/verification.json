@@ -1,0 +1,57 @@
+{
+  "schema": "openclaw-a08-public-verification.v1",
+  "status": "public_evidence_reviewed",
+  "meaning": "公开白名单与保留证据一致，独立复核及主任务公开审阅已完成；不表示行为 A 或平台验收通过。最终目录的提交前秘密扫描另存于交付审计。",
+  "source_context": "b68199be84f4af6c1c434f736a67a3bc72f2b4dc",
+  "public_payload_files_verified": 4,
+  "source_rows_verified": 66,
+  "run_raw_streams_verified": 8,
+  "plan_raw_streams_verified": 4,
+  "plan_and_run_raw_records_verified": 12,
+  "raw_record_count_basis": "Run八条由本次派生核对；Plan四条及Run八条的原流与解码已由独立实际复核共同验证，计数不混同。",
+  "base64_run_streams_verified": 4,
+  "diagnostic_subframes_verified": 2,
+  "diagnostic_subframes_are_additional_streams": false,
+  "frozen_inputs_verified": 20,
+  "installed_source_pins_verified_from_retained_records": 21,
+  "node_identity_verified_from_retained_records": true,
+  "unshare_identity_verified_from_retained_records": true,
+  "runtime_payloads_verified": 6,
+  "actual_verdict_preserved": "instrumented behavioral A fail; diagnostic complete; cause capture complete; B not_run",
+  "memory_instrumentation_disclosed": true,
+  "uninstrumented_A_pass_claimed": false,
+  "empty_primitive_permission_and_resource_preserved": true,
+  "name_and_syscall_absence_preserved": true,
+  "stack_skipped_preserved": true,
+  "cause_unique_call_id_binding": false,
+  "actual_wrapper_sha256": "84bd887a69e25987661abca475f1a796d08f73684977a3a168d3db13c3b1e81f",
+  "frozen_manifest_sha256": "61739abae171503819ebe6e62d7852c4f17aac811f60b0409d747c173b3195fa",
+  "public_manifest_sha256": "726002d1d40be2c689539fb01643b43c9cf2c0d1b33d283cd3e7d204e0dbda14",
+  "independent_actual_review": {
+    "status": "completed",
+    "bytes": 4214,
+    "sha256": "b6360ac79de29bead53c221348f60e0651f87bd355bf3ac78e79994573025b23",
+    "method": "读取保留证据，没有重新执行宿主/WSL/Node。"
+  },
+  "sensitive_content_review": {
+    "explicit_private_field_check": "passed",
+    "gitleaks": "passed_reviewed_payload_scan_8.24.2_exit_0",
+    "final_public_review": "passed_root_and_independent"
+  },
+  "boundaries": {
+    "raw_stdout_stderr_published": false,
+    "nonce_and_process_identity_published": false,
+    "model_request_body_published": false,
+    "private_paths_or_environment_values_published": false,
+    "siq_invoked": false,
+    "native_windows_acceptance_pass_claimed": false,
+    "formal_acceptance_matrix_changed": false,
+    "prior_attempts_modified": false
+  },
+  "ready_for_publication": true,
+  "independent_public_review": {
+    "bytes": 4169,
+    "sha256": "f2b79dc6185f8abde2ca933bf33f49fc357eddee7a3eefade392246b34a9a811",
+    "method": "只读公开材料与保留原件；没有重跑宿主。"
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "kind": "Windows local Skill management UI evidence; not full native-host acceptance",
+  "attempt": "R5",
+  "recorded_at_utc": "2026-09-14T06:17:02.812847+00:00",
+  "source_before": {
+    "sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "clean": true
+  },
+  "source_after": {
+    "sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "clean": true
+  },
+  "binary_sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470",
+  "native_build_attempt": "R3",
+  "R5_binary_reused_byte_identically": true,
+  "R5_go_build_executed": false,
+  "go_identity": {
+    "GOARCH": "amd64",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "windows",
+    "GOOS": "windows",
+    "GOTELEMETRY": "off",
+    "GOTOOLCHAIN": "local",
+    "GOVERSION": "go1.27.1"
+  },
+  "go_exe_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+  "python_sha256": "d932e5e2f324d57f392e8fd063dcf6d0185be8a664c57c6d24e7762ed02c28ca",
+  "node_sha256": "fdddbf4581e046b8102815d56208d6a248950bb554570b81519a8a5dacfee95d",
+  "git_exe_sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2",
+  "browser_sha256": "ed19d88b4486c39c0265b0c07cbf1d6835d06069e600bede1adb09db0df46c8e",
+  "browser_version": "141.0.7390.37",
+  "node_version": "22.20.0",
+  "playwright_version": "1.62.1",
+  "script_sha256": {
+    "harness.py": "e00c9b2cdecdb0dd92339ff166086e766c676811d6c4b3aafbc3d00c65b4b833",
+    "run-journey.py": "cfcb1c3efbeac10e5af66afea278bd4f23102d86f04f2e5e3dd4ad57e9fc61f6",
+    "ui-journey.cjs": "7eeb02320ffd4c3c08c4c0dfc3b5f1b7857929b8f053f711c48f7cb22b189040"
+  },
+  "controller_exit_code": 0,
+  "outcome": "pass_with_limited_scope",
+  "ui_assertions": {
+    "paired_through_ui": true,
+    "v1_installed_unverified": true,
+    "cancelled_old_bytes_and_grant_unchanged": true,
+    "cancelled_update_claim_absent": true,
+    "v2_updated_unverified": true,
+    "old_grant_revoked_new_approved": true,
+    "removal_preserved_all_files": true,
+    "note_preserved_by_owned_move": true,
+    "same_removal_confirmation_completed": true,
+    "both_grants_revoked": true,
+    "immutable_history_retained": true,
+    "sources_and_profile_unchanged": true,
+    "runtime_identity_absent": true
+  },
+  "ui_process": {
+    "exit_code": 0,
+    "held_direct_process_reaped": true,
+    "held_process_handle_closed": true,
+    "forced_held_process_kill": false,
+    "observation_timeout": false,
+    "capture_overflow": false,
+    "capture_threads_ended": true,
+    "input_thread_ended": true,
+    "capture_error_types": [],
+    "cleanup_unverified": false,
+    "elapsed_seconds": 129.317,
+    "descendant_process_inventory_claimed": false
+  },
+  "browser_job": {
+    "assigned_before_fixture_input": true,
+    "forced_job_termination": false,
+    "handle_closed": true,
+    "before_close": {
+      "total_processes": 6,
+      "active_processes": 0,
+      "terminated_by_limits": 0
+    },
+    "before_bounded_natural_exit_wait": {
+      "total_processes": 6,
+      "active_processes": 0,
+      "terminated_by_limits": 0
+    },
+    "final_accounting_before_handle_close": {
+      "total_processes": 6,
+      "active_processes": 0,
+      "terminated_by_limits": 0
+    },
+    "cleanup_error_types": [],
+    "job_handle_non_inheritable_verified": true,
+    "limit": "Only the assigned Node tree; no machine-wide inventory or OS sandbox claim."
+  },
+  "service_cleanup": {
+    "exit_code": 0,
+    "held_direct_process_reaped": true,
+    "held_process_handle_closed": true,
+    "forced_held_process_kill": false,
+    "observation_timeout": false,
+    "capture_overflow": false,
+    "capture_threads_ended": true,
+    "input_thread_ended": true,
+    "capture_error_types": [],
+    "cleanup_unverified": false,
+    "elapsed_seconds": 134.916,
+    "descendant_process_inventory_claimed": false,
+    "signed_graceful_stop": {
+      "attempted": true,
+      "verified_drained": true,
+      "error_type": null
+    },
+    "service_watchdog_ended": true,
+    "primary_error_type": null,
+    "normal_stop_verified": true
+  },
+  "private_acl": {
+    "sddl_sha256": "25cf82e7f34ffd7c5ddbaf9581de2db66f68d5f0f42223e4ef0c6a53c0e869ab",
+    "ace_count": 3,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "protected": true
+  },
+  "sources": {
+    "v1": [
+      {
+        "path": "SKILL.md",
+        "kind": "file",
+        "bytes": 141,
+        "sha256": "4ac13c62e6a56bfc5edf28c181674cef10a13b30539828c4baf0856c44e01aa0"
+      }
+    ],
+    "v2": [
+      {
+        "path": "SKILL.md",
+        "kind": "file",
+        "bytes": 168,
+        "sha256": "ce065c4d54f36f398461a452c2bb0b3fbb0ce8041d5bceeada3a8b6f3c2f64af"
+      }
+    ]
+  },
+  "immutable_history_file_count": 28,
+  "page_error_count": 0,
+  "page_route_external_requests_blocked": 0,
+  "page_route_websockets_blocked": 0,
+  "all_product_writes_through_real_UI": true,
+  "mock_HTTP_responses": false,
+  "hermes_executed": false,
+  "provider_invoked": false,
+  "runtime_verified": false,
+  "local_source_auto_update_check": false,
+  "system_tasks_managed": false,
+  "action_timings": [
+    {
+      "phase": "v1-import-approve",
+      "method": "POST",
+      "path": "/v1/skill-imports",
+      "response_timeout_ms": 75000,
+      "status": 201,
+      "elapsed_ms": 1697
+    },
+    {
+      "phase": "v1-import-approve",
+      "method": "POST",
+      "path": "/v1/skill-imports/<import>/permissions",
+      "response_timeout_ms": 75000,
+      "status": 201,
+      "elapsed_ms": 3176
+    },
+    {
+      "phase": "v1-import-approve",
+      "method": "POST",
+      "path": "/v1/grants/<grant>/approve",
+      "response_timeout_ms": 75000,
+      "status": 200,
+      "elapsed_ms": 4414
+    },
+    {
+      "phase": "v1-install",
+      "method": "POST",
+      "path": "/v1/skill-installations/plans",
+      "response_timeout_ms": 75000,
+      "status": 201,
+      "elapsed_ms": 3428
+    },
+    {
+      "phase": "v1-install",
+      "method": "POST",
+      "path": "/v1/skill-installations/apply",
+      "response_timeout_ms": 75000,
+      "status": 200,
+      "elapsed_ms": 6654
+    },
+    {
+      "phase": "v2-import-approve",
+      "method": "POST",
+      "path": "/v1/skill-imports",
+      "response_timeout_ms": 75000,
+      "status": 201,
+      "elapsed_ms": 826
+    },
+    {
+      "phase": "v2-import-approve",
+      "method": "POST",
+      "path": "/v1/skill-imports/<import>/permissions",
+      "response_timeout_ms": 75000,
+      "status": 201,
+      "elapsed_ms": 2249
+    },
+    {
+      "phase": "v2-import-approve",
+      "method": "POST",
+      "path": "/v1/grants/<grant>/approve",
+      "response_timeout_ms": 75000,
+      "status": 200,
+      "elapsed_ms": 3112
+    },
+    {
+      "phase": "v2-prepare-cancel",
+      "method": "POST",
+      "path": "/v1/skill-installations/operations/<operation>/update-comparison",
+      "response_timeout_ms": 75000,
+      "status": 200,
+      "elapsed_ms": 1987
+    },
+    {
+      "phase": "v2-prepare-cancel",
+      "method": "POST",
+      "path": "/v1/skill-installations/operations/<operation>/update-plans",
+      "response_timeout_ms": 75000,
+      "status": 201,
+      "elapsed_ms": 8306
+    },
+    {
+      "phase": "v2-recompare-update",
+      "method": "POST",
+      "path": "/v1/skill-installations/operations/<operation>/update-comparison",
+      "response_timeout_ms": 75000,
+      "status": 200,
+      "elapsed_ms": 2015
+    },
+    {
+      "phase": "v2-recompare-update",
+      "method": "POST",
+      "path": "/v1/skill-installations/operations/<operation>/update-plans",
+      "response_timeout_ms": 75000,
+      "status": 201,
+      "elapsed_ms": 7272
+    },
+    {
+      "phase": "v2-recompare-update",
+      "method": "POST",
+      "path": "/v1/skill-installations/operations/<operation>/update-comparison",
+      "response_timeout_ms": 75000,
+      "status": 200,
+      "elapsed_ms": 2727
+    },
+    {
+      "phase": "v2-recompare-update",
+      "method": "POST",
+      "path": "/v1/skill-installations/updates",
+      "response_timeout_ms": 75000,
+      "status": 200,
+      "elapsed_ms": 28535
+    },
+    {
+      "phase": "remove-preserve-note",
+      "method": "POST",
+      "path": "/v1/skill-installations/operations/<operation>/removal",
+      "response_timeout_ms": 75000,
+      "status": 200,
+      "elapsed_ms": 4160
+    },
+    {
+      "phase": "preserve-note-retry-remove",
+      "method": "POST",
+      "path": "/v1/skill-installations/operations/<operation>/removal",
+      "response_timeout_ms": 75000,
+      "status": 200,
+      "elapsed_ms": 3242
+    }
+  ],
+  "limitations": [
+    "Synthetic inert local Skill directories and named profile; no real host Skill execution.",
+    "approved/installed_unverified/updated_unverified are not effective runtime authority.",
+    "Cancellation leaves a signed preview, without committing its update claim.",
+    "The operator preserves its own note before retrying the exact removal confirmation.",
+    "No N01 historical binary pair, upstream auto-check, three-host or N09 full acceptance.",
+    "Browser Job counts cover its assigned tree; no OS sandbox or individual descendant identity claim.",
+    "HTTP action timings include browser dispatch and response reading; not server-only benchmarks."
+  ],
+  "environment_observed": {
+    "os": "Windows 11 Pro for Workstations",
+    "version": "10.0.26200",
+    "architecture": "64-bit",
+    "filesystem": "NTFS"
+  },
+  "non_2xx_api_response_counts": [
+    {
+      "method": "GET",
+      "path_template": "/v1/grants",
+      "status": 500,
+      "count": 1
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations/<operation>/removal",
+      "status": 429,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/operations/<operation>/update-source",
+      "status": 429,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "path_template": "/v1/skill-installations/updates/<operation>",
+      "status": 404,
+      "count": 2
+    },
+    {
+      "method": "POST",
+      "path_template": "/v1/session/restore",
+      "status": 401,
+      "count": 1
+    }
+  ]
+}

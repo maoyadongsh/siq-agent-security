@@ -1,0 +1,24 @@
+{
+  "schema": "public-group-validation/v1",
+  "scope": "OpenClaw historical public 5 files plus A04 public 5 files and group report",
+  "byte_identical_copy_checks": {
+    "history_files": 5,
+    "a04_files": 5,
+    "pass": true
+  },
+  "child_public_manifests": {
+    "history_sha256": "eeefd756806f28e3e48579b58892329ed6cb542d8a637a9d5899c4c028cc48c7",
+    "a04_sha256": "6cf6e9fc37c6eef1cc72bc2d2ce0ea4990a73c75253d0742a4055c97f5d67ba3"
+  },
+  "group_scan": {
+    "gitleaks_version": "8.24.2",
+    "source_files_scanned": 11,
+    "findings": 0,
+    "private_identity_pattern_count": 0
+  },
+  "limitations": [
+    "Private raw and validation materials excluded.",
+    "Source hash indexes are integrity references, not raw evidence publication.",
+    "No product commands run during derivation."
+  ]
+}

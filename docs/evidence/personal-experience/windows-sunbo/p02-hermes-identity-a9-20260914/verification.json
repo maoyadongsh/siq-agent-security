@@ -1,0 +1,68 @@
+{
+  "artifact_kind": "public evidence byte index; not a runtime or platform acceptance schema",
+  "assembled_at_utc": "2026-09-14T07:23:10.441068+00:00",
+  "archive_base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "identity_only_source_context": "3cbbd1dcec7eae5691de465de0ea6fbc459243ae",
+  "A9_source_context": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "SIQ_binary_tested_in_these_two_diagnostics": false,
+  "identity_only_result": "identity_diagnostic_pass; A/B not_run",
+  "A9_result": "A_control fail; B not_run",
+  "new_native_acceptance_passes": 0,
+  "raw_private_files_included": false,
+  "original_public_groups_copied_byte_identical": true,
+  "nested_manifest_entries_matched": 6,
+  "relative_links_checked": 6,
+  "self_excluded": true,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 361,
+      "sha256": "bed32ea327fb41a033db17c14c2cdaa54089c54e7069a5870f32a3ea8cdc2c6c"
+    },
+    {
+      "path": "identity-only-r1/manifest.json",
+      "bytes": 606,
+      "sha256": "e021138d2137b3eaccd3f58ae03ab5adf285d4be3a355cfbc6275ab31a2dadcb"
+    },
+    {
+      "path": "identity-only-r1/raw-source-index.json",
+      "bytes": 5020,
+      "sha256": "470201979c9c63d42c077757667c11f1cd34ea5f62d4372f970f92a82f223a1d"
+    },
+    {
+      "path": "identity-only-r1/report.md",
+      "bytes": 2165,
+      "sha256": "83b55cd3c09e4cd714bbfe948b5ef21bdc44f780a7f81332e694d65489af9ada"
+    },
+    {
+      "path": "identity-only-r1/summary.json",
+      "bytes": 4461,
+      "sha256": "13d9b84f7cf737a7cd5171be297ece279d59c5d8c2ea562abd52e442c40d46e1"
+    },
+    {
+      "path": "native-a9/manifest.json",
+      "bytes": 585,
+      "sha256": "69b11b4e760f61121634ec982b810ca0c7e0bef77335062267d1eb28584e86c7"
+    },
+    {
+      "path": "native-a9/raw-source-index.json",
+      "bytes": 18233,
+      "sha256": "ba6cba60460f7e6c43c1e3f60e486758e34e7360171513c69b6e90f537cb1563"
+    },
+    {
+      "path": "native-a9/report.md",
+      "bytes": 2746,
+      "sha256": "25798c999293905468f719e935b4ab238ff66b82f4a528f0d418ddfa7d33797c"
+    },
+    {
+      "path": "native-a9/summary.json",
+      "bytes": 5799,
+      "sha256": "128a71063480cecabed2f30d8a1c2be0f0a9e5c583bcfd86fee6ed415ea1e0fd"
+    },
+    {
+      "path": "report.md",
+      "bytes": 3168,
+      "sha256": "1c7fb1401e4e81b241553709bc6a150f0d1ad916700b1dc3d5ff3b5b80f12e2c"
+    }
+  ]
+}

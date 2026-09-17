@@ -1,0 +1,225 @@
+{
+  "schema": "a09-r3-evidence-verification/v1",
+  "verified_utc": "2026-09-14T22:16:32.327907+00:00",
+  "checks": {
+    "strict_public_json_inputs": true,
+    "all_frozen10files_rehashed": true,
+    "five_payloads_same_plan_run": true,
+    "actual_case_plan_matches_reviewed_except_reserved_ports": true,
+    "guest_base64_raw_and_parsed_objects_match": true,
+    "guest_raw_hash_matches_later17_named_files_readback": true,
+    "three_network_events_redecoded_from_actual_logs": true,
+    "three_expected_missing_paths_readback_absent": true,
+    "windows_root_acl_matches_preflight": true
+  },
+  "raw_stream_count": 18,
+  "raw_streams": [
+    {
+      "layer": "plan-inventory-raw_stdout",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0",
+      "complete": true,
+      "decode_error": false
+    },
+    {
+      "layer": "plan-inventory-raw_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true,
+      "decode_error": false
+    },
+    {
+      "layer": "plan-transport-raw_stdout",
+      "bytes": 14392,
+      "sha256": "a0fb99ebb59affb53ed1de2b6bb1438d42a6287c67b53da3319bd4d021a15a2e",
+      "complete": true,
+      "decode_error": false
+    },
+    {
+      "layer": "plan-transport-raw_stderr",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "complete": true,
+      "decode_error": true
+    },
+    {
+      "layer": "run-inventory-raw_stdout",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0",
+      "complete": true,
+      "decode_error": false
+    },
+    {
+      "layer": "run-inventory-raw_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true,
+      "decode_error": false
+    },
+    {
+      "layer": "run-transport-raw_stdout",
+      "bytes": 186544,
+      "sha256": "d2f4e8e1c1ddd227b9aa576ec8e1212a3a63bbdbdfda9ca555f46bf365686dda",
+      "complete": true,
+      "decode_error": false
+    },
+    {
+      "layer": "run-transport-raw_stderr",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "complete": true,
+      "decode_error": true
+    },
+    {
+      "layer": "postflight-transport-raw_stdout",
+      "bytes": 4650,
+      "sha256": "1ca7c7e50d5687cdfa780ee867700d3ade9a2276965d624ee49abc003eea8a37",
+      "complete": true,
+      "decode_error": false
+    },
+    {
+      "layer": "postflight-transport-raw_stderr",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "complete": true,
+      "decode_error": true
+    },
+    {
+      "layer": "namespace-stdout",
+      "bytes": 50561,
+      "sha256": "2862fc351d399946970bea25ec3a2d03f0ebe2afd1562b593bb0cad6d08d98f8",
+      "complete": true
+    },
+    {
+      "layer": "namespace-stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true
+    },
+    {
+      "layer": "D0-stdout",
+      "bytes": 508,
+      "sha256": "538aabad68ee0b8e35e2e8c4e47ba40ab301023d783ed09dd78256cd894ca2df",
+      "complete": true
+    },
+    {
+      "layer": "D0-stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true
+    },
+    {
+      "layer": "D1-stdout",
+      "bytes": 874,
+      "sha256": "a602bc30b2046161d420219a870bde81824ee59a03ecfe1e413b8a81b77f80e2",
+      "complete": true
+    },
+    {
+      "layer": "D1-stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true
+    },
+    {
+      "layer": "D2-stdout",
+      "bytes": 532,
+      "sha256": "83a17f07e1e990f3977fcf76345049d301a3aad53c0fd679d0b0b1b5e597cd2e",
+      "complete": true
+    },
+    {
+      "layer": "D2-stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true
+    }
+  ],
+  "source_index": [
+    {
+      "file": "a09-reviewable-plan.json",
+      "bytes": 37777,
+      "sha256": "e9955662a3634edc2a945a34775efbd76765da768e1868defb7e807394623107"
+    },
+    {
+      "file": "plan-root-review.json",
+      "bytes": 795,
+      "sha256": "7b10c26b4a08c3051a66d5b928209c7b9f2c94eb594750f665bd1cdfc6e75f2b"
+    },
+    {
+      "file": "a09-run.json",
+      "bytes": 416154,
+      "sha256": "57a54870454d6088f1e9394bd299026d8213a023fcf8196b3834f7aa247b920e"
+    },
+    {
+      "file": "owned-files-postflight.json",
+      "bytes": 7775,
+      "sha256": "3e35876374a16be8dc0a31fb61b7e298d3aaf30501b537de30ec787ebd392502"
+    },
+    {
+      "file": "windows-root-preflight.json",
+      "bytes": 756,
+      "sha256": "d224205e70af8513137b46216725f1bcaf8047535888e7605701fb2a1a0cf47b"
+    },
+    {
+      "file": "r3-draft-manifest.json",
+      "bytes": 1995,
+      "sha256": "2ae930023cf683d1e3dd0f477f9cb00cbbfd46ca8c8b8cad64ec7ecdc2c5cb94"
+    },
+    {
+      "file": "r2-preflight-refusal-summary.json",
+      "bytes": 2256,
+      "sha256": "20e2c554748b07b7d8c82b0f881607394c1e0aa7e50007cf0e444410cb7d9c50"
+    },
+    {
+      "file": "unshare-package-provenance.json",
+      "bytes": 4894,
+      "sha256": "edef93f808f49fb9f17b263d1df41079d8772e3587c5bae302d497615e40d68f"
+    }
+  ],
+  "frozen_execution_payloads": [
+    {
+      "role": "parent",
+      "file": "namespace-parent.py",
+      "bytes": 16079,
+      "sha256": "3c867bc7511a1ff842e0daea35381c9bd503ef0985bda50ab627aa43ff8c7506"
+    },
+    {
+      "role": "child",
+      "file": "namespace-child.py",
+      "bytes": 9686,
+      "sha256": "036b75e347a337024e53c8b5f32ea6fc663d10474ca53a738c5495360a8b363b"
+    },
+    {
+      "role": "runtime",
+      "file": "runtime-diagnostic.py",
+      "bytes": 22110,
+      "sha256": "ac6b229e0b7a70662c905f90f58ef1d5829e247115eb9a6e3918b53c327a900d"
+    },
+    {
+      "role": "guard",
+      "file": "owned-loopback-guard.mjs",
+      "bytes": 4409,
+      "sha256": "c105681c91205b5c00f409fd93e492cbdec16f590c67a111ca0409e52027fa23"
+    },
+    {
+      "role": "probe",
+      "file": "probe.mjs",
+      "bytes": 5489,
+      "sha256": "15be1ba5694ac22f943950123c39dcb19fa73ab6b92cbddefe908ab5cf9be477"
+    }
+  ],
+  "windows_main_stderr": {
+    "bytes": 132,
+    "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+    "original_decode_error": true,
+    "original_decode": "utf-8-with-replacement",
+    "supplementary_decode": "utf-16le strict, preserved WSL localhost proxy/NAT warning",
+    "node_stderr_separate_and_empty": true
+  },
+  "scope": "18=Plan4+Run4+postflight2 Windows streams and namespace2+Node6 guest streams. This hashes evidence; pass does not establish host acceptance. Public fields are selected, private paths/PIDs/SIDs and third-party source excluded.",
+  "independent_run_review": {
+    "file": "openclaw-a09-r3-result-review-20260915.md",
+    "bytes": 8172,
+    "sha256": "67c90d15ed5ce316f9a971aea9bec6b8f4b300870c1abbcb59c3fc39ed1ca78f",
+    "scope": "12 Run streams and stored result; does not cover later postflight. Root and separate public-content reviewer verified later17files/3networklogs."
+  }
+}

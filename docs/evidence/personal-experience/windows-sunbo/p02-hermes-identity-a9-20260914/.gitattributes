@@ -1,0 +1,9 @@
+# Preserve only these frozen public diagnostic bytes, including original line endings.
+identity-only-r1/manifest.json -text
+identity-only-r1/raw-source-index.json -text
+identity-only-r1/report.md -text
+identity-only-r1/summary.json -text
+native-a9/manifest.json -text
+native-a9/raw-source-index.json -text
+native-a9/report.md -text
+native-a9/summary.json -text
