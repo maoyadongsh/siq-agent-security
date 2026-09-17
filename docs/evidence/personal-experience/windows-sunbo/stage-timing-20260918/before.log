@@ -1,0 +1,11 @@
+=== RUN   TestStageTimingFollowsExecutedBranchesAndPreservesDecisions
+=== RUN   TestStageTimingFollowsExecutedBranchesAndPreservesDecisions/optional
+    timing_test.go:33: missing monotonic sample despite frozen authority clock authority_validation map[authority_validation:[0s] intent_lookup:[0s] policy_evaluation:[0s] provenance_resolution:[0s] receipt_append_fsync:[38.8598ms] runtime_action_normalization:[0s]]
+=== RUN   TestStageTimingFollowsExecutedBranchesAndPreservesDecisions/required
+    timing_test.go:33: missing monotonic sample despite frozen authority clock authority_validation map[authority_validation:[0s] intent_lookup:[0s] receipt_append_fsync:[40.2836ms] runtime_action_normalization:[0s]]
+--- FAIL: TestStageTimingFollowsExecutedBranchesAndPreservesDecisions (0.28s)
+    --- FAIL: TestStageTimingFollowsExecutedBranchesAndPreservesDecisions/optional (0.14s)
+    --- FAIL: TestStageTimingFollowsExecutedBranchesAndPreservesDecisions/required (0.14s)
+FAIL
+FAIL	siq-agent-security/apps/agentshield/internal/receipt	3.224s
+FAIL

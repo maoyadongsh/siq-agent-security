@@ -1,0 +1,43 @@
+{
+  "code_commit": "1947a614377fc23317cf2745734be132230854df",
+  "base_main": "d4850f52988b52b9399a1e8889891f624edf7eea",
+  "scope": "test portability only; no engine or authority-clock change",
+  "go": "go1.27.1 windows/amd64",
+  "before": {
+    "exit_code": 1
+  },
+  "after": {
+    "exit_code": 0
+  },
+  "counterfactual": {
+    "exit_code": 1,
+    "expected_failure": true,
+    "wrong_authority_clock_rejected_in_both_branches": true,
+    "engine_restored_sha256": "c0bcb1c7ea0bb976b1d7f53a23e6262b8801c9e3e8056a73478f7cab992047dd"
+  },
+  "race": {
+    "exit_code": 0
+  },
+  "receipt_package": {
+    "exit_code": 0
+  },
+  "gofmt_files": [],
+  "vet_receipt_exit": 0,
+  "diff_check_exit": 0,
+  "new_skips": 0,
+  "private_log_sha256": {
+    "before.log": "19691558707bcdbcecd679110456d4a924f8f5b415966a5abb0d007336e7bb21",
+    "after.log": "260b7d25d76df6bf6e8d56eeff28b622f71430d56a19ce23e410543f49963980",
+    "mutant.log": "e248163498bf3592a84e5ebf203a9f69ce5d986ac34db70a29a4f6fc8baa75b5",
+    "race.log": "4cdda49e85eb72ee575406700d6bdb53679a1c52af58bb004875dac26bb2e820",
+    "receipt-package.log": "251c47a7125113f3d5255487e291257414ce8041dd9cb260005265a5049c2b32"
+  },
+  "validation_commands": [
+    "go test ./internal/receipt -run ^TestStageTimingFollowsExecutedBranchesAndPreservesDecisions$ -count=1 -timeout=5m -v",
+    "go test -race ./internal/receipt -run ^TestStageTimingFollowsExecutedBranchesAndPreservesDecisions$ -count=1 -timeout=5m",
+    "go test ./internal/receipt -count=1 -timeout=10m",
+    "go vet ./internal/receipt"
+  ],
+  "test_inputs": "The tested final source was committed unchanged; counterfactual engine edits were restored byte-for-byte before package/race regression",
+  "final_windows_acceptance": false
+}
