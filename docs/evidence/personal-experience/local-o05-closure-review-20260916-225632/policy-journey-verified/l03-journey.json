@@ -1,0 +1,1125 @@
+{
+  "schema_version": "o05-l03-candidate-journey/v1",
+  "meta": {
+    "candidate_binary": "<repo>/dist/siq-agent-security-0.3.0-rc.5/siq-agent-security-linux-arm64",
+    "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+    "gateway_endpoint": "https://127.0.0.1:17671",
+    "sandbox_target": "siq-review-r5-225905",
+    "fact_endpoint": "172.23.0.1:42865",
+    "isolated_root": "<isolated-root>",
+    "isolated_state": "<isolated-root>/state",
+    "isolated_home": "<isolated-root>/home",
+    "started_at": "2026-09-16T15:01:50.569189+00:00",
+    "ui_acceptance": "not_run",
+    "notes": [
+      "o05_live_test.go 是辅助控制面恢复验证，不代表本旅程或候选 B3 全链通过"
+    ]
+  },
+  "scope": "policy_apply_http_journey",
+  "task_execution_acceptance": false,
+  "ui_acceptance": false,
+  "summary": {
+    "steps": 57,
+    "passed": 57,
+    "failed": 0,
+    "finished_at": "2026-09-16T15:01:53.182230+00:00"
+  },
+  "steps": [
+    {
+      "id": "J00",
+      "title": "candidate binary identity bind",
+      "kind": "cli",
+      "status": "pass",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "version_stdout": "siq-agent-security 0.3.0-rc.5 (linux/arm64)",
+      "bytes": 22585526,
+      "recorded_at": "2026-09-16T15:01:50.576492+00:00",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J01a",
+      "title": "init isolated state dir",
+      "kind": "cli",
+      "command": [
+        "siq-agent-security-linux-arm64",
+        "init",
+        "--port",
+        "49743"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J01a.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J01a.cli.stderr.txt",
+      "duration_ms": 30,
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.606856+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J01b",
+      "title": "serve start (mode=block) + admin pairing on 127.0.0.1:54235",
+      "kind": "cli+http",
+      "command": [
+        "siq-agent-security-linux-arm64",
+        "serve",
+        "--port",
+        54235,
+        "--mode",
+        "block"
+      ],
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed"
+      },
+      "daemon_endpoint": "http://127.0.0.1:54235",
+      "stdout_file": "l03-private/l03-raw/J01b.serve-log.txt",
+      "recorded_at": "2026-09-16T15:01:50.663542+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J02a",
+      "title": "real protection status: openshell probe",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/probe"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J02a.request.json",
+      "response_file": "l03-private/l03-raw/J02a.response.json",
+      "duration_ms": 12,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.676557+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J02b",
+      "title": "real protection status: openshell doctor",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/doctor"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J02b.request.json",
+      "response_file": "l03-private/l03-raw/J02b.response.json",
+      "duration_ms": 52,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.729217+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J02c",
+      "title": "real protection status: grants ledger (empty)",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/grants"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J02c.request.json",
+      "response_file": "l03-private/l03-raw/J02c.response.json",
+      "duration_ms": 1,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.730295+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J02d",
+      "title": "CLI observation: policy get siq-review-r5-225905 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-review-r5-225905",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J02d.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J02d.cli.stderr.txt",
+      "duration_ms": 89,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.819388+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J02e",
+      "title": "baseline binding: gateway/fingerprint/target revision",
+      "kind": "derived",
+      "status": "pass",
+      "gateway_version": "unknown",
+      "endpoint_fingerprint": "c4b76903a33d3ecce2c227459de8d15f61a862fca3ed7c4a22f5b5eaa864856f",
+      "sandbox_revision": "3",
+      "sandbox_policy_sha256": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "recorded_at": "2026-09-16T15:01:50.819412+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J10a",
+      "title": "admit batch-owned fixture skill (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/admit"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J10a.request.json",
+      "response_file": "l03-private/l03-raw/J10a.response.json",
+      "duration_ms": 7,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.827123+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J10b",
+      "title": "create grant platform=openclaw subject=sandbox (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J10b.request.json",
+      "response_file": "l03-private/l03-raw/J10b.response.json",
+      "duration_ms": 37,
+      "key_fields": {
+        "state_revision": 0
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.864270+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J10c",
+      "title": "patch-desired approved model allowlist (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-d010a0651765-be7154b0/patch-desired"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J10c.request.json",
+      "response_file": "l03-private/l03-raw/J10c.response.json",
+      "duration_ms": 38,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.903217+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J10d",
+      "title": "approval challenge (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-d010a0651765-be7154b0/challenge"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J10d.request.json",
+      "response_file": "l03-private/l03-raw/J10d.response.json",
+      "duration_ms": 9,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.912431+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J10e",
+      "title": "human approve with challenge proof (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-d010a0651765-be7154b0/approve"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J10e.request.json",
+      "response_file": "l03-private/l03-raw/J10e.response.json",
+      "duration_ms": 35,
+      "key_fields": {
+        "state_revision": 2
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.947567+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J10f",
+      "title": "deploy grant (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-d010a0651765-be7154b0/deploy"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J10f.request.json",
+      "response_file": "l03-private/l03-raw/J10f.response.json",
+      "duration_ms": 32,
+      "key_fields": {
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.980093+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J10g",
+      "title": "read deployed grant for digest replication",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/grants/grt-d010a0651765-be7154b0"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J10g.request.json",
+      "response_file": "l03-private/l03-raw/J10g.response.json",
+      "duration_ms": 1,
+      "key_fields": {
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:50.981845+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J10h",
+      "title": "grant digest replicated client-side (canon grant-permissions/v1)",
+      "kind": "derived",
+      "status": "pass",
+      "grant_id": "grt-d010a0651765-be7154b0",
+      "grant_digest": "fdecf5ba0bd18c2023c925f8c201dc28baba44e60b34d169a57ed2c583e57862",
+      "grant_network_endpoints": [
+        "172.23.0.1:42865",
+        "172.23.0.1:42866",
+        "astral.sh:443"
+      ],
+      "note": "digest mirrors internal/grant/permission_digest.go; verified by binding acceptance in J40",
+      "recorded_at": "2026-09-16T15:01:50.982023+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J20a",
+      "title": "preview: authorized endpoints + live revision (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/session-executions/preview"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J20a.request.json",
+      "response_file": "l03-private/l03-raw/J20a.response.json",
+      "duration_ms": 141,
+      "key_fields": {
+        "live": {
+          "endpoints": [],
+          "policy_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+          "revision": "3"
+        }
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.124044+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J20b",
+      "title": "CLI observation: policy get siq-review-r5-225905 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-review-r5-225905",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J20b.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J20b.cli.stderr.txt",
+      "duration_ms": 91,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.215375+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J30a",
+      "title": "decide (tool exec, expect hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J30a.request.json",
+      "response_file": "l03-private/l03-raw/J30a.response.json",
+      "duration_ms": 23,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-627b6affc420-150151.216239",
+        "action_id": "act-4baeb09f3fae8285c34a2c98"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.238695+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J30b",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-627b6affc420-150151.216239"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J30b.request.json",
+      "response_file": "l03-private/l03-raw/J30b.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "deny",
+        "receipt_id": "rcp-627b6affc420-150151.216239-res"
+      },
+      "note": "human cancels: the operation must never execute",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.252270+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J30c",
+      "title": "hold status after cancellation",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold-status"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J30c.request.json",
+      "response_file": "l03-private/l03-raw/J30c.response.json",
+      "duration_ms": 1,
+      "key_fields": {
+        "reason_code": "hold_denied",
+        "status": "denied",
+        "action_id": "act-4baeb09f3fae8285c34a2c98"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.253432+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J30d",
+      "title": "cancelled operation refused at execution entry (expected rejection)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/session-executions"
+      ],
+      "http_status": 400,
+      "request_body_file": "l03-private/l03-raw/J30d.request.json",
+      "response_file": "l03-private/l03-raw/J30d.response.json",
+      "duration_ms": 51,
+      "key_fields": {
+        "reason_code": "hold_action_not_approved",
+        "error": "hold_action_not_approved"
+      },
+      "note": "recorded actual rejection HTTP 400: hold_action_not_approved",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.357576+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J30e",
+      "title": "CLI observation: policy get siq-review-r5-225905 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-review-r5-225905",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J30e.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J30e.cli.stderr.txt",
+      "duration_ms": 48,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.406480+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J30f",
+      "title": "zero-execution proof after cancellation",
+      "kind": "derived",
+      "status": "pass",
+      "sandbox_revision_unchanged": "3",
+      "recorded_at": "2026-09-16T15:01:51.406518+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J40a",
+      "title": "decide (tool exec, expect hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J40a.request.json",
+      "response_file": "l03-private/l03-raw/J40a.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-fc1a6a0e56d7-150151.407395",
+        "action_id": "act-fb852bc380acd49a84fbefde"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.420197+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J40b",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-fc1a6a0e56d7-150151.407395"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J40b.request.json",
+      "response_file": "l03-private/l03-raw/J40b.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-fc1a6a0e56d7-150151.407395-res"
+      },
+      "note": "human approves the legitimate policy apply",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.434040+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J40c",
+      "title": "confirmed execution: real policy apply via gateway",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/session-executions"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J40c.request.json",
+      "response_file": "l03-private/l03-raw/J40c.response.json",
+      "duration_ms": 502,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:51.936646+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J40d",
+      "title": "CLI observation: policy get siq-review-r5-225905 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-review-r5-225905",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J40d.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J40d.cli.stderr.txt",
+      "duration_ms": 87,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.024595+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J40e",
+      "title": "real write verified via CLI observation",
+      "kind": "derived",
+      "status": "pass",
+      "revision_before": "3",
+      "revision_after": "4",
+      "policy_sha256_after": "874a12d45aed55f74bbda602b2e6139835a2078329bd5ebe956376d6a0e74562",
+      "scope": "policy_apply",
+      "task_executed": false,
+      "recorded_at": "2026-09-16T15:01:52.024630+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J50a",
+      "title": "hold-executions/status: executed correlation",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold-executions/status"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J50a.request.json",
+      "response_file": "l03-private/l03-raw/J50a.response.json",
+      "duration_ms": 1,
+      "key_fields": {
+        "reason_code": "hold_execution_completed",
+        "status": "completed",
+        "action_id": "act-fb852bc380acd49a84fbefde"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.026075+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J50b",
+      "title": "receipt chain correlation",
+      "kind": "derived",
+      "status": "pass",
+      "decision_receipt_id": "rcp-fc1a6a0e56d7-150151.407395",
+      "action_id": "act-fb852bc380acd49a84fbefde",
+      "reservation_receipt_id": "rcp-fc1a6a0e56d7-150151.407395-exec",
+      "observation_receipt_id": "rcp-fc1a6a0e56d7-150151.407395-exec-obs",
+      "execution_receipt_id": "opo-201c7dd02de648b8621d2cbf12c052c695cda485b3d5c231",
+      "hold_status": "completed",
+      "hold_status_reason": "hold_execution_completed",
+      "recorded_at": "2026-09-16T15:01:52.026098+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J60a",
+      "title": "decide (tool exec, expect hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J60a.request.json",
+      "response_file": "l03-private/l03-raw/J60a.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "deny",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-bf54acf9a5df-150152.026812",
+        "action_id": "act-3cb3b9a696f4949546b3fb44"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.040139+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J60b",
+      "title": "overreach decided without hold",
+      "kind": "derived",
+      "status": "pass",
+      "decide_action": "deny",
+      "detail": "decide refused the out-of-grant endpoint with action=deny",
+      "recorded_at": "2026-09-16T15:01:52.040164+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J60d",
+      "title": "CLI observation: policy get siq-review-r5-225905 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-review-r5-225905",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J60d.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J60d.cli.stderr.txt",
+      "duration_ms": 88,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.128875+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J80a",
+      "title": "rollback of the executed operation (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/session-executions/rollback"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J80a.request.json",
+      "response_file": "l03-private/l03-raw/J80a.response.json",
+      "duration_ms": 366,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.495294+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J80b",
+      "title": "CLI observation: policy get siq-review-r5-225905 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-review-r5-225905",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J80b.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J80b.cli.stderr.txt",
+      "duration_ms": 89,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.584615+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J80c",
+      "title": "rollback restored baseline policy (CLI verified)",
+      "kind": "derived",
+      "status": "pass",
+      "rollback_result": "restored",
+      "restored_revision": "5",
+      "restored_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+      "live_revision_after": "5",
+      "live_hash_after": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "outcome": "occurred",
+      "reconciliation_note": "hold_reconciliation_changed_or_resolved",
+      "recorded_at": "2026-09-16T15:01:52.584641+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J70a",
+      "title": "read grant state revision before revoke",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/grants/grt-d010a0651765-be7154b0"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J70a.request.json",
+      "response_file": "l03-private/l03-raw/J70a.response.json",
+      "duration_ms": 1,
+      "key_fields": {
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.585743+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J70b",
+      "title": "revoke grant (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-d010a0651765-be7154b0/revoke"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J70b.request.json",
+      "response_file": "l03-private/l03-raw/J70b.response.json",
+      "duration_ms": 26,
+      "key_fields": {
+        "state_revision": 4
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.611945+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J70c",
+      "title": "decide (tool exec, expect hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J70c.request.json",
+      "response_file": "l03-private/l03-raw/J70c.response.json",
+      "duration_ms": 11,
+      "key_fields": {
+        "action": "deny",
+        "reason_code": "grant_missing",
+        "receipt_id": "rcp-fc1a6a0e56d7-150152.612454",
+        "action_id": "act-36de5cd95b8a234673c86ac2"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.623952+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J70d",
+      "title": "revoked grant: decide no longer holds for execution",
+      "kind": "derived",
+      "status": "pass",
+      "decide_action": "deny",
+      "recorded_at": "2026-09-16T15:01:52.623974+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J70f",
+      "title": "CLI observation: policy get siq-review-r5-225905 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-review-r5-225905",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J70f.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J70f.cli.stderr.txt",
+      "duration_ms": 91,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.715169+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90a",
+      "title": "serve start (mode=block) + admin pairing on 127.0.0.1:56923",
+      "kind": "cli+http",
+      "command": [
+        "siq-agent-security-linux-arm64",
+        "serve",
+        "--port",
+        56923,
+        "--mode",
+        "block"
+      ],
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed"
+      },
+      "daemon_endpoint": "http://127.0.0.1:56923",
+      "stdout_file": "l03-private/l03-raw/J90a.serve-log.txt",
+      "recorded_at": "2026-09-16T15:01:52.794603+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90b",
+      "title": "lost-backend: admit fixture skill",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/admit"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J90b.request.json",
+      "response_file": "l03-private/l03-raw/J90b.response.json",
+      "duration_ms": 7,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.802077+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90c",
+      "title": "lost-backend: create grant",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J90c.request.json",
+      "response_file": "l03-private/l03-raw/J90c.response.json",
+      "duration_ms": 35,
+      "key_fields": {
+        "state_revision": 0
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.837971+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90d",
+      "title": "lost-backend: patch-desired",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-d010a0651765-be7154b0/patch-desired"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J90d.request.json",
+      "response_file": "l03-private/l03-raw/J90d.response.json",
+      "duration_ms": 38,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.876196+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90e",
+      "title": "lost-backend: challenge",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-d010a0651765-be7154b0/challenge"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J90e.request.json",
+      "response_file": "l03-private/l03-raw/J90e.response.json",
+      "duration_ms": 11,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.887269+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90f",
+      "title": "lost-backend: approve",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-d010a0651765-be7154b0/approve"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J90f.request.json",
+      "response_file": "l03-private/l03-raw/J90f.response.json",
+      "duration_ms": 35,
+      "key_fields": {
+        "state_revision": 2
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.923068+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90g",
+      "title": "lost-backend: deploy",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-d010a0651765-be7154b0/deploy"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J90g.request.json",
+      "response_file": "l03-private/l03-raw/J90g.response.json",
+      "duration_ms": 31,
+      "key_fields": {
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.954763+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90h",
+      "title": "decide (tool exec, expect hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J90h.request.json",
+      "response_file": "l03-private/l03-raw/J90h.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-2d44ee8bcdbe-150152.955688",
+        "action_id": "act-343ae489cc1139a3f33d631d"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.968070+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90i",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-2d44ee8bcdbe-150152.955688"
+      ],
+      "http_status": 200,
+      "request_body_file": "l03-private/l03-raw/J90i.request.json",
+      "response_file": "l03-private/l03-raw/J90i.response.json",
+      "duration_ms": 16,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-2d44ee8bcdbe-150152.955688-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.984367+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90j",
+      "title": "lost backend: execution refused 503, no native fallback",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/session-executions"
+      ],
+      "http_status": 503,
+      "request_body_file": "l03-private/l03-raw/J90j.request.json",
+      "response_file": "l03-private/l03-raw/J90j.response.json",
+      "duration_ms": 8,
+      "key_fields": {
+        "error": "OpenShell L3 不可用: 已发现 OpenShell CLI，但网关不可达。请由人类运行 openshell gateway start，或 openshell gateway select <name> 后重试 probe。agentshield 不会执行 gateway start，也不会猜测端口。"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:52.993356+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90k",
+      "title": "CLI observation: policy get siq-review-r5-225905 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-review-r5-225905",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J90k.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J90k.cli.stderr.txt",
+      "duration_ms": 92,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:53.085463+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J90l",
+      "title": "serve stop (SIGTERM drain)",
+      "kind": "cli",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:53.088912+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J95a",
+      "title": "serve stop (SIGTERM drain)",
+      "kind": "cli",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:53.092361+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J95b",
+      "title": "CLI observation: policy get siq-review-r5-225905 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-review-r5-225905",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "l03-private/l03-raw/J95b.cli.stdout.txt",
+      "stderr_file": "l03-private/l03-raw/J95b.cli.stderr.txt",
+      "duration_ms": 89,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-16T15:01:53.182168+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    },
+    {
+      "id": "J95c",
+      "title": "final sandbox state",
+      "kind": "derived",
+      "status": "pass",
+      "final_revision": "5",
+      "final_hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "baseline_hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "recorded_at": "2026-09-16T15:01:53.182199+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    }
+  ]
+}

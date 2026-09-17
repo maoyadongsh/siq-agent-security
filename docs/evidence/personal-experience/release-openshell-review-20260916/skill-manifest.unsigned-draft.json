@@ -1,0 +1,251 @@
+{
+  "state_compatibility": {
+    "reader_version": 2,
+    "writer_version": 2,
+    "min_format": 1,
+    "max_format": 2
+  },
+  "client_compatibility": {
+    "state_profile": "agentshield-local-ledger/v1",
+    "service_protocol": "local-service-instance-health/v1",
+    "migration": "none"
+  },
+  "manifest_version": 3,
+  "skill": {
+    "name": "siq-agent-security",
+    "version": "0.3.0-rc.2",
+    "description": "Admits unknown skills and signs each tool-call receipt.",
+    "content_hash": "e69b1486c4dda3b6c8be242a80ab610ca04988a59dd5e3bb5c142e157e0a7098",
+    "sub_skills": [
+      "agent-asset-inventory",
+      "skill-admission",
+      "least-privilege-grant",
+      "runtime-receipt"
+    ]
+  },
+  "binary": {
+    "name": "siq-agent-security",
+    "version": "0.3.0-rc.2",
+    "artifacts": [
+      {
+        "os": "linux",
+        "arch": "amd64",
+        "sha256": "f7741dc8a238866abccc8b581991da0ef9bccfb27cb6768419fd968d3c9e5c6f",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/v0.3.0-rc.2/siq-agent-security-linux-amd64",
+        "bytes": 19206306
+      },
+      {
+        "os": "linux",
+        "arch": "arm64",
+        "sha256": "5b52109a43355168fb04bd5101f5d6b4cce8f3ea35bc3ff492c4401823c1bc70",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/v0.3.0-rc.2/siq-agent-security-linux-arm64",
+        "bytes": 18088098
+      },
+      {
+        "os": "darwin",
+        "arch": "arm64",
+        "sha256": "92ee13591a0ee731a14789a6d0696aa0be03c6230f8570a1f31671fc2458d23c",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/v0.3.0-rc.2/siq-agent-security-darwin-arm64",
+        "bytes": 18265234
+      },
+      {
+        "os": "windows",
+        "arch": "amd64",
+        "sha256": "7798be7e39521f44f01a8982c986d5374e445ad03b45161bbc8b40db1741d49d",
+        "url": "https://github.com/maoyadongsh/siq-agent-security/releases/download/v0.3.0-rc.2/siq-agent-security-windows-amd64.exe",
+        "bytes": 19422208
+      }
+    ]
+  },
+  "rulepack": {
+    "version": 1,
+    "sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051",
+    "public_key_b64": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY="
+  },
+  "support_matrix": [
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "L0\u2013L2 evidenced on Spark 2026-09-05; L3 optional (verified OpenShell gateway), not claimed"
+    },
+    {
+      "platform": "hermes",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "status": "experimental",
+      "note": "L1\u2013L2 evidenced Spark 2026-09-05 isolated HOME; L3 optional, not claimed"
+    },
+    {
+      "platform": "openclaw",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs Docker Desktop; not evidenced"
+    },
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L3 needs WSL2; not evidenced"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "linux",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "L2 hook evidenced Spark 2026-09-05 isolated HOME, not GUI"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "darwin",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "codebuddy",
+      "os": "windows",
+      "tiers": [
+        "L0",
+        "L1",
+        "L2"
+      ],
+      "status": "experimental",
+      "note": "hook landed; no E2E evidence"
+    },
+    {
+      "platform": "trae",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "trae",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "audit_only",
+      "note": "no tool hook; cannot block"
+    },
+    {
+      "platform": "claude_code",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "claude_code",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "linux",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "darwin",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    },
+    {
+      "platform": "codex",
+      "os": "windows",
+      "tiers": [
+        "L0"
+      ],
+      "status": "experimental",
+      "note": "not this round"
+    }
+  ],
+  "signed_by": "LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=",
+  "signature": ""
+}

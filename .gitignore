@@ -62,3 +62,12 @@ secrets/
 
 # Local SonarScanner output (not source or review evidence).
 .scannerwork/
+
+!docs/evidence/personal-experience/release-openshell-20260916-142706/openshell-live/o05/apply-deny.out
+!docs/evidence/personal-experience/release-openshell-20260916-142706/openshell-live/o05/doctor-unreachable.out
+!docs/evidence/personal-experience/release-openshell-20260916-142706/openshell-live/o05/apply-ok.out
+!docs/evidence/personal-experience/release-openshell-20260916-142706/openshell-live/o05/apply-unreachable.out
+!docs/evidence/personal-experience/release-openshell-20260916-142706/openshell-live/o05/apply-cas-negative.out
+
+# Raw local acceptance materials may contain pairing codes or credentials.
+docs/evidence/**/*-private/

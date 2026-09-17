@@ -1,0 +1,63 @@
+{
+  "schema_version": "release-openshell-baseline/v1",
+  "task_id": "release-openshell-20260916-142706",
+  "phase": "baseline",
+  "recorded_at": "2026-09-16T15:00:00+08:00",
+  "host": "spark-1319",
+  "os": "linux",
+  "arch": "arm64",
+  "kernel": "6.17.0-1014-nvidia",
+  "source": {
+    "commit": "052c81617438d1eabf94a5e0166338312366c491",
+    "origin_main": "052c81617438d1eabf94a5e0166338312366c491",
+    "merge_base": "052c81617438d1eabf94a5e0166338312366c491",
+    "worktree": "/home/maoyd/siq/worktrees/siq-release-openshell-20260916-142706",
+    "branch": "glm/release-openshell-readiness-20260916-142706",
+    "local_source_modifications": false
+  },
+  "toolchain": {
+    "go": "1.26.5",
+    "python_default": "3.13.12",
+    "python_playwright": "/home/maoyd/report-finder-service/.venv/bin/python3 (import playwright verified)",
+    "ruff": "0.14.10",
+    "node": "v22.22.2",
+    "docker": "29.1.3",
+    "systemd_user": "available (state degraded, unit ops OK)"
+  },
+  "trust": {
+    "embedded_root": "skillmanifest.ReleasePublicKeyB64 v1 present in 052c816",
+    "official_seed_env": "SIQ_AGENT_SECURITY_RELEASE_SEED unset -> official signing leg BLOCKED",
+    "test_release_path": "closure-b01-lifecycle-runner.py (per-run test seed, fail-closed single-key pin)"
+  },
+  "openshell": {
+    "cli": {"path": "~/.local/bin/openshell", "version": "0.0.13", "level": "client_expressible"},
+    "default_active_gateway": {"name": "nemoclaw", "endpoint": "https://127.0.0.1:18789", "state": "configured_unreachable (no listener)"},
+    "project_gateway": {
+      "name": "siq-openshell-dev",
+      "endpoint": "https://127.0.0.1:17671",
+      "health": "http://127.0.0.1:17672",
+      "toolchain": "0.0.83",
+      "mtls_required": true,
+      "driver": "docker",
+      "sandbox_namespace": "siq-openshell-dev",
+      "process": "openshell-gateway pid 4009810 started 2026-09-15 by maoyd (siq-research-engine scope)",
+      "provenance_evidence": "docs/evidence/personal-experience/openshell-o01-o02-20260915/report.md (user-authorized start)",
+      "level": "documented (handshake/policy readback pending preflight)"
+    }
+  },
+  "ports": {
+    "17671": "siq-openshell-dev gateway TLS (owned, running)",
+    "17672": "siq-openshell-dev health",
+    "18789": "nemoclaw endpoint, dead",
+    "8016": "local router python3 pid 2687, unrelated to this batch, NOT adopted"
+  },
+  "task_status_baseline": {
+    "B01": "partial (official trust leg blocked)",
+    "B02": "partial",
+    "B03": "partial",
+    "B07": "partial (diagnose_unconfigured p95 regression recorded as failure per review doc)",
+    "B08_O05": "conditional",
+    "B09": "external_manual"
+  },
+  "out_of_scope": ["T01-T06 team features", "N09 threshold change", "sunbo Windows env", "Luke macOS env"]
+}

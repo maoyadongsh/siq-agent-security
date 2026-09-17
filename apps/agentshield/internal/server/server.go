@@ -101,6 +101,12 @@ type Server struct {
 	osCaps        *openshell.Capabilities
 	osDiag        openshell.Diagnosis
 
+	// Session-execution bindings (L02): maps reservation receipt ID to the
+	// recorded openshell operation this process executed. Process-local by
+	// design, like the openshell client's operation registry.
+	osExecMu       sync.Mutex
+	osExecBindings map[string]openshellExecBinding
+
 	pairMu          sync.Mutex
 	pairDisplay     string
 	pairHash        [32]byte
@@ -271,6 +277,9 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/openshell/doctor", s.auth(s.openshellDoctor))
 	s.mux.HandleFunc("/v1/openshell/apply", s.auth(s.openshellApply))
 	s.mux.HandleFunc("/v1/openshell/drift-check", s.auth(s.openshellDriftCheck))
+	s.mux.HandleFunc("/v1/openshell/session-executions", s.auth(s.openshellSessionExecute, capDecision))
+	s.mux.HandleFunc("/v1/openshell/session-executions/preview", s.auth(s.openshellSessionPreview, capAdmin))
+	s.mux.HandleFunc("/v1/openshell/session-executions/rollback", s.auth(s.openshellSessionRollback, capAdmin))
 	s.mux.HandleFunc("/v1/assets", s.auth(s.assets))
 	s.mux.HandleFunc("/v1/assets/", s.auth(s.assets))
 	s.mux.HandleFunc("/v1/permissions", s.auth(s.permissions))

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "go",
+    "test",
+    "./internal/openshell",
+    "-run",
+    "^TestO05LiveCrossBoundaryEnforcement$",
+    "-count=2",
+    "-v"
+  ],
+  "exit_code": 0,
+  "planned_additional_runs": 2,
+  "output": "=== RUN   TestO05LiveCrossBoundaryEnforcement\n    o05_enforcement_live_test.go:160: allow propagation_ms=266\n    o05_enforcement_live_test.go:160: allow propagation_ms=296\n    o05_enforcement_live_test.go:160: allow propagation_ms=266\n    o05_enforcement_live_test.go:175: deny_probe outcome=http_403 arrivals=0\n    o05_enforcement_live_test.go:189: cross-boundary enforcement pass target=siq-loadwait-231213 allowed=172.23.0.1:36225 (arrived) violating=172.23.0.1:38865 (blocked, 0 arrivals) both_targets_reachable=ok restore_verified=true base_revision=5 applied_revision=8\n--- PASS: TestO05LiveCrossBoundaryEnforcement (32.55s)\n=== RUN   TestO05LiveCrossBoundaryEnforcement\n    o05_enforcement_live_test.go:160: allow propagation_ms=318\n    o05_enforcement_live_test.go:160: allow propagation_ms=272\n    o05_enforcement_live_test.go:160: allow propagation_ms=259\n    o05_enforcement_live_test.go:175: deny_probe outcome=http_403 arrivals=0\n    o05_enforcement_live_test.go:189: cross-boundary enforcement pass target=siq-loadwait-231213 allowed=172.23.0.1:44669 (arrived) violating=172.23.0.1:40529 (blocked, 0 arrivals) both_targets_reachable=ok restore_verified=true base_revision=9 applied_revision=12\n--- PASS: TestO05LiveCrossBoundaryEnforcement (39.62s)\nPASS\nok  \tsiq-agent-security/apps/agentshield/internal/openshell\t72.182s\n"
+}

@@ -1,5 +1,11 @@
 # 个人体验与局域网团队管理后续开发任务书 v5
 
+> **2026-09-16 策略加载修复后更新**：见 [修复与复测报告](openshell-policy-load-wait-repair-20260916.md)。L01 旧 `arrivals=1` 失败已定位到未等待沙箱加载；应用及回滚增加有界加载确认，3 轮真实复测均为 HTTP 403 + 零到达，rc.6 策略 HTTP 旅程 57/57。Python 同类路径同步修复并完成组件回归。旧失败证据保留；L02 完整任务/UI、新候选性能及外部实机仍未完成。此更新优先于下方历史状态。
+
+
+> **2026-09-16 收尾复核更新**：以 [最新复核报告](local-o05-closure-review-20260916.md) 为准。rc.5 身份保护原生验证 4/4、策略 HTTP 旅程 57/57；L01 严格实测发现违规请求到达 1 次，保持未通过。L02 非完整任务执行；L04 的旧 0.9967 只对应 doctor_readback，B3 未测，新候选性能未测；L05 部分完成。旧绿色勾选仅保留为历史声明。
+
+
 生成时间：2026-09-15 23:21:55（Asia/Shanghai）。仓库：`maoyadongsh/siq-agent-security`。
 
 **本轮代码基线：`53155b10c276fe41e71c47757e58e7e56d5d75d4`。** 这是当前本地工作树的已提交成果，不代表已推送或已合并到远端 main。文档提交在该基线之后，不改变代码候选。
@@ -321,8 +327,8 @@ python3 scripts/personal-experience/n09-baseline-check.py --matrix <新矩阵路
 | B04 | partial | 真实墙钟到期 19/19；两个独立 HTTP export 复核各 192/192。合成捕获不冒充宿主原生采集，保留证据等级边界 |
 | B05 | partial | 当前指定候选 53619668…，共享 harness 修复后 r3 16/16；已修复忽略 --binary 而重建 HEAD 的问题。通知视觉及其他 OS/宿主未关闭 |
 | B06 | conditional | DNS 重查仍 198.18/15，未绕过 SSRF |
-| B07 | partial | 原声称干净的 022051 B1 实与 Go race 重叠，022225 对比已标 INVALID；最终对照 closure-b07-final-review-20260916：绝对预算全过，仅 diagnose_unconfigured 的相对 +15.79% 超 10%，其余等工作量项通过。C 工作量变化、E 无 B0，不计等工作量通过；B2/B3 仍待真实后端，fsync 占比不能证明回退由噪声造成 |
-| B08 | conditional | 真实后端/固定驱动不可用 |
+| B07 | partial | 原声称干净的 022051 B1 实与 Go race 重叠，022225 对比已标 INVALID；最终对照 closure-b07-final-review-20260916：绝对预算全过，仅 diagnose_unconfigured 的相对 +15.79% 超 10%，其余等工作量项通过。C 工作量变化、E 无 B0，不计等工作量通过。B2/B3 真网部分仍 partial：旧测量缺少逐样本 doctor 状态校验；同 CLI 对照不算候选对比，Go 测试驱动不算候选 B3；修复后需按 v2 协议重跑，fsync 占比不能证明回退由噪声造成 |
+| B08 | partial（2026-09-16 复核） | 已观察策略读回与控制面拒绝/回滚；会话及调用身份、撤销/会话失效、执行结果关联未被这些证据证明，撤回 7/8 通过说法。环回未阻断仅是行为负例；interceptor:false 是客户端硬编码兼容值，不能归因后端能力。见 release-openshell-review-fixes-20260916.md |
 | B09 | external_manual | sunbo（Windows）/Luke（macOS） |
 | B10 | partial | 本机文档/负向回归/矩阵更新；不代表 B02、N09 或正式发布验收关闭，最终矩阵 closure-b10-final-review-20260916 使用 B05 r3；脚本回归 33/33；复核以 personal-v5-takeover-review-20260916.md 为准 |
 
@@ -340,3 +346,17 @@ python3 scripts/personal-experience/n09-baseline-check.py --matrix <新矩阵路
 - B04 的未知 activity ID 404 只证明不存在；真正隔离需两个有效任务的回执集合互斥、raw record 错误 task 拒绝，以及 export/trace-export 的撤销/删除/旧快照行为。当前 raw-record 错配 task 的合同错误是 503 `raw_task_content_unavailable`，不得随意改为 404 以适配测试。
 - B07 冻结输入原样保留；继承注释的错误用新复核报告纠正。B0 D 无新版管道排空上界；三轮 3×(3+60)×30 秒约 94.5 分钟。C 冷探测跨版本工作量不同，E 没有 B0 实现，分别登记，不计算为等工作量门槛通过。
 - CLI 原文只在调用内存中处理，证据日志仅输出类别与字节计数。测试签名种子通过 stdin 传递，不进入进程 argv 或公开证据。
+
+## 21. 发行候选准备批次增量（GLM，2026-09-16）
+
+批次 `release-openshell-20260916-142706`（基线 `052c816`，工作树
+`/home/maoyd/siq/worktrees/siq-release-openshell-20260916-142706`，仅本地落盘）：
+
+- 原 rc.1 只保留历史；修复后 rc.2 独立构建与源码绑定见复核报告，旧证据不自动转用于新候选；
+  正式签名仍阻塞于官方种子（负向回归已锁死三条边界）。
+- 原预检证明旧候选策略可读；O05/B2/B3 的过度结论已撤回，当前状态见复核报告与
+  `openshell-real-environment-readiness-20260916.md`（§3 路径修正 / §6 O05 / §7 B2/B3）。
+- 阶梯终态：第 5 级 policy_verified；第 6 级 enforcement_verified 未达成
+  （行为未阻断的根因待查；客户端 interceptor:false 不等于网关实测能力）。
+
+2026-09-16 复核修复优先于本节原批次结论：见 [修复报告](release-openshell-review-fixes-20260916.md)。原始证据与失败结果保留，正式签名、实机协作者与团队功能门禁不变。

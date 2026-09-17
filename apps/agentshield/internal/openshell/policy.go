@@ -3,6 +3,8 @@ package openshell
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"net"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -135,7 +137,8 @@ func networkRules(raw any) ([]NetworkRule, error) {
 	if !ok {
 		return nil, fail("后端网络策略形状不受支持（fail-closed）")
 	}
-	for key, raw := range gateway {
+	for _, key := range sortedMapKeys(gateway) {
+		raw := gateway[key]
 		rule, ok := raw.(map[string]any)
 		if !ok {
 			return nil, fail("后端网络策略形状不受支持（fail-closed）")
@@ -169,7 +172,7 @@ func networkRules(raw any) ([]NetworkRule, error) {
 		}
 		for _, e := range eps {
 			m, ok := e.(map[string]any)
-			if !ok || !onlyKeys(m, "host", "port") {
+			if !ok || !onlyKeys(m, "host", "port", "protocol", "enforcement", "rules", "allowed_ips", "request_body_credential_rewrite") {
 				return nil, fail("后端网络 endpoint 限制不可保真（fail-closed）")
 			}
 			host, hostOK := m["host"].(string)
@@ -177,20 +180,108 @@ func networkRules(raw any) ([]NetworkRule, error) {
 			if !hostOK || !portOK || !validHost(host) || port < 1 || port > 65535 {
 				return nil, fail("后端网络 endpoint 无效（fail-closed）")
 			}
-			rules = append(rules, NetworkRule{
-				Endpoint:    host + ":" + strconv.Itoa(port),
-				Effect:      "allow",
-				BinaryPaths: bins,
-				RuleName:    name,
-			})
+			// The gateway 0.0.83 schema carries protocol/enforcement as fixed
+			// values; anything else cannot be summarized without overstating
+			// what the backend actually enforces, so it fails closed.
+			if v, ok := m["protocol"]; ok && v != "rest" {
+				return nil, fail("后端网络 endpoint protocol 不可保真（fail-closed）")
+			}
+			if v, ok := m["enforcement"]; ok && v != "enforce" {
+				return nil, fail("后端网络 endpoint enforcement 不可保真（fail-closed）")
+			}
+			var rewrite *bool
+			if v, ok := m["request_body_credential_rewrite"]; ok {
+				value, isBool := v.(bool)
+				if !isBool {
+					return nil, fail("后端网络 request_body_credential_rewrite 无效（fail-closed）")
+				}
+				rewrite = &value
+			}
+			protocol, _ := m["protocol"].(string)
+			enforcement, _ := m["enforcement"].(string)
+			var ips []string
+			if raw, ok := m["allowed_ips"]; ok {
+				list, isList := raw.([]any)
+				if !isList || len(list) == 0 {
+					return nil, fail("后端网络 allowed_ips 无效（fail-closed）")
+				}
+				for _, item := range list {
+					s, isStr := item.(string)
+					if !isStr {
+						return nil, fail("后端网络 allowed_ips 非有效 CIDR（fail-closed）")
+					}
+					if _, _, err := net.ParseCIDR(strings.TrimSpace(s)); err != nil {
+						return nil, fail("后端网络 allowed_ips 非有效 CIDR（fail-closed）")
+					}
+					ips = append(ips, s)
+				}
+			}
+			type allowRule struct{ method, path string }
+			var allows []allowRule
+			if raw, ok := m["rules"]; ok {
+				list, isList := raw.([]any)
+				if !isList || len(list) == 0 {
+					return nil, fail("后端网络 rules 无效（fail-closed）")
+				}
+				for _, item := range list {
+					rm, isMap := item.(map[string]any)
+					if !isMap || !onlyKeys(rm, "allow") {
+						return nil, fail("后端网络 rule 含不可保真的 effect（fail-closed）")
+					}
+					am, isMap := rm["allow"].(map[string]any)
+					if !isMap || !onlyKeys(am, "method", "path") {
+						return nil, fail("后端网络 allow rule 形状不可保真（fail-closed）")
+					}
+					method, _ := am["method"].(string)
+					path, _ := am["path"].(string)
+					if method == "" || path == "" {
+						return nil, fail("后端网络 allow rule 缺少 method/path（fail-closed）")
+					}
+					allows = append(allows, allowRule{method: method, path: path})
+				}
+			}
+			endpoint := net.JoinHostPort(host, strconv.Itoa(port))
+			if len(allows) == 0 {
+				rules = append(rules, NetworkRule{
+					Endpoint:    endpoint,
+					Effect:      "allow",
+					BinaryPaths: bins,
+					RuleName:    name,
+					AllowedIPs:  ips, Protocol: protocol, Enforcement: enforcement, RequestBodyCredentialRewrite: rewrite,
+				})
+				continue
+			}
+			// One readback entry per explicit allow restriction so the
+			// method/path limits stay attached to the endpoint instead of
+			// being silently dropped.
+			for _, a := range allows {
+				rules = append(rules, NetworkRule{
+					Endpoint:    endpoint,
+					Effect:      "allow",
+					BinaryPaths: bins,
+					RuleName:    name,
+					Method:      a.method,
+					Path:        a.path,
+					AllowedIPs:  ips, Protocol: protocol, Enforcement: enforcement, RequestBodyCredentialRewrite: rewrite,
+				})
+			}
 		}
 	}
 	return rules, nil
 }
 
+// Restricted projections are read-only until the writer can preserve all semantics.
+func (r NetworkRule) hasReadbackRestrictions() bool {
+	return r.Method != "" || r.Path != "" || r.AllowedIPs != nil ||
+		r.Protocol != "" || r.Enforcement != "" || r.RequestBodyCredentialRewrite != nil
+}
+
 func networkRulesToGateway(rules []NetworkRule) (map[string]any, error) {
 	gateway := map[string]any{}
 	for idx, rule := range rules {
+		if rule.hasReadbackRestrictions() {
+			return nil, fail("网络读回限制不支持写入，拒绝降格为 host:port（fail-closed）")
+		}
 		if rule.Effect != "allow" {
 			return nil, fail("OpenShell 仅支持显式 allow 网络规则（fail-closed）")
 		}
@@ -247,6 +338,17 @@ func validHost(host string) bool {
 	return host != "" && !strings.ContainsAny(host, "/?#@[] \t\r\n")
 }
 
+// sortedMapKeys keeps readback summaries deterministic across runs; Go map
+// iteration order would otherwise leak into Snapshot.Network.
+func sortedMapKeys(m map[string]any) []string {
+	keys := make([]string, 0, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 func onlyKeys(m map[string]any, allowed ...string) bool {
 	want := make(map[string]bool, len(allowed))
 	for _, key := range allowed {
@@ -294,6 +396,17 @@ func parseSetReceipt(out string) (revision, hash string, err error) {
 	return m[1], m[2], nil
 }
 
+// setPolicyAndWait requires the sandbox load acknowledgement, not merely
+// gateway submission. Outer Runner timeout remains authoritative. Never retry
+// a timeout without --wait: the first write may already have happened.
+func (c *Client) setPolicyAndWait(target, path string) (string, error) {
+	seconds := int64(c.Timeout/time.Second) - 2
+	if seconds < 1 {
+		seconds = 1
+	}
+	return c.cli("policy", "set", target, "--policy", path, "--wait", "--timeout", strconv.FormatInt(seconds, 10))
+}
+
 // ApplyNetwork merges the live static sections with the new network rules and
 // submits `policy set`. It never writes filesystem/process from the caller and
 // never calls create_generation.
@@ -301,10 +414,22 @@ func (c *Client) ApplyNetwork(target string, rules []NetworkRule, expectedRevisi
 	lock := c.targetPolicyLock(target)
 	lock.Lock()
 	defer lock.Unlock()
-	return c.applyNetworkLocked(target, rules, expectedRevision)
+	return c.applyNetworkLocked(target, rules, expectedRevision, nil)
 }
 
-func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expectedRevision string) (DeploymentReceipt, error) {
+// ApplyNetworkAuthorized rechecks the caller's current authority after backend
+// prewrite drift checks. It makes no cross-process atomicity guarantee.
+func (c *Client) ApplyNetworkAuthorized(target string, rules []NetworkRule, expectedRevision string, authorize func() error) (DeploymentReceipt, error) {
+	if authorize == nil {
+		return DeploymentReceipt{}, fail("current authorization required")
+	}
+	lock := c.targetPolicyLock(target)
+	lock.Lock()
+	defer lock.Unlock()
+	return c.applyNetworkLocked(target, rules, expectedRevision, authorize)
+}
+
+func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expectedRevision string, authorize func() error) (DeploymentReceipt, error) {
 	if err := validateRevision(expectedRevision); err != nil {
 		return DeploymentReceipt{}, err
 	}
@@ -330,6 +455,11 @@ func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expected
 		return DeploymentReceipt{}, err
 	}
 	if expectedDigest == current.PolicyDigest {
+		if authorize != nil {
+			if err := authorize(); err != nil {
+				return DeploymentReceipt{}, err
+			}
+		}
 		receipt := DeploymentReceipt{
 			OperationID: opID, Target: target,
 			BaseRevision: current.Revision, BasePolicyDigest: current.PolicyDigest,
@@ -349,10 +479,15 @@ func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expected
 	if prewrite.Revision != current.Revision || prewrite.PolicyDigest != current.PolicyDigest {
 		return DeploymentReceipt{}, fail("OpenShell 策略写前检测到外部漂移（fail-closed）")
 	}
+	if authorize != nil {
+		if err := authorize(); err != nil {
+			return DeploymentReceipt{}, err
+		}
+	}
 	var out string
 	err = withPolicyFile(merged, func(path string) error {
 		var e error
-		out, e = c.cli("policy", "set", target, "--policy", path)
+		out, e = c.setPolicyAndWait(target, path)
 		return e
 	})
 	if err != nil {
@@ -433,8 +568,11 @@ func (c *Client) Verify(target string, receipt DeploymentReceipt, expectAllow, e
 		}
 	}
 	allowed := map[string]struct{}{}
+	restricted := map[string]struct{}{}
 	for _, r := range snap.Network {
-		if r.Effect != "deny" {
+		if r.hasReadbackRestrictions() {
+			restricted[r.Endpoint] = struct{}{}
+		} else if r.Effect != "deny" {
 			allowed[r.Endpoint] = struct{}{}
 		}
 	}
@@ -451,6 +589,9 @@ func (c *Client) Verify(target string, receipt DeploymentReceipt, expectAllow, e
 		if _, ok := allowed[e]; ok {
 			actual = "allow"
 		}
+		if _, ok := restricted[e]; ok {
+			actual = "restricted"
+		}
 		allowChecks = append(allowChecks, Check{
 			Endpoint: e, Request: "config_readback", Expected: "allow", Actual: actual,
 			Result: "allow", Revision: snap.Revision,
@@ -463,6 +604,9 @@ func (c *Client) Verify(target string, receipt DeploymentReceipt, expectAllow, e
 		actual := "deny"
 		if _, ok := allowed[e]; ok {
 			actual = "in_allow_set"
+		}
+		if _, ok := restricted[e]; ok {
+			actual = "restricted"
 		}
 		denyChecks = append(denyChecks, Check{
 			Endpoint: e, Request: "config_readback", Expected: "deny", Actual: actual,
@@ -564,7 +708,7 @@ func (c *Client) RollbackAuthorized(target string, receipt DeploymentReceipt, au
 	var applied string
 	err = withPolicyFile(op.Base.Policy, func(path string) error {
 		var e error
-		applied, e = c.cli("policy", "set", target, "--policy", path)
+		applied, e = c.setPolicyAndWait(target, path)
 		return e
 	})
 	if err != nil {

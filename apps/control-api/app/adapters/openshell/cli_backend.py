@@ -105,6 +105,7 @@ _GATEWAY_VERSION_RE = re.compile(r"(?m)^\s*Gateway version:\s*v?(\d+\.\d+\.\d+)\
 
 # 版本/握手缓存 TTL：与调用指纹共同构成证据作用域（配置一变即失效）。
 _VERSION_CACHE_TTL_SECONDS = 300.0
+_CLI_TIMEOUT_SECONDS = 30
 
 
 def _looks_like_openshell_status(text: str) -> bool:
@@ -299,7 +300,7 @@ class OpenShellCliBackend(EnforcementAdapter):
 
     def _subprocess_runner(self, args: list[str]) -> tuple[int, str, str]:
         cmd = self._build_command(args)
-        return run_bounded(cmd)
+        return run_bounded(cmd, timeout=_CLI_TIMEOUT_SECONDS)
 
     def _cli(self, *args: str) -> str:
         """执行 CLI；成功输出可能落在 stdout 或 stderr（实测 policy set 的 ✓ 回执在 stderr）。"""
@@ -311,6 +312,15 @@ class OpenShellCliBackend(EnforcementAdapter):
         if rc != 0:
             raise AdapterError("openshell_command_failed")
         return clean_out + "\n" + clean_err
+
+    def _set_policy_and_wait(self, target: str, policy_file: str) -> str:
+        # Submission/readback does not confirm the sandbox loaded the policy.
+        # A failed acknowledgement may follow a committed write: never retry
+        # without --wait or issue a successful deployment receipt.
+        return self._cli(
+            "policy", "set", target, "--policy", policy_file,
+            "--wait", "--timeout", str(max(1, _CLI_TIMEOUT_SECONDS - 2)),
+        )
 
     # ------------------------------------------------------------ 合同实现
 
@@ -584,7 +594,7 @@ class OpenShellCliBackend(EnforcementAdapter):
             if prewrite.revision != current.revision or prewrite.policy_digest != current.policy_digest:
                 raise AdapterError("openshell_prewrite_policy_drift")
             with self._policy_yaml_file(merged) as policy_file:
-                out = self._cli("policy", "set", target, "--policy", policy_file)
+                out = self._set_policy_and_wait(target, policy_file)
             new_revision, gateway_hash = self._parse_set_receipt(out)
             readback = self._read_after_write(prewrite, new_revision, expected_digest)
             receipt = self._deployment_receipt(
@@ -792,7 +802,7 @@ class OpenShellCliBackend(EnforcementAdapter):
             if prewrite.revision != operation.applied_revision or prewrite.policy_digest != operation.applied_digest:
                 raise VerificationFailed("openshell_rollback_prewrite_drift")
             with self._policy_yaml_file(operation.base.policy) as policy_file:
-                applied = self._cli("policy", "set", target, "--policy", policy_file)
+                applied = self._set_policy_and_wait(target, policy_file)
             restored_revision, gateway_hash = self._parse_set_receipt(applied)
             readback = self._read_after_write(
                 prewrite,

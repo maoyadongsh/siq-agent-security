@@ -94,6 +94,15 @@ type NetworkRule struct {
 	Effect      string   `json:"effect"`
 	BinaryPaths []string `json:"binary_paths"`
 	RuleName    string   `json:"rule_name,omitempty"`
+	// Readback-only restriction details from `policy get --full`. Apply-shaped
+	// rules leave them zero; the gateway's own method/path/IP restrictions are
+	// preserved here so the summary cannot overstate effective access.
+	Method                       string   `json:"method,omitempty"`
+	Path                         string   `json:"path,omitempty"`
+	AllowedIPs                   []string `json:"allowed_ips,omitempty"`
+	Protocol                     string   `json:"protocol,omitempty"`
+	Enforcement                  string   `json:"enforcement,omitempty"`
+	RequestBodyCredentialRewrite *bool    `json:"request_body_credential_rewrite,omitempty"`
 }
 
 // Snapshot is a policy get --full read-back.

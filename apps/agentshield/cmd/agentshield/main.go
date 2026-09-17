@@ -559,12 +559,11 @@ func cmdServe(args []string) error {
 	if err := st.CheckServiceSwitchPending(); err != nil {
 		return err
 	}
-	if _, err := st.RecoverGrantCommits(writer); err != nil {
-		return err
-	}
-
 	key, err := signing.Load(dir)
 	if err != nil {
+		return err
+	}
+	if _, err := st.RecoverGrantCommits(writer); err != nil {
 		return err
 	}
 	intentStore, err := st.IntentAuthority(key)

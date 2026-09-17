@@ -1,0 +1,31 @@
+[1m[36mSandbox:[39m[0m
+
+  [2mId:[0m 0ece464a-4cbb-49e4-98f1-0ba6bee62fb5
+  [2mName:[0m siq-relcand-20260916-154423
+  [2mPhase:[0m Ready
+  [2mResource version:[0m 7
+  [2mPolicy source:[0m sandbox
+  [2mRevision:[0m 1
+
+[1m[36mPolicy:[39m[0m
+
+  [2mversion[0m[2m:[0m 1
+  [2mfilesystem_policy[0m[2m:[0m
+    [2minclude_workdir[0m[2m:[0m true
+    [2mread_only[0m[2m:[0m
+    [2m- [0m/usr
+    [2m- [0m/lib
+    [2m- [0m/proc
+    [2m- [0m/dev/urandom
+    [2m- [0m/app
+    [2m- [0m/etc
+    [2m- [0m/var/log
+    [2mread_write[0m[2m:[0m
+    [2m- [0m/sandbox
+    [2m- [0m/tmp
+    [2m- [0m/dev/null
+  [2mlandlock[0m[2m:[0m
+    [2mcompatibility[0m[2m:[0m best_effort
+  [2mprocess[0m[2m:[0m
+    [2mrun_as_user[0m[2m:[0m sandbox
+    [2mrun_as_group[0m[2m:[0m sandbox

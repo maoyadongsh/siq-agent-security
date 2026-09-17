@@ -1,0 +1,675 @@
+diff --git a/apps/agentshield/internal/openshell/policy.go b/apps/agentshield/internal/openshell/policy.go
+index 90a7014..445d160 100644
+--- a/apps/agentshield/internal/openshell/policy.go
++++ b/apps/agentshield/internal/openshell/policy.go
+@@ -3,6 +3,8 @@ package openshell
+ import (
+ 	"crypto/sha256"
+ 	"encoding/hex"
++	"net"
++	"sort"
+ 	"strconv"
+ 	"strings"
+ 	"time"
+@@ -135,7 +137,8 @@ func networkRules(raw any) ([]NetworkRule, error) {
+ 	if !ok {
+ 		return nil, fail("后端网络策略形状不受支持（fail-closed）")
+ 	}
+-	for key, raw := range gateway {
++	for _, key := range sortedMapKeys(gateway) {
++		raw := gateway[key]
+ 		rule, ok := raw.(map[string]any)
+ 		if !ok {
+ 			return nil, fail("后端网络策略形状不受支持（fail-closed）")
+@@ -169,7 +172,7 @@ func networkRules(raw any) ([]NetworkRule, error) {
+ 		}
+ 		for _, e := range eps {
+ 			m, ok := e.(map[string]any)
+-			if !ok || !onlyKeys(m, "host", "port") {
++			if !ok || !onlyKeys(m, "host", "port", "protocol", "enforcement", "rules", "allowed_ips", "request_body_credential_rewrite") {
+ 				return nil, fail("后端网络 endpoint 限制不可保真（fail-closed）")
+ 			}
+ 			host, hostOK := m["host"].(string)
+@@ -177,20 +180,108 @@ func networkRules(raw any) ([]NetworkRule, error) {
+ 			if !hostOK || !portOK || !validHost(host) || port < 1 || port > 65535 {
+ 				return nil, fail("后端网络 endpoint 无效（fail-closed）")
+ 			}
+-			rules = append(rules, NetworkRule{
+-				Endpoint:    host + ":" + strconv.Itoa(port),
+-				Effect:      "allow",
+-				BinaryPaths: bins,
+-				RuleName:    name,
+-			})
++			// The gateway 0.0.83 schema carries protocol/enforcement as fixed
++			// values; anything else cannot be summarized without overstating
++			// what the backend actually enforces, so it fails closed.
++			if v, ok := m["protocol"]; ok && v != "rest" {
++				return nil, fail("后端网络 endpoint protocol 不可保真（fail-closed）")
++			}
++			if v, ok := m["enforcement"]; ok && v != "enforce" {
++				return nil, fail("后端网络 endpoint enforcement 不可保真（fail-closed）")
++			}
++			var rewrite *bool
++			if v, ok := m["request_body_credential_rewrite"]; ok {
++				value, isBool := v.(bool)
++				if !isBool {
++					return nil, fail("后端网络 request_body_credential_rewrite 无效（fail-closed）")
++				}
++				rewrite = &value
++			}
++			protocol, _ := m["protocol"].(string)
++			enforcement, _ := m["enforcement"].(string)
++			var ips []string
++			if raw, ok := m["allowed_ips"]; ok {
++				list, isList := raw.([]any)
++				if !isList || len(list) == 0 {
++					return nil, fail("后端网络 allowed_ips 无效（fail-closed）")
++				}
++				for _, item := range list {
++					s, isStr := item.(string)
++					if !isStr {
++						return nil, fail("后端网络 allowed_ips 非有效 CIDR（fail-closed）")
++					}
++					if _, _, err := net.ParseCIDR(strings.TrimSpace(s)); err != nil {
++						return nil, fail("后端网络 allowed_ips 非有效 CIDR（fail-closed）")
++					}
++					ips = append(ips, s)
++				}
++			}
++			type allowRule struct{ method, path string }
++			var allows []allowRule
++			if raw, ok := m["rules"]; ok {
++				list, isList := raw.([]any)
++				if !isList || len(list) == 0 {
++					return nil, fail("后端网络 rules 无效（fail-closed）")
++				}
++				for _, item := range list {
++					rm, isMap := item.(map[string]any)
++					if !isMap || !onlyKeys(rm, "allow") {
++						return nil, fail("后端网络 rule 含不可保真的 effect（fail-closed）")
++					}
++					am, isMap := rm["allow"].(map[string]any)
++					if !isMap || !onlyKeys(am, "method", "path") {
++						return nil, fail("后端网络 allow rule 形状不可保真（fail-closed）")
++					}
++					method, _ := am["method"].(string)
++					path, _ := am["path"].(string)
++					if method == "" || path == "" {
++						return nil, fail("后端网络 allow rule 缺少 method/path（fail-closed）")
++					}
++					allows = append(allows, allowRule{method: method, path: path})
++				}
++			}
++			endpoint := net.JoinHostPort(host, strconv.Itoa(port))
++			if len(allows) == 0 {
++				rules = append(rules, NetworkRule{
++					Endpoint:    endpoint,
++					Effect:      "allow",
++					BinaryPaths: bins,
++					RuleName:    name,
++					AllowedIPs:  ips, Protocol: protocol, Enforcement: enforcement, RequestBodyCredentialRewrite: rewrite,
++				})
++				continue
++			}
++			// One readback entry per explicit allow restriction so the
++			// method/path limits stay attached to the endpoint instead of
++			// being silently dropped.
++			for _, a := range allows {
++				rules = append(rules, NetworkRule{
++					Endpoint:    endpoint,
++					Effect:      "allow",
++					BinaryPaths: bins,
++					RuleName:    name,
++					Method:      a.method,
++					Path:        a.path,
++					AllowedIPs:  ips, Protocol: protocol, Enforcement: enforcement, RequestBodyCredentialRewrite: rewrite,
++				})
++			}
+ 		}
+ 	}
+ 	return rules, nil
+ }
+ 
++// Restricted projections are read-only until the writer can preserve all semantics.
++func (r NetworkRule) hasReadbackRestrictions() bool {
++	return r.Method != "" || r.Path != "" || r.AllowedIPs != nil ||
++		r.Protocol != "" || r.Enforcement != "" || r.RequestBodyCredentialRewrite != nil
++}
++
+ func networkRulesToGateway(rules []NetworkRule) (map[string]any, error) {
+ 	gateway := map[string]any{}
+ 	for idx, rule := range rules {
++		if rule.hasReadbackRestrictions() {
++			return nil, fail("网络读回限制不支持写入，拒绝降格为 host:port（fail-closed）")
++		}
+ 		if rule.Effect != "allow" {
+ 			return nil, fail("OpenShell 仅支持显式 allow 网络规则（fail-closed）")
+ 		}
+@@ -247,6 +338,17 @@ func validHost(host string) bool {
+ 	return host != "" && !strings.ContainsAny(host, "/?#@[] \t\r\n")
+ }
+ 
++// sortedMapKeys keeps readback summaries deterministic across runs; Go map
++// iteration order would otherwise leak into Snapshot.Network.
++func sortedMapKeys(m map[string]any) []string {
++	keys := make([]string, 0, len(m))
++	for key := range m {
++		keys = append(keys, key)
++	}
++	sort.Strings(keys)
++	return keys
++}
++
+ func onlyKeys(m map[string]any, allowed ...string) bool {
+ 	want := make(map[string]bool, len(allowed))
+ 	for _, key := range allowed {
+@@ -433,8 +535,11 @@ func (c *Client) Verify(target string, receipt DeploymentReceipt, expectAllow, e
+ 		}
+ 	}
+ 	allowed := map[string]struct{}{}
++	restricted := map[string]struct{}{}
+ 	for _, r := range snap.Network {
+-		if r.Effect != "deny" {
++		if r.hasReadbackRestrictions() {
++			restricted[r.Endpoint] = struct{}{}
++		} else if r.Effect != "deny" {
+ 			allowed[r.Endpoint] = struct{}{}
+ 		}
+ 	}
+@@ -451,6 +556,9 @@ func (c *Client) Verify(target string, receipt DeploymentReceipt, expectAllow, e
+ 		if _, ok := allowed[e]; ok {
+ 			actual = "allow"
+ 		}
++		if _, ok := restricted[e]; ok {
++			actual = "restricted"
++		}
+ 		allowChecks = append(allowChecks, Check{
+ 			Endpoint: e, Request: "config_readback", Expected: "allow", Actual: actual,
+ 			Result: "allow", Revision: snap.Revision,
+@@ -464,6 +572,9 @@ func (c *Client) Verify(target string, receipt DeploymentReceipt, expectAllow, e
+ 		if _, ok := allowed[e]; ok {
+ 			actual = "in_allow_set"
+ 		}
++		if _, ok := restricted[e]; ok {
++			actual = "restricted"
++		}
+ 		denyChecks = append(denyChecks, Check{
+ 			Endpoint: e, Request: "config_readback", Expected: "deny", Actual: actual,
+ 			Result: "deny", Revision: snap.Revision,
+diff --git a/apps/agentshield/internal/openshell/types.go b/apps/agentshield/internal/openshell/types.go
+index 4838878..8e0c243 100644
+--- a/apps/agentshield/internal/openshell/types.go
++++ b/apps/agentshield/internal/openshell/types.go
+@@ -94,6 +94,15 @@ type NetworkRule struct {
+ 	Effect      string   `json:"effect"`
+ 	BinaryPaths []string `json:"binary_paths"`
+ 	RuleName    string   `json:"rule_name,omitempty"`
++	// Readback-only restriction details from `policy get --full`. Apply-shaped
++	// rules leave them zero; the gateway's own method/path/IP restrictions are
++	// preserved here so the summary cannot overstate effective access.
++	Method                       string   `json:"method,omitempty"`
++	Path                         string   `json:"path,omitempty"`
++	AllowedIPs                   []string `json:"allowed_ips,omitempty"`
++	Protocol                     string   `json:"protocol,omitempty"`
++	Enforcement                  string   `json:"enforcement,omitempty"`
++	RequestBodyCredentialRewrite *bool    `json:"request_body_credential_rewrite,omitempty"`
+ }
+ 
+ // Snapshot is a policy get --full read-back.
+diff --git a/apps/agentshield/internal/openshell/yamlkit.go b/apps/agentshield/internal/openshell/yamlkit.go
+index 8c0aab1..c98cb9f 100644
+--- a/apps/agentshield/internal/openshell/yamlkit.go
++++ b/apps/agentshield/internal/openshell/yamlkit.go
+@@ -315,43 +315,51 @@ func parseYAMLScalar(s string) (any, error) {
+ 	return s, nil
+ }
+ 
++// YAML indicators (&anchor, *alias, !tag, |, >, flow collections) are only
++// meaningful at the START of a node. The same characters inside a plain
++// scalar value (e.g. the glob "/research/**") are unambiguous valid YAML, so
++// rejecting them is an over-strict false positive that blocks policy
++// readback from real gateways. This check therefore only inspects the first
++// byte of each node token: the line itself, content after "- " sequence
++// indicators, and the value after "key:" mapping indicators. Anything else
++// that this subset parser cannot represent still fails closed.
+ func hasUnsupportedYAMLSyntax(s string) bool {
+-	inSingle, inDouble, escape := false, false, false
+-	for i := 0; i < len(s); i++ {
+-		ch := s[i]
+-		if escape {
+-			escape = false
+-			continue
+-		}
+-		if inDouble && ch == '\\' {
+-			escape = true
+-			continue
+-		}
+-		if !inDouble && ch == '\'' {
+-			inSingle = !inSingle
+-			continue
+-		}
+-		if !inSingle && ch == '"' {
+-			inDouble = !inDouble
+-			continue
+-		}
+-		if inSingle || inDouble {
+-			continue
+-		}
+-		if strings.ContainsRune("&*!|>{}", rune(ch)) {
+-			if (ch == '{' || ch == '}') && (s == "{}" || strings.HasSuffix(s, ": {}")) {
+-				continue
+-			}
++	tok := s
++	for {
++		if unsupportedNodeToken(tok) {
+ 			return true
+ 		}
+-		if ch == '[' || ch == ']' {
+-			if s == "[]" || strings.HasSuffix(s, ": []") {
+-				continue
++		for strings.HasPrefix(tok, "- ") {
++			tok = strings.TrimSpace(tok[2:])
++			if unsupportedNodeToken(tok) {
++				return true
+ 			}
+-			return true
+ 		}
++		if tok == "-" {
++			return false
++		}
++		_, value, ok := splitYAMLKey(tok)
++		if !ok || value == "" {
++			return false
++		}
++		tok = value
++	}
++}
++
++func unsupportedNodeToken(tok string) bool {
++	if tok == "" {
++		return false
++	}
++	// Anchors, aliases, tags, block scalars, directives, reserved and
++	// flow-indicator characters may not begin a plain scalar; quoted scalars
++	// begin with a quote and are handled by parseYAMLScalar.
++	if strings.ContainsRune("&*!|>%`,]}", rune(tok[0])) {
++		return true
++	}
++	if tok == "{}" || tok == "[]" {
++		return false
+ 	}
+-	return false
++	return strings.ContainsRune("{[", rune(tok[0]))
+ }
+ 
+ func dumpYAML(v any) string {
+diff --git a/apps/agentshield/internal/openshell/yamlkit_test.go b/apps/agentshield/internal/openshell/yamlkit_test.go
+index de4d10a..4c2564c 100644
+--- a/apps/agentshield/internal/openshell/yamlkit_test.go
++++ b/apps/agentshield/internal/openshell/yamlkit_test.go
+@@ -3,6 +3,7 @@ package openshell
+ import (
+ 	"os"
+ 	"path/filepath"
++	"reflect"
+ 	"runtime"
+ 	"strings"
+ 	"testing"
+@@ -229,3 +230,142 @@ func TestExplicitPairWinsOverPATH(t *testing.T) {
+ 		t.Fatalf("explicit pair must win: %v", cmd)
+ 	}
+ }
++
++// 回归：YAML 指示符只在节点起始位置有语义。真实网关策略含值中部的 glob
++// 通配符（如 path: /research/**），不得因值内出现 * 而被误判为不受支持语法。
++func TestYAMLAcceptsIndicatorsInsidePlainScalars(t *testing.T) {
++	cases := []struct {
++		src  string
++		key  string
++		want any
++	}{
++		{"path: /research/**\n", "path", "/research/**"},
++		{"cmd: /usr/bin/curl -x http://a*b\n", "cmd", "/usr/bin/curl -x http://a*b"},
++		{"note: a|b&c!d>e\n", "note", "a|b&c!d>e"},
++		{"glob: /logs/**/*.log\n", "glob", "/logs/**/*.log"},
++		{"glob: \"**/*.log\"\n", "glob", "**/*.log"},
++		{"q: \"*alias not real\"\n", "q", "*alias not real"},
++		{"empty: {}\n", "empty", map[string]any{}},
++		{"empty: []\n", "empty", []any{}},
++	}
++	for _, tc := range cases {
++		v, err := parseYAML(tc.src)
++		if err != nil {
++			t.Fatalf("parseYAML(%q) = %v, want ok", tc.src, err)
++		}
++		got := v.(map[string]any)[tc.key]
++		if !reflect.DeepEqual(got, tc.want) {
++			t.Fatalf("parseYAML(%q)[%s] = %#v, want %#v", tc.src, tc.key, got, tc.want)
++		}
++	}
++}
++
++// 负向回归：真正的 YAML 锚点/别名/标签/块标量/流集合仍必须 fail-closed。
++func TestYAMLRejectsNodeStartIndicators(t *testing.T) {
++	bad := []string{
++		"key: *alias\n",
++		"key: &anchor value\n",
++		"key: !!str value\n",
++		"key: !tag value\n",
++		"key: |\n  block\n",
++		"key: >\n  folded\n",
++		"key: |2\n  block\n",
++		"- *alias\n",
++		"- &anchor key: v\n",
++		"key: {a: b}\n",
++		"key: [1, 2]\n",
++		"key: ,leading\n",
++		"key: ]leading\n",
++		"key: `reserved\n",
++		"*alias\n",
++		"&anchor key: v\n",
++	}
++	for _, src := range bad {
++		if _, err := parseYAML(src); err == nil {
++			t.Fatalf("parseYAML(%q) must fail closed, got nil error", src)
++		}
++	}
++}
++
++// 回归：网关 0.0.83 的网络策略形状（rest allow 限制 + allowed_ips）必须可保真读回。
++func TestNetworkRulesReadbackGatewayV0083Shapes(t *testing.T) {
++	src := `network_policies:
++  rest_provider:
++    name: rest-provider
++    endpoints:
++    - host: api.example.com
++      port: 443
++      protocol: rest
++      enforcement: enforce
++      rules:
++      - allow:
++          method: GET
++          path: /v1/models
++      - allow:
++          method: POST
++          path: /v1/messages/**
++    binaries:
++    - path: /usr/bin/curl
++  ip_allowlist:
++    name: ip-allowlist
++    endpoints:
++    - host: host.openshell.internal
++      port: 8000
++      allowed_ips:
++      - '172.23.0.1/32'
++    binaries:
++    - path: /usr/bin/curl
++`
++	doc, err := parseYAML(src)
++	if err != nil {
++		t.Fatal(err)
++	}
++	rules, err := networkRules(doc.(map[string]any)["network_policies"])
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(rules) != 3 {
++		t.Fatalf("rules: %+v", rules)
++	}
++	// provider keys are summarized in sorted order: ip_allowlist < rest_provider
++	ip := rules[0]
++	if ip.Endpoint != "host.openshell.internal:8000" || len(ip.AllowedIPs) != 1 || ip.AllowedIPs[0] != "172.23.0.1/32" {
++		t.Fatalf("ip: %+v", ip)
++	}
++	rest := rules[1]
++	if rest.Endpoint != "api.example.com:443" || rest.Method != "GET" || rest.Path != "/v1/models" {
++		t.Fatalf("rest[0]: %+v", rest)
++	}
++	if rules[2].Method != "POST" || rules[2].Path != "/v1/messages/**" {
++		t.Fatalf("rest[1]: %+v", rules[2])
++	}
++}
++
++// 负向回归：0.0.83 形状之外的限制仍必须 fail-closed，不得静默丢弃后夸大有效权限。
++func TestNetworkRulesReadbackFailClosedBeyondV0083(t *testing.T) {
++	base := func(endpointExtra, rule string) string {
++		return "network_policies:\n  p:\n    name: p\n    endpoints:\n    - host: a.example.com\n      port: 443\n" +
++			endpointExtra + "    binaries:\n    - path: /usr/bin/curl\n" + rule
++	}
++	cases := map[string]string{
++		"enforcement-monitor":  base("      enforcement: monitor\n", ""),
++		"protocol-tcp":         base("      protocol: tcp\n", ""),
++		"rewrite-string":       base("      request_body_credential_rewrite: \"true\"\n", ""),
++		"unknown-endpoint-key": base("      future_restriction: x\n", ""),
++		"malformed-cidr":       base("      allowed_ips:\n      - '172.23.0.1/33'\n", ""),
++		"empty-allowed-ips":    base("      allowed_ips: []\n", ""),
++		"deny-rule":            base("      rules:\n      - deny:\n          method: GET\n          path: /x\n", ""),
++		"rules-empty-list":     base("      rules: []\n", ""),
++		"allow-missing-path":   base("      rules:\n      - allow:\n          method: GET\n", ""),
++		"allow-extra-key":      base("      rules:\n      - allow:\n          method: GET\n          path: /x\n          future: z\n", ""),
++	}
++	for name, src := range cases {
++		doc, err := parseYAML(src)
++		if err != nil {
++			t.Fatalf("%s: fixture itself must parse: %v", name, err)
++		}
++		if _, err := networkRules(doc.(map[string]any)["network_policies"]); err == nil {
++			t.Fatalf("%s: networkRules must fail closed, got nil error", name)
++		}
++	}
++}
+diff --git a/apps/agentshield/internal/openshell/o05_live_test.go b/apps/agentshield/internal/openshell/o05_live_test.go
+new file mode 100644
+index 0000000..149a2a1
+--- /dev/null
++++ b/apps/agentshield/internal/openshell/o05_live_test.go
+@@ -0,0 +1,108 @@
++package openshell
++
++// Auxiliary control-plane driver, not candidate-binary B3 or session/enforcement
++// acceptance. Opt in only for a disposable target owned by this run. Ordinary CI
++// skips it. SIQ_O05_CONFIRM_TARGET must repeat that exact target.
++import (
++	"errors"
++	"os"
++	"testing"
++	"time"
++)
++
++func liveRollbackAuthorizer(target string, rec DeploymentReceipt, base Snapshot) RollbackAuthorizer {
++	return func(a RollbackAuthorization) error {
++		if a.OperationID != rec.OperationID || a.Target != target || a.Restore.PolicyDigest != base.PolicyDigest {
++			return errors.New("live rollback authorization binding mismatch")
++		}
++		return nil
++	}
++}
++
++func TestO05LiveRollbackRestore(t *testing.T) {
++	if os.Getenv("SIQ_O05_LIVE") != "1" {
++		t.Skip("explicit live opt-in required")
++	}
++	target := os.Getenv("SIQ_O05_TARGET")
++	if target == "" || os.Getenv("SIQ_O05_CONFIRM_TARGET") != target {
++		t.Fatal("confirm exact disposable target ownership first")
++	}
++	c := New(Options{ProbeTimeout: 5 * time.Second, PollInterval: time.Second, PollAttempts: 15})
++	base, err := c.ReadEffective(target)
++	if err != nil {
++		t.Fatalf("base readback: %v", err)
++	}
++	// Choose a rule distinct from the base before the first write.
++	rules := []NetworkRule{{Endpoint: "127.0.0.1:8097", Effect: "allow", BinaryPaths: []string{"/usr/local/bin/python3"}}}
++	projected, _ := networkRulesToGateway(rules)
++	proposed := clonePolicy(base.Policy)
++	proposed["network_policies"] = projected
++	digest, err := policyDigest(proposed)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if digest == base.PolicyDigest {
++		rules[0].Endpoint = "127.0.0.1:8096"
++	}
++	rec, err := c.ApplyNetwork(target, rules, base.Revision)
++	if err != nil {
++		t.Fatalf("apply: %v; inspect owned target before cleanup", err)
++	}
++	authorize := liveRollbackAuthorizer(target, rec, base)
++	restored := false
++	t.Cleanup(func() {
++		if restored {
++			return
++		}
++		// Exact receipt + fresh authorization + drift checks; never force restoration
++		// over an unrelated writer. Any failure is visible and requires inspection.
++		if _, err := c.RollbackAuthorized(target, rec, authorize); err != nil {
++			t.Errorf("owned target cleanup refused: %v", err)
++		}
++	})
++	if rec.Result != "applied" || rec.BasePolicyDigest == rec.AppliedPolicyDigest {
++		t.Fatal("changed apply required; no-op is not coverage")
++	}
++	if _, err := c.RollbackAuthorized(target, rec, nil); err == nil {
++		t.Fatal("nil authorizer rollback succeeded")
++	}
++	unchanged, err := c.ReadEffective(target)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if unchanged.Revision != rec.BackendRevision || unchanged.PolicyDigest != rec.AppliedPolicyDigest {
++		t.Fatal("state changed after refused rollback")
++	}
++	rb, err := c.RollbackAuthorized(target, rec, authorize)
++	if err != nil {
++		t.Fatal(err)
++	}
++	restored = true // consumed receipt must not be replayed, even if final read fails
++	final, err := c.ReadEffective(target)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if rb.Result != "restored" || final.PolicyDigest != base.PolicyDigest || final.Revision != rb.RestoredRevision {
++		t.Fatalf("exact restore not proven: result=%s", rb.Result)
++	}
++	t.Log("SIQ_AUX_CONTROL_PLANE_RESTORE_VERIFIED")
++}
++
++func TestLiveRollbackAuthorizerRejectsMismatch(t *testing.T) {
++	base := Snapshot{PolicyDigest: "base"}
++	rec := DeploymentReceipt{OperationID: "op"}
++	authorize := liveRollbackAuthorizer("owned", rec, base)
++	good := RollbackAuthorization{OperationID: "op", Target: "owned", Restore: base}
++	if err := authorize(good); err != nil {
++		t.Fatal(err)
++	}
++	for _, bad := range []RollbackAuthorization{
++		{OperationID: "other", Target: "owned", Restore: base},
++		{OperationID: "op", Target: "other", Restore: base},
++		{OperationID: "op", Target: "owned", Restore: Snapshot{PolicyDigest: "changed"}},
++	} {
++		if authorize(bad) == nil {
++			t.Fatal("mismatch authorized")
++		}
++	}
++}
+diff --git a/apps/agentshield/internal/openshell/readback_restrictions_test.go b/apps/agentshield/internal/openshell/readback_restrictions_test.go
+new file mode 100644
+index 0000000..7d1a018
+--- /dev/null
++++ b/apps/agentshield/internal/openshell/readback_restrictions_test.go
+@@ -0,0 +1,95 @@
++package openshell
++
++import "testing"
++
++func TestReadbackRestrictionsCannotBroadenOnReapply(t *testing.T) {
++	cases := map[string]map[string]any{
++		"method_path": {"rules": []any{map[string]any{"allow": map[string]any{"method": "GET", "path": "/safe/**"}}}},
++		"ips":         {"allowed_ips": []any{"192.0.2.1/32"}},
++		"protocol":    {"protocol": "rest"}, "enforcement": {"enforcement": "enforce"},
++		"rewrite_true":  {"request_body_credential_rewrite": true},
++		"rewrite_false": {"request_body_credential_rewrite": false}, "plain": {},
++	}
++	for name, extra := range cases {
++		t.Run(name, func(t *testing.T) {
++			endpoint := map[string]any{"host": "example.test", "port": 443}
++			for k, v := range extra {
++				endpoint[k] = v
++			}
++			policy := map[string]any{"version": 1, "network_policies": map[string]any{"r": map[string]any{
++				"endpoints": []any{endpoint}, "binaries": []any{map[string]any{"path": "/usr/bin/curl"}},
++			}}}
++			body := dumpYAML(policy)
++			writes := 0
++			c := New(Options{PollInterval: -1, policyCoordinator: newPolicyCoordinator(), Runner: func(args []string) (int, string, string) {
++				if len(args) > 1 && args[0] == "policy" && args[1] == "get" {
++					return 0, policyOutput("1", body), ""
++				}
++				writes++
++				return 1, "", "unexpected write"
++			}})
++			snap, err := c.ReadEffective("fixture")
++			if err != nil {
++				t.Fatal(err)
++			}
++			if len(snap.Network) != 1 {
++				t.Fatalf("missing projection: %+v", snap)
++			}
++			r := snap.Network[0]
++			if name == "plain" {
++				if _, err := networkRulesToGateway(snap.Network); err != nil {
++					t.Fatal(err)
++				}
++				if !c.Verify("fixture", DeploymentReceipt{BackendRevision: "1", AppliedPolicyDigest: snap.PolicyDigest}, []string{r.Endpoint}, nil).Passed {
++					t.Fatal("plain readback should pass")
++				}
++				return
++			}
++			if !r.hasReadbackRestrictions() {
++				t.Fatal("restriction silently lost")
++			}
++			if want, ok := extra["request_body_credential_rewrite"]; ok && (r.RequestBodyCredentialRewrite == nil || *r.RequestBodyCredentialRewrite != want) {
++				t.Fatal("rewrite presence/value lost")
++			}
++			if name == "method_path" && (r.Method != "GET" || r.Path != "/safe/**") {
++				t.Fatal("L7 restrictions lost")
++			}
++			if name == "ips" && (len(r.AllowedIPs) != 1 || r.AllowedIPs[0] != "192.0.2.1/32") {
++				t.Fatal("IP restriction lost")
++			}
++			if _, err := c.ApplyNetwork("fixture", snap.Network, "1"); err == nil {
++				t.Fatal("restricted reapply must reject")
++			}
++			for _, allow := range []bool{true, false} {
++				var allows, denies []string
++				if allow {
++					allows = []string{r.Endpoint}
++				} else {
++					denies = []string{r.Endpoint}
++				}
++				rep := c.Verify("fixture", DeploymentReceipt{BackendRevision: "1", AppliedPolicyDigest: snap.PolicyDigest}, allows, denies)
++				if rep.Passed || rep.Level != VerifyFailed {
++					t.Fatal("endpoint-only verification overstated restricted access")
++				}
++			}
++			if writes != 0 {
++				t.Fatalf("rejection mutated backend: %d", writes)
++			}
++		})
++	}
++}
++
++func TestApplyRejectsPartialRestrictionFields(t *testing.T) {
++	f := false
++	for _, r := range []NetworkRule{
++		{Method: "GET"}, {Path: "/"}, {AllowedIPs: []string{}}, {Protocol: "rest"},
++		{Enforcement: "enforce"}, {RequestBodyCredentialRewrite: &f},
++	} {
++		r.Endpoint = "example.test:443"
++		r.Effect = "allow"
++		r.BinaryPaths = []string{"/usr/bin/curl"}
++		if _, err := networkRulesToGateway([]NetworkRule{r}); err == nil {
++			t.Fatalf("restriction dropped: %+v", r)
++		}
++	}
++}
