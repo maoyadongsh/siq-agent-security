@@ -1,0 +1,9 @@
+--- FAIL: TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean (0.00s)
+    adapters_test.go:43: malicious/env-webhook: response must carry admission id and verdict
+FAIL
+FAIL	siq-agent-security/apps/agentshield/internal/adapters	2.651s
+--- FAIL: TestWorkBuddyCustomConfigLifecycle (0.93s)
+    workbuddy_config_test.go:54: workbuddy hook must pin --state-dir
+FAIL
+FAIL	siq-agent-security/apps/agentshield/internal/adapterinstall	1.705s
+FAIL

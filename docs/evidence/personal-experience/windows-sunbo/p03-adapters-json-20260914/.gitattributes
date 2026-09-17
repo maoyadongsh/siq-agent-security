@@ -1,0 +1,11 @@
+# Keep frozen evidence hashes; exceptions are limited to the exact listed files.
+results/baseline-summary.json whitespace=cr-at-eol
+# Exact Git diff: context space before tab or on a blank line is original format.
+results/change.patch whitespace=cr-at-eol,-blank-at-eol,-space-before-tab
+results/focused-summary.json whitespace=cr-at-eol
+results/gofmt-summary.json whitespace=cr-at-eol
+results/manifest.json whitespace=cr-at-eol
+results/package-summary.json whitespace=cr-at-eol
+results/process-observation.json whitespace=cr-at-eol
+results/verification.json whitespace=cr-at-eol
+results/vet-summary.json whitespace=cr-at-eol
