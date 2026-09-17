@@ -1,6 +1,6 @@
 """OpenShellHttpClient 测试（httpx.MockTransport，不依赖真实网关）。
 
-锁定：fail-closed（不可达/非 JSON → AdapterError）、409 → RevisionConflict、
+锁定：fail-closed（不可达/非 JSON → AdapterError）、未联调写路径零写入拒绝、
 能力探测驱动编译、正负向验证语义。
 """
 
@@ -10,7 +10,22 @@ import httpx
 import pytest
 
 from app.adapters.openshell.client import OpenShellHttpClient
-from app.adapters.openshell.contracts import AdapterError, RevisionConflict
+from app.adapters.openshell.contracts import AdapterError
+from app.adapters.openshell.policy_safety import policy_digest
+
+
+def _policy(endpoint: str = "api.example.com:443") -> dict:
+    host, port = endpoint.rsplit(":", 1)
+    return {
+        "version": 1,
+        "network_policies": {
+            "managed": {
+                "name": "managed",
+                "endpoints": [{"host": host, "port": int(port)}],
+                "binaries": [{"path": "/usr/bin/curl"}],
+            }
+        },
+    }
 
 
 def _client(handler) -> OpenShellHttpClient:
@@ -51,14 +66,14 @@ def test_probe_fail_closed_on_unreachable():
         _client(handler).probe()
 
 
-def test_apply_dynamic_maps_409_to_revision_conflict():
+def test_apply_dynamic_is_disabled_until_full_policy_cas_is_verified():
     def handler(request: httpx.Request) -> httpx.Response:
         return _json_response({"detail": "revision conflict"}, 409)
 
     client = _client(handler)
     from app.adapters.openshell.contracts import ChangePlan
 
-    with pytest.raises(RevisionConflict):
+    with pytest.raises(AdapterError, match="policy_fidelity_unavailable"):
         client.apply_dynamic(
             "s-1",
             ChangePlan(target="s-1", kind="dynamic", expected_revision="1", artifact_hash="h"),
@@ -66,19 +81,46 @@ def test_apply_dynamic_maps_409_to_revision_conflict():
         )
 
 
+def test_create_generation_is_disabled_without_verified_receipt_contract():
+    calls = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        return _json_response({"revision": "2"})
+
+    from app.adapters.openshell.contracts import CompiledPolicy
+
+    compiled = CompiledPolicy("p1", 1, "openshell", "v1", {}, "a" * 64)
+    with pytest.raises(AdapterError, match="generation_unavailable"):
+        _client(handler).create_generation("s-1", compiled)
+    assert calls == 0
+
+
+def test_gateway_error_body_is_not_exposed():
+    canary = "SYNTHETIC_SECRET_DO_NOT_EXPOSE"
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(500, text=canary)
+
+    with pytest.raises(AdapterError) as exc_info:
+        _client(handler).read_effective_policy("s-1")
+    assert canary not in str(exc_info.value)
+
+
 def test_read_effective_policy_returns_backend_state():
     def handler(request: httpx.Request) -> httpx.Response:
         return _json_response(
             {
                 "revision": "7",
-                "network_policies": [{"endpoint": "api.example.com", "effect": "allow"}],
+                "policy": _policy(),
                 "enforcement_mode": "block",
             }
         )
 
     snapshot = _client(handler).read_effective_policy("s-1")
     assert snapshot.revision == "7"
-    assert snapshot.network[0]["endpoint"] == "api.example.com"
+    assert snapshot.network[0]["endpoint"] == "api.example.com:443"
 
 
 def test_non_json_response_fails_closed():
@@ -91,6 +133,7 @@ def test_non_json_response_fails_closed():
 
 def test_compile_uses_probed_capabilities():
     """编译必须基于探测能力（不按版本号假设）。"""
+
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.path == "/v1/health":
             return _json_response({"ok": True})
@@ -103,7 +146,7 @@ def test_compile_uses_probed_capabilities():
             "policy_id": "p1",
             "version": 1,
             "selector": {"agent_ids": ["a"]},
-            "network": [{"endpoint": "x", "effect": "allow"}],
+            "network": [{"endpoint": "x.example:443", "effect": "allow", "binary_paths": ["/usr/bin/curl"]}],
             "enforcement_mode": "block",
         }
     )
@@ -111,12 +154,12 @@ def test_compile_uses_probed_capabilities():
     assert "network.dynamic_update" in compiled.unsupported_by_backend
 
 
-def test_verify_requires_both_allow_and_deny():
+def test_verify_full_digest_does_not_require_an_invented_deny_probe():
     def handler(request: httpx.Request) -> httpx.Response:
         return _json_response(
             {
                 "revision": "2",
-                "network_policies": [{"endpoint": "allowed.example.com", "effect": "allow"}],
+                "policy": _policy("allowed.example.com:443"),
                 "enforcement_mode": "block",
             }
         )
@@ -126,16 +169,20 @@ def test_verify_requires_both_allow_and_deny():
     client = _client(handler)
     report = client.verify(
         "s-1",
-        checks={"expect_allow": ["allowed.example.com"], "expect_deny": []},
-        receipt=DeploymentReceipt(backend_revision="2", evidence={}),
+        checks={"expect_allow": ["allowed.example.com:443"], "expect_deny": []},
+        receipt=DeploymentReceipt(
+            backend_revision="2", applied_policy_digest=policy_digest(_policy("allowed.example.com:443"))
+        ),
     )
-    assert report.passed is False
-    assert any("正负向" in f for f in report.failures)
+    assert report.passed is True
+    assert report.deny_checks == []
 
     report2 = client.verify(
         "s-1",
-        checks={"expect_allow": ["allowed.example.com"], "expect_deny": ["evil.example.com"]},
-        receipt=DeploymentReceipt(backend_revision="2", evidence={}),
+        checks={"expect_allow": ["allowed.example.com:443"], "expect_deny": ["evil.example.com:443"]},
+        receipt=DeploymentReceipt(
+            backend_revision="2", applied_policy_digest=policy_digest(_policy("allowed.example.com:443"))
+        ),
     )
     assert report2.passed is True, report2.failures
 
@@ -173,6 +220,7 @@ def test_http_client_implements_same_contract_as_cli_backend():
 
 def test_probe_capability_document_from_gateway_response():
     """P1-1：能力文档只采纳网关如实上报的项；未报告项一律 unknown（fail-closed）。"""
+
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.path == "/v1/health":
             return _json_response({"ok": True})
@@ -198,8 +246,9 @@ def test_probe_capability_document_from_gateway_response():
 
 def test_read_effective_policy_mode_defaults_to_unknown_when_absent():
     """P1-11：网关响应未携带 enforcement_mode 时如实 unknown，不默认编造 block。"""
+
     def handler(request: httpx.Request) -> httpx.Response:
-        return _json_response({"revision": "7", "network_policies": []})
+        return _json_response({"revision": "7", "policy": {"version": 1}})
 
     snapshot = _client(handler).read_effective_policy("s-1")
     assert snapshot.enforcement_mode == "unknown"
@@ -213,7 +262,7 @@ def test_verify_level_readback_on_pass_and_failed_on_failure():
         return _json_response(
             {
                 "revision": "2",
-                "network_policies": [{"endpoint": "allowed.example.com", "effect": "allow"}],
+                "policy": _policy("allowed.example.com:443"),
                 "enforcement_mode": "block",
             }
         )
@@ -221,8 +270,10 @@ def test_verify_level_readback_on_pass_and_failed_on_failure():
     client = _client(handler)
     ok = client.verify(
         "s-1",
-        checks={"expect_allow": ["allowed.example.com"], "expect_deny": ["evil.example.com"]},
-        receipt=DeploymentReceipt(backend_revision="2", evidence={}),
+        checks={"expect_allow": ["allowed.example.com:443"], "expect_deny": ["evil.example.com:443"]},
+        receipt=DeploymentReceipt(
+            backend_revision="2", applied_policy_digest=policy_digest(_policy("allowed.example.com:443"))
+        ),
     )
     assert ok.passed is True
     assert ok.level == "readback_verified"
@@ -231,8 +282,10 @@ def test_verify_level_readback_on_pass_and_failed_on_failure():
 
     bad = client.verify(
         "s-1",
-        checks={"expect_allow": ["missing.example.com"], "expect_deny": ["evil.example.com"]},
-        receipt=DeploymentReceipt(backend_revision="2", evidence={}),
+        checks={"expect_allow": ["missing.example.com:443"], "expect_deny": ["evil.example.com:443"]},
+        receipt=DeploymentReceipt(
+            backend_revision="2", applied_policy_digest=policy_digest(_policy("allowed.example.com:443"))
+        ),
     )
     assert bad.passed is False
     assert bad.level == "failed"

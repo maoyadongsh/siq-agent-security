@@ -59,12 +59,17 @@ func Load(stateDir string) (*Key, error) {
 		return nil, errors.New("signing: state directory required (fail closed)")
 	}
 	dir := filepath.Join(stateDir, "keys")
-	if err := statefs.MkdirAll(dir, 0o700); err != nil {
-		return nil, err
-	}
 	path := filepath.Join(dir, "signing.seed")
 	if raw, err := statefs.ReadFile(path); err == nil {
 		return decodeSeedFile(path, raw)
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return nil, err
+	}
+	if err := requireInitialIdentityState(stateDir); err != nil {
+		return nil, err
+	}
+	if err := statefs.MkdirAll(dir, 0o700); err != nil {
+		return nil, err
 	}
 	seed := make([]byte, ed25519.SeedSize)
 	if _, err := rand.Read(seed); err != nil {

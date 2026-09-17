@@ -12,6 +12,10 @@ import (
 
 func testOpts(t *testing.T, platform string) Options {
 	t.Helper()
+	// Live shells may export WORKBUDDY_CONFIG_DIR / CODEBUDDY_CONFIG_DIR.
+	// Tests must not inherit those roots; cases that need an override call t.Setenv after this.
+	t.Setenv("WORKBUDDY_CONFIG_DIR", "")
+	t.Setenv("CODEBUDDY_CONFIG_DIR", "")
 	home := t.TempDir()
 	state := t.TempDir()
 	if _, err := statepkg.Open(state); err != nil {
@@ -53,7 +57,10 @@ func TestHermesInstallUninstallRoundTrip(t *testing.T) {
 		t.Fatal(err)
 	}
 	if exists(plugin) {
-		t.Fatal("uninstall must remove the plugin directory it created")
+		t.Fatal("uninstall must remove the plugin files it created")
+	}
+	if exists(filepath.Join(opts.Home, ".hermes", "plugins", "siq-agent-security")) {
+		t.Fatal("empty product plugin directory remained")
 	}
 }
 
@@ -85,16 +92,45 @@ func TestOpenClawRegistersRuntimeWithoutUnsupportedInstallPolicy(t *testing.T) {
 	if _, err := Uninstall(opts); err != nil {
 		t.Fatal(err)
 	}
-	restored, _ := os.ReadFile(oc)
-	if err := json.Unmarshal(restored, &doc); err != nil {
+	restored, err := os.ReadFile(oc)
+	if err != nil {
 		t.Fatal(err)
 	}
-	sec = doc["security"].(map[string]any)
+	var after map[string]any
+	if err := json.Unmarshal(restored, &after); err != nil {
+		t.Fatal(err)
+	}
+	sec = after["security"].(map[string]any)
 	if sec["extra"] != true {
 		t.Fatal("extra must remain after surgical uninstall")
 	}
 	if _, ok := sec["installPolicy"]; ok {
 		t.Fatal("installPolicy must be stripped")
+	}
+	if _, ok := after["plugins"]; ok {
+		t.Fatal("empty plugins registration remained after uninstall")
+	}
+	if exists(filepath.Join(opts.Home, ".openclaw", "plugins", "siq-agent-security")) {
+		t.Fatal("empty OpenClaw plugin directory remained")
+	}
+}
+
+func TestUninstallKeepsUnknownPluginFiles(t *testing.T) {
+	opts := testOpts(t, Hermes)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	dir := filepath.Join(opts.Home, ".hermes", "plugins", "siq-agent-security")
+	user := filepath.Join(dir, "user-keep.txt")
+	if err := os.WriteFile(user, []byte("keep\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(user)
+	if err != nil || string(raw) != "keep\n" {
+		t.Fatal("unknown plugin file was removed")
 	}
 }
 
@@ -240,6 +276,78 @@ func TestCodeBuddySurgicalUninstallKeepsUserSettings(t *testing.T) {
 	}
 }
 
+func TestWorkBuddyPreservesEnabledPluginsAndDoesNotTouchCodeBuddy(t *testing.T) {
+	opts := testOpts(t, WorkBuddy)
+	settings := filepath.Join(opts.Home, ".workbuddy", "settings.json")
+	if err := os.MkdirAll(filepath.Dir(settings), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	original := []byte(`{"enabledPlugins":{"sheetagent@builtin":true},"sandbox":{"mode":"workspace"}}`)
+	if err := os.WriteFile(settings, original, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(settings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Count(string(raw), "hook workbuddy") != 2 {
+		t.Fatalf("expected one workbuddy command per event, got %s", raw)
+	}
+	if strings.Contains(string(raw), "hook codebuddy") {
+		t.Fatal("workbuddy install must not register codebuddy hooks")
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		t.Fatal(err)
+	}
+	plugins, _ := doc["enabledPlugins"].(map[string]any)
+	if plugins["sheetagent@builtin"] != true {
+		t.Fatal("enabledPlugins must be preserved")
+	}
+	if exists(filepath.Join(opts.Home, ".codebuddy")) {
+		t.Fatal("workbuddy install must not write CodeBuddy config")
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	restored, err := os.ReadFile(settings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(restored), "hook workbuddy") {
+		t.Fatal("product hooks must be removed")
+	}
+	var after map[string]any
+	if err := json.Unmarshal(restored, &after); err != nil {
+		t.Fatal(err)
+	}
+	plugins, _ = after["enabledPlugins"].(map[string]any)
+	if plugins["sheetagent@builtin"] != true {
+		t.Fatal("enabledPlugins lost after uninstall")
+	}
+}
+
+func TestWorkBuddyIsIdempotentAndFailClosedUninstallWithoutRecord(t *testing.T) {
+	opts := testOpts(t, WorkBuddy)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := os.ReadFile(filepath.Join(opts.Home, ".workbuddy", "settings.json"))
+	if strings.Count(string(raw), "hook workbuddy") != 2 {
+		t.Fatalf("expected one command per event, got %s", raw)
+	}
+	fresh := testOpts(t, WorkBuddy)
+	if _, err := Uninstall(fresh); err == nil {
+		t.Fatal("uninstall without a record must fail")
+	}
+}
+
 func TestUninstallConflictReturnsRecoveryPlan(t *testing.T) {
 	opts := testOpts(t, CodeBuddy)
 	settings := filepath.Join(opts.Home, ".codebuddy", "settings.json")
@@ -322,6 +430,13 @@ func TestEmbeddedAssetsMatchRuntimeTree(t *testing.T) {
 		}
 		if string(got) != string(want) {
 			t.Fatalf("embed drifted from adapters/runtime/%s — copy the runtime file into adapterinstall/assets", p[1])
+		}
+		if p[0] == "assets/hermes/plugin.yaml" {
+			for _, declaration := range []string{"provides_hooks:\n", "  - pre_tool_call\n", "  - post_tool_call\n"} {
+				if !strings.Contains(string(got), declaration) {
+					t.Fatalf("Hermes manifest does not declare registered hook %q", strings.TrimSpace(declaration))
+				}
+			}
 		}
 	}
 }

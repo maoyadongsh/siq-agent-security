@@ -64,6 +64,9 @@ def main():
                 ".hermes/skills/other/same-name/SKILL.md": "---\nname: same-name\n---\nVersion A\n",
                 ".hermes/profiles/work/config.yaml": "model: test-fixture\n",
                 ".hermes/profiles/work/skills/category/work-only/SKILL.md": "---\nname: work-only\n---\nWork fixture\n",
+                ".workbuddy/settings.json": json.dumps(
+                    {"enabledPlugins": {"sheetagent@builtin": True}, "sandbox": {"mode": "workspace"}}
+                ),
             }
             for relative, content in fixtures.items():
                 target = home / relative
@@ -381,8 +384,19 @@ def main():
                         outcomes["native_uninstall_preserves_other_profile_and_later_user_settings"] = True
 
                     workbuddy_row = page.get_by_role("row").filter(has=page.get_by_text("WorkBuddy", exact=True))
-                    expect(workbuddy_row.get_by_role("button")).to_have_count(0)
-                    expect(workbuddy_row.get_by_text("桌面接入待实测", exact=True)).to_be_visible()
+                    expect(workbuddy_row.get_by_text("不能沿用 CodeBuddy", exact=False)).to_be_visible()
+                    workbuddy_row.get_by_role("button", name="安装", exact=True).click()
+                    dialog = page.get_by_role("dialog")
+                    expect(dialog.get_by_role("button", name="确认应用")).to_be_enabled()
+                    dialog.get_by_role("button", name="确认应用").click()
+                    expect(workbuddy_row.get_by_text("接入待验证", exact=True)).to_be_visible()
+                    wb_settings = json.loads((home / ".workbuddy/settings.json").read_text())
+                    assert wb_settings["enabledPlugins"]["sheetagent@builtin"] is True
+                    hooks = json.dumps(wb_settings.get("hooks", {}))
+                    assert "hook workbuddy" in hooks
+                    assert "--state-dir" in hooks
+                    assert "hook codebuddy" not in hooks
+                    assert not (home / ".codebuddy").exists()
                     outcomes["workbuddy_keeps_separate_verification_status"] = True
                     openclaw_row = page.get_by_role("row").filter(has=page.get_by_text("OpenClaw", exact=True))
                     openclaw_row.get_by_role("button", name="安装", exact=True).click()

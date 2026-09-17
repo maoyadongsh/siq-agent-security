@@ -1,0 +1,43 @@
+{
+  "schema_version": "personal-macos-candidate-verification/v1",
+  "recorded_at": "2026-09-16T22:22:00+08:00",
+  "candidate_sha": "450fe1836d8a3bffefbd2ce9b6f02bbbfe730c64",
+  "source_dirty_at_build": false,
+  "binary_sha256": "f067f96b05c3472b8ebe2d43ac9c19ce79c5063af19ec1dc66999a6da1bd3e23",
+  "binary_format": "Mach-O arm64 CGO=0 trimpath; isolated go1.27.1",
+  "inherited_same_candidate_checks": {
+    "source": "../p11-20260916-220456/verification.json",
+    "gofmt_exit": 0,
+    "go_vet_all_exit": 0,
+    "go_test_all_count_1_exit": 0,
+    "adapterinstall_race_exit": 0,
+    "cross_build_linux_amd64_exit": 0,
+    "cross_build_linux_arm64_exit": 0,
+    "cross_build_darwin_arm64_exit": 0,
+    "cross_build_windows_amd64_exit": 0,
+    "openclaw_native_smoke_check_count": 17,
+    "hermes_native_smoke_check_count": 6
+  },
+  "new_checks": {
+    "workbuddy_native_desktop_pass_count": 5,
+    "workbuddy_local_chain_verified": true,
+    "workbuddy_fail_closed_target_absent": true,
+    "hermes_clean_source_dispatcher_fixture_passed": true,
+    "hermes_dispatcher_fixture_check_count": 15,
+    "matrix_structure_exit": 0,
+    "matrix_require_native_exit": 3,
+    "matrix_rows": 18,
+    "matrix_evidence_files_checked": 4,
+    "isolated_workbuddy_port_stopped": true,
+    "workbuddy_product_hooks_uninstalled": true,
+    "daily_workbuddy_config_unchanged": true
+  },
+  "constraints_preserved": {
+    "sudo_used": false,
+    "global_path_changed": false,
+    "security_policy_changed": false,
+    "daily_services_changed": false,
+    "push_or_publish_performed": false,
+    "secrets_or_pairing_codes_in_evidence": false
+  }
+}

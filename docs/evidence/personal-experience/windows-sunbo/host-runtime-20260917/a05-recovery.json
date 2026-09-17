@@ -1,0 +1,298 @@
+{
+  "kind": "owned_host_runtime_observation/v1",
+  "case": "offline_restore_revoke_restart",
+  "recorded_utc": "2026-09-17T14:24:49.8905328Z",
+  "candidate_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "source_dirty": false,
+  "binary_sha256": "d0a6f0f5c7b5cb5f04fb7f644346547ae542ef735ac8f0553af31205db5a0923",
+  "host_version": "2026.9.4",
+  "method": "native_cli",
+  "environment": "Windows 11 10.0.26200 amd64 - WSL2 Ubuntu 24.04.5 kernel 6.6.87.2",
+  "private_transport_sha256": "b7065ba0d3d3db8459efbad9401b2b288294999dc6c22b0370e7caacf051b463",
+  "manifest_sha256": "5cbf7634432f3e07881371d41e2a373a80cd0e799f60451fcd3220890a602f73",
+  "outer_exit_code": 0,
+  "guest_exit_code": 0,
+  "checks": {
+    "cli_completed": true,
+    "seven_native_provider_exchanges": true,
+    "three_native_phases": true,
+    "offline_connection_refused": true,
+    "all_siq_lifetimes_reaped": true,
+    "denied_target_absent": true,
+    "signed_receipts_verified": true,
+    "siq_owned_cleanup": true,
+    "control_unchanged": true,
+    "provider_actual_connect": true,
+    "decision_connect": true,
+    "native_default_permissions_recorded": true,
+    "no_guard_denial": true,
+    "owned_resources_closed": true,
+    "no_harness_error": true,
+    "source_unchanged": true,
+    "owned_node_security_verified": true
+  },
+  "phase_results": [
+    {
+      "phase": "offline",
+      "tool_call_id": "siqa05offline20260917",
+      "target": {
+        "exists": false
+      },
+      "exit_code": 0
+    },
+    {
+      "phase": "restored",
+      "tool_call_id": "siqa05restored20260917",
+      "target": {
+        "exists": true,
+        "regular": true,
+        "mode": "0o600",
+        "uid": 1000,
+        "bytes": 24,
+        "sha256": "61ce1f719a6e665277382aaf1d375351c112fcac8f1d03a503febd0010beca87"
+      },
+      "exit_code": 0
+    },
+    {
+      "phase": "revoked",
+      "tool_call_id": "siqa05revoked20260917",
+      "target": {
+        "exists": false
+      },
+      "exit_code": 0
+    }
+  ],
+  "receipt_verification": {
+    "verified": true,
+    "selected": [
+      {
+        "tool_call_id": "siqa05restored20260917",
+        "action": "allow",
+        "reason_code": "allow",
+        "action_id": "act-f91282063eb1c67b744c4771",
+        "intent_binding": "bound",
+        "intent_digest": "2f0247ab5da06c96448a9981c7319dc84660bf25c03fcb4da22379d072547fcd"
+      },
+      {
+        "tool_call_id": "siqa05revoked20260917",
+        "action": "deny",
+        "reason_code": "intent_revoked",
+        "action_id": "act-a8dac588acee1d80e3b82723",
+        "intent_binding": "bound",
+        "intent_digest": "2f0247ab5da06c96448a9981c7319dc84660bf25c03fcb4da22379d072547fcd",
+        "authority_reason_code": "intent_revoked"
+      }
+    ],
+    "receipt_count": 4
+  },
+  "tool_results": [
+    {
+      "exchange": 3,
+      "tool_call_id": "siqa05offline20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 4,
+      "tool_call_id": "siqa05offline20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 5,
+      "tool_call_id": "siqa05offline20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 5,
+      "tool_call_id": "siqa05restored20260917",
+      "content_sha256": "95e2efd8a200008b15d72bd7816b43abaf09adeb4eba0a02aebcb8ea394b776c",
+      "adapter_fail_closed": false,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 6,
+      "tool_call_id": "siqa05offline20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 6,
+      "tool_call_id": "siqa05restored20260917",
+      "content_sha256": "95e2efd8a200008b15d72bd7816b43abaf09adeb4eba0a02aebcb8ea394b776c",
+      "adapter_fail_closed": false,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 7,
+      "tool_call_id": "siqa05offline20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 7,
+      "tool_call_id": "siqa05restored20260917",
+      "content_sha256": "95e2efd8a200008b15d72bd7816b43abaf09adeb4eba0a02aebcb8ea394b776c",
+      "adapter_fail_closed": false,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 7,
+      "tool_call_id": "siqa05revoked20260917",
+      "content_sha256": "405e658411e51699163d53b4ca67ed486d48b180ef3619cae6c241026fa8ca90",
+      "adapter_fail_closed": false,
+      "siq_denial": true,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    }
+  ],
+  "node_runs": [
+    {
+      "phase": "warmup",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    },
+    {
+      "phase": "offline",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    },
+    {
+      "phase": "restored",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    },
+    {
+      "phase": "revoked",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    }
+  ],
+  "siq_lifetimes": [
+    {
+      "owned_process_reaped": true,
+      "log_closed": true,
+      "killed": false,
+      "exit_code": 0
+    },
+    {
+      "owned_process_reaped": true,
+      "log_closed": true,
+      "killed": false,
+      "exit_code": 0
+    },
+    {
+      "owned_process_reaped": true,
+      "log_closed": true,
+      "killed": false,
+      "exit_code": 0
+    }
+  ],
+  "owned_resources": {
+    "node_reaped": true,
+    "siq_reaped": true,
+    "siq_log_closed": true,
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true
+  },
+  "cleanup_ack": "confirmed_by_guest_report",
+  "real_model_requests": 0,
+  "synthetic_provider_requests": 7,
+  "elapsed_seconds": 31.45743707099973,
+  "source_unchanged": true,
+  "control_unchanged": true,
+  "fault_endpoint_events": null,
+  "fault_endpoint_cleanup": null,
+  "parent_invariants": {
+    "parent_namespaces_unchanged": true,
+    "parent_tmp_metadata_unchanged": true
+  },
+  "network_outcomes": [
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "decision",
+      "code": "ECONNREFUSED"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "decision",
+      "code": "ECONNREFUSED"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    }
+  ],
+  "limitations": [
+    "Local synthetic model, real public CLI and real tools",
+    "Timeout/401/malformed responses are explicit fault injection, not SIQ authoritative decisions",
+    "Historical clean candidate; not final integrated candidate or Windows-native OpenClaw runtime",
+    "No approval-resume or trusted Skill attribution claim"
+  ]
+}

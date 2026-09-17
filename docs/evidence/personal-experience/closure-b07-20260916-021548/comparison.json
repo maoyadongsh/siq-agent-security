@@ -1,0 +1,86 @@
+{
+  "format": "closure-b07-comparison/v1",
+  "recorded_at": "2026-09-16T02:15:48.988334+00:00",
+  "b0_dir": "/tmp/siq-b07-b0/docs/evidence/personal-experience/openshell-o04-perf-20260916-003758",
+  "b0_head": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "b1_dir": "/home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914/docs/evidence/personal-experience/openshell-o04-perf-20260916-021336",
+  "b1_head": "dafb4cd4a4077feaabad902ad6912ee7d4a2a4cd",
+  "relative_p95_budget": 0.1,
+  "rows": [
+    {
+      "scenario": "A",
+      "metric": "decide_allow_ms",
+      "b0_p95_ms": 7.726,
+      "b1_p95_ms": 12.283,
+      "delta_pct": 58.98,
+      "status": "over_budget"
+    },
+    {
+      "scenario": "A",
+      "metric": "diagnose_unconfigured_ms",
+      "b0_p95_ms": 0.019,
+      "b1_p95_ms": 0.02,
+      "delta_pct": 5.26,
+      "status": "within_budget"
+    },
+    {
+      "scenario": "B",
+      "metric": "decide_allow_auth_ms",
+      "b0_p95_ms": 8.238,
+      "b1_p95_ms": 12.638,
+      "delta_pct": 53.41,
+      "status": "over_budget"
+    },
+    {
+      "scenario": "B",
+      "metric": "decide_deny_revoked_ms",
+      "b0_p95_ms": 8.441,
+      "b1_p95_ms": 12.289,
+      "delta_pct": 45.59,
+      "status": "over_budget"
+    },
+    {
+      "scenario": "C",
+      "metric": "probe_cold_ms",
+      "b0_p95_ms": 4.327,
+      "b1_p95_ms": 3.842,
+      "delta_pct": -11.21,
+      "status": "within_budget"
+    },
+    {
+      "scenario": "C",
+      "metric": "probe_repeat_ms",
+      "b0_p95_ms": 4.084,
+      "b1_p95_ms": 3.986,
+      "delta_pct": -2.4,
+      "status": "within_budget"
+    },
+    {
+      "scenario": "D",
+      "metric": "timeout_fail_ms",
+      "b0_p95_ms": 30003.426,
+      "b1_p95_ms": 200.846,
+      "delta_pct": -99.33,
+      "status": "improved"
+    },
+    {
+      "scenario": "E",
+      "metric": "apply_rollback_cycle_ms",
+      "b0_p95_ms": null,
+      "b1_p95_ms": 0.755,
+      "delta_pct": null,
+      "status": "not_measured"
+    }
+  ],
+  "budget_misses": [
+    "A decide_allow_ms: p95 +59.0% > 10%",
+    "B decide_allow_auth_ms: p95 +53.4% > 10%",
+    "B decide_deny_revoked_ms: p95 +45.6% > 10%"
+  ],
+  "disclosure": [
+    "B0 = b303c6f（O01-O03 与 O04 之前的真实基线），独立 detached worktree，仅移植冻结协议测试架与 runner，不移植产品源码",
+    "B0 harness 适配（不触及被测计时操作）：Diagnosis.State→Source 断言、Capabilities 版本字段断言移除、场景 E not_measured（RollbackAuthorized 不存在）、runner SCENARIO_TIMEOUT D=2700s（B0 无管道排水，fail-return 阻塞至挂死子进程退出，fixture sleep 30 未改动）",
+    "场景 C 的 B1 probe 含版本检测字段（EvidenceLevel/GatewayVersion/CLIVersion），B0 probe 路径无这些字段；被测计时操作（client.Probe 子进程 spawn）一致",
+    "B2/B3（真实网关/驱动）blocked：本机无可用真实后端"
+  ]
+}

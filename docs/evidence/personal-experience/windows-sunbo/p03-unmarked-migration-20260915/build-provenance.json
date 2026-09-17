@@ -1,0 +1,113 @@
+{
+  "candidate_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "historical_source_sha": "ff99317450784c9563f5b6a2308c98e8262df98d",
+  "go_version": "go1.27.1",
+  "go_executable_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+  "environment": {
+    "GOENV": "off",
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOOS": "windows",
+    "GOARCH": "amd64",
+    "CGO_ENABLED": "0"
+  },
+  "build_command_template": "go build -trimpath -o <new-private-output.exe> ./cmd/agentshield",
+  "version_override_used": false,
+  "candidates": [
+    {
+      "label": "old",
+      "source_sha": "ff99317450784c9563f5b6a2308c98e8262df98d",
+      "source_tree": "a609b2b46e371d1140a6fb42b41be6a795e8019d",
+      "source_files": 1018,
+      "clean_before": true,
+      "clean_after": true,
+      "source_bytes_unchanged": true,
+      "binary_sha256": "0fa81005ee65bc12c00e8390251d19fc1d3958beb988cecff61e62eeca517a42",
+      "binary_bytes": 24379392,
+      "source_manifest_sha256": "1f5e442849b6d555cdcafbad050fc863a969a495ec6586399e0c627dada5b614",
+      "build_exit_code": 0,
+      "build_elapsed_seconds": 81.0938163000028,
+      "vcs_metadata_matches": true
+    },
+    {
+      "label": "new",
+      "source_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+      "source_tree": "c790f048eebf20aacf6c98c1dc409a99127dae7e",
+      "source_files": 1066,
+      "clean_before": true,
+      "clean_after": true,
+      "source_bytes_unchanged": true,
+      "binary_sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470",
+      "binary_bytes": 24623104,
+      "source_manifest_sha256": "afff78e7645198824508e55bbbd5add2bd1135d90cb61560effaf253ae26d430",
+      "build_exit_code": 0,
+      "build_elapsed_seconds": 19.097923499997705,
+      "vcs_metadata_matches": true
+    }
+  ],
+  "raw_build_streams": [
+    {
+      "role": "go-version_stdout",
+      "bytes": 34,
+      "sha256": "e37270413fda49039b4f31dd90726df0e94c163cf9bca2f62fd40a47d12b5db1"
+    },
+    {
+      "role": "go-version_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "go-env_stdout",
+      "bytes": 255,
+      "sha256": "929dc31b24acea4723692e8972b878e79d35baab10a994652e6f5a96e9371b5f"
+    },
+    {
+      "role": "go-env_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "old-build_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "old-build_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "old-build-info_stdout",
+      "bytes": 948,
+      "sha256": "e022fa64c5e47a2660d671ade664053c38ddb787582abf119d79954f4b9349ca"
+    },
+    {
+      "role": "old-build-info_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "new-build_stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "new-build_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "new-build-info_stdout",
+      "bytes": 948,
+      "sha256": "e87705781e02ee444345210f7da9e7e5684b6a2bb5c2edb0da9310fdb9436e91"
+    },
+    {
+      "role": "new-build-info_stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "private_provenance_sha256": "c5ee3cc98c7dd0b84c95f5025d37dff261cc9118104cab3f01d79c33e0770c70"
+}

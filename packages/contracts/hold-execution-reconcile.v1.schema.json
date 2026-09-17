@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/hold-execution-reconcile.v1.schema.json",
+  "title": "Administrator reconciliation of an uncertain held execution",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "action_id", "decision_receipt_id", "reservation_receipt_id", "reservation_hash", "outcome", "actor_id"],
+  "properties": {
+    "schema_version": {"const": "hold-execution-reconcile/v1"},
+    "action_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "decision_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "reservation_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "reservation_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "outcome": {"enum": ["occurred", "not_occurred"]},
+    "actor_id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"}
+  }
+}

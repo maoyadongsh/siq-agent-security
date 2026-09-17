@@ -1,0 +1,163 @@
+{
+  "schema": "openshell-policy-safety-vectors/v2",
+  "read_cases": [
+    {
+      "name": "full_policy_with_hard_landlock_and_extensions",
+      "expect": "ok",
+      "output": "Version:      7\nHash:         gateway-hash-is-supplementary\nStatus:       Effective\n---\nversion: 1\nfilesystem_policy:\n  include_workdir: true\n  read_only:\n  - /usr\n  read_write:\n  - /sandbox\nlandlock:\n  compatibility: hard_requirement\n  abi: 6\nprocess:\n  run_as_user: sandbox\n  run_as_group: sandbox\nnetwork_policies:\n  managed_api:\n    name: managed-api\n    endpoints:\n    - host: api.example.com\n      port: 443\n    binaries:\n    - path: /usr/bin/curl\nx_siq_extension:\n  enabled: true\n  mode: \"yes\"\n  label: \"策略✓\"\n  empty_map: {}\n  empty_list: []\n",
+      "revision": "7",
+      "policy": {
+        "version": 1,
+        "filesystem_policy": {
+          "include_workdir": true,
+          "read_only": ["/usr"],
+          "read_write": ["/sandbox"]
+        },
+        "landlock": {
+          "compatibility": "hard_requirement",
+          "abi": 6
+        },
+        "process": {
+          "run_as_user": "sandbox",
+          "run_as_group": "sandbox"
+        },
+        "network_policies": {
+          "managed_api": {
+            "name": "managed-api",
+            "endpoints": [{"host": "api.example.com", "port": 443}],
+            "binaries": [{"path": "/usr/bin/curl"}]
+          }
+        },
+        "x_siq_extension": {
+          "enabled": true,
+          "mode": "yes",
+          "label": "策略✓",
+          "empty_map": {},
+          "empty_list": []
+        }
+      },
+      "policy_digest": "7d98908ab0fb43ed9bd6f80cfabccbbc514be061c1f2245b3adb6ccf33cf8504",
+      "static_digest": "782586667f978f773877ddc20a44243d98db1fb159bbcf15e109fe09b83a6e69"
+    },
+    {
+      "name": "missing_revision",
+      "expect": "reject",
+      "output": "Hash: abc\n---\nversion: 1\n"
+    },
+    {
+      "name": "duplicate_active_revision",
+      "expect": "reject",
+      "output": "Active: 7\nActive: 8\n---\nversion: 1\n"
+    },
+    {
+      "name": "duplicate_metadata_key",
+      "expect": "reject",
+      "output": "Hash: first\nHash: second\nActive: 7\n---\nversion: 1\n"
+    },
+    {
+      "name": "invalid_active_revision",
+      "expect": "reject",
+      "output": "Active: latest\n---\nversion: 1\n"
+    },
+    {
+      "name": "conflicting_version_and_active_revision",
+      "expect": "reject",
+      "output": "Version: 7\nActive: 8\n---\nversion: 1\n"
+    },
+    {
+      "name": "duplicate_yaml_key",
+      "expect": "reject",
+      "output": "Active: 7\n---\nversion: 1\nlandlock:\n  compatibility: hard_requirement\n  compatibility: best_effort\n"
+    },
+    {
+      "name": "ambiguous_yaml_scalar",
+      "expect": "reject",
+      "output": "Active: 7\n---\nversion: 1\nx_extension:\n  enabled: yes\n"
+    },
+    {
+      "name": "yaml_alias",
+      "expect": "reject",
+      "output": "Active: 7\n---\nversion: 1\nx_extension: &shared value\ny_extension: *shared\n"
+    },
+    {
+      "name": "multiple_yaml_documents",
+      "expect": "reject",
+      "output": "Active: 7\n---\nversion: 1\n---\nversion: 2\n"
+    }
+  ],
+  "network_cases": [
+    {
+      "name": "explicit_allow_host_port_binary",
+      "expect": "ok",
+      "rule": {
+        "endpoint": "api.example.com:443",
+        "effect": "allow",
+        "binary_paths": ["/usr/bin/curl"],
+        "rule_name": "managed-api"
+      },
+      "gateway": {
+        "siq_as_rule_0": {
+          "name": "managed-api",
+          "endpoints": [{"host": "api.example.com", "port": 443}],
+          "binaries": [{"path": "/usr/bin/curl"}]
+        }
+      }
+    },
+    {
+      "name": "deny_rejected",
+      "expect": "reject",
+      "rule": {
+        "endpoint": "api.example.com:443",
+        "effect": "deny",
+        "binary_paths": ["/usr/bin/curl"]
+      }
+    },
+    {
+      "name": "method_rejected",
+      "expect": "reject",
+      "rule": {
+        "endpoint": "api.example.com:443",
+        "effect": "allow",
+        "binary_paths": ["/usr/bin/curl"],
+        "methods": ["GET"]
+      }
+    },
+    {
+      "name": "path_rejected",
+      "expect": "reject",
+      "rule": {
+        "endpoint": "api.example.com:443/admin",
+        "effect": "allow",
+        "binary_paths": ["/usr/bin/curl"]
+      }
+    },
+    {
+      "name": "provider_rejected_without_leak",
+      "expect": "reject",
+      "secret_canary": "CANARY_PROVIDER_SECRET_7e91",
+      "rule": {
+        "endpoint": "api.example.com:443",
+        "effect": "allow",
+        "binary_paths": ["/usr/bin/curl"],
+        "provider": "CANARY_PROVIDER_SECRET_7e91"
+      }
+    },
+    {
+      "name": "missing_binary_rejected",
+      "expect": "reject",
+      "rule": {
+        "endpoint": "api.example.com:443",
+        "effect": "allow"
+      }
+    },
+    {
+      "name": "relative_binary_rejected",
+      "expect": "reject",
+      "rule": {
+        "endpoint": "api.example.com:443",
+        "effect": "allow",
+        "binary_paths": ["bin/curl"]
+      }
+    }
+  ]
+}

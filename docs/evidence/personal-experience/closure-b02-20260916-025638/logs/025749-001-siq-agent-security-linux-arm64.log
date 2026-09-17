@@ -1,0 +1,9 @@
+$ /tmp/siq-closure-b02/bin-main/siq-agent-security-linux-arm64 client-install --manifest /tmp/siq-closure-b02/manifest-main.json --binary /tmp/siq-closure-b02/bin-main/siq-agent-security-linux-arm64 --confirm-install --port 25183
+# exit recorded separately; redacted=True
+--- stdout ---
+已安装并启动本机管理服务。
+程序：/tmp/siq-closure-b02/journey-root/state/client-releases/e9dc14060575bc845ade92bf3e5f6e9dbf890e3a43dbaa0168e39fd6a8675623/siq-agent-security
+管理页面：http://127.0.0.1:25183/
+首次连接请使用已安装程序的 pair 命令。
+
+--- stderr ---

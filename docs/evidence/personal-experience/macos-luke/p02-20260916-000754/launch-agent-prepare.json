@@ -1,0 +1,36 @@
+{
+  "schema_version": "personal-macos-launch-agent-prepare/v1",
+  "recorded_at": "2026-09-15T16:12:00+00:00",
+  "passed": true,
+  "binary_sha256": "4fe4be6830df67a6df653a98def8017f37cf1ba20768cb6d1d9f50762a443cf0",
+  "gui_manager": "Aqua",
+  "user_launchagents_siq_before": "none",
+  "user_launchagents_siq_after_prepare": "none",
+  "plist_export_exit": 0,
+  "plist_sha256": "2192e334a0d778b4aed564096475375e69d4d5fcb5b015462e27925f3aebaf83",
+  "plist_keys": [
+    "EnvironmentVariables",
+    "ExitTimeOut",
+    "KeepAlive",
+    "Label",
+    "ProgramArguments",
+    "RunAtLoad",
+    "StandardErrorPath",
+    "StandardOutPath",
+    "Umask"
+  ],
+  "run_at_load": false,
+  "keep_alive": false,
+  "logs_to_devnull": true,
+  "state_bound_via": "SIQ_AGENT_SECURITY_STATE_DIR",
+  "program_arguments_include_state_dir_flag": false,
+  "prepare_exit": 0,
+  "prepare_schema": "local-launch-agent-record/v1",
+  "registered_or_loaded": false,
+  "limitations": [
+    "export and signed prepare only; no register, load, start, stop, or unregister",
+    "did not prove login restart or crash KeepAlive",
+    "current plist binds state through the environment variable, not serve --state-dir",
+    "isolated adapter-state instance, not the pairing daemon on 47612"
+  ]
+}

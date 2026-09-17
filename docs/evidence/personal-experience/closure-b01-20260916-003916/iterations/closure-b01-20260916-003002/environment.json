@@ -1,0 +1,154 @@
+{
+  "schema": "closure-b01-environment/v1",
+  "trust_layer": {
+    "mode": "test_release：一次性测试种子签署；测试公钥固定注入测试构建（fail-closed 单密钥 pin）",
+    "test_public_key_b64": "cK7JKn4hiEM+GwtkCZK8xCmzUtNQCFOqOz77qUcVO5k=",
+    "seed_location": "run_dir/release-seed.b64 (0600，不入证据)",
+    "official_release_leg": "blocked；解锁条件=维护者以正式发布种子签署 manifest"
+  },
+  "old_commit": "efad840",
+  "old_tree": "2216f4a0e9eef3e750c13673da8e158d4e84a6a3",
+  "new_commit": "53155b1",
+  "new_tree": "9ff0c7e9c50c48fcc249adfbe48df76b82d19c51",
+  "versions": {
+    "old": "0.2.0-b01-old",
+    "new": "0.2.0-b01-new"
+  },
+  "builds": {
+    "old": [
+      {
+        "target": "linux/amd64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-closure-20260915/b01r5/src-old/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-old",
+          "-o",
+          "/tmp/siq-closure-20260915/b01r5/bin-old/siq-agent-security-linux-amd64",
+          "./cmd/agentshield"
+        ],
+        "digest": "627bf865bd8652669618e2e1144f9d49a655727baa5ee592d93cd755d536c416"
+      },
+      {
+        "target": "linux/arm64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-closure-20260915/b01r5/src-old/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-old",
+          "-o",
+          "/tmp/siq-closure-20260915/b01r5/bin-old/siq-agent-security-linux-arm64",
+          "./cmd/agentshield"
+        ],
+        "digest": "85ca775f466064ff8003a06e897407330d19c27b0548ce1c1a34e4d3ecc0deb0"
+      },
+      {
+        "target": "darwin/arm64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-closure-20260915/b01r5/src-old/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-old",
+          "-o",
+          "/tmp/siq-closure-20260915/b01r5/bin-old/siq-agent-security-darwin-arm64",
+          "./cmd/agentshield"
+        ],
+        "digest": "81a7b1dea11289bd315d466ebb7f96bab58eaadb3da7b1ff679ad9a3e5b8cceb"
+      },
+      {
+        "target": "windows/amd64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-closure-20260915/b01r5/src-old/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-old",
+          "-o",
+          "/tmp/siq-closure-20260915/b01r5/bin-old/siq-agent-security-windows-amd64.exe",
+          "./cmd/agentshield"
+        ],
+        "digest": "4d599bba1dba053cd14b0e2c7bb9a60ab7e7b687ae628d5891c71e3fb2ae7600"
+      }
+    ],
+    "new": [
+      {
+        "target": "linux/amd64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-closure-20260915/b01r5/src-new/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-new",
+          "-o",
+          "/tmp/siq-closure-20260915/b01r5/bin-new/siq-agent-security-linux-amd64",
+          "./cmd/agentshield"
+        ],
+        "digest": "a8b6a9fe775b00f1e7d12ddd139f8ea55516648cf3faf07bdad89048d5131cad"
+      },
+      {
+        "target": "linux/arm64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-closure-20260915/b01r5/src-new/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-new",
+          "-o",
+          "/tmp/siq-closure-20260915/b01r5/bin-new/siq-agent-security-linux-arm64",
+          "./cmd/agentshield"
+        ],
+        "digest": "afb6642e554f3db4eea033a6588b944ef25a234f1e3da09c758dcfd3e784425a"
+      },
+      {
+        "target": "darwin/arm64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-closure-20260915/b01r5/src-new/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-new",
+          "-o",
+          "/tmp/siq-closure-20260915/b01r5/bin-new/siq-agent-security-darwin-arm64",
+          "./cmd/agentshield"
+        ],
+        "digest": "b62a2f909a7c2f029e07e189402ebe10822ad31c4dcbf98183b20e44ba3a57a5"
+      },
+      {
+        "target": "windows/amd64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-closure-20260915/b01r5/src-new/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-new",
+          "-o",
+          "/tmp/siq-closure-20260915/b01r5/bin-new/siq-agent-security-windows-amd64.exe",
+          "./cmd/agentshield"
+        ],
+        "digest": "28822d59a2c8e557ba468db40b46563352ae4f3af83811a1a1f122f06a42dca5"
+      }
+    ]
+  },
+  "state_dir": "/tmp/siq-closure-20260915/b01r5/state 中文 空格%25实例",
+  "port": 25173,
+  "duration_s": 10.6
+}

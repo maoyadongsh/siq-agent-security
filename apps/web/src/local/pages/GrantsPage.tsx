@@ -75,9 +75,11 @@ export default function GrantsPage() {
 
   useEffect(() => {
     load();
-  }, []);
+  }, [guard]);
 
   useEffect(() => {
+    setSelected(null);
+    setEditingId(null);
     if (!requestedGrant) return;
     let cancelled = false;
     localApi.grant(requestedGrant).then(({ grant }) => {
@@ -86,7 +88,7 @@ export default function GrantsPage() {
       if (!cancelled) setError(err instanceof Error ? err.message : '无法读取指定授权');
     });
     return () => { cancelled = true; };
-  }, [requestedGrant]);
+  }, [requestedGrant, guard]);
 
   const act = (id: string, action: string, extra: Record<string, unknown> = {}) => {
     if (busy) return;

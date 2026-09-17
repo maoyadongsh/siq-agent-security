@@ -1,0 +1,10 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.12, pytest-9.1.1, pluggy-1.6.0 -- /home/maoyd/.cache/uv/builds-v0/.tmpqTNalI/bin/python
+cachedir: .pytest_cache
+rootdir: /home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914
+plugins: anyio-4.13.0
+collecting ... collected 1 item
+
+scripts/personal-experience/test_systemd_user_service.py::test_real_user_service_restart_and_cleanup PASSED [100%]
+
+============================== 1 passed in 1.64s ===============================

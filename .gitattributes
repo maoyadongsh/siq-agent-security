@@ -31,3 +31,25 @@ site/vendor/mermaid-bundled-notices.txt whitespace=-blank-at-eol
 docs/archive/gh-pages-9a4ebdc/vendor/** -whitespace
 
 docs/evidence/personal-experience/glm-stage-review-20260914/** -text
+
+# Captured Linux batch evidence is hashed; preserve bytes on every checkout.
+docs/evidence/personal-experience/glm-linux-batch-20260915/** -text
+docs/evidence/personal-experience/n09-glm-batch-20260915/** -text
+docs/evidence/personal-experience/r04-openclaw-native-update-20260915-171614/** -text
+docs/evidence/personal-experience/r06-linux-lifecycle-20260915-161515/** -text
+docs/evidence/personal-experience/r07-linux-user-journey-20260915-211053/** -text
+docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/** -text
+# Only these captured outputs contain original trailing spaces / blank lines.
+docs/evidence/personal-experience/r07-linux-user-journey-20260915-211053/commands.txt whitespace=-blank-at-eol
+docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/guard-old-candidate-failure.log whitespace=-blank-at-eol,-blank-at-eof
+docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/web-tests.log whitespace=-blank-at-eof
+
+# Hashed OpenShell acceptance evidence must survive cross-platform checkout unchanged.
+docs/evidence/personal-experience/local-o05-b3-20260916-181347/** -text
+docs/evidence/personal-experience/local-o05-closure-review-20260916-225632/** -text
+docs/evidence/personal-experience/local-o05-review-20260916-204031/** -text
+docs/evidence/personal-experience/policy-load-wait-20260916-231213/** -text
+docs/evidence/personal-experience/release-openshell-20260916-142706/** -text
+docs/evidence/personal-experience/release-openshell-review-20260916/** -text
+# Unified diff context markers intentionally precede tabs and blank lines.
+docs/evidence/personal-experience/release-openshell-review-20260916/source-delta.patch whitespace=-space-before-tab,-blank-at-eol

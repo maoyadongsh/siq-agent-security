@@ -1,0 +1,28 @@
+{
+  "schema_version": "closure-b04-export-review/v1",
+  "recorded_at": "2026-09-16T02:25:49.310768+00:00",
+  "binary_sha256": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942",
+  "evidence_level": "http_real_daemon_synthetic_runtime_bound_tasks",
+  "passed": false,
+  "error_type": "ModuleNotFoundError",
+  "failure_location": {
+    "file": "closure-b04-export-runner.py",
+    "line": 31,
+    "function": "verify_export"
+  },
+  "checks": {
+    "default_disabled": true,
+    "export-a_capture": true,
+    "export-b_capture": true,
+    "before_two_tasks": true,
+    "before_0_bounded_detail": true,
+    "before_0_nonempty": true,
+    "before_0_export_scope": true
+  },
+  "not_measured": [
+    "native host capture",
+    "new real-wall-clock expiry",
+    "concurrent snapshot mutation during response assembly"
+  ],
+  "signature_validation": "independent Ed25519 verification anchored in the selected state CLI pubkey"
+}

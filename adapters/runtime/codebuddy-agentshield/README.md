@@ -1,6 +1,6 @@
-# codebuddy-agentshield（CodeBuddy / WorkBuddy 适配器：L2）
+# codebuddy-agentshield（CodeBuddy CLI 适配器：L2）
 
-CodeBuddy 没有装前钩子；运行时用全局 `PreToolUse` / `PostToolUse` 命令钩子调用 `siq-agent-security hook codebuddy`（Go，在 `apps/agentshield`）。Skill frontmatter hooks 仅对 `context: fork` 生效且默认被 `allowUntrustedFrontmatterHooks=false` 关闭，因此不采用。
+CodeBuddy 没有装前钩子；运行时用全局 `PreToolUse` / `PostToolUse` 命令钩子调用 `siq-agent-security hook codebuddy`（Go，在 `apps/agentshield`）。Skill frontmatter hooks 仅对 `context: fork` 生效且默认被 `allowUntrustedFrontmatterHooks=false` 关闭，因此不采用。WorkBuddy 桌面是独立平台，见 [`../workbuddy-agentshield/README.md`](../workbuddy-agentshield/README.md)；本适配器的 CodeBuddy CLI 结果不能代替桌面证据。
 
 ## 安装（需用户确认；写入前备份）
 

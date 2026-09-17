@@ -1,0 +1,37 @@
+{
+  "schema_version": "personal-macos-workbuddy-uninstall-restore/v1",
+  "recorded_at": "2026-09-16T09:52:00Z",
+  "method": "cli_isolated_config",
+  "binary_sha256": "37c511bfca8fa7ed091341e2586faaec5476e969b4815ebcc2d23eb88d43662c",
+  "workbuddy_config_dir": "isolated ui-wb-config (WORKBUDDY_CONFIG_DIR)",
+  "preview_digest": "c10734bb7565b45c6c85b75124907cb2087a4ef0b6cbf593ff061f5f39cfa2a3",
+  "before": {
+    "settings_sha256": "5bcfaeeaa5be28ecfeb5ce560e6aba5efe3ded755ae0bfd419be6da554bbad6b",
+    "keys": ["enabledPlugins", "hooks", "sandbox"],
+    "hooks": true,
+    "enabledPlugins": {"sheetagent@builtin": true}
+  },
+  "orig_sha256": "e7d2f4d1dfbd199753fbca5e691dbacc67f30b96b3f75acfc1e441489283adb6",
+  "after": {
+    "settings_sha256": "5f068c83eaceda9fd2bd4dc39b116ebc7023883dff123809a85d8bfcad3ca5a4",
+    "keys": ["enabledPlugins", "sandbox"],
+    "hooks": false,
+    "enabledPlugins": {"sheetagent@builtin": true},
+    "sandbox": {"mode": "workspace"},
+    "status_note": "not installed"
+  },
+  "uninstall_note": "surgical: removed owned configuration; other settings preserved",
+  "ui_after_uninstall": {
+    "tier": "配置待修复",
+    "adapter": "未安装",
+    "note_contains": "须在 WorkBuddy 桌面会话验证，不能沿用 CodeBuddy",
+    "actions": ["安装"],
+    "reason": "isolated settings.json still exists without product hooks; Inspect treats host_registration as fail, not a missing file"
+  },
+  "screenshot_after": "workbuddy-settings-after-uninstall.png",
+  "daily_settings_has_hooks": false,
+  "daily_settings_sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+  "did_not_kill_existing_daemons": true,
+  "existing_daemons": [47612, 47613],
+  "omitted": ["pairing", "token", "keys"]
+}

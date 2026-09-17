@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -53,6 +54,13 @@ func TestInspectLaunchAgentSeparatesAbsenceFromFailure(t *testing.T) {
 		t.Fatal(err)
 	}
 	label := "dev.siq.agent-security." + strings.Repeat("a", 64)
+	source := filepath.Join(t.TempDir(), label+".plist")
+	if err := os.WriteFile(source, expected, 0600); err != nil {
+		t.Fatal(err)
+	}
+	loadedPrint := mustLaunchPrint(t, string(expected), source, 0, "", "")
+	runningPrint := mustLaunchPrint(t, string(expected), source, 123, "", "")
+	foreignPrint := mustLaunchPrint(t, string(expected), source, 0, "", "other")
 	for _, name := range []string{"absent", "loaded", "running", "enumeration failure", "malformed", "disappeared", "foreign config", "wrong domain", "mismatched expectation"} {
 		t.Run(name, func(t *testing.T) {
 			queries, details := 0, 0
@@ -77,20 +85,18 @@ func TestInspectLaunchAgentSeparatesAbsenceFromFailure(t *testing.T) {
 						return "PID\tStatus\tLabel\n", nil
 					}
 					return "PID\tStatus\tLabel\n-\t0\t" + label + "\n", nil
-				case "list -x " + label:
+				case "print " + launchPrintTarget(501, label):
 					details++
 					if name == "disappeared" {
 						return "", errors.New("missing")
 					}
 					if name == "foreign config" {
-						return strings.Replace(string(expected), "<string>serve</string>", "<string>other</string>", 1), nil
+						return foreignPrint, nil
 					}
 					if name == "running" {
-						xml := string(expected)
-						at := strings.LastIndex(xml, "</dict>")
-						return xml[:at] + "<key>PID</key><integer>123</integer>" + xml[at:], nil
+						return runningPrint, nil
 					}
-					return string(expected), nil
+					return loadedPrint, nil
 				default:
 					t.Fatal("unexpected command", args)
 					return "", nil
@@ -100,7 +106,7 @@ func TestInspectLaunchAgentSeparatesAbsenceFromFailure(t *testing.T) {
 			if name == "mismatched expectation" {
 				input = []byte(strings.Replace(string(expected), label, label+"x", 1))
 			}
-			loaded, pid, err := inspectLaunchAgent(control, 501, label, input)
+			loaded, pid, err := inspectLaunchAgent(control, 501, label, input, source)
 			valid := name == "absent" || name == "loaded" || name == "running"
 			if (err == nil) != valid || loaded != (name == "loaded" || name == "running") {
 				t.Fatal(loaded, pid, err)

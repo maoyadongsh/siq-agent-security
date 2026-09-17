@@ -1,0 +1,17 @@
+{
+  "command": [
+    "go",
+    "test",
+    "./internal/openshell",
+    "-run",
+    "^TestO05LiveCrossBoundaryEnforcement$",
+    "-count=1",
+    "-v"
+  ],
+  "exit_code": 1,
+  "target": "siq-review-20260916-225159",
+  "explicit_live_opt_in": true,
+  "reason_for_rerun": "final source adds denial outcome and independent arrival count diagnostics; previous failures retained",
+  "output": "=== RUN   TestO05LiveCrossBoundaryEnforcement\n    o05_enforcement_live_test.go:160: allow propagation_ms=2844\n    o05_enforcement_live_test.go:160: allow propagation_ms=267\n    o05_enforcement_live_test.go:160: allow propagation_ms=272\n    o05_enforcement_live_test.go:175: deny_probe outcome=arrived arrivals=1\n    o05_enforcement_live_test.go:177: policy denial not proven: need explicit HTTP 403 and zero arrivals\n--- FAIL: TestO05LiveCrossBoundaryEnforcement (5.32s)\nFAIL\nFAIL\tsiq-agent-security/apps/agentshield/internal/openshell\t5.324s\nFAIL\n",
+  "scope": "test_driver_behavior_not_candidate_task_execution"
+}

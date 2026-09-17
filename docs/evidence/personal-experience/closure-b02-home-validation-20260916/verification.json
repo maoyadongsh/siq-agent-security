@@ -1,0 +1,28 @@
+{
+  "status": "test_release_verified",
+  "official_release": "blocked_missing_trusted_release",
+  "installed_checks": 26,
+  "direct_checks": 25,
+  "batch_checks": 15,
+  "script_regressions": 36,
+  "go_vet_exit": 0,
+  "go_test_exit": 0,
+  "go_race_exit": 0,
+  "ruff_exit": 0,
+  "owned_units_remaining": 0,
+  "source_evidence_sha256": {
+    "checks.json": "06ad73630897ddda78a26f13c87e6ee5ecf147c067aec311be6f6d3b12b789d5",
+    "journey-report.json": "505ec67b4d0912c631236da1d37492301931317a055ddd9e3f6d5a0da57ab76b",
+    "direct-process-report.json": "562ce40bfe9ff896984a4817ed43e71b546c66c3165de1e58c5b527dad080427",
+    "direct-process-raw-report.json": "5273fb299f585bae8a51d1c2ca2fc39555804c05d2e518e7a044c5a36add17f6",
+    "environment.json": "a4929fa666967eba355c173692df1c24422e0e31bb77974798346fa3532885e4",
+    "direct-process-diagnostic.json": "ec188104f24c688c1c674feccde3c3b1407f820e3e8df7b119c475a71ecfa4aa"
+  },
+  "corrections": [
+    "Original detail.failed incorrectly used ok instead of status; all 26 actual status fields are pass. New aggregator rejects inconsistent passed summaries.",
+    "Original environment.method is inherited wording. Running process HOME was read back and matched fixture; signed unit supplied HOME. Manager environment read-only before/after was unchanged.",
+    "Runner report wording and aggregation corrected after native run; no production changes after native build."
+  ],
+  "installed_failed": [],
+  "direct_failed": []
+}

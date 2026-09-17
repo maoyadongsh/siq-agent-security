@@ -1,0 +1,32 @@
+{
+  "schema_version": "personal-macos-workbuddy-native-desktop-autosend/v1",
+  "method": "native_desktop",
+  "deeplink": "conversation_open_autosend",
+  "read_url_redacted": "workbuddy://conversation/open?sidebarUrl=https%3A%2F%2Fexample.invalid%2Fsiq-p07&autoSend=true&promptContentBlocks=<redacted>",
+  "write_url_opened": true,
+  "desktop_hook_invocations": 1,
+  "pending": [],
+  "forbidden_created": false,
+  "daily_before": {
+    "mtime": 1789548251,
+    "size": 1135,
+    "has_hooks": false
+  },
+  "daily_after": {
+    "mtime": 1789548251,
+    "size": 1135,
+    "has_hooks": false
+  },
+  "renderer_hits": [],
+  "main_hits": [
+    "{\"timestamp\":\"2026-09-16T08:57:27.160Z\",\"level\":\"info\",\"scope\":\"main\",\"message\":[\"[DeepLink] dispatching open url to renderer\",{\"hasUrl\":true,\"scheme\":\"workbuddy\",\"host\":\"task\",\"pathname\":\"\",\"searchKeys\":[\"action\",\"prompt\",\"cwd\",\"permissionMode\"],\"hash\":\"\",\"urlLength\":504,\"isWorkbuddyDeepLink\":true}",
+    "{\"timestamp\":\"2026-09-16T09:01:30.386Z\",\"level\":\"info\",\"scope\":\"main\",\"message\":[\"[DeepLink] dispatching open url to renderer\",{\"hasUrl\":true,\"scheme\":\"workbuddy\",\"host\":\"task\",\"pathname\":\"\",\"searchKeys\":[\"action\",\"prompt\",\"cwd\",\"permissionMode\"],\"hash\":\"\",\"urlLength\":540,\"isWorkbuddyDeepLink\":true}",
+    "{\"timestamp\":\"2026-09-16T09:08:19.088Z\",\"level\":\"info\",\"scope\":\"main\",\"message\":[\"[DeepLink] dispatching open url to renderer\",{\"hasUrl\":true,\"scheme\":\"workbuddy\",\"host\":\"conversation\",\"pathname\":\"/open\",\"searchKeys\":[\"sidebarUrl\",\"autoSend\",\"promptContentBlocks\"],\"hash\":\"\",\"urlLength\":577,\"isWorkbu",
+    "{\"timestamp\":\"2026-09-16T09:08:19.092Z\",\"level\":\"info\",\"scope\":\"renderer\",\"message\":[\"[DeepLink][Renderer] conversation/open deeplink detected\",{\"hasUrl\":true,\"scheme\":\"workbuddy\",\"host\":\"conversation\",\"pathname\":\"/open\",\"searchKeys\":[\"sidebarUrl\",\"autoSend\",\"promptContentBlocks\"],\"hash\":\"\",\"urlLeng",
+    "{\"timestamp\":\"2026-09-16T09:08:19.094Z\",\"level\":\"info\",\"scope\":\"renderer\",\"message\":[\"[DeepLink][Renderer] open url consumed by conversation-open handler\",{\"hasUrl\":true,\"scheme\":\"workbuddy\",\"host\":\"conversation\",\"pathname\":\"/open\",\"searchKeys\":[\"sidebarUrl\",\"autoSend\",\"promptContentBlocks\"],\"hash\":",
+    "{\"timestamp\":\"2026-09-16T09:08:26.054Z\",\"level\":\"info\",\"scope\":\"main\",\"message\":[\"[DeepLink] dispatching open url to renderer\",{\"hasUrl\":true,\"scheme\":\"workbuddy\",\"host\":\"conversation\",\"pathname\":\"/open\",\"searchKeys\":[\"sidebarUrl\",\"autoSend\",\"promptContentBlocks\"],\"hash\":\"\",\"urlLength\":529,\"isWorkbu",
+    "{\"timestamp\":\"2026-09-16T09:08:26.058Z\",\"level\":\"info\",\"scope\":\"renderer\",\"message\":[\"[DeepLink][Renderer] conversation/open deeplink detected\",{\"hasUrl\":true,\"scheme\":\"workbuddy\",\"host\":\"conversation\",\"pathname\":\"/open\",\"searchKeys\":[\"sidebarUrl\",\"autoSend\",\"promptContentBlocks\"],\"hash\":\"\",\"urlLeng",
+    "{\"timestamp\":\"2026-09-16T09:08:26.060Z\",\"level\":\"info\",\"scope\":\"renderer\",\"message\":[\"[DeepLink][Renderer] open url consumed by conversation-open handler\",{\"hasUrl\":true,\"scheme\":\"workbuddy\",\"host\":\"conversation\",\"pathname\":\"/open\",\"searchKeys\":[\"sidebarUrl\",\"autoSend\",\"promptContentBlocks\"],\"hash\":"
+  ],
+  "live_app": true
+}

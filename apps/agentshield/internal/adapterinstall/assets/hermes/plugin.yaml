@@ -2,6 +2,11 @@ name: siq-agent-security
 version: 0.2.0
 description: "siq-agent-security runtime adapter: forwards every tool call to the local decision API (127.0.0.1) and blocks on deny/hold. Contains no policy logic and no keys."
 author: "SIQ Agent Security"
+# Hermes 0.21+ validates registered runtime hooks against this declaration.
+# Keep the legacy hooks list below for older host versions.
+provides_hooks:
+  - pre_tool_call
+  - post_tool_call
 hooks:
   - pre_tool_call
   - post_tool_call

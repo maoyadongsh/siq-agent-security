@@ -1,0 +1,19 @@
+{
+  "schema_version": "closure-b01-crash-review/v1",
+  "recorded_at": "2026-09-16T02:26:07.515665+00:00",
+  "passed": true,
+  "error_type": null,
+  "checks": {
+    "runtime_owned_unit": true,
+    "revoked_authority_present": true,
+    "killed_main_exited": true,
+    "explicit_product_start_recovers_new_main_pid": true,
+    "same_instance_candidate_and_configuration": true,
+    "old_admin_session_rejected": true,
+    "all_grant_signatures_revisions_and_revocation_retained": true,
+    "owned_unit_unregistered_data_retained": true
+  },
+  "binary_sha256": "1f702fc5bb7ee46bc27fb96840bb130af24e611443ae44fd61dc355d7cf63157",
+  "trust_layer": "test_release",
+  "boundary": "same retained test instance; no full-machine reboot, login-autostart or official-release claim"
+}

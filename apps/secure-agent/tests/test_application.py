@@ -295,6 +295,18 @@ class ApplicationTest(unittest.TestCase):
         self.assertFalse(result["task"]["actions"][-1]["d3_materialized"])
         self.assertFalse(result["messages"])
 
+    def test_replaced_approval_task_fails_actual_siq_recheck(self):
+        def replace_task(request, decision, authority):
+            authority.admin.request("/v1/hold/" + decision["receipt_id"], {"approve": True, "actor_id": "test-operator"})
+            changed = {**request, "task_id": "different-task"}
+            with self.assertRaisesRegex(AgentError, "hold_identity_mismatch"):
+                authority.client.recheck_hold(changed, decision)
+            raise AgentError("hold_identity_mismatch")
+        result = self.run_application(approval=True, hold=replace_task)
+        self.assertEqual(result["task"]["error_code"], "hold_identity_mismatch")
+        self.assertFalse(result["task"]["actions"][-1]["d3_materialized"])
+        self.assertFalse(result["messages"])
+
     def test_replaced_approval_parameters_fail_actual_siq_recheck(self):
         def replace_request(request, decision, authority):
             authority.admin.request("/v1/hold/" + decision["receipt_id"], {"approve": True, "actor_id": "test-operator"})

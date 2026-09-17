@@ -14,6 +14,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/canon"
 	"siq-agent-security/apps/agentshield/internal/fileopen"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
 const MaxFileBytes int64 = 16 << 20
@@ -59,7 +60,7 @@ func CaptureFile(path string, maxBytes int64) (FileSnapshot, error) {
 	// replacement races by a same-UID adversary (ADR-013).
 	for current := filepath.Dir(path); ; current = filepath.Dir(current) {
 		info, err := os.Lstat(current)
-		if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		if err != nil || !stateformat.AcceptDirectory(info, current) {
 			return out, ErrFileObservation
 		}
 		if filepath.Dir(current) == current {

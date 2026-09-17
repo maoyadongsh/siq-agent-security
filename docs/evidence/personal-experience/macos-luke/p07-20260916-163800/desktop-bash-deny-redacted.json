@@ -1,0 +1,21 @@
+{
+  "schema_version": "personal-macos-workbuddy-desktop-bash-deny/v1",
+  "source": "isolated receipts/local/2026-09-16.jsonl",
+  "record_type": "decision",
+  "issued_at": "2026-09-16T10:02:18Z",
+  "platform": "workbuddy",
+  "session_id": "9c715b70-35b1-4bc6-b222-d94094619be9",
+  "tool": "Bash",
+  "operation": "exec",
+  "action": "deny",
+  "reason": "no deployed grant for agent (default deny)",
+  "reason_code": "grant_missing",
+  "enforcement_mode": "block",
+  "params_excerpt": "ls -la …/workspace/safe/",
+  "spawn": {
+    "wrapper_log": "2026-09-16T10:02:18Z pid=94419 event=PreToolUse tool=Bash",
+    "method": "native_desktop"
+  },
+  "model": "custom-local:MiniMax-M3",
+  "omitted": ["sig", "hash", "pairing", "token"]
+}

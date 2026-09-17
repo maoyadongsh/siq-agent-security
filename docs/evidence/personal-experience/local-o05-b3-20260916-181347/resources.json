@@ -1,0 +1,19 @@
+{
+  "batch": "local-o05-b3-20260916-181347",
+  "date": "2026-09-16",
+  "cleaned": [
+    {"resource": "host receiver 18444", "pid": 3365264, "proof": "cmdline 'python3 hostrecv.py 18444', batch-created in l01", "action": "terminated 2026-09-16"},
+    {"resource": "host receiver 18445", "pid": 3388392, "proof": "cmdline 'python3 hostrecv.py 18445', batch-created in l01", "action": "terminated 2026-09-16"},
+    {"resource": "/tmp/l01-exp", "proof": "batch-created experiment dir", "action": "removed"},
+    {"resource": "/tmp/b05-debug", "proof": "batch-created debug dir", "action": "removed"},
+    {"resource": "orphan daemon pid 687436", "proof": "/proc environ HOME+SIQ_AGENT_SECURITY_STATE_DIR pointed at b03-private/b03-service/up07-unmarked-incomplete", "action": "killed mid-batch after crashed leg run"},
+    {"resource": "b03-private/b03-service leg dirs", "proof": "created by closure-b03-service-concurrency.py reruns", "action": "reset before final passing run; final run's outputs retained"}
+  ],
+  "pending_manual": [
+    {"resource": "sandbox siq-l01-o05-181930 (Id c27b9276-44e1-4809-8160-6d258b7a264b)", "proof_of_creation": "l01-private/sandbox-create2.log", "reason": "openshell CLI transport error: connection refused to its configured gateway (siq-openshell-dev down); restarting the shared gateway is out of scope/prohibited this batch", "suggested_action": "maintainer runs: openshell sandbox delete siq-l01-o05-181930"}
+  ],
+  "untouched_other_owner": [
+    {"pid": 276252, "note": "daemon on port 42817, provenance not conclusively established in this batch; kill previously denied by permission classifier — do not retry, surfaced as manual item for the maintainer"},
+    {"pid": 2540314, "note": "hackathon-profile daemon, port 58151 — unrelated to this batch, never touched"}
+  ]
+}

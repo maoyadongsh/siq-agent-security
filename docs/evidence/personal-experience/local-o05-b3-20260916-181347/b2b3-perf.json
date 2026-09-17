@@ -1,0 +1,60 @@
+{
+  "valid": true,
+  "budget_passed": true,
+  "B3": "not_measured",
+  "protocol_sha256": "e2de0ebde266359e678e9b5eb7dd9db0e36651fd2b9519a17559de8b3c3638dd",
+  "budget_verdicts": {
+    "auxiliary:aux_control_plane_restore": {
+      "n": 5,
+      "p50_ms": 1036.089391913265,
+      "p95_ms": 1073.3755000401288,
+      "p99_ms": 1073.3755000401288,
+      "max_ms": 1073.3755000401288,
+      "absolute_budget_p95_ms": 60000.0,
+      "absolute_verdict": "pass"
+    },
+    "new:doctor_readback": {
+      "n": 90,
+      "p50_ms": 110.49080896191299,
+      "p95_ms": 151.53811895288527,
+      "p99_ms": 152.51109399832785,
+      "max_ms": 152.51109399832785,
+      "absolute_budget_p95_ms": 15000.0,
+      "absolute_verdict": "pass"
+    },
+    "new:doctor_unreachable": {
+      "n": 90,
+      "p50_ms": 13.435874949209392,
+      "p95_ms": 15.40833106264472,
+      "p99_ms": 16.859536059200764,
+      "max_ms": 16.859536059200764,
+      "absolute_budget_p95_ms": 15000.0,
+      "absolute_verdict": "pass"
+    },
+    "old:doctor_readback": {
+      "n": 90,
+      "p50_ms": 108.97814796771854,
+      "p95_ms": 152.03684091102332,
+      "p99_ms": 154.83638492878526,
+      "max_ms": 154.83638492878526,
+      "absolute_budget_p95_ms": 15000.0,
+      "absolute_verdict": "pass"
+    },
+    "old:doctor_unreachable": {
+      "n": 90,
+      "p50_ms": 13.560211984440684,
+      "p95_ms": 15.816285042092204,
+      "p99_ms": 17.13075302541256,
+      "max_ms": 17.13075302541256,
+      "absolute_budget_p95_ms": 15000.0,
+      "absolute_verdict": "pass"
+    },
+    "relative:doctor_readback": {
+      "ratio": 0.9967197295395666,
+      "budget_ratio": 1.3,
+      "verdict": "pass"
+    }
+  },
+  "misses": [],
+  "finished_utc": "2026-09-16T13:34:35.028649+00:00"
+}

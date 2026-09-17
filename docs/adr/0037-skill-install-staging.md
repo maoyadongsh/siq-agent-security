@@ -14,7 +14,7 @@ Hermes 官方文档将 profile 内的 `skills/` 作为默认 Skill 来源，prof
 
 `local-skill-install-stage-create/v1`：request_id（is-32hex）、grant_id、expected_revision、instance_id（hi-32hex）、directory_name、actor_id，全部必需。directory_name 是用户明确选择的单层可移植目录名，1–64 位小写 ASCII 字母/数字/连字符，首尾为字母/数字，Windows 设备名亦拒绝；不能覆盖已有路径或大小写别名。
 
-`local-skill-install-plan/v1` 为签名只读计划：plan_id（sip-64hex）、request_id、source、grant_id/revision/signature/permission_digest、platform=hermes、instance_id、directory_name、target_locator_digest、target_display、actor_id、created_at/expires_at、file_count/total_bytes、installed=false、runtime_verified=false、signature。完整 source 使用 ADR-036 合同，target_locator_digest 是实际绝对目标路径 SHA256；target_display 由可信目标解析器产生供人审阅，不由客户端传入。
+`local-skill-install-plan/v1` 为签名只读计划：plan_id（sip-64hex）、request_id、source、grant_id/revision/signature/permission_digest、platform（hermes 或 openclaw）、instance_id、directory_name、target_locator_digest、target_display、actor_id、created_at/expires_at、file_count/total_bytes、installed=false、runtime_verified=false、signature。完整 source 使用 ADR-036 合同，target_locator_digest 是实际绝对目标路径 SHA256；target_display 由可信目标解析器产生供人审阅，不由客户端传入。
 
 plan_id = SHA256(规范化 `{request, source, target_locator_digest, grant_signature, grant_permission_digest}`) 加 sip- 前缀。同请求在源/目标/授权不变时复验并复用原计划，不重置五分钟有效期；已过期时需要明确的新 request_id。权限 revision 或源变化时拒绝旧请求，不把旧计划当作当前批准。同一 request_id 的已发布计划通过有界签名元数据扫描查找，目标、操作者或请求字段改变时拒绝复用；已损坏或无法验签的计划使该次准备失败，不信任其请求身份。
 
@@ -22,7 +22,9 @@ plan_id = SHA256(规范化 `{request, source, target_locator_digest, grant_signa
 
 计划和载荷位于状态目录 `skill-installations/{plans,stages}/<plan_id>`；最多 64 个暂存候选，包括无法确认归属的孤立目录。先创建独占阶段目录，复制到 payload，完整重新核对暂存清单、原导入和最新 Grant，再最后排他发布签名计划。新建失败只清理本次创建的阶段目录，不接管同 ID 孤立目录。源与目标路径均拒绝链接/特殊类型，使用既有 2000 文件、2000 目录、8 MiB 单文件、64 MiB 总内容预算。
 
-Grant 必须可验签、状态恰为 approved、未过期、revision 匹配，主体恰为目标 Hermes 实例的 hri 身份，来源 admission 必须通过 ADR-036 当前完整副本复验。比较完整 Grant 签名与 PermissionDigest，复制过程中撤权/权限变更使预览失败；完整载荷复验结束后再次读取授权版本/签名/期限并检查目标缺失。不调用批准、部署或身份签发。
+Grant 必须可验签、状态恰为 approved、未过期、revision 匹配，平台与主体恰为服务端解析的目标 Hermes/OpenClaw 实例及其 hri 身份，来源 admission 必须通过 ADR-036 当前完整副本复验。比较完整 Grant 签名与 PermissionDigest，复制过程中撤权/权限变更使预览失败；完整载荷复验结束后再次读取授权版本/签名/期限并检查目标缺失。不调用批准、部署或身份签发。
+
+2026-09-14 补充：OpenClaw 目标载荷不得使用硬链接，因为已验证版本会拒绝 `nlink > 1` 的 Skill 文件。其发布采用排他创建的独立副本，归属由签名目录标记和完整载荷读回共同证明；Hermes 继续使用硬链接池证明。两条路径均不覆盖既有目标，并在安装、检查、更新和移除时复验签名平台。
 
 Load 重新验证计划形状/签名/ID/期限、批准版本与来源、目标仍缺失、暂存及原导入完整摘要。元数据历史不等同于当前可安装。所有外部错误使用固定 skill_install_* 类别，不带原路径、文件正文或凭据。
 

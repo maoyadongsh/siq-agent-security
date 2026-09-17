@@ -1,0 +1,124 @@
+{
+  "activation": {
+    "activated_at": "2026-09-15T23:27:06.748607678Z",
+    "budget_bytes": 67108864,
+    "key_fingerprint": "sha256:0a885942db66c648fba3359f46cc4aff0aa528ab1f4082978360d14cad9d0d3d",
+    "retention_seconds": 86400
+  },
+  "admin_token": "NOT SAVED (single-use pairing code at serve startup; re-pair on restart)",
+  "binary": {
+    "path": "/tmp/siq-b04-bin/agentshield",
+    "sha256": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942"
+  },
+  "ciphertext_files_before_wait": [
+    "raw-39a721aada7c919dd036c52c6f292a7f.json",
+    "raw-865c4e7ef275b11f9a92b7f4c84a4361.json",
+    "raw-e6d9f6f27a87a1a7d9d41ec97723caf1.json"
+  ],
+  "created_at": "2026-09-16T07:27:06+08:00",
+  "decision_evidence": [
+    {
+      "action": "allow",
+      "reason_code": "allow",
+      "session_id": "task-exp-1"
+    },
+    {
+      "action": "allow",
+      "reason_code": "allow",
+      "session_id": "task-keep-1"
+    },
+    {
+      "action": "allow",
+      "reason_code": "allow",
+      "session_id": "task-rev-1"
+    }
+  ],
+  "expected_purge": {
+    "contract": "PurgeExpired deletes only envelopes whose expires_at <= now (internal/rawcontent/store.go); grant/revocation records under raw-task-content-authority/, the receipt chain, task activities and audit facts must survive; the 24h leg must survive.",
+    "expected_deleted_records": 2,
+    "expected_released_bytes": 386,
+    "expired_legs": [
+      "task-exp-1",
+      "task-rev-1"
+    ],
+    "surviving_legs": [
+      "task-keep-1"
+    ]
+  },
+  "legs": [
+    {
+      "created_at": "2026-09-15T23:27:06.771046816Z",
+      "expect": "purged",
+      "expires_at": "2026-09-16T00:27:06.771046816Z",
+      "grant_id": "rawgrant-20b6f19cf8ac48987699908fa4ee837c",
+      "grant_signature_sha256": "8db51470f046fb23908682fb47539437365809822777905af929824d76b7b4ac",
+      "kind": "parameters",
+      "name": "task-exp-1",
+      "omitted_secret_count": 0,
+      "plaintext_bytes": 193,
+      "plaintext_sha256": "85dbc8ff333b764f8cebf4c02143498326d8b26640da02ca9c140d43369a922a",
+      "record_id": "raw-e6d9f6f27a87a1a7d9d41ec97723caf1",
+      "session_id": "task-exp-1",
+      "task_id": "task-ri-7442c1532264dc9cc9af4cf774e3fde69b9e1e76bd310f92f1c89e7d34f99453"
+    },
+    {
+      "created_at": "2026-09-15T23:27:06.791770053Z",
+      "expect": "survives",
+      "expires_at": "2026-09-16T23:27:06.791770053Z",
+      "grant_id": "rawgrant-e423c904d0b7fa3544e5d9484067bd5e",
+      "grant_signature_sha256": "4b1f06b9014cce78920b4cc5397e977b0c7a3e49a9cd0e5993fe657031603ec4",
+      "kind": "output",
+      "name": "task-keep-1",
+      "omitted_secret_count": 0,
+      "plaintext_bytes": 191,
+      "plaintext_sha256": "68c92ce4cba4a21a757ef0517b69ad93a175293ce1bf561dc646c159642c7384",
+      "record_id": "raw-865c4e7ef275b11f9a92b7f4c84a4361",
+      "session_id": "task-keep-1",
+      "task_id": "task-ri-bb35cb4fcb02303e66c965ffe6626e7462e0b81d9413312193ae0bd488fbf0f7"
+    },
+    {
+      "created_at": "2026-09-15T23:27:06.81914097Z",
+      "expect": "purged_after_revocation",
+      "expires_at": "2026-09-16T00:27:06.81914097Z",
+      "grant_id": "rawgrant-183b61c8cd0c1bc4bc87e4725990ce24",
+      "grant_signature_sha256": "4b4480817691800d0bde51a4dfa105e73f78fe3a09a9605a91bc85ad558f9fd7",
+      "kind": "parameters",
+      "name": "task-rev-1",
+      "omitted_secret_count": 0,
+      "plaintext_bytes": 193,
+      "plaintext_sha256": "7c07183b70cfd7226c305ee23e14b601805b3bcdd6061bc6f565681780bc497c",
+      "record_id": "raw-39a721aada7c919dd036c52c6f292a7f",
+      "session_id": "task-rev-1",
+      "task_id": "task-ri-d2a0be33bcb1029ce609f3fe17bf96196e2d063785b51b8ca1b5c12059fc0aa3"
+    }
+  ],
+  "notes": [
+    "task_id is derived by the product (task-ri-<hash(identity,session)>); leg names are the session_id labels"
+  ],
+  "port": 53701,
+  "re_pair": {
+    "admin_token_saved": false,
+    "credential_source": "single-use admin pairing code printed by `siq-agent-security serve` at startup: 'admin pairing code (single use, 5 min): <code>'",
+    "method": "POST /v1/pair {\"code\": <code>}"
+  },
+  "revocation": {
+    "ciphertext_retained_until_expiry": true,
+    "grant_id": "rawgrant-183b61c8cd0c1bc4bc87e4725990ce24",
+    "leg": "task-rev-1",
+    "revocation_response_keys": [
+      "actor_ref",
+      "expected_grant_signature",
+      "grant_id",
+      "reason_code",
+      "revoked_at",
+      "schema_version",
+      "signature",
+      "signing_schema"
+    ],
+    "revoked_at": "2026-09-16T07:27:06+08:00"
+  },
+  "root": "/tmp/siq-b04-run3",
+  "run_dir": "/tmp/siq-b04-run3",
+  "schema_version": "b04-expiry-seed/v1",
+  "state_dir": "/tmp/siq-b04-run3/state"
+}

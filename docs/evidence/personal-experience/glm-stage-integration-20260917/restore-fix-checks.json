@@ -1,0 +1,22 @@
+[
+  {
+    "command": "go test ./...",
+    "exit_code": 0
+  },
+  {
+    "command": "go vet ./...",
+    "exit_code": 0
+  },
+  {
+    "command": "go test -race ./internal/openshell ./internal/server ./internal/receipt ./internal/signing",
+    "exit_code": 0
+  },
+  {
+    "command": "gofmt -l apps/agentshield; git diff --check",
+    "exit_code": 0
+  },
+  {
+    "command": "CGO_ENABLED=0 go build ./cmd/agentshield (four targets)",
+    "exit_code": 0
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "schema_version": "personal-macos-luke-verification/v1",
+  "candidate_sha": "8fe579ad7ef916837f8656bfa9a4488060864038",
+  "source_dirty_at_candidate_build": false,
+  "binary_sha256": "e86646f245225f0dce93658469df098f400a6193d71cb33ae1665944001201d3",
+  "binary_format": "Mach-O 64-bit executable arm64",
+  "host": {"os": "macos", "version": "26.6.2", "arch": "arm64", "openclaw_version": "2026.9.4"},
+  "checks": {
+    "go_test_all": 0,
+    "go_vet_all": 0,
+    "gofmt_l": 0,
+    "go_test_adapters_adapterinstall_race": 0,
+    "cross_build_linux_amd64": 0,
+    "cross_build_linux_arm64": 0,
+    "cross_build_darwin_arm64": 0,
+    "cross_build_windows_amd64": 0,
+    "python_fixture_compile": 0,
+    "openclaw_managed_public_cli": 0,
+    "openclaw_public_skill_install": 0,
+    "openclaw_native_approval_fixture": 1,
+    "approval_private_receipt_verify": 0,
+    "matrix_structure_verify": 0,
+    "matrix_require_native_verify": 3
+  },
+  "private_raw_sha256": {
+    "openclaw_managed_public_cli": "96b60256fc0b53927bf3428926f0e258e3d4d1d68486b12d02db02d02c19122b",
+    "openclaw_public_skill_install": "a72f9738b441fa6242f6b5ec8cb8a8af2c9afebb708cb5568c83a1a29603f813"
+  },
+  "formal_apple_signing_identity_count": 0,
+  "notarization_submitted": false,
+  "publication_performed": false,
+  "independent_review_complete": false
+}

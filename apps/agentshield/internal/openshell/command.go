@@ -1,7 +1,6 @@
 package openshell
 
 import (
-	"context"
 	"net"
 	"net/url"
 	"os"
@@ -24,6 +23,7 @@ var safeEnvKeys = map[string]bool{
 	"XDG_CONFIG_HOME": true, "XDG_STATE_HOME": true, "XDG_DATA_HOME": true,
 	"XDG_CACHE_HOME": true, "XDG_RUNTIME_DIR": true,
 	"USERPROFILE": true, "APPDATA": true, "LOCALAPPDATA": true,
+	"SYSTEMROOT": true, "SystemRoot": true, "WINDIR": true, "TEMP": true, "TMP": true,
 }
 
 // Runner executes CLI args (not the wrapper argv). Tests inject a fake.
@@ -31,16 +31,17 @@ type Runner func(args []string) (rc int, stdout, stderr string)
 
 // Options construct a Client.
 type Options struct {
-	EnvScript    string
-	Runner       Runner
-	DockerRunner Runner
-	Timeout      time.Duration
-	ProbeTimeout time.Duration
-	PollInterval time.Duration
-	PollAttempts int
-	MaxOutput    int
-	LookupEnv    func(string) (string, bool)
-	LookPath     func(string) (string, error)
+	EnvScript         string
+	Runner            Runner
+	DockerRunner      Runner
+	Timeout           time.Duration
+	ProbeTimeout      time.Duration
+	PollInterval      time.Duration
+	PollAttempts      int
+	MaxOutput         int
+	LookupEnv         func(string) (string, bool)
+	LookPath          func(string) (string, error)
+	policyCoordinator *policyCoordinator
 }
 
 func (c *Client) env(key string) string {
@@ -210,48 +211,11 @@ func (c *Client) subprocess(args []string) (int, string, string) {
 	if c.ProbeTimeout > 0 && ((len(args) >= 2 && args[0] == "gateway" && args[1] == "info") || (len(args) >= 1 && args[0] == "--version") || (len(args) == 1 && args[0] == "status")) {
 		timeout = c.ProbeTimeout
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	cmd := exec.CommandContext(ctx, cmdLine[0], cmdLine[1:]...)
-	cmd.Env = c.cleanEnv()
-	var stdout, stderr strings.Builder
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	runErr := cmd.Run()
-	so, se := stdout.String(), stderr.String()
-	if len(so)+len(se) > c.MaxOutput {
-		return 1, "", "openshell CLI 输出超限（fail-closed）"
-	}
-	if ctx.Err() == context.DeadlineExceeded {
-		return 1, so, "openshell CLI 超时（fail-closed）"
-	}
-	if runErr != nil {
-		if ee, ok := runErr.(*exec.ExitError); ok {
-			return ee.ExitCode(), so, se
-		}
-		return 1, so, "无法执行 openshell CLI（fail-closed）: " + runErr.Error()
-	}
-	return 0, so, se
+	return runBoundedCommand(cmdLine, c.cleanEnv(), timeout, c.MaxOutput)
 }
 
 func runDockerPS(timeout time.Duration) (int, string, string) {
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	cmd := exec.CommandContext(ctx, "docker", "ps", "--format", "{{.Names}}")
-	var stdout, stderr strings.Builder
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if ctx.Err() == context.DeadlineExceeded {
-		return 1, stdout.String(), "docker 目标发现超时（fail-closed）"
-	}
-	if err != nil {
-		if ee, ok := err.(*exec.ExitError); ok {
-			return ee.ExitCode(), stdout.String(), stderr.String()
-		}
-		return 1, stdout.String(), "无法执行 docker 目标发现（fail-closed）: " + err.Error()
-	}
-	return 0, stdout.String(), stderr.String()
+	return runBoundedCommand([]string{"docker", "ps", "--format", "{{.Names}}"}, (&Client{}).cleanEnv(), timeout, 2<<20)
 }
 
 func (c *Client) cleanEnv() []string {
@@ -262,7 +226,7 @@ func (c *Client) cleanEnv() []string {
 		if !ok {
 			continue
 		}
-		if safeEnvKeys[k] || strings.HasPrefix(k, "SIQ_AS_") || strings.HasPrefix(k, "OPENSHELL_") {
+		if safeEnvKeys[k] {
 			out = append(out, kv)
 		}
 	}

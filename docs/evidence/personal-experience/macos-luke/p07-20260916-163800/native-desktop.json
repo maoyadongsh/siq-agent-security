@@ -1,0 +1,62 @@
+{
+  "schema_version": "personal-macos-workbuddy-native-desktop/v1",
+  "recorded_at": "2026-09-16T09:28:13Z",
+  "method": "native_desktop",
+  "trigger": "workbuddy://conversation/open?autoSend=true",
+  "binary_sha256": "82b8f45c6a3698fe872c4058de87f43871561035688423e712634fc311d39597",
+  "port": 47614,
+  "read_deny": {
+    "tool": "Read",
+    "action": "deny",
+    "reason_code": "grant_missing",
+    "platform": "workbuddy",
+    "session_id": "ede5be07-0310-4545-853e-db6c63897f48",
+    "issued_at": "2026-09-16T09:08:24Z"
+  },
+  "read_unavailable": {
+    "tool": "Read",
+    "outcome": "deny",
+    "reason": "decision service unavailable",
+    "signed": false,
+    "platform": "workbuddy",
+    "issued_at": "2026-09-16T09:25:08Z"
+  },
+  "sentinel_unchanged": true,
+  "forbidden_file_created": false,
+  "daily_settings_unchanged": true,
+  "daily_still_has_no_hooks": true,
+  "daily_settings_sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+  "live_app_still_running": true,
+  "live_app_pid": 69850,
+  "did_not_kill_existing_daemons": true,
+  "existing_daemons": [47612, 47613],
+  "isolated_port_closed_after": true,
+  "task_deeplink_is_prefill_only": true,
+  "osascript_keystroke": {
+    "exit": 1,
+    "error": "osascript is not allowed to send keystrokes (1002)"
+  },
+  "write_autosend": {
+    "opened": true,
+    "hook_invocations": 0,
+    "jump_task_id": "ede5be07-0310-4545-853e-db6c63897f48",
+    "send_prompt": true,
+    "session_completed_without_write_tool": true,
+    "note": "earlier isolated-cwd session received the Write prompt and completed; PreToolUse Write was not spawned and MUST_NOT_WRITE.txt was not created"
+  },
+  "write_fresh_minimax": {
+    "session_id": "9c715b70-35b1-4bc6-b222-d94094619be9",
+    "model": "custom-local:MiniMax-M3",
+    "bash_grant_missing": "2026-09-16T10:02:18Z",
+    "write_fail_closed": "2026-09-16T10:02:35Z",
+    "forbidden_created": false
+  },
+  "limitations": [
+    "project-scope hooks only; daily ~/.workbuddy/settings.json was not a write target",
+    "desktop PreToolUse deny proven for Read (grant_missing) and fail-closed (service unavailable)",
+    "desktop PreToolUse deny proven for Bash grant_missing and Write fail-closed on MiniMax-M3 session 9c715b70",
+    "grant allow path not claimed; model must not approve grants",
+    "install_interception remains host_capability_missing",
+    "System Events keystroke send remains Accessibility-blocked"
+  ]
+}

@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-"""Record the current Hermes host approval-chain boundary against a real daemon.
+"""Verify the closed Hermes approval gap against a real daemon and native tool.
 
-A deployed grant requiring human approval for write_file makes the installed
-native adapter degrade the daemon hold to a block with console guidance, and
-the held write never executes. Console approval and denial are then recorded
-through the daemon management API, and identical native retries are driven
-again to document the real boundary: the current adapter has no hold-status
-resume channel, so each retry is held and blocked again. This is gap evidence,
-not a product defect claim. Isolated fixture profile, synthetic model and
-target file only; no real user configuration, contacts, or model calls.
+The public Hermes process first receives a held write and blocks it before the
+side effect. A synthetic local operator resolves the immutable confirmation
+while that same process is alive. Hermes then retries the same parameters with
+a fresh tool-call ID; the installed adapter reads approval, atomically reserves
+one execution and the real file tool writes exactly once. A separate denial
+run proves retry remains blocked with no side effect. The model endpoint is a
+local deterministic fixture; no real user configuration, data or model calls.
 """
 
 from __future__ import annotations
@@ -45,7 +44,7 @@ def register(ctx):
 
 CONTENT = "fixture-approval-gap-content"
 CONSOLE_GUIDANCE = "Approve in the console"
-LABELS = ("initial", "after-approve", "after-deny")
+LABELS = ("approve", "deny")
 
 
 class Harness(fixture.Harness):
@@ -175,6 +174,8 @@ class Harness(fixture.Harness):
                 "platform": "hermes",
                 "session_id": session_id,
                 "agent_id": fixture.AGENT,
+                "task_id": item.get("task_id", ""),
+                "runtime_task_id": item.get("runtime_task_id", ""),
                 "tool": self.write_tool,
                 "tool_call_id": item["tool_call_id"],
                 "action_id": item["action_id"],
@@ -218,7 +219,10 @@ class Harness(fixture.Harness):
         self.write_params = {"path": str(target), "content": CONTENT}
         nonce = secrets.token_hex(32)
         sessions = {}
-        state = {"label": "", "session": "", "received": 0, "blocks": [], "aux": 0, "failures": []}
+        state = {
+            "label": "", "session": "", "received": 0, "blocks": [],
+            "resolutions": [], "aux": 0, "failures": [],
+        }
         guard = threading.Lock()
         controller = self
 
@@ -333,13 +337,15 @@ class Harness(fixture.Harness):
                         results = [item for item in body.get("messages", []) if item.get("role") == "tool"]
                         index = state["received"]
                         fixture.require(
-                            index <= 1 and len(results) == index,
+                            index <= 2 and len(results) == index,
                             f"unexpected model retry or lost history: step={index} results={len(results)}",
                         )
-                        call_id = "write-" + state["label"]
+                        original_call_id = "write-" + state["label"] + "-original"
+                        retry_call_id = "write-" + state["label"] + "-retry"
                         if index == 1:
                             fixture.require(
-                                results[0]["tool_call_id"] == call_id, "tool call identity changed"
+                                results[0]["tool_call_id"] == original_call_id,
+                                "original tool call identity changed",
                             )
                             text = str(results[0].get("content", ""))
                             fixture.require("siq-agent-security" in text, "native block missing adapter reason")
@@ -347,15 +353,45 @@ class Harness(fixture.Harness):
                             state["blocks"].append(
                                 {"label": state["label"], "console_guidance": CONSOLE_GUIDANCE in text}
                             )
-                        message = {"role": "assistant", "content": "SIQ_APPROVAL_GAP_CHECK_COMPLETE"}
+                            item = controller.pending_confirmation(original_call_id)
+                            approve = state["label"] == "approve"
+                            resolution = controller.resolve(item, approve=approve)
+                            fixture.require(
+                                resolution["action"] == ("allow" if approve else "deny"),
+                                "console resolution action mismatch",
+                            )
+                            status = controller.hold_status(item, state["session"])
+                            fixture.require(
+                                status["status"] == ("approved" if approve else "denied"),
+                                "resolved hold status mismatch",
+                            )
+                            state["resolutions"].append(
+                                {
+                                    "label": state["label"], "approve": approve,
+                                    "action_id": item["action_id"], "status": status["status"],
+                                }
+                            )
+                        if index == 2:
+                            fixture.require(
+                                results[1]["tool_call_id"] == retry_call_id,
+                                "retry tool call identity changed",
+                            )
+                            text = str(results[1].get("content", ""))
+                            if state["label"] == "approve":
+                                fixture.require(target.read_text() == CONTENT, "approved native write did not execute")
+                                fixture.require("siq-agent-security" not in text, "approved retry stayed blocked")
+                            else:
+                                fixture.require(not target.exists(), "denied retry executed")
+                                fixture.require("siq-agent-security" in text, "denied retry was not blocked")
+                        message = {"role": "assistant", "content": "SIQ_APPROVAL_RETRY_CHECK_COMPLETE"}
                         finish = "stop"
-                        if index == 0:
+                        if index in (0, 1):
                             message = {
                                 "role": "assistant",
                                 "content": None,
                                 "tool_calls": [
                                     {
-                                        "id": call_id,
+                                        "id": original_call_id if index == 0 else retry_call_id,
                                         "type": "function",
                                         "function": {
                                             "name": "write_file",
@@ -403,7 +439,7 @@ class Harness(fixture.Harness):
                     "--quiet",
                     "--oneshot",
                     "-q",
-                    "Execute the SIQ synthetic approval-gap check.",
+                    "Execute the SIQ synthetic approval retry check.",
                 ],
                 cwd=self.workspace,
                 env=env,
@@ -414,77 +450,56 @@ class Harness(fixture.Harness):
             if process.returncode:
                 raise RuntimeError("public CLI did not complete in isolated fixture")
             fixture.require(not state["failures"], "synthetic model protocol failed")
-            fixture.require(state["received"] == 2, "native conversation did not complete the probe")
+            fixture.require(state["received"] == 3, "native conversation did not complete the probe")
             fixture.require(bool(state["session"]), "native session was not attached")
-            fixture.require(not target.exists(), "held write executed")
-            return {"label": label, "session_id": state["session"]}
+            if label == "approve":
+                fixture.require(target.read_text() == CONTENT, "approved native retry did not write target")
+            else:
+                fixture.require(not target.exists(), "denied native retry wrote target")
+            return {"label": label, "session_id": state["session"], "target_file_created": target.exists()}
 
         attempts = []
-        resolutions = []
         try:
-            attempts.append(run("initial"))
-            item = self.pending_confirmation("write-initial")
-            resolution = self.resolve(item, approve=True)
-            fixture.require(resolution["action"] == "allow", "console approval not recorded as allow")
-            status = self.hold_status(item, attempts[-1]["session_id"])
-            fixture.require(
-                status["status"] == "approved" and status["reason_code"] == "hold_approved",
-                "approved hold not visible through hold-status",
-            )
-            resolutions.append(
-                {
-                    "for_tool_call_id": "write-initial",
-                    "approve": True,
-                    "resolve_action": resolution["action"],
-                    "hold_status_after": status["status"],
-                    "inbox_status_after": self.confirmation_status("write-initial"),
-                }
-            )
-            attempts.append(run("after-approve"))
-            fixture.require(not target.exists(), "retry after approval executed the held write")
-            item = self.pending_confirmation("write-after-approve")
-            resolution = self.resolve(item, approve=False)
-            fixture.require(resolution["action"] == "deny", "console denial not recorded as deny")
-            status = self.hold_status(item, attempts[-1]["session_id"])
-            fixture.require(
-                status["status"] == "denied" and status["reason_code"] == "hold_denied",
-                "denied hold not visible through hold-status",
-            )
-            resolutions.append(
-                {
-                    "for_tool_call_id": "write-after-approve",
-                    "approve": False,
-                    "resolve_action": resolution["action"],
-                    "hold_status_after": status["status"],
-                    "inbox_status_after": self.confirmation_status("write-after-approve"),
-                }
-            )
-            attempts.append(run("after-deny"))
-            fixture.require(not target.exists(), "retry after denial executed the held write")
+            attempts.append(run("approve"))
+            target.unlink()
+            attempts.append(run("deny"))
         finally:
             model.shutdown()
             model.server_close()
             thread.join(timeout=2)
-        fixture.require(len(attempts) == 3, "probe did not complete all native runs")
+        fixture.require(len(attempts) == 2, "probe did not complete all native runs")
         fixture.require(
-            all(block["console_guidance"] for block in state["blocks"]) and len(state["blocks"]) == 3,
+            all(block["console_guidance"] for block in state["blocks"]) and len(state["blocks"]) == 2,
             "hold block message missing console guidance",
         )
         records = self.receipts()
         decisions = {}
         for label in LABELS:
-            decisions[label] = self.held_decision(records, "write-" + label)
+            decisions[label] = self.held_decision(records, "write-" + label + "-original")
         resolutions_on_chain = [r for r in records if r.get("record_type") == "hold_resolution"]
         fixture.require(len(resolutions_on_chain) == 2, "expected exactly two hold resolutions")
         fixture.require(
             resolutions_on_chain[0]["action"] == "allow"
-            and resolutions_on_chain[0]["decision_receipt_id"] == decisions["initial"]["receipt_id"],
+            and resolutions_on_chain[0]["decision_receipt_id"] == decisions["approve"]["receipt_id"],
             "approval resolution missing or misattributed",
         )
         fixture.require(
             resolutions_on_chain[1]["action"] == "deny"
-            and resolutions_on_chain[1]["decision_receipt_id"] == decisions["after-approve"]["receipt_id"],
+            and resolutions_on_chain[1]["decision_receipt_id"] == decisions["deny"]["receipt_id"],
             "denial resolution missing or misattributed",
+        )
+        reservations = [r for r in records if r.get("record_type") == "hold_reservation"]
+        observations = [r for r in records if r.get("record_type") == "observation"]
+        fixture.require(len(reservations) == 1, "approved retry did not create exactly one reservation")
+        fixture.require(
+            reservations[0].get("tool_call_id") == "write-approve-retry"
+            and reservations[0].get("decision_receipt_id") == decisions["approve"]["receipt_id"],
+            "reservation is not bound to the approved retry",
+        )
+        fixture.require(
+            len(observations) == 1
+            and observations[0].get("decision_receipt_id") == reservations[0].get("receipt_id"),
+            "native execution observation is not linked to the reservation",
         )
         self.stop()
         verified = json.loads(self.command([str(self.binary), "verify"]))
@@ -492,18 +507,19 @@ class Harness(fixture.Harness):
         self.checks.extend(
             [
                 "native_cli_runs_completed",
-                "hold_degrades_to_block_without_execution",
+                "hold_blocks_before_execution",
                 "block_message_points_to_console",
                 "console_approval_recorded",
-                "no_native_resume_path_observed",
+                "approved_retry_reserved_before_native_execution",
+                "approved_native_side_effect_exactly_once",
                 "console_denial_recorded",
                 "denied_retry_blocked_without_execution",
-                "held_calls_have_no_execution_observations",
+                "reservation_and_observation_linked",
                 "receipt_chain_verified",
             ]
         )
         return {
-            "schema_version": "personal-hermes-approval-gap-native-smoke/v1",
+            "schema_version": "personal-hermes-approved-retry-native-smoke/v2",
             "recorded_at": datetime.now(UTC).isoformat(),
             "passed": True,
             "binary_sha256": hashlib.sha256(self.binary.read_bytes()).hexdigest(),
@@ -515,28 +531,25 @@ class Harness(fixture.Harness):
             "attempts": [
                 {
                     "label": label,
-                    "tool_call_id": "write-" + label,
+                    "tool_call_id": "write-" + label + "-original",
                     "decision_action": decisions[label]["action"],
                     "decision_reason_code": decisions[label].get("reason_code"),
                     "intent_binding": decisions[label].get("intent_binding"),
                     "console_guidance_in_block": True,
-                    "target_file_created": False,
-                    "execution_observations": 0,
+                    "target_file_created": label == "approve",
+                    "execution_observations": 1 if label == "approve" else 0,
                 }
                 for label in LABELS
             ],
-            "console_resolutions": resolutions,
+            "console_resolutions": state["resolutions"],
             "receipt_count": len(records),
             "auxiliary_requests": state["aux"],
             "profile_config_unchanged": config_digest == hashlib.sha256(config.read_bytes()).hexdigest(),
             "limitations": [
-                (
-                    "evidences only the current Hermes adapter boundary: hold degrades to block and the "
-                    "installed plugin never calls /v1/hold-status, so a console approval has no native resume channel"
-                ),
+                "approved execution is at-most-once locally; external systems can still require uncertain reconciliation",
                 "synthetic model, operator and target; no real user data, contacts or external services",
                 "isolated fixture profile and daemon state; no claim about other platforms or adapter versions",
-                "each CLI retry is a fresh host session; in-process resume was not exercised",
+                "desktop notification delivery and manual browser clicking are covered by separate evidence",
             ],
         }
 

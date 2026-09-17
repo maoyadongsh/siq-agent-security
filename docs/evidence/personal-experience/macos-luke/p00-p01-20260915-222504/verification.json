@@ -1,0 +1,161 @@
+{
+  "schema_version": "macos-luke-p00-p01/v1",
+  "recorded_at": "2026-09-15T14:56:00+00:00",
+  "candidate_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "source_dirty": false,
+  "branch": "codex/macos-luke-p01-20260915-222504",
+  "baseline_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "binary_sha256": "967d9c922a6a304823fd58461ffb115db9d20b59a2d633a7055e731e3738beb9",
+  "status": "partial_delivery_not_platform_acceptance",
+  "native": {
+    "os": "darwin",
+    "arch": "arm64",
+    "translated": false,
+    "macos_product_version": "26.6.2",
+    "macos_build": "25G83",
+    "cpu": "Apple M4"
+  },
+  "builds": [
+    {
+      "os": "darwin",
+      "arch": "arm64",
+      "native_build": true,
+      "cgo_enabled": "0",
+      "command": "env -u GOOS -u GOARCH CGO_ENABLED=0 go build -trimpath -o <build-dir>/siq-agent-security ./cmd/agentshield",
+      "cwd": "apps/agentshield",
+      "exit_code": 0,
+      "file": "Mach-O 64-bit executable arm64",
+      "binary_sha256": "967d9c922a6a304823fd58461ffb115db9d20b59a2d633a7055e731e3738beb9",
+      "go_toolchain": "go1.27.1 darwin/arm64 isolated user directory"
+    }
+  ],
+  "frontend": {
+    "commands": ["npm ci", "npm run build:local"],
+    "cwd": "apps/web",
+    "exit_code": 0,
+    "tracked_embed_changed": false
+  },
+  "checks": [
+    {
+      "id": "status_live",
+      "command": "siq-agent-security status --port 47612",
+      "exit_code": 0,
+      "public": {
+        "schema_version": "local-service-instance-health/v1",
+        "product": "siq-agent-security",
+        "status": "ready",
+        "local_mode": true,
+        "version": "0.0.0-dev"
+      }
+    },
+    {
+      "id": "state_status",
+      "command": "siq-agent-security state-status",
+      "exit_code": 0,
+      "public": {
+        "schema": "local-state-status/v1",
+        "compatible": true,
+        "status": "ok",
+        "format_version": 2,
+        "reader_version": 2,
+        "writer_version": 2
+      }
+    },
+    {
+      "id": "wrong_port",
+      "command": "siq-agent-security status --port 47999",
+      "exit_code": 1,
+      "stderr": "local service is unreachable; start siq-agent-security serve, then retry"
+    },
+    {
+      "id": "wrong_state_dir",
+      "command": "siq-agent-security status --port 47612 with a different SIQ_AGENT_SECURITY_STATE_DIR",
+      "exit_code": 1,
+      "stderr": "local service uses a different state directory; select the matching directory or a different port"
+    },
+    {
+      "id": "wrong_service",
+      "command": "siq-agent-security status --port <ephemeral dummy HTTP>",
+      "exit_code": 1,
+      "stderr": "local service returned an unexpected HTTP response; check the port and service version"
+    },
+    {
+      "id": "pair_reuse",
+      "command": "POST /v1/pair twice with the same one-time code",
+      "first_http": 200,
+      "second_http": 401
+    },
+    {
+      "id": "stop_confirm",
+      "command": "siq-agent-security stop --confirm-stop",
+      "exit_code": 0,
+      "public": {
+        "schema_version": "local-service-stop-result/v1",
+        "status": "drained"
+      }
+    },
+    {
+      "id": "ui_invalid_code",
+      "browser": "cursor-ide-browser",
+      "result": "alert 配对码无效、已使用或已过期；仍停留在配对页"
+    },
+    {
+      "id": "ui_pair_refresh_second_tab",
+      "browser": "cursor-ide-browser",
+      "result": "配对后总览可见退出管理；刷新与第二标签恢复；document.cookie 空且无 Web Storage hex 凭据"
+    },
+    {
+      "id": "ui_logout_and_restart",
+      "browser": "cursor-ide-browser",
+      "result": "退出后两标签均需重新配对；stop+start 后两标签均需重新配对"
+    },
+    {
+      "id": "ui_full_outage",
+      "browser": "cursor-ide-browser",
+      "result": "serve 完全停止后导航为 chrome-error://chromewebdata/；恢复服务后再次导航回到配对页"
+    },
+    {
+      "id": "codesign_spctl",
+      "command": "codesign -dv --verbose=2; spctl --assess --type execute --verbose",
+      "codesign_signature": "adhoc",
+      "spctl_exit": 3,
+      "note": "unsigned development build; not an official release claim"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "evidence/pairing-page.png",
+      "sha256": "1e0927bf23271abf7a86fdd83235e6ac830497dcf3880b9682a00c561e1c7d34",
+      "note": "pairing form; no pairing code shown"
+    },
+    {
+      "path": "evidence/overview-connected.png",
+      "sha256": "fa78ff1bd691bea67f2400a8eb832585c3c615680caa7a616994106ca7459c72",
+      "note": "overview after pairing; default-home discovery counts only"
+    },
+    {
+      "path": "evidence/p01-invalid-pair-error.png",
+      "sha256": "458901b6906cd56d80ffa54684e20660a64aa0efabf72612785b4193d8b8d7a9",
+      "note": "invalid pairing code 0000-0000-0000-0000 rejected; no live secret"
+    },
+    {
+      "path": "evidence/p01-second-tab-restored.png",
+      "sha256": "9ecbde45e46ba626e13e114fbc1ec739ece99f4e43b2ac0c6e54dcd7248c8164",
+      "note": "second tab restored overview with 退出管理 visible"
+    },
+    {
+      "path": "evidence/p01-restart-repaired-overview.png",
+      "sha256": "10dc067bea422d21c4ed582a892b4756047c249078acf136b74c0c46ad860cdb",
+      "note": "overview after stop --confirm-stop, start-local, and a new pairing code"
+    }
+  ],
+  "not_run": [
+    "safari_or_chrome_user_profile_session",
+    "darwin_amd64_native",
+    "rosetta_translated_go_or_product",
+    "launch_agent_gui_domain",
+    "isolated_openclaw_hermes_workbuddy_runtime_journey",
+    "uv_control_api_pytest",
+    "notarization_or_official_signature"
+  ]
+}

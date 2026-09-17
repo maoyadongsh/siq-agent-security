@@ -1,0 +1,25 @@
+{
+  "schema_version": "personal-development-verification/v1",
+  "batch": "r04b-update-source-disable-20260914",
+  "recorded_at": "2026-09-14T19:51:59+08:00",
+  "base_commit": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "working_tree_clean": false,
+  "delivery_state": "local_only",
+  "native_platform_tested": false,
+  "model_started": false,
+  "checks": [
+    {"name": "go_targeted", "result": "pass", "command": "go test ./internal/skillinstall ./internal/server"},
+    {"name": "go_race", "result": "pass", "command": "go test -race ./internal/skillinstall ./internal/server"},
+    {"name": "go_full", "result": "pass", "command": "go vet ./... && go test ./..."},
+    {"name": "web_targeted", "result": "pass", "command": "npm test -- --run src/local/skillUpdateCheck.test.ts src/local/api.test.ts", "tests": 21},
+    {"name": "web_full", "result": "pass", "command": "npm test && npm run build && npm run build:local", "test_files": 24, "tests": 93},
+    {"name": "contracts", "result": "pass", "command": "uv run pytest --noconftest app/tests/test_update_schedule_contracts.py app/tests/test_schema_contracts.py && uv run ruff check app", "tests": 218},
+    {"name": "platform_acceptance", "result": "pass", "tests": 40},
+    {"name": "n09_evidence", "result": "pass", "tests": 7}
+  ],
+  "remaining": [
+    "isolated native V1 to V2 update journey",
+    "real hosted upstream network verification",
+    "Windows and macOS native validation"
+  ]
+}

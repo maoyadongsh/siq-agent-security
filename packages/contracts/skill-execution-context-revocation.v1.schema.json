@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/skill-execution-context-revocation.v1.schema.json",
+  "title": "Signed skill execution context revocation V1 (N05/R01)",
+  "description": "SEC 的显式撤销墓碑：独立签名文档，只新建不改写；存在即失效，不删除原上下文。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "skill-execution-context-revocation/v1"
+    },
+    "context_id": {
+      "type": "string",
+      "pattern": "^sec-[0-9a-f]{32}$"
+    },
+    "issuer_id": {
+      "const": "local-admin"
+    },
+    "revoked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "context_id",
+    "issuer_id",
+    "revoked_at",
+    "signing_schema",
+    "signature"
+  ]
+}

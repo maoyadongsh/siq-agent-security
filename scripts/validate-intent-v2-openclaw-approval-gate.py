@@ -9,6 +9,7 @@ Security failures are reported as passed=false and exit 1, not a success gate.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import importlib.util
 import json
@@ -18,13 +19,13 @@ import subprocess
 import sys
 import tempfile
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
+from openclaw_reservation_evidence import execution_records
+
 ROOT = Path(__file__).resolve().parents[1]
-loader = importlib.util.spec_from_file_location(
-    "openclaw_fixture", ROOT / "scripts/validate-intent-v2-openclaw.py"
-)
+loader = importlib.util.spec_from_file_location("openclaw_fixture", ROOT / "scripts/validate-intent-v2-openclaw.py")
 native = importlib.util.module_from_spec(loader)
 loader.loader.exec_module(native)
 fixture = native.fixture
@@ -33,10 +34,7 @@ require = fixture.require
 
 class ApprovalHarness(native.OpenClawHarness):
     def setup_grant(self):
-        path = (
-            ROOT
-            / "apps/agentshield/internal/admission/testdata/skills/benign/official-like"
-        )
+        path = ROOT / "apps/agentshield/internal/admission/testdata/skills/benign/official-like"
         admitted = self.api("/v1/admit", {"path": str(path)})["admission"]
         result = self.api(
             "/v1/grants",
@@ -62,14 +60,25 @@ class ApprovalHarness(native.OpenClawHarness):
 
         action("patch-desired", models=["fixture-model"])
         challenge = action("challenge")["challenge"]
-        action(
-            "approve", challenge_id=challenge["challenge_id"], nonce=challenge["nonce"]
-        )
+        action("approve", challenge_id=challenge["challenge_id"], nonce=challenge["nonce"])
         action("deploy")
         require(
             "exec" in result["grant"]["openclaw_tool_policy"]["require_approval"],
             "exec hold gate missing",
         )
+
+    def _early_worker_failure(self, process) -> None:
+        if process.poll() is None:
+            return
+        result = self.root / "control/result.json"
+        if result.is_file():
+            outcomes = json.loads(result.read_text()).get("outputs", [])
+            if outcomes and all(item.get("blocked") and not item.get("platform_requested") for item in outcomes):
+                raise RuntimeError(
+                    "native worker finished with all hold calls blocked before platform approval; "
+                    "installed host lacks the required approval execution recheck checkpoint"
+                )
+        raise RuntimeError("native worker exited before approval result")
 
     def wait_file(self, path, process, timeout=90):
         deadline = time.monotonic() + timeout
@@ -82,7 +91,7 @@ class ApprovalHarness(native.OpenClawHarness):
                 raise RuntimeError(
                     f"native worker failed at {failure['stage']}: {failure['category']}"
                 )
-            require(process.poll() is None, "native worker exited before result")
+            self._early_worker_failure(process)
             time.sleep(0.025)
         raise RuntimeError("native worker result timeout")
 
@@ -109,7 +118,8 @@ class ApprovalHarness(native.OpenClawHarness):
                     "controlUi": {"enabled": False},
                 },
                 "browser": {"enabled": False},
-                "canvasHost": {"enabled": False},
+                # canvasHost/canvas was removed upstream in 2026.9; omitting it
+                # is valid on both old and new schemas.
                 "discovery": {"mdns": {"mode": "off"}},
                 "cron": {"enabled": False},
                 "update": {"checkOnStart": False},
@@ -121,13 +131,12 @@ class ApprovalHarness(native.OpenClawHarness):
             }
         )
         config_path.write_text(json.dumps(config))
-        (oc / "siq-agent-security.json").write_text(
-            json.dumps({"timeoutMs": 1000, "holdWaitMs": 1500})
-        )
+        (oc / "siq-agent-security.json").write_text(json.dumps({"timeoutMs": 1000, "holdWaitMs": 1500}))
         self.env.pop("OPENCLAW_DISABLE_BUNDLED_PLUGINS", None)
         self.env.update(
             {
                 "OPENCLAW_HOME": str(self.root / "native-home"),
+                "OPENCLAW_CONFIG_PATH": str(config_path),
                 "PI_CODING_AGENT_DIR": str(self.root / "pi"),
                 "OPENCLAW_SKIP_CHANNELS": "1",
                 "OPENCLAW_SKIP_CRON": "1",
@@ -181,7 +190,8 @@ class ApprovalHarness(native.OpenClawHarness):
             str(ROOT / "scripts/openclaw-approval-gate-worker.mjs"),
             str(spec),
         ]
-        with tempfile.TemporaryFile(mode="w+t") as log:
+        log_path = self.root / "worker.log"
+        with open(log_path, "w+t") as log:
             process = subprocess.Popen(
                 command, cwd=self.workspace, env=self.env, stdout=log, stderr=log
             )
@@ -190,14 +200,11 @@ class ApprovalHarness(native.OpenClawHarness):
                     call_id = case["id"]
                     deadline = time.monotonic() + 90
                     while True:
-                        require(
-                            process.poll() is None, "native worker exited before hold"
-                        )
+                        self._early_worker_failure(process)
                         current = [
                             r
                             for r in self.receipts()
-                            if r.get("tool_call_id") == call_id
-                            and r.get("record_type") == "decision"
+                            if r.get("tool_call_id") == call_id and r.get("record_type") == "decision"
                         ]
                         if current:
                             break
@@ -206,8 +213,7 @@ class ApprovalHarness(native.OpenClawHarness):
                     decisions = [
                         r
                         for r in self.receipts()
-                        if r.get("tool_call_id") == call_id
-                        and r.get("record_type") == "decision"
+                        if r.get("tool_call_id") == call_id and r.get("record_type") == "decision"
                     ]
                     require(
                         len(decisions) == 1 and decisions[0]["action"] == "hold",
@@ -245,32 +251,19 @@ class ApprovalHarness(native.OpenClawHarness):
                         result["platform_requested"] == (case["local"] is True),
                         "platform approval order violated",
                     )
-                    observations = [
-                        r
-                        for r in self.receipts()
-                        if r.get("tool_call_id") == call_id
-                        and r.get("record_type") == "observation"
-                    ]
-                    expected = (
-                        case["platform"] == "allow-once" and case["local"] is True
-                    )
+                    reservations, observations = execution_records(self.receipts(), decision, call_id, require)
+                    expected = case["platform"] == "allow-once" and case["local"] is True
                     require(
-                        len(observations) == int(expected),
+                        len(reservations) == int(expected) and len(observations) == int(expected),
                         "observation authorization invariant failed",
                     )
-                    if observations:
-                        require(
-                            observations[0]["decision_receipt_id"]
-                            == decision["receipt_id"]
-                            and observations[0]["action_id"] == decision["action_id"],
-                            "observation correlation lost",
-                        )
                     outcomes.append(
                         {
                             **result,
                             "local_approval": case["local"],
                             "expected_execution": expected,
                             "observation_count": len(observations),
+                            "reservation_count": len(reservations),
                             "execution_gate_passed": result["executed"] == expected,
                         }
                     )
@@ -279,9 +272,7 @@ class ApprovalHarness(native.OpenClawHarness):
                         flush=True,
                     )
                 runtime = self.wait_file(control / "result.json", process)
-                require(
-                    process.wait(timeout=30) == 0, "native worker did not close cleanly"
-                )
+                require(process.wait(timeout=30) == 0, "native worker did not close cleanly")
             finally:
                 if process.poll() is None:
                     process.kill()
@@ -290,18 +281,19 @@ class ApprovalHarness(native.OpenClawHarness):
         self.stop()
         verified = json.loads(self.command([str(self.binary), "verify"]))
         require(verified["verified"], "offline receipt verification failed")
-        sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+
+        def sha(path):
+            return hashlib.sha256(path.read_bytes()).hexdigest()
+
         return {
-            "schema": "intent-v2-openclaw-approval-gate-validation/v1",
-            "recorded_at": datetime.now(timezone.utc).isoformat(),
+            "schema": "intent-v2-openclaw-approval-gate-validation/v2",
+            "recorded_at": datetime.now(UTC).isoformat(),
             "passed": all(item["execution_gate_passed"] for item in outcomes),
             "observation_invariants_passed": True,
             "configured_local_wait_ms": 1500,
             "daemon_kill_restarts": sum(bool(case.get("disconnect")) for case in cases),
             "siq_commit": self.command(["git", "rev-parse", "HEAD"], cwd=ROOT).strip(),
-            "siq_dirty": bool(
-                self.command(["git", "status", "--porcelain"], cwd=ROOT).strip()
-            ),
+            "siq_dirty": bool(self.command(["git", "status", "--porcelain"], cwd=ROOT).strip()),
             "siq_binary_sha256": sha(self.binary),
             "cases": outcomes,
             "receipt_count": len(records),
@@ -312,12 +304,14 @@ class ApprovalHarness(native.OpenClawHarness):
                 str(path.relative_to(ROOT)): sha(path)
                 for path in [
                     Path(__file__),
+                    ROOT / "scripts/openclaw_reservation_evidence.py",
                     ROOT / "scripts/openclaw-approval-gate-worker.mjs",
                     ROOT / "scripts/openclaw-fixture-guard.mjs",
                     ROOT / "scripts/validate-intent-v2-openclaw.py",
                     ROOT / "scripts/validate-intent-v2-hermes.py",
                     ROOT / "adapters/runtime/openclaw-agentshield/index.ts",
                     ROOT / "apps/agentshield/internal/receipt/hold_status.go",
+                    ROOT / "apps/agentshield/internal/receipt/hold_execution.go",
                     ROOT / "apps/agentshield/internal/receipt/action_state.go",
                     ROOT / "apps/agentshield/internal/receipt/engine.go",
                     ROOT / "apps/agentshield/internal/server/hold_status.go",
@@ -329,6 +323,7 @@ class ApprovalHarness(native.OpenClawHarness):
                 "synthetic tool executor and operator; no model or human approval proof",
                 "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
                 "optional unbound exec; required bound opaque shell remains denied",
+                "reservation response loss is uncertain and requires explicit reconciliation",
                 "cancelled native wait is explicitly resolved as deny after execution settles, for fixture cleanup",
                 "test IO guard is not OS isolation; installed runtime and real settings unchanged",
             ],
@@ -339,11 +334,21 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--openclaw-root", type=Path, required=True)
     parser.add_argument("--node", type=Path, required=True)
+    parser.add_argument("--binary", type=Path, help="use a fixed candidate binary instead of building HEAD")
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--private-workdir", type=Path, help="retain an isolated private fixture directory for failure diagnosis")
     args = parser.parse_args()
     args.openclaw_root = args.openclaw_root.resolve()
     args.node = args.node.absolute()
-    with tempfile.TemporaryDirectory(prefix="siq-openclaw-approval-") as temporary:
+    if args.binary:
+        args.binary = args.binary.resolve(strict=True)
+    if args.private_workdir:
+        args.private_workdir = args.private_workdir.absolute()
+        args.private_workdir.mkdir(mode=0o700, parents=True, exist_ok=False)
+        temporary_context = contextlib.nullcontext(str(args.private_workdir))
+    else:
+        temporary_context = tempfile.TemporaryDirectory(prefix="siq-openclaw-approval-")
+    with temporary_context as temporary:
         harness = ApprovalHarness(Path(temporary), args)
         try:
             report = harness.run()
@@ -351,11 +356,7 @@ def main():
             harness.stop()
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
-    print(
-        json.dumps(
-            {"passed": report["passed"], "receipt_count": report["receipt_count"]}
-        )
-    )
+    print(json.dumps({"passed": report["passed"], "receipt_count": report["receipt_count"]}))
     return 0 if report["passed"] else 1
 
 

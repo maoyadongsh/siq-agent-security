@@ -26,6 +26,7 @@ class _Fake(BaseHTTPRequestHandler):
     seen: ClassVar[list] = []
     attach: ClassVar[dict | None] = None
     enroll: ClassVar[dict | None] = None
+    responses: ClassVar[dict[str, dict]] = {}
     raw_capture: ClassVar[dict] = {
         "schema_version": "local-raw-task-content-capture-result/v1",
         "record_id": "raw-" + "a" * 32,
@@ -42,11 +43,14 @@ class _Fake(BaseHTTPRequestHandler):
         n = int(self.headers.get("Content-Length", 0))
         body = json.loads(self.rfile.read(n) or b"{}")
         _Fake.seen.append((self.path, self.headers.get("Authorization"), body))
-        status = 201 if self.path == "/v1/raw-task-content/native-captures" and _Fake.status == 200 else _Fake.status
+        created = self.path in ("/v1/raw-task-content/native-captures", "/v1/hold-executions/reserve")
+        status = 201 if created and _Fake.status == 200 else _Fake.status
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
-        value = _Fake.attach if self.path == "/v1/runtime-checks/attach" else _Fake.decision
+        value = _Fake.responses.get(self.path)
+        if value is None:
+            value = _Fake.attach if self.path == "/v1/runtime-checks/attach" else _Fake.decision
         if self.path == "/v1/runtime-sessions":
             value = _Fake.enroll
         elif self.path == "/v1/raw-task-content/native-captures":
@@ -66,8 +70,10 @@ def server(tmp_path):
     token.write_text("t" * 64)
     _Fake.seen = []
     _Fake.status = 200
+    _Fake.decision = {"action": "allow", "reason": "ok", "receipt_id": "rcp-1"}
     _Fake.attach = None
     _Fake.enroll = None
+    _Fake.responses = {}
     yield srv, token
     srv.shutdown()
 
@@ -92,11 +98,49 @@ def test_allow_returns_none_and_sends_bearer(server):
     assert body["tool"] == "read_file" and body["platform"] == "hermes" and body["session_id"] == "s1"
 
 
+def test_native_task_is_separate_from_trusted_intent_task(server, monkeypatch):
+    srv, token = server
+    check_id = "rc-" + "a" * 32
+    instance_id = "hi-" + "b" * 32
+    credential = "c" * 64
+    monkeypatch.setenv("SIQ_RUNTIME_CHECK_ID", check_id)
+    monkeypatch.setenv("SIQ_RUNTIME_CHECK_INSTANCE", instance_id)
+    monkeypatch.setenv("SIQ_RUNTIME_CHECK_TOKEN", credential)
+    monkeypatch.setenv("AGENTSHIELD_AGENT_ID", "rca-" + "a" * 32)
+    _Fake.attach = {
+        "schema_version": "local-runtime-check-attached/v1",
+        "check_id": check_id,
+        "session_id": "native-session",
+        "attached": True,
+    }
+    _Fake.decision = {"action": "allow", "reason": "ok", "receipt_id": "rcp-1"}
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    assert mod._pre_tool_call(
+        "read_file", {"path": "/tmp/a"}, task_id="hermes-random-turn",
+        session_id="native-session", tool_call_id="tc-runtime-check",
+    ) is None
+    decide = next(body for path, _, body in _Fake.seen if path == "/v1/decide")
+    assert decide["task_id"] == ""
+    assert decide["runtime_task_id"] == "hermes-random-turn"
+
+    for name in ("SIQ_RUNTIME_CHECK_ID", "SIQ_RUNTIME_CHECK_INSTANCE", "SIQ_RUNTIME_CHECK_TOKEN"):
+        monkeypatch.delenv(name)
+    _Fake.seen = []
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    assert mod._pre_tool_call(
+        "read_file", {"path": "/tmp/a"}, task_id="managed-task",
+        session_id="managed-session", tool_call_id="tc-managed",
+    ) is None
+    decide = next(body for path, _, body in _Fake.seen if path == "/v1/decide")
+    assert decide["task_id"] == ""
+    assert decide["runtime_task_id"] == "managed-task"
+
+
 @pytest.mark.parametrize(
     "decision,expect",
     [
         ({"action": "deny", "reason": "not granted", "receipt_id": "r"}, "denied"),
-        ({"action": "hold", "reason": "approval", "receipt_id": "r"}, "Approve in the console"),
+        ({"action": "hold", "reason": "approval", "receipt_id": "r", "action_id": "a"}, "Approve in the console"),
         ({"action": "redact", "reason": "x", "receipt_id": "r"}, "secret literal"),
     ],
 )
@@ -199,6 +243,61 @@ def test_hooks_forward_decision_identity(server):
     path, _, body = _Fake.seen[-1]
     assert path == "/v1/observe"
     assert body["action_id"] == "act-1" and body["decision_receipt_id"] == "rcp-1"
+
+
+def test_approved_hold_retry_is_reserved_once_before_execution(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {"action": "hold", "reason": "approval", "action_id": "act-hold",
+                      "receipt_id": "rcp-hold", "task_id": "trusted-task",
+                      "runtime_task_id": "task-1"}
+    args = {"command": "printf once"}
+    blocked = mod._pre_tool_call("exec", args, task_id="task-1", session_id="s1", tool_call_id="original")
+    assert blocked["action"] == "block" and "Approve" in blocked["message"]
+
+    _Fake.responses["/v1/hold-status"] = {"schema_version": "hold-status/v1", "status": "pending"}
+    pending = mod._pre_tool_call("exec", args, task_id="task-1", session_id="s1", tool_call_id="retry-1")
+    assert pending["action"] == "block" and "pending" in pending["message"]
+
+    _Fake.responses["/v1/hold-status"] = {"schema_version": "hold-status/v1", "status": "approved"}
+    _Fake.responses["/v1/hold-executions/reserve"] = {
+        "schema_version": "hold-execution-status/v1", "status": "reserved",
+        "action_id": "act-hold", "decision_receipt_id": "rcp-hold",
+        "reservation_receipt_id": "rcp-hold-exec", "expires_at": "2026-09-14T18:00:00Z",
+        "reason_code": "hold_execution_reserved",
+    }
+    assert mod._pre_tool_call("exec", args, task_id="task-1", session_id="s1", tool_call_id="retry-2") is None
+    reserve = [body for path, _, body in _Fake.seen if path == "/v1/hold-executions/reserve"]
+    assert len(reserve) == 1
+    assert reserve[0]["original_tool_call_id"] == "original"
+    assert reserve[0]["retry_tool_call_id"] == "retry-2"
+    assert reserve[0]["task_id"] == "trusted-task" and reserve[0]["runtime_task_id"] == "task-1"
+    assert reserve[0]["params"] == args
+
+    mod._post_tool_call("exec", args, result="done", task_id="task-1", session_id="s1",
+                        tool_call_id="retry-2")
+    observe = [body for path, _, body in _Fake.seen if path == "/v1/observe"][-1]
+    assert observe["action_id"] == "act-hold"
+    assert observe["decision_receipt_id"] == "rcp-hold-exec"
+
+
+def test_lost_reservation_response_never_allows_blind_retry(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {"action": "hold", "reason": "approval", "action_id": "act-lost",
+                      "receipt_id": "rcp-lost"}
+    args = {"command": "printf maybe"}
+    assert mod._pre_tool_call("exec", args, task_id="task-1", session_id="s1",
+                              tool_call_id="original")["action"] == "block"
+    _Fake.responses["/v1/hold-status"] = {"status": "approved"}
+    _Fake.responses["/v1/hold-executions/reserve"] = {"status": "malformed"}
+    failed = mod._pre_tool_call("exec", args, task_id="task-1", session_id="s1", tool_call_id="retry")
+    assert failed["action"] == "block" and "fail-closed" in failed["message"]
+    # The local hint was consumed before the request. A later invocation starts
+    # a new hold; it cannot reuse the potentially durable reservation.
+    again = mod._pre_tool_call("exec", args, task_id="task-1", session_id="s1", tool_call_id="retry-2")
+    assert again["action"] == "block"
+    assert len([path for path, _, _ in _Fake.seen if path == "/v1/hold-executions/reserve"]) == 1
 
 
 @pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])

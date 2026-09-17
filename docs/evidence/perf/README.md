@@ -4,7 +4,8 @@
 
 ## 规格
 
-- 报告 `format`: `agentshield.perf_baseline.v1`
+- 新报告 `format`: `agentshield.perf_baseline.v2`；历史 v1 报告保留原样
+- v2 的 `rss_bytes_after` 为 OS VmRSS 字节数；不可得时为 JSON `null` 且 `rss_source=unavailable`。Go runtime Sys 单独报告，不冒充 RSS。
 - 字段 `thresholds`: 恒为 `null`（本骨架不做 pass/fail）
 - `notes`: 固定诚实声明（Observations only…）
 

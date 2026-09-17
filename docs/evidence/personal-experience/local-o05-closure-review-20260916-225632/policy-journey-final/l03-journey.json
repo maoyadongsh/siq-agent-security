@@ -1,0 +1,39 @@
+{
+  "schema_version": "o05-l03-candidate-journey/v1",
+  "meta": {
+    "candidate_binary": "<repo>/dist/siq-agent-security-0.3.0-rc.5/siq-agent-security-linux-arm64",
+    "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+    "gateway_endpoint": "https://127.0.0.1:17671",
+    "sandbox_target": "siq-review-r5-225905",
+    "fact_endpoint": "172.23.0.1:42865",
+    "isolated_root": "<isolated-root>",
+    "isolated_state": "<isolated-root>/state",
+    "isolated_home": "<isolated-root>/home",
+    "started_at": "2026-09-16T15:01:18.898216+00:00",
+    "ui_acceptance": "not_run",
+    "notes": [
+      "o05_live_test.go 是辅助控制面恢复验证，不代表本旅程或候选 B3 全链通过"
+    ]
+  },
+  "scope": "policy_apply_http_journey",
+  "task_execution_acceptance": false,
+  "ui_acceptance": false,
+  "summary": {
+    "steps": 1,
+    "passed": 0,
+    "failed": 1,
+    "finished_at": "2026-09-16T15:01:18.903617+00:00"
+  },
+  "steps": [
+    {
+      "id": "ABORT",
+      "title": "journey aborted",
+      "kind": "derived",
+      "status": "fail",
+      "detail": "candidate version probe failed",
+      "recorded_at": "2026-09-16T15:01:18.903597+00:00",
+      "binary_sha256": "8ae6b24b4da7e01f5e74a156a8c88246aa3cd6e2b2c3b48e9f116931b055ac93",
+      "sandbox_target": "siq-review-r5-225905"
+    }
+  ]
+}

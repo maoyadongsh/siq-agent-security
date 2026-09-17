@@ -1,0 +1,54 @@
+{
+  "protocol_sha256": "d066dfe1f3be7d5eaa4d5fe3fa93f7d8e524caf66b95efe7b48c935158ba6ab7",
+  "binary_hashes": {
+    "before": "fb5289a8c4c470f83c1db6ebca80ca32a8006ceaefb8b8159cb54dc4772c4a81",
+    "after": "304af762e8fc5b8aba2c13c5f6b2ec5756fbacc67e02321075da7a54c37a5f42"
+  },
+  "summary": {
+    "before": {
+      "allow_ms": {
+        "n": 600,
+        "max_ms": 12.866095,
+        "p50_ms": 7.682998,
+        "p95_ms": 8.983741,
+        "p99_ms": 11.791034
+      },
+      "revoked_deny_ms": {
+        "n": 600,
+        "max_ms": 12.670303,
+        "p50_ms": 7.61351,
+        "p95_ms": 8.929005,
+        "p99_ms": 10.389507
+      }
+    },
+    "after": {
+      "allow_ms": {
+        "n": 600,
+        "max_ms": 11.968059,
+        "p50_ms": 7.648918,
+        "p95_ms": 8.9979,
+        "p99_ms": 10.296291
+      },
+      "revoked_deny_ms": {
+        "n": 600,
+        "max_ms": 12.622814,
+        "p50_ms": 7.68079,
+        "p95_ms": 8.700955,
+        "p99_ms": 10.18405
+      }
+    }
+  },
+  "comparison": {
+    "allow_ms": {
+      "p95_relative_increase": 0.001576069479295894,
+      "within_10_percent": true
+    },
+    "revoked_deny_ms": {
+      "p95_relative_increase": -0.025540359760130027,
+      "within_10_percent": true
+    }
+  },
+  "source_unchanged": true,
+  "functional_journey": "auth negatives; pending deny; admit/challenge/approve/deploy; allow; revoke; deny; receipt chain verified",
+  "finished_at": "2026-09-15T07:07:03.755823+00:00"
+}

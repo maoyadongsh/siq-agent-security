@@ -1,0 +1,81 @@
+{
+  "grant": {
+    "grant_id": "grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5",
+    "admission_id": "adm-si-80e942bd7a3b337b6a03982f4cc47e11078e1e2163fec7256a785d87682ad47a",
+    "skill": {
+      "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+      "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8"
+    },
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-0fe6e47d6a3222f038b3535dbece7df8"
+    },
+    "platform": "hermes",
+    "facts": [
+      {
+        "fact_id": "pf-1-811cbc58",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "evi-si-25a0cfa207b57c13ea07b59192d4ca31b27bd0f7386c91a582863e0efd80d0f6"
+        ]
+      },
+      {
+        "fact_id": "pf-2-12bb99cf",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "evi-si-25a0cfa207b57c13ea07b59192d4ca31b27bd0f7386c91a582863e0efd80d0f6"
+        ]
+      }
+    ],
+    "default_effect": "deny",
+    "hermes_toolset_allowlist": [
+      "read_file",
+      "write_file"
+    ],
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5",
+      "version": 1,
+      "static_domains_unavailable": []
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "pending_approval",
+    "approved_by": null,
+    "effective_readback": null,
+    "created_at": "2026-09-14T11:26:16Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "signature": "8ea4772637628cddc3e2f7c32bbb146bf3a96c9866e85077af01d7639c7cfe94577f728de6563b37f8811200b93e8e6230a8798ff4fffc400cd321a9a5cb1507"
+  },
+  "import_id": "si-57e440732738a14778ec438b34ec7ac3",
+  "installed": false,
+  "reused": false,
+  "schema_version": "local-skill-import-permission-created/v1",
+  "source": {
+    "schema_version": "local-skill-import-permission-source/v1",
+    "import_id": "si-57e440732738a14778ec438b34ec7ac3",
+    "artifact_digest": "96586a0a7904cb7f1c0d3acbd857cda042cf7d1a6ab1d48e5fb1acdca1c5c7df",
+    "analysis_sha256": "7b0142d32e45d6503fb83cb04b13acff52a8ed1d470cfea2a0f247943f4ad2cd"
+  },
+  "state_revision": 0
+}

@@ -80,6 +80,57 @@ func TestOpenClawPreservesForeignInstallPolicy(t *testing.T) {
 	}
 }
 
+func TestOpenClawExplicitInstallPolicyRoundTrip(t *testing.T) {
+	opts := testOpts(t, OpenClaw)
+	opts.InstallPolicy = true
+	oc := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+	if err := os.MkdirAll(filepath.Dir(oc), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	original := `{"security":{"other":true},"gateway":{"mode":"local"}}`
+	if err := os.WriteFile(oc, []byte(original), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	plan, err := Prepare(opts, "install")
+	if err != nil || plan.View().InstallPolicy == nil || !*plan.View().InstallPolicy {
+		t.Fatalf("explicit policy missing from preview: %v", err)
+	}
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	doc, err := readJSONObject(oc)
+	if err != nil || !sameOpenClawCurrentPolicy(doc["security"].(map[string]any)["installPolicy"], opts) {
+		t.Fatal("installed policy differs from reviewed contract")
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(oc)
+	if err != nil || string(raw) != original {
+		t.Fatalf("explicit policy uninstall did not restore original config: %v", err)
+	}
+}
+
+func TestOpenClawExplicitInstallPolicyRefusesForeignPolicyBeforeWrite(t *testing.T) {
+	opts := testOpts(t, OpenClaw)
+	opts.InstallPolicy = true
+	oc := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+	if err := os.MkdirAll(filepath.Dir(oc), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	original := `{"security":{"installPolicy":{"enabled":true,"exec":{"command":"/foreign/policy"}}}}`
+	if err := os.WriteFile(oc, []byte(original), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Install(opts); err == nil {
+		t.Fatal("foreign install policy was overwritten")
+	}
+	raw, err := os.ReadFile(oc)
+	if err != nil || string(raw) != original {
+		t.Fatalf("foreign policy changed after rejected install: %v", err)
+	}
+}
+
 func TestOpenClawLegacyPolicyRequiresFullMatch(t *testing.T) {
 	policy := openClawInstallPolicy(Options{Binary: "/owned/siq"})
 	var decoded map[string]any
@@ -210,5 +261,73 @@ func TestOpenClawInstalledPluginLoadsNatively(t *testing.T) {
 	}
 	if !exists(result) {
 		t.Fatal("native loader did not complete")
+	}
+}
+
+func TestOpenClawUninstallPreservesExplicitEmptySettings(t *testing.T) {
+	for _, original := range []string{
+		`{"plugins":{}}`, `{"plugins":{"allow":[]}}`,
+		`{"plugins":{"load":{}}}`, `{"plugins":{"load":{"paths":[]}}}`,
+		`{"plugins":{"entries":{}}}`,
+		`{"plugins":{"entries":{"siq-agent-security":{}}}}`,
+		`{"plugins":{"allow":[],"load":{"paths":[]},"entries":{}}}`,
+	} {
+		t.Run(original, func(t *testing.T) {
+			opts := testOpts(t, OpenClaw)
+			path := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+			if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(path, []byte(original), 0600); err != nil {
+				t.Fatal(err)
+			}
+			for i := 0; i < 2; i++ {
+				if _, err := Install(opts); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if _, err := Uninstall(opts); err != nil {
+				t.Fatal(err)
+			}
+			raw, err := os.ReadFile(path)
+			if err != nil || string(raw) != original {
+				t.Fatalf("original empty settings changed: got %s, err %v", raw, err)
+			}
+		})
+	}
+}
+
+func TestOpenClawUninstallKeepsUserSettingsAddedAfterInstall(t *testing.T) {
+	opts := testOpts(t, OpenClaw)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+	doc, err := readJSONObject(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	plugins := doc["plugins"].(map[string]any)
+	allow, _ := plugins["allow"].([]any)
+	plugins["allow"] = append(allow, "user-plugin")
+	plugins["load"].(map[string]any)["custom"] = map[string]any{}
+	plugins["entries"].(map[string]any)["user-plugin"] = map[string]any{}
+	doc["gateway"] = map[string]any{"mode": "local"}
+	if err := os.WriteFile(path, encodePlanJSON(doc), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	got, err := readJSONObject(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := map[string]any{"plugins": map[string]any{
+		"allow": []any{"user-plugin"}, "load": map[string]any{"custom": map[string]any{}},
+		"entries": map[string]any{"user-plugin": map[string]any{}},
+	}, "gateway": map[string]any{"mode": "local"}}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("user additions changed: got %#v", got)
 	}
 }

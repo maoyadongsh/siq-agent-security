@@ -44,7 +44,7 @@ export default function PermissionsPage() {
     setSubject(subjectFromUrl);
     load(subjectFromUrl);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subjectFromUrl]);
+  }, [subjectFromUrl, guard]);
 
   const l3 = hasOpenShellL3(status?.platforms);
   const runDrift = () => {
