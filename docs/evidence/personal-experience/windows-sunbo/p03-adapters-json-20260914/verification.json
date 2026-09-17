@@ -1,0 +1,129 @@
+{
+  "artifact_kind": "public byte index; not a runtime or acceptance schema",
+  "assembled_at_utc": "2026-09-14T06:29:18.664076+00:00",
+  "base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "tested_code_candidate": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+  "original_public_group_copied_byte_identical": true,
+  "raw_private_files_included": false,
+  "new_native_host_acceptance_passes": 0,
+  "nested_manifest_entries_matched": 20,
+  "relative_links_checked": 6,
+  "self_excluded": true,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 626,
+      "sha256": "9864ceadc46dfe9c3a2c66ce40b111ab393411015ea790ab04afa7df75eeaa0f"
+    },
+    {
+      "path": "report.md",
+      "bytes": 1544,
+      "sha256": "1c4787ca939fb5131c62405c7be59736e05b5d8c6055656803f94eb4ee188bfb"
+    },
+    {
+      "path": "results/baseline-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/baseline-summary.json",
+      "bytes": 4580,
+      "sha256": "1fc9c1cd33f6af3e441826c7df7f462f6d1eb258e451e43b6de98365436abad4"
+    },
+    {
+      "path": "results/baseline.jsonl",
+      "bytes": 5637,
+      "sha256": "bf87351c0a4aeaa31098bb7a5db6b753409d8e7d6ee4ad0b5c262b495e7b4a94"
+    },
+    {
+      "path": "results/change.patch",
+      "bytes": 2909,
+      "sha256": "1fc25ec37924ac18032048770cc5001e9ee1311ce30f2a632e5d6cdc0b01b0da"
+    },
+    {
+      "path": "results/focused-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/focused-summary.json",
+      "bytes": 3986,
+      "sha256": "f8f53bbf72fa1f4acf3b3da402af553f745c877a3d599a4b8dbb5aba60fa8413"
+    },
+    {
+      "path": "results/focused.jsonl",
+      "bytes": 2568,
+      "sha256": "c58ba84d31370bf1f185dd30744a3d7933b2ffdcf68785edcf886c80901c2b52"
+    },
+    {
+      "path": "results/gofmt-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/gofmt-summary.json",
+      "bytes": 3101,
+      "sha256": "518a160a098dd18770badf316f8d1d88e8f9a7d1d74d0e5fb3fd38df5150900b"
+    },
+    {
+      "path": "results/gofmt.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/manifest.json",
+      "bytes": 3328,
+      "sha256": "5fd994cb3c21911e45a9c0d8bff65898a9386517ea91650951660be915ef817a"
+    },
+    {
+      "path": "results/package-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/package-summary.json",
+      "bytes": 4579,
+      "sha256": "7bba8e3b981df8b034d835b77272830cc062cdefcc890d9cf9083478cc5abccd"
+    },
+    {
+      "path": "results/package.jsonl",
+      "bytes": 5280,
+      "sha256": "dd1bf9336de01237292b0ba87a31a00e64ff313fe0f8192adabc16b74b8d859d"
+    },
+    {
+      "path": "results/process-observation.json",
+      "bytes": 629,
+      "sha256": "cbae4eaa0311f959b04ecc6c358f3c6d8d7343c985051515b8614a680dfacc58"
+    },
+    {
+      "path": "results/report.md",
+      "bytes": 5193,
+      "sha256": "96b2c7cee7d25fdff5de6daf388c3ffc179974d24351a00b19744dd142b1cc59"
+    },
+    {
+      "path": "results/run-adapters-check.py",
+      "bytes": 10960,
+      "sha256": "ab366c3eb362d1e3f3d39f2743562ac9e1d71b73ab0422486934aa9a780f88d1"
+    },
+    {
+      "path": "results/verification.json",
+      "bytes": 6657,
+      "sha256": "0648538e8a8a1e2fac1ab63bbb03bcc47acc15380f2d24d2630b76734fda27c5"
+    },
+    {
+      "path": "results/vet-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/vet-summary.json",
+      "bytes": 3117,
+      "sha256": "c4dd0bb561cb05a6c84de2b0d5d74d3226f5fd94524e57949e8b5b4a9edc962e"
+    },
+    {
+      "path": "results/vet.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

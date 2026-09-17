@@ -1,0 +1,71 @@
+=== RUN   TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean
+--- PASS: TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean (0.10s)
+=== RUN   TestPolicyExecFailsClosed
+=== RUN   TestPolicyExecFailsClosed/old_protocol
+=== RUN   TestPolicyExecFailsClosed/future_protocol
+=== RUN   TestPolicyExecFailsClosed/missing_dir
+=== RUN   TestPolicyExecFailsClosed/file_not_dir
+=== RUN   TestPolicyExecFailsClosed/wrong_kind
+=== RUN   TestPolicyExecFailsClosed/trailing_object
+=== RUN   TestPolicyExecFailsClosed/malformed
+=== RUN   TestPolicyExecFailsClosed/no_path
+--- PASS: TestPolicyExecFailsClosed (0.03s)
+    --- PASS: TestPolicyExecFailsClosed/old_protocol (0.00s)
+    --- PASS: TestPolicyExecFailsClosed/future_protocol (0.00s)
+    --- PASS: TestPolicyExecFailsClosed/missing_dir (0.00s)
+    --- PASS: TestPolicyExecFailsClosed/file_not_dir (0.00s)
+    --- PASS: TestPolicyExecFailsClosed/wrong_kind (0.00s)
+    --- PASS: TestPolicyExecFailsClosed/trailing_object (0.00s)
+    --- PASS: TestPolicyExecFailsClosed/malformed (0.00s)
+    --- PASS: TestPolicyExecFailsClosed/no_path (0.00s)
+=== RUN   TestWorkBuddyHookStampsPlatformAndFailClosedDeny
+--- PASS: TestWorkBuddyHookStampsPlatformAndFailClosedDeny (0.02s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/adapters	0.558s
+=== RUN   TestWorkBuddyDiagnosticRejectsTextOutsideHooks
+--- PASS: TestWorkBuddyDiagnosticRejectsTextOutsideHooks (0.14s)
+=== RUN   TestWorkBuddyPreservesEnabledPluginsAndDoesNotTouchCodeBuddy
+--- PASS: TestWorkBuddyPreservesEnabledPluginsAndDoesNotTouchCodeBuddy (0.85s)
+=== RUN   TestWorkBuddyIsIdempotentAndFailClosedUninstallWithoutRecord
+--- PASS: TestWorkBuddyIsIdempotentAndFailClosedUninstallWithoutRecord (0.97s)
+=== RUN   TestWorkBuddyCustomConfigLifecycle
+--- PASS: TestWorkBuddyCustomConfigLifecycle (1.55s)
+=== RUN   TestWorkBuddyReinstallAfterSurgicalUninstall
+--- PASS: TestWorkBuddyReinstallAfterSurgicalUninstall (1.75s)
+=== RUN   TestWorkBuddyIgnoresCodeBuddyConfigDir
+--- PASS: TestWorkBuddyIgnoresCodeBuddyConfigDir (0.59s)
+=== RUN   TestWorkBuddyChangedConfigDoesNotUninstallOtherInstance
+--- PASS: TestWorkBuddyChangedConfigDoesNotUninstallOtherInstance (0.88s)
+=== RUN   TestWorkBuddyReinstallRefusesDifferentConfigRoot
+--- PASS: TestWorkBuddyReinstallRefusesDifferentConfigRoot (1.03s)
+=== RUN   TestWorkBuddyLegacyMixedRootsUninstallAllOwnedConfigs
+--- PASS: TestWorkBuddyLegacyMixedRootsUninstallAllOwnedConfigs (0.74s)
+=== RUN   TestWorkBuddyUninstallIgnoresMetadataOnlyConfig
+--- PASS: TestWorkBuddyUninstallIgnoresMetadataOnlyConfig (0.65s)
+=== RUN   TestDesktopInstallUninstallPreservesUserHookQuotingProduct
+=== RUN   TestDesktopInstallUninstallPreservesUserHookQuotingProduct/codebuddy
+=== RUN   TestDesktopInstallUninstallPreservesUserHookQuotingProduct/workbuddy
+--- PASS: TestDesktopInstallUninstallPreservesUserHookQuotingProduct (2.89s)
+    --- PASS: TestDesktopInstallUninstallPreservesUserHookQuotingProduct/codebuddy (1.52s)
+    --- PASS: TestDesktopInstallUninstallPreservesUserHookQuotingProduct/workbuddy (1.37s)
+=== RUN   TestRecordedToolHookAcceptsOnlyGeneratedCommands
+--- PASS: TestRecordedToolHookAcceptsOnlyGeneratedCommands (0.31s)
+=== RUN   TestWorkBuddyHookQuotesBinaryAndStatePaths
+    workbuddy_config_test.go:431: POSIX shell quoting test
+--- SKIP: TestWorkBuddyHookQuotesBinaryAndStatePaths (0.00s)
+=== RUN   TestWorkBuddyInvalidConfigOverrideNeverFallsBack
+=== RUN   TestWorkBuddyInvalidConfigOverrideNeverFallsBack/relative
+=== RUN   TestWorkBuddyInvalidConfigOverrideNeverFallsBack/symlink
+    workbuddy_config_test.go:506: symlink unavailable: symlink <REPO>\.tmp\win-task-native\bootstrap-fixed-20260917\go-temp\TestWorkBuddyInvalidConfigOverrideNeverFallsBacksymlink3381407888\004 <REPO>\.tmp\win-task-native\bootstrap-fixed-20260917\go-temp\TestWorkBuddyInvalidConfigOverrideNeverFallsBacksymlink3381407888\003\invalid: A required privilege is not held by the client.
+=== RUN   TestWorkBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink
+    workbuddy_config_test.go:506: symlink unavailable: symlink <REPO>\.tmp\win-task-native\bootstrap-fixed-20260917\go-temp\TestWorkBuddyInvalidConfigOverrideNeverFallsBackancestor-symlin2659641400\004 <REPO>\.tmp\win-task-native\bootstrap-fixed-20260917\go-temp\TestWorkBuddyInvalidConfigOverrideNeverFallsBackancestor-symlin2659641400\003\invalid: A required privilege is not held by the client.
+=== RUN   TestWorkBuddyInvalidConfigOverrideNeverFallsBack/file
+--- PASS: TestWorkBuddyInvalidConfigOverrideNeverFallsBack (0.69s)
+    --- PASS: TestWorkBuddyInvalidConfigOverrideNeverFallsBack/relative (0.18s)
+    --- SKIP: TestWorkBuddyInvalidConfigOverrideNeverFallsBack/symlink (0.17s)
+    --- SKIP: TestWorkBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink (0.18s)
+    --- PASS: TestWorkBuddyInvalidConfigOverrideNeverFallsBack/file (0.17s)
+=== RUN   TestWorkBuddyUninstallLeavesCodeBuddyHook
+--- PASS: TestWorkBuddyUninstallLeavesCodeBuddyHook (1.58s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/adapterinstall	15.749s
