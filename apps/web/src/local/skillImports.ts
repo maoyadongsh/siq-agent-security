@@ -65,7 +65,7 @@ export function skillImportErrorText(error: unknown): string {
   const messages: Record<string, string> = {
     skill_import_permission_invalid: '无法准备权限，请检查目标实例和操作者信息。',
     skill_import_permission_source_invalid: '此候选无法用于权限准备。请确认检查结论、签名与内容均有效，隔离候选不能授权。',
-    skill_import_permission_target_unavailable: '目标 Hermes 实例已不可用，请重新检查实例列表。',
+    skill_import_permission_target_unavailable: '目标智能体实例已不可用或存在歧义，请重新检查实例列表。',
     skill_import_invalid: '无法导入。请检查来源、归档内的 Skill 目录、预期摘要，以及 ZIP 内的路径和文件类型。所选目录须包含 SKILL.md。',
     skill_import_url_blocked: '下载链接不符合要求。请使用公网 HTTPS ZIP 链接；暂不支持内网地址、非标准端口、账号密码或重定向到这些地址。',
     skill_import_git_transport_unavailable: '仓库导入尚未开放，请先使用 HTTPS ZIP 或本地目录导入。',

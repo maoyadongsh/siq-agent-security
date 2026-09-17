@@ -69,6 +69,9 @@ func CheckStateCompatibility(dir string) (StateCompatibility, error) {
 	if err := checkStateParents(dir); err != nil {
 		return compatibilityFailure(CompatStatusCorrupt, ErrCorruptState)
 	}
+	if info, err := os.Lstat(dir); err == nil && (info.Mode()&os.ModeSymlink != 0 || !info.IsDir()) {
+		return compatibilityFailure(CompatStatusCorrupt, ErrCorruptState)
+	}
 	// Validate every existing core directory before Open creates any missing one.
 	for _, name := range coreStateDirs {
 		info, err := os.Lstat(filepath.Join(dir, name))
@@ -172,30 +175,14 @@ func decodeStateMarker(raw []byte) (StateFormatMarker, error) {
 	return m, nil
 }
 
-// Root and existing ancestors must be real directories. Missing directories are
-// allowed for initialization. No files or locks are created by this check.
+// Root and existing ancestors must be directories. Missing directories are
+// allowed for initialization. Volume-root directory aliases are accepted by
+// stateformat.CheckParents; no files or locks are created by this check.
 func checkStateParents(dir string) error {
-	if dir == "" {
+	if err := stateformat.CheckParents(dir); err != nil {
 		return ErrCorruptState
 	}
-	path, err := filepath.Abs(dir)
-	if err != nil {
-		return err
-	}
-	for {
-		info, err := os.Lstat(path)
-		if err == nil && !info.IsDir() {
-			return ErrCorruptState
-		}
-		if err != nil && !errors.Is(err, os.ErrNotExist) {
-			return err
-		}
-		parent := filepath.Dir(path)
-		if parent == path {
-			return nil
-		}
-		path = parent
-	}
+	return nil
 }
 
 func checkUnmarkedState(dir string) (StateCompatibility, error) {

@@ -10,6 +10,7 @@ import RuntimeCheckDialog from '../components/RuntimeCheckDialog';
 import AdapterChangeDialog, { type AdapterChangeRequest } from '../components/AdapterChangeDialog';
 import AdapterDiagnosisPanel from '../components/AdapterDiagnosisPanel';
 import RawContentPrivacyPanel from '../components/RawContentPrivacyPanel';
+import { openshellDiagnosisLabel, type OpenShellDiagnosis } from '../openshellDiagnosis';
 
 const MODES = ['block', 'warn', 'audit_only'] as const;
 
@@ -29,6 +30,15 @@ export default function SettingsPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [osTarget, setOsTarget] = useState('siq-as-live');
   const [osAllow, setOsAllow] = useState('');
+  const [osRevision, setOsRevision] = useState('');
+  const [osBinaries, setOsBinaries] = useState('/usr/bin/curl');
+  const [osDiagnosis, setOsDiagnosis] = useState<OpenShellDiagnosis>();
+  const [diagnosisClock, setDiagnosisClock] = useState(Date.now());
+  useEffect(() => {
+    if (!osDiagnosis?.expires_at) return;
+    const timer = window.setInterval(() => setDiagnosisClock(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [osDiagnosis]);
   const [audit, setAudit] = useState<AuditEvent[]>([]);
 
   useEffect(() => {
@@ -71,15 +81,17 @@ export default function SettingsPage() {
   };
 
   const probeOpenshell = () => {
+    setOsDiagnosis(undefined);
     setBusy('openshell:probe');
     setMsg(null);
     localApi
       .openshellProbe()
       .then((res) => {
+        setOsDiagnosis(res.doctor);
         const next = res.doctor?.human_next;
         report(
           res.ok
-            ? `OpenShell L3 · ${res.schema_version ?? ''} — ${res.note ?? 'probe 成功'}`
+            ? `OpenShell：${openshellDiagnosisLabel(res.doctor)}。${next ?? ''}`
             : `OpenShell 不可用（${res.tier}）：${next || res.note || 'probe 失败'}`,
           !res.ok,
         );
@@ -94,8 +106,12 @@ export default function SettingsPage() {
       .split(/[\s,]+/)
       .map((s) => s.trim())
       .filter(Boolean);
-    if (!osTarget.trim() || endpoints.length === 0) {
-      report('需要 sandbox 名和至少一个 host:port。', true);
+    const binaries = osBinaries
+      .split(/[\s,]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (!osTarget.trim() || !osRevision.trim() || endpoints.length === 0 || binaries.length === 0) {
+      report('需要 sandbox 名、当前 revision、至少一个 host:port 和绝对可执行文件路径。', true);
       return;
     }
     setBusy('openshell:apply');
@@ -103,7 +119,8 @@ export default function SettingsPage() {
     localApi
       .openshellApply({
         target: osTarget.trim(),
-        network: endpoints.map((endpoint) => ({ endpoint, effect: 'allow' })),
+        expected_revision: osRevision.trim(),
+        network: endpoints.map((endpoint) => ({ endpoint, effect: 'allow', binary_paths: binaries })),
         expect_allow: endpoints,
         expect_deny: ['192.0.2.1:1'],
       })
@@ -140,7 +157,6 @@ export default function SettingsPage() {
       render: (p) => {
         if (p.name === 'trae') return <span className="muted-text">审计模式 · 无法阻断</span>;
         if (p.name === 'openshell') return <span className="muted-text">CLI 探针，无安装钩子</span>;
-        if (p.name === 'workbuddy') return <span className="muted-text">桌面接入待实测</span>;
         if (p.name === 'hermes') return <div className="toolbar"><button type="button" className="btn btn-sm" disabled={!!busy} onClick={() => mutate(p.name, 'install')}>管理实例</button><button type="button" className="btn btn-sm" disabled={!!busy} onClick={() => setRuntimeCheckOpen(true)}>运行自检</button></div>;
         const installed = p.adapter === 'installed';
         return (
@@ -248,13 +264,14 @@ export default function SettingsPage() {
         />
       </div>
       <div className="card">
-        <h2>OpenShell（L3）</h2>
+        <h2>OpenShell 当前能力</h2>
         <p className="page-desc">
-          接入已在运行、已验明的 OpenShell 网关（显式 SIQ_AS_* 优先，其次 ENV_SH，再 PATH）。probe
-          必须验明网关是 OpenShell；连到 OpenClaw / Hermes 会失败。siq-agent-security 不会执行 gateway
-          start。apply 只提交网络段；filesystem / process 保持当前读回，禁止
-          create_generation。平台工具接入是否生效，按各自诊断与运行验证结果显示。
+          检查已配置网关的协议响应；检查成功不代表执行限制已验证。
+          网络策略更新后会读回核对，平台工具接入效果以各自运行验证结果为准。
         </p>
+        {osDiagnosis && (
+          <p role="status">{openshellDiagnosisLabel(osDiagnosis, diagnosisClock)}</p>
+        )}
         <div className="toolbar toolbar-end">
           <button
             type="button"
@@ -276,6 +293,24 @@ export default function SettingsPage() {
             value={osAllow}
             onChange={(e) => setOsAllow(e.target.value)}
             placeholder="api.example.com:443"
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="os-revision">当前 policy revision（必填）</label>
+          <input
+            id="os-revision"
+            value={osRevision}
+            onChange={(e) => setOsRevision(e.target.value)}
+            placeholder="7"
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="os-binaries">允许访问端点的绝对可执行文件路径（逗号或空格分隔）</label>
+          <input
+            id="os-binaries"
+            value={osBinaries}
+            onChange={(e) => setOsBinaries(e.target.value)}
+            placeholder="/usr/bin/curl"
           />
         </div>
         <button

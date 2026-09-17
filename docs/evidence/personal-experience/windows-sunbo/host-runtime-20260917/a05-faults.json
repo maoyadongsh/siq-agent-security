@@ -1,0 +1,321 @@
+{
+  "kind": "owned_host_runtime_observation/v1",
+  "case": "timeout_401_malformed_real_host_denial",
+  "recorded_utc": "2026-09-17T14:28:55.5591045Z",
+  "candidate_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "source_dirty": false,
+  "binary_sha256": "d0a6f0f5c7b5cb5f04fb7f644346547ae542ef735ac8f0553af31205db5a0923",
+  "host_version": "2026.9.4",
+  "method": "native_cli",
+  "environment": "Windows 11 10.0.26200 amd64 - WSL2 Ubuntu 24.04.5 kernel 6.6.87.2",
+  "private_transport_sha256": "7f29bb475892cbc189418366061d89eab401b3f582e74d29f2a8581b4b8aed4b",
+  "manifest_sha256": "f9188da2df7d812fc233fbf3045cba5a837f62cd6205989538426a9836789041",
+  "outer_exit_code": 0,
+  "guest_exit_code": 0,
+  "checks": {
+    "cli_completed": true,
+    "seven_native_provider_exchanges": true,
+    "three_native_phases": true,
+    "three_fault_requests": true,
+    "all_siq_lifetimes_reaped": true,
+    "denied_target_absent": true,
+    "signed_receipts_verified": true,
+    "siq_owned_cleanup": true,
+    "control_unchanged": true,
+    "provider_actual_connect": true,
+    "decision_connect": true,
+    "native_default_permissions_recorded": true,
+    "no_guard_denial": true,
+    "owned_resources_closed": true,
+    "fault_endpoint_closed": true,
+    "no_harness_error": true,
+    "source_unchanged": true,
+    "owned_node_security_verified": true
+  },
+  "phase_results": [
+    {
+      "phase": "timeout",
+      "tool_call_id": "siqa05faulttimeout20260917",
+      "target": {
+        "exists": false
+      },
+      "exit_code": 0
+    },
+    {
+      "phase": "unauthorized",
+      "tool_call_id": "siqa05faultunauthorized20260917",
+      "target": {
+        "exists": false
+      },
+      "exit_code": 0
+    },
+    {
+      "phase": "malformed",
+      "tool_call_id": "siqa05faultmalformed20260917",
+      "target": {
+        "exists": false
+      },
+      "exit_code": 0
+    }
+  ],
+  "receipt_verification": {
+    "verified": true,
+    "receipt_count": 3,
+    "no_authoritative_allow": true,
+    "meaning": "signed chain after recovery; injected responses are not signed decisions"
+  },
+  "tool_results": [
+    {
+      "exchange": 3,
+      "tool_call_id": "siqa05faulttimeout20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 4,
+      "tool_call_id": "siqa05faulttimeout20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 5,
+      "tool_call_id": "siqa05faulttimeout20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 5,
+      "tool_call_id": "siqa05faultunauthorized20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 6,
+      "tool_call_id": "siqa05faulttimeout20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 6,
+      "tool_call_id": "siqa05faultunauthorized20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 7,
+      "tool_call_id": "siqa05faulttimeout20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 7,
+      "tool_call_id": "siqa05faultunauthorized20260917",
+      "content_sha256": "8d65390707678b0d3d4cf72c5c83000f99596ced6153c4f362d937bf723b9769",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": false,
+      "note": "history may replay a tool result; not an execution count"
+    },
+    {
+      "exchange": 7,
+      "tool_call_id": "siqa05faultmalformed20260917",
+      "content_sha256": "93d5b90242155225f61e56d3e54364c1235388c288830736304e2b2a3836bfb4",
+      "adapter_fail_closed": true,
+      "siq_denial": false,
+      "malformed_reference": true,
+      "note": "history may replay a tool result; not an execution count"
+    }
+  ],
+  "node_runs": [
+    {
+      "phase": "warmup",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    },
+    {
+      "phase": "timeout",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    },
+    {
+      "phase": "unauthorized",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    },
+    {
+      "phase": "malformed",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    }
+  ],
+  "siq_lifetimes": [
+    {
+      "owned_process_reaped": true,
+      "log_closed": true,
+      "killed": false,
+      "exit_code": 0
+    },
+    {
+      "owned_process_reaped": true,
+      "log_closed": true,
+      "killed": false,
+      "exit_code": 0
+    }
+  ],
+  "owned_resources": {
+    "node_reaped": true,
+    "siq_reaped": true,
+    "siq_log_closed": true,
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true
+  },
+  "cleanup_ack": "confirmed_by_guest_report",
+  "real_model_requests": 0,
+  "synthetic_provider_requests": 7,
+  "elapsed_seconds": 30.305283280000367,
+  "source_unchanged": true,
+  "control_unchanged": true,
+  "fault_endpoint_events": [
+    {
+      "mode": "timeout",
+      "tool_call_id": "siqa05faulttimeout20260917",
+      "request_sha256": "a57940309a13ed70d5700f3f0d32d0283d09d378055f6de680a92240507ccd9e",
+      "path": "/v1/decide",
+      "status": 200,
+      "response_sha256": "4b625801a3e58ef710a13b659426dd0222cb495b16210145fdb7c811f1524304",
+      "elapsed_before_response_ms": 3000.1874019999377,
+      "client_disconnected": true
+    },
+    {
+      "mode": "unauthorized",
+      "tool_call_id": "siqa05faultunauthorized20260917",
+      "request_sha256": "76c1d8f7386081856d9f7317eeb4a9337ae665e5d86e9007c0f937b558db1fe9",
+      "path": "/v1/decide",
+      "status": 401,
+      "response_sha256": "e86dfc0f6b1fab9e8b8d12778091b5038c0da5bd1eb91c608ad132cd80981ca0",
+      "elapsed_before_response_ms": 0.002499999936844688,
+      "response_write_completed": true
+    },
+    {
+      "mode": "malformed",
+      "tool_call_id": "siqa05faultmalformed20260917",
+      "request_sha256": "ce7f5ff08b8e2b8b14901d9a709cd8d437638b797353baf0f868dd63cb53ee9c",
+      "path": "/v1/decide",
+      "status": 200,
+      "response_sha256": "4b625801a3e58ef710a13b659426dd0222cb495b16210145fdb7c811f1524304",
+      "elapsed_before_response_ms": 0.0033999995139311068,
+      "response_write_completed": true
+    }
+  ],
+  "fault_endpoint_cleanup": {
+    "thread_joined": true,
+    "socket_closed": true,
+    "errors": []
+  },
+  "parent_invariants": {
+    "parent_namespaces_unchanged": true,
+    "parent_tmp_metadata_unchanged": true
+  },
+  "network_outcomes": [
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "decision",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "decision",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "decision",
+      "code": "UND_ERR_SOCKET"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "decision",
+      "code": "UND_ERR_INFO"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "decision",
+      "code": "UND_ERR_SOCKET"
+    },
+    {
+      "event": "connect-error",
+      "purpose": "provider",
+      "code": "UND_ERR_INFO"
+    }
+  ],
+  "limitations": [
+    "Local synthetic model, real public CLI and real tools",
+    "Timeout/401/malformed responses are explicit fault injection, not SIQ authoritative decisions",
+    "Historical clean candidate; not final integrated candidate or Windows-native OpenClaw runtime",
+    "No approval-resume or trusted Skill attribution claim"
+  ]
+}

@@ -35,6 +35,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/runtimecheck"
 	"siq-agent-security/apps/agentshield/internal/runtimeidentity"
 	"siq-agent-security/apps/agentshield/internal/signing"
+	"siq-agent-security/apps/agentshield/internal/skillcontext"
 	"siq-agent-security/apps/agentshield/internal/skillimport"
 	"siq-agent-security/apps/agentshield/internal/skillinstall"
 	"siq-agent-security/apps/agentshield/internal/state"
@@ -62,9 +63,10 @@ type Deps struct {
 	Binary        string       // agentshield path written into adapter configs
 	Endpoint      string       // decision API URL written into adapter configs
 	Openshell     *openshell.Client
-	ListenHost    string // bind address advertised for Host allowlisting (default 127.0.0.1)
-	ListenPort    int    // must match the actual listen port
-	PairingCode   string // tests only; production serve generates a random code
+	ListenHost    string              // bind address advertised for Host allowlisting (default 127.0.0.1)
+	ListenPort    int                 // must match the actual listen port
+	PairingCode   string              // tests only; production serve generates a random code
+	SkillContexts *skillcontext.Store // exact store also used by receipt.Engine in production
 }
 
 // Server is the HTTP handler set.
@@ -76,6 +78,7 @@ type Server struct {
 	skillImportMu      sync.Mutex
 	runtimeIdentities  *runtimeidentity.Store
 	runtimeChecks      *runtimecheck.Manager
+	skillContexts      *skillcontext.Store
 	adapterPlanMu      sync.Mutex
 	adapterPlans       map[string]pendingAdapterPlan
 	fileObservations   map[string]pendingFileObservation
@@ -97,6 +100,12 @@ type Server struct {
 	osOK          bool
 	osCaps        *openshell.Capabilities
 	osDiag        openshell.Diagnosis
+
+	// Session-execution bindings (L02): maps reservation receipt ID to the
+	// recorded openshell operation this process executed. Process-local by
+	// design, like the openshell client's operation registry.
+	osExecMu       sync.Mutex
+	osExecBindings map[string]openshellExecBinding
 
 	pairMu          sync.Mutex
 	pairDisplay     string
@@ -129,7 +138,7 @@ func New(d Deps) (*Server, error) {
 	if err := state.RequireStateCompatibility(d.Store.Dir); err != nil {
 		return nil, err
 	}
-	s := &Server{d: d, mux: http.NewServeMux()}
+	s := &Server{d: d, mux: http.NewServeMux(), skillContexts: d.SkillContexts}
 	var err error
 	s.stateDirectoryID, err = d.Store.DirectoryID()
 	if err != nil {
@@ -201,6 +210,8 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/runtime-identities", s.auth(s.runtimeIdentityCollection, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-identities/", s.auth(s.runtimeIdentityOne, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-sessions", s.runtimeSessionEnroll)
+	s.mux.HandleFunc("/v1/skill-contexts", s.auth(s.skillContextCollection, capAdmin))
+	s.mux.HandleFunc("/v1/skill-contexts/", s.auth(s.skillContextOne, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks/preview", s.auth(s.runtimeCheckPreview, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks", s.auth(s.runtimeCheckLatest, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks/start", s.auth(s.runtimeCheckStart, capAdmin))
@@ -236,6 +247,9 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/confirmations", s.auth(s.confirmations, capAdmin))
 	s.mux.HandleFunc("/v1/confirmations/", s.auth(s.confirmationResolve, capAdmin))
 	s.mux.HandleFunc("/v1/hold-status", s.auth(s.holdStatus, capDecision))
+	s.mux.HandleFunc("/v1/hold-executions/reserve", s.auth(s.holdExecutionReserve, capDecision))
+	s.mux.HandleFunc("/v1/hold-executions/status", s.auth(s.holdExecutionStatus, capDecision))
+	s.mux.HandleFunc("/v1/hold-executions/reconcile", s.auth(s.holdExecutionReconcile, capAdmin))
 	s.mux.HandleFunc("/v1/hold/", s.auth(s.hold))
 	s.mux.HandleFunc("/v1/task-activities/", s.auth(s.taskActivityDetail))
 	s.mux.HandleFunc("/v1/task-activities/search", s.auth(s.taskActivitySearch))
@@ -263,6 +277,9 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/openshell/doctor", s.auth(s.openshellDoctor))
 	s.mux.HandleFunc("/v1/openshell/apply", s.auth(s.openshellApply))
 	s.mux.HandleFunc("/v1/openshell/drift-check", s.auth(s.openshellDriftCheck))
+	s.mux.HandleFunc("/v1/openshell/session-executions", s.auth(s.openshellSessionExecute, capDecision))
+	s.mux.HandleFunc("/v1/openshell/session-executions/preview", s.auth(s.openshellSessionPreview, capAdmin))
+	s.mux.HandleFunc("/v1/openshell/session-executions/rollback", s.auth(s.openshellSessionRollback, capAdmin))
 	s.mux.HandleFunc("/v1/assets", s.auth(s.assets))
 	s.mux.HandleFunc("/v1/assets/", s.auth(s.assets))
 	s.mux.HandleFunc("/v1/permissions", s.auth(s.permissions))
@@ -450,7 +467,7 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 500, map[string]any{"error": "decision failed"})
 		return
 	}
-	resp := map[string]any{"action": d.Action, "reason": d.Reason, "receipt_id": d.Receipt.ReceiptID, "action_id": d.Receipt.ActionID, "reason_code": d.Receipt.ReasonCode}
+	resp := map[string]any{"action": d.Action, "reason": d.Reason, "receipt_id": d.Receipt.ReceiptID, "action_id": d.Receipt.ActionID, "reason_code": d.Receipt.ReasonCode, "task_id": d.Receipt.TaskID, "runtime_task_id": d.Receipt.RuntimeTaskID}
 	resp["authority_status"] = d.Receipt.AuthorityStatus
 	resp["effective_action"] = d.Receipt.EffectiveAction
 	resp["trifecta"] = d.Receipt.Trifecta

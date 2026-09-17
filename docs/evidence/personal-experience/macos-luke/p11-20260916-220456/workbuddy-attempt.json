@@ -1,0 +1,24 @@
+{
+  "schema_version": "personal-macos-workbuddy-attempt/v1",
+  "recorded_at": "2026-09-16T22:05:52+08:00",
+  "candidate_sha": "450fe1836d8a3bffefbd2ce9b6f02bbbfe730c64",
+  "binary_sha256": "f067f96b05c3472b8ebe2d43ac9c19ce79c5063af19ec1dc66999a6da1bd3e23",
+  "host": "WorkBuddy 5.5.6 macOS desktop",
+  "environment": "isolated WorkBuddy project configuration, workspace, state and loopback daemon",
+  "result": "blocked_no_native_tool_call",
+  "observations": [
+    "Candidate adapter install and status completed in an isolated project configuration.",
+    "A pre-existing unrelated hook remained alongside the new product hook in each tool event.",
+    "The desktop composer displayed a disabled send control during the attempted safe read; no new native tool call or signed receipt was produced.",
+    "No host permission or operating-system security policy was changed to bypass the disabled control."
+  ],
+  "cleanup": {
+    "adapter_uninstalled": true,
+    "product_hook_count_after": 0,
+    "unrelated_hook_count_after_per_event": 1,
+    "isolated_loopback_port_47614_stopped": true,
+    "new_workbuddy_receipts": 0,
+    "daily_workbuddy_config_sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa"
+  },
+  "acceptance_claim": "none; old candidate P10 desktop evidence must not be attributed to this binary"
+}

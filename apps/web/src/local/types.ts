@@ -155,6 +155,7 @@ export interface Receipt {
   parent_action_id?: string;
   task_seq?: number;
   task_id?: string;
+  runtime_task_id?: string;
   intent_id?: string;
   intent_digest?: string;
   intent_binding?: 'bound' | 'unbound';
@@ -176,11 +177,21 @@ export interface Receipt {
   reason: string;
   hash: string;
   taint_labels?: string[];
+  /** N05/R01：可信 Skill 归属裁决；仅后端可产出 verified。 */
+  skill_attribution?: {
+    status: 'verified' | 'mismatch' | 'unknown';
+    skill_id?: string;
+    version?: string;
+    content_hash?: string;
+    evidence_level?: 'controlled_task' | 'controlled_session';
+    context_id?: string;
+    call_binding?: string;
+  };
 }
 
 export interface AdapterInstance {
   instance_id: string;
-  platform: 'hermes';
+  platform: 'hermes' | 'openclaw';
   name: string;
   config_dir: string;
   source: string;
@@ -351,7 +362,7 @@ export interface RuntimeIdentity {
   identity_id: string;
   instance_id: string;
   agent_id: string;
-  platform: 'hermes';
+  platform: 'hermes' | 'openclaw';
   grant_ref: { grant_id: string; admission_id: string; permission_digest: string };
   actor_id: string;
   created_at: string;
@@ -364,16 +375,25 @@ export interface Confirmation {
   action_id: string;
   decision_receipt_id: string;
   decision_hash: string;
+  reservation_receipt_id: string;
+  reservation_hash: string;
   params_digest: string;
   platform: string;
   agent_id: string;
   session_id: string;
+  task_id: string;
+  runtime_task_id?: string;
   tool: string;
   tool_call_id: string;
+  operation: string;
+  effects: string[];
+  resource_refs: { domain: 'filesystem' | 'network' | 'message'; digest: string }[];
+  approval_scope: 'once';
+  resume_mode: 'retry_required' | 'native_resume' | 'unsupported';
   grant_id: string;
   issued_at: string;
   expires_at: string | null;
-  status: 'pending' | 'approved' | 'denied' | 'expired' | 'consumed' | 'unavailable';
+  status: 'pending' | 'approved' | 'denied' | 'expired' | 'consumed' | 'reserved' | 'completed' | 'cancelled' | 'uncertain' | 'unavailable';
   params_excerpt: string | null;
 }
 
@@ -520,7 +540,7 @@ export interface SkillInstallPlan {
   grant_revision: number;
   grant_signature: string;
   grant_permission_digest: string;
-  platform: 'hermes';
+  platform: 'hermes' | 'openclaw';
   instance_id: string;
   directory_name: string;
   target_locator_digest: string;

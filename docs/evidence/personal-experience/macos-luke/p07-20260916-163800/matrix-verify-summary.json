@@ -1,0 +1,24 @@
+{
+  "candidate_sha": "e03c9f5bb9f5208d673b23e96ad0d5b8f2d8385b",
+  "source_dirty_verify_exit": 2,
+  "source_dirty_stderr": "{\"status\": \"invalid\", \"error\": \"dirty_candidate\"}",
+  "structure_verify_exit": 0,
+  "require_native_exit": 3,
+  "structure_status": "needs_native_evidence",
+  "workbuddy": {
+    "target": "workbuddy/macos/arm64/native",
+    "native_checks_recorded": [
+      "discovery",
+      "normal_execution",
+      "pre_execution_denial",
+      "service_unavailable_denial"
+    ],
+    "gaps": [
+      "approval_resume",
+      "final_parameter_recheck",
+      "skill_attribution",
+      "install_interception"
+    ],
+    "status": "needs_native_evidence"
+  }
+}

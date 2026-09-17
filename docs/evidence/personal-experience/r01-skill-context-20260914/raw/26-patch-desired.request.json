@@ -1,0 +1,14 @@
+{
+  "expected_revision": 0,
+  "actor_id": "r01-live-operator",
+  "tools": [
+    "read_file",
+    "write_file"
+  ],
+  "filesystem": {
+    "read_only": [
+      "/tmp/siq-r01-sec-live-_0rio8a1/workspace"
+    ],
+    "read_write": []
+  }
+}

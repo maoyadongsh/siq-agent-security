@@ -1,0 +1,31 @@
+{
+  "supersedes": "local-o05-b3-20260916-181347 report/checks completion claims",
+  "historical_reports_unchanged": true,
+  "corrections": [
+    {
+      "id": "L01",
+      "old_problem": "nonmatching test name and wrong opt-in variable",
+      "actual_test": "TestO05LiveCrossBoundaryEnforcement",
+      "opt_in": "SIQ_O05_ENFORCE_LIVE=1",
+      "current_result": "failed",
+      "evidence": "l01-final-source.json"
+    },
+    {
+      "id": "L03",
+      "actual_script": "scripts/personal-experience/openshell-b3-candidate-journey.py",
+      "current_result": "57/57 policy-only; no UI or sandbox task execution",
+      "evidence": "policy-journey-verified/l03-journey.json"
+    },
+    {
+      "id": "L04",
+      "actual_script": "scripts/personal-experience/openshell-b2b3-perf-protocol.py",
+      "historical_ratio_scope": "doctor_readback only, rc.2 versus rc.3",
+      "B3": "not_measured",
+      "rc5_performance": "not_run"
+    },
+    {
+      "id": "L05",
+      "result": "partial; historical B03 supplemental evidence, B04/B05 blocked; native identity checks now added separately"
+    }
+  ]
+}

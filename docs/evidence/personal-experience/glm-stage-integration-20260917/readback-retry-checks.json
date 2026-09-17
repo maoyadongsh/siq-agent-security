@@ -1,0 +1,14 @@
+{
+  "source": "apps/agentshield/internal/server/skill_update_concurrency_test.go",
+  "sha256": "38375dda86519223c4cad7ce7049a1a068ee2de9d7ce6d30bd670da2093a2bb6",
+  "checks": [
+    {
+      "command": "go test ./internal/server -run TestSkillUpdateCommitHTTPConcurrent -count=10",
+      "exit_code": 0
+    },
+    {
+      "command": "go test -race ./internal/server -run TestSkillUpdateCommitHTTPConcurrent -count=5",
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "created_targets": [
+    {
+      "target": "siq-review-20260916-225159",
+      "ownership": "successful create this review; dedicated siq-review label",
+      "delete_exit": 0,
+      "readback_exit": 1,
+      "absence_confirmed": true
+    },
+    {
+      "target": "siq-review-r5-225905",
+      "ownership": "successful create this review; dedicated siq-review label",
+      "delete_exit": 0,
+      "readback_exit": 1,
+      "absence_confirmed": true
+    }
+  ],
+  "shared_gateway": "not modified or restarted",
+  "previous_batch_pending_resources": "untouched; no ownership assumption based on old PIDs",
+  "candidate_daemons": "driver finally terminated only owned Popen processes",
+  "private_logs": "retained under private /tmp review directory; not published"
+}

@@ -1,0 +1,21 @@
+network_policies:
+  siq_as_rule_0:
+    name: siq_as_rule_0
+    endpoints:
+    - host: '127.0.0.1'
+      port: 18443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: GET
+          path: /*
+    binaries:
+    - path: /usr/local/bin/python3
+  siq_as_rule_1:
+    name: siq_as_rule_1
+    endpoints:
+    - host: '172.23.0.1'
+      port: 18444
+    binaries:
+    - path: /usr/local/bin/python3

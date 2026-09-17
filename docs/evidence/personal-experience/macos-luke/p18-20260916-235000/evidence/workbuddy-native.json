@@ -1,0 +1,19 @@
+{
+  "schema_version": "personal-macos-native-rebaseline-evidence/v1",
+  "candidate_sha": "720ea397ca189669516b474e6f549c52d91a8dcc",
+  "binary_sha256": "b245897b994dcd23bae30c80933407d4663340bc0e894cd4e226c297895d42f0",
+  "platform": "workbuddy",
+  "host_version": "5.5.6",
+  "entrypoint": "actual Aqua desktop; user-authorized model requests in the isolated project workspace; native PreToolUse/PostToolUse",
+  "native_passed_checks": ["discovery", "normal_execution", "pre_execution_denial", "service_unavailable_denial", "final_parameter_recheck"],
+  "allowed_read": {"decision_seq": 22, "decision_action": "allow", "observation_seq": 23, "observation_reason_code": "observation_accepted", "safe_file_sha256_before_and_after": "b2c204478a35ad9d84ca69abff0c227e25582c087ea62161fb015c9f47fae7dd"},
+  "out_of_grant_final_read": {"decision_seq": 24, "decision_action": "deny", "decision_reason_code": "grant_scope_violation", "native_result": "blocked before read", "sentinel_sha256_before_and_after": "ee0e84d8b242aba8e94777c26e12be079ea2dc63b42b2aff365e0604e21dc41f"},
+  "service_unavailable_write": {"isolated_service_stopped_before_native_call": true, "native_result": "decision service unavailable; blocked (fail-closed)", "target_absent_before_and_after": true, "pending_denial_promoted_once_after_recovery_seq": 25},
+  "receipt_chain_after_recovery": {"verified": true, "receipt_count": 26, "head_seq": 25, "head_hash": "68346402e880903abfd35c9ea2987b85269c5939301c04cbfb90ca55d6f3a8be"},
+  "cleanup": {"product_hooks_remaining_per_event": 0, "unrelated_user_hooks_remaining_per_event": 1, "project_settings_sha256_restored": "de73d429ccff5c3890522bb02cfd092e9ba49f9e8627fc073cb1ac7479e156fb", "daily_workbuddy_settings_sha256_unchanged": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa", "isolated_port_stopped": 47614},
+  "limitations": [
+    "The three requests used a model in the user's existing WorkBuddy account with explicit user authorization; no raw prompt or account information is archived.",
+    "The unavailable-service refusal was visible in the native tool result. No signed refusal existed while the service was down; the pending denial was signed only after service recovery.",
+    "Approval resume, same-call trusted Skill attribution and native pre-install interception remain unverified."
+  ]
+}

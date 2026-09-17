@@ -1,5 +1,7 @@
 # Trusted Intent V2：宿主能力识别与审批检查点集成
 
+> 历史记录：本文描述 2026-09-07 的只读重查实现。当前 shipping adapter 已在该宿主检查点内增加签名执行预留，现行合同与复验见 [R02-F](evidence/personal-experience/r02f-openclaw-approved-retry-20260915/report.md)。
+
 - 时间：2026-09-07 22:18，Asia/Shanghai。
 - 工作基线：`87fd1ce` 上的未提交增量。
 - 状态：审批后检查已进入适配器源码及内嵌安装资产；配套宿主补丁 v2 在隔离副本验证通过，真实安装未更新。

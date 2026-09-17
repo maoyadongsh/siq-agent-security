@@ -6,7 +6,8 @@
     "hermes",
     "mcp",
     "openclaw",
-    "trae"
+    "trae",
+    "workbuddy"
   ],
   "candidates": [
     {
@@ -207,6 +208,26 @@
       },
       "evidence_ids": [
         "ev-b5d42fc63d1ccff7"
+      ],
+      "confidence": 1,
+      "status": "candidate"
+    },
+    {
+      "candidate_id": "platform:workbuddy",
+      "source_type": "platform_config",
+      "source_locator": "workbuddy://.workbuddy/settings.json",
+      "discovered_at": "2026-09-04T08:00:00Z",
+      "name": "workbuddy",
+      "framework": "workbuddy",
+      "artifact_digest": "cba8aa3e0625e0e1a85c66f054b4b5dbfe1d895034eb53c70ad76ee19ca865dd",
+      "attributes": {
+        "agentshield_tool_hook": "true",
+        "bytes": "159",
+        "config": ".workbuddy/settings.json",
+        "platform": "workbuddy"
+      },
+      "evidence_ids": [
+        "ev-b5e3bd1501f94501"
       ],
       "confidence": 1,
       "status": "candidate"
@@ -467,6 +488,22 @@
       "expires_at": null
     },
     {
+      "evidence_id": "ev-b5e3bd1501f94501",
+      "source_type": "platform_config",
+      "source_locator": "workbuddy://.workbuddy/settings.json",
+      "subject_ref": null,
+      "observed_at": "2026-09-04T08:00:00Z",
+      "collected_at": "2026-09-04T08:00:00Z",
+      "collector_id": "agentshield-local",
+      "connector_version": "test",
+      "content_hash": "cba8aa3e0625e0e1a85c66f054b4b5dbfe1d895034eb53c70ad76ee19ca865dd",
+      "redaction_profile": "siq.redaction.v1",
+      "classification": "internal",
+      "payload_ref": null,
+      "signature": "726abdb7d6b0efe0bce3dcab453c8d6e91f2b7484325b8ade470c8af95a5481135662fadd42655aeab14e48ecb00a34da6855e95a69169a31938df1e0a186d07",
+      "expires_at": null
+    },
+    {
       "evidence_id": "ev-e57589243098b6ff",
       "source_type": "platform_config",
       "source_locator": "hermes://.hermes/config.yaml",
@@ -590,6 +627,24 @@
       "authority": "agentshield",
       "evidence_ids": [
         "ev-276866d2bba0a04f"
+      ]
+    },
+    {
+      "subject": {
+        "type": "agent_asset",
+        "id": "workbuddy://.workbuddy/settings.json"
+      },
+      "domain": "control_plane",
+      "action": "tool.hook",
+      "resource": {
+        "type": "platform",
+        "value": "workbuddy"
+      },
+      "effect": "allow",
+      "state": "observed",
+      "authority": "agentshield",
+      "evidence_ids": [
+        "ev-b5e3bd1501f94501"
       ]
     }
   ],

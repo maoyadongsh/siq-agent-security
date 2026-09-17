@@ -1,0 +1,66 @@
+{
+  "full_validation": [
+    {
+      "check": "go-vet",
+      "exit": 0,
+      "started_at": "2026-09-16T02:18:50.738372+00:00",
+      "finished_at": "2026-09-16T02:18:51.135371+00:00"
+    },
+    {
+      "check": "go-all",
+      "exit": 0,
+      "started_at": "2026-09-16T02:18:51.135571+00:00",
+      "finished_at": "2026-09-16T02:19:53.375948+00:00"
+    },
+    {
+      "check": "go-race",
+      "exit": 0,
+      "started_at": "2026-09-16T02:19:53.376163+00:00",
+      "finished_at": "2026-09-16T02:22:11.382493+00:00"
+    },
+    {
+      "check": "python-contracts",
+      "exit": 0,
+      "started_at": "2026-09-16T02:22:11.382792+00:00",
+      "finished_at": "2026-09-16T02:22:28.423439+00:00"
+    },
+    {
+      "check": "build-linux-amd64",
+      "exit": 0,
+      "sha256": "321241a8cab0f065ac6afcd208c5b26515eb04ed4b73d5552c16a1aa2dd3a9dc"
+    },
+    {
+      "check": "build-linux-arm64",
+      "exit": 0,
+      "sha256": "df639a1b55cff41b54c5fb755b48a5e0f013a4ff6eeb83131391c338766379a5"
+    },
+    {
+      "check": "build-darwin-arm64",
+      "exit": 0,
+      "sha256": "3da03334d0fb2f705aed0c037a1dabb426f8b9a4df254eb86f7ad65ceb9fd95d"
+    },
+    {
+      "check": "build-windows-amd64",
+      "exit": 0,
+      "sha256": "308491d4b9ec13be778a1698fb2e9df291cbd1c407a7c6aa1a02bf33d81e5395"
+    }
+  ],
+  "script_regressions": {
+    "passed": 33,
+    "exit": 0
+  },
+  "ruff_exit": 0,
+  "diff_check_exit": 0,
+  "matrix": {
+    "cells": 9,
+    "rows": 99,
+    "complete_acceptance": 0,
+    "exit": 0
+  },
+  "owned_lifecycle_unit": {
+    "MainPID": 0,
+    "LoadState": "not-found",
+    "ActiveState": "inactive"
+  },
+  "scope": "Cross builds are build evidence only; no Web production changes."
+}

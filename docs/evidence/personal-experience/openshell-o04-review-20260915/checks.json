@@ -1,0 +1,66 @@
+{
+  "format": "openshell-o04-review-checks/v1",
+  "status": "local_validation_passed_real_environment_acceptance_pending",
+  "head": "6e34f3ad82033b0b5ffe49cd82bc042c84414429",
+  "checks": [
+    {
+      "command": "go vet ./...",
+      "cwd": "apps/agentshield",
+      "result": "passed"
+    },
+    {
+      "command": "go test ./...",
+      "cwd": "apps/agentshield",
+      "result": "passed"
+    },
+    {
+      "command": "go test -race ./internal/openshell ./internal/server",
+      "cwd": "apps/agentshield",
+      "result": "passed"
+    },
+    {
+      "command": "uv run pytest -q",
+      "cwd": "apps/control-api",
+      "result": "passed",
+      "tests": 844
+    },
+    {
+      "command": "uv run ruff check app scripts/gen_policy_compile_vectors_v1.py",
+      "cwd": "apps/control-api",
+      "result": "passed"
+    },
+    {
+      "command": "npm test -- --reporter=dot",
+      "cwd": "apps/web",
+      "result": "passed",
+      "tests": 95,
+      "files": 25
+    },
+    {
+      "command": "npm run build:local",
+      "cwd": "apps/web",
+      "result": "passed",
+      "embedded_assets_rebuilt": true
+    },
+    {
+      "command": "python3 scripts/check_perf_baseline_harness.py",
+      "result": "passed"
+    },
+    {
+      "command": "temporary generator invocation with OUT redirected outside repository",
+      "result": "passed",
+      "frozen_vectors_unchanged": 6
+    },
+    {
+      "command": "python3 scripts/personal-experience/openshell-o04-http-comparison.py",
+      "result": "passed",
+      "evidence": "../openshell-o04-http-review-20260915-070639"
+    },
+    {
+      "command": "python3 scripts/personal-experience/openshell-o04-perf-protocol.py",
+      "result": "passed",
+      "evidence": "../openshell-o04-perf-20260915-070714"
+    }
+  ],
+  "known_lint_scope_limit": "ruff check . also scans existing migrations import-style errors; app and changed generator pass"
+}

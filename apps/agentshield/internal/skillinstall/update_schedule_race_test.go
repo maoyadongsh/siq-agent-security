@@ -19,10 +19,15 @@ func TestLateUpdateOutcomeCannotOverwriteUserReconfiguration(t *testing.T) {
 				snapshot := snapInstall(t, s, op.InstallID)
 				var saved []byte
 				s.upstream = func(ctx context.Context, r *skillimport.Record, url string) (*skillimport.UpstreamSnapshot, error) {
-					if _, err := s.SaveUpdateSource(ctx, op.InstallID, saveRequest("", enable)); err != nil {
+					var err error
+					if enable {
+						_, err = s.SaveUpdateSource(ctx, op.InstallID, saveRequest("", true))
+					} else {
+						_, err = s.DisableUpdateSource(ctx, op.InstallID, disableRequest())
+					}
+					if err != nil {
 						t.Fatal(err)
 					}
-					var err error
 					saved, err = os.ReadFile(s.updateSourcePath(op.InstallID))
 					if err != nil {
 						t.Fatal(err)

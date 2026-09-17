@@ -1,0 +1,71 @@
+{
+  "schema_version": "personal-workbuddy-native-desktop-smoke/v1",
+  "recorded_at": "2026-09-16T22:18:25+08:00",
+  "candidate_sha": "450fe1836d8a3bffefbd2ce9b6f02bbbfe730c64",
+  "binary_sha256": "f067f96b05c3472b8ebe2d43ac9c19ce79c5063af19ec1dc66999a6da1bd3e23",
+  "host": {
+    "os": "macos",
+    "version": "26.6.2",
+    "arch": "arm64",
+    "workbuddy_version": "5.5.6",
+    "entrypoint": "actual WorkBuddy Aqua desktop with isolated project workspace and native PreToolUse/PostToolUse hooks"
+  },
+  "passed_checks": [
+    "discovery",
+    "normal_execution",
+    "pre_execution_denial",
+    "service_unavailable_denial",
+    "final_parameter_recheck"
+  ],
+  "observations": {
+    "allowed_read": {
+      "pre_receipt_seq": 16,
+      "pre_action": "allow",
+      "pre_reason_code": "allow",
+      "post_receipt_seq": 17,
+      "post_action": "observation_accepted",
+      "read_target_sha256_before_and_after": "b2c204478a35ad9d84ca69abff0c227e25582c087ea62161fb015c9f47fae7dd"
+    },
+    "out_of_grant_read": {
+      "pre_receipt_seq": 18,
+      "pre_action": "deny",
+      "pre_reason_code": "grant_scope_violation",
+      "out_of_grant_target_sha256_before_and_after": "ee0e84d8b242aba8e94777c26e12be079ea2dc63b42b2aff365e0604e21dc41f",
+      "native_tool_result": "blocked before read"
+    },
+    "service_unavailable_write": {
+      "isolated_service_stopped_before_native_call": true,
+      "native_tool_result": "decision service unavailable; blocked (fail-closed)",
+      "target_absent_before_and_after": true,
+      "pending_fail_closed_promoted_after_service_recovery_seq": 19,
+      "promoted_action": "deny",
+      "promoted_reason_category": "decision_service_unavailable"
+    },
+    "recovery_read": {
+      "pre_receipt_seq": 20,
+      "pre_action": "allow",
+      "post_receipt_seq": 21,
+      "post_action": "observation_accepted"
+    },
+    "local_receipt_chain": {
+      "verified": true,
+      "head_seq": 21,
+      "receipt_count": 22,
+      "head_hash": "5de8d4d9c0f09a2ce5aebf9676c66daa333015513974cccc0c76fb35b2b0e9be"
+    }
+  },
+  "cleanup": {
+    "isolated_service_port_stopped": 47614,
+    "product_hooks_remaining_per_event": 0,
+    "unrelated_user_hooks_remaining_per_event": 1,
+    "daily_workbuddy_settings_sha256_unchanged": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+    "harmless_out_of_grant_sentinel_moved_to_private_artifacts": true,
+    "daily_services_untouched": true
+  },
+  "limitations": [
+    "Operator-entered desktop prompts and isolated workspace; not a general WorkBuddy certification.",
+    "The unavailable-service denial was visible in the native tool result; no signed receipt existed while the service was down. A pending fail-closed record became signed receipt 19 after recovery.",
+    "The out-of-grant final tool target was denied; host-side approval resume, trustworthy same-call Skill identity and pre-install interception were not demonstrated.",
+    "No UI screenshot, raw prompt, pairing code, token, private state, or absolute user path is included."
+  ]
+}

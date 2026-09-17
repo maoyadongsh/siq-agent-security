@@ -1,0 +1,31 @@
+{
+  "platform": "hermes",
+  "action": "install",
+  "paths": [
+    "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/bin/hermes-skills-install",
+    "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/__init__.py",
+    "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/config.json",
+    "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/plugin.yaml"
+  ],
+  "note": "configuration operation only; runtime verification remains required",
+  "record": {
+    "instance_id": "hi-0fe6e47d6a3222f038b3535dbece7df8",
+    "config_dir": "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home",
+    "platform": "hermes",
+    "installed_at": "2026-09-14T11:26:16Z",
+    "binary": "/home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914/apps/agentshield/.tmp/r01-candidate/agentshield",
+    "created": [
+      "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/plugin.yaml",
+      "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/__init__.py",
+      "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/config.json",
+      "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/bin/hermes-skills-install"
+    ],
+    "modified": {},
+    "written": {
+      "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/bin/hermes-skills-install": "06e67c7e4e67d9a0754c6298163005a4ba634c66455a91752fe2393bc789ee56",
+      "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/__init__.py": "91b79e4cb0f4901e4e3af4841c4499277d5354a3b511262b2023a52c04fb093d",
+      "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/config.json": "6ba6299b6e85bb035d92fe3158b479f622336b77962402796bcbd406fd883dc4",
+      "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/plugin.yaml": "2d037f71f97afe2a84874d1bda83e109fbed926e83f5bcdef6d2945f0e2957c6"
+    }
+  }
+}

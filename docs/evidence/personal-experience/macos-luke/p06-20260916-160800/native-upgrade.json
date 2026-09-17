@@ -1,0 +1,51 @@
+{
+  "schema": "siq-p06-native-upgrade/v1",
+  "host": {
+    "os": "macOS 26.6.2",
+    "arch": "arm64",
+    "cpu": "Apple M4",
+    "proc_translated": 0,
+    "uid": 501,
+    "launchctl_manager": "Aqua"
+  },
+  "candidate": {
+    "branch": "codex/macos-luke-p06-20260916-153008",
+    "git_head": "e03c9f5bb9f5208d673b23e96ad0d5b8f2d8385b",
+    "working_tree": "dirty",
+    "binary": ".tmp/personal-macos-p06-upgrade-20260916/siq-agent-security",
+    "sha256": "823d44be2626214a6e97c102c1b6e892fc953eb5a43f0f449c862a833a5ba0e1",
+    "go": "go1.27.1 darwin/arm64",
+    "cgo": 0,
+    "trimpath": true,
+    "codesign": "adhoc,linker-signed"
+  },
+  "tests": {
+    "TestNativeLaunchAgentUpgrade": {
+      "pass": true,
+      "seconds": 1.95,
+      "old_pid": 77075,
+      "new_pid": 77109,
+      "rolled_pid": 77153,
+      "transaction": "ec64ad7c720b7ad1b163484eb5bedee14cf29e53ceb68be8732e198f01f25db0",
+      "notes": "same trusted build copied to two paths; development issuer CLI rejected without interrupting the source; launchd GUI domain switch then explicit rollback; LaunchAgents link removed"
+    },
+    "TestNativeLaunchAgentUpgradeTransientFailure": {
+      "pass": true,
+      "seconds": 2.56,
+      "old_pid": 77209,
+      "new_pid": 77279,
+      "rolled_pid": 77314,
+      "transaction": "b6504d6649bbee83da0e9e328aa9db1497438bce2eb094b4af3fe484045a344c",
+      "notes": "kickstart port conflict injected, recover forwarded, missing prior binary restored from local snapshot, then rollback"
+    }
+  },
+  "cleanup": {
+    "launchagents_siq_links_after": [],
+    "loaded_siq_jobs_after": []
+  },
+  "not_claimed": [
+    "cross-release signed upgrade",
+    "Apple notarization / Developer ID",
+    "historical v1-only macOS binary refuse-write (§6.3.4 remains blocked)"
+  ]
+}

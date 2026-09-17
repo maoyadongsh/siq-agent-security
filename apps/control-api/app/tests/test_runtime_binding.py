@@ -4,7 +4,7 @@
 - 客户端自由文本 target 不再被接受（schema 422）；
 - 跨租户/已吊销/环境不符/selector 未命中的绑定部署一律拒绝；
 - selector 引用未知资产 id 部署时 fail-closed；
-- openshell-cli 下静态策略（needs_generation）不得进入 effective。
+- openshell-cli 按 live 静态差异规划：等值字段可动态更新，真实变化拒绝。
 """
 
 from __future__ import annotations
@@ -67,13 +67,13 @@ def test_create_binding_happy_path_with_audit_outbox(client, tenant_a, env_a):
     with session_scope() as session:
         from app.models import AuditEvent, OutboxEvent
 
-        create_audit = session.query(AuditEvent).filter(
-            AuditEvent.action == "binding.create", AuditEvent.resource_id == body["id"]
-        ).one()
+        create_audit = (
+            session.query(AuditEvent)
+            .filter(AuditEvent.action == "binding.create", AuditEvent.resource_id == body["id"])
+            .one()
+        )
         assert create_audit.summary["backend_target_id"] == body["backend_target_id"]
-        events = session.query(OutboxEvent).filter(
-            OutboxEvent.event_type == "runtime_binding.created.v1"
-        ).all()
+        events = session.query(OutboxEvent).filter(OutboxEvent.event_type == "runtime_binding.created.v1").all()
         assert any(e.payload.get("resource_ref") == body["id"] for e in events)
 
 
@@ -202,9 +202,7 @@ def test_deploy_revoked_binding_409(client, tenant_a, env_a):
         session.query(AuditEvent).filter(
             AuditEvent.action == "binding.revoke", AuditEvent.resource_id == binding["id"]
         ).one()
-        events = session.query(OutboxEvent).filter(
-            OutboxEvent.event_type == "runtime_binding.revoked.v1"
-        ).all()
+        events = session.query(OutboxEvent).filter(OutboxEvent.event_type == "runtime_binding.revoked.v1").all()
         assert any(e.payload.get("resource_ref") == binding["id"] for e in events)
 
 
@@ -291,7 +289,13 @@ def test_static_policy_openshell_cli_rejected_422(client, tenant_a, env_a, monke
             "name": name,
             "selector": {"agent_ids": [asset_id]},
             "filesystem": {"read_only": ["/etc"]},
-            "network": [{"endpoint": "api.example.com:443", "effect": "allow"}],
+            "network": [
+                {
+                    "endpoint": "api.example.com:443",
+                    "effect": "allow",
+                    "binary_paths": ["/usr/bin/curl"],
+                }
+            ],
             "enforcement_mode": "block",
         },
         headers=tenant_a,
@@ -313,3 +317,42 @@ def test_static_policy_openshell_cli_rejected_422(client, tenant_a, env_a, monke
         assert session.query(Deployment).filter(Deployment.change_request_id == cr["id"]).count() == 0
         row = session.query(ChangeRequest).filter(ChangeRequest.id == cr["id"]).one()
         assert row.status == "approved"  # CR 状态不被副作用改变
+
+
+def test_static_policy_equal_to_live_state_uses_dynamic_update(client, tenant_a, env_a, monkeypatch):
+    """静态字段存在但与 live 值相同，不得仅因字段存在要求 generation。"""
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    fake = _fake_cli_backend(monkeypatch)
+    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli")
+    response = client.post(
+        "/api/v1/policies",
+        json={
+            "name": f"static-equal-{uuid.uuid4().hex[:8]}",
+            "selector": {"agent_ids": [asset_id]},
+            "filesystem": {
+                "read_only": ["/usr", "/lib", "/proc", "/dev/urandom", "/app", "/etc", "/var/log"],
+                "read_write": ["/sandbox", "/tmp", "/dev/null"],
+            },
+            "network": [
+                {
+                    "endpoint": "api.example.com:443",
+                    "effect": "allow",
+                    "binary_paths": ["/usr/bin/curl"],
+                }
+            ],
+            "enforcement_mode": "block",
+        },
+        headers=tenant_a,
+    )
+    assert response.status_code == 201, response.text
+    policy = response.json()
+    cr = _approved_cr(client, tenant_a, policy["id"], "tnt-A")
+
+    deployment = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        headers=tenant_a,
+    )
+    assert deployment.status_code == 201, deployment.text
+    assert deployment.json()["status"] == "effective"
+    assert fake.applied

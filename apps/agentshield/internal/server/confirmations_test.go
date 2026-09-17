@@ -9,6 +9,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
+
+	"siq-agent-security/apps/agentshield/internal/receipt"
 )
 
 func confirmationHTTPFixture(t *testing.T) (*Server, map[string]any, string) {
@@ -92,5 +94,76 @@ func TestConfirmationHTTPStrictAndAdminOnly(t *testing.T) {
 	code, out := call(t, s, "GET", "/v1/confirmations", token, nil)
 	if code != 200 || out["items"].([]any)[0].(map[string]any)["status"] != "approved" {
 		t.Fatal(out)
+	}
+}
+
+func TestHoldExecutionReconcileHTTPIsStrictAndAdminOnly(t *testing.T) {
+	s, approval, approvalRoute := confirmationHTTPFixture(t)
+	exactPost := func(path, bearer string, body any, want int) map[string]any {
+		t.Helper()
+		r := loopbackRequest("POST", path, body)
+		if bearer != "" {
+			r.Header.Set("Authorization", "Bearer "+bearer)
+		}
+		w := httptest.NewRecorder()
+		s.Handler().ServeHTTP(w, r)
+		if w.Code != want {
+			t.Fatalf("%s: got %d want %d: %s", path, w.Code, want, w.Body.String())
+		}
+		var out map[string]any
+		if w.Body.Len() > 0 {
+			if err := json.Unmarshal(w.Body.Bytes(), &out); err != nil {
+				t.Fatal(err)
+			}
+		}
+		return out
+	}
+	exactPost(approvalRoute, s.bootAdmin, approval, 200)
+	actionID := strings.Split(strings.TrimPrefix(approvalRoute, "/v1/confirmations/"), "/")[0]
+	decisionID := approval["decision_receipt_id"].(string)
+	reserve := map[string]any{
+		"schema_version": "hold-execution-reserve/v1", "platform": "openclaw",
+		"session_id": "inbox-session", "agent_id": "inbox-agent", "tool": "exec",
+		"original_tool_call_id": "call-fixture", "retry_tool_call_id": "call-retry",
+		"action_id": actionID, "decision_receipt_id": decisionID,
+		"params": map[string]any{"command": "printf fixture"},
+	}
+	exactPost("/v1/hold-executions/reserve", token, reserve, 201)
+	code, listing := call(t, s, "GET", "/v1/confirmations", s.bootAdmin, nil)
+	if code != 200 {
+		t.Fatal(listing)
+	}
+	item := listing["items"].([]any)[0].(map[string]any)
+	reconcile := map[string]any{
+		"schema_version": "hold-execution-reconcile/v1", "action_id": actionID,
+		"decision_receipt_id": decisionID, "reservation_receipt_id": item["reservation_receipt_id"],
+		"reservation_hash": item["reservation_hash"], "outcome": "not_occurred", "actor_id": "reviewer",
+	}
+	exactPost("/v1/hold-executions/reconcile", token, reconcile, 403)
+	invalid := map[string]any{}
+	for key, value := range reconcile {
+		invalid[key] = value
+	}
+	invalid["approve"] = true
+	exactPost("/v1/hold-executions/reconcile", s.bootAdmin, invalid, 400)
+	invalid = map[string]any{}
+	for key, value := range reconcile {
+		invalid[key] = value
+	}
+	invalid["reservation_hash"] = strings.Repeat("0", 64)
+	exactPost("/v1/hold-executions/reconcile", s.bootAdmin, invalid, 409)
+	resolved := exactPost("/v1/hold-executions/reconcile", s.bootAdmin, reconcile, 200)
+	if resolved["status"] != "cancelled" || resolved["reconciliation_receipt_id"] == "" {
+		t.Fatal(resolved)
+	}
+	replayed := exactPost("/v1/hold-executions/reconcile", s.bootAdmin, reconcile, 200)
+	if replayed["reconciliation_receipt_id"] != resolved["reconciliation_receipt_id"] {
+		t.Fatal("reconciliation retry changed receipt", replayed)
+	}
+	reconcile["outcome"] = "occurred"
+	exactPost("/v1/hold-executions/reconcile", s.bootAdmin, reconcile, 409)
+	all, err := s.d.Chain.Read()
+	if err != nil || len(all) != 4 || all[3].RecordType != "hold_reconciliation" || receipt.Verify(all, s.d.Key.Public()) != nil {
+		t.Fatal("invalid reconciliation chain", len(all), err)
 	}
 }

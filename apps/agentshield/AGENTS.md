@@ -15,7 +15,7 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 | `internal/controlsync` | `sync --control-api` → Edge `POST /edge/v1/batches`；缺凭据跳过；失败不改本地决策 | 规格 §2.4 |
 | `internal/admission` | frontmatter、哈希、限额、决策表、Skill Card | 完成（决策表变更需同步规格 §3.6.4 与 `dispositions.go`）|
 | `internal/grant` | declared → allowlist / DesiredPolicy；状态机；`PatchDesired`；读回 effective | 完成（`CompilePolicy` 与 Python `artifact_hash` 对等）|
-| `internal/receipt` | 决策引擎、污点/trifecta、哈希链、Verify；block 下无 host 的出网 exec deny | 完成 |
+| `internal/receipt` | 决策引擎、污点/trifecta、哈希链、Verify；block 下无 host 的出网 exec deny；hold 审批后签名预留与不确定恢复 | N06/R02 组件批次 |
 | `internal/state` | 状态目录、token、admission/grant/policy/assets/findings/audit 文件态存储 | 完成 |
 | `internal/ledger` | 台账投影 + 资产生命周期 refresh（G7）；confirm/dismiss/drift/accept | 完成 |
 | `internal/server` | `/v1/*` HTTP（loopback + Host 允许列表 + 决策/管理分权 + 配对）+ 无 secret 的 `/ui-config.json` + embed UI | DEV02-A |
@@ -24,6 +24,7 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 | `internal/ui` | embed `apps/web` 本地模式构建产物（`npm run build:local`） | 完成 |
 | `cmd/agentshield` | 子命令入口（含 `admit`/`grant`/`adapter`/`openshell`/`serve`/`export`/`sync`/`release-manifest`/`manifest-verify`） | 完成 |
 | `internal/skillmanifest` | 发布清单构建、Ed25519 验签、诚实 support_matrix | 完成 |
+| `internal/skillcontext` | Skill 执行上下文（SEC，`skill-execution-context/v1`）签发/验证/撤销；verified 归属唯一路径；决策时全量重验实例、会话 binding、grant digest、安装与目标内容 | N05/R01 组件批次 |
 
 ## 硬性规则
 
@@ -36,6 +37,7 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 7. **模型不是权威。** 任何未来的 LLM 语义层只能产生 `inferred` 事实或 `info` finding，不能改 verdict / action / status。
 8. **fail-closed 表是合同。** `block` 模式下服务不可达、超时、401、非法响应 = 拒绝；普通 policy 的 `audit_only`/`warn` 保留 allow + `advisory_action`。按当前用户开发目标（ADR-0015），无效 Authority 在所有模式下 hard deny，不得被 advisory 放宽。每个适配器必须有对应负向测试。
 9. **日志只记类别。** 拒绝原因、异常消息不得包含规则内容、参数、文件内容或密钥。
+10. **批准不等于执行。** hold 通过后必须先追加唯一 `hold_reservation` 才能允许外部工具；重复/并发预留拒绝。已预留且无 observation 时只能报告 `uncertain`，不得因超时或权限撤销掩盖可能发生的副作用。管理员人工结案只追加 `hold_reconciliation`，不能再执行旧预留或宣称 exactly-once。
 
 ## 测试要求
 

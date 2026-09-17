@@ -1,0 +1,10 @@
+{
+  "head": "77f6692653d4ee196789baaa3f217db41d3d8cf6",
+  "job_url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35168833536/job/105035863018",
+  "go_version": "go1.22.12 darwin/arm64",
+  "CGO_ENABLED": "1",
+  "stateformat": "passed",
+  "adapterinstall": "test executable aborted before test cases",
+  "observed_error": "dyld: missing LC_UUID load command; signal: abort trap",
+  "correction": "Use repository-pinned Go 1.26.6 and CGO_ENABLED=0; keep all regression cases and rerun"
+}

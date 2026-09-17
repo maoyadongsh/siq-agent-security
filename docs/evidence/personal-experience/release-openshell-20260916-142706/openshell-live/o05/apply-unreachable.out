@@ -1,0 +1,27 @@
+{
+  "receipt": {
+    "operation_id": "",
+    "target": "",
+    "base_revision": "",
+    "base_policy_digest": "",
+    "backend_revision": "",
+    "applied_policy_digest": "",
+    "result": "",
+    "evidence": null
+  },
+  "report": {
+    "passed": false,
+    "level": "",
+    "allow_checks": null,
+    "deny_checks": null,
+    "failures": null
+  },
+  "effective_readback": {
+    "backend": "",
+    "revision": "",
+    "verified_at": "",
+    "evidence_id": ""
+  }
+}
+siq-agent-security: openshell_command_failed
+exit=1

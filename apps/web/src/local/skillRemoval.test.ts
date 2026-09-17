@@ -28,6 +28,9 @@ describe('explicit installed Skill removal', () => {
     expect(skillRemoveRequest(cleanup, 'different-current-actor')).toEqual(sample('remove'));
     const preview = { ...pending, claim: null, status: 'not_requested' };
     expect(isSkillRemovalView(preview, id)).toBe(true);
+    const openClaw = { ...preview, record: { ...preview.record, plan: { ...preview.record.plan, platform: 'openclaw' } }, grant: { ...preview.grant, platform: 'openclaw' } };
+    expect(isSkillRemovalView(openClaw, id)).toBe(true);
+    expect(isSkillRemovalView({ ...openClaw, grant: { ...openClaw.grant, platform: 'hermes' } }, id)).toBe(false);
     expect(skillRemoveRequest(preview, ' new-human ').actor_id).toBe('new-human');
     const retained = { ...pending, status: 'cleanup_pending', will_revoke_grant: false, retained_install_id: 'sin-' + 'b'.repeat(64), binding_signature: 'c'.repeat(128), claim: { ...c, revoke_grant: false, retained_install_id: 'sin-' + 'b'.repeat(64), binding_signature: 'c'.repeat(128) } };
     expect(isSkillRemovalView(retained, id)).toBe(true);

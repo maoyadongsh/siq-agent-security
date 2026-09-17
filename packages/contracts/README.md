@@ -12,7 +12,12 @@
 | `grant.schema.json` | 最小权限签发 | `default_effect` 恒为 `deny`；`approved_by.actor_type` 只允许 `human`；approved 及之后禁止 `unresolved` 重叠；`effective` 必须带 `effective_readback` 与逐条 `authority_revision`/`readback_evidence_id`；按 `platform` 强制输出 `hermes_toolset_allowlist` / `openclaw_tool_policy`；`static_domains_unavailable` 显式承认 fs/process 不可热下发 | ADR-011、ADR-003/004、§12.4 |
 | `receipt.schema.json` | 每次工具调用的签名回执 | 哈希链（`seq`/`prev_hash`/`hash`/`sig`，创世 prev 全 0）；四种处置 allow/deny/hold/redact；deny/hold/redact 必须有 `reason`；`audit_only` 只能 allow 并以 `advisory_action` 记录；只存 `params_digest` 与脱敏 `params_excerpt`，禁止参数原文；`taint_labels` + `trifecta`；可选 intent/task/digest/authority_revision/bound 状态、reason_code、action_id、record_type、decision_receipt_id、task_seq/parent_action_id 均进入签名 | 设计方案 v1 §4.2 |
 | `hold-status-request.v1.schema.json` / `hold-status.v1.schema.json` | 执行前只读本地审批查询 | capDecision 请求完整动作/前置回执身份及原参数；响应 pending/approved/denied/expired/consumed；不能批准、续期或生成新授权，状态来自签名回执恢复 | 开发规格 §10.2 |
+| `hold-execution-reserve.v1.schema.json` / `hold-execution-status-request.v1.schema.json` / `hold-execution-status.v1.schema.json` | 审批后的可信单次重试 | capDecision 重呈原 hold 全部身份并绑定新的宿主调用 ID；先签名持久化 reservation 再允许执行；重启后无 observation 的 reservation 为 uncertain，禁止盲目再执行 | N06 可信重试规格 |
+| `local-confirmations.v2.schema.json` | 个人确认窗口投影 | 在 v1 摘要绑定上增加 task、规范动作/效果、资源指纹、仅一次范围、平台恢复模式与 reserved/completed/uncertain 状态；不返回原始参数 | N06 可信重试规格 |
+| `local-skill-update-source-save.v1.schema.json` / `local-skill-update-source-disable.v1.schema.json` / `local-skill-update-schedule-view.v1.schema.json` | 本机 Skill 更新来源启停与只读视图 | 保存时显式绑定来源；停用请求不携带 URL，只能复用当前有效签名记录；未知、损坏和陈旧记录拒写 | N03 来源调度规格 |
+| `local-skill-execution-context-issue.v1.schema.json` / `local-skill-execution-context-revoke.v1.schema.json` | SEC 在线管理请求 | 仅 capAdmin；签发只提交实例、会话、任务和安装 ID，其余可信身份由 daemon 重读；撤销绑定当前 SEC 签名；均要求显式确认 | N05 可信 Skill 执行上下文规格 |
 | `openclaw-approval-checkpoint.v1.md` | 受信宿主审批后执行检查点 | 原生 context 协议版本 1、等待 beforeExecute 严格 true；仅一次执行前状态检查，不是签发或原子执行租约 | OpenClaw 配套宿主 v2 集成 |
+| `openclaw-held-execution.v1.md` | OpenClaw 审批后的签名执行预留 | 最终参数重查后原子预留；派生独立执行尝试 ID；observation 绑定 reservation；响应丢失进入 uncertain | N06 可信重试规格 |
 | `skill-manifest.schema.json` | siq-agent-security Skill 发布清单 | 二进制按 OS × arch 钉 `sha256`；规则包版本 + 公钥；`support_matrix` 按平台 × OS 标 L0–L3，`audit_only` 不得宣称 L2，macOS/Windows 的 L3 必须写 `requires`；`description` ≤60 字符句号结尾；清单本身签名 | ADR-011 D1/D5 |
 | `candidate.schema.json` | 发现阶段的智能体候选 | `evidence_ids` 必填（minItems 1）、确认/驳回生命周期；ADR-011 追加 `source_type` 枚举 `skill_dir`（Skill 目录）与 `platform_config`（平台配置存在性，本机 inventory 产出） | §10.2 / §10.5 |
 | `evidence.schema.json` | 可验证证据 | `collected_at`、`expires_at`（新鲜度窗口）、`signature`（Edge 签名） | §10.5 |
@@ -105,3 +110,7 @@ V2 Go 输出与固定向量位于 `apps/agentshield/testdata/contracts/intent-co
 JSON Schema 负责结构；RE2 可编译性、时间窗顺序、证据存在性和 digest/signature 完整性由 Go 运行时校验，不能仅凭 schema 通过就视为可信授权。
 
 绑定撤销：[请求 schema](intent-binding-revoke-request.v1.schema.json)、[签名记录 schema](intent-binding-revocation.v1.schema.json)。管理面撤销为追加不可变记录；原绑定保留，运行时不得回退 unbound。并发与恢复语义见开发规格的绑定撤销增量。
+
+审批后执行采用签名预留：`hold-execution-reserve/v1` 只允许决策凭据申请一次执行，后续读取
+`hold-execution-status/v1` 无法证明工具是否启动时必须返回 `uncertain`。管理员核对外部系统后可提交
+`hold-execution-reconcile/v1`，仅把“已发生/未发生”写入签名链；该操作不会重新启用旧预留或直接调用工具。

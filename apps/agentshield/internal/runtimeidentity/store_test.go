@@ -488,6 +488,30 @@ func TestIdentitySharedContractFixtures(t *testing.T) {
 	}
 }
 
+func TestInspectByInstanceSkipsRevokedPredecessor(t *testing.T) {
+	s, req, _ := fixture(t)
+	old, _ := create(t, s, req)
+	if _, err := s.Revoke(old.IdentityID, "replacement-test"); err != nil {
+		t.Fatal(err)
+	}
+	replacement := old
+	replacement.IdentityID = "ri-" + strings.Repeat("f", 32)
+	replacement.CreatedAt = time.Now().UTC().Add(time.Second).Format(time.RFC3339Nano)
+	replacement.CredentialHash = strings.Repeat("e", 64)
+	replacement.Signature, _ = s.sign(replacement)
+	raw, err := json.Marshal(replacement)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := publish(s.recordPath(replacement.IdentityID), raw); err != nil {
+		t.Fatal(err)
+	}
+	got, err := s.InspectByInstance(req.InstanceID)
+	if err != nil || got.IdentityID != replacement.IdentityID {
+		t.Fatalf("active replacement must be found after revoked predecessor: %+v %v", got, err)
+	}
+}
+
 func TestEmptyToolGrantDoesNotPublishIdentityOrSecret(t *testing.T) {
 	s, req, g := fixture(t)
 	g.Facts = nil

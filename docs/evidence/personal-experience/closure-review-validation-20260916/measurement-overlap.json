@@ -1,0 +1,14 @@
+{
+  "invalid_b1": {
+    "start": "2026-09-16T02:20:51.078336+00:00",
+    "end": "2026-09-16T02:22:01.703340+00:00"
+  },
+  "concurrent_go_race": {
+    "check": "go-race",
+    "exit": 0,
+    "started_at": "2026-09-16T02:19:53.376163+00:00",
+    "finished_at": "2026-09-16T02:22:11.382493+00:00"
+  },
+  "replacement": "openshell-o04-perf-20260916-030440",
+  "boundary": "Replacement launched alone after all owned full validation jobs finished; unrelated machine background services were not stopped."
+}

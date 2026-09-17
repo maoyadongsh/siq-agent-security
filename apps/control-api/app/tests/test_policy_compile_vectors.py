@@ -8,13 +8,7 @@ from pathlib import Path
 from app.adapters.openshell.contracts import BackendCapabilities, CapabilityItem, UnsupportedCapability
 from app.adapters.openshell.policy_compiler import compile_policy
 
-FIXTURE = (
-    Path(__file__).resolve().parents[4]
-    / "packages"
-    / "contracts"
-    / "fixtures"
-    / "policy_compile_vectors_v1.json"
-)
+FIXTURE = Path(__file__).resolve().parents[4] / "packages" / "contracts" / "fixtures" / "policy_compile_vectors_v1.json"
 
 
 def _caps(raw: dict) -> BackendCapabilities:
@@ -28,6 +22,12 @@ def _caps(raw: dict) -> BackendCapabilities:
         dynamic_network_update=raw["dynamic_network_update"],
         provider_credential_injection=raw["provider_credential_injection"],
         capabilities=items,
+        # This fixture describes a simulated compiler adapter, not live proof.
+        configuration_capabilities={
+            "network.dynamic_update": raw["dynamic_network_update"],
+            "model_routing": raw["provider_credential_injection"],
+            **{k: v.status == "supported" for k, v in items.items() if k.startswith("enforcement_mode.")},
+        },
     )
 
 

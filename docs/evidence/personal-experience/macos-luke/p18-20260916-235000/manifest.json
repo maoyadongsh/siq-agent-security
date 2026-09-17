@@ -1,0 +1,1157 @@
+{
+  "schema_version": "personal-platform-acceptance/v1",
+  "candidate_sha": "720ea397ca189669516b474e6f549c52d91a8dcc",
+  "source_dirty": false,
+  "cases": [
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "wsl2",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "macos",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": "26.6.2",
+      "host_version": "2026.9.4",
+      "guest_version": null,
+      "binary_sha256": "b245897b994dcd23bae30c80933407d4663340bc0e894cd4e226c297895d42f0",
+      "checks": {
+        "discovery": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/openclaw-native.json",
+              "sha256": "4aa6645fe8a4325215a2d689c0ddd49d7757c4389dc10bc42b90a6d8386c4c01"
+            }
+          ]
+        },
+        "normal_execution": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/openclaw-native.json",
+              "sha256": "4aa6645fe8a4325215a2d689c0ddd49d7757c4389dc10bc42b90a6d8386c4c01"
+            }
+          ]
+        },
+        "pre_execution_denial": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/openclaw-native.json",
+              "sha256": "4aa6645fe8a4325215a2d689c0ddd49d7757c4389dc10bc42b90a6d8386c4c01"
+            }
+          ]
+        },
+        "service_unavailable_denial": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/openclaw-native.json",
+              "sha256": "4aa6645fe8a4325215a2d689c0ddd49d7757c4389dc10bc42b90a6d8386c4c01"
+            }
+          ]
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "host_capability_missing",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "host_capability_missing",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "host_capability_missing",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "macos",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "wsl2",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "macos",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": "26.6.2",
+      "host_version": "0.21.3",
+      "guest_version": null,
+      "binary_sha256": "b245897b994dcd23bae30c80933407d4663340bc0e894cd4e226c297895d42f0",
+      "checks": {
+        "discovery": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/hermes-native.json",
+              "sha256": "f146de9699986e2ecb4fef81bdb2e15ffb23c5d8bf76dbe04f296906709fd4cd"
+            }
+          ]
+        },
+        "normal_execution": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/hermes-native.json",
+              "sha256": "f146de9699986e2ecb4fef81bdb2e15ffb23c5d8bf76dbe04f296906709fd4cd"
+            }
+          ]
+        },
+        "pre_execution_denial": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/hermes-native.json",
+              "sha256": "f146de9699986e2ecb4fef81bdb2e15ffb23c5d8bf76dbe04f296906709fd4cd"
+            }
+          ]
+        },
+        "service_unavailable_denial": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/hermes-native.json",
+              "sha256": "f146de9699986e2ecb4fef81bdb2e15ffb23c5d8bf76dbe04f296906709fd4cd"
+            }
+          ]
+        },
+        "approval_resume": {
+          "status": "pass",
+          "method": "native_cli",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/hermes-native.json",
+              "sha256": "f146de9699986e2ecb4fef81bdb2e15ffb23c5d8bf76dbe04f296906709fd4cd"
+            }
+          ]
+        },
+        "final_parameter_recheck": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "host_capability_missing",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "host_capability_missing",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "macos",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "windows",
+      "arch": "amd64",
+      "mode": "wsl2",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "macos",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": "26.6.2",
+      "host_version": "5.5.6",
+      "guest_version": null,
+      "binary_sha256": "b245897b994dcd23bae30c80933407d4663340bc0e894cd4e226c297895d42f0",
+      "checks": {
+        "discovery": {
+          "status": "pass",
+          "method": "native_desktop",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/workbuddy-native.json",
+              "sha256": "20601a565a9547969b81caffdc6a20ddddc11c1ec50eca9a3414f00778afd0d6"
+            }
+          ]
+        },
+        "normal_execution": {
+          "status": "pass",
+          "method": "native_desktop",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/workbuddy-native.json",
+              "sha256": "20601a565a9547969b81caffdc6a20ddddc11c1ec50eca9a3414f00778afd0d6"
+            }
+          ]
+        },
+        "pre_execution_denial": {
+          "status": "pass",
+          "method": "native_desktop",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/workbuddy-native.json",
+              "sha256": "20601a565a9547969b81caffdc6a20ddddc11c1ec50eca9a3414f00778afd0d6"
+            }
+          ]
+        },
+        "service_unavailable_denial": {
+          "status": "pass",
+          "method": "native_desktop",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/workbuddy-native.json",
+              "sha256": "20601a565a9547969b81caffdc6a20ddddc11c1ec50eca9a3414f00778afd0d6"
+            }
+          ]
+        },
+        "approval_resume": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "host_capability_missing",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "pass",
+          "method": "native_desktop",
+          "reason": null,
+          "evidence": [
+            {
+              "path": "evidence/workbuddy-native.json",
+              "sha256": "20601a565a9547969b81caffdc6a20ddddc11c1ec50eca9a3414f00778afd0d6"
+            }
+          ]
+        },
+        "skill_attribution": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "host_capability_missing",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "blocked",
+          "method": "none",
+          "reason": "host_capability_missing",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "macos",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "linux",
+      "arch": "amd64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "platform": "workbuddy",
+      "os": "linux",
+      "arch": "arm64",
+      "mode": "native",
+      "os_version": null,
+      "host_version": null,
+      "guest_version": null,
+      "binary_sha256": null,
+      "checks": {
+        "discovery": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "normal_execution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "pre_execution_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "service_unavailable_denial": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "approval_resume": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "final_parameter_recheck": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "skill_attribution": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        },
+        "install_interception": {
+          "status": "not_run",
+          "method": "none",
+          "reason": "not_tested",
+          "evidence": []
+        }
+      }
+    }
+  ]
+}

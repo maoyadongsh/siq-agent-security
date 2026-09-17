@@ -1,0 +1,47 @@
+{
+  "candidate": "0.3.0-rc.2",
+  "base_commit": "052c81617438d1eabf94a5e0166338312366c491",
+  "go_version": "go version go1.26.5 linux/arm64",
+  "build_flags": [
+    "-trimpath",
+    "-buildvcs=false",
+    "-ldflags",
+    "-s -w -X main.Version=0.3.0-rc.2"
+  ],
+  "CGO_ENABLED": "0",
+  "source_manifest_sha256": "5902a010825d077944c613f58623109aaaad1c1059c4310257a6fc95305a7e96",
+  "source_delta_sha256": "de39223993d6d412da26ae947a57123588bd2b02cb1d85becd174ddc147cbd18",
+  "source_snapshot_sha256": "7743df23f2880bcf13f3453baa46993d5ac8a95ff8be3e63ced0b18d3b3955fd",
+  "artifacts": [
+    {
+      "target": "linux/amd64",
+      "artifact": "siq-agent-security-linux-amd64",
+      "sha256": "f7741dc8a238866abccc8b581991da0ef9bccfb27cb6768419fd968d3c9e5c6f",
+      "bytes": 19206306,
+      "exit_code": 0
+    },
+    {
+      "target": "linux/arm64",
+      "artifact": "siq-agent-security-linux-arm64",
+      "sha256": "5b52109a43355168fb04bd5101f5d6b4cce8f3ea35bc3ff492c4401823c1bc70",
+      "bytes": 18088098,
+      "exit_code": 0
+    },
+    {
+      "target": "darwin/arm64",
+      "artifact": "siq-agent-security-darwin-arm64",
+      "sha256": "92ee13591a0ee731a14789a6d0696aa0be03c6230f8570a1f31671fc2458d23c",
+      "bytes": 18265234,
+      "exit_code": 0
+    },
+    {
+      "target": "windows/amd64",
+      "artifact": "siq-agent-security-windows-amd64.exe",
+      "sha256": "7798be7e39521f44f01a8982c986d5374e445ad03b45161bbc8b40db1741d49d",
+      "bytes": 19422208,
+      "exit_code": 0
+    }
+  ],
+  "signed": false,
+  "live_acceptance": "not_inherited_from_rc1"
+}

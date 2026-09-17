@@ -1,0 +1,20 @@
+{
+  "batch": "local-o05-b3-20260916-181347",
+  "worktree": "/home/maoyd/siq/worktrees/siq-release-openshell-20260916-142706",
+  "date": "2026-09-16",
+  "candidate": {
+    "binary": "dist/siq-agent-security-0.3.0-rc.3/siq-agent-security-linux-arm64",
+    "version": "0.3.0-rc.3",
+    "sha256": "4866f307cf0328caa6c9f127d0a56f8034ead6bbc511b95fae042da223e0bd5c",
+    "host_arch_note": "host is aarch64; only linux-arm64 artifacts executable here; amd64 artifacts built but not executed (see builds-rc3.json)"
+  },
+  "acceptance_baseline": "personal-acceptance-baseline/v2",
+  "n09_matrix_changed": false,
+  "constraints": {
+    "no_commit_push_merge_sign_release": true,
+    "shared_gateway_writes": "read-only precheck only; no canary writes",
+    "no_global_dns_proxy_tls_ssrf_changes": true,
+    "no_sudo_no_global_pkill": true,
+    "secrets_policy": "pairing codes / credentials / serve logs kept in *-private/ only"
+  }
+}

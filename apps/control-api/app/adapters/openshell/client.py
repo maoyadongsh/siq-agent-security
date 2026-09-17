@@ -33,12 +33,20 @@ from app.adapters.openshell.contracts import (
     EventBatch,
     PolicySnapshot,
     RevisionConflict,
+    RollbackAuthorizer,
     RollbackReceipt,
     SandboxPage,
     ValidationReport,
     VerificationReport,
 )
 from app.adapters.openshell.policy_compiler import compile_policy, validate_compiled
+from app.adapters.openshell.policy_safety import (
+    clone_policy,
+    gateway_network_to_rules,
+    policy_digest,
+    static_policy_digest,
+    validate_revision,
+)
 
 
 def _env(name: str, default: str) -> str:
@@ -121,12 +129,12 @@ class OpenShellHttpClient(EnforcementAdapter):
     def _request(self, method: str, path: str, *, json: dict | None = None, params: dict | None = None) -> dict:
         try:
             resp = self._http.request(method, path, json=json, params=params)
-        except httpx.HTTPError as exc:
-            raise AdapterError(f"openshell gateway 不可达（fail-closed）: {exc}") from exc
+        except httpx.HTTPError:
+            raise AdapterError("openshell_http_transport_failed") from None
         if resp.status_code == 409:
             raise RevisionConflict(expected="(from request)", actual="(backend)")
         if resp.status_code >= 400:
-            raise AdapterError(f"openshell gateway 错误 {resp.status_code}: {resp.text[:200]}")
+            raise AdapterError(f"openshell_http_status_{resp.status_code}")
         try:
             return resp.json()
         except ValueError as exc:
@@ -167,12 +175,20 @@ class OpenShellHttpClient(EnforcementAdapter):
     def read_effective_policy(self, target: str) -> PolicySnapshot:
         """读后端实际生效策略（不回退到控制面上次提交值）。"""
         data = self._request("GET", f"{self.endpoints['sandboxes']}/{target}/policy")
+        revision = validate_revision(data.get("revision"))
+        policy = data.get("policy")
+        if not isinstance(policy, dict):
+            raise AdapterError("openshell_http_full_policy_missing")
+        policy = clone_policy(policy)
         return PolicySnapshot(
             target=target,
-            revision=str(data.get("revision", "0")),
-            filesystem=data.get("filesystem_policy") or {},
-            network=data.get("network_policies") or [],
-            process=data.get("process") or {},
+            revision=revision,
+            policy=policy,
+            policy_digest=policy_digest(policy),
+            static_digest=static_policy_digest(policy),
+            filesystem=policy.get("filesystem_policy") or {},
+            network=gateway_network_to_rules(policy.get("network_policies")),
+            process=policy.get("process") or {},
             # P1-11：网关响应未携带模式时如实 unknown，不默认编造 "block"
             enforcement_mode=str(data.get("enforcement_mode", "unknown")),
             observed_at=data.get("observed_at"),
@@ -187,43 +203,32 @@ class OpenShellHttpClient(EnforcementAdapter):
 
     def plan_change(self, target: str, compiled: CompiledPolicy) -> ChangePlan:
         current = self.read_effective_policy(target)
-        kind = "generation" if compiled.needs_generation else "dynamic"
+        static_changed = any(
+            key in compiled.artifact
+            and (
+                not isinstance(current.policy.get(key), dict)
+                or any(current.policy[key].get(field) != value for field, value in compiled.artifact[key].items())
+            )
+            for key in ("filesystem_policy", "process")
+        )
+        kind = "generation" if static_changed else "dynamic"
         return ChangePlan(
             target=target,
             kind=kind,
             expected_revision=current.revision,
             artifact_hash=compiled.artifact_hash,
+            base_policy_digest=current.policy_digest,
+            base_static_digest=current.static_digest,
             steps=[f"apply {kind} policy {compiled.artifact_hash[:12]}"],
         )
 
     def apply_dynamic(self, target: str, plan: ChangePlan, expected_revision: str) -> DeploymentReceipt:
-        """动态网络策略更新：期望 revision 防并发；后端 409 → RevisionConflict。"""
-        data = self._request(
-            "PATCH",
-            f"{self.endpoints['sandboxes']}/{target}/policy",
-            json={"expected_revision": expected_revision, "artifact_hash": plan.artifact_hash},
-        )
-        return DeploymentReceipt(
-            backend_revision=str(data.get("revision", "")),
-            evidence={"snapshot_hash": data.get("snapshot_hash", ""), "response": data},
-            applied_at=data.get("applied_at"),
-        )
+        """联调前无法证明 HTTP 端支持完整策略 CAS，因此零写入拒绝。"""
+        raise AdapterError("openshell_http_policy_fidelity_unavailable: use the verified CLI transport")
 
     def create_generation(self, target: str, compiled: CompiledPolicy) -> DeploymentReceipt:
-        data = self._request(
-            "POST",
-            self.endpoints["sandboxes"],
-            json={
-                "target": target,
-                "policy": compiled.artifact,
-                "enforcement_mode": compiled.enforcement_mode,
-            },
-        )
-        return DeploymentReceipt(
-            backend_revision=str(data.get("revision", "")),
-            evidence={"snapshot_hash": data.get("snapshot_hash", ""), "response": data},
-            applied_at=data.get("applied_at"),
-        )
+        """联调前无法证明 HTTP 端安全创建与完整回执，因此零写入拒绝。"""
+        raise AdapterError("openshell_http_generation_unavailable: use the verified CLI transport")
 
     def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
         """正负向验证：allow 项读回策略确认命中；deny 项确认不在允许集（block 模式）。
@@ -235,6 +240,8 @@ class OpenShellHttpClient(EnforcementAdapter):
         snapshot = self.read_effective_policy(target)
         if snapshot.revision != receipt.backend_revision:
             failures.append(f"revision mismatch: {snapshot.revision} != {receipt.backend_revision}")
+        if not receipt.applied_policy_digest or snapshot.policy_digest != receipt.applied_policy_digest:
+            failures.append("full policy digest mismatch")
         allowed = {r.get("endpoint") for r in snapshot.network if r.get("effect") != "deny"}
         allow_checks = [
             {
@@ -264,8 +271,6 @@ class OpenShellHttpClient(EnforcementAdapter):
         for check in deny_checks:
             if check["endpoint"] in allowed and snapshot.enforcement_mode == "block":
                 failures.append(f"deny check failed: {check['endpoint']}")
-        if not allow_checks or not deny_checks:
-            failures.append("正负向验证必须各至少一项（§15.3）")
         passed = not failures
         return VerificationReport(
             passed=passed,
@@ -275,17 +280,14 @@ class OpenShellHttpClient(EnforcementAdapter):
             failures=failures,
         )
 
-    def rollback(self, target: str, receipt: DeploymentReceipt) -> RollbackReceipt:
-        data = self._request(
-            "POST",
-            f"{self.endpoints['sandboxes']}/{target}/rollback",
-            json={"from_revision": receipt.backend_revision},
-        )
-        return RollbackReceipt(
-            restored_revision=str(data.get("revision", "")),
-            evidence={"response": data},
-            rolled_back_at=data.get("rolled_back_at"),
-        )
+    def rollback(
+        self,
+        target: str,
+        receipt: DeploymentReceipt,
+        authorizer: RollbackAuthorizer | None = None,
+    ) -> RollbackReceipt:
+        """HTTP 端未提供可信快照/CAS 合同前，拒绝伪安全回滚。"""
+        raise AdapterError("openshell_http_safe_rollback_unavailable: use the verified CLI transport")
 
     def stream_events(self, cursor: str | None = None) -> EventBatch:
         params = {"cursor": cursor} if cursor else None

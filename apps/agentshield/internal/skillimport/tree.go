@@ -11,6 +11,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 	"strings"
@@ -100,7 +101,7 @@ func gitMetadata(path string) bool {
 func checkDirs(path string) error {
 	for {
 		info, err := os.Lstat(path)
-		if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		if err != nil || !stateformat.AcceptDirectory(info, path) {
 			return ErrInvalid
 		}
 		parent := filepath.Dir(path)

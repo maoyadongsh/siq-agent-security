@@ -11,6 +11,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/clientrelease"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
 func cmdServiceRollback(args []string, out io.Writer) error {
@@ -25,11 +26,14 @@ func cmdServiceRollback(args []string, out io.Writer) error {
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
-	if runtime.GOOS != "linux" {
-		return errors.New("service-rollback: Linux user service integration required")
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
+		return errors.New("service-rollback: Linux user service or macOS LaunchAgent integration required")
 	}
 	if !*confirm || *original == "" || *binary == "" || fs.NArg() != 0 {
 		return errors.New("回退会短暂停止保护；请提供 --transaction ID --binary OLD --confirm-rollback；可用 --manifest OLD 指定旧发行清单")
+	}
+	if runtime.GOOS == "darwin" {
+		return cmdServiceRollbackDarwin(*original, *manifest, *binary, *restore, *recoverID, out)
 	}
 	dir, err := state.DefaultDir()
 	if err != nil {
@@ -133,17 +137,22 @@ func prepareRollbackBinary(st *state.Store, plan state.ServiceSwitch, binary, ma
 	if plan.BinaryBindings == nil {
 		return "", "", errors.New("service-rollback: legacy transaction lacks historical binary identity")
 	}
+	render := func(path string) (string, error) { return renderUserUnit(path, st.Dir) }
+	return prepareHistoricalBinary(st, *plan.BinaryBindings, plan.SourceUnit, render, binary, manifest, restore, verify)
+}
+
+// prepareHistoricalBinary is manager-neutral: render reproduces the recorded
+// source configuration for a candidate path (systemd unit or launchd plist).
+func prepareHistoricalBinary(st *state.Store, bindings state.ServiceBinaryBindings, sourceUnit string, render func(string) (string, error), binary, manifest string, restore bool, verify func(string, string) (string, error)) (string, string, error) {
 	path, err := filepath.Abs(binary)
 	if err != nil {
 		return "", "", err
 	}
-	parent, err := filepath.EvalSymlinks(filepath.Dir(path))
-	if err != nil {
-		return "", "", err
+	if err := stateformat.LeafDirectory(filepath.Dir(path)); err != nil {
+		return "", "", errors.New("service-rollback: binary parent is not a canonical directory")
 	}
-	path = filepath.Join(parent, filepath.Base(path))
-	unit, err := renderUserUnit(path, st.Dir)
-	if err != nil || unit != plan.SourceUnit {
+	unit, err := render(path)
+	if err != nil || unit != sourceUnit {
 		return "", "", errors.New("service-rollback: binary path differs from historical source")
 	}
 	info, statErr := os.Lstat(path)
@@ -156,14 +165,14 @@ func prepareRollbackBinary(st *state.Store, plan state.ServiceSwitch, binary, ma
 			return "", "", err
 		}
 		restoreErr := func() error {
-			snapshot, err := clientrelease.SnapshotPath(st.Dir, plan.BinaryBindings.SourceSHA256)
+			snapshot, err := clientrelease.SnapshotPath(st.Dir, bindings.SourceSHA256)
 			if err != nil {
 				return err
 			}
 			if _, err = verify(manifest, snapshot); err != nil {
 				return err
 			}
-			return clientrelease.RestoreSnapshot(st.Dir, plan.BinaryBindings.SourceSHA256, path)
+			return clientrelease.RestoreSnapshot(st.Dir, bindings.SourceSHA256, path)
 		}()
 		if err = errors.Join(restoreErr, lock.Release()); err != nil {
 			return "", "", err
@@ -171,7 +180,7 @@ func prepareRollbackBinary(st *state.Store, plan state.ServiceSwitch, binary, ma
 	} else if statErr != nil {
 		return "", "", statErr
 	}
-	if err := checkServiceBinary(path, plan.BinaryBindings.SourceSHA256); err != nil {
+	if err := checkServiceBinary(path, bindings.SourceSHA256); err != nil {
 		return "", "", err
 	}
 	version, err := verify(manifest, path)

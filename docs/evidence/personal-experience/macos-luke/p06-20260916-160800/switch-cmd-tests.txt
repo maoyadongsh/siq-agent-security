@@ -1,0 +1,24 @@
+=== RUN   TestSwitchLaunchAgentUpgradeThenRollback
+--- PASS: TestSwitchLaunchAgentUpgradeThenRollback (0.20s)
+=== RUN   TestSwitchLaunchAgentFailedStartRecovers
+--- PASS: TestSwitchLaunchAgentFailedStartRecovers (0.15s)
+=== RUN   TestSwitchLaunchAgentRefusesWithoutMutation
+=== RUN   TestSwitchLaunchAgentRefusesWithoutMutation/unregistered
+=== RUN   TestSwitchLaunchAgentRefusesWithoutMutation/foreign_loaded_configuration
+=== RUN   TestSwitchLaunchAgentRefusesWithoutMutation/binary_drift
+=== RUN   TestSwitchLaunchAgentRefusesWithoutMutation/recheck_failure
+=== RUN   TestSwitchLaunchAgentRefusesWithoutMutation/no_bindings
+=== RUN   TestSwitchLaunchAgentRefusesWithoutMutation/pending_blocks_load
+=== RUN   TestSwitchLaunchAgentRefusesWithoutMutation/running_source_refuses_recovery
+--- PASS: TestSwitchLaunchAgentRefusesWithoutMutation (0.55s)
+    --- PASS: TestSwitchLaunchAgentRefusesWithoutMutation/unregistered (0.07s)
+    --- PASS: TestSwitchLaunchAgentRefusesWithoutMutation/foreign_loaded_configuration (0.08s)
+    --- PASS: TestSwitchLaunchAgentRefusesWithoutMutation/binary_drift (0.07s)
+    --- PASS: TestSwitchLaunchAgentRefusesWithoutMutation/recheck_failure (0.07s)
+    --- PASS: TestSwitchLaunchAgentRefusesWithoutMutation/no_bindings (0.07s)
+    --- PASS: TestSwitchLaunchAgentRefusesWithoutMutation/pending_blocks_load (0.09s)
+    --- PASS: TestSwitchLaunchAgentRefusesWithoutMutation/running_source_refuses_recovery (0.09s)
+=== RUN   TestServiceUpgradeCommandGuards
+--- PASS: TestServiceUpgradeCommandGuards (0.00s)
+PASS
+ok  	siq-agent-security/apps/agentshield/cmd/agentshield	1.331s

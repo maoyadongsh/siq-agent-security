@@ -1,0 +1,31 @@
+{
+  "schema_version": "personal-b05-evidence/v1",
+  "task": "B05 服务失联时真实宿主 fail-closed 与零独立副作用",
+  "status": "done",
+  "recorded_at": "2026-09-15T22:20:08.409428+00:00",
+  "checks": {
+    "managed_install_with_read_write_exec_grant": "done",
+    "loopback_receiver_selftest_proves_hit_counting": "done",
+    "positive_control_marker_write_executed_with_service_up": "done",
+    "up_leg_exec_denied_runtime_effect_unknown_contract": "done",
+    "up_leg_denied_exec_produced_zero_egress": "done",
+    "service_down_denies_file_write_before_execution": "done",
+    "service_down_denies_read_without_content_leak": "done",
+    "service_down_zero_loopback_egress_from_denied_exec": "done",
+    "fail_closed_pending_lines_signed_false_recorded": "done",
+    "managed_audit_only_override_still_fails_closed": "done",
+    "same_port_restart_recovers_pairing": "done",
+    "pending_lines_promoted_onto_signed_receipt_chain": "done",
+    "unreachable_service_produced_no_authorized_receipts": "done",
+    "recovered_service_allows_authorized_read": "done",
+    "promotion_cursor_matches_pending_lines": "done",
+    "receipt_chain_verified_after_promotion": "done"
+  },
+  "gaps": [],
+  "metrics": {
+    "receipt_count": 9,
+    "pending_line_count": 4,
+    "promoted_receipt_count": 4,
+    "loopback_receiver_hits": 1
+  }
+}

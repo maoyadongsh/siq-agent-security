@@ -1,0 +1,1176 @@
+{
+  "schema_version": "personal-r01-sec-live-smoke/v1",
+  "context": {
+    "binary": "/home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914/apps/agentshield/.tmp/r01-candidate/agentshield",
+    "binary_sha256": "e5280d6623078e7cc60023dc5efe06bc76adfbeb27598f3542ad9456aebbf9e8",
+    "binary_source": "explicit --binary",
+    "repo": "/home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914",
+    "os": "Linux/aarch64",
+    "python": "3.13.12",
+    "started_at": "2026-09-14T11:26:16.090352+00:00",
+    "git_head": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "git_dirty_paths": 84,
+    "finished_at": "2026-09-14T11:26:17.799046+00:00",
+    "overall": "pass"
+  },
+  "steps": [
+    {
+      "id": "00-binary-version",
+      "title": "candidate binary identity",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "version"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/00-binary-version.cli.stdout.txt",
+      "stderr_file": "raw/00-binary-version.cli.stderr.txt",
+      "stdout_summary": "siq-agent-security 0.0.0-dev (linux/arm64)\n",
+      "stderr_summary": "",
+      "duration_ms": 13,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.120709+00:00"
+    },
+    {
+      "id": "01-init-help",
+      "title": "init usage probe (task requires reading --help first)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "init",
+        "--help"
+      ],
+      "exit_code": 1,
+      "stdout_file": "raw/01-init-help.cli.stdout.txt",
+      "stderr_file": "raw/01-init-help.cli.stderr.txt",
+      "stdout_summary": "",
+      "stderr_summary": "Usage of init:\n  -port int\n    \tinitial local port (default 47611; preserve existing configuration)\nsiq-agent-security: flag: help requested\n",
+      "duration_ms": 14,
+      "note": "flag.ErrHelp exits 1 after printing defaults",
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.135310+00:00"
+    },
+    {
+      "id": "02-adapter-help",
+      "title": "adapter usage probe (task requires reading --help first)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "adapter",
+        "install",
+        "--help"
+      ],
+      "exit_code": 1,
+      "stdout_file": "raw/02-adapter-help.cli.stdout.txt",
+      "stderr_file": "raw/02-adapter-help.cli.stderr.txt",
+      "stdout_summary": "",
+      "stderr_summary": "siq-agent-security: adapter: unknown option\n",
+      "duration_ms": 11,
+      "note": "adapter subcommand has no flag help; usage error is the honest output",
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.146910+00:00"
+    },
+    {
+      "id": "10-init",
+      "title": "initialize state directory",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "init",
+        "--port",
+        "47611"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/10-init.cli.stdout.txt",
+      "stderr_file": "raw/10-init.cli.stderr.txt",
+      "stdout_summary": "{\"schema_version\":\"local-client-initialization/v1\",\"status\":\"initialized\",\"instance_id\":\"85f641ff4a5060ac2dfafa269d21621f6dc4024aef13412a72b35483380e302d\",\"state_directory_id\":\"182201040dbf2f10ecbdb6ad44cb6296bce5210253a6111a14c95659548870de\",\"port\":47611}\n",
+      "stderr_summary": "",
+      "duration_ms": 43,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.190766+00:00"
+    },
+    {
+      "id": "11-discover-instance",
+      "title": "discover isolated Hermes instance (CLI, pre-grant planning)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "adapter",
+        "instances",
+        "hermes"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/11-discover-instance.cli.stdout.txt",
+      "stderr_file": "raw/11-discover-instance.cli.stderr.txt",
+      "stdout_summary": "{\"instances\":[{\"instance_id\":\"hi-a902f52b58fec470e5bf4b6541035450\",\"name\":\"default\",\"config_dir\":\"/tmp/siq-r01-sec-live-_0rio8a1/home/.hermes\",\"active\":false},{\"instance_id\":\"hi-0fe6e47d6a3222f038b3535dbece7df8\",\"name\":\"hermes-home\",\"config_dir\":\"/tmp/siq-r01-sec-live-_0rio8a1/hermes-home\",\"active\":true}],\"issues\":[]}\n",
+      "stderr_summary": "",
+      "duration_ms": 9,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.200683+00:00"
+    },
+    {
+      "id": "12-admit",
+      "title": "admit minimal fixture skill",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "admit",
+        "/tmp/siq-r01-sec-live-_0rio8a1/skill",
+        "--trust",
+        "unknown"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/12-admit.cli.stdout.txt",
+      "stderr_file": "raw/12-admit.cli.stderr.txt",
+      "stdout_summary": "{\n  \"admission_id\": \"adm-e32c4cd6a52b\",\n  \"skill_id\": \"local_dir:r01-sec-fixture@e32c4cd6a52b\",\n  \"skill_name\": \"r01-sec-fixture\",\n  \"skill_version\": null,\n  \"source\": {\n    \"type\": \"local_dir\",\n    \"locator\": \"/tmp/siq-r01-sec-live-_0rio8a1/skill\",\n    \"trust_level\": \"unknown\",\n    \"ref\": null\n  },\n  \"content_hash\": \"e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8\",\n  \"file_manif",
+      "stderr_summary": "",
+      "duration_ms": 17,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.217975+00:00"
+    },
+    {
+      "id": "13-grant-create",
+      "title": "create skill grant for the planned hri- subject (CLI)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "grant",
+        "adm-e32c4cd6a52b",
+        "--platform",
+        "hermes",
+        "--subject",
+        "hri-0fe6e47d6a3222f038b3535dbece7df8"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/13-grant-create.cli.stdout.txt",
+      "stderr_file": "raw/13-grant-create.cli.stderr.txt",
+      "stdout_summary": "{\n  \"desired_policy\": {\n    \"enforcement_mode\": \"block\",\n    \"policy_id\": \"pol-grt-e32c4cd6a52b-20128b73\",\n    \"selector\": {\n      \"agent_ids\": [\n        \"hri-0fe6e47d6a3222f038b3535dbece7df8\"\n      ]\n    },\n    \"status\": \"validated\",\n    \"tools\": [\n      \"read_file\",\n      \"write_file\"\n    ],\n    \"version\": 1\n  },\n  \"grant\": {\n    \"grant_id\": \"grt-e32c4cd6a52b-20128b73\",\n    \"admission_id\": \"adm-",
+      "stderr_summary": "",
+      "duration_ms": 54,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.272279+00:00"
+    },
+    {
+      "id": "14-grant-challenge",
+      "title": "approval challenge (CLI)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "grant",
+        "challenge",
+        "grt-e32c4cd6a52b-20128b73"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/14-grant-challenge.cli.stdout.txt",
+      "stderr_file": "raw/14-grant-challenge.cli.stderr.txt",
+      "stdout_summary": "{\n  \"challenge\": {\n    \"challenge_id\": \"chl-843cbfb843d5968f949f3931663e9389\",\n    \"grant_id\": \"grt-e32c4cd6a52b-20128b73\",\n    \"grant_digest\": \"56eea51e1abd818072321c242cb19c07e83c6647109e655179f2d137f9c6041c\",\n    \"expected_revision\": 0,\n    \"subject_type\": \"agent_instance\",\n    \"subject_id\": \"hri-0fe6e47d6a3222f038b3535dbece7df8\",\n    \"platform\": \"hermes\",\n    \"scope_digest\": \"84070bb3f3fa1582e",
+      "stderr_summary": "",
+      "duration_ms": 16,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.288730+00:00"
+    },
+    {
+      "id": "15-grant-approve",
+      "title": "human approve with challenge proof (CLI)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "grant",
+        "approve",
+        "grt-e32c4cd6a52b-20128b73",
+        "--approve-as",
+        "r01-live-operator",
+        "--challenge-id",
+        "chl-843cbfb843d5968f949f3931663e9389",
+        "--nonce",
+        "eb5eacf47ba92ce66fb2e97748c42d13"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/15-grant-approve.cli.stdout.txt",
+      "stderr_file": "raw/15-grant-approve.cli.stderr.txt",
+      "stdout_summary": "{\n  \"grant\": {\n    \"grant_id\": \"grt-e32c4cd6a52b-20128b73\",\n    \"admission_id\": \"adm-e32c4cd6a52b\",\n    \"skill\": {\n      \"skill_id\": \"local_dir:r01-sec-fixture@e32c4cd6a52b\",\n      \"content_hash\": \"e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8\"\n    },\n    \"subject\": {\n      \"type\": \"agent_instance\",\n      \"id\": \"hri-0fe6e47d6a3222f038b3535dbece7df8\"\n    },\n    \"platform\": \"herme",
+      "stderr_summary": "",
+      "duration_ms": 75,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.364563+00:00"
+    },
+    {
+      "id": "16-grant-deploy",
+      "title": "deploy CLI grant (allowed: admission is not import-reserved)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "grant",
+        "deploy",
+        "grt-e32c4cd6a52b-20128b73"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/16-grant-deploy.cli.stdout.txt",
+      "stderr_file": "raw/16-grant-deploy.cli.stderr.txt",
+      "stdout_summary": "{\n  \"grant\": {\n    \"grant_id\": \"grt-e32c4cd6a52b-20128b73\",\n    \"admission_id\": \"adm-e32c4cd6a52b\",\n    \"skill\": {\n      \"skill_id\": \"local_dir:r01-sec-fixture@e32c4cd6a52b\",\n      \"content_hash\": \"e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8\"\n    },\n    \"subject\": {\n      \"type\": \"agent_instance\",\n      \"id\": \"hri-0fe6e47d6a3222f038b3535dbece7df8\"\n    },\n    \"platform\": \"herme",
+      "stderr_summary": "",
+      "duration_ms": 59,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.423961+00:00"
+    },
+    {
+      "id": "17-adapter-install",
+      "title": "install adapter plugin into the isolated HERMES_HOME instance",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "adapter",
+        "install",
+        "hermes",
+        "--instance",
+        "hi-0fe6e47d6a3222f038b3535dbece7df8"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/17-adapter-install.cli.stdout.txt",
+      "stderr_file": "raw/17-adapter-install.cli.stderr.txt",
+      "stdout_summary": "{\n  \"platform\": \"hermes\",\n  \"action\": \"install\",\n  \"paths\": [\n    \"/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/bin/hermes-skills-install\",\n    \"/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/__init__.py\",\n    \"/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/config.json\",\n    \"/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/plugins/siq-agent-security/plugin.ya",
+      "stderr_summary": "",
+      "duration_ms": 93,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.517065+00:00"
+    },
+    {
+      "id": "20-serve-a-start",
+      "title": "serve start on 127.0.0.1:38371 (mode=block) + admin pairing",
+      "kind": "cli+http",
+      "command": [
+        "agentshield",
+        "serve",
+        "--port",
+        "38371",
+        "--mode",
+        "block"
+      ],
+      "duration_ms": 0,
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed",
+        "session_scope": "admin"
+      },
+      "stdout_file": "raw/20-serve-a-start.serve-log.txt",
+      "recorded_at": "2026-09-14T11:26:16.574987+00:00"
+    },
+    {
+      "id": "21-serve-instance-confirm",
+      "title": "daemon-side instance discovery matches CLI planning",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/adapter/instances?platform=hermes"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/21-serve-instance-confirm.request.json",
+      "response_file": "raw/21-serve-instance-confirm.response.json",
+      "duration_ms": 4,
+      "key_fields": {
+        "schema_version": "local-adapter-instances/v1"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.579121+00:00"
+    },
+    {
+      "id": "22-status",
+      "title": "daemon status",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/status"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/22-status.request.json",
+      "response_file": "raw/22-status.response.json",
+      "duration_ms": 6,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.585228+00:00"
+    },
+    {
+      "id": "23-grant-cli-under-lock",
+      "title": "grant CLI must refuse while serve holds the state writer lock",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "grant",
+        "deploy",
+        "grt-e32c4cd6a52b-20128b73"
+      ],
+      "exit_code": 1,
+      "stdout_file": "raw/23-grant-cli-under-lock.cli.stdout.txt",
+      "stderr_file": "raw/23-grant-cli-under-lock.cli.stderr.txt",
+      "stdout_summary": "",
+      "stderr_summary": "siq-agent-security: grant: serve holds write lock (pid 1575686); use the local console or authenticated HTTP admin session — offline CLI must not bypass the single writer\n",
+      "duration_ms": 13,
+      "note": "documented single-writer behavior; CLI authority changes run with serve stopped",
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.598802+00:00"
+    },
+    {
+      "id": "24-skill-import",
+      "title": "import skill from local dir",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/skill-imports"
+      ],
+      "http_status": 201,
+      "request_body_file": "raw/24-skill-import.request.json",
+      "response_file": "raw/24-skill-import.response.json",
+      "duration_ms": 26,
+      "key_fields": {
+        "schema_version": "local-skill-import-result/v1"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.625096+00:00"
+    },
+    {
+      "id": "25-import-permission",
+      "title": "derive import permission grant (draft)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/skill-imports/si-57e440732738a14778ec438b34ec7ac3/permissions"
+      ],
+      "http_status": 201,
+      "request_body_file": "raw/25-import-permission.request.json",
+      "response_file": "raw/25-import-permission.response.json",
+      "duration_ms": 96,
+      "key_fields": {
+        "schema_version": "local-skill-import-permission-created/v1",
+        "state_revision": 0
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.722119+00:00"
+    },
+    {
+      "id": "26-patch-desired",
+      "title": "scope grant to read_file/write_file and the sandbox workspace",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5/patch-desired"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/26-patch-desired.request.json",
+      "response_file": "raw/26-patch-desired.response.json",
+      "duration_ms": 58,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.780571+00:00"
+    },
+    {
+      "id": "27-grant-challenge",
+      "title": "approval challenge (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5/challenge"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/27-grant-challenge.request.json",
+      "response_file": "raw/27-grant-challenge.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.792826+00:00"
+    },
+    {
+      "id": "28-grant-approve",
+      "title": "approve import grant (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5/approve"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/28-grant-approve.request.json",
+      "response_file": "raw/28-grant-approve.response.json",
+      "duration_ms": 55,
+      "key_fields": {
+        "state_revision": 2
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.848754+00:00"
+    },
+    {
+      "id": "29-install-plan",
+      "title": "stage install plan (grant must be approved)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/skill-installations/plans"
+      ],
+      "http_status": 201,
+      "request_body_file": "raw/29-install-plan.request.json",
+      "response_file": "raw/29-install-plan.response.json",
+      "duration_ms": 29,
+      "key_fields": {
+        "schema_version": "local-skill-install-plan-created/v1"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.877901+00:00"
+    },
+    {
+      "id": "30-install-apply",
+      "title": "apply install plan",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/skill-installations/apply"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/30-install-apply.request.json",
+      "response_file": "raw/30-install-apply.response.json",
+      "duration_ms": 53,
+      "key_fields": {
+        "status": "installed_unverified",
+        "schema_version": "local-skill-install-view/v1",
+        "install_id": "sin-4dd24884e9f0f9ff5fb1528f2b91c6926ce932f75063b6796831fe6f5a61e8c3"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.931176+00:00"
+    },
+    {
+      "id": "31-install-activate",
+      "title": "activate instance-scoped runtime permission (grant stays approved)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/skill-installations/operations/sin-4dd24884e9f0f9ff5fb1528f2b91c6926ce932f75063b6796831fe6f5a61e8c3/activate"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/31-install-activate.request.json",
+      "response_file": "raw/31-install-activate.response.json",
+      "duration_ms": 65,
+      "key_fields": {
+        "schema_version": "local-skill-install-activated/v1",
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:16.996305+00:00"
+    },
+    {
+      "id": "32-runtime-identity",
+      "title": "issue runtime identity pinned to the install grant",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/runtime-identities"
+      ],
+      "http_status": 201,
+      "request_body_file": "raw/32-runtime-identity.request.json",
+      "response_file": "raw/32-runtime-identity.response.json",
+      "duration_ms": 21,
+      "key_fields": {
+        "schema_version": "local-runtime-identity-issued/v1"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.017718+00:00"
+    },
+    {
+      "id": "33-enroll-session-1",
+      "title": "enroll primary session (SEC subject)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/runtime-sessions"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/33-enroll-session-1.request.json",
+      "response_file": "raw/33-enroll-session-1.response.json",
+      "duration_ms": 30,
+      "key_fields": {
+        "schema_version": "local-runtime-session-enrolled/v1",
+        "binding_id": "bind-5305a76859848eeac585848870afaa3d4581e1e333278d0e7ae9dcc39d9ce586"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.048383+00:00"
+    },
+    {
+      "id": "34-enroll-session-2",
+      "title": "enroll second session (never SEC-covered; negative control)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/runtime-sessions"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/34-enroll-session-2.request.json",
+      "response_file": "raw/34-enroll-session-2.response.json",
+      "duration_ms": 29,
+      "key_fields": {
+        "schema_version": "local-runtime-session-enrolled/v1",
+        "binding_id": "bind-1412b0a275120e2a56b8910af3f5d77dc252bbf44bb506757d69b28c6c8928b0"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.078045+00:00"
+    },
+    {
+      "id": "35-bindings",
+      "title": "read signed session bindings",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/intent-bindings"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/35-bindings.request.json",
+      "response_file": "raw/35-bindings.response.json",
+      "duration_ms": 1,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.079183+00:00"
+    },
+    {
+      "id": "36-forged-claim-no-sec",
+      "title": "pre-SEC invariant: exact copied claim never verifies",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/36-forged-claim-no-sec.request.json",
+      "response_file": "raw/36-forged-claim-no-sec.response.json",
+      "duration_ms": 37,
+      "key_fields": {
+        "action": "deny",
+        "reason_code": "skill_attribution_mismatch",
+        "authority_status": "valid",
+        "skill_attribution": {
+          "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+          "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+          "status": "unknown"
+        },
+        "observed_action_without_sec": "deny",
+        "observed_reason_code_without_sec": "skill_attribution_mismatch"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.116451+00:00"
+    },
+    {
+      "id": "37-unenrolled-session",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "title": "scoped credential cannot decide for an unenrolled session",
+      "http_status": 401,
+      "response_file": "raw/37-unenrolled-session.response.json",
+      "status": "pass",
+      "key_fields": {
+        "error": "scoped_decision_credential_required"
+      },
+      "recorded_at": "2026-09-14T11:26:17.127852+00:00"
+    },
+    {
+      "id": "38-sec-cli-under-lock",
+      "title": "skill-context CLI must refuse while serve owns the state writer",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "skill-context",
+        "issue",
+        "--instance",
+        "hi-0fe6e47d6a3222f038b3535dbece7df8",
+        "--session",
+        "r01-sec-live-session-1",
+        "--task",
+        "task-ri-1e94e49b70c43a58bc561ae11902b69b5bb9ce589b1011e6b758e397e0107ec9",
+        "--install-id",
+        "sin-4dd24884e9f0f9ff5fb1528f2b91c6926ce932f75063b6796831fe6f5a61e8c3",
+        "--ttl",
+        "30m",
+        "--confirm"
+      ],
+      "exit_code": 1,
+      "stdout_file": "raw/38-sec-cli-under-lock.cli.stdout.txt",
+      "stderr_file": "raw/38-sec-cli-under-lock.cli.stderr.txt",
+      "stdout_summary": "",
+      "stderr_summary": "siq-agent-security: skill-context: state: write lock held by another process (pid 1575686); submit writes through serve HTTP or wait\n",
+      "duration_ms": 15,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.143394+00:00"
+    },
+    {
+      "id": "40-serve-a-stop",
+      "title": "serve stop (SIGTERM, drain)",
+      "kind": "process",
+      "command": [
+        "SIGTERM"
+      ],
+      "stdout_file": "raw/40-serve-a-stop.serve-log.txt",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 7,
+      "recorded_at": "2026-09-14T11:26:17.151376+00:00"
+    },
+    {
+      "id": "41-sec-issue-task",
+      "title": "issue task-scoped SEC (controlled_task evidence)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "skill-context",
+        "issue",
+        "--instance",
+        "hi-0fe6e47d6a3222f038b3535dbece7df8",
+        "--session",
+        "r01-sec-live-session-1",
+        "--task",
+        "task-ri-1e94e49b70c43a58bc561ae11902b69b5bb9ce589b1011e6b758e397e0107ec9",
+        "--install-id",
+        "sin-4dd24884e9f0f9ff5fb1528f2b91c6926ce932f75063b6796831fe6f5a61e8c3",
+        "--ttl",
+        "30m",
+        "--confirm"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/41-sec-issue-task.cli.stdout.txt",
+      "stderr_file": "raw/41-sec-issue-task.cli.stderr.txt",
+      "stdout_summary": "{\"context_id\":\"sec-1f941039ff3d9c92e4f6456ed1c35c36\",\"evidence_level\":\"controlled_task\",\"expires_at\":\"2026-09-14T11:56:17.169856536Z\",\"grant_id\":\"grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5\",\"issued_at\":\"2026-09-14T11:26:17.169856536Z\",\"skill\":{\"skill_id\":\"local_dir:r01-sec-fixture@e32c4cd6a52b\",\"content_hash\":\"e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a74",
+      "stderr_summary": "",
+      "duration_ms": 35,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.187182+00:00"
+    },
+    {
+      "id": "42-sec-get",
+      "title": "read back issued SEC",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "skill-context",
+        "get",
+        "--context-id",
+        "sec-1f941039ff3d9c92e4f6456ed1c35c36"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/42-sec-get.cli.stdout.txt",
+      "stderr_file": "raw/42-sec-get.cli.stderr.txt",
+      "stdout_summary": "{\"context_id\":\"sec-1f941039ff3d9c92e4f6456ed1c35c36\",\"evidence_level\":\"controlled_task\",\"expires_at\":\"2026-09-14T11:56:17.169856536Z\",\"grant_digest\":\"5d49bdf7dc68657e48a509d08a2b5582ffaa7a45ce5549b39a8aad27d3d9ae6c\",\"grant_id\":\"grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5\",\"install_id\":\"sin-4dd24884e9f0f9ff5fb1528f2b91c6926ce932f75063b6796831fe6f5a61e8c3\",\"issued_at\":\"20",
+      "stderr_summary": "",
+      "duration_ms": 17,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.205147+00:00"
+    },
+    {
+      "id": "50-serve-b-start",
+      "title": "serve start on 127.0.0.1:42525 (mode=block) + admin pairing",
+      "kind": "cli+http",
+      "command": [
+        "agentshield",
+        "serve",
+        "--port",
+        "42525",
+        "--mode",
+        "block"
+      ],
+      "duration_ms": 0,
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed",
+        "session_scope": "admin"
+      },
+      "stdout_file": "raw/50-serve-b-start.serve-log.txt",
+      "recorded_at": "2026-09-14T11:26:17.256773+00:00"
+    },
+    {
+      "id": "51-positive-task",
+      "title": "positive: exact claim + bound task verified",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/51-positive-task.request.json",
+      "response_file": "raw/51-positive-task.response.json",
+      "duration_ms": 44,
+      "key_fields": {
+        "action": "allow",
+        "reason_code": "allow",
+        "authority_status": "valid",
+        "skill_attribution": {
+          "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+          "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+          "status": "verified",
+          "evidence_level": "controlled_task",
+          "context_id": "sec-1f941039ff3d9c92e4f6456ed1c35c36",
+          "call_binding": "c9ee40d5850c0afe2abf4f6fb2d8d63f385ff8cdf38efcde6ab3f9b2455de892"
+        }
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.301130+00:00"
+    },
+    {
+      "id": "52-call-binding-recompute",
+      "title": "recompute call_binding locally from receipt fields (canonical sha256)",
+      "kind": "derived",
+      "command": [
+        "python3 json.dumps(sort_keys,separators) + sha256"
+      ],
+      "key_fields": {
+        "receipt_call_binding": "c9ee40d5850c0afe2abf4f6fb2d8d63f385ff8cdf38efcde6ab3f9b2455de892",
+        "recomputed": "c9ee40d5850c0afe2abf4f6fb2d8d63f385ff8cdf38efcde6ab3f9b2455de892"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.301189+00:00"
+    },
+    {
+      "id": "53-negative-cross-session",
+      "title": "negative (a): same claim on an enrolled but SEC-less session is denied",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/53-negative-cross-session.request.json",
+      "response_file": "raw/53-negative-cross-session.response.json",
+      "duration_ms": 32,
+      "key_fields": {
+        "action": "deny",
+        "reason_code": "skill_attribution_mismatch",
+        "authority_status": "valid",
+        "skill_attribution": {
+          "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+          "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+          "status": "unknown"
+        },
+        "assertion": "not_verified",
+        "observed_action": "deny"
+      },
+      "note": "Installed Skill grants require verified SEC attribution even when the legacy skill_attribution_enforcement switch is off",
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.334142+00:00"
+    },
+    {
+      "id": "53a-negative-cross-task",
+      "title": "negative (a2): task-scoped SEC cannot be copied to another task",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/53a-negative-cross-task.request.json",
+      "response_file": "raw/53a-negative-cross-task.response.json",
+      "duration_ms": 40,
+      "key_fields": {
+        "action": "deny",
+        "reason_code": "intent_task_mismatch",
+        "authority_status": "invalid",
+        "authority_reason_code": "intent_task_mismatch",
+        "skill_attribution": {
+          "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+          "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+          "status": "unknown"
+        }
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.374351+00:00"
+    },
+    {
+      "id": "54-negative-claim-swap",
+      "title": "negative (d): swapped skill_id claim conflicts with the SEC",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/54-negative-claim-swap.request.json",
+      "response_file": "raw/54-negative-claim-swap.response.json",
+      "duration_ms": 46,
+      "key_fields": {
+        "action": "deny",
+        "reason_code": "skill_context_mismatch",
+        "authority_status": "invalid",
+        "authority_reason_code": "skill_context_mismatch",
+        "skill_attribution": {
+          "skill_id": "local_dir:other-skill@0000deadbeef",
+          "status": "unknown"
+        }
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.420887+00:00"
+    },
+    {
+      "id": "55-negative-no-claim",
+      "title": "negative (e): dropping the claim does not downgrade the SEC subject",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/55-negative-no-claim.request.json",
+      "response_file": "raw/55-negative-no-claim.response.json",
+      "duration_ms": 33,
+      "key_fields": {
+        "action": "allow",
+        "reason_code": "allow",
+        "authority_status": "valid",
+        "skill_attribution": {
+          "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+          "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+          "status": "verified",
+          "evidence_level": "controlled_task",
+          "context_id": "sec-1f941039ff3d9c92e4f6456ed1c35c36",
+          "call_binding": "5cddd398df9dc63f0766504fd3f2262eba2f6a89bc8ca749f45dd5e14169d9b1"
+        }
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.454641+00:00"
+    },
+    {
+      "id": "56-content-replaced",
+      "title": "replace installed Skill content after SEC issuance",
+      "kind": "filesystem",
+      "command": [
+        "write",
+        "/tmp/siq-r01-sec-live-_0rio8a1/hermes-home/skills/r01-sec-fixture/helper.txt"
+      ],
+      "status": "pass",
+      "key_fields": {
+        "before_sha256": "a695db33de1dfec4e3737abcfcc020624fdb40509028dced603b2fc3fd71460b",
+        "after_sha256": "cbafcbac30ad44aa681d0ce60e978548447c1e0c24889e01aa4d5ef12816b8e1"
+      },
+      "recorded_at": "2026-09-14T11:26:17.454860+00:00"
+    },
+    {
+      "id": "57-content-replaced-deny",
+      "title": "changed installed bytes invalidate old SEC authority",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 401,
+      "response_file": "raw/57-content-replaced-deny.response.json",
+      "status": "pass",
+      "key_fields": {
+        "action": null,
+        "error": "unauthorized",
+        "skill_attribution": null
+      },
+      "recorded_at": "2026-09-14T11:26:17.458856+00:00"
+    },
+    {
+      "id": "58-content-restored",
+      "title": "restoring exact installed bytes restores the still-live SEC",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/58-content-restored.request.json",
+      "response_file": "raw/58-content-restored.response.json",
+      "duration_ms": 33,
+      "key_fields": {
+        "action": "allow",
+        "reason_code": "allow",
+        "authority_status": "valid",
+        "skill_attribution": {
+          "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+          "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+          "status": "verified",
+          "evidence_level": "controlled_task",
+          "context_id": "sec-1f941039ff3d9c92e4f6456ed1c35c36",
+          "call_binding": "ca01732b64996d0933c31bd821a2afb6b52c4ca7fc610ac9bc3da69616697d92"
+        }
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.492932+00:00"
+    },
+    {
+      "id": "60-serve-b-stop",
+      "title": "serve stop (SIGTERM, drain)",
+      "kind": "process",
+      "command": [
+        "SIGTERM"
+      ],
+      "stdout_file": "raw/60-serve-b-stop.serve-log.txt",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 3,
+      "recorded_at": "2026-09-14T11:26:17.496230+00:00"
+    },
+    {
+      "id": "61-sec-revoke",
+      "title": "revoke the task SEC (signed tombstone)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "skill-context",
+        "revoke",
+        "--context-id",
+        "sec-1f941039ff3d9c92e4f6456ed1c35c36",
+        "--confirm"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/61-sec-revoke.cli.stdout.txt",
+      "stderr_file": "raw/61-sec-revoke.cli.stderr.txt",
+      "stdout_summary": "{\"context_id\":\"sec-1f941039ff3d9c92e4f6456ed1c35c36\",\"revoked_at\":\"2026-09-14T11:26:17.506824958Z\"}\n",
+      "stderr_summary": "",
+      "duration_ms": 14,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.510738+00:00"
+    },
+    {
+      "id": "62-serve-c-start",
+      "title": "serve start on 127.0.0.1:47259 (mode=block) + admin pairing",
+      "kind": "cli+http",
+      "command": [
+        "agentshield",
+        "serve",
+        "--port",
+        "47259",
+        "--mode",
+        "block"
+      ],
+      "duration_ms": 0,
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed",
+        "session_scope": "admin"
+      },
+      "stdout_file": "raw/62-serve-c-start.serve-log.txt",
+      "recorded_at": "2026-09-14T11:26:17.562573+00:00"
+    },
+    {
+      "id": "63-negative-revoked-replay",
+      "title": "negative (b): replay after revocation hard-denies",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/63-negative-revoked-replay.request.json",
+      "response_file": "raw/63-negative-revoked-replay.response.json",
+      "duration_ms": 37,
+      "key_fields": {
+        "action": "deny",
+        "reason_code": "skill_context_revoked",
+        "authority_status": "invalid",
+        "authority_reason_code": "skill_context_revoked",
+        "skill_attribution": {
+          "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+          "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+          "status": "unknown"
+        }
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.600464+00:00"
+    },
+    {
+      "id": "70-serve-c-stop",
+      "title": "serve stop (SIGTERM, drain)",
+      "kind": "process",
+      "command": [
+        "SIGTERM"
+      ],
+      "stdout_file": "raw/70-serve-c-stop.serve-log.txt",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 3,
+      "recorded_at": "2026-09-14T11:26:17.603966+00:00"
+    },
+    {
+      "id": "71-sec-issue-session",
+      "title": "issue session-scoped SEC (controlled_session evidence)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "skill-context",
+        "issue",
+        "--instance",
+        "hi-0fe6e47d6a3222f038b3535dbece7df8",
+        "--session",
+        "r01-sec-live-session-1",
+        "--install-id",
+        "sin-4dd24884e9f0f9ff5fb1528f2b91c6926ce932f75063b6796831fe6f5a61e8c3",
+        "--ttl",
+        "30m",
+        "--confirm"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/71-sec-issue-session.cli.stdout.txt",
+      "stderr_file": "raw/71-sec-issue-session.cli.stderr.txt",
+      "stdout_summary": "{\"context_id\":\"sec-aba470fb7c56e1db30683e9ac9eae793\",\"evidence_level\":\"controlled_session\",\"expires_at\":\"2026-09-14T11:56:17.618636611Z\",\"grant_id\":\"grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5\",\"issued_at\":\"2026-09-14T11:26:17.618636611Z\",\"skill\":{\"skill_id\":\"local_dir:r01-sec-fixture@e32c4cd6a52b\",\"content_hash\":\"e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8",
+      "stderr_summary": "",
+      "duration_ms": 26,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.630648+00:00"
+    },
+    {
+      "id": "72-serve-d-start",
+      "title": "serve start on 127.0.0.1:36077 (mode=block) + admin pairing",
+      "kind": "cli+http",
+      "command": [
+        "agentshield",
+        "serve",
+        "--port",
+        "36077",
+        "--mode",
+        "block"
+      ],
+      "duration_ms": 0,
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed",
+        "session_scope": "admin"
+      },
+      "stdout_file": "raw/72-serve-d-start.serve-log.txt",
+      "recorded_at": "2026-09-14T11:26:17.683352+00:00"
+    },
+    {
+      "id": "73-positive-session",
+      "title": "positive: session-scoped SEC verifies without a task id",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/73-positive-session.request.json",
+      "response_file": "raw/73-positive-session.response.json",
+      "duration_ms": 44,
+      "key_fields": {
+        "action": "allow",
+        "reason_code": "allow",
+        "authority_status": "valid",
+        "skill_attribution": {
+          "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+          "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+          "status": "verified",
+          "evidence_level": "controlled_session",
+          "context_id": "sec-aba470fb7c56e1db30683e9ac9eae793",
+          "call_binding": "d29059345d40f840466df307512cfa792f0a0d3415b773d90dcd45b89ab4125e"
+        }
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.727676+00:00"
+    },
+    {
+      "id": "74-grant-readback",
+      "title": "read grant before revocation",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/grants/grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/74-grant-readback.request.json",
+      "response_file": "raw/74-grant-readback.response.json",
+      "duration_ms": 0,
+      "key_fields": {
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.728498+00:00"
+    },
+    {
+      "id": "75-grant-revoke",
+      "title": "negative (c) setup: revoke the install grant (HTTP admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5/revoke"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/75-grant-revoke.request.json",
+      "response_file": "raw/75-grant-revoke.response.json",
+      "duration_ms": 47,
+      "key_fields": {
+        "state_revision": 4
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.775975+00:00"
+    },
+    {
+      "id": "76-negative-grant-revoked",
+      "title": "negative (c): after grant revocation the call must not be allowed or verified",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 401,
+      "response_file": "raw/76-negative-grant-revoked.response.json",
+      "key_fields": {
+        "action": null,
+        "reason_code": null,
+        "error": "unauthorized",
+        "skill_attribution": null,
+        "task_expectation": "deny + skill_context_grant_changed",
+        "observed_layer": "http-auth"
+      },
+      "status": "pass",
+      "detail": "denied at the credential-auth layer (grant reference re-validated on every request); the SEC grant-digest gate is shadowed here — see report",
+      "recorded_at": "2026-09-14T11:26:17.778061+00:00"
+    },
+    {
+      "id": "80-receipts",
+      "title": "receipt chain reads and verifies over HTTP",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/receipts"
+      ],
+      "http_status": 200,
+      "request_body_file": "raw/80-receipts.request.json",
+      "response_file": "raw/80-receipts.response.json",
+      "duration_ms": 6,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.784420+00:00"
+    },
+    {
+      "id": "81-serve-d-stop",
+      "title": "serve stop (SIGTERM, drain)",
+      "kind": "process",
+      "command": [
+        "SIGTERM"
+      ],
+      "stdout_file": "raw/81-serve-d-stop.serve-log.txt",
+      "exit_code": 0,
+      "status": "pass",
+      "duration_ms": 3,
+      "recorded_at": "2026-09-14T11:26:17.787974+00:00"
+    },
+    {
+      "id": "82-verify-chain",
+      "title": "offline receipt chain verification (CLI)",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "verify"
+      ],
+      "exit_code": 0,
+      "stdout_file": "raw/82-verify-chain.cli.stdout.txt",
+      "stderr_file": "raw/82-verify-chain.cli.stderr.txt",
+      "stdout_summary": "{\"chain\":\"local\",\"head_hash\":\"a16d389ef6ef20ce9f5603e5ca00c8ae3d90622786ced7a4e30c318789f74641\",\"head_seq\":8,\"receipts\":9,\"verified\":true}\n",
+      "stderr_summary": "",
+      "duration_ms": 10,
+      "status": "pass",
+      "recorded_at": "2026-09-14T11:26:17.798943+00:00"
+    }
+  ]
+}

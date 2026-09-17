@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -30,6 +31,9 @@ func TestDesktopNotifierUnsupportedPlatformWithoutOverrideStaysSilent(t *testing
 	t.Setenv("PATH", t.TempDir())
 	// On a platform whose DefaultCommand reports false and with no configured
 	// override, the honest result is nil (no notifier), never a fake one.
+	if argv, ok := notify.DefaultCommand(runtime.GOOS); ok && len(argv) > 0 {
+		t.Skipf("platform %s has a default notifier; nil contract only applies where none exists", runtime.GOOS)
+	}
 	if n := desktopNotifier(state.Config{}); n != nil {
 		t.Fatalf("unsupported platform must yield nil notifier, got %T", n)
 	}
@@ -43,6 +47,9 @@ func TestStartDesktopNotifyDisabledAndUnsupportedAreNoOps(t *testing.T) {
 		cancel()
 		t.Fatal("default config (off) must not start the dispatcher")
 	}
+	if _, ok := notify.DefaultCommand(runtime.GOOS); ok {
+		t.Skipf("platform %s has a default notifier; the unsupported-platform no-op only applies where none exists", runtime.GOOS)
+	}
 	cancel := startDesktopNotify(state.Config{DesktopNotify: true}, nil, logf)
 	if cancel != nil {
 		cancel()
@@ -51,6 +58,19 @@ func TestStartDesktopNotifyDisabledAndUnsupportedAreNoOps(t *testing.T) {
 	joined := strings.Join(lines, "\n")
 	if !strings.Contains(joined, "no notifier available") || !strings.Contains(joined, "inbox remains fully usable") {
 		t.Fatalf("startup log must state honestly that nothing was started: %q", joined)
+	}
+}
+
+// On darwin the honest default exists: desktopNotifier resolves osascript and
+// the dispatcher starts for real when opted in.
+func TestDesktopNotifierDarwinDefaultResolves(t *testing.T) {
+	if runtime.GOOS != "darwin" {
+		t.Skip("darwin-only contract")
+	}
+	n := desktopNotifier(state.Config{})
+	cn, ok := n.(notify.CommandNotifier)
+	if !ok || cn.Bin != "/usr/bin/osascript" {
+		t.Fatalf("darwin default must resolve osascript, got %T %+v", n, n)
 	}
 }
 

@@ -105,6 +105,7 @@ var platforms = []platformSpec{
 	{"hermes", "hermes", []string{".hermes/config.yaml"}, []string{".hermes/skills"}, nil},
 	{"openclaw", "openclaw", []string{".openclaw/openclaw.json"}, []string{".openclaw/skills", ".agents/skills"}, []string{"skills", ".agents/skills"}},
 	{"codebuddy", "codebuddy", []string{".codebuddy/settings.json"}, []string{".codebuddy/skills"}, []string{".codebuddy/skills"}},
+	{"workbuddy", "workbuddy", []string{".workbuddy/settings.json"}, []string{".workbuddy/skills"}, nil},
 	{"trae", "trae", nil, []string{".trae/skills"}, []string{".trae/skills", ".agents/skills"}},
 	{"claude_code", "claude_code", []string{".claude/settings.json"}, []string{".claude/skills"}, []string{".claude/skills"}},
 	{"codex", "codex", []string{".codex/config.toml"}, []string{".codex/skills"}, nil},
@@ -268,13 +269,13 @@ func adapterInstalled(platform string, raw []byte) (installGate, toolHook bool) 
 	}
 	switch platform {
 	case "openclaw":
-		// Top-level security.installPolicy is unsupported by the verified
-		// public host. Its presence cannot prove an active installation gate.
+		// OpenClaw 2026.9.4 can run security.installPolicy, but a static
+		// config read cannot prove that the installed host accepted or ran it.
 		if plugins, ok := doc["plugins"].(map[string]any); ok {
 			b, _ := json.Marshal(plugins)
 			toolHook = product.Mentions(string(b))
 		}
-	case "codebuddy", "claude_code":
+	case "codebuddy", "workbuddy", "claude_code":
 		if hooks, ok := doc["hooks"].(map[string]any); ok {
 			b, _ := json.Marshal(hooks["PreToolUse"])
 			toolHook = product.Mentions(string(b))

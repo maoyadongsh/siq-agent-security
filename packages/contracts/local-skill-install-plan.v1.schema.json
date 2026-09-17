@@ -59,7 +59,10 @@
       "pattern": "^[a-f0-9]{64}$"
     },
     "platform": {
-      "const": "hermes"
+      "enum": [
+        "hermes",
+        "openclaw"
+      ]
     },
     "instance_id": {
       "type": "string",

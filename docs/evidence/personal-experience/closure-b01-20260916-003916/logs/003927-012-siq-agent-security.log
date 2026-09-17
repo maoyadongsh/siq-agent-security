@@ -1,0 +1,8 @@
+$ '/tmp/siq-closure-20260915/b01r6/state 中文 空格%25实例/client-releases/be2fe3e5abd78b4f7e5143b3284ea94c84331297cd941e204e146dcf3f672cbf/siq-agent-security' service-rollback --transaction cc288fbad746fcd2582666a054905850bc4d03afa758fcafb1fe23f2b3dc1e62 --binary '/tmp/siq-closure-20260915/b01r6/state 中文 空格%25实例/client-releases/9029352cf111078926b0e6db61a4fd958775d40577fa55c096f6967cc03c9e72/siq-agent-security' --confirm-rollback --manifest /tmp/siq-closure-20260915/b01r6/manifest-old.json
+# exit recorded separately; redacted=True
+--- stdout ---
+正在停止保护并切换已校验候选；block 模式下受控操作将暂时被拒绝。
+切换事务：79237ee69fe96306571ec8dc7fef6bd52b1c1402f54b870f2751a6f4d4c132a5
+已切换到校验通过的目标版本，本实例 API 健康检查通过。
+
+--- stderr ---

@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"sort"
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/product"
@@ -76,7 +77,7 @@ func (p *Plan) prepareUninstall() error {
 		if sec, ok := doc["security"].(map[string]any); ok {
 			oldSec, _ := original["security"].(map[string]any)
 			if policy, exists := sec["installPolicy"]; exists && !reflect.DeepEqual(policy, oldSec["installPolicy"]) {
-				if !sameOpenClawLegacyPolicy(policy, rec.Binary) {
+				if !sameOpenClawLegacyPolicy(policy, rec.Binary) && !sameOpenClawCurrentPolicy(policy, Options{Binary: rec.Binary, StateDir: o.StateDir}) {
 					return conflictRecovery(path, rec.Modified[path], errors.New("installation policy changed outside this operation"))
 				}
 				delete(sec, "installPolicy")
@@ -91,68 +92,21 @@ func (p *Plan) prepareUninstall() error {
 		if err := restoreOpenClawRegistration(doc, original, plugin); err != nil {
 			return conflictRecovery(path, rec.Modified[path], err)
 		}
+		pruneEmptyOpenClawPlugins(doc, original)
 		if err := p.surgicalWrite(path, doc); err != nil {
 			return err
 		}
-	case CodeBuddy:
+	case CodeBuddy, WorkBuddy:
 		path := filepath.Join(root, "settings.json")
 		if !p.owns(path) {
-			return errors.New("adapter: CodeBuddy config directory differs from latest install record")
+			return errors.New("adapter: host config directory differs from latest install record")
 		}
-		doc, err := p.planJSON(path)
-		if err != nil {
-			return conflictRecovery(path, rec.Modified[path], err)
-		}
-		hooks, ok := doc["hooks"].(map[string]any)
-		if _, exists := doc["hooks"]; exists && !ok {
-			return conflictRecovery(path, rec.Modified[path], errors.New("invalid hooks object"))
-		}
-		if hooks != nil {
-			for _, event := range []string{"PreToolUse", "PostToolUse"} {
-				value, exists := hooks[event]
-				if !exists {
-					continue
-				}
-				list, ok := value.([]any)
-				if !ok {
-					return conflictRecovery(path, rec.Modified[path], errors.New("invalid hooks list"))
-				}
-				kept := []any{}
-				for _, item := range list {
-					entry, ok := item.(map[string]any)
-					if !ok {
-						kept = append(kept, item)
-						continue
-					}
-					commands, ok := entry["hooks"].([]any)
-					if !ok {
-						kept = append(kept, item)
-						continue
-					}
-					remaining := []any{}
-					for _, command := range commands {
-						cmd, _ := command.(map[string]any)
-						if cmd["type"] == "command" && cmd["command"] == rec.Binary+" hook codebuddy" {
-							continue
-						}
-						remaining = append(remaining, command)
-					}
-					if len(remaining) > 0 || len(commands) == 0 {
-						entry["hooks"] = remaining
-						kept = append(kept, entry)
-					}
-				}
-				if len(kept) == 0 {
-					delete(hooks, event)
-				} else {
-					hooks[event] = kept
-				}
-			}
-			if len(hooks) == 0 {
-				delete(doc, "hooks")
+		for _, owned := range hostConfigPaths(rec) {
+			if err := p.prepareHostConfigUninstall(owned); err != nil {
+				return err
 			}
 		}
-		return p.surgicalWrite(path, doc)
+		return nil
 	}
 	for _, path := range paths {
 		owned := p.owns(path)
@@ -194,13 +148,99 @@ func (p *Plan) prepareUninstall() error {
 	return nil
 }
 
+func hostConfigPaths(rec Record) []string {
+	set := map[string]struct{}{}
+	for _, path := range rec.Created {
+		if filepath.Base(path) == "settings.json" {
+			set[path] = struct{}{}
+		}
+	}
+	for path := range rec.Modified {
+		if filepath.Base(path) == "settings.json" {
+			set[path] = struct{}{}
+		}
+	}
+	paths := make([]string, 0, len(set))
+	for path := range set {
+		paths = append(paths, path)
+	}
+	sort.Strings(paths)
+	return paths
+}
+
+func (p *Plan) prepareHostConfigUninstall(path string) error {
+	rec := p.payload.Record
+	doc, err := p.planJSON(path)
+	if err != nil {
+		return conflictRecovery(path, rec.Modified[path], err)
+	}
+	hooks, ok := doc["hooks"].(map[string]any)
+	if _, exists := doc["hooks"]; exists && !ok {
+		return conflictRecovery(path, rec.Modified[path], errors.New("invalid hooks object"))
+	}
+	if hooks != nil {
+		for _, event := range []string{"PreToolUse", "PostToolUse"} {
+			value, exists := hooks[event]
+			if !exists {
+				continue
+			}
+			list, ok := value.([]any)
+			if !ok {
+				return conflictRecovery(path, rec.Modified[path], errors.New("invalid hooks list"))
+			}
+			kept := []any{}
+			for _, item := range list {
+				entry, ok := item.(map[string]any)
+				if !ok {
+					kept = append(kept, item)
+					continue
+				}
+				commands, ok := entry["hooks"].([]any)
+				if !ok {
+					kept = append(kept, item)
+					continue
+				}
+				remaining := []any{}
+				for _, cmdValue := range commands {
+					cmd, _ := cmdValue.(map[string]any)
+					text, _ := cmd["command"].(string)
+					if cmd["type"] == "command" && isRecordedToolHook(text, p.payload.Options.Platform, rec.Binary, p.payload.Options.StateDir) {
+						continue
+					}
+					remaining = append(remaining, cmdValue)
+				}
+				if len(remaining) > 0 || len(commands) == 0 {
+					entry["hooks"] = remaining
+					kept = append(kept, entry)
+				}
+			}
+			if len(kept) == 0 {
+				delete(hooks, event)
+			} else {
+				hooks[event] = kept
+			}
+		}
+		if len(hooks) == 0 {
+			delete(doc, "hooks")
+		}
+	}
+	return p.surgicalWrite(path, doc)
+}
+
 func (p *Plan) surgicalWrite(path string, doc map[string]any) error {
-	after := fileImage{Exists: true, Data: encodePlanJSON(doc), Mode: 0o600}
+	data := encodePlanJSON(doc)
+	mode := uint32(0o600)
 	// A configuration this install modified keeps the mode it had before the
 	// install touched it, matching the snapshot restore path below.
-	if mode, ok := p.payload.Record.OriginalModes[path]; ok {
-		after.Mode = mode
+	if originalMode, ok := p.payload.Record.OriginalModes[path]; ok {
+		mode = originalMode
 	}
+	if orig, err := p.input(path + originalSuffix); err != nil {
+		return err
+	} else if orig.Exists && jsonDocumentsEqual(orig.Data, data) {
+		data = append([]byte(nil), orig.Data...)
+	}
+	after := fileImage{Exists: true, Data: data, Mode: mode}
 	if len(doc) == 0 && p.payload.Record.Modified[path] == "" {
 		after = fileImage{}
 	}
@@ -260,7 +300,7 @@ func restoreOpenClawRegistration(doc, original map[string]any, root string) erro
 			} else {
 				delete(entry, "enabled")
 			}
-			if len(entry) == 0 {
+			if _, existed := oldEntries[product.PluginDir()]; !existed && len(entry) == 0 {
 				delete(entries, product.PluginDir())
 			}
 		} else if _, exists := entries[product.PluginDir()]; exists {
@@ -271,4 +311,39 @@ func restoreOpenClawRegistration(doc, original map[string]any, root string) erro
 	}
 	return nil
 }
+
+// Only prune containers absent from the original configuration. An explicit
+// empty value belongs to the user and is not interchangeable with a missing key.
+func pruneEmptyOpenClawPlugins(doc, original map[string]any) {
+	plugins, ok := doc["plugins"].(map[string]any)
+	if !ok || plugins == nil {
+		return
+	}
+	old, _ := original["plugins"].(map[string]any)
+	if load, ok := plugins["load"].(map[string]any); ok {
+		oldLoad, _ := old["load"].(map[string]any)
+		if _, had := oldLoad["paths"]; !had {
+			if paths, ok := load["paths"].([]any); ok && len(paths) == 0 {
+				delete(load, "paths")
+			}
+		}
+		if _, had := old["load"]; !had && len(load) == 0 {
+			delete(plugins, "load")
+		}
+	}
+	if _, had := old["allow"]; !had {
+		if allow, ok := plugins["allow"].([]any); ok && len(allow) == 0 {
+			delete(plugins, "allow")
+		}
+	}
+	if _, had := old["entries"]; !had {
+		if entries, ok := plugins["entries"].(map[string]any); ok && len(entries) == 0 {
+			delete(plugins, "entries")
+		}
+	}
+	if _, had := original["plugins"]; !had && len(plugins) == 0 {
+		delete(doc, "plugins")
+	}
+}
+
 func asList(raw any) []any { list, _ := raw.([]any); return list }

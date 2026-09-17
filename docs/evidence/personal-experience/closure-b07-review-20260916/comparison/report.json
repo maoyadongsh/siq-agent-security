@@ -1,0 +1,261 @@
+{
+  "schema_version": "closure-b07-component-comparison/v1",
+  "status": "partial",
+  "scope": "component_only; B2/B3 and O05 remain blocked without real backend",
+  "input_heads": {
+    "b0": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "b1": "dafb4cd4a4077feaabad902ad6912ee7d4a2a4cd"
+  },
+  "input_manifests": {
+    "b0": {
+      "report.json": "ef35cf82f8e6cfea9b95acc4525d42cb78796e96d58aca9bc6feede1221fc361",
+      "samples.json": "3ee28570f72c184025d80a1079ef59e70b4d296d1aecd52b2cfdb06f5f67ad64",
+      "protocol.md": "f30e993ce7ca5d942d169e0eb3b6f4c8f2b5fbd27f088a7619394588d0b1da72",
+      "source-hashes.json": "22a41d1b2fbf098b45fc646d9a8f19629cdd17673b064b16574b7a5781bb5e6e"
+    },
+    "b1": {
+      "report.json": "ccfba7f46877e71961639c2adea7720f07c3b419a1ed5594e9d7c412231d0920",
+      "samples.json": "d3dc9d8274c7b02f09a64100e5edb6fad617f083cbc4c753e14baef63226fe6c",
+      "protocol.md": "3e46f0c7d18f766e77e157865400ac9a2044b5cc3c8cdc6817d0d550de4125ab",
+      "source-hashes.json": "d3c842f464ce06bfd3ccaefa678d8b828316e5644053c4bbd1a1bd2b0917d77b"
+    }
+  },
+  "rows": [
+    {
+      "scenario": "A",
+      "metric": "decide_allow_ms",
+      "b0": {
+        "n": 1200,
+        "min_ms": 5.894,
+        "max_ms": 12.668,
+        "p50_ms": 6.753,
+        "p95_ms": 7.726,
+        "p99_ms": 9.678
+      },
+      "b1": {
+        "n": 1200,
+        "min_ms": 5.876,
+        "max_ms": 15.656,
+        "p50_ms": 11.102,
+        "p95_ms": 12.309,
+        "p99_ms": 13.002
+      },
+      "b1_absolute_budget_ms": {
+        "p95": 25.0
+      },
+      "b1_absolute_passed": true,
+      "relative_p95_percent": 59.31918198291481,
+      "relative_budget_percent": 10,
+      "relative_passed": false,
+      "comparability": "same_external_component_operation"
+    },
+    {
+      "scenario": "A",
+      "metric": "diagnose_unconfigured_ms",
+      "b0": {
+        "n": 1200,
+        "min_ms": 0.009,
+        "max_ms": 0.365,
+        "p50_ms": 0.011,
+        "p95_ms": 0.019,
+        "p99_ms": 0.083
+      },
+      "b1": {
+        "n": 1200,
+        "min_ms": 0.01,
+        "max_ms": 0.335,
+        "p50_ms": 0.017,
+        "p95_ms": 0.021,
+        "p99_ms": 0.066
+      },
+      "b1_absolute_budget_ms": {
+        "p95": 25.0
+      },
+      "b1_absolute_passed": true,
+      "relative_p95_percent": 10.526315789473696,
+      "relative_budget_percent": 10,
+      "relative_passed": false,
+      "comparability": "same_external_component_operation"
+    },
+    {
+      "scenario": "B",
+      "metric": "decide_allow_auth_ms",
+      "b0": {
+        "n": 1200,
+        "min_ms": 6.086,
+        "max_ms": 12.211,
+        "p50_ms": 7.078,
+        "p95_ms": 8.238,
+        "p99_ms": 9.725
+      },
+      "b1": {
+        "n": 1200,
+        "min_ms": 6.066,
+        "max_ms": 16.37,
+        "p50_ms": 10.764,
+        "p95_ms": 12.233,
+        "p99_ms": 13.18
+      },
+      "b1_absolute_budget_ms": {
+        "p95": 25.0
+      },
+      "b1_absolute_passed": true,
+      "relative_p95_percent": 48.494780286477315,
+      "relative_budget_percent": 10,
+      "relative_passed": false,
+      "comparability": "same_external_component_operation"
+    },
+    {
+      "scenario": "B",
+      "metric": "decide_deny_revoked_ms",
+      "b0": {
+        "n": 1200,
+        "min_ms": 6.091,
+        "max_ms": 13.116,
+        "p50_ms": 7.335,
+        "p95_ms": 8.441,
+        "p99_ms": 11.338
+      },
+      "b1": {
+        "n": 1200,
+        "min_ms": 6.093,
+        "max_ms": 14.015,
+        "p50_ms": 11.534,
+        "p95_ms": 12.496,
+        "p99_ms": 13.185
+      },
+      "b1_absolute_budget_ms": {
+        "p95": 25.0
+      },
+      "b1_absolute_passed": true,
+      "relative_p95_percent": 48.039331832721246,
+      "relative_budget_percent": 10,
+      "relative_passed": false,
+      "comparability": "same_external_component_operation"
+    },
+    {
+      "scenario": "C",
+      "metric": "probe_cold_ms",
+      "b0": {
+        "n": 3,
+        "min_ms": 2.741,
+        "max_ms": 4.327,
+        "p50_ms": 3.527,
+        "p95_ms": 4.327,
+        "p99_ms": 4.327
+      },
+      "b1": {
+        "n": 3,
+        "min_ms": 3.096,
+        "max_ms": 4.232,
+        "p50_ms": 3.206,
+        "p95_ms": 4.232,
+        "p99_ms": 4.232
+      },
+      "b1_absolute_budget_ms": {
+        "p95": 200.0
+      },
+      "b1_absolute_passed": true,
+      "relative_p95_percent": -2.1955165241506758,
+      "relative_budget_percent": null,
+      "relative_passed": null,
+      "comparability": "changed_probe_workload"
+    },
+    {
+      "scenario": "C",
+      "metric": "probe_repeat_ms",
+      "b0": {
+        "n": 600,
+        "min_ms": 2.029,
+        "max_ms": 5.097,
+        "p50_ms": 3.151,
+        "p95_ms": 4.084,
+        "p99_ms": 4.365
+      },
+      "b1": {
+        "n": 600,
+        "min_ms": 2.111,
+        "max_ms": 5.002,
+        "p50_ms": 3.518,
+        "p95_ms": 4.504,
+        "p99_ms": 4.707
+      },
+      "b1_absolute_budget_ms": {
+        "p95": 50.0
+      },
+      "b1_absolute_passed": true,
+      "relative_p95_percent": 10.284035259549462,
+      "relative_budget_percent": null,
+      "relative_passed": null,
+      "comparability": "changed_probe_workload"
+    },
+    {
+      "scenario": "D",
+      "metric": "timeout_fail_ms",
+      "b0": {
+        "n": 180,
+        "min_ms": 30002.063,
+        "max_ms": 30003.825,
+        "p50_ms": 30002.988,
+        "p95_ms": 30003.426,
+        "p99_ms": 30003.723
+      },
+      "b1": {
+        "n": 180,
+        "min_ms": 200.391,
+        "max_ms": 201.179,
+        "p50_ms": 200.67,
+        "p95_ms": 200.884,
+        "p99_ms": 201.081
+      },
+      "b1_absolute_budget_ms": {
+        "p95": 300.0,
+        "max": 500.0
+      },
+      "b1_absolute_passed": true,
+      "relative_p95_percent": -99.33046312777748,
+      "relative_budget_percent": 10,
+      "relative_passed": true,
+      "comparability": "same_external_component_operation"
+    },
+    {
+      "scenario": "E",
+      "metric": "apply_rollback_cycle_ms",
+      "b0": null,
+      "b1": {
+        "n": 600,
+        "min_ms": 0.163,
+        "max_ms": 1.56,
+        "p50_ms": 0.224,
+        "p95_ms": 0.567,
+        "p99_ms": 0.888
+      },
+      "b1_absolute_budget_ms": {
+        "p95": 100.0
+      },
+      "b1_absolute_passed": true,
+      "relative_p95_percent": null,
+      "relative_budget_percent": null,
+      "relative_passed": null,
+      "comparability": "no_b0_implementation"
+    }
+  ],
+  "comparable_relative_passed": false,
+  "b1_absolute_passed": true,
+  "corrections": [
+    "B0 D inherited notes mention bounded pipe drainage; b303c6f has no such bound. Raw notes are preserved, this correction supersedes them.",
+    "B0 C does not detect the CLI version; B1 cold probe does. C numbers are observations with changed work, not equivalent-workload acceptance.",
+    "D total fixture wait is 3 * (3 warmups + 60 samples) * 30 seconds = 94.5 minutes, excluding overhead.",
+    "Hash validity attests file integrity, not native/backend verification or absence of background host load."
+  ],
+  "not_measured": [
+    "B2 service",
+    "B3 host end-to-end",
+    "B0 E",
+    "cross-OS real hardware",
+    "CPU",
+    "RSS per scenario",
+    "network and disk counts",
+    "false rejection rate"
+  ]
+}

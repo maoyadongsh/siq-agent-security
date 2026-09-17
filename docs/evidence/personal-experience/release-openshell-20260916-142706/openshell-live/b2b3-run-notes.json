@@ -1,0 +1,21 @@
+{
+  "protocol_script": "scripts/personal-experience/openshell-b2b3-perf-protocol.py",
+  "measurement_window_utc": "2026-09-16T08:09:40Z/2026-09-16T08:10:26Z",
+  "aborted_first_attempt": {
+    "what": "warmup crash: SIQ_AS_OPENSHELL_CLI_BIN was not exported, so the old binary reported state=unconfigured (env-pair fail-closed) instead of configured_unreachable",
+    "timed_samples_taken": 0,
+    "resolution": "env completed; protocol constants unchanged; fresh full run executed",
+    "note": "this is an env setup failure before measurement started, not sample exclusion"
+  },
+  "results_file": "b2b3-results.json",
+  "verdict_summary": {
+    "absolute_budgets": "all pass (7 leg-scenario rows)",
+    "relative_doctor_readback": "new/old p95 = 0.9963 <= 1.30 pass",
+    "relative_cli_sandbox_get": "new/old p95 = 0.9977 <= 1.30 pass",
+    "b3_apply_rollback_service": "p95 1030.343 ms <= 60000 ms pass (n=5)",
+    "misses": []
+  },
+  "level_discipline": "service-level only; does not prove in-sandbox enforcement; enforcement_verified (ladder 6) remains NOT achieved on this gateway path",
+  "concurrency": 1,
+  "parallel_load": "none; script ran alone for the full window"
+}

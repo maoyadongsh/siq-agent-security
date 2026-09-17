@@ -1,0 +1,11 @@
+{
+  "captured_at_utc": "2026-09-15T20:55:17Z",
+  "host": "linux aarch64 (6.17.0-1014-nvidia)",
+  "os": "Ubuntu 24.04.4 LTS",
+  "go": "go1.26.5",
+  "repo": "/home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914",
+  "branch": "kimi/personal-v4-r01-20260914",
+  "head": "dafb4cd4a4077feaabad902ad6912ee7d4a2a4cd",
+  "baseline_required": "dafb4cd4a4077feaabad902ad6912ee7d4a2a4cd (contains 53155b10c276fe41e71c47757e58e7e56d5d75d4)",
+  "isolation": "tests use t.TempDir state dirs; real-binary leg uses SIQ_AGENT_SECURITY_STATE_DIR + throwaway HOME; real ~/.config/siq-agent-security and ~/.openclaw untouched"
+}

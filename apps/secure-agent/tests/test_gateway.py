@@ -70,11 +70,31 @@ class GatewayTest(unittest.TestCase):
         self.api.request.return_value = {"schema_version": "hold-status/v1", "action_id": "action",
                                         "decision_receipt_id": "receipt", "status": "approved",
                                         "reason_code": "hold_approved", "expires_at": "2026-09-08T00:00:00Z"}
+        approved = self.api.request.return_value
+        self.api.request.side_effect = [approved, {
+            "schema_version": "hold-execution-status/v1", "status": "reserved",
+            "action_id": "action", "decision_receipt_id": "receipt", "reservation_receipt_id": "reservation"}, {}]
         self.gateway.resume("action")
+        self.assertEqual(self.api.request.call_args_list[-2].args[0], "/v1/hold-executions/reserve")
+        self.assertEqual(self.api.request.call_args_list[-1].args[1]["decision_receipt_id"], "reservation")
         self.assertEqual(self.executor.call_args.args[0]["nested"]["value"], "original")
         with self.assertRaisesRegex(Blocked, "gateway_pending_action_missing"):
             self.gateway.resume("action")
         self.executor.assert_called_once()
+
+    def test_lost_reservation_response_never_executes_or_retries(self):
+        self.api.request.return_value = decision("hold")
+        with self.assertRaises(WaitingForApproval):
+            self.gateway.call("write_file", {"path": "/work/report.md"})
+        self.api.request.side_effect = [
+            {"schema_version": "hold-status/v1", "action_id": "action", "decision_receipt_id": "receipt",
+             "status": "approved", "reason_code": "hold_approved", "expires_at": "2026-09-08T00:00:00Z"},
+            AgentError("siq_unavailable")]
+        with self.assertRaisesRegex(AgentError, "siq_unavailable"):
+            self.gateway.resume("action")
+        with self.assertRaisesRegex(Blocked, "gateway_pending_action_missing"):
+            self.gateway.resume("action")
+        self.executor.assert_not_called()
 
     def test_revoked_expired_and_unavailable_hold_never_executes(self):
         for status in ("denied", "expired", "consumed", "unavailable"):

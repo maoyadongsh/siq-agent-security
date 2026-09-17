@@ -1,0 +1,22 @@
+{
+  "schema_version": "personal-macos-workbuddy-desktop-read-deny/v1",
+  "source": "isolated receipts/local/2026-09-16.jsonl",
+  "record_type": "decision",
+  "issued_at": "2026-09-16T09:08:24Z",
+  "platform": "workbuddy",
+  "session_id": "ede5be07-0310-4545-853e-db6c63897f48",
+  "tool": "Read",
+  "operation": "read",
+  "action": "deny",
+  "reason": "no deployed grant for agent (default deny)",
+  "reason_code": "grant_missing",
+  "enforcement_mode": "block",
+  "params_excerpt": "<isolated-home>/workspace/safe/README.txt",
+  "effects": ["file.read"],
+  "spawn": {
+    "wrapper_log": "2026-09-16T09:08:24Z pid=88033",
+    "method": "native_desktop",
+    "deeplink": "workbuddy://conversation/open?autoSend=true"
+  },
+  "omitted": ["sig", "hash", "prev_hash", "pairing", "token", "keys"]
+}

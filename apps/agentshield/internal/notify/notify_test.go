@@ -181,10 +181,25 @@ func TestDefaultCommandOnlyLinuxWithBinary(t *testing.T) {
 			t.Fatalf("linux default must be notify-send when present, got %v", argv)
 		}
 	}
-	for _, goos := range []string{"windows", "darwin"} {
+	for _, goos := range []string{"windows"} {
 		if argv, ok := DefaultCommand(goos); ok {
 			t.Fatalf("%s must have no fabricated default notifier, got %v", goos, argv)
 		}
+	}
+}
+
+// Darwin delivers via /usr/bin/osascript with a fixed two-argument handler;
+// no shell, no user content, and no click-navigation capability.
+func TestDefaultCommandDarwinOsascript(t *testing.T) {
+	argv, ok := DefaultCommand("darwin")
+	if !ok {
+		t.Skip("osascript unavailable on this host")
+	}
+	if argv[0] != "/usr/bin/osascript" {
+		t.Fatalf("darwin default must pin /usr/bin/osascript, got %v", argv)
+	}
+	if len(argv) != 3 || argv[1] != "-e" || !strings.Contains(argv[2], "display notification") {
+		t.Fatalf("darwin default argv shape unexpected: %v", argv)
 	}
 }
 

@@ -1,0 +1,29 @@
+{
+  "schema_version": "personal-macos-native-offline-verification/v1",
+  "recorded_at": "2026-09-16T22:47:38+08:00",
+  "product_candidate_sha": "450fe1836d8a3bffefbd2ce9b6f02bbbfe730c64",
+  "product_binary_sha256": "f067f96b05c3472b8ebe2d43ac9c19ce79c5063af19ec1dc66999a6da1bd3e23",
+  "tests": {
+    "hermes_public_cli_offline_exit": 0,
+    "hermes_check_count": 7,
+    "hermes_receipt_count": 3,
+    "hermes_harness_sha256": "729b873def2d89f8e00c5713f29711a7ade542d0d4143dc5d1bd396f3bd55813",
+    "openclaw_public_cli_offline_exit": 0,
+    "openclaw_check_count": 15,
+    "openclaw_receipt_count": 2,
+    "openclaw_allowed_observation_recorded": false,
+    "openclaw_harness_sha256": "08e2cd2a06ccc438aae52ebe67c9f026409af45c31336a9224b0327e3ae921d6",
+    "controlled_forbidden_write_absent_in_both": true,
+    "matrix_rows": 18,
+    "matrix_evidence_files_checked": 7,
+    "matrix_structure_exit": 0,
+    "matrix_require_native_exit": 3
+  },
+  "constraints": {
+    "daily_host_profiles_targeted": false,
+    "sudo_used": false,
+    "global_path_changed": false,
+    "security_policy_changed": false,
+    "pairing_codes_or_tokens_in_evidence": false
+  }
+}

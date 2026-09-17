@@ -9,6 +9,7 @@ interface Inbox {
   loading: boolean;
   refresh: (force?: boolean) => Promise<void>;
   resolve: (item: Confirmation, approve: boolean, actorId: string) => Promise<{ receipt_id: string; action: string }>;
+  reconcile: (item: Confirmation, outcome: 'occurred' | 'not_occurred', actorId: string) => Promise<{ status: 'completed' | 'cancelled'; reconciliation_receipt_id: string }>;
 }
 const Context = createContext<Inbox | null>(null);
 
@@ -57,7 +58,18 @@ export function ConfirmationProvider({ children }: { children: ReactNode }) {
       working.current = false;
     }
   }, [refresh]);
-  const value = useMemo(() => ({ items, grants, error, loading, refresh, resolve }), [items, grants, error, loading, refresh, resolve]);
+  const reconcile = useCallback(async (item: Confirmation, outcome: 'occurred' | 'not_occurred', actorId: string) => {
+    if (working.current) throw new Error('正在处理确认，请等待状态更新');
+    working.current = true;
+    generation.current += 1;
+    try {
+      return await localApi.reconcileHoldExecution(item, outcome, actorId);
+    } finally {
+      if (alive.current) await refresh(true);
+      working.current = false;
+    }
+  }, [refresh]);
+  const value = useMemo(() => ({ items, grants, error, loading, refresh, resolve, reconcile }), [items, grants, error, loading, refresh, resolve, reconcile]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 export function useConfirmations(): Inbox {

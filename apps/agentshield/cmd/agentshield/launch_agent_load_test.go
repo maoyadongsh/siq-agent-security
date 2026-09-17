@@ -44,7 +44,7 @@ func TestLoadRegisteredLaunchAgent(t *testing.T) {
 				t.Fatal(err)
 			}
 			home := t.TempDir()
-			source := filepath.Join(st.Dir, record.Label+".plist")
+			source := mustResolve(t, filepath.Join(st.Dir, record.Label+".plist"))
 			link, err := publishLaunchRegistration(home, source, record.Label)
 			if err != nil {
 				t.Fatal(err)
@@ -80,15 +80,14 @@ func TestLoadRegisteredLaunchAgent(t *testing.T) {
 						raw += "-\t0\t" + record.Label + "\n"
 					}
 					return raw, nil
-				case "list -x " + record.Label:
+				case "print " + launchPrintTarget(501, record.Label):
 					if mode == "foreign" || mode == "readback foreign" {
-						return strings.Replace(rendered, "<string>serve</string>", "<string>other</string>", 1), nil
+						return mustLaunchPrint(t, rendered, source, 0, "", "other"), nil
 					}
 					if mode == "reuse running" {
-						at := strings.LastIndex(rendered, "</dict>")
-						return rendered[:at] + "<key>PID</key><integer>123</integer>" + rendered[at:], nil
+						return mustLaunchPrint(t, rendered, source, 123, "", ""), nil
 					}
-					return rendered, nil
+					return mustLaunchPrint(t, rendered, source, 0, "", ""), nil
 				case "bootstrap gui/501 " + link:
 					bootstraps++
 					// No daemon can acquire the writer while loading this non-autostart configuration.

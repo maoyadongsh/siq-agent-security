@@ -84,12 +84,12 @@ func TestSharedAdmissionHasSeparatePolicyNamespaces(t *testing.T) {
 
 // artifact_hash produced by apps/control-api compile_policy for the same
 // desired policy + capabilities (see PR notes); Go must reproduce it.
-const pyArtifactHash = "60e90e56ea34fe46081f3c055b03e18b7a7cb135ced8edc57d5e0e9da38575b6"
+const pyArtifactHash = "b5dc93632461abec6a1d53cf9e1230de4175f25f7b349c5cf420f419f2c2728e"
 
 func TestCompilePolicyParityWithPython(t *testing.T) {
 	dp := `{"policy_id":"pol-grt-1","selector":{"agent_ids":["inst_1"]},"version":1,"status":"validated","enforcement_mode":"block",
 	 "filesystem":{"read_only":["/skills/github-triage"],"read_write":["~/work/out"]},
-	 "network":[{"endpoint":"api.github.com:443","effect":"allow"},{"endpoint":"astral.sh:443","effect":"allow"}],
+	 "network":[{"endpoint":"api.github.com:443","effect":"allow","binary_paths":["/usr/bin/curl"]},{"endpoint":"astral.sh:443","effect":"allow","binary_paths":["/usr/bin/curl"]}],
 	 "process":{"forbid_privilege_escalation":true},
 	 "model_routing":{"allowed_models":["nemotron-local"]},
 	 "tools":["terminal","read_file","web_extract"]}`
@@ -219,6 +219,13 @@ func TestBuildRefusesQuarantine(t *testing.T) {
 	}
 	if _, err := Build(sampleAdmission(), Options{Subject: Subject{"agent_instance", "x"}, Platform: "windows95", Key: key(t)}); err == nil {
 		t.Fatal("unknown platform must be rejected")
+	}
+}
+
+func TestBuildAcceptsWorkBuddy(t *testing.T) {
+	g := build(t, "workbuddy", sampleAdmission()).Grant
+	if g.Platform != "workbuddy" {
+		t.Fatalf("platform %s", g.Platform)
 	}
 }
 

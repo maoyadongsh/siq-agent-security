@@ -18,7 +18,7 @@ export const sameUpdateValue = (a: unknown, b: unknown): boolean => {
 };
 const resource = (v: unknown) => object(v) && text(v.type) && text(v.value, 16384);
 const rule = (v: unknown) => object(v) && text(v.domain) && text(v.action) && resource(v.resource) && ['allow', 'deny'].includes(String(v.effect)) && text(v.state) && (v.conditions === null || object(v.conditions));
-const grant = (v: unknown): v is Grant => object(v) && text(v.grant_id, 256) && text(v.admission_id, 256) && v.platform === 'hermes' &&
+const grant = (v: unknown): v is Grant => object(v) && text(v.grant_id, 256) && text(v.admission_id, 256) && ['hermes', 'openclaw'].includes(String(v.platform)) &&
   object(v.subject) && v.subject.type === 'agent_instance' && id(v.subject.id, 'hri-', 32) && sig(v.signature) &&
   Array.isArray(v.facts) && v.facts.every((f) => object(f) && text(f.fact_id, 256) && rule({ ...f, conditions: f.conditions ?? null })) && (v.expires_at === null || date(v.expires_at));
 const content = (v: unknown) => v === null || (object(v) && exact(v, 'kind sha256 bytes executable') && rev(v.bytes) && v.bytes <= 8388608 && typeof v.executable === 'boolean' &&
@@ -32,6 +32,7 @@ export function isSkillUpdateComparison(v: unknown, installId: string, req: Skil
     v.record.recorded_status !== 'installed_unverified' || v.record.operation?.signature !== req.operation_signature || !isImportPermissionSource(v.candidate_source) ||
     !grant(v.previous_grant) || !grant(v.candidate_grant) || !rev(v.previous_revision) || v.candidate_revision !== req.expected_candidate_revision ||
     v.candidate_grant.grant_id !== req.candidate_grant_id || v.previous_grant.grant_id !== v.record.plan.grant_id || v.candidate_grant.grant_id === v.previous_grant.grant_id ||
+    v.previous_grant.platform !== v.record.plan.platform || v.candidate_grant.platform !== v.record.plan.platform ||
     v.candidate_grant.subject.id !== v.record.plan.instance_id.replace(/^hi-/, 'hri-') || v.previous_grant.subject.id !== v.candidate_grant.subject.id ||
     !['draft', 'pending_approval', 'approved'].includes(v.candidate_grant.status) || !['approved', 'revoked'].includes(v.previous_grant.status) ||
     !date(v.checked_at) || v.comparison_basis !== 'signed_installation_manifest' || v.platform_changes !== false || v.runtime_verified !== false || v.requires_confirmation !== true ||

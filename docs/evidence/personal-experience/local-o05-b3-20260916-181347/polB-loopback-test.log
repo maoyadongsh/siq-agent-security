@@ -1,0 +1,8 @@
+== POLICY B (enforcement: enforce + protocol: rest + rules) version 4 ==
+-- allowed target 18443 --
+RESULT corr_id=polB-allowed-1789555313 status=200 body=ok-corr=polB-allowed-1789555313
+-- violating target 18098 --
+RESULT corr_id=polB-violating-1789555313 status=200 body=ok-corr=polB-violating-1789555313
+-- receiver logs --
+/sandbox/recv-18443.log:ARRIVED corr_id=polB-allowed-1789555313 path=/?corr_id=polB-allowed-1789555313 from=127.0.0.1
+/sandbox/recv-18098.log:ARRIVED corr_id=polB-violating-1789555313 path=/?corr_id=polB-violating-1789555313 from=127.0.0.1

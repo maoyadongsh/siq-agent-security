@@ -18,7 +18,7 @@ func (s *Server) platforms() []PlatformInfo {
 	for _, p := range adapterinstall.Detect(home) {
 		detected[p] = true
 	}
-	names := []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, "workbuddy", adapterinstall.Trae}
+	names := []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.WorkBuddy, adapterinstall.Trae}
 	out := make([]PlatformInfo, 0, len(names))
 	for _, name := range names {
 		res, err := adapterinstall.Status(adapterinstall.Options{Platform: name, Home: home, StateDir: s.d.Store.Dir})
@@ -35,9 +35,6 @@ func (s *Server) platforms() []PlatformInfo {
 			if !detected[name] {
 				info.Note = "未发现；即便安装也仅审计、无法阻断"
 			}
-		case "workbuddy":
-			info.Adapter = "unverified"
-			info.Note = "WorkBuddy 桌面接入待独立验证；不沿用 CodeBuddy 结果"
 		default:
 			if diagnosis.ConfigurationState == "incomplete" {
 				info.Note = "配置待修复；保护尚未验证"
@@ -50,6 +47,9 @@ func (s *Server) platforms() []PlatformInfo {
 			} else {
 				info.Note = "未发现平台"
 			}
+		}
+		if name == adapterinstall.WorkBuddy && info.Note != "" {
+			info.Note = info.Note + "。须在 WorkBuddy 桌面会话验证，不能沿用 CodeBuddy"
 		}
 		if name == adapterinstall.Hermes {
 			info.Note = "此处显示默认目录；其他 profile 请打开实例管理。" + info.Note

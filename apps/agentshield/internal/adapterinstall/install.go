@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 	"time"
@@ -27,6 +29,7 @@ const (
 	OpenClaw  = "openclaw"
 	Hermes    = "hermes"
 	CodeBuddy = "codebuddy"
+	WorkBuddy = "workbuddy"
 	Trae      = "trae"
 )
 
@@ -35,6 +38,7 @@ type Options struct {
 	RuntimeIdentityID string          `json:"runtime_identity_id,omitempty"`
 	Instance          *InstanceTarget `json:"instance,omitempty"`
 	NativeEnable      bool            `json:"native_enable,omitempty"`
+	InstallPolicy     bool            `json:"install_policy,omitempty"`
 	NativeCLI         string          `json:"native_cli,omitempty"`
 	Platform          string          // required
 	Home              string          // override os.UserHomeDir (tests)
@@ -85,7 +89,7 @@ type RecoveryPlan struct {
 	SuggestedActions []string `json:"suggested_actions"`
 }
 
-var known = map[string]bool{OpenClaw: true, Hermes: true, CodeBuddy: true, Trae: true}
+var known = map[string]bool{OpenClaw: true, Hermes: true, CodeBuddy: true, WorkBuddy: true, Trae: true}
 
 // Detect lists platforms whose well-known config dir exists under home.
 func Detect(home string) []string {
@@ -93,8 +97,11 @@ func Detect(home string) []string {
 		home, _ = os.UserHomeDir()
 	}
 	var out []string
-	for _, p := range []string{OpenClaw, Hermes, CodeBuddy, Trae} {
+	for _, p := range []string{OpenClaw, Hermes, CodeBuddy, WorkBuddy, Trae} {
 		if p == CodeBuddy && validateCodeBuddyConfigDir() != nil {
+			continue
+		}
+		if p == WorkBuddy && validateWorkBuddyConfigDir() != nil {
 			continue
 		}
 		if st, err := os.Stat(configDir(home, p)); err == nil && st.IsDir() {
@@ -115,6 +122,11 @@ func configDir(home, platform string) string {
 			return filepath.Clean(dir)
 		}
 		return filepath.Join(home, ".codebuddy")
+	case WorkBuddy:
+		if dir := os.Getenv("WORKBUDDY_CONFIG_DIR"); dir != "" {
+			return filepath.Clean(dir)
+		}
+		return filepath.Join(home, ".workbuddy")
 	case Trae:
 		return filepath.Join(home, ".trae")
 	}
@@ -136,13 +148,76 @@ func validateCodeBuddyConfigDir() error {
 		if err != nil && !errors.Is(err, os.ErrNotExist) {
 			return errors.New("adapter: cannot inspect CODEBUDDY_CONFIG_DIR")
 		}
-		if err == nil && (!info.IsDir() || info.Mode()&os.ModeSymlink != 0) {
+		if err == nil && !stateformat.AcceptDirectory(info, p) {
 			return errors.New("adapter: CODEBUDDY_CONFIG_DIR requires directory ancestors without symlinks")
 		}
 		if filepath.Dir(p) == p {
 			return nil
 		}
 	}
+}
+
+func validateWorkBuddyConfigDir() error {
+	dir := os.Getenv("WORKBUDDY_CONFIG_DIR")
+	if dir == "" {
+		return nil
+	}
+	if !filepath.IsAbs(dir) {
+		return errors.New("adapter: WORKBUDDY_CONFIG_DIR must be an absolute path")
+	}
+	for p := filepath.Clean(dir); ; p = filepath.Dir(p) {
+		info, err := os.Lstat(p)
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			return errors.New("adapter: cannot inspect WORKBUDDY_CONFIG_DIR")
+		}
+		if err == nil && !stateformat.AcceptDirectory(info, p) {
+			return errors.New("adapter: WORKBUDDY_CONFIG_DIR requires directory ancestors without symlinks")
+		}
+		if filepath.Dir(p) == p {
+			return nil
+		}
+	}
+}
+
+func hookCommand(binary, platform, stateDir string) string {
+	name := "codebuddy"
+	if platform == WorkBuddy {
+		name = "workbuddy"
+	}
+	cmd := hookArg(binary) + " hook " + name
+	// Desktop Electron children do not inherit SIQ_AGENT_SECURITY_STATE_DIR.
+	if platform == WorkBuddy && filepath.IsAbs(stateDir) {
+		cmd += " --state-dir " + hookArg(stateDir)
+	}
+	return cmd
+}
+
+func hookArg(path string) string {
+	if runtime.GOOS == "windows" {
+		return `"` + path + `"`
+	}
+	return "'" + strings.ReplaceAll(path, "'", `'"'"'`) + "'"
+}
+
+// A config file can contain user commands that merely quote a product command.
+// Mutation requires the exact command generated for the recorded binary and
+// state directory, including the pre-quoting legacy form.
+func isRecordedToolHook(command, platform, binary, stateDir string) bool {
+	if binary == "" {
+		return false
+	}
+	if command == hookCommand(binary, platform, stateDir) {
+		return true
+	}
+	name := "codebuddy"
+	if platform == WorkBuddy {
+		name = "workbuddy"
+	}
+	legacy := binary + " hook " + name
+	if platform == WorkBuddy && filepath.IsAbs(stateDir) {
+		legacy += " --state-dir '" + strings.ReplaceAll(stateDir, "'", `'"'"'`) + "'"
+	}
+	return command == legacy
 }
 
 // Install writes adapter files for one platform. Trae is audit-only: no files.
@@ -200,6 +275,11 @@ func (o *Options) normalise() error {
 			return err
 		}
 	}
+	if o.Platform == WorkBuddy {
+		if err := validateWorkBuddyConfigDir(); err != nil {
+			return err
+		}
+	}
 	if o.Home == "" {
 		h, err := os.UserHomeDir()
 		if err != nil {
@@ -248,7 +328,7 @@ func (o *Options) normalise() error {
 	return nil
 }
 
-func upsertHook(existing any, command string) []any {
+func upsertHook(existing any, command, platform, recordedBinary, stateDir string) []any {
 	entry := map[string]any{
 		"matcher": ".*",
 		"hooks": []any{
@@ -261,7 +341,7 @@ func upsertHook(existing any, command string) []any {
 		inner, _ := m["hooks"].([]any)
 		for _, h := range inner {
 			hm, _ := h.(map[string]any)
-			if c, _ := hm["command"].(string); strings.Contains(c, "hook codebuddy") && product.Mentions(c) {
+			if c, _ := hm["command"].(string); c == command || isRecordedToolHook(c, platform, recordedBinary, stateDir) {
 				hm["command"] = command
 				return list
 			}
@@ -373,6 +453,19 @@ func exists(p string) bool {
 	return err == nil
 }
 
+func removeEmptyProductPluginDir(root string) {
+	plugin := filepath.Join(root, "plugins", product.PluginDir())
+	info, err := os.Lstat(plugin)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return
+	}
+	entries, err := os.ReadDir(plugin)
+	if err != nil || len(entries) != 0 {
+		return
+	}
+	_ = os.Remove(plugin)
+}
+
 func appendUnique(ss []string, v string) []string {
 	for _, s := range ss {
 		if s == v {
@@ -386,6 +479,11 @@ func appendUnique(ss []string, v string) []string {
 func Status(opts Options) (*Result, error) {
 	if opts.Platform == CodeBuddy {
 		if err := validateCodeBuddyConfigDir(); err != nil {
+			return nil, err
+		}
+	}
+	if opts.Platform == WorkBuddy {
+		if err := validateWorkBuddyConfigDir(); err != nil {
 			return nil, err
 		}
 	}
@@ -420,17 +518,46 @@ func Status(opts Options) (*Result, error) {
 				break
 			}
 		}
-	case CodeBuddy:
+	case CodeBuddy, WorkBuddy:
 		p := filepath.Join(opts.configRoot(), "settings.json")
 		if exists(p) {
-			raw, _ := statefs.ReadFile(p)
-			if strings.Contains(string(raw), "hook codebuddy") && product.Mentions(string(raw)) {
-				note = "installed"
-				paths = []string{p}
+			rec, err := newestInstanceRecord(opts)
+			if err != nil && !errors.Is(err, errNoInstallRecord) {
+				return nil, err
+			}
+			if rec != nil {
+				raw, err := statefs.ReadFile(p)
+				if err != nil {
+					return nil, err
+				}
+				var doc map[string]any
+				if json.Unmarshal(raw, &doc) == nil && hasRecordedToolHook(doc, opts.Platform, rec.Binary, opts.StateDir) {
+					note = "installed"
+					paths = []string{p}
+				}
 			}
 		}
 	case Trae:
 		note = "audit_only"
 	}
 	return &Result{Platform: opts.Platform, Action: "status", Paths: paths, Note: note}, nil
+}
+
+func hasRecordedToolHook(doc map[string]any, platform, binary, stateDir string) bool {
+	hooks, _ := doc["hooks"].(map[string]any)
+	for _, event := range []string{"PreToolUse", "PostToolUse"} {
+		list, _ := hooks[event].([]any)
+		for _, entry := range list {
+			group, _ := entry.(map[string]any)
+			commands, _ := group["hooks"].([]any)
+			for _, item := range commands {
+				command, _ := item.(map[string]any)
+				text, _ := command["command"].(string)
+				if command["type"] == "command" && isRecordedToolHook(text, platform, binary, stateDir) {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
