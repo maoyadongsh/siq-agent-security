@@ -1,0 +1,26 @@
+{
+  "requirement": "P03-TASK-09",
+  "candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "retested": false,
+  "method": "existing_native_evidence_revalidation",
+  "manifest_hashes_verified": [
+    {
+      "path": "docs/evidence/personal-experience/windows-sunbo/p00-p01-p03-20260914-094945/evidence/lifecycle/candidate-port-occupied-start.json",
+      "sha256": "779542eed553c3730123fbdf763da0fd0b4f04c85bf23b1d7f0dfedd0c86d82c"
+    },
+    {
+      "path": "docs/evidence/personal-experience/windows-sunbo/p00-p01-p03-20260914-094945/evidence/lifecycle/candidate-port-occupied-observation.json",
+      "sha256": "2c8bf7d1506f1d9c1cc3b381a5d0ff911e9ae9b2fb71c46a7bb417df507297d6"
+    },
+    {
+      "path": "docs/evidence/personal-experience/windows-sunbo/p00-p01-p03-20260914-094945/evidence/lifecycle/candidate-cleanup-observation.json",
+      "sha256": "1c2c401d5dc9739ee3e9dc999f3ffa79951857e6d959d91d07d591500bf2556f"
+    },
+    {
+      "path": "docs/evidence/personal-experience/windows-sunbo/p00-p01-p03-20260914-094945/evidence/lifecycle/report.md",
+      "sha256": "8d03ae12965419a0b49d2cb85dee12efde21a720eb0dbf8bfbe5acd26f6ab597"
+    }
+  ],
+  "result": "pass",
+  "scope": "occupied port does not report ready; occupying listener retained; no claim of bind-failure process exit or final candidate acceptance"
+}
