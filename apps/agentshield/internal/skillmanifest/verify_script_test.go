@@ -1,9 +1,11 @@
 package skillmanifest
 
 import (
+	"bytes"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -123,6 +125,9 @@ func TestResolveStagesVerifiedBinary(t *testing.T) {
 	}
 	resolve := filepath.Join(dir, "scripts", "resolve_verified_bin.sh")
 	repoBin := filepath.Join(dir, "..", "..", "apps", "agentshield", "siq-agent-security")
+	if runtime.GOOS == "windows" {
+		repoBin += ".exe"
+	}
 	if _, err := os.Stat(repoBin); err != nil {
 		t.Skip("repo binary missing")
 	}
@@ -151,8 +156,20 @@ func TestResolveStagesVerifiedBinary(t *testing.T) {
 	if path == "" || !strings.HasPrefix(path, stage) {
 		t.Fatalf("expected staged path under %s, got %q\nfull:\n%s", stage, path, out)
 	}
-	if st, err := os.Stat(path); err != nil || st.Mode()&0o111 == 0 {
-		t.Fatalf("staged binary missing or not executable: %v", err)
+	st, err := os.Stat(path)
+	if err != nil || !st.Mode().IsRegular() {
+		t.Fatalf("staged binary missing or not regular: %v", err)
+	}
+	if runtime.GOOS != "windows" && st.Mode()&0o111 == 0 {
+		t.Fatal("staged binary is not executable")
+	}
+	original, err := os.ReadFile(repoBin)
+	if err != nil {
+		t.Fatal(err)
+	}
+	copied, err := os.ReadFile(path)
+	if err != nil || !bytes.Equal(original, copied) {
+		t.Fatalf("staged binary differs from source: %v", err)
 	}
 }
 func TestPythonVerifierAcceptsSignedManifest(t *testing.T) {
