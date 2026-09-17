@@ -1,0 +1,57 @@
+{
+  "scope": "Direct validation of fresh native outputs; not the standard pytest command or Control API runtime test.",
+  "candidate_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "python_version": "3.13.7",
+  "jsonschema_version": "4.26.0",
+  "rows": [
+    {
+      "private_output_role": "journey/raw/07-new-status-before.stdout.bin",
+      "output_sha256": "bac4a60e4d1410f01242f1e76bd2e4d9ab5511651a616963e67ad736cdb738c3",
+      "schema": "local-state-status.v1.schema.json",
+      "schema_sha256": "525d36f9052299715d507b369cd7e830e0e1a9fef61f02660cd8469235291ac2",
+      "validator": "Draft7Validator",
+      "status": "pass"
+    },
+    {
+      "private_output_role": "journey/raw/08-new-migrate.stdout.bin",
+      "output_sha256": "ac8cc6ba03b650d45b8563c49d354f43aab6d92b2b412ac80725ee2ad8c75ca7",
+      "schema": "local-state-migration-result.v1.schema.json",
+      "schema_sha256": "8137bf0e2dbdb0773bb8bf42c8655f896aad22d254059df0a8ec7be525fa588e",
+      "validator": "Draft7Validator",
+      "status": "pass"
+    },
+    {
+      "private_output_role": "journey/raw/10-new-repeat-migrate.stdout.bin",
+      "output_sha256": "6ab27815e12d63d6a39c90fc0a5cdd6cc2cded849a15867ba715daa4e1a97a41",
+      "schema": "local-state-migration-result.v1.schema.json",
+      "schema_sha256": "8137bf0e2dbdb0773bb8bf42c8655f896aad22d254059df0a8ec7be525fa588e",
+      "validator": "Draft7Validator",
+      "status": "pass"
+    },
+    {
+      "private_output_role": "journey/raw/11-new-status-after.stdout.bin",
+      "output_sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+      "schema": "local-state-status.v1.schema.json",
+      "schema_sha256": "525d36f9052299715d507b369cd7e830e0e1a9fef61f02660cd8469235291ac2",
+      "validator": "Draft7Validator",
+      "status": "pass"
+    },
+    {
+      "private_output_role": "journey/state/state-format.json",
+      "output_sha256": "8b47775ed745e0ac9a949099ccd4287a1b85bc8c8b3dc4cceb93d0c758ee00b8",
+      "schema": "local-state-format.v2.schema.json",
+      "schema_sha256": "8eddef8288b0f67109f5bc0fad93f71df1efc993632c59514330956cc03e317c",
+      "validator": "Draft7Validator",
+      "status": "pass"
+    },
+    {
+      "private_output_role": "journey/state/state-migration-v2/plan.json",
+      "output_sha256": "7cf30af8824431e12914d3d78f6f92da4d8bbfe34baee1f531a59f8b5ac65869",
+      "schema": "local-state-migration-plan.v1.schema.json",
+      "schema_sha256": "8c6db1c522261e455f87f4bfdb0efeb6678397f75771c543a52f790963912bc6",
+      "validator": "Draft7Validator",
+      "status": "pass"
+    }
+  ],
+  "passed": 6
+}
