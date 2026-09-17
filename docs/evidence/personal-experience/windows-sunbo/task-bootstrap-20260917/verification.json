@@ -1,0 +1,78 @@
+{
+  "candidate_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+  "go": "go1.27.1 windows/amd64",
+  "before": {
+    "exit_code": 1
+  },
+  "after": {
+    "exit_code": 0
+  },
+  "windows_regression": {
+    "command": "go test ./cmd/agentshield -run ^TestWindows -count=1 -timeout 10m -v",
+    "exit_code": 0,
+    "top_level_pass": 27,
+    "skips": 0
+  },
+  "race": {
+    "command": "go test -race ./cmd/agentshield -run ^TestWindowsTask(Prepare|Bootstrap) -count=1 -timeout 5m",
+    "exit_code": 0,
+    "cgo_enabled": 1,
+    "compiler": "MSYS2 mingw64 gcc",
+    "scope": "TestWindowsTask(Prepare|Bootstrap)"
+  },
+  "static": {
+    "vet_exit": 0,
+    "gofmt_exit": 0,
+    "gofmt_files": []
+  },
+  "builds": [
+    {
+      "sha256": "62d820f30f3e39628a81939683132d4f7f9e87678e14b5afce0452401b01ec41",
+      "exit_code": 0,
+      "target": "linux/amd64"
+    },
+    {
+      "sha256": "a43ff5e970ac4da414591d2feb14142ee8bc05a768bc2de615f66cbd5860be50",
+      "exit_code": 0,
+      "target": "linux/arm64"
+    },
+    {
+      "sha256": "8ba74d4f993463cc3638b3a8bd7888e623ffca740f3e740db191c5c1337db14c",
+      "exit_code": 0,
+      "target": "darwin/arm64"
+    },
+    {
+      "sha256": "5776d67d784c7131a7eb88faef1c26a8dbe939e5140fd2634603d4625fce9d2c",
+      "exit_code": 0,
+      "target": "windows/amd64"
+    }
+  ],
+  "schema": {
+    "uv_lock_sha256": "c662fc35bb1180ef08d46ea8fe76009f7c3e85c5e18d2294e1a538c5f2d0e33e",
+    "exit_code": 0,
+    "locked_environment_reused": true,
+    "passed": 214,
+    "command": "python -m pytest app/tests/test_schema_contracts.py; locked uv environment; PYTHONUTF8=1"
+  },
+  "full_windows_go": {
+    "status": "running",
+    "command": "go test -p 2 ./... -count=1 -timeout 20m",
+    "environment": "batch-owned private TEMP/TMP outside AppData",
+    "observed_failures": true,
+    "acceptance": "not_passed"
+  },
+  "ci_at_code_head": {
+    "success": 39,
+    "skipped": 3,
+    "pending": 0,
+    "failed": 0,
+    "scope": "remote checks; not native final acceptance"
+  },
+  "private_log_sha256": {
+    "windows-regression.log": "4a2bca7de77cb1e7afd0486714fc2f9c4aaaf5b278821531151334f079ea9cd1",
+    "race.log": "2ccd84ff166b3f2dec490d20e56bb3e95f099f8940e918d1797ac857bc884046",
+    "schema.log": "b94e2280009b4824992f605c16181d71af0ccdddeac9080332458f33ca6c264c",
+    "vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

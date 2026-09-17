@@ -1,0 +1,123 @@
+{
+  "method": "native_cli_and_task_scheduler",
+  "candidate": {
+    "binary_sha256": "5776d67d784c7131a7eb88faef1c26a8dbe939e5140fd2634603d4625fce9d2c",
+    "source_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+    "private_root_ace_count": 3,
+    "protected_acl": true,
+    "source_dirty": false
+  },
+  "private_transport_sha256": "d4dd0c03a15583bd6b7ce7773bdb655f0027625c3b7659e0bd9f7539d211790e",
+  "checks": {
+    "setup_ready_single_owned_process": true,
+    "combined_definition_matches_stepwise": true,
+    "setup_created_valid_first_identity_and_task_signature": true,
+    "repeat_setup_same_process": true,
+    "unregister_preserved_all_state_files": true,
+    "completed": true,
+    "cleanup_task_absent": true,
+    "cleanup_processes": {
+      "listener_pids": [],
+      "pids": []
+    }
+  },
+  "commands": [
+    {
+      "label": "setup",
+      "args": [
+        "setup",
+        "--confirm-setup",
+        "--port",
+        "<isolated-port>"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 18.82672470001853
+    },
+    {
+      "label": "setup-runtime",
+      "args": [
+        "task-runtime"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.926272300013807
+    },
+    {
+      "label": "setup-public-key",
+      "args": [
+        "pubkey"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.12651800000458024
+    },
+    {
+      "label": "setup-query",
+      "args": [
+        "task-query"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.085534199984977
+    },
+    {
+      "label": "setup-repeat",
+      "args": [
+        "setup",
+        "--confirm-setup",
+        "--port",
+        "<isolated-port>"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.592843299993547
+    },
+    {
+      "label": "stop",
+      "args": [
+        "task-stop",
+        "--confirm-stop"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 12.750692200002959
+    },
+    {
+      "label": "stopped-runtime",
+      "args": [
+        "task-runtime"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.9665004999842495
+    },
+    {
+      "label": "unregister",
+      "args": [
+        "task-unregister",
+        "--confirm-unregister"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 14.407985600002576
+    },
+    {
+      "label": "final-absence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.7142172000021674
+    },
+    {
+      "label": "cleanup-presence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.534538200008683
+    },
+    {
+      "label": "cleanup-final-absence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.7108962000056636
+    }
+  ],
+  "scope": "Windows common Task Scheduler lifecycle; file preservation means path-to-SHA256 snapshots, not all metadata or ACLs; not host protection or final integration acceptance"
+}
