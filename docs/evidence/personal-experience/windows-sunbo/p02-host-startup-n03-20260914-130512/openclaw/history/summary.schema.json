@@ -1,0 +1,1847 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "历史 WSL2 OpenClaw 汇总结果字段白名单",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_kind",
+    "scope",
+    "derivation",
+    "sources",
+    "identities",
+    "preflight",
+    "runtime_attempts",
+    "namespace_probe",
+    "b_status",
+    "limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "artifact_kind": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_environment",
+        "windows_native_runtime_evidence",
+        "historical_batches_only",
+        "later_runtime_batches_included",
+        "assessment"
+      ],
+      "properties": {
+        "execution_environment": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "windows_native_runtime_evidence": {
+          "type": "boolean"
+        },
+        "historical_batches_only": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          }
+        },
+        "later_runtime_batches_included": {
+          "type": "boolean"
+        },
+        "assessment": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "derivation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "hash_semantics",
+        "literal_resource_allowlist",
+        "omitted",
+        "resource_replacement",
+        "raw_artifacts_are_private"
+      ],
+      "properties": {
+        "method": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "hash_semantics": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "literal_resource_allowlist": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          }
+        },
+        "omitted": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          }
+        },
+        "resource_replacement": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "raw_artifacts_are_private": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sha256",
+          "original_published"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "original_published": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "identities": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "component",
+          "version",
+          "version_basis",
+          "files",
+          "execution"
+        ],
+        "properties": {
+          "component": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "version": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "version_basis": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "files": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "logical_name",
+                "sha256"
+              ],
+              "properties": {
+                "logical_name": {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          },
+          "execution": {
+            "type": "string",
+            "maxLength": 4096
+          }
+        }
+      }
+    },
+    "preflight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_ref",
+        "result",
+        "transport",
+        "commands",
+        "public_cli_invoked",
+        "agent_turn_invoked",
+        "model_requests",
+        "provider_started",
+        "siq_executed",
+        "gateway_invoked",
+        "configuration_warning",
+        "existing_fixture_files_unchanged"
+      ],
+      "properties": {
+        "source_ref": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "result": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "transport": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "exit_code",
+            "stdout",
+            "stderr"
+          ],
+          "properties": {
+            "exit_code": {
+              "type": "integer"
+            },
+            "stdout": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sha256",
+                "stored_text_characters",
+                "empty",
+                "derived_semantics"
+              ],
+              "properties": {
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "stored_text_characters": {
+                  "type": "integer"
+                },
+                "empty": {
+                  "type": "boolean"
+                },
+                "derived_semantics": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              }
+            },
+            "stderr": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sha256",
+                "stored_text_characters",
+                "empty",
+                "derived_semantics"
+              ],
+              "properties": {
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "stored_text_characters": {
+                  "type": "integer"
+                },
+                "empty": {
+                  "type": "boolean"
+                },
+                "derived_semantics": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              }
+            }
+          }
+        },
+        "commands": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "operation",
+              "process_started",
+              "exit_code",
+              "timeout",
+              "waited_and_reaped",
+              "stdout",
+              "stderr"
+            ],
+            "properties": {
+              "operation": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "process_started": {
+                "type": "boolean"
+              },
+              "exit_code": {
+                "type": "integer"
+              },
+              "timeout": {
+                "type": "boolean"
+              },
+              "waited_and_reaped": {
+                "type": "boolean"
+              },
+              "stdout": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "sha256",
+                  "stored_text_characters",
+                  "empty",
+                  "derived_semantics"
+                ],
+                "properties": {
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "stored_text_characters": {
+                    "type": "integer"
+                  },
+                  "empty": {
+                    "type": "boolean"
+                  },
+                  "derived_semantics": {
+                    "type": "string",
+                    "maxLength": 4096
+                  }
+                }
+              },
+              "stderr": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "sha256",
+                  "stored_text_characters",
+                  "empty",
+                  "derived_semantics"
+                ],
+                "properties": {
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "stored_text_characters": {
+                    "type": "integer"
+                  },
+                  "empty": {
+                    "type": "boolean"
+                  },
+                  "derived_semantics": {
+                    "type": "string",
+                    "maxLength": 4096
+                  }
+                }
+              }
+            }
+          }
+        },
+        "public_cli_invoked": {
+          "type": "boolean"
+        },
+        "agent_turn_invoked": {
+          "type": "boolean"
+        },
+        "model_requests": {
+          "type": "integer"
+        },
+        "provider_started": {
+          "type": "boolean"
+        },
+        "siq_executed": {
+          "type": "boolean"
+        },
+        "gateway_invoked": {
+          "type": "boolean"
+        },
+        "configuration_warning": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "existing_fixture_files_unchanged": {
+          "type": "boolean"
+        }
+      }
+    },
+    "runtime_attempts": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_ref",
+              "result",
+              "transport",
+              "command",
+              "public_cli_invoked",
+              "agent_command_attempted",
+              "agent_turn_invoked",
+              "agent_turn_observation",
+              "native_tool_exchange_observed",
+              "synthetic_provider_started",
+              "provider_start_basis",
+              "synthetic_provider_requests",
+              "provider_events_count",
+              "provider_failures_count",
+              "provider_connection_observed",
+              "decision_connection_observed",
+              "network_guard_denial_observed",
+              "real_model_requests",
+              "siq_plugin_loaded",
+              "siq_server_started",
+              "gateway_started",
+              "target_exists_before",
+              "target_exists_after",
+              "control_unchanged",
+              "fixed_sources_and_node_unchanged",
+              "native_permission_checks",
+              "original_fs_error_count",
+              "original_fs_error_classes",
+              "fatal_resource_observation",
+              "owned_resources",
+              "configuration_difference"
+            ],
+            "properties": {
+              "source_ref": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "result": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "transport": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "exit_code",
+                  "stdout",
+                  "stderr"
+                ],
+                "properties": {
+                  "exit_code": {
+                    "type": "integer"
+                  },
+                  "stdout": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  },
+                  "stderr": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  }
+                }
+              },
+              "command": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "operation",
+                  "process_started",
+                  "exit_code",
+                  "timeout",
+                  "waited_and_reaped",
+                  "stdout",
+                  "stderr"
+                ],
+                "properties": {
+                  "operation": {
+                    "type": "string",
+                    "maxLength": 4096
+                  },
+                  "process_started": {
+                    "type": "boolean"
+                  },
+                  "exit_code": {
+                    "type": "integer"
+                  },
+                  "timeout": {
+                    "type": "boolean"
+                  },
+                  "waited_and_reaped": {
+                    "type": "boolean"
+                  },
+                  "stdout": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  },
+                  "stderr": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  }
+                }
+              },
+              "public_cli_invoked": {
+                "type": "boolean"
+              },
+              "agent_command_attempted": {
+                "type": "boolean"
+              },
+              "agent_turn_invoked": {
+                "type": "null"
+              },
+              "agent_turn_observation": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "native_tool_exchange_observed": {
+                "type": "boolean"
+              },
+              "synthetic_provider_started": {
+                "type": "boolean"
+              },
+              "provider_start_basis": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "synthetic_provider_requests": {
+                "type": "integer"
+              },
+              "provider_events_count": {
+                "type": "integer"
+              },
+              "provider_failures_count": {
+                "type": "integer"
+              },
+              "provider_connection_observed": {
+                "type": "boolean"
+              },
+              "decision_connection_observed": {
+                "type": "boolean"
+              },
+              "network_guard_denial_observed": {
+                "type": "boolean"
+              },
+              "real_model_requests": {
+                "type": "integer"
+              },
+              "siq_plugin_loaded": {
+                "type": "boolean"
+              },
+              "siq_server_started": {
+                "type": "boolean"
+              },
+              "gateway_started": {
+                "type": "boolean"
+              },
+              "target_exists_before": {
+                "type": "boolean"
+              },
+              "target_exists_after": {
+                "type": "boolean"
+              },
+              "control_unchanged": {
+                "type": "boolean"
+              },
+              "fixed_sources_and_node_unchanged": {
+                "type": "boolean"
+              },
+              "native_permission_checks": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fixtureRead",
+                  "fixtureWrite",
+                  "oldProfileRead",
+                  "oldProfileWrite",
+                  "child",
+                  "worker",
+                  "addons"
+                ],
+                "properties": {
+                  "fixtureRead": {
+                    "type": "boolean"
+                  },
+                  "fixtureWrite": {
+                    "type": "boolean"
+                  },
+                  "oldProfileRead": {
+                    "type": "boolean"
+                  },
+                  "oldProfileWrite": {
+                    "type": "boolean"
+                  },
+                  "child": {
+                    "type": "boolean"
+                  },
+                  "worker": {
+                    "type": "boolean"
+                  },
+                  "addons": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "original_fs_error_count": {
+                "type": "integer"
+              },
+              "original_fs_error_classes": {
+                "type": "array",
+                "maxItems": 64,
+                "items": false
+              },
+              "fatal_resource_observation": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "owned_resources": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "node_reaped",
+                  "provider_socket_closed",
+                  "provider_thread_joined",
+                  "decision_socket_closed"
+                ],
+                "properties": {
+                  "node_reaped": {
+                    "type": "boolean"
+                  },
+                  "provider_socket_closed": {
+                    "type": "boolean"
+                  },
+                  "provider_thread_joined": {
+                    "type": "boolean"
+                  },
+                  "decision_socket_closed": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "configuration_difference": {
+                "type": "string",
+                "maxLength": 4096
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_ref",
+              "result",
+              "transport",
+              "command",
+              "public_cli_invoked",
+              "agent_command_attempted",
+              "agent_turn_invoked",
+              "agent_turn_observation",
+              "native_tool_exchange_observed",
+              "synthetic_provider_started",
+              "provider_start_basis",
+              "synthetic_provider_requests",
+              "provider_events_count",
+              "provider_failures_count",
+              "provider_connection_observed",
+              "decision_connection_observed",
+              "network_guard_denial_observed",
+              "real_model_requests",
+              "siq_plugin_loaded",
+              "siq_server_started",
+              "gateway_started",
+              "target_exists_before",
+              "target_exists_after",
+              "control_unchanged",
+              "fixed_sources_and_node_unchanged",
+              "native_permission_checks",
+              "original_fs_error_count",
+              "original_fs_error_classes",
+              "fatal_resource_observation",
+              "owned_resources",
+              "configuration_difference"
+            ],
+            "properties": {
+              "source_ref": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "result": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "transport": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "exit_code",
+                  "stdout",
+                  "stderr"
+                ],
+                "properties": {
+                  "exit_code": {
+                    "type": "integer"
+                  },
+                  "stdout": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  },
+                  "stderr": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  }
+                }
+              },
+              "command": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "operation",
+                  "process_started",
+                  "exit_code",
+                  "timeout",
+                  "waited_and_reaped",
+                  "stdout",
+                  "stderr"
+                ],
+                "properties": {
+                  "operation": {
+                    "type": "string",
+                    "maxLength": 4096
+                  },
+                  "process_started": {
+                    "type": "boolean"
+                  },
+                  "exit_code": {
+                    "type": "integer"
+                  },
+                  "timeout": {
+                    "type": "boolean"
+                  },
+                  "waited_and_reaped": {
+                    "type": "boolean"
+                  },
+                  "stdout": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  },
+                  "stderr": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  }
+                }
+              },
+              "public_cli_invoked": {
+                "type": "boolean"
+              },
+              "agent_command_attempted": {
+                "type": "boolean"
+              },
+              "agent_turn_invoked": {
+                "type": "null"
+              },
+              "agent_turn_observation": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "native_tool_exchange_observed": {
+                "type": "boolean"
+              },
+              "synthetic_provider_started": {
+                "type": "boolean"
+              },
+              "provider_start_basis": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "synthetic_provider_requests": {
+                "type": "integer"
+              },
+              "provider_events_count": {
+                "type": "integer"
+              },
+              "provider_failures_count": {
+                "type": "integer"
+              },
+              "provider_connection_observed": {
+                "type": "boolean"
+              },
+              "decision_connection_observed": {
+                "type": "boolean"
+              },
+              "network_guard_denial_observed": {
+                "type": "boolean"
+              },
+              "real_model_requests": {
+                "type": "integer"
+              },
+              "siq_plugin_loaded": {
+                "type": "boolean"
+              },
+              "siq_server_started": {
+                "type": "boolean"
+              },
+              "gateway_started": {
+                "type": "boolean"
+              },
+              "target_exists_before": {
+                "type": "boolean"
+              },
+              "target_exists_after": {
+                "type": "boolean"
+              },
+              "control_unchanged": {
+                "type": "boolean"
+              },
+              "fixed_sources_and_node_unchanged": {
+                "type": "boolean"
+              },
+              "native_permission_checks": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fixtureRead",
+                  "fixtureWrite",
+                  "oldProfileRead",
+                  "oldProfileWrite",
+                  "child",
+                  "worker",
+                  "addons"
+                ],
+                "properties": {
+                  "fixtureRead": {
+                    "type": "boolean"
+                  },
+                  "fixtureWrite": {
+                    "type": "boolean"
+                  },
+                  "oldProfileRead": {
+                    "type": "boolean"
+                  },
+                  "oldProfileWrite": {
+                    "type": "boolean"
+                  },
+                  "child": {
+                    "type": "boolean"
+                  },
+                  "worker": {
+                    "type": "boolean"
+                  },
+                  "addons": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "original_fs_error_count": {
+                "type": "integer"
+              },
+              "original_fs_error_classes": {
+                "type": "array",
+                "maxItems": 64,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "api",
+                    "code",
+                    "permission",
+                    "resource",
+                    "resource_class",
+                    "redacted",
+                    "fatal_resource_observed"
+                  ],
+                  "properties": {
+                    "api": {
+                      "type": "string",
+                      "maxLength": 4096
+                    },
+                    "code": {
+                      "type": "string",
+                      "maxLength": 4096
+                    },
+                    "permission": {
+                      "type": "string",
+                      "maxLength": 4096
+                    },
+                    "resource": {
+                      "type": "null"
+                    },
+                    "resource_class": {
+                      "type": "string",
+                      "maxLength": 4096
+                    },
+                    "redacted": {
+                      "type": "boolean"
+                    },
+                    "fatal_resource_observed": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "fatal_resource_observation": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "owned_resources": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "node_reaped",
+                  "provider_socket_closed",
+                  "provider_thread_joined",
+                  "decision_socket_closed"
+                ],
+                "properties": {
+                  "node_reaped": {
+                    "type": "boolean"
+                  },
+                  "provider_socket_closed": {
+                    "type": "boolean"
+                  },
+                  "provider_thread_joined": {
+                    "type": "boolean"
+                  },
+                  "decision_socket_closed": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "configuration_difference": {
+                "type": "string",
+                "maxLength": 4096
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_ref",
+              "result",
+              "transport",
+              "command",
+              "public_cli_invoked",
+              "agent_command_attempted",
+              "agent_turn_invoked",
+              "agent_turn_observation",
+              "native_tool_exchange_observed",
+              "synthetic_provider_started",
+              "provider_start_basis",
+              "synthetic_provider_requests",
+              "provider_events_count",
+              "provider_failures_count",
+              "provider_connection_observed",
+              "decision_connection_observed",
+              "network_guard_denial_observed",
+              "real_model_requests",
+              "siq_plugin_loaded",
+              "siq_server_started",
+              "gateway_started",
+              "target_exists_before",
+              "target_exists_after",
+              "control_unchanged",
+              "fixed_sources_and_node_unchanged",
+              "native_permission_checks",
+              "original_fs_error_count",
+              "original_fs_error_classes",
+              "fatal_resource_observation",
+              "owned_resources",
+              "configuration_difference"
+            ],
+            "properties": {
+              "source_ref": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "result": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "transport": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "exit_code",
+                  "stdout",
+                  "stderr"
+                ],
+                "properties": {
+                  "exit_code": {
+                    "type": "integer"
+                  },
+                  "stdout": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  },
+                  "stderr": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  }
+                }
+              },
+              "command": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "operation",
+                  "process_started",
+                  "exit_code",
+                  "timeout",
+                  "waited_and_reaped",
+                  "stdout",
+                  "stderr"
+                ],
+                "properties": {
+                  "operation": {
+                    "type": "string",
+                    "maxLength": 4096
+                  },
+                  "process_started": {
+                    "type": "boolean"
+                  },
+                  "exit_code": {
+                    "type": "integer"
+                  },
+                  "timeout": {
+                    "type": "boolean"
+                  },
+                  "waited_and_reaped": {
+                    "type": "boolean"
+                  },
+                  "stdout": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  },
+                  "stderr": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "sha256",
+                      "stored_text_characters",
+                      "empty",
+                      "derived_semantics"
+                    ],
+                    "properties": {
+                      "sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "stored_text_characters": {
+                        "type": "integer"
+                      },
+                      "empty": {
+                        "type": "boolean"
+                      },
+                      "derived_semantics": {
+                        "type": "string",
+                        "maxLength": 4096
+                      }
+                    }
+                  }
+                }
+              },
+              "public_cli_invoked": {
+                "type": "boolean"
+              },
+              "agent_command_attempted": {
+                "type": "boolean"
+              },
+              "agent_turn_invoked": {
+                "type": "null"
+              },
+              "agent_turn_observation": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "native_tool_exchange_observed": {
+                "type": "boolean"
+              },
+              "synthetic_provider_started": {
+                "type": "boolean"
+              },
+              "provider_start_basis": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "synthetic_provider_requests": {
+                "type": "integer"
+              },
+              "provider_events_count": {
+                "type": "integer"
+              },
+              "provider_failures_count": {
+                "type": "integer"
+              },
+              "provider_connection_observed": {
+                "type": "boolean"
+              },
+              "decision_connection_observed": {
+                "type": "boolean"
+              },
+              "network_guard_denial_observed": {
+                "type": "boolean"
+              },
+              "real_model_requests": {
+                "type": "integer"
+              },
+              "siq_plugin_loaded": {
+                "type": "boolean"
+              },
+              "siq_server_started": {
+                "type": "boolean"
+              },
+              "gateway_started": {
+                "type": "boolean"
+              },
+              "target_exists_before": {
+                "type": "boolean"
+              },
+              "target_exists_after": {
+                "type": "boolean"
+              },
+              "control_unchanged": {
+                "type": "boolean"
+              },
+              "fixed_sources_and_node_unchanged": {
+                "type": "boolean"
+              },
+              "native_permission_checks": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fixtureRead",
+                  "fixtureWrite",
+                  "oldProfileRead",
+                  "oldProfileWrite",
+                  "child",
+                  "worker",
+                  "addons"
+                ],
+                "properties": {
+                  "fixtureRead": {
+                    "type": "boolean"
+                  },
+                  "fixtureWrite": {
+                    "type": "boolean"
+                  },
+                  "oldProfileRead": {
+                    "type": "boolean"
+                  },
+                  "oldProfileWrite": {
+                    "type": "boolean"
+                  },
+                  "child": {
+                    "type": "boolean"
+                  },
+                  "worker": {
+                    "type": "boolean"
+                  },
+                  "addons": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "original_fs_error_count": {
+                "type": "integer"
+              },
+              "original_fs_error_classes": {
+                "type": "array",
+                "maxItems": 64,
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "api",
+                        "code",
+                        "permission",
+                        "resource",
+                        "resource_class",
+                        "redacted",
+                        "fatal_resource_observed"
+                      ],
+                      "properties": {
+                        "api": {
+                          "type": "string",
+                          "maxLength": 4096
+                        },
+                        "code": {
+                          "type": "string",
+                          "maxLength": 4096
+                        },
+                        "permission": {
+                          "type": "string",
+                          "maxLength": 4096
+                        },
+                        "resource": {
+                          "type": "null"
+                        },
+                        "resource_class": {
+                          "type": "string",
+                          "maxLength": 4096
+                        },
+                        "redacted": {
+                          "type": "boolean"
+                        },
+                        "fatal_resource_observed": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "api",
+                        "code",
+                        "permission",
+                        "resource",
+                        "resource_class",
+                        "redacted",
+                        "fatal_resource_observed"
+                      ],
+                      "properties": {
+                        "api": {
+                          "type": "string",
+                          "maxLength": 4096
+                        },
+                        "code": {
+                          "type": "string",
+                          "maxLength": 4096
+                        },
+                        "permission": {
+                          "type": "string",
+                          "maxLength": 4096
+                        },
+                        "resource": {
+                          "const": "/tmp"
+                        },
+                        "resource_class": {
+                          "type": "string",
+                          "maxLength": 4096
+                        },
+                        "redacted": {
+                          "type": "boolean"
+                        },
+                        "fatal_resource_observed": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "fatal_resource_observation": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "owned_resources": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "node_reaped",
+                  "provider_socket_closed",
+                  "provider_thread_joined",
+                  "decision_socket_closed"
+                ],
+                "properties": {
+                  "node_reaped": {
+                    "type": "boolean"
+                  },
+                  "provider_socket_closed": {
+                    "type": "boolean"
+                  },
+                  "provider_thread_joined": {
+                    "type": "boolean"
+                  },
+                  "decision_socket_closed": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "configuration_difference": {
+                "type": "string",
+                "maxLength": 4096
+              }
+            }
+          }
+        ]
+      }
+    },
+    "namespace_probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_ref",
+        "result",
+        "transport",
+        "command",
+        "checks",
+        "check_count",
+        "all_checks_passed",
+        "bind_confirmed",
+        "synthetic_tmp_write",
+        "threads_before_capset",
+        "threads_after_capset",
+        "all_observed_capability_sets_zero",
+        "no_new_privileges_after",
+        "user_and_group_identity_preserved",
+        "namespace_identities_changed_from_parent",
+        "mount_shared_or_master_tags_count",
+        "parent_tmp_observation_scope",
+        "openclaw_invoked",
+        "siq_invoked",
+        "provider_started",
+        "node_invoked",
+        "interpretation"
+      ],
+      "properties": {
+        "source_ref": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "result": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "transport": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "exit_code",
+            "stdout",
+            "stderr"
+          ],
+          "properties": {
+            "exit_code": {
+              "type": "integer"
+            },
+            "stdout": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sha256",
+                "stored_text_characters",
+                "empty",
+                "derived_semantics"
+              ],
+              "properties": {
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "stored_text_characters": {
+                  "type": "integer"
+                },
+                "empty": {
+                  "type": "boolean"
+                },
+                "derived_semantics": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              }
+            },
+            "stderr": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sha256",
+                "stored_text_characters",
+                "empty",
+                "derived_semantics"
+              ],
+              "properties": {
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "stored_text_characters": {
+                  "type": "integer"
+                },
+                "empty": {
+                  "type": "boolean"
+                },
+                "derived_semantics": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              }
+            }
+          }
+        },
+        "command": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "operation",
+            "process_started",
+            "exit_code",
+            "timeout",
+            "waited_and_reaped",
+            "stdout",
+            "stderr"
+          ],
+          "properties": {
+            "operation": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "process_started": {
+              "type": "boolean"
+            },
+            "exit_code": {
+              "type": "integer"
+            },
+            "timeout": {
+              "type": "boolean"
+            },
+            "waited_and_reaped": {
+              "type": "boolean"
+            },
+            "stdout": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sha256",
+                "stored_text_characters",
+                "empty",
+                "derived_semantics"
+              ],
+              "properties": {
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "stored_text_characters": {
+                  "type": "integer"
+                },
+                "empty": {
+                  "type": "boolean"
+                },
+                "derived_semantics": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              }
+            },
+            "stderr": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sha256",
+                "stored_text_characters",
+                "empty",
+                "derived_semantics"
+              ],
+              "properties": {
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "stored_text_characters": {
+                  "type": "integer"
+                },
+                "empty": {
+                  "type": "boolean"
+                },
+                "derived_semantics": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              }
+            }
+          }
+        },
+        "checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "child_success",
+            "bounded_and_reaped",
+            "parent_namespaces_unchanged",
+            "parent_tmp_metadata_unchanged",
+            "owned_effect_exact",
+            "owned_sentinel_unchanged",
+            "unshare_unchanged"
+          ],
+          "properties": {
+            "child_success": {
+              "type": "boolean"
+            },
+            "bounded_and_reaped": {
+              "type": "boolean"
+            },
+            "parent_namespaces_unchanged": {
+              "type": "boolean"
+            },
+            "parent_tmp_metadata_unchanged": {
+              "type": "boolean"
+            },
+            "owned_effect_exact": {
+              "type": "boolean"
+            },
+            "owned_sentinel_unchanged": {
+              "type": "boolean"
+            },
+            "unshare_unchanged": {
+              "type": "boolean"
+            }
+          }
+        },
+        "check_count": {
+          "type": "integer"
+        },
+        "all_checks_passed": {
+          "type": "boolean"
+        },
+        "bind_confirmed": {
+          "type": "boolean"
+        },
+        "synthetic_tmp_write": {
+          "type": "boolean"
+        },
+        "threads_before_capset": {
+          "type": "integer"
+        },
+        "threads_after_capset": {
+          "type": "integer"
+        },
+        "all_observed_capability_sets_zero": {
+          "type": "boolean"
+        },
+        "no_new_privileges_after": {
+          "type": "boolean"
+        },
+        "user_and_group_identity_preserved": {
+          "type": "boolean"
+        },
+        "namespace_identities_changed_from_parent": {
+          "type": "boolean"
+        },
+        "mount_shared_or_master_tags_count": {
+          "type": "integer"
+        },
+        "parent_tmp_observation_scope": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "openclaw_invoked": {
+          "type": "boolean"
+        },
+        "siq_invoked": {
+          "type": "boolean"
+        },
+        "provider_started": {
+          "type": "boolean"
+        },
+        "node_invoked": {
+          "type": "boolean"
+        },
+        "interpretation": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "b_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result",
+        "basis",
+        "offline_fail_closed_observed",
+        "later_batches_claimed"
+      ],
+      "properties": {
+        "result": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "basis": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "offline_fail_closed_observed": {
+          "type": "boolean"
+        },
+        "later_batches_claimed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "limits": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "string",
+        "maxLength": 4096
+      }
+    }
+  }
+}
