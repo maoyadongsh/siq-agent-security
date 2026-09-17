@@ -49,3 +49,10 @@
 控制台复现使用原生 Python 启动专用 `CREATE_NEW_CONSOLE` 控制进程并隐藏窗口；由控制进程执行 `task-start`，结束后读回 `GetConsoleProcessList` 必须只包含自身 PID，并记录自己的 `GetConsoleWindow`。父进程确认对应 `ConsoleWindowClass`、同一进程句柄存活和 SIQ 服务就绪后，仅对此 HWND 发送 WM_CLOSE。等待控制进程退出且 IsWindow=false，再核对原服务 PID、监听和目录健康。该证据覆盖本批原生 Windows Console 关闭，不外推人工操作 Windows Terminal 标签页。
 
 初次控制台探针因 Python venv 启动器额外进程被独占检查拒绝；独立无 SIQ 调用的对照确认 venv 为两个控制台进程、原生解释器为一个，因此新批改用原生解释器后完成。初次任务已停止注销，失败原始记录与修正原因均保留。
+
+
+## 缺失二进制原生预检（2026-09-18）
+
+P03-TASK-10通过，程序仍为同一clean185候选。新独占目录复制并验证原生程序，init/task-prepare后确认系统任务缺席；用CreateProcessW暂停启动本批task-register，核对实际进程句柄和专用Job，在其执行预检前将本批程序文件移至同目录独占备份。ResumeThread后程序exit1，明确返回`service-unit: current executable unavailable`。恢复原文件且SHA一致，状态全部文件摘要不变，系统任务仍缺席。未注册或启动任务，未操作日常实例。
+
+r1过早采样Job时active=1，保留原记录不声称自然收尾。r2改进收尾观察，在关闭Job前有界等待其active=0，total=2、terminated=0，确认无强杀；没有改变产品断言。`missing-executable.json`记录原始证据/控制器摘要。该测试验证的是当前程序文件缺失时注册预检，不扩展为SID不符、调度器不可用或已注册任务恢复。
