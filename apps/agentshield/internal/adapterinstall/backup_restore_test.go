@@ -119,9 +119,21 @@ func TestUninstallOfOneInstanceRestoresOnlyThatInstance(t *testing.T) {
 		if _, err := Install(o); err != nil {
 			t.Fatal(err)
 		}
+		if runtime.GOOS == "windows" {
+			if _, err := os.Lstat(o.wrapperPath()); !os.IsNotExist(err) {
+				t.Fatalf("Windows install must not create an unsupported shell wrapper: %v", err)
+			}
+		}
 	}
 	if _, err := Uninstall(second); err != nil {
 		t.Fatal(err)
+	}
+	if runtime.GOOS == "windows" {
+		for _, o := range []Options{first, second} {
+			if _, err := os.Lstat(o.wrapperPath()); !os.IsNotExist(err) {
+				t.Fatalf("Windows uninstall must leave unsupported shell wrappers absent: %v", err)
+			}
+		}
 	}
 	sibling := filepath.Join(opts.Home, ".hermes", "profiles", "work-a")
 	raw, err := os.ReadFile(filepath.Join(sibling, "config.yaml"))
@@ -134,7 +146,7 @@ func TestUninstallOfOneInstanceRestoresOnlyThatInstance(t *testing.T) {
 	if !exists(filepath.Join(sibling, "plugins", "siq-agent-security", "plugin.yaml")) {
 		t.Fatal("sibling plugin removed by other instance's uninstall")
 	}
-	if !exists(first.wrapperPath()) {
+	if runtime.GOOS != "windows" && !exists(first.wrapperPath()) {
 		t.Fatal("sibling wrapper removed by other instance's uninstall")
 	}
 }

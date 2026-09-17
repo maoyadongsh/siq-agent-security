@@ -1,0 +1,647 @@
+{
+  "name": "package",
+  "argv": [
+    "test",
+    "-json",
+    "-p=2",
+    "-parallel=1",
+    "-count=1",
+    "-timeout=300s",
+    "./internal/adapterinstall"
+  ],
+  "cwd": "apps/agentshield",
+  "started_utc": "2026-09-14T05:24:48.113874+00:00",
+  "finished_utc": "2026-09-14T05:28:15.857246+00:00",
+  "exit_code": 0,
+  "outer_timeout_seconds": 420,
+  "outer_timed_out": false,
+  "cleanup_exit": null,
+  "go_process_reaped": true,
+  "source_before": {
+    "source": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+    "source_dirty": false
+  },
+  "source_after": {
+    "source": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+    "source_dirty": false
+  },
+  "event_count": 493,
+  "top_level_counts": {
+    "pass": 59,
+    "fail": 0,
+    "skip": 12
+  },
+  "subtest_counts": {
+    "pass": 42,
+    "fail": 0,
+    "skip": 5
+  },
+  "top_level_results": [
+    {
+      "Test": "TestUnicodeAndSpaceConfigPathsRestoreBytesAndModes",
+      "Action": "pass",
+      "Elapsed": 11.94
+    },
+    {
+      "Test": "TestUninstallOfOneInstanceRestoresOnlyThatInstance",
+      "Action": "pass",
+      "Elapsed": 10.3
+    },
+    {
+      "Test": "TestUninstallPlanRejectsConfigChangedAfterPrepare",
+      "Action": "pass",
+      "Elapsed": 6.69
+    },
+    {
+      "Test": "TestUninstallPlanRejectsMovedInstanceAfterPrepare",
+      "Action": "pass",
+      "Elapsed": 5.04
+    },
+    {
+      "Test": "TestCodeBuddyCustomConfigLifecycle",
+      "Action": "pass",
+      "Elapsed": 9.8
+    },
+    {
+      "Test": "TestCodeBuddyChangedConfigDoesNotUninstallOtherInstance",
+      "Action": "pass",
+      "Elapsed": 6.21
+    },
+    {
+      "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack",
+      "Action": "pass",
+      "Elapsed": 1.64
+    },
+    {
+      "Test": "TestDiagnosisSeparatesFilesFromRuntime",
+      "Action": "pass",
+      "Elapsed": 4.49
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift",
+      "Action": "pass",
+      "Elapsed": 20.2
+    },
+    {
+      "Test": "TestDiagnosticsRejectUnsafeFilesWithoutLeakingContents",
+      "Action": "skip",
+      "Elapsed": 2.27
+    },
+    {
+      "Test": "TestCodeBuddyDiagnosticRejectsTextOutsideHooks",
+      "Action": "pass",
+      "Elapsed": 0.49
+    },
+    {
+      "Test": "TestHermesNativeEvidenceSeparatesRegistrationFromCompatibility",
+      "Action": "pass",
+      "Elapsed": 0.07
+    },
+    {
+      "Test": "TestConfiguredEndpointReadsConnectionDocumentOnly",
+      "Action": "pass",
+      "Elapsed": 5.39
+    },
+    {
+      "Test": "TestNativeYAMLGuardRefusesAliasesAndTags",
+      "Action": "pass",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestNativeEnableMissingProgramDoesNotWrite",
+      "Action": "pass",
+      "Elapsed": 0.37
+    },
+    {
+      "Test": "TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestHermesNativeCLIFreshConfig",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver",
+      "Action": "pass",
+      "Elapsed": 4.91
+    },
+    {
+      "Test": "TestOpenClawFreshInstallAddsNoInterceptionFields",
+      "Action": "pass",
+      "Elapsed": 2.78
+    },
+    {
+      "Test": "TestCodeBuddyFreshInstallAddsOnlyHooks",
+      "Action": "pass",
+      "Elapsed": 1.1
+    },
+    {
+      "Test": "TestHermesControlledInstallPathChecksBeforeNativeInstall",
+      "Action": "pass",
+      "Elapsed": 1.52
+    },
+    {
+      "Test": "TestHermesInstallUninstallRoundTrip",
+      "Action": "pass",
+      "Elapsed": 2.76
+    },
+    {
+      "Test": "TestOpenClawRegistersRuntimeWithoutUnsupportedInstallPolicy",
+      "Action": "pass",
+      "Elapsed": 3.43
+    },
+    {
+      "Test": "TestCodeBuddyIsIdempotentAndFailClosedUninstallWithoutRecord",
+      "Action": "pass",
+      "Elapsed": 2.85
+    },
+    {
+      "Test": "TestTraeIsAuditOnly",
+      "Action": "pass",
+      "Elapsed": 0.39
+    },
+    {
+      "Test": "TestReinstallKeepsImmutableOriginal",
+      "Action": "pass",
+      "Elapsed": 3.75
+    },
+    {
+      "Test": "TestSurgicalUninstallKeepsPostInstallUserFields",
+      "Action": "pass",
+      "Elapsed": 2.34
+    },
+    {
+      "Test": "TestCodeBuddySurgicalUninstallKeepsUserSettings",
+      "Action": "pass",
+      "Elapsed": 2
+    },
+    {
+      "Test": "TestUninstallConflictReturnsRecoveryPlan",
+      "Action": "pass",
+      "Elapsed": 1.45
+    },
+    {
+      "Test": "TestBadJSONRefusesRewrite",
+      "Action": "pass",
+      "Elapsed": 0.36
+    },
+    {
+      "Test": "TestUnknownModeRejected",
+      "Action": "pass",
+      "Elapsed": 0.28
+    },
+    {
+      "Test": "TestSymlinkConfigRefused",
+      "Action": "skip",
+      "Elapsed": 0.28
+    },
+    {
+      "Test": "TestEmbeddedAssetsMatchRuntimeTree",
+      "Action": "pass",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestPlanRejectsRecreatedInstanceRoot",
+      "Action": "pass",
+      "Elapsed": 4
+    },
+    {
+      "Test": "TestPlanRejectsInstanceRootSymlink",
+      "Action": "skip",
+      "Elapsed": 0.51
+    },
+    {
+      "Test": "TestPlanRootBindingIsRequiredForApply",
+      "Action": "pass",
+      "Elapsed": 2.24
+    },
+    {
+      "Test": "TestHermesInstancesHaveSeparatePlansAndUninstallRecords",
+      "Action": "pass",
+      "Elapsed": 6.06
+    },
+    {
+      "Test": "TestDefaultInstanceUpgradeRestoresLegacyWrapper",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestPlanRejectsConfigChangedBetweenPrepareAndApply",
+      "Action": "pass",
+      "Elapsed": 3.32
+    },
+    {
+      "Test": "TestPlanPinnedToMovedInstanceIsRejected",
+      "Action": "pass",
+      "Elapsed": 1.69
+    },
+    {
+      "Test": "TestOpenClawRuntimeRegistrationRoundTrip",
+      "Action": "pass",
+      "Elapsed": 4.62
+    },
+    {
+      "Test": "TestOpenClawPreservesForeignInstallPolicy",
+      "Action": "pass",
+      "Elapsed": 4.72
+    },
+    {
+      "Test": "TestOpenClawLegacyPolicyRequiresFullMatch",
+      "Action": "pass",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestOpenClawMigratesOwnedLegacyPolicy",
+      "Action": "pass",
+      "Elapsed": 4.52
+    },
+    {
+      "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed",
+      "Action": "pass",
+      "Elapsed": 2.58
+    },
+    {
+      "Test": "TestOpenClawReinstallRefusesCorruptOwnershipRecord",
+      "Action": "pass",
+      "Elapsed": 2.24
+    },
+    {
+      "Test": "TestOpenClawInstalledPluginLoadsNatively",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestManagedPlanPinsPublicIdentityInputsWithoutReadingSecret",
+      "Action": "pass",
+      "Elapsed": 3.72
+    },
+    {
+      "Test": "TestManagedConfigurationCannotBeSilentlyDowngraded",
+      "Action": "pass",
+      "Elapsed": 0.69
+    },
+    {
+      "Test": "TestOpenClawManagedPlanWritesProductConfigFields",
+      "Action": "pass",
+      "Elapsed": 2.5
+    },
+    {
+      "Test": "TestOpenClawManagedConfigurationCannotBeSilentlyDowngraded",
+      "Action": "pass",
+      "Elapsed": 0.56
+    },
+    {
+      "Test": "TestOpenClawManagedPinRejectsForeignPlatformIdentity",
+      "Action": "pass",
+      "Elapsed": 0.58
+    },
+    {
+      "Test": "TestOpenClawManagedUninstallRequiresIdentityWithdrawal",
+      "Action": "pass",
+      "Elapsed": 4.01
+    },
+    {
+      "Test": "TestRuntimeTargetRequiresExplicitReadyHermesInstance",
+      "Action": "pass",
+      "Elapsed": 1.64
+    },
+    {
+      "Test": "TestNativeRuntimeTargetPinsConfigurationServiceAndCLI",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestPlanReadOnlyAndPinsNoOpInputs",
+      "Action": "pass",
+      "Elapsed": 2.54
+    },
+    {
+      "Test": "TestPlanPreflightRejectsWholeOperation",
+      "Action": "pass",
+      "Elapsed": 6.73
+    },
+    {
+      "Test": "TestTransactionBoundaryFailureRestoresFiles",
+      "Action": "pass",
+      "Elapsed": 6.52
+    },
+    {
+      "Test": "TestTransactionConflictPreservesForeignEditAndCanRecover",
+      "Action": "pass",
+      "Elapsed": 1.93
+    },
+    {
+      "Test": "TestTransactionAuditFailureAndEncryptedRecovery",
+      "Action": "pass",
+      "Elapsed": 3.09
+    },
+    {
+      "Test": "TestRecoveryCannotTakeActiveWriter",
+      "Action": "pass",
+      "Elapsed": 1.04
+    },
+    {
+      "Test": "TestAdapterCrashHelper",
+      "Action": "pass",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestAdapterRealProcessDeathRecovery",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestTransactionPrivateStoreRejectsSymlinks",
+      "Action": "pass",
+      "Elapsed": 1.3
+    },
+    {
+      "Test": "TestUninstallKeepsUnknownFilesAndWrapperMode",
+      "Action": "pass",
+      "Elapsed": 2.79
+    },
+    {
+      "Test": "TestHermesWrapperQuotesPathsAndRefusesFailedAdmission",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestUninstallRestoresPreexistingPluginRegistration",
+      "Action": "pass",
+      "Elapsed": 3.17
+    },
+    {
+      "Test": "TestRecoveryRejectsTamperedCiphertext",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Test": "TestCommittedOwnershipRequiresAuthenticatedJournal",
+      "Action": "pass",
+      "Elapsed": 1.88
+    },
+    {
+      "Test": "TestApplyReadbackRejectsConcurrentEditBeforeCompletion",
+      "Action": "pass",
+      "Elapsed": 1.93
+    }
+  ],
+  "subtest_results": [
+    {
+      "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/relative",
+      "Action": "pass",
+      "Elapsed": 0.46
+    },
+    {
+      "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/symlink",
+      "Action": "skip",
+      "Elapsed": 0.41
+    },
+    {
+      "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink",
+      "Action": "skip",
+      "Elapsed": 0.38
+    },
+    {
+      "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/file",
+      "Action": "pass",
+      "Elapsed": 0.38
+    },
+    {
+      "Test": "TestDiagnosisSeparatesFilesFromRuntime/hermes",
+      "Action": "pass",
+      "Elapsed": 1.37
+    },
+    {
+      "Test": "TestDiagnosisSeparatesFilesFromRuntime/openclaw",
+      "Action": "pass",
+      "Elapsed": 1.76
+    },
+    {
+      "Test": "TestDiagnosisSeparatesFilesFromRuntime/codebuddy",
+      "Action": "pass",
+      "Elapsed": 1.35
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/disabled",
+      "Action": "pass",
+      "Elapsed": 2
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/null_enabled",
+      "Action": "pass",
+      "Elapsed": 1.85
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/denied",
+      "Action": "pass",
+      "Elapsed": 2.12
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/allow_missing",
+      "Action": "pass",
+      "Elapsed": 1.99
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/load_missing",
+      "Action": "pass",
+      "Elapsed": 1.77
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/entry_disabled",
+      "Action": "pass",
+      "Elapsed": 2.02
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/other_endpoint",
+      "Action": "pass",
+      "Elapsed": 2.03
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/other_state",
+      "Action": "pass",
+      "Elapsed": 2.19
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/other_mode",
+      "Action": "pass",
+      "Elapsed": 2.14
+    },
+    {
+      "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/changed_plugin",
+      "Action": "pass",
+      "Elapsed": 2.11
+    },
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver/hermes",
+      "Action": "pass",
+      "Elapsed": 1.56
+    },
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver/openclaw",
+      "Action": "pass",
+      "Elapsed": 1.81
+    },
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver/codebuddy",
+      "Action": "pass",
+      "Elapsed": 1.2
+    },
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver/trae",
+      "Action": "pass",
+      "Elapsed": 0.33
+    },
+    {
+      "Test": "TestPlanRejectsRecreatedInstanceRoot/model:_work_",
+      "Action": "pass",
+      "Elapsed": 1.96
+    },
+    {
+      "Test": "TestPlanRejectsRecreatedInstanceRoot/model:_replacement_",
+      "Action": "pass",
+      "Elapsed": 2.03
+    },
+    {
+      "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"enabled\":false}}",
+      "Action": "pass",
+      "Elapsed": 0.35
+    },
+    {
+      "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"deny\":[\"siq-agent-security\"]}}",
+      "Action": "pass",
+      "Elapsed": 0.3
+    },
+    {
+      "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":[]}",
+      "Action": "pass",
+      "Elapsed": 0.29
+    },
+    {
+      "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"allow\":\"other\"}}",
+      "Action": "pass",
+      "Elapsed": 0.31
+    },
+    {
+      "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"load\":{\"paths\":[42]}}}",
+      "Action": "pass",
+      "Elapsed": 0.34
+    },
+    {
+      "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"entries\":[]}}",
+      "Action": "pass",
+      "Elapsed": 0.43
+    },
+    {
+      "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"entries\":{\"siq-agent-security\":false}}}",
+      "Action": "pass",
+      "Elapsed": 0.55
+    },
+    {
+      "Test": "TestManagedPlanPinsPublicIdentityInputsWithoutReadingSecret/metadata",
+      "Action": "pass",
+      "Elapsed": 0.97
+    },
+    {
+      "Test": "TestManagedPlanPinsPublicIdentityInputsWithoutReadingSecret/revocation",
+      "Action": "pass",
+      "Elapsed": 0.87
+    },
+    {
+      "Test": "TestManagedPlanPinsPublicIdentityInputsWithoutReadingSecret/secret",
+      "Action": "pass",
+      "Elapsed": 1.88
+    },
+    {
+      "Test": "TestPlanPreflightRejectsWholeOperation/last-file",
+      "Action": "pass",
+      "Elapsed": 1.02
+    },
+    {
+      "Test": "TestPlanPreflightRejectsWholeOperation/binary",
+      "Action": "pass",
+      "Elapsed": 0.99
+    },
+    {
+      "Test": "TestPlanPreflightRejectsWholeOperation/expired",
+      "Action": "pass",
+      "Elapsed": 0.88
+    },
+    {
+      "Test": "TestPlanPreflightRejectsWholeOperation/digest",
+      "Action": "pass",
+      "Elapsed": 1
+    },
+    {
+      "Test": "TestPlanPreflightRejectsWholeOperation/revision",
+      "Action": "pass",
+      "Elapsed": 2.84
+    },
+    {
+      "Test": "TestTransactionBoundaryFailureRestoresFiles/prepared",
+      "Action": "pass",
+      "Elapsed": 1.51
+    },
+    {
+      "Test": "TestTransactionBoundaryFailureRestoresFiles/file:0",
+      "Action": "pass",
+      "Elapsed": 1.57
+    },
+    {
+      "Test": "TestTransactionBoundaryFailureRestoresFiles/file:2",
+      "Action": "pass",
+      "Elapsed": 1.5
+    },
+    {
+      "Test": "TestTransactionBoundaryFailureRestoresFiles/audited",
+      "Action": "pass",
+      "Elapsed": 1.93
+    },
+    {
+      "Test": "TestTransactionAuditFailureAndEncryptedRecovery/start",
+      "Action": "pass",
+      "Elapsed": 1.2
+    },
+    {
+      "Test": "TestTransactionAuditFailureAndEncryptedRecovery/completion",
+      "Action": "pass",
+      "Elapsed": 1.89
+    },
+    {
+      "Test": "TestTransactionPrivateStoreRejectsSymlinks/adapter-transactions",
+      "Action": "skip",
+      "Elapsed": 0.44
+    },
+    {
+      "Test": "TestTransactionPrivateStoreRejectsSymlinks/adapter-operations",
+      "Action": "skip",
+      "Elapsed": 0.45
+    },
+    {
+      "Test": "TestTransactionPrivateStoreRejectsSymlinks/adapter-write",
+      "Action": "skip",
+      "Elapsed": 0.41
+    }
+  ],
+  "package_terminal_events": [
+    {
+      "Time": "2026-09-14T13:28:14.9653015+08:00",
+      "Action": "pass",
+      "Package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "Elapsed": 201.303
+    }
+  ],
+  "raw_log_bytes": 125179,
+  "raw_log_sha256": "ebaa4b501abb2cff452c0d9544be632cfaaffa056dca061a3f8d098f6024bc86",
+  "derived_jsonl_bytes": 128668,
+  "derived_jsonl_sha256": "549115ba6dd2ca23aa8221fa9bbe0eb61502c012e608aea24fae03df11ab8745",
+  "non_json_lines": 0,
+  "panic_test_timed_out": false
+}

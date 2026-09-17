@@ -1,0 +1,83 @@
+{
+  "candidate": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+  "manifest_excludes_itself": true,
+  "file_count": 15,
+  "total_bytes": 2259685,
+  "files": [
+    {
+      "path": "analysis.json",
+      "bytes": 56660,
+      "sha256": "ac0c39b83d8c25d756d1a6d454bce4c6a7a3c39b4af8a3a5a01265516da83354"
+    },
+    {
+      "path": "change.patch",
+      "bytes": 4734,
+      "sha256": "d7fcad2bd7e496998898648fc8b7621c4c3dd9b2e0ea97e20b22a908ec1883cd"
+    },
+    {
+      "path": "derive-public-results.py",
+      "bytes": 7698,
+      "sha256": "d447f85fc94ea0b89f432aecd294a2bcdd8c5dfa3d99be1a2aa81b0321240f7d"
+    },
+    {
+      "path": "go-toolchain-build.txt",
+      "bytes": 239,
+      "sha256": "a07a630df62034048c92391786eaeaab9ee6447281ebccf91bf791a234fbd30a"
+    },
+    {
+      "path": "module-tests-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "module-tests-summary.json",
+      "bytes": 268170,
+      "sha256": "a8f1d7fb600c656a2b024c41478f0519f05b1d4ec54013167f0c67e9c0e218fb"
+    },
+    {
+      "path": "module-tests.jsonl",
+      "bytes": 1585317,
+      "sha256": "7d616fc573cc1bdb9c0d37c409c58fc2e10325cb9df587462975bca856ad5232"
+    },
+    {
+      "path": "module-vet-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "module-vet-summary.json",
+      "bytes": 1146,
+      "sha256": "6d002e3b83cc18224f7d4350a88d7e86551d4fad02ba196e32443e3d7ebfcb1c"
+    },
+    {
+      "path": "module-vet.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "process-observation.json",
+      "bytes": 669,
+      "sha256": "9bb3e5230d744144003945a276bda564f15ef88633afe863a59cba9f51bf8e84"
+    },
+    {
+      "path": "report.md",
+      "bytes": 11533,
+      "sha256": "24ff5622bd45ae40b1d9a7572f678c77fa8a9fd259f148e196501d485f70ee25"
+    },
+    {
+      "path": "run-windows-module-checks-r3.py",
+      "bytes": 15106,
+      "sha256": "9dd04aba515ec517f4754e5b370f6605bd159ec7ba57f0b6b4ebbb366bdb5902"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 305816,
+      "sha256": "976d7d4682befc6f020eeb68fb1b5c9f57b4dabb2a0447a7509db4e66f75f7d2"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 2597,
+      "sha256": "13b54b8b06d604f74aa7f943180a0501b064fad9cef80c659e4bd590d78a63c3"
+    }
+  ]
+}

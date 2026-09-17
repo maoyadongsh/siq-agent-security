@@ -1,0 +1,9 @@
+{
+  "observed_utc": "2026-09-14T05:52:38.9775823Z",
+  "method": "Read-only Win32_Process CIM snapshot; compare recorded final owned Go PID and case-insensitive owned private-root prefixes in visible executable paths/command lines.",
+  "direct_go_pid_present": false,
+  "private_root_path_match_count": 0,
+  "matching_process_names": [],
+  "cleanup_action_after_test": "none; outer timeout was not reached and runner waited for each direct Go child",
+  "limitations": "One-time visibility-limited snapshot. Does not certify each historical descendant was individually reaped. Private fixture files and raw evidence retained. Real PID, personal paths and SID omitted."
+}
