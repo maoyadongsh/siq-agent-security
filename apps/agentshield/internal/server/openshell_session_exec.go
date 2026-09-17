@@ -190,6 +190,17 @@ func (s *Server) openshellSessionExecute(w http.ResponseWriter, r *http.Request)
 		writeJSON(w, 403, map[string]string{"error": err.Error(), "reason_code": err.Error()})
 		return
 	}
+
+	// Reject a known-unrestorable baseline without consuming human approval.
+	base, err := s.d.Openshell.ReadEffective(body.Target)
+	if err != nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "openshell_base_unreadable"})
+		return
+	}
+	if err := s.validateOpenShellRestoreBase(body, base); err != nil {
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "openshell_base_not_restorable", "reason_code": "openshell_base_not_restorable"})
+		return
+	}
 	// Reserve: consumes the approved hold exactly once, via the existing
 	// engine contract. Failures here leave the approval intact.
 	reserveStatus, err := s.d.Engine.ReserveHoldExecution(body.HoldExecutionReserve)
@@ -213,8 +224,8 @@ func (s *Server) openshellSessionExecute(w http.ResponseWriter, r *http.Request)
 	for _, ep := range endpoints {
 		rules = append(rules, openshell.NetworkRule{Endpoint: ep, Effect: "allow", BinaryPaths: body.BinaryPaths})
 	}
-	rec, err := s.d.Openshell.ApplyNetworkAuthorized(body.Target, rules, body.ExpectedRevision, func() error {
-		if _, err := s.validateOpenShellExecutionBinding(body); err != nil {
+	rec, err := s.d.Openshell.ApplyNetworkAuthorizedBase(body.Target, rules, body.ExpectedRevision, func(base openshell.Snapshot) error {
+		if err := s.validateOpenShellRestoreBase(body, base); err != nil {
 			return err
 		}
 		return s.d.Engine.RecheckReservedExecution(receipt.HoldExecutionStatusRequest{
@@ -547,24 +558,8 @@ func (s *Server) osExecRollbackAuthorizer(reservationReceiptID string, binding o
 		if authz.Target != binding.Target || authz.OperationID != binding.Receipt.OperationID || authz.Restore.PolicyDigest != binding.Receipt.BasePolicyDigest {
 			return fmt.Errorf("rollback target mismatch")
 		}
-		g, err := s.validateOpenShellExecutionBinding(binding.Plan)
-		if err != nil {
+		if err := s.validateOpenShellRestoreBase(binding.Plan, authz.Restore); err != nil {
 			return err
-		}
-		allowed := grantNetwork(*g)
-		bins := map[string]bool{}
-		for _, p := range binding.Plan.BinaryPaths {
-			bins[p] = true
-		}
-		for _, rule := range authz.Restore.Network {
-			if rule.Effect != "allow" || !allowed[rule.Endpoint] {
-				return fmt.Errorf("restore_network_not_authorized")
-			}
-			for _, p := range rule.BinaryPaths {
-				if !bins[p] {
-					return fmt.Errorf("restore_binary_not_authorized")
-				}
-			}
 		}
 		receipts, err := s.d.Chain.Read()
 		if err != nil || receipt.Verify(receipts, s.d.Key.Public()) != nil {
@@ -587,4 +582,32 @@ func (s *Server) osExecRollbackAuthorizer(reservationReceiptID string, binding o
 		}
 		return nil
 	}
+}
+
+// Shared by apply preflight, the locked apply baseline check and rollback.
+// A current grant cannot authorize restoration of unrelated previous rules.
+func (s *Server) validateOpenShellRestoreBase(plan openshellSessionExecuteRequest, base openshell.Snapshot) error {
+	g, err := s.validateOpenShellExecutionBinding(plan)
+	if err != nil {
+		return err
+	}
+	allowed := grantNetwork(*g)
+	bins := map[string]bool{}
+	for _, p := range plan.BinaryPaths {
+		bins[p] = true
+	}
+	for _, rule := range base.Network {
+		if rule.Effect != "allow" || !allowed[rule.Endpoint] {
+			return fmt.Errorf("restore_network_not_authorized")
+		}
+		if len(rule.BinaryPaths) == 0 {
+			return fmt.Errorf("restore_binary_not_authorized")
+		}
+		for _, p := range rule.BinaryPaths {
+			if !bins[p] {
+				return fmt.Errorf("restore_binary_not_authorized")
+			}
+		}
+	}
+	return nil
 }

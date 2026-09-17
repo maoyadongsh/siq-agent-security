@@ -2047,3 +2047,7 @@ Secure Agent 复用现有 hold-status/v1 与 hold-execution-reserve/v1 合同：
 policy set 的提交成功和 policy get 的配置读回不等于沙箱已加载。所有实际网络策略写入与授权回滚须使用当前 CLI 提供的 `--wait --timeout N`，等待沙箱确认加载后才返回成功，再保留原完整修订/摘要读回。N 使用已有 CLI Timeout 的秒数减去 2 秒余量，最少 1 秒；外层已有进程超时仍是硬上限。失败、超时、旧 CLI 不支持选项均报错，不回退为不等待写入；可能已提交的写入保持 uncertain。no_op 仍只表示未写入，不升级为行为证明。CLI 加载确认本身仍不产生 enforcement_verified；行为测试保持显式 403+零到达，不重试到通过。依据：本机 0.0.83 CLI help 与 https://docs.nvidia.com/openshell/sandboxes/policies 。
 
 同一策略安全合同的 Python Control API CLI 后端同步：30 秒进程上限内等待 28 秒，应用和回滚均禁止无等待降级；本批 Python 仅组件验证，不继承 Go 的真实网关行为结论。实测与证据见 [加载等待修复](openshell-policy-load-wait-repair-20260916.md)。
+
+### 2026-09-17 会话策略基线恢复前置检查
+
+会话 policy_apply 在消费 hold 前复验当前完整网络基线能否按既有 rollback 权限恢复。超出 Grant 端点、批准程序路径或无程序限制的基线，返回 403 / openshell_base_not_restorable，保留批准与网关原策略。在 Client 目标锁内，以捕获到的真实基线再次运行相同检查，避免预检与实际写入基线不同。回滚授权仍按当前 Grant/程序范围与操作摘要验签，不能为方便恢复放宽权限。无法解析/读取的基线先返回 503 / openshell_base_unreadable，同样零写入且不消费批准。该检查仅拒绝已知不可恢复的起点，不承诺跨进程原子性或撤权后仍可回滚。

@@ -2,8 +2,10 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 
@@ -183,5 +185,91 @@ func TestOpenShellPolicyLoadTimeoutAfterWriteRemainsUncertain(t *testing.T) {
 	code, _ = sessionExecPost(t, s, "/v1/openshell/session-executions", token, sessionExecBody(d))
 	if code != 409 || gw.setCalls != 1 {
 		t.Fatal("timed-out write replayed")
+	}
+}
+
+func sessionPolicyWithExistingNetwork(host, binary string) string {
+	return sessionExecBasePolicy + fmt.Sprintf(`network_policies:
+  original_rule:
+    name: original_rule
+    endpoints:
+    - host: %s
+      port: 443
+    binaries:
+    - path: %s
+`, host, binary)
+}
+
+func TestOpenShellPolicyUnrestorableBaseRefusedBeforeReservation(t *testing.T) {
+	for _, tc := range []struct{ name, host, binary string }{
+		{"other_endpoint", "other.test", "/usr/bin/curl"},
+		{"other_binary", "api.github.com", "/usr/bin/wget"},
+		{"unrestricted_binary", "api.github.com", ""},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			s, gw := newSessionExecServer(t)
+			gw.body = sessionPolicyWithExistingNetwork(tc.host, tc.binary)
+			if tc.binary == "" {
+				gw.body = strings.Replace(gw.body, "    binaries:\n    - path: \n", "    binaries: []\n", 1)
+			}
+			before := gw.body
+			d := sessionExecApproveHold(t, s)
+			code, out := sessionExecPost(t, s, "/v1/openshell/session-executions", token, sessionExecBody(d))
+			expectedCode, expectedError := 403, "openshell_base_not_restorable"
+			if tc.binary == "" {
+				expectedCode, expectedError = 503, "openshell_base_unreadable"
+			}
+			if code != expectedCode || out["error"] != expectedError || gw.setCalls != 0 || gw.body != before {
+				t.Fatalf("unrestorable base overwritten: code=%d result=%v writes=%d", code, out, gw.setCalls)
+			}
+			if sessionExecHoldStatus(t, s, d) != "approved" {
+				t.Fatal("preflight refusal consumed approval")
+			}
+		})
+	}
+}
+
+func TestOpenShellPolicyExistingAuthorizedBaseRoundTrip(t *testing.T) {
+	s, gw := newSessionExecServer(t)
+	gw.body = sessionPolicyWithExistingNetwork("api.github.com", "/usr/bin/curl")
+	before, err := s.d.Openshell.ReadEffective("inst_1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	d := sessionExecApproveHold(t, s)
+	code, out := sessionExecPost(t, s, "/v1/openshell/session-executions", token, sessionExecBody(d))
+	if code != 200 || gw.setCalls != 1 {
+		t.Fatalf("apply failed: %d %v", code, out)
+	}
+	reserve := out["reservation"].(map[string]any)
+	code, out = sessionExecPost(t, s, "/v1/openshell/session-executions/rollback", s.bootAdmin, map[string]any{
+		"reservation_receipt_id": reserve["reservation_receipt_id"], "action_id": d["action_id"], "decision_receipt_id": d["receipt_id"], "actor_id": "fixture-admin",
+	})
+	if code != 200 || gw.setCalls != 2 {
+		t.Fatalf("restore failed: %d %v", code, out)
+	}
+	after, err := s.d.Openshell.ReadEffective("inst_1")
+	if err != nil || after.PolicyDigest != before.PolicyDigest {
+		t.Fatalf("base not restored: %v", err)
+	}
+}
+
+func TestOpenShellPolicyBaseChangedAfterPreflightStillRefused(t *testing.T) {
+	s, gw := newSessionExecServer(t)
+	d := sessionExecApproveHold(t, s)
+	runner := gw.runner()
+	changed := false
+	s.d.Openshell.Runner = func(args []string) (int, string, string) {
+		rc, out, diag := runner(args)
+		if len(args) > 1 && args[0] == "policy" && args[1] == "get" && !changed {
+			changed = true
+			// Same revision, but actual locked baseline differs from the earlier preflight.
+			gw.body = sessionPolicyWithExistingNetwork("other.test", "/usr/bin/curl")
+		}
+		return rc, out, diag
+	}
+	code, out := sessionExecPost(t, s, "/v1/openshell/session-executions", token, sessionExecBody(d))
+	if code < 400 || out["ok"] == true || gw.setCalls != 0 {
+		t.Fatalf("changed base overwritten: %d %v", code, out)
 	}
 }

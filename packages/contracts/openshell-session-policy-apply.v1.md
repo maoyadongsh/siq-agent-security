@@ -12,3 +12,5 @@ Status: unreleased prototype; no sandbox command execution.
 - 回滚须重验签名链、操作绑定、当前 Grant 及恢复网络规则权限范围。回滚记录写入失败返回非成功并保留实际恢复事实。原始证据不改写，旧 L01 PASS 暂不能作为修复后验收。
 
 Routes: POST `/v1/openshell/session-executions` (capDecision); `/preview` and `/rollback` (capAdmin). Existing strict JSON and credential separation apply. No new runtime Authority or grant source is introduced. Preview is advisory and cannot authorize a write. Reservation uncertainty persists on storage/transport failures.
+
+2026-09-17 集成修复：会话策略应用会替换完整 network_policies，故必须在消费批准前确认基线能够在当前 Grant 和批准 binary_paths 范围内恢复；不满足返回 403 / openshell_base_not_restorable，零写入且不消费 hold。在目标锁内对真正捕获的基线再次检查，拒绝预检后替换基线的竞态。规则必须为 allow 且具有非空、已批准的 binary_paths；空路径列表不能被当成有限权限。恢复仍复验当前权限，撤权或漂移后允许拒绝；不承诺永久可回滚，不自动授予恢复旧权限的权力。

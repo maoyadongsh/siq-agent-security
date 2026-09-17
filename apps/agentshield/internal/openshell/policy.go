@@ -426,10 +426,23 @@ func (c *Client) ApplyNetworkAuthorized(target string, rules []NetworkRule, expe
 	lock := c.targetPolicyLock(target)
 	lock.Lock()
 	defer lock.Unlock()
+	return c.applyNetworkLocked(target, rules, expectedRevision, func(Snapshot) error { return authorize() })
+}
+
+// ApplyNetworkAuthorizedBase checks the exact captured restore baseline while
+// holding the target lock; callers can refuse replacing a policy they cannot
+// restore under current authority. The callback also rechecks current authority.
+func (c *Client) ApplyNetworkAuthorizedBase(target string, rules []NetworkRule, expectedRevision string, authorize func(Snapshot) error) (DeploymentReceipt, error) {
+	if authorize == nil {
+		return DeploymentReceipt{}, fail("current authorization required")
+	}
+	lock := c.targetPolicyLock(target)
+	lock.Lock()
+	defer lock.Unlock()
 	return c.applyNetworkLocked(target, rules, expectedRevision, authorize)
 }
 
-func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expectedRevision string, authorize func() error) (DeploymentReceipt, error) {
+func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expectedRevision string, authorize func(Snapshot) error) (DeploymentReceipt, error) {
 	if err := validateRevision(expectedRevision); err != nil {
 		return DeploymentReceipt{}, err
 	}
@@ -456,7 +469,7 @@ func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expected
 	}
 	if expectedDigest == current.PolicyDigest {
 		if authorize != nil {
-			if err := authorize(); err != nil {
+			if err := authorize(current); err != nil {
 				return DeploymentReceipt{}, err
 			}
 		}
@@ -480,7 +493,7 @@ func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expected
 		return DeploymentReceipt{}, fail("OpenShell 策略写前检测到外部漂移（fail-closed）")
 	}
 	if authorize != nil {
-		if err := authorize(); err != nil {
+		if err := authorize(current); err != nil {
 			return DeploymentReceipt{}, err
 		}
 	}
