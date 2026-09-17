@@ -71,3 +71,9 @@ secrets/
 
 # Raw local acceptance materials may contain pairing codes or credentials.
 docs/evidence/**/*-private/
+
+# Local candidate binaries are not review evidence.
+/.artifacts/
+# Runtime databases must never enter public acceptance evidence.
+/docs/evidence/**/*.db
+/docs/evidence/**/*.db-*

@@ -1,0 +1,34 @@
+[
+  {
+    "command": "gofmt -l apps/agentshield",
+    "exit_code": 0,
+    "detail": "empty output"
+  },
+  {
+    "command": "go vet ./...",
+    "exit_code": 0
+  },
+  {
+    "command": "go test ./...",
+    "exit_code": 0
+  },
+  {
+    "command": "go test -race ./internal/openshell ./internal/server ./internal/receipt ./internal/signing",
+    "exit_code": 0
+  },
+  {
+    "command": "uv run pytest -o addopts= -q app/tests/test_schema_contracts.py app/tests/test_openshell_policy_operations.py",
+    "exit_code": 0,
+    "passed": 225,
+    "warnings": 1
+  },
+  {
+    "command": "git diff --cached --check / git diff --check",
+    "exit_code": 0
+  },
+  {
+    "command": "git check-ignore --no-index -v (candidate and database examples)",
+    "exit_code": 0,
+    "examples": 4
+  }
+]
