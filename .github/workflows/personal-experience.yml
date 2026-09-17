@@ -13,12 +13,14 @@ jobs:
   macos-path-config-regressions:
     name: macOS path and config regressions (component only)
     runs-on: macos-latest
+    env:
+      CGO_ENABLED: "0"
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
         with:
-          go-version: "1.22"
+          go-version: "1.26.6"
           cache: false
       - name: Real Darwin aliases and isolated adapter configuration round trips
         working-directory: apps/agentshield

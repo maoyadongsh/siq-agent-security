@@ -26,3 +26,7 @@
 #64/#66/#67 均为 #69 祖先，整合合并后可关闭重复 PR；不删除协作者分支。Windows #49/#57 的代码冲突仍需单独整合验证。本批不将 GLM v6 未提交工作或其他脏工作树混入 main。
 
 本报告在合并前形成；最终合并结果以 GitHub PR #69 与 main 提交图为准。测试与构建 JSON 记录实际退出码，SHA256SUMS 只证明本证据包完整性。
+
+## CI 工具链纠正
+
+首次 macOS job 在 Go 1.22.12 / CGO=1 下，stateformat 全部适用用例通过，但 adapterinstall 测试程序在任何用例启动前被 dyld 以 missing LC_UUID 拒绝（abort trap）。失败另存 macos-ci-toolchain-failure.json，未重标为 pass。新增 job 改用仓库已有 Go 1.26.6 固定版本，并与候选一致显式 CGO=0，保留相同用例重跑；Linux Go 1.22 最低兼容 CI 保持不变。本纠正不修改生产 Go 源码，四目标二进制的实现版本仍对应 3e07e08。
