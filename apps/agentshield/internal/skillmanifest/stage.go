@@ -7,11 +7,13 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 )
 
-// StageVerifiedBinary copies src into a private 0700 directory under stageRoot,
-// Syncs the copy, then re-hashes it (DEV04-D).
+// StageVerifiedBinary copies src into a directory requested with mode 0700 under
+// stageRoot, Syncs the copy, then re-hashes it (DEV04-D). On Windows, POSIX mode
+// bits establish neither loader execution permission nor private DACLs.
 //
 // wantSHA256, when non-empty, must match both the source digest taken before
 // copy and the staged digest after copy. When empty, only source==staged is
@@ -26,7 +28,7 @@ func StageVerifiedBinary(src, stageRoot, wantSHA256 string) (stagedPath string, 
 	if !info.Mode().IsRegular() {
 		return "", fmt.Errorf("skillmanifest: stage source must be a regular file")
 	}
-	if info.Mode()&0o111 == 0 {
+	if runtime.GOOS != "windows" && info.Mode()&0o111 == 0 {
 		return "", fmt.Errorf("skillmanifest: stage source is not executable")
 	}
 	srcSum, err := HashFileDigest(src)

@@ -70,8 +70,14 @@ func TestDownloadVerifiedArtifactHappyAndNegatives(t *testing.T) {
 		t.Fatalf("happy: digest=%s err=%v", got, err)
 	}
 	st, err := os.Stat(dest)
-	if err != nil || st.Mode().Perm()&0o100 == 0 {
-		t.Fatalf("downloaded must be executable: mode=%v err=%v", st.Mode(), err)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !st.Mode().IsRegular() || st.Size() != int64(n) {
+		t.Fatal("downloaded must be an ordinary file with pinned size")
+	}
+	if runtime.GOOS != "windows" && st.Mode().Perm()&0o100 == 0 {
+		t.Fatalf("downloaded must have POSIX exec bits: mode=%v", st.Mode())
 	}
 
 	if _, err := DownloadVerifiedArtifact(context.Background(), artOK, filepath.Join(dir, "no"), FetchOptions{}); err == nil {
