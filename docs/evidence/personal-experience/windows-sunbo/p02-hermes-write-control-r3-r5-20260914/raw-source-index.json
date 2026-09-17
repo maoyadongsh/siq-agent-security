@@ -1,0 +1,2918 @@
+{
+  "kind": "sha256_only_private_source_index",
+  "rows": [
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "python_site",
+      "bytes": 22987,
+      "sha256": "0577e4b379d8ef4aa0ecf88a264ef18c10f72ea72119afae36524d1aae77c9bf"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "python_subprocess",
+      "bytes": 88725,
+      "sha256": "baa9f9138d8d20df6284f67e7d2e790f847f65e2c5370de322d54cccd737f2d9"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pyvenv_config",
+      "bytes": 207,
+      "sha256": "fdf672de85c510c6a658b769a739e39b74a5a56098e4bec56f67936aeded6453"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "venv_launcher",
+      "bytes": 47104,
+      "sha256": "e1189fc39481bdb0949aa4eb2b2ad26b849e4d2d8f88c36cf0db3164ae222f5d"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "base_python",
+      "bytes": 91648,
+      "sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pth_editable",
+      "bytes": 97,
+      "sha256": "6a64cf458f569dfc40a32a9cedfb4a9a9ac46295f2b465349e606fac1f199130"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pth_virtualenv",
+      "bytes": 18,
+      "sha256": "69ac3d8f27e679c81b94ab30b3b56e9cd138219b1ba94a1fa3606d5a76a1433d"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pth_distutils",
+      "bytes": 151,
+      "sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pth_pywin32",
+      "bytes": 185,
+      "sha256": "d902584a2a0a5216ce12c712d1378fe07541d32c383d0cc5abcd68412144fe4d"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pth_editable_finder",
+      "bytes": 10660,
+      "sha256": "ed6a8460d00d69d6004a6dfe9a0f094095e82e20e4fc20997aa613f767465e51"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pth_virtualenv_module",
+      "bytes": 5246,
+      "sha256": "cfb3db86aaa53bb62b5ff764970bec2d71c9228590a0ebec57f6ec926cc0bf1a"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pth_distutils_module",
+      "bytes": 6800,
+      "sha256": "ced72e54431ecf2d8d7dbd8a1e27724f1b171af3ca1503c304bf11c59a7fe861"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pth_pywin32_module",
+      "bytes": 772,
+      "sha256": "fd31f27bc85a6b9c974670838b6eefafb32991be4a9f840f96a4f5524df3b3c3"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pywin32_pythoncom_dll",
+      "bytes": 680448,
+      "sha256": "d6172ee192e577b786ce2e06f0020782c257e1ee48fc4ba56c1affc5c3e915eb"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "pywin32_pywintypes_dll",
+      "bytes": 135168,
+      "sha256": "f33290cafcf91b6bd5b12b808198cbf816b68529e00e1b3563f63916529a0657"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:hermes_cli/main.py",
+      "bytes": 142154,
+      "sha256": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:hermes_constants.py",
+      "bytes": 54131,
+      "sha256": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:hermes_cli/plugins.py",
+      "bytes": 119717,
+      "sha256": "1b5aae9a34e97c9922b5ab7e76c4bd3562a6ab715a983bf9c4dfe6031c457942"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:agent/tool_executor.py",
+      "bytes": 85135,
+      "sha256": "9634ebdc01b12591753fa9a1653f4aa8937edde7130175bbd69be8a0e5895ab7"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:model_tools.py",
+      "bytes": 49309,
+      "sha256": "c99620c824ab59f341ac7d0e22cde016b0c469d0643e7a5a5a82e0d63176e4b5"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:hermes_cli/runtime_provider_backends.py",
+      "bytes": 15022,
+      "sha256": "b1c31df03b9f1b57bc06d57123e89a94371a5839ab91510b3460a76d5da80d05"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:tools/file_tools.py",
+      "bytes": 64756,
+      "sha256": "3dfa1aa17b83641857b04634b7de7af77e0679719d9eb4a4f4bee689991ac433"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:tools/file_operations.py",
+      "bytes": 77970,
+      "sha256": "18fa0fe106517cf509e9bcbd07c2cbcb2246b076ff6eaa1d955d5f588ff1fa78"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:tools/file_operations_common.py",
+      "bytes": 10396,
+      "sha256": "d346c6d2e710a0fbf74bb25151b3864adba0e716db0ec9e8fa87fdbc180c6a7d"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local.py",
+      "bytes": 40776,
+      "sha256": "36eabe3abe3b5237c7f78e9de812144f1af73f69cb1b9eee88ec2a71fa15ed25"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/base.py",
+      "bytes": 31817,
+      "sha256": "aef2181257b7d9c486f9886199ed0a020e6f28ce498d322e61ce089fe5aaf72a"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local_gitbash_probe.py",
+      "bytes": 4940,
+      "sha256": "65398ac87a186b8a74e629b7c7c616fc32f1b317f79bb848af5482cfa7498fcf"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local_env_policy.py",
+      "bytes": 13634,
+      "sha256": "1a1b916fcbf3af7ceb1f27d47cee67db0d3dd2f92c84d622458ccc0bfc9663a5"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local_pythonpath.py",
+      "bytes": 6657,
+      "sha256": "5e63afb429e6d505bc824fd097183b269a9afc382bae74bdbf5db0b698ee15a9"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "controller_python",
+      "bytes": 105816,
+      "sha256": "d932e5e2f324d57f392e8fd063dcf6d0185be8a664c57c6d24e7762ed02c28ca"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "bash_launcher",
+      "bytes": 47008,
+      "sha256": "a32755c3fe6b70dbd1fb19c0ac074fe23b0f603da3f15123f1106d740b6341e3"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "bash_runtime",
+      "bytes": 2553064,
+      "sha256": "fc362aae1f217d34d02237d99527839dd6cf85b37c7a0277109400bfa0faa594"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "git",
+      "bytes": 46480,
+      "sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/file_tools.py",
+      "bytes": 64756,
+      "sha256": "3dfa1aa17b83641857b04634b7de7af77e0679719d9eb4a4f4bee689991ac433"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/file_operations.py",
+      "bytes": 77970,
+      "sha256": "18fa0fe106517cf509e9bcbd07c2cbcb2246b076ff6eaa1d955d5f588ff1fa78"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local.py",
+      "bytes": 40776,
+      "sha256": "36eabe3abe3b5237c7f78e9de812144f1af73f69cb1b9eee88ec2a71fa15ed25"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/environments/base.py",
+      "bytes": 31817,
+      "sha256": "aef2181257b7d9c486f9886199ed0a020e6f28ce498d322e61ce089fe5aaf72a"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local_gitbash_probe.py",
+      "bytes": 4940,
+      "sha256": "65398ac87a186b8a74e629b7c7c616fc32f1b317f79bb848af5482cfa7498fcf"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/environments/base_session_env.py",
+      "bytes": 10334,
+      "sha256": "1db42be8bead2c12d8e1ae3bccfc775148e0fda15aaf85d2b979cc01e62739b0"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/file_operations_lint.py",
+      "bytes": 13701,
+      "sha256": "8bb10170f92b5108f87195421a08c03dc0ea27eca0aaff344476cf7f44497e0c"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/terminal_tool_sudo.py",
+      "bytes": 21968,
+      "sha256": "16f97b9a3f2d0c60d9b060fbaf6b54c0dbc65f5af04670da7f5b4699f3072082"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:agent/lsp/servers.py",
+      "bytes": 19174,
+      "sha256": "b571aed0eae2eaf606581d63d84753710d1195634f69726d80808efd40ac0f88"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:gateway/session_context.py",
+      "bytes": 11490,
+      "sha256": "76cb6383168db1c6fd8f70f963e1436b101a9f810f13724cd812bf57a777dbe2"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:agent/agent_init.py",
+      "bytes": 119520,
+      "sha256": "b64195a84942304a53125d7b04d61ef20589f793d5a95e45b615b74296aed0c2"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:cli.py",
+      "bytes": 216739,
+      "sha256": "eaf9ec637a4dbc6be2e595a827c6442365ef6e871494bf51f4d6f2f5f8cd2b5b"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:hermes_state_ids.py",
+      "bytes": 1265,
+      "sha256": "c2b4531690fedd0f4d37c3f6c44f5478b4e87c1883b102c22a86340f3a4bdeb1"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local_pythonpath.py",
+      "bytes": 6657,
+      "sha256": "5e63afb429e6d505bc824fd097183b269a9afc382bae74bdbf5db0b698ee15a9"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local_env_policy.py",
+      "bytes": 13634,
+      "sha256": "1a1b916fcbf3af7ceb1f27d47cee67db0d3dd2f92c84d622458ccc0bfc9663a5"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:hermes_constants.py",
+      "bytes": 54131,
+      "sha256": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:agent/delegation_context.py",
+      "bytes": 4858,
+      "sha256": "df04c7cd8dc3ff392efd2f092fda312fdfe078548cdfc660f8efb2d2e033cc7b"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:hermes_cli/banner.py",
+      "bytes": 47499,
+      "sha256": "2436a336254e2d5453058caa4bcd8a87d0396ed0b7e72f545474b05bcfd18d71"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "template:tools/env_probe.py",
+      "bytes": 11445,
+      "sha256": "14ad6ca5fa4dd82dd8af89c5909e4470db05fc2786166bdeacd30d95aafacdfa"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:mkdir.exe",
+      "bytes": 71435,
+      "sha256": "fc9b9e49fd6496cdddfc5681208d74bd649ac934818eafdfd50a9571bdcb4861"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:mktemp.exe",
+      "bytes": 44192,
+      "sha256": "bd6474b0404e52b195296438342f38e510fe1a4c1c0d91ceb83cf8411959fecb"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:cat.exe",
+      "bytes": 38719,
+      "sha256": "f1b37048ee5c70fdc31dde509e562261c9b2d102d94c903393f55b45e883ef90"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:chmod.exe",
+      "bytes": 58933,
+      "sha256": "fd765e24d91b94dcedf9b4c070047a964f866c0f079ad47d7462559302736f1c"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:mv.exe",
+      "bytes": 122430,
+      "sha256": "0e990f9314e17eaf2eed168561313e0b6e1d21daf8fb6400387026c6da7277a1"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:rm.exe",
+      "bytes": 63813,
+      "sha256": "a845f7517a49b49726e056da8a8f65a6d9ce96fbe79c3664c082521eea0f80e7"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:sha256sum.exe",
+      "bytes": 56252,
+      "sha256": "ad199fb8a1104b5ac86eb49d775e2aeaea8396c4c8818beda074ddb0d359acc4"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:head.exe",
+      "bytes": 45413,
+      "sha256": "c82ae2ef72235a34db7007580628cd5183cb350878a10fcc98b6ef26b92a3537"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:base64.exe",
+      "bytes": 41819,
+      "sha256": "ef4877b2e3f929fa3e9671ff421fe64a8e50c89b3e11c2263d9b802604586e7c"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:readlink.exe",
+      "bytes": 48491,
+      "sha256": "3617334c256348026305e7a978bb803c45c31e2f4d24c763e1f11361ceb1d58c"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:realpath.exe",
+      "bytes": 49576,
+      "sha256": "e780c23d5d6bf60d7e80e073586be5f4d7f91faa0a0d1f07b3088b5d710f8395"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:dirname.exe",
+      "bytes": 34830,
+      "sha256": "53896fda354605a1a1d1f5e6802daba5ba6c05961f3074b892194e068aa82772"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:stat.exe",
+      "bytes": 97209,
+      "sha256": "84468965a541829728d1fa02d32e987ab1a844ec4a23644058ef477ff8b3264a"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:msys-2.0.dll",
+      "bytes": 3355762,
+      "sha256": "c30c8744de788aace27e17e7abedb219b4ec9882ac80660ca494b0f2a0e7f58b"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:msys-intl-8.dll",
+      "bytes": 111181,
+      "sha256": "50f7de0c712d867ddca2c9eb8562ca6ee2d69e120e798ec6126ad29dd1ed5402"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:msys-iconv-2.dll",
+      "bytes": 1098126,
+      "sha256": "5d890c42222c7b86519f7c368836cc2930f11dc975341b7ded30f26ef8770e0b"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:bash_launcher",
+      "bytes": 47008,
+      "sha256": "a32755c3fe6b70dbd1fb19c0ac074fe23b0f603da3f15123f1106d740b6341e3"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "native:bash_runtime",
+      "bytes": 2553064,
+      "sha256": "fc362aae1f217d34d02237d99527839dd6cf85b37c7a0277109400bfa0faa594"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:agent/model_metadata.py",
+      "bytes": 123493,
+      "sha256": "441a27eb5399678e134dd92b868e6ac9ea69ad8759f09ef9b875e42f9b6547d6"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/base_output.py",
+      "bytes": 18641,
+      "sha256": "e7093b4f192cfdd4ecaa22ab1ffd7719ff779ae98bb90f473971084fc84ebf8b"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_bootstrap.py",
+      "bytes": 5306,
+      "sha256": "21df938bf9ef15f56d6205637c6e105cbff9d2dbdc736ddd0c3cad963d03d150"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_constants.py",
+      "bytes": 54131,
+      "sha256": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:cli.py",
+      "bytes": 216739,
+      "sha256": "eaf9ec637a4dbc6be2e595a827c6442365ef6e871494bf51f4d6f2f5f8cd2b5b"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/main.py",
+      "bytes": 142154,
+      "sha256": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/stdio.py",
+      "bytes": 5244,
+      "sha256": "b5176a53f855441b5302cd974a2d0db0400da1dbb258194fb66c9b4467178a5e"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/config.py",
+      "bytes": 176605,
+      "sha256": "d76471ce54d40e68165e2cce7c2ade9c2164ed5ce4dbcf673b1b289cb89c7d84"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/config_defaults.py",
+      "bytes": 190995,
+      "sha256": "fc9eabbf4d948df548091ef4f032c9621e18b75bf995118e9b7512f036774bae"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/config_effective.py",
+      "bytes": 6057,
+      "sha256": "a180333d8a5d273e38b92c1f47fa7ea601a920c5a988eea502d3d0bde3f325ce"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/env_loader.py",
+      "bytes": 28693,
+      "sha256": "4bdeccecea814299627f0e1a4fb54f9e93ba48a01f35b966337f7ad9a826f798"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/managed_scope.py",
+      "bytes": 6585,
+      "sha256": "1ef50ab8787f4a1c9fb3cbe562de426eb9b58a4bb16fe3960427921cd22773b6"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/auth.py",
+      "bytes": 117510,
+      "sha256": "93784e2efd9c2918726dda00d1da877a886c678d4994d4dc58bc51824615b026"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/runtime_provider.py",
+      "bytes": 55872,
+      "sha256": "013831a166ff862fbc4284d43556f9bd124ecd8beaadce3b4adc9d9fc0032f17"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/runtime_provider_backends.py",
+      "bytes": 15022,
+      "sha256": "b1c31df03b9f1b57bc06d57123e89a94371a5839ab91510b3460a76d5da80d05"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/main_tui_launch.py",
+      "bytes": 38189,
+      "sha256": "95c8cec883b69aea7f1903b2520c98222885f504322da424b531a53c0484e2f0"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/kanban_db.py",
+      "bytes": 182289,
+      "sha256": "7650279891e680b782abe83bc49fc971ddfad736dadd8d7e3a63a56c801da4d6"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/cli_agent_setup_mixin.py",
+      "bytes": 38966,
+      "sha256": "8fc7de71862a93c324390cfa0161e552337396dff20d6419aed246655f9efa28"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/cli_session_mixin.py",
+      "bytes": 57614,
+      "sha256": "5c93db0a8fd953ecd33612f061b17052bc0a5d634b67d3ea6f17f1755ffd36c0"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:agent/agent_init.py",
+      "bytes": 119520,
+      "sha256": "b64195a84942304a53125d7b04d61ef20589f793d5a95e45b615b74296aed0c2"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:agent/delegation_context.py",
+      "bytes": 4858,
+      "sha256": "df04c7cd8dc3ff392efd2f092fda312fdfe078548cdfc660f8efb2d2e033cc7b"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:gateway/session_context.py",
+      "bytes": 11490,
+      "sha256": "76cb6383168db1c6fd8f70f963e1436b101a9f810f13724cd812bf57a777dbe2"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:tools/terminal_tool.py",
+      "bytes": 66513,
+      "sha256": "2fdfdb2d10b23d7cdf0db2e7eb981fd8d185a3534adf3f81fbad5750be4feebe"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:tools/terminal_tool_backends.py",
+      "bytes": 17908,
+      "sha256": "b8d5d0aaa90b10f9dcfd029d76715b5b9ca7b7bd5375f4e7ac1c3282316c0011"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:tools/env_passthrough.py",
+      "bytes": 6793,
+      "sha256": "26cb4c956af627cf6d94e542ce75b4ce50d61aaf1da1a50eb1e29a87d03e2b64"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/local.py",
+      "bytes": 40776,
+      "sha256": "36eabe3abe3b5237c7f78e9de812144f1af73f69cb1b9eee88ec2a71fa15ed25"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/local_env_policy.py",
+      "bytes": 13634,
+      "sha256": "1a1b916fcbf3af7ceb1f27d47cee67db0d3dd2f92c84d622458ccc0bfc9663a5"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/local_pythonpath.py",
+      "bytes": 6657,
+      "sha256": "5e63afb429e6d505bc824fd097183b269a9afc382bae74bdbf5db0b698ee15a9"
+    },
+    {
+      "attempt": "r3",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/base.py",
+      "bytes": 31817,
+      "sha256": "aef2181257b7d9c486f9886199ed0a020e6f28ce498d322e61ce089fe5aaf72a"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "command_templates.py",
+      "bytes": 30799,
+      "sha256": "7eb08311ed3cff2e3552aeb74b1f1c093966a1a5a64cadf8e3523fd4c643bbc1"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "controller.py",
+      "bytes": 42969,
+      "sha256": "54bfce4c25f6e1127985fccb31d49d3de147301592240b8f8e77104f6a208cf6"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "env_preflight.py",
+      "bytes": 15731,
+      "sha256": "6f5b263d194a3a77e58b7d99fbfb73d1e9c4332ac1799e822c167a80baa0714d"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "expected_child_env.py",
+      "bytes": 14576,
+      "sha256": "cb4487a683e7e04dff172db0fd9f2ab77f42157ae1cb52491ce592c45f15dcee"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "final-static-review.private.json",
+      "bytes": 1141,
+      "sha256": "a4231b2d96134e4e3935900cd036c66fd7f203d00d268e039e4555ac94f546aa"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "freeze-review.ps1",
+      "bytes": 2496,
+      "sha256": "27f50b6e7dd1dba8fbd0b791074761933be9f1445ec58cff852a8337579dc04e"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "integration-review.md",
+      "bytes": 3158,
+      "sha256": "27b9723440130e45902b8217f02dcb3472ed40b800e1b366a94f24c5b3d592af"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "manifest.private.json",
+      "bytes": 4813,
+      "sha256": "ca6ce457be073ac95714e312cae392bb8b05fbfd9fd0704b04138d3da8f9b135"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "native-helper-review.md",
+      "bytes": 3671,
+      "sha256": "a695b6b9c878565afe3a371975ce6d28d241b706bfaa84a7719e7d1ee765ef8c"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "native-helper-review.private.json",
+      "bytes": 44275,
+      "sha256": "f3a97fcf4ca38638060fdd2317b4310b415aa4f622226feddc6551baf659b2d2"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "plan.private.json",
+      "bytes": 66263,
+      "sha256": "a7d51d1e587c4cdfaaa580f6ec717ee411219f1be2f486169a7b0c811e04b72b"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "preparation.private.json",
+      "bytes": 1552,
+      "sha256": "c64fc13f4ec717f9986dcd35bdecb368c95a6c9e0985002332b0a14573e7064e"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "prepare-new-plan.py",
+      "bytes": 9349,
+      "sha256": "9fea5a8e8b2afc4e54cf75c26404dbe6f7e3ebbf83e733b80d809bba7b70d5f9"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "provider-review.md",
+      "bytes": 8440,
+      "sha256": "ef22d4b5bf42c927729dc4b057127e7793d9d8a393900594d64d3a0104d951b9"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "README-review.md",
+      "bytes": 2281,
+      "sha256": "8a4893c943e3893455643cb4a8a341a3fe118150ae5108475260d668a2152100"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "root-template-self-test.private.json",
+      "bytes": 1187,
+      "sha256": "cacb1cfc1482120adbd7b7ce74bb57a08a3dcdc0274bd15861e353a2783da257"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "run-control.ps1",
+      "bytes": 10804,
+      "sha256": "45b29c4185b5f5805077f74e478d0a5009e12d01ec2607191d97ad243a6ef656"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "sitecustomize.py",
+      "bytes": 25396,
+      "sha256": "fab3a9f47028ac13be567598c5ef7a69c27caa9f3bb1b12e1198e494312df279"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "startup-sources.private.json",
+      "bytes": 8640,
+      "sha256": "fff3a3c19cee9965717d6fb4ef9abe207be597d6d12aa781b3d2da9c498bc9ca"
+    },
+    {
+      "attempt": "r3",
+      "kind": "frozen_draft",
+      "role": "win32_identity.py",
+      "bytes": 6549,
+      "sha256": "3b6673e036c7023dd7bfbbc82d2adda5c4d050a18e654eb2447b45aa962a15d7"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "acl-before.private.json",
+      "bytes": 3753,
+      "sha256": "766f9784976601ea18a720b3a98ce341a1b2b12f65e33898c31ced9e1f043fde"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "actual-identity.private.json",
+      "bytes": 757,
+      "sha256": "8a2da7850d3ce47a7ae8efaab0e133fd323d56c868e7da27ae193f3919fa9daf"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "command-policy.private.json",
+      "bytes": 27217,
+      "sha256": "daa56d80ab0b752863a496a7e96c0a0a11e534d455608b3631333b99401c2fc7"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "controller-output.private.json",
+      "bytes": 139,
+      "sha256": "ecd838c38924ef7b1c663acbf8083bdd1a1b18e5dc4e589237cf34dfce579eba"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "guard-events.private.jsonl",
+      "bytes": 56215,
+      "sha256": "faaf607d00a8a88f767156dcf900a6e2923d342238cb7241883debbd2c59cf35"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "guard-loaded.txt",
+      "bytes": 70,
+      "sha256": "d8122b692024133bf535b8bc91314ac3f4598c15776b9ad8fb08e40f62e07c48"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "job-handshake.private.json",
+      "bytes": 403,
+      "sha256": "9711a330112ce173ee583040e3cd891930485ddcecc827866508bb981593042e"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "job-ready.private.txt",
+      "bytes": 64,
+      "sha256": "7deaf9254a20beae37b1f1f5dd8c62d112cae7359a2f11350622865e6f47afcc"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "provider-errors.private.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "provider-requests.private.json",
+      "bytes": 1326,
+      "sha256": "c11147e2228b541739ec4ac4b6e8b031b0d0797240fe410b60af7880e81dfc60"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "result.private.json",
+      "bytes": 40643,
+      "sha256": "a093f18abc389d69d50174cd461f0f93f2d45e2f9a9efe91c806debf5f40ee75"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "startup-stacks.private.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "stderr.private.bin",
+      "bytes": 38,
+      "sha256": "d80640686aa86a51ee729d9855abc4c7d15040427cc927fb98ce87710367f118"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "stdin.private.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "stdout.private.bin",
+      "bytes": 466,
+      "sha256": "aa042fe15e7bc7199993ced4b8dba48e2107bafadf27d5a73fa2ae00a45cf525"
+    },
+    {
+      "attempt": "r3",
+      "kind": "private_runtime",
+      "role": "wrapper.private.json",
+      "bytes": 2743,
+      "sha256": "016bd5cb124d29ae3166b3f201869b664519fd2a000224878d74a69e7e1491f0"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "python_site",
+      "bytes": 22987,
+      "sha256": "0577e4b379d8ef4aa0ecf88a264ef18c10f72ea72119afae36524d1aae77c9bf"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "python_subprocess",
+      "bytes": 88725,
+      "sha256": "baa9f9138d8d20df6284f67e7d2e790f847f65e2c5370de322d54cccd737f2d9"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pyvenv_config",
+      "bytes": 207,
+      "sha256": "fdf672de85c510c6a658b769a739e39b74a5a56098e4bec56f67936aeded6453"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "venv_launcher",
+      "bytes": 47104,
+      "sha256": "e1189fc39481bdb0949aa4eb2b2ad26b849e4d2d8f88c36cf0db3164ae222f5d"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "base_python",
+      "bytes": 91648,
+      "sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pth_editable",
+      "bytes": 97,
+      "sha256": "6a64cf458f569dfc40a32a9cedfb4a9a9ac46295f2b465349e606fac1f199130"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pth_virtualenv",
+      "bytes": 18,
+      "sha256": "69ac3d8f27e679c81b94ab30b3b56e9cd138219b1ba94a1fa3606d5a76a1433d"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pth_distutils",
+      "bytes": 151,
+      "sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pth_pywin32",
+      "bytes": 185,
+      "sha256": "d902584a2a0a5216ce12c712d1378fe07541d32c383d0cc5abcd68412144fe4d"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pth_editable_finder",
+      "bytes": 10660,
+      "sha256": "ed6a8460d00d69d6004a6dfe9a0f094095e82e20e4fc20997aa613f767465e51"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pth_virtualenv_module",
+      "bytes": 5246,
+      "sha256": "cfb3db86aaa53bb62b5ff764970bec2d71c9228590a0ebec57f6ec926cc0bf1a"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pth_distutils_module",
+      "bytes": 6800,
+      "sha256": "ced72e54431ecf2d8d7dbd8a1e27724f1b171af3ca1503c304bf11c59a7fe861"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pth_pywin32_module",
+      "bytes": 772,
+      "sha256": "fd31f27bc85a6b9c974670838b6eefafb32991be4a9f840f96a4f5524df3b3c3"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pywin32_pythoncom_dll",
+      "bytes": 680448,
+      "sha256": "d6172ee192e577b786ce2e06f0020782c257e1ee48fc4ba56c1affc5c3e915eb"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "pywin32_pywintypes_dll",
+      "bytes": 135168,
+      "sha256": "f33290cafcf91b6bd5b12b808198cbf816b68529e00e1b3563f63916529a0657"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:hermes_cli/main.py",
+      "bytes": 142154,
+      "sha256": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:hermes_constants.py",
+      "bytes": 54131,
+      "sha256": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:hermes_cli/plugins.py",
+      "bytes": 119717,
+      "sha256": "1b5aae9a34e97c9922b5ab7e76c4bd3562a6ab715a983bf9c4dfe6031c457942"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:agent/tool_executor.py",
+      "bytes": 85135,
+      "sha256": "9634ebdc01b12591753fa9a1653f4aa8937edde7130175bbd69be8a0e5895ab7"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:model_tools.py",
+      "bytes": 49309,
+      "sha256": "c99620c824ab59f341ac7d0e22cde016b0c469d0643e7a5a5a82e0d63176e4b5"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:hermes_cli/runtime_provider_backends.py",
+      "bytes": 15022,
+      "sha256": "b1c31df03b9f1b57bc06d57123e89a94371a5839ab91510b3460a76d5da80d05"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:tools/file_tools.py",
+      "bytes": 64756,
+      "sha256": "3dfa1aa17b83641857b04634b7de7af77e0679719d9eb4a4f4bee689991ac433"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:tools/file_operations.py",
+      "bytes": 77970,
+      "sha256": "18fa0fe106517cf509e9bcbd07c2cbcb2246b076ff6eaa1d955d5f588ff1fa78"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:tools/file_operations_common.py",
+      "bytes": 10396,
+      "sha256": "d346c6d2e710a0fbf74bb25151b3864adba0e716db0ec9e8fa87fdbc180c6a7d"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local.py",
+      "bytes": 40776,
+      "sha256": "36eabe3abe3b5237c7f78e9de812144f1af73f69cb1b9eee88ec2a71fa15ed25"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/base.py",
+      "bytes": 31817,
+      "sha256": "aef2181257b7d9c486f9886199ed0a020e6f28ce498d322e61ce089fe5aaf72a"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local_gitbash_probe.py",
+      "bytes": 4940,
+      "sha256": "65398ac87a186b8a74e629b7c7c616fc32f1b317f79bb848af5482cfa7498fcf"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local_env_policy.py",
+      "bytes": 13634,
+      "sha256": "1a1b916fcbf3af7ceb1f27d47cee67db0d3dd2f92c84d622458ccc0bfc9663a5"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local_pythonpath.py",
+      "bytes": 6657,
+      "sha256": "5e63afb429e6d505bc824fd097183b269a9afc382bae74bdbf5db0b698ee15a9"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "controller_python",
+      "bytes": 105816,
+      "sha256": "d932e5e2f324d57f392e8fd063dcf6d0185be8a664c57c6d24e7762ed02c28ca"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "bash_launcher",
+      "bytes": 47008,
+      "sha256": "a32755c3fe6b70dbd1fb19c0ac074fe23b0f603da3f15123f1106d740b6341e3"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "bash_runtime",
+      "bytes": 2553064,
+      "sha256": "fc362aae1f217d34d02237d99527839dd6cf85b37c7a0277109400bfa0faa594"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "git",
+      "bytes": 46480,
+      "sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/file_tools.py",
+      "bytes": 64756,
+      "sha256": "3dfa1aa17b83641857b04634b7de7af77e0679719d9eb4a4f4bee689991ac433"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/file_operations.py",
+      "bytes": 77970,
+      "sha256": "18fa0fe106517cf509e9bcbd07c2cbcb2246b076ff6eaa1d955d5f588ff1fa78"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local.py",
+      "bytes": 40776,
+      "sha256": "36eabe3abe3b5237c7f78e9de812144f1af73f69cb1b9eee88ec2a71fa15ed25"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/environments/base.py",
+      "bytes": 31817,
+      "sha256": "aef2181257b7d9c486f9886199ed0a020e6f28ce498d322e61ce089fe5aaf72a"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local_gitbash_probe.py",
+      "bytes": 4940,
+      "sha256": "65398ac87a186b8a74e629b7c7c616fc32f1b317f79bb848af5482cfa7498fcf"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/environments/base_session_env.py",
+      "bytes": 10334,
+      "sha256": "1db42be8bead2c12d8e1ae3bccfc775148e0fda15aaf85d2b979cc01e62739b0"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/file_operations_lint.py",
+      "bytes": 13701,
+      "sha256": "8bb10170f92b5108f87195421a08c03dc0ea27eca0aaff344476cf7f44497e0c"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/terminal_tool_sudo.py",
+      "bytes": 21968,
+      "sha256": "16f97b9a3f2d0c60d9b060fbaf6b54c0dbc65f5af04670da7f5b4699f3072082"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:agent/lsp/servers.py",
+      "bytes": 19174,
+      "sha256": "b571aed0eae2eaf606581d63d84753710d1195634f69726d80808efd40ac0f88"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:gateway/session_context.py",
+      "bytes": 11490,
+      "sha256": "76cb6383168db1c6fd8f70f963e1436b101a9f810f13724cd812bf57a777dbe2"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:agent/agent_init.py",
+      "bytes": 119520,
+      "sha256": "b64195a84942304a53125d7b04d61ef20589f793d5a95e45b615b74296aed0c2"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:cli.py",
+      "bytes": 216739,
+      "sha256": "eaf9ec637a4dbc6be2e595a827c6442365ef6e871494bf51f4d6f2f5f8cd2b5b"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:hermes_state_ids.py",
+      "bytes": 1265,
+      "sha256": "c2b4531690fedd0f4d37c3f6c44f5478b4e87c1883b102c22a86340f3a4bdeb1"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local_pythonpath.py",
+      "bytes": 6657,
+      "sha256": "5e63afb429e6d505bc824fd097183b269a9afc382bae74bdbf5db0b698ee15a9"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local_env_policy.py",
+      "bytes": 13634,
+      "sha256": "1a1b916fcbf3af7ceb1f27d47cee67db0d3dd2f92c84d622458ccc0bfc9663a5"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:hermes_constants.py",
+      "bytes": 54131,
+      "sha256": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:agent/delegation_context.py",
+      "bytes": 4858,
+      "sha256": "df04c7cd8dc3ff392efd2f092fda312fdfe078548cdfc660f8efb2d2e033cc7b"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:hermes_cli/banner.py",
+      "bytes": 47499,
+      "sha256": "2436a336254e2d5453058caa4bcd8a87d0396ed0b7e72f545474b05bcfd18d71"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "template:tools/env_probe.py",
+      "bytes": 11445,
+      "sha256": "14ad6ca5fa4dd82dd8af89c5909e4470db05fc2786166bdeacd30d95aafacdfa"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:mkdir.exe",
+      "bytes": 71435,
+      "sha256": "fc9b9e49fd6496cdddfc5681208d74bd649ac934818eafdfd50a9571bdcb4861"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:mktemp.exe",
+      "bytes": 44192,
+      "sha256": "bd6474b0404e52b195296438342f38e510fe1a4c1c0d91ceb83cf8411959fecb"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:cat.exe",
+      "bytes": 38719,
+      "sha256": "f1b37048ee5c70fdc31dde509e562261c9b2d102d94c903393f55b45e883ef90"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:chmod.exe",
+      "bytes": 58933,
+      "sha256": "fd765e24d91b94dcedf9b4c070047a964f866c0f079ad47d7462559302736f1c"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:mv.exe",
+      "bytes": 122430,
+      "sha256": "0e990f9314e17eaf2eed168561313e0b6e1d21daf8fb6400387026c6da7277a1"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:rm.exe",
+      "bytes": 63813,
+      "sha256": "a845f7517a49b49726e056da8a8f65a6d9ce96fbe79c3664c082521eea0f80e7"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:sha256sum.exe",
+      "bytes": 56252,
+      "sha256": "ad199fb8a1104b5ac86eb49d775e2aeaea8396c4c8818beda074ddb0d359acc4"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:head.exe",
+      "bytes": 45413,
+      "sha256": "c82ae2ef72235a34db7007580628cd5183cb350878a10fcc98b6ef26b92a3537"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:base64.exe",
+      "bytes": 41819,
+      "sha256": "ef4877b2e3f929fa3e9671ff421fe64a8e50c89b3e11c2263d9b802604586e7c"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:readlink.exe",
+      "bytes": 48491,
+      "sha256": "3617334c256348026305e7a978bb803c45c31e2f4d24c763e1f11361ceb1d58c"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:realpath.exe",
+      "bytes": 49576,
+      "sha256": "e780c23d5d6bf60d7e80e073586be5f4d7f91faa0a0d1f07b3088b5d710f8395"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:dirname.exe",
+      "bytes": 34830,
+      "sha256": "53896fda354605a1a1d1f5e6802daba5ba6c05961f3074b892194e068aa82772"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:stat.exe",
+      "bytes": 97209,
+      "sha256": "84468965a541829728d1fa02d32e987ab1a844ec4a23644058ef477ff8b3264a"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:msys-2.0.dll",
+      "bytes": 3355762,
+      "sha256": "c30c8744de788aace27e17e7abedb219b4ec9882ac80660ca494b0f2a0e7f58b"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:msys-intl-8.dll",
+      "bytes": 111181,
+      "sha256": "50f7de0c712d867ddca2c9eb8562ca6ee2d69e120e798ec6126ad29dd1ed5402"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:msys-iconv-2.dll",
+      "bytes": 1098126,
+      "sha256": "5d890c42222c7b86519f7c368836cc2930f11dc975341b7ded30f26ef8770e0b"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:bash_launcher",
+      "bytes": 47008,
+      "sha256": "a32755c3fe6b70dbd1fb19c0ac074fe23b0f603da3f15123f1106d740b6341e3"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "native:bash_runtime",
+      "bytes": 2553064,
+      "sha256": "fc362aae1f217d34d02237d99527839dd6cf85b37c7a0277109400bfa0faa594"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:agent/model_metadata.py",
+      "bytes": 123493,
+      "sha256": "441a27eb5399678e134dd92b868e6ac9ea69ad8759f09ef9b875e42f9b6547d6"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/base_output.py",
+      "bytes": 18641,
+      "sha256": "e7093b4f192cfdd4ecaa22ab1ffd7719ff779ae98bb90f473971084fc84ebf8b"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_bootstrap.py",
+      "bytes": 5306,
+      "sha256": "21df938bf9ef15f56d6205637c6e105cbff9d2dbdc736ddd0c3cad963d03d150"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_constants.py",
+      "bytes": 54131,
+      "sha256": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:cli.py",
+      "bytes": 216739,
+      "sha256": "eaf9ec637a4dbc6be2e595a827c6442365ef6e871494bf51f4d6f2f5f8cd2b5b"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/main.py",
+      "bytes": 142154,
+      "sha256": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/stdio.py",
+      "bytes": 5244,
+      "sha256": "b5176a53f855441b5302cd974a2d0db0400da1dbb258194fb66c9b4467178a5e"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/config.py",
+      "bytes": 176605,
+      "sha256": "d76471ce54d40e68165e2cce7c2ade9c2164ed5ce4dbcf673b1b289cb89c7d84"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/config_defaults.py",
+      "bytes": 190995,
+      "sha256": "fc9eabbf4d948df548091ef4f032c9621e18b75bf995118e9b7512f036774bae"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/config_effective.py",
+      "bytes": 6057,
+      "sha256": "a180333d8a5d273e38b92c1f47fa7ea601a920c5a988eea502d3d0bde3f325ce"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/env_loader.py",
+      "bytes": 28693,
+      "sha256": "4bdeccecea814299627f0e1a4fb54f9e93ba48a01f35b966337f7ad9a826f798"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/managed_scope.py",
+      "bytes": 6585,
+      "sha256": "1ef50ab8787f4a1c9fb3cbe562de426eb9b58a4bb16fe3960427921cd22773b6"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/auth.py",
+      "bytes": 117510,
+      "sha256": "93784e2efd9c2918726dda00d1da877a886c678d4994d4dc58bc51824615b026"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/runtime_provider.py",
+      "bytes": 55872,
+      "sha256": "013831a166ff862fbc4284d43556f9bd124ecd8beaadce3b4adc9d9fc0032f17"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/runtime_provider_backends.py",
+      "bytes": 15022,
+      "sha256": "b1c31df03b9f1b57bc06d57123e89a94371a5839ab91510b3460a76d5da80d05"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/main_tui_launch.py",
+      "bytes": 38189,
+      "sha256": "95c8cec883b69aea7f1903b2520c98222885f504322da424b531a53c0484e2f0"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/kanban_db.py",
+      "bytes": 182289,
+      "sha256": "7650279891e680b782abe83bc49fc971ddfad736dadd8d7e3a63a56c801da4d6"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/cli_agent_setup_mixin.py",
+      "bytes": 38966,
+      "sha256": "8fc7de71862a93c324390cfa0161e552337396dff20d6419aed246655f9efa28"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/cli_session_mixin.py",
+      "bytes": 57614,
+      "sha256": "5c93db0a8fd953ecd33612f061b17052bc0a5d634b67d3ea6f17f1755ffd36c0"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:agent/agent_init.py",
+      "bytes": 119520,
+      "sha256": "b64195a84942304a53125d7b04d61ef20589f793d5a95e45b615b74296aed0c2"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:agent/delegation_context.py",
+      "bytes": 4858,
+      "sha256": "df04c7cd8dc3ff392efd2f092fda312fdfe078548cdfc660f8efb2d2e033cc7b"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:gateway/session_context.py",
+      "bytes": 11490,
+      "sha256": "76cb6383168db1c6fd8f70f963e1436b101a9f810f13724cd812bf57a777dbe2"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:gateway/run.py",
+      "bytes": 291059,
+      "sha256": "613ca35b1eac190e32dde5f76813c56e80ef217cb6712f139f7bafbed7c6100d"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:venv/Lib/site-packages/certifi/cacert.pem",
+      "bytes": 236095,
+      "sha256": "7cef540c6af3bf0a3c7d0070bd3fd7aae34f8aa805b408d1c27a01c8aeb305df"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:tools/terminal_tool.py",
+      "bytes": 66513,
+      "sha256": "2fdfdb2d10b23d7cdf0db2e7eb981fd8d185a3534adf3f81fbad5750be4feebe"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:tools/terminal_tool_backends.py",
+      "bytes": 17908,
+      "sha256": "b8d5d0aaa90b10f9dcfd029d76715b5b9ca7b7bd5375f4e7ac1c3282316c0011"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:tools/env_passthrough.py",
+      "bytes": 6793,
+      "sha256": "26cb4c956af627cf6d94e542ce75b4ce50d61aaf1da1a50eb1e29a87d03e2b64"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/local.py",
+      "bytes": 40776,
+      "sha256": "36eabe3abe3b5237c7f78e9de812144f1af73f69cb1b9eee88ec2a71fa15ed25"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/local_env_policy.py",
+      "bytes": 13634,
+      "sha256": "1a1b916fcbf3af7ceb1f27d47cee67db0d3dd2f92c84d622458ccc0bfc9663a5"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/local_pythonpath.py",
+      "bytes": 6657,
+      "sha256": "5e63afb429e6d505bc824fd097183b269a9afc382bae74bdbf5db0b698ee15a9"
+    },
+    {
+      "attempt": "r4",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/base.py",
+      "bytes": 31817,
+      "sha256": "aef2181257b7d9c486f9886199ed0a020e6f28ce498d322e61ce089fe5aaf72a"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "command_templates.py",
+      "bytes": 30799,
+      "sha256": "7eb08311ed3cff2e3552aeb74b1f1c093966a1a5a64cadf8e3523fd4c643bbc1"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "controller.py",
+      "bytes": 43088,
+      "sha256": "2650565716478effcb2bc3fea6bf7d1496dfbcf335bb33a0175b621cc233c199"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "env_preflight.py",
+      "bytes": 17432,
+      "sha256": "2b498ef2f06d870c053e36f2841a269bb2c0dfd554771b42b98f84041a58c4ed"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "expected-env-pure-test-result.json",
+      "bytes": 1120,
+      "sha256": "e0f8bec89020fe3e6c65eb8e123026e224836a3cb7f1aea16909682c7968c607"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "expected-env-review.md",
+      "bytes": 3391,
+      "sha256": "554d5a715796062417ca418020c4a022db01a57beffb77418e61d9b0c7285068"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "expected_child_env.py",
+      "bytes": 15622,
+      "sha256": "32110b8a31a845e22576cc5c5366c0c660098eaa38818acf7c20ea8f7da2412f"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "final-static-review.private.json",
+      "bytes": 1141,
+      "sha256": "a4231b2d96134e4e3935900cd036c66fd7f203d00d268e039e4555ac94f546aa"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "freeze-review.ps1",
+      "bytes": 2496,
+      "sha256": "27f50b6e7dd1dba8fbd0b791074761933be9f1445ec58cff852a8337579dc04e"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "integration-review.md",
+      "bytes": 3409,
+      "sha256": "4c0048572a640db10d27066a591700dafbe975211582413b5892d785dbe1bd3d"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "manifest.private.json",
+      "bytes": 5553,
+      "sha256": "a68bae71bed48120320f3ef3c867ec3e1ddb767ffa847cc0489eb0ddf7a6c913"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "native-helper-review.md",
+      "bytes": 3671,
+      "sha256": "a695b6b9c878565afe3a371975ce6d28d241b706bfaa84a7719e7d1ee765ef8c"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "native-helper-review.private.json",
+      "bytes": 44275,
+      "sha256": "f3a97fcf4ca38638060fdd2317b4310b415aa4f622226feddc6551baf659b2d2"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "plan.private.json",
+      "bytes": 67148,
+      "sha256": "aece69b42d8cad6908f7186d36b1bc39dbbb106d1a9a84247dcfa1973902d7d7"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "preparation.private.json",
+      "bytes": 1553,
+      "sha256": "2b639280f1c47f6f0d614c41e941448bf6b3d1d8f5beb674c04b12933c68e139"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "prepare-new-plan.py",
+      "bytes": 9439,
+      "sha256": "78c3904bc9ee9f379ae4a62a4d1902ce051d637e982798d5089395e07a102be8"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "provider-review.md",
+      "bytes": 8440,
+      "sha256": "ef22d4b5bf42c927729dc4b057127e7793d9d8a393900594d64d3a0104d951b9"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "README-review.md",
+      "bytes": 2448,
+      "sha256": "cf02cd9e668f703052cee66fd59a6e9d7e9f9b97890fe30139b85e779b26ec2b"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "root-template-self-test.private.json",
+      "bytes": 1877,
+      "sha256": "6a6ba81bdb4a2da2fe516df98bfdb035cc300e120f7a66a2f6ec68b213b042d5"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "run-control.ps1",
+      "bytes": 10804,
+      "sha256": "ce603f47f87a0750af1f5420b0c238e3048ed4adadd8a48f44fd5abee745a47e"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "sitecustomize.py",
+      "bytes": 25396,
+      "sha256": "fab3a9f47028ac13be567598c5ef7a69c27caa9f3bb1b12e1198e494312df279"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "startup-sources.private.json",
+      "bytes": 8640,
+      "sha256": "fff3a3c19cee9965717d6fb4ef9abe207be597d6d12aa781b3d2da9c498bc9ca"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "test_expected_child_env.py",
+      "bytes": 10585,
+      "sha256": "c629385ac2a12c5a7f4a1a509e6f4e6eb9726e57b078ef70ecb460b2cd47d6b6"
+    },
+    {
+      "attempt": "r4",
+      "kind": "frozen_draft",
+      "role": "win32_identity.py",
+      "bytes": 6549,
+      "sha256": "3b6673e036c7023dd7bfbbc82d2adda5c4d050a18e654eb2447b45aa962a15d7"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "acl-before.private.json",
+      "bytes": 3753,
+      "sha256": "106c9e4d3de6059b1974bbd5647c1c975796697dffb5406fa641d55829eb168f"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "actual-identity.private.json",
+      "bytes": 754,
+      "sha256": "867ceff159f85e9f11c9723788b6164feae9e6abbac907db4e63f514fdec147c"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "command-policy.private.json",
+      "bytes": 27409,
+      "sha256": "e3057ed888ba9bd11bab83f36f4ac53e9d72fd6bfcb01ca326b609d274be8d2f"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "controller-output.private.json",
+      "bytes": 139,
+      "sha256": "ecd838c38924ef7b1c663acbf8083bdd1a1b18e5dc4e589237cf34dfce579eba"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "guard-events.private.jsonl",
+      "bytes": 58623,
+      "sha256": "9fd8e26fd5582c7418b9ad601d98d43ce929e74ad35f1ad8de5053707809a645"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "guard-loaded.txt",
+      "bytes": 70,
+      "sha256": "d8122b692024133bf535b8bc91314ac3f4598c15776b9ad8fb08e40f62e07c48"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "job-handshake.private.json",
+      "bytes": 402,
+      "sha256": "2d4d6f3862f091f701d381c1abba7c39bc223f1b935bd8d3dbb49e2a09c2d4a0"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "job-ready.private.txt",
+      "bytes": 64,
+      "sha256": "7a2390365587aea323a4a056553c17bac1d673501f02b4daf72d5f08586053d5"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "provider-errors.private.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "provider-requests.private.json",
+      "bytes": 1918,
+      "sha256": "9851908ff56f0077546432e55e04f6367663ec2a764ad529537b30ac5921886e"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "result.private.json",
+      "bytes": 41730,
+      "sha256": "676259d6e6714e311bd4fb90eb30459e2e233659c2c15f9ab2dfdfda0171788e"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "startup-stacks.private.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "stderr.private.bin",
+      "bytes": 6896,
+      "sha256": "eede8e16a0b4025edb783156d12799522da74aa9c3a6bec969f4e1b5bda15329"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "stdin.private.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "stdout.private.bin",
+      "bytes": 35,
+      "sha256": "dac9d1f5b45d742b70a998f3142aed5c2c6761919c6ada91d9d56f273b8b9280"
+    },
+    {
+      "attempt": "r4",
+      "kind": "private_runtime",
+      "role": "wrapper.private.json",
+      "bytes": 2743,
+      "sha256": "7e4a47746b2b631eac601a1c5ea92877197e8bbd0dccc195803c085fc523a6d8"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "python_site",
+      "bytes": 22987,
+      "sha256": "0577e4b379d8ef4aa0ecf88a264ef18c10f72ea72119afae36524d1aae77c9bf"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "python_subprocess",
+      "bytes": 88725,
+      "sha256": "baa9f9138d8d20df6284f67e7d2e790f847f65e2c5370de322d54cccd737f2d9"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pyvenv_config",
+      "bytes": 207,
+      "sha256": "fdf672de85c510c6a658b769a739e39b74a5a56098e4bec56f67936aeded6453"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "venv_launcher",
+      "bytes": 47104,
+      "sha256": "e1189fc39481bdb0949aa4eb2b2ad26b849e4d2d8f88c36cf0db3164ae222f5d"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "base_python",
+      "bytes": 91648,
+      "sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pth_editable",
+      "bytes": 97,
+      "sha256": "6a64cf458f569dfc40a32a9cedfb4a9a9ac46295f2b465349e606fac1f199130"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pth_virtualenv",
+      "bytes": 18,
+      "sha256": "69ac3d8f27e679c81b94ab30b3b56e9cd138219b1ba94a1fa3606d5a76a1433d"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pth_distutils",
+      "bytes": 151,
+      "sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pth_pywin32",
+      "bytes": 185,
+      "sha256": "d902584a2a0a5216ce12c712d1378fe07541d32c383d0cc5abcd68412144fe4d"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pth_editable_finder",
+      "bytes": 10660,
+      "sha256": "ed6a8460d00d69d6004a6dfe9a0f094095e82e20e4fc20997aa613f767465e51"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pth_virtualenv_module",
+      "bytes": 5246,
+      "sha256": "cfb3db86aaa53bb62b5ff764970bec2d71c9228590a0ebec57f6ec926cc0bf1a"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pth_distutils_module",
+      "bytes": 6800,
+      "sha256": "ced72e54431ecf2d8d7dbd8a1e27724f1b171af3ca1503c304bf11c59a7fe861"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pth_pywin32_module",
+      "bytes": 772,
+      "sha256": "fd31f27bc85a6b9c974670838b6eefafb32991be4a9f840f96a4f5524df3b3c3"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pywin32_pythoncom_dll",
+      "bytes": 680448,
+      "sha256": "d6172ee192e577b786ce2e06f0020782c257e1ee48fc4ba56c1affc5c3e915eb"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "pywin32_pywintypes_dll",
+      "bytes": 135168,
+      "sha256": "f33290cafcf91b6bd5b12b808198cbf816b68529e00e1b3563f63916529a0657"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:hermes_cli/main.py",
+      "bytes": 142154,
+      "sha256": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:hermes_constants.py",
+      "bytes": 54131,
+      "sha256": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:hermes_cli/plugins.py",
+      "bytes": 119717,
+      "sha256": "1b5aae9a34e97c9922b5ab7e76c4bd3562a6ab715a983bf9c4dfe6031c457942"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:agent/tool_executor.py",
+      "bytes": 85135,
+      "sha256": "9634ebdc01b12591753fa9a1653f4aa8937edde7130175bbd69be8a0e5895ab7"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:model_tools.py",
+      "bytes": 49309,
+      "sha256": "c99620c824ab59f341ac7d0e22cde016b0c469d0643e7a5a5a82e0d63176e4b5"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:hermes_cli/runtime_provider_backends.py",
+      "bytes": 15022,
+      "sha256": "b1c31df03b9f1b57bc06d57123e89a94371a5839ab91510b3460a76d5da80d05"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:tools/file_tools.py",
+      "bytes": 64756,
+      "sha256": "3dfa1aa17b83641857b04634b7de7af77e0679719d9eb4a4f4bee689991ac433"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:tools/file_operations.py",
+      "bytes": 77970,
+      "sha256": "18fa0fe106517cf509e9bcbd07c2cbcb2246b076ff6eaa1d955d5f588ff1fa78"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:tools/file_operations_common.py",
+      "bytes": 10396,
+      "sha256": "d346c6d2e710a0fbf74bb25151b3864adba0e716db0ec9e8fa87fdbc180c6a7d"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local.py",
+      "bytes": 40776,
+      "sha256": "36eabe3abe3b5237c7f78e9de812144f1af73f69cb1b9eee88ec2a71fa15ed25"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/base.py",
+      "bytes": 31817,
+      "sha256": "aef2181257b7d9c486f9886199ed0a020e6f28ce498d322e61ce089fe5aaf72a"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local_gitbash_probe.py",
+      "bytes": 4940,
+      "sha256": "65398ac87a186b8a74e629b7c7c616fc32f1b317f79bb848af5482cfa7498fcf"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local_env_policy.py",
+      "bytes": 13634,
+      "sha256": "1a1b916fcbf3af7ceb1f27d47cee67db0d3dd2f92c84d622458ccc0bfc9663a5"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "hermes:tools/environments/local_pythonpath.py",
+      "bytes": 6657,
+      "sha256": "5e63afb429e6d505bc824fd097183b269a9afc382bae74bdbf5db0b698ee15a9"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "controller_python",
+      "bytes": 105816,
+      "sha256": "d932e5e2f324d57f392e8fd063dcf6d0185be8a664c57c6d24e7762ed02c28ca"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "bash_launcher",
+      "bytes": 47008,
+      "sha256": "a32755c3fe6b70dbd1fb19c0ac074fe23b0f603da3f15123f1106d740b6341e3"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "bash_runtime",
+      "bytes": 2553064,
+      "sha256": "fc362aae1f217d34d02237d99527839dd6cf85b37c7a0277109400bfa0faa594"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "git",
+      "bytes": 46480,
+      "sha256": "34a408843194be320d8a87a3c12cd5c7d2e08d03b24567a41db32e21d12569d2"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/file_tools.py",
+      "bytes": 64756,
+      "sha256": "3dfa1aa17b83641857b04634b7de7af77e0679719d9eb4a4f4bee689991ac433"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/file_operations.py",
+      "bytes": 77970,
+      "sha256": "18fa0fe106517cf509e9bcbd07c2cbcb2246b076ff6eaa1d955d5f588ff1fa78"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local.py",
+      "bytes": 40776,
+      "sha256": "36eabe3abe3b5237c7f78e9de812144f1af73f69cb1b9eee88ec2a71fa15ed25"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/environments/base.py",
+      "bytes": 31817,
+      "sha256": "aef2181257b7d9c486f9886199ed0a020e6f28ce498d322e61ce089fe5aaf72a"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local_gitbash_probe.py",
+      "bytes": 4940,
+      "sha256": "65398ac87a186b8a74e629b7c7c616fc32f1b317f79bb848af5482cfa7498fcf"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/environments/base_session_env.py",
+      "bytes": 10334,
+      "sha256": "1db42be8bead2c12d8e1ae3bccfc775148e0fda15aaf85d2b979cc01e62739b0"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/file_operations_lint.py",
+      "bytes": 13701,
+      "sha256": "8bb10170f92b5108f87195421a08c03dc0ea27eca0aaff344476cf7f44497e0c"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/terminal_tool_sudo.py",
+      "bytes": 21968,
+      "sha256": "16f97b9a3f2d0c60d9b060fbaf6b54c0dbc65f5af04670da7f5b4699f3072082"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:agent/lsp/servers.py",
+      "bytes": 19174,
+      "sha256": "b571aed0eae2eaf606581d63d84753710d1195634f69726d80808efd40ac0f88"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:gateway/session_context.py",
+      "bytes": 11490,
+      "sha256": "76cb6383168db1c6fd8f70f963e1436b101a9f810f13724cd812bf57a777dbe2"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:agent/agent_init.py",
+      "bytes": 119520,
+      "sha256": "b64195a84942304a53125d7b04d61ef20589f793d5a95e45b615b74296aed0c2"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:cli.py",
+      "bytes": 216739,
+      "sha256": "eaf9ec637a4dbc6be2e595a827c6442365ef6e871494bf51f4d6f2f5f8cd2b5b"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:hermes_state_ids.py",
+      "bytes": 1265,
+      "sha256": "c2b4531690fedd0f4d37c3f6c44f5478b4e87c1883b102c22a86340f3a4bdeb1"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local_pythonpath.py",
+      "bytes": 6657,
+      "sha256": "5e63afb429e6d505bc824fd097183b269a9afc382bae74bdbf5db0b698ee15a9"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/environments/local_env_policy.py",
+      "bytes": 13634,
+      "sha256": "1a1b916fcbf3af7ceb1f27d47cee67db0d3dd2f92c84d622458ccc0bfc9663a5"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:hermes_constants.py",
+      "bytes": 54131,
+      "sha256": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:agent/delegation_context.py",
+      "bytes": 4858,
+      "sha256": "df04c7cd8dc3ff392efd2f092fda312fdfe078548cdfc660f8efb2d2e033cc7b"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:hermes_cli/banner.py",
+      "bytes": 47499,
+      "sha256": "2436a336254e2d5453058caa4bcd8a87d0396ed0b7e72f545474b05bcfd18d71"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "template:tools/env_probe.py",
+      "bytes": 11445,
+      "sha256": "14ad6ca5fa4dd82dd8af89c5909e4470db05fc2786166bdeacd30d95aafacdfa"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:mkdir.exe",
+      "bytes": 71435,
+      "sha256": "fc9b9e49fd6496cdddfc5681208d74bd649ac934818eafdfd50a9571bdcb4861"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:mktemp.exe",
+      "bytes": 44192,
+      "sha256": "bd6474b0404e52b195296438342f38e510fe1a4c1c0d91ceb83cf8411959fecb"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:cat.exe",
+      "bytes": 38719,
+      "sha256": "f1b37048ee5c70fdc31dde509e562261c9b2d102d94c903393f55b45e883ef90"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:chmod.exe",
+      "bytes": 58933,
+      "sha256": "fd765e24d91b94dcedf9b4c070047a964f866c0f079ad47d7462559302736f1c"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:mv.exe",
+      "bytes": 122430,
+      "sha256": "0e990f9314e17eaf2eed168561313e0b6e1d21daf8fb6400387026c6da7277a1"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:rm.exe",
+      "bytes": 63813,
+      "sha256": "a845f7517a49b49726e056da8a8f65a6d9ce96fbe79c3664c082521eea0f80e7"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:sha256sum.exe",
+      "bytes": 56252,
+      "sha256": "ad199fb8a1104b5ac86eb49d775e2aeaea8396c4c8818beda074ddb0d359acc4"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:head.exe",
+      "bytes": 45413,
+      "sha256": "c82ae2ef72235a34db7007580628cd5183cb350878a10fcc98b6ef26b92a3537"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:base64.exe",
+      "bytes": 41819,
+      "sha256": "ef4877b2e3f929fa3e9671ff421fe64a8e50c89b3e11c2263d9b802604586e7c"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:readlink.exe",
+      "bytes": 48491,
+      "sha256": "3617334c256348026305e7a978bb803c45c31e2f4d24c763e1f11361ceb1d58c"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:realpath.exe",
+      "bytes": 49576,
+      "sha256": "e780c23d5d6bf60d7e80e073586be5f4d7f91faa0a0d1f07b3088b5d710f8395"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:dirname.exe",
+      "bytes": 34830,
+      "sha256": "53896fda354605a1a1d1f5e6802daba5ba6c05961f3074b892194e068aa82772"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:stat.exe",
+      "bytes": 97209,
+      "sha256": "84468965a541829728d1fa02d32e987ab1a844ec4a23644058ef477ff8b3264a"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:msys-2.0.dll",
+      "bytes": 3355762,
+      "sha256": "c30c8744de788aace27e17e7abedb219b4ec9882ac80660ca494b0f2a0e7f58b"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:msys-intl-8.dll",
+      "bytes": 111181,
+      "sha256": "50f7de0c712d867ddca2c9eb8562ca6ee2d69e120e798ec6126ad29dd1ed5402"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:msys-iconv-2.dll",
+      "bytes": 1098126,
+      "sha256": "5d890c42222c7b86519f7c368836cc2930f11dc975341b7ded30f26ef8770e0b"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:bash_launcher",
+      "bytes": 47008,
+      "sha256": "a32755c3fe6b70dbd1fb19c0ac074fe23b0f603da3f15123f1106d740b6341e3"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "native:bash_runtime",
+      "bytes": 2553064,
+      "sha256": "fc362aae1f217d34d02237d99527839dd6cf85b37c7a0277109400bfa0faa594"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:agent/model_metadata.py",
+      "bytes": 123493,
+      "sha256": "441a27eb5399678e134dd92b868e6ac9ea69ad8759f09ef9b875e42f9b6547d6"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/base_output.py",
+      "bytes": 18641,
+      "sha256": "e7093b4f192cfdd4ecaa22ab1ffd7719ff779ae98bb90f473971084fc84ebf8b"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:agent/lsp/__init__.py",
+      "bytes": 3326,
+      "sha256": "18978e3c1ed8636493fd78085564e82a374a999f582271244362297fc0ca76f0"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:agent/lsp/manager.py",
+      "bytes": 23272,
+      "sha256": "6fcb17f6d871630b5430b55086e16cd2834a27a76829e4fae16b21d62f85a297"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_bootstrap.py",
+      "bytes": 5306,
+      "sha256": "21df938bf9ef15f56d6205637c6e105cbff9d2dbdc736ddd0c3cad963d03d150"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_constants.py",
+      "bytes": 54131,
+      "sha256": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:cli.py",
+      "bytes": 216739,
+      "sha256": "eaf9ec637a4dbc6be2e595a827c6442365ef6e871494bf51f4d6f2f5f8cd2b5b"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/main.py",
+      "bytes": 142154,
+      "sha256": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/stdio.py",
+      "bytes": 5244,
+      "sha256": "b5176a53f855441b5302cd974a2d0db0400da1dbb258194fb66c9b4467178a5e"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/config.py",
+      "bytes": 176605,
+      "sha256": "d76471ce54d40e68165e2cce7c2ade9c2164ed5ce4dbcf673b1b289cb89c7d84"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/config_defaults.py",
+      "bytes": 190995,
+      "sha256": "fc9eabbf4d948df548091ef4f032c9621e18b75bf995118e9b7512f036774bae"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/config_effective.py",
+      "bytes": 6057,
+      "sha256": "a180333d8a5d273e38b92c1f47fa7ea601a920c5a988eea502d3d0bde3f325ce"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/env_loader.py",
+      "bytes": 28693,
+      "sha256": "4bdeccecea814299627f0e1a4fb54f9e93ba48a01f35b966337f7ad9a826f798"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/managed_scope.py",
+      "bytes": 6585,
+      "sha256": "1ef50ab8787f4a1c9fb3cbe562de426eb9b58a4bb16fe3960427921cd22773b6"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/auth.py",
+      "bytes": 117510,
+      "sha256": "93784e2efd9c2918726dda00d1da877a886c678d4994d4dc58bc51824615b026"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/runtime_provider.py",
+      "bytes": 55872,
+      "sha256": "013831a166ff862fbc4284d43556f9bd124ecd8beaadce3b4adc9d9fc0032f17"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/runtime_provider_backends.py",
+      "bytes": 15022,
+      "sha256": "b1c31df03b9f1b57bc06d57123e89a94371a5839ab91510b3460a76d5da80d05"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/main_tui_launch.py",
+      "bytes": 38189,
+      "sha256": "95c8cec883b69aea7f1903b2520c98222885f504322da424b531a53c0484e2f0"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/kanban_db.py",
+      "bytes": 182289,
+      "sha256": "7650279891e680b782abe83bc49fc971ddfad736dadd8d7e3a63a56c801da4d6"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/cli_agent_setup_mixin.py",
+      "bytes": 38966,
+      "sha256": "8fc7de71862a93c324390cfa0161e552337396dff20d6419aed246655f9efa28"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:hermes_cli/cli_session_mixin.py",
+      "bytes": 57614,
+      "sha256": "5c93db0a8fd953ecd33612f061b17052bc0a5d634b67d3ea6f17f1755ffd36c0"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:agent/agent_init.py",
+      "bytes": 119520,
+      "sha256": "b64195a84942304a53125d7b04d61ef20589f793d5a95e45b615b74296aed0c2"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:agent/delegation_context.py",
+      "bytes": 4858,
+      "sha256": "df04c7cd8dc3ff392efd2f092fda312fdfe078548cdfc660f8efb2d2e033cc7b"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:gateway/session_context.py",
+      "bytes": 11490,
+      "sha256": "76cb6383168db1c6fd8f70f963e1436b101a9f810f13724cd812bf57a777dbe2"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:gateway/run.py",
+      "bytes": 291059,
+      "sha256": "613ca35b1eac190e32dde5f76813c56e80ef217cb6712f139f7bafbed7c6100d"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:venv/Lib/site-packages/certifi/cacert.pem",
+      "bytes": 236095,
+      "sha256": "7cef540c6af3bf0a3c7d0070bd3fd7aae34f8aa805b408d1c27a01c8aeb305df"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:tools/terminal_tool.py",
+      "bytes": 66513,
+      "sha256": "2fdfdb2d10b23d7cdf0db2e7eb981fd8d185a3534adf3f81fbad5750be4feebe"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:tools/terminal_tool_backends.py",
+      "bytes": 17908,
+      "sha256": "b8d5d0aaa90b10f9dcfd029d76715b5b9ca7b7bd5375f4e7ac1c3282316c0011"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:tools/env_passthrough.py",
+      "bytes": 6793,
+      "sha256": "26cb4c956af627cf6d94e542ce75b4ce50d61aaf1da1a50eb1e29a87d03e2b64"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/local.py",
+      "bytes": 40776,
+      "sha256": "36eabe3abe3b5237c7f78e9de812144f1af73f69cb1b9eee88ec2a71fa15ed25"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/local_env_policy.py",
+      "bytes": 13634,
+      "sha256": "1a1b916fcbf3af7ceb1f27d47cee67db0d3dd2f92c84d622458ccc0bfc9663a5"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/local_pythonpath.py",
+      "bytes": 6657,
+      "sha256": "5e63afb429e6d505bc824fd097183b269a9afc382bae74bdbf5db0b698ee15a9"
+    },
+    {
+      "attempt": "r5",
+      "kind": "installed_input",
+      "role": "environment:tools/environments/base.py",
+      "bytes": 31817,
+      "sha256": "aef2181257b7d9c486f9886199ed0a020e6f28ce498d322e61ce089fe5aaf72a"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "command_templates.py",
+      "bytes": 30799,
+      "sha256": "d349291c989a65d9e3492d51cb8f3307642517bc51f1dd6723bc1c5d4162275e"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "controller.py",
+      "bytes": 43127,
+      "sha256": "1962b671419489c046cead7883b11193d14985506d583d3ba8f0ada2ea27ff54"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "env_preflight.py",
+      "bytes": 17467,
+      "sha256": "70ec95f1a8feff0806fb856acc671a8f531b707b022f9294bf206ff22ecef976"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "expected_child_env.py",
+      "bytes": 15951,
+      "sha256": "82333d5f0754cddf6620a4653026f539d4347079c3facf17ef31cafad7235b66"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "final-static-review.private.json",
+      "bytes": 1141,
+      "sha256": "a4231b2d96134e4e3935900cd036c66fd7f203d00d268e039e4555ac94f546aa"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "freeze-review.ps1",
+      "bytes": 2496,
+      "sha256": "27f50b6e7dd1dba8fbd0b791074761933be9f1445ec58cff852a8337579dc04e"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "integration-review.md",
+      "bytes": 4800,
+      "sha256": "a4620928e3a37288772243af1fb4d18116b2d01e6d9f2db2e6ffc4affa783b7a"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "manifest.private.json",
+      "bytes": 5294,
+      "sha256": "892fdd6b6e9a63e096dbdacffbdcf58a0bfde865d1ed8b5c02ac33e2620c743d"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "native-helper-review.md",
+      "bytes": 3671,
+      "sha256": "a695b6b9c878565afe3a371975ce6d28d241b706bfaa84a7719e7d1ee765ef8c"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "native-helper-review.private.json",
+      "bytes": 44275,
+      "sha256": "f3a97fcf4ca38638060fdd2317b4310b415aa4f622226feddc6551baf659b2d2"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "plan.private.json",
+      "bytes": 67956,
+      "sha256": "cb383fe2a80606439b69bf85ea90ca578a5c8772b15c4b88686b6a93f626a81e"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "preparation.private.json",
+      "bytes": 1553,
+      "sha256": "a754b748b9def3e8081abef9d75298800026a22889a0c7c5a317f10b69b4f895"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "prepare-new-plan.py",
+      "bytes": 9501,
+      "sha256": "9accf985e42e06175139584ad5ad7f5bbbee96fdad5b43f6881168503b26ce0e"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "provider-review.md",
+      "bytes": 8440,
+      "sha256": "ef22d4b5bf42c927729dc4b057127e7793d9d8a393900594d64d3a0104d951b9"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "README-review.md",
+      "bytes": 2837,
+      "sha256": "372b95613083debc00e8b1e25ebe6473f88bc4f3cfafbd97765c130f9b6ce324"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "root-template-self-test.private.json",
+      "bytes": 2331,
+      "sha256": "81adb1d3c9080a09d969965a03d79f56668ed080f831e69e48f8da120e445a93"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "run-control.ps1",
+      "bytes": 10804,
+      "sha256": "72fdac90e8c4a0acd263a3efa1ca97b019ca416ab9b62c1cd4f2455f7bd76300"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "sitecustomize.py",
+      "bytes": 25396,
+      "sha256": "fab3a9f47028ac13be567598c5ef7a69c27caa9f3bb1b12e1198e494312df279"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "startup-sources.private.json",
+      "bytes": 8640,
+      "sha256": "fff3a3c19cee9965717d6fb4ef9abe207be597d6d12aa781b3d2da9c498bc9ca"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "test_expected_child_env.py",
+      "bytes": 10585,
+      "sha256": "c629385ac2a12c5a7f4a1a509e6f4e6eb9726e57b078ef70ecb460b2cd47d6b6"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "test_r5_scope.py",
+      "bytes": 4470,
+      "sha256": "785a9b93ac259f18ce1cfb17406c5a8ad16fb904be0af5a863c9293239ee88a3"
+    },
+    {
+      "attempt": "r5",
+      "kind": "frozen_draft",
+      "role": "win32_identity.py",
+      "bytes": 6549,
+      "sha256": "3b6673e036c7023dd7bfbbc82d2adda5c4d050a18e654eb2447b45aa962a15d7"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "acl-before.private.json",
+      "bytes": 3753,
+      "sha256": "21fbf63890ddb036f4451fe884ea1735b469bce96d3361ad45eb97b8377e5deb"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "actual-identity.private.json",
+      "bytes": 755,
+      "sha256": "00f9adf03f2130693582b073245962e744b60430efee5382ff01d089df8b798a"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "command-policy.private.json",
+      "bytes": 27409,
+      "sha256": "ec16f7eeca4a01d0bd5b0c21bbfdf28e6b80477a7a43a54768ac0ae66b1d3b8b"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "controller-output.private.json",
+      "bytes": 138,
+      "sha256": "a08b4faa1ed51b96cc0066583f37e2ff8b82e8ceea846b296b74d5f892a94138"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "guard-events.private.jsonl",
+      "bytes": 52901,
+      "sha256": "79adc65e0011dcad53e6730eac37a607af82ffcbb8d800d304ab713b822bc633"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "guard-loaded.txt",
+      "bytes": 70,
+      "sha256": "d8122b692024133bf535b8bc91314ac3f4598c15776b9ad8fb08e40f62e07c48"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "job-handshake.private.json",
+      "bytes": 402,
+      "sha256": "a83a6c25f90f0f0be33096d1f21585ae0575004ad5bda2aec694d214c6031473"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "job-ready.private.txt",
+      "bytes": 64,
+      "sha256": "a75476cf92389a15661bb3a52dee8df1f1a5120f0e7fe7d80a0be71c2106e44d"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "provider-errors.private.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "provider-requests.private.json",
+      "bytes": 1918,
+      "sha256": "2895286045f34ce0c7c93edf295db5f80aa1283f9e19b8c61ba990883dddd4bd"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "result.private.json",
+      "bytes": 42350,
+      "sha256": "3e737b53f4f78627babcfe6dce8ce89a678b3852b71433a3033ad3c47dde2174"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "startup-stacks.private.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "stderr.private.bin",
+      "bytes": 38,
+      "sha256": "d502074668dadef91525f485d38c12ce6cf8c9e34717ea25dec984e0cef7bb56"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "stdin.private.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "stdout.private.bin",
+      "bytes": 35,
+      "sha256": "dac9d1f5b45d742b70a998f3142aed5c2c6761919c6ada91d9d56f273b8b9280"
+    },
+    {
+      "attempt": "r5",
+      "kind": "private_runtime",
+      "role": "wrapper.private.json",
+      "bytes": 2742,
+      "sha256": "0dd5e3e4847de4a63d14cdc1879bcb5e391d3c1d7915d64f4edd424e35027c0c"
+    }
+  ],
+  "raw_content_included": false
+}

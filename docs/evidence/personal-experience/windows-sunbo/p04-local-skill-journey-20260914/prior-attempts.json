@@ -1,0 +1,771 @@
+{
+  "format": "windows-p04-prior-attempts-public-index/v1",
+  "source_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "scope": "A1_A2_R3_R4_only",
+  "conclusion": "prior_attempts_do_not_establish_complete_p04_or_native_runtime_protection_acceptance",
+  "disclosure": "allowlisted_facts_and_original_role_bytes_sha256_only_original_bodies_remain_private",
+  "raw_index_resolution": "logical_roles_only_no_original_absolute_locations",
+  "raw_index_note": "hashes_identify_retained_original_bytes_not_an_authorization_to_publish_original_bodies",
+  "attempts": [
+    {
+      "attempt": "A1",
+      "classification": "controller_preflight_failure_product_not_run",
+      "source_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+      "exit_code": 1,
+      "phase": "controller_preflight",
+      "error_type": "HarnessError",
+      "private_root_entries_after_attempt": 0,
+      "build_started": false,
+      "service_started": false,
+      "browser_started": false,
+      "product_journey_result": "not_run",
+      "cause": "installed_git_launcher_hardlink_rejected_by_controller",
+      "product_defect_established": false,
+      "complete_p04_pass": false,
+      "script_sha256": {
+        "harness.py": "b081f52045ff1465508ea933a84a42ec2dc333e8212d3009cc8ed6a7cdd25a45",
+        "run-journey.py": "2d5e84b890e92735be9417d28bd8180c9a54ec9a22abff6c9df73a9802d694c5",
+        "ui-journey.cjs": "bae458723618dcfe7e220ccd675d95f3517cd1dba6caa4ebb5a7e046dcb47ebc"
+      },
+      "raw_index": [
+        {
+          "role": "original_preflight_result",
+          "bytes": 738,
+          "sha256": "fd85d5db294a118dc7af7a59f38f99cd8ae5bb7579cf758ab9cf7d7054360289"
+        },
+        {
+          "role": "controller_harness_py",
+          "bytes": 27275,
+          "sha256": "b081f52045ff1465508ea933a84a42ec2dc333e8212d3009cc8ed6a7cdd25a45"
+        },
+        {
+          "role": "controller_run_journey_py",
+          "bytes": 14942,
+          "sha256": "2d5e84b890e92735be9417d28bd8180c9a54ec9a22abff6c9df73a9802d694c5"
+        },
+        {
+          "role": "controller_ui_journey_cjs",
+          "bytes": 34407,
+          "sha256": "bae458723618dcfe7e220ccd675d95f3517cd1dba6caa4ebb5a7e046dcb47ebc"
+        },
+        {
+          "role": "controller_attempt_plan",
+          "bytes": 2514,
+          "sha256": "f6eaa586ad81c5bc92b308db9a71ca322f9b4dd1c7ef06b77c6b0bbbcba6e17d"
+        }
+      ]
+    },
+    {
+      "attempt": "A2",
+      "classification": "controller_preflight_failure_product_not_run",
+      "source_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+      "exit_code": 1,
+      "phase": "controller_preflight",
+      "error_type": "FileExistsError",
+      "error_location": {
+        "file": "harness.py",
+        "line": 254
+      },
+      "build_started": false,
+      "service_started": false,
+      "browser_started": false,
+      "product_journey_result": "not_run",
+      "cause": "controller_directory_creation_collides_with_own_cli_preflight",
+      "product_defect_established": false,
+      "complete_p04_pass": false,
+      "script_sha256": {
+        "harness.py": "70810ac8ea7c9e270263d7e7dad8c10fdfbbb763e6e420e8f092985cd7e0b590",
+        "run-journey.py": "80b9265930c7d89ade585311115b655b80a5f9681d12262b7fd2e90ddb2eddf2",
+        "ui-journey.cjs": "bae458723618dcfe7e220ccd675d95f3517cd1dba6caa4ebb5a7e046dcb47ebc"
+      },
+      "raw_index": [
+        {
+          "role": "original_preflight_result",
+          "bytes": 843,
+          "sha256": "54cc960dcdafc47d320b295ad0be50535622fdcb0c68358f2966b0c532426dbd"
+        },
+        {
+          "role": "controller_harness_py",
+          "bytes": 27805,
+          "sha256": "70810ac8ea7c9e270263d7e7dad8c10fdfbbb763e6e420e8f092985cd7e0b590"
+        },
+        {
+          "role": "controller_run_journey_py",
+          "bytes": 15016,
+          "sha256": "80b9265930c7d89ade585311115b655b80a5f9681d12262b7fd2e90ddb2eddf2"
+        },
+        {
+          "role": "controller_ui_journey_cjs",
+          "bytes": 34407,
+          "sha256": "bae458723618dcfe7e220ccd675d95f3517cd1dba6caa4ebb5a7e046dcb47ebc"
+        },
+        {
+          "role": "controller_attempt_plan",
+          "bytes": 2514,
+          "sha256": "f6eaa586ad81c5bc92b308db9a71ca322f9b4dd1c7ef06b77c6b0bbbcba6e17d"
+        }
+      ]
+    },
+    {
+      "attempt": "R3",
+      "classification": "partial_real_ui_controller_type_error",
+      "source_before": {
+        "sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+        "clean": true
+      },
+      "source_after": {
+        "sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+        "clean": true
+      },
+      "binary_sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470",
+      "binary_vcs_and_platform": {
+        "GOARCH": "amd64",
+        "GOOS": "windows",
+        "vcs": "git",
+        "vcs.revision": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+        "vcs.modified": "false"
+      },
+      "go_version": "go1.27.1",
+      "native_build_executed_this_attempt": true,
+      "same_binary_reused_from_r3": false,
+      "service_started": true,
+      "browser_started": true,
+      "browser_version": "141.0.7390.37",
+      "outcome": "fail",
+      "phase": "v1-install",
+      "ui_error_type": "TypeError",
+      "outer_error_type": "RuntimeError",
+      "captured_stages": [
+        "v1-approved"
+      ],
+      "ui_assertions": {
+        "paired_through_ui": true,
+        "v1_installed_unverified": false,
+        "cancelled_old_bytes_and_grant_unchanged": false,
+        "cancelled_update_claim_absent": false,
+        "v2_updated_unverified": false,
+        "old_grant_revoked_new_approved": false,
+        "removal_preserved_all_files": false,
+        "note_preserved_by_owned_move": false,
+        "same_removal_confirmation_completed": false,
+        "both_grants_revoked": false,
+        "immutable_history_retained": false,
+        "sources_and_profile_unchanged": false,
+        "runtime_identity_absent": false
+      },
+      "assertion_counts": {
+        "true": 1,
+        "false_not_verified": 12
+      },
+      "assertion_semantics": "false_at_interruption_is_not_a_proven_product_counterexample",
+      "final_observed_v1_target_file_exists": false,
+      "service_cleanup": {
+        "exit_code": 0,
+        "held_direct_process_reaped": true,
+        "held_process_handle_closed": true,
+        "forced_held_process_kill": false,
+        "observation_timeout": false,
+        "capture_overflow": false,
+        "capture_threads_ended": true,
+        "input_thread_ended": true,
+        "capture_error_types": [],
+        "cleanup_unverified": false,
+        "service_watchdog_ended": true,
+        "normal_stop_verified": true,
+        "signed_graceful_stop": {
+          "attempted": true,
+          "verified_drained": true,
+          "error_type": null
+        }
+      },
+      "readiness_probe_exit_counts": {
+        "0": 1,
+        "1": 7
+      },
+      "node_direct_process_cleanup": {
+        "exit_code": 1,
+        "held_direct_process_reaped": true,
+        "held_process_handle_closed": true,
+        "forced_held_process_kill": false,
+        "observation_timeout": false,
+        "capture_overflow": false,
+        "capture_threads_ended": true,
+        "input_thread_ended": true,
+        "capture_error_types": [],
+        "cleanup_unverified": false
+      },
+      "browser_job_cleanup": {
+        "assigned_before_fixture_input": true,
+        "forced_job_termination": true,
+        "handle_closed": true,
+        "before_close": {
+          "total_processes": 6,
+          "active_processes": 1,
+          "terminated_by_limits": 0
+        },
+        "final_accounting_before_handle_close": {
+          "total_processes": 6,
+          "active_processes": 0,
+          "terminated_by_limits": 0
+        },
+        "cleanup_error_types": [],
+        "job_handle_non_inheritable_verified": true
+      },
+      "natural_browser_tree_exit_verified": false,
+      "observed_api_response_counts": [
+        {
+          "method": "POST",
+          "path": "/v1/grants/{id}/approve",
+          "status": 200,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/grants/{id}/challenge",
+          "status": 200,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/pair",
+          "status": 200,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/session/restore",
+          "status": 200,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/session/restore",
+          "status": 401,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/skill-imports",
+          "status": 201,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/skill-imports/{id}/permissions",
+          "status": 201,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/skill-installations/plans",
+          "status": 201,
+          "count": 1
+        }
+      ],
+      "response_counts_limit": "observed_browser_responses_only_no_response_is_not_proof_of_no_server_execution",
+      "all_product_mutations_via_ui": true,
+      "mock_responses": false,
+      "runtime_verified": false,
+      "hermes_executed": false,
+      "provider_invoked": false,
+      "system_tasks_managed": false,
+      "product_defect_established": false,
+      "complete_p04_pass": false,
+      "script_sha256": {
+        "harness.py": "90344aaf1402ad62fc579f061107f55586fbe060e70fee1efac1edc3f7303b22",
+        "run-journey.py": "1f41e6a70e19620b371887674e7fc8c013b974566dfad5cce68b73ff7c3f5983",
+        "ui-journey.cjs": "bae458723618dcfe7e220ccd675d95f3517cd1dba6caa4ebb5a7e046dcb47ebc"
+      },
+      "fixture_sha256": {
+        "v1": {
+          "SKILL.md": "4ac13c62e6a56bfc5edf28c181674cef10a13b30539828c4baf0856c44e01aa0"
+        },
+        "v2": {
+          "SKILL.md": "ce065c4d54f36f398461a452c2bb0b3fbb0ce8041d5bceeada3a8b6f3c2f64af"
+        }
+      },
+      "raw_index": [
+        {
+          "role": "controller_harness_py",
+          "bytes": 28089,
+          "sha256": "90344aaf1402ad62fc579f061107f55586fbe060e70fee1efac1edc3f7303b22"
+        },
+        {
+          "role": "controller_run_journey_py",
+          "bytes": 15016,
+          "sha256": "1f41e6a70e19620b371887674e7fc8c013b974566dfad5cce68b73ff7c3f5983"
+        },
+        {
+          "role": "controller_ui_journey_cjs",
+          "bytes": 34407,
+          "sha256": "bae458723618dcfe7e220ccd675d95f3517cd1dba6caa4ebb5a7e046dcb47ebc"
+        },
+        {
+          "role": "controller_attempt_plan",
+          "bytes": 2514,
+          "sha256": "f6eaa586ad81c5bc92b308db9a71ca322f9b4dd1c7ef06b77c6b0bbbcba6e17d"
+        },
+        {
+          "role": "original_harness_summary",
+          "bytes": 16898,
+          "sha256": "2d23a03f0dcf01c2ba5cd0cf451917fb6b1874a56aae8815178b0884fb44d621"
+        },
+        {
+          "role": "original_journey_result",
+          "bytes": 2476,
+          "sha256": "09d98f627fa70a3853263ede89c699f83e6d5f37209f8e7384e02c94828a6989"
+        },
+        {
+          "role": "original_ui_result",
+          "bytes": 9110,
+          "sha256": "ff6452e894073dc2df8faf507b4eeb13819985075532e18d4b335f750c72c579"
+        },
+        {
+          "role": "native_binary",
+          "bytes": 24623104,
+          "sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470"
+        },
+        {
+          "role": "original_binary_build_identity",
+          "bytes": 886,
+          "sha256": "9702be45d4b1ac1d2e36628abb87ae0c7fa9a5d3570a9876371df846f9e2dcf4"
+        },
+        {
+          "role": "original_service_stdout_log",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "role": "original_service_stderr_log",
+          "bytes": 289,
+          "sha256": "e3510f6bdd5057aec867afc879b8e67e9d9cc81a0b22e09cc18f9d5926d359a6"
+        },
+        {
+          "role": "ui_v1_approved_facts",
+          "bytes": 1540,
+          "sha256": "1e5c69ceecdba939bce1d3cc719c92a9064a4ae36aa7f87dccd3110151c17cfa"
+        },
+        {
+          "role": "ui_v1_approved_dom",
+          "bytes": 14199,
+          "sha256": "d228f1dbe2b55d7c7a80b6fc2232586f4817d74b2c80e6d01d0fd34d26057960"
+        },
+        {
+          "role": "ui_v1_approved_screenshot",
+          "bytes": 144951,
+          "sha256": "b07de26557fceabd5a78ad8dd3e7ff8ab53473bb151a2ed7679d405ad9b62c5b"
+        }
+      ],
+      "failure_detail": {
+        "controller_api_error": "Locator.checkAt_is_not_a_function",
+        "first_affected_line": 365,
+        "same_error_lines": [
+          365,
+          411,
+          441,
+          470
+        ],
+        "v1_installation_plan_created": true,
+        "v1_apply_response_observed": false,
+        "v1_installation_not_applied_at_capture": true,
+        "confirmed_update_or_removal": false
+      }
+    },
+    {
+      "attempt": "R4",
+      "classification": "partial_real_ui_client_response_timeout",
+      "source_before": {
+        "sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+        "clean": true
+      },
+      "source_after": {
+        "sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+        "clean": true
+      },
+      "binary_sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470",
+      "binary_vcs_and_platform": {
+        "GOARCH": "amd64",
+        "GOOS": "windows",
+        "vcs": "git",
+        "vcs.revision": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+        "vcs.modified": "false"
+      },
+      "go_version": "go1.27.1",
+      "native_build_executed_this_attempt": false,
+      "same_binary_reused_from_r3": true,
+      "service_started": true,
+      "browser_started": true,
+      "browser_version": "141.0.7390.37",
+      "outcome": "fail",
+      "phase": "v2-recompare-update",
+      "ui_error_type": "TimeoutError",
+      "outer_error_type": "RuntimeError",
+      "captured_stages": [
+        "v1-approved",
+        "v1-installed",
+        "v2-prepared-before-cancel",
+        "v2-cancelled"
+      ],
+      "ui_assertions": {
+        "paired_through_ui": true,
+        "v1_installed_unverified": true,
+        "cancelled_old_bytes_and_grant_unchanged": true,
+        "cancelled_update_claim_absent": true,
+        "v2_updated_unverified": false,
+        "old_grant_revoked_new_approved": false,
+        "removal_preserved_all_files": false,
+        "note_preserved_by_owned_move": false,
+        "same_removal_confirmation_completed": false,
+        "both_grants_revoked": false,
+        "immutable_history_retained": false,
+        "sources_and_profile_unchanged": false,
+        "runtime_identity_absent": false
+      },
+      "assertion_counts": {
+        "true": 4,
+        "false_not_verified": 9
+      },
+      "assertion_semantics": "false_at_interruption_is_not_a_proven_product_counterexample",
+      "final_observed_v1_target_file_exists": true,
+      "service_cleanup": {
+        "exit_code": 0,
+        "held_direct_process_reaped": true,
+        "held_process_handle_closed": true,
+        "forced_held_process_kill": false,
+        "observation_timeout": false,
+        "capture_overflow": false,
+        "capture_threads_ended": true,
+        "input_thread_ended": true,
+        "capture_error_types": [],
+        "cleanup_unverified": false,
+        "service_watchdog_ended": true,
+        "normal_stop_verified": true,
+        "signed_graceful_stop": {
+          "attempted": true,
+          "verified_drained": true,
+          "error_type": null
+        }
+      },
+      "readiness_probe_exit_counts": {
+        "0": 1,
+        "1": 7
+      },
+      "node_direct_process_cleanup": {
+        "exit_code": 1,
+        "held_direct_process_reaped": true,
+        "held_process_handle_closed": true,
+        "forced_held_process_kill": false,
+        "observation_timeout": false,
+        "capture_overflow": false,
+        "capture_threads_ended": true,
+        "input_thread_ended": true,
+        "capture_error_types": [],
+        "cleanup_unverified": false
+      },
+      "browser_job_cleanup": {
+        "assigned_before_fixture_input": true,
+        "forced_job_termination": false,
+        "handle_closed": true,
+        "before_close": {
+          "total_processes": 6,
+          "active_processes": 0,
+          "terminated_by_limits": 0
+        },
+        "before_bounded_natural_exit_wait": {
+          "total_processes": 6,
+          "active_processes": 1,
+          "terminated_by_limits": 0
+        },
+        "final_accounting_before_handle_close": {
+          "total_processes": 6,
+          "active_processes": 0,
+          "terminated_by_limits": 0
+        },
+        "cleanup_error_types": [],
+        "job_handle_non_inheritable_verified": true
+      },
+      "natural_browser_tree_exit_verified": true,
+      "observed_api_response_counts": [
+        {
+          "method": "GET",
+          "path": "/v1/grants",
+          "status": 500,
+          "count": 2
+        },
+        {
+          "method": "GET",
+          "path": "/v1/skill-installations/operations/{id}/removal",
+          "status": 429,
+          "count": 1
+        },
+        {
+          "method": "GET",
+          "path": "/v1/skill-installations/operations/{id}/update-source",
+          "status": 429,
+          "count": 1
+        },
+        {
+          "method": "GET",
+          "path": "/v1/skill-installations/updates/{id}",
+          "status": 404,
+          "count": 2
+        },
+        {
+          "method": "POST",
+          "path": "/v1/grants/{id}/approve",
+          "status": 200,
+          "count": 2
+        },
+        {
+          "method": "POST",
+          "path": "/v1/grants/{id}/challenge",
+          "status": 200,
+          "count": 2
+        },
+        {
+          "method": "POST",
+          "path": "/v1/pair",
+          "status": 200,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/session/restore",
+          "status": 200,
+          "count": 3
+        },
+        {
+          "method": "POST",
+          "path": "/v1/session/restore",
+          "status": 401,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/skill-imports",
+          "status": 201,
+          "count": 2
+        },
+        {
+          "method": "POST",
+          "path": "/v1/skill-imports/{id}/permissions",
+          "status": 201,
+          "count": 2
+        },
+        {
+          "method": "POST",
+          "path": "/v1/skill-installations/apply",
+          "status": 200,
+          "count": 1
+        },
+        {
+          "method": "POST",
+          "path": "/v1/skill-installations/operations/{id}/update-comparison",
+          "status": 200,
+          "count": 3
+        },
+        {
+          "method": "POST",
+          "path": "/v1/skill-installations/operations/{id}/update-plans",
+          "status": 201,
+          "count": 2
+        },
+        {
+          "method": "POST",
+          "path": "/v1/skill-installations/plans",
+          "status": 201,
+          "count": 1
+        }
+      ],
+      "response_counts_limit": "observed_browser_responses_only_no_response_is_not_proof_of_no_server_execution",
+      "all_product_mutations_via_ui": true,
+      "mock_responses": false,
+      "runtime_verified": false,
+      "hermes_executed": false,
+      "provider_invoked": false,
+      "system_tasks_managed": false,
+      "product_defect_established": false,
+      "complete_p04_pass": false,
+      "script_sha256": {
+        "harness.py": "e00c9b2cdecdb0dd92339ff166086e766c676811d6c4b3aafbc3d00c65b4b833",
+        "run-journey.py": "bebea9d19f603d645c35c0793c47344045d8c395fd3c7835e499244172147803",
+        "ui-journey.cjs": "540acb0b5a0f2704d548993756b4d41a5b3712a58e16504d69b43a5e942af0f6"
+      },
+      "fixture_sha256": {
+        "v1": {
+          "SKILL.md": "4ac13c62e6a56bfc5edf28c181674cef10a13b30539828c4baf0856c44e01aa0"
+        },
+        "v2": {
+          "SKILL.md": "ce065c4d54f36f398461a452c2bb0b3fbb0ce8041d5bceeada3a8b6f3c2f64af"
+        }
+      },
+      "raw_index": [
+        {
+          "role": "controller_harness_py",
+          "bytes": 28794,
+          "sha256": "e00c9b2cdecdb0dd92339ff166086e766c676811d6c4b3aafbc3d00c65b4b833"
+        },
+        {
+          "role": "controller_run_journey_py",
+          "bytes": 15342,
+          "sha256": "bebea9d19f603d645c35c0793c47344045d8c395fd3c7835e499244172147803"
+        },
+        {
+          "role": "controller_ui_journey_cjs",
+          "bytes": 34367,
+          "sha256": "540acb0b5a0f2704d548993756b4d41a5b3712a58e16504d69b43a5e942af0f6"
+        },
+        {
+          "role": "controller_attempt_plan",
+          "bytes": 2514,
+          "sha256": "f6eaa586ad81c5bc92b308db9a71ca322f9b4dd1c7ef06b77c6b0bbbcba6e17d"
+        },
+        {
+          "role": "original_harness_summary",
+          "bytes": 16481,
+          "sha256": "7649941f46b39ec080d94cfed3057e93e906f2b3bce2c91d3bb5633624f7ce50"
+        },
+        {
+          "role": "original_journey_result",
+          "bytes": 2625,
+          "sha256": "c968299e425af1b1009a530c2ecb9b281566be4bbbdf0ea2f4b0a624182b7c82"
+        },
+        {
+          "role": "original_ui_result",
+          "bytes": 20888,
+          "sha256": "41e09f5218fe3265b097d4f0518e7d33a83254138ba5c992170cda7090bb938a"
+        },
+        {
+          "role": "native_binary",
+          "bytes": 24623104,
+          "sha256": "ee4b78c79bb2aee0d2ea1996ce8e937e9d8a0b320c77cabb3b71ef2b2233e470"
+        },
+        {
+          "role": "original_binary_build_identity",
+          "bytes": 886,
+          "sha256": "9702be45d4b1ac1d2e36628abb87ae0c7fa9a5d3570a9876371df846f9e2dcf4"
+        },
+        {
+          "role": "original_service_stdout_log",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "role": "original_service_stderr_log",
+          "bytes": 289,
+          "sha256": "e3fa22920807fe9c39ae8d0a260926ad9f7934119647980e85f659eef1ce96a5"
+        },
+        {
+          "role": "original_binary_reuse_record",
+          "bytes": 77,
+          "sha256": "30fb5b864a89609ec0f46ecf382b2b384a6097dccba13660df4707edd841eb0c"
+        },
+        {
+          "role": "ui_v1_approved_facts",
+          "bytes": 1540,
+          "sha256": "9da5d6281389c9f9b79b9b8926f34103ae08f55587bd0364b400ccebfe126757"
+        },
+        {
+          "role": "ui_v1_approved_dom",
+          "bytes": 14199,
+          "sha256": "e5ecf6af2c2ea534ce82b1fd7436a56c1fbb709b06a3e905d440305dca85c7cb"
+        },
+        {
+          "role": "ui_v1_approved_screenshot",
+          "bytes": 145228,
+          "sha256": "bfaeeb769562c10523fa8622c605543f1d00c85a6f8f680485034f7fcdbbfb28"
+        },
+        {
+          "role": "ui_v1_installed_facts",
+          "bytes": 2239,
+          "sha256": "56b0c014713e579aa93db99526aa0cd50bb88e35ff855d1f1ecf0f732aa800a3"
+        },
+        {
+          "role": "ui_v1_installed_dom",
+          "bytes": 14856,
+          "sha256": "583e93810aac66db945c4ca77f7f09cf80cc87e5c973a338d430b4d53ce73314"
+        },
+        {
+          "role": "ui_v1_installed_screenshot",
+          "bytes": 147199,
+          "sha256": "1cdbb116b6cbc701d45b1a6bb470dfbc3a6c87d7351b78d3ef5fec0c7a1ab8e5"
+        },
+        {
+          "role": "ui_v2_prepared_before_cancel_facts",
+          "bytes": 2075,
+          "sha256": "2d3a3d15c2e118084f2ee7c4b5906925fd147c0b0c81147d1dff1b64f42c7c0d"
+        },
+        {
+          "role": "ui_v2_prepared_before_cancel_dom",
+          "bytes": 13901,
+          "sha256": "f62e7a47cfbd10fcbd0d7252dad6286722bfa17ec6bfacdd4f242dcca436d631"
+        },
+        {
+          "role": "ui_v2_prepared_before_cancel_screenshot",
+          "bytes": 114093,
+          "sha256": "3ca52db5754ac9f39ebbb0bdc315e2bd637e5bfb9453165ecc3f33803f615d0d"
+        },
+        {
+          "role": "ui_v2_cancelled_facts",
+          "bytes": 2119,
+          "sha256": "cb3e62b583250a0b2e3d3120af44eeecb315339d3c91bf7381772b983adecf02"
+        },
+        {
+          "role": "ui_v2_cancelled_dom",
+          "bytes": 11813,
+          "sha256": "b52b85aee9fdffc8319564003768552a9501de3a26675ecb1f249ee733191063"
+        },
+        {
+          "role": "ui_v2_cancelled_screenshot",
+          "bytes": 93816,
+          "sha256": "c454ef38922e9dbdd9e9896a1aaec8a08d2ad07388a558d7694c38deac921ea0"
+        },
+        {
+          "role": "final_observed_v1_target_skill",
+          "bytes": 141,
+          "sha256": "4ac13c62e6a56bfc5edf28c181674cef10a13b30539828c4baf0856c44e01aa0"
+        },
+        {
+          "role": "final_old_grant_version_2",
+          "bytes": 1740,
+          "sha256": "412660c502b4932a2782c2320735a7aa221517ae1da2148132eda2079e7afce5"
+        },
+        {
+          "role": "final_update_operation_claim",
+          "bytes": 5776,
+          "sha256": "d3b10bdef73cc12cab4df21cfe79859fd4f3c12152f8309fc7fee5a2c8115493"
+        },
+        {
+          "role": "final_old_installation_removal_claim",
+          "bytes": 1002,
+          "sha256": "6d02e7d9b3617aa1df78f1ee08d07688dbb716614c3a0cb74e5d18cddd3f20e2"
+        },
+        {
+          "role": "candidate_update_http_handler_source",
+          "bytes": 2163,
+          "sha256": "8441888c6af327d5235bd31e395661a0f83d972c78de645eeeb0d3e66dc194bc"
+        }
+      ],
+      "failure_detail": {
+        "client_action_response_timeout_ms": 15000,
+        "update_handler_context_timeout_ms": 60000,
+        "timeout_observation_does_not_establish_product_deadlock": true,
+        "v1_installation_result": "installed_unverified",
+        "cancelled_update_left_old_bytes_and_old_grant_unchanged": true,
+        "cancelled_preview_claim_absent_at_cancel_capture": true,
+        "cancelled_preview_retained_at_cancel_capture": true,
+        "final_old_grant_version": 2,
+        "final_old_grant_status": "revoked",
+        "final_target_bytes_equal_v1_fixture": true,
+        "final_update_claim_exists": true,
+        "final_update_result_exists": false,
+        "final_old_installation_removal_claim_exists": true,
+        "final_old_installation_removal_result_exists": false,
+        "removal_claim_scope": "old_installation_removal_during_confirmed_update_not_completed_final_removal_journey",
+        "confirmed_update_completion_verified": false,
+        "final_removal_journey_reached": false,
+        "bounded_browser_natural_exit_window_ms": 5000
+      }
+    }
+  ]
+}

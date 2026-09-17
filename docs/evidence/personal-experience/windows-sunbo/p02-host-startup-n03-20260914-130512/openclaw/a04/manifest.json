@@ -1,0 +1,27 @@
+{
+  "schema_version": "public-a04-manifest/v1",
+  "scope": "A04 only; raw evidence and other batches excluded",
+  "files": [
+    {
+      "name": "report.md",
+      "bytes": 2102,
+      "sha256": "cf47ac71295d912db3a455c2cc0a5475e82733bc796eb7f88509f065ce3e8ca1"
+    },
+    {
+      "name": "scan-summary.json",
+      "bytes": 1218,
+      "sha256": "66cd382067f959c516a5a5b62f0109a1fb4c3d39a3d72322480230ddd9d6ec76"
+    },
+    {
+      "name": "summary.derived.json",
+      "bytes": 10585,
+      "sha256": "dabcc3daac0d3dde2c7c95034bb812ca4b53dc61ac395ce29d7117bb3745e8ee"
+    },
+    {
+      "name": "summary.schema.json",
+      "bytes": 15597,
+      "sha256": "331126ec84cfef6f34c4cb18c69b35d085af31d7a5fa09902519f6fbb5a6e99f"
+    }
+  ],
+  "manifest_self_excluded": true
+}

@@ -1,0 +1,106 @@
+{
+  "schema": "windows-hermes-identity-only-evidence-summary.v1",
+  "claim_scope": "one native Windows installed venv launcher / actual Python identity diagnostic",
+  "identity_diagnostic_pass": true,
+  "hermes_A": "not_run",
+  "hermes_B": "not_run",
+  "normal_hermes_startup_tested": false,
+  "native_agent_tool_execution_tested": false,
+  "startup_mode": "installed_venv_launcher_-S_-s_-B_-c_explicit_sitecustomize",
+  "script_argument": "import sitecustomize; raise SystemExit(88)",
+  "identity_observations": {
+    "actual_pid_differs_from_launcher": true,
+    "reported_actual_ppid_matches_launcher": true,
+    "launcher_assigned_and_verified_in_exact_owned_job": true,
+    "actual_in_exact_owned_job_before_and_after_image_digest": true,
+    "same_actual_handle_alive_and_pid_consistent_before_and_after_image_digest": true,
+    "actual_image_role": "pre_pinned_installed_base_python",
+    "actual_image_sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a",
+    "reported_cpython_version": "3.11.16",
+    "query_rights": "PROCESS_QUERY_LIMITED_INFORMATION|SYNCHRONIZE",
+    "job_total_processes": 3,
+    "individually_identified_process_roles": 2,
+    "third_job_process_identity": "not_collected; no full chain inferred"
+  },
+  "exit_and_resources": {
+    "actual_and_launcher_signaled_exit_zero_before_job_close": true,
+    "actual_handle_final_signaled_exit_zero": true,
+    "launcher_waited_exit_code": 0,
+    "controller_exit_code": 0,
+    "actual_launcher_job_handles_closed": true,
+    "job_active_before_close": 0,
+    "job_terminated_processes": 0,
+    "wrapper_timeout": false,
+    "owned_controller_killed": false,
+    "output_drain_timeout": false,
+    "controller_elapsed_seconds": 12.267549200005305,
+    "wrapper_elapsed_seconds": 12.791300099999999,
+    "normal_guard_self_exit_elapsed_ms": 12000,
+    "guard_events": {
+      "installed": 1,
+      "self_exit": 1,
+      "denied": 0
+    },
+    "fault_stack_stdout_stderr_stdin_bytes": 0
+  },
+  "independent_checks": {
+    "frozen_manifest_payloads_verified": 11,
+    "all_raw_hashes_recomputed": true,
+    "copied_guard_matches_frozen_source": true,
+    "installed_source_before_after_and_current_match": true,
+    "recorded_fixed_argv_matches_plan": true,
+    "raw_identity_matches_embedded_identity_and_digest": true,
+    "protected_three_ace_root_and_unchanged_parent_acl_read_back": true,
+    "helper_ready_and_handshake_absent": true,
+    "originals_unchanged_during_derivation": true
+  },
+  "installed_source_identities": {
+    "controller_python": {
+      "bytes": 105816,
+      "sha256": "d932e5e2f324d57f392e8fd063dcf6d0185be8a664c57c6d24e7762ed02c28ca"
+    },
+    "venv_launcher": {
+      "bytes": 47104,
+      "sha256": "e1189fc39481bdb0949aa4eb2b2ad26b849e4d2d8f88c36cf0db3164ae222f5d"
+    },
+    "base_python": {
+      "bytes": 91648,
+      "sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a"
+    },
+    "pyvenv_config": {
+      "bytes": 207,
+      "sha256": "fdf672de85c510c6a658b769a739e39b74a5a56098e4bec56f67936aeded6453"
+    }
+  },
+  "frozen_plan_sha256": "6892ae0a67cf70e089659e19e8e2e259b79fe51314db5eccbf003be13d755c48",
+  "frozen_manifest_sha256": "6b9905d90963db368e1775b783f844620de656a8690b76a4942c908fa99b3962",
+  "not_invoked": [
+    "Hermes main",
+    "provider",
+    "model",
+    "SIQ",
+    "helper",
+    "network"
+  ],
+  "limitations": [
+    "-S and explicit sitecustomize differ from normal Hermes startup; no native A/B acceptance.",
+    "v7/v8 actual PID was not captured; this result does not establish their historical failure cause.",
+    "The third Job-accounted process was not identified; Job total does not prove a full process chain.",
+    "Pre-watchdog interpreter initialization is outside the self-watchdog window; Python audit hooks are not an OS sandbox.",
+    "Image SHA binds a disk file, not process memory; this run contains no hostile guard bypass test.",
+    "Future real A must recheck its own live handle, exact Job and pinned image; no PID may be reused as authorization."
+  ],
+  "public_derivation": {
+    "method": "explicit field whitelist; no private raw objects copied or silently rewritten",
+    "omitted": [
+      "absolute local paths",
+      "numeric process IDs",
+      "user identifiers",
+      "SDDL",
+      "raw stdout/stderr"
+    ],
+    "raw_sources_unchanged": true,
+    "raw_hash_reference": "raw-source-index.json",
+    "signed_object_revalidation_claimed": false
+  }
+}

@@ -1,0 +1,9 @@
+# These frozen evidence files contain CRLF. Preserve their existing byte hashes
+# while checking other whitespace normally; this exception is limited to these files.
+openclaw/manifest.json whitespace=cr-at-eol
+openclaw/scan-summary.json whitespace=cr-at-eol
+shared-core/n03-review/cold-cache-summary.json whitespace=cr-at-eol
+shared-core/n03-review/cold-cleanup-observation.json whitespace=cr-at-eol
+shared-core/n03-review/manifest.json whitespace=cr-at-eol
+shared-core/n03-review/process-observation.json whitespace=cr-at-eol
+shared-core/n03-review/summary.json whitespace=cr-at-eol
