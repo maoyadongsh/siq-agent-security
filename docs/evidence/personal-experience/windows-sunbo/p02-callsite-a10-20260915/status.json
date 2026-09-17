@@ -1,0 +1,48 @@
+{
+  "schema": "private-a10-cause-status/v1",
+  "association": "same_owned_process",
+  "registration": "registered",
+  "hook": {
+    "transformed": {
+      "errors": 1,
+      "pinned_write": 1
+    },
+    "rejected": false
+  },
+  "observer": {
+    "attempted": 1,
+    "emitted": 1,
+    "sink_failed": false,
+    "diagnostic_failed": false
+  },
+  "callsite": {
+    "observed_calls": 1,
+    "matched_calls": 1,
+    "recorded_errors": 1,
+    "ambiguous": false,
+    "target_mismatch": false,
+    "rejected_error": false,
+    "diagnostic_failed": false,
+    "count_saturated": false
+  },
+  "cause_wire": {
+    "attempted": 1,
+    "expected_bytes": 643,
+    "written_bytes": 643,
+    "complete": true,
+    "error": null
+  },
+  "source_sha256": {
+    "errors": "6187c0aff86970d3b39039c9a6e1a19e2f55f967c87351745b4c71a71b30ee6f",
+    "pinned_write": "c8de6b4e90f48e60ea8888b80cd1afa8302ecb76ef43e4d414cf177b9640d693"
+  },
+  "transformed_sha256": {
+    "errors": "c654a4840230370df2cbb57c5e0898e76e44784104abd6e530ced481edc4c09e",
+    "pinned_write": "3f2e28be542c6bca7fbefa44ed794965570d0ef167f905ac6933825d215b1378"
+  },
+  "expected_transformed_sha256": {
+    "errors": "c654a4840230370df2cbb57c5e0898e76e44784104abd6e530ced481edc4c09e",
+    "pinned_write": "3f2e28be542c6bca7fbefa44ed794965570d0ef167f905ac6933825d215b1378"
+  },
+  "stack_status": "skipped_unverified_lazy_stack"
+}

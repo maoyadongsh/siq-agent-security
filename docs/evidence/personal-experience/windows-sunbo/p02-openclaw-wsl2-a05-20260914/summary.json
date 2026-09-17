@@ -1,0 +1,147 @@
+{
+  "schema": "openclaw-a05-public-summary.v1",
+  "batch": "A05",
+  "status": "诊断已完成；A失败；公开证据",
+  "source_context": {
+    "revision": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "dirty": false,
+    "meaning": "任务背景身份，不是已安装OpenClaw身份"
+  },
+  "scope": {
+    "platform": "WSL2/Linux",
+    "native_windows_acceptance": false,
+    "siq_invoked": false,
+    "B": "not_run",
+    "product_runtime_changed": false,
+    "original_18_case_matrix_changed": false,
+    "original_denominator_changed": false,
+    "prior_A04_failure_preserved": true,
+    "A04_fatal_cause_inferred": false
+  },
+  "outcome": {
+    "A_status": "fail",
+    "A_pass": false,
+    "diagnostic_completed": true,
+    "terminal_stack_marker_observed": true,
+    "error_code": "ERR_ACCESS_DENIED",
+    "api": "lstatSync",
+    "stack_frame": {
+      "source": "dist/openclaw-agent-db-registry-CQNE3K5p.mjs",
+      "line": 392,
+      "column": 17
+    },
+    "fatal_resource_observed": null,
+    "fix_claimed": false
+  },
+  "observed": {
+    "provider_requests": 0,
+    "target_before_exists": false,
+    "target_after_exists": false,
+    "native_tool_exchange_observed": false,
+    "agent_turn_observation": "not_observed",
+    "node_exit_code": 1,
+    "namespace_child_exit_code": 1,
+    "wsl_transport_exit_code": 1,
+    "windows_driver_exit_code": 1,
+    "node_elapsed_seconds": 5.468137649999335
+  },
+  "cleanup": {
+    "confirmed_by_guest_report": true,
+    "node_reaped": true,
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true,
+    "namespace_waited_and_reaped": true,
+    "namespace_timed_out": false,
+    "namespace_killed": false,
+    "node_timed_out": false,
+    "node_killed": false,
+    "windows_transport_complete": true,
+    "windows_waited_and_reaped": true,
+    "windows_disposed": true,
+    "windows_timed_out": false,
+    "windows_kill_requested": false
+  },
+  "integrity": {
+    "frozen_file_count": 19,
+    "frozen_mismatch_count": 0,
+    "installed_source_pin_count": 9,
+    "source_unchanged": true,
+    "control_unchanged": true,
+    "namespace_sentinel_unchanged": true,
+    "parent_namespaces_unchanged": true,
+    "parent_tmp_metadata_unchanged": true,
+    "unshare_unchanged": true
+  },
+  "raw_streams": [
+    {
+      "role": "WSL运行盘点.标准输出",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-16le",
+      "driver_decode_error": false
+    },
+    {
+      "role": "WSL运行盘点.标准错误",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "WSL主传输.标准输出",
+      "bytes": 204539,
+      "sha256": "c7489e9c76d1c13b73896a838129a9adc9e0576debb9fcd6882de0a4ef945f23",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "WSL主传输.标准错误",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "complete": true,
+      "truncated": false,
+      "decoding": "原始UTF-16LE；driver的UTF-8替换标记保留",
+      "driver_decode_error": true
+    },
+    {
+      "role": "namespace子进程.标准输出",
+      "bytes": 55634,
+      "sha256": "99ec9d04212554af85efb591e35dea0ea7bbd209f0e44ff32d8b9447bd76f35d",
+      "complete": true,
+      "truncated": false,
+      "decoding": "UTF-8"
+    },
+    {
+      "role": "namespace子进程.标准错误",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true,
+      "truncated": false,
+      "decoding": "UTF-8"
+    },
+    {
+      "role": "Node进程.标准输出",
+      "bytes": 117,
+      "sha256": "9a9da94a612293580096e886a3f80c49a543d8fcc7a1dcf6443a05451404621f",
+      "complete": true,
+      "truncated": false,
+      "decoding": "UTF-8"
+    },
+    {
+      "role": "Node进程.标准错误",
+      "bytes": 2032,
+      "sha256": "e02801422dce73d3ed9037bac6b63a02299c9c271b8e26877fc79daba3324c8e",
+      "complete": true,
+      "truncated": false,
+      "decoding": "UTF-8"
+    }
+  ],
+  "interpretation": "A失败、诊断完成和Linux清理分别读回；本批未修复问题，也未证明SIQ或原生Windows验收通过。"
+}

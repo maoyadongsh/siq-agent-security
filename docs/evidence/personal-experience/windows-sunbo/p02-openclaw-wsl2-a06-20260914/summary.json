@@ -1,0 +1,200 @@
+{
+  "schema": "public-openclaw-wsl-runtime-diagnostic/v2",
+  "batch": "A06",
+  "source_context": {
+    "revision": "fd2cdba7c9d5111bc5fd475651fb6453d5b45d15",
+    "dirty": false,
+    "upstream_main_context": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "meaning": "Frozen review context: documentation-only A05 successor; not the installed OpenClaw identity."
+  },
+  "scope": {
+    "platform": "WSL2/Linux",
+    "native_windows_acceptance": false,
+    "siq_invoked": false,
+    "B": "not_run",
+    "gateway_started": false,
+    "real_model_requests": 0,
+    "product_runtime_changed": false,
+    "original_18_case_matrix_changed": false,
+    "original_denominator_changed": false,
+    "prior_attempts_preserved": true
+  },
+  "outcome": {
+    "A_status": "fail",
+    "A_pass": false,
+    "diagnostic_completed": true,
+    "parent_diagnostic_completed": true,
+    "terminal_stack_marker_observed": true,
+    "fix_claimed": false,
+    "native_fs_api": null,
+    "native_permission": null,
+    "native_resource": null
+  },
+  "observed": {
+    "provider_requests": 1,
+    "request_tool_names": [
+      [
+        "apply_patch",
+        "read",
+        "write"
+      ]
+    ],
+    "provider_required_tool": "write",
+    "provider_allowed_tool_superset": [
+      "read",
+      "write"
+    ],
+    "read_optional": true,
+    "role_tool_messages": 0,
+    "successful_provider_response_files": 0,
+    "actual_failed_native_tool_call_observed": false,
+    "tool_summary": null,
+    "successful_tool_names": null,
+    "tool_error_code": null,
+    "native_tool_exchange_observed": false,
+    "native_tool_exchange_field_meaning": "Frozen success-consumption predicate; false does not rule out an observed failed tool reply.",
+    "target_before_exists": false,
+    "target_at_requests_exists": [
+      false
+    ],
+    "target_after_exists": false,
+    "node_exit_code": 1,
+    "namespace_child_exit_code": 1,
+    "wsl_transport_exit_code": 1,
+    "windows_driver_exit_code": 1,
+    "node_elapsed_seconds": 6.123192210001434,
+    "namespace_elapsed_seconds": 7.188205049998942,
+    "windows_elapsed_ms": 8251,
+    "local_http_400": {
+      "raw_node_field_observed": false,
+      "evidence_basis": "frozen Handler.send_error(400) branch; not a raw Node status field"
+    },
+    "local_fixture_error_origin": true,
+    "cloud_or_cdn_failure_proven": false
+  },
+  "fixture": {
+    "precreated_imports": {
+      "before": {
+        "mode": "0o700",
+        "bytes": 4096,
+        "symlink": false
+      },
+      "before_child_entries": 0,
+      "after": {
+        "mode": "0o700",
+        "bytes": 4096,
+        "symlink": false
+      },
+      "after_child_entries": 0,
+      "snapshot_type_field_present": false,
+      "meaning": "Exclusive empty-directory creation and retained metadata; snapshots do not record final directory/regular type."
+    },
+    "database_relocated_to_imports": false,
+    "apply_patch_explicitly_disabled": false,
+    "provider_predicate_unchanged": true
+  },
+  "cleanup": {
+    "confirmed_by_guest_report": true,
+    "node_reaped": true,
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true,
+    "namespace_waited_and_reaped": true,
+    "namespace_timed_out": false,
+    "namespace_killed": false,
+    "node_timed_out": false,
+    "node_killed": false,
+    "windows_transport_complete": true,
+    "windows_stdin_complete": true,
+    "windows_waited_and_reaped": true,
+    "windows_disposed": true,
+    "windows_timed_out": false,
+    "windows_kill_requested": false
+  },
+  "integrity": {
+    "frozen_file_count": 15,
+    "frozen_mismatch_count": 0,
+    "installed_source_pin_count": 15,
+    "source_unchanged": true,
+    "control_unchanged": true,
+    "namespace_sentinel_unchanged": true,
+    "parent_namespaces_unchanged": true,
+    "parent_tmp_metadata_unchanged": true,
+    "unshare_unchanged": true,
+    "windows_root_sddl_unchanged": true
+  },
+  "raw_streams": [
+    {
+      "role": "inventory/stdout",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-16le",
+      "driver_decode_error": false
+    },
+    {
+      "role": "inventory/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "wsl-transport/stdout",
+      "bytes": 276549,
+      "sha256": "f9d51e498e49eceb799f0f0b12e672797b2087e7a6f846eb3da254ff0c746521",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "wsl-transport/stderr",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8-with-replacement",
+      "driver_decode_error": true
+    },
+    {
+      "role": "namespace/stdout",
+      "bytes": 76697,
+      "sha256": "e5761f58e1f1d78216adde8b468e9ae7691e952516e1dde9a6432da671b1d370",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "namespace/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "node/stdout",
+      "bytes": 266,
+      "sha256": "33721ae9033cbbcf8cec4e7ad80ddc6496d50518a5bd26258d616ba435f134f3",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "node/stderr",
+      "bytes": 1550,
+      "sha256": "e274557413861993c4158df12edcf1a8700cc70743087a0985ebaf945817665f",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    }
+  ]
+}
