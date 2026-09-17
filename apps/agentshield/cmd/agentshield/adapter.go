@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"siq-agent-security/apps/agentshield/internal/hermeshome"
+	"runtime"
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
+	"siq-agent-security/apps/agentshield/internal/hermeshome"
 	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/state"
 )
@@ -100,13 +101,30 @@ func cmdAdapter(args []string) error {
 	if len(rest) == 0 || rest[0] == "auto" {
 		platforms = adapterinstall.Detect(home)
 		if action != "status" && len(platforms) == 0 {
-			return fmt.Errorf("adapter: no platform config dirs found under %s; pass openclaw|hermes|codebuddy|workbuddy|trae", home)
+			return fmt.Errorf("adapter: no platform config dirs found under %s; pass a currently supported platform", home)
 		}
 		if action == "status" && len(platforms) == 0 {
 			platforms = []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.WorkBuddy, adapterinstall.Trae}
 		}
 	} else {
 		platforms = []string{rest[0]}
+	}
+	newInstall := action == "install" || action == "preview" && (len(rest) < 2 || rest[1] != "uninstall")
+	if newInstall {
+		if len(rest) == 0 || rest[0] == "auto" {
+			eligible := platforms[:0]
+			for _, platform := range platforms {
+				if adapterinstall.NewIntegrationSupportedOnOS(platform, runtime.GOOS) {
+					eligible = append(eligible, platform)
+				}
+			}
+			platforms = eligible
+		} else if !adapterinstall.NewIntegrationSupportedOnOS(platforms[0], runtime.GOOS) {
+			return fmt.Errorf("adapter: new integration for %s is outside the current product scope; existing integration can be uninstalled", platforms[0])
+		}
+		if len(platforms) == 0 {
+			return fmt.Errorf("adapter: no supported platform config dirs found")
+		}
 	}
 
 	enc := json.NewEncoder(os.Stdout)

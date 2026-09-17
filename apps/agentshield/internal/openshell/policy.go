@@ -41,6 +41,8 @@ func (c *Client) ReadEffective(target string) (Snapshot, error) {
 	return Snapshot{
 		Target:          target,
 		Revision:        rev,
+		LoadEpoch:       parsePolicyLoadEpoch(out),
+		PolicyStatus:    parsePolicyStatus(out),
 		Policy:          clonePolicy(doc),
 		PolicyDigest:    digest,
 		StaticDigest:    staticDigest,
@@ -49,6 +51,55 @@ func (c *Client) ReadEffective(target string) (Snapshot, error) {
 		Process:         asMap(doc["process"]),
 		EnforcementMode: "unknown", // policy get --full has no mode field
 	}, nil
+}
+
+func parsePolicyStatus(out string) string {
+	for _, line := range strings.Split(out, "\n") {
+		if strings.TrimSpace(line) == "---" {
+			break
+		}
+		key, value, ok := strings.Cut(line, ":")
+		if ok && strings.TrimSpace(key) == "Status" {
+			return strings.TrimSpace(value)
+		}
+	}
+	return ""
+}
+
+// parsePolicyLoadEpoch extracts the target revision's Loaded timestamp from
+// policy get --full only while the reported revision is loaded/active. A stale
+// Loaded field alongside Pending/Failed must not preserve execution proof.
+// Missing or malformed metadata yields no execution proof; ordinary policy
+// readback remains available for diagnostics and rollback.
+func parsePolicyLoadEpoch(out string) string {
+	var status, loaded string
+	for _, line := range strings.Split(out, "\n") {
+		if strings.TrimSpace(line) == "---" {
+			break
+		}
+		key, value, ok := strings.Cut(line, ":")
+		if !ok {
+			continue
+		}
+		switch strings.TrimSpace(key) {
+		case "Status":
+			status = strings.TrimSpace(value)
+		case "Loaded":
+			parts := strings.Fields(value)
+			if len(parts) != 2 || parts[1] != "ms" {
+				return ""
+			}
+			millis, err := strconv.ParseUint(parts[0], 10, 64)
+			if err != nil || millis == 0 {
+				return ""
+			}
+			loaded = parts[0]
+		}
+	}
+	if status != "Loaded" && status != "Active" {
+		return ""
+	}
+	return loaded
 }
 
 func parsePolicyYAML(out string) (map[string]any, error) {
@@ -497,6 +548,9 @@ func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expected
 			return DeploymentReceipt{}, err
 		}
 	}
+	// The write may reach the gateway even if --wait or readback fails. Drop
+	// the old loaded fact before that side effect, not after observing success.
+	c.forgetLoadedPolicy(target)
 	var out string
 	err = withPolicyFile(merged, func(path string) error {
 		var e error
@@ -517,6 +571,7 @@ func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expected
 	if err != nil {
 		return DeploymentReceipt{}, err
 	}
+	c.rememberLoadedPolicy(target, readback.Revision, readback.PolicyDigest, readback.LoadEpoch)
 	receipt := DeploymentReceipt{
 		OperationID: opID, Target: target,
 		BaseRevision: current.Revision, BasePolicyDigest: current.PolicyDigest,
@@ -718,6 +773,7 @@ func (c *Client) RollbackAuthorized(target string, receipt DeploymentReceipt, au
 	if prewrite.Revision != op.AppliedRevision || prewrite.PolicyDigest != op.AppliedDigest {
 		return RollbackReceipt{}, fail("策略回滚写前检测到外部漂移（fail-closed）")
 	}
+	c.forgetLoadedPolicy(target)
 	var applied string
 	err = withPolicyFile(op.Base.Policy, func(path string) error {
 		var e error
@@ -738,6 +794,7 @@ func (c *Client) RollbackAuthorized(target string, receipt DeploymentReceipt, au
 	if err != nil {
 		return RollbackReceipt{}, err
 	}
+	c.rememberLoadedPolicy(target, readback.Revision, readback.PolicyDigest, readback.LoadEpoch)
 	c.consumeOperation(op.ID)
 	return RollbackReceipt{
 		RestoredRevision: rev, RestoredDigest: readback.PolicyDigest, Result: "restored",

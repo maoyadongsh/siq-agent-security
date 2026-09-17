@@ -62,11 +62,11 @@ func TestAdapterPlanRequiresSameAdminAndUnchangedConfiguration(t *testing.T) {
 
 func TestAdapterPlanModeChangeAndIdempotentReplay(t *testing.T) {
 	s, store := newServer(t, "block")
-	code, view := call(t, s, "POST", "/v1/adapter/preview", token, map[string]any{"platform": "codebuddy", "action": "install"})
+	code, view := call(t, s, "POST", "/v1/adapter/preview", token, map[string]any{"platform": "openclaw", "action": "install"})
 	if code != 200 {
 		t.Fatal(view)
 	}
-	body := map[string]any{"platform": "codebuddy", "plan_id": view["plan_id"], "plan_digest": view["plan_digest"]}
+	body := map[string]any{"platform": "openclaw", "plan_id": view["plan_id"], "plan_digest": view["plan_digest"]}
 	call(t, s, "PUT", "/v1/config", token, map[string]any{"enforcement_mode": "warn"})
 	if code, _ := call(t, s, "POST", "/v1/adapter/install", token, body); code != 409 {
 		t.Fatal("mode drift accepted")

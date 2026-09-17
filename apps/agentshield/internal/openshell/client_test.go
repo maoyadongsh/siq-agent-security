@@ -41,7 +41,7 @@ func fake(responses map[string]struct {
 func k(args ...string) string { return strings.Join(args, "\x00") }
 
 func policyOutput(revision, body string) string {
-	return "Version:      " + revision + "\nStatus:       Active\nActive:       " + revision + "\n---\n" + body
+	return "Version:      " + revision + "\nStatus:       Active\nActive:       " + revision + "\nLoaded:       " + revision + " ms\n---\n" + body
 }
 
 func policyBody(t *testing.T, output string) string {

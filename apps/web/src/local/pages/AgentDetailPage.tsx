@@ -326,7 +326,6 @@ export default function AgentDetailPage() {
                   >
                     <option value="hermes">Hermes</option>
                     <option value="openclaw">OpenClaw</option>
-                    <option value="codebuddy">CodeBuddy</option>
                   </select>
                 </div>
                 <div className="field field-flush">
