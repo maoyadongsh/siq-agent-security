@@ -1,0 +1,48 @@
+{
+  "source_sha": "de5de5f72d5a9a5f60323334f038abbae6c80ad1",
+  "binary_sha256": "08b43f749f716d042a4d2a3a0219e605a9ebeee05f5eda66c742de9064f67658",
+  "original_manifest_sha256": "5a7943164728826cbb8d97d34fcce08c1c84da8bdfb3b6263c7fa52fe16bd71f",
+  "cases": [
+    {
+      "case": "original",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: skillmanifest: signed client compatibility declaration missing or unsupported",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "signature_first",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: skillmanifest: signature mismatch",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "signature_last",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: skillmanifest: signature mismatch",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "signature_zero",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: skillmanifest: signature mismatch",
+      "state_tree_unchanged": true
+    },
+    {
+      "case": "signed_version_changed",
+      "exit": 1,
+      "stdout_empty": true,
+      "diagnostic": "siq-agent-security: skillmanifest: signature mismatch",
+      "state_tree_unchanged": true
+    }
+  ],
+  "source_binary_unchanged": true,
+  "manifest_source_unchanged": true,
+  "service_started": false,
+  "scope": "native Windows CLI preflight, existing v1 signed manifest; not v3 upgrade or runtime switch",
+  "first_attempt": "controller read UTF-8 manifest with Windows default encoding; original control changed and failed signature; not product failure",
+  "model_calls": 0
+}
