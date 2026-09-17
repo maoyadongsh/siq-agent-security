@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -77,5 +78,55 @@ func TestCheckParentsRejectsFileAndIntermediateSymlink(t *testing.T) {
 	}
 	if err := LeafDirectory(alias); err == nil {
 		t.Fatal("leaf symlink accepted")
+	}
+}
+
+func TestDarwinDirectoryAliasRequiresExactSystemTarget(t *testing.T) {
+	for _, c := range []struct {
+		name, link string
+		allowed    bool
+	}{
+		{"/var", "private/var", true}, {"/tmp", "/private/tmp", true}, {"/etc", "private/etc", true},
+		{"/var", "/private/tmp", false}, {"/tmp", "/untrusted/tmp", false},
+		{"/custom", "/private/var", false}, {"/bin", "usr/bin", false},
+		{"/home/var", "/private/var", false}, {"var", "private/var", false},
+	} {
+		if got := darwinDirectoryAlias(c.name, c.link); got != c.allowed {
+			t.Errorf("alias %q -> %q: got %v", c.name, c.link, got)
+		}
+	}
+}
+
+func TestNonDarwinRootSymlinkStillRejected(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("existing Linux root alias probe")
+	}
+	info, err := os.Lstat("/bin")
+	if err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Skip("no /bin symlink on this host")
+	}
+	if AcceptDirectory(info, "/bin") {
+		t.Fatal("non-Darwin symlink accepted")
+	}
+	if err := CheckParents("/bin/siq-nonexistent-state-probe"); err == nil {
+		t.Fatal("non-Darwin parent symlink accepted")
+	}
+}
+
+func TestDarwinKnownAliasesAreAncestorsOnly(t *testing.T) {
+	if runtime.GOOS != "darwin" {
+		t.Skip("real Darwin filesystem required")
+	}
+	for _, name := range []string{"/var", "/tmp", "/etc"} {
+		info, err := os.Lstat(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !AcceptDirectory(info, name) {
+			t.Fatalf("system alias rejected: %s", name)
+		}
+		if info.Mode()&os.ModeSymlink != 0 && LeafDirectory(name) == nil {
+			t.Fatalf("alias accepted as leaf: %s", name)
+		}
 	}
 }

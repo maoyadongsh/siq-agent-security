@@ -263,3 +263,71 @@ func TestOpenClawInstalledPluginLoadsNatively(t *testing.T) {
 		t.Fatal("native loader did not complete")
 	}
 }
+
+func TestOpenClawUninstallPreservesExplicitEmptySettings(t *testing.T) {
+	for _, original := range []string{
+		`{"plugins":{}}`, `{"plugins":{"allow":[]}}`,
+		`{"plugins":{"load":{}}}`, `{"plugins":{"load":{"paths":[]}}}`,
+		`{"plugins":{"entries":{}}}`,
+		`{"plugins":{"entries":{"siq-agent-security":{}}}}`,
+		`{"plugins":{"allow":[],"load":{"paths":[]},"entries":{}}}`,
+	} {
+		t.Run(original, func(t *testing.T) {
+			opts := testOpts(t, OpenClaw)
+			path := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+			if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(path, []byte(original), 0600); err != nil {
+				t.Fatal(err)
+			}
+			for i := 0; i < 2; i++ {
+				if _, err := Install(opts); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if _, err := Uninstall(opts); err != nil {
+				t.Fatal(err)
+			}
+			raw, err := os.ReadFile(path)
+			if err != nil || string(raw) != original {
+				t.Fatalf("original empty settings changed: got %s, err %v", raw, err)
+			}
+		})
+	}
+}
+
+func TestOpenClawUninstallKeepsUserSettingsAddedAfterInstall(t *testing.T) {
+	opts := testOpts(t, OpenClaw)
+	if _, err := Install(opts); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(opts.Home, ".openclaw", "openclaw.json")
+	doc, err := readJSONObject(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	plugins := doc["plugins"].(map[string]any)
+	allow, _ := plugins["allow"].([]any)
+	plugins["allow"] = append(allow, "user-plugin")
+	plugins["load"].(map[string]any)["custom"] = map[string]any{}
+	plugins["entries"].(map[string]any)["user-plugin"] = map[string]any{}
+	doc["gateway"] = map[string]any{"mode": "local"}
+	if err := os.WriteFile(path, encodePlanJSON(doc), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Uninstall(opts); err != nil {
+		t.Fatal(err)
+	}
+	got, err := readJSONObject(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := map[string]any{"plugins": map[string]any{
+		"allow": []any{"user-plugin"}, "load": map[string]any{"custom": map[string]any{}},
+		"entries": map[string]any{"user-plugin": map[string]any{}},
+	}, "gateway": map[string]any{"mode": "local"}}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("user additions changed: got %#v", got)
+	}
+}

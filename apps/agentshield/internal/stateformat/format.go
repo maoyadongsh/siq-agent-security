@@ -9,7 +9,9 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
+	"runtime"
 	"time"
 	"unicode/utf8"
 )
@@ -145,19 +147,33 @@ func CheckParents(dir string) error {
 	}
 }
 
-// AcceptDirectory reports whether path is a directory. Darwin volume aliases
-// such as /var -> /private/var sit directly under the volume root and must not
-// make an otherwise ordinary temp or /tmp path look corrupt. User-created
-// intermediate symlinks stay rejected.
+// AcceptDirectory accepts real directories and the three fixed Darwin system
+// aliases. Root-level symlinks on other platforms are not a compatibility case.
 func AcceptDirectory(info os.FileInfo, path string) bool {
 	if info.IsDir() {
 		return true
 	}
-	if info.Mode()&os.ModeSymlink == 0 || filepath.Dir(path) != filepath.Dir(filepath.Dir(path)) {
+	if runtime.GOOS != "darwin" || info.Mode()&os.ModeSymlink == 0 {
 		return false
 	}
-	resolved, err := os.Stat(path)
-	return err == nil && resolved.IsDir()
+	link, err := os.Readlink(path)
+	if err != nil || !darwinDirectoryAlias(path, link) {
+		return false
+	}
+	target, err := os.Lstat(filepath.Join("/private", filepath.Base(path)))
+	return err == nil && target.IsDir() && target.Mode()&os.ModeSymlink == 0
+}
+
+func darwinDirectoryAlias(name, link string) bool {
+	switch name {
+	case "/var", "/tmp", "/etc":
+	default:
+		return false
+	}
+	if !path.IsAbs(link) {
+		link = path.Join(path.Dir(name), link)
+	}
+	return path.Clean(link) == path.Join("/private", path.Base(name))
 }
 
 // LeafDirectory requires path itself to be a real directory, not a symlink.

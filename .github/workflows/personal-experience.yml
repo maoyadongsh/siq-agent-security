@@ -10,6 +10,21 @@ permissions:
   contents: read
 
 jobs:
+  macos-path-config-regressions:
+    name: macOS path and config regressions (component only)
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: "1.22"
+          cache: false
+      - name: Real Darwin aliases and isolated adapter configuration round trips
+        working-directory: apps/agentshield
+        # No launchctl, live agent, credentials or model calls. This is not
+        # OpenClaw/Hermes/WorkBuddy native application acceptance.
+        run: go test ./internal/stateformat ./internal/adapterinstall -run 'Test(Darwin|NonDarwin|CheckParents|OpenClaw)' -count=1 -v
   windows-build-inputs:
     name: Windows build inputs (not native Agent acceptance)
     runs-on: windows-latest

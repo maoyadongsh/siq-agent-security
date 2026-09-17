@@ -115,7 +115,7 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 
 本增量只实现受支持格式的入口防护，不实现跨格式迁移。`state-format.json` 的合同为 `state-format/v1`，字段见 `packages/contracts/local-state-format.v1.schema.json`：程序版本只作说明，格式版本才决定兼容性；目前仅支持 1。小于 1 的显式版本、未来版本、未知 schema/字段、重复键、多个 JSON 值、无效 UTF-8、缺失必需字段、超预算、非普通文件或符号链接一律拒绝，不自动改标记、迁移或修复。不输出文件原文或私有路径。
 
-检查顺序：CLI 分派前只读预检（version/help 等不访问状态的命令除外；serve 使用解析后的 --state-dir，CodeBuddy hook 走结构化 deny，不能仅退出 1）；`state.Open` 必须在 MkdirAll 前检查；`AcquireWriter` 必须在创建/隔离锁前检查并在取得锁后复验，维护锁使用显式 `AcquireScopedWriter(stateDir, scope)`，service-control/adapter-write/client-releases/client-snapshots 先检查传入的真实根状态，不能按目录 basename 猜父状态；`Initialize` 在任何配置/身份写入前复验。状态根本身必须是真实目录，不得为符号链接。已存在祖先必须是目录；位于卷根下、解析为目标目录的符号链接视为 OS 卷别名（macOS `/var`→`/private/var`、`/tmp`→`/private/tmp`，以及默认 `TMPDIR` `/var/folders` 所经过的 `/var`），允许作为路径分量，否则 Go 测试目录和 Darwin 临时状态会被误判 corrupt。用户在中间路径创建的符号链接仍拒绝。inventory 发现、adapter 配置镜像读取、Hermes profile 根（含 HOME 之外的 Override）走同一祖先规则，被检查的叶路径仍拒绝符号链接。读取标记在打开前/后校验普通文件身份并限读 4097 字节。DirectoryID / v2 `state_directory_id` 继续绑定 `EvalSymlinks` 后的规范路径。它不是抵抗任意同 UID 并发篡改的 OS 隔离保证。
+检查顺序：CLI 分派前只读预检（version/help 等不访问状态的命令除外；serve 使用解析后的 --state-dir，CodeBuddy hook 走结构化 deny，不能仅退出 1）；`state.Open` 必须在 MkdirAll 前检查；`AcquireWriter` 必须在创建/隔离锁前检查并在取得锁后复验，维护锁使用显式 `AcquireScopedWriter(stateDir, scope)`，service-control/adapter-write/client-releases/client-snapshots 先检查传入的真实根状态，不能按目录 basename 猜父状态；`Initialize` 在任何配置/身份写入前复验。状态根本身必须是真实目录，不得为符号链接。已存在祖先必须是目录；仅 Darwin 的 `/var`→`/private/var`、`/tmp`→`/private/tmp`、`/etc`→`/private/etc` 三个固定系统别名允许作为祖先路径分量；Readlink 目标必须精确解析到对应位置，目标本身必须是真实目录。Linux/Windows 与未知根级别名维持符号链接拒绝，否则 Go 测试目录和 Darwin 临时状态会被误判 corrupt。用户在中间路径创建的符号链接仍拒绝。inventory 发现、adapter 配置镜像读取、Hermes profile 根（含 HOME 之外的 Override）走同一祖先规则，被检查的叶路径仍拒绝符号链接。读取标记在打开前/后校验普通文件身份并限读 4097 字节。DirectoryID / v2 `state_directory_id` 继续绑定 `EvalSymlinks` 后的规范路径。它不是抵抗任意同 UID 并发篡改的 OS 隔离保证。
 
 缺失标记不是自动认定格式 0：不存在/空目录（锁文件除外）允许初始化；已具有本版本 `state.Open` 建立的完整核心目录结构，或具有可解码合法本地 config.json、有效本地 signing.seed 的历史目录；根条目只含既有独立子存储 client-releases/client-snapshots/skill-imports/adapter-write/service-control 的真实目录也保留兼容，以 `legacy_unversioned` 兼容原有格式族，但不因打开/serve 就重打标记。未知非空目录拒绝。目录识别不意味着其中 Grant/回执可信，各模块仍逐对象验签、校验。HTTP 分派、Server 构造、原文清理及核心 Store 写入也复验格式；这不等于所有独立子存储已有统一事务或任意旧二进制都能拒写。明确 `init` 在既有初始化检查通过后，以不可变排他发布增加格式 1 标记；不覆盖已有标记，不改写历史授权、回执或已有配置。
 
@@ -2027,3 +2027,5 @@ Skill 执行上下文（SEC，`skill-execution-context/v1`）是归属从 unknow
 
 ### Secure Agent 审批消费者兼容修复（2026-09-16）
 Secure Agent 复用现有 hold-status/v1 与 hold-execution-reserve/v1 合同：复查携带已提交的 Intent task_id 和原有 runtime_task_id；approved 仅表示可申请预留。消费本地 pending 后，用唯一新 retry_tool_call_id 请求持久化预留，完整匹配回读 action/原 decision/reservation，成功才执行；观察与效果记录使用预留 receipt 和 retry ID。拒绝、冲突、未知或丢失响应都不得执行或盲目重试；不放宽后端身份、Authority 与参数绑定。原 hold receipt 保留用于 UI 审批追溯。
+
+2026-09-17 Mac 阶段合并复核：OpenClaw 外科卸载仅移除本安装添加的注册与空容器；原始快照已有的空 allow、load、paths、entries 及本插件空 entry 必须保留，不能把缺省与显式空值合并。用户其他插件/设置保持不变。阶段合并不提升 P19 实机矩阵，修复候选仍需平台复测。

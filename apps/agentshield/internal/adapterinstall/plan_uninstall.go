@@ -300,7 +300,7 @@ func restoreOpenClawRegistration(doc, original map[string]any, root string) erro
 			} else {
 				delete(entry, "enabled")
 			}
-			if len(entry) == 0 {
+			if _, existed := oldEntries[product.PluginDir()]; !existed && len(entry) == 0 {
 				delete(entries, product.PluginDir())
 			}
 		} else if _, exists := entries[product.PluginDir()]; exists {
@@ -312,27 +312,38 @@ func restoreOpenClawRegistration(doc, original map[string]any, root string) erro
 	return nil
 }
 
+// Only prune containers absent from the original configuration. An explicit
+// empty value belongs to the user and is not interchangeable with a missing key.
 func pruneEmptyOpenClawPlugins(doc, original map[string]any) {
 	plugins, ok := doc["plugins"].(map[string]any)
 	if !ok || plugins == nil {
 		return
 	}
+	old, _ := original["plugins"].(map[string]any)
 	if load, ok := plugins["load"].(map[string]any); ok {
-		if paths, ok := load["paths"].([]any); ok && len(paths) == 0 {
-			delete(load, "paths")
+		oldLoad, _ := old["load"].(map[string]any)
+		if _, had := oldLoad["paths"]; !had {
+			if paths, ok := load["paths"].([]any); ok && len(paths) == 0 {
+				delete(load, "paths")
+			}
 		}
-		if len(load) == 0 {
+		if _, had := old["load"]; !had && len(load) == 0 {
 			delete(plugins, "load")
 		}
 	}
-	if allow, ok := plugins["allow"].([]any); ok && len(allow) == 0 {
-		delete(plugins, "allow")
+	if _, had := old["allow"]; !had {
+		if allow, ok := plugins["allow"].([]any); ok && len(allow) == 0 {
+			delete(plugins, "allow")
+		}
 	}
-	if entries, ok := plugins["entries"].(map[string]any); ok && len(entries) == 0 {
-		delete(plugins, "entries")
+	if _, had := old["entries"]; !had {
+		if entries, ok := plugins["entries"].(map[string]any); ok && len(entries) == 0 {
+			delete(plugins, "entries")
+		}
 	}
 	if _, had := original["plugins"]; !had && len(plugins) == 0 {
 		delete(doc, "plugins")
 	}
 }
+
 func asList(raw any) []any { list, _ := raw.([]any); return list }
