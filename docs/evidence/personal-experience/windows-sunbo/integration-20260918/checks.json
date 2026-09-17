@@ -1,0 +1,27 @@
+{
+  "source_sha": "d9f7a309e8cd29e0c2478bb2bdcbdea14ddc2ed6",
+  "final_candidate": false,
+  "checks": [
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 2.357
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 39.714
+    },
+    {
+      "name": "affected-packages",
+      "exit": 1,
+      "seconds": 363.441
+    },
+    {
+      "name": "native-build",
+      "exit": 0,
+      "seconds": 11.83
+    }
+  ],
+  "binary_sha256": "3f53b30045c08cdd787191ab3e575e8f3da3897b84eb0bda58cab97d248dbe27"
+}

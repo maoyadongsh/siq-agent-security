@@ -1,0 +1,30 @@
+{
+  "source_sha": "d9f7a309e8cd29e0c2478bb2bdcbdea14ddc2ed6",
+  "checks": [
+    {
+      "name": "windows-cli",
+      "exit": 0,
+      "seconds": 201.327
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0,
+      "seconds": 29.66
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0,
+      "seconds": 27.492
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0,
+      "seconds": 20.154
+    },
+    {
+      "name": "schema",
+      "exit": 0,
+      "seconds": 19.414
+    }
+  ]
+}
