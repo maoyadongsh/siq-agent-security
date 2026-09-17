@@ -380,10 +380,47 @@ func TestExecTaskRequiresBoundBackendAndLiveAuthorization(t *testing.T) {
 	bound := taskClient(0, taskFixtureOutput, spy)
 	req := taskRequest(t, bound)
 
-	// Unbound backend: no env pair, so no fingerprint. Never a native fallback.
-	unbound := New(Options{LookupEnv: func(string) (string, bool) { return "", false }, PollInterval: -1})
-	if _, err := unbound.ExecTask(req, allowAll); err == nil || err.Error() != errTaskBackendUnbound {
-		t.Fatalf("unbound backend err=%v", err)
+	// Cache fingerprints for invalid/unconfigured clients are not endpoint bindings.
+	for _, mode := range []string{"missing", "path", "half_pair", "invalid_endpoint", "script"} {
+		t.Run(mode, func(t *testing.T) {
+			opts := Options{PollInterval: -1, LookPath: missingPATH(),
+				LookupEnv: func(key string) (string, bool) {
+					if mode == "half_pair" && key == envCLIBin {
+						return "/fixture/openshell", true
+					}
+					if mode == "invalid_endpoint" {
+						if key == envCLIBin {
+							return "/fixture/openshell", true
+						}
+						if key == envEndpoint {
+							return "not-an-endpoint", true
+						}
+					}
+					return "", false
+				},
+				Runner: func([]string) (int, string, string) {
+					t.Fatal("unbound client performed backend I/O")
+					return 1, "", ""
+				},
+			}
+			if mode == "path" {
+				opts.LookPath = func(string) (string, error) { return "/fixture/openshell", nil }
+			}
+			if mode == "script" {
+				opts.EnvScript = "/fixture/env.sh"
+			}
+			unbound := New(opts)
+			out, err := unbound.ExecTask(req, allowAll)
+			if err == nil || err.Error() != errTaskBackendUnbound || out.Spawned || out.TaskExecuted != TaskExecutedNo {
+				t.Fatalf("unbound backend outcome=%+v err=%v", out, err)
+			}
+			if err := unbound.VerifyTaskPolicyLoaded(req.Target, req.PolicyRevision, req.PolicyDigest, req.NetworkTargets); err == nil || err.Error() != errTaskBackendUnbound {
+				t.Fatalf("unbound policy check err=%v", err)
+			}
+			if _, err := unbound.CurrentTaskSandboxID(req.Target, req.PolicyRevision); err == nil || err.Error() != errTaskBackendUnbound {
+				t.Fatalf("unbound instance check err=%v", err)
+			}
+		})
 	}
 
 	// No authorization closure at all is a programming error, not a pass.

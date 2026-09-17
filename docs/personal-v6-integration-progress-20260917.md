@@ -27,3 +27,9 @@
 归因关系补强已由 `v6-f06-r07-attribution-20260917` 的 27/27 + 嵌套 31/31 覆盖，当前不再列为待办。原旅程 phase-c locator 超时根因仍未知；补强批次的 API View 字段误用是另一失败事件，不作为原超时的根因。补强批次 attempt1 的 failure.json 曾误删，不能称失败原始材料全部完整留存；attempt2 已归档。
 
 失败报告生成器已移除原始异常文本（截断不构成脱敏），改为错误类型、失败检查 ID 与固定等待标记。该脚本修复改变 harness 摘要，历史实测证据保留其原摘要；本次离线回归不冒充新一次真实旅程。产品候选未重建，旧候选性能证据仍有效于原候选；未来产品改动需为新候选补测，而非删除或作废旧证据。
+
+## 2026-09-18 PR #75 CI 修复
+
+远端两项 CI 均发现 `TestExecTaskRequiresBoundBackendAndLiveAuthorization` 在未安装 OpenShell 的环境返回 policy_not_loaded 而非 backend_unbound。根因是错误/未配置状态也有缓存指纹；任务路径现要求 ResolveInvocation 成功且为显式 CLI/endpoint 对。五种无绑定情形在任何后端 I/O 前拒绝，补充执行、策略加载与实例读回负向回归。
+
+此项改变产品 Go 源，历史 `0b16e5e0…` / `ba8d266e…` 仍仅代表之前候选，不能作为本次修复后的源绑定或完整实机验收。本次不伪造新冻结候选，后续新候选需补相应实机与性能验证。

@@ -467,12 +467,19 @@ func refusedTaskOutcome(reason string) TaskExecOutcome {
 	}
 }
 
+// taskBackendBound separates cache identity from an executable endpoint binding.
+// Invalid/unconfigured invocations intentionally have nonempty cache fingerprints.
+func (c *Client) taskBackendBound() bool {
+	inv, err := c.ResolveInvocation()
+	return err == nil && inv.Source == SourceEnvPair
+}
+
 // VerifyTaskPolicyLoaded checks the execution prerequisite before the server
 // consumes a one-use approval. This is only a preflight: ExecTask checks again
 // under the target lock immediately before spawning, because policy or backend
 // state can change between the two calls.
 func (c *Client) VerifyTaskPolicyLoaded(target, revision, digest string, networkTargets []string) error {
-	if c.InvocationFingerprint() == "" {
+	if !c.taskBackendBound() {
 		return fail(errTaskBackendUnbound)
 	}
 	lock := c.targetPolicyLock(target)
@@ -528,7 +535,7 @@ func (c *Client) ExecTask(req TaskExecRequest, authorize func() error) (TaskExec
 	if err := validateTaskExecRequest(req); err != nil {
 		return refusedTaskOutcome(errTaskInvalidShape), fail(errTaskInvalidShape)
 	}
-	if c.InvocationFingerprint() == "" {
+	if !c.taskBackendBound() {
 		return refusedTaskOutcome(errTaskBackendUnbound), fail(errTaskBackendUnbound)
 	}
 	if authorize == nil {

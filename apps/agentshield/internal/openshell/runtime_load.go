@@ -58,7 +58,7 @@ func (c *Client) sandboxLoadedInstance(target, revision string) (string, error) 
 // until the caller binds it to a signed decision and checks it again before
 // spawn. A name alone is never an instance identity.
 func (c *Client) CurrentTaskSandboxID(target, revision string) (string, error) {
-	if c.InvocationFingerprint() == "" {
+	if !c.taskBackendBound() {
 		return "", fail(errTaskBackendUnbound)
 	}
 	return c.sandboxLoadedInstance(target, revision)
