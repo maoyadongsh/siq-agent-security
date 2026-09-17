@@ -50,15 +50,27 @@ func TestWorkBuddyCustomConfigLifecycle(t *testing.T) {
 	if strings.Count(string(raw), "hook workbuddy") != 2 {
 		t.Fatalf("expected one command per event, got %s", raw)
 	}
-	if !strings.Contains(string(raw), "--state-dir") || !strings.Contains(string(raw), opts.StateDir) {
-		t.Fatal("workbuddy hook must pin --state-dir")
-	}
 	if strings.Contains(string(raw), "hook codebuddy") {
 		t.Fatal("workbuddy install wrote a codebuddy hook")
 	}
 	var doc map[string]any
 	if err := json.Unmarshal(raw, &doc); err != nil {
 		t.Fatal(err)
+	}
+	for _, event := range []string{"PreToolUse", "PostToolUse"} {
+		groups := doc["hooks"].(map[string]any)[event].([]any)
+		if len(groups) != 1 {
+			t.Fatalf("%s: expected exactly one hook group", event)
+		}
+		commands := groups[0].(map[string]any)["hooks"].([]any)
+		if len(commands) != 1 {
+			t.Fatalf("%s: expected exactly one hook command", event)
+		}
+		command := commands[0].(map[string]any)["command"].(string)
+		// Inspect the decoded command: JSON escapes Windows path separators.
+		if !strings.Contains(command, " hook workbuddy --state-dir ") || !strings.HasSuffix(command, hookArg(opts.StateDir)) {
+			t.Fatalf("%s: workbuddy hook must pin the exact state directory", event)
+		}
 	}
 	if doc["enabledPlugins"].(map[string]any)["sheetagent@workbuddy-builtin"] != true || doc["sandbox"].(map[string]any)["on"] != true {
 		t.Fatal("unrelated desktop settings removed")
