@@ -1,0 +1,34 @@
+{
+  "schema_version": "personal-macos-isolated-adapter-restore/v1",
+  "recorded_at": "2026-09-15T16:08:41.835928+00:00",
+  "passed": true,
+  "binary_sha256": "4fe4be6830df67a6df653a98def8017f37cf1ba20768cb6d1d9f50762a443cf0",
+  "checks": [
+    "isolated_state_init",
+    "preview_does_not_mutate_isolated_host",
+    "openclaw_install_preserves_skills_and_user_file",
+    "hermes_install_preserves_settings_skills_and_user_file",
+    "uninstall_removed_product_plugin_dirs",
+    "uninstall_dropped_empty_openclaw_plugins_key",
+    "uninstall_preserved_user_keep_files_and_skills"
+  ],
+  "preview_schemas": [
+    "local-adapter-plan/v1",
+    "local-adapter-plan/v1"
+  ],
+  "kept_user_files": [
+    "openclaw/user-keep.txt",
+    "hermes/user-keep.yaml"
+  ],
+  "orig_snapshots_retained": [
+    true,
+    true
+  ],
+  "hermes_native_host_normalized_yaml": true,
+  "limitations": [
+    "isolated host HOME only; daily OpenClaw/Hermes/WorkBuddy configs were not write targets",
+    "CLI confirm install/uninstall, not browser confirmation",
+    "Hermes native enable/uninstall uses host CLI normalization; user model setting retained; exact original YAML bytes are in the orig snapshot",
+    "this step did not re-run host tool calls"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "receipt": {
+    "operation_id": "opo-cac8339f0c50fb50b12431423cca195533e0468846beb94c",
+    "target": "siq-relcand-20260916-154423",
+    "base_revision": "1",
+    "base_policy_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+    "backend_revision": "2",
+    "applied_policy_digest": "15a9162054fd1e405c4bb61ffec152ff32350047fdd4182f5074eccc6ce697a3",
+    "result": "applied",
+    "evidence": {
+      "full_policy_digest": "15a9162054fd1e405c4bb61ffec152ff32350047fdd4182f5074eccc6ce697a3",
+      "gateway_policy_hash": "236bea762725"
+    }
+  },
+  "report": {
+    "passed": true,
+    "level": "readback_verified",
+    "allow_checks": [
+      {
+        "endpoint": "127.0.0.1:8099",
+        "request": "config_readback",
+        "expected": "allow",
+        "actual": "allow",
+        "result": "allow",
+        "revision": "2"
+      }
+    ],
+    "deny_checks": null,
+    "failures": null
+  },
+  "effective_readback": {
+    "backend": "openshell",
+    "revision": "2",
+    "verified_at": "2026-09-16T07:47:51Z",
+    "evidence_id": "ev-9fa7b8197745dd20"
+  }
+}
+exit=0

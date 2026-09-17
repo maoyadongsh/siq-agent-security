@@ -1,0 +1,840 @@
+{
+  "schema": "openclaw-approval-integration-validation/v2",
+  "recorded_at": "2026-09-14T16:47:16.294530+00:00",
+  "passed": true,
+  "binary_sha256": "b6e7650f9ab35f6b259cbd64fe9be5a19347b3689ed3dab0be38874d4bda6708",
+  "runtime": {
+    "platform": "openclaw",
+    "os": "linux"
+  },
+  "checks": [
+    "stock_host_refuses_unsupported_hold",
+    "shipping_adapter_matches_embedded_source",
+    "approved_execution_has_one_reservation_and_observation",
+    "denial_missing_approval_and_offline_paths_fail_closed",
+    "revoked_authority_blocks_after_platform_approval",
+    "checkpoint_faults_and_parameter_changes_fail_closed",
+    "reservation_response_loss_stays_uncertain",
+    "all_receipt_chains_verified",
+    "installed_runtime_remains_unchanged"
+  ],
+  "installed_source_unchanged": true,
+  "shipping_adapter_used_without_patch": true,
+  "runner_sha256": "286c605b2150da6edde5e804ba24e4c4caa0c5ce90ec026921cfa683dab82111",
+  "patch": {
+    "package": "openclaw",
+    "version": "2026.5.12",
+    "target": "dist/pi-tools.before-tool-call-BmZM4hyt.js",
+    "checkpoint_protocol_version": 1,
+    "before_sha256": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+    "after_sha256": "6ff914993889c1933f8d450e3b5111f084bdbbc69b59d33fab82ef67fd764cdc",
+    "patch_sha256": "3739f75e28996dc3253b28ff4ff8f2d3288e937f329159be7c8b7cefee376a64",
+    "adapter_source": "adapters/runtime/openclaw-agentshield/index.ts",
+    "adapter_sha256": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5"
+  },
+  "validation": {
+    "stock_unsupported": {
+      "schema": "intent-v2-openclaw-approval-gate-validation/v2",
+      "recorded_at": "2026-09-14T16:46:22.865705+00:00",
+      "passed": true,
+      "observation_invariants_passed": true,
+      "configured_local_wait_ms": 1500,
+      "daemon_kill_restarts": 0,
+      "siq_commit": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+      "siq_dirty": true,
+      "siq_binary_sha256": "b6e7650f9ab35f6b259cbd64fe9be5a19347b3689ed3dab0be38874d4bda6708",
+      "cases": [
+        {
+          "id": "unsupported-host",
+          "executed": false,
+          "platform_decision": null,
+          "platform_requested": false,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": null,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        }
+      ],
+      "receipt_count": 1,
+      "receipt_chain_verified": true,
+      "openclaw_runtime": {
+        "outputs": [
+          {
+            "id": "unsupported-host",
+            "executed": false,
+            "platform_decision": null,
+            "platform_requested": false,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          }
+        ],
+        "sources": {
+          "dist/server-DCqS_Ro7.js": "0a0b9a399c0370b1fcbd06b8c63f252a45cd06818c11f3fb66feac8cdbcaf484",
+          "dist/server.impl-D3CWr7f5.js": "68262664701ca2ec11004c7cbf056cad81bb77875babc77a936cd0177f56c249",
+          "dist/plugin-approval-DGSeVwU6.js": "3a1a769e0593653414a9089aecd3c421f867c5701f32e1a1c42a59ef6890849a",
+          "dist/approval-shared-lxPlCjce.js": "47bd0d6a7c499a7cfb0ef950fb8fb13330fe89eb29199d17837fd03e65724c91",
+          "dist/server-request-context-CslsVvbA.js": "0f8eb35347dd49d4f9bca599254313a8a94b31a0e733bd6d0456317a0fdec906",
+          "dist/operator-approvals-client-DhuKX2Cs.js": "e309ce5c0458fe207c7e0bd277dda19f4165204f668c2ce94481b3731955686f",
+          "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+          "dist/pi-tools.before-tool-call-BmZM4hyt.js": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+          "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61"
+        },
+        "openclaw_version": "2026.5.12"
+      },
+      "node_version": "v22.22.1",
+      "sources": {
+        "scripts/validate-intent-v2-openclaw-approval-gate.py": "8224777da9eb5b45ea3b20ed24491c7e04bca323e7ef71abb723ec5d22cb724d",
+        "scripts/openclaw_reservation_evidence.py": "10b4101a4c828611186565292e76c14c0ce1ba4394601877b4645cf98dcdd2ff",
+        "scripts/openclaw-approval-gate-worker.mjs": "65258afedb98382e53150989f3fc989dd3a79a58e1f8c6cc7b4f245b45a20601",
+        "scripts/openclaw-fixture-guard.mjs": "d520368340e6672182e3a3ba72dc8ae09c7359fb367f7a859b0058647874671b",
+        "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+        "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+        "adapters/runtime/openclaw-agentshield/index.ts": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5",
+        "apps/agentshield/internal/receipt/hold_status.go": "e929e03b9e70bb4ea38fc7c1a84517a9177e5a0e721a272ab4cb5165b7447a04",
+        "apps/agentshield/internal/receipt/hold_execution.go": "71216502d2bb990818c8613a87d4edae11cd690c77778fa4dc5408ab67e0e8e5",
+        "apps/agentshield/internal/receipt/action_state.go": "47a900b59735cf6abaa2e7c84e1f7c9e2db92806f133e9635e12cccb126807e3",
+        "apps/agentshield/internal/receipt/engine.go": "c0bcb1c7ea0bb976b1d7f53a23e6262b8801c9e3e8056a73478f7cab992047dd",
+        "apps/agentshield/internal/server/hold_status.go": "555ea3671f39b3e8fd97f3eb97f2c9744b61e6e59c7c12007b2d916d907c67da",
+        "apps/agentshield/internal/server/server.go": "154d444b0f453d9928c4218de4468cd011b33f1761861d5f678428c736a24b34",
+        "apps/agentshield/internal/server/authz.go": "2d91d8ecf2affd7107edcd08ff5f80667ed2743b31775ec5ce1a08bcce12669c"
+      },
+      "limitations": [
+        "synthetic tool executor and operator; no model or human approval proof",
+        "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
+        "optional unbound exec; required bound opaque shell remains denied",
+        "reservation response loss is uncertain and requires explicit reconciliation",
+        "cancelled native wait is explicitly resolved as deny after execution settles, for fixture cleanup",
+        "test IO guard is not OS isolation; installed runtime and real settings unchanged"
+      ],
+      "runtime_kind": "stock",
+      "executed_adapter_sha256": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5"
+    },
+    "ordinary": {
+      "schema": "intent-v2-openclaw-approval-gate-validation/v2",
+      "recorded_at": "2026-09-14T16:46:41.534942+00:00",
+      "passed": true,
+      "observation_invariants_passed": true,
+      "configured_local_wait_ms": 1500,
+      "daemon_kill_restarts": 1,
+      "siq_commit": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+      "siq_dirty": true,
+      "siq_binary_sha256": "b6e7650f9ab35f6b259cbd64fe9be5a19347b3689ed3dab0be38874d4bda6708",
+      "cases": [
+        {
+          "id": "platform-deny",
+          "executed": false,
+          "platform_decision": "deny",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "both-approve",
+          "executed": true,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": false,
+          "local_approval": true,
+          "expected_execution": true,
+          "observation_count": 1,
+          "reservation_count": 1,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "local-missing",
+          "executed": false,
+          "platform_decision": null,
+          "platform_requested": false,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": null,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "local-reject",
+          "executed": false,
+          "platform_decision": null,
+          "platform_requested": false,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": false,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "platform-cancel",
+          "executed": false,
+          "platform_decision": "cancel",
+          "platform_requested": true,
+          "cancelled_request_cleanup": true,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "local-offline",
+          "executed": false,
+          "platform_decision": null,
+          "platform_requested": false,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": null,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        }
+      ],
+      "receipt_count": 13,
+      "receipt_chain_verified": true,
+      "openclaw_runtime": {
+        "outputs": [
+          {
+            "id": "platform-deny",
+            "executed": false,
+            "platform_decision": "deny",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "both-approve",
+            "executed": true,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": false
+          },
+          {
+            "id": "local-missing",
+            "executed": false,
+            "platform_decision": null,
+            "platform_requested": false,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "local-reject",
+            "executed": false,
+            "platform_decision": null,
+            "platform_requested": false,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "platform-cancel",
+            "executed": false,
+            "platform_decision": "cancel",
+            "platform_requested": true,
+            "cancelled_request_cleanup": true,
+            "blocked": true
+          },
+          {
+            "id": "local-offline",
+            "executed": false,
+            "platform_decision": null,
+            "platform_requested": false,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          }
+        ],
+        "sources": {
+          "dist/server-DCqS_Ro7.js": "0a0b9a399c0370b1fcbd06b8c63f252a45cd06818c11f3fb66feac8cdbcaf484",
+          "dist/server.impl-D3CWr7f5.js": "68262664701ca2ec11004c7cbf056cad81bb77875babc77a936cd0177f56c249",
+          "dist/plugin-approval-DGSeVwU6.js": "3a1a769e0593653414a9089aecd3c421f867c5701f32e1a1c42a59ef6890849a",
+          "dist/approval-shared-lxPlCjce.js": "47bd0d6a7c499a7cfb0ef950fb8fb13330fe89eb29199d17837fd03e65724c91",
+          "dist/server-request-context-CslsVvbA.js": "0f8eb35347dd49d4f9bca599254313a8a94b31a0e733bd6d0456317a0fdec906",
+          "dist/operator-approvals-client-DhuKX2Cs.js": "e309ce5c0458fe207c7e0bd277dda19f4165204f668c2ce94481b3731955686f",
+          "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+          "dist/pi-tools.before-tool-call-BmZM4hyt.js": "6ff914993889c1933f8d450e3b5111f084bdbbc69b59d33fab82ef67fd764cdc",
+          "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61"
+        },
+        "openclaw_version": "2026.5.12"
+      },
+      "node_version": "v22.22.1",
+      "sources": {
+        "scripts/validate-intent-v2-openclaw-approval-gate.py": "8224777da9eb5b45ea3b20ed24491c7e04bca323e7ef71abb723ec5d22cb724d",
+        "scripts/openclaw_reservation_evidence.py": "10b4101a4c828611186565292e76c14c0ce1ba4394601877b4645cf98dcdd2ff",
+        "scripts/openclaw-approval-gate-worker.mjs": "65258afedb98382e53150989f3fc989dd3a79a58e1f8c6cc7b4f245b45a20601",
+        "scripts/openclaw-fixture-guard.mjs": "d520368340e6672182e3a3ba72dc8ae09c7359fb367f7a859b0058647874671b",
+        "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+        "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+        "adapters/runtime/openclaw-agentshield/index.ts": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5",
+        "apps/agentshield/internal/receipt/hold_status.go": "e929e03b9e70bb4ea38fc7c1a84517a9177e5a0e721a272ab4cb5165b7447a04",
+        "apps/agentshield/internal/receipt/hold_execution.go": "71216502d2bb990818c8613a87d4edae11cd690c77778fa4dc5408ab67e0e8e5",
+        "apps/agentshield/internal/receipt/action_state.go": "47a900b59735cf6abaa2e7c84e1f7c9e2db92806f133e9635e12cccb126807e3",
+        "apps/agentshield/internal/receipt/engine.go": "c0bcb1c7ea0bb976b1d7f53a23e6262b8801c9e3e8056a73478f7cab992047dd",
+        "apps/agentshield/internal/server/hold_status.go": "555ea3671f39b3e8fd97f3eb97f2c9744b61e6e59c7c12007b2d916d907c67da",
+        "apps/agentshield/internal/server/server.go": "154d444b0f453d9928c4218de4468cd011b33f1761861d5f678428c736a24b34",
+        "apps/agentshield/internal/server/authz.go": "2d91d8ecf2affd7107edcd08ff5f80667ed2743b31775ec5ce1a08bcce12669c"
+      },
+      "limitations": [
+        "synthetic tool executor and operator; no model or human approval proof",
+        "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
+        "optional unbound exec; required bound opaque shell remains denied",
+        "reservation response loss is uncertain and requires explicit reconciliation",
+        "cancelled native wait is explicitly resolved as deny after execution settles, for fixture cleanup",
+        "test IO guard is not OS isolation; installed runtime and real settings unchanged"
+      ],
+      "runtime_kind": "temporary checkpoint-v2 copy",
+      "executed_adapter_sha256": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5"
+    },
+    "revocation": {
+      "schema": "intent-v2-openclaw-approval-revocation-validation/v2",
+      "recorded_at": "2026-09-14T16:46:58.886610+00:00",
+      "passed": true,
+      "observation_identity_checks_passed": true,
+      "configured_local_wait_ms": 1500,
+      "daemon_kill_restarts": 0,
+      "siq_commit": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+      "siq_dirty": true,
+      "siq_binary_sha256": "b6e7650f9ab35f6b259cbd64fe9be5a19347b3689ed3dab0be38874d4bda6708",
+      "cases": [
+        {
+          "id": "both-approve",
+          "executed": true,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": false,
+          "local_approval": true,
+          "grant_revoked_before_platform_allow": false,
+          "status_before_platform_allow": "approved",
+          "expected_execution": true,
+          "observation_count": 1,
+          "reservation_count": 1,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "grant-revoked",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "grant_revoked_before_platform_allow": true,
+          "status_before_platform_allow": "denied",
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        }
+      ],
+      "receipt_count": 6,
+      "receipt_chain_verified": true,
+      "openclaw_runtime": {
+        "outputs": [
+          {
+            "id": "both-approve",
+            "executed": true,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": false
+          },
+          {
+            "id": "grant-revoked",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          }
+        ],
+        "sources": {
+          "dist/server-DCqS_Ro7.js": "0a0b9a399c0370b1fcbd06b8c63f252a45cd06818c11f3fb66feac8cdbcaf484",
+          "dist/server.impl-D3CWr7f5.js": "68262664701ca2ec11004c7cbf056cad81bb77875babc77a936cd0177f56c249",
+          "dist/plugin-approval-DGSeVwU6.js": "3a1a769e0593653414a9089aecd3c421f867c5701f32e1a1c42a59ef6890849a",
+          "dist/approval-shared-lxPlCjce.js": "47bd0d6a7c499a7cfb0ef950fb8fb13330fe89eb29199d17837fd03e65724c91",
+          "dist/server-request-context-CslsVvbA.js": "0f8eb35347dd49d4f9bca599254313a8a94b31a0e733bd6d0456317a0fdec906",
+          "dist/operator-approvals-client-DhuKX2Cs.js": "e309ce5c0458fe207c7e0bd277dda19f4165204f668c2ce94481b3731955686f",
+          "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+          "dist/pi-tools.before-tool-call-BmZM4hyt.js": "6ff914993889c1933f8d450e3b5111f084bdbbc69b59d33fab82ef67fd764cdc",
+          "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61"
+        },
+        "openclaw_version": "2026.5.12"
+      },
+      "node_version": "v22.22.1",
+      "sources": {
+        "scripts/validate-intent-v2-openclaw-approval-revocation.py": "33a7f5bfa36bcf61000dd829b1ec2566b75df6ab6edb56d1763cd24c6399e2f1",
+        "scripts/openclaw_reservation_evidence.py": "10b4101a4c828611186565292e76c14c0ce1ba4394601877b4645cf98dcdd2ff",
+        "scripts/openclaw-approval-gate-worker.mjs": "65258afedb98382e53150989f3fc989dd3a79a58e1f8c6cc7b4f245b45a20601",
+        "scripts/openclaw-fixture-guard.mjs": "d520368340e6672182e3a3ba72dc8ae09c7359fb367f7a859b0058647874671b",
+        "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+        "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+        "adapters/runtime/openclaw-agentshield/index.ts": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5",
+        "apps/agentshield/internal/receipt/hold_status.go": "e929e03b9e70bb4ea38fc7c1a84517a9177e5a0e721a272ab4cb5165b7447a04",
+        "apps/agentshield/internal/receipt/hold_execution.go": "71216502d2bb990818c8613a87d4edae11cd690c77778fa4dc5408ab67e0e8e5",
+        "apps/agentshield/internal/receipt/action_state.go": "47a900b59735cf6abaa2e7c84e1f7c9e2db92806f133e9635e12cccb126807e3",
+        "apps/agentshield/internal/receipt/engine.go": "c0bcb1c7ea0bb976b1d7f53a23e6262b8801c9e3e8056a73478f7cab992047dd",
+        "apps/agentshield/internal/server/hold_status.go": "555ea3671f39b3e8fd97f3eb97f2c9744b61e6e59c7c12007b2d916d907c67da",
+        "apps/agentshield/internal/server/server.go": "154d444b0f453d9928c4218de4468cd011b33f1761861d5f678428c736a24b34",
+        "apps/agentshield/internal/server/authz.go": "2d91d8ecf2affd7107edcd08ff5f80667ed2743b31775ec5ce1a08bcce12669c"
+      },
+      "limitations": [
+        "synthetic tool executor and operator; no model or human approval proof",
+        "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
+        "optional unbound exec; required bound opaque shell remains denied",
+        "execution uses a current-authority reservation and observation binds its signed receipt",
+        "reservation response loss remains uncertain and requires explicit reconciliation",
+        "test IO guard is not OS isolation; installed runtime and real settings unchanged"
+      ],
+      "runtime_kind": "temporary checkpoint-v2 copy",
+      "executed_adapter_sha256": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5"
+    },
+    "faults": {
+      "schema": "intent-v2-openclaw-approval-checkpoint-fault-validation/v2",
+      "recorded_at": "2026-09-14T16:47:16.264879+00:00",
+      "passed": true,
+      "observation_identity_checks_passed": true,
+      "configured_local_wait_ms": 1500,
+      "daemon_kill_restarts": 1,
+      "siq_commit": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+      "siq_dirty": true,
+      "siq_binary_sha256": "b6e7650f9ab35f6b259cbd64fe9be5a19347b3689ed3dab0be38874d4bda6708",
+      "cases": [
+        {
+          "id": "normal",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [
+              {
+                "status": 200,
+                "reason_code": "hold_approved"
+              }
+            ],
+            "transport_failed": false,
+            "elapsed_ms": 34.31231200000002
+          },
+          "fault": null,
+          "executed": true,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": false,
+          "local_approval": true,
+          "expected_execution": true,
+          "observation_count": 1,
+          "reservation_count": 1,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-throw",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 0.3587700000002769
+          },
+          "fault": "throw",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-reject",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 0.15211300000009942
+          },
+          "fault": "reject",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-undefined",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 0.1092329999996764
+          },
+          "fault": "undefined",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-truthy",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 0.20340899999973772
+          },
+          "fault": "truthy",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-timeout",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": true,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 5000.714939000001
+          },
+          "fault": "timeout",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-cancel",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": true,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": false,
+            "elapsed_ms": 25.797459000001254
+          },
+          "fault": "cancel",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-params-changed",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": true,
+            "http_checks": [
+              {
+                "status": 400,
+                "reason_code": "hold_identity_mismatch"
+              }
+            ],
+            "transport_failed": false,
+            "elapsed_ms": 1.3382459999993443
+          },
+          "fault": "params-changed",
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        },
+        {
+          "id": "checkpoint-offline",
+          "checkpoint": {
+            "calls": 1,
+            "signal_aborted": false,
+            "final_params_changed": false,
+            "http_checks": [],
+            "transport_failed": true,
+            "elapsed_ms": 1.2896060000002763
+          },
+          "fault": null,
+          "executed": false,
+          "platform_decision": "allow-once",
+          "platform_requested": true,
+          "cancelled_request_cleanup": false,
+          "blocked": true,
+          "local_approval": true,
+          "expected_execution": false,
+          "observation_count": 0,
+          "reservation_count": 0,
+          "execution_gate_passed": true
+        }
+      ],
+      "receipt_count": 20,
+      "receipt_chain_verified": true,
+      "openclaw_runtime": {
+        "outputs": [
+          {
+            "id": "normal",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [
+                {
+                  "status": 200,
+                  "reason_code": "hold_approved"
+                }
+              ],
+              "transport_failed": false,
+              "elapsed_ms": 34.31231200000002
+            },
+            "fault": null,
+            "executed": true,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": false
+          },
+          {
+            "id": "checkpoint-throw",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 0.3587700000002769
+            },
+            "fault": "throw",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-reject",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 0.15211300000009942
+            },
+            "fault": "reject",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-undefined",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 0.1092329999996764
+            },
+            "fault": "undefined",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-truthy",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 0.20340899999973772
+            },
+            "fault": "truthy",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-timeout",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": true,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 5000.714939000001
+            },
+            "fault": "timeout",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-cancel",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": true,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": false,
+              "elapsed_ms": 25.797459000001254
+            },
+            "fault": "cancel",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-params-changed",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": true,
+              "http_checks": [
+                {
+                  "status": 400,
+                  "reason_code": "hold_identity_mismatch"
+                }
+              ],
+              "transport_failed": false,
+              "elapsed_ms": 1.3382459999993443
+            },
+            "fault": "params-changed",
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          },
+          {
+            "id": "checkpoint-offline",
+            "checkpoint": {
+              "calls": 1,
+              "signal_aborted": false,
+              "final_params_changed": false,
+              "http_checks": [],
+              "transport_failed": true,
+              "elapsed_ms": 1.2896060000002763
+            },
+            "fault": null,
+            "executed": false,
+            "platform_decision": "allow-once",
+            "platform_requested": true,
+            "cancelled_request_cleanup": false,
+            "blocked": true
+          }
+        ],
+        "sources": {
+          "dist/server-DCqS_Ro7.js": "0a0b9a399c0370b1fcbd06b8c63f252a45cd06818c11f3fb66feac8cdbcaf484",
+          "dist/hook-runner-global-aUo3QVZe.js": "9a2f457f6fbc5ad5da07d00c66e6c4db782753e30aadd5c984309838453e30a6",
+          "dist/server.impl-D3CWr7f5.js": "68262664701ca2ec11004c7cbf056cad81bb77875babc77a936cd0177f56c249",
+          "dist/plugin-approval-DGSeVwU6.js": "3a1a769e0593653414a9089aecd3c421f867c5701f32e1a1c42a59ef6890849a",
+          "dist/approval-shared-lxPlCjce.js": "47bd0d6a7c499a7cfb0ef950fb8fb13330fe89eb29199d17837fd03e65724c91",
+          "dist/server-request-context-CslsVvbA.js": "0f8eb35347dd49d4f9bca599254313a8a94b31a0e733bd6d0456317a0fdec906",
+          "dist/operator-approvals-client-DhuKX2Cs.js": "e309ce5c0458fe207c7e0bd277dda19f4165204f668c2ce94481b3731955686f",
+          "dist/plugins/loader.js": "f8b50eebc82dbf63120ccfefa40a018adb1f51610ce01547a9d96fbd3592b3ec",
+          "dist/pi-tools.before-tool-call-BmZM4hyt.js": "6ff914993889c1933f8d450e3b5111f084bdbbc69b59d33fab82ef67fd764cdc",
+          "dist/native-hook-relay-C47Deh81.js": "09aa5308bbb6415fc835f5ac9f330cf364907dec8103c5657db85cf7991c4a61"
+        },
+        "openclaw_version": "2026.5.12"
+      },
+      "node_version": "v22.22.1",
+      "sources": {
+        "scripts/validate-intent-v2-openclaw-checkpoint-faults.py": "c61437b5f465b913047dd880c50ae8b04f4db75295dd560e458cb23d81b0f8a7",
+        "scripts/openclaw_reservation_evidence.py": "10b4101a4c828611186565292e76c14c0ce1ba4394601877b4645cf98dcdd2ff",
+        "scripts/openclaw-approval-checkpoint-fault-worker.mjs": "4d632a84762c496fc44502c4bfb6dbe798e37ac87056215ff1fb133899be9621",
+        "scripts/openclaw-fixture-guard.mjs": "d520368340e6672182e3a3ba72dc8ae09c7359fb367f7a859b0058647874671b",
+        "scripts/validate-intent-v2-openclaw.py": "910b020775a21d287a288173371caae32588c456b2dd67749c4214ff86a0968e",
+        "scripts/validate-intent-v2-hermes.py": "71183252173f7ae807bcbdcacc27475594fb7ef4173538b6748a74e71768285f",
+        "adapters/runtime/openclaw-agentshield/index.ts": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5",
+        "apps/agentshield/internal/receipt/hold_status.go": "e929e03b9e70bb4ea38fc7c1a84517a9177e5a0e721a272ab4cb5165b7447a04",
+        "apps/agentshield/internal/receipt/hold_execution.go": "71216502d2bb990818c8613a87d4edae11cd690c77778fa4dc5408ab67e0e8e5",
+        "apps/agentshield/internal/receipt/action_state.go": "47a900b59735cf6abaa2e7c84e1f7c9e2db92806f133e9635e12cccb126807e3",
+        "apps/agentshield/internal/receipt/engine.go": "c0bcb1c7ea0bb976b1d7f53a23e6262b8801c9e3e8056a73478f7cab992047dd",
+        "apps/agentshield/internal/server/hold_status.go": "555ea3671f39b3e8fd97f3eb97f2c9744b61e6e59c7c12007b2d916d907c67da",
+        "apps/agentshield/internal/server/server.go": "154d444b0f453d9928c4218de4468cd011b33f1761861d5f678428c736a24b34",
+        "apps/agentshield/internal/server/authz.go": "2d91d8ecf2affd7107edcd08ff5f80667ed2743b31775ec5ce1a08bcce12669c"
+      },
+      "limitations": [
+        "synthetic tool executor and operator; no model or human approval proof",
+        "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
+        "optional unbound exec; required bound opaque shell remains denied",
+        "reservation response loss is uncertain and requires explicit reconciliation",
+        "fault injection wraps the real SIQ hook callback; params-change injection uses native hook result merging",
+        "test IO guard is not OS isolation; installed runtime and real settings unchanged"
+      ],
+      "runtime_kind": "temporary checkpoint-v2 copy",
+      "executed_adapter_sha256": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5"
+    }
+  },
+  "limitations": [
+    "stock runtime cannot complete holds with this adapter; this is an explicit compatibility boundary",
+    "context capability is trusted host metadata, not a cryptographic proof against malicious same-process plugins",
+    "checkpoint-v2 host remains an isolated local candidate, not an upstream API or installed upgrade",
+    "post-check races, real-world effects and human approval are not proven"
+  ]
+}

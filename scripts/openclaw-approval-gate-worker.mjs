@@ -15,8 +15,15 @@ function write(name, data) {
 }
 async function nativeFunction(prefix, name) {
   const dist = path.join(spec.openclaw_root, "dist");
-  const matches = fs.readdirSync(dist).filter((file) => file.startsWith(prefix) && file.endsWith(".js") &&
-    fs.readFileSync(path.join(dist, file), "utf8").includes(`function ${name}(`));
+  // OpenClaw 2026.9.x ships chunks as .mjs; older layouts used .js. Accept both.
+  // Chunk names drift between releases; try ordered candidate prefixes.
+  const prefixes = Array.isArray(prefix) ? prefix : [prefix];
+  let matches = [];
+  for (const candidate of prefixes) {
+    matches = fs.readdirSync(dist).filter((file) => file.startsWith(candidate) && (file.endsWith(".js") || file.endsWith(".mjs")) &&
+      fs.readFileSync(path.join(dist, file), "utf8").includes(`function ${name}(`));
+    if (matches.length > 0) break;
+  }
   assert.equal(matches.length, 1, `unsupported native export: ${name}`);
   const file = path.join(dist, matches[0]);
   const source = fs.readFileSync(file, "utf8");
@@ -36,15 +43,27 @@ try {
   // Fingerprint the actual gateway implementation and approval handlers, not
   // just the lazy exported entry. This is a selected-source record, not a
   // complete module-load trace.
-  for (const [prefix, symbol] of [["server.impl-", "startGatewayServer"],
-    ["plugin-approval-", "createPluginApprovalHandlers"],
-    ["approval-shared-", "handlePendingApprovalRequest"],
-    ["server-request-context-", "createGatewayRequestContext"]]) {
-    const files = fs.readdirSync(path.join(spec.openclaw_root, "dist"))
-      .filter((file) => file.startsWith(prefix) && file.endsWith(".js") &&
-        fs.readFileSync(path.join(spec.openclaw_root, "dist", file), "utf8").includes(`function ${symbol}(`));
-    assert.equal(files.length, 1, `unsupported runtime source: ${prefix}`);
-    const relative = `dist/${files[0]}`;
+  // Chunk names drift between OpenClaw releases (2026.5 shipped server.impl-*,
+  // 2026.9 renamed it to server-* and pi-tools-* to agent-tools-*). Fingerprint
+  // by symbol with ordered candidate prefixes instead of one fixed name.
+  const locate = (symbol, prefixes) => {
+    const dist = path.join(spec.openclaw_root, "dist");
+    for (const prefix of prefixes) {
+      const files = fs.readdirSync(dist).filter((file) => file.startsWith(prefix) &&
+        (file.endsWith(".js") || file.endsWith(".mjs")) &&
+        fs.readFileSync(path.join(dist, file), "utf8").includes(`function ${symbol}(`));
+      if (files.length === 1) return files[0];
+      if (files.length > 1) throw new assert.AssertionError({ message: `ambiguous runtime source: ${symbol} under ${prefix}` });
+    }
+    throw new assert.AssertionError({ message: `unsupported runtime source: ${symbol}` });
+  };
+  for (const [prefixes, symbol] of [
+    [["server.impl-", "server-"], "startGatewayServer"],
+    [["plugin-approval-"], "createPluginApprovalHandlers"],
+    [["approval-shared-"], "handlePendingApprovalRequest"],
+    [["server-request-context-"], "createGatewayRequestContext"],
+  ]) {
+    const relative = `dist/${locate(symbol, prefixes)}`;
     sources[relative] = createHash("sha256").update(fs.readFileSync(path.join(spec.openclaw_root, relative))).digest("hex");
   }
   gateway = await startGateway(spec.port, { bind: "loopback", controlUiEnabled: false });
@@ -76,8 +95,8 @@ try {
   });
   assert.ok(registry.plugins.some((plugin) => plugin.id === "siq-agent-security" && plugin.status === "loaded"), "SIQ native plugin not loaded");
   stage = "wrapper";
-  const wrap = await nativeFunction("pi-tools.before-tool-call-", "wrapToolWithBeforeToolCallHook");
-  const after = await nativeFunction("native-hook-relay-", "runAgentHarnessAfterToolCallHook");
+  const wrap = await nativeFunction(["pi-tools.before-tool-call-", "agent-tools.before-tool-call-"], "wrapToolWithBeforeToolCallHook");
+  const after = await nativeFunction(["native-hook-relay-", "hook-helpers-"], "runAgentHarnessAfterToolCallHook");
   const context = { config, cwd: spec.workspace, agentId: spec.agent_id,
     sessionKey: spec.session_id, sessionId: spec.session_id,
     runId: "native-approval-fixture", loopDetection: { enabled: false } };

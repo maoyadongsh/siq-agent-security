@@ -43,7 +43,7 @@ func TestTeardownLaunchAgentRecoveryAndRetention(t *testing.T) {
 				t.Fatal(err)
 			}
 			home := t.TempDir()
-			source := filepath.Join(st.Dir, record.Label+".plist")
+			source := mustResolve(t, filepath.Join(st.Dir, record.Label+".plist"))
 			if _, err := publishLaunchRegistration(home, source, record.Label); err != nil {
 				t.Fatal(err)
 			}
@@ -103,13 +103,11 @@ func TestTeardownLaunchAgentRecoveryAndRetention(t *testing.T) {
 						raw += "-\t0\t" + record.Label + "\n"
 					}
 					return raw, nil
-				case "list -x " + record.Label:
-					extra := "<key>LastExitStatus</key><integer>0</integer>"
+				case "print " + launchPrintTarget(501, record.Label):
 					if running {
-						extra += "<key>PID</key><integer>123</integer>"
+						return mustLaunchPrint(t, rendered, source, 123, "(never exited)", ""), nil
 					}
-					at := strings.LastIndex(rendered, "</dict>")
-					return rendered[:at] + extra + rendered[at:], nil
+					return mustLaunchPrint(t, rendered, source, 0, "0", ""), nil
 				case "stop " + record.Label:
 					mutations = append(mutations, "stop")
 					if mode == "stop failed" {

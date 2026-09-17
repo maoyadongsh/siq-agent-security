@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 )
 
@@ -84,8 +85,7 @@ func setUserLogin(control userSystemctl, path, name string, enable bool) error {
 		return errors.New("service-login: owned registration symlink required")
 	}
 	parent := filepath.Dir(fragment)
-	canonical, err := filepath.EvalSymlinks(parent)
-	if err != nil || canonical != parent {
+	if err := stateformat.LeafDirectory(parent); err != nil {
 		return errors.New("service-login: canonical registration directory required")
 	}
 	link := loginLinkPath(fragment)

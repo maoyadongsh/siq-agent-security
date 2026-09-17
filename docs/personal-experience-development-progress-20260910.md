@@ -45,7 +45,7 @@
 | UX-005 | doing / core implemented | 显式扫描、范围预览、手动目录、稳定安装身份和共享关系已实现；Hermes 自定义根与 profile 使用同一实例解析器。同名实例隔离通过；其他平台根、过滤优先级、全量覆盖与跨 OS 实机仍待验证 |
 | UX-006 | doing / Hermes runtime check implemented | 接入预览、确认、恢复、卸载、Hermes 实例选择/原生启用及产品运行自检已落盘；Linux 独立 profile 的 UI/API/真实 CLI 通过。其他平台自检、自动重启和跨 OS 恢复仍待完成 |
 | UX-007 | doing / managed instance integration verified | Hermes/OpenClaw 托管会话已在隔离 Linux arm64 验证。M128 已具备 Skill 元数据与门禁框架，但精确匹配仍为 unknown，可信执行来源绑定未完成；强制开关默认关闭。场景模板及其他窗口后继工作另行验收 |
-| UX-008 | doing / Web inbox and notification logic verified | 统一待办、单次处理、长期授权定位和浏览器通知的开启/合并/跨窗口去重已落盘；Linux Chromium 测试替身验证通过。OS 实际投递、后台启动器、任务内授权与原生恢复执行仍待完成 |
+| UX-008 | doing / Linux dual-host retry and notification transport verified | 统一待办、单次处理、长期授权定位和浏览器通知已落盘；签名执行预留、uncertain 人工结案、Linux/Hermes/OpenClaw 原生恢复及 GNOME session-bus 通知传输通过。Linux 视觉确认、Windows/macOS 通知、WorkBuddy 与跨系统仍待完成 |
 | UX-009 | doing / Hermes installation UI verified in isolated profile | 本地目录/ZIP、HTTPS ZIP、固定副本审阅、来源绑定批准、安装预览、明确安装确认与失败恢复已接通；隔离 Linux Chromium 和目标文件操作验证通过。安装后实例权限准备、原生清单识别与实例范围的 CLI 保护已验证；Git 来源、浏览器文件选择、平台安装入口拦截、可信 Skill 归属与其他平台仍待完成 |
 | UX-010 | doing / update UI verified in isolated Linux browser | 记录、内容检查、移除与恢复 UI/API 已验证；更新比较、独立副本准备、明确切换和中断恢复核心/API 已实现。差异/确认/恢复 UI 已在隔离 Linux 浏览器验证；新版检查、原生更新验收与通用旧状态写入拒绝仍待完成 |
 | UX-011 | doing / local trace flow implemented | 已实现任务活动列表/详情/检索、结果证据与历史 Skill 来源查看，以及回执摘要和完整脱敏追溯包的 API/UI 下载流程；真实平台样例、保留期联动和最终验收待完成 |
@@ -1128,3 +1128,33 @@ Hermes 已管理插件在允许后采集参数、观察后采集结果，嵌套 
 验证：`go vet ./... && go test ./...` 37 包全部 ok 0 失败；gofmt -l/git diff --check 无输出；Python 合同 197 passed + Ruff 通过（未触碰合同 schema/样本）；CGO_ENABLED=0 四目标构建（linux/amd64、linux/arm64、darwin/arm64、windows/amd64，SHA256 见证据文档）。仅本地落盘，未提交、未推送、未发布，未重启用户 daemon。
 
 证据：[skill-update-check-20260913.md](evidence/personal-experience/skill-update-check-20260913.md)。
+
+## R04-E：Linux/Hermes 原生 Skill 更新闭环（2026-09-14）
+
+基于 v4 任务书补充 `r04-hermes-native-update-smoke.py`，使用公开 Hermes CLI、真实插件钩子/文件工具、隔离 HOME/profile/state 和本机确定性模型，完成 V1 安装/激活/明确预载/读取，pending V2 比较后取消零写入，V2 批准、复比、签名计划、明确更新，旧权限与身份退出，新权限激活、换身份和 SEC，V2 明确预载/读取、内容摘要切换、回执链验证及安全移除，共 15 项通过。
+
+复核同时修复原 R01 runner 的加载假阳性：Skill 由 Hermes `--skills` 明确预载，断言只搜索宿主生成的 system/developer/tool 材料，不再搜索包含用户提示词的整份请求。收紧后 R01 Linux/Hermes 原生 SEC 仍为 11/11。V2 来源是明确导入的本地目录；公网调度取数、其他平台和 Windows/macOS 仍未由本批覆盖。代码与证据仅本地落盘，未提交、未推送、未发布。
+
+证据：[R04-E 报告](evidence/personal-experience/r04e-hermes-native-update-20260914/report.md)。
+
+## R02-F：Linux/OpenClaw 审批后签名预留（2026-09-15）
+
+OpenClaw shipping adapter 在平台批准后的受信 `beforeExecute` 检查点中新增 R02 一次性签名预留：最终参数重查通过后调用 `/v1/hold-executions/reserve`，只有严格匹配的 201 `reserved` 才允许工具；适配器派生独立执行尝试 ID，并让 after-hook observation 绑定 reservation receipt 与预留参数快照。预留拒绝、畸形响应、响应丢失、重复回调均拒绝执行；响应丢失保持 uncertain，不能盲目重试。
+
+真实 OpenClaw 2026.5.12 gateway、审批管理器和临时补丁宿主共 18/18 场景通过，覆盖双方批准、两侧拒绝、等待期撤销、最终参数变化、异常返回、超时、取消及 daemon 失联；三个正向各产生一条 reservation 和一条绑定 observation。原版宿主未修改并按设计拒绝 hold。工具与操作者为确定性夹具，未证明真人审批、桌面通知或真实外部副作用；宿主检查点尚未上游，UX-008/N06 保持 doing/partial。代码与证据仅本地落盘，未提交、未推送、未发布。
+
+证据：[R02-F 报告](evidence/personal-experience/r02f-openclaw-approved-retry-20260915/report.md)。
+
+## R02-G：Linux 桌面通知总线传输（2026-09-15）
+
+真实候选 daemon 启用 `desktop_notify` 后，一条签名 pending hold 经产品 dispatcher 调用系统 `notify-send`，GNOME session bus 实际接收 `org.freedesktop.Notifications.Notify`。标题和正文严格为产品名与待确认数量；总线记录中无工具调用、action、receipt 或参数标识。测试结束明确拒绝 hold 并验证回执链。远程 TTY 无法证明屏幕渲染或用户注意，因此只提升 Linux 通知传输，不关闭整体通知体验。代码与证据仅本地落盘，未提交、未推送、未发布。
+
+证据：[R02-G 报告](evidence/personal-experience/r02g-linux-desktop-notify-20260915/report.md)。
+
+## R07：同一当前候选的 N09 逐行证据矩阵（2026-09-15）
+
+将 R01 Linux/Hermes SEC、R02 Linux/Hermes 批准重试、R04-E Linux/Hermes 更新、R01 Linux/OpenClaw SEC、R02-F Linux/OpenClaw 批准重试和 R02-G Linux 通知六条腿统一重跑/归档到候选二进制 SHA256 `b6e7650f9ab35f6b259cbd64fe9be5a19347b3689ed3dab0be38874d4bda6708`。新增可重复生成器，读取每份通过报告的明确检查项、验证同一候选并生成 3 平台 × 3 系统 × J1–J11 矩阵；v2 校验器对报告摘要、平台归属和逐行 coverage 全部通过。
+
+矩阵没有 `complete_acceptance` 行。Linux/Hermes 的任务级归属、批准重试、本地来源更新和部分卸载，以及 Linux/OpenClaw 的会话级归属、配套检查点批准重试、失败关闭和通知总线传输只记为 `controlled_start`；OpenClaw 临时宿主检查点、合成执行器/操作者及远程通知的限制均保留。WorkBuddy 缺运行时，生产 Git 受当前非公网解析阻断，Windows/macOS 需协作者实机，完整产品安装/卸载、隐私与恢复行仍未完成。因此 R07/N09 维持 partial，T01–T06 不启动。所有成果仍仅本地落盘，未提交、未推送、未发布。
+
+证据：[N09 当前候选矩阵](evidence/personal-experience/n09-current-candidate-20260915/report.md)。

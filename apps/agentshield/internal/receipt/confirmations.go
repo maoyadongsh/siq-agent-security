@@ -9,25 +9,35 @@ import (
 	"unicode/utf8"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 )
 
 // Confirmation is a read-only projection, not a lease to execute a tool.
 // Excerpt is copied from the existing redacted receipt; raw parameters never enter it.
 type Confirmation struct {
-	ActionID          string  `json:"action_id"`
-	DecisionReceiptID string  `json:"decision_receipt_id"`
-	DecisionHash      string  `json:"decision_hash"`
-	ParamsDigest      string  `json:"params_digest"`
-	Platform          string  `json:"platform"`
-	AgentID           string  `json:"agent_id"`
-	SessionID         string  `json:"session_id"`
-	Tool              string  `json:"tool"`
-	ToolCallID        string  `json:"tool_call_id"`
-	GrantID           string  `json:"grant_id"`
-	IssuedAt          string  `json:"issued_at"`
-	ExpiresAt         *string `json:"expires_at"`
-	Status            string  `json:"status"`
-	ParamsExcerpt     *string `json:"params_excerpt"`
+	ActionID             string                      `json:"action_id"`
+	DecisionReceiptID    string                      `json:"decision_receipt_id"`
+	DecisionHash         string                      `json:"decision_hash"`
+	ReservationReceiptID string                      `json:"reservation_receipt_id"`
+	ReservationHash      string                      `json:"reservation_hash"`
+	ParamsDigest         string                      `json:"params_digest"`
+	Platform             string                      `json:"platform"`
+	AgentID              string                      `json:"agent_id"`
+	SessionID            string                      `json:"session_id"`
+	TaskID               string                      `json:"task_id"`
+	RuntimeTaskID        string                      `json:"runtime_task_id,omitempty"`
+	Tool                 string                      `json:"tool"`
+	ToolCallID           string                      `json:"tool_call_id"`
+	Operation            string                      `json:"operation"`
+	Effects              []string                    `json:"effects"`
+	ResourceRefs         []runtimeaction.ResourceRef `json:"resource_refs"`
+	ApprovalScope        string                      `json:"approval_scope"`
+	ResumeMode           string                      `json:"resume_mode"`
+	GrantID              string                      `json:"grant_id"`
+	IssuedAt             string                      `json:"issued_at"`
+	ExpiresAt            *string                     `json:"expires_at"`
+	Status               string                      `json:"status"`
+	ParamsExcerpt        *string                     `json:"params_excerpt"`
 }
 type ConfirmationList struct {
 	SchemaVersion string         `json:"schema_version"`
@@ -51,12 +61,12 @@ func (e *Engine) Confirmations() ConfirmationList {
 	now := e.opts.Now()
 	actions := make([]*actionRecord, 0)
 	for _, a := range e.actions {
-		if a.decision.Action == ActionHold && now.Before(a.expires) {
+		if a.decision.Action == ActionHold && (now.Before(a.expires) || unresolvedReservation(a)) {
 			actions = append(actions, a)
 		}
 	}
 	sort.Slice(actions, func(i, j int) bool { return actions[i].decision.Seq > actions[j].decision.Seq })
-	out := ConfirmationList{SchemaVersion: "local-confirmations/v1", Items: make([]Confirmation, 0, len(actions))}
+	out := ConfirmationList{SchemaVersion: "local-confirmations/v2", Items: make([]Confirmation, 0, len(actions))}
 	for _, a := range actions {
 		out.Items = append(out.Items, e.confirmationLocked(a, now))
 	}
@@ -66,7 +76,13 @@ func (e *Engine) confirmationLocked(a *actionRecord, now time.Time) Confirmation
 	d := a.decision
 	c := Confirmation{ActionID: d.ActionID, DecisionReceiptID: d.ReceiptID, DecisionHash: d.Hash, ParamsDigest: d.ParamsDigest,
 		Platform: d.Platform, AgentID: str(d.AgentID), SessionID: d.SessionID, Tool: d.Tool, ToolCallID: str(d.ToolCallID),
-		GrantID: str(d.MatchedGrantID), IssuedAt: d.IssuedAt, Status: "pending"}
+		TaskID: d.TaskID, RuntimeTaskID: d.RuntimeTaskID, Operation: d.Operation, Effects: append([]string{}, d.Effects...),
+		ResourceRefs: append([]runtimeaction.ResourceRef{}, d.ResourceRefs...), ApprovalScope: "once",
+		ResumeMode: confirmationResumeMode(d.Platform), GrantID: str(d.MatchedGrantID), IssuedAt: d.IssuedAt, Status: "pending"}
+	if a.reservation != nil {
+		c.ReservationReceiptID = a.reservation.ReceiptID
+		c.ReservationHash = a.reservation.Hash
+	}
 	if d.ParamsExcerpt != nil {
 		value := truncate(*d.ParamsExcerpt, excerptMax)
 		c.ParamsExcerpt = &value
@@ -80,10 +96,18 @@ func (e *Engine) confirmationLocked(a *actionRecord, now time.Time) Confirmation
 	value := deadline.Format(time.RFC3339Nano)
 	c.ExpiresAt = &value
 	switch {
+	case a.observation != nil:
+		c.Status = "completed"
+	case a.reconciliation != nil && a.reconciliation.Action == ActionAllow:
+		c.Status = "completed"
+	case a.reconciliation != nil:
+		c.Status = "cancelled"
+	case a.reservation != nil:
+		// A management projection cannot know whether the reservation response
+		// reached the host or whether the side effect started.
+		c.Status = "uncertain"
 	case !now.Before(deadline) || !now.Before(a.expires):
 		c.Status = "expired"
-	case a.observation != nil:
-		c.Status = "consumed"
 	case a.holdResolved && !a.approved:
 		c.Status = "denied"
 	case !e.confirmationAuthorityCurrent(d, now):
@@ -94,11 +118,24 @@ func (e *Engine) confirmationLocked(a *actionRecord, now time.Time) Confirmation
 	return c
 }
 
+func confirmationResumeMode(platform string) string {
+	if platform == "hermes" {
+		return "retry_required"
+	}
+	return "unsupported"
+}
+
 // This checks current identity and lifetime without attempting to reconstruct
 // parameters from an excerpt. Full policy/provenance checks remain in hold-status.
 func (e *Engine) confirmationAuthorityCurrent(d Receipt, now time.Time) bool {
 	session := e.sessions[d.SessionID]
-	if session == nil || session.boundIntentID != d.IntentID || session.boundTaskID != d.TaskID || (d.IntentBinding != "bound" && e.opts.IntentEnforcement == "required") {
+	if session == nil || (d.IntentBinding != "bound" && e.opts.IntentEnforcement == "required") {
+		return false
+	}
+	if d.IntentBinding == "bound" && (session.boundIntentID != d.IntentID || session.boundTaskID != d.TaskID) {
+		return false
+	}
+	if d.IntentBinding != "bound" && session.boundIntentID != "" {
 		return false
 	}
 	var g *grant.Grant

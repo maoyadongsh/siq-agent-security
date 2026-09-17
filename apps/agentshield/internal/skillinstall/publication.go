@@ -266,12 +266,21 @@ func (s *Store) ownerMatches(ctx context.Context, c *Claim, destination, pool, r
 		return err
 	}
 	b, err := os.Lstat(opaque(pool, "d", index))
-	if err != nil || !b.Mode().IsRegular() || !os.SameFile(a, b) {
+	if err != nil || !b.Mode().IsRegular() {
+		return ErrChanged
+	}
+	if c.Plan.Platform == "openclaw" {
+		targetRaw, _, targetErr := readBounded(ctx, marker, 1<<20)
+		poolRaw, _, poolErr := readBounded(ctx, opaque(pool, "d", index), 1<<20)
+		if targetErr != nil || poolErr != nil || !bytes.Equal(targetRaw, poolRaw) {
+			return ErrChanged
+		}
+	} else if !os.SameFile(a, b) {
 		return ErrChanged
 	}
 	return nil
 }
-func ownedFile(ctx context.Context, destination, pool string, file skillimport.File, index int) error {
+func ownedFile(ctx context.Context, destination, pool string, file skillimport.File, index int, platform string) error {
 	path := filepath.Join(destination, filepath.FromSlash(file.Path))
 	raw, info, err := readBounded(ctx, path, 8<<20)
 	if err != nil {
@@ -284,10 +293,35 @@ func ownedFile(ctx context.Context, destination, pool string, file skillimport.F
 		return err
 	}
 	other, err := os.Lstat(opaque(pool, "f", index))
-	if err != nil || !other.Mode().IsRegular() || !os.SameFile(info, other) {
+	if err != nil || !other.Mode().IsRegular() {
+		return ErrChanged
+	}
+	if platform == "openclaw" {
+		poolRaw, poolInfo, poolErr := readBounded(ctx, opaque(pool, "f", index), 8<<20)
+		if poolErr != nil || int64(len(poolRaw)) != file.Bytes || hash(poolRaw) != file.SHA256 || (poolInfo.Mode().Perm()&0111 != 0) != file.Executable {
+			return ErrChanged
+		}
+	} else if !os.SameFile(info, other) {
 		return ErrChanged
 	}
 	return nil
+}
+
+func publishOpaque(ctx context.Context, source, destination string, executable, hardlink bool) error {
+	if hardlink {
+		if err := statefs.Link(source, destination); err != nil {
+			if os.IsExist(err) {
+				return ErrConflict
+			}
+			return ErrUnavailable
+		}
+		return nil
+	}
+	raw, _, err := readBounded(ctx, source, 8<<20)
+	if err != nil {
+		return err
+	}
+	return writeOpaque(destination, raw, executable)
 }
 func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimport.InstallationSnapshot) error {
 	destination, pool, err := s.destination(ctx, c.Plan)
@@ -304,6 +338,11 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 		return ErrUnavailable
 	}
 	dirs := append([]string{""}, c.Directories...)
+	// OpenClaw rejects Skill payloads with a link count greater than one. Its
+	// target files therefore use exclusive independent publication and retain
+	// ownership through the signed marker plus full content readback. Hermes
+	// keeps the stronger inode-linked pool proof for backward compatibility.
+	hardlinkTarget := c.Plan.Platform != "openclaw"
 	for i, dir := range dirs {
 		if err := ctx.Err(); err != nil {
 			return err
@@ -385,7 +424,7 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 		// restart recovery never guesses ownership of an unmarked directory.
 		markErr := s.boundary("directory_created:" + dir)
 		if markErr == nil {
-			markErr = statefs.Link(opaque(pool, "d", i), filepath.Join(path, ownerName))
+			markErr = publishOpaque(ctx, opaque(pool, "d", i), filepath.Join(path, ownerName), false, hardlinkTarget)
 		}
 		if markErr != nil {
 			current, readErr := os.Lstat(path)
@@ -429,11 +468,8 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 		if err != nil || int64(len(raw)) != file.Bytes || hash(raw) != file.SHA256 || (info.Mode().Perm()&0111 != 0) != file.Executable {
 			return ErrChanged
 		}
-		if err := statefs.Link(opaque(pool, "f", i), path); err != nil {
-			if os.IsExist(err) {
-				return ErrConflict
-			}
-			return ErrUnavailable
+		if err := publishOpaque(ctx, opaque(pool, "f", i), path, file.Executable, hardlinkTarget); err != nil {
+			return err
 		}
 		if err := s.boundary("file_published:" + file.Path); err != nil {
 			return ErrUnavailable
@@ -519,7 +555,7 @@ func (s *Store) verifyTarget(ctx context.Context, c *Claim, complete bool) ([]st
 				path = relative + "/" + name
 			}
 			if i, ok := fileIndex[path]; ok {
-				if err := ownedFile(ctx, destination, pool, c.Files[i], i); err != nil {
+				if err := ownedFile(ctx, destination, pool, c.Files[i], i, c.Plan.Platform); err != nil {
 					return err
 				}
 				visitedFiles++
@@ -567,7 +603,7 @@ func (s *Store) cleanupTarget(ctx context.Context, c *Claim, prefix string) erro
 	})
 	for _, path := range files {
 		i := index[path]
-		if err := ownedFile(ctx, destination, pool, c.Files[i], i); err != nil {
+		if err := ownedFile(ctx, destination, pool, c.Files[i], i, c.Plan.Platform); err != nil {
 			return err
 		}
 		if err := statefs.Remove(filepath.Join(destination, filepath.FromSlash(path))); err != nil {

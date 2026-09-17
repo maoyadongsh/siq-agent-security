@@ -27,10 +27,15 @@ func (e *Engine) EffectAction(actionID, receiptID string) (effectevidence.Action
 		}
 		authorizedAt := at
 		if d.Action == ActionHold {
-			authorizedAt = a.approvedAt
+			if a.reservation != nil {
+				authorizedAt, err = time.Parse(time.RFC3339Nano, a.reservation.IssuedAt)
+				if err != nil {
+					return effectevidence.Action{}, effectevidence.ErrCorrelation
+				}
+			}
 		}
 		return effectevidence.Action{AuthorizedAt: authorizedAt, IntentID: d.IntentID, IntentDigest: d.IntentDigest, ActionID: d.ActionID, DecisionReceiptID: d.ReceiptID, TaskID: d.TaskID, Platform: d.Platform, SessionID: d.SessionID, AgentID: str(d.AgentID), IssuedAt: at,
-			Authorized: d.Action == ActionAllow || d.Action == ActionRedact || (d.Action == ActionHold && a.approved),
+			Authorized: d.Action == ActionAllow || d.Action == ActionRedact || (d.Action == ActionHold && a.approved && a.reservation != nil),
 			Effects:    append([]string(nil), d.Effects...), Resources: append([]runtimeaction.ResourceRef(nil), d.ResourceRefs...)}, nil
 	}
 	return effectevidence.Action{}, effectevidence.ErrCorrelation

@@ -1,0 +1,59 @@
+[
+  {
+    "name": "gofmt",
+    "command": [
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "exit_code": 0,
+    "seconds": 0.07
+  },
+  {
+    "name": "vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "seconds": 0.26
+  },
+  {
+    "name": "go-test",
+    "command": [
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 0,
+    "seconds": 9.78
+  },
+  {
+    "name": "race",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./internal/adapterinstall",
+      "./internal/stateformat",
+      "./internal/state"
+    ],
+    "exit_code": 0,
+    "seconds": 33.44
+  },
+  {
+    "name": "schema",
+    "command": [
+      "python",
+      "-m",
+      "pytest",
+      "-o",
+      "addopts=",
+      "-q",
+      "app/tests/test_schema_contracts.py"
+    ],
+    "exit_code": 0,
+    "seconds": 1.77
+  }
+]

@@ -37,6 +37,17 @@ func renderUserUnit(binary, directory string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	cfg, err := (&state.Store{Dir: directory}).LoadConfig()
+	if err != nil {
+		return "", err
+	}
+	if cfg.LinuxServiceHome != "" {
+		home, err := systemdQuote("HOME=" + cfg.LinuxServiceHome)
+		if err != nil {
+			return "", err
+		}
+		environment += "\nEnvironment=" + home
+	}
 	return fmt.Sprintf(`[Unit]
 Description=SIQ Agent Security personal protection
 

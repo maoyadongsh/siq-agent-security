@@ -1,0 +1,50 @@
+{
+  "schema_version": "personal-macos-post-reboot-validation/v1",
+  "recorded_at": "2026-09-16T22:38:33+08:00",
+  "product_candidate_sha": "450fe1836d8a3bffefbd2ce9b6f02bbbfe730c64",
+  "pushed_branch_head_before_reboot": "9cba48f07de430936c4d73da0b88f8f428a2f2fe",
+  "binary_sha256_before_and_after": "f067f96b05c3472b8ebe2d43ac9c19ce79c5063af19ec1dc66999a6da1bd3e23",
+  "host": {
+    "os": "macos",
+    "version": "26.6.2",
+    "arch": "arm64",
+    "gui_session_after_reboot": "Aqua"
+  },
+  "reboot": {
+    "requested_via": "System Events normal restart; no sudo or forced shutdown",
+    "precheck_at": "2026-09-16T22:31:16+08:00",
+    "precheck_kern_boottime_sec": 1789202134,
+    "postcheck_at": "2026-09-16T22:37:12+08:00",
+    "postcheck_kern_boottime_sec": 1789569104,
+    "postcheck_boot_datetime": "2026-09-16T22:31:44+08:00",
+    "new_boot_confirmed": true
+  },
+  "isolated_state_after_reboot": {
+    "state_status": "ok",
+    "compatible": true,
+    "chain_verified": true,
+    "receipt_count": 22,
+    "head_seq": 21,
+    "head_hash_unchanged": "5de8d4d9c0f09a2ce5aebf9676c66daa333015513974cccc0c76fb35b2b0e9be",
+    "manual_serve_health": "ready",
+    "manual_serve_product": "siq-agent-security",
+    "manual_serve_local_mode": true,
+    "manual_serve_stopped_after_check": true,
+    "isolated_port_47614_absent_before_and_after": true,
+    "out_of_grant_sentinel_sha256_unchanged": "ee0e84d8b242aba8e94777c26e12be079ea2dc63b42b2aff365e0604e21dc41f",
+    "allowed_read_sentinel_sha256_unchanged": "b2c204478a35ad9d84ca69abff0c227e25582c087ea62161fb015c9f47fae7dd",
+    "offline_write_target_absent": true
+  },
+  "host_cleanup_after_reboot": {
+    "workbuddy_product_hooks_per_event": 0,
+    "unrelated_user_hooks_per_event": 1,
+    "daily_workbuddy_settings_sha256_unchanged": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+    "test_launch_agent_registered": false,
+    "test_launch_agent_auto_start_claim": false
+  },
+  "limitations": [
+    "This is a real reboot plus post-login state/manual-service recovery check, not a separate logout/login or sleep/wake experiment.",
+    "No test LaunchAgent was registered across the reboot, so automatic launch or manager ownership across reboot is not established.",
+    "No power-loss or formal notarization claim is made."
+  ]
+}

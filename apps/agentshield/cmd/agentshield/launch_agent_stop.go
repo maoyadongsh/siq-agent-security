@@ -21,27 +21,16 @@ func cmdLaunchAgentStop(args []string, out io.Writer) error {
 	return err
 }
 
-// Read the exit status from the same XML response whose ownership was verified.
-func stoppedLaunchAgent(control userSystemctl, uid int, plist []byte, requireCleanExit bool) error {
-	var raw string
-	pid, err := readLoadedLaunchAgent(func(args ...string) (string, error) {
-		result, err := control(args...)
-		if len(args) == 3 && args[0] == "list" && args[1] == "-x" {
-			raw = result
-		}
-		return result, err
-	}, uid, plist)
+func stoppedLaunchAgent(control userSystemctl, uid int, plist []byte, source string, requireCleanExit bool) error {
+	runtime, err := readLoadedLaunchRuntime(control, uid, plist, source)
 	if err != nil {
 		return err
 	}
-	if pid != 0 {
+	if runtime.PID != 0 {
 		return errors.New("launch-agent: process still running")
 	}
-	if requireCleanExit {
-		actual, err := decodeLaunchPlist(raw)
-		if err != nil || actual["LastExitStatus"] != int64(0) {
-			return errors.New("launch-agent: normal exit not confirmed; task preserved")
-		}
+	if requireCleanExit && (runtime.LastExit == nil || *runtime.LastExit != 0) {
+		return errors.New("launch-agent: normal exit not confirmed; task preserved")
 	}
 	return nil
 }
@@ -51,7 +40,7 @@ func stopRegisteredLaunchAgent(st *state.Store, key *signing.Key, plist []byte, 
 	if err != nil {
 		return err
 	}
-	source, err := filepath.Abs(filepath.Join(st.Dir, record.Label+".plist"))
+	source, err := launchAgentSource(st.Dir, record.Label)
 	if err != nil {
 		return err
 	}
@@ -70,7 +59,7 @@ func stopRegisteredLaunchAgent(st *state.Store, key *signing.Key, plist []byte, 
 	if err := verify(); err != nil {
 		return err
 	}
-	loaded, pid, err := inspectLaunchAgent(control, uid, record.Label, plist)
+	loaded, pid, err := inspectLaunchAgent(control, uid, record.Label, plist, source)
 	if err != nil {
 		return err
 	}
@@ -89,7 +78,7 @@ func stopRegisteredLaunchAgent(st *state.Store, key *signing.Key, plist []byte, 
 			if err := verify(); err != nil {
 				return err
 			}
-			pid, err = readLoadedLaunchAgent(control, uid, plist)
+			pid, err = readLoadedLaunchAgent(control, uid, plist, source)
 			if err != nil {
 				return err
 			}
@@ -111,11 +100,11 @@ func stopRegisteredLaunchAgent(st *state.Store, key *signing.Key, plist []byte, 
 		return err
 	}
 	if loaded {
-		return stoppedLaunchAgent(control, uid, plist, requested)
+		return stoppedLaunchAgent(control, uid, plist, source, requested)
 	}
 	// Recheck absence after acquiring the writer; an externally loaded job is
 	// not stopped based on an older observation.
-	loaded, _, err = inspectLaunchAgent(control, uid, record.Label, plist)
+	loaded, _, err = inspectLaunchAgent(control, uid, record.Label, plist, source)
 	if err != nil {
 		return err
 	}

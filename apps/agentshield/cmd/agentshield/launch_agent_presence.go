@@ -9,7 +9,7 @@ import (
 )
 
 // Presence is a point-in-time observation, never ownership or permission to replace.
-func inspectLaunchAgent(control userSystemctl, uid int, label string, expected []byte) (bool, int64, error) {
+func inspectLaunchAgent(control userSystemctl, uid int, label string, expected []byte, source string) (bool, int64, error) {
 	if !launchAgentLabelValid(label) {
 		return false, 0, errors.New("launch-agent: invalid expected label")
 	}
@@ -29,7 +29,7 @@ func inspectLaunchAgent(control userSystemctl, uid int, label string, expected [
 		return false, 0, err
 	}
 	// A disappeared or changed job must not become an absence result here.
-	pid, err := readLoadedLaunchAgent(control, uid, expected)
+	pid, err := readLoadedLaunchAgent(control, uid, expected, source)
 	if err != nil {
 		return false, 0, err
 	}

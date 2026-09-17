@@ -1,0 +1,49 @@
+{
+  "schema_version": "personal-macos-logout-login-validation/v1",
+  "recorded_at": "2026-09-16T23:25:00+08:00",
+  "product_candidate_sha": "450fe1836d8a3bffefbd2ce9b6f02bbbfe730c64",
+  "binary_sha256": "f067f96b05c3472b8ebe2d43ac9c19ce79c5063af19ec1dc66999a6da1bd3e23",
+  "host": {
+    "os": "macos",
+    "version": "26.6.2",
+    "arch": "arm64",
+    "gui_session_after": "Aqua"
+  },
+  "logout_login": {
+    "requested_via": "System Events normal log out; no sudo or forced session termination",
+    "precheck_at": "2026-09-16T23:01:06+08:00",
+    "precheck_console_loginwindow_pid": 432,
+    "precheck_gui_asid": 100023,
+    "postcheck_at": "2026-09-16T23:21:49+08:00",
+    "postcheck_console_login_at": "2026-09-16T23:18:00+08:00",
+    "postcheck_console_loginwindow_pid": 4266,
+    "postcheck_gui_asid": 100111,
+    "kern_boottime_sec_before_and_after": 1789569104,
+    "independent_new_login_confirmed": true,
+    "not_a_reboot": true
+  },
+  "isolated_state_after_login": {
+    "format_version": 2,
+    "compatible": true,
+    "status": "ok",
+    "chain_verified": true,
+    "receipt_count": 22,
+    "head_seq": 21,
+    "head_hash_unchanged": "5de8d4d9c0f09a2ce5aebf9676c66daa333015513974cccc0c76fb35b2b0e9be",
+    "manual_service_health": "ready",
+    "manual_service_product": "siq-agent-security",
+    "manual_service_local_mode": true,
+    "manual_service_stopped_after_check": true,
+    "isolated_port_47614_absent_before_and_after": true,
+    "isolated_port_47615_absent_after_check": true,
+    "out_of_grant_sentinel_sha256_unchanged": "ee0e84d8b242aba8e94777c26e12be079ea2dc63b42b2aff365e0604e21dc41f",
+    "allowed_read_sentinel_sha256_unchanged": "b2c204478a35ad9d84ca69abff0c227e25582c087ea62161fb015c9f47fae7dd",
+    "daily_workbuddy_settings_sha256_unchanged": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa"
+  },
+  "limitations": [
+    "No test LaunchAgent was registered across logout/login, so this does not establish automatic login startup or launchd manager ownership after login.",
+    "The service was manually started and stopped solely for the post-login health check.",
+    "No power-loss durability, formal code signing or notarization is claimed.",
+    "No token, pairing code, raw state or absolute user path is included."
+  ]
+}

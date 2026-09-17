@@ -1,0 +1,133 @@
+{
+  "chain": {
+    "head_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "head_seq": -1,
+    "id": "local"
+  },
+  "enforcement_mode": "block",
+  "local_mode": true,
+  "platforms": [
+    {
+      "name": "openclaw",
+      "detected": false,
+      "adapter": "not installed",
+      "tier": "L0",
+      "note": "\u672a\u53d1\u73b0\u5e73\u53f0",
+      "diagnosis": {
+        "platform": "openclaw",
+        "configuration_state": "not_installed",
+        "runtime_state": "unverified",
+        "checks": [
+          {
+            "code": "adapter_files",
+            "status": "unknown",
+            "message": "\u5c1a\u672a\u53d1\u73b0\u5f53\u524d\u9002\u914d\u5668\u6587\u4ef6"
+          }
+        ],
+        "next_steps": [
+          "\u67e5\u770b\u63a5\u5165\u6240\u9700\u6539\u52a8\u5e76\u5b89\u88c5\u9002\u914d\u5668\uff0c\u968f\u540e\u9a8c\u8bc1\u5bbf\u4e3b\u52a0\u8f7d\u548c\u5de5\u5177\u8c03\u7528\u3002"
+        ]
+      }
+    },
+    {
+      "name": "hermes",
+      "detected": false,
+      "adapter": "not installed",
+      "tier": "L0",
+      "note": "\u6b64\u5904\u663e\u793a\u9ed8\u8ba4\u76ee\u5f55\uff1b\u5176\u4ed6 profile \u8bf7\u6253\u5f00\u5b9e\u4f8b\u7ba1\u7406\u3002\u672a\u53d1\u73b0\u5e73\u53f0",
+      "diagnosis": {
+        "platform": "hermes",
+        "configuration_state": "not_installed",
+        "runtime_state": "unverified",
+        "checks": [
+          {
+            "code": "adapter_files",
+            "status": "unknown",
+            "message": "\u5c1a\u672a\u53d1\u73b0\u5f53\u524d\u9002\u914d\u5668\u6587\u4ef6"
+          }
+        ],
+        "next_steps": [
+          "\u67e5\u770b\u63a5\u5165\u6240\u9700\u6539\u52a8\u5e76\u5b89\u88c5\u9002\u914d\u5668\uff0c\u968f\u540e\u9a8c\u8bc1\u5bbf\u4e3b\u52a0\u8f7d\u548c\u5de5\u5177\u8c03\u7528\u3002"
+        ]
+      }
+    },
+    {
+      "name": "codebuddy",
+      "detected": false,
+      "adapter": "not installed",
+      "tier": "L0",
+      "note": "\u672a\u53d1\u73b0\u5e73\u53f0",
+      "diagnosis": {
+        "platform": "codebuddy",
+        "configuration_state": "not_installed",
+        "runtime_state": "unverified",
+        "checks": [
+          {
+            "code": "adapter_files",
+            "status": "unknown",
+            "message": "\u5c1a\u672a\u53d1\u73b0\u5f53\u524d\u9002\u914d\u5668\u6587\u4ef6"
+          }
+        ],
+        "next_steps": [
+          "\u67e5\u770b\u63a5\u5165\u6240\u9700\u6539\u52a8\u5e76\u5b89\u88c5\u9002\u914d\u5668\uff0c\u968f\u540e\u9a8c\u8bc1\u5bbf\u4e3b\u52a0\u8f7d\u548c\u5de5\u5177\u8c03\u7528\u3002"
+        ]
+      }
+    },
+    {
+      "name": "workbuddy",
+      "detected": false,
+      "adapter": "unverified",
+      "tier": "L0",
+      "note": "WorkBuddy \u684c\u9762\u63a5\u5165\u5f85\u72ec\u7acb\u9a8c\u8bc1\uff1b\u4e0d\u6cbf\u7528 CodeBuddy \u7ed3\u679c",
+      "diagnosis": {
+        "platform": "workbuddy",
+        "configuration_state": "unsupported",
+        "runtime_state": "unverified",
+        "checks": [
+          {
+            "code": "runtime_integration",
+            "status": "not_applicable",
+            "message": "\u5f53\u524d\u5c1a\u65e0\u7ecf\u8fc7\u9a8c\u8bc1\u7684\u5de5\u5177\u63a5\u5165\u8def\u5f84"
+          }
+        ],
+        "next_steps": [
+          "WorkBuddy \u684c\u9762\u7aef\u9700\u72ec\u7acb\u5b9e\u6d4b\uff0cCodeBuddy \u7684\u7ed3\u679c\u4e0d\u80fd\u4ee3\u66ff\u3002"
+        ]
+      }
+    },
+    {
+      "name": "trae",
+      "detected": false,
+      "adapter": "audit_only",
+      "tier": "L0",
+      "note": "\u672a\u53d1\u73b0\uff1b\u5373\u4fbf\u5b89\u88c5\u4e5f\u4ec5\u5ba1\u8ba1\u3001\u65e0\u6cd5\u963b\u65ad",
+      "diagnosis": {
+        "platform": "trae",
+        "configuration_state": "unsupported",
+        "runtime_state": "unverified",
+        "checks": [
+          {
+            "code": "runtime_integration",
+            "status": "not_applicable",
+            "message": "\u5f53\u524d\u5c1a\u65e0\u7ecf\u8fc7\u9a8c\u8bc1\u7684\u5de5\u5177\u63a5\u5165\u8def\u5f84"
+          }
+        ],
+        "next_steps": [
+          "\u53ef\u7ee7\u7eed\u76d8\u70b9\u4e0e\u9759\u6001\u68c0\u67e5\uff1b\u5f53\u524d\u4e0d\u58f0\u660e\u5de5\u5177\u8c03\u7528\u963b\u65ad\u80fd\u529b\u3002"
+        ]
+      }
+    },
+    {
+      "name": "openshell",
+      "detected": false,
+      "adapter": "unconfigured",
+      "tier": "L0",
+      "note": "\u5df2\u53d1\u73b0 OpenShell CLI\uff0c\u4f46\u7f51\u5173\u4e0d\u53ef\u8fbe\u3002\u8bf7\u7531\u4eba\u7c7b\u8fd0\u884c openshell gateway start\uff0c\u6216 openshell gateway select <name> \u540e\u91cd\u8bd5 probe\u3002agentshield \u4e0d\u4f1a\u6267\u884c gateway start\uff0c\u4e5f\u4e0d\u4f1a\u731c\u6d4b\u7aef\u53e3\u3002"
+    }
+  ],
+  "rulepack_source": "builtin",
+  "rulepack_version": 1,
+  "signing_public_key": "exvLmUMFrdFeHOcS0ZGFpZVsGzV8Kd9DRmqsqnZ5wzo=",
+  "single_user": true,
+  "version": "0.0.0-dev"
+}

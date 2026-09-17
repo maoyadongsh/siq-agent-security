@@ -1,0 +1,45 @@
+{
+  "schema_version": "local-skill-install-view/v1",
+  "install_id": "sin-5e845835be9eab11de851196a42557c187fcd1558adc14812f08f1d844c75de0",
+  "plan": {
+    "schema_version": "local-skill-install-plan/v1",
+    "plan_id": "sip-5e845835be9eab11de851196a42557c187fcd1558adc14812f08f1d844c75de0",
+    "request_id": "is-f8808a930b1d0f0dff091a43022f1cda",
+    "source": {
+      "schema_version": "local-skill-import-permission-source/v1",
+      "import_id": "si-57e440732738a14778ec438b34ec7ac3",
+      "artifact_digest": "96586a0a7904cb7f1c0d3acbd857cda042cf7d1a6ab1d48e5fb1acdca1c5c7df",
+      "analysis_sha256": "5fbf74c4e8b333d68e93dd19fc610025bdb8e79b62b3c1a0e4cb9d8213a3a8fd"
+    },
+    "grant_id": "grt-si-95b3b0fabe1d8c3efffbc0e051dda34cec71bb04e64db414edf1607bb5880507",
+    "grant_revision": 2,
+    "grant_signature": "83eb73935f7112f30e46f6f01603d80ec1b9c0db64b6a40f40fe8a762c1aad174d074937c95e6f20ac845d5d095fb0b312ad03163ea519ff56ffa4dbb8489c05",
+    "grant_permission_digest": "f52f8b260863154a2fcb20a828e6a32c5787c17077dbcc6e69ae68e1bcd14322",
+    "platform": "hermes",
+    "instance_id": "hi-a7d91215aaf9e85ff287a44a1c29570d",
+    "directory_name": "r01-sec-fixture",
+    "target_locator_digest": "0f72ad262fcb3925202b9569e6df0f8ac53172b671fb4189758ec2ce7b79e4a2",
+    "target_display": "/tmp/siq-r01-sec-live-s6d1r04m/hermes-home/skills/r01-sec-fixture",
+    "actor_id": "r01-live-operator",
+    "created_at": "2026-09-14T12:52:29.936488483Z",
+    "expires_at": "2026-09-14T12:57:29.936488483Z",
+    "file_count": 2,
+    "total_bytes": 148,
+    "installed": false,
+    "runtime_verified": false,
+    "signature": "7e31344a8f4d2487e5f34e20f858157745eedf0f1c028414102fdffdb8a04b9232a447ca4be5a5844a6ad99b547dbdfe49b9785ece8c51a857556123023daf0c"
+  },
+  "claim_signature": "c105c5cbf5f596b209a1d254fc02b1f57c999b2aa7ee74888871de0deba39bce48d6e91f8b18db8381de135617e4bcd4abeb63361517f739fc5e91d519ede704",
+  "status": "installed_unverified",
+  "operation": {
+    "schema_version": "local-skill-install-operation/v1",
+    "install_id": "sin-5e845835be9eab11de851196a42557c187fcd1558adc14812f08f1d844c75de0",
+    "plan_id": "sip-5e845835be9eab11de851196a42557c187fcd1558adc14812f08f1d844c75de0",
+    "claim_signature": "c105c5cbf5f596b209a1d254fc02b1f57c999b2aa7ee74888871de0deba39bce48d6e91f8b18db8381de135617e4bcd4abeb63361517f739fc5e91d519ede704",
+    "status": "installed_unverified",
+    "actor_id": "r01-live-operator",
+    "recorded_at": "2026-09-14T12:52:29.984653309Z",
+    "runtime_verified": false,
+    "signature": "bfc0803a701861b3810d2785b0bb4a2f7e32ba843f37780354c6d8ee87d6d3876ee1fa684a0ac2dc80fd92393f24818cf4ca151d099b6b8eb5a266d60a59b003"
+  }
+}

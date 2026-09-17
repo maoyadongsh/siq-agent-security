@@ -132,6 +132,35 @@ func TestHoldHTTPRequiresManagementApprovalAcrossRecovery(t *testing.T) {
 			post(heldPath, s.bootAdmin, map[string]any{"approve": !approve, "actor_id": "fixture-admin"}, 409)
 			wantRecords := 2
 			if approve {
+				reserveRequest := map[string]any{
+					"schema_version": "hold-execution-reserve/v1", "platform": "openclaw",
+					"session_id": "hold-session", "agent_id": "inst_1", "tool": "exec",
+					"original_tool_call_id": "held-call", "retry_tool_call_id": "held-call-retry",
+					"action_id": decision["action_id"], "decision_receipt_id": decision["receipt_id"],
+					"params": map[string]any{"command": "printf fixture"},
+				}
+				post("/v1/hold-executions/reserve", s.bootAdmin, reserveRequest, 401)
+				reservation := post("/v1/hold-executions/reserve", token, reserveRequest, 201)
+				post("/v1/hold-executions/reserve", token, reserveRequest, 409)
+				statusBody := map[string]any{
+					"schema_version": "hold-execution-status-request/v1", "platform": "openclaw",
+					"session_id": "hold-session", "agent_id": "inst_1", "tool": "exec",
+					"retry_tool_call_id": "held-call-retry", "action_id": decision["action_id"],
+					"decision_receipt_id":    decision["receipt_id"],
+					"reservation_receipt_id": reservation["reservation_receipt_id"],
+					"params":                 map[string]any{"command": "printf fixture"},
+				}
+				if status := post("/v1/hold-executions/status", token, statusBody, 200); status["status"] != "uncertain" {
+					t.Fatal(status)
+				}
+				invalidStatus := map[string]any{}
+				for key, value := range statusBody {
+					invalidStatus[key] = value
+				}
+				invalidStatus["approve"] = true
+				post("/v1/hold-executions/status", token, invalidStatus, 400)
+				request["tool_call_id"] = "held-call-retry"
+				request["decision_receipt_id"] = reservation["reservation_receipt_id"]
 				observation := post("/v1/observe", token, request, 200)
 				retry := post("/v1/observe", token, request, 200)
 				if observation["receipt_id"] != retry["receipt_id"] || observation["action_id"] != decision["action_id"] {
@@ -139,7 +168,10 @@ func TestHoldHTTPRequiresManagementApprovalAcrossRecovery(t *testing.T) {
 				}
 				request["result"] = "conflicting synthetic result"
 				post("/v1/observe", token, request, 409)
-				wantRecords++
+				if status := post("/v1/hold-executions/status", token, statusBody, 200); status["status"] != "completed" {
+					t.Fatal(status)
+				}
+				wantRecords += 2
 			} else {
 				post("/v1/observe", token, request, 400)
 			}

@@ -1,0 +1,20 @@
+{
+  "action": "deny",
+  "action_id": "act-09458dc4494058e6420f14d2",
+  "authority_status": "valid",
+  "effective_action": "deny",
+  "policy_action": "deny",
+  "reason": "skill attribution does not verify for grant (default deny)",
+  "reason_code": "skill_attribution_mismatch",
+  "receipt_id": "rcp-1cf640538ec3-112617.309872",
+  "skill_attribution": {
+    "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+    "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+    "status": "unknown"
+  },
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  }
+}

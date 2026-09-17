@@ -179,7 +179,7 @@ Linux 已注册服务可用 `siq-agent-security service-start` 启动，`siq-age
 升级前可执行 `siq-agent-security client-upgrade-check --manifest FILE --binary FILE`。它要求发行方签名的 v2 无迁移兼容声明并检查候选内容；v1 仍可暂存，但不能通过该预检。成功不代表已批准或切换版本。发行准备工具只有显式 `release-manifest --client-compatible` 才生成 v2；旧 Skill 引导脚本与冻结 v1 包保持原协议。
 
 
-Linux 已注册服务可执行 `siq-agent-security service-upgrade --manifest FILE --binary FILE --confirm-upgrade`。候选必须通过 v2 发行签名/兼容预检；确认后会短暂停止保护，block 模式下受控操作暂时拒绝。失败输出的事务 ID 可配合同一候选及 `--recover ID` 前滚恢复；不得替换目标。该流程不回滚台账，自动回退仍待实施。
+Linux 已注册服务与 macOS 已注册 LaunchAgent 可执行 `siq-agent-security service-upgrade --manifest FILE --binary FILE --confirm-upgrade`。候选必须通过 v2 发行签名/兼容预检；确认后会短暂停止保护，block 模式下受控操作暂时拒绝。失败输出的事务 ID 可配合同一候选及 `--recover ID` 前滚恢复；不得替换目标。该流程不回滚台账。显式 `service-rollback` 可把已完成切换恢复到原事务源配置。macOS 使用独立的 `local-launch-agent-switch/v1` 日志切换 `<label>.plist` 与 `launch-agent.json`，随后对同一注册链接 `bootout`→`bootstrap`→`kickstart` 使 launchd 读到新程序。
 
 若候选因端口冲突等原因启动失败，先排除冲突，再使用同一候选和事务 ID 执行 `service-upgrade ... --confirm-upgrade --recover ID`。只有已停止/失败且无主进程的单位可恢复；活跃写锁或无法确认的进程状态会被拒绝，勿手工删除锁。
 
@@ -206,7 +206,7 @@ macOS `launch-agent-prepare` 可在状态目录中准备签名归属记录与 pl
 
 macOS `launch-agent-register` 会复验/准备签名配置，并向当前用户 `Library/LaunchAgents` 排他发布实例链接。只复用同一源的精确链接，不覆盖未知文件或跟随被重定向的目录。当前尚不执行 launchctl，不代表已经加载或启动；实机验收待完成。
 
-macOS `launch-agent-status` 只读核对当前 GUI 用户域的已加载 XML 配置，与签名源字段及用户目录链接匹配后区分已加载/报告 PID/API 就绪。该兼容入口基于 `launchctl list -x`，尚缺当前 macOS 实机验证；命令或格式不支持时返回未确认，不会自动加载或替换任务。
+macOS `launch-agent-status` 只读核对当前 GUI 用户域：先用 `launchctl list` 判定本实例是否出现，再用 `launchctl print gui/<uid>/<label>` 核对已加载源路径、程序参数、状态目录环境和 umask。当前 Darwin 没有 `list -x` XML 开关；命令或格式不支持时返回未确认，不会自动加载或替换任务。
 
 `launch-agent-status` 现在会先核对当前 GUI 用户域的完整任务列表；明确缺席时提示“已注册，当前用户域未加载”。查询失败、格式不支持或查询中任务变化均保持“未确认”，不会自动加载或重装。此查询只反映当时的当前用户域，不证明全系统没有服务。
 

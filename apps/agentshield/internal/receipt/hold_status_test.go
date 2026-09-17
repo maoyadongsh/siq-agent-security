@@ -45,7 +45,7 @@ func TestHoldStatusContractSamples(t *testing.T) {
 }
 
 func statusRequest(req Request, d *Decision) HoldStatusRequest {
-	return HoldStatusRequest{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, Tool: req.Tool, ToolCallID: req.ToolCallID, ActionID: d.Receipt.ActionID, DecisionReceiptID: d.Receipt.ReceiptID, Params: req.Params}
+	return HoldStatusRequest{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, TaskID: d.Receipt.TaskID, Tool: req.Tool, ToolCallID: req.ToolCallID, ActionID: d.Receipt.ActionID, DecisionReceiptID: d.Receipt.ReceiptID, Params: req.Params}
 }
 
 func TestHoldStatusIsReadOnlyBoundedAndRecovered(t *testing.T) {
@@ -98,7 +98,9 @@ func TestHoldStatusIsReadOnlyBoundedAndRecovered(t *testing.T) {
 				t.Fatal("restart extended hold")
 			}
 			if approve {
-				if _, err = fx.eng.Observe(correlatedRequest(r, d), "fixture"); err != nil {
+				retry, _ := reserveForRetry(t, fx, r, d, "status-retry")
+				check("consumed")
+				if _, err = fx.eng.Observe(retry, "fixture"); err != nil {
 					t.Fatal(err)
 				}
 				check("consumed")
@@ -118,7 +120,7 @@ func TestHoldStatusIsReadOnlyBoundedAndRecovered(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if len(all) != 2+map[bool]int{true: 1, false: 0}[approve] {
+			if len(all) != 2+map[bool]int{true: 2, false: 0}[approve] {
 				t.Fatal("read appended receipts")
 			}
 			if err = Verify(all, fx.k.Public()); err != nil {

@@ -19,6 +19,24 @@ func correlatedRequest(r Request, d *Decision) Request {
 	r.DecisionReceiptID = d.Receipt.ReceiptID
 	return r
 }
+
+func reserveForRetry(t *testing.T, fx *fixture, r Request, d *Decision, retryCallID string) (Request, *HoldExecutionStatus) {
+	t.Helper()
+	status, err := fx.eng.ReserveHoldExecution(HoldExecutionReserve{
+		SchemaVersion: "hold-execution-reserve/v1", Platform: r.Platform, SessionID: r.SessionID,
+		AgentID: r.AgentID, TaskID: r.TaskID, Tool: r.Tool, OriginalToolCallID: r.ToolCallID,
+		RetryToolCallID: retryCallID, ActionID: d.Receipt.ActionID, DecisionReceiptID: d.Receipt.ReceiptID,
+		Params: r.Params,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	retry := r
+	retry.ToolCallID = retryCallID
+	retry.ActionID = d.Receipt.ActionID
+	retry.DecisionReceiptID = status.ReservationReceiptID
+	return retry, status
+}
 func TestObserveRequiresAuthorizedDecision(t *testing.T) {
 	fx := newFixture(t, "block", deployedGrant(t, "hermes", false), false)
 	r := req("hermes", "read_file", map[string]any{"path": "/home/u/proj/a.txt"})
@@ -98,6 +116,7 @@ func TestObserveHoldRequiresManagementResolution(t *testing.T) {
 	if _, err = fx.eng.ResolveHold(d.Receipt, true, "admin"); err != nil {
 		t.Fatal(err)
 	}
+	r, _ = reserveForRetry(t, fx, req("openclaw", "exec", map[string]any{"command": "ls"}), d, "retry-call")
 	if _, err = fx.eng.Observe(r, "result"); err != nil {
 		t.Fatal(err)
 	}

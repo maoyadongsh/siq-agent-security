@@ -1,0 +1,76 @@
+{
+  "grant": {
+    "grant_id": "grt-e32c4cd6a52b-0461f3c6",
+    "admission_id": "adm-e32c4cd6a52b",
+    "skill": {
+      "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+      "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8"
+    },
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-a7d91215aaf9e85ff287a44a1c29570d"
+    },
+    "platform": "hermes",
+    "facts": [
+      {
+        "fact_id": "pf-1-811cbc58",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "ev-331e3231235696f2"
+        ]
+      },
+      {
+        "fact_id": "pf-2-12bb99cf",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "ev-331e3231235696f2"
+        ]
+      }
+    ],
+    "default_effect": "deny",
+    "hermes_toolset_allowlist": [
+      "read_file",
+      "write_file"
+    ],
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-e32c4cd6a52b-0461f3c6",
+      "version": 1,
+      "static_domains_unavailable": []
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "deployed",
+    "approved_by": {
+      "actor_type": "human",
+      "actor_id": "r01-live-operator",
+      "approved_at": "2026-09-14T12:52:29Z",
+      "channel": "cli"
+    },
+    "effective_readback": null,
+    "created_at": "2026-09-14T12:52:29Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "signature": "03fd85b8b9f9717922dbfd8aea6fa0873aa80e0ba13d1b03634e61a3c014ef7073bd2b37c1b188c1e3744ec8a7f5dcfc96ec31fe0eab80e5b6e0593b6c0cc507"
+  },
+  "state_revision": 2
+}

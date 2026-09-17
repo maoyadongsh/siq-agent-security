@@ -46,12 +46,16 @@ func TestHistoricalEffectActionSurvivesWindowAndRestart(t *testing.T) {
 func TestHistoricalEffectHoldResolution(t *testing.T) {
 	for _, approve := range []bool{true, false} {
 		fx := newFixture(t, "block", deployedGrant(t, "openclaw", false), false)
-		d, err := fx.eng.Decide(req("openclaw", "exec", map[string]any{"command": "ls"}))
+		r := req("openclaw", "exec", map[string]any{"command": "ls"})
+		d, err := fx.eng.Decide(r)
 		if err != nil || d.Action != ActionHold {
 			t.Fatal(d, err)
 		}
 		if _, err = fx.eng.ResolveHold(d.Receipt, approve, "admin"); err != nil {
 			t.Fatal(err)
+		}
+		if approve {
+			reserveForRetry(t, fx, r, d, "history-retry")
 		}
 		fx.clock = fx.clock.Add(48 * time.Hour)
 		restarted, err := New(fx.eng.opts)

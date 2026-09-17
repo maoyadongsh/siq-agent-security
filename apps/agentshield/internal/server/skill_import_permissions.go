@@ -5,12 +5,11 @@ import (
 	"errors"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
-	"siq-agent-security/apps/agentshield/internal/hermeshome"
 	"siq-agent-security/apps/agentshield/internal/importsource"
+	"siq-agent-security/apps/agentshield/internal/runtimeidentity"
 	"siq-agent-security/apps/agentshield/internal/skillimport"
 	"siq-agent-security/apps/agentshield/internal/state"
 )
@@ -53,12 +52,17 @@ func (s *Server) skillImportPermissions(w http.ResponseWriter, r *http.Request, 
 		skillImportError(w, skillimport.ErrChanged)
 		return
 	}
-	root, err := hermeshome.Resolve(s.hermesRoots(), req.InstanceID)
-	if err != nil || !root.Detected {
+	target, err := s.resolveSkillTarget(ctx, req.InstanceID)
+	if err != nil {
 		writeJSON(w, 409, map[string]string{"error": "skill_import_permission_target_unavailable"})
 		return
 	}
-	opts := grant.Options{Subject: grant.Subject{Type: "agent_instance", ID: "hri-" + strings.TrimPrefix(root.ID, "hi-")}, Platform: "hermes", EnforcementMode: s.currentMode(), Key: s.d.Key, RedactSecrets: true}
+	agentID, err := runtimeidentity.AgentID(target.InstanceID)
+	if err != nil {
+		writeJSON(w, 400, map[string]string{"error": "skill_import_permission_invalid"})
+		return
+	}
+	opts := grant.Options{Subject: grant.Subject{Type: "agent_instance", ID: agentID}, Platform: target.Platform, EnforcementMode: s.currentMode(), Key: s.d.Key, RedactSecrets: true}
 	grantID, err := grant.ImportGrantID(derived.Admission, opts, req.ActorID, req.RequestID)
 	if err != nil {
 		writeJSON(w, 400, map[string]string{"error": "skill_import_permission_invalid"})

@@ -1,0 +1,154 @@
+{
+  "schema": "closure-b01-environment/v1",
+  "trust_layer": {
+    "mode": "test_release：一次性测试种子签署；测试公钥固定注入测试构建（fail-closed 单密钥 pin）",
+    "test_public_key_b64": "d4Wha8wbIf4IUUzpbE33CcKxNADSMJaY1vxvC40Y9Ns=",
+    "seed_location": "run_dir/release-seed.b64 (0600，不入证据)",
+    "official_release_leg": "blocked；解锁条件=维护者以正式发布种子签署 manifest"
+  },
+  "old_commit": "efad840",
+  "old_tree": "2216f4a0e9eef3e750c13673da8e158d4e84a6a3",
+  "new_commit": "53155b1",
+  "new_tree": "9ff0c7e9c50c48fcc249adfbe48df76b82d19c51",
+  "versions": {
+    "old": "0.2.0-b01-old",
+    "new": "0.2.0-b01-new"
+  },
+  "builds": {
+    "old": [
+      {
+        "target": "linux/amd64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-takeover-review-20260916/b01-run/src-old/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-old",
+          "-o",
+          "/tmp/siq-takeover-review-20260916/b01-run/bin-old/siq-agent-security-linux-amd64",
+          "./cmd/agentshield"
+        ],
+        "digest": "51128344eb490fdd71c53f32782235384df1429b385ace296cf85d67689a6b62"
+      },
+      {
+        "target": "linux/arm64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-takeover-review-20260916/b01-run/src-old/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-old",
+          "-o",
+          "/tmp/siq-takeover-review-20260916/b01-run/bin-old/siq-agent-security-linux-arm64",
+          "./cmd/agentshield"
+        ],
+        "digest": "0b085b7d7d47c61a95ff78434dcacfd03a75bed843815fad2643734bd8365a45"
+      },
+      {
+        "target": "darwin/arm64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-takeover-review-20260916/b01-run/src-old/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-old",
+          "-o",
+          "/tmp/siq-takeover-review-20260916/b01-run/bin-old/siq-agent-security-darwin-arm64",
+          "./cmd/agentshield"
+        ],
+        "digest": "151cbabe96b2d183111b208e60c01e517ab419d944f99fdf5187037f06394daf"
+      },
+      {
+        "target": "windows/amd64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-takeover-review-20260916/b01-run/src-old/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-old",
+          "-o",
+          "/tmp/siq-takeover-review-20260916/b01-run/bin-old/siq-agent-security-windows-amd64.exe",
+          "./cmd/agentshield"
+        ],
+        "digest": "492dadf04ed6a17ad4da506329790cebe25277ea80fe238bbb01c3dd49e03e98"
+      }
+    ],
+    "new": [
+      {
+        "target": "linux/amd64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-takeover-review-20260916/b01-run/src-new/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-new",
+          "-o",
+          "/tmp/siq-takeover-review-20260916/b01-run/bin-new/siq-agent-security-linux-amd64",
+          "./cmd/agentshield"
+        ],
+        "digest": "0dd47a8e3a45d963a49c24fc3ff8baf9ab99eb68b869da84110e184bb16665e5"
+      },
+      {
+        "target": "linux/arm64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-takeover-review-20260916/b01-run/src-new/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-new",
+          "-o",
+          "/tmp/siq-takeover-review-20260916/b01-run/bin-new/siq-agent-security-linux-arm64",
+          "./cmd/agentshield"
+        ],
+        "digest": "1f702fc5bb7ee46bc27fb96840bb130af24e611443ae44fd61dc355d7cf63157"
+      },
+      {
+        "target": "darwin/arm64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-takeover-review-20260916/b01-run/src-new/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-new",
+          "-o",
+          "/tmp/siq-takeover-review-20260916/b01-run/bin-new/siq-agent-security-darwin-arm64",
+          "./cmd/agentshield"
+        ],
+        "digest": "60ce42065c02d0ab4203b9479e00b8e614ad60532c476fcbb62652f450fd6048"
+      },
+      {
+        "target": "windows/amd64",
+        "argv": [
+          "go",
+          "build",
+          "-C",
+          "/tmp/siq-takeover-review-20260916/b01-run/src-new/apps/agentshield",
+          "-trimpath",
+          "-ldflags",
+          "-s -w -X main.Version=0.2.0-b01-new",
+          "-o",
+          "/tmp/siq-takeover-review-20260916/b01-run/bin-new/siq-agent-security-windows-amd64.exe",
+          "./cmd/agentshield"
+        ],
+        "digest": "efc355847f0423ddeecb85c3982e12c07ad1b487b13cbb6f8c4ceb4c1686c9bf"
+      }
+    ]
+  },
+  "state_dir": "/tmp/siq-takeover-review-20260916/b01-run/state 中文 空格%25实例",
+  "port": 25241,
+  "duration_s": 315.0
+}

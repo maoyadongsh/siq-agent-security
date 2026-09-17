@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
 	"strings"
 	"testing"
@@ -38,6 +39,10 @@ func TestCmdSyncHTTPFailureUnchanged(t *testing.T) {
 	}
 	t.Setenv("AGENTSHIELD_STATE_DIR", dir)
 	t.Setenv("AGENTSHIELD_SIGNING_KEY_SEED", "")
+	// Existing user data requires an established signing identity.
+	if _, err := signing.Load(dir); err != nil {
+		t.Fatal(err)
+	}
 	t.Setenv("HOME", filepath.Join(dir, "home"))
 	home := filepath.Join(dir, "home")
 	_ = os.MkdirAll(filepath.Join(home, ".hermes"), 0o700)
@@ -82,6 +87,10 @@ func TestCmdExportWritesFile(t *testing.T) {
 	}
 	t.Setenv("AGENTSHIELD_STATE_DIR", dir)
 	t.Setenv("AGENTSHIELD_SIGNING_KEY_SEED", "")
+	// Existing user data requires an established signing identity.
+	if _, err := signing.Load(dir); err != nil {
+		t.Fatal(err)
+	}
 	t.Setenv("HOME", filepath.Join(dir, "home"))
 	_ = os.MkdirAll(filepath.Join(dir, "home"), 0o700)
 	rawDir := filepath.Join(dir, "raw-task-content", "content")

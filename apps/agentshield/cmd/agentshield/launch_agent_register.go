@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 )
@@ -46,8 +47,7 @@ func ordinaryLaunchDirectory(path string, create bool) error {
 	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
 		return errors.New("launch-agent: ordinary directory required")
 	}
-	canonical, err := filepath.EvalSymlinks(path)
-	if err != nil || canonical != path {
+	if err := stateformat.LeafDirectory(path); err != nil {
 		return errors.New("launch-agent: canonical directory required")
 	}
 	return nil

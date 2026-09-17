@@ -11,7 +11,8 @@ import type { Confirmation } from '../types';
 
 const statusText: Record<Confirmation['status'], string> = {
   pending: '等待确认', approved: '已批准', denied: '已拒绝', expired: '已过期',
-  consumed: '已记录执行结果', unavailable: '权限已失效或不可核实',
+  consumed: '旧版执行记录', reserved: '已预留一次执行', completed: '执行结果已记录',
+  cancelled: '已确认未执行', uncertain: '执行结果不确定，需核对', unavailable: '权限已失效或不可核实',
 };
 const grantLink = (id: string) => `/grants?grant=${encodeURIComponent(id)}`;
 
@@ -19,7 +20,7 @@ export default function ConfirmationsPage() {
   const { actorId, setActorId } = useLocalSession();
   const [params, setParams] = useSearchParams();
   const requested = params.get('request');
-  const { items, grants, error, loading, refresh: load, resolve } = useConfirmations();
+  const { items, grants, error, loading, refresh: load, resolve, reconcile } = useConfirmations();
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [reviewed, setReviewed] = useState(false);
@@ -48,6 +49,25 @@ export default function ConfirmationsPage() {
       if (alive.current) setMessage(err instanceof LocalApiError && err.status === 409
         ? '请求已处理、过期或发生变化，请查看最新状态。没有重复批准。'
         : err instanceof Error ? err.message : '处理失败，请刷新查看结果后重试');
+    } finally {
+      working.current = false;
+      if (alive.current) { setBusy(false); setReviewed(false); }
+    }
+  };
+  const reconcileUncertain = async (outcome: 'occurred' | 'not_occurred') => {
+    if (!selected || selected.status !== 'uncertain' || working.current || error || !reviewed) return;
+    working.current = true;
+    setBusy(true);
+    setMessage(null);
+    try {
+      const result = await reconcile(selected, outcome, actorId.trim());
+      if (alive.current) setMessage(outcome === 'occurred'
+        ? `已记录外部操作确实发生。核对回执：${result.reconciliation_receipt_id}`
+        : `已记录外部操作没有发生。核对回执：${result.reconciliation_receipt_id}`);
+    } catch (err) {
+      if (alive.current) setMessage(err instanceof LocalApiError && err.status === 409
+        ? '该不确定执行已结案或证据发生变化，请刷新查看最新状态。'
+        : err instanceof Error ? err.message : '结案失败，请刷新后重试');
     } finally {
       working.current = false;
       if (alive.current) { setBusy(false); setReviewed(false); }
@@ -83,6 +103,11 @@ export default function ConfirmationsPage() {
       <dl>
         <dt>智能体</dt><dd className="resource-cell">{selected.agent_id || '未提供实例标识'}</dd>
         <dt>会话</dt><dd className="resource-cell">{selected.session_id}</dd>
+        <dt>运行任务</dt><dd className="resource-cell">{selected.runtime_task_id || selected.task_id || '平台未提供任务标识'}</dd>
+        <dt>批准范围</dt><dd>仅本次操作；不扩大长期权限</dd>
+        <dt>动作效果</dt><dd>{selected.effects.length ? selected.effects.join('、') : selected.operation || '未识别效果'}</dd>
+        <dt>资源指纹</dt><dd className="resource-cell">{selected.resource_refs.length
+          ? selected.resource_refs.map((ref) => `${ref.domain}:${ref.digest}`).join('\n') : '未识别结构化资源；请核对脱敏参数摘要'}</dd>
         <dt>请求时间</dt><dd>{new Date(selected.issued_at).toLocaleString()}</dd>
         <dt>确认截止</dt><dd>{selected.expires_at ? new Date(selected.expires_at).toLocaleString() : '无法核实'}</dd>
         <dt>脱敏参数摘要</dt><dd><pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{selected.params_excerpt ?? '未记录参数摘要；无法判断时请选择拒绝。'}</pre></dd>
@@ -90,7 +115,7 @@ export default function ConfirmationsPage() {
       <details><summary>查看对应证据</summary><p className="resource-cell">请求回执：{selected.decision_receipt_id}</p><p className="resource-cell">参数指纹：{selected.params_digest}</p></details>
       <p>{selected.grant_id && <Link to={grantLink(selected.grant_id)}>查看长期权限</Link>} · 批准本次请求不会扩大长期权限。</p>
       <p className="notice">{selected.platform === 'hermes'
-        ? 'Hermes 当前会阻止等待审批的调用，批准后尚不能自动恢复原调用。重新发起的调用属于新请求，可能需要再次确认。'
+        ? 'Hermes 会阻止原调用。批准后请在同一会话和任务中重试相同操作；适配器会先预留一次执行。若显示“结果不确定”，请先核对外部结果，系统不会自动再执行。'
         : '批准记录不代表工具已执行。支持恢复的平台仍需在有效期内核对原请求和当前权限。'}</p>
       {actionable && <>
         <div className="field"><label htmlFor="confirmation-actor">确认人</label><input id="confirmation-actor" value={actorId} disabled={busy} onChange={(event) => setActorId(event.target.value)} /></div>
@@ -98,6 +123,15 @@ export default function ConfirmationsPage() {
         <div className="toolbar">
           <button type="button" className="btn btn-danger" disabled={busy || !actorId.trim()} onClick={() => void act(false)}>拒绝本次请求</button>
           <button type="button" className="btn btn-primary" disabled={busy || !reviewed || !actorId.trim()} onClick={() => void act(true)}>批准本次请求</button>
+        </div>
+      </>}
+      {selected.status === 'uncertain' && <>
+        <p className="action-error" role="alert">请先在目标系统核对文件、消息或外部服务结果。此操作只记录核对结论，不会重新执行工具。</p>
+        <div className="field"><label htmlFor="reconciliation-actor">核对人</label><input id="reconciliation-actor" value={actorId} disabled={busy} onChange={(event) => setActorId(event.target.value)} /></div>
+        <label><input type="checkbox" checked={reviewed} disabled={busy} onChange={(event) => setReviewed(event.target.checked)} /> 我已在外部系统核对本次操作结果</label>
+        <div className="toolbar">
+          <button type="button" className="btn" disabled={busy || !reviewed || !actorId.trim()} onClick={() => void reconcileUncertain('not_occurred')}>确认没有执行</button>
+          <button type="button" className="btn btn-primary" disabled={busy || !reviewed || !actorId.trim()} onClick={() => void reconcileUncertain('occurred')}>确认已经执行</button>
         </div>
       </>}
       {message && <p role="status">{message}</p>}

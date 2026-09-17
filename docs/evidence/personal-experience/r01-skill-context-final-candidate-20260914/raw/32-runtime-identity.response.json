@@ -1,0 +1,20 @@
+{
+  "credential_path": "/tmp/siq-r01-sec-live-xjgb87vm/state/runtime-identity-secrets/ri-495dea0727cd15885ffa78acba336147.token",
+  "identity": {
+    "identity_id": "ri-495dea0727cd15885ffa78acba336147",
+    "instance_id": "hi-5bc1056da0d3598bb975a212b0e573c4",
+    "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+    "platform": "hermes",
+    "grant_ref": {
+      "grant_id": "grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "admission_id": "adm-si-4a3804829c9306baf95ba1d53d3fa245eeb0d231e69933297142aabf779e1e32",
+      "permission_digest": "e2ae158a21798b575beb968ee31b6685f3d63202c835e4c287fd3750e7a6b7cf"
+    },
+    "actor_id": "r01-live-operator",
+    "created_at": "2026-09-14T12:41:46.500374525Z",
+    "session_ttl_seconds": 3600,
+    "status": "issued",
+    "runtime_state": "unverified"
+  },
+  "schema_version": "local-runtime-identity-issued/v1"
+}

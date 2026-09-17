@@ -1,0 +1,115 @@
+{
+  "binary": {
+    "path": "/tmp/siq-b04-bin/agentshield",
+    "sha256": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942"
+  },
+  "checks": [
+    {
+      "detail": "sha256=5361966882f7bbdc…",
+      "id": "verify_binary_matches_seed",
+      "ok": true
+    },
+    {
+      "detail": "task-exp-1:expires_at=2026-09-16T00:27:06.771046816Z; task-keep-1:expires_at=2026-09-16T23:27:06.791770053Z; task-rev-1:expires_at=2026-09-16T00:27:06.81914097Z",
+      "id": "verify_ciphertext_retained_while_daemon_down",
+      "ok": true
+    },
+    {
+      "detail": "state=/tmp/siq-b04-run3/state port=53701",
+      "id": "verify_state_dir_reused",
+      "ok": true
+    },
+    {
+      "detail": "removed=[] added=['serve.lock'] modified=[]",
+      "id": "verify_startup_purge_scope",
+      "ok": true
+    },
+    {
+      "detail": "status=ready retention=86400",
+      "id": "verify_activation_persists",
+      "ok": true
+    },
+    {
+      "detail": "earliest_expires_at=2026-09-16T00:27:06.771046+00:00 skip_wait=False checked_at=2026-09-16T00:27:07.865673+00:00",
+      "id": "verify_expiry_elapsed",
+      "ok": true
+    },
+    {
+      "detail": "expect_visible=True; task-exp-1:status=expired,file=True; task-rev-1:status=expired,file=True; task-keep-1:status=active,file=True",
+      "id": "verify_pre_purge_expiry_state",
+      "ok": true
+    },
+    {
+      "detail": "record=raw-865c4e7ef275b11f9a92b7f4c84a4361 sha_match=True",
+      "id": "verify_survivor_readable_before_purge",
+      "ok": true
+    },
+    {
+      "detail": "deleted_records=2 expected=2 released_bytes=1700",
+      "id": "verify_purge_deleted_only_expired",
+      "ok": true
+    },
+    {
+      "detail": "removed=['raw-task-content/raw-39a721aada7c919dd036c52c6f292a7f.json', 'raw-task-content/raw-e6d9f6f27a87a1a7d9d41ec97723caf1.json'] added=[] modified=[]",
+      "id": "verify_purge_scope_state_dir",
+      "ok": true
+    },
+    {
+      "detail": "task-exp-1:records=0,file=False; task-keep-1:records=1,file=True; task-rev-1:records=0,file=False",
+      "id": "verify_purge_removed_expired_kept_survivor",
+      "ok": true
+    },
+    {
+      "detail": "record=raw-865c4e7ef275b11f9a92b7f4c84a4361",
+      "id": "verify_survivor_intact_after_purge",
+      "ok": true
+    },
+    {
+      "detail": "grant_files=['rawgrant-183b61c8cd0c1bc4bc87e4725990ce24.grant.json', 'rawgrant-20b6f19cf8ac48987699908fa4ee837c.grant.json', 'rawgrant-e423c904d0b7fa3544e5d9484067bd5e.grant.json'] grants_before=1 grants_after=1",
+      "id": "verify_grants_not_deleted",
+      "ok": true
+    },
+    {
+      "detail": "revocation_files=['rawgrant-183b61c8cd0c1bc4bc87e4725990ce24.revocation.json']",
+      "id": "verify_revocation_record_retained",
+      "ok": true
+    },
+    {
+      "detail": "receipts_before=3 receipts_after=3",
+      "id": "verify_receipts_not_deleted",
+      "ok": true
+    },
+    {
+      "detail": "activities_before=3 activities_after=3",
+      "id": "verify_activities_not_deleted",
+      "ok": true
+    },
+    {
+      "detail": "activity=230408b3f21eb014… receipts=1",
+      "id": "verify_export_success",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 404 task_activity_not_found",
+      "id": "verify_export_unknown_id_rejected",
+      "ok": true
+    },
+    {
+      "detail": "HTTP 401 unauthorized",
+      "id": "verify_export_requires_auth",
+      "ok": true
+    }
+  ],
+  "created_at": "2026-09-16T08:27:07+08:00",
+  "passed": true,
+  "port": 53701,
+  "purge_result": {
+    "deleted_records": 2,
+    "released_bytes": 1700,
+    "schema_version": "local-raw-task-content-purge-result/v1"
+  },
+  "schema_version": "b04-expiry-verify/v1",
+  "seed_created_at": "2026-09-16T07:27:06+08:00",
+  "seed_path": "/tmp/siq-b04-bin/b04-seed3.json",
+  "state_dir": "/tmp/siq-b04-run3/state"
+}

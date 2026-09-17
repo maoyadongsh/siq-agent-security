@@ -4,7 +4,9 @@ import type { Confirmation, Grant } from './types';
 
 const digest = 'a'.repeat(64);
 const item: Confirmation = { action_id: 'action-fixture', decision_receipt_id: 'receipt-fixture', decision_hash: digest,
+  reservation_receipt_id: '', reservation_hash: '',
   params_digest: digest, platform: 'hermes', agent_id: 'private-agent', session_id: 'private-session', tool: 'private-tool',
+  task_id: 'private-task', operation: 'process.exec', effects: ['process.exec'], resource_refs: [], approval_scope: 'once', resume_mode: 'retry_required',
   tool_call_id: 'private-call', grant_id: 'grant-fixture', issued_at: '2026-09-10T00:00:00Z', expires_at: '2026-09-10T00:01:00Z',
   params_excerpt: '/private/path', status: 'pending' };
 

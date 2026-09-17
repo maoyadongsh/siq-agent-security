@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/skill-execution-context.v1.schema.json",
+  "title": "Signed skill execution context V1 (N05/R01)",
+  "description": "daemon 签发的 Skill 执行上下文：归属从 unknown 提升为 verified 的唯一路径。签发与验证规则见 docs/personal-experience-n05-trusted-skill-execution-spec.md。SEC 不是 grant、不是 intent、不是审批；它不扩大任何资源范围。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "skill-execution-context/v1"
+    },
+    "context_id": {
+      "type": "string",
+      "pattern": "^sec-[0-9a-f]{32}$"
+    },
+    "issuer_id": {
+      "const": "local-admin"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "instance_id",
+        "agent_id",
+        "session_id"
+      ],
+      "properties": {
+        "platform": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "instance_id": {
+          "type": "string",
+          "pattern": "^hi-[0-9a-f]{32}$"
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^hri-[0-9a-f]{32}$"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_id",
+        "content_hash"
+      ],
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "install": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "install_id",
+        "claim_signature"
+      ],
+      "properties": {
+        "install_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "claim_signature": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{128}$"
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grant_id",
+        "grant_digest"
+      ],
+      "properties": {
+        "grant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "grant_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "签发时 daemon 现场计算的 grant canonical 字节 sha256；调用方提供的值一律忽略"
+        }
+      }
+    },
+    "evidence_level": {
+      "type": "string",
+      "enum": ["controlled_task", "controlled_session"]
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "context_id",
+    "issuer_id",
+    "subject",
+    "skill",
+    "install",
+    "authority",
+    "evidence_level",
+    "issued_at",
+    "expires_at",
+    "signing_schema",
+    "signature"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "evidence_level": {
+            "const": "controlled_task"
+          }
+        },
+        "required": ["evidence_level"]
+      },
+      "then": {
+        "properties": {
+          "subject": {
+            "required": ["task_id"]
+          }
+        }
+      }
+    }
+  ]
+}

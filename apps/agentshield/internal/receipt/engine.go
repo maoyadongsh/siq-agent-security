@@ -74,9 +74,14 @@ type Request struct {
 	Params              map[string]any                `json:"params"`
 	Context             map[string]any                `json:"context"`
 	TaskID              string                        `json:"task_id,omitempty"`
-	IntentID            string                        `json:"intent_id,omitempty"`
-	Principal           string                        `json:"principal,omitempty"`
-	Intent              *IntentContract               `json:"intent,omitempty"`
+	// RuntimeTaskID is the host runtime's per-task identity. TaskID remains an
+	// optional hint for the trusted Intent task and must never be overloaded by
+	// adapters with a host-local routing ID. SEC and native retry boundaries use
+	// RuntimeTaskID, falling back to TaskID for pre-R01 clients.
+	RuntimeTaskID string          `json:"runtime_task_id,omitempty"`
+	IntentID      string          `json:"intent_id,omitempty"`
+	Principal     string          `json:"principal,omitempty"`
+	Intent        *IntentContract `json:"intent,omitempty"`
 	// Skill is the runtime's claim about which skill version produced this
 	// call. It is untrusted input: it never grants anything by itself and is
 	// only resolved to a verified attribution through the trusted lookup.
@@ -107,6 +112,13 @@ type SkillAttribution struct {
 	Version     string `json:"version,omitempty"`
 	ContentHash string `json:"content_hash,omitempty"`
 	Status      string `json:"status"`
+	// EvidenceLevel and ContextID exist only on verified attributions produced
+	// by a skill execution context (N05/R01); CallBinding is the sha256 over the
+	// canonical (platform, session, agent, task, tool, tool_call_id, params) of
+	// the decided call, so the receipt alone re-proves the binding.
+	EvidenceLevel string `json:"evidence_level,omitempty"`
+	ContextID     string `json:"context_id,omitempty"`
+	CallBinding   string `json:"call_binding,omitempty"`
 }
 
 // SkillAttributionLookup resolves a runtime skill claim against trusted local
@@ -114,6 +126,34 @@ type SkillAttribution struct {
 // be attributed. Implementations must derive the result from trusted state,
 // never from the claim alone.
 type SkillAttributionLookup func(platform, sessionID, agentID string, claim *SkillClaim) *SkillAttribution
+
+// SkillContextVerification is the outcome of resolving daemon-issued skill
+// execution contexts (SEC) for the request subject (N05/R01).
+//
+// A nil verification means no SEC covers the subject: the request follows the
+// pre-SEC claim path unchanged. Invalid reports a SEC that matched the subject
+// but failed verification; the engine must deny (authority class) and never
+// fall back to a baseline grant.
+type SkillContextVerification struct {
+	// Valid SEC fields (Invalid=false):
+	ContextID     string
+	EvidenceLevel string
+	SkillID       string
+	Version       string
+	ContentHash   string
+	Grant         *grant.Grant
+	// Invalid SEC (Invalid=true): ReasonCode is a stable skill_context_* code.
+	Invalid    bool
+	ReasonCode string
+}
+
+// SkillContextLookup returns the SEC verification for one request subject.
+// It runs entirely against trusted server-side state; the request contributes
+// lookup keys only. Implementations must re-verify signature, expiry,
+// revocation and every live dependency (grant digest, install record) on each
+// call. The claim is already shape-validated by the engine; a claim that
+// conflicts with the SEC skill identity must yield Invalid.
+type SkillContextLookup func(platform, agentID, sessionID, taskID string, claim *SkillClaim) *SkillContextVerification
 
 // IntentLookup resolves authority from trusted local state. Implementations
 // must verify the stored digest/signature before returning an intent.
@@ -166,6 +206,7 @@ type Receipt struct {
 	ActionID            string                        `json:"action_id,omitempty"`
 	AgentID             *string                       `json:"agent_id"`
 	TaskID              string                        `json:"task_id,omitempty"`
+	RuntimeTaskID       string                        `json:"runtime_task_id,omitempty"`
 	IntentID            string                        `json:"intent_id,omitempty"`
 	IntentDigest        string                        `json:"intent_digest,omitempty"`
 	IntentBinding       string                        `json:"intent_binding,omitempty"`
@@ -239,9 +280,16 @@ type Options struct {
 	// every call. Claims are still resolved and signed into receipts either
 	// way, and are never displayed as verified unless the lookup confirms.
 	SkillAttributionEnforced bool
-	IntentLookup             IntentLookup
-	ContextLookup            func(string) (*trustedcontext.Assertion, error)
-	IntentEnforcement        string // optional (legacy) or required (fail closed)
+	// SkillContexts resolves daemon-issued skill execution contexts (N05/R01).
+	// nil → no SEC ever applies and behavior is identical to pre-SEC builds.
+	// A matched-but-invalid SEC denies regardless of enforcement mode.
+	SkillContexts SkillContextLookup
+	// BaselineGrants returns the newest live grant without a skill scope for
+	// the agent; it is the second leg of the SEC permission intersection.
+	BaselineGrants    GrantLookup
+	IntentLookup      IntentLookup
+	ContextLookup     func(string) (*trustedcontext.Assertion, error)
+	IntentEnforcement string // optional (legacy) or required (fail closed)
 }
 
 type session struct {
@@ -381,6 +429,8 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	start := e.opts.Now()
 	req.selectedGrant = nil
 	parameterErr := runtimeaction.ValidateParameters(req.Params)
+	runtimeTaskID := requestRuntimeTaskID(req)
+	runtimeTaskInvalid := !validExecutionText(runtimeTaskID, 256, true)
 	// Intent authority is resolved from trusted state; a decision client may
 	// never mint or replace it inline.
 	if req.Intent != nil {
@@ -391,6 +441,13 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		return nil, err
 	}
 	skillAttribution := e.resolveSkillAttribution(req)
+	// SEC resolution (N05/R01): a valid skill execution context overrides the
+	// claim-derived attribution with a verified one; a matched-but-invalid SEC
+	// hard denies later via the authority path, regardless of mode.
+	var sec *SkillContextVerification
+	if !runtimeTaskInvalid {
+		sec = e.resolveSkillContext(req)
+	}
 	var resolvedIntent *IntentContract
 	var authorityErr error
 	if e.opts.IntentLookup != nil {
@@ -400,6 +457,19 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 			req.selectedGrant = resolvedIntent.SelectedGrant
 		}
 		finish()
+	}
+	if sec != nil && !sec.Invalid {
+		// The SEC grant is server-selected authority; a trusted intent binding
+		// that pins a different grant conflicts and invalidates the context.
+		if req.selectedGrant != nil && req.selectedGrant.GrantID != sec.Grant.GrantID {
+			sec = &SkillContextVerification{Invalid: true, ReasonCode: "skill_context_grant_conflict"}
+		} else {
+			req.selectedGrant = sec.Grant
+			skillAttribution = &SkillAttribution{
+				SkillID: sec.SkillID, Version: sec.Version, ContentHash: sec.ContentHash,
+				Status: SkillAttributionVerified, EvidenceLevel: sec.EvidenceLevel, ContextID: sec.ContextID,
+			}
+		}
 	}
 	finishAuthority := e.stageTimer("authority_validation")
 	// A revoked but verified binding still identifies the trusted task for its
@@ -449,6 +519,8 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 
 	if parameterErr != nil {
 		authorityErr = &intent.Violation{Code: "runtime_parameter_budget_exceeded"}
+	} else if runtimeTaskInvalid {
+		authorityErr = &intent.Violation{Code: "runtime_task_invalid"}
 	}
 	finishAuthority()
 	if err := e.actionCapacity(start); err != nil {
@@ -467,11 +539,23 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	digest := sha256.Sum256(paramsJSON)
 
 	paramsDigest := hex.EncodeToString(digest[:])
+	if authorityErr == nil {
+		if code := e.pendingReservedExecution(req, paramsDigest); code != "" {
+			authorityErr = &intent.Violation{Code: code}
+		}
+	}
 	finishNormalization := e.stageTimer("runtime_action_normalization")
 	descriptor := runtimeaction.Describe(req.Tool, req.Params)
 	finishNormalization()
 	operation, effects := descriptor.Operation, descriptor.Effects
-	taskID := s.boundTaskID
+	// Preserve the host task identity even when no Intent is bound. It remains
+	// untrusted input and grants no authority by itself, but signed correlation
+	// records (SEC attribution and approved retry) must not erase the task
+	// boundary they validated. A trusted Intent binding remains authoritative.
+	taskID := req.TaskID
+	if s.boundTaskID != "" {
+		taskID = s.boundTaskID
+	}
 	intentID := s.boundIntentID
 	intentDigest := s.boundIntentDigest
 	authorityRevision := s.boundAuthorityRevision
@@ -506,6 +590,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		ActionID:          actionID,
 		Tool:              req.Tool,
 		TaskID:            taskID,
+		RuntimeTaskID:     runtimeTaskID,
 		IntentID:          intentID,
 		IntentDigest:      intentDigest,
 		IntentBinding:     "unbound",
@@ -530,6 +615,21 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	if req.ToolCallID != "" {
 		t := req.ToolCallID
 		rec.ToolCallID = &t
+	}
+	// A verified attribution binds the exact final call: tool, tool call ID and
+	// the final parameter set. If the adapter cannot name the call, the SEC
+	// cannot verify it and the decision must fail closed instead of recording
+	// an unbound verified attribution.
+	if sec != nil && !sec.Invalid {
+		binding, bindingErr := trustedcontext.CallBinding(req.Platform, req.SessionID, req.AgentID, runtimeTaskID, req.Tool, req.ToolCallID, req.Params)
+		if bindingErr != nil {
+			sec = &SkillContextVerification{Invalid: true, ReasonCode: "skill_context_invalid"}
+			skillAttribution = e.resolveSkillAttribution(req)
+			rec.SkillAttribution = skillAttribution
+		} else {
+			skillAttribution.CallBinding = binding
+			rec.SkillAttribution = skillAttribution
+		}
 	}
 	excerpt := truncate(e.analyzer.Redact(paramsText), excerptMax)
 	rec.ParamsExcerpt = &excerpt
@@ -562,6 +662,13 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		}
 	}
 	authority := runtimeauthz.Authority(validationCode, rec.IntentBinding == "bound")
+	if authority.Valid && sec != nil && sec.Invalid {
+		// A SEC matched this subject but failed verification (revoked, expired,
+		// grant or install drift, claim conflict). This is an authority-class
+		// failure: advisory modes must not allow it, and the request must never
+		// fall back to a baseline grant.
+		authority = runtimeauthz.Authority(sec.ReasonCode, rec.IntentBinding == "bound")
+	}
 	if authority.Valid && req.ContextAssertionID != "" {
 		finish := e.stageTimer("context_validation")
 		contextErr := e.checkContext(req, taskID, start)
@@ -603,7 +710,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	var redacted map[string]any
 	if authority.Valid {
 		finish := e.stageTimer("policy_evaluation")
-		policy.Action, policy.Reason = e.evaluate(req, s, descriptor, &rec, start)
+		policy.Action, policy.Reason = e.evaluate(req, s, descriptor, &rec, start, sec)
 		if policy.Reason == "intent_grant_installation_binding_required" {
 			authority = runtimeauthz.Authority(policy.Reason, rec.IntentBinding == "bound")
 			rec.AuthorityStatus, rec.AuthorityReasonCode = authority.Status, authority.ReasonCode
@@ -622,10 +729,17 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 				}
 			}
 			checkedReceipt := rec
-			if action, _ := e.evaluate(checked, &cleanSession, runtimeaction.Describe(req.Tool, candidate), &checkedReceipt, start); action == ActionAllow && checkedReceipt.MatchedGrantID != nil && rec.MatchedGrantID != nil && *checkedReceipt.MatchedGrantID == *rec.MatchedGrantID {
+			if action, _ := e.evaluate(checked, &cleanSession, runtimeaction.Describe(req.Tool, candidate), &checkedReceipt, start, sec); action == ActionAllow && checkedReceipt.MatchedGrantID != nil && rec.MatchedGrantID != nil && *checkedReceipt.MatchedGrantID == *rec.MatchedGrantID {
 				redacted = candidate
 				rec.MatchedFactIDs = checkedReceipt.MatchedFactIDs
 				policy.Action, policy.Reason = ActionRedact, "secret literal removed from params before egress (grant permits redaction)"
+				// The executed call carries the redacted parameters; the verified
+				// attribution must bind those, not the pre-redaction input.
+				if sec != nil && rec.SkillAttribution != nil && rec.SkillAttribution.Status == SkillAttributionVerified {
+					if b, berr := trustedcontext.CallBinding(req.Platform, req.SessionID, req.AgentID, runtimeTaskID, req.Tool, req.ToolCallID, candidate); berr == nil {
+						rec.SkillAttribution.CallBinding = b
+					}
+				}
 			}
 		}
 		policy.ReasonCode = classifyReason(policy.Reason, policy.Action)
@@ -747,6 +861,52 @@ func (e *Engine) resolveSkillAttribution(req Request) *SkillAttribution {
 	return &SkillAttribution{SkillID: claim.SkillID, Version: claim.Version, ContentHash: claim.ContentHash, Status: SkillAttributionUnknown}
 }
 
+// resolveSkillContext resolves a daemon-issued skill execution context for the
+// request subject. It returns nil when no SEC covers the subject (the request
+// then follows the pre-SEC claim path unchanged). Lookup results that violate
+// the contract shape are treated as invalid (fail closed), never trusted.
+func (e *Engine) resolveSkillContext(req Request) *SkillContextVerification {
+	if e.opts.SkillContexts == nil {
+		return nil
+	}
+	claim := req.Skill
+	if claim != nil && !validSkillClaim(claim) {
+		claim = nil
+	}
+	v := e.opts.SkillContexts(req.Platform, req.AgentID, req.SessionID, requestRuntimeTaskID(req), claim)
+	if v == nil {
+		return nil
+	}
+	if v.Invalid {
+		code := v.ReasonCode
+		if !strings.HasPrefix(code, "skill_context_") {
+			code = "skill_context_invalid"
+		}
+		return &SkillContextVerification{Invalid: true, ReasonCode: code}
+	}
+	if v.ContextID == "" || v.Grant == nil || v.Grant.Skill == nil ||
+		v.Grant.Skill.SkillID != v.SkillID || v.Grant.Skill.ContentHash != v.ContentHash ||
+		!validSkillClaim(&SkillClaim{SkillID: v.SkillID, Version: v.Version, ContentHash: v.ContentHash}) ||
+		(v.EvidenceLevel != "controlled_task" && v.EvidenceLevel != "controlled_session") {
+		return &SkillContextVerification{Invalid: true, ReasonCode: "skill_context_invalid"}
+	}
+	return v
+}
+
+func requestRuntimeTaskID(req Request) string {
+	if req.RuntimeTaskID != "" {
+		return req.RuntimeTaskID
+	}
+	return req.TaskID
+}
+
+func receiptRuntimeTaskID(rec Receipt) string {
+	if rec.RuntimeTaskID != "" {
+		return rec.RuntimeTaskID
+	}
+	return rec.TaskID
+}
+
 // skillAttributionMatches reports whether the trusted attribution covers the
 // grant's approved skill version exactly. Anything less (unclaimed, unknown,
 // version or content drift) fails closed.
@@ -763,18 +923,66 @@ func skillAttributionMatches(ref grant.SkillRef, a *SkillAttribution) bool {
 	return true
 }
 
-// evaluate performs steps 2–5 and returns the raw (pre-mode) action.
-func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt, now time.Time) (string, string) {
-	hosts, paths := descriptor.Hosts, descriptor.Paths
+// evaluate performs steps 2–5 and returns the raw (pre-mode) action. A valid
+// SEC switches evaluation to the permission intersection of the SEC-bound
+// grant and the agent's baseline grant (N05/R01 §3.4).
+func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt, now time.Time, sec *SkillContextVerification) (string, string) {
+	if sec != nil {
+		return e.evaluateIntersection(req, s, descriptor, rec, now, sec)
+	}
 	g := req.selectedGrant
+	unselected := req.selectedGrant == nil
 	if g == nil && e.opts.Grants != nil {
 		g = e.opts.Grants(req.Platform, req.AgentID)
 	}
-	if g == nil || (g.Status != "deployed" && g.Status != "effective" && !(req.selectedGrant != nil && g.Status == "approved" && importsource.Reserved(g.AdmissionID))) {
+	return e.evaluateGrant(req, s, descriptor, rec, now, g, unselected)
+}
+
+// evaluateIntersection applies the SEC-bound grant first and the agent's
+// baseline grant second. The effective permission is the backend-computed
+// intersection: any deny wins, otherwise any hold wins, otherwise allow.
+// Without a live distinct baseline the SEC grant is the whole intersection.
+func (e *Engine) evaluateIntersection(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt, now time.Time, sec *SkillContextVerification) (string, string) {
+	action, reason := e.evaluateGrant(req, s, descriptor, rec, now, sec.Grant, false)
+	if action == ActionDeny {
+		return action, reason
+	}
+	var baseline *grant.Grant
+	if e.opts.BaselineGrants != nil {
+		baseline = e.opts.BaselineGrants(req.Platform, req.AgentID)
+	}
+	if baseline == nil || baseline.GrantID == sec.Grant.GrantID || baseline.Skill != nil {
+		return action, reason
+	}
+	scratch := &Receipt{MatchedFactIDs: []string{}}
+	baction, breason := e.evaluateGrant(req, s, descriptor, scratch, now, baseline, false)
+	for _, fid := range scratch.MatchedFactIDs {
+		rec.MatchedFactIDs = appendUnique(rec.MatchedFactIDs, fid)
+	}
+	gid := sec.Grant.GrantID
+	rec.MatchedGrantID = &gid
+	switch {
+	case baction == ActionDeny:
+		return ActionDeny, "baseline grant " + baseline.GrantID + " intersection: " + breason
+	case action == ActionHold:
+		return ActionHold, reason
+	case baction == ActionHold:
+		return ActionHold, "baseline grant " + baseline.GrantID + " intersection: " + breason
+	default:
+		return ActionAllow, "granted by " + sec.Grant.GrantID + " intersect " + baseline.GrantID
+	}
+}
+
+// evaluateGrant is the single-grant policy evaluation (spec §3.8.2 steps 2-5).
+// unselected marks a grant from the default lookup rather than a trusted
+// binding; import-reserved grants deny unless explicitly selected.
+func (e *Engine) evaluateGrant(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt, now time.Time, g *grant.Grant, unselected bool) (string, string) {
+	hosts, paths := descriptor.Hosts, descriptor.Paths
+	if g == nil || (g.Status != "deployed" && g.Status != "effective" && !(!unselected && g.Status == "approved" && importsource.Reserved(g.AdmissionID))) {
 		return ActionDeny, "no deployed grant for agent (default deny)"
 	}
 
-	if req.selectedGrant == nil && importsource.Reserved(g.AdmissionID) {
+	if unselected && importsource.Reserved(g.AdmissionID) {
 		return ActionDeny, "intent_grant_installation_binding_required"
 	}
 	gid := g.GrantID
@@ -788,9 +996,12 @@ func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Desc
 
 	// A skill-scoped grant only serves calls attributed to exactly its
 	// approved skill version; forged, switched or borrowed identities (and no
-	// claim at all) fall through to default deny (UX-007, Q05). Gated on
-	// SkillAttributionEnforced: adapters do not yet attach runtime claims.
-	if g.Skill != nil && e.opts.SkillAttributionEnforced && !skillAttributionMatches(*g.Skill, rec.SkillAttribution) {
+	// claim at all) fall through to default deny (UX-007, N05). Installed
+	// grants use an import-reserved admission and always require a verified
+	// SEC. The legacy feature flag remains for non-install grant flows whose
+	// platform adapter cannot yet provide a trusted execution context.
+	requireSkillAttribution := g.Skill != nil && (e.opts.SkillAttributionEnforced || importsource.Reserved(g.AdmissionID))
+	if requireSkillAttribution && !skillAttributionMatches(*g.Skill, rec.SkillAttribution) {
 		return ActionDeny, "skill attribution does not verify for grant (default deny)"
 	}
 

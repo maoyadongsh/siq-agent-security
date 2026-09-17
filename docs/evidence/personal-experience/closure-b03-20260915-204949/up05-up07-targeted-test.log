@@ -1,0 +1,13 @@
+=== RUN   TestUP07FutureFormatBlocksWriteEntrypointsAndMutatesNothing
+--- PASS: TestUP07FutureFormatBlocksWriteEntrypointsAndMutatesNothing (0.08s)
+=== RUN   TestUP07CorruptMarkerBlocksWriteEntrypointsAndMutatesNothing
+--- PASS: TestUP07CorruptMarkerBlocksWriteEntrypointsAndMutatesNothing (0.06s)
+=== RUN   TestUP07BrokenStoredSignatureRefusedWithoutRewrite
+--- PASS: TestUP07BrokenStoredSignatureRefusedWithoutRewrite (0.02s)
+=== RUN   TestUP07StaleRevisionWriteRefusedLeavesGrantUntouched
+--- PASS: TestUP07StaleRevisionWriteRefusedLeavesGrantUntouched (0.05s)
+=== RUN   TestUP07RealBinaryRefusesFutureStateBeforeSideEffects
+    up07_state_compat_write_test.go:372: admit exit=1 output="siq-agent-security: state: incompatible state directory: state: format requires a newer program\n状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。\n"
+--- PASS: TestUP07RealBinaryRefusesFutureStateBeforeSideEffects (0.40s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/server	0.624s

@@ -1,0 +1,13 @@
+[
+  {"name":"normal","text":"Server Status\nGateway: demo-1\nGateway version: 0.0.104\n","valid":true},
+  {"name":"whitespace","text":"\n Server Status \n Gateway: demo_1 \n","valid":true},
+  {"name":"missing_heading","text":"Gateway: demo\n","valid":false},
+  {"name":"heading_suffix","text":"Server Status garbage\nGateway: demo\n","valid":false},
+  {"name":"heading_late","text":"garbage\nServer Status\nGateway: demo\n","valid":false},
+  {"name":"duplicate","text":"Server Status\nGateway: a\nGateway: b\n","valid":false},
+  {"name":"empty","text":"Server Status\nGateway: \n","valid":false},
+  {"name":"unicode","text":"Server Status\nGateway: 网关\n","valid":false},
+  {"name":"space","text":"Server Status\nGateway: a b\n","valid":false},
+  {"name":"empty_then_valid","text":"Server Status\nGateway:\nGateway: a\n","valid":false},
+  {"name":"foreign","text":"OpenClaw ready","valid":false}
+]

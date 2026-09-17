@@ -1,0 +1,35 @@
+{
+  "schema_version": "personal-macos-clean-candidate-verification/v1",
+  "recorded_at": "2026-09-16T21:13:21+08:00",
+  "branch": "codex/macos-luke-p06-20260916-153008",
+  "candidate": "2162907c980c9a4d17a22d64437be9b97502f9ab",
+  "source_dirty_at_build": false,
+  "binary_sha256": "7ea96e90fc3b9012f98e32d24406534ccf9d0d847bf8b52206c47eff93dc9362",
+  "binary_format": "Mach-O 64-bit executable arm64",
+  "checks": {
+    "gofmt": "pass",
+    "go_vet_all": "pass",
+    "go_test_all_count_1": "pass",
+    "cross_build_linux_amd64": "pass",
+    "cross_build_linux_arm64": "pass",
+    "cross_build_darwin_arm64": "pass",
+    "cross_build_windows_amd64": "pass",
+    "openclaw_native": {"passed": true, "check_count": 17},
+    "hermes_native": {"passed": true, "check_count": 6},
+    "workbuddy_native_final_parameter": {"passed": true, "receipt_seq": 10},
+    "workbuddy_receipt_chain": {"verified": true, "receipts": 14, "head_seq": 13},
+    "workbuddy_cross_root_reinstall_regression": {
+      "passed": true,
+      "test": "TestWorkBuddyReinstallRefusesDifferentConfigRoot",
+      "expected_behavior": "reject before writing a second configuration root"
+    }
+  },
+  "constraints_preserved": {
+    "sudo_used": false,
+    "global_path_changed": false,
+    "security_policy_changed": false,
+    "daily_workbuddy_config_changed": false,
+    "push_or_publish_performed": false,
+    "secrets_or_pairing_codes_in_evidence": false
+  }
+}

@@ -10,6 +10,8 @@ import (
 	"testing"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/hermeshome"
+	"siq-agent-security/apps/agentshield/internal/skillinstall"
 )
 
 func importPermissionFixture(t *testing.T) (*Server, string, importPermissionRequest) {
@@ -26,6 +28,158 @@ func importPermissionFixture(t *testing.T) (*Server, string, importPermissionReq
 	}
 	body := importPermissionRequest{SchemaVersion: "local-skill-import-permission-create/v1", RequestID: "ip-" + strings.Repeat("b", 32), ArtifactDigest: rec.ArtifactDigest, AnalysisSHA256: rec.AnalysisSHA256, InstanceID: rows[1].(map[string]any)["instance_id"].(string), ActorID: "fixture-human"}
 	return s, req.ImportID, body
+}
+
+func TestImportedPermissionAndInstallationSupportOpenClawInstance(t *testing.T) {
+	s, req := skillImportHTTPFixture(t)
+	root := filepath.Join(s.d.Home, ".openclaw")
+	if err := os.MkdirAll(root, 0700); err != nil {
+		t.Fatal(err)
+	}
+	if code, out := call(t, s, "POST", "/v1/skill-imports", token, req); code != 201 {
+		t.Fatal(code, out)
+	}
+	record, _, err := s.skillImports.Load(nil, req.ImportID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	body := importPermissionRequest{
+		SchemaVersion: "local-skill-import-permission-create/v1",
+		RequestID:     "ip-" + strings.Repeat("d", 32), ArtifactDigest: record.ArtifactDigest,
+		AnalysisSHA256: record.AnalysisSHA256, InstanceID: hermeshome.Identifier(root), ActorID: "fixture-human",
+	}
+	code, result := call(t, s, "POST", "/v1/skill-imports/"+req.ImportID+"/permissions", token, body)
+	if code != 201 {
+		t.Fatal(code, result)
+	}
+	g := result["grant"].(map[string]any)
+	if g["platform"] != "openclaw" || g["subject"].(map[string]any)["id"] != "hri-"+strings.TrimPrefix(body.InstanceID, "hi-") {
+		t.Fatal("permission target was not bound to OpenClaw", g)
+	}
+	grantPath := "/v1/grants/" + g["grant_id"].(string)
+	code, result = call(t, s, "POST", grantPath+"/patch-desired", token, map[string]any{
+		"expected_revision": 0, "actor_id": body.ActorID, "tools": []string{"read"},
+	})
+	if code != 200 {
+		t.Fatal(code, result)
+	}
+	challengeCode, challengeResult := call(t, s, "POST", grantPath+"/challenge", token, map[string]any{
+		"expected_revision": result["state_revision"], "actor_id": body.ActorID,
+	})
+	if challengeCode != 200 {
+		t.Fatal(challengeCode, challengeResult)
+	}
+	challenge := challengeResult["challenge"].(map[string]any)
+	code, result = call(t, s, "POST", grantPath+"/approve", token, map[string]any{
+		"expected_revision": result["state_revision"], "actor_id": body.ActorID,
+		"challenge_id": challenge["challenge_id"], "nonce": challenge["nonce"],
+	})
+	if code != 200 {
+		t.Fatal(code, result)
+	}
+	stage := skillinstall.Request{
+		SchemaVersion: "local-skill-install-stage-create/v1", RequestID: "is-" + strings.Repeat("e", 32),
+		GrantID: g["grant_id"].(string), ExpectedRevision: int(result["state_revision"].(float64)),
+		InstanceID: body.InstanceID, DirectoryName: "openclaw-import", ActorID: body.ActorID,
+	}
+	code, planResult := call(t, s, "POST", "/v1/skill-installations/plans", token, stage)
+	if code != 201 {
+		t.Fatal(code, planResult)
+	}
+	plan := planResult["plan"].(map[string]any)
+	if plan["platform"] != "openclaw" {
+		t.Fatal("installation plan lost OpenClaw target", plan)
+	}
+	code, installed := call(t, s, "POST", "/v1/skill-installations/apply", token, skillinstall.ApplyRequest{
+		SchemaVersion: "local-skill-install-apply/v1", PlanID: plan["plan_id"].(string),
+		PlanSignature: plan["signature"].(string), ActorID: body.ActorID, ConfirmInstall: true,
+	})
+	if code != 200 || installed["status"] != "installed_unverified" {
+		t.Fatal(code, installed)
+	}
+	operation := installed["operation"].(map[string]any)
+	code, activated := call(t, s, "POST", "/v1/skill-installations/operations/"+installed["install_id"].(string)+"/activate", token, skillinstall.ActivateRequest{
+		SchemaVersion: "local-skill-install-activate/v1", OperationSignature: operation["signature"].(string),
+		ExpectedRevision: stage.ExpectedRevision, ActorID: body.ActorID, ConfirmInstanceScope: true,
+	})
+	if code != 200 || activated["runtime_verified"] != false {
+		t.Fatal(code, activated)
+	}
+	targetSkill := filepath.Join(root, "skills", stage.DirectoryName, "SKILL.md")
+	targetInfo, err := os.Stat(targetSkill)
+	if err != nil {
+		t.Fatal("OpenClaw Skill was not installed in the selected root", err)
+	}
+	pool := filepath.Join(root, ".siq-agent-security-installs", installed["install_id"].(string))
+	entries, err := os.ReadDir(pool)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if !strings.HasPrefix(entry.Name(), "f-") {
+			continue
+		}
+		poolInfo, statErr := os.Stat(filepath.Join(pool, entry.Name()))
+		if statErr != nil {
+			t.Fatal(statErr)
+		}
+		if os.SameFile(targetInfo, poolInfo) {
+			t.Fatal("OpenClaw payload must be independently published; hardlinks are rejected by its Skill loader")
+		}
+	}
+}
+
+func TestImportedPermissionRejectsAmbiguousAndSymlinkOpenClawTargets(t *testing.T) {
+	for _, test := range []struct {
+		name      string
+		configure func(*testing.T, *Server) string
+	}{
+		{
+			name: "ambiguous",
+			configure: func(t *testing.T, s *Server) string {
+				root := filepath.Join(s.d.Home, ".openclaw")
+				if err := os.MkdirAll(root, 0700); err != nil {
+					t.Fatal(err)
+				}
+				s.d.HermesHome = root
+				return hermeshome.Identifier(root)
+			},
+		},
+		{
+			name: "symlink",
+			configure: func(t *testing.T, s *Server) string {
+				real := filepath.Join(s.d.Home, "real-openclaw")
+				root := filepath.Join(s.d.Home, ".openclaw")
+				if err := os.MkdirAll(real, 0700); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.Symlink(real, root); err != nil {
+					t.Fatal(err)
+				}
+				return hermeshome.Identifier(root)
+			},
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			s, req := skillImportHTTPFixture(t)
+			instanceID := test.configure(t, s)
+			if code, out := call(t, s, "POST", "/v1/skill-imports", token, req); code != 201 {
+				t.Fatal(code, out)
+			}
+			record, _, err := s.skillImports.Load(nil, req.ImportID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			body := importPermissionRequest{SchemaVersion: "local-skill-import-permission-create/v1", RequestID: "ip-" + strings.Repeat("f", 32), ArtifactDigest: record.ArtifactDigest, AnalysisSHA256: record.AnalysisSHA256, InstanceID: instanceID, ActorID: "fixture-human"}
+			if code, out := call(t, s, "POST", "/v1/skill-imports/"+req.ImportID+"/permissions", token, body); code != 409 || out["error"] != "skill_import_permission_target_unavailable" {
+				t.Fatal("unsafe target accepted", code, out)
+			}
+			grants, err := s.d.Store.ListGrants()
+			if err != nil || len(grants) != 0 {
+				t.Fatal("unsafe target wrote authority", err, grants)
+			}
+		})
+	}
 }
 func TestImportedPermissionHTTPPrepareApproveAndRefuseEarlyDeployment(t *testing.T) {
 	s, id, body := importPermissionFixture(t)

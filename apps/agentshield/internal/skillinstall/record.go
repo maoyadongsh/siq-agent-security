@@ -104,7 +104,7 @@ func (s *Store) readPlan(id string) (*Plan, error) {
 	if err != nil || !bytes.Equal(raw, canonical) {
 		return nil, ErrChanged
 	}
-	if p.SchemaVersion != "local-skill-install-plan/v1" || p.PlanID != id || !validRequest(p.request()) || p.Platform != "hermes" || !displayValid(p.TargetDisplay) || !digestPattern.MatchString(p.TargetLocatorDigest) || !digestPattern.MatchString(p.GrantPermissionDigest) || !signaturePattern.MatchString(p.GrantSignature) || !signaturePattern.MatchString(p.Signature) || p.FileCount < 1 || p.FileCount > 2000 || p.TotalBytes < 0 || p.TotalBytes > 64<<20 || p.Installed || p.RuntimeVerified {
+	if p.SchemaVersion != "local-skill-install-plan/v1" || p.PlanID != id || !validRequest(p.request()) || !supportedPlatform(p.Platform) || !displayValid(p.TargetDisplay) || !digestPattern.MatchString(p.TargetLocatorDigest) || !digestPattern.MatchString(p.GrantPermissionDigest) || !signaturePattern.MatchString(p.GrantSignature) || !signaturePattern.MatchString(p.Signature) || p.FileCount < 1 || p.FileCount > 2000 || p.TotalBytes < 0 || p.TotalBytes > 64<<20 || p.Installed || p.RuntimeVerified {
 		return nil, ErrChanged
 	}
 	if _, err := p.Source.Canonical(); err != nil {

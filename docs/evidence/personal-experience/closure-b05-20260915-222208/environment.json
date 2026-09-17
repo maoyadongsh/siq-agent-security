@@ -1,0 +1,13 @@
+{
+  "schema_version": "personal-evidence-environment/v1",
+  "recorded_at": "2026-09-15T22:22:08.884099+00:00",
+  "platform": "Linux-6.17.0-1014-nvidia-aarch64-with-glibc2.39",
+  "machine": "aarch64",
+  "openclaw_version": "2026.5.12",
+  "native_cli_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733",
+  "agentshield_binary_sha256": "22b867384f6e074489a7b0b37b085120f082bf12e06822d8af19570c8dca3d92",
+  "harness_sha256": "366557d17ee5ef8615c3aca1a9de90d14eb418af69bf2483fdd0dd343efc5f50",
+  "harness_script": "scripts/personal-experience/closure-b05-service-down-side-effects.py",
+  "isolation": "TemporaryDirectory HOME/state (0700); deterministic local model fixture; loopback-only receiver and daemon",
+  "sensitive_paths_touched": "none (real ~/.config/siq-agent-security and ~/.openclaw untouched)"
+}

@@ -54,8 +54,8 @@
     },
     "platform": {
       "type": "string",
-      "enum": ["openclaw", "hermes", "codebuddy", "trae", "claude_code", "codex", "other"],
-      "description": "被授权 Agent 所在平台；决定输出哪种 allowlist"
+      "enum": ["openclaw", "hermes", "codebuddy", "workbuddy", "trae", "claude_code", "codex", "other"],
+      "description": "被授权 Agent 所在平台；决定输出哪种 allowlist。WorkBuddy 桌面必须用 workbuddy，不能签发到 codebuddy。"
     },
     "facts": {
       "type": "array",

@@ -270,6 +270,42 @@ func (s *Store) Create(req CreateRequest) (Record, error) {
 	return r, nil
 }
 
+// InspectByInstance returns the signed, unrevoked record for one instance.
+// It is a management/verification read: no credential material is exposed and
+// no session is authorized by it.
+func (s *Store) InspectByInstance(instance string) (Record, error) {
+	writeMu.RLock()
+	defer writeMu.RUnlock()
+	if !instanceID.MatchString(instance) {
+		return Record{}, ErrInvalid
+	}
+	ids, err := recordIDs(filepath.Join(s.dir, "runtime-identities"), maxIdentities)
+	if err != nil {
+		return Record{}, ErrUnavailable
+	}
+	for _, id := range ids {
+		r, err := s.read(id)
+		if err != nil {
+			return Record{}, err
+		}
+		if r.InstanceID != instance {
+			continue
+		}
+		revoked, err := s.revoked(r)
+		if err != nil {
+			return Record{}, err
+		}
+		if revoked {
+			// A replacement identity for the same instance is valid only after
+			// the previous one is revoked. Keep scanning because record IDs are
+			// random and therefore do not encode creation order.
+			continue
+		}
+		return r, nil
+	}
+	return Record{}, ErrUnavailable
+}
+
 // Authenticate rereads signed metadata, revocation, and Grant on every call.
 // It does not authorize a session: the decision middleware must additionally
 // match the session's signed binding to this identity and fixed Grant.

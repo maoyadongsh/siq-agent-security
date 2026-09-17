@@ -1,0 +1,6 @@
+{
+  "command": "go test ./internal/openshell -run ^TestO05LiveCrossBoundaryEnforcement$ -count=1 -v",
+  "exit_code": 0,
+  "scope": "real_cross_boundary_policy_enforcement",
+  "output": "=== RUN   TestO05LiveCrossBoundaryEnforcement\n    o05_enforcement_live_test.go:160: allow propagation_ms=334\n    o05_enforcement_live_test.go:160: allow propagation_ms=286\n    o05_enforcement_live_test.go:160: allow propagation_ms=269\n    o05_enforcement_live_test.go:175: deny_probe outcome=http_403 arrivals=0\n    o05_enforcement_live_test.go:189: cross-boundary enforcement pass target=siq-loadwait-231213 allowed=172.23.0.1:36103 (arrived) violating=172.23.0.1:32879 (blocked, 0 arrivals) both_targets_reachable=ok restore_verified=true base_revision=1 applied_revision=4\n--- PASS: TestO05LiveCrossBoundaryEnforcement (40.57s)\nPASS\nok  \tsiq-agent-security/apps/agentshield/internal/openshell\t40.571s\n"
+}
