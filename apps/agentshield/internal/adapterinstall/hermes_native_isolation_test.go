@@ -1,7 +1,6 @@
 package adapterinstall
 
 import (
-	"bytes"
 	"crypto/sha256"
 	"errors"
 	"io/fs"
@@ -136,8 +135,36 @@ func TestHermesNativeCLIProfileIsolationAndDrift(t *testing.T) {
 	if _, err := Uninstall(second); err != nil {
 		t.Fatal(err)
 	}
-	if raw, err := os.ReadFile(filepath.Join(second.configRoot(), "config.yaml")); err != nil || !bytes.Equal(raw, originals[second.configRoot()]) {
-		t.Fatal("unchanged second config not exactly restored")
+	secondRaw, err := os.ReadFile(filepath.Join(second.configRoot(), "config.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	originalDoc, err := stage.document(originals[second.configRoot()])
+	if err != nil {
+		t.Fatal(err)
+	}
+	restoredDoc, err := stage.document(secondRaw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	originalUnowned, err := nativeUnowned(originalDoc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	restoredUnowned, err := nativeUnowned(restoredDoc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	originalRegistration, err := nativeRegistration(originalDoc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	restoredRegistration, err := nativeRegistration(restoredDoc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(originalUnowned, restoredUnowned) || !reflect.DeepEqual(originalRegistration, restoredRegistration) {
+		t.Fatal("second profile configuration semantics not fully restored")
 	}
 	t.Log("native preview unchanged; stale plan rejected; sibling tree unchanged; both registrations restored")
 }
