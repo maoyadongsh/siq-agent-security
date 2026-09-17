@@ -1,0 +1,24 @@
+{
+  "schema": "openclaw-a07-public-verification.v1",
+  "status": "passed",
+  "meaning": "公开材料与保留证据一致，不代表平台验收通过。",
+  "source_context": "fd2cdba7c9d5111bc5fd475651fb6453d5b45d15",
+  "payload_files_verified": 4,
+  "source_rows_verified": 53,
+  "raw_streams_verified": 8,
+  "frozen_inputs_verified": 17,
+  "actual_verdict_preserved": "A fail; diagnostic complete; B not_run",
+  "actual_wrapper_sha256": "bbddd005fa54eb75288457c6314adc1b09722d8d40b477176c184afce9983883",
+  "public_manifest_sha256": "8b238f9d1f1f8a15b35497c7f3b832ab1ae91743f9897aa9e7c58df05ee5cceb",
+  "independent_actual_review_sha256": "155556233861e80b3ee3bbb2a43f50adbc728db0296372374e3ab7b73b8b7bda",
+  "validator": {
+    "entry": "verify-public.py",
+    "sha256": "c59d5cbb188fd5e06c34eb7f85ac5264ed1fc79dc645ac6fcceb02bc70124be7",
+    "exit_code": 0
+  },
+  "sensitive_content_review": {
+    "explicit_private_field_check": "passed"
+  },
+  "product_code_changed": false,
+  "formal_acceptance_matrix_changed": false
+}

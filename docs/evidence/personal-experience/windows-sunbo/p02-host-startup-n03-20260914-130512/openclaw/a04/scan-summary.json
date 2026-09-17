@@ -1,0 +1,33 @@
+{
+  "schema_version": "public-a04-scan-summary/v1",
+  "scope": "A04 public allowlist export only",
+  "scanner": {
+    "name": "Gitleaks",
+    "version": "8.24.2",
+    "sha256": "e2b9ba6baa1cd385033b37572b084188f351d48ec586eb2cfbc5af10c72bfeb9"
+  },
+  "configuration": {
+    "label": "existing_repository_configuration",
+    "sha256": "e7ee7c9969928bf97590c038ef98e2eddc34fd506932a2ad1c760b64ac8a5a89",
+    "new_exceptions": false
+  },
+  "calibration": "No new calibration in this batch; existing available scanner reused.",
+  "content_scan": {
+    "exit_code": 0,
+    "finding_count": 0,
+    "file_count": 3,
+    "subjects": [
+      "report.md",
+      "summary.derived.json",
+      "summary.schema.json"
+    ]
+  },
+  "static_privacy_check": {
+    "passed": true,
+    "finding_count": 0,
+    "scope": "Common private paths, OS identities, raw argv/env/request/signature keys; manual field allowlist review.",
+    "initial_review": "A metadata key was renamed to avoid collision with the prohibited raw-environment-map key; no private value was present."
+  },
+  "strict_jsonschema_valid": true,
+  "final_export_scan": "The full final export is scanned after the manifest is written; its report is retained privately."
+}

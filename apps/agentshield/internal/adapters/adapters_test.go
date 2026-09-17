@@ -34,8 +34,15 @@ func TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean(t *testing.T) {
 		"benign/pure-doc":       "allow",
 	}
 	for rel, want := range cases {
-		in := `{"protocolVersion":1,"targetType":"skill","targetName":"x","source":{"kind":"clawhub","locator":"clawhub:x"},"sourcePathKind":"directory","sourcePath":"` + fixture(rel) + `"}`
-		out := PolicyExec(strings.NewReader(in), deps(t))
+		in, err := json.Marshal(map[string]any{
+			"protocolVersion": 1, "targetType": "skill", "targetName": "x",
+			"source":         map[string]string{"kind": "clawhub", "locator": "clawhub:x"},
+			"sourcePathKind": "directory", "sourcePath": fixture(rel),
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		out := PolicyExec(bytes.NewReader(in), deps(t))
 		if out.ProtocolVersion != 1 || out.Decision != want {
 			t.Fatalf("%s: got %s (%s)", rel, out.Decision, out.Reason)
 		}
@@ -46,28 +53,55 @@ func TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean(t *testing.T) {
 }
 
 func TestPolicyExecFailsClosed(t *testing.T) {
-	for name, in := range map[string]string{
-		"malformed":       `{not json`,
-		"no path":         `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory"}`,
-		"old protocol":    `{"targetType":"skill","stagedPath":"` + fixture("benign/pure-doc") + `"}`,
-		"future protocol": `{"protocolVersion":2,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"` + fixture("benign/pure-doc") + `"}`,
-		"missing dir":     `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"/nonexistent/skill"}`,
-		"file not dir":    `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"` + fixture("benign/pure-doc/SKILL.md") + `"}`,
-		"wrong kind":      `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"file","sourcePath":"` + fixture("benign/pure-doc") + `"}`,
-		"trailing object": `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"` + fixture("benign/pure-doc") + `"}{}`,
-	} {
-		if out := PolicyExec(strings.NewReader(in), deps(t)); out.Decision != "block" {
-			t.Fatalf("%s: must block, got %s", name, out.Decision)
+	request := func(version int, kind, path string) string {
+		t.Helper()
+		raw, err := json.Marshal(PolicyExecRequest{
+			ProtocolVersion: version, TargetType: "skill", TargetName: "x",
+			SourcePathKind: kind, SourcePath: path,
+		})
+		if err != nil {
+			t.Fatal(err)
 		}
+		return string(raw)
+	}
+	filePath := fixture("benign/pure-doc/SKILL.md")
+	if info, err := os.Stat(filePath); err != nil || !info.Mode().IsRegular() {
+		t.Fatalf("file-not-directory fixture must be an existing regular file: %v", err)
+	}
+	good := request(1, "directory", fixture("benign/pure-doc"))
+	legacy, err := json.Marshal(map[string]string{"targetType": "skill", "stagedPath": fixture("benign/pure-doc")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for name, test := range map[string]struct{ input, reason string }{
+		"malformed":       {`{not json`, "malformed install policy request"},
+		"no path":         {request(1, "directory", ""), "unsupported install policy request"},
+		"old protocol":    {string(legacy), "unsupported install policy request"},
+		"future protocol": {request(2, "directory", fixture("benign/pure-doc")), "unsupported install policy request"},
+		"missing dir":     {request(1, "directory", filepath.Join(t.TempDir(), "missing")), "staged path is not a readable directory"},
+		"file not dir":    {request(1, "directory", filePath), "staged path is not a readable directory"},
+		"wrong kind":      {request(1, "file", fixture("benign/pure-doc")), "unsupported install policy request"},
+		"trailing object": {good + `{}`, "malformed install policy request"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			out := PolicyExec(strings.NewReader(test.input), deps(t))
+			if out.ProtocolVersion != 1 || out.Decision != "block" || !strings.HasSuffix(out.Reason, ": "+test.reason) {
+				t.Fatalf("must block at expected validation layer %q, got %+v", test.reason, out)
+			}
+		})
 	}
 	if out := PolicyExec(strings.NewReader(`{"protocolVersion":1,"targetType":"plugin","targetName":"x","sourcePathKind":"directory","sourcePath":"/x"}`), deps(t)); out.Decision != "block" {
 		t.Fatalf("plugin targets are out of scope and must block, got %s", out.Decision)
 	}
 	deps := deps(t)
-	deps.Persist = func(*admission.Result) error { return errors.New("disk unavailable") }
-	good := `{"protocolVersion":1,"targetType":"skill","targetName":"x","sourcePathKind":"directory","sourcePath":"` + fixture("benign/pure-doc") + `"}`
-	if out := PolicyExec(strings.NewReader(good), deps); out.Decision != "block" {
-		t.Fatalf("persistence failure must block, got %s", out.Decision)
+	persistCalled := false
+	deps.Persist = func(*admission.Result) error {
+		persistCalled = true
+		return errors.New("disk unavailable")
+	}
+	out := PolicyExec(strings.NewReader(good), deps)
+	if out.Decision != "block" || !persistCalled || !strings.HasSuffix(out.Reason, ": admission persistence failed (fail-closed)") {
+		t.Fatalf("persistence failure must block after the persistence callback, got %+v (called=%v)", out, persistCalled)
 	}
 }
 

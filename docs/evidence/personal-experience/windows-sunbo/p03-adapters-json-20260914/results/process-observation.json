@@ -1,0 +1,10 @@
+{
+  "observed_utc": "2026-09-14T06:25:41.7922847Z",
+  "method": "Read-only Win32_Process CIM snapshot of recorded direct PIDs and visible paths matching the owned private root",
+  "recorded_direct_process_count": 5,
+  "recorded_direct_pid_present_count": 0,
+  "private_root_path_match_count": 0,
+  "matching_process_names": [],
+  "cleanup_action": "No outer timeout or taskkill; runner waited for each direct process",
+  "limitations": "One-time visibility-limited snapshot, not a proof of individual historical descendant cleanup. Private fixture files and raw logs retained. No PID, private path or SID published."
+}

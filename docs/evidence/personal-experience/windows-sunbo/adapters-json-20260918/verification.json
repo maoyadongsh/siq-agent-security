@@ -1,0 +1,38 @@
+{
+  "code_commit": "30acef6c80dedd96853805fb7d0b738608ec459c",
+  "base_main": "d4850f5",
+  "scope": "tests only; production behavior unchanged",
+  "tested_source": "merged main plus test edits immediately before this commit; not a clean-build artifact claim",
+  "before": {
+    "exit_code": 1
+  },
+  "after": {
+    "exit_code": 0
+  },
+  "top_level_pass": 17,
+  "existing_skips": [
+    "TestWorkBuddyHookQuotesBinaryAndStatePaths",
+    "TestWorkBuddyInvalidConfigOverrideNeverFallsBack/symlink",
+    "TestWorkBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink"
+  ],
+  "gofmt_files": [],
+  "vet_exit": 0,
+  "vet_packages": [
+    "internal/adapters",
+    "internal/adapterinstall"
+  ],
+  "diff_check_against_main_exit": 0,
+  "private_log_sha256": {
+    "before.log": "15d26bba46f7ad03c654f14eac3ae625a028aefb75d845031015e35d587e6452",
+    "after.log": "e7e073a38c21c3b56b49e0cc397cb3ce8df0d72a36e86722d6f40f6a60136005"
+  },
+  "checks": [
+    "protocolVersion=1 retained; old/future versions still denied",
+    "JSON encodes native source paths",
+    "negative tests assert intended rejection reason",
+    "persistence-failure test verifies callback actually reached",
+    "WorkBuddy JSON is decoded before both hook commands are checked for pinned state directory",
+    "backup, unrelated settings, repeat install and uninstall assertions retained"
+  ],
+  "full_suite": "not rerun for these test-only edits; native full-suite failures remain recorded in PR74"
+}

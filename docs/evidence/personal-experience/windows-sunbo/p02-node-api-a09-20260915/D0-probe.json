@@ -1,0 +1,31 @@
+{
+  "schema": "owned-node-fd-probe/v1",
+  "case_id": "D0",
+  "node_version": "24.19.0",
+  "start_token_accepted": true,
+  "operation_succeeded": true,
+  "operation_error": null,
+  "error_stage": null,
+  "api": {
+    "name": "none",
+    "reached": false,
+    "returned": false
+  },
+  "completed_stages": [
+    "fixture-check",
+    "open",
+    "writeFile",
+    "identity-check",
+    "close",
+    "rename",
+    "readback"
+  ],
+  "close": {
+    "attempted": true,
+    "succeeded": true,
+    "error": null
+  },
+  "content_bytes": 29,
+  "content_sha256": "d247dfc7677cd2275a573f10f64300b86e68cb0744c3c15ef1cef0b96ec2c3fc",
+  "stack_read": false
+}
