@@ -3,6 +3,7 @@ package skillmanifest
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -33,7 +34,10 @@ func TestStageVerifiedBinaryHappyPath(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if st.Mode().Perm()&0o077 != 0 {
+	if !st.IsDir() {
+		t.Fatal("stage parent must be a directory")
+	}
+	if runtime.GOOS != "windows" && st.Mode().Perm()&0o077 != 0 {
 		t.Fatalf("stage dir must be private, mode=%v", st.Mode())
 	}
 }
@@ -44,15 +48,27 @@ func TestStageVerifiedBinaryDetectsPinMismatch(t *testing.T) {
 	if err := os.WriteFile(src, []byte("payload-a"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	_, err := StageVerifiedBinary(src, filepath.Join(dir, "stage"), strings.Repeat("ab", 32))
-	if err == nil {
-		t.Fatal("wrong pin must fail before/at source check")
+	before, err := HashFileDigest(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	stageRoot := filepath.Join(dir, "stage")
+	_, err = StageVerifiedBinary(src, stageRoot, strings.Repeat("ab", 32))
+	if err == nil || !strings.HasPrefix(err.Error(), "skillmanifest: source sha256 ") {
+		t.Fatalf("wrong pin must reach source digest rejection, got %v", err)
+	}
+	if _, err := os.Lstat(stageRoot); !os.IsNotExist(err) {
+		t.Fatalf("wrong pin created stage root: %v", err)
+	}
+	if after, err := HashFileDigest(src); err != nil || after != before {
+		t.Fatal("wrong pin changed source bytes")
 	}
 }
 
 func TestStageVerifiedBinaryDetectsCorruptCopy(t *testing.T) {
 	// Simulate by requiring pin that matches source, then using a hook is hard;
-	// instead verify empty want still requires regular executable and rejects dirs.
+	// instead verify directories are rejected and POSIX no-exec stays rejected.
+	// Windows FileMode has no loader execution bit; this test never executes x.
 	dir := t.TempDir()
 	srcDir := filepath.Join(dir, "notfile")
 	if err := os.Mkdir(srcDir, 0o755); err != nil {
@@ -65,8 +81,18 @@ func TestStageVerifiedBinaryDetectsCorruptCopy(t *testing.T) {
 	if err := os.WriteFile(src, []byte("x"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := StageVerifiedBinary(src, filepath.Join(dir, "stage"), ""); err == nil {
-		t.Fatal("non-executable must fail")
+	staged, err := StageVerifiedBinary(src, filepath.Join(dir, "stage"), "")
+	if runtime.GOOS != "windows" {
+		if err == nil {
+			t.Fatal("non-executable must fail")
+		}
+	} else {
+		if err != nil {
+			t.Fatalf("Windows ordinary source must not require POSIX exec bits: %v", err)
+		}
+		if raw, err := os.ReadFile(staged); err != nil || string(raw) != "x" {
+			t.Fatal("Windows staged bytes changed")
+		}
 	}
 }
 

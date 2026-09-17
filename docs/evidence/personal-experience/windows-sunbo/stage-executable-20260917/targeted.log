@@ -1,0 +1,17 @@
+=== RUN   TestDownloadVerifiedArtifactHappyAndNegatives
+--- PASS: TestDownloadVerifiedArtifactHappyAndNegatives (0.20s)
+=== RUN   TestStageVerifiedBinaryHappyPath
+--- PASS: TestStageVerifiedBinaryHappyPath (0.46s)
+=== RUN   TestStageVerifiedBinaryDetectsPinMismatch
+--- PASS: TestStageVerifiedBinaryDetectsPinMismatch (0.21s)
+=== RUN   TestStageVerifiedBinaryDetectsCorruptCopy
+--- PASS: TestStageVerifiedBinaryDetectsCorruptCopy (0.35s)
+=== RUN   TestStageVerifiedBinarySelfConsistencyWithoutPin
+--- PASS: TestStageVerifiedBinarySelfConsistencyWithoutPin (0.61s)
+=== RUN   TestStageVerifiedBinaryWindowsNativeExecutable
+    stage_windows_test.go:95: owned staged Windows probe: exact marker, exit 0, bytes=8660480 sha256=797773cb6b275308eaa816df086bd18341479a7ea68aef0094e238b4ddd35317
+--- PASS: TestStageVerifiedBinaryWindowsNativeExecutable (18.72s)
+=== RUN   TestStageVerifiedBinaryWindowsPinMismatchBeforeStage
+--- PASS: TestStageVerifiedBinaryWindowsPinMismatchBeforeStage (0.81s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/skillmanifest	56.319s

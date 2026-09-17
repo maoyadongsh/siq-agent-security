@@ -114,6 +114,7 @@ DefaultDir、Open、兼容诊断、Writer、目录身份、初始化/迁移、�
 - 审批状态转换先校验 actor 与未解决 overlap，再消费挑战。缺 actor 或 overlap 未解决时返回 HTTP 400；不追加 Grant 版本或成功审批审计，也不消费挑战。挑战成功消费后的持久化故障仍遵循既有提交恢复协议，不将整个审批流程宣称为跨文件事务。
 - **多文档提交（DEV03-E）：** 在原单写者/CAS 上，`commits/<grant_id>.<seq>.prepare.json` 先持久化 `grant_commit/v1` 完整材料（已签 grant 原文、expected revision、可选 policy、审计）；随后排他发布 policy、`commit-audit/<id>.json`、grant 版本，最后写与 prepare SHA-256 绑定的 `.done.json`。`.done` 是可见性界限；未完成的当前或下一版本使 grant 读取失败关闭，不能继续沿用旧批准。`TailAudit` 合并历史 JSONL 与已提交的独立审计，不重复追加。所有写入采用同目录暂存+Sync+Link，Linux 同步目录；不支持目录 Sync 的 Windows 仅声明进程崩溃恢复，不声明断电保证。`serve`/离线 grant 获写锁后先恢复；`incomplete` 只读诊断，`incomplete --recover` 获同一写锁后幂等补齐，无新批准/后端副作用。旧 `.incomplete.json` 缺完整材料时保留且拒绝自动猜测恢复。升级前备份 state；不得用不理解 prepare/done 的旧二进制混跑或回退写入。
 - **发布 staging（DEV04-D）：** bootstrap/adapter 经 `resolve_verified_bin.sh` 在验签后将二进制复制到私有 staging（0700），对副本再算 sha256；与源摘要（及 pin，若强制）不一致则拒绝。stdout 仅输出 staged 路径。不宣称同 UID 进程无法在验证后改写。真实下载链另做。
+- **Go staging 的平台语义：** `skillmanifest.StageVerifiedBinary` 在非 Windows 继续要求普通源文件具有 POSIX 执行位；Windows 的 Go `FileMode` 不表达 loader 执行性，不以 `0111` 判定源是否可启动。普通文件、源与副本摘要、可选 pin、排他复制和失败清理条件不变，不增加扩展名或 PE 格式限制，也不改变下载信任。成功暂存只证明上述复制完整性；Windows 实际加载须由明确执行自建 staged `.exe` 的独立证据证明，`Chmod(0700)` 不证明 Windows DACL 私有。本增量不改 Python bootstrap、`clientrelease.Stage` 或原生客户端安装/升级支持范围。
 
 ### 2.3.1 状态格式前置拒绝（N01 审查修复，2026-09-13）
 

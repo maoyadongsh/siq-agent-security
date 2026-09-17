@@ -1,0 +1,7 @@
+=== RUN   TestAdapterAndBootstrapShareVerifiedResolve
+    verify_script_test.go:110: expected hash/verify failure, got:
+        siq-agent-security-verify: error: siq-agent-security binary not found. Build apps/agentshield or set SIQ_AGENT_SECURITY_BIN. To download a pinned release artifact after signed-manifest verify, set SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1.
+--- FAIL: TestAdapterAndBootstrapShareVerifiedResolve (1.17s)
+FAIL
+FAIL	siq-agent-security/apps/agentshield/internal/skillmanifest	2.833s
+FAIL
