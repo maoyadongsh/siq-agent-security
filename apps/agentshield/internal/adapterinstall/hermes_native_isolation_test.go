@@ -20,7 +20,7 @@ func TestHermesNativeCLIProfileIsolationAndDrift(t *testing.T) {
 	base := testOpts(t, Hermes)
 	var targets []Options
 	originals := map[string][]byte{}
-	for _, name := range []string{"native-a", "原生 b"} {
+	for _, name := range []string{"native-a", "鍘熺敓 b"} {
 		root := filepath.Join(base.Home, ".hermes", "profiles", name)
 		raw := []byte("model: fixture-model\ncustom_fixture: keep\nplugins:\n  enabled: [other-plugin]\n  disabled: [siq-agent-security]\n")
 		putTestFile(t, filepath.Join(root, "config.yaml"), raw, 0600)
@@ -127,7 +127,7 @@ func TestHermesNativeCLIProfileIsolationAndDrift(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !reflect.DeepEqual(asList(plugins["enabled"]), []string{"other-plugin"}) {
+	if !reflect.DeepEqual(asList(plugins["enabled"]), []any{"other-plugin"}) {
 		t.Fatal("unrelated enabled plugin lost")
 	}
 	if exists(filepath.Join(first.configRoot(), "plugins", "siq-agent-security")) {
