@@ -47,7 +47,7 @@ func up05ResultSignature(f up05Flight) string {
 	return sig
 }
 
-// up05Terminal drives one write to a terminal contract outcome. The server's
+// up05Terminal drives one request to a terminal contract outcome. The server's
 // install write slot is a try-lock: a request that arrives while another admin
 // session holds it gets 429 skill_install_busy with Retry-After, which mutates
 // nothing. A real client honors that and retries; the retry must end in either
@@ -62,7 +62,7 @@ func up05Terminal(t *testing.T, request up05Request, credential, method, path st
 			return f
 		}
 		if attempt >= 200 {
-			t.Fatalf("write stayed busy beyond retry budget: %v", out)
+			t.Fatalf("request stayed busy beyond retry budget: %v", out)
 		}
 		time.Sleep(time.Second) // current write-slot Retry-After is one second
 	}
@@ -242,7 +242,7 @@ func TestSkillUpdateCommitHTTPConcurrentAdminSessions(t *testing.T) {
 		t.Fatal("update-operations artifacts:", files)
 	}
 	// The durable operation view agrees with what the winning session returned.
-	code, view := call(t, s, "GET", "/v1/skill-installations/updates/"+commit.UpdateID, token, nil)
+	code, view := up05ReadTerminal(t, request, credentials[0], "/v1/skill-installations/updates/"+commit.UpdateID)
 	if code != 200 {
 		t.Fatal(code, view)
 	}
@@ -254,7 +254,7 @@ func TestSkillUpdateCommitHTTPConcurrentAdminSessions(t *testing.T) {
 		t.Fatal("durable result signature differs from winning commit")
 	}
 	// The original installation is removed exactly once and its Grant is frozen.
-	code, removal := call(t, s, "GET", originalRoute+"/removal", token, nil)
+	code, removal := up05ReadTerminal(t, request, credentials[0], originalRoute+"/removal")
 	if code != 200 || removal["status"] != "removed" || removal["result"] == nil {
 		t.Fatal("original install not durably removed:", code, removal)
 	}
@@ -335,7 +335,7 @@ func TestSkillUpdateCommitHTTPConcurrentWithRemoval(t *testing.T) {
 	}
 	// Whatever the winner was, the durable state is single-valued and complete.
 	viewPublished := updateWon
-	code, view := call(t, s, "GET", "/v1/skill-installations/updates/"+commit.UpdateID, token, nil)
+	code, view := up05ReadTerminal(t, request, credentials[0], "/v1/skill-installations/updates/"+commit.UpdateID)
 	if updateWon {
 		if code != 200 || view["status"] != "updated_unverified" {
 			t.Fatal("durable update status after winning commit:", code, view)
@@ -356,7 +356,7 @@ func TestSkillUpdateCommitHTTPConcurrentWithRemoval(t *testing.T) {
 		// 404 means the removal won before any claim was published — clean.
 		t.Fatal("unexpected update view after removal win:", code, view)
 	}
-	code, removal := call(t, s, "GET", originalRoute+"/removal", token, nil)
+	code, removal := up05ReadTerminal(t, request, credentials[0], originalRoute+"/removal")
 	if code != 200 || removal["status"] != "removed" || removal["result"] == nil {
 		t.Fatal("original install not durably removed:", code, removal)
 	}
@@ -370,7 +370,7 @@ func TestSkillUpdateCommitHTTPConcurrentWithRemoval(t *testing.T) {
 		t.Fatal("original grant revoked more than once:", g1["state_revision"], g2["state_revision"])
 	}
 	// The durable removal result is the single one, stable across reads.
-	code, removalAgain := call(t, s, "GET", originalRoute+"/removal", token, nil)
+	code, removalAgain := up05ReadTerminal(t, request, credentials[0], originalRoute+"/removal")
 	if code != 200 || removalAgain["status"] != "removed" {
 		t.Fatal("removal view not stable:", code, removalAgain)
 	}
@@ -384,4 +384,13 @@ func TestSkillUpdateCommitHTTPConcurrentWithRemoval(t *testing.T) {
 			t.Fatal("claim artifact missing:", files)
 		}
 	}
+}
+
+// Receiving a JSON body does not establish that the server handler released
+// its deferred operation lock. Readback shares that slot and may legitimately
+// return the same retryable 429 as a write. Retain all final state assertions.
+func up05ReadTerminal(t *testing.T, request up05Request, credential, path string) (int, map[string]any) {
+	t.Helper()
+	f := up05Terminal(t, request, credential, "GET", path, nil)
+	return f.code, f.out
 }

@@ -47,3 +47,11 @@ Windows/macOS 实机、WorkBuddy、托管源 DNS 与发行签名继续单独记�
 修复后的构建另记 `restore-fix-cross-builds.json`，源码绑定见 `restore-fix-sources.json`；旧构建摘要保留，不冒用为修复版。构建仍为未签名组件验证，无真实网关复测。
 
 最终修复候选 Go 全量、vet、相关 race、格式与 diff 检查、四目标构建再次通过，见 `restore-fix-checks.json`。先前失败包括用于证明旧行为的两条负例，以及修复后测试对空程序列表错误期待 403；均已明确归因。
+
+## CI 暴露的既有 UP05 读回竞态
+
+58b6cc0 的 agentshield CI 在 `TestSkillUpdateCommitHTTPConcurrentAdminSessions` 最终读取持久更新记录时收到 429 / skill_install_busy，日志见 GitHub run 35174364778 job 105052680611。三次并发提交及复用结果均成功，失败来自响应到达与 handler 释放操作锁之间的窗口。最终读取与写请求共用 try-lock，429 属既有合同。
+
+测试读回改用真实 loopback 客户端及原有有界 429 重试，只对 skill_install_busy 重试。保留非重试错误、最终结果签名、唯一 claim/result、移除状态与 Grant revision 不变断言；不改生产锁或 HTTP 状态码。验证结果单列 `readback-retry-checks.json`。
+
+Bugbot 第一轮已发现并据实修复上述基线问题；58b6cc0 的 Bugbot 自身运行失败并标 neutral，不能写成“审阅通过”。最终检查以最后提交记录为准。
