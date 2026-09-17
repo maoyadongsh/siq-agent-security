@@ -1,0 +1,69 @@
+{
+  "schema_version": "personal-macos-workbuddy-grant-allow/v1",
+  "recorded_at": "2026-09-16T11:48:08Z",
+  "method": "native_desktop",
+  "operator_authorized_grant_approve": true,
+  "actor_id": "luke",
+  "channel": "cli",
+  "subject_id": "default",
+  "platform": "workbuddy",
+  "grant_status": "deployed",
+  "grant_id_prefix": "grt-b3144f7b",
+  "admission_verdict": "admit_with_conditions",
+  "stdin_hook_exit": 0,
+  "stdin_permission_decision": "allow",
+  "desktop_task_id": "9c715b70-35b1-4bc6-b222-d94094619be9",
+  "desktop_sidebar_host": "example.invalid",
+  "desktop_hook_new_lines": [
+    "2026-09-16T11:48:07Z pid=1490 event=PreToolUse tool=Read",
+    "2026-09-16T11:48:08Z pid=1513 event=PostToolUse tool=Read"
+  ],
+  "desktop_new_receipts": [
+    {
+      "tool": "Read",
+      "action": "allow",
+      "reason_code": "allow",
+      "platform": "workbuddy",
+      "session_id": "9c715b70-35b1-4bc6-b222-d94094619be9",
+      "issued_at": "2026-09-16T11:48:07Z"
+    },
+    {
+      "tool": "Read",
+      "action": "allow",
+      "reason_code": "observation_accepted",
+      "platform": "workbuddy",
+      "session_id": "9c715b70-35b1-4bc6-b222-d94094619be9",
+      "issued_at": "2026-09-16T11:48:08Z"
+    }
+  ],
+  "desktop_read_allow": true,
+  "sentinel_text": "p07-workbuddy-sentinel-ok\n",
+  "forbidden_created": false,
+  "daily_before": {
+    "sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+    "has_hooks": false,
+    "mtime": 1789548251,
+    "size": 1135
+  },
+  "daily_after": {
+    "sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+    "has_hooks": false,
+    "mtime": 1789548251,
+    "size": 1135
+  },
+  "daily_unchanged": true,
+  "live_app_pid": 69850,
+  "did_not_kill_existing_daemons": true,
+  "existing_daemons": [
+    47612,
+    47613
+  ],
+  "omitted": [
+    "pairing",
+    "token",
+    "nonce",
+    "challenge",
+    "grant_id_full",
+    "url"
+  ]
+}

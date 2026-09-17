@@ -1,0 +1,17 @@
+{
+  "challenge": {
+    "challenge_id": "chl-dae48d0cb0b9584cd52a3a97f659197e",
+    "grant_id": "grt-e32c4cd6a52b-0461f3c6",
+    "grant_digest": "5c937b73a8123da471054347687c9f13fdbe016ce8dec36807302bc90ebf48f6",
+    "expected_revision": 0,
+    "subject_type": "agent_instance",
+    "subject_id": "hri-a7d91215aaf9e85ff287a44a1c29570d",
+    "platform": "hermes",
+    "scope_digest": "84070bb3f3fa1582ee6c2f4ed8bd30fc48dea80cc4b2586495f7eccef75b8ac2",
+    "nonce": "1e113c3cc5d98ebe5b4d522c560b74f0",
+    "expires_at": "2026-09-14T12:57:29.471119061Z",
+    "created_at": "2026-09-14T12:52:29Z"
+  },
+  "note": "desktop-same-uid: this challenge is not an OS isolation boundary; use grant approve --challenge-id --nonce next",
+  "state_revision": 0
+}

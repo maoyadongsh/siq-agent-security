@@ -163,6 +163,11 @@ class Harness:
         return p.stdout
 
     def build(self):
+        source = getattr(self.args, "binary", None)
+        if source:
+            shutil.copy2(Path(source), self.binary)
+            self.binary.chmod(self.binary.stat().st_mode | 0o111)
+            return
         self.command(
             ["go", "build", "-trimpath", "-o", str(self.binary), "./cmd/agentshield"],
             cwd=REPO / "apps/agentshield",
@@ -717,6 +722,7 @@ def main():
     parser.add_argument("--hermes-root", type=Path)
     parser.add_argument("--hermes-python", type=Path)
     parser.add_argument("--hermes-cli", type=Path)
+    parser.add_argument("--binary", type=Path, help="use an already-built siq-agent-security candidate")
     parser.add_argument(
         "--installer-managed-profile",
         action="store_true",
@@ -736,6 +742,9 @@ def main():
     args.hermes_root = args.hermes_root.resolve()
     args.hermes_python = args.hermes_python or args.hermes_root / "venv/bin/python"
     args.hermes_cli = (args.hermes_cli or args.hermes_python.parent / "hermes").resolve()
+    if args.binary:
+        args.binary = args.binary.resolve()
+        require(args.binary.is_file(), "siq-agent-security binary not found")
     if args.installer_managed_profile:
         require(args.hermes_cli.is_file(), "installed Hermes CLI not found; use --hermes-cli")
     require(

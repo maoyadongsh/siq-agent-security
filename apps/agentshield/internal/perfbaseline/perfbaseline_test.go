@@ -2,6 +2,7 @@ package perfbaseline
 
 import (
 	"encoding/json"
+	"runtime"
 	"testing"
 )
 
@@ -20,6 +21,20 @@ func TestResolveScalePresets(t *testing.T) {
 	}
 	if _, err := ResolveScale(Options{Scale: "xlarge"}); err == nil {
 		t.Fatal("unknown scale must fail")
+	}
+}
+
+func TestUnavailableRSSSerializesNull(t *testing.T) {
+	raw, err := json.Marshal(map[string]any{"rss_bytes_after": rssValue(0, false), "rss_source": "unavailable"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc map[string]any
+	if err = json.Unmarshal(raw, &doc); err != nil {
+		t.Fatal(err)
+	}
+	if value, ok := doc["rss_bytes_after"]; !ok || value != nil {
+		t.Fatal("unavailable RSS must not be fake zero")
 	}
 }
 
@@ -57,6 +72,20 @@ func TestRunSmokeProducesHonestReport(t *testing.T) {
 	}
 	if rep.Metrics.AppendTotalMS <= 0 || rep.Environment.GoVersion == "" {
 		t.Fatalf("incomplete metrics/env: %+v", rep)
+	}
+	// O04-D: RSS must come from the OS (VmRSS), not runtime.MemStats.Sys.
+	// On Linux the reading is always available; elsewhere it must be recorded
+	// as not measured ("unavailable") rather than substituted with a wrong
+	// number. go_memstats_sys_bytes is kept as a Go-runtime observation only.
+	if runtime.GOOS == "linux" {
+		if rep.Metrics.RSSSource != "os_vm_rss" || rep.Metrics.RSSBytesAfter == nil || *rep.Metrics.RSSBytesAfter == 0 {
+			t.Fatalf("linux RSS must be os_vm_rss and >0: %+v", rep.Metrics)
+		}
+	} else if rep.Metrics.RSSSource != "unavailable" || rep.Metrics.RSSBytesAfter != nil {
+		t.Fatalf("non-linux RSS must be unavailable/null: %+v", rep.Metrics)
+	}
+	if rep.Metrics.GoSysBytes == 0 {
+		t.Fatalf("go_memstats_sys_bytes observation missing: %+v", rep.Metrics)
 	}
 	raw, err := MarshalJSON(rep)
 	if err != nil {

@@ -1,0 +1,48 @@
+{
+ "candidate": "0.3.0-rc.3",
+ "base_commit": "052c81617438d1eabf94a5e0166338312366c491",
+ "go_version": "go version go1.26.5 linux/arm64",
+ "build_flags": [
+  "-trimpath",
+  "-buildvcs=false",
+  "-ldflags",
+  "-s -w -X main.Version=0.3.0-rc.3"
+ ],
+ "CGO_ENABLED": "0",
+ "source_snapshot_sha256": "d81f89ac63c07f5a9a48699fdcaa6e6ac2007713877d616874b7e1217ba72f0d",
+ "source_snapshot_files": 1112,
+ "uncommitted_included": true,
+ "note": "包含 L02 会话执行闭环未提交修复；来源为 git ls-files + untracked 新文件工作树快照",
+ "artifacts": [
+  {
+   "target": "linux/amd64",
+   "artifact": "siq-agent-security-linux-amd64",
+   "sha256": "c8461cc5f0d8b2ed7a0adaf76b8c180349e60b98de39630cfd671712bb2bfb20",
+   "bytes": 19267746,
+   "exit_code": 0
+  },
+  {
+   "target": "linux/arm64",
+   "artifact": "siq-agent-security-linux-arm64",
+   "sha256": "4866f307cf0328caa6c9f127d0a56f8034ead6bbc511b95fae042da223e0bd5c",
+   "bytes": 18153634,
+   "exit_code": 0
+  },
+  {
+   "target": "darwin/arm64",
+   "artifact": "siq-agent-security-darwin-arm64",
+   "sha256": "61e807f59f21901de1d7a326d4c9a6a324f8b1993062e0283b27bc268ad9fbf2",
+   "bytes": 18315314,
+   "exit_code": 0
+  },
+  {
+   "target": "windows/amd64",
+   "artifact": "siq-agent-security-windows-amd64.exe",
+   "sha256": "8934ffc02bce293d3da26cd68bc949740b1b11f0a632824297ddae83ec315633",
+   "bytes": 19483648,
+   "exit_code": 0
+  }
+ ],
+ "signed": false,
+ "live_acceptance": "pending_l03"
+}

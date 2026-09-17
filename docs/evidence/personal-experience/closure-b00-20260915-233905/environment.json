@@ -1,0 +1,73 @@
+{
+  "schema": "closure-b00-environment/v1",
+  "captured_at": "2026-09-15T23:39:05+08:00",
+  "git": {
+    "worktree": "/home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914",
+    "branch": "kimi/personal-v4-r01-20260914",
+    "head": "dafb4cd4a4077feaabad902ad6912ee7d4a2a4cd",
+    "head_tree": "013ce853a44582ccdd854c1789cbb79d350f7dbd",
+    "code_baseline": "53155b10c276fe41e71c47757e58e7e56d5d75d4",
+    "code_baseline_tree": "9ff0c7e9c50c48fcc249adfbe48df76b82d19c51",
+    "ancestor_check": "merge-base --is-ancestor 53155b1 HEAD -> exit 0",
+    "uncommitted_files": 0,
+    "note": "HEAD 只在代码基线之上追加文档提交；apps/ 代码树与 53155b1 一致的声明以实际构建/测试复核为准，不据此跳过复测。"
+  },
+  "platform": {
+    "os": "Ubuntu 24.04.4 LTS",
+    "kernel_arch": "aarch64",
+    "systemd": "systemd 255 (255.4-1ubuntu8.15)",
+    "systemd_user_session": "available (systemctl --user functional; linger state not modified)"
+  },
+  "toolchain": {
+    "go": "go1.26.5 linux/arm64",
+    "node_system": "v22.22.2 at /home/maoyd/.hermes/node/bin/node",
+    "node_journey": "v22.22.1 at /home/maoyd/.nvm/versions/node/v22.22.1/bin/node (same as prior accepted legs)",
+    "python_system_default": "3.13.12 (PATH python3 currently resolves to unrelated ic_master venv WITHOUT playwright)",
+    "python_playwright": "/home/maoyd/miniconda3/bin/python3 (3.13.12, playwright import OK) — used explicitly for all journey scripts",
+    "control_api_venv": "apps/control-api/.venv (Python 3.13.12, Anaconda; no playwright installed, per prior evidence)"
+  },
+  "host": {
+    "openclaw_root": "/home/maoyd/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw",
+    "openclaw_version": "2026.5.12",
+    "hermes_present": true,
+    "workbuddy_runtime": "not available (unchanged; blocked rows stay blocked)"
+  },
+  "artifacts": {
+    "review_candidate": {
+      "path": "/tmp/siq-review-candidate",
+      "sha256": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942",
+      "provenance": "built from 53155b1 code during r06-r04-r07 review batch (see review report section 1)"
+    },
+    "prior_release_manifests": {
+      "v1": "sha256:b78f959624c7840dcc3d9dd23dff8fca5084f229441c5de4aa374b593c933ce5 (/tmp/siq-batch-20260915/manifest-v1.json, test-signed)",
+      "v2": "sha256:9de381e8b6197777cf66a29be1f9f4d8a2702e67d4697194f091131095a92768 (/tmp/siq-batch-20260915/manifest-v2.json, test-signed)",
+      "classification": "test_release — NOT production release signature"
+    },
+    "prior_release_binaries_linux_arm64": {
+      "v1": "sha256:0cb1dcbb336c2d3384d4210b5f0f134fe4dfaf77fd9aff1475f3237083403424",
+      "v2": "sha256:efcd5c9c49f8791398c766f7bab3500b1123bf4627a014c235d95f7f0a1dded6",
+      "provenance": "built during r06 lifecycle batch from efad840-era source; exact rebuild commits to be re-established in B01 step 2"
+    }
+  },
+  "trust_materials": {
+    "production_release_trust_root": "not available in this environment",
+    "test_signing_materials": "available (test-only, used by prior batches)",
+    "decision": "B01/B02 run the test_release leg; the official release-trust leg stays blocked with explicit unlock conditions"
+  },
+  "ports": {
+    "25173": "free",
+    "25177": "free",
+    "25191": "free",
+    "25201": "free",
+    "note": "25173/25177 previously used by GLM test units; those units were torn down by the review batch (final-cleanup.json); no listener at B00 time"
+  },
+  "user_units": {
+    "siq-agent-security-*": "none active (only pre-existing unrelated failed siq-research-engine.service, not owned by this batch, untouched)"
+  },
+  "run_dir": {
+    "path": "/tmp/siq-closure-20260915",
+    "mode": "0700",
+    "ownership": "this batch only; cleaned after ownership re-verification, never before teardown succeeds"
+  },
+  "redaction_note": "No credentials, pairing codes, private keys, raw-content outputs, or full environment dumps recorded. Only variable NAMES were probed (none set beyond shell builtins)."
+}

@@ -232,7 +232,7 @@ func TestSelectedGrantHoldStatusUsesSelectionAndRechecksRevocation(t *testing.T)
 	if code, out := call(t, s, "POST", "/v1/intent-bindings", token, selectedBindingRequest(g, rev, "held-selected")); code != 201 {
 		t.Fatal(out)
 	}
-	body := map[string]any{"platform": "hermes", "agent_id": "a-1", "session_id": "held-selected", "tool": "read_file", "tool_call_id": "held-call", "params": map[string]any{"path": "/work/public/report"}}
+	body := map[string]any{"platform": "hermes", "agent_id": "a-1", "session_id": "held-selected", "task_id": "task-1", "tool": "read_file", "tool_call_id": "held-call", "params": map[string]any{"path": "/work/public/report"}}
 	_, held := call(t, s, "POST", "/v1/decide", token, body)
 	if held["action"] != "hold" {
 		t.Fatal(held)

@@ -40,6 +40,7 @@ func TestPatchedGrantCannotExecuteWithoutPerUseApproval(t *testing.T) {
 	if _, err := fx.eng.ResolveHold(decision.Receipt, true, "fixture-admin"); err != nil {
 		t.Fatal(err)
 	}
+	request, _ = reserveForRetry(t, fx, req("openclaw", "exec", map[string]any{"command": "printf fixture"}), decision, "patched-retry")
 	if _, err := fx.eng.Observe(request, "fixture"); err != nil {
 		t.Fatal(err)
 	}

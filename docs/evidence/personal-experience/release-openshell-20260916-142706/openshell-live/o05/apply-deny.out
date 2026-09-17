@@ -1,0 +1,46 @@
+{
+  "receipt": {
+    "operation_id": "opo-3cbaa4e63d27f02fc1098ea1687f02c16b64830d760e5b22",
+    "target": "siq-relcand-20260916-154423",
+    "base_revision": "2",
+    "base_policy_digest": "15a9162054fd1e405c4bb61ffec152ff32350047fdd4182f5074eccc6ce697a3",
+    "backend_revision": "2",
+    "applied_policy_digest": "15a9162054fd1e405c4bb61ffec152ff32350047fdd4182f5074eccc6ce697a3",
+    "result": "no_op",
+    "evidence": {
+      "full_policy_digest": "15a9162054fd1e405c4bb61ffec152ff32350047fdd4182f5074eccc6ce697a3"
+    }
+  },
+  "report": {
+    "passed": true,
+    "level": "readback_verified",
+    "allow_checks": [
+      {
+        "endpoint": "127.0.0.1:8099",
+        "request": "config_readback",
+        "expected": "allow",
+        "actual": "allow",
+        "result": "allow",
+        "revision": "2"
+      }
+    ],
+    "deny_checks": [
+      {
+        "endpoint": "127.0.0.1:8098",
+        "request": "config_readback",
+        "expected": "deny",
+        "actual": "deny",
+        "result": "deny",
+        "revision": "2"
+      }
+    ],
+    "failures": null
+  },
+  "effective_readback": {
+    "backend": "openshell",
+    "revision": "2",
+    "verified_at": "2026-09-16T07:50:06Z",
+    "evidence_id": "ev-9fa7b8197745dd20"
+  }
+}
+exit=0

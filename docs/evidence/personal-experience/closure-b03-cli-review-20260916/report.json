@@ -1,0 +1,321 @@
+{
+  "schema_version": "closure-b03-dual-cli/v1",
+  "recorded_at": "2026-09-16T02:16:52.464918+00:00",
+  "binary_sha256": {
+    "old": "633c99e140e3b01517cd1a11ddcd61d5489c47e6aaf46695da1209c264d1dc29",
+    "new": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942"
+  },
+  "evidence_level": "real_cli_synthetic_state_markers",
+  "checks": [
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "admit",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "grant",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "adapter",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "setup",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "client-install",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "service-upgrade",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "service-rollback",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "service-register",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "service-unregister",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "teardown",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "future",
+      "command": "state-status",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "admit",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "grant",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "adapter",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "setup",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "client-install",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "service-upgrade",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "service-rollback",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "service-register",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "service-unregister",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "teardown",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "old",
+      "marker": "corrupt",
+      "command": "state-status",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "admit",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "grant",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "adapter",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "setup",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "client-install",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "service-upgrade",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "service-rollback",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "service-register",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "service-unregister",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "teardown",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "future",
+      "command": "state-status",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "admit",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "grant",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "adapter",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "setup",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "client-install",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "service-upgrade",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "service-rollback",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "service-register",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "service-unregister",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "teardown",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "binary": "new",
+      "marker": "corrupt",
+      "command": "state-status",
+      "exit": 0,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "boundary": "not an actual future-format release; no system service command reached its operational body"
+}

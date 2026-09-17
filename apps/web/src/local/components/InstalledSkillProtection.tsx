@@ -56,15 +56,16 @@ export default function InstalledSkillProtection({ view, onBusy }: { view: Skill
       {readiness.status === 'no_tools' ? <p role="alert">此授权没有可运行的工具，无法准备接入。请重新起草并确认所需权限；系统不会自动增加工具权限。</p> : readiness.status === 'prepared' ? <>
         <p role="status">实例权限已准备。接入配置和运行保护仍需分别验证。</p>
         <div className="import-actions"><button type="button" className="btn btn-primary" disabled={busy} onClick={() => setDialog('adapter')}>管理此实例接入</button>
-          <button type="button" className="btn" disabled={busy} onClick={() => setDialog('check')}>运行此实例自检</button></div>
+          {view.plan.platform === 'hermes' ? <button type="button" className="btn" disabled={busy} onClick={() => setDialog('check')}>运行此实例自检</button> : null}</div>
       </> : <div className="field">
         {readiness.status === 'incomplete' ? <p>上次权限准备中断，尚未启用。确认后以原操作者 {readiness.binding?.actor_id} 重试原操作。</p> : null}
-        <label className="install-confirmation"><input type="checkbox" checked={confirmed} disabled={busy} onChange={(e) => setConfirmed(e.target.checked)} />确认以上权限用于此 Hermes 实例的会话</label>
+        <label className="install-confirmation"><input type="checkbox" checked={confirmed} disabled={busy} onChange={(e) => setConfirmed(e.target.checked)} />确认以上权限用于此 {view.plan.platform} 实例的会话</label>
         <button type="button" className="btn btn-primary" disabled={busy || !confirmed || !(readiness.binding?.actor_id || actorId.trim())} onClick={() => void prepare()}>{readiness.status === 'incomplete' ? '重试原权限准备' : '确认并准备实例权限'}</button>
       </div>}
     </> : null}
     <button type="button" className="btn" disabled={busy} onClick={() => setRefresh((n) => n + 1)}>重新查询权限准备状态</button>
-    {dialog === 'adapter' ? <AdapterChangeDialog request={{ platform: 'hermes', action: 'install', instanceId: view.plan.instance_id, grantId: view.plan.grant_id }} onClose={closeDialog} onApplied={(m) => { setMessage(m); closeDialog(); }} /> : null}
-    {dialog === 'check' ? <RuntimeCheckDialog instanceId={view.plan.instance_id} onClose={closeDialog} /> : null}
+    {view.plan.platform !== 'hermes' && readiness?.status === 'prepared' ? <p className="page-desc">OpenClaw 原生接入可在此管理；图形化运行自检仍在完善，请以原生验收证据为准。</p> : null}
+    {dialog === 'adapter' ? <AdapterChangeDialog request={{ platform: view.plan.platform, action: 'install', instanceId: view.plan.instance_id, grantId: view.plan.grant_id }} onClose={closeDialog} onApplied={(m) => { setMessage(m); closeDialog(); }} /> : null}
+    {dialog === 'check' && view.plan.platform === 'hermes' ? <RuntimeCheckDialog instanceId={view.plan.instance_id} onClose={closeDialog} /> : null}
   </section>;
 }

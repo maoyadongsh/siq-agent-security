@@ -1,0 +1,42 @@
+{
+  "schema_version": "personal-macos-sleep-wake-validation/v1",
+  "recorded_at": "2026-09-16T22:59:59+08:00",
+  "product_candidate_sha": "450fe1836d8a3bffefbd2ce9b6f02bbbfe730c64",
+  "binary_sha256": "f067f96b05c3472b8ebe2d43ac9c19ce79c5063af19ec1dc66999a6da1bd3e23",
+  "host": {"os": "macos", "version": "26.6.2", "arch": "arm64", "gui_session_after": "Aqua"},
+  "power_event": {
+    "first_system_events_request_result": "display_off_then_on_only; not counted as system sleep",
+    "first_display_off_at": "2026-09-16T22:56:32+08:00",
+    "first_display_on_at": "2026-09-16T22:56:33+08:00",
+    "accepted_command": "pmset sleepnow",
+    "accepted_command_exit": 0,
+    "display_off_at": "2026-09-16T22:57:05+08:00",
+    "system_sleep_at": "2026-09-16T22:57:10+08:00",
+    "system_sleep_reason_category": "Software Sleep",
+    "reported_sleep_duration_seconds": 117,
+    "dark_wake_at": "2026-09-16T22:59:07+08:00",
+    "full_wake_at": "2026-09-16T22:59:08+08:00",
+    "power_log_sleep_wake_count_since_boot": 1,
+    "kern_boottime_sec_before_and_after": 1789569104,
+    "system_sleep_wake_confirmed": true
+  },
+  "isolated_state_after_wake": {
+    "format_version": 2,
+    "compatible": true,
+    "status": "ok",
+    "chain_verified": true,
+    "receipt_count": 22,
+    "head_seq": 21,
+    "head_hash_unchanged": "5de8d4d9c0f09a2ce5aebf9676c66daa333015513974cccc0c76fb35b2b0e9be",
+    "manual_service_health": "ready",
+    "manual_service_stopped_after_check": true,
+    "isolated_port_47614_absent_after_check": true,
+    "allowed_read_sentinel_sha256_unchanged": "b2c204478a35ad9d84ca69abff0c227e25582c087ea62161fb015c9f47fae7dd",
+    "daily_workbuddy_settings_sha256_unchanged": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa"
+  },
+  "limitations": [
+    "No power policy, security policy or third-party sleep assertion was changed.",
+    "This validates one normal sleep/wake and manual service recovery, not power-loss durability or automatic LaunchAgent restart.",
+    "No token, pairing code, raw state or absolute user path is included."
+  ]
+}

@@ -2,13 +2,13 @@ package server
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
 	"strings"
 
-	"siq-agent-security/apps/agentshield/internal/adapterinstall"
 	"siq-agent-security/apps/agentshield/internal/runtimeidentity"
 )
 
@@ -146,14 +146,11 @@ func readStrictRequestLimit(w http.ResponseWriter, r *http.Request, out any, err
 func (s *Server) initRuntimeIdentities() error {
 	var err error
 	s.runtimeIdentities, err = runtimeidentity.Open(s.d.Store.Dir, s.d.Key, s.intents, func(id string) (string, error) {
-		// Instance IDs are content-derived (hi-...), so exactly one platform's
-		// discovery can own a given ID; try each supported product once.
-		for _, platform := range []string{adapterinstall.Hermes, adapterinstall.OpenClaw} {
-			if _, e := s.resolveAdapterOptions(platform, id); e == nil {
-				return platform, nil
-			}
+		target, resolveErr := s.resolveSkillTarget(context.Background(), id)
+		if resolveErr != nil {
+			return "", resolveErr
 		}
-		return "", adapterinstall.ErrPlanChanged
+		return target.Platform, nil
 	})
 	return err
 }

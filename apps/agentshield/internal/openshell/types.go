@@ -13,6 +13,22 @@ const (
 	VerifyReadback = "readback_verified"
 	VerifyFailed   = "failed"
 	BackendName    = "openshell"
+
+	// Evidence levels (O04 contract). enforcement_verified is reserved for
+	// real behavioral fixtures against the current endpoint; component tests
+	// must never set it.
+	EvidenceNone        = "none"
+	EvidenceHandshake   = "handshake_verified"
+	EvidenceEnforcement = "enforcement_verified"
+	// Diagnostic states (O04 contract; policy_readable/behavior_verified are
+	// reached only by per-target apply/verify flows, never by probe alone).
+	StateUnconfigured        = "unconfigured"
+	StateUnreachable         = "configured_unreachable"
+	StateIdentityUnconfirmed = "identity_unconfirmed"
+	StateHandshake           = "handshake_verified"
+	StatePolicyReadable      = "policy_readable"
+	StateBehaviorVerified    = "behavior_verified"
+	StateEvidenceExpired     = "evidence_expired"
 )
 
 // AdapterError is a fail-closed CLI / gateway failure. Messages must not
@@ -36,14 +52,17 @@ func (e *RevisionConflict) Error() string {
 
 // CapabilityItem is one row of the versioned capability document (P1-1).
 type CapabilityItem struct {
-	Status    string `json:"status"`
-	Semantics string `json:"semantics"`
-	Basis     string `json:"basis"`
+	Status        string `json:"status"`
+	Semantics     string `json:"semantics"`
+	Basis         string `json:"basis"`
+	EvidenceLevel string `json:"evidence_level,omitempty"`
+	Scope         string `json:"scope,omitempty"`
 }
 
-// Capabilities is the probe result. Boolean fields are a convenience view of
-// already-measured semantics; they must not be raised just because a newer
-// version string was parsed.
+// Capabilities is the probe result. Legacy boolean fields are a compatibility
+// view of historical/documented semantics (O04 contract); current-instance
+// claims must use the evidence fields below. New fields are additive; existing
+// JSON keys keep their published meanings.
 type Capabilities struct {
 	Backend                     string                    `json:"backend"`
 	SchemaVersion               string                    `json:"schema_version"`
@@ -56,20 +75,43 @@ type Capabilities struct {
 	RevisionSupport             bool                      `json:"revision_support"`
 	MaxFilesystemPaths          int                       `json:"max_filesystem_paths"`
 	Capabilities                map[string]CapabilityItem `json:"capabilities"`
+
+	// Evidence fields: facts about the CURRENT endpoint only.
+	EvidenceLevel              string          `json:"evidence_level"`
+	HandshakeVerified          bool            `json:"handshake_verified"`
+	HandshakeGateway           string          `json:"handshake_gateway,omitempty"`
+	ObservedAt                 string          `json:"observed_at,omitempty"` // RFC3339 UTC
+	EndpointFingerprint        string          `json:"endpoint_fingerprint,omitempty"`
+	CLIVersion                 string          `json:"cli_version,omitempty"`         // from --version / gateway-info text only
+	GatewayVersion             string          `json:"gateway_version,omitempty"`     // only when the live handshake output states it; "unknown" otherwise
+	MaxFilesystemPathsMeasured bool            `json:"max_filesystem_paths_measured"` // always false: contract default, not a tested limit
+	ConfigurationCapabilities  map[string]bool `json:"configuration_capabilities"`
 }
 
 // NetworkRule is the product-shaped allow rule submitted on apply.
 type NetworkRule struct {
 	Endpoint    string   `json:"endpoint"`
-	Effect      string   `json:"effect,omitempty"`
-	BinaryPaths []string `json:"binary_paths,omitempty"`
+	Effect      string   `json:"effect"`
+	BinaryPaths []string `json:"binary_paths"`
 	RuleName    string   `json:"rule_name,omitempty"`
+	// Readback-only restriction details from `policy get --full`. Apply-shaped
+	// rules leave them zero; the gateway's own method/path/IP restrictions are
+	// preserved here so the summary cannot overstate effective access.
+	Method                       string   `json:"method,omitempty"`
+	Path                         string   `json:"path,omitempty"`
+	AllowedIPs                   []string `json:"allowed_ips,omitempty"`
+	Protocol                     string   `json:"protocol,omitempty"`
+	Enforcement                  string   `json:"enforcement,omitempty"`
+	RequestBodyCredentialRewrite *bool    `json:"request_body_credential_rewrite,omitempty"`
 }
 
 // Snapshot is a policy get --full read-back.
 type Snapshot struct {
 	Target          string         `json:"target"`
 	Revision        string         `json:"revision"`
+	Policy          map[string]any `json:"policy"`
+	PolicyDigest    string         `json:"policy_digest"`
+	StaticDigest    string         `json:"static_digest"`
 	Filesystem      map[string]any `json:"filesystem"`
 	Network         []NetworkRule  `json:"network"`
 	Process         map[string]any `json:"process"`
@@ -78,8 +120,14 @@ type Snapshot struct {
 
 // DeploymentReceipt is the gateway's policy-set acknowledgement.
 type DeploymentReceipt struct {
-	BackendRevision string            `json:"backend_revision"`
-	Evidence        map[string]string `json:"evidence"`
+	OperationID         string            `json:"operation_id"`
+	Target              string            `json:"target"`
+	BaseRevision        string            `json:"base_revision"`
+	BasePolicyDigest    string            `json:"base_policy_digest"`
+	BackendRevision     string            `json:"backend_revision"`
+	AppliedPolicyDigest string            `json:"applied_policy_digest"`
+	Result              string            `json:"result"`
+	Evidence            map[string]string `json:"evidence"`
 }
 
 // Check is one config-readback assertion (not a behavioural fixture).
@@ -104,8 +152,23 @@ type VerificationReport struct {
 // RollbackReceipt is a successful restore.
 type RollbackReceipt struct {
 	RestoredRevision string            `json:"restored_revision"`
+	RestoredDigest   string            `json:"restored_digest"`
+	Result           string            `json:"result"`
 	Evidence         map[string]string `json:"evidence"`
 }
+
+// RollbackAuthorization is derived from the private operation record and live
+// readback. It is never populated from a rollback request body.
+type RollbackAuthorization struct {
+	OperationID string
+	Target      string
+	Current     Snapshot
+	Restore     Snapshot
+}
+
+// RollbackAuthorizer revalidates current authority immediately before a
+// rollback write. A nil authorizer fails closed for every changed rollback.
+type RollbackAuthorizer func(RollbackAuthorization) error
 
 // EffectiveReadback is the grant-facing proof (dev-spec §3.7 / §3.9).
 type EffectiveReadback struct {

@@ -1,0 +1,9 @@
+/bin/bash: /home/sandbox/.profile: Permission denied
+== A2: listed binary -> ALLOWED 8099, real file ==
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 404: File not found
+== B2: listed binary -> NOT-ALLOWED 8098, real file ==
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 404: File not found
+== server logs (did requests arrive?) ==
+tail: option used in invalid context -- 4

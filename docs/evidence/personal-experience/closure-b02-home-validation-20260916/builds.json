@@ -1,0 +1,21 @@
+{
+  "scope": "test_release build only; Windows/macOS not native acceptance",
+  "builds": [
+    {
+      "target": "siq-agent-security-darwin-arm64",
+      "sha256": "f1930b9a4985be16f18dde454bc59ed9b562469263ec939d9527efd9a93cc5e1"
+    },
+    {
+      "target": "siq-agent-security-linux-amd64",
+      "sha256": "55f33c08a7bdd8dbcd478a7dd7b6840c7160a702f2d866be5bfb88822984bf1c"
+    },
+    {
+      "target": "siq-agent-security-linux-arm64",
+      "sha256": "593b236ea5cbad67560eb72919a81544d20eb2232176f64e66abfb2b42bb1156"
+    },
+    {
+      "target": "siq-agent-security-windows-amd64.exe",
+      "sha256": "74d4f9c83c4608be8d6c5709203ab05ac65401a5eee146f9981945d1be6418cf"
+    }
+  ]
+}

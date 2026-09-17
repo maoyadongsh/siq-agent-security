@@ -20,6 +20,8 @@ func (e *Engine) HistoricalEffectActions(records []effectevidence.Record) (func(
 	found := map[pair]Receipt{}
 	approved := map[pair]bool{}
 	approvedAt := map[pair]time.Time{}
+	reserved := map[pair]bool{}
+	reservedAt := map[pair]time.Time{}
 	resolved := map[pair]bool{}
 	for _, record := range records {
 		r := record.Evidence
@@ -58,6 +60,22 @@ func (e *Engine) HistoricalEffectActions(records []effectevidence.Record) (func(
 			}
 			approvedAt[p] = at
 		}
+		if r.RecordType == "hold_reservation" {
+			p := pair{r.ActionID, r.DecisionReceiptID}
+			if !wanted[p] {
+				return nil
+			}
+			d, exists := found[p]
+			if !exists || !resolved[p] || !approved[p] || reserved[p] || d.Action != ActionHold || d.TaskID != r.TaskID || d.IntentID != r.IntentID || d.IntentDigest != r.IntentDigest || d.Platform != r.Platform || d.SessionID != r.SessionID || str(d.AgentID) != str(r.AgentID) || r.Action != ActionAllow || r.ToolCallID == nil {
+				return effectevidence.ErrCorrelation
+			}
+			at, err := time.Parse(time.RFC3339Nano, r.IssuedAt)
+			if err != nil || at.Before(approvedAt[p]) {
+				return effectevidence.ErrCorrelation
+			}
+			reserved[p] = true
+			reservedAt[p] = at
+		}
 		return nil
 	})
 	if err != nil {
@@ -78,9 +96,9 @@ func (e *Engine) HistoricalEffectActions(records []effectevidence.Record) (func(
 		}
 		authorizedAt := at
 		if d.Action == ActionHold {
-			authorizedAt = approvedAt[p]
+			authorizedAt = reservedAt[p]
 		}
-		out[p] = effectevidence.Action{AuthorizedAt: authorizedAt, ActionID: d.ActionID, DecisionReceiptID: d.ReceiptID, TaskID: d.TaskID, IntentID: d.IntentID, IntentDigest: d.IntentDigest, Platform: d.Platform, SessionID: d.SessionID, AgentID: str(d.AgentID), IssuedAt: at, Authorized: d.Action == ActionAllow || d.Action == ActionRedact || d.Action == ActionHold && approved[p], Effects: append([]string(nil), d.Effects...), Resources: append([]runtimeaction.ResourceRef(nil), d.ResourceRefs...)}
+		out[p] = effectevidence.Action{AuthorizedAt: authorizedAt, ActionID: d.ActionID, DecisionReceiptID: d.ReceiptID, TaskID: d.TaskID, IntentID: d.IntentID, IntentDigest: d.IntentDigest, Platform: d.Platform, SessionID: d.SessionID, AgentID: str(d.AgentID), IssuedAt: at, Authorized: d.Action == ActionAllow || d.Action == ActionRedact || d.Action == ActionHold && approved[p] && reserved[p], Effects: append([]string(nil), d.Effects...), Resources: append([]runtimeaction.ResourceRef(nil), d.ResourceRefs...)}
 	}
 	return func(actionID, receiptID string) (effectevidence.Action, error) {
 		a, ok := out[pair{actionID, receiptID}]

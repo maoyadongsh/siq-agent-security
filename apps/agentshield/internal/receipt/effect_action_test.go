@@ -54,7 +54,8 @@ func mustRestartEffectEngine(t *testing.T, e *Engine) *Engine {
 
 func TestEffectActionHoldApproval(t *testing.T) {
 	fx := newFixture(t, "block", deployedGrant(t, "openclaw", false), false)
-	d, err := fx.eng.Decide(req("openclaw", "exec", map[string]any{"command": "ls"}))
+	r := req("openclaw", "exec", map[string]any{"command": "ls"})
+	d, err := fx.eng.Decide(r)
 	if err != nil || d.Action != ActionHold {
 		t.Fatal(d, err)
 	}
@@ -65,6 +66,7 @@ func TestEffectActionHoldApproval(t *testing.T) {
 	if _, err = fx.eng.ResolveHold(d.Receipt, true, "admin"); err != nil {
 		t.Fatal(err)
 	}
+	reserveForRetry(t, fx, r, d, "effect-retry")
 	a, err = mustRestartEffectEngine(t, fx.eng).EffectAction(d.Receipt.ActionID, d.Receipt.ReceiptID)
 	if err != nil || !a.Authorized {
 		t.Fatal(a, err)

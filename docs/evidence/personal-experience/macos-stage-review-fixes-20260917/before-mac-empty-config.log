@@ -1,0 +1,20 @@
+=== RUN   TestReviewOpenClawPreservesExplicitEmptyConfig
+=== RUN   TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"allow":[]}}
+    review_empty_config_test.go:15: user-owned fields removed: before={"plugins":{"allow":[]}} after={
+          "plugins": {}
+        }
+=== RUN   TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"load":{"paths":[]}}}
+    review_empty_config_test.go:15: user-owned fields removed: before={"plugins":{"load":{"paths":[]}}} after={
+          "plugins": {}
+        }
+=== RUN   TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"entries":{}}}
+    review_empty_config_test.go:15: user-owned fields removed: before={"plugins":{"entries":{}}} after={
+          "plugins": {}
+        }
+--- FAIL: TestReviewOpenClawPreservesExplicitEmptyConfig (0.22s)
+    --- FAIL: TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"allow":[]}} (0.08s)
+    --- FAIL: TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"load":{"paths":[]}}} (0.07s)
+    --- FAIL: TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"entries":{}}} (0.07s)
+FAIL
+FAIL	siq-agent-security/apps/agentshield/internal/adapterinstall	0.230s
+FAIL

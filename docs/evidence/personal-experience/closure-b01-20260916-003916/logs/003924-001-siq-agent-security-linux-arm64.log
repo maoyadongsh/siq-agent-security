@@ -1,0 +1,6 @@
+$ /tmp/siq-closure-20260915/b01r6/bin-old/siq-agent-security-linux-arm64 client-install --manifest /tmp/siq-closure-20260915/b01r6/manifest-old.json --binary /tmp/siq-closure-20260915/b01r6/bin-old/siq-agent-security-linux-arm64 --confirm-install --port 25179
+# exit recorded separately; redacted=True
+--- stdout ---
+
+--- stderr ---
+siq-agent-security: client-install: installation not confirmed; staged program retained, inspect service-status before retrying

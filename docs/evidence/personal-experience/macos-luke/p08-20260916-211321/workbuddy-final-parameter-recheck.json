@@ -1,0 +1,52 @@
+{
+  "schema_version": "personal-workbuddy-native-final-parameter/v1",
+  "recorded_at": "2026-09-16T21:12:00+08:00",
+  "passed": true,
+  "candidate": "2162907c980c9a4d17a22d64437be9b97502f9ab",
+  "binary_sha256": "7ea96e90fc3b9012f98e32d24406534ccf9d0d847bf8b52206c47eff93dc9362",
+  "binary_format": "Mach-O 64-bit executable arm64",
+  "build": {"cgo_enabled": false, "trimpath": true, "go_version": "go1.27.1"},
+  "platform": "workbuddy",
+  "workbuddy_version": "5.5.6",
+  "method": "native_desktop",
+  "native_entrypoint": "logged-in Aqua WorkBuddy task in an isolated workspace",
+  "test": {
+    "requested_tool": "Read",
+    "requested_path": "<isolated-root>/workspace/outside.txt",
+    "granted_read_root": "<isolated-root>/workspace/safe",
+    "receipt_seq": 10,
+    "action": "deny",
+    "reason_code": "grant_scope_violation",
+    "matched_grant_id": "grt-b3144f7b7e3a-c50be74d",
+    "reason_redacted": "filesystem target <isolated-root>/workspace/outside.txt outside granted paths (default deny)",
+    "follow_on_denials": [
+      {"receipt_seq": 11, "tool": "Bash", "reason_code": "grant_scope_violation"},
+      {"receipt_seq": 12, "tool": "Glob", "reason_code": "grant_scope_violation"},
+      {"receipt_seq": 13, "tool": "Grep", "reason_code": "grant_scope_violation"}
+    ]
+  },
+  "integrity": {
+    "target_sha256_before": "2c130edb6409ed676b7d4a0de5502170a746386b4fb58ed0ec5ec9d9f2d95789",
+    "target_sha256_after": "2c130edb6409ed676b7d4a0de5502170a746386b4fb58ed0ec5ec9d9f2d95789",
+    "forbidden_write_absent": true,
+    "receipt_chain_verified": true,
+    "receipt_count": 14,
+    "receipt_head_seq": 13,
+    "receipt_head_hash": "82585bb0d21c1bcec606556088dacd3ea03713535e61b4d4dc05fc20a244a484"
+  },
+  "cleanup": {
+    "isolated_service_stopped": true,
+    "isolated_hooks_removed": true,
+    "daily_settings_sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+    "daily_settings_contains_product_hook": false,
+    "existing_ports_47612_47613_preserved": true
+  },
+  "matrix": {
+    "passed": ["discovery", "normal_execution", "pre_execution_denial", "service_unavailable_denial", "final_parameter_recheck"],
+    "blocked": [
+      {"check": "approval_resume", "reason": "host_capability_missing: no resume or hold-status channel"},
+      {"check": "skill_attribution", "reason": "host_capability_missing: no trusted same-call Skill context"},
+      {"check": "install_interception", "reason": "host_capability_missing: no supported pre-install hook"}
+    ]
+  }
+}

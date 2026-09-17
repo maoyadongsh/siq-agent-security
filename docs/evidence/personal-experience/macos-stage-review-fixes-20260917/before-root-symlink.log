@@ -1,0 +1,6 @@
+=== RUN   TestReviewNonDarwinRootSymlinkRejected
+    review_root_symlink_test.go:6: non-Darwin root symlink accepted by state parent barrier
+--- FAIL: TestReviewNonDarwinRootSymlinkRejected (0.00s)
+FAIL
+FAIL	siq-agent-security/apps/agentshield/internal/stateformat	0.003s
+FAIL

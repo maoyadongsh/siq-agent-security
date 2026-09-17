@@ -1,0 +1,69 @@
+{
+  "schema_version": "personal-hermes-approved-retry-native-smoke/v2",
+  "recorded_at": "2026-09-14T16:42:06.292238+00:00",
+  "passed": true,
+  "binary_sha256": "b6e7650f9ab35f6b259cbd64fe9be5a19347b3689ed3dab0be38874d4bda6708",
+  "harness_sha256": "2e2735e266de730edae9c815797c1d5c79e3b55b4e0348d3d0d7ff7496b0ae1c",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "native_entrypoint": "public hermes chat --oneshot; normal Agent loop and plugin lifecycle",
+  "session_id_source": "native pre_llm_call; fixture observer only; not injected",
+  "checks": [
+    "grant_require_approval_applied",
+    "decision_token_cannot_read_authority_or_confirmations",
+    "native_cli_runs_completed",
+    "hold_blocks_before_execution",
+    "block_message_points_to_console",
+    "console_approval_recorded",
+    "approved_retry_reserved_before_native_execution",
+    "approved_native_side_effect_exactly_once",
+    "console_denial_recorded",
+    "denied_retry_blocked_without_execution",
+    "reservation_and_observation_linked",
+    "receipt_chain_verified"
+  ],
+  "attempts": [
+    {
+      "label": "approve",
+      "tool_call_id": "write-approve-original",
+      "decision_action": "hold",
+      "decision_reason_code": "runtime_denied",
+      "intent_binding": "bound",
+      "console_guidance_in_block": true,
+      "target_file_created": true,
+      "execution_observations": 1
+    },
+    {
+      "label": "deny",
+      "tool_call_id": "write-deny-original",
+      "decision_action": "hold",
+      "decision_reason_code": "runtime_denied",
+      "intent_binding": "bound",
+      "console_guidance_in_block": true,
+      "target_file_created": false,
+      "execution_observations": 0
+    }
+  ],
+  "console_resolutions": [
+    {
+      "label": "approve",
+      "approve": true,
+      "action_id": "act-67061443eee613c6dcac1e92",
+      "status": "approved"
+    },
+    {
+      "label": "deny",
+      "approve": false,
+      "action_id": "act-4718bf5d0673f6246e57c1a9",
+      "status": "denied"
+    }
+  ],
+  "receipt_count": 7,
+  "auxiliary_requests": 2,
+  "profile_config_unchanged": true,
+  "limitations": [
+    "approved execution is at-most-once locally; external systems can still require uncertain reconciliation",
+    "synthetic model, operator and target; no real user data, contacts or external services",
+    "isolated fixture profile and daemon state; no claim about other platforms or adapter versions",
+    "desktop notification delivery and manual browser clicking are covered by separate evidence"
+  ]
+}

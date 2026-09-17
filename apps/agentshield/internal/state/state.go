@@ -20,6 +20,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
@@ -70,6 +71,7 @@ func DefaultDir() (string, error) {
 
 // Config is <state>/config.json.
 type Config struct {
+	LinuxServiceHome  string `json:"linux_service_home,omitempty"`
 	IntentEnforcement string `json:"intent_enforcement"`
 	EnforcementMode   string `json:"enforcement_mode"`
 	Port              int    `json:"port"`
@@ -131,6 +133,17 @@ func decodeConfig(raw []byte) (Config, error) {
 	if raw != nil {
 		if err := json.Unmarshal(raw, &cfg); err != nil {
 			return cfg, fmt.Errorf("state: config.json malformed: %w", err)
+		}
+	}
+	if cfg.LinuxServiceHome != "" {
+		home := cfg.LinuxServiceHome
+		if !filepath.IsAbs(home) || filepath.Clean(home) != home || strings.IndexFunc(home, unicode.IsControl) >= 0 {
+			return cfg, errors.New("state: invalid linux_service_home")
+		}
+		resolved, err := filepath.EvalSymlinks(home)
+		info, statErr := os.Stat(home)
+		if err != nil || resolved != home || statErr != nil || !info.IsDir() {
+			return cfg, errors.New("state: linux_service_home requires an existing canonical directory")
 		}
 	}
 	if cfg.IntentEnforcement != "optional" && cfg.IntentEnforcement != "required" {
@@ -443,6 +456,41 @@ func (s *Store) ActiveGrant(platform, agentID string) *grant.Grant {
 	for i := range all {
 		g := all[i]
 		if g.Platform == platform && g.Subject.ID == agentID && (g.Status == "deployed" || g.Status == "effective") {
+			return &g
+		}
+	}
+	return nil
+}
+
+// GrantByID returns the newest stored version of one grant whatever its
+// state, or nil. Verification callers re-check status, lifetime and digests.
+func (s *Store) GrantByID(id string) *grant.Grant {
+	if !safeID(id) {
+		return nil
+	}
+	all, err := s.ListGrants()
+	if err != nil {
+		return nil
+	}
+	for i := range all {
+		if all[i].GrantID == id {
+			return &all[i]
+		}
+	}
+	return nil
+}
+
+// BaselineGrant returns the newest deployed/effective grant without a skill
+// scope for (platform, agent): the second leg of the SEC permission
+// intersection (N05/R01). nil means no baseline exists.
+func (s *Store) BaselineGrant(platform, agentID string) *grant.Grant {
+	all, err := s.ListGrants()
+	if err != nil {
+		return nil
+	}
+	for i := range all {
+		g := all[i]
+		if g.Platform == platform && g.Subject.ID == agentID && g.Skill == nil && (g.Status == "deployed" || g.Status == "effective") {
 			return &g
 		}
 	}

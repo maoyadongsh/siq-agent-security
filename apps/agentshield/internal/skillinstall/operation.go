@@ -87,7 +87,7 @@ func (s *Store) claim(ctx context.Context, id string) (*Claim, error) {
 }
 func (s *Store) destination(ctx context.Context, p Plan) (string, string, error) {
 	target, err := s.resolve(ctx, p.InstanceID)
-	if err != nil || target.InstanceID != p.InstanceID || target.Platform != "hermes" || !filepath.IsAbs(target.Root) || filepath.Clean(target.Root) != target.Root || checkDirectories(target.Root) != nil {
+	if err != nil || target.InstanceID != p.InstanceID || target.Platform != p.Platform || !supportedPlatform(target.Platform) || !filepath.IsAbs(target.Root) || filepath.Clean(target.Root) != target.Root || checkDirectories(target.Root) != nil {
 		return "", "", ErrChanged
 	}
 	destination := filepath.Join(target.Root, "skills", p.DirectoryName)

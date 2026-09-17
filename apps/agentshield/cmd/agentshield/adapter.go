@@ -15,12 +15,13 @@ import (
 
 func cmdAdapter(args []string) error {
 	if len(args) < 1 {
-		return fmt.Errorf("adapter: usage: %s adapter install|uninstall|status|preview|recover|instances [platform] [install|uninstall] [--instance ID] [--enable-native]", product.Name)
+		return fmt.Errorf("adapter: usage: %s adapter install|uninstall|status|preview|recover|instances [platform] [install|uninstall] [--instance ID] [--enable-native] [--enable-install-policy]", product.Name)
 	}
 	action := args[0]
 	rest := []string{}
 	instanceID := ""
 	nativeEnable := false
+	installPolicy := false
 	for i := 1; i < len(args); i++ {
 		switch args[i] {
 		case "--instance":
@@ -31,6 +32,8 @@ func cmdAdapter(args []string) error {
 			instanceID = args[i]
 		case "--enable-native":
 			nativeEnable = true
+		case "--enable-install-policy":
+			installPolicy = true
 		default:
 			if strings.HasPrefix(args[i], "--") {
 				return fmt.Errorf("adapter: unknown option")
@@ -84,6 +87,9 @@ func cmdAdapter(args []string) error {
 	if nativeEnable && instanceID == "" {
 		return fmt.Errorf("adapter: --enable-native requires explicit --instance from adapter instances hermes")
 	}
+	if installPolicy && (len(rest) == 0 || rest[0] != "openclaw" || action != "install" && action != "preview") {
+		return fmt.Errorf("adapter: --enable-install-policy requires explicit openclaw install or preview")
+	}
 
 	from := product.Env(product.EnvAdaptersDir, product.EnvAdaptersDirOld)
 	if from == "" {
@@ -94,10 +100,10 @@ func cmdAdapter(args []string) error {
 	if len(rest) == 0 || rest[0] == "auto" {
 		platforms = adapterinstall.Detect(home)
 		if action != "status" && len(platforms) == 0 {
-			return fmt.Errorf("adapter: no platform config dirs found under %s; pass openclaw|hermes|codebuddy|trae", home)
+			return fmt.Errorf("adapter: no platform config dirs found under %s; pass openclaw|hermes|codebuddy|workbuddy|trae", home)
 		}
 		if action == "status" && len(platforms) == 0 {
-			platforms = []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.Trae}
+			platforms = []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.WorkBuddy, adapterinstall.Trae}
 		}
 	} else {
 		platforms = []string{rest[0]}
@@ -114,6 +120,7 @@ func cmdAdapter(args []string) error {
 		}
 
 		opts.NativeEnable = nativeEnable
+		opts.InstallPolicy = installPolicy
 		opts.NativeCLI = os.Getenv("SIQ_AGENT_SECURITY_HERMES_CLI")
 		if instanceID != "" {
 			if p != "hermes" {

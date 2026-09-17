@@ -314,31 +314,72 @@ for (const mode of ["block", "warn", "audit_only"]) {
   }
 }
 
-for (const flow of ["duplicate-post", "duplicate-pre", "blocked-hold", "approved-hold"]) {
+for (const flow of [
+  "duplicate-post",
+  "duplicate-pre",
+  "blocked-hold",
+  "approved-hold",
+  "reserve-rejected",
+  "reserve-malformed",
+  "reserve-response-loss",
+]) {
   scenarios[`correlation-${flow}`] = async () => {
     const { home } = makeHome(); process.env.__OC_HOME = home;
     const routes = allowHandlers();
-    const held = flow.endsWith("hold");
+    const held = ["blocked-hold", "approved-hold", "reserve-rejected", "reserve-malformed", "reserve-response-loss"].includes(flow);
     if (held) {
       routes["/v1/decide"] = res => json(res, 200, { action: "hold", reason: "approve", receipt_id: "rcp-1", action_id: "act-1" });
       routes["/v1/hold-status"] = res => json(res, 200, {
         schema_version: "hold-status/v1", action_id: "act-1", decision_receipt_id: "rcp-1",
         status: "approved", reason_code: "hold_approved", expires_at: new Date(Date.now() + 60000).toISOString(),
       });
+      routes["/v1/hold-executions/reserve"] = (res, body) => {
+        if (flow === "reserve-rejected") return json(res, 409, {});
+        if (flow === "reserve-response-loss") return res.destroy();
+        return json(res, 201, {
+          schema_version: "hold-execution-status/v1",
+          status: "reserved",
+          action_id: body.action_id,
+          decision_receipt_id: body.decision_receipt_id,
+          reservation_receipt_id: flow === "reserve-malformed" ? "" : `${body.decision_receipt_id}-exec`,
+          expires_at: new Date(Date.now() + 60000).toISOString(),
+          reason_code: "hold_execution_reserved",
+        });
+      };
     }
     const { server, requests, port } = await makeServer(routes);
     try {
       const handlers = await loadPlugin(`http://localhost:${port}`);
       const decision = await handlers.before_tool_call(
         { toolName: "write_file", toolCallId: "call-1", params: {}, sessionKey: "s1" },
-        { sessionKey: "s1", approvalExecutionRecheckVersion: flow === "approved-hold" ? 1 : undefined });
+        {
+          sessionKey: "s1",
+          approvalExecutionRecheckVersion:
+            flow === "approved-hold" || flow.startsWith("reserve-") ? 1 : undefined,
+        });
       if (flow === "duplicate-pre") assert.equal((await before(handlers, {})).block, true);
       if (flow === "blocked-hold") assert.equal(decision.block, true);
-      if (flow === "approved-hold") assert.equal(await decision.requireApproval.beforeExecute({}), true);
+      if (flow === "approved-hold") {
+        assert.equal(await decision.requireApproval.beforeExecute({}), true);
+        const reserve = requests.find(r => r.url === "/v1/hold-executions/reserve");
+        assert.equal(reserve.body.original_tool_call_id, "call-1");
+        assert.notEqual(reserve.body.retry_tool_call_id, "call-1");
+      }
+      if (flow.startsWith("reserve-")) {
+        assert.equal(await decision.requireApproval.beforeExecute({}), false);
+        assert.equal(requests.filter(r => r.url === "/v1/hold-executions/reserve").length, 1);
+        return;
+      }
       await after(handlers, "result");
       await after(handlers, "duplicate result");
       const output = requests.filter(r => r.url === "/v1/raw-task-content/native-captures" && r.body.kind === "output");
       assert.equal(output.length, ["duplicate-post", "approved-hold"].includes(flow) ? 1 : 0);
+      if (flow === "approved-hold") {
+        const reserve = requests.find(r => r.url === "/v1/hold-executions/reserve");
+        const observe = requests.find(r => r.url === "/v1/observe");
+        assert.equal(observe.body.tool_call_id, reserve.body.retry_tool_call_id);
+        assert.equal(observe.body.decision_receipt_id, "rcp-1-exec");
+      }
       assert.equal((await before(handlers, {})).block, true, "consumed call must remain unusable");
     } finally { server.close(); fs.rmSync(home, { recursive: true, force: true }); }
   };

@@ -5,6 +5,7 @@ native SIQ_TEST_BINARY and SIQ_TEST_SYSTEMD=1; this is Linux service evidence,
 not intelligent-agent platform acceptance.
 """
 
+import hashlib
 import json
 import os
 import shutil
@@ -159,7 +160,7 @@ def test_real_user_service_restart_and_cleanup(tmp_path):
         assert property_value("ActiveState") == "inactive"
         assert property_value("Result") == "success"
         assert not (state / "serve.lock").exists()
-        retained = {p: p.read_bytes() for p in [
+        retained = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in [
             state / "local-instance.json", state / "config.json",
             state / "user-service.json", state / "keys" / "signing.seed", unit,
         ]}
@@ -170,8 +171,32 @@ def test_real_user_service_restart_and_cleanup(tmp_path):
             )
         assert property_value("LoadState") == "not-found"
         linked = False
-        for path, content in retained.items():
-            assert path.read_bytes() == content
+        for path, digest in retained.items():
+            assert hashlib.sha256(path.read_bytes()).hexdigest() == digest
+        # Re-enter using the retained state, not a fresh replacement directory.
+        # This verifies runtime registration/start after teardown, not a signed
+        # release installer or a real OS login session.
+        linked = True
+        subprocess.run(
+            [str(binary), "service-register", "--runtime"], env=env,
+            capture_output=True, timeout=45, check=True,
+        )
+        subprocess.run(
+            [str(binary), "service-start"], env=env,
+            capture_output=True, timeout=45, check=True,
+        )
+        ready()
+        assert (state / "local-instance.json").read_bytes() == identity
+        for path, digest in retained.items():
+            assert hashlib.sha256(path.read_bytes()).hexdigest() == digest
+        subprocess.run(
+            [str(binary), "teardown", "--confirm-teardown"], env=env,
+            capture_output=True, timeout=45, check=True,
+        )
+        assert property_value("LoadState") == "not-found"
+        linked = False
+        for path, digest in retained.items():
+            assert hashlib.sha256(path.read_bytes()).hexdigest() == digest
 
     finally:
         if linked:

@@ -1,0 +1,28 @@
+{
+  "schema_version": "personal-macos-workbuddy-ui-install/v1",
+  "recorded_at": "2026-09-16T09:45:00Z",
+  "method": "native_desktop",
+  "ui": "embedded local console on 127.0.0.1:47614",
+  "binary_sha256": "37c511bfca8fa7ed091341e2586faaec5476e969b4815ebcc2d23eb88d43662c",
+  "rebuild": "npm run build:local then CGO_ENABLED=0 go1.27.1 build -trimpath",
+  "workbuddy_row_before_rebuild": "桌面接入待实测",
+  "workbuddy_row_after": {
+    "tier": "接入待验证",
+    "adapter": "发现安装文件",
+    "note_contains": "须在 WorkBuddy 桌面会话验证，不能沿用 CodeBuddy",
+    "actions": ["重新安装", "卸载"]
+  },
+  "preview_paths_under_isolated_config": true,
+  "isolated_settings": {
+    "enabledPlugins_preserved": true,
+    "hook_workbuddy": true,
+    "state_dir_flag": true,
+    "no_codebuddy_hook": true
+  },
+  "daily_settings_has_hooks": false,
+  "daily_settings_sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+  "did_not_kill_existing_daemons": true,
+  "existing_daemons": [47612, 47613],
+  "screenshot": "workbuddy-settings-install.png",
+  "omitted": ["pairing", "token", "keys"]
+}

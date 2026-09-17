@@ -1,6 +1,7 @@
 import type { SkillImportSourceKind, SkillUpdateContent } from './types';
 export interface SkillUpdateCheckRequest { schema_version: 'local-skill-update-check/v1'; remote_url: string; actor_id: string }
 export interface SkillUpdateSourceRequest { schema_version: 'local-skill-update-source-save/v1'; remote_url: string; enable: boolean; actor_id: string }
+export interface SkillUpdateSourceDisableRequest { schema_version: 'local-skill-update-source-disable/v1'; actor_id: string }
 export interface SkillUpdateCheckResult {
   schema_version: 'local-skill-update-check-result/v1'; install_id: string; checked_at: string;
   status: 'up_to_date' | 'new_version'; source_kind: 'git' | 'https_zip';
@@ -61,10 +62,33 @@ export function isSkillUpdateScheduleView(v: unknown, id: string): v is SkillUpd
     ? typeof v[k] === 'string' && v[k].length > 0 && [...v[k]].length <= 64
     : timestamp(v[k]));
 }
+
+export type SkillUpdateSourceTogglePlan =
+  | { kind: 'disable' }
+  | { kind: 'save'; remoteURL: string }
+  | { kind: 'error'; message: string };
+
+// A saved enabled source always uses the URL-free disable endpoint. Enabling
+// still follows the original binding rules: Git uses its signed import record,
+// while HTTPS ZIP must be explicitly supplied again.
+export function planSkillUpdateSourceToggle(view: SkillUpdateScheduleView, remoteURL: string): SkillUpdateSourceTogglePlan {
+  if (view.source_state === 'unsupported') return { kind: 'error', message: '此安装来源不支持自动检查。' };
+  if (view.source_state === 'stale') return { kind: 'error', message: '已保存来源与当前安装不一致，请先重新绑定来源。' };
+  if (view.source_state === 'saved' && view.enabled) return { kind: 'disable' };
+  if (view.source_kind === 'git') return { kind: 'save', remoteURL: '' };
+  const trimmed = remoteURL.trim();
+  if (trimmed) return { kind: 'save', remoteURL: trimmed };
+  return { kind: 'error', message: '启用 HTTPS ZIP 自动检查前，请先在下方填写原下载链接。' };
+}
+
+export function isCurrentSkillUpdateRequest(ownerIdentity: string, currentIdentity: string, aborted: boolean): boolean {
+  return !aborted && ownerIdentity === currentIdentity;
+}
 export function updateCheckErrorText(error: unknown): string {
   const code = error instanceof Error ? error.message : '';
   const messages: Record<string, string> = {
     skill_update_source_unavailable: '暂时无法从上游获取内容。请检查网络与代理设置，确认来源公开可见，然后重试；此次未完成检查。',
+    skill_update_source_not_configured: '尚未保存自动检查来源，请先保存来源后再操作。',
     skill_update_url_blocked: '链接未通过安全检查，请使用原 HTTPS 下载链接；不接受内网或本机地址。',
     skill_install_unavailable: '暂时无法获取上游，请检查网络与本地服务后重试。此次未完成检查。',
     skill_install_changed: '来源链接或安装记录与原记录不一致，请核对原下载链接和安装记录。',

@@ -76,6 +76,16 @@ func TestSaveUpdateSourcePreservesIncompatibleRecords(t *testing.T) {
 					t.Fatal("rejected save changed state path listing")
 				}
 			}
+			if _, err := s.DisableUpdateSource(context.Background(), op.InstallID, disableRequest()); !errors.Is(err, ErrChanged) {
+				t.Fatalf("disable must refuse incompatible record: %v", err)
+			}
+			after, err := os.ReadFile(path)
+			if err != nil || !bytes.Equal(before, after) {
+				t.Fatalf("rejected disable changed original bytes: %v", err)
+			}
+			if !reflect.DeepEqual(pathsBefore, storeTree(t, s.dir)) {
+				t.Fatal("rejected disable changed state path listing")
+			}
 		})
 	}
 }

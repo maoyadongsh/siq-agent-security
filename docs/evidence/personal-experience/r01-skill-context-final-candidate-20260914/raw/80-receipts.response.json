@@ -1,0 +1,655 @@
+{
+  "receipts": [
+    {
+      "authority_status": "valid",
+      "policy_action": "deny",
+      "effective_action": "deny",
+      "principal": {
+        "type": "user",
+        "id": "r01-live-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "ca33280f349943b63f46bc4bd94c05844a52f22cc2b0371a4f664f0214013911"
+        }
+      ],
+      "record_type": "decision",
+      "task_seq": 1,
+      "receipt_id": "rcp-55db6e68566a-124146.572851",
+      "chain_id": "local",
+      "seq": 0,
+      "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "4f0bdbd09dd3e32467059401656d75c8c897176baa49ecb6fbc545f1e1985541",
+      "sig": "6a371f35eeb227960c66dd1b89f30ee1746905c6fc77c8d17d669275feca0dc31bd9b92d92d5354b390a19e349e81d475649a598c289a44d95dcc3c756b9c303",
+      "issued_at": "2026-09-14T12:41:46Z",
+      "platform": "hermes",
+      "session_id": "r01-sec-live-session-1",
+      "action_id": "act-082da584261d5e51c45e9929",
+      "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+      "task_id": "task-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_id": "int-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_digest": "bd01ede048155d75617f47aac6c5594e74b03f128f76b94996ba6cd131f69d60",
+      "intent_binding": "bound",
+      "authority_revision": "741998978285b2c4c175e2b00c8fd16c349160881e48c522251553258481fb78",
+      "tool": "read_file",
+      "tool_call_id": "tc-r01-pre-sec",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "55db6e68566a051926976a7cbc40b5e733cb1c1d5c5cf5b1adfe5a7ef07ba388",
+      "params_excerpt": "/tmp/siq-r01-sec-live-xjgb87vm/workspace/report.txt",
+      "action": "deny",
+      "advisory_action": null,
+      "reason": "skill attribution does not verify for grant (default deny)",
+      "reason_code": "skill_attribution_mismatch",
+      "matched_grant_id": "grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "matched_fact_ids": [],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 3,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+        "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+        "status": "unknown"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "allow",
+      "effective_action": "allow",
+      "principal": {
+        "type": "user",
+        "id": "r01-live-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "ca33280f349943b63f46bc4bd94c05844a52f22cc2b0371a4f664f0214013911"
+        }
+      ],
+      "record_type": "decision",
+      "task_seq": 2,
+      "receipt_id": "rcp-55db6e68566a-124146.715539",
+      "chain_id": "local",
+      "seq": 1,
+      "prev_hash": "4f0bdbd09dd3e32467059401656d75c8c897176baa49ecb6fbc545f1e1985541",
+      "hash": "13b954e0799b82b7feb891b1292dc47d001c2446c406ad929ec769bdbfcd74e0",
+      "sig": "58c7ebc50ac4f003b5d5c328ca41423747c626ed2184d4ddc777624865e51009d7b8dd55b2c24951cd8e24eb9b4be3ba047ada1887b21075b1e5630e0e4bfe0c",
+      "issued_at": "2026-09-14T12:41:46Z",
+      "platform": "hermes",
+      "session_id": "r01-sec-live-session-1",
+      "action_id": "act-93e9d4f17e008a583ce12648",
+      "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+      "task_id": "task-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_id": "int-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_digest": "bd01ede048155d75617f47aac6c5594e74b03f128f76b94996ba6cd131f69d60",
+      "intent_binding": "bound",
+      "authority_revision": "741998978285b2c4c175e2b00c8fd16c349160881e48c522251553258481fb78",
+      "tool": "read_file",
+      "tool_call_id": "tc-r01-task-1",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "55db6e68566a051926976a7cbc40b5e733cb1c1d5c5cf5b1adfe5a7ef07ba388",
+      "params_excerpt": "/tmp/siq-r01-sec-live-xjgb87vm/workspace/report.txt",
+      "action": "allow",
+      "advisory_action": null,
+      "reason": "granted by grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "reason_code": "allow",
+      "matched_grant_id": "grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "matched_fact_ids": [
+        "pf-p-3-f1ed39d6",
+        "pf-p-1-811cbc58"
+      ],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 10,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+        "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+        "status": "verified",
+        "evidence_level": "controlled_task",
+        "context_id": "sec-47216e3aa8af15d363b771fa96b2bd33",
+        "call_binding": "8ba8f84622e56e13b6b4b624ba9f051b4be6fc4e2ea16db8747708f1445eca04"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "deny",
+      "effective_action": "deny",
+      "principal": {
+        "type": "user",
+        "id": "r01-live-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "ca33280f349943b63f46bc4bd94c05844a52f22cc2b0371a4f664f0214013911"
+        }
+      ],
+      "record_type": "decision",
+      "task_seq": 1,
+      "receipt_id": "rcp-55db6e68566a-124146.746699",
+      "chain_id": "local",
+      "seq": 2,
+      "prev_hash": "13b954e0799b82b7feb891b1292dc47d001c2446c406ad929ec769bdbfcd74e0",
+      "hash": "e7cc0c4ae8094d579231741f76cf1a0199f4975c046c38bd232b74605834d360",
+      "sig": "4350db50168e37e1d84466305b88fe95f38cb2f36df785095bb751e70764b2064ec13f882065457ddc49d448de572f324b0af4ef5c4c63a236c96cdbc1e18c0f",
+      "issued_at": "2026-09-14T12:41:46Z",
+      "platform": "hermes",
+      "session_id": "r01-sec-live-session-2",
+      "action_id": "act-5b714577dc402f4c1e694d70",
+      "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+      "task_id": "task-ri-f4bc30d587311c347c3da9d7fd5b8db6b64c68ad1ab16bb7481ce836ef76368c",
+      "intent_id": "int-ri-f4bc30d587311c347c3da9d7fd5b8db6b64c68ad1ab16bb7481ce836ef76368c",
+      "intent_digest": "a4ac4ff1ad91101b6fec6aeb4e7b45c4dd0a4d6ffb30f56a3770289e19be966d",
+      "intent_binding": "bound",
+      "authority_revision": "741998978285b2c4c175e2b00c8fd16c349160881e48c522251553258481fb78",
+      "tool": "read_file",
+      "tool_call_id": "tc-r01-xsess-1",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "55db6e68566a051926976a7cbc40b5e733cb1c1d5c5cf5b1adfe5a7ef07ba388",
+      "params_excerpt": "/tmp/siq-r01-sec-live-xjgb87vm/workspace/report.txt",
+      "action": "deny",
+      "advisory_action": null,
+      "reason": "skill attribution does not verify for grant (default deny)",
+      "reason_code": "skill_attribution_mismatch",
+      "matched_grant_id": "grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "matched_fact_ids": [],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 4,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+        "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+        "status": "unknown"
+      }
+    },
+    {
+      "authority_status": "invalid",
+      "authority_reason_code": "intent_task_mismatch",
+      "effective_action": "deny",
+      "principal": {
+        "type": "user",
+        "id": "r01-live-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "ca33280f349943b63f46bc4bd94c05844a52f22cc2b0371a4f664f0214013911"
+        }
+      ],
+      "record_type": "decision",
+      "parent_action_id": "act-93e9d4f17e008a583ce12648",
+      "task_seq": 3,
+      "receipt_id": "rcp-55db6e68566a-124146.777120",
+      "chain_id": "local",
+      "seq": 3,
+      "prev_hash": "e7cc0c4ae8094d579231741f76cf1a0199f4975c046c38bd232b74605834d360",
+      "hash": "b8d4d43f42c4d7017f10fcbffd7d04526219e5efff7212780d17f2420ade3e7e",
+      "sig": "ffd8907cd957f455f41754251f9095de8fb06cfaec4d4f72fb675c37ede41c7c5b0e86cb7b972e91324b0b8ed2a294de70d558086882f51241113a4bb363030c",
+      "issued_at": "2026-09-14T12:41:46Z",
+      "platform": "hermes",
+      "session_id": "r01-sec-live-session-1",
+      "action_id": "act-cae462cb1c78fffa91570a9b",
+      "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+      "task_id": "task-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_id": "int-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_digest": "bd01ede048155d75617f47aac6c5594e74b03f128f76b94996ba6cd131f69d60",
+      "intent_binding": "bound",
+      "authority_revision": "741998978285b2c4c175e2b00c8fd16c349160881e48c522251553258481fb78",
+      "tool": "read_file",
+      "tool_call_id": "tc-r01-xtask-1",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "55db6e68566a051926976a7cbc40b5e733cb1c1d5c5cf5b1adfe5a7ef07ba388",
+      "params_excerpt": "/tmp/siq-r01-sec-live-xjgb87vm/workspace/report.txt",
+      "action": "deny",
+      "advisory_action": null,
+      "reason": "intent_task_mismatch",
+      "reason_code": "intent_task_mismatch",
+      "matched_grant_id": null,
+      "matched_fact_ids": [],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 6,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+        "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+        "status": "unknown"
+      }
+    },
+    {
+      "authority_status": "invalid",
+      "authority_reason_code": "skill_context_mismatch",
+      "effective_action": "deny",
+      "principal": {
+        "type": "user",
+        "id": "r01-live-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "ca33280f349943b63f46bc4bd94c05844a52f22cc2b0371a4f664f0214013911"
+        }
+      ],
+      "record_type": "decision",
+      "parent_action_id": "act-93e9d4f17e008a583ce12648",
+      "task_seq": 4,
+      "receipt_id": "rcp-55db6e68566a-124146.805371",
+      "chain_id": "local",
+      "seq": 4,
+      "prev_hash": "b8d4d43f42c4d7017f10fcbffd7d04526219e5efff7212780d17f2420ade3e7e",
+      "hash": "da2c5fd55079a20b317e0a8718b0d12dccf4d9692359ba924e97530715020a54",
+      "sig": "243d898169228524b2289d597a79c6bede5c976557b195a81b6064b7253076e5556adee8868dc919d8eb1fca74a2991cccad1c04cb04941d7b9370c6bfc4ce06",
+      "issued_at": "2026-09-14T12:41:46Z",
+      "platform": "hermes",
+      "session_id": "r01-sec-live-session-1",
+      "action_id": "act-e7d5a8e74fa125c0fbd29799",
+      "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+      "task_id": "task-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_id": "int-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_digest": "bd01ede048155d75617f47aac6c5594e74b03f128f76b94996ba6cd131f69d60",
+      "intent_binding": "bound",
+      "authority_revision": "741998978285b2c4c175e2b00c8fd16c349160881e48c522251553258481fb78",
+      "tool": "read_file",
+      "tool_call_id": "tc-r01-swap-1",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "55db6e68566a051926976a7cbc40b5e733cb1c1d5c5cf5b1adfe5a7ef07ba388",
+      "params_excerpt": "/tmp/siq-r01-sec-live-xjgb87vm/workspace/report.txt",
+      "action": "deny",
+      "advisory_action": null,
+      "reason": "skill_context_mismatch",
+      "reason_code": "skill_context_mismatch",
+      "matched_grant_id": null,
+      "matched_fact_ids": [],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 10,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:other-skill@0000deadbeef",
+        "status": "unknown"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "allow",
+      "effective_action": "allow",
+      "principal": {
+        "type": "user",
+        "id": "r01-live-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "ca33280f349943b63f46bc4bd94c05844a52f22cc2b0371a4f664f0214013911"
+        }
+      ],
+      "record_type": "decision",
+      "parent_action_id": "act-93e9d4f17e008a583ce12648",
+      "task_seq": 5,
+      "receipt_id": "rcp-55db6e68566a-124146.841825",
+      "chain_id": "local",
+      "seq": 5,
+      "prev_hash": "da2c5fd55079a20b317e0a8718b0d12dccf4d9692359ba924e97530715020a54",
+      "hash": "748f5358e6e05addd23e0eda4a474b805146929a49f5e1c1de8c1ecd7b3150eb",
+      "sig": "a11d651f28dcc1c1349251e32dd7f0041e6cc608f6a0a99c4ed9b9b5c6e47f9889c532fced6b57cb3de1877d15aecd2c22ba680efeed06869a126dca9ff7110c",
+      "issued_at": "2026-09-14T12:41:46Z",
+      "platform": "hermes",
+      "session_id": "r01-sec-live-session-1",
+      "action_id": "act-00fbd9ac4eb74521f97427a1",
+      "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+      "task_id": "task-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_id": "int-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_digest": "bd01ede048155d75617f47aac6c5594e74b03f128f76b94996ba6cd131f69d60",
+      "intent_binding": "bound",
+      "authority_revision": "741998978285b2c4c175e2b00c8fd16c349160881e48c522251553258481fb78",
+      "tool": "read_file",
+      "tool_call_id": "tc-r01-noclaim-1",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "55db6e68566a051926976a7cbc40b5e733cb1c1d5c5cf5b1adfe5a7ef07ba388",
+      "params_excerpt": "/tmp/siq-r01-sec-live-xjgb87vm/workspace/report.txt",
+      "action": "allow",
+      "advisory_action": null,
+      "reason": "granted by grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "reason_code": "allow",
+      "matched_grant_id": "grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "matched_fact_ids": [
+        "pf-p-3-f1ed39d6",
+        "pf-p-1-811cbc58"
+      ],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 6,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+        "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+        "status": "verified",
+        "evidence_level": "controlled_task",
+        "context_id": "sec-47216e3aa8af15d363b771fa96b2bd33",
+        "call_binding": "ea4637f0f885cecfdfb0cd68ffd78ef0663a5d9c31167744f5e3d15d06ce186c"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "allow",
+      "effective_action": "allow",
+      "principal": {
+        "type": "user",
+        "id": "r01-live-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "ca33280f349943b63f46bc4bd94c05844a52f22cc2b0371a4f664f0214013911"
+        }
+      ],
+      "record_type": "decision",
+      "parent_action_id": "act-00fbd9ac4eb74521f97427a1",
+      "task_seq": 6,
+      "receipt_id": "rcp-55db6e68566a-124146.877691",
+      "chain_id": "local",
+      "seq": 6,
+      "prev_hash": "748f5358e6e05addd23e0eda4a474b805146929a49f5e1c1de8c1ecd7b3150eb",
+      "hash": "ff6d1d5163912cfbcb0fb76db8c5a20c1c32d7574f10b0d81130934b7eb1d3ac",
+      "sig": "b3388ede20ef06130fe90ee2d4073a3bd2bd8a44395f7cd192f0d05798b69da9b283161a26fcfd71dcf6fe9a03d92f07ac77b5e13db13ca2fef35965a745e607",
+      "issued_at": "2026-09-14T12:41:46Z",
+      "platform": "hermes",
+      "session_id": "r01-sec-live-session-1",
+      "action_id": "act-0ce5f990ed6ef72bbf459436",
+      "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+      "task_id": "task-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_id": "int-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_digest": "bd01ede048155d75617f47aac6c5594e74b03f128f76b94996ba6cd131f69d60",
+      "intent_binding": "bound",
+      "authority_revision": "741998978285b2c4c175e2b00c8fd16c349160881e48c522251553258481fb78",
+      "tool": "read_file",
+      "tool_call_id": "tc-r01-content-restored",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "55db6e68566a051926976a7cbc40b5e733cb1c1d5c5cf5b1adfe5a7ef07ba388",
+      "params_excerpt": "/tmp/siq-r01-sec-live-xjgb87vm/workspace/report.txt",
+      "action": "allow",
+      "advisory_action": null,
+      "reason": "granted by grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "reason_code": "allow",
+      "matched_grant_id": "grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "matched_fact_ids": [
+        "pf-p-3-f1ed39d6",
+        "pf-p-1-811cbc58"
+      ],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 9,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+        "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+        "status": "verified",
+        "evidence_level": "controlled_task",
+        "context_id": "sec-47216e3aa8af15d363b771fa96b2bd33",
+        "call_binding": "b3b5b18068ba8bc4d54d06c1a56675bbf28a2434e9ba69ccc19187a9e83e0832"
+      }
+    },
+    {
+      "authority_status": "invalid",
+      "authority_reason_code": "skill_context_revoked",
+      "effective_action": "deny",
+      "principal": {
+        "type": "user",
+        "id": "r01-live-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "ca33280f349943b63f46bc4bd94c05844a52f22cc2b0371a4f664f0214013911"
+        }
+      ],
+      "record_type": "decision",
+      "parent_action_id": "act-0ce5f990ed6ef72bbf459436",
+      "task_seq": 7,
+      "receipt_id": "rcp-55db6e68566a-124146.990056",
+      "chain_id": "local",
+      "seq": 7,
+      "prev_hash": "ff6d1d5163912cfbcb0fb76db8c5a20c1c32d7574f10b0d81130934b7eb1d3ac",
+      "hash": "f5766e5587a04b518d5995a7df3b63bf10cf07774340498f5a0b4645c7bf640c",
+      "sig": "75cdda408be378fc107643ca917fa430aca22d3430b27a14038bf9b660c51650787b27648d4f5a151808f1b99c9dbcf04200b03eda051d584878d0662a75560a",
+      "issued_at": "2026-09-14T12:41:46Z",
+      "platform": "hermes",
+      "session_id": "r01-sec-live-session-1",
+      "action_id": "act-737ef70a1a42944e7f57dba4",
+      "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+      "task_id": "task-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_id": "int-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_digest": "bd01ede048155d75617f47aac6c5594e74b03f128f76b94996ba6cd131f69d60",
+      "intent_binding": "bound",
+      "authority_revision": "741998978285b2c4c175e2b00c8fd16c349160881e48c522251553258481fb78",
+      "tool": "read_file",
+      "tool_call_id": "tc-r01-task-1",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "55db6e68566a051926976a7cbc40b5e733cb1c1d5c5cf5b1adfe5a7ef07ba388",
+      "params_excerpt": "/tmp/siq-r01-sec-live-xjgb87vm/workspace/report.txt",
+      "action": "deny",
+      "advisory_action": null,
+      "reason": "skill_context_revoked",
+      "reason_code": "skill_context_revoked",
+      "matched_grant_id": null,
+      "matched_fact_ids": [],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 5,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+        "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+        "status": "unknown"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "allow",
+      "effective_action": "allow",
+      "principal": {
+        "type": "user",
+        "id": "r01-live-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "ca33280f349943b63f46bc4bd94c05844a52f22cc2b0371a4f664f0214013911"
+        }
+      ],
+      "record_type": "decision",
+      "parent_action_id": "act-0ce5f990ed6ef72bbf459436",
+      "task_seq": 8,
+      "receipt_id": "rcp-55db6e68566a-124147.105008",
+      "chain_id": "local",
+      "seq": 8,
+      "prev_hash": "f5766e5587a04b518d5995a7df3b63bf10cf07774340498f5a0b4645c7bf640c",
+      "hash": "7557fa47ef9b02a82a0b5637c2dec5b09533023ed179ff553abc21167a8e2464",
+      "sig": "6ebeea5ff8a4103c9391256e96de9db2e4ee298da87abcfe4395c2c9b200c402a2bf0edb86c73481f740b6697c2469e6143715f24ceb0a8d6a1a09561798620d",
+      "issued_at": "2026-09-14T12:41:47Z",
+      "platform": "hermes",
+      "session_id": "r01-sec-live-session-1",
+      "action_id": "act-de6a683ef806ddcb00b9c3ff",
+      "agent_id": "hri-5bc1056da0d3598bb975a212b0e573c4",
+      "task_id": "task-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_id": "int-ri-929fa79c4c07608836df71a56ba75e615e3816c73c6cd68f790a1eab21dfe016",
+      "intent_digest": "bd01ede048155d75617f47aac6c5594e74b03f128f76b94996ba6cd131f69d60",
+      "intent_binding": "bound",
+      "authority_revision": "741998978285b2c4c175e2b00c8fd16c349160881e48c522251553258481fb78",
+      "tool": "read_file",
+      "tool_call_id": "tc-r01-sess-1",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "55db6e68566a051926976a7cbc40b5e733cb1c1d5c5cf5b1adfe5a7ef07ba388",
+      "params_excerpt": "/tmp/siq-r01-sec-live-xjgb87vm/workspace/report.txt",
+      "action": "allow",
+      "advisory_action": null,
+      "reason": "granted by grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "reason_code": "allow",
+      "matched_grant_id": "grt-si-536e797d0b0885d3d59fa9968d5302d023ffb72d4e6c39ebb32d948a795626da",
+      "matched_fact_ids": [
+        "pf-p-3-f1ed39d6",
+        "pf-p-1-811cbc58"
+      ],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 15,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+        "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+        "status": "verified",
+        "evidence_level": "controlled_session",
+        "context_id": "sec-6ac69be75d2acc2b9edceb91dd55e5e4",
+        "call_binding": "9f138e41d2e8826343c8e3d6c58ff73af4d9a2d661835a4fd29de8efdd45b278"
+      }
+    }
+  ],
+  "verified": true
+}

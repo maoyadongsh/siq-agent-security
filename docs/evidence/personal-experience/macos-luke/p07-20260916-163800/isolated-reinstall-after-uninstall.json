@@ -1,0 +1,28 @@
+{
+  "schema_version": "personal-macos-workbuddy-reinstall-after-uninstall/v1",
+  "recorded_at": "2026-09-16T11:23:30Z",
+  "method": "cli_isolated_config",
+  "binary_sha256": "64d09fdcf8b214a3ec17caada841427e5c1f9ebddc95fba877fcbab6e7ed5bbc",
+  "fix": "surgical uninstall restores orig bytes when JSON-equal; reinstall compares orig semantically",
+  "pollution_before_restore": {
+    "note": "isolated settings.json had been overwritten by TestWorkBuddyDiagnosticRejectsTextOutsideHooks while WORKBUDDY_CONFIG_DIR leaked",
+    "keys": ["description"]
+  },
+  "restored_from_orig": true,
+  "orig_sha256": "e7d2f4d1dfbd199753fbca5e691dbacc67f30b96b3f75acfc1e441489283adb6",
+  "uninstall_restored_orig_bytes": true,
+  "reinstall": {
+    "settings_sha256": "b429c64ab08df968519e94e15583834823d7b1cef1a1b0f7649c00bff059912f",
+    "status_note": "installed",
+    "enabledPlugins": {"sheetagent@builtin": true},
+    "sandbox": {"mode": "workspace"},
+    "hook_workbuddy": true,
+    "state_dir_flag": true,
+    "no_codebuddy_hook": true
+  },
+  "daily_settings_has_hooks": false,
+  "daily_settings_sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+  "did_not_kill_existing_daemons": true,
+  "existing_daemons": [47612, 47613],
+  "omitted": ["pairing", "token", "keys"]
+}

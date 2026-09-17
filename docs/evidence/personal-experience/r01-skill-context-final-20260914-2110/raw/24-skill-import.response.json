@@ -1,0 +1,145 @@
+{
+  "schema_version": "local-skill-import-result/v1",
+  "import": {
+    "schema_version": "local-skill-import/v1",
+    "import_id": "si-57e440732738a14778ec438b34ec7ac3",
+    "source_kind": "local_dir",
+    "source_locator_digest": "70559ced556d37185232b11cf0a8b9d1bee703563d46d20a137fc46da5f24f19",
+    "actor_id": "r01-live-operator",
+    "created_at": "2026-09-14T12:52:29.777095277Z",
+    "artifact_digest": "96586a0a7904cb7f1c0d3acbd857cda042cf7d1a6ab1d48e5fb1acdca1c5c7df",
+    "analysis_sha256": "5fbf74c4e8b333d68e93dd19fc610025bdb8e79b62b3c1a0e4cb9d8213a3a8fd",
+    "directories": [],
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "b41a41c82a3ea214d4c508b3dab547075da47f8f92ec2ab1120c3250cddd6206",
+        "bytes": 129,
+        "executable": false
+      },
+      {
+        "path": "helper.txt",
+        "sha256": "a695db33de1dfec4e3737abcfcc020624fdb40509028dced603b2fc3fd71460b",
+        "bytes": 19,
+        "executable": false
+      }
+    ],
+    "excluded_git_metadata": false,
+    "signature": "27159b64e426a2f999691d36c2f32654618c779d4eeff6058ddb05f100d3e892389d6c4a0599356ff74ee5d26c289ac5cce941fff801385343100d1c0caee40d"
+  },
+  "admission": {
+    "admission_id": "adm-e32c4cd6a52b",
+    "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+    "skill_name": "r01-sec-fixture",
+    "skill_version": null,
+    "source": {
+      "type": "local_dir",
+      "locator": "skill-import:si-57e440732738a14778ec438b34ec7ac3",
+      "trust_level": "unknown",
+      "ref": null
+    },
+    "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+    "file_manifest": [
+      {
+        "path": "SKILL.md",
+        "sha256": "b41a41c82a3ea214d4c508b3dab547075da47f8f92ec2ab1120c3250cddd6206",
+        "bytes": 129
+      },
+      {
+        "path": "helper.txt",
+        "sha256": "a695db33de1dfec4e3737abcfcc020624fdb40509028dced603b2fc3fd71460b",
+        "bytes": 19
+      }
+    ],
+    "verdict": "admit_with_conditions",
+    "decided_at": "2026-09-14T12:52:29Z",
+    "engine": {
+      "name": "agentshield-go",
+      "version": "0.0.0-dev",
+      "rulepack_version": 1,
+      "rulepack_sha256": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051"
+    },
+    "declared_facts": [
+      {
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "source_field": "frontmatter.allowed-tools",
+        "evidence_ids": [
+          "ev-9d91d94830f08809"
+        ]
+      },
+      {
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "source_field": "frontmatter.allowed-tools",
+        "evidence_ids": [
+          "ev-9d91d94830f08809"
+        ]
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "f-5a4a13e31a221e57",
+        "rule_id": "adm-allowed-tools",
+        "category": "capability_declaration",
+        "severity": "low",
+        "confidence": 1,
+        "disposition": "declare",
+        "location": {
+          "path": "SKILL.md",
+          "line": 1
+        },
+        "excerpt": "allowed-tools: read_file",
+        "evidence_ids": [
+          "ev-9d91d94830f08809"
+        ]
+      },
+      {
+        "finding_id": "f-5f5325a9c5dedec0",
+        "rule_id": "adm-allowed-tools",
+        "category": "capability_declaration",
+        "severity": "low",
+        "confidence": 1,
+        "disposition": "declare",
+        "location": {
+          "path": "SKILL.md",
+          "line": 1
+        },
+        "excerpt": "allowed-tools: write_file",
+        "evidence_ids": [
+          "ev-9d91d94830f08809"
+        ]
+      }
+    ],
+    "integrity": {
+      "file_count": 2,
+      "total_bytes": 148,
+      "symlink_escape": false,
+      "binary_files": 0,
+      "over_limit": false,
+      "frontmatter_valid": true
+    },
+    "skill_card_ref": null,
+    "evidence_ids": [
+      "ev-9d91d94830f08809"
+    ],
+    "signing_schema": "local_canonical/v1",
+    "signature": "3b4dc2e21ded7f00d0233b0d22617a80de0265bc9cdca1a20f701a094fb2d74dff276a52b5c64a0a84ffd5b2669c89b52866b162c8ced625539e03ac6b35760b"
+  },
+  "reused": false,
+  "installed": false
+}

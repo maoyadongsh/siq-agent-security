@@ -41,13 +41,12 @@ budget. The existing non-awaited `onResolution` notification is not this gate.
 If the host permits a timeout-based platform approval for another plugin, it
 must still run that plugin's checkpoint; SIQ uses platform timeoutBehavior=deny.
 
-The SIQ callback has a one-second budget and queries the existing
-[hold-status request](hold-status-request.v1.schema.json) and
-[response](hold-status.v1.schema.json) contracts. It supplies the original
-platform/session/agent/tool/tool_call_id/action_id/decision_receipt_id and the
-final parameters. It returns true only for a matching, current, unexpired
-approved result and an uncancelled signal. It holds only the decision credential;
-it cannot resolve the approval, sign authority, consume the action or extend TTL.
+This file defines the trusted host callback and strict boolean gate. The current
+SIQ callback behavior is specified by
+[OpenClaw approved held execution](openclaw-held-execution.v1.md): it rechecks
+the original hold and final params, then atomically obtains a signed execution
+reservation before returning true. The earlier recheck-only implementation is
+insufficient for N06 and must not authorize a current shipping adapter.
 
 ## Compatibility and limits
 
@@ -57,10 +56,10 @@ an unmodified host or old candidate without the marker cannot complete SIQ holds
 Ordinary allow/deny/redact mapping is unchanged.
 
 This declaration is part of the trusted host/plugin execution boundary, not a
-cryptographic attestation against hostile same-process code. The check is a
-snapshot, not an atomic lease covering external side effects. It does not prove
-the absence of mutations after the checkpoint, independent effect verification,
-OS isolation or a real human's presence.
+cryptographic attestation against hostile same-process code. The signed local
+reservation still cannot form an atomic transaction with an external side
+effect. It does not prove the absence of hostile same-process mutations,
+independent effect verification, OS isolation or a real human's presence.
 
 Acceptance requires both a successful native approval/execution control and
 negative cases for unsupported hosts, revoked authority, altered final params,

@@ -1,0 +1,40 @@
+{
+  "schema_version": "siq-r05c-final-host-runtime-contract/v1",
+  "observed_at": "2026-09-14T21:16:00+08:00",
+  "candidate_sha256": "f4b5c23cfff4f89608b1e113b36858c2938d6f8e06630b6e9031c7665c77420c",
+  "host": {
+    "os": "linux",
+    "architecture": "aarch64"
+  },
+  "openclaw": {
+    "version": "2026.5.12 (f066dd2)",
+    "runtime_inspect_exit_code": 0,
+    "status": "loaded",
+    "activated": true,
+    "hook_count": 2,
+    "typed_hooks": [
+      "after_tool_call",
+      "before_tool_call"
+    ],
+    "uninstall_preserved_unrelated_config": true
+  },
+  "hermes": {
+    "version": "0.21.0 (2026.8.31)",
+    "plugin_doctor_exit_code": 0,
+    "runtime_discovery": "passed",
+    "manifest_parsing": "passed",
+    "import": "passed",
+    "registration": "passed",
+    "registered_tools": 0,
+    "registered_hooks": 2,
+    "warnings": 0,
+    "uninstall_preserved_unrelated_config": true
+  },
+  "isolated_home": true,
+  "temporary_directory_cleaned": true,
+  "model_started": false,
+  "gateway_started": false,
+  "tool_call_executed": false,
+  "daily_profile_changed": false,
+  "result": "pass_with_native_tool_call_pending"
+}

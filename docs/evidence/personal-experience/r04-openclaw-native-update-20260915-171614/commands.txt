@@ -1,0 +1,53 @@
+# R04 OpenClaw native update smoke — commands and exit codes (2026-09-15)
+
+Working tree: /home/maoyd/siq/worktrees/siq-personal-v4-r01-20260914
+Branch: kimi/personal-v4-r01-20260914
+Accepted baseline: efad8407c84b7b8f626cb06421287e7632c83a46 (unchanged; no commits made)
+
+## Final passing run (run 16)
+
+```
+python3 scripts/personal-experience/r04-openclaw-native-update-smoke.py \
+  --binary /tmp/siq-batch-20260915/bin/agentshield \
+  --node /home/maoyd/.nvm/versions/node/v22.22.1/bin/node \
+  --openclaw-root /home/maoyd/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw \
+  --out /tmp/siq-batch-20260915/evidence-r04/r04-openclaw-native-update.json
+# stdout: {"passed": true, "checks": 29}
+# EXIT=0
+```
+
+The binary is copied (never rebuilt) by the script, preserving the batch
+candidate identity: sha256 15d688fdd4652e9efb544ece769142b60725bc0a5d2deae233062f6b910e0701.
+
+## Failed iterations kept as samples (redaction-scanned: no tokens/pairing codes/keys present)
+
+- failed-run13-attributeerror.stderr — run 13: handler referenced harness state
+  through the request-handler `self` (AttributeError); CLI fell back to network
+  failover. Fix: capture harness reference before the handler class.
+- failed-run14-session-unbound.stderr — run 14: SEC issued for the bare CLI
+  session id; OpenClaw enrolls the namespaced key
+  `agent:<agent>:explicit:<id>` → 409 skill_context_session_unbound.
+- failed-run15-session-unbound-with-diagnostics.stderr — run 15: same failure
+  with diagnostics proving the new session DID enroll under the V2 identity
+  (decision receipt carries the namespaced session id).
+
+Earlier runs 11–12 (session-per-transcript model-fixture accounting) are
+summarised in report.md; their outputs were transient fixture-accounting
+errors (native transcript result count changed / unexpected model request)
+with no product-side significance, so only stderr tails were retained and
+they contained no product evidence.
+
+## Post-run verification
+
+- Report JSON: r04-openclaw-native-update.json (passed=true, 29 checks)
+- Receipt chain: verified inside the run via `agentshield verify`
+  (check id receipt_chain_verified: signed receipt chain verifies)
+- Secret scan on all retained files: grep for pairing codes / bearer tokens /
+  "token": / seed — 0 matches in every retained file.
+
+## Environment
+
+- Linux 6.17.0-1014-nvidia; Node v22.22.1; OpenClaw 2026.5.12 (real host)
+- Isolated HOME/profile under a per-run TemporaryDirectory; no production
+  state touched; daemon spawned on a random 127.0.0.1 port and stopped by the
+  harness at run end; model fixture on 127.0.0.1:0 (no external model).

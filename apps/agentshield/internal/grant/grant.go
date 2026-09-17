@@ -139,7 +139,7 @@ type Result struct {
 	DesiredPolicy DesiredPolicy
 }
 
-var validPlatforms = map[string]bool{"openclaw": true, "hermes": true, "codebuddy": true, "trae": true, "claude_code": true, "codex": true, "other": true}
+var validPlatforms = map[string]bool{"openclaw": true, "hermes": true, "codebuddy": true, "workbuddy": true, "trae": true, "claude_code": true, "codex": true, "other": true}
 
 // Build derives a draft/pending grant from an admission. Quarantined
 // admissions cannot be granted.

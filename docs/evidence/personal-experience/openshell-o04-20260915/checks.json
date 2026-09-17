@@ -1,0 +1,26 @@
+{
+  "snapshot": {
+    "head": "6e34f3ad82033b0b5ffe49cd82bc042c84414429",
+    "branch": "kimi/personal-v4-r01-20260914",
+    "source_state": "uncommitted_worktree",
+    "commit_status": "未提交、未推送、未合并、未发布"
+  },
+  "commands": [
+    {"cmd": "gofmt -l . (apps/agentshield)", "result": "clean"},
+    {"cmd": "go vet ./... (apps/agentshield)", "result": "pass"},
+    {"cmd": "go test ./... (apps/agentshield)", "result": "pass", "note": "全部包 ok，无 FAIL"},
+    {"cmd": "go test -race ./internal/openshell ./internal/server", "result": "pass", "durations": ["openshell 7.432s", "server 40.517s"]},
+    {"cmd": "CGO_ENABLED=0 GOOS/GOARCH go build -trimpath cmd/agentshield (linux/amd64, linux/arm64, darwin/arm64, windows/amd64)", "result": "pass", "digests": "cross-builds.json"},
+    {"cmd": "uv run pytest (apps/control-api)", "result": "pass", "note": "841 passed, exit 0"},
+    {"cmd": "uv run ruff check app (apps/control-api)", "result": "pass"},
+    {"cmd": "git diff --check", "result": "clean"},
+    {"cmd": "python3 scripts/check_perf_baseline_harness.py", "result": "OK: perf baseline harness honesty + smoke measurement"},
+    {"cmd": "python3 scripts/personal-experience/openshell-o04-perf-protocol.py", "result": "pass", "evidence": "evidence/personal-experience/openshell-o04-perf-20260915-062001/report.json", "budget_misses": ["D:timeout_fail_ms p95 301.0ms > 300ms (设计边界，见 report.md)"]}
+  ],
+  "key_source_digests": {
+    "apps/agentshield/internal/perfbaseline/perfbaseline.go": "5f01769f04932b1d15244938a5edefca3e5bdb666fcfc5fc7a72202f52c53804",
+    "apps/agentshield/internal/receipt/openshell_perf_scenarios_test.go": "63a6724d25e0b8a6b697e57a2898931ec3617c118a5617e2496582c8ef6b34ae",
+    "scripts/personal-experience/openshell-o04-perf-protocol.py": "b1f85f4ae3c1b7e88b5c0fef77887e9507c55bb1fed71f20cb3d8215488cca0d",
+    "docs/evidence/personal-experience/openshell-o04-perf-20260915-062001/report.json": "86a7fddf72f5a74c0766a4281b11eb7bb070e70d9fad5719bd33506fb7b73e3f"
+  }
+}

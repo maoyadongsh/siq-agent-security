@@ -15,7 +15,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,25 +46,18 @@ def main():
     args = parser.parse_args()
     runtime = args.openclaw_root.resolve()
     args.node = args.node.absolute()
-    metadata = json.loads(
-        (PATCH_DIR / "2026.5.12-approval-execution-recheck-v2.json").read_text()
-    )
+    metadata = json.loads((PATCH_DIR / "2026.5.12-approval-execution-recheck-v2.json").read_text())
     patch = PATCH_DIR / "2026.5.12-approval-execution-recheck-v2.patch"
     source = runtime / metadata["target"]
     adapter = ROOT / metadata["adapter_source"]
-    embedded = (
-        ROOT / "apps/agentshield/internal/adapterinstall/assets/openclaw/index.ts"
-    )
+    embedded = ROOT / "apps/agentshield/internal/adapterinstall/assets/openclaw/index.ts"
     package = json.loads((runtime / "package.json").read_text())
     require(
-        package["name"] == metadata["package"]
-        and package["version"] == metadata["version"],
+        package["name"] == metadata["package"] and package["version"] == metadata["version"],
         "unsupported native package/version",
     )
     require(
-        source.is_file()
-        and not source.is_symlink()
-        and source.resolve().is_relative_to(runtime),
+        source.is_file() and not source.is_symlink() and source.resolve().is_relative_to(runtime),
         "native patch target must be a regular package file",
     )
     for path, expected in [
@@ -80,11 +73,7 @@ def main():
 
     class StockHarness(ordinary.ApprovalHarness):
         def run(self):
-            result = super().run(
-                cases=[
-                    {"id": "unsupported-host", "platform": "allow-once", "local": None}
-                ]
-            )
+            result = super().run(cases=[{"id": "unsupported-host", "platform": "allow-once", "local": None}])
             case = result["cases"][0]
             require(
                 case["blocked"] and not case["platform_requested"],
@@ -96,9 +85,7 @@ def main():
             )
             return result
 
-    with tempfile.TemporaryDirectory(
-        prefix="siq-openclaw-checkpoint-integration-"
-    ) as tmp:
+    with tempfile.TemporaryDirectory(prefix="siq-openclaw-checkpoint-integration-") as tmp:
         root = Path(tmp)
         results = {}
 
@@ -107,9 +94,7 @@ def main():
             case_root = root / name
             case_root.mkdir(mode=0o700)
             harness = cls(case_root, args)
-            installed_adapter = (
-                case_root / "openclaw/plugins/siq-agent-security/index.ts"
-            )
+            installed_adapter = case_root / "openclaw/plugins/siq-agent-security/index.ts"
             require(
                 digest(installed_adapter) == metadata["adapter_sha256"],
                 "loaded adapter differs",
@@ -117,11 +102,7 @@ def main():
             print(f"Starting native integration: {name}.", flush=True)
             try:
                 result = harness.run()
-                result["runtime_kind"] = (
-                    "stock"
-                    if native_root == runtime
-                    else "temporary checkpoint-v2 copy"
-                )
+                result["runtime_kind"] = "stock" if native_root == runtime else "temporary checkpoint-v2 copy"
                 result["executed_adapter_sha256"] = digest(installed_adapter)
                 results[name] = result
             finally:
@@ -131,14 +112,10 @@ def main():
         copy = root / "openclaw"
         shutil.copytree(runtime, copy, symlinks=True)
         copied_source = copy / metadata["target"]
-        require(
-            digest(copied_source) == metadata["before_sha256"], "copied source differs"
-        )
+        require(digest(copied_source) == metadata["before_sha256"], "copied source differs")
         subprocess.run(["git", "apply", "--check", str(patch)], cwd=copy, check=True)
         subprocess.run(["git", "apply", str(patch)], cwd=copy, check=True)
-        require(
-            digest(copied_source) == metadata["after_sha256"], "patched source differs"
-        )
+        require(digest(copied_source) == metadata["after_sha256"], "patched source differs")
         subprocess.run([str(args.node), "--check", str(copied_source)], check=True)
         for name, cls in [
             ("ordinary", ordinary.ApprovalHarness),
@@ -146,17 +123,37 @@ def main():
             ("faults", faults.ApprovalHarness),
         ]:
             run_group(name, cls, copy)
+        binary_sha256 = results["ordinary"]["siq_binary_sha256"]
         require(
-            digest(source) == metadata["before_sha256"], "installed runtime changed"
+            all(item["siq_binary_sha256"] == binary_sha256 for item in results.values()),
+            "validation groups used different SIQ binaries",
         )
+        require(
+            all(item["receipt_chain_verified"] for item in results.values()),
+            "a validation group did not verify its receipt chain",
+        )
+        require(digest(source) == metadata["before_sha256"], "installed runtime changed")
         require(
             digest(adapter) == metadata["adapter_sha256"],
             "shipping adapter changed during test",
         )
         result = {
-            "schema": "openclaw-approval-integration-validation/v1",
-            "recorded_at": datetime.now(timezone.utc).isoformat(),
+            "schema": "openclaw-approval-integration-validation/v2",
+            "recorded_at": datetime.now(UTC).isoformat(),
             "passed": all(item["passed"] for item in results.values()),
+            "binary_sha256": binary_sha256,
+            "runtime": {"platform": "openclaw", "os": "linux"},
+            "checks": [
+                "stock_host_refuses_unsupported_hold",
+                "shipping_adapter_matches_embedded_source",
+                "approved_execution_has_one_reservation_and_observation",
+                "denial_missing_approval_and_offline_paths_fail_closed",
+                "revoked_authority_blocks_after_platform_approval",
+                "checkpoint_faults_and_parameter_changes_fail_closed",
+                "reservation_response_loss_stays_uncertain",
+                "all_receipt_chains_verified",
+                "installed_runtime_remains_unchanged",
+            ],
             "installed_source_unchanged": True,
             "shipping_adapter_used_without_patch": True,
             "runner_sha256": digest(Path(__file__)),
@@ -164,7 +161,8 @@ def main():
             "validation": results,
             "limitations": [
                 "stock runtime cannot complete holds with this adapter; this is an explicit compatibility boundary",
-                "context capability is trusted host metadata, not a cryptographic proof against malicious same-process plugins",
+                "context capability is trusted host metadata, not a cryptographic proof "
+                "against malicious same-process plugins",
                 "checkpoint-v2 host remains an isolated local candidate, not an upstream API or installed upgrade",
                 "post-check races, real-world effects and human approval are not proven",
             ],

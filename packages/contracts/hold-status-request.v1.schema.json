@@ -12,6 +12,8 @@
     "tool_call_id": {"type": "string", "minLength": 1},
     "action_id": {"type": "string", "minLength": 1},
     "decision_receipt_id": {"type": "string", "minLength": 1},
-    "params": {"type": "object"}
+    "params": {"type": "object"},
+    "task_id": {"type": "string", "maxLength": 256, "description": "决策回执中的可信 Intent 任务标识。"},
+    "runtime_task_id": {"type": "string", "maxLength": 256, "description": "决策回执中的宿主任务标识；task 级 SEC 在 hold 复查时重绑同一宿主任务。"}
   }
 }

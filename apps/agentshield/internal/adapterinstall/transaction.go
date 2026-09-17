@@ -418,6 +418,9 @@ func Apply(p *Plan) (*Result, error) {
 			return fail(ErrPlanChanged)
 		}
 	}
+	if p.payload.View.Action == "uninstall" {
+		removeEmptyProductPluginDir(p.payload.Options.configRoot())
+	}
 	if err := st.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "adapter_files_applied", ActorID: "local-admin", Target: claim.ID, Note: claim.Platform + ":" + claim.Action}); err != nil {
 		return fail(errors.New("adapter: completion audit unavailable"))
 	}

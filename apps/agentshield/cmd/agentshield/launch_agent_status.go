@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"reflect"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
 	"strconv"
@@ -56,62 +55,6 @@ func verifyLaunchUserDomain(control userSystemctl, uid int) error {
 	}
 	return nil
 }
-func readLoadedLaunchAgent(control userSystemctl, uid int, expected []byte) (int64, error) {
-	if err := verifyLaunchUserDomain(control, uid); err != nil {
-		return 0, err
-	}
-	wanted, err := decodeLaunchPlist(string(expected))
-	if err != nil {
-		return 0, err
-	}
-	label, ok := wanted["Label"].(string)
-	if !ok || !launchAgentLabelValid(label) {
-		return 0, errors.New("launch-agent: invalid expected label")
-	}
-	raw, err := control("list", "-x", label)
-	if err != nil {
-		return 0, err
-	}
-	actual, err := decodeLaunchPlist(raw)
-	if err != nil {
-		return 0, errors.New("launch-agent: invalid or unsupported loaded configuration response")
-	}
-	for name, value := range wanted {
-		if !reflect.DeepEqual(actual[name], value) {
-			return 0, errors.New("launch-agent: loaded configuration differs from signed source")
-		}
-	}
-	for name, value := range actual {
-		if _, present := wanted[name]; present {
-			continue
-		}
-		switch name {
-		case "PID":
-		case "LastExitStatus":
-			if _, ok := value.(int64); !ok {
-				return 0, errors.New("launch-agent: invalid exit status")
-			}
-		case "OnDemand":
-			if value != true {
-				return 0, errors.New("launch-agent: unexpected on-demand override")
-			}
-		case "LimitLoadToSessionType":
-			if value != "Aqua" {
-				return 0, errors.New("launch-agent: unexpected session override")
-			}
-		default:
-			return 0, errors.New("launch-agent: unknown loaded configuration field; compatibility unconfirmed")
-		}
-	}
-	if value, present := actual["PID"]; present {
-		pid, ok := value.(int64)
-		if !ok || pid <= 0 {
-			return 0, errors.New("launch-agent: invalid running PID")
-		}
-		return pid, nil
-	}
-	return 0, nil
-}
 func cmdLaunchAgentStatus(args []string, out io.Writer) error {
 	var plist bytes.Buffer
 	if err := cmdLaunchAgentPlist(args, &plist); err != nil {
@@ -144,14 +87,14 @@ func cmdLaunchAgentStatus(args []string, out io.Writer) error {
 			return err
 		}
 	}
-	source, err := filepath.EvalSymlinks(filepath.Join(st.Dir, record.Label+".plist"))
+	source, err := launchAgentSource(st.Dir, record.Label)
 	if err != nil {
 		return err
 	}
 	if err := verifyLaunchRegistration(filepath.Join(directory, record.Label+".plist"), source); err != nil {
 		return err
 	}
-	loaded, pid, err := inspectLaunchAgent(runUserLaunchctl, os.Getuid(), record.Label, plist.Bytes())
+	loaded, pid, err := inspectLaunchAgent(runUserLaunchctl, os.Getuid(), record.Label, plist.Bytes(), source)
 	if err != nil {
 		return err
 	}

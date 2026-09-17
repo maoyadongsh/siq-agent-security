@@ -9,7 +9,9 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
+	"runtime"
 	"time"
 	"unicode/utf8"
 )
@@ -25,6 +27,12 @@ var ErrIncompatible = errors.New("state: incompatible state directory")
 var ErrCorrupt = errors.New("state: invalid state format marker or directory")
 var ErrFuture = errors.New("state: format requires a newer program")
 var ErrMigration = errors.New("state: migration incomplete; run state-migrate --confirm with the compatible program")
+
+// ErrBinding marks a marker that decodes but is bound to a different
+// canonical directory path (case, Unicode normalization or alias spelling on
+// insensitive volumes, or a moved directory). It is always joined with
+// ErrCorrupt so existing fail-closed callers are unchanged.
+var ErrBinding = errors.New("state: directory binding differs from the current path spelling")
 
 type Marker struct {
 	Schema         string `json:"schema"`
@@ -125,7 +133,7 @@ func CheckParents(dir string) error {
 	}
 	for {
 		i, e := os.Lstat(p)
-		if e == nil && !i.IsDir() {
+		if e == nil && !AcceptDirectory(i, p) {
 			return ErrCorrupt
 		}
 		if e != nil && !errors.Is(e, os.ErrNotExist) {
@@ -137,6 +145,60 @@ func CheckParents(dir string) error {
 		}
 		p = parent
 	}
+}
+
+// AcceptDirectory accepts real directories and the three fixed Darwin system
+// aliases. Root-level symlinks on other platforms are not a compatibility case.
+func AcceptDirectory(info os.FileInfo, path string) bool {
+	if info.IsDir() {
+		return true
+	}
+	if runtime.GOOS != "darwin" || info.Mode()&os.ModeSymlink == 0 {
+		return false
+	}
+	link, err := os.Readlink(path)
+	if err != nil || !darwinDirectoryAlias(path, link) {
+		return false
+	}
+	target, err := os.Lstat(filepath.Join("/private", filepath.Base(path)))
+	return err == nil && target.IsDir() && target.Mode()&os.ModeSymlink == 0
+}
+
+func darwinDirectoryAlias(name, link string) bool {
+	switch name {
+	case "/var", "/tmp", "/etc":
+	default:
+		return false
+	}
+	if !path.IsAbs(link) {
+		link = path.Join(path.Dir(name), link)
+	}
+	return path.Clean(link) == path.Join("/private", path.Base(name))
+}
+
+// LeafDirectory requires path itself to be a real directory, not a symlink.
+// EvalSymlinks may rewrite ancestor volume aliases; the resolved object must
+// still be the same directory.
+func LeafDirectory(path string) error {
+	if path == "" || filepath.Clean(path) != path {
+		return ErrCorrupt
+	}
+	info, err := os.Lstat(path)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return ErrCorrupt
+	}
+	canonical, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return err
+	}
+	resolved, err := os.Stat(canonical)
+	if err != nil || !os.SameFile(info, resolved) {
+		return ErrCorrupt
+	}
+	return nil
 }
 func ReadRegular(path string, limit int64) ([]byte, error) {
 	i, e := os.Lstat(path)
@@ -185,8 +247,11 @@ func ValidateBinding(dir string, m Marker) error {
 		return nil
 	}
 	id, e := DirectoryID(dir)
-	if e != nil || id != m.DirectoryID {
+	if e != nil {
 		return ErrCorrupt
+	}
+	if id != m.DirectoryID {
+		return errors.Join(ErrCorrupt, ErrBinding)
 	}
 	raw, e := ReadRegular(filepath.Join(dir, "local-instance.json"), 65536)
 	if e != nil {
@@ -297,4 +362,13 @@ func RequirePath(path string, write bool) error {
 }
 func RecoveryMessage() string {
 	return "状态版本不兼容或迁移未完成。请保留状态目录，运行 siq-agent-security state-status；中断迁移可用原兼容版本执行 state-migrate --confirm。未知版本请使用匹配程序，不要删除状态或回放旧授权。"
+}
+
+// RecoveryMessageFor selects the operator hint for a compatibility failure.
+// A binding mismatch is a path spelling problem, not marker corruption.
+func RecoveryMessageFor(err error) string {
+	if errors.Is(err, ErrBinding) {
+		return "状态目录绑定与当前路径拼写不一致（大小写、Unicode 规范化、卷别名或目录已移动）。请使用初始化时的规范路径重新指定状态目录；不要复制、改名或重新初始化该目录。"
+	}
+	return RecoveryMessage()
 }

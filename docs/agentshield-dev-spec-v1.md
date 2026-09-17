@@ -115,7 +115,7 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 
 本增量只实现受支持格式的入口防护，不实现跨格式迁移。`state-format.json` 的合同为 `state-format/v1`，字段见 `packages/contracts/local-state-format.v1.schema.json`：程序版本只作说明，格式版本才决定兼容性；目前仅支持 1。小于 1 的显式版本、未来版本、未知 schema/字段、重复键、多个 JSON 值、无效 UTF-8、缺失必需字段、超预算、非普通文件或符号链接一律拒绝，不自动改标记、迁移或修复。不输出文件原文或私有路径。
 
-检查顺序：CLI 分派前只读预检（version/help 等不访问状态的命令除外；serve 使用解析后的 --state-dir，CodeBuddy hook 走结构化 deny，不能仅退出 1）；`state.Open` 必须在 MkdirAll 前检查；`AcquireWriter` 必须在创建/隔离锁前检查并在取得锁后复验，维护锁使用显式 `AcquireScopedWriter(stateDir, scope)`，service-control/adapter-write/client-releases/client-snapshots 先检查传入的真实根状态，不能按目录 basename 猜父状态；`Initialize` 在任何配置/身份写入前复验。完整父路径静态符号链接拒绝，读取标记在打开前/后校验普通文件身份并限读 4097 字节。它不是抵抗任意同 UID 并发篡改的 OS 隔离保证。
+检查顺序：CLI 分派前只读预检（version/help 等不访问状态的命令除外；serve 使用解析后的 --state-dir，CodeBuddy hook 走结构化 deny，不能仅退出 1）；`state.Open` 必须在 MkdirAll 前检查；`AcquireWriter` 必须在创建/隔离锁前检查并在取得锁后复验，维护锁使用显式 `AcquireScopedWriter(stateDir, scope)`，service-control/adapter-write/client-releases/client-snapshots 先检查传入的真实根状态，不能按目录 basename 猜父状态；`Initialize` 在任何配置/身份写入前复验。状态根本身必须是真实目录，不得为符号链接。已存在祖先必须是目录；仅 Darwin 的 `/var`→`/private/var`、`/tmp`→`/private/tmp`、`/etc`→`/private/etc` 三个固定系统别名允许作为祖先路径分量；Readlink 目标必须精确解析到对应位置，目标本身必须是真实目录。Linux/Windows 与未知根级别名维持符号链接拒绝，否则 Go 测试目录和 Darwin 临时状态会被误判 corrupt。用户在中间路径创建的符号链接仍拒绝。inventory 发现、adapter 配置镜像读取、Hermes profile 根（含 HOME 之外的 Override）走同一祖先规则，被检查的叶路径仍拒绝符号链接。读取标记在打开前/后校验普通文件身份并限读 4097 字节。DirectoryID / v2 `state_directory_id` 继续绑定 `EvalSymlinks` 后的规范路径。它不是抵抗任意同 UID 并发篡改的 OS 隔离保证。
 
 缺失标记不是自动认定格式 0：不存在/空目录（锁文件除外）允许初始化；已具有本版本 `state.Open` 建立的完整核心目录结构，或具有可解码合法本地 config.json、有效本地 signing.seed 的历史目录；根条目只含既有独立子存储 client-releases/client-snapshots/skill-imports/adapter-write/service-control 的真实目录也保留兼容，以 `legacy_unversioned` 兼容原有格式族，但不因打开/serve 就重打标记。未知非空目录拒绝。目录识别不意味着其中 Grant/回执可信，各模块仍逐对象验签、校验。HTTP 分派、Server 构造、原文清理及核心 Store 写入也复验格式；这不等于所有独立子存储已有统一事务或任意旧二进制都能拒写。明确 `init` 在既有初始化检查通过后，以不可变排他发布增加格式 1 标记；不覆盖已有标记，不改写历史授权、回执或已有配置。
 
@@ -325,6 +325,8 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 | `POST /v1/decide` | 工具调用决策（同步）|
 | `POST /v1/observe` | 工具结果观测（after/post 钩子；用于污点更新，不做决策）|
 | `POST /v1/hold/{receipt_id}` | 人工签核（body: `{"approve": bool, "actor_id": ...}`；拒绝未知字段）。同一决议幂等返回已有回执；相反决议 409；超过 `hold.timeout_ms` 拒绝。 |
+| `POST /v1/hold-executions/reserve` / `status` | decision credential 在批准后申请唯一签名执行预留，或以完整调用身份只读查询；后续无 observation 一律投影 uncertain。 |
+| `POST /v1/hold-executions/reconcile` | 管理会话绑定 reservation ID/hash 记录人工核对的 occurred/not_occurred；只追加签名结案，不调用工具、不复活旧预留。 |
 | `GET /v1/receipts?chain=&since_seq=` | 分页读回执 |
 | `GET /v1/status` | 版本、enforcement_mode、平台档位、链头 |
 | `POST /v1/admit` / `POST /v1/grant/...` | 控制台与 CLI 复用；同 §3.6/§3.7 |
@@ -462,9 +464,23 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 
 ### 3.9 `internal/openshell`（规格）
 
+O04 复核修订以 `packages/contracts/openshell-capability-evidence.v3.md` 为准。配置表达能力与历史/当前执行证据分离，编译器只使用明确的配置能力映射；PATH/env.sh 不复用握手缓存，显式配置包含 TLS 模式和 CLI 身份并在探测前后检查漂移。失败刷新清空旧证据。doctor 可显式只读指定目标，返回 revision/digest，不产生行为验证；无目标只做握手。UI 按状态和时效展示。RSS 缺失编码 null，历史原报告不覆盖。子进程管道排空等待上限为 min(200ms, command timeout)，不扩大停止权限或放宽输出/授权检查。
+
+2026-09-15 P0 修订以 `packages/contracts/openshell-policy-safety.v2.md` 为准：网络修改保留完整静态策略；转换器拒绝无法表达的限制；revision 不可缺省；完整策略摘要读回；回滚绑定本次变更前快照及当前授权，未知历史拒绝。CLI 输出运行中共享限额、环境精确白名单、错误不含原文。进程内互斥不宣称跨外部写者 CAS，配置读回不提升为真实执行验证。R01/R02 复用当前 SEC 和签名 reservation 实现。
+
+- O01 快照保存完整已解析 policy、`policy_digest=sha256(canonical_json(policy))` 和移除 `network_policies` 后的 `static_digest`；filesystem/network/process 只作兼容投影。元信息接受已覆盖的 `Active` 或 `Version` 规范正十进制 revision；同时出现必须一致，缺失、重复、冲突或默认补 `1` 均拒绝。此处修正文档遗留描述，与现有 Go/Python 实现及共享向量一致。两语言共同拒绝重复键、alias/anchor/tag/merge、多文档、非空 flow collection、非字符串键与歧义隐式标量，使用根目录 `testdata/openshell-policy-safety.v2.json` 锁定子集和摘要。
+- 动态网络输入只接受 `effect=allow`、单个 host:port 端点和至少一个显式绝对 binary path；deny、method/path/provider/protocol/purpose 及未知字段在写前拒绝。更新只替换完整当前 policy 的 `network_policies`。计划仅在调用方明确给出的 filesystem/process 与当前真实值不同才标 generation；字段存在但相同仍是 dynamic。
+- 2026-09-16 读回投影修复：method/path/allowed_ips/protocol/enforcement/request_body_credential_rewrite 均保留在 NetworkRule 只读投影（布尔值保留 false 与缺席的区别）；任何带上述字段的 Apply 输入在写前拒绝，禁止读回后再提交时降格为无条件 host:port。端点级 Verify 对带限制的同端点返回 restricted，不把限制规则认作无条件 allow 或 deny；完整 Policy 仍是摘要与精确回滚事实源。
+- 验收工具修复：doctor 退出 0 不代表在线；性能样本必须结构化核对状态、target、revision/digest。绝对或相对预算任一失败均返回非零。相同外部 CLI 是环境对照，不算候选相对性能；工作树 Go 测试驱动是辅助控制面验证，不算候选二进制 B3 或会话授权/执行隔离验收。
+- O02 apply/rollback 按 target 进程内串行。apply 生成不可预测 `operation_id`，私有有界注册表保存精确 base snapshot/revision/digest 与 applied revision/digest；公开回执只是索引和可审计摘要，不能自行证明操作。P0 不新增持久化状态：进程重启、逐出、未知或已消费记录一律拒绝回滚。
+- no-op 回滚核对 live revision/digest 后零写入。实际恢复还必须调用由认证服务端状态派生的当前授权器，并在授权后再次读回检测漂移；成功后消费操作记录。写后必须同时核对网关 revision 与完整 policy digest。无后端原子 CAS，因此只声明进程内串行及已观察漂移检测，不声明跨进程事务原子性。
+
 - 后端只用 CLI。显式环境变量与 Python `cli_backend.py` 相同：`SIQ_AS_OPENSHELL_CLI_BIN` 与 `SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT`（必须成对）或 `SIQ_AS_OPENSHELL_ENV_SH`。`ENV_SH` 在 `source` 之后优先 `exec $SIQ_OPENSHELL_BIN`（research-engine `env.sh` 约定），否则 PATH 上的 `openshell`。
-- siq-agent-security 额外发现 PATH 上的 `openshell`，走用户 CLI 配置（`HOME` / XDG / `OPENSHELL_*`），不注入 `--gateway-endpoint`。显式 `SIQ_AS_*` 优先于 PATH。Python 控制面后端不跟随此发现。
-- `probe()`：`gateway info` 只表示调用了 OpenShell CLI（本地配置打印，端口上即使是 OpenClaw 也可能 rc=0）。必须以 `status`（或等价的会真正连网关的命令）做握手。`status` 出现 `InvalidContentType` / OpenClaw / Hermes 特征则 fail-closed。不按版本号假设能力。禁止猜测端口，禁止改别人的网关。
+- siq-agent-security 额外发现 PATH 上的 `openshell`，走用户 CLI 配置（`HOME` / XDG），不注入 `--gateway-endpoint`。显式 CLI/endpoint 配置在父进程解析为 argv，优先于 PATH；不批量透传 `SIQ_AS_*` 或 `OPENSHELL_*` 环境变量。Python 控制面后端不跟随 PATH 发现。
+- O03 子进程边界：stdout/stderr 共享默认 2 MiB 字节预算，在读取时检查；超限/超时/非零退出丢弃输出，公开错误仅稳定类别。基础 env 精确白名单含 PATH/HOME、locale、XDG 和 Windows 用户/系统目录，不继承凭据前缀、BASH_ENV、代理或动态加载器配置。显式 env.sh 是用户信任的可执行配置，可自行注入环境，此机制不承诺隔离恶意脚本。CLI 与旧 Docker 发现均走有界执行；退出后管道排空最多 200ms，只终止当前拥有的直接子进程，不宣称终止所有后代。Windows Python 管道语义仍须实机验证，能力不支持则拒绝执行，不回退无界 capture_output。
+- `probe()`：`gateway info` 只表示调用了 OpenShell CLI（本地配置打印，端口上即使是 OpenClaw 也可能 rc=0）。必须以 `status`（或等价的会真正连网关的命令）做握手。`status` 出现 `InvalidContentType` / OpenClaw / Hermes 特征则 fail-closed；`status` rc=0 但输出缺少 `Server Status` 标题或 `Gateway:` 名称行同样 fail-closed（空输出/无关服务不构成握手成功）。不按版本号假设能力。禁止猜测端口，禁止改别人的网关。
+- O04 能力事实（2026-09-15 修订，见 `packages/contracts/openshell-policy-safety.v2.md` O04 节）：probe 输出区分 `client_expressible` / `documented`（带观测日期与实例范围）/ `configured` / `handshake_verified` / `readback_verified` / `enforcement_reserved` 六类事实，不合并为单个 supported/connected。`cli_version`（`--version`/info 文本）与 `gateway_version`（仅当握手输出声明时）分离；CLI 版本不提升任何能力级别，仅产出描述性 `schema_version`（网关版本未知时为 `unknown-policy-v1`）。历史"实测"布尔保留为兼容字段，语义标注为历史文档视图；当前实例主张必须用证据字段与能力文档。版本/网关名缓存绑定 endpoint 指纹与观测时间，跨 endpoint 或过期即失效。`max_filesystem_paths` 恒为合同默认值，报告为未实测上限。
+- 已实现诊断态：`unconfigured` / `configured_unreachable` / `identity_unconfirmed` / `handshake_verified`（仅协议响应）/ `policy_readable`（指定目标策略读回，执行限制未验证）/ `evidence_expired`。`behavior_verified` 仅保留，当前无生产者。doctor 与 HTTP 输出相同状态语义；指定目标诊断要求显式 CLI/endpoint 绑定，附 revision/digest/有效期且零写入。UI 每秒复核证据有效期并降级过期显示。严格 status 形状由 Go/Python 共享 `testdata/openshell-status-shape.v1.json` 锁定，不声称加密身份认证。
 - **禁止** `openshell gateway start`。bootstrap、doctor、serve 都不启动网关。缺 CLI、网关没起、连错进程时 L0–L2 照常，并给出人类可执行修复。
 - `siq-agent-security openshell doctor` 与 `GET /v1/openshell/doctor`：报告 CLI 路径、覆盖来源（`env_pair` / `env_sh` / `path` / `none`）、探针、身份、`human_next`；`started_gateway` 恒为 `false`。
 - `apply(network)`：`policy set` 只提交网络段；`policy get --full` 读回 → 比对 → 产出 `effective_readback{backend:"openshell", revision}` 与 evidence。
@@ -542,6 +558,8 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 
 M40 原生验证增量：systemd 255 实际拒绝含双引号的可执行文件路径；导出现在提前拒绝二进制路径中的双引号和反斜杠，连同美元符号给出可操作错误。空格/百分号二进制路径以及含美元符号/百分号/双引号的状态目录已通过真实运行验证。此限制只约束导出的可执行路径，不把允许状态目录的转义误作非法可执行路径支持。
 
+B02 实例 HOME 增量（2026-09-16）：`config.json` 可选 `linux_service_home`，默认空保持旧 unit 字节不变。非空须为已存在、规范绝对且无符号链接重定向的目录，拒绝控制字符。Linux unit 增加转义后的 `Environment="HOME=..."`，只作用于该服务及子进程；禁止修改用户 manager 环境。完整 unit 仍由原签名归属记录绑定，更改 HOME 后旧记录必须拒绝；不自动迁移、覆盖或接受 drop-in。这是配置隔离，不是文件系统沙箱；不改变 SEC、Authority 或平台权限。其他 OS 不使用该 Linux 专属字段，跨平台验收不因此升级。
+
 ### 3.11.5 用户服务配置发布记录（UX-003）
 
 后台安装先在状态目录发布签名配置记录，再排他发布对应单元文件。记录绑定 local instance、目录摘要和完整 unit SHA-256；重试必须通过签名与全部绑定校验，配置变化要求新的迁移流程，不能覆盖旧记录。首次发布前目标已存在则拒绝，即使字节相同也不接管；已持有签名记录时可补发缺失单元，存在但内容改变拒绝。沿用 state Writer 与同目录原子发布，不删除未知文件。记录表达配置发布意图，不表示系统服务已注册、运行或权限已生效。此为后续 systemctl 注册/失败恢复的持久前置条件，不直接执行系统命令。
@@ -588,7 +606,7 @@ CLI 成功以人类可读文本报告“已注册、尚未启动”；签名配�
 
 ### 3.11.12 Linux 产品升级与前滚恢复（UX-003/014）
 
-`service-upgrade --manifest FILE --binary FILE --confirm-upgrade [--recover ID]` 仅 Linux。先检查 v2 发行签名/兼容声明与候选 pin，再暂存并重新校验暂存内容；随后持生命周期锁复验当前源 unit 和系统归属。显式确认覆盖停止保护提示；未确认或候选无效时不停止服务。正常停止后获取主 Writer，准备并打印切换 ID，应用 §3.11.11，释放主锁后 reload、复验 target 配置、启动；active/正数 MainPID/目录健康绑定/发行版本一致才报告成功。
+`service-upgrade --manifest FILE --binary FILE --confirm-upgrade [--recover ID]` 在 Linux 走用户 systemd（本节）。macOS LaunchAgent 组合见 §3.11.54，不把 systemd 的 stop/reload/start 语义套到 launchd。Linux 先检查 v2 发行签名/兼容声明与候选 pin，再暂存并重新校验暂存内容；随后持生命周期锁复验当前源 unit 和系统归属。显式确认覆盖停止保护提示；未确认或候选无效时不停止服务。正常停止后获取主 Writer，准备并打印切换 ID，应用 §3.11.11，释放主锁后 reload、复验 target 配置、启动；active/正数 MainPID/目录健康绑定/发行版本一致才报告成功。
 
 失败保留候选、日志和旧配置，不自动回滚台账。`--recover ID` 重新验签候选并要求目标 unit 与日志逐字节一致，加载同一已签名事务；停止状态下恢复文件阶段后继续 reload/start。若该目标已运行且配置/健康/版本一致，则只读复用；其他运行状态拒绝恢复，不误停未知版本。任意阶段错误不声称升级完成；失败消息保留已知事务 ID。恢复不是新授权，也不接受替换目标。自动回退和跨 OS 系统集成仍是后续工作。
 
@@ -596,7 +614,7 @@ CLI 成功以人类可读文本报告“已注册、尚未启动”；签名配�
 
 ### 3.11.13 显式回退至原事务源配置（UX-003/014）
 
-`service-rollback --transaction ID --manifest OLD --binary OLD --confirm-rollback [--recover ID]` 只用于已完成配置切换的 Linux 用户服务。先只读验签原事务，校验旧版本 v2 发行清单/兼容声明/当前平台 pin，规范化 OLD 路径渲染结果必须逐字节等于原事务 SourceUnit；不能把任意旧版本当作该次回退目标。原程序位置与内容必须保留且通过验签，不覆盖未知程序；缺失时仅按 §3.11.16 明确恢复。
+`service-rollback --transaction ID --manifest OLD --binary OLD --confirm-rollback [--recover ID]` 只用于已完成配置切换的 Linux 用户服务。macOS 回退见 §3.11.54。先只读验签原事务，校验旧版本 v2 发行清单/兼容声明/当前平台 pin，规范化 OLD 路径渲染结果必须逐字节等于原事务 SourceUnit；不能把任意旧版本当作该次回退目标。原程序位置与内容必须保留且通过验签，不覆盖未知程序；缺失时仅按 §3.11.16 明确恢复。
 
 回退从原 TargetUnit 到原 SourceUnit 创建新的签名切换事务，保留原记录；恢复回退须使用新的事务 ID，并重复原事务/旧候选绑定检查。显式确认覆盖短暂停止保护；已失败且无主进程的源可回退，仍须主 Writer 验证，未知进程状态不操作。成功要求旧发行版本/目录健康及 manager active/MainPID 读回一致。授权、撤销与台账均不回滚，旧任意二进制不获得新权限。
 
@@ -700,25 +718,29 @@ launch-agent-register 仅 macOS，复用已签名 plist 准备，在生命周期
 
 ### 3.11.26 macOS 已加载配置只读核对（UX-003）
 
-launch-agent-status 仅 macOS。先读取/验证当前程序渲染的 plist 签名归属和当前用户 Library/LaunchAgents 精确链接，不创建或修复文件。绝对 /bin/launchctl 在 15 秒/64 KiB 输出预算下执行；移除 LAUNCHD_SOCKET 环境覆盖，manageruid 必须等于非 root 当前 uid，managername 必须 Aqua，才查询当前域 list -x <已验证 label>。
+launch-agent-status 仅 macOS。先读取/验证当前程序渲染的 plist 签名归属和当前用户 Library/LaunchAgents 精确链接，不创建或修复文件。绝对 /bin/launchctl 在 15 秒/64 KiB 输出预算下执行；移除 LAUNCHD_SOCKET 环境覆盖，manageruid 必须等于非 root 当前 uid，managername 必须 Aqua。
 
-XML plist 使用标准库递归解析，限制 64 KiB/16 层/2048 元素，拒绝重复 key、命名空间、未知结构和非整数数值。逐项比较全部原渲染字段，ProgramArguments/EnvironmentVariables/label 等必须一致；额外字段仅允许整数 LastExitStatus、PID、OnDemand=true、LimitLoadToSessionType=Aqua；其他额外字段（含 Program/RootDirectory/WorkingDirectory/UserName/GroupName）视为未知配置并拒绝，不推断系统默认值。PID 若存在必须正整数；存在进程时再要求本实例目录健康才报告已运行，否则只报告已加载且未报告运行 PID。launchctl 失败不解释为任务不存在，禁止用无结构 print 文本替代。
+Darwin 25（本机实机：`launchctl help list` 为 `list [service-name]`）上 `list -x <label>` 不是 XML 开关：`-x` 被当成服务名，查询失败且不能当作缺席。禁止调用 `list -x`。`list <label>` 返回的 OpenStep 文本缺少 EnvironmentVariables、Umask、ExitTimeOut 和已加载源路径，不能单独作为归属证明。
 
-此兼容路径依据 Apple 开源 launchctl 的 list -x 实现，当前 macOS 是否提供该接口须实机验证。尚未支持的版本拒绝并保留现场，不隐式调用旧 load/unload 或不经验证启动。状态核对不证明完整进程内存身份，尚不启用 bootstrap/kickstart；后续加载动作依赖该只读前置。
+目标在当前域列表中出现后，只查询 `launchctl print gui/<当前 uid>/<已验证 label>`。解析器限制 64 KiB、UTF-8、完整换行结尾、8 层/2048 节点，按制表符缩进识别 `key = value`、`key = {`、`key => value` 与参数数组行，拒绝重复 key、空 key、控制字符和尾随内容。输出不得写入错误消息或证据正文。
+
+必须与签名源及规范化源路径一致的字段：`type=LaunchAgent`、`path` 等于已验证 plist 的 EvalSymlinks 路径、`program` 与 `arguments` 等于 ProgramArguments、`stdout path`/`stderr path` 等于 `/dev/null`、`umask` 为 Umask 的八进制、`exit timeout` 等于 ExitTimeOut、`domain` 为 `gui/<uid>` 或以其后空格引导的当前域、`environment` 含精确 `SIQ_AGENT_SECURITY_STATE_DIR`。环境块额外键仅允许 launchd 注入的 `OSLogRateLimit` 与等于 label 的 `XPC_SERVICE_NAME`。签名源 KeepAlive/RunAtLoad 必须为 false；print 若出现 keep alive、run at load、username、working directory、root directory 等非允许顶层键则拒绝。允许的运行时顶层键为封闭名单（jetsam/coalition/asid/pid 等 Darwin 25 实测字段）；未知顶层键 fail-closed。
+
+`state` 仅接受 `running`（必须有正整数 `pid`）、`not running`（不得有 `pid`）或 `xpcproxy`（Darwin 25 实测的 kickstart→exec 过渡态，必须有正整数 `pid`，即即将 exec 为服务进程的 xpcproxy 进程；调用方仍要求健康检查通过才报告就绪）。`last exit code` 为 `(never exited)` 或规范有符号整数。有正 PID 时再要求本实例目录健康才报告已运行，否则只报告已加载且未报告运行 PID。launchctl 失败或格式不支持不解释为任务不存在，也不回退到 `list -x` 或未约束的人类文本。状态核对不证明完整进程内存身份。
 
 ### 3.11.27 macOS 未加载状态的显式判定（UX-003）
 
 launch-agent-status 在签名源和注册链接核对后，先验证 GUI 用户域，再查询不带参数的 launchctl list。仅接受成功退出、完整换行结尾、64 KiB 内的 TSV：首行精确 PID/Status/Label，后续每行三列；PID 为正十进制整数或 -，Status 为规范有符号整数、- 或 Apple 历史实现的 ???，label 为非空无控制字符 UTF-8。拒绝重复 label、额外诊断、空行、缺列和截断；必须解析全部行才可判定目标 label 缺席。其他任务的名称和输出不落盘、不进入错误消息。
 
-目标缺席只表示查询时当前域未加载，状态命令输出“配置已注册，当前用户域未加载”，不代表后台停止、全系统不存在或授权后续覆盖。目标存在时仍执行 §3.11.26 的 XML 全字段归属核对，后续查询失败（包括两次查询间任务消失）保持未确认，不降格为缺席。列表中的 PID/Status 不用于归属或健康判断。此增量只读、不新增持久合同；未来加载必须重新核对域、源、链接及即时存在状态，不能复用历史查询结果。
+目标缺席只表示查询时当前域未加载，状态命令输出“配置已注册，当前用户域未加载”，不代表后台停止、全系统不存在或授权后续覆盖。目标存在时仍执行 §3.11.26 的 print 归属核对，后续查询失败（包括两次查询间任务消失）保持未确认，不降格为缺席。列表中的 PID/Status 不用于归属或健康判断。此增量只读、不新增持久合同；未来加载必须重新核对域、源、链接及即时存在状态，不能复用历史查询结果。
 
 格式依据 Apple 公开历史 launchctl 源码 list_cmd/print_jobs；真实 macOS 兼容性仍待验收，不以模拟输出证明原生支持。
 
 ### 3.11.28 macOS 显式加载（UX-003）
 
-launch-agent-load --confirm-load 仅 macOS，要求既有签名源和当前用户 Library/LaunchAgents 精确链接；不自动准备或修复。持 service-control 生命周期锁，复用完整 GUI 域枚举与已加载 XML 归属核对。已加载且归属一致时只复验文件并返回，不启动或重启。缺席时持主 Writer，立即再核对域、列表、签名源和链接，仅对仍缺席的实例执行 /bin/launchctl bootstrap gui/<当前 uid> <精确注册链接>；不使用 sudo、force、enable、旧 load 或目录批量加载。
+launch-agent-load --confirm-load 仅 macOS，要求既有签名源和当前用户 Library/LaunchAgents 精确链接；不自动准备或修复。持 service-control 生命周期锁，复用完整 GUI 域枚举与 §3.11.26 print 归属核对。已加载且归属一致时只复验文件并返回，不启动或重启。缺席时持主 Writer，立即再核对域、列表、签名源和链接，仅对仍缺席的实例执行 /bin/launchctl bootstrap gui/<当前 uid> <精确注册链接>；不使用 sudo、force、enable、旧 load 或目录批量加载。
 
-bootstrap 返回后重新核对源、链接和加载状态，只有当前域目标存在且完整 XML 与签名源相符才确认加载。命令失败或读回失败保持未确认，保留配置供用户检查和同命令重试，不自动 bootout 或删链接。主 Writer 与模板 RunAtLoad=false/KeepAlive=false 共同保留加载与启动边界；不因加载成功宣称保护运行。重复命令允许已运行且归属一致的任务，不占用该任务的主 Writer。文件复验不等于抵御同用户恶意并发替换，系统加载仍可能受外部会话操作影响；后续启动必须再验证归属。
+bootstrap 返回后重新核对源、链接和加载状态，只有当前域目标存在且 print 归属与签名源相符才确认加载。命令失败或读回失败保持未确认，保留配置供用户检查和同命令重试，不自动 bootout 或删链接。主 Writer 与模板 RunAtLoad=false/KeepAlive=false 共同保留加载与启动边界；不因加载成功宣称保护运行。重复命令允许已运行且归属一致的任务，不占用该任务的主 Writer。文件复验不等于抵御同用户恶意并发替换，系统加载仍可能受外部会话操作影响；后续启动必须再验证归属。
 
 bootstrap GUI 域用法参考 CircleCI 官方 macOS runner 安装文档；当前 Linux 仅使用模拟控制器与临时目录验证流程，真实 macOS 加载和接口兼容性仍待验收。本命令不新增持久合同。
 
@@ -726,21 +748,21 @@ bootstrap GUI 域用法参考 CircleCI 官方 macOS runner 安装文档；当前
 
 launch-agent-start --confirm-start 在生命周期锁内复用已注册配置加载流程。已加载配置报告正 PID 时只等待/检查当前实例健康，不重启；无 PID 时先获取并释放主 Writer 确认没有已知台账写者，再立即复验签名源、精确链接、GUI 域和加载配置。仍无 PID 才执行 kickstart gui/<uid>/<label>，不带 -k、不 enable 或替换任务。启动必须在释放主 Writer 后执行，让 serve 自行获取单写者锁；外部启动竞争由该锁拒绝，不声称消除同用户并发竞争。
 
-命令返回成功要求签名源/链接一致、已加载 XML 完整核对、正 PID 和当前目录健康 API 全部通过，并在健康返回后复核源/链接。健康最多轮询 10 秒（单次 manager/HTTP 请求另有自身超时），100 ms 间隔；配置/查询错误立即失败，无 PID 或健康未就绪可继续等候。超时和启动命令失败保留现场，不强制重启、结束进程或自动卸载。API 健康复用既有目录身份验证，不把 PID 声明当作 API 身份。
+命令返回成功要求签名源/链接一致、已加载 print 归属核对、正 PID 和当前目录健康 API 全部通过，并在健康返回后复核源/链接。健康最多轮询 10 秒（单次 manager/HTTP 请求另有自身超时），100 ms 间隔；配置/查询错误立即失败，无 PID 或健康未就绪可继续等候。超时和启动命令失败保留现场，不强制重启、结束进程或自动卸载。API 健康复用既有目录身份验证，不把 PID 声明当作 API 身份。
 
 Linux 模拟控制器测试不作为 macOS 原生启动证据；当前不声明 GUI 通知、退出恢复、自启或正式安装器完成。
 
 ### 3.11.30 macOS 显式停止（UX-003）
 
-launch-agent-stop --confirm-stop 在生命周期锁内验证既有签名源、当前用户目录精确注册链接、GUI 域和已加载 XML。目标缺席不执行任何系统命令，只有主 Writer 可获取且归属文件复验一致才报告当前域未加载。目标有 PID 才执行当前已验证域的 stop <label>（Apple 历史 launchctl 接口），不 bootout、不 kill PID、不 disable、不删除配置；模板 KeepAlive=false，仍须真实系统验证停止语义。
+launch-agent-stop --confirm-stop 在生命周期锁内验证既有签名源、当前用户目录精确注册链接、GUI 域和已加载 print 归属。目标缺席不执行任何系统命令，只有主 Writer 可获取且归属文件复验一致才报告当前域未加载。目标有 PID 才执行当前已验证域的 stop <label>（Apple 现行 `launchctl stop <service-name>`），不 bootout、不 kill PID、不 disable、不删除配置；模板 KeepAlive=false，仍须真实系统验证停止语义。
 
-停止后最多轮询 35 秒（单次 manager 超时另计），每 100 ms 复验源/链接及完整 XML，直到 PID 消失。主动停止的任务必须存在整数 LastExitStatus=0，随后在主 Writer 内复验文件和最后一次 XML/PID，才能报告正常停止。进程仍存在、任务查询失败、异常退出或 Writer 冲突均返回未确认并保留现场；不将删除任务、查询失败或失联推断成正常退出。最初已无 PID 的任务仅报告无运行进程且台账可用，不捏造退出状态。此状态是瞬时读回，不保证外部程序不会随后重启服务。
+停止后最多轮询 35 秒（单次 manager 超时另计），每 100 ms 复验源/链接及 print 归属，直到 PID 消失。主动停止的任务必须存在整数 `last exit code=0`，随后在主 Writer 内复验文件和最后一次 print/PID，才能报告正常停止。进程仍存在、任务查询失败、异常退出或 Writer 冲突均返回未确认并保留现场；不将删除任务、查询失败或失联推断成正常退出。最初已无 PID 的任务仅报告无运行进程且台账可用，不捏造退出状态。此状态是瞬时读回，不保证外部程序不会随后重启服务。
 
 状态文件和用户注册链接保持原样，后续 launch-agent-start 可复用已加载配置。没有 macOS 实机时只用临时状态与模拟控制器验证，不计为原生停止或排空验收。
 
 ### 3.11.31 macOS 注销与中断恢复（UX-003）
 
-launch-agent-unregister --confirm-unregister 复用生命周期锁，验证当前实例签名源、普通用户目录及精确注册链接，完整枚举/已加载 XML 核对后拒绝任何正 PID，提示先 stop。主 Writer 可获取后再次复验；已加载且无 PID 时只 bootout gui/<uid>/<label>，随后必须完整枚举证明目标缺席，才删除已复验的单个注册链接并同步其目录。保留 plist、签名归属、配置、密钥及历史，不删除目录或修改其他服务。
+launch-agent-unregister --confirm-unregister 复用生命周期锁，验证当前实例签名源、普通用户目录及精确注册链接，完整枚举/已加载 print 核对后拒绝任何正 PID，提示先 stop。主 Writer 可获取后再次复验；已加载且无 PID 时只 bootout gui/<uid>/<label>，随后必须完整枚举证明目标缺席，才删除已复验的单个注册链接并同步其目录。保留 plist、签名归属、配置、密钥及历史，不删除目录或修改其他服务。
 
 bootout 返回失败、目标仍存在、域/源/链接漂移均失败保留现场。链接缺失只有当前域也缺席时才视为注销重试，仍须主 Writer 可获取；链接缺失但任务存在拒绝接管。bootout 成功而删除链接前中断可重试，删除后重复操作不再调用系统变更。未知普通文件/异目标链接不删除。注销只证明当前用户域未加载、没有该注册链接及写者冲突；不声称历史异常退出正常排空，也不抵御其他同用户进程在最终检查后重新注册。
 
@@ -764,7 +786,7 @@ teardown --confirm-teardown 在 macOS 通过既有生命周期锁包装一次停
 
 ### 3.11.34 后台启动的显式状态目录（UX-003，Windows 前置）
 
-serve 增加 --state-dir <已存在规范绝对目录>。显式指定优先于新旧状态目录环境变量，仅绑定当前 serve 使用的 Store/锁/密钥/台账/健康响应，不修改进程环境或全局默认目录。不指定时保留原环境/平台默认行为。显式空值、相对路径、非规范路径、目录符号链接别名、非目录或不存在路径在状态写入前拒绝；serve 多余位置参数拒绝。
+serve 增加 --state-dir <已存在规范绝对目录>。显式指定优先于新旧状态目录环境变量，仅绑定当前 serve 使用的 Store/锁/密钥/台账/健康响应，不修改进程环境或全局默认目录。不指定时保留原环境/平台默认行为。显式空值、相对路径、非规范路径、状态根本身是符号链接别名、非目录或不存在路径在状态写入前拒绝；祖先卷别名（macOS `/var`→`/private/var`）不单独构成拒绝，因为 `EvalSymlinks` 字符串与调用路径不同但 `SameFile` 仍指向同一目录。serve 多余位置参数拒绝。
 
 Windows Task Scheduler 的 Exec 动作将通过该参数绑定实例目录，避免依赖任务引擎缓存的环境变量；不经过 cmd.exe/PowerShell 设置环境。该参数本身不实现 Windows 任务注册或原生生命周期。测试须证明显式目录不会写入环境指向的另一实例，且健康响应属于选定目录；Linux 子进程证据不能算 Windows 原生验收。
 
@@ -899,6 +921,24 @@ setup --confirm-setup [--port N] [--open-ui] 在 Windows 接入既有初始化�
 teardown --confirm-teardown 在 Windows 持生命周期锁贯穿正常停止和注销；先拒绝 pending 切换、核对签名归属与定点存在性。存在时复用 task-stop 核心，停止未确认不注销；已缺席跳过停止，进入注销核心的幂等缺席复验。停止后取得主 Writer，再复用 task-unregister 完整归属/空闲/缺席检查，锁忙即拒绝。
 
 任何失败保留现场，重试可恢复已经完成注销但响应中断的状态；不重建任务，不移除程序、配置、身份、历史或智能体钩子。成功说明后台入口已移除，钩子仍在且 block 模式服务不可达会拒绝。各平台原生验收仍按真实宿主证据单独登记。
+
+### 3.11.53 macOS LaunchAgent 配置成对切换事务（UX-003/014）
+
+新增 `local-launch-agent-switch/v1` 本地签名日志，与 §3.11.11/§3.11.15 的 Linux 日志并列而非复用：保存 source/target 的 `LaunchAgentRecord` 与 plist 字节、必需 `binary_bindings`（source/target 小写 SHA-256），签名绑定当前实例、目录标识与同一 Label；无 bindings 的 v1 形态不存在，混入 Linux 字段或 `.service` 记录一律拒绝。日志仍写入 `service-switches/<sha256>.json` 并共享 `service-switch.pending.json` 门闸，因此 `serve`、setup/teardown、Windows/Linux 切换与 macOS 加载都会在 pending 时拒绝；`ReadServiceSwitch` 读到 macOS 日志按 schema 不符拒绝，反向同理。
+
+应用只替换 `<label>.plist` 与 `launch-agent.json` 两个归属文件，前置验证、部分完成恢复、`.done.json` 与 pending 移除规则与 §3.11.11 相同；不执行 launchctl，不改配置、私钥或台账。macOS 显式加载（§3.11.28）在核对签名归属前先检查 pending 门闸，半写入配置不得被 bootstrap。
+
+### 3.11.54 macOS 产品升级、失败恢复与显式回退（UX-003/014）
+
+`service-upgrade --manifest FILE --binary FILE --confirm-upgrade [--source-manifest OLD] [--recover ID]` 在 macOS 沿 §3.11.12 的步骤执行，差异只在系统管理器：候选 v2/v3 发行验签、兼容声明、当前平台 pin、暂存与二次校验、当前程序副本留存（§3.11.14）、摘要绑定与 os.Executable 与源 plist 一致性检查全部相同；目标配置为 `renderLaunchAgent(暂存路径, 规范目录, instance_id)`。持生命周期锁复验源 plist 签名归属、`~/Library/LaunchAgents/<label>.plist` 符号链接归属与 GUI 域；未注册的实例拒绝升级。
+
+已加载且有 PID 时先 `launchctl stop <label>`，按 §3.11.30 等待 PID=0 且 `last exit code=0`，再取主 Writer（证明旧进程已释放台账）；随后准备并打印切换 ID、应用 §3.11.53，释放主 Writer。launchd 在 bootstrap 时缓存 plist，故文件切换后必须对已加载任务 `bootout gui/<uid>/<label>` 并确认从 `list` 消失，再以同一注册链接 `bootstrap gui/<uid>`、以目标 plist 做 §3.11.26 print 归属核对、复验目标签名归属与候选摘要，最后 `kickstart`；PID>0、目录健康绑定与发行版本一致才报告成功，12 秒内未就绪或读回 `last exit code≠0` 且 PID=0 视为失败，消息保留事务 ID。
+
+失败保留候选、日志、副本与旧配置，不自动回退。`--recover ID` 重新验签候选，要求目标 plist 与日志逐字节一致且 bindings 相同；先按目标、再按源 plist 尝试 print 归属，两者都不匹配即拒绝（未知加载配置不 bootout）。目标已加载、PID>0 且健康版本一致则只读复用；任何 PID>0 的其他状态拒绝恢复，不误停；PID=0 时复验主 Writer 后继续文件阶段（幂等）→ 已加载则 bootout → bootstrap → kickstart。
+
+`service-rollback --transaction ID --binary OLD [--manifest OLD] [--restore-missing-binary] --confirm-rollback [--recover ID]` 在 macOS 读取 `local-launch-agent-switch/v1` 原事务，旧程序路径渲染的 plist 必须逐字节等于原 `source_plist`，程序内容必须等于 `binary_bindings.source_sha256`，缺失时仅按 §3.11.16 从本地副本显式恢复；旧发行清单可显式提供或按 §3.11.17 从留存清单唯一解析。回退创建新的 `local-launch-agent-switch/v1` 事务（bindings 对调），沿上一段相同的 stop → Writer → 切换 → bootout → bootstrap → kickstart → 健康/版本读回流程；已失败且 PID=0 的目标可直接回退，正在运行的目标需先正常停止。授权、撤销与台账不回滚。
+
+本入口的原生验收以 opt-in 测试与实机脚本在真实 launchd GUI 域完成：同一受信构建复制到两个路径完成升级→健康→回退，注入端口占用产生失败启动后 `--recover` 前滚，以及产品 CLI 对开发签发者的拒绝不中断运行中的源进程。这些证明的是进程/配置切换与恢复语义，不是不同发行版本间兼容或正式签名发行；跨发行版本升级仍需真实签名清单后单独验收。
 
 ### 3.12 个人任务活动追溯（UX-011）
 
@@ -1144,7 +1184,7 @@ SkillClaim 中的 Skill ID、摘要、Grant ID 是调用方声明；即使匹配
 
 POST /v1/grants 只有既有 live Grant 的场景 ID/版本与本次请求一致时才能返回 reused。不同场景（包括基线与场景互换）返回 409 grant_scenario_conflict、当前版本及场景，指引显式处理既有授权；不改变现有状态、签名、DesiredPolicy 或审计序列，不自动覆盖/撤销有效权限。未知场景仍为 400。场景目录接口为管理面只读 GET，返回既有 scenarios 数组形状。只读工具仍须满足原有路径授权，选择场景不会隐式增加文件读取权限。
 
-桌面通知默认关闭；正文只含待确认数量。失败投递维护独立的下次重试时刻，15 秒内不重复启动通知子进程；成功合并、归零和失败重试分别处理，归零不能清除尚未到期的失败退避。命令直接 argv 执行、最长 5 秒，stdout/stderr 直接丢弃，不收集进内存，不把命令路径、参数、输出或底层异常写日志。日志仅可使用固定失败/超时/不可用类别。Linux notify-send 是当前默认通知器，其他 OS 和真实桌面投递继续独立验收。
+桌面通知默认关闭；正文只含待确认数量。失败投递维护独立的下次重试时刻，15 秒内不重复启动通知子进程；成功合并、归零和失败重试分别处理，归零不能清除尚未到期的失败退避。命令直接 argv 执行、最长 5 秒，stdout/stderr 直接丢弃，不收集进内存，不把命令路径、参数、输出或底层异常写日志。日志仅可使用固定失败/超时/不可用类别。Linux notify-send 与 macOS `/usr/bin/osascript`（固定两参 `on run` handler，`display notification (item 2 of argv) with title (item 1 of argv)`）是当前默认通知器，其他 OS 继续独立验收。macOS 已知缺口：`display notification` 无点击导航回调，通知只提供计数，点击不会打开本地控制台待办页；该导航缺口如实保留，不以退出 0 冒称可点击跳转。免打扰/通知权限拒绝时 osascript 仍可退出 0，投递不可证明；真实 GUI 投递须在通知中心可见并单独立证。
 
 ### 3.12.35 M131/M132 获取边界与新版检查合同
 
@@ -1164,6 +1204,10 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 
 **安装检查入口**：使用 SIQ 的 Skill 导入、检查与确认安装流程。已验证的 OpenClaw 2026.5.12 不接受顶层 `security.installPolicy`，安装器不得注入该字段，也不得据此声称原生安装已被拦截。`policy-exec` 保留为具备明确调用合同的外部宿主接口。历史本产品写入的字段仅在安装记录归属及完整内容匹配后移除；未知用户配置保留。
 
+**2026-09-17 OpenClaw 2026.9.4 增量**：该宿主已提供 `security.installPolicy` 的正式 operator-owned 装前入口，覆盖受支持的 Skill/Plugin 安装与更新；它与仅在已加载插件流程触发的 `before_install` 不等价。仅在显式 `--enable-install-policy` 的 OpenClaw 单实例预览/安装中，安装器才可写入本产品精确配置，并且必须拒绝已有未知策略、保留无关字段、卸载只剥离记录归属且完整匹配的本产品配置；旧版本默认仍不注入。策略只声明 `targets:["skill"]`，不声称覆盖 Plugin；可执行文件是经宿主校验的绝对普通文件，策略子进程用显式状态目录环境变量，不依赖终端 PATH。`policy-exec` 严格接受 `protocolVersion:1`、`targetType:"skill"`、`sourcePathKind:"directory"` 和非空 `sourcePath`，仅在静态 admission 成功且持久化成功时返回含 `protocolVersion:1` 的 `allow`/`warn`/`block`；缺字段、未知版本/类型、不可读目录、分析或持久化失败均返回 block。warn 必须经宿主独立确认；不把通过准入等同于运行授权。必须用本机公开安装入口证明 block 时目标未发布、allow 时发布，随后外科卸载并核对原配置。未经此原生证明不得提升 `install_interception`。
+
+同版批准钩子的公开类型仅有 `onResolution`，没有等待式、可否决的 `beforeExecute(finalParams)`；分发实现异步通知 `onResolution` 而不等待其 Promise。固定本机版本的原生 worker 真实运行结果为所有 hold 在平台审批前 fail-closed，原因为缺 `approvalExecutionRecheckVersion=1`。不得以修改夹具超时、给配置补能力字段或在异步回调内预留来声称安全继续；`approval_resume`/最终参数复验仍 blocked，待宿主提供执行前等待式检查点或产品实施并实测符合 N06 的原生可信重试。来源（2026-09-17 核对）：[OpenClaw 安装策略](https://docs.openclaw.ai/tools/skills-config#operator-install-policy-securityinstallpolicy)、[工具调用策略钩子](https://docs.openclaw.ai/plugins/hooks/tool-policy)及本机 2026.9.4 分发物 `plugin-entry` 类型/`agent-tools.before-tool-call` 实现。
+
 **运行时（L2）**：插件 `adapters/runtime/openclaw-agentshield/`（TypeScript，`definePluginEntry`）：
 
 - 安装资产包含 `openclaw.plugin.json`（插件 ID、无凭据配置 schema）和 package 的 `openclaw.extensions` 入口。安装器把插件绝对目录加入 `plugins.load.paths`，启用本插件 entry；已有 allow 列表时仅追加本插件，保留其他插件。显式全局禁用或 deny 本插件、配置类型错误时安装拒绝，不擅自打开全局插件开关。卸载只移除本插件的路径/entry/allow 项。
@@ -1174,9 +1218,9 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 - 超时：插件侧 5 s；OpenClaw 钩子 15 s fail-closed 兜底。
 - 配置：`~/.openclaw/siq-agent-security.json` 保存 `endpoint`、`tokenPath`、`enforcementMode`；托管配置增加 `runtimeIdentityId` 和固定 `agentId`。
 
-**卸载**：`siq-agent-security adapter uninstall openclaw` 按归属移除本插件注册及自建文件，保留无关配置；不整文件覆盖用户改动。
-- **安装首备（DEV07-A）：** 改写已有用户配置前，以 `*.siq-agent-security.orig`（O_EXCL、0600）保存首次见到的原文；重装不得覆盖。坏 JSON、指向配置的 symlink、未知 `enforcement_mode` 拒绝且不改写。配置写入同目录暂存+Rename。
-- **外科卸载（DEV07-B）：** OpenClaw/CodeBuddy 在活配置上剥离本产品 `installPolicy`/hooks，保留安装后用户字段；冲突（坏 JSON 等）返回 `RecoveryPlan`，不静默整文件回滚。首备仅供人工恢复参考。
+**卸载**：`siq-agent-security adapter uninstall openclaw` 按归属移除本插件注册及自建文件，保留无关配置；不整文件覆盖用户改动。卸载在移除本产品插件文件后，若 `plugins/<product>` 为真实空目录（非符号链接、无未知条目）则删除该目录；含未知文件时保留目录。OpenClaw 外科卸载后，若接入前无 `plugins` 且剥离本产品登记后仅剩空 allow/entries/load.paths 容器，删除 `plugins` 键，避免把空登记写回用户配置。
+- **安装首备（DEV07-A）：** 改写已有用户配置前，以 `*.siq-agent-security.orig`（O_EXCL、0600）保存首次见到的原文；重装不得覆盖。坏 JSON、指向配置的 symlink、未知 `enforcement_mode` 拒绝且不改写。配置写入同目录暂存+Rename。重装与首备比较按 JSON 语义，不把缩进或键序差异当成“原文已改需人工审阅”。
+- **外科卸载（DEV07-B）：** OpenClaw/CodeBuddy/WorkBuddy 在活配置上剥离本产品 `installPolicy`/hooks，保留安装后用户字段；冲突（坏 JSON 等）返回 `RecoveryPlan`，不静默整文件回滚。剩余文档若与首备语义相同，写回快照原文。首备仅供人工恢复参考。
 - OpenClaw 重装记录保留先前由本产品创建的插件目录/文件及本产品配置的归属；损坏的既有安装记录拒绝继续。卸载同时移除本插件运行时注册，不把“安装资产存在”当作原生运行时已验收。
 
 ### 4.2 Hermes（P0）
@@ -1194,7 +1238,9 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 
 ### 4.3 CodeBuddy / WorkBuddy（P1）
 
-**配置目录（2026-09-07 增量）**：安装、状态、自动发现与卸载统一读取进程环境 `CODEBUDDY_CONFIG_DIR`，未设置或为空时保留 `~/.codebuddy`。覆盖值须为绝对路径，现存路径及祖先不得为符号链接；非法覆盖明确拒绝操作，自动发现忽略该平台，不静默回退默认目录。CLI 与管理 API 使用相同解析逻辑；管理 API 不接受请求正文指定配置目录。卸载须核对最新安装记录中的目标路径，环境改变导致记录与当前配置目录不符时拒绝，避免误删另一实例的钩子。多实例建议分别使用独立 SIQ 状态目录；本增量不扩展 inventory 的扫描范围。
+**配置目录（2026-09-07 增量）**：安装、状态、自动发现与卸载统一读取进程环境 `CODEBUDDY_CONFIG_DIR`，未设置或为空时保留 `~/.codebuddy`。覆盖值须为绝对路径，现存路径及祖先不得为符号链接；非法覆盖明确拒绝操作，自动发现忽略该平台，不静默回退默认目录。CLI 与管理 API 使用相同解析逻辑；管理 API 不接受请求正文指定配置目录。新安装须核对最新安装记录中的唯一目标路径，环境改变或历史记录已混入多个配置根时在写入前拒绝，避免继续污染归属。卸载仍要求当前配置根属于该记录；对旧版本已认证记录中的多个 `settings.json`，同一事务逐一外科移除本产品 hook，任一配置冲突则整批不开始写入。多实例建议分别使用独立 SIQ 状态目录；本增量不扩展 inventory 的扫描范围。
+
+**桌面 hook 所有权增量**：重装只替换本次欲写入的完全相同命令，或最新安装记录中二进制路径、平台及状态目录组合生成的当前/旧版命令；卸载同样只移除记录能精确证明的命令。状态只在可信安装记录与真实 hook 命令吻合时标记已安装。仅包含产品名和 `hook <platform>` 字样的用户命令（例如 `printf` 输出）不得被覆盖、删除或误报为安装。旧记录中无法精确复原的变体保留现场并要求人工恢复，不用子串猜测归属；该规则不把宿主缺失的可信 Skill/安装拦截能力伪称为已支持。
 
 **钩子启动失败（2026-09-07 增量）**：CodeBuddy 将普通非零退出视为非阻断错误，不能用进程退出码 1 代替 pre hook 的拒绝。状态目录、完整配置或 decision token 读取失败时，钩子仍读取事件并输出结构化 PreToolUse 结果；无有效完整配置时按 block，已验证 warn/audit_only 配置但 token 不可用时按 advisory allow。PostToolUse 在客户端不可用时只返回非阻断结果，不制造 observation。状态目录可用时沿用 pending 记录；目录不可用时拒绝仍生效，但不声称已持久化。返回原因仅使用固定类别，不含底层路径、配置内容或凭据。此机制不覆盖二进制未启动、被杀、超时或 stdout 管道不可写的宿主行为。
 
@@ -1214,6 +1260,8 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 `hold → ask`、`deny → deny`、`redact` → 当前适配器尚未接入原生改参，退化为 `ask`。
 
 不使用 Skill frontmatter hooks（仅 fork Skill 且默认关闭）。
+
+**WorkBuddy 桌面（与 CodeBuddy CLI 分列）**：macOS/Windows 桌面应用的配置根为 `WORKBUDDY_CONFIG_DIR`（须为无符号链接祖先的绝对路径），未设置时为 `~/.workbuddy`。SIQ 不把 `CODEBUDDY_CONFIG_DIR` 当作 WorkBuddy 配置根，也不静默回退。安装、状态、自动发现、卸载与 inventory 读取该根下的 `settings.json`；不读取 `config.yaml`、`workbuddy.db`、`claw` 或 pairing 凭据。`adapter install workbuddy` 在 `settings.json` 的 `hooks.PreToolUse` / `hooks.PostToolUse` 追加 `` `<abs>/siq-agent-security hook workbuddy --state-dir <abs-state>` ``（先备份、可卸载），保留 `enabledPlugins` 及其他未知键。命令中的二进制和状态目录都按目标 OS 的单参数规则引用，空格、单引号、中文不得改变 argv。Electron 子进程通常不继承 SIQ 环境变量，因此 WorkBuddy 钩子命令必须带绝对 `--state-dir`；`siq-agent-security hook workbuddy [--state-dir DIR]` 与 CodeBuddy 使用同一 JSON 合同，但回执与 pending 的 `platform` 必须为 `workbuddy`。WorkBuddy 与 CodeBuddy 使用上一段的单根新安装和历史混合记录整批外科卸载规则。`POST /v1/grants` 与 CLI `grant --platform workbuddy` 必须接受该平台；ActiveGrant 按 platform+agent_id 匹配，WorkBuddy 的 allow 不得签发到 `codebuddy` 或其他平台。CodeBuddy CLI 的 `~/.codebuddy` 与 `hook codebuddy` 不得替代 WorkBuddy 桌面证据。原生桌面验收使用隔离 `WORKBUDDY_CONFIG_DIR` 或项目级 `.workbuddy/settings.json`，不得改写日常 `~/.workbuddy` 的 claw/db。桌面安装入口（插件市场）未被接管，`install_interception` 保持 host_capability_missing，直到有受支持的装前拦截。`block` 下决策不可达必须输出结构化 `permissionDecision=deny`；宿主把退出码 1 视为非阻断错误，不能用 exit 1 代替拒绝。
 
 ### 4.4 Trae / TraeWork（P2，审计）
 
@@ -1407,13 +1455,17 @@ make -C apps/agentshield ui
 新回执增加 `record_type`、`decision_receipt_id`、`parent_action_id`、`task_seq`（均为可选扩展，不重签历史回执）。服务端将单次决策链序号纳入 action ID；同一 task/session 的 task_seq 单调增加，parent 指向上一条允许或 redact 的动作。
 Observe 显式携带 action_id 与 decision_receipt_id；旧适配器可用相同 platform/session/agent/tool/tool_call_id 唯一定位。缺 tool_call_id 时必须携带相同参数，若有多个候选则拒绝，不能猜测。
 只有 allow/redact 或已由本地管理面批准的 hold 可观测。同一动作相同结果摘要幂等返回原回执，不同摘要返回 409。结果超过 64 KiB 拒绝，避免截断掩盖冲突。
-关联状态从签名回执恢复，内存最多 8192 项，默认 24h 窗口；溢出拒绝新决策，过期动作不再接受 Observe。过期仅清理动作关联，不清理 bound/tainted 会话安全状态。
+关联状态从签名回执恢复，内存最多 8192 项，默认 24h 窗口；溢出拒绝新决策，过期动作不再接受 Observe。过期仅清理动作关联，不清理 bound/tainted 会话安全状态。唯一例外是已有 `hold_reservation` 且没有 observation 或 `hold_reconciliation` 的动作：它代表外部副作用可能已经发生，必须跨 24h 和重启保留为 `uncertain`，计入容量且保持失败关闭，直到管理员核对结案；不能用通用过期清理删除。
 
 24h 窗口从签名 decision 的 `issued_at`（当前秒精度）计算，到达边界即拒绝；内存运行期与重启恢复使用相同精度。较晚的 observation 不延长原动作窗口，也不使 bound/tainted 会话变回 clean。
 
 ### 10.2 V2 完整性补齐（2026-09-07）
 
 执行前 hold 检查：`POST /v1/hold-status` 使用 capDecision，只读，不接受批准字段。请求严格限定 platform/session_id/agent_id/tool/tool_call_id/action_id/decision_receipt_id/params，必须提供完整服务端动作身份和原参数。返回合同 `hold-status/v1`：status 为 pending/approved/denied/expired/consumed，带原 action_id、decision_receipt_id、expires_at 和 reason_code；不返回参数或管理身份。身份/参数不匹配、未知动作或非 hold 返回 400，匿名返回 401。状态由已有签名 decision/resolution/observation 恢复，不新增授权记录；查询不续期。原 hold 到期（含边界）、已观察或当前授权不再匹配时不得报告 approved。
+
+N06 可信重试（2026-09-14）：管理端的 `hold_resolution(allow)` 只记录人已批准，不能直接作为外部工具执行权。不能暂停原调用的宿主在用户重试时必须通过 `POST /v1/hold-executions/reserve` 重呈原 action/decision、平台、主体、会话、任务、工具、原调用 ID、最终参数并绑定新的调用 ID。服务端在同一互斥区重验当前 Intent/Grant/SEC/安装内容和期限，先追加签名 `hold_reservation` 再返回 `hold-execution-status/v1:reserved`。同一 hold 的第二次或并发预留一律冲突；`Observe` 必须引用 reservation receipt，引用原 hold decision 不再接受。旧 `hold-status/v1` 在 reservation 存在时投影为 consumed，防止旧客户端把已预留的批准再次当作新执行权。
+
+`POST /v1/hold-executions/status` 是强身份绑定的只读查询。`reserved` 只在原子预留成功的直接响应中出现；任何后续读取仍无 observation 都必须为 uncertain，因为服务端无法证明响应是否到达宿主或副作用是否开始。预留前授权变化为 denied、未预留超时为 expired；预留后即使授权撤销或原审批期限经过，也不能掩盖 uncertain。管理员在外部核对后通过 `POST /v1/hold-executions/reconcile` 提交绑定 reservation ID/hash 的 `occurred` 或 `not_occurred`，追加签名 `hold_reconciliation`，分别投影 completed/cancelled；相同结论幂等，相反结论或已有 observation 冲突，且永不重新执行旧预留。外部副作用和本地链不能原子提交，因此产品不得宣称 exactly-once。完整状态机和原生边界见 [N06 可信重试规格](personal-experience-n06-trusted-retry-spec.md)。
 
 OpenClaw hold 按顺序执行：先等待上述本地批准，再返回原生 requireApproval。默认本地等待上限 10 秒（配置 holdWaitMs，范围 100–10000ms），每次 HTTP 仍受 timeoutMs 与总剩余等待时间限制；上限为适配原生 15 秒 hook 预算而设，不能把等待挂起为无限期。管理端需在等待期间处理当前 hold，超时后该次调用阻断，迟到批准不会自动重新执行。平台审批超时不超过原 hold 剩余有效期；本地拒绝、异常响应、断连和取消均在 block 下阻断。warn/audit_only 仍由服务端产生 allow/advisory，不把该模式升级成强制阻断。本地状态查询是执行前检查快照，不是外部工具执行完成证明；平台等待期间的外部状态变化仍须单独验证。
 
@@ -1431,7 +1483,7 @@ JSON 数值匹配的单个数字词法表示上限为 1024 字符，超过上限
 
 ### 审批后执行检查点候选（2026-09-07，未进入默认安装）
 
-当前 OpenClaw 本地 hold 预检与平台批准之间存在可复现的 Grant 撤销窗口。候选通过配套宿主扩展 `requireApproval.beforeExecute(finalParams, signal)` 在平台允许后等待适配器重新校验；宿主仅接受严格 true，异常、拒绝、取消和五秒预算超限均 veto，适配器以一秒预算查询现有强关联 hold-status。此项不是官方 API 或默认产品已支持合同，只在固定源指纹的临时副本验证；仅改一侧不生效。当前八场景覆盖与未覆盖故障见 [撤销验收报告](trusted-intent-v2-approval-revocation-20260907-220037.md)。检查点不构成与外部副作用原子提交的租约。
+OpenClaw 本地 hold 预检与平台批准之间曾存在可复现的 Grant 撤销窗口。配套宿主扩展 `requireApproval.beforeExecute(finalParams, signal)` 在平台允许后等待适配器重新校验；宿主仅接受严格 true，异常、拒绝、取消和五秒预算超限均 veto。当前适配器在一秒预算内用最终参数重查强关联 hold-status，并原子取得签名 `hold_reservation` 后才返回 true；after hook 以派生的执行尝试 ID 绑定 observation。此项不是官方 API，只在固定源指纹的临时副本验证；仅改一侧不生效。当前 18 场景证据见 [R02-F 报告](evidence/personal-experience/r02f-openclaw-approved-retry-20260915/report.md)。签名预留仍不构成与外部副作用的跨系统原子事务。
 
 候选检查点增量（2026-09-07 22:08）：[原生故障验收](trusted-intent-v2-checkpoint-faults-20260907-220834.md) 已覆盖正常批准、同步异常、Promise 拒绝、undefined/真值字符串、五秒预算、取消后返回 true、最终参数改写和审批后失联。最终参数不匹配由真实 hold-status 返回 400，只有正常对照产生执行及 observation。此增量不改变候选未进入默认安装的状态。
 
@@ -1439,7 +1491,7 @@ JSON 数值匹配的单个数字词法表示上限为 1024 字符，超过上限
 
 适配器的 hold 路径要求本次原生 hook context 提供整数 `approvalExecutionRecheckVersion: 1`，表示宿主在平台批准后等待 `requireApproval.beforeExecute(finalParams, signal)` 并执行严格 true/异常/取消/超时否决。该值由配套宿主执行包装器生成，不能从工具参数、事件、自定义插件配置或环境变量读取。缺失、未知版本、字符串或布尔值均视为不支持；block 模式明确阻断当前 hold，不能回退到已知存在撤销窗口的旧审批路径。allow/deny/redact 的既有映射保留；warn/audit 的失效处理仍按原模式表执行。
 
-当前适配器及内嵌安装资产应携带实际 `beforeExecute` 回调，在一秒预算内用原动作身份与最终参数重新查询 hold-status，仅仍 approved 且未取消时返回 true。配套宿主补丁 v2 增加上述 context 能力标记，原版和旧候选 v1 不具备该标记。协议标记属于同一受信宿主执行边界，不是对恶意同进程插件的密码证明。原版升级适配器后，hold 需要配套宿主支持才能完成；不得把这种明确的兼容性要求写成无缝兼容。
+当前适配器及内嵌安装资产应携带实际 `beforeExecute` 回调，在一秒预算内用原动作身份与最终参数重查 hold-status，并调用 `hold-execution-reserve/v1`；仅严格匹配、未过期的 201 reserved 响应可返回 true。配套宿主补丁 v2 增加上述 context 能力标记，原版和旧候选 v1 不具备该标记。协议标记属于同一受信宿主执行边界，不是对恶意同进程插件的密码证明。原版升级适配器后，hold 需要配套宿主支持才能完成；不得把这种明确的兼容性要求写成无缝兼容。
 
 宿主兼容工具提供 `inspect/apply/restore`，只支持固定包版本和源码指纹。修改操作要求显式指定运行时与独立备份目录，先持有 POSIX 文件锁、持久化原始字节和恢复记录，再同目录原子替换目标；保留原文件权限和属主。恢复只接受已记录的目标身份及预期补丁后字节，拒绝覆盖后续改动。记录与完成标记只新建，不原地覆盖；替换后但完成标记前中断可通过相同命令幂等收尾。工具不更新用户配置、插件或自动重启服务；磁盘文件状态不代表运行进程已加载新代码。Windows 修改路径暂不支持，不能绕过文件锁运行。
 
@@ -1618,13 +1670,13 @@ Admin GET `/v1/tasks/{task_id}/completion` 查验签名 Intent、按task读出�
 
 ### C2 历史动作复核
 
-Completion 使用 HistoricalEffectActions 按本次证据引用集合单次扫描整条签名回执链，最多8192个引用；历史查询不依赖24小时内存动作缓存。要求精确decision action_id/receipt_id以及hold_resolution对原决策的引用和scope一致；重复决策/重复审批或链校验失败拒绝。扫描结束与当前进程已知链头比较，防止运行中截断被误当完整历史。
+Completion 使用 HistoricalEffectActions 按本次证据引用集合单次扫描整条签名回执链，最多8192个引用；历史查询不依赖24小时内存动作缓存。要求精确 decision action_id/receipt_id；hold 还必须有 scope 一致且顺序正确的 hold_resolution 与唯一 hold_reservation。重复决策、重复审批、重复预留或链校验失败均拒绝。扫描结束与当前进程已知链头比较，防止运行中截断被误当完整历史。
 
 HistoricalEffectActions 只生成只读投影供已保存证据复核，不重新注册动作、不延长 Observe/hold-status/新证据提交的执行窗口。新请求继续用 EffectAction。完整目录回滚后重启的保护仍取决于既有可信checkpoint，不能把内存链头比较宣称为永久防回滚。
 
 ### C2 审批生效时间
 
-动作投影增加仅服务端派生的 AuthorizedAt。普通允许动作取决策时间，hold获批取签名hold_resolution时间；新审批记录使用RFC3339Nano保留亚秒精度。当前缓存、重启恢复和历史扫描均从同一签名时间恢复。独立completed效果若observed_at早于AuthorizedAt，记录unauthorized_effect_observed；Completion也复核该关系，旧expected证据不能因后续获批变成verified。旧秒级审批记录仍只能提供秒级历史精度，不伪称能恢复当时未记录的亚秒顺序。
+动作投影增加仅服务端派生的 AuthorizedAt。普通允许动作取决策时间；hold 取签名 hold_reservation 时间，单有审批不再授权副作用。新审批和预留记录使用 RFC3339Nano 保留亚秒精度。当前缓存、重启恢复和历史扫描均从同一签名时间恢复。独立 completed 效果若 observed_at 早于 AuthorizedAt，记录 unauthorized_effect_observed；Completion 也复核该关系，旧 expected 证据不能因后续获批变成 verified。旧的批准但未预留记录升级后安全降级为未授权，不伪造当时不存在的执行预留。
 
 ### C1 网络观测材料归档
 
@@ -1788,7 +1840,7 @@ This changes resource selection, not taint policy or authority requirements.
 
 期限为半开区间：当前时间达到 expires_at 即不再可用；非法非空期限按无效处理，null 保持旧版无期限行为。挑战生成/消费、批准、部署及每次决策/hold 执行前重查均检查期限。旧回执继续可验证，不因后来到期否认历史已发生的操作。期限检查保持原 policy 模式语义：block 拒绝，warn/audit_only 只给出拒绝建议；无效或过期的必需 Intent Authority 仍在所有模式 hard deny。自检临时授权必须同时绑定独立短期 Intent，不能仅靠 Grant 字段保证撤权。
 
-产品自检增量采用 `local-runtime-check.v1`：管理接口 `POST /v1/runtime-checks/preview`、`POST /v1/runtime-checks/start`、`GET /v1/runtime-checks/{id}`、`POST /v1/runtime-checks/{id}/cancel`；独立启动凭据接口 `POST /v1/runtime-checks/attach` 只绑定服务预定的检查身份与真实宿主会话，不能查询或修改通用授权。具体容量、确认、120 秒期限、摘要失效及崩溃恢复规则见 ADR-024。旧 adapter diagnostics v1 不回填运行成功状态。
+产品自检增量采用 `local-runtime-check.v1`：管理接口 `POST /v1/runtime-checks/preview`、`POST /v1/runtime-checks/start`、`GET /v1/runtime-checks/{id}`、`POST /v1/runtime-checks/{id}/cancel`；独立启动凭据接口 `POST /v1/runtime-checks/attach` 只绑定服务预定的检查身份与真实宿主会话，不能查询或修改通用授权。自检 Intent 使用服务预生成的 `rct-*` 任务范围。决策协议中 `task_id` 专指服务端可信 Intent 任务；Hermes 在 turn 开始后生成的随机 task ID 及其他宿主任务标识必须透传为 `runtime_task_id`，供 SEC 与审批重试边界核对，不能覆盖 Intent 范围。回执同时签名两者，旧客户端未提供 `runtime_task_id` 时才回落到 `task_id`。具体容量、确认、120 秒期限、摘要失效及崩溃恢复规则见 ADR-024。旧 adapter diagnostics v1 不回填运行成功状态。
 
 管理查询 `GET /v1/runtime-checks?instance_id=...` 返回 `local-runtime-check-list/v1`，items 只含该实例最近一条检查或空数组，恢复前端刷新后的检查入口；读取 passed 结果时重新核对摘要。所有结果保留“仅本次调用边界”的含义，不能提升整个平台或 Skill 的保护等级。正常服务退出先取消并等待自检清理；崩溃恢复在既有 state writer 独占锁下进行。若绑定已提交而检查记录尚未保存其 ID，按该检查的独立 Intent 找回并撤销，不处理其他 Intent 的绑定。
 
@@ -1826,7 +1878,7 @@ ADR-030 准入存储修正：禁止在签名后补写 skill_card_ref；卡片按
 
 ### 个人统一确认待办增量（2026-09-10，ADR-031）
 
-按 ADR-031 与 `local-confirmations.v1` / `local-confirmation-resolve.v1` 合同新增管理会话专属列表和严格摘要绑定的单次处理入口。列表是既有 action 窗口内的状态投影，不能批准；处理须锁内检查未处理、签名回执摘要和参数摘要，一次性写入 hold_resolution。截止时刻拒绝；客户端收到冲突后读回，不自动重放。旧 hold API 的幂等不产生新增审批权限。前端统一运行确认和长期授权的审阅入口，保留平台继续执行能力限制，不宣称系统通知或 Hermes 自动恢复已完成。
+按 ADR-031 与 `local-confirmations.v1` / `local-confirmation-resolve.v1` 合同新增管理会话专属列表和严格摘要绑定的单次处理入口。列表是既有 action 窗口内的状态投影，不能批准；处理须锁内检查未处理、签名回执摘要和参数摘要，一次性写入 hold_resolution。截止时刻拒绝；客户端收到冲突后读回，不自动重放。旧 hold API 的幂等不产生新增审批权限。N06 再以唯一签名 reservation 消费已批准状态；确认列表在预留后显示 consumed。前端统一运行确认和长期授权的审阅入口，保留平台继续执行能力限制；Hermes 组件已支持“阻止原调用—用户批准—精确重试—预留后执行”，原生宿主和真实副作用证据未完成前不得宣称 N06 关闭。
 
 ### 个人浏览器通知增量（2026-09-10，ADR-032）
 
@@ -1854,11 +1906,11 @@ ADR-034 准入显示修正：固定导入使用不透明 source.locator，内部
 
 ### 安装预览的私有暂存（ADR-037，实施中）
 
-新 skillinstall 模块在状态目录形成已批准候选的独立待安装副本和签名计划，绑定 ADR-036 来源、Grant revision/签名/权限摘要、实际 Hermes 实例和单层目标目录。仅规划尚不存在的目标，目标目录不写入；五分钟期限、同请求不续期、64 个暂存上限，Load 必须重新验证源/授权/目标/副本。沿用固定导入的完整文件清单与预算，不使用旧 admission.content_hash 代替。合同 local-skill-install-stage-create/v1、local-skill-install-plan/v1；目标发布与恢复、安装后保护验证继续实施，不解除 M20 的部署限制。
+新 skillinstall 模块在状态目录形成已批准候选的独立待安装副本和签名计划，绑定 ADR-036 来源、Grant revision/签名/权限摘要、服务端唯一解析的 Hermes/OpenClaw 实例和单层目标目录。仅规划尚不存在的目标，目标目录不写入；五分钟期限、同请求不续期、64 个暂存上限，Load 必须重新验证源/授权/目标/副本。沿用固定导入的完整文件清单与预算，不使用旧 admission.content_hash 代替。合同 local-skill-install-stage-create/v1、local-skill-install-plan/v1；目标发布与恢复、安装后保护验证继续实施，不解除 M20 的部署限制。
 
 ### 安装预览的管理入口（ADR-038，实施中）
 
-管理 POST `/v1/skill-installations/plans` 严格接收 stage-create/v1，返回 plan-created/v1；管理 GET `/v1/skill-installations/plans/{id}` 完整复验后返回 plan/v1。与导入共享单并发工作锁及 60/65 秒处理/写出预算，决策凭据不能访问。目标只由 Hermes 实例解析器解析。签发页从已批准的来源绑定授权进入，响应丢失保留原请求，刷新只按计划 ID 复验；生成预览不安装、不部署、不激活运行身份。
+管理 POST `/v1/skill-installations/plans` 严格接收 stage-create/v1，返回 plan-created/v1；管理 GET `/v1/skill-installations/plans/{id}` 完整复验后返回 plan/v1。与导入共享单并发工作锁及 60/65 秒处理/写出预算，决策凭据不能访问。目标只由 Hermes/OpenClaw 服务端发现结果唯一解析，同 ID 跨平台歧义、缺失和链接根拒绝。签发页从已批准的来源绑定授权进入，响应丢失保留原请求，刷新只按计划 ID 复验；生成预览不安装、不部署、不激活运行身份。
 
 ### Skill 文件发布与恢复（ADR-039，实施中）
 
@@ -1959,3 +2011,43 @@ Grant/Revoke 管理采用 §3.12.25 的严格、管理会话专用入口，列�
 ## 2026-09-14 个人来源调度与受控 Git 阶段增量
 
 N03 来源签名记录、HTTP 合同及 daemon 调度见 [专项规格](personal-experience-n03-update-source-spec.md)。取数结果写回必须比较取数前的记录签名；未来状态禁止覆盖。N02 HTTPS 组件见 ADR-0051，生产入口仍关闭，真实联网验收前不能启用。接入诊断的本机探测仅拨号已验证的 loopback 字面地址。可信 Skill 归属及审批重试链另行完成，保留既有拒绝边界。
+
+## 2026-09-14 N05 可信 Skill 执行上下文（R01）
+
+可信 Skill 归属的信任边界、平台能力核实结论与最小方案见 [N05 专项规格](personal-experience-n05-trusted-skill-execution-spec.md)。本节为不变量摘要，冲突时以专项规格为准。
+
+Skill 执行上下文（SEC，`skill-execution-context/v1`）是归属从 unknown 提升为 verified 的唯一路径。SEC 仅由持有状态目录私钥的本地管理进程签发，签发前必须重读 runtime identity、签名 session binding、安装记录与 skill grant，grant_digest 由签发方现场计算，期限不得超过 session binding。验证在每次决策时全量重做：验签、有效期、实例与 session binding、subject（platform/instance/agent/session[/task]）、grant 现场 digest、安装记录和目标内容；任一失败即拒绝且零副作用，不回落 baseline。grant live 判据与引擎安装绑定语义一致：deployed/effective，或 approved 且准入为 import 保留记录（安装流水线真实终态，须有匹配安装记录）。import 保留准入的已安装 Skill Grant 无 verified SEC 时一律拒绝，不受旧 attribution 开关影响。SEC 命中时有效权限为 SEC grant 与该 agent 现行 baseline grant 的交集（deny > hold > allow），由引擎后端现场合成；无 baseline grant 时交集退化为 SEC grant 自身。SEC 存在期间去掉 skill claim 不降级：归属由服务端按 subject 命中，不来自调用方引用。回执追加 evidence_level（controlled_task/controlled_session）、context_id 与精确 call_binding，UI 只对字段完整的 verified 显示可信及等级，controlled_session 必须明示「会话级、不含逐调用因果」。威胁范围仅覆盖模型可控输入与调用层伪造；不抵御已攻陷宿主或同 UID 恶意本地代码。OpenClaw 2026.5.12 与 Hermes v0.21.0 实机核实均无逐调用 Skill 归属能力（§2 证据），不得把钩子安装表述为可信宿主。
+
+### R06/R04/R07 复核增量（2026-09-15）
+
+- 管理页面加载绑定 `useLoadGuard` 身份。连接、签名公钥或 actor 变化后，失效旧响应的同时必须重新请求；旧授权详情不得沿用。重复选择相同适配器操作不得清空有效预览。
+- 浏览器验收只允许一次导航，禁止刷新至成功掩盖竞态；重启验收保持同一已登录文档，断言旧凭据 401、UI 失效及持久状态保留。
+- 负例只接受预期 HTTP 状态与错误码；候选漂移必须实际改变隔离候选内容并保留有效计划签名。签名篡改与旧状态兼容分别记账。
+- 诊断仅保存类别与完成项计数；临时目录 0700、文件 0600。不保存配对码、daemon 原文、DOM 或网络响应体。原始证据不覆盖；修复候选独立记录摘要与结果。
+- 原文清理区分实机未到期内容保留与组件时钟下过期删除。systemd 生命周期、直接启动旅程、正式版本升级不能相互替代。
+
+
+### Secure Agent 审批消费者兼容修复（2026-09-16）
+Secure Agent 复用现有 hold-status/v1 与 hold-execution-reserve/v1 合同：复查携带已提交的 Intent task_id 和原有 runtime_task_id；approved 仅表示可申请预留。消费本地 pending 后，用唯一新 retry_tool_call_id 请求持久化预留，完整匹配回读 action/原 decision/reservation，成功才执行；观察与效果记录使用预留 receipt 和 retry ID。拒绝、冲突、未知或丢失响应都不得执行或盲目重试；不放宽后端身份、Authority 与参数绑定。原 hold receipt 保留用于 UI 审批追溯。
+
+2026-09-17 Mac 阶段合并复核：OpenClaw 外科卸载仅移除本安装添加的注册与空容器；原始快照已有的空 allow、load、paths、entries 及本插件空 entry 必须保留，不能把缺省与显式空值合并。用户其他插件/设置保持不变。阶段合并不提升 P19 实机矩阵，修复候选仍需平台复测。
+
+### 2026-09-16 L01/L02 安全复核增量
+
+未发布 OpenShell 会话策略原型按 [修复规格](openshell-l01-l02-repair-spec-20260916.md) 与 [独立 v1 合同](../packages/contracts/openshell-session-policy-apply.v1.md) 收紧授权。仅 policy_apply，不能标记 O05 真实任务执行完成；L01 旧 PASS 需用修正后的判定与恢复流程复测。
+
+
+### 2026-09-16 缺失本地签名身份保护
+
+磁盘 signing.seed 缺失时，仅首次使用的引导状态可生成身份：config.json、local-instance.json、state-format.json、当前 serve.lock 与空目录。任何其他文件、符号链接、不可读取目录或已有历史均拒绝自动补建，返回 signing: identity_missing_restore_required；恢复原密钥须由维护者从可信备份完成，不能清空历史。有效既有密钥继续使用，损坏或非 ENOENT 读取错误直接拒绝；显式 SeedEnv 的既有合同不改变。此检查不能区分所有历史均被删除后的目录与全新目录，不声明防本机任意文件篡改。serve 在恢复 Grant 事务前加载身份。
+
+
+### 2026-09-16 策略加载确认修复
+
+policy set 的提交成功和 policy get 的配置读回不等于沙箱已加载。所有实际网络策略写入与授权回滚须使用当前 CLI 提供的 `--wait --timeout N`，等待沙箱确认加载后才返回成功，再保留原完整修订/摘要读回。N 使用已有 CLI Timeout 的秒数减去 2 秒余量，最少 1 秒；外层已有进程超时仍是硬上限。失败、超时、旧 CLI 不支持选项均报错，不回退为不等待写入；可能已提交的写入保持 uncertain。no_op 仍只表示未写入，不升级为行为证明。CLI 加载确认本身仍不产生 enforcement_verified；行为测试保持显式 403+零到达，不重试到通过。依据：本机 0.0.83 CLI help 与 https://docs.nvidia.com/openshell/sandboxes/policies 。
+
+同一策略安全合同的 Python Control API CLI 后端同步：30 秒进程上限内等待 28 秒，应用和回滚均禁止无等待降级；本批 Python 仅组件验证，不继承 Go 的真实网关行为结论。实测与证据见 [加载等待修复](openshell-policy-load-wait-repair-20260916.md)。
+
+### 2026-09-17 会话策略基线恢复前置检查
+
+会话 policy_apply 在消费 hold 前复验当前完整网络基线能否按既有 rollback 权限恢复。超出 Grant 端点、批准程序路径或无程序限制的基线，返回 403 / openshell_base_not_restorable，保留批准与网关原策略。在 Client 目标锁内，以捕获到的真实基线再次运行相同检查，避免预检与实际写入基线不同。回滚授权仍按当前 Grant/程序范围与操作摘要验签，不能为方便恢复放宽权限。无法解析/读取的基线先返回 503 / openshell_base_unreadable，同样零写入且不消费批准。该检查仅拒绝已知不可恢复的起点，不承诺跨进程原子性或撤权后仍可回滚。

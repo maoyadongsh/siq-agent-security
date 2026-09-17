@@ -1,0 +1,38 @@
+{
+  "schema_version": "personal-b05-service-down-side-effects/v1",
+  "recorded_at": "2026-09-16T02:26:28.692294+00:00",
+  "passed": true,
+  "binary_sha256": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942",
+  "harness_sha256": "c28826e182e4e2e0bf252cf66b161e09f305a3292eb31767643657c59f6fb3ee",
+  "native_cli_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733",
+  "openclaw_version": "2026.5.12",
+  "native_entrypoint": "public openclaw agent --local; real plugin hook lifecycle",
+  "checks": [
+    "managed_install_with_read_write_exec_grant",
+    "loopback_receiver_selftest_proves_hit_counting",
+    "positive_control_marker_write_executed_with_service_up",
+    "up_leg_exec_denied_runtime_effect_unknown_contract",
+    "up_leg_denied_exec_produced_zero_egress",
+    "service_down_denies_file_write_before_execution",
+    "service_down_denies_read_without_content_leak",
+    "service_down_zero_loopback_egress_from_denied_exec",
+    "fail_closed_pending_lines_signed_false_recorded",
+    "managed_audit_only_override_still_fails_closed",
+    "same_port_restart_recovers_pairing",
+    "pending_lines_promoted_onto_signed_receipt_chain",
+    "unreachable_service_produced_no_authorized_receipts",
+    "recovered_service_allows_authorized_read",
+    "promotion_cursor_matches_pending_lines",
+    "receipt_chain_verified_after_promotion"
+  ],
+  "receipt_count": 9,
+  "pending_line_count": 4,
+  "promoted_receipt_count": 4,
+  "loopback_receiver_hits": 1,
+  "limitations": [
+    "local deterministic model and automated fixture operator; no external or paid model",
+    "exec-class tools are never intent-compatible (shell always carries an unknown effect), so no authorized-egress allow path exists through the real host; the loopback receiver therefore proves the zero-egress property on the denial paths, backed by a self-test",
+    "exec egress uses curl; host-level firewall isolation is not claimed",
+    "same-UID compromise and OS sandbox isolation remain outside the threat boundary"
+  ]
+}

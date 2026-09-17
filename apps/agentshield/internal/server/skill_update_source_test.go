@@ -115,6 +115,10 @@ func updateSourceSaveBody(remoteURL string, enable bool) map[string]any {
 	return map[string]any{"schema_version": "local-skill-update-source-save/v1", "remote_url": remoteURL, "enable": enable, "actor_id": "fixture-human"}
 }
 
+func updateSourceDisableBody() map[string]any {
+	return map[string]any{"schema_version": "local-skill-update-source-disable/v1", "actor_id": "fixture-human"}
+}
+
 func updateSourceView(t *testing.T, value map[string]any) skillinstall.UpdateScheduleView {
 	t.Helper()
 	raw, err := json.Marshal(value)
@@ -175,6 +179,62 @@ func TestSkillUpdateSourceHTTPSaveViewAndDisable(t *testing.T) {
 	}
 	if on := updateSourceView(t, enabled); !on.Enabled || on.NextCheckAt == "" {
 		t.Fatal("re-enable", on)
+	}
+}
+
+func TestSkillUpdateSourceHTTPDisableSavedZIPWithoutLocator(t *testing.T) {
+	s, importID, installID := updateSourceFixture(t)
+	zipifyServerImportRecord(t, s, importID)
+	sourceRoute := "/v1/skill-installations/operations/" + installID + "/update-source"
+	disableRoute := sourceRoute + "/disable"
+
+	if code, out := call(t, s, "POST", disableRoute, token, updateSourceDisableBody()); code != 409 || out["error"] != "skill_update_source_not_configured" {
+		t.Fatal("missing saved source", code, out)
+	}
+	if code, out := call(t, s, "POST", sourceRoute, token, updateSourceSaveBody(serverZipFixtureURL, true)); code != 200 || out["enabled"] != true {
+		t.Fatal("zip save", code, out)
+	}
+	code, out := call(t, s, "POST", disableRoute, token, updateSourceDisableBody())
+	if code != 200 || out["enabled"] != false || out["source_state"] != "saved" || out["display"] != serverZipFixtureURL {
+		t.Fatal("zip disable without locator", code, out)
+	}
+	// A retry after losing the first response returns the same disabled view.
+	if code, replay := call(t, s, "POST", disableRoute, token, updateSourceDisableBody()); code != 200 || replay["enabled"] != false || replay["display"] != serverZipFixtureURL {
+		t.Fatal("disable replay", code, replay)
+	}
+
+	for _, credential := range []string{"", token} {
+		r := loopbackRequest("POST", disableRoute, updateSourceDisableBody())
+		if credential != "" {
+			r.Header.Set("Authorization", "Bearer "+credential)
+		}
+		w := httptest.NewRecorder()
+		s.Handler().ServeHTTP(w, r)
+		want := 401
+		if credential != "" {
+			want = 403
+		}
+		if w.Code != want {
+			t.Fatal("disable capability", w.Code)
+		}
+	}
+	if code, _ := call(t, s, "GET", disableRoute, token, nil); code != 405 {
+		t.Fatal("disable method", code)
+	}
+	raw, _ := json.Marshal(updateSourceDisableBody())
+	for _, bad := range []string{
+		`{}`,
+		strings.Replace(string(raw), `"actor_id":`, `"actor_id":"duplicate","actor_id":`, 1),
+		strings.TrimSuffix(string(raw), "}") + `,"remote_url":"https://evil.example/redirect.zip"}`,
+		strings.Replace(string(raw), `"local-skill-update-source-disable/v1"`, `"local-skill-update-source-disable/v2"`, 1),
+	} {
+		r := loopbackRequest("POST", disableRoute, bad)
+		r.Header.Set("Authorization", "Bearer "+s.bootAdmin)
+		w := httptest.NewRecorder()
+		s.Handler().ServeHTTP(w, r)
+		if w.Code != 400 {
+			t.Fatal("strict disable body", w.Code, w.Body.String())
+		}
 	}
 }
 
@@ -295,6 +355,9 @@ func TestSkillUpdateSourceHTTPRemovalPending(t *testing.T) {
 	}
 	if code, out := call(t, s, "POST", route+"/update-source", token, updateSourceSaveBody("", true)); code != 409 || out["error"] != "skill_install_removal_pending" {
 		t.Fatal("save during removal", code, out)
+	}
+	if code, out := call(t, s, "POST", route+"/update-source/disable", token, updateSourceDisableBody()); code != 409 || out["error"] != "skill_install_removal_pending" {
+		t.Fatal("disable during removal", code, out)
 	}
 }
 

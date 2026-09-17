@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 	"strings"
@@ -53,7 +54,11 @@ func (r *run) safePath(path string) error {
 		if err != nil {
 			return err
 		}
-		if info.Mode()&os.ModeSymlink != 0 {
+		leaf := current == path
+		if leaf && info.Mode()&os.ModeSymlink != 0 {
+			return errors.New("symlink refused")
+		}
+		if !leaf && !stateformat.AcceptDirectory(info, current) {
 			return errors.New("symlink refused")
 		}
 		parent := filepath.Dir(current)
