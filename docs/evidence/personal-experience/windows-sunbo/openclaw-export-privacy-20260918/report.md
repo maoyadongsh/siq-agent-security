@@ -17,3 +17,11 @@ Windows Companion → 本机 WSL2 OpenClawGateway，不能标作 Windows 原生�
 ## 边界与收尾
 
 通用export与活动详情下载是不同入口。本批不覆盖活动原文授权/撤销/TTL、敏感URL注入样本或独立导出签名验算，不提升完整A11条目通过计数。原状态未修改；新副本和导出保留在本批私有目录，私钥仍只在state/keys。没有模型、服务、监听器或计划任务创建。此证据不代表全部OpenClaw隐私旅程完成。
+
+## 后续独立验签（已完成）
+
+上述初批未独立验签的缺口已补齐。先固定导出原始SHA-256，读取与宿主候选同摘要的实际二进制 pubkey 输出，核对它等于文档identity公钥；读取前后状态文件摘要不变。只将已脱敏文档、公钥和签名作为验算输入，私钥没有离开WSL状态目录。
+
+Python读取JSON，移除仅signature字段，以 `json.dumps(doc, sort_keys=True, separators=(',', ':'), ensure_ascii=True)` 产生ASCII规范化字节（保留signing_schema）。附带的 verify-seal.go 仅用Go标准库 Ed25519，未调用产品 Seal/Verify/canon。实际文档验签成功；独立翻转消息字节、签名字节及替换公钥全部拒绝，命令退出0。规范化摘要与检查结果见seal-preflight.json和verification.json。
+
+复现：将规范化消息、公钥base64、签名hex分别保存为 message.canon、public-key.base64、signature.hex，然后 `go run verify-seal.go <输入目录>`。输入是本机私有导出材料，未提交PR。此检查是独立实现的密码学复验，不冒充外部审阅者；attestation_scope仍为share_projection_only。活动原文访问/撤销/TTL及敏感URL样本仍待验收。

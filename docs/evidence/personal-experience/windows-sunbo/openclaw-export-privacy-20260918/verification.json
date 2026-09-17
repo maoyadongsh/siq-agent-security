@@ -53,5 +53,16 @@
   "state_content_match_classification": "params_excerpt on denied write receipt; bounded redacted excerpt is allowed by specification, not proof of raw trace enabled",
   "controller_observation": "first wrapper printed valid guest exit0 then failed decoding WSL stderr as UTF-8; guest result retained; bounded read-only follow-up exit0",
   "cleanup": "no service or model processes started; original 38-file state unchanged; private exact-copy state and export retained under mode0700 owned WSL2 directory",
-  "independent_export_signature_verification": false
+  "independent_export_signature_verification": true,
+  "independent_verifier": {
+    "canonicalization": "CPython JSON sorted keys, ASCII, comma/colon separators; only signature removed",
+    "signature_check": "Go standard library crypto/ed25519; no product verifier import",
+    "public_key_source": "actual pinned binary pubkey from exact private state copy; matched export identity; state hash unchanged",
+    "results": {
+      "actual_export_verified": true,
+      "changed_message_rejected": true,
+      "changed_signature_rejected": true,
+      "foreign_public_key_rejected": true
+    }
+  }
 }
