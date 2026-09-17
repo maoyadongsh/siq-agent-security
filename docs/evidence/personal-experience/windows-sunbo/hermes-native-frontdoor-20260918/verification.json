@@ -1,0 +1,112 @@
+{
+  "source_sha": "de5de5f72d5a9a5f60323334f038abbae6c80ad1",
+  "binary_sha256": "08b43f749f716d042a4d2a3a0219e605a9ebeee05f5eda66c742de9064f67658",
+  "hermes_cli_sha256": "fa802a97400fd6575bff8cf305ae68bc665a8fd933099abdd45cca96d2bee748",
+  "model_calls": 0,
+  "steps": [
+    {
+      "label": "init",
+      "exit": 0,
+      "seconds": 0.519
+    },
+    {
+      "label": "instances",
+      "exit": 0,
+      "seconds": 0.17
+    },
+    {
+      "label": "preview",
+      "exit": 0,
+      "seconds": 14.894
+    },
+    {
+      "label": "install",
+      "exit": 0,
+      "seconds": 14.27
+    },
+    {
+      "label": "status",
+      "exit": 0,
+      "seconds": 0.428
+    },
+    {
+      "label": "uninstall",
+      "exit": 0,
+      "seconds": 19.986
+    }
+  ],
+  "preview_profile_unchanged": true,
+  "plugin_present": true,
+  "owned_plugin_removed": true,
+  "temp_remaining": 0,
+  "source_dirty": false,
+  "mode": "windows_amd64_native_cli_configuration",
+  "runtime_verified": false,
+  "backup_exactly_matches_original": true,
+  "original_config": "model: fixture-model\r\ncustom_fixture: keep\r\nplugins:\r\n  enabled: []\r\n  disabled: [siq-agent-security]\r\n",
+  "restored_config": "model: fixture-model\nplugins:\n  enabled: []\n  disabled:\n    - siq-agent-security\n_config_version: 44\ncustom_fixture: keep\n",
+  "preview": {
+    "instance_id": "hi-f5e2ed81307d8e0998e2715b3a00bfd9",
+    "instance_name": "native-cli",
+    "native_enable": true,
+    "schema_version": "local-adapter-plan/v2",
+    "plan_id": "ap-5bcce30242abc5c648b6481de07d0cbb",
+    "plan_digest": "d22b9d7b89bf0888592bf052a14bd2a60028f182278695906e6417c0f3f14407",
+    "platform": "hermes",
+    "action": "install",
+    "expires_at": "2026-09-17T22:32:31Z",
+    "changes": [
+      {
+        "path": "~/.hermes/profiles/native-cli/plugins/siq-agent-security/plugin.yaml",
+        "action": "create",
+        "purpose": "安装当前版本的工具调用适配器文件",
+        "before_sha256": "",
+        "after_sha256": "0f6a898c187c592f2a48270fc8d7fe3c1d77c896e36169028c7e0491004707bc"
+      },
+      {
+        "path": "~/.hermes/profiles/native-cli/plugins/siq-agent-security/__init__.py",
+        "action": "create",
+        "purpose": "安装当前版本的工具调用适配器文件",
+        "before_sha256": "",
+        "after_sha256": "36b03a9d5dd92fe6e872adf50c8a6dab92a6731ee31905c0e8db7284279501c2"
+      },
+      {
+        "path": "~/.hermes/profiles/native-cli/plugins/siq-agent-security/config.json",
+        "action": "create",
+        "purpose": "连接当前本地服务，使用决策凭据引用和当前执行模式",
+        "before_sha256": "",
+        "after_sha256": "45597a0f93b4d78bdec28b2f606e19561ff9c12bef21997f0febf4037ba39db2"
+      },
+      {
+        "path": "~/.hermes/profiles/native-cli/config.yaml.siq-agent-security.orig",
+        "action": "create",
+        "purpose": "保留首次接入前的不可变恢复副本",
+        "before_sha256": "",
+        "after_sha256": "9f2b5754bf08115b7c3b1ed6a24a5d746c070d3b4bd2f839ec9857fe0afa1930"
+      },
+      {
+        "path": "~/.hermes/profiles/native-cli/config.yaml",
+        "action": "replace",
+        "purpose": "由 Hermes 原生命令启用本插件，不授予内置工具覆盖权限；宿主会规范化配置格式",
+        "before_sha256": "9f2b5754bf08115b7c3b1ed6a24a5d746c070d3b4bd2f839ec9857fe0afa1930",
+        "after_sha256": "3558c4d5f956018e7fdef0425ac8beb0fb080a107b99fdd21e243a6e83d3494b"
+      }
+    ],
+    "next_steps": [
+      "平台安装入口未被接管，Windows 暂无受控安装命令；通过发现与诊断做事后检查。",
+      "配置应用后检查诊断，并在方便时重启目标会话、验证实际调用；此操作不产生运行验证结论。"
+    ],
+    "restart_required": true,
+    "runtime_verified": false
+  },
+  "controller_exit": 0,
+  "prior_attempt": {
+    "controller_exit": 1,
+    "reason": "fixture assumed only one discovered root; two isolated default roots also returned",
+    "stopped_before_preview_or_install": true
+  },
+  "cleanup": {
+    "remaining_native_document_cli_processes": 0,
+    "state_and_original_backup_retained": true
+  }
+}
