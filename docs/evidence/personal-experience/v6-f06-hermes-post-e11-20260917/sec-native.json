@@ -1,0 +1,33 @@
+{
+  "schema_version": "personal-r01-sec-hermes-native/v1",
+  "recorded_at": "2026-09-17T11:36:44.443196+00:00",
+  "passed": true,
+  "binary_sha256": "0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+  "harness_sha256": "ff41997dc3addd9bb8201185d90d11ad77f0e6a688d3470787ba470a20563808",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "native_entrypoint": "public hermes chat --oneshot with normal Agent loop, plugin hooks, and file tools",
+  "native_identity_source": "test-only pre_llm observer reports Hermes-generated session/task; product APIs enroll and issue SEC",
+  "checks": [
+    "two_skills_installed_for_same_agent",
+    "other_skill_cannot_borrow_runtime_identity",
+    "admin_api_issues_task_bound_sec",
+    "native_prompt_contains_installed_skill",
+    "native_allowed_read_executes",
+    "native_write_denied_before_side_effect",
+    "verified_attribution_on_allow_and_deny",
+    "receipt_call_binding_recomputed",
+    "new_native_task_cannot_copy_sec",
+    "receipt_chain_verified",
+    "test_observer_removed_and_product_config_restored"
+  ],
+  "receipt_count": 4,
+  "verified_decision_count": 2,
+  "cross_task_verified": false,
+  "other_skill_issue_error": "skill_context_grant_changed",
+  "limitations": [
+    "local deterministic synthetic model; no external provider or paid model",
+    "pre_llm observer is a test-only synchronization helper and carries no SIQ credential or authority",
+    "controlled_task proves admin-bound task attribution, not causal attribution for every prompt fragment",
+    "same-UID compromise and OS sandbox isolation remain outside the SEC threat boundary"
+  ]
+}

@@ -64,6 +64,29 @@ class EvidenceTests(unittest.TestCase):
         self.row["classification"] = "complete_acceptance"
         self.validate()
 
+    def test_linux_workbuddy_scope_exclusion_is_whole_cell_only(self):
+        cell = next(c for c in self.matrix["cells"]
+                    if (c["platform"], c["os"]) == ("workbuddy", "linux"))
+        for row in cell["rows"]:
+            row.update(status="out_of_scope", reason="product_scope_excluded",
+                       classification="static_check", evidence_refs=[], coverage=[],
+                       note="2026-09-17 product scope: Linux supports Hermes and OpenClaw only")
+        self.validate()
+        cell["rows"][0]["status"] = "blocked"
+        cell["rows"][0]["reason"] = "environment_unavailable"
+        with self.assertRaises(Invalid):
+            self.validate()
+        cell["rows"][0]["status"] = "out_of_scope"
+        cell["rows"][0]["reason"] = "product_scope_excluded"
+        cell["rows"][0]["evidence_refs"] = [self.ref]
+        with self.assertRaises(Invalid):
+            self.validate()
+        cell["rows"][0]["evidence_refs"] = []
+        other = self.matrix["cells"][0]["rows"][0]
+        other.update(status="out_of_scope", reason="product_scope_excluded")
+        with self.assertRaises(Invalid):
+            self.validate()
+
     def test_failed_report_even_with_recomputed_hash(self):
         for change in ({"passed": False}, {"checks": {"allow": False}},
                        {"status": "failed"}, {"checks": []},

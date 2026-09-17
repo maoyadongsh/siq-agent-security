@@ -1,0 +1,12 @@
+{
+  "schema": "siq-v6-f01-cross-builds/v1",
+  "source": "uncommitted integration worktree; not an F04 frozen candidate",
+  "cgo_enabled": "0",
+  "package": "./cmd/agentshield",
+  "results": [
+    {"target": "linux/amd64", "exit_code": 0, "sha256": "067fdab4887885f0783213009c6310b9af20be46991b62f046f9d1bb4230a869"},
+    {"target": "linux/arm64", "exit_code": 0, "sha256": "a523c3a25f5120a8ec71fa84dac8bcf7f0d3a40b4f9c80e29f570eb76ee0a33e"},
+    {"target": "darwin/arm64", "exit_code": 0, "sha256": "b101317238ee7547f6459cc439dd77052556886b5f5ea15a18b84a1abbdfdff9"},
+    {"target": "windows/amd64", "exit_code": 0, "sha256": "23376bd1bcc28be260f8bf5357cec9d626b2212b945fb58fb053a6e8ea1f5e0d"}
+  ]
+}

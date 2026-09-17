@@ -13,6 +13,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 import re
 import sqlite3
 import shutil
@@ -263,7 +264,10 @@ class Harness(native.fixture.Harness):
         payload = json.loads(result.stdout)
         require(
             any(p.get("text") == "fixture-conversation-complete" for p in payload.get("payloads", [])),
-            "native CLI did not finish",
+            "native CLI did not finish: payload_count=" + str(len(payload.get("payloads", [])))
+            + " text_prefixes=" + repr([str(p.get("text", ""))[:100] for p in payload.get("payloads", [])])
+            + " model_requests=" + str(len(self.model_requests_seen))
+            + " model_failures=" + repr(self.model_failures[:2]),
         )
 
     def session_key(self):
@@ -332,10 +336,20 @@ class Harness(native.fixture.Harness):
             "tool": self.read_tool,
             "params": {"path": str(report)},
         }
+        raw_end = "expiry" if self.args.raw_expiry_seconds else "revoke"
+        allowed_after_raw_end = {
+            "id": "allowed-after-raw-" + raw_end,
+            "tool": self.read_tool,
+            "params": {"path": str(report)},
+        }
         # Request sequence: warmup; deny probe; (raw grant created here)
-        # allowed capture probe; completion; then the revoked run where every
-        # tool must fail closed.
-        steps = [None, [write_denied], [allowed_first], None, [write_denied, allowed_first, allowed_last], None]
+        # allowed capture probe; completion; then revoke or naturally expire
+        # ONLY the raw-content grant and make an allowed native call with zero
+        # new raw captures;
+        # finally revoke runtime identity and require every tool to fail closed.
+        steps = [None, [write_denied], [allowed_first], None,
+                 [allowed_after_raw_end], None,
+                 [write_denied, allowed_first, allowed_last], None]
         requests, failures = [], []
         self.model_failures = failures
         self.model_requests_seen = requests
@@ -420,7 +434,8 @@ class Harness(native.fixture.Harness):
                             )
                         else:
                             require("fixture-visible-" not in content, "denied content reached model")
-                            require("siq-agent-security" in content, "SIQ rejection missing")
+                            require("siq-agent-security" in content,
+                                    "SIQ rejection missing: " + repr(content[:300]))
                     requests.append({"tool_results": len(results), "stream": bool(body.get("stream"))})
                     if index == 2 and harness.raw_grant is None:
                         bindings = harness.api("/v1/intent-bindings")["items"]
@@ -433,7 +448,7 @@ class Harness(native.fixture.Harness):
                                 "task_id": harness.raw_binding["task_id"],
                                 "kinds": ["parameters", "output"],
                                 "actor_id": "automated-fixture-operator",
-                                "duration_seconds": 3600,
+                                "duration_seconds": harness.args.raw_expiry_seconds or 3600,
                                 "retention_seconds": 3600,
                                 "max_plaintext_bytes": 65536,
                             },
@@ -574,10 +589,60 @@ class Harness(native.fixture.Harness):
                 all(record["session_id"] == key for record in records),
                 "receipts do not match native session",
             )
-            first_requests = list(requests)
             require(not forbidden.exists(), "forbidden write executed")
             self.raw_evidence()
-            signed_count = len(records)
+            raw_before = self.api(
+                "/v1/raw-task-content/records/search",
+                {"schema_version": "local-raw-task-content-record-list/v1",
+                 "task_id": self.raw_binding["task_id"]},
+            )["items"]
+            if self.args.raw_expiry_seconds:
+                expires_at = datetime.fromisoformat(self.raw_grant["expires_at"].replace("Z", "+00:00"))
+                deadline = time.monotonic() + self.args.raw_expiry_seconds + 20
+                while datetime.now(UTC) <= expires_at:
+                    require(time.monotonic() < deadline, "raw Grant did not reach real wall-clock expiry")
+                    time.sleep(min(1.0, max(0.1, (expires_at - datetime.now(UTC)).total_seconds())))
+                require(datetime.now(UTC) > expires_at, "raw Grant has not naturally expired")
+                expired = self.api(
+                    "/v1/raw-task-content/capture-permits",
+                    {
+                        "schema_version": "local-raw-task-content-capture-permit-create/v1",
+                        "platform": self.platform,
+                        "agent_id": self.agent,
+                        "session_id": key,
+                        "task_id": self.raw_binding["task_id"],
+                        "grant_id": self.raw_grant["grant_id"],
+                        "expected_grant_signature": self.raw_grant["signature"],
+                        "kind": "parameters",
+                        "ttl_seconds": 10,
+                    },
+                    token=Path(self.issued["credential_path"]).read_text().strip(), expected=410,
+                )
+                require(expired.get("reason_code") == "raw_task_content_authority_expired",
+                        "expired raw Grant did not fail closed")
+            else:
+                self.api(
+                    "/v1/raw-task-content/grants/" + self.raw_grant["grant_id"] + "/revoke",
+                    {"schema_version": "local-raw-task-content-revoke/v1",
+                     "expected_grant_signature": self.raw_grant["signature"],
+                     "actor_id": "automated-fixture-operator"},
+                )
+            self.run_cli()
+            require(self.session_key() == key, "raw-grant end changed native session")
+            after_raw_end = self.receipts()
+            self.assert_call(after_raw_end, allowed_after_raw_end["id"], "allow")
+            raw_after = self.api(
+                "/v1/raw-task-content/records/search",
+                {"schema_version": "local-raw-task-content-record-list/v1",
+                 "task_id": self.raw_binding["task_id"]},
+            )["items"]
+            require(
+                len(raw_after) == len(raw_before) == 2
+                and {item["record_id"] for item in raw_after}
+                == {item["record_id"] for item in raw_before},
+                "native call after raw Grant end created a new raw capture",
+            )
+            signed_count = len(after_raw_end)
             self.api(
                 "/v1/runtime-identities/" + self.issued["identity"]["identity_id"] + "/revoke",
                 {"schema_version": "local-runtime-identity-revoke/v1", "actor_id": "automated-fixture-operator"},
@@ -597,7 +662,7 @@ class Harness(native.fixture.Harness):
                     "task_id": self.raw_binding["task_id"],
                 },
             )["items"]
-            require(len(raw_records) == 2, "revoked run captured additional raw content")
+            require(len(raw_records) == 2, "inactive raw Grant run captured additional raw content")
             self.stop()
             verified = json.loads(self.command([str(self.binary), "verify"]))
             require(verified["verified"], "receipt chain invalid")
@@ -629,18 +694,24 @@ class Harness(native.fixture.Harness):
                     "allowed_read",
                     "native_raw_parameters_captured_after_explicit_task_grant",
                     "native_raw_output_captured_after_explicit_task_grant",
+                    "native_raw_grant_" + ("naturally_expired" if self.args.raw_expiry_seconds else "revoked") + "_while_runtime_identity_still_valid",
+                    *(["expired_raw_grant_permit_rejected_410"] if self.args.raw_expiry_seconds else []),
+                    "allowed_native_call_after_raw_grant_" + raw_end + "_adds_no_capture",
                     "receipt_chain_verified",
                     "revoked_identity_blocks_new_native_calls",
                 ],
                 "receipt_count": signed_count,
                 "installation": self.install_evidence,
                 "installer_configuration_compatible": True,
-                "model_requests": first_requests,
+                "model_requests": list(requests),
                 "raw_content": {
                     "record_count": 2,
+                    "authority_ended_by": "natural_expiry" if self.args.raw_expiry_seconds else "revoke",
                     "kinds": ["output", "parameters"],
                     "task_binding_source": "server-signed native session binding",
-                    "grant_id": self.raw_grant["grant_id"],
+                    # The grant identifier is not needed to assess this public
+                    # report. Keep only a digest, never the full local handle.
+                    "grant_id_sha256": hashlib.sha256(self.raw_grant["grant_id"].encode()).hexdigest(),
                     "plaintext_verified_via_admin_read": True,
                 },
                 "limitations": [
@@ -689,12 +760,17 @@ class Harness(native.fixture.Harness):
 
 
 def main():
+    os.umask(0o077)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--openclaw-root", type=Path, required=True)
     parser.add_argument("--node", type=Path, required=True)
     parser.add_argument("--binary", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--raw-expiry-seconds", type=int, default=0,
+                        help="use real wall-clock Grant expiry instead of revoke; minimum 60 seconds")
     args = parser.parse_args()
+    require(args.raw_expiry_seconds == 0 or 60 <= args.raw_expiry_seconds <= 600,
+            "--raw-expiry-seconds must be zero or between 60 and 600")
     args.openclaw_root, args.node, args.binary = (
         args.openclaw_root.resolve(),
         args.node.resolve(),
@@ -702,6 +778,15 @@ def main():
     )
     require(args.node.is_file(), "Node executable not found")
     require((args.openclaw_root / "openclaw.mjs").is_file(), "OpenClaw entrypoint not found")
+    # The fixture's first policy probe is a real native write. Refuse an
+    # incompatible host before creating that probe: a plugin import failure
+    # would otherwise let the write run outside SIQ's hook boundary.
+    host_package = json.loads((args.openclaw_root / "package.json").read_text())
+    entry = host_package.get("exports", {}).get("./plugin-sdk/plugin-entry", {})
+    entry_file = entry.get("default") if isinstance(entry, dict) else None
+    require(isinstance(entry_file, str) and entry_file.startswith("./dist/plugin-sdk/")
+            and (args.openclaw_root / entry_file).is_file(),
+            "OpenClaw host lacks the SIQ plugin SDK entrypoint; native write probe refused")
     with tempfile.TemporaryDirectory(prefix="siq-openclaw-managed-native-") as temporary:
         root = Path(temporary)
         harness = Harness(root, args)
@@ -712,8 +797,9 @@ def main():
             report = harness.public_cli()
         finally:
             harness.stop()
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(report, indent=2) + "\n")
+    args.out.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    with args.out.open("x") as output:
+        output.write(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report))
 
 

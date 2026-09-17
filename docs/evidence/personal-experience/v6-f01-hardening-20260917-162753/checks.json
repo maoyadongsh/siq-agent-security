@@ -1,0 +1,13 @@
+{
+  "schema": "siq-v6-f01-hardening-checks/v1",
+  "level": "component_and_build_only",
+  "checks": [
+    {"command": "go test ./internal/openshell -count=1", "cwd": "apps/agentshield", "exit_code": 0},
+    {"command": "go test ./...", "cwd": "apps/agentshield", "exit_code": 0},
+    {"command": "go vet ./...", "cwd": "apps/agentshield", "exit_code": 0},
+    {"command": "go test -race ./internal/openshell ./internal/server", "cwd": "apps/agentshield", "exit_code": 0},
+    {"command": "gofmt -l internal/openshell/policy.go internal/openshell/policy_state.go internal/openshell/task_exec_test.go", "cwd": "apps/agentshield", "exit_code": 0, "stdout": ""},
+    {"command": "git diff --check", "cwd": ".", "exit_code": 0, "stdout": ""}
+  ],
+  "not_run": ["live gateway", "browser end-to-end", "native macOS", "native Windows"]
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "v6-f05-owned-resources/v1",
+  "owned_sandbox": {
+    "name": "siq-v6-f05-171950",
+    "id": "8ed255ef-cd9b-4db2-867b-824169c78c43",
+    "phase_after_create": "Ready",
+    "current_policy_version_after_create": 1,
+    "cleanup_status": "deleted_exact_name_and_uuid_verified_absent_by_read_only_list_after_delete",
+    "policy_hash_before_delete": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43"
+  },
+  "candidate_binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+  "external_shared_gateway": {
+    "name": "siq-openshell-dev",
+    "endpoint": "https://127.0.0.1:17671",
+    "ownership": "external; no restart, reconfiguration, or deletion"
+  },
+  "inherited_protocol_source_sha256": "4eb968b01a62d589a14ec2ed1b8715ef8fddbf4654c6164b4fb31288d78dcb0e",
+  "created_at_utc": "2026-09-17T09:20:49.743453+00:00",
+  "measurement_exit_code": 0,
+  "isolated_state_cleanup": "driver-owned /tmp/siq-o05v6-taskexec-tg68trie absent after driver finally",
+  "shared_gateway_action": "none"
+}

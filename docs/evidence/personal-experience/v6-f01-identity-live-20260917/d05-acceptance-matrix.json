@@ -1,0 +1,336 @@
+{
+  "schema": "o05v6-d05-acceptance/v1",
+  "scope": "development-and-isolated-verification",
+  "candidate_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+  "acceptance_matrix": [
+    {
+      "item": "E01",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E02",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E03",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E04",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E05",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E06",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E07",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E08",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E09",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E10",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E11",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E12",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    },
+    {
+      "item": "E13",
+      "status": "not_run",
+      "detail": "no acceptance leg produced a verdict"
+    }
+  ],
+  "acceptance_status_counts": {
+    "not_run": 13
+  },
+  "meta": {
+    "candidate_binary": "<candidate-binary>",
+    "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+    "gateway_endpoint": "https://127.0.0.1:17671",
+    "sandbox_target": "siq-v6-f01-identity-20260917",
+    "fact_endpoint": "172.23.0.1:45131",
+    "fact_endpoint_role": "declared in SKILL.md so it becomes an admitted network fact, and contacted by the sandbox through the OpenShell proxy during E02",
+    "isolated_root": "<isolated-root>",
+    "isolated_state": "<isolated-root>/state",
+    "isolated_home": "<isolated-root>/home",
+    "canary_argv_count": 3,
+    "canary_path": "/tmp/o05v6-canary-949e8801f3467a31.txt",
+    "started_at": "2026-09-17T10:05:05.614256+00:00",
+    "ui_acceptance": "not_run",
+    "production_executor": "POST /v1/openshell/task-executions",
+    "notes": [
+      "canary stdout 由运行时随机 token 构成，无法被非真实执行伪造",
+      "原始 argv 只存在于人工批准的 params；证据/观测只存摘要"
+    ],
+    "declared_egress_targets": [
+      "172.23.0.1:45131",
+      "172.23.0.1:38991"
+    ],
+    "d05": {
+      "schema": "o05v6-d05-acceptance/v1",
+      "production_executor": "POST /v1/openshell/task-executions",
+      "receivers": {
+        "A": {
+          "port": 45131,
+          "log": "<evidence-root>/d05-private/d05-raw/arrivals-A.jsonl"
+        },
+        "B": {
+          "port": 38991,
+          "log": "<evidence-root>/d05-private/d05-raw/arrivals-B.jsonl"
+        }
+      },
+      "sandbox_peer": "not_calibrated"
+    }
+  },
+  "summary": {
+    "pass": 10,
+    "fail": 2,
+    "total": 12,
+    "failed_ids": [
+      "K90d",
+      "FATAL"
+    ]
+  },
+  "steps": [
+    {
+      "id": "D00a",
+      "title": "read the host aliases the sandbox itself publishes",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f01-identity-20260917",
+        "--no-tty",
+        "--",
+        "/bin/cat",
+        "/etc/hosts"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/D00a.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/D00a.cli.stderr.txt",
+      "duration_ms": 180,
+      "note": "read-only; this is the platform's own 'where is the host' answer, which is the address the egress proxy resolves -- not the sandbox default-route gateway, which is the proxy itself",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:05:05.794422+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "D00b",
+      "title": "sandbox->host egress address derived",
+      "kind": "derived",
+      "status": "pass",
+      "egress_ip": "172.23.0.1",
+      "alias": "host.openshell.internal",
+      "all_host_aliases": {
+        "host.docker.internal": "172.23.0.1",
+        "host.openshell.internal": "172.23.0.1"
+      },
+      "note": "derived from the sandbox's own /etc/hosts, not from its route table: the route-table gateway is the egress proxy's own namespace address and requests there are answered 502 by the proxy failing to reach itself",
+      "recorded_at": "2026-09-17T10:05:05.794447+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "D00c",
+      "title": "canary skill redeclares the two live egress endpoints",
+      "kind": "fixture",
+      "status": "pass",
+      "declared_endpoints": [
+        "172.23.0.1:45131",
+        "172.23.0.1:38991"
+      ],
+      "ports": [
+        "45131",
+        "38991"
+      ],
+      "note": "each declaration line carries `curl` so admission derives a network fact",
+      "recorded_at": "2026-09-17T10:05:05.794541+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "K00",
+      "title": "candidate binary identity bind",
+      "kind": "cli",
+      "status": "pass",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "version_stdout": "siq-agent-security 0.0.0-dev (linux/arm64)",
+      "bytes": 22918084,
+      "recorded_at": "2026-09-17T10:05:05.802828+00:00",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "K01a",
+      "title": "init isolated state dir",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "init",
+        "--port",
+        "42325"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K01a.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K01a.cli.stderr.txt",
+      "duration_ms": 24,
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:05:05.827408+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "K01b",
+      "title": "serve start (mode=block) + admin pairing on 127.0.0.1:53777",
+      "kind": "cli+http",
+      "command": [
+        "agentshield",
+        "serve",
+        "--port",
+        53777,
+        "--mode",
+        "block"
+      ],
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed"
+      },
+      "daemon_endpoint": "http://127.0.0.1:53777",
+      "stdout_file": "d05-private/d05-raw/K01b.serve-log.txt",
+      "recorded_at": "2026-09-17T10:05:05.883959+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "K02a",
+      "title": "real protection status: openshell probe",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/probe"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K02a.request.json",
+      "response_file": "d05-private/d05-raw/K02a.response.json",
+      "duration_ms": 5,
+      "key_fields": {
+        "ok": false
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:05:05.889701+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "K02b",
+      "title": "real protection status: openshell doctor",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/doctor"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K02b.request.json",
+      "response_file": "d05-private/d05-raw/K02b.response.json",
+      "duration_ms": 4,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:05:05.893749+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "K90a",
+      "title": "serve stop (SIGTERM drain)",
+      "kind": "cli",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:05:05.897113+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "K90c",
+      "title": "CLI observation: policy get siq-v6-f01-identity-20260917 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f01-identity-20260917",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K90c.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K90c.cli.stderr.txt",
+      "duration_ms": 90,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:05:05.987297+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "K90d",
+      "title": "sandbox policy content restored to the batch baseline",
+      "kind": "derived",
+      "status": "fail",
+      "baseline_hash": null,
+      "final_hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "baseline_version": null,
+      "final_version": "1",
+      "version_advanced_by_e02_window": true,
+      "note": "identity is the content hash; the version counter is expected to have advanced because the E02 window necessarily updated the policy, and the change is recorded rather than hidden",
+      "recorded_at": "2026-09-17T10:05:05.987320+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    },
+    {
+      "id": "FATAL",
+      "title": "the journey aborted",
+      "kind": "internal",
+      "status": "fail",
+      "detail": "StepFailure: the sandbox policy content was not restored: 21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43 != None",
+      "traceback_file": "d05-private/d05-raw/fatal.txt",
+      "recorded_at": "2026-09-17T10:05:05.990773+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f01-identity-20260917"
+    }
+  ],
+  "finished_at": "2026-09-17T10:05:05.990795+00:00"
+}
