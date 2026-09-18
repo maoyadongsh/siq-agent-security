@@ -74,7 +74,7 @@ func InspectRuntimeTarget(opts Options) (RuntimeTarget, error) {
 	}
 	material := map[string]any{"instance_id": opts.Instance.ID, "profile": opts.configRoot(), "native_cli": cli, "native_sha256": nativeHash, "service_sha256": serviceHash, "mode": opts.Mode, "endpoint": opts.Endpoint}
 	if profile != "" {
-		material["filesystem_profile"], material["root_identity_digest"] = profile, rootIdentity
+		material["filesystem_profile"], material["root_identity_digest"] = string(profile), rootIdentity
 	}
 	for _, name := range []string{"config.yaml", filepath.Join("plugins", product.PluginDir(), "plugin.yaml"), filepath.Join("plugins", product.PluginDir(), "__init__.py"), filepath.Join("plugins", product.PluginDir(), "config.json")} {
 		raw, err := inspectRead(opts.Home, filepath.Join(opts.configRoot(), name))
