@@ -1,0 +1,93 @@
+{
+  "source_sha": "0c9a335bcfa06205801f9b15b596c8c185dd34c4",
+  "source_dirty": false,
+  "checks": [
+    {
+      "name": "build-windows-amd64",
+      "exit": 0
+    },
+    {
+      "name": "identity-windows-amd64",
+      "exit": 0
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0
+    },
+    {
+      "name": "identity-linux-amd64",
+      "exit": 0
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0
+    },
+    {
+      "name": "identity-linux-arm64",
+      "exit": 0
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0
+    },
+    {
+      "name": "identity-darwin-arm64",
+      "exit": 0
+    },
+    {
+      "name": "vet",
+      "exit": 0
+    },
+    {
+      "name": "gofmt",
+      "exit": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "target": "windows/amd64",
+      "sha256": "52d8f3674d1f3141ee613fb28d4982743962c09ad7f26ec0ab889c13bd4eee3e",
+      "source_sha": "0c9a335bcfa06205801f9b15b596c8c185dd34c4",
+      "source_dirty": false
+    },
+    {
+      "target": "linux/amd64",
+      "sha256": "f800978d2d5c53247ce2fa8c036b76ae6ef30536e88e63f99f9519c8fa7fa4ca",
+      "source_sha": "0c9a335bcfa06205801f9b15b596c8c185dd34c4",
+      "source_dirty": false
+    },
+    {
+      "target": "linux/arm64",
+      "sha256": "981fcb3ca83bfda5d77865c000b8a501d31a65eca0d7f1533f461f97c78ba3b3",
+      "source_sha": "0c9a335bcfa06205801f9b15b596c8c185dd34c4",
+      "source_dirty": false
+    },
+    {
+      "target": "darwin/arm64",
+      "sha256": "a5018fea594dd3c76cf8ceccd0c6fa25884eac86ada420e510d5cb1e5d8f1b74",
+      "source_sha": "0c9a335bcfa06205801f9b15b596c8c185dd34c4",
+      "source_dirty": false
+    }
+  ],
+  "native_negative": [
+    {
+      "case": "untrusted",
+      "exit": 1,
+      "state_not_created": true,
+      "expected_reason": true
+    },
+    {
+      "case": "runtime",
+      "exit": 1,
+      "state_not_created": true,
+      "expected_reason": true
+    },
+    {
+      "case": "unconfirmed",
+      "exit": 1,
+      "state_not_created": true,
+      "expected_reason": true
+    }
+  ],
+  "scope": "CLI implementation and native refusal only; no signed-release installation, real task registration, host or model calls"
+}
