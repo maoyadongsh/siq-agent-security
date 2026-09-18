@@ -56,6 +56,8 @@ OpenClaw 的实际可用路径是本机 WSL，Hermes 是 Windows 原生 CLI；�
 
 2026-09-19 新候选 Skill 归属接通：`eac2a99` 在真实 OpenClawGateway WSL 宿主完成产品导入、安装、激活、原生 Skill 目录识别、安装绑定身份接入；同一原生会话在未签发 SEC 时拒绝，管理员明确签发后读取成功并产生 `verified / controlled_session` 归属及 observation，撤销 SEC 后拒绝。独立核对 4 条持久回执、哨兵不变、受管插件卸载和自有进程无残留，耗时 70.98 秒。见 [Skill 归属结果](evidence/personal-experience/windows-sunbo/openclaw-sec-eac2a99-20260919/report.json)。使用合成 Skill 与本地模拟模型；不证明正式发行包、Windows 原生 OpenClaw Agent、逐调用因果、更新或审批恢复。
 
+2026-09-19 OpenClaw 更新/移除增量：同一 `eac2a99` 候选的本地 V1→V2 旅程完成 31 项检查（80.08 秒）：取消与未确认不改旧版本、内容漂移/伪造签名拒绝、更新撤销旧 Grant/SEC、新版本明确重新授权后真实读取、安全移除及未知用户文件保留。独立核对安装目录消失、三个自定义文件和哨兵不变、受管插件卸载及无自有进程残留。见 [完整结果和前三次失败](evidence/personal-experience/windows-sunbo/openclaw-update-eac2a99-20260919/report.json)。本机 OpenClaw 2026.9.4 的新会话实测路径为公开 `--session-key agent:<agent>:<new-key>`，先完成不调用工具的一轮以建立原生 epoch，再申请该实际会话的 SEC；单用旧脚本的 `--session-id` 路径缺少钩子必需元数据，继续拒绝。没有改写宿主会话库、伪造 epoch 或放宽 Authority。前两次为验证脚本在 Agent 配置前查询目录失败，第三次在新会话元数据检查失败；最终修正夹具顺序与公开会话入口后通过。该结果不覆盖云端更新源、双操作者并发、原生 hold 审批恢复或正式发行包。
+
 ## 历史固定源码与已有检查
 
 - 实现候选：`494464ea9f3cff90be4dc0ceac0dd5980c464617`。Windows amd64 自建二进制 SHA256：`ad7680ba64672c9abbaab341ecebea4946e317e2fc3c6160cb5a0ade7e6d9d16`。已有干净候选构建退出 0。
