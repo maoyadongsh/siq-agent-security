@@ -1,0 +1,54 @@
+{
+  "schema_version": "windows-hermes-skill-sec-evidence/v1",
+  "candidate_sha": "d9ad885f2f894dce3f7c9dd036130df7bb436e2a",
+  "source_dirty": false,
+  "binary_sha256": "f37203184bfb9041f93332f6828240f2e141c1f2156164b0de17f2c3d2a8df9e",
+  "status": "pass",
+  "method": "native Windows Hermes CLI --skills managed-fixture; isolated profile and local deterministic model",
+  "paid_model_calls": false,
+  "seconds": 171.59,
+  "checks": [
+    "formal_import_permission_install_activate",
+    "native_skill_explicitly_loaded",
+    "unbound_call_denied_without_file",
+    "explicit_admin_session_binding",
+    "bound_native_write_allowed_and_observed",
+    "revoked_context_denies_overwrite_in_same_native_session",
+    "signed_receipt_chain_and_context_verified",
+    "runtime_identity_revoked",
+    "adapter_uninstalled",
+    "owned_jobs_closed"
+  ],
+  "receipt_count": 4,
+  "signed_documents_verified": 5,
+  "owned_jobs_closed": 5,
+  "controller_sha256": "b15896e407d9df21004db3059d47a2ed283b82f479903977205171557e823f43",
+  "private_report_sha256": "8468595da9b018d1bb81b1f92d27667e68fa87d7ba2420decaa5f53f56ffbc7e",
+  "limitations": [
+    "Synthetic Skill; not a formally signed distribution.",
+    "Controlled-session attribution, not per-call Skill causality.",
+    "Does not prove update/removal or native hold/approval resume.",
+    "Explicit --skills loading; automatic catalog discovery was not demonstrated.",
+    "Native enable flag was prepared in isolated fixture before adapter installation."
+  ],
+  "controller_status": "fail",
+  "controller_failure": "post-run JSON parsing rejected native budget annotation; retained unchanged",
+  "independent_native_chain_verification": "pass",
+  "historical_attempts": [
+    {
+      "attempt": 3,
+      "status": "fail",
+      "reason": "5s production request budget expired; no actual write despite allow receipt"
+    },
+    {
+      "attempt": 1,
+      "status": "fail",
+      "reason": "fixture activation request used wrong confirmation field; rejected before native launch"
+    },
+    {
+      "attempt": 2,
+      "status": "fail",
+      "reason": "file-only invocation did not expose installed Skill in model catalog; fixture refused before tool execution"
+    }
+  ]
+}

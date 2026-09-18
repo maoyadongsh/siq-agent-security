@@ -1,0 +1,42 @@
+{
+  "candidate": "d9ad885f2f894dce3f7c9dd036130df7bb436e2a",
+  "unsigned": true,
+  "results": [
+    {
+      "target": "windows/amd64",
+      "exit_code": 0,
+      "stderr": "",
+      "sha256": "f37203184bfb9041f93332f6828240f2e141c1f2156164b0de17f2c3d2a8df9e",
+      "bytes": 26397184
+    },
+    {
+      "target": "linux/amd64",
+      "exit_code": 0,
+      "stderr": "",
+      "sha256": "4aaa2db194c855318668d6c29a0c299acd90410eab1e2810d970162c8a704d10",
+      "bytes": 25771291
+    },
+    {
+      "target": "linux/arm64",
+      "exit_code": 0,
+      "stderr": "",
+      "sha256": "6f3f0f4125100e6aaeecc6c83ca8ff767fed11293cbd3b21238be76d78898604",
+      "bytes": 24212938
+    },
+    {
+      "target": "darwin/arm64",
+      "exit_code": 0,
+      "stderr": "",
+      "sha256": "ba1653bf96cd1e66e6e266f767192c9d2388713ee703e39f26e9865cb68558a5",
+      "bytes": 24653106
+    }
+  ],
+  "embedded_version": "0.0.0-dev",
+  "release_requires_versioned_rebuild": true,
+  "archive": {
+    "file": "windows-unsigned-candidate-d9ad885-reviewed.zip",
+    "sha256": "7da0db60c367b5c1125331ccdd25e88f90ca867140d08ebe7d81f3c28afd6ada",
+    "bytes": 66039676
+  },
+  "skill_payload_unchanged_from": "2d5ee6c725e865b2c0769f0d35ac839161dbb717"
+}

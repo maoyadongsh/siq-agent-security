@@ -1,5 +1,7 @@
 # Windows 修复候选签名交接
 
+当前签发交接候选已更新为 `d9ad885f2f894dce3f7c9dd036130df7bb436e2a`（Windows Hermes 请求预算修复）。四目标仍为干净构建、嵌入版本 `0.0.0-dev`，正式发行须由维护者选择批准版本重建并签发。当前归档 `windows-unsigned-candidate-d9ad885-reviewed.zip`，SHA256 `7da0db60c367b5c1125331ccdd25e88f90ca867140d08ebe7d81f3c28afd6ada`；见 [新摘要](evidence/personal-experience/windows-sunbo/hermes-skill-budget-20260919/unsigned-candidate.json)。下方旧候选摘要保留为历史，不用于本次签发。
+
 2026-09-19 03 时当前交接源码为 `eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8`，包含安装后会话绑定界面、在线 SEC 安装读取接线及长路径诊断修复。四目标干净开发构建位于 `.tmp/windows-goal-20260916/windows-unsigned-candidate-eac2a99/`；归档为 `windows-unsigned-candidate-eac2a99-reviewed.zip`，SHA256 `973a669ad110ee4540f766b1ba0572b82b7d573b97b7659ba0780db73abcd4bd`，66,029,577 字节。见 [当前候选记录](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/unsigned-candidate.json)。
 
 嵌入版本仍为 `0.0.0-dev`，维护者必须从此固定源码按批准正式版本重建四目标并记录新摘要后签发，不能直接将开发包标为正式发行。Skill 载荷经源码差异与逐文件摘要确认和 2d5ee6c 相同，旧正式清单、签名及信任根未改。2d5ee6c 的归档和宿主证据保留为历史，不作为当前二进制实测。下方 ff16606/candidate.1 步骤仍是历史准备记录，当前源码与摘要以本段为准。
