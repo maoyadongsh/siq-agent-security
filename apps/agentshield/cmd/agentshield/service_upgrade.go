@@ -26,14 +26,17 @@ func cmdServiceUpgrade(args []string, out io.Writer) error {
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
-	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
-		return errors.New("service-upgrade: Linux user service or macOS LaunchAgent integration required")
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" && runtime.GOOS != "windows" {
+		return errors.New("service-upgrade: Linux user service, macOS LaunchAgent or Windows task integration required")
 	}
 	if !*confirm || *manifest == "" || *binary == "" || fs.NArg() != 0 {
 		return errors.New("升级会短暂停止保护，block 模式下受控操作将被拒绝；请提供 --manifest FILE --binary FILE --confirm-upgrade")
 	}
 	if *recoverID != "" && *sourceManifest != "" {
 		return errors.New("service-upgrade: source-manifest applies only to a new upgrade")
+	}
+	if runtime.GOOS == "windows" {
+		return cmdServiceUpgradeWindows(*manifest, *sourceManifest, *binary, *recoverID, out)
 	}
 	if runtime.GOOS == "darwin" {
 		return cmdServiceUpgradeDarwin(*manifest, *sourceManifest, *binary, *recoverID, out)
