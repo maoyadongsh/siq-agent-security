@@ -228,6 +228,10 @@ func TestUnmarkedMigrationPreservesPrivateReadonlyTree(t *testing.T) {
 	if e := os.Chmod(p, 0500); e != nil {
 		t.Fatal(e)
 	}
+	original, err := os.Stat(p)
+	if err != nil {
+		t.Fatal(err)
+	}
 	// A pre-publication crash can leave an unpublished scratch file. It is retained.
 	scratch := filepath.Join(s.Dir, stateformat.MigrationDir, "tmp")
 	os.MkdirAll(scratch, 0700)
@@ -236,7 +240,7 @@ func TestUnmarkedMigrationPreservesPrivateReadonlyTree(t *testing.T) {
 		t.Fatal(e)
 	}
 	info, e := os.Stat(p)
-	if e != nil || info.Mode().Perm() != 0500 {
+	if e != nil || info.Mode() != original.Mode() {
 		t.Fatal("source directory permissions changed", e)
 	}
 	if _, e := os.Stat(filepath.Join(scratch, ".migration-orphan")); e != nil {
