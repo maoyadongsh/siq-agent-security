@@ -206,6 +206,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/skill-installations/updates", s.auth(s.skillUpdateCommit, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/updates/", s.auth(s.skillUpdateOperation, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/plans", s.auth(s.skillInstallPlanCreate, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installation-targets", s.auth(s.skillInstallationTargets, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/plans/", s.auth(s.skillInstallPlanRead, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/apply", s.auth(s.skillInstallApply, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/operations", s.auth(s.skillInstallCatalog, capAdmin))
@@ -701,7 +702,9 @@ func (s *Server) runInventory(cwd string) (*inventory.Report, error) {
 	for _, a := range admissions {
 		byHash[a.ContentHash] = a.Verdict
 	}
+	workBuddyRoot, workBuddyDisabled := s.inventoryWorkBuddyRoot()
 	return inventory.Run(inventory.Options{HermesHome: s.d.HermesHome, LocalAppData: s.d.LocalAppData, Home: s.d.Home, Cwd: cwd, Version: s.d.Version, Key: s.d.Key,
+		WorkBuddyConfigDir: workBuddyRoot, WorkBuddyDisabled: workBuddyDisabled,
 		ProjectDirs: roots.ProjectDirs, SkillDirs: roots.SkillDirs,
 		ConnectorsDir: strings.TrimSpace(os.Getenv("SIQ_AS_CONNECTORS_DIR")),
 		HasAdmission:  func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
@@ -927,7 +930,7 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 400, map[string]any{"error": "platform_out_of_scope"})
 		return
 	}
-	if importsource.Reserved(g.AdmissionID) && (parts[1] == "challenge" || parts[1] == "approve" || parts[1] == "draft") {
+	if importsource.Reserved(g.AdmissionID) && (parts[1] == "challenge" || parts[1] == "approve" || parts[1] == "draft" || parts[1] == "resources") {
 		if !s.skillImportSlot(w) {
 			return
 		}

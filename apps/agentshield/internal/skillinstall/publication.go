@@ -338,6 +338,9 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 	if err := privateDirectory(filepath.Dir(pool)); err != nil {
 		return err
 	}
+	if err := s.publicationTargetUnchanged(ctx, c, destination, pool); err != nil {
+		return err
+	}
 	if err := statefs.Mkdir(pool, 0700); err != nil {
 		if os.IsExist(err) {
 			return ErrConflict
@@ -358,6 +361,9 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 		if err != nil {
 			return ErrUnavailable
 		}
+		if err := s.publicationTargetUnchanged(ctx, c, destination, pool); err != nil {
+			return err
+		}
 		if err := writeOpaque(opaque(pool, "d", i), raw, false); err != nil {
 			return err
 		}
@@ -366,6 +372,9 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 		raw, err := snapshot.ReadFile(ctx, file.Path)
 		if err != nil {
 			return sourceError(ctx, err)
+		}
+		if err := s.publicationTargetUnchanged(ctx, c, destination, pool); err != nil {
+			return err
 		}
 		if err := writeOpaque(opaque(pool, "f", i), raw, file.Executable); err != nil {
 			return err
@@ -386,14 +395,28 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 	if current, currentPool, err := s.destination(ctx, c.Plan); err != nil || current != destination || currentPool != pool {
 		return ErrChanged
 	}
-	if _, err := targetPath(Target{Root: filepath.Dir(filepath.Dir(destination))}, c.Plan.DirectoryName); err != nil {
-		return err
-	}
-	if err := statefs.Mkdir(filepath.Dir(destination), 0700); err != nil && !os.IsExist(err) {
-		return ErrUnavailable
+	if c.Plan.SchemaVersion == planV2 {
+		if _, err := vacantTarget(filepath.Dir(destination), c.Plan.DirectoryName); err != nil {
+			return err
+		}
+		if err := s.createScopedParents(ctx, c, pool); err != nil {
+			return err
+		}
+	} else {
+		if _, err := targetPath(Target{Root: filepath.Dir(filepath.Dir(destination))}, c.Plan.DirectoryName); err != nil {
+			return err
+		}
+		if err := statefs.Mkdir(filepath.Dir(destination), 0700); err != nil && !os.IsExist(err) {
+			return ErrUnavailable
+		}
 	}
 	if err := checkDirectories(filepath.Dir(destination)); err != nil {
 		return err
+	}
+	if c.Plan.SchemaVersion == planV2 {
+		if _, _, err := s.destination(ctx, c.Plan); err != nil {
+			return err
+		}
 	}
 	dirIndices := map[string]int{}
 	for i, dir := range dirs {
@@ -416,6 +439,9 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 				return err
 			}
 		}
+		if err := s.publicationTargetUnchanged(ctx, c, destination, pool); err != nil {
+			return err
+		}
 		if err := statefs.Mkdir(path, 0700); err != nil {
 			if os.IsExist(err) {
 				return ErrConflict
@@ -431,11 +457,14 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 		// restart recovery never guesses ownership of an unmarked directory.
 		markErr := s.boundary("directory_created:" + dir)
 		if markErr == nil {
+			markErr = s.publicationTargetUnchanged(ctx, c, destination, pool)
+		}
+		if markErr == nil {
 			markErr = publishOpaque(ctx, opaque(pool, "d", i), filepath.Join(path, ownerName), false, hardlinkTarget)
 		}
 		if markErr != nil {
 			current, readErr := os.Lstat(path)
-			if readErr == nil && current.IsDir() && current.Mode()&os.ModeSymlink == 0 && os.SameFile(created, current) {
+			if readErr == nil && current.IsDir() && current.Mode()&os.ModeSymlink == 0 && os.SameFile(created, current) && s.publicationTargetUnchanged(ctx, c, destination, pool) == nil {
 				_ = statefs.Remove(path) // only an empty directory; never RemoveAll
 			}
 			return ErrUnavailable
@@ -474,6 +503,9 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 		raw, info, err := readBounded(ctx, opaque(pool, "f", i), 8<<20)
 		if err != nil || int64(len(raw)) != file.Bytes || hash(raw) != file.SHA256 || (info.Mode().Perm()&0111 != 0) != file.Executable {
 			return ErrChanged
+		}
+		if err := s.publicationTargetUnchanged(ctx, c, destination, pool); err != nil {
+			return err
 		}
 		if err := publishOpaque(ctx, opaque(pool, "f", i), path, file.Executable, hardlinkTarget); err != nil {
 			return err
@@ -613,6 +645,9 @@ func (s *Store) cleanupTarget(ctx context.Context, c *Claim, prefix string) erro
 		if err := ownedFile(ctx, destination, pool, c.Files[i], i, c.Plan.Platform); err != nil {
 			return err
 		}
+		if err := s.publicationTargetUnchanged(ctx, c, destination, pool); err != nil {
+			return err
+		}
 		if err := statefs.Remove(filepath.Join(destination, filepath.FromSlash(path))); err != nil {
 			return ErrChanged
 		}
@@ -643,6 +678,9 @@ func (s *Store) cleanupTarget(ctx context.Context, c *Claim, prefix string) erro
 		if len(names) != 1 || names[0] != ownerName {
 			return ErrChanged
 		}
+		if err := s.publicationTargetUnchanged(ctx, c, destination, pool); err != nil {
+			return err
+		}
 		if err := statefs.Remove(filepath.Join(directory, ownerName)); err != nil {
 			return ErrChanged
 		}
@@ -650,6 +688,9 @@ func (s *Store) cleanupTarget(ctx context.Context, c *Claim, prefix string) erro
 			if err := s.boundary(prefix + "owner_removed:" + dirs[i]); err != nil {
 				return ErrUnavailable
 			}
+		}
+		if err := s.publicationTargetUnchanged(ctx, c, destination, pool); err != nil {
+			return err
 		}
 		if err := statefs.Remove(directory); err != nil {
 			return ErrChanged

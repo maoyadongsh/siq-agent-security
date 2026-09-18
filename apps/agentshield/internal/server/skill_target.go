@@ -24,8 +24,8 @@ func (s *Server) resolveSkillTarget(ctx context.Context, id string) (skillinstal
 	return target, nil
 }
 
-// WorkBuddy is an identity target only. It does not silently become a supported
-// Skill installation target. All product roots participate in ambiguity checks.
+// All product roots participate in ambiguity checks. WorkBuddy installation
+// still requires the separate versioned scope resolver; v1 never infers one.
 func (s *Server) resolveRuntimeIdentityTarget(ctx context.Context, id string) (skillinstall.Target, error) {
 	if err := ctx.Err(); err != nil {
 		return skillinstall.Target{}, err

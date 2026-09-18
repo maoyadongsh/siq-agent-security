@@ -6,14 +6,37 @@ import (
 	"encoding/json"
 	"errors"
 	"reflect"
+	"regexp"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
+	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"siq-agent-security/apps/agentshield/internal/runtimepath"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
 
 var ErrFilesystemProfile = errors.New("grant_filesystem_profile_invalid")
+
+var windowsImportedAdmission = regexp.MustCompile(`^adm-si-[a-f0-9]{64}$`)
+var windowsImportedSubject = regexp.MustCompile(`^hri-[a-f0-9]{32}$`)
+var windowsImportedContent = regexp.MustCompile(`^[a-f0-9]{64}$`)
+
+// This checks signed shape only. The management boundary additionally verifies
+// the immutable import admission/snapshot before resource changes or approval.
+// Keeping the SkillRef makes installation and controlled-session attribution
+// mandatory; an imported grant can never turn into a baseline by dropping it.
+func windowsProfileSubject(g Grant) bool {
+	if g.Skill == nil {
+		return !importsource.Reserved(g.AdmissionID)
+	}
+	validText := func(value string, limit int, empty bool) bool {
+		return (empty || value != "") && utf8.ValidString(value) && strings.TrimSpace(value) == value && utf8.RuneCountInString(value) <= limit && strings.IndexFunc(value, unicode.IsControl) < 0
+	}
+	return windowsImportedAdmission.MatchString(g.AdmissionID) && windowsImportedSubject.MatchString(g.Subject.ID) &&
+		validText(g.Skill.SkillID, 128, false) && (g.Skill.Version == nil || validText(*g.Skill.Version, 64, true)) && windowsImportedContent.MatchString(g.Skill.ContentHash)
+}
 
 // Legacy documents cannot smuggle new interpretation fields as empty/null
 // values that would disappear again when their signatures are reconstructed.
@@ -89,7 +112,7 @@ func ValidateFilesystemProfile(g Grant) error {
 	if g.SchemaVersion == "" && g.FilesystemProfile == "" && g.FilesystemBindings == nil {
 		return nil
 	}
-	if g.SchemaVersion != "grant/v2" || g.FilesystemProfile != string(runtimeaction.FilesystemWindowsLocalDriveV1) || g.FilesystemBindings == nil || g.Subject.Type != "agent_instance" || (g.Platform != "hermes" && g.Platform != "openclaw" && g.Platform != "workbuddy") || g.Skill != nil {
+	if g.SchemaVersion != "grant/v2" || g.FilesystemProfile != string(runtimeaction.FilesystemWindowsLocalDriveV1) || g.FilesystemBindings == nil || g.Subject.Type != "agent_instance" || (g.Platform != "hermes" && g.Platform != "openclaw" && g.Platform != "workbuddy") || !windowsProfileSubject(g) {
 		return ErrFilesystemProfile
 	}
 	expected := map[string]bool{}
@@ -179,7 +202,7 @@ func RecheckFilesystemBindings(g Grant) error {
 // the versioned human confirmation route and the state compatibility barrier
 // before publication; this function neither persists nor approves anything.
 func PrepareWindowsResources(source Grant, input ResourceEdit, confirm bool, key *signing.Key) (Grant, DesiredPolicy, error) {
-	if !confirm || key == nil || !Verify(key.Public(), source) || source.Status != "pending_approval" || source.SchemaVersion != "" || source.Skill != nil || source.Subject.Type != "agent_instance" || (source.Platform != "hermes" && source.Platform != "openclaw" && source.Platform != "workbuddy") {
+	if !confirm || key == nil || !Verify(key.Public(), source) || source.Status != "pending_approval" || source.SchemaVersion != "" || !windowsProfileSubject(source) || source.Subject.Type != "agent_instance" || (source.Platform != "hermes" && source.Platform != "openclaw" && source.Platform != "workbuddy") {
 		return source, nil, ErrFilesystemProfile
 	}
 	raw, err := json.Marshal(source)

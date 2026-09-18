@@ -280,7 +280,7 @@ func gitLoopFixture(t *testing.T) gitLoop {
 	if err != nil {
 		t.Fatal(err)
 	}
-	f := fixture{s, Request{"local-skill-install-stage-create/v1", "is-" + strings.Repeat("d", 32), approved.GrantID, rev, instance, "example", "human"}, source, root, id}
+	f := fixture{s, Request{SchemaVersion: "local-skill-install-stage-create/v1", RequestID: "is-" + strings.Repeat("d", 32), GrantID: approved.GrantID, ExpectedRevision: rev, InstanceID: instance, DirectoryName: "example", ActorID: "human"}, source, root, id}
 	// Pin the installed record to git after the install flow is complete;
 	// from here on the upstream seam answers checks from the live repo.
 	gitLoopPinRecord(t, f, id, commit)

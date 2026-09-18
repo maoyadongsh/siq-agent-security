@@ -155,7 +155,7 @@ func (s *Store) liveInstall(ref InstallRef, g *grant.Grant) error {
 	if err != nil || rec == nil {
 		return invalid("skill_context_install_changed")
 	}
-	if rec.SchemaVersion != "local-skill-install-record/v1" || rec.RecordedStatus != "installed_unverified" ||
+	if !skillinstall.ValidRecordVersion(rec) || rec.RecordedStatus != "installed_unverified" ||
 		rec.ClaimSignature != ref.ClaimSignature || rec.Plan.GrantID != g.GrantID {
 		return invalid("skill_context_install_changed")
 	}
@@ -187,7 +187,7 @@ func (s *Store) Issue(req IssueRequest) (*Context, error) {
 	if err != nil || install == nil {
 		return nil, invalid("skill_context_install_changed")
 	}
-	if install.SchemaVersion != "local-skill-install-record/v1" || install.RecordedStatus != "installed_unverified" ||
+	if !skillinstall.ValidRecordVersion(install) || install.RecordedStatus != "installed_unverified" ||
 		install.Plan.Platform != inst.Platform || install.Plan.InstanceID != req.InstanceID {
 		return nil, invalid("skill_context_install_changed")
 	}

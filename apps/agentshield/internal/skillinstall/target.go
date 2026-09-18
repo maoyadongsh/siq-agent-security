@@ -55,6 +55,13 @@ func targetPath(target Target, name string) (string, error) {
 		return "", err
 	}
 	parent := filepath.Join(target.Root, "skills")
+	return vacantTarget(parent, name)
+}
+
+func vacantTarget(parent, name string) (string, error) {
+	if !nameValid(name) {
+		return "", ErrInvalid
+	}
 	destination := filepath.Join(parent, name)
 	if _, err := os.Lstat(parent); os.IsNotExist(err) {
 		return destination, nil

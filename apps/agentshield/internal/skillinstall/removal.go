@@ -136,7 +136,7 @@ func (s *Store) pendingGrantRemoval(ctx context.Context, grantID string) error {
 }
 func (s *Store) removalAuthority(ctx context.Context, c *Claim) (*grant.Grant, int, string, string, error) {
 	g, revision, err := s.authority.GetGrantWithSeq(c.Plan.GrantID)
-	if err != nil || g == nil || !grant.Verify(s.key.Public(), *g) || (g.Status != "approved" && g.Status != "revoked") || g.Platform != c.Plan.Platform || !supportedPlatform(g.Platform) || g.Subject.Type != "agent_instance" || g.Subject.ID != subjectForInstance(c.Plan.InstanceID) {
+	if err != nil || g == nil || !grant.Verify(s.key.Public(), *g) || (g.Status != "approved" && g.Status != "revoked") || g.Platform != c.Plan.Platform || !validPlanTarget(c.Plan) || g.Subject.Type != "agent_instance" || g.Subject.ID != subjectForInstance(c.Plan.InstanceID) {
 		return nil, 0, "", "", ErrChanged
 	}
 	admissionID, err := c.Plan.Source.AdmissionID()
@@ -171,7 +171,7 @@ func (s *Store) removalView(ctx context.Context, id string) (*RemovalView, *Clai
 	if record.RecordedStatus != "installed_unverified" || record.Operation == nil {
 		return nil, nil, ErrConflict
 	}
-	v := &RemovalView{SchemaVersion: "local-skill-install-removal-view/v1", Record: *record, Status: "not_requested"}
+	v := &RemovalView{SchemaVersion: record.Plan.wireVersion("local-skill-install-removal-view"), Record: *record, Status: "not_requested"}
 	removal, err := s.readRemovalClaim(ctx, id)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, nil, err

@@ -96,7 +96,7 @@ func setupFiles(t *testing.T, extra map[string]string) fixture {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return fixture{s, Request{"local-skill-install-stage-create/v1", "is-" + strings.Repeat("d", 32), approved.GrantID, rev, instance, "example", "human"}, source, root, id}
+	return fixture{s, Request{SchemaVersion: "local-skill-install-stage-create/v1", RequestID: "is-" + strings.Repeat("d", 32), GrantID: approved.GrantID, ExpectedRevision: rev, InstanceID: instance, DirectoryName: "example", ActorID: "human"}, source, root, id}
 }
 func (f fixture) revoke(t *testing.T) {
 	t.Helper()
