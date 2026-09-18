@@ -1,0 +1,32 @@
+{
+  "production_source": "f2ab8a7238dbcd85fe82a4af19aad2cd490f2658",
+  "only_new_tests_and_spec": true,
+  "exit": 1,
+  "seconds": 12.572,
+  "summary": {
+    "counts": {
+      "sub_fail": 11,
+      "top_fail": 4,
+      "package_fail": 1
+    },
+    "failed_tests": [
+      "TestWindowsIntentPrivateReadAndCachedStore/file",
+      "TestWindowsIntentPrivateReadAndCachedStore/directory",
+      "TestWindowsIntentPrivateReadAndCachedStore/state",
+      "TestWindowsIntentPrivateReadAndCachedStore",
+      "TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence/intent-binding-revocations",
+      "TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence/intent-revocations",
+      "TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence/intent-bindings",
+      "TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence",
+      "TestWindowsIntentMissingRevocationDirectoryDenies",
+      "TestWindowsIntentPublishAndOpenRejectBroadDirectory/intents",
+      "TestWindowsIntentPublishAndOpenRejectBroadDirectory/intent-bindings",
+      "TestWindowsIntentPublishAndOpenRejectBroadDirectory/intent-binding-revocations",
+      "TestWindowsIntentPublishAndOpenRejectBroadDirectory/intent-revocations",
+      "TestWindowsIntentPublishAndOpenRejectBroadDirectory/context-assertions",
+      "TestWindowsIntentPublishAndOpenRejectBroadDirectory"
+    ],
+    "skipped_tests": [],
+    "log_sha256": "62e627f7f78567213a5179c20a23070a4ad2f0fceedaabee1e8ee98bff067ea8"
+  }
+}
