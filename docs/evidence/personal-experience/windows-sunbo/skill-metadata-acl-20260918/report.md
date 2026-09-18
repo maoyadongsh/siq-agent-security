@@ -17,7 +17,7 @@
 - Windows 原生 SIQ 服务在隔离合成 OpenClaw 配置中执行真实导入、挑战批准、计划、安装、读回和移除。独立 .NET 查询元数据根、plans、计划和操作记录的 owner、protected DACL 和允许主体；宽 ACL 注入后拒绝读取，内容和 ACL 不变，测试恢复权限后可正常读取。合计 35 条断言，实际目标内容一致，移除后目标消失。
 - 原生脚本 r1 误用响应 record 字段，在导入后停止；r2 完成安装后误在顶层读取 runtime_verified。两次均收回专用进程并确认端口关闭，未隐藏失败。r2 在同一二进制、同一状态继续读回、验证操作记录拒绝及移除，没有重新安装；最终正常签名 stop、进程退出、端口关闭。完整分段事实见 native-api-verification.json 和 fixture-attempts.json。
 - 同一干净6a6e47c二进制另行完成原生更新旅程：24次HTTP调用、29断言通过。准备保持旧文件；更新计划/目录宽ACL拒绝且内容/ACL保持；确认后实际第二版字节一致；重复提交签名结果相同、宿主文件无额外变化；旧Grant读回revoked。独立核查update-plans/update-operations/update-installations记录DACL，新版读回及卸载完成，正常签名停止、端口关闭、夹具ACL还原。见 native-update-verification.json；零模型/实际宿主调用。
-- Skill 整包在独立干净源码树运行，见 full-package-status.json；在拿到终态前不宣称整包通过。旧 b321a5d 的完整 Go 回归已退出 1，详见同级 migration-publication-20260918/full-go-verification.json，不属于本批源码结果。
+- Skill 整包已在独立干净6a6e47c源码树结束，退出1：105顶层通过、1失败、1跳过；128子测试通过、1失败、1跳过。唯一失败是Inspection/type_changed无法创建符号链接（Windows 1314）；另一个symlink子场景和Darwin原生项跳过，均未记为通过。没有超时。见 full-package-status.json，不声明整包通过。旧 b321a5d 的完整 Go 回归已退出 1，详见同级 migration-publication-20260918/full-go-verification.json，不属于本批源码结果。
 
 ## 重放和边界
 
