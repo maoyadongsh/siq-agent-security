@@ -1,0 +1,126 @@
+package adapterinstall
+
+import (
+	"encoding/json"
+	"errors"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"siq-agent-security/apps/agentshield/internal/adapters"
+	"siq-agent-security/apps/agentshield/internal/hermeshome"
+	"siq-agent-security/apps/agentshield/internal/product"
+)
+
+func WithWorkBuddyInstance(opts Options, root string) Options {
+	opts.Instance = &InstanceTarget{ID: hermeshome.Identifier(root), Name: "default", ConfigDir: root}
+	return opts
+}
+
+func workBuddyManagedConfigPath(o Options) string {
+	return filepath.Join(o.configRoot(), product.Name+".json")
+}
+
+// WorkBuddyManagedConfigReference detects the file and recorded managed
+// installations with a removed file. Neither may fall back to shared tokens.
+func WorkBuddyManagedConfigReference(home, stateDir string) (string, bool, error) {
+	o := Options{Platform: WorkBuddy, Home: home, StateDir: stateDir}
+	if err := validateWorkBuddyConfigDir(); err != nil {
+		return "", false, err
+	}
+	path := workBuddyManagedConfigPath(o)
+	if _, err := os.Lstat(path); err == nil {
+		return path, true, nil
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return path, true, err
+	}
+	record, err := newestInstanceRecord(o)
+	if err != nil && !errors.Is(err, errNoInstallRecord) {
+		return path, false, err
+	}
+	return path, record != nil && record.RuntimeIdentityID != "", nil
+}
+
+func workBuddyManagedCommand(binary string, o Options) string {
+	return hookCommand(binary, WorkBuddy, o.StateDir) + " --managed-config " + hookArg(workBuddyManagedConfigPath(o))
+}
+
+func (p *Plan) prepareWorkBuddyManagedConfig() error {
+	o := p.payload.Options
+	path := workBuddyManagedConfigPath(o)
+	previous, err := p.input(path)
+	if err != nil {
+		return err
+	}
+	if o.RuntimeIdentityID == "" {
+		if previous.Exists {
+			return ErrPlanChanged
+		}
+		return nil
+	}
+	if !filepath.IsAbs(o.StateDir) || filepath.Clean(o.StateDir) != o.StateDir {
+		return ErrPlanChanged
+	}
+	if previous.Exists && !p.owns(path) {
+		return ErrPlanChanged
+	}
+	if err := p.pinRuntimeIdentity(); err != nil {
+		return err
+	}
+	cfg := adapters.WorkBuddyManagedConfig{SchemaVersion: "workbuddy-managed-hook/v1", RuntimeIdentityID: o.RuntimeIdentityID,
+		InstanceID: o.Instance.ID, AgentID: "hri-" + strings.TrimPrefix(o.Instance.ID, "hi-"), CredentialPath: managedCredentialPath(o), Endpoint: o.Endpoint, EnforcementMode: o.Mode, StateDir: o.StateDir}
+	raw, err := json.MarshalIndent(cfg, "", "  ")
+	if err != nil {
+		return err
+	}
+	if _, err := adapters.DecodeWorkBuddyManagedConfig(raw, path, o.StateDir); err != nil {
+		return ErrPlanChanged
+	}
+	return p.write(path, append(raw, '\n'), 0600, "连接已确认的 WorkBuddy 实例身份；仅保存专属凭据引用")
+}
+
+func upsertWorkBuddyManagedHook(existing any, command string, o Options, recordedBinary string) []any {
+	list, _ := existing.([]any)
+	for _, item := range list {
+		group, _ := item.(map[string]any)
+		hooks, _ := group["hooks"].([]any)
+		for _, item := range hooks {
+			hook, _ := item.(map[string]any)
+			if hook["type"] == "command" && hook["command"] == workBuddyManagedCommand(recordedBinary, o) {
+				hook["command"] = command
+				return list
+			}
+		}
+	}
+	return upsertHook(existing, command, WorkBuddy, recordedBinary, o.StateDir)
+}
+
+func workBuddyManagedConnectionMatches(o Options, raw []byte) bool {
+	cfg, err := adapters.DecodeWorkBuddyManagedConfig(raw, workBuddyManagedConfigPath(o), o.StateDir)
+	return err == nil && (o.RuntimeIdentityID == "" || cfg.RuntimeIdentityID == o.RuntimeIdentityID) && cfg.Endpoint == o.Endpoint && cfg.EnforcementMode == o.Mode
+}
+
+func inspectWorkBuddyManaged(d *Diagnosis, o Options) bool {
+	path := workBuddyManagedConfigPath(o)
+	_, statErr := os.Lstat(path)
+	if errors.Is(statErr, os.ErrNotExist) && o.RuntimeIdentityID == "" {
+		rec, err := newestInstanceRecord(o)
+		if (errors.Is(err, errNoInstallRecord) || err == nil) && (rec == nil || rec.RuntimeIdentityID == "") {
+			return false
+		}
+	}
+	raw, err := inspectRead(o.Home, path)
+	if err == nil && workBuddyManagedConnectionMatches(o, raw) {
+		d.check("service_configuration", "pass", "受管连接的实例、身份、专属凭据引用和服务配置一致；未读取凭据")
+	} else {
+		d.check("service_configuration", "fail", "WorkBuddy 受管配置缺失或不一致；禁止回退共享凭据，请重新预览修复")
+	}
+	doc, err := inspectJSON(o.Home, filepath.Join(o.configRoot(), "settings.json"))
+	if err == nil && hostHookRegisteredCommand(doc, workBuddyManagedCommand(o.Binary, o)) {
+		d.check("host_registration", "pass", "前置和后置钩子已固定受管配置路径；尚需桌面验证")
+	} else {
+		d.check("host_registration", "fail", "受管钩子命令缺失或未固定当前配置")
+	}
+	d.check("approval_resumption", "unknown", "已配置原 hold 关联与唯一预留恢复链；实际桌面审批、重试和后置观察仍待核验，宿主 ask 不代表 SIQ 批准")
+	return true
+}

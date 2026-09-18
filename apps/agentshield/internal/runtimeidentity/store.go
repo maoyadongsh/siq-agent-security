@@ -80,7 +80,7 @@ type CreateRequest struct {
 // supportedIdentityPlatforms is the closed set of host products for which a
 // Runtime Identity may be issued. Extending it requires a real adapter and
 // contracts, not just a new constant here.
-var supportedIdentityPlatforms = map[string]bool{"hermes": true, "openclaw": true}
+var supportedIdentityPlatforms = map[string]bool{"hermes": true, "openclaw": true, "workbuddy": true}
 
 // ResolveInstance must resolve the ID against currently discovered roots of the
 // host product it names; it must not accept an arbitrary client-provided path.
@@ -334,6 +334,26 @@ func (s *Store) Authenticate(token string) (Record, error) {
 }
 
 func (s *Store) authenticate(token string) (Record, error) {
+	r, _, err := s.authenticateWithGrant(token)
+	return r, err
+}
+
+func (s *Store) authenticateWithGrant(token string) (Record, *grant.Grant, error) {
+	r, err := s.authenticateRecord(token)
+	if err != nil {
+		return Record{}, nil, err
+	}
+	g, err := s.intents.GrantForReference(r.GrantRef, r.Platform, r.AgentID)
+	if err != nil || !recordGrantProfileMatches(r, g) {
+		return Record{}, nil, ErrUnavailable
+	}
+	return r, g, nil
+}
+
+// authenticateRecord validates credential, signed record, current revocation
+// and profile only. Its caller must independently validate the current Grant
+// (or the selected Grant from its same-call ResolveBinding) before authorizing.
+func (s *Store) authenticateRecord(token string) (Record, error) {
 	if len(token) != 100 || token[35] != '.' || !identityID.MatchString(token[:35]) || !hexDigest.MatchString(token[36:]) {
 		return Record{}, ErrInvalid
 	}
@@ -355,8 +375,7 @@ func (s *Store) authenticate(token string) (Record, error) {
 	if err != nil || revoked {
 		return Record{}, ErrUnavailable
 	}
-	g, err := s.intents.GrantForReference(r.GrantRef, r.Platform, r.AgentID)
-	if err != nil || !recordGrantProfileMatches(r, g) || s.checkRecordProfile(r) != nil {
+	if s.checkRecordProfile(r) != nil {
 		return Record{}, ErrUnavailable
 	}
 	return r, nil

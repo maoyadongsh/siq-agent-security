@@ -89,7 +89,7 @@ func ValidateFilesystemProfile(g Grant) error {
 	if g.SchemaVersion == "" && g.FilesystemProfile == "" && g.FilesystemBindings == nil {
 		return nil
 	}
-	if g.SchemaVersion != "grant/v2" || g.FilesystemProfile != string(runtimeaction.FilesystemWindowsLocalDriveV1) || g.FilesystemBindings == nil || g.Subject.Type != "agent_instance" || (g.Platform != "hermes" && g.Platform != "openclaw") || g.Skill != nil {
+	if g.SchemaVersion != "grant/v2" || g.FilesystemProfile != string(runtimeaction.FilesystemWindowsLocalDriveV1) || g.FilesystemBindings == nil || g.Subject.Type != "agent_instance" || (g.Platform != "hermes" && g.Platform != "openclaw" && g.Platform != "workbuddy") || g.Skill != nil {
 		return ErrFilesystemProfile
 	}
 	expected := map[string]bool{}
@@ -179,7 +179,7 @@ func RecheckFilesystemBindings(g Grant) error {
 // the versioned human confirmation route and the state compatibility barrier
 // before publication; this function neither persists nor approves anything.
 func PrepareWindowsResources(source Grant, input ResourceEdit, confirm bool, key *signing.Key) (Grant, DesiredPolicy, error) {
-	if !confirm || key == nil || !Verify(key.Public(), source) || source.Status != "pending_approval" || source.SchemaVersion != "" || source.Skill != nil || source.Subject.Type != "agent_instance" || (source.Platform != "hermes" && source.Platform != "openclaw") {
+	if !confirm || key == nil || !Verify(key.Public(), source) || source.Status != "pending_approval" || source.SchemaVersion != "" || source.Skill != nil || source.Subject.Type != "agent_instance" || (source.Platform != "hermes" && source.Platform != "openclaw" && source.Platform != "workbuddy") {
 		return source, nil, ErrFilesystemProfile
 	}
 	raw, err := json.Marshal(source)

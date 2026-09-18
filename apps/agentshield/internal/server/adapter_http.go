@@ -212,9 +212,13 @@ func (s *Server) adapterRecover(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	switch body.Platform {
-	case adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy:
+	case adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.WorkBuddy:
 	default:
 		writeJSON(w, 400, map[string]any{"error": "unsupported recovery platform"})
+		return
+	}
+	if body.Platform == adapterinstall.WorkBuddy && body.InstanceID == "" {
+		writeJSON(w, 400, map[string]any{"error": "WorkBuddy 恢复需要明确选择实例"})
 		return
 	}
 	s.adapterPlanMu.Lock()

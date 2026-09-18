@@ -106,7 +106,11 @@ func (p *Plan) prepareUninstall() error {
 				return err
 			}
 		}
-		return nil
+		if o.Platform == WorkBuddy && rec.RuntimeIdentityID != "" {
+			paths = []string{workBuddyManagedConfigPath(o)}
+		} else {
+			return nil
+		}
 	}
 	for _, path := range paths {
 		owned := p.owns(path)
@@ -204,7 +208,8 @@ func (p *Plan) prepareHostConfigUninstall(path string) error {
 				for _, cmdValue := range commands {
 					cmd, _ := cmdValue.(map[string]any)
 					text, _ := cmd["command"].(string)
-					if cmd["type"] == "command" && isRecordedToolHook(text, p.payload.Options.Platform, rec.Binary, p.payload.Options.StateDir) {
+					managed := p.payload.Options.Platform == WorkBuddy && rec.RuntimeIdentityID != "" && text == workBuddyManagedCommand(rec.Binary, p.payload.Options)
+					if cmd["type"] == "command" && (managed || isRecordedToolHook(text, p.payload.Options.Platform, rec.Binary, p.payload.Options.StateDir)) {
 						continue
 					}
 					remaining = append(remaining, cmdValue)

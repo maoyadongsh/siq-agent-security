@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"siq-agent-security/apps/agentshield/internal/runtimeidentity"
 )
 
 func decisionTuple(raw []byte) (platform, agent, session string, ok bool) {
@@ -69,8 +71,10 @@ func (s *Server) authorizeDecision(w http.ResponseWriter, r *http.Request, crede
 	if !global {
 		valid := false
 		if strings.HasPrefix(credential, "ri-") {
-			_, e := s.runtimeIdentities.Authenticate(credential)
-			valid = e == nil
+			// The bounded body supplies the complete scope. AuthorizeSession
+			// below performs one complete fresh credential/authority check;
+			// this prefix only selects the validator, never authenticates.
+			valid = true
 		} else if s.runtimeChecks != nil {
 			valid = s.runtimeChecks.HasDecisionCredential(credential)
 		}
@@ -104,6 +108,10 @@ func (s *Server) authorizeDecision(w http.ResponseWriter, r *http.Request, crede
 	}
 	if strings.HasPrefix(credential, "ri-") {
 		if _, err = s.runtimeIdentities.AuthorizeSession(credential, platform, agent, session); err == nil {
+			if platform == "workbuddy" && !workBuddyRuntimeCall(r.URL.Path, raw) {
+				writeJSON(w, 400, map[string]string{"error": "invalid_workbuddy_call_identity"})
+				return false
+			}
 			return true
 		}
 	} else if s.runtimeChecks != nil && s.runtimeChecks.AuthorizeDecision(credential, platform, agent, session) {
@@ -111,4 +119,32 @@ func (s *Server) authorizeDecision(w http.ResponseWriter, r *http.Request, crede
 	}
 	writeJSON(w, 401, map[string]string{"error": "scoped_decision_credential_required"})
 	return false
+}
+
+func workBuddyDecisionCall(raw []byte) bool {
+	d := json.NewDecoder(bytes.NewReader(raw))
+	if token, err := d.Token(); err != nil || token != json.Delim('{') {
+		return false
+	}
+	seen := false
+	for d.More() {
+		token, err := d.Token()
+		name, ok := token.(string)
+		var value json.RawMessage
+		if err != nil || !ok || d.Decode(&value) != nil {
+			return false
+		}
+		if strings.EqualFold(name, "tool_call_id") {
+			var call string
+			if seen || name != "tool_call_id" || json.Unmarshal(value, &call) != nil || !runtimeidentity.ValidWorkBuddyCallID(call) {
+				return false
+			}
+			seen = true
+		}
+	}
+	if token, err := d.Token(); err != nil || token != json.Delim('}') {
+		return false
+	}
+	var extra any
+	return seen && d.Decode(&extra) == io.EOF
 }

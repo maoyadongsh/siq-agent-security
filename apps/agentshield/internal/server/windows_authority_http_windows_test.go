@@ -21,11 +21,11 @@ import (
 )
 
 type windowsAuthorityHTTPFixture struct {
-	s                                                                           *Server
-	st                                                                          *state.Store
-	instance, agent, credential, identityID, session, grantID, intentID, taskID string
-	root, input, output, outside                                                string
-	revision                                                                    int
+	s                                                                                     *Server
+	st                                                                                    *state.Store
+	instance, agent, credential, identityID, session, grantID, intentID, taskID, platform string
+	root, input, output, outside                                                          string
+	revision                                                                              int
 }
 
 // Send the exact bearer without the legacy call helper's admin substitution.
@@ -51,17 +51,23 @@ func windowsAuthorityHTTP(t *testing.T, s *Server, method, route, bearer string,
 
 func (f windowsAuthorityHTTPFixture) decision(tool, callID, path string) map[string]any {
 	return map[string]any{
-		"platform": "hermes", "agent_id": f.agent, "session_id": f.session,
+		"platform": f.platform, "agent_id": f.agent, "session_id": f.session,
 		"task_id": f.taskID, "runtime_task_id": f.session + "-task",
 		"tool": tool, "tool_call_id": callID, "params": map[string]any{"path": path},
 	}
 }
 
 // A real initialized state and the production stores/resolvers are retained.
-// Only the initial pending Grant is seeded directly; all versioned edits,
+// Legacy Hermes initial pending Grants are seeded directly; WorkBuddy uses
+// real admit + explicit instance-drafts. All subsequent versioned edits,
 // approval, deployment, identity issuance and enrollment use HTTP handlers.
 // No desktop, host process or model is started by this component fixture.
 func newWindowsAuthorityHTTPFixture(t *testing.T, mode string, requireApproval bool) windowsAuthorityHTTPFixture {
+	t.Helper()
+	return newWindowsAuthorityHTTPFixtureForPlatform(t, mode, requireApproval, "hermes")
+}
+
+func newWindowsAuthorityHTTPFixtureForPlatform(t *testing.T, mode string, requireApproval bool, platform string) windowsAuthorityHTTPFixture {
 	t.Helper()
 	started := time.Now()
 	stage := func(name string) {
@@ -119,6 +125,10 @@ func newWindowsAuthorityHTTPFixture(t *testing.T, mode string, requireApproval b
 	}
 	home := filepath.Join(t.TempDir(), "Home")
 	profile := filepath.Join(home, ".hermes", "profiles", "windows-test")
+	if platform == "workbuddy" {
+		profile = filepath.Join(home, ".workbuddy")
+		t.Setenv("WORKBUDDY_CONFIG_DIR", "")
+	}
 	if err := os.MkdirAll(profile, 0700); err != nil {
 		t.Fatal(err)
 	}
@@ -137,11 +147,14 @@ func newWindowsAuthorityHTTPFixture(t *testing.T, mode string, requireApproval b
 		t.Fatal(err)
 	}
 	stage("server opened")
-	listed := windowsAuthorityHTTP(t, s, "GET", "/v1/adapter/instances?platform=hermes", s.bootAdmin, nil, 200)
+	listed := windowsAuthorityHTTP(t, s, "GET", "/v1/adapter/instances?platform="+platform, s.bootAdmin, nil, 200)
+	if platform == "workbuddy" {
+		workBuddyContractSample(t, "local-adapter-instances.v2", listed)
+	}
 	var instance string
 	for _, item := range listed["instances"].([]any) {
 		row := item.(map[string]any)
-		if row["name"] == "windows-test" && row["detected"] == true && row["source"] == "named_profile" {
+		if row["detected"] == true && (platform == "workbuddy" && row["name"] == "default" || platform == "hermes" && row["name"] == "windows-test" && row["source"] == "named_profile") {
 			if instance != "" {
 				t.Fatal("profile discovery was ambiguous")
 			}
@@ -149,7 +162,7 @@ func newWindowsAuthorityHTTPFixture(t *testing.T, mode string, requireApproval b
 		}
 	}
 	if instance == "" {
-		t.Fatal("actual named Hermes profile was not discovered")
+		t.Fatal("actual host profile was not discovered")
 	}
 	agent, err := runtimeidentity.AgentID(instance)
 	if err != nil {
@@ -167,31 +180,55 @@ func newWindowsAuthorityHTTPFixture(t *testing.T, mode string, requireApproval b
 	if err != nil {
 		t.Fatal(err)
 	}
-	facts := []admission.DeclaredFact{}
-	for _, tool := range []string{"read_file", "write_file"} {
-		facts = append(facts, admission.DeclaredFact{Domain: "tool", Action: "tool.invoke", Resource: admission.Resource{Type: "tool", Value: tool}, Effect: "allow", State: "declared", Authority: "skill_manifest", SourceField: "fixture", EvidenceIDs: []string{"fixture-permission"}})
-	}
-	built, err := grant.Build(admission.Admission{AdmissionID: "adm-windows-http", ContentHash: strings.Repeat("a", 64), Verdict: "admit_with_conditions", EvidenceIDs: []string{"fixture-permission"}, DeclaredFacts: facts}, grant.Options{Platform: "hermes", Subject: grant.Subject{Type: "agent_instance", ID: agent}, Key: k})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if requireApproval {
-		built.Grant, err = grant.RequireToolApproval(built.Grant, []string{"write_file"}, k)
+	var built *grant.Result
+	var seq int
+	if platform == "workbuddy" {
+		if requireApproval {
+			t.Fatal("WorkBuddy hold fixture needs a separately approved requirement")
+		}
+		skill := t.TempDir()
+		if err := os.WriteFile(filepath.Join(skill, "SKILL.md"), []byte("---\nname: workbuddy-component-permissions\ndescription: Inspect controlled test files.\nallowed-tools: read_file write_file\n---\nInspect the supplied controlled file.\n"), 0600); err != nil {
+			t.Fatal(err)
+		}
+		admitted := windowsAuthorityHTTP(t, s, "POST", "/v1/admit", s.bootAdmin, map[string]any{"path": skill, "trust_level": "trusted"}, 200)
+		adm := admitted["admission"].(map[string]any)
+		draft := windowsAuthorityHTTP(t, s, "POST", "/v1/grants/instance-drafts", s.bootAdmin, map[string]any{"schema_version": "grant-instance-draft-create/v1", "actor_id": "fixture-owner", "instance_id": instance, "admission_id": adm["admission_id"], "request_id": "gid-" + strings.Repeat("7", 32), "confirm_instance_scope": true}, 201)
+		seq = stateRevision(t, draft)
+		raw, err := json.Marshal(draft["grant"])
 		if err != nil {
 			t.Fatal(err)
 		}
-	}
-	seq, err := st.CommitGrant(state.GrantCommit{Grant: built.Grant, DesiredPolicy: built.DesiredPolicy, ExpectedRevision: -1,
-		Audit: &state.AuditEvent{Event: "grant_create", Target: built.Grant.GrantID, ActorID: "fixture-owner", At: time.Now().UTC().Format(time.RFC3339Nano)}})
-	if err != nil {
-		t.Fatal(err)
+		built = &grant.Result{}
+		if json.Unmarshal(raw, &built.Grant) != nil || built.Grant.Skill != nil {
+			t.Fatal("instance draft did not produce a separate baseline")
+		}
+	} else {
+		facts := []admission.DeclaredFact{}
+		for _, tool := range []string{"read_file", "write_file"} {
+			facts = append(facts, admission.DeclaredFact{Domain: "tool", Action: "tool.invoke", Resource: admission.Resource{Type: "tool", Value: tool}, Effect: "allow", State: "declared", Authority: "skill_manifest", SourceField: "fixture", EvidenceIDs: []string{"fixture-permission"}})
+		}
+		built, err = grant.Build(admission.Admission{AdmissionID: "adm-windows-http", ContentHash: strings.Repeat("a", 64), Verdict: "admit_with_conditions", EvidenceIDs: []string{"fixture-permission"}, DeclaredFacts: facts}, grant.Options{Platform: platform, Subject: grant.Subject{Type: "agent_instance", ID: agent}, Key: k})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if requireApproval {
+			built.Grant, err = grant.RequireToolApproval(built.Grant, []string{"write_file"}, k)
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+		seq, err = st.CommitGrant(state.GrantCommit{Grant: built.Grant, DesiredPolicy: built.DesiredPolicy, ExpectedRevision: -1,
+			Audit: &state.AuditEvent{Event: "grant_create", Target: built.Grant.GrantID, ActorID: "fixture-owner", At: time.Now().UTC().Format(time.RFC3339Nano)}})
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 	stage("pending Grant committed")
 	pending, persistedSeq, err := st.GetGrantWithSeq(built.Grant.GrantID)
 	if err != nil || pending == nil {
 		t.Fatal("pending Grant unavailable", err)
 	}
-	if persistedSeq != seq || pending.Status != "pending_approval" || pending.SchemaVersion != "" || pending.Skill != nil || pending.Subject.Type != "agent_instance" || pending.Platform != "hermes" || !grant.Verify(k.Public(), *pending) {
+	if persistedSeq != seq || pending.Status != "pending_approval" || pending.SchemaVersion != "" || pending.Skill != nil || pending.Subject.Type != "agent_instance" || pending.Platform != platform || !grant.Verify(k.Public(), *pending) {
 		t.Fatalf("pending Grant preconditions: seq=%d/%d status=%s schema=%s skill=%t subject=%s platform=%s signature=%t", persistedSeq, seq, pending.Status, pending.SchemaVersion, pending.Skill != nil, pending.Subject.Type, pending.Platform, grant.Verify(k.Public(), *pending))
 	}
 	snapshot, err := runtimepath.InspectWindows(canonical, false)
@@ -217,11 +254,17 @@ func newWindowsAuthorityHTTPFixture(t *testing.T, mode string, requireApproval b
 		t.Fatal("HTTP deployment did not produce committed Windows authority", err)
 	}
 	stage("new Grant edited, challenged, approved and deployed")
+	if platform == "workbuddy" {
+		workBuddyContractSample(t, "grant.v2", g)
+	}
 	issued := windowsAuthorityHTTP(t, s, "POST", "/v1/runtime-identities", s.bootAdmin, map[string]any{
 		"schema_version": "local-runtime-identity-create/v2", "confirm_filesystem_profile": true,
 		"instance_id": instance, "grant_id": g.GrantID, "expected_grant_revision": seq, "actor_id": "fixture-owner", "session_ttl_seconds": 3600,
 	}, 201)
 	identity := issued["identity"].(map[string]any)
+	if platform == "workbuddy" {
+		workBuddyContractSample(t, "local-runtime-identity-issued.v2", issued)
+	}
 	if issued["schema_version"] != "local-runtime-identity-issued/v2" || identity["filesystem_profile"] != "windows-local-drive/v1" {
 		t.Fatal("identity response lost the Windows interpretation")
 	}
@@ -230,13 +273,22 @@ func newWindowsAuthorityHTTPFixture(t *testing.T, mode string, requireApproval b
 		t.Fatal(err)
 	}
 	session := "windows-authority-http"
+	if platform == "workbuddy" {
+		session, err = runtimeidentity.WorkBuddySessionID(session)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
 	enrolled := windowsAuthorityHTTP(t, s, "POST", "/v1/runtime-sessions", string(credential), map[string]any{"schema_version": "local-runtime-session-enroll/v1", "session_id": session}, 200)
-	c, binding, err := s.intents.ResolveBinding("hermes", session, agent)
+	if platform == "workbuddy" {
+		workBuddyContractSample(t, "local-runtime-session-enrolled.v2", enrolled)
+	}
+	c, binding, err := s.intents.ResolveBinding(platform, session, agent)
 	if err != nil || c == nil || binding == nil || c.SchemaVersion != "intent/v4" || binding.SchemaVersion != "intent-grant-binding/v2" || binding.GrantRef == nil || binding.GrantRef.PermissionDigestSchema != "grant-permissions/v2" || enrolled["intent_id"] != c.IntentID {
 		t.Fatal("HTTP enrollment lost the signed profile chain", err)
 	}
 	stage("identity issued and native session enrolled")
-	return windowsAuthorityHTTPFixture{s: s, st: st, instance: instance, agent: agent, credential: string(credential), identityID: identity["identity_id"].(string),
+	return windowsAuthorityHTTPFixture{s: s, st: st, platform: platform, instance: instance, agent: agent, credential: string(credential), identityID: identity["identity_id"].(string),
 		session: session, grantID: g.GrantID, revision: seq, intentID: c.IntentID, taskID: c.TaskID,
 		root: root, input: input, output: filepath.Join(root, "Output.txt"), outside: filepath.Join(filepath.Dir(root), "Outside.txt")}
 }

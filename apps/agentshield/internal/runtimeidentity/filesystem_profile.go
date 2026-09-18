@@ -43,20 +43,34 @@ func validCreateProfile(req CreateRequest) bool {
 	return req.SchemaVersion == "local-runtime-identity-create/v1" && !req.ConfirmFilesystemProfile || req.SchemaVersion == "local-runtime-identity-create/v2" && req.ConfirmFilesystemProfile
 }
 func validRecordProfile(r Record) bool {
-	return r.SchemaVersion == "local-runtime-identity/v1" && r.FilesystemProfile == "" && r.GrantRef.PermissionDigestSchema == "" || r.SchemaVersion == "local-runtime-identity/v2" && r.FilesystemProfile == string(runtimeaction.FilesystemWindowsLocalDriveV1) && r.GrantRef.PermissionDigestSchema == "grant-permissions/v2"
+	return r.SchemaVersion == "local-runtime-identity/v1" && r.Platform != "workbuddy" && r.FilesystemProfile == "" && r.GrantRef.PermissionDigestSchema == "" || r.SchemaVersion == "local-runtime-identity/v2" && r.FilesystemProfile == string(runtimeaction.FilesystemWindowsLocalDriveV1) && r.GrantRef.PermissionDigestSchema == "grant-permissions/v2"
 }
 func recordGrantProfileMatches(r Record, g *grant.Grant) bool {
 	return g != nil && validRecordProfile(r) && (r.SchemaVersion == "local-runtime-identity/v1" && g.SchemaVersion == "" || r.SchemaVersion == "local-runtime-identity/v2" && g.SchemaVersion == "grant/v2" && g.FilesystemProfile == r.FilesystemProfile)
 }
 func (s *Store) checkRecordProfile(r Record) error {
 	if r.SchemaVersion == "local-runtime-identity/v2" {
-		return stateformat.RequireWindowsProfile(s.dir)
+		if err := stateformat.RequireWindowsProfile(s.dir); err != nil {
+			return err
+		}
+		if r.Platform == "workbuddy" {
+			if s.resolveInstance == nil {
+				return ErrUnavailable
+			}
+			info, err := s.resolveInstance(r.InstanceID)
+			if err != nil || info.Platform != r.Platform {
+				return ErrUnavailable
+			}
+			if snapshot, err := runtimepath.InspectWindows(info.Root, false); err != nil || !snapshot.IsDirectory() {
+				return ErrUnavailable
+			}
+		}
 	}
 	return nil
 }
 func (s *Store) creationProfile(req CreateRequest, platform string, g *grant.Grant) (string, error) {
 	if req.SchemaVersion == "local-runtime-identity-create/v1" {
-		if g == nil || g.SchemaVersion != "" {
+		if platform == "workbuddy" || g == nil || g.SchemaVersion != "" {
 			return "", ErrInvalid
 		}
 		return "", nil
@@ -157,7 +171,7 @@ func (s *Store) VerifySessionAuthority(c intent.Contract, session string) error 
 			continue
 		}
 		revoked, err := s.revoked(r)
-		if err != nil || revoked || s.checkRecordProfile(r) != nil {
+		if err != nil || revoked || s.checkRecordProfile(r) != nil || validateManagedSession(r, session) != nil {
 			return ErrUnavailable
 		}
 		current, binding, err := s.intents.ResolveBinding(r.Platform, session, r.AgentID)

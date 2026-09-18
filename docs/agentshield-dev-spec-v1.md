@@ -2116,3 +2116,11 @@ D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-priv
 按 [Windows 本地盘符资源专项规格](windows-resource-profile-spec-v1.md) 建立明确签名的新 managed 权限解释。旧 Intent v2/v3、Grant、identity 和会话保持 POSIX 原义；不得全局放宽 NormalizeResource。新版 Authority 必须完成可恢复状态升级，经明确的资源确认及批准，再由运行身份产生 Intent 和会话绑定；最终裁决、审批恢复与文件观察沿同一解释复验。实施接线见本文开头的三个专项增量。组件实现不代表 Hermes B 或其他真实宿主旅程已通过。
 
 2026-09-18 接续 Windows 资源事实层：`internal/runtimepath` 按上述专项规格核对本地 NTFS、真实长名称、父组件、目录大小写、硬链接及删除/替换状态，逐次复验并拒绝不确定对象。该层不产生 Authority、不改变旧路径语义，也不单独启用新版 Grant/Intent/identity；批准与最终调用链仍须完整接通。
+
+2026-09-18 真实首次启用顺序按 [初始身份专项增量](windows-profile-identity-bootstrap-v1.md) 修复：显式启用 Windows profile 写历史前建立初始签名身份，既有历史缺钥保护及活跃屏障恢复保持。WorkBuddy Windows 的受管实例、专属凭据和原生 command 会话接线按 [WorkBuddy 受管增量](workbuddy-managed-runtime-spec-v1.md) 执行；旧接入不冒充受管保护，审批恢复与桌面验证缺口仍须独立收口。界面继续遵守 [Windows 权限确认](windows-authority-ui-v1.md)，不能根据浏览器 OS 自动选择权限解释。
+
+2026-09-18 真实 Skill 准入与实例授权的作用域按 [实例权限草稿增量](instance-baseline-draft-v1.md) 分开：管理用户明确确认后，通过独立 instance-drafts 接口从可信准入创建无 SkillRef 的新 pending 实例草稿，不清除、重签或改写原 Skill 授权。Windows 资源解释、批准、部署与身份签发仍为后续独立步骤。
+
+2026-09-18 WorkBuddy 安装中断恢复按 [实例恢复增量](workbuddy-adapter-recovery-v1.md) 绑定当前可信实例与加密计划的原始配置根；在原事务锁内复验，不从明文记录或当前环境重新解释旧根，不恢复被撤销的身份。Windows 状态检查成本按 [只读快照增量](windows-state-check-cost-spec-v1.md) 减少同次重复元数据读取；仍在每次请求验证当前 ACL、状态与迁移屏障，不建立跨请求 Authority 缓存。
+
+2026-09-18 WorkBuddy 审批恢复按 [审批恢复增量](workbuddy-approval-resume-v1.md) 保存首次真实 pre 的有限私有关联，并在后续真实 pre 中在线核对原 hold 与唯一执行预留；批准来自 SIQ 独立管理操作，参数变化、缺失关联、重复调用和不确定结果均不得复用原执行许可。组件验证与实际桌面验收分别记录。

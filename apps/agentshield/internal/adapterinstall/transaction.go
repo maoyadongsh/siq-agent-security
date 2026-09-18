@@ -440,9 +440,11 @@ func Apply(p *Plan) (*Result, error) {
 
 // Recover rolls back an unfinished operation only after acquiring the same
 // cross-process guard as Apply. It never completes or reauthorizes an install.
-func Recover(dir, platform string) (*Result, error) { return recoverOperation(dir, platform, platform) }
+func Recover(dir, platform string) (*Result, error) {
+	return recoverOperation(dir, platform, platform, nil)
+}
 
-func recoverOperation(dir, platform, key string) (*Result, error) {
+func recoverOperation(dir, platform, key string, selected *Options) (*Result, error) {
 	if err := validateTransactionStore(dir); err != nil {
 		return nil, err
 	}
@@ -476,6 +478,9 @@ func recoverOperation(dir, platform, key string) (*Result, error) {
 	p, err := unsealPlan(dir, claim)
 	if err != nil {
 		return nil, err
+	}
+	if platform == WorkBuddy && selected != nil && !workBuddyRecoveryMatches(p, *selected) {
+		return nil, ErrPlanChanged
 	}
 	if err := st.AppendAudit(state.AuditEvent{At: time.Now().UTC().Format(time.RFC3339), Event: "adapter_recovery_started", Target: claim.ID}); err != nil {
 		return nil, errors.New("adapter: recovery audit unavailable")

@@ -146,7 +146,7 @@ func readStrictRequestLimit(w http.ResponseWriter, r *http.Request, out any, err
 func (s *Server) initRuntimeIdentities() error {
 	var err error
 	s.runtimeIdentities, err = runtimeidentity.OpenWithInstances(s.d.Store.Dir, s.d.Key, s.intents, func(id string) (runtimeidentity.InstanceInfo, error) {
-		target, resolveErr := s.resolveSkillTarget(context.Background(), id)
+		target, resolveErr := s.resolveRuntimeIdentityTarget(context.Background(), id)
 		if resolveErr != nil {
 			return runtimeidentity.InstanceInfo{}, resolveErr
 		}
@@ -257,11 +257,6 @@ func (s *Server) runtimeSessionEnroll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	credential := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-	record, err := s.runtimeIdentities.Authenticate(credential)
-	if err != nil {
-		writeJSON(w, 401, map[string]string{"error": "runtime_identity_required"})
-		return
-	}
 	var req runtimeidentity.EnrollRequest
 	if !readRuntimeIdentity(w, r, &req, "schema_version", "session_id") {
 		return
@@ -270,10 +265,18 @@ func (s *Server) runtimeSessionEnroll(w http.ResponseWriter, r *http.Request) {
 		runtimeIdentityError(w, runtimeidentity.ErrInvalid)
 		return
 	}
-	b, err := s.runtimeIdentities.Enroll(credential, req.SessionID)
+	record, b, err := s.runtimeIdentities.EnrollContext(credential, req.SessionID)
 	if err != nil {
+		if errors.Is(err, runtimeidentity.ErrCredential) {
+			writeJSON(w, 401, map[string]string{"error": "runtime_identity_required"})
+			return
+		}
 		runtimeIdentityError(w, err)
 		return
 	}
-	writeJSON(w, 200, map[string]any{"schema_version": "local-runtime-session-enrolled/v1", "identity_id": record.IdentityID, "platform": record.Platform, "agent_id": record.AgentID, "session_id": req.SessionID, "binding_id": b.BindingID, "intent_id": b.IntentID, "expires_at": b.ExpiresAt})
+	version := "local-runtime-session-enrolled/v1"
+	if record.Platform == "workbuddy" {
+		version = "local-runtime-session-enrolled/v2"
+	}
+	writeJSON(w, 200, map[string]any{"schema_version": version, "identity_id": record.IdentityID, "platform": record.Platform, "agent_id": record.AgentID, "session_id": req.SessionID, "binding_id": b.BindingID, "intent_id": b.IntentID, "expires_at": b.ExpiresAt})
 }

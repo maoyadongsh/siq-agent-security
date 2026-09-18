@@ -286,6 +286,12 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		}
 	}
 	if prior != nil && prior.RuntimeIdentityID != "" {
+		if opts.Platform == WorkBuddy && opts.Instance == nil {
+			opts = WithWorkBuddyInstance(opts, opts.configRoot())
+			if prior.InstanceID != opts.Instance.ID || prior.ConfigDir != opts.Instance.ConfigDir {
+				return nil, ErrPlanChanged
+			}
+		}
 		if action == "uninstall" && opts.RuntimeIdentityID != "" && opts.RuntimeIdentityID != prior.RuntimeIdentityID {
 			return nil, ErrPlanChanged
 		}
@@ -317,11 +323,15 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		}
 	}
 	if opts.Instance != nil {
-		view.SchemaVersion = "local-adapter-plan/v2"
-		view.InstanceID = opts.Instance.ID
-		view.InstanceName = opts.Instance.Name
-		enabled := opts.NativeEnable
-		view.NativeEnable = &enabled
+		// WorkBuddy discovery may pin the legacy (including macOS) root. It
+		// must not turn that historical operation into Hermes' v2 protocol.
+		if opts.Platform != WorkBuddy || opts.RuntimeIdentityID != "" {
+			view.SchemaVersion = "local-adapter-plan/v2"
+			view.InstanceID = opts.Instance.ID
+			view.InstanceName = opts.Instance.Name
+			enabled := opts.NativeEnable
+			view.NativeEnable = &enabled
+		}
 		rec.InstanceID = opts.Instance.ID
 		rec.ConfigDir = opts.Instance.ConfigDir
 	}
@@ -331,6 +341,9 @@ func Prepare(opts Options, action string) (*Plan, error) {
 	}
 	if opts.RuntimeIdentityID != "" {
 		view.SchemaVersion = "local-adapter-plan/v3"
+		if opts.Platform == WorkBuddy {
+			view.SchemaVersion = "local-adapter-plan/v4"
+		}
 		view.RuntimeIdentityID = opts.RuntimeIdentityID
 		rec.RuntimeIdentityID = opts.RuntimeIdentityID
 		if action == "uninstall" {
@@ -512,6 +525,11 @@ func (p *Plan) prepareInstall() error {
 		}
 		return p.write(path, encodePlanJSON(doc), 0o600, "登记本插件的加载路径与启用项；保留其他平台设置")
 	case CodeBuddy, WorkBuddy:
+		if o.Platform == WorkBuddy {
+			if err := p.prepareWorkBuddyManagedConfig(); err != nil {
+				return err
+			}
+		}
 		path := filepath.Join(root, "settings.json")
 		doc, err := p.planJSON(path)
 		if err != nil {
@@ -525,13 +543,20 @@ func (p *Plan) prepareInstall() error {
 			hooks = map[string]any{}
 		}
 		command := hookCommand(o.Binary, o.Platform, o.StateDir)
+		if o.Platform == WorkBuddy && o.RuntimeIdentityID != "" {
+			command = workBuddyManagedCommand(o.Binary, o)
+		}
 		for _, event := range []string{"PreToolUse", "PostToolUse"} {
 			if v, exists := hooks[event]; exists {
 				if _, ok := v.([]any); !ok {
 					return errors.New("adapter: invalid host hook list")
 				}
 			}
-			hooks[event] = upsertHook(hooks[event], command, o.Platform, p.payload.Record.Binary, o.StateDir)
+			if o.Platform == WorkBuddy && o.RuntimeIdentityID != "" {
+				hooks[event] = upsertWorkBuddyManagedHook(hooks[event], command, o, p.payload.Record.Binary)
+			} else {
+				hooks[event] = upsertHook(hooks[event], command, o.Platform, p.payload.Record.Binary, o.StateDir)
+			}
 		}
 		doc["hooks"] = hooks
 		purpose := "登记工具执行前和执行后的 SIQ 钩子；保留其他设置"

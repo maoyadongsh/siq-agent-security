@@ -19,6 +19,8 @@ type EnrollRequest struct {
 
 const permissionPurpose = "按用户确认的实例权限运行（任务目的未单独确认）"
 
+var ErrCredential = errors.New("runtime_identity_credential_unavailable")
+
 func sessionNames(r Record, session string) (string, string) {
 	b, _ := json.Marshal([]string{r.IdentityID, session})
 	suffix := hash(b)
@@ -79,31 +81,34 @@ func sameEnvelope(c intent.Contract, want intent.Contract) bool {
 // A retry never extends its deadline, resurrects a revoked session, or switches
 // an already-bound session to a new identity. No prompt text is accepted.
 func (s *Store) Enroll(token, session string) (intent.Binding, error) {
+	_, binding, err := s.EnrollContext(token, session)
+	return binding, err
+}
+
+// EnrollContext returns the exact record used for this enrollment while holding
+// the same identity lock. It does not accept a cached/preauthenticated Record.
+func (s *Store) EnrollContext(token, session string) (Record, intent.Binding, error) {
 	writeMu.Lock()
 	defer writeMu.Unlock()
 	if !textValid(session, 256) {
-		return intent.Binding{}, ErrInvalid
+		return Record{}, intent.Binding{}, ErrInvalid
 	}
-	r, err := s.authenticate(token)
+	r, g, err := s.authenticateWithGrant(token)
 	if err != nil {
-		return intent.Binding{}, err
+		return Record{}, intent.Binding{}, errors.Join(ErrCredential, err)
 	}
-	if err := intent.ValidateNativeSession(r.Platform, session); err != nil {
-		return intent.Binding{}, ErrInvalid
-	}
-	g, err := s.intents.GrantForReference(r.GrantRef, r.Platform, r.AgentID)
-	if err != nil {
-		return intent.Binding{}, ErrUnavailable
+	if err := validateManagedSession(r, session); err != nil {
+		return Record{}, intent.Binding{}, ErrInvalid
 	}
 	c, b, err := s.intents.ResolveBinding(r.Platform, session, r.AgentID)
 	if err != nil {
-		return intent.Binding{}, ErrUnavailable
+		return Record{}, intent.Binding{}, ErrUnavailable
 	}
 	if b != nil {
 		if !bindingMatches(r, session, c, b) {
-			return intent.Binding{}, ErrConflict
+			return Record{}, intent.Binding{}, ErrConflict
 		}
-		return *b, nil
+		return r, *b, nil
 	}
 	id, _ := sessionNames(r, session)
 	existing, err := s.intents.Get(id)
@@ -112,20 +117,24 @@ func (s *Store) Enroll(token, session string) (intent.Binding, error) {
 		envelope = permissionEnvelope(r, session, g, time.Now())
 		signed, e := s.intents.Issue(envelope)
 		if e != nil {
-			return intent.Binding{}, e
+			return Record{}, intent.Binding{}, e
 		}
 		envelope = *signed
 	} else if err != nil {
-		return intent.Binding{}, ErrUnavailable
+		return Record{}, intent.Binding{}, ErrUnavailable
 	} else {
 		// Recover an issuance interrupted before binding, retaining its original time.
 		at, e := time.Parse(time.RFC3339Nano, existing.IssuedAt)
 		if e != nil || !sameEnvelope(existing, permissionEnvelope(r, session, g, at)) || existing.Active(time.Now()) != nil {
-			return intent.Binding{}, ErrConflict
+			return Record{}, intent.Binding{}, ErrConflict
 		}
 		envelope = existing
 	}
-	return s.intents.BindWithReference(intent.Binding{Platform: r.Platform, AgentID: r.AgentID, SessionID: session, IntentID: envelope.IntentID}, r.GrantRef)
+	binding, err := s.intents.BindWithReference(intent.Binding{Platform: r.Platform, AgentID: r.AgentID, SessionID: session, IntentID: envelope.IntentID}, r.GrantRef)
+	if err != nil {
+		return Record{}, intent.Binding{}, err
+	}
+	return r, binding, nil
 }
 func bindingMatches(r Record, session string, c *intent.Contract, b *intent.Binding) bool {
 	id, task := sessionNames(r, session)
@@ -150,12 +159,12 @@ func (s *Store) AuthorizeSessionContext(token, platform, agent, session string) 
 	if !textValid(session, 256) {
 		return Record{}, intent.Binding{}, ErrInvalid
 	}
-	r, err := s.authenticate(token)
-	if err != nil || r.Platform != platform || r.AgentID != agent {
+	r, err := s.authenticateRecord(token)
+	if err != nil || r.Platform != platform || r.AgentID != agent || validateManagedSession(r, session) != nil {
 		return Record{}, intent.Binding{}, ErrUnavailable
 	}
 	c, b, err := s.intents.ResolveBinding(platform, session, agent)
-	if err != nil || !bindingMatches(r, session, c, b) {
+	if err != nil || !bindingMatches(r, session, c, b) || !recordGrantProfileMatches(r, b.SelectedGrant) {
 		return Record{}, intent.Binding{}, ErrUnavailable
 	}
 	return r, *b, nil
