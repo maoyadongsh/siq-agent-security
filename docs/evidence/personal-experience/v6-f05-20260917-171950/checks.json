@@ -1,0 +1,26 @@
+{
+  "schema": "v6-f05-checks/v1",
+  "measurement": {
+    "command": "python3 -u scripts/personal-experience/openshell-o05v6-taskexec-perf.py --binary <batch-owned-binary> --expected-sha256 c8048691…ae9853 --env-script <local-OpenShell-env> --gateway-endpoint https://127.0.0.1:17671 --target siq-v6-f05-171950 --fact-endpoint 10.200.0.1:1 --out <this-directory>",
+    "exit_code": 0,
+    "rounds_completed": [1, 2, 3],
+    "valid_samples": 150,
+    "invalid_samples": 0,
+    "driver_steps_pass": 323,
+    "driver_steps_fail": 0,
+    "budget_misses": 0,
+    "level": "real SIQ daemon + real OpenShell 0.0.83 gateway/sandbox; local dirty candidate"
+  },
+  "relative_baseline": {
+    "S1": "not_measured",
+    "S2": "not_measured",
+    "S3": "not_comparable_to_main_base",
+    "S4": "not_comparable_to_main_base"
+  },
+  "resource_cleanup": {
+    "dedicated_sandbox": "deleted and absent on read-only list",
+    "isolated_state_root": "absent",
+    "shared_gateway": "untouched"
+  },
+  "evidence_scope": "absolute budget of this candidate only; not release or cross-platform acceptance"
+}

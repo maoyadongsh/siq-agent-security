@@ -1,0 +1,27 @@
+{
+  "schema": "siq-v6-integration-resources/v1",
+  "scope": "local integration worktree through 2026-09-17",
+  "owned_retained": [
+    {
+      "path": "/tmp/siq-v6-f00-20260917-152015",
+      "type": "private_source_snapshot",
+      "reason": "F00 protected source backup; directory mode 0700 and files 0600",
+      "running_dependency": false
+    },
+    {
+      "path": "/tmp/siq-v6-integration-cross-20260917",
+      "type": "unsigned_cross_builds",
+      "reason": "four local build files for hash review; directory created mode 0700",
+      "running_dependency": false
+    }
+  ],
+  "owned_running_services": [],
+  "owned_listening_ports": [],
+  "owned_sandboxes": [],
+  "external_observed_not_touched": [
+    "OpenShell shared gateway process observed on host port 17671; no request to its status/configuration and no restart",
+    "Other pre-existing host listeners were not modified"
+  ],
+  "pending_manual_cleanup": [],
+  "note": "No F04 dedicated target was created. Private F00 backup and unsigned build directory are intentionally retained for review; do not publish them."
+}

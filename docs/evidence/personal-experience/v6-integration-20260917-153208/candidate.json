@@ -1,0 +1,26 @@
+{
+  "schema": "siq-v6-integration-component-snapshot/v1",
+  "level": "component_and_cross_build_only",
+  "release_candidate": false,
+  "source_state": "uncommitted_worktree",
+  "branch": "codex/personal-v6-integration-20260917",
+  "base_commit": "9b8c09af742cb9df94c6d02e6f2db6ecccd68951",
+  "source_inventory": "source-summary.json plus integration-map.md; F04 final source binding not frozen",
+  "go": "go1.26.5 linux/arm64",
+  "node": "v22.22.2",
+  "npm": "10.9.7",
+  "uv": "0.11.7 aarch64-unknown-linux-gnu",
+  "embedded_index_sha256": "fb5466fc51f18190ecff344104db948ae85e0f46131e8a4c2924317a9e000e04",
+  "web_lock_sha256": "d27d6b9bd7676209d9279a74821bea733b94e2151f68868b085a69c808c5cba7",
+  "go_mod_sha256": "76d4db76c1f3cac2668814e3159de6cdabf9ee6947095f0bb387b194012beb6a",
+  "cross_builds": {
+    "linux/amd64": "dba4bbff20a0a027aef2069e1cc011ec8510cea749c09464a8b433b7f96fa47c",
+    "linux/arm64": "d1387752435add183cf767e96ba4623b27d8be67f8dff78cf328bdeb5722771d",
+    "darwin/arm64": "690c88d6236f89971fefd48a77c98ffa5fa253d79a339b711f4f79262f6b2223",
+    "windows/amd64": "cf8956d9a69297e11092879a3736d9ade63516cd3fd87a9b6ed1c8d9d6c825b7"
+  },
+  "actual_gateway_test": "not_run",
+  "actual_browser_test": "not_run",
+  "native_windows_or_macos_test": "not_run",
+  "note": "These unsigned local binaries are a component snapshot, not a frozen F04 candidate or release artifact."
+}

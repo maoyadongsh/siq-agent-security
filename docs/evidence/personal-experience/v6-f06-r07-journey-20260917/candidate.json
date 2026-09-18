@@ -1,0 +1,20 @@
+{
+  "schema": "v6-r07-journey-candidate/v1",
+  "base_commit": "9b8c09af742cb9df94c6d02e6f2db6ecccd68951",
+  "branch": "codex/personal-v6-integration-20260917",
+  "git_state": "uncommitted dirty integration tree",
+  "source_binding_procedure": "B / openshell-b2b3-perf-protocol.py source_binding",
+  "source_file_count": 931,
+  "source_binding_sha256": "ba8d266ef5ba861282f23a8576be8744d6023118f3f42efd8e1054632ffe06fc",
+  "build": "CGO_ENABLED=0 go build -o /tmp/siq-v6-hermes-post-e11-agent ./cmd/agentshield",
+  "target": "linux/arm64",
+  "binary_sha256": "0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+  "binary_origin": "/tmp/siq-v6-hermes-post-e11-agent (volatile); executed copy pinned at journey-private/siq-v6-hermes-post-e11-agent (0700) before the run",
+  "openclaw_host_version": "OpenClaw 2026.5.12 (f066dd2)",
+  "openclaw_root": "/home/maoyd/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw",
+  "node_version": "v22.22.1",
+  "playwright": "python 1.58.0 / chromium headless 145.0.7632.0",
+  "ui_under_test": "candidate-embedded console (//go:embed all:embedded in apps/agentshield/internal/ui/ui.go); no Vite dev server involved",
+  "model": "local deterministic fixture only; no external or paid model contacted",
+  "candidate_scope": "same-candidate R07 full Linux user journey on the real OpenClaw host; browser legs prove transport/API/rendered-DOM behaviour in headless Chromium and do not close GUI visual acceptance"
+}

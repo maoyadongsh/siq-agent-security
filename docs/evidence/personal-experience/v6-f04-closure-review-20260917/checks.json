@@ -1,0 +1,18 @@
+{
+  "tests": {
+    "command": "python3 scripts/personal-experience/test_o05v6_review_guards.py",
+    "exit_code": 0,
+    "tests_passed": 18
+  },
+  "ruff": {
+    "command": "uv run --project apps/control-api ruff check --config apps/control-api/pyproject.toml scripts/personal-experience/openshell-o05v6-d05-acceptance.py scripts/personal-experience/test_o05v6_review_guards.py",
+    "exit_code": 0
+  },
+  "product_source_binding": {
+    "sha256": "ba8d266ef5ba861282f23a8576be8744d6023118f3f42efd8e1054632ffe06fc",
+    "files": 931,
+    "matches_candidate": true
+  },
+  "new_live_execution": false,
+  "note": "Initial Ruff invocation inherited home config and failed; explicit repository config revealed three existing script hygiene issues plus new lambda binding warnings, all corrected before final passing run."
+}

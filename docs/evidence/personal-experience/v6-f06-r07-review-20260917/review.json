@@ -1,0 +1,37 @@
+{
+  "schema": "siq-r07-evidence-review/v1",
+  "review_scope": "offline evidence and harness review; no new live run",
+  "source_evidence_files": {
+    "resources.json": "37894fdb791432e2cb01d13e380460871001df67823d73ec711860e16f1748f3",
+    "report.md": "2a52daefc2c9ba446e82350416ae3429978a1159aa276776276dd308e8798fd4",
+    "candidate.json": "118ba593d0f85425036e704c21abe4b4b49f4f3fc5f3bbff9883d219744365c5",
+    "r07-journey.attempt1.failure.json": "fef21fc854ca5b5c0c7107552980676359c3f9bf327dcb957d36842ebb0a6a2d",
+    "r07-journey.json": "63957b5d0a235a05679b96c36bd37d329febb3691b87b0828c58aa5887adc563",
+    "SHA256SUMS": "74078914db920e4f2f18ad67ca5531afcd38dcd32039ef3f3a3ba7a10b52b8a9"
+  },
+  "binary_sha256": "0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+  "source_binding_sha256": "ba8d266ef5ba861282f23a8576be8744d6023118f3f42efd8e1054632ffe06fc",
+  "source_file_count": 931,
+  "harness_sha256": "e1d9e4f60fdb01aa47826eea583bf40601808418dfe520e12964fd8e105d9f31",
+  "observed_journey_checks": 25,
+  "observed_nested_checks": 30,
+  "retained_attempt1": {
+    "error_type": "TimeoutError",
+    "checks_before_failure": 16,
+    "root_cause": "unconfirmed; one passing rerun does not establish a transient wait flake"
+  },
+  "acceptance": "partial",
+  "unverified_claim": "r07_step4_attribution_correlates_grant_install_sec only asserts matched grant and nonempty digests, not their cryptographic correspondence; the nested R04 V1 assertion has the same limit",
+  "limitations": [
+    "browser operator is automated (Playwright); UI journeys here are not human acceptance",
+    "step 1 starts a fixture-copied binary, not the R06 installed systemd service; the combined installation-to-journey gate remains open",
+    "step 6 is an HTTP decision plus browser approval test, not native host hold consumption or exactly-once execution",
+    "step 10 checks unexpired ciphertext preservation; expired deletion uses component clock fixtures, not elapsed real retention time",
+    "UP07 legacy/future signed state rejection is not covered by the stale source digest check",
+    "J11 only default export exclusion is exercised; task-specific export lifecycle and elapsed-time expiry remain open",
+    "OS desktop notifications are not exercised in this headless journey; browser/OS notification layers are covered by the dedicated notification smokes",
+    "step 5 exercises missing-authority (no SEC) overreach; permission-scope overreach inside the granted read scope is not constructible at this fixture level because the host config restricts OpenClaw to the read tool",
+    "session-level attribution only (controlled_session), inherited from the L2 leg",
+    "local deterministic model and synthetic operator; no external or paid model"
+  ]
+}

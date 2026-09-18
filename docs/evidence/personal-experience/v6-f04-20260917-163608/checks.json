@@ -1,0 +1,191 @@
+{
+  "schema": "v6-f04-checks/v1",
+  "recorded_at_utc": "2026-09-17T09:15:42.219750+00:00",
+  "final_checks": [
+    {
+      "id": "F04-D05-r7",
+      "level": "real SIQ daemon + real OpenShell 0.0.83 gateway/sandbox + real browser",
+      "command": "python3 scripts/personal-experience/openshell-o05v6-d05-acceptance.py --binary <private-r4> --expected-sha256 c8048691…ae9853 --env-script <private-env> --gateway-endpoint https://127.0.0.1:17671 --target siq-v6-f04-163608 --out <r7-evidence>",
+      "exit_code": 0,
+      "check_pass": 228,
+      "check_fail": 0,
+      "acceptance_after_adjudication": {
+        "pass": 9,
+        "partial": 4
+      },
+      "matrix_sha256": "98d3e75a0dd640a0b337c45a81bfdd0bf813c3f1e9a3c25ecb284ce54fd2a7d7"
+    },
+    {
+      "id": "Go-full",
+      "level": "component",
+      "command": "go test ./... (apps/agentshield)",
+      "exit_code": 0,
+      "result": "go list ./... enumerated 46 packages; go test ./... reported all ok/no test files"
+    },
+    {
+      "id": "Go-vet",
+      "level": "static",
+      "command": "go vet ./... (apps/agentshield)",
+      "exit_code": 0
+    },
+    {
+      "id": "Go-race",
+      "level": "component race",
+      "command": "go test -race ./internal/openshell ./internal/server",
+      "exit_code": 0,
+      "result": "both packages ok"
+    },
+    {
+      "id": "Python-review-guards",
+      "level": "component",
+      "command": "python3 scripts/personal-experience/test_o05v6_review_guards.py",
+      "exit_code": 0,
+      "tests": 9
+    },
+    {
+      "id": "Python-compile",
+      "level": "syntax",
+      "command": "python3 -m py_compile <three D05 driver/test scripts>",
+      "exit_code": 0
+    },
+    {
+      "id": "Go-format",
+      "level": "source hygiene",
+      "command": "gofmt -l <changed OpenShell Go files>",
+      "exit_code": 0,
+      "output": "empty"
+    },
+    {
+      "id": "Git-diff-check",
+      "level": "source hygiene",
+      "command": "git diff --check",
+      "exit_code": 0,
+      "output": "empty"
+    },
+    {
+      "id": "Four-cross-builds",
+      "level": "build only",
+      "command": "CGO_ENABLED=0 go build linux/amd64, linux/arm64, darwin/arm64, windows/amd64",
+      "build_exit_codes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_wrapper_exit_code": 1,
+      "first_wrapper_error": "report path resolved from apps/agentshield; all builds succeeded, report regenerated from output digests",
+      "evidence": "cross-builds.json"
+    },
+    {
+      "id": "Private-material-layout",
+      "level": "filesystem audit",
+      "result": "14 ignored private roots, 28 private directories mode 0700, 1406 private files mode 0600; seven public matrices have zero absolute /home/maoyd paths, zero standalone 32-hex tokens and zero Bearer headers",
+      "exit_code": 0
+    },
+    {
+      "id": "Owned-sandbox-cleanup",
+      "level": "real gateway resource",
+      "result": "exact UUID and pristine hash checked; delete returned, immediate list still showed target, subsequent list showed target absent; no retry; shared gateway untouched",
+      "exit_code": 0
+    }
+  ],
+  "development_attempts": [
+    {
+      "directory": "v6-f04-20260917-163608",
+      "candidate_sha256": "a523c3a25f5120a8ec71fa84dac8bcf7f0d3a40b4f9c80e29f570eb76ee0a33e",
+      "driver_exit_code": 1,
+      "check_pass": 32,
+      "check_fail": 2,
+      "failed_ids": [
+        "K30c",
+        "FATAL"
+      ],
+      "started_at": "2026-09-17T08:38:03.484369+00:00",
+      "finished_at": "2026-09-17T08:38:05.241837+00:00"
+    },
+    {
+      "directory": "v6-f04-r2-20260917-170800",
+      "candidate_sha256": "7a7e3e286f95bb3e7bcbc6d1913e8e32aa37f93959e0f0f3be339ecd05d2cf22",
+      "driver_exit_code": 1,
+      "check_pass": 32,
+      "check_fail": 2,
+      "failed_ids": [
+        "K30c",
+        "FATAL"
+      ],
+      "started_at": "2026-09-17T08:50:07.633199+00:00",
+      "finished_at": "2026-09-17T08:50:09.428051+00:00"
+    },
+    {
+      "directory": "v6-f04-r3-20260917-171400",
+      "candidate_sha256": "bc75aa52fcd0080d7c9eb2eab39619b44e6371cc4dce1530cb807c1ced546271",
+      "driver_exit_code": 1,
+      "check_pass": 46,
+      "check_fail": 1,
+      "failed_ids": [
+        "FATAL"
+      ],
+      "started_at": "2026-09-17T08:54:20.700440+00:00",
+      "finished_at": "2026-09-17T08:54:23.717496+00:00"
+    },
+    {
+      "directory": "v6-f04-r4-20260917-171800",
+      "candidate_sha256": "bc75aa52fcd0080d7c9eb2eab39619b44e6371cc4dce1530cb807c1ced546271",
+      "driver_exit_code": 1,
+      "check_pass": 159,
+      "check_fail": 13,
+      "failed_ids": [
+        "E10d",
+        "leg_e02_window.ABORT",
+        "E01b",
+        "leg_e01.ABORT",
+        "E03g",
+        "leg_e03.ABORT",
+        "leg_e04.ABORT",
+        "E05d",
+        "leg_e05.ABORT",
+        "E11b",
+        "leg_e11.ABORT",
+        "E09f",
+        "leg_e09.ABORT"
+      ],
+      "started_at": "2026-09-17T08:55:30.999856+00:00",
+      "finished_at": "2026-09-17T08:56:14.777683+00:00"
+    },
+    {
+      "directory": "v6-f04-r5-20260917-174500",
+      "candidate_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "driver_exit_code": 1,
+      "check_pass": 212,
+      "check_fail": 1,
+      "failed_ids": [
+        "leg_e02_window.ABORT"
+      ],
+      "started_at": "2026-09-17T08:59:31.505546+00:00",
+      "finished_at": "2026-09-17T09:01:05.026458+00:00"
+    },
+    {
+      "directory": "v6-f04-r6-20260917-175500",
+      "candidate_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "driver_exit_code": 1,
+      "check_pass": 212,
+      "check_fail": 1,
+      "failed_ids": [
+        "leg_e02_window.ABORT"
+      ],
+      "started_at": "2026-09-17T09:01:51.427990+00:00",
+      "finished_at": "2026-09-17T09:03:25.501301+00:00"
+    },
+    {
+      "directory": "v6-f04-r7-20260917-180500",
+      "candidate_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "driver_exit_code": 0,
+      "check_pass": 228,
+      "check_fail": 0,
+      "failed_ids": [],
+      "started_at": "2026-09-17T09:03:39.085127+00:00",
+      "finished_at": "2026-09-17T09:05:16.977648+00:00"
+    }
+  ],
+  "acceptance_note": "E04 was adjudicated partial after the run because expired SEC and missing mandatory Authority were not executed; public-evidence-review.json preserves original/public hashes. The D05 exit code refers to step failures and does not mean all E items passed."
+}

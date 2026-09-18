@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/openshell-task-execution-preview.v1.schema.json",
+  "title": "Advisory preview of what an OpenShell task execution could be bound to",
+  "description": "Read-only. A preview is advisory and cannot authorize an execution: it neither reserves the hold nor proves the gateway will enforce the listed limits at execution time.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "target", "grant_ids", "authorized_network_targets", "execution_constraints_verified", "task_executed"],
+  "properties": {
+    "schema_version": {"const": "openshell-task-execution-preview/v1"},
+    "mode": {"const": "advisory"},
+    "target": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,62}$"},
+    "grant_ids": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 256}},
+    "authorized_network_targets": {"type": "array", "items": {"type": "string", "minLength": 3, "maxLength": 300}},
+    "execution_constraints_verified": {"const": false},
+    "task_executed": {"const": false},
+    "policy_revision": {"type": "string", "pattern": "^[1-9][0-9]{0,18}$"},
+    "policy_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "note": {"type": "string", "maxLength": 512}
+  }
+}

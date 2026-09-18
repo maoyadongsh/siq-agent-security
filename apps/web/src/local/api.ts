@@ -22,6 +22,12 @@ import type { TaskActivityItem } from './taskActivities';
 import { isTaskActivityDetail, isTaskActivityPage, isTaskActivitySearch, type ActivityFilters, type ActivityView } from './taskActivities';
 import { isSkillUpdateComparison, isSkillUpdateCreated, isSkillUpdatePlan, isSkillUpdateView } from './skillUpdate';
 import type { SkillUpdateCompareRequest, SkillUpdateStageRequest, SkillUpdateCommit, SkillUpdateRecover } from './types';
+import {
+  classifyTaskRead,
+  taskExecutionCandidate,
+  taskExecutionReadRequest,
+  type TaskReadOutcome,
+} from './taskExecutions';
 import { isSkillRemovalView } from './skillRemoval';
 import type { SkillRemoveRequest } from './types';
 import { isSkillInstallationCatalog, isSkillInstallationInspection } from './skillInspection';
@@ -664,6 +670,29 @@ export const localApi = {
       effective_readback?: { backend: string; revision: string; evidence_id: string };
       failures?: string[];
     }>('/v1/openshell/apply', { method: 'POST', body: JSON.stringify(body) }),
+  /**
+   * 读取一次**真实任务执行**的后端投影（`/v1/openshell/task-executions/read`）。
+   *
+   * 管理会话走 `/read`，而不是决策凭据的 `/status`：控制台只持管理会话。
+   * 这条路径是只读的——不启动、不停止、不重放、不写链。
+   *
+   * 失败被归类而不是抛出：`404` 表示"该预留不是一次任务执行"，这既不是错误也不是
+   * 状态，UI 必须能把它与"读取失败"和"后端说它未决"区分开。真正的连接失败
+   * （status 0）同样只作为一次失败呈现，不推断任何任务状态。
+   */
+  readTaskExecution: async (item: Confirmation): Promise<TaskReadOutcome> => {
+    if (!taskExecutionCandidate(item)) return { kind: 'not_a_task_execution' };
+    try {
+      const data = await request<unknown>('/v1/openshell/task-executions/read', {
+        method: 'POST',
+        body: JSON.stringify(taskExecutionReadRequest(item)),
+      });
+      return classifyTaskRead(200, data);
+    } catch (error) {
+      if (error instanceof LocalApiError) return classifyTaskRead(error.status, { error: error.message });
+      return classifyTaskRead(0, null);
+    }
+  },
   openshellDriftCheck: () =>
     request<{ ok?: boolean; findings_written?: string[]; error?: string }>('/v1/openshell/drift-check', {
       method: 'POST',

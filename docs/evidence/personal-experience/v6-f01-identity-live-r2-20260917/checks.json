@@ -1,0 +1,74 @@
+{
+  "schema": "v6-f01-checks/v1",
+  "checks": [
+    {
+      "id": "real-d05",
+      "result": "passed",
+      "counts": {
+        "pass": 229,
+        "fail": 0
+      },
+      "acceptance": {
+        "pass": 9,
+        "partial": 4
+      },
+      "evidence": "d05-acceptance-matrix.json"
+    },
+    {
+      "id": "go-vet-all",
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "level": "static"
+    },
+    {
+      "id": "go-test-all",
+      "command": "go test ./...",
+      "exit_code": 0,
+      "level": "component"
+    },
+    {
+      "id": "go-race-openshell-server",
+      "command": "go test -race ./internal/openshell ./internal/server",
+      "exit_code": 0,
+      "level": "component"
+    },
+    {
+      "id": "go-race-receipt-state",
+      "command": "go test -race ./internal/receipt ./internal/state",
+      "exit_code": 0,
+      "level": "component"
+    },
+    {
+      "id": "python-negative",
+      "command": "pytest -q scripts/personal-experience/test_b04_expiry_scope.py scripts/personal-experience/test_o05v6_review_guards.py scripts/personal-experience/test_workbuddy_host_diagnostics.py",
+      "exit_code": 0,
+      "counts": "14 passed, 15 subtests passed",
+      "level": "component"
+    },
+    {
+      "id": "python-api",
+      "command": "apps/control-api/.venv/bin/python3 -m pytest -q && .venv/bin/ruff check app",
+      "exit_code": 0,
+      "level": "component"
+    },
+    {
+      "id": "web",
+      "command": "npm test -- --run && npm run build && npm run build:local",
+      "exit_code": 0,
+      "counts": "26 files, 115 tests passed",
+      "level": "component/build"
+    },
+    {
+      "id": "gofmt",
+      "command": "gofmt -l .",
+      "exit_code": 0,
+      "output": "empty"
+    },
+    {
+      "id": "cross-build",
+      "result": "passed",
+      "counts": "4/4",
+      "evidence": "cross-builds.json"
+    }
+  ]
+}

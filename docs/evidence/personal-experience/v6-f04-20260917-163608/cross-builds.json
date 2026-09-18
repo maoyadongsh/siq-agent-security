@@ -1,0 +1,32 @@
+{
+  "schema": "v6-f04-cross-builds/v1",
+  "go_version": "go version go1.26.5 linux/arm64",
+  "rows": [
+    {
+      "goos": "linux",
+      "goarch": "amd64",
+      "build_exit_code": 0,
+      "sha256": "fdfd55b08a458b6880bcead45a440af29dbf6a27195cb56f158db95466b49f2e"
+    },
+    {
+      "goos": "linux",
+      "goarch": "arm64",
+      "build_exit_code": 0,
+      "sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853"
+    },
+    {
+      "goos": "darwin",
+      "goarch": "arm64",
+      "build_exit_code": 0,
+      "sha256": "91b6b7ef8229e12401fce69a8398173c2b62a4765d19274c77da7749c02ab818"
+    },
+    {
+      "goos": "windows",
+      "goarch": "amd64",
+      "build_exit_code": 0,
+      "sha256": "d53b6a86982e2e755b18598bf6c49cc0a4bde133ad927d037929294af455883e"
+    }
+  ],
+  "first_wrapper_exit_code": 1,
+  "first_wrapper_note": "All four go build commands exited 0; wrapper failed only while writing its report from apps/agentshield using a repository-root-relative path. This report rehashes those exact output files without rebuilding."
+}

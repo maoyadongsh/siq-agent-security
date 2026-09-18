@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
@@ -27,7 +28,11 @@ func TestAdapterDiagnosticContractAndAuthority(t *testing.T) {
 		t.Fatal(err)
 	}
 	got, _ := json.MarshalIndent(body, "", "  ")
-	path := filepath.Join("..", "..", "testdata", "contracts", "adapter-diagnostics.json")
+	name := "adapter-diagnostics.json"
+	if runtime.GOOS == "linux" {
+		name = "adapter-diagnostics-linux.json"
+	}
+	path := filepath.Join("..", "..", "testdata", "contracts", name)
 	if os.Getenv("AGENTSHIELD_UPDATE_SAMPLES") == "1" {
 		if err := os.WriteFile(path, append(got, '\n'), 0o644); err != nil {
 			t.Fatal(err)

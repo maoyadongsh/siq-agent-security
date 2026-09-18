@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"errors"
 	"net/http"
+	"runtime"
 	"strings"
 	"time"
 
@@ -43,6 +44,10 @@ func (s *Server) adapterPreview(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := readJSON(r, &body, 16<<10); err != nil {
 		writeJSON(w, 400, map[string]any{"error": "invalid preview request"})
+		return
+	}
+	if body.Action != "uninstall" && !adapterinstall.NewIntegrationSupportedOnOS(body.Platform, runtime.GOOS) {
+		writeJSON(w, 400, map[string]any{"error": "当前产品范围不支持此平台的新接入；已有配置仍可卸载。"})
 		return
 	}
 	s.adapterPlanMu.Lock()
@@ -132,6 +137,10 @@ func (s *Server) adapterMutate(w http.ResponseWriter, r *http.Request, action st
 	}
 	if err := readJSON(r, &body, 16<<10); err != nil || body.PlanID == "" || body.PlanDigest == "" {
 		writeJSON(w, 400, map[string]any{"error": "请先预览配置变更，再确认应用。"})
+		return
+	}
+	if action == "install" && !adapterinstall.NewIntegrationSupportedOnOS(body.Platform, runtime.GOOS) {
+		writeJSON(w, 400, map[string]any{"error": "当前产品范围不支持此平台的新接入；已有配置仍可卸载。"})
 		return
 	}
 	s.adapterPlanMu.Lock()

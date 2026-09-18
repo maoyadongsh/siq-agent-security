@@ -1,0 +1,352 @@
+{
+  "started_at": "2026-09-17T09:33:43Z",
+  "legs": [],
+  "checks": [
+    {
+      "leg": "A1-env-create",
+      "expected": 201,
+      "actual": 201,
+      "ok": true,
+      "note": "env_id=env_7a1b26fc9d824c549907",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A2-env-mode-enforce",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "note": "{\"id\": \"env_7a1b26fc9d824c549907\", \"tenant_id\": \"tnt-d08\", \"name\": \"d08-service-env\", \"env_type\": \"host\", \"mode\": \"enforce\", \"risk_level\": \"medium\", \"last_heartbeat_at\": null}",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A3-edge-register",
+      "expected": "device_secret issued",
+      "actual": "issued",
+      "ok": true,
+      "note": "edge_identity=d08-edge-01",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A4-scan-task",
+      "expected": "task created",
+      "actual": "tsk_38c73fa937bf4b6ba39d",
+      "ok": true,
+      "note": "task_id=tsk_38c73fa937bf4b6ba39d",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A5-edge-batch-ingest",
+      "expected": "200/201/202",
+      "actual": 200,
+      "ok": true,
+      "note": "accepted={\"candidates\": 1, \"evidence\": 1, \"permission_facts\": 0}",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A6-candidate-visible",
+      "expected": "edge-ingested candidate listed",
+      "actual": "1 of 1",
+      "ok": true,
+      "note": "asset_id=agt_b40ecde753204f22a161",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A7-candidate-confirm",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "note": "status=confirmed",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A8-instance-autocreated",
+      "expected": ">=1 instance",
+      "actual": 1,
+      "ok": true,
+      "note": "instance_id=inst_92860b33e4384ebcb4ba runtime=hermes",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A9-binding",
+      "expected": 201,
+      "actual": 201,
+      "ok": true,
+      "note": "binding_id=rb_81c94b493bd344bbabde target=siq-v6-f07-174600",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A10-policy-create",
+      "expected": 201,
+      "actual": 201,
+      "ok": true,
+      "note": "policy_id=pol_cf8aaad3b0804dc4ac10",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A11-sod-self-approve",
+      "expected": "409 segregation_of_duties",
+      "actual": "409 segregation_of_duties",
+      "ok": true,
+      "note": "approver == requester must be refused",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A12-approve-by-other",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "note": "approver=d08-approver",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A13-backend-none-gate",
+      "expected": "409 enforcement_backend_disabled",
+      "actual": "409 enforcement_backend_disabled",
+      "ok": true,
+      "note": "fully approved CR still cannot deploy when enforcement backend is none",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A14-missing-credentials",
+      "expected": "401 missing_credentials",
+      "actual": "401 missing_credentials",
+      "ok": true,
+      "note": "no X-Dev-Tenant-Id header",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A15-viewer-forbidden",
+      "expected": "403 forbidden",
+      "actual": "403 forbidden",
+      "ok": true,
+      "note": "viewer lacks policy:manage",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "A16-cross-tenant-404",
+      "expected": "404 not_found",
+      "actual": "404 not_found",
+      "ok": true,
+      "note": "another tenant cannot resolve this tenant's asset id",
+      "at": "2026-09-17T09:33:44Z"
+    },
+    {
+      "leg": "B0-pristine-precondition",
+      "expected": "Hash=21ca0b7c8c0e… no network_policies",
+      "actual": "Hash=21ca0b7c8c0e… net=False",
+      "ok": true,
+      "note": "version=1",
+      "at": "2026-09-17T09:33:45Z"
+    },
+    {
+      "leg": "B1-deploy-effective",
+      "expected": "201 + status effective",
+      "actual": "201 status=effective",
+      "ok": true,
+      "note": "target=siq-v6-f07-174600 err=",
+      "at": "2026-09-17T09:33:50Z"
+    },
+    {
+      "leg": "B2-deploy-target-binding",
+      "expected": "siq-v6-f07-174600",
+      "actual": "siq-v6-f07-174600",
+      "ok": true,
+      "note": "deployment.target must equal binding.backend_target_id",
+      "at": "2026-09-17T09:33:50Z"
+    },
+    {
+      "leg": "B3-verification-level",
+      "expected": "method=config_readback (readback, NOT enforcement_verified)",
+      "actual": "level=readback_verified method=config_readback",
+      "ok": true,
+      "note": "readback proves config state only, never general behaviour protection",
+      "at": "2026-09-17T09:33:50Z"
+    },
+    {
+      "leg": "B4-receipt-verify",
+      "expected": 200,
+      "actual": 200,
+      "ok": true,
+      "note": "attestation={\"verifier\": \"control-plane.independent-readback.v1\", \"checked_at\": \"2026-09-17T09:33:50.139796+00:00\", \"expected_revision\": \"2\", \"actual_revision\": \"2\", \"result\": \"verified\"}",
+      "at": "2026-09-17T09:33:50Z"
+    },
+    {
+      "leg": "B5-external-readback-applied",
+      "expected": "independent CLI shows network_policies with api.openai.com:443 and a new Hash",
+      "actual": "rc=0 net=True version=2 hash=e087f65ef7d6…",
+      "ok": true,
+      "note": "read back outside the service, via the same env.sh the adapter uses",
+      "at": "2026-09-17T09:33:50Z"
+    },
+    {
+      "leg": "B6-rollback-restored",
+      "expected": "200 + verification.rollback.result=restored",
+      "actual": "200 result=restored err=",
+      "ok": true,
+      "note": "restored_revision=3",
+      "at": "2026-09-17T09:34:00Z"
+    },
+    {
+      "leg": "B7-external-readback-restored",
+      "expected": "CLI content Hash returns to 21ca0b7c8c0e… and network_policies gone",
+      "actual": "hash=21ca0b7c8c0e… net=False version=3",
+      "ok": true,
+      "note": "independent proof the rollback really reached the gateway",
+      "at": "2026-09-17T09:34:00Z"
+    },
+    {
+      "leg": "B8-double-rollback",
+      "expected": "409 invalid_state",
+      "actual": "409 invalid_state",
+      "ok": true,
+      "note": "rollback is not idempotent-replayable",
+      "at": "2026-09-17T09:34:00Z"
+    },
+    {
+      "leg": "B9-deploy2-effective",
+      "expected": "201 + effective",
+      "actual": "201 status=effective",
+      "ok": true,
+      "note": "deployment_id=dep_b2f4c9e2aad04ace8726",
+      "at": "2026-09-17T09:34:10Z"
+    },
+    {
+      "leg": "B10-external-readback-applied2",
+      "expected": "CLI shows api.anthropic.com:443",
+      "actual": "rc=0 net=True version=4",
+      "ok": true,
+      "note": "deploy #2 deliberately left applied for the service-C leg",
+      "at": "2026-09-17T09:34:10Z"
+    },
+    {
+      "leg": "C1-fresh-process-operation-unknown",
+      "expected": "502 openshell_rollback_failed (operation_unknown)",
+      "actual": "502 openshell_rollback_failed: 602353f19a0f92eedbe08726d830ec9765f30e1f0d0eaf9fe20fc5396caf2767",
+      "ok": true,
+      "note": "in-process registry is not a cross-restart source of truth; a fresh process must refuse rather than replay",
+      "at": "2026-09-17T09:34:11Z"
+    },
+    {
+      "leg": "C2-backend-zero-mutation",
+      "expected": "revision + Hash unchanged, deploy #2 policy still present",
+      "actual": "version=4 (was 4) hash_match=True",
+      "ok": true,
+      "note": "a refused rollback must not have touched the gateway",
+      "at": "2026-09-17T09:34:11Z"
+    },
+    {
+      "leg": "D1-unreachable-gateway-preflight",
+      "expected": "502 openshell_preflight_failed",
+      "actual": "502 openshell_preflight_failed: 3e9ac42c090a51f12414b9d375a735fde4ecf05858c80383210b05c709db5552 (30.02s)",
+      "ok": true,
+      "note": "unreachable backend is an explicit gateway failure, never a silent success",
+      "at": "2026-09-17T09:34:42Z"
+    },
+    {
+      "leg": "D2-no-deployment-row-on-preflight-failure",
+      "expected": "0 rows for the failed CR",
+      "actual": 0,
+      "ok": true,
+      "note": "preflight failure happens before the row is created",
+      "at": "2026-09-17T09:34:42Z"
+    },
+    {
+      "leg": "D3-backend-zero-mutation",
+      "expected": "api.example.com absent, revision + Hash unchanged",
+      "actual": "version=4 (was 4) example_com_present=False",
+      "ok": true,
+      "note": "a timed-out preflight must not have touched the gateway",
+      "at": "2026-09-17T09:34:42Z"
+    },
+    {
+      "leg": "Z1-outside-service-cleanup",
+      "expected": "CLI-side restore returns Hash to 21ca0b7c8c0e…",
+      "actual": "set_rc=0 hash=21ca0b7c8c0e… version=5",
+      "ok": true,
+      "note": "performed outside the service by the batch; the service itself correctly refuses to replay an unknown operation",
+      "at": "2026-09-17T09:34:50Z"
+    }
+  ],
+  "fatal": null,
+  "cleanup": {
+    "set_rc": 0,
+    "hash_after": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+    "version_after": 5,
+    "ok": true
+  },
+  "finished_at": "2026-09-17T09:34:50Z",
+  "state": {
+    "env_id": "env_7a1b26fc9d824c549907",
+    "asset_id": "agt_b40ecde753204f22a161",
+    "instance_id": "inst_92860b33e4384ebcb4ba",
+    "binding_id": "rb_81c94b493bd344bbabde",
+    "policy_id": "pol_cf8aaad3b0804dc4ac10",
+    "cr_id": "cr_18baf8b2787c4b19b72a",
+    "dep1_id": "dep_d93e7582d4c04453abfb",
+    "dep2_id": "dep_b2f4c9e2aad04ace8726",
+    "cr2_id": "cr_a4387b394445428d908f",
+    "applied2_version": 4,
+    "applied2_hash": "785a7d07f49715fc202c0271f2b34d0433bf513073a066b61ec29cf88015ebd3"
+  },
+  "snapshots": {
+    "snapshot_before": {
+      "leg": "B0-before",
+      "note": "",
+      "rc": 0,
+      "version": 1,
+      "hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "has_network_policies": false,
+      "at": "2026-09-17T09:33:45Z"
+    },
+    "snapshot_applied": {
+      "leg": "B5-after-apply",
+      "note": "",
+      "rc": 0,
+      "version": 2,
+      "hash": "e087f65ef7d65a0de7e58ac0210ef8920bd73cd54782df2333a77b928d43de7b",
+      "has_network_policies": true,
+      "at": "2026-09-17T09:33:50Z"
+    },
+    "snapshot_restored": {
+      "leg": "B7-after-rollback",
+      "note": "",
+      "rc": 0,
+      "version": 3,
+      "hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "has_network_policies": false,
+      "at": "2026-09-17T09:34:00Z"
+    },
+    "snapshot_applied2": {
+      "leg": "B10-after-apply2",
+      "note": "",
+      "rc": 0,
+      "version": 4,
+      "hash": "785a7d07f49715fc202c0271f2b34d0433bf513073a066b61ec29cf88015ebd3",
+      "has_network_policies": true,
+      "at": "2026-09-17T09:34:10Z"
+    },
+    "snapshot_after_refused_rollback": {
+      "leg": "C2-after-refused-rollback",
+      "note": "",
+      "rc": 0,
+      "version": 4,
+      "hash": "785a7d07f49715fc202c0271f2b34d0433bf513073a066b61ec29cf88015ebd3",
+      "has_network_policies": true,
+      "at": "2026-09-17T09:34:11Z"
+    },
+    "snapshot_after_timeout": {
+      "leg": "D3-after-timeout",
+      "note": "",
+      "rc": 0,
+      "version": 4,
+      "hash": "785a7d07f49715fc202c0271f2b34d0433bf513073a066b61ec29cf88015ebd3",
+      "has_network_policies": true,
+      "at": "2026-09-17T09:34:42Z"
+    }
+  },
+  "summary": {
+    "total": 33,
+    "passed": 33,
+    "failed": []
+  }
+}

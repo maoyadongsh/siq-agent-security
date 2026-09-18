@@ -11,7 +11,7 @@ from n09_evidence import Invalid, passed_checks, read_json, report_binary, requi
 ITEMS = [f"J{i}" for i in range(1, 12)]
 PLATFORMS = ["hermes", "openclaw", "workbuddy"]
 OS_NAMES = ["linux", "macos", "windows"]
-STATUSES = ["native", "controlled_start", "unavailable", "unverified", "blocked"]
+STATUSES = ["native", "controlled_start", "unavailable", "unverified", "blocked", "out_of_scope"]
 REASONS = ["environment_unavailable", "upstream_runtime_unconfirmed", "host_capability_missing"]
 CLASSIFICATIONS = ["static_check", "unit_test", "component_integration", "native_machine", "complete_acceptance"]
 
@@ -81,13 +81,21 @@ def check(matrix_path, repo, summary_path=None):
         rows = cell["rows"]
         require(isinstance(rows, list) and len(rows) == 11, "eleven rows required")
         require(all(isinstance(row, dict) for row in rows) and [r.get("item") for r in rows] == ITEMS, "row items")
+        if any(row.get("status") == "out_of_scope" for row in rows):
+            require(env == ("workbuddy", "linux") and all(row.get("status") == "out_of_scope" for row in rows),
+                    "only the entire Linux/WorkBuddy cell may be out of scope")
         for row in rows:
             keys(row, ("item", "status", "classification", "evidence_refs", "coverage", "note"), ("reason", "required_evidence"))
             require(row["status"] in STATUSES and row["classification"] in CLASSIFICATIONS, "closed-set status/classification")
             require(isinstance(row["note"], str), "row note")
             if "required_evidence" in row:
                 require(isinstance(row["required_evidence"], str) and row["required_evidence"], "evidence requirement type")
-            if row["status"] == "blocked":
+            if row["status"] == "out_of_scope":
+                require(row.get("reason") == "product_scope_excluded" and row["classification"] == "static_check"
+                        and row["note"] and not row["evidence_refs"] and not row["coverage"]
+                        and "required_evidence" not in row,
+                        "out-of-scope rows cannot claim runtime evidence or acceptance")
+            elif row["status"] == "blocked":
                 require(row.get("reason") in REASONS, "blocked reason")
             else:
                 require("reason" not in row, "unexpected reason")

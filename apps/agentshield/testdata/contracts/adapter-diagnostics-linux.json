@@ -1,0 +1,81 @@
+{
+  "platform_changes": false,
+  "platforms": [
+    {
+      "checks": [
+        {
+          "code": "adapter_files",
+          "message": "尚未发现当前适配器文件",
+          "status": "unknown"
+        }
+      ],
+      "configuration_state": "not_installed",
+      "next_steps": [
+        "查看接入所需改动并安装适配器，随后验证宿主加载和工具调用。"
+      ],
+      "platform": "openclaw",
+      "runtime_state": "unverified"
+    },
+    {
+      "checks": [
+        {
+          "code": "adapter_files",
+          "message": "尚未发现当前适配器文件",
+          "status": "unknown"
+        }
+      ],
+      "configuration_state": "not_installed",
+      "next_steps": [
+        "查看接入所需改动并安装适配器，随后验证宿主加载和工具调用。"
+      ],
+      "platform": "hermes",
+      "runtime_state": "unverified"
+    },
+    {
+      "checks": [
+        {
+          "code": "product_scope",
+          "message": "CodeBuddy 已退出全平台产品范围；历史配置可查看或卸载",
+          "status": "not_applicable"
+        }
+      ],
+      "configuration_state": "unsupported",
+      "next_steps": [
+        "如有旧接入，可在设置中卸载；新权限请选当前支持的平台。"
+      ],
+      "platform": "codebuddy",
+      "runtime_state": "unverified"
+    },
+    {
+      "checks": [
+        {
+          "code": "product_scope",
+          "message": "Linux 不支持 WorkBuddy 新接入；历史配置可查看或卸载",
+          "status": "not_applicable"
+        }
+      ],
+      "configuration_state": "unsupported",
+      "next_steps": [
+        "如有旧接入，可在设置中卸载；Linux 当前仅验收 OpenClaw 和 Hermes。"
+      ],
+      "platform": "workbuddy",
+      "runtime_state": "unverified"
+    },
+    {
+      "checks": [
+        {
+          "code": "runtime_integration",
+          "message": "当前尚无经过验证的工具接入路径",
+          "status": "not_applicable"
+        }
+      ],
+      "configuration_state": "unsupported",
+      "next_steps": [
+        "可继续盘点与静态检查；当前不声明工具调用阻断能力。"
+      ],
+      "platform": "trae",
+      "runtime_state": "unverified"
+    }
+  ],
+  "schema_version": "local-adapter-diagnostics/v1"
+}
