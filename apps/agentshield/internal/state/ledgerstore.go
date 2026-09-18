@@ -140,11 +140,16 @@ func (s *Store) stageVersion(subdir, fileID string, doc any) (tmp string, cleanu
 		return "", nil, errors.New("state: invalid file id")
 	}
 	dir := filepath.Join(s.Dir, subdir)
-	if err := statefs.MkdirAll(dir, 0o700); err != nil {
-		return "", nil, err
-	}
 	raw, err := json.MarshalIndent(doc, "", "  ")
 	if err != nil {
+		return "", nil, err
+	}
+	if subdir == "grants" {
+		if err := checkGrantProfileWrite(raw); err != nil {
+			return "", nil, err
+		}
+	}
+	if err := statefs.MkdirAll(dir, 0o700); err != nil {
 		return "", nil, err
 	}
 	f, err := statefs.CreateTemp(dir, ".pending-*")

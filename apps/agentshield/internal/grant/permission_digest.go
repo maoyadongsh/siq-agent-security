@@ -11,6 +11,9 @@ import (
 // PermissionDigest identifies the approved execution limits independently of
 // backend readback evidence. The complete Grant signature is verified separately.
 func PermissionDigest(g Grant) (string, error) {
+	if err := ValidateFilesystemProfile(g); err != nil {
+		return "", err
+	}
 	raw, err := json.Marshal(g)
 	if err != nil {
 		return "", err
@@ -40,6 +43,9 @@ func PermissionDigest(g Grant) (string, error) {
 		}
 	}
 	document["digest_schema"] = "grant-permissions/v1"
+	if g.SchemaVersion == "grant/v2" {
+		document["digest_schema"] = "grant-permissions/v2"
+	}
 	normalized, err := canon.Marshal(document)
 	if err != nil {
 		return "", err

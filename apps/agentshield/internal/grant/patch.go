@@ -262,6 +262,11 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 	}
 
 	g.Signature = "" // cleared before resign
+	if g.SchemaVersion != "" || g.FilesystemProfile != "" || g.FilesystemBindings != nil {
+		if err := bindFilesystemResources(&g); err != nil {
+			return g, nil, err
+		}
+	}
 	resign(key, &g)
 	return g, dp, nil
 }

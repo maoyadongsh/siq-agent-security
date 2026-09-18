@@ -84,6 +84,9 @@ func (s *Store) commitPath(id, suffix string) string {
 }
 
 func validateCommit(c GrantCommit) error {
+	if c.Grant.SchemaVersion != "" || c.Grant.FilesystemProfile != "" || c.Grant.FilesystemBindings != nil {
+		return ErrGrantProfileActivation
+	}
 	if !safeID(c.Grant.GrantID) || c.ExpectedRevision < -1 {
 		return errors.New("state: invalid commit identity or revision")
 	}

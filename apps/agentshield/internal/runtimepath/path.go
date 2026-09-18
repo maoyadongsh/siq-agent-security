@@ -3,9 +3,12 @@
 package runtimepath
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"slices"
 
+	"siq-agent-security/apps/agentshield/internal/canon"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 )
 
@@ -44,6 +47,24 @@ func (s *Snapshot) Path() string {
 func (s *Snapshot) Exists() bool { return s != nil && s.exists }
 func (s *Snapshot) IsDirectory() bool {
 	return s != nil && s.exists && len(s.objects) > 0 && s.objects[len(s.objects)-1].directory
+}
+
+// IdentityDigest binds a signed scope to the observed name and ancestor/file
+// identities. It deliberately excludes mutable contents and sizes.
+func (s *Snapshot) IdentityDigest() (string, error) {
+	if s == nil || len(s.objects) == 0 {
+		return "", ErrUnverified
+	}
+	objects := make([]any, 0, len(s.objects))
+	for _, o := range s.objects {
+		objects = append(objects, []any{int64(o.volume), int64(o.indexHigh), int64(o.indexLow), int64(o.createdHigh), int64(o.createdLow), o.directory})
+	}
+	raw, err := canon.Marshal([]any{"windows-resource-identity/v1", s.path, s.device, s.exists, objects})
+	if err != nil {
+		return "", ErrUnverified
+	}
+	digest := sha256.Sum256(raw)
+	return hex.EncodeToString(digest[:]), nil
 }
 
 // Revalidate rejects changed identity or existence. This is deliberately not a

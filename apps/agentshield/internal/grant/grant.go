@@ -89,6 +89,9 @@ type SkillRef struct {
 }
 
 type Grant struct {
+	SchemaVersion          string              `json:"schema_version,omitempty"`
+	FilesystemProfile      string              `json:"filesystem_profile,omitempty"`
+	FilesystemBindings     *map[string]string  `json:"filesystem_bindings,omitempty"`
 	GrantID                string              `json:"grant_id"`
 	AdmissionID            string              `json:"admission_id"`
 	Skill                  *SkillRef           `json:"skill,omitempty"`
@@ -439,6 +442,11 @@ func IsLiveStatus(status string) bool {
 // Approve moves pending_approval → approved. Fails unless the actor is human
 // and no overlap is unresolved (mirrors the schema's if/then).
 func Approve(g Grant, actor Approval, key *signing.Key) (Grant, error) {
+	if g.SchemaVersion != "" || g.FilesystemProfile != "" || g.FilesystemBindings != nil {
+		if key == nil || !Verify(key.Public(), g) || RecheckFilesystemBindings(g) != nil {
+			return g, ErrFilesystemProfile
+		}
+	}
 	if !canTransition(g.Status, "approved") {
 		return g, fmt.Errorf("grant: cannot approve from %s", g.Status)
 	}
@@ -565,6 +573,9 @@ func resign(key *signing.Key, g *Grant) {
 
 // Verify checks the grant signature.
 func Verify(pub []byte, g Grant) bool {
+	if ValidateFilesystemProfile(g) != nil {
+		return false
+	}
 	raw, _ := json.Marshal(g)
 	dec, err := canon.Decode(raw)
 	if err != nil {
