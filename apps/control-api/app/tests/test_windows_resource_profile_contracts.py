@@ -37,6 +37,7 @@ def _validator(name: str) -> Draft7Validator:
 def _candidate(kind: str) -> dict:
     if kind == "intent-contract.v4":
         value = _read("intent-contract.v2.sample.json")
+        value.pop("provenance_refs", None)
         value.update(schema_version="intent/v4", authority_kind="instance_permission", filesystem_profile=PROFILE)
         value["authority"]["issuer"] = "local-runtime-identity"
         return value
@@ -91,6 +92,7 @@ def test_new_managed_intent_cannot_encode_provenance_downgrade() -> None:
         {"filesystem_profile": "posix/v1"},
         {"filesystem_profile": "unknown/v1"},
         {"provenance_constraints": []},
+        {"provenance_refs": []},
         {"effect_requirements": []},
         {"authority": {**value["authority"], "issuer": "model"}},
     ]:
@@ -144,7 +146,9 @@ def test_legacy_shapes_stay_closed_to_profile_injection(schema: str, fixture: st
     assert list(validator.iter_errors({**value, **patch}))
 
 
-@pytest.mark.parametrize("kind", ["local-state-windows-profile-plan", "local-state-windows-profile-done", "local-state-windows-profile-result"])
+@pytest.mark.parametrize("kind", [
+    "local-state-windows-profile-plan", "local-state-windows-profile-done", "local-state-windows-profile-result",
+])
 def test_state_profile_transition_contracts(kind: str) -> None:
     validator = _validator(kind + ".v1.schema.json")
     value = _read(kind + ".json")

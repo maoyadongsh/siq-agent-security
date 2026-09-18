@@ -26,15 +26,6 @@
     "filesystem_profile"
   ],
   "properties": {
-    "provenance_refs": {
-      "type": "array",
-      "maxItems": 64,
-      "uniqueItems": true,
-      "items": {
-        "type": "string",
-        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
-      }
-    },
     "schema_version": {
       "const": "intent/v4"
     },

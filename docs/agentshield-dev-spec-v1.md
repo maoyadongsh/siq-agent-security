@@ -5,6 +5,8 @@
 - 上游文档：ADR-011（决策）→ `agentshield-design-v1.md`（方案）→ **本文（规格）** → `packages/contracts/`（合同事实源）
 - 相关：`research/agentshield-market-survey-2026-09.md`、`detection-baseline.md`、`compatibility.md`、ADR-003/004/005
 - W7 增量计划（本地台账与企业能力对齐，待按期回写本文）：[`agentshield-local-ledger-dev-plan-v1.md`](./agentshield-local-ledger-dev-plan-v1.md)
+- OpenClaw 原生会话轮换：[`openclaw-native-session-spec-v1.md`](./openclaw-native-session-spec-v1.md)；运行身份必须同时覆盖可信 hook 的路由键与 UUID，禁止旧 raw key 授权回退。
+- Windows 新版授权执行链：[`windows-authority-runtime-v1.md`](./windows-authority-runtime-v1.md)、[`windows-file-observation-spec-v2.md`](./windows-file-observation-spec-v2.md) 与 [`windows-authority-ui-v1.md`](./windows-authority-ui-v1.md)；在显式状态升级后绑定经批准的路径事实，最终裁决和审批恢复复验同一解释，保留旧记录签名字节。
 
 > 文档分工：设计方案回答「做什么、为什么」；本文回答「怎么做、边界在哪、怎么验证」。合同细节以 schema 为准，本文只解释语义与算法，不复制字段表。W7 新接口与状态文件必须先回写本文再实现。
 
@@ -2107,6 +2109,6 @@ D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-priv
 
 ## 2026-09-16 Windows 文件资源解释候选（#39）
 
-按 [Windows 本地盘符资源专项规格](windows-resource-profile-spec-v1.md) 准备明确签名的新 managed 权限解释。旧 Intent v2/v3、Grant、identity 和会话保持 POSIX 原义；不得全局放宽 NormalizeResource。首片只建立新版合同和显式纯词法入口，在 Windows 文件事实层与批准/身份/裁决全链完成前不启用新 Authority，也不声明 Hermes B 已通过。
+按 [Windows 本地盘符资源专项规格](windows-resource-profile-spec-v1.md) 建立明确签名的新 managed 权限解释。旧 Intent v2/v3、Grant、identity 和会话保持 POSIX 原义；不得全局放宽 NormalizeResource。新版 Authority 必须完成可恢复状态升级，经明确的资源确认及批准，再由运行身份产生 Intent 和会话绑定；最终裁决、审批恢复与文件观察沿同一解释复验。实施接线见本文开头的三个专项增量。组件实现不代表 Hermes B 或其他真实宿主旅程已通过。
 
 2026-09-18 接续 Windows 资源事实层：`internal/runtimepath` 按上述专项规格核对本地 NTFS、真实长名称、父组件、目录大小写、硬链接及删除/替换状态，逐次复验并拒绝不确定对象。该层不产生 Authority、不改变旧路径语义，也不单独启用新版 Grant/Intent/identity；批准与最终调用链仍须完整接通。
