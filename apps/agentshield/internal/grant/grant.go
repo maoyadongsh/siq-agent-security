@@ -121,6 +121,7 @@ type DesiredPolicy = map[string]any
 // Options for Build.
 type Options struct {
 	importGrantID   string
+	instanceGrantID string
 	Subject         Subject
 	Platform        string
 	EnforcementMode string
@@ -203,6 +204,12 @@ func buildGrant(adm admission.Admission, opts Options) (*Result, error) {
 	}
 	if opts.importGrantID != "" {
 		g.GrantID = opts.importGrantID
+	}
+	if opts.instanceGrantID != "" {
+		// Only BuildInstanceDraft sets this after validating the explicit
+		// instance scope. No existing Grant or admission is rewritten.
+		g.GrantID = opts.instanceGrantID
+		g.Skill = nil
 	}
 	if opts.Scenario != nil {
 		g.Scenario = &ScenarioRef{ID: opts.Scenario.ID, Version: opts.Scenario.Version}

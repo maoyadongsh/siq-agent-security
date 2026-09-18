@@ -273,6 +273,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/adapter/diagnostics", s.auth(s.adapterDiagnostics, capAdmin))
 	s.mux.HandleFunc("/v1/grant-scenarios", s.auth(s.grantScenarios))
 	s.mux.HandleFunc("/v1/grants", s.auth(s.grants))
+	s.mux.HandleFunc("/v1/grants/instance-drafts", s.auth(s.grantInstanceDraft, capAdmin))
 	s.mux.HandleFunc("/v1/grants/", s.auth(s.grantAction))
 	s.mux.HandleFunc("/v1/config", s.auth(s.config))
 	s.mux.HandleFunc("/v1/adapter/status", s.auth(s.adapterStatus))
