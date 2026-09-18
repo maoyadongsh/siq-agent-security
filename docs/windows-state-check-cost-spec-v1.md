@@ -8,4 +8,6 @@ Windows profile 兼容元数据使用短生命周期的只读快照：每次检�
 
 HTTP 登记由单一 `EnrollContext` 在同一身份锁内完成完整凭据/撤销/当前 Grant 验证并返回用于响应的 Record 与 Binding，不再由 handler 预认证后重复认证；身份认证函数可同时返回它本次已验证的 Grant 供本次 envelope 构造。裁决在解析有界请求后执行一次 `AuthorizeSessionContext`，后者仍读取当前身份签名/凭据/撤销/Windows profile，并从本次 ResolveBinding 已完整验证的选中 Grant 核对身份 profile 和精确引用。最终 Intent/Binding 发布复验、引擎裁决前复验、现有撤销锁与不延长会话期限保持。无结果跨请求留存；未认证畸形输入仅可能改变 400/401 错误优先级，不暴露身份详情。
 
+Windows Intent 记录的单次读取合并为 `statefs.ReadPrivateRecord`：使用调用者已有的状态根及记录路径，前后各一次 RequirePath 保持所有外层/嵌套兼容与 N01 屏障，期间用同一 ReadSnapshot 固定根、记录目录和文件。先 PinDirectory 明确核验记录目录，即使文件不存在，目录缺失/不可读/扩权也不是“无撤销”。所有元数据和 ACL 均来自当前调用，读取结束再次 Verify 后释放句柄；大小上限及后续严格 JSON/签名解析保留。仅合并同一业务文件原有的五次兼容路径检查；不合并不同记录、Grant 查询、撤销查询或发布边界。
+
 验证包括前后同旅程成本、缺失/损坏/替换/硬链接/重解析元数据、当前 ACL 扩权、检查结束后新调用立即看见变化、活动屏障及旧消费者拒写；不能以 profile 工具的额外成本当作正式性能门槛。最终须以不带 profile 的受管宿主 HTTP 登记＋裁决验证原 4 秒预算。

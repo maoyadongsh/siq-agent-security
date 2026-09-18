@@ -107,23 +107,34 @@ func (s *ReadSnapshot) privateParent(name string) (string, error) {
 		}
 	}
 	path := filepath.Join(s.root, name)
-	parent := filepath.Dir(name)
-	if parent == "." {
-		return path, nil
+	if err := s.PinDirectory(filepath.Dir(name)); err != nil {
+		return "", err
+	}
+	return path, nil
+}
+
+// PinDirectory distinguishes an absent record from an invalid/missing record
+// directory. It does not create directories or repair their permissions.
+func (s *ReadSnapshot) PinDirectory(name string) error {
+	if s == nil || s.closed || name == "" || !filepath.IsLocal(name) || filepath.Clean(name) != name {
+		return ErrPrivate
+	}
+	if name == "." {
+		return nil // The private root is already pinned by OpenReadSnapshot.
 	}
 	current := s.root
-	for _, part := range strings.Split(parent, string(filepath.Separator)) {
+	for _, part := range strings.Split(name, string(filepath.Separator)) {
 		current = filepath.Join(current, part)
 		if s.dirs[current] != nil {
 			continue
 		}
 		f, err := snapshotOpen(current, true, true)
 		if err != nil {
-			return "", err
+			return err
 		}
 		s.dirs[current] = f
 	}
-	return path, nil
+	return nil
 }
 
 func (s *ReadSnapshot) ReadFile(name string, limit int64) ([]byte, error) {

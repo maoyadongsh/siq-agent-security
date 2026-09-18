@@ -11,6 +11,12 @@ type ReadSnapshot struct {
 }
 
 func OpenReadSnapshot(root string) (*ReadSnapshot, error) { return &ReadSnapshot{root: root}, nil }
+func (s *ReadSnapshot) PinDirectory(name string) error {
+	if s == nil || s.closed || !filepath.IsLocal(name) || filepath.Clean(name) != name {
+		return ErrPrivate
+	}
+	return CheckDir(filepath.Join(s.root, name))
+}
 func (s *ReadSnapshot) ReadFile(name string, limit int64) ([]byte, error) {
 	if s == nil || s.closed || !filepath.IsLocal(name) {
 		return nil, ErrPrivate
