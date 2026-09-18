@@ -2144,7 +2144,7 @@ Windows WorkBuddy 实测补充（2026-09-19）：受管钩子 enroll/decide/obse
 
 安装后会话绑定管理接线（2026-09-19）：在既有安装权限面板中选择后端已登记、仍有效且绑定同安装 Grant 的会话，明确确认整个会话归并该 Skill（不含逐调用因果），通过原 SEC issue/revoke 管理合同操作。新增只读 capAdmin `GET /v1/skill-contexts/management?install_id=...`，响应 `local-skill-context-management/v1`，从安装记录派生实例及 Grant，不接受客户端路径、主体、平台或权限摘要。枚举沿用签名 binding/SEC 存储的 4096 项硬上限；结果各最多 64 个会话/历史上下文，超限或损坏拒绝，取消请求停止继续读取。会话选择经当前 runtime identity 与 ResolveBinding 复验；它只供选择，签发时仍完整重验。历史上下文验签并读撤销墓碑，不把历史记录或未撤销直接标为有效权限。读回用于刷新和响应丢失后的确认，不自动重发写请求；撤销绑定最新读回的原签名。UI 不存管理凭据或密钥，不把受控会话绑定声称为宿主加载或项目隔离。
 
-守护进程 SEC 安装读取接线：Server.New 在开始提供 HTTP 服务之前，一次性将既有 SEC store 的安装读取依赖绑定到服务端 OpenWithTargets 安装库。保留同一个 SEC store、签名密钥和引擎查找，不改变判定规则；修复旧 CLI Hermes-only reader 在在线 WorkBuddy/OpenClaw 管理路径上的误用。绑定只能执行一次且要求非空 store，仍通过 RecordByID 完整读取和校验。离线 CLI 支持边界不因此扩大。只读会话查询整体限时 10 秒。Windows 不受支持的长安装目标映射为明确的 invalid request，仍拒绝且不改写路径，不返回误导性的服务不可用。
+守护进程 SEC 安装读取接线：Server.New 在开始提供 HTTP 服务之前，一次性将既有 SEC store 的安装读取依赖绑定到服务端 OpenWithTargets 安装库。保留同一个 SEC store、签名密钥和引擎查找，不改变判定规则；修复旧 CLI Hermes-only reader 在在线 WorkBuddy/OpenClaw 管理路径上的误用。绑定只能执行一次且要求非空 store，仍通过 RecordByID 完整读取和校验。离线 CLI 支持边界不因此扩大。只读会话查询整体限时按下文授权管理预算执行。Windows 不受支持的长安装目标映射为明确的 invalid request，仍拒绝且不改写路径，不返回误导性的服务不可用。
 
 ### Windows Hermes 已安装 Skill 的 HTTP 等待预算（2026-09-19）
 
@@ -2154,3 +2154,5 @@ Windows WorkBuddy 实测补充（2026-09-19）：受管钩子 enroll/decide/obse
 ### 运行身份管理响应预算（2026-09-19）
 
 Windows WorkBuddy 安装激活后的身份签发包含私密文件、签名和实例复验，可能超过全局 15 秒 HTTP 写期限；旧行为可能已经签发但客户端只收到断连。仅 capAdmin 运行身份枚举、明确签发及撤销操作使用 65 秒响应写期限，管理界面等待 70 秒，失败或取消不自动重发写请求。开始存储操作前若响应期限无法设置或请求已经取消，拒绝且不写身份/撤销状态。保持状态库原有串行化、权限确认、同实例冲突与审计；不放宽运行时会话登记、工具钩子、判定或服务失联拒绝的预算。响应不确定仍需读回身份列表，不把断连当成未执行，也不保证期限能取消已经开始的同步存储操作。
+
+同轮 WorkBuddy 实机还确认 SEC 会话目录查询具有相同响应断连问题。身份及 SEC 管理读回、明确签发/撤销共同使用 65 秒响应期限，界面等待 70 秒；会话目录的上下文预算改为 60 秒，以容纳 Windows 已撤销身份历史的逐份验签读取。4096/64 项上限、签名/撤销/安装内容复验和显式确认不变；不缓存已验证权限、不扩大工具运行时预算、不根据模型输出自动授权。响应期限不可用或请求已取消时，在 SEC 审计和签名写入之前拒绝。运行时 SEC Validate 与宿主钩子仍使用原有期限及 fail-closed。

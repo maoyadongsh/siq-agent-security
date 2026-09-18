@@ -28,13 +28,16 @@ func (s *Server) skillContextManagement(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(r.Context(), 60*time.Second)
 	defer cancel()
 	r = r.WithContext(ctx)
 	q, err := url.ParseQuery(r.URL.RawQuery)
 	ids := q["install_id"]
 	if err != nil || len(q) != 1 || len(ids) != 1 || len(ids[0]) == 0 || len(ids[0]) > 128 {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": skillContextRequestError})
+		return
+	}
+	if !skillContextResponseReady(w, r) {
 		return
 	}
 	if s.skillContexts == nil || s.skillInstallations == nil || s.runtimeIdentities == nil || s.intents == nil {

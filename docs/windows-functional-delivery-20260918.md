@@ -1,5 +1,9 @@
 # Windows 三宿主功能集成交付
 
+当前产品候选为 `198c73ebfce2cc7af075a92068911699f2386449`。本轮真实 WorkBuddy Skill 安装激活后，运行身份已写入但 HTTP 响应断连；已修复身份管理接口的响应等待，并同步管理界面和嵌入资源。旧连接写期限的真实 socket 负向、新响应正向、取消/响应错误不写状态、原有身份隔离撤销/合同检查、15 项前端接口测试、类型与嵌入构建、Go vet、四目标干净构建通过。原隔离状态已读回并明确撤销遗留身份；新导入、安装激活、身份签发与钩子安装实际通过。见 [修复与管理链证据](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/report.json) 和 [候选摘要](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/unsigned-candidate.json)。
+
+WorkBuddy 原生 Skill 调用未通过：用户协助手动输入后，桌面识别出了正式安装的 Skill；第 5 次任务已发送。会话管理查询随后断连，控制器已撤权并清理钩子，因此立即取消桌面任务；目标文件没有生成。累计 5/5 个授权任务，未自动重试。身份接口修复之外，SEC 管理响应期限也需同步修复；不能将目录识别或安装通过写成受保护的原生调用成功。以下 d9ad885 与更早候选的实测记录保留原身份，不改绑到本次构建。
+
 2026-09-19 04 时当前实现候选更新为 `d9ad885f2f894dce3f7c9dd036130df7bb436e2a`。真实 Windows Hermes 安装绑定 Skill 在旧 5 秒请求预算下出现“服务端 allow、实际工具未写入”；已将 Windows Hermes 新安装及默认 HTTP 等待改为每请求 20 秒，保留更短期限、不重试及超时拒绝。114 项适配器测试、旧行为负向、安装往返/嵌入一致性、Go vet、四目标干净构建通过。新候选原生 `--skills managed-fixture` 已完成正式安装激活、未绑定拒绝、明确签发后写入、撤销后拒绝覆盖；独立核验 4 条回执、5 份签名文档、实际 37 字节文件及 5 个自有 Job 清理通过。原控制器末尾因宿主追加运行时间提醒导致 JSON 解析失败，原失败保留，不能记为脚本全绿。见 [独立原生证据](evidence/personal-experience/windows-sunbo/hermes-sec-d9ad885-20260919/report.json)、[开发检查](evidence/personal-experience/windows-sunbo/hermes-skill-budget-20260919/report.json)、[候选与归档摘要](evidence/personal-experience/windows-sunbo/hermes-skill-budget-20260919/unsigned-candidate.json)。
 
 2026-09-19 Hermes 审批恢复增量：`d9ad885` 的同进程同会话原生调用完成“hold 阻止且文件缺席 → 管理接口明确批准 → 相同参数新调用 ID 精确重试 → 一次性预留后成功写入 → 再次重复调用重新 hold 且文件未变”，86.56 秒。独立验证 5 条签名回执、唯一执行 observation、撤权卸载和 5 个自有 Job 关闭。见 [审批恢复证据](evidence/personal-experience/windows-sunbo/hermes-approval-d9ad885-20260919/report.json)。该次使用实例基线 Grant 和本地模拟模型，不混同已安装 Skill SEC 旅程；人工 GUI、拒绝/过期及跨进程恢复仍未覆盖。

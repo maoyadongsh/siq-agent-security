@@ -124,6 +124,23 @@ describe('local import request lifetime', () => {
     }
     expect(fetch).toHaveBeenCalledTimes(3);
   });
+  it('allows the session catalog management budget and still cancels once', async () => {
+    const { localApi } = await import('./api');
+    vi.useFakeTimers();
+    let signal: AbortSignal | undefined;
+    vi.mocked(fetch).mockImplementationOnce((_url, init) => new Promise<Response>((_resolve, reject) => {
+      signal = init?.signal ?? undefined;
+      signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+    }));
+    const view = { install_id: 'fixture' } as Parameters<typeof localApi.skillContextManagement>[0];
+    const ready = {} as Parameters<typeof localApi.skillContextManagement>[1];
+    const failed = expect(localApi.skillContextManagement(view, ready)).rejects.toMatchObject({ status: 0 });
+    await vi.advanceTimersByTimeAsync(69999);
+    expect(signal?.aborted).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+    await failed;
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
   it('allows the import processing budget, then aborts once without retrying a write', async () => {
     const { localApi } = await import('./api');
     vi.useFakeTimers();

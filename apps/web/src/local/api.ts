@@ -108,7 +108,8 @@ async function fetchLocal(path: string, init: RequestInit = {}): Promise<Respons
   const importRequest = path === '/v1/skill-imports' || path.startsWith('/v1/skill-imports/') || path.startsWith('/v1/skill-installations/');
   const adapterManagementRequest = ['/v1/adapter/preview', '/v1/adapter/install', '/v1/adapter/uninstall', '/v1/adapter/recover'].includes(path);
   const identityManagementRequest = path === '/v1/runtime-identities' || /^\/v1\/runtime-identities\/[^/]+\/revoke$/.test(path);
-  const timeout = setTimeout(cancel, adapterManagementRequest ? 180000 : (importRequest || identityManagementRequest) ? 70000 : 8000);
+  const skillContextManagementRequest = path === '/v1/skill-contexts' || path.startsWith('/v1/skill-contexts/');
+  const timeout = setTimeout(cancel, adapterManagementRequest ? 180000 : (importRequest || identityManagementRequest || skillContextManagementRequest) ? 70000 : 8000);
   try {
     const response = await fetch(path, { ...init, credentials: 'same-origin', cache: 'no-store', signal: controller.signal });
     if (response.status === 503) {
