@@ -23,7 +23,8 @@ def test_windows_switch_signed_go_fixture() -> None:
     key = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
     for document in (plan, plan["source_record"], plan["target_record"]):
         unsigned = {k: v for k, v in document.items() if k != "signature"}
-        key.verify(bytes.fromhex(document["signature"]), json.dumps(unsigned, sort_keys=True, separators=(",", ":")).encode())
+        canonical = json.dumps(unsigned, sort_keys=True, separators=(",", ":")).encode()
+        key.verify(bytes.fromhex(document["signature"]), canonical)
     for side in ("source", "target"):
         assert plan[f"{side}_record"]["xml_sha256"] == hashlib.sha256(plan[f"{side}_xml"].encode()).hexdigest()
     for field in ("task_name", "user_sid", "instance_id", "state_directory_id"):
