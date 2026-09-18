@@ -1,0 +1,35 @@
+{
+  "source_revision": "f42a7c94b5ad2a766c79001aee3d760c02a3574c",
+  "scope": "Seven record-read follow-up files captured after r4; not a complete repository or binary attestation.",
+  "hash_semantics": "Raw local worktree bytes from the preserved original inventory; these are not claimed to be Git blob hashes.",
+  "files": [
+    {
+      "path": "apps/agentshield/internal/privatefs/snapshot_windows.go",
+      "raw_worktree_sha256": "2e8a39dce7e68a01dab7f9f17ff35d00e87a1330767232636098f380cb2f1ad5"
+    },
+    {
+      "path": "apps/agentshield/internal/privatefs/snapshot_other.go",
+      "raw_worktree_sha256": "c905de427079c7cd720d3225c80ac162604ec2e61148f01ff0358be200bbe869"
+    },
+    {
+      "path": "apps/agentshield/internal/statefs/record.go",
+      "raw_worktree_sha256": "49a29679f7d2bfacdeb9bdc7fd6ec777e8b6f3682f877396c8caf0d91876b3dd"
+    },
+    {
+      "path": "apps/agentshield/internal/statefs/record_windows_test.go",
+      "raw_worktree_sha256": "afdb424f8bf4126e6b9060e2f04d0c8bf94520b13619ed0885c519e60e5f0096"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/private.go",
+      "raw_worktree_sha256": "9dc506850af28d77d5317f29653542de8860350fca84877a18da8de2b558674b"
+    },
+    {
+      "path": "apps/agentshield/internal/intent/store.go",
+      "raw_worktree_sha256": "21aa312c15a69f7248d214d05109183bb8eccb85397df842d123426ba0ac4c7b"
+    },
+    {
+      "path": "docs/windows-state-check-cost-spec-v1.md",
+      "raw_worktree_sha256": "67978d7d6c9b82e7b813c7d403487789aa8161117edd3e5b0f7cf2083ba487d6"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "format_version": 1,
+  "evidence_type": "windows_authority_http_budget_component",
+  "date": "2026-09-18",
+  "platform": "Windows",
+  "go_version": "go1.27.1",
+  "tested_source_revision": "f42a7c94b5ad2a766c79001aee3d760c02a3574c",
+  "dirty_tree_boundary_at_r4": "The only uncommitted change was apps/agentshield/cmd/agentshield/launch_agent_switch_test.go, a Mac test fixture. It did not participate in go test ./internal/server. The complete tree was not claimed clean.",
+  "deadline": {
+    "milliseconds": 4000,
+    "shared_across": [
+      "POST /v1/runtime-sessions",
+      "POST /v1/decide"
+    ],
+    "mechanism": "One context.WithTimeout(context.Background(), 4*time.Second)",
+    "extended": false,
+    "fixture_setup_excluded": true
+  },
+  "commands": {
+    "cwd": "<WORKTREE>/apps/agentshield",
+    "go_binary": "<GO_TOOLCHAIN>/bin/go.exe",
+    "environment": {
+      "TEMP": "<PRIVATE_TEMP_ROOT>",
+      "TMP": "<PRIVATE_TEMP_ROOT>"
+    },
+    "environment_note": "Existing physical protected current-SID temporary root used by the original run; no ACL repair or elevation was performed.",
+    "budget": "go test ./internal/server -run '^TestWorkBuddyWindowsFreshSessionHTTPBudget$' -count=1 -v",
+    "safety": "go test ./internal/privatefs ./internal/statefs ./internal/intent ./internal/runtimeidentity -run 'TestWindowsReadSnapshot|TestPrivateRecord|TestWindowsIntentPrivateReadAndCachedStore|TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence|TestWindowsIntentMissingRevocationDirectoryDenies|TestEnrollmentContext' -count=1 -v",
+    "vet": "go vet ./internal/privatefs ./internal/statefs ./internal/intent ./internal/runtimeidentity ./internal/server"
+  },
+  "runs": [
+    {
+      "id": "r1",
+      "log": "http-budget-r1.log",
+      "source_revision": null,
+      "source_identity": "Historical working tree: initial metadata snapshot optimization, before same-call identity deduplication; immutable full source snapshot was not recorded.",
+      "exit_code": 1,
+      "result": "fail",
+      "enrollment_ms": 3029,
+      "combined_ms": null,
+      "timeout_ms": 4000.3089,
+      "failed_route": "/v1/decide",
+      "comparison_limit": "Different worktree state; not a matched final-candidate speed benchmark."
+    },
+    {
+      "id": "r2",
+      "log": "http-budget-r2.log",
+      "source_revision": null,
+      "source_identity": "Historical working tree: added same-call identity deduplication, before final directory-sharing and record-read follow-up; immutable full source snapshot was not recorded.",
+      "exit_code": 1,
+      "result": "fail",
+      "enrollment_ms": null,
+      "combined_ms": null,
+      "timeout_ms": 4002.1362,
+      "failed_route": "/v1/runtime-sessions",
+      "comparison_limit": "Application first-start/unpacking occurred around this period; causal timing attribution was not established. Do not use as a strict speed comparison."
+    },
+    {
+      "id": "r3",
+      "log": "http-budget-r3-quiet.log",
+      "source_revision": null,
+      "source_identity": "Historical working tree: snapshot sharing, initial-marker consistency and identity deduplication fixes, before protected record-read helper; immutable full source snapshot was not recorded.",
+      "exit_code": 1,
+      "result": "fail",
+      "enrollment_ms": null,
+      "combined_ms": null,
+      "timeout_ms": 4001.1249,
+      "failed_route": "/v1/runtime-sessions",
+      "comparison_limit": "Coordinated quiet window; still a different source state from r4."
+    },
+    {
+      "id": "r4",
+      "log": "http-budget-r4-record-read.log",
+      "source_revision": "f42a7c94b5ad2a766c79001aee3d760c02a3574c",
+      "source_identity": "Integrated source including protected per-record read helper, main and PR #86 changes.",
+      "exit_code": 0,
+      "result": "pass",
+      "enrollment_ms": 1923,
+      "combined_ms": 3301,
+      "timeout_ms": null,
+      "failed_route": null,
+      "decision_assertions": {
+        "action": "allow",
+        "authority_status": "valid"
+      },
+      "test_seconds": 22.44,
+      "go_package_seconds": 30.404,
+      "comparison_limit": "Single HTTP component run in a coordinated quiet window. Mac test-only dirty fixture at execution was outside this server budget target."
+    }
+  ],
+  "safety": {
+    "result": "pass",
+    "exit_code": 0,
+    "log": "record-read-safety-test.log",
+    "source_identity": "Local implementation of the protected read helper, subsequently integrated into r4; the four-package safety command was not rerun while packaging.",
+    "scope": [
+      "snapshot reparse and concurrent writer rejection",
+      "root/directory/file ACL checks",
+      "missing record versus missing or unsafe revocation directory",
+      "hard links and size/path bounds",
+      "fresh reads after state changes",
+      "outer/nested compatibility and active migration barriers",
+      "current revocation and pre-publication Grant revalidation"
+    ]
+  },
+  "vet": {
+    "result": "pass",
+    "exit_code": 0,
+    "log": "record-read-vet-result.log",
+    "raw_log_file_exists": false,
+    "provenance": "Preserved execution-tool completion, with empty stdout/stderr; no rerun."
+  },
+  "limits": {
+    "real_host_or_model_executed": false,
+    "native_hermes_run_included": false,
+    "desktop_cold_start_verified": false,
+    "load_or_large_history_benchmark": false,
+    "full_test_suite_claimed": false,
+    "three_host_acceptance_claimed": false,
+    "formal_release_attestation_claimed": false
+  },
+  "ledger303": {
+    "fixed_denominator": 303,
+    "updated": false,
+    "pass_delta": 0
+  },
+  "packaging": {
+    "original_local_logs_modified": false,
+    "product_code_changed": false,
+    "tests_or_builds_rerun": false,
+    "git_or_index_mutated": false,
+    "normalization_manifest": "normalization-manifest.json",
+    "package_sha256_list": "SHA256SUMS"
+  }
+}

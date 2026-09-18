@@ -1,0 +1,8 @@
+SOURCE: recorded execution-tool result summary; not a copied raw log file.
+COMMAND: go vet ./internal/privatefs ./internal/statefs ./internal/intent ./internal/runtimeidentity ./internal/server
+CWD: <WORKTREE>/apps/agentshield
+EXIT_CODE: 0
+STDOUT_STDERR: empty
+PROVENANCE: exec session 35098 completed in write_stdin result chunk 84c1f7.
+RAW_LOG_FILE: absent; Tee-Object did not emit record-read-vet.log for empty output.
+PACKAGING_ACTION: no command was rerun; this record was composed from the preserved session result.
