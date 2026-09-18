@@ -191,6 +191,11 @@ func New(d Deps) (*Server, error) {
 	if err := s.initSkillInstallations(); err != nil {
 		return nil, err
 	}
+	if s.skillContexts != nil {
+		if err := s.skillContexts.BindInstallationStore(s.skillInstallations); err != nil {
+			return nil, err
+		}
+	}
 	s.refreshRawContentLocked()
 	s.mux.HandleFunc("/v1/raw-task-content/status", s.auth(s.rawTaskContentStatus, capAdmin))
 	s.mux.HandleFunc("/v1/raw-task-content/activation", s.auth(s.rawTaskContentActivation, capAdmin))
@@ -220,6 +225,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/runtime-identities/", s.auth(s.runtimeIdentityOne, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-sessions", s.runtimeSessionEnroll)
 	s.mux.HandleFunc("/v1/skill-contexts", s.auth(s.skillContextCollection, capAdmin))
+	s.mux.HandleFunc("/v1/skill-contexts/management", s.auth(s.skillContextManagement, capAdmin))
 	s.mux.HandleFunc("/v1/skill-contexts/", s.auth(s.skillContextOne, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks/preview", s.auth(s.runtimeCheckPreview, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks", s.auth(s.runtimeCheckLatest, capAdmin))

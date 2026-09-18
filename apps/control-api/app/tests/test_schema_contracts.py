@@ -3592,3 +3592,11 @@ def test_windows_runtime_check_intent_v5_contract() -> None:
     assert hashlib.sha256(canonical(unsigned)).hexdigest() == data["digest"]
     public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
     public.verify(bytes.fromhex(data["signature"]), canonical(unsigned | {"digest": data["digest"]}))
+
+
+def test_skill_context_management_http_sample_and_boundaries() -> None:
+    _, validator = _workbuddy_skill_validator("local-skill-context-management.v1")
+    data = json.loads((GO_SAMPLES / "local-skill-context-management.v1.sample.json").read_text(encoding="utf-8"))
+    validator.validate(data)
+    for changed in [dict(data, sessions=[{}]), dict(data, contexts=[{"context": {}, "revoked": False}]), dict(data, unexpected=True), dict(data, sessions=data["sessions"] * 65)]:
+        assert list(validator.iter_errors(changed))

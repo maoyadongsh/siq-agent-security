@@ -1,0 +1,44 @@
+{
+  "contexts": [
+    {
+      "context": {
+        "authority": {
+          "grant_digest": "5c2285877e69296a6cae5fd953220a9e9edc1caf890cefb636933420468162cc",
+          "grant_id": "grt-si-7cf7b6578bd779a4b95b2159dfd33ed65c6f3557e45952730bc422a44e7140dd"
+        },
+        "context_id": "sec-79b0e06ab5a48ce901f408148f6d8a18",
+        "evidence_level": "controlled_session",
+        "expires_at": "2026-09-18T19:07:30.1313155Z",
+        "install": {
+          "claim_signature": "c9c968a3c8bc479eb646e30874b0eed80656701de8a68e583a5249dbb1040ab075e7525c3647bb12fc3442a577b17032834c887734a6050044c658a56b6d230b",
+          "install_id": "sin-89a7193b4a73d55c851dc3840e7fe242a375ab8d747087c88e26a9f684028576"
+        },
+        "issued_at": "2026-09-18T18:57:30.1313155Z",
+        "issuer_id": "local-admin",
+        "schema_version": "skill-execution-context/v1",
+        "signature": "ef38e1d481b3686d4448f9d133f00d2637c7e74ad482216fb0dae391bccac6685bd35967ac4cf4d7d0eb8dd55065a407068679cfce15cf7f390f2aa875669700",
+        "signing_schema": "local_canonical/v1",
+        "skill": {
+          "content_hash": "c9c12cb07c37053e803918c2a93a724fac31f5179fbeca5a21beab93fd005289",
+          "skill_id": "local_dir:scoped-import@c9c12cb07c37"
+        },
+        "subject": {
+          "agent_id": "hri-99fef002fc5ea4e7bd093405425be92d",
+          "instance_id": "hi-99fef002fc5ea4e7bd093405425be92d",
+          "platform": "workbuddy",
+          "session_id": "workbuddy-session/v1:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      },
+      "revoked": false
+    }
+  ],
+  "install_id": "sin-89a7193b4a73d55c851dc3840e7fe242a375ab8d747087c88e26a9f684028576",
+  "instance_id": "hi-99fef002fc5ea4e7bd093405425be92d",
+  "schema_version": "local-skill-context-management/v1",
+  "sessions": [
+    {
+      "expires_at": "2026-09-18T19:57:20.3258493Z",
+      "session_id": "workbuddy-session/v1:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  ]
+}

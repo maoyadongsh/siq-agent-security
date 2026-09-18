@@ -221,6 +221,29 @@ func TestWorkBuddyV2RuntimeGrantWithinServerBudget(t *testing.T) {
 	}
 }
 
+func TestWorkBuddyLongDestinationIsInvalidNotUnavailable(t *testing.T) {
+	root := t.TempDir()
+	for len(root) < 205 {
+		root = filepath.Join(root, strings.Repeat("x", 20))
+	}
+	if len(root) > 240 {
+		t.Skip("test TEMP exceeds supported Windows fixture root length")
+	}
+	if err := os.MkdirAll(root, 0700); err != nil {
+		t.Fatal(err)
+	}
+	instance := Target{InstanceID: "hi-" + strings.Repeat("a", 32), Platform: "workbuddy", Root: root, Display: "fixture"}
+	target, err := InspectScopedTarget(context.Background(), instance, "user", root, "fixture")
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := &Store{resolveV2: func(context.Context, string, string) (ScopedTarget, error) { return target, nil }}
+	_, _, _, _, err = s.inspectRequestTarget(context.Background(), Request{SchemaVersion: "local-skill-install-stage-create/v2", InstanceID: instance.InstanceID, TargetID: target.Reference.TargetID, DirectoryName: strings.Repeat("n", 64)})
+	if !errors.Is(err, ErrInvalid) {
+		t.Fatalf("unsupported destination must be an invalid request, got %v", err)
+	}
+}
+
 func TestWorkBuddyV2ExistingParentsAndUnrecordedCreation(t *testing.T) {
 	t.Run("existing-preview-anchor", func(t *testing.T) {
 		f := workBuddyInstallSetup(t, "project", true)

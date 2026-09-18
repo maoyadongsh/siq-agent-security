@@ -45,8 +45,9 @@ type Deps struct {
 // <state>/skill-context-revocations. Files are published exclusively and are
 // never rewritten in place.
 type Store struct {
-	dir  string
-	deps Deps
+	dir                    string
+	deps                   Deps
+	installationStoreBound bool
 }
 
 // IssueRequest identifies the controlled subject by stored identities only;

@@ -2141,3 +2141,7 @@ Windows `client-install` 的首次身份创建和运行中重复安装按 [安�
 Windows WorkBuddy 的用户级与已登记项目级 Skill 安装按 [目标与安装链增量](windows-workbuddy-skill-install-v1.md) 执行：版本化计划固定安装目标、真实根身份及父链事实，复用既有安装、更新、移除和恢复事务；导入 Grant 的 Windows 资源编辑保留来源与 Skill 绑定，并在管理边界复验固定副本。SEC 继续表示管理员明确绑定的整个受控会话，不把项目目录或安装成功解释为逐调用因果或运行隔离。旧 v1 签名字节与身份域保持不变。
 
 Windows WorkBuddy 实测补充（2026-09-19）：受管钩子 enroll/decide/observe 的单次调用链共用 20 秒 HTTP 总预算，宿主同步 command hook 为 30 秒，给本机 ACL、签名台账及退出留出时间；不按阶段重置预算、不自动重试，超时或响应不确定仍拒绝且不得重放。原 4 秒 HTTP / 5 秒宿主预算在真实桌面正常写入中超时，不能作为可用配置。仅调整 WorkBuddy 受管路径，其他宿主不变。
+
+安装后会话绑定管理接线（2026-09-19）：在既有安装权限面板中选择后端已登记、仍有效且绑定同安装 Grant 的会话，明确确认整个会话归并该 Skill（不含逐调用因果），通过原 SEC issue/revoke 管理合同操作。新增只读 capAdmin `GET /v1/skill-contexts/management?install_id=...`，响应 `local-skill-context-management/v1`，从安装记录派生实例及 Grant，不接受客户端路径、主体、平台或权限摘要。枚举沿用签名 binding/SEC 存储的 4096 项硬上限；结果各最多 64 个会话/历史上下文，超限或损坏拒绝，取消请求停止继续读取。会话选择经当前 runtime identity 与 ResolveBinding 复验；它只供选择，签发时仍完整重验。历史上下文验签并读撤销墓碑，不把历史记录或未撤销直接标为有效权限。读回用于刷新和响应丢失后的确认，不自动重发写请求；撤销绑定最新读回的原签名。UI 不存管理凭据或密钥，不把受控会话绑定声称为宿主加载或项目隔离。
+
+守护进程 SEC 安装读取接线：Server.New 在开始提供 HTTP 服务之前，一次性将既有 SEC store 的安装读取依赖绑定到服务端 OpenWithTargets 安装库。保留同一个 SEC store、签名密钥和引擎查找，不改变判定规则；修复旧 CLI Hermes-only reader 在在线 WorkBuddy/OpenClaw 管理路径上的误用。绑定只能执行一次且要求非空 store，仍通过 RecordByID 完整读取和校验。离线 CLI 支持边界不因此扩大。只读会话查询整体限时 10 秒。Windows 不受支持的长安装目标映射为明确的 invalid request，仍拒绝且不改写路径，不返回误导性的服务不可用。

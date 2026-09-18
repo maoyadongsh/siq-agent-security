@@ -177,6 +177,9 @@ func (s *Store) inspectRequestTarget(ctx context.Context, r Request) (Target, *T
 		return Target{}, nil, "", "", err
 	}
 	canonical, err := runtimeaction.NormalizeResourceForProfile(runtimeaction.FilesystemProfile(target.Reference.FilesystemProfile), "filesystem", path)
+	if err != nil {
+		return Target{}, nil, "", "", ErrInvalid
+	}
 	return target.Instance, &target.Reference, canonical, strings.TrimSuffix(target.RootDisplay, "/") + "/" + scopeSkills(target.Reference.Scope) + "/" + r.DirectoryName, err
 }
 

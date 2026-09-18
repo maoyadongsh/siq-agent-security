@@ -32,6 +32,8 @@ import { isSkillRemovalView } from './skillRemoval';
 import type { SkillRemoveRequest } from './types';
 import { isSkillInstallationCatalog, isSkillInstallationInspection } from './skillInspection';
 import { isSkillActivated, isSkillRuntimeReadiness } from './skillRuntime';
+import { isSkillContextManagement, isInstalledContext, isContextRevocation, type SkillSessionContext } from './skillContextManagement';
+import type { SkillInstallView, SkillRuntimeReadiness } from './types';
 import type { SkillActivateRequest } from './types';
 import { isSkillInstallCreated, isSkillInstallPlan, isSkillInstallView, isSkillInstallationTargets, isSkillInstallRequest } from './skillInstall';
 import { isImportPermissionResult } from "./importPermissions";
@@ -260,6 +262,25 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export const localApi = {
+  skillContextManagement: async (view: SkillInstallView, ready: SkillRuntimeReadiness, signal?: AbortSignal) => {
+    const data = await request<unknown>(`/v1/skill-contexts/management?install_id=${encodeURIComponent(view.install_id)}`, { signal, cache: 'no-store' });
+    if (!isSkillContextManagement(data, view, ready)) throw new LocalApiError(502, 'skill_context_incompatible_response');
+    return data;
+  },
+  issueSkillSession: async (view: SkillInstallView, ready: SkillRuntimeReadiness, session: string, actor: string, signal?: AbortSignal) => {
+    const data = await request<unknown>('/v1/skill-contexts', { method: 'POST', signal, body: JSON.stringify({
+      schema_version: 'local-skill-execution-context-issue/v1', instance_id: view.plan.instance_id, install_id: view.install_id,
+      session_id: session, task_id: '', ttl_seconds: 3600, actor_id: actor, confirm_issue: true,
+    }) });
+    if (!isInstalledContext(data, view, ready) || data.subject.session_id !== session || data.evidence_level !== 'controlled_session') throw new LocalApiError(502, 'skill_context_incompatible_response');
+    return data;
+  },
+  revokeSkillSession: async (context: SkillSessionContext, actor: string, signal?: AbortSignal) => {
+    const data = await request<unknown>(`/v1/skill-contexts/${encodeURIComponent(context.context_id)}/revoke`, { method: 'POST', signal, body: JSON.stringify({
+      schema_version: 'local-skill-execution-context-revoke/v1', expected_context_signature: context.signature, actor_id: actor, confirm_revoke: true,
+    }) });
+    if (!isContextRevocation(data, context.context_id)) throw new LocalApiError(502, 'skill_context_incompatible_response');
+  },
   taskActivitySources: async (detail: TaskActivityDetail, signal?: AbortSignal) => {
     const query = new URLSearchParams({ view: detail.view, offset: String(detail.offset), limit: '50', snapshot: detail.snapshot });
     const data = await request<unknown>(`/v1/task-activities/${encodeURIComponent(detail.activity.activity_id)}/sources?${query}`, { signal, cache: 'no-store' });

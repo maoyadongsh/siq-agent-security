@@ -7,11 +7,13 @@ import type { SkillInstallView, SkillRuntimeReadiness } from '../types';
 import AdapterChangeDialog from './AdapterChangeDialog';
 import RuntimeCheckDialog from './RuntimeCheckDialog';
 import GrantScopeSummary from './GrantScopeSummary';
+import SkillSessionBinding from './SkillSessionBinding';
 
 export default function InstalledSkillProtection({ view, onBusy }: { view: SkillInstallView; onBusy: (busy: boolean) => void }) {
   const { actorId } = useLocalSession();
   const [readiness, setReadiness] = useState<SkillRuntimeReadiness | null>(null);
   const [busy, setBusy] = useState(false);
+  const [contextBusy, setContextBusy] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -20,7 +22,7 @@ export default function InstalledSkillProtection({ view, onBusy }: { view: Skill
   const submitting = useRef(false);
   const active = useRef<AbortController | null>(null);
   const closeDialog = useCallback(() => { setDialog(null); setRefresh((n) => n + 1); }, []);
-  useEffect(() => { onBusy(busy || dialog !== null); return () => onBusy(false); }, [busy, dialog, onBusy]);
+  useEffect(() => { onBusy(busy || contextBusy || dialog !== null); return () => onBusy(false); }, [busy, contextBusy, dialog, onBusy]);
   useEffect(() => () => active.current?.abort(), []);
   useEffect(() => {
     const controller = new AbortController();
@@ -56,15 +58,16 @@ export default function InstalledSkillProtection({ view, onBusy }: { view: Skill
       <GrantScopeSummary grant={readiness.grant} label="此次安装对应的实例权限" />
       {readiness.status === 'no_tools' ? <p role="alert">此授权没有可运行的工具，无法准备接入。请重新起草并确认所需权限；系统不会自动增加工具权限。</p> : readiness.status === 'prepared' ? <>
         <p role="status">实例权限已准备。接入配置和运行保护仍需分别验证。</p>
-        <div className="import-actions"><button type="button" className="btn btn-primary" disabled={busy} onClick={() => setDialog('adapter')}>管理此实例接入</button>
-          {view.plan.platform === 'hermes' ? <button type="button" className="btn" disabled={busy} onClick={() => setDialog('check')}>运行此实例自检</button> : null}</div>
+        <div className="import-actions"><button type="button" className="btn btn-primary" disabled={busy || contextBusy} onClick={() => setDialog('adapter')}>管理此实例接入</button>
+          {view.plan.platform === 'hermes' ? <button type="button" className="btn" disabled={busy || contextBusy} onClick={() => setDialog('check')}>运行此实例自检</button> : null}</div>
+        {!dialog ? <SkillSessionBinding key={`${view.install_id}:${view.claim_signature}`} view={view} readiness={readiness} actor={actorId} onBusy={setContextBusy} /> : null}
       </> : <div className="field">
         {readiness.status === 'incomplete' ? <p>上次权限准备中断，尚未启用。确认后以原操作者 {readiness.binding?.actor_id} 重试原操作。</p> : null}
         <label className="install-confirmation"><input type="checkbox" checked={confirmed} disabled={busy} onChange={(e) => setConfirmed(e.target.checked)} />确认以上权限用于此 {view.plan.platform} 实例的会话</label>
         <button type="button" className="btn btn-primary" disabled={busy || !confirmed || !(readiness.binding?.actor_id || actorId.trim())} onClick={() => void prepare()}>{readiness.status === 'incomplete' ? '重试原权限准备' : '确认并准备实例权限'}</button>
       </div>}
     </> : null}
-    <button type="button" className="btn" disabled={busy} onClick={() => setRefresh((n) => n + 1)}>重新查询权限准备状态</button>
+    <button type="button" className="btn" disabled={busy || contextBusy} onClick={() => setRefresh((n) => n + 1)}>重新查询权限准备状态</button>
     {view.plan.platform !== 'hermes' && readiness?.status === 'prepared' ? <p className="page-desc">{view.plan.platform === 'workbuddy' ? 'WorkBuddy' : 'OpenClaw'} 原生接入可在此管理；图形化运行自检仍在完善，请以原生验收证据为准。</p> : null}
     {view.plan.schema_version === 'local-skill-install-plan/v2' ? <p className="page-desc">WorkBuddy 运行仍需受管身份、原生会话和人工确认的 Skill 会话绑定。准备权限不代表实际加载；项目级安装也不把实例权限变成项目隔离。</p> : null}
     {dialog === 'adapter' ? <AdapterChangeDialog request={{ platform: view.plan.platform, action: 'install', instanceId: view.plan.instance_id, grantId: view.plan.grant_id }} onClose={closeDialog} onApplied={(m) => { setMessage(m); closeDialog(); }} /> : null}

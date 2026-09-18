@@ -1,6 +1,7 @@
 package intent
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -160,12 +161,22 @@ func (s *Store) bindingPath(id string) (string, error) {
 	return filepath.Join(s.bindingDir(), id+".json"), nil
 }
 func (s *Store) ListBindings() ([]Binding, error) {
+	return s.ListBindingsContext(context.Background())
+}
+
+func (s *Store) ListBindingsContext(ctx context.Context) ([]Binding, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	ids, err := recordIDs(s.bindingDir())
 	if err != nil {
 		return nil, err
 	}
 	out := []Binding{}
 	for _, id := range ids {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
 		b, err := s.GetBinding(id)
 		if err != nil {
 			return nil, err
