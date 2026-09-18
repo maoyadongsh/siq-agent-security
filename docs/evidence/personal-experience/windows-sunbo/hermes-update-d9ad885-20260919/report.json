@@ -1,0 +1,41 @@
+{
+  "schema_version": "windows-hermes-update-evidence/v1",
+  "candidate_sha": "d9ad885f2f894dce3f7c9dd036130df7bb436e2a",
+  "binary_sha256": "f37203184bfb9041f93332f6828240f2e141c1f2156164b0de17f2c3d2a8df9e",
+  "status": "pass",
+  "method": "native Windows Hermes CLI with explicit --skills; public management HTTP; local deterministic model",
+  "paid_model_calls": false,
+  "seconds": 265.56,
+  "checks": [
+    "formal_v1_install",
+    "comparison_and_stage_do_not_modify_installed_files",
+    "confirmed_v2_replaces_bytes",
+    "old_grant_revoked_and_identity_unavailable",
+    "new_identity_and_adapter_rebound",
+    "native_v2_content_loaded",
+    "unbound_denied_bound_write_observed_revoked_denied",
+    "removal_revokes_grant_and_removes_skill",
+    "unrelated_user_file_preserved",
+    "both_runtime_identities_revoked_adapter_uninstalled_jobs_closed"
+  ],
+  "receipt_count": 4,
+  "signed_documents_verified": 13,
+  "owned_jobs_closed": 5,
+  "controller_sha256": "a02ff2daad64445520f9d603e2daf4de44018f647c9256c3247f1d4d6505691d",
+  "private_report_sha256": "b96910ce301c50e62ac468ff551a8fb045dab45c5c728777048c8f4dedef9a87",
+  "historical_attempts": [
+    {
+      "attempt": 1,
+      "status": "fail",
+      "reason": "Controller management request hit 20s timeout during update commit before native launch; old target remained and owned processes/plugin cleaned up. R2 uses the product UI 70s installation-management budget."
+    }
+  ],
+  "limitations": [
+    "Native V2 content assertion is recorded by the hash-pinned controller; model message bodies are not retained for independent replay.",
+    "Synthetic local Skill; not a formally signed release.",
+    "Explicit --skills loading, not automatic discovery.",
+    "Controlled-session attribution, not per-call causality.",
+    "Management API confirmation, not manual GUI acceptance.",
+    "Does not cover network update source, concurrent operators, cross-process approval recovery or all original taskbook cases."
+  ]
+}
