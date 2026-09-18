@@ -1,0 +1,11 @@
+=== RUN   TestStageTimingFollowsExecutedBranchesAndPreservesDecisions
+=== RUN   TestStageTimingFollowsExecutedBranchesAndPreservesDecisions/optional
+    timing_test.go:52: lookup timing must advance despite frozen authority clock [0s]
+=== RUN   TestStageTimingFollowsExecutedBranchesAndPreservesDecisions/required
+    timing_test.go:52: lookup timing must advance despite frozen authority clock [0s]
+--- FAIL: TestStageTimingFollowsExecutedBranchesAndPreservesDecisions (0.16s)
+    --- FAIL: TestStageTimingFollowsExecutedBranchesAndPreservesDecisions/optional (0.08s)
+    --- FAIL: TestStageTimingFollowsExecutedBranchesAndPreservesDecisions/required (0.08s)
+FAIL
+FAIL	siq-agent-security/apps/agentshield/internal/receipt	1.723s
+FAIL

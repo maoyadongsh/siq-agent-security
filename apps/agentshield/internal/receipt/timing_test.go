@@ -19,6 +19,21 @@ func TestStageTimingFollowsExecutedBranchesAndPreservesDecisions(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+			// Only the observed lookup deliberately waits. Fast executed stages may
+			// legitimately measure zero; the frozen authority clock must still not
+			// become the performance clock for this measurable lookup.
+			const minimumLookupElapsed = 2 * time.Millisecond
+			fx.eng.opts.IntentLookup = func(string, string, string) (*IntentContract, error) {
+				started := time.Now()
+				for attempt := 0; attempt < 16; attempt++ {
+					time.Sleep(time.Millisecond)
+					if time.Since(started) >= minimumLookupElapsed {
+						return nil, nil
+					}
+				}
+				t.Fatal("monotonic lookup clock did not advance within bounded polling")
+				return nil, nil
+			}
 			timings := map[string][]time.Duration{}
 			fx.eng.opts.StageTiming = func(stage string, d time.Duration) { timings[stage] = append(timings[stage], d) }
 			after, err := fx.eng.Decide(req)
@@ -29,9 +44,12 @@ func TestStageTimingFollowsExecutedBranchesAndPreservesDecisions(t *testing.T) {
 				t.Fatal("timing changed security decision")
 			}
 			for _, stage := range []string{"authority_validation", "intent_lookup", "runtime_action_normalization", "receipt_append_fsync"} {
-				if len(timings[stage]) != 1 || timings[stage][0] <= 0 {
-					t.Fatal("missing monotonic sample despite frozen authority clock", stage, timings)
+				if len(timings[stage]) != 1 || timings[stage][0] < 0 {
+					t.Fatal("missing or negative monotonic sample", stage, timings)
 				}
+			}
+			if timings["intent_lookup"][0] < minimumLookupElapsed {
+				t.Fatal("lookup timing must advance despite frozen authority clock", timings["intent_lookup"])
 			}
 			if len(timings["context_validation"]) != 0 {
 				t.Fatal("unexecuted context stage reported")
