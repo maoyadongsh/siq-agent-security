@@ -2,7 +2,7 @@
 
 2026-09-19 03 时当前实现候选：`eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8`。已补安装后会话选择、明确绑定、读回和撤销的管理界面及嵌入页面；服务启动时将 SEC 安装读取一次性接到现有三宿主安装库，修复在线路径误用 Hermes-only CLI reader；不支持的 Windows 长安装目标明确拒绝为无效请求。正式 Windows HTTP 夹具完成安装、准备、登记、签发、运行复验、读回、重复/错签名拒绝、撤销及撤销后失效。旧启动行为在负向回归中失败，修复通过；合同、前端、vet 与四目标干净构建通过。见 [检查与限制](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/report.json)、[候选摘要](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/unsigned-candidate.json)。
 
-本次改动涉及公共安装读取，尚未新增该候选的三宿主原生确认。下方 WorkBuddy `2d5ee6c`、Hermes/OpenClaw `ff16606` 保留为历史实测，不能改绑到新候选；桌面 Skill 加载、完整审批恢复与正式签发仍未验收。未新增模型调用，WorkBuddy 仍为 4/5 个授权桌面任务。
+本次改动涉及公共安装读取。`eac2a99` 已在真实 OpenClawGateway WSL 宿主完成最小回归：正式接入、正常读取、越权拒绝、失联拒绝、身份撤销拒绝及卸载，66.60 秒；独立核对 4 条回执、文件副作用、二进制摘要和受管入口移除，自有进程无残留。使用本地模拟模型，没有云模型调用。见 [本候选 OpenClaw 结果](evidence/personal-experience/windows-sunbo/openclaw-candidate-eac2a99-20260919/report.json)。新候选 Hermes/WorkBuddy 原生确认仍未完成，下方旧候选证据保留；桌面 Skill 加载、完整审批恢复与正式签发仍未验收。WorkBuddy 仍为 4/5 个授权桌面任务。
 
 2026-09-19 02:00 历史增量：当批运行确认候选为 `2d5ee6c725e865b2c0769f0d35ac839161dbb717`，修复 Windows WorkBuddy 卸载后宿主配置变化导致无法重装，以及真实钩子 4/5 秒预算不足。WorkBuddy 5.5.6 桌面在默认权限、GLM-5.3-Flash 下通过正式接入、正常写入及对应 pre/post 回执、越权拒绝、服务失联拒绝和撤权卸载；总共 4/5 个任务，含修复前一次失败。独立验证 7 条回执和 2 份身份/撤销签名；其中序号 0–2 是明确标记的合成诊断，真实桌面对应 3–6。自有服务与桌面已关闭，清理无错误。见 [结果及限制](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/report.json)。
 
