@@ -2,6 +2,7 @@ package adapterinstall
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
@@ -75,7 +76,8 @@ type planPayload struct {
 // into an HTTP response or CLI output. Durable recovery material is encrypted.
 type Plan struct {
 	payload      planPayload
-	instanceRoot os.FileInfo // Process-local preview binding, never recovery material.
+	instanceRoot os.FileInfo     // Process-local preview binding, never recovery material.
+	prepareCtx   context.Context // Only while preparing; never retained by Apply.
 }
 
 func (p *Plan) View() PlanView { return p.payload.View }
@@ -248,6 +250,15 @@ func jsonDocumentsEqual(a, b []byte) bool {
 }
 
 func Prepare(opts Options, action string) (*Plan, error) {
+	return PrepareContext(context.Background(), opts, action)
+}
+
+// PrepareContext cancels preview work, not the later independently confirmed
+// transaction. The context is never serialized or retained in the returned plan.
+func PrepareContext(ctx context.Context, opts Options, action string) (*Plan, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	if err := opts.normalise(); err != nil {
 		return nil, err
 	}
@@ -351,6 +362,8 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		}
 	}
 	p := &Plan{payload: planPayload{View: view, Options: opts, ExpectedRevision: rev, Record: rec, Files: []fileChange{}, Inputs: map[string]fileImage{}, BinaryDigest: binaryDigest}}
+	p.prepareCtx = ctx
+	defer func() { p.prepareCtx = nil }()
 	if opts.Instance != nil {
 		p.instanceRoot, err = inspectInstanceRoot(opts.Instance)
 		if err != nil {
@@ -365,6 +378,9 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		err = p.prepareUninstall()
 	}
 	if err != nil {
+		return nil, err
+	}
+	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
 	if action == "install" {
@@ -386,6 +402,9 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		return nil, err
 	}
 	p.payload.View.PlanDigest = digest
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	return p, nil
 }
 

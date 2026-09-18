@@ -104,7 +104,8 @@ async function fetchLocal(path: string, init: RequestInit = {}): Promise<Respons
   if (init.signal?.aborted) controller.abort();
   else init.signal?.addEventListener('abort', cancel, { once: true });
   const importRequest = path === '/v1/skill-imports' || path.startsWith('/v1/skill-imports/') || path.startsWith('/v1/skill-installations/');
-  const timeout = setTimeout(cancel, importRequest ? 70000 : path === '/v1/adapter/preview' ? 45000 : 8000);
+  const adapterManagementRequest = ['/v1/adapter/preview', '/v1/adapter/install', '/v1/adapter/uninstall', '/v1/adapter/recover'].includes(path);
+  const timeout = setTimeout(cancel, adapterManagementRequest ? 180000 : importRequest ? 70000 : 8000);
   try {
     const response = await fetch(path, { ...init, credentials: 'same-origin', cache: 'no-store', signal: controller.signal });
     if (response.status === 503) {
@@ -238,6 +239,15 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
       expiredListeners.forEach((listener) => listener());
     }
     const err = (parsed as { error?: string } | null)?.error;
+    if (err === 'adapter_busy') {
+      throw new LocalApiError(resp.status, '另一项接入操作正在进行，请等待完成后重试。', err);
+    }
+    if (err === 'adapter_interrupted') {
+      throw new LocalApiError(resp.status, '接入操作在开始前或预览时被取消，请重新预览后确认。', err);
+    }
+    if (err === 'adapter_response_unavailable') {
+      throw new LocalApiError(resp.status, '无法建立接入操作的响应通道，本次未开始操作，请检查服务后重试。', err);
+    }
     if (path === '/v1/grants' && (!init.method || init.method === 'GET') && resp.status === 503 && err === 'grants_busy') {
       throw new LocalApiError(503, '授权正在更新，请稍后刷新；当前显示的列表不是最新状态。', err);
     }

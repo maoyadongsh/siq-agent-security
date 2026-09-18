@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"crypto/sha256"
 	"errors"
 	"net/http"
@@ -50,8 +51,12 @@ func (s *Server) adapterPreview(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 400, map[string]any{"error": "当前产品范围不支持此平台的新接入；已有配置仍可卸载。"})
 		return
 	}
-	s.adapterPlanMu.Lock()
+	if !s.adapterManagementSlot(w, r) {
+		return
+	}
 	defer s.adapterPlanMu.Unlock()
+	ctx, cancel := context.WithTimeout(r.Context(), adapterPreviewWorkBudget)
+	defer cancel()
 	if s.adapterPlans == nil {
 		s.adapterPlans = map[string]pendingAdapterPlan{}
 	}
@@ -78,8 +83,11 @@ func (s *Server) adapterPreview(w http.ResponseWriter, r *http.Request) {
 	opts.RuntimeIdentityID = body.RuntimeIdentityID
 	opts.NativeEnable = body.NativeEnable
 	opts.NativeCLI = s.d.HermesCLI
-	plan, err := adapterinstall.Prepare(opts, body.Action)
+	plan, err := adapterinstall.PrepareContext(ctx, opts, body.Action)
 	if err != nil {
+		if adapterRequestCanceled(w, ctx) {
+			return
+		}
 		adapterError(w, err)
 		return
 	}
@@ -89,6 +97,9 @@ func (s *Server) adapterPreview(w http.ResponseWriter, r *http.Request) {
 			adapterError(w, err)
 			return
 		}
+	}
+	if adapterRequestCanceled(w, ctx) {
+		return
 	}
 	expires, _ := time.Parse(time.RFC3339, view.ExpiresAt)
 	s.adapterPlans[view.PlanID] = pendingAdapterPlan{plan: plan, owner: sha256.Sum256([]byte(r.Header.Get("Authorization"))), mode: opts.Mode, endpoint: opts.Endpoint, expires: expires}
@@ -143,7 +154,9 @@ func (s *Server) adapterMutate(w http.ResponseWriter, r *http.Request, action st
 		writeJSON(w, 400, map[string]any{"error": "当前产品范围不支持此平台的新接入；已有配置仍可卸载。"})
 		return
 	}
-	s.adapterPlanMu.Lock()
+	if !s.adapterManagementSlot(w, r) {
+		return
+	}
 	defer s.adapterPlanMu.Unlock()
 	pending, ok := s.adapterPlans[body.PlanID]
 	if !ok || pending.owner != sha256.Sum256([]byte(r.Header.Get("Authorization"))) {
@@ -164,11 +177,17 @@ func (s *Server) adapterMutate(w http.ResponseWriter, r *http.Request, action st
 		adapterError(w, adapterinstall.ErrPlanChanged)
 		return
 	}
+	if adapterRequestCanceled(w, r.Context()) {
+		return
+	}
 	revoked := false
 	if view.RuntimeIdentityID != "" {
 		if action == "install" {
 			if err := s.validateManagedSelection(view.Platform, view.RuntimeIdentityID, view.InstanceID); err != nil {
 				adapterError(w, err)
+				return
+			}
+			if adapterRequestCanceled(w, r.Context()) {
 				return
 			}
 		} else {
@@ -221,11 +240,16 @@ func (s *Server) adapterRecover(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 400, map[string]any{"error": "WorkBuddy 恢复需要明确选择实例"})
 		return
 	}
-	s.adapterPlanMu.Lock()
+	if !s.adapterManagementSlot(w, r) {
+		return
+	}
 	defer s.adapterPlanMu.Unlock()
 	opts, err := s.resolveAdapterOptions(body.Platform, body.InstanceID)
 	if err != nil {
 		adapterError(w, err)
+		return
+	}
+	if adapterRequestCanceled(w, r.Context()) {
 		return
 	}
 	res, err := adapterinstall.RecoverInstance(opts)
