@@ -1,0 +1,63 @@
+{
+  "verified_utc": "2026-09-14T05:59:00.619353+00:00",
+  "candidate": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+  "source_dirty": false,
+  "phase_checks": [
+    {
+      "phase": "module-vet",
+      "raw_and_derived_lengths_hashes_match": true,
+      "event_count": 0,
+      "non_output_event_fields_match_raw": true,
+      "source_before_after_exact_clean": true,
+      "direct_go_process_reaped": true,
+      "outer_timed_out": false,
+      "exit_code": 0
+    },
+    {
+      "phase": "module-tests",
+      "raw_and_derived_lengths_hashes_match": true,
+      "event_count": 6416,
+      "non_output_event_fields_match_raw": true,
+      "source_before_after_exact_clean": true,
+      "direct_go_process_reaped": true,
+      "outer_timed_out": false,
+      "exit_code": 1
+    }
+  ],
+  "changed_file_set_and_hashes_match": true,
+  "executed_runner_hash_unchanged": true,
+  "patch_hash_matches": true,
+  "final_event_statistics": {
+    "event_count": 6416,
+    "package_counts": {
+      "fail": 18,
+      "skip": 6,
+      "pass": 21
+    },
+    "top_level_counts": {
+      "pass": 577,
+      "fail": 41,
+      "skip": 34
+    },
+    "subtest_counts": {
+      "pass": 556,
+      "fail": 52,
+      "skip": 12
+    },
+    "explicit_timeout_package_count": 10,
+    "started_without_terminal_count": 15
+  },
+  "no_test_file_package_outputs": 6,
+  "public_derivation": "Only Output redaction changed; public metadata explicitly records second-pass correction. Private raw logs and private summaries are unchanged.",
+  "local_privacy_scan": "Current public UTF-8 files and decoded event Output: no personal user path/name, account SID, common PAT or private-key header pattern found. This is a bounded pattern check, not proof against all secrets.",
+  "independent_review": {
+    "reviewer_role": "same-machine sibling agent",
+    "scope": "Twelve generated public files and 6416 decoded Output events after second-pass redaction; summaries/raw identity fields compared, private raw not read and scripts not run. No remaining matched personal path/name/SID/common PAT/JWT/private key patterns. Later report/process-observation/verification are covered by local final scan, not that twelve-file review.",
+    "unfixed_conclusion_issue": false
+  },
+  "limitations": [
+    "No native host acceptance or independent OS reproduction.",
+    "Only direct Go processes waited; separate CIM snapshot does not prove individual historical descendant cleanup.",
+    "Package90s timeouts and test-level assertions remain failures/incomplete; no rerun."
+  ]
+}

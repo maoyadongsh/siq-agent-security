@@ -1,0 +1,36 @@
+{
+  "candidate": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+  "source_dirty_at_final_review": false,
+  "expected_focused_test_set_verified": true,
+  "phase_checks": [
+    {
+      "phase": "focused",
+      "source_fixed_and_clean": true,
+      "event_hash_and_counts_match": true,
+      "no_timeouts": true,
+      "package_terminal_or_vet_success_verified": true
+    },
+    {
+      "phase": "package",
+      "source_fixed_and_clean": true,
+      "event_hash_and_counts_match": true,
+      "no_timeouts": true,
+      "package_terminal_or_vet_success_verified": true
+    },
+    {
+      "phase": "vet",
+      "source_fixed_and_clean": true,
+      "event_hash_and_counts_match": true,
+      "no_timeouts": true,
+      "package_terminal_or_vet_success_verified": true
+    }
+  ],
+  "gofmt_entire_module": {
+    "command": "gofmt -l .",
+    "cwd": "apps/agentshield",
+    "exit_code": 0,
+    "output_empty": true
+  },
+  "independent_static_review": "Same-machine independent reviewer checked runner delta and POSIX assertions; r1 manifest 16 files and 209961 bytes unchanged; no independent rerun",
+  "scope": "Windows component tests; existing skips preserved; not native host or POSIX acceptance"
+}

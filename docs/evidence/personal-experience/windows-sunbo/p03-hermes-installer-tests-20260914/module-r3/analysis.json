@@ -1,0 +1,1676 @@
+{
+  "candidate": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+  "source_before": {
+    "source": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+    "source_dirty": false
+  },
+  "source_after": {
+    "source": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+    "source_dirty": false
+  },
+  "test_exit_code": 1,
+  "outer_timed_out": false,
+  "event_count": 6416,
+  "package_counts": {
+    "fail": 18,
+    "skip": 6,
+    "pass": 21
+  },
+  "top_level_counts": {
+    "pass": 577,
+    "fail": 41,
+    "skip": 34
+  },
+  "subtest_counts": {
+    "pass": 556,
+    "fail": 52,
+    "skip": 12
+  },
+  "explicit_timeout_package_count": 10,
+  "started_without_terminal_count": 15,
+  "counting_note": "Only terminal pass/fail/skip events enter counts. Started-without-terminal tests are incomplete, not semantic failures; tests never started have unknown denominator. Parent and subtest failures can describe the same assertion and are not summed as unique defects.",
+  "raw_log_bytes": 1555847,
+  "raw_log_sha256": "06f21b5f45918f9e1cf18bd53c8398f1eff99dc4d1f1d3f716d3f11135499aba",
+  "derived_jsonl_bytes": 1585317,
+  "derived_jsonl_sha256": "7d616fc573cc1bdb9c0d37c409c58fc2e10325cb9df587462975bca856ad5232",
+  "raw_and_derived_non_output_fields_equal": true,
+  "packages": [
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "action": "fail",
+      "elapsed_seconds": 91.022,
+      "top_level_counts": {
+        "pass": 48,
+        "fail": 9,
+        "skip": 11
+      },
+      "subtest_counts": {
+        "pass": 77,
+        "fail": 44,
+        "skip": 6
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestServiceUpgradeFailedTargetRecovery (2s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestServiceUpgradeFailedTargetRecovery",
+          "started": "2026-09-14T13:36:10.184894+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/perfbaseline",
+      "action": "skip",
+      "elapsed_seconds": 0.001,
+      "top_level_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "action": "fail",
+      "elapsed_seconds": 91.205,
+      "top_level_counts": {
+        "pass": 24,
+        "fail": 0,
+        "skip": 4
+      },
+      "subtest_counts": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 2
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestCodeBuddySurgicalUninstallKeepsUserSettings (1s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestCodeBuddySurgicalUninstallKeepsUserSettings",
+          "started": "2026-09-14T13:36:12.6470183+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "action": "fail",
+      "elapsed_seconds": 7.3469999999999995,
+      "top_level_counts": {
+        "pass": 4,
+        "fail": 1,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "action": "fail",
+      "elapsed_seconds": 10.927,
+      "top_level_counts": {
+        "pass": 31,
+        "fail": 1,
+        "skip": 8
+      },
+      "subtest_counts": {
+        "pass": 13,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/canon",
+      "action": "pass",
+      "elapsed_seconds": 3.365,
+      "top_level_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/clientrelease",
+      "action": "pass",
+      "elapsed_seconds": 16.821,
+      "top_level_counts": {
+        "pass": 10,
+        "fail": 0,
+        "skip": 1
+      },
+      "subtest_counts": {
+        "pass": 9,
+        "fail": 0,
+        "skip": 3
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/completion",
+      "action": "fail",
+      "elapsed_seconds": 3.505,
+      "top_level_counts": {
+        "pass": 1,
+        "fail": 1,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/contractvectors",
+      "action": "pass",
+      "elapsed_seconds": 3.064,
+      "top_level_counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/controlsync",
+      "action": "pass",
+      "elapsed_seconds": 2.491,
+      "top_level_counts": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/display",
+      "action": "pass",
+      "elapsed_seconds": 2.36,
+      "top_level_counts": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "action": "fail",
+      "elapsed_seconds": 54.715,
+      "top_level_counts": {
+        "pass": 11,
+        "fail": 7,
+        "skip": 1
+      },
+      "subtest_counts": {
+        "pass": 8,
+        "fail": 5,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/export",
+      "action": "pass",
+      "elapsed_seconds": 5.63,
+      "top_level_counts": {
+        "pass": 18,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 10,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/fileopen",
+      "action": "skip",
+      "elapsed_seconds": 0,
+      "top_level_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/grant",
+      "action": "pass",
+      "elapsed_seconds": 3.149,
+      "top_level_counts": {
+        "pass": 45,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 53,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/hermeshome",
+      "action": "pass",
+      "elapsed_seconds": 4.376,
+      "top_level_counts": {
+        "pass": 5,
+        "fail": 0,
+        "skip": 1
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/importsource",
+      "action": "skip",
+      "elapsed_seconds": 0,
+      "top_level_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "action": "fail",
+      "elapsed_seconds": 92.666,
+      "top_level_counts": {
+        "pass": 22,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 59,
+        "fail": 0,
+        "skip": 1
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestBindingRevocationInputAndCapacity (10s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestBindingRevocationInputAndCapacity",
+          "started": "2026-09-14T13:38:35.9639127+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "action": "fail",
+      "elapsed_seconds": 16.4,
+      "top_level_counts": {
+        "pass": 15,
+        "fail": 3,
+        "skip": 1
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/ledger",
+      "action": "pass",
+      "elapsed_seconds": 15.909,
+      "top_level_counts": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 6,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/localcontrol",
+      "action": "pass",
+      "elapsed_seconds": 2.836,
+      "top_level_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 7,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/notify",
+      "action": "pass",
+      "elapsed_seconds": 3.92,
+      "top_level_counts": {
+        "pass": 12,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/openshell",
+      "action": "pass",
+      "elapsed_seconds": 6.833,
+      "top_level_counts": {
+        "pass": 46,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/pending",
+      "action": "fail",
+      "elapsed_seconds": 7.364,
+      "top_level_counts": {
+        "pass": 3,
+        "fail": 1,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/perfbaseline",
+      "action": "pass",
+      "elapsed_seconds": 13.965,
+      "top_level_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/product",
+      "action": "skip",
+      "elapsed_seconds": 0,
+      "top_level_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/provenance",
+      "action": "fail",
+      "elapsed_seconds": 96.719,
+      "top_level_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 14,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestGraphNodeAndEdgeCapacityBoundaries (1m20s)",
+        "TestGraphNodeAndEdgeCapacityBoundaries/nodes (1m20s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestGraphNodeAndEdgeCapacityBoundaries",
+          "started": "2026-09-14T13:39:17.4313832+08:00"
+        },
+        {
+          "test": "TestGraphNodeAndEdgeCapacityBoundaries/nodes",
+          "started": "2026-09-14T13:39:17.4313832+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/rawcontent",
+      "action": "pass",
+      "elapsed_seconds": 20.424,
+      "top_level_counts": {
+        "pass": 23,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 10,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/receipt",
+      "action": "fail",
+      "elapsed_seconds": 97.834,
+      "top_level_counts": {
+        "pass": 48,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 108,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestGlobalIntentRevocationHardDeniesEveryModeAfterRestart (1s)",
+        "TestGlobalIntentRevocationHardDeniesEveryModeAfterRestart/block/required (1s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestGlobalIntentRevocationHardDeniesEveryModeAfterRestart",
+          "started": "2026-09-14T13:41:19.1796839+08:00"
+        },
+        {
+          "test": "TestGlobalIntentRevocationHardDeniesEveryModeAfterRestart/block/required",
+          "started": "2026-09-14T13:41:19.1796839+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/rulepack",
+      "action": "pass",
+      "elapsed_seconds": 5.891,
+      "top_level_counts": {
+        "pass": 9,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 21,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "action": "pass",
+      "elapsed_seconds": 10.832,
+      "top_level_counts": {
+        "pass": 16,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 6,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeauthz",
+      "action": "skip",
+      "elapsed_seconds": 0,
+      "top_level_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "action": "fail",
+      "elapsed_seconds": 97.182,
+      "top_level_counts": {
+        "pass": 3,
+        "fail": 4,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestAuditFailureNeverStartsHostOrReportsPass (5s)",
+        "TestAuditFailureNeverStartsHostOrReportsPass/at_finish (3s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestAuditFailureNeverStartsHostOrReportsPass",
+          "started": "2026-09-14T13:42:42.5134091+08:00"
+        },
+        {
+          "test": "TestAuditFailureNeverStartsHostOrReportsPass/at_finish",
+          "started": "2026-09-14T13:42:44.5315504+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "action": "fail",
+      "elapsed_seconds": 70.305,
+      "top_level_counts": {
+        "pass": 17,
+        "fail": 2,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 28,
+        "fail": 3,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "action": "fail",
+      "elapsed_seconds": 100.727,
+      "top_level_counts": {
+        "pass": 17,
+        "fail": 1,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestApprovalChallengeInvalidatedByPatch (6s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestApprovalChallengeInvalidatedByPatch",
+          "started": "2026-09-14T13:44:31.9870029+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/signing",
+      "action": "pass",
+      "elapsed_seconds": 1.576,
+      "top_level_counts": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "action": "fail",
+      "elapsed_seconds": 99.592,
+      "top_level_counts": {
+        "pass": 23,
+        "fail": 3,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 53,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestReviewerGitFetchRejectsPrivateDNSBeforeTransport (1s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestReviewerGitFetchRejectsPrivateDNSBeforeTransport",
+          "started": "2026-09-14T13:44:48.0803334+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "action": "fail",
+      "elapsed_seconds": 99.034,
+      "top_level_counts": {
+        "pass": 2,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 7,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestInspectionSeparatesHistoricalRecordAndCurrentContents (43s)",
+        "TestInspectionSeparatesHistoricalRecordAndCurrentContents/type_changed (14s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestInspectionSeparatesHistoricalRecordAndCurrentContents",
+          "started": "2026-09-14T13:45:46.633858+08:00"
+        },
+        {
+          "test": "TestInspectionSeparatesHistoricalRecordAndCurrentContents/type_changed",
+          "started": "2026-09-14T13:46:15.7322361+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "action": "fail",
+      "elapsed_seconds": 39.503,
+      "top_level_counts": {
+        "pass": 23,
+        "fail": 7,
+        "skip": 1
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "action": "fail",
+      "elapsed_seconds": 92.293,
+      "top_level_counts": {
+        "pass": 36,
+        "fail": 1,
+        "skip": 6
+      },
+      "subtest_counts": {
+        "pass": 37,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": true,
+      "timeout_report_running_tests": [
+        "TestMigrationFullBackupAndEveryCheckpointRecovery (27s)",
+        "TestMigrationFullBackupAndEveryCheckpointRecovery/backup:1 (8s)"
+      ],
+      "started_without_terminal": [
+        {
+          "test": "TestMigrationFullBackupAndEveryCheckpointRecovery",
+          "started": "2026-09-14T13:46:45.891205+08:00"
+        },
+        {
+          "test": "TestMigrationFullBackupAndEveryCheckpointRecovery/backup:1",
+          "started": "2026-09-14T13:47:05.4695273+08:00"
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/stateformat",
+      "action": "pass",
+      "elapsed_seconds": 5.501,
+      "top_level_counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/statefs",
+      "action": "pass",
+      "elapsed_seconds": 5.459,
+      "top_level_counts": {
+        "pass": 2,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/threat",
+      "action": "pass",
+      "elapsed_seconds": 5.539,
+      "top_level_counts": {
+        "pass": 16,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/trustedcontext",
+      "action": "skip",
+      "elapsed_seconds": 0.001,
+      "top_level_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/ui",
+      "action": "pass",
+      "elapsed_seconds": 7.251,
+      "top_level_counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "explicit_test_timeout": false,
+      "timeout_report_running_tests": [],
+      "started_without_terminal": []
+    }
+  ],
+  "terminal_failures": [
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/load",
+      "elapsed_seconds": 0.89,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/reuse_running",
+      "elapsed_seconds": 0.86,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/writer_conflict",
+      "elapsed_seconds": 0.99,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/foreign",
+      "elapsed_seconds": 0.99,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/query_failed",
+      "elapsed_seconds": 0.94,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/bootstrap_failed",
+      "elapsed_seconds": 0.94,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/readback_absent",
+      "elapsed_seconds": 1.02,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/readback_foreign",
+      "elapsed_seconds": 1.01,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/source_changed",
+      "elapsed_seconds": 0.83,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/link_changed",
+      "elapsed_seconds": 0.87,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/appeared",
+      "elapsed_seconds": 0.94,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/wrong_domain",
+      "elapsed_seconds": 0.85,
+      "diagnostic_lines": [
+        "launch_agent_load_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent",
+      "elapsed_seconds": 11.14,
+      "diagnostic_lines": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/start",
+      "elapsed_seconds": 0.89,
+      "diagnostic_lines": [
+        "launch_agent_start_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/reuse",
+      "elapsed_seconds": 0.86,
+      "diagnostic_lines": [
+        "launch_agent_start_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/unhealthy",
+      "elapsed_seconds": 0.89,
+      "diagnostic_lines": [
+        "launch_agent_start_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/no_PID",
+      "elapsed_seconds": 0.86,
+      "diagnostic_lines": [
+        "launch_agent_start_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/kickstart_failed",
+      "elapsed_seconds": 0.84,
+      "diagnostic_lines": [
+        "launch_agent_start_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/foreign",
+      "elapsed_seconds": 0.94,
+      "diagnostic_lines": [
+        "launch_agent_start_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/writer_conflict",
+      "elapsed_seconds": 0.86,
+      "diagnostic_lines": [
+        "launch_agent_start_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/health_drift",
+      "elapsed_seconds": 0.85,
+      "diagnostic_lines": [
+        "launch_agent_start_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent",
+      "elapsed_seconds": 6.98,
+      "diagnostic_lines": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/stop",
+      "elapsed_seconds": 0.83,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/idle",
+      "elapsed_seconds": 0.83,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/absent",
+      "elapsed_seconds": 0.88,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/foreign",
+      "elapsed_seconds": 0.86,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/stop_failed",
+      "elapsed_seconds": 0.83,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/still_running",
+      "elapsed_seconds": 0.83,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/exit_error",
+      "elapsed_seconds": 0.87,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/missing_exit",
+      "elapsed_seconds": 0.9,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/writer_conflict",
+      "elapsed_seconds": 0.85,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/disappeared",
+      "elapsed_seconds": 0.83,
+      "diagnostic_lines": [
+        "launch_agent_stop_test.go:35: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent",
+      "elapsed_seconds": 8.49,
+      "diagnostic_lines": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/unregister",
+      "elapsed_seconds": 0.82,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/already_unloaded",
+      "elapsed_seconds": 0.83,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/already_removed",
+      "elapsed_seconds": 0.87,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/running",
+      "elapsed_seconds": 0.86,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/foreign",
+      "elapsed_seconds": 1.02,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/writer_conflict",
+      "elapsed_seconds": 0.78,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/bootout_failed",
+      "elapsed_seconds": 0.75,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/still_loaded",
+      "elapsed_seconds": 0.83,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/readback_failed",
+      "elapsed_seconds": 0.81,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/unknown_link",
+      "elapsed_seconds": 0.79,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/link_changed",
+      "elapsed_seconds": 0.83,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/missing_link_loaded",
+      "elapsed_seconds": 0.89,
+      "diagnostic_lines": [
+        "launch_agent_unregister_test.go:36: launch-agent: canonical absolute UTF-8 paths required"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent",
+      "elapsed_seconds": 10.08,
+      "diagnostic_lines": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestCmdSyncHTTPFailureUnchanged",
+      "elapsed_seconds": 0.78,
+      "diagnostic_lines": [
+        "p3_cli_test.go:62: 401 must fail"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestServeStateDirectorySelection",
+      "elapsed_seconds": 0.04,
+      "diagnostic_lines": [
+        "serve_state_directory_test.go:28: symlink <PRIVATE_RUN_ROOT>\\build\\TestServeStateDirectorySelection1907934735\\001 <PRIVATE_RUN_ROOT>\\build\\TestServeStateDirectorySelection1907934735\\003\\alias: A required privilege is not held by the client."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestPrepareRollbackMissingBinary",
+      "elapsed_seconds": 2.75,
+      "diagnostic_lines": [
+        "service_restore_test.go:25: service-unit: absolute paths required; executable path cannot contain dollar signs, double quotes or backslashes"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterExactLinkAndRetry/false",
+      "elapsed_seconds": 0.03,
+      "diagnostic_lines": [
+        "service_unregister_test.go:25: symlink <PRIVATE_RUN_ROOT>\\build\\TestUnregisterExactLinkAndRetryfalse432727911\\001\\source <PRIVATE_RUN_ROOT>\\build\\TestUnregisterExactLinkAndRetryfalse432727911\\001\\unit.service: A required privilege is not held by the client."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterExactLinkAndRetry/true",
+      "elapsed_seconds": 0.04,
+      "diagnostic_lines": [
+        "service_unregister_test.go:30: symlink <PRIVATE_RUN_ROOT>\\build\\TestUnregisterExactLinkAndRetrytrue2268844764\\001\\source <PRIVATE_RUN_ROOT>\\build\\TestUnregisterExactLinkAndRetrytrue2268844764\\001\\user-alias.service: A required privilege is not held by the client."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterExactLinkAndRetry",
+      "elapsed_seconds": 0.07,
+      "diagnostic_lines": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterRejectsUnknownAndFailedReload",
+      "elapsed_seconds": 0.05,
+      "diagnostic_lines": [
+        "service_unregister_test.go:87: symlink <PRIVATE_RUN_ROOT>\\build\\TestUnregisterRejectsUnknownAndFailedReload4277348999\\001\\owned <PRIVATE_RUN_ROOT>\\build\\TestUnregisterRejectsUnknownAndFailedReload4277348999\\002\\unit.service: A required privilege is not held by the client."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "test": "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean",
+      "elapsed_seconds": 0,
+      "diagnostic_lines": [
+        "adapters_test.go:41: malicious/env-webhook: response must carry admission id and verdict"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestAddFileDetectsReplacedInode",
+      "elapsed_seconds": 0.02,
+      "diagnostic_lines": [
+        "reading_test.go:215: remove <PRIVATE_RUN_ROOT>\\build\\TestAddFileDetectsReplacedInode2920150164\\001\\a.txt: The process cannot access the file because it is being used by another process."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/completion",
+      "test": "TestCompletionRequiresActualSignedMaterialAndRetainsConflicts",
+      "elapsed_seconds": 0.02,
+      "diagnostic_lines": [
+        "evaluate_test.go:27: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestActualFileWriteAndFakeSuccess",
+      "elapsed_seconds": 0.01,
+      "diagnostic_lines": [
+        "file_test.go:21: { false  0  } file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestFileCaptureBoundsAndUnsafeTargets",
+      "elapsed_seconds": 0.01,
+      "diagnostic_lines": [
+        "file_test.go:118: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestPendingFileImmutableRestartAndTamper",
+      "elapsed_seconds": 0.03,
+      "diagnostic_lines": [
+        "pending_test.go:30: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryConcurrentDifferentOwnersHaveOneWinner",
+      "elapsed_seconds": 0.03,
+      "diagnostic_lines": [
+        "recovery_store_test.go:40: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryStoredCapacityAndFailureIsolation",
+      "elapsed_seconds": 0.03,
+      "diagnostic_lines": [
+        "recovery_store_test.go:74: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/gap",
+      "elapsed_seconds": 0.03,
+      "diagnostic_lines": [
+        "recovery_store_test.go:97: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/unknown-field",
+      "elapsed_seconds": 0.03,
+      "diagnostic_lines": [
+        "recovery_store_test.go:97: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/symlink",
+      "elapsed_seconds": 0.03,
+      "diagnostic_lines": [
+        "recovery_store_test.go:97: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/oversized",
+      "elapsed_seconds": 0.03,
+      "diagnostic_lines": [
+        "recovery_store_test.go:97: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/unpublished-temp",
+      "elapsed_seconds": 0.03,
+      "diagnostic_lines": [
+        "recovery_store_test.go:97: file_observation_unavailable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed",
+      "elapsed_seconds": 0.15,
+      "diagnostic_lines": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestStoreRejectsUnsafeStateAndInput",
+      "elapsed_seconds": 0.07,
+      "diagnostic_lines": [
+        "store_test.go:94: symlink <PRIVATE_RUN_ROOT>\\build\\TestStoreRejectsUnsafeStateAndInput1722295960\\002\\missing <PRIVATE_RUN_ROOT>\\build\\TestStoreRejectsUnsafeStateAndInput1722295960\\001\\effect-evidence\\eff-1.json: A required privilege is not held by the client."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestConnectorsMergeWithoutDroppingNative",
+      "elapsed_seconds": 1.89,
+      "diagnostic_lines": [
+        "inventory_test.go:294: connector candidate missing, skipped=[connector_missing:hermes connector_missing:openclaw connector_missing:directory connector_missing:mcp] ids=[platform:openclaw skill-installation:0fd035dede25978a1ac7deb3b9051f13 skill-installation:54884c9210192484bae6991f9c3ff853 skill-installation:eafd3009b509387c776ee8311d959c75 agent:hermes:default agent:hermes:work agent:openclaw:main agent:openclaw:other mcp:cursor:remote@9d6746f3 platform:codebuddy skill-installation:54adcbd09f2643838963cda2b69695c4 agent:hermes:home mcp:cursor:github@47b27826 platform:hermes]"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestConnectorsNetworkAccessSkipped",
+      "elapsed_seconds": 0.94,
+      "diagnostic_lines": [
+        "inventory_test.go:331: skipped [connector_missing:hermes connector_missing:openclaw connector_missing:directory connector_missing:mcp]"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestMCPSymlinkIsSkipped",
+      "elapsed_seconds": 0.05,
+      "diagnostic_lines": [
+        "inventory_test.go:465: symlink <PRIVATE_RUN_ROOT>\\build\\TestMCPSymlinkIsSkipped1190491058\\001\\elsewhere.json <PRIVATE_RUN_ROOT>\\build\\TestMCPSymlinkIsSkipped1190491058\\001\\.cursor\\mcp.json: A required privilege is not held by the client."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/pending",
+      "test": "TestAppendWritesUnsignedJSONL",
+      "elapsed_seconds": 0.14,
+      "diagnostic_lines": [
+        "pending_test.go:50: pending log must be 0600, got 666"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestRuntimeCheckContractFixtures",
+      "elapsed_seconds": 9.52,
+      "diagnostic_lines": [
+        "contracts_test.go:33: incoherent runtime outputs"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestCheckTemporaryAuthorityAndVerifiedCleanup",
+      "elapsed_seconds": 10.8,
+      "diagnostic_lines": [
+        "manager_test.go:139: {local-runtime-check-result/v1 rc-aab087db5286c3d82ee1062040e090b5 hi-0123456789abcdef0123456789abcdef failed runtime_check_intent_failed 2026-09-14T05:41:28.1065693Z 0x16ba0ba0ef50 2026-09-14T05:43:28.1065693Z de3118fced258b9636658c96229f9e8d78e64c798f7f0f5b36daa1ebd752aefd complete [] map[] [检查新的合成测试会话，不覆盖已运行会话或可信 Skill 归属。 宿主可能写入自身历史、缓存并运行已配置插件；不声明网络或操作系统隔离。 摘要仅覆盖被核对的配置、适配器、CLI 入口和 SIQ 服务，不代表完整 Python 依赖身份。]}"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestCancelStopsLaunchAndRevokesAuthority",
+      "elapsed_seconds": 8.91,
+      "diagnostic_lines": [
+        "manager_test.go:293: launch not reached"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestRecoveryFindsBindingPublishedBeforeJournalUpdate",
+      "elapsed_seconds": 7.42,
+      "diagnostic_lines": [
+        "recovery_test.go:26: runtime_check_intent_failed"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "test": "TestIdentityIssuanceRestartRevocationAndReplacement",
+      "elapsed_seconds": 1.01,
+      "diagnostic_lines": [
+        "store_test.go:166: private file <nil>"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed/ancestor_link",
+      "elapsed_seconds": 1.02,
+      "diagnostic_lines": [
+        "store_test.go:341: symlink <PRIVATE_RUN_ROOT>\\build\\TestIdentityCorruptAndAliasedRecordsFailClosedancestor_link247096326\\001\\runtime-identities-original <PRIVATE_RUN_ROOT>\\build\\TestIdentityCorruptAndAliasedRecordsFailClosedancestor_link247096326\\001\\runtime-identities: A required privilege is not held by the client."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed/record_link",
+      "elapsed_seconds": 1.12,
+      "diagnostic_lines": [
+        "store_test.go:348: symlink <PRIVATE_RUN_ROOT>\\build\\TestIdentityCorruptAndAliasedRecordsFailClosedrecord_link2265272893\\001\\runtime-identities\\ri-e00521e22e2edc3a850c02979c25ebcc.json.original <PRIVATE_RUN_ROOT>\\build\\TestIdentityCorruptAndAliasedRecordsFailClosedrecord_link2265272893\\001\\runtime-identities\\ri-e00521e22e2edc3a850c02979c25ebcc.json: A required privilege is not held by the client."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed/permissions",
+      "elapsed_seconds": 1.13,
+      "diagnostic_lines": [
+        "store_test.go:363: corrupt authority accepted"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed",
+      "elapsed_seconds": 12.13,
+      "diagnostic_lines": []
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestInstanceAndPlanV2ContractFixtures",
+      "elapsed_seconds": 3.98,
+      "diagnostic_lines": [
+        "adapter_instances_test.go:99: contract drift: adapter-plan.v2.json"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestGitImportClonesFixedCopyWithoutHooks",
+      "elapsed_seconds": 9.75,
+      "diagnostic_lines": [
+        "git_test.go:99: skill_import_download_failed false"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestGitImportSubDirectorySelectsSubtree",
+      "elapsed_seconds": 8.43,
+      "diagnostic_lines": [
+        "git_test.go:165: skill_import_download_failed"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestRemoteImportContractSamples",
+      "elapsed_seconds": 2.68,
+      "diagnostic_lines": [
+        "remote_test.go:265: remote sample differs local-skill-import-result.v2 <nil>"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestPythonHashSkillDirRejectsEscape",
+      "elapsed_seconds": 0.16,
+      "diagnostic_lines": [
+        "content_hash_python_test.go:79: symlink <PRIVATE_RUN_ROOT>\\build\\TestPythonHashSkillDirRejectsEscape1340904691\\002\\secret <PRIVATE_RUN_ROOT>\\build\\TestPythonHashSkillDirRejectsEscape1340904691\\001\\leak: A required privilege is not held by the client."
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestDownloadVerifiedArtifactHappyAndNegatives",
+      "elapsed_seconds": 0.15,
+      "diagnostic_lines": [
+        "fetch_test.go:74: downloaded must be executable: mode=-rw-rw-rw- err=<nil>"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestFetchAndStage",
+      "elapsed_seconds": 0.6,
+      "diagnostic_lines": [
+        "fetch_test.go:120: skillmanifest: stage source is not executable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestPythonFetchArtifact",
+      "elapsed_seconds": 3.87,
+      "diagnostic_lines": [
+        "fetch_test.go:186: python fetch failed: exit status 3"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestStageVerifiedBinaryHappyPath",
+      "elapsed_seconds": 0.09,
+      "diagnostic_lines": [
+        "stage_test.go:23: skillmanifest: stage source is not executable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestStageVerifiedBinarySelfConsistencyWithoutPin",
+      "elapsed_seconds": 0.05,
+      "diagnostic_lines": [
+        "stage_test.go:81: skillmanifest: stage source is not executable"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestAdapterAndBootstrapShareVerifiedResolve",
+      "elapsed_seconds": 0.17,
+      "diagnostic_lines": [
+        "verify_script_test.go:110: expected hash/verify failure, got:"
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestAcquireWriterBlocksSecondAndTakesOverDead",
+      "elapsed_seconds": 0.21,
+      "diagnostic_lines": [
+        "cas_test.go:103: stale lock must be quarantined and acquired: state: write lock held by another process (pid 999999999); submit writes through serve HTTP or wait"
+      ]
+    }
+  ]
+}

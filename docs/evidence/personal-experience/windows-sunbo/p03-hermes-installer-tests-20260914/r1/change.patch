@@ -1,0 +1,75 @@
+diff --git a/apps/agentshield/internal/adapterinstall/install_entry_test.go b/apps/agentshield/internal/adapterinstall/install_entry_test.go
+index 4e3b0a9..e95d19a 100644
+--- a/apps/agentshield/internal/adapterinstall/install_entry_test.go
++++ b/apps/agentshield/internal/adapterinstall/install_entry_test.go
+@@ -5,6 +5,7 @@ import (
+ 	"os"
+ 	"path/filepath"
+ 	"reflect"
++	"runtime"
+ 	"strings"
+ 	"testing"
+ )
+@@ -73,22 +74,50 @@ func TestCodeBuddyFreshInstallAddsOnlyHooks(t *testing.T) {
+ 
+ func TestHermesControlledInstallPathChecksBeforeNativeInstall(t *testing.T) {
+ 	opts := testOpts(t, Hermes)
++	if runtime.GOOS == "windows" {
++		plan, err := Prepare(opts, "install")
++		if err != nil {
++			t.Fatal(err)
++		}
++		view := plan.View()
++		steps := strings.Join(view.NextSteps, "\n")
++		if view.RuntimeVerified || !strings.Contains(steps, "安装入口未被接管") || !strings.Contains(steps, "Windows 暂无受控安装命令") {
++			t.Fatalf("Windows preview must report the unsupported controlled install path: %+v", view)
++		}
++	}
+ 	if _, err := Install(opts); err != nil {
+ 		t.Fatal(err)
+ 	}
+ 	wrapper := opts.wrapperPath()
+-	raw, err := os.ReadFile(wrapper)
+-	if err != nil {
+-		t.Fatalf("controlled install command missing: %v", err)
+-	}
+-	info, err := os.Stat(wrapper)
+-	if err != nil || info.Mode().Perm() != 0o700 {
+-		t.Fatalf("wrapper mode: %v %v", info, err)
+-	}
+-	admit := bytes.Index(raw, []byte("admit"))
+-	native := bytes.Index(raw, []byte("exec hermes skills install"))
+-	if admit < 0 || native < 0 || admit > native {
+-		t.Fatal("controlled install path must check the skill before the native installer runs")
++	if runtime.GOOS == "windows" {
++		// Windows has no supported shell wrapper; installed files do not verify
++		// native registration, platform compatibility, or actual tool calls.
++		if _, err := os.Lstat(wrapper); !os.IsNotExist(err) {
++			t.Fatalf("Windows install must not create an unsupported shell wrapper: %v", err)
++		}
++		d := Inspect(opts)
++		if d.ConfigurationState != "needs_verification" || d.RuntimeState != "unverified" {
++			t.Fatalf("Windows file installation claimed native verification: %+v", d)
++		}
++		for _, code := range []string{"host_registration", "platform_compatibility", "runtime_verification"} {
++			if checkStatus(d, code) != "unknown" {
++				t.Fatalf("Windows %s must remain unknown without native evidence: %+v", code, d)
++			}
++		}
++	} else {
++		raw, err := os.ReadFile(wrapper)
++		if err != nil {
++			t.Fatalf("controlled install command missing: %v", err)
++		}
++		info, err := os.Stat(wrapper)
++		if err != nil || info.Mode().Perm() != 0o700 {
++			t.Fatalf("wrapper mode: %v %v", info, err)
++		}
++		admit := bytes.Index(raw, []byte("admit"))
++		native := bytes.Index(raw, []byte("exec hermes skills install"))
++		if admit < 0 || native < 0 || admit > native {
++			t.Fatal("controlled install path must check the skill before the native installer runs")
++		}
+ 	}
+ 	if _, err := os.Stat(filepath.Join(opts.Home, ".hermes", "config.yaml")); !os.IsNotExist(err) {
+ 		t.Fatalf("install must not modify the Hermes profile config without native enable: %v", err)
