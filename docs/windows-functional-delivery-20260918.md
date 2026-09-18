@@ -42,7 +42,7 @@
 
 交付沿用 PR #83，基于 PR #82 的 Windows 私密状态分支；维护者应保留依赖顺序。只提交本轮相关材料，不写 main、不合并、不发布或修改治理。
 
-当前工作树另有既存的 `apps/agentshield/cmd/agentshield/launch_agent_switch_test.go` 未提交修改，涉及 macOS 模拟夹具在 Windows 上的路径/注册准备。它不进入本次交付候选，原样保留，不当作已完成的全量测试修复。
+原工作树的 `apps/agentshield/cmd/agentshield/launch_agent_switch_test.go` 未验证修改，已在后续仓库整理中原样归档到本地 `codex/windows-deferred-launch-fixture-20260918`（`3f7bbcfe43f2d8aa3d09dac168ea5edcb71b3e21`），并从主集成工作树移开。它不进入本次交付候选，不当作已完成的全量测试修复。分支、Issues 和 PR 的最新组织见 [Windows 协作索引](windows-branch-pr-status-20260918.md)。
 
 上一批 Hermes r3 的自有进程/Job 清理已有记录；被暂停的 A05 草稿没有启动宿主、服务或模型。本次收口没有新增宿主进程、系统任务或修改日常配置。此前失败和清理证据不覆盖、不删除。
 
