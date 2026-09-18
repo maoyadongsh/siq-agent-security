@@ -2112,3 +2112,8 @@ D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-priv
 按 [Windows 本地盘符资源专项规格](windows-resource-profile-spec-v1.md) 建立明确签名的新 managed 权限解释。旧 Intent v2/v3、Grant、identity 和会话保持 POSIX 原义；不得全局放宽 NormalizeResource。新版 Authority 必须完成可恢复状态升级，经明确的资源确认及批准，再由运行身份产生 Intent 和会话绑定；最终裁决、审批恢复与文件观察沿同一解释复验。实施接线见本文开头的三个专项增量。组件实现不代表 Hermes B 或其他真实宿主旅程已通过。
 
 2026-09-18 接续 Windows 资源事实层：`internal/runtimepath` 按上述专项规格核对本地 NTFS、真实长名称、父组件、目录大小写、硬链接及删除/替换状态，逐次复验并拒绝不确定对象。该层不产生 Authority、不改变旧路径语义，也不单独启用新版 Grant/Intent/identity；批准与最终调用链仍须完整接通。
+
+
+## Windows 当前用户任务升级增量（2026-09-18）
+
+Windows `service-upgrade/service-rollback` 的签名事务、系统任务替换、恢复、二进制与状态兼容约束见 [专项规格](windows-task-upgrade-spec-v1.md)。实现复用 clientrelease 与既有受签名 Task 生命周期；配置切换不回放历史权限，原生与测试签名证据分别记录。
