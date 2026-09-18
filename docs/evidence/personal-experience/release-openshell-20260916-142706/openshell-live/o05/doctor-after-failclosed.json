@@ -1,0 +1,135 @@
+{
+  "cli_found": true,
+  "cli_path": "/home/maoyd/siq-research-engine/var/openshell/toolchains/v0.0.83/bin/openshell",
+  "source": "env_pair",
+  "active_gateway": "siq-openshell-dev",
+  "probe_ok": true,
+  "identity_ok": true,
+  "tier": "L3",
+  "state": "policy_readable",
+  "note": "指定目标策略已读回；尚未验证执行限制",
+  "human_next": "请按该目标的权限范围完成独立行为验收。",
+  "started_gateway": false,
+  "capabilities": {
+    "backend": "openshell",
+    "schema_version": "unknown-policy-v1",
+    "dynamic_network_update": true,
+    "static_filesystem": true,
+    "static_process": true,
+    "landlock": true,
+    "interceptor": false,
+    "provider_credential_injection": false,
+    "revision_support": true,
+    "max_filesystem_paths": 1024,
+    "capabilities": {
+      "audit_events": {
+        "status": "unknown",
+        "semantics": "none",
+        "basis": "无已实测事件流；stream_events 仅 policy list 回读（非行为事件）",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "enforcement_mode.audit_only": {
+        "status": "unsupported",
+        "semantics": "none",
+        "basis": "CLI 路径无 audit_only 执行语义的实测依据",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "enforcement_mode.block": {
+        "status": "supported",
+        "semantics": "enforce",
+        "basis": "网关策略默认拦截语义（部署路径实测）",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "enforcement_mode.warn": {
+        "status": "unsupported",
+        "semantics": "none",
+        "basis": "CLI 路径无 warn 执行语义的实测依据",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "filesystem": {
+        "status": "supported",
+        "semantics": "enforce",
+        "basis": "实测：静态边界，创建时锁定，网关强制",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "model_routing": {
+        "status": "unsupported",
+        "semantics": "none",
+        "basis": "provider 凭据注入未经实测（保守拒绝）",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "network_l34": {
+        "status": "supported",
+        "semantics": "enforce",
+        "basis": "2026-08-13 实测：host:port 网络段热更新成功",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "network_l7": {
+        "status": "unsupported",
+        "semantics": "none",
+        "basis": "实测：端点模型仅 host:port，path 级规则编译拒绝",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "process": {
+        "status": "supported",
+        "semantics": "enforce",
+        "basis": "实测：process 段同属静态边界，创建时锁定",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "resources": {
+        "status": "unknown",
+        "semantics": "none",
+        "basis": "资源配额语义未经实测",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "sandbox_lifecycle": {
+        "status": "unsupported",
+        "semantics": "none",
+        "basis": "实测：SandboxResponse 解码缺陷，create_generation 经 CLI 拒绝（v0.0.104 修复未在本路径实测）",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "secrets": {
+        "status": "unsupported",
+        "semantics": "none",
+        "basis": "凭据注入能力未经实测（保守拒绝，§15.2 由 Provider 侧承担）",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      },
+      "tools_mcp": {
+        "status": "unknown",
+        "semantics": "none",
+        "basis": "interceptor/工具治理未经实测（不猜测）",
+        "evidence_level": "documented",
+        "scope": "historical_adapter_observations_2026-08-13; not_current_target"
+      }
+    },
+    "evidence_level": "handshake_verified",
+    "handshake_verified": true,
+    "handshake_gateway": "siq-openshell-dev",
+    "observed_at": "2026-09-16T07:50:38Z",
+    "endpoint_fingerprint": "c4b76903a33d3ecce2c227459de8d15f61a862fca3ed7c4a22f5b5eaa864856f",
+    "cli_version": "0.0.83",
+    "gateway_version": "unknown",
+    "max_filesystem_paths_measured": false,
+    "configuration_capabilities": {
+      "enforcement_mode.block": true,
+      "network.dynamic_update": true
+    }
+  },
+  "observed_at": "2026-09-16T07:50:38Z",
+  "expires_at": "2026-09-16T07:50:53Z",
+  "target": "siq-relcand-20260916-154423",
+  "revision": "2",
+  "policy_digest": "15a9162054fd1e405c4bb61ffec152ff32350047fdd4182f5074eccc6ce697a3"
+}

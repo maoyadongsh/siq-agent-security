@@ -121,6 +121,13 @@ class ToolGateway:
         del self._pending[action_id]
         if status["status"] != "approved":
             raise Blocked(status.get("reason_code", "hold_not_approved"))
+        retry_id = uuid4().hex
+        reserved = self._security.reserve_hold(request, decision, retry_id)
+        event["reservation_receipt_id"] = reserved["reservation_receipt_id"]
+        request = {**request, "tool_call_id": retry_id,
+                   "task_id": request.get("task_id", self._security.identity.task_id)}
+        decision = {**decision, "action": "allow", "effective_action": "allow",
+                    "receipt_id": reserved["reservation_receipt_id"]}
         return self._execute(request, decision, event)
 
     def _execute(self, request, decision, event):

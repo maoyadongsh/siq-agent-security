@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { localApi } from '../api';
 import { useLocalSession } from '../session';
-import { updateCheckErrorText, type SkillUpdateCheckResult, type SkillUpdateScheduleView } from '../skillUpdateCheck';
+import { isCurrentSkillUpdateRequest, planSkillUpdateSourceToggle, updateCheckErrorText, type SkillUpdateCheckResult, type SkillUpdateScheduleView } from '../skillUpdateCheck';
 import type { SkillImportSourceKind } from '../types';
 
 type SourceProbe = { state: 'loading' | 'unknown' | 'ready'; kind: SkillImportSourceKind | null; git?: { url: string; commit_sha: string } | null };
@@ -26,6 +26,12 @@ export default function SkillUpdateCheckPanel({ installId, importId = '', disabl
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const active = useRef<AbortController | null>(null);
+  const requestIdentity = [installId, importId, actorId, signer ?? '', connected ? 'connected' : 'disconnected'].join('\u0000');
+  const currentIdentity = useRef(requestIdentity);
+  // Render updates this synchronously, before effect cleanup can abort an old
+  // request. A response owned by the previous object therefore cannot write
+  // into the newly rendered installation, even in that narrow transition.
+  currentIdentity.current = requestIdentity;
   useEffect(() => {
     setUrl('');
     return () => { active.current?.abort(); active.current = null; };
@@ -35,15 +41,16 @@ export default function SkillUpdateCheckPanel({ installId, importId = '', disabl
     setProbe(importId ? { state: 'loading', kind: null } : { state: 'unknown', kind: null });
     if (!importId) return;
     const controller = new AbortController();
+    const owner = requestIdentity;
     void (async () => {
       try {
         const detail = await localApi.skillImport(importId, controller.signal);
-        if (controller.signal.aborted) return;
+        if (!isCurrentSkillUpdateRequest(owner, currentIdentity.current, controller.signal.aborted)) return;
         setProbe(detail.import.source_kind === 'git'
           ? { state: 'ready', kind: 'git', git: { url: detail.import.git.url, commit_sha: detail.import.git.commit_sha } }
           : { state: 'ready', kind: detail.import.source_kind });
       } catch {
-        if (!controller.signal.aborted) setProbe({ state: 'unknown', kind: null });
+        if (isCurrentSkillUpdateRequest(owner, currentIdentity.current, controller.signal.aborted)) setProbe({ state: 'unknown', kind: null });
       }
     })();
     return () => controller.abort();
@@ -52,12 +59,13 @@ export default function SkillUpdateCheckPanel({ installId, importId = '', disabl
     setSchedule({ state: 'loading' });
     if (!/^sin-[a-f0-9]{64}$/.test(installId)) { setSchedule({ state: 'unavailable' }); return; }
     const controller = new AbortController();
+    const owner = requestIdentity;
     void (async () => {
       try {
         const view = await localApi.readSkillUpdateSource(installId, controller.signal);
-        if (!controller.signal.aborted) setSchedule({ state: 'ready', view });
+        if (isCurrentSkillUpdateRequest(owner, currentIdentity.current, controller.signal.aborted)) setSchedule({ state: 'ready', view });
       } catch {
-        if (!controller.signal.aborted) setSchedule({ state: 'unavailable' });
+        if (isCurrentSkillUpdateRequest(owner, currentIdentity.current, controller.signal.aborted)) setSchedule({ state: 'unavailable' });
       }
     })();
     return () => controller.abort();
@@ -67,25 +75,29 @@ export default function SkillUpdateCheckPanel({ installId, importId = '', disabl
   const scheduleReady = schedule.state === 'ready';
   const savedView = scheduleReady && schedule.view.source_state === 'saved' ? schedule.view : null;
   const cancel = () => { active.current?.abort(); active.current = null; setBusy(false); setError('检查已取消。'); };
-  const run = async (action: (controller: AbortController) => Promise<void>) => {
+  const run = async (action: (controller: AbortController, owner: string) => Promise<void>) => {
     if (active.current || disabled || !actorId.trim()) return;
     const controller = new AbortController(); active.current = controller;
+    const owner = requestIdentity;
     setBusy(true); setError('');
     try {
-      await action(controller);
+      await action(controller, owner);
     } catch (err) {
-      if (active.current === controller && !controller.signal.aborted) setError(updateCheckErrorText(err));
+      if (active.current === controller && isCurrentSkillUpdateRequest(owner, currentIdentity.current, controller.signal.aborted)) setError(updateCheckErrorText(err));
     } finally {
-      if (active.current === controller) { active.current = null; setBusy(false); }
+      if (active.current === controller) {
+        active.current = null;
+        if (isCurrentSkillUpdateRequest(owner, currentIdentity.current, controller.signal.aborted)) setBusy(false);
+      }
     }
   };
   const check = () => {
     if (blockedSource || probe.state === 'loading') return;
     if (!gitMode && !url.trim()) return;
     setResult(null);
-    void run(async (controller) => {
+    void run(async (controller, owner) => {
       const data = await localApi.checkSkillUpdate(installId, { schema_version: 'local-skill-update-check/v1', remote_url: gitMode ? '' : url.trim(), actor_id: actorId.trim() }, controller.signal);
-      if (active.current === controller && !controller.signal.aborted) setResult(data);
+      if (active.current === controller && isCurrentSkillUpdateRequest(owner, currentIdentity.current, controller.signal.aborted)) setResult(data);
     });
   };
   // The caller-provided URL lives in React state only: it is sent once with the
@@ -93,21 +105,27 @@ export default function SkillUpdateCheckPanel({ installId, importId = '', disabl
   // display form returned by the service. It is never written to Web Storage.
   const saveSource = (remoteURL: string, enable: boolean) => {
     setResult(null);
-    void run(async (controller) => {
+    void run(async (controller, owner) => {
       const view = await localApi.saveSkillUpdateSource(installId, { schema_version: 'local-skill-update-source-save/v1', remote_url: remoteURL, enable, actor_id: actorId.trim() }, controller.signal);
-      if (active.current === controller && !controller.signal.aborted) {
+      if (active.current === controller && isCurrentSkillUpdateRequest(owner, currentIdentity.current, controller.signal.aborted)) {
         setSchedule({ state: 'ready', view });
         if (!gitMode) setUrl('');
       }
     });
   };
+  const disableSource = () => {
+    setResult(null);
+    void run(async (controller, owner) => {
+      const view = await localApi.disableSkillUpdateSource(installId, { schema_version: 'local-skill-update-source-disable/v1', actor_id: actorId.trim() }, controller.signal);
+      if (active.current === controller && isCurrentSkillUpdateRequest(owner, currentIdentity.current, controller.signal.aborted)) setSchedule({ state: 'ready', view });
+    });
+  };
   const toggleSchedule = () => {
-    if (!scheduleReady || !savedView) return;
-    if (gitMode) { saveSource('', !savedView.enabled); return; }
-    // HTTPS ZIP sources are re-bound on every save: the service re-checks the
-    // URL against the original import, so it must be provided again.
-    if (url.trim()) saveSource(url.trim(), !savedView.enabled);
-    else setError('更改 HTTPS ZIP 来源的自动检查前，请先在下方填写原下载链接。');
+    if (!scheduleReady) return;
+    const plan = planSkillUpdateSourceToggle(schedule.view, url);
+    if (plan.kind === 'disable') { disableSource(); return; }
+    if (plan.kind === 'save') { saveSource(plan.remoteURL, true); return; }
+    setError(plan.message);
   };
   const description = gitMode
     ? '检查 Git 仓库上游是否有内容变化，不会自动更新文件或权限。检查固定在导入时的仓库地址与提交。'
@@ -129,7 +147,7 @@ export default function SkillUpdateCheckPanel({ installId, importId = '', disabl
       {savedView.last_success_at ? ` · 上次成功：${new Date(savedView.last_success_at).toLocaleString()}` : ''}
     </p> : null}
     {savedView && savedView.status === 'new_version' ? versionLinks : null}
-    {savedView && !gitMode ? <p className="page-desc">更改 HTTPS ZIP 来源的自动检查设置需重新提供原下载链接。</p> : null}
+    {savedView && !gitMode ? <p className="page-desc">停止自动检查无需重新输入链接；重新启用或更换来源时需要再次提供原下载链接。</p> : null}
     {scheduleReady && (gitMode || !blockedSource) ? <div className="import-actions">
       {scheduleReady && schedule.view.source_state !== 'unsupported'
         ? <button className="btn" type="button" disabled={disabled || busy || !actorId.trim()} onClick={toggleSchedule}>{savedView?.enabled ? '停止自动检查' : '启用自动检查'}</button>

@@ -23,6 +23,7 @@ import (
 const updateScheduleSchema = "local-skill-update-schedule/v1"
 const updateScheduleViewSchema = "local-skill-update-schedule-view/v1"
 const updateSourceSaveSchema = "local-skill-update-source-save/v1"
+const updateSourceDisableSchema = "local-skill-update-source-disable/v1"
 
 // Stable update-check states. "checking" is transient and is never persisted
 // as last_status; a failed check must never leave up_to_date behind.
@@ -67,6 +68,16 @@ type UpdateSourceRequest struct {
 	Enable        bool   `json:"enable"`
 	ActorID       string `json:"actor_id"`
 }
+
+// UpdateSourceDisableRequest deliberately has no locator field. Disabling an
+// already saved source is authorized only by the current signed schedule
+// record; callers cannot use this path to replace or repair that record.
+type UpdateSourceDisableRequest struct {
+	SchemaVersion string `json:"schema_version"`
+	ActorID       string `json:"actor_id"`
+}
+
+var ErrUpdateSourceNotConfigured = errors.New("skill_update_source_not_configured")
 
 // UpdateSchedule is the persisted per-install update-check metadata. Locator
 // keeps only the public ZIP locator (https, no userinfo, no query string):
@@ -290,6 +301,96 @@ func (s *Store) SaveUpdateSource(ctx context.Context, id string, req UpdateSourc
 		return nil, ErrUnavailable
 	}
 	if err = replaceDocument(s.updateSourcePath(id), *sched); err != nil {
+		return nil, err
+	}
+	return sched, nil
+}
+
+// DisableUpdateSource stops automatic checks using only the current signed
+// source record. It preserves the locator, display and install binding, never
+// accepts caller-supplied source material, and is byte-idempotent after the
+// first successful disable. Unknown, damaged or stale records are left intact.
+func (s *Store) DisableUpdateSource(ctx context.Context, id string, req UpdateSourceDisableRequest) (*UpdateSchedule, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if req.SchemaVersion != updateSourceDisableSchema || !actorIDValid(req.ActorID) || !validInstallID(id) {
+		return nil, ErrInvalid
+	}
+	select {
+	case updateSourceSlot <- struct{}{}:
+		defer func() { <-updateSourceSlot }()
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
+	record, installed, err := s.historicalRecord(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if record.RecordedStatus != "installed_unverified" || record.Operation == nil {
+		return nil, ErrChanged
+	}
+	if err := s.removalStarted(id); err != nil {
+		return nil, err
+	}
+	imported, err := s.imports.ReadRecord(ctx, installed.Plan.Source.ImportID)
+	if err != nil {
+		return nil, sourceError(ctx, err)
+	}
+	if imported.ArtifactDigest != installed.Plan.Source.ArtifactDigest || imported.AnalysisSHA256 != installed.Plan.Source.AnalysisSHA256 {
+		return nil, ErrChanged
+	}
+	sched, err := s.readUpdateSchedule(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if sched == nil {
+		return nil, ErrUpdateSourceNotConfigured
+	}
+	binding, err := installBindingDigest(record)
+	if err != nil {
+		return nil, err
+	}
+	if sched.SourceKind != imported.SourceKind || sched.InstallBindingDigest != binding {
+		return nil, ErrChanged
+	}
+	switch sched.SourceKind {
+	case "git":
+		if sched.Locator != "" || sched.Display != locatorDisplay(imported.Git.URL) {
+			return nil, ErrChanged
+		}
+	case "https_zip":
+		canonical, bindErr := skillimport.ZipSourceBinding(imported, sched.Locator)
+		if bindErr != nil || canonical != sched.Locator || sched.Display != locatorDisplay(canonical) {
+			return nil, ErrChanged
+		}
+	default:
+		return nil, ErrChanged
+	}
+	if !sched.Enabled {
+		// Retrying after a lost response must not change timestamps, signatures
+		// or attribution. The signed disabled record is already the result.
+		copy := *sched
+		return &copy, nil
+	}
+	sched.Enabled = false
+	sched.NextCheckAt = ""
+	sched.LastAttemptAt = ""
+	sched.LastSuccessAt = ""
+	sched.LastStatus = UpdateStatusNotChecked
+	sched.FailureCategory = ""
+	sched.FailureCount = 0
+	sched.SavedBy = req.ActorID
+	sched.UpdatedAt = s.now().UTC().Format(time.RFC3339Nano)
+	doc, err := document(*sched, false)
+	if err != nil {
+		return nil, err
+	}
+	sched.Signature, err = s.key.SignCanonical(doc)
+	if err != nil {
+		return nil, ErrUnavailable
+	}
+	if err := replaceDocument(s.updateSourcePath(id), *sched); err != nil {
 		return nil, err
 	}
 	return sched, nil

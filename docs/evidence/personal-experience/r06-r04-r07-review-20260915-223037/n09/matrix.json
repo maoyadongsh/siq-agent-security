@@ -1,0 +1,1117 @@
+{
+  "schema_version": "personal-acceptance-baseline/v2",
+  "batch": "n09",
+  "recorded_at": "2026-09-15T14:36:41.318572+00:00",
+  "legs": [
+    {
+      "leg_id": "R04OC",
+      "platform": "openclaw",
+      "os": "linux",
+      "binary_sha256": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942",
+      "started_at": "2026-09-15T14:35:05.368867+00:00",
+      "finished_at": "2026-09-15T14:35:05.368867+00:00",
+      "report_ref": "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r04.json",
+      "report_sha256": "af6256a9024de0cb22dff3b885c9f18ac9035c97180c95a958710fcdbfdc1960",
+      "checks_passed": 30
+    },
+    {
+      "leg_id": "R07",
+      "platform": "openclaw",
+      "os": "linux",
+      "binary_sha256": "5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942",
+      "started_at": "2026-09-15T14:35:32.691540+00:00",
+      "finished_at": "2026-09-15T14:35:32.691540+00:00",
+      "report_ref": "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json",
+      "report_sha256": "10f73526a056ed986be726e62269ce1b2234978f22f4b6b48af2754b8017c143",
+      "checks_passed": 25
+    }
+  ],
+  "cells": [
+    {
+      "platform": "hermes",
+      "os": "linux",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Clean product package installation, service start, pairing, and management UI evidence."
+        },
+        {
+          "item": "J2",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Complete default and nondefault Agent/Skill discovery with instance relationships."
+        },
+        {
+          "item": "J3",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Confirmed attachment to the selected native instance with unrelated settings preserved."
+        },
+        {
+          "item": "J4",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Final-candidate native permission matrix covering relevant tools and zero denied effects."
+        },
+        {
+          "item": "J5",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Human approval, visible notification, trusted native retry, replay, outage, and recovery evidence."
+        },
+        {
+          "item": "J6",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Native install/update/removal using an enabled production remote source and permission review."
+        },
+        {
+          "item": "J7",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Host-provided causal binding from one specific Skill to the actual native tool call."
+        },
+        {
+          "item": "J8",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Native required call blocked before side effect while the SIQ service is unavailable."
+        },
+        {
+          "item": "J9",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Service and native-session restart recovery with old authority constrained and no duplicate effect."
+        },
+        {
+          "item": "J10",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Full product and adapter uninstall with authority revocation and user-data preservation."
+        },
+        {
+          "item": "J11",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No same-candidate leg was run for this cell in this batch.",
+          "required_evidence": "Redaction, explicit raw capture, expiry/revocation, and isolated export lifecycle evidence."
+        }
+      ]
+    },
+    {
+      "platform": "openclaw",
+      "os": "linux",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "controlled_start",
+          "classification": "component_integration",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step1_daemon_health_paired",
+                "r07_step2_ui_pairing_with_wrong_code_retry"
+              ]
+            }
+          ],
+          "note": "Journey pairing (wrong-code retry) and daemon health passed; the clean install/upgrade/recovery lifecycle is real-machine markdown evidence in r06-linux-lifecycle-20260915-161515 (not a machine-readable leg), and clean package installation itself remains open."
+        },
+        {
+          "item": "J2",
+          "status": "controlled_start",
+          "classification": "component_integration",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step2_ui_bindings_discovers_openclaw"
+              ]
+            }
+          ],
+          "note": "The real OpenClaw instance was discovered in the bindings UI; broad and nondefault discovery remains open."
+        },
+        {
+          "item": "J3",
+          "status": "controlled_start",
+          "classification": "native_machine",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step3_ui_grants_shows_v1_grant"
+              ]
+            }
+          ],
+          "note": "Attachment to the native instance was confirmed through the grants UI with the managed skill installed."
+        },
+        {
+          "item": "J4",
+          "status": "controlled_start",
+          "classification": "native_machine",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step4_sec_issued_for_real_session",
+                "r07_step4_allow_read_with_session_attribution",
+                "r07_step4_call_binding_recomputed",
+                "r07_step4_attribution_correlates_grant_install_sec"
+              ]
+            }
+          ],
+          "note": "Session-level SEC allowed a real host read with verified attribution; the broader tool matrix remains open (OpenClaw lacks trusted single-Skill causal metadata)."
+        },
+        {
+          "item": "J5",
+          "status": "controlled_start",
+          "classification": "component_integration",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step6_hold_lands_in_siq_confirmations",
+                "r07_step6_ui_approval_records_confirmation",
+                "r07_step6_replayed_approval_rejected"
+              ]
+            }
+          ],
+          "note": "HTTP hold creation, UI approval, and replay rejection passed; native consumption is not exercised; the operator is automated Playwright and desktop notification confirmation is covered only by the separate R02 smokes."
+        },
+        {
+          "item": "J6",
+          "status": "controlled_start",
+          "classification": "native_machine",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json",
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r04.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step7_update_leg_v1_cancel_confirm_v2_remove"
+              ]
+            },
+            {
+              "leg_id": "R04OC",
+              "checks": [
+                "up01_import_generates_check_data_only",
+                "comparison_is_read_only",
+                "up02_cancel_and_repeated_requests_keep_v1",
+                "update_replaces_target_bytes",
+                "update_revokes_v1_grant",
+                "removal_revokes_authority_and_removes_target"
+              ]
+            }
+          ],
+          "note": "The full V1→cancel→confirm-update V2→re-authorize→removal journey passed as a nested leg inside the user journey; the source is local, so production hosted source validation remains blocked."
+        },
+        {
+          "item": "J7",
+          "status": "controlled_start",
+          "classification": "native_machine",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json",
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r04.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step4_call_binding_recomputed",
+                "r07_step4_attribution_correlates_grant_install_sec"
+              ]
+            },
+            {
+              "leg_id": "R04OC",
+              "checks": [
+                "v1_call_binding_recomputed",
+                "v1_attribution_correlates_grant_install_sec"
+              ]
+            }
+          ],
+          "note": "Call binding and grant/install/SEC correlation are verified at session level (controlled_session); single-Skill causality is not claimable on OpenClaw."
+        },
+        {
+          "item": "J8",
+          "status": "unverified",
+          "classification": "component_integration",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "This batch did not block a native required call while the SIQ service was unavailable; R07 step 8 interrupts the service for UI-session recovery, not for a fail-closed native call.",
+          "required_evidence": "Native required call blocked before side effect while the SIQ service is unavailable."
+        },
+        {
+          "item": "J9",
+          "status": "controlled_start",
+          "classification": "native_machine",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json",
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r04.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step8_interrupt_invalidates_ui_session",
+                "r07_step8_retry_and_keyboard_repair",
+                "r07_step9_receipts_activities_render_after_recovery"
+              ]
+            },
+            {
+              "leg_id": "R04OC",
+              "checks": [
+                "up08_commit_after_daemon_restart_from_recorded_plan",
+                "up09_old_context_cannot_authorize_new_version"
+              ]
+            }
+          ],
+          "note": "Service interruption with UI-session recovery and post-restart commit with old-context refusal passed; a full native-session restart journey with duplicate-effect checks remains open."
+        },
+        {
+          "item": "J10",
+          "status": "controlled_start",
+          "classification": "native_machine",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r04.json",
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R04OC",
+              "checks": [
+                "removal_revokes_authority_and_removes_target",
+                "unknown_user_files_preserved",
+                "host_config_final_state_preserved"
+              ]
+            },
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step11_adapter_uninstall_preserves_host_config"
+              ]
+            }
+          ],
+          "note": "Skill removal and adapter uninstall revoke authority and preserve unrelated host config and user files; full product uninstall remains open."
+        },
+        {
+          "item": "J11",
+          "status": "controlled_start",
+          "classification": "component_integration",
+          "evidence_refs": [
+            "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json"
+          ],
+          "coverage": [
+            {
+              "leg_id": "R07",
+              "checks": [
+                "r07_step10a_raw_content_store_default_disabled",
+                "r07_step10_raw_content_opt_in_ui_and_per_task_gating",
+                "r07_step10_purge_preserves_unexpired_records_and_receipts",
+                "r07_step10_native_capture_opt_in_and_revoke",
+                "r07_step10_default_export_excludes_raw_store"
+              ]
+            }
+          ],
+          "note": "Store default-off, native task opt-in/revocation, unexpired ciphertext preservation and default export exclusion passed; elapsed-time expiry and task-specific export lifecycle remain open."
+        }
+      ]
+    },
+    {
+      "platform": "workbuddy",
+      "os": "linux",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "No Linux WorkBuddy runtime is installed or documented on this host.",
+          "reason": "upstream_runtime_unconfirmed"
+        }
+      ]
+    },
+    {
+      "platform": "hermes",
+      "os": "macos",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "openclaw",
+      "os": "macos",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "workbuddy",
+      "os": "macos",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "macos native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "hermes",
+      "os": "windows",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "openclaw",
+      "os": "windows",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    },
+    {
+      "platform": "workbuddy",
+      "os": "windows",
+      "rows": [
+        {
+          "item": "J1",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J2",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J3",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J4",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J5",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J6",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J7",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J8",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J9",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J10",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        },
+        {
+          "item": "J11",
+          "status": "blocked",
+          "classification": "static_check",
+          "evidence_refs": [],
+          "coverage": [],
+          "note": "windows native evidence is owned by the external platform track.",
+          "reason": "environment_unavailable"
+        }
+      ]
+    }
+  ],
+  "evidence_sha256": {
+    "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r04.json": "af6256a9024de0cb22dff3b885c9f18ac9035c97180c95a958710fcdbfdc1960",
+    "docs/evidence/personal-experience/r06-r04-r07-review-20260915-223037/r07.json": "10f73526a056ed986be726e62269ce1b2234978f22f4b6b48af2754b8017c143"
+  },
+  "notes": [
+    "Both machine-readable legs use candidate 5361966882f7bbdcfe44dbd942bbef1876ae93e043c744ea76158c8bdc80d942; earlier candidates are not carried into this matrix.",
+    "R06 real-machine lifecycle evidence (docs/evidence/personal-experience/r06-linux-lifecycle-20260915-161515/) is markdown-only and therefore cited in notes, not asserted as validator-checked coverage.",
+    "No row is classified complete_acceptance. controlled_start records only the native or component behavior named by its coverage checks.",
+    "The browser operator is automated Playwright; desktop notification confirmation and the production hosted skill source remain outside this batch.",
+    "This matrix validates integrity and declared coverage; it does not close N09 or authorize T01-T06."
+  ]
+}

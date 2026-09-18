@@ -1,0 +1,15 @@
+{
+  "schema_version": "closure-b01-crash-review/v1",
+  "recorded_at": "2026-09-16T02:24:25.195022+00:00",
+  "passed": false,
+  "error_type": "InstalledServiceError",
+  "checks": {
+    "runtime_owned_unit": true,
+    "revoked_authority_present": true,
+    "manager_recovers_new_main_pid": false,
+    "owned_unit_unregistered_data_retained": false
+  },
+  "binary_sha256": "1f702fc5bb7ee46bc27fb96840bb130af24e611443ae44fd61dc355d7cf63157",
+  "trust_layer": "test_release",
+  "boundary": "same retained test instance; no full-machine reboot, login-autostart or official-release claim"
+}

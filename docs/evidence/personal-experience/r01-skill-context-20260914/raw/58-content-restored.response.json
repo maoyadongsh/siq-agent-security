@@ -1,0 +1,23 @@
+{
+  "action": "allow",
+  "action_id": "act-6ad19cf65b335a12835f8131",
+  "authority_status": "valid",
+  "effective_action": "allow",
+  "policy_action": "allow",
+  "reason": "granted by grt-si-a81c39bd50eb9cff20e0bcf1c69af8d9869d718cb98d2db12d00e42ef2144fc5",
+  "reason_code": "allow",
+  "receipt_id": "rcp-1cf640538ec3-112617.468290",
+  "skill_attribution": {
+    "skill_id": "local_dir:r01-sec-fixture@e32c4cd6a52b",
+    "content_hash": "e32c4cd6a52b9e4a3813fb37e41f9ce9ef113fa0320755d63a374ee8a742e9c8",
+    "status": "verified",
+    "evidence_level": "controlled_task",
+    "context_id": "sec-1f941039ff3d9c92e4f6456ed1c35c36",
+    "call_binding": "ca01732b64996d0933c31bd821a2afb6b52c4ca7fc610ac9bc3da69616697d92"
+  },
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  }
+}

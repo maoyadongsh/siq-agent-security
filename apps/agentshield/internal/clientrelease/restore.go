@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 )
 
@@ -54,11 +55,7 @@ func RestoreSnapshot(directory, digest, target string) error {
 		return errors.New("client-restore: canonical absolute target required")
 	}
 	parent := filepath.Dir(target)
-	resolved, err := filepath.EvalSymlinks(parent)
-	if err != nil {
-		return err
-	}
-	if resolved != parent {
+	if err := stateformat.LeafDirectory(parent); err != nil {
 		return errors.New("client-restore: noncanonical target parent")
 	}
 	if _, err := os.Lstat(target); !errors.Is(err, os.ErrNotExist) {

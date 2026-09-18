@@ -1,0 +1,273 @@
+{
+  "schema": "public-private-source-index/v1",
+  "source_count": 53,
+  "raw_content_included": false,
+  "bytes_null_meaning": "Installed pin retained as digest only; no new WSL read was performed.",
+  "sources": [
+    {
+      "role": "frozen-input/draft/INDEPENDENT-REVIEW.md",
+      "bytes": 2473,
+      "sha256": "b5c41d5beba52efe7c9ea710cc71aadb18174cf1733bc197461f2f0049910a36"
+    },
+    {
+      "role": "frozen-input/draft/README-CONDITIONAL.md",
+      "bytes": 2118,
+      "sha256": "79518c29dcca47dfda6bb522e2c79508bd39f533a7b4b64ae39c3a97df4882ad"
+    },
+    {
+      "role": "frozen-input/draft/SOURCE-INTERPRETATION-NOTE.md",
+      "bytes": 528,
+      "sha256": "19c96859732960cef1e4d8b5be36e3364af76192557e942baab988b69fc40f63"
+    },
+    {
+      "role": "frozen-input/draft/check-static.py",
+      "bytes": 2714,
+      "sha256": "c3e733e57ed51034d770fd589f2a656d7e50ebb69102c56401884f12f48e62e8"
+    },
+    {
+      "role": "frozen-input/draft/namespace-child.py",
+      "bytes": 9516,
+      "sha256": "771f66709ef29b2f8fcd9c3766df60c325dfb0f9d2a0c20ee5057c27f879c85b"
+    },
+    {
+      "role": "frozen-input/draft/namespace-parent.py",
+      "bytes": 12271,
+      "sha256": "07a4182a98d04961308b3bf06d85c5989083e11fd76e7e412cf908e1bae178b1"
+    },
+    {
+      "role": "frozen-input/draft/owned-loopback-guard.mjs",
+      "bytes": 4409,
+      "sha256": "c105681c91205b5c00f409fd93e492cbdec16f590c67a111ca0409e52027fa23"
+    },
+    {
+      "role": "frozen-input/draft/prepare-runtime-a.ps1",
+      "bytes": 17811,
+      "sha256": "7a06e627d7b6da10f6474b7815a1894de23e3e2d60948a48687a26441440e91f"
+    },
+    {
+      "role": "frozen-input/draft/review-context.json",
+      "bytes": 386,
+      "sha256": "ad892043450781b120e39ecabc82fd46d87bcaa6af4ceaa7093975f2456dc708"
+    },
+    {
+      "role": "frozen-input/draft/runtime-a-guest.py",
+      "bytes": 25956,
+      "sha256": "bd0bcf733f5929d22559922f8b304d6f996bbde59c4dcb98b3a924959153f8b3"
+    },
+    {
+      "role": "frozen-input/draft/static-review.json",
+      "bytes": 1111,
+      "sha256": "5566d0ed9e397a81477e8bce9b36cb949fa8d2e426949193546eac46b26b39f2"
+    },
+    {
+      "role": "frozen-input/private_evidence/runtime-a-reviewable-plan.inventory.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "frozen-input/private_evidence/runtime-a-reviewable-plan.inventory.stdout.bin",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0"
+    },
+    {
+      "role": "frozen-input/private_evidence/runtime-a-reviewable-plan.json",
+      "bytes": 33261,
+      "sha256": "c4f1628b6368b78ec7d2c250862c27518a4ec5f636936e92f2b94fc7bc2c5e35"
+    },
+    {
+      "role": "frozen-input/private_evidence/runtime-a-reviewable-plan.stderr.bin",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca"
+    },
+    {
+      "role": "frozen-input/private_evidence/runtime-a-reviewable-plan.stdout.bin",
+      "bytes": 12334,
+      "sha256": "9653471d682294cc7d525021eeac7bdde314a4aa4635e3a325764e58a20d9690"
+    },
+    {
+      "role": "frozen-input/private_evidence/windows-root-preflight.private.json",
+      "bytes": 708,
+      "sha256": "3623483a05394315caa4aa26a3ead7c6dba1b45b8b963be5525db07c287cc35f"
+    },
+    {
+      "role": "frozen-manifest",
+      "bytes": 3648,
+      "sha256": "b9a623000050a634fde074b2c249e8d314772bfac6d5a7c518ebd7df6bfc1828"
+    },
+    {
+      "role": "independent-actual-result-review",
+      "bytes": 5469,
+      "sha256": "155556233861e80b3ee3bbb2a43f50adbc728db0296372374e3ab7b73b8b7bda"
+    },
+    {
+      "role": "installed-executable/node",
+      "bytes": null,
+      "sha256": "bc17c508ffeed0ec622934f9b7fa72f8e78da65350e63c3eceb56fa688aa5e12"
+    },
+    {
+      "role": "installed-executable/unshare",
+      "bytes": null,
+      "sha256": "7863536428c7c77526e21b8b5eaf4744bae48f660c15cf75bf23dee69711ca08"
+    },
+    {
+      "role": "installed-source/dist/agent-deletion-journal-C9AaQ2t0.mjs",
+      "bytes": null,
+      "sha256": "7cc9803e584e56aae2ca86b0bb523a650b2ddaad4b0d5e1293d648675b9c8a5d"
+    },
+    {
+      "role": "installed-source/dist/agent-tools-DXxcrXNI.mjs",
+      "bytes": null,
+      "sha256": "98b729a2ac53cefa8c832cb3c90008112e1e06b0b4f4d294adb1d92c447a5e21"
+    },
+    {
+      "role": "installed-source/dist/agent-tools.before-tool-call-WtmCO7BO.mjs",
+      "bytes": null,
+      "sha256": "809c4545e65460961c9cb3e43fcfa506a4829c1a0f6c83889b689ff266903274"
+    },
+    {
+      "role": "installed-source/dist/core-coding-tools-DoP9tAh3.mjs",
+      "bytes": null,
+      "sha256": "403a72188e3378cc570691083fa9270c05e20dc7e2706c62c5c455457b50dca3"
+    },
+    {
+      "role": "installed-source/dist/entry.js",
+      "bytes": null,
+      "sha256": "1bbc3921048304d7c25a3d882276c1300c453873af390731c63ec53bbe4abcfd"
+    },
+    {
+      "role": "installed-source/dist/errors-ZZevQ1qu.mjs",
+      "bytes": null,
+      "sha256": "0b0aa56d8f2849f6ecdf17f3d12317f2519c08854ba59be58ad6cec3c5fd64db"
+    },
+    {
+      "role": "installed-source/dist/failure-output-BB_GqQZi.mjs",
+      "bytes": null,
+      "sha256": "c6f3e98114cab04edf03b701e9485c30a457cce3e132eee21800d2a3b15882bb"
+    },
+    {
+      "role": "installed-source/dist/failure-output-CbY7qgCq.mjs",
+      "bytes": null,
+      "sha256": "3e7d5ad5565593209d00e59919370cd7afc553c8f193880f34624327fd29fff1"
+    },
+    {
+      "role": "installed-source/dist/home-dir-59dFSOZn.mjs",
+      "bytes": null,
+      "sha256": "bfeb293e8916be7c298c6027c3d7acee475e66f3e8cb5fe8a7857a7347c723ba"
+    },
+    {
+      "role": "installed-source/dist/lazy-exec-tool-C4NdOfwu.mjs",
+      "bytes": null,
+      "sha256": "4024daa30d7c932d98974beb77c24489b32ce0a03a2041992aa37ef4b8e6fe63"
+    },
+    {
+      "role": "installed-source/dist/openclaw-agent-db-fItexY2B.mjs",
+      "bytes": null,
+      "sha256": "e72e2a6e9990543194c1d3ab1e4c8d013f2957a97cc4c16639ad3e6fe47abcab"
+    },
+    {
+      "role": "installed-source/dist/openclaw-agent-db-registry-CQNE3K5p.mjs",
+      "bytes": null,
+      "sha256": "51ac28680ec08ba0b27fc97cdfcae45a90114f34b4086b96a7dc84fa06f7aa7c"
+    },
+    {
+      "role": "installed-source/dist/openclaw-state-db.paths-LPXbiQmG.mjs",
+      "bytes": null,
+      "sha256": "d3b66823751055732753e069dcde0c719418e25526866284e5c69aed09739d6c"
+    },
+    {
+      "role": "installed-source/dist/paths-V8kKIUzt.mjs",
+      "bytes": null,
+      "sha256": "748adce324ae1fba153b092ba016545dd1433a48e93085838cc9f4bc247a8228"
+    },
+    {
+      "role": "installed-source/dist/resource-loader-Bu_pVD2t.mjs",
+      "bytes": null,
+      "sha256": "62b6668ee808bdcedb6a7fc149aee940005c7fafb55427a0a0a313f38a0cc2d8"
+    },
+    {
+      "role": "installed-source/dist/tool-policy-match-RtZReoAT.mjs",
+      "bytes": null,
+      "sha256": "053a1401baa7819541d273bac039b504a276d689aa559f591f8bd6525b8dea18"
+    },
+    {
+      "role": "installed-source/node_modules/@openclaw/ai/dist/openai-completions-stream-Da2vvl-S.mjs",
+      "bytes": null,
+      "sha256": "94fcb8422e4055a977cdd21a8581ec9dc88f57d9e70660369e5286400b6be96d"
+    },
+    {
+      "role": "installed-source/openclaw.mjs",
+      "bytes": null,
+      "sha256": "97464647c50a1420d530db948cb203826306ef6b3a84810b6801c338366cecaf"
+    },
+    {
+      "role": "installed-source/package.json",
+      "bytes": null,
+      "sha256": "a234b616a049b4dedaad49ba0e95ff31afd3f19935e446199e75f78b589d1c21"
+    },
+    {
+      "role": "post-run-write-wrapper-source-review",
+      "bytes": 4995,
+      "sha256": "a26c98eb858243985adc8c3ad4b19b6a33259c06a68b273517eebd8ecb6a818b"
+    },
+    {
+      "role": "retained-evidence/actual-namespace-stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "retained-evidence/actual-namespace-stdout.bin",
+      "bytes": 123317,
+      "sha256": "c783742bb7a9b67ee4cdea436f98db5aea8b803eb72ed402a34ae47860615e64"
+    },
+    {
+      "role": "retained-evidence/actual-node-stderr.bin",
+      "bytes": 436,
+      "sha256": "f307068d6cee5208af48ba8e6e3e43b19a039452e4f74bdcfa7958b3a2fd9ee1"
+    },
+    {
+      "role": "retained-evidence/actual-node-stdout.bin",
+      "bytes": 6483,
+      "sha256": "2f743d60127f31695d6901843743c43febbb9338a68a368ac57156f211493923"
+    },
+    {
+      "role": "retained-evidence/result-files.private.json",
+      "bytes": 3042,
+      "sha256": "e58750d01899174c46d5fe1fc6dc6a799910d89aa73fba715e17c90c07bbaab8"
+    },
+    {
+      "role": "retained-evidence/result-summary.private.json",
+      "bytes": 4120,
+      "sha256": "38c8a5fbe6913ff8c8507a3435f6a994c8d1d082fbcc09d52763f4b05a62ea6d"
+    },
+    {
+      "role": "retained-evidence/runtime-a-run.inventory.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "retained-evidence/runtime-a-run.inventory.stdout.bin",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0"
+    },
+    {
+      "role": "retained-evidence/runtime-a-run.json",
+      "bytes": 956036,
+      "sha256": "bbddd005fa54eb75288457c6314adc1b09722d8d40b477176c184afce9983883"
+    },
+    {
+      "role": "retained-evidence/runtime-a-run.stderr.bin",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca"
+    },
+    {
+      "role": "retained-evidence/runtime-a-run.stdout.bin",
+      "bytes": 436869,
+      "sha256": "bf6294fed0261624da41f623c93663ffd09e4b70188b2bb30edf9565d89b815d"
+    },
+    {
+      "role": "retained-evidence/windows-root-postflight.private.json",
+      "bytes": 421,
+      "sha256": "685231326793aad208f0876162a49f98342235236be0ee67a3807d762dcfda92"
+    }
+  ]
+}

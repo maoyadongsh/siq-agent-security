@@ -1,0 +1,163 @@
+{
+  "format": "closure-b04-checks/v1",
+  "passed": true,
+  "seed": {
+    "passed_count": 0,
+    "total": 0,
+    "checks": []
+  },
+  "verify": {
+    "passed_count": 19,
+    "total": 19,
+    "checks": [
+      {
+        "name": "verify_binary_matches_seed",
+        "ok": true,
+        "detail": "sha256=5361966882f7bbdc…"
+      },
+      {
+        "name": "verify_ciphertext_retained_while_daemon_down",
+        "ok": true,
+        "detail": "task-exp-1:expires_at=2026-09-16T00:27:06.771046816Z; task-keep-1:expires_at=2026-09-16T23:27:06.791770053Z; task-rev-1:expires_at=2026-09-16T00:27:06.81914097Z"
+      },
+      {
+        "name": "verify_state_dir_reused",
+        "ok": true,
+        "detail": "state=/tmp/siq-b04-run3/state port=53701"
+      },
+      {
+        "name": "verify_startup_purge_scope",
+        "ok": true,
+        "detail": "removed=[] added=['serve.lock'] modified=[]"
+      },
+      {
+        "name": "verify_activation_persists",
+        "ok": true,
+        "detail": "status=ready retention=86400"
+      },
+      {
+        "name": "verify_expiry_elapsed",
+        "ok": true,
+        "detail": "earliest_expires_at=2026-09-16T00:27:06.771046+00:00 skip_wait=False checked_at=2026-09-16T00:27:07.865673+00:00"
+      },
+      {
+        "name": "verify_pre_purge_expiry_state",
+        "ok": true,
+        "detail": "expect_visible=True; task-exp-1:status=expired,file=True; task-rev-1:status=expired,file=True; task-keep-1:status=active,file=True"
+      },
+      {
+        "name": "verify_survivor_readable_before_purge",
+        "ok": true,
+        "detail": "record=raw-865c4e7ef275b11f9a92b7f4c84a4361 sha_match=True"
+      },
+      {
+        "name": "verify_purge_deleted_only_expired",
+        "ok": true,
+        "detail": "deleted_records=2 expected=2 released_bytes=1700"
+      },
+      {
+        "name": "verify_purge_scope_state_dir",
+        "ok": true,
+        "detail": "removed=['raw-task-content/raw-39a721aada7c919dd036c52c6f292a7f.json', 'raw-task-content/raw-e6d9f6f27a87a1a7d9d41ec97723caf1.json'] added=[] modified=[]"
+      },
+      {
+        "name": "verify_purge_removed_expired_kept_survivor",
+        "ok": true,
+        "detail": "task-exp-1:records=0,file=False; task-keep-1:records=1,file=True; task-rev-1:records=0,file=False"
+      },
+      {
+        "name": "verify_survivor_intact_after_purge",
+        "ok": true,
+        "detail": "record=raw-865c4e7ef275b11f9a92b7f4c84a4361"
+      },
+      {
+        "name": "verify_grants_not_deleted",
+        "ok": true,
+        "detail": "grant_files=['rawgrant-183b61c8cd0c1bc4bc87e4725990ce24.grant.json', 'rawgrant-20b6f19cf8ac48987699908fa4ee837c.grant.json', 'rawgrant-e423c904d0b7fa3544e5d9484067bd5e.grant.json'] grants_before=1 grants_after=1"
+      },
+      {
+        "name": "verify_revocation_record_retained",
+        "ok": true,
+        "detail": "revocation_files=['rawgrant-183b61c8cd0c1bc4bc87e4725990ce24.revocation.json']"
+      },
+      {
+        "name": "verify_receipts_not_deleted",
+        "ok": true,
+        "detail": "receipts_before=3 receipts_after=3"
+      },
+      {
+        "name": "verify_activities_not_deleted",
+        "ok": true,
+        "detail": "activities_before=3 activities_after=3"
+      },
+      {
+        "name": "verify_export_success",
+        "ok": true,
+        "detail": "activity=230408b3f21eb014… receipts=1"
+      },
+      {
+        "name": "verify_export_unknown_id_rejected",
+        "ok": true,
+        "detail": "HTTP 404 task_activity_not_found"
+      },
+      {
+        "name": "verify_export_requires_auth",
+        "ok": true,
+        "detail": "HTTP 401 unauthorized"
+      }
+    ]
+  },
+  "legs": [
+    {
+      "created_at": "2026-09-15T23:27:06.771046816Z",
+      "expect": "purged",
+      "expires_at": "2026-09-16T00:27:06.771046816Z",
+      "grant_id": "rawgrant-20b6f19cf8ac48987699908fa4ee837c",
+      "grant_signature_sha256": "8db51470f046fb23908682fb47539437365809822777905af929824d76b7b4ac",
+      "kind": "parameters",
+      "name": "task-exp-1",
+      "omitted_secret_count": 0,
+      "plaintext_bytes": 193,
+      "plaintext_sha256": "85dbc8ff333b764f8cebf4c02143498326d8b26640da02ca9c140d43369a922a",
+      "record_id": "raw-e6d9f6f27a87a1a7d9d41ec97723caf1",
+      "session_id": "task-exp-1",
+      "task_id": "task-ri-7442c1532264dc9cc9af4cf774e3fde69b9e1e76bd310f92f1c89e7d34f99453"
+    },
+    {
+      "created_at": "2026-09-15T23:27:06.791770053Z",
+      "expect": "survives",
+      "expires_at": "2026-09-16T23:27:06.791770053Z",
+      "grant_id": "rawgrant-e423c904d0b7fa3544e5d9484067bd5e",
+      "grant_signature_sha256": "4b1f06b9014cce78920b4cc5397e977b0c7a3e49a9cd0e5993fe657031603ec4",
+      "kind": "output",
+      "name": "task-keep-1",
+      "omitted_secret_count": 0,
+      "plaintext_bytes": 191,
+      "plaintext_sha256": "68c92ce4cba4a21a757ef0517b69ad93a175293ce1bf561dc646c159642c7384",
+      "record_id": "raw-865c4e7ef275b11f9a92b7f4c84a4361",
+      "session_id": "task-keep-1",
+      "task_id": "task-ri-bb35cb4fcb02303e66c965ffe6626e7462e0b81d9413312193ae0bd488fbf0f7"
+    },
+    {
+      "created_at": "2026-09-15T23:27:06.81914097Z",
+      "expect": "purged_after_revocation",
+      "expires_at": "2026-09-16T00:27:06.81914097Z",
+      "grant_id": "rawgrant-183b61c8cd0c1bc4bc87e4725990ce24",
+      "grant_signature_sha256": "4b4480817691800d0bde51a4dfa105e73f78fe3a09a9605a91bc85ad558f9fd7",
+      "kind": "parameters",
+      "name": "task-rev-1",
+      "omitted_secret_count": 0,
+      "plaintext_bytes": 193,
+      "plaintext_sha256": "7c07183b70cfd7226c305ee23e14b601805b3bcdd6061bc6f565681780bc497c",
+      "record_id": "raw-39a721aada7c919dd036c52c6f292a7f",
+      "session_id": "task-rev-1",
+      "task_id": "task-ri-d2a0be33bcb1029ce609f3fe17bf96196e2d063785b51b8ca1b5c12059fc0aa3"
+    }
+  ],
+  "activation": {
+    "activated_at": "2026-09-15T23:27:06.748607678Z",
+    "budget_bytes": 67108864,
+    "key_fingerprint": "sha256:0a885942db66c648fba3359f46cc4aff0aa528ab1f4082978360d14cad9d0d3d",
+    "retention_seconds": 86400
+  }
+}

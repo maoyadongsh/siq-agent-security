@@ -1,0 +1,7 @@
+# Full regression (background task b76ik42mr), 2026-09-15, cwd apps/agentshield
+# command: go test ./internal/skillinstall/ ./internal/server/ ./internal/state/ ./cmd/agentshield/ -count=1 -timeout 900s
+ok  	siq-agent-security/apps/agentshield/internal/skillinstall	49.707s
+ok  	siq-agent-security/apps/agentshield/internal/server	26.252s
+ok  	siq-agent-security/apps/agentshield/internal/state	31.316s
+ok  	siq-agent-security/apps/agentshield/cmd/agentshield	10.886s
+# exit code 0

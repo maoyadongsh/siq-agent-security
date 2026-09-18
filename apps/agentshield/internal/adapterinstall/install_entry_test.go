@@ -10,9 +10,9 @@ import (
 	"testing"
 )
 
-// Install previews must state the install-entry boundary: no supported
-// platform offers a real pre-install interception today, so the view may name
-// a controlled install path or post-hoc discovery, never a takeover.
+// Default install previews must state the install-entry boundary. Newer
+// OpenClaw versions offer an explicitly enabled operator policy, but a
+// normal adapter install must not silently activate it.
 func TestInstallEntryIsNeverTakenOver(t *testing.T) {
 	for _, platform := range []string{Hermes, OpenClaw, CodeBuddy, Trae} {
 		t.Run(platform, func(t *testing.T) {

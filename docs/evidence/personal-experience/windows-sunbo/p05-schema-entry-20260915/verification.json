@@ -1,0 +1,134 @@
+{
+  "schema": "windows-schema-evidence-verification/v1",
+  "status": "verified_no_discrepancy",
+  "method": "independent readback and SHA256 recomputation; no pytest, ruff, app, WSL or host execution during preparation",
+  "candidate": {
+    "head": "810e8e93df747ac91c9e1a9eccd3294c1a20490c",
+    "base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "clean_at_review": true,
+    "only_changed_source": "apps/control-api/app/tests/conftest.py"
+  },
+  "verified_counts": {
+    "preparation_commands": 15,
+    "preparation_raw_streams": 30,
+    "formal_commands": 8,
+    "formal_raw_streams": 16,
+    "total_raw_streams": 46,
+    "candidate_files": 5
+  },
+  "assertions": {
+    "all_46_raw_stream_sizes_and_hashes_match_records_and_summaries": true,
+    "command_exit_timeout_kill_reap_fields_match": true,
+    "prepost_metadata_hashes_match": true,
+    "five_candidate_files_match_prepost_and_current": true,
+    "only_app_import_moved_by_ast": true,
+    "base_signing_schema_tests_lock_and_pyproject_unchanged": true,
+    "preserved_crlf_normalizes_to_candidate_lf": true,
+    "editable_metadata_hash_and_binding_unchanged": true,
+    "venv_python_hash_matches": true,
+    "baseline_exit4_no_tests_started": true,
+    "dirty_206_pass_distinct_from_clean_206_pass": true,
+    "warning_preserved": true
+  },
+  "source_files": {
+    "app/tests/conftest.py": {
+      "bytes": 1909,
+      "sha256": "586655d47e4d855b3323ba970f45e244e5431869c4ffbf9021be613a6c16dc12"
+    },
+    "app/tests/test_schema_contracts.py": {
+      "bytes": 140914,
+      "sha256": "dcdc7cd5d1f08708759de6317eb3456151d799142861afd8e4b709d0b35d8ac1"
+    },
+    "uv.lock": {
+      "bytes": 256422,
+      "sha256": "146e8615916b50f9bd81305490cee7ab041be2aa83cba5f05c55d65ff3ccee5e"
+    },
+    "pyproject.toml": {
+      "bytes": 1186,
+      "sha256": "30773f0939352f5ca672c23989f82a0080c63166a4854d3919a5c769a99695f8"
+    },
+    "app/signing.py": {
+      "bytes": 4550,
+      "sha256": "351edb485e0abf5ffb6aefd9ca0a78d556fb1232d52f9a210ed480afbdaf1ae2"
+    }
+  },
+  "private_source_identities": [
+    {
+      "role": "formal_preflight",
+      "bytes": 1252,
+      "sha256": "242805a789b9bfdd9154bdc16ec3fcb52061be552c040b917d96420a99d2e89f"
+    },
+    {
+      "role": "formal_postflight",
+      "bytes": 928,
+      "sha256": "dcd7641901b560d1b74f56a0ac7b177ca964d09842e75e77c50ddfb03d1532ac"
+    },
+    {
+      "role": "same_execution_environment",
+      "bytes": 1420,
+      "sha256": "a9dcfea9fe17a4e9f4314ba254de44eacd76f81a60f681e48d5c8557718f26f6"
+    },
+    {
+      "role": "new_venv_provenance",
+      "bytes": 525,
+      "sha256": "9f449c31c63d025c6e94889df9da41c70a9fc327caa0b58e23aecec71e325435"
+    },
+    {
+      "role": "tool_identities",
+      "bytes": 425,
+      "sha256": "c6f70efc1929899866eb1e4d8050bc96fdd3d2bdc857931405f877189e07eaaf"
+    },
+    {
+      "role": "development_summary",
+      "bytes": 11787,
+      "sha256": "d81f9f7ef1af5c87f0845bae7fffa34c479dacbb0947898f78bff52c02f7c698"
+    },
+    {
+      "role": "preparation_report",
+      "bytes": 6183,
+      "sha256": "529371f7a322c8d73c53d39aba2c46deb78000a5d6dd201a0816a9d6573fcd1a"
+    },
+    {
+      "role": "formal_report",
+      "bytes": 3429,
+      "sha256": "bda9f76f73653ca1351010daade0f3511b3ece010a8acaf6201e0a34ee16b5ec"
+    },
+    {
+      "role": "formal_whitelist",
+      "bytes": 8965,
+      "sha256": "fddad3da5bc00fd304f0020cdc759b133972bd0ee9399e2f79ef049fbf94c66b"
+    },
+    {
+      "role": "proposed_patch",
+      "bytes": 414,
+      "sha256": "ab5635fa02006e77bd231dfaa61e55a4dfaf416241f775c3c5533c49be818370"
+    },
+    {
+      "role": "patch_static_review",
+      "bytes": 651,
+      "sha256": "70652e6b963533481565679453c9ed1cc8265cc0c6eb6ad0a441fdf73f5a1510"
+    },
+    {
+      "role": "development_crlf_copy",
+      "bytes": 1976,
+      "sha256": "302ef2b8bb1785f39b8d8ee0c2481586bf1c44775edfba90204c6bfd12252adf"
+    },
+    {
+      "role": "root_acl_preflight",
+      "bytes": 496,
+      "sha256": "51c5ae2fa57ac2b06e0a3cec05b7114d1459b3c7145b9571f8f43c0813a2e463"
+    }
+  ],
+  "ci": {
+    "linux_client_fixture_regression": "pending future pull-request exact-head control-api CI",
+    "executed_or_inferred_here": false,
+    "representative_test": "app/tests/test_enrollment_flow.py::test_enrollment_code_single_use"
+  },
+  "scope_limits": [
+    "No raw traceback, environment values, account identifiers or full tool paths are included in this public package.",
+    "Metadata and current candidate reads do not independently reproduce historical commands or prove absence of transient I/O.",
+    "Current root ACL receipt was only read and hashed; no fresh ACL or cross-user access test.",
+    "Not Windows production Control API/signing support, complete Go validation, or three-host acceptance.",
+    "Pytest-reported seconds and per-command elapsed seconds are separate; development/formal timings are not causal or performance claims."
+  ]
+}

@@ -50,7 +50,7 @@ func cmdStateStatus(args []string, out io.Writer) error {
 	}
 	result := map[string]any{"schema": "local-state-status/v1", "compatible": e == nil, "status": c.Status, "format_version": c.Format, "reader_version": stateformat.ReaderVersion, "writer_version": stateformat.WriterVersion}
 	if e != nil {
-		result["recovery"] = stateformat.RecoveryMessage()
+		result["recovery"] = stateformat.RecoveryMessageFor(e)
 	}
 	return json.NewEncoder(out).Encode(result)
 }

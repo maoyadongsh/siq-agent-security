@@ -1,0 +1,28 @@
+{
+  "schema_version": "personal-macos-workbuddy-desktop-read-allow/v1",
+  "source": "isolated receipts/local/2026-09-16.jsonl",
+  "record_type": "decision",
+  "issued_at": "2026-09-16T11:48:07Z",
+  "platform": "workbuddy",
+  "session_id": "9c715b70-35b1-4bc6-b222-d94094619be9",
+  "tool": "Read",
+  "operation": "read",
+  "action": "allow",
+  "reason": "granted by grt-b3144f7b7e3a-c50be74d",
+  "reason_code": "allow",
+  "enforcement_mode": "block",
+  "params_excerpt": "<isolated-home>/workspace/safe/README.txt",
+  "effects": [
+    "file.read"
+  ],
+  "matched_grant": true,
+  "omitted": [
+    "sig",
+    "hash",
+    "prev_hash",
+    "pairing",
+    "token",
+    "keys",
+    "matched_grant_id"
+  ]
+}

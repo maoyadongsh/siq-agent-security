@@ -1,0 +1,19 @@
+{
+  "schema_version": "personal-macos-native-rebaseline-evidence/v1",
+  "candidate_sha": "720ea397ca189669516b474e6f549c52d91a8dcc",
+  "binary_sha256": "b245897b994dcd23bae30c80933407d4663340bc0e894cd4e226c297895d42f0",
+  "platform": "hermes",
+  "host_version": "0.21.3",
+  "entrypoint": "public hermes chat --oneshot; installed plugin; isolated profile and deterministic local model",
+  "native_passed_checks": ["discovery", "normal_execution", "pre_execution_denial", "service_unavailable_denial", "approval_resume"],
+  "base_smoke": {"passed": true, "checks": 6, "signed_receipts": 5, "private_raw_sha256": "5d666113a7e1d82896b160dd72840c2fae62add9bbaee4ffad6d7bb2c436c827"},
+  "offline_smoke": {"passed": true, "checks": 7, "signed_receipts": 3, "native_write_blocked_while_service_down": true, "private_raw_sha256": "4fba2522811c8f121bcc7a8e02914689cf0025ac0385dbde9044ea25784e0d50"},
+  "approved_retry_smoke": {"passed": true, "checks": 12, "signed_receipts": 7, "original_call_held_before_effect": true, "same_host_process_retried_exact_parameters_with_new_call_id": true, "approved_retry_reserved_before_effect": true, "approved_side_effect_count": 1, "denied_retry_side_effect_count": 0, "private_raw_sha256": "1a4ddd4303117b9baf53794eccc0e8cc143c98d49af2d6b54d744ee2d054b8f9"},
+  "skill_context_probe": {"passed": true, "checks": 11, "evidence_level": "controlled_task", "cross_task_replay_denied": true, "verified_receipt_binding": true, "per_prompt_fragment_causality_proven": false, "private_raw_sha256": "a621b016f466c2567f40ef4a8ea1ea76e59a35cde875505e1e185ad40a122516"},
+  "limitations": [
+    "Approval resume is an explicit exact-parameter retry with a fresh host tool-call ID, not transparent continuation of the original host call.",
+    "The approved effect is at-most-once under local reservation; external effects still need reconciliation on uncertain outcomes.",
+    "The controlled_task Skill context is admin-issued with a test-only observer; causal attribution of every prompt fragment to one loaded Skill is not proven.",
+    "Changed parameters after approval, native install interception, and real-user approval remain unverified."
+  ]
+}

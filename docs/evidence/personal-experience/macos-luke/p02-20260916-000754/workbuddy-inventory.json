@@ -1,0 +1,39 @@
+{
+  "schema_version": "personal-macos-workbuddy-inventory/v1",
+  "recorded_at": "2026-09-15T16:09:29.331286+00:00",
+  "app_present": true,
+  "bundle_id": "com.tencent.workbuddy.mac",
+  "short_version": "5.5.6",
+  "bundle_version": "5.5.6",
+  "executable_name": "Electron",
+  "executable_present": true,
+  "macos_entries": [
+    "Electron"
+  ],
+  "plugins": [
+    "WechatShare.appex"
+  ],
+  "helper_frameworks": [
+    "WorkBuddy Helper (GPU).app",
+    "WorkBuddy Helper (Plugin).app",
+    "WorkBuddy Helper (Renderer).app",
+    "WorkBuddy Helper.app",
+    "WorkBuddy Legacy Auto Launch Cleaner.app",
+    "WorkBuddy Repair.app"
+  ],
+  "has_workbuddy_cli_on_path": false,
+  "codebuddy_app_present": false,
+  "daily_dot_workbuddy_present": true,
+  "application_support_workbuddy_present": true,
+  "not_opened_desktop_session": true,
+  "not_used_as_write_target": true,
+  "hook_capability": "unverified",
+  "notes": [
+    "Desktop app is Electron-based (MacOS entry Electron). No workbuddy CLI on PATH.",
+    "PlugIns contains WechatShare.appex only; no SIQ/agent hook bundle observed in the app package.",
+    "Daily ~/.workbuddy and Application Support exist and were not read or written.",
+    "CodeBuddy.app is absent; WorkBuddy is not substituted.",
+    "Connector can discover ~/.workbuddy layout but was not pointed at the daily profile.",
+    "native_desktop allow/deny/unavailable remain blocked until a dedicated GUI session."
+  ]
+}

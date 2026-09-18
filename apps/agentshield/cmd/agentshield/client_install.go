@@ -126,9 +126,9 @@ func prepareClientInstallation(dir, manifest, binary string, check func(string, 
 	if err != nil {
 		return "", "", err
 	}
-	staged, err = filepath.EvalSymlinks(staged)
-	if err != nil {
-		return "", "", err
+	info, err := os.Lstat(staged)
+	if err != nil || !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
+		return "", "", errors.New("client-install: staged program is not a regular file")
 	}
 	verified, err := check(manifest, staged)
 	if err != nil {
@@ -141,12 +141,10 @@ func prepareClientInstallation(dir, manifest, binary string, check func(string, 
 	if err != nil {
 		return "", "", err
 	}
-	canonical, err := filepath.EvalSymlinks(dir)
-	if err != nil {
-		return "", "", err
-	}
-	expected := filepath.Join(canonical, "client-releases", digest, "siq-agent-security")
-	if staged != expected {
+	expected := filepath.Join(dir, "client-releases", digest, "siq-agent-security")
+	stagedCanon, stagedErr := filepath.EvalSymlinks(staged)
+	expectedCanon, expectedErr := filepath.EvalSymlinks(expected)
+	if staged != expected && (stagedErr != nil || expectedErr != nil || stagedCanon != expectedCanon) {
 		return "", "", errors.New("client-install: staged program identity or location mismatch")
 	}
 	return staged, version, nil

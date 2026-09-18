@@ -70,6 +70,17 @@ func (s *Store) historicalRecord(ctx context.Context, id string) (*Record, *Clai
 	return &Record{"local-skill-install-record/v1", id, c.Plan, c.Signature, status, op}, c, nil
 }
 
+// RecordByID returns the signed install record for one ID without scanning
+// the catalog. Recovery-required records surface with their status so callers
+// can refuse to trust them.
+func (s *Store) RecordByID(ctx context.Context, id string) (*Record, error) {
+	if !validInstallID(id) {
+		return nil, ErrInvalid
+	}
+	r, _, err := s.historicalRecord(ctx, id)
+	return r, err
+}
+
 // Catalog reads signed metadata only. Current target and permission validity
 // must not be inferred from an installed historical outcome.
 func (s *Store) Catalog(ctx context.Context) (*Catalog, error) {

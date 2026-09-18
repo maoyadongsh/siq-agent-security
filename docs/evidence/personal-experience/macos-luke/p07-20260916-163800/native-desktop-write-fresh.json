@@ -1,0 +1,53 @@
+{
+  "schema_version": "personal-macos-workbuddy-native-desktop-write-fresh/v1",
+  "method": "native_desktop",
+  "adapter_install_exit": 1,
+  "adapter_install_note": "",
+  "created_project_hooks": [
+    "<isolated-home>/workspace/.workbuddy/settings.json",
+    "<isolated-home>/workspace/.codebuddy/settings.json"
+  ],
+  "new_session_id": "9c715b70-35b1-4bc6-b222-d94094619be9",
+  "seen_session_ids": [
+    "9c715b70-35b1-4bc6-b222-d94094619be9",
+    "9c715b70-35b1-4bc6-b222-d94094619be9",
+    "9c715b70-35b1-4bc6-b222-d94094619be9",
+    "9c715b70-35b1-4bc6-b222-d94094619be9",
+    "9c715b70-35b1-4bc6-b222-d94094619be9",
+    "9c715b70-35b1-4bc6-b222-d94094619be9",
+    "9c715b70-35b1-4bc6-b222-d94094619be9"
+  ],
+  "desktop_hook_invocations": [
+    "2026-09-16T10:02:18Z pid=94419 event=PreToolUse tool=Bash"
+  ],
+  "write_or_edit_hook_hits": [
+    "2026-09-16T10:02:18Z pid=94419 event=PreToolUse tool=Bash"
+  ],
+  "new_receipts": [
+    {
+      "tool": "Bash",
+      "action": "deny",
+      "reason_code": "grant_missing",
+      "reason": "no deployed grant for agent (default deny)",
+      "platform": "workbuddy",
+      "session_id": "9c715b70-35b1-4bc6-b222-d94094619be9",
+      "issued_at": "2026-09-16T10:02:18Z",
+      "params_excerpt": "ls -la <isolated-home>/workspace/safe/\nList safe directory contents"
+    }
+  ],
+  "forbidden_created": false,
+  "readme_text": "p07-workbuddy-sentinel-ok\n",
+  "daily_before": {
+    "sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+    "has_hooks": false,
+    "mtime": 1789548251,
+    "size": 1135
+  },
+  "daily_after": {
+    "sha256": "89e179cfe920c2ee4f8956f291ebc0013955071fbd75d320b1ffa410d37541fa",
+    "has_hooks": false,
+    "mtime": 1789548251,
+    "size": 1135
+  },
+  "daily_unchanged": true
+}

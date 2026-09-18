@@ -1,0 +1,108 @@
+{
+  "schema_version": "hackathon-browser-smoke/v1",
+  "provider": "fixture",
+  "cases": [
+    {
+      "scenario": "normal",
+      "task_status": "verified",
+      "messages": 1,
+      "recipient_source": "TRUSTED_DATABASE",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ]
+    },
+    {
+      "scenario": "research-only",
+      "task_status": "researched",
+      "messages": 0,
+      "recipient_source": null,
+      "selected_skills": [
+        "secure-research"
+      ]
+    },
+    {
+      "scenario": "research-report",
+      "task_status": "verified",
+      "messages": 0,
+      "recipient_source": null,
+      "selected_skills": [
+        "secure-research",
+        "secure-report"
+      ]
+    },
+    {
+      "scenario": "mcp-attack",
+      "task_status": "blocked",
+      "messages": 0,
+      "recipient_source": "MCP",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ]
+    },
+    {
+      "scenario": "same-value",
+      "task_status": "blocked",
+      "messages": 0,
+      "recipient_source": "MCP",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ]
+    },
+    {
+      "scenario": "fake-success",
+      "task_status": "incomplete",
+      "messages": 0,
+      "recipient_source": "TRUSTED_DATABASE",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ]
+    },
+    {
+      "scenario": "conflicting",
+      "task_status": "conflicting",
+      "messages": 1,
+      "recipient_source": "TRUSTED_DATABASE",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ]
+    },
+    {
+      "scenario": "approval",
+      "task_status": "verified",
+      "messages": 1,
+      "recipient_source": "TRUSTED_DATABASE",
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ]
+    },
+    {
+      "scenario": "trifecta",
+      "task_status": "blocked",
+      "messages": 0,
+      "recipient_source": null,
+      "selected_skills": [
+        "secure-research",
+        "secure-report",
+        "secure-delivery"
+      ]
+    }
+  ],
+  "page_errors": [],
+  "local_storage_keys": [],
+  "cookie_http_only": true,
+  "mobile_no_horizontal_overflow": true,
+  "pairing_error_persists": true,
+  "renewed_pairing_preserves_history_and_session": true
+}

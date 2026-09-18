@@ -38,6 +38,7 @@ func fakeHome(t *testing.T) string {
 	write(t, filepath.Join(home, ".openclaw", "skills", "gh-triage", "SKILL.md"), "---\nname: gh-triage\ndescription: Triage.\n---\n")
 	write(t, filepath.Join(home, ".agents", "skills", "shared", "SKILL.md"), "---\nname: shared\ndescription: Shared.\n---\n")
 	write(t, filepath.Join(home, ".codebuddy", "settings.json"), `{"hooks":{"PreToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"/x/agentshield hook codebuddy"}]}]}}`)
+	write(t, filepath.Join(home, ".workbuddy", "settings.json"), `{"enabledPlugins":{"sheetagent@builtin":true},"hooks":{"PreToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"/x/agentshield hook workbuddy"}]}]}}`)
 	write(t, filepath.Join(home, ".trae", "skills", "style", "SKILL.md"), "---\nname: style\ndescription: Style.\n---\n")
 	write(t, filepath.Join(home, ".cursor", "mcp.json"), `{
   "mcpServers": {
@@ -75,11 +76,11 @@ func byID(rep *Report) map[string]Candidate {
 
 func TestDiscoversPlatformsAndSkills(t *testing.T) {
 	rep := runInv(t, fakeHome(t))
-	if strings.Join(rep.Platforms, ",") != "codebuddy,hermes,mcp,openclaw,trae" {
+	if strings.Join(rep.Platforms, ",") != "codebuddy,hermes,mcp,openclaw,trae,workbuddy" {
 		t.Fatalf("platforms %v", rep.Platforms)
 	}
 	c := byID(rep)
-	for _, want := range []string{"platform:hermes", "platform:openclaw", "platform:codebuddy"} {
+	for _, want := range []string{"platform:hermes", "platform:openclaw", "platform:codebuddy", "platform:workbuddy"} {
 		if _, ok := c[want]; !ok {
 			t.Fatalf("missing %s in %v", want, keys(c))
 		}
@@ -102,6 +103,9 @@ func TestDiscoversPlatformsAndSkills(t *testing.T) {
 	if c["platform:codebuddy"].Attributes["agentshield_tool_hook"] != "true" {
 		t.Fatal("codebuddy PreToolUse hook not detected")
 	}
+	if c["platform:workbuddy"].Attributes["agentshield_tool_hook"] != "true" {
+		t.Fatal("workbuddy PreToolUse hook not detected")
+	}
 	if c["platform:hermes"].Attributes["agentshield_install_gate"] == "true" {
 		t.Fatal("hermes has no install gate; must not be claimed")
 	}
@@ -121,8 +125,8 @@ func TestDiscoversPlatformsAndSkills(t *testing.T) {
 			declaredTools++
 		}
 	}
-	if factsObs != 3 { // openclaw hook, codebuddy hook, hermes plugin marker
-		t.Fatalf("expected 3 observed facts, got %d", factsObs)
+	if factsObs != 4 { // openclaw, codebuddy, workbuddy hooks, hermes plugin marker
+		t.Fatalf("expected 4 observed facts, got %d", factsObs)
 	}
 	if declaredTools < 1 {
 		t.Fatal("hermes platform_toolsets must produce declared tool facts")

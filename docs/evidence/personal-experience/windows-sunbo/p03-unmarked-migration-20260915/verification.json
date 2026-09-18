@@ -1,0 +1,49 @@
+{
+  "scope": "Root readback of source/build/raw run records plus original/after snapshots; independent review is separate.",
+  "raw_streams_rehashed": 32,
+  "source_files_rechecked": 2084,
+  "binary_sha256_rechecked": true,
+  "original_33_entries_match_after": true,
+  "repeat_status_and_revoke_end_snapshots_match": true,
+  "business_data_uploaded": false,
+  "private_acl_readback": {
+    "entries": 124,
+    "literal_first_read_matches": 84,
+    "literal_first_read_mismatches": 40,
+    "class_counts": [
+      {
+        "Name": "explicit_current_user",
+        "Count": 84
+      },
+      {
+        "Name": "OWNER_RIGHTS_with_current_user_owner",
+        "Count": 40
+      }
+    ],
+    "all_expected_structure": true,
+    "all_sddl_unchanged": true
+  },
+  "acl_scope": "Readback of this owned fixture only. OWNER_RIGHTS is recorded separately from literal user SID. No pre-migration per-file ACL baseline or cross-user access test.",
+  "retained_records": [
+    {
+      "role": "acl-preflight.json",
+      "bytes": 371,
+      "sha256": "bcfeb0dac6c5a9d9cbc6cf2e9dd6004c0ea9524895008d32b1ea3ab544987075"
+    },
+    {
+      "role": "journey-acl-preflight.json",
+      "bytes": 349,
+      "sha256": "8bd149d6ff8e267103b2fbd9255e1814ddeba89bae5a7c2c7a0ae24bb3878918"
+    },
+    {
+      "role": "journey-acl-postflight.json",
+      "bytes": 42123,
+      "sha256": "bcc65b70ab915ed779f069255139823ee848a476083ebf227659241f26adbdd7"
+    },
+    {
+      "role": "journey-acl-postflight-supplement.json",
+      "bytes": 33369,
+      "sha256": "295755895753ad0edf484fd1af691c8dcf88b62c19802e4cda1c3ed9e373ec9f"
+    }
+  ]
+}

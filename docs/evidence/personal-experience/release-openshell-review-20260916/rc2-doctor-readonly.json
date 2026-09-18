@@ -1,0 +1,16 @@
+{
+  "scope": "single_read_only_rc2_diagnosis_not_B2_B3_or_enforcement",
+  "binary_sha256": "5b52109a43355168fb04bd5101f5d6b4cce8f3ea35bc3ff492c4401823c1bc70",
+  "command": "candidate openshell doctor --target <existing-readonly-canary>",
+  "exit_code": 0,
+  "validated": true,
+  "evidence": {
+    "state": "policy_readable",
+    "target": "siq-analysis-canary-a01b02c91503",
+    "revision": "2",
+    "policy_digest": "2373bb131a84765119bbc62b61b16d744cca198d4b3d816b8a262d80d038a746",
+    "observed_at": "2026-09-16T08:58:48Z",
+    "expires_at": "2026-09-16T08:59:03Z"
+  },
+  "mutations": 0
+}

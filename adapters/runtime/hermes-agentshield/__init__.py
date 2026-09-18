@@ -12,8 +12,9 @@ Fail-closed table (dev-spec §3.8.4): in ``block`` mode an unreachable /
 timed-out / 401 / malformed decision service blocks the tool call; in
 ``audit_only`` / ``warn`` it allows and prints a warning to stderr.
 
-``hold`` has no approval channel in Hermes and degrades to block with a pointer
-to the siq-agent-security console (spec §4.2).
+Hermes cannot suspend a running hook. ``hold`` therefore blocks the first call;
+after console approval, an exact user retry obtains one durable execution
+reservation before this hook allows the tool (N06/R02).
 """
 
 from __future__ import annotations
@@ -249,6 +250,96 @@ _CORRELATION_LOCK = threading.Lock()
 _CORRELATION_TTL = 300
 _CORRELATION_MAX = 2048
 
+_HOLDS: dict[tuple[str, str, str, str], tuple[float, str, str, str, str]] = {}
+
+
+def _params_key(params: dict[str, Any]) -> str | None:
+    try:
+        raw = json.dumps(params, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
+    except (TypeError, ValueError, RecursionError, UnicodeError):
+        return None
+    if len(raw) > 1 << 20:
+        return None
+    return hashlib.sha256(raw).hexdigest()
+
+
+def _hold_key(sid: str, task_id: str, tool: str, params: dict[str, Any]):
+    digest = _params_key(params)
+    return (sid, task_id, tool, digest) if digest else None
+
+
+def _remember_hold(sid, task_id, tool, call_id, params, decision):
+    action_id, receipt_id = decision.get("action_id"), decision.get("receipt_id")
+    authority_task_id = decision.get("task_id", task_id)
+    decided_runtime_task_id = decision.get("runtime_task_id", task_id)
+    key = _hold_key(sid, task_id, tool, params)
+    if (key is None or not call_id or not isinstance(action_id, str) or not action_id
+            or not isinstance(receipt_id, str) or not receipt_id
+            or not isinstance(authority_task_id, str)
+            or not isinstance(decided_runtime_task_id, str)
+            or decided_runtime_task_id != task_id):
+        return False
+    now = time.monotonic()
+    with _CORRELATION_LOCK:
+        for old in [k for k, value in _HOLDS.items() if value[0] <= now]:
+            del _HOLDS[old]
+        if key in _HOLDS or len(_HOLDS) >= _CORRELATION_MAX:
+            return False
+        _HOLDS[key] = (now + _CORRELATION_TTL, call_id, action_id, receipt_id, authority_task_id)
+    return True
+
+
+def _approved_retry(sid, task_id, tool, call_id, params):
+    """Return (handled, decision). handled failures must stay fail closed."""
+    key = _hold_key(sid, task_id, tool, params)
+    if key is None:
+        return True, None
+    with _CORRELATION_LOCK:
+        value = _HOLDS.get(key)
+        if value and value[0] <= time.monotonic():
+            del _HOLDS[key]
+            value = None
+    if value is None:
+        return False, None
+    _, original_call_id, action_id, decision_receipt_id, authority_task_id = value
+    original = {
+        "platform": _CFG["platform"], "session_id": sid,
+        "agent_id": _CFG["agent_id"] or os.environ.get("HERMES_PROFILE", "default"),
+        "task_id": authority_task_id, "runtime_task_id": task_id,
+        "tool": tool, "tool_call_id": original_call_id,
+        "action_id": action_id, "decision_receipt_id": decision_receipt_id, "params": params,
+    }
+    status = _post("/v1/hold-status", original)
+    if status is None:
+        return True, None
+    state = status.get("status")
+    if state == "pending":
+        return True, {"action": "block", "message": "siq-agent-security: approval is still pending"}
+    if state != "approved":
+        with _CORRELATION_LOCK:
+            _HOLDS.pop(key, None)
+        return False, None
+    # Consume the in-memory hint before the network request. If the response is
+    # lost after durable reservation, another pre-hook must not execute blindly.
+    with _CORRELATION_LOCK:
+        if _HOLDS.pop(key, None) != value:
+            return True, None
+    reserved = _post("/v1/hold-executions/reserve", {
+        "schema_version": "hold-execution-reserve/v1", "platform": original["platform"],
+        "session_id": sid, "agent_id": original["agent_id"],
+        "task_id": authority_task_id, "runtime_task_id": task_id, "tool": tool,
+        "original_tool_call_id": original_call_id, "retry_tool_call_id": call_id,
+        "action_id": action_id, "decision_receipt_id": decision_receipt_id, "params": params,
+    }, expected=201)
+    if not isinstance(reserved, dict) or reserved.get("schema_version") != "hold-execution-status/v1" \
+            or reserved.get("status") != "reserved" or reserved.get("action_id") != action_id \
+            or reserved.get("decision_receipt_id") != decision_receipt_id \
+            or not isinstance(reserved.get("reservation_receipt_id"), str) \
+            or not reserved["reservation_receipt_id"]:
+        return True, None
+    return True, {"action": "allow", "action_id": action_id,
+                  "receipt_id": reserved["reservation_receipt_id"]}
+
 
 def _remember_decision(sid, tool, call_id, decision):
     if not call_id or not decision.get("action_id") or not decision.get("receipt_id"):
@@ -447,11 +538,26 @@ def _pre_tool_call(
     if not _enroll_runtime_session(session_id):
         return _fail_closed("instance session could not be verified", tool=tool_name, session_id=session_id)
     sid = session_id or task_id or "hermes-default"
+    params = args if isinstance(args, dict) else {}
+    retry_handled, retry_decision = _approved_retry(sid, task_id, tool_name, tool_call_id, params)
+    if retry_handled:
+        if retry_decision is None:
+            return _fail_closed("approved retry could not be safely reserved", tool=tool_name, session_id=sid)
+        if retry_decision.get("action") == "block":
+            return retry_decision
+        if not _remember_decision(sid, tool_name, tool_call_id, retry_decision):
+            return _fail_closed("approved retry correlation unavailable", tool=tool_name, session_id=sid)
+        _capture_native_raw_content("parameters", sid, tool_name, params)
+        return None
     authority_refs = {}
     if parameter_provenance is not None:
         authority_refs["parameter_provenance"] = parameter_provenance
     if context_assertion_id is not None:
         authority_refs["context_assertion_id"] = context_assertion_id
+    # task_id is reserved for the daemon's trusted Intent task. Hermes' native
+    # per-turn identity is separately signed as runtime_task_id and is used by
+    # SEC and approved-retry isolation. Mixing the two would make every Runtime
+    # Identity enrollment contradict the first native tool call.
     decision = _post(
         "/v1/decide",
         {
@@ -461,7 +567,9 @@ def _pre_tool_call(
             "agent_id": _CFG["agent_id"] or os.environ.get("HERMES_PROFILE", "default"),
             "tool": tool_name,
             "tool_call_id": tool_call_id,
-            "params": args if isinstance(args, dict) else {},
+            "task_id": "",
+            "runtime_task_id": task_id,
+            "params": params,
             "context": {"cwd": os.getcwd(), "host": "hermes"},
         },
     )
@@ -486,6 +594,14 @@ def _pre_tool_call(
             "message": f"siq-agent-security: parameters contain a secret literal; remove it and retry (receipt {rid})",
         }
     if action == "hold":
+        if not _remember_hold(sid, task_id, tool_name, tool_call_id, params, decision):
+            return {
+                "action": "block",
+                "message": (
+                    f"siq-agent-security: {reason}. Approve in the console ({_CFG['endpoint']}); "
+                    f"this host call lacks a safe retry identity (receipt {rid})"
+                ),
+            }
         return {
             "action": "block",
             "message": (

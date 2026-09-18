@@ -1,0 +1,10 @@
+=== RUN   TestReviewOpenClawPreservesExplicitEmptyConfig
+=== RUN   TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"allow":[]}}
+=== RUN   TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"load":{"paths":[]}}}
+=== RUN   TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"entries":{}}}
+--- PASS: TestReviewOpenClawPreservesExplicitEmptyConfig (0.23s)
+    --- PASS: TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"allow":[]}} (0.08s)
+    --- PASS: TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"load":{"paths":[]}}} (0.07s)
+    --- PASS: TestReviewOpenClawPreservesExplicitEmptyConfig/{"plugins":{"entries":{}}} (0.08s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/adapterinstall	0.241s

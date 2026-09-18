@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 
@@ -36,20 +37,21 @@ func (d *Diagnosis) check(code, status, message string) {
 func Inspect(opts Options) Diagnosis {
 	d := Diagnosis{Platform: opts.Platform, ConfigurationState: "not_installed", RuntimeState: "unverified",
 		Checks: []DiagnosticCheck{}, NextSteps: []string{}}
-	if opts.Platform == "workbuddy" || opts.Platform == Trae || !known[opts.Platform] {
+	if opts.Platform == Trae || !known[opts.Platform] {
 		d.ConfigurationState = "unsupported"
 		d.check("runtime_integration", "not_applicable", "当前尚无经过验证的工具接入路径")
-		if opts.Platform == "workbuddy" {
-			d.NextSteps = append(d.NextSteps, "WorkBuddy 桌面端需独立实测，CodeBuddy 的结果不能代替。")
-		} else {
-			d.NextSteps = append(d.NextSteps, "可继续盘点与静态检查；当前不声明工具调用阻断能力。")
-		}
+		d.NextSteps = append(d.NextSteps, "可继续盘点与静态检查；当前不声明工具调用阻断能力。")
 		return d
 	}
 	if opts.Home == "" {
 		opts.Home, _ = os.UserHomeDir()
 	}
 	if opts.Platform == CodeBuddy && validateCodeBuddyConfigDir() != nil {
+		d.ConfigurationState = "incomplete"
+		d.check("configuration_root", "fail", "平台配置目录覆盖无效或包含符号链接")
+		return d
+	}
+	if opts.Platform == WorkBuddy && validateWorkBuddyConfigDir() != nil {
 		d.ConfigurationState = "incomplete"
 		d.check("configuration_root", "fail", "平台配置目录覆盖无效或包含符号链接")
 		return d
@@ -64,14 +66,14 @@ func Inspect(opts Options) Diagnosis {
 	entry := filepath.Join(plugin, "index.ts")
 	if opts.Platform == Hermes {
 		entry = filepath.Join(plugin, "plugin.yaml")
-	} else if opts.Platform == CodeBuddy {
+	} else if opts.Platform == CodeBuddy || opts.Platform == WorkBuddy {
 		entry = filepath.Join(root, "settings.json")
 	}
 	if _, err := os.Lstat(entry); errors.Is(err, os.ErrNotExist) {
 		// Partial installs and legacy roots need repair, not a false fresh state.
 		_, pluginErr := os.Lstat(plugin)
 		_, legacyErr := os.Lstat(filepath.Join(root, "plugins", product.LegacyName))
-		if opts.Platform == CodeBuddy || errors.Is(pluginErr, os.ErrNotExist) && errors.Is(legacyErr, os.ErrNotExist) {
+		if opts.Platform == CodeBuddy || opts.Platform == WorkBuddy || errors.Is(pluginErr, os.ErrNotExist) && errors.Is(legacyErr, os.ErrNotExist) {
 			d.check("adapter_files", "unknown", "尚未发现当前适配器文件")
 			d.NextSteps = append(d.NextSteps, "查看接入所需改动并安装适配器，随后验证宿主加载和工具调用。")
 			return d
@@ -114,14 +116,18 @@ func Inspect(opts Options) Diagnosis {
 				d.NextSteps = append(d.NextSteps, "在接入预览中选择目标 profile 并启用插件，再开启新会话验证正常和拒绝调用。")
 			}
 		}
-	case CodeBuddy:
+	case CodeBuddy, WorkBuddy:
 		doc, err := inspectJSON(opts.Home, entry)
-		if err == nil && codeBuddyRegistered(doc, opts.Binary) {
+		if err == nil && hostHookRegistered(doc, opts.Binary, opts.Platform, opts.StateDir) {
 			d.check("host_registration", "pass", "配置含本程序的前置和后置工具钩子")
 		} else {
 			d.check("host_registration", "fail", "未确认前置及后置工具钩子，或命令与当前程序不一致")
 		}
-		d.check("service_configuration", "unknown", "需在 CodeBuddy 实际进程中验证程序路径、状态目录及服务连接")
+		message := "需在 CodeBuddy 实际进程中验证程序路径、状态目录及服务连接"
+		if opts.Platform == WorkBuddy {
+			message = "需在 WorkBuddy 桌面会话中验证程序路径、状态目录及服务连接；CodeBuddy CLI 不能代替"
+		}
+		d.check("service_configuration", "unknown", message)
 	}
 	for _, check := range d.Checks {
 		if check.Status == "fail" {
@@ -188,7 +194,14 @@ func ConfiguredEndpoint(opts Options) (string, bool) {
 func inspectRead(home, path string) ([]byte, error) {
 	for current := filepath.Clean(path); ; current = filepath.Dir(current) {
 		info, err := os.Lstat(current)
-		if err != nil || info.Mode()&os.ModeSymlink != 0 {
+		if err != nil {
+			return nil, errors.New("adapter: diagnostic file unavailable")
+		}
+		leaf := current == filepath.Clean(path)
+		if leaf && info.Mode()&os.ModeSymlink != 0 {
+			return nil, errors.New("adapter: diagnostic file unavailable")
+		}
+		if !leaf && !stateformat.AcceptDirectory(info, current) {
 			return nil, errors.New("adapter: diagnostic file unavailable")
 		}
 		if current == filepath.Clean(home) || filepath.Dir(current) == current {
@@ -283,10 +296,11 @@ func openClawRegistered(doc map[string]any, root string) bool {
 	return registered && entry["enabled"] == true
 }
 
-func codeBuddyRegistered(doc map[string]any, binary string) bool {
+func hostHookRegistered(doc map[string]any, binary, platform, stateDir string) bool {
 	if binary == "" {
 		return false
 	}
+	command := hookCommand(binary, platform, stateDir)
 	hooks, _ := doc["hooks"].(map[string]any)
 	for _, event := range []string{"PreToolUse", "PostToolUse"} {
 		found := false
@@ -297,10 +311,10 @@ func codeBuddyRegistered(doc map[string]any, binary string) bool {
 				continue
 			}
 			commands, _ := entry["hooks"].([]any)
-			for _, command := range commands {
-				cmd, _ := command.(map[string]any)
+			for _, cmdValue := range commands {
+				cmd, _ := cmdValue.(map[string]any)
 				text, _ := cmd["command"].(string)
-				found = found || cmd["type"] == "command" && strings.TrimSpace(text) == binary+" hook codebuddy"
+				found = found || cmd["type"] == "command" && strings.TrimSpace(text) == command
 			}
 		}
 		if !found {
@@ -308,4 +322,8 @@ func codeBuddyRegistered(doc map[string]any, binary string) bool {
 		}
 	}
 	return true
+}
+
+func codeBuddyRegistered(doc map[string]any, binary string) bool {
+	return hostHookRegistered(doc, binary, CodeBuddy, "")
 }

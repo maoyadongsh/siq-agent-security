@@ -1,10 +1,12 @@
 package skillinstall
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -13,6 +15,10 @@ import (
 
 func saveRequest(url string, enable bool) UpdateSourceRequest {
 	return UpdateSourceRequest{SchemaVersion: "local-skill-update-source-save/v1", RemoteURL: url, Enable: enable, ActorID: "human"}
+}
+
+func disableRequest() UpdateSourceDisableRequest {
+	return UpdateSourceDisableRequest{SchemaVersion: "local-skill-update-source-disable/v1", ActorID: "human-disabler"}
 }
 
 // TestSaveUpdateSourceGitAndZeroInstallWrites covers the happy git path: the
@@ -79,6 +85,93 @@ func TestSaveUpdateSourceZipBinding(t *testing.T) {
 	}
 	if view.SourceState != UpdateSourceSaved || view.SourceKind != "https_zip" {
 		t.Fatalf("unexpected view %+v", view)
+	}
+}
+
+func TestDisableUpdateSourceUsesSavedZIPAndIsByteIdempotent(t *testing.T) {
+	f, op := installedInspection(t)
+	s := f.store
+	zipifyImportRecord(t, f)
+	if _, err := s.DisableUpdateSource(context.Background(), op.InstallID, disableRequest()); !errors.Is(err, ErrUpdateSourceNotConfigured) {
+		t.Fatal("missing source was not distinguished", err)
+	}
+	if _, err := os.Lstat(s.updateSourcePath(op.InstallID)); !os.IsNotExist(err) {
+		t.Fatal("missing-source disable created state", err)
+	}
+	sched, err := s.SaveUpdateSource(context.Background(), op.InstallID, saveRequest(zipFixtureURL, true))
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := s.updateSourcePath(op.InstallID)
+	pathsBefore := storeTree(t, s.dir)
+	locator, display, binding, interval := sched.Locator, sched.Display, sched.InstallBindingDigest, sched.IntervalSeconds
+	disabled, err := s.DisableUpdateSource(context.Background(), op.InstallID, disableRequest())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if disabled.Enabled || disabled.NextCheckAt != "" || disabled.LastAttemptAt != "" || disabled.LastSuccessAt != "" || disabled.LastStatus != UpdateStatusNotChecked || disabled.FailureCategory != "" || disabled.FailureCount != 0 {
+		t.Fatalf("disable did not clear scheduling outcome: %+v", disabled)
+	}
+	if disabled.Locator != locator || disabled.Display != display || disabled.InstallBindingDigest != binding || disabled.IntervalSeconds != interval || disabled.SavedBy != "human-disabler" {
+		t.Fatalf("disable replaced saved source identity: %+v", disabled)
+	}
+	if !reflect.DeepEqual(pathsBefore, storeTree(t, s.dir)) {
+		t.Fatal("disable changed state path listing")
+	}
+	first, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	replayed, err := s.DisableUpdateSource(context.Background(), op.InstallID, UpdateSourceDisableRequest{SchemaVersion: updateSourceDisableSchema, ActorID: "another-human"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := os.ReadFile(path)
+	if err != nil || !bytes.Equal(first, second) {
+		t.Fatal("idempotent disable rewrote signed bytes", err)
+	}
+	if replayed.Signature != disabled.Signature || replayed.SavedBy != "human-disabler" {
+		t.Fatal("idempotent disable changed attribution")
+	}
+}
+
+func TestDisableUpdateSourceRejectsStaleBindingWithoutWrites(t *testing.T) {
+	f, op := installedInspection(t)
+	s := f.store
+	gitifyImportRecord(t, f)
+	if _, err := s.SaveUpdateSource(context.Background(), op.InstallID, saveRequest("", true)); err != nil {
+		t.Fatal(err)
+	}
+	path := s.updateSourcePath(op.InstallID)
+	before, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	value, err := canon.Decode(before)
+	if err != nil {
+		t.Fatal(err)
+	}
+	doc := value.(map[string]any)
+	doc["install_binding_digest"] = strings.Repeat("a", 64)
+	delete(doc, "signature")
+	doc["signature"], err = s.key.SignCanonical(doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	stale, err := canon.Marshal(doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, stale, 0600); err != nil {
+		t.Fatal(err)
+	}
+	pathsBefore := storeTree(t, s.dir)
+	if _, err := s.DisableUpdateSource(context.Background(), op.InstallID, disableRequest()); !errors.Is(err, ErrChanged) {
+		t.Fatal("stale source was disabled", err)
+	}
+	after, err := os.ReadFile(path)
+	if err != nil || !bytes.Equal(stale, after) || !reflect.DeepEqual(pathsBefore, storeTree(t, s.dir)) {
+		t.Fatal("rejected stale disable changed state", err)
 	}
 }
 

@@ -1,0 +1,30 @@
+{
+  "schema_version": "skill-execution-context/v1",
+  "context_id": "sec-0123456789abcdef0123456789abcdef",
+  "issuer_id": "local-admin",
+  "subject": {
+    "platform": "hermes",
+    "instance_id": "hi-0123456789abcdef0123456789abcdef",
+    "agent_id": "hri-0123456789abcdef0123456789abcdef",
+    "session_id": "s1",
+    "task_id": "task-1"
+  },
+  "skill": {
+    "skill_id": "marketplace:skill:report-gen@0a1b2c3d4e5f",
+    "version": "1.2.0",
+    "content_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "install": {
+    "install_id": "ins-1",
+    "claim_signature": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "authority": {
+    "grant_id": "grt-1",
+    "grant_digest": "2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "evidence_level": "controlled_task",
+  "issued_at": "2026-09-14T00:00:00Z",
+  "expires_at": "2026-09-14T01:00:00Z",
+  "signing_schema": "local_canonical/v1",
+  "signature": "6b96ee828f8052ae1c1bd5743153bb029962223e11407f34427a552ce96ab52169a31bd53c115a6fdbf85172cab9d243ace35193cb8e733e1e0c6bf3239c1601"
+}

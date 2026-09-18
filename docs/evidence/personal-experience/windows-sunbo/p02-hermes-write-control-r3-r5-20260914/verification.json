@@ -1,0 +1,36 @@
+{
+  "kind": "archive_assembly_verification",
+  "public_manifest_sha256": "d476d37c1f1838d629e66dbeb8e478fe7985d302553c106505c55ab03536f0c7",
+  "public_payload_files": 4,
+  "source_index_rows": 416,
+  "frozen_drafts_rechecked": true,
+  "installed_input_digests_rechecked": true,
+  "source_before_after_clean": true,
+  "raw_content_not_copied": true,
+  "independent_review": "pass",
+  "independent_review_source_sha256": {
+    "r3-actual-result-review.md": "9de9fc7e48c2a77572ad0d60bf0d43302b48bd2669dcb445d1b0bef4673adab0",
+    "r4-actual-result-review.md": "dd7ff03d0a9215cb06f340c547f6fb0e32534b2fe5baea6fb8df0e28b2a137da",
+    "r5-actual-result-review.md": "faed93c7fceb8c181a474dd949fddf0ce877afff255c5b35bb27728e589ae673",
+    "r345-public-review.md": "be04eda082878e23b9c5368d363d2d51eed3ec5f5489c9b5b7e6b82d3f5c28b6"
+  },
+  "gitleaks": {
+    "version": "8.24.2",
+    "scope": "final seven public files",
+    "exit_code": 0,
+    "result": "no leaks found"
+  },
+  "effective_A_statuses": [
+    "fail",
+    "fail",
+    "pass"
+  ],
+  "SIQ_B": "not_run",
+  "field_definitions": {
+    "expected_shell_environment_key_count": "Predicted shell map without fixed SIQ transport fields; 61/64/64 for r3/r4/r5.",
+    "environment_difference_expected_key_count": "Actual comparison map includes fixed SIQ transport fields and excludes the dynamic session identifier; r3 is 71.",
+    "frozen_file_count": "Number of entries in the private freeze manifest; excludes the manifest itself, which has a separate source-index row.",
+    "installed_role_count": "Pinned functional input roles; several roles may reference the same physical file."
+  },
+  "scope": "one real Windows device, synthetic provider, r5 optional LSP disabled; no SIQ B or full platform acceptance"
+}

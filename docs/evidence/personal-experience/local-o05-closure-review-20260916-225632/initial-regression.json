@@ -1,0 +1,46 @@
+{
+  "checks": [
+    {
+      "name": "format",
+      "command": [
+        "gofmt",
+        "-l",
+        "."
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "vet",
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "test",
+      "command": [
+        "go",
+        "test",
+        "./..."
+      ],
+      "exit_code": 1
+    },
+    {
+      "name": "race",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./internal/signing",
+        "./internal/openshell",
+        "./internal/server",
+        "./internal/receipt"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "cause": "two CLI fixtures constructed preexisting data without a key; fixtures now establish identity before writing user data",
+  "no_production_guard_relaxation": true
+}

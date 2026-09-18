@@ -1,0 +1,43 @@
+{
+  "schema_version": "personal-macos-legacy-release-v2-negative/v1",
+  "recorded_at": "2026-09-16T22:53:39+08:00",
+  "host": {"os": "macos", "version": "26.6.2", "arch": "arm64"},
+  "old_artifact": {
+    "release_tag": "agentshield-v0.1.0",
+    "tag_commit": "f14bb0650828eadb3c1c02640eeed5cf2cd3f9bd",
+    "binary_name": "agentshield-darwin-arm64",
+    "binary_sha256": "7603b01294751fb2dca82a963f51c41468e745721180ba090bb842b1380127a8",
+    "sha256_matches_tagged_skill_manifest": true,
+    "version_output": "agentshield 0.1.0 (darwin/arm64)",
+    "tag_precedes_stateformat_v2_commit": true,
+    "v2_commit": "9ba20e87c57b8ead40f4df3e090301bea77da6fa",
+    "old_source_has_stateformat_guard": false
+  },
+  "isolated_test": {
+    "current_candidate_sha": "450fe1836d8a3bffefbd2ce9b6f02bbbfe730c64",
+    "current_binary_sha256": "f067f96b05c3472b8ebe2d43ac9c19ce79c5063af19ec1dc66999a6da1bd3e23",
+    "fresh_state_format": 2,
+    "state_compatible_before": true,
+    "file_count_before": 3,
+    "old_serve_port": 47615,
+    "old_serve_listened_on_isolated_loopback": true,
+    "old_serve_refused_v2_before_write": false,
+    "old_created_files": ["keys/signing.seed", "token"],
+    "old_transient_lock_removed_on_stop": true,
+    "file_count_after_stop": 5,
+    "state_format_sha256_before_and_after": "2e1f3a63baa199edf92efd3f0bd3f5f0d2eb818fcc946b5f5007b0c70ef197db",
+    "local_instance_sha256_before_and_after": "c6c9f92254e4945eaf035918aad45eab3c58a5deded869b719cd5e145a615c05",
+    "config_sha256_before_and_after": "e48281aa01853803e5836e4f88cf75d41edd3ecf377f1756af496c85e8b4a0be",
+    "state_compatible_after": true,
+    "old_serve_stopped": true,
+    "isolation": "fresh private state and HOME only; no daily state or existing service touched"
+  },
+  "assessment": {
+    "historical_release_v2_refusal": "observed_failure",
+    "supported_v1_only_v2_refusing_artifact": "not_available",
+    "current_candidate_regression": false,
+    "retroactive_repair_of_published_binary_possible": false,
+    "remaining_p03_requirement": "blocked_until_traceable_compatible_aware_v1_artifact"
+  },
+  "privacy": "No private key, token value, pairing code, raw state, absolute user path or host log is included."
+}

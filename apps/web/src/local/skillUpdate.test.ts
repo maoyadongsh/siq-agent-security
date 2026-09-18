@@ -8,6 +8,10 @@ describe('Skill update review and transaction boundaries', () => {
     expect(isSkillUpdateComparison(c, id, r)).toBe(true);
     for (const patch of [{ requires_confirmation: false }, { platform_changes: true }, { candidate_revision: 123 }, { content_changes_total: 123 }, { settings_changed: ['unknown'] }, { previous_grant: c.candidate_grant }]) expect(isSkillUpdateComparison({ ...c, ...patch }, id, r)).toBe(false);
     expect(isSkillUpdateComparison({ ...c, content_changes: [{ ...c.content_changes[0], before: null, after: null }] }, id, r)).toBe(false);
+    const openClaw = { ...c, record: { ...c.record, plan: { ...c.record.plan, platform: 'openclaw' } },
+      previous_grant: { ...c.previous_grant, platform: 'openclaw' }, candidate_grant: { ...c.candidate_grant, platform: 'openclaw' } };
+    expect(isSkillUpdateComparison(openClaw, id, r)).toBe(true);
+    expect(isSkillUpdateComparison({ ...openClaw, candidate_grant: { ...openClaw.candidate_grant, platform: 'hermes' } }, id, r)).toBe(false);
     expect(comparisonMatchesPlan(c, sample('plan'))).toBe(false);
   });
   it('binds prepared plan to the exact request and does not renew expiry', () => {

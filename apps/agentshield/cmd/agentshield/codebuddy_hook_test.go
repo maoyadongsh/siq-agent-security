@@ -92,6 +92,108 @@ func TestCodeBuddyBootstrapFailuresStillProduceHookDecision(t *testing.T) {
 	}
 }
 
+func TestWorkBuddyHookInvalidArgumentsStillDeny(t *testing.T) {
+	for _, args := range [][]string{
+		{"workbuddy", "--state-dir", "relative"},
+		{"workbuddy", "--state-dir", t.TempDir(), "unexpected"},
+		{"workbuddy", "--unknown"},
+	} {
+		t.Run(strings.Join(args[1:], "_"), func(t *testing.T) {
+			oldIn, oldOut := os.Stdin, os.Stdout
+			inR, inW, err := os.Pipe()
+			if err != nil {
+				t.Fatal(err)
+			}
+			outR, outW, err := os.Pipe()
+			if err != nil {
+				t.Fatal(err)
+			}
+			os.Stdin, os.Stdout = inR, outW
+			go func() {
+				_, _ = inW.Write([]byte(`{"hook_event_name":"PreToolUse","tool_name":"Read"}`))
+				_ = inW.Close()
+			}()
+			hookErr := cmdHook(args)
+			_ = outW.Close()
+			os.Stdin, os.Stdout = oldIn, oldOut
+			_ = inR.Close()
+			if hookErr != nil {
+				t.Fatal(hookErr)
+			}
+			var buf bytes.Buffer
+			if _, err := buf.ReadFrom(outR); err != nil {
+				t.Fatal(err)
+			}
+			_ = outR.Close()
+			var response adapters.CodeBuddyOutput
+			if err := json.Unmarshal(bytes.TrimSpace(buf.Bytes()), &response); err != nil {
+				t.Fatal(err)
+			}
+			if response.HookSpecificOutput.PermissionDecision != "deny" || !strings.Contains(response.HookSpecificOutput.PermissionDecisionReason, "fail-closed") {
+				t.Fatalf("invalid invocation did not deny: %s", buf.String())
+			}
+		})
+	}
+}
+
+func TestWorkBuddyHookStateDirOverridesEnv(t *testing.T) {
+	ambient := t.TempDir()
+	selected := t.TempDir()
+	if _, err := state.Open(ambient); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := state.Open(selected); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(ambient, "config.json"), []byte(`{"enforcement_mode":"warn"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(selected, "config.json"), []byte(`{"enforcement_mode":"block"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("SIQ_AGENT_SECURITY_STATE_DIR", ambient)
+	oldIn, oldOut := os.Stdin, os.Stdout
+	inR, inW, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	outR, outW, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	os.Stdin, os.Stdout = inR, outW
+	go func() {
+		_, _ = inW.Write([]byte(`{"hook_event_name":"PreToolUse","tool_name":"Read"}`))
+		_ = inW.Close()
+	}()
+	hookErr := cmdHook([]string{"workbuddy", "--state-dir", selected})
+	_ = outW.Close()
+	os.Stdin, os.Stdout = oldIn, oldOut
+	_ = inR.Close()
+	if hookErr != nil {
+		t.Fatal(hookErr)
+	}
+	var buf bytes.Buffer
+	if _, err := buf.ReadFrom(outR); err != nil {
+		t.Fatal(err)
+	}
+	_ = outR.Close()
+	var response adapters.CodeBuddyOutput
+	if err := json.Unmarshal(bytes.TrimSpace(buf.Bytes()), &response); err != nil {
+		t.Fatal(err)
+	}
+	if response.HookSpecificOutput.PermissionDecision != "deny" {
+		t.Fatalf("selected block state must deny: %s", buf.String())
+	}
+	raw, err := os.ReadFile(filepath.Join(selected, "pending", "decisions.jsonl"))
+	if err != nil || !strings.Contains(string(raw), `"platform":"workbuddy"`) {
+		t.Fatalf("pending: %v %s", err, raw)
+	}
+	if _, err := os.Stat(filepath.Join(ambient, "pending", "decisions.jsonl")); !os.IsNotExist(err) {
+		t.Fatal("ambient state was used")
+	}
+}
+
 func TestCodeBuddyUnavailableStateStillBlocks(t *testing.T) {
 	file := filepath.Join(t.TempDir(), "not-a-directory")
 	if err := os.WriteFile(file, []byte("fixture"), 0o600); err != nil {

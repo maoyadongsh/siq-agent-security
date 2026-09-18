@@ -17,6 +17,8 @@ describe('import permission preparation', () => {
       { ...result, state_revision: -1 },
     ]) expect(isImportPermissionResult(bad, id, req)).toBe(false);
     expect(isImportPermissionResult(result, 'si-' + 'f'.repeat(32), req)).toBe(false);
+    expect(isImportPermissionResult({ ...result, grant: { ...result.grant, platform: 'openclaw' } }, id, req)).toBe(true);
+    expect(isImportPermissionResult({ ...result, grant: { ...result.grant, platform: 'workbuddy' } }, id, req)).toBe(false);
   });
   it('requires all immutable source digests', () => {
     const source = sample('source');

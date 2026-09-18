@@ -8,7 +8,7 @@ func checkCommandState(command string) error {
 	switch command {
 	case "state-status", "state-migrate", "version", "help", "--help", "-h", "rulepack", "manifest-verify", "serve", "hook":
 		// serve checks its explicit directory; hook must emit a structured deny
-		// through codeBuddyClient/Open, because exit 1 alone is non-blocking.
+		// through hostHookClient/Open, because exit 1 alone is non-blocking.
 		return nil
 	default:
 		dir, err := state.DefaultDir()

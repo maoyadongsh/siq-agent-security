@@ -1,0 +1,9 @@
+=== RUN   TestO05LiveRollbackRestore
+    o05_live_test.go:42: base revision=2 digest=15a9162054fd1e405c4bb61ffec152ff32350047fdd4182f5074eccc6ce697a3
+    o05_live_test.go:56: apply result=applied base_rev=2 backend_rev=3 op=opo-63eeb153abcce8d558c420e401bf20be30d0d5ba7ddc9fc4
+    o05_live_test.go:65: nil authorizer rollback failed closed as required: 策略回滚缺少当前授权器（fail-closed）
+    o05_live_test.go:89: rollback result=restored restored_rev=4 restored_digest=15a9162054fd1e405c4bb61ffec152ff32350047fdd4182f5074eccc6ce697a3
+    o05_live_test.go:97: restore proven by readback: revision=4 digest=15a9162054fd1e405c4bb61ffec152ff32350047fdd4182f5074eccc6ce697a3
+--- PASS: TestO05LiveRollbackRestore (1.02s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/openshell	1.025s

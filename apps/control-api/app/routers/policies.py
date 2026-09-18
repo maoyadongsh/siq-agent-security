@@ -86,9 +86,7 @@ def _ensure_binding_in_selector(
         )
         known |= set(
             session.scalars(
-                select(AgentInstance.id).where(
-                    AgentInstance.tenant_id == tenant_id, AgentInstance.id.in_(agent_ids)
-                )
+                select(AgentInstance.id).where(AgentInstance.tenant_id == tenant_id, AgentInstance.id.in_(agent_ids))
             )
         )
         if any(aid not in known for aid in agent_ids):
@@ -249,9 +247,7 @@ def create_change_request(
     # Break-glass 需独立权限点（§19.2）：普通 proposer 自选 break_glass 直接 403，不豁免职责分离
     if body.approval_policy == "break_glass":
         ensure_permission(identity, "change:break_glass")
-    existing = session.scalar(
-        select(ChangeRequest).where(ChangeRequest.idempotency_key == body.idempotency_key)
-    )
+    existing = session.scalar(select(ChangeRequest).where(ChangeRequest.idempotency_key == body.idempotency_key))
     if existing is not None:
         if existing.tenant_id != identity.tenant_id:
             raise HTTPException(status_code=404, detail="not_found")
@@ -473,14 +469,40 @@ def create_deployment(
         "policy_id": policy.id,
         "enforcement_mode": policy.enforcement_mode,
     }
-    # 执行后端编译接线：SIQ_AS_ENFORCEMENT_BACKEND 决定编译与发布路径
-    # 编译先于 Deployment 落库：编译拒绝/静态 gate 命中时不产生任何状态变化
-    _compile_for_enforcement(policy, task_payload)
+    openshell_preflight = None
+    if backend == "openshell-cli":
+        # plan_change 必须对照 live policy；compiler 的 needs_generation 只表示
+        # 制品携带静态意图，不能以字段存在替代真实差异。
+        from app.adapters.openshell.contracts import AdapterError, RevisionConflict, UnsupportedCapability
 
-    # P0-2：静态段（filesystem/process 等需重建生效）在 generation 路径修复前
-    # 不得经 openshell-cli 进入 effective；此时尚未 flush 任何行，直接拒绝无副作用
-    if backend == "openshell-cli" and (task_payload.get("compiled") or {}).get("needs_generation"):
-        raise HTTPException(status_code=422, detail="static_generation_unavailable")
+        try:
+            adapter = OpenShellCliBackend()
+            caps = adapter.probe()
+            compiled = adapter.compile(_desired_from_policy(policy), caps)
+            validation = adapter.validate(compiled)
+            if not validation.valid:
+                raise HTTPException(status_code=422, detail=f"compile_invalid: {validation.errors}")
+            plan = adapter.plan_change(target, compiled)
+        except UnsupportedCapability as exc:
+            raise HTTPException(status_code=422, detail=f"compile_rejected: {exc}") from None
+        except (AdapterError, RevisionConflict) as exc:
+            error = error_reference(exc)
+            raise HTTPException(
+                status_code=502, detail=f"openshell_preflight_failed: {error['error_digest']}"
+            ) from None
+        task_payload["compiled"] = {
+            "artifact_hash": compiled.artifact_hash,
+            "backend": compiled.backend,
+            "schema_version": compiled.schema_version,
+            "needs_generation": plan.kind == "generation",
+            "unsupported_by_backend": compiled.unsupported_by_backend,
+        }
+        if plan.kind == "generation":
+            raise HTTPException(status_code=422, detail="static_generation_unavailable")
+        openshell_preflight = (adapter, compiled, plan)
+    else:
+        # 非 CLI 后端保持原编译接线。CLI 已在上面用真实快照完成编译和计划。
+        _compile_for_enforcement(policy, task_payload)
 
     deployment = Deployment(
         tenant_id=identity.tenant_id,
@@ -499,28 +521,29 @@ def create_deployment(
     if backend == "openshell-cli":
         # 真实闭环（2026-08-13 活网关验证）：审批后直接 policy set + 读回验证
         # 静态段一致（只改网络段）→ 动态热更新；验证通过才 effective（§21.1 不变量 #5）
-        from app.adapters.openshell.contracts import AdapterError, RevisionConflict
-
+        receipt = None
         try:
-            adapter = OpenShellCliBackend()
-            caps = adapter.probe()
-            desired = _desired_from_policy(policy)
-            compiled = adapter.compile(desired, caps)
-            plan = adapter.plan_change(target, compiled)
-            if plan.kind == "generation":
-                receipt = adapter.create_generation(target, compiled)
-            else:
-                receipt = adapter.apply_dynamic(target, plan, expected_revision=plan.expected_revision)
-            # 正负向验证：允许集=策略网络端点；拒绝集=合成未授权端点（block 模式下必须不在允许集）
+            assert openshell_preflight is not None
+            adapter, compiled, plan = openshell_preflight
+            receipt = adapter.apply_dynamic(target, plan, expected_revision=plan.expected_revision)
+            # 完整 digest 是权威校验；host/port 只补充核对真实声明，不发明
+            # 可能与策略冲突的固定 deny probe。
             allow = [r.get("endpoint") for r in (compiled.artifact.get("network_policies") or [])]
-            checks = {"expect_allow": allow, "expect_deny": ["10.255.255.255:1"]}
+            checks = {"expect_allow": allow, "expect_deny": []}
+            deployment.receipt = {
+                "operation_id": receipt.operation_id,
+                "target": receipt.target,
+                "base_revision": receipt.base_revision,
+                "base_policy_digest": receipt.base_policy_digest,
+                "backend_revision": receipt.backend_revision,
+                "applied_policy_digest": receipt.applied_policy_digest,
+                "result": receipt.result,
+                "gateway_policy_hash": receipt.evidence.get("gateway_policy_hash", ""),
+            }
+            deployment.from_revision = receipt.base_revision
             report = adapter.verify(target, checks, receipt)
             if not report.passed:
-                raise AdapterError(f"验证失败: {report.failures}")
-            deployment.receipt = {
-                "backend_revision": receipt.backend_revision,
-                "snapshot_hash": receipt.evidence.get("snapshot_hash", ""),
-            }
+                raise AdapterError("openshell_post_apply_verification_failed")
             # P1-2：verification JSON 如实分级。当前 openShell 路径的 effective
             # 基于 readback（配置读回）验证——证明"后端配置与期望一致"，不证明
             # 行为执行；待行为 fixture 通道落地后才允许标 enforcement_verified。
@@ -560,7 +583,16 @@ def create_deployment(
         except (AdapterError, RevisionConflict) as exc:
             error = error_reference(exc)
             deployment.status = "failed"
-            deployment.receipt = error
+            if receipt is None:
+                deployment.receipt = error
+            else:
+                # policy set 已返回可信 operation binding 时不可用错误覆盖它；
+                # failed deployment 仍可通过该绑定安全回滚。
+                deployment.verification = {
+                    **(deployment.verification or {}),
+                    "apply_failed": error,
+                    "backend_mutated": receipt.result == "applied",
+                }
             audit(
                 session,
                 identity.tenant_id,
@@ -734,30 +766,90 @@ def rollback_deployment(
     if deployment.status not in ("effective", "sent", "failed"):
         raise HTTPException(status_code=409, detail="invalid_state")
 
-    # 真实后端回滚（§14.4）：openshell-cli 模式恢复上一 revision（--rev 回读 + policy set）
+    # 真实后端回滚（§14.4）：只恢复本进程本次 apply 绑定的精确前置快照。
     import os
 
     backend = os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
-    if backend == "openshell-cli" and deployment.status == "effective":
-        from app.adapters.openshell.contracts import AdapterError, DeploymentReceipt, VerificationFailed
-
+    if backend == "openshell-cli":
         receipt = deployment.receipt or {}
+        if deployment.status != "effective" and not (deployment.status == "failed" and receipt.get("operation_id")):
+            raise HTTPException(status_code=409, detail="openshell_rollback_requires_effective_deployment")
+
+        from app.adapters.openshell.contracts import (
+            AdapterError,
+            DeploymentReceipt,
+            RollbackAuthorization,
+            VerificationFailed,
+        )
+
+        def authorize_rollback(_authorization: RollbackAuthorization) -> bool:
+            """写前重新查询当前授权链；不使用申请中的 evidence 决定可否回滚。"""
+            ensure_permission(identity, "policy:manage")
+            session.expire_all()
+            live_binding = session.scalar(
+                select(RuntimeBinding).where(
+                    RuntimeBinding.id == deployment.runtime_binding_id,
+                    RuntimeBinding.tenant_id == identity.tenant_id,
+                )
+            )
+            if (
+                live_binding is None
+                or live_binding.status != "active"
+                or live_binding.backend != "openshell-cli"
+                or live_binding.backend_target_id != deployment.target
+            ):
+                return False
+            live_cr = session.scalar(
+                select(ChangeRequest).where(
+                    ChangeRequest.id == deployment.change_request_id,
+                    ChangeRequest.tenant_id == identity.tenant_id,
+                )
+            )
+            if live_cr is None or live_cr.status not in {"approved", "effective"}:
+                return False
+            live_policy = session.scalar(
+                select(DesiredPolicy).where(
+                    DesiredPolicy.id == live_cr.policy_id,
+                    DesiredPolicy.tenant_id == identity.tenant_id,
+                )
+            )
+            if live_policy is None or live_policy.status in {"rejected", "failed", "superseded", "rolled_back"}:
+                return False
+            try:
+                _ensure_binding_in_selector(session, identity.tenant_id, live_policy, live_binding)
+            except HTTPException:
+                return False
+            return True
+
         try:
             rollback_receipt = OpenShellCliBackend().rollback(
                 deployment.target,
                 DeploymentReceipt(
                     backend_revision=str(receipt.get("backend_revision", "")),
+                    operation_id=str(receipt.get("operation_id", "")),
+                    target=str(receipt.get("target", "")),
+                    base_revision=str(receipt.get("base_revision", "")),
+                    base_policy_digest=str(receipt.get("base_policy_digest", "")),
+                    applied_policy_digest=str(receipt.get("applied_policy_digest", "")),
+                    result=str(receipt.get("result", "")),
                     evidence=receipt,
                 ),
+                authorizer=authorize_rollback,
             )
             deployment.verification = {
+                **(deployment.verification or {}),
                 "rollback": {
                     "restored_revision": rollback_receipt.restored_revision,
-                }
+                    "restored_digest": rollback_receipt.restored_digest,
+                    "result": rollback_receipt.result,
+                },
             }
         except (AdapterError, VerificationFailed) as exc:
             error = error_reference(exc)
-            deployment.status = "failed"
+            deployment.verification = {
+                **(deployment.verification or {}),
+                "rollback_failed": error,
+            }
             audit(
                 session,
                 identity.tenant_id,

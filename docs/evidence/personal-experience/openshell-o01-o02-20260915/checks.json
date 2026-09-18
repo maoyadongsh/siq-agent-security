@@ -1,0 +1,46 @@
+{
+  "schema_version": "openshell-o01-o02-component-checks/v1",
+  "date": "2026-09-15",
+  "source": {
+    "branch": "kimi/personal-v4-r01-20260914",
+    "head": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "verification_snapshot_includes_uncommitted_changes": true
+  },
+  "outcome": "fixed",
+  "checks": [
+    {"name": "go_test_all", "status": "passed"},
+    {"name": "go_vet_all", "status": "passed"},
+    {"name": "go_race_openshell_server", "status": "passed"},
+    {"name": "python_pytest_all", "status": "passed"},
+    {"name": "python_ruff_lint_app", "status": "passed"},
+    {"name": "python_ruff_format_o01_o02_scope", "status": "passed"},
+    {"name": "python_ruff_format_repository_baseline", "status": "not_passed_preexisting", "files": 43},
+    {"name": "web_vitest", "status": "passed", "files": 24, "tests": 93},
+    {"name": "web_build", "status": "passed"},
+    {"name": "go_cross_build_four_targets", "status": "passed", "native_validation": false},
+    {"name": "git_diff_check", "status": "passed"},
+    {"name": "research_engine_openshell_tests", "status": "passed", "tests": 1312},
+    {"name": "research_engine_env_and_recovery_targeted", "status": "passed", "tests": 34},
+    {"name": "real_openshell_gateway", "status": "passed", "version": "0.0.83"},
+    {"name": "real_minimal_hermes_landlock_poc", "status": "passed"},
+    {"name": "real_policy_apply_rollback", "status": "passed", "base_revision": "7", "applied_revision": "8", "restored_revision": "9"},
+    {"name": "real_policy_base_restored", "status": "passed", "policy_digest": "237ea4ad962c095a7d08ddd7ddb6059df2dd233bf0efe23eb198b8a205ed1b6c"},
+    {"name": "siq_analysis_canary_status_and_probe", "status": "passed", "run_id": "canary-a01b02c91503"},
+    {"name": "siq_analysis_real_model_run", "status": "passed", "effective_provider": "custom:gemma4-local", "fallback_activated": true},
+    {"name": "windows_macos_native", "status": "not_run_platform_owners_unchanged"}
+  ],
+  "external_side_effects": {
+    "research_engine_source_modified": true,
+    "gateway_started": true,
+    "brokers_started_with_required_identity": true,
+    "siq_analysis_runtime_selection": "openshell",
+    "siq_analysis_canary_kept_running": true,
+    "historical_agentshield_demo_sandbox_deleted_after_restore": true,
+    "paid_model_called": false,
+    "committed_at_verification_time": false,
+    "pushed_at_verification_time": false,
+    "delivery_authorized_after_verification": true,
+    "merge": false,
+    "release": false
+  }
+}

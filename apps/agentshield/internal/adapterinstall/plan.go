@@ -13,7 +13,9 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
+	"slices"
 	"strings"
 	"time"
 
@@ -35,6 +37,7 @@ type PlanView struct {
 	InstanceID        string          `json:"instance_id,omitempty"`
 	InstanceName      string          `json:"instance_name,omitempty"`
 	NativeEnable      *bool           `json:"native_enable,omitempty"`
+	InstallPolicy     *bool           `json:"install_policy,omitempty"`
 	SchemaVersion     string          `json:"schema_version"`
 	PlanID            string          `json:"plan_id"`
 	PlanDigest        string          `json:"plan_digest"`
@@ -102,8 +105,14 @@ func readImage(home, path string) (fileImage, error) {
 		if err != nil && !os.IsNotExist(err) {
 			return fileImage{}, errors.New("adapter: file inspection failed")
 		}
-		if err == nil && (info.Mode()&os.ModeSymlink != 0 || current != filepath.Clean(path) && !info.IsDir()) {
-			return fileImage{}, errors.New("adapter: symlink or invalid ancestor refused")
+		if err == nil {
+			leaf := current == filepath.Clean(path)
+			if leaf && info.Mode()&os.ModeSymlink != 0 {
+				return fileImage{}, errors.New("adapter: symlink or invalid ancestor refused")
+			}
+			if !leaf && !stateformat.AcceptDirectory(info, current) {
+				return fileImage{}, errors.New("adapter: symlink or invalid ancestor refused")
+			}
 		}
 		if current == filepath.Clean(home) || filepath.Dir(current) == current {
 			break
@@ -194,7 +203,7 @@ func (p *Plan) write(path string, raw []byte, mode uint32, purpose string) error
 		if err != nil {
 			return err
 		}
-		if snapshot.Exists && !bytes.Equal(snapshot.Data, before.Data) {
+		if snapshot.Exists && !bytes.Equal(snapshot.Data, before.Data) && !jsonDocumentsEqual(snapshot.Data, before.Data) {
 			return errors.New("adapter: existing original snapshot needs review")
 		}
 		if !snapshot.Exists {
@@ -230,6 +239,14 @@ func encodePlanJSON(doc map[string]any) []byte {
 	return append(raw, '\n')
 }
 
+func jsonDocumentsEqual(a, b []byte) bool {
+	var da, db any
+	if json.Unmarshal(a, &da) != nil || json.Unmarshal(b, &db) != nil {
+		return false
+	}
+	return reflect.DeepEqual(da, db)
+}
+
 func Prepare(opts Options, action string) (*Plan, error) {
 	if err := opts.normalise(); err != nil {
 		return nil, err
@@ -260,6 +277,13 @@ func Prepare(opts Options, action string) (*Plan, error) {
 	err = nil
 	if action == "uninstall" && prior == nil && opts.Platform != Trae {
 		return nil, errNoInstallRecord
+	}
+	if prior != nil && action == "install" && (opts.Platform == CodeBuddy || opts.Platform == WorkBuddy) {
+		path := filepath.Join(opts.configRoot(), "settings.json")
+		paths := hostConfigPaths(*prior)
+		if len(paths) != 1 || paths[0] != path || prior.Modified[path] == "" && prior.Written[path] == "" && !slices.Contains(prior.Created, path) {
+			return nil, errors.New("adapter: host config directory differs from latest install record")
+		}
 	}
 	if prior != nil && prior.RuntimeIdentityID != "" {
 		if action == "uninstall" && opts.RuntimeIdentityID != "" && opts.RuntimeIdentityID != prior.RuntimeIdentityID {
@@ -300,6 +324,10 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		view.NativeEnable = &enabled
 		rec.InstanceID = opts.Instance.ID
 		rec.ConfigDir = opts.Instance.ConfigDir
+	}
+	if opts.Platform == OpenClaw && action == "install" {
+		enabled := opts.InstallPolicy
+		view.InstallPolicy = &enabled
 	}
 	if opts.RuntimeIdentityID != "" {
 		view.SchemaVersion = "local-adapter-plan/v3"
@@ -472,8 +500,18 @@ func (p *Plan) prepareInstall() error {
 				}
 			}
 		}
+		if o.InstallPolicy {
+			if sec == nil {
+				sec = map[string]any{}
+			}
+			if previous, exists := sec["installPolicy"]; exists && !sameOpenClawCurrentPolicy(previous, o) {
+				return errors.New("adapter: existing OpenClaw install policy is not owned by this operation")
+			}
+			sec["installPolicy"] = openClawCurrentPolicy(o)
+			doc["security"] = sec
+		}
 		return p.write(path, encodePlanJSON(doc), 0o600, "登记本插件的加载路径与启用项；保留其他平台设置")
-	case CodeBuddy:
+	case CodeBuddy, WorkBuddy:
 		path := filepath.Join(root, "settings.json")
 		doc, err := p.planJSON(path)
 		if err != nil {
@@ -481,27 +519,46 @@ func (p *Plan) prepareInstall() error {
 		}
 		hooks, ok := doc["hooks"].(map[string]any)
 		if _, exists := doc["hooks"]; exists && !ok {
-			return errors.New("adapter: invalid CodeBuddy hooks object")
+			return errors.New("adapter: invalid host hooks object")
 		}
 		if hooks == nil {
 			hooks = map[string]any{}
 		}
+		command := hookCommand(o.Binary, o.Platform, o.StateDir)
 		for _, event := range []string{"PreToolUse", "PostToolUse"} {
 			if v, exists := hooks[event]; exists {
 				if _, ok := v.([]any); !ok {
-					return errors.New("adapter: invalid CodeBuddy hook list")
+					return errors.New("adapter: invalid host hook list")
 				}
 			}
-			hooks[event] = upsertHook(hooks[event], o.Binary+" hook codebuddy")
+			hooks[event] = upsertHook(hooks[event], command, o.Platform, p.payload.Record.Binary, o.StateDir)
 		}
 		doc["hooks"] = hooks
-		return p.write(path, encodePlanJSON(doc), 0o600, "登记工具执行前和执行后的 SIQ 钩子；保留其他设置")
+		purpose := "登记工具执行前和执行后的 SIQ 钩子；保留其他设置"
+		if o.Platform == WorkBuddy {
+			purpose = "登记 WorkBuddy 桌面工具钩子；保留 enabledPlugins 及其他设置，不沿用 CodeBuddy 安装"
+		}
+		return p.write(path, encodePlanJSON(doc), 0o600, purpose)
 	}
 	return nil
 }
 
 func openClawInstallPolicy(o Options) map[string]any {
 	return map[string]any{"enabled": true, "targets": []any{"skill", "plugin"}, "exec": map[string]any{"source": "exec", "command": o.Binary, "args": []any{"policy-exec"}, "timeoutMs": 10000, "trustedDirs": []any{filepath.Dir(o.Binary)}, "passEnv": []any{product.EnvStateDir, product.EnvStateDirOld, "HOME", "PATH"}}}
+}
+
+func openClawCurrentPolicy(o Options) map[string]any {
+	return map[string]any{"enabled": true, "targets": []any{"skill"}, "exec": map[string]any{
+		"source": "exec", "command": o.Binary, "args": []any{"policy-exec"},
+		"timeoutMs": 10000, "trustedDirs": []any{filepath.Dir(o.Binary)},
+		"env": map[string]any{product.EnvStateDir: o.StateDir},
+	}}
+}
+
+func sameOpenClawCurrentPolicy(value any, o Options) bool {
+	var expected any
+	_ = json.Unmarshal(encodePlanJSON(openClawCurrentPolicy(o)), &expected)
+	return o.Binary != "" && o.StateDir != "" && reflect.DeepEqual(value, expected)
 }
 
 func sameOpenClawLegacyPolicy(value any, binary string) bool {
@@ -539,6 +596,11 @@ func installEntryStep(o Options) string {
 		return "平台安装入口未被接管，Windows 暂无受控安装命令；通过发现与诊断做事后检查。"
 	case Trae:
 		return "平台没有工具钩子，安装入口未被接管；通过静态检查、盘点与诊断做事后检查。"
+	case OpenClaw:
+		if o.InstallPolicy {
+			return "已显式配置 OpenClaw 原生 Skill 装前策略；仍须用受支持的宿主版本和真实安装入口验证，不覆盖 Plugin。"
+		}
+		return "OpenClaw 平台安装入口未被接管；经确认宿主版本后可在单实例预览并显式 --enable-install-policy。"
 	default:
 		return "平台安装入口未被接管，也不注入其不支持的安装拦截配置；通过发现与诊断做事后检查。"
 	}

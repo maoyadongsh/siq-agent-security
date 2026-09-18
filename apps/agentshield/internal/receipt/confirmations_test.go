@@ -25,7 +25,7 @@ func TestConfirmationsSingleResolutionAndRecovery(t *testing.T) {
 	}
 	before, _ := fx.chain.Read()
 	list := fx.eng.Confirmations()
-	if len(list.Items) != 1 || list.Items[0].Status != "pending" || list.Items[0].DecisionHash != d.Receipt.Hash {
+	if list.SchemaVersion != "local-confirmations/v2" || len(list.Items) != 1 || list.Items[0].Status != "pending" || list.Items[0].DecisionHash != d.Receipt.Hash || list.Items[0].ApprovalScope != "once" || list.Items[0].ResumeMode != "unsupported" || list.Items[0].Operation != "exec" || len(list.Items[0].Effects) == 0 {
 		t.Fatal(list)
 	}
 	for i := 0; i < 4; i++ {
@@ -82,10 +82,18 @@ func TestConfirmationsSingleResolutionAndRecovery(t *testing.T) {
 	if _, err = fx.eng.ReadHoldStatus(changed); err == nil {
 		t.Fatal("changed parameters approved")
 	}
-	if _, err = fx.eng.Observe(correlatedRequest(r, d), "fixture"); err != nil {
+	retry, _ := reserveForRetry(t, fx, r, d, "confirmation-retry")
+	if fx.eng.Confirmations().Items[0].Status != "uncertain" {
+		t.Fatal("management view treated reservation as proven execution")
+	}
+	fx.eng, err = New(fx.eng.opts)
+	if err != nil || fx.eng.Confirmations().Items[0].Status != "uncertain" {
+		t.Fatal("restart hid uncertain execution", err)
+	}
+	if _, err = fx.eng.Observe(retry, "fixture"); err != nil {
 		t.Fatal(err)
 	}
-	if fx.eng.Confirmations().Items[0].Status != "consumed" {
+	if fx.eng.Confirmations().Items[0].Status != "completed" {
 		t.Fatal("missing consumption")
 	}
 }
@@ -165,6 +173,7 @@ func TestConfirmationContractSamples(t *testing.T) {
 	c.ActionID = "act-fixture"
 	c.DecisionReceiptID = "rcpt-fixture"
 	c.DecisionHash = strings.Repeat("1", 64)
+	c.TaskID = "task-1"
 	c.GrantID = "grt-fixture"
 	c.IssuedAt = "2026-09-10T01:00:00Z"
 	expiry := "2026-09-10T01:05:00Z"
@@ -172,7 +181,7 @@ func TestConfirmationContractSamples(t *testing.T) {
 	body := confirmationRequest(d)
 	body.DecisionReceiptID = c.DecisionReceiptID
 	body.DecisionHash = c.DecisionHash
-	for name, value := range map[string]any{"local-confirmations.v1": list, "local-confirmation-resolve.v1": body} {
+	for name, value := range map[string]any{"local-confirmations.v2": list, "local-confirmation-resolve.v1": body} {
 		raw, _ := json.MarshalIndent(value, "", "  ")
 		raw = append(raw, '\n')
 		path := "../../testdata/contracts/" + name + ".sample.json"
@@ -183,7 +192,7 @@ func TestConfirmationContractSamples(t *testing.T) {
 		}
 		expected, e := os.ReadFile(path)
 		if e != nil || string(expected) != string(raw) {
-			t.Fatal(name, "contract differs", e)
+			t.Fatalf("%s contract differs: %v\nactual:\n%s\nexpected:\n%s", name, e, raw, expected)
 		}
 	}
 }

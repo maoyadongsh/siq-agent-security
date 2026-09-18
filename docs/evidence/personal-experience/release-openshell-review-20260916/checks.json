@@ -1,0 +1,44 @@
+{
+  "scope": "repair regression, not live O05/B2/B3 acceptance",
+  "checks": [
+    {
+      "command": "go vet ./...",
+      "cwd": "apps/agentshield",
+      "exit_code": 0
+    },
+    {
+      "command": "go test ./...",
+      "cwd": "apps/agentshield",
+      "exit_code": 0
+    },
+    {
+      "command": "go test -race ./internal/openshell ./internal/server",
+      "cwd": "apps/agentshield",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/personal-experience -p test_openshell_b2b3_perf_protocol.py -v",
+      "exit_code": 0,
+      "tests": 8
+    },
+    {
+      "command": "ruff check scripts/personal-experience/openshell-b2b3-perf-protocol.py scripts/personal-experience/test_openshell_b2b3_perf_protocol.py",
+      "exit_code": 0
+    },
+    {
+      "command": "uv run pytest -q app/tests/test_openshell_policy_safety_vectors.py app/tests/test_schema_contracts.py",
+      "cwd": "apps/control-api",
+      "exit_code": 0,
+      "tests": 231
+    },
+    {
+      "command": "gofmt -l apps/agentshield/internal/openshell",
+      "exit_code": 0,
+      "output_empty": true
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ]
+}

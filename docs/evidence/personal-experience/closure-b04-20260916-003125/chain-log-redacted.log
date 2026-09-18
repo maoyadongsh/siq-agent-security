@@ -1,0 +1,40 @@
+[b04] waiting… 630s left
+[b04] waiting… 600s left
+[b04] waiting… 570s left
+[b04] waiting… 540s left
+[b04] waiting… 510s left
+[b04] waiting… 480s left
+[b04] waiting… 450s left
+[b04] waiting… 420s left
+[b04] waiting… 390s left
+[b04] waiting… 360s left
+[b04] waiting… 330s left
+[b04] waiting… 300s left
+[b04] waiting… 270s left
+[b04] waiting… 240s left
+[b04] waiting… 210s left
+[b04] waiting… 180s left
+[b04] waiting… 150s left
+[b04] waiting… 120s left
+[b04] waiting… 90s left
+[b04] waiting… 60s left
+[b04] waiting… 30s left
+[b04] waiting… 0s left
+[b04] waiting… 0s left
+[b04] check verify_expiry_elapsed: ok (earliest_expires_at=2026-09-16T00:27:06.771046+00:00 skip_wait=False checked_at=2026-09-16T00:27:07.865673+00:00)
+[b04] check verify_pre_purge_expiry_state: ok (expect_visible=True; task-exp-1:status=expired,file=True; task-rev-1:status=expired,file=True; task-keep-1:status=active,file=True)
+[b04] check verify_survivor_readable_before_purge: ok (record=raw-865c4e7ef275b11f9a92b7f4c84a4361 sha_match=True)
+[b04] check verify_purge_deleted_only_expired: ok (deleted_records=2 expected=2 released_bytes=1700)
+[b04] check verify_purge_scope_state_dir: ok (removed=['raw-task-content/raw-39a721aada7c919dd036c52c6f292a7f.json', 'raw-task-content/raw-e6d9f6f27a87a1a7d9d41ec97723caf1.json'] added=[] modified=[])
+[b04] check verify_purge_removed_expired_kept_survivor: ok (task-exp-1:records=0,file=False; task-keep-1:records=1,file=True; task-rev-1:records=0,file=False)
+[b04] check verify_survivor_intact_after_purge: ok (record=raw-865c4e7ef275b11f9a92b7f4c84a4361)
+[b04] check verify_grants_not_deleted: ok (grant_files=['rawgrant-183b61c8cd0c1bc4bc87e4725990ce24.grant.json', 'rawgrant-20b6f19cf8ac48987699908fa4ee837c.grant.json', 'rawgrant-e423c904d0b7fa3544e5d9484067bd5e.grant.json'] grants_before=1 grants_after=1)
+[b04] check verify_revocation_record_retained: ok (revocation_files=['rawgrant-183b61c8cd0c1bc4bc87e4725990ce24.revocation.json'])
+[b04] check verify_receipts_not_deleted: ok (receipts_before=3 receipts_after=3)
+[b04] check verify_activities_not_deleted: ok (activities_before=3 activities_after=3)
+[b04] check verify_export_success: ok (activity=230408b3f21eb014… receipts=1)
+[b04] check verify_export_unknown_id_rejected: ok (HTTP 404 task_activity_not_found)
+[b04] check verify_export_requires_auth: ok (HTTP 401 unauthorized)
+[b04] verify daemon stopped
+[b04] verify evidence written: /tmp/siq-b04-bin/b04-verify3.json passed=True
+[b04] VERIFY-DONE passed=True

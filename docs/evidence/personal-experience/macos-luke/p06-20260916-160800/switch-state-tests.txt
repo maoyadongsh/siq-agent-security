@@ -1,0 +1,16 @@
+=== RUN   TestLaunchAgentSwitchPartialRecoveryAndDrift
+=== RUN   TestLaunchAgentSwitchPartialRecoveryAndDrift/before
+=== RUN   TestLaunchAgentSwitchPartialRecoveryAndDrift/plist
+=== RUN   TestLaunchAgentSwitchPartialRecoveryAndDrift/pair
+=== RUN   TestLaunchAgentSwitchPartialRecoveryAndDrift/drift
+--- PASS: TestLaunchAgentSwitchPartialRecoveryAndDrift (0.39s)
+    --- PASS: TestLaunchAgentSwitchPartialRecoveryAndDrift/before (0.11s)
+    --- PASS: TestLaunchAgentSwitchPartialRecoveryAndDrift/plist (0.11s)
+    --- PASS: TestLaunchAgentSwitchPartialRecoveryAndDrift/pair (0.10s)
+    --- PASS: TestLaunchAgentSwitchPartialRecoveryAndDrift/drift (0.08s)
+=== RUN   TestLaunchAgentSwitchRejectsLinuxJournalAndBadBindings
+--- PASS: TestLaunchAgentSwitchRejectsLinuxJournalAndBadBindings (0.08s)
+=== RUN   TestLaunchAgentSwitchRequiresOwnWriter
+--- PASS: TestLaunchAgentSwitchRequiresOwnWriter (0.06s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/state	0.868s

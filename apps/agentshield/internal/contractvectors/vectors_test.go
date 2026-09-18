@@ -13,6 +13,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/effectevidence"
 	"siq-agent-security/apps/agentshield/internal/provenance"
 	"siq-agent-security/apps/agentshield/internal/signing"
+	"siq-agent-security/apps/agentshield/internal/skillcontext"
 	"siq-agent-security/apps/agentshield/internal/trustedcontext"
 )
 
@@ -27,6 +28,8 @@ func TestSharedAuthorityEffectCanonicalVectors(t *testing.T) {
 		{"context-assertion", 7, &trustedcontext.Assertion{}},
 		{"provenance-assertion", 3, &provenance.Assertion{}},
 		{"effect-evidence", 7, &effectevidence.Evidence{}},
+		{"skill-execution-context", 7, &skillcontext.Context{}},
+		{"skill-execution-context-revocation", 7, &skillcontext.Revocation{}},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			var vector struct {
