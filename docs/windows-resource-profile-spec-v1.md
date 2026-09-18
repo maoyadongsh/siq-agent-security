@@ -18,6 +18,8 @@
 
 新版审批 BindingDigest 与 ScopeDigest 分别增加 `digest_schema=grant-approval-binding/v2`、`digest_schema=grant-approval-scope/v2`，两者都纳入 schema_version、filesystem_profile、filesystem_bindings。仅目录身份变化而路径文本、权限列表和修订号不变时，旧挑战也必须失效；旧 Grant 的两个摘要前像完全不变。反序列化时旧 Grant 拒绝新增字段的空值/null/大小写别名，新版拒绝未知字段和重复顶层键，避免新语义被丢弃后重新验签。
 
+状态写入门禁覆盖 GrantCommit、PutGrant/CAS 和底层版本化写入。判断 grants 命名空间时必须先按当前 OS 清理分隔符与导航分量，并在 Windows 上按不区分大小写比较，不能让 `GRANTS`、`grants/.` 等同目录拼写绕过检查。拒绝发生在目录、暂存文件或事务日志创建前；不替代现有状态目录路径检查。
+
 `grant-permissions/v2` 的摘要前像为完整新 Grant 的 canonical JSON 投影：仅删除顶层 status、effective_readback、signature、signing_schema；facts 中 tool 的 declared/effective 状态统一为 runtime_eligible，其他域删除 state；所有 facts 删除 authority、authority_revision、readback_evidence_id；保留其余字段，特别是 schema_version 与 filesystem_profile，再加入 digest_schema=`grant-permissions/v2`，最后计算 SHA-256。该投影复用旧 v1 的排除规则，但域标记和新增签名字段显式属于 v2；旧 v1 前像和摘要完全不变。新 Grant Schema 只检查外形，路径合法性、profile语义、allow/deny与实际文件身份必须在签发层及裁决层分别验证，不能以 Schema pass 代替。
 
 新增 `local-runtime-identity/v2`、create/v2、issued/v2；签名记录/返回视图含 filesystem_profile，其 grant_ref 明确 `permission_digest_schema=grant-permissions/v2`。create/v2 要求 `confirm_filesystem_profile=true`，但不接收可由请求自选的 profile 值；服务从已验签新 Grant 与可信实例来源派生，确认只表示用户明确接受展示的范围。当前首片仅支持 Windows 本地盘符解释。旧 identity/session 不升级；新版本恢复中断时复验完整同一解释、Grant/会话绑定和期限。

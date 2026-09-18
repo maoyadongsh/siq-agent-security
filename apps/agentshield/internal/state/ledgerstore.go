@@ -144,7 +144,8 @@ func (s *Store) stageVersion(subdir, fileID string, doc any) (tmp string, cleanu
 	if err != nil {
 		return "", nil, err
 	}
-	if subdir == "grants" {
+	namespace := filepath.Clean(subdir)
+	if namespace == "grants" || runtime.GOOS == "windows" && strings.EqualFold(namespace, "grants") {
 		if err := checkGrantProfileWrite(raw); err != nil {
 			return "", nil, err
 		}
