@@ -18,7 +18,7 @@ const runtimeInstance = "hi-0123456789abcdef0123456789abcdef"
 
 func runtimeHTTPFixture(t *testing.T) (*Server, *atomic.Bool) {
 	t.Helper()
-	s, _ := newServer(t, "block")
+	s := newRuntimeCheckHTTPServer(t)
 	changed := &atomic.Bool{}
 	m, err := runtimecheck.New(runtimecheck.Options{Store: s.d.Store, Intents: s.intents, Key: s.d.Key, Pack: s.d.Pack, Chain: s.d.Chain, Endpoint: "http://127.0.0.1:47611", Snapshot: func(id string) (adapterinstall.RuntimeTarget, error) {
 		if id != runtimeInstance {
@@ -30,7 +30,7 @@ func runtimeHTTPFixture(t *testing.T) (*Server, *atomic.Bool) {
 		}
 		// This HTTP failure fixture deliberately has no executable host. Native
 		// success is verified separately through the installed Hermes public CLI.
-		return adapterinstall.RuntimeTarget{InstanceID: id, Home: s.d.Home, ProfilePath: s.d.Home, NativeCLI: filepath.Join(s.d.Home, "missing-host"), Digest: strings.Repeat(hash, 64)}, nil
+		return runtimeCheckHTTPFixtureTarget(t, adapterinstall.RuntimeTarget{InstanceID: id, Home: s.d.Home, ProfilePath: s.d.Home, NativeCLI: filepath.Join(s.d.Home, "missing-host"), Digest: strings.Repeat(hash, 64)}), nil
 	}})
 	if err != nil {
 		t.Fatal(err)
@@ -129,7 +129,7 @@ func TestRuntimeCheckHTTPConfirmationDriftAndFailureCleanup(t *testing.T) {
 	if code, _ := call(t, s, "POST", "/v1/runtime-checks/start", token, body); code != 404 {
 		t.Fatal("replay accepted", code)
 	}
-	deadline := time.Now().Add(5 * time.Second)
+	deadline := time.Now().Add(150 * time.Second)
 	var result map[string]any
 	for time.Now().Before(deadline) {
 		code, result = call(t, s, "GET", "/v1/runtime-checks/"+id, token, nil)

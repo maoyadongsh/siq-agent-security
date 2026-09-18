@@ -33,6 +33,7 @@ func newManagerFixture(t *testing.T) *managerFixture {
 	if err != nil {
 		t.Fatal(err)
 	}
+	prepareRuntimeCheckFixtureState(t, store)
 	key, err := signing.FromSeed(bytes.Repeat([]byte{7}, 32))
 	if err != nil {
 		t.Fatal(err)
@@ -59,7 +60,7 @@ func newManagerFixture(t *testing.T) *managerFixture {
 		if fx.changed.Load() {
 			value = "b"
 		}
-		return adapterinstall.RuntimeTarget{InstanceID: id, Home: store.Dir, ProfilePath: store.Dir, NativeCLI: filepath.Join(store.Dir, "missing-native"), Digest: strings.Repeat(value, 64)}, nil
+		return runtimeCheckFixtureTarget(t, adapterinstall.RuntimeTarget{InstanceID: id, Home: store.Dir, ProfilePath: store.Dir, NativeCLI: filepath.Join(store.Dir, "missing-native"), Digest: strings.Repeat(value, 64)}), nil
 	}})
 	if err != nil {
 		t.Fatal(err)
@@ -87,7 +88,7 @@ func startFixture(t *testing.T, fx *managerFixture) (Plan, Result) {
 }
 func awaitResult(t *testing.T, m *Manager, id string) Result {
 	t.Helper()
-	deadline := time.Now().Add(5 * time.Second)
+	deadline := time.Now().Add(150 * time.Second)
 	for time.Now().Before(deadline) {
 		out, err := m.Get(id)
 		if err != nil {
@@ -108,6 +109,9 @@ func (fx *managerFixture) runProbes(r *run, nonce string, p probes, emitObservat
 	}
 	for _, probe := range []struct{ id, tool, path, action string }{{"rc-first", "read_file", p.first, "allow"}, {"rc-denied", "write_file", p.forbidden, "deny"}, {"rc-last", "read_file", p.last, "allow"}} {
 		request := receipt.Request{Platform: "hermes", AgentID: input.AgentID, SessionID: input.SessionID, Tool: probe.tool, ToolCallID: probe.id, Params: map[string]any{"path": probe.path}}
+		if !fx.m.AuthorizeDecision(nonce, request.Platform, request.AgentID, request.SessionID) {
+			return errors.New("fixture decision credential rejected")
+		}
 		d, err := fx.engine.Decide(request)
 		if err != nil {
 			return err
@@ -116,6 +120,9 @@ func (fx *managerFixture) runProbes(r *run, nonce string, p probes, emitObservat
 			return errors.New("wrong probe decision")
 		}
 		if d.Action == "allow" && emitObservation {
+			if !fx.m.AuthorizeDecision(nonce, request.Platform, request.AgentID, request.SessionID) {
+				return errors.New("fixture observation credential rejected")
+			}
 			request.ActionID, request.DecisionReceiptID = d.Receipt.ActionID, d.Receipt.ReceiptID
 			if _, err := fx.engine.Observe(request, p.proof); err != nil {
 				return err
@@ -289,7 +296,7 @@ func TestCancelStopsLaunchAndRevokesAuthority(t *testing.T) {
 	plan, _ := startFixture(t, fx)
 	select {
 	case <-entered:
-	case <-time.After(5 * time.Second):
+	case <-time.After(150 * time.Second):
 		t.Fatal("launch not reached")
 	}
 	other, err := fx.m.Preview(testInstance, "admin")

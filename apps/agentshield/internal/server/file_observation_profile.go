@@ -6,6 +6,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/effectevidence"
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 )
 
@@ -19,7 +20,7 @@ func (s *Server) fileActionProfile(a effectevidence.Action) (runtimeaction.Files
 		return "", effectevidence.ErrCorrelation
 	}
 	c, err := s.intents.Get(a.IntentID)
-	if err != nil || c.Digest != a.IntentDigest || c.TaskID != a.TaskID || c.Agent.ID != a.AgentID || c.Agent.Platform != a.Platform || c.Active(time.Now()) != nil {
+	if err != nil || c.SchemaVersion == intent.RuntimeCheckSchema || c.Digest != a.IntentDigest || c.TaskID != a.TaskID || c.Agent.ID != a.AgentID || c.Agent.Platform != a.Platform || c.Active(time.Now()) != nil {
 		return "", effectevidence.ErrCorrelation
 	}
 	current, binding, err := s.intents.ResolveBinding(a.Platform, a.SessionID, a.AgentID)

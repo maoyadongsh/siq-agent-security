@@ -78,16 +78,16 @@ func (c *Contract) UnmarshalJSON(raw []byte) error {
 	if json.Unmarshal(raw, &fields) != nil {
 		return violation("intent_invalid_contract")
 	}
-	if value.SchemaVersion == "intent/v4" && !exactProfileFields(raw, value) {
+	if (value.SchemaVersion == "intent/v4" || value.SchemaVersion == RuntimeCheckSchema) && !exactProfileFields(raw, value) {
 		return violation("intent_invalid_contract")
 	}
 	for name, rawValue := range fields {
 		for _, added := range []string{"authority_kind", "filesystem_profile"} {
-			if strings.EqualFold(name, added) && (name != added || value.SchemaVersion != "intent/v4" || bytes.Equal(bytes.TrimSpace(rawValue), []byte("null"))) {
+			if strings.EqualFold(name, added) && (name != added || (value.SchemaVersion != "intent/v4" && value.SchemaVersion != RuntimeCheckSchema) || bytes.Equal(bytes.TrimSpace(rawValue), []byte("null"))) {
 				return violation("intent_invalid_contract")
 			}
 		}
-		if value.SchemaVersion == "intent/v4" && (strings.EqualFold(name, "provenance_constraints") || strings.EqualFold(name, "effect_requirements") || strings.EqualFold(name, "provenance_refs")) {
+		if (value.SchemaVersion == "intent/v4" || value.SchemaVersion == RuntimeCheckSchema) && (strings.EqualFold(name, "provenance_constraints") || strings.EqualFold(name, "effect_requirements") || strings.EqualFold(name, "provenance_refs")) {
 			return violation("intent_invalid_contract")
 		}
 	}

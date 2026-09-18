@@ -41,6 +41,9 @@ func (c Contract) Validate() error {
 	if c.SchemaVersion == "intent/v4" && (c.Authority.Issuer != "local-runtime-identity" || len(c.ProvenanceRefs) != 0) {
 		return violation("intent_invalid_contract")
 	}
+	if err := c.validateRuntimeCheck(); err != nil {
+		return err
+	}
 	if c.EffectRequirements != nil {
 		if c.SchemaVersion != "intent/v3" || len(*c.EffectRequirements) > 128 {
 			return violation("intent_invalid_contract")
@@ -92,7 +95,7 @@ func (c Contract) Validate() error {
 		if err := validateOperator(r.Operator, r.Value, nil, true); err != nil {
 			return err
 		}
-		if c.SchemaVersion == "intent/v4" && r.Domain == "filesystem" && r.Operator != "equals" && r.Operator != "one_of" && r.Operator != "prefix" {
+		if c.windowsProfileContract() && r.Domain == "filesystem" && r.Operator != "equals" && r.Operator != "one_of" && r.Operator != "prefix" {
 			return violation("intent_invalid_resource_constraint")
 		}
 		values := []any{r.Value}
@@ -104,7 +107,7 @@ func (c Contract) Validate() error {
 			if !ok || str == "" {
 				return violation("intent_invalid_resource_constraint")
 			}
-			if c.SchemaVersion != "intent/v4" && r.Domain == "filesystem" && r.Operator != "regex" && (!path.IsAbs(str) || strings.Contains(str, `\`)) {
+			if !c.windowsProfileContract() && r.Domain == "filesystem" && r.Operator != "regex" && (!path.IsAbs(str) || strings.Contains(str, `\`)) {
 				return violation("intent_invalid_resource_constraint")
 			}
 			if r.Operator == "equals" || r.Operator == "one_of" || (r.Domain == "filesystem" && r.Operator != "regex") {

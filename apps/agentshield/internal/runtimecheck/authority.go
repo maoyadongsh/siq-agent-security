@@ -11,6 +11,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/intent"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"siq-agent-security/apps/agentshield/internal/state"
 )
 
@@ -20,6 +21,11 @@ type probes struct{ dir, first, last, forbidden, proof string }
 // uses the existing signed stores; the model never approves or holds admin keys.
 func (m *Manager) prepare(r *run) (probes, error) {
 	p := probes{dir: m.materials(r.record.Result.ID)}
+	target, err := m.snapshot(r.record.Result.InstanceID)
+	if err != nil || target.Digest != r.record.Result.Snapshot {
+		return p, errors.New("runtime_check_snapshot_changed")
+	}
+	windows := target.FilesystemProfile == runtimeaction.FilesystemWindowsLocalDriveV1
 	if err := statefs.Mkdir(p.dir, 0700); err != nil {
 		return p, errors.New("runtime_check_materials_failed")
 	}
@@ -56,7 +62,13 @@ func (m *Manager) prepare(r *run) (probes, error) {
 	if err != nil {
 		return p, errors.New("runtime_check_deadline_invalid")
 	}
-	built, err := grant.Build(adm.Admission, grant.Options{Subject: grant.Subject{Type: "agent_instance", ID: agentID(r.record.Result.ID)}, Platform: "hermes", Key: m.o.Key, ExpiresAt: &deadline})
+	opts := grant.Options{Subject: grant.Subject{Type: "agent_instance", ID: agentID(r.record.Result.ID)}, Platform: "hermes", Key: m.o.Key, ExpiresAt: &deadline}
+	var built *grant.Result
+	if windows {
+		built, err = grant.BuildRuntimeCheckDraft(adm.Admission, opts, r.id)
+	} else {
+		built, err = grant.Build(adm.Admission, opts)
+	}
 	if err != nil {
 		return p, errors.New("runtime_check_grant_failed")
 	}
@@ -73,7 +85,17 @@ func (m *Manager) prepare(r *run) (probes, error) {
 	if err = commit(built.Grant, built.DesiredPolicy, "runtime_check_grant_create"); err != nil {
 		return p, errors.New("runtime_check_authority_persist_failed")
 	}
-	g, policy, err := grant.PatchDesired(built.Grant, grant.DesiredPatch{HasFilesystem: true, Filesystem: &grant.FilesystemPatch{ReadOnly: []string{allowed}, ReadWrite: []string{}}}, m.o.Key)
+	var g grant.Grant
+	var policy grant.DesiredPolicy
+	if windows {
+		allowed, err = runtimeaction.NormalizeResourceForProfile(runtimeaction.FilesystemWindowsLocalDriveV1, "filesystem", allowed)
+		if err != nil {
+			return p, errors.New("runtime_check_grant_failed")
+		}
+		g, policy, err = grant.PrepareWindowsResources(built.Grant, grant.ResourceEdit{Tools: []string{"read_file"}, Network: []grant.NetworkPatch{}, Models: []string{}, Filesystem: grant.FilesystemPatch{ReadOnly: []string{allowed}, ReadWrite: []string{}}}, true, m.o.Key)
+	} else {
+		g, policy, err = grant.PatchDesired(built.Grant, grant.DesiredPatch{HasFilesystem: true, Filesystem: &grant.FilesystemPatch{ReadOnly: []string{allowed}, ReadWrite: []string{}}}, m.o.Key)
+	}
 	if err != nil || commit(g, policy, "runtime_check_grant_scope") != nil {
 		return p, errors.New("runtime_check_grant_failed")
 	}
@@ -93,7 +115,13 @@ func (m *Manager) prepare(r *run) (probes, error) {
 		return p, errors.New("runtime_check_authority_persist_failed")
 	}
 	now := time.Now().UTC().Add(-time.Second).Format(time.RFC3339Nano)
-	c, err := m.o.Intents.Issue(intent.Contract{SchemaVersion: "intent/v2", IntentID: r.record.IntentID, TaskID: "rct-" + strings.TrimPrefix(r.record.Result.ID, "rc-"), Principal: intent.Principal{Type: "user", ID: r.record.Actor}, Agent: intent.Agent{ID: agentID(r.record.Result.ID), Platform: "hermes"}, Purpose: "Read SIQ generated runtime check files", AllowedTools: []string{"read_file"}, AllowedEffects: []string{"file.read"}, ResourceConstraints: []intent.ResourceConstraint{{Domain: "filesystem", Operator: "prefix", Value: allowed}}, ParameterConstraints: []intent.ParameterConstraint{}, IssuedAt: now, ValidFrom: now, ExpiresAt: deadline.Format(time.RFC3339Nano), Authority: intent.Authority{Issuer: "local-admin", Revision: "runtime-check/v1", EvidenceIDs: []string{}}})
+	envelope := intent.Contract{SchemaVersion: "intent/v2", IntentID: r.record.IntentID, TaskID: "rct-" + strings.TrimPrefix(r.record.Result.ID, "rc-"), Principal: intent.Principal{Type: "user", ID: r.record.Actor}, Agent: intent.Agent{ID: agentID(r.record.Result.ID), Platform: "hermes"}, Purpose: "Read SIQ generated runtime check files", AllowedTools: []string{"read_file"}, AllowedEffects: []string{"file.read"}, ResourceConstraints: []intent.ResourceConstraint{{Domain: "filesystem", Operator: "prefix", Value: allowed}}, ParameterConstraints: []intent.ParameterConstraint{}, IssuedAt: now, ValidFrom: now, ExpiresAt: deadline.Format(time.RFC3339Nano), Authority: intent.Authority{Issuer: "local-admin", Revision: "runtime-check/v1", EvidenceIDs: []string{}}}
+	if windows {
+		envelope.SchemaVersion, envelope.AuthorityKind, envelope.FilesystemProfile = intent.RuntimeCheckSchema, "runtime_check", string(runtimeaction.FilesystemWindowsLocalDriveV1)
+		envelope.IssuedAt, envelope.ValidFrom = r.record.Result.StartedAt, r.record.Result.StartedAt
+		envelope.Authority = intent.Authority{Issuer: "local-runtime-check", Revision: r.record.Result.Snapshot, EvidenceIDs: []string{}}
+	}
+	c, err := m.o.Intents.Issue(envelope)
 	if err != nil {
 		return p, errors.New("runtime_check_intent_failed")
 	}

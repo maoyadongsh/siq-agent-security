@@ -59,6 +59,10 @@ func (s *Server) intentCollection(w http.ResponseWriter, r *http.Request) {
 		}
 		// Managed Windows envelopes are issued only by authenticated instance
 		// enrollment, never by a caller claiming the internal issuer name.
+		if c.SchemaVersion == intent.RuntimeCheckSchema {
+			writeJSON(w, 400, map[string]string{"error": "intent_runtime_check_issuer_required"})
+			return
+		}
 		if c.SchemaVersion == "intent/v4" {
 			writeJSON(w, 400, map[string]string{"error": "intent_managed_issuer_required"})
 			return
@@ -140,6 +144,15 @@ func (s *Server) bindingCollection(w http.ResponseWriter, r *http.Request) {
 			ExpiresAt             string          `json:"expires_at"`
 		}
 		if !readAuthority(w, r, &body) {
+			return
+		}
+		contract, lookupErr := s.intents.Get(body.IntentID)
+		if lookupErr != nil {
+			intentError(w, lookupErr)
+			return
+		}
+		if contract.SchemaVersion == intent.RuntimeCheckSchema {
+			writeJSON(w, 400, map[string]string{"error": "intent_runtime_check_binding_required"})
 			return
 		}
 		input := intent.Binding{Platform: body.Platform, SessionID: body.SessionID, AgentID: body.AgentID, TaskID: body.TaskID, IntentID: body.IntentID, ExpiresAt: body.ExpiresAt}

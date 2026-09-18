@@ -99,7 +99,7 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 	if descriptor.ResourceError == runtimeaction.ErrParameterBudget {
 		return violation("runtime_parameter_budget_exceeded")
 	}
-	if c.SchemaVersion == "intent/v4" && descriptor.ResourceError != nil {
+	if c.windowsProfileContract() && descriptor.ResourceError != nil {
 		return violation("intent_resource_not_allowed")
 	}
 	for _, effect := range descriptor.Effects {

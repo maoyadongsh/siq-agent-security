@@ -80,7 +80,7 @@ func (s *Store) bind(b Binding) (Binding, error) {
 	if err != nil {
 		return b, err
 	}
-	if c.SchemaVersion == "intent/v4" {
+	if c.windowsProfileContract() {
 		b.SchemaVersion = "intent-grant-binding/v2"
 	}
 	if !bindingProfileMatches(c, b, g) {
