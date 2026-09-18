@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"siq-agent-security/apps/agentshield/internal/privatefs"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
@@ -66,6 +67,9 @@ func migrationExcluded(rel string) bool {
 }
 func snapshotMigration(dir string) ([]MigrationEntry, error) { return snapshotMigrationTree(dir, true) }
 func snapshotMigrationTree(dir string, exclude bool) ([]MigrationEntry, error) {
+	if err := privatefs.CheckDir(dir); err != nil {
+		return nil, err
+	}
 	entries := []MigrationEntry{}
 	var total int64
 	err := filepath.WalkDir(dir, func(p string, d os.DirEntry, e error) error {
@@ -93,12 +97,17 @@ func snapshotMigrationTree(dir string, exclude bool) ([]MigrationEntry, error) {
 		if e != nil || (!info.IsDir() && !info.Mode().IsRegular()) || info.Mode()&(os.ModeSetuid|os.ModeSetgid|os.ModeSticky) != 0 {
 			return errors.New("state-migrate: nonregular entry rejected")
 		}
+		if info.IsDir() {
+			if err := privatefs.CheckDir(p); err != nil {
+				return err
+			}
+		}
 		row := MigrationEntry{Path: rel, Mode: uint32(info.Mode().Perm()), Directory: info.IsDir()}
 		if !row.Directory {
 			if info.Size() > migrationMaxFile || total+info.Size() > migrationMaxBytes {
 				return errors.New("state-migrate: backup byte budget exceeded")
 			}
-			b, e := stateformat.ReadRegular(p, migrationMaxFile)
+			b, e := privatefs.ReadFile(p, migrationMaxFile)
 			if e != nil {
 				return errors.New("state-migrate: source changed")
 			}
@@ -124,13 +133,34 @@ func migrationSync(dir string) error {
 	return f.Sync()
 }
 
+// Migration owns the active compatibility barrier, so its private reads cannot
+// use the ordinary statefs wrapper. Keep the pre-existing POSIX reader intact.
+func migrationReadRegular(path string, limit int64) ([]byte, error) {
+	if runtime.GOOS != "windows" {
+		return stateformat.ReadRegular(path, limit)
+	}
+	if err := stateformat.ValidatePath(path); err != nil {
+		return nil, err
+	}
+	if err := privatefs.CheckDir(filepath.Dir(path)); err != nil {
+		return nil, err
+	}
+	return privatefs.ReadFile(path, limit)
+}
+
 // Migration-only raw publication. Callers hold every writer and validate the
 // immutable plan. Ordinary statefs intentionally refuses this active barrier.
 func migrationPublish(root, path string, b []byte, mode os.FileMode) (resultErr error) {
+	if err := privatefs.CheckDir(root); err != nil {
+		return err
+	}
+	if err := privatefs.CheckDir(filepath.Dir(path)); err != nil {
+		return err
+	}
 	if e := stateformat.CheckParents(filepath.Dir(path)); e != nil {
 		return e
 	}
-	if old, e := stateformat.ReadRegular(path, migrationMaxFile); e == nil {
+	if old, e := privatefs.ReadFile(path, migrationMaxFile); e == nil {
 		info, se := os.Lstat(path)
 		if se != nil || string(old) != string(b) || !migrationModeMatches(info.Mode(), mode) {
 			return errors.New("state-migrate: existing output differs")
@@ -143,7 +173,7 @@ func migrationPublish(root, path string, b []byte, mode os.FileMode) (resultErr 
 	if e := migrationPrivateDir(scratch); e != nil {
 		return e
 	}
-	f, e := os.CreateTemp(scratch, ".migration-*")
+	f, e := privatefs.CreateTemp(scratch, ".migration-*")
 	if e != nil {
 		return e
 	}
@@ -179,6 +209,12 @@ func migrationModeMatches(actual, requested os.FileMode) bool {
 }
 
 func migrationMkdir(path string, mode os.FileMode) error {
+	if runtime.GOOS == "windows" {
+		if err := privatefs.MkdirAll(path); err != nil {
+			return err
+		}
+		return migrationSync(filepath.Dir(path))
+	}
 	if e := os.Mkdir(path, mode); e != nil && !errors.Is(e, os.ErrExist) {
 		return e
 	}
@@ -252,15 +288,15 @@ func verifyMigrationSource(dir string, p MigrationPlan) error {
 	if !reflect.DeepEqual(withoutMarker(actual), withoutMarker(p.Entries)) {
 		return errors.New("state-migrate: source data changed; retain state and backup")
 	}
-	raw, e := stateformat.ReadRegular(filepath.Join(dir, stateformat.MarkerName), stateformat.Budget)
+	raw, e := migrationReadRegular(filepath.Join(dir, stateformat.MarkerName), stateformat.Budget)
 	if errors.Is(e, os.ErrNotExist) {
 		if p.SourceMarker == "absent" {
 			return nil
 		}
 		// Some filesystems may lose the directory entry across a failed rename.
 		// Only a completed backup and the exact prepared target authorize recovery.
-		cp, ce := stateformat.ReadRegular(filepath.Join(dir, stateformat.MigrationDir, "backup.done.json"), 4096)
-		staged, se := stateformat.ReadRegular(filepath.Join(dir, stateformat.MigrationDir, "target.json"), 4096)
+		cp, ce := migrationReadRegular(filepath.Join(dir, stateformat.MigrationDir, "backup.done.json"), 4096)
+		staged, se := migrationReadRegular(filepath.Join(dir, stateformat.MigrationDir, "target.json"), 4096)
 		var proof struct {
 			Plan string `json:"plan_sha256"`
 		}
@@ -330,7 +366,7 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 		locks = append(locks, w)
 	}
 	var plan MigrationPlan
-	raw, e := stateformat.ReadRegular(planPath, 8<<20)
+	raw, e := migrationReadRegular(planPath, 8<<20)
 	if errors.Is(e, os.ErrNotExist) {
 		target, e := s.newFormatMarker(version)
 		if e != nil {
@@ -341,7 +377,7 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 			return result, e
 		}
 		source := "absent"
-		if b, e := stateformat.ReadRegular(filepath.Join(s.Dir, stateformat.MarkerName), stateformat.Budget); e == nil {
+		if b, e := migrationReadRegular(filepath.Join(s.Dir, stateformat.MarkerName), stateformat.Budget); e == nil {
 			source = stateformat.Hash(b)
 		} else if !errors.Is(e, os.ErrNotExist) {
 			return result, e
@@ -410,9 +446,9 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 		if row.Directory {
 			e = migrationMkdir(dest, 0700)
 		} else {
-			b, re := stateformat.ReadRegular(dest, migrationMaxFile)
+			b, re := migrationReadRegular(dest, migrationMaxFile)
 			if errors.Is(re, os.ErrNotExist) {
-				b, re = stateformat.ReadRegular(filepath.Join(s.Dir, filepath.FromSlash(row.Path)), migrationMaxFile)
+				b, re = migrationReadRegular(filepath.Join(s.Dir, filepath.FromSlash(row.Path)), migrationMaxFile)
 			}
 			if re != nil || int64(len(b)) != row.Size || stateformat.Hash(b) != row.SHA256 {
 				return result, errors.New("state-migrate: backup or source integrity mismatch")
@@ -455,7 +491,7 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 	}
 	target := migrationJSON(plan.Target)
 	live := filepath.Join(s.Dir, stateformat.MarkerName)
-	existing, re := stateformat.ReadRegular(live, stateformat.Budget)
+	existing, re := migrationReadRegular(live, stateformat.Budget)
 	if re != nil && !errors.Is(re, os.ErrNotExist) {
 		return result, re
 	}
@@ -502,12 +538,12 @@ func (s *Store) finishMigrationBarrier(raw []byte) error {
 	if e := stateformat.Check(s.Dir, true, false); e != nil {
 		return e
 	}
-	archive, e := stateformat.ReadRegular(filepath.Join(s.Dir, stateformat.MigrationDir, "plan.json"), 8<<20)
+	archive, e := migrationReadRegular(filepath.Join(s.Dir, stateformat.MigrationDir, "plan.json"), 8<<20)
 	if e != nil || string(archive) != string(raw) {
 		return errors.New("state-migrate: archived plan mismatch")
 	}
 	active := filepath.Join(s.Dir, stateformat.PlanName)
-	current, e := stateformat.ReadRegular(active, 8<<20)
+	current, e := migrationReadRegular(active, 8<<20)
 	if e != nil || string(current) != string(raw) {
 		return errors.New("state-migrate: active plan changed")
 	}

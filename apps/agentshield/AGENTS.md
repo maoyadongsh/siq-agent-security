@@ -41,6 +41,10 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 
 ## 测试要求
 
+Windows 私密状态按 dev-spec §2 的限定例外，允许 `internal/privatefs/*_windows.go` 使用标准库 `syscall`/`unsafe` 查询文件句柄安全描述符、构造受限 DACL 并在新对象创建时传入。禁止改已有对象 ACL、提权、调用外部权限工具或让其他平台直接引用 Windows API；保留兼容屏障和仅标准库约束。
+
+ACL 负向测试允许仅由 `_test.go` 引用的 `internal/acltest` 辅助包使用同类标准库 API 修改本次测试临时根内的合成对象 DACL，并在结束时还原测试夹具；不得用于产品代码或真实用户对象。
+
 Windows Writer 恢复按 dev-spec §2.3 的限定例外，允许在 `_windows.go` 中使用标准库 `syscall`/`unsafe` 调用进程只读查询和文件句柄重命名 API；独占创建仍用 `O_EXCL`，不引入第三方依赖、进程终止、提权或新的平台服务。跨平台文件不得直接引用这些 API，其他平台构建保持通过。
 
 N01 Windows 迁移暂存清理按 `docs/n01-state-protocol-design-20260913.md` 的限定例外，允许同样通过标准库 Win32 句柄删除本次创建且身份复验一致的暂存链接；禁止通过清除只读位删除硬链接，禁止清理未知对象。

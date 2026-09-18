@@ -36,7 +36,7 @@ func privateDir(dir string) error {
 	if err := checkAncestors(filepath.Dir(dir)); err != nil {
 		return err
 	}
-	if err := statefs.Mkdir(dir, 0700); err != nil && !errors.Is(err, os.ErrExist) {
+	if err := statefs.MkdirAllPrivate(dir); err != nil && !errors.Is(err, os.ErrExist) {
 		return err
 	}
 	if err := checkAncestors(dir); err != nil {
@@ -55,7 +55,7 @@ func publish(path string, b []byte) error {
 	if err := privateDir(filepath.Dir(path)); err != nil {
 		return err
 	}
-	f, err := statefs.CreateTemp(filepath.Dir(path), ".runtime-identity-*")
+	f, err := statefs.CreatePrivateTemp(filepath.Dir(path), ".runtime-identity-*")
 	if err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func readJSON(path string, out any) error {
 	if !info.Mode().IsRegular() || info.Size() > maxRecordBytes || (runtime.GOOS != "windows" && info.Mode().Perm()&0077 != 0) {
 		return ErrInvalid
 	}
-	f, err := statefs.Open(path)
+	f, err := statefs.OpenPrivate(path)
 	if err != nil {
 		return err
 	}

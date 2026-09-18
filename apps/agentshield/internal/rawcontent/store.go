@@ -7,6 +7,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
@@ -177,6 +178,13 @@ func OpenExisting(stateDir string, limits Limits) (*Store, error) {
 	if stateDir == "" || !limits.valid() {
 		return nil, ErrInvalid
 	}
+	if runtime.GOOS == "windows" {
+		if err := statefs.CheckPrivateDir(stateDir); errors.Is(err, os.ErrNotExist) {
+			return nil, ErrDisabled
+		} else if err != nil {
+			return nil, ErrState
+		}
+	}
 	key, err := readKey(keyPath(stateDir))
 	if errors.Is(err, os.ErrNotExist) {
 		return nil, ErrDisabled
@@ -198,7 +206,10 @@ func Initialize(stateDir string, limits Limits) (*Store, error) {
 	if stateDir == "" || !limits.valid() {
 		return nil, ErrInvalid
 	}
-	if err := statefs.MkdirAll(filepath.Join(stateDir, "keys"), 0700); err != nil {
+	if err := statefs.MkdirAllPrivate(stateDir); err != nil {
+		return nil, ErrState
+	}
+	if err := statefs.MkdirAllPrivate(filepath.Join(stateDir, "keys")); err != nil {
 		return nil, ErrState
 	}
 	path := keyPath(stateDir)
@@ -207,7 +218,7 @@ func Initialize(stateDir string, limits Limits) (*Store, error) {
 		if _, err := io.ReadFull(random, key); err != nil {
 			return nil, ErrState
 		}
-		f, err := statefs.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+		f, err := statefs.CreatePrivate(path)
 		if err != nil {
 			return nil, ErrState
 		}
@@ -220,13 +231,16 @@ func Initialize(stateDir string, limits Limits) (*Store, error) {
 	} else if err != nil {
 		return nil, ErrState
 	}
-	if err := statefs.Mkdir(contentDir(stateDir), 0700); err != nil && !errors.Is(err, os.ErrExist) {
+	if err := statefs.MkdirAllPrivate(contentDir(stateDir)); err != nil && !errors.Is(err, os.ErrExist) {
 		return nil, ErrState
 	}
 	return OpenExisting(stateDir, limits)
 }
 
 func privateDir(path string) error {
+	if err := statefs.CheckPrivateDir(path); err != nil {
+		return ErrState
+	}
 	info, err := os.Lstat(path)
 	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 || (runtime.GOOS != "windows" && info.Mode().Perm()&0077 != 0) {
 		return ErrState
@@ -242,7 +256,7 @@ func readKey(path string) ([]byte, error) {
 	if !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 || info.Size() > 128 || (runtime.GOOS != "windows" && info.Mode().Perm()&0077 != 0) {
 		return nil, ErrState
 	}
-	raw, err := statefs.ReadFile(path)
+	raw, err := statefs.ReadPrivateFile(path, 128)
 	if err != nil {
 		return nil, ErrState
 	}
@@ -258,6 +272,21 @@ func aad(e Envelope) []byte {
 	copy.Nonce, copy.Ciphertext = "", ""
 	raw, _ := json.Marshal(copy)
 	return raw
+}
+
+func (s *Store) checkCachedKey() error {
+	if runtime.GOOS != "windows" {
+		return nil
+	}
+	root := filepath.Dir(s.dir)
+	if statefs.CheckPrivateDir(root) != nil {
+		return ErrState
+	}
+	current, err := readKey(keyPath(root))
+	if err != nil || subtle.ConstantTimeCompare(current, s.key) != 1 {
+		return ErrState
+	}
+	return nil
 }
 
 func (s *Store) diskBytes() (int64, error) {
@@ -287,6 +316,9 @@ func (s *Store) diskBytes() (int64, error) {
 func (s *Store) write(taskID string, content Prepared, retention time.Duration, now time.Time) (Envelope, error) {
 	storeMu.Lock()
 	defer storeMu.Unlock()
+	if err := s.checkCachedKey(); err != nil {
+		return Envelope{}, err
+	}
 	ref, ok := taskRef(taskID)
 	if !ok || now.IsZero() || retention < MinRetention || retention > s.limits.Retention || len(content.raw) == 0 || len(content.raw) > MaxPlaintext || privateDir(s.dir) != nil {
 		return Envelope{}, ErrInvalid
@@ -321,7 +353,7 @@ func (s *Store) write(taskID string, content Prepared, retention time.Duration, 
 		return Envelope{}, ErrBudget
 	}
 	path := filepath.Join(s.dir, e.RecordID+".json")
-	f, err := statefs.CreateTemp(s.dir, ".pending-content-*")
+	f, err := statefs.CreatePrivateTemp(s.dir, ".pending-content-*")
 	if err != nil {
 		return Envelope{}, ErrState
 	}
@@ -351,7 +383,11 @@ func (s *Store) readEnvelope(id string) (Envelope, error) {
 	if !before.Mode().IsRegular() || before.Mode()&os.ModeSymlink != 0 || before.Size() > 2<<20 {
 		return e, ErrState
 	}
-	f, err := fileopen.Regular(path)
+	open := fileopen.Regular
+	if runtime.GOOS == "windows" {
+		open = statefs.OpenPrivate
+	}
+	f, err := open(path)
 	if err != nil {
 		return e, ErrState
 	}
@@ -377,6 +413,9 @@ func (s *Store) readEnvelope(id string) (Envelope, error) {
 }
 
 func (s *Store) decryptEnvelope(e Envelope) (payload, error) {
+	if err := s.checkCachedKey(); err != nil {
+		return payload{}, err
+	}
 	nonce, nerr := base64.StdEncoding.Strict().DecodeString(e.Nonce)
 	ciphertext, cerr := base64.StdEncoding.Strict().DecodeString(e.Ciphertext)
 	block, berr := aes.NewCipher(s.key)

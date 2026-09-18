@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/privatefs"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"strconv"
 	"strings"
@@ -67,7 +68,10 @@ func acquireWriterChecked(dir, compatDir string, check func() error) (*Writer, e
 	if err := check(); err != nil {
 		return nil, err
 	}
-	if err := os.MkdirAll(dir, 0o700); err != nil {
+	if err := privatefs.MkdirAll(compatDir); err != nil {
+		return nil, err
+	}
+	if err := privatefs.MkdirAll(dir); err != nil {
 		return nil, err
 	}
 	path := filepath.Join(dir, LockFile)

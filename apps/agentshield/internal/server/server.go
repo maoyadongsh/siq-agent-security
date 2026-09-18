@@ -43,30 +43,31 @@ import (
 
 // Deps wires the server.
 type Deps struct {
-	StopWriter    *state.Writer // current serve writer; required with RequestStop
-	RequestStop   func()        // nonblocking notification, after durable acceptance
-	HermesOS      string        // optional platform path policy injection for deterministic tests
-	HermesHome    string        // explicit native profile root override, captured by launcher
-	HermesCLI     string        // optional absolute Hermes executable
-	LocalAppData  string        // native Windows home base, injected for deterministic tests
-	Store         *state.Store
-	Engine        *receipt.Engine
-	Chain         *receipt.Chain
-	Pack          *rulepack.Pack
-	Key           *signing.Key
-	Token         string
-	RecoveryToken string // local launcher only; never distributed to adapters
-	Version       string
-	Mode          string
-	UI            http.Handler // optional embedded console
-	Home          string       // override os.UserHomeDir (tests + adapter HTTP)
-	Binary        string       // agentshield path written into adapter configs
-	Endpoint      string       // decision API URL written into adapter configs
-	Openshell     *openshell.Client
-	ListenHost    string              // bind address advertised for Host allowlisting (default 127.0.0.1)
-	ListenPort    int                 // must match the actual listen port
-	PairingCode   string              // tests only; production serve generates a random code
-	SkillContexts *skillcontext.Store // exact store also used by receipt.Engine in production
+	StopWriter        *state.Writer // current serve writer; required with RequestStop
+	RequestStop       func()        // nonblocking notification, after durable acceptance
+	HermesOS          string        // optional platform path policy injection for deterministic tests
+	HermesHome        string        // explicit native profile root override, captured by launcher
+	HermesCLI         string        // optional absolute Hermes executable
+	LocalAppData      string        // native Windows home base, injected for deterministic tests
+	Store             *state.Store
+	Engine            *receipt.Engine
+	Chain             *receipt.Chain
+	Pack              *rulepack.Pack
+	Key               *signing.Key
+	Token             string
+	RecoveryToken     string       // local launcher only; never distributed to adapters
+	CheckPrivateState func() error // production launcher supplies the cached-credential guard
+	Version           string
+	Mode              string
+	UI                http.Handler // optional embedded console
+	Home              string       // override os.UserHomeDir (tests + adapter HTTP)
+	Binary            string       // agentshield path written into adapter configs
+	Endpoint          string       // decision API URL written into adapter configs
+	Openshell         *openshell.Client
+	ListenHost        string              // bind address advertised for Host allowlisting (default 127.0.0.1)
+	ListenPort        int                 // must match the actual listen port
+	PairingCode       string              // tests only; production serve generates a random code
+	SkillContexts     *skillcontext.Store // exact store also used by receipt.Engine in production
 }
 
 // Server is the HTTP handler set.
@@ -137,6 +138,11 @@ func New(d Deps) (*Server, error) {
 	}
 	if err := state.RequireStateCompatibility(d.Store.Dir); err != nil {
 		return nil, err
+	}
+	if d.CheckPrivateState != nil {
+		if err := d.CheckPrivateState(); err != nil {
+			return nil, errors.New("server: state_private_permissions")
+		}
 	}
 	s := &Server{d: d, mux: http.NewServeMux(), skillContexts: d.SkillContexts}
 	var err error
@@ -324,6 +330,10 @@ func (s *Server) Handler() http.Handler {
 		}
 		if err := state.RequireStateCompatibility(s.d.Store.Dir); err != nil {
 			writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "state_incompatible"})
+			return
+		}
+		if s.d.CheckPrivateState != nil && s.d.CheckPrivateState() != nil {
+			writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "state_private_permissions"})
 			return
 		}
 		s.mux.ServeHTTP(w, r)

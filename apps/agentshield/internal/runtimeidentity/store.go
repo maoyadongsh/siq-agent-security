@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -22,6 +23,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/signing"
+	"siq-agent-security/apps/agentshield/internal/statefs"
 )
 
 const maxIdentities = 512
@@ -95,6 +97,9 @@ func Open(dir string, key *signing.Key, intents *intent.Store, resolve ResolveIn
 		return nil, ErrInvalid
 	}
 	dir = filepath.Clean(dir)
+	if err := statefs.CheckPrivateDir(dir); err != nil {
+		return nil, ErrUnavailable
+	}
 	for _, name := range []string{"runtime-identities", "runtime-identity-secrets", "runtime-identity-revocations"} {
 		if err := privateDir(filepath.Join(dir, name)); err != nil {
 			return nil, ErrUnavailable
@@ -318,6 +323,12 @@ func (s *Store) Authenticate(token string) (Record, error) {
 func (s *Store) authenticate(token string) (Record, error) {
 	if len(token) != 100 || token[35] != '.' || !identityID.MatchString(token[:35]) || !hexDigest.MatchString(token[36:]) {
 		return Record{}, ErrInvalid
+	}
+	if runtime.GOOS == "windows" {
+		path, _ := s.CredentialPath(token[:35])
+		if statefs.CheckPrivateDir(s.dir) != nil || statefs.CheckPrivateFile(path) != nil {
+			return Record{}, ErrUnavailable
+		}
 	}
 	r, err := s.read(token[:35])
 	if err != nil {
