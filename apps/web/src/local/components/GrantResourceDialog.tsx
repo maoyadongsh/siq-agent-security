@@ -45,7 +45,7 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
   }, [grantId, retry]);
   const currentProfile = grant ? grantFilesystemProfile(grant) : 'unsupported';
   const editable = grant?.status === 'pending_approval' && currentProfile !== 'unsupported' && !loading && !loadFailed && !busy;
-  const windowsAvailable = grant?.subject.type === 'agent_instance' && !grant.skill && ['hermes', 'openclaw'].includes(grant.platform);
+  const windowsAvailable = grant?.subject.type === 'agent_instance' && !grant.skill && ['hermes', 'openclaw', 'workbuddy'].includes(grant.platform);
   const windows = filesystem === windowsFilesystemProfile;
   const filesystemConfirmation = grant ? resourceFilesystemConfirmation(grant, filesystem, confirmedFilesystem) : null;
   const pathLines = windows ? windowsPathLines : lines;

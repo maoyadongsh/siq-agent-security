@@ -30,7 +30,7 @@ export function resourceFilesystemConfirmation(grant: Grant, selected: DisplayFi
   const current = grantFilesystemProfile(grant);
   if (current === 'unsupported' || selected === 'unsupported' || (current === windowsFilesystemProfile && selected !== current)) return null;
   if (selected === 'posix/v1') return { profile: 'posix/v1' };
-  if (selected !== windowsFilesystemProfile || !confirmed || grant.subject.type !== 'agent_instance' || grant.skill || !['hermes', 'openclaw'].includes(grant.platform)) return null;
+  if (selected !== windowsFilesystemProfile || !confirmed || grant.subject.type !== 'agent_instance' || grant.skill || !['hermes', 'openclaw', 'workbuddy'].includes(grant.platform)) return null;
   return { profile: windowsFilesystemProfile, confirmed: true };
 }
 
@@ -43,6 +43,6 @@ export function identityFilesystemReviewKey(platform: string, instanceId: string
 export function identityFilesystemConfirmation(platform: string, instanceId: string, grant: Grant | undefined, reviewedKey: string): FilesystemConfirmation | null {
   const key = identityFilesystemReviewKey(platform, instanceId, grant);
   if (!key || !grant) return null;
-  if (grantFilesystemProfile(grant) === 'posix/v1') return { profile: 'posix/v1' };
+  if (grantFilesystemProfile(grant) === 'posix/v1') return platform === 'workbuddy' ? null : { profile: 'posix/v1' };
   return reviewedKey === key ? { profile: windowsFilesystemProfile, confirmed: true } : null;
 }

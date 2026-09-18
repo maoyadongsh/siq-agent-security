@@ -90,6 +90,29 @@ describe('Windows authority request boundary', () => {
     await expect(localApi.createRuntimeIdentity('hi-test', 'gr-test', 3, 'reviewer', 3600)).rejects.toMatchObject({ status: 502 });
     expect(fetch).toHaveBeenCalledTimes(1);
   });
+
+  it('refuses WorkBuddy POSIX identity creation before sending a request', async () => {
+    const { localApi } = await import('./api');
+    await expect(localApi.createRuntimeIdentity('hi-test', 'gr-test', 3, 'reviewer', 3600, { profile: 'posix/v1' }, 'workbuddy')).rejects.toMatchObject({ status: 400 });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('accepts the selected WorkBuddy platform without adding an untrusted platform request field', async () => {
+    const { localApi } = await import('./api');
+    const result = issued({ ...windowsIdentity, platform: 'workbuddy' });
+    vi.mocked(fetch).mockResolvedValueOnce(response(result));
+    await expect(localApi.createRuntimeIdentity('hi-test', 'gr-test', 3, 'reviewer', 3600, confirmation, 'workbuddy')).resolves.toEqual(result);
+    expect(sent()).not.toHaveProperty('platform');
+    expect(sent().schema_version).toBe('local-runtime-identity-create/v2');
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['hermes', 'openclaw', 'unknown'] as const)('rejects a substituted platform %s without another issuance', async (platform) => {
+    const { localApi } = await import('./api');
+    vi.mocked(fetch).mockResolvedValueOnce(response(issued({ ...windowsIdentity, platform } as RuntimeIdentity)));
+    await expect(localApi.createRuntimeIdentity('hi-test', 'gr-test', 3, 'reviewer', 3600, confirmation, 'workbuddy')).rejects.toMatchObject({ status: 502 });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('identity list profile compatibility', () => {
@@ -98,11 +121,12 @@ describe('identity list profile compatibility', () => {
     for (const list of [
       { schema_version: 'local-runtime-identities/v1', items: [legacyIdentity] },
       { schema_version: 'local-runtime-identities/v2', items: [legacyIdentity, windowsIdentity] },
+      { schema_version: 'local-runtime-identities/v2', items: [{ ...windowsIdentity, platform: 'workbuddy' }] },
     ]) {
       vi.mocked(fetch).mockResolvedValueOnce(response(list));
       await expect(localApi.runtimeIdentities()).resolves.toEqual(list);
     }
-    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenCalledTimes(3);
   });
 
   it.each([
@@ -111,10 +135,43 @@ describe('identity list profile compatibility', () => {
     { schema_version: 'local-runtime-identities/v2', items: [{ ...windowsIdentity, grant_ref: legacyIdentity.grant_ref }] },
     { schema_version: 'local-runtime-identities/v2', items: [{ ...windowsIdentity, filesystem_profile: undefined }] },
     { schema_version: 'local-runtime-identities/v2', items: [null] },
+    { schema_version: 'local-runtime-identities/v2', items: [{ ...legacyIdentity, platform: 'workbuddy' }] },
+    { schema_version: 'local-runtime-identities/v1', items: [{ ...legacyIdentity, platform: 'workbuddy' }] },
+    { schema_version: 'local-runtime-identities/v2', items: [{ ...windowsIdentity, platform: 'unknown' }] },
   ])('refuses contradictory or unknown metadata instead of displaying a legacy identity: %j', async (list) => {
     const { localApi } = await import('./api');
     vi.mocked(fetch).mockResolvedValueOnce(response(list));
     await expect(localApi.runtimeIdentities()).rejects.toMatchObject({ status: 502 });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('WorkBuddy managed capability comes from the service', () => {
+  const catalog = { schema_version: 'local-adapter-instances/v2', platform_changes: false,
+    native_available: false, managed_runtime_available: true, issues: [],
+    instances: [{ instance_id: 'hi-test', platform: 'workbuddy' }] };
+
+  it.each([true, false])('preserves the explicit managed availability %s without a fallback request', async (available) => {
+    const { localApi } = await import('./api');
+    const result = { ...catalog, managed_runtime_available: available };
+    vi.mocked(fetch).mockResolvedValueOnce(response(result));
+    await expect(localApi.adapterInstances('workbuddy')).resolves.toEqual(result);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    { schema_version: 'local-adapter-instances/v1' },
+    { managed_runtime_available: undefined },
+    { managed_runtime_available: 'true' },
+    { platform_changes: true },
+    { instances: [{ instance_id: 'hi-test', platform: 'codebuddy' }] },
+    { instances: [{ instance_id: '', platform: 'workbuddy' }] },
+    { instances: null },
+    { issues: null },
+  ])('rejects unverified capability or another platform: %j', async (bad) => {
+    const { localApi } = await import('./api');
+    vi.mocked(fetch).mockResolvedValueOnce(response({ ...catalog, ...bad }));
+    await expect(localApi.adapterInstances('workbuddy')).rejects.toMatchObject({ status: 502 });
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 });

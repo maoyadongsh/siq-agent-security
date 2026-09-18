@@ -199,7 +199,7 @@ export interface Receipt {
 
 export interface AdapterInstance {
   instance_id: string;
-  platform: 'hermes' | 'openclaw';
+  platform: 'hermes' | 'openclaw' | 'workbuddy';
   name: string;
   config_dir: string;
   source: string;
@@ -209,7 +209,8 @@ export interface AdapterInstance {
   diagnosis: AdapterDiagnosis;
 }
 export interface AdapterInstances {
-  schema_version: 'local-adapter-instances/v1';
+  schema_version: 'local-adapter-instances/v1' | 'local-adapter-instances/v2';
+  managed_runtime_available?: boolean;
   platform_changes: false;
   native_available: boolean;
   instances: AdapterInstance[];
@@ -217,7 +218,7 @@ export interface AdapterInstances {
 }
 
 export interface AdapterPlan {
-  schema_version: 'local-adapter-plan/v1' | 'local-adapter-plan/v2' | 'local-adapter-plan/v3';
+  schema_version: 'local-adapter-plan/v1' | 'local-adapter-plan/v2' | 'local-adapter-plan/v3' | 'local-adapter-plan/v4';
   runtime_identity_id?: string;
   instance_id?: string;
   instance_name?: string;
@@ -372,7 +373,7 @@ export interface RuntimeIdentity {
   identity_id: string;
   instance_id: string;
   agent_id: string;
-  platform: 'hermes' | 'openclaw';
+  platform: 'hermes' | 'openclaw' | 'workbuddy';
   grant_ref: { grant_id: string; admission_id: string; permission_digest: string; permission_digest_schema?: 'grant-permissions/v2' };
   actor_id: string;
   created_at: string;

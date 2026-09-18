@@ -25,9 +25,10 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
   const [busy, setBusy] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [catalogAttempt, setCatalogAttempt] = useState(0);
-  const managedPlatform = request.platform === 'hermes' || request.platform === 'openclaw' ? request.platform : null;
+  const managedPlatform = request.platform === 'hermes' || request.platform === 'openclaw' || request.platform === 'workbuddy' ? request.platform : null;
   const managedInstance = !!managedPlatform;
-  const permissions = useInstancePermissions(managedPlatform ?? 'hermes', managedInstance && action === 'install' && connectionMode === 'permissions' ? instanceId : '', busy, request.grantId);
+  const managedAvailable = request.platform !== 'workbuddy' || (catalog?.schema_version === 'local-adapter-instances/v2' && catalog.managed_runtime_available === true);
+  const permissions = useInstancePermissions(managedPlatform ?? 'hermes', managedInstance && managedAvailable && action === 'install' && connectionMode === 'permissions' ? instanceId : '', busy, request.grantId);
   const working = busy || permissions.busy;
   const close = useCallback(() => { if (!working) onClose(); }, [working, onClose]);
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
     return () => { active = false; };
   }, [request.platform, request.instanceId, catalogAttempt, managedInstance]);
   useEffect(() => {
-    if (managedInstance && (!instanceId || action === 'install' && connectionMode === 'permissions' && !permissions.identityId)) {
+    if (managedInstance && (!instanceId || action === 'install' && connectionMode === 'permissions' && (!managedAvailable || !permissions.identityId))) {
       setPlan(null); setLoading(false); return;
     }
     let active = true;
@@ -56,11 +57,11 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
       .catch((err: unknown) => { if (active) setError(err instanceof Error ? err.message : '预览失败'); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [request.platform, action, instanceId, nativeEnable, attempt, connectionMode, permissions.identityId]);
+  }, [request.platform, action, instanceId, nativeEnable, attempt, connectionMode, permissions.identityId, managedAvailable]);
 
   const apply = async () => {
     if (!plan || working || loading || plan.instance_id !== (instanceId || undefined) || plan.action !== action) return;
-    if (action === 'install' && managedInstance && connectionMode === 'permissions' && plan.runtime_identity_id !== permissions.identityId) return;
+    if (action === 'install' && managedInstance && connectionMode === 'permissions' && (!managedAvailable || plan.runtime_identity_id !== permissions.identityId)) return;
     setBusy(true); setError('');
     try {
       await localApi.adapterApply(plan, actorId);
@@ -109,7 +110,7 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
               <option value="permissions">配置实例权限并接入</option><option value="connection">仅安装连接组件</option>
             </select>
           </div>
-          {connectionMode === 'permissions' ? permissions.panel : <p>此步骤仅配置平台钩子，不建立新的日常会话授权；已有实例身份会保留。</p>}
+          {connectionMode === 'permissions' ? (managedAvailable ? permissions.panel : <p role="status">当前服务未确认此 WorkBuddy 实例可配置受管权限。请检查实例目录和服务系统；不会自动改用旧接入方式。已有普通连接可选择“仅安装连接组件”检查或修复。</p>) : <p>此步骤仅配置平台钩子，不建立新的日常会话授权；已有实例身份会保留。</p>}
         </> : null}
         {action === 'install' && request.platform === 'hermes' ? <label className="adapter-native-option">
           <input type="checkbox" checked={nativeEnable} disabled={working || !catalog.native_available} onChange={(event) => { if (event.target.checked === nativeEnable) return; setPlan(null); setLoading(true); setNativeEnable(event.target.checked); }} />

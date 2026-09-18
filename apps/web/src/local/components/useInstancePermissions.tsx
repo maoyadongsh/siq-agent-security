@@ -11,7 +11,7 @@ import type { SkillRuntimeReadiness } from '../types';
 import { filesystemProfileLabel, grantFilesystemProfile, identityFilesystemConfirmation, identityFilesystemProfile, identityFilesystemReviewKey, windowsFilesystemProfile } from '../filesystemProfile';
 
 // Keep editor state above the preview Modal, so only one focus trap is open.
-export function useInstancePermissions(platform: 'hermes' | 'openclaw', instanceId: string, operationBusy = false, requiredGrantId?: string) {
+export function useInstancePermissions(platform: RuntimeIdentity['platform'], instanceId: string, operationBusy = false, requiredGrantId?: string) {
   const { actorId, setActorId } = useLocalSession();
   const [actor, setActor] = useState(actorId);
   const [grants, setGrants] = useState<Grant[]>([]);
@@ -21,6 +21,7 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
   const [admissionId, setAdmissionId] = useState('');
   const [reviewed, setReviewed] = useState('');
   const [filesystemReviewed, setFilesystemReviewed] = useState('');
+  const [baselineReviewed, setBaselineReviewed] = useState('');
   const [withdraw, setWithdraw] = useState(false);
   const [ttl, setTtl] = useState(28800);
   const [preparing, setPreparing] = useState(false);
@@ -39,6 +40,7 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
   const closeEditor = useCallback(() => setEditingId(null), []);
   const subject = instanceId ? `hri-${instanceId.slice(3)}` : '';
   const scopeKey = instanceId ? `${platform}:${instanceId}` : '';
+  const baselineReviewKey = instanceId && admissionId && actor.trim() ? JSON.stringify([platform, instanceId, admissionId, actor.trim()]) : '';
   const identity = loadedFor === scopeKey ? identities.find((item) => item.platform === platform && item.instance_id === instanceId && item.status !== 'revoked') : undefined;
   const eligible = grants.filter((item) => item.platform === platform && item.subject.type === 'agent_instance' && item.subject.id === subject
     && ['pending_approval', 'approved', 'deployed', 'effective'].includes(item.status));
@@ -53,8 +55,9 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
   const filesystemReviewKey = identityFilesystemReviewKey(platform, instanceId, selected);
   const filesystemConfirmation = identityFilesystemConfirmation(platform, instanceId, selected, filesystemReviewed);
   const identityProfileMatches = !!identity && !!currentGrant && identityFilesystemProfile(identity) === grantFilesystemProfile(currentGrant)
-    && identityFilesystemProfile(identity) !== 'unsupported';
+    && identityFilesystemProfile(identity) !== 'unsupported' && (platform !== 'workbuddy' || identityFilesystemProfile(identity) === windowsFilesystemProfile);
   useEffect(() => { setPreparing(false); }, [instanceId, platform]);
+  useEffect(() => { setBaselineReviewed(''); }, [platform, instanceId, admissionId, actor]);
   useEffect(() => { setFilesystemReviewed(''); }, [scopeKey, reviewKey, selectedProfile]);
   const refresh = () => { setReviewed(''); setFilesystemReviewed(''); setWithdraw(false); setAttempt((n) => n + 1); };
   useEffect(() => {
@@ -111,8 +114,12 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
     keepGrant({ ...out.grant, state_revision: out.state_revision });
   });
   const createDraft = () => run(async () => {
-    if (!admissionId || !instanceId) return;
-    const out = await localApi.createGrant({ admission_id: admissionId, platform, subject_id: subject, redact_secrets: true });
+    if (!baselineReviewKey || baselineReviewed !== baselineReviewKey) return;
+    const requestKey = `instance:${baselineReviewKey}`;
+    let requestId = draftRequests.current.get(requestKey);
+    if (!requestId) { requestId = `gid-${crypto.randomUUID().replaceAll('-', '')}`; draftRequests.current.set(requestKey, requestId); }
+    const out = await localApi.createInstanceDraft(instanceId, admissionId, actor.trim(), requestId, true, platform);
+    draftRequests.current.delete(requestKey); setBaselineReviewed('');
     const created = { ...out.grant, state_revision: out.state_revision };
     if (created.status !== 'pending_approval') { await fork(created); return; }
     keepGrant(created); setEditingId(created.grant_id);
@@ -138,7 +145,7 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
     if (!selected || selected.state_revision === undefined || reviewed !== reviewKey || identity || (imported && !importPrepared)
       || !filesystemConfirmation) return;
     const out = await localApi.createRuntimeIdentity(instanceId, selected.grant_id, selected.state_revision, actor.trim(), ttl,
-      filesystemConfirmation);
+      filesystemConfirmation, platform);
     setIdentities((current) => [...current, out.identity]); setPreparing(false);
     setFilesystemReviewed('');
   });
@@ -173,12 +180,15 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
       {!requiredGrantId ? <details open={!selected}><summary>从已有检查结果起草权限</summary>
         {admissions.length ? <><div className="field"><label htmlFor="instance-admission">参考检查结果</label>
           <select id="instance-admission" value={admissionId} disabled={busy} onChange={(event) => setAdmissionId(event.target.value)}>{admissions.map((item) => <option key={item.admission_id} value={item.admission_id}>{item.skill_name} · {item.content_hash.slice(0, 8)}</option>)}</select></div>
-          <button type="button" className="btn" disabled={busy || !admissionId || !actor.trim()} onClick={createDraft}>起草并编辑实例权限</button></>
+          <label><input type="checkbox" checked={!!baselineReviewKey && baselineReviewed === baselineReviewKey} disabled={busy || !baselineReviewKey}
+            onChange={(event) => setBaselineReviewed(event.target.checked ? baselineReviewKey : '')} />我确认以此检查结果为参考起草所选实例的权限，不将它作为每次调用的 Skill 归属证明</label>
+          <button type="button" className="btn" disabled={busy || !baselineReviewKey || baselineReviewed !== baselineReviewKey} onClick={createDraft}>起草并编辑实例权限</button></>
           : <p>还没有可用检查结果，请先在<Link to="/agents">资产管理</Link>中检查 Skill。</p>}
       </details> : null}
       {requiredGrantId && !selected ? <p role="alert">此次安装对应的授权不可用，请关闭并重新查询安装结果。</p> : null}
       {scope(selected, identity ? '准备替换的权限' : '待接入权限')}
       {selected ? <>
+        {platform === 'workbuddy' && !windows && selectedProfile !== 'unsupported' ? <p role="status">WorkBuddy 的实例权限接入需要 Windows 本地盘符路径解释。请编辑待批准授权，或基于已有授权重新起草；原有权限不会自动转换。</p> : null}
         {selectedProfile === 'unsupported' ? <p role="alert">所选授权的版本或路径解释无法识别，暂不能批准或签发身份。请检查服务版本并重新读取。</p> : null}
         {!requiredGrantId && (selected.status === 'pending_approval' ? <>
           <button type="button" className="btn" disabled={busy} onClick={() => setEditingId(selected.grant_id)}>编辑权限范围</button>

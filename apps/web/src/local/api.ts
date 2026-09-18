@@ -506,16 +506,20 @@ export const localApi = {
   })),
   runtimeIdentities: () => request<{ schema_version: 'local-runtime-identities/v1' | 'local-runtime-identities/v2'; items: RuntimeIdentity[] }>("/v1/runtime-identities").then((data) => {
     if (!['local-runtime-identities/v1', 'local-runtime-identities/v2'].includes(data.schema_version) || !Array.isArray(data.items)
-      || data.items.some((item) => !item || !item.grant_ref || identityFilesystemProfile(item) === 'unsupported'
+      || data.items.some((item) => !item || !item.grant_ref || !['hermes', 'openclaw', 'workbuddy'].includes(item.platform) || identityFilesystemProfile(item) === 'unsupported'
+        || (item.platform === 'workbuddy' && identityFilesystemProfile(item) !== windowsFilesystemProfile)
         || (data.schema_version === 'local-runtime-identities/v1' && identityFilesystemProfile(item) !== 'posix/v1'))) {
       throw new LocalApiError(502, '实例身份的路径解释与响应版本不一致，请检查服务版本后重新读取。');
     }
     return data;
   }),
-  createRuntimeIdentity: (instanceId: string, grantId: string, revision: number, actorId: string, ttl: number, filesystem: FilesystemConfirmation = { profile: 'posix/v1' }) => {
+  createRuntimeIdentity: (instanceId: string, grantId: string, revision: number, actorId: string, ttl: number, filesystem: FilesystemConfirmation = { profile: 'posix/v1' }, expectedPlatform?: RuntimeIdentity['platform']) => {
     const windows = filesystem.profile === windowsFilesystemProfile;
     if (filesystem.profile !== 'posix/v1' && (!windows || filesystem.confirmed !== true)) {
       return Promise.reject(new LocalApiError(400, '请明确确认使用 Windows 本地盘符路径解释。'));
+    }
+    if (expectedPlatform === 'workbuddy' && !windows) {
+      return Promise.reject(new LocalApiError(400, 'WorkBuddy 的实例权限接入需要明确确认 Windows 本地盘符路径解释，请先编辑或重新起草授权。'));
     }
     return request<{ schema_version: 'local-runtime-identity-issued/v1' | 'local-runtime-identity-issued/v2'; identity: RuntimeIdentity }>("/v1/runtime-identities", { method: "POST", body: JSON.stringify({
       schema_version: windows ? "local-runtime-identity-create/v2" : "local-runtime-identity-create/v1", instance_id: instanceId, grant_id: grantId,
@@ -523,6 +527,9 @@ export const localApi = {
       ...(windows ? { confirm_filesystem_profile: true } : {}),
     }) }).then((result) => {
       if (!result.identity || !result.identity.grant_ref || result.identity.instance_id !== instanceId || result.identity.grant_ref.grant_id !== grantId
+        || !['hermes', 'openclaw', 'workbuddy'].includes(result.identity.platform)
+        || (expectedPlatform !== undefined && result.identity.platform !== expectedPlatform)
+        || (result.identity.platform === 'workbuddy' && !windows)
         || result.schema_version !== (windows ? 'local-runtime-identity-issued/v2' : 'local-runtime-identity-issued/v1')
         || identityFilesystemProfile(result.identity) !== filesystem.profile) {
         throw new LocalApiError(502, '无法确认新身份的实例、授权或路径解释，请重新读取身份列表；不要重复签发。');
@@ -552,6 +559,24 @@ export const localApi = {
     subject_id: string;
     redact_secrets?: boolean;
   }) => request<{ grant: Grant; state_revision?: number }>('/v1/grants', { method: 'POST', body: JSON.stringify(body) }),
+  createInstanceDraft: (instanceId: string, admissionId: string, actorId: string, requestId: string, confirmInstanceScope: boolean, expectedPlatform: RuntimeIdentity['platform']) => {
+    if (confirmInstanceScope !== true || !instanceId || !admissionId || !actorId.trim() || !/^gid-[a-f0-9]{32}$/.test(requestId)) {
+      return Promise.reject(new LocalApiError(400, '请明确确认所选实例的权限作用域，并核对检查结果与操作者。'));
+    }
+    return request<{ schema_version: 'grant-instance-draft-created/v1'; instance_id: string; grant: Grant; state_revision: number; reused: boolean }>('/v1/grants/instance-drafts', {
+      method: 'POST', body: JSON.stringify({ schema_version: 'grant-instance-draft-create/v1', instance_id: instanceId,
+        admission_id: admissionId, actor_id: actorId, request_id: requestId, confirm_instance_scope: true }),
+    }).then((result) => {
+      if (result.schema_version !== 'grant-instance-draft-created/v1' || result.instance_id !== instanceId || typeof result.reused !== 'boolean'
+        || !Number.isSafeInteger(result.state_revision) || result.state_revision < 0 || !result.grant || !/^grt-id-[a-f0-9]{64}$/.test(result.grant.grant_id)
+        || result.grant.admission_id !== admissionId || result.grant.platform !== expectedPlatform || result.grant.skill !== undefined
+        || result.grant.subject?.type !== 'agent_instance' || result.grant.subject.id !== `hri-${instanceId.slice(3)}`
+        || (!result.reused && result.grant.status !== 'pending_approval')) {
+        throw new LocalApiError(502, '无法核对实例权限草稿，请刷新权限列表；不要重复创建或直接批准。');
+      }
+      return result;
+    });
+  },
   draftGrant: (id: string, revision: number, actor: string, requestId: string) =>
     request<{ schema_version: 'grant-draft-created/v1'; source_grant_id: string; source_revision: number; grant: Grant; state_revision: number; reused: boolean }>(`/v1/grants/${id}/draft`, {
       method: 'POST', body: JSON.stringify({ schema_version: 'grant-draft-create/v1', expected_revision: revision, actor_id: actor, request_id: requestId }),
@@ -660,7 +685,15 @@ export const localApi = {
     }),
   adapterStatus: () =>
     request<{ detected: string[]; platforms: PlatformInfo[] }>('/v1/adapter/status'),
-  adapterInstances: (platform: string) => request<AdapterInstances>(`/v1/adapter/instances?platform=${encodeURIComponent(platform)}`),
+  adapterInstances: (platform: string) => request<AdapterInstances>(`/v1/adapter/instances?platform=${encodeURIComponent(platform)}`).then((data) => {
+    if (platform === 'workbuddy' && (data.schema_version !== 'local-adapter-instances/v2'
+      || typeof data.managed_runtime_available !== 'boolean' || data.platform_changes !== false
+      || !Array.isArray(data.instances) || !Array.isArray(data.issues)
+      || data.instances.some((item) => !item || item.platform !== 'workbuddy' || typeof item.instance_id !== 'string' || !item.instance_id))) {
+      throw new LocalApiError(502, '无法核对 WorkBuddy 实例或受管接入能力，请检查服务版本并重新读取。');
+    }
+    return data;
+  }),
   adapterPreview: (platform: string, action: 'install' | 'uninstall', instance_id?: string, native_enable = false, runtime_identity_id?: string) =>
     request<AdapterPlan>('/v1/adapter/preview', { method: 'POST', body: JSON.stringify({ platform, action, instance_id, native_enable, runtime_identity_id }) }),
   adapterApply: (plan: AdapterPlan, actor_id?: string) =>

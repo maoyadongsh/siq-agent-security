@@ -37,7 +37,7 @@ describe('filesystem interpretation submission boundaries', () => {
   });
 
   it.each([
-    { platform: 'workbuddy' },
+    { platform: 'codebuddy' },
     { subject: { type: 'skill', id: 'skill-test' } },
     { skill: { skill_id: 'skill-test' } },
   ])('does not upgrade an unsupported managed subject: %j', (fields) => {
@@ -63,6 +63,20 @@ describe('filesystem interpretation submission boundaries', () => {
 
 describe('independent identity filesystem review', () => {
   const reviewed = identityFilesystemReviewKey('hermes', 'hi-test', windows);
+
+  it('allows WorkBuddy only after separate Windows resource and identity confirmations', () => {
+    const oldWorkBuddy = { ...legacy, platform: 'workbuddy' };
+    expect(grantFilesystemProfile(oldWorkBuddy)).toBe('posix/v1');
+    expect(resourceFilesystemConfirmation(oldWorkBuddy, 'windows-local-drive/v1', false)).toBeNull();
+    expect(resourceFilesystemConfirmation(oldWorkBuddy, 'windows-local-drive/v1', true)).toEqual({ profile: 'windows-local-drive/v1', confirmed: true });
+    expect(identityFilesystemConfirmation('workbuddy', 'hi-test', oldWorkBuddy, '')).toBeNull();
+    const newWorkBuddy = { ...windows, platform: 'workbuddy' };
+    const workBuddyReview = identityFilesystemReviewKey('workbuddy', 'hi-test', newWorkBuddy);
+    expect(identityFilesystemConfirmation('workbuddy', 'hi-test', newWorkBuddy, reviewed)).toBeNull();
+    expect(identityFilesystemConfirmation('workbuddy', 'hi-test', newWorkBuddy, '')).toBeNull();
+    expect(identityFilesystemConfirmation('workbuddy', 'hi-test', newWorkBuddy, workBuddyReview)).toEqual({ profile: 'windows-local-drive/v1', confirmed: true });
+    expect(identityFilesystemConfirmation('workbuddy', 'hi-test', { ...newWorkBuddy, state_revision: 4 }, workBuddyReview)).toBeNull();
+  });
 
   it('requires its own review instead of accepting a grant resource or ordinary permission confirmation', () => {
     expect(reviewed).not.toBe('');
