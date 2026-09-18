@@ -81,10 +81,16 @@ func PatchDesired(g Grant, patch DesiredPatch, key *signing.Key) (Grant, Desired
 	n := len(kept)
 	add := func(domain, action, rtype, value, effect, state, authority string) {
 		n++
+		var evidence []string
+		if g.SchemaVersion == "grant/v2" {
+			// Match the existing draft lineage convention. This locates the
+			// source Grant; it does not approve the newly edited resources.
+			evidence = []string{"source_grant:" + g.GrantID}
+		}
 		kept = append(kept, Fact{
 			FactID: fmt.Sprintf("pf-p-%d-%s", n, shortID(domain+action+value)),
 			Domain: domain, Action: action, Resource: admission.Resource{Type: rtype, Value: value},
-			Effect: effect, State: state, Authority: authority,
+			Effect: effect, State: state, Authority: authority, EvidenceIDs: evidence,
 		})
 	}
 	if patch.HasTools {

@@ -26,6 +26,8 @@
 
 新包络、Grant、identity 的 schema 和 profile 均属于签名内容。签发前必须阻止旧消费者误读新记录，按 N01 检查和写入边界处理；不能仅添加字段并假定旧 Go 解析器会拒绝。首片不创建任何此类持久状态。
 
+新版资源编辑产生的事实必须保留非空 `evidence_ids`。新事实沿既有 Grant 草稿约定引用 `source_grant:<grant_id>`，用于定位来源授权，不表示旧授权已批准新增范围；新范围仍须明确批准、文件身份复验及签名。既有保留事实的证据不改写，旧签名对象不补写字段。实际 Go 输出必须回灌 Python Schema，并独立核验签名及摘要，不能仅以手写结构样例替代。
+
 ## 确定性词法入口
 
 `runtimeaction.NormalizeResourceForProfile(profile, domain, value)` 和 `DescribeForProfile(profile, tool, params)` 仅接受显式 `posix/v1` 或 `windows-local-drive/v1`。缺省、未知 profile 失败，不回退。旧 NormalizeResource 和 Describe 仍使用旧算法。非 filesystem 域复用现有 network/message 解释。

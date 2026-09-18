@@ -27,6 +27,25 @@ func windowsResources(t *testing.T) (Grant, ResourceEdit, string) {
 	return g, input, root
 }
 
+func TestWindowsGrantResourceEditRetainsEvidenceReferences(t *testing.T) {
+	g, input, _ := windowsResources(t)
+	out, _, err := PrepareWindowsResources(g, input, true, key(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, f := range out.Facts {
+		if len(f.EvidenceIDs) == 0 {
+			t.Fatal("produced fact has no contract-required evidence reference")
+		}
+		if f.Authority == "human" && (len(f.EvidenceIDs) != 1 || f.EvidenceIDs[0] != "source_grant:"+g.GrantID) {
+			t.Fatal("resource edit lost source grant lineage")
+		}
+	}
+	if out.Status != "pending_approval" || out.ApprovedBy != nil {
+		t.Fatal("source reference substituted for human approval")
+	}
+}
+
 func TestWindowsGrantSignedScopeAndExplicitConfirmation(t *testing.T) {
 	g, input, _ := windowsResources(t)
 	before, _ := json.Marshal(g)
