@@ -1,0 +1,32 @@
+{
+  "source_sha": "84c84a1d990f3783c2afe53e9a9657f6c21b4ffd",
+  "binary_sha256": "2ab5c2ac7a290da64ec6faad72c822fcec7adfdd96de592862455caef4897f14",
+  "fmt_empty": true,
+  "vet_exit": 0,
+  "native_build_exit": 0,
+  "state_suite": {
+    "exit": 1,
+    "budget_seconds": 300,
+    "budget_exhausted": true,
+    "completed_top_level": {
+      "pass": 75,
+      "skip": 6,
+      "fail": 4
+    },
+    "observed_failures": [
+      "TestMigrationFullBackupAndEveryCheckpointRecovery",
+      "TestUnmarkedMigrationPreservesPrivateReadonlyTree",
+      "TestMigrationRecoversMissingMarkerOnlyAfterPreparedBackup",
+      "TestIndependentProcessesPublishUniqueVersions"
+    ],
+    "selected_results": {
+      "TestAcquireWriterBlocksSecondAndTakesOverDead": "pass",
+      "TestWriterReleaseRefusesForeignLock": "pass",
+      "TestReviewFutureStateWriterMustNotQuarantineLock": "pass",
+      "TestCommitRecoveryAfterProcessKill": "pass"
+    }
+  },
+  "full_go_suite": "running; not claimed passed",
+  "cross_build_and_schema": "pending in live controller",
+  "whole_windows_acceptance": "incomplete"
+}
