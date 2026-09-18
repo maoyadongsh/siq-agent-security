@@ -2,7 +2,9 @@
 
 2026-09-19 04 时当前实现候选更新为 `d9ad885f2f894dce3f7c9dd036130df7bb436e2a`。真实 Windows Hermes 安装绑定 Skill 在旧 5 秒请求预算下出现“服务端 allow、实际工具未写入”；已将 Windows Hermes 新安装及默认 HTTP 等待改为每请求 20 秒，保留更短期限、不重试及超时拒绝。114 项适配器测试、旧行为负向、安装往返/嵌入一致性、Go vet、四目标干净构建通过。新候选原生 `--skills managed-fixture` 已完成正式安装激活、未绑定拒绝、明确签发后写入、撤销后拒绝覆盖；独立核验 4 条回执、5 份签名文档、实际 37 字节文件及 5 个自有 Job 清理通过。原控制器末尾因宿主追加运行时间提醒导致 JSON 解析失败，原失败保留，不能记为脚本全绿。见 [独立原生证据](evidence/personal-experience/windows-sunbo/hermes-sec-d9ad885-20260919/report.json)、[开发检查](evidence/personal-experience/windows-sunbo/hermes-skill-budget-20260919/report.json)、[候选与归档摘要](evidence/personal-experience/windows-sunbo/hermes-skill-budget-20260919/unsigned-candidate.json)。
 
-本次仅改 Windows Hermes 预算，未改变 OpenClaw/WorkBuddy 运行路径；下方各批证据仍保留原候选身份。Hermes 更新/移除及原生审批恢复、WorkBuddy Skill 完整旅程与新候选确认、正式签发仍待完成。没有新增云模型调用，WorkBuddy 保持 4/5 个授权任务。以下 eac2a99 增量为历史记录。
+2026-09-19 Hermes 审批恢复增量：`d9ad885` 的同进程同会话原生调用完成“hold 阻止且文件缺席 → 管理接口明确批准 → 相同参数新调用 ID 精确重试 → 一次性预留后成功写入 → 再次重复调用重新 hold 且文件未变”，86.56 秒。独立验证 5 条签名回执、唯一执行 observation、撤权卸载和 5 个自有 Job 关闭。见 [审批恢复证据](evidence/personal-experience/windows-sunbo/hermes-approval-d9ad885-20260919/report.json)。该次使用实例基线 Grant 和本地模拟模型，不混同已安装 Skill SEC 旅程；人工 GUI、拒绝/过期及跨进程恢复仍未覆盖。
+
+本次仅改 Windows Hermes 预算，未改变 OpenClaw/WorkBuddy 运行路径；下方各批证据仍保留原候选身份。Hermes 更新/移除及审批拒绝/过期/跨进程恢复、WorkBuddy Skill 完整旅程与新候选确认、正式签发仍待完成。没有新增云模型调用，WorkBuddy 保持 4/5 个授权任务。以下 eac2a99 增量为历史记录。
 
 2026-09-19 03 时当前实现候选：`eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8`。已补安装后会话选择、明确绑定、读回和撤销的管理界面及嵌入页面；服务启动时将 SEC 安装读取一次性接到现有三宿主安装库，修复在线路径误用 Hermes-only CLI reader；不支持的 Windows 长安装目标明确拒绝为无效请求。正式 Windows HTTP 夹具完成安装、准备、登记、签发、运行复验、读回、重复/错签名拒绝、撤销及撤销后失效。旧启动行为在负向回归中失败，修复通过；合同、前端、vet 与四目标干净构建通过。见 [检查与限制](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/report.json)、[候选摘要](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/unsigned-candidate.json)。
 

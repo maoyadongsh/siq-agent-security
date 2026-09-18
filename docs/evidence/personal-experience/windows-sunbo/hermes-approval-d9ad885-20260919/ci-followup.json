@@ -1,0 +1,24 @@
+{
+  "observed_head": "cba8a5a40555a5350459bce706357375666d7228",
+  "control_api_failure": {
+    "job_id": "105745319081",
+    "reason": "Ruff E501 on added schema test line 3601",
+    "fix": "format the four negative examples over separate lines; assertions unchanged",
+    "ruff_check_app": "pass",
+    "standalone_schema_target": "pass (--noconftest; base Python has no FastAPI, unrelated app conftest excluded)"
+  },
+  "agentshield_failure": {
+    "job_id": "105745319069",
+    "failed_tests": [
+      "TestCommittedReleaseManifest",
+      "TestAdapterAndBootstrapShareVerifiedResolve",
+      "TestPythonVerifierAcceptsCommittedRelease"
+    ],
+    "reason": "committed manifest content hash differs from current Skill; tracked in #87"
+  },
+  "logs_sha256": {
+    "ci-105745319081.log": "3065a9d3cc42edb0290467142c12d90389fbb0bd12ec4685957c6affe303d656",
+    "ci-105745319069.log": "e99c930d3dc0c45483de7618e68de5998faa3c992c6f6008135689926fd80c10"
+  },
+  "new_head_ci": "pending after push; not declared passed"
+}
