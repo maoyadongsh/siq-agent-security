@@ -1,6 +1,10 @@
 # Windows 三宿主功能集成交付
 
-当前产品候选为 `198c73ebfce2cc7af075a92068911699f2386449`。本轮真实 WorkBuddy Skill 安装激活后，运行身份已写入但 HTTP 响应断连；已修复身份管理接口的响应等待，并同步管理界面和嵌入资源。旧连接写期限的真实 socket 负向、新响应正向、取消/响应错误不写状态、原有身份隔离撤销/合同检查、15 项前端接口测试、类型与嵌入构建、Go vet、四目标干净构建通过。原隔离状态已读回并明确撤销遗留身份；新导入、安装激活、身份签发与钩子安装实际通过。见 [修复与管理链证据](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/report.json) 和 [候选摘要](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/unsigned-candidate.json)。
+**当前唯一产品候选：`cdfec5adaeb2b0fc7a6b28d2d57fdea9c1b53064`。** 身份及 SEC 管理的响应等待已统一修复，工具运行预算和拒绝规则不变。真实隔离目录上的导入、安装激活、身份签发、钩子安装、会话目录读取（2.81 秒）、撤权卸载和 Skill 移除通过；签名及清理独立核验通过。16 项前端接口测试、类型/嵌入构建、Go 身份与 SEC 正负向、Go vet、四目标干净构建通过。见 [最终本地管理回归](evidence/personal-experience/windows-sunbo/authority-management-budget-20260919/report.json) 与 [候选摘要](evidence/personal-experience/windows-sunbo/authority-management-budget-20260919/unsigned-candidate.json)。
+
+WorkBuddy 桌面只确认了 Skill 目录识别；第 5 次任务因管理观察链断连后取消，目标未生成，不能宣布受保护写入成功。5/5 次额度已用完，无自动重试。全部自有桌面/服务进程、测试身份、钩子和 Skill 已清理。新的模型任务需另行授权；正式签发仍由 #87 跟踪。下面各批候选、次数和结论保留为历史，不是当前汇总。
+
+中间修复候选为 `198c73ebfce2cc7af075a92068911699f2386449`。本轮真实 WorkBuddy Skill 安装激活后，运行身份已写入但 HTTP 响应断连；已修复身份管理接口的响应等待，并同步管理界面和嵌入资源。旧连接写期限的真实 socket 负向、新响应正向、取消/响应错误不写状态、原有身份隔离撤销/合同检查、15 项前端接口测试、类型与嵌入构建、Go vet、四目标干净构建通过。原隔离状态已读回并明确撤销遗留身份；新导入、安装激活、身份签发与钩子安装实际通过。见 [修复与管理链证据](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/report.json) 和 [候选摘要](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/unsigned-candidate.json)。
 
 WorkBuddy 原生 Skill 调用未通过：用户协助手动输入后，桌面识别出了正式安装的 Skill；第 5 次任务已发送。会话管理查询随后断连，控制器已撤权并清理钩子，因此立即取消桌面任务；目标文件没有生成。累计 5/5 个授权任务，未自动重试。身份接口修复之外，SEC 管理响应期限也需同步修复；不能将目录识别或安装通过写成受保护的原生调用成功。以下 d9ad885 与更早候选的实测记录保留原身份，不改绑到本次构建。
 

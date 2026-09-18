@@ -1,0 +1,42 @@
+{
+  "candidate": "cdfec5adaeb2b0fc7a6b28d2d57fdea9c1b53064",
+  "status": "management_fix_verified_native_desktop_not_passed",
+  "checks": {
+    "go_identity_and_sec_deadline_positive_negative_and_existing_sec_http": "pass (25.998s)",
+    "web_api_tests": "16 passed",
+    "typescript_embedded_build": "pass",
+    "go_vet_all": "pass",
+    "four_clean_builds": "pass",
+    "actual_management_import_install_activate_identity_adapter_catalog_remove": "pass",
+    "catalog_response_seconds": 2.81,
+    "cleanup_and_signed_identity_revocation_independent_check": "pass"
+  },
+  "runtime_enforcement_budgets_changed": false,
+  "new_model_tasks_in_final_management_check": 0,
+  "workbuddy_desktop": {
+    "catalog_recognized": true,
+    "task_submitted_once": true,
+    "total_tasks_used": 5,
+    "authorized_limit": 5,
+    "task_status": "canceled after management observer disconnected and cleaned up; not retried",
+    "protected_skill_write": "not demonstrated",
+    "target_file_exists": false,
+    "ui_usage_display": "0.58",
+    "usage_unit_not_assumed": true,
+    "owned_desktop_closed": true
+  },
+  "previous_failure": "On 198c73e the SEC management observer still inherited the global response deadline; task stopped after its fixture controller cleaned up. The final candidate covers both identity and SEC management.",
+  "controller_sha256": "579aeb34be070b681da8b5b34d14dd24741d81361032401499d41c72278d4e99",
+  "private_evidence_sha256": {
+    "catalog": "f82322acd1ef60c85225336c97e69534500575f831292a9861914ecb10428657",
+    "cleanup": "634c9e97d8d19ea740890133251b7077bc482bf7f6adb56ba0b775ce2a6fddd3",
+    "http": "83ef8f2b5aaf97a2ddacb2958d44440db26b1889fd00d5b022c19960d72e33a8",
+    "desktop_terminal": "221ef7c5ce09bd7d8e1499dd9b7f33e311368b11fa9a747badb71cd818c8f67c"
+  },
+  "limitations": [
+    "The final check uses public management HTTP and no native model or desktop task.",
+    "Its empty session catalog is not evidence of native binding or protected Skill execution.",
+    "Further paid desktop tasks require new user authorization.",
+    "Formal signing remains Issue #87; existing full-suite/race failures are not declared fixed."
+  ]
+}

@@ -1,6 +1,8 @@
 # Windows 修复候选签名交接
 
-当前候选更新为 `198c73ebfce2cc7af075a92068911699f2386449`（身份管理响应断连修复）。四目标干净构建与未签名归档摘要见 [当前候选](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/unsigned-candidate.json)。归档 `windows-unsigned-candidate-198c73e-reviewed.zip`，SHA256 `135d1feb850e688928a914301bb9be569d88d934f5f7b40a30a28f7e858cb21f`。仍为 `0.0.0-dev`，维护者必须按批准正式版本重建再签发；原签名、信任根及 Skill 载荷未改。下方归档均保留为历史。
+**当前唯一签发输入源码：`cdfec5adaeb2b0fc7a6b28d2d57fdea9c1b53064`。** 四目标干净开发构建、Skill 载荷和归档摘要见 [当前候选记录](evidence/personal-experience/windows-sunbo/authority-management-budget-20260919/unsigned-candidate.json)。归档 `windows-unsigned-candidate-cdfec5a-reviewed.zip`，SHA256 `cb0aabd685013812072892b4f5271bff1e1715b49e1433ec28c0f3260c2cb2d7`。仍须维护者采用批准版本重建并正式签发，不能把 `0.0.0-dev` 或下方历史归档视为正式发行。
+
+上一中间候选为 `198c73ebfce2cc7af075a92068911699f2386449`（身份管理响应断连修复）。四目标干净构建与未签名归档摘要见 [当前候选](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/unsigned-candidate.json)。归档 `windows-unsigned-candidate-198c73e-reviewed.zip`，SHA256 `135d1feb850e688928a914301bb9be569d88d934f5f7b40a30a28f7e858cb21f`。仍为 `0.0.0-dev`，维护者必须按批准正式版本重建再签发；原签名、信任根及 Skill 载荷未改。下方归档均保留为历史。
 
 当前签发交接候选已更新为 `d9ad885f2f894dce3f7c9dd036130df7bb436e2a`（Windows Hermes 请求预算修复）。四目标仍为干净构建、嵌入版本 `0.0.0-dev`，正式发行须由维护者选择批准版本重建并签发。当前归档 `windows-unsigned-candidate-d9ad885-reviewed.zip`，SHA256 `7da0db60c367b5c1125331ccdd25e88f90ca867140d08ebe7d81f3c28afd6ada`；见 [新摘要](evidence/personal-experience/windows-sunbo/hermes-skill-budget-20260919/unsigned-candidate.json)。下方旧候选摘要保留为历史，不用于本次签发。
 
