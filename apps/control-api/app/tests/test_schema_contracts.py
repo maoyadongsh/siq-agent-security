@@ -3555,3 +3555,35 @@ def test_workbuddy_skill_static_signatures_and_identity_vectors() -> None:
     assert update["replacement_plan"]["request_id"] == "is-" + hashlib.sha256(
         ("update-install:" + update["update_id"]).encode()
     ).hexdigest()[:32]
+
+
+def test_windows_runtime_check_intent_v5_contract() -> None:
+    import hashlib
+
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+    from jsonschema import FormatChecker
+
+    schema = json.loads((CONTRACTS / "intent-contract.v5.schema.json").read_text(encoding="utf-8"))
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema, format_checker=FormatChecker())
+    data = json.loads((GO_SAMPLES / "intent-contract.v5.sample.json").read_text(encoding="utf-8"))
+    validator.validate(data)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+    for patch in [
+        {"schema_version": "intent/v4"}, {"authority_kind": "instance_permission"},
+        {"filesystem_profile": "posix/v1"}, {"agent": {"id": "hri-" + "a" * 32, "platform": "hermes"}},
+        {"allowed_tools": ["write_file"]}, {"allowed_effects": ["file.write"]},
+        {"authority": data["authority"] | {"issuer": "local-runtime-identity"}},
+        {"resource_constraints": [{"domain": "filesystem", "operator": "prefix", "value": "C:/"}]},
+        {"effect_requirements": []}, {"provenance_refs": []},
+    ]:
+        assert list(validator.iter_errors(data | patch))
+    # A public test seed proves cross-language canonical bytes, not a release signature.
+    def canonical(value) -> bytes:
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+
+    unsigned = {k: v for k, v in data.items() if k not in {"digest", "signature"}}
+    assert hashlib.sha256(canonical(unsigned)).hexdigest() == data["digest"]
+    public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+    public.verify(bytes.fromhex(data["signature"]), canonical(unsigned | {"digest": data["digest"]}))

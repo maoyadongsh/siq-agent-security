@@ -1883,6 +1883,8 @@ This changes resource selection, not taint policy or authority requirements.
 
 运行自检采用真实宿主会话，不以工具 registry 的直接调用替代钩子链路；控制器与临时授权边界见 ADR-024。公开 Hermes CLI 先以隔离实例验证，尚未接入用户实例前不得写入成功状态。
 
+Windows 原生自检的路径与临时权限增量见 [Windows Hermes 运行自检规格](windows-runtime-check-v1.md)：仅已确认的活动自检可签发 `intent/v5`，使用 `local-runtime-check` issuer、Windows 文件系统 profile、独立 120 秒只读 Grant/v2 与 Binding/v2；普通发行、绑定与独立文件观察入口拒绝该权限。每次调用和结束前重新核验实际实例、目标快照、当前签名授权和目录身份，结束或恢复只撤销清理。原 POSIX v2 与 managed v4 语义保持；组件检查不替代真实宿主验收。
+
 授权期限的前置实现：管理接口 `POST /v1/grants/{id}/expiry` 接收 `grant-expiry-edit/v1`，仅允许 pending_approval Grant 在精确 revision 下修改期限。duration_seconds 为 60–2592000 的整数，按服务器当前时间计算到期点；null 明确表示不设期限。期限写入已有 signed Grant.expires_at，与审计同事务。变更使既有批准 challenge 失效，不延长已批准或已部署 Grant，不产生 effective。
 
 期限为半开区间：当前时间达到 expires_at 即不再可用；非法非空期限按无效处理，null 保持旧版无期限行为。挑战生成/消费、批准、部署及每次决策/hold 执行前重查均检查期限。旧回执继续可验证，不因后来到期否认历史已发生的操作。期限检查保持原 policy 模式语义：block 拒绝，warn/audit_only 只给出拒绝建议；无效或过期的必需 Intent Authority 仍在所有模式 hard deny。自检临时授权必须同时绑定独立短期 Intent，不能仅靠 Grant 字段保证撤权。
