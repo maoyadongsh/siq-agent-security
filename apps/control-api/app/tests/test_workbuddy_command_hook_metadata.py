@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft7Validator
 
-
 CONTRACTS = Path(__file__).parents[4] / "packages" / "contracts"
 
 

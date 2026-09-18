@@ -3468,7 +3468,10 @@ def test_workbuddy_skill_wrappers_reject_mixed_plan_versions() -> None:
     for name in ["local-skill-install-runtime-readiness.v2", "local-skill-import-permission-created.v2"]:
         _, validator = _workbuddy_skill_validator(name)
         data = json.loads((GO_SAMPLES / f"{name}.sample.json").read_text(encoding="utf-8"))
-        old = {k: v for k, v in data["grant"].items() if k not in {"schema_version", "filesystem_profile", "filesystem_bindings"}}
+        old = {
+            k: v for k, v in data["grant"].items()
+            if k not in {"schema_version", "filesystem_profile", "filesystem_bindings"}
+        }
         assert list(validator.iter_errors(data | {"grant": old}))
 
 
@@ -3480,14 +3483,16 @@ def test_workbuddy_skill_static_signatures_and_identity_vectors() -> None:
     def canonical(value) -> bytes:
         return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
 
-    manifest = json.loads((GO_SAMPLES / "local-skill-install-workbuddy-v2-fixture-manifest.sample.json").read_text(encoding="utf-8"))
+    manifest_path = GO_SAMPLES / "local-skill-install-workbuddy-v2-fixture-manifest.sample.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["fixture_kind"] == "static_contract_vectors"
     public = Ed25519PublicKey.from_public_bytes(bytes.fromhex(manifest["public_key"]))
 
     def verify(value) -> None:
         if isinstance(value, dict):
             if "signature" in value:
-                public.verify(bytes.fromhex(value["signature"]), canonical({k: v for k, v in value.items() if k != "signature"}))
+                signed_value = {k: v for k, v in value.items() if k != "signature"}
+                public.verify(bytes.fromhex(value["signature"]), canonical(signed_value))
             for nested in value.values():
                 verify(nested)
         elif isinstance(value, list):
