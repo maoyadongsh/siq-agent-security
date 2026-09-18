@@ -1,6 +1,6 @@
 # Windows 修复候选签名交接
 
-**当前唯一签发输入源码：`cdfec5adaeb2b0fc7a6b28d2d57fdea9c1b53064`。** 四目标干净开发构建、Skill 载荷和归档摘要见 [当前候选记录](evidence/personal-experience/windows-sunbo/authority-management-budget-20260919/unsigned-candidate.json)。归档 `windows-unsigned-candidate-cdfec5a-reviewed.zip`，SHA256 `cb0aabd685013812072892b4f5271bff1e1715b49e1433ec28c0f3260c2cb2d7`。仍须维护者采用批准版本重建并正式签发，不能把 `0.0.0-dev` 或下方历史归档视为正式发行。
+**当前唯一签发输入源码：`189cda23f21b0f79d5003aad021443c3768953ab`。** 已修复 WorkBuddy 安装载荷的硬链接与运行时校验冲突；四目标干净开发构建、Skill 载荷及归档摘要见 [当前候选记录](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/unsigned-candidate.json)。归档 `windows-unsigned-candidate-189cda2-reviewed.zip`，SHA256 `96c20afe0ad44ad0ded5c681a1eaee983408c0bcfc4a9bdbc8370f78d97a0a4c`。仍须维护者采用批准版本重建并正式签发；原签名与信任根不改，下方候选均为历史。
 
 上一中间候选为 `198c73ebfce2cc7af075a92068911699f2386449`（身份管理响应断连修复）。四目标干净构建与未签名归档摘要见 [当前候选](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/unsigned-candidate.json)。归档 `windows-unsigned-candidate-198c73e-reviewed.zip`，SHA256 `135d1feb850e688928a914301bb9be569d88d934f5f7b40a30a28f7e858cb21f`。仍为 `0.0.0-dev`，维护者必须按批准正式版本重建再签发；原签名、信任根及 Skill 载荷未改。下方归档均保留为历史。
 
