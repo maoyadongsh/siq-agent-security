@@ -38,8 +38,11 @@ func cmdClientInstall(args []string, out io.Writer) error {
 	if !*confirm || *manifest == "" || *binary == "" || fs.NArg() != 0 || *port < 0 || *port > 65535 || (explicit && *port == 0) {
 		return errors.New("client-install: --manifest FILE --binary FILE --confirm-install and optional valid --port required")
 	}
-	if runtime.GOOS != "linux" {
-		return errors.New("client-install: Linux user service installation required; other OS installers remain unavailable")
+	if runtime.GOOS != "linux" && runtime.GOOS != "windows" {
+		return errors.New("client-install: Linux user service or Windows current-user task installation required")
+	}
+	if runtime.GOOS == "windows" && *runtimeOnly {
+		return errors.New("client-install: Windows does not support --runtime; omit this option")
 	}
 	dir, err := state.DefaultDir()
 	if err != nil {
@@ -74,19 +77,28 @@ func cmdClientInstall(args []string, out io.Writer) error {
 	command.Stderr = io.Discard
 	command.WaitDelay = time.Second
 	if err = command.Run(); err != nil {
+		if runtime.GOOS == "windows" {
+			return errors.New("client-install: installation not confirmed; staged program retained, inspect task-runtime/task-query before retrying")
+		}
 		return errors.New("client-install: installation not confirmed; staged program retained, inspect service-status before retrying")
 	}
 	st := &state.Store{Dir: dir}
-	unit, err := renderUserUnit(staged, dir)
-	if err != nil {
-		return err
-	}
-	_, props, err := ownedService(st, []byte(unit), runUserSystemctl)
-	if err != nil {
-		return err
-	}
-	if !serviceRunning(props) {
-		return errors.New("client-install: installed service is not running")
+	if runtime.GOOS == "windows" {
+		if err := verifyInstalledWindowsClient(st, staged); err != nil {
+			return err
+		}
+	} else {
+		unit, err := renderUserUnit(staged, dir)
+		if err != nil {
+			return err
+		}
+		_, props, err := ownedService(st, []byte(unit), runUserSystemctl)
+		if err != nil {
+			return err
+		}
+		if !serviceRunning(props) {
+			return errors.New("client-install: installed service is not running")
+		}
 	}
 	cfg, err := st.LoadConfig()
 	if err != nil {
@@ -141,7 +153,11 @@ func prepareClientInstallation(dir, manifest, binary string, check func(string, 
 	if err != nil {
 		return "", "", err
 	}
-	expected := filepath.Join(dir, "client-releases", digest, "siq-agent-security")
+	name := "siq-agent-security"
+	if runtime.GOOS == "windows" {
+		name += ".exe"
+	}
+	expected := filepath.Join(dir, "client-releases", digest, name)
 	stagedCanon, stagedErr := filepath.EvalSymlinks(staged)
 	expectedCanon, expectedErr := filepath.EvalSymlinks(expected)
 	if staged != expected && (stagedErr != nil || expectedErr != nil || stagedCanon != expectedCanon) {
@@ -153,6 +169,9 @@ func installationEnvironment(environment []string, dir string) []string {
 	result := make([]string, 0, len(environment)+1)
 	for _, entry := range environment {
 		name, _, _ := strings.Cut(entry, "=")
+		if runtime.GOOS == "windows" {
+			name = strings.ToUpper(name)
+		}
 		if name != "SIQ_AGENT_SECURITY_STATE_DIR" && name != "AGENTSHIELD_STATE_DIR" {
 			result = append(result, entry)
 		}

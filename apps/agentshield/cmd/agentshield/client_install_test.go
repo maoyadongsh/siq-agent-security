@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"testing"
 )
 
@@ -33,7 +34,11 @@ func TestClientInstallationValidatesBeforeAndAfterStaging(t *testing.T) {
 			dir := t.TempDir()
 			raw := []byte("synthetic program")
 			digest := fmt.Sprintf("%x", sha256.Sum256(raw))
-			expected := filepath.Join(dir, "client-releases", digest, "siq-agent-security")
+			name := "siq-agent-security"
+			if runtime.GOOS == "windows" {
+				name += ".exe"
+			}
+			expected := filepath.Join(dir, "client-releases", digest, name)
 			calls, stages := 0, 0
 			check := func(_ string, path string) (string, error) {
 				calls++
