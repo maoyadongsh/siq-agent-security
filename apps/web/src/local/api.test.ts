@@ -107,6 +107,23 @@ describe('local session recovery', () => {
 describe('local import request lifetime', () => {
   beforeEach(() => { vi.resetModules(); vi.stubGlobal('fetch', vi.fn()); });
   afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
+  it('waits for identity management responses without replaying a mutation', async () => {
+    const { localApi } = await import('./api');
+    vi.useFakeTimers();
+    for (const run of [() => localApi.runtimeIdentities(), () => localApi.createRuntimeIdentity('hi-fixture', 'grant-fixture', 1, 'fixture', 600), () => localApi.revokeRuntimeIdentity('ri-fixture', 'fixture')]) {
+      let signal: AbortSignal | undefined;
+      vi.mocked(fetch).mockImplementationOnce((_url, init) => new Promise<Response>((_resolve, reject) => {
+        signal = init?.signal ?? undefined;
+        signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+      }));
+      const failed = expect(run()).rejects.toMatchObject({ status: 0 });
+      await vi.advanceTimersByTimeAsync(69999);
+      expect(signal?.aborted).toBe(false);
+      await vi.advanceTimersByTimeAsync(1);
+      await failed;
+    }
+    expect(fetch).toHaveBeenCalledTimes(3);
+  });
   it('allows the import processing budget, then aborts once without retrying a write', async () => {
     const { localApi } = await import('./api');
     vi.useFakeTimers();

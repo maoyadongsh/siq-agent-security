@@ -175,6 +175,9 @@ func (s *Server) runtimeIdentityCollection(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Cache-Control", "no-store")
 	switch r.Method {
 	case http.MethodGet:
+		if !runtimeIdentityResponseReady(w, r) {
+			return
+		}
 		items, err := s.runtimeIdentities.List()
 		if err != nil {
 			runtimeIdentityError(w, err)
@@ -190,6 +193,9 @@ func (s *Server) runtimeIdentityCollection(w http.ResponseWriter, r *http.Reques
 	case http.MethodPost:
 		var req runtimeidentity.CreateRequest
 		if !readRuntimeIdentityCreate(w, r, &req) {
+			return
+		}
+		if !runtimeIdentityResponseReady(w, r) {
 			return
 		}
 		record, err := s.runtimeIdentities.Create(req)
@@ -237,6 +243,9 @@ func (s *Server) runtimeIdentityOne(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.SchemaVersion != "local-runtime-identity-revoke/v1" {
 		runtimeIdentityError(w, runtimeidentity.ErrInvalid)
+		return
+	}
+	if !runtimeIdentityResponseReady(w, r) {
 		return
 	}
 	_, err := s.runtimeIdentities.Revoke(id, req.ActorID)
