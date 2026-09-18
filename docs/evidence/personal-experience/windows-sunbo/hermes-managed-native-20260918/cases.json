@@ -1,0 +1,247 @@
+{
+  "cases": [
+    {
+      "case": "B01",
+      "controller_status": "pass",
+      "guard_allows_test_target": true,
+      "guard_denied_ancillary_subprocess_count": 5,
+      "independent_evidence_verified": true,
+      "native_image_sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a",
+      "native_owned_job": true,
+      "native_tool_result_kind": "allow_result",
+      "pending_enrollment_denied_without_decide": false,
+      "receipt_counts": {
+        "decision": 2,
+        "observation": 2
+      },
+      "receipt_projection": [
+        {
+          "action": "allow",
+          "authority_status": "valid",
+          "effective_action": "allow",
+          "operation": "write",
+          "reason_code": "allow",
+          "record_type": "decision"
+        },
+        {
+          "action": "allow",
+          "authority_status": "valid",
+          "effective_action": "allow",
+          "operation": "write",
+          "reason_code": "observation_accepted",
+          "record_type": "observation"
+        },
+        {
+          "action": "allow",
+          "authority_status": "valid",
+          "effective_action": "allow",
+          "operation": "read",
+          "reason_code": "allow",
+          "record_type": "decision"
+        },
+        {
+          "action": "allow",
+          "authority_status": "valid",
+          "effective_action": "allow",
+          "operation": "read",
+          "reason_code": "observation_accepted",
+          "record_type": "observation"
+        }
+      ],
+      "target_after_exists": true,
+      "target_before_exists": false,
+      "target_relative": "workspace/allowed/b01.txt",
+      "target_sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9",
+      "workspace_after": {
+        "allowed/b01.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        }
+      },
+      "workspace_before": {}
+    },
+    {
+      "case": "B02",
+      "controller_status": "pass",
+      "guard_allows_test_target": true,
+      "guard_denied_ancillary_subprocess_count": 4,
+      "independent_evidence_verified": true,
+      "native_image_sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a",
+      "native_owned_job": true,
+      "native_tool_result_kind": "filesystem_default_deny",
+      "pending_enrollment_denied_without_decide": false,
+      "receipt_counts": {
+        "decision": 1,
+        "observation": 0
+      },
+      "receipt_projection": [
+        {
+          "action": "deny",
+          "authority_status": "valid",
+          "effective_action": "deny",
+          "operation": "write",
+          "reason_code": "grant_scope_violation",
+          "record_type": "decision"
+        }
+      ],
+      "target_after_exists": false,
+      "target_before_exists": false,
+      "target_relative": "workspace/outside/b02.txt",
+      "target_sha256": null,
+      "workspace_after": {
+        "allowed/b01.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        }
+      },
+      "workspace_before": {
+        "allowed/b01.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        }
+      }
+    },
+    {
+      "case": "B03",
+      "controller_status": "pass",
+      "guard_allows_test_target": true,
+      "guard_denied_ancillary_subprocess_count": 4,
+      "independent_evidence_verified": true,
+      "native_image_sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a",
+      "native_owned_job": true,
+      "native_tool_result_kind": "instance_enrollment_fail_closed",
+      "pending_enrollment_denied_without_decide": true,
+      "receipt_counts": {
+        "decision": 0,
+        "observation": 0
+      },
+      "receipt_projection": [],
+      "target_after_exists": false,
+      "target_before_exists": false,
+      "target_relative": "workspace/allowed/b03.txt",
+      "target_sha256": null,
+      "workspace_after": {
+        "allowed/b01.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        }
+      },
+      "workspace_before": {
+        "allowed/b01.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        }
+      }
+    },
+    {
+      "case": "B04",
+      "controller_status": "pass",
+      "guard_allows_test_target": true,
+      "guard_denied_ancillary_subprocess_count": 5,
+      "independent_evidence_verified": true,
+      "native_image_sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a",
+      "native_owned_job": true,
+      "native_tool_result_kind": "allow_result",
+      "pending_enrollment_denied_without_decide": false,
+      "receipt_counts": {
+        "decision": 2,
+        "observation": 2
+      },
+      "receipt_projection": [
+        {
+          "action": "allow",
+          "authority_status": "valid",
+          "effective_action": "allow",
+          "operation": "write",
+          "reason_code": "allow",
+          "record_type": "decision"
+        },
+        {
+          "action": "allow",
+          "authority_status": "valid",
+          "effective_action": "allow",
+          "operation": "write",
+          "reason_code": "observation_accepted",
+          "record_type": "observation"
+        },
+        {
+          "action": "allow",
+          "authority_status": "valid",
+          "effective_action": "allow",
+          "operation": "read",
+          "reason_code": "allow",
+          "record_type": "decision"
+        },
+        {
+          "action": "allow",
+          "authority_status": "valid",
+          "effective_action": "allow",
+          "operation": "read",
+          "reason_code": "observation_accepted",
+          "record_type": "observation"
+        }
+      ],
+      "target_after_exists": true,
+      "target_before_exists": false,
+      "target_relative": "workspace/allowed/b04.txt",
+      "target_sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9",
+      "workspace_after": {
+        "allowed/b01.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        },
+        "allowed/b04.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        }
+      },
+      "workspace_before": {
+        "allowed/b01.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        }
+      }
+    },
+    {
+      "case": "B05",
+      "controller_status": "pass",
+      "guard_allows_test_target": true,
+      "guard_denied_ancillary_subprocess_count": 4,
+      "independent_evidence_verified": true,
+      "native_image_sha256": "4d33159de276fb921e2e987f63af88b75d88c4de0b1848373b7b85b570cd726a",
+      "native_owned_job": true,
+      "native_tool_result_kind": "instance_enrollment_fail_closed",
+      "pending_enrollment_denied_without_decide": true,
+      "receipt_counts": {
+        "decision": 0,
+        "observation": 0
+      },
+      "receipt_projection": [],
+      "target_after_exists": false,
+      "target_before_exists": false,
+      "target_relative": "workspace/allowed/b05.txt",
+      "target_sha256": null,
+      "workspace_after": {
+        "allowed/b01.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        },
+        "allowed/b04.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        }
+      },
+      "workspace_before": {
+        "allowed/b01.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        },
+        "allowed/b04.txt": {
+          "bytes": 37,
+          "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+        }
+      }
+    }
+  ],
+  "projection_only_not_signed_original": true
+}
