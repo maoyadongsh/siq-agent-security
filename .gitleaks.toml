@@ -32,6 +32,14 @@
     condition = "AND"
     paths = ['''docs/hackathon/evidence/benchmark-20260908/controls-first\.json$''']
     regexes = ['''^M0TfIyTYjfzpAaFbrhRVPm1PTlMPQ2Eei/kcYna\+y7w=$''']
+  # Reviewed SHA-256 of an isolated native session routing identifier, verified
+  # against the frozen generator and six original evidence records. Only this
+  # exact value, field line and evidence path are excepted; new values still scan.
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary\.json$''']
+    regexTarget = "line"
+    regexes = ['''^\s*"session_key_sha256": "b4f6a7cf296ab0fd7f3dc39c1fe6b0520d93d21b740a61692ba991a9bf28ad47",?\s*$''']
 
 [[rules]]
   id = "aws-access-token"

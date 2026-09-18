@@ -1,0 +1,69 @@
+{
+  "scope": "exact-path exception regression and fixed CI merge history scan",
+  "merge": "4c7a29574e88b99fb75603dd5fda82a7c801ec82",
+  "product_tests": false,
+  "source_dirty": true,
+  "config_sha256": "47fd7989fa6ead39650e9fafe31464307ac01f4119a313a626f8ab073af8fea9",
+  "calibration_sha256": "cf90d1bbc000de2861f0f1d01dc17f29ec08ec847e6d86047ba016c4df99fa49",
+  "old_config_sha256": "b2917c949440231d8f66bb09b83f8569dfbc4b507ce64aed4b084ef1ab55e138",
+  "scanner_sha256": "e2b9ba6baa1cd385033b37572b084188f351d48ec586eb2cfbc5af10c72bfeb9",
+  "results": [
+    {
+      "label": "old-rule-negative",
+      "command": [
+        "C:/Python313/python.exe",
+        "-I",
+        "-B",
+        "-X",
+        "utf8",
+        "<integration>\\scripts\\check_gitleaks_config.py",
+        "--binary",
+        "<workspace>\\.tmp\\windows-gitleaks-8.24.2\\bin\\gitleaks.exe",
+        "--config",
+        "<workspace>\\.tmp\\windows-goal-20260916\\gitleaks-exact-session-r2\\reviewed-before-narrowing.toml"
+      ],
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "seconds": 6.782
+    },
+    {
+      "label": "calibration",
+      "command": [
+        "C:/Python313/python.exe",
+        "-I",
+        "-B",
+        "-X",
+        "utf8",
+        "<integration>\\scripts\\check_gitleaks_config.py",
+        "--binary",
+        "<workspace>\\.tmp\\windows-gitleaks-8.24.2\\bin\\gitleaks.exe",
+        "--out",
+        "<workspace>\\.tmp\\windows-goal-20260916\\gitleaks-exact-session-r3\\calibration.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "seconds": 9.674
+    },
+    {
+      "label": "history",
+      "command": [
+        "<workspace>\\.tmp\\windows-gitleaks-8.24.2\\bin\\gitleaks.exe",
+        "git",
+        "--redact",
+        "--log-opts=--full-history -m 4c7a29574e88b99fb75603dd5fda82a7c801ec82",
+        "--config",
+        "<integration>\\.gitleaks.toml",
+        "--report-format=json",
+        "--report-path=<workspace>\\.tmp\\windows-goal-20260916\\gitleaks-exact-session-r3\\redacted-report.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "seconds": 174.091
+    }
+  ],
+  "result": "pass",
+  "findings": 0,
+  "method": "local scanner calibration and fixed historical merge scan",
+  "native_acceptance": false,
+  "final_pr_ci_claimed": false
+}
