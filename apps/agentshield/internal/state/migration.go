@@ -446,7 +446,7 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 	digest := stateformat.Hash(raw)
 	// A crash after done need not compare an obsolete business snapshot. The
 	// completed target and archived plan are verified before removing the barrier.
-	if e := stateformat.Check(s.Dir, true, false); e == nil {
+	if e := stateformat.CheckCompletedMigration(s.Dir); e == nil {
 		if m, e := stateformat.ReadMarker(s.Dir); e == nil && m.Schema == "state-format/v2" {
 			if e = s.finishMigrationBarrier(raw); e != nil {
 				return result, e
@@ -560,7 +560,10 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 }
 
 func (s *Store) finishMigrationBarrier(raw []byte) error {
-	if e := stateformat.Check(s.Dir, true, false); e != nil {
+	if e := stateformat.Check(s.Dir, true, true); e != nil {
+		return e
+	}
+	if e := stateformat.CheckCompletedMigration(s.Dir); e != nil {
 		return e
 	}
 	archive, e := migrationReadRegular(filepath.Join(s.Dir, stateformat.MigrationDir, "plan.json"), 8<<20)
