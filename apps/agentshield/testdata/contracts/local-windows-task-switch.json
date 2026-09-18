@@ -1,0 +1,28 @@
+{
+  "binary_bindings": {
+    "source_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "target_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+  },
+  "schema_version": "local-windows-task-switch/v1",
+  "source_record": {
+    "schema_version": "local-windows-task-record/v1",
+    "instance_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "state_directory_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task_name": "\\SIQ-Agent-Security-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "xml_sha256": "8ace57152bda2d48244c3b38746a73f5409d4d780af6c3ddd4e8a749ba89c749",
+    "user_sid": "S-1-5-21-100-200-300-1001",
+    "signature": "c65fefe10c58e5a076108254da87acbe24c543b3eaa43eaa699dd01421fdd67761a3f7041f6405eb507a8589aff879a9dafe273f162b683b4c92ffd278e3270b"
+  },
+  "target_record": {
+    "schema_version": "local-windows-task-record/v1",
+    "instance_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "state_directory_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "task_name": "\\SIQ-Agent-Security-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "xml_sha256": "11da31b5477bf322c8aa301cb258d10019be743e6244420ac642b915d649ac0d",
+    "user_sid": "S-1-5-21-100-200-300-1001",
+    "signature": "fcb225b3f0b07ee09d5e544c09d566ae8d242a1cd48c566ff65f5e9f386985bd2722621969162d8406fc3c7586322e97e5a5c20b3c06f90263d1cd1f2eb69608"
+  },
+  "source_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Task version=\"1.3\" xmlns=\"http://schemas.microsoft.com/windows/2004/02/mit/task\">\n  <RegistrationInfo><URI>\\SIQ-Agent-Security-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</URI></RegistrationInfo>\n  <Principals><Principal id=\"LocalUser\"><UserId>S-1-5-21-100-200-300-1001</UserId><LogonType>InteractiveToken</LogonType><RunLevel>LeastPrivilege</RunLevel></Principal></Principals>\n  <Settings>\n    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>\n    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>\n    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>\n    <AllowHardTerminate>false</AllowHardTerminate>\n    <StartWhenAvailable>false</StartWhenAvailable>\n    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>\n    <IdleSettings><StopOnIdleEnd>false</StopOnIdleEnd><RestartOnIdle>false</RestartOnIdle></IdleSettings>\n    <AllowStartOnDemand>true</AllowStartOnDemand>\n    <Enabled>true</Enabled><Hidden>false</Hidden><RunOnlyIfIdle>false</RunOnlyIfIdle>\n    <UseUnifiedSchedulingEngine>true</UseUnifiedSchedulingEngine>\n    <WakeToRun>false</WakeToRun><ExecutionTimeLimit>PT0S</ExecutionTimeLimit><Priority>7</Priority>\n  </Settings>\n  <Actions Context=\"LocalUser\"><Exec><Command>C:\\Program Files\\SIQ &amp; tools\\siq.exe</Command><Arguments>serve --state-dir &#34;C:\\Users\\example\\SIQ 中文&#34;</Arguments></Exec></Actions>\n</Task>\n",
+  "target_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Task version=\"1.3\" xmlns=\"http://schemas.microsoft.com/windows/2004/02/mit/task\">\n  <RegistrationInfo><URI>\\SIQ-Agent-Security-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</URI></RegistrationInfo>\n  <Principals><Principal id=\"LocalUser\"><UserId>S-1-5-21-100-200-300-1001</UserId><LogonType>InteractiveToken</LogonType><RunLevel>LeastPrivilege</RunLevel></Principal></Principals>\n  <Settings>\n    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>\n    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>\n    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>\n    <AllowHardTerminate>false</AllowHardTerminate>\n    <StartWhenAvailable>false</StartWhenAvailable>\n    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>\n    <IdleSettings><StopOnIdleEnd>false</StopOnIdleEnd><RestartOnIdle>false</RestartOnIdle></IdleSettings>\n    <AllowStartOnDemand>true</AllowStartOnDemand>\n    <Enabled>true</Enabled><Hidden>false</Hidden><RunOnlyIfIdle>false</RunOnlyIfIdle>\n    <UseUnifiedSchedulingEngine>true</UseUnifiedSchedulingEngine>\n    <WakeToRun>false</WakeToRun><ExecutionTimeLimit>PT0S</ExecutionTimeLimit><Priority>7</Priority>\n  </Settings>\n  <Actions Context=\"LocalUser\"><Exec><Command>C:\\Program Files\\SIQ &amp; tools\\siq-next.exe</Command><Arguments>serve --state-dir &#34;C:\\Users\\example\\SIQ 中文&#34;</Arguments></Exec></Actions>\n</Task>\n",
+  "signature": "0624396d55dd6b26b7cb4a9e8adbf1251bce1b0a806ad2fb21685e0d102fa942f3953c73efe862beaa14896730a9f79130ec1996dd2fdda364a5915065cd3a09"
+}

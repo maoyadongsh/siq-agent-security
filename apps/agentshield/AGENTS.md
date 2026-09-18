@@ -96,3 +96,6 @@ M78 按规格 §3.11.40 允许 `task-register --confirm-register` 在当前用�
 M79 按规格 §3.11.41 允许 `task-start --confirm-start` 在生命周期锁、完整签名/系统配置核对后按需 Run 当前用户已注册实例；主 Writer 检查后先释放再启动，不传动作参数，不强制重启、改配置或自动删除。无 Windows 宿主只测试模拟控制器。
 
 M88 按规格 §3.11.50 允许明确 task-unregister --confirm-unregister 在双 Writer、签名/完整配置与空闲状态复验后，删除当前用户精确实例任务并读回缺席；保留本地源配置、密钥和历史。无 Windows 宿主只测试模拟控制器，不执行真实系统删除。
+
+
+按 docs/windows-task-upgrade-spec-v1.md 的 Windows 升级增量，明确确认后允许在主 Writer 与 service-control Writer 保护下，以签名事务复验并替换本实例的任务 XML/windows-task.json；只删除与记录精确匹配且空闲的当前用户系统任务，并以 TASK_CREATE 排他注册同名目标。未知对象不覆盖，业务授权和撤销历史不回放。故障只保留可恢复事务，不重启/注销 Windows、不更改信任根或系统防护。

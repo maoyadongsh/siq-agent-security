@@ -2124,3 +2124,7 @@ D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-priv
 2026-09-18 WorkBuddy 安装中断恢复按 [实例恢复增量](workbuddy-adapter-recovery-v1.md) 绑定当前可信实例与加密计划的原始配置根；在原事务锁内复验，不从明文记录或当前环境重新解释旧根，不恢复被撤销的身份。Windows 状态检查成本按 [只读快照增量](windows-state-check-cost-spec-v1.md) 减少同次重复元数据读取；仍在每次请求验证当前 ACL、状态与迁移屏障，不建立跨请求 Authority 缓存。
 
 2026-09-18 WorkBuddy 审批恢复按 [审批恢复增量](workbuddy-approval-resume-v1.md) 保存首次真实 pre 的有限私有关联，并在后续真实 pre 中在线核对原 hold 与唯一执行预留；批准来自 SIQ 独立管理操作，参数变化、缺失关联、重复调用和不确定结果均不得复用原执行许可。组件验证与实际桌面验收分别记录。
+
+## Windows 当前用户任务升级增量（2026-09-18）
+
+Windows `service-upgrade/service-rollback` 的签名事务、系统任务替换、恢复、二进制与状态兼容约束见 [专项规格](windows-task-upgrade-spec-v1.md)。实现复用 clientrelease 与既有受签名 Task 生命周期；配置切换不回放历史权限，原生与测试签名证据分别记录。
