@@ -55,6 +55,27 @@ func cmdStateStatus(args []string, out io.Writer) error {
 	return json.NewEncoder(out).Encode(result)
 }
 
+func cmdStateEnableWindowsResources(args []string, out io.Writer) error {
+	fs := flag.NewFlagSet("state-enable-windows-resources", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	confirm := fs.Bool("confirm", false, "confirm Windows resource compatibility activation")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if !*confirm || fs.NArg() != 0 {
+		return errors.New("使用 state-enable-windows-resources --confirm 明确确认状态版本升级；不会批准已有或新增授权")
+	}
+	dir, err := state.DefaultDir()
+	if err != nil {
+		return err
+	}
+	status, err := (&state.Store{Dir: dir}).ActivateWindowsProfile(true, Version)
+	if err != nil {
+		return err
+	}
+	return json.NewEncoder(out).Encode(map[string]any{"schema": "local-state-windows-profile-result/v1", "status": status, "filesystem_profile": stateformat.WindowsResourceProfile, "min_reader": 3, "min_writer": 3})
+}
+
 func checkUpgradeForCurrentState(manifest, binary string) (string, error) {
 	dir, e := state.DefaultDir()
 	if e != nil {

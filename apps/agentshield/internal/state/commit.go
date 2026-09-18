@@ -84,8 +84,8 @@ func (s *Store) commitPath(id, suffix string) string {
 }
 
 func validateCommit(c GrantCommit) error {
-	if c.Grant.SchemaVersion != "" || c.Grant.FilesystemProfile != "" || c.Grant.FilesystemBindings != nil {
-		return ErrGrantProfileActivation
+	if err := grant.ValidateFilesystemProfile(c.Grant); err != nil {
+		return err
 	}
 	if !safeID(c.Grant.GrantID) || c.ExpectedRevision < -1 {
 		return errors.New("state: invalid commit identity or revision")
@@ -105,6 +105,11 @@ func validateCommit(c GrantCommit) error {
 // CommitGrant durably prepares all materials before publishing any grant. The
 // final marker binds their bytes and is the visibility boundary for readers.
 func (s *Store) CommitGrant(c GrantCommit) (int, error) {
+	unlock, err := s.lockGrantPublication()
+	if err != nil {
+		return -1, err
+	}
+	defer unlock()
 	commitMu.Lock()
 	defer commitMu.Unlock()
 	return s.commitGrantLocked(c)
@@ -113,6 +118,11 @@ func (s *Store) CommitGrant(c GrantCommit) (int, error) {
 // CommitGrantFrom checks the exact source under the same lock as publication.
 // The source remains untouched; the new commit has its own policy and audit.
 func (s *Store) CommitGrantFrom(c GrantCommit, sourceID string, revision int, signature string) (int, error) {
+	unlock, err := s.lockGrantPublication()
+	if err != nil {
+		return -1, err
+	}
+	defer unlock()
 	commitMu.Lock()
 	defer commitMu.Unlock()
 	if c.Grant.GrantID == sourceID || c.ExpectedRevision != -1 || c.Audit == nil {
@@ -130,6 +140,13 @@ func (s *Store) CommitGrantFrom(c GrantCommit, sourceID string, revision int, si
 
 func (s *Store) commitGrantLocked(c GrantCommit) (int, error) {
 	if err := RequireStateCompatibility(s.Dir); err != nil {
+		return -1, err
+	}
+	grantRaw, err := json.Marshal(c.Grant)
+	if err != nil {
+		return -1, err
+	}
+	if err := checkGrantProfileWrite(s.Dir, grantRaw); err != nil {
 		return -1, err
 	}
 	if err := validateCommit(c); err != nil {
@@ -171,6 +188,15 @@ func (s *Store) commitGrantLocked(c GrantCommit) (int, error) {
 }
 
 func (s *Store) replayCommit(c GrantCommit, raw []byte) (int, error) {
+	// Recovery must not publish policy/audit materials before checking that this
+	// new Grant interpretation is still behind the completed consumer barrier.
+	grantBody, err := json.Marshal(c.Grant)
+	if err != nil {
+		return -1, err
+	}
+	if err := checkGrantProfileWrite(s.Dir, grantBody); err != nil {
+		return -1, err
+	}
 	seq := c.ExpectedRevision + 1
 	id := commitID(c)
 	fail := func(phase string, err error) (int, error) {
@@ -367,6 +393,11 @@ func (s *Store) RecoverGrantCommits(w *Writer) (int, error) {
 	if err != nil || pid != os.Getpid() || pid != w.pid || owner != w.owner {
 		return 0, ErrWriterBusy
 	}
+	unlock, err := s.lockGrantPublication()
+	if err != nil {
+		return 0, err
+	}
+	defer unlock()
 	commitMu.Lock()
 	defer commitMu.Unlock()
 	pending, err := s.ListIncompleteCommits()

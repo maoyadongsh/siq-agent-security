@@ -154,3 +154,11 @@ def test_state_profile_transition_contracts(kind: str) -> None:
         missing.pop(field)
         assert list(validator.iter_errors(missing)), field
     assert list(validator.iter_errors({**value, "unknown": True}))
+
+
+@pytest.mark.parametrize(("fixture", "schema"), [
+    ("local-state-status-reader3.json", "local-state-status.v1.schema.json"),
+    ("skill-manifest.v3.reader3.sample.json", "skill-manifest.v3.schema.json"),
+])
+def test_reader3_producer_fixtures(fixture: str, schema: str) -> None:
+    _validator(schema).validate(_read(fixture))

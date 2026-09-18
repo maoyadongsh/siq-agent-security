@@ -64,6 +64,8 @@ func main() {
 	switch os.Args[1] {
 	case "state-migrate":
 		err = cmdStateMigrate(os.Args[2:], os.Stdout)
+	case "state-enable-windows-resources":
+		err = cmdStateEnableWindowsResources(os.Args[2:], os.Stdout)
 	case "state-status":
 		err = cmdStateStatus(os.Args[2:], os.Stdout)
 	case "version":
@@ -199,6 +201,7 @@ func usage() {
   %[1]s version
   %[1]s state-status        # read-only compatibility diagnosis
   %[1]s state-migrate --confirm # explicit backed-up metadata migration; stop this instance first
+  %[1]s state-enable-windows-resources --confirm # explicit Windows resource compatibility activation
   %[1]s rulepack            # effective rule pack summary (JSON)
   %[1]s scan <file>...      # static threat scan, one JSON result per line
   %[1]s admit <skill-dir> [--trust trusted|community|unknown] [--out <dir>] [--card]

@@ -51,7 +51,7 @@ macOS 原生补验发现的祖先检查增量（2026-09-15）：Darwin 的 `/var
 
 ## Windows 资源解释显式启用事务（reader/writer 3，2026-09-18）
 
-Windows Grant v2 / Runtime Identity v2 / Intent v4 必须在旧消费者拒绝的状态中发布。状态外形仍为 state-format/v2、format_version=2，显式启用将 min_reader/min_writer 从2提升到3；不重签或升级既有业务对象。全新初始化仍为2，不自动改变旧实例。完整新版授权消费链开放前，新版 Grant 的临时拒写门禁保留。
+Windows Grant v2 / Runtime Identity v2 / Intent v4 必须在旧消费者拒绝的状态中发布。状态外形仍为 state-format/v2、format_version=2，显式启用将 min_reader/min_writer 从2提升到3；不重签或升级既有业务对象。全新初始化仍为2，不自动改变旧实例。只有完整启用记录可通过新版 Grant 的持久化门禁；完整新版授权消费链开放前，管理创建入口仍保持关闭。
 
 启用只接受已初始化且常规 v1→v2 迁移已收尾的 Windows 本机状态，明确 confirm，持主 Writer 与 service-control/adapter-write/client-releases/client-snapshots 全部维护 Writer。v1、未知格式、活跃旧迁移或非本机平台拒绝，不自动停服务、不提权。
 
@@ -66,3 +66,5 @@ Windows Grant v2 / Runtime Identity v2 / Intent v4 必须在旧消费者拒绝�
 任意中断后只可由同一显式启用事务持锁恢复；计划漂移、源标记替换、旧迁移历史变化、未知输出或权限异常均保留现场拒绝。标记缺失只在prepared与精确target暂存都匹配计划时可恢复；更早阶段不补造。done以后重试不比较过时业务快照、不回滚新业务写入。拒绝或未确认时不产生事务材料。测试覆盖逐阶段故障和真实隔离进程退出，Windows不据此宣称断电耐久性。
 
 显式入口为 `state-enable-windows-resources --confirm`；无确认/多余参数在访问状态前拒绝。`state-status` 对中断启用给出此恢复命令，损坏记录保持拒绝。命令返回 local-state-windows-profile-result/v1，仅表示兼容元数据 activated/up_to_date，不表示批准或启用某个宿主。发行清单的 reader/writer 声明随实现提升到3，已有清单不改写；旧最低版本2制品对升级状态的发行预检拒绝。
+
+完成后仍核验 prepared.json 的计划摘要；缺失、篡改或宽 ACL 不自动修复。活动屏障即使已有 done 也始终拒绝普通入口，只由显式启用命令完成清理。普通 state-migrate 在取锁前识别新版屏障并返回专属恢复指引。Windows 新增元数据读沿已有 privatefs 核查目录 DACL、单链接及文件 DACL，状态兼容层仍不依赖业务存储，也不经过会拒绝活动屏障的 statefs。

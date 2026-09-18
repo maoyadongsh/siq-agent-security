@@ -422,9 +422,14 @@ func (s *Store) GetChallengeWithSeq(id string) (*grant.ApprovalChallenge, int, e
 
 // ListGrants returns the latest version of every grant.
 func (s *Store) ListGrants() ([]grant.Grant, error) {
+	list, _, err := s.ListGrantsWithRevisions()
+	return list, err
+}
+
+func (s *Store) listGrantsWithRevisions() ([]grant.Grant, map[string]int, error) {
 	entries, err := statefs.ReadDir(filepath.Join(s.Dir, "grants"))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	latest := map[string]int{}
 	files := map[string]string{}
@@ -448,26 +453,26 @@ func (s *Store) ListGrants() ([]grant.Grant, error) {
 			files[id] = filepath.Join(s.Dir, "grants", name)
 		}
 	}
-	var out []grant.Grant
+	out := []grant.Grant{}
 	for id, p := range files {
 		if err := s.checkGrantCommit(id, latest[id]); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		raw, err := statefs.ReadFile(p)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		var g grant.Grant
 		if err := json.Unmarshal(raw, &g); err != nil {
-			return nil, fmt.Errorf("state: malformed grant version: %w", err)
+			return nil, nil, fmt.Errorf("state: malformed grant version: %w", err)
 		}
 		if g.GrantID != id {
-			return nil, errors.New("state: grant identity does not match version filename")
+			return nil, nil, errors.New("state: grant identity does not match version filename")
 		}
 		out = append(out, g)
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].CreatedAt > out[j].CreatedAt })
-	return out, nil
+	return out, latest, nil
 }
 
 // ActiveGrant is the receipt.GrantLookup: newest deployed/effective grant for
