@@ -167,3 +167,19 @@ func TestWorkBuddyManagedConfigRejectsFallbackReferences(t *testing.T) {
 		}
 	}
 }
+
+type workBuddyEnrollmentStageDecider struct {
+	workBuddyDecider
+	failure error
+}
+
+func (d *workBuddyEnrollmentStageDecider) Enroll(string) error { return d.failure }
+func TestWorkBuddyEnrollmentDeadlineAlwaysDenies(t *testing.T) {
+	for _, failure := range []error{&WorkBuddyEnrollmentDeadline{BeforeRequest: true}, &WorkBuddyEnrollmentDeadline{}, errors.New("private token and URL")} {
+		d := &workBuddyEnrollmentStageDecider{failure: failure}
+		out := WorkBuddyManagedHook(strings.NewReader(workBuddyInput), d, "hri-fixture", "block", "")
+		if out.HookSpecificOutput.PermissionDecision != "deny" || len(d.requests) != 0 || strings.Contains(out.HookSpecificOutput.PermissionDecisionReason, "private") {
+			t.Fatalf("unsafe enrollment failure: %+v", out)
+		}
+	}
+}

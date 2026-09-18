@@ -57,8 +57,14 @@ func (h *workBuddyManagedClient) postStatus(path string, body any, expected int)
 }
 
 func (h *workBuddyManagedClient) Enroll(session string) error {
+	if h.ctx.Err() != nil {
+		return &adapters.WorkBuddyEnrollmentDeadline{BeforeRequest: true}
+	}
 	raw, err := h.post("/v1/runtime-sessions", map[string]string{"schema_version": "local-runtime-session-enroll/v1", "session_id": session})
 	if err != nil {
+		if h.ctx.Err() != nil {
+			return &adapters.WorkBuddyEnrollmentDeadline{}
+		}
 		return err
 	}
 	var out struct {

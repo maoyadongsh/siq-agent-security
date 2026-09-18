@@ -236,6 +236,11 @@ type WorkBuddyManagedFailure struct{ Uncertain bool }
 
 func (e *WorkBuddyManagedFailure) Error() string { return "managed WorkBuddy correlation unavailable" }
 
+// These fixed categories never expose a transport error, URL, or bearer.
+type WorkBuddyEnrollmentDeadline struct{ BeforeRequest bool }
+
+func (e *WorkBuddyEnrollmentDeadline) Error() string { return "managed enrollment deadline" }
+
 // WorkBuddyManagedHook has no default session/agent or advisory transport
 // fallback. A valid server policy allow expresses no opinion to the host.
 func WorkBuddyManagedHook(in io.Reader, d WorkBuddyManagedDecider, agentID, mode, stateDir string) CodeBuddyOutput {
@@ -277,8 +282,16 @@ func WorkBuddyManagedHook(in io.Reader, d WorkBuddyManagedDecider, agentID, mode
 	if d == nil || !strings.HasPrefix(agentID, "hri-") {
 		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, "managed configuration or credential unavailable")
 	}
-	if d.Enroll(session) != nil {
-		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, "managed session enrollment unavailable")
+	if err := d.Enroll(session); err != nil {
+		reason := "managed session enrollment unavailable"
+		var deadline *WorkBuddyEnrollmentDeadline
+		if errors.As(err, &deadline) {
+			reason = "managed session enrollment deadline during request"
+			if deadline.BeforeRequest {
+				reason = "managed session enrollment deadline before request"
+			}
+		}
+		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, reason)
 	}
 	dec, err := d.Decide(req)
 	var failure *WorkBuddyManagedFailure

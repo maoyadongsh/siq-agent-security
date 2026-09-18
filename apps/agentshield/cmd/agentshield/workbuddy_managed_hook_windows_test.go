@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -236,5 +238,45 @@ func TestWorkBuddyManagedHTTPBudgetDoesNotResetAfterEnroll(t *testing.T) {
 	elapsed := time.Since(start)
 	if got.HookSpecificOutput.PermissionDecision != "deny" || elapsed > 23*time.Second || elapsed < 19*time.Second {
 		t.Fatalf("budget changed: %v %+v", elapsed, got)
+	}
+}
+
+func TestWorkBuddyEnrollmentDeadlineStage(t *testing.T) {
+	for _, before := range []bool{true, false} {
+		t.Run(fmt.Sprint(before), func(t *testing.T) {
+			reached := make(chan struct{}, 1)
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				reached <- struct{}{}
+				select {
+				case <-r.Context().Done():
+				case <-time.After(time.Second):
+				}
+			}))
+			defer server.Close()
+			ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+			defer cancel()
+			if before {
+				cancel()
+			}
+			client := &workBuddyManagedClient{config: adapters.WorkBuddyManagedConfig{Endpoint: server.URL}, token: "private-fixture", client: server.Client(), ctx: ctx}
+			err := client.Enroll("fixture")
+			var stage *adapters.WorkBuddyEnrollmentDeadline
+			if !errors.As(err, &stage) || stage.BeforeRequest != before || strings.Contains(err.Error(), "private") {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if before {
+				select {
+				case <-reached:
+					t.Fatal("expired request reached server")
+				default:
+				}
+			} else {
+				select {
+				case <-reached:
+				default:
+					t.Fatal("no request reached server")
+				}
+			}
+		})
 	}
 }
