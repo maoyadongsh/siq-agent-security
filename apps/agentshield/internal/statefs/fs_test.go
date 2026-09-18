@@ -102,3 +102,40 @@ func TestNestedMarkerCannotShadowOuterState(t *testing.T) {
 		t.Fatal("nested marker bypass")
 	}
 }
+
+func TestPrivatePublicationChecksBothCompatibilityBarriers(t *testing.T) {
+	for _, side := range []string{"source", "target"} {
+		t.Run(side, func(t *testing.T) {
+			sourceRoot, targetRoot := t.TempDir(), t.TempDir()
+			source, target := filepath.Join(sourceRoot, "scratch"), filepath.Join(targetRoot, "published")
+			f, err := os.OpenFile(source, os.O_CREATE|os.O_EXCL|os.O_RDWR, 0600)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if _, err := f.WriteString("unchanged private payload"); err != nil {
+				t.Fatal(err)
+			}
+			created, err := f.Stat()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := f.Close(); err != nil {
+				t.Fatal(err)
+			}
+			root := sourceRoot
+			if side == "target" {
+				root = targetRoot
+			}
+			if err := os.WriteFile(filepath.Join(root, stateformat.MarkerName), []byte(`{"schema":"state-format/v1","program_version":"future","format_version":999,"published_at":"2026-09-13T09:00:00Z"}`), 0600); err != nil {
+				t.Fatal(err)
+			}
+			beforeSource, beforeTarget := snapshot(t, sourceRoot), snapshot(t, targetRoot)
+			if moved, err := statefs.PublishPrivateNew(source, target, created); moved || !errors.Is(err, stateformat.ErrIncompatible) {
+				t.Fatal("compatibility publication bypass", moved, err)
+			}
+			if !reflect.DeepEqual(beforeSource, snapshot(t, sourceRoot)) || !reflect.DeepEqual(beforeTarget, snapshot(t, targetRoot)) {
+				t.Fatal("blocked publication changed state")
+			}
+		})
+	}
+}

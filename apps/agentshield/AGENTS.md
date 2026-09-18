@@ -51,6 +51,8 @@ N01 Windows 迁移暂存清理按 `docs/n01-state-protocol-design-20260913.md` �
 
 N01 Windows 私密单链接发布同样允许在普通文件、DACL、创建身份和目标父目录验证后，通过现有 FileRenameInfo 不覆盖地原子移动本次暂存文件；不允许覆盖目标、清除只读属性或退回暴露双链接窗口的发布方式。其他平台保持 ADR-012 原有排他发布。
 
+同一限定例外允许 privatefs.PublishNew 共用不覆盖的 FileRenameInfo 发布原语，供 N01 迁移及适配器内部私密恢复材料使用；statefs 调用必须先执行兼容屏障，不改变宿主配置文件的授权写入语义。
+
 ```bash
 gofmt -l . && go vet ./... && go test ./...
 for t in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do GOOS=${t%/*} GOARCH=${t#*/} go build ./cmd/agentshield || exit 1; done

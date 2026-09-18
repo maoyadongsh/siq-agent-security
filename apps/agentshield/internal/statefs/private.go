@@ -58,3 +58,15 @@ func CheckPrivateDir(path string) error {
 	}
 	return privatefs.CheckDir(path)
 }
+
+// PublishPrivateNew retains the compatibility barrier for both names. The
+// caller owns scratch cleanup when moved is false; existing targets survive.
+func PublishPrivateNew(source, target string, created os.FileInfo) (bool, error) {
+	if err := stateformat.RequirePath(source, true); err != nil {
+		return false, err
+	}
+	if err := stateformat.RequirePath(target, true); err != nil {
+		return false, err
+	}
+	return privatefs.PublishNew(source, target, created)
+}
