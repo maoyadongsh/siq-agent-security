@@ -2125,6 +2125,10 @@ D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-priv
 
 2026-09-18 WorkBuddy 审批恢复按 [审批恢复增量](workbuddy-approval-resume-v1.md) 保存首次真实 pre 的有限私有关联，并在后续真实 pre 中在线核对原 hold 与唯一执行预留；批准来自 SIQ 独立管理操作，参数变化、缺失关联、重复调用和不确定结果均不得复用原执行许可。组件验证与实际桌面验收分别记录。
 
+2026-09-18 Windows 默认后台通知按 [通知与待办导航增量](windows-desktop-notifications-v1.md) 接通既有显式开启配置。固定计数提醒、仅本实例 loopback 待办导航、启动冷却和关闭清理均不改变工具裁决或管理授权；API 接受不冒充桌面实测通过。
+
 ## Windows 当前用户任务升级增量（2026-09-18）
 
 Windows `service-upgrade/service-rollback` 的签名事务、系统任务替换、恢复、二进制与状态兼容约束见 [专项规格](windows-task-upgrade-spec-v1.md)。实现复用 clientrelease 与既有受签名 Task 生命周期；配置切换不回放历史权限，原生与测试签名证据分别记录。
+
+Windows `client-install` 的首次身份创建和运行中重复安装按 [安装身份顺序](windows-client-install-bootstrap-v1.md) 执行：受信发行检查先于身份建立，已有身份只读复用，仅确切缺钥时进入原 Writer 保护的初始化路径；已有历史缺钥、ACL、迁移和版本屏障不得绕过。

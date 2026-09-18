@@ -68,6 +68,8 @@ for t in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do GOOS=${t%/*} GOA
 
 ## 提交
 
+Windows 后台通知按 `docs/windows-desktop-notifications-v1.md` 的限定例外，允许 `internal/notify/*_windows.go` 使用标准库 `syscall`/`unsafe` 创建并清理本进程专属隐藏消息窗口和通知区图标，仅通过 Shell_NotifyIconW 投递固定计数提醒、ShellExecuteW 打开已监听本实例的固定 loopback 待办页。不得注册系统协议或自启、改系统设置、默认启用、执行脚本/任意目标或修改其他窗口；点击不产生批准权限。
+
 `agentshield: <主题>`；规则包改动用 `rulepack:`；涉及合同同时改 `packages/contracts/` 并用 `contracts:` 单独提交。安全修复必须带证明旧行为被拒绝的负向测试。
 
 

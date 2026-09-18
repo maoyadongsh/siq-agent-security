@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"siq-agent-security/apps/agentshield/internal/clientrelease"
+	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
 	"strconv"
 	"strings"
@@ -130,6 +131,15 @@ func prepareClientInstallation(dir, manifest, binary string, check func(string, 
 	if err != nil {
 		return "", "", err
 	}
+	if runtime.GOOS == "windows" {
+		// Stage publishes non-bootstrap history. Establish the first identity
+		// only after release verification, before those files can strand setup.
+		// Existing identities need no primary writer: setup may reuse the
+		// healthy instance that currently holds it.
+		if err := prepareWindowsClientInstallationIdentity(dir); err != nil {
+			return "", "", err
+		}
+	}
 	staged, err := stage(dir, manifest, binary)
 	if err != nil {
 		return "", "", err
@@ -165,6 +175,30 @@ func prepareClientInstallation(dir, manifest, binary string, check func(string, 
 	}
 	return staged, version, nil
 }
+
+func prepareWindowsClientInstallationIdentity(dir string) error {
+	// A readable identity must not bypass the state writer-version or migration
+	// barrier. Stage independently checks it again before publishing files.
+	if err := state.RequireStateCompatibility(dir); err != nil {
+		return err
+	}
+	_, err := signing.LoadExisting(dir)
+	if err == nil || !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	// Do not interpret a missing prerequisite from the read path as permission
+	// to bootstrap an existing identity. Only this exact absent file qualifies;
+	// the writer-protected Load repeats the full historical-identity guard.
+	if _, missingErr := os.Lstat(filepath.Join(dir, "keys", "signing.seed")); !errors.Is(missingErr, os.ErrNotExist) {
+		if missingErr != nil {
+			return missingErr
+		}
+		return err
+	}
+	_, err = loadWindowsTaskPreparationKey(dir)
+	return err
+}
+
 func installationEnvironment(environment []string, dir string) []string {
 	result := make([]string, 0, len(environment)+1)
 	for _, entry := range environment {
