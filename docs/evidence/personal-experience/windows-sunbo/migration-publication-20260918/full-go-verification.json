@@ -1,0 +1,310 @@
+{
+  "source_sha": "b321a5d807e05c6b2d002a856a357711b9202203",
+  "source_dirty": false,
+  "command": "go test -json -p 2 -count=1 -timeout=15m ./...",
+  "finished": true,
+  "exit": 1,
+  "seconds": 2073.477,
+  "source_clean_after": true,
+  "counts": {
+    "package_skip": 7,
+    "test_pass": 1223,
+    "sub_pass": 1438,
+    "test_skip": 70,
+    "sub_fail": 77,
+    "test_fail": 53,
+    "sub_skip": 22,
+    "package_pass": 27,
+    "package_fail": 14
+  },
+  "failures": [
+    {
+      "package": "agentshield",
+      "test": "TestLoadRegisteredLaunchAgent"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestStartRegisteredLaunchAgent"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestStopRegisteredLaunchAgent"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestSwitchLaunchAgentUpgradeThenRollback"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestSwitchLaunchAgentFailedStartRecovers"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestUnregisterLaunchAgent"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestServeStateDirectorySelection"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestPrepareRollbackMissingBinary"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestUnregisterExactLinkAndRetry"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestUnregisterRejectsUnknownAndFailedReload"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention"
+    },
+    {
+      "package": "adapters",
+      "test": "TestPolicyExecRejectsSymlinkedStagedRoot"
+    },
+    {
+      "package": "adapters",
+      "test": null
+    },
+    {
+      "package": "admission",
+      "test": "TestAddFileDetectsReplacedInode"
+    },
+    {
+      "package": "admission",
+      "test": null
+    },
+    {
+      "package": "completion",
+      "test": "TestCompletionRequiresActualSignedMaterialAndRetainsConflicts"
+    },
+    {
+      "package": "completion",
+      "test": null
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestActualFileWriteAndFakeSuccess"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestFileCaptureBoundsAndUnsafeTargets"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestPendingFileImmutableRestartAndTamper"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestRecoveryConcurrentDifferentOwnersHaveOneWinner"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestRecoveryStoredCapacityAndFailureIsolation"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestStoreRejectsUnsafeStateAndInput"
+    },
+    {
+      "package": "agentshield",
+      "test": null
+    },
+    {
+      "package": "effectevidence",
+      "test": null
+    },
+    {
+      "package": "inventory",
+      "test": "TestFindConnectorBinWindowsRejectsSymlink"
+    },
+    {
+      "package": "inventory",
+      "test": "TestMCPSymlinkIsSkipped"
+    },
+    {
+      "package": "inventory",
+      "test": null
+    },
+    {
+      "package": "pending",
+      "test": "TestAppendWritesUnsignedJSONL"
+    },
+    {
+      "package": "pending",
+      "test": null
+    },
+    {
+      "package": "rawcontent",
+      "test": "TestCaptureRacingRevokeNeverProducesLateWrite"
+    },
+    {
+      "package": "rawcontent",
+      "test": null
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestRuntimeCheckContractFixtures"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestCheckTemporaryAuthorityAndVerifiedCleanup"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestCancelStopsLaunchAndRevokesAuthority"
+    },
+    {
+      "package": "runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestRecoveryFindsBindingPublishedBeforeJournalUpdate"
+    },
+    {
+      "package": "runtimeidentity",
+      "test": null
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestAuditFailureNeverStartsHostOrReportsPass"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestCleanupRefusesSymlinkAndCanBeRetriedAfterRepair"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestTamperedOrTrailingRecordCannotBeReadAsPassed"
+    },
+    {
+      "package": "runtimecheck",
+      "test": null
+    },
+    {
+      "package": "server",
+      "test": "TestAdapterDiagnosticContractAndAuthority"
+    },
+    {
+      "package": "server",
+      "test": "TestInstanceAndPlanV2ContractFixtures"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestGitImportClonesFixedCopyWithoutHooks"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestGitImportSubDirectorySelectsSubtree"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestRemoteImportContractSamples"
+    },
+    {
+      "package": "server",
+      "test": "TestDiscoveryContractFixtures"
+    },
+    {
+      "package": "server",
+      "test": "TestFileObservationHTTPReadsRealState"
+    },
+    {
+      "package": "server",
+      "test": "TestToolSuccessConflictsWithIndependentMissingOutputHTTP"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestImportTamperAndAnalysisBinding"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestImportLocalSymlinksAndWrongSigningKey"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestUpstreamCheckGitSeesAdvancedHeadWithoutTouchingRecord"
+    },
+    {
+      "package": "skillimport",
+      "test": null
+    },
+    {
+      "package": "server",
+      "test": "TestGrantDraftContractSamples"
+    },
+    {
+      "package": "skillinstall",
+      "test": "TestInspectionSeparatesHistoricalRecordAndCurrentContents"
+    },
+    {
+      "package": "server",
+      "test": "TestOpenShellTaskExecEvidenceFailureNeverReportsSuccess"
+    },
+    {
+      "package": "server",
+      "test": "TestOpenShellTaskExecUncertainEvidenceFailureIsExplicit"
+    },
+    {
+      "package": "server",
+      "test": "TestOpenShellTaskExecPlanNotPersistedRefusesBeforeSpawn"
+    },
+    {
+      "package": "server",
+      "test": "TestManagedPlanV3ContractFixture"
+    },
+    {
+      "package": "server",
+      "test": "TestImportedPermissionRejectsAmbiguousAndSymlinkOpenClawTargets"
+    },
+    {
+      "package": "server",
+      "test": null
+    },
+    {
+      "package": "skillmanifest",
+      "test": "TestPythonHashSkillDirRejectsEscape"
+    },
+    {
+      "package": "skillmanifest",
+      "test": null
+    },
+    {
+      "package": "skillinstall",
+      "test": null
+    }
+  ],
+  "timeouts": [
+    {
+      "package": "server",
+      "output": "panic: test timed out after 15m0s\n"
+    },
+    {
+      "package": "skillinstall",
+      "output": "panic: test timed out after 15m0s\n"
+    }
+  ],
+  "log_sha256": "884c44cb8a9d2c1f368d1f2b80ada55e91ab28716f9ac3a404d35598e1314ecd",
+  "scope": "Historical b321a5d full Go run; not the later adapter or Skill ACL source; not final acceptance.",
+  "triage": [
+    "Windows filesystem resource normalization still blocks effectevidence/runtimecheck; tracked in Issue #39.",
+    "Symbolic-link cases include missing Windows privilege; those cases remain unverified.",
+    "pending permission test compares POSIX mode 0600 with Windows 0666; actual Windows ACL requires separate verification.",
+    "rawcontent concurrency test did not exercise a pre-revocation capture window; test failed, no product correctness inferred.",
+    "Other fixture mismatch, Git import, service lifecycle and inspection failures require diagnosis; do not classify all failures as environment.",
+    "server and skillinstall reached the original 15-minute package timeout; no full-suite pass."
+  ]
+}

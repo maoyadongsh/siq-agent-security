@@ -1,0 +1,380 @@
+{
+  "source_sha": "6a6e47ce17801074ae5d3e3244928b417814cc08",
+  "binary_sha256": "b2a37de466b86634f36627f9bdd51347a4213ae4f135ca814228b8a761eeed19",
+  "method": "native SIQ daemon and API against isolated synthetic OpenClaw profile; host/model not invoked",
+  "same_isolated_state_resume": true,
+  "first_execution": {
+    "source_sha": "6a6e47ce17801074ae5d3e3244928b417814cc08",
+    "binary_sha256": "b2a37de466b86634f36627f9bdd51347a4213ae4f135ca814228b8a761eeed19",
+    "method": "native SIQ daemon and API against isolated synthetic OpenClaw profile; host/model not invoked",
+    "checks": [
+      {
+        "name": "init",
+        "passed": true
+      },
+      {
+        "name": "owned-daemon-healthy",
+        "passed": true
+      },
+      {
+        "name": "synthetic-profile-discovered",
+        "passed": true
+      },
+      {
+        "name": "metadata-root-independent-acl",
+        "passed": true,
+        "descriptor": {
+          "unknown_allow_count": 0,
+          "allowed_classes": [
+            "system",
+            "administrators",
+            "current_user"
+          ],
+          "protected": true,
+          "owner_current": true
+        }
+      },
+      {
+        "name": "plans-independent-acl",
+        "passed": true,
+        "descriptor": {
+          "unknown_allow_count": 0,
+          "allowed_classes": [
+            "system",
+            "administrators",
+            "current_user"
+          ],
+          "protected": true,
+          "owner_current": true
+        }
+      },
+      {
+        "name": "plan-independent-acl",
+        "passed": true,
+        "descriptor": {
+          "unknown_allow_count": 0,
+          "allowed_classes": [
+            "system",
+            "administrators",
+            "current_user"
+          ],
+          "protected": true,
+          "owner_current": true
+        }
+      },
+      {
+        "name": "plan-cached-read-denied",
+        "passed": true,
+        "http_status": 409
+      },
+      {
+        "name": "plan-target-preserved",
+        "passed": true
+      },
+      {
+        "name": "plan-metadata-preserved",
+        "passed": true
+      },
+      {
+        "name": "plan-acl-not-repaired",
+        "passed": true
+      },
+      {
+        "name": "plans-cached-read-denied",
+        "passed": true,
+        "http_status": 409
+      },
+      {
+        "name": "plans-target-preserved",
+        "passed": true
+      },
+      {
+        "name": "plans-metadata-preserved",
+        "passed": true
+      },
+      {
+        "name": "plans-acl-not-repaired",
+        "passed": true
+      },
+      {
+        "name": "metadata-root-cached-read-denied",
+        "passed": true,
+        "http_status": 409
+      },
+      {
+        "name": "metadata-root-target-preserved",
+        "passed": true
+      },
+      {
+        "name": "metadata-root-metadata-preserved",
+        "passed": true
+      },
+      {
+        "name": "metadata-root-acl-not-repaired",
+        "passed": true
+      }
+    ],
+    "commands": [
+      {
+        "label": "01-init",
+        "args": [
+          "init",
+          "--port",
+          "62840"
+        ],
+        "exit": 0
+      }
+    ],
+    "http": [
+      {
+        "label": "02-pairing",
+        "method": "POST",
+        "path": "/v1/session/pairing",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "03-pair",
+        "method": "POST",
+        "path": "/v1/pair",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "04-instances",
+        "method": "GET",
+        "path": "/v1/adapter/instances?platform=openclaw",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "05-import",
+        "method": "POST",
+        "path": "/v1/skill-imports",
+        "status": 201,
+        "error": null
+      },
+      {
+        "label": "06-permissions",
+        "method": "POST",
+        "path": "/v1/skill-imports/si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/permissions",
+        "status": 201,
+        "error": null
+      },
+      {
+        "label": "07-tools",
+        "method": "POST",
+        "path": "/v1/grants/grt-si-855ae302fb59fe1ea34953a65474e28b6d91ee6324f74c17d73d0d039ef0b9f7/patch-desired",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "08-challenge",
+        "method": "POST",
+        "path": "/v1/grants/grt-si-855ae302fb59fe1ea34953a65474e28b6d91ee6324f74c17d73d0d039ef0b9f7/challenge",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "09-approve",
+        "method": "POST",
+        "path": "/v1/grants/grt-si-855ae302fb59fe1ea34953a65474e28b6d91ee6324f74c17d73d0d039ef0b9f7/approve",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "10-stage",
+        "method": "POST",
+        "path": "/v1/skill-installations/plans",
+        "status": 201,
+        "error": null
+      },
+      {
+        "label": "11-restored-0",
+        "method": "GET",
+        "path": "/v1/skill-installations/plans/sip-141a974df5b4a83588db859125e76096774f8e02d4d9f121bad4fda837137f50",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "11-restored-1",
+        "method": "GET",
+        "path": "/v1/skill-installations/plans/sip-141a974df5b4a83588db859125e76096774f8e02d4d9f121bad4fda837137f50",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "11-restored-2",
+        "method": "GET",
+        "path": "/v1/skill-installations/plans/sip-141a974df5b4a83588db859125e76096774f8e02d4d9f121bad4fda837137f50",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "12-install",
+        "method": "POST",
+        "path": "/v1/skill-installations/apply",
+        "status": 200,
+        "error": null
+      }
+    ],
+    "forced_cleanup": true,
+    "all_fixture_acls_restored": true,
+    "owned_process_exited": true,
+    "model_calls": 0,
+    "listener_closed": true
+  },
+  "continued_execution": {
+    "source_sha": "6a6e47ce17801074ae5d3e3244928b417814cc08",
+    "binary_sha256": "b2a37de466b86634f36627f9bdd51347a4213ae4f135ca814228b8a761eeed19",
+    "method": "native SIQ daemon and API against isolated synthetic OpenClaw profile; host/model not invoked",
+    "checks": [
+      {
+        "name": "owned-daemon-restarted",
+        "passed": true
+      },
+      {
+        "name": "installed-unverified-readback",
+        "passed": true
+      },
+      {
+        "name": "actual-content-copied",
+        "passed": true
+      },
+      {
+        "name": "operation-0-independent-acl",
+        "passed": true,
+        "descriptor": {
+          "unknown_allow_count": 0,
+          "allowed_classes": [
+            "system",
+            "administrators",
+            "current_user"
+          ],
+          "protected": true,
+          "owner_current": true
+        }
+      },
+      {
+        "name": "operation-0-wide-read-denied",
+        "passed": true,
+        "http_status": 409
+      },
+      {
+        "name": "operation-0-target-preserved",
+        "passed": true
+      },
+      {
+        "name": "operation-0-metadata-preserved",
+        "passed": true
+      },
+      {
+        "name": "operation-0-acl-not-repaired",
+        "passed": true
+      },
+      {
+        "name": "operation-1-independent-acl",
+        "passed": true,
+        "descriptor": {
+          "unknown_allow_count": 0,
+          "allowed_classes": [
+            "system",
+            "administrators",
+            "current_user"
+          ],
+          "protected": true,
+          "owner_current": true
+        }
+      },
+      {
+        "name": "operation-1-wide-read-denied",
+        "passed": true,
+        "http_status": 409
+      },
+      {
+        "name": "operation-1-target-preserved",
+        "passed": true
+      },
+      {
+        "name": "operation-1-metadata-preserved",
+        "passed": true
+      },
+      {
+        "name": "operation-1-acl-not-repaired",
+        "passed": true
+      },
+      {
+        "name": "owned-target-removed",
+        "passed": true
+      },
+      {
+        "name": "original-config-preserved",
+        "passed": true
+      },
+      {
+        "name": "signed-stop",
+        "passed": true
+      },
+      {
+        "name": "owned-daemon-exit",
+        "passed": true
+      }
+    ],
+    "commands": [
+      {
+        "label": "21-stop",
+        "args": [
+          "stop",
+          "--confirm-stop"
+        ],
+        "exit": 0
+      }
+    ],
+    "resume_of": "result.private.json",
+    "resume_reason": "fixture inspected runtime_verified at wrong level after successful install; continue saved installation without reinstall",
+    "http": [
+      {
+        "label": "16-pairing",
+        "method": "POST",
+        "path": "/v1/session/pairing",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "17-pair",
+        "method": "POST",
+        "path": "/v1/pair",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "18-read-installed",
+        "method": "GET",
+        "path": "/v1/skill-installations/operations/sin-141a974df5b4a83588db859125e76096774f8e02d4d9f121bad4fda837137f50",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "19-removal-preview",
+        "method": "GET",
+        "path": "/v1/skill-installations/operations/sin-141a974df5b4a83588db859125e76096774f8e02d4d9f121bad4fda837137f50/removal",
+        "status": 200,
+        "error": null
+      },
+      {
+        "label": "20-remove",
+        "method": "POST",
+        "path": "/v1/skill-installations/operations/sin-141a974df5b4a83588db859125e76096774f8e02d4d9f121bad4fda837137f50/removal",
+        "status": 200,
+        "error": null
+      }
+    ],
+    "passed": true,
+    "all_fixture_acls_restored": true,
+    "owned_process_exited": true,
+    "model_calls": 0,
+    "listener_closed": true
+  },
+  "assertions_passed": 35,
+  "limitation": "Native SIQ API and real NTFS effects only; no real OpenClaw or Hermes host process, no model calls. Update plan/schedule coverage remains component evidence."
+}

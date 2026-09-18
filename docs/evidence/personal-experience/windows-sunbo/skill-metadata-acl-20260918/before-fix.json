@@ -1,0 +1,31 @@
+{
+  "production_source": "654be43093bc0d7d26b88bbba9d12bc9edf32ce6",
+  "only_new_tests_and_spec": true,
+  "exit": 1,
+  "seconds": 26.265,
+  "summary": {
+    "raw_log_sha256": "c2821da2ef9da981bd2b63b136dc44106c9ac78dd06cb3d3f91ec24d9980f80a",
+    "top_level": {
+      "fail": 4
+    },
+    "subtests": {
+      "fail": 9
+    },
+    "failed_tests": [
+      "TestWindowsSkillPlanReadRejectsBroadACL/file",
+      "TestWindowsSkillPlanReadRejectsBroadACL/plans",
+      "TestWindowsSkillPlanReadRejectsBroadACL/store",
+      "TestWindowsSkillPlanReadRejectsBroadACL/state",
+      "TestWindowsSkillPlanReadRejectsBroadACL",
+      "TestWindowsSkillUpdatePlanReadRejectsBroadACL/file",
+      "TestWindowsSkillUpdatePlanReadRejectsBroadACL/directory",
+      "TestWindowsSkillUpdatePlanReadRejectsBroadACL",
+      "TestWindowsSkillMetadataRejectsBroadDirectory/directory",
+      "TestWindowsSkillMetadataRejectsBroadDirectory/publish",
+      "TestWindowsSkillMetadataRejectsBroadDirectory/replace",
+      "TestWindowsSkillMetadataRejectsBroadDirectory",
+      "TestWindowsSkillScheduleRejectsBroadExistingFile"
+    ],
+    "skipped_tests": []
+  }
+}

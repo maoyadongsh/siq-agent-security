@@ -1,0 +1,19 @@
+{
+  "attempts": [
+    {
+      "name": "r1",
+      "reason": "Fixture accessed record instead of import response key; stopped after import.",
+      "assertions_passed": 3,
+      "owned_process_exited": true,
+      "listener_closed": true
+    },
+    {
+      "name": "r2",
+      "reason": "Fixture accessed top-level runtime_verified; field belongs to operation/plan. Stopped after successful install, then resumed same state without reinstall.",
+      "assertions_passed": 18,
+      "owned_process_exited": true,
+      "listener_closed": true
+    }
+  ],
+  "no_attempt_declared_full_host_pass": true
+}
