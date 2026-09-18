@@ -26,7 +26,7 @@ siq-agent-security adapter install hermes --instance <返回的实例ID> --enabl
 | --- | --- | --- |
 | `allow` | `None` | 放行 |
 | `deny` | `{"action":"block","message":...}` | Hermes 把 message 作为工具错误返回给模型 |
-| `hold` | block + 控制台 URL | Hermes 无审批通道，退化为阻断（规格 §4.2）|
+| `hold` | 首次 block + 控制台 URL | 控制台批准后，同会话、工具和参数的重试先取得唯一执行预留，再允许执行；不会自动恢复原调用。|
 | `redact` | block + 提示移除密钥 | `pre_tool_call` 不能改参 |
 
 `post_tool_call` 把结果（截断 64 KiB）发到 `/v1/observe`，服务端脱敏并更新会话污点。
@@ -51,7 +51,7 @@ siq-agent-security adapter uninstall hermes --instance <返回的实例ID>
 - L1 安装门禁：Hermes 无装前钩子；用 `siq-agent-security admit <src>` 后再 `hermes skills install`，或让 `siq-agent-security serve` 周期盘点 `~/.hermes/skills` 标出未准入 Skill。
 - `agent_id` 默认取 `HERMES_PROFILE` 或 `default`，需与 grant 的 `subject.id` 一致。
 
-V2：有 tool_call_id 时保存服务端 action_id/receipt_id（最多 2048 项、TTL 300 秒）并在 post 回传；重复 ID 冲突不覆盖旧关联，产生无关联的拒绝路径。无 ID 时由服务端用相同参数唯一匹配，歧义拒绝。除 hook 单测外，已有 [Hermes 原生分发器与真实 HTTP 集成证据](../../../docs/trusted-intent-v2-native-validation-20260907-191006.md)，覆盖合成工具调用的允许/拒绝、关联、失联及重启。新增 [原生 Agent 完整会话证据](../../../docs/trusted-intent-v2-conversation-validation-20260907-200400.md)，通过本地合成模型的 SSE 响应驱动实际会话循环，覆盖生成会话 ID、跨轮固定授权和动作链。hold/审批及真实平台 V2 综合验收仍为 unverified。
+V2：有 tool_call_id 时保存服务端 action_id/receipt_id（最多 2048 项、TTL 300 秒）并在 post 回传；重复 ID 冲突不覆盖旧关联，产生无关联的拒绝路径。无 ID 时由服务端用相同参数唯一匹配，歧义拒绝。除 hook 单测外，已有 [Hermes 原生分发器与真实 HTTP 集成证据](../../../docs/trusted-intent-v2-native-validation-20260907-191006.md)，覆盖合成工具调用的允许/拒绝、关联、失联及重启。新增 [原生 Agent 完整会话证据](../../../docs/trusted-intent-v2-conversation-validation-20260907-200400.md)，通过本地合成模型的 SSE 响应驱动实际会话循环，覆盖生成会话 ID、跨轮固定授权和动作链。hold/审批恢复已有 N06/R02 实现：适配器查询原 hold 状态并请求持久执行预留，预留响应丢失或结果不确定时不盲目重放；内存关联过期或宿主进程退出后不能凭旧提示恢复。实现存在不替代真实平台 V2 综合验收，该综合验收仍为 unverified。
 
 ## 显式MCP来源采集（组件集成）
 

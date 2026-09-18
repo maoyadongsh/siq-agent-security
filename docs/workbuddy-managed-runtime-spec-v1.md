@@ -31,6 +31,8 @@ POST /v1/runtime-sessions 仍接受 enroll/v1 的两个严格字段及实例 bea
 
 --managed-config 存在或检测到受管痕迹后，配置缺失、损坏、字段别名、重复、身份/路径不符均输出结构化 deny，禁止回退全局 token/default agent。无受管痕迹的旧接入仍是 legacy。凭据只发明确端口的 HTTP loopback，拒绝代理与重定向；现有 4 秒 HTTP 预算不提高。
 
+受管接入的“安装或修复”必须将本实例已确认归属的 command 钩子恢复为独立 `matcher=.*` 分组和产品默认同步配置，不能只替换命令而沿用用户改窄的 matcher、异步属性或重复登记。仅移除与当前/记录二进制、状态目录和受管配置路径精确匹配的 SIQ command，随后每个事件写入一个规范分组；其他命令、非 command 项及其分组 matcher/元数据原样保留，不能通过扩大混合分组的 matcher 影响用户钩子。仍经原预览、确认、备份和归属校验流程写入。
+
 ## command 输入与能力边界
 
 新 WorkBuddy 受管 hook 输入合同只允许 hook_event_name/session_id/tool_use_id/call_id/tool_name/tool_input/tool_response/cwd/transcript_path/permission_mode/agent_id/agent_type/generation_id/model/client/version。前六项必需，tool_use_id 与 call_id 精确相同；tool_input 必须 object；只接受 PreToolUse/PostToolUse，后者必须 tool_response。metadata 是可选 string，每项最多 4096 UTF-8 字节，无控制字符或首尾空白，存在时不得为 null 或其他类型；空 string 可接受。总量最多 1 MiB、深度最多 64，递归拒绝重复 JSON 字段、大小写别名、未知外层、非法 UTF-8 和多 JSON；用户工具参数 key 不作为 Authority 字段解释。transcript_path 不读取，外层 agent_id 不覆盖 SIQ 签名身份，cwd 不选择 profile 或授权根，相对路径仍按当前 Windows 资源合同拒绝。

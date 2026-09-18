@@ -81,18 +81,40 @@ func (p *Plan) prepareWorkBuddyManagedConfig() error {
 
 func upsertWorkBuddyManagedHook(existing any, command string, o Options, recordedBinary string) []any {
 	list, _ := existing.([]any)
+	kept := make([]any, 0, len(list)+1)
 	for _, item := range list {
 		group, _ := item.(map[string]any)
 		hooks, _ := group["hooks"].([]any)
-		for _, item := range hooks {
-			hook, _ := item.(map[string]any)
-			if hook["type"] == "command" && hook["command"] == workBuddyManagedCommand(recordedBinary, o) {
-				hook["command"] = command
-				return list
+		remaining := make([]any, 0, len(hooks))
+		removed := false
+		for _, value := range hooks {
+			hook, _ := value.(map[string]any)
+			text, _ := hook["command"].(string)
+			owned := text == command || recordedBinary != "" && (text == workBuddyManagedCommand(recordedBinary, o) || isRecordedToolHook(text, WorkBuddy, recordedBinary, o.StateDir))
+			if hook["type"] == "command" && owned {
+				removed = true
+				continue
 			}
+			remaining = append(remaining, value)
+		}
+		if !removed {
+			kept = append(kept, item)
+		} else if len(remaining) != 0 {
+			// Keep the user's matcher and metadata: broadening a mixed group
+			// would also change when unrelated user hooks execute.
+			copy := make(map[string]any, len(group))
+			for key, value := range group {
+				copy[key] = value
+			}
+			copy["hooks"] = remaining
+			kept = append(kept, copy)
 		}
 	}
-	return upsertHook(existing, command, WorkBuddy, recordedBinary, o.StateDir)
+	// Rebuild exactly one owned synchronous hook. Reusing its old group can
+	// preserve a restricted matcher or async execution and defeat repair.
+	return append(kept, map[string]any{"matcher": ".*", "hooks": []any{
+		map[string]any{"type": "command", "command": command, "timeout": 5},
+	}})
 }
 
 func workBuddyManagedConnectionMatches(o Options, raw []byte) bool {
