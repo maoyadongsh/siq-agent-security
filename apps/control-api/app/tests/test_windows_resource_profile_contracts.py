@@ -142,3 +142,15 @@ def test_legacy_shapes_stay_closed_to_profile_injection(schema: str, fixture: st
     value = _read(fixture)
     validator.validate(value)
     assert list(validator.iter_errors({**value, **patch}))
+
+
+@pytest.mark.parametrize("kind", ["local-state-windows-profile-plan", "local-state-windows-profile-done"])
+def test_state_profile_transition_contracts(kind: str) -> None:
+    validator = _validator(kind + ".v1.schema.json")
+    value = _read(kind + ".json")
+    validator.validate(value)
+    for field in validator.schema["required"]:
+        missing = copy.deepcopy(value)
+        missing.pop(field)
+        assert list(validator.iter_errors(missing)), field
+    assert list(validator.iter_errors({**value, "unknown": True}))
