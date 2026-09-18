@@ -37,11 +37,16 @@
       "name": "schema",
       "exit": 0,
       "seconds": 10.796
+    },
+    {
+      "name": "all-go",
+      "exit": 1,
+      "seconds": 1966.294
     }
   ],
   "binary_sha256": "a32afce00f32c20f534885dc16a55ef62dba7f2220c22b5ee30f312f365e01c7",
   "build_and_schema_finished": true,
-  "whole_go_suite": "running; not claimed passed",
+  "whole_go_suite": "finished: exit 1; see full-go-verification.json",
   "final_windows_acceptance": "incomplete",
   "artifacts": [
     {

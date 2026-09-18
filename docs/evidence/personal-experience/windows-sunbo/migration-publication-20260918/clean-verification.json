@@ -1,0 +1,97 @@
+{
+  "source_sha": "b321a5d807e05c6b2d002a856a357711b9202203",
+  "source_dirty": false,
+  "checks": [
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 2.2,
+      "output_empty": true
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 29.542
+    },
+    {
+      "name": "migration-regression",
+      "exit": 0,
+      "seconds": 306.049
+    },
+    {
+      "name": "native-build",
+      "exit": 0,
+      "seconds": 13.457
+    },
+    {
+      "name": "native-build-info",
+      "exit": 0,
+      "seconds": 0.532
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0,
+      "seconds": 13.299
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0,
+      "seconds": 12.969
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0,
+      "seconds": 17.003
+    },
+    {
+      "name": "schema",
+      "exit": 0,
+      "seconds": 18.617
+    }
+  ],
+  "binary_sha256": "4706efe37bb939eb1e51a34a88a22e9d37b56ccc4ae22c16e4c40baa7974401e",
+  "finished": true,
+  "artifacts": [
+    {
+      "name": "agent.exe",
+      "source_sha": "b321a5d807e05c6b2d002a856a357711b9202203",
+      "source_dirty": false,
+      "sha256": "4706efe37bb939eb1e51a34a88a22e9d37b56ccc4ae22c16e4c40baa7974401e"
+    },
+    {
+      "name": "agent-linux-amd64",
+      "source_sha": "b321a5d807e05c6b2d002a856a357711b9202203",
+      "source_dirty": false,
+      "sha256": "18ac4196d69fcacbdc1b5943615095eb1b24d68c2b4889341bd1c1018fedb693"
+    },
+    {
+      "name": "agent-linux-arm64",
+      "source_sha": "b321a5d807e05c6b2d002a856a357711b9202203",
+      "source_dirty": false,
+      "sha256": "d0fcef753012208ff2185edbc8a93b711de8d3da32dcad3be806f19745a921d1"
+    },
+    {
+      "name": "agent-darwin-arm64",
+      "source_sha": "b321a5d807e05c6b2d002a856a357711b9202203",
+      "source_dirty": false,
+      "sha256": "2c9b09d68fbf99cb4fae12b6bef21a9de374aac93a4f664e426be8dae186010b"
+    }
+  ],
+  "migration_regression": {
+    "raw_log_sha256": "47e286013ab7acbe92b0a9b375bd139978189bfdb2b4b3bf177f0504cffea085",
+    "top_level": {
+      "skip": 1,
+      "pass": 14
+    },
+    "subtests": {
+      "pass": 58,
+      "skip": 1
+    },
+    "failed_tests": [],
+    "skipped_tests": [
+      "TestWindowsMigrationPublicationCrashHelper",
+      "TestMigrationRejectsDriftAndUntrustedPlan/symlink-backup"
+    ]
+  },
+  "whole_go_suite": "not covered by selected regression; tracked separately"
+}

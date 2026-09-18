@@ -1,0 +1,396 @@
+{
+  "schema": "windows-unmarked-migration-journey/v1",
+  "status": "passed",
+  "source_commits": {
+    "old": "ff99317450784c9563f5b6a2308c98e8262df98d",
+    "new": "b321a5d807e05c6b2d002a856a357711b9202203"
+  },
+  "source_provenance": "externally verified build record; harness verifies binary SHA only",
+  "binary_sha256": {
+    "old": "0fa81005ee65bc12c00e8390251d19fc1d3958beb988cecff61e62eeca517a42",
+    "new": "4706efe37bb939eb1e51a34a88a22e9d37b56ccc4ae22c16e4c40baa7974401e"
+  },
+  "platform": "native_windows",
+  "private_root_acl": "caller-created and externally verified; this harness checks ordinary empty directory only",
+  "zero_write_semantics": "equal state snapshots at command boundaries; not a trace proving absence of transient lock I/O",
+  "steps": [
+    {
+      "label": "01-old-init",
+      "binary_role": "old",
+      "command": "init",
+      "spawned": true,
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "01-old-init_stdout",
+          "bytes": 257,
+          "sha256": "c08d8f4b4a43f16e932902a93960071706e452783e3e96d1b9d74cdfe6a2547d",
+          "complete": true,
+          "relative_file": "raw/01-old-init.stdout.bin"
+        },
+        "stderr": {
+          "role": "01-old-init_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/01-old-init.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 3.417060300009325,
+      "snapshot_saved": true,
+      "marker_absent": true
+    },
+    {
+      "label": "02-old-pubkey",
+      "binary_role": "old",
+      "command": "pubkey",
+      "spawned": true,
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "02-old-pubkey_stdout",
+          "bytes": 45,
+          "sha256": "cbf02fc9ce21dd9c6ef65057eab31595c19a46a5c37b3343d3b0aebfac982c03",
+          "complete": true,
+          "relative_file": "raw/02-old-pubkey.stdout.bin"
+        },
+        "stderr": {
+          "role": "02-old-pubkey_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/02-old-pubkey.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 0.16867409998667426,
+      "snapshot_saved": true,
+      "marker_absent": true
+    },
+    {
+      "label": "03-old-admit",
+      "binary_role": "old",
+      "command": "admit",
+      "spawned": true,
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "03-old-admit_stdout",
+          "bytes": 1825,
+          "sha256": "40cf1de628a4c63d6ab10561a6986afe0b546c25b313d9719676ae86843e8d1d",
+          "complete": true,
+          "relative_file": "raw/03-old-admit.stdout.bin"
+        },
+        "stderr": {
+          "role": "03-old-admit_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/03-old-admit.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 0.31898589999764226,
+      "snapshot_saved": true,
+      "marker_absent": true
+    },
+    {
+      "label": "04-old-grant",
+      "binary_role": "old",
+      "command": "grant",
+      "spawned": true,
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "04-old-grant_stdout",
+          "bytes": 1588,
+          "sha256": "a340db98e001080d68de3ff2dd9cad569e3fd29142f8083d892c4d67db2e895f",
+          "complete": true,
+          "relative_file": "raw/04-old-grant.stdout.bin"
+        },
+        "stderr": {
+          "role": "04-old-grant_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/04-old-grant.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 0.6075217000034172,
+      "snapshot_saved": true,
+      "marker_absent": true
+    },
+    {
+      "label": "05-old-revoke",
+      "binary_role": "old",
+      "command": "grant",
+      "spawned": true,
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "05-old-revoke_stdout",
+          "bytes": 1067,
+          "sha256": "fbedc32b28aff0eb3cdf24caea800690183d8f3784d16c1217946f0ce71730c4",
+          "complete": true,
+          "relative_file": "raw/05-old-revoke.stdout.bin"
+        },
+        "stderr": {
+          "role": "05-old-revoke_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/05-old-revoke.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 0.48718100000405684,
+      "snapshot_saved": true,
+      "marker_absent": true
+    },
+    {
+      "label": "07-new-status-before",
+      "binary_role": "new",
+      "command": "state-status",
+      "spawned": true,
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "07-new-status-before_stdout",
+          "bytes": 140,
+          "sha256": "bac4a60e4d1410f01242f1e76bd2e4d9ab5511651a616963e67ad736cdb738c3",
+          "complete": true,
+          "relative_file": "raw/07-new-status-before.stdout.bin"
+        },
+        "stderr": {
+          "role": "07-new-status-before_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/07-new-status-before.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 0.693972599983681,
+      "snapshot_saved": true
+    },
+    {
+      "label": "08-new-migrate",
+      "binary_role": "new",
+      "command": "state-migrate",
+      "spawned": true,
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "08-new-migrate_stdout",
+          "bytes": 104,
+          "sha256": "ac8cc6ba03b650d45b8563c49d354f43aab6d92b2b412ac80725ee2ad8c75ca7",
+          "complete": true,
+          "relative_file": "raw/08-new-migrate.stdout.bin"
+        },
+        "stderr": {
+          "role": "08-new-migrate_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/08-new-migrate.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 3.663521499984199,
+      "snapshot_saved": true
+    },
+    {
+      "label": "10-new-repeat-migrate",
+      "binary_role": "new",
+      "command": "state-migrate",
+      "spawned": true,
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "10-new-repeat-migrate_stdout",
+          "bytes": 105,
+          "sha256": "6ab27815e12d63d6a39c90fc0a5cdd6cc2cded849a15867ba715daa4e1a97a41",
+          "complete": true,
+          "relative_file": "raw/10-new-repeat-migrate.stdout.bin"
+        },
+        "stderr": {
+          "role": "10-new-repeat-migrate_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/10-new-repeat-migrate.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 0.13662200001999736,
+      "snapshot_saved": true
+    },
+    {
+      "label": "11-new-status-after",
+      "binary_role": "new",
+      "command": "state-status",
+      "spawned": true,
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "11-new-status-after_stdout",
+          "bytes": 124,
+          "sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+          "complete": true,
+          "relative_file": "raw/11-new-status-after.stdout.bin"
+        },
+        "stderr": {
+          "role": "11-new-status-after_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/11-new-status-after.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 0.2044228999875486,
+      "snapshot_saved": true
+    },
+    {
+      "label": "12-new-revoke-rejected",
+      "binary_role": "new",
+      "command": "grant",
+      "spawned": true,
+      "expected_exit": "nonzero",
+      "exit_code": 1,
+      "timeout": false,
+      "kill_attempted": false,
+      "kill_error": null,
+      "waited_and_reaped": true,
+      "wait_error": null,
+      "validation_complete": true,
+      "raw": {
+        "stdout": {
+          "role": "12-new-revoke-rejected_stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true,
+          "relative_file": "raw/12-new-revoke-rejected.stdout.bin"
+        },
+        "stderr": {
+          "role": "12-new-revoke-rejected_stderr",
+          "bytes": 66,
+          "sha256": "ce0f770bb72480fda1f10c0129ba060070b03d2a0a5da14dcdabba4cef0ac5c1",
+          "complete": true,
+          "relative_file": "raw/12-new-revoke-rejected.stderr.bin"
+        }
+      },
+      "deadline_seconds": 30,
+      "cleanup_reserve_seconds": 5,
+      "deadline_semantics": "monotonic process wait plus cleanup budget; excludes pre/post hashing and snapshots; no absolute OS-call preemption guarantee",
+      "elapsed_seconds": 0.870885400014231,
+      "snapshot_saved": true
+    }
+  ],
+  "claims": {
+    "real_unmarked_old_business_created": true,
+    "old_marker_absent_after_each_command": true,
+    "old_revoked_state_revision": 1,
+    "historical_entries": 33,
+    "pre_migration_status_zero_state_writes": true,
+    "migrated_to_v2": true,
+    "historical_entries_unchanged": true,
+    "source_marker_binding": "absent",
+    "backup_entries": 37,
+    "complete_backup_verified": true,
+    "backup_live_file_bytes_equal": true,
+    "marker_instance_and_original_directory_bound": true,
+    "archived_plan_sha256": "5cd85af8367a9a8933577777238e2e0584353efe653aaf4f865ff741f9398efc",
+    "repeat_up_to_date_zero_state_writes": true,
+    "v2_status_zero_state_writes": true,
+    "already_revoked_rejected_zero_state_writes": true,
+    "old_binary_never_invoked_after_upgrade_boundary": true
+  },
+  "fixture_retained": true,
+  "old_executed_after_migration_started": false,
+  "siq_service_started": false,
+  "all_spawned_commands_reaped": true
+}

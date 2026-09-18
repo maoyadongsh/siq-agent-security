@@ -27,10 +27,12 @@ Windows 的 `Chmod(0600)` 不能限制 DACL，旧代码还会在凭据文件权�
 
 开发期间 privatefs、rawcontent、signing、服务缓存检查以及选定迁移/提交崩溃恢复测试通过；signing 和迁移的显式跳过仍保留。runtimeidentity 整包保留退出 1：两个符号链接夹具无法在本机普通用户权限下创建，未抑制失败。Windows 权限正负向测试已改为实际 DACL，非 Windows 仍检查原有 POSIX 位。
 
-干净源码 fmt、vet、Windows amd64/Linux amd64/Linux arm64/Darwin arm64 构建及 Schema 校验退出 0，每个产物的内嵌版本和哈希见 `clean-build-verification.json`。完整 Go 回归仍运行；不将选定包通过或构建通过当作全量通过。
+干净源码 fmt、vet、Windows amd64/Linux amd64/Linux arm64/Darwin arm64 构建及 Schema 校验退出 0，每个产物的内嵌版本和哈希见 `clean-build-verification.json`。完整 Go 回归已退出 1：1210 顶层通过、67 跳过、50 失败；server/skillinstall 超时。详见 full-go-verification.json，不将选定包通过或构建通过当作全量通过。
 
 ## 台账范围与剩余工作
 
 本批证据满足 P03-FILE-20 的私钥 ACL/继承与宽读取拒绝要求，该项由 fail 改 pass。固定台账为 **72/303 通过、3 失败、8 受阻、220 未测**，另排除 3 个系统中断项。最终集成候选尚未确定。
 
 Issue #42 尚未整体完成：仍需审计和覆盖剩余适配器读取/缓存、计划及备份入口，验证真实第二登录身份，继续受影响宿主与最终集成回归。特别需要验证迁移在硬链接已发布、暂存链接尚未清理时真实中断的恢复边界；已有 checkpoint 测试不能替代这一窗口。P03-FILE-21/22/23 不随私钥条目自动通过。本批不提供同用户/管理员隔离，也不声称消除了历史泄漏或撤销其他进程已打开的句柄。
+
+迁移双链接中断窗口后续已在 b321a5d 修复并复验，见同级 migration-publication-20260918；不回写为本批 82a7da5 已通过。
