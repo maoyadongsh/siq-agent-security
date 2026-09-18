@@ -20,6 +20,9 @@ const migrationMaxEntries = 10000
 const migrationMaxFile int64 = 128 << 20
 const migrationMaxBytes int64 = 2 << 30
 
+// Set only by isolated process tests, never by runtime configuration.
+var migrationPublicationTestHook func(string)
+
 type MigrationEntry struct {
 	Path      string `json:"path"`
 	Mode      uint32 `json:"mode"`
@@ -182,7 +185,12 @@ func migrationPublish(root, path string, b []byte, mode os.FileMode) (resultErr 
 		_ = f.Close()
 		return e
 	}
-	defer func() { resultErr = errors.Join(resultErr, migrationRemoveScratch(f.Name(), created)) }()
+	moved := false
+	defer func() {
+		if !moved {
+			resultErr = errors.Join(resultErr, migrationRemoveScratch(f.Name(), created))
+		}
+	}()
 	if e = f.Chmod(mode); e == nil {
 		_, e = f.Write(b)
 	}
@@ -193,8 +201,14 @@ func migrationPublish(root, path string, b []byte, mode os.FileMode) (resultErr 
 	if e != nil {
 		return e
 	}
-	if e = os.Link(f.Name(), path); e != nil {
+	if migrationPublicationTestHook != nil {
+		migrationPublicationTestHook("before-publish")
+	}
+	if moved, e = migrationPublishScratch(f.Name(), path, created); e != nil {
 		return e
+	}
+	if migrationPublicationTestHook != nil {
+		migrationPublicationTestHook("published")
 	}
 	return migrationSync(filepath.Dir(path))
 }
