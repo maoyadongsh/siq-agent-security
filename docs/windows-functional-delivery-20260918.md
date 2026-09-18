@@ -25,6 +25,8 @@ OpenClaw 的实际可用路径是本机 WSL，Hermes 是 Windows 原生 CLI；�
 
 表中 Go `cmd/` 与 `internal/` 均相对 `apps/agentshield/`。这是实现交付清单，不是逐项真实宿主通过清单；宿主原生安装前拦截、可信 Skill 归属及子任务边界仍以实际支持能力和证据为准，未知归属不升级为 verified。
 
+2026-09-19 02 时补充：干净交付源码 `017c405`（产品代码与 `2d5ee6c` 相同）的 WorkBuddy 用户级 Skill 安装、检查、激活准备、更新、移除及签名历史读取通过，用时 160.43 秒；用户级/项目级受控会话绑定及混用、缺失、替换目标拒绝检查通过。首次两范围串行检查触及共用 300 秒上限，项目级当时停在更新提交的目录身份校验，整次退出 1，保留 [首次结果](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/skill-lifecycle-initial.json)。仅单独重跑项目级同一用例，177.10 秒通过、进程退出 0，见 [项目级结果](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/skill-lifecycle-project.json)。这些是 Windows 私有目录的组件流程，未启动宿主或模型，不证明桌面发现/加载 Skill 或审批恢复。另同步四处旧预算文字为已实现的完整 HTTP 链 20 秒、宿主等待 30 秒；安装内容校验仍为 5 秒。`017c405` 的两个失败 CI job 均确认是 `internal/skillmanifest` 三项旧正式清单摘要不匹配测试，继续由 Issue #87 跟踪，不更改旧签名。
+
 ## ff16606 历史修复与复用证据
 
 - 本阶段历史实现提交为 `ff166068a9047d0cfca73f8dcfb6f8c2dd9102d8`；当前实现已由开头的 2d5ee6c 替代。WorkBuddy 已登记钩子的 matcher 被缩窄、设置 async 或重复登记时，正式安装/修复入口现在重建单独的同步全匹配产品钩子，同时保留用户钩子的原匹配范围和元数据。

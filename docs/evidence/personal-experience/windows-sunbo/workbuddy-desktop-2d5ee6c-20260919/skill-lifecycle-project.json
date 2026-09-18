@@ -1,0 +1,35 @@
+{
+  "source_sha": "017c405287f4286caff5fc10b9cc1fec374c2e4e",
+  "source_dirty": false,
+  "runtime_equivalent_candidate": "2d5ee6c725e865b2c0769f0d35ac839161dbb717",
+  "method": "component_fixture",
+  "native_host_launched": false,
+  "model_calls": 0,
+  "command": [
+    "test",
+    "./internal/skillinstall",
+    "-json",
+    "-run",
+    "^TestWorkBuddyV2InstallUpdateRemoveBothScopes$/^project$",
+    "-count=1",
+    "-timeout=300s"
+  ],
+  "exit_code": 0,
+  "seconds": 185.302,
+  "tests": [
+    {
+      "test": "TestWorkBuddyV2InstallUpdateRemoveBothScopes/project",
+      "action": "pass",
+      "elapsed": 177.1
+    },
+    {
+      "test": "TestWorkBuddyV2InstallUpdateRemoveBothScopes",
+      "action": "pass",
+      "elapsed": 177.1
+    }
+  ],
+  "private_log_sha256": {
+    "stdout.jsonl": "77db8b2e05e0adfbb8b87a30e615897a257f4949f847f4ce4f929aabf4dbc330",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

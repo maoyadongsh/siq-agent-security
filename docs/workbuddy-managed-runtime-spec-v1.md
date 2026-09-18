@@ -29,7 +29,7 @@ POST /v1/runtime-sessions 仍接受 enroll/v1 的两个严格字段及实例 bea
 
 配置仅为 `<WorkBuddyConfigDir>/siq-agent-security.json`，schema `workbuddy-managed-hook/v1`，固定字段 schema_version/runtime_identity_id/instance_id/agent_id/credential_path/endpoint/enforcement_mode/state_dir。state_dir 是明确安装状态目录，credential_path 必须等于该目录的 runtime-identity-secrets/<identity>.token；命令显式 `hook workbuddy --state-dir <abs> --managed-config <abs>`。不写明文 token、管理员权限或签名私钥。
 
---managed-config 存在或检测到受管痕迹后，配置缺失、损坏、字段别名、重复、身份/路径不符均输出结构化 deny，禁止回退全局 token/default agent。无受管痕迹的旧接入仍是 legacy。凭据只发明确端口的 HTTP loopback，拒绝代理与重定向；现有 4 秒 HTTP 预算不提高。
+--managed-config 存在或检测到受管痕迹后，配置缺失、损坏、字段别名、重复、身份/路径不符均输出结构化 deny，禁止回退全局 token/default agent。无受管痕迹的旧接入仍是 legacy。凭据只发明确端口的 HTTP loopback，拒绝代理与重定向；单次完整 HTTP 链共用 20 秒预算，宿主同步 hook 等待 30 秒；不续时或自动重试。
 
 受管接入的“安装或修复”必须将本实例已确认归属的 command 钩子恢复为独立 `matcher=.*` 分组和产品默认同步配置，不能只替换命令而沿用用户改窄的 matcher、异步属性或重复登记。仅移除与当前/记录二进制、状态目录和受管配置路径精确匹配的 SIQ command，随后每个事件写入一个规范分组；其他命令、非 command 项及其分组 matcher/元数据原样保留，不能通过扩大混合分组的 matcher 影响用户钩子。仍经原预览、确认、备份和归属校验流程写入。
 
@@ -45,4 +45,4 @@ allow 输出仅表示 SIQ 无异议，不覆盖宿主原权限门禁；初次 de
 
 合同正负向、旧签名/旧 POSIX 兼容、真实目录发现、缺 session/call、跨实例/平台/session、profile 降级、撤销、重复登记不续期、服务不可达及 malformed 请求必须分别验证。核心 HTTP 夹具不能替代桌面允许/越界拒绝/失联恢复/撤销的原生证据；未经新增账号额度授权不发送 WorkBuddy 模型任务。
 
-受管 Pre 的登记和裁决必须在既有同一次 4 秒 HTTP 预算内完成；组件正确但超预算仍是接入阻断，不能以调大超时、延迟撤销检查或复用旧 Authority 的方式记为通过。
+2026-09-19 按主开发规格的实机修复增量，替代此前固定 4 秒预算的约束：受管 Pre 的登记、裁决及审批恢复请求共用一次 20 秒 HTTP 截止时间，宿主同步 hook 等待 30 秒。原预算已在真实桌面正常调用中造成超时；预算调整后已取得正常写入及拒绝场景证据，见 [当前交付](windows-functional-delivery-20260918.md)。到期仍拒绝，不重置截止时间、不自动重试、不延迟撤销检查、不复用旧 Authority；这不构成审批恢复已实机通过的证据。

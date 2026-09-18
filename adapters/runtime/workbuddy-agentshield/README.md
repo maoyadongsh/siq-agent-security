@@ -19,7 +19,7 @@ stdin 外层必需 `hook_event_name`、`session_id`、`tool_use_id`、`call_id`�
 
 输入最多 1 MiB、嵌套深度最多 64；拒绝重复键、大小写字段别名、未知外层字段、尾随 JSON、无效 UTF-8、空或冲突 ID。session/call 使用规格中的域分离哈希，保留宿主命名空间。宿主可能折叠父任务 session，摘要不能证明独立子任务、恢复 epoch 或同用户隔离。
 
-每次前置先用专属凭据 `/v1/runtime-sessions` 登记并核对 enrolled/v2 的身份、session、到期时间，再裁决新操作或核对并预留原批准的 hold。同次 HTTP 共用 4 秒截止时间，只访问明确端口的 `http://127.0.0.1`，不使用环境代理、不跟随重定向。后置只调用 `/v1/observe`，用持久记录中的同一 session/call/action/decision 明确关联已允许的前置；失败不伪造成功回执。
+每次前置先用专属凭据 `/v1/runtime-sessions` 登记并核对 enrolled/v2 的身份、session、到期时间，再裁决新操作或核对并预留原批准的 hold。同次完整 HTTP 链共用 20 秒截止时间，宿主同步 hook 等待 30 秒；不续时、不自动重试，只访问明确端口的 `http://127.0.0.1`，不使用环境代理、不跟随重定向。后置只调用 `/v1/observe`，用持久记录中的同一 session/call/action/decision 明确关联已允许的前置；失败不伪造成功回执。
 
 | SIQ 结果 | 受管 WorkBuddy 输出 |
 | --- | --- |

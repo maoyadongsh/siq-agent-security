@@ -22,8 +22,8 @@ post 必须匹配已保存允许的 pre、当前派生 call 和参数摘要，�
 
 复用 hold-status/v1、hold-execution-reserve/v1（成功 201）、hold-execution-status/v1；不新增审批权限或管理 token 用途。WorkBuddy 专属 credential 每次经过身份/会话在线复验；hold 相关入口同样严格校验派生 call 格式和精确字段名，reserve 的原 call 与新 call 必须不同。后端原有 current Authority、Intent/Grant 版本、目录事实、撤销和唯一 reservation 检查保持。
 
-登记、关联操作、hold-status 和 reserve 使用同一次现有 4 秒上下文，不续时、不自动重试 HTTP；超时没有允许。到期/撤销/Grant 或 Intent 变化即拒绝，描述性客户端 version 不作为授权版本。
+登记、关联操作、hold-status 和 reserve 使用同一次 20 秒上下文（宿主同步 hook 等待 30 秒），不续时、不自动重试 HTTP；超时没有允许。到期/撤销/Grant 或 Intent 变化即拒绝，描述性客户端 version 不作为授权版本。
 
 ## 验证
 
-组件覆盖新 client 实例读取私有记录、原 call 重复、相同 effect 排他并发、批准→reserve→post、pending/deny/expired、改参/跨会话/实例、坏记录/缺记录/错误类型/容量、网络丢响应及观测丢响应。后端测试覆盖 WorkBuddy 各 hold 路径原/新 call 的格式、重复、别名与冲突。4 秒预算不增加。完整 Windows 桌面与模型验收单独执行；组件不能记为原生通过。
+组件覆盖新 client 实例读取私有记录、原 call 重复、相同 effect 排他并发、批准→reserve→post、pending/deny/expired、改参/跨会话/实例、坏记录/缺记录/错误类型/容量、网络丢响应及观测丢响应。后端测试覆盖 WorkBuddy 各 hold 路径原/新 call 的格式、重复、别名与冲突。2026-09-19 按主开发规格及受管接入规格，将此前 4 秒预算更新为完整链共用 20 秒；不续时、不重试及唯一预留约束保持。完整 Windows 桌面与模型验收单独执行；组件不能记为原生通过。

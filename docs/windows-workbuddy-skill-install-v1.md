@@ -125,7 +125,7 @@ WorkBuddy 实例候选保持 `source_type=workbuddy_profile`；其配置目录�
 
 ## 5. 运行权限与可信归属
 
-复用现有安装内容绑定 activate → identity/create-v2 → 原生 session enroll → 管理 SEC issue → decide/observe。安装导入 Grant 保持 approved 的专用提交语义；普通 deploy/effective 入口继续拒绝导入授权。每次运行仍复验当前 Grant、profile、安装完整内容及目标根身份；任何 Authority 缺口在 block/warn/audit_only 全部 hard deny，不缓存成功、不扩大 WorkBuddy 4 秒总 HTTP 预算或安装内容校验 5 秒预算。
+复用现有安装内容绑定 activate → identity/create-v2 → 原生 session enroll → 管理 SEC issue → decide/observe。安装导入 Grant 保持 approved 的专用提交语义；普通 deploy/effective 入口继续拒绝导入授权。每次运行仍复验当前 Grant、profile、安装完整内容及目标根身份；任何 Authority 缺口在 block/warn/audit_only 全部 hard deny，不缓存成功；WorkBuddy 总 HTTP 预算按 2026-09-19 主规格为 20 秒，安装内容校验仍为 5 秒，两者分别约束且不续时。
 
 SEC/v1 可以继续使用：`install_id + claim_signature` 串联 claim/v2 → Plan/v2 → target_ref。`skillcontext/store.go` 当前硬编码 record/v1 的 Issue/liveInstall 要按版本完整验证；不能只放宽 schema 字符串而跳过签名、当前成功安装状态、平台/实例、Grant 和目标内容。身份/登记会话继续来自 WorkBuddy 自身原生 session_id 派生，模型提供 Skill 名、cwd、generation_id、安装摘要或 SEC ID 均不替代它。
 
@@ -168,7 +168,7 @@ SEC/v1 可以继续使用：`install_id + claim_signature` 串联 claim/v2 → P
 | 新 Plan/claim/record/update 的 schema 样例和实际 Go 输出一致 | v1 原签名/ID 固定向量不变；v1 外壳夹 v2、错误 target_ref、重复/null/尾随 JSON；旧程序不消费 v2 |
 | 正式 HTTP 导入→Windows resources→批准→两种 scope 的 stage/apply/inspection | 明确确认缺失、未批准/撤销/过期/修订 Grant、源变化、目标根/祖先替换、大小写别名、junction/UNC/ADS、任一模式 Authority hard deny |
 | 更新、移除、故障恢复与响应丢失后的 GET 查回 | 跨项目更新、跨实例/安装借用绑定、目标重定向、并发相同物理目的地、未知用户改动不删、失败不复活旧授权 |
-| prepared→WorkBuddy 专属身份→原生会话→管理 SEC→允许与越权拒绝 | 无 SEC、伪造 claim/摘要/cwd、跨会话、换 Skill/版本、撤销与失联；不宣称项目切换隔离；4 秒/5 秒预算保持 |
+| prepared→WorkBuddy 专属身份→原生会话→管理 SEC→允许与越权拒绝 | 无 SEC、伪造 claim/摘要/cwd、跨会话、换 Skill/版本、撤销与失联；不宣称项目切换隔离；总 HTTP 20 秒、安装内容校验 5 秒预算分别保持 |
 | UI 用户/项目选择、旧新记录混合、明确确认与刷新恢复 | stale 响应、selection 变化、服务端 capability 缺失、默认回落用户目录、普通 token 执行管理写入 |
 | 最终 WorkBuddy 自身真实用户级与项目级加载、更新、撤权/移除结果 | 不使用 CodeBuddy 独立 CLI或组件夹具代替桌面证据；同名覆盖和缓存未更新不得报已加载 |
 
