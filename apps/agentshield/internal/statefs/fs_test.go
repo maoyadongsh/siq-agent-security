@@ -78,6 +78,13 @@ func TestIndependentWritersAndReadersRejectChangedFormat(t *testing.T) {
 		func() error { return statefs.Rename(file, file+".moved") }, func() error { return statefs.Link(file, file+".link") },
 		func() error { return statefs.Chmod(file, 0777) }, func() error { return statefs.MkdirAll(filepath.Join(dir, "new/sub"), 0700) },
 		func() error { _, e := statefs.ReadFile(file); return e }, func() error { _, e := statefs.ReadDir(dir); return e },
+		func() error {
+			f, e := statefs.OpenPrivateDir(dir)
+			if f != nil {
+				f.Close()
+			}
+			return e
+		},
 	}
 	for i, call := range calls {
 		if e := call(); !errors.Is(e, stateformat.ErrIncompatible) {

@@ -4,7 +4,8 @@ package privatefs
 
 import "os"
 
-func Open(path string) (*os.File, error) { return os.Open(path) }
+func Open(path string) (*os.File, error)    { return os.Open(path) }
+func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 func CreateNew(path string) (*os.File, error) {
 	return os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
 }

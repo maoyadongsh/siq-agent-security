@@ -26,6 +26,14 @@ func OpenPrivate(path string) (*os.File, error) {
 	return privatefs.Open(path)
 }
 
+// OpenPrivateDir checks the directory handle that the caller will enumerate.
+func OpenPrivateDir(path string) (*os.File, error) {
+	if err := stateformat.RequirePath(path, false); err != nil {
+		return nil, err
+	}
+	return privatefs.OpenDir(path)
+}
+
 // CheckPrivateFile validates the opened object without reading secret bytes.
 func CheckPrivateFile(path string) error {
 	f, err := OpenPrivate(path)

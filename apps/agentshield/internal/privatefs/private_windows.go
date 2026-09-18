@@ -91,7 +91,7 @@ func checkParents(path string) error {
 	}
 }
 
-func openHandle(path string, directory bool) (*os.File, error) {
+func openHandle(path string, directory bool, enumerate ...bool) (*os.File, error) {
 	if _, err := nativePath(path); err != nil {
 		return nil, err
 	}
@@ -113,6 +113,9 @@ func openHandle(path string, directory bool) (*os.File, error) {
 	access, flags := uint32(syscall.GENERIC_READ), uint32(syscall.FILE_FLAG_OPEN_REPARSE_POINT)
 	if directory {
 		access = 0x20000 | 0x80
+		if len(enumerate) > 0 && enumerate[0] {
+			access |= 0x1 // FILE_LIST_DIRECTORY, only for checked enumeration.
+		}
 		flags |= syscall.FILE_FLAG_BACKUP_SEMANTICS
 	}
 	h, err := syscall.CreateFile(name, access, syscall.FILE_SHARE_READ|syscall.FILE_SHARE_WRITE|syscall.FILE_SHARE_DELETE, nil, syscall.OPEN_EXISTING, flags, 0)
@@ -127,7 +130,8 @@ func openHandle(path string, directory bool) (*os.File, error) {
 	return f, nil
 }
 
-func Open(path string) (*os.File, error) { return openHandle(path, false) }
+func Open(path string) (*os.File, error)    { return openHandle(path, false) }
+func OpenDir(path string) (*os.File, error) { return openHandle(path, true, true) }
 func CheckDir(path string) error {
 	f, err := openHandle(path, true)
 	if err != nil {
