@@ -303,7 +303,7 @@ func ownedFile(ctx context.Context, destination, pool string, file skillimport.F
 	if err != nil || !other.Mode().IsRegular() {
 		return ErrChanged
 	}
-	if platform == "openclaw" {
+	if platform == "openclaw" || platform == "workbuddy" {
 		poolRaw, poolInfo, poolErr := readBounded(ctx, opaque(pool, "f", index), 8<<20)
 		if poolErr != nil || int64(len(poolRaw)) != file.Bytes || hash(poolRaw) != file.SHA256 || (poolInfo.Mode().Perm()&0111 != 0) != file.Executable {
 			return ErrChanged
@@ -352,6 +352,8 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 	// target files therefore use exclusive independent publication and retain
 	// ownership through the signed marker plus full content readback. Hermes
 	// keeps the stronger inode-linked pool proof for backward compatibility.
+	// WorkBuddy also needs single-link payloads for Windows runtime path checks;
+	// its directory owner markers retain the existing inode-linked pool proof.
 	hardlinkTarget := c.Plan.Platform != "openclaw"
 	for i, dir := range dirs {
 		if err := ctx.Err(); err != nil {
@@ -507,7 +509,7 @@ func (s *Store) publishTarget(ctx context.Context, c *Claim, snapshot *skillimpo
 		if err := s.publicationTargetUnchanged(ctx, c, destination, pool); err != nil {
 			return err
 		}
-		if err := publishOpaque(ctx, opaque(pool, "f", i), path, file.Executable, hardlinkTarget); err != nil {
+		if err := publishOpaque(ctx, opaque(pool, "f", i), path, file.Executable, hardlinkTarget && c.Plan.Platform != "workbuddy"); err != nil {
 			return err
 		}
 		if err := s.boundary("file_published:" + file.Path); err != nil {

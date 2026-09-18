@@ -12,6 +12,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
+	"siq-agent-security/apps/agentshield/internal/runtimepath"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/skillimport"
 	"siq-agent-security/apps/agentshield/internal/state"
@@ -152,6 +153,10 @@ func TestWorkBuddyV2InstallUpdateRemoveBothScopes(t *testing.T) {
 			f := workBuddyInstallSetup(t, scope, false)
 			s := f.store
 			p, op := f.install(t)
+			installedPath := filepath.Join(f.scopeRoot, filepath.FromSlash(scopeSkills(scope)), "example", "SKILL.md")
+			if _, err := runtimepath.InspectWindows(filepath.ToSlash(installedPath), false); err != nil {
+				t.Fatal("installed Skill rejected by runtime filesystem identity", err)
+			}
 			inspection, err := s.Inspect(nil, op.InstallID)
 			if err != nil || inspection.TargetState != "matched" || inspection.SchemaVersion != "local-skill-install-inspection/v2" {
 				t.Fatal("inspection", err)
@@ -180,6 +185,9 @@ func TestWorkBuddyV2InstallUpdateRemoveBothScopes(t *testing.T) {
 			path := filepath.Join(f.scopeRoot, filepath.FromSlash(scopeSkills(scope)), "example", "SKILL.md")
 			if raw, err := os.ReadFile(path); err != nil || !strings.Contains(string(raw), "second version") {
 				t.Fatal("replacement payload", err)
+			}
+			if _, err := runtimepath.InspectWindows(filepath.ToSlash(path), false); err != nil {
+				t.Fatal("updated Skill rejected by runtime filesystem identity", err)
 			}
 			id := result.Installation.InstallID
 			removed, err := s.Remove(nil, id, removalRequest(t, s, id))

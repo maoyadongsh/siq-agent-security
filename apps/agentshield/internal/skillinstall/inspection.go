@@ -366,6 +366,12 @@ func (s *Store) compareTarget(ctx context.Context, c *Claim, out *Inspection) er
 				out.add(file.Path, "file", "ownership_changed")
 				continue
 			}
+			if c.Plan.Platform == "workbuddy" {
+				if ownedFile(ctx, destination, pool, file, child.fileIndex, c.Plan.Platform) != nil {
+					out.add(file.Path, "file", "ownership_changed")
+				}
+				continue
+			}
 			owned, err := os.Lstat(opaque(pool, "f", child.fileIndex))
 			if err != nil || !owned.Mode().IsRegular() || !os.SameFile(opened, owned) {
 				out.add(file.Path, "file", "ownership_changed")
