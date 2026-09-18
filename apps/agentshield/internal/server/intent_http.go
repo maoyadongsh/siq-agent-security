@@ -57,6 +57,12 @@ func (s *Server) intentCollection(w http.ResponseWriter, r *http.Request) {
 		if !readAuthority(w, r, &c) {
 			return
 		}
+		// Managed Windows envelopes are issued only by authenticated instance
+		// enrollment, never by a caller claiming the internal issuer name.
+		if c.SchemaVersion == "intent/v4" {
+			writeJSON(w, 400, map[string]string{"error": "intent_managed_issuer_required"})
+			return
+		}
 		out, err := s.intents.Issue(c)
 		if err != nil {
 			intentError(w, err)

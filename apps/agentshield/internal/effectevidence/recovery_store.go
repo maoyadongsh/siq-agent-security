@@ -32,6 +32,11 @@ func (s *Store) recoveryDir(id string) (string, error) {
 	return dir, nil
 }
 func (s *Store) recoveryHistory(p PendingFile, now time.Time) ([]FileRecovery, []string, error) {
+	// Recovery history may create its directory, so check the profile before
+	// either a read retry or an ownership publication can change durable state.
+	if err := s.checkPendingProfile(p); err != nil {
+		return nil, nil, err
+	}
 	dir, err := s.recoveryDir(p.ID)
 	if err != nil {
 		return nil, nil, err

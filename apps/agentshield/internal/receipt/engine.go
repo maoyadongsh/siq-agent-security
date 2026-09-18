@@ -61,19 +61,20 @@ var ErrSessionCapacity = errors.New("receipt: session capacity exhausted")
 
 // Request is one tool call awaiting a decision.
 type Request struct {
-	selectedGrant       *grant.Grant                  // resolved internally; never accepted from JSON
-	ParameterProvenance []provenance.ParameterBinding `json:"parameter_provenance,omitempty"`
-	ContextAssertionID  string                        `json:"context_assertion_id,omitempty"`
-	ActionID            string                        `json:"action_id,omitempty"`
-	DecisionReceiptID   string                        `json:"decision_receipt_id,omitempty"`
-	Platform            string                        `json:"platform"`
-	SessionID           string                        `json:"session_id"`
-	AgentID             string                        `json:"agent_id"`
-	Tool                string                        `json:"tool"`
-	ToolCallID          string                        `json:"tool_call_id"`
-	Params              map[string]any                `json:"params"`
-	Context             map[string]any                `json:"context"`
-	TaskID              string                        `json:"task_id,omitempty"`
+	resourceProfile     runtimeaction.FilesystemProfile // derived only from verified Intent
+	selectedGrant       *grant.Grant                    // resolved internally; never accepted from JSON
+	ParameterProvenance []provenance.ParameterBinding   `json:"parameter_provenance,omitempty"`
+	ContextAssertionID  string                          `json:"context_assertion_id,omitempty"`
+	ActionID            string                          `json:"action_id,omitempty"`
+	DecisionReceiptID   string                          `json:"decision_receipt_id,omitempty"`
+	Platform            string                          `json:"platform"`
+	SessionID           string                          `json:"session_id"`
+	AgentID             string                          `json:"agent_id"`
+	Tool                string                          `json:"tool"`
+	ToolCallID          string                          `json:"tool_call_id"`
+	Params              map[string]any                  `json:"params"`
+	Context             map[string]any                  `json:"context"`
+	TaskID              string                          `json:"task_id,omitempty"`
 	// RuntimeTaskID is the host runtime's per-task identity. TaskID remains an
 	// optional hint for the trusted Intent task and must never be overloaded by
 	// adapters with a host-local routing ID. SEC and native retry boundaries use
@@ -449,8 +450,8 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		sec = e.resolveSkillContext(req)
 	}
 	var resolvedIntent *IntentContract
-	var authorityErr error
-	if e.opts.IntentLookup != nil {
+	authorityErr := intent.ValidateNativeSession(req.Platform, req.SessionID)
+	if authorityErr == nil && e.opts.IntentLookup != nil {
 		finish := e.stageTimer("intent_lookup")
 		resolvedIntent, authorityErr = e.opts.IntentLookup(req.Platform, req.SessionID, req.AgentID)
 		if resolvedIntent != nil {
@@ -545,7 +546,8 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		}
 	}
 	finishNormalization := e.stageTimer("runtime_action_normalization")
-	descriptor := runtimeaction.Describe(req.Tool, req.Params)
+	req.resourceProfile = verifiedResourceProfile(resolvedIntent)
+	descriptor := runtimeaction.DescribeForProfile(req.resourceProfile, req.Tool, req.Params)
 	finishNormalization()
 	operation, effects := descriptor.Operation, descriptor.Effects
 	// Preserve the host task identity even when no Intent is bound. It remains
@@ -711,9 +713,8 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	if authority.Valid {
 		finish := e.stageTimer("policy_evaluation")
 		policy.Action, policy.Reason = e.evaluate(req, s, descriptor, &rec, start, sec)
-		if policy.Reason == "intent_grant_installation_binding_required" {
-			authority = runtimeauthz.Authority(policy.Reason, rec.IntentBinding == "bound")
-			rec.AuthorityStatus, rec.AuthorityReasonCode = authority.Status, authority.ReasonCode
+		if rec.AuthorityStatus == "invalid" {
+			authority = runtimeauthz.Authority(rec.AuthorityReasonCode, rec.IntentBinding == "bound")
 		}
 		if policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req, start) && containsSecretLiteral(e.analyzer, paramsText) {
 			candidate := redactParams(e.analyzer, req.Params)
@@ -729,7 +730,11 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 				}
 			}
 			checkedReceipt := rec
-			if action, _ := e.evaluate(checked, &cleanSession, runtimeaction.Describe(req.Tool, candidate), &checkedReceipt, start, sec); action == ActionAllow && checkedReceipt.MatchedGrantID != nil && rec.MatchedGrantID != nil && *checkedReceipt.MatchedGrantID == *rec.MatchedGrantID {
+			checkedAction, _ := e.evaluate(checked, &cleanSession, runtimeaction.DescribeForProfile(req.resourceProfile, req.Tool, candidate), &checkedReceipt, start, sec)
+			if checkedReceipt.AuthorityStatus == "invalid" {
+				rec.AuthorityStatus, rec.AuthorityReasonCode = checkedReceipt.AuthorityStatus, checkedReceipt.AuthorityReasonCode
+				authority = runtimeauthz.Authority(rec.AuthorityReasonCode, rec.IntentBinding == "bound")
+			} else if checkedAction == ActionAllow && checkedReceipt.MatchedGrantID != nil && rec.MatchedGrantID != nil && *checkedReceipt.MatchedGrantID == *rec.MatchedGrantID {
 				redacted = candidate
 				rec.MatchedFactIDs = checkedReceipt.MatchedFactIDs
 				policy.Action, policy.Reason = ActionRedact, "secret literal removed from params before egress (grant permits redaction)"
@@ -944,7 +949,7 @@ func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Desc
 // Without a live distinct baseline the SEC grant is the whole intersection.
 func (e *Engine) evaluateIntersection(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt, now time.Time, sec *SkillContextVerification) (string, string) {
 	action, reason := e.evaluateGrant(req, s, descriptor, rec, now, sec.Grant, false)
-	if action == ActionDeny {
+	if rec.AuthorityStatus == "invalid" {
 		return action, reason
 	}
 	var baseline *grant.Grant
@@ -956,6 +961,16 @@ func (e *Engine) evaluateIntersection(req Request, s *session, descriptor runtim
 	}
 	scratch := &Receipt{MatchedFactIDs: []string{}}
 	baction, breason := e.evaluateGrant(req, s, descriptor, scratch, now, baseline, false)
+	// A policy denial on either leg can be advisory; an invalid authority on
+	// either leg cannot. Preserve the classification before adding display
+	// context, including when the SEC leg already returned a policy denial.
+	if scratch.AuthorityStatus == "invalid" {
+		rec.AuthorityStatus, rec.AuthorityReasonCode = scratch.AuthorityStatus, scratch.AuthorityReasonCode
+		return baction, breason
+	}
+	if action == ActionDeny {
+		return action, reason
+	}
 	for _, fid := range scratch.MatchedFactIDs {
 		rec.MatchedFactIDs = appendUnique(rec.MatchedFactIDs, fid)
 	}
@@ -978,12 +993,15 @@ func (e *Engine) evaluateIntersection(req Request, s *session, descriptor runtim
 // binding; import-reserved grants deny unless explicitly selected.
 func (e *Engine) evaluateGrant(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt, now time.Time, g *grant.Grant, unselected bool) (string, string) {
 	hosts, paths := descriptor.Hosts, descriptor.Paths
+	if code := filesystemAuthority(req, g, descriptor, unselected); code != "" {
+		return denyGrantAuthority(rec, code)
+	}
 	if g == nil || (g.Status != "deployed" && g.Status != "effective" && !(!unselected && g.Status == "approved" && importsource.Reserved(g.AdmissionID))) {
 		return ActionDeny, "no deployed grant for agent (default deny)"
 	}
 
 	if unselected && importsource.Reserved(g.AdmissionID) {
-		return ActionDeny, "intent_grant_installation_binding_required"
+		return denyGrantAuthority(rec, "intent_grant_installation_binding_required")
 	}
 	gid := g.GrantID
 	rec.MatchedGrantID = &gid
@@ -1059,7 +1077,17 @@ func (e *Engine) evaluateGrant(req Request, s *session, descriptor runtimeaction
 		if credPathRe.MatchString(p) {
 			return ActionDeny, "credential path " + p + " denied (credential facts are never allow)"
 		}
-		if fid, ok := pathGranted(g, p, descriptor.FilesystemWriteHint); ok {
+		fid, ok := "", false
+		if g.SchemaVersion == "grant/v2" {
+			var err error
+			fid, ok, err = windowsPathMatch(g, p, descriptor.FilesystemWriteHint)
+			if err != nil {
+				return denyGrantAuthority(rec, "intent_filesystem_identity_unavailable")
+			}
+		} else {
+			fid, ok = pathGranted(g, p, descriptor.FilesystemWriteHint)
+		}
+		if ok {
 			if fid != "" {
 				rec.MatchedFactIDs = appendUnique(rec.MatchedFactIDs, fid)
 			}
@@ -1078,6 +1106,15 @@ func (e *Engine) evaluateGrant(req Request, s *session, descriptor runtimeaction
 		}
 	}
 	return ActionAllow, "granted by " + g.GrantID
+}
+
+// denyGrantAuthority carries validity separately from the human-readable
+// evaluation reason, so intersection and redaction cannot turn a hard gate
+// into an advisory policy result. It adds no fields to the signed wire format.
+func denyGrantAuthority(rec *Receipt, code string) (string, string) {
+	authority := runtimeauthz.Authority(code, rec.IntentBinding == "bound")
+	rec.AuthorityStatus, rec.AuthorityReasonCode = authority.Status, authority.ReasonCode
+	return ActionDeny, code
 }
 
 // AppendPendingObserved promotes one unsigned pending_decision/v1 line into a

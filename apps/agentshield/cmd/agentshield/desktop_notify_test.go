@@ -9,6 +9,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/notify"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
@@ -131,7 +132,11 @@ func TestPendingConfirmationsCountsOnlyPending(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	d, err := eng.Decide(receipt.Request{Platform: "openclaw", SessionID: "sess-1", AgentID: "inst_1",
+	session, err := intent.OpenClawSessionID("sess-1", "11111111-1111-4111-8111-111111111111")
+	if err != nil {
+		t.Fatal(err)
+	}
+	d, err := eng.Decide(receipt.Request{Platform: "openclaw", SessionID: session, AgentID: "inst_1",
 		Tool: "exec", ToolCallID: "tc-1", Params: map[string]any{"command": "printf hi"},
 		Context: map[string]any{"cwd": "/home/u/proj"}})
 	if err != nil || d.Action != receipt.ActionHold {

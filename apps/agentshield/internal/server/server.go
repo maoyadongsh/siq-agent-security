@@ -815,16 +815,15 @@ func (s *Server) grantScenarios(w http.ResponseWriter, r *http.Request) {
 func (s *Server) grants(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		list, err := s.d.Store.ListGrants()
+		list, revs, err := s.d.Store.ListGrantsWithRevisions()
 		if err != nil {
+			if errors.Is(err, state.ErrGrantsBusy) {
+				w.Header().Set("Retry-After", "1")
+				writeJSON(w, 503, map[string]any{"error": "grants_busy"})
+				return
+			}
 			writeJSON(w, 500, map[string]any{"error": "store unreadable"})
 			return
-		}
-		revs := map[string]int{}
-		for _, g := range list {
-			if _, seq, err := s.d.Store.GetGrantWithSeq(g.GrantID); err == nil {
-				revs[g.GrantID] = seq
-			}
 		}
 		writeJSON(w, 200, map[string]any{"grants": list, "state_revisions": revs})
 	case http.MethodPost:

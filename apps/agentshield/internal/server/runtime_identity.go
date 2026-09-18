@@ -145,12 +145,12 @@ func readStrictRequestLimit(w http.ResponseWriter, r *http.Request, out any, err
 }
 func (s *Server) initRuntimeIdentities() error {
 	var err error
-	s.runtimeIdentities, err = runtimeidentity.Open(s.d.Store.Dir, s.d.Key, s.intents, func(id string) (string, error) {
+	s.runtimeIdentities, err = runtimeidentity.OpenWithInstances(s.d.Store.Dir, s.d.Key, s.intents, func(id string) (runtimeidentity.InstanceInfo, error) {
 		target, resolveErr := s.resolveSkillTarget(context.Background(), id)
 		if resolveErr != nil {
-			return "", resolveErr
+			return runtimeidentity.InstanceInfo{}, resolveErr
 		}
-		return target.Platform, nil
+		return runtimeidentity.InstanceInfo{Platform: target.Platform, Root: target.Root}, nil
 	})
 	return err
 }
@@ -158,6 +158,8 @@ func runtimeIdentityError(w http.ResponseWriter, err error) {
 	status := 503
 	code := "runtime_identity_unavailable"
 	switch {
+	case errors.Is(err, runtimeidentity.ErrProfileState):
+		status, code = 409, "windows_profile_activation_required"
 	case errors.Is(err, runtimeidentity.ErrNoTools):
 		status, code = 400, "runtime_identity_no_tools"
 	case errors.Is(err, runtimeidentity.ErrInvalid):
@@ -178,10 +180,16 @@ func (s *Server) runtimeIdentityCollection(w http.ResponseWriter, r *http.Reques
 			runtimeIdentityError(w, err)
 			return
 		}
-		writeJSON(w, 200, map[string]any{"schema_version": "local-runtime-identities/v1", "items": items})
+		version := "local-runtime-identities/v1"
+		for _, item := range items {
+			if item.FilesystemProfile != "" {
+				version = "local-runtime-identities/v2"
+			}
+		}
+		writeJSON(w, 200, map[string]any{"schema_version": version, "items": items})
 	case http.MethodPost:
 		var req runtimeidentity.CreateRequest
-		if !readRuntimeIdentity(w, r, &req, "schema_version", "instance_id", "grant_id", "expected_grant_revision", "actor_id", "session_ttl_seconds") {
+		if !readRuntimeIdentityCreate(w, r, &req) {
 			return
 		}
 		record, err := s.runtimeIdentities.Create(req)
@@ -199,7 +207,11 @@ func (s *Server) runtimeIdentityCollection(w http.ResponseWriter, r *http.Reques
 			runtimeIdentityError(w, err)
 			return
 		}
-		writeJSON(w, 201, map[string]any{"schema_version": "local-runtime-identity-issued/v1", "identity": summary, "credential_path": path})
+		version := "local-runtime-identity-issued/v1"
+		if record.SchemaVersion == "local-runtime-identity/v2" {
+			version = "local-runtime-identity-issued/v2"
+		}
+		writeJSON(w, 201, map[string]any{"schema_version": version, "identity": summary, "credential_path": path})
 	default:
 		w.WriteHeader(405)
 	}

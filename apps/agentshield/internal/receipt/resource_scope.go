@@ -87,6 +87,9 @@ func hostGranted(g *grant.Grant, endpoint string) (string, bool) {
 }
 
 func pathGranted(g *grant.Grant, target string, write bool) (string, bool) {
+	if g.SchemaVersion != "" {
+		return windowsPathGranted(g, target, write)
+	}
 	if strings.ContainsAny(target, "\\\x00") {
 		return "", false
 	}

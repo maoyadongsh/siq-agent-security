@@ -19,6 +19,7 @@ import (
 	"testing"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 )
@@ -209,7 +210,7 @@ func sessionExecApproveHold(t *testing.T, s *Server) map[string]any {
 		"grant_id": g.GrantID, "grant_digest": digest, "endpoint_fingerprint": s.d.Openshell.InvocationFingerprint(),
 	}}
 	decision := sessionExecPostOK(t, s, "/v1/decide", token, map[string]any{
-		"platform": "openclaw", "session_id": "hold-session", "agent_id": "inst_1",
+		"platform": "openclaw", "session_id": nativeOpenClawSession(t, "hold-session"), "agent_id": "inst_1",
 		"tool": "exec", "tool_call_id": "held-call", "params": params,
 	})
 	if decision["action"] != "hold" {
@@ -225,9 +226,10 @@ func sessionExecApproveHold(t *testing.T, s *Server) map[string]any {
 }
 
 func sessionExecBody(decision map[string]any) map[string]any {
+	session, _ := intent.OpenClawSessionID("hold-session", "11111111-1111-4111-8111-111111111111")
 	return map[string]any{
 		"schema_version": "hold-execution-reserve/v1", "platform": "openclaw",
-		"session_id": "hold-session", "agent_id": "inst_1", "tool": "exec",
+		"session_id": session, "agent_id": "inst_1", "tool": "exec",
 		"original_tool_call_id": "held-call", "retry_tool_call_id": "held-call-retry",
 		"action_id": decision["action_id"], "decision_receipt_id": decision["receipt_id"],
 		"params":            decision["fixture_params"],
@@ -242,7 +244,7 @@ func sessionExecBody(decision map[string]any) map[string]any {
 func sessionExecHoldStatus(t *testing.T, s *Server, decision map[string]any) string {
 	t.Helper()
 	code, status := sessionExecPost(t, s, "/v1/hold-status", token, map[string]any{
-		"platform": "openclaw", "session_id": "hold-session", "agent_id": "inst_1",
+		"platform": "openclaw", "session_id": nativeOpenClawSession(t, "hold-session"), "agent_id": "inst_1",
 		"tool": "exec", "tool_call_id": "held-call", "action_id": decision["action_id"],
 		"decision_receipt_id": decision["receipt_id"],
 		"params":              decision["fixture_params"],
@@ -258,7 +260,7 @@ func sessionExecReservationStatus(t *testing.T, s *Server, decision, reservation
 	t.Helper()
 	code, status := sessionExecPost(t, s, "/v1/hold-executions/status", token, map[string]any{
 		"schema_version": "hold-execution-status-request/v1", "platform": "openclaw",
-		"session_id": "hold-session", "agent_id": "inst_1", "tool": "exec",
+		"session_id": nativeOpenClawSession(t, "hold-session"), "agent_id": "inst_1", "tool": "exec",
 		"retry_tool_call_id": "held-call-retry", "action_id": decision["action_id"],
 		"decision_receipt_id":    decision["receipt_id"],
 		"reservation_receipt_id": reservation["reservation_receipt_id"],

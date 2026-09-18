@@ -49,7 +49,7 @@ func permissionEnvelope(r Record, session string, g *grant.Grant, at time.Time) 
 			expires = end
 		}
 	}
-	return intent.Contract{
+	envelope := intent.Contract{
 		SchemaVersion: "intent/v2", IntentID: id, TaskID: task,
 		Principal: intent.Principal{Type: "user", ID: r.ActorID}, Agent: intent.Agent{ID: r.AgentID, Platform: r.Platform},
 		Purpose: permissionPurpose, AllowedTools: tools,
@@ -60,6 +60,10 @@ func permissionEnvelope(r Record, session string, g *grant.Grant, at time.Time) 
 		IssuedAt: at.UTC().Format(time.RFC3339Nano), ValidFrom: at.UTC().Format(time.RFC3339Nano), ExpiresAt: expires.UTC().Format(time.RFC3339Nano),
 		Authority: intent.Authority{Issuer: "local-runtime-identity", Revision: recordDigest(r), EvidenceIDs: []string{}},
 	}
+	if r.SchemaVersion == "local-runtime-identity/v2" {
+		envelope.SchemaVersion, envelope.AuthorityKind, envelope.FilesystemProfile = "intent/v4", "instance_permission", r.FilesystemProfile
+	}
+	return envelope
 }
 
 func sameEnvelope(c intent.Contract, want intent.Contract) bool {
@@ -83,6 +87,9 @@ func (s *Store) Enroll(token, session string) (intent.Binding, error) {
 	r, err := s.authenticate(token)
 	if err != nil {
 		return intent.Binding{}, err
+	}
+	if err := intent.ValidateNativeSession(r.Platform, session); err != nil {
+		return intent.Binding{}, ErrInvalid
 	}
 	g, err := s.intents.GrantForReference(r.GrantRef, r.Platform, r.AgentID)
 	if err != nil {
@@ -122,7 +129,8 @@ func (s *Store) Enroll(token, session string) (intent.Binding, error) {
 }
 func bindingMatches(r Record, session string, c *intent.Contract, b *intent.Binding) bool {
 	id, task := sessionNames(r, session)
-	return c != nil && b != nil && c.IntentID == id && b.IntentID == id && c.TaskID == task && b.TaskID == task && c.Authority.Issuer == "local-runtime-identity" && c.Authority.Revision == recordDigest(r) && b.GrantRef != nil && *b.GrantRef == r.GrantRef
+	profileMatch := c != nil && (r.SchemaVersion == "local-runtime-identity/v1" && c.SchemaVersion == "intent/v2" && c.FilesystemProfile == "" || r.SchemaVersion == "local-runtime-identity/v2" && c.SchemaVersion == "intent/v4" && c.AuthorityKind == "instance_permission" && c.FilesystemProfile == r.FilesystemProfile)
+	return profileMatch && b != nil && c.IntentID == id && b.IntentID == id && c.TaskID == task && b.TaskID == task && c.Authority.Issuer == "local-runtime-identity" && c.Authority.Revision == recordDigest(r) && b.GrantRef != nil && *b.GrantRef == r.GrantRef
 }
 
 // AuthorizeSession is the required credential + session boundary for middleware.

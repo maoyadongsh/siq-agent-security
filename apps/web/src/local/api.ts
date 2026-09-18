@@ -37,6 +37,7 @@ import { isSkillInstallCreated, isSkillInstallPlan, isSkillInstallView } from '.
 import { isImportPermissionResult } from "./importPermissions";
 import { isSkillImportList, isSkillImportResult } from "./skillImports";
 import type { RuntimeIdentity } from "./types";
+import { identityFilesystemProfile, windowsFilesystemProfile } from './filesystemProfile';
 /**
  * siq-agent-security 本地 API 客户端。
  * 管理会话只留在模块闭包里，不进 React state、不写 localStorage。
@@ -53,6 +54,7 @@ import type {
   AdapterInstances,
   Grant,
   GrantResourceEdit,
+  FilesystemConfirmation,
   RuntimeCheckPlan,
   RuntimeCheckResult,
   LedgerAsset,
@@ -144,9 +146,11 @@ function acceptSession(data: Record<string, unknown>): string {
 
 export class LocalApiError extends Error {
   status: number;
-  constructor(status: number, message: string) {
+  code?: string;
+  constructor(status: number, message: string, code?: string) {
     super(message);
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -234,7 +238,13 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
       expiredListeners.forEach((listener) => listener());
     }
     const err = (parsed as { error?: string } | null)?.error;
-    throw new LocalApiError(resp.status, err || `HTTP ${resp.status}`);
+    if (path === '/v1/grants' && (!init.method || init.method === 'GET') && resp.status === 503 && err === 'grants_busy') {
+      throw new LocalApiError(503, '授权正在更新，请稍后刷新；当前显示的列表不是最新状态。', err);
+    }
+    if (err === 'windows_profile_activation_required') {
+      throw new LocalApiError(resp.status, 'Windows 路径授权的状态升级尚未完成或未通过校验。请先运行 siq-agent-security state-status 诊断并保留状态目录，再按诊断完成显式启用或中断恢复；不要删除状态或改用旧授权绕过。', err);
+    }
+    throw new LocalApiError(resp.status, err || `HTTP ${resp.status}`, err);
   }
   return parsed as T;
 }
@@ -494,14 +504,32 @@ export const localApi = {
   admissions: () => request<{ admissions: Admission[] }>("/v1/admissions").then((data) => ({
     admissions: data.admissions ?? [],
   })),
-  runtimeIdentities: () => request<{ items: RuntimeIdentity[] }>("/v1/runtime-identities").then((data) => ({
-    items: data.items ?? [],
-  })),
-  createRuntimeIdentity: (instanceId: string, grantId: string, revision: number, actorId: string, ttl: number) =>
-    request<{ identity: RuntimeIdentity }>("/v1/runtime-identities", { method: "POST", body: JSON.stringify({
-      schema_version: "local-runtime-identity-create/v1", instance_id: instanceId, grant_id: grantId,
+  runtimeIdentities: () => request<{ schema_version: 'local-runtime-identities/v1' | 'local-runtime-identities/v2'; items: RuntimeIdentity[] }>("/v1/runtime-identities").then((data) => {
+    if (!['local-runtime-identities/v1', 'local-runtime-identities/v2'].includes(data.schema_version) || !Array.isArray(data.items)
+      || data.items.some((item) => !item || !item.grant_ref || identityFilesystemProfile(item) === 'unsupported'
+        || (data.schema_version === 'local-runtime-identities/v1' && identityFilesystemProfile(item) !== 'posix/v1'))) {
+      throw new LocalApiError(502, '实例身份的路径解释与响应版本不一致，请检查服务版本后重新读取。');
+    }
+    return data;
+  }),
+  createRuntimeIdentity: (instanceId: string, grantId: string, revision: number, actorId: string, ttl: number, filesystem: FilesystemConfirmation = { profile: 'posix/v1' }) => {
+    const windows = filesystem.profile === windowsFilesystemProfile;
+    if (filesystem.profile !== 'posix/v1' && (!windows || filesystem.confirmed !== true)) {
+      return Promise.reject(new LocalApiError(400, '请明确确认使用 Windows 本地盘符路径解释。'));
+    }
+    return request<{ schema_version: 'local-runtime-identity-issued/v1' | 'local-runtime-identity-issued/v2'; identity: RuntimeIdentity }>("/v1/runtime-identities", { method: "POST", body: JSON.stringify({
+      schema_version: windows ? "local-runtime-identity-create/v2" : "local-runtime-identity-create/v1", instance_id: instanceId, grant_id: grantId,
       expected_grant_revision: revision, actor_id: actorId, session_ttl_seconds: ttl,
-    }) }),
+      ...(windows ? { confirm_filesystem_profile: true } : {}),
+    }) }).then((result) => {
+      if (!result.identity || !result.identity.grant_ref || result.identity.instance_id !== instanceId || result.identity.grant_ref.grant_id !== grantId
+        || result.schema_version !== (windows ? 'local-runtime-identity-issued/v2' : 'local-runtime-identity-issued/v1')
+        || identityFilesystemProfile(result.identity) !== filesystem.profile) {
+        throw new LocalApiError(502, '无法确认新身份的实例、授权或路径解释，请重新读取身份列表；不要重复签发。');
+      }
+      return result;
+    });
+  },
   revokeRuntimeIdentity: (id: string, actorId: string) => request(`/v1/runtime-identities/${encodeURIComponent(id)}/revoke`, {
     method: "POST", body: JSON.stringify({ schema_version: "local-runtime-identity-revoke/v1", actor_id: actorId }),
   }),
@@ -544,11 +572,16 @@ export const localApi = {
       body: JSON.stringify({ schema_version: 'grant-expiry-edit/v1', expected_revision: revision,
         actor_id: actorId, duration_seconds: durationSeconds }),
     }),
-  setGrantResources: (id: string, revision: number, actorId: string, resources: GrantResourceEdit) =>
-    request<{ grant: Grant; state_revision: number }>(`/v1/grants/${encodeURIComponent(id)}/resources`, {
-      method: 'POST', body: JSON.stringify({ schema_version: 'grant-resource-edit/v1',
-        expected_revision: revision, actor_id: actorId, ...resources }),
-    }),
+  setGrantResources: (id: string, revision: number, actorId: string, resources: GrantResourceEdit, filesystem: FilesystemConfirmation = { profile: 'posix/v1' }) => {
+    const windows = filesystem.profile === windowsFilesystemProfile;
+    if (filesystem.profile !== 'posix/v1' && (!windows || filesystem.confirmed !== true)) {
+      return Promise.reject(new LocalApiError(400, '请明确确认使用 Windows 本地盘符路径解释。'));
+    }
+    return request<{ grant: Grant; state_revision: number }>(`/v1/grants/${encodeURIComponent(id)}/resources`, {
+      method: 'POST', body: JSON.stringify({ ...resources, schema_version: windows ? 'grant-resource-edit/v2' : 'grant-resource-edit/v1',
+        expected_revision: revision, actor_id: actorId, ...(windows ? { confirm_filesystem_profile: true } : {}) }),
+    });
+  },
   runtimeCheckPreview: (instanceId: string) => request<RuntimeCheckPlan>('/v1/runtime-checks/preview', {
     method: 'POST', body: JSON.stringify({ schema_version: 'local-runtime-check-preview/v1', instance_id: instanceId }),
   }),

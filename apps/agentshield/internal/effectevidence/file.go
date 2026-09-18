@@ -22,14 +22,19 @@ const MaxFileBytes int64 = 16 << 20
 var ErrFileObservation = errors.New("file_observation_unavailable")
 
 type FileSnapshot struct {
-	ResourceRef string `json:"resource_ref"`
-	Exists      bool   `json:"exists"`
-	Digest      string `json:"digest"`
-	Size        int64  `json:"size"`
-	MTime       string `json:"mtime"`
-	CapturedAt  string `json:"captured_at"`
+	SchemaVersion        string `json:"schema_version,omitempty"`
+	FilesystemProfile    string `json:"filesystem_profile,omitempty"`
+	IdentityDigest       string `json:"identity_digest,omitempty"`
+	ParentIdentityDigest string `json:"parent_identity_digest,omitempty"`
+	ResourceRef          string `json:"resource_ref"`
+	Exists               bool   `json:"exists"`
+	Digest               string `json:"digest"`
+	Size                 int64  `json:"size"`
+	MTime                string `json:"mtime"`
+	CapturedAt           string `json:"captured_at"`
 }
 type FileObservation struct {
+	SchemaVersion  string       `json:"schema_version,omitempty"`
 	Before         FileSnapshot `json:"before"`
 	After          FileSnapshot `json:"after"`
 	ExpectedDigest string       `json:"expected_digest"`
@@ -107,6 +112,13 @@ func CaptureFile(path string, maxBytes int64) (FileSnapshot, error) {
 }
 
 func validSnapshot(s FileSnapshot) bool {
+	if s.SchemaVersion == "" {
+		if s.FilesystemProfile != "" || s.IdentityDigest != "" || s.ParentIdentityDigest != "" {
+			return false
+		}
+	} else if s.SchemaVersion != "file-snapshot/v2" || s.FilesystemProfile != string(runtimeaction.FilesystemWindowsLocalDriveV1) || !digestPattern.MatchString(s.IdentityDigest) || !digestPattern.MatchString(s.ParentIdentityDigest) {
+		return false
+	}
 	if !resourcePattern.MatchString(s.ResourceRef) || !strings.HasPrefix(s.ResourceRef, "filesystem:") {
 		return false
 	}
@@ -123,7 +135,7 @@ func validSnapshot(s FileSnapshot) bool {
 // FileWrite compares observations; equal content and metadata do not prove a
 // write occurred. A changed file is still only partial host-side evidence.
 func FileWrite(before, after FileSnapshot, expectedDigest string) (FileObservation, error) {
-	if !validSnapshot(before) || !validSnapshot(after) || before.ResourceRef != after.ResourceRef || !digestPattern.MatchString(expectedDigest) {
+	if !validSnapshot(before) || !validSnapshot(after) || before.ResourceRef != after.ResourceRef || before.SchemaVersion != after.SchemaVersion || before.FilesystemProfile != after.FilesystemProfile || before.ParentIdentityDigest != after.ParentIdentityDigest || !digestPattern.MatchString(expectedDigest) {
 		return FileObservation{}, ErrFileObservation
 	}
 	start, _ := time.Parse(time.RFC3339Nano, before.CapturedAt)
@@ -132,12 +144,15 @@ func FileWrite(before, after FileSnapshot, expectedDigest string) (FileObservati
 		return FileObservation{}, ErrFileObservation
 	}
 	o := FileObservation{Before: before, After: after, ExpectedDigest: expectedDigest, ExecutionState: "unknown", Result: "unknown"}
+	if before.SchemaVersion == "file-snapshot/v2" {
+		o.SchemaVersion = "file-observation/v2"
+	}
 	if !after.Exists {
 		o.ExecutionState = "failed"
 		o.Result = "unexpected"
 		return o, nil
 	}
-	if !before.Exists || before.Digest != after.Digest || before.Size != after.Size || before.MTime != after.MTime {
+	if !before.Exists || before.Digest != after.Digest || before.Size != after.Size || before.MTime != after.MTime || before.IdentityDigest != after.IdentityDigest {
 		o.ExecutionState = "completed"
 		o.Result = "unexpected"
 		if after.Digest == expectedDigest {

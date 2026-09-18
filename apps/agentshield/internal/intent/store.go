@@ -222,6 +222,9 @@ func (s *Store) Issue(c Contract) (*Contract, error) {
 	if err := c.Validate(); err != nil {
 		return nil, err
 	}
+	if err := s.checkProfileState(c); err != nil {
+		return nil, err
+	}
 	if err := s.checkEvidence(c); err != nil {
 		return nil, err
 	}
@@ -309,6 +312,9 @@ func (s *Store) List() ([]Contract, error) {
 func (s *Store) ResolveBinding(platform, sessionID, agentID string) (*Contract, *Binding, error) {
 	authorityWriteMu.RLock()
 	defer authorityWriteMu.RUnlock()
+	if err := ValidateNativeSession(platform, sessionID); err != nil {
+		return nil, nil, err
+	}
 	id := bindingID(platform, sessionID, agentID)
 	revoked, revokeErr := s.GetBindingRevocation(id)
 	if revokeErr != nil && !errors.Is(revokeErr, os.ErrNotExist) {
@@ -372,6 +378,12 @@ func (s *Store) ResolveBinding(platform, sessionID, agentID string) (*Contract, 
 	}
 	found.SelectedGrant, err = s.resolveGrantSelection(*found)
 	if err != nil {
+		return &c, found, err
+	}
+	if !bindingProfileMatches(c, *found, found.SelectedGrant) {
+		return &c, found, violation("intent_grant_profile_mismatch")
+	}
+	if err := s.checkProfileState(c); err != nil {
 		return &c, found, err
 	}
 	return &c, found, nil

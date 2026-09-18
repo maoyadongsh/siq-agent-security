@@ -210,7 +210,7 @@ func TestEndToEndAdmitGrantDecide(t *testing.T) {
 	skill, _ := filepath.Abs(filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like"))
 
 	// decide before any grant → default deny
-	code, d := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "read_file", "params": map[string]any{"path": "/tmp/x"}})
+	code, d := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "read_file", "params": map[string]any{"path": "/tmp/x"}})
 	if code != 200 || d["action"] != "deny" {
 		t.Fatalf("%d %v", code, d)
 	}
@@ -233,7 +233,7 @@ func TestEndToEndAdmitGrantDecide(t *testing.T) {
 	rev := stateRevision(t, g)
 
 	// still deny: grant is pending
-	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "read_file", "params": map[string]any{"path": "/tmp/x"}})
+	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "read_file", "params": map[string]any{"path": "/tmp/x"}})
 	if d["action"] != "deny" {
 		t.Fatal("pending grant must not authorise")
 	}
@@ -254,17 +254,17 @@ func TestEndToEndAdmitGrantDecide(t *testing.T) {
 	}
 
 	// granted tool, granted host → allow
-	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://api.github.com/repos"}})
+	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://api.github.com/repos"}})
 	if d["action"] != "allow" {
 		t.Fatalf("%v", d)
 	}
 	// ungranted host → deny
-	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://evil.example/"}})
+	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://evil.example/"}})
 	if d["action"] != "deny" || !strings.Contains(d["reason"].(string), "evil.example") {
 		t.Fatalf("%v", d)
 	}
 	// exec requires approval (openclaw) → hold, then resolve
-	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "exec", "params": map[string]any{"command": "ls"}})
+	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "exec", "params": map[string]any{"command": "ls"}})
 	if d["action"] != "hold" || d["hold"] == nil {
 		t.Fatalf("%v", d)
 	}
@@ -277,9 +277,9 @@ func TestEndToEndAdmitGrantDecide(t *testing.T) {
 		t.Fatalf("%d %v", code, r)
 	}
 	// observe an authorized action, then egress is denied by result taint
-	call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "tool_call_id": "observe-1", "params": map[string]any{"url": "https://api.github.com/x"}})
-	call(t, s, "POST", "/v1/observe", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "tool_call_id": "observe-1", "result": "leaked: sk-" + strings.Repeat("Z", 40)})
-	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://api.github.com/x"}})
+	call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "web_extract", "tool_call_id": "observe-1", "params": map[string]any{"url": "https://api.github.com/x"}})
+	call(t, s, "POST", "/v1/observe", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "web_extract", "tool_call_id": "observe-1", "result": "leaked: sk-" + strings.Repeat("Z", 40)})
+	_, d = call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://api.github.com/x"}})
 	if d["action"] != "deny" || !strings.HasPrefix(d["reason"].(string), "tainted egress") {
 		t.Fatalf("%v", d)
 	}
@@ -320,7 +320,7 @@ func TestGrantCreateReusesLiveGrant(t *testing.T) {
 	if got["grant_id"] != gid || got["status"] != "deployed" || again["reused"] != true {
 		t.Fatalf("must reuse deployed grant, got %v", again)
 	}
-	_, d := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://evil.example/"}})
+	_, d := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://evil.example/"}})
 	if d["action"] != "deny" {
 		t.Fatalf("overreach after reused deploy: %v", d)
 	}
@@ -350,7 +350,7 @@ func TestDecideRejectsMalformedAndAuditOnlyAllows(t *testing.T) {
 	if rr.Code != 400 {
 		t.Fatal("malformed JSON must be 400")
 	}
-	_, d := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s", "tool": "exec", "params": map[string]any{"command": "curl https://evil.example"}})
+	_, d := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s"), "tool": "exec", "params": map[string]any{"command": "curl https://evil.example"}})
 	if d["action"] != "allow" {
 		t.Fatalf("audit_only must allow: %v", d)
 	}
@@ -773,7 +773,7 @@ func TestLedgerAssetsPermissionsFindings(t *testing.T) {
 		}
 	}
 
-	call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "s1", "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://evil.example/"}})
+	call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "s1"), "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://evil.example/"}})
 	_, perm = call(t, s, "GET", "/v1/permissions?subject_id=inst_1", token, nil)
 	var observed bool
 	for _, raw := range perm["facts"].([]any) {

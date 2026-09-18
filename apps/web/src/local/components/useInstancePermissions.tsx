@@ -8,6 +8,7 @@ import GrantResourceDialog from './GrantResourceDialog';
 import GrantScopeSummary from './GrantScopeSummary';
 import { skillInstallErrorText } from '../skillInstall';
 import type { SkillRuntimeReadiness } from '../types';
+import { filesystemProfileLabel, grantFilesystemProfile, identityFilesystemConfirmation, identityFilesystemProfile, identityFilesystemReviewKey, windowsFilesystemProfile } from '../filesystemProfile';
 
 // Keep editor state above the preview Modal, so only one focus trap is open.
 export function useInstancePermissions(platform: 'hermes' | 'openclaw', instanceId: string, operationBusy = false, requiredGrantId?: string) {
@@ -19,6 +20,7 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
   const [selectedId, setSelectedId] = useState('');
   const [admissionId, setAdmissionId] = useState('');
   const [reviewed, setReviewed] = useState('');
+  const [filesystemReviewed, setFilesystemReviewed] = useState('');
   const [withdraw, setWithdraw] = useState(false);
   const [ttl, setTtl] = useState(28800);
   const [preparing, setPreparing] = useState(false);
@@ -46,10 +48,17 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
   const imported = selected?.admission_id.startsWith('adm-si-') ?? false;
   const importPrepared = imported && importReadiness?.status === 'prepared' && importReadiness.grant.grant_id === selected?.grant_id && importReadiness.state_revision === selected?.state_revision;
   const reviewKey = selected ? `${selected.grant_id}:${selected.state_revision}` : '';
+  const selectedProfile = selected ? grantFilesystemProfile(selected) : 'unsupported';
+  const windows = selectedProfile === windowsFilesystemProfile;
+  const filesystemReviewKey = identityFilesystemReviewKey(platform, instanceId, selected);
+  const filesystemConfirmation = identityFilesystemConfirmation(platform, instanceId, selected, filesystemReviewed);
+  const identityProfileMatches = !!identity && !!currentGrant && identityFilesystemProfile(identity) === grantFilesystemProfile(currentGrant)
+    && identityFilesystemProfile(identity) !== 'unsupported';
   useEffect(() => { setPreparing(false); }, [instanceId, platform]);
-  const refresh = () => { setReviewed(''); setWithdraw(false); setAttempt((n) => n + 1); };
+  useEffect(() => { setFilesystemReviewed(''); }, [scopeKey, reviewKey, selectedProfile]);
+  const refresh = () => { setReviewed(''); setFilesystemReviewed(''); setWithdraw(false); setAttempt((n) => n + 1); };
   useEffect(() => {
-    setLoadedFor(''); setReviewed(''); setWithdraw(false); setEditingId(null);
+    setLoadedFor(''); setReviewed(''); setFilesystemReviewed(''); setWithdraw(false); setEditingId(null);
     if (!instanceId) return;
     let active = true;
     setLoading(true); setError('');
@@ -76,7 +85,7 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
   }, [imported, selected?.grant_id, selected?.state_revision, loadedFor, scopeKey, attempt]);
   const keepGrant = (grant: Grant) => {
     setGrants((current) => [...current.filter((item) => item.grant_id !== grant.grant_id), grant]);
-    setSelectedId(grant.grant_id); setReviewed('');
+    setSelectedId(grant.grant_id); setReviewed(''); setFilesystemReviewed('');
   };
   const run = async (work: () => Promise<void>) => {
     if (submitting.current || busy || loading || !actor.trim()) return;
@@ -109,7 +118,7 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
     keepGrant(created); setEditingId(created.grant_id);
   });
   const approveAndDeploy = () => run(async () => {
-    if (!selected || imported || reviewed !== reviewKey || selected.state_revision === undefined) return;
+    if (!selected || imported || reviewed !== reviewKey || selected.state_revision === undefined || selectedProfile === 'unsupported') return;
     let grant = selected;
     if (grant.status === 'pending_approval') {
       const challenge = await localApi.grantAction(grant.grant_id, 'challenge', { expected_revision: grant.state_revision });
@@ -126,9 +135,12 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
     keepGrant({ ...out.grant, state_revision: out.state_revision });
   });
   const issue = () => run(async () => {
-    if (!selected || selected.state_revision === undefined || reviewed !== reviewKey || identity || (imported && !importPrepared)) return;
-    const out = await localApi.createRuntimeIdentity(instanceId, selected.grant_id, selected.state_revision, actor.trim(), ttl);
+    if (!selected || selected.state_revision === undefined || reviewed !== reviewKey || identity || (imported && !importPrepared)
+      || !filesystemConfirmation) return;
+    const out = await localApi.createRuntimeIdentity(instanceId, selected.grant_id, selected.state_revision, actor.trim(), ttl,
+      filesystemConfirmation);
     setIdentities((current) => [...current, out.identity]); setPreparing(false);
+    setFilesystemReviewed('');
   });
   const stop = () => run(async () => {
     if (!identity || !withdraw) return;
@@ -142,7 +154,9 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
     <p>先核对权限，再确认接入。这里配置实例可用范围，实际调用的 Skill 归属仍待验证。</p>
     {loading ? <p role="status">正在读取检查结果和权限…</p> : null}
     {loadedFor === scopeKey && identity ? <>
-      <p role="status">{identity.status === 'issued' ? (changing ? '当前仍使用旧授权，新权限尚未接入。' : imported && !importPrepared ? '正在核验安装权限，暂不能预览接入。' : '已有可用授权，可以预览接入配置。') : '原有授权已失效，请先停用旧身份，再重新设置。'}</p>
+      <p role="status">{identity.status === 'issued' ? (!identityProfileMatches ? '身份的路径解释尚未核对，暂不能预览接入。' : changing ? '当前仍使用旧授权，新权限尚未接入。' : imported && !importPrepared ? '正在核验安装权限，暂不能预览接入。' : '已有可用授权，可以预览接入配置。') : '原有授权已失效，请先停用旧身份，再重新设置。'}</p>
+      <p>当前身份的文件路径解释：{filesystemProfileLabel(identityFilesystemProfile(identity))}</p>
+      {!identityProfileMatches ? <p role="alert">身份与当前授权的路径解释无法核对，暂不能预览接入。请刷新并检查授权；不要改用旧解释继续。</p> : null}
       {scope(currentGrant, '当前实例权限')}
       {imported && !changing && importError ? <p role="alert">{importError}</p> : null}
       {currentGrant && !requiredGrantId ? <button type="button" className="btn" disabled={busy || !actor.trim()} onClick={() => forkDraft(currentGrant)}>调整当前权限</button> : null}
@@ -153,7 +167,7 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
     </> : null}
     {loadedFor === scopeKey && (!identity || changing) ? <>
       {eligible.length ? <div className="field"><label htmlFor="instance-grant">已有实例授权</label>
-        <select id="instance-grant" value={requiredGrantId ?? selectedId} disabled={busy || !!requiredGrantId} onChange={(event) => { setSelectedId(event.target.value); setReviewed(''); }}>
+        <select id="instance-grant" value={requiredGrantId ?? selectedId} disabled={busy || !!requiredGrantId} onChange={(event) => { setSelectedId(event.target.value); setReviewed(''); setFilesystemReviewed(''); }}>
           <option value="">选择授权</option>{eligible.map((grant) => <option key={grant.grant_id} value={grant.grant_id}>{admissions.find((a) => a.admission_id === grant.admission_id)?.skill_name ?? '实例授权'} · {grantStatusLabel(grant.status)}</option>)}
         </select></div> : null}
       {!requiredGrantId ? <details open={!selected}><summary>从已有检查结果起草权限</summary>
@@ -165,6 +179,7 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
       {requiredGrantId && !selected ? <p role="alert">此次安装对应的授权不可用，请关闭并重新查询安装结果。</p> : null}
       {scope(selected, identity ? '准备替换的权限' : '待接入权限')}
       {selected ? <>
+        {selectedProfile === 'unsupported' ? <p role="alert">所选授权的版本或路径解释无法识别，暂不能批准或签发身份。请检查服务版本并重新读取。</p> : null}
         {!requiredGrantId && (selected.status === 'pending_approval' ? <>
           <button type="button" className="btn" disabled={busy} onClick={() => setEditingId(selected.grant_id)}>编辑权限范围</button>
           <div className="field"><label htmlFor="instance-grant-duration">新授权有效期</label>
@@ -176,10 +191,12 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
         </> : <button type="button" className="btn" disabled={busy || !actor.trim()} onClick={() => forkDraft(selected)}>基于此授权重新起草</button>)}
         {selected.overlap_conflicts?.some((item) => item.resolution === 'unresolved') ? <p role="alert">存在权限冲突，请在授权页面处理后刷新。</p> : <>
           <label><input type="checkbox" disabled={busy} checked={reviewed === reviewKey} onChange={(event) => setReviewed(event.target.checked ? reviewKey : '')} />我已核对以上权限范围</label>
-          {imported && !importPrepared ? <p role="status">{importError || (importReadiness?.status === 'no_tools' ? '此授权没有可运行工具。' : '请从对应安装结果准备实例权限，再刷新此处状态。')} <Link to={importReadiness ? `/grants?install_id=${encodeURIComponent(importReadiness.install_id)}&grant=${encodeURIComponent(selected.grant_id)}` : `/grants?grant=${encodeURIComponent(selected.grant_id)}`}>查看安装与授权</Link></p> : !imported && ['pending_approval', 'approved'].includes(selected.status) ? <button type="button" className="btn" disabled={busy || reviewed !== reviewKey || !actor.trim()} onClick={approveAndDeploy}>确认权限并应用授权</button> : <>
+          {imported && !importPrepared ? <p role="status">{importError || (importReadiness?.status === 'no_tools' ? '此授权没有可运行工具。' : '请从对应安装结果准备实例权限，再刷新此处状态。')} <Link to={importReadiness ? `/grants?install_id=${encodeURIComponent(importReadiness.install_id)}&grant=${encodeURIComponent(selected.grant_id)}` : `/grants?grant=${encodeURIComponent(selected.grant_id)}`}>查看安装与授权</Link></p> : !imported && ['pending_approval', 'approved'].includes(selected.status) ? <button type="button" className="btn" disabled={busy || reviewed !== reviewKey || !actor.trim() || selectedProfile === 'unsupported'} onClick={approveAndDeploy}>确认权限并应用授权</button> : <>
             {identity ? <p role="status">新授权已准备好。请先确认停用上方旧身份，再签发新身份并确认接入；切换期间工具调用会被阻止。</p> : null}
             <div className="field"><label htmlFor="instance-session-ttl">单次会话最长运行时间</label><select id="instance-session-ttl" value={ttl} disabled={busy} onChange={(event) => setTtl(Number(event.target.value))}><option value={3600}>1 小时</option><option value={28800}>8 小时</option><option value={86400}>24 小时</option></select></div>
-            <button type="button" className="btn btn-primary" disabled={busy || !!identity || reviewed !== reviewKey || !actor.trim()} onClick={issue}>使用此授权并准备接入</button>
+            {windows ? <label><input type="checkbox" checked={!!filesystemReviewKey && filesystemReviewed === filesystemReviewKey} disabled={busy || !!identity || !filesystemReviewKey}
+              onChange={(event) => setFilesystemReviewed(event.target.checked ? filesystemReviewKey : '')} />我确认此实例的新身份使用所选授权的 Windows 本地盘符路径解释</label> : null}
+            <button type="button" className="btn btn-primary" disabled={busy || !!identity || reviewed !== reviewKey || !actor.trim() || !filesystemConfirmation} onClick={issue}>使用此授权并准备接入</button>
           </>}
         </>}
       </> : null}
@@ -188,6 +205,6 @@ export function useInstancePermissions(platform: 'hermes' | 'openclaw', instance
     {error ? <p role="alert" className="action-error">{error}</p> : null}
     <button type="button" className="btn" disabled={busy || loading} onClick={refresh}>刷新权限状态</button>
   </section>;
-  return { panel, busy, editing: editingId !== null, identityId: !changing && (!imported || importPrepared) && identity?.status === 'issued' && (!requiredGrantId || identity.grant_ref.grant_id === requiredGrantId) ? identity.identity_id : '',
+  return { panel, busy, editing: editingId !== null, identityId: !changing && identityProfileMatches && (!imported || importPrepared) && identity?.status === 'issued' && (!requiredGrantId || identity.grant_ref.grant_id === requiredGrantId) ? identity.identity_id : '',
     editor: editingId ? <GrantResourceDialog grantId={editingId} onClose={closeEditor} onSaved={(grant) => { keepGrant(grant); setEditingId(null); }} /> : null };
 }

@@ -3,6 +3,7 @@ import Modal from '@/components/Modal';
 import { LocalApiError, localApi } from '../api';
 import { useLocalSession } from '../session';
 import type { Grant, GrantResourceEdit } from '../types';
+import { filesystemProfileLabel, grantFilesystemProfile, resourceFilesystemConfirmation, windowsFilesystemProfile, windowsPathLines, type DisplayFilesystemProfile } from '../filesystemProfile';
 
 interface Draft { tools: string; readOnly: string; readWrite: string; networkAllow: string; networkDeny: string; models: string }
 const empty: Draft = { tools: '', readOnly: '', readWrite: '', networkAllow: '', networkDeny: '', models: '' };
@@ -26,6 +27,8 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
   const [editorActor, setEditorActor] = useState(actorId);
   const [grant, setGrant] = useState<Grant | null>(null);
   const [draft, setDraft] = useState<Draft>(empty);
+  const [filesystem, setFilesystem] = useState<DisplayFilesystemProfile>('posix/v1');
+  const [confirmedFilesystem, setConfirmedFilesystem] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadFailed, setLoadFailed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -34,18 +37,24 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
   const close = useCallback(() => { if (!busy) onClose(); }, [busy, onClose]);
   useEffect(() => {
     let active = true;
-    setLoading(true); setLoadFailed(false); setError('');
+    setLoading(true); setLoadFailed(false); setError(''); setConfirmedFilesystem(false);
     localApi.grant(grantId).then(({ grant: current }) => {
-      if (active) { setGrant(current); setDraft(fromGrant(current)); setLoading(false); }
+      if (active) { setGrant(current); setDraft(fromGrant(current)); setFilesystem(grantFilesystemProfile(current)); setLoading(false); }
     }).catch(() => { if (active) { setLoadFailed(true); setError('无法读取当前权限，请检查连接后重试。'); setLoading(false); } });
     return () => { active = false; };
   }, [grantId, retry]);
-  const editable = grant?.status === 'pending_approval' && !loading && !loadFailed && !busy;
+  const currentProfile = grant ? grantFilesystemProfile(grant) : 'unsupported';
+  const editable = grant?.status === 'pending_approval' && currentProfile !== 'unsupported' && !loading && !loadFailed && !busy;
+  const windowsAvailable = grant?.subject.type === 'agent_instance' && !grant.skill && ['hermes', 'openclaw'].includes(grant.platform);
+  const windows = filesystem === windowsFilesystemProfile;
+  const filesystemConfirmation = grant ? resourceFilesystemConfirmation(grant, filesystem, confirmedFilesystem) : null;
+  const pathLines = windows ? windowsPathLines : lines;
   const update = (key: keyof Draft, value: string) => setDraft((current) => ({ ...current, [key]: value }));
   const save = async () => {
-    if (!editable || !grant || grant.state_revision === undefined || !editorActor.trim()) return;
+    if (!editable || !grant || grant.state_revision === undefined || !editorActor.trim() || !filesystemConfirmation) return;
     setError('');
-    const values = Object.values(draft).map(lines);
+    const readOnly = pathLines(draft.readOnly), readWrite = pathLines(draft.readWrite);
+    const values = [lines(draft.tools), readOnly, readWrite, lines(draft.networkAllow), lines(draft.networkDeny), lines(draft.models)];
     if (values.some((items) => items.length > 32 || new Set(items).size !== items.length)) {
       setError('每个列表最多 32 项，不能重复；目录包含空格时仍完整写在一行。'); return;
     }
@@ -53,18 +62,26 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
       setError('网络允许与拒绝列表合计最多 32 项。'); return;
     }
     const resources: GrantResourceEdit = { tools: lines(draft.tools),
-      filesystem: { read_only: lines(draft.readOnly), read_write: lines(draft.readWrite) },
+      filesystem: { read_only: readOnly, read_write: readWrite },
       network: [...lines(draft.networkAllow).map((endpoint) => ({ endpoint, effect: 'allow' as const })),
         ...lines(draft.networkDeny).map((endpoint) => ({ endpoint, effect: 'deny' as const }))], models: lines(draft.models) };
     setBusy(true);
     try {
-      const saved = await localApi.setGrantResources(grantId, grant.state_revision, editorActor.trim(), resources);
+      const saved = await localApi.setGrantResources(grantId, grant.state_revision, editorActor.trim(), resources,
+        filesystemConfirmation);
+      if (saved.grant.grant_id !== grantId || saved.grant.status !== 'pending_approval' || grantFilesystemProfile(saved.grant) !== filesystem) {
+        setError('无法确认保存结果的授权或路径解释。请重新读取当前权限，再决定后续操作；不要直接批准。');
+        return;
+      }
       setActorId(editorActor.trim());
       onSaved({ ...saved.grant, state_revision: saved.state_revision });
     } catch (err) {
-      setError(err instanceof LocalApiError && err.status === 409
-        ? '权限已被其他操作修改或已批准。你的输入仍保留；重新读取会载入最新权限，请核对后再编辑。'
-        : '保存未完成。请检查目录为规范的绝对路径、网络为主机:端口，以及每个列表最多 32 项。');
+      setError(err instanceof LocalApiError && err.code === 'windows_profile_activation_required' ? err.message
+        : err instanceof LocalApiError && err.code === 'grant_filesystem_profile_invalid' ? '无法核验 Windows 路径或其文件身份。请检查路径原文、目录是否存在及是否为受支持的本地 NTFS 目录；你的输入仍保留。'
+        : err instanceof LocalApiError && err.code === 'grant_filesystem_profile_confirmation_required' ? '请重新读取授权并明确确认其路径解释，新版授权不能改用旧解释。'
+        : err instanceof LocalApiError && err.status === 409 ? '权限已被其他操作修改或已批准。你的输入仍保留；重新读取会载入最新权限，请核对后再编辑。'
+        : err instanceof LocalApiError && [0, 502, 503].includes(err.status) ? err.message
+        : '保存未完成。请检查路径原文、网络主机:端口格式，以及每个列表最多 32 项。');
     } finally { setBusy(false); }
   };
   const field = (key: keyof Draft, label: string, hint?: string) => <div className="field" key={key}>
@@ -82,17 +99,32 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
       {grant ? <>
         <p>平台：{grant.platform} · 主体：{grant.subject.id}</p>
         <p>来源准入：{grant.admission_id}</p>
+        <p>当前文件路径解释：{filesystemProfileLabel(currentProfile)}</p>
+        {currentProfile === 'unsupported' ? <p role="alert">当前授权的版本或路径解释无法识别，暂不能编辑。请检查服务版本并重新读取。</p> : null}
         <p className="page-desc">此授权尚未证明每次调用的 Skill 归属。目录限制是工具层检查，不代表操作系统隔离。</p>
         {grant.status !== 'pending_approval' ? <p role="status">此授权已离开待批准状态。需要修改时，请重新起草并批准。</p> : null}
+        <div className="field"><label htmlFor="grant-filesystem-profile">本次保存的文件路径解释</label>
+          <select id="grant-filesystem-profile" value={filesystem} disabled={!editable || currentProfile === windowsFilesystemProfile}
+            onChange={(event) => { setFilesystem(event.target.value as DisplayFilesystemProfile); setConfirmedFilesystem(false); }}>
+            <option value="posix/v1">保留原有 POSIX 路径解释</option>
+            {windowsAvailable || currentProfile === windowsFilesystemProfile ? <option value={windowsFilesystemProfile}>Windows 本地盘符路径</option> : null}
+            {currentProfile === 'unsupported' ? <option value="unsupported">无法识别，请重新读取</option> : null}
+          </select>
+        </div>
+        {windows ? <>
+          <p className="page-desc">使用真实 Windows 本地盘符目录，例如 C:\Users\me\reports。原有目录不会自动转换；保存后仍需单独批准。</p>
+          <label><input type="checkbox" disabled={!editable} checked={confirmedFilesystem} onChange={(event) => setConfirmedFilesystem(event.target.checked)} />我确认本次权限使用 Windows 本地盘符路径解释</label>
+          {currentProfile === windowsFilesystemProfile ? <p className="page-desc">此授权已绑定 Windows 路径解释，不能改回旧解释。</p> : null}
+        </> : null}
         <div className="toolbar">
           <button type="button" className="btn btn-sm" disabled={!editable} onClick={() => setDraft((current) => ({
-            ...current, readOnly: Array.from(new Set([...lines(current.readOnly), ...lines(current.readWrite)])).join('\n'), readWrite: '',
+            ...current, readOnly: Array.from(new Set([...pathLines(current.readOnly), ...pathLines(current.readWrite)])).join('\n'), readWrite: '',
           }))}>目录全部改为只读</button>
           <button type="button" className="btn btn-sm" disabled={!editable} onClick={() => setDraft((current) => ({ ...empty, networkDeny: current.networkDeny }))}>清空允许范围</button>
         </div>
-        <p className="page-desc">每行一项，留空表示清空对应允许列表。路径中的空格和逗号会保留。</p>
+        <p className="page-desc">每行一项，留空表示清空对应允许列表。{windows ? '路径原文完整提交，前后空格不会自动删除；非法路径由服务拒绝。' : '路径内部的空格和逗号会保留。'}</p>
         {field('tools', '允许的工具', '仅填写平台实际工具名称；允许工具不等于允许任意资源。')}
-        {field('readOnly', '只读目录', '当前填写绝对 POSIX 路径，例如 /home/me/reports；Windows 原生路径尚待接入验证。')}
+        {field('readOnly', '只读目录', windows ? '填写现存本地盘符目录。UNC、设备路径、重解析点、尾点或尾空格等路径会被拒绝。' : '填写绝对 POSIX 路径，例如 /home/me/reports。')}
         {field('readWrite', '读写目录', '允许读取、修改和删除范围内的文件；不会授予凭据读取权限。')}
         {field('networkAllow', '允许的网络端点', '例如 api.example.com:443；子域可写 *.example.com:443。')}
         {field('networkDeny', '拒绝的网络端点', '拒绝优先于允许。端口必须明确，不支持在此填写 URL 路径。')}
@@ -110,7 +142,7 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
     <div className="modal-actions runtime-check-actions">
       <button type="button" className="btn" disabled={busy} onClick={onClose}>取消</button>
       <button type="button" className="btn" disabled={busy || loading} onClick={() => setRetry((n) => n + 1)}>重新读取</button>
-      <button type="button" className="btn btn-primary" disabled={!editable || !editorActor.trim()} onClick={save}>保存待批准权限</button>
+      <button type="button" className="btn btn-primary" disabled={!editable || !editorActor.trim() || !filesystemConfirmation} onClick={save}>保存待批准权限</button>
     </div>
   </Modal>;
 }

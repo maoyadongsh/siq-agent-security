@@ -14,6 +14,7 @@ import (
 )
 
 type Binding struct {
+	SchemaVersion     string          `json:"schema_version,omitempty"`
 	GrantRef          *GrantReference `json:"grant_ref,omitempty"`
 	SelectedGrant     *grant.Grant    `json:"-"`
 	BindingID         string          `json:"binding_id"`
@@ -53,6 +54,9 @@ func (s *Store) Bind(b Binding) (Binding, error) {
 func (s *Store) bind(b Binding) (Binding, error) {
 	authorityWriteMu.Lock()
 	defer authorityWriteMu.Unlock()
+	if err := ValidateNativeSession(b.Platform, b.SessionID); err != nil {
+		return b, err
+	}
 	if b.Platform == "" || b.SessionID == "" || b.AgentID == "" || b.IntentID == "" {
 		return b, violation("intent_invalid_binding")
 	}
@@ -72,7 +76,17 @@ func (s *Store) bind(b Binding) (Binding, error) {
 	if b.TaskID != "" && b.TaskID != c.TaskID {
 		return b, violation("intent_task_mismatch")
 	}
-	if _, err := s.resolveGrantSelection(b); err != nil {
+	g, err := s.resolveGrantSelection(b)
+	if err != nil {
+		return b, err
+	}
+	if c.SchemaVersion == "intent/v4" {
+		b.SchemaVersion = "intent-grant-binding/v2"
+	}
+	if !bindingProfileMatches(c, b, g) {
+		return b, violation("intent_grant_profile_mismatch")
+	}
+	if err := s.checkProfileState(c); err != nil {
 		return b, err
 	}
 	b.BindingID = bindingID(b.Platform, b.SessionID, b.AgentID)

@@ -32,10 +32,13 @@ func (c Contract) Validate() error {
 			return violation("intent_invalid_provenance_ref")
 		}
 	}
-	if (c.SchemaVersion != "intent/v2" && c.SchemaVersion != "intent/v3") || !validID(c.IntentID) || c.TaskID == "" || c.Principal.Type != "user" || c.Principal.ID == "" || c.Agent.ID == "" || c.Agent.Platform == "" || c.Purpose == "" || c.Authority.Issuer == "" || c.Authority.Revision == "" {
+	if c.ResourceProfile() == "" || !validID(c.IntentID) || c.TaskID == "" || c.Principal.Type != "user" || c.Principal.ID == "" || c.Agent.ID == "" || c.Agent.Platform == "" || c.Purpose == "" || c.Authority.Issuer == "" || c.Authority.Revision == "" {
 		return violation("intent_invalid_contract")
 	}
-	if c.SchemaVersion == "intent/v2" && c.ProvenanceConstraints != nil || c.SchemaVersion == "intent/v3" && c.ProvenanceConstraints == nil {
+	if c.SchemaVersion != "intent/v3" && c.ProvenanceConstraints != nil || c.SchemaVersion == "intent/v3" && c.ProvenanceConstraints == nil {
+		return violation("intent_invalid_contract")
+	}
+	if c.SchemaVersion == "intent/v4" && (c.Authority.Issuer != "local-runtime-identity" || len(c.ProvenanceRefs) != 0) {
 		return violation("intent_invalid_contract")
 	}
 	if c.EffectRequirements != nil {
@@ -89,6 +92,9 @@ func (c Contract) Validate() error {
 		if err := validateOperator(r.Operator, r.Value, nil, true); err != nil {
 			return err
 		}
+		if c.SchemaVersion == "intent/v4" && r.Domain == "filesystem" && r.Operator != "equals" && r.Operator != "one_of" && r.Operator != "prefix" {
+			return violation("intent_invalid_resource_constraint")
+		}
 		values := []any{r.Value}
 		if r.Operator == "one_of" {
 			values, _ = r.Value.([]any)
@@ -98,11 +104,11 @@ func (c Contract) Validate() error {
 			if !ok || str == "" {
 				return violation("intent_invalid_resource_constraint")
 			}
-			if r.Domain == "filesystem" && r.Operator != "regex" && (!path.IsAbs(str) || strings.Contains(str, `\`)) {
+			if c.SchemaVersion != "intent/v4" && r.Domain == "filesystem" && r.Operator != "regex" && (!path.IsAbs(str) || strings.Contains(str, `\`)) {
 				return violation("intent_invalid_resource_constraint")
 			}
 			if r.Operator == "equals" || r.Operator == "one_of" || (r.Domain == "filesystem" && r.Operator != "regex") {
-				if _, err := runtimeaction.NormalizeResource(r.Domain, str); err != nil {
+				if _, err := runtimeaction.NormalizeResourceForProfile(c.ResourceProfile(), r.Domain, str); err != nil {
 					return violation("intent_invalid_resource_constraint")
 				}
 			}

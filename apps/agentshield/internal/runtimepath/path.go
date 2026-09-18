@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"slices"
+	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/canon"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
@@ -65,6 +66,27 @@ func (s *Snapshot) IdentityDigest() (string, error) {
 	}
 	digest := sha256.Sum256(raw)
 	return hex.EncodeToString(digest[:]), nil
+}
+
+// AncestorIdentityDigest extracts a boundary from this same verified chain.
+// A second open could observe a replacement instead of the target's ancestor.
+func (s *Snapshot) AncestorIdentityDigest(path string) (string, error) {
+	canonical, err := runtimeaction.NormalizeResourceForProfile(runtimeaction.FilesystemWindowsLocalDriveV1, "filesystem", path)
+	if err != nil || s == nil || canonical != path || (s.path != path && !strings.HasPrefix(s.path, strings.TrimSuffix(path, "/")+"/")) {
+		return "", ErrUnverified
+	}
+	count := 1
+	if len(path) > 3 {
+		count += len(strings.Split(path[3:], "/"))
+	}
+	if count > len(s.objects) || s.path == path && !s.exists {
+		return "", ErrUnverified
+	}
+	if s.path != path && !s.objects[count-1].directory {
+		return "", ErrUnverified
+	}
+	ancestor := &Snapshot{path: path, device: s.device, exists: true, objects: s.objects[:count]}
+	return ancestor.IdentityDigest()
 }
 
 // Revalidate rejects changed identity or existence. This is deliberately not a

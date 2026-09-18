@@ -92,7 +92,15 @@ export interface GrantResourceEdit {
   models: string[];
 }
 
+export type WindowsFilesystemProfile = 'windows-local-drive/v1';
+export type FilesystemConfirmation = { profile: 'posix/v1' } | { profile: WindowsFilesystemProfile; confirmed: true };
+
 export interface Grant {
+
+  schema_version?: 'grant/v2';
+  filesystem_profile?: WindowsFilesystemProfile;
+  filesystem_bindings?: Record<string, string>;
+  skill?: { skill_id: string; [key: string]: unknown } | null;
   signature?: string;
   hermes_toolset_allowlist?: string[];
   openclaw_tool_policy?: { allow: string[]; deny: string[]; require_approval: string[] };
@@ -359,11 +367,13 @@ export interface LedgerFinding {
 }
 
 export interface RuntimeIdentity {
+
+  filesystem_profile?: WindowsFilesystemProfile;
   identity_id: string;
   instance_id: string;
   agent_id: string;
   platform: 'hermes' | 'openclaw';
-  grant_ref: { grant_id: string; admission_id: string; permission_digest: string };
+  grant_ref: { grant_id: string; admission_id: string; permission_digest: string; permission_digest_schema?: 'grant-permissions/v2' };
   actor_id: string;
   created_at: string;
   session_ttl_seconds: number;

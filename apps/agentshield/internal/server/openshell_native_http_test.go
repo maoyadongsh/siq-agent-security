@@ -68,7 +68,7 @@ func TestO04NativeHTTP(t *testing.T) {
 	request("GET", "/v1/status", "", nil, 401)
 	request("GET", "/v1/status", "wrong", nil, 401)
 	request("GET", "/v1/status", s.bootAdmin, nil, 200)
-	body := map[string]any{"platform": "openclaw", "session_id": "http-benchmark", "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://api.github.com/repos"}}
+	body := map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "http-benchmark"), "agent_id": "inst_1", "tool": "web_extract", "params": map[string]any{"url": "https://api.github.com/repos"}}
 	decide := func(want string) float64 {
 		t.Helper()
 		d := request("POST", "/v1/decide", token, body, 200)
