@@ -252,9 +252,6 @@ func TestAdapterCrashHelper(t *testing.T) {
 }
 
 func TestAdapterRealProcessDeathRecovery(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("writer implementation conservatively cannot prove Windows process death; requires native lifecycle work")
-	}
 	for _, boundary := range []string{"prepared", "file:1", "audited"} {
 		t.Run(boundary, func(t *testing.T) {
 			o := testOpts(t, Hermes)
