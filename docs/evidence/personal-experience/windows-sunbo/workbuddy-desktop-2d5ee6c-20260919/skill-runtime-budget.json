@@ -1,0 +1,16 @@
+{
+  "source_base": "96091f3e3520b60b91682dfcc6f37056f047a199",
+  "source_dirty": true,
+  "source_change": "Added TestWorkBuddyV2RuntimeGrantWithinServerBudget only; no production code changed.",
+  "runtime_equivalent_candidate": "2d5ee6c725e865b2c0769f0d35ac839161dbb717",
+  "method": "component_fixture",
+  "native_host_launched": false,
+  "model_calls": 0,
+  "command": "go test ./internal/skillinstall -run ^TestWorkBuddyV2RuntimeGrantWithinServerBudget$ -count=1 -timeout=240s -v",
+  "exit_code": 0,
+  "package_seconds": 125.026,
+  "content_validation_deadline_seconds": 5,
+  "user_validation_seconds": 2.7648565,
+  "project_validation_seconds": 2.9000534,
+  "scope": "Each private Windows fixture installs and activates a Skill, then validates the runtime Grant using the same content deadline as the daemon. This does not prove full HTTP hook-chain timing, native Skill loading, or approval resume."
+}

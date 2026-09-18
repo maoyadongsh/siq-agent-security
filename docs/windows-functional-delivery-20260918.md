@@ -61,6 +61,8 @@ OpenClaw 的实际可用路径是本机 WSL，Hermes 是 Windows 原生 CLI；�
 
 ## 未测与外部依赖
 
+运行接线复查：安装内容复验已另按服务端实际 5 秒期限检查，用户级 2.76 秒、项目级 2.90 秒均通过，见 [期限检查](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/skill-runtime-budget.json)。它不能证明完整 HTTP 链或原生加载。安装后的界面目前只提示人工绑定 Skill 会话，没有签发/撤销操作入口；服务端已有 `POST /v1/skill-contexts`、`GET /v1/skill-contexts/{id}` 和 `POST /v1/skill-contexts/{id}/revoke` 管理接口。离线 `skill-context` 命令的安装解析只接 Hermes，不能作为 WorkBuddy/OpenClaw 替代入口。此界面接线缺口仍待完善，不能据此宣布完整用户流程收口。
+
 1. 三宿主完整原生旅程及统一最终候选验收未完成。现有固定 303 项台账为 78 通过、3 失败、5 受阻、217 未测；属于各自证据范围，不是本次交付候选覆盖率。其他 OS 和 WSL2 保持各自标记。
 2. WorkBuddy 已完成本轮授权的最小桌面保护闭环，累计 4/5 个任务。最新 [18 行候选矩阵](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/matrix.json)只填入有实机证据的三项；结构/摘要校验退出 0，完整原生门槛退出 3。其他宿主的历史证据没有改绑到新候选，完整审批与 Skill 旅程不因此标绿。
 3. `productionGitFetch` 按 ADR-0051 保持关闭，等待真实托管网络安全验收。HTTPS ZIP、本地目录及本地 ZIP 路线保留；不通过开放环境开关绕过这一门禁。

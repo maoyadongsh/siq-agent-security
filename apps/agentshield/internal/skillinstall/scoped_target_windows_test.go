@@ -196,6 +196,31 @@ func TestWorkBuddyV2InstallUpdateRemoveBothScopes(t *testing.T) {
 	}
 }
 
+// Match the daemon's installed-content deadline, not an unbounded fixture call.
+func TestWorkBuddyV2RuntimeGrantWithinServerBudget(t *testing.T) {
+	for _, scope := range []string{"user", "project"} {
+		t.Run(scope, func(t *testing.T) {
+			f := workBuddyInstallSetup(t, scope, false)
+			p, op := f.install(t)
+			if _, err := f.store.Activate(nil, op.InstallID, ActivateRequest{"local-skill-install-activate/v1", op.Signature, p.GrantRevision, "human", true}); err != nil {
+				t.Fatal(err)
+			}
+			ready, err := f.store.ReadReadiness(nil, op.InstallID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			started := time.Now()
+			err = f.store.ValidateRuntimeGrant(ctx, ready.Grant)
+			t.Logf("installed-content validation: %s", time.Since(started))
+			if err != nil {
+				t.Fatalf("daemon runtime budget rejected installed Skill: %v", err)
+			}
+		})
+	}
+}
+
 func TestWorkBuddyV2ExistingParentsAndUnrecordedCreation(t *testing.T) {
 	t.Run("existing-preview-anchor", func(t *testing.T) {
 		f := workBuddyInstallSetup(t, "project", true)
