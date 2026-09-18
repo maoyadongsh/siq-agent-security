@@ -1,6 +1,8 @@
 # Windows 修复候选签名交接
 
-**当前唯一签发输入源码：`189cda23f21b0f79d5003aad021443c3768953ab`。** 已修复 WorkBuddy 安装载荷的硬链接与运行时校验冲突；四目标干净开发构建、Skill 载荷及归档摘要见 [当前候选记录](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/unsigned-candidate.json)。归档 `windows-unsigned-candidate-189cda2-reviewed.zip`，SHA256 `96c20afe0ad44ad0ded5c681a1eaee983408c0bcfc4a9bdbc8370f78d97a0a4c`。仍须维护者采用批准版本重建并正式签发；原签名与信任根不改，下方候选均为历史。
+**当前唯一交接源码：`6841a4957b179484f8dcd0faa9dddccb1f9a7ade`。** 四目标干净开发构建、Skill 载荷及归档摘要见 [当前候选记录](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/enrollment-stage-unsigned-candidate.json)。归档 `windows-unsigned-candidate-6841a49-reviewed.zip`，SHA256 `79343336112e11cc8a50cfbcac8a6d1db5d2d658366948693b92a519ead831ee`，66,053,270 字节。二进制仍为 `0.0.0-dev`，不是正式发行。WorkBuddy 原生读取已安装 Skill 后写入的最小链已通过；slash/Skill 入口、桌面更新、完整审批恢复及重复稳定性未据此验收。交接制品不代表正式发行。维护者须按批准版本重建并签发；原签名与信任根不改，#87 保持 open。
+
+## 历史候选（不用于当前签发）
 
 上一中间候选为 `198c73ebfce2cc7af075a92068911699f2386449`（身份管理响应断连修复）。四目标干净构建与未签名归档摘要见 [当前候选](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/unsigned-candidate.json)。归档 `windows-unsigned-candidate-198c73e-reviewed.zip`，SHA256 `135d1feb850e688928a914301bb9be569d88d934f5f7b40a30a28f7e858cb21f`。仍为 `0.0.0-dev`，维护者必须按批准正式版本重建再签发；原签名、信任根及 Skill 载荷未改。下方归档均保留为历史。
 

@@ -1,0 +1,53 @@
+{
+  "candidate": "6841a4957b179484f8dcd0faa9dddccb1f9a7ade",
+  "host": "WorkBuddy 5.5.6 Windows desktop",
+  "model": "Quick (GLM-5.3-Flash)",
+  "permission_mode": "default",
+  "result": "minimal_installed_skill_read_write_passed",
+  "native_tasks": 2,
+  "task_1": "native enrollment and unbound Skill deny; 1m48s",
+  "task_2": "same native session explicitly bound; Read installed SKILL then Write once; 3m5s",
+  "diagnostic_enrollment_not_used_in_this_run": true,
+  "native_receipt_sequences": [
+    20,
+    21,
+    22,
+    23,
+    24
+  ],
+  "verified_chain_entries": 25,
+  "verified_identity_sec_baseline_documents": 6,
+  "marker_bytes": 23,
+  "marker_sha256": "360dfcc86cd8edbb62bd6b3d59ecb20fe2238004139c85650acc644c74d9bff2",
+  "cleanup_verified": true,
+  "temporary_baseline_revoked": true,
+  "installed_skill_removed": true,
+  "import_grant_revoked": true,
+  "owned_hooks_removed": true,
+  "owned_desktop_service_closed": true,
+  "preserved_login_field": true,
+  "private_evidence_sha256": {
+    "baseline-active.json": "d4d4b1d8dcf72b3e826c265ff8403f10c9b4544de6216ef07691767b55484cc9",
+    "baseline-before.json": "7d152051ad86c0e53e7fa03cdef5392cea39ad5e01dd0414c1cac38e009eeaeb",
+    "baseline-revoked.json": "094b964578c03c1fe5b1d36962404bd45ea0aea79ef68299939fb25280ceb7d0",
+    "cleanup.json": "634c9e97d8d19ea740890133251b7077bc482bf7f6adb56ba0b775ce2a6fddd3",
+    "desktop-send-1.json": "fbaefac5c09cddb6ff8e24e2b6e5ddb6ff80141896e8f77b0f143102ae81e5e2",
+    "desktop-send-2.json": "527e4bda9206451e4f3306236cd438fc75bc3cf88dd199af2a55e0cb834705da",
+    "desktop-terminal-1.json": "3eb4a1c453410dc8fcffd99874e6bbf20970e7b3928ef7f448ced2166ffa77e8",
+    "desktop-terminal-2.json": "af4caff3fac7a57e196a7298a1f8c57cd61ae2d69221358a19a7c920892c88be",
+    "marker-observation.json": "9548f93405119faa2dce2918f9c6808ddf54a7a062c7e7c3d24a59bc401cd2aa",
+    "native-session-bound.json": "e6dc6cca55a0086d8e46c21c7663df91178be1fe22b3b98bff5e3a426808fc77",
+    "ready.json": "44c027b45eefa38df2efb469a39336cf9160ee4a0d0d852ab82ceda2a8a3a5e7",
+    "service-1.json": "51811a52243cf39dbad158987009280a07bfc130f38953fdab1825c8fa46c112",
+    "skill-removal.json": "4de011bb154590569e4fc76971800a3d15963f272f1da186dc4f7a7e949a4c35",
+    "snapshot-1.json": "59412b30995b02086909bb5114fc749a5b94f40de76a11c17aedfaa8e0230a95"
+  },
+  "limits": [
+    "Direct native Read of installed SKILL followed by Write; slash/Skill tool is not covered or accepted.",
+    "Earlier native enrollment timeouts remain real failures; one successful journey does not establish repeatability or latency guarantees.",
+    "WorkBuddy approval resumption and desktop V1-to-V2 update journey remain unverified; component lifecycle tests are separate.",
+    "Cleanup revocations independently verified; no additional native tool call after revoke in this run.",
+    "Private fixture public key derived in memory for verification only; no new signatures or secret export.",
+    "Official release signing remains external via issue 87."
+  ]
+}

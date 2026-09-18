@@ -1,8 +1,12 @@
 # Windows 三宿主功能集成交付
 
-**当前唯一产品候选：`189cda23f21b0f79d5003aad021443c3768953ab`。** WorkBuddy 的 Skill 载荷改为单链接发布，目录 owner 仍保持原硬链接归属证明，状态检查同步校验目标和操作池内容。用户级及项目级安装、状态检查、更新、移除及产物运行时路径校验通过（346.784 秒）；载荷与操作池篡改负向、runtimepath 安全测试、Go vet 和四目标干净构建通过。见 [实机失败与修复证据](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/report.json) 和 [候选摘要](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/unsigned-candidate.json)。
+**当前唯一产品候选：`6841a4957b179484f8dcd0faa9dddccb1f9a7ade`。** 已修复 WorkBuddy 安装载荷双硬链接、管理链和运行链响应期限，并补充固定脱敏的登记超时阶段信息。保持全部权限、签名、安装内容复验和 fail-closed；不自动重试。最新构建及归档见 [候选摘要](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/enrollment-stage-unsigned-candidate.json)。
 
-用户已解除模型任务额度限制。随后两个 WorkBuddy 原生任务分别在会话登记和读取阶段停止；后者签名回执确认 SEC 归属有效，但双链接载荷导致文件身份校验拒绝。原候选 `cdfec5a` 的这两个任务均未生成标记，身份、SEC、Grant、Skill、钩子及自有进程均已清理。新候选正在做原生复核，尚不能宣布 Skill 写入可用。正式签发仍由 #87 跟踪；以下为历史记录，历史任务额度不再作为当前限制。
+**三宿主均已有真实的最小 Skill 调用证据，完整任务书未全项验收。** 当前 `6841a49` 在 WorkBuddy 5.5.6 默认权限、快速 GLM-5.3-Flash 下完成“真实会话登记 → 未绑定拒绝 → 明确绑定 → 原生 Read 读取已安装 Skill → Write 一次写入”。独立验签 25 条链记录，其中本轮为 20–24 的 5 条真实回执，另验签 6 份身份/SEC/基础授权文档；23 字节文件内容完全一致。临时授权、身份、SEC、Skill、钩子和自有进程均已清理。见 [本候选真实调用与清理证据](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/native-6841a49-report.json)。
+
+**使用与验收边界：** OpenClaw 为本机 OpenClawGateway WSL Agent，Hermes 为 Windows 原生 CLI，两者保留各自候选的实测身份；WorkBuddy 本轮是读取已安装 SKILL.md 后执行受保护工具，不能据此承诺 slash/Skill 工具入口、桌面更新或完整审批恢复。此前登记超时全部保留；单轮成功不证明稳定性或时延保证。组件生命周期验证与真实调用分开记录。`6841a49` CI 为 38 成功、2 跳过、2 失败，失败仅为 #87 的旧清单摘要检查；见 [CI 核验](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/ci-6841a49.json)。#83 保持 draft，正式签发集中交接 #87；用户已解除模型任务额度限制。
+
+## 历史记录（不代表当前状态）
 
 中间修复候选为 `198c73ebfce2cc7af075a92068911699f2386449`。本轮真实 WorkBuddy Skill 安装激活后，运行身份已写入但 HTTP 响应断连；已修复身份管理接口的响应等待，并同步管理界面和嵌入资源。旧连接写期限的真实 socket 负向、新响应正向、取消/响应错误不写状态、原有身份隔离撤销/合同检查、15 项前端接口测试、类型与嵌入构建、Go vet、四目标干净构建通过。原隔离状态已读回并明确撤销遗留身份；新导入、安装激活、身份签发与钩子安装实际通过。见 [修复与管理链证据](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/report.json) 和 [候选摘要](evidence/personal-experience/windows-sunbo/identity-response-budget-20260919/unsigned-candidate.json)。
 
