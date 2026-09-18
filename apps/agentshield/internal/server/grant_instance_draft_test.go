@@ -46,7 +46,9 @@ func instanceDraftFixture(t *testing.T) (*Server, *state.Store, map[string]any) 
 	if instance == "" {
 		t.Fatal("real fixture profile not discovered")
 	}
-	skill := filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like")
+	// The admission locator is part of each evidence ID. Keep this fixture's
+	// request bytes stable across OSes without changing production identity rules.
+	skill := filepath.ToSlash(filepath.Join("..", "admission", "testdata", "skills", "benign", "official-like"))
 	code, admitted := call(t, s, "POST", "/v1/admit", token, map[string]any{"path": skill})
 	if code != 200 {
 		t.Fatal(code, admitted)
