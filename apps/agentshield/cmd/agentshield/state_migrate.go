@@ -69,6 +69,9 @@ func cmdStateEnableWindowsResources(args []string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
+	if err := prepareWindowsProfileIdentity(dir); err != nil {
+		return err
+	}
 	status, err := (&state.Store{Dir: dir}).ActivateWindowsProfile(true, Version)
 	if err != nil {
 		return err
