@@ -26,7 +26,49 @@
       "TestCommitRecoveryAfterProcessKill": "pass"
     }
   },
-  "full_go_suite": "running; not claimed passed",
-  "cross_build_and_schema": "pending in live controller",
+  "full_go_suite": {
+    "exit": 1,
+    "top_level": {
+      "pass": 1143,
+      "skip": 67,
+      "fail": 53
+    },
+    "packages": {
+      "skip": 6,
+      "pass": 26,
+      "fail": 14
+    },
+    "timeouts": [
+      "server",
+      "skillinstall"
+    ],
+    "details": "full-go-verification.json"
+  },
+  "cross_build_and_schema": {
+    "cross_build_exit": 0,
+    "schema_exit": 0,
+    "artifact_identities": [
+      {
+        "name": "agent.exe",
+        "embedded_revision": "84c84a1d990f3783c2afe53e9a9657f6c21b4ffd",
+        "modified": "false"
+      },
+      {
+        "name": "agent-linux-amd64",
+        "embedded_revision": "90ad881d101a33056e0ab8c9c57131e6f1238075",
+        "modified": "false"
+      },
+      {
+        "name": "agent-linux-arm64",
+        "embedded_revision": "90ad881d101a33056e0ab8c9c57131e6f1238075",
+        "modified": "false"
+      },
+      {
+        "name": "agent-darwin-arm64",
+        "embedded_revision": "90ad881d101a33056e0ab8c9c57131e6f1238075",
+        "modified": "false"
+      }
+    ]
+  },
   "whole_windows_acceptance": "incomplete"
 }

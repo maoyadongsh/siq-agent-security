@@ -1,0 +1,257 @@
+{
+  "top_level": {
+    "pass": 1143,
+    "skip": 67,
+    "fail": 53
+  },
+  "packages": {
+    "skip": 6,
+    "pass": 26,
+    "fail": 14
+  },
+  "failures": [
+    {
+      "package": "agentshield",
+      "test": "TestLoadRegisteredLaunchAgent"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestStartRegisteredLaunchAgent"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestStopRegisteredLaunchAgent"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestSwitchLaunchAgentUpgradeThenRollback"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestSwitchLaunchAgentFailedStartRecovers"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestUnregisterLaunchAgent"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestServeStateDirectorySelection"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestPrepareRollbackMissingBinary"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestUnregisterExactLinkAndRetry"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestUnregisterRejectsUnknownAndFailedReload"
+    },
+    {
+      "package": "agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention"
+    },
+    {
+      "package": "adapters",
+      "test": "TestPolicyExecRejectsSymlinkedStagedRoot"
+    },
+    {
+      "package": "admission",
+      "test": "TestAddFileDetectsReplacedInode"
+    },
+    {
+      "package": "completion",
+      "test": "TestCompletionRequiresActualSignedMaterialAndRetainsConflicts"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestActualFileWriteAndFakeSuccess"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestFileCaptureBoundsAndUnsafeTargets"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestPendingFileImmutableRestartAndTamper"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestRecoveryConcurrentDifferentOwnersHaveOneWinner"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestRecoveryStoredCapacityAndFailureIsolation"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed"
+    },
+    {
+      "package": "effectevidence",
+      "test": "TestStoreRejectsUnsafeStateAndInput"
+    },
+    {
+      "package": "inventory",
+      "test": "TestFindConnectorBinWindowsRejectsSymlink"
+    },
+    {
+      "package": "inventory",
+      "test": "TestMCPSymlinkIsSkipped"
+    },
+    {
+      "package": "pending",
+      "test": "TestAppendWritesUnsignedJSONL"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestRuntimeCheckContractFixtures"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestCheckTemporaryAuthorityAndVerifiedCleanup"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestCancelStopsLaunchAndRevokesAuthority"
+    },
+    {
+      "package": "runtimeidentity",
+      "test": "TestIdentityIssuanceRestartRevocationAndReplacement"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestRecoveryFindsBindingPublishedBeforeJournalUpdate"
+    },
+    {
+      "package": "runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestAuditFailureNeverStartsHostOrReportsPass"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestCleanupRefusesSymlinkAndCanBeRetriedAfterRepair"
+    },
+    {
+      "package": "runtimecheck",
+      "test": "TestTamperedOrTrailingRecordCannotBeReadAsPassed"
+    },
+    {
+      "package": "server",
+      "test": "TestInstanceAndPlanV2ContractFixtures"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestGitImportClonesFixedCopyWithoutHooks"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestGitImportSubDirectorySelectsSubtree"
+    },
+    {
+      "package": "server",
+      "test": "TestDiscoveryContractFixtures"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestRemoteImportContractSamples"
+    },
+    {
+      "package": "server",
+      "test": "TestFileObservationHTTPReadsRealState"
+    },
+    {
+      "package": "server",
+      "test": "TestToolSuccessConflictsWithIndependentMissingOutputHTTP"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestImportTamperAndAnalysisBinding"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestImportLocalSymlinksAndWrongSigningKey"
+    },
+    {
+      "package": "skillimport",
+      "test": "TestUpstreamCheckGitSeesAdvancedHeadWithoutTouchingRecord"
+    },
+    {
+      "package": "server",
+      "test": "TestGrantDraftContractSamples"
+    },
+    {
+      "package": "skillinstall",
+      "test": "TestInspectionSeparatesHistoricalRecordAndCurrentContents"
+    },
+    {
+      "package": "server",
+      "test": "TestManagedPlanV3ContractFixture"
+    },
+    {
+      "package": "server",
+      "test": "TestImportedPermissionRejectsAmbiguousAndSymlinkOpenClawTargets"
+    },
+    {
+      "package": "skillmanifest",
+      "test": "TestPythonHashSkillDirRejectsEscape"
+    },
+    {
+      "package": "state",
+      "test": "TestMigrationFullBackupAndEveryCheckpointRecovery"
+    },
+    {
+      "package": "state",
+      "test": "TestUnmarkedMigrationPreservesPrivateReadonlyTree"
+    },
+    {
+      "package": "state",
+      "test": "TestMigrationRecoversMissingMarkerOnlyAfterPreparedBackup"
+    },
+    {
+      "package": "state",
+      "test": "TestIndependentProcessesPublishUniqueVersions"
+    }
+  ],
+  "timeouts": [
+    "server",
+    "skillinstall"
+  ],
+  "artifacts": [
+    {
+      "name": "agent.exe",
+      "embedded_revision": "84c84a1d990f3783c2afe53e9a9657f6c21b4ffd",
+      "modified": "false",
+      "sha256": "2ab5c2ac7a290da64ec6faad72c822fcec7adfdd96de592862455caef4897f14"
+    },
+    {
+      "name": "agent-linux-amd64",
+      "embedded_revision": "90ad881d101a33056e0ab8c9c57131e6f1238075",
+      "modified": "false",
+      "sha256": "0691eaf2ecc9531894bafd320332f0dc30a6b127d6ec2b6dd89087f81ef1ad8b"
+    },
+    {
+      "name": "agent-linux-arm64",
+      "embedded_revision": "90ad881d101a33056e0ab8c9c57131e6f1238075",
+      "modified": "false",
+      "sha256": "a34566e81110a91ad5d0118b1d894f6638fe141e9897e650b07bc0b3979645f5"
+    },
+    {
+      "name": "agent-darwin-arm64",
+      "embedded_revision": "90ad881d101a33056e0ab8c9c57131e6f1238075",
+      "modified": "false",
+      "sha256": "871be54cb3b40240abdef2cccf24540745f9bcce648cfc1220a50d6c8010c63f"
+    }
+  ],
+  "note": "Go run started at84c84a1; later documentation-only commits advanced HEAD; artifact embedded identities retained individually; not a final combined acceptance claim"
+}
