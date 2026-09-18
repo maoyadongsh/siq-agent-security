@@ -451,6 +451,9 @@ func (p *Plan) prepareInstall() error {
 		}
 		path := filepath.Join(plugin, "config.json")
 		cfg := map[string]any{"endpoint": o.Endpoint, "token_path": filepath.Join(o.StateDir, "token"), "enforcement_mode": o.Mode, "timeout_s": 5}
+		if o.Platform == Hermes && runtime.GOOS == "windows" {
+			cfg["timeout_s"] = 20
+		}
 		if o.Platform == Hermes {
 			previous, err := p.planJSON(path)
 			if err != nil {

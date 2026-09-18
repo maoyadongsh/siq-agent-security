@@ -2145,3 +2145,7 @@ Windows WorkBuddy 实测补充（2026-09-19）：受管钩子 enroll/decide/obse
 安装后会话绑定管理接线（2026-09-19）：在既有安装权限面板中选择后端已登记、仍有效且绑定同安装 Grant 的会话，明确确认整个会话归并该 Skill（不含逐调用因果），通过原 SEC issue/revoke 管理合同操作。新增只读 capAdmin `GET /v1/skill-contexts/management?install_id=...`，响应 `local-skill-context-management/v1`，从安装记录派生实例及 Grant，不接受客户端路径、主体、平台或权限摘要。枚举沿用签名 binding/SEC 存储的 4096 项硬上限；结果各最多 64 个会话/历史上下文，超限或损坏拒绝，取消请求停止继续读取。会话选择经当前 runtime identity 与 ResolveBinding 复验；它只供选择，签发时仍完整重验。历史上下文验签并读撤销墓碑，不把历史记录或未撤销直接标为有效权限。读回用于刷新和响应丢失后的确认，不自动重发写请求；撤销绑定最新读回的原签名。UI 不存管理凭据或密钥，不把受控会话绑定声称为宿主加载或项目隔离。
 
 守护进程 SEC 安装读取接线：Server.New 在开始提供 HTTP 服务之前，一次性将既有 SEC store 的安装读取依赖绑定到服务端 OpenWithTargets 安装库。保留同一个 SEC store、签名密钥和引擎查找，不改变判定规则；修复旧 CLI Hermes-only reader 在在线 WorkBuddy/OpenClaw 管理路径上的误用。绑定只能执行一次且要求非空 store，仍通过 RecordByID 完整读取和校验。离线 CLI 支持边界不因此扩大。只读会话查询整体限时 10 秒。Windows 不受支持的长安装目标映射为明确的 invalid request，仍拒绝且不改写路径，不返回误导性的服务不可用。
+
+### Windows Hermes 已安装 Skill 的 HTTP 等待预算（2026-09-19）
+
+真实 Windows Hermes 安装绑定 Skill 调用发现：安装内容逐次复验及签名台账开销使原 5 秒客户端 HTTP 等待先于有效服务端响应结束，导致有 allow 回执但工具实际未执行。Windows Hermes 新安装的 `timeout_s` 与无配置默认值统一为 20 秒/请求；非 Windows Hermes 保持 5 秒。显式配置和调用处更短的超时继续生效，原生原文采集 0.25 秒上限不变。此项只调整已有 HTTP 请求等待，不是整条 hook 的总时限；不增加重试，不更改安装内容校验的服务端 5 秒限额，不缓存 Authority，任何超时仍按原 managed/block 规则拒绝。旧已安装配置不静默改写，须经正常预览、确认接入流程更新。

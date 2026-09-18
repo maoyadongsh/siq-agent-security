@@ -20,6 +20,8 @@ siq-agent-security adapter install hermes --instance <返回的实例ID> --enabl
 
 插件文件存在不证明宿主已加载。设置页的“接入诊断”会分别显示文件、连接配置和运行验证状态；CLI `adapter status` 的 installed 仅表示发现安装文件。完成目标实例正常调用与执行前拒绝验证后，才可声明相应工具层保护。Grant 与运行时阻断仍复用原有引擎，不由诊断产生权限。
 
+Windows 新接入配置的 HTTP 等待为每请求 20 秒，其他系统为 5 秒；旧配置需经预览、确认重新接入才更新。安装内容仍逐次复验，更短专项超时仍生效，超时拒绝且不自动重试。有 allow 回执不等于工具实际执行，须结合 observation 和文件结果确认。
+
 ## 行为映射
 
 | 决策 API `action` | 插件返回 | 说明 |
