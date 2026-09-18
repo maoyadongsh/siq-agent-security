@@ -1,0 +1,114 @@
+{
+  "source": "development worktree later committed as 82a7da5; not relabeled clean builds",
+  "checks": {
+    "privatefs": {
+      "top_level": {
+        "pass": 5,
+        "skip": 0,
+        "fail": 0
+      },
+      "subtests": {
+        "pass": 8,
+        "skip": 0,
+        "fail": 0
+      },
+      "failed_tests": [],
+      "skipped_tests": []
+    },
+    "rawcontent": {
+      "top_level": {
+        "pass": 26,
+        "skip": 0,
+        "fail": 0
+      },
+      "subtests": {
+        "pass": 16,
+        "skip": 0,
+        "fail": 0
+      },
+      "failed_tests": [],
+      "skipped_tests": []
+    },
+    "runtimeidentity": {
+      "top_level": {
+        "pass": 20,
+        "skip": 0,
+        "fail": 1
+      },
+      "subtests": {
+        "pass": 32,
+        "skip": 0,
+        "fail": 2
+      },
+      "failed_tests": [
+        "TestIdentityCorruptAndAliasedRecordsFailClosed/ancestor_link",
+        "TestIdentityCorruptAndAliasedRecordsFailClosed/record_link",
+        "TestIdentityCorruptAndAliasedRecordsFailClosed"
+      ],
+      "skipped_tests": []
+    },
+    "server-cache": {
+      "top_level": {
+        "pass": 1,
+        "skip": 0,
+        "fail": 0
+      },
+      "subtests": {
+        "pass": 5,
+        "skip": 0,
+        "fail": 0
+      },
+      "failed_tests": [],
+      "skipped_tests": []
+    },
+    "signing": {
+      "top_level": {
+        "pass": 14,
+        "skip": 1,
+        "fail": 0
+      },
+      "subtests": {
+        "pass": 6,
+        "skip": 0,
+        "fail": 0
+      },
+      "failed_tests": [],
+      "skipped_tests": [
+        "TestMissingIdentityRejectsDanglingSeedLink"
+      ]
+    },
+    "state-migration": {
+      "top_level": {
+        "pass": 15,
+        "skip": 2,
+        "fail": 0
+      },
+      "subtests": {
+        "pass": 63,
+        "skip": 1,
+        "fail": 0
+      },
+      "failed_tests": [],
+      "skipped_tests": [
+        "TestRecoveryCredentialRefusesCorruptionAndSymlink",
+        "TestInitializationRequiresWriterAndRejectsSymlinks",
+        "TestMigrationRejectsDriftAndUntrustedPlan/symlink-backup"
+      ]
+    },
+    "state-private": {
+      "top_level": {
+        "pass": 3,
+        "skip": 0,
+        "fail": 0
+      },
+      "subtests": {
+        "pass": 3,
+        "skip": 0,
+        "fail": 0
+      },
+      "failed_tests": [],
+      "skipped_tests": []
+    }
+  },
+  "remaining_runtimeidentity_failure": "Two symlink fixture creations returned Windows privilege-not-held; tests remain failures, not suppressed."
+}
