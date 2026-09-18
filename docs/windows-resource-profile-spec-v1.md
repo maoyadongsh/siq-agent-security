@@ -1,6 +1,6 @@
 # Windows 本地盘符资源解释（#39，候选规格）
 
-本规格是 2026-09-16 Windows 修复候选，未声明已经完成原生验收。继承本地规格的 Authority、Grant、回执、N01 状态边界。首片仅准备合同与确定性词法入口；在真实文件事实层、明确批准链和跨层一致性接通前，不在生产裁决中选择新解释。
+本规格始于 2026-09-16 Windows 修复候选，2026-09-18 接续原生文件事实层，未声明宿主验收完成。继承本地规格的 Authority、Grant、回执、N01 状态边界。合同、词法和事实层分步验证；在明确批准链和跨层一致性接通前，不在生产裁决中选择新解释。
 
 ## 显式签名与兼容
 
@@ -33,6 +33,20 @@ Windows 首版规则：
 词法结果不是文件身份结论，不访问文件系统，不证明路径在本地卷、大小写实际拼写、8.3/SUBST/映射盘、reparse/junction/hardlink 或检查后替换安全。当前 b303 fileopen 的 Windows fallback 只是 os.Open，不能当作已实现的事实层。
 
 ## 后续生产接通门槛
+
+### Windows 文件事实层（2026-09-18，#39 接续）
+
+`internal/runtimepath.InspectWindows` 只检查显式选择新 profile 后的本地资源，不改变旧路径解释，也不单独授予权限。先调用既有 Windows 词法检查，再从盘符根逐组件打开带 READ_DATA（目录为 LIST_DIRECTORY）及 READ_ATTRIBUTES 权限的只读句柄，保留所有父句柄直到本次检查结束；不共享 DELETE，阻止检查期间对已打开组件改名；仅属性句柄不具备此共享检查语义，不能替代。句柄不读取内容，缺少读取/列目录权限或共享冲突时拒绝，不退回弱检查。所有失败只返回固定类别，不输出路径或 Win32 参数。
+
+本次支持普通本地固定 NTFS 卷。盘符必须由 QueryDosDevice 读回为直接 HarddiskVolume 映射，GetDriveType 必须为 fixed；每个句柄的最终 DOS/NT 路径分别与规范长拼写和该设备映射一致。拒绝 SUBST、映射盘、8.3/大小写别名、reparse/junction、非磁盘对象、待删除对象及多硬链接文件。每个父目录必须支持 FileCaseSensitiveInfo 且标志为零；未知或启用大小写敏感时拒绝，不修改目录属性。现阶段此子集不代表 Windows 全文件系统支持。
+
+只允许最后一个叶子不存在，且由调用方明确传入允许新叶子；所有父目录必须实际存在。事实保留盘符映射、每级卷序列号/文件索引/创建时间/目录类型及叶子存在性。返回值只在内存保存，内部字段不导出，不作为可由调用方伪造的签名事实。Revalidate 重新打开整条路径并逐级比较，父目录/目标替换、原缺失叶子出现、硬链接数变化及映射变化均拒绝；内容摘要不属于本层，读取内容和效果证据仍走各自合同。
+
+检查不创建资源、不更改 ACL、不设置系统或会话盘符映射、不执行文件，也不改变签名或状态格式。新 API 仍须接通 Grant/Intent/identity 的明确批准及最终调用参数链后才能启用。检查结束关闭句柄，无法消除宿主执行前的同 UID TOCTOU，不宣称 OS 沙箱；审批恢复必须重新检查，不能缓存一次结果永久放行。
+
+限定标准库 Windows API 例外仅在该包 `_windows.go` 使用 syscall/unsafe 查询句柄、卷、盘符和目录属性。其他平台返回未验证错误，不用词法成功替代原生事实。测试只在临时目录创建普通文件、硬链接及 junction，恢复测试资源；不要求提权或修改全局盘符。未具备条件的原生场景如实记 skip。
+
+参考 Microsoft [最终句柄路径](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlew)、[DOS 设备映射](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-querydosdevicew)、[句柄信息类型](https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ne-minwinbase-file_info_by_handle_class)、[卷信息](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getvolumeinformationbyhandlew)，2026-09-18 核对。
 
 新 profile 的 Intent matcher、Grant read/write/deny 匹配、runtimeaction 描述、hold/final params、action/receipt、file observer 必须统一从已验证 Authority 恢复解释。范围先精确相等，或以 `/` 为组件边界的 prefix；只允许 equals/one_of/prefix，filesystem regex/suffix 不开放。allow/deny 使用同一大小写与文件身份规则，未知别名拒绝。
 

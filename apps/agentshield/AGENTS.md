@@ -41,6 +41,8 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 
 ## 测试要求
 
+Windows 资源事实按 `docs/windows-resource-profile-spec-v1.md` 的限定例外，允许 `internal/runtimepath/*_windows.go` 使用标准库 syscall/unsafe 只读查询盘符映射、文件/目录句柄、卷和目录大小写属性；不更改资源、盘符或 ACL，不提权，不把路径事实本身当作 Authority。测试可在临时目录内建立并清理 junction，不修改用户对象。
+
 Windows 私密状态按 dev-spec §2 的限定例外，允许 `internal/privatefs/*_windows.go` 使用标准库 `syscall`/`unsafe` 查询文件句柄安全描述符、构造受限 DACL 并在新对象创建时传入。禁止改已有对象 ACL、提权、调用外部权限工具或让其他平台直接引用 Windows API；保留兼容屏障和仅标准库约束。
 
 ACL 负向测试允许仅由 `_test.go` 引用的 `internal/acltest` 辅助包使用同类标准库 API 修改本次测试临时根内的合成对象 DACL，并在结束时还原测试夹具；不得用于产品代码或真实用户对象。

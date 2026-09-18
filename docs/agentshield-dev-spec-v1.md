@@ -2108,3 +2108,5 @@ D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-priv
 ## 2026-09-16 Windows 文件资源解释候选（#39）
 
 按 [Windows 本地盘符资源专项规格](windows-resource-profile-spec-v1.md) 准备明确签名的新 managed 权限解释。旧 Intent v2/v3、Grant、identity 和会话保持 POSIX 原义；不得全局放宽 NormalizeResource。首片只建立新版合同和显式纯词法入口，在 Windows 文件事实层与批准/身份/裁决全链完成前不启用新 Authority，也不声明 Hermes B 已通过。
+
+2026-09-18 接续 Windows 资源事实层：`internal/runtimepath` 按上述专项规格核对本地 NTFS、真实长名称、父组件、目录大小写、硬链接及删除/替换状态，逐次复验并拒绝不确定对象。该层不产生 Authority、不改变旧路径语义，也不单独启用新版 Grant/Intent/identity；批准与最终调用链仍须完整接通。
