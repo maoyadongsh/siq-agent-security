@@ -1,0 +1,59 @@
+package main
+
+import (
+	"crypto/rand"
+	"encoding/json"
+	"os"
+	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/admission"
+	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
+	"siq-agent-security/apps/agentshield/internal/signing"
+	"time"
+)
+
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+func main() {
+	if len(os.Args) != 2 {
+		panic("isolated absent root required")
+	}
+	root := os.Args[1]
+	if _, err := os.Stat(root); !os.IsNotExist(err) {
+		panic("root exists")
+	}
+	must(os.Mkdir(root, 0700))
+	scope := filepath.Join(root, "scope")
+	must(os.Mkdir(scope, 0700))
+	seed := make([]byte, 32)
+	_, err := rand.Read(seed)
+	must(err)
+	key, err := signing.FromSeed(seed)
+	must(err)
+	adm := admission.Admission{AdmissionID: "adm-probe", ContentHash: "4af17a9f97199f397e267a992f07d36fdd1c01c9d6d618a87cf44c7e10108ab3", Verdict: "admit_with_conditions", EvidenceIDs: []string{"ev-synthetic-probe"}, DeclaredFacts: []admission.DeclaredFact{{Domain: "tool", Action: "tool.invoke", Resource: admission.Resource{Type: "tool", Value: "read_file"}, Effect: "allow", State: "declared", Authority: "skill_manifest", SourceField: "synthetic", EvidenceIDs: []string{"ev-synthetic-probe"}}}}
+	rows := []map[string]any{}
+	for _, platform := range []string{"hermes", "openclaw"} {
+		res, err := grant.Build(adm, grant.Options{Subject: grant.Subject{Type: "agent_instance", ID: "inst-probe"}, Platform: platform, Now: time.Now().UTC(), Key: key})
+		must(err)
+		canonical, err := runtimeaction.NormalizeResourceForProfile(runtimeaction.FilesystemWindowsLocalDriveV1, "filesystem", scope)
+		must(err)
+		edit := grant.ResourceEdit{Tools: []string{"read_file"}, Network: []grant.NetworkPatch{}, Models: []string{}, Filesystem: grant.FilesystemPatch{ReadOnly: []string{canonical}, ReadWrite: []string{}}}
+		pending, _, err := grant.PrepareWindowsResources(res.Grant, edit, true, key)
+		must(err)
+		approved, err := grant.Approve(pending, grant.Approval{ActorType: "human", ActorID: "synthetic-probe", ApprovedAt: time.Now().UTC().Format(time.RFC3339Nano), Channel: "console"}, key)
+		must(err)
+		for _, g := range []grant.Grant{pending, approved} {
+			digest, err := grant.PermissionDigest(g)
+			must(err)
+			bind, err := grant.BindingDigest(g)
+			must(err)
+			scopeDigest, err := grant.ScopeDigest(g)
+			must(err)
+			rows = append(rows, map[string]any{"grant": g, "permission_digest": digest, "binding_digest": bind, "scope_digest": scopeDigest})
+		}
+	}
+	must(json.NewEncoder(os.Stdout).Encode(map[string]any{"public_key": key.PublicBase64(), "rows": rows}))
+}

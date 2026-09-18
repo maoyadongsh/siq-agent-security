@@ -28,3 +28,5 @@
 在上述干净源码的apps/agentshield运行 `go test -count=1 ./internal/runtimepath ./internal/runtimeaction`，以及 `go test -count=1 -run TestLegacyFilesystemRegexDoesNotGainWindowsAuthority ./internal/intent`。使用独立TEMP/TMP和已有私密测试父目录；夹具权限不冒充产品ACL能力。race使用本机GCC与CGO_ENABLED=1，其余交叉构建使用CGO_ENABLED=0。原始输出私有保留，公开JSON仅摘录测试身份和结果。
 
 测试移除junction、还原临时目录大小写标志并清理TempDir；无daemon、真实宿主、模型调用、提权、全局盘符更改或系统中断。完整回归仍占用其独立测试目录，未声称该运行中资源已经清理。
+
+后续终态：冻结 d384e24 完整 Go 回归退出1，1346顶层通过、55失败、70跳过；28包通过、14失败、7跳过。原始日志摘要及完整失败列表见 full-go-status.json。此前“运行中”仅为当时时间点，不再是当前状态。

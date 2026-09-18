@@ -1,0 +1,73 @@
+{
+  "grant-path-identity": {
+    "counts": {
+      "top_pass": 84,
+      "sub_pass": 96,
+      "sub_fail": 2,
+      "top_fail": 1
+    },
+    "failed_tests": [
+      "TestIdentityCorruptAndAliasedRecordsFailClosed/ancestor_link",
+      "TestIdentityCorruptAndAliasedRecordsFailClosed/record_link",
+      "TestIdentityCorruptAndAliasedRecordsFailClosed"
+    ],
+    "packages": {
+      "siq-agent-security/apps/agentshield/internal/runtimepath": "pass",
+      "siq-agent-security/apps/agentshield/internal/grant": "pass",
+      "siq-agent-security/apps/agentshield/internal/runtimeidentity": "fail"
+    },
+    "raw_sha256": "55ff27574529d2f3542fc9727c78f18995cf9c914f9b818c55f4fb47fd2bb408"
+  },
+  "intent-compatibility": {
+    "counts": {
+      "sub_pass": 20,
+      "top_pass": 1
+    },
+    "failed_tests": [],
+    "packages": {
+      "siq-agent-security/apps/agentshield/internal/intent": "pass"
+    },
+    "raw_sha256": "1091c74baf37775cc7b23a16a269c95871486ddb3f6f60a759f96d9e6e729420"
+  },
+  "race": {
+    "counts": {
+      "top_pass": 84,
+      "sub_pass": 96,
+      "sub_fail": 2,
+      "top_fail": 1
+    },
+    "failed_tests": [
+      "TestIdentityCorruptAndAliasedRecordsFailClosed/ancestor_link",
+      "TestIdentityCorruptAndAliasedRecordsFailClosed/record_link",
+      "TestIdentityCorruptAndAliasedRecordsFailClosed"
+    ],
+    "packages": {
+      "siq-agent-security/apps/agentshield/internal/grant": "pass",
+      "siq-agent-security/apps/agentshield/internal/runtimepath": "pass",
+      "siq-agent-security/apps/agentshield/internal/runtimeidentity": "fail"
+    },
+    "raw_sha256": "6a2a8460cc0f1ccf1abde9284c3fc9d5e22f0cd2ae525315df6d992de72bb404"
+  },
+  "receipt-authority": {
+    "counts": {
+      "top_pass": 7,
+      "sub_pass": 15
+    },
+    "failed_tests": [],
+    "packages": {
+      "siq-agent-security/apps/agentshield/internal/receipt": "pass"
+    },
+    "raw_sha256": "68c190d012b6c817aac3ca568d240eccfe600cc48282effd3dc00b26ba25dce3"
+  },
+  "state-commit": {
+    "counts": {
+      "top_pass": 7,
+      "top_skip": 1
+    },
+    "failed_tests": [],
+    "packages": {
+      "siq-agent-security/apps/agentshield/internal/state": "pass"
+    },
+    "raw_sha256": "33d7ee39f70e96bc9114dfc2abfcabf805db4ad59bd02454d74ef4ccb3d941a1"
+  }
+}
