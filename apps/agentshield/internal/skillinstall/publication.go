@@ -31,6 +31,14 @@ func (r contextRead) Read(p []byte) (int, error) {
 	return r.reader.Read(p)
 }
 func readBounded(ctx context.Context, path string, limit int64) ([]byte, os.FileInfo, error) {
+	return readBoundedWith(ctx, path, limit, fileopen.Regular)
+}
+
+func readPrivateBounded(ctx context.Context, path string, limit int64) ([]byte, os.FileInfo, error) {
+	return readBoundedWith(ctx, path, limit, openPrivateMetadata)
+}
+
+func readBoundedWith(ctx context.Context, path string, limit int64, open func(string) (*os.File, error)) ([]byte, os.FileInfo, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, nil, err
 	}
@@ -47,7 +55,7 @@ func readBounded(ctx context.Context, path string, limit int64) ([]byte, os.File
 	if before.Size() > limit {
 		return nil, nil, ErrLimit
 	}
-	f, err := fileopen.Regular(path)
+	f, err := open(path)
 	if err != nil {
 		return nil, nil, ErrChanged
 	}
@@ -83,10 +91,27 @@ func sameDocument(a, b any) bool {
 	return e == nil && bytes.Equal(ar, br)
 }
 func (s *Store) readSigned(ctx context.Context, path string, out any) error {
+	if err := s.checkPrivateMetadataRoot(); err != nil {
+		return err
+	}
+	raw, _, err := readPrivateBounded(ctx, path, 4<<20)
+	if err != nil {
+		return err
+	}
+	return s.verifySignedMetadata(raw, out)
+}
+
+// Host-side owner markers can be linked to the operation pool. Their existing
+// signature and ownership checks must not become private single-link reads.
+func (s *Store) readTargetOwner(ctx context.Context, path string, out any) error {
 	raw, _, err := readBounded(ctx, path, 4<<20)
 	if err != nil {
 		return err
 	}
+	return s.verifySignedMetadata(raw, out)
+}
+
+func (s *Store) verifySignedMetadata(raw []byte, out any) error {
 	decoder := json.NewDecoder(bytes.NewReader(raw))
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(out); err != nil {
@@ -122,25 +147,7 @@ func publishDocument(path string, value any) error {
 	if err != nil {
 		return ErrUnavailable
 	}
-	f, err := statefs.CreateTemp(filepath.Dir(path), ".operation-*")
-	if err != nil {
-		return ErrUnavailable
-	}
-	defer statefs.Remove(f.Name())
-	if _, err = f.Write(raw); err == nil {
-		err = f.Sync()
-	}
-	closeErr := f.Close()
-	if err != nil || closeErr != nil {
-		return ErrUnavailable
-	}
-	if err := statefs.Link(f.Name(), path); err != nil {
-		if os.IsExist(err) {
-			return ErrConflict
-		}
-		return ErrUnavailable
-	}
-	return nil
+	return publishPrivateMetadata(path, raw, ".operation-*")
 }
 func relativeValid(path string) bool {
 	if path == "" || len(path) > 512 || !utf8.ValidString(path) || strings.ContainsAny(path, "\\:\x00") || filepath.IsAbs(filepath.FromSlash(path)) {
@@ -252,7 +259,7 @@ func (s *Store) ownerBytes(c *Claim, relative string) ([]byte, error) {
 func (s *Store) ownerMatches(ctx context.Context, c *Claim, destination, pool, relative string, index int) error {
 	marker := filepath.Join(destination, filepath.FromSlash(relative), ownerName)
 	var owner Owner
-	if err := s.readSigned(ctx, marker, &owner); err != nil {
+	if err := s.readTargetOwner(ctx, marker, &owner); err != nil {
 		return err
 	}
 	if owner.SchemaVersion != "local-skill-install-owner/v1" || owner.InstallID != c.InstallID || owner.ClaimSignature != c.Signature || owner.RelativeDirectory != relative {

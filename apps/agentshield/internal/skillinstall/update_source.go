@@ -403,6 +403,9 @@ func replaceDocument(path string, value any) error {
 	if err := privateDirectory(filepath.Dir(path)); err != nil {
 		return err
 	}
+	if err := checkExistingPrivateMetadata(path); err != nil {
+		return err
+	}
 	doc, err := document(value, true)
 	if err != nil {
 		return ErrUnavailable
@@ -411,7 +414,7 @@ func replaceDocument(path string, value any) error {
 	if err != nil {
 		return ErrUnavailable
 	}
-	f, err := statefs.CreateTemp(filepath.Dir(path), ".operation-*")
+	f, err := statefs.CreatePrivateTemp(filepath.Dir(path), ".operation-*")
 	if err != nil {
 		return ErrUnavailable
 	}
@@ -423,6 +426,9 @@ func replaceDocument(path string, value any) error {
 	closeErr := f.Close()
 	if err != nil || closeErr != nil {
 		return ErrUnavailable
+	}
+	if err := checkExistingPrivateMetadata(path); err != nil {
+		return err
 	}
 	if err := statefs.Rename(name, path); err != nil {
 		return ErrUnavailable
