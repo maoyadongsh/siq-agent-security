@@ -1,0 +1,31 @@
+{
+  "schema": "openclaw-a05-public-verification.v1",
+  "status": "passed",
+  "meaning": "公开材料与私有记录一致，不代表平台验收通过。",
+  "source_context": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "source_dirty_during_run": false,
+  "payload_files_verified": 4,
+  "source_rows_verified": 36,
+  "unrecorded_source_lengths": 2,
+  "raw_streams_verified": 8,
+  "frozen_inputs_verified": 19,
+  "actual_verdict_preserved": "A fail; diagnostic complete; B not_run",
+  "actual_wrapper_sha256": "232e43e554ff02c3c470a17a5fc6abc1ad1e8d328f1a7f778a631a593452a33f",
+  "public_manifest_sha256": "ffe0561f2f0b236a351b1bd7432f7f86f62c7b74098ce083a2e0cc3822985a20",
+  "independent_actual_review_sha256": "48c85e941657b3e959da090223d97fdbaa57e4088e307554e01b83dcf2b1f363",
+  "validator": {
+    "entry": "verify-public.py",
+    "sha256": "3a2620d40537c3a2bf3cf5a4596ebf83604b3c8ecb0a15cf31cf489c6a118cc5",
+    "exit_code": 0
+  },
+  "sensitive_content_review": {
+    "manual_whitelist": "passed",
+    "explicit_private_field_check": "passed",
+    "gitleaks_version": "8.24.2",
+    "command": "gitleaks dir <public-directory> --no-banner --redact --exit-code 1",
+    "exit_code": 0,
+    "scan_scope": "交付前四内容文件、manifest 与 .gitattributes，共六文件"
+  },
+  "product_code_changed": false,
+  "formal_acceptance_matrix_changed": false
+}

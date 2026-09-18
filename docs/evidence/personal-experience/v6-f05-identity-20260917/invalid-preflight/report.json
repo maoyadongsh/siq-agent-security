@@ -1,0 +1,1276 @@
+{
+  "schema": "openshell-taskexec-perf/v1",
+  "scope": "task_execution",
+  "scope_note": "independent of openshell-b2b3-perf-protocol.py; the two drivers' results must never be merged",
+  "protocol": {
+    "file": "protocol.md",
+    "schema": "openshell-taskexec-perf-protocol/v1",
+    "sha256": "9dd516397cb76562964db8223f91ca573d9ac9515984bae36bb116e91c5cd049",
+    "amendment": "R1 (pre-measurement): conditioning step between S2 and S3; R2 (pre-measurement): teardown invariant is policy content, not revision; no frozen parameter changed by either"
+  },
+  "candidate": {
+    "binary": "/tmp/siq-v6-f01-identity-20260917/agentshield",
+    "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+    "source_binding_procedure": "B / source_binding-family; measured at run start, not independently captured at build time",
+    "source_binding_sha256": "6a2705d423321ac7cb7b0a5259070aa0c9dc5e2fbfd7e57027eab77a786ea13f",
+    "source_file_count": 929,
+    "source_stable_during_run": true
+  },
+  "meta": {
+    "candidate_binary": "/tmp/siq-v6-f01-identity-20260917/agentshield",
+    "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+    "gateway_endpoint": "https://127.0.0.1:17671",
+    "sandbox_target": "siq-v6-f05-identity-20260917",
+    "fact_endpoint": "172.23.0.1:1",
+    "fact_endpoint_role": "declared policy content only; never contacted",
+    "isolated_root": "/tmp/siq-o05v6-taskexec-_870hp2s",
+    "isolated_state": "/tmp/siq-o05v6-taskexec-_870hp2s/state",
+    "isolated_home": "/tmp/siq-o05v6-taskexec-_870hp2s/home",
+    "canary_argv_count": 3,
+    "canary_path": "/tmp/o05v6-canary-c5a7da1748348b13.txt",
+    "started_at": "2026-09-17T10:11:18.040052+00:00",
+    "ui_acceptance": "not_run",
+    "production_executor": "POST /v1/openshell/task-executions",
+    "notes": [
+      "canary stdout 由运行时随机 token 构成，无法被非真实执行伪造",
+      "原始 argv 只存在于人工批准的 params；证据/观测只存摘要"
+    ]
+  },
+  "frozen": {
+    "rounds": 3,
+    "warmup": 2,
+    "samples": 15,
+    "cycle_samples": 5,
+    "order": {
+      "1": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "2": [
+        "S2",
+        "cond",
+        "S3",
+        "S1",
+        "S4"
+      ],
+      "3": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ]
+    },
+    "budgets_ms": {
+      "S1": {
+        "p95": 15000.0,
+        "max": 30000.0
+      },
+      "S2": {
+        "p95": 60000.0,
+        "max": 60000.0
+      },
+      "S3": {
+        "p95": 2000.0,
+        "max": 15000.0
+      },
+      "S4": {
+        "p95": 1500.0,
+        "max": 15000.0
+      }
+    },
+    "percentile": "nearest-rank ceil(p/100*n) on sorted samples",
+    "exclusion_rule": "none",
+    "failure_rule": "any invalid measured sample voids its round and stops the run; no retry, no cherry-picking"
+  },
+  "rounds_completed": [],
+  "aborted": false,
+  "abort_reason": null,
+  "aborted_round": null,
+  "scenarios": {
+    "S1": {
+      "scenario": "doctor_readback",
+      "scope": "control_plane",
+      "evidence_level": "integration_real_gateway_control_plane",
+      "relative_to_old_candidate": "not_measured",
+      "relative_reason": "本轮未按相同协议独占重测 main 基点的 doctor 读回",
+      "wall_ms": {
+        "n": 0
+      },
+      "invalid_samples": 0,
+      "budget_p95_ms": 15000.0,
+      "max_ceiling_ms": 30000.0,
+      "per_round": {
+        "1": {
+          "n": 0
+        },
+        "2": {
+          "n": 0
+        },
+        "3": {
+          "n": 0
+        }
+      },
+      "phases": {
+        "user_visible_total_ms": "measured (wall_ms above)",
+        "policy_load_ms": "measured only for S2 (wall_ms above)",
+        "remote_exec_ms": "product-measured (outcome.started_at/finished_at); see samples.json",
+        "client_api_and_recording_ms": "DERIVED (wall - remote); recording is not separable from it and is reported as null",
+        "per_phase_write_counts": null,
+        "per_phase_write_counts_reason": "the product exposes no per-phase write/fsync/signature counters; adding them would change the candidate under measurement"
+      },
+      "verdict": "no_valid_samples"
+    },
+    "S2": {
+      "scenario": "policy_load_roundtrip",
+      "scope": "control_plane",
+      "evidence_level": "integration_real_gateway_policy_write",
+      "relative_to_old_candidate": "not_measured",
+      "relative_reason": "本轮未按相同协议独占重测 main 基点的策略加载",
+      "wall_ms": {
+        "n": 0
+      },
+      "invalid_samples": 0,
+      "budget_p95_ms": 60000.0,
+      "max_ceiling_ms": 60000.0,
+      "per_round": {
+        "1": {
+          "n": 0
+        },
+        "2": {
+          "n": 0
+        },
+        "3": {
+          "n": 0
+        }
+      },
+      "phases": {
+        "user_visible_total_ms": "measured (wall_ms above)",
+        "policy_load_ms": "measured only for S2 (wall_ms above)",
+        "remote_exec_ms": "product-measured (outcome.started_at/finished_at); see samples.json",
+        "client_api_and_recording_ms": "DERIVED (wall - remote); recording is not separable from it and is reported as null",
+        "per_phase_write_counts": null,
+        "per_phase_write_counts_reason": "the product exposes no per-phase write/fsync/signature counters; adding them would change the candidate under measurement"
+      },
+      "verdict": "no_valid_samples"
+    },
+    "S3": {
+      "scenario": "taskexec_read_only",
+      "scope": "task_execution",
+      "evidence_level": "integration_real_gateway_real_sandbox_real_execution",
+      "relative_to_old_candidate": "not_comparable",
+      "relative_reason": "集成基点 9b8c09af 无任务执行路由；不能把 policy_apply 冒充任务执行",
+      "wall_ms": {
+        "n": 0
+      },
+      "invalid_samples": 0,
+      "budget_p95_ms": 2000.0,
+      "max_ceiling_ms": 15000.0,
+      "per_round": {
+        "1": {
+          "n": 0
+        },
+        "2": {
+          "n": 0
+        },
+        "3": {
+          "n": 0
+        }
+      },
+      "phases": {
+        "user_visible_total_ms": "measured (wall_ms above)",
+        "policy_load_ms": "measured only for S2 (wall_ms above)",
+        "remote_exec_ms": "product-measured (outcome.started_at/finished_at); see samples.json",
+        "client_api_and_recording_ms": "DERIVED (wall - remote); recording is not separable from it and is reported as null",
+        "per_phase_write_counts": null,
+        "per_phase_write_counts_reason": "the product exposes no per-phase write/fsync/signature counters; adding them would change the candidate under measurement",
+        "remote_exec_ms_stats": {
+          "n": 0
+        },
+        "client_api_and_recording_ms_stats": {
+          "n": 0,
+          "derived": true
+        }
+      },
+      "anti_replay": {
+        "method": "each sample's stdout digest must derive from that sample's own unique token",
+        "matched": {
+          "exact": 0,
+          "trailing_newline": 0
+        }
+      },
+      "verdict": "no_valid_samples"
+    },
+    "S4": {
+      "scenario": "taskexec_status_read",
+      "scope": "task_execution",
+      "evidence_level": "integration_real_daemon_state_projection",
+      "relative_to_old_candidate": "not_comparable",
+      "relative_reason": "集成基点 9b8c09af 无任务执行状态读回路由",
+      "wall_ms": {
+        "n": 0
+      },
+      "invalid_samples": 0,
+      "budget_p95_ms": 1500.0,
+      "max_ceiling_ms": 15000.0,
+      "per_round": {
+        "1": {
+          "n": 0
+        },
+        "2": {
+          "n": 0
+        },
+        "3": {
+          "n": 0
+        }
+      },
+      "phases": {
+        "user_visible_total_ms": "measured (wall_ms above)",
+        "policy_load_ms": "measured only for S2 (wall_ms above)",
+        "remote_exec_ms": "product-measured (outcome.started_at/finished_at); see samples.json",
+        "client_api_and_recording_ms": "DERIVED (wall - remote); recording is not separable from it and is reported as null",
+        "per_phase_write_counts": null,
+        "per_phase_write_counts_reason": "the product exposes no per-phase write/fsync/signature counters; adding them would change the candidate under measurement"
+      },
+      "verdict": "no_valid_samples"
+    }
+  },
+  "budget_misses": [],
+  "conditioning": [],
+  "conditioning_role": "untimed environment conditioning; excluded from all percentiles and budgets",
+  "resources": [],
+  "resource_notes": {
+    "daemon_rss_kb": "VmRSS of this batch's own daemon, read from /proc/<pid>/status",
+    "client_cpu": "resource.getrusage; children_ms only accounts reaped children, so per-sample daemon CPU is not obtainable and is reported as null",
+    "per_sample_daemon_cpu_ms": null,
+    "per_sample_daemon_cpu_reason": "a running daemon's CPU is only reaped at exit, so it is a whole-run figure, not a per-sample one"
+  },
+  "relative_to_old_candidate": {
+    "S1": {
+      "value": "not_measured",
+      "reason": "本轮未按相同协议独占重测 main 基点的 doctor 读回"
+    },
+    "S2": {
+      "value": "not_measured",
+      "reason": "本轮未按相同协议独占重测 main 基点的策略加载"
+    },
+    "S3": {
+      "value": "not_comparable",
+      "reason": "集成基点 9b8c09af 无任务执行路由；不能把 policy_apply 冒充任务执行"
+    },
+    "S4": {
+      "value": "not_comparable",
+      "reason": "集成基点 9b8c09af 无任务执行状态读回路由"
+    }
+  },
+  "interference_precheck": {
+    "scan": {
+      "fatal": [
+        {
+          "pid": 474377,
+          "cmd": "rsync -a --delete --exclude __pycache__/ --exclude .pytest_cache/ <home>/siq-research-engine/agents/hermes/profiles/shared/ <home>/siq-research-engine/data/hermes/home/profiles/shared/",
+          "cwd": "<home>/siq-research-engine/agents/hermes/profiles/shared",
+          "reason": "competing build/test/benchmark"
+        }
+      ],
+      "observed": [
+        {
+          "pid": 2268,
+          "cmd": "node /snap/code-server/73/lib/node_modules/code-server/node_modules/.bin/code-server --config /var/snap/code-server/73/config.yaml --user-data-dir /var/snap/code-server/73/user-data --extensions-dir /var/snap/code-server/73/extensions /var/snap/code-server/common",
+          "cwd": "/proc/2268/cwd"
+        },
+        {
+          "pid": 2691,
+          "cmd": "<home>/report-finder-service/.venv/bin/python -m uvicorn report_finder_service.app:app --host 127.0.0.1 --port 8000",
+          "cwd": "<home>/report-finder-service"
+        },
+        {
+          "pid": 3049,
+          "cmd": "fusermount3 -o rw,nosuid,nodev,fsname=portal,auto_unmount,subtype=portal -- /run/user/1000/doc",
+          "cwd": "/proc/3049/cwd"
+        },
+        {
+          "pid": 3757,
+          "cmd": "/snap/code-server/73/bin/node /snap/code-server/73/lib/node_modules/code-server/node_modules/code-server/out/node/entry",
+          "cwd": "/proc/3757/cwd"
+        },
+        {
+          "pid": 6252,
+          "cmd": "<home>/.local/bin/node scripts/trial-server.mjs",
+          "cwd": "<home>/finsight/finall_all_front_0516/front"
+        },
+        {
+          "pid": 7658,
+          "cmd": "/workspace/siq-gateway/.venv/bin/python /workspace/siq-gateway/.venv/bin/uvicorn siq_gateway.main:app --host 0.0.0.0 --port 10080",
+          "cwd": "/proc/7658/cwd"
+        },
+        {
+          "pid": 7826,
+          "cmd": "/usr/local/bin/python3.12 /usr/local/bin/uvicorn apps.api.main:app --host 0.0.0.0 --port 8010",
+          "cwd": "/proc/7826/cwd"
+        },
+        {
+          "pid": 8532,
+          "cmd": "/workspace/siq-org-iam/apps/service/.venv/bin/python /workspace/siq-org-iam/apps/service/.venv/bin/uvicorn siq_org_iam_service.main:app --host 0.0.0.0 --port 10088",
+          "cwd": "/proc/8532/cwd"
+        },
+        {
+          "pid": 8753,
+          "cmd": "uv run --no-sync uvicorn siq_memory.api.app:create_app --factory --host 0.0.0.0 --port 10094",
+          "cwd": "/proc/8753/cwd"
+        },
+        {
+          "pid": 8822,
+          "cmd": "/workspace/siq-agent-hub/hub/.venv/bin/python /workspace/siq-agent-hub/hub/.venv/bin/uvicorn siq_agent_hub.main:app --host 0.0.0.0 --port 10092",
+          "cwd": "/proc/8822/cwd"
+        },
+        {
+          "pid": 9083,
+          "cmd": "uv run --no-sync uvicorn siq_investment_api.main:app --host 0.0.0.0 --port 10097",
+          "cwd": "/proc/9083/cwd"
+        },
+        {
+          "pid": 9084,
+          "cmd": "/workspace/siq-notify/.venv/bin/python /workspace/siq-notify/.venv/bin/uvicorn siq_notify.main:app --host 0.0.0.0 --port 10090",
+          "cwd": "/proc/9084/cwd"
+        },
+        {
+          "pid": 9278,
+          "cmd": "node dist/src/app.js",
+          "cwd": "/proc/9278/cwd"
+        },
+        {
+          "pid": 9352,
+          "cmd": "/usr/local/bin/python3.12 /usr/local/bin/uvicorn app.main:app --host 0.0.0.0 --port 8600",
+          "cwd": "/proc/9352/cwd"
+        },
+        {
+          "pid": 9566,
+          "cmd": "/workspace/siq-flow-engine/apps/service/.venv/bin/python /workspace/siq-flow-engine/apps/service/.venv/bin/uvicorn siq_flow_service.main:app --host 0.0.0.0 --port 10086",
+          "cwd": "/proc/9566/cwd"
+        },
+        {
+          "pid": 10905,
+          "cmd": "/workspace/siq-memory/.venv/bin/python /workspace/siq-memory/.venv/bin/uvicorn siq_memory.api.app:create_app --factory --host 0.0.0.0 --port 10094",
+          "cwd": "/proc/10905/cwd"
+        },
+        {
+          "pid": 11045,
+          "cmd": "/workspace/.venv/bin/python /workspace/.venv/bin/uvicorn siq_investment_api.main:app --host 0.0.0.0 --port 10097",
+          "cwd": "/proc/11045/cwd"
+        },
+        {
+          "pid": 11312,
+          "cmd": "uv run uvicorn main:app --host 0.0.0.0 --port 18181 --no-access-log",
+          "cwd": "<home>/gpcapital/apps/api"
+        },
+        {
+          "pid": 11359,
+          "cmd": "<home>/siq-research-engine/apps/api/.venv/bin/python <home>/gpcapital/apps/api/.venv/bin/uvicorn main:app --host 0.0.0.0 --port 18181 --no-access-log",
+          "cwd": "<home>/gpcapital/apps/api"
+        },
+        {
+          "pid": 11750,
+          "cmd": "<home>/finsight/backend/.venv/bin/python <home>/finsight/backend/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 10081",
+          "cwd": "<home>/finsight/backend"
+        },
+        {
+          "pid": 83981,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/node <home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/out/server-main.js --socket-path /tmp/code-47549a63-cbe2-4e67-8df6-4dfc784c510d --agent-host-path /tmp/code",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 84687,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/node <home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/out/bootstrap-fork --type=agentHost --logsPath <home>/.vscode-server/data/logs/20260906T175917 --user-",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 84744,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/node <home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/node_modules/@github/copilot-linux-arm64/index.js --headless --no-auto-update --log-level info --stdio --no",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 375634,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/markdown-language-features/dist/serverWorkerMain --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 538946,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node --max-old-space-size=3072 <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/node_modules/typescript/lib/tsserver.js --serverMode partialSemantic -",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 538972,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node --max-old-space-size=3072 <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/node_modules/typescript/lib/tsserver.js --useInferredProjectPerProject",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 538986,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/node_modules/typescript/lib/typingsInstaller.js --globalTypingsCacheLocation <home>/.cache/",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 1429999,
+          "cmd": "<home>/.local/bin/node <home>/gpcapital-governance/apps/web/node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5210 --strictPort",
+          "cwd": "<home>/gpcapital-governance/apps/web"
+        },
+        {
+          "pid": 1430115,
+          "cmd": "<home>/gpcapital-governance/.venv/bin/python3.12 <home>/gpcapital-governance/.venv/bin/uvicorn gpcapital_governance.apps.api.main:app --host 127.0.0.1 --port 8310",
+          "cwd": "<home>/gpcapital-governance"
+        },
+        {
+          "pid": 1432009,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/out/server-main.js --connection-token=remotessh --accept-server-license-terms --agent-host-bridge-port=3645",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 1432060,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/out/bootstrap-fork --type=ptyHost --logsPath <home>/.vscode-server/data/logs/20260911T172503",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 2913631,
+          "cmd": "uv run uvicorn main:app --host 0.0.0.0 --port 10084 --reload",
+          "cwd": "<home>/hrsight/apps/api-gateway"
+        },
+        {
+          "pid": 2913636,
+          "cmd": "<home>/hrsight/apps/api-gateway/.venv/bin/python <home>/hrsight/apps/api-gateway/.venv/bin/uvicorn main:app --host 0.0.0.0 --port 10084 --reload",
+          "cwd": "<home>/hrsight/apps/api-gateway"
+        },
+        {
+          "pid": 2923342,
+          "cmd": "node <home>/gpcapital/apps/web/node_modules/vite/bin/vite.js --host 0.0.0.0 --port 15273",
+          "cwd": "<home>/gpcapital/apps/web"
+        },
+        {
+          "pid": 2929360,
+          "cmd": "npm run dev --host 0.0.0.0 --port 1349",
+          "cwd": "<home>/hrsight/apps/web"
+        },
+        {
+          "pid": 2929375,
+          "cmd": "sh -c vite --host 0.0.0.0 --port 1349",
+          "cwd": "<home>/hrsight/apps/web"
+        },
+        {
+          "pid": 2929376,
+          "cmd": "node <home>/hrsight/apps/web/node_modules/.bin/vite --host 0.0.0.0 --port 1349",
+          "cwd": "<home>/hrsight/apps/web"
+        },
+        {
+          "pid": 3040554,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node --dns-result-order=ipv4first <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3040570,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/out/bootstrap-fork --type=fileWatcher",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3041791,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/extensions/ckolkman.vscode-postgres-1.4.3/out/language/server.js --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3041793,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode/extensions/mtxr.sqltools-0.28.5/dist/languageserver.js --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3042038,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/json-language-features/server/dist/node/jsonServerMain --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3404370,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode/extensions/ms-python.vscode-pylance-2026.2.1/dist/server.bundle.js --cancellationReceive=file:04a461670940b8005e1c2716d804b0430efdb66283 --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>/.vscode/extensions/ms-python.vscode-pylance-2026.2.1/dist"
+        },
+        {
+          "pid": 3535465,
+          "cmd": "npm run dev --host 127.0.0.1 --port 5277 --strictPort",
+          "cwd": "<home>/gpcapital-governance/apps/web"
+        },
+        {
+          "pid": 3535486,
+          "cmd": "sh -c vite --host 127.0.0.1 --port 5277 --strictPort",
+          "cwd": "<home>/gpcapital-governance/apps/web"
+        },
+        {
+          "pid": 3535487,
+          "cmd": "node <home>/gpcapital-governance/apps/web/node_modules/.bin/vite --host 127.0.0.1 --port 5277 --strictPort",
+          "cwd": "<home>/gpcapital-governance/apps/web"
+        }
+      ]
+    },
+    "host_load_pre": {
+      "nproc": 20,
+      "loadavg": [
+        4.27,
+        4.3,
+        4.35
+      ],
+      "top_cpu": [
+        {
+          "pid": 3404370,
+          "pcpu": 149.0,
+          "etimes": 84320,
+          "comm": "MainThread"
+        },
+        {
+          "pid": 1101005,
+          "pcpu": 100.0,
+          "etimes": 789048,
+          "comm": "sglang::schedul"
+        },
+        {
+          "pid": 3040570,
+          "pcpu": 11.6,
+          "etimes": 466342,
+          "comm": "MainThread"
+        },
+        {
+          "pid": 473973,
+          "pcpu": 11.0,
+          "etimes": 1,
+          "comm": "python3"
+        },
+        {
+          "pid": 7744,
+          "pcpu": 10.5,
+          "etimes": 951682,
+          "comm": "python"
+        },
+        {
+          "pid": 5022,
+          "pcpu": 9.6,
+          "etimes": 951686,
+          "comm": "WebKitWebProces"
+        },
+        {
+          "pid": 3040554,
+          "pcpu": 3.6,
+          "etimes": 466342,
+          "comm": "MainThread"
+        },
+        {
+          "pid": 10230,
+          "pcpu": 3.5,
+          "etimes": 951681,
+          "comm": "milvus"
+        }
+      ]
+    }
+  },
+  "environment_conditions": {
+    "sandbox_exec_stall": "intermittent; bounded by the conditioning step (protocol §1.3 R1) and, for measured samples, by the §1.5 stop rule",
+    "shared_gateway": "pid 4009810 used as-is; not restarted by this batch",
+    "sandbox": "siq-v6-f05-identity-20260917",
+    "host": "Linux-6.17.0-1014-nvidia-aarch64-with-glibc2.39"
+  },
+  "finished_at": "2026-09-17T10:11:19.287318+00:00",
+  "steps": [
+    {
+      "id": "P00",
+      "title": "protocol hash bound (budgets frozen before measurement)",
+      "kind": "derived",
+      "status": "pass",
+      "protocol_file": "protocol.md",
+      "protocol_sha256": "9dd516397cb76562964db8223f91ca573d9ac9515984bae36bb116e91c5cd049",
+      "rounds": 3,
+      "warmup": 2,
+      "samples": 15,
+      "cycle_samples": 5,
+      "budgets_ms": {
+        "S1": {
+          "p95": 15000.0,
+          "max": 30000.0
+        },
+        "S2": {
+          "p95": 60000.0,
+          "max": 60000.0
+        },
+        "S3": {
+          "p95": 2000.0,
+          "max": 15000.0
+        },
+        "S4": {
+          "p95": 1500.0,
+          "max": 15000.0
+        }
+      },
+      "recorded_at": "2026-09-17T10:11:18.067196+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K00",
+      "title": "candidate binary identity bind",
+      "kind": "cli",
+      "status": "pass",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "version_stdout": "siq-agent-security 0.0.0-dev (linux/arm64)",
+      "bytes": 22918084,
+      "recorded_at": "2026-09-17T10:11:18.075417+00:00",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K01a",
+      "title": "init isolated state dir",
+      "kind": "cli",
+      "command": [
+        "agentshield",
+        "init",
+        "--port",
+        "40107"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d06-private/d06-raw/K01a.cli.stdout.txt",
+      "stderr_file": "d06-private/d06-raw/K01a.cli.stderr.txt",
+      "duration_ms": 36,
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:18.111993+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K01b",
+      "title": "serve start (mode=block) + admin pairing on 127.0.0.1:48177",
+      "kind": "cli+http",
+      "command": [
+        "agentshield",
+        "serve",
+        "--port",
+        48177,
+        "--mode",
+        "block"
+      ],
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed"
+      },
+      "daemon_endpoint": "http://127.0.0.1:48177",
+      "stdout_file": "d06-private/d06-raw/K01b.serve-log.txt",
+      "recorded_at": "2026-09-17T10:11:18.168788+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K02a",
+      "title": "real protection status: openshell probe",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/probe"
+      ],
+      "http_status": 200,
+      "request_body_file": "d06-private/d06-raw/K02a.request.json",
+      "response_file": "d06-private/d06-raw/K02a.response.json",
+      "duration_ms": 56,
+      "key_fields": {
+        "ok": true
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:18.225144+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K02b",
+      "title": "real protection status: openshell doctor",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/doctor"
+      ],
+      "http_status": 200,
+      "request_body_file": "d06-private/d06-raw/K02b.request.json",
+      "response_file": "d06-private/d06-raw/K02b.response.json",
+      "duration_ms": 10,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:18.235964+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K02c",
+      "title": "real protection status: grants ledger (empty)",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/grants"
+      ],
+      "http_status": 200,
+      "request_body_file": "d06-private/d06-raw/K02c.request.json",
+      "response_file": "d06-private/d06-raw/K02c.response.json",
+      "duration_ms": 0,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:18.236547+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K02d",
+      "title": "CLI observation: policy get siq-v6-f05-identity-20260917 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f05-identity-20260917",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d06-private/d06-raw/K02d.cli.stdout.txt",
+      "stderr_file": "d06-private/d06-raw/K02d.cli.stderr.txt",
+      "duration_ms": 89,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:18.326143+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K02f",
+      "title": "read current sandbox identity before approval",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "list",
+        "--limit",
+        "1000",
+        "--output",
+        "json"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d06-private/d06-raw/K02f.cli.stdout.txt",
+      "stderr_file": "d06-private/d06-raw/K02f.cli.stderr.txt",
+      "duration_ms": 48,
+      "note": "read-only; a same-name replacement must invalidate the old approval",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:18.374251+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K02e",
+      "title": "baseline binding: gateway/fingerprint/target revision",
+      "kind": "derived",
+      "status": "pass",
+      "gateway_version": "unknown",
+      "endpoint_fingerprint": "c4b76903a33d3ecce2c227459de8d15f61a862fca3ed7c4a22f5b5eaa864856f",
+      "sandbox_revision": "1",
+      "sandbox_policy_sha256": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "sandbox_id": "b2044454-289a-4d06-bc27-2c6091d4f2b6",
+      "recorded_at": "2026-09-17T10:11:18.374379+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K03a",
+      "title": "ownership preflight: reach target sandbox and read its default route",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f05-identity-20260917",
+        "--no-tty",
+        "--",
+        "/bin/cat",
+        "/proc/net/route"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d06-private/d06-raw/K03a.cli.stdout.txt",
+      "stderr_file": "d06-private/d06-raw/K03a.cli.stderr.txt",
+      "duration_ms": 177,
+      "note": "read-only; confirms the target is alive and owned by this batch",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:18.551826+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K03a2",
+      "title": "ownership preflight: host addresses the sandbox itself publishes",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f05-identity-20260917",
+        "--no-tty",
+        "--",
+        "/bin/cat",
+        "/etc/hosts"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d06-private/d06-raw/K03a2.cli.stdout.txt",
+      "stderr_file": "d06-private/d06-raw/K03a2.cli.stderr.txt",
+      "duration_ms": 181,
+      "note": "read-only; the platform's own 'where is the host' answer",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:18.733119+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K03b",
+      "title": "capability preflight: /bin/sh -c works in the target",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f05-identity-20260917",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "printf %s o05v6-preflight"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d06-private/d06-raw/K03b.cli.stdout.txt",
+      "stderr_file": "d06-private/d06-raw/K03b.cli.stderr.txt",
+      "duration_ms": 183,
+      "note": "read-only probe",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:18.916399+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K03b2",
+      "title": "capability preflight: the exact canary command shape runs",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f05-identity-20260917",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "printf %s o05v6-canary-preflight | dd of=/tmp/o05v6-canary-preflight-c5a7da1748348b13.txt status=none; cat /tmp/o05v6-canary-preflight-c5a7da1748348b13.txt"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d06-private/d06-raw/K03b2.cli.stdout.txt",
+      "stderr_file": "d06-private/d06-raw/K03b2.cli.stderr.txt",
+      "duration_ms": 180,
+      "note": "read-only for policy; writes one batch-owned scratch file",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:19.096829+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K03c",
+      "title": "preflight summary",
+      "kind": "derived",
+      "status": "pass",
+      "sandbox_egress_gateway": "10.200.0.1",
+      "sandbox_published_host_alias": "172.23.0.1",
+      "declared_fact_endpoint": "172.23.0.1:1",
+      "declaration_is_deliverable": true,
+      "declared_endpoint_role": "policy content only; never contacted by any leg",
+      "note": "the route gateway is the sandbox-side address of the egress proxy and is not a deliverable destination; naming it is accepted as a policy-content placeholder but recorded as non-deliverable, so the preflight never certifies it as an egress path",
+      "recorded_at": "2026-09-17T10:11:19.096854+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "P01",
+      "title": "exclusivity pre-check (no competing build/regression/benchmark)",
+      "kind": "derived",
+      "status": "fail",
+      "scanned_root": "<repo>",
+      "fatal": [
+        {
+          "pid": 474377,
+          "cmd": "rsync -a --delete --exclude __pycache__/ --exclude .pytest_cache/ <home>/siq-research-engine/agents/hermes/profiles/shared/ <home>/siq-research-engine/data/hermes/home/profiles/shared/",
+          "cwd": "<home>/siq-research-engine/agents/hermes/profiles/shared",
+          "reason": "competing build/test/benchmark"
+        }
+      ],
+      "observed_background_services": [
+        {
+          "pid": 2268,
+          "cmd": "node /snap/code-server/73/lib/node_modules/code-server/node_modules/.bin/code-server --config /var/snap/code-server/73/config.yaml --user-data-dir /var/snap/code-server/73/user-data --extensions-dir /var/snap/code-server/73/extensions /var/snap/code-server/common",
+          "cwd": "/proc/2268/cwd"
+        },
+        {
+          "pid": 2691,
+          "cmd": "<home>/report-finder-service/.venv/bin/python -m uvicorn report_finder_service.app:app --host 127.0.0.1 --port 8000",
+          "cwd": "<home>/report-finder-service"
+        },
+        {
+          "pid": 3049,
+          "cmd": "fusermount3 -o rw,nosuid,nodev,fsname=portal,auto_unmount,subtype=portal -- /run/user/1000/doc",
+          "cwd": "/proc/3049/cwd"
+        },
+        {
+          "pid": 3757,
+          "cmd": "/snap/code-server/73/bin/node /snap/code-server/73/lib/node_modules/code-server/node_modules/code-server/out/node/entry",
+          "cwd": "/proc/3757/cwd"
+        },
+        {
+          "pid": 6252,
+          "cmd": "<home>/.local/bin/node scripts/trial-server.mjs",
+          "cwd": "<home>/finsight/finall_all_front_0516/front"
+        },
+        {
+          "pid": 7658,
+          "cmd": "/workspace/siq-gateway/.venv/bin/python /workspace/siq-gateway/.venv/bin/uvicorn siq_gateway.main:app --host 0.0.0.0 --port 10080",
+          "cwd": "/proc/7658/cwd"
+        },
+        {
+          "pid": 7826,
+          "cmd": "/usr/local/bin/python3.12 /usr/local/bin/uvicorn apps.api.main:app --host 0.0.0.0 --port 8010",
+          "cwd": "/proc/7826/cwd"
+        },
+        {
+          "pid": 8532,
+          "cmd": "/workspace/siq-org-iam/apps/service/.venv/bin/python /workspace/siq-org-iam/apps/service/.venv/bin/uvicorn siq_org_iam_service.main:app --host 0.0.0.0 --port 10088",
+          "cwd": "/proc/8532/cwd"
+        },
+        {
+          "pid": 8753,
+          "cmd": "uv run --no-sync uvicorn siq_memory.api.app:create_app --factory --host 0.0.0.0 --port 10094",
+          "cwd": "/proc/8753/cwd"
+        },
+        {
+          "pid": 8822,
+          "cmd": "/workspace/siq-agent-hub/hub/.venv/bin/python /workspace/siq-agent-hub/hub/.venv/bin/uvicorn siq_agent_hub.main:app --host 0.0.0.0 --port 10092",
+          "cwd": "/proc/8822/cwd"
+        },
+        {
+          "pid": 9083,
+          "cmd": "uv run --no-sync uvicorn siq_investment_api.main:app --host 0.0.0.0 --port 10097",
+          "cwd": "/proc/9083/cwd"
+        },
+        {
+          "pid": 9084,
+          "cmd": "/workspace/siq-notify/.venv/bin/python /workspace/siq-notify/.venv/bin/uvicorn siq_notify.main:app --host 0.0.0.0 --port 10090",
+          "cwd": "/proc/9084/cwd"
+        },
+        {
+          "pid": 9278,
+          "cmd": "node dist/src/app.js",
+          "cwd": "/proc/9278/cwd"
+        },
+        {
+          "pid": 9352,
+          "cmd": "/usr/local/bin/python3.12 /usr/local/bin/uvicorn app.main:app --host 0.0.0.0 --port 8600",
+          "cwd": "/proc/9352/cwd"
+        },
+        {
+          "pid": 9566,
+          "cmd": "/workspace/siq-flow-engine/apps/service/.venv/bin/python /workspace/siq-flow-engine/apps/service/.venv/bin/uvicorn siq_flow_service.main:app --host 0.0.0.0 --port 10086",
+          "cwd": "/proc/9566/cwd"
+        },
+        {
+          "pid": 10905,
+          "cmd": "/workspace/siq-memory/.venv/bin/python /workspace/siq-memory/.venv/bin/uvicorn siq_memory.api.app:create_app --factory --host 0.0.0.0 --port 10094",
+          "cwd": "/proc/10905/cwd"
+        },
+        {
+          "pid": 11045,
+          "cmd": "/workspace/.venv/bin/python /workspace/.venv/bin/uvicorn siq_investment_api.main:app --host 0.0.0.0 --port 10097",
+          "cwd": "/proc/11045/cwd"
+        },
+        {
+          "pid": 11312,
+          "cmd": "uv run uvicorn main:app --host 0.0.0.0 --port 18181 --no-access-log",
+          "cwd": "<home>/gpcapital/apps/api"
+        },
+        {
+          "pid": 11359,
+          "cmd": "<home>/siq-research-engine/apps/api/.venv/bin/python <home>/gpcapital/apps/api/.venv/bin/uvicorn main:app --host 0.0.0.0 --port 18181 --no-access-log",
+          "cwd": "<home>/gpcapital/apps/api"
+        },
+        {
+          "pid": 11750,
+          "cmd": "<home>/finsight/backend/.venv/bin/python <home>/finsight/backend/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 10081",
+          "cwd": "<home>/finsight/backend"
+        },
+        {
+          "pid": 83981,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/node <home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/out/server-main.js --socket-path /tmp/code-47549a63-cbe2-4e67-8df6-4dfc784c510d --agent-host-path /tmp/code",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 84687,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/node <home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/out/bootstrap-fork --type=agentHost --logsPath <home>/.vscode-server/data/logs/20260906T175917 --user-",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 84744,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/node <home>/.vscode-server/cli/servers/Stable-a44adf7f53e00964ab890f9f8758a334f1fc15bc/server/node_modules/@github/copilot-linux-arm64/index.js --headless --no-auto-update --log-level info --stdio --no",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 375634,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/markdown-language-features/dist/serverWorkerMain --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 538946,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node --max-old-space-size=3072 <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/node_modules/typescript/lib/tsserver.js --serverMode partialSemantic -",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 538972,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node --max-old-space-size=3072 <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/node_modules/typescript/lib/tsserver.js --useInferredProjectPerProject",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 538986,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/node_modules/typescript/lib/typingsInstaller.js --globalTypingsCacheLocation <home>/.cache/",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 1429999,
+          "cmd": "<home>/.local/bin/node <home>/gpcapital-governance/apps/web/node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5210 --strictPort",
+          "cwd": "<home>/gpcapital-governance/apps/web"
+        },
+        {
+          "pid": 1430115,
+          "cmd": "<home>/gpcapital-governance/.venv/bin/python3.12 <home>/gpcapital-governance/.venv/bin/uvicorn gpcapital_governance.apps.api.main:app --host 127.0.0.1 --port 8310",
+          "cwd": "<home>/gpcapital-governance"
+        },
+        {
+          "pid": 1432009,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/out/server-main.js --connection-token=remotessh --accept-server-license-terms --agent-host-bridge-port=3645",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 1432060,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/out/bootstrap-fork --type=ptyHost --logsPath <home>/.vscode-server/data/logs/20260911T172503",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 2913631,
+          "cmd": "uv run uvicorn main:app --host 0.0.0.0 --port 10084 --reload",
+          "cwd": "<home>/hrsight/apps/api-gateway"
+        },
+        {
+          "pid": 2913636,
+          "cmd": "<home>/hrsight/apps/api-gateway/.venv/bin/python <home>/hrsight/apps/api-gateway/.venv/bin/uvicorn main:app --host 0.0.0.0 --port 10084 --reload",
+          "cwd": "<home>/hrsight/apps/api-gateway"
+        },
+        {
+          "pid": 2923342,
+          "cmd": "node <home>/gpcapital/apps/web/node_modules/vite/bin/vite.js --host 0.0.0.0 --port 15273",
+          "cwd": "<home>/gpcapital/apps/web"
+        },
+        {
+          "pid": 2929360,
+          "cmd": "npm run dev --host 0.0.0.0 --port 1349",
+          "cwd": "<home>/hrsight/apps/web"
+        },
+        {
+          "pid": 2929375,
+          "cmd": "sh -c vite --host 0.0.0.0 --port 1349",
+          "cwd": "<home>/hrsight/apps/web"
+        },
+        {
+          "pid": 2929376,
+          "cmd": "node <home>/hrsight/apps/web/node_modules/.bin/vite --host 0.0.0.0 --port 1349",
+          "cwd": "<home>/hrsight/apps/web"
+        },
+        {
+          "pid": 3040554,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node --dns-result-order=ipv4first <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3040570,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/out/bootstrap-fork --type=fileWatcher",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3041791,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/extensions/ckolkman.vscode-postgres-1.4.3/out/language/server.js --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3041793,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode/extensions/mtxr.sqltools-0.28.5/dist/languageserver.js --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3042038,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/extensions/json-language-features/server/dist/node/jsonServerMain --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>"
+        },
+        {
+          "pid": 3404370,
+          "cmd": "<home>/.vscode-server/cli/servers/Stable-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/server/node <home>/.vscode/extensions/ms-python.vscode-pylance-2026.2.1/dist/server.bundle.js --cancellationReceive=file:04a461670940b8005e1c2716d804b0430efdb66283 --node-ipc --clientProcessId=3040554",
+          "cwd": "<home>/.vscode/extensions/ms-python.vscode-pylance-2026.2.1/dist"
+        },
+        {
+          "pid": 3535465,
+          "cmd": "npm run dev --host 127.0.0.1 --port 5277 --strictPort",
+          "cwd": "<home>/gpcapital-governance/apps/web"
+        },
+        {
+          "pid": 3535486,
+          "cmd": "sh -c vite --host 127.0.0.1 --port 5277 --strictPort",
+          "cwd": "<home>/gpcapital-governance/apps/web"
+        },
+        {
+          "pid": 3535487,
+          "cmd": "node <home>/gpcapital-governance/apps/web/node_modules/.bin/vite --host 127.0.0.1 --port 5277 --strictPort",
+          "cwd": "<home>/gpcapital-governance/apps/web"
+        }
+      ],
+      "host_load_pre": {
+        "nproc": 20,
+        "loadavg": [
+          4.27,
+          4.3,
+          4.35
+        ],
+        "top_cpu": [
+          {
+            "pid": 3404370,
+            "pcpu": 149.0,
+            "etimes": 84320,
+            "comm": "MainThread"
+          },
+          {
+            "pid": 1101005,
+            "pcpu": 100.0,
+            "etimes": 789048,
+            "comm": "sglang::schedul"
+          },
+          {
+            "pid": 3040570,
+            "pcpu": 11.6,
+            "etimes": 466342,
+            "comm": "MainThread"
+          },
+          {
+            "pid": 473973,
+            "pcpu": 11.0,
+            "etimes": 1,
+            "comm": "python3"
+          },
+          {
+            "pid": 7744,
+            "pcpu": 10.5,
+            "etimes": 951682,
+            "comm": "python"
+          },
+          {
+            "pid": 5022,
+            "pcpu": 9.6,
+            "etimes": 951686,
+            "comm": "WebKitWebProces"
+          },
+          {
+            "pid": 3040554,
+            "pcpu": 3.6,
+            "etimes": 466342,
+            "comm": "MainThread"
+          },
+          {
+            "pid": 10230,
+            "pcpu": 3.5,
+            "etimes": 951681,
+            "comm": "milvus"
+          }
+        ]
+      },
+      "note": "read-only /proc scan; nothing signalled. Protocol §1.4 forbids competing builds/regressions/benchmarks and requires stopping the round rather than selecting data. Pre-existing services on a shared host are recorded as environment conditions, not treated as exclusivity failures -- killing them is forbidden, and a condition that can never be cleared would make any measurement impossible.",
+      "recorded_at": "2026-09-17T10:11:19.138382+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K90a",
+      "title": "serve stop (SIGTERM drain)",
+      "kind": "cli",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:19.141694+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K90c",
+      "title": "CLI observation: policy get siq-v6-f05-identity-20260917 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f05-identity-20260917",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d06-private/d06-raw/K90c.cli.stdout.txt",
+      "stderr_file": "d06-private/d06-raw/K90c.cli.stderr.txt",
+      "duration_ms": 88,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-17T10:11:19.230589+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "K90d",
+      "title": "sandbox policy content untouched by the whole perf journey",
+      "kind": "derived",
+      "status": "pass",
+      "sandbox_revision_before": "1",
+      "sandbox_revision_after": "1",
+      "sandbox_policy_sha256_before": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "sandbox_policy_sha256_after": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "revision_delta_reason": "S2's measured operation is a byte-for-byte reload of the pristine document; a policy set advances the revision even when the content is unchanged",
+      "recorded_at": "2026-09-17T10:11:19.230618+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    },
+    {
+      "id": "ABORT",
+      "title": "performance run aborted",
+      "kind": "derived",
+      "status": "fail",
+      "detail": "competing build/test/benchmark present before measurement; stopping per protocol §1.4",
+      "leg": "?",
+      "traceback": "Traceback (most recent call last):\n  File \"<repo>/scripts/personal-experience/openshell-o05v6-taskexec-perf.py\", line 982, in main\n    rc = j.run()\n  File \"<repo>/scripts/personal-experience/openshell-o05v6-taskexec-perf.py\", line 684, in run\n    self.exclusivity()\n    ~~~~~~~~~~~~~~~~^^\n  File \"<repo>/scripts/personal-experience/openshell-o05v6-taskexec-perf.py\", line 328, in exclusivity\n    raise StepFailure(\n        \"competing build/test/benchmark present before measurement; \"\n        \"stopping per protocol §1.4\")\no05v6_taskexec_journey.StepFailure: competing build/test/benchmark present before measurement; stopping per protocol §1.4\n",
+      "recorded_at": "2026-09-17T10:11:19.234911+00:00",
+      "binary_sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7",
+      "sandbox_target": "siq-v6-f05-identity-20260917"
+    }
+  ]
+}

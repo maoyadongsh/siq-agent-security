@@ -13,10 +13,12 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
 
+	"siq-agent-security/apps/agentshield/internal/adapterinstall"
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/effectevidence"
 	"siq-agent-security/apps/agentshield/internal/export"
@@ -280,6 +282,29 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/openshell/session-executions", s.auth(s.openshellSessionExecute, capDecision))
 	s.mux.HandleFunc("/v1/openshell/session-executions/preview", s.auth(s.openshellSessionPreview, capAdmin))
 	s.mux.HandleFunc("/v1/openshell/session-executions/rollback", s.auth(s.openshellSessionRollback, capAdmin))
+	// Real task execution: distinct route, distinct scope. An old
+	// policy_apply request can never be upgraded into command execution by
+	// naming it differently.
+	s.mux.HandleFunc("/v1/openshell/task-executions", s.auth(s.openshellTaskExecute, capDecision))
+	s.mux.HandleFunc("/v1/openshell/task-executions/preview", s.auth(s.openshellTaskPreview, capAdmin))
+	// Tracking, stop and reconciliation. Status and stop are decision-credential
+	// routes: an operator who may approve the task may follow it and ask for it
+	// to stop, and neither route can do anything a decision could not already
+	// do. Reconciliation is administrative because it closes a reservation with
+	// evidence that only an operator can supply.
+	s.mux.HandleFunc("/v1/openshell/task-executions/status", s.auth(s.openshellTaskStatus, capDecision))
+	s.mux.HandleFunc("/v1/openshell/task-executions/stop", s.auth(s.openshellTaskStop, capDecision))
+	s.mux.HandleFunc("/v1/openshell/task-executions/reconcile", s.auth(s.openshellTaskReconcile, capAdmin))
+	// The management console holds an administrator session and never a decision
+	// credential, so it cannot reach /status. The human who approved the task is
+	// the one who has to be told it failed, so the SAME read-only projection is
+	// also reachable with an administrator session. This is the identical
+	// handler: one read path, two gates. It adds no authority an administrator
+	// did not already have — an administrator session can already read the whole
+	// signed chain (/v1/receipts) and already closes these reservations
+	// (/reconcile) — and it adds no way to execute, stop or replay anything,
+	// because openshellTaskStatus has no path to any of those.
+	s.mux.HandleFunc("/v1/openshell/task-executions/read", s.auth(s.openshellTaskStatus, capAdmin))
 	s.mux.HandleFunc("/v1/assets", s.auth(s.assets))
 	s.mux.HandleFunc("/v1/assets/", s.auth(s.assets))
 	s.mux.HandleFunc("/v1/permissions", s.auth(s.permissions))
@@ -805,6 +830,10 @@ func (s *Server) grants(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, 400, map[string]any{"error": "admission_id, platform, subject_id required"})
 			return
 		}
+		if !adapterinstall.NewIntegrationSupportedOnOS(body.Platform, runtime.GOOS) {
+			writeJSON(w, 400, map[string]any{"error": "platform_out_of_scope"})
+			return
+		}
 		if body.SubjectType == "" {
 			body.SubjectType = "agent_instance"
 		}
@@ -882,6 +911,10 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 	g, seq, err := s.d.Store.GetGrantWithSeq(parts[0])
 	if err != nil {
 		writeJSON(w, 404, map[string]any{"error": "grant not found"})
+		return
+	}
+	if parts[1] != "reject" && parts[1] != "revoke" && !adapterinstall.NewIntegrationSupportedOnOS(g.Platform, runtime.GOOS) {
+		writeJSON(w, 400, map[string]any{"error": "platform_out_of_scope"})
 		return
 	}
 	if importsource.Reserved(g.AdmissionID) && (parts[1] == "challenge" || parts[1] == "approve" || parts[1] == "draft") {

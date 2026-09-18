@@ -1,0 +1,14 @@
+{
+  "schema": "windows-null-device-handle-check/v1",
+  "observed_at_utc": "2026-09-14T04:18:55.525269+00:00",
+  "method": "Independent workspace Python process, os.open(os.devnull, os.O_RDWR) and Win32 GetFileType",
+  "python_version": "3.13.7",
+  "script_sha256": "4e32211363b955467912dcafeafb51da81870f5bfaf1e1ba501ef737b88d7cd1",
+  "devnull_literal": "nul",
+  "flags": 2,
+  "win32_file_type": 2,
+  "expected_character_device_type": 2,
+  "descriptor_closed_verified_by_ebadf": true,
+  "host_or_siq_executed": false,
+  "scope": "Device identity only; not a replay of any Hermes run, filesystem permission proof, or OS sandbox"
+}

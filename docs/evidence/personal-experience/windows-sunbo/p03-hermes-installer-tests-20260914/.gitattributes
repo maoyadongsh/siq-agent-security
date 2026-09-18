@@ -1,0 +1,33 @@
+# Frozen CRLF evidence: preserve hashes; other whitespace checks remain enabled.
+r1/focused-summary.json whitespace=cr-at-eol
+r1/go-toolchain-build.txt whitespace=cr-at-eol
+r1/manifest.json whitespace=cr-at-eol
+r1/package-summary.json whitespace=cr-at-eol
+r1/process-observation.json whitespace=cr-at-eol
+r1/summary.json whitespace=cr-at-eol
+r1/verification.json whitespace=cr-at-eol
+r1/vet-summary.json whitespace=cr-at-eol
+r2/focused-summary.json whitespace=cr-at-eol
+r2/go-toolchain-build.txt whitespace=cr-at-eol
+r2/manifest.json whitespace=cr-at-eol
+r2/package-summary.json whitespace=cr-at-eol
+r2/process-observation.json whitespace=cr-at-eol
+r2/run-hermes-installer-tests-r2.py whitespace=cr-at-eol
+r2/summary.json whitespace=cr-at-eol
+r2/verification.json whitespace=cr-at-eol
+r2/vet-summary.json whitespace=cr-at-eol
+module-r3/analysis.json whitespace=cr-at-eol
+module-r3/go-toolchain-build.txt whitespace=cr-at-eol
+module-r3/manifest.json whitespace=cr-at-eol
+module-r3/module-tests-summary.json whitespace=cr-at-eol
+module-r3/module-vet-summary.json whitespace=cr-at-eol
+module-r3/run-windows-module-checks-r3.py whitespace=cr-at-eol
+module-r3/summary.json whitespace=cr-at-eol
+module-r3/verification.json whitespace=cr-at-eol
+independent-review/manifest.json whitespace=cr-at-eol
+independent-review/review.json whitespace=cr-at-eol
+# Exact Git diffs: one context space can precede a tab or represent a blank line.
+# All three patches were independently byte-compared with their original Git diffs.
+r1/change.patch whitespace=cr-at-eol,-blank-at-eol,-space-before-tab
+r2/change.patch whitespace=cr-at-eol,-blank-at-eol,-space-before-tab
+module-r3/change.patch whitespace=cr-at-eol,-blank-at-eol,-space-before-tab

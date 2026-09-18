@@ -1,0 +1,37 @@
+{
+  "schema": "siq-v6-integration-resources/v1",
+  "scope": "v6-f04-e04e06e11-closure-20260917 batch (2026-09-17 evening, local)",
+  "owned_retained": [
+    {
+      "path": "docs/evidence/personal-experience/v6-f04-e04e06e11-closure-20260917/d05-private/",
+      "type": "batch_private_evidence_and_candidate_copy",
+      "reason": "raw product traffic (0600) plus the batch-private copy of the unchanged candidate binary d05-private/bin/siq-v6-hermes-post-e11-agent (0700), sha256 re-verified 0b16e5e0…c8177 after the /tmp copy",
+      "running_dependency": false
+    }
+  ],
+  "owned_running_services": [],
+  "owned_listening_ports": [],
+  "owned_sandboxes": [],
+  "created_and_deleted": [
+    {
+      "name": "siq-v6-f04-e04e06e11-20260917",
+      "type": "openshell_sandbox",
+      "created": "openshell sandbox create --name siq-v6-f04-e04e06e11-20260917 --from siq/hermes-openshell-siq-analysis:f470321d2fb2b2cda14b7c3b --label siq_batch=v6-f04-e04e06e11-closure (local pinned image; the create CLI then hung on its interactive shell and was killed by the local timeout -- the sandbox itself was Ready; recorded, not hidden)",
+      "deleted": "openshell sandbox delete siq-v6-f04-e04e06e11-20260917 -> exit 0, 'Deleted sandbox' output",
+      "delete_readback": "sandbox list --output json after deletion: only siq-analysis-canary-a01b02c91503, siq-l01-o05-181930, siq-o05v6-taskexec-002524 remain; the batch name is gone",
+      "policy_state_at_delete": "pristine content hash 21ca0b7c8c0ee3fe… restored and loaded (K90d pass; version counter advanced to 18 by the E02/E06 windows, recorded as deltas)"
+    }
+  ],
+  "batch_processes": "all batch-owned daemons (main, K80 lost-backend, E04n/E04s/E06v side daemons) stopped by the driver's own finally/serve_stop; ps readback after the run shows no d05-acceptance or candidate-binary process alive",
+  "batch_tmp_dirs": "deleted: /tmp/siq-v6-e04e06e11-iter{1,1b,2,2b,2c,3}, /tmp/poke-pristine.json, /tmp/siq-v6-iter*.log, /tmp/siq-v6-final-run.log. The journey's own per-run roots (siq-o05v6-taskexec-*) were rmtree'd by the driver's finally; none from this batch remain",
+  "external_observed_not_touched": [
+    "OpenShell shared gateway on 127.0.0.1:17671: never restarted, never reconfigured",
+    "sandboxes siq-analysis-canary-a01b02c91503 / siq-l01-o05-181930 / siq-o05v6-taskexec-002524: untouched",
+    "/tmp/siq-v6-hermes-post-e11-agent (the shared candidate origin): left in place, sha256 still 0b16e5e0…",
+    "/tmp/siq-o05v6-taskexec-* dirs dated 2026-09-17 01:01-04:19 CST and other /tmp/siq-v6-* entries predate this batch (earlier batches' material); not touched",
+    "old CLI /home/maoyd/.local/bin/openshell v0.0.13: read-only use only (--version, policy set --help, and pinned as a side daemon's backend); the file was never modified",
+    "collaborator worktrees: untouched"
+  ],
+  "pending_manual_cleanup": [],
+  "note": "Iteration runs used --only filters into /tmp scratch dirs and were deleted after reading; the evidence of record is the single full-matrix run in this directory (no --only). No failed intermediate run was deleted to select a favourable one: the iteration failures (scoped-credential 403 at E04sf, restore --wait exit 124 at E06x2) were diagnosed from their preserved matrices before the dirs were cleaned, and the loader-wedge observation is written into the driver and report."
+}

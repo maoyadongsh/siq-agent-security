@@ -1,0 +1,24 @@
+{
+  "schema_version": "personal-r01-hermes-service-down/v1",
+  "recorded_at": "2026-09-17T09:52:45.806489+00:00",
+  "passed": true,
+  "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+  "hermes_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "harness_sha256": "af8341ba91830a34cd07f90c63d41f79eb66c51ad55901cbb20b93c203adbc54",
+  "checks": [
+    "isolated_managed_hermes_profile",
+    "online_native_allowed_read_control",
+    "online_native_sec_receipts_verified",
+    "only_batch_daemon_stopped",
+    "batch_daemon_listener_absent",
+    "offline_native_read_blocked",
+    "offline_native_write_blocked",
+    "offline_independent_file_marker_absent",
+    "offline_receipt_chain_unchanged"
+  ],
+  "limitations": [
+    "isolated deterministic local model; no external provider",
+    "write operation also lacks narrow-skill permission while online; the read control isolates service loss",
+    "host tool return proves plugin refusal; no network egress target exercised"
+  ]
+}

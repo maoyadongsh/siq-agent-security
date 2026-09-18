@@ -1,0 +1,104 @@
+{
+  "name": "focused",
+  "argv": [
+    "test",
+    "-json",
+    "-p=2",
+    "-parallel=1",
+    "-count=1",
+    "-timeout=90s",
+    "-run",
+    "^(TestHermesNativeEvidenceSeparatesRegistrationFromCompatibility|TestConfiguredEndpointReadsConnectionDocumentOnly|TestHermesControlledInstallPathChecksBeforeNativeInstall|TestInstallEntryIsNeverTakenOver|TestUninstallOfOneInstanceRestoresOnlyThatInstance)$",
+    "./internal/adapterinstall"
+  ],
+  "cwd": "apps/agentshield",
+  "started_utc": "2026-09-14T05:24:18.973691+00:00",
+  "finished_utc": "2026-09-14T05:24:46.685293+00:00",
+  "exit_code": 0,
+  "outer_timeout_seconds": 300,
+  "outer_timed_out": false,
+  "cleanup_exit": null,
+  "go_process_reaped": true,
+  "source_before": {
+    "source": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+    "source_dirty": false
+  },
+  "source_after": {
+    "source": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+    "source_dirty": false
+  },
+  "event_count": 40,
+  "top_level_counts": {
+    "pass": 5,
+    "fail": 0,
+    "skip": 0
+  },
+  "subtest_counts": {
+    "pass": 4,
+    "fail": 0,
+    "skip": 0
+  },
+  "top_level_results": [
+    {
+      "Test": "TestUninstallOfOneInstanceRestoresOnlyThatInstance",
+      "Action": "pass",
+      "Elapsed": 3.07
+    },
+    {
+      "Test": "TestHermesNativeEvidenceSeparatesRegistrationFromCompatibility",
+      "Action": "pass",
+      "Elapsed": 0.07
+    },
+    {
+      "Test": "TestConfiguredEndpointReadsConnectionDocumentOnly",
+      "Action": "pass",
+      "Elapsed": 5.18
+    },
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver",
+      "Action": "pass",
+      "Elapsed": 5.47
+    },
+    {
+      "Test": "TestHermesControlledInstallPathChecksBeforeNativeInstall",
+      "Action": "pass",
+      "Elapsed": 2.22
+    }
+  ],
+  "subtest_results": [
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver/hermes",
+      "Action": "pass",
+      "Elapsed": 1.51
+    },
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver/openclaw",
+      "Action": "pass",
+      "Elapsed": 1.98
+    },
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver/codebuddy",
+      "Action": "pass",
+      "Elapsed": 1.53
+    },
+    {
+      "Test": "TestInstallEntryIsNeverTakenOver/trae",
+      "Action": "pass",
+      "Elapsed": 0.45
+    }
+  ],
+  "package_terminal_events": [
+    {
+      "Time": "2026-09-14T13:24:45.8541292+08:00",
+      "Action": "pass",
+      "Package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "Elapsed": 18.527
+    }
+  ],
+  "raw_log_bytes": 9321,
+  "raw_log_sha256": "55d237515f2a4c15fa455dca9f82b10c7bcbe4a7b094606e0cc76399427b17cf",
+  "derived_jsonl_bytes": 9691,
+  "derived_jsonl_sha256": "19b1d959bd5e055c0858dc9f078546869f1bc0c0ecd257848c0c63375ca6ce33",
+  "non_json_lines": 0,
+  "panic_test_timed_out": false
+}

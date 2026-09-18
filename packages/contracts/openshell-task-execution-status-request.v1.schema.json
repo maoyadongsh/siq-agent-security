@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/openshell-task-execution-status-request.v1.schema.json",
+  "title": "Read the durable status of one OpenShell task execution",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "platform", "session_id", "agent_id", "tool",
+    "action_id", "decision_receipt_id", "reservation_receipt_id"
+  ],
+  "properties": {
+    "schema_version": {"const": "openshell-task-execution-status-request/v1"},
+    "platform": {"type": "string", "minLength": 1, "maxLength": 64},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "agent_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "task_id": {"type": "string", "maxLength": 256},
+    "runtime_task_id": {"type": "string", "maxLength": 256},
+    "tool": {"const": "exec"},
+    "action_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "decision_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "reservation_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256}
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "verified_utc": "2026-09-14T06:28:13.031094+00:00",
+  "base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "candidate": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+  "candidate_source_dirty": false,
+  "changed_files": [
+    "apps/agentshield/internal/adapters/adapters_test.go"
+  ],
+  "insertions": 31,
+  "deletions": 9,
+  "candidate_dco_signoff_present": true,
+  "candidate_test_file_sha256": "ad2b58902fe774ef9be7e912fd0a3338d7cbd5b7a9ea745e46e40e26d50cfc5d",
+  "change_patch_sha256": "1fc25ec37924ac18032048770cc5001e9ee1311ce30f2a632e5d6cdc0b01b0da",
+  "executed_runner_sha256": "ab366c3eb362d1e3f3d39f2743562ac9e1d71b73ab0422486934aa9a780f88d1",
+  "phase_checks": [
+    {
+      "phase": "baseline",
+      "source": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+      "exit_code": 1,
+      "source_before_after_exact_clean": true,
+      "raw_and_derived_lengths_hashes_match": true,
+      "private_and_public_summaries_identical": true,
+      "non_output_event_fields_equal_raw": true,
+      "event_count": 25,
+      "top_level_counts": {
+        "pass": 4,
+        "fail": 1,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "expected_test_set_and_package_terminal_match": true,
+      "no_unfinished_started_tests_or_timeouts": true,
+      "raw_bytes": 5406,
+      "raw_sha256": "ef83a9c99901c677bb718cb7cdd3cd1fd5fc3720c80d61634c9f3e0f8fc3eafe",
+      "derived_jsonl_bytes": 5637,
+      "derived_jsonl_sha256": "bf87351c0a4aeaa31098bb7a5db6b753409d8e7d6ee4ad0b5c262b495e7b4a94",
+      "started_utc": "2026-09-14T06:15:38.654723+00:00",
+      "finished_utc": "2026-09-14T06:16:26.386475+00:00"
+    },
+    {
+      "phase": "focused",
+      "source": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+      "exit_code": 0,
+      "source_before_after_exact_clean": true,
+      "raw_and_derived_lengths_hashes_match": true,
+      "private_and_public_summaries_identical": true,
+      "non_output_event_fields_equal_raw": true,
+      "event_count": 12,
+      "top_level_counts": {
+        "pass": 2,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "expected_test_set_and_package_terminal_match": true,
+      "no_unfinished_started_tests_or_timeouts": true,
+      "raw_bytes": 2464,
+      "raw_sha256": "32360cfa3acdf8a09dcbfefb9688dce1abf5bc3d5649944839af085403d7899d",
+      "derived_jsonl_bytes": 2568,
+      "derived_jsonl_sha256": "c58ba84d31370bf1f185dd30744a3d7933b2ffdcf68785edcf886c80901c2b52",
+      "started_utc": "2026-09-14T06:20:43.260906+00:00",
+      "finished_utc": "2026-09-14T06:21:14.521816+00:00"
+    },
+    {
+      "phase": "package",
+      "source": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+      "exit_code": 0,
+      "source_before_after_exact_clean": true,
+      "raw_and_derived_lengths_hashes_match": true,
+      "private_and_public_summaries_identical": true,
+      "non_output_event_fields_equal_raw": true,
+      "event_count": 24,
+      "top_level_counts": {
+        "pass": 5,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "expected_test_set_and_package_terminal_match": true,
+      "no_unfinished_started_tests_or_timeouts": true,
+      "raw_bytes": 5062,
+      "raw_sha256": "ac35296ad08e2211101bc58d9f559de0caac5b20bcebcaf1355582522dc08664",
+      "derived_jsonl_bytes": 5280,
+      "derived_jsonl_sha256": "dd1bf9336de01237292b0ba87a31a00e64ff313fe0f8192adabc16b74b8d859d",
+      "started_utc": "2026-09-14T06:22:00.859914+00:00",
+      "finished_utc": "2026-09-14T06:22:22.898807+00:00"
+    },
+    {
+      "phase": "gofmt",
+      "source": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+      "exit_code": 0,
+      "source_before_after_exact_clean": true,
+      "raw_and_derived_lengths_hashes_match": true,
+      "private_and_public_summaries_identical": true,
+      "non_output_event_fields_equal_raw": true,
+      "event_count": 0,
+      "top_level_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "expected_test_set_and_package_terminal_match": null,
+      "no_unfinished_started_tests_or_timeouts": true,
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "derived_jsonl_bytes": 0,
+      "derived_jsonl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "started_utc": "2026-09-14T06:22:53.559781+00:00",
+      "finished_utc": "2026-09-14T06:22:59.365872+00:00"
+    },
+    {
+      "phase": "vet",
+      "source": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+      "exit_code": 0,
+      "source_before_after_exact_clean": true,
+      "raw_and_derived_lengths_hashes_match": true,
+      "private_and_public_summaries_identical": true,
+      "non_output_event_fields_equal_raw": true,
+      "event_count": 0,
+      "top_level_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "expected_test_set_and_package_terminal_match": null,
+      "no_unfinished_started_tests_or_timeouts": true,
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "derived_jsonl_bytes": 0,
+      "derived_jsonl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "started_utc": "2026-09-14T06:23:45.289025+00:00",
+      "finished_utc": "2026-09-14T06:24:49.963288+00:00"
+    }
+  ],
+  "privacy_check": "All current public UTF-8 files and decoded Output events checked for personal paths/name, account SID, common PAT/JWT/private-key patterns: no match. Exact path-prefix redaction accepts nested JSON separator escapes. Bounded pattern scan is not a guarantee against every secret representation.",
+  "review_scope": "Same-machine post-execution raw/derived byte and JSON review, not a second test run or independent OS reproduction. Root and sibling review are recorded separately.",
+  "not_run": [
+    "Windows full module go test for this candidate",
+    "real host installation or hook E2E",
+    "new release SIQ build"
+  ],
+  "historical_result_boundary": "PR48 candidate2f84 Windows full module exit1 remains separate evidence; not substituted as this candidate result."
+}

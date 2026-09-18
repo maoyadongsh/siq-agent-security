@@ -14,10 +14,12 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 import shutil
 import subprocess
 import tempfile
 import threading
+import time
 from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -37,6 +39,17 @@ class Harness(installed.Harness):
         self.narrow_install = self.skill_installation["install_id"]
         self.product_config = (Path(self.env["HERMES_HOME"]) / "config.yaml").read_bytes()
         self.broad_install = self._install_broad_skill()
+        if self.args.raw_expiry_seconds:
+            self.api(
+                "/v1/raw-task-content/activation",
+                {
+                    "schema_version": "local-raw-task-content-activate/v1",
+                    "actor_id": "automated-fixture-operator",
+                    "retention_seconds": 3600,
+                    "budget_bytes": 16 << 20,
+                },
+                expected=201,
+            )
 
     def _install_broad_skill(self):
         skill = self.root / "fixture-broad-skill"
@@ -270,10 +283,18 @@ class Harness(installed.Harness):
                         if call["outcome"] == "allow":
                             category = "siq_block" if "siq-agent-security" in text else "host_result"
                             fixture.require(
-                                "fixture-visible-company-a" in text, "allowed read did not execute: " + category
+                                "fixture-visible-company-a" in text,
+                                "allowed read did not execute: " + category + " result=" + repr(text[:220]),
                             )
                         else:
                             fixture.require("siq-agent-security" in text, "denied call was not blocked by adapter")
+                            if forbidden_text := call.get("forbidden_text"):
+                                fixture.require(
+                                    forbidden_text not in text,
+                                    "denied call exposed protected fixture content",
+                                )
+                    if callback := getattr(harness, "_native_step_callback", None):
+                        callback(index)
                     message, finish = {"role": "assistant", "content": "SIQ_SEC_NATIVE_COMPLETE"}, "stop"
                     if index < len(calls):
                         call = calls[index]
@@ -324,7 +345,7 @@ class Harness(installed.Harness):
                 cwd=self.workspace,
                 env=env,
                 capture_output=True,
-                timeout=90,
+                timeout=max(90, self.args.raw_expiry_seconds + 90),
                 check=False,
             )
             if process.returncode != 0:
@@ -368,6 +389,13 @@ class Harness(installed.Harness):
         }
         canonical = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
         return hashlib.sha256(canonical).hexdigest()
+
+    def raw_records(self):
+        return self.api(
+            "/v1/raw-task-content/records/search",
+            {"schema_version": "local-raw-task-content-record-list/v1",
+             "task_id": self.raw_binding["task_id"]},
+        )["items"]
 
     def native_sec(self):
         controller_failures = []
@@ -449,12 +477,126 @@ class Harness(installed.Harness):
                 "outcome": "deny",
             },
         ]
+        if self.args.raw_expiry_seconds:
+            # Hermes returns an "unchanged" optimization for repeat reads of
+            # the same file in one conversation. Distinct fixture paths make
+            # both post-grant calls execute the real read_file tool and keep
+            # the raw-capture assertion about actual output meaningful.
+            captured_path = self.workspace / "company-a/raw-capture.txt"
+            expired_path = self.workspace / "company-a/post-expiry.txt"
+            captured_path.write_text("fixture-visible-company-a raw capture\n")
+            expired_path.write_text("fixture-visible-company-a after expiry\n")
+            calls.extend(
+                [
+                    {
+                        "id": "raw-captured-read",
+                        "tool": "read_file",
+                        "params": {"path": str(captured_path)},
+                        "outcome": "allow",
+                    },
+                    {
+                        "id": "raw-expired-read",
+                        "tool": "read_file",
+                        "params": {"path": str(expired_path)},
+                        "outcome": "allow",
+                    },
+                ]
+            )
+
+            def raw_expiry_step(index):
+                # The first two native results prove the session is live before
+                # granting raw capture. Only the third tool call has an active
+                # task-scoped raw Grant; the fourth happens after wall-clock
+                # expiry in the SAME public Hermes chat process.
+                if index == 2:
+                    fixture.require(len(subjects) == 1, "native task identity unavailable for raw grant")
+                    session_id, _ = subjects[0]
+                    bindings = [
+                        row for row in self.api("/v1/intent-bindings")["items"]
+                        if row.get("session_id") == session_id
+                    ]
+                    fixture.require(len(bindings) == 1, "expected one signed native session binding")
+                    self.raw_binding = bindings[0]
+                    self.raw_grant = self.api(
+                        "/v1/raw-task-content/grants",
+                        {
+                            "schema_version": "local-raw-task-content-grant-create/v1",
+                            "task_id": self.raw_binding["task_id"],
+                            "kinds": ["parameters", "output"],
+                            "actor_id": "automated-fixture-operator",
+                            "duration_seconds": self.args.raw_expiry_seconds,
+                            "retention_seconds": 3600,
+                            "max_plaintext_bytes": 65536,
+                        },
+                        expected=201,
+                    )
+                elif index == 3:
+                    session_id, _ = subjects[0]
+                    before = self.raw_records()
+                    fixture.require(
+                        len(before) == 2 and {row["kind"] for row in before} == {"parameters", "output"},
+                        "native Hermes parameter/output capture missing before expiry",
+                    )
+                    self.raw_before_ids = {row["record_id"] for row in before}
+                    values = [
+                        self.api(
+                            f"/v1/raw-task-content/records/{row['record_id']}/read",
+                            {"schema_version": "local-raw-task-content-record-read/v1",
+                             "task_id": self.raw_binding["task_id"]},
+                        )
+                        for row in before
+                    ]
+                    fixture.require(
+                        all(value.get("contains_plaintext") is True for value in values)
+                        and any("fixture-visible-company-a" in json.dumps(value["fields"]) for value in values)
+                        and any(str(captured_path) in json.dumps(value["fields"]) for value in values),
+                        "native Hermes raw result did not match the executed read",
+                    )
+                    expires_at = datetime.fromisoformat(self.raw_grant["expires_at"].replace("Z", "+00:00"))
+                    self.raw_expired_at = expires_at.isoformat()
+                    deadline = time.monotonic() + self.args.raw_expiry_seconds + 20
+                    while datetime.now(UTC) <= expires_at:
+                        fixture.require(time.monotonic() < deadline, "raw Grant did not naturally expire")
+                        time.sleep(min(1.0, max(0.1, (expires_at - datetime.now(UTC)).total_seconds())))
+                    credential = Path(self.issued["credential_path"]).read_text().strip()
+                    expired = self.api(
+                        "/v1/raw-task-content/capture-permits",
+                        {
+                            "schema_version": "local-raw-task-content-capture-permit-create/v1",
+                            "platform": "hermes",
+                            "agent_id": self.agent,
+                            "session_id": session_id,
+                            "task_id": self.raw_binding["task_id"],
+                            "grant_id": self.raw_grant["grant_id"],
+                            "expected_grant_signature": self.raw_grant["signature"],
+                            "kind": "parameters",
+                            "ttl_seconds": 10,
+                        },
+                        token=credential,
+                        expected=410,
+                    )
+                    fixture.require(
+                        expired.get("reason_code") == "raw_task_content_authority_expired",
+                        "expired raw Grant did not fail closed",
+                    )
+                    self.raw_expiry_confirmed_at = datetime.now(UTC).isoformat()
+                elif index == 4:
+                    after = self.raw_records()
+                    fixture.require(
+                        {row["record_id"] for row in after} == self.raw_before_ids,
+                        "allowed native call after expiry added raw content",
+                    )
+                    self.raw_post_expiry_call_at = datetime.now(UTC).isoformat()
+
+            self._native_step_callback = raw_expiry_step
         try:
             self._run_native(
                 calls,
                 "Use the installed intent-fixture Skill for the SIQ controlled-task check.",
                 skills=("intent-fixture",),
             )
+            if hasattr(self, "_native_step_callback"):
+                del self._native_step_callback
             cross = {
                 "id": "sec-cross-task",
                 "tool": "read_file",
@@ -467,6 +609,8 @@ class Harness(installed.Harness):
                 skills=("intent-fixture",),
             )
         finally:
+            if hasattr(self, "_native_step_callback"):
+                del self._native_step_callback
             controller.shutdown()
             controller.server_close()
             thread.join(timeout=2)
@@ -480,6 +624,10 @@ class Harness(installed.Harness):
         for call in calls:
             row = decisions[call["id"]]
             fixture.require(row["action"] == call["outcome"], call["id"] + ": wrong action")
+            fixture.require(
+                row["session_id"] == subjects[0][0] and row.get("runtime_task_id") == subjects[0][1],
+                call["id"] + ": native session/task changed",
+            )
             attribution = row["skill_attribution"]
             fixture.require(
                 attribution["status"] == "verified"
@@ -504,6 +652,16 @@ class Harness(installed.Harness):
         fixture.require(
             self.broad_rejection == "skill_context_grant_changed", "other installed Skill borrowed authority"
         )
+        if self.args.raw_expiry_seconds:
+            fixture.require(
+                datetime.fromisoformat(self.raw_post_expiry_call_at)
+                > datetime.fromisoformat(self.raw_expired_at),
+                "post-expiry native call preceded Grant expiry",
+            )
+            fixture.require(
+                {row["record_id"] for row in self.raw_records()} == self.raw_before_ids,
+                "cross-task run changed expired raw capture set",
+            )
         fixture.require(
             (Path(self.env["HERMES_HOME"]) / "config.yaml").read_bytes() == self.product_config,
             "fixture plugin config not restored",
@@ -512,7 +670,10 @@ class Harness(installed.Harness):
         verified = json.loads(self.command([str(self.binary), "verify"]))
         fixture.require(verified["verified"], "receipt chain failed verification")
         return {
-            "schema_version": "personal-r01-sec-hermes-native/v1",
+            "schema_version": (
+                "personal-r01-sec-hermes-native-raw-expiry/v1"
+                if self.args.raw_expiry_seconds else "personal-r01-sec-hermes-native/v1"
+            ),
             "recorded_at": datetime.now(UTC).isoformat(),
             "passed": True,
             "binary_sha256": hashlib.sha256(self.binary.read_bytes()).hexdigest(),
@@ -537,11 +698,38 @@ class Harness(installed.Harness):
                 "new_native_task_cannot_copy_sec",
                 "receipt_chain_verified",
                 "test_observer_removed_and_product_config_restored",
+                *(
+                    [
+                        "native_task_scoped_raw_grant_created_after_initial_calls",
+                        "native_parameters_and_output_captured_during_grant",
+                        "raw_plaintext_matches_native_result",
+                        "raw_grant_naturally_expired_on_real_wall_clock",
+                        "expired_capture_permit_rejected_410",
+                        "same_native_task_allowed_after_expiry_without_new_raw_capture",
+                    ]
+                    if self.args.raw_expiry_seconds else []
+                ),
             ],
             "receipt_count": len(records),
-            "verified_decision_count": 2,
+            "verified_decision_count": len(calls),
             "cross_task_verified": False,
             "other_skill_issue_error": self.broad_rejection,
+            **(
+                {"raw_content": {
+                    "authority_ended_by": "natural_expiry",
+                    "record_count": len(self.raw_before_ids),
+                    "kinds": ["parameters", "output"],
+                    "grant_id_sha256": hashlib.sha256(self.raw_grant["grant_id"].encode()).hexdigest(),
+                    "task_binding_source": "server-signed native session binding",
+                    "grant_duration_seconds": self.args.raw_expiry_seconds,
+                    "grant_expires_at": self.raw_expired_at,
+                    "expired_permit_confirmed_at": self.raw_expiry_confirmed_at,
+                    "post_expiry_native_result_at": self.raw_post_expiry_call_at,
+                    "native_session_sha256": hashlib.sha256(subjects[0][0].encode()).hexdigest(),
+                    "native_task_sha256": hashlib.sha256(subjects[0][1].encode()).hexdigest(),
+                }}
+                if self.args.raw_expiry_seconds else {}
+            ),
             "limitations": [
                 "local deterministic synthetic model; no external provider or paid model",
                 "pre_llm observer is a test-only synchronization helper and carries no SIQ credential or authority",
@@ -552,11 +740,16 @@ class Harness(installed.Harness):
 
 
 def main():
+    os.umask(0o077)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", required=True, type=Path)
     parser.add_argument("--hermes-cli", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--raw-expiry-seconds", type=int, default=0,
+                        help="run task-scoped native raw capture through real Grant expiry (60–600 seconds)")
     args = parser.parse_args()
+    fixture.require(args.raw_expiry_seconds == 0 or 60 <= args.raw_expiry_seconds <= 600,
+                    "--raw-expiry-seconds must be zero or between 60 and 600")
     args.binary, args.hermes_cli = args.binary.resolve(), args.hermes_cli.resolve()
     args.installer_managed_profile = True
     args.remove_installed_skill = False
@@ -570,8 +763,9 @@ def main():
             report = harness.native_sec()
         finally:
             harness.stop()
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    args.out.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    with args.out.open("x") as output:
+        output.write(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps({"passed": report["passed"], "checks": len(report["checks"])}))
 
 

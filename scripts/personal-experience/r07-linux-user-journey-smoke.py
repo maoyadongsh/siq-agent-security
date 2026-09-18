@@ -52,6 +52,19 @@ require = fixture.require
 canonical_hash = r04.canonical_hash
 
 
+def failure_diagnostics(error, harness):
+    """Keep exception payloads out of public evidence, even when truncated.
+
+    Check IDs/status and wait markers are authored by this harness; exception
+    messages may contain HTTP bodies, credentials, paths, or browser content.
+    """
+    checks = [{"id": item["id"], "status": item["status"]}
+              for item in getattr(harness, "journey_results", [])]
+    return {"passed": False, "error_type": type(error).__name__,
+            "failed_check_ids": [item["id"] for item in checks if item["status"] == "fail"],
+            "last_wait": getattr(harness, "current_wait", None), "checks": checks}
+
+
 class Harness(r04.Harness):
     def setup_authority(self):
         super().setup_authority()
@@ -63,6 +76,13 @@ class Harness(r04.Harness):
         self.model_failures, self.model_requests_seen = [], []
         self._model = None
         self.journey_results = []
+        self.current_wait = None
+
+    def mark(self, step, category, state="visible"):
+        """Record the fixed wait-point identity for failure diagnostics. Only
+        static step IDs and locator categories are allowed here — never input
+        values, pairing codes, grant IDs or page text."""
+        self.current_wait = {"journey_step": step, "wait_target": {"category": category, "state": state}}
 
     def check_raw_content_default_disabled(self):
         """Store-level default, asserted on the fresh daemon BEFORE the managed
@@ -130,6 +150,7 @@ class Harness(r04.Harness):
     def debug_dump(self, page, name, error):
         # Never persist DOM, screenshots, response bodies or daemon output:
         # these can contain pairing codes, bearer credentials and raw content.
+        # Only fixed phase/step identifiers and locator categories are recorded.
         dump = getattr(self, "debug_directory", None)
         if dump is None:
             dump = Path(tempfile.mkdtemp(prefix="siq-r07-diagnostics-"))
@@ -138,11 +159,14 @@ class Harness(r04.Harness):
         with target.open("x", encoding="utf-8") as handle:
             target.chmod(0o600)
             json.dump({"phase": name, "error_type": type(error).__name__,
-                       "checks_completed": len(self.journey_results)}, handle)
+                       "checks_completed": len(self.journey_results),
+                       "last_wait": self.current_wait}, handle)
         raise error
 
-    def goto_until(self, page, url, locator, timeout=15000):
+    def goto_until(self, page, url, locator, timeout=15000, *, step=None, category=None):
         # One navigation only. A stalled load is a failure, never a retry success.
+        if step is not None:
+            self.mark(step, category or "locator", "visible")
         page.goto(url)
         locator.wait_for(state="visible", timeout=timeout)
 
@@ -244,12 +268,17 @@ class Harness(r04.Harness):
                 # Journey step 2: pair the console from the browser, including a
                 # wrong-code retry before the real code.
                 page.goto(self.endpoint + "/overview")
+                self.mark("step2_pairing_form", "role:heading")
                 expect(page.get_by_role("heading", name="连接你的本地管理台")).to_be_visible()
+                self.mark("step2_pairing_code_input", "label:textbox", "editable")
                 page.get_by_label("配对码", exact=True).fill("wrong")
                 page.get_by_role("button", name="建立管理会话", exact=True).click()
+                self.mark("step2_wrong_code_alert", "role:alert", "contains_text")
                 expect(page.get_by_role("alert")).to_contain_text("配对码无效")
+                self.mark("step2_pairing_code_input", "label:textbox", "editable")
                 page.get_by_label("配对码", exact=True).fill(self.pair_code())
                 page.get_by_role("button", name="建立管理会话", exact=True).click()
+                self.mark("step2_session_established", "role:button")
                 expect(page.get_by_role("button", name="退出管理", exact=True)).to_be_visible()
                 self.record(
                     "r07_step2_ui_pairing_with_wrong_code_retry",
@@ -260,7 +289,8 @@ class Harness(r04.Harness):
 
                 # Journey step 2b: the console discovers the real OpenClaw instance.
                 openclaw_row = page.get_by_role("row").filter(has_text="OpenClaw")
-                self.goto_until(page, self.endpoint + "/bindings", openclaw_row.first)
+                self.goto_until(page, self.endpoint + "/bindings", openclaw_row.first,
+                                step="step2b_bindings_openclaw_row", category="role:row")
                 expect(openclaw_row.first).to_contain_text("发现安装文件")
                 self.record(
                     "r07_step2_ui_bindings_discovers_openclaw",
@@ -272,7 +302,8 @@ class Harness(r04.Harness):
                 # Journey step 3: the deployed V1 grant is visible in the
                 # console, using a single navigation after the product load fix.
                 grant_row = page.get_by_role("row").filter(has_text=grant_id).first
-                self.goto_until(page, self.endpoint + "/grants", grant_row)
+                self.goto_until(page, self.endpoint + "/grants", grant_row,
+                                step="step3_grants_grant_row", category="role:row")
                 self.record(
                     "r07_step3_ui_grants_shows_v1_grant",
                     "console /grants shows the deployed V1 grant by its full grant id",
@@ -298,7 +329,8 @@ class Harness(r04.Harness):
                 deny_marker = (pre.get("reason") or pre.get("reason_code") or "")[:24]
                 require(deny_marker, "deny receipt carries no reason to correlate against the UI")
                 deny_row = page.get_by_role("row").filter(has_text=deny_marker)
-                self.goto_until(page, self.endpoint + "/receipts", deny_row.first)
+                self.goto_until(page, self.endpoint + "/receipts", deny_row.first,
+                                step="step5_receipts_deny_row", category="role:row")
                 expect(deny_row.first).to_contain_text("拒绝")
                 self.record(
                     "r07_step5_ui_receipts_consistent_with_deny",
@@ -347,13 +379,39 @@ class Harness(r04.Harness):
                     ),
                     "call_binding=" + str(attribution.get("call_binding"))[:16] + "…",
                 )
+                sec_read = self.api("/v1/skill-contexts/" + sec["context_id"])
+                grant_doc = self.api("/v1/grants/" + grant_id)["grant"]
+                relations_ok, relations_detail = self.attribution_relations(sec_read, row, grant_doc, view)
                 self.record(
                     "r07_step4_attribution_correlates_grant_install_sec",
-                    "decision correlates the real call with the V1 Grant, install content digest and SEC",
-                    row.get("matched_grant_id") == grant_id and bool(attribution.get("content_hash"))
-                    and self.skill_installation["source_digest"],
-                    "matched_grant_id=" + str(row.get("matched_grant_id")) + " content_hash="
-                    + str(attribution.get("content_hash"))[:16] + "…",
+                    "install record, runtime identity, grant document, SEC and receipt correlate field-by-field: one grant id across all five, SEC pins the install claim signature and the real subject, receipt attribution copies the SEC skill/content hash, SEC authority grant digest recomputes from the live grant document",
+                    relations_ok and bool(self.skill_installation["source_digest"]),
+                    relations_detail + " matched_grant_id=" + str(row.get("matched_grant_id"))
+                    + " content_hash=" + str(attribution.get("content_hash"))[:16] + "…",
+                )
+                mismatch_ok, mismatch_detail = self.attribution_mismatch_negative(sec_read, row, grant_doc, view)
+                self.record(
+                    "r07_step4_attribution_digest_mismatch_detected",
+                    "tampering any one side's digest (grant document, SEC install pin, install claim signature, receipt content hash) is detected by the relation check",
+                    mismatch_ok,
+                    mismatch_detail,
+                )
+                tampered_signature = "0" * 128 if sec_read["signature"] != "0" * 128 else "1" * 128
+                tamper_reject = self.api(
+                    "/v1/skill-contexts/" + sec["context_id"] + "/revoke",
+                    {"schema_version": "local-skill-execution-context-revoke/v1",
+                     "expected_context_signature": tampered_signature,
+                     "actor_id": "automated-fixture-operator", "confirm_revoke": True},
+                    expected=409,
+                )
+                sec_reread = self.api("/v1/skill-contexts/" + sec["context_id"])
+                self.record(
+                    "r07_step4_tampered_sec_revoke_rejected",
+                    "revoking the SEC with a tampered expected signature is refused 409 skill_context_changed and the signed context is unchanged",
+                    tamper_reject.get("error") == "skill_context_changed"
+                    and sec_reread.get("signature") == sec_read["signature"],
+                    "http=409 error=" + str(tamper_reject.get("error"))
+                    + " context_unchanged=" + str(sec_reread.get("signature") == sec_read["signature"]),
                 )
                 # Journey step 6: a sensitive call is held by the deployed grant
                 # authority, approved in the UI, and the replayed resolve is rejected.
@@ -444,10 +502,13 @@ class Harness(r04.Harness):
                 )
                 confirmation_heading = page.get_by_role("heading", name="确认操作：web_extract")
                 self.goto_until(page, self.endpoint + "/confirmations?request=" + item["action_id"],
-                                confirmation_heading)
+                                confirmation_heading,
+                                step="step6_confirmation_detail", category="role:heading")
+                self.mark("step6_confirmation_form", "label:textbox+role:checkbox", "editable")
                 page.get_by_label("确认人", exact=True).fill("journey-fixture-operator")
                 page.get_by_text("我已核对本次操作和参数摘要").check()
                 page.get_by_role("button", name="批准本次请求", exact=True).click()
+                self.mark("step6_approval_recorded", "text:confirmation_receipt")
                 expect(page.get_by_text("已批准本次请求。确认记录：" + decision["receipt_id"])).to_be_visible()
                 self.record(
                     "r07_step6_ui_approval_records_confirmation",
@@ -519,9 +580,12 @@ class Harness(r04.Harness):
                 page_errors = []
                 page.on("pageerror", lambda _: page_errors.append("pageerror"))
                 page.goto(self.endpoint + "/overview")
+                self.mark("step8_pairing_form_fresh_daemon", "role:heading")
                 expect(page.get_by_role("heading", name="连接你的本地管理台")).to_be_visible()
+                self.mark("step8_pairing_code_input", "label:textbox", "editable")
                 page.get_by_label("配对码", exact=True).fill(self.pair_code())
                 page.get_by_role("button", name="建立管理会话", exact=True).click()
+                self.mark("step8_session_established", "role:button")
                 expect(page.get_by_role("button", name="退出管理", exact=True)).to_be_visible()
                 # Keep this exact document and its in-memory session alive.
                 old_admin = self.admin
@@ -532,7 +596,9 @@ class Harness(r04.Harness):
                 # A real UI request must hit the restarted daemon with its old
                 # browser credential; no page.goto/reload or new context here.
                 page.get_by_role("link", name="签发", exact=True).click()
+                self.mark("step8_session_invalidated_notice", "text:session_expired")
                 expect(page.get_by_text(re.compile("管理会话已失效"))).to_be_visible()
+                self.mark("step8_pairing_form_after_invalidation", "role:heading")
                 expect(page.get_by_role("heading", name="连接你的本地管理台")).to_be_visible()
                 self.record(
                     "r07_step8_interrupt_invalidates_ui_session",
@@ -541,14 +607,17 @@ class Harness(r04.Harness):
                     and self.api("/v1/runtime-identities") == identities_before,
                     "same_document=true old_admin_http=401 receipts_unchanged=true identities_unchanged=true",
                 )
+                self.mark("step8_retry_code_input", "label:textbox", "editable")
                 page.get_by_label("配对码", exact=True).fill("wrong")
                 page.get_by_role("button", name="建立管理会话", exact=True).click()
+                self.mark("step8_wrong_code_alert", "role:alert", "contains_text")
                 expect(page.get_by_role("alert")).to_contain_text("配对码无效")
                 code_input = page.get_by_label("配对码", exact=True)
                 code_input.fill("")  # the failed attempt leaves "wrong" in the field
                 code_input.click()
                 page.keyboard.type(self.pair_code())
                 page.keyboard.press("Enter")
+                self.mark("step8_keyboard_repair_established", "role:button")
                 expect(page.get_by_role("button", name="退出管理", exact=True)).to_be_visible()
                 self.record(
                     "r07_step8_retry_and_keyboard_repair",
@@ -558,8 +627,10 @@ class Harness(r04.Harness):
                 )
 
                 # Journey step 9: receipts and activities render post-recovery.
-                self.goto_until(page, self.endpoint + "/receipts", page.get_by_role("table").first)
-                self.goto_until(page, self.endpoint + "/activities", page.get_by_role("table").first)
+                self.goto_until(page, self.endpoint + "/receipts", page.get_by_role("table").first,
+                                step="step9_receipts_table", category="role:table")
+                self.goto_until(page, self.endpoint + "/activities", page.get_by_role("table").first,
+                                step="step9_activities_table", category="role:table")
                 self.record(
                     "r07_step9_receipts_activities_render_after_recovery",
                     "console /receipts and /activities render the recovered history without script errors",
@@ -577,7 +648,8 @@ class Harness(r04.Harness):
                 # default capture still off, the signed record's immutable
                 # limits, per-task authorization in the topbar, and a purge
                 # path that only removes expired ciphertext.
-                self.goto_until(page, self.endpoint + "/settings", page.get_by_text("原文仓已启用，默认采集仍为关闭。"))
+                self.goto_until(page, self.endpoint + "/settings", page.get_by_text("原文仓已启用，默认采集仍为关闭。"),
+                                step="step10_settings_raw_store_status", category="text:raw_store_banner")
                 expect(page.get_by_text("原文仓已启用 · 按任务授权")).to_be_visible()
                 expect(page.get_by_text("1 小时")).to_be_visible()
                 expect(page.get_by_text("16 MiB")).to_be_visible()
@@ -593,8 +665,10 @@ class Harness(r04.Harness):
                     for item in (self.state / "raw-task-content").glob("*.json")
                 }
                 require(bool(ciphertext_before), "native leg must produce real ciphertext before purge")
+                self.mark("step10_purge_controls", "text:checkbox+role:button", "editable")
                 page.get_by_text("仅删除已达到保留期限的独立密文").check()
                 page.get_by_role("button", name="清理到期原文", exact=True).click()
+                self.mark("step10_purge_result", "text:purge_summary")
                 expect(page.get_by_text(re.compile(r"已清理 \d+ 条到期密文，释放 .+。任务回执和追溯记录未改动。"))).to_be_visible()
                 self.record(
                     "r07_step10_purge_preserves_unexpired_records_and_receipts",
@@ -626,7 +700,8 @@ class Harness(r04.Harness):
                 mobile_errors = []
                 mobile.on("pageerror", lambda _: mobile_errors.append("pageerror"))
                 self.goto_until(mobile, self.endpoint + "/confirmations",
-                                mobile.get_by_role("heading", name=re.compile(r"^运行操作")))
+                                mobile.get_by_role("heading", name=re.compile(r"^运行操作")),
+                                step="step11_mobile_confirmations_heading", category="role:heading")
                 self.record(
                     "r07_step11_mobile_confirmations_usable",
                     "390×844 viewport renders the confirmation inbox usable (heading + no script errors)",
@@ -637,16 +712,20 @@ class Harness(r04.Harness):
                 # Journey step 11b: uninstall the adapter from the console; the
                 # user-owned host config must survive.
                 openclaw_row = page.get_by_role("row").filter(has_text="OpenClaw")
-                self.goto_until(page, self.endpoint + "/bindings", openclaw_row.first)
+                self.goto_until(page, self.endpoint + "/bindings", openclaw_row.first,
+                                step="step11_bindings_openclaw_row", category="role:row")
+                self.mark("step11_uninstall_button", "role:button", "enabled")
                 openclaw_row.first.get_by_role("button", name="卸载", exact=True).click()
                 dialog = page.get_by_role("dialog")
                 action_select = dialog.get_by_label("操作", exact=True)
                 apply_button = dialog.get_by_role("button", name="确认应用", exact=True)
+                self.mark("step11_uninstall_preview_ready", "role:button", "enabled")
                 expect(apply_button).to_be_enabled(timeout=60000)
                 # Same-value change must not discard a valid preview forever.
                 action_select.select_option("uninstall")
                 expect(apply_button).to_be_enabled()
                 apply_button.click()
+                self.mark("step11_uninstall_dialog_closed", "role:dialog", "count=0")
                 expect(dialog).to_have_count(0)
                 adapter_state_gone = not (self.oc / "siq-agent-security.json").exists()
                 host_config_kept = (self.oc / "openclaw.json").is_file()
@@ -659,7 +738,9 @@ class Harness(r04.Harness):
                 )
 
                 # Journey step 12: logout returns the console to pairing state.
+                self.mark("step12_logout_button", "role:button", "enabled")
                 page.get_by_role("button", name="退出管理", exact=True).click()
+                self.mark("step12_pairing_form_restored", "role:heading")
                 expect(page.get_by_role("heading", name="连接你的本地管理台")).to_be_visible()
                 self.record(
                     "r07_step12_logout_ends_session",
@@ -738,11 +819,10 @@ def main():
             failure = args.out.with_suffix(".failure.json")
             with failure.open("x", encoding="utf-8") as handle:
                 failure.chmod(0o600)
-                json.dump({"passed": False, "error_type": type(exc).__name__,
+                json.dump({**failure_diagnostics(exc, harness),
                            "binary_sha256": hashlib.sha256(args.binary.read_bytes()).hexdigest(),
                            "harness_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                           "checks": [{"id": item["id"], "status": item["status"]}
-                                      for item in getattr(harness, "journey_results", [])]}, handle, indent=2)
+}, handle, indent=2)
             raise
         finally:
             if harness is not None:

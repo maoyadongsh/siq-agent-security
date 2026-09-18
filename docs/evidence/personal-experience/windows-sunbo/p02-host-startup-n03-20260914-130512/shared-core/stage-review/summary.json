@@ -1,0 +1,44 @@
+{
+  "source_head": "9cc18630be584692905e1ce612b91a9ba5aee610",
+  "source_after": "9cc18630be584692905e1ce612b91a9ba5aee610",
+  "source_dirty_after": false,
+  "started_utc": "2026-09-14T03:22:51.3608043Z",
+  "finished_utc": "2026-09-14T03:23:39.5718864Z",
+  "test_exit": 1,
+  "goos": "windows",
+  "goarch": "amd64",
+  "cgo_enabled": "0",
+  "scope": "Three selected adapterinstall tests from fixed PR45 source; no host CLI or model invocation",
+  "tests": [
+    {
+      "Test": "TestHermesNativeEvidenceSeparatesRegistrationFromCompatibility",
+      "Action": "pass",
+      "Elapsed": 0.06
+    },
+    {
+      "Test": "TestConfiguredEndpointReadsConnectionDocumentOnly",
+      "Action": "pass",
+      "Elapsed": 3.3
+    },
+    {
+      "Test": "TestHermesControlledInstallPathChecksBeforeNativeInstall",
+      "Action": "fail",
+      "Elapsed": 1.19
+    }
+  ],
+  "original_log_sha256": "47091146adcdc96faf2fb1d7f9fb95a360a3363e75b4a43ab6a324c91c86997d",
+  "public_log_sha256": "8712724ecd1dcf1f73b87e6f74f2ed5d9c0cd4207e544406148d2dc68e128ee5",
+  "redaction_scope": "Only owned fixture/check-out/workspace absolute prefixes in Output strings; raw log retained privately",
+  "tested_siq_cli_binary": "not applicable: go test compiled the selected package; no persistent CLI binary produced or retagged",
+  "go_version": "go version go1.27.1 windows/amd64",
+  "command": "CGO_ENABLED=0 GOPROXY=off GOSUMDB=off GOTOOLCHAIN=local GOOS=windows GOARCH=amd64 go test ./internal/adapterinstall -run ^Test(HermesControlledInstallPathChecksBeforeNativeInstall|HermesNativeEvidenceSeparatesRegistrationFromCompatibility|ConfiguredEndpointReadsConnectionDocumentOnly)$ -count=1 -timeout=90s -json",
+  "checkout_setup_note": "Initial nested worktree creation failed on long tracked filenames and Git removed the failed worktree; retried after verifying it absent using command-scoped git -c core.longpaths=true. No global config change.",
+  "publication_state_checked_after_test": {
+    "pr": 45,
+    "state": "MERGED",
+    "merged_at": "2026-09-14T03:19:44Z",
+    "merge_commit": "4464dfbc8e66c8ec1fb2590b286351595fcd9667",
+    "timing": "Merged before the test start; the earlier pre-test source inventory observed an open PR. No checkout update or source relabeling during the test."
+  },
+  "original_private_summary_note": "The original private runner summary still says unmerged based on the preceding inventory; this derived report corrects that stale publication description using the later authoritative PR readback."
+}

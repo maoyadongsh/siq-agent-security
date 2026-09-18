@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -33,6 +34,19 @@ func (s *Server) adapterOptions(platform string) adapterinstall.Options {
 }
 
 func (s *Server) diagnoseAdapter(platform string) adapterinstall.Diagnosis {
+	if !adapterinstall.NewIntegrationSupportedOnOS(platform, runtime.GOOS) {
+		message := "Linux 不支持 WorkBuddy 新接入；历史配置可查看或卸载"
+		next := "如有旧接入，可在设置中卸载；Linux 当前仅验收 OpenClaw 和 Hermes。"
+		if platform == adapterinstall.CodeBuddy {
+			message = "CodeBuddy 已退出全平台产品范围；历史配置可查看或卸载"
+			next = "如有旧接入，可在设置中卸载；新权限请选当前支持的平台。"
+		}
+		return adapterinstall.Diagnosis{
+			Platform: platform, ConfigurationState: "unsupported", RuntimeState: "unverified",
+			Checks:    []adapterinstall.DiagnosticCheck{{Code: "product_scope", Status: "not_applicable", Message: message}},
+			NextSteps: []string{next},
+		}
+	}
 	return s.diagnoseInstance(s.adapterOptions(platform))
 }
 

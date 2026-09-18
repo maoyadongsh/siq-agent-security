@@ -1,0 +1,308 @@
+{
+  "schema": "windows-p04-r2-independent-verification/v1",
+  "result": "consistent",
+  "candidate": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "mode": "readback_only_no_product_execution_with_authorized_two_file_node_stat",
+  "checks": {
+    "thirteen_assertions_three_layers": true,
+    "complete_result": true,
+    "stage_documents_equal_embedded_records": true,
+    "fixed_source_record": true,
+    "claim-first_metadata": true,
+    "claim-first_strict_json": true,
+    "claim-first_current_bytes": true,
+    "claim-first_stage": true,
+    "claim-stable_metadata": true,
+    "claim-stable_strict_json": true,
+    "claim-stable_current_bytes": true,
+    "claim-stable_stage": true,
+    "recover-result_metadata": true,
+    "recover-result_strict_json": true,
+    "recover-result_current_bytes": true,
+    "recover-result_stage": true,
+    "same_original_claim_before_after": true,
+    "prepared_plan_matches_claim": true,
+    "partial_target_two_files": true,
+    "partial_states": true,
+    "recovered_states": true,
+    "same_claim_signature_binding": true,
+    "current_removal_docs": true,
+    "old_only_one_revocation_appended": true,
+    "candidate_versions_unchanged": true,
+    "old_grant_v0": true,
+    "old_grant_v1": true,
+    "old_grant_v2": true,
+    "old_grant_exact_versions": true,
+    "candidate_grant_v0": true,
+    "candidate_grant_v1": true,
+    "candidate_grant_exact_versions": true,
+    "only_five_grants": true,
+    "pool_stage_and_current": true,
+    "current_target_absent_and_skills_empty": true,
+    "replacement_not_installed": true,
+    "source_v1": true,
+    "source_v2": true,
+    "profile_config.yaml": true,
+    "profile_SOUL.md_absent": true,
+    "all_stage_profile_records_equal": true,
+    "runtime_empty_runtime-identities": true,
+    "runtime_empty_runtime-identity-secrets": true,
+    "runtime_empty_runtime-identity-revocations": true,
+    "runtime_empty_skill-installations/runtime-bindings": true,
+    "history_0": true,
+    "history_1": true,
+    "history_2": true,
+    "history_3": true,
+    "history_4": true,
+    "history_5": true,
+    "history_6": true,
+    "history_7": true,
+    "history_8": true,
+    "history_9": true,
+    "history_10": true,
+    "history_11": true,
+    "history_12": true,
+    "history_13": true,
+    "history_14": true,
+    "history_15": true,
+    "history_16": true,
+    "history_17": true,
+    "history_18": true,
+    "history_19": true,
+    "history_20": true,
+    "history_21": true,
+    "history_22": true,
+    "history_23": true,
+    "history_24": true,
+    "explicit_history_count": true,
+    "recorded_lock_denial_and_release": true,
+    "recorded_ui_cleanup": true,
+    "recorded_job_cleanup": true,
+    "recorded_service_cleanup": true,
+    "no_runtime_mock_provider": true,
+    "locked_stage_observation_hash": true,
+    "same_pinned_node_pool_identity_0": true,
+    "same_pinned_node_pool_identity_1": true
+  },
+  "check_count": 79,
+  "passed_check_count": 79,
+  "failed_checks": [],
+  "source_documents": {
+    "journey": {
+      "bytes": 6516,
+      "sha256": "fcc7b96586c838f7b5a416c6d4b67513a2aa75c0b6094c3eb99f6d9eb66bcfb4"
+    },
+    "harness": {
+      "bytes": 28729,
+      "sha256": "d907b598a29ef9305ba20d0c5ea0534877ad3bf7ddeb84680381180199227021"
+    },
+    "ui": {
+      "bytes": 76284,
+      "sha256": "5cb32c7e257e00494d05207f16720dfdb5277e1b8b01fe060168cdae0c8d83e6"
+    },
+    "stage_v1-approved": {
+      "bytes": 1540,
+      "sha256": "511ff02f04860a75057fac76529c4485a312f7edafaca3153b298095d8a53537"
+    },
+    "stage_v1-installed": {
+      "bytes": 2416,
+      "sha256": "5f10d821b45af89d57cc386869305923bdec6c4f7b9ef14671bbe83c4a206592"
+    },
+    "stage_prepared": {
+      "bytes": 9058,
+      "sha256": "fe81a4b03a278068212ba388393234fc7381793a6548ac2b89f90bb39d841139"
+    },
+    "stage_locked-partial-failure": {
+      "bytes": 18880,
+      "sha256": "e60f5abd93215a919a12fb2c39bacad156aa2465024878dcd37e3276bf370173"
+    },
+    "stage_recovered-aborted": {
+      "bytes": 18075,
+      "sha256": "bc6241dc076d5dab9be20699f1ac4d12f0831abb01a0ddc3af9c78ed7537a852"
+    },
+    "claim-first_disk": {
+      "bytes": 5780,
+      "sha256": "3046adb2da46a2413a0525cfffacdad77bd2befba03ebc0e1f2f25de5282d2b5"
+    },
+    "claim-first_api": {
+      "bytes": 6578,
+      "sha256": "e92d38dc59e7b39faa216b93ef9e7a00c7d6db3f663c46d35cf1d887adbe6159"
+    },
+    "claim-first_metadata": {
+      "bytes": 597,
+      "sha256": "54d7606b95b11b4ecdb6cf68c741fb3564898c145148374c3eb1c6e92629cf76"
+    },
+    "claim-stable_disk": {
+      "bytes": 5780,
+      "sha256": "3046adb2da46a2413a0525cfffacdad77bd2befba03ebc0e1f2f25de5282d2b5"
+    },
+    "claim-stable_api": {
+      "bytes": 6578,
+      "sha256": "e92d38dc59e7b39faa216b93ef9e7a00c7d6db3f663c46d35cf1d887adbe6159"
+    },
+    "claim-stable_metadata": {
+      "bytes": 600,
+      "sha256": "76a589f8a5eddd84af847431d2ccdc75fb68b99b53603021a1f387d3f3fed827"
+    },
+    "recover-result_disk": {
+      "bytes": 730,
+      "sha256": "0e4636902492385555899ea174b41a357b603369bda338832bb1dd197e7566c9"
+    },
+    "recover-result_api": {
+      "bytes": 772,
+      "sha256": "d822304ba143c3a1382f7b18152f8f2c0c8be366d2f4977bba2c0252eadf89a5"
+    },
+    "recover-result_metadata": {
+      "bytes": 604,
+      "sha256": "3ad1a46d2a7006a5797ee40446d42fe38d6ee127c69fe16b456974fe7683ad46"
+    },
+    "old_grant_v0": {
+      "bytes": 1606,
+      "sha256": "a479580e94c1a6fa4a6d738575e0b57563bcfab0caad7c64d9096935a7ad022a"
+    },
+    "old_grant_v1": {
+      "bytes": 1738,
+      "sha256": "96840230e50e469da8a97c49e1f6c22a2303b8f1c7678f9af50df9a93844d51d"
+    },
+    "old_grant_v2": {
+      "bytes": 1737,
+      "sha256": "4c128fa408b151c260f357f05c669b5fa4bff78b15e2e22787709d7c5b8e945c"
+    },
+    "candidate_grant_v0": {
+      "bytes": 1606,
+      "sha256": "3714cce9419189b002a19e904772de3f5b014a6c39450778cb5d3ce83789dd2f"
+    },
+    "candidate_grant_v1": {
+      "bytes": 1738,
+      "sha256": "e0e5e06e427294fbfe5a527f207b0660d5dc4f1ea02f4517a5048ba3cbc2d233"
+    },
+    "profile_config.yaml": {
+      "bytes": 60,
+      "sha256": "8086c092136188faec813230e046d88d3517e9b4a86b08b5f2e9a64ac7f0b4b9"
+    }
+  },
+  "comparisons": [
+    {
+      "label": "claim-first",
+      "disk": {
+        "bytes": 5780,
+        "sha256": "3046adb2da46a2413a0525cfffacdad77bd2befba03ebc0e1f2f25de5282d2b5"
+      },
+      "api_reserialized": {
+        "bytes": 6578,
+        "sha256": "e92d38dc59e7b39faa216b93ef9e7a00c7d6db3f663c46d35cf1d887adbe6159"
+      },
+      "bytes_equal": false,
+      "strict_json_equal": true
+    },
+    {
+      "label": "claim-stable",
+      "disk": {
+        "bytes": 5780,
+        "sha256": "3046adb2da46a2413a0525cfffacdad77bd2befba03ebc0e1f2f25de5282d2b5"
+      },
+      "api_reserialized": {
+        "bytes": 6578,
+        "sha256": "e92d38dc59e7b39faa216b93ef9e7a00c7d6db3f663c46d35cf1d887adbe6159"
+      },
+      "bytes_equal": false,
+      "strict_json_equal": true
+    },
+    {
+      "label": "recover-result",
+      "disk": {
+        "bytes": 730,
+        "sha256": "0e4636902492385555899ea174b41a357b603369bda338832bb1dd197e7566c9"
+      },
+      "api_reserialized": {
+        "bytes": 772,
+        "sha256": "d822304ba143c3a1382f7b18152f8f2c0c8be366d2f4977bba2c0252eadf89a5"
+      },
+      "bytes_equal": false,
+      "strict_json_equal": true
+    }
+  ],
+  "cross_runtime_identity_observations": {
+    "python_and_node_exact_device_inode_equal": {
+      "pool_content_identity_0": false,
+      "pool_content_identity_1": false
+    },
+    "current_same_pinned_node_vs_stage_identity_equal": [
+      true,
+      true
+    ],
+    "inode_equal_across_runtimes": [
+      true,
+      true
+    ],
+    "python_device_low32_equals_node": [
+      true,
+      true
+    ],
+    "node_exe_sha256": "fdddbf4581e046b8102815d56208d6a248950bb554570b81519a8a5dacfee95d",
+    "node_receipt": "ba6fae",
+    "node_exit_code": 0,
+    "node_stdout_bytes": 150,
+    "node_stdout_sha256": "9ee8cbc5ecfc146625b9c28da00c2952782e01cf9b0bc2bb8eb6c7af4e91160e",
+    "node_stderr_bytes": 0,
+    "raw_identity_values_omitted_from_public_report": true,
+    "interpretation": "Exact cross-runtime device comparison differs; same pinned Node readback agrees with recorded Node identity. No file replacement inferred."
+  },
+  "grant_versions": {
+    "old_grant": [
+      {
+        "version": 0,
+        "bytes": 1606,
+        "sha256": "a479580e94c1a6fa4a6d738575e0b57563bcfab0caad7c64d9096935a7ad022a",
+        "status": "pending_approval"
+      },
+      {
+        "version": 1,
+        "bytes": 1738,
+        "sha256": "96840230e50e469da8a97c49e1f6c22a2303b8f1c7678f9af50df9a93844d51d",
+        "status": "approved"
+      },
+      {
+        "version": 2,
+        "bytes": 1737,
+        "sha256": "4c128fa408b151c260f357f05c669b5fa4bff78b15e2e22787709d7c5b8e945c",
+        "status": "revoked"
+      }
+    ],
+    "candidate_grant": [
+      {
+        "version": 0,
+        "bytes": 1606,
+        "sha256": "3714cce9419189b002a19e904772de3f5b014a6c39450778cb5d3ce83789dd2f",
+        "status": "pending_approval"
+      },
+      {
+        "version": 1,
+        "bytes": 1738,
+        "sha256": "e0e5e06e427294fbfe5a527f207b0660d5dc4f1ea02f4517a5048ba3cbc2d233",
+        "status": "approved"
+      }
+    ]
+  },
+  "explicit_history_current_files_rehashed": 25,
+  "business_assertions": 13,
+  "recorded_http_status_counts": {
+    "200": 183,
+    "201": 6,
+    "401": 1,
+    "404": 1,
+    "409": 1,
+    "429": 2
+  },
+  "recorded_page_error_count": 0,
+  "recorded_command_count": 28,
+  "all_raw_streams_independently_rehashed": false,
+  "limitations": [
+    "API comparison files are parsed JSON reserializations, not raw HTTP bytes.",
+    "The complete pre-action history map was not saved; 25 explicitly listed current hashes and recorded stage grants were independently checked.",
+    "Cleanup, share-delete denial and intermediate target state are controller/stage observations, not a second lifecycle measurement.",
+    "Most command streams retained only memory hashes and filtered logs; no complete raw-stream rehash claim.",
+    "Only listed synthetic sources, pool, target, grants/history and config.yaml/SOUL.md were read; no daily-profile, ACL or global-process claim.",
+    "R1 remains its original failed attempt. No Hermes/provider execution or full host/P04 acceptance claim."
+  ]
+}

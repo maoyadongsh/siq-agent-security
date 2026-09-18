@@ -1,0 +1,291 @@
+{
+  "schema": "openshell-taskexec-perf/v1",
+  "scope": "task_execution",
+  "scope_note": "independent of openshell-b2b3-perf-protocol.py; the two drivers' results must never be merged",
+  "protocol": {
+    "file": "protocol.md",
+    "schema": "openshell-taskexec-perf-protocol/v1",
+    "sha256": "32246f7b3a3d8e137aade9a1fbe45c408fb9f42aaedd1db33136c4b40b537288",
+    "amendment": "R1 (pre-measurement): conditioning step between S2 and S3; R2 (pre-measurement): teardown invariant is policy content, not revision; no frozen parameter changed by either"
+  },
+  "candidate": {
+    "binary": "/tmp/siq-v6-hermes-post-e11-agent",
+    "binary_sha256": "0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+    "source_binding_procedure": "B / source_binding-family; measured at run start, not independently captured at build time",
+    "source_binding_sha256": "ba8d266ef5ba861282f23a8576be8744d6023118f3f42efd8e1054632ffe06fc",
+    "source_file_count": 931,
+    "source_stable_during_run": true
+  },
+  "meta": {
+    "candidate_binary": "/tmp/siq-v6-hermes-post-e11-agent",
+    "binary_sha256": "0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+    "gateway_endpoint": "https://127.0.0.1:17671",
+    "sandbox_target": "siq-v6-f04-post-e11-local-20260917",
+    "fact_endpoint": "10.200.0.1:1",
+    "fact_endpoint_role": "declared policy content only; never contacted",
+    "isolated_root": "/tmp/siq-o05v6-taskexec-gfzijv8e",
+    "isolated_state": "/tmp/siq-o05v6-taskexec-gfzijv8e/state",
+    "isolated_home": "/tmp/siq-o05v6-taskexec-gfzijv8e/home",
+    "canary_argv_count": 3,
+    "canary_path": "/tmp/o05v6-canary-fa7471225897d9c8.txt",
+    "started_at": "2026-09-17T11:56:39.088672+00:00",
+    "ui_acceptance": "not_run",
+    "production_executor": "POST /v1/openshell/task-executions",
+    "notes": [
+      "canary stdout 由运行时随机 token 构成，无法被非真实执行伪造",
+      "原始 argv 只存在于人工批准的 params；证据/观测只存摘要"
+    ]
+  },
+  "frozen": {
+    "rounds": 3,
+    "warmup": 2,
+    "samples": 15,
+    "cycle_samples": 5,
+    "order": {
+      "1": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "2": [
+        "S2",
+        "cond",
+        "S3",
+        "S1",
+        "S4"
+      ],
+      "3": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ]
+    },
+    "budgets_ms": {
+      "S1": {
+        "p95": 15000.0,
+        "max": 30000.0
+      },
+      "S2": {
+        "p95": 60000.0,
+        "max": 60000.0
+      },
+      "S3": {
+        "p95": 2000.0,
+        "max": 15000.0
+      },
+      "S4": {
+        "p95": 1500.0,
+        "max": 15000.0
+      }
+    },
+    "percentile": "nearest-rank ceil(p/100*n) on sorted samples",
+    "exclusion_rule": "none",
+    "failure_rule": "any invalid measured sample voids its round and stops the run; no retry, no cherry-picking"
+  },
+  "rounds_completed": [],
+  "aborted": false,
+  "abort_reason": null,
+  "aborted_round": null,
+  "scenarios": {
+    "S1": {
+      "scenario": "doctor_readback",
+      "scope": "control_plane",
+      "evidence_level": "integration_real_gateway_control_plane",
+      "relative_to_old_candidate": "not_measured",
+      "relative_reason": "本轮未按相同协议独占重测 main 基点的 doctor 读回",
+      "wall_ms": {
+        "n": 0
+      },
+      "invalid_samples": 0,
+      "budget_p95_ms": 15000.0,
+      "max_ceiling_ms": 30000.0,
+      "per_round": {
+        "1": {
+          "n": 0
+        },
+        "2": {
+          "n": 0
+        },
+        "3": {
+          "n": 0
+        }
+      },
+      "phases": {
+        "user_visible_total_ms": "measured (wall_ms above)",
+        "policy_load_ms": "measured only for S2 (wall_ms above)",
+        "remote_exec_ms": "product-measured (outcome.started_at/finished_at); see samples.json",
+        "client_api_and_recording_ms": "DERIVED (wall - remote); recording is not separable from it and is reported as null",
+        "per_phase_write_counts": null,
+        "per_phase_write_counts_reason": "the product exposes no per-phase write/fsync/signature counters; adding them would change the candidate under measurement"
+      },
+      "verdict": "no_valid_samples"
+    },
+    "S2": {
+      "scenario": "policy_load_roundtrip",
+      "scope": "control_plane",
+      "evidence_level": "integration_real_gateway_policy_write",
+      "relative_to_old_candidate": "not_measured",
+      "relative_reason": "本轮未按相同协议独占重测 main 基点的策略加载",
+      "wall_ms": {
+        "n": 0
+      },
+      "invalid_samples": 0,
+      "budget_p95_ms": 60000.0,
+      "max_ceiling_ms": 60000.0,
+      "per_round": {
+        "1": {
+          "n": 0
+        },
+        "2": {
+          "n": 0
+        },
+        "3": {
+          "n": 0
+        }
+      },
+      "phases": {
+        "user_visible_total_ms": "measured (wall_ms above)",
+        "policy_load_ms": "measured only for S2 (wall_ms above)",
+        "remote_exec_ms": "product-measured (outcome.started_at/finished_at); see samples.json",
+        "client_api_and_recording_ms": "DERIVED (wall - remote); recording is not separable from it and is reported as null",
+        "per_phase_write_counts": null,
+        "per_phase_write_counts_reason": "the product exposes no per-phase write/fsync/signature counters; adding them would change the candidate under measurement"
+      },
+      "verdict": "no_valid_samples"
+    },
+    "S3": {
+      "scenario": "taskexec_read_only",
+      "scope": "task_execution",
+      "evidence_level": "integration_real_gateway_real_sandbox_real_execution",
+      "relative_to_old_candidate": "not_comparable",
+      "relative_reason": "集成基点 9b8c09af 无任务执行路由；不能把 policy_apply 冒充任务执行",
+      "wall_ms": {
+        "n": 0
+      },
+      "invalid_samples": 0,
+      "budget_p95_ms": 2000.0,
+      "max_ceiling_ms": 15000.0,
+      "per_round": {
+        "1": {
+          "n": 0
+        },
+        "2": {
+          "n": 0
+        },
+        "3": {
+          "n": 0
+        }
+      },
+      "phases": {
+        "user_visible_total_ms": "measured (wall_ms above)",
+        "policy_load_ms": "measured only for S2 (wall_ms above)",
+        "remote_exec_ms": "product-measured (outcome.started_at/finished_at); see samples.json",
+        "client_api_and_recording_ms": "DERIVED (wall - remote); recording is not separable from it and is reported as null",
+        "per_phase_write_counts": null,
+        "per_phase_write_counts_reason": "the product exposes no per-phase write/fsync/signature counters; adding them would change the candidate under measurement",
+        "remote_exec_ms_stats": {
+          "n": 0
+        },
+        "client_api_and_recording_ms_stats": {
+          "n": 0,
+          "derived": true
+        }
+      },
+      "anti_replay": {
+        "method": "each sample's stdout digest must derive from that sample's own unique token",
+        "matched": {
+          "exact": 0,
+          "trailing_newline": 0
+        }
+      },
+      "verdict": "no_valid_samples"
+    },
+    "S4": {
+      "scenario": "taskexec_status_read",
+      "scope": "task_execution",
+      "evidence_level": "integration_real_daemon_state_projection",
+      "relative_to_old_candidate": "not_comparable",
+      "relative_reason": "集成基点 9b8c09af 无任务执行状态读回路由",
+      "wall_ms": {
+        "n": 0
+      },
+      "invalid_samples": 0,
+      "budget_p95_ms": 1500.0,
+      "max_ceiling_ms": 15000.0,
+      "per_round": {
+        "1": {
+          "n": 0
+        },
+        "2": {
+          "n": 0
+        },
+        "3": {
+          "n": 0
+        }
+      },
+      "phases": {
+        "user_visible_total_ms": "measured (wall_ms above)",
+        "policy_load_ms": "measured only for S2 (wall_ms above)",
+        "remote_exec_ms": "product-measured (outcome.started_at/finished_at); see samples.json",
+        "client_api_and_recording_ms": "DERIVED (wall - remote); recording is not separable from it and is reported as null",
+        "per_phase_write_counts": null,
+        "per_phase_write_counts_reason": "the product exposes no per-phase write/fsync/signature counters; adding them would change the candidate under measurement"
+      },
+      "verdict": "no_valid_samples"
+    }
+  },
+  "budget_misses": [],
+  "conditioning": [],
+  "conditioning_role": "untimed environment conditioning; excluded from all percentiles and budgets",
+  "resources": [],
+  "resource_notes": {
+    "daemon_rss_kb": "VmRSS of this batch's own daemon, read from /proc/<pid>/status",
+    "client_cpu": "resource.getrusage; children_ms only accounts reaped children, so per-sample daemon CPU is not obtainable and is reported as null",
+    "per_sample_daemon_cpu_ms": null,
+    "per_sample_daemon_cpu_reason": "a running daemon's CPU is only reaped at exit, so it is a whole-run figure, not a per-sample one"
+  },
+  "relative_to_old_candidate": {
+    "S1": {
+      "value": "not_measured",
+      "reason": "本轮未按相同协议独占重测 main 基点的 doctor 读回"
+    },
+    "S2": {
+      "value": "not_measured",
+      "reason": "本轮未按相同协议独占重测 main 基点的策略加载"
+    },
+    "S3": {
+      "value": "not_comparable",
+      "reason": "集成基点 9b8c09af 无任务执行路由；不能把 policy_apply 冒充任务执行"
+    },
+    "S4": {
+      "value": "not_comparable",
+      "reason": "集成基点 9b8c09af 无任务执行状态读回路由"
+    }
+  },
+  "interference_precheck": [],
+  "environment_conditions": {
+    "sandbox_exec_stall": "intermittent; bounded by the conditioning step (protocol §1.3 R1) and, for measured samples, by the §1.5 stop rule",
+    "shared_gateway": "pid 4009810 used as-is; not restarted by this batch",
+    "sandbox": "siq-v6-f04-post-e11-local-20260917",
+    "host": "Linux-6.17.0-1014-nvidia-aarch64-with-glibc2.39"
+  },
+  "finished_at": "2026-09-17T11:56:39.146522+00:00",
+  "steps": [
+    {
+      "id": "ABORT",
+      "title": "performance run aborted",
+      "kind": "derived",
+      "status": "fail",
+      "detail": "the frozen protocol is missing: <repo>/docs/evidence/personal-experience/v6-f05-post-e11-perf-20260917/protocol.md",
+      "leg": "?",
+      "traceback": "Traceback (most recent call last):\n  File \"<repo>/scripts/personal-experience/openshell-o05v6-taskexec-perf.py\", line 982, in main\n    rc = j.run()\n  File \"<repo>/scripts/personal-experience/openshell-o05v6-taskexec-perf.py\", line 678, in run\n    self.bind_protocol()\n    ~~~~~~~~~~~~~~~~~~^^\n  File \"<repo>/scripts/personal-experience/openshell-o05v6-taskexec-perf.py\", line 286, in bind_protocol\n    check(self.protocol_path.is_file(),\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n          f\"the frozen protocol is missing: {self.protocol_path}\")\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<repo>/scripts/personal-experience/openshell-o05v6-taskexec-journey.py\", line 95, in check\n    raise StepFailure(detail)\no05v6_taskexec_journey.StepFailure: the frozen protocol is missing: <repo>/docs/evidence/personal-experience/v6-f05-post-e11-perf-20260917/protocol.md\n",
+      "recorded_at": "2026-09-17T11:56:39.118709+00:00",
+      "binary_sha256": "0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+      "sandbox_target": "siq-v6-f04-post-e11-local-20260917"
+    }
+  ]
+}

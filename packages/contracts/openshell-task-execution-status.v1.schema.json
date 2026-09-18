@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/openshell-task-execution-status.v1.schema.json",
+  "title": "Durable status of one OpenShell task execution",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "state", "reason_code", "execution_id", "action_id",
+    "decision_receipt_id", "target", "platform", "session_id", "agent_id", "tool",
+    "policy_revision", "policy_digest", "argv_digest", "task_execution_kind"
+  ],
+  "properties": {
+    "schema_version": {"const": "openshell-task-execution-status/v1"},
+    "task_execution_kind": {"const": "real_sandbox_command"},
+    "state": {
+      "enum": [
+        "denied", "reserved", "policy_unverified", "running", "succeeded", "failed",
+        "output_limited", "timed_out", "stop_requested", "uncertain",
+        "reconciled_occurred", "reconciled_not_occurred"
+      ]
+    },
+    "reason_code": {
+      "enum": [
+        "openshell_task_reserved", "openshell_task_policy_not_loaded",
+        "openshell_task_running", "openshell_task_succeeded", "openshell_task_failed",
+        "openshell_task_output_limited", "openshell_task_timeout_local",
+        "openshell_task_timeout_remote", "openshell_task_stop_requested_local_only",
+        "openshell_task_result_uncertain", "openshell_task_confirmed_occurred",
+        "openshell_task_confirmed_not_occurred", "openshell_task_denied_binding",
+        "openshell_task_denied_grant", "openshell_task_denied_policy",
+        "openshell_task_reservation_expired", "openshell_task_backend_unbound"
+      ]
+    },
+    "execution_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "action_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "decision_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "reservation_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "result_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "reconciliation_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "platform": {"type": "string", "minLength": 1, "maxLength": 64},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "agent_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "task_id": {"type": "string", "maxLength": 256},
+    "runtime_task_id": {"type": "string", "maxLength": 256},
+    "tool": {"const": "exec"},
+    "target": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,62}$"},
+    "policy_revision": {"type": "string", "pattern": "^[1-9][0-9]{0,18}$"},
+    "policy_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "argv_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "argv_preview": {"type": "array", "maxItems": 256, "items": {"type": "string", "maxLength": 256}},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "remote_exit_code": {"type": "integer", "minimum": -1, "maximum": 255},
+    "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 900},
+    "timeout_bound_that_fired": {"enum": ["remote", "local", "none"]},
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "bytes", "truncated", "raw_stored", "raw_opt_in"],
+      "properties": {
+        "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "stderr_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "bytes": {"type": "integer", "minimum": 0},
+        "truncated": {"type": "boolean"},
+        "raw_stored": {"type": "boolean"},
+        "raw_opt_in": {"type": "boolean"}
+      }
+    },
+    "stop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requested_at", "local_cli_termination", "remote_stop", "remote_stop_confirmed"],
+      "properties": {
+        "requested_at": {"type": "string", "format": "date-time"},
+        "local_cli_termination": {"enum": ["not_running", "requested", "terminated", "refused"]},
+        "remote_stop": {"const": "unsupported"},
+        "remote_stop_confirmed": {"const": false},
+        "actor_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "note": {"type": "string", "maxLength": 512}
+      }
+    },
+    "note": {"type": "string", "maxLength": 512}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"state": {"const": "denied"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"enum": ["openshell_task_denied_binding", "openshell_task_denied_grant", "openshell_task_denied_policy", "openshell_task_backend_unbound", "openshell_task_reservation_expired"]}}}
+    },
+    {
+      "if": {"properties": {"state": {"const": "reserved"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"const": "openshell_task_reserved"}}, "required": ["reservation_receipt_id"]}
+    },
+    {
+      "if": {"properties": {"state": {"const": "policy_unverified"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"const": "openshell_task_policy_not_loaded"}}, "required": ["reservation_receipt_id"]}
+    },
+    {
+      "if": {"properties": {"state": {"const": "running"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"const": "openshell_task_running"}}, "required": ["reservation_receipt_id", "started_at"]}
+    },
+    {
+      "if": {"properties": {"state": {"const": "succeeded"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"const": "openshell_task_succeeded"}, "remote_exit_code": {"const": 0}}, "required": ["reservation_receipt_id", "remote_exit_code", "output"]}
+    },
+    {
+      "if": {"properties": {"state": {"const": "failed"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"const": "openshell_task_failed"}}, "required": ["reservation_receipt_id", "remote_exit_code", "output"]}
+    },
+    {
+      "if": {"properties": {"state": {"const": "output_limited"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"const": "openshell_task_output_limited"}}, "required": ["reservation_receipt_id", "output"]}
+    },
+    {
+      "if": {"properties": {"state": {"const": "timed_out"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"enum": ["openshell_task_timeout_local", "openshell_task_timeout_remote"]}, "timeout_bound_that_fired": {"enum": ["remote", "local"]}}, "required": ["reservation_receipt_id", "timeout_bound_that_fired"]}
+    },
+    {
+      "if": {"properties": {"state": {"const": "stop_requested"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"const": "openshell_task_stop_requested_local_only"}}, "required": ["reservation_receipt_id", "stop"]}
+    },
+    {
+      "if": {"properties": {"state": {"const": "uncertain"}}, "required": ["state"]},
+      "then": {"properties": {"reason_code": {"const": "openshell_task_result_uncertain"}}, "required": ["reservation_receipt_id"]}
+    },
+    {
+      "if": {"properties": {"state": {"enum": ["reconciled_occurred", "reconciled_not_occurred"]}}, "required": ["state"]},
+      "then": {"required": ["reservation_receipt_id", "reconciliation_receipt_id", "reason_code"]}
+    },
+    {
+      "if": {"properties": {"reason_code": {"const": "openshell_task_confirmed_occurred"}}, "required": ["reason_code"]},
+      "then": {"properties": {"state": {"const": "reconciled_occurred"}}}
+    },
+    {
+      "if": {"properties": {"reason_code": {"const": "openshell_task_confirmed_not_occurred"}}, "required": ["reason_code"]},
+      "then": {"properties": {"state": {"const": "reconciled_not_occurred"}}}
+    },
+    {
+      "if": {"properties": {"output": {"required": ["raw_stored"], "properties": {"raw_stored": {"const": true}}}}},
+      "then": {"properties": {"output": {"properties": {"raw_opt_in": {"const": true}}}}}
+    }
+  ]
+}

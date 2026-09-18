@@ -1,0 +1,319 @@
+{
+  "schema": "windows-unmarked-migration-evidence/v1",
+  "status": "pass",
+  "method": "native_cli",
+  "candidate_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "source_dirty": false,
+  "host": {
+    "recorded_utc": "2026-09-14T23:39:56.1064111Z",
+    "os": {
+      "Caption": "Microsoft Windows 11 专业工作站版",
+      "Version": "10.0.26200",
+      "BuildNumber": "26200",
+      "OSArchitecture": "64 位"
+    },
+    "volume": {
+      "DriveLetter": "C",
+      "FileSystemType": "NTFS",
+      "HealthStatus": "Healthy"
+    },
+    "powershell": "7.6.5",
+    "process_architecture": "X64",
+    "native_windows": true
+  },
+  "scope": "Traceable historical initialized unmarked state to v2 only; no compatibility-aware v1 or host execution claim.",
+  "steps": [
+    {
+      "label": "01-old-init",
+      "binary_role": "old",
+      "command": "init",
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "elapsed_seconds": 0.6320017000034568,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "01-old-init_stdout",
+          "bytes": 257,
+          "sha256": "56474ae95a8a5864fef66b61fd2801337c5a0cc380c2744e59837b34fee069f4",
+          "complete": true
+        },
+        "stderr": {
+          "role": "01-old-init_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        }
+      }
+    },
+    {
+      "label": "02-old-pubkey",
+      "binary_role": "old",
+      "command": "pubkey",
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "elapsed_seconds": 0.13640119999763556,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "02-old-pubkey_stdout",
+          "bytes": 45,
+          "sha256": "0bab243b8d44da1b88a952bfdb4e328b8c21a089f0783e642f8fc8db5baacae6",
+          "complete": true
+        },
+        "stderr": {
+          "role": "02-old-pubkey_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        }
+      }
+    },
+    {
+      "label": "03-old-admit",
+      "binary_role": "old",
+      "command": "admit",
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1691865000029793,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "03-old-admit_stdout",
+          "bytes": 1774,
+          "sha256": "e049547891b0e8b4de11f7794ddd796f75b68f64048c85c14617436d13398558",
+          "complete": true
+        },
+        "stderr": {
+          "role": "03-old-admit_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        }
+      }
+    },
+    {
+      "label": "04-old-grant",
+      "binary_role": "old",
+      "command": "grant",
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "elapsed_seconds": 0.23648880000109784,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "04-old-grant_stdout",
+          "bytes": 1588,
+          "sha256": "4280598640f279911503c0f4eb1b585fb74b8d5fdb981081bd0dbc7d240a2e2c",
+          "complete": true
+        },
+        "stderr": {
+          "role": "04-old-grant_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        }
+      }
+    },
+    {
+      "label": "05-old-revoke",
+      "binary_role": "old",
+      "command": "grant",
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "elapsed_seconds": 0.24236670000391314,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "05-old-revoke_stdout",
+          "bytes": 1067,
+          "sha256": "a687b29f16070d60b6e18c5a352254085060e3bb4be917161862c44c3f1aaf61",
+          "complete": true
+        },
+        "stderr": {
+          "role": "05-old-revoke_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        }
+      }
+    },
+    {
+      "label": "07-new-status-before",
+      "binary_role": "new",
+      "command": "state-status",
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "elapsed_seconds": 0.4504178999995929,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "07-new-status-before_stdout",
+          "bytes": 140,
+          "sha256": "bac4a60e4d1410f01242f1e76bd2e4d9ab5511651a616963e67ad736cdb738c3",
+          "complete": true
+        },
+        "stderr": {
+          "role": "07-new-status-before_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        }
+      }
+    },
+    {
+      "label": "08-new-migrate",
+      "binary_role": "new",
+      "command": "state-migrate",
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "elapsed_seconds": 1.2953879999986384,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "08-new-migrate_stdout",
+          "bytes": 104,
+          "sha256": "ac8cc6ba03b650d45b8563c49d354f43aab6d92b2b412ac80725ee2ad8c75ca7",
+          "complete": true
+        },
+        "stderr": {
+          "role": "08-new-migrate_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        }
+      }
+    },
+    {
+      "label": "10-new-repeat-migrate",
+      "binary_role": "new",
+      "command": "state-migrate",
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "elapsed_seconds": 0.15420649999578018,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "10-new-repeat-migrate_stdout",
+          "bytes": 105,
+          "sha256": "6ab27815e12d63d6a39c90fc0a5cdd6cc2cded849a15867ba715daa4e1a97a41",
+          "complete": true
+        },
+        "stderr": {
+          "role": "10-new-repeat-migrate_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        }
+      }
+    },
+    {
+      "label": "11-new-status-after",
+      "binary_role": "new",
+      "command": "state-status",
+      "expected_exit": "zero",
+      "exit_code": 0,
+      "elapsed_seconds": 0.16668019999633543,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "11-new-status-after_stdout",
+          "bytes": 124,
+          "sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+          "complete": true
+        },
+        "stderr": {
+          "role": "11-new-status-after_stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        }
+      }
+    },
+    {
+      "label": "12-new-revoke-rejected",
+      "binary_role": "new",
+      "command": "grant",
+      "expected_exit": "nonzero",
+      "exit_code": 1,
+      "elapsed_seconds": 1.177752200004761,
+      "timeout": false,
+      "kill_attempted": false,
+      "waited_and_reaped": true,
+      "validation_complete": true,
+      "streams": {
+        "stdout": {
+          "role": "12-new-revoke-rejected_stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "complete": true
+        },
+        "stderr": {
+          "role": "12-new-revoke-rejected_stderr",
+          "bytes": 66,
+          "sha256": "ce0f770bb72480fda1f10c0129ba060070b03d2a0a5da14dcdabba4cef0ac5c1",
+          "complete": true
+        }
+      }
+    }
+  ],
+  "claims": {
+    "real_unmarked_old_business_created": true,
+    "old_marker_absent_after_each_command": true,
+    "old_revoked_state_revision": 1,
+    "historical_entries": 33,
+    "pre_migration_status_zero_state_writes": true,
+    "migrated_to_v2": true,
+    "historical_entries_unchanged": true,
+    "source_marker_binding": "absent",
+    "backup_entries": 37,
+    "complete_backup_verified": true,
+    "backup_live_file_bytes_equal": true,
+    "marker_instance_and_original_directory_bound": true,
+    "archived_plan_sha256": "7cf30af8824431e12914d3d78f6f92da4d8bbfe34baee1f531a59f8b5ac65869",
+    "repeat_up_to_date_zero_state_writes": true,
+    "v2_status_zero_state_writes": true,
+    "already_revoked_rejected_zero_state_writes": true,
+    "old_binary_never_invoked_after_upgrade_boundary": true
+  },
+  "snapshot_semantics": "equal state snapshots at command boundaries; not a trace proving absence of transient lock I/O",
+  "grant_journey": {
+    "initial_status": "pending_approval",
+    "initial_revision": 0,
+    "final_status": "revoked",
+    "final_revision": 1,
+    "ever_approved_deployed_or_effective": false
+  },
+  "historical_directories": 18,
+  "historical_files": 15,
+  "all_processes_reaped": true,
+  "private_result_sha256": "18fa7688d56170cf8774100c024e263af290d243ca523851079c3028cc0fa31f",
+  "harness_sha256": "8726c840560f82f3702acb52062bc82bbe3ad0f4ec15fed574190322b3180d92"
+}

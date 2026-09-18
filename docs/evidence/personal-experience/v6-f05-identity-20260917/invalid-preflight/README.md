@@ -1,0 +1,1 @@
+P01 pre-measurement exclusivity check stopped this attempt; zero samples were collected. The scanner observed a separate rsync process that has since exited. Original report and private raw observations are retained. Same frozen protocol is used for the next attempt.

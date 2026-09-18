@@ -1,0 +1,27 @@
+{
+  "schema": "v6-f01-cross-builds/v1",
+  "base_commit": "9b8c09af742cb9df94c6d02e6f2db6ecccd68951",
+  "build_command": "CGO_ENABLED=0 GOOS=<target> GOARCH=<target> go build -o <isolated-output> ./cmd/agentshield",
+  "builds": [
+    {
+      "target": "linux/amd64",
+      "exit_code": 0,
+      "sha256": "bf5c9879f18b1eaa6b49409590c83f16fe2d648fe933fc8adeef275b81e713ff"
+    },
+    {
+      "target": "linux/arm64",
+      "exit_code": 0,
+      "sha256": "ceddc59c929da6ae449fdcb06f5e4f5915bf2e3ca73dad73457be421fbb194e7"
+    },
+    {
+      "target": "darwin/arm64",
+      "exit_code": 0,
+      "sha256": "2d1b90b8b21db4d8f7930548a5eaea764ac63a0a11b45e82d48121d7be0479ed"
+    },
+    {
+      "target": "windows/amd64",
+      "exit_code": 0,
+      "sha256": "bd497a55ccd906678b713e583d8f334f30bcc2e8398ce8a03d3b58a78bc055b0"
+    }
+  ]
+}

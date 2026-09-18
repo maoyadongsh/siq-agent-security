@@ -1,0 +1,48 @@
+{
+  "schema": "public-evidence-manifest/v1",
+  "candidate_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "files": [
+    {
+      "file": "attempts.json",
+      "bytes": 16701,
+      "sha256": "a074bcc379c35157f5a5c90bfefda3637ee226ed6b9d6da5f5168c0a8de98282"
+    },
+    {
+      "file": "independent-review.json",
+      "bytes": 10317,
+      "sha256": "14b8717d41e0784d307473c62a1540c46b4280c1ebb2f5c6631117391371b0f4"
+    },
+    {
+      "file": "locked-partial-failure.png",
+      "bytes": 131728,
+      "sha256": "997e15aabe5ff0854d159b631701db1b809fc7760d02f915b6f7e251dd717079"
+    },
+    {
+      "file": "output-schema-validation.json",
+      "bytes": 6840,
+      "sha256": "3de99a7e7ef3ac77bcba9bee2f87c7a8f09226320032ee20e944f274afc3cd76"
+    },
+    {
+      "file": "r1-comparator-diagnosis.json",
+      "bytes": 4151,
+      "sha256": "0d563425bab84e933e7f073a7c384c68e3e785abbd93748131925bb46bffc9c1"
+    },
+    {
+      "file": "recovered-aborted.png",
+      "bytes": 97403,
+      "sha256": "2c04625549003aa12ad7dcf4ed6796a1f602d616a534a2e7e8db53339483bfdc"
+    },
+    {
+      "file": "report.md",
+      "bytes": 7137,
+      "sha256": "ff5ac770ba6a990feceb617147b653e716899527048621fb3b8e2d57683b84da"
+    },
+    {
+      "file": "runtime-inputs.json",
+      "bytes": 6717,
+      "sha256": "7363abcceb360eceabf73204289fc4f38ecc65d6799ab026a998e9ea60fa5df5"
+    }
+  ],
+  "total_bytes_excluding_manifest": 280994,
+  "scope": "Manifest covers eight companion files; private runners, signed state and logs are represented only by scoped hashes or derived facts. Screenshots are original bytes."
+}

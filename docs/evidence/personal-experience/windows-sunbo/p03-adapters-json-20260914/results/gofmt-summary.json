@@ -1,0 +1,105 @@
+{
+  "phase": "gofmt",
+  "source_before": {
+    "source": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+    "source_dirty": false
+  },
+  "source_after": {
+    "source": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+    "source_dirty": false
+  },
+  "argv": [
+    "-l",
+    "."
+  ],
+  "cwd": "apps/agentshield",
+  "go_version": "go version go1.27.1 windows/amd64",
+  "go_identity": {
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "windows",
+    "GOOS": "windows",
+    "GOTELEMETRY": "off",
+    "GOTOOLCHAIN": "local",
+    "GOVERSION": "go1.27.1"
+  },
+  "go_exe_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+  "check_executable_sha256": "ab730b8446c0c2369be901f263fb7433ea0d2d053d3a3584ca543aaff3b667cc",
+  "runner_sha256": "ab366c3eb362d1e3f3d39f2743562ac9e1d71b73ab0422486934aa9a780f88d1",
+  "root_acl_before": {
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "full_control": true,
+    "protected": true,
+    "ace_count": 3,
+    "broad_aces": false
+  },
+  "root_acl_after": {
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "broad_aces": false,
+    "ace_count": 3,
+    "full_control": true,
+    "protected": true
+  },
+  "cache_parent_acl": {
+    "broad_aces": false,
+    "ace_count": 3,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "full_control": true,
+    "protected": true
+  },
+  "cache_policy": "Reuse earlier owned private N03 build cache; prior raw evidence unchanged",
+  "started_utc": "2026-09-14T06:22:53.559781+00:00",
+  "finished_utc": "2026-09-14T06:22:59.365872+00:00",
+  "exit_code": 0,
+  "outer_timeout_seconds": 300,
+  "outer_timed_out": false,
+  "cleanup_exit": null,
+  "direct_process_reaped": true,
+  "raw_bytes": 0,
+  "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "derived_jsonl_bytes": 0,
+  "derived_jsonl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "event_count": 0,
+  "non_json_lines": 0,
+  "top_level_counts": {
+    "pass": 0,
+    "fail": 0,
+    "skip": 0
+  },
+  "subtest_counts": {
+    "pass": 0,
+    "fail": 0,
+    "skip": 0
+  },
+  "terminal_tests": [],
+  "package_terminal_events": [],
+  "expected_top_level_tests": [],
+  "expected_test_set_matches": null,
+  "source_unchanged_clean": true,
+  "redaction": "Exact case-insensitive owned path prefixes, repeated slash/backslash separators including nested JSON; account SID pattern. Raw bytes retained privately.",
+  "environment": {
+    "child_allowlist": true,
+    "synthetic_home_profile_appdata_tmp": true,
+    "go_proxy_sumdb_off": true,
+    "no_host_optins_or_credentials": true,
+    "test_path_roles": [
+      "Go bin",
+      "Windows System32"
+    ],
+    "controller_git_acl_queries_inherit_controller_environment": true
+  },
+  "scope": "Native Windows component tests/checks, no real host acceptance, no release SIQ binary created"
+}

@@ -1,0 +1,281 @@
+{
+  "schema": "public-openclaw-instrumented-diagnostic/v1",
+  "batch": "A08",
+  "source_context": {
+    "revision": "b68199be84f4af6c1c434f736a67a3bc72f2b4dc",
+    "dirty": false,
+    "upstream_main_context": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+    "documentation_only_difference_files": 21,
+    "meaning": "干净的文档证据后继上下文；不是安装OpenClaw身份，也不表示SIQ运行。"
+  },
+  "scope": {
+    "platform": "WSL2/Linux",
+    "host": "OpenClaw",
+    "memory_instrumentation": true,
+    "batch_run_count": 1,
+    "uninstrumented_A_pass_claimed": false,
+    "native_windows_acceptance": false,
+    "siq_invoked": false,
+    "B": "not_run",
+    "gateway_started": false,
+    "real_model_requests": 0,
+    "siq_product_source_changed": false,
+    "original_18_case_matrix_changed": false,
+    "original_denominator_changed": false,
+    "prior_attempts_preserved": true
+  },
+  "outcome": {
+    "instrumented_behavioral_A": "fail",
+    "A_pass": false,
+    "diagnostic_completed": true,
+    "cause_capture_complete": true,
+    "terminal_stack_marker_observed": false,
+    "fix_claimed": false,
+    "native_fs_api": null,
+    "specific_resource_identified": false
+  },
+  "instrumentation": {
+    "association": "same_owned_process",
+    "unique_call_id_binding": false,
+    "source_role": "installed-source/node_modules/@openclaw/fs-safe/dist/errors.js",
+    "registration": "registered",
+    "transformed": 1,
+    "attempted": 1,
+    "emitted": 1,
+    "sink_failed": false,
+    "diagnostic_failed": false,
+    "source_sha256": "6187c0aff86970d3b39039c9a6e1a19e2f55f967c87351745b4c71a71b30ee6f",
+    "transformed_sha256": "a82c5d846d0a4db59567c79d434d922e36362211f372c8b69c80e62f5527a574",
+    "expected_transformed_sha256": "a82c5d846d0a4db59567c79d434d922e36362211f372c8b69c80e62f5527a574",
+    "recorded_installed_pins_unchanged": true,
+    "meaning": "内存模块变换已发生；磁盘已固定安装文件摘要保持，不把插桩结果当无插桩正对照。"
+  },
+  "cause_diagnostic": {
+    "association": "same_owned_process",
+    "unique_call_id_binding": false,
+    "status": "captured_same_owned_process",
+    "capture_complete_to_eof": true,
+    "cause_frame_count": 1,
+    "status_frame_count": 1,
+    "cause_capture_complete": true,
+    "cause_frame_valid": true,
+    "cause": {
+      "name": {
+        "status": "absent",
+        "value": null,
+        "truncated": false
+      },
+      "code": {
+        "status": "present",
+        "value": "ERR_ACCESS_DENIED",
+        "truncated": false
+      },
+      "permission": {
+        "status": "present",
+        "value": "",
+        "truncated": false
+      },
+      "resource": {
+        "status": "present",
+        "value": "",
+        "truncated": false,
+        "classification": "unmapped"
+      },
+      "syscall": {
+        "status": "absent",
+        "value": null,
+        "truncated": false
+      },
+      "stack_status": "skipped_unverified_lazy_stack"
+    },
+    "cause_wire": {
+      "attempted": 1,
+      "expected_bytes": 444,
+      "written_bytes": 444,
+      "complete": true,
+      "error": null
+    },
+    "cause_frame": {
+      "bytes": 444,
+      "sha256": "d68bd86bd56caff1a95feac98bf36b6b252e91753153e0aa4fcf1b5cb19057e1"
+    },
+    "status_frame": {
+      "bytes": 679,
+      "sha256": "118584b3b7bee7c3f650edf6b1eabc6879702a9480b1207690c65dd58340d503"
+    },
+    "empty_field_meaning": "permission/resource为实际own primitive空字符串；不是字段缺失、null或截断。",
+    "association_limit": "不能以same_owned_process把该cause唯一归属于固定write调用；没有CALL_ID绑定。"
+  },
+  "observed": {
+    "provider_requests": 2,
+    "request_tool_names": [
+      [
+        "read",
+        "write"
+      ],
+      [
+        "read",
+        "write"
+      ]
+    ],
+    "provider_required_tool": "write",
+    "provider_allowed_tool_superset": [
+      "read",
+      "write"
+    ],
+    "read_optional": true,
+    "actual_failed_native_tool_call_observed": true,
+    "role_tool_messages": 1,
+    "tool_summary": {
+      "calls": 1,
+      "tools": [
+        "write"
+      ],
+      "failures": 1
+    },
+    "successful_tool_names": [],
+    "tool_error": {
+      "status": "error",
+      "tool": "write",
+      "error": "filesystem write failed (ERR_ACCESS_DENIED)"
+    },
+    "native_tool_exchange_observed": false,
+    "native_tool_exchange_field_meaning": "成功消费谓词未满足，不是否认已观察到失败工具回复。",
+    "target_before_exists": false,
+    "target_at_requests_exists": [
+      false,
+      false
+    ],
+    "target_after_exists": false,
+    "node_exit_code": 1,
+    "namespace_child_exit_code": 1,
+    "wsl_transport_exit_code": 1,
+    "windows_driver_exit_code": 1,
+    "node_elapsed_seconds": 16.6459269329971,
+    "namespace_elapsed_seconds": 18.991749481003353,
+    "windows_elapsed_ms": 21331,
+    "local_http_400_observed_in_node_error": true,
+    "owned_synthetic_fixture_rejection": true,
+    "cloud_or_cdn_failure_proven": false
+  },
+  "cleanup": {
+    "confirmed_by_guest_report": true,
+    "node_reaped": true,
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true,
+    "namespace_waited_and_reaped": true,
+    "namespace_timed_out": false,
+    "namespace_killed": false,
+    "node_timed_out": false,
+    "node_killed": false,
+    "windows_transport_complete": true,
+    "windows_stdin_complete": true,
+    "windows_waited_and_reaped": true,
+    "windows_disposed": true,
+    "windows_timed_out": false,
+    "windows_kill_requested": false
+  },
+  "integrity": {
+    "frozen_input_count": 20,
+    "frozen_mismatch_count": 0,
+    "installed_source_pin_count": 21,
+    "node_pin_count": 1,
+    "runtime_payload_count": 6,
+    "source_unchanged": true,
+    "control_unchanged": true,
+    "namespace_fixture_effect_exact": true,
+    "namespace_sentinel_unchanged": true,
+    "parent_namespaces_unchanged": true,
+    "parent_tmp_metadata_unchanged": true,
+    "unshare_unchanged": true,
+    "windows_root_sddl_unchanged": true,
+    "meaning": "基于本次已保留的前后记录与独立原件复核；没有重新访问WSL安装目录。"
+  },
+  "host_identity": {
+    "package_json_sha256": "a234b616a049b4dedaad49ba0e95ff31afd3f19935e446199e75f78b589d1c21",
+    "node_binary_sha256": "bc17c508ffeed0ec622934f9b7fa72f8e78da65350e63c3eceb56fa688aa5e12",
+    "version_command_rerun": false,
+    "meaning": "本页用同一次已固定package/Node摘要识别宿主，不复制未绑定的历史版本标签。"
+  },
+  "raw_streams": [
+    {
+      "role": "namespace/stdout",
+      "bytes": 141836,
+      "sha256": "a74919ab91033fc9068be1b0bf971644009aa499c9bfb6e22b1f87ac628c7f2b",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "namespace/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "node/stdout",
+      "bytes": 6484,
+      "sha256": "55ebf5eee04463ae78509660b05a83bb7462d79ac125c7c0fc694ac572f2d2a7",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "node/stderr",
+      "bytes": 1559,
+      "sha256": "cde63906945cce6f173d986c5f094f56a4219c33bddbd63bced391ab6a8cb9c1",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "wsl-transport/stdout",
+      "bytes": 503254,
+      "sha256": "8369eb67e76ffdc8cbf7b25e758a2a1f3d0108ea35af1dd6249e0c53b1e69171",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    },
+    {
+      "role": "wsl-transport/stderr",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8-with-replacement",
+      "driver_decode_error": true
+    },
+    {
+      "role": "inventory/stdout",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-16le",
+      "driver_decode_error": false
+    },
+    {
+      "role": "inventory/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "complete": true,
+      "truncated": false,
+      "decoding": "utf-8",
+      "driver_decode_error": false
+    }
+  ],
+  "record_counts": {
+    "run_raw_streams": 8,
+    "plan_raw_streams": 4,
+    "plan_and_run_raw_records": 12,
+    "meaning": "8为Run四层stdout/stderr；12另含Plan的inventory/transport四条。诊断两帧是Node stderr子片段，不另算完整流。"
+  }
+}

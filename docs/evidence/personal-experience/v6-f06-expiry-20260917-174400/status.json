@@ -1,0 +1,33 @@
+{
+  "schema": "v6-f06-natural-expiry-status/v1",
+  "candidate_binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+  "seed_phase": "passed",
+  "seed_attempt_1": "failed_before_daemon_start: relative run-dir caused relative executable resolution; private partial state retained",
+  "seed_attempt_2": "passed: three encrypted capture legs, revocation refusal, daemon stopped",
+  "seed_attempt_3": "passed with relative run-dir after harness path fix: three encrypted capture legs, revocation refusal, daemon stopped",
+  "earliest_real_expiry_utc": "2026-09-17T10:32:16Z",
+  "relative_run_expiry_utc": "2026-09-17T10:35:46Z",
+  "verify_phase": "passed_two_independent_real_wall_clock_runs",
+  "manual_clock_change": false,
+  "private_seeds": [
+    "ignored expiry-private/seed-r2.json",
+    "ignored expiry-private/seed-r3.json"
+  ],
+  "public_claim": "two isolated old-candidate B04 expiry/purge runs passed at real wall-clock; native post-expiry host call and GUI remain unverified",
+  "verify_runs": [
+    {
+      "run": "r2",
+      "checks_passed": 19,
+      "checks_total": 19,
+      "verify_passed": true,
+      "verified_at": "2026-09-17T18:32:17+08:00"
+    },
+    {
+      "run": "r3",
+      "checks_passed": 19,
+      "checks_total": 19,
+      "verify_passed": true,
+      "verified_at": "2026-09-17T18:35:47+08:00"
+    }
+  ]
+}

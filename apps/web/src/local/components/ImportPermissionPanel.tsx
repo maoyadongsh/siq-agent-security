@@ -50,7 +50,7 @@ export default function ImportPermissionPanel({ result }: { result: SkillImportR
   return <section className="import-permission-panel" aria-labelledby="prepare-permissions-heading">
     <h3 id="prepare-permissions-heading">为目标智能体准备权限</h3>
     <p className="page-desc">选择已有 Hermes 或 OpenClaw 实例，生成待审阅的权限草稿。下一页可调整权限和期限，再由你批准；批准后仍需确认安装与实例权限。</p>
-    <p className="page-desc">WorkBuddy 的安装目标接入仍在开发中。</p>
+    <p className="page-desc">Linux 当前仅支持 Hermes 和 OpenClaw；WorkBuddy 的 Windows/macOS 安装目标接入仍待实机验收。</p>
     <div className="field"><label htmlFor="import-target-instance">目标智能体实例</label>
       <select id="import-target-instance" value={instance} disabled={loading || busy || !!pending}
         onChange={(event) => setInstance(event.target.value)}>

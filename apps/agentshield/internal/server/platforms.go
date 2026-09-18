@@ -1,6 +1,10 @@
 package server
 
-import "siq-agent-security/apps/agentshield/internal/adapterinstall"
+import (
+	"runtime"
+
+	"siq-agent-security/apps/agentshield/internal/adapterinstall"
+)
 
 // PlatformInfo is the console-facing row for one runtime (dev-spec §3.10).
 type PlatformInfo struct {
@@ -29,6 +33,15 @@ func (s *Server) platforms() []PlatformInfo {
 		info := PlatformInfo{Name: name, Detected: detected[name], Adapter: adapter, Tier: "L0"}
 		diagnosis := s.diagnoseAdapter(name)
 		info.Diagnosis = &diagnosis
+		if !adapterinstall.NewIntegrationSupportedOnOS(name, runtime.GOOS) {
+			if name == adapterinstall.CodeBuddy {
+				info.Note = "CodeBuddy 已退出全平台产品范围；已存在的配置仅供查看和卸载"
+			} else {
+				info.Note = "当前 Linux 产品范围不支持 WorkBuddy 新接入；已存在的配置仅供查看和卸载"
+			}
+			out = append(out, info)
+			continue
+		}
 		switch name {
 		case adapterinstall.Trae:
 			info.Note = "审计模式，无法阻断"

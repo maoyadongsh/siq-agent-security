@@ -1,0 +1,887 @@
+{
+  "candidate": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+  "base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "source_before": {
+    "source": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+    "source_dirty": false
+  },
+  "source_after": {
+    "source": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+    "source_dirty": false
+  },
+  "changed_files": [
+    "apps/agentshield/internal/adapterinstall/install_entry_test.go"
+  ],
+  "dco_signoff_present": true,
+  "change_patch_sha256": "3031ab3f69156902474c29e19c9b15c16933859fb55c212738a24ecff9eaa419",
+  "changed_file_sha256": "f30829f44d6c5a753a01051540acee03cf9344db8508fdf7d267868eab48d372",
+  "go_version": "go version go1.27.1 windows/amd64",
+  "go_identity": {
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "windows",
+    "GOOS": "windows",
+    "GOTELEMETRY": "off",
+    "GOTOOLCHAIN": "local",
+    "GOVERSION": "go1.27.1"
+  },
+  "go_exe_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+  "go_build_identity_sha256": "ca0e187f1db9ed227cc398768898e832ad3fd7c90d3ee6d27e54ceb4fe2ed1ea",
+  "runner_sha256": "4d490aedf38d6c68c8a1d9bfabbc4db88f47472b63266125537d653446705bd1",
+  "private_root_acl": {
+    "broad_aces": false,
+    "rights": "FullControl",
+    "ace_count": 3,
+    "protected": true,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ]
+  },
+  "private_root_acl_after": {
+    "protected": true,
+    "rights": "FullControl",
+    "ace_count": 3,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "broad_aces": false
+  },
+  "cache_parent_acl": {
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "broad_aces": false,
+    "ace_count": 3,
+    "rights": "FullControl",
+    "protected": true
+  },
+  "cache_policy": "Reuse the previously owned N03 cold-run private build cache; previous logs and summaries unchanged",
+  "fresh_synthetic_environment": [
+    "HOME",
+    "USERPROFILE",
+    "HOMEDRIVE",
+    "HOMEPATH",
+    "TMP",
+    "TEMP",
+    "GOTMPDIR",
+    "GOPATH",
+    "APPDATA",
+    "LOCALAPPDATA"
+  ],
+  "child_environment_is_allowlist": true,
+  "offline_environment": {
+    "GOENV": "off",
+    "GOWORK": "off",
+    "GOFLAGS": "",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOTOOLCHAIN": "local",
+    "GOCACHEPROG": "",
+    "GOMAXPROCS": "2"
+  },
+  "native_host_optins_absent": [
+    "SIQ_HERMES_NATIVE_CLI",
+    "SIQ_OPENCLAW_NATIVE_ROOT",
+    "SIQ_OPENCLAW_NATIVE_NODE"
+  ],
+  "scope": "Native Windows Go component tests; no real host/model/service acceptance; loopback endpoint strings are configuration fixtures only",
+  "phases": [
+    {
+      "name": "focused",
+      "argv": [
+        "test",
+        "-json",
+        "-p=2",
+        "-parallel=1",
+        "-count=1",
+        "-timeout=90s",
+        "-run",
+        "^(TestHermesNativeEvidenceSeparatesRegistrationFromCompatibility|TestConfiguredEndpointReadsConnectionDocumentOnly|TestHermesControlledInstallPathChecksBeforeNativeInstall|TestInstallEntryIsNeverTakenOver)$",
+        "./internal/adapterinstall"
+      ],
+      "cwd": "apps/agentshield",
+      "started_utc": "2026-09-14T05:10:39.669522+00:00",
+      "finished_utc": "2026-09-14T05:11:48.916482+00:00",
+      "exit_code": 0,
+      "outer_timeout_seconds": 300,
+      "outer_timed_out": false,
+      "cleanup_exit": null,
+      "go_process_reaped": true,
+      "source_before": {
+        "source": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+        "source_dirty": false
+      },
+      "source_after": {
+        "source": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+        "source_dirty": false
+      },
+      "event_count": 36,
+      "top_level_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "top_level_results": [
+        {
+          "Test": "TestHermesNativeEvidenceSeparatesRegistrationFromCompatibility",
+          "Action": "pass",
+          "Elapsed": 0.06
+        },
+        {
+          "Test": "TestConfiguredEndpointReadsConnectionDocumentOnly",
+          "Action": "pass",
+          "Elapsed": 3.95
+        },
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver",
+          "Action": "pass",
+          "Elapsed": 5.63
+        },
+        {
+          "Test": "TestHermesControlledInstallPathChecksBeforeNativeInstall",
+          "Action": "pass",
+          "Elapsed": 2.1
+        }
+      ],
+      "subtest_results": [
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver/hermes",
+          "Action": "pass",
+          "Elapsed": 1.68
+        },
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver/openclaw",
+          "Action": "pass",
+          "Elapsed": 2.07
+        },
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver/codebuddy",
+          "Action": "pass",
+          "Elapsed": 1.44
+        },
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver/trae",
+          "Action": "pass",
+          "Elapsed": 0.44
+        }
+      ],
+      "package_terminal_events": [
+        {
+          "Time": "2026-09-14T13:11:47.7312431+08:00",
+          "Action": "pass",
+          "Package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+          "Elapsed": 12.704
+        }
+      ],
+      "raw_log_bytes": 8329,
+      "raw_log_sha256": "6adf12f9a36d56acae0c4bbdfaf9927abe78ce2f03e65564f991d0a3b0bdff66",
+      "derived_jsonl_bytes": 8661,
+      "derived_jsonl_sha256": "0f4b3acec5caff2c8ad6cc347a6d6084f9f9ffe80cfea9e23be2c33733b6fb11",
+      "non_json_lines": 0,
+      "panic_test_timed_out": false
+    },
+    {
+      "name": "package",
+      "argv": [
+        "test",
+        "-json",
+        "-p=2",
+        "-parallel=1",
+        "-count=1",
+        "-timeout=300s",
+        "./internal/adapterinstall"
+      ],
+      "cwd": "apps/agentshield",
+      "started_utc": "2026-09-14T05:11:50.451591+00:00",
+      "finished_utc": "2026-09-14T05:15:18.254292+00:00",
+      "exit_code": 1,
+      "outer_timeout_seconds": 420,
+      "outer_timed_out": false,
+      "cleanup_exit": null,
+      "go_process_reaped": true,
+      "source_before": {
+        "source": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+        "source_dirty": false
+      },
+      "source_after": {
+        "source": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+        "source_dirty": false
+      },
+      "event_count": 494,
+      "top_level_counts": {
+        "pass": 58,
+        "fail": 1,
+        "skip": 12
+      },
+      "subtest_counts": {
+        "pass": 42,
+        "fail": 0,
+        "skip": 5
+      },
+      "top_level_results": [
+        {
+          "Test": "TestUnicodeAndSpaceConfigPathsRestoreBytesAndModes",
+          "Action": "pass",
+          "Elapsed": 7
+        },
+        {
+          "Test": "TestUninstallOfOneInstanceRestoresOnlyThatInstance",
+          "Action": "fail",
+          "Elapsed": 4.44
+        },
+        {
+          "Test": "TestUninstallPlanRejectsConfigChangedAfterPrepare",
+          "Action": "pass",
+          "Elapsed": 2.32
+        },
+        {
+          "Test": "TestUninstallPlanRejectsMovedInstanceAfterPrepare",
+          "Action": "pass",
+          "Elapsed": 2.78
+        },
+        {
+          "Test": "TestCodeBuddyCustomConfigLifecycle",
+          "Action": "pass",
+          "Elapsed": 4.21
+        },
+        {
+          "Test": "TestCodeBuddyChangedConfigDoesNotUninstallOtherInstance",
+          "Action": "pass",
+          "Elapsed": 2.61
+        },
+        {
+          "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack",
+          "Action": "pass",
+          "Elapsed": 1.73
+        },
+        {
+          "Test": "TestDiagnosisSeparatesFilesFromRuntime",
+          "Action": "pass",
+          "Elapsed": 6.6
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift",
+          "Action": "pass",
+          "Elapsed": 25.69
+        },
+        {
+          "Test": "TestDiagnosticsRejectUnsafeFilesWithoutLeakingContents",
+          "Action": "skip",
+          "Elapsed": 2.45
+        },
+        {
+          "Test": "TestCodeBuddyDiagnosticRejectsTextOutsideHooks",
+          "Action": "pass",
+          "Elapsed": 0.58
+        },
+        {
+          "Test": "TestHermesNativeEvidenceSeparatesRegistrationFromCompatibility",
+          "Action": "pass",
+          "Elapsed": 0.08
+        },
+        {
+          "Test": "TestConfiguredEndpointReadsConnectionDocumentOnly",
+          "Action": "pass",
+          "Elapsed": 5.41
+        },
+        {
+          "Test": "TestNativeYAMLGuardRefusesAliasesAndTags",
+          "Action": "pass",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestNativeEnableMissingProgramDoesNotWrite",
+          "Action": "pass",
+          "Elapsed": 0.41
+        },
+        {
+          "Test": "TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings",
+          "Action": "skip",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites",
+          "Action": "skip",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestHermesNativeCLIFreshConfig",
+          "Action": "skip",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver",
+          "Action": "pass",
+          "Elapsed": 5.81
+        },
+        {
+          "Test": "TestOpenClawFreshInstallAddsNoInterceptionFields",
+          "Action": "pass",
+          "Elapsed": 3.38
+        },
+        {
+          "Test": "TestCodeBuddyFreshInstallAddsOnlyHooks",
+          "Action": "pass",
+          "Elapsed": 1.87
+        },
+        {
+          "Test": "TestHermesControlledInstallPathChecksBeforeNativeInstall",
+          "Action": "pass",
+          "Elapsed": 2.24
+        },
+        {
+          "Test": "TestHermesInstallUninstallRoundTrip",
+          "Action": "pass",
+          "Elapsed": 5.39
+        },
+        {
+          "Test": "TestOpenClawRegistersRuntimeWithoutUnsupportedInstallPolicy",
+          "Action": "pass",
+          "Elapsed": 5.64
+        },
+        {
+          "Test": "TestCodeBuddyIsIdempotentAndFailClosedUninstallWithoutRecord",
+          "Action": "pass",
+          "Elapsed": 2.91
+        },
+        {
+          "Test": "TestTraeIsAuditOnly",
+          "Action": "pass",
+          "Elapsed": 0.45
+        },
+        {
+          "Test": "TestReinstallKeepsImmutableOriginal",
+          "Action": "pass",
+          "Elapsed": 5.13
+        },
+        {
+          "Test": "TestSurgicalUninstallKeepsPostInstallUserFields",
+          "Action": "pass",
+          "Elapsed": 3.61
+        },
+        {
+          "Test": "TestCodeBuddySurgicalUninstallKeepsUserSettings",
+          "Action": "pass",
+          "Elapsed": 2.61
+        },
+        {
+          "Test": "TestUninstallConflictReturnsRecoveryPlan",
+          "Action": "pass",
+          "Elapsed": 1.48
+        },
+        {
+          "Test": "TestBadJSONRefusesRewrite",
+          "Action": "pass",
+          "Elapsed": 0.49
+        },
+        {
+          "Test": "TestUnknownModeRejected",
+          "Action": "pass",
+          "Elapsed": 0.43
+        },
+        {
+          "Test": "TestSymlinkConfigRefused",
+          "Action": "skip",
+          "Elapsed": 0.44
+        },
+        {
+          "Test": "TestEmbeddedAssetsMatchRuntimeTree",
+          "Action": "pass",
+          "Elapsed": 0.09
+        },
+        {
+          "Test": "TestPlanRejectsRecreatedInstanceRoot",
+          "Action": "pass",
+          "Elapsed": 5.26
+        },
+        {
+          "Test": "TestPlanRejectsInstanceRootSymlink",
+          "Action": "skip",
+          "Elapsed": 0.77
+        },
+        {
+          "Test": "TestPlanRootBindingIsRequiredForApply",
+          "Action": "pass",
+          "Elapsed": 2.57
+        },
+        {
+          "Test": "TestHermesInstancesHaveSeparatePlansAndUninstallRecords",
+          "Action": "pass",
+          "Elapsed": 5.74
+        },
+        {
+          "Test": "TestDefaultInstanceUpgradeRestoresLegacyWrapper",
+          "Action": "skip",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestPlanRejectsConfigChangedBetweenPrepareAndApply",
+          "Action": "pass",
+          "Elapsed": 4.2
+        },
+        {
+          "Test": "TestPlanPinnedToMovedInstanceIsRejected",
+          "Action": "pass",
+          "Elapsed": 3.68
+        },
+        {
+          "Test": "TestOpenClawRuntimeRegistrationRoundTrip",
+          "Action": "pass",
+          "Elapsed": 5.22
+        },
+        {
+          "Test": "TestOpenClawPreservesForeignInstallPolicy",
+          "Action": "pass",
+          "Elapsed": 4.52
+        },
+        {
+          "Test": "TestOpenClawLegacyPolicyRequiresFullMatch",
+          "Action": "pass",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestOpenClawMigratesOwnedLegacyPolicy",
+          "Action": "pass",
+          "Elapsed": 4.87
+        },
+        {
+          "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed",
+          "Action": "pass",
+          "Elapsed": 3.47
+        },
+        {
+          "Test": "TestOpenClawReinstallRefusesCorruptOwnershipRecord",
+          "Action": "pass",
+          "Elapsed": 2.08
+        },
+        {
+          "Test": "TestOpenClawInstalledPluginLoadsNatively",
+          "Action": "skip",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestManagedPlanPinsPublicIdentityInputsWithoutReadingSecret",
+          "Action": "pass",
+          "Elapsed": 3.61
+        },
+        {
+          "Test": "TestManagedConfigurationCannotBeSilentlyDowngraded",
+          "Action": "pass",
+          "Elapsed": 0.51
+        },
+        {
+          "Test": "TestOpenClawManagedPlanWritesProductConfigFields",
+          "Action": "pass",
+          "Elapsed": 2.18
+        },
+        {
+          "Test": "TestOpenClawManagedConfigurationCannotBeSilentlyDowngraded",
+          "Action": "pass",
+          "Elapsed": 0.51
+        },
+        {
+          "Test": "TestOpenClawManagedPinRejectsForeignPlatformIdentity",
+          "Action": "pass",
+          "Elapsed": 0.6
+        },
+        {
+          "Test": "TestOpenClawManagedUninstallRequiresIdentityWithdrawal",
+          "Action": "pass",
+          "Elapsed": 3.99
+        },
+        {
+          "Test": "TestRuntimeTargetRequiresExplicitReadyHermesInstance",
+          "Action": "pass",
+          "Elapsed": 1.74
+        },
+        {
+          "Test": "TestNativeRuntimeTargetPinsConfigurationServiceAndCLI",
+          "Action": "skip",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestPlanReadOnlyAndPinsNoOpInputs",
+          "Action": "pass",
+          "Elapsed": 2.64
+        },
+        {
+          "Test": "TestPlanPreflightRejectsWholeOperation",
+          "Action": "pass",
+          "Elapsed": 7.62
+        },
+        {
+          "Test": "TestTransactionBoundaryFailureRestoresFiles",
+          "Action": "pass",
+          "Elapsed": 7.43
+        },
+        {
+          "Test": "TestTransactionConflictPreservesForeignEditAndCanRecover",
+          "Action": "pass",
+          "Elapsed": 1.98
+        },
+        {
+          "Test": "TestTransactionAuditFailureAndEncryptedRecovery",
+          "Action": "pass",
+          "Elapsed": 2.97
+        },
+        {
+          "Test": "TestRecoveryCannotTakeActiveWriter",
+          "Action": "pass",
+          "Elapsed": 0.8
+        },
+        {
+          "Test": "TestAdapterCrashHelper",
+          "Action": "pass",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestAdapterRealProcessDeathRecovery",
+          "Action": "skip",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestTransactionPrivateStoreRejectsSymlinks",
+          "Action": "pass",
+          "Elapsed": 0.96
+        },
+        {
+          "Test": "TestUninstallKeepsUnknownFilesAndWrapperMode",
+          "Action": "pass",
+          "Elapsed": 2.69
+        },
+        {
+          "Test": "TestHermesWrapperQuotesPathsAndRefusesFailedAdmission",
+          "Action": "skip",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestUninstallRestoresPreexistingPluginRegistration",
+          "Action": "pass",
+          "Elapsed": 3.47
+        },
+        {
+          "Test": "TestRecoveryRejectsTamperedCiphertext",
+          "Action": "skip",
+          "Elapsed": 0
+        },
+        {
+          "Test": "TestCommittedOwnershipRequiresAuthenticatedJournal",
+          "Action": "pass",
+          "Elapsed": 1.84
+        },
+        {
+          "Test": "TestApplyReadbackRejectsConcurrentEditBeforeCompletion",
+          "Action": "pass",
+          "Elapsed": 3.03
+        }
+      ],
+      "subtest_results": [
+        {
+          "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/relative",
+          "Action": "pass",
+          "Elapsed": 0.44
+        },
+        {
+          "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/symlink",
+          "Action": "skip",
+          "Elapsed": 0.4
+        },
+        {
+          "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink",
+          "Action": "skip",
+          "Elapsed": 0.44
+        },
+        {
+          "Test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/file",
+          "Action": "pass",
+          "Elapsed": 0.46
+        },
+        {
+          "Test": "TestDiagnosisSeparatesFilesFromRuntime/hermes",
+          "Action": "pass",
+          "Elapsed": 2.12
+        },
+        {
+          "Test": "TestDiagnosisSeparatesFilesFromRuntime/openclaw",
+          "Action": "pass",
+          "Elapsed": 2.55
+        },
+        {
+          "Test": "TestDiagnosisSeparatesFilesFromRuntime/codebuddy",
+          "Action": "pass",
+          "Elapsed": 1.93
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/disabled",
+          "Action": "pass",
+          "Elapsed": 2.54
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/null_enabled",
+          "Action": "pass",
+          "Elapsed": 2.96
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/denied",
+          "Action": "pass",
+          "Elapsed": 2.75
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/allow_missing",
+          "Action": "pass",
+          "Elapsed": 2.56
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/load_missing",
+          "Action": "pass",
+          "Elapsed": 2.49
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/entry_disabled",
+          "Action": "pass",
+          "Elapsed": 2.6
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/other_endpoint",
+          "Action": "pass",
+          "Elapsed": 2.32
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/other_state",
+          "Action": "pass",
+          "Elapsed": 2.47
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/other_mode",
+          "Action": "pass",
+          "Elapsed": 2.59
+        },
+        {
+          "Test": "TestOpenClawDiagnosisDetectsConfigAndFileDrift/changed_plugin",
+          "Action": "pass",
+          "Elapsed": 2.41
+        },
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver/hermes",
+          "Action": "pass",
+          "Elapsed": 1.59
+        },
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver/openclaw",
+          "Action": "pass",
+          "Elapsed": 2.24
+        },
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver/codebuddy",
+          "Action": "pass",
+          "Elapsed": 1.54
+        },
+        {
+          "Test": "TestInstallEntryIsNeverTakenOver/trae",
+          "Action": "pass",
+          "Elapsed": 0.45
+        },
+        {
+          "Test": "TestPlanRejectsRecreatedInstanceRoot/model:_work_",
+          "Action": "pass",
+          "Elapsed": 2.37
+        },
+        {
+          "Test": "TestPlanRejectsRecreatedInstanceRoot/model:_replacement_",
+          "Action": "pass",
+          "Elapsed": 2.89
+        },
+        {
+          "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"enabled\":false}}",
+          "Action": "pass",
+          "Elapsed": 0.49
+        },
+        {
+          "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"deny\":[\"siq-agent-security\"]}}",
+          "Action": "pass",
+          "Elapsed": 0.5
+        },
+        {
+          "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":[]}",
+          "Action": "pass",
+          "Elapsed": 0.47
+        },
+        {
+          "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"allow\":\"other\"}}",
+          "Action": "pass",
+          "Elapsed": 0.49
+        },
+        {
+          "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"load\":{\"paths\":[42]}}}",
+          "Action": "pass",
+          "Elapsed": 0.54
+        },
+        {
+          "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"entries\":[]}}",
+          "Action": "pass",
+          "Elapsed": 0.52
+        },
+        {
+          "Test": "TestOpenClawRuntimeRegistrationRejectsDisabledOrMalformed/{\"plugins\":{\"entries\":{\"siq-agent-security\":false}}}",
+          "Action": "pass",
+          "Elapsed": 0.47
+        },
+        {
+          "Test": "TestManagedPlanPinsPublicIdentityInputsWithoutReadingSecret/metadata",
+          "Action": "pass",
+          "Elapsed": 0.89
+        },
+        {
+          "Test": "TestManagedPlanPinsPublicIdentityInputsWithoutReadingSecret/revocation",
+          "Action": "pass",
+          "Elapsed": 0.9
+        },
+        {
+          "Test": "TestManagedPlanPinsPublicIdentityInputsWithoutReadingSecret/secret",
+          "Action": "pass",
+          "Elapsed": 1.83
+        },
+        {
+          "Test": "TestPlanPreflightRejectsWholeOperation/last-file",
+          "Action": "pass",
+          "Elapsed": 0.92
+        },
+        {
+          "Test": "TestPlanPreflightRejectsWholeOperation/binary",
+          "Action": "pass",
+          "Elapsed": 0.93
+        },
+        {
+          "Test": "TestPlanPreflightRejectsWholeOperation/expired",
+          "Action": "pass",
+          "Elapsed": 1.21
+        },
+        {
+          "Test": "TestPlanPreflightRejectsWholeOperation/digest",
+          "Action": "pass",
+          "Elapsed": 1.26
+        },
+        {
+          "Test": "TestPlanPreflightRejectsWholeOperation/revision",
+          "Action": "pass",
+          "Elapsed": 3.3
+        },
+        {
+          "Test": "TestTransactionBoundaryFailureRestoresFiles/prepared",
+          "Action": "pass",
+          "Elapsed": 1.54
+        },
+        {
+          "Test": "TestTransactionBoundaryFailureRestoresFiles/file:0",
+          "Action": "pass",
+          "Elapsed": 1.76
+        },
+        {
+          "Test": "TestTransactionBoundaryFailureRestoresFiles/file:2",
+          "Action": "pass",
+          "Elapsed": 2.13
+        },
+        {
+          "Test": "TestTransactionBoundaryFailureRestoresFiles/audited",
+          "Action": "pass",
+          "Elapsed": 2
+        },
+        {
+          "Test": "TestTransactionAuditFailureAndEncryptedRecovery/start",
+          "Action": "pass",
+          "Elapsed": 1.29
+        },
+        {
+          "Test": "TestTransactionAuditFailureAndEncryptedRecovery/completion",
+          "Action": "pass",
+          "Elapsed": 1.69
+        },
+        {
+          "Test": "TestTransactionPrivateStoreRejectsSymlinks/adapter-transactions",
+          "Action": "skip",
+          "Elapsed": 0.32
+        },
+        {
+          "Test": "TestTransactionPrivateStoreRejectsSymlinks/adapter-operations",
+          "Action": "skip",
+          "Elapsed": 0.33
+        },
+        {
+          "Test": "TestTransactionPrivateStoreRejectsSymlinks/adapter-write",
+          "Action": "skip",
+          "Elapsed": 0.31
+        }
+      ],
+      "package_terminal_events": [
+        {
+          "Time": "2026-09-14T13:15:17.2642972+08:00",
+          "Action": "fail",
+          "Package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+          "Elapsed": 200.942
+        }
+      ],
+      "raw_log_bytes": 125542,
+      "raw_log_sha256": "a4fa5cab7ade8a35f79dc4d24801ebbc1bcfc67ce382907cd7aee634eda596ca",
+      "derived_jsonl_bytes": 129044,
+      "derived_jsonl_sha256": "5c6629d9b2cb8ddd901fd9fbd05fc5df90b1b63e7c0954f86e969c430b991bd1",
+      "non_json_lines": 0,
+      "panic_test_timed_out": false
+    },
+    {
+      "name": "vet",
+      "argv": [
+        "vet",
+        "-p=2",
+        "./internal/adapterinstall"
+      ],
+      "cwd": "apps/agentshield",
+      "started_utc": "2026-09-14T05:15:19.760174+00:00",
+      "finished_utc": "2026-09-14T05:16:12.753079+00:00",
+      "exit_code": 0,
+      "outer_timeout_seconds": 180,
+      "outer_timed_out": false,
+      "cleanup_exit": null,
+      "go_process_reaped": true,
+      "source_before": {
+        "source": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+        "source_dirty": false
+      },
+      "source_after": {
+        "source": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+        "source_dirty": false
+      },
+      "event_count": 0,
+      "top_level_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "subtest_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "top_level_results": [],
+      "subtest_results": [],
+      "package_terminal_events": [],
+      "raw_log_bytes": 0,
+      "raw_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "derived_jsonl_bytes": 0,
+      "derived_jsonl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "non_json_lines": 0,
+      "panic_test_timed_out": false
+    }
+  ]
+}
