@@ -327,8 +327,23 @@ func Check(dir string, write, ignoreMigration bool) error {
 	return nil
 }
 func checkMigration(dir string) error {
+	return checkMigrationCompletion(dir, false)
+}
+
+// CheckCompletedMigration verifies an active legacy migration's completion
+// record. Only the explicit migration recovery path may use this check, while
+// holding its Writers and separately validating state version compatibility.
+// It does not permit ordinary access while the active barrier remains.
+func CheckCompletedMigration(dir string) error {
+	return checkMigrationCompletion(dir, true)
+}
+
+func checkMigrationCompletion(dir string, recovery bool) error {
 	plan, e := ReadRegular(filepath.Join(dir, PlanName), 8<<20)
 	if errors.Is(e, os.ErrNotExist) {
+		if recovery {
+			return ErrMigration
+		}
 		return nil
 	}
 	if e != nil {
@@ -366,6 +381,9 @@ func checkMigration(dir string) error {
 	marker, e := ReadRegular(filepath.Join(dir, MarkerName), Budget)
 	if e != nil || d.Marker != Hash(marker) {
 		return ErrCorrupt
+	}
+	if !recovery {
+		return ErrMigration
 	}
 	return nil
 }
