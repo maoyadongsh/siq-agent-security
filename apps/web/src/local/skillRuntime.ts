@@ -1,3 +1,4 @@
+import { grantWireVersion } from './filesystemProfile';
 import { isImportPermissionSource } from './importPermissions';
 import type { SkillActivated, SkillActivateRequest, SkillInstallView, SkillRuntimeBinding, SkillRuntimeReadiness } from './types';
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -16,12 +17,12 @@ export function isSkillRuntimeBinding(v: unknown): v is SkillRuntimeBinding {
 }
 export function isSkillRuntimeReadiness(v: unknown, id?: string, grantId?: string): v is SkillRuntimeReadiness {
   if (!object(v) || !exact(v, ['schema_version', 'install_id', 'grant', 'state_revision', 'status', 'binding']) ||
-    v.schema_version !== 'local-skill-install-runtime-readiness/v1' || !text(v.install_id) || !/^sin-[a-f0-9]{64}$/.test(v.install_id) ||
+    !['local-skill-install-runtime-readiness/v1', 'local-skill-install-runtime-readiness/v2'].includes(String(v.schema_version)) || !text(v.install_id) || !/^sin-[a-f0-9]{64}$/.test(v.install_id) ||
     (id !== undefined && v.install_id !== id) || !revision(v.state_revision) || !object(v.grant) ||
     !['not_prepared', 'incomplete', 'prepared', 'no_tools'].includes(String(v.status))) return false;
   const g = v.grant;
-  if (!text(g.grant_id) || (grantId !== undefined && g.grant_id !== grantId) || !sig(g.signature) || g.status !== 'approved' ||
-    !text(g.admission_id) || !/^adm-si-[a-f0-9]{64}$/.test(g.admission_id) || !['hermes', 'openclaw'].includes(String(g.platform)) || !object(g.subject) ||
+  if (v.schema_version !== `local-skill-install-runtime-readiness/v${grantWireVersion(g)}` || !text(g.grant_id) || (grantId !== undefined && g.grant_id !== grantId) || !sig(g.signature) || g.status !== 'approved' ||
+    !text(g.admission_id) || !/^adm-si-[a-f0-9]{64}$/.test(g.admission_id) || !['hermes', 'openclaw', 'workbuddy'].includes(String(g.platform)) || (g.platform === 'workbuddy' && grantWireVersion(g) !== 2) || !object(g.subject) ||
     g.subject.type !== 'agent_instance' || !text(g.subject.id) || !/^hri-[a-f0-9]{32}$/.test(g.subject.id) ||
     !Array.isArray(g.facts) || !g.facts.every((f: unknown) => object(f) && text(f.fact_id) && text(f.domain) && text(f.action) &&
       ['allow', 'deny'].includes(String(f.effect)) && object(f.resource) && text(f.resource.value) && (f.conditions == null || object(f.conditions))) ||
@@ -35,7 +36,7 @@ export function isSkillRuntimeReadiness(v: unknown, id?: string, grantId?: strin
 }
 export function matchesInstalledReadiness(r: SkillRuntimeReadiness, v: SkillInstallView): boolean {
   const p = v.plan, b = r.binding;
-  return v.status === 'installed_unverified' && !!v.operation && r.install_id === v.install_id && r.grant.platform === p.platform && r.grant.grant_id === p.grant_id &&
+  return (p.schema_version !== 'local-skill-install-plan/v2' || r.schema_version === 'local-skill-install-runtime-readiness/v2') && v.status === 'installed_unverified' && !!v.operation && r.install_id === v.install_id && r.grant.platform === p.platform && r.grant.grant_id === p.grant_id &&
     r.grant.signature === p.grant_signature && r.grant.subject.id === p.instance_id.replace(/^hi-/, 'hri-') &&
     (b ? b.plan_signature === p.signature && b.operation_signature === v.operation.signature && b.approved_revision === p.grant_revision &&
       b.permission_digest === p.grant_permission_digest && b.source.import_id === p.source.import_id && b.source.artifact_digest === p.source.artifact_digest && b.source.analysis_sha256 === p.source.analysis_sha256

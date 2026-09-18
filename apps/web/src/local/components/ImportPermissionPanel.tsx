@@ -21,15 +21,25 @@ export default function ImportPermissionPanel({ result }: { result: SkillImportR
   useEffect(() => {
     let canceled = false;
     setLoading(true); setError(null);
-    Promise.all([localApi.adapterInstances('hermes'), localApi.adapterInstances('openclaw')]).then((catalogs) => {
+    const controller = new AbortController();
+    Promise.allSettled(['hermes', 'openclaw', 'workbuddy'].map(async (platform) => {
+      const catalog = await localApi.adapterInstances(platform);
+      if (platform !== 'workbuddy') return catalog.instances.filter((item) => item.detected);
+      const available = await Promise.all(catalog.instances.filter((item) => item.detected).map(async (item) => {
+        try {
+          const targets = await localApi.skillInstallationTargets(item.instance_id, controller.signal);
+          return targets.targets.some((target) => target.available) ? item : null;
+        } catch { return null; }
+      }));
+      return available.filter((item): item is AdapterInstance => item !== null);
+    })).then((catalogs) => {
       if (!canceled) {
-        const found = catalogs.flatMap((data) => data.instances).filter((item) => item.detected);
+        const found = catalogs.flatMap((entry) => entry.status === 'fulfilled' ? entry.value : []);
         setInstances(found); setInstance((previous) => found.some((item) => item.instance_id === previous) ? previous : '');
+        if (catalogs.some((entry) => entry.status === 'rejected')) setError('部分平台实例暂时无法读取，已保留可核验的目标；可刷新重试。');
       }
-    }).catch((err: unknown) => {
-      if (!canceled) { setInstances([]); setError(err instanceof Error ? err.message : '无法读取目标实例'); }
     }).finally(() => { if (!canceled) setLoading(false); });
-    return () => { canceled = true; };
+    return () => { canceled = true; controller.abort(); };
   }, [epoch]);
   const prepare = async (original?: ImportPermissionRequest) => {
     if (submitting.current || busy || loading) return;
@@ -38,19 +48,20 @@ export default function ImportPermissionPanel({ result }: { result: SkillImportR
       artifact_digest: result.import.artifact_digest, analysis_sha256: result.import.analysis_sha256,
       instance_id: instance, actor_id: actorId.trim(),
     };
-    if (!body.instance_id || !body.actor_id) return;
+    if (!body.instance_id || !body.actor_id || !instances.some((item) => item.instance_id === body.instance_id)) return;
     submitting.current = true; setBusy(true); setPending(body); setError(null);
     const controller = new AbortController(); active.current = controller;
     try {
       const prepared = await localApi.prepareImportPermissions(result.import.import_id, body, controller.signal);
+      if (prepared.grant.platform !== instances.find((item) => item.instance_id === body.instance_id)?.platform) throw new Error('skill_install_incompatible_response');
       if (!controller.signal.aborted) navigate(`/grants?grant=${encodeURIComponent(prepared.grant.grant_id)}`);
     } catch (err) { if (!controller.signal.aborted) setError(skillImportErrorText(err)); }
     finally { submitting.current = false; if (!controller.signal.aborted) setBusy(false); }
   };
   return <section className="import-permission-panel" aria-labelledby="prepare-permissions-heading">
     <h3 id="prepare-permissions-heading">为目标智能体准备权限</h3>
-    <p className="page-desc">选择已有 Hermes 或 OpenClaw 实例，生成待审阅的权限草稿。下一页可调整权限和期限，再由你批准；批准后仍需确认安装与实例权限。</p>
-    <p className="page-desc">Linux 当前仅支持 Hermes 和 OpenClaw；WorkBuddy 的 Windows/macOS 安装目标接入仍待实机验收。</p>
+    <p className="page-desc">选择已有 Hermes、OpenClaw 或受支持的 Windows WorkBuddy 实例，生成待审阅的权限草稿。下一页可调整权限和期限，再由你批准；批准后仍需确认安装与实例权限。</p>
+    <p className="page-desc">WorkBuddy 仅在本机服务返回可用 Windows 安装目标后列出。安装时还需明确选择用户级或已登记项目；准备权限不会安装或启用 Skill。</p>
     <div className="field"><label htmlFor="import-target-instance">目标智能体实例</label>
       <select id="import-target-instance" value={instance} disabled={loading || busy || !!pending}
         onChange={(event) => setInstance(event.target.value)}>
@@ -59,7 +70,7 @@ export default function ImportPermissionPanel({ result }: { result: SkillImportR
       </select></div>
     <div className="field"><label htmlFor="import-permission-actor">权限准备操作者</label>
       <input id="import-permission-actor" value={actorId} onChange={(event) => setActorId(event.target.value)} maxLength={128} disabled={busy || !!pending} /></div>
-    {loading ? <p role="status">正在读取实例…</p> : !instances.length ? <p className="page-desc">未发现可选 Hermes 或 OpenClaw 实例。请先完成平台初始化，再刷新列表。</p> : null}
+    {loading ? <p role="status">正在读取实例…</p> : !instances.length ? <p className="page-desc">未发现可用目标实例。请先完成平台初始化；WorkBuddy 还需可安全读取的用户目录或已登记项目，再刷新列表。</p> : null}
     {error ? <p role="alert" className="action-error">{error}</p> : null}
     {busy ? <p role="status">正在复验候选并准备权限…</p> : null}
     <div className="import-actions">

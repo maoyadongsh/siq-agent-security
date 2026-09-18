@@ -3,7 +3,7 @@ import Modal from '@/components/Modal';
 import { LocalApiError, localApi } from '../api';
 import { useLocalSession } from '../session';
 import type { Grant, GrantResourceEdit } from '../types';
-import { filesystemProfileLabel, grantFilesystemProfile, resourceFilesystemConfirmation, windowsFilesystemProfile, windowsPathLines, type DisplayFilesystemProfile } from '../filesystemProfile';
+import { filesystemProfileLabel, grantFilesystemProfile, resourceFilesystemConfirmation, supportsWindowsGrantResources, windowsFilesystemProfile, windowsPathLines, type DisplayFilesystemProfile } from '../filesystemProfile';
 
 interface Draft { tools: string; readOnly: string; readWrite: string; networkAllow: string; networkDeny: string; models: string }
 const empty: Draft = { tools: '', readOnly: '', readWrite: '', networkAllow: '', networkDeny: '', models: '' };
@@ -45,7 +45,7 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
   }, [grantId, retry]);
   const currentProfile = grant ? grantFilesystemProfile(grant) : 'unsupported';
   const editable = grant?.status === 'pending_approval' && currentProfile !== 'unsupported' && !loading && !loadFailed && !busy;
-  const windowsAvailable = grant?.subject.type === 'agent_instance' && !grant.skill && ['hermes', 'openclaw', 'workbuddy'].includes(grant.platform);
+  const windowsAvailable = grant !== null && supportsWindowsGrantResources(grant);
   const windows = filesystem === windowsFilesystemProfile;
   const filesystemConfirmation = grant ? resourceFilesystemConfirmation(grant, filesystem, confirmedFilesystem) : null;
   const pathLines = windows ? windowsPathLines : lines;

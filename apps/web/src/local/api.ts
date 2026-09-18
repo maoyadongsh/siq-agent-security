@@ -33,7 +33,7 @@ import type { SkillRemoveRequest } from './types';
 import { isSkillInstallationCatalog, isSkillInstallationInspection } from './skillInspection';
 import { isSkillActivated, isSkillRuntimeReadiness } from './skillRuntime';
 import type { SkillActivateRequest } from './types';
-import { isSkillInstallCreated, isSkillInstallPlan, isSkillInstallView } from './skillInstall';
+import { isSkillInstallCreated, isSkillInstallPlan, isSkillInstallView, isSkillInstallationTargets, isSkillInstallRequest } from './skillInstall';
 import { isImportPermissionResult } from "./importPermissions";
 import { isSkillImportList, isSkillImportResult } from "./skillImports";
 import type { RuntimeIdentity } from "./types";
@@ -300,6 +300,10 @@ export const localApi = {
       data.claim.grant_revision !== body.expected_grant_revision || data.claim.binding_signature !== body.expected_binding_signature || data.claim.actor_id !== body.actor_id) throw new LocalApiError(502, 'skill_install_incompatible_response');
     return data;
   }),
+  skillInstallationTargets: (instanceId: string, signal?: AbortSignal) => request<unknown>(`/v1/skill-installation-targets?instance_id=${encodeURIComponent(instanceId)}`, { signal }).then((data) => {
+    if (!isSkillInstallationTargets(data, instanceId)) throw new LocalApiError(502, 'skill_install_incompatible_response');
+    return data;
+  }),
   skillInstallations: (signal?: AbortSignal) => request<unknown>('/v1/skill-installations/operations', { signal }).then((data) => {
     if (!isSkillInstallationCatalog(data)) throw new LocalApiError(502, 'skill_install_incompatible_response');
     return data;
@@ -351,7 +355,7 @@ export const localApi = {
     return data;
   }),
 
-  createInstallPlan: (body: SkillInstallRequest, signal?: AbortSignal) => request<unknown>('/v1/skill-installations/plans', { method: 'POST', body: JSON.stringify(body), signal }).then((data) => {
+  createInstallPlan: (body: SkillInstallRequest, signal?: AbortSignal) => !isSkillInstallRequest(body) ? Promise.reject(new LocalApiError(400, 'skill_install_invalid')) : request<unknown>('/v1/skill-installations/plans', { method: 'POST', body: JSON.stringify(body), signal }).then((data) => {
     if (!isSkillInstallCreated(data, body)) throw new LocalApiError(502, 'skill_install_incompatible_response');
     return data;
   }),

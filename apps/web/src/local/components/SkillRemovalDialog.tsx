@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Modal from '@/components/Modal';
 import { localApi } from '../api';
-import { skillInstallErrorText } from '../skillInstall';
+import { skillInstallErrorText, skillInstallScopeLabel } from '../skillInstall';
 import { skillRemoveRequest } from '../skillRemoval';
 import { useLocalSession } from '../session';
 import type { SkillRemovalView } from '../types';
@@ -66,7 +66,7 @@ export default function SkillRemovalDialog({ current, disabled, onOpen, onRefres
       {current?.status === 'removed' ? '查看移除记录' : current?.claim ? '继续移除与恢复' : '移除此 Skill'}
     </button>
     <Modal open={open} onClose={close} title="移除 Skill" description="核对目标副本和权限范围后，再确认操作。" className="skill-removal-dialog">
-      {record ? <><h3>{record.plan.directory_name}</h3><p>{record.plan.target_display}</p></> : null}
+      {record ? <><h3>{record.plan.directory_name}</h3><p>{skillInstallScopeLabel(record.plan)} · {record.plan.target_display}</p></> : null}
       {busy ? <p role="status">正在处理或查询移除操作…</p> : null}
       {message ? <p role="alert" className="action-error">{message}</p> : null}
       {view ? <>

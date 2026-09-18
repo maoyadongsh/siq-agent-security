@@ -18,7 +18,8 @@ describe('import permission preparation', () => {
     ]) expect(isImportPermissionResult(bad, id, req)).toBe(false);
     expect(isImportPermissionResult(result, 'si-' + 'f'.repeat(32), req)).toBe(false);
     expect(isImportPermissionResult({ ...result, grant: { ...result.grant, platform: 'openclaw' } }, id, req)).toBe(true);
-    expect(isImportPermissionResult({ ...result, grant: { ...result.grant, platform: 'workbuddy' } }, id, req)).toBe(false);
+    // Initial WorkBuddy drafts remain Grant/v1; explicit Windows conversion precedes installation.
+    expect(isImportPermissionResult({ ...result, grant: { ...result.grant, platform: 'workbuddy' } }, id, req)).toBe(true);
   });
   it('requires all immutable source digests', () => {
     const source = sample('source');

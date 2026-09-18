@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { localApi } from '../api';
-import { skillInstallErrorText } from '../skillInstall';
+import { skillInstallErrorText, skillInstallScopeLabel } from '../skillInstall';
 import { matchesInstalledReadiness } from '../skillRuntime';
 import { useLocalSession } from '../session';
 import type { SkillInstallView, SkillRuntimeReadiness } from '../types';
@@ -47,6 +47,7 @@ export default function InstalledSkillProtection({ view, onBusy }: { view: Skill
   };
   return <section className="instance-permission-panel" aria-label="安装后的实例权限" aria-busy={busy}>
     <h3>下一步：准备实例权限</h3>
+    <p>{skillInstallScopeLabel(view.plan)} · {view.plan.target_display}</p>
     <p>先确认权限，再接入原平台并运行自检。这些权限约束整个实例会话，实际 Skill 调用归属仍待验证。</p>
     {busy ? <p role="status">正在核验安装内容与权限…</p> : null}
     {message ? <p role="status">{message}</p> : null}
@@ -64,7 +65,8 @@ export default function InstalledSkillProtection({ view, onBusy }: { view: Skill
       </div>}
     </> : null}
     <button type="button" className="btn" disabled={busy} onClick={() => setRefresh((n) => n + 1)}>重新查询权限准备状态</button>
-    {view.plan.platform !== 'hermes' && readiness?.status === 'prepared' ? <p className="page-desc">OpenClaw 原生接入可在此管理；图形化运行自检仍在完善，请以原生验收证据为准。</p> : null}
+    {view.plan.platform !== 'hermes' && readiness?.status === 'prepared' ? <p className="page-desc">{view.plan.platform === 'workbuddy' ? 'WorkBuddy' : 'OpenClaw'} 原生接入可在此管理；图形化运行自检仍在完善，请以原生验收证据为准。</p> : null}
+    {view.plan.schema_version === 'local-skill-install-plan/v2' ? <p className="page-desc">WorkBuddy 运行仍需受管身份、原生会话和人工确认的 Skill 会话绑定。准备权限不代表实际加载；项目级安装也不把实例权限变成项目隔离。</p> : null}
     {dialog === 'adapter' ? <AdapterChangeDialog request={{ platform: view.plan.platform, action: 'install', instanceId: view.plan.instance_id, grantId: view.plan.grant_id }} onClose={closeDialog} onApplied={(m) => { setMessage(m); closeDialog(); }} /> : null}
     {dialog === 'check' && view.plan.platform === 'hermes' ? <RuntimeCheckDialog instanceId={view.plan.instance_id} onClose={closeDialog} /> : null}
   </section>;

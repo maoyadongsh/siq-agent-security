@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import { localApi, LocalApiError } from '../api';
-import { skillInstallErrorText } from '../skillInstall';
+import { skillInstallErrorText, skillInstallScopeLabel } from '../skillInstall';
 import { useLocalSession } from '../session';
 import type { SkillContentChange, SkillInstallationCatalog, SkillInstallationInspection, SkillRemovalView } from '../types';
 
@@ -107,14 +107,14 @@ export default function InstalledSkillsPage() {
         <ul className="import-history">{items.map((r) => <li key={r.install_id}>
           <button type="button" className="import-history-button" disabled={removalOpen} aria-current={r.install_id === selected} onClick={() => setParams({ install_id: r.install_id })}>
             <strong>{r.plan.directory_name}</strong><span>{recordedLabel[r.recorded_status]} · {new Date(r.operation?.recorded_at ?? r.plan.created_at).toLocaleString()}</span>
-            <span>{r.plan.target_display}</span>
+            <span>{skillInstallScopeLabel(r.plan)} · {r.plan.target_display}</span>
           </button>
         </li>)}</ul>
       </section>
       <section className="panel import-panel" aria-labelledby="installation-inspection-heading" aria-busy={checking}>
         <h2 id="installation-inspection-heading">当前内容检查</h2>
         {!record ? <p>{selected && !listBusy ? '未找到可核验的对应记录，请刷新列表后重新选择。' : '选择一份安装记录查看。'}</p> : <>
-          <h3>{record.plan.directory_name}</h3><p>{record.plan.target_display}</p>
+          <h3>{record.plan.directory_name}</h3><p>{skillInstallScopeLabel(record.plan)} · {record.plan.target_display}</p>
           <p className="page-desc">{visible ? '页面可见时每 30 秒检查所选安装；只比较原安装清单，不检查远端新版本。' : '页面不可见，自动检查已暂停。'}</p>
           {removal?.record.install_id === selected && removal.status === 'removed' ? <p role="status"><strong>已记录移除完成</strong>，原操作不再检查或清理同路径后来的内容。</p> : null}
           {removalError ? <p role="alert" className="action-error">{removalError} 当前移除状态无法确认。</p> : null}
