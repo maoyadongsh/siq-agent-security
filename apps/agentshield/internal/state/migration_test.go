@@ -207,7 +207,7 @@ func TestBoundInitializationRejectsLostOrCopiedIdentity(t *testing.T) {
 	if e := stateformat.Check(other, true, false); !errors.Is(e, stateformat.ErrCorrupt) {
 		t.Fatal("copied marker accepted", e)
 	}
-	m.MinWriter = 3
+	m.MinWriter = stateformat.WriterVersion + 1
 	os.WriteFile(filepath.Join(s.Dir, stateformat.MarkerName), migrationJSON(m), 0600)
 	if e := stateformat.Check(s.Dir, false, false); e != nil {
 		t.Fatal("compatible reader rejected", e)
