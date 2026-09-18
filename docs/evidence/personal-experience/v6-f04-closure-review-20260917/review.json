@@ -1,0 +1,102 @@
+{
+  "schema": "siq-acceptance-evidence-review/v1",
+  "review_type": "offline_source_and_evidence_review",
+  "live_rerun": false,
+  "source_matrix": "../v6-f04-e04e06e11-closure-20260917/d05-acceptance-matrix.json",
+  "source_matrix_sha256": "53a4514987074c1fc3af1c300146478eb99b862013fac14e12034af85b940ec5",
+  "source_summary_unchanged": {
+    "pass": 337,
+    "fail": 0,
+    "total": 344,
+    "failed_ids": []
+  },
+  "source_acceptance_counts": {
+    "pass": 11,
+    "partial": 2
+  },
+  "reviewed_acceptance_counts": {
+    "pass": 10,
+    "partial": 3
+  },
+  "rows": [
+    {
+      "item": "E10",
+      "reported_status": "pass",
+      "reviewed_status": "pass"
+    },
+    {
+      "item": "E06",
+      "reported_status": "pass",
+      "reviewed_status": "partial",
+      "reason": "E06u3 confirms old CLI supports --wait; unsupported-wait option branch was not exercised. E06 other real legs are retained."
+    },
+    {
+      "item": "E02",
+      "reported_status": "pass",
+      "reviewed_status": "pass"
+    },
+    {
+      "item": "E01",
+      "reported_status": "pass",
+      "reviewed_status": "pass"
+    },
+    {
+      "item": "E03",
+      "reported_status": "pass",
+      "reviewed_status": "pass"
+    },
+    {
+      "item": "E04",
+      "reported_status": "pass",
+      "reviewed_status": "pass",
+      "boundary": "SEC expiry and required Authority denial proved on decision plane; no claim of SEC subject binding at task executor."
+    },
+    {
+      "item": "E05",
+      "reported_status": "pass",
+      "reviewed_status": "pass"
+    },
+    {
+      "item": "E11",
+      "reported_status": "partial",
+      "reviewed_status": "partial",
+      "boundary": "Real EACCES variants accepted; CLI exit 124 remains ambiguous remote_or_cli. HTTP reservation uncertainty is true."
+    },
+    {
+      "item": "E13",
+      "reported_status": "pass",
+      "reviewed_status": "pass"
+    },
+    {
+      "item": "E09",
+      "reported_status": "pass",
+      "reviewed_status": "pass"
+    },
+    {
+      "item": "E08",
+      "reported_status": "partial",
+      "reviewed_status": "partial"
+    },
+    {
+      "item": "E12",
+      "reported_status": "pass",
+      "reviewed_status": "pass"
+    },
+    {
+      "item": "E07",
+      "reported_status": "pass",
+      "reviewed_status": "pass"
+    }
+  ],
+  "original_files_sha256": {
+    "resources.json": "e916692677319f2d9547749c6b49bf8216f78afeadc2e110e4436ac420841289",
+    "report.md": "40eb2db820b754222697ca0cd0473fadf63bee7d2fd247519973f450ed5563f0",
+    "d05-acceptance-matrix.json": "53a4514987074c1fc3af1c300146478eb99b862013fac14e12034af85b940ec5",
+    "candidate.json": "a498721a2732a5743df938d99add021ed35360f137618ad06b931278c282e830",
+    "SHA256SUMS": "714bf00a4a8476a20efcb03fbfe5cd624ceb97f39e99f04eda389bfd36b70c45"
+  },
+  "driver_files_sha256": {
+    "scripts/personal-experience/openshell-o05v6-d05-acceptance.py": "5d34257370101ad6525686c89ab53680e55d00d2146ee68baf1184c052335ae1",
+    "scripts/personal-experience/test_o05v6_review_guards.py": "30d52eba8c7c8d65d145a2f3166bbe96823408c066e4dcd15c46a22363a63741"
+  }
+}

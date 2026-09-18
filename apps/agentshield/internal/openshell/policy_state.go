@@ -5,11 +5,18 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"sync"
+	"time"
 
 	"siq-agent-security/apps/agentshield/internal/canon"
 )
 
-const operationRegistryLimit = 256
+const (
+	operationRegistryLimit = 256
+	// A successful --wait is an observation, not a durable capability. Require
+	// a recent observation before a task starts even when the readback bytes
+	// and Loaded marker have remained unchanged.
+	loadedPolicyMaxAge = 5 * time.Minute
+)
 
 type policyOperation struct {
 	ID              string
@@ -25,10 +32,27 @@ type policyCoordinator struct {
 	operationsMu   sync.Mutex
 	operations     map[string]policyOperation
 	operationOrder []string
+	// Loaded facts come from either a successful policy set --wait or a fresh
+	// combination of policy get --full and the gateway's Ready/current-policy
+	// sandbox observation. ReadEffective alone cannot create one. They are
+	// process-local, bounded, and invalidated on inconsistency or unknown write.
+	loaded map[string]loadedPolicy
+	// An invalidated revision cannot be silently repaired by old bytes. A
+	// different revision may establish a new proof from both gateway readbacks;
+	// an unknown prior revision requires an explicit successful --wait.
+	invalidated map[string]string
+}
+
+type loadedPolicy struct {
+	revision    string
+	digest      string
+	loadEpoch   string
+	sandboxID   string
+	confirmedAt time.Time
 }
 
 func newPolicyCoordinator() *policyCoordinator {
-	return &policyCoordinator{operations: make(map[string]policyOperation)}
+	return &policyCoordinator{operations: make(map[string]policyOperation), loaded: make(map[string]loadedPolicy), invalidated: make(map[string]string)}
 }
 
 var processPolicyCoordinator = newPolicyCoordinator()
@@ -36,6 +60,89 @@ var processPolicyCoordinator = newPolicyCoordinator()
 func (c *Client) targetPolicyLock(target string) *sync.Mutex {
 	sum := sha256.Sum256([]byte(target))
 	return &c.policy.locks[int(sum[0])%len(c.policy.locks)]
+}
+
+func (c *Client) loadedPolicyKey(target string) string {
+	return c.InvocationFingerprint() + "\x00" + target
+}
+
+func (c *Client) forgetLoadedPolicy(target string) {
+	c.policy.operationsMu.Lock()
+	defer c.policy.operationsMu.Unlock()
+	key := c.loadedPolicyKey(target)
+	old := c.policy.loaded[key]
+	delete(c.policy.loaded, key)
+	if c.policy.invalidated == nil {
+		c.policy.invalidated = make(map[string]string)
+	}
+	if _, alreadyInvalidated := c.policy.invalidated[key]; !alreadyInvalidated {
+		c.policy.invalidated[key] = old.revision
+	}
+}
+
+func (c *Client) rememberLoadedPolicy(target, revision, digest, loadEpoch string) {
+	if loadEpoch == "" {
+		return
+	}
+	c.policy.operationsMu.Lock()
+	defer c.policy.operationsMu.Unlock()
+	if c.policy.loaded == nil {
+		c.policy.loaded = make(map[string]loadedPolicy)
+	}
+	key := c.loadedPolicyKey(target)
+	c.policy.loaded[key] = loadedPolicy{
+		revision: revision, digest: digest, loadEpoch: loadEpoch, confirmedAt: time.Now(),
+	}
+	delete(c.policy.invalidated, key)
+}
+
+// confirmOrObserveLoadedPolicy accepts a fresh gateway-reported load fact only
+// when no previous fact was invalidated in this process. A --wait fact without
+// an instance ID gets bound to the first matching live sandbox observation.
+func (c *Client) confirmOrObserveLoadedPolicy(target, revision, digest, loadEpoch, sandboxID string) bool {
+	if loadEpoch == "" || sandboxID == "" {
+		return false
+	}
+	c.policy.operationsMu.Lock()
+	defer c.policy.operationsMu.Unlock()
+	key := c.loadedPolicyKey(target)
+	if invalidatedRevision, wasInvalidated := c.policy.invalidated[key]; wasInvalidated {
+		if invalidatedRevision == "" || invalidatedRevision == revision {
+			return false
+		}
+		// The old proof stays dead. A different, monotonically reported
+		// loaded revision gets a fresh proof only from the current policy and
+		// sandbox readbacks; no old approval can match the new revision.
+		delete(c.policy.invalidated, key)
+	}
+	if c.policy.loaded == nil {
+		c.policy.loaded = make(map[string]loadedPolicy)
+	}
+	loaded, ok := c.policy.loaded[key]
+	if !ok {
+		c.policy.loaded[key] = loadedPolicy{
+			revision: revision, digest: digest, loadEpoch: loadEpoch,
+			sandboxID: sandboxID, confirmedAt: time.Now(),
+		}
+		return true
+	}
+	if loaded.revision != revision && loaded.sandboxID == sandboxID {
+		c.policy.loaded[key] = loadedPolicy{
+			revision: revision, digest: digest, loadEpoch: loadEpoch,
+			sandboxID: sandboxID, confirmedAt: time.Now(),
+		}
+		return true
+	}
+	if loaded.revision != revision || loaded.digest != digest || loaded.loadEpoch != loadEpoch ||
+		(loaded.sandboxID != "" && loaded.sandboxID != sandboxID) ||
+		loaded.confirmedAt.IsZero() || time.Since(loaded.confirmedAt) >= loadedPolicyMaxAge {
+		return false
+	}
+	if loaded.sandboxID == "" {
+		loaded.sandboxID = sandboxID
+		c.policy.loaded[key] = loaded
+	}
+	return true
 }
 
 func policyDigest(policy map[string]any) (string, error) {

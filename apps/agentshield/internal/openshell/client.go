@@ -29,6 +29,10 @@ type Client struct {
 	EnvScript    string
 	Runner       Runner
 	DockerRunner Runner
+	// TaskRunner spawns one approved task command. It is a separate seam from
+	// Runner so an injected fake replaces the process spawn only: the gates,
+	// ordering and refusal logic in ExecTask stay shared with production.
+	TaskRunner   TaskRunner
 	Timeout      time.Duration
 	ProbeTimeout time.Duration
 	PollInterval time.Duration
@@ -38,7 +42,8 @@ type Client struct {
 	lookPath     func(string) (string, error)
 
 	mu                    sync.Mutex
-	dockerFallbackRetired bool // conservative latch; never authorizes a capability
+	taskCancels           *TaskCanceller // lazily created; termination only, never authority
+	dockerFallbackRetired bool           // conservative latch; never authorizes a capability
 	detectedVersion       string
 	detectedKey           string
 	detectedAt            time.Time
@@ -54,6 +59,7 @@ func New(opts Options) *Client {
 		EnvScript:    opts.EnvScript,
 		Runner:       opts.Runner,
 		DockerRunner: opts.DockerRunner,
+		TaskRunner:   opts.TaskRunner,
 		Timeout:      opts.Timeout,
 		ProbeTimeout: opts.ProbeTimeout,
 		PollInterval: opts.PollInterval,
@@ -82,6 +88,9 @@ func New(opts Options) *Client {
 	}
 	if c.Runner == nil {
 		c.Runner = c.subprocess
+	}
+	if c.TaskRunner == nil {
+		c.TaskRunner = c.taskSubprocess
 	}
 	return c
 }

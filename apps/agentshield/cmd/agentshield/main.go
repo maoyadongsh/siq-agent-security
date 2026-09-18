@@ -215,9 +215,9 @@ func usage() {
                                   # optional Edge upload; skip (exit 0) without creds; never auto-runs from serve
   %[1]s policy-exec         # OpenClaw security.installPolicy exec: stdin request → {decision,reason}
   %[1]s hook codebuddy|workbuddy [--state-dir DIR]
-                                  # CodeBuddy/WorkBuddy PreToolUse/PostToolUse hook: stdin event → hookSpecificOutput
+                                  # WorkBuddy hook; CodeBuddy retained only for historical installed hooks
   %[1]s adapter install|uninstall|status [platform]
-                                  # write/restore host adapter files (openclaw|hermes|codebuddy|workbuddy|trae)
+                                  # new install: openclaw|hermes, plus workbuddy on macOS/Windows; legacy uninstall remains
   %[1]s grant <admission_id> --platform P --subject ID
   %[1]s grant approve|deploy|reject|revoke <grant_id> [--approve-as ACTOR]
                                   # least-privilege grant; approve requires a human --approve-as

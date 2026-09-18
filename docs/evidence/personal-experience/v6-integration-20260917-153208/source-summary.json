@@ -1,0 +1,137 @@
+{
+  "schema": "siq-v6-integration-source/v1",
+  "main_head": "9b8c09af742cb9df94c6d02e6f2db6ecccd68951",
+  "glm_head": "ff310716cc4c7e045456e3f44357f2c48baf3589",
+  "source_manifest_sha256": "7c86b6569404e372373d20d96fbf92f434c66fbcb6a1f5076358c9122e10d0a5",
+  "tracked_patch_sha256": "6efa7a5ba8245cad8ef03969a93bb00d785f2cf7556c5313bfa6e9bec5691740",
+  "untracked_total": 128,
+  "untracked_selected": 31,
+  "untracked_deferred": 97,
+  "selected": [
+    {
+      "path": "apps/agentshield/internal/openshell/task_exec.go",
+      "source_sha256": "fa40cdae706dfe25cd3cb932f7b82a393b00efb01d5aa7815e9fa2a9053c8607"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/task_exec_test.go",
+      "source_sha256": "82300d0dccc4f7ab98b297b5110facf376857c14d6f98e17f11bfe93c7c15290"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_binding.go",
+      "source_sha256": "7b4815752f733cd5d419ecc2204e195d6babcb11ac07eb2c136c3d8f914828c0"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_exec.go",
+      "source_sha256": "aca2b87e4c8291aecb65e03f43b05e5ecc8522017588bcbf69d9c164424ecb51"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_exec_test.go",
+      "source_sha256": "5c0ec9d2e1a8dd242e5b2ab759cbcf383fcb787d469e4790d34af8ebe261d779"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_track.go",
+      "source_sha256": "4a1551d9ad1a2825da164e7621185a5b1eee91c03efae8b12509e75e1d7e1be9"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_track_test.go",
+      "source_sha256": "3610af3ad6cabe8e573216053f9472d6a0173e1976bd653144d8ca56aed424dd"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/live_hosted_source_preflight_test.go",
+      "source_sha256": "a931af3e31bcbf7c63f42914c06ea4a6069023aeecd5a7e5da617a4c84ec397c"
+    },
+    {
+      "path": "apps/web/src/local/components/TaskExecutionPanel.tsx",
+      "source_sha256": "4050927a1c7de9f5a40f2d9d9f83cabaf16c02c586b23116704e1dd6d9da217a"
+    },
+    {
+      "path": "apps/web/src/local/taskExecutions.test.ts",
+      "source_sha256": "f3a9590078d003173d47860ed4158cac1ac1ee55b7df9eac4bea61e926053fab"
+    },
+    {
+      "path": "apps/web/src/local/taskExecutions.ts",
+      "source_sha256": "8775c42596f62d73d7566fa22b66cca0acea176c0280c2fadad404be29f97d37"
+    },
+    {
+      "path": "docs/glm-local-o05-v6-execution-prompt-20260917-000307.md",
+      "source_sha256": "b63738a74bec68f8d82b7a32e808c94a2f8a9edbbbfe338a4769bec32cf7ee2d"
+    },
+    {
+      "path": "docs/local-o05-v6-progress-20260917-001207.md",
+      "source_sha256": "b8be309580ffb54878171c1c247fc4a421d33435305cfccfafa071030e6cadee"
+    },
+    {
+      "path": "docs/openshell-task-execution-d01-design-20260917.md",
+      "source_sha256": "e0ba47e6bbaba38306fedb7dc4a23c45c35640d9dd32a38a969587cd2c4af0d9"
+    },
+    {
+      "path": "docs/openshell-task-execution-d10-manual-compat-20260917.md",
+      "source_sha256": "4291d2340167e4f68435cb6842ddb61420a3003880ccacb38b520648ddfaf703"
+    },
+    {
+      "path": "docs/personal-local-o05-next-development-taskbook-20260917-000307.md",
+      "source_sha256": "000f6e67615b42fd03c602ea9a7bb2d89a0d19cb8c7fd6411e1444fdec0344a8"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-preview.v1.schema.json",
+      "source_sha256": "8cee4625dae39abe490f729e1ecf24d01b96344d1ae7598bb8b6ff849ae9c457"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-reconcile.v1.schema.json",
+      "source_sha256": "8860f3feb6a467fa69281fc059451cace77b290dd6602320eb8e5a0dbdce7a0f"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-request.v1.schema.json",
+      "source_sha256": "5d3c6809c12ceccb2ffbc3e7c56138629ee2bf33939c60eb543179e887febec1"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-status-request.v1.schema.json",
+      "source_sha256": "ce2ccbdf31f1e244fe738b6f3b4f76d34fec5ebffd28f54275990fd1ba77f3f0"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-status.v1.schema.json",
+      "source_sha256": "e3a50dcbc728224122929d506a87791659b9512a0c4d030a97909f380fdd2d81"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-stop.v1.schema.json",
+      "source_sha256": "d91b1936a1211f7ade12ae23dab93852fc61016b111813481b05d72a7b438d72"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution.v1.md",
+      "source_sha256": "eeecdd96df05a50cacc17789793bc124edb5294255074a1945bbb4f98865b312"
+    },
+    {
+      "path": "scripts/personal-experience/o05v6-same-candidate-matrix.py",
+      "source_sha256": "36df074c1141020bd65b8abab425e87493ffd34f8ed131266f54d0cc77bc81c4"
+    },
+    {
+      "path": "scripts/personal-experience/openshell-o05v6-d05-acceptance.py",
+      "source_sha256": "3126e4839fabc369e558c00759a69261a8dd2bfaf34a43c6d3dd70a384b8ea46"
+    },
+    {
+      "path": "scripts/personal-experience/openshell-o05v6-d05-e12-browser.mjs",
+      "source_sha256": "740b99a60905f28f809f07e80e548288bb917c447a22234dc528dba73a45885a"
+    },
+    {
+      "path": "scripts/personal-experience/openshell-o05v6-d08-service-gateway.py",
+      "source_sha256": "bbfc6f90c96135ffd829975c37184eaa9d66b0674ba0a3e55aec0d0707ef29a0"
+    },
+    {
+      "path": "scripts/personal-experience/openshell-o05v6-taskexec-journey.py",
+      "source_sha256": "b69234257c3ffa3a03e71d6b575c5b8e24d181a14a952103570f03ad9c15f332"
+    },
+    {
+      "path": "scripts/personal-experience/openshell-o05v6-taskexec-perf.py",
+      "source_sha256": "cceb2ce40b841595ea8361bf4183b2790307b4e617bedda8662173171dbc896a"
+    },
+    {
+      "path": "scripts/personal-experience/test_o05v6_review_guards.py",
+      "source_sha256": "e5288415291a8026c2ea27a4670bda793095287919fa7b3bcfd1e91c2baf51f9"
+    },
+    {
+      "path": "scripts/personal-experience/workbuddy-linux-host-diagnostics.py",
+      "source_sha256": "9270e6ab3901cc501f83d9d8e9e4006d66fbd19030fd05eb2370267966cbafc2"
+    }
+  ],
+  "note": "Source hashes describe the copied GLM snapshot, before integration edits. Deferred evidence and old generated embed remain in the preserved GLM snapshot/worktree."
+}

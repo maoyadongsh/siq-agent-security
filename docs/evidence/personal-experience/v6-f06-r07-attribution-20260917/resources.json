@@ -1,0 +1,50 @@
+{
+  "schema": "v6-r07-attribution-resources/v1",
+  "recorded_at": "2026-09-17T23:30:00+08:00",
+  "attempts": [
+    {
+      "attempt": 1,
+      "harness_sha256": "6a35bfbb19dfbdd10056d437280305e09bc894da88a1e6e31ae1f55f9ad92db7",
+      "outcome": "RuntimeError at r07_step4_attribution_correlates_grant_install_sec (new relation assertion), 10 pass + 1 fail recorded",
+      "diagnostics": "/tmp/siq-r07-diagnostics-qkuta4pd (phase-a, checks_completed=11, last_wait=step5_receipts_deny_row role:row/visible) — contents archived here, directory deleted",
+      "note": "its failure.json (0600) was deleted by operator mistake before archival; the failure point is independently fixed by output frames (r07 line 372) and reproduced with full detail by attempt 2"
+    },
+    {
+      "attempt": 2,
+      "harness_sha256": "a9d91778e6be469e421ae24191bbca4cae9a66c414c61ec57b37f9dcbede39fe",
+      "outcome": "same deterministic failure, error detail captured: failed=install_record_live",
+      "diagnostics": "/tmp/siq-r07-diagnostics-5j72e_pd (same shape as attempt 1) — archived into r07-journey.attempt2.failure.json facts, directory deleted",
+      "root_cause": "assertion assumed the internal Record projection (schema_version local-skill-install-record/v1, recorded_status); the public API returns the View projection (local-skill-install-view/v1, status) — same value domain, different field names (skillinstall operation.go View vs Record). Fixed in the harness; product untouched."
+    },
+    {
+      "attempt": 3,
+      "harness_sha256": "a9d91778e6be469e421ae24191bbca4cae9a66c414c61ec57b37f9dcbede39fe (r07), r04 nested leg 45223137b063848e4f006c035fe67f0f3182b57451633c7c034d88bf3c54d9d1",
+      "outcome": "exit 0, passed=true, 27/27 journey checks + nested r04 leg 31/31"
+    }
+  ],
+  "processes": {
+    "post_run_check": "ps aux over journey tempdir / candidate copy / headless_shell patterns: 0 batch-owned processes; foreign-batch daemons (pid 276252 port 42817, pid 2540314 port 58151) untouched",
+    "daemon": "fixture-copied candidate serve --port <ephemeral> --mode block; stopped by harness.stop()",
+    "browser": "headless chromium per phase, closed in finally",
+    "host_cli": "real node openclaw.mjs agent --local per native turn"
+  },
+  "ports": "all 127.0.0.1 ephemeral (bind port=0); no fixed port; no listener remains from this batch",
+  "temporary_directories": {
+    "journey_roots": "tempfile siq-r07-user-journey-* auto-removed; post-run glob confirms none left",
+    "batch_diagnostics_deleted": ["/tmp/siq-r07-diagnostics-qkuta4pd", "/tmp/siq-r07-diagnostics-5j72e_pd"],
+    "foreign_leftovers_untouched": ["121rexm0", "c_1q7c5p", "m4328r8t", "o9m0jows (2026-09-15/16)"]
+  },
+  "host_config_drift": {
+    "/home/maoyd/.openclaw/openclaw.json": {"before": "642238d1a9f6ea9e4b53c1806123fd7b0d6ab9a78101d85eb51c4528c0657f29", "after": "642238d1a9f6ea9e4b53c1806123fd7b0d6ab9a78101d85eb51c4528c0657f29", "unchanged": true},
+    "/home/maoyd/.openclaw/agentshield.json": {"before": "8df315255cc6ede0db11cf599aafa550c189d679897e7f9c46470d64ccb3d290", "after": "8df315255cc6ede0db11cf599aafa550c189d679897e7f9c46470d64ccb3d290", "unchanged": true},
+    "/home/maoyd/.openclaw/exec-approvals.json": {"before": "d691264bc0292cc71903d4dbaedf60051fa2303e58c0edcbd122ba2a9713fce4", "after": "d691264bc0292cc71903d4dbaedf60051fa2303e58c0edcbd122ba2a9713fce4", "unchanged": true},
+    "mechanism": "isolated fixture HOME (OPENCLAW_CONFIG_PATH pinned); adapter install/uninstall with backup happens inside the fixture and is verified by step11"
+  },
+  "private_material": {
+    "journey-private/": "0700, matched by .gitignore line 73",
+    "journey-private/siq-v6-hermes-post-e11-agent": "0700, sha256 0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+    "journey-private/prereq-checks.json": "0600"
+  },
+  "public_area_hygiene": "public files carry no tokens, pairing codes or raw content; failure JSONs contain only check ids, digest prefixes and fixed step/locator categories",
+  "parallel_safety": "no foreign sandbox, process, port or directory modified"
+}

@@ -1,0 +1,167 @@
+{
+  "schema": "v6-f04-dirty-source-manifest/v1",
+  "base_commit": "9b8c09af742cb9df94c6d02e6f2db6ecccd68951",
+  "rows": [
+    {
+      "path": "apps/agentshield/internal/openshell/client.go",
+      "sha256": "dae601814ed13287e03c0e57f8ea38b63fe7eec6d48ddb8cacb550a7d0a0f2c6"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/client_test.go",
+      "sha256": "4a3f2703de89ca0fbd23e15a874230822ece0efb74fff783dc4360920a995a13"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/command.go",
+      "sha256": "fba29a8245366a5db6892907ea79d8dcce3c985c607022a14addb6ec4e5500e8"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/policy.go",
+      "sha256": "a5eb5e52f69c75b1647f833a39f5063710f9c09e82298da316da3da4b0e56ac0"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/policy_state.go",
+      "sha256": "d6824b54bf74e628fb43aef42362a72b350eeec383d697f25014bfe096b57f7a"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/runtime_load.go",
+      "sha256": "56d36bf7939a5346ee96ff84b21f9e16faf51dc859fd43ef4ded4fdc212d9135"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/runtime_load_test.go",
+      "sha256": "4b9f01bedd1f6c1f0e55d784688cc4d5c8e418aa16b8d00de1620550ef986750"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/task_exec.go",
+      "sha256": "6a21863632b8d255179b2c491638b8a4b2342795aa5426e6ae1fe683c1c4eadb"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/task_exec_test.go",
+      "sha256": "2a8b748d9c2f9ab07eff4a172b5f252f1d969fb58017d50c1a9d031559d74ec3"
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/types.go",
+      "sha256": "3b1e5b747dc599e7b3eddb6a1201d1590e3314fa11e0f85ee9bec0fc19f4db45"
+    },
+    {
+      "path": "apps/agentshield/internal/server/authz.go",
+      "sha256": "d4a8e3b9d8e7ebfefba6cea5ff5af1a8c2fe30c2f7e84dd7bec0bca51cde94a2"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_session_exec_test.go",
+      "sha256": "8bf88a5a8ad449da4413c2da4f402e8ad4f65f4ef7189dc4cd88ae5b0d4b3201"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_binding.go",
+      "sha256": "b09c3a49c7c845c2a6149cedfa57f63ba362a558607050648835bf842bd197cd"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_exec.go",
+      "sha256": "64255824574c39409c8f0e3a2a6c5a1b9513f6ba8796745b4033732ccdcb9f64"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_exec_test.go",
+      "sha256": "1cc13c7a12b202baf3326cb7ae31c2dd530d7eddea6814b60716504fd96debed"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_track.go",
+      "sha256": "ab574d3acf2623b9f3433c4c489308d5c6c08a9f31caa8e1a54e804c9e64d75c"
+    },
+    {
+      "path": "apps/agentshield/internal/server/openshell_task_track_test.go",
+      "sha256": "3796c40fbd368134800a9ce662f2c7fbab8f89a372ba3ce13aa57f005cceeb15"
+    },
+    {
+      "path": "apps/agentshield/internal/server/server.go",
+      "sha256": "b0227e19082cabfef80919af880c9286fc199349411f0d819cb3c3de09469493"
+    },
+    {
+      "path": "apps/agentshield/internal/skillimport/live_hosted_source_preflight_test.go",
+      "sha256": "a931af3e31bcbf7c63f42914c06ea4a6069023aeecd5a7e5da617a4c84ec397c"
+    },
+    {
+      "path": "apps/agentshield/internal/state/state.go",
+      "sha256": "8c09ce3f4af1c976d222433307cb079aaf76b9f166a571e4757517bbb3f7be2e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/DemoPage-DE6OunA6.js",
+      "sha256": "4ce24cf1678ce31f96729d80e9f16f49c9f348c987a6ad19e0d9d72e9eea2f5e"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/InstalledSkillsPage-7iNI2kM3.js",
+      "sha256": "1d04b3e48f32670fc04816d9412f0a8cb16a67d2a3ff11e70d4aad302a6caa7c"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/SkillImportsPage-NCNx1q37.js",
+      "sha256": "85376c213a25f32353ed9cbfeebe34ad76afdac541cd7e18c144597224b37aaa"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/SkillUpdatesPage-Dx8iTgCh.js",
+      "sha256": "ba261396023fd1e1f5a124be69aab0cd0d5210cea28be07c3776102b8adb7fbd"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/TaskActivitiesPage-CBXicjjV.js",
+      "sha256": "10396d23756f7eda65d81c87f26751a866d40b848937e516f4eb5eba7d5d0aee"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/TaskActivityDetailPage-EJqAltZp.js",
+      "sha256": "41bf6ad751f0dd1e3e999a5df73b0cf4049837ee7af1f6de757ad3cbeb7cd188"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/index.local-DJfykmF3.js",
+      "sha256": "7e3a40055521323142fa9974de52a1494d0aa7e202af226b47fba4ff1f6faa6a"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/index.html",
+      "sha256": "fb5466fc51f18190ecff344104db948ae85e0f46131e8a4c2924317a9e000e04"
+    },
+    {
+      "path": "apps/web/src/local/api.ts",
+      "sha256": "393667b30515ff123ba8637f4d076c3cab59c0a0ba0213daf8c7ab97e6c4ae48"
+    },
+    {
+      "path": "apps/web/src/local/components/TaskExecutionPanel.tsx",
+      "sha256": "be2028cd34e435015c82094fcf56970587274ccb586ed41ebf245027f93172b8"
+    },
+    {
+      "path": "apps/web/src/local/pages/ConfirmationsPage.tsx",
+      "sha256": "c9baf67d3896fba2f1851b9e4f43b02f64a6e8dc86d94245479d6b0391c89716"
+    },
+    {
+      "path": "apps/web/src/local/taskExecutions.test.ts",
+      "sha256": "9ff51d3c437fecbcff0b7f3a006b9a2184410d9e292093029cc128297afd790c"
+    },
+    {
+      "path": "apps/web/src/local/taskExecutions.ts",
+      "sha256": "c763bdad141d1ab0bd789fce5b2cd45538d386144b0ceb378b25c53640c4a371"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-preview.v1.schema.json",
+      "sha256": "8cee4625dae39abe490f729e1ecf24d01b96344d1ae7598bb8b6ff849ae9c457"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-reconcile.v1.schema.json",
+      "sha256": "8860f3feb6a467fa69281fc059451cace77b290dd6602320eb8e5a0dbdce7a0f"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-request.v1.schema.json",
+      "sha256": "5d3c6809c12ceccb2ffbc3e7c56138629ee2bf33939c60eb543179e887febec1"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-status-request.v1.schema.json",
+      "sha256": "ce2ccbdf31f1e244fe738b6f3b4f76d34fec5ebffd28f54275990fd1ba77f3f0"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-status.v1.schema.json",
+      "sha256": "e3a50dcbc728224122929d506a87791659b9512a0c4d030a97909f380fdd2d81"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution-stop.v1.schema.json",
+      "sha256": "444733555703bbce6b7c6e3eb9a0fcd0d959c0b582bd2f315d6885bb8b96cb87"
+    },
+    {
+      "path": "packages/contracts/openshell-task-execution.v1.md",
+      "sha256": "8b1a855f7f4a156de81b80b8f94e6ce96b34e7360ff6992df61dba7ba4dd61f5"
+    }
+  ],
+  "note": "This lists changed and untracked app/contract files in the working tree at report time. It is not a clean-checkout release manifest. Go binary identity is pinned separately."
+}

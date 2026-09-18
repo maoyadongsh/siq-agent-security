@@ -1263,6 +1263,10 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 
 **WorkBuddy 桌面（与 CodeBuddy CLI 分列）**：macOS/Windows 桌面应用的配置根为 `WORKBUDDY_CONFIG_DIR`（须为无符号链接祖先的绝对路径），未设置时为 `~/.workbuddy`。SIQ 不把 `CODEBUDDY_CONFIG_DIR` 当作 WorkBuddy 配置根，也不静默回退。安装、状态、自动发现、卸载与 inventory 读取该根下的 `settings.json`；不读取 `config.yaml`、`workbuddy.db`、`claw` 或 pairing 凭据。`adapter install workbuddy` 在 `settings.json` 的 `hooks.PreToolUse` / `hooks.PostToolUse` 追加 `` `<abs>/siq-agent-security hook workbuddy --state-dir <abs-state>` ``（先备份、可卸载），保留 `enabledPlugins` 及其他未知键。命令中的二进制和状态目录都按目标 OS 的单参数规则引用，空格、单引号、中文不得改变 argv。Electron 子进程通常不继承 SIQ 环境变量，因此 WorkBuddy 钩子命令必须带绝对 `--state-dir`；`siq-agent-security hook workbuddy [--state-dir DIR]` 与 CodeBuddy 使用同一 JSON 合同，但回执与 pending 的 `platform` 必须为 `workbuddy`。WorkBuddy 与 CodeBuddy 使用上一段的单根新安装和历史混合记录整批外科卸载规则。`POST /v1/grants` 与 CLI `grant --platform workbuddy` 必须接受该平台；ActiveGrant 按 platform+agent_id 匹配，WorkBuddy 的 allow 不得签发到 `codebuddy` 或其他平台。CodeBuddy CLI 的 `~/.codebuddy` 与 `hook codebuddy` 不得替代 WorkBuddy 桌面证据。原生桌面验收使用隔离 `WORKBUDDY_CONFIG_DIR` 或项目级 `.workbuddy/settings.json`，不得改写日常 `~/.workbuddy` 的 claw/db。桌面安装入口（插件市场）未被接管，`install_interception` 保持 host_capability_missing，直到有受支持的装前拦截。`block` 下决策不可达必须输出结构化 `permissionDecision=deny`；宿主把退出码 1 视为非阻断错误，不能用 exit 1 代替拒绝。
 
+2026-09-17 个人版范围收紧：Linux 仅以 OpenClaw/Hermes 为本轮原生宿主目标，WorkBuddy 只保留 Windows/macOS 接入与历史数据读取。Linux 上 `/v1/adapter/status` 和诊断仍可展示已存在的 WorkBuddy 文件，但必须标明不在当前系统支持范围；控制台不得提供新的安装/重装按钮。Linux 上 `adapter install workbuddy`、安装预览及对应管理 API 应在写入或签发安装计划前拒绝，旧计划应用也须拒绝；显式卸载既有接入仍可用，避免把历史钩子困在系统中。自动安装跳过该平台，不能导致其他可用平台被连带拒绝。不能据此删除历史 WorkBuddy Grant/回执或改变旧 hook 的 fail-closed 行为；macOS/Windows 原规则保持。此范围调整不把 Linux/WorkBuddy 的历史探测记为产品验收通过。
+
+同日用户进一步明确：**全平台取消 CodeBuddy 后续任务与新适配**。CodeBuddy 与 WorkBuddy 不得合并：Windows/macOS WorkBuddy 任务继续。Linux/macOS/Windows 均不得新安装/重装 CodeBuddy 适配器或签发新的 CodeBuddy Grant；已有 pending Grant 不得继续批准或部署。控制台、管理 API、CLI 应标明停止新接入并拒绝相应动作，自动安装跳过 CodeBuddy。历史资产/配置/Grant/回执仍可查看、拒绝或撤销，已有配置可外科卸载；旧钩子在卸载前保持原 fail-closed 行为。底层跨平台解析、验签与卸载代码可为兼容旧安装保留，不据此恢复 CodeBuddy 支持宣称；新产品验收和发布支持矩阵不得把 CodeBuddy 算入当前目标。
+
 ### 4.4 Trae / TraeWork（P2，审计）
 
 无钩子。SKILL.md 引导：安装前 `siq-agent-security admit`；`serve` 周期扫描 `.trae/skills`；UI 标「审计模式，无法阻断」。`skill-manifest.support_matrix` 对应行 `status=audit_only, tiers=[L0]`。
@@ -2051,3 +2055,15 @@ policy set 的提交成功和 policy get 的配置读回不等于沙箱已加载
 ### 2026-09-17 会话策略基线恢复前置检查
 
 会话 policy_apply 在消费 hold 前复验当前完整网络基线能否按既有 rollback 权限恢复。超出 Grant 端点、批准程序路径或无程序限制的基线，返回 403 / openshell_base_not_restorable，保留批准与网关原策略。在 Client 目标锁内，以捕获到的真实基线再次运行相同检查，避免预检与实际写入基线不同。回滚授权仍按当前 Grant/程序范围与操作摘要验签，不能为方便恢复放宽权限。无法解析/读取的基线先返回 503 / openshell_base_unreadable，同样零写入且不消费批准。该检查仅拒绝已知不可恢复的起点，不承诺跨进程原子性或撤权后仍可回滚。
+
+### 2026-09-17 v6 执行接续约束
+
+以下为 v6 未合入任务执行原型的接续要求；已合入的会话策略基线恢复检查继续生效。任务执行在同一 Client 目标锁内读取策略、复核授权并运行；后端读取可能阻塞，所以读取后、spawn 前再次复核当前授权。锁范围只覆盖本进程，不证明跨进程原子性，也不证明未知远端任务结束。**读回修订与摘要相符仍不能独立证明执行平面已经加载策略**；执行器需结合 `policy get --full` 的已加载状态及当前 `sandbox list --output json` 的唯一目标 UUID、`Ready` 状态和相同 `current_policy_version`。v0.0.83 协议中该版本由沙箱报告加载后更新；此版本对既有策略的 `Status: Effective` 不提供 `Loaded` 时间标记，所以只能由独立沙箱行补足加载证据，而 `Loaded`/`Active` 状态仍须有有效标记。已有 `policy set --wait` 成功可建立进程内确认；新进程或原本无写入的沙箱可在上述双读回后建立只读确认。每次启动前重读并绑定同一目标身份，确认最长 5 分钟；失败/变化/过期清除且锁定旧确认，不由旧字节恢复自动复活。同一沙箱已报告加载不同新修订时，可为该新修订与新批准建立新的双读回证明，旧批准仍拒绝；未知旧修订或沙箱 UUID 变化不能这样解锁。读回中每项 allow 网络端点必须属于本次批准的 `network_targets`，空目标列表不能借已有策略获得联网。v6 集成候选已将沙箱 UUID 纳入签名批准参数，预留前从网关重新取得唯一 Ready 实例并比较；旧的不含 UUID 的原型批准不能沿用。执行 CLI 仍按沙箱名称选择目标，UUID 读回与启动之间缺网关原子性；网络 binary 限制也未单列，因此跨进程替换和资源范围仍需进一步验收。
+
+停止响应的事实位于 `stop` 对象；409 `stop_not_observable` 响应中位于 `status.stop`。缺字段或类型不符属于验收失败，不自动记为后端不支持。当前 `unsupported/false` 来自 SIQ 实现，不是网关能力读回；本地 CLI 终止也不等于远端任务已停止。远端停止与状态查询需按真实网关版本单独验收，未确认时保留不确定状态。
+
+D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-private/` 内创建，目录 0700、文件 0600。真实网关复测须由操作者确认独占目标，显式传入目标、环境脚本、CLI 路径和预期基线摘要；服务启动前先只读核对。清理前读回版本/摘要必须匹配本批写入，恢复使用捕获的完整初始策略；漂移、读回失败或归属不明时拒绝写入，保留人工恢复项。此保护不是远端 CAS，不允许其他写入者并发修改目标。
+
+### v6 CI 补充：执行端点绑定
+
+任务执行、加载校验与实例读回要求 ResolveInvocation 成功且来源为显式 CLI/endpoint 对。缓存指纹可包含未配置或错误状态，非空指纹不能替代端点绑定。无配置、PATH、脚本、缺半对或非法 endpoint 均在后端 I/O 前拒绝。

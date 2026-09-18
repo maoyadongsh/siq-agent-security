@@ -1,0 +1,44 @@
+{
+  "schema": "siq-v6-f04-owned-resources/v1",
+  "created_for": "v6 F04 same-candidate live acceptance",
+  "owned_sandbox": {
+    "name": "siq-v6-f04-163608",
+    "id": "de99ab6a-8e47-487d-8f69-6e5b6ae9c7a2",
+    "source_image": "siq/hermes-openshell-siq-analysis:f470321d2fb2b2cda14b7c3b",
+    "observed_phase_after_create": "Ready",
+    "observed_current_policy_version_after_create": 1,
+    "cleanup_status": "deleted_confirmed_after_async_settle",
+    "cleanup_checked_at_utc": "2026-09-17T09:10:01.755622+00:00",
+    "cleanup_observation": "Exact-name delete returned successfully; immediate list still showed the sandbox; a subsequent read-only list returned no matching name or UUID. No second delete was sent.",
+    "baseline_policy_hash_before_delete": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43"
+  },
+  "candidate": {
+    "binary_sha256": "a523c3a25f5120a8ec71fa84dac8bcf7f0d3a40b4f9c80e29f570eb76ee0a33e",
+    "dirty_source_manifest_sha256": "abfd27a3bafd35f3ca4730f827f55df93bcc5bc8bf27cdcb46a53bf184a826d9",
+    "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7"
+  },
+  "external_shared_gateway": {
+    "name": "siq-openshell-dev",
+    "endpoint": "https://127.0.0.1:17671",
+    "status_preflight": "Connected",
+    "reported_version": "0.0.83",
+    "ownership": "external; do not restart, reconfigure, or delete"
+  },
+  "owned_local_build_directory": "/tmp/siq-v6-f04-20260917-163608",
+  "final_live_run": {
+    "evidence_dir": "v6-f04-r7-20260917-180500",
+    "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+    "exit_code": 0,
+    "checks_passed": 228,
+    "checks_failed": 0,
+    "acceptance_pass": 9,
+    "acceptance_partial": 4
+  },
+  "owned_isolated_state_roots": {
+    "identified": 11,
+    "removed": 11,
+    "already_absent": 0,
+    "ownership_method": "exact paths from this batch public matrix isolated_root and private raw logs; /tmp direct-child prefix, uid, non-symlink and active-process checks before deletion"
+  },
+  "owned_local_build_directory_status": "retained for F05 same-candidate verification; contains r4 and prior/cross-build outputs, mode 0700; not a published artifact"
+}

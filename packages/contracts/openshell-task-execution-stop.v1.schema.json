@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/openshell-task-execution-stop.v1.schema.json",
+  "title": "Request termination of one owned OpenShell task execution",
+  "description": "Binds the stop request to the signed task-execution identity. This SIQ implementation has no verified per-task remote stop path: its response may only report local CLI termination and must report remote_stop=unsupported and remote_stop_confirmed=false. Deleting the sandbox is never a substitute.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "reservation_receipt_id", "action_id", "decision_receipt_id",
+    "target", "platform", "session_id", "agent_id", "tool", "actor_id"
+  ],
+  "properties": {
+    "schema_version": {"const": "openshell-task-execution-stop/v1"},
+    "reservation_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "action_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "decision_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "target": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,62}$"},
+    "platform": {"type": "string", "minLength": 1, "maxLength": 64},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "agent_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "tool": {"const": "exec"},
+    "actor_id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"},
+    "delete_sandbox": {"const": false},
+    "reason": {"type": "string", "maxLength": 512}
+  }
+}

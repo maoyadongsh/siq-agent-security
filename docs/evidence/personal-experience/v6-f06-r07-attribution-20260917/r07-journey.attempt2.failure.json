@@ -1,0 +1,60 @@
+{
+  "passed": false,
+  "error_type": "RuntimeError",
+  "error": "r07_step4_attribution_correlates_grant_install_sec: failed=install_record_live matched_grant_id=grt-si-c517beac6eb7191845bbf03a938c892403e16be335f32e55352ce9a387678a47 content_hash=ed97c76d53f887fc\u2026",
+  "binary_sha256": "0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+  "harness_sha256": "a9d91778e6be469e421ae24191bbca4cae9a66c414c61ec57b37f9dcbede39fe",
+  "last_wait": {
+    "journey_step": "step5_receipts_deny_row",
+    "wait_target": {
+      "category": "role:row",
+      "state": "visible"
+    }
+  },
+  "checks": [
+    {
+      "id": "r07_step10a_raw_content_store_default_disabled",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step1_daemon_health_paired",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step2_ui_pairing_with_wrong_code_retry",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step2_ui_bindings_discovers_openclaw",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step3_ui_grants_shows_v1_grant",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step5_missing_authority_denied_fail_closed",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step5_ui_receipts_consistent_with_deny",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step4_sec_issued_for_real_session",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step4_allow_read_with_session_attribution",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step4_call_binding_recomputed",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step4_attribution_correlates_grant_install_sec",
+      "status": "fail"
+    }
+  ]
+}

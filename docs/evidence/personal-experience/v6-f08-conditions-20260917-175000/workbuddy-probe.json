@@ -1,0 +1,177 @@
+{
+  "schema_version": "workbuddy-linux-host-diagnostics/v1",
+  "generated_at": "2026-09-17T09:37:45Z",
+  "mode": "probe",
+  "platform": "workbuddy",
+  "environment": {
+    "os": "linux",
+    "arch": "aarch64",
+    "mode": "native"
+  },
+  "probe": {
+    "home": "~",
+    "root": {
+      "root": "~/.workbuddy",
+      "root_exists": false,
+      "has_config": false,
+      "has_buddies": false
+    },
+    "layouts": [
+      {
+        "path": "~/.workbuddy",
+        "exists": false
+      },
+      {
+        "path": "~/.config/workbuddy",
+        "exists": false
+      },
+      {
+        "path": "~/.local/share/workbuddy",
+        "exists": false
+      },
+      {
+        "path": "~/.codebuddy",
+        "exists": true
+      },
+      {
+        "path": "/opt/workbuddy",
+        "exists": false
+      },
+      {
+        "path": "/usr/local/lib/workbuddy",
+        "exists": false
+      }
+    ],
+    "adjacent_family_installs": [
+      "~/.codebuddy"
+    ],
+    "executables": [
+      {
+        "name": "workbuddy",
+        "found": false
+      },
+      {
+        "name": "codebuddy",
+        "found": false
+      },
+      {
+        "name": "workbuddy-cli",
+        "found": false
+      }
+    ],
+    "node_packages": [],
+    "processes": [],
+    "host_present": false,
+    "runtime_confirmed": false
+  },
+  "evidence_grade": "host",
+  "host_home": true,
+  "acceptance_usable": true,
+  "authorization": "diagnostic only; never a runtime authorization or certification",
+  "acceptance": {
+    "assertions": [],
+    "verdict": "blocked",
+    "checks": {
+      "discovery": {
+        "status": "blocked",
+        "method": "none",
+        "reason": "environment_unavailable",
+        "evidence": []
+      },
+      "normal_execution": {
+        "status": "blocked",
+        "method": "none",
+        "reason": "environment_unavailable",
+        "evidence": []
+      },
+      "pre_execution_denial": {
+        "status": "blocked",
+        "method": "none",
+        "reason": "environment_unavailable",
+        "evidence": []
+      },
+      "service_unavailable_denial": {
+        "status": "blocked",
+        "method": "none",
+        "reason": "environment_unavailable",
+        "evidence": []
+      },
+      "approval_resume": {
+        "status": "blocked",
+        "method": "none",
+        "reason": "environment_unavailable",
+        "evidence": []
+      },
+      "final_parameter_recheck": {
+        "status": "blocked",
+        "method": "none",
+        "reason": "environment_unavailable",
+        "evidence": []
+      },
+      "skill_attribution": {
+        "status": "blocked",
+        "method": "none",
+        "reason": "environment_unavailable",
+        "evidence": []
+      },
+      "install_interception": {
+        "status": "blocked",
+        "method": "none",
+        "reason": "environment_unavailable",
+        "evidence": []
+      }
+    }
+  },
+  "blocked_reason": "environment_unavailable",
+  "blocked_detail": "no real Linux WorkBuddy host: ~/.workbuddy has no buddies.json, no executable on PATH, no running host process",
+  "checks": {
+    "discovery": {
+      "status": "blocked",
+      "method": "none",
+      "reason": "environment_unavailable",
+      "evidence": []
+    },
+    "normal_execution": {
+      "status": "blocked",
+      "method": "none",
+      "reason": "environment_unavailable",
+      "evidence": []
+    },
+    "pre_execution_denial": {
+      "status": "blocked",
+      "method": "none",
+      "reason": "environment_unavailable",
+      "evidence": []
+    },
+    "service_unavailable_denial": {
+      "status": "blocked",
+      "method": "none",
+      "reason": "environment_unavailable",
+      "evidence": []
+    },
+    "approval_resume": {
+      "status": "blocked",
+      "method": "none",
+      "reason": "environment_unavailable",
+      "evidence": []
+    },
+    "final_parameter_recheck": {
+      "status": "blocked",
+      "method": "none",
+      "reason": "environment_unavailable",
+      "evidence": []
+    },
+    "skill_attribution": {
+      "status": "blocked",
+      "method": "none",
+      "reason": "environment_unavailable",
+      "evidence": []
+    },
+    "install_interception": {
+      "status": "blocked",
+      "method": "none",
+      "reason": "environment_unavailable",
+      "evidence": []
+    }
+  }
+}

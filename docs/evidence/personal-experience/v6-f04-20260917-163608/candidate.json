@@ -1,0 +1,23 @@
+{
+  "schema": "v6-f04-local-candidate/v1",
+  "base_commit": "9b8c09af742cb9df94c6d02e6f2db6ecccd68951",
+  "git_branch": "codex/personal-v6-integration-20260917",
+  "working_tree_dirty": true,
+  "source_manifest_sha256": "655486599a9c2bab3847521139551078061541c0a1e057b3f3c93f2edae7fcc7",
+  "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+  "build_command": "CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o <private-output> ./cmd/agentshield",
+  "go_version": "go version go1.26.5 linux/arm64",
+  "embedded_index_sha256": "fb5466fc51f18190ecff344104db948ae85e0f46131e8a4c2924317a9e000e04",
+  "cli_version": "0.0.83",
+  "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+  "gateway_name": "siq-openshell-dev",
+  "gateway_endpoint": "https://127.0.0.1:17671",
+  "dedicated_target_name": "siq-v6-f04-163608",
+  "dedicated_target_id": "de99ab6a-8e47-487d-8f69-6e5b6ae9c7a2",
+  "sandbox_image": "siq/hermes-openshell-siq-analysis:f470321d2fb2b2cda14b7c3b",
+  "native_openclaw_host_in_this_leg": false,
+  "driver_sha256_at_report_time": "d8003050524208c0abf3fc9968b60407a00cd6d78384f6766be8e076dc9e95d0",
+  "driver_temporal_note": "Driver reporting/redaction/E04 adjudication code was changed after the r7 run; execution-control logic used for r7 was unchanged. Exact driver file hash at r7 invocation was not recorded, so this is not a fully frozen release candidate.",
+  "acceptance_matrix_public_sha256": "98d3e75a0dd640a0b337c45a81bfdd0bf813c3f1e9a3c25ecb284ce54fd2a7d7",
+  "created_at_utc": "2026-09-17T09:13:05.493837+00:00"
+}

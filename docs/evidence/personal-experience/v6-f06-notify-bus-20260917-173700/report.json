@@ -1,0 +1,27 @@
+{
+  "schema_version": "personal-r02-linux-desktop-notify/v1",
+  "recorded_at": "2026-09-17T09:30:19.632047+00:00",
+  "passed": true,
+  "platform": "Linux-6.17.0-1014-nvidia-aarch64-with-glibc2.39",
+  "runtime": {
+    "platform": "openclaw",
+    "os": "linux"
+  },
+  "binary_sha256": "9d90b53f936ceb616adc29c1af0800a15fadc1440d35682fd07058c5a72ce180",
+  "harness_sha256": "2ff1165f04f11d0409252202f28799f01ae13ddbf7f77333dcdbe28172f8b332",
+  "notify_send_sha256": "21491085324f2859a9c5e6d60279b9f26185611cba7fe36b775ccdb88cbfd91b",
+  "checks": [
+    "product_dispatcher_started_with_opt_in",
+    "signed_hold_became_pending",
+    "notify_method_reached_real_session_bus",
+    "title_and_count_only_body_matched",
+    "tool_action_receipt_and_params_not_exposed",
+    "hold_safely_resolved_and_receipt_chain_verified"
+  ],
+  "limitations": [
+    "D-Bus method acceptance is verified; visual rendering and user attention are not observable",
+    "automated fixture hold and operator; no human approval or external model",
+    "remote TTY session reused the logged-in user's real GNOME notification service",
+    "Windows and macOS notification transports are outside this Linux evidence"
+  ]
+}

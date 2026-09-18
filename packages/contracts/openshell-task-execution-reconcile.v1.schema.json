@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/openshell-task-execution-reconcile.v1.schema.json",
+  "title": "Administrator reconciliation of an uncertain OpenShell task execution",
+  "description": "Closes one unresolved task-execution reservation with an externally verified fact. Reconciliation is read-only: it never re-runs the task, never rewrites the observation, and never rebuilds a missing identity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "reservation_receipt_id", "reservation_hash", "action_id",
+    "decision_receipt_id", "outcome", "actor_id"
+  ],
+  "properties": {
+    "schema_version": {"const": "openshell-task-execution-reconcile/v1"},
+    "reservation_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "reservation_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "action_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "decision_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "outcome": {"enum": ["occurred", "not_occurred"]},
+    "actor_id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"},
+    "evidence_note": {"type": "string", "maxLength": 512}
+  }
+}

@@ -633,6 +633,32 @@ func (s *Store) PutEvidence(id string, doc any) error {
 	})
 }
 
+// GetEvidence reads one previously written evidence document. Evidence files
+// are immutable, so this is a read-only view: it exists so a projection can be
+// rebuilt after a restart without replaying anything.
+//
+// A missing file returns (nil, nil) so callers can tell "never recorded" apart
+// from "recorded but unreadable". Unreadable must never be silently treated as
+// absent: a caller that conflates the two would report an execution as never
+// having happened.
+func (s *Store) GetEvidence(id string) (map[string]any, error) {
+	if !safeID(id) {
+		return nil, errors.New("state: invalid evidence id")
+	}
+	raw, err := statefs.ReadFile(filepath.Join(s.Dir, "evidence", id+".json"))
+	if errors.Is(err, os.ErrNotExist) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		return nil, err
+	}
+	return doc, nil
+}
+
 // ErrConflict means an O_EXCL target exists with bytes that are not identical.
 var ErrConflict = errors.New("state: immutable path exists with different content")
 

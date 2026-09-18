@@ -1,0 +1,5277 @@
+{
+  "schema": "o05v6-d05-acceptance/v1",
+  "scope": "development-and-isolated-verification",
+  "candidate_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+  "acceptance_matrix": [
+    {
+      "item": "E10",
+      "status": "pass",
+      "detail": "external drift refused a stale-pinned approval; policy set/readback is never treated as loaded, and the live revision was re-read before the drift assertion",
+      "observed_drift_reason": "openshell_task_policy_not_loaded",
+      "status_projection_payload": {
+        "error": "openshell_task_reservation_unknown",
+        "reason_code": "openshell_task_reservation_unknown",
+        "_http_status": 404
+      },
+      "reservation_created": false
+    },
+    {
+      "item": "E06",
+      "status": "partial",
+      "detail": "approve-before-load refusal proven (E06a/E06b below); the load-timeout and old-CLI-without---wait sub-cases are not reproducible with the single gateway version available and are covered at source level only",
+      "refusal_reason": "openshell_task_policy_not_loaded"
+    },
+    {
+      "item": "E02",
+      "status": "pass",
+      "detail": "two precise destinations proven reachable (200 + fresh arrivals), then blocked under a tightened policy (403 + zero arrivals), then the pristine content hash restored",
+      "code_A": "200",
+      "code_B": "403",
+      "arrivals_B_delta": 0,
+      "arrival_peer_check": "fresh arrivals match calibrated peer 172.23.0.6; host self-check peer differs"
+    },
+    {
+      "item": "E01",
+      "status": "pass",
+      "detail": "approved task executed through the production executor; the effect was read back by an independent CLI; approval/Grant/reservation/observation link 1:1",
+      "outcome": {
+        "state": "succeeded",
+        "task_executed": "yes",
+        "execution_uncertain": false,
+        "spawned": true,
+        "preflight_refused": false,
+        "exit_code": 0,
+        "exit_code_attribution": "remote",
+        "stdout_digest": "15de673ef8e3660cc13eb744fc50b702679bc05779493341e84e846adeba558b",
+        "stderr_digest": "76ec9768ba15ab3ee78d1bd1bc79b8b2788d2eb20095b51908d40003018fe287",
+        "stdout_bytes": 32,
+        "stderr_bytes": 53,
+        "started_at": "2026-09-17T09:04:11.442599871Z",
+        "finished_at": "2026-09-17T09:04:11.622429372Z",
+        "policy_revision": "12",
+        "policy_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc"
+      },
+      "reservation_receipt_id": "rcp-beac5473b9ac-090411.140491-exec"
+    },
+    {
+      "item": "E03",
+      "status": "pass",
+      "detail": "unapproved, cancelled, and six drift shapes refused with zero side effects; the untouched approval then executed",
+      "http_by_variant": {
+        "unapproved": 400,
+        "cancelled": 400,
+        "drift_argv": 403,
+        "drift_digest": 403,
+        "drift_revision": 403,
+        "drift_target": 403,
+        "drift_timeout": 403,
+        "drift_workdir": 403
+      },
+      "not_refused": {}
+    },
+    {
+      "item": "E04",
+      "status": "partial",
+      "detail": "five identity/session/decision refusals against the production executor plus the revocation leg; the expired-SEC sub-case is recorded not-run with its reason",
+      "reason_code_by_variant": {
+        "wrong_agent": "openshell_grant_invalid",
+        "wrong_session": "hold_identity_mismatch",
+        "fabricated_decision": "openshell_decision_missing",
+        "wrong_platform": "openshell_grant_invalid",
+        "wrong_target": "openshell_task_binding_mismatch"
+      },
+      "adjudication": "Expired SEC and missing mandatory Authority were not run; E04 cannot be fully passed."
+    },
+    {
+      "item": "E05",
+      "status": "pass",
+      "detail": "4 concurrent submissions -> exactly 1 launch; retry of the consumed approval -> 0 further launches; counter verified by independent CLI",
+      "concurrent_http": [
+        409,
+        409,
+        200,
+        409
+      ],
+      "counter": 1
+    },
+    {
+      "item": "E11",
+      "status": "partial",
+      "detail": "output limit, non-zero exit and timeout are separately reported; the raw-leak grep passes with a positive control; the result-storage-failure case is source-level only",
+      "observations": {
+        "output_limited": {
+          "http": 502,
+          "state": "output_limited",
+          "task_executed": "unknown",
+          "reason_code": "execution_uncertain"
+        },
+        "nonzero_exit": {
+          "http": 502,
+          "state": "failed",
+          "exit_code": 7,
+          "task_executed": "unknown"
+        },
+        "timeout": {
+          "http": 502,
+          "state": "failed",
+          "task_executed": "unknown",
+          "execution_uncertain": false
+        }
+      }
+    },
+    {
+      "item": "E13",
+      "status": "pass",
+      "detail": "the legacy policy_apply route refuses a task-shaped body and never reports scope=task_execution or task_executed=yes, so no silent upgrade into command execution occurs; the management path is unaffected. The refusal was produced before the route's binding check ran (see E13d), so no binding reason code is asserted here",
+      "http": 400,
+      "reason_code": "invalid json",
+      "binding_check_reached": false
+    },
+    {
+      "item": "E09",
+      "status": "pass",
+      "detail": "SIGKILL + restart on the same state dir: no replay, the chain still verifies, the projection is rebuilt from persisted facts, the remote task demonstrably outlived the local daemon, and the reconcile matrix refuses a hash mismatch, an unknown reservation and a never-submitted approval before closing the orphaned reservation",
+      "remote_effect_observed": true,
+      "read_back_attempts": 3,
+      "reconcile_closure_http": 200,
+      "reconcile_outcome": "occurred"
+    },
+    {
+      "item": "E08",
+      "status": "partial",
+      "detail": "ownership refusal, unknown-reservation refusal, delete-sandbox refusal and a real local stop are all exercised against the production route; remote stop confirmation is unsupported by the current SIQ implementation; gateway capability is unverified",
+      "stop_http": 200,
+      "remote_stop": "unsupported"
+    },
+    {
+      "item": "E12",
+      "status": "pass",
+      "detail": "one navigation previewed, confirmed, ran and read back the approved command's result; the console stayed read-only for execution by design and the run came from the executor credential",
+      "sub_checks": {
+        "E12b1": "pass",
+        "E12b2": "pass",
+        "E12b3": "pass",
+        "E12b4": "pass",
+        "E12b5": "pass",
+        "E12b6": "pass",
+        "E12b7": "pass",
+        "E12b8": "pass",
+        "E12b9": "pass",
+        "E12b10": "pass",
+        "E12b11": "pass",
+        "E12b12": "pass"
+      },
+      "approved_command_file_matches": true,
+      "refused_request_left_nothing": true
+    },
+    {
+      "item": "E07",
+      "status": "pass",
+      "detail": "required backend down: refused with no native fallback; two independent side-effect channels (sandbox file, receiver arrival) both empty",
+      "http": 503,
+      "spawned": null
+    }
+  ],
+  "acceptance_status_counts": {
+    "pass": 9,
+    "partial": 4
+  },
+  "meta": {
+    "candidate_binary": "/tmp/siq-v6-f04-20260917-163608/agentshield-r4",
+    "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+    "gateway_endpoint": "https://127.0.0.1:17671",
+    "sandbox_target": "siq-v6-f04-163608",
+    "fact_endpoint": "172.23.0.1:43393",
+    "fact_endpoint_role": "declared in SKILL.md so it becomes an admitted network fact, and contacted by the sandbox through the OpenShell proxy during E02",
+    "isolated_root": "/tmp/siq-o05v6-taskexec-ndsedi60",
+    "isolated_state": "/tmp/siq-o05v6-taskexec-ndsedi60/state",
+    "isolated_home": "/tmp/siq-o05v6-taskexec-ndsedi60/home",
+    "canary_argv_count": 3,
+    "canary_path": "/tmp/o05v6-canary-e81a6e9752a07357.txt",
+    "started_at": "2026-09-17T09:03:39.085127+00:00",
+    "ui_acceptance": "not_run",
+    "production_executor": "POST /v1/openshell/task-executions",
+    "notes": [
+      "canary stdout 由运行时随机 token 构成，无法被非真实执行伪造",
+      "原始 argv 只存在于人工批准的 params；证据/观测只存摘要"
+    ],
+    "declared_egress_targets": [
+      "172.23.0.1:43393",
+      "172.23.0.1:38041"
+    ],
+    "d05": {
+      "schema": "o05v6-d05-acceptance/v1",
+      "production_executor": "POST /v1/openshell/task-executions",
+      "receivers": {
+        "A": {
+          "port": 43393,
+          "log": "<repo>/docs/evidence/personal-experience/v6-f04-r7-20260917-180500/d05-private/d05-raw/arrivals-A.jsonl"
+        },
+        "B": {
+          "port": 38041,
+          "log": "<repo>/docs/evidence/personal-experience/v6-f04-r7-20260917-180500/d05-private/d05-raw/arrivals-B.jsonl"
+        }
+      },
+      "sandbox_peer": "172.23.0.6"
+    }
+  },
+  "summary": {
+    "pass": 228,
+    "fail": 0,
+    "total": 237,
+    "failed_ids": []
+  },
+  "steps": [
+    {
+      "id": "D00a",
+      "title": "read the host aliases the sandbox itself publishes",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/cat",
+        "/etc/hosts"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/D00a.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/D00a.cli.stderr.txt",
+      "duration_ms": 98,
+      "note": "read-only; this is the platform's own 'where is the host' answer, which is the address the egress proxy resolves -- not the sandbox default-route gateway, which is the proxy itself",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:39.183673+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "D00b",
+      "title": "sandbox->host egress address derived",
+      "kind": "derived",
+      "status": "pass",
+      "egress_ip": "172.23.0.1",
+      "alias": "host.openshell.internal",
+      "all_host_aliases": {
+        "host.docker.internal": "172.23.0.1",
+        "host.openshell.internal": "172.23.0.1"
+      },
+      "note": "derived from the sandbox's own /etc/hosts, not from its route table: the route-table gateway is the egress proxy's own namespace address and requests there are answered 502 by the proxy failing to reach itself",
+      "recorded_at": "2026-09-17T09:03:39.183708+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "D00c",
+      "title": "canary skill redeclares the two live egress endpoints",
+      "kind": "fixture",
+      "status": "pass",
+      "declared_endpoints": [
+        "172.23.0.1:43393",
+        "172.23.0.1:38041"
+      ],
+      "ports": [
+        "43393",
+        "38041"
+      ],
+      "note": "each declaration line carries `curl` so admission derives a network fact",
+      "recorded_at": "2026-09-17T09:03:39.183857+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K00",
+      "title": "candidate binary identity bind",
+      "kind": "cli",
+      "status": "pass",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "version_stdout": "siq-agent-security 0.0.0-dev (linux/arm64)",
+      "bytes": 22917494,
+      "recorded_at": "2026-09-17T09:03:39.189149+00:00",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K01a",
+      "title": "init isolated state dir",
+      "kind": "cli",
+      "command": [
+        "agentshield-r4",
+        "init",
+        "--port",
+        "41977"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K01a.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K01a.cli.stderr.txt",
+      "duration_ms": 27,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:39.216553+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K01b",
+      "title": "serve start (mode=block) + admin pairing on 127.0.0.1:32875",
+      "kind": "cli+http",
+      "command": [
+        "agentshield-r4",
+        "serve",
+        "--port",
+        32875,
+        "--mode",
+        "block"
+      ],
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed"
+      },
+      "daemon_endpoint": "http://127.0.0.1:32875",
+      "stdout_file": "d05-private/d05-raw/K01b.serve-log.txt",
+      "recorded_at": "2026-09-17T09:03:39.272787+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K02a",
+      "title": "real protection status: openshell probe",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/probe"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K02a.request.json",
+      "response_file": "d05-private/d05-raw/K02a.response.json",
+      "duration_ms": 11,
+      "key_fields": {
+        "ok": true
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:39.284149+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K02b",
+      "title": "real protection status: openshell doctor",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/doctor"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K02b.request.json",
+      "response_file": "d05-private/d05-raw/K02b.response.json",
+      "duration_ms": 8,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:39.293147+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K02c",
+      "title": "real protection status: grants ledger (empty)",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/grants"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K02c.request.json",
+      "response_file": "d05-private/d05-raw/K02c.response.json",
+      "duration_ms": 1,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:39.294411+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K02d",
+      "title": "CLI observation: policy get siq-v6-f04-163608 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f04-163608",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K02d.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K02d.cli.stderr.txt",
+      "duration_ms": 91,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:39.385471+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K02e",
+      "title": "baseline binding: gateway/fingerprint/target revision",
+      "kind": "derived",
+      "status": "pass",
+      "gateway_version": "unknown",
+      "endpoint_fingerprint": "c4b76903a33d3ecce2c227459de8d15f61a862fca3ed7c4a22f5b5eaa864856f",
+      "sandbox_revision": "9",
+      "sandbox_policy_sha256": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "recorded_at": "2026-09-17T09:03:39.385492+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K03a",
+      "title": "ownership preflight: reach target sandbox and read its default route",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/cat",
+        "/proc/net/route"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K03a.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K03a.cli.stderr.txt",
+      "duration_ms": 222,
+      "note": "read-only; confirms the target is alive and owned by this batch",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:39.607529+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K03a2",
+      "title": "ownership preflight: host addresses the sandbox itself publishes",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/cat",
+        "/etc/hosts"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K03a2.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K03a2.cli.stderr.txt",
+      "duration_ms": 138,
+      "note": "read-only; the platform's own 'where is the host' answer",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:39.745923+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K03b",
+      "title": "capability preflight: /bin/sh -c works in the target",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "printf %s o05v6-preflight"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K03b.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K03b.cli.stderr.txt",
+      "duration_ms": 141,
+      "note": "read-only probe",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:39.887382+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K03b2",
+      "title": "capability preflight: the exact canary command shape runs",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "printf %s o05v6-canary-preflight | dd of=/tmp/o05v6-canary-preflight-e81a6e9752a07357.txt status=none; cat /tmp/o05v6-canary-preflight-e81a6e9752a07357.txt"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K03b2.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K03b2.cli.stderr.txt",
+      "duration_ms": 180,
+      "note": "read-only for policy; writes one batch-owned scratch file",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.068190+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K03c",
+      "title": "preflight summary",
+      "kind": "derived",
+      "status": "pass",
+      "sandbox_egress_gateway": "10.200.0.1",
+      "sandbox_published_host_alias": "172.23.0.1",
+      "declared_fact_endpoint": "172.23.0.1:43393",
+      "declaration_is_deliverable": true,
+      "declared_endpoint_role": "policy content only; never contacted by any leg",
+      "note": "the route gateway is the sandbox-side address of the egress proxy and is not a deliverable destination; naming it is accepted as a policy-content placeholder but recorded as non-deliverable, so the preflight never certifies it as an egress path",
+      "recorded_at": "2026-09-17T09:03:40.068205+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K10a",
+      "title": "admit batch-owned canary skill (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/admit"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K10a.request.json",
+      "response_file": "d05-private/d05-raw/K10a.response.json",
+      "duration_ms": 11,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.079885+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K10b",
+      "title": "create grant platform=openclaw subject=sandbox (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K10b.request.json",
+      "response_file": "d05-private/d05-raw/K10b.response.json",
+      "duration_ms": 37,
+      "key_fields": {
+        "state_revision": 0
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.117094+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K10c",
+      "title": "patch-desired approved model allowlist (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0/patch-desired"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K10c.request.json",
+      "response_file": "d05-private/d05-raw/K10c.response.json",
+      "duration_ms": 38,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.155870+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K10d",
+      "title": "approval challenge (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0/challenge"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K10d.request.json",
+      "response_file": "d05-private/d05-raw/K10d.response.json",
+      "duration_ms": 10,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.166776+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K10e",
+      "title": "human approve with challenge proof (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0/approve"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K10e.request.json",
+      "response_file": "d05-private/d05-raw/K10e.response.json",
+      "duration_ms": 33,
+      "key_fields": {
+        "state_revision": 2
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.200451+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K10f",
+      "title": "deploy grant (HTTP)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0/deploy"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K10f.request.json",
+      "response_file": "d05-private/d05-raw/K10f.response.json",
+      "duration_ms": 27,
+      "key_fields": {
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.228152+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K10g",
+      "title": "read deployed grant for digest replication",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K10g.request.json",
+      "response_file": "d05-private/d05-raw/K10g.response.json",
+      "duration_ms": 2,
+      "key_fields": {
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.230385+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K10h",
+      "title": "grant digest replicated client-side (canon grant-permissions/v1)",
+      "kind": "derived",
+      "status": "pass",
+      "grant_id": "grt-5c9b81adafcf-b8aab4a0",
+      "grant_digest": "03e0361de0f0d744747d3de8312fc839311b3e27f99e92567489b40789fce2ff",
+      "grant_network_endpoints": [
+        "172.23.0.1:1",
+        "172.23.0.1:38041",
+        "172.23.0.1:43393",
+        "astral.sh:443"
+      ],
+      "openclaw_tool_policy_allow": [
+        "read_file",
+        "terminal"
+      ],
+      "openclaw_tool_policy_require_approval": [
+        "exec"
+      ],
+      "grant_fact_summary": [
+        {
+          "domain": "network",
+          "action": "http.request",
+          "effect": "allow",
+          "value": "172.23.0.1:1"
+        },
+        {
+          "domain": "network",
+          "action": "http.request",
+          "effect": "allow",
+          "value": "172.23.0.1:38041"
+        },
+        {
+          "domain": "network",
+          "action": "http.request",
+          "effect": "allow",
+          "value": "172.23.0.1:43393"
+        },
+        {
+          "domain": "network",
+          "action": "http.request",
+          "effect": "allow",
+          "value": "astral.sh:443"
+        },
+        {
+          "domain": "process",
+          "action": "process.exec",
+          "effect": "allow",
+          "value": "shell"
+        },
+        {
+          "domain": "tool",
+          "action": "tool.invoke",
+          "effect": "allow",
+          "value": "read_file"
+        },
+        {
+          "domain": "tool",
+          "action": "tool.invoke",
+          "effect": "allow",
+          "value": "terminal"
+        },
+        {
+          "domain": "process",
+          "action": "process.privilege_escalation",
+          "effect": "deny",
+          "value": "setuid/sudo"
+        },
+        {
+          "domain": "model",
+          "action": "model.generate",
+          "effect": "allow",
+          "value": "fixture-model"
+        }
+      ],
+      "grant_exec_facts": [
+        {
+          "domain": "process",
+          "action": "process.exec",
+          "effect": "allow",
+          "value": "shell"
+        },
+        {
+          "domain": "tool",
+          "action": "tool.invoke",
+          "effect": "allow",
+          "value": "terminal"
+        }
+      ],
+      "note": "digest mirrors internal/grant/permission_digest.go; the server compares its own recomputation",
+      "recorded_at": "2026-09-17T09:03:40.230617+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K20a",
+      "title": "task preview: authorized endpoints + live revision (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/preview"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K20a.request.json",
+      "response_file": "d05-private/d05-raw/K20a.response.json",
+      "duration_ms": 140,
+      "key_fields": {
+        "scope": "task_execution",
+        "task_executed": false,
+        "mode": "advisory"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.371521+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K20b",
+      "title": "CLI observation: policy get siq-v6-f04-163608 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f04-163608",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K20b.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K20b.cli.stderr.txt",
+      "duration_ms": 49,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.420963+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K20c",
+      "title": "preview is side-effect free and the approved revision is the live one",
+      "kind": "derived",
+      "status": "pass",
+      "live_revision": "9",
+      "live_policy_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+      "note": "预留在写前必须等于 live；执行前 ExecTask 还会再读一次 ReadEffective",
+      "recorded_at": "2026-09-17T09:03:40.420988+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K30a",
+      "title": "decide (tool exec, expect human hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K30a.request.json",
+      "response_file": "d05-private/d05-raw/K30a.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-d9f5192cf48f-090340.421618",
+        "action_id": "act-b5ff7d7e6f92c0874840ac18"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.433852+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K30b",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-d9f5192cf48f-090340.421618"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K30b.request.json",
+      "response_file": "d05-private/d05-raw/K30b.response.json",
+      "duration_ms": 10,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-d9f5192cf48f-090340.421618-res"
+      },
+      "note": "human approves this exact command",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.444411+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K30c",
+      "title": "CANARY: production executor runs one real command",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K30c.request.json",
+      "response_file": "d05-private/d05-raw/K30c.response.json",
+      "duration_ms": 466,
+      "key_fields": {
+        "ok": true,
+        "scope": "task_execution",
+        "binding_evidence_id": "ost-42cc664b23f5db8d",
+        "binding_evidence_persisted": true,
+        "observation_receipt_id": "rcp-d9f5192cf48f-090340.421618-exec-obs",
+        "outcome.state": "succeeded",
+        "outcome.exit_code": 0,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "note": "must be 200 with outcome.task_executed=yes",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:40.910637+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K30d",
+      "title": "canary outcome (digests only)",
+      "kind": "derived",
+      "status": "pass",
+      "reservation_receipt_id": "rcp-d9f5192cf48f-090340.421618-exec",
+      "observation_receipt_id": "rcp-d9f5192cf48f-090340.421618-exec-obs",
+      "binding_evidence_id": "ost-42cc664b23f5db8d",
+      "stdout_digest": "e21b371b9dfa23d1e4e2e93f05f149c9bbd6ceeec07a6c22e8696cb967bd9483",
+      "stdout_bytes": 32,
+      "exit_code": 0,
+      "exit_code_attribution": "remote",
+      "recorded_at": "2026-09-17T09:03:40.910682+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K30e",
+      "title": "boundary: an approved exec is not path-scoped by the grant",
+      "kind": "derived",
+      "status": "pass",
+      "observed": "the canary wrote /tmp/o05v6-canary-e81a6e9752a07357.txt, which no grant fact covers",
+      "why_allowed": "engine.go:1068 denies an ungranted path only when fileOperation || descriptor.FilesystemWriteHint",
+      "consequence": "the grant's path facts bound file tools; for an approved exec the effective filesystem scope is the sandbox itself",
+      "severity_for_review": "recorded for D03/D05 review; no production behaviour changed here",
+      "recorded_at": "2026-09-17T09:03:40.910688+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K35a",
+      "title": "independent effect read-back: cat the canary file via direct CLI",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/cat",
+        "/tmp/o05v6-canary-e81a6e9752a07357.txt"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K35a.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K35a.cli.stderr.txt",
+      "duration_ms": 219,
+      "note": "outside the daemon; the only writer of this file is the canary itself",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.130574+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K35b",
+      "title": "canary effect independently confirmed",
+      "kind": "derived",
+      "status": "pass",
+      "independent_readback_source": "openshell sandbox exec (direct CLI)",
+      "readback_matches_token": true,
+      "daemon_stdout_digest_matches_sha256_of_token": true,
+      "note": "远端文件由 canary 写入并由独立 CLI 读回；两端摘要一致",
+      "recorded_at": "2026-09-17T09:03:41.130609+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K40a",
+      "title": "decide (tool exec, expect human hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K40a.request.json",
+      "response_file": "d05-private/d05-raw/K40a.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-ebd34779f127-090341.131917",
+        "action_id": "act-0fb15139439c85b329969afe"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.144355+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K40b",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-ebd34779f127-090341.131917"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K40b.request.json",
+      "response_file": "d05-private/d05-raw/K40b.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-ebd34779f127-090341.131917-res"
+      },
+      "note": "human approves timeout=60s for /bin/echo",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.157411+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K40c",
+      "title": "refusal: parameter drift after approval",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/K40c.request.json",
+      "response_file": "d05-private/d05-raw/K40c.response.json",
+      "duration_ms": 10,
+      "key_fields": {
+        "reason_code": "openshell_task_binding_mismatch",
+        "error": "openshell_task_binding_mismatch"
+      },
+      "note": "must be 403 openshell_task_binding_mismatch",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.168409+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K40e",
+      "title": "the same approval still executes after a refused submission",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K40e.request.json",
+      "response_file": "d05-private/d05-raw/K40e.response.json",
+      "duration_ms": 478,
+      "key_fields": {
+        "ok": true,
+        "scope": "task_execution",
+        "binding_evidence_id": "ost-cdbcfe1abc8eea3a",
+        "binding_evidence_persisted": true,
+        "observation_receipt_id": "rcp-ebd34779f127-090341.131917-exec-obs",
+        "outcome.state": "succeeded",
+        "outcome.exit_code": 0,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "note": "proves the drift refusal ran before the reservation consumed the approval",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.647386+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K40f",
+      "title": "drift refused before the reservation; approval left unconsumed",
+      "kind": "derived",
+      "status": "pass",
+      "hold_status_after_refusal": null,
+      "hold_status_http": 400,
+      "approved_body_after_refusal": "200 / outcome.task_executed=yes",
+      "recorded_at": "2026-09-17T09:03:41.647422+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K50a",
+      "title": "decide (tool exec, expect human hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K50a.request.json",
+      "response_file": "d05-private/d05-raw/K50a.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-349f6cf5dcf0-090341.648253",
+        "action_id": "act-3069dd4458603f74b38615e0"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.661940+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K50b",
+      "title": "refusal: submission for a hold that was never approved",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 400,
+      "request_body_file": "d05-private/d05-raw/K50b.request.json",
+      "response_file": "d05-private/d05-raw/K50b.response.json",
+      "duration_ms": 109,
+      "key_fields": {
+        "reason_code": "hold_action_not_approved",
+        "error": "hold_action_not_approved"
+      },
+      "note": "no human approval exists for this decision",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.771616+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K50c",
+      "title": "unapproved submission refused",
+      "kind": "derived",
+      "status": "pass",
+      "reason_code": "hold_action_not_approved",
+      "http_status": 400,
+      "recorded_at": "2026-09-17T09:03:41.771635+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K60a",
+      "title": "decide refuses a command declaring an out-of-grant egress target",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K60a.request.json",
+      "response_file": "d05-private/d05-raw/K60a.response.json",
+      "duration_ms": 21,
+      "key_fields": {
+        "action": "deny",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-d55078841e68-090341.772228",
+        "action_id": "act-47b2285629a8121c4f72e323"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.793056+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K60a1",
+      "title": "engine-layer refusal of the out-of-grant endpoint",
+      "kind": "derived",
+      "status": "pass",
+      "rogue_endpoint": "10.99.99.99:443",
+      "decision_action": "deny",
+      "decision_reason_code": "runtime_denied",
+      "decision_reason": "network egress to 10.99.99.99:443 not in grant grt-5c9b81adafcf-b8aab4a0 (default deny)",
+      "note": "engine denies before the approval gate; no hold exists to approve",
+      "recorded_at": "2026-09-17T09:03:41.793085+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K60b",
+      "title": "refusal: a denied decision cannot be approved",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-d55078841e68-090341.772228"
+      ],
+      "http_status": 404,
+      "request_body_file": "d05-private/d05-raw/K60b.request.json",
+      "response_file": "d05-private/d05-raw/K60b.response.json",
+      "duration_ms": 1,
+      "key_fields": {
+        "error": "held receipt not found"
+      },
+      "note": "must be 404: there is no hold on a denied decision",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.794384+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K60c",
+      "title": "refusal: network target outside the grant facts",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/K60c.request.json",
+      "response_file": "d05-private/d05-raw/K60c.response.json",
+      "duration_ms": 53,
+      "key_fields": {
+        "reason_code": "endpoint_not_authorized",
+        "error": "endpoint_not_authorized"
+      },
+      "note": "must be 403 endpoint_not_authorized",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.847866+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K60d",
+      "title": "out-of-scope egress refused at both layers; nothing ran",
+      "kind": "derived",
+      "status": "pass",
+      "rogue_endpoint": "10.99.99.99:443",
+      "binding_layer_reason_code": "endpoint_not_authorized",
+      "submission_http": 403,
+      "submission_reached_reservation": false,
+      "note": "engine refused the decide AND the handler refused the submission before ReserveHoldExecution",
+      "recorded_at": "2026-09-17T09:03:41.847889+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02a",
+      "title": "read the pristine policy body and its content hash",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f04-163608",
+        "--base",
+        "-o",
+        "json"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02a.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02a.cli.stderr.txt",
+      "duration_ms": 89,
+      "note": "policy get --base -o json returns both the restorable body and the hash",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:41.937401+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02b",
+      "title": "pristine policy identity captured",
+      "kind": "derived",
+      "status": "pass",
+      "active_version": 9,
+      "config_revision": 7719475491042574064,
+      "hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "policy_source": "sandbox",
+      "scope": "sandbox",
+      "hash_matches_journey_baseline": true,
+      "recorded_at": "2026-09-17T09:03:41.937442+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02a1",
+      "title": "executor-space policy identity of the loaded policy",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/preview"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02a1.request.json",
+      "response_file": "d05-private/d05-raw/E02a1.response.json",
+      "duration_ms": 142,
+      "key_fields": {
+        "scope": "task_execution",
+        "task_executed": false,
+        "mode": "advisory"
+      },
+      "note": "digest space of the executor, not of `policy get --full`",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:42.080120+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02a2",
+      "title": "pristine policy in both digest spaces",
+      "kind": "derived",
+      "status": "pass",
+      "cli_space_hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "executor_space_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+      "executor_space_revision": "9",
+      "baseline_executor_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+      "spaces_agree": false,
+      "note": "`policy get --full` Hash: and the executor's policyDigest are two different functions over the same document; approvals bind to the executor space only",
+      "recorded_at": "2026-09-17T09:03:42.080152+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E10aa",
+      "title": "E10: approve a task pinned to the pristine policy, before any drift",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E10aa.request.json",
+      "response_file": "d05-private/d05-raw/E10aa.response.json",
+      "duration_ms": 22,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-c48efaf855e3-090342.081105",
+        "action_id": "act-1b7637afc2f20739fea11436"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:42.103071+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E10ab",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-c48efaf855e3-090342.081105"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E10ab.request.json",
+      "response_file": "d05-private/d05-raw/E10ab.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-c48efaf855e3-090342.081105-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:42.116807+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02c",
+      "title": "receiver baseline before the sandbox is allowed",
+      "kind": "derived",
+      "status": "pass",
+      "arrivals_A": 0,
+      "arrivals_B": 0,
+      "sandbox_arrivals_A": "not_calibrated",
+      "foreign_peers_A": [],
+      "recorded_at": "2026-09-17T09:03:42.116844+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02e",
+      "title": "host self-check: both receivers answer on the host",
+      "kind": "derived",
+      "status": "pass",
+      "receiver_results": [
+        true,
+        true
+      ],
+      "foreign_peers_are_the_host": [
+        "127.0.0.1"
+      ],
+      "note": "the host self-check is why the peer address is recorded and checked",
+      "recorded_at": "2026-09-17T09:03:42.118825+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02f",
+      "title": "loosen: allow GET to both declared endpoints, from the absolute curl binary",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "update",
+        "siq-v6-f04-163608",
+        "--add-endpoint",
+        "172.23.0.1:43393:read-only:rest",
+        "--add-endpoint",
+        "172.23.0.1:38041:read-only:rest",
+        "--binary",
+        "/usr/bin/curl",
+        "--add-allow",
+        "172.23.0.1:43393:GET:/**",
+        "--add-allow",
+        "172.23.0.1:38041:GET:/**",
+        "--wait"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02f.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02f.cli.stderr.txt",
+      "duration_ms": 7251,
+      "note": "binaries are matched by absolute path; a bare `curl` does not match",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:49.370450+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02g",
+      "title": "CLI observation: policy get siq-v6-f04-163608 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f04-163608",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02g.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02g.cli.stderr.txt",
+      "duration_ms": 90,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:49.682656+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02g1",
+      "title": "executor-space policy identity of the loaded policy",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/preview"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02g1.request.json",
+      "response_file": "d05-private/d05-raw/E02g1.response.json",
+      "duration_ms": 102,
+      "key_fields": {
+        "scope": "task_execution",
+        "task_executed": false,
+        "mode": "advisory"
+      },
+      "note": "digest space of the executor, not of `policy get --full`",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:49.785448+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02h",
+      "title": "loosened policy loaded and exec responsive again",
+      "kind": "derived",
+      "status": "pass",
+      "policy_version": "10",
+      "policy_hash": "f22c3a41b88144365b1464f93446e67eb89eb2114a41e2f51d0eaac4217db7fa",
+      "executor_revision": "10",
+      "executor_policy_digest": "c6f436a66aeb0c1ba2eecef3b9ffa38c30d16208f69fe1848cb3c1cdbe964363",
+      "digest_space_note": "policy_hash is the CLI `Hash:` space; executor_policy_digest is the binding space",
+      "version_moved_from_pristine": true,
+      "executor_version_moved": true,
+      "content_changed_from_pristine": true,
+      "executor_content_changed": true,
+      "ready": true,
+      "attempts": 1,
+      "elapsed_s": 0.2,
+      "recorded_at": "2026-09-17T09:03:49.785482+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02peerA",
+      "title": "direct sandbox positive control for receiver A",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/usr/bin/curl",
+        "--silent",
+        "--show-error",
+        "--fail",
+        "--max-time",
+        "10",
+        "http://172.23.0.1:43393/sandbox-peer-e81a6e9752a07357-A-add141edab9732fd"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02peerA.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02peerA.cli.stderr.txt",
+      "duration_ms": 183,
+      "note": "temporary allow policy; unique receiver path proves this sandbox's current peer address; a stalled control is not retried",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:49.969003+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02peerB",
+      "title": "direct sandbox positive control for receiver B",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/usr/bin/curl",
+        "--silent",
+        "--show-error",
+        "--fail",
+        "--max-time",
+        "10",
+        "http://172.23.0.1:38041/sandbox-peer-e81a6e9752a07357-B-4bee777cd27033d9"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02peerB.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02peerB.cli.stderr.txt",
+      "duration_ms": 223,
+      "note": "temporary allow policy; unique receiver path proves this sandbox's current peer address; a stalled control is not retried",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:50.192177+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02peer",
+      "title": "current sandbox peer calibrated against both receivers",
+      "kind": "derived",
+      "status": "pass",
+      "sandbox_peer": "172.23.0.6",
+      "host_selfcheck_peers": [
+        "127.0.0.1"
+      ],
+      "note": "exact peer observed from run-unique direct sandbox GETs; later production arrivals must be fresh and match this address",
+      "recorded_at": "2026-09-17T09:03:50.192230+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E10b",
+      "title": "E10: a task approved against the old revision does not start after external drift",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 409,
+      "request_body_file": "d05-private/d05-raw/E10b.request.json",
+      "response_file": "d05-private/d05-raw/E10b.response.json",
+      "duration_ms": 100,
+      "key_fields": {
+        "reason_code": "openshell_task_policy_not_loaded",
+        "error": "openshell_task_policy_not_loaded"
+      },
+      "note": "the drift is external to the approval; the approval must not silently widen",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:50.293055+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E10c",
+      "title": "external drift refused the stale-pinned approval",
+      "kind": "derived",
+      "status": "partial",
+      "http": 409,
+      "reason_code": "openshell_task_policy_not_loaded",
+      "outcome_state": null,
+      "note": "no silent widening: the approval pinned to the old revision never ran",
+      "recorded_at": "2026-09-17T09:03:50.293083+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E10d",
+      "title": "E10: a pre-reservation drift refusal has no completed reservation",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/read"
+      ],
+      "http_status": 404,
+      "request_body_file": "d05-private/d05-raw/E10d.request.json",
+      "response_file": "d05-private/d05-raw/E10d.response.json",
+      "duration_ms": 3,
+      "key_fields": {
+        "reason_code": "openshell_task_reservation_unknown",
+        "error": "openshell_task_reservation_unknown"
+      },
+      "note": "404 reservation_unknown is expected when drift is refused before reservation",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:50.297007+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02ia",
+      "title": "E02: approve a task that GETs both declared endpoints",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02ia.request.json",
+      "response_file": "d05-private/d05-raw/E02ia.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-a36ed6a4aa04-090350.297924",
+        "action_id": "act-facc0159292707a7e2ee27bd"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:50.311733+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02ib",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-a36ed6a4aa04-090350.297924"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02ib.request.json",
+      "response_file": "d05-private/d05-raw/E02ib.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-a36ed6a4aa04-090350.297924-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:50.324785+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02j",
+      "title": "E02: both precise destinations are reachable while allowed",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02j.request.json",
+      "response_file": "d05-private/d05-raw/E02j.response.json",
+      "duration_ms": 461,
+      "key_fields": {
+        "ok": true,
+        "scope": "task_execution",
+        "binding_evidence_id": "ost-d503ac805f92a562",
+        "binding_evidence_persisted": true,
+        "observation_receipt_id": "rcp-a36ed6a4aa04-090350.297924-exec-obs",
+        "outcome.state": "succeeded",
+        "outcome.exit_code": 0,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "note": "reachability must be proven before blocking means anything",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:50.786681+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02k",
+      "title": "independent read-back of endpoint A's code",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "cat /tmp/o05v6-d05-e02a-e81a6e9752a07357.txt 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02k.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02k.cli.stderr.txt",
+      "duration_ms": 141,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:50.928415+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02l",
+      "title": "independent read-back of endpoint B's code",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "cat /tmp/o05v6-d05-e02b-e81a6e9752a07357.txt 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02l.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02l.cli.stderr.txt",
+      "duration_ms": 182,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:51.111336+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02m",
+      "title": "both precise destinations reachable, arrivals attributed",
+      "kind": "derived",
+      "status": "pass",
+      "code_A": "200",
+      "code_B": "200",
+      "arrivals_A": [
+        2,
+        3
+      ],
+      "arrivals_B": [
+        2,
+        3
+      ],
+      "sandbox_peer_arrivals_seen": true,
+      "foreign_peers_A": [
+        "127.0.0.1"
+      ],
+      "note": "read back with a direct CLI call, not from the daemon's report",
+      "recorded_at": "2026-09-17T09:03:51.111375+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02n",
+      "title": "tighten: remove endpoint B from the sandbox policy",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "update",
+        "siq-v6-f04-163608",
+        "--remove-endpoint",
+        "172.23.0.1:38041",
+        "--wait"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02n.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02n.cli.stderr.txt",
+      "duration_ms": 8136,
+      "note": "--rule-name cannot name both of a two-endpoint update, so the endpoint itself is removed rather than a named rule",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:59.247921+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02o",
+      "title": "CLI observation: policy get siq-v6-f04-163608 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f04-163608",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02o.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02o.cli.stderr.txt",
+      "duration_ms": 90,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:59.521116+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02o1",
+      "title": "executor-space policy identity of the loaded policy",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/preview"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02o1.request.json",
+      "response_file": "d05-private/d05-raw/E02o1.response.json",
+      "duration_ms": 144,
+      "key_fields": {
+        "scope": "task_execution",
+        "task_executed": false,
+        "mode": "advisory"
+      },
+      "note": "digest space of the executor, not of `policy get --full`",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:59.666145+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02pa",
+      "title": "E02: approve the same GETs for the tightened policy",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02pa.request.json",
+      "response_file": "d05-private/d05-raw/E02pa.response.json",
+      "duration_ms": 22,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-0817e117c1ac-090359.666716",
+        "action_id": "act-4744622575abb66017137f1b"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:59.688826+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02pb",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-0817e117c1ac-090359.666716"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02pb.request.json",
+      "response_file": "d05-private/d05-raw/E02pb.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-0817e117c1ac-090359.666716-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:03:59.702715+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02q",
+      "title": "E02: A still allowed, B now blocked, same approved command",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02q.request.json",
+      "response_file": "d05-private/d05-raw/E02q.response.json",
+      "duration_ms": 558,
+      "key_fields": {
+        "ok": true,
+        "scope": "task_execution",
+        "binding_evidence_id": "ost-355cf70c3696c8ef",
+        "binding_evidence_persisted": true,
+        "observation_receipt_id": "rcp-0817e117c1ac-090359.666716-exec-obs",
+        "outcome.state": "succeeded",
+        "outcome.exit_code": 0,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "note": "the task itself succeeds; the *denied request inside it* is what blocks",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:00.261108+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02r",
+      "title": "independent read-back of A's code after tightening",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "cat /tmp/o05v6-d05-e02a-e81a6e9752a07357.txt 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02r.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02r.cli.stderr.txt",
+      "duration_ms": 183,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:00.444532+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02s",
+      "title": "independent read-back of B's code after tightening",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "cat /tmp/o05v6-d05-e02b-e81a6e9752a07357.txt 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02s.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02s.cli.stderr.txt",
+      "duration_ms": 142,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:00.587049+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02t",
+      "title": "tightened policy: explicit HTTP 403 on B with zero B arrivals",
+      "kind": "derived",
+      "status": "pass",
+      "code_A_after_tighten": "200",
+      "code_B_after_tighten": "403",
+      "arrivals_A": [
+        3,
+        4
+      ],
+      "arrivals_B": [
+        3,
+        3
+      ],
+      "B_arrivals_delta": 0,
+      "policy_version": "11",
+      "policy_hash": "d616fec9c4dfb384a28cd4a894e8e88034e6cf0a59dcb09d53e696594ac16489",
+      "executor_revision": "11",
+      "executor_policy_digest": "7a34b7a446a76812e16acc976e53383e2acfa7645b590dfab59f984bf5b67051",
+      "ready": true,
+      "attempts": 1,
+      "elapsed_s": 0.2,
+      "note": "blocking is claimed only from an explicit 403 *and* zero independent arrivals; a timeout or a network error would be recorded as partial, never as blocking",
+      "recorded_at": "2026-09-17T09:04:00.587073+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02u",
+      "title": "restore the pristine policy body through policy set --wait",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "set",
+        "--policy",
+        "<repo>/docs/evidence/personal-experience/v6-f04-r7-20260917-180500/d05-private/d05-raw/pristine-policy.json",
+        "siq-v6-f04-163608",
+        "--wait"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02u.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02u.cli.stderr.txt",
+      "duration_ms": 9096,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:09.683452+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02v",
+      "title": "CLI observation: policy get siq-v6-f04-163608 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f04-163608",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02v.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02v.cli.stderr.txt",
+      "duration_ms": 90,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:09.954466+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02v1",
+      "title": "executor-space policy identity of the loaded policy",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/preview"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02v1.request.json",
+      "response_file": "d05-private/d05-raw/E02v1.response.json",
+      "duration_ms": 143,
+      "key_fields": {
+        "scope": "task_execution",
+        "task_executed": false,
+        "mode": "advisory"
+      },
+      "note": "digest space of the executor, not of `policy get --full`",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:10.097751+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02w",
+      "title": "confirm the restored content identity",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f04-163608",
+        "--base",
+        "-o",
+        "json"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02w.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02w.cli.stderr.txt",
+      "duration_ms": 91,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:10.189754+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02x",
+      "title": "pristine content restored in both digest spaces",
+      "kind": "derived",
+      "status": "pass",
+      "pristine_hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "restored_hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "pristine_executor_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+      "restored_executor_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+      "pristine_version": "9",
+      "restored_version": "12",
+      "note": "the Version counter advances on every update even when the body returns to its pristine content, so content identity is asserted by Hash and digest and the version counter is recorded as a delta, not as a mismatch",
+      "recorded_at": "2026-09-17T09:04:10.189799+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02y",
+      "title": "binding revision re-read after the window",
+      "kind": "derived",
+      "status": "pass",
+      "expected_revision": "12",
+      "expected_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+      "digest_equals_pristine": true,
+      "recorded_at": "2026-09-17T09:04:10.189807+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E06ca",
+      "title": "E06: approve a task pinned to a policy revision that was never loaded",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E06ca.request.json",
+      "response_file": "d05-private/d05-raw/E06ca.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-f948fb40bac1-090410.190635",
+        "action_id": "act-0a41cc88845cdabf7ce27d01"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:10.203302+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E06cb",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-f948fb40bac1-090410.190635"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E06cb.request.json",
+      "response_file": "d05-private/d05-raw/E06cb.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-f948fb40bac1-090410.190635-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:10.217700+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E06d",
+      "title": "E06: a fabricated approved-policy identity must not start",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 409,
+      "request_body_file": "d05-private/d05-raw/E06d.request.json",
+      "response_file": "d05-private/d05-raw/E06d.response.json",
+      "duration_ms": 144,
+      "key_fields": {
+        "reason_code": "openshell_task_policy_not_loaded",
+        "error": "openshell_task_policy_not_loaded"
+      },
+      "note": "approving a policy operation is not authorizing an arbitrary command",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:10.362725+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E06ea",
+      "title": "E06: the same task approved against the live policy",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E06ea.request.json",
+      "response_file": "d05-private/d05-raw/E06ea.response.json",
+      "duration_ms": 11,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-bb9bb812a414-090410.363243",
+        "action_id": "act-3d758bcd1fa02265def80f84"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:10.374506+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E06eb",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-bb9bb812a414-090410.363243"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E06eb.request.json",
+      "response_file": "d05-private/d05-raw/E06eb.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-bb9bb812a414-090410.363243-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:10.387452+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E06f",
+      "title": "E06: the live-pinned twin of the same command does start",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E06f.request.json",
+      "response_file": "d05-private/d05-raw/E06f.response.json",
+      "duration_ms": 562,
+      "key_fields": {
+        "ok": true,
+        "scope": "task_execution",
+        "binding_evidence_id": "ost-59ecc48b8cecf5a6",
+        "binding_evidence_persisted": true,
+        "observation_receipt_id": "rcp-bb9bb812a414-090410.363243-exec-obs",
+        "outcome.state": "succeeded",
+        "outcome.exit_code": 0,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "note": "the contrast is the claim: only the approved policy identity differs",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:10.950002+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E06g",
+      "title": "policy identity binding: fabricated revision refused, live one runs",
+      "kind": "derived",
+      "status": "pass",
+      "fabricated_http": 409,
+      "fabricated_reason": "openshell_task_policy_not_loaded",
+      "live_http": 200,
+      "note": "the approved policy identity is bound to the command, and only the loaded identity executes",
+      "recorded_at": "2026-09-17T09:04:10.950029+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02z",
+      "title": "CLI observation: policy get siq-v6-f04-163608 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f04-163608",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E02z.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E02z.cli.stderr.txt",
+      "duration_ms": 89,
+      "note": "post-window policy state for the record",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.039828+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02z6",
+      "title": "executor-space policy identity of the loaded policy",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/preview"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E02z6.request.json",
+      "response_file": "d05-private/d05-raw/E02z6.response.json",
+      "duration_ms": 99,
+      "key_fields": {
+        "scope": "task_execution",
+        "task_executed": false,
+        "mode": "advisory"
+      },
+      "note": "executor-space identity after the fallback restore",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.139838+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E02z4",
+      "title": "window closed with the pristine content in place",
+      "kind": "derived",
+      "status": "pass",
+      "hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "version": "12",
+      "executor_revision": "12",
+      "executor_policy_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc",
+      "recorded_at": "2026-09-17T09:04:11.139859+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E01aa",
+      "title": "E01: approve a canary task through the production executor",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E01aa.request.json",
+      "response_file": "d05-private/d05-raw/E01aa.response.json",
+      "duration_ms": 11,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-beac5473b9ac-090411.140491",
+        "action_id": "act-6a27e0b617e15131581c99e2"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.151401+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E01ab",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-beac5473b9ac-090411.140491"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E01ab.request.json",
+      "response_file": "d05-private/d05-raw/E01ab.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-beac5473b9ac-090411.140491-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.163663+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E01b",
+      "title": "E01: the approved task really executes",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E01b.request.json",
+      "response_file": "d05-private/d05-raw/E01b.response.json",
+      "duration_ms": 480,
+      "key_fields": {
+        "ok": true,
+        "scope": "task_execution",
+        "binding_evidence_id": "ost-9d91451a8346b2c2",
+        "binding_evidence_persisted": true,
+        "observation_receipt_id": "rcp-beac5473b9ac-090411.140491-exec-obs",
+        "outcome.state": "succeeded",
+        "outcome.exit_code": 0,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.644612+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E01c",
+      "title": "E01: independent CLI read-back of the canary effect",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "cat /tmp/o05v6-d05-e01-e81a6e9752a07357.txt 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E01c.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E01c.cli.stderr.txt",
+      "duration_ms": 182,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.827201+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E01d",
+      "title": "E01: approval -> reservation -> execution -> effect, one chain",
+      "kind": "derived",
+      "status": "pass",
+      "independent_readback_source": "openshell sandbox exec (direct CLI)",
+      "readback_matches_runtime_token": true,
+      "reservation_receipt_id": "rcp-beac5473b9ac-090411.140491-exec",
+      "decision_receipt_id": "rcp-beac5473b9ac-090411.140491",
+      "reservation_id_is_decision_derived": true,
+      "observation_receipt_id": "rcp-beac5473b9ac-090411.140491-exec-obs",
+      "binding_evidence_id": "ost-9d91451a8346b2c2",
+      "binding_evidence_persisted": true,
+      "reported_stdout_digest": "15de673ef8e3660cc13eb744fc50b702679bc05779493341e84e846adeba558b",
+      "expected_stdout_digest": "15de673ef8e3660cc13eb744fc50b702679bc05779493341e84e846adeba558b",
+      "stdout_digest_equals_sha256_token": true,
+      "note": "the runtime token is random per run, so a non-executed path cannot fake it; the reported stdout digest is compared, not assumed",
+      "recorded_at": "2026-09-17T09:04:11.827237+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E01e",
+      "title": "E01: the task list/detail projection is built from persisted facts",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/read"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E01e.request.json",
+      "response_file": "d05-private/d05-raw/E01e.response.json",
+      "duration_ms": 5,
+      "key_fields": {
+        "reason_code": "openshell_task_succeeded",
+        "action_id": "act-6a27e0b617e15131581c99e2"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.833130+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E01f",
+      "title": "E01: status projection agrees with the executed outcome",
+      "kind": "derived",
+      "status": "pass",
+      "projection_keys": [
+        "_http_status",
+        "action_id",
+        "agent_id",
+        "argv_digest",
+        "decision_receipt_id",
+        "execution_id",
+        "finished_at",
+        "output",
+        "platform",
+        "policy_digest",
+        "policy_revision",
+        "reason_code",
+        "remote_exit_code",
+        "reservation_receipt_id",
+        "schema_version",
+        "session_id",
+        "started_at",
+        "state",
+        "target",
+        "task_execution_kind",
+        "timeout_seconds",
+        "tool"
+      ],
+      "recorded_at": "2026-09-17T09:04:11.833181+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E01g",
+      "title": "E01: the signed receipt chain verifies",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/receipts"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E01g.request.json",
+      "response_file": "d05-private/d05-raw/E01g.response.json",
+      "duration_ms": 6,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.839912+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E01h",
+      "title": "E01: receipts for this task are in the verified chain",
+      "kind": "derived",
+      "status": "pass",
+      "chain_verified": true,
+      "receipt_count": 30,
+      "receipt_kinds": [],
+      "observation_receipt_present": true,
+      "recorded_at": "2026-09-17T09:04:11.839932+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03a",
+      "title": "decide (tool exec, expect human hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E03a.request.json",
+      "response_file": "d05-private/d05-raw/E03a.response.json",
+      "duration_ms": 10,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-ed2e19801d7b-090411.840315",
+        "action_id": "act-2be23f818f8ead89fda21701"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.850578+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03b",
+      "title": "E03: an unapproved decision cannot be submitted",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 400,
+      "request_body_file": "d05-private/d05-raw/E03b.request.json",
+      "response_file": "d05-private/d05-raw/E03b.response.json",
+      "duration_ms": 147,
+      "key_fields": {
+        "reason_code": "hold_action_not_approved",
+        "error": "hold_action_not_approved"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:11.998311+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03ca",
+      "title": "decide (hold) for a task that will be cancelled",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E03ca.request.json",
+      "response_file": "d05-private/d05-raw/E03ca.response.json",
+      "duration_ms": 23,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-19c7f2e4f657-090411.999007",
+        "action_id": "act-dacee373383c409f88148c53"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.021717+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03cb",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-19c7f2e4f657-090411.999007"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E03cb.request.json",
+      "response_file": "d05-private/d05-raw/E03cb.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "action": "deny",
+        "receipt_id": "rcp-19c7f2e4f657-090411.999007-res"
+      },
+      "note": "human explicitly cancels",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.034236+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03d",
+      "title": "E03: a cancelled approval cannot be submitted",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 400,
+      "request_body_file": "d05-private/d05-raw/E03d.request.json",
+      "response_file": "d05-private/d05-raw/E03d.response.json",
+      "duration_ms": 153,
+      "key_fields": {
+        "reason_code": "hold_action_not_approved",
+        "error": "hold_action_not_approved"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.188146+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03ea",
+      "title": "E03: approve a clean task, then drift it after approval",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E03ea.request.json",
+      "response_file": "d05-private/d05-raw/E03ea.response.json",
+      "duration_ms": 21,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-2df2782c2024-090412.188700",
+        "action_id": "act-bec95258854afb95aa3f1aa5"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.209412+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03eb",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-2df2782c2024-090412.188700"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E03eb.request.json",
+      "response_file": "d05-private/d05-raw/E03eb.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-2df2782c2024-090412.188700-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.223824+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03f0",
+      "title": "E03: drift in argv after approval must be refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E03f0.request.json",
+      "response_file": "d05-private/d05-raw/E03f0.response.json",
+      "duration_ms": 58,
+      "key_fields": {
+        "reason_code": "openshell_task_binding_mismatch",
+        "error": "openshell_task_binding_mismatch"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.282773+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03f1",
+      "title": "E03: drift in digest after approval must be refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E03f1.request.json",
+      "response_file": "d05-private/d05-raw/E03f1.response.json",
+      "duration_ms": 57,
+      "key_fields": {
+        "reason_code": "openshell_task_binding_mismatch",
+        "error": "openshell_task_binding_mismatch"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.340596+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03f2",
+      "title": "E03: drift in revision after approval must be refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E03f2.request.json",
+      "response_file": "d05-private/d05-raw/E03f2.response.json",
+      "duration_ms": 16,
+      "key_fields": {
+        "reason_code": "openshell_task_binding_mismatch",
+        "error": "openshell_task_binding_mismatch"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.357422+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03f3",
+      "title": "E03: drift in target after approval must be refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E03f3.request.json",
+      "response_file": "d05-private/d05-raw/E03f3.response.json",
+      "duration_ms": 55,
+      "key_fields": {
+        "reason_code": "openshell_grant_invalid",
+        "error": "openshell_grant_invalid"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.413026+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03f4",
+      "title": "E03: drift in timeout after approval must be refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E03f4.request.json",
+      "response_file": "d05-private/d05-raw/E03f4.response.json",
+      "duration_ms": 57,
+      "key_fields": {
+        "reason_code": "openshell_task_binding_mismatch",
+        "error": "openshell_task_binding_mismatch"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.471053+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03f5",
+      "title": "E03: drift in workdir after approval must be refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E03f5.request.json",
+      "response_file": "d05-private/d05-raw/E03f5.response.json",
+      "duration_ms": 57,
+      "key_fields": {
+        "reason_code": "openshell_task_binding_mismatch",
+        "error": "openshell_task_binding_mismatch"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:12.528174+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03g",
+      "title": "E03: the untouched approval still executes after every drift refusal",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E03g.request.json",
+      "response_file": "d05-private/d05-raw/E03g.response.json",
+      "duration_ms": 472,
+      "key_fields": {
+        "ok": true,
+        "scope": "task_execution",
+        "binding_evidence_id": "ost-f0f5f789edf3ce4b",
+        "binding_evidence_persisted": true,
+        "observation_receipt_id": "rcp-2df2782c2024-090412.188700-exec-obs",
+        "outcome.state": "succeeded",
+        "outcome.exit_code": 0,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "note": "a refused drift must not consume or degrade the approval",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.000632+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E03h",
+      "title": "E03: unapproved / cancelled / drifted all refused, approval intact",
+      "kind": "derived",
+      "status": "pass",
+      "http_by_variant": {
+        "unapproved": 400,
+        "cancelled": 400,
+        "drift_argv": 403,
+        "drift_digest": 403,
+        "drift_revision": 403,
+        "drift_target": 403,
+        "drift_timeout": 403,
+        "drift_workdir": 403
+      },
+      "not_refused": {},
+      "approved_body_after_refusals": "200 / outcome.task_executed=yes",
+      "recorded_at": "2026-09-17T09:04:13.000668+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04aa",
+      "title": "E04: approve a task, then submit it under the wrong identities",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E04aa.request.json",
+      "response_file": "d05-private/d05-raw/E04aa.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-0fcdc07280bd-090413.001378",
+        "action_id": "act-ab4314e0a5944233cbc61da3"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.013993+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04ab",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-0fcdc07280bd-090413.001378"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E04ab.request.json",
+      "response_file": "d05-private/d05-raw/E04ab.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-0fcdc07280bd-090413.001378-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.028141+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04b",
+      "title": "E04: wrong agent identity is refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E04b.request.json",
+      "response_file": "d05-private/d05-raw/E04b.response.json",
+      "duration_ms": 59,
+      "key_fields": {
+        "reason_code": "openshell_grant_invalid",
+        "error": "openshell_grant_invalid"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.087481+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04c",
+      "title": "E04: wrong session is refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 400,
+      "request_body_file": "d05-private/d05-raw/E04c.request.json",
+      "response_file": "d05-private/d05-raw/E04c.response.json",
+      "duration_ms": 155,
+      "key_fields": {
+        "reason_code": "hold_identity_mismatch",
+        "error": "hold_identity_mismatch"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.242989+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04d",
+      "title": "E04: a decision receipt that does not exist is refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E04d.request.json",
+      "response_file": "d05-private/d05-raw/E04d.response.json",
+      "duration_ms": 57,
+      "key_fields": {
+        "reason_code": "openshell_decision_missing",
+        "error": "openshell_decision_missing"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.300946+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04e",
+      "title": "E04: wrong platform is refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E04e.request.json",
+      "response_file": "d05-private/d05-raw/E04e.response.json",
+      "duration_ms": 16,
+      "key_fields": {
+        "reason_code": "openshell_grant_invalid",
+        "error": "openshell_grant_invalid"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.317885+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04f",
+      "title": "E04: a target that is not the approved subject is refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/E04f.request.json",
+      "response_file": "d05-private/d05-raw/E04f.response.json",
+      "duration_ms": 8,
+      "key_fields": {
+        "reason_code": "openshell_task_binding_mismatch",
+        "error": "openshell_task_binding_mismatch"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.326286+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04g",
+      "title": "E04: the correct identity still executes",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E04g.request.json",
+      "response_file": "d05-private/d05-raw/E04g.response.json",
+      "duration_ms": 612,
+      "key_fields": {
+        "ok": true,
+        "scope": "task_execution",
+        "binding_evidence_id": "ost-2901709a28e7af92",
+        "binding_evidence_persisted": true,
+        "observation_receipt_id": "rcp-0fcdc07280bd-090413.001378-exec-obs",
+        "outcome.state": "succeeded",
+        "outcome.exit_code": 0,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "note": "identity refusals must not consume the reservation",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.938547+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04h",
+      "title": "E04: identity/session/decision binding refused, approval intact",
+      "kind": "derived",
+      "status": "pass",
+      "reason_code_by_variant": {
+        "wrong_agent": "openshell_grant_invalid",
+        "wrong_session": "hold_identity_mismatch",
+        "fabricated_decision": "openshell_decision_missing",
+        "wrong_platform": "openshell_grant_invalid",
+        "wrong_target": "openshell_task_binding_mismatch"
+      },
+      "correct_identity_after_refusals": "200 / outcome.task_executed=yes",
+      "recorded_at": "2026-09-17T09:04:13.938587+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E04i",
+      "title": "E04: expired SEC / missing mandatory Authority / revoked grant",
+      "kind": "acceptance",
+      "status": "partial",
+      "reason_codes": {
+        "wrong_agent": "openshell_grant_invalid",
+        "wrong_session": "hold_identity_mismatch",
+        "fabricated_decision": "openshell_decision_missing",
+        "wrong_platform": "openshell_grant_invalid",
+        "wrong_target": "openshell_task_binding_mismatch"
+      },
+      "detail": "wrong identity, wrong session, fabricated decision receipt, wrong platform and wrong target are all covered against the real executor. The grant revocation case is K70. An *expired SEC* and a *missing mandatory Authority* cannot be manufactured in this isolated state without forging the admission fixture, and are therefore recorded as not run rather than claimed.",
+      "recorded_at": "2026-09-17T09:04:13.938595+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E05aa",
+      "title": "E05: approve one counter task, then submit it concurrently many times",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E05aa.request.json",
+      "response_file": "d05-private/d05-raw/E05aa.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-d07bfa26181a-090413.939775",
+        "action_id": "act-a406c1ba3154a66b8b30a2f5"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.952820+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E05ab",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-d07bfa26181a-090413.939775"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E05ab.request.json",
+      "response_file": "d05-private/d05-raw/E05ab.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-d07bfa26181a-090413.939775-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:13.967828+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E05b",
+      "title": "E05: independent read-back of the launch counter size",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "wc -c < /tmp/o05v6-d05-e05-count-e81a6e9752a07357.bin 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E05b.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E05b.cli.stderr.txt",
+      "duration_ms": 184,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:15.078016+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E05d",
+      "title": "E05: concurrent submissions of one approval",
+      "kind": "derived",
+      "status": "pass",
+      "http_statuses": [
+        409,
+        409,
+        200,
+        409
+      ],
+      "successes": 1,
+      "counter_bytes": 1,
+      "counter_is_one": true,
+      "note": "the counter file grows by exactly one byte per real launch, so its size is the launch count, read back outside the daemon",
+      "recorded_at": "2026-09-17T09:04:15.078197+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E05e",
+      "title": "E05: the counter after the retry of a consumed approval",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "wc -c < /tmp/o05v6-d05-e05-count-e81a6e9752a07357.bin 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E05e.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E05e.cli.stderr.txt",
+      "duration_ms": 224,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:15.498575+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E05f",
+      "title": "E05: retry after a consumed approval does not re-execute",
+      "kind": "derived",
+      "status": "pass",
+      "retry_http": 409,
+      "retry_reason": "hold_execution_already_reserved",
+      "counter_after_retry": 1,
+      "counter_after_retry_is_one": true,
+      "recorded_at": "2026-09-17T09:04:15.498602+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E05g",
+      "title": "E05: exactly-once scope",
+      "kind": "acceptance",
+      "status": "partial",
+      "detail": "at-most-one real launch is evidenced for *this* approval under concurrent submissions and under a lost-response retry, by a counter read back outside the daemon. No arbitrary-failure exactly-once claim is made: the evidence is component-level (single process, single reservation, single counter) and the cross-process atomic CAS and exactly-once properties remain unproven and unpromised.",
+      "recorded_at": "2026-09-17T09:04:15.498612+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11aa",
+      "title": "E11: approve a task whose output exceeds the approved byte limit",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E11aa.request.json",
+      "response_file": "d05-private/d05-raw/E11aa.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-1e234378d772-090415.499595",
+        "action_id": "act-5ea5a625b57ffa90fc227303"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:15.512903+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11ab",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-1e234378d772-090415.499595"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E11ab.request.json",
+      "response_file": "d05-private/d05-raw/E11ab.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-1e234378d772-090415.499595-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:15.527126+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11b",
+      "title": "E11: output over the limit is reported, not truncated to success",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 502,
+      "request_body_file": "d05-private/d05-raw/E11b.request.json",
+      "response_file": "d05-private/d05-raw/E11b.response.json",
+      "duration_ms": 459,
+      "key_fields": {
+        "ok": false,
+        "scope": "task_execution",
+        "reason_code": "execution_uncertain",
+        "error": "execution_uncertain",
+        "execution_uncertain": true,
+        "binding_evidence_id": "ost-ea940344f4b40c96",
+        "binding_evidence_persisted": true,
+        "outcome.state": "output_limited",
+        "outcome.exit_code": -1,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": true
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:15.987085+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11c",
+      "title": "E11: output limit is its own outcome",
+      "kind": "derived",
+      "status": "pass",
+      "outcome_state": "output_limited",
+      "http": 502,
+      "note": "the raw stdout is not returned and not durably stored by default",
+      "recorded_at": "2026-09-17T09:04:15.987105+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11da",
+      "title": "E11: approve a command that exits non-zero",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E11da.request.json",
+      "response_file": "d05-private/d05-raw/E11da.response.json",
+      "duration_ms": 15,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-f39511e9da6a-090415.987868",
+        "action_id": "act-d2cf03ec9caabac958464046"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:16.002904+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11db",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-f39511e9da6a-090415.987868"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E11db.request.json",
+      "response_file": "d05-private/d05-raw/E11db.response.json",
+      "duration_ms": 19,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-f39511e9da6a-090415.987868-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:16.022230+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11e",
+      "title": "E11: a non-zero exit is not reported as success",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 502,
+      "request_body_file": "d05-private/d05-raw/E11e.request.json",
+      "response_file": "d05-private/d05-raw/E11e.response.json",
+      "duration_ms": 504,
+      "key_fields": {
+        "ok": false,
+        "scope": "task_execution",
+        "reason_code": "task_failed",
+        "error": "task_failed",
+        "execution_uncertain": true,
+        "binding_evidence_id": "ost-6ea3c4ff2dec87d8",
+        "binding_evidence_persisted": true,
+        "outcome.state": "failed",
+        "outcome.exit_code": 7,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:16.526959+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11f",
+      "title": "E11: non-zero remote exit is distinguishable from a CLI failure",
+      "kind": "derived",
+      "status": "pass",
+      "exit_code": 7,
+      "outcome_state": "failed",
+      "note": "any non-zero rc proves only 'did not succeed'; the executor reports task_executed=unknown / execution_uncertain rather than guessing",
+      "recorded_at": "2026-09-17T09:04:16.526983+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11ga",
+      "title": "E11: approve a task that outlives its timeout",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E11ga.request.json",
+      "response_file": "d05-private/d05-raw/E11ga.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-ac2ecb652c58-090416.527580",
+        "action_id": "act-296d83dd5a2aac2ec1d4147f"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:16.539681+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11gb",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-ac2ecb652c58-090416.527580"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E11gb.request.json",
+      "response_file": "d05-private/d05-raw/E11gb.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-ac2ecb652c58-090416.527580-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:16.554030+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11h",
+      "title": "E11: a local timeout means we stopped observing, not that it stopped",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 502,
+      "request_body_file": "d05-private/d05-raw/E11h.request.json",
+      "response_file": "d05-private/d05-raw/E11h.response.json",
+      "duration_ms": 5423,
+      "key_fields": {
+        "ok": false,
+        "scope": "task_execution",
+        "reason_code": "task_failed",
+        "error": "task_failed",
+        "execution_uncertain": true,
+        "binding_evidence_id": "ost-b1bdca9a54f14c07",
+        "binding_evidence_persisted": true,
+        "outcome.state": "failed",
+        "outcome.exit_code": 124,
+        "outcome.spawned": true,
+        "outcome.execution_uncertain": false
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:21.977574+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11i",
+      "title": "E11: timeout is reported as uncertain, never as a stop",
+      "kind": "derived",
+      "status": "partial",
+      "outcome_state": "failed",
+      "note": "a local bound firing means WE stopped observing; the remote may still run",
+      "recorded_at": "2026-09-17T09:04:21.977599+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11j",
+      "title": "E11: no raw stdout / raw argv in durable task evidence",
+      "kind": "derived",
+      "status": "pass",
+      "evidence_dir": "/tmp/siq-o05v6-taskexec-ndsedi60/state/evidence",
+      "canary_token_hits_in_evidence": 0,
+      "output_marker_hits_in_evidence": 0,
+      "positive_control_token_hits_in_state_tree": 1,
+      "positive_control_marker_hits_in_state_tree": 1,
+      "note": "the state-tree count is the positive control: the approved params do retain the argv where the hold needs it, while the task evidence store holds only digests and counts",
+      "recorded_at": "2026-09-17T09:04:21.984029+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E11k",
+      "title": "E11: result-storage failure",
+      "kind": "acceptance",
+      "status": "partial",
+      "detail": "a durable-store write failure on the success path is implemented as 503 execution_evidence_incomplete with task_executed=yes (source: openshell_task_exec.go), but no fixture in this isolated state can make the evidence store fail deterministically without patching the running binary, so it is recorded as source-level only and not claimed as executed.",
+      "recorded_at": "2026-09-17T09:04:21.984054+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E13a",
+      "title": "decide (tool exec, expect human hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E13a.request.json",
+      "response_file": "d05-private/d05-raw/E13a.response.json",
+      "duration_ms": 11,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-753e3238f2bc-090421.984786",
+        "action_id": "act-c537f2f8c22a9615ce6bd7c7"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:21.995699+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E13b",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-753e3238f2bc-090421.984786"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E13b.request.json",
+      "response_file": "d05-private/d05-raw/E13b.response.json",
+      "duration_ms": 14,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-753e3238f2bc-090421.984786-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:22.010520+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E13c",
+      "title": "E13: a task-shaped body on the legacy policy_apply route",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/session-executions"
+      ],
+      "http_status": 400,
+      "request_body_file": "d05-private/d05-raw/E13c.request.json",
+      "response_file": "d05-private/d05-raw/E13c.response.json",
+      "duration_ms": 1,
+      "key_fields": {
+        "error": "invalid json"
+      },
+      "note": "the old route must not silently upgrade into real command execution",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:22.011801+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E13d",
+      "title": "E13: policy_apply route refuses a task-shaped request",
+      "kind": "derived",
+      "status": "partial",
+      "http": 400,
+      "reason_code": "invalid json",
+      "scope": null,
+      "task_executed": null,
+      "note": "404/400 would also prove no upgrade, but the asserted code is the one the route's binding check produces",
+      "recorded_at": "2026-09-17T09:04:22.011818+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E13e",
+      "title": "E13: the management path still works with no task backend configured",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/probe"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E13e.request.json",
+      "response_file": "d05-private/d05-raw/E13e.response.json",
+      "duration_ms": 11,
+      "key_fields": {
+        "ok": true
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:22.023188+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E13f",
+      "title": "E13: management path independent of the task route",
+      "kind": "derived",
+      "status": "pass",
+      "probe_keys": [
+        "_http_status",
+        "adapter",
+        "backend",
+        "capabilities",
+        "cli_version",
+        "configuration_capabilities",
+        "detected",
+        "doctor",
+        "dynamic_network_update",
+        "evidence_level",
+        "gateway_version",
+        "handshake_gateway",
+        "handshake_verified",
+        "max_filesystem_paths_measured",
+        "note",
+        "observed_at",
+        "ok",
+        "revision_support",
+        "schema_version",
+        "tier"
+      ],
+      "recorded_at": "2026-09-17T09:04:22.023216+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09aa",
+      "title": "E09: approve a long task, then crash the daemon while it runs",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E09aa.request.json",
+      "response_file": "d05-private/d05-raw/E09aa.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-7a23d2e33d9b-090422.023852",
+        "action_id": "act-0819529bb9c0092669752a7d"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:22.035478+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09ab",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-7a23d2e33d9b-090422.023852"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E09ab.request.json",
+      "response_file": "d05-private/d05-raw/E09ab.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-7a23d2e33d9b-090422.023852-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:22.048093+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "chk-cb52c6",
+      "title": "independent check: does the path exist",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "test -e /tmp/o05v6-d05-e09-e81a6e9752a07357.txt && echo yes || echo no"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/chk-cb52c6.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/chk-cb52c6.cli.stderr.txt",
+      "duration_ms": 181,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:28.230329+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09b",
+      "title": "E09: daemon killed while a task was in flight",
+      "kind": "component_fault",
+      "status": "pass",
+      "fault": "SIGKILL to the batch-owned daemon process",
+      "scope": "component-level: this kills the local daemon, not the sandbox, and does not claim to stop the remote command",
+      "client_thread_outcome": {
+        "error": "RemoteDisconnected: Remote end closed connection without response"
+      },
+      "recorded_at": "2026-09-17T09:04:28.233644+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09c",
+      "title": "serve start (mode=block) + admin pairing on 127.0.0.1:36941",
+      "kind": "cli+http",
+      "command": [
+        "agentshield-r4",
+        "serve",
+        "--port",
+        36941,
+        "--mode",
+        "block"
+      ],
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed"
+      },
+      "daemon_endpoint": "http://127.0.0.1:36941",
+      "stdout_file": "d05-private/d05-raw/E09c.serve-log.txt",
+      "recorded_at": "2026-09-17T09:04:28.285748+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09d",
+      "title": "E09: the same state dir comes back up",
+      "kind": "derived",
+      "status": "pass",
+      "endpoint": "http://127.0.0.1:36941",
+      "daemon_token_unchanged": true,
+      "recorded_at": "2026-09-17T09:04:28.285938+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09e",
+      "title": "E09: no auto-replay after restart",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/receipts"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E09e.request.json",
+      "response_file": "d05-private/d05-raw/E09e.response.json",
+      "duration_ms": 12,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:31.298828+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09f",
+      "title": "E09: the reservation's persisted facts survive the restart",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/read"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E09f.request.json",
+      "response_file": "d05-private/d05-raw/E09f.response.json",
+      "duration_ms": 10,
+      "key_fields": {
+        "reason_code": "openshell_task_result_uncertain",
+        "action_id": "act-0819529bb9c0092669752a7d"
+      },
+      "note": "the projection is rebuilt from persisted evidence, not from memory",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:31.309859+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09g",
+      "title": "E09: post-restart chain verification and projection",
+      "kind": "derived",
+      "status": "pass",
+      "chain_verified_after_restart": true,
+      "receipt_count_after_restart": 59,
+      "status_projection_keys": [
+        "_http_status",
+        "action_id",
+        "agent_id",
+        "argv_digest",
+        "decision_receipt_id",
+        "execution_id",
+        "note",
+        "platform",
+        "policy_digest",
+        "policy_revision",
+        "reason_code",
+        "reservation_receipt_id",
+        "schema_version",
+        "session_id",
+        "started_at",
+        "state",
+        "target",
+        "task_execution_kind",
+        "timeout_seconds",
+        "tool"
+      ],
+      "in_process_registry_is_not_the_source_of_truth": true,
+      "recorded_at": "2026-09-17T09:04:31.310018+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09h",
+      "title": "E09: the remote command outlived the local daemon (it was never stopped)",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "cat /tmp/o05v6-d05-e09-e81a6e9752a07357.txt 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E09h.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E09h.cli.stderr.txt",
+      "duration_ms": 222,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:31.532592+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09h2",
+      "title": "E09: the remote command outlived the local daemon (it was never stopped)",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "cat /tmp/o05v6-d05-e09-e81a6e9752a07357.txt 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E09h2.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E09h2.cli.stderr.txt",
+      "duration_ms": 102,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:04:46.634919+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09h3",
+      "title": "E09: the remote command outlived the local daemon (it was never stopped)",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "cat /tmp/o05v6-d05-e09-e81a6e9752a07357.txt 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E09h3.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E09h3.cli.stderr.txt",
+      "duration_ms": 182,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.817566+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09i",
+      "title": "E09: local crash does not stop the remote task",
+      "kind": "derived",
+      "status": "pass",
+      "remote_effect_present_after_local_kill": true,
+      "effect_absent_before_the_kill": true,
+      "read_back_attempts": 3,
+      "note": "a killed local PID is not a remote stop; the executor never claims otherwise. The remote argv sleeps before it writes, so the effect is polled with a bound rather than sampled once",
+      "recorded_at": "2026-09-17T09:05:01.817598+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09p",
+      "title": "E09: read the signed chain to locate the reservation",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/receipts"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E09p.request.json",
+      "response_file": "d05-private/d05-raw/E09p.response.json",
+      "duration_ms": 11,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.829911+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09k",
+      "title": "E09: a hash mismatch is refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/reconcile"
+      ],
+      "http_status": 409,
+      "request_body_file": "d05-private/d05-raw/E09k.request.json",
+      "response_file": "d05-private/d05-raw/E09k.response.json",
+      "duration_ms": 9,
+      "key_fields": {
+        "reason_code": "openshell_task_reconcile_hash_mismatch",
+        "error": "openshell_task_reconcile_hash_mismatch"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.839917+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09l",
+      "title": "E09: an unknown reservation is refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/reconcile"
+      ],
+      "http_status": 404,
+      "request_body_file": "d05-private/d05-raw/E09l.request.json",
+      "response_file": "d05-private/d05-raw/E09l.response.json",
+      "duration_ms": 8,
+      "key_fields": {
+        "reason_code": "openshell_task_reservation_unknown",
+        "error": "openshell_task_reservation_unknown"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.848055+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09ma",
+      "title": "E09: approve a task and never submit it",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E09ma.request.json",
+      "response_file": "d05-private/d05-raw/E09ma.response.json",
+      "duration_ms": 15,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-110e69e578db-090501.848947",
+        "action_id": "act-24c402be2e91fdc6d3499fbf"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.863426+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09mb",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-110e69e578db-090501.848947"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E09mb.request.json",
+      "response_file": "d05-private/d05-raw/E09mb.response.json",
+      "duration_ms": 16,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-110e69e578db-090501.848947-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.879987+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09n",
+      "title": "E09: an approval that was never submitted has nothing to reconcile",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/reconcile"
+      ],
+      "http_status": 404,
+      "request_body_file": "d05-private/d05-raw/E09n.request.json",
+      "response_file": "d05-private/d05-raw/E09n.response.json",
+      "duration_ms": 5,
+      "key_fields": {
+        "reason_code": "openshell_task_reservation_unknown",
+        "error": "openshell_task_reservation_unknown"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.885575+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09o",
+      "title": "E09: the administrator closes the crash-orphaned reservation",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/reconcile"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E09o.request.json",
+      "response_file": "d05-private/d05-raw/E09o.response.json",
+      "duration_ms": 32,
+      "key_fields": {
+        "reason_code": "openshell_task_confirmed_occurred",
+        "action_id": "act-0819529bb9c0092669752a7d"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.917955+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09r",
+      "title": "E09: the projection reflects the reconciliation",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/read"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E09r.request.json",
+      "response_file": "d05-private/d05-raw/E09r.response.json",
+      "duration_ms": 9,
+      "key_fields": {
+        "reason_code": "openshell_task_confirmed_occurred",
+        "action_id": "act-0819529bb9c0092669752a7d"
+      },
+      "note": "read back after the closure, so it is the daemon's own record",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.927945+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09s",
+      "title": "E09: reconcile matrix",
+      "kind": "derived",
+      "status": "pass",
+      "hash_mismatch": {
+        "http": 409,
+        "reason": "openshell_task_reconcile_hash_mismatch"
+      },
+      "unknown_reservation": {
+        "http": 404,
+        "reason": "openshell_task_reservation_unknown"
+      },
+      "never_submitted_approval": {
+        "http": 404,
+        "reason": "openshell_task_reservation_unknown"
+      },
+      "closure": {
+        "http": 200,
+        "reason": "openshell_task_confirmed_occurred",
+        "outcome": "occurred"
+      },
+      "projection_after_closure": [
+        "_http_status",
+        "action_id",
+        "agent_id",
+        "argv_digest",
+        "decision_receipt_id",
+        "execution_id",
+        "note",
+        "platform",
+        "policy_digest",
+        "policy_revision",
+        "reason_code",
+        "reconciliation_receipt_id",
+        "reservation_receipt_id",
+        "schema_version",
+        "session_id",
+        "state",
+        "target",
+        "task_execution_kind",
+        "timeout_seconds",
+        "tool"
+      ],
+      "note": "reconciliation closes a reservation by administrator fiat; it never re-executes anything. The refusals run while the reservation is still open, so each one is isolated rather than masked by an earlier closure",
+      "recorded_at": "2026-09-17T09:05:01.927995+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E09q",
+      "title": "E09: crash points and clock/storage fault injection",
+      "kind": "acceptance",
+      "status": "partial",
+      "detail": "the daemon-kill restart point is real and exercised. The finer component-level crash points inside the executor (between plan and start, between start and outcome) and clock/storage fault injection are covered structurally by the immutable per-fact evidence records (plan, start and outcome are separate ids) but are not injected in this run, so they are recorded component-level rather than as executed scenarios.",
+      "recorded_at": "2026-09-17T09:05:01.927999+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E08aa",
+      "title": "E08: approve a long task, then exercise the whole stop contract on it",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E08aa.request.json",
+      "response_file": "d05-private/d05-raw/E08aa.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-80894983ec4b-090501.928382",
+        "action_id": "act-4f6da46b326f984a77499e64"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.941590+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E08ab",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-80894983ec4b-090501.928382"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E08ab.request.json",
+      "response_file": "d05-private/d05-raw/E08ab.response.json",
+      "duration_ms": 15,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-80894983ec4b-090501.928382-res"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.956933+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E08b",
+      "title": "E08: a stop naming another target is refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/stop"
+      ],
+      "http_status": 404,
+      "request_body_file": "d05-private/d05-raw/E08b.request.json",
+      "response_file": "d05-private/d05-raw/E08b.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "reason_code": "openshell_task_reservation_unknown",
+        "error": "openshell_task_reservation_unknown"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.969093+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E08c",
+      "title": "E08: a stop for an unknown reservation is refused",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/stop"
+      ],
+      "http_status": 404,
+      "request_body_file": "d05-private/d05-raw/E08c.request.json",
+      "response_file": "d05-private/d05-raw/E08c.response.json",
+      "duration_ms": 10,
+      "key_fields": {
+        "reason_code": "openshell_task_reservation_unknown",
+        "error": "openshell_task_reservation_unknown"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.979807+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E08d",
+      "title": "E08: deleting the sandbox is not a stop",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/stop"
+      ],
+      "http_status": 400,
+      "request_body_file": "d05-private/d05-raw/E08d.request.json",
+      "response_file": "d05-private/d05-raw/E08d.response.json",
+      "duration_ms": 0,
+      "key_fields": {
+        "reason_code": "invalid_openshell_task_stop_shape",
+        "error": "invalid_openshell_task_stop_shape"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:01.980755+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E08e",
+      "title": "E08: stop an in-flight task this daemon owns",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions/stop"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E08e.request.json",
+      "response_file": "d05-private/d05-raw/E08e.response.json",
+      "duration_ms": 16,
+      "key_fields": {
+        "reason_code": "openshell_task_stop_requested_local_only",
+        "action_id": "act-4f6da46b326f984a77499e64"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:06.997315+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "chk-bf7e10",
+      "title": "independent check: does the path exist",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "test -e /sandbox && echo yes || echo no"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/chk-bf7e10.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/chk-bf7e10.cli.stderr.txt",
+      "duration_ms": 140,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:07.145731+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E08g",
+      "title": "E08: stop contract exercised end to end",
+      "kind": "derived",
+      "status": "partial",
+      "ownership_refusal_http": 404,
+      "ownership_refusal_reason": "openshell_task_reservation_unknown",
+      "unknown_refusal_http": 404,
+      "unknown_refusal_reason": "openshell_task_reservation_unknown",
+      "delete_sandbox_refusal_http": 400,
+      "delete_sandbox_refusal_reason": "invalid_openshell_task_stop_shape",
+      "stop_http": 200,
+      "stop_reason": "openshell_task_stop_requested_local_only",
+      "remote_stop": "unsupported",
+      "remote_stop_confirmed": false,
+      "delete_sandbox": null,
+      "sandbox_still_present_after_stop": true,
+      "requester_submission_outcome": {
+        "status": 502,
+        "payload": {
+          "binding_evidence_id": "ost-a09509b30ecd25a8",
+          "binding_evidence_persisted": true,
+          "error": "execution_uncertain",
+          "execution_uncertain": true,
+          "note": "本地已发起命令并收到停止请求；SIQ 当前未接入远端停止确认，远端可能仍在运行，预留保持未决等待管理员对账，不会自动重放",
+          "ok": false,
+          "outcome": {
+            "state": "stop_requested",
+            "task_executed": "unknown",
+            "execution_uncertain": true,
+            "bound_fired": "stop_local",
+            "spawned": true,
+            "preflight_refused": false,
+            "exit_code": -1,
+            "exit_code_attribution": "none",
+            "stdout_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_bytes": 0,
+            "stderr_bytes": 0,
+            "started_at": "2026-09-17T09:05:02.361241425Z",
+            "finished_at": "2026-09-17T09:05:06.997935242Z",
+            "policy_revision": "12",
+            "policy_digest": "a9cbcce9dba51752dd0d77f7d1d47ebd67d11b1ee4b3c773a562cdcb29b3effc"
+          },
+          "reason_code": "execution_stopped_after_spawn_uncertain",
+          "reservation": {
+            "schema_version": "hold-execution-status/v1",
+            "status": "reserved",
+            "action_id": "act-4f6da46b326f984a77499e64",
+            "decision_receipt_id": "rcp-80894983ec4b-090501.928382",
+            "reservation_receipt_id": "rcp-80894983ec4b-090501.928382-exec",
+            "expires_at": "2026-09-17T09:06:01Z",
+            "reason_code": "hold_execution_reserved"
+          },
+          "scope": "task_execution",
+          "target": "siq-v6-f04-163608"
+        }
+      },
+      "note": "the stop terminates LOCAL observation only. The executor reports remote_stop=unsupported / remote_stop_confirmed=false and refuses to delete the sandbox as a substitute. An unobserved task gets 409 stop_not_observable rather than a fabricated success.",
+      "recorded_at": "2026-09-17T09:05:07.145956+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E08h",
+      "title": "E08: remote stop confirmation",
+      "kind": "acceptance",
+      "status": "blocked",
+      "detail": "SIQ currently implements local observation termination only; unsupported/false is a client contract constant, not a gateway response. Remote capability needs independent verification and integration; the O05 batch is not declared complete on its account.",
+      "remote_stop": "unsupported",
+      "remote_stop_confirmed": false,
+      "sandbox_still_present": true,
+      "recorded_at": "2026-09-17T09:05:07.145967+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12a",
+      "title": "E12: the product CLI mints a single-use pairing code",
+      "kind": "acceptance",
+      "status": "pass",
+      "exit_code": 0,
+      "recorded_at": "2026-09-17T09:05:07.159648+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b",
+      "title": "E12: an exec request left pending for the browser to approve",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E12b.request.json",
+      "response_file": "d05-private/d05-raw/E12b.response.json",
+      "duration_ms": 12,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-c6b0fe3547a3-090507.160215",
+        "action_id": "act-1c8bd6eb07cd4b899e910959"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:07.172079+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12c",
+      "title": "E12: a second exec request for the browser to refuse",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E12c.request.json",
+      "response_file": "d05-private/d05-raw/E12c.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-2167c9d49706-090507.172814",
+        "action_id": "act-3e1d6d91f059dc065a776f6e"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:07.185858+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12d",
+      "title": "E12: the browser is handed a pending request, not an approval",
+      "kind": "acceptance",
+      "status": "pass",
+      "action_id": "act-1c8bd6eb07cd4b899e910959",
+      "recorded_at": "2026-09-17T09:05:07.185989+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b1",
+      "title": "the served UI gates on the one-time pairing code, not a pre-seeded session",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": null,
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899119+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b2",
+      "title": "pairing a real one-time code opens the admin console",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": null,
+      "url": "http://127.0.0.1:36941/overview",
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899137+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b3",
+      "title": "预览: approval is shown as an approval, execution as a separate fact",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": null,
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899139+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b4",
+      "title": "确认: the browser approves this exact request and gets a receipt back",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": "已批准本次请求。确认记录：rcp-c6b0fe3547a3-090507.160215-res",
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899143+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b5",
+      "title": "批准后仍未执行: the approval is recorded and the run is still a separate fact",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": null,
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899145+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b6",
+      "title": "运行: the agent-side executor ran the approved command in the sandbox",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": "succeeded",
+      "status_text": null,
+      "url": null,
+      "http": 200,
+      "exit_code": 0,
+      "recorded_at": "2026-09-17T09:05:15.899146+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b7",
+      "title": "结果: the console renders the backend-signed outcome, not a local guess",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": null,
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899148+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b8",
+      "title": "结果 survives a full page reload (it is a ledger projection)",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": null,
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899150+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b9",
+      "title": "旧响应: another request never renders the previous request's result",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": null,
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899153+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b10",
+      "title": "取消 + 键盘: the refusal is made and activated entirely from the keyboard",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": "已拒绝本次请求。确认记录：rcp-2167c9d49706-090507.172814-res",
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899156+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b11",
+      "title": "移动端: the console is usable at a phone viewport",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": null,
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899158+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12b12",
+      "title": "失联: losing the admin session returns to the pairing gate",
+      "kind": "browser",
+      "status": "pass",
+      "detail": null,
+      "state": null,
+      "status_text": null,
+      "url": null,
+      "http": null,
+      "exit_code": null,
+      "recorded_at": "2026-09-17T09:05:15.899159+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12g",
+      "title": "E12: browser sub-check roll-up",
+      "kind": "derived",
+      "status": "pass",
+      "sub_checks": {
+        "E12b1": "pass",
+        "E12b2": "pass",
+        "E12b3": "pass",
+        "E12b4": "pass",
+        "E12b5": "pass",
+        "E12b6": "pass",
+        "E12b7": "pass",
+        "E12b8": "pass",
+        "E12b9": "pass",
+        "E12b10": "pass",
+        "E12b11": "pass",
+        "E12b12": "pass"
+      },
+      "driver_sha256": "740b99a60905f28f809f07e80e548288bb917c447a22234dc528dba73a45885a",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "fatal": null,
+      "recorded_at": "2026-09-17T09:05:15.899165+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12h",
+      "title": "independent read of the file the browser-approved command wrote",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "cat /tmp/o05v6-d05-e12-run-e81a6e9752a07357.txt 2>/dev/null || printf %s __o05v6_absent__"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/E12h.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/E12h.cli.stderr.txt",
+      "duration_ms": 223,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.122420+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "chk-154d15",
+      "title": "independent check: does the path exist",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "test -e /tmp/o05v6-d05-e12-cancel-e81a6e9752a07357.txt && echo yes || echo no"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/chk-154d15.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/chk-154d15.cli.stderr.txt",
+      "duration_ms": 182,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.304512+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E12i",
+      "title": "E12: effect and refusal, proven outside the daemon",
+      "kind": "derived",
+      "status": "pass",
+      "exit_code": 0,
+      "approved_command_file_matches": true,
+      "refused_request_left_nothing": true,
+      "raw_token_evidence_hits": 0,
+      "stdout_tail": "72814-res\"},{\"id\":\"E12b11\",\"title\":\"移动端: the console is usable at a phone viewport\",\"status\":\"pass\",\"viewport\":\"390x844\"},{\"id\":\"E12b12\",\"title\":\"失联: losing the admin session returns to the pairing gate\",\"status\":\"pass\",\"mentions_invalid_session\":false}],\"console_errors\":[\"Failed to load resource: the server responded with a status of 401 (Unauthorized)\"],\"failed_steps\":[],\"fatal\":null,\"ok\":true}\n",
+      "recorded_at": "2026-09-17T09:05:16.305598+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K70a",
+      "title": "decide (tool exec, expect human hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K70a.request.json",
+      "response_file": "d05-private/d05-raw/K70a.response.json",
+      "duration_ms": 17,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-b6171e60becd-090516.306317",
+        "action_id": "act-10932821cf6ea282eea17c01"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.323528+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K70b",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-b6171e60becd-090516.306317"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K70b.request.json",
+      "response_file": "d05-private/d05-raw/K70b.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-b6171e60becd-090516.306317-res"
+      },
+      "note": "human approves; the grant is revoked immediately afterwards",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.336573+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K70c",
+      "title": "revoke the grant after the human approval",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0/revoke"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K70c.request.json",
+      "response_file": "d05-private/d05-raw/K70c.response.json",
+      "duration_ms": 27,
+      "key_fields": {
+        "state_revision": 4
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.363645+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K70d",
+      "title": "refusal: grant revoked between approval and submission",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 403,
+      "request_body_file": "d05-private/d05-raw/K70d.request.json",
+      "response_file": "d05-private/d05-raw/K70d.response.json",
+      "duration_ms": 22,
+      "key_fields": {
+        "reason_code": "openshell_grant_invalid",
+        "error": "openshell_grant_invalid"
+      },
+      "note": "must be refused, never executed",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.385707+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K70e",
+      "title": "revocation after approval blocked the execution",
+      "kind": "derived",
+      "status": "pass",
+      "revoke_http_status": null,
+      "submission_reason_code": "openshell_grant_invalid",
+      "recorded_at": "2026-09-17T09:05:16.385729+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80a",
+      "title": "init the lost-backend daemon's isolated state",
+      "kind": "cli",
+      "command": [
+        "agentshield-r4",
+        "init",
+        "--port",
+        "41383"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K80a.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K80a.cli.stderr.txt",
+      "duration_ms": 29,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.415112+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80b",
+      "title": "serve start (mode=block) + admin pairing on 127.0.0.1:35641",
+      "kind": "cli+http",
+      "command": [
+        "agentshield-r4",
+        "serve",
+        "--port",
+        35641,
+        "--mode",
+        "block"
+      ],
+      "status": "pass",
+      "http_status": 200,
+      "key_fields": {
+        "pairing": "redeemed"
+      },
+      "daemon_endpoint": "http://127.0.0.1:35641",
+      "stdout_file": "d05-private/d05-raw/K80b.serve-log.txt",
+      "recorded_at": "2026-09-17T09:05:16.466773+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80c",
+      "title": "lost backend: admit the fixture skill",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/admit"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K80c.request.json",
+      "response_file": "d05-private/d05-raw/K80c.response.json",
+      "duration_ms": 10,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.477084+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80d",
+      "title": "lost backend: create grant",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K80d.request.json",
+      "response_file": "d05-private/d05-raw/K80d.response.json",
+      "duration_ms": 40,
+      "key_fields": {
+        "state_revision": 0
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.517801+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80e",
+      "title": "lost backend: patch-desired",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0/patch-desired"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K80e.request.json",
+      "response_file": "d05-private/d05-raw/K80e.response.json",
+      "duration_ms": 38,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.556423+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80f",
+      "title": "lost backend: challenge",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0/challenge"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K80f.request.json",
+      "response_file": "d05-private/d05-raw/K80f.response.json",
+      "duration_ms": 9,
+      "key_fields": {
+        "state_revision": 1
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.565688+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80g",
+      "title": "lost backend: approve",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0/approve"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K80g.request.json",
+      "response_file": "d05-private/d05-raw/K80g.response.json",
+      "duration_ms": 32,
+      "key_fields": {
+        "state_revision": 2
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.598494+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80h",
+      "title": "lost backend: deploy",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants/grt-5c9b81adafcf-b8aab4a0/deploy"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K80h.request.json",
+      "response_file": "d05-private/d05-raw/K80h.response.json",
+      "duration_ms": 32,
+      "key_fields": {
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.630729+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80i",
+      "title": "lost backend: probe reports the backend unavailable",
+      "kind": "http",
+      "command": [
+        "GET",
+        "/v1/openshell/probe"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/K80i.request.json",
+      "response_file": "d05-private/d05-raw/K80i.response.json",
+      "duration_ms": 9,
+      "key_fields": {
+        "ok": false
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.639907+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80j",
+      "title": "lost-backend daemon reports the required backend down",
+      "kind": "derived",
+      "status": "pass",
+      "probe_keys": [
+        "_http_status",
+        "adapter",
+        "backend",
+        "detected",
+        "doctor",
+        "note",
+        "ok",
+        "tier"
+      ],
+      "probe_tier": null,
+      "recorded_at": "2026-09-17T09:05:16.639922+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K80k",
+      "title": "refusal: required backend unreachable (no native fallback)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 503,
+      "request_body_file": "d05-private/d05-raw/K80k.request.json",
+      "response_file": "d05-private/d05-raw/K80k.response.json",
+      "duration_ms": 8,
+      "key_fields": {
+        "error": "OpenShell L3 不可用: 已发现 OpenShell CLI，但网关不可达。请由人类运行 openshell gateway start，或 openshell gateway select <name> 后重试 probe。agentshield 不会执行 gateway start，也不会猜测端口。"
+      },
+      "note": "503 before any authorization is consumed; never falls back to native",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.648744+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E07a",
+      "title": "E07: admit the fixture skill in the lost-backend daemon",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/admit"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E07a.request.json",
+      "response_file": "d05-private/d05-raw/E07a.response.json",
+      "duration_ms": 7,
+      "key_fields": {},
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.656246+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E07b",
+      "title": "E07: create a grant in the lost-backend daemon",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/grants"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E07b.request.json",
+      "response_file": "d05-private/d05-raw/E07b.response.json",
+      "duration_ms": 0,
+      "key_fields": {
+        "state_revision": 3
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.657208+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E07c",
+      "title": "E07: reuse the deployed grant K80 left behind",
+      "kind": "derived",
+      "status": "pass",
+      "grant_id": "grt-5c9b81adafcf-b8aab4a0",
+      "grant_status": "deployed",
+      "reused": true,
+      "note": "the lost-backend daemon already holds this grant in `deployed`; admission is content-addressed so re-creating it returns the same grant rather than a fresh one to walk through the lifecycle",
+      "recorded_at": "2026-09-17T09:05:16.657216+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E07g",
+      "title": "decide (tool exec, expect human hold)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/decide"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E07g.request.json",
+      "response_file": "d05-private/d05-raw/E07g.response.json",
+      "duration_ms": 11,
+      "key_fields": {
+        "action": "hold",
+        "reason_code": "runtime_denied",
+        "receipt_id": "rcp-5c48d15232dd-090516.657612",
+        "action_id": "act-6779eb10a9b5c59090e7ae2f"
+      },
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.668542+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E07h",
+      "title": "hold resolution (admin)",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/hold/rcp-5c48d15232dd-090516.657612"
+      ],
+      "http_status": 200,
+      "request_body_file": "d05-private/d05-raw/E07h.request.json",
+      "response_file": "d05-private/d05-raw/E07h.response.json",
+      "duration_ms": 13,
+      "key_fields": {
+        "action": "allow",
+        "receipt_id": "rcp-5c48d15232dd-090516.657612-res"
+      },
+      "note": "approved, then submitted while the backend is required and down",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.682195+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E07i",
+      "title": "E07: approved task with the required backend down",
+      "kind": "http",
+      "command": [
+        "POST",
+        "/v1/openshell/task-executions"
+      ],
+      "http_status": 503,
+      "request_body_file": "d05-private/d05-raw/E07i.request.json",
+      "response_file": "d05-private/d05-raw/E07i.response.json",
+      "duration_ms": 8,
+      "key_fields": {
+        "error": "OpenShell L3 不可用: 已发现 OpenShell CLI，但网关不可达。请由人类运行 openshell gateway start，或 openshell gateway select <name> 后重试 probe。agentshield 不会执行 gateway start，也不会猜测端口。"
+      },
+      "note": "must not fall back to native execution",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.691005+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "chk-77634f",
+      "title": "independent check: does the path exist",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "sandbox",
+        "exec",
+        "-n",
+        "siq-v6-f04-163608",
+        "--no-tty",
+        "--",
+        "/bin/sh",
+        "-c",
+        "test -e /tmp/o05v6-d05-e07-e81a6e9752a07357.txt && echo yes || echo no"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/chk-77634f.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/chk-77634f.cli.stderr.txt",
+      "duration_ms": 190,
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.881767+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "E07j",
+      "title": "E07: no native fallback and no side effect either side",
+      "kind": "derived",
+      "status": "pass",
+      "http": 503,
+      "reason_code": "OpenShell L3 不可用: 已发现 OpenShell CLI，但网关不可达。请由人类运行 openshell gateway start，或 openshell gateway select <name> 后重试 probe。agentshield 不会执行 gateway start，也不会猜测端口。",
+      "spawned": null,
+      "task_executed": null,
+      "sandbox_marker_present": false,
+      "arrivals_before": [
+        4,
+        3
+      ],
+      "arrivals_after": [
+        4,
+        3
+      ],
+      "foreign_peers": [
+        "127.0.0.1"
+      ],
+      "note": "the host reaches the receiver fine, so a native fallback would have produced an arrival from a non-sandbox peer; the sandbox file would only appear if something ran in the sandbox. Neither happened.",
+      "recorded_at": "2026-09-17T09:05:16.881801+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K90a",
+      "title": "serve stop (SIGTERM drain)",
+      "kind": "cli",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.885213+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K90b",
+      "title": "serve stop (SIGTERM drain)",
+      "kind": "cli",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.888564+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K90c",
+      "title": "CLI observation: policy get siq-v6-f04-163608 --full",
+      "kind": "cli",
+      "command": [
+        "openshell",
+        "--gateway-endpoint",
+        "https://127.0.0.1:17671",
+        "policy",
+        "get",
+        "siq-v6-f04-163608",
+        "--full"
+      ],
+      "exit_code": 0,
+      "stdout_file": "d05-private/d05-raw/K90c.cli.stdout.txt",
+      "stderr_file": "d05-private/d05-raw/K90c.cli.stderr.txt",
+      "duration_ms": 88,
+      "note": "read-only observation via real openshell CLI",
+      "status": "pass",
+      "recorded_at": "2026-09-17T09:05:16.977540+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    },
+    {
+      "id": "K90d",
+      "title": "sandbox policy content restored to the batch baseline",
+      "kind": "derived",
+      "status": "pass",
+      "baseline_hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "final_hash": "21ca0b7c8c0ee3fe71660bb18960bdb2d572b6904f6a22338eba727ca26add43",
+      "baseline_version": "9",
+      "final_version": "12",
+      "version_advanced_by_e02_window": true,
+      "note": "identity is the content hash; the version counter is expected to have advanced because the E02 window necessarily updated the policy, and the change is recorded rather than hidden",
+      "recorded_at": "2026-09-17T09:05:16.977568+00:00",
+      "binary_sha256": "c8048691276590a064b5314837e35c80a2e8fba48471f1bf12c434f6b9ae9853",
+      "sandbox_target": "siq-v6-f04-163608"
+    }
+  ],
+  "finished_at": "2026-09-17T09:05:16.977648+00:00"
+}
