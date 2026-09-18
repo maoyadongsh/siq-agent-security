@@ -1,0 +1,58 @@
+{
+  "schema": "windows-component-evidence-manifest/v1",
+  "source_head": "9cc18630be584692905e1ce612b91a9ba5aee610",
+  "files": [
+    {
+      "path": "cold-cache-summary.json",
+      "bytes": 3319,
+      "sha256": "6550c931046e3c7568b72cc02e14223b21ed3bfa28d7f1e4a97b0cf4c123dbd3"
+    },
+    {
+      "path": "cold-cache-tests.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cold-cleanup-observation.json",
+      "bytes": 835,
+      "sha256": "586609a5ba9a01db23297ff342add2d922e7745cb9974fe22c7faa7ad671d1df"
+    },
+    {
+      "path": "go-toolchain-build.txt",
+      "bytes": 212,
+      "sha256": "2b5a7d46c43063427d1af06e019a82c3fbb0ef59e7033cd9c940ff0faa154a31"
+    },
+    {
+      "path": "process-observation.json",
+      "bytes": 856,
+      "sha256": "7d262c48eee5576141d8a3f70e407dba08354740cad7a7210f0fc3064962b518"
+    },
+    {
+      "path": "report.md",
+      "bytes": 7392,
+      "sha256": "57cb2bdce0236c9a466bb2416d3f6229913a5575ae0df3e6a5cd17c4dad1525c"
+    },
+    {
+      "path": "run-n03-cold.py",
+      "bytes": 6964,
+      "sha256": "757dfe8810f156ec2cc760173c815bd9f566bfa974d85d2285999511a12d88a4"
+    },
+    {
+      "path": "run-n03.py",
+      "bytes": 8017,
+      "sha256": "4cdc7821fe1737f82c0b5696c64fda240bfde33cf5c1db822dd9c8cf271169cf"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 5421,
+      "sha256": "c8396d19108a4bf20523e2e60afb3e7b888afd48b7844eb5997547354b6c827e"
+    },
+    {
+      "path": "tests.jsonl",
+      "bytes": 14331,
+      "sha256": "75ae97a26e1a359ecc5a3f5587e0fcf13e9c112036b2b1e35298e53c22503f86"
+    }
+  ],
+  "privacy_scan": [],
+  "scope": "Public derived N03 Windows component evidence; original logs retained privately; manifest excludes itself."
+}

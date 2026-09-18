@@ -1,0 +1,109 @@
+{
+  "candidate": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+  "baseline": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "manifest_excludes_itself": true,
+  "file_count": 20,
+  "total_bytes": 59196,
+  "files": [
+    {
+      "path": "baseline-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "baseline-summary.json",
+      "bytes": 4580,
+      "sha256": "1fc9c1cd33f6af3e441826c7df7f462f6d1eb258e451e43b6de98365436abad4"
+    },
+    {
+      "path": "baseline.jsonl",
+      "bytes": 5637,
+      "sha256": "bf87351c0a4aeaa31098bb7a5db6b753409d8e7d6ee4ad0b5c262b495e7b4a94"
+    },
+    {
+      "path": "change.patch",
+      "bytes": 2909,
+      "sha256": "1fc25ec37924ac18032048770cc5001e9ee1311ce30f2a632e5d6cdc0b01b0da"
+    },
+    {
+      "path": "focused-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused-summary.json",
+      "bytes": 3986,
+      "sha256": "f8f53bbf72fa1f4acf3b3da402af553f745c877a3d599a4b8dbb5aba60fa8413"
+    },
+    {
+      "path": "focused.jsonl",
+      "bytes": 2568,
+      "sha256": "c58ba84d31370bf1f185dd30744a3d7933b2ffdcf68785edcf886c80901c2b52"
+    },
+    {
+      "path": "gofmt-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "gofmt-summary.json",
+      "bytes": 3101,
+      "sha256": "518a160a098dd18770badf316f8d1d88e8f9a7d1d74d0e5fb3fd38df5150900b"
+    },
+    {
+      "path": "gofmt.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "package-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "package-summary.json",
+      "bytes": 4579,
+      "sha256": "7bba8e3b981df8b034d835b77272830cc062cdefcc890d9cf9083478cc5abccd"
+    },
+    {
+      "path": "package.jsonl",
+      "bytes": 5280,
+      "sha256": "dd1bf9336de01237292b0ba87a31a00e64ff313fe0f8192adabc16b74b8d859d"
+    },
+    {
+      "path": "process-observation.json",
+      "bytes": 629,
+      "sha256": "cbae4eaa0311f959b04ecc6c358f3c6d8d7343c985051515b8614a680dfacc58"
+    },
+    {
+      "path": "report.md",
+      "bytes": 5193,
+      "sha256": "96b2c7cee7d25fdff5de6daf388c3ffc179974d24351a00b19744dd142b1cc59"
+    },
+    {
+      "path": "run-adapters-check.py",
+      "bytes": 10960,
+      "sha256": "ab366c3eb362d1e3f3d39f2743562ac9e1d71b73ab0422486934aa9a780f88d1"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 6657,
+      "sha256": "0648538e8a8a1e2fac1ab63bbb03bcc47acc15380f2d24d2630b76734fda27c5"
+    },
+    {
+      "path": "vet-output.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "vet-summary.json",
+      "bytes": 3117,
+      "sha256": "c4dd0bb561cb05a6c84de2b0d5d74d3226f5fd94524e57949e8b5b4a9edc962e"
+    },
+    {
+      "path": "vet.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "openclaw-a05-public-manifest.v1",
+  "description": "固定四个公开内容文件；verification单独记录交付前检查，不将材料验证等同平台通过。",
+  "files": [
+    {
+      "file": "README.md",
+      "bytes": 1002,
+      "sha256": "0de6b7cafe3b1e56fa602f3a3f70f8460bc4194f92a5bf619cf34a3558e1ed8f"
+    },
+    {
+      "file": "report.md",
+      "bytes": 2658,
+      "sha256": "1985632331bf51570702305e993abd0e9ab52bfc3269a144deee75b38fadef85"
+    },
+    {
+      "file": "summary.json",
+      "bytes": 4548,
+      "sha256": "bf130ec32e7d486a96719f99bc68ff1b8ef3857916297250cf616b014d0e6c5c"
+    },
+    {
+      "file": "raw-source-index.json",
+      "bytes": 6399,
+      "sha256": "e5b584916a401b5997b39b60a1340ed51efd975c9499d12751ae5fe6659b00da"
+    }
+  ]
+}

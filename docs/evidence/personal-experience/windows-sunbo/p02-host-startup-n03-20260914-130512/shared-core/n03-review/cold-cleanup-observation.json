@@ -1,0 +1,20 @@
+{
+  "schema": "windows-component-process-observation/v1",
+  "run_id": "cold-cache-attempt-1",
+  "observation_order": "After first runner completed and before retry was started",
+  "exact_observation_utc": null,
+  "method": "Read-only Win32_Process CIM: executable path starts with owned private run root OR command line contains that root; exclude observer PID",
+  "matching_process_count": 0,
+  "go_process_reaped": true,
+  "taskkill_exit_code": 255,
+  "taskkill_output_categories": {
+    "success_messages": 2,
+    "failure_messages": 1,
+    "failure_reason": "operation_not_supported"
+  },
+  "limits": [
+    "No claim that every descendant termination succeeded individually.",
+    "The raw cleanup log retains original output privately.",
+    "CIM is one scoped process snapshot, not continuous tracing."
+  ]
+}

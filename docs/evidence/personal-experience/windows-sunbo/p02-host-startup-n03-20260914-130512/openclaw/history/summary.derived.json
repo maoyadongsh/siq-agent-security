@@ -1,0 +1,711 @@
+{
+  "schema_version": "derived-openclaw-wsl-historical-allowlist/v1",
+  "artifact_kind": "derived_public_draft",
+  "scope": {
+    "execution_environment": "Windows 宿主上的 WSL2/Linux",
+    "windows_native_runtime_evidence": false,
+    "historical_batches_only": [
+      "preflight",
+      "a01",
+      "diag02",
+      "diag03",
+      "namespace"
+    ],
+    "later_runtime_batches_included": false,
+    "assessment": "仅配置预检、失败的 runtime 尝试及纯 namespace 可行性；不构成 OpenClaw/SIQ 完整用户旅程或跨 OS 验收。"
+  },
+  "derivation": {
+    "method": "只选取原始 JSON 的白名单字段、计算原件/存储文本摘要，并以分类替换资源路径；不修改原始证据。",
+    "hash_semantics": "原件 SHA256 对私有 wrapper 文件原字节计算；stdout/stderr SHA256 对 wrapper 已存储字符串的 UTF-8 编码计算，不能宣称为原进程未经解码的字节流摘要。",
+    "literal_resource_allowlist": [
+      "/tmp"
+    ],
+    "omitted": [
+      "完整 argv 与 env",
+      "原始日志、堆栈和请求体",
+      "账号与 OS 身份、PID、namespace 编号、inode 和 owner 数字",
+      "私有路径、端口、签名、密钥和凭据内容"
+    ],
+    "resource_replacement": "resource_class 为衍生分类；resource 仅允许公共常量 /tmp 或 null。",
+    "raw_artifacts_are_private": true
+  },
+  "sources": [
+    {
+      "id": "preflight",
+      "sha256": "1d7b675a21807e439336994d667996dcfaf0cea8eaafd47a01e4c64c594eda8a",
+      "original_published": false
+    },
+    {
+      "id": "a01",
+      "sha256": "8e64f1e2c20682619f378238e9b7bc2da62bca31afc21597159b329f8130931b",
+      "original_published": false
+    },
+    {
+      "id": "diag02",
+      "sha256": "c03194306d06b72995555401e6164e92c93cf5381bd98b24d5d6ec70275cd14c",
+      "original_published": false
+    },
+    {
+      "id": "diag03",
+      "sha256": "bd78089a2a0b8bbf3b94b675148d12c9f067be00302cc68555fb1cf6dd639e0a",
+      "original_published": false
+    },
+    {
+      "id": "namespace",
+      "sha256": "14c9ba4f1195690500c81741be84b1f5dda2730c3a15c0fcfc8ea60f4f451acc",
+      "original_published": false
+    },
+    {
+      "id": "preflight_identity_notes",
+      "sha256": "1bfc0af4785146befcceeb924c79e803eac7764c8cb998d1f6339e3ad740afb0",
+      "original_published": false
+    },
+    {
+      "id": "coordinator_source_observation",
+      "sha256": "8d7047269936346820dc24c171c809ac92e9318225a82b6f58ee10316361d3e8",
+      "original_published": false
+    },
+    {
+      "id": "historical_b_status_note",
+      "sha256": "fe98ecafab8b9c7cad247141b3e3a8db041edc9b146953ea9bbe0f1a153d67f8",
+      "original_published": false
+    },
+    {
+      "id": "diag03_interpretation_note",
+      "sha256": "7bc4dec4f6345a8da9df14516643a681bc33c73b663d52f43b429bdf087ea1e2",
+      "original_published": false
+    }
+  ],
+  "identities": [
+    {
+      "component": "OpenClaw",
+      "version": "2026.9.4",
+      "version_basis": "已安装 package 元数据及本批实际 CLI 版本输出；CLI build 3a9d69d。",
+      "files": [
+        {
+          "logical_name": "package_metadata",
+          "sha256": "a234b616a049b4dedaad49ba0e95ff31afd3f19935e446199e75f78b589d1c21"
+        },
+        {
+          "logical_name": "public_entrypoint",
+          "sha256": "97464647c50a1420d530db948cb203826306ef6b3a84810b6801c338366cecaf"
+        },
+        {
+          "logical_name": "distribution_entrypoint",
+          "sha256": "1bbc3921048304d7c25a3d882276c1300c453873af390731c63ec53bbe4abcfd"
+        }
+      ],
+      "execution": "preflight 与 A/diag 命令实际执行；未观察到 provider/tool 回合。"
+    },
+    {
+      "component": "Node.js",
+      "version": "24.19.0",
+      "version_basis": "沿用私有预检说明引用的既有盘点版本；本摘要五批未独立执行 node --version。",
+      "files": [
+        {
+          "logical_name": "node_binary",
+          "sha256": "bc17c508ffeed0ec622934f9b7fa72f8e78da65350e63c3eceb56fa688aa5e12"
+        }
+      ],
+      "execution": "preflight 与 A/diag 实际执行；A/diag 原件报告固定 Node SHA 前后一致。"
+    },
+    {
+      "component": "SIQ OpenClaw adapter",
+      "version": "0.3.0",
+      "version_basis": "与预检复制资产同 SHA 的仓库 package 元数据。",
+      "files": [
+        {
+          "logical_name": "plugin_source",
+          "sha256": "81e62c8929bdff5a610028e3b69d45947424fb0da250718505cca815877cd449"
+        },
+        {
+          "logical_name": "package_metadata",
+          "sha256": "4a285d01390837dc1e0a4e125d886adca54a45e5899bdba67759026d2ee8cd5b"
+        },
+        {
+          "logical_name": "plugin_manifest",
+          "sha256": "66923bad3ae69253cbfde9d05d16a5fbdb237f8173afdf35249067589e1ea875"
+        }
+      ],
+      "execution": "三件资产复制用于配置预检；A/diag 未加载；没有 B 运行证据。"
+    },
+    {
+      "component": "SIQ Linux amd64 candidate",
+      "version": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+      "version_basis": "Go build 元数据 revision；Go 1.27.1，CGO=0，vcs.modified=false。",
+      "files": [
+        {
+          "logical_name": "linux_amd64_binary",
+          "sha256": "f19aec196861c5b2df5a82dfcee1a804e4978dfb63e469ab904b44085221b3c9"
+        }
+      ],
+      "execution": "仅仅读取制品字节 SHA 与元数据，未执行。"
+    }
+  ],
+  "preflight": {
+    "source_ref": "preflight",
+    "result": "pass_preflight_only",
+    "transport": {
+      "exit_code": 0,
+      "stdout": {
+        "sha256": "691d9382100752d91b132f6c073e4dbc051d6d0ab5b894b32bfe1a1bb4f46c50",
+        "stored_text_characters": 24119,
+        "empty": false,
+        "derived_semantics": "JSON 包装载荷；只对存储文本计算摘要，不公开原始载荷。"
+      },
+      "stderr": {
+        "sha256": "54cbf66986b07c80bf2026411b2799fb4dc82c6da7ca94d20ae1b1c7c8417977",
+        "stored_text_characters": 132,
+        "empty": false,
+        "derived_semantics": "非空 WSL 传输提示含 localhost/NAT 标记及混合编码；不是下述 Node/探针子命令的 stderr。"
+      }
+    },
+    "commands": [
+      {
+        "operation": "Node permission.has 查询",
+        "process_started": true,
+        "exit_code": 0,
+        "timeout": false,
+        "waited_and_reaped": true,
+        "stdout": {
+          "sha256": "32acf7bd6571cbeb22174850636ba5e098c2ba0b1f6cb3f0fb80c2be707529fe",
+          "stored_text_characters": 138,
+          "empty": false,
+          "derived_semantics": "许可查询：新夹具读写 true，既有 profile 读写 false，child/worker/addons false；查询本身没有读取既有 profile。"
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stored_text_characters": 0,
+          "empty": true,
+          "derived_semantics": "子命令 stderr 为空。"
+        }
+      },
+      {
+        "operation": "OpenClaw 版本查询",
+        "process_started": true,
+        "exit_code": 0,
+        "timeout": false,
+        "waited_and_reaped": true,
+        "stdout": {
+          "sha256": "846bcc31703193e301b28be8a4c77238e325a17f02daf285361db57d3d536cee",
+          "stored_text_characters": 28,
+          "empty": false,
+          "derived_semantics": "OpenClaw 2026.9.4 (3a9d69d)。"
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stored_text_characters": 0,
+          "empty": true,
+          "derived_semantics": "子命令 stderr 为空。"
+        }
+      },
+      {
+        "operation": "OpenClaw 配置路径查询",
+        "process_started": true,
+        "exit_code": 0,
+        "timeout": false,
+        "waited_and_reaped": true,
+        "stdout": {
+          "sha256": "e18ef4bae5bf47ffa7338b05541a53ff60a3ee4c3b8e8766c6bb807d5185161f",
+          "stored_text_characters": 125,
+          "empty": false,
+          "derived_semantics": "返回新夹具的配置路径；原路径已移除。"
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stored_text_characters": 0,
+          "empty": true,
+          "derived_semantics": "子命令 stderr 为空。"
+        }
+      },
+      {
+        "operation": "OpenClaw 配置验证",
+        "process_started": true,
+        "exit_code": 0,
+        "timeout": false,
+        "waited_and_reaped": true,
+        "stdout": {
+          "sha256": "24e4ec1fa6a69d04f2860ec35ba3090ac1e7af04f7235cb3f4361a6d18d30553",
+          "stored_text_characters": 234,
+          "empty": false,
+          "derived_semantics": "valid=true；保留退役 default 配置标记警告，原配置文件前后未改。"
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stored_text_characters": 0,
+          "empty": true,
+          "derived_semantics": "子命令 stderr 为空。"
+        }
+      },
+      {
+        "operation": "OpenClaw agent 帮助查询",
+        "process_started": true,
+        "exit_code": 0,
+        "timeout": false,
+        "waited_and_reaped": true,
+        "stdout": {
+          "sha256": "9388c3a7605b3313ee2a4f9ee75203c6ea907a5272f52e67bd47e63907716a12",
+          "stored_text_characters": 3242,
+          "empty": false,
+          "derived_semantics": "返回真实 agent CLI 帮助；并非执行 agent 回合。"
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stored_text_characters": 0,
+          "empty": true,
+          "derived_semantics": "子命令 stderr 为空。"
+        }
+      }
+    ],
+    "public_cli_invoked": true,
+    "agent_turn_invoked": false,
+    "model_requests": 0,
+    "provider_started": false,
+    "siq_executed": false,
+    "gateway_invoked": false,
+    "configuration_warning": "Removed retired agents.entries.*.default markers.",
+    "existing_fixture_files_unchanged": true
+  },
+  "runtime_attempts": [
+    {
+      "source_ref": "a01",
+      "result": "failed_before_observed_provider_or_tool_turn",
+      "transport": {
+        "exit_code": 1,
+        "stdout": {
+          "sha256": "a231bad2a28440598bf00c81636548b1f7ae15ab75b94e12bdfc9d01f203bac6",
+          "stored_text_characters": 15654,
+          "empty": false,
+          "derived_semantics": "JSON 包装载荷；只对存储文本计算摘要，不公开原始载荷。"
+        },
+        "stderr": {
+          "sha256": "54cbf66986b07c80bf2026411b2799fb4dc82c6da7ca94d20ae1b1c7c8417977",
+          "stored_text_characters": 132,
+          "empty": false,
+          "derived_semantics": "非空 WSL 传输提示含 localhost/NAT 标记及混合编码；不是下述 Node/探针子命令的 stderr。"
+        }
+      },
+      "command": {
+        "operation": "OpenClaw agent --local",
+        "process_started": true,
+        "exit_code": 1,
+        "timeout": false,
+        "waited_and_reaped": true,
+        "stdout": {
+          "sha256": "03d8b904e67017da5273554c0bd1ee1433a735d325f2578e6fa7d2d97058e771",
+          "stored_text_characters": 161,
+          "empty": false,
+          "derived_semantics": "ok=false，error.type=cli_error，消息为文件系统读取权限拒绝。"
+        },
+        "stderr": {
+          "sha256": "418e15c570467920e3723349ebd56004c1fb236332d0f208a1be131e72de3c7f",
+          "stored_text_characters": 629,
+          "empty": false,
+          "derived_semantics": "stderr 报配置 health-state 写入失败、CLI 读权限拒绝和日志追加失败；没有具体致命 resource 或堆栈。"
+        }
+      },
+      "public_cli_invoked": true,
+      "agent_command_attempted": true,
+      "agent_turn_invoked": null,
+      "agent_turn_observation": "not_observed",
+      "native_tool_exchange_observed": false,
+      "synthetic_provider_started": true,
+      "provider_start_basis": "执行脚本在 Popen 之前启动自有 HTTPServer 线程；本批 Popen 已成功，回收记录包含该线程和 socket。",
+      "synthetic_provider_requests": 0,
+      "provider_events_count": 0,
+      "provider_failures_count": 0,
+      "provider_connection_observed": false,
+      "decision_connection_observed": false,
+      "network_guard_denial_observed": false,
+      "real_model_requests": 0,
+      "siq_plugin_loaded": false,
+      "siq_server_started": false,
+      "gateway_started": false,
+      "target_exists_before": false,
+      "target_exists_after": false,
+      "control_unchanged": true,
+      "fixed_sources_and_node_unchanged": true,
+      "native_permission_checks": {
+        "fixtureRead": true,
+        "fixtureWrite": true,
+        "oldProfileRead": false,
+        "oldProfileWrite": false,
+        "child": false,
+        "worker": false,
+        "addons": false
+      },
+      "original_fs_error_count": 0,
+      "original_fs_error_classes": [],
+      "fatal_resource_observation": "not_observed",
+      "owned_resources": {
+        "node_reaped": true,
+        "provider_socket_closed": true,
+        "provider_thread_joined": true,
+        "decision_socket_closed": true
+      },
+      "configuration_difference": "新配置省略退役 default 标记；未改旧预检配置。"
+    },
+    {
+      "source_ref": "diag02",
+      "result": "failed_before_observed_provider_or_tool_turn",
+      "transport": {
+        "exit_code": 1,
+        "stdout": {
+          "sha256": "565c8039355ddb951c234dccc5c6fc81e6c34c9f8a2ac4459106d63b47de79aa",
+          "stored_text_characters": 28071,
+          "empty": false,
+          "derived_semantics": "JSON 包装载荷；只对存储文本计算摘要，不公开原始载荷。"
+        },
+        "stderr": {
+          "sha256": "54cbf66986b07c80bf2026411b2799fb4dc82c6da7ca94d20ae1b1c7c8417977",
+          "stored_text_characters": 132,
+          "empty": false,
+          "derived_semantics": "非空 WSL 传输提示含 localhost/NAT 标记及混合编码；不是下述 Node/探针子命令的 stderr。"
+        }
+      },
+      "command": {
+        "operation": "OpenClaw agent --local",
+        "process_started": true,
+        "exit_code": 1,
+        "timeout": false,
+        "waited_and_reaped": true,
+        "stdout": {
+          "sha256": "03d8b904e67017da5273554c0bd1ee1433a735d325f2578e6fa7d2d97058e771",
+          "stored_text_characters": 161,
+          "empty": false,
+          "derived_semantics": "ok=false，error.type=cli_error，消息为文件系统读取权限拒绝。"
+        },
+        "stderr": {
+          "sha256": "a5979670175c89181012885a485a6579de641e2a3124f9275a775971d0550dff",
+          "stored_text_characters": 2406,
+          "empty": false,
+          "derived_semantics": "同类 stderr 错误并含 debug 堆栈：existsSync → 既有祖先解析 → state coordinator；观察器未覆盖 existsSync，未实测致命 resource。"
+        }
+      },
+      "public_cli_invoked": true,
+      "agent_command_attempted": true,
+      "agent_turn_invoked": null,
+      "agent_turn_observation": "not_observed",
+      "native_tool_exchange_observed": false,
+      "synthetic_provider_started": true,
+      "provider_start_basis": "执行脚本在 Popen 之前启动自有 HTTPServer 线程；本批 Popen 已成功，回收记录包含该线程和 socket。",
+      "synthetic_provider_requests": 0,
+      "provider_events_count": 0,
+      "provider_failures_count": 0,
+      "provider_connection_observed": false,
+      "decision_connection_observed": false,
+      "network_guard_denial_observed": false,
+      "real_model_requests": 0,
+      "siq_plugin_loaded": false,
+      "siq_server_started": false,
+      "gateway_started": false,
+      "target_exists_before": false,
+      "target_exists_after": false,
+      "control_unchanged": true,
+      "fixed_sources_and_node_unchanged": true,
+      "native_permission_checks": {
+        "fixtureRead": true,
+        "fixtureWrite": true,
+        "oldProfileRead": false,
+        "oldProfileWrite": false,
+        "child": false,
+        "worker": false,
+        "addons": false
+      },
+      "original_fs_error_count": 6,
+      "original_fs_error_classes": [
+        {
+          "api": "fs.accessSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "node_install_executable_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.accessSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "node_install_executable_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.statSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "system_package_manager_bin_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.statSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "system_package_manager_bin_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.statSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "system_package_manager_bin_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.statSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "system_package_manager_bin_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        }
+      ],
+      "fatal_resource_observation": "not_observed",
+      "owned_resources": {
+        "node_reaped": true,
+        "provider_socket_closed": true,
+        "provider_thread_joined": true,
+        "decision_socket_closed": true
+      },
+      "configuration_difference": "新配置省略退役 default 标记；未改旧预检配置。"
+    },
+    {
+      "source_ref": "diag03",
+      "result": "failed_before_observed_provider_or_tool_turn",
+      "transport": {
+        "exit_code": 1,
+        "stdout": {
+          "sha256": "aa51f65c21e9697df2b467f7b50e62ef482f3e45bcfb6e8f4325309f313f42f3",
+          "stored_text_characters": 31786,
+          "empty": false,
+          "derived_semantics": "JSON 包装载荷；只对存储文本计算摘要，不公开原始载荷。"
+        },
+        "stderr": {
+          "sha256": "54cbf66986b07c80bf2026411b2799fb4dc82c6da7ca94d20ae1b1c7c8417977",
+          "stored_text_characters": 132,
+          "empty": false,
+          "derived_semantics": "非空 WSL 传输提示含 localhost/NAT 标记及混合编码；不是下述 Node/探针子命令的 stderr。"
+        }
+      },
+      "command": {
+        "operation": "OpenClaw agent --local",
+        "process_started": true,
+        "exit_code": 1,
+        "timeout": false,
+        "waited_and_reaped": true,
+        "stdout": {
+          "sha256": "03d8b904e67017da5273554c0bd1ee1433a735d325f2578e6fa7d2d97058e771",
+          "stored_text_characters": 161,
+          "empty": false,
+          "derived_semantics": "ok=false，error.type=cli_error，消息为文件系统读取权限拒绝。"
+        },
+        "stderr": {
+          "sha256": "5e9e2dfbd2a378935a3f4444d0a840ca0528f3cc61b11634abcd5b99d7a07cba",
+          "stored_text_characters": 2377,
+          "empty": false,
+          "derived_semantics": "同类 stderr 错误并含 debug 堆栈；被动观察器另实测两次 existsSync 对 /tmp 的 FileSystemRead 拒绝。"
+        }
+      },
+      "public_cli_invoked": true,
+      "agent_command_attempted": true,
+      "agent_turn_invoked": null,
+      "agent_turn_observation": "not_observed",
+      "native_tool_exchange_observed": false,
+      "synthetic_provider_started": true,
+      "provider_start_basis": "执行脚本在 Popen 之前启动自有 HTTPServer 线程；本批 Popen 已成功，回收记录包含该线程和 socket。",
+      "synthetic_provider_requests": 0,
+      "provider_events_count": 0,
+      "provider_failures_count": 0,
+      "provider_connection_observed": false,
+      "decision_connection_observed": false,
+      "network_guard_denial_observed": false,
+      "real_model_requests": 0,
+      "siq_plugin_loaded": false,
+      "siq_server_started": false,
+      "gateway_started": false,
+      "target_exists_before": false,
+      "target_exists_after": false,
+      "control_unchanged": true,
+      "fixed_sources_and_node_unchanged": true,
+      "native_permission_checks": {
+        "fixtureRead": true,
+        "fixtureWrite": true,
+        "oldProfileRead": false,
+        "oldProfileWrite": false,
+        "child": false,
+        "worker": false,
+        "addons": false
+      },
+      "original_fs_error_count": 8,
+      "original_fs_error_classes": [
+        {
+          "api": "fs.accessSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "node_install_executable_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.accessSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "node_install_executable_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.statSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "system_package_manager_bin_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.statSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "system_package_manager_bin_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.statSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "system_package_manager_bin_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.statSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": null,
+          "resource_class": "system_package_manager_bin_probe",
+          "redacted": true,
+          "fatal_resource_observed": false
+        },
+        {
+          "api": "fs.existsSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": "/tmp",
+          "resource_class": "public_tmp",
+          "redacted": false,
+          "fatal_resource_observed": true
+        },
+        {
+          "api": "fs.existsSync",
+          "code": "ERR_ACCESS_DENIED",
+          "permission": "FileSystemRead",
+          "resource": "/tmp",
+          "resource_class": "public_tmp",
+          "redacted": false,
+          "fatal_resource_observed": true
+        }
+      ],
+      "fatal_resource_observation": "observed_tmp",
+      "owned_resources": {
+        "node_reaped": true,
+        "provider_socket_closed": true,
+        "provider_thread_joined": true,
+        "decision_socket_closed": true
+      },
+      "configuration_difference": "新配置省略退役 default 标记；未改旧预检配置。"
+    }
+  ],
+  "namespace_probe": {
+    "source_ref": "namespace",
+    "result": "pass_pure_probe_only",
+    "transport": {
+      "exit_code": 0,
+      "stdout": {
+        "sha256": "c79f541b67bcfb1765afe188ddbebdd9ba1942109150491cbe99489db2c28c8a",
+        "stored_text_characters": 5944,
+        "empty": false,
+        "derived_semantics": "JSON 包装载荷；只对存储文本计算摘要，不公开原始载荷。"
+      },
+      "stderr": {
+        "sha256": "54cbf66986b07c80bf2026411b2799fb4dc82c6da7ca94d20ae1b1c7c8417977",
+        "stored_text_characters": 132,
+        "empty": false,
+        "derived_semantics": "非空 WSL 传输提示含 localhost/NAT 标记及混合编码；不是下述 Node/探针子命令的 stderr。"
+      }
+    },
+    "command": {
+      "operation": "单线程 user/mount namespace 纯可行性探针",
+      "process_started": true,
+      "exit_code": 0,
+      "timeout": false,
+      "waited_and_reaped": true,
+      "stdout": {
+        "sha256": "0532ff8713aeab78d1a3cfce90c50e235819406f72cc5391a610b95bb8ea69fb",
+        "stored_text_characters": 1512,
+        "empty": false,
+        "derived_semantics": "子报告 pass=true，私有 /tmp 绑定与合成写入成功，降权后 capability 清零；身份数值已移除。"
+      },
+      "stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stored_text_characters": 0,
+        "empty": true,
+        "derived_semantics": "子探针 stderr 为空。"
+      }
+    },
+    "checks": {
+      "child_success": true,
+      "bounded_and_reaped": true,
+      "parent_namespaces_unchanged": true,
+      "parent_tmp_metadata_unchanged": true,
+      "owned_effect_exact": true,
+      "owned_sentinel_unchanged": true,
+      "unshare_unchanged": true
+    },
+    "check_count": 7,
+    "all_checks_passed": true,
+    "bind_confirmed": true,
+    "synthetic_tmp_write": true,
+    "threads_before_capset": 1,
+    "threads_after_capset": 1,
+    "all_observed_capability_sets_zero": true,
+    "no_new_privileges_after": true,
+    "user_and_group_identity_preserved": true,
+    "namespace_identities_changed_from_parent": true,
+    "mount_shared_or_master_tags_count": 0,
+    "parent_tmp_observation_scope": "仅前后 lstat 元数据；没有列举或读取原 /tmp 内容。",
+    "openclaw_invoked": false,
+    "siq_invoked": false,
+    "provider_started": false,
+    "node_invoked": false,
+    "interpretation": "只证明本机普通用户可建立私有 /tmp 视图并在核对的单线程降权后写入；不是 OpenClaw 验收。"
+  },
+  "b_status": {
+    "result": "not_run_in_these_historical_batches",
+    "basis": "原始 A 对照未成功；B 仅保留静态草稿，未执行。",
+    "offline_fail_closed_observed": false,
+    "later_batches_claimed": false
+  },
+  "limits": [
+    "A/diag 的 agent_turn_invoked 原字段为 null，保留未知；命令尝试与实际工具回合分开。",
+    "A/diag 目标始终不存在，且未加载 SIQ；不能把预初始化权限拒绝或目标未创建记为 SIQ block。",
+    "diag02 的致命调用资源只是源码推断；仅 diag03 的原始观察器捕获到 /tmp。",
+    "Node FS 权限和 JavaScript 网络守卫是本批测试约束，不能宣称为完整 OS 沙箱。",
+    "纯 namespace 探针的 capability 清零只在被核对的单线程进程中验证，不能外推 OpenClaw 多线程宿主。",
+    "未建立 SIQ 服务授权链、有效权限、回执或完整平台旅程；Linux SIQ 制品仅做身份核对，未执行。"
+  ]
+}

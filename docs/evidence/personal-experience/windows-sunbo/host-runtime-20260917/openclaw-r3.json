@@ -1,0 +1,151 @@
+{
+  "kind": "owned_host_runtime_observation/v1",
+  "revision": "r3",
+  "recorded_utc": "2026-09-17T14:06:36.8214219Z",
+  "candidate_sha": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "method": "native_cli",
+  "host_version": "2026.9.4",
+  "environment": "Windows 11 build 26200 / WSL2 Ubuntu 24.04.5 / kernel 6.6.87.2",
+  "binary_sha256": "d0a6f0f5c7b5cb5f04fb7f644346547ae542ef735ac8f0553af31205db5a0923",
+  "private_raw_transport_sha256": "50f5f4722dff6fb5a0da565f24741fc51c8450ef4369f8647d77a76329acae43",
+  "frozen_manifest_sha256": "d122c2daf4d1b8ff781c01830aea496f9e63ebf718877dd4b5d00c0f4e7f6575",
+  "outer_exit_code": 0,
+  "guest_exit_code": 0,
+  "pass": true,
+  "checks": {
+    "cli_completed": true,
+    "four_native_provider_exchanges": true,
+    "denied_target_absent": true,
+    "signed_receipts_verified": true,
+    "siq_owned_cleanup": true,
+    "control_unchanged": true,
+    "provider_actual_connect": true,
+    "decision_connect": true,
+    "native_default_permissions_recorded": true,
+    "no_guard_denial": true,
+    "owned_resources_closed": true,
+    "no_harness_error": true,
+    "source_unchanged": true,
+    "owned_node_security_verified": true
+  },
+  "harness_error": null,
+  "provider_failures": [],
+  "target_before": {
+    "exists": false
+  },
+  "target_after": {
+    "exists": false
+  },
+  "control_unchanged": true,
+  "receipt_verification": {
+    "verified": true,
+    "selected": [
+      {
+        "tool_call_id": "siqfixturereadallowed20260916",
+        "action": "allow",
+        "reason_code": "allow",
+        "action_id": "act-d12b168ac1c46c430c199b54",
+        "intent_binding": "bound",
+        "intent_digest": "5162ddd1c699c202b5a191598208ce41c809c9e1f308019e304676ea18174ca5"
+      },
+      {
+        "tool_call_id": "siqfixturewritedenied20260916",
+        "action": "deny",
+        "reason_code": "intent_tool_not_allowed",
+        "action_id": "act-816afbc9395cf96358f1ffae",
+        "intent_binding": "bound",
+        "intent_digest": "5162ddd1c699c202b5a191598208ce41c809c9e1f308019e304676ea18174ca5"
+      }
+    ],
+    "receipt_count": 3
+  },
+  "source_unchanged": true,
+  "source_file_hashes": {
+    "NODE": "bc17c508ffeed0ec622934f9b7fa72f8e78da65350e63c3eceb56fa688aa5e12",
+    "dist/system-prompt-report-DZJbcDI4.mjs": "50803825eb86d4f062029c7728bc39fb69ccdef4de83f1e7ab82bb70babb4e08",
+    "package.json": "a234b616a049b4dedaad49ba0e95ff31afd3f19935e446199e75f78b589d1c21",
+    "openclaw.mjs": "97464647c50a1420d530db948cb203826306ef6b3a84810b6801c338366cecaf",
+    "dist/entry.js": "1bbc3921048304d7c25a3d882276c1300c453873af390731c63ec53bbe4abcfd",
+    "dist/resource-loader-Bu_pVD2t.mjs": "62b6668ee808bdcedb6a7fc149aee940005c7fafb55427a0a0a313f38a0cc2d8",
+    "dist/agent-tools.before-tool-call-WtmCO7BO.mjs": "809c4545e65460961c9cb3e43fcfa506a4829c1a0f6c83889b689ff266903274",
+    "node_modules/@openclaw/ai/dist/openai-completions-stream-Da2vvl-S.mjs": "94fcb8422e4055a977cdd21a8581ec9dc88f57d9e70660369e5286400b6be96d",
+    "dist/failure-output-CbY7qgCq.mjs": "3e7d5ad5565593209d00e59919370cd7afc553c8f193880f34624327fd29fff1",
+    "dist/failure-output-BB_GqQZi.mjs": "c6f3e98114cab04edf03b701e9485c30a457cce3e132eee21800d2a3b15882bb",
+    "dist/errors-ZZevQ1qu.mjs": "0b0aa56d8f2849f6ecdf17f3d12317f2519c08854ba59be58ad6cec3c5fd64db",
+    "dist/openclaw-agent-db-registry-CQNE3K5p.mjs": "51ac28680ec08ba0b27fc97cdfcae45a90114f34b4086b96a7dc84fa06f7aa7c",
+    "dist/openclaw-agent-db-fItexY2B.mjs": "e72e2a6e9990543194c1d3ab1e4c8d013f2957a97cc4c16639ad3e6fe47abcab",
+    "dist/paths-V8kKIUzt.mjs": "748adce324ae1fba153b092ba016545dd1433a48e93085838cc9f4bc247a8228",
+    "dist/agent-deletion-journal-C9AaQ2t0.mjs": "7cc9803e584e56aae2ca86b0bb523a650b2ddaad4b0d5e1293d648675b9c8a5d",
+    "dist/home-dir-59dFSOZn.mjs": "bfeb293e8916be7c298c6027c3d7acee475e66f3e8cb5fe8a7857a7347c723ba",
+    "dist/openclaw-state-db.paths-LPXbiQmG.mjs": "d3b66823751055732753e069dcde0c719418e25526866284e5c69aed09739d6c",
+    "dist/agent-tools-DXxcrXNI.mjs": "98b729a2ac53cefa8c832cb3c90008112e1e06b0b4f4d294adb1d92c447a5e21",
+    "dist/core-coding-tools-DoP9tAh3.mjs": "403a72188e3378cc570691083fa9270c05e20dc7e2706c62c5c455457b50dca3",
+    "dist/lazy-exec-tool-C4NdOfwu.mjs": "4024daa30d7c932d98974beb77c24489b32ce0a03a2041992aa37ef4b8e6fe63",
+    "dist/tool-policy-match-RtZReoAT.mjs": "053a1401baa7819541d273bac039b504a276d689aa559f591f8bd6525b8dea18",
+    "node_modules/@openclaw/fs-safe/dist/errors.js": "6187c0aff86970d3b39039c9a6e1a19e2f55f967c87351745b4c71a71b30ee6f",
+    "node_modules/@openclaw/fs-safe/dist/root-errors.js": "8bd41bfc7cf7ce53a27e06b74440691982b18373fa9f86ea17d4f3c49ddfea27",
+    "node_modules/@openclaw/fs-safe/dist/pinned-write.js": "c8de6b4e90f48e60ea8888b80cd1afa8302ecb76ef43e4d414cf177b9640d693"
+  },
+  "real_model_requests": 0,
+  "synthetic_provider_requests": 4,
+  "node_runs": [
+    {
+      "phase": "warmup",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    },
+    {
+      "phase": "read-deny",
+      "exit_code": 0,
+      "timeout": false,
+      "killed": false,
+      "waited_and_reaped": true,
+      "capture_complete_to_eof": true
+    }
+  ],
+  "owned_resources": {
+    "node_reaped": true,
+    "siq_reaped": true,
+    "siq_log_closed": true,
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true
+  },
+  "cleanup_ack": "confirmed_by_guest_report",
+  "parent_unchanged": {
+    "parent_namespaces_unchanged": true,
+    "parent_tmp_metadata_unchanged": true
+  },
+  "tool_results": [
+    {
+      "exchange": 3,
+      "tool_call_id": "siqfixturereadallowed20260916",
+      "sentinel_exact": true,
+      "siq_denial": false,
+      "content_sha256": "f09acb516b07184cee217f1aa41727b34f09e483a3b2678a20ca146a82ce63f5"
+    },
+    {
+      "exchange": 4,
+      "tool_call_id": "siqfixturereadallowed20260916",
+      "sentinel_exact": true,
+      "siq_denial": false,
+      "content_sha256": "f09acb516b07184cee217f1aa41727b34f09e483a3b2678a20ca146a82ce63f5"
+    },
+    {
+      "exchange": 4,
+      "tool_call_id": "siqfixturewritedenied20260916",
+      "sentinel_exact": false,
+      "siq_denial": true,
+      "content_sha256": "63b60ecaeec4fe043099b01e45313a7e2afce1b0320f4092c40ccffd261e2152"
+    }
+  ],
+  "limitations": [
+    "synthetic local model and administrator fixture",
+    "legacy plugin mode, not managed identity",
+    "no service-unavailable, approval retry, trusted Skill attribution or full lifecycle claim",
+    "historical clean candidate; not latest-main or final-candidate acceptance"
+  ]
+}

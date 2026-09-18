@@ -1,0 +1,85 @@
+{
+  "schema": "hermes-windows-startup-delivery-verification/v1",
+  "assembled_at_utc": "2026-09-14T04:27:32.078647+00:00",
+  "method": "Byte-copy frozen public source folders into a new exclusive destination; verify source bytes before and after copy and destination bytes. No host or product tests executed during assembly.",
+  "source_directories": [
+    "hermes-startup-v2-v6-r3",
+    "hermes-startup-v7-v8"
+  ],
+  "copied_file_count": 7,
+  "all_copied_files_byte_identical": true,
+  "checkout_head_at_diagnostics": "3cbbd1dcec7eae5691de465de0ea6fbc459243ae",
+  "hermes_version_from_prior_source_inventory": "0.21.2",
+  "hermes_public_cli_executed_in_prior_diagnostics": true,
+  "siq_candidate_identity_checked_only": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "siq_binary_sha256_checked_only": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "siq_binary_executed": false,
+  "siq_plugin_installed_or_loaded": false,
+  "A_successfully_wrote_target": false,
+  "B_executed": false,
+  "native_pass": false,
+  "native_matrix_promotion": false,
+  "v7_actual_guard_pid_membership_proved": false,
+  "v8_native_access_violation_cause": "unknown",
+  "next_actual_pid_plan_executed": false,
+  "files": [
+    {
+      "path": "hermes-startup-v2-v6-r3/check-devnull.py",
+      "bytes": 1740,
+      "sha256": "4e32211363b955467912dcafeafb51da81870f5bfaf1e1ba501ef737b88d7cd1",
+      "source_copy_byte_identical": true
+    },
+    {
+      "path": "hermes-startup-v2-v6-r3/devnull-device-check.json",
+      "bytes": 630,
+      "sha256": "1b5bc2ebf18f454e615cb6cfb06a23c75498f16d1a9b4237b358d2b78b39c65f",
+      "source_copy_byte_identical": true
+    },
+    {
+      "path": "hermes-startup-v2-v6-r3/report.md",
+      "bytes": 6481,
+      "sha256": "6118c6d9d1fcd53ac79b56b5481e26a48a88a6d7bb777d8368fa3bf118210f4e",
+      "source_copy_byte_identical": true
+    },
+    {
+      "path": "hermes-startup-v2-v6-r3/review.json",
+      "bytes": 2835,
+      "sha256": "349b1cc331f93877c2f0099eac9f176902ef05054bf2804ec5192190f2f6cf5e",
+      "source_copy_byte_identical": true
+    },
+    {
+      "path": "hermes-startup-v2-v6-r3/summary.json",
+      "bytes": 19358,
+      "sha256": "7451a504f8c7f97a5873cb7d70c733b0df89fb8f71dc0ddf8beef3abef092f02",
+      "source_copy_byte_identical": true
+    },
+    {
+      "path": "hermes-startup-v7-v8/report.md",
+      "bytes": 4922,
+      "sha256": "ac7d693380fdd521ebe91cf56c43e029717eb2c2e350ce2a2cabcc8d78e1775d",
+      "source_copy_byte_identical": true
+    },
+    {
+      "path": "hermes-startup-v7-v8/summary.json",
+      "bytes": 13192,
+      "sha256": "c8a55698569f1a9fbb33e4673f70114329b1438e4477030f676ffc196a4f5e32",
+      "source_copy_byte_identical": true
+    },
+    {
+      "path": "report.md",
+      "bytes": 2394,
+      "sha256": "dec90abcb4dcb0bd2e8920771344e147f64118a80239173552b0d203cc90dc51",
+      "role": "new aggregate explanation"
+    }
+  ],
+  "index_scope": "All package payload files except verification.json itself. Its own length and SHA256 must be recorded in the enclosing delivery manifest to avoid self-reference.",
+  "raw_private_sources_included": false,
+  "copied_subdirectories_modified": false,
+  "independent_same_machine_v7_v8_review": {
+    "reviewer_role": "root agent",
+    "reported_result": "zero mismatches",
+    "scope": "Read public report/summary; compare original report SHA, exit code, case elapsed time, absent target, two protocol errors per row; compare every private_raw_byte_identities file length and SHA.",
+    "test_or_host_rerun": false,
+    "actual_guard_pid_or_job_membership_proved": false
+  }
+}

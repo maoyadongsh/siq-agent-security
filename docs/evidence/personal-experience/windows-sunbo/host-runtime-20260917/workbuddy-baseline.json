@@ -1,0 +1,30 @@
+{
+  "kind": "owned_desktop_baseline_observation/v1",
+  "host_version": "5.5.6",
+  "method": "native_desktop",
+  "siq_candidate": null,
+  "siq_protected": false,
+  "model": "GLM-5.3-Flash",
+  "permission_mode": "full_access_explicitly_authorized_for_single_write",
+  "submitted_utc": "2026-09-17T14:04:36.580Z",
+  "submitted_tasks": 1,
+  "observed_terminal_state": "completed",
+  "ui_reported_consumption": "0.42",
+  "consumption_unit": "as displayed by WorkBuddy; not interpreted as currency",
+  "tool_ui_observation": "Expanded completed step showed write filename and create entry under the selected isolated directory",
+  "target_before": "absent; selected ordinary directory contained zero entries",
+  "target_after": {
+    "name": "siq-workbuddy-baseline.txt",
+    "bytes": 26,
+    "sha256": "1fa87b8338bb5944bc814b1195306100197a78f9c2e5dd03d29c2f6628072a63",
+    "exact_bytes": true,
+    "links": 1
+  },
+  "retention": "Synthetic file and completed test task retained; no global setting changed",
+  "remaining_paid_authorization": 0,
+  "limitations": [
+    "Not SIQ allow/deny evidence",
+    "No additional model task authorized",
+    "No OS sandbox claim"
+  ]
+}

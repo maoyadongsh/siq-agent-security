@@ -1,0 +1,133 @@
+{
+  "phase": "focused",
+  "source_before": {
+    "source": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+    "source_dirty": false
+  },
+  "source_after": {
+    "source": "94e0d162215cb4238f0759cb96cae4a99f437b48",
+    "source_dirty": false
+  },
+  "argv": [
+    "test",
+    "-json",
+    "-count=1",
+    "-timeout=120s",
+    "-run",
+    "^(TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean|TestPolicyExecFailsClosed)$",
+    "./internal/adapters"
+  ],
+  "cwd": "apps/agentshield",
+  "go_version": "go version go1.27.1 windows/amd64",
+  "go_identity": {
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "windows",
+    "GOOS": "windows",
+    "GOTELEMETRY": "off",
+    "GOTOOLCHAIN": "local",
+    "GOVERSION": "go1.27.1"
+  },
+  "go_exe_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+  "check_executable_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+  "runner_sha256": "ab366c3eb362d1e3f3d39f2743562ac9e1d71b73ab0422486934aa9a780f88d1",
+  "root_acl_before": {
+    "protected": true,
+    "ace_count": 3,
+    "full_control": true,
+    "broad_aces": false,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ]
+  },
+  "root_acl_after": {
+    "protected": true,
+    "broad_aces": false,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "full_control": true,
+    "ace_count": 3
+  },
+  "cache_parent_acl": {
+    "ace_count": 3,
+    "broad_aces": false,
+    "protected": true,
+    "full_control": true,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ]
+  },
+  "cache_policy": "Reuse earlier owned private N03 build cache; prior raw evidence unchanged",
+  "started_utc": "2026-09-14T06:20:43.260906+00:00",
+  "finished_utc": "2026-09-14T06:21:14.521816+00:00",
+  "exit_code": 0,
+  "outer_timeout_seconds": 300,
+  "outer_timed_out": false,
+  "cleanup_exit": null,
+  "direct_process_reaped": true,
+  "raw_bytes": 2464,
+  "raw_sha256": "32360cfa3acdf8a09dcbfefb9688dce1abf5bc3d5649944839af085403d7899d",
+  "derived_jsonl_bytes": 2568,
+  "derived_jsonl_sha256": "c58ba84d31370bf1f185dd30744a3d7933b2ffdcf68785edcf886c80901c2b52",
+  "event_count": 12,
+  "non_json_lines": 0,
+  "top_level_counts": {
+    "pass": 2,
+    "fail": 0,
+    "skip": 0
+  },
+  "subtest_counts": {
+    "pass": 0,
+    "fail": 0,
+    "skip": 0
+  },
+  "terminal_tests": [
+    {
+      "Package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "Test": "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean",
+      "Action": "pass",
+      "Elapsed": 0.64
+    },
+    {
+      "Package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "Test": "TestPolicyExecFailsClosed",
+      "Action": "pass",
+      "Elapsed": 0.03
+    }
+  ],
+  "package_terminal_events": [
+    {
+      "Time": "2026-09-14T14:21:12.5108077+08:00",
+      "Action": "pass",
+      "Package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "Elapsed": 10.559
+    }
+  ],
+  "expected_top_level_tests": [
+    "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean",
+    "TestPolicyExecFailsClosed"
+  ],
+  "expected_test_set_matches": true,
+  "source_unchanged_clean": true,
+  "redaction": "Exact case-insensitive owned path prefixes, repeated slash/backslash separators including nested JSON; account SID pattern. Raw bytes retained privately.",
+  "environment": {
+    "child_allowlist": true,
+    "synthetic_home_profile_appdata_tmp": true,
+    "go_proxy_sumdb_off": true,
+    "no_host_optins_or_credentials": true,
+    "test_path_roles": [
+      "Go bin",
+      "Windows System32"
+    ],
+    "controller_git_acl_queries_inherit_controller_environment": true
+  },
+  "scope": "Native Windows component tests/checks, no real host acceptance, no release SIQ binary created"
+}

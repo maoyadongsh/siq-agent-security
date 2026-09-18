@@ -1,0 +1,171 @@
+{
+  "source_before": "9cc18630be584692905e1ce612b91a9ba5aee610",
+  "source_after": "9cc18630be584692905e1ce612b91a9ba5aee610",
+  "source_dirty_before": false,
+  "source_dirty_after": false,
+  "go_version": "go version go1.27.1 windows/amd64",
+  "go_identity": {
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "windows",
+    "GOOS": "windows",
+    "GOTELEMETRY": "off",
+    "GOTOOLCHAIN": "local",
+    "GOVERSION": "go1.27.1"
+  },
+  "go_exe_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+  "go_build_identity_sha256": "ca0e187f1db9ed227cc398768898e832ad3fd7c90d3ee6d27e54ceb4fe2ed1ea",
+  "runner_sha256": "4cdc7821fe1737f82c0b5696c64fda240bfde33cf5c1db822dd9c8cf271169cf",
+  "started_utc": "2026-09-14T04:06:52.662261+00:00",
+  "finished_utc": "2026-09-14T04:08:36.161510+00:00",
+  "exit_code": 0,
+  "outer_timeout_seconds": 300,
+  "outer_timed_out": false,
+  "timeout_cleanup_exit": null,
+  "go_process_reaped": true,
+  "test_argv": [
+    "test",
+    "./internal/skillinstall",
+    "-run",
+    "^(TestLateUpdateOutcomeCannotOverwriteUserReconfiguration|TestSaveUpdateSourcePreservesIncompatibleRecords|TestScheduledCheckNewVersionDoesNotConfirm)$",
+    "-count=1",
+    "-p=1",
+    "-parallel=1",
+    "-timeout=90s",
+    "-json"
+  ],
+  "cwd": "apps/agentshield",
+  "private_root_acl": {
+    "protected": true,
+    "ace_count": 3,
+    "principals": [
+      "current-user",
+      "SYSTEM",
+      "Administrators"
+    ],
+    "broad_aces": false,
+    "rights": "FullControl"
+  },
+  "offline_environment": {
+    "GOENV": "off",
+    "GOWORK": "off",
+    "GOFLAGS": "",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOTOOLCHAIN": "local",
+    "GOCACHEPROG": ""
+  },
+  "isolated_environment_paths": [
+    "TMP",
+    "TEMP",
+    "GOTMPDIR",
+    "GOCACHE",
+    "GOPATH",
+    "APPDATA",
+    "LOCALAPPDATA"
+  ],
+  "cache_source": "n03-review-20260914T035923941Z/cache",
+  "cache_policy": "Reuse only the prior owned private Go build cache; prior logs and summaries remain immutable",
+  "raw_log_bytes": 14331,
+  "raw_log_sha256": "75ae97a26e1a359ecc5a3f5587e0fcf13e9c112036b2b1e35298e53c22503f86",
+  "scope": "Windows component tests using temporary synthetic state and in-memory upstream; no real host or model acceptance",
+  "run_id": "owned-cache-retry-2",
+  "event_count": 56,
+  "tests": [
+    {
+      "Test": "TestLateUpdateOutcomeCannotOverwriteUserReconfiguration",
+      "Action": "pass",
+      "Elapsed": 26.44
+    },
+    {
+      "Test": "TestScheduledCheckNewVersionDoesNotConfirm",
+      "Action": "pass",
+      "Elapsed": 6.18
+    },
+    {
+      "Test": "TestSaveUpdateSourcePreservesIncompatibleRecords",
+      "Action": "pass",
+      "Elapsed": 32.88
+    }
+  ],
+  "subtests": [
+    {
+      "Test": "TestLateUpdateOutcomeCannotOverwriteUserReconfiguration/manual-disable",
+      "Action": "pass",
+      "Elapsed": 7.32
+    },
+    {
+      "Test": "TestLateUpdateOutcomeCannotOverwriteUserReconfiguration/manual-resave",
+      "Action": "pass",
+      "Elapsed": 6.6
+    },
+    {
+      "Test": "TestLateUpdateOutcomeCannotOverwriteUserReconfiguration/scheduled-disable",
+      "Action": "pass",
+      "Elapsed": 6.58
+    },
+    {
+      "Test": "TestLateUpdateOutcomeCannotOverwriteUserReconfiguration/scheduled-resave",
+      "Action": "pass",
+      "Elapsed": 5.94
+    },
+    {
+      "Test": "TestSaveUpdateSourcePreservesIncompatibleRecords/future_schema",
+      "Action": "pass",
+      "Elapsed": 5.32
+    },
+    {
+      "Test": "TestSaveUpdateSourcePreservesIncompatibleRecords/unknown_field",
+      "Action": "pass",
+      "Elapsed": 5.63
+    },
+    {
+      "Test": "TestSaveUpdateSourcePreservesIncompatibleRecords/bad_signature",
+      "Action": "pass",
+      "Elapsed": 5.13
+    },
+    {
+      "Test": "TestSaveUpdateSourcePreservesIncompatibleRecords/invalid_status",
+      "Action": "pass",
+      "Elapsed": 5.43
+    },
+    {
+      "Test": "TestSaveUpdateSourcePreservesIncompatibleRecords/wrong_install",
+      "Action": "pass",
+      "Elapsed": 5.23
+    },
+    {
+      "Test": "TestSaveUpdateSourcePreservesIncompatibleRecords/malformed_json",
+      "Action": "pass",
+      "Elapsed": 6.14
+    }
+  ],
+  "package_results": [
+    {
+      "Package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "Action": "pass",
+      "Elapsed": 66.533
+    }
+  ],
+  "counts": {
+    "top_level": {
+      "pass": 3,
+      "fail": 0,
+      "skip": 0
+    },
+    "subtests": {
+      "pass": 10,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "public_log_sha256": "75ae97a26e1a359ecc5a3f5587e0fcf13e9c112036b2b1e35298e53c22503f86",
+  "public_log_bytes": 14331,
+  "redaction_scope": "No private paths, SIDs, credentials or raw task content occur in the successful JSONL; public copy is byte-identical. Raw process and toolchain absolute paths remain private.",
+  "first_event_time": "2026-09-14T12:07:27.4236824+08:00",
+  "last_event_time": "2026-09-14T12:08:33.9570944+08:00",
+  "elapsed_total_seconds": 103.499249,
+  "reuse_caveat": "Only owned compiler cache was reused; -count=1 forced fresh test execution. First cold-cache timeout is retained separately.",
+  "public_go_toolchain_build_sha256": "2b5a7d46c43063427d1af06e019a82c3fbb0ef59e7033cd9c940ff0faa154a31"
+}

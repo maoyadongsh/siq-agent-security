@@ -1,0 +1,338 @@
+{
+  "schema": "public-source-sha256-index/v1",
+  "batch": "A08",
+  "source_count": 66,
+  "meaning": "逻辑角色、实际保存字节数与SHA；原始内容私有保留。安装源码/Node/unshare仅记录原运行pin，未保存大小则为null，不伪填。",
+  "sources": [
+    {
+      "role": "frozen-input/namespace-parent.py",
+      "bytes": 12963,
+      "sha256": "fdd4587dfe725b0f0dcbfe0c21a586456b13a9bd6e4ef9388f922b61a0aa360d"
+    },
+    {
+      "role": "frozen-input/namespace-child.py",
+      "bytes": 9907,
+      "sha256": "86627a0e75dff1cba55476674186442042271f2956cc97bfcf02e1abda76d18b"
+    },
+    {
+      "role": "frozen-input/runtime-a-guest.py",
+      "bytes": 35502,
+      "sha256": "1a63afdb2bc18822440ba5cb7cb0377f36acbf59c7f6cbb95385e2f3f0d837ff"
+    },
+    {
+      "role": "frozen-input/owned-loopback-guard.mjs",
+      "bytes": 4409,
+      "sha256": "c105681c91205b5c00f409fd93e492cbdec16f590c67a111ca0409e52027fa23"
+    },
+    {
+      "role": "frozen-input/prepare-runtime-a.ps1",
+      "bytes": 17883,
+      "sha256": "ca5c2301f81573577e9ccd493d35dec77bd86f8343a69fb4649f7eca71041db4"
+    },
+    {
+      "role": "frozen-input/cause-prototype.mjs",
+      "bytes": 8060,
+      "sha256": "2426d2afada44ce5cd214b7bcc5a2b933f23f900088f2ccae850fd6abbec8a16"
+    },
+    {
+      "role": "frozen-input/cause-preload.mjs",
+      "bytes": 4345,
+      "sha256": "3aed45850e2b3ab9fd7f7fd4dff1fbd34bc06b93d888fcf77e1d08b3362a0d73"
+    },
+    {
+      "role": "frozen-input/README-CONDITIONAL.md",
+      "bytes": 5813,
+      "sha256": "290a64053f86a42a0ff2df5f319162c1544345e15ea65c2cb160d90258732841"
+    },
+    {
+      "role": "frozen-input/review-context.json",
+      "bytes": 730,
+      "sha256": "1a29b4235a3114a99cf2eff23b55802623a92874ad000709dac9741ef05d8429"
+    },
+    {
+      "role": "frozen-input/reviewable-plan-final.json",
+      "bytes": 14753,
+      "sha256": "002311631345b60055aa9db414b4cd5d3bdd12fee1cf36f9093e28cc120ade77"
+    },
+    {
+      "role": "frozen-input/integration-final.diff",
+      "bytes": 23497,
+      "sha256": "7a08f2aa7253902261a9c3b5e1d3bc42f0e4a53f948995262265b655d1b1fbb8"
+    },
+    {
+      "role": "frozen-input/static-review-final.json",
+      "bytes": 1178,
+      "sha256": "af715a3e04901d853eb8cf8f8f2c3d723c16e933c74c173e6b60585744d64950"
+    },
+    {
+      "role": "frozen-input/powershell-static-review.json",
+      "bytes": 128,
+      "sha256": "32abc54c17fca3edbd6b9e0d5023b8c1fa0b3301cad2fa0d6839bb52489504e4"
+    },
+    {
+      "role": "frozen-input/static-review.py",
+      "bytes": 8884,
+      "sha256": "fe9f17003821c53e71f0d824d0defdf7e81c029df7cc99438f13a99543ebe557"
+    },
+    {
+      "role": "frozen-input/draft-review-manifest.json",
+      "bytes": 2680,
+      "sha256": "84604a3290ae0af5c00dfb4a4c424cc1abec2678b4b96b97730ad5b8fb06f9e5"
+    },
+    {
+      "role": "frozen-input/a08-independent-review.md",
+      "bytes": 3533,
+      "sha256": "6ddb90bfcb85bbca94b351ace3e8293b77fc50aee9952ac6a0cdf3fbfa8efb18"
+    },
+    {
+      "role": "frozen-input/a08-root-review.md",
+      "bytes": 2261,
+      "sha256": "023650fc82ee0c5b7244f8b76f2bab0ac99b901bf52cf763a5d4e6cb0eda6435"
+    },
+    {
+      "role": "frozen-input/javascript-syntax-result.json",
+      "bytes": 2380,
+      "sha256": "7c0469ab9f2ad15f074aefd29cb9b9c8dc1cbf40bd5ab03c689fbed7a41d4779"
+    },
+    {
+      "role": "frozen-input/prototype-synthetic-result.json",
+      "bytes": 1499,
+      "sha256": "dcb99fa2a73aa06fe3f03a7f8328976314d3ae801865a686b75ecfc473cd341d"
+    },
+    {
+      "role": "frozen-input/acl-preflight.json",
+      "bytes": 534,
+      "sha256": "1c5766667f9339917bf8a1e7289ec1d69ebade703ddb26d62e45bf81ba6a7797"
+    },
+    {
+      "role": "actual/acl-postflight.json",
+      "bytes": 301,
+      "sha256": "301f0a868ced9f19e2ac5f4767517da84856578b596a84013b2df6633f6e45ad"
+    },
+    {
+      "role": "actual/acl-preflight.json",
+      "bytes": 534,
+      "sha256": "1c5766667f9339917bf8a1e7289ec1d69ebade703ddb26d62e45bf81ba6a7797"
+    },
+    {
+      "role": "actual/actual-cause-frame.bin",
+      "bytes": 444,
+      "sha256": "d68bd86bd56caff1a95feac98bf36b6b252e91753153e0aa4fcf1b5cb19057e1"
+    },
+    {
+      "role": "actual/actual-namespace-stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "actual/actual-namespace-stdout.bin",
+      "bytes": 141836,
+      "sha256": "a74919ab91033fc9068be1b0bf971644009aa499c9bfb6e22b1f87ac628c7f2b"
+    },
+    {
+      "role": "actual/actual-node-stderr.bin",
+      "bytes": 1559,
+      "sha256": "cde63906945cce6f173d986c5f094f56a4219c33bddbd63bced391ab6a8cb9c1"
+    },
+    {
+      "role": "actual/actual-node-stdout.bin",
+      "bytes": 6484,
+      "sha256": "55ebf5eee04463ae78509660b05a83bb7462d79ac125c7c0fc694ac572f2d2a7"
+    },
+    {
+      "role": "actual/actual-status-frame.bin",
+      "bytes": 679,
+      "sha256": "118584b3b7bee7c3f650edf6b1eabc6879702a9480b1207690c65dd58340d503"
+    },
+    {
+      "role": "actual/frozen-inputs.json",
+      "bytes": 8965,
+      "sha256": "61739abae171503819ebe6e62d7852c4f17aac811f60b0409d747c173b3195fa"
+    },
+    {
+      "role": "actual/plan-verification.json",
+      "bytes": 1125,
+      "sha256": "4140dd21ef44ccae3fade5a76e4c158d4198abc9310f945988bb3bada0b4bcdd"
+    },
+    {
+      "role": "actual/result-summary.private.json",
+      "bytes": 6504,
+      "sha256": "c603b0ceeb166b7f40213088eee2a247559a8b09ecc5b9faee67fac861f08d03"
+    },
+    {
+      "role": "actual/runtime-a-reviewable-plan.inventory.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "actual/runtime-a-reviewable-plan.inventory.stdout.bin",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0"
+    },
+    {
+      "role": "actual/runtime-a-reviewable-plan.json",
+      "bytes": 39175,
+      "sha256": "77a44fcbca33015972281d10be814b4733ae5f53c3ca5a3c0711d1d9c5efde30"
+    },
+    {
+      "role": "actual/runtime-a-reviewable-plan.stderr.bin",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca"
+    },
+    {
+      "role": "actual/runtime-a-reviewable-plan.stdout.bin",
+      "bytes": 14931,
+      "sha256": "2f660baee10beee0b54e655e05b7297e56bd80cfbbb3f878e7df934e5038d44a"
+    },
+    {
+      "role": "actual/runtime-a-run.inventory.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "actual/runtime-a-run.inventory.stdout.bin",
+      "bytes": 34,
+      "sha256": "e511787c4a0c7f713f8c05bb2c60b725ef6e06669388e7bde106712967b150e0"
+    },
+    {
+      "role": "actual/runtime-a-run.json",
+      "bytes": 1102270,
+      "sha256": "84bd887a69e25987661abca475f1a796d08f73684977a3a168d3db13c3b1e81f"
+    },
+    {
+      "role": "actual/runtime-a-run.stderr.bin",
+      "bytes": 132,
+      "sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca"
+    },
+    {
+      "role": "actual/runtime-a-run.stdout.bin",
+      "bytes": 503254,
+      "sha256": "8369eb67e76ffdc8cbf7b25e758a2a1f3d0108ea35af1dd6249e0c53b1e69171"
+    },
+    {
+      "role": "actual/result-files.private.json",
+      "bytes": 3478,
+      "sha256": "ab65eac049215ce69e95341fad7c524acf9f8fffbabd81165b363e8ac438622c"
+    },
+    {
+      "role": "installed-source/package.json",
+      "bytes": null,
+      "sha256": "a234b616a049b4dedaad49ba0e95ff31afd3f19935e446199e75f78b589d1c21"
+    },
+    {
+      "role": "installed-source/openclaw.mjs",
+      "bytes": null,
+      "sha256": "97464647c50a1420d530db948cb203826306ef6b3a84810b6801c338366cecaf"
+    },
+    {
+      "role": "installed-source/dist/entry.js",
+      "bytes": null,
+      "sha256": "1bbc3921048304d7c25a3d882276c1300c453873af390731c63ec53bbe4abcfd"
+    },
+    {
+      "role": "installed-source/dist/resource-loader-Bu_pVD2t.mjs",
+      "bytes": null,
+      "sha256": "62b6668ee808bdcedb6a7fc149aee940005c7fafb55427a0a0a313f38a0cc2d8"
+    },
+    {
+      "role": "installed-source/dist/agent-tools.before-tool-call-WtmCO7BO.mjs",
+      "bytes": null,
+      "sha256": "809c4545e65460961c9cb3e43fcfa506a4829c1a0f6c83889b689ff266903274"
+    },
+    {
+      "role": "installed-source/node_modules/@openclaw/ai/dist/openai-completions-stream-Da2vvl-S.mjs",
+      "bytes": null,
+      "sha256": "94fcb8422e4055a977cdd21a8581ec9dc88f57d9e70660369e5286400b6be96d"
+    },
+    {
+      "role": "installed-source/dist/failure-output-CbY7qgCq.mjs",
+      "bytes": null,
+      "sha256": "3e7d5ad5565593209d00e59919370cd7afc553c8f193880f34624327fd29fff1"
+    },
+    {
+      "role": "installed-source/dist/failure-output-BB_GqQZi.mjs",
+      "bytes": null,
+      "sha256": "c6f3e98114cab04edf03b701e9485c30a457cce3e132eee21800d2a3b15882bb"
+    },
+    {
+      "role": "installed-source/dist/errors-ZZevQ1qu.mjs",
+      "bytes": null,
+      "sha256": "0b0aa56d8f2849f6ecdf17f3d12317f2519c08854ba59be58ad6cec3c5fd64db"
+    },
+    {
+      "role": "installed-source/dist/openclaw-agent-db-registry-CQNE3K5p.mjs",
+      "bytes": null,
+      "sha256": "51ac28680ec08ba0b27fc97cdfcae45a90114f34b4086b96a7dc84fa06f7aa7c"
+    },
+    {
+      "role": "installed-source/dist/openclaw-agent-db-fItexY2B.mjs",
+      "bytes": null,
+      "sha256": "e72e2a6e9990543194c1d3ab1e4c8d013f2957a97cc4c16639ad3e6fe47abcab"
+    },
+    {
+      "role": "installed-source/dist/paths-V8kKIUzt.mjs",
+      "bytes": null,
+      "sha256": "748adce324ae1fba153b092ba016545dd1433a48e93085838cc9f4bc247a8228"
+    },
+    {
+      "role": "installed-source/dist/agent-deletion-journal-C9AaQ2t0.mjs",
+      "bytes": null,
+      "sha256": "7cc9803e584e56aae2ca86b0bb523a650b2ddaad4b0d5e1293d648675b9c8a5d"
+    },
+    {
+      "role": "installed-source/dist/home-dir-59dFSOZn.mjs",
+      "bytes": null,
+      "sha256": "bfeb293e8916be7c298c6027c3d7acee475e66f3e8cb5fe8a7857a7347c723ba"
+    },
+    {
+      "role": "installed-source/dist/openclaw-state-db.paths-LPXbiQmG.mjs",
+      "bytes": null,
+      "sha256": "d3b66823751055732753e069dcde0c719418e25526866284e5c69aed09739d6c"
+    },
+    {
+      "role": "installed-source/dist/agent-tools-DXxcrXNI.mjs",
+      "bytes": null,
+      "sha256": "98b729a2ac53cefa8c832cb3c90008112e1e06b0b4f4d294adb1d92c447a5e21"
+    },
+    {
+      "role": "installed-source/dist/core-coding-tools-DoP9tAh3.mjs",
+      "bytes": null,
+      "sha256": "403a72188e3378cc570691083fa9270c05e20dc7e2706c62c5c455457b50dca3"
+    },
+    {
+      "role": "installed-source/dist/lazy-exec-tool-C4NdOfwu.mjs",
+      "bytes": null,
+      "sha256": "4024daa30d7c932d98974beb77c24489b32ce0a03a2041992aa37ef4b8e6fe63"
+    },
+    {
+      "role": "installed-source/dist/tool-policy-match-RtZReoAT.mjs",
+      "bytes": null,
+      "sha256": "053a1401baa7819541d273bac039b504a276d689aa559f591f8bd6525b8dea18"
+    },
+    {
+      "role": "installed-source/node_modules/@openclaw/fs-safe/dist/errors.js",
+      "bytes": null,
+      "sha256": "6187c0aff86970d3b39039c9a6e1a19e2f55f967c87351745b4c71a71b30ee6f"
+    },
+    {
+      "role": "installed-source/node_modules/@openclaw/fs-safe/dist/root-errors.js",
+      "bytes": null,
+      "sha256": "8bd41bfc7cf7ce53a27e06b74440691982b18373fa9f86ea17d4f3c49ddfea27"
+    },
+    {
+      "role": "installed-runtime/node",
+      "bytes": null,
+      "sha256": "bc17c508ffeed0ec622934f9b7fa72f8e78da65350e63c3eceb56fa688aa5e12"
+    },
+    {
+      "role": "installed-runtime/unshare",
+      "bytes": null,
+      "sha256": "7863536428c7c77526e21b8b5eaf4744bae48f660c15cf75bf23dee69711ca08"
+    },
+    {
+      "role": "independent-actual-review",
+      "bytes": 4214,
+      "sha256": "b6360ac79de29bead53c221348f60e0651f87bd355bf3ac78e79994573025b23"
+    }
+  ]
+}
