@@ -126,7 +126,7 @@ func migrationSync(dir string) error {
 
 // Migration-only raw publication. Callers hold every writer and validate the
 // immutable plan. Ordinary statefs intentionally refuses this active barrier.
-func migrationPublish(root, path string, b []byte, mode os.FileMode) error {
+func migrationPublish(root, path string, b []byte, mode os.FileMode) (resultErr error) {
 	if e := stateformat.CheckParents(filepath.Dir(path)); e != nil {
 		return e
 	}
@@ -147,7 +147,12 @@ func migrationPublish(root, path string, b []byte, mode os.FileMode) error {
 	if e != nil {
 		return e
 	}
-	defer os.Remove(f.Name())
+	created, e := f.Stat()
+	if e != nil {
+		_ = f.Close()
+		return e
+	}
+	defer func() { resultErr = errors.Join(resultErr, migrationRemoveScratch(f.Name(), created)) }()
 	if e = f.Chmod(mode); e == nil {
 		_, e = f.Write(b)
 	}
