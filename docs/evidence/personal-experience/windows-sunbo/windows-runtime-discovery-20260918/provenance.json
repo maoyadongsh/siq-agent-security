@@ -1,0 +1,1112 @@
+{
+  "raw_files_unchanged": true,
+  "normalization": "Strict decode as stated per file. Redact fixed workspace paths, home directories, WSL temporary paths and SID/credential forms. UTF-8/LF output. JSON metadata is parsed and reserialized; embedded historical digests still refer to raw local files. Public hashes are separate.",
+  "selection": "Exact component result metadata and stdout/stderr. Binaries, before-* fixture backups and superseded local handoff narratives are not copied.",
+  "entries": [
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux-architecture.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r1/inventory-linux-architecture.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux-architecture.stdout.log",
+      "raw_sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62",
+      "raw_bytes": 7,
+      "public_sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62",
+      "public_bytes": 7,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r1/inventory-linux-architecture.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux-build.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux-build.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux-copy.stderr.log",
+      "raw_sha256": "5e1fc50fe16dfeb959db1ccc926d8451e2af3256fa0793e4f6b214fdea90f7a4",
+      "raw_bytes": 328,
+      "public_sha256": "0c83c5c1dee4c8583d6447b0592c2509a787a3b2bf5c348dc45e2da9770a44a8",
+      "public_bytes": 269,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r1/inventory-linux-copy.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux-copy.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux-private-temp.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r1/inventory-linux-private-temp.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux-private-temp.stdout.log",
+      "raw_sha256": "7149e25f8f8b46053c55b41be6e997bd0920005aad8b184dcc46a6ab3562dbef",
+      "raw_bytes": 36,
+      "public_sha256": "199c71e5aef3e2473d67997ae7cf6fa1ff552add2f07f34dc345de3beef345b0",
+      "public_bytes": 10,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r1/inventory-linux-private-temp.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux.json",
+      "raw_sha256": "03aea47fe4d187f73a985256e5f39e8a636e5a7d4dbba1c1462b647babdb98f2",
+      "raw_bytes": 2691,
+      "public_sha256": "5000b3f6eb27d1502a5cd1940e3fc2dcfd42494487aa1d5fddbe454a0ce5ad11",
+      "public_bytes": 2072,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r1/inventory-linux.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-windows-generate.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-windows-generate.stdout.log",
+      "raw_sha256": "2ebad8c197cda5f8ace867c6dff14ecea0c73c7dd357ab6f88c734776a1b0f9e",
+      "raw_bytes": 1435,
+      "public_sha256": "2ebad8c197cda5f8ace867c6dff14ecea0c73c7dd357ab6f88c734776a1b0f9e",
+      "public_bytes": 1435,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r1/inventory-windows-generate.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-windows-verify.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-windows-verify.stdout.log",
+      "raw_sha256": "8e9404d5421e9a42750c552f60c85aa7a80671d4afc3f14c98c84d63bd4d68b0",
+      "raw_bytes": 2231,
+      "public_sha256": "8e9404d5421e9a42750c552f60c85aa7a80671d4afc3f14c98c84d63bd4d68b0",
+      "public_bytes": 2231,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r1/inventory-windows-verify.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-windows.json",
+      "raw_sha256": "c73de4b7dd2d7cd3696ff1ba201ef0edf10b5dc000565c226d71ac012b1b90a8",
+      "raw_bytes": 2021,
+      "public_sha256": "fa2dcf5f02022fe918bb1de0deecb95502d1072fb88d528e8e1142b941b4fd6c",
+      "public_bytes": 1707,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r1/inventory-windows.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-linux-architecture.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/discovery-linux-architecture.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-linux-architecture.stdout.log",
+      "raw_sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62",
+      "raw_bytes": 7,
+      "public_sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62",
+      "public_bytes": 7,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/discovery-linux-architecture.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-linux-private-temp.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/discovery-linux-private-temp.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-linux-private-temp.stdout.log",
+      "raw_sha256": "6082f39a845b4573b732fae1684e3b668208f3220adf57ffb10d588e66888c27",
+      "raw_bytes": 36,
+      "public_sha256": "199c71e5aef3e2473d67997ae7cf6fa1ff552add2f07f34dc345de3beef345b0",
+      "public_bytes": 10,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/discovery-linux-private-temp.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-linux.json",
+      "raw_sha256": "4911c089c6c2b9cbbd32d41ed26ac5b6013d72cabefd07be386f8be78beae796",
+      "raw_bytes": 9409,
+      "public_sha256": "862d6111f7fd85e6f2ab7e2f4788caabec4170f54e997266f9c9d1750c782687",
+      "public_bytes": 7775,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/discovery-linux.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-windows-generate.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-windows-generate.stdout.log",
+      "raw_sha256": "d68de9d1e32180723ba54403ca886ab23f7e9c0bf625f257010966550ee7fb04",
+      "raw_bytes": 1469,
+      "public_sha256": "d68de9d1e32180723ba54403ca886ab23f7e9c0bf625f257010966550ee7fb04",
+      "public_bytes": 1469,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/discovery-windows-generate.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-windows-verify.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-windows-verify.stdout.log",
+      "raw_sha256": "ede93738e7d8faf0974a6b84f841b9056f67a0323878211d4213495db6743d7c",
+      "raw_bytes": 2311,
+      "public_sha256": "ede93738e7d8faf0974a6b84f841b9056f67a0323878211d4213495db6743d7c",
+      "public_bytes": 2311,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/discovery-windows-verify.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/discovery-windows.json",
+      "raw_sha256": "f721df3cbe090368e72d80d2faeabe6f9a6dac710811af607d5848ee0746ef51",
+      "raw_bytes": 2443,
+      "public_sha256": "62ac17365594bce4c6b43aac9d7f8a75aac1f77780b4f65b77a4fc3268727d64",
+      "public_bytes": 2128,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/discovery-windows.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/fixed-module-source.json",
+      "raw_sha256": "a03146ae88537ccf61ce887a3dfa2817fa03378e71525419d80273b4bbd1ef2a",
+      "raw_bytes": 221516,
+      "public_sha256": "51b5d6f2cbac5feee415c4d40575c86a090494688fc8e21eb88a9bd932c4016c",
+      "public_bytes": 215965,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/fixed-module-source.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-architecture.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux-architecture.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-architecture.stdout.log",
+      "raw_sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62",
+      "raw_bytes": 7,
+      "public_sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62",
+      "public_bytes": 7,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux-architecture.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-clean-directories.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux-clean-directories.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-clean-directories.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-clean-files.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux-clean-files.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-clean-files.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-private-temp.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux-private-temp.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-private-temp.stdout.log",
+      "raw_sha256": "f2f329d7270d6df7761b12218b6feaab082cbadb71e7cd1f4341de9cd2052e7a",
+      "raw_bytes": 36,
+      "public_sha256": "199c71e5aef3e2473d67997ae7cf6fa1ff552add2f07f34dc345de3beef345b0",
+      "public_bytes": 10,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux-private-temp.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-transfer.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux-transfer.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-transfer.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-verify.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux-verify.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux-verify.stdout.log",
+      "raw_sha256": "a96f5712acd3265d7d43c489e84ad13c3b439067f6102a8297a8f76bf439bc49",
+      "raw_bytes": 141,
+      "public_sha256": "a96f5712acd3265d7d43c489e84ad13c3b439067f6102a8297a8f76bf439bc49",
+      "public_bytes": 141,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux-verify.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/inventory-linux.json",
+      "raw_sha256": "a6aebaa3a7a6fed84a03ffc58f9c3036af397c8c0102940bad3515fd49579279",
+      "raw_bytes": 4949,
+      "public_sha256": "f8217ecd2eb9ca9e2444613d8a0592732b8a3ed77f7610c4c35516a2191293e2",
+      "public_bytes": 3869,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/inventory-linux.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/linux-read-discovery-preview.json.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/linux-read-discovery-preview.json.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/linux-read-discovery-preview.json.stdout.log",
+      "raw_sha256": "2e3df6f0b1cd55700e985c1fabe938a313f4e55a2d5884ee6630d8c61810ea7d",
+      "raw_bytes": 2581,
+      "public_sha256": "2e3df6f0b1cd55700e985c1fabe938a313f4e55a2d5884ee6630d8c61810ea7d",
+      "public_bytes": 2581,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/linux-read-discovery-preview.json.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/linux-read-discovery-status.json.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/linux-read-discovery-status.json.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/linux-read-discovery-status.json.stdout.log",
+      "raw_sha256": "4676c84505bb7d56386610e80c6a43da5c676e28ff822adbe96a371dc7fb68cf",
+      "raw_bytes": 2675,
+      "public_sha256": "4676c84505bb7d56386610e80c6a43da5c676e28ff822adbe96a371dc7fb68cf",
+      "public_bytes": 2675,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/linux-read-discovery-status.json.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/recovered-fixtures.json",
+      "raw_sha256": "e368b3dc285b5075bcfeba6ce328cf5897de0ed3d0467a2cd5a979983078d1c1",
+      "raw_bytes": 1137,
+      "public_sha256": "4056e24aaed667a336114329a2198141d3d80cdd8b4a125eb80fe90dc88a7137",
+      "public_bytes": 1108,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/recovered-fixtures.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/schema-ruff.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/schema-ruff.stdout.log",
+      "raw_sha256": "ce187a31c4e19123b5efc1adcc0342f96e199e3f5883478a6dec7bd3d82b31d9",
+      "raw_bytes": 1522,
+      "public_sha256": "ce187a31c4e19123b5efc1adcc0342f96e199e3f5883478a6dec7bd3d82b31d9",
+      "public_bytes": 1522,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/schema-ruff.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/schema.json",
+      "raw_sha256": "2b2862151bbad12d44e9d0e59f3a9055d31746298a3c63a042e0efcb6c4686e3",
+      "raw_bytes": 774,
+      "public_sha256": "2f0ca127bfbd28ecd2a5275bb94b307c6dba40041c93e0d143e672543b26b133",
+      "public_bytes": 624,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/schema.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-build.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-build.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-clean-directories.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/server-linux-clean-directories.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-clean-directories.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-clean-files.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/server-linux-clean-files.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-clean-files.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-create-cwd.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/server-linux-create-cwd.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-create-cwd.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-generate.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/server-linux-generate.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-generate.stdout.log",
+      "raw_sha256": "081a43b44308244420c077372e64e2cec45959f5466c9082f0751539d4685e73",
+      "raw_bytes": 93,
+      "public_sha256": "081a43b44308244420c077372e64e2cec45959f5466c9082f0751539d4685e73",
+      "public_bytes": 93,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/server-linux-generate.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-transfer.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/server-linux-transfer.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-transfer.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-verify.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r2/server-linux-verify.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r2/server-linux-verify.stdout.log",
+      "raw_sha256": "ee71816f59fd537354bbd3afedf06295bd2e7f9cc3898263c94839cc8874c4a2",
+      "raw_bytes": 181,
+      "public_sha256": "ee71816f59fd537354bbd3afedf06295bd2e7f9cc3898263c94839cc8874c4a2",
+      "public_bytes": 181,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r2/server-linux-verify.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r3/schema-inventory-discovery.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r3/schema-inventory-discovery.stdout.log",
+      "raw_sha256": "8aac15bcba8246fdea2d0c114acf05e682262ff4dc8e0d66aa71f50421b139c8",
+      "raw_bytes": 2279,
+      "public_sha256": "1f47245c2ac7c3d294b4bc6683c213ee77cb6b8fadbba2f6b3aefb0266b3cc7e",
+      "public_bytes": 2210,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r3/schema-inventory-discovery.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r3/schema-ruff.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r3/schema-ruff.stdout.log",
+      "raw_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "raw_bytes": 19,
+      "public_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "public_bytes": 19,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r3/schema-ruff.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r3/schema.json",
+      "raw_sha256": "806457351da2f67bb46ece0d676dafd9cd97822ee38ab609798268bd0e0c8d92",
+      "raw_bytes": 1452,
+      "public_sha256": "d8090e7368bb9c0a236601f34b5773e8e665734af17e7bdef48345199e18b03d",
+      "public_bytes": 1158,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r3/schema.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-architecture.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-architecture.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-architecture.stdout.log",
+      "raw_sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62",
+      "raw_bytes": 7,
+      "public_sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62",
+      "public_bytes": 7,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-architecture.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-build.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-build.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-clean-directories.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-clean-directories.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-clean-directories.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-clean-files.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-clean-files.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-clean-files.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-create-cwd.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-create-cwd.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-create-cwd.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-private-temp.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-private-temp.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-private-temp.stdout.log",
+      "raw_sha256": "256756e81983c00d56f48e72e1ba4d24c5ba7404181478b0b50501012bb4bd2e",
+      "raw_bytes": 36,
+      "public_sha256": "199c71e5aef3e2473d67997ae7cf6fa1ff552add2f07f34dc345de3beef345b0",
+      "public_bytes": 10,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-private-temp.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-transfer.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-transfer.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-transfer.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-verify.stderr.log",
+      "raw_sha256": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+      "raw_bytes": 132,
+      "public_sha256": "2f5889b2a122dd9ceb3ce3b646d97426a6a187e1c6fb95d529260c1d9398affe",
+      "public_bytes": 113,
+      "decode": "UTF-16LE WSL prefix + UTF-8 remainder",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-verify.stderr.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux-verify.stdout.log",
+      "raw_sha256": "b2e3cf1798066955bf8b01fd8c60c458194c4fc9508d815add639b0c78c03763",
+      "raw_bytes": 449,
+      "public_sha256": "b2e3cf1798066955bf8b01fd8c60c458194c4fc9508d815add639b0c78c03763",
+      "public_bytes": 449,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux-verify.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-linux.json",
+      "raw_sha256": "1676ab6d8524de111a3e0d69b7f9a9389ff51c4dbf2b2b96fbbb531b7d79733d",
+      "raw_bytes": 6839,
+      "public_sha256": "f1c98a49a7f9e4249c772d94d47c5d54ae167861d71f1cd947e246c06476c63e",
+      "public_bytes": 5440,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/inventory-linux.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-windows-generate.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-windows-generate.stdout.log",
+      "raw_sha256": "86dc362203350001116363b1744e17651c6030bf8dc3d70f407c6d95db873dbf",
+      "raw_bytes": 2471,
+      "public_sha256": "86dc362203350001116363b1744e17651c6030bf8dc3d70f407c6d95db873dbf",
+      "public_bytes": 2471,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/inventory-windows-generate.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-windows-verify.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-windows-verify.stdout.log",
+      "raw_sha256": "77cc2deb4e35d4a644561a4005b3c9af0bad0dc1947605cb91873afaa8301f8f",
+      "raw_bytes": 4311,
+      "public_sha256": "77cc2deb4e35d4a644561a4005b3c9af0bad0dc1947605cb91873afaa8301f8f",
+      "public_bytes": 4311,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/inventory-windows-verify.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/inventory-windows.json",
+      "raw_sha256": "0e429cf113c6c3859bb7f011cd76baaf3a1244b1e001274f38c3e128e4b893f0",
+      "raw_bytes": 2448,
+      "public_sha256": "1455cfd23d302e30c45e723fb158f5c5cc85d36f625417ef454c09a477cfb51c",
+      "public_bytes": 2126,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/inventory-windows.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/schema-inventory-discovery.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/schema-inventory-discovery.stdout.log",
+      "raw_sha256": "6751f2d6dc9e40a1d88aefe32d7c501f001bc0cc91fb2ca9142cfd7defddd47e",
+      "raw_bytes": 665,
+      "public_sha256": "f7cd20b1612a018420334250251297bb81989ad5cfbd705087c402e04aa771fe",
+      "public_bytes": 618,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/schema-inventory-discovery.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/schema-ruff.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/schema-ruff.stdout.log",
+      "raw_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "raw_bytes": 19,
+      "public_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "public_bytes": 19,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/schema-ruff.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r4/schema.json",
+      "raw_sha256": "d7a3e661030424e55596698e3e448b3cc414db30c5c51c558890cf1b36b54a91",
+      "raw_bytes": 2207,
+      "public_sha256": "e4e97f5e62005473a913a49c37ae19f475b1736eb40a764aabb4131637bc097b",
+      "public_bytes": 1890,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/inventory-discovery/r4/schema.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r1/compile.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r1/compile.stdout.log",
+      "raw_sha256": "abe7825461ee6caefd8e29ff6c8d0651b3091265651214db308f9985891396a8",
+      "raw_bytes": 423,
+      "public_sha256": "abe7825461ee6caefd8e29ff6c8d0651b3091265651214db308f9985891396a8",
+      "public_bytes": 423,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r1/compile.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r1/gofmt.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r1/gofmt.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r1/summary.json",
+      "raw_sha256": "c45bd3e0312cb454195afddc7f3e4c854e460072044a01051a5b204b65e3d7ff",
+      "raw_bytes": 5654,
+      "public_sha256": "8a89fde623bc73e5e9dfe4ab136c37d3b9f9e41dbc4cb3b9f121a7c1a696e545",
+      "public_bytes": 3134,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r1/summary.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/adapter-boundaries.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/adapter-boundaries.stdout.log",
+      "raw_sha256": "8014a697ba35f4c3127e1586ea29594ab85b6238c91f335a4df286017a8f2e34",
+      "raw_bytes": 1677,
+      "public_sha256": "8014a697ba35f4c3127e1586ea29594ab85b6238c91f335a4df286017a8f2e34",
+      "public_bytes": 1677,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/adapter-boundaries.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/gofmt.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/gofmt.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/http-boundaries.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/http-boundaries.stdout.log",
+      "raw_sha256": "7645aa5ad3bc643a075a22a952fb6e50b75973fda24e7c9895a076e619f358de",
+      "raw_bytes": 3586,
+      "public_sha256": "7645aa5ad3bc643a075a22a952fb6e50b75973fda24e7c9895a076e619f358de",
+      "public_bytes": 3586,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/http-boundaries.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/intent-grant-contracts.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/intent-grant-contracts.stdout.log",
+      "raw_sha256": "f4f16bdbb683e1bd29b58d7d4e2e8b4f67f57bba2168996ec33e2e9a183e3936",
+      "raw_bytes": 59418,
+      "public_sha256": "f4f16bdbb683e1bd29b58d7d4e2e8b4f67f57bba2168996ec33e2e9a183e3936",
+      "public_bytes": 59418,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/ruff-schema.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/ruff-schema.stdout.log",
+      "raw_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "raw_bytes": 19,
+      "public_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "public_bytes": 19,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/ruff-schema.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/runtimecheck-authority.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/runtimecheck-authority.stdout.log",
+      "raw_sha256": "3757d84055abf63706145c27ad95186ffb2d3c31c7a6da1527aebfd439f811b5",
+      "raw_bytes": 27455,
+      "public_sha256": "3757d84055abf63706145c27ad95186ffb2d3c31c7a6da1527aebfd439f811b5",
+      "public_bytes": 27455,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/runtimecheck-positive.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/runtimecheck-positive.stdout.log",
+      "raw_sha256": "c055fd244208468a053b684a089e5ffe40bee4a24de02eb7d1ca1ce6efc2bd2f",
+      "raw_bytes": 1621,
+      "public_sha256": "c055fd244208468a053b684a089e5ffe40bee4a24de02eb7d1ca1ce6efc2bd2f",
+      "public_bytes": 1621,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/runtimecheck-positive.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/schema-v5.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/schema-v5.stdout.log",
+      "raw_sha256": "a94d537264a6716570d60d6a32cf0ee1922fc335ce5354826b02df68673b5af1",
+      "raw_bytes": 665,
+      "public_sha256": "34815b0a73eb2c4b9df111004850de920a7bc8095626e2a0df5cc5b1e87a0fd3",
+      "public_bytes": 618,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/schema-v5.stdout.log"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/source-sha256-after-checks.json",
+      "raw_sha256": "aabd9b2c6c3fbb118be8573f00889bfb4f2c61479db138c62e4608f9dd521125",
+      "raw_bytes": 3897,
+      "public_sha256": "aabd9b2c6c3fbb118be8573f00889bfb4f2c61479db138c62e4608f9dd521125",
+      "public_bytes": 3897,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/source-sha256-after-checks.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/summary.json",
+      "raw_sha256": "98fbb96208944697e4a2bf5d1dd6003feae95fa1400923e6695aab985a825fe7",
+      "raw_bytes": 9771,
+      "public_sha256": "c2510195b2174086f3e5759246f0b72095c4737201b40d17445abb2bd8bacd94",
+      "public_bytes": 6288,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/summary.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/test-counts.json",
+      "raw_sha256": "bbbcf82b218600a8a026bfdc95cfb8fa47e6d125c72afb9301f35e8fdad12d87",
+      "raw_bytes": 2372,
+      "public_sha256": "bbbcf82b218600a8a026bfdc95cfb8fa47e6d125c72afb9301f35e8fdad12d87",
+      "public_bytes": 2372,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": "logs/runtimecheck-v5/r2/test-counts.json"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/vet.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/runtimecheck-v5-components-r2/vet.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "decode": "UTF-8 (optional BOM)",
+      "public_path": null,
+      "omitted_reason": "empty stdout/stderr; zero byte length and digest retained"
+    }
+  ]
+}

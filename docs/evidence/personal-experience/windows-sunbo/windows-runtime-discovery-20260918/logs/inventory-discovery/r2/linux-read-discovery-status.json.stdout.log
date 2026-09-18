@@ -1,0 +1,120 @@
+{
+  "platform_changes": false,
+  "roots": [
+    {
+      "kind": "skill_directory",
+      "path": "~/.agents/skills",
+      "platform": "openclaw",
+      "status": "missing"
+    },
+    {
+      "kind": "mcp_config",
+      "path": "~/.claude.json",
+      "platform": "claude",
+      "status": "missing"
+    },
+    {
+      "kind": "mcp_config",
+      "path": "~/.claude/mcp.json",
+      "platform": "claude",
+      "status": "missing"
+    },
+    {
+      "kind": "platform_config",
+      "path": "~/.claude/settings.json",
+      "platform": "claude_code",
+      "status": "missing"
+    },
+    {
+      "kind": "skill_directory",
+      "path": "~/.claude/skills",
+      "platform": "claude_code",
+      "status": "missing"
+    },
+    {
+      "kind": "platform_config",
+      "path": "~/.codebuddy/settings.json",
+      "platform": "codebuddy",
+      "status": "missing"
+    },
+    {
+      "kind": "skill_directory",
+      "path": "~/.codebuddy/skills",
+      "platform": "codebuddy",
+      "status": "missing"
+    },
+    {
+      "kind": "mcp_config",
+      "path": "~/.codeium/windsurf/mcp_config.json",
+      "platform": "windsurf",
+      "status": "missing"
+    },
+    {
+      "kind": "platform_config",
+      "path": "~/.codex/config.toml",
+      "platform": "codex",
+      "status": "missing"
+    },
+    {
+      "kind": "skill_directory",
+      "path": "~/.codex/skills",
+      "platform": "codex",
+      "status": "missing"
+    },
+    {
+      "kind": "mcp_config",
+      "path": "~/.cursor/mcp.json",
+      "platform": "cursor",
+      "status": "missing"
+    },
+    {
+      "kind": "platform_config",
+      "path": "~/.hermes/config.yaml",
+      "platform": "hermes",
+      "status": "missing"
+    },
+    {
+      "kind": "profile_directory",
+      "path": "~/.hermes/profiles",
+      "platform": "hermes",
+      "status": "missing"
+    },
+    {
+      "kind": "skill_directory",
+      "path": "~/.hermes/skills",
+      "platform": "hermes",
+      "status": "missing"
+    },
+    {
+      "kind": "platform_config",
+      "path": "~/.openclaw/openclaw.json",
+      "platform": "openclaw",
+      "status": "missing"
+    },
+    {
+      "kind": "skill_directory",
+      "path": "~/.openclaw/skills",
+      "platform": "openclaw",
+      "status": "missing"
+    },
+    {
+      "kind": "skill_directory",
+      "path": "~/.trae/skills",
+      "platform": "trae",
+      "status": "missing"
+    },
+    {
+      "kind": "mcp_config",
+      "path": "~/.windsurf/mcp_config.json",
+      "platform": "windsurf",
+      "status": "missing"
+    }
+  ],
+  "run": {
+    "asset_count": 0,
+    "issue_count": 0,
+    "skill_count": 0,
+    "state": "idle"
+  },
+  "schema_version": "local-discovery/v1"
+}

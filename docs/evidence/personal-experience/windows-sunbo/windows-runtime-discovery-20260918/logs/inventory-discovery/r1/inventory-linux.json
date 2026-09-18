@@ -1,0 +1,78 @@
+{
+  "scope": "isolated Go contract components, not host/model or clean-candidate acceptance",
+  "base_sha": "72140795963244d293232c905a34ef00312b8253",
+  "source_dirty": true,
+  "phase": "inventory-linux",
+  "results": [
+    {
+      "label": "inventory-linux-architecture",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/uname",
+        "-m"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.34858
+    },
+    {
+      "label": "inventory-linux-private-temp",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/mktemp",
+        "-d",
+        "<WSL_TMP>"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.314532
+    },
+    {
+      "label": "inventory-linux-build",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-c",
+        "./internal/inventory",
+        "-o",
+        "<WORKSPACE>\\.tmp\\windows-goal-20260916\\inventory-discovery-fixtures-r1\\inventory-linux-amd64.test"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {
+        "GOOS": "linux",
+        "GOARCH": "amd64"
+      },
+      "exit_code": 0,
+      "seconds": 13.210459
+    },
+    {
+      "label": "inventory-linux-copy",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/cp",
+        "--",
+        "<WSL_WORKSPACE>/.tmp/windows-goal-20260916/inventory-discovery-fixtures-r1/inventory-linux-amd64.test",
+        "<WSL_TMP>/inventory-linux-amd64.test"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "exit_code": 1,
+      "seconds": 0.550963
+    }
+  ],
+  "private_temp": ".tmp/isc3",
+  "protected_dacl_verified": true,
+  "helper_sha256": "aef152e1706c2d89caab077178ae23d3c4bb8235fab703fe71aa27f4061e3711",
+  "wsl_temp": "<WSL_TMP>"
+}

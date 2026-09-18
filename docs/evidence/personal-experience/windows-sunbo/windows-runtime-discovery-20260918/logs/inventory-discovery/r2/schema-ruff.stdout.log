@@ -1,0 +1,32 @@
+I001 [*] Import block is un-sorted or un-formatted
+    --> app\tests\test_schema_contracts.py:3566:5
+     |
+3565 |   def test_windows_runtime_check_intent_v5_contract() -> None:
+3566 | /     import hashlib
+3567 | |     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+3568 | |     from jsonschema import FormatChecker
+     | |________________________________________^
+3569 |
+3570 |       schema = json.loads((CONTRACTS / "intent-contract.v5.schema.json").read_text(encoding="utf-8"))
+     |
+help: Organize imports
+     |
+3566 |     import hashlib
+3567 +
+3568 |     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+     |
+
+E731 Do not assign a `lambda` expression, use a `def`
+    --> app\tests\test_schema_contracts.py:3587:5
+     |
+3585 |         assert list(validator.iter_errors(data | patch))
+3586 |     # A public test seed proves cross-language canonical bytes, not a release signature.
+3587 |     canonical = lambda v: json.dumps(v, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3588 |     unsigned = {k: v for k, v in data.items() if k not in {"digest", "signature"}}
+3589 |     assert hashlib.sha256(canonical(unsigned)).hexdigest() == data["digest"]
+     |
+help: Rewrite `canonical` as a `def`
+
+Found 2 errors.
+[*] 1 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).

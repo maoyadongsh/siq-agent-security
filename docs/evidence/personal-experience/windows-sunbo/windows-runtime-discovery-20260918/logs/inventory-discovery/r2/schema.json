@@ -1,0 +1,24 @@
+{
+  "scope": "isolated Go contract components, not host/model or clean-candidate acceptance",
+  "base_sha": "72140795963244d293232c905a34ef00312b8253",
+  "source_dirty": true,
+  "phase": "schema",
+  "results": [
+    {
+      "label": "schema-ruff",
+      "command": [
+        "<WORKSPACE>\\.tmp\\win-stage-r2-20260917\\apps\\control-api\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-m",
+        "ruff",
+        "check",
+        "app/tests/test_schema_contracts.py"
+      ],
+      "cwd": "<WORKTREE>\\apps\\control-api",
+      "extra_env": {},
+      "exit_code": 1,
+      "seconds": 1.363895
+    }
+  ]
+}
