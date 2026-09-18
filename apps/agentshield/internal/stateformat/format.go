@@ -255,6 +255,10 @@ func ReadMarker(dir string) (Marker, error) {
 	return Decode(b)
 }
 func ValidateBinding(dir string, m Marker) error {
+	return validateBindingRead(dir, m, ReadRegular)
+}
+
+func validateBindingRead(dir string, m Marker, read func(string, int64) ([]byte, error)) error {
 	if m.Schema != "state-format/v2" {
 		return nil
 	}
@@ -265,7 +269,7 @@ func ValidateBinding(dir string, m Marker) error {
 	if id != m.DirectoryID {
 		return errors.Join(ErrCorrupt, ErrBinding)
 	}
-	raw, e := ReadRegular(filepath.Join(dir, "local-instance.json"), 65536)
+	raw, e := read(filepath.Join(dir, "local-instance.json"), 65536)
 	if e != nil {
 		return ErrCorrupt
 	}
@@ -316,13 +320,12 @@ func Check(dir string, write, ignoreMigration bool) error {
 	if m.MinReader > ReaderVersion || (write && m.MinWriter > WriterVersion) {
 		return Fail(ErrFuture)
 	}
-	if e := ValidateBinding(dir, m); e != nil {
-		return Fail(e)
-	}
 	if !ignoreMigration {
 		if e := checkWindowsProfile(dir, m); e != nil {
 			return Fail(e)
 		}
+	} else if e := ValidateBinding(dir, m); e != nil {
+		return Fail(e)
 	}
 	return nil
 }

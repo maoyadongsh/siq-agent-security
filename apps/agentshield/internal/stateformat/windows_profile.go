@@ -73,8 +73,12 @@ func DecodeWindowsProfilePlan(raw []byte) (WindowsProfilePlan, error) {
 // WindowsProfileHistory validates the completed original migration, if any.
 // It does not modify or revalidate all business backup files.
 func WindowsProfileHistory(dir string, source []byte) (string, error) {
-	plan, pe := readWindowsProfileMetadata(filepath.Join(dir, MigrationDir, "plan.json"), 8<<20)
-	done, de := readWindowsProfileMetadata(filepath.Join(dir, MigrationDir, "done.json"), Budget)
+	return windowsProfileHistoryRead(dir, source, readWindowsProfileMetadata)
+}
+
+func windowsProfileHistoryRead(dir string, source []byte, read func(string, int64) ([]byte, error)) (string, error) {
+	plan, pe := read(filepath.Join(dir, MigrationDir, "plan.json"), 8<<20)
+	done, de := read(filepath.Join(dir, MigrationDir, "done.json"), Budget)
 	if errors.Is(pe, os.ErrNotExist) && errors.Is(de, os.ErrNotExist) {
 		return "absent", nil
 	}
@@ -102,14 +106,18 @@ func WindowsProfileHistory(dir string, source []byte) (string, error) {
 }
 
 func ValidateWindowsProfilePlan(dir string, p WindowsProfilePlan) error {
+	return validateWindowsProfilePlanRead(dir, p, readWindowsProfileMetadata)
+}
+
+func validateWindowsProfilePlanRead(dir string, p WindowsProfilePlan, read func(string, int64) ([]byte, error)) error {
 	if _, err := DecodeWindowsProfilePlan(EncodeWindowsProfilePlan(p)); err != nil {
 		return err
 	}
 	m, _ := Decode([]byte(p.TargetMarker))
-	if err := ValidateBinding(dir, m); err != nil {
+	if err := validateBindingRead(dir, m, read); err != nil {
 		return err
 	}
-	history, err := WindowsProfileHistory(dir, []byte(p.SourceMarker))
+	history, err := windowsProfileHistoryRead(dir, []byte(p.SourceMarker), read)
 	if err != nil || history != p.MigrationHash {
 		return ErrCorrupt
 	}
@@ -117,25 +125,31 @@ func ValidateWindowsProfilePlan(dir string, p WindowsProfilePlan) error {
 }
 
 func CheckWindowsProfileCompleted(dir string, raw []byte) error {
+	return withWindowsProfileSnapshot(dir, func(read func(string, int64) ([]byte, error)) error {
+		return checkWindowsProfileCompletedRead(dir, raw, read)
+	})
+}
+
+func checkWindowsProfileCompletedRead(dir string, raw []byte, read func(string, int64) ([]byte, error)) error {
 	p, err := DecodeWindowsProfilePlan(raw)
-	if err != nil || ValidateWindowsProfilePlan(dir, p) != nil {
+	if err != nil {
 		return ErrCorrupt
 	}
-	if err := privatefs.CheckDir(dir); err != nil {
-		return ErrCorrupt
+	if err := validateWindowsProfilePlanRead(dir, p, read); err != nil {
+		return err
 	}
-	archive, err := readWindowsProfileMetadata(filepath.Join(dir, WindowsProfileDir, "plan.json"), WindowsProfileBudget)
+	archive, err := read(filepath.Join(dir, WindowsProfileDir, "plan.json"), WindowsProfileBudget)
 	if err != nil || !bytes.Equal(archive, raw) {
 		return ErrMigration
 	}
-	prepared, err := readWindowsProfileMetadata(filepath.Join(dir, WindowsProfileDir, "prepared.json"), Budget)
+	prepared, err := read(filepath.Join(dir, WindowsProfileDir, "prepared.json"), Budget)
 	var proof struct {
 		Plan string `json:"plan_sha256"`
 	}
 	if err != nil || DecodeObject(prepared, []string{"plan_sha256"}, &proof) != nil || proof.Plan != Hash(raw) {
 		return ErrMigration
 	}
-	done, err := readWindowsProfileMetadata(filepath.Join(dir, WindowsProfileDir, "done.json"), Budget)
+	done, err := read(filepath.Join(dir, WindowsProfileDir, "done.json"), Budget)
 	if err != nil {
 		return ErrMigration
 	}
@@ -143,7 +157,7 @@ func CheckWindowsProfileCompleted(dir string, raw []byte) error {
 	if DecodeObject(done, []string{"schema", "plan_sha256", "marker_sha256"}, &d) != nil || d.Schema != "state-windows-profile-done/v1" || d.Plan != Hash(raw) || d.Marker != Hash([]byte(p.TargetMarker)) {
 		return ErrCorrupt
 	}
-	live, err := readWindowsProfileMetadata(filepath.Join(dir, MarkerName), Budget)
+	live, err := read(filepath.Join(dir, MarkerName), Budget)
 	if err != nil || string(live) != p.TargetMarker {
 		return ErrCorrupt
 	}
@@ -151,15 +165,68 @@ func CheckWindowsProfileCompleted(dir string, raw []byte) error {
 }
 
 func checkWindowsProfile(dir string, m Marker) error {
-	raw, err := readWindowsProfileMetadata(filepath.Join(dir, WindowsProfileDir, "plan.json"), WindowsProfileBudget)
-	if errors.Is(err, os.ErrNotExist) && m.MinReader < 3 {
-		return nil
+	path := filepath.Join(dir, WindowsProfileDir, "plan.json")
+	if _, err := os.Lstat(path); errors.Is(err, os.ErrNotExist) && m.MinReader < 3 {
+		return ValidateBinding(dir, m)
 	}
+	err := withWindowsProfileSnapshot(dir, func(read func(string, int64) ([]byte, error)) error {
+		raw, err := read(path, WindowsProfileBudget)
+		if err != nil {
+			return ErrMigration
+		}
+		plan, err := DecodeWindowsProfilePlan(raw)
+		if err != nil {
+			return ErrCorrupt
+		}
+		target, err := Decode([]byte(plan.TargetMarker))
+		if err != nil || target != m {
+			// The marker used by Check's reader/writer version gate must be
+			// the same marker proven by the pinned completion metadata.
+			return ErrCorrupt
+		}
+		if err := checkWindowsProfileCompletedRead(dir, raw, read); err != nil {
+			return err
+		}
+		// A freshly appeared active barrier must remain a hard stop. Holding
+		// metadata handles never grants ordinary consumers migration recovery.
+		return checkMigration(dir)
+	})
 	if err != nil {
-		return errors.Join(ErrMigration, ErrWindowsProfileMigration)
-	}
-	if err := CheckWindowsProfileCompleted(dir, raw); err != nil {
+		if errors.Is(err, ErrBinding) {
+			return err
+		}
 		return errors.Join(err, ErrWindowsProfileMigration)
+	}
+	return nil
+}
+
+func withWindowsProfileSnapshot(dir string, run func(func(string, int64) ([]byte, error)) error) error {
+	if runtime.GOOS != "windows" {
+		if err := privatefs.CheckDir(dir); err != nil {
+			return ErrCorrupt
+		}
+		return run(readWindowsProfileMetadata)
+	}
+	snapshot, err := privatefs.OpenReadSnapshot(dir)
+	if err != nil {
+		return ErrCorrupt
+	}
+	defer snapshot.Close()
+	read := func(path string, limit int64) ([]byte, error) {
+		rel, err := filepath.Rel(dir, path)
+		if err != nil {
+			return nil, ErrCorrupt
+		}
+		return snapshot.ReadFile(rel, limit)
+	}
+	if err := run(read); err != nil {
+		return err
+	}
+	if err := snapshot.Verify(); err != nil {
+		return ErrCorrupt
+	}
+	if err := snapshot.Close(); err != nil {
+		return ErrCorrupt
 	}
 	return nil
 }
