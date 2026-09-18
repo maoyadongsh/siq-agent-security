@@ -1,0 +1,294 @@
+{
+  "artifact_kind": "public evidence byte index; not a new product contract",
+  "assembled_at_utc": "2026-09-14T05:59:20.402451+00:00",
+  "base": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "final_tested_code_candidate": "2f84d5af6934f3cc17354107f66beae6dc8e1b59",
+  "r1_candidate": "59d757ae0b104f6d419a7220e64c520727d3c9a7",
+  "originals_modified": false,
+  "public_copy_byte_identity_checked": true,
+  "private_raw_artifacts_included": false,
+  "new_native_host_acceptance_passes": 0,
+  "payload_file_count": 55,
+  "nested_manifest_entries_matched": 49,
+  "relative_markdown_links_resolved": 24,
+  "self_excluded": true,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 1724,
+      "sha256": "7d7a3811151bdc3fdaae09b68b54bbebd61bcd66ecf08716effafd6f3ed1d532"
+    },
+    {
+      "path": "independent-review/manifest.json",
+      "bytes": 478,
+      "sha256": "3baafb9bf86ead1120f05aaa2e06ec522f5f730707009cd54c587fb762a42f7f"
+    },
+    {
+      "path": "independent-review/report.md",
+      "bytes": 2562,
+      "sha256": "0e27887ce6e6b04243ebdd424f29b058356de1007e8a8e548347697ee26098cd"
+    },
+    {
+      "path": "independent-review/review.json",
+      "bytes": 7132,
+      "sha256": "6e79b0607a1f5b80445033710dd4e5d9d9a0a3b0ef46dc7ce125b3962408a947"
+    },
+    {
+      "path": "module-r3/analysis.json",
+      "bytes": 56660,
+      "sha256": "ac0c39b83d8c25d756d1a6d454bce4c6a7a3c39b4af8a3a5a01265516da83354"
+    },
+    {
+      "path": "module-r3/change.patch",
+      "bytes": 4734,
+      "sha256": "d7fcad2bd7e496998898648fc8b7621c4c3dd9b2e0ea97e20b22a908ec1883cd"
+    },
+    {
+      "path": "module-r3/derive-public-results.py",
+      "bytes": 7698,
+      "sha256": "d447f85fc94ea0b89f432aecd294a2bcdd8c5dfa3d99be1a2aa81b0321240f7d"
+    },
+    {
+      "path": "module-r3/go-toolchain-build.txt",
+      "bytes": 239,
+      "sha256": "a07a630df62034048c92391786eaeaab9ee6447281ebccf91bf791a234fbd30a"
+    },
+    {
+      "path": "module-r3/manifest.json",
+      "bytes": 2562,
+      "sha256": "7322819b3e326438f608a5a9713f21642ab68fc9882d9cd9c269e990fba36b53"
+    },
+    {
+      "path": "module-r3/module-tests-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "module-r3/module-tests-summary.json",
+      "bytes": 268170,
+      "sha256": "a8f1d7fb600c656a2b024c41478f0519f05b1d4ec54013167f0c67e9c0e218fb"
+    },
+    {
+      "path": "module-r3/module-tests.jsonl",
+      "bytes": 1585317,
+      "sha256": "7d616fc573cc1bdb9c0d37c409c58fc2e10325cb9df587462975bca856ad5232"
+    },
+    {
+      "path": "module-r3/module-vet-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "module-r3/module-vet-summary.json",
+      "bytes": 1146,
+      "sha256": "6d002e3b83cc18224f7d4350a88d7e86551d4fad02ba196e32443e3d7ebfcb1c"
+    },
+    {
+      "path": "module-r3/module-vet.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "module-r3/process-observation.json",
+      "bytes": 669,
+      "sha256": "9bb3e5230d744144003945a276bda564f15ef88633afe863a59cba9f51bf8e84"
+    },
+    {
+      "path": "module-r3/report.md",
+      "bytes": 11533,
+      "sha256": "24ff5622bd45ae40b1d9a7572f678c77fa8a9fd259f148e196501d485f70ee25"
+    },
+    {
+      "path": "module-r3/run-windows-module-checks-r3.py",
+      "bytes": 15106,
+      "sha256": "9dd04aba515ec517f4754e5b370f6605bd159ec7ba57f0b6b4ebbb366bdb5902"
+    },
+    {
+      "path": "module-r3/summary.json",
+      "bytes": 305816,
+      "sha256": "976d7d4682befc6f020eeb68fb1b5c9f57b4dabb2a0447a7509db4e66f75f7d2"
+    },
+    {
+      "path": "module-r3/verification.json",
+      "bytes": 2597,
+      "sha256": "13b54b8b06d604f74aa7f943180a0501b064fad9cef80c659e4bd590d78a63c3"
+    },
+    {
+      "path": "r1/change.patch",
+      "bytes": 3128,
+      "sha256": "3031ab3f69156902474c29e19c9b15c16933859fb55c212738a24ecff9eaa419"
+    },
+    {
+      "path": "r1/focused-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r1/focused-summary.json",
+      "bytes": 2691,
+      "sha256": "7360c36cb1d4535f8de71ef995c516d1c3e999ca285cad7d337c0280173ad9fd"
+    },
+    {
+      "path": "r1/focused.jsonl",
+      "bytes": 8661,
+      "sha256": "0f4b3acec5caff2c8ad6cc347a6d6084f9f9ffe80cfea9e23be2c33733b6fb11"
+    },
+    {
+      "path": "r1/go-toolchain-build.txt",
+      "bytes": 239,
+      "sha256": "a07a630df62034048c92391786eaeaab9ee6447281ebccf91bf791a234fbd30a"
+    },
+    {
+      "path": "r1/manifest.json",
+      "bytes": 2652,
+      "sha256": "87d5dacf696ea50acc5367477905bdeda5ce2c9f9d671b7bbe356962b75cb2cd"
+    },
+    {
+      "path": "r1/package-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r1/package-summary.json",
+      "bytes": 17049,
+      "sha256": "cb1077b817eb7b543169e3d760f977b74d67a02dc93873c6f0ca6c328252f76d"
+    },
+    {
+      "path": "r1/package.jsonl",
+      "bytes": 129044,
+      "sha256": "5c6629d9b2cb8ddd901fd9fbd05fc5df90b1b63e7c0954f86e969c430b991bd1"
+    },
+    {
+      "path": "r1/process-observation.json",
+      "bytes": 398,
+      "sha256": "3f2b34f20d1e0462b5afe206cb00b23506a3464e11df1b500e86f02b9c005f10"
+    },
+    {
+      "path": "r1/report.md",
+      "bytes": 5920,
+      "sha256": "a277deb40f2ec9c595a8655c53f3562dd4e6904ec97a7fc030cc9c007ac5cfd5"
+    },
+    {
+      "path": "r1/run-hermes-installer-tests.py",
+      "bytes": 13498,
+      "sha256": "4d490aedf38d6c68c8a1d9bfabbc4db88f47472b63266125537d653446705bd1"
+    },
+    {
+      "path": "r1/summary.json",
+      "bytes": 26862,
+      "sha256": "386cb0494f8da2fe7474d7c3825764eb55ff086551213c1c7c6645f567b465fb"
+    },
+    {
+      "path": "r1/verification.json",
+      "bytes": 1312,
+      "sha256": "6aaba65bf536f83fbc3fc4da7365032a204dc5ba7e8b6234e4b5020753aec5ca"
+    },
+    {
+      "path": "r1/vet-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r1/vet-summary.json",
+      "bytes": 1159,
+      "sha256": "e23e29305ec8750def83ebd72daa84ac0f2464c7814c68668f361c065c84817b"
+    },
+    {
+      "path": "r1/vet.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r2/change.patch",
+      "bytes": 4734,
+      "sha256": "d7fcad2bd7e496998898648fc8b7621c4c3dd9b2e0ea97e20b22a908ec1883cd"
+    },
+    {
+      "path": "r2/focused-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r2/focused-summary.json",
+      "bytes": 2875,
+      "sha256": "d56d5a3789bad5cbd848199cff6961ccf322e9a3f3e4cf7a26840a2cd5f31850"
+    },
+    {
+      "path": "r2/focused.jsonl",
+      "bytes": 9691,
+      "sha256": "19b1d959bd5e055c0858dc9f078546869f1bc0c0ecd257848c0c63375ca6ce33"
+    },
+    {
+      "path": "r2/go-toolchain-build.txt",
+      "bytes": 239,
+      "sha256": "a07a630df62034048c92391786eaeaab9ee6447281ebccf91bf791a234fbd30a"
+    },
+    {
+      "path": "r2/manifest.json",
+      "bytes": 2674,
+      "sha256": "e7356634d9b63f87e12e655014118d520db5cfa076959a8aff6d57e77173161e"
+    },
+    {
+      "path": "r2/package-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r2/package-summary.json",
+      "bytes": 17041,
+      "sha256": "78ec009a7eac5fe3583430a88b4cd8d450deed8e7487f0ee8592e171d5e78e8b"
+    },
+    {
+      "path": "r2/package.jsonl",
+      "bytes": 128668,
+      "sha256": "549115ba6dd2ca23aa8221fa9bbe0eb61502c012e608aea24fae03df11ab8745"
+    },
+    {
+      "path": "r2/process-observation.json",
+      "bytes": 352,
+      "sha256": "5eabb4c632dbccf4cd2213a749936cb83a8f4883a32fff0c98ff083340c03a2e"
+    },
+    {
+      "path": "r2/report.md",
+      "bytes": 4754,
+      "sha256": "eaad35395cb62291b79bcd2069b9c6627bd57c612736cd641cd45a8fb815d1c5"
+    },
+    {
+      "path": "r2/run-hermes-installer-tests-r2.py",
+      "bytes": 13932,
+      "sha256": "fd3497e675a6c304eabe6a4202da7ecc3c11f9096ab9c9755dd5f7c8e4721b35"
+    },
+    {
+      "path": "r2/summary.json",
+      "bytes": 27348,
+      "sha256": "78d6c0ea66c29c2de960a340eebc3862fe76c1b54068bdbce892df30dd25d5fb"
+    },
+    {
+      "path": "r2/verification.json",
+      "bytes": 1230,
+      "sha256": "f1afdbe4623fc6e34e10f96873f840e4a93b4bdb81cb8598e23a0068ebab4f8a"
+    },
+    {
+      "path": "r2/vet-non-json.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "r2/vet-summary.json",
+      "bytes": 1159,
+      "sha256": "a4dae72d88c229883a67aa54f5866e4464ea0dc34b2fa0e798e20a79e975f49e"
+    },
+    {
+      "path": "r2/vet.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "report.md",
+      "bytes": 5324,
+      "sha256": "59119c464ea2dd173001356b91253e54e7abde602f61bee46fafcda9df249c4c"
+    }
+  ],
+  "frozen_patch_git_diff_byte_identity_checked": true,
+  "whitespace_exception_scope": "Only three change.patch files permit their original unified-diff context space; production Go formatting remains checked separately."
+}
