@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Private untrusted correlation hints, not Authority. Parser additionally enforces UTF-8 byte limits, recursive duplicate rejection, depth 64 and 16 KiB. No params, result, token or signing key.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "scope_digest", "effect_digest", "session_id", "agent_id", "tool", "tool_call_id", "params_digest", "created_at", "expires_at"],
+  "properties": {
+    "schema_version": {"const": "workbuddy-hook-correlation/v1"},
+    "kind": {"enum": ["pre", "decision", "consume", "post", "complete", "terminal"]},
+    "scope_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "effect_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "session_id": {"type": "string", "pattern": "^workbuddy-session/v1:[a-f0-9]{64}$"},
+    "agent_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "tool": {"type": "string", "minLength": 1, "maxLength": 256},
+    "tool_call_id": {"type": "string", "pattern": "^workbuddy-call/v1:[a-f0-9]{64}$"},
+    "params_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "outcome": {"enum": ["allow", "deny", "hold", "reserved", "blocked"]},
+    "action_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "decision_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "original_tool_call_id": {"type": "string", "pattern": "^workbuddy-call/v1:[a-f0-9]{64}$"},
+    "original_decision_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "task_id": {"type": "string", "maxLength": 256},
+    "runtime_task_id": {"type": "string", "maxLength": 256}
+  },
+  "allOf": [
+    {"if": {"properties": {"kind": {"const": "decision"}}, "required": ["kind"]}, "then": {"required": ["outcome"]}},
+    {"if": {"properties": {"outcome": {"enum": ["allow", "hold", "reserved"]}}, "required": ["outcome"]}, "then": {"required": ["action_id", "decision_receipt_id"]}},
+    {"if": {"properties": {"outcome": {"const": "reserved"}}, "required": ["outcome"]}, "then": {"required": ["original_tool_call_id", "original_decision_receipt_id"]}}
+  ]
+}
