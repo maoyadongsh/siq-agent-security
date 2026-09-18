@@ -1,0 +1,268 @@
+{
+  "counting_rule": "Unique (Package, Test), only Action=pass and no slash in Test; subtests/package summaries excluded; cross-development-run union, not a single candidate or package-wide pass",
+  "unique_completed_passes": 20,
+  "by_package": {
+    "grant": 2,
+    "skillinstall": 8,
+    "skillcontext": 2,
+    "inventory": 2,
+    "server": 6
+  },
+  "new_unique_passes_by_round": {
+    "1": 2,
+    "2": 7,
+    "3": 11
+  },
+  "passes": [
+    {
+      "round": 1,
+      "log": "logs/go/r1/imported-windows-profile.stdout.log",
+      "line": 17,
+      "package": "siq-agent-security/apps/agentshield/internal/grant",
+      "test": "TestWindowsImportedSkillProfileRetainsSourceAndAttribution",
+      "action": "pass"
+    },
+    {
+      "round": 1,
+      "log": "logs/go/r1/imported-windows-profile.stdout.log",
+      "line": 49,
+      "package": "siq-agent-security/apps/agentshield/internal/grant",
+      "test": "TestWindowsImportedSkillProfileRejectsMissingOrForeignIdentity",
+      "action": "pass"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 24,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestWorkBuddyV2TargetLocatorUsesCanonicalWindowsPath",
+      "action": "pass"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 28,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestWorkBuddyV2CannotUseLegacyResolverOrVersion",
+      "action": "pass"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 40,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestWorkBuddyV2InstallUpdateRemoveBothScopes",
+      "action": "pass"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 147,
+      "package": "siq-agent-security/apps/agentshield/internal/skillcontext",
+      "test": "TestWorkBuddyV2InstallSupportsControlledSessionSEC",
+      "action": "pass"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 171,
+      "package": "siq-agent-security/apps/agentshield/internal/skillcontext",
+      "test": "TestWorkBuddyV2InstallSECRejectsMixedOrMissingTarget",
+      "action": "pass"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 185,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 205,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryDoesNotPromoteTransientOrDisabledRoots",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/canonical-contract-vectors.stdout.log",
+      "line": 17,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestWorkBuddyV2CanonicalContractVectors",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/scoped-installation-negative-recovery.stdout.log",
+      "line": 13,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestWorkBuddyV2ExistingParentsAndUnrecordedCreation",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/scoped-installation-negative-recovery.stdout.log",
+      "line": 25,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestWorkBuddyV2ParentReplacementAndMissingFactDeny",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/scoped-installation-negative-recovery.stdout.log",
+      "line": 29,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestWorkBuddyV2RecoveryUsesSignedParentFactsAfterReload",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/scoped-installation-negative-recovery.stdout.log",
+      "line": 49,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestWorkBuddyV2RechecksRootBeforeNextPublishOrDelete",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/server-scoped-installation.stdout.log",
+      "line": 13,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestImportedResourceEditsRecheckSourceWithoutMutation",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/server-scoped-installation.stdout.log",
+      "line": 33,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestImportedGrantSkillReferenceMustMatchSignedAdmission",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/server-scoped-installation.stdout.log",
+      "line": 59,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestWorkBuddyImportedSkillPermissionAndTargetPlanV2",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/server-scoped-installation.stdout.log",
+      "line": 103,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestSkillInstallStageRequestVersionBoundary",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/server-scoped-installation.stdout.log",
+      "line": 107,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestWorkBuddySkillTargetsAreReadOnlyAndInstanceBound",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/server-scoped-installation.stdout.log",
+      "line": 111,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestWorkBuddySkillTargetsRecheckParentsAndNeverFallback",
+      "action": "pass"
+    }
+  ],
+  "observed_top_level_nonpasses": [
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 20,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestWorkBuddyV2CanonicalContractVectors",
+      "action": "fail"
+    }
+  ],
+  "package_outcomes": [
+    {
+      "round": 1,
+      "log": "logs/go/r1/imported-windows-profile.stdout.log",
+      "line": 52,
+      "package": "siq-agent-security/apps/agentshield/internal/grant",
+      "test": "",
+      "action": "pass"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 134,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "",
+      "action": "fail"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 174,
+      "package": "siq-agent-security/apps/agentshield/internal/skillcontext",
+      "test": "",
+      "action": "pass"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 177,
+      "package": null,
+      "test": "",
+      "action": "build-fail"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 180,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "",
+      "action": "fail"
+    },
+    {
+      "round": 2,
+      "log": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "line": 208,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/canonical-contract-vectors.stdout.log",
+      "line": 20,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/scoped-installation-negative-recovery.stdout.log",
+      "line": 52,
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "",
+      "action": "pass"
+    },
+    {
+      "round": 3,
+      "log": "logs/go/r3/server-scoped-installation.stdout.log",
+      "line": 114,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "",
+      "action": "pass"
+    }
+  ],
+  "r2_reused_scope": [
+    "dual user/project installation-update-removal",
+    "controlled_session SEC",
+    "inventory"
+  ],
+  "reuse_basis": "Original r2 PASS events plus implementation-owner handoff that the passing implementations were not changed by the r3 helper/cast/budget corrections. No per-file r2 source snapshot is asserted; r3 did not rerun these passing cases."
+}

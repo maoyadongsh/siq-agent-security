@@ -1,0 +1,19 @@
+{
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/local/workbuddySkillInstall.test.ts",
+    "src/local/skillInstall.test.ts",
+    "src/local/skillInspection.test.ts",
+    "src/local/skillRemoval.test.ts",
+    "src/local/skillRuntime.test.ts",
+    "src/local/skillUpdate.test.ts",
+    "src/local/importPermissions.test.ts",
+    "src/local/filesystemProfile.test.ts",
+    "--maxWorkers=2"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 8.327,
+  "output_log": "vitest-r2.log"
+}

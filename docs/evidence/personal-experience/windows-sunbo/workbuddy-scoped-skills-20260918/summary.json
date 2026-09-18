@@ -1,0 +1,62 @@
+{
+  "schema_version": "workbuddy-scoped-skills-development-evidence/v1",
+  "date": "2026-09-18",
+  "evidence_kind": "development checks; scoped Windows WorkBuddy Skill implementation",
+  "implementation_commit_references": {
+    "spec": "773279b414df0e981af70b3c5eeb61d7fb563192",
+    "contracts": "aa5ddef2afa07b66e25455847b2093ea48ff51d8",
+    "go_implementation": "2285309e7a035b1e8c4ea70ee15530c57a942d61",
+    "web_and_embed": "1122cf49534eed6e15af6da337031bc3f58aebdf"
+  },
+  "all_checks_source_dirty": true,
+  "commit_claim": "Implementation references were recorded after the development checks; no clean candidate execution is asserted",
+  "go_unique_top_level_completed": 20,
+  "go_by_package": {
+    "grant": 2,
+    "skillinstall": 8,
+    "skillcontext": 2,
+    "inventory": 2,
+    "server": 6
+  },
+  "go_round_results": {
+    "r1": "pass (2 grant cases + 22 contract checks)",
+    "r2": "fail; canonical fixture helper mismatch, server build/vet type error and 180-second package timeout; 7 top-level passes retained",
+    "r3": "pass for corrected canonical vectors, 6 server cases, 4 negative/recovery cases and five-package targeted vet"
+  },
+  "contract_checks": 22,
+  "web": {
+    "typecheck_exit_code": 0,
+    "targeted_test_files": 8,
+    "targeted_tests": 53,
+    "full_test_files": 30,
+    "full_tests": 217,
+    "enterprise_build_exit_code": 0,
+    "local_build_exit_code": 0,
+    "build_source_inputs_unchanged": true,
+    "build_source_inputs": 144,
+    "embedded_files": 214,
+    "counting_note": "Targeted 53 are included in full 217, not added; builds/typecheck are separate checks"
+  },
+  "ledger_303": {
+    "changed": false,
+    "new_passes_claimed": 0
+  },
+  "not_covered": [
+    "interactive browser flows",
+    "native WorkBuddy desktop or model execution",
+    "native user/project Skill loading or priority/cache evidence",
+    "full three-host journey",
+    "final clean-source full Go suite",
+    "final four-target Go builds",
+    "formal release signing or external acceptance"
+  ],
+  "build_orchestration": {
+    "enterprise_product_build_succeeded_before_error": true,
+    "gbk_console_print_error": true,
+    "enterprise_repeated": false,
+    "local_resumed_once": true,
+    "original_python_trace": "Only returned by tool; not separately saved as a raw log. Contemporaneous orchestration-resume.json is preserved without inventing a raw trace."
+  },
+  "raw_log_policy": "Original local files untouched; included public text is redacted and LF normalized; raw and public hashes are separate in provenance.json; empty streams and identical duplicate input manifests are omitted with digests",
+  "source_hash_capture": "source-after-checks.json is explicitly after-checks"
+}

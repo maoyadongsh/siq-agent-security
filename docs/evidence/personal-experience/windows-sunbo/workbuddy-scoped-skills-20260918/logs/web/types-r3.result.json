@@ -1,0 +1,12 @@
+{
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--incremental",
+    "false"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 11.483,
+  "output_log": "types-r3.log"
+}

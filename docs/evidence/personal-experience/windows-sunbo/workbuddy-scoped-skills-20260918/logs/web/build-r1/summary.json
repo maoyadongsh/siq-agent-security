@@ -1,0 +1,69 @@
+{
+  "builds": [
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "run",
+        "build"
+      ],
+      "cwd": "apps/web",
+      "env_overrides": {
+        "VITE_APP": null
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 24.384,
+      "stdout": "enterprise.stdout.log",
+      "stderr": "enterprise.stderr.log"
+    },
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "run",
+        "build:local"
+      ],
+      "cwd": "apps/web",
+      "env_overrides": {
+        "VITE_APP": null
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 25.079,
+      "stdout": "local.stdout.log",
+      "stderr": "local.stderr.log"
+    }
+  ],
+  "source_inputs_unchanged": true,
+  "source_input_count": 144,
+  "not_clean_final_candidate": true,
+  "native_execution": false,
+  "orchestration_resume": "orchestration-resume.json",
+  "embedded_file_count": 214,
+  "generated_changes": {
+    "added": [
+      "apps/agentshield/internal/ui/embedded/assets/DemoPage-CR2uxzEn.js",
+      "apps/agentshield/internal/ui/embedded/assets/InstalledSkillsPage-DkU8EZ0H.js",
+      "apps/agentshield/internal/ui/embedded/assets/SkillImportsPage-Ci07549q.js",
+      "apps/agentshield/internal/ui/embedded/assets/SkillUpdatesPage-PSdT0Zyq.js",
+      "apps/agentshield/internal/ui/embedded/assets/TaskActivitiesPage-BFzdHCWy.js",
+      "apps/agentshield/internal/ui/embedded/assets/TaskActivityDetailPage-BpDX_dui.js",
+      "apps/agentshield/internal/ui/embedded/assets/index.local-DmDqH_Ou.js"
+    ],
+    "deleted": [
+      "apps/agentshield/internal/ui/embedded/assets/DemoPage-FYq9mp72.js",
+      "apps/agentshield/internal/ui/embedded/assets/InstalledSkillsPage-DuBQJbfd.js",
+      "apps/agentshield/internal/ui/embedded/assets/SkillImportsPage-DZLb3iBT.js",
+      "apps/agentshield/internal/ui/embedded/assets/SkillUpdatesPage-9JiUrkbk.js",
+      "apps/agentshield/internal/ui/embedded/assets/TaskActivitiesPage-Cl5WLqV1.js",
+      "apps/agentshield/internal/ui/embedded/assets/TaskActivityDetailPage-CQG53wUm.js",
+      "apps/agentshield/internal/ui/embedded/assets/index.local-Df87a7St.js"
+    ],
+    "modified": [
+      "apps/agentshield/internal/ui/embedded/index.html"
+    ]
+  },
+  "tracked_generated_roots": [
+    "apps/agentshield/internal/ui/embedded"
+  ],
+  "ignored_generated_roots": [
+    "apps/web/dist"
+  ]
+}
