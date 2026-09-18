@@ -173,8 +173,9 @@ func TestWinTaskSwitchNative(t *testing.T) {
 		}
 	}
 	rejected.Env = append(rejected.Env, product.EnvStateDir+"="+st.Dir)
-	if err = rejected.Run(); err == nil {
-		t.Fatal("production CLI accepted fixture issuer")
+	rejection, err := rejected.CombinedOutput()
+	if err == nil || !strings.Contains(string(rejection), "skillmanifest: untrusted signing identity") {
+		t.Fatal("production CLI did not reject the fixture signing identity", err)
 	}
 	if err = readyOld(); err != nil {
 		t.Fatal("rejected candidate interrupted source", err)
