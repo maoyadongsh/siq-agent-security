@@ -4,6 +4,7 @@
 
 - 旧 Grant 打开编辑器时保留原 POSIX 解释，不根据浏览器系统、宿主名称或输入路径自动升级。仅支持的 managed 实例授权显示 Windows 本地盘符解释选项；选择后还需明确确认，才发送 grant-resource-edit/v2 和 confirm_filesystem_profile=true。保存仅产生 pending 修订，批准仍是后续独立操作。
 - 已签入 Windows 解释的 Grant 显示其 profile，不能在编辑器切回旧解释；未知/不完整的版本与 profile 组合不能编辑或用于身份签发。Windows 路径按换行分项，只忽略完全空行，保留前后空格、反斜杠、大小写和 Unicode；只读快捷操作同样不 trim 路径。后端决定路径是否合法，UI 不悄悄修正尾点、尾空格等别名。
+- 合法输入如 `c:\Users\me\reports` 由明确选择 Windows profile 的后端资源编辑入口规范为 `C:/Users/me/reports` 后签入新 pending 修订；界面继续原样提交输入。后端仅允许盘符大小写和分隔符转换，并在转换后检查每个列表的重复范围；保留组件大小写、Unicode 序列及所有非法路径拒绝边界。保存后展示后端返回的新范围，原签名历史不改写，旧 POSIX 路径不自动转换。
 - Runtime Identity v1/v2 摘要可在列表中混合显示；新身份的 Windows 解释另有人工确认，确认绑定所选实例、Grant 及 revision。刷新、换授权或权限变化后需要重新确认。只有新 Grant、有效确认和 create/v2 共同出现才发送 confirm_filesystem_profile=true，不通过旧 create/v1 降级。
 - Scope 摘要和现有身份显示所使用的文件路径解释。批准或身份签发仍不等于真实宿主加载、实际保护或 OS 沙箱。
 - 未完成状态升级时显示后端固定错误的诊断提示，引导先查看 state-status 和保留状态；界面不执行升级、提权、重启或绕过兼容屏障。其他权限或资源错误不能伪装成状态升级问题。

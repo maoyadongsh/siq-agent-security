@@ -44,6 +44,8 @@ Windows 首版规则：
 - 多个 path/file_path 字段必须全部合法；错误时不产生 partial refs。等价分隔符/盘符拼写可归一为同一资源，但原始 params_digest 不因此相等。
 - 新 Windows 描述器在 ResourceError 时清空 legacy Paths hints，裁决链必须直接拒绝，不能使用旧提示路径降级匹配。旧 Describe 的 POSIX hints 行为保持不变。
 
+资源编辑接收的是未签输入，不能将已签事实的 canonical 要求提前用于拒绝合法 Windows 拼写。仅在显式确认的 `grant-resource-edit/v2` 转换或已绑定 Windows profile 的 pending 资源编辑中，后端复用 `NormalizeResourceForProfile`：接受合法大小写盘符及 `/`、`\` 分隔符，只将盘符大写、分隔符转 `/`，再生成新事实和文件身份绑定。每个只读/读写列表须在规范化后再次检查重复；同一目录的等价盘符或分隔符拼写不能形成重复范围。对输入的处理不得改写调用者的原始列表或历史 Grant。尾点、尾空格、导航、UNC/设备/ADS、非法 UTF-8、超长及其他既有拒绝边界不变，不做 trim、clean、组件大小写折叠或 Unicode 归一化。旧 POSIX 编辑语义不变；已签 Grant 的 `ValidateFilesystemProfile` 仍要求事实已是 canonical，不得在验签、历史读回或权限行使时修正已签内容。
+
 词法结果不是文件身份结论，不访问文件系统，不证明路径在本地卷、大小写实际拼写、8.3/SUBST/映射盘、reparse/junction/hardlink 或检查后替换安全。当前 b303 fileopen 的 Windows fallback 只是 os.Open，不能当作已实现的事实层。
 
 ## 后续生产接通门槛

@@ -76,8 +76,16 @@ func editResources(g Grant, input ResourceEdit, key *signing.Key) (Grant, Desire
 			}
 		}
 	}
+	// Resource input is unsigned. Canonicalize only the explicitly selected
+	// Windows profile, without modifying the caller's slices or signed history.
+	windows := g.SchemaVersion == "grant/v2" && g.FilesystemProfile == string(runtimeaction.FilesystemWindowsLocalDriveV1)
+	if windows {
+		input.Filesystem.ReadOnly = append([]string{}, input.Filesystem.ReadOnly...)
+		input.Filesystem.ReadWrite = append([]string{}, input.Filesystem.ReadWrite...)
+	}
 	for _, values := range [][]string{input.Filesystem.ReadOnly, input.Filesystem.ReadWrite} {
-		for _, value := range values {
+		seen := map[string]bool{}
+		for i, value := range values {
 			var normalized string
 			var err error
 			if g.SchemaVersion == "grant/v2" {
@@ -85,13 +93,17 @@ func editResources(g Grant, input ResourceEdit, key *signing.Key) (Grant, Desire
 			} else {
 				normalized, err = runtimeaction.NormalizeResource("filesystem", value)
 			}
-			if err != nil || normalized != value || utf8.RuneCountInString(value) > 4096 {
+			if err != nil || (!windows && normalized != value) || seen[normalized] || utf8.RuneCountInString(value) > 4096 {
 				return g, nil, ErrResourcesInvalid
 			}
 			for _, r := range value {
 				if r < 32 || r == 127 {
 					return g, nil, ErrResourcesInvalid
 				}
+			}
+			seen[normalized] = true
+			if windows {
+				values[i] = normalized
 			}
 		}
 	}
