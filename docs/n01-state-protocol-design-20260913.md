@@ -68,3 +68,5 @@ Windows Grant v2 / Runtime Identity v2 / Intent v4 必须在旧消费者拒绝�
 显式入口为 `state-enable-windows-resources --confirm`；无确认/多余参数在访问状态前拒绝。`state-status` 对中断启用给出此恢复命令，损坏记录保持拒绝。命令返回 local-state-windows-profile-result/v1，仅表示兼容元数据 activated/up_to_date，不表示批准或启用某个宿主。发行清单的 reader/writer 声明随实现提升到3，已有清单不改写；旧最低版本2制品对升级状态的发行预检拒绝。
 
 完成后仍核验 prepared.json 的计划摘要；缺失、篡改或宽 ACL 不自动修复。活动屏障即使已有 done 也始终拒绝普通入口，只由显式启用命令完成清理。普通 state-migrate 在取锁前识别新版屏障并返回专属恢复指引。Windows 新增元数据读沿已有 privatefs 核查目录 DACL、单链接及文件 DACL，状态兼容层仍不依赖业务存储，也不经过会拒绝活动屏障的 statefs。
+
+目标标记已经发布时，恢复预检必须同时核验已有归档计划及 prepared 证明；缺失或损坏时不得补造归档、追加 done 或删除活动屏障。只有源标记仍在的正常前期检查点允许首次发布这些材料。

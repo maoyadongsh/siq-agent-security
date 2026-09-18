@@ -197,6 +197,33 @@ func TestWindowsProfileCompletedMetadataCannotBeSubstituted(t *testing.T) {
 	}
 }
 
+func TestWindowsProfilePublishedMarkerRequiresOriginalPreparation(t *testing.T) {
+	for _, name := range []string{"plan.json", "prepared.json"} {
+		t.Run(name, func(t *testing.T) {
+			s := windowsProfileFixture(t)
+			_, err := s.activateWindowsProfile(true, "test", func(at string) error {
+				if at == "marker" {
+					return errors.New("stop after marker")
+				}
+				return nil
+			})
+			if err == nil {
+				t.Fatal("marker checkpoint not reached")
+			}
+			if err := os.Remove(filepath.Join(s.Dir, stateformat.WindowsProfileDir, name)); err != nil {
+				t.Fatal(err)
+			}
+			before := treeSnapshot(t, s.Dir)
+			if _, err := s.ActivateWindowsProfile(true, "retry"); err == nil {
+				t.Fatal("lost preparation was reconstructed")
+			}
+			if !reflect.DeepEqual(before, treeSnapshot(t, s.Dir)) {
+				t.Fatal("rejected preparation loss changed state")
+			}
+		})
+	}
+}
+
 func TestWindowsProfileProcessDeathHelper(t *testing.T) {
 	dir := os.Getenv("SIQ_TEST_PROFILE_CRASH_DIR")
 	point := os.Getenv("SIQ_TEST_PROFILE_CRASH_POINT")

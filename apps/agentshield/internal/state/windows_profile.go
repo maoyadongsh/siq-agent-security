@@ -233,22 +233,32 @@ func (s *Store) activateWindowsProfile(confirm bool, version string, fault func(
 func validateWindowsProfileLive(dir string, raw []byte, p stateformat.WindowsProfilePlan) error {
 	current, err := migrationReadRegular(filepath.Join(dir, stateformat.MarkerName), stateformat.Budget)
 	if err == nil {
-		if string(current) == p.SourceMarker || string(current) == p.TargetMarker {
+		if string(current) == p.SourceMarker {
 			return nil
 		}
-		return ErrWindowsProfileActivation
+		if string(current) != p.TargetMarker {
+			return ErrWindowsProfileActivation
+		}
 	}
-	if !errors.Is(err, os.ErrNotExist) {
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
 		return err
 	}
 	journal := filepath.Join(dir, stateformat.WindowsProfileDir)
 	archived, ae := migrationReadRegular(filepath.Join(journal, "plan.json"), stateformat.WindowsProfileBudget)
 	prepared, pe := migrationReadRegular(filepath.Join(journal, "prepared.json"), stateformat.Budget)
-	target, te := migrationReadRegular(filepath.Join(journal, "target.json"), stateformat.Budget)
 	var proof struct {
 		Plan string `json:"plan_sha256"`
 	}
-	if ae != nil || pe != nil || te != nil || !bytes.Equal(archived, raw) || stateformat.DecodeObject(prepared, []string{"plan_sha256"}, &proof) != nil || proof.Plan != stateformat.Hash(raw) || string(target) != p.TargetMarker {
+	if ae != nil || pe != nil || !bytes.Equal(archived, raw) || stateformat.DecodeObject(prepared, []string{"plan_sha256"}, &proof) != nil || proof.Plan != stateformat.Hash(raw) {
+		return ErrWindowsProfileActivation
+	}
+	// Once the target is live, its archived preparation must already exist.
+	// Reconstructing either record would hide loss of immutable history.
+	if err == nil {
+		return nil
+	}
+	target, te := migrationReadRegular(filepath.Join(journal, "target.json"), stateformat.Budget)
+	if te != nil || string(target) != p.TargetMarker {
 		return ErrWindowsProfileActivation
 	}
 	return nil
