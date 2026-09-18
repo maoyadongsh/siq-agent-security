@@ -10,6 +10,12 @@
 
 新增 `grant/v2` wire 身份及 `grant.v2.schema.json`，明确签入 filesystem_profile。新字段只进入新的授权，不向旧 Grant 注入默认值。权限摘要使用 `grant-permissions/v2` 域；旧摘要公式不变。新 identity 只能绑定已经明确批准、版本/摘要匹配的新 Grant。
 
+2026-09-18 Grant 接续：新版另必需签入 `filesystem_bindings`，为每个非通配 filesystem fact ID 到现场身份 SHA-256 的完整映射；没有 filesystem fact 时是空对象。摘要前像为 canonical JSON 数组 `["windows-resource-identity/v1", canonical_path, native_device, exists, objects]`，objects 从卷根到目标逐级按 `[volume_serial, file_index_high, file_index_low, creation_time_high, creation_time_low, is_directory]` 排列。只有实际存在并完整核验的普通目录/文件可作授权边界；`*` 仅可作为 deny，保留而不进行文件身份绑定。未知操作、别名、缺失路径、重复 fact ID 或缺少/多余绑定拒绝。绑定本身不证明权限已批准。
+
+仅针对已验签的 pending_approval managed baseline（Hermes/OpenClaw agent_instance）生成新版待批准资源草稿，必须显式确认新解释。旧签名 Grant 不原地升级；返回新修订待批准对象，原对象字节保持。原有 deny、审批条件、期限和场景边界保留，无法解释的旧路径限制拒绝转换，不能悄悄删除。pending 资源编辑重新生成精确事实绑定并改变权限摘要，使旧挑战失效。Approve 必须验签并重新核对所有绑定；批准后文件范围不可自动重绑定。拒绝/撤销仍可在目标消失后执行，不能因文件缺失阻止撤权。
+
+新字段在旧 Grant 中必须完全省略，旧签名向量及 grant-permissions/v1 摘要逐字节不变。新版 Verify 校验版本/绑定结构后验签；历史读回不依赖资源仍存在，现场核验是批准/行使权限时的独立步骤。任何新版本 Grant 持久化前必须有明确旧消费者读写屏障；当前默认 reader/writer 2 状态不得写入新 Grant。先完成该屏障与身份/裁决全链，再开放 HTTP/CLI 新版创建入口。
+
 `grant-permissions/v2` 的摘要前像为完整新 Grant 的 canonical JSON 投影：仅删除顶层 status、effective_readback、signature、signing_schema；facts 中 tool 的 declared/effective 状态统一为 runtime_eligible，其他域删除 state；所有 facts 删除 authority、authority_revision、readback_evidence_id；保留其余字段，特别是 schema_version 与 filesystem_profile，再加入 digest_schema=`grant-permissions/v2`，最后计算 SHA-256。该投影复用旧 v1 的排除规则，但域标记和新增签名字段显式属于 v2；旧 v1 前像和摘要完全不变。新 Grant Schema 只检查外形，路径合法性、profile语义、allow/deny与实际文件身份必须在签发层及裁决层分别验证，不能以 Schema pass 代替。
 
 新增 `local-runtime-identity/v2`、create/v2、issued/v2；签名记录/返回视图含 filesystem_profile，其 grant_ref 明确 `permission_digest_schema=grant-permissions/v2`。create/v2 要求 `confirm_filesystem_profile=true`，但不接收可由请求自选的 profile 值；服务从已验签新 Grant 与可信实例来源派生，确认只表示用户明确接受展示的范围。当前首片仅支持 Windows 本地盘符解释。旧 identity/session 不升级；新版本恢复中断时复验完整同一解释、Grant/会话绑定和期限。

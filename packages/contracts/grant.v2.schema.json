@@ -18,7 +18,8 @@
     "signature",
     "signing_schema",
     "schema_version",
-    "filesystem_profile"
+    "filesystem_profile",
+    "filesystem_bindings"
   ],
   "additionalProperties": false,
   "properties": {
@@ -454,6 +455,15 @@
     },
     "filesystem_profile": {
       "const": "windows-local-drive/v1"
+    },
+    "filesystem_bindings": {
+      "type": "object",
+      "maxProperties": 128,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "description": "Signed live identity digest per non-wildcard filesystem fact ID; full fact mapping and live revalidation are checked by the implementation, not Schema."
     }
   },
   "allOf": [

@@ -42,7 +42,7 @@ def _candidate(kind: str) -> dict:
         return value
     if kind == "grant.v2":
         value = _read("grant.pending.sample.json")
-        value.update(schema_version="grant/v2", filesystem_profile=PROFILE)
+        value.update(schema_version="grant/v2", filesystem_profile=PROFILE, filesystem_bindings={})
         return value
     if kind == "local-runtime-identity-create.v2":
         value = _read("local-runtime-identity-create.json")
