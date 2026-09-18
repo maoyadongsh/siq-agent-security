@@ -27,7 +27,7 @@ func TestWorkBuddyManagedRepairRestoresCoverageWithoutChangingUserHooks(t *testi
 	got := upsertWorkBuddyManagedHook(original, command, o, "old-siq")
 	want := []any{
 		map[string]any{"matcher": "Read", "metadata": "user value", "hooks": []any{user, foreign}},
-		map[string]any{"matcher": ".*", "hooks": []any{map[string]any{"type": "command", "command": command, "timeout": 30}}},
+		map[string]any{"matcher": ".*", "hooks": []any{map[string]any{"type": "command", "command": command, "timeout": 75}}},
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("repair must preserve user scope and replace all owned hooks: %#v", got)

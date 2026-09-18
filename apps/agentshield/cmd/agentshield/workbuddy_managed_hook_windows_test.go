@@ -100,7 +100,7 @@ func TestWorkBuddyManagedHTTPEnrolledDecideObserve(t *testing.T) {
 			t.Error("wrong session")
 		}
 		if r.URL.Path == "/v1/runtime-sessions" {
-			time.Sleep(4200 * time.Millisecond) // Real Windows persistence can exceed the former four-second budget.
+			time.Sleep(21 * time.Second) // Installed Skill validation can exceed the former shared twenty-second budget.
 			_ = json.NewEncoder(w).Encode(map[string]any{"schema_version": "local-runtime-session-enrolled/v2", "identity_id": cfg.RuntimeIdentityID, "platform": "workbuddy", "agent_id": cfg.AgentID, "session_id": session, "binding_id": "ib-fixture", "intent_id": "int-fixture", "expires_at": time.Now().Add(time.Hour).UTC().Format(time.RFC3339)})
 			return
 		}
@@ -225,7 +225,14 @@ func TestWorkBuddyManagedHTTPBudgetDoesNotResetAfterEnroll(t *testing.T) {
 		}
 	})
 	start := time.Now()
-	got := runManagedWorkBuddy(t, cfg, path, managedWorkBuddyInput)
+	var out bytes.Buffer
+	if err := runWorkBuddyManagedHookWithBudget(path, cfg.StateDir, strings.NewReader(managedWorkBuddyInput), &out, 20*time.Second); err != nil {
+		t.Fatal(err)
+	}
+	var got adapters.CodeBuddyOutput
+	if err := json.Unmarshal(out.Bytes(), &got); err != nil {
+		t.Fatal(err)
+	}
 	elapsed := time.Since(start)
 	if got.HookSpecificOutput.PermissionDecision != "deny" || elapsed > 23*time.Second || elapsed < 19*time.Second {
 		t.Fatalf("budget changed: %v %+v", elapsed, got)

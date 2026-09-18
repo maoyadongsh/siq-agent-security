@@ -485,7 +485,6 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 405, map[string]any{"error": "POST required"})
 		return
 	}
-	s.promotePendingBestEffort()
 	var req receipt.Request
 	if err := readJSON(r, &req, 4<<20); err != nil || req.Tool == "" || req.SessionID == "" || req.Platform == "" {
 		writeJSON(w, 400, map[string]any{"error": "invalid request: platform, session_id and tool are required"})
@@ -495,6 +494,10 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 400, map[string]string{"error": "inline_intent_rejected", "reason_code": "inline_intent_rejected"})
 		return
 	}
+	if req.Platform == "workbuddy" && !workBuddyRuntimeResponseReady(w, r) {
+		return
+	}
+	s.promotePendingBestEffort()
 	d, err := s.d.Engine.Decide(req)
 	if err != nil {
 		if errors.Is(err, receipt.ErrSessionCapacity) || errors.Is(err, receipt.ErrActionCapacity) {
@@ -559,6 +562,9 @@ func (s *Server) observe(w http.ResponseWriter, r *http.Request) {
 	}
 	if len(body.Result) > 64<<10 {
 		writeJSON(w, 413, map[string]string{"error": "observation_result_too_large"})
+		return
+	}
+	if body.Platform == "workbuddy" && !workBuddyRuntimeResponseReady(w, r) {
 		return
 	}
 	rec, err := s.d.Engine.Observe(body.Request, body.Result)

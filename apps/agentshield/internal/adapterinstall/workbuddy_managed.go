@@ -145,7 +145,7 @@ func upsertWorkBuddyManagedHook(existing any, command string, o Options, recorde
 	// Rebuild exactly one owned synchronous hook. Reusing its old group can
 	// preserve a restricted matcher or async execution and defeat repair.
 	return append(kept, map[string]any{"matcher": ".*", "hooks": []any{
-		map[string]any{"type": "command", "command": command, "timeout": 30},
+		map[string]any{"type": "command", "command": command, "timeout": 75},
 	}})
 }
 

@@ -160,6 +160,10 @@ func runWorkBuddySelectedHook(configPath string, explicit bool, in io.Reader, ou
 }
 
 func runWorkBuddyManagedHook(configPath, dir string, in io.Reader, out io.Writer) error {
+	return runWorkBuddyManagedHookWithBudget(configPath, dir, in, out, 60*time.Second)
+}
+
+func runWorkBuddyManagedHookWithBudget(configPath, dir string, in io.Reader, out io.Writer, budget time.Duration) error {
 	if !filepath.IsAbs(configPath) || filepath.Clean(configPath) != configPath || filepath.Base(configPath) != "siq-agent-security.json" {
 		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedHook(in, nil, "", "block", dir))
 	}
@@ -176,12 +180,12 @@ func runWorkBuddyManagedHook(configPath, dir string, in io.Reader, out io.Writer
 		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedHook(in, nil, "", cfg.EnforcementMode, dir))
 	}
 	// One deadline bounds enroll + decide together; retries do not renew the Windows I/O budget.
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), budget)
 	defer cancel()
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	transport.Proxy = nil
 	defer transport.CloseIdleConnections()
-	client := &http.Client{Timeout: 20 * time.Second, Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	client := &http.Client{Timeout: budget, Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
 	d := &workBuddyManagedClient{config: cfg, token: token, client: client, ctx: ctx}
 	return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedHook(in, d, cfg.AgentID, cfg.EnforcementMode, dir))
 }

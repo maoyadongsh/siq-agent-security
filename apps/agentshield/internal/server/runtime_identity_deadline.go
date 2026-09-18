@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"net/http"
+	"runtime"
 	"time"
 )
 
@@ -28,4 +29,13 @@ func authorityManagementResponseReady(w http.ResponseWriter, r *http.Request, ca
 		return false
 	}
 	return true
+}
+
+// Windows enrollment and WorkBuddy payload validation can outlive the global
+// socket write deadline. Keep authorization and uncertainty handling unchanged.
+func workBuddyRuntimeResponseReady(w http.ResponseWriter, r *http.Request) bool {
+	if runtime.GOOS != "windows" {
+		return true
+	}
+	return authorityManagementResponseReady(w, r, "runtime_response")
 }

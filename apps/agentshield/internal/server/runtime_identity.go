@@ -274,6 +274,9 @@ func (s *Server) runtimeSessionEnroll(w http.ResponseWriter, r *http.Request) {
 		runtimeIdentityError(w, runtimeidentity.ErrInvalid)
 		return
 	}
+	if !workBuddyRuntimeResponseReady(w, r) {
+		return
+	}
 	record, b, err := s.runtimeIdentities.EnrollContext(credential, req.SessionID)
 	if err != nil {
 		if errors.Is(err, runtimeidentity.ErrCredential) {
