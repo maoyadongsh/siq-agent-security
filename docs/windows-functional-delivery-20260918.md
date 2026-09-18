@@ -2,7 +2,7 @@
 
 2026-09-19 03 时当前实现候选：`eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8`。已补安装后会话选择、明确绑定、读回和撤销的管理界面及嵌入页面；服务启动时将 SEC 安装读取一次性接到现有三宿主安装库，修复在线路径误用 Hermes-only CLI reader；不支持的 Windows 长安装目标明确拒绝为无效请求。正式 Windows HTTP 夹具完成安装、准备、登记、签发、运行复验、读回、重复/错签名拒绝、撤销及撤销后失效。旧启动行为在负向回归中失败，修复通过；合同、前端、vet 与四目标干净构建通过。见 [检查与限制](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/report.json)、[候选摘要](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/unsigned-candidate.json)。
 
-本次改动涉及公共安装读取。`eac2a99` 已在真实 OpenClawGateway WSL 宿主完成最小回归：正式接入、正常读取、越权拒绝、失联拒绝、身份撤销拒绝及卸载，66.60 秒；独立核对 4 条回执、文件副作用、二进制摘要和受管入口移除，自有进程无残留。使用本地模拟模型，没有云模型调用。见 [本候选 OpenClaw 结果](evidence/personal-experience/windows-sunbo/openclaw-candidate-eac2a99-20260919/report.json)。新候选 Hermes/WorkBuddy 原生确认仍未完成，下方旧候选证据保留；桌面 Skill 加载、完整审批恢复与正式签发仍未验收。WorkBuddy 仍为 4/5 个授权桌面任务。
+本次改动涉及公共安装读取。`eac2a99` 已在真实 OpenClawGateway WSL 宿主完成最小回归：正式接入、正常读取、越权拒绝、失联拒绝、身份撤销拒绝及卸载，66.60 秒；独立核对 4 条回执、文件副作用、二进制摘要和受管入口移除，自有进程无残留。使用本地模拟模型，没有云模型调用。见 [本候选 OpenClaw 结果](evidence/personal-experience/windows-sunbo/openclaw-candidate-eac2a99-20260919/report.json)。新候选 Hermes 原生 CLI 五场景回归及独立核验已通过（356.69 秒，10 条回执、17 份签名、10 个自有 Job 关闭），见 [Hermes 本候选结果](evidence/personal-experience/windows-sunbo/hermes-candidate-eac2a99-20260919/report.json)；新候选 WorkBuddy 原生确认仍未完成，下方旧候选证据保留；桌面 Skill 加载、完整审批恢复与正式签发仍未验收。WorkBuddy 仍为 4/5 个授权桌面任务。
 
 2026-09-19 02:00 历史增量：当批运行确认候选为 `2d5ee6c725e865b2c0769f0d35ac839161dbb717`，修复 Windows WorkBuddy 卸载后宿主配置变化导致无法重装，以及真实钩子 4/5 秒预算不足。WorkBuddy 5.5.6 桌面在默认权限、GLM-5.3-Flash 下通过正式接入、正常写入及对应 pre/post 回执、越权拒绝、服务失联拒绝和撤权卸载；总共 4/5 个任务，含修复前一次失败。独立验证 7 条回执和 2 份身份/撤销签名；其中序号 0–2 是明确标记的合成诊断，真实桌面对应 3–6。自有服务与桌面已关闭，清理无错误。见 [结果及限制](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/report.json)。
 
@@ -53,6 +53,8 @@ OpenClaw 的实际可用路径是本机 WSL，Hermes 是 Windows 原生 CLI；�
 | WorkBuddy | Windows 桌面配置根的 PreToolUse/PostToolUse command 钩子；明确管理身份/凭据引用；在线裁决、持久关联、审批预留、撤销、Skill 用户级/项目级安装及卸载 | 2d5ee6c 已完成真实桌面正常写入、越权/失联拒绝、撤权卸载；累计使用 4/5 个任务。审批恢复、可信 Skill 归属及原生安装前拦截未实机验收。 |
 
 三者的“发现、安装文件、受管身份配置、运行检查、可信 Skill 归属”各自独立。未知 Skill 归属不提升为 verified；用户直接绕过受控安装入口的行为不宣称被装前拦截。没有新增宿主插件 API、对外监听或替代安全引擎。当前交付仍不证明所有本地功能要求及真实调用全部完成，不能据此标记整项目完成。
+
+2026-09-19 新候选 Skill 归属接通：`eac2a99` 在真实 OpenClawGateway WSL 宿主完成产品导入、安装、激活、原生 Skill 目录识别、安装绑定身份接入；同一原生会话在未签发 SEC 时拒绝，管理员明确签发后读取成功并产生 `verified / controlled_session` 归属及 observation，撤销 SEC 后拒绝。独立核对 4 条持久回执、哨兵不变、受管插件卸载和自有进程无残留，耗时 70.98 秒。见 [Skill 归属结果](evidence/personal-experience/windows-sunbo/openclaw-sec-eac2a99-20260919/report.json)。使用合成 Skill 与本地模拟模型；不证明正式发行包、Windows 原生 OpenClaw Agent、逐调用因果、更新或审批恢复。
 
 ## 历史固定源码与已有检查
 

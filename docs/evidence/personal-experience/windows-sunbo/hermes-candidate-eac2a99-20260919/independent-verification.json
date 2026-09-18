@@ -1,0 +1,85 @@
+{
+  "status": "pass",
+  "method": "independent-offline-evidence-verification",
+  "source_files_verified": 1390,
+  "pinned_files_verified": 14,
+  "receipt_chain_count": 10,
+  "signed_documents_verified": [
+    "checkpoint",
+    "identity",
+    "identity-revocation",
+    "grant-revision-0",
+    "grant-revision-1",
+    "grant-revision-2",
+    "grant-revision-3",
+    "B01-intent-B01-write",
+    "B01-binding-B01-write",
+    "B01-intent-B01-read",
+    "B01-binding-B01-read",
+    "B02-intent-B02-write",
+    "B02-binding-B02-write",
+    "B04-intent-B04-write",
+    "B04-binding-B04-write",
+    "B04-intent-B04-read",
+    "B04-binding-B04-read"
+  ],
+  "public_key_sha256": "e5bcded3e9ab3bd8b6e7a8774ef605bf6907d4f71b1fffb782b385d58f72b7cf",
+  "cases": [
+    {
+      "case": "B01",
+      "verified": true,
+      "receipt_decisions": 2,
+      "guard_denied_subprocess_count": 5
+    },
+    {
+      "case": "B02",
+      "verified": true,
+      "receipt_decisions": 1,
+      "guard_denied_subprocess_count": 4
+    },
+    {
+      "case": "B03",
+      "verified": true,
+      "receipt_decisions": 0,
+      "guard_denied_subprocess_count": 4
+    },
+    {
+      "case": "B04",
+      "verified": true,
+      "receipt_decisions": 2,
+      "guard_denied_subprocess_count": 5
+    },
+    {
+      "case": "B05",
+      "verified": true,
+      "receipt_decisions": 0,
+      "guard_denied_subprocess_count": 4
+    }
+  ],
+  "owned_jobs_closed": 10,
+  "workspace_files": {
+    "allowed/b01.txt": {
+      "bytes": 37,
+      "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+    },
+    "allowed/b04.txt": {
+      "bytes": 37,
+      "sha256": "372424085826122c24485f32b06dd823da25d04b5c7b246db8d1efbd47bc4ab9"
+    }
+  },
+  "ledger_fully_supported": [
+    "P02-HM-A04-01",
+    "P02-HM-A04-02",
+    "P02-HM-A05-01"
+  ],
+  "ledger_partial": {
+    "P02-HM-A05-04": "B04 recovery allows valid authority; B05 later revocation denies. No restart after revocation, so invalid-authority persistence across recovery is not demonstrated."
+  },
+  "limitations": [
+    "No host/service/model was launched by verification.",
+    "Retained controller observations are verified, not a second independent native rerun.",
+    "The private fixture signing seed was used only to derive an in-memory verification public key; no signing performed or secret emitted.",
+    "Guard rejected ancillary subprocess attempts; exact SIQ denial and real allow file effects distinguish security results from those guard rejections.",
+    "This is managed Hermes v4 evidence, not product runtime-check v5, paid-model evidence, or final whole-project acceptance."
+  ]
+}

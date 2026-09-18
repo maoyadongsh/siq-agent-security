@@ -1,0 +1,48 @@
+{
+  "schema_version": "personal-r01-sec-openclaw-native/v1",
+  "recorded_at": "2026-09-18T19:27:40.563834+00:00",
+  "passed": true,
+  "binary_sha256": "112f30fc30c10ec4516bf5244736a9f10477fbeac524badde83a667b335ac31a",
+  "harness_sha256": "81e79a48deac6d0627b22ff151da2a74c54ae63c6ec310dc512ae4b929b04685",
+  "native_cli_sha256": "97464647c50a1420d530db948cb203826306ef6b3a84810b6801c338366cecaf",
+  "openclaw_version": "2026.9.4",
+  "native_entrypoint": "public openclaw agent --local; real plugin hook and file tool lifecycle",
+  "checks": [
+    "product_skill_import_install_and_activation",
+    "managed_adapter_uses_installation_bound_identity",
+    "native_session_enrolled_without_manual_intent",
+    "missing_sec_denied_before_file_read",
+    "admin_issues_controlled_session_sec",
+    "native_read_allowed_with_verified_attribution",
+    "controlled_session_call_binding_recomputed",
+    "revoked_sec_denied_in_same_native_session",
+    "installed_skill_present_in_native_catalog",
+    "receipt_chain_verified"
+  ],
+  "receipt_count": 4,
+  "skill_installation": {
+    "install_id": "sin-53edea002147b3a9301c9eecf6cd3ca721598bbe31689076b7b5bc0debd54c95",
+    "source_digest": "95f50e61780d220232e92928fd6a13f0e130583c106c1454f10d104d2177462f",
+    "grant_id": "grt-si-e4077880078701b991b3eea71da2f5b39f752f66b2e01700adedc6f80ab09ae5"
+  },
+  "limitations": [
+    "OpenClaw exposes no trustworthy per-Skill tool-causality field; evidence level is controlled_session",
+    "native catalog discovery proves availability, not that one model tool call was caused by the Skill instructions",
+    "local deterministic model and automated fixture operator; no external or paid model",
+    "same-UID compromise and OS sandbox isolation remain outside the SEC threat boundary",
+    "WSL OpenClaw Agent, not Windows-native Agent; synthetic Skill, not formally signed distribution; Skill payload retained privately as evidence; no update or approval-resume coverage."
+  ],
+  "candidate_sha": "eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8",
+  "source_dirty": false,
+  "elapsed_seconds": 70.98,
+  "independent_verification": {
+    "passed": true,
+    "receipt_count": 4,
+    "pre_sec_denied": true,
+    "bound_read_allowed_and_observed": true,
+    "revoked_sec_denied": true,
+    "sentinel_unchanged": true,
+    "managed_config_and_entry_removed": true,
+    "owned_processes_remaining": 0
+  }
+}
