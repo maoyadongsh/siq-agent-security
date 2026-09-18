@@ -53,7 +53,7 @@ func (r *run) workBuddyDiscovery(seen map[string]bool) bool {
 	// content digest, an installed-host assertion, or execution attribution.
 	raw, _ := canon.Marshal(map[string]any{"instance_id": id, "configuration_directory_exists": true})
 	sum := sha256.Sum256(raw)
-	evidence := r.evidence("directory_manifest", locator, hex.EncodeToString(sum[:]))
+	evidence := r.evidence("manifest", locator, hex.EncodeToString(sum[:]))
 	r.report.Candidates = append(r.report.Candidates, Candidate{CandidateID: owner, SourceType: "workbuddy_profile", SourceLocator: locator,
 		DiscoveredAt: r.now, Name: "workbuddy", Framework: "workbuddy", Confidence: 1, Status: "candidate",
 		Attributes: map[string]string{"platform": "workbuddy", "instance_id": id, "config_dir": redactHome(root, r.opts.Home), "detection": "configuration_directory"}, EvidenceIDs: []string{evidence}})

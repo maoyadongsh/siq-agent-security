@@ -108,7 +108,31 @@
       "path": "~/.windsurf/mcp_config.json",
       "platform": "windsurf",
       "status": "missing"
+    },
+    {
+      "kind": "platform_config",
+      "path": "~/AppData/Local/hermes/config.yaml",
+      "platform": "hermes",
+      "status": "missing"
+    },
+    {
+      "kind": "profile_directory",
+      "path": "~/AppData/Local/hermes/profiles",
+      "platform": "hermes",
+      "status": "missing"
+    },
+    {
+      "kind": "skill_directory",
+      "path": "~/AppData/Local/hermes/skills",
+      "platform": "hermes",
+      "status": "missing"
     }
   ],
-  "schema_version": "local-discovery-preview/v1"
+  "run": {
+    "asset_count": 0,
+    "issue_count": 0,
+    "skill_count": 0,
+    "state": "idle"
+  },
+  "schema_version": "local-discovery/v1"
 }

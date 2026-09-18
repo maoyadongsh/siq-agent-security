@@ -191,7 +191,10 @@ def test_personal_discovery_contracts_and_inferred_relationships() -> None:
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema)
     fixtures = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
-    for name in ["discovery-status.json", "discovery-preview.json"]:
+    for name in [
+        "discovery-status.json", "discovery-preview.json",
+        "discovery-status-windows.json", "discovery-preview-windows.json",
+    ]:
         data = json.loads((fixtures / name).read_text(encoding="utf-8"))
         validator.validate(data)
         assert list(validator.iter_errors({**data, "platform_changes": True}))
@@ -942,7 +945,9 @@ def test_go_inventory_sample_conforms():
     for c in rep["candidates"]:
         errors = _validate("candidate", c)
         assert not errors, (c["candidate_id"], [e.message for e in errors])
-        assert c["source_type"] in {"skill_dir", "platform_config", "hermes_profile", "openclaw_agent", "mcp_server"}
+        assert c["source_type"] in {
+            "skill_dir", "platform_config", "hermes_profile", "openclaw_agent", "mcp_server", "workbuddy_profile",
+        }
     ids = set()
     for ev in rep["evidence"]:
         errors = _validate("evidence", ev)

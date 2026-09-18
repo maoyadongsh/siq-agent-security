@@ -119,6 +119,8 @@ stage、Load、apply 均重新读取批准版本/签名、权限摘要、完整�
 
 inventory 新增显式 WorkBuddy 配置根输入，和 server 使用同一已核验根；不能继续只扫描静态 Home/.workbuddy。对已登记项目加入 `.codebuddy/skills` 的 WorkBuddy 能力关联，同目录也属于 CodeBuddy 时记录共享物理来源，不能因扫描先后把宿主混为同一产品或两次读回当两份证据。
 
+WorkBuddy 实例候选保持 `source_type=workbuddy_profile`；其配置目录存在性证据使用既有 `evidence/v1` 合同允许的 `source_type=manifest`，不可混用 Candidate 的 `directory_manifest` 类型。该证据只签名绑定实例 ID 与 `configuration_directory_exists=true` 的规范化元数据摘要，不声称目录内容完整性、宿主已安装或实际执行归属；不扩宽旧 Evidence 合同枚举。
+
 同名 Skill 优先级按原生项目优先规则展示。安装目标内既有目录/大小写冲突继续拒绝；发现已知项目与用户 Skill 同名时提示实际选用可能被覆盖，不能悄悄删除另一版本。扫描登记之外的未知项目不得为了证明无冲突而遍历。缓存没有经过实际加载确认时保持未验证，不自动写启停设置或调用内部 reload-command。
 
 ## 5. 运行权限与可信归属

@@ -2,10 +2,13 @@ package inventory
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"siq-agent-security/apps/agentshield/internal/canon"
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
@@ -35,7 +38,11 @@ func TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence(t *testing.T
 	}
 	owner := "agent:workbuddy:" + hermeshome.Identifier(opts.WorkBuddyConfigDir)
 	var user, project Candidate
+	var profile Candidate
 	for _, candidate := range report.Candidates {
+		if candidate.SourceType == "workbuddy_profile" && candidate.CandidateID == owner {
+			profile = candidate
+		}
 		if candidate.Name == "wrong-root" {
 			t.Fatal("custom root fell back to Home/.workbuddy")
 		}
@@ -48,6 +55,32 @@ func TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence(t *testing.T
 		case "project":
 			project = candidate
 		}
+	}
+	// Candidate and Evidence have distinct source-type vocabularies. The
+	// instance metadata must be a contract-valid manifest, bound to this root.
+	if profile.CandidateID == "" || len(profile.EvidenceIDs) != 1 {
+		t.Fatal("WorkBuddy instance lacks its own directory metadata evidence")
+	}
+	metadata, err := canon.Marshal(map[string]any{
+		"instance_id": hermeshome.Identifier(opts.WorkBuddyConfigDir), "configuration_directory_exists": true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedHash := sha256.Sum256(metadata)
+	directoryEvidence := 0
+	for _, evidence := range report.Evidence {
+		if evidence.EvidenceID != profile.EvidenceIDs[0] {
+			continue
+		}
+		directoryEvidence++
+		if evidence.SourceType != "manifest" || evidence.SourceLocator != profile.SourceLocator ||
+			evidence.ContentHash != hex.EncodeToString(expectedHash[:]) {
+			t.Fatal("WorkBuddy directory metadata used an invalid evidence type or lost its instance binding")
+		}
+	}
+	if directoryEvidence != 1 {
+		t.Fatal("WorkBuddy directory metadata reference is missing or ambiguous")
 	}
 	if user.CandidateID == "" || project.CandidateID == "" || user.CandidateID == project.CandidateID || user.ArtifactDigest == project.ArtifactDigest {
 		t.Fatal("project priority collapsed separate installed contents")
