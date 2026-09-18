@@ -1,0 +1,86 @@
+{
+  "source_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+  "binary_sha256": {
+    "old": "0fa81005ee65bc12c00e8390251d19fc1d3958beb988cecff61e62eeca517a42",
+    "reader2": "74eba15f5a51daad52a8564a3a171c0c0359a11397c4c8182429684da4fc7bc0",
+    "new": "12c1f24e63e76351384ec0db8cf8e9595058c8498e327c85cbf16c8ce798c76c"
+  },
+  "old_source_sha": "ff99317450784c9563f5b6a2308c98e8262df98d",
+  "reader2_source_sha": "a24e029b177c110a97637f3c6902ab99670b33b7",
+  "steps": [
+    {
+      "role": "old",
+      "command": "init",
+      "exit": 0,
+      "expected_success": true
+    },
+    {
+      "role": "old",
+      "command": "admit",
+      "exit": 0,
+      "expected_success": true
+    },
+    {
+      "role": "old",
+      "command": "grant",
+      "exit": 0,
+      "expected_success": true
+    },
+    {
+      "role": "old",
+      "command": "grant",
+      "exit": 0,
+      "expected_success": true
+    },
+    {
+      "role": "reader2",
+      "command": "state-migrate",
+      "exit": 0,
+      "expected_success": true
+    },
+    {
+      "role": "new",
+      "command": "state-enable-windows-resources",
+      "exit": 1,
+      "expected_success": false
+    },
+    {
+      "role": "new",
+      "command": "state-enable-windows-resources",
+      "exit": 0,
+      "expected_success": true
+    },
+    {
+      "role": "new",
+      "command": "state-enable-windows-resources",
+      "exit": 0,
+      "expected_success": true
+    },
+    {
+      "role": "new",
+      "command": "state-status",
+      "exit": 0,
+      "expected_success": true
+    },
+    {
+      "role": "reader2",
+      "command": "state-status",
+      "exit": 0,
+      "expected_success": true
+    },
+    {
+      "role": "reader2",
+      "command": "init",
+      "exit": 1,
+      "expected_success": false
+    }
+  ],
+  "passed": true,
+  "evidence_scope": "native CLI state compatibility; not host acceptance",
+  "fixture_acl": "inherited private parent; not product-created root proof",
+  "preserved_prior_entries": 80,
+  "independent_plan_done_history_hashes": true,
+  "actual_outputs_schema_valid": true,
+  "reader2_refused_without_state_change": true,
+  "repeated_activation_without_state_change": true
+}

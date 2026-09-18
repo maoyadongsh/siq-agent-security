@@ -1,0 +1,53 @@
+{
+  "counts": {
+    "test_pass": 132,
+    "test_skip": 12,
+    "package_pass": 2,
+    "subtest_pass": 129,
+    "subtest_skip": 4,
+    "test_fail": 5,
+    "package_fail": 1
+  },
+  "failures": [
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestPythonHashSkillDirRejectsEscape"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestPythonFetchArtifact"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestAdapterAndBootstrapShareVerifiedResolve"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": null
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestBoundInitializationRejectsLostOrCopiedIdentity"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestIndependentProcessesPublishUniqueVersions"
+    }
+  ],
+  "packages": {
+    "siq-agent-security/apps/agentshield/internal/stateformat": "pass",
+    "siq-agent-security/apps/agentshield/internal/clientrelease": "pass",
+    "siq-agent-security/apps/agentshield/internal/skillmanifest": "fail"
+  },
+  "raw_log_sha256": "84d17af3e11b52edf1ec11c548b4b6c968dd9f0d308137ad159245e5df641f04",
+  "source_sha": "fbaa771e2717d458e5cd63094f67d1062818eb36",
+  "process_status": "running",
+  "exit": null,
+  "environment_followup": {
+    "python3": "native Python shim replaces MSYS Python with empty machine result",
+    "sh": "Git bin explicitly on PATH",
+    "fixed_environment_tests_passed_on": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+    "remaining_failure": "TestPythonHashSkillDirRejectsEscape needs an authorized, representative Windows fixture; no elevation or skip used"
+  },
+  "observed_at": "2026-09-18T05:42:35.343348+00:00"
+}

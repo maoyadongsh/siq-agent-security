@@ -1,0 +1,107 @@
+{
+  "source_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+  "source_dirty": false,
+  "native_binary_sha256": "12c1f24e63e76351384ec0db8cf8e9595058c8498e327c85cbf16c8ce798c76c",
+  "go_version": "go1.27.1",
+  "checks": [
+    {
+      "name": "native-build",
+      "exit": 0,
+      "seconds": 33.218
+    },
+    {
+      "name": "command-profile",
+      "exit": 0,
+      "seconds": 45.059
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 42.615
+    },
+    {
+      "name": "gofmt",
+      "exit": 0,
+      "seconds": 2.162
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0,
+      "seconds": 27.689
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0,
+      "seconds": 23.961
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0,
+      "seconds": 23.988
+    },
+    {
+      "name": "schemas",
+      "exit": 0,
+      "seconds": 27.535
+    },
+    {
+      "name": "state-components",
+      "exit": 0,
+      "seconds": 208.001
+    }
+  ],
+  "component_tests": {
+    "counts": {
+      "test_pass": 23,
+      "package_pass": 3,
+      "subtest_pass": 33,
+      "test_skip": 1
+    },
+    "failures": [],
+    "packages": {
+      "siq-agent-security/apps/agentshield/internal/stateformat": "pass",
+      "siq-agent-security/apps/agentshield/internal/skillmanifest": "pass",
+      "siq-agent-security/apps/agentshield/internal/state": "pass"
+    },
+    "raw_log_sha256": "4c21cd9f3b38eb8c532b4acda9ae7d0af31bed00b02d19e510ba313ee603216b"
+  },
+  "cli_tests": {
+    "counts": {
+      "test_pass": 3,
+      "package_pass": 1
+    },
+    "failures": [],
+    "packages": {
+      "siq-agent-security/apps/agentshield/cmd/agentshield": "pass"
+    },
+    "raw_log_sha256": "2871262a1348afd1df421743c560d60fff5c2b2d5d52da98452400ced8d17d3b"
+  },
+  "gofmt_output_empty": true,
+  "whole_module_pass_claim": false,
+  "artifacts": [
+    {
+      "name": "agent.exe",
+      "sha256": "12c1f24e63e76351384ec0db8cf8e9595058c8498e327c85cbf16c8ce798c76c",
+      "source_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+      "vcs_modified": false
+    },
+    {
+      "name": "linux-amd64",
+      "sha256": "e0c7f9cd65267a01b6b7b2ee6bf18e350056c1fea6510c221778c001c0613a8d",
+      "source_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+      "vcs_modified": false
+    },
+    {
+      "name": "linux-arm64",
+      "sha256": "de8de392e9c7be798e4be9554f6a51fb2f47899f5007591b140ce464468a403c",
+      "source_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+      "vcs_modified": false
+    },
+    {
+      "name": "darwin-arm64",
+      "sha256": "989d73eb9d68a1a03473473cfdb0b6e3aa4dc03cc15259e1428717a150ccb9b8",
+      "source_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+      "vcs_modified": false
+    }
+  ]
+}
