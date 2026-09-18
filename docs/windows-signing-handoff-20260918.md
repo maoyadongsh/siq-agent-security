@@ -1,5 +1,10 @@
 # Windows 修复候选签名交接
 
+2026-09-19 更新：当前交接源码改为 `2d5ee6c725e865b2c0769f0d35ac839161dbb717`。已验证的四目标开发二进制与 Skill 位于 `.tmp/windows-goal-20260916/windows-unsigned-candidate-2d5ee6c/`；交接归档为同级 `windows-unsigned-candidate-2d5ee6c-reviewed.zip`，SHA256 `39561883a9a03655102a43ea18e3b3e3d86e42b20dbdc2e41a7875ba667120c4`，65,990,619 字节。全部摘要见 [候选记录](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/unsigned-candidate.json)。
+
+此次运行确认二进制使用 `go build -trimpath -buildvcs=true`，嵌入版本是 `0.0.0-dev`，不能作为正式发布版本签发；源码 VCS 信息确认干净。维护者必须从上述固定源码按批准发行版本重建四目标，再执行下方既有签发/验签步骤，并记录新的二进制摘要；不得把开发包的摘要和新发行二进制混用。下方 ff16606/candidate.1 是历史准备记录，已由本段替代，不修改原冻结清单。
+
+
 本材料关联 PR #83、Issue #87。仅准备未签名候选，不授权签发、发布、合并或更换信任根。
 
 ## 固定输入
