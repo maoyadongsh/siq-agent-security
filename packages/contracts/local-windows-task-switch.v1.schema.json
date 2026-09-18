@@ -10,7 +10,8 @@
     "target_record",
     "source_xml",
     "target_xml",
-    "signature"
+    "signature",
+    "transaction_nonce"
   ],
   "properties": {
     "schema_version": {
@@ -53,6 +54,10 @@
     "signature": {
       "type": "string",
       "pattern": "^[a-f0-9]{128}$"
+    },
+    "transaction_nonce": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
     }
   },
   "definitions": {
