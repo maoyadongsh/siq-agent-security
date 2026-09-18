@@ -1,0 +1,60 @@
+{
+  "source_sha": "eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8",
+  "tests_source_dirty_at_run": true,
+  "tests_committed_without_product_changes": true,
+  "method": "Windows component and formal HTTP fixtures; no host or model launched",
+  "model_calls": 0,
+  "checks": {
+    "windows_http_install_session_issue_readback_runtime_verify_revoke": {
+      "exit_code": 0,
+      "test_seconds": 154.64
+    },
+    "startup_uses_server_installation_reader": {
+      "exit_code": 0,
+      "old_behavior_exit": 1
+    },
+    "long_destination_rejected_as_invalid": {
+      "exit_code": 0,
+      "old_behavior_exit": 1
+    },
+    "admin_strict_query_and_existing_sec_audit_tests": {
+      "exit_code": 0
+    },
+    "python_actual_response_schema_and_four_negatives": {
+      "exit_code": 0
+    },
+    "frontend_contract_api_tests": {
+      "exit_code": 0,
+      "tests": 3
+    },
+    "frontend_typecheck_and_embedded_build": {
+      "exit_code": 0
+    },
+    "go_vet_all": {
+      "exit_code": 0
+    }
+  },
+  "private_log_sha256": {
+    "session-management-fixed.log": "2cf74a6d1e02127becb0b9c32dc13c458109c09c004a31cd87c2246f0d64c065",
+    "session-management-startup.log": "d6557eaa39b5f41a333fe96abd8b3bcc87947e6e1ff12309a41184579697239f",
+    "session-management-old-reader.log": "7ae328dd6d8b5baef45358df004108cccb1db276b45d10d32a3a2449537a1018",
+    "session-management-final.log": "5769966d30cd48095ade8e121caa13527bbec53e0b955d83f193dcec065f4c27",
+    "session-management-canonical-root.log": "436471fb190f8dc4f2534af48262319ecb9d4fcb1b0eae82b510529c39563d1f",
+    "session-management-short-root.log": "aa491b6ebf17eefb01724f5ba6dcf4c6fd164a9e154a46d182bae2738a3c8d63",
+    "session-management-diag/run.log": "450f1c2afb1bb27f57b9535a3aadd28f89d7253d1f67c37f4a2043a0c2e74791",
+    "session-management-diag/run2.log": "56a24e57101c8d5210e1a5391a4bc49a460c342209606817924b9f108816f669"
+  },
+  "limitations": [
+    "No new native desktop Skill loading or approval-resume evidence.",
+    "Previous native host evidence remains bound to its original candidates.",
+    "Common installation-reader wiring changed; native host confirmation for this candidate remains pending.",
+    "Whole Go suite not rerun; prior failures retained.",
+    "Publisher signing and release-version rebuild remain Issue #87."
+  ],
+  "failed_attempts": [
+    "Original private TEMP made the target exceed the supported 259-character Windows path limit.",
+    "A shorter redirected LocalAppData alias was correctly rejected; rerun used its canonical package path.",
+    "Initial server HTTP fixture omitted the SEC store; corrected to exercise the real installation reader dependency.",
+    "Old startup behavior intentionally failed the new regression test."
+  ]
+}

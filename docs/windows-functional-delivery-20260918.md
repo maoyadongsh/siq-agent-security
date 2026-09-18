@@ -1,6 +1,10 @@
 # Windows 三宿主功能集成交付
 
-2026-09-19 02:00 当前增量：最终运行确认候选为 `2d5ee6c725e865b2c0769f0d35ac839161dbb717`，修复 Windows WorkBuddy 卸载后宿主配置变化导致无法重装，以及真实钩子 4/5 秒预算不足。WorkBuddy 5.5.6 桌面在默认权限、GLM-5.3-Flash 下通过正式接入、正常写入及对应 pre/post 回执、越权拒绝、服务失联拒绝和撤权卸载；总共 4/5 个任务，含修复前一次失败。独立验证 7 条回执和 2 份身份/撤销签名；其中序号 0–2 是明确标记的合成诊断，真实桌面对应 3–6。自有服务与桌面已关闭，清理无错误。见 [结果及限制](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/report.json)。
+2026-09-19 03 时当前实现候选：`eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8`。已补安装后会话选择、明确绑定、读回和撤销的管理界面及嵌入页面；服务启动时将 SEC 安装读取一次性接到现有三宿主安装库，修复在线路径误用 Hermes-only CLI reader；不支持的 Windows 长安装目标明确拒绝为无效请求。正式 Windows HTTP 夹具完成安装、准备、登记、签发、运行复验、读回、重复/错签名拒绝、撤销及撤销后失效。旧启动行为在负向回归中失败，修复通过；合同、前端、vet 与四目标干净构建通过。见 [检查与限制](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/report.json)、[候选摘要](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/unsigned-candidate.json)。
+
+本次改动涉及公共安装读取，尚未新增该候选的三宿主原生确认。下方 WorkBuddy `2d5ee6c`、Hermes/OpenClaw `ff16606` 保留为历史实测，不能改绑到新候选；桌面 Skill 加载、完整审批恢复与正式签发仍未验收。未新增模型调用，WorkBuddy 仍为 4/5 个授权桌面任务。
+
+2026-09-19 02:00 历史增量：当批运行确认候选为 `2d5ee6c725e865b2c0769f0d35ac839161dbb717`，修复 Windows WorkBuddy 卸载后宿主配置变化导致无法重装，以及真实钩子 4/5 秒预算不足。WorkBuddy 5.5.6 桌面在默认权限、GLM-5.3-Flash 下通过正式接入、正常写入及对应 pre/post 回执、越权拒绝、服务失联拒绝和撤权卸载；总共 4/5 个任务，含修复前一次失败。独立验证 7 条回执和 2 份身份/撤销签名；其中序号 0–2 是明确标记的合成诊断，真实桌面对应 3–6。自有服务与桌面已关闭，清理无错误。见 [结果及限制](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/report.json)。
 
 OpenClaw 的实际可用路径是本机 WSL，Hermes 是 Windows 原生 CLI；两者复用 ff16606 的真实基本保护闭环证据。新修复只改变 Windows WorkBuddy 路径，未重跑两者，也不将旧证据冒充新二进制实测。三宿主基本保护链已有实际证据；原任务书的完整审批恢复、全部 Skill 旅程及正式发行仍不能据此声称全部验收。以下早期进度保留为历史，本段覆盖其中“WorkBuddy 0/5、尚待选目录、候选 ff16606”的当前状态。
 
@@ -61,7 +65,7 @@ OpenClaw 的实际可用路径是本机 WSL，Hermes 是 Windows 原生 CLI；�
 
 ## 未测与外部依赖
 
-运行接线复查：安装内容复验已另按服务端实际 5 秒期限检查，用户级 2.76 秒、项目级 2.90 秒均通过，见 [期限检查](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/skill-runtime-budget.json)。它不能证明完整 HTTP 链或原生加载。安装后的界面目前只提示人工绑定 Skill 会话，没有签发/撤销操作入口；服务端已有 `POST /v1/skill-contexts`、`GET /v1/skill-contexts/{id}` 和 `POST /v1/skill-contexts/{id}/revoke` 管理接口。离线 `skill-context` 命令的安装解析只接 Hermes，不能作为 WorkBuddy/OpenClaw 替代入口。此界面接线缺口仍待完善，不能据此宣布完整用户流程收口。
+运行接线复查：安装内容复验已另按服务端实际 5 秒期限检查，用户级 2.76 秒、项目级 2.90 秒均通过，见 [期限检查](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/skill-runtime-budget.json)。它不能证明完整 HTTP 链或原生加载。该次复查发现界面缺少签发/撤销操作入口，已在本文开头的 eac2a99 增量补齐；服务端已有 `POST /v1/skill-contexts`、`GET /v1/skill-contexts/{id}` 和 `POST /v1/skill-contexts/{id}/revoke` 管理接口。离线 `skill-context` 命令的安装解析只接 Hermes，不能作为 WorkBuddy/OpenClaw 替代入口。界面接线与正式 HTTP 夹具已完成；尚不能据此宣布完整原生用户旅程通过。
 
 1. 三宿主完整原生旅程及统一最终候选验收未完成。现有固定 303 项台账为 78 通过、3 失败、5 受阻、217 未测；属于各自证据范围，不是本次交付候选覆盖率。其他 OS 和 WSL2 保持各自标记。
 2. WorkBuddy 已完成本轮授权的最小桌面保护闭环，累计 4/5 个任务。最新 [18 行候选矩阵](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/matrix.json)只填入有实机证据的三项；结构/摘要校验退出 0，完整原生门槛退出 3。其他宿主的历史证据没有改绑到新候选，完整审批与 Skill 旅程不因此标绿。

@@ -1,9 +1,8 @@
 # Windows 修复候选签名交接
 
-2026-09-19 更新：当前交接源码改为 `2d5ee6c725e865b2c0769f0d35ac839161dbb717`。已验证的四目标开发二进制与 Skill 位于 `.tmp/windows-goal-20260916/windows-unsigned-candidate-2d5ee6c/`；交接归档为同级 `windows-unsigned-candidate-2d5ee6c-reviewed.zip`，SHA256 `39561883a9a03655102a43ea18e3b3e3d86e42b20dbdc2e41a7875ba667120c4`，65,990,619 字节。全部摘要见 [候选记录](evidence/personal-experience/windows-sunbo/workbuddy-desktop-2d5ee6c-20260919/unsigned-candidate.json)。
+2026-09-19 03 时当前交接源码为 `eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8`，包含安装后会话绑定界面、在线 SEC 安装读取接线及长路径诊断修复。四目标干净开发构建位于 `.tmp/windows-goal-20260916/windows-unsigned-candidate-eac2a99/`；归档为 `windows-unsigned-candidate-eac2a99-reviewed.zip`，SHA256 `973a669ad110ee4540f766b1ba0572b82b7d573b97b7659ba0780db73abcd4bd`，66,029,577 字节。见 [当前候选记录](evidence/personal-experience/windows-sunbo/skill-session-management-20260919/unsigned-candidate.json)。
 
-此次运行确认二进制使用 `go build -trimpath -buildvcs=true`，嵌入版本是 `0.0.0-dev`，不能作为正式发布版本签发；源码 VCS 信息确认干净。维护者必须从上述固定源码按批准发行版本重建四目标，再执行下方既有签发/验签步骤，并记录新的二进制摘要；不得把开发包的摘要和新发行二进制混用。下方 ff16606/candidate.1 是历史准备记录，已由本段替代，不修改原冻结清单。
-
+嵌入版本仍为 `0.0.0-dev`，维护者必须从此固定源码按批准正式版本重建四目标并记录新摘要后签发，不能直接将开发包标为正式发行。Skill 载荷经源码差异与逐文件摘要确认和 2d5ee6c 相同，旧正式清单、签名及信任根未改。2d5ee6c 的归档和宿主证据保留为历史，不作为当前二进制实测。下方 ff16606/candidate.1 步骤仍是历史准备记录，当前源码与摘要以本段为准。
 
 本材料关联 PR #83、Issue #87。仅准备未签名候选，不授权签发、发布、合并或更换信任根。
 
