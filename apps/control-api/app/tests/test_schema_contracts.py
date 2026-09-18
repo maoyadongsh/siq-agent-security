@@ -3315,3 +3315,212 @@ def test_d01_task_execution_control_contracts() -> None:
     assert list(preview_validator.iter_errors({**preview, "task_executed": True}))
     assert list(preview_validator.iter_errors({**preview, "execution_constraints_verified": True}))
     assert list(preview_validator.iter_errors({**preview, "mode": "authorizing"}))
+
+
+WORKBUDDY_SKILL_CONTRACTS = [
+    "local-skill-install-stage-create.v2",
+    "local-skill-install-plan.v2",
+    "local-skill-install-plan-created.v2",
+    "local-skill-install-claim.v2",
+    "local-skill-install-record.v2",
+    "local-skill-install-view.v2",
+    "local-skill-install-catalog.v2",
+    "local-skill-install-inspection.v2",
+    "local-skill-install-removal-view.v2",
+    "local-skill-update-comparison.v2",
+    "local-skill-update-plan.v2",
+    "local-skill-update-plan-created.v2",
+    "local-skill-update-claim.v2",
+    "local-skill-update-view.v2",
+    "local-skill-install-runtime-readiness.v2",
+    "local-skill-import-permission-created.v2",
+    "local-skill-install-target-ref.v1",
+    "local-skill-install-targets.v1",
+    "local-skill-install-parent-fact.v1",
+]
+
+
+def _workbuddy_skill_validator(name: str):
+    """Resolve the exact contract closure locally; never fetch remote schemas."""
+    from jsonschema import FormatChecker
+    from referencing import Registry, Resource
+    from referencing.jsonschema import DRAFT7
+
+    schemas = {}
+
+    def collect(current: str) -> None:
+        if current in schemas:
+            return
+        schema = json.loads((CONTRACTS / f"{current}.schema.json").read_text(encoding="utf-8"))
+        Draft7Validator.check_schema(schema)
+        schemas[current] = schema
+
+        def walk(value) -> None:
+            if isinstance(value, dict):
+                reference = value.get("$ref", "")
+                if reference and not reference.startswith("#"):
+                    filename = reference.split("#", 1)[0].rsplit("/", 1)[-1]
+                    assert filename.endswith(".schema.json"), reference
+                    collect(filename.removesuffix(".schema.json"))
+                for nested in value.values():
+                    walk(nested)
+            elif isinstance(value, list):
+                for nested in value:
+                    walk(nested)
+
+        walk(schema)
+
+    collect(name)
+    registry = Registry()
+    for current, schema in schemas.items():
+        resource = Resource(contents=schema, specification=DRAFT7)
+        for uri in {schema["$id"], f"https://siq.dev/contracts/{current}.schema.json"}:
+            registry = registry.with_resource(uri, resource)
+    schema = schemas[name]
+    return schema, Draft7Validator(schema, registry=registry, format_checker=FormatChecker())
+
+
+@pytest.mark.parametrize("name", WORKBUDDY_SKILL_CONTRACTS)
+def test_workbuddy_skill_static_contract_samples(name: str) -> None:
+    # These are synthetic public-key vectors, not Go/native-install evidence
+    # or publisher signatures. See the adjacent fixture manifest.
+    schema, validator = _workbuddy_skill_validator(name)
+    data = json.loads((GO_SAMPLES / f"{name}.sample.json").read_text(encoding="utf-8"))
+    validator.validate(data)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+    assert list(validator.iter_errors(data | {"private_path": "C:\\private"}))
+    if name.endswith(".v2"):
+        legacy_name = name.removesuffix(".v2") + ".v1"
+        _, legacy = _workbuddy_skill_validator(legacy_name)
+        old = json.loads((GO_SAMPLES / f"{legacy_name}.sample.json").read_text(encoding="utf-8"))
+        legacy.validate(old)
+        assert list(legacy.iter_errors(data | {"schema_version": old["schema_version"]}))
+
+
+def test_workbuddy_skill_targets_and_parent_facts_fail_closed() -> None:
+    import copy
+
+    _, validator = _workbuddy_skill_validator("local-skill-install-targets.v1")
+    data = json.loads((GO_SAMPLES / "local-skill-install-targets.v1.sample.json").read_text(encoding="utf-8"))
+    row = data["targets"][0]
+    assert list(validator.iter_errors(data | {"platform_changes": True}))
+    assert list(validator.iter_errors(data | {"targets": [row] * 18}))
+    for code in ["target_unavailable", "target_changed", "target_ambiguous", "target_unsupported"]:
+        validator.validate(data | {"targets": [row | {"available": False, "error_code": code}]})
+        assert list(validator.iter_errors(data | {"targets": [row | {"error_code": code}]}))
+    for patch in [
+        {"available": False}, {"error_code": "arbitrary_failure"},
+        {"root_display": "C:\\private"}, {"target_display": "\\\\server\\private"},
+        {"root_identity_digest": "a" * 64}, {"platform": "codebuddy"},
+        {"filesystem_profile": "posix/v1"}, {"target_id": "hi-" + "a" * 32},
+    ]:
+        assert list(validator.iter_errors(data | {"targets": [row | patch]}))
+
+    _, plan_validator = _workbuddy_skill_validator("local-skill-install-plan.v2")
+    plan = json.loads((GO_SAMPLES / "local-skill-install-plan.v2.sample.json").read_text(encoding="utf-8"))
+    for scope, parents in [("user", ["", "skills"]), ("project", ["", ".codebuddy", ".codebuddy/skills"])]:
+        for parent in parents:
+            candidate = copy.deepcopy(plan)
+            candidate["target_ref"].update(scope=scope, existing_parent_relative_path=parent)
+            plan_validator.validate(candidate)
+    for patch in [
+        {"scope": "user", "existing_parent_relative_path": ".codebuddy"},
+        {"scope": "project", "existing_parent_relative_path": "skills"},
+        {"existing_parent_relative_path": "../escape"}, {"existing_parent_relative_path": ".codebuddy\\skills"},
+        {"root_identity_digest": "A" * 64}, {"config_root_identity_digest": None},
+        {"scope": "cwd"}, {"root": "C:\\private"}, {"filesystem_profile": "posix/v1"},
+    ]:
+        assert list(plan_validator.iter_errors(plan | {"target_ref": plan["target_ref"] | patch}))
+    assert list(plan_validator.iter_errors(plan | {"platform": "hermes"}))
+    assert list(plan_validator.iter_errors(plan | {"runtime_verified": True}))
+    assert list(plan_validator.iter_errors(plan | {"installed": True}))
+    _, parent_validator = _workbuddy_skill_validator("local-skill-install-parent-fact.v1")
+    parent = json.loads((GO_SAMPLES / "local-skill-install-parent-fact.v1.sample.json").read_text(encoding="utf-8"))
+    for relative in ["", "..", "../skills", ".codebuddy/skills/example", "C:\\private"]:
+        assert list(parent_validator.iter_errors(parent | {"relative_parent": relative}))
+    for field in ["signature", "claim_signature", "identity_digest"]:
+        assert list(parent_validator.iter_errors(parent | {field: "invalid"}))
+
+
+def test_workbuddy_skill_wrappers_reject_mixed_plan_versions() -> None:
+    for name, field, old_name in [
+        ("local-skill-install-claim.v2", "plan", "local-skill-install-plan.v1"),
+        ("local-skill-install-record.v2", "plan", "local-skill-install-plan.v1"),
+        ("local-skill-install-view.v2", "plan", "local-skill-install-plan.v1"),
+        ("local-skill-install-inspection.v2", "record", "local-skill-install-record.v1"),
+        ("local-skill-update-comparison.v2", "record", "local-skill-install-record.v1"),
+        ("local-skill-update-plan.v2", "record", "local-skill-install-record.v1"),
+        ("local-skill-update-claim.v2", "plan", "local-skill-update-plan.v1"),
+        ("local-skill-update-claim.v2", "replacement_plan", "local-skill-install-plan.v1"),
+        ("local-skill-update-view.v2", "claim", "local-skill-update-claim.v1"),
+    ]:
+        _, validator = _workbuddy_skill_validator(name)
+        data = json.loads((GO_SAMPLES / f"{name}.sample.json").read_text(encoding="utf-8"))
+        old = json.loads((GO_SAMPLES / f"{old_name}.sample.json").read_text(encoding="utf-8"))
+        assert list(validator.iter_errors(data | {field: old}))
+    _, catalog_validator = _workbuddy_skill_validator("local-skill-install-catalog.v2")
+    catalog = json.loads((GO_SAMPLES / "local-skill-install-catalog.v2.sample.json").read_text(encoding="utf-8"))
+    assert {row["schema_version"] for row in catalog["items"]} == {
+        "local-skill-install-record/v1", "local-skill-install-record/v2",
+    }
+    catalog_validator.validate(catalog)
+    for name in ["local-skill-install-runtime-readiness.v2", "local-skill-import-permission-created.v2"]:
+        _, validator = _workbuddy_skill_validator(name)
+        data = json.loads((GO_SAMPLES / f"{name}.sample.json").read_text(encoding="utf-8"))
+        old = {k: v for k, v in data["grant"].items() if k not in {"schema_version", "filesystem_profile", "filesystem_bindings"}}
+        assert list(validator.iter_errors(data | {"grant": old}))
+
+
+def test_workbuddy_skill_static_signatures_and_identity_vectors() -> None:
+    import hashlib
+
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+
+    def canonical(value) -> bytes:
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+
+    manifest = json.loads((GO_SAMPLES / "local-skill-install-workbuddy-v2-fixture-manifest.sample.json").read_text(encoding="utf-8"))
+    assert manifest["fixture_kind"] == "static_contract_vectors"
+    public = Ed25519PublicKey.from_public_bytes(bytes.fromhex(manifest["public_key"]))
+
+    def verify(value) -> None:
+        if isinstance(value, dict):
+            if "signature" in value:
+                public.verify(bytes.fromhex(value["signature"]), canonical({k: v for k, v in value.items() if k != "signature"}))
+            for nested in value.values():
+                verify(nested)
+        elif isinstance(value, list):
+            for nested in value:
+                verify(nested)
+
+    for name in WORKBUDDY_SKILL_CONTRACTS:
+        verify(json.loads((GO_SAMPLES / f"{name}.sample.json").read_text(encoding="utf-8")))
+    plan_ids = set()
+    for vector in manifest["identity_vectors"]:
+        plan = json.loads((GO_SAMPLES / vector["plan_sample"]).read_text(encoding="utf-8"))
+        _, validator = _workbuddy_skill_validator("local-skill-install-plan.v2")
+        validator.validate(plan)
+        verify(plan)
+        ref = vector["target_ref"]
+        assert ref == plan["target_ref"]
+        assert "\\" not in vector["synthetic_root"] and "\\" not in vector["synthetic_destination"]
+        assert ref["root_locator_digest"] == hashlib.sha256(vector["synthetic_root"].encode()).hexdigest()
+        assert ref["target_id"] == "sit-" + hashlib.sha256(canonical(vector["target_id_input"])).hexdigest()
+        assert plan["target_locator_digest"] == hashlib.sha256(vector["synthetic_destination"].encode()).hexdigest()
+        identity = {"request": vector["request"], **{k: plan[k] for k in [
+            "source", "target_locator_digest", "grant_signature", "grant_permission_digest", "target_ref",
+        ]}}
+        assert plan["plan_id"] == vector["plan_id"] == "sip-" + hashlib.sha256(canonical(identity)).hexdigest()
+        assert vector["request"]["schema_version"] == "local-skill-install-stage-create/v2"
+        assert vector["request"]["target_id"] == ref["target_id"]
+        plan_ids.add(plan["plan_id"])
+    assert len(plan_ids) == 2  # Same request ID, distinct signed user/project targets.
+    claim = json.loads((GO_SAMPLES / "local-skill-install-claim.v2.sample.json").read_text(encoding="utf-8"))
+    parent = json.loads((GO_SAMPLES / "local-skill-install-parent-fact.v1.sample.json").read_text(encoding="utf-8"))
+    update = json.loads((GO_SAMPLES / "local-skill-update-claim.v2.sample.json").read_text(encoding="utf-8"))
+    assert parent["install_id"] == claim["install_id"] and parent["claim_signature"] == claim["signature"]
+    assert update["replacement_plan"]["target_ref"] == update["plan"]["record"]["plan"]["target_ref"]
+    assert update["replacement_plan"]["request_id"] == "is-" + hashlib.sha256(
+        ("update-install:" + update["update_id"]).encode()
+    ).hexdigest()[:32]
