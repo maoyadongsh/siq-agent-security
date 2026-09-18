@@ -1,16 +1,48 @@
 package adapterinstall
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/adapters"
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
 	"siq-agent-security/apps/agentshield/internal/product"
+	"siq-agent-security/apps/agentshield/internal/state"
 )
+
+// Reuse only a first snapshot pinned by the authenticated, committed uninstall
+// of this exact Windows profile. This grants no ownership over the changed live
+// fields: normal installation/uninstallation still edits only product hooks.
+func (p *Plan) workBuddyReinstallSnapshot(path, original string, snapshot fileImage) bool {
+	o := p.payload.Options
+	if runtime.GOOS != "windows" || o.Platform != WorkBuddy || path != filepath.Join(o.configRoot(), "settings.json") || original != path+originalSuffix {
+		return false
+	}
+	st := &state.Store{Dir: o.StateDir}
+	rev, raw, err := st.LatestSeq("adapter-operations", operationKey(o))
+	if err != nil || rev < 0 {
+		return false
+	}
+	var claim operationClaim
+	if json.Unmarshal(raw, &claim) != nil || claim.Schema != "adapter-operation/v1" || claim.Platform != WorkBuddy || claim.Action != "uninstall" {
+		return false
+	}
+	status, err := endState(o.StateDir, claim)
+	if err != nil || status != "committed" {
+		return false
+	}
+	prior, err := unsealPlan(o.StateDir, claim)
+	if err != nil || !workBuddyRecoveryMatches(prior, o) || prior.payload.Record.Modified[path] != original {
+		return false
+	}
+	pinned, ok := prior.payload.Inputs[original]
+	return ok && pinned.Exists && snapshot.Exists && bytes.Equal(pinned.Data, snapshot.Data)
+}
 
 func WithWorkBuddyInstance(opts Options, root string) Options {
 	opts.Instance = &InstanceTarget{ID: hermeshome.Identifier(root), Name: "default", ConfigDir: root}

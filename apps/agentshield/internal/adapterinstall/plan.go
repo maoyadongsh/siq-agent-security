@@ -206,7 +206,9 @@ func (p *Plan) write(path string, raw []byte, mode uint32, purpose string) error
 			return err
 		}
 		if snapshot.Exists && !bytes.Equal(snapshot.Data, before.Data) && !jsonDocumentsEqual(snapshot.Data, before.Data) {
-			return errors.New("adapter: existing original snapshot needs review")
+			if !p.workBuddyReinstallSnapshot(path, original, snapshot) {
+				return errors.New("adapter: existing original snapshot needs review")
+			}
 		}
 		if !snapshot.Exists {
 			if err := p.add(original, fileImage{Exists: true, Data: before.Data, Mode: 0o600}, "保留首次接入前的不可变恢复副本"); err != nil {
