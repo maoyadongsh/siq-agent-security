@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "status",
+    "filesystem_profile",
+    "min_reader",
+    "min_writer"
+  ],
+  "properties": {
+    "schema": {
+      "const": "local-state-windows-profile-result/v1"
+    },
+    "status": {
+      "enum": [
+        "activated",
+        "up_to_date"
+      ]
+    },
+    "filesystem_profile": {
+      "const": "windows-local-drive/v1"
+    },
+    "min_reader": {
+      "const": 3
+    },
+    "min_writer": {
+      "const": 3
+    }
+  }
+}

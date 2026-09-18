@@ -64,3 +64,5 @@ Windows Grant v2 / Runtime Identity v2 / Intent v4 必须在旧消费者拒绝�
 目标标记发布并读回复验后，追加state-windows-profile-done/v1（plan_sha256、marker_sha256），复验完整链后移除精确活动屏障。完成后旧reader/writer2因最低版本3拒绝；新读取器必须验证归档计划、完成记录、目标标记及旧迁移关联，不能只信一个版本数字。已有对象的副作用与权限状态保持原样。
 
 任意中断后只可由同一显式启用事务持锁恢复；计划漂移、源标记替换、旧迁移历史变化、未知输出或权限异常均保留现场拒绝。标记缺失只在prepared与精确target暂存都匹配计划时可恢复；更早阶段不补造。done以后重试不比较过时业务快照、不回滚新业务写入。拒绝或未确认时不产生事务材料。测试覆盖逐阶段故障和真实隔离进程退出，Windows不据此宣称断电耐久性。
+
+显式入口为 `state-enable-windows-resources --confirm`；无确认/多余参数在访问状态前拒绝。`state-status` 对中断启用给出此恢复命令，损坏记录保持拒绝。命令返回 local-state-windows-profile-result/v1，仅表示兼容元数据 activated/up_to_date，不表示批准或启用某个宿主。发行清单的 reader/writer 声明随实现提升到3，已有清单不改写；旧最低版本2制品对升级状态的发行预检拒绝。
