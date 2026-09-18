@@ -2132,3 +2132,5 @@ D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-priv
 Windows `service-upgrade/service-rollback` 的签名事务、系统任务替换、恢复、二进制与状态兼容约束见 [专项规格](windows-task-upgrade-spec-v1.md)。实现复用 clientrelease 与既有受签名 Task 生命周期；配置切换不回放历史权限，原生与测试签名证据分别记录。
 
 Windows `client-install` 的首次身份创建和运行中重复安装按 [安装身份顺序](windows-client-install-bootstrap-v1.md) 执行：受信发行检查先于身份建立，已有身份只读复用，仅确切缺钥时进入原 Writer 保护的初始化路径；已有历史缺钥、ACL、迁移和版本屏障不得绕过。
+
+Windows WorkBuddy 的用户级与已登记项目级 Skill 安装按 [目标与安装链增量](windows-workbuddy-skill-install-v1.md) 执行：版本化计划固定安装目标、真实根身份及父链事实，复用既有安装、更新、移除和恢复事务；导入 Grant 的 Windows 资源编辑保留来源与 Skill 绑定，并在管理边界复验固定副本。SEC 继续表示管理员明确绑定的整个受控会话，不把项目目录或安装成功解释为逐调用因果或运行隔离。旧 v1 签名字节与身份域保持不变。

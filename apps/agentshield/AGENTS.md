@@ -41,6 +41,8 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 
 ## 测试要求
 
+Windows WorkBuddy 安装目标按 `docs/windows-workbuddy-skill-install-v1.md` 的限定增量执行：用户级仅写已确认配置根下的 `skills`，项目级仅写已登记且已确认项目下的 `.codebuddy/skills`；各自私密事务目录位于对应已验证根的 `.siq-agent-security-installs`，不进入原生 Skill 扫描根。父目录创建事实只追加并签名，操作前复验目标身份，保留未知用户对象；此例外不授予普通项目文件写入或运行权限。
+
 Windows 资源事实按 `docs/windows-resource-profile-spec-v1.md` 的限定例外，允许 `internal/runtimepath/*_windows.go` 使用标准库 syscall/unsafe 只读查询盘符映射、文件/目录句柄、卷和目录大小写属性；不更改资源、盘符或 ACL，不提权，不把路径事实本身当作 Authority。测试可在临时目录内建立并清理 junction，不修改用户对象。
 
 Windows 私密状态按 dev-spec §2 的限定例外，允许 `internal/privatefs/*_windows.go` 使用标准库 `syscall`/`unsafe` 查询文件句柄安全描述符、构造受限 DACL 并在新对象创建时传入。禁止改已有对象 ACL、提权、调用外部权限工具或让其他平台直接引用 Windows API；保留兼容屏障和仅标准库约束。
