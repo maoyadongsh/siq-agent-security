@@ -1,0 +1,150 @@
+{
+  "purpose": "Hashes of explicitly selected nonsecret retained evidence, without local paths or original bytes.",
+  "key_or_credential_files_read_or_hashed": false,
+  "sources": [
+    {
+      "source_id": "clean131.build-summary",
+      "sha256": "4433bd3b2ac7d109c3b7a6b88064dab706364430a6b8b1536e8a6996e739d836",
+      "bytes": 727,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r1.controller-result",
+      "sha256": "7af198ebcf6925f12878192a6709ac63989784b5e936e3ef6c375daba9c00d9a",
+      "bytes": 2127,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r1.plan",
+      "sha256": "c98f66ef83cb56e83e5de99d4a3a8b9fa5a937d9432652e3e0d292a7b4d92e0a",
+      "bytes": 8404,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r1.original-failed-report",
+      "sha256": "ac19682059001a54bc7084bc9eb95a1365aa7a606b7ecab99c01da96819d502c",
+      "bytes": 10146,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r1.management-http",
+      "sha256": "c73003b5cce38d76238d364b44025331f8f680a46fbb9b1d6c677623dea2e7e5",
+      "bytes": 2944,
+      "distribution": "retained_private_redacted_HTTP; bytes not copied"
+    },
+    {
+      "source_id": "r1.owned-process-observation",
+      "sha256": "039fd17b448ac9492c2204c99f0106fe9056e4c10dcf146d692b8942566069f3",
+      "bytes": 4223,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r2.controller-result",
+      "sha256": "76932c6227c25b32ec291356566b2b6531f7ce1baec2b112f31bcfd25e70ec59",
+      "bytes": 2138,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r2.plan",
+      "sha256": "94d4d527e19f8e76a38efdbae0b8adbb3ddc0dd72d5a11b71c4111662fd35ee2",
+      "bytes": 8502,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r2.original-failed-report",
+      "sha256": "7712d95fefe74eb5cf5cdc50c13546a402fe70d614db329dfa21d345d255ce2f",
+      "bytes": 10732,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r2.management-http",
+      "sha256": "263f31291bca81cbf7c6fb826de9b68e444d6b108e633c090ffa8c90736bb493",
+      "bytes": 10365,
+      "distribution": "retained_private_redacted_HTTP; bytes not copied"
+    },
+    {
+      "source_id": "r2.owned-process-observation",
+      "sha256": "af9bf38d76706c3e397fc42d91717d75dd9a4d7148c545c0ac5aad12e9901338",
+      "bytes": 9617,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r1.isolated-metadata-diagnosis",
+      "sha256": "497c28e7c9296866aeab840d2ed36c7002edbb2d80bb880e0c51001b8e04debb",
+      "bytes": 1897,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r2.official-cli-restoration-verification",
+      "sha256": "38572b29abc45965584458b8f4e0446937c8affaf2d4da36ab5a4f0a63c6f0e6",
+      "bytes": 1045,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r2.official-cli-uninstall-preview",
+      "sha256": "7a448a0cc161ded926239235425ae19585083200ffa83f0c40288856d5ffa596",
+      "bytes": 6232,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "r2.official-cli-uninstall-apply-status",
+      "sha256": "595f62cea49658184441590c64df44f131e3e08616ae6837730932db584262b5",
+      "bytes": 9696,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "snapshot-fix.component-freeze",
+      "sha256": "f0a7acd0d163c764b17b1b17ab9f6a7e67991bec826514a5b45d390da79b0482",
+      "bytes": 1143,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "snapshot-fix.old-behavior-result",
+      "sha256": "18b7bcc6105552aa850d8be9ac41332950892e59a8db8fc994cfcb437eee0dfe",
+      "bytes": 201,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "snapshot-fix.fixed-result",
+      "sha256": "76be9649e0b556fd2e481a642eeda134a009102289340dafc62899e526bbaa65",
+      "bytes": 185,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "snapshot-fix.old-behavior-log",
+      "sha256": "0f79f5c7fa8999c4d58e40122cb23c2b37bdd032687b801f7591e03869b90ecf",
+      "bytes": 425,
+      "distribution": "retained_private_component_log; bytes not copied"
+    },
+    {
+      "source_id": "snapshot-fix.fixed-log",
+      "sha256": "7e7375b5a8e71a8890a3fa5b6a40c2fb3d1b7d61d416485865518029c11bad25",
+      "bytes": 527,
+      "distribution": "retained_private_component_log; bytes not copied"
+    },
+    {
+      "source_id": "snapshot-fix.fixture-setup-old-result",
+      "sha256": "d17ee38ae74d5ee4175f3cf428af4785da1582201be25c061d7d9267f8e31395",
+      "bytes": 177,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "snapshot-fix.fixture-setup-old-log",
+      "sha256": "d26c28266d10538eb0c4f9c7a4a1aa4e4bf700ca42704d9663ace5136c234443",
+      "bytes": 307,
+      "distribution": "retained_private_component_log; bytes not copied"
+    },
+    {
+      "source_id": "snapshot-fix.fixture-setup-old-r2-result",
+      "sha256": "fe87e4e4e49b491d92b25547aec1b55020725ad952b077f0a48618e79a7caf01",
+      "bytes": 199,
+      "distribution": "retained_private_nonsecret_evidence; bytes not copied"
+    },
+    {
+      "source_id": "snapshot-fix.fixture-setup-old-r2-log",
+      "sha256": "a76e48606f7ffe43b3abe8229354226955483f2f02f277789aa3444c37e7b14d",
+      "bytes": 307,
+      "distribution": "retained_private_component_log; bytes not copied"
+    }
+  ]
+}
