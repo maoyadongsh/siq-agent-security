@@ -2139,3 +2139,5 @@ Windows `service-upgrade/service-rollback` 的签名事务、系统任务替换�
 Windows `client-install` 的首次身份创建和运行中重复安装按 [安装身份顺序](windows-client-install-bootstrap-v1.md) 执行：受信发行检查先于身份建立，已有身份只读复用，仅确切缺钥时进入原 Writer 保护的初始化路径；已有历史缺钥、ACL、迁移和版本屏障不得绕过。
 
 Windows WorkBuddy 的用户级与已登记项目级 Skill 安装按 [目标与安装链增量](windows-workbuddy-skill-install-v1.md) 执行：版本化计划固定安装目标、真实根身份及父链事实，复用既有安装、更新、移除和恢复事务；导入 Grant 的 Windows 资源编辑保留来源与 Skill 绑定，并在管理边界复验固定副本。SEC 继续表示管理员明确绑定的整个受控会话，不把项目目录或安装成功解释为逐调用因果或运行隔离。旧 v1 签名字节与身份域保持不变。
+
+Windows WorkBuddy 实测补充（2026-09-19）：受管钩子 enroll/decide/observe 的单次调用链共用 20 秒 HTTP 总预算，宿主同步 command hook 为 30 秒，给本机 ACL、签名台账及退出留出时间；不按阶段重置预算、不自动重试，超时或响应不确定仍拒绝且不得重放。原 4 秒 HTTP / 5 秒宿主预算在真实桌面正常写入中超时，不能作为可用配置。仅调整 WorkBuddy 受管路径，其他宿主不变。

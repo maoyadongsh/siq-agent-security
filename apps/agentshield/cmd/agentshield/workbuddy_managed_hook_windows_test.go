@@ -100,6 +100,7 @@ func TestWorkBuddyManagedHTTPEnrolledDecideObserve(t *testing.T) {
 			t.Error("wrong session")
 		}
 		if r.URL.Path == "/v1/runtime-sessions" {
+			time.Sleep(4200 * time.Millisecond) // Real Windows persistence can exceed the former four-second budget.
 			_ = json.NewEncoder(w).Encode(map[string]any{"schema_version": "local-runtime-session-enrolled/v2", "identity_id": cfg.RuntimeIdentityID, "platform": "workbuddy", "agent_id": cfg.AgentID, "session_id": session, "binding_id": "ib-fixture", "intent_id": "int-fixture", "expires_at": time.Now().Add(time.Hour).UTC().Format(time.RFC3339)})
 			return
 		}
@@ -212,21 +213,21 @@ func TestWorkBuddyManagedHTTPBudgetDoesNotResetAfterEnroll(t *testing.T) {
 	var path string
 	cfg, path = managedWorkBuddyFixture(t, func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/v1/runtime-sessions" {
-			time.Sleep(2200 * time.Millisecond)
+			time.Sleep(10 * time.Second)
 			session, _ := runtimeidentity.WorkBuddySessionID("host-session")
 			_ = json.NewEncoder(w).Encode(map[string]any{"schema_version": "local-runtime-session-enrolled/v2", "identity_id": cfg.RuntimeIdentityID, "platform": "workbuddy", "agent_id": cfg.AgentID, "session_id": session, "binding_id": "ib-fixture", "intent_id": "int-fixture", "expires_at": time.Now().Add(time.Hour).UTC().Format(time.RFC3339)})
 			return
 		}
 		select {
 		case <-r.Context().Done():
-		case <-time.After(3 * time.Second):
+		case <-time.After(15 * time.Second):
 			_, _ = fmt.Fprint(w, `{"action":"allow"}`)
 		}
 	})
 	start := time.Now()
 	got := runManagedWorkBuddy(t, cfg, path, managedWorkBuddyInput)
 	elapsed := time.Since(start)
-	if got.HookSpecificOutput.PermissionDecision != "deny" || elapsed > 5*time.Second || elapsed < 3800*time.Millisecond {
+	if got.HookSpecificOutput.PermissionDecision != "deny" || elapsed > 23*time.Second || elapsed < 19*time.Second {
 		t.Fatalf("budget changed: %v %+v", elapsed, got)
 	}
 }

@@ -175,13 +175,13 @@ func runWorkBuddyManagedHook(configPath, dir string, in io.Reader, out io.Writer
 	if err != nil || len(token) < 32 || len(token) > 4096 || strings.ContainsAny(token, " \t\r\n") {
 		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedHook(in, nil, "", cfg.EnforcementMode, dir))
 	}
-	// One deadline bounds enroll + decide together; retries do not add 4 seconds.
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+	// One deadline bounds enroll + decide together; retries do not renew the Windows I/O budget.
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	transport.Proxy = nil
 	defer transport.CloseIdleConnections()
-	client := &http.Client{Timeout: 4 * time.Second, Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	client := &http.Client{Timeout: 20 * time.Second, Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
 	d := &workBuddyManagedClient{config: cfg, token: token, client: client, ctx: ctx}
 	return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedHook(in, d, cfg.AgentID, cfg.EnforcementMode, dir))
 }
