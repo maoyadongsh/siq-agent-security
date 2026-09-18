@@ -4,7 +4,9 @@ base=Path.cwd();root=base/'.tmp/win-task-native/bootstrap-fixed-20260917/writer-
 old=base/'.tmp/windows-goal-20260916/hermes-startup-checks-r1/agent.exe';new=base/'.tmp/windows-goal-20260916/writer-recovery-checks-r1/agent.exe';assert new.is_file()
 state=root/'state';home=root/'home';home.mkdir();env=dict(os.environ,SIQ_AGENT_SECURITY_STATE_DIR=str(state),HOME=str(home),USERPROFILE=str(home),APPDATA=str(home/'AppData/Roaming'),LOCALAPPDATA=str(home/'AppData/Local'),XDG_CONFIG_HOME=str(home/'.config'),HERMES_HOME=str(home/'.hermes'))
 for p in [home/'AppData/Roaming',home/'AppData/Local',home/'.config',home/'.hermes']:p.mkdir(parents=True,exist_ok=True)
-report={'old_sha256':hashlib.sha256(old.read_bytes()).hexdigest(),'new_sha256':hashlib.sha256(new.read_bytes()).hexdigest(),'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=base/'.tmp/win-integration-20260918',text=True).strip(),'checks':[]};child=None;log=None
+report={'old_sha256':hashlib.sha256(old.read_bytes()).hexdigest(),'new_sha256':hashlib.sha256(new.read_bytes()).hexdigest(),'source_sha':'84c84a1d990f3783c2afe53e9a9657f6c21b4ffd','checks':[]};child=None;log=None
+assert report['old_sha256']=='08b43f749f716d042a4d2a3a0219e605a9ebeee05f5eda66c742de9064f67658'
+assert report['new_sha256']=='2ab5c2ac7a290da64ec6faad72c822fcec7adfdd96de592862455caef4897f14'
 with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
 opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
 def cli(binary,args):return subprocess.run([str(binary),*args],cwd=root,env=env,capture_output=True,timeout=45,creationflags=subprocess.CREATE_NO_WINDOW)
