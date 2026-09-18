@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -24,6 +25,7 @@ type probeCall struct {
 type probeModel struct {
 	mu       sync.Mutex
 	prefix   string
+	model    string
 	proof    string
 	calls    []probeCall
 	step     int
@@ -44,7 +46,7 @@ func (m *Manager) launch(ctx context.Context, r *run, target adapterinstall.Runt
 	if err != nil {
 		return err
 	}
-	model := &probeModel{prefix: "/" + modelID + "/v1", proof: p.proof, calls: []probeCall{
+	model := &probeModel{prefix: "/" + modelID + "/v1", model: "siq-check-" + modelID, proof: p.proof, calls: []probeCall{
 		{"rc-first", "read_file", map[string]any{"path": p.first}},
 		{"rc-denied", "write_file", map[string]any{"path": p.forbidden, "content": "SIQ negative probe must not execute"}},
 		{"rc-last", "read_file", map[string]any{"path": p.last}},
@@ -52,6 +54,20 @@ func (m *Manager) launch(ctx context.Context, r *run, target adapterinstall.Runt
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		return errors.New("runtime_check_model_unavailable")
+	}
+	defer listener.Close()
+	endpoint := "http://" + listener.Addr().String() + model.prefix
+	provider := "custom"
+	var scope *syntheticModelScope
+	if runtime.GOOS == "windows" {
+		scope, err = prepareSyntheticModelScope(target, p.dir, endpoint, modelID)
+		if err != nil {
+			return err
+		}
+		provider = scope.provider
+	} else {
+		// This increment leaves the existing POSIX launch contract unchanged.
+		model.model = "siq-synthetic-fixture"
 	}
 	server := &http.Server{Handler: model, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second, IdleTimeout: 10 * time.Second, MaxHeaderBytes: 16 << 10}
 	finished := make(chan struct{})
@@ -67,16 +83,38 @@ func (m *Manager) launch(ctx context.Context, r *run, target adapterinstall.Runt
 		"SIQ_AGENT_SECURITY_STATE_DIR="+m.o.Store.Dir, "AGENTSHIELD_STATE_DIR="+m.o.Store.Dir,
 		"SIQ_AGENT_SECURITY_AGENT_ID="+agentID(r.id), "SIQ_RUNTIME_CHECK_ID="+r.id,
 		"SIQ_RUNTIME_CHECK_INSTANCE="+target.InstanceID, "SIQ_RUNTIME_CHECK_TOKEN="+nonce,
-		"CUSTOM_BASE_URL=http://"+listener.Addr().String()+model.prefix, "NO_PROXY=127.0.0.1,localhost,::1",
+		"CUSTOM_BASE_URL="+endpoint, "NO_PROXY=127.0.0.1,localhost,::1",
 		"PYTHONDONTWRITEBYTECODE=1", "PYTHONNOUSERSITE=1", "HERMES_ENABLE_PROJECT_PLUGINS=0", "NO_COLOR=1")
 	if value := os.Getenv("LOCALAPPDATA"); value != "" {
 		env = append(env, "LOCALAPPDATA="+value)
 	}
-	command := exec.CommandContext(ctx, target.NativeCLI, "chat", "--provider", "custom", "--model", "siq-synthetic-fixture", "--toolsets", "file", "--max-turns", "6", "--run-budget", "45", "--ignore-rules", "--quiet", "--oneshot", "-q", "Execute the SIQ synthetic runtime check.")
+	if scope != nil {
+		env = append(env, "HERMES_MANAGED_DIR="+scope.dir, "PYTHON_DOTENV_DISABLED=1")
+	}
+	command := exec.CommandContext(ctx, target.NativeCLI, "chat", "--provider", provider, "--model", model.model, "--toolsets", "file", "--max-turns", "6", "--run-budget", "45", "--ignore-rules", "--quiet", "--oneshot", "-q", "Execute the SIQ synthetic runtime check.")
 	command.Dir, command.Env, command.WaitDelay = p.dir, env, 2*time.Second
+	current, err = m.snapshot(target.InstanceID)
+	if err != nil || current.Digest != target.Digest {
+		return errors.New("runtime_check_snapshot_changed")
+	}
+	if ctx.Err() != nil {
+		return errors.New("runtime_check_cancelled")
+	}
+	if scope != nil {
+		pin, err := scope.pin()
+		if err != nil {
+			return err
+		}
+		defer pin.Close()
+	}
 	// Nil streams connect to the null device; host output and model request
 	// contents are never persisted or included in public failure messages.
 	err = command.Run()
+	if scope != nil {
+		if scopeErr := scope.verify(); scopeErr != nil {
+			return scopeErr
+		}
+	}
 	model.mu.Lock()
 	defer model.mu.Unlock()
 	if err != nil {
@@ -103,7 +141,7 @@ func (p *probeModel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == http.MethodGet && r.URL.Path == p.prefix+"/models" {
 		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{"object": "list", "data": []any{map[string]any{"id": "siq-synthetic-fixture", "object": "model", "owned_by": "siq", "created": 0}}})
+		_ = json.NewEncoder(w).Encode(map[string]any{"object": "list", "data": []any{map[string]any{"id": p.model, "object": "model", "owned_by": "siq", "created": 0}}})
 		return
 	}
 	if r.Method != http.MethodPost || r.URL.Path != p.prefix+"/chat/completions" {
@@ -127,7 +165,7 @@ func (p *probeModel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1<<20))
 	decoder.UseNumber()
 	var extra any
-	if decoder.Decode(&body) != nil || decoder.Decode(&extra) != io.EOF || body.Model != "siq-synthetic-fixture" {
+	if decoder.Decode(&body) != nil || decoder.Decode(&extra) != io.EOF || body.Model != p.model || p.model == "" {
 		p.failed = true
 		w.WriteHeader(400)
 		return
@@ -172,7 +210,7 @@ func (p *probeModel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p.respond(w, body.Stream, map[string]any{"role": "assistant", "content": nil, "tool_calls": []any{map[string]any{"index": 0, "id": call.id, "type": "function", "function": map[string]any{"name": call.tool, "arguments": string(arguments)}}}}, "tool_calls")
 }
 func (p *probeModel) respond(w http.ResponseWriter, stream bool, message map[string]any, finish string) {
-	base := map[string]any{"id": "siq-runtime-check", "created": 0, "model": "siq-synthetic-fixture"}
+	base := map[string]any{"id": "siq-runtime-check", "created": 0, "model": p.model}
 	if !stream {
 		w.Header().Set("Content-Type", "application/json")
 		base["object"] = "chat.completion"
