@@ -12,7 +12,7 @@ siq-agent-security adapter preview hermes install --instance <返回的实例ID>
 siq-agent-security adapter install hermes --instance <返回的实例ID> --enable-native
 ```
 
-实例目录解析覆盖 `HERMES_HOME`、默认目录和命名 profile。CLI 中的 `<返回的实例ID>` 需替换为第一条命令给出的 ID。新实例包装器放在 `<profile>/bin/hermes-skills-install`，固定该 profile 的 `HERMES_HOME`；不会覆盖其他实例的包装器。CLI `install` 是直接授权动作，会重新准备并应用计划；浏览器确认则严格绑定先前预览的 ID 和摘要。
+实例目录解析覆盖 `HERMES_HOME`、默认目录和命名 profile。CLI 中的 `<返回的实例ID>` 需替换为第一条命令给出的 ID。非 Windows 系统的新实例包装器放在 `<profile>/bin/hermes-skills-install`，固定该 profile 的 `HERMES_HOME`；不会覆盖其他实例的包装器。Windows 不安装该 shell 包装器，使用本地管理页的受控 Skill 安装入口，或显式先 `admit` 再调用原生命令；原生命令本身不受装前门禁接管。CLI `install` 是直接授权动作，会重新准备并应用计划；浏览器确认则严格绑定先前预览的 ID 和摘要。
 
 选择原生启用时，安装器调用已安装 Hermes 的公开 CLI，在私有临时副本上执行启用并验证其他配置未变，再由文件事务应用已确认的内容。Hermes 会规范化 YAML 格式；不授予内置工具覆盖权限。CLI 不在 PATH 时，可在启动 SIQ 前将 `SIQ_AGENT_SECURITY_HERMES_CLI` 设置为可信 Hermes CLI 的绝对路径。该路径仅用于定位已安装程序，不能指向 Skill 脚本。
 

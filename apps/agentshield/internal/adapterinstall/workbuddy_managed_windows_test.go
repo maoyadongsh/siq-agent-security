@@ -93,6 +93,48 @@ func TestWorkBuddyManagedInstallDiagnosisAndRevokedUninstall(t *testing.T) {
 	}
 }
 
+func TestWorkBuddyManagedInstallRepairsRestrictedRegistration(t *testing.T) {
+	o := workBuddyManagedOptions(t)
+	if _, err := Install(o); err != nil {
+		t.Fatal(err)
+	}
+	settings := filepath.Join(o.configRoot(), "settings.json")
+	raw, err := os.ReadFile(settings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		t.Fatal(err)
+	}
+	for _, event := range []string{"PreToolUse", "PostToolUse"} {
+		for _, item := range doc["hooks"].(map[string]any)[event].([]any) {
+			group := item.(map[string]any)
+			group["matcher"] = "Read"
+			group["hooks"].([]any)[0].(map[string]any)["async"] = true
+		}
+	}
+	raw, _ = json.Marshal(doc)
+	putTestFile(t, settings, raw, 0600)
+	if checkStatus(Inspect(o), "host_registration") == "pass" {
+		t.Fatal("restricted registration reported healthy")
+	}
+	if _, err := Install(o); err != nil {
+		t.Fatal("formal install/repair failed", err)
+	}
+	if checkStatus(Inspect(o), "host_registration") != "pass" {
+		t.Fatal("formal repair did not restore registration")
+	}
+	raw, err = os.ReadFile(settings)
+	if err != nil || strings.Contains(string(raw), `"async"`) {
+		t.Fatal("repair retained asynchronous execution", err)
+	}
+	putTestFile(t, managedRevocationPath(o), []byte(`{"revoked":true}`), 0600)
+	if _, err := Uninstall(o); err != nil {
+		t.Fatal("repaired registration could not be uninstalled", err)
+	}
+}
+
 func TestWorkBuddyManagedNeverDowngradesAndDetectsMissingConfig(t *testing.T) {
 	o := workBuddyManagedOptions(t)
 	if _, err := Install(o); err != nil {

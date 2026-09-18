@@ -83,4 +83,4 @@ Managed 安装器写入 camelCase 配置 `runtimeIdentityId` / `agentId` / `toke
 
 凭据仅发送至显式端口的 HTTP loopback，localhost 固定为 127.0.0.1，不跟随重定向。托管模式要求真实会话、有效身份凭据及带 action/receipt 的允许裁决。输出原文仅在允许执行或 hold 最终复验通过后按精确调用关联采集一次；重复调用保持失效至关联过期。
 
-macOS Homebrew OpenClaw 2026.9.4 的默认会话仓是 `agents/<id>/agent/openclaw-agent.sqlite`（`session_nodes.session_key`），不再写 `sessions/sessions.json`。本插件仍只使用 hook 提供的 `sessionKey`，不读取宿主会话文件。实测夹具若要对账原生会话身份，必须读当前版本实际存储，不能假定 2026.5.12 的 JSON 路径。
+macOS Homebrew OpenClaw 2026.9.4 的默认会话仓是 `agents/<id>/agent/openclaw-agent.sqlite`（`session_nodes.session_key`），不再写 `sessions/sessions.json`。该段记录历史版本行为；当前插件使用 hook 提供的 `sessionKey` 与 `sessionId`，不读取宿主会话文件，具体以本文开头的会话轮换说明为准。实测夹具若要对账原生会话身份，必须读当前版本实际存储，不能假定 2026.5.12 的 JSON 路径。

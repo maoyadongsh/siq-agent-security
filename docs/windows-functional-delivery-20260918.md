@@ -20,10 +20,27 @@
 
 表中 Go `cmd/` 与 `internal/` 均相对 `apps/agentshield/`。这是实现交付清单，不是逐项真实宿主通过清单；宿主原生安装前拦截、可信 Skill 归属及子任务边界仍以实际支持能力和证据为准，未知归属不升级为 verified。
 
-## 固定源码与已有检查
+## 本轮限时补充（当前交付）
+
+- 当前实现提交为 `ff166068a9047d0cfca73f8dcfb6f8c2dd9102d8`，取代下节历史实现候选。WorkBuddy 已登记钩子的 matcher 被缩窄、设置 async 或重复登记时，正式安装/修复入口现在重建单独的同步全匹配产品钩子，同时保留用户钩子的原匹配范围和元数据。
+- 新负向回归在旧实现失败、修复实现通过；正式 `Install → 损坏匹配范围 → Inspect → Install 修复 → Inspect → 撤权卸载` 组件流程通过。该流程使用隔离文件配置，不冒充 WorkBuddy 桌面真实工具调用。
+- Go vet 通过；四目标构建通过。默认临时目录的适配器包回归因私密权限校验失败；私密目录重跑有 Hermes 取消用例 helper 未启动的失败，并在 5 分钟上限超时。WorkBuddy 定向生命周期/受管身份/修复检查通过；全量 Go 检查退出 1，包含大量权限夹具失败、清单不匹配及超时，不能宣布全绿。具体结果见本批证据目录。
+- 未签名交接包与源码/二进制/Skill 摘要已准备，见 [签名交接](windows-signing-handoff-20260918.md) 及 [候选记录](evidence/personal-experience/windows-sunbo/workbuddy-repair-20260918/unsigned-candidate.json)。正式签名仍由 Issue #87 跟踪。
+
+### 三宿主当前使用方式与边界
+
+| 宿主 | 已接入的产品路径 | 尚不能声称的范围／外部条件 |
+| --- | --- | --- |
+| OpenClaw | 实例发现与预览安装；运行时插件将可信 sessionKey 与 sessionId 绑定到在线身份；权限、撤销、Skill 生命周期复用后端 | Windows 原生与 WSL2 分开；当前统一候选的完整原生调用未验收。原生 hold 必须有宿主可信执行前复验能力，缺少时继续阻断，不注入能力开关。 |
+| Hermes | Windows 原生 CLI/profile 启用与受管插件；真实会话自动接入；pre/post、hold 批准后精确重试预留、撤销与配置还原 | 已有 494464e 的 Windows 原生正式接入/自检证据，但非本候选完整五步验收；进程退出或关联过期不凭旧缓存自动恢复；Windows 无 shell 安装包装器。 |
+| WorkBuddy | Windows 桌面配置根的 PreToolUse/PostToolUse command 钩子；明确管理身份/凭据引用；在线裁决、持久关联、审批预留、撤销、Skill 用户级/项目级安装及卸载 | 本次已修正式修复入口。真实桌面受保护调用仍未完成；此前一次普通写入不能证明安全闭环，账号一次调用授权已消耗。 |
+
+三者的“发现、安装文件、受管身份配置、运行检查、可信 Skill 归属”各自独立。未知 Skill 归属不提升为 verified；用户直接绕过受控安装入口的行为不宣称被装前拦截。没有新增宿主插件 API、对外监听或替代安全引擎。当前交付仍不证明所有本地功能要求及真实调用全部完成，不能据此标记整项目完成。
+
+## 历史固定源码与已有检查
 
 - 实现候选：`494464ea9f3cff90be4dc0ceac0dd5980c464617`。Windows amd64 自建二进制 SHA256：`ad7680ba64672c9abbaab341ecebea4946e317e2fc3c6160cb5a0ade7e6d9d16`。已有干净候选构建退出 0。
-- 收口前分支 head：`1b54d048874e072a5c39a0d07b6e1c4878ba6500`；与实现候选相比只有 Hermes r3 的四份证据文件，产品源码和嵌入 UI 未变化。本交付说明同样不改变产品候选。
+- 收口前分支 head：`1b54d048874e072a5c39a0d07b6e1c4878ba6500`；与实现候选相比只有 Hermes r3 的四份证据文件，产品源码和嵌入 UI 未变化。这是上批材料的状态，本轮修复已产生上述新实现候选。
 - 最近 UI 类型检查和本地嵌入构建退出 0，输出已纳入 494464e。沿用已有定向 Go/Web/合同检查与各批四目标构建记录，不将不同历史候选拼为最终全通过。
 - Hermes 正式接入/自检 r3 的独立核查已通过；r1/r2 原失败保留。材料见 `docs/evidence/personal-experience/windows-sunbo/hermes-product-runtimecheck-20260918-r3/`。
 - 1b54d04 的 PR CI 为 38 成功、2 跳过、2 失败。两个失败 job 均在 `internal/skillmanifest` 的三项测试遇到旧发布清单与实际 Skill 内容摘要不符；仍是实际失败，未删除或放宽测试。
