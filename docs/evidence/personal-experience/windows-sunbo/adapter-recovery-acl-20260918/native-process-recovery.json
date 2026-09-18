@@ -1,0 +1,14 @@
+{
+  "production_source": "17763748f957606bd04f0608cc90ee917a2f2aad",
+  "test_change": "Removed obsolete Windows skip, same existing crash cases now actually run",
+  "exit": 0,
+  "seconds": 21.832,
+  "passed_tests": [
+    "TestAdapterRealProcessDeathRecovery/prepared",
+    "TestAdapterRealProcessDeathRecovery/file:1",
+    "TestAdapterRealProcessDeathRecovery/audited",
+    "TestAdapterRealProcessDeathRecovery"
+  ],
+  "skipped_tests": [],
+  "raw_log_sha256": "e4d571bbab9f00ff1573049c5def52ebb7679caad95a91818cb8493f67f4fa63"
+}

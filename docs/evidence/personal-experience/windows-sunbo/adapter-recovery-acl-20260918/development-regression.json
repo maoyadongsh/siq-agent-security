@@ -1,0 +1,90 @@
+{
+  "source": "Same production later committed as 17763748f957606bd04f0608cc90ee917a2f2aad; tests started while development tree dirty, not relabeled clean",
+  "checks": [
+    {
+      "name": "statefs",
+      "exit": 0,
+      "seconds": 13.13
+    },
+    {
+      "name": "adapterinstall",
+      "exit": 0,
+      "seconds": 439.986
+    }
+  ],
+  "summaries": {
+    "statefs": {
+      "raw_log_sha256": "40d63a21f4aabc7e08d0917c68e2f61df9cd3e291b018b897a944437b225f01d",
+      "top_level": {
+        "pass": 4
+      },
+      "subtests": {
+        "pass": 2
+      },
+      "failed_tests": [],
+      "skipped_tests": []
+    },
+    "adapterinstall": {
+      "raw_log_sha256": "8e90daa1ac4cc337804f2fe99b88dc7c49d9eb7cb8f89051d4c36cdbe26ce9cc",
+      "top_level": {
+        "pass": 88,
+        "skip": 14
+      },
+      "subtests": {
+        "pass": 61,
+        "skip": 7
+      },
+      "failed_tests": [],
+      "skipped_tests": [
+        "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/symlink",
+        "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink",
+        "TestDiagnosticsRejectUnsafeFilesWithoutLeakingContents",
+        "TestHermesNativeCLIProfileIsolationAndDrift",
+        "TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings",
+        "TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites",
+        "TestHermesNativeCLIFreshConfig",
+        "TestSymlinkConfigRefused",
+        "TestPlanRejectsInstanceRootSymlink",
+        "TestDefaultInstanceUpgradeRestoresLegacyWrapper",
+        "TestOpenClawInstalledPluginLoadsNatively",
+        "TestNativeRuntimeTargetPinsConfigurationServiceAndCLI",
+        "TestAdapterRealProcessDeathRecovery",
+        "TestTransactionPrivateStoreRejectsSymlinks/adapter-transactions",
+        "TestTransactionPrivateStoreRejectsSymlinks/adapter-operations",
+        "TestTransactionPrivateStoreRejectsSymlinks/adapter-write",
+        "TestHermesWrapperQuotesPathsAndRefusesFailedAdmission",
+        "TestRecoveryRejectsTamperedCiphertext",
+        "TestWorkBuddyHookQuotesBinaryAndStatePaths",
+        "TestWorkBuddyInvalidConfigOverrideNeverFallsBack/symlink",
+        "TestWorkBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink"
+      ]
+    }
+  },
+  "focused": {
+    "adapter-private": {
+      "raw_log_sha256": "07600692e58b0169dabfcaa6fbddabc6c20eb5e47b6d733d68da128d1ec6a849",
+      "top_level": {
+        "pass": 4
+      },
+      "subtests": {
+        "pass": 7
+      },
+      "failed_tests": [],
+      "skipped_tests": []
+    },
+    "publication-regression": {
+      "raw_log_sha256": "5f3cfd18ad2b77b43512f8c85910e4accbbccab43d13422e5ae68d5b4e17b4a4",
+      "top_level": {
+        "pass": 9,
+        "skip": 1
+      },
+      "subtests": {
+        "pass": 19
+      },
+      "failed_tests": [],
+      "skipped_tests": [
+        "TestWindowsMigrationPublicationCrashHelper"
+      ]
+    }
+  }
+}
