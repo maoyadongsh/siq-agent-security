@@ -3598,5 +3598,10 @@ def test_skill_context_management_http_sample_and_boundaries() -> None:
     _, validator = _workbuddy_skill_validator("local-skill-context-management.v1")
     data = json.loads((GO_SAMPLES / "local-skill-context-management.v1.sample.json").read_text(encoding="utf-8"))
     validator.validate(data)
-    for changed in [dict(data, sessions=[{}]), dict(data, contexts=[{"context": {}, "revoked": False}]), dict(data, unexpected=True), dict(data, sessions=data["sessions"] * 65)]:
+    for changed in [
+        dict(data, sessions=[{}]),
+        dict(data, contexts=[{"context": {}, "revoked": False}]),
+        dict(data, unexpected=True),
+        dict(data, sessions=data["sessions"] * 65),
+    ]:
         assert list(validator.iter_errors(changed))
