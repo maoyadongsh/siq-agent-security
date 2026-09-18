@@ -1,0 +1,64 @@
+{
+  "base_sha": "edbf5d1e5a52a92f126f58302a59fd4dc27f60d2",
+  "source_dirty": true,
+  "dirty_paths_before": [
+    " M apps/agentshield/AGENTS.md",
+    " M apps/agentshield/cmd/agentshield/client_install.go",
+    " M apps/agentshield/cmd/agentshield/desktop_notify.go",
+    " M apps/agentshield/cmd/agentshield/launch_agent_switch_test.go",
+    " M apps/agentshield/internal/grant/resources.go",
+    " M apps/agentshield/internal/notify/notify.go",
+    " M docs/agentshield-dev-spec-v1.md",
+    " M docs/windows-authority-ui-v1.md",
+    " M docs/windows-resource-profile-spec-v1.md",
+    "?? apps/agentshield/cmd/agentshield/client_install_bootstrap_windows_test.go",
+    "?? apps/agentshield/internal/grant/resources_input_windows_test.go",
+    "?? apps/agentshield/internal/notify/desktop.go",
+    "?? apps/agentshield/internal/notify/desktop_other.go",
+    "?? apps/agentshield/internal/notify/desktop_test.go",
+    "?? apps/agentshield/internal/notify/desktop_windows.go",
+    "?? apps/agentshield/internal/notify/desktop_windows_test.go",
+    "?? docs/windows-client-install-bootstrap-v1.md",
+    "?? docs/windows-desktop-notifications-v1.md"
+  ],
+  "scope": "targeted implementation checks only",
+  "results": [
+    {
+      "label": "notify",
+      "args": [
+        "test",
+        "./internal/notify",
+        "-count=1",
+        "-timeout=60s"
+      ],
+      "exit_code": 0,
+      "seconds": 19.067646
+    },
+    {
+      "label": "windows-resource-input",
+      "args": [
+        "test",
+        "./internal/grant",
+        "-run",
+        "^TestResourceWindows",
+        "-count=1",
+        "-timeout=180s"
+      ],
+      "exit_code": 0,
+      "seconds": 6.667939
+    },
+    {
+      "label": "client-install-and-notification-wiring",
+      "args": [
+        "test",
+        "./cmd/agentshield",
+        "-run",
+        "^(TestWindowsClientInstall|TestClientInstallationValidates|TestClientInstallRequires|TestDesktopNotifier|TestStartDesktopNotify|TestPendingConfirmations|TestDesktopNotifyConfig)",
+        "-count=1",
+        "-timeout=180s"
+      ],
+      "exit_code": 1,
+      "seconds": 37.043362
+    }
+  ]
+}

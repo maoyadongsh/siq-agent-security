@@ -1,0 +1,159 @@
+{
+  "base_sha": "6d3cd12a691b914b86a0c2b118aa70fccea17393",
+  "source_dirty": true,
+  "dirty_paths_before": [
+    "M apps/agentshield/AGENTS.md",
+    " M apps/agentshield/cmd/agentshield/client_install.go",
+    " M apps/agentshield/cmd/agentshield/desktop_notify.go",
+    " M apps/agentshield/cmd/agentshield/launch_agent_switch_test.go",
+    " M apps/agentshield/internal/notify/notify.go",
+    " M docs/agentshield-dev-spec-v1.md",
+    "?? apps/agentshield/cmd/agentshield/client_install_bootstrap_windows_test.go",
+    "?? apps/agentshield/internal/notify/desktop.go",
+    "?? apps/agentshield/internal/notify/desktop_other.go",
+    "?? apps/agentshield/internal/notify/desktop_test.go",
+    "?? apps/agentshield/internal/notify/desktop_windows.go",
+    "?? apps/agentshield/internal/notify/desktop_windows_test.go",
+    "?? docs/windows-client-install-bootstrap-v1.md",
+    "?? docs/windows-desktop-notifications-v1.md",
+    "?? docs/windows-workbuddy-skill-install-v1.md"
+  ],
+  "scope": "targeted implementation checks and four build targets only; no native desktop or host acceptance",
+  "reason_for_rerun": "Explorer recovery source changed; prior client fixture exceeded canonical task path limit under long TEMP. Same assertions retained with new short private TEMP.",
+  "prior_r2_preflight": "No product tests ran: Windows PowerShell module autoload failed under inherited PowerShell 7 PSModulePath. Direct read-back confirmed the created directory had the required protected three-principal DACL.",
+  "prior_r3_preflight": "No product tests ran: helper expected case-sensitive SystemRoot in a copied environment dictionary. The Windows os.environ mapping itself was case-insensitive.",
+  "fixture": {
+    "new_private_root": ".tmp/fi4",
+    "protected_dacl_verified": true,
+    "helper_sha256": "aef152e1706c2d89caab077178ae23d3c4bb8235fab703fe71aa27f4061e3711"
+  },
+  "reused_check": "r1/windows-resource-input exit 0; that code is unchanged",
+  "results": [
+    {
+      "label": "notify",
+      "args": [
+        "test",
+        "./internal/notify",
+        "-json",
+        "-count=1",
+        "-timeout=60s"
+      ],
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 12.515849
+    },
+    {
+      "label": "client-install-and-notification-wiring",
+      "args": [
+        "test",
+        "./cmd/agentshield",
+        "-json",
+        "-run",
+        "^(TestWindowsClientInstall|TestClientInstallationValidates|TestClientInstallRequires|TestDesktopNotifier|TestStartDesktopNotify|TestPendingConfirmations|TestDesktopNotifyConfig)",
+        "-count=1",
+        "-timeout=180s"
+      ],
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 38.334097
+    },
+    {
+      "label": "vet",
+      "args": [
+        "vet",
+        "./internal/notify",
+        "./internal/grant",
+        "./cmd/agentshield"
+      ],
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 9.194224
+    },
+    {
+      "label": "windows-amd64-build",
+      "args": [
+        "build",
+        "-trimpath",
+        "-o",
+        "<workspace>\\.tmp\\windows-goal-20260916\\feature-implementation-checks-20260918-r4\\agentshield-windows-amd64.exe",
+        "./cmd/agentshield"
+      ],
+      "extra_env": {
+        "GOOS": "windows",
+        "GOARCH": "amd64"
+      },
+      "exit_code": 0,
+      "seconds": 24.046716,
+      "binary_sha256": "22847e877d33d5edbcff95838e141bdadc3a19b130bd4aba33cbbcf369f585ec"
+    },
+    {
+      "label": "linux-amd64-build",
+      "args": [
+        "build",
+        "-trimpath",
+        "-o",
+        "<workspace>\\.tmp\\windows-goal-20260916\\feature-implementation-checks-20260918-r4\\agentshield-linux-amd64",
+        "./cmd/agentshield"
+      ],
+      "extra_env": {
+        "GOOS": "linux",
+        "GOARCH": "amd64"
+      },
+      "exit_code": 0,
+      "seconds": 17.643553,
+      "binary_sha256": "c477002aeb5b7a7b911b474e57a98bec1ca16d6356252a2cee6c6abdc4d3c512"
+    },
+    {
+      "label": "linux-arm64-build",
+      "args": [
+        "build",
+        "-trimpath",
+        "-o",
+        "<workspace>\\.tmp\\windows-goal-20260916\\feature-implementation-checks-20260918-r4\\agentshield-linux-arm64",
+        "./cmd/agentshield"
+      ],
+      "extra_env": {
+        "GOOS": "linux",
+        "GOARCH": "arm64"
+      },
+      "exit_code": 0,
+      "seconds": 19.140314,
+      "binary_sha256": "8e3b307907b50d681146756663b3dd9164f6dee3776b434b8da3e80b13196ea4"
+    },
+    {
+      "label": "darwin-arm64-build",
+      "args": [
+        "build",
+        "-trimpath",
+        "-o",
+        "<workspace>\\.tmp\\windows-goal-20260916\\feature-implementation-checks-20260918-r4\\agentshield-darwin-arm64",
+        "./cmd/agentshield"
+      ],
+      "extra_env": {
+        "GOOS": "darwin",
+        "GOARCH": "arm64"
+      },
+      "exit_code": 0,
+      "seconds": 22.038951,
+      "binary_sha256": "dbd1b4933451dc58283b9fd8f77bf772e7ab3ea88478f886eaf9cd740c7cd084"
+    }
+  ],
+  "result": "pass",
+  "dirty_paths_after": [
+    "M apps/agentshield/AGENTS.md",
+    " M apps/agentshield/cmd/agentshield/client_install.go",
+    " M apps/agentshield/cmd/agentshield/desktop_notify.go",
+    " M apps/agentshield/cmd/agentshield/launch_agent_switch_test.go",
+    " M apps/agentshield/internal/notify/notify.go",
+    " M docs/agentshield-dev-spec-v1.md",
+    "?? apps/agentshield/cmd/agentshield/client_install_bootstrap_windows_test.go",
+    "?? apps/agentshield/internal/notify/desktop.go",
+    "?? apps/agentshield/internal/notify/desktop_other.go",
+    "?? apps/agentshield/internal/notify/desktop_test.go",
+    "?? apps/agentshield/internal/notify/desktop_windows.go",
+    "?? apps/agentshield/internal/notify/desktop_windows_test.go",
+    "?? docs/windows-client-install-bootstrap-v1.md",
+    "?? docs/windows-desktop-notifications-v1.md",
+    "?? docs/windows-workbuddy-skill-install-v1.md"
+  ]
+}
