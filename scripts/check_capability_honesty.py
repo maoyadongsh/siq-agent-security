@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX_GO = ROOT / "apps" / "agentshield" / "internal" / "skillmanifest" / "matrix.go"
-SKILL_MANIFEST = ROOT / "skills" / "siq-agent-security" / "skill-manifest.json"
+SKILL_MANIFEST = ROOT / "apps/agentshield/testdata/releases/siq-agent-security-v0.2.0/skill-manifest.json"
 CAP_MATRIX = ROOT / "docs" / "agentshield-capability-matrix-v1.md"
 RUNBOOK = ROOT / "docs" / "enterprise-production-runbook-v1.md"
 PROFILES = ROOT / "docs" / "agentshield-capability-profiles-v1.md"

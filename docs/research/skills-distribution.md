@@ -108,3 +108,7 @@ Google 的[官方工程实践说明](https://cloud.google.com/blog/topics/develo
 人工审阅上游源码和依赖锁，重新从官方 registry 核对每个 artifact 的 integrity 与 SHA-256，并更新 pin。先跑全部离线测试，再执行新的真实 CLI smoke，检查所有失败与差异。GitHub Actions 使用固定 commit，workflow 不自动更新依赖或发布产物。MIT 及其他上游依赖许可留在临时下载的包内；本仓仅保存来源和摘要，不再分发这些包的源码。
 
 源码依据：[发现逻辑](https://github.com/vercel-labs/skills/blob/d667282815248da03a08a18272b5d2eef9caf77c/src/skills.ts)、[安装与复制](https://github.com/vercel-labs/skills/blob/d667282815248da03a08a18272b5d2eef9caf77c/src/installer.ts)、[本地 lock](https://github.com/vercel-labs/skills/blob/d667282815248da03a08a18272b5d2eef9caf77c/src/local-lock.ts)、[audit 展示](https://github.com/vercel-labs/skills/blob/d667282815248da03a08a18272b5d2eef9caf77c/src/add.ts)、[临时使用](https://github.com/vercel-labs/skills/blob/d667282815248da03a08a18272b5d2eef9caf77c/src/use.ts)。
+
+### 2026-09-19 开发源码说明
+
+main 中的 `skills/siq-agent-security/` 为未签名开发源码；复制安装兼容测试只证明目录分发，不证明 bootstrap 可运行。旧签名完整包移至 `apps/agentshield/testdata/releases/siq-agent-security-v0.2.0/` 作历史验签回归。源码缺失清单时 bootstrap 继续拒绝；正式使用须获得对实际内容签名的发行包。见 [源码与发行边界](../skill-source-release-boundary-20260919.md)。

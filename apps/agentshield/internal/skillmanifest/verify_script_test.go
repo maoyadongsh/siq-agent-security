@@ -69,10 +69,7 @@ func TestEmbedReleasePubkeyKeepsPS1Variable(t *testing.T) {
 }
 
 func TestAdapterAndBootstrapShareVerifiedResolve(t *testing.T) {
-	dir, err := FindSkillDir()
-	if err != nil {
-		t.Fatal(err)
-	}
+	dir := signedSourceCopy(t)
 	resolve := filepath.Join(dir, "scripts", "resolve_verified_bin.sh")
 	adapter, err := os.ReadFile(filepath.Join(dir, "scripts", "adapter.sh"))
 	if err != nil {
@@ -123,7 +120,6 @@ func TestResolveStagesVerifiedBinary(t *testing.T) {
 	if err != nil {
 		t.Skip(err)
 	}
-	resolve := filepath.Join(dir, "scripts", "resolve_verified_bin.sh")
 	repoBin := filepath.Join(dir, "..", "..", "apps", "agentshield", "siq-agent-security")
 	if runtime.GOOS == "windows" {
 		repoBin += ".exe"
@@ -131,6 +127,8 @@ func TestResolveStagesVerifiedBinary(t *testing.T) {
 	if _, err := os.Stat(repoBin); err != nil {
 		t.Skip("repo binary missing")
 	}
+	dir = signedSourceCopy(t)
+	resolve := filepath.Join(dir, "scripts", "resolve_verified_bin.sh")
 	stage := t.TempDir()
 	cmd := exec.Command("sh", resolve)
 	cmd.Env = append(os.Environ(),
@@ -213,14 +211,12 @@ func TestPythonVerifierAcceptsSignedManifest(t *testing.T) {
 func TestPythonVerifierAcceptsCommittedRelease(t *testing.T) {
 	dir, err := FindSkillDir()
 	if err != nil {
-		t.Skip(err)
+		t.Fatal(err)
 	}
-	path := filepath.Join(dir, "skill-manifest.json")
-	if _, err := os.Stat(path); err != nil {
-		t.Skip("release manifest not generated yet")
-	}
+	release := historicalReleaseDir(t)
+	path := filepath.Join(release, "skill-manifest.json")
 	py := filepath.Join(dir, "scripts", "verify_manifest.py")
-	cmd := exec.Command("python3", py, "--manifest", path, "--pubkey", ReleasePublicKeyB64, "--skill-dir", dir)
+	cmd := exec.Command("python3", py, "--manifest", path, "--pubkey", ReleasePublicKeyB64, "--skill-dir", release)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("committed skill-manifest.json failed bootstrap verifier: %v\n%s", err, out)
@@ -230,13 +226,10 @@ func TestPythonVerifierAcceptsCommittedRelease(t *testing.T) {
 func TestPythonVerifierRejectsContentHashMismatch(t *testing.T) {
 	dir, err := FindSkillDir()
 	if err != nil {
-		t.Skip(err)
+		t.Fatal(err)
 	}
 	py := filepath.Join(dir, "scripts", "verify_manifest.py")
-	path := filepath.Join(dir, "skill-manifest.json")
-	if _, err := os.Stat(path); err != nil {
-		t.Skip("release manifest not generated yet")
-	}
+	path := filepath.Join(historicalReleaseDir(t), "skill-manifest.json")
 	tmp := t.TempDir()
 	if err := os.WriteFile(filepath.Join(tmp, "SKILL.md"), []byte("---\nname: tampered\n---\n# tampered\n"), 0o644); err != nil {
 		t.Fatal(err)

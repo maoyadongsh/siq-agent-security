@@ -5,11 +5,11 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-usage: agentshield-release-check.sh [--build] [--bin-dir DIR] [--manifest PATH]
+usage: agentshield-release-check.sh [--build] [--bin-dir DIR] --manifest PATH
 
   --build         cross-compile four targets into --bin-dir (default: /tmp/siq-agent-security-release-bin)
   --bin-dir DIR   directory that already contains the four artifact names
-  --manifest PATH skills/siq-agent-security/skill-manifest.json (default: repo path)
+  --manifest PATH signed manifest from the actual staged release (required)
 
 Exit 0 if sha256 and bytes match the signed manifest. Exit 1 on drift.
 EOF
@@ -18,7 +18,7 @@ EOF
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BIN_DIR=""
 DO_BUILD=0
-MANIFEST="${ROOT}/skills/siq-agent-security/skill-manifest.json"
+MANIFEST=""
 GO_BIN="${HOME}/sdk/go/bin/go"
 if ! command -v go >/dev/null 2>&1 && [[ -x "$GO_BIN" ]]; then
   export PATH="$(dirname "$GO_BIN"):$PATH"
@@ -38,7 +38,7 @@ if [[ -z "$BIN_DIR" ]]; then
   BIN_DIR="/tmp/siq-agent-security-release-bin"
 fi
 if [[ ! -f "$MANIFEST" ]]; then
-  echo "missing manifest: $MANIFEST" >&2
+  echo "supply --manifest pointing to the signed staged release; missing manifest: $MANIFEST" >&2
   exit 1
 fi
 

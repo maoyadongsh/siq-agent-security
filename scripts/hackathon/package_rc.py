@@ -237,7 +237,7 @@ def build(args):
         "official_signature": False, "version": args.version, "skills": {
             name: {path: value for path, value in files.items() if path.startswith("skills/" + name + "/")}
             for name in ("secure-research", "secure-report", "secure-delivery")},
-        "historical_manifest": "source/skills/siq-agent-security/skill-manifest.json",
+        "historical_manifest": "source/apps/agentshield/testdata/releases/siq-agent-security-v0.2.0/skill-manifest.json",
         "limitation": "Historical signed manifest belongs to v0.2.0; it does not authorize these new binaries."})
     write_json(out / "skill-inventory.json", skill_inventory(source, args.version))
     subprocess.run(["python3", str(source / "scripts/check_gitleaks_config.py"), "--binary", str(args.scanner.resolve())],

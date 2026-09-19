@@ -59,7 +59,7 @@ stage_root() {
 
 verify_and_stage() {
   bin=$1
-  [ -f "$MANIFEST" ] || die "skill-manifest.json missing; development source is unsigned. Use a signed release package or build the daemon for development; refusing to proceed"
+  [ -f "$MANIFEST" ] || die "skill-manifest.json missing; refusing to proceed"
   command -v python3 >/dev/null 2>&1 || die "python3 required to verify skill-manifest.json"
   extra=""
   if [ -z "${SIQ_AGENT_SECURITY_REQUIRE_PINNED:-}" ] && [ -z "${AGENTSHIELD_REQUIRE_PINNED:-}" ]; then
@@ -78,7 +78,7 @@ verify_and_stage() {
 
 # DEV04-E: opt-in download from signed manifest URL only (never before signature verify).
 fetch_and_stage() {
-  [ -f "$MANIFEST" ] || die "skill-manifest.json missing; development source is unsigned. Use a signed release package or build the daemon for development; refusing to proceed"
+  [ -f "$MANIFEST" ] || die "skill-manifest.json missing; refusing to proceed"
   command -v python3 >/dev/null 2>&1 || die "python3 required to verify skill-manifest.json"
   root=$(stage_root)
   mkdir -p -m 700 "$root" 2>/dev/null || mkdir -p "$root"

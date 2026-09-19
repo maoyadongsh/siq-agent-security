@@ -242,9 +242,9 @@ jobs:
             echo "building $os/$arch"
             GOOS=$os GOARCH=$arch CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.Version=0.2.0" -o /tmp/siq-agent-security-$os-$arch$ext ./cmd/agentshield
           done
-      - name: Verify signed skill-manifest.json
+      - name: Verify historical signed release snapshot
         run: |
-          go run ./cmd/agentshield manifest-verify ../../skills/siq-agent-security/skill-manifest.json
+          go run ./cmd/agentshield manifest-verify testdata/releases/siq-agent-security-v0.2.0/skill-manifest.json
       - name: Self-scan Skill pack
         run: |
           go build -trimpath -ldflags "-s -w -X main.Version=0.2.0" -o /tmp/siq-agent-security ./cmd/agentshield
