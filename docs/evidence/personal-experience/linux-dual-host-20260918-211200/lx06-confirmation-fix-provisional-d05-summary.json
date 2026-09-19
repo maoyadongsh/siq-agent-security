@@ -1,0 +1,44 @@
+{
+  "schema_version": "linux-lx06-confirmation-fix-provisional-d05/v1",
+  "recorded_at": "2026-09-18T21:23:48.603648+00:00",
+  "scope": "real OpenShell task execution functional D05 on batch-owned sandbox",
+  "candidate_sha256": "6ce92b692f099478e88a86e368e9132ab113c5eecc41c77a791ca7d367d3262e",
+  "source_binding_sha256": "dbc07ca53280c61052644b220d013e909b16c2a499d7a30c558b65bb738c1323",
+  "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+  "cli_version": "0.0.83",
+  "image_sha256": "523904c19a4b886e87b8340d7d359e4400a1d2e58def479e351dddad8ff1ee72",
+  "matrix": {
+    "total": 373,
+    "pass": 365,
+    "partial": 7,
+    "blocked": 1,
+    "fail": 0,
+    "acceptance_items": 13,
+    "acceptance_pass": 10,
+    "acceptance_partial": 3,
+    "partial_items": [
+      "E06",
+      "E08",
+      "E11"
+    ],
+    "k90_restore_checks": 4
+  },
+  "private_matrix_sha256": "52435376ef2011a3027806a61c93eea8478ef719a0d4c6d95b748bb413fc2ea8",
+  "private_console_sha256": "18d6195ff540e92263e8359409fc2c5b435dc9d735228faaece76009249243b3",
+  "private_preflight_sha256": "706d3ab9ef337661d69aab0dbe63959e71c5995414ac81b037802ce1970961f6",
+  "driver_sha256": "d11aacc835ce961a145a830b741be97aac8b0ca35fcb423c2812ad4ada650717",
+  "sandbox": {
+    "created_by_batch": true,
+    "name": "siq-lx06-confirmation-fix-20260919",
+    "preexisting_count": 3,
+    "postdelete_count": 3,
+    "preexisting_unchanged": true,
+    "delete_exit": 0
+  },
+  "limitations": [
+    "D05 exit 0 means no failed steps; seven partial and one blocked remain and are not full acceptance.",
+    "E06, E08 and E11 remain partial; E08 remote per-task stop lacks confirmed upstream protocol.",
+    "No B2/B3 or S1-S4 performance measurement for this candidate while LX04 natural-expiry worker is live.",
+    "Gateway behavior beyond this batch-owned sandbox and Windows/macOS host behavior are not inferred."
+  ]
+}

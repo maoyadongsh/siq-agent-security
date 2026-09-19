@@ -1,0 +1,60 @@
+{
+  "schema_version": "linux-lx03-openclaw-approval-sixth/v1",
+  "recorded_at": "2026-09-18T22:49:46.421520+00:00",
+  "host_os": "linux/arm64",
+  "host_version": "OpenClaw 2026.5.12",
+  "source_candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0",
+  "adapter_sha256": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5",
+  "runner_sha256": "576aa4197a1cd4e46e1532b9f9add7558e22ede7eb52b0614f478ad6499fdb25",
+  "private_report_sha256": "d1952061b91c8520e2ac6310a428a5dad939e687fd364a7c9c340c377dd0225e",
+  "total_cases": 18,
+  "groups": {
+    "stock_unsupported": {
+      "cases": 1,
+      "passed": true,
+      "runtime_kind": "stock",
+      "receipt_chain_verified": true
+    },
+    "ordinary": {
+      "cases": 6,
+      "passed": true,
+      "runtime_kind": "temporary checkpoint-v2 copy",
+      "receipt_chain_verified": true
+    },
+    "revocation": {
+      "cases": 2,
+      "passed": true,
+      "runtime_kind": "temporary checkpoint-v2 copy",
+      "receipt_chain_verified": true
+    },
+    "faults": {
+      "cases": 9,
+      "passed": true,
+      "runtime_kind": "temporary checkpoint-v2 copy",
+      "receipt_chain_verified": true
+    }
+  },
+  "stock_original_host": {
+    "hold_blocked_before_platform_approval": true,
+    "executed": false,
+    "observation_count": 0
+  },
+  "temporary_checkpoint_copy": {
+    "groups": [
+      "ordinary",
+      "revocation",
+      "faults"
+    ],
+    "cases": 17,
+    "passed": true,
+    "scope": "controlled local patch copy only; installed host unchanged"
+  },
+  "installed_source_unchanged": true,
+  "release_acceptance": false,
+  "limitations": [
+    "The original installed OpenClaw safely refuses hold; native post-approval execution is not complete.",
+    "The checkpoint-capable runtime is an isolated test copy, not an upstream or installed product capability.",
+    "Synthetic model/operator and local effects do not establish human approval or cross-process effect atomicity."
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "B2_doctor": {
+    "B3": "not_measured_by_this_driver",
+    "absolute_p95_budget_ms": {
+      "aux_control_plane_restore": 60000,
+      "doctor_readback": 15000,
+      "doctor_unreachable": 15000
+    },
+    "aux_control_plane_restore_samples": 5,
+    "doctor_readback_relative_p95_budget_ratio": 1.3,
+    "driver_sha256": "761ae1868f781d68f0018effd5d19a2087367cd09cec40adf4cf1c46cc515dd6",
+    "interleaved_orders": [
+      [
+        "old",
+        "new",
+        "new",
+        "old"
+      ],
+      [
+        "new",
+        "old",
+        "old",
+        "new"
+      ],
+      [
+        "old",
+        "new",
+        "new",
+        "old"
+      ]
+    ],
+    "offline_guard_sha256": "440e8b8f23046c8404f8a5824630f014ec5bb54e9d0ce81a6ad4d673ad8845e3",
+    "pre_help_fix_driver_sha256": "27f4b8d58c5433f59e07626ac5aeec6222e31b2c54083b696baa792fb1c60d03",
+    "pre_sample_help_fix": "Argument parsing now precedes required environment access; --help is offline and missing environment exits 2 without traceback. Measurement algorithm, samples, order and budgets are unchanged.",
+    "rounds": 3,
+    "samples_per_leg_scenario_round": 15,
+    "warmups_per_leg_scenario": 2
+  },
+  "B3_functional": {
+    "candidate": "sixth_sec_hold_fix",
+    "driver_sha256": "3623a058b5e1e67ad64047ac7b23e3dc3152a5ef36a1ffe761d40067562c84a1",
+    "own_sandbox": true,
+    "performance_budget": "none_frozen; separate functional result"
+  },
+  "S1_S4_task_execution": {
+    "absolute_budgets_ms": {
+      "S1": {
+        "max": 30000,
+        "p95": 15000
+      },
+      "S2": {
+        "max": 60000,
+        "p95": 60000
+      },
+      "S3": {
+        "max": 15000,
+        "p95": 2000
+      },
+      "S4": {
+        "max": 15000,
+        "p95": 1500
+      }
+    },
+    "baseline_arg_scope": "common committed ancestor with task routes; actual fourth predecessor binary and source binding are separate SHA256 identities",
+    "baseline_commit_arg": "2187fea621ff40b368f2e01e51d26672239c9f8d",
+    "baseline_has_taskexec": true,
+    "driver_expected_protocol_sha256": "01b68415088e27412efbf99d99078e2872702a7f4c2afc3f8d1036038f73af11",
+    "driver_relative_field": "not_measured for each single-candidate run; external two-run ratio descriptive only",
+    "driver_sha256": "06699fcd80c2dc895d50720236703bbc2a025ce0cc47a594cfaa720436e9adf4",
+    "imported_dependency_sha256": {
+      "b2b3_source_binding_helper": "761ae1868f781d68f0018effd5d19a2087367cd09cec40adf4cf1c46cc515dd6",
+      "base_taskexec_journey": "4073dec7f1e811a1a65fd7eda6bf2c5a468e19ffdb7db7f30547971193247af9"
+    },
+    "offline_dependency_guard_sha256": "ad8971462b5e1210da1a5c10e7074c3ec805e00f292bec8a1ac80a6c65f92a21",
+    "offline_env_loading_guard_sha256": "cb1f4c5a1670bfb692f323029af88b8e7092e9a9fae7b219bc63f60db6c97b6c",
+    "pre_dependency_binding_driver_sha256": "c82eb065056e72c2ffdb0a5113b015a3f56a9a52c19a9aa442713e5e230c2c45",
+    "pre_env_isolation_base_taskexec_journey_sha256": "2d272e62f259e93c8074764d92210f2cbebebe2ff0050410f902f1f2346fadad",
+    "pre_env_isolation_driver_sha256": "bcfcee5672a3c7bd930e5c7892fc81402842963711c560c06a54cddee2434560",
+    "pre_sample_dependency_binding": "The task-execution driver now refuses imported helper drift before live access and records both helper hashes in P00/report.json. Sampling order, counts, budgets and algorithms are unchanged.",
+    "pre_sample_env_loading_repair": "The base journey now strips XDG/OpenShell variables before sourcing env.sh, so a pre-sourced parent cannot hide required exports and ambient values absent from the file cannot leak in. Samples, order, budgets and measurement algorithms are unchanged.",
+    "relative_budget": "none_frozen; ratio descriptive only",
+    "round_order": {
+      "1": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "2": [
+        "S2",
+        "cond",
+        "S3",
+        "S1",
+        "S4"
+      ],
+      "3": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ]
+    },
+    "rounds": 3,
+    "run_order": [
+      "fourth_predecessor",
+      "sixth_sec_hold_fix"
+    ],
+    "same_protocol_copied_to_each_fresh_output": true,
+    "samples_per_round": {
+      "S1": 15,
+      "S2": 5,
+      "S3": 15,
+      "S4": 15
+    },
+    "warmups_per_scenario_round": 2
+  },
+  "candidate_order": [
+    "fourth_predecessor",
+    "sixth_sec_hold_fix"
+  ],
+  "candidates": {
+    "fourth_predecessor": {
+      "binary_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+      "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9"
+    },
+    "sixth_sec_hold_fix": {
+      "binary_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+      "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0"
+    }
+  },
+  "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+  "cli_version": "0.0.83",
+  "d05_functional_reference": "lx06-sec-hold-fix-d05-summary.json; 365 pass/7 partial/1 blocked/0 fail, not performance acceptance",
+  "failure_handling": "retain every failed/timeout sample and preflight; invalid leg is not budget pass; no cherry-pick",
+  "frozen_at": "2026-09-18T22:30:25.086940+00:00",
+  "gateway_kind": "existing_loopback_https_mtls",
+  "image_digest_last_observed": "sha256:523904c19a4b886e87b8340d7d359e4400a1d2e58def479e351dddad8ff1ee72",
+  "latest_input_preflight": "lx06-sec-hold-fix-perf-input-preflight.json",
+  "latest_input_preflight_state": "all frozen artifacts matched; ambient PATH CLI differs and is prohibited; LX04 live wait remains",
+  "percentile": "nearest_rank_ceil_p_times_n_over_100",
+  "preconditions": [
+    "LX04 predecessor 12-hour admin expiry worker has terminal evidence and its owned daemon/port are cleaned",
+    "no parallel build, regression, benchmark, native expiry verifier, or other heavy workload",
+    "source bindings, both binary hashes, CLI hash, image digest and preexisting sandbox names rechecked",
+    "fresh exact batch-owned sandbox and output per leg; no shared gateway mutation"
+  ],
+  "protocol_file": "lx06-sec-hold-fix-perf-protocol.md",
+  "protocol_sha256": "01b68415088e27412efbf99d99078e2872702a7f4c2afc3f8d1036038f73af11",
+  "refreeze_reason": "Pre-sampling B2 help repair, S1-S4 imported-helper binding and isolated env.sh loading repair; no samples existed and the frozen measurement method is unchanged.",
+  "refrozen_at": "2026-09-19T00:37:57.146857+00:00",
+  "release_acceptance": false,
+  "sandbox_image": "siq/hermes-openshell-siq-analysis:f470321d2fb2b2cda14b7c3b",
+  "schema_version": "linux-lx06-sec-hold-fix-perf-plan/v1",
+  "state": "frozen_not_started_waiting_for_lx04_worker_terminal_and_exclusive_host",
+  "supersedes_fifth_plan": "Previous plan remains historical and has zero performance samples; it is not reused for the sixth candidate."
+}

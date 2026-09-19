@@ -1,0 +1,39 @@
+{
+  "schema_version": "linux-lx07-postgres-oidc-jwks-rotation/v1",
+  "recorded_at": "2026-09-18T20:16:35.071557+00:00",
+  "host_os": "linux/arm64",
+  "evidence_level": "isolated_postgres_and_loopback_test_jwks_over_real_http",
+  "control_api_source_ref": "main@2187fea (apps/control-api clean in this worktree)",
+  "candidate_sha256": null,
+  "image": "postgres:17-alpine",
+  "passed": true,
+  "checks": 27,
+  "new_checks": [
+    "production_rejects_wrong_signature",
+    "jwks_new_kid_refreshes_without_api_restart",
+    "jwks_removed_kid_rejected_after_real_ttl",
+    "jwks_remaining_kid_still_accepted",
+    "expired_jwks_cache_fails_closed_on_upstream_503",
+    "jwks_recovery_restores_signed_access"
+  ],
+  "resources": {
+    "container_removed": true,
+    "api_stopped": true,
+    "jwks_stopped": true
+  },
+  "private_report_sha256": "e88053efd0110553b6f96a6cc3acdd320351ddb8895a8e1ef0438a99234657df",
+  "private_log_sha256": {
+    "postgres-oidc-jwks-rotation.api.1.log": "acd855ec498225de8395fb3f514ac073321e35a55b706a5347d380f6372a4b92",
+    "postgres-oidc-jwks-rotation.api.2.log": "229ce0a86882c1dfff455d095941b30aa677d8b46173335c01c2a2cf7bc8650d",
+    "postgres-oidc-jwks-rotation.log": "18de723995b12a77b259dd547667edde7547c61a64c4c3930b8ac15cf97d593f"
+  },
+  "driver_sha256": "6e7984e3a25bebf5d5bcbaead3464b286f251f3c01e214e0fdc3836563e99260",
+  "observed": "real HTTP production-config API and isolated PostgreSQL: invalid RSA signature denied; new JWKS kid accepted without restart; removed old kid denied after real five-second TTL; expired cache denies during issuer 503; signed access recovers when issuer returns",
+  "limitations": [
+    "loopback JWKS is a local RS256 issuer fixture, not a customer IdP",
+    "single PostgreSQL container, not production HA/backup/operations",
+    "no customer data, cloud gateway, or Windows/macOS validation",
+    "loopback issuer rotation and outage are fixtures; customer IdP key rollover, HA, backup and production operations remain external"
+  ],
+  "targeted_validation": "uv run pytest -q app/tests/test_oidc_jwt_verify.py: 7 passed, exit 0"
+}

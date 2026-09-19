@@ -45,6 +45,14 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 BASE_DRIVER = HERE / "openshell-o05v6-taskexec-journey.py"
 B2B3_DRIVER = HERE / "openshell-b2b3-perf-protocol.py"
+DEPENDENCY_SHA256 = {
+    "base_driver": "4073dec7f1e811a1a65fd7eda6bf2c5a468e19ffdb7db7f30547971193247af9",
+    "b2b3_helper": "761ae1868f781d68f0018effd5d19a2087367cd09cec40adf4cf1c46cc515dd6",
+}
+DEPENDENCY_PATHS = {
+    "base_driver": BASE_DRIVER,
+    "b2b3_helper": B2B3_DRIVER,
+}
 
 PERF_SCHEMA = "openshell-taskexec-perf/v1"
 PROTOCOL_SCHEMA = "openshell-taskexec-perf-protocol/v1"
@@ -97,6 +105,34 @@ RELATIVE = {
 _FRAC = re.compile(r"\.(\d+)")
 
 
+def sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def bind_driver_dependencies(paths=None, expected=None):
+    """Fail before any live access when an imported measurement helper drifts."""
+    paths = DEPENDENCY_PATHS if paths is None else paths
+    expected = DEPENDENCY_SHA256 if expected is None else expected
+    if set(paths) != set(expected):
+        raise SystemExit("measurement dependency names do not match the frozen set")
+    bound = {}
+    for name in sorted(paths):
+        path = Path(paths[name])
+        if not path.is_file():
+            raise SystemExit(f"measurement dependency is missing: {name}")
+        actual = sha256_file(path)
+        wanted = expected[name]
+        if actual != wanted:
+            raise SystemExit(
+                f"measurement dependency drifted: {name} {actual} != frozen {wanted}"
+            )
+        bound[name] = {
+            "file": path.name,
+            "sha256": actual,
+        }
+    return bound
+
+
 def load_module(name: str, path: Path):
     spec = importlib.util.spec_from_file_location(name, path)
     if spec is None or spec.loader is None:
@@ -107,6 +143,7 @@ def load_module(name: str, path: Path):
     return mod
 
 
+DRIVER_DEPENDENCIES = bind_driver_dependencies()
 BASE = load_module("o05v6_taskexec_journey", BASE_DRIVER)
 B2B3 = load_module("b2b3_perf_protocol", B2B3_DRIVER)
 check = BASE.check
@@ -154,10 +191,6 @@ def parse_ts(text):
         return datetime.fromisoformat(text)
     except ValueError:
         return None
-
-
-def sha256_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 # Protocol §1.4. A *competing build, regression run or benchmark* voids the
@@ -278,7 +311,15 @@ class PerfJourney(BASE.Journey):
         self.pristine_body = None
         self.last_task = None
         self.s3_revision = self.s3_digest = None
-        self.relative = RELATIVE
+        self.relative = dict(RELATIVE)
+        if args.baseline_has_taskexec:
+            # The original F05 baseline predates the task routes. A newer main
+            # may contain them, but this driver still measures only one binary.
+            # Never carry the old "not_comparable" claim into that new run.
+            reason = ("baseline " + args.baseline_commit +
+                      " has the task route; an equivalent baseline run was not measured")
+            for scenario in ("S3", "S4"):
+                self.relative[scenario] = ("not_measured", reason)
         self.evidence_level = EVIDENCE_LEVEL
 
     # ---------- protocol binding ----------
@@ -296,6 +337,7 @@ class PerfJourney(BASE.Journey):
             "id": "P00", "title": "protocol hash bound (budgets frozen before measurement)",
             "kind": "derived", "status": "pass",
             "protocol_file": PROTOCOL_NAME, "protocol_sha256": actual,
+            "driver_dependencies": DRIVER_DEPENDENCIES,
             "rounds": ROUNDS, "warmup": WARMUP, "samples": SAMPLES,
             "cycle_samples": CYCLE_SAMPLES,
             "budgets_ms": {k: {"p95": v[0], "max": v[1]} for k, v in BUDGETS.items()},
@@ -867,6 +909,7 @@ class PerfJourney(BASE.Journey):
                                       "and S3; R2 (pre-measurement): teardown invariant is "
                                       "policy content, not revision; no frozen parameter "
                                       "changed by either"},
+            "driver_dependencies": DRIVER_DEPENDENCIES,
             "candidate": {
                 "binary": str(self.binary),
                 "binary_sha256": self.binary_sha,
@@ -957,6 +1000,10 @@ def main():
     ap.add_argument("--expected-protocol-sha256", default=None,
                     help="pre-measurement SHA256 of this run's protocol.md; "
                          "omission keeps the original frozen protocol hash")
+    ap.add_argument("--baseline-commit", default=None,
+                    help="source commit of an explicitly declared baseline")
+    ap.add_argument("--baseline-has-taskexec", action="store_true",
+                    help="baseline has task routes, but this run does not measure it")
     ap.add_argument("--env-script", required=True,
                     help="private env script exporting SIQ_OPENSHELL_BIN + XDG dirs")
     ap.add_argument("--gateway-endpoint", default="https://127.0.0.1:17671")
@@ -967,6 +1014,8 @@ def main():
     ap.add_argument("--out", required=True, help="evidence directory (must not already "
                                                  "contain a report.json)")
     args = ap.parse_args()
+    if args.baseline_has_taskexec and not args.baseline_commit:
+        ap.error("--baseline-has-taskexec requires --baseline-commit")
     if args.expected_protocol_sha256 is not None and not re.fullmatch(
         r"[0-9a-f]{64}", args.expected_protocol_sha256
     ):

@@ -1,0 +1,68 @@
+{
+  "schema_version": "linux-dual-host-lx04-native-retention-summary/v1",
+  "candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "host": "real OpenClaw 2026.5.12",
+  "journey": {
+    "passed": true,
+    "checks": 31,
+    "nested_r04_checks": 31,
+    "private_report_sha256": "c39a7a677a29ba9ad5b96e8b07bc7534265eda26132339ed1c6ae184da64d264",
+    "driver_sha256": "dcb54e7509450e660f4694e2b3604db01a71f42d23dca2e2ea52ebdd95b5c557"
+  },
+  "retention_seed": {
+    "status": "verified_after_real_wall_clock_expiry",
+    "private_seed_sha256": "7027787be997dad7b5eca8fa6f03a4af439de412aa71d23942db3a1389eb5153",
+    "first_expiry_at": "2026-09-18T16:36:37.38597136Z",
+    "groups": [
+      {
+        "label": "A1",
+        "native_record_count": 2,
+        "kinds": [
+          "parameters",
+          "output"
+        ],
+        "retention_seconds": 3600,
+        "expected_after_expiry": "deleted"
+      },
+      {
+        "label": "A2",
+        "native_record_count": 2,
+        "kinds": [
+          "parameters",
+          "output"
+        ],
+        "retention_seconds": 86400,
+        "expected_after_expiry": "byte_identical"
+      },
+      {
+        "label": "B1",
+        "native_record_count": 2,
+        "kinds": [
+          "parameters",
+          "output"
+        ],
+        "retention_seconds": 86400,
+        "expected_after_expiry": "byte_identical"
+      }
+    ]
+  },
+  "prior_failed_run": {
+    "private_failure_sha256": "08e7775fb41759328915f922bbe8cb6d4c64a134c25141abb1a7da6179c34629",
+    "cause": "harness expected 24 小时, embedded UI correctly rendered 1 天; exact failed private state removed"
+  },
+  "verification": {
+    "passed": true,
+    "checks": 14,
+    "private_report_sha256": "3d9520ebf576048c6db99f81e9fa2260ec0761bf048370e123068630f9d9bd28",
+    "verifier_sha256": "e4a8137bf2636fb60a8e1e0d82f2074574c0a4964d89aa3e13b88375d3693851",
+    "first_expiry_at": "2026-09-18T16:36:37.38597136Z",
+    "report_file_written_at": "2026-09-18T16:36:38.579241+00:00",
+    "elapsed_after_first_expiry_seconds": 1.193,
+    "candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e"
+  },
+  "release_acceptance": false,
+  "limitations": [
+    "This is the first-generation candidate only; second-generation native retention verification remains independent and pending.",
+    "Natural 12-hour admin-session expiry and human desktop visual acceptance remain unverified."
+  ]
+}

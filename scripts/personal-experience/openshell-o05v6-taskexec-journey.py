@@ -152,13 +152,23 @@ def grant_digest(grant_json):
 
 def load_env_script(path):
     """Source the private env script and return only the OpenShell-relevant
-    keys that it adds or changes. Values are never printed or persisted."""
+    keys that it defines. Values are never printed or persisted.
+
+    Relevant variables are removed from the child environment first. This
+    makes the result independent of whether an operator accidentally sourced
+    the same file in the parent shell, and prevents an ambient OpenShell/XDG
+    value that the file did not define from being accepted as batch input.
+    """
+    clean_env = {
+        key: value for key, value in os.environ.items()
+        if not key.startswith(("XDG_", "SIQ_OPENSHELL", "OPENSHELL_"))
+    }
     control = subprocess.run(
-        ["bash", "-lc", "env -0"], capture_output=True, check=True
+        ["bash", "-lc", "env -0"], env=clean_env, capture_output=True, check=True
     ).stdout
     withsource = subprocess.run(
         ["bash", "-lc", 'set -a; source "$1" >/dev/null 2>&1; env -0', "siq-env", str(path)],
-        capture_output=True,
+        env=clean_env, capture_output=True,
         check=True,
     ).stdout
 

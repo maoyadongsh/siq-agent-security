@@ -1,0 +1,82 @@
+{
+  "schema_version": "linux-dual-host-lx06-gateway-summary/v1",
+  "candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "source_binding_sha256": "036df1bd5fdd90d9ecb49f40d3f76761b1b85a03e74843c078600a0bacf77fab",
+  "matrix_private_sha256": "11c4ccc8564c1256e66fd76cbdde490b925b0a14468a79563b6b8b541224314a",
+  "evidence_level": "current_candidate_real_gateway_owned_sandbox",
+  "gateway_cli_version": "0.0.83",
+  "steps": {
+    "total": 373,
+    "pass": 365,
+    "partial": 7,
+    "blocked": 1,
+    "fail": 0
+  },
+  "acceptance": {
+    "pass": 10,
+    "partial": 3,
+    "items": [
+      {
+        "item": "E10",
+        "status": "pass"
+      },
+      {
+        "item": "E06",
+        "status": "partial"
+      },
+      {
+        "item": "E02",
+        "status": "pass"
+      },
+      {
+        "item": "E01",
+        "status": "pass"
+      },
+      {
+        "item": "E03",
+        "status": "pass"
+      },
+      {
+        "item": "E04",
+        "status": "pass"
+      },
+      {
+        "item": "E05",
+        "status": "pass"
+      },
+      {
+        "item": "E11",
+        "status": "partial"
+      },
+      {
+        "item": "E13",
+        "status": "pass"
+      },
+      {
+        "item": "E09",
+        "status": "pass"
+      },
+      {
+        "item": "E08",
+        "status": "partial"
+      },
+      {
+        "item": "E12",
+        "status": "pass"
+      },
+      {
+        "item": "E07",
+        "status": "pass"
+      }
+    ]
+  },
+  "open_boundaries": [
+    "E08h remote single-task stop confirmation blocked by backend protocol",
+    "E06 unsupported --wait CLI path not run: available v0.0.13 supports --wait",
+    "E11 timeout attribution remains partial",
+    "E05/E09/E10/E13 subcase claims limited to recorded matrix"
+  ],
+  "owned_sandbox_removed": true,
+  "pre_existing_sandboxes_retained": true,
+  "performance_scope": "separate; first precheck aborted with zero timed samples while LX04 verifier active"
+}

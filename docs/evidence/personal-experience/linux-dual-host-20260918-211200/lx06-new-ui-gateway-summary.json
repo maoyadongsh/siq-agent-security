@@ -1,0 +1,43 @@
+{
+  "schema_version": "linux-lx06-new-ui-gateway-summary/v1",
+  "recorded_at": "2026-09-18T16:46:20.398157+00:00",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "source_binding_sha256": "be63b032635ed78be4c743f05fbbbb923c6a252799374fe6dabf094e845ca0af",
+  "gateway_cli_version": "0.0.83",
+  "evidence_level": "real_gateway_functional_matrix",
+  "d05": {
+    "steps": {
+      "total": 373,
+      "pass": 365,
+      "partial": 7,
+      "blocked": 1,
+      "fail": 0
+    },
+    "acceptance": {
+      "pass": 10,
+      "partial": 3
+    },
+    "partial_acceptance_items": [
+      "E06",
+      "E08",
+      "E11"
+    ],
+    "private_matrix_sha256": "5dcb1d81160463b3db2b5376b9ec05b5e93bfab6e1a97ee1ad38a59cabc3cc2c",
+    "driver_sha256": "d11aacc835ce961a145a830b741be97aac8b0ca35fcb423c2812ad4ada650717"
+  },
+  "resource_cleanup": {
+    "owned_sandbox": "siq-lx06-new-ui-20260918",
+    "created_by_batch": true,
+    "delete_cli_exit": 0,
+    "immediate_postdelete_list_stale": true,
+    "later_readback_absent": true,
+    "preexisting_sandboxes_unchanged": true,
+    "private_resource_report_sha256": "9b846c8881d2f52be2d9643401b189eda6c099786f6b550a5a93e6308c7abb31"
+  },
+  "limitations": [
+    "Full D05 has three partial acceptance items; E08 remote single-task stop cannot be confirmed by backend 0.0.83.",
+    "Functional matrix is not a latency or throughput measurement; new candidate performance remains unmeasured.",
+    "Isolated sandbox and local client material do not prove production OpenShell interceptor capability or formal release acceptance."
+  ],
+  "release_acceptance": false
+}

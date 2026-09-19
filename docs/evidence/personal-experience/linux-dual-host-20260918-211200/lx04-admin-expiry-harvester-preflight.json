@@ -1,0 +1,34 @@
+{
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "expected_verify_after_utc": "2026-09-19T05:45:52.827239+00:00",
+  "harvester_sha256": "dfc2e9ccaa2353b432d6b2b53f1abb8f21ddae0bc25d6d582b986ad771ab6788",
+  "limitations": [
+    "Offline readiness is not natural-expiry evidence.",
+    "The final summary must be created only after the existing worker reaches terminal state."
+  ],
+  "live_access_performed": false,
+  "offline_guard_sha256": "ecd2b672e46ffe64422a45ad37a2dc998c174d7dd9f7a88e442528051de47741",
+  "offline_guards": {
+    "covers": [
+      "safe public field projection",
+      "short wall-clock rejection",
+      "live worker identity rejection"
+    ],
+    "failed": 0,
+    "passed": 3
+  },
+  "pending_summary_sha256": "027b176befeb3357a7d5f8bcb8cd0c5e2a88079b0ade2a5585319ddc01f0f065",
+  "post_deadline_invariants": [
+    "private result proves same-daemon 12-hour expiry",
+    "worker identity is terminal",
+    "exact owned daemon identity is absent",
+    "owned loopback port is closed",
+    "candidate, seed, deadline and pre-expiry export hashes match"
+  ],
+  "recorded_at": "2026-09-19T00:35:04.947753+00:00",
+  "release_acceptance": false,
+  "schema_version": "linux-lx04-admin-expiry-harvester-preflight/v1",
+  "signals_sent": false,
+  "status": "offline_ready_waiting_for_real_deadline",
+  "summary_written": false
+}

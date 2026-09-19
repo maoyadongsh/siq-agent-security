@@ -1,0 +1,28 @@
+{
+  "schema_version": "linux-lx04-export-malformed-scope/v1",
+  "recorded_at": "2026-09-18T19:30:04.398594+00:00",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "evidence_level": "http_real_daemon_synthetic_runtime_bound_tasks",
+  "passed": true,
+  "checks": 200,
+  "new_malformed_scope_checks": [
+    "malformed_export_encoded_parent_rejected",
+    "malformed_export_encoded_slash_rejected",
+    "malformed_export_short_rejected",
+    "malformed_export_task_scope_rejected",
+    "malformed_trace-export_encoded_parent_rejected",
+    "malformed_trace-export_encoded_slash_rejected",
+    "malformed_trace-export_short_rejected",
+    "malformed_trace-export_task_scope_rejected"
+  ],
+  "negative_result": "both signed export routes rejected short, percent-encoded slash, percent-encoded parent activity IDs and a task_id=../foreign scope override without returning fixture canaries",
+  "private_report_sha256": "9f1798e4c0a1f9d6ea9026cfbd8c88e061f43464a58c651e03e4c26e36bf5652",
+  "private_report_manifest_sha256": "42eb3d90bb070451158156ea89d97aa6dc3d9432d200cdbd55d62fd6943aec18",
+  "driver_sha256": "6fe75bdcd6ce1b565d00a2c90650b0f8d4c17d2b0a59684cc675988e5d2d9d0d",
+  "limitations": [
+    "real local daemon and signed exports, but tasks use synthetic runtime-bound identities rather than native host calls",
+    "the 12-hour administrator session natural-expiry leg is pending in its separate isolated daemon",
+    "existing delivered export copies cannot be revoked retroactively"
+  ]
+}

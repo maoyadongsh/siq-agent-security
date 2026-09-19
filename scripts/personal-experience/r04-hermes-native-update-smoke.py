@@ -256,6 +256,37 @@ class Harness(r01.Harness):
             fixture.require(update["status"] == "updated_unverified", "V2 update did not finish")
             fixture.require(target.read_bytes() == (source / "SKILL.md").read_bytes(), "V2 target bytes mismatch")
             fixture.require(self.api(old_grant_route)["grant"]["status"] == "revoked", "V1 Grant stayed active")
+            old_credential = Path(self.issued["credential_path"]).read_text().strip()
+            stale_call = "r04-v1-stale-after-update"
+            stale_request = {
+                "platform": first["platform"],
+                "session_id": first["session_id"],
+                "agent_id": first["agent_id"],
+                "task_id": first.get("task_id", ""),
+                "runtime_task_id": first.get("runtime_task_id", ""),
+                "tool": self.read_tool,
+                "tool_call_id": stale_call,
+                "params": {"path": str(self.workspace / "company-a/report.txt")},
+                "skill": {
+                    "skill_id": first["skill_attribution"]["skill_id"],
+                    "content_hash": first["skill_attribution"]["content_hash"],
+                    **(
+                        {"version": first["skill_attribution"]["version"]}
+                        if first["skill_attribution"].get("version") else {}
+                    ),
+                },
+            }
+            stale_before = len(self.receipts())
+            stale_refusal = self.api(
+                "/v1/decide", stale_request, token=old_credential, expected=401
+            )
+            stale_records = self.receipts()[stale_before:]
+            fixture.require(
+                (stale_refusal.get("reason_code") or stale_refusal.get("error")) == "unauthorized"
+                and not stale_records
+                and target.read_bytes() == (source / "SKILL.md").read_bytes(),
+                "V1 scoped credential remained usable after confirmed V2 update",
+            )
             old_row = next(
                 row for row in self.api("/v1/runtime-identities")["items"] if row["identity_id"] == old_identity
             )
@@ -377,7 +408,7 @@ class Harness(r01.Harness):
         chain = json.loads(self.command([str(self.binary), "verify"]))
         fixture.require(chain["verified"], "receipt chain invalid")
         return {
-            "schema_version": "personal-r04-hermes-native-update/v1",
+            "schema_version": "personal-r04-hermes-native-update/v2",
             "recorded_at": datetime.now(UTC).isoformat(),
             "passed": True,
             "binary_sha256": hashlib.sha256(self.binary.read_bytes()).hexdigest(),
@@ -391,6 +422,7 @@ class Harness(r01.Harness):
                 "cancel_before_confirmation_preserves_v1_files_and_authority",
                 "approved_candidate_recomparison_and_signed_plan",
                 "explicit_update_replaces_bytes_and_revokes_v1_grant",
+                "v1_scoped_decision_credential_refused_after_v2_update_without_receipt_or_effect",
                 "v1_runtime_identity_becomes_unavailable",
                 "v1_runtime_identity_explicitly_retired_before_replacement",
                 "v2_requires_new_activation_identity_and_sec",
@@ -408,6 +440,7 @@ class Harness(r01.Harness):
             "v2_context_id": self.contexts[1]["context_id"],
             "v1_content_hash": first["skill_attribution"]["content_hash"],
             "v2_content_hash": second["skill_attribution"]["content_hash"],
+            "stale_v1_http_refusal_reason_code": stale_refusal.get("reason_code") or stale_refusal["error"],
             "signed_receipt_count": len(records),
             "limitations": [
                 "local deterministic model and synthetic operator; no external or paid model",
@@ -429,6 +462,8 @@ def main():
     args.installer_managed_profile = True
     args.remove_installed_skill = False
     args.legacy_binary = None
+    args.raw_expiry_seconds = 0
+    args.raw_dual_task = False
     with tempfile.TemporaryDirectory(prefix="siq-r04-native-update-") as tmp:
         harness = Harness(Path(tmp), args)
         shutil.copy2(args.binary, harness.binary)

@@ -1,0 +1,13 @@
+{
+  "schema_version": "linux-lx02-root-scope-final-installed-summary/v1",
+  "host_os": "linux/arm64",
+  "trust_layer": "test_release",
+  "source_candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "installed_binary_sha256": "d43a5efa919219b0cd30a2e4d6822be749422bf84cc9dc6bdcd2e6ea9ff6f9a1",
+  "installed_service": {"checks": 16, "passed": true, "private_checks_sha256": "a1d8e2a2a22d5c4fcbdbe6a9db6dcabcaaf3d439ef22c9945516c41d7d6e879e"},
+  "installed_r07": {"checks": 31, "nested_r04_checks": 31, "passed": true, "private_report_sha256": "e843cc493a4c9583f45d9c67ddca9811041abac9f5958fb4e414b5e3bda35209"},
+  "direct_process_comparison": {"checks": 30, "nested_r04_checks": 31, "passed": true, "private_report_sha256": "9d37112ad322cc81b73d96942f1105787361335b536cb8c9a5044b79169efcc4"},
+  "private_manifest": "25/25 sha256sum -c passed",
+  "cleanup": "Ownership-checked user unit, port and temporary run directory absent after the test; retained state and signed receipts were verified before teardown.",
+  "limitations": "An ephemeral test signing root was used. Formal release signing, desktop visual acceptance and other OS system-service lifecycle remain separate gates."
+}

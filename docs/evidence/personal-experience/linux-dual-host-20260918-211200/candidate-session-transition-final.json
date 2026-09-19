@@ -1,0 +1,18 @@
+{
+  "schema_version": "linux-lx05-session-transition-candidate/v2",
+  "recorded_at": "2026-09-19T01:14:59.657532+00:00",
+  "status": "final_scoped_ui_repair_validation",
+  "fix": "Retire both pre-transition and transition-window admin requests before response status processing; an old-bearer 401 cannot cancel a successful concurrent pairing.",
+  "build": "CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -o <private binary> ./cmd/agentshield",
+  "unsigned_linux_arm64_binary_sha256": "a85c76b03292eafea5f92e10b2a5a87dc1d46a0c90563751796d3dc19f672c0e",
+  "source_binding": {
+    "algorithm": "scripts/personal-experience/openshell-b2b3-perf-protocol.py:source_binding",
+    "file_count": 931,
+    "sha256": "163d5ded0c18b6a466b302f863edf534823882faf9ede1ea07ddddb0d4abfd31",
+    "file_hashes": "source-hashes-session-transition-final.json"
+  },
+  "validation_summary": "lx05-session-transition-eighth-summary.json",
+  "supersedes": "candidate-session-transition-provisional.json",
+  "promotion_gates": "Scoped LX05 candidate only. Previous sixth-candidate backend/host evidence does not transfer; formal signing, installed-service and wider native journeys remain separate.",
+  "release_acceptance": false
+}

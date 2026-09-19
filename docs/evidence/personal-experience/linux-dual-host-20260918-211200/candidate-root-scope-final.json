@@ -1,0 +1,35 @@
+{
+  "schema_version": "linux-dual-host-root-scope-final-candidate/v1",
+  "predecessor_unsigned_binary_sha256": "36042d1b8ae8b305eeac5c83d14486bcfd884d9ac9b56af74e2beb8e7e469880",
+  "unsigned_linux_arm64_binary_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding": {
+    "algorithm": "scripts/personal-experience/openshell-b2b3-perf-protocol.py:source_binding",
+    "file_count": 931,
+    "sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+    "file_hashes": "source-hashes-root-scope-final.json"
+  },
+  "additional_fix": "Preserve the existing root-path Grant scope and explicit root deny while applying Unix canonical path checks.",
+  "build": "CGO_ENABLED=0 go build; unsigned local Linux/arm64 source build",
+  "test_release_installed_binary_sha256": "d43a5efa919219b0cd30a2e4d6822be749422bf84cc9dc6bdcd2e6ea9ff6f9a1",
+  "test_release_scope": "ephemeral test trust root and current-source overlay; not official signing",
+  "cross_builds": "cross-builds-root-scope-final.json",
+  "validation": {
+    "go_test_all": "passed",
+    "go_vet_all": "passed",
+    "real_openclaw_symlink_checks": 21,
+    "real_hermes_symlink_checks": 15,
+    "real_openclaw_direct_dotdot_checks": 21,
+    "real_openclaw_r07_checks": 30,
+    "nested_r04_checks": 31,
+    "real_gateway_d05_steps": 373,
+    "real_gateway_d05_pass": 365,
+    "real_gateway_d05_partial": 7,
+    "real_gateway_d05_blocked": 1,
+    "real_gateway_d05_fail": 0,
+    "installed_test_release_checks": 16,
+    "installed_r07_checks": 31,
+    "installed_nested_r04_checks": 31
+  },
+  "trust": "unsigned local source build; not a formal release",
+  "release_acceptance": false
+}

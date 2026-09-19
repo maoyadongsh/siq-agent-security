@@ -60,6 +60,10 @@ def main() -> None:
     args.installer_managed_profile = True
     args.remove_installed_skill = False
     args.legacy_binary = None
+    # The shared native SEC harness also accepts optional raw-capture modes.
+    # Keep this service-loss leg on its original ordinary-tool path.
+    args.raw_expiry_seconds = 0
+    args.raw_dual_task = False
     with tempfile.TemporaryDirectory(prefix="siq-hermes-offline-") as tmp:
         harness = r01.Harness(Path(tmp), args)
         shutil.copy2(args.binary, harness.binary)
@@ -67,7 +71,13 @@ def main() -> None:
             harness.start()
             harness.setup_authority()
             online = harness.native_sec()  # real allowed read; stops own daemon
-            if not online["passed"] or online["verified_decision_count"] != 2:
+            required_control = {
+                "native_allowed_read_executes",
+                "native_write_denied_before_side_effect",
+                "receipt_chain_verified",
+            }
+            if (not online["passed"] or online["verified_decision_count"] < 2
+                    or not required_control.issubset(online["checks"])):
                 raise RuntimeError("online native control incomplete")
             before = receipt_snapshot(harness.state)
             host, port_text = harness.endpoint.removeprefix("http://").split(":")
@@ -108,6 +118,7 @@ def main() -> None:
                 "binary_sha256": sha256(args.binary),
                 "hermes_cli_sha256": sha256(args.hermes_cli),
                 "harness_sha256": sha256(Path(__file__)),
+                "online_control_decisions": online["verified_decision_count"],
                 "checks": [
                     "isolated_managed_hermes_profile",
                     "online_native_allowed_read_control",

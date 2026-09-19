@@ -694,8 +694,13 @@ class B04Runner:
                 "expired_legs": [row["name"] for row in seed["legs"] if row["expect"] != "survives"],
                 "surviving_legs": [row["name"] for row in seed["legs"] if row["expect"] == "survives"],
                 "expected_deleted_records": sum(1 for row in seed["legs"] if row["expect"] != "survives"),
-                "expected_released_bytes": sum(row["plaintext_bytes"] for row in seed["legs"]
-                                               if row["expect"] != "survives"),
+                # The purge API reports deleted encrypted JSON file sizes,
+                # which cannot equal plaintext bytes. Keep the seeded number
+                # as a plaintext bound and observe actual disk bytes at purge.
+                "expected_expired_plaintext_bytes": sum(
+                    row["plaintext_bytes"] for row in seed["legs"]
+                    if row["expect"] != "survives"),
+                "released_bytes_basis": "deleted encrypted envelope JSON file sizes",
             }
             seed["notes"].append("task_id is derived by the product (task-ri-<hash(identity,session)>); "
                                  "leg names are the session_id labels")

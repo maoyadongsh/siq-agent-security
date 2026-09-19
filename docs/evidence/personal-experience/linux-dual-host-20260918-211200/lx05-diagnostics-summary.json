@@ -1,0 +1,41 @@
+{
+  "schema_version": "linux-dual-host-lx05-diagnostics-summary/v1",
+  "candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "driver_sha256": "3caa94753f018a83784b05c85b8ed744cf59d6c462b67518db2c71e57f0ba3db",
+  "private_journey_report_sha256": "d056e40ef0f73c86065dc329384a6ef179a6a2568086bb33ac66364489c7eeae",
+  "result": {
+    "passed": true,
+    "checks": 30,
+    "nested_r04_checks": 31,
+    "nested_r04_passed": true
+  },
+  "diagnostic_guard": {
+    "original_minimal_harness_failure": "AttributeError on missing current_wait shadowed original failure",
+    "repair": "optional last_wait field; original error re-raised",
+    "focused_tests": "8 passed, including fixed stage marker and no error payload persistence"
+  },
+  "evidence_level": "current_candidate_real_openclaw_headless_browser_plus_unit_fault_injection",
+  "historical_phase_c_timeout": "not_reproduced_root_cause_unknown_after_final_30_check_run",
+  "release_acceptance": false,
+  "prior_diagnostic_fix_journey": {
+    "private_report_sha256": "cbad68840e166a25d2de30e4d9d5cafae2611bb3e498ccde6825d879356d64b2",
+    "driver_sha256": "c20b0fc9d1b1523dace6e69fa98f1fd81b917035ac2112b41673b22d4efa7681",
+    "checks": 27,
+    "nested_r04_checks": 31,
+    "passed": true
+  },
+  "latest_same_candidate_dual_native_journey": {
+    "private_report_sha256": "d056e40ef0f73c86065dc329384a6ef179a6a2568086bb33ac66364489c7eeae",
+    "driver_sha256": "3caa94753f018a83784b05c85b8ed744cf59d6c462b67518db2c71e57f0ba3db",
+    "checks": 30,
+    "nested_r04_checks": 31,
+    "passed": true
+  },
+  "prior_single_native_export_journey": {
+    "private_report_sha256": "5612dd88aba2c1114b4150c09f3000924982c0c4436dabd3f1dfb61438644e25",
+    "driver_sha256": "c794cd5409c83b97aa1a831300dc837a2cbd62e81f1c3eff199dc9acf876ac8f",
+    "checks": 28,
+    "nested_r04_checks": 31,
+    "passed": true
+  }
+}

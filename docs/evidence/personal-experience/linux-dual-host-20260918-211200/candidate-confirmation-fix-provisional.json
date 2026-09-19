@@ -1,0 +1,43 @@
+{
+  "schema_version": "linux-lx03-confirmation-fix-candidate/v1",
+  "recorded_at": "2026-09-18T21:04:34.136519+00:00",
+  "status": "provisional_repair_validation",
+  "predecessor_unsigned_binary_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "unsigned_linux_arm64_binary_sha256": "6ce92b692f099478e88a86e368e9132ab113c5eecc41c77a791ca7d367d3262e",
+  "source_binding": {
+    "algorithm": "scripts/personal-experience/openshell-b2b3-perf-protocol.py:source_binding",
+    "file_count": 931,
+    "sha256": "dbc07ca53280c61052644b220d013e909b16c2a499d7a30c558b65bb738c1323",
+    "file_hashes": "source-hashes-confirmation-fix-provisional.json"
+  },
+  "build": "CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o <private binary> ./cmd/agentshield",
+  "fix": "Trusted Intent-selected approved import-reserved installed Skill grants remain confirmable; unselected reserved grants remain unavailable.",
+  "validation": {
+    "go_test_all": "passed",
+    "go_vet_all": "passed",
+    "race_receipt_server": "passed",
+    "hermes_held_install_update_native_checks": 10,
+    "openclaw_r07_checks": 30,
+    "nested_r04_checks": 31,
+    "installed_test_release_checks": 16,
+    "installed_r07_checks": 31,
+    "installed_nested_r04_checks": 31,
+    "direct_test_release_r07_checks": 30,
+    "test_release_source_overlay_mismatches": 0,
+    "real_gateway_d05_steps": 373,
+    "real_gateway_d05_pass": 365,
+    "real_gateway_d05_partial": 7,
+    "real_gateway_d05_blocked": 1,
+    "real_gateway_d05_fail": 0,
+    "openclaw_real_service_down_checks": 16,
+    "hermes_real_service_down_checks": 9,
+    "hermes_same_task_service_down_checks": 12,
+    "lx06_performance_protocol_sha256": "353524ad1afcc71214135c7acda89d8187e553aa3b93fc88cdc11109c1e97e5a",
+    "lx06_performance_plan_sha256": "1d5f3d953007d949888c130482fadeca4e1425a847ed811edb7ad383497c9d60",
+    "lx06_performance_state": "frozen_not_started"
+  },
+  "trust": "unsigned local source build; not a formal release",
+  "promotion_gates": "Installed systemd test-release journey and real OpenShell D05 function rerun completed. New-candidate B2/B3 and S1-S4 performance remain unmeasured while LX04 predecessor admin expiry worker is live; formal signing, GUI visual acceptance and other OS are separate.",
+  "release_acceptance": false,
+  "test_release_installed_binary_sha256": "57d08964db4f9e2a1ac8f04a6c5cc6b22f2a2ffb23e34a5024b8ad684fdd53c4"
+}

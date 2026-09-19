@@ -1,0 +1,36 @@
+{
+  "schema_version": "linux-lx03-hermes-approval-concurrent-current/v1",
+  "recorded_at": "2026-09-18T20:24:56.467757+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "Hermes Agent v0.21.0 public CLI",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "passed": true,
+  "checks": 21,
+  "attempts": 5,
+  "race_http_statuses": [
+    201,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409
+  ],
+  "race_reservation_status": "uncertain_without_external_execution",
+  "private_report_sha256": "28e56613bc3e54a5cded81b52904a48f7217b98e8a4ce0d9c1cd2a1fc4bccb47",
+  "private_log_sha256": "f8c71b277318e64268925e3b311e6f461bd2479dc72189a36aa90c17ce4ecd68",
+  "driver_sha256": "f5e35bb6fe1d3541e07946aa27a5edea5eeada5c9c37e024e2f05a1ab6b03cbb",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "observed": "real Hermes CLI approved retry retains the original one local write; a fresh approval receives eight simultaneous HTTP reserve submissions with distinct retry IDs, yielding exactly one 201 and seven 409 with hold_execution_already_reserved; later native retry is blocked, no second file effect or race execution observation, signed receipt chain verifies",
+  "limitations": [
+    "approved execution is at-most-once locally; external systems can still require uncertain reconciliation",
+    "race uses eight concurrent HTTP submitters against one daemon; it does not prove cross-daemon or external-effect atomicity",
+    "synthetic model, operator and target; no real user data, contacts or external services",
+    "isolated fixture profile and daemon state; no claim about other platforms or adapter versions",
+    "desktop notification delivery and manual browser clicking are covered by separate evidence",
+    "competing submissions come from eight threads in one fixture process; cross-daemon and external side-effect atomicity remain unverified",
+    "earlier 21/21 run asserted only HTTP status; stricter reason-code rerun is the public reference and the earlier run remains private"
+  ]
+}

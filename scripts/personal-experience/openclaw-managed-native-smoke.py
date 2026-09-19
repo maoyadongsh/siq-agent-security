@@ -28,6 +28,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
+CONTROLLED_START = ROOT / "scripts/openclaw-controlled-start.py"
 loader = importlib.util.spec_from_file_location(
     "openclaw_fixture", ROOT / "scripts/validate-intent-v2-openclaw.py"
 )
@@ -41,6 +42,12 @@ class Harness(native.fixture.Harness):
     platform = "openclaw"
     read_tool = "read"
     write_tool = "write"
+
+    @property
+    def grant_write_probe(self):
+        # R01/R04/R07 also subclass this harness with their own argparse
+        # namespaces, which predate this optional boundary-only mode.
+        return bool(getattr(self.args, "grant_write_symlink_overreach", False))
 
     def __init__(self, root, args):
         super().__init__(root, args)
@@ -113,7 +120,12 @@ class Harness(native.fixture.Harness):
         action(
             "patch-desired",
             tools=[self.read_tool, self.write_tool],
-            filesystem={"read_only": [str(self.workspace)], "read_write": []},
+            filesystem={"read_only": [str(self.workspace / "company-a" if (getattr(self.args, "grant_overreach", False)
+                                                                       or getattr(self.args, "grant_symlink_overreach", False)
+                                                                       or getattr(self.args, "grant_write_symlink_overreach", False))
+                                          else self.workspace)],
+                        "read_write": ([str(self.workspace / "company-a")]
+                                       if self.grant_write_probe else [])},
         )
         for index, overlap in enumerate(result["grant"]["overlap_conflicts"]):
             if overlap["resolution"] == "unresolved":
@@ -203,7 +215,7 @@ class Harness(native.fixture.Harness):
             {
                 "schema_version": "local-raw-task-content-activate/v1",
                 "actor_id": "automated-fixture-operator",
-                "retention_seconds": 3600,
+                "retention_seconds": getattr(self.args, "raw_activation_retention_seconds", 3600),
                 "budget_bytes": 16 << 20,
             },
             expected=201,
@@ -223,11 +235,7 @@ class Harness(native.fixture.Harness):
         }
 
     def run_cli(self):
-        command = [
-            str(self.args.node),
-            "--import",
-            str(ROOT / "scripts/openclaw-fixture-guard.mjs"),
-            str(self.args.openclaw_root / "openclaw.mjs"),
+        native_args = [
             "agent",
             "--local",
             "--agent",
@@ -240,10 +248,37 @@ class Harness(native.fixture.Harness):
             "45",
             "--json",
         ]
+        if getattr(self.args, "controlled_start", False):
+            command = [
+                sys.executable, str(CONTROLLED_START), "run",
+                "--runtime", str(self.args.openclaw_root),
+                "--profile-home", str(self.home),
+                "--node", str(self.args.node),
+                "--fixture-guard", "--", *native_args,
+            ]
+        else:
+            command = [
+                str(self.args.node), "--import",
+                str(ROOT / "scripts/openclaw-fixture-guard.mjs"),
+                str(self.args.openclaw_root / "openclaw.mjs"),
+                *native_args,
+            ]
+        child_env = dict(self.env)
+        if getattr(self.args, "controlled_start", False):
+            # All of these would break or weaken the native chain if the
+            # launcher inherited them. Inject only into this child process.
+            child_env.update({
+                "AGENTSHIELD_MODE": "audit_only",
+                "AGENTSHIELD_ENDPOINT": "http://127.0.0.1:9",
+                "SIQ_AGENT_SECURITY_MODE": "audit_only",
+                "OPENCLAW_CONFIG_PATH": str(self.root / "missing-openclaw.json"),
+                "NODE_OPTIONS": "--import /nonexistent/siq-node-injection.mjs",
+                "NODE_PATH": "/nonexistent/siq-node-modules",
+            })
         result = subprocess.run(
             command,
             cwd=self.workspace,
-            env=self.env,
+            env=child_env,
             capture_output=True,
             text=True,
             timeout=120,
@@ -319,13 +354,53 @@ class Harness(native.fixture.Harness):
             require(row["reason_code"] == "grant_scope_violation", "wrong rejection layer")
 
     def public_cli(self):
-        forbidden = self.workspace / "company-a/must-not-exist.txt"
+        forbidden = self.workspace / ("company-b/must-not-exist.txt"
+                                      if self.grant_write_probe else "company-a/must-not-exist.txt")
         report = self.workspace / "company-a/report.txt"
+        protected = self.workspace / "company-b/protected-fixture.txt"
+        scope_probe = (self.args.grant_overreach or self.args.grant_symlink_overreach
+                       or self.grant_write_probe)
+        if scope_probe:
+            protected.parent.mkdir(exist_ok=True)
+            protected.write_text("fixture-visible-company-b-protected\n")
         allowed_first = {
             "id": "allowed-first",
             "tool": self.read_tool,
             "params": {"path": str(report)},
         }
+        overreach = [
+            {"id": "read-outside-grant", "tool": self.read_tool, "params": {"path": str(protected)}},
+            {"id": "read-traversal-outside-grant", "tool": self.read_tool,
+             "params": {"path": str(self.workspace / "company-a/../company-b/protected-fixture.txt")}},
+        ] if getattr(self.args, "grant_overreach", False) else []
+        if getattr(self.args, "grant_symlink_overreach", False):
+            alias = self.workspace / "company-a/protected-alias.txt"
+            alias.symlink_to(protected)
+            overreach.append({"id": "read-symlink-outside-grant", "tool": self.read_tool,
+                              "params": {"path": str(alias)}})
+            directory_alias = self.workspace / "company-a/escape-dir"
+            directory_alias.symlink_to(protected.parent, target_is_directory=True)
+            # Lexical clean stays under company-a; the host resolves the
+            # existing link before '..' and reaches company-b. This must be
+            # rejected before either normalization or native read.
+            symlink_dotdot = self.workspace / "company-a/escape-dir/../company-b/protected-fixture.txt"
+            overreach.append({"id": "read-symlink-dotdot-outside-grant", "tool": self.read_tool,
+                              "params": {"path": str(symlink_dotdot)}})
+        allowed_write = None
+        if self.grant_write_probe:
+            allowed_write = {"id": "allowed-write-in-grant", "tool": self.write_tool,
+                             "params": {"path": str(self.workspace / "company-a/write-control.txt"),
+                                        "content": "fixture-visible-company-a-write-control"}}
+            write_alias = self.workspace / "company-a/protected-write-alias.txt"
+            write_alias.symlink_to(protected)
+            overreach.append({"id": "write-symlink-outside-grant", "tool": self.write_tool,
+                              "params": {"path": str(write_alias),
+                                         "content": "must-not-overwrite-protected"}})
+            write_directory_alias = self.workspace / "company-a/write-escape-dir"
+            write_directory_alias.symlink_to(protected.parent, target_is_directory=True)
+            overreach.append({"id": "write-symlink-missing-tail-outside-grant", "tool": self.write_tool,
+                              "params": {"path": str(write_directory_alias / "must-not-create.txt"),
+                                         "content": "must-not-create-outside"}})
         write_denied = {
             "id": "write-denied",
             "tool": self.write_tool,
@@ -336,7 +411,8 @@ class Harness(native.fixture.Harness):
             "tool": self.read_tool,
             "params": {"path": str(report)},
         }
-        raw_end = "expiry" if self.args.raw_expiry_seconds else "revoke"
+        raw_end = ("scope-probe" if self.grant_write_probe else
+                   "expiry" if self.args.raw_expiry_seconds else "revoke")
         allowed_after_raw_end = {
             "id": "allowed-after-raw-" + raw_end,
             "tool": self.read_tool,
@@ -347,7 +423,11 @@ class Harness(native.fixture.Harness):
         # ONLY the raw-content grant and make an allowed native call with zero
         # new raw captures;
         # finally revoke runtime identity and require every tool to fail closed.
-        steps = [None, [write_denied], [allowed_first], None,
+        # The raw Grant is issued when the model receives the first tool
+        # results. Keep the write control before that point so this boundary
+        # leg does not add ciphertext to the later read-only capture proof.
+        steps = [None, [write_denied, *([allowed_write] if allowed_write else [])],
+                 [allowed_first, *overreach], None,
                  [allowed_after_raw_end], None,
                  [write_denied, allowed_first, allowed_last], None]
         requests, failures = [], []
@@ -427,7 +507,10 @@ class Harness(native.fixture.Harness):
                         require(replayed in (call["id"], plain) or suffixed,
                                 "unexpected native tool ID mapping result=" + repr(replayed) + " call=" + repr(call["id"]))
                         content = str(result.get("content", ""))
-                        if call["id"].startswith("allowed") and not revoked:
+                        if call["id"] == "allowed-write-in-grant" and not revoked:
+                            require("siq-agent-security" not in content,
+                                    "in-grant write was blocked: " + repr(content[:300]))
+                        elif call["id"].startswith("allowed") and not revoked:
                             require(
                                 "fixture-visible-company-a" in content,
                                 "allowed read missing; got " + repr(content[:300]),
@@ -437,7 +520,7 @@ class Harness(native.fixture.Harness):
                             require("siq-agent-security" in content,
                                     "SIQ rejection missing: " + repr(content[:300]))
                     requests.append({"tool_results": len(results), "stream": bool(body.get("stream"))})
-                    if index == 2 and harness.raw_grant is None:
+                    if index == 2 and harness.raw_grant is None and not harness.grant_write_probe:
                         bindings = harness.api("/v1/intent-bindings")["items"]
                         require(len(bindings) == 1, "native session binding unavailable for raw grant")
                         harness.raw_binding = bindings[0]
@@ -577,9 +660,17 @@ class Harness(native.fixture.Harness):
             self.run_cli()
             require(self.session_key() == key, "native continuation changed session")
             records = self.receipts()
-            require(len(records) == 3, "unexpected receipt count: " + str(len(records)))
+            require(len(records) == 3 + len(overreach) + (2 if allowed_write else 0),
+                    "unexpected receipt count: " + str(len(records)))
             self.assert_call(records, "write-denied", "deny")
             self.assert_call(records, "allowed-first", "allow")
+            if allowed_write:
+                self.assert_call(records, allowed_write["id"], "allow")
+                require((self.workspace / "company-a/write-control.txt").read_text()
+                        == "fixture-visible-company-a-write-control",
+                        "in-grant native write did not execute")
+            for call in overreach:
+                self.assert_call(records, call["id"], "deny")
             self.session_key()
             contracts = self.api("/v1/intents")["items"]
             require(len(contracts) == 1, "manual or duplicate intent was created")
@@ -590,58 +681,67 @@ class Harness(native.fixture.Harness):
                 "receipts do not match native session",
             )
             require(not forbidden.exists(), "forbidden write executed")
-            self.raw_evidence()
-            raw_before = self.api(
-                "/v1/raw-task-content/records/search",
-                {"schema_version": "local-raw-task-content-record-list/v1",
-                 "task_id": self.raw_binding["task_id"]},
-            )["items"]
-            if self.args.raw_expiry_seconds:
-                expires_at = datetime.fromisoformat(self.raw_grant["expires_at"].replace("Z", "+00:00"))
-                deadline = time.monotonic() + self.args.raw_expiry_seconds + 20
-                while datetime.now(UTC) <= expires_at:
-                    require(time.monotonic() < deadline, "raw Grant did not reach real wall-clock expiry")
-                    time.sleep(min(1.0, max(0.1, (expires_at - datetime.now(UTC)).total_seconds())))
-                require(datetime.now(UTC) > expires_at, "raw Grant has not naturally expired")
-                expired = self.api(
-                    "/v1/raw-task-content/capture-permits",
-                    {
-                        "schema_version": "local-raw-task-content-capture-permit-create/v1",
-                        "platform": self.platform,
-                        "agent_id": self.agent,
-                        "session_id": key,
-                        "task_id": self.raw_binding["task_id"],
-                        "grant_id": self.raw_grant["grant_id"],
-                        "expected_grant_signature": self.raw_grant["signature"],
-                        "kind": "parameters",
-                        "ttl_seconds": 10,
-                    },
-                    token=Path(self.issued["credential_path"]).read_text().strip(), expected=410,
-                )
-                require(expired.get("reason_code") == "raw_task_content_authority_expired",
-                        "expired raw Grant did not fail closed")
-            else:
-                self.api(
-                    "/v1/raw-task-content/grants/" + self.raw_grant["grant_id"] + "/revoke",
-                    {"schema_version": "local-raw-task-content-revoke/v1",
-                     "expected_grant_signature": self.raw_grant["signature"],
-                     "actor_id": "automated-fixture-operator"},
-                )
+            if overreach:
+                require(protected.read_text() == "fixture-visible-company-b-protected\n",
+                        "protected fixture was modified")
+            require(not forbidden.exists(), "out-of-grant native write executed")
+            if self.grant_write_probe:
+                require(not (protected.parent / "must-not-create.txt").exists(),
+                        "directory symlink created an out-of-grant file")
+            if not self.grant_write_probe:
+                self.raw_evidence()
+                raw_before = self.api(
+                    "/v1/raw-task-content/records/search",
+                    {"schema_version": "local-raw-task-content-record-list/v1",
+                     "task_id": self.raw_binding["task_id"]},
+                )["items"]
+                if self.args.raw_expiry_seconds:
+                    expires_at = datetime.fromisoformat(self.raw_grant["expires_at"].replace("Z", "+00:00"))
+                    deadline = time.monotonic() + self.args.raw_expiry_seconds + 20
+                    while datetime.now(UTC) <= expires_at:
+                        require(time.monotonic() < deadline, "raw Grant did not reach real wall-clock expiry")
+                        time.sleep(min(1.0, max(0.1, (expires_at - datetime.now(UTC)).total_seconds())))
+                    require(datetime.now(UTC) > expires_at, "raw Grant has not naturally expired")
+                    expired = self.api(
+                        "/v1/raw-task-content/capture-permits",
+                        {
+                            "schema_version": "local-raw-task-content-capture-permit-create/v1",
+                            "platform": self.platform,
+                            "agent_id": self.agent,
+                            "session_id": key,
+                            "task_id": self.raw_binding["task_id"],
+                            "grant_id": self.raw_grant["grant_id"],
+                            "expected_grant_signature": self.raw_grant["signature"],
+                            "kind": "parameters",
+                            "ttl_seconds": 10,
+                        },
+                        token=Path(self.issued["credential_path"]).read_text().strip(), expected=410,
+                    )
+                    require(expired.get("reason_code") == "raw_task_content_authority_expired",
+                            "expired raw Grant did not fail closed")
+                else:
+                    self.api(
+                        "/v1/raw-task-content/grants/" + self.raw_grant["grant_id"] + "/revoke",
+                        {"schema_version": "local-raw-task-content-revoke/v1",
+                         "expected_grant_signature": self.raw_grant["signature"],
+                         "actor_id": "automated-fixture-operator"},
+                    )
             self.run_cli()
-            require(self.session_key() == key, "raw-grant end changed native session")
+            require(self.session_key() == key, "scope continuation changed native session")
             after_raw_end = self.receipts()
             self.assert_call(after_raw_end, allowed_after_raw_end["id"], "allow")
-            raw_after = self.api(
-                "/v1/raw-task-content/records/search",
-                {"schema_version": "local-raw-task-content-record-list/v1",
-                 "task_id": self.raw_binding["task_id"]},
-            )["items"]
-            require(
-                len(raw_after) == len(raw_before) == 2
-                and {item["record_id"] for item in raw_after}
-                == {item["record_id"] for item in raw_before},
-                "native call after raw Grant end created a new raw capture",
-            )
+            if not self.grant_write_probe:
+                raw_after = self.api(
+                    "/v1/raw-task-content/records/search",
+                    {"schema_version": "local-raw-task-content-record-list/v1",
+                     "task_id": self.raw_binding["task_id"]},
+                )["items"]
+                require(
+                    len(raw_after) == len(raw_before) == 2
+                    and {item["record_id"] for item in raw_after}
+                    == {item["record_id"] for item in raw_before},
+                    "native call after raw Grant end created a new raw capture",
+                )
             signed_count = len(after_raw_end)
             self.api(
                 "/v1/runtime-identities/" + self.issued["identity"]["identity_id"] + "/revoke",
@@ -655,19 +755,21 @@ class Harness(native.fixture.Harness):
             )
             require(not failures and len(requests) == len(steps), "incomplete model exchange: " + repr(failures))
             require(not forbidden.exists(), "revoked write executed")
-            raw_records = self.api(
-                "/v1/raw-task-content/records/search",
-                {
-                    "schema_version": "local-raw-task-content-record-list/v1",
-                    "task_id": self.raw_binding["task_id"],
-                },
-            )["items"]
-            require(len(raw_records) == 2, "inactive raw Grant run captured additional raw content")
+            if not self.grant_write_probe:
+                raw_records = self.api(
+                    "/v1/raw-task-content/records/search",
+                    {
+                        "schema_version": "local-raw-task-content-record-list/v1",
+                        "task_id": self.raw_binding["task_id"],
+                    },
+                )["items"]
+                require(len(raw_records) == 2, "inactive raw Grant run captured additional raw content")
             self.stop()
             verified = json.loads(self.command([str(self.binary), "verify"]))
             require(verified["verified"], "receipt chain invalid")
             return {
-                "schema_version": "personal-openclaw-managed-native-smoke/v1",
+                "schema_version": ("personal-openclaw-managed-native-write-boundary/v1"
+                                   if self.grant_write_probe else "personal-openclaw-managed-native-smoke/v1"),
                 "recorded_at": datetime.now(UTC).isoformat(),
                 "passed": True,
                 "binary_sha256": hashlib.sha256(self.binary.read_bytes()).hexdigest(),
@@ -692,19 +794,48 @@ class Harness(native.fixture.Harness):
                     "environment_cannot_override_managed_agent",
                     "write_denied_before_execution",
                     "allowed_read",
-                    "native_raw_parameters_captured_after_explicit_task_grant",
-                    "native_raw_output_captured_after_explicit_task_grant",
-                    "native_raw_grant_" + ("naturally_expired" if self.args.raw_expiry_seconds else "revoked") + "_while_runtime_identity_still_valid",
-                    *(["expired_raw_grant_permit_rejected_410"] if self.args.raw_expiry_seconds else []),
-                    "allowed_native_call_after_raw_grant_" + raw_end + "_adds_no_capture",
+                    *(["valid_grant_denies_direct_read_outside_root",
+                       "valid_grant_denies_dotdot_read_outside_root"]
+                      if getattr(self.args, "grant_overreach", False) else []),
+                    *(["valid_grant_denies_symlink_read_outside_root",
+                       "valid_grant_denies_symlink_dotdot_read_outside_root"]
+                      if getattr(self.args, "grant_symlink_overreach", False) else []),
+                    *(["valid_grant_allows_in_root_native_write",
+                       "valid_grant_denies_symlink_write_outside_root",
+                       "valid_grant_denies_symlink_directory_write_missing_tail"]
+                      if self.grant_write_probe else []),
+                    *(["native_raw_parameters_captured_after_explicit_task_grant",
+                       "native_raw_output_captured_after_explicit_task_grant",
+                       "native_raw_grant_" + ("naturally_expired" if self.args.raw_expiry_seconds else "revoked")
+                       + "_while_runtime_identity_still_valid",
+                       *(["expired_raw_grant_permit_rejected_410"] if self.args.raw_expiry_seconds else []),
+                       "allowed_native_call_after_raw_grant_" + raw_end + "_adds_no_capture"]
+                      if not self.grant_write_probe else
+                      ["allowed_native_call_after_scope_probe"]),
                     "receipt_chain_verified",
                     "revoked_identity_blocks_new_native_calls",
                 ],
                 "receipt_count": signed_count,
+                "resource_overreach": ({"granted_read_root": "isolated_fixture/company-a",
+                                         "granted_write_root": ("isolated_fixture/company-a"
+                                                                if self.grant_write_probe else None),
+                                         "direct_and_dotdot_denied_before_native_read": bool(
+                                             getattr(self.args, "grant_overreach", False)),
+                                         "symlink_denied_before_native_read": bool(
+                                             getattr(self.args, "grant_symlink_overreach", False)),
+                                         "symlink_dotdot_denied_before_native_read": bool(
+                                             getattr(self.args, "grant_symlink_overreach", False)),
+                                         "in_root_write_executed": bool(self.grant_write_probe),
+                                         "symlink_write_denied_before_native_side_effect": bool(
+                                             self.grant_write_probe),
+                                         "symlink_directory_missing_tail_denied_before_side_effect": bool(
+                                             self.grant_write_probe),
+                                         "protected_fixture_unchanged": True}
+                                        if overreach else None),
                 "installation": self.install_evidence,
                 "installer_configuration_compatible": True,
                 "model_requests": list(requests),
-                "raw_content": {
+                "raw_content": None if self.grant_write_probe else {
                     "record_count": 2,
                     "authority_ended_by": "natural_expiry" if self.args.raw_expiry_seconds else "revoke",
                     "kinds": ["output", "parameters"],
@@ -766,8 +897,16 @@ def main():
     parser.add_argument("--node", type=Path, required=True)
     parser.add_argument("--binary", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--controlled-start", action="store_true",
+                        help="prepare and run a supported pinned private host copy")
     parser.add_argument("--raw-expiry-seconds", type=int, default=0,
                         help="use real wall-clock Grant expiry instead of revoke; minimum 60 seconds")
+    parser.add_argument("--grant-overreach", action="store_true",
+                        help="narrow Grant to company-a and test direct/dotdot company-b reads with valid authority")
+    parser.add_argument("--grant-symlink-overreach", action="store_true",
+                        help="narrow Grant to company-a and test a symlink into company-b with valid authority")
+    parser.add_argument("--grant-write-symlink-overreach", action="store_true",
+                        help="grant writes in company-a, then reject a native write through a link into company-b")
     args = parser.parse_args()
     require(args.raw_expiry_seconds == 0 or 60 <= args.raw_expiry_seconds <= 600,
             "--raw-expiry-seconds must be zero or between 60 and 600")
@@ -789,12 +928,28 @@ def main():
             "OpenClaw host lacks the SIQ plugin SDK entrypoint; native write probe refused")
     with tempfile.TemporaryDirectory(prefix="siq-openclaw-managed-native-") as temporary:
         root = Path(temporary)
+        if args.controlled_start:
+            prepared = root / "controlled-runtime"
+            subprocess.run(
+                [sys.executable, str(CONTROLLED_START), "prepare",
+                 "--source", str(args.openclaw_root),
+                 "--destination", str(prepared), "--node", str(args.node)],
+                check=True, capture_output=True, text=True, timeout=120,
+            )
+            args.openclaw_root = prepared
         harness = Harness(root, args)
         harness.build()
         try:
             harness.start()
             harness.setup_authority()
             report = harness.public_cli()
+            if args.controlled_start:
+                report["native_entrypoint"] = "controlled-start run -> public openclaw agent --local"
+                report["controlled_start_sha256"] = hashlib.sha256(CONTROLLED_START.read_bytes()).hexdigest()
+                report["checks"].append("controlled_start_ambient_environment_overrides_ignored")
+                report["limitations"].append(
+                    "The host was a pinned temporary checkpoint copy, not the installed stock OpenClaw runtime."
+                )
         finally:
             harness.stop()
     args.out.parent.mkdir(parents=True, mode=0o700, exist_ok=True)

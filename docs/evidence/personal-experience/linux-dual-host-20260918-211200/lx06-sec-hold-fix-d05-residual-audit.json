@@ -1,0 +1,102 @@
+{
+  "actions_performed": {
+    "candidate_executed": false,
+    "gateway_access": false,
+    "sandbox_created": false,
+    "shared_configuration_changed": false,
+    "signal_sent": false
+  },
+  "available_cli_inventory": [
+    {
+      "policy_set_timeout_supported": true,
+      "policy_set_wait_supported": true,
+      "role": "ambient CLI; prohibited for frozen performance use",
+      "sha256": "48b49e6418cd67f228083126d291d3b1bda6b19d1c92e110b8b18cc7dd64fb6c",
+      "version": "0.0.13"
+    },
+    {
+      "policy_set_timeout_supported": true,
+      "policy_set_wait_supported": true,
+      "role": "managed D05 and frozen-performance CLI",
+      "sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+      "version": "0.0.83"
+    }
+  ],
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "conclusion": "no_local_product_defect_proven_no_matrix_rerun",
+  "driver_sha256": "d11aacc835ce961a145a830b741be97aac8b0ca35fcb423c2812ad4ada650717",
+  "matrix_result": {
+    "acceptance_partial": 3,
+    "acceptance_pass": 10,
+    "blocked": 1,
+    "fail": 0,
+    "partial": 7,
+    "pass": 365,
+    "total": 373
+  },
+  "matrix_sha256": "6d1b9ca8866cd90466ac9d2e9f42ba3eafb1e092ea6157635772b175cf269281",
+  "recorded_at": "2026-09-19T00:43:44.834966+00:00",
+  "residuals": {
+    "E06": {
+      "decision": "Do not download or execute an unverified historical CLI solely to manufacture this condition.",
+      "not_run": "unsupported_wait_option",
+      "passed": [
+        "approve-before-load refusal",
+        "submit during load refused 409",
+        "revoke during load refused 403 after load",
+        "--wait --timeout 1 stale-pinned approval refused",
+        "0.0.13 CLI backend refusal with zero task starts"
+      ],
+      "reason": "Both locally available verified CLI versions expose --wait and --timeout.",
+      "state": "partial_external_fixture_condition",
+      "unlock_condition": "Provide a trusted, provenance-bound CLI version whose policy set command truly lacks --wait."
+    },
+    "E08": {
+      "decision": "Do not relabel local process termination or sandbox deletion as remote task stop.",
+      "observed": {
+        "remote_stop": "unsupported",
+        "remote_stop_confirmed": false,
+        "sandbox_still_present_after_stop": true,
+        "stop_http": 200
+      },
+      "passed": [
+        "ownership refusal",
+        "unknown-reservation refusal",
+        "sandbox-delete substitution refusal",
+        "real local observation stop"
+      ],
+      "reason": "The product contract intentionally reports local observation termination only; current gateway remote-stop capability is not integrated.",
+      "state": "blocked_backend_protocol",
+      "unlock_condition": "Add and verify an authenticated backend single-task stop protocol, then bind its confirmation to the task outcome."
+    },
+    "E11": {
+      "decision": "Preserve ambiguity; do not infer remote timeout from exit code alone.",
+      "observed": {
+        "bound_fired": null,
+        "exit_code": 124,
+        "exit_code_attribution": "remote_or_cli",
+        "reservation_uncertain": true
+      },
+      "partial": "E11i",
+      "passed": [
+        "E11c output limit",
+        "E11f non-zero exit handling",
+        "E11j raw leak guard",
+        "outcome write failure",
+        "audit write failure",
+        "pre-spawn persistence failure"
+      ],
+      "reason": "The current CLI/backend result has no structured timeout-origin field, so rc=124 cannot distinguish a remote timeout from a CLI exit.",
+      "state": "partial_protocol_ambiguity",
+      "unlock_condition": "Expose a structured timeout origin or fire and persist a product-owned local bound."
+    }
+  },
+  "schema_version": "linux-lx06-sec-hold-fix-d05-residual-audit/v1",
+  "scope": "read-only residual review of the sixth-candidate D05 functional result; no rerun and no performance claim",
+  "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0",
+  "stage_priority": {
+    "current": "real functional chains and core behavior",
+    "deferred": "sixth-candidate B2/S1-S4 performance measurement remains frozen for a later performance/release gate",
+    "effect": "These external/protocol residuals do not trigger another 373-step run in the current stage."
+  }
+}

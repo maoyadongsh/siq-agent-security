@@ -9,6 +9,7 @@ import (
 	"unicode/utf8"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 )
 
@@ -139,6 +140,7 @@ func (e *Engine) confirmationAuthorityCurrent(d Receipt, now time.Time) bool {
 		return false
 	}
 	var g *grant.Grant
+	selected := false
 	if d.IntentBinding == "bound" {
 		if e.opts.IntentLookup == nil {
 			return false
@@ -148,11 +150,16 @@ func (e *Engine) confirmationAuthorityCurrent(d Receipt, now time.Time) bool {
 			return false
 		}
 		g = current.SelectedGrant
+		selected = g != nil
 	}
 	if g == nil && e.opts.Grants != nil {
 		g = e.opts.Grants(d.Platform, str(d.AgentID))
 	}
-	return g != nil && g.GrantID == str(d.MatchedGrantID) && (g.Status == "deployed" || g.Status == "effective") && grant.ValidateLifetime(*g, now) == nil
+	if g == nil || g.GrantID != str(d.MatchedGrantID) || (!selected && importsource.Reserved(g.AdmissionID)) {
+		return false
+	}
+	active := g.Status == "deployed" || g.Status == "effective" || (selected && g.Status == "approved" && importsource.Reserved(g.AdmissionID))
+	return active && grant.ValidateLifetime(*g, now) == nil
 }
 
 // ResolveConfirmation binds a single human click to the displayed immutable

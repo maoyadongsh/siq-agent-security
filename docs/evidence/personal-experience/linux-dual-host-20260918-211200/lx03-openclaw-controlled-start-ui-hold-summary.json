@@ -1,0 +1,41 @@
+{
+  "schema_version": "personal-lx03-openclaw-controlled-start-ui-hold-summary/v1",
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "host_platform": "OpenClaw 2026.5.12 temporary pinned checkpoint-v2 copy",
+  "host_os": "linux/arm64",
+  "evidence_level": "isolated_prepared_native_host_and_embedded_browser_ui",
+  "passed": true,
+  "preparation": "scripts/openclaw-controlled-start.py prepare + inspect; native gateway started by the harness from the prepared copy",
+  "cases": [
+    {
+      "id": "ui-approved-native-once",
+      "browser_resolution": "approve",
+      "native_execution_count": 1,
+      "signed_reservation_count": 1,
+      "signed_observation_count": 1
+    },
+    {
+      "id": "ui-denied-native-zero",
+      "browser_resolution": "deny",
+      "native_execution_count": 0,
+      "signed_reservation_count": 0,
+      "signed_observation_count": 0
+    }
+  ],
+  "signed_receipt_chain_verified": true,
+  "receipt_count": 6,
+  "installed_openclaw_unchanged": true,
+  "private_report_sha256": "0a4378507a2743882d605194b5cd895f85adb416d6a4b86e9f0c2b3a2690f0b8",
+  "driver_sha256": "ee1a8a76cf9785e516334ff34f97d90e5981fd56db76d823118a821fddb6d581",
+  "controlled_start_sha256": "a4ac2aae554b6ba9c36585182bca1a7c069a9303aa51a05f157fdc5a3dfb7d94",
+  "approval_harness_sha256": "06a81ffee36210315034bfc70755ffe44683e4632c8c9fdace9b17a05bf7238c",
+  "adapter_sha256": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5",
+  "host_source_before_sha256": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+  "host_source_after_sha256": "6ff914993889c1933f8d450e3b5111f084bdbbc69b59d33fab82ef67fd764cdc",
+  "limitations": [
+    "The installed stock OpenClaw and the latest stock OpenClaw do not support approved-hold execution through SIQ.",
+    "The browser operator, platform approver, model and file-effect tool are local deterministic fixtures.",
+    "The controlled-start run command was smoke-tested separately with --version, but this native journey used the prepared copy through its existing harness.",
+    "One local effect does not prove cross-process external exactly-once or user-install lifecycle."
+  ]
+}

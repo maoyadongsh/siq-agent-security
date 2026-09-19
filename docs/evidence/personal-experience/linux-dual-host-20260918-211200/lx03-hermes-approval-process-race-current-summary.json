@@ -1,0 +1,34 @@
+{
+  "schema_version": "linux-lx03-hermes-approval-process-race-current/v1",
+  "recorded_at": "2026-09-18T20:29:30.116306+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "Hermes Agent v0.21.0 public CLI",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "passed": true,
+  "checks": 22,
+  "attempts": 5,
+  "race_client_mode": "processes",
+  "race_http_statuses": [
+    201,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409
+  ],
+  "race_reservation_status": "uncertain_without_external_execution",
+  "private_report_sha256": "95ff6503dcb7be20673576bd1f7c5e3305d2ef4abed97ec2a42d0bb0dc3cbcdc",
+  "private_log_sha256": "b8a5f44071a6af8ff91bc990c97cfda92dc876cd92050d05680af8458be363a6",
+  "driver_sha256": "54b7fd7283025b0aac3609deca8491961e1727a291db166f58839981433a94f0",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "observed": "real Hermes CLI approved retry retained one local write; eight independent client processes raced for a fresh approved hold on one daemon, yielding one 201 and seven 409 hold_execution_already_reserved; subsequent native retry was blocked, no second file effect or race execution observation; signed receipt chain verified",
+  "limitations": [
+    "competition is across client processes but against one daemon; cross-daemon and external-effect atomicity remain unverified",
+    "winning reservation did not execute an external action and retains uncertain outcome",
+    "synthetic model, operator and target; no real user data or external services",
+    "stock OpenClaw approval-after-hold checkpoint remains unavailable"
+  ]
+}

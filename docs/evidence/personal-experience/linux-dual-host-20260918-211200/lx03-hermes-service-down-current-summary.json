@@ -1,0 +1,37 @@
+{
+  "schema_version": "linux-lx03-hermes-service-down-current/v1",
+  "recorded_at": "2026-09-18T19:49:47.379747+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "Hermes public CLI v0.21.0",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "passed": true,
+  "checks": 9,
+  "online_control_decisions": 6,
+  "private_report_sha256": "3b6f7bd4b8e510e984930b1f3036256f98949fecd8dff48458a1be088f4be233",
+  "private_log_sha256": "3d49b21664bf6d2dc70ac4f5426f030356371c2aa02b820e0ed87def3cfe3687",
+  "driver_sha256": "c97bec9724916a1631321227f49e2ec4f1128f8b9c0fa57ed2d82b613f0e5e97",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "observed": "Real Hermes CLI online allowed read control, then only isolated fixture daemon stopped; offline native read and write denied, no file marker, signed receipt chain unchanged",
+  "failed_preflight_attempts": [
+    {
+      "private_log_sha256": "df6caa352aebc295a5935783434c125bbbcb382d20af790f9c1c0ee75771f58b",
+      "classification": "driver omitted newly required optional harness arguments"
+    },
+    {
+      "private_log_sha256": "b93cf04978cbfde671ed294180278a99de7ef59347f6c233fbaf686ecf91bc63",
+      "classification": "driver used None for a numeric optional timeout"
+    },
+    {
+      "private_log_sha256": "5aeb0cc4d16480a3395602c5b90dcbac30802e7b18baffc108a6c38eacf1fc54",
+      "classification": "driver assumed exactly two online decisions while current harness has six"
+    }
+  ],
+  "limitations": [
+    "isolated deterministic local model; no external provider",
+    "write operation also lacks narrow-skill permission while online; the read control isolates service loss",
+    "host tool return proves plugin refusal; no network egress target exercised",
+    "This is a daemon-down fail-closed leg; the offline write also lacks narrow online skill permission, so the read control isolates service loss more directly.",
+    "Isolated fixture only; no claim about other hosts or paid model traffic."
+  ]
+}

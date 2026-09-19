@@ -1,12 +1,104 @@
 package receipt
 
 import (
+	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
 )
+
+func TestFilesystemSymlinkCannotEscapeGrantOrExplicitDeny(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows canonical path contract requires native host validation")
+	}
+	base := t.TempDir()
+	root := filepath.Join(base, "granted")
+	outside := filepath.Join(base, "outside")
+	blocked := filepath.Join(root, "blocked")
+	for _, dir := range []string{root, outside, blocked} {
+		if err := os.MkdirAll(dir, 0o700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	insideFile := filepath.Join(root, "inside.txt")
+	outsideFile := filepath.Join(outside, "outside.txt")
+	for _, file := range []string{insideFile, outsideFile, filepath.Join(blocked, "denied.txt")} {
+		if err := os.WriteFile(file, []byte("fixture"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for name, target := range map[string]string{
+		"escape-file": outsideFile,
+		"escape-dir":  outside,
+		"inside-link": insideFile,
+		"deny-link":   blocked,
+		"dangling":    filepath.Join(base, "missing-target"),
+	} {
+		if err := os.Symlink(target, filepath.Join(root, name)); err != nil {
+			t.Skipf("symlinks unavailable: %v", err)
+		}
+	}
+	g := &grant.Grant{Facts: []grant.Fact{
+		scopedFact("allow-root", "filesystem", "fs.read", filepath.ToSlash(root), "allow"),
+		scopedFact("deny-blocked", "filesystem", "fs.read", filepath.ToSlash(blocked), "deny"),
+	}}
+	for _, tc := range []struct {
+		name, target string
+		want         bool
+	}{
+		{"inside", insideFile, true},
+		{"inside_link", filepath.Join(root, "inside-link"), true},
+		{"outside_file_alias", filepath.Join(root, "escape-file"), false},
+		{"outside_dir_alias_missing_tail", filepath.Join(root, "escape-dir", "new.txt"), false},
+		{"explicit_deny_alias", filepath.Join(root, "deny-link", "denied.txt"), false},
+		{"dangling_alias", filepath.Join(root, "dangling"), false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			_, ok := pathGranted(g, filepath.ToSlash(tc.target), false)
+			if ok != tc.want {
+				t.Fatalf("pathGranted(%q) = %t, want %t", tc.target, ok, tc.want)
+			}
+		})
+	}
+	writeGrant := &grant.Grant{Facts: []grant.Fact{
+		scopedFact("allow-write", "filesystem", "fs.write", filepath.ToSlash(root), "allow"),
+	}}
+	for _, tc := range []struct {
+		name, target string
+		want         bool
+	}{
+		{"new_file_inside", filepath.Join(root, "new.txt"), true},
+		{"new_file_through_outside_alias", filepath.Join(root, "escape-dir", "new.txt"), false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			_, ok := pathGranted(writeGrant, filepath.ToSlash(tc.target), true)
+			if ok != tc.want {
+				t.Fatalf("write pathGranted(%q) = %t, want %t", tc.target, ok, tc.want)
+			}
+		})
+	}
+}
+
+func TestFilesystemRootScopeRemainsValid(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows root paths require native path-identity validation")
+	}
+	target := filepath.ToSlash(filepath.Join(t.TempDir(), "inside.txt"))
+	g := &grant.Grant{Facts: []grant.Fact{
+		scopedFact("root-read", "filesystem", "fs.read", "/", "allow"),
+	}}
+	if id, ok := pathGranted(g, target, false); !ok || id != "root-read" {
+		t.Fatalf("root Grant lost its documented lexical scope: id=%q allowed=%t", id, ok)
+	}
+	g.Facts = append(g.Facts, scopedFact("root-deny", "filesystem", "fs.read", "/", "deny"))
+	if _, ok := pathGranted(g, target, false); ok {
+		t.Fatal("explicit root deny did not override allow")
+	}
+}
 
 func TestSecretRedactionCannotBypassResourceOrApprovalScope(t *testing.T) {
 	for _, tc := range []struct {

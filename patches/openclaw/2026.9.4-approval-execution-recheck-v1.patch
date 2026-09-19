@@ -1,0 +1,81 @@
+--- a/dist/agent-tools.before-tool-call-WtmCO7BO.mjs
++++ b/dist/agent-tools.before-tool-call-WtmCO7BO.mjs
+@@ -911,6 +911,44 @@
+ }
+ async function requestPluginToolApproval(params) {
+ 	const approval = params.approval;
++	const allowAfterRecheck = async (resolution) => {
++		const finalParams = mergeParamsWithApprovalOverrides(params.baseParams, params.overrideParams);
++		if (typeof approval.beforeExecute !== "function") return {
++			blocked: false,
++			params: finalParams,
++			approvalResolution: resolution
++		};
++		const controller = new AbortController();
++		const abort = () => controller.abort();
++		if (params.signal?.aborted) controller.abort();
++		else params.signal?.addEventListener("abort", abort, { once: true });
++		let timer;
++		try {
++			const valid = await Promise.race([
++				Promise.resolve().then(() => approval.beforeExecute(finalParams, controller.signal)),
++				new Promise((resolve) => {
++					timer = setTimeout(() => { controller.abort(); resolve(false); }, 5000);
++				})
++			]);
++			if (valid === true && !controller.signal.aborted) return {
++				blocked: false,
++				params: cloneHookIsolationValue("before_tool_call", finalParams),
++				approvalResolution: resolution
++			};
++		} catch {
++			// Callback failures and clone failures veto execution.
++		} finally {
++			clearTimeout(timer);
++			params.signal?.removeEventListener("abort", abort);
++		}
++		return {
++			blocked: true,
++			kind: "veto",
++			deniedReason: "plugin-approval-recheck",
++			reason: "Approval execution recheck denied",
++			params: params.baseParams
++		};
++	};
+ 	const timeoutMs = resolvePluginToolApprovalTimeoutMs(approval);
+ 	const gatewayTimeoutMs = resolvePluginToolApprovalGatewayTimeoutMs(timeoutMs);
+ 	const allowedDecisions = resolveCanonicalPluginApprovalRequestAllowedDecisions(approval);
+@@ -940,11 +978,7 @@
+ 			})).decision;
+ 			const resolution = resolvePermittedPluginApprovalResolution(decision, allowedDecisions);
+ 			notifyPluginApprovalResolution(approval, resolution);
+-			if (resolution === PluginApprovalResolutions.ALLOW_ONCE || resolution === PluginApprovalResolutions.ALLOW_ALWAYS) return {
+-				blocked: false,
+-				params: mergeParamsWithApprovalOverrides(params.baseParams, params.overrideParams),
+-				approvalResolution: resolution
+-			};
++			if (resolution === PluginApprovalResolutions.ALLOW_ONCE || resolution === PluginApprovalResolutions.ALLOW_ALWAYS) return await allowAfterRecheck(resolution);
+ 			if (resolution === PluginApprovalResolutions.DENY) return pluginApprovalDeniedOutcome(params.baseParams);
+ 			return approval.timeoutReason ? {
+ 				blocked: true,
+@@ -1033,11 +1067,7 @@
+ 		}
+ 		const resolution = resolvePermittedPluginApprovalResolution(decision, allowedDecisions);
+ 		notifyPluginApprovalResolution(approval, resolution);
+-		if (resolution === PluginApprovalResolutions.ALLOW_ONCE || resolution === PluginApprovalResolutions.ALLOW_ALWAYS) return {
+-			blocked: false,
+-			params: mergeParamsWithApprovalOverrides(params.baseParams, params.overrideParams),
+-			approvalResolution: resolution
+-		};
++		if (resolution === PluginApprovalResolutions.ALLOW_ONCE || resolution === PluginApprovalResolutions.ALLOW_ALWAYS) return await allowAfterRecheck(resolution);
+ 		if (resolution === PluginApprovalResolutions.DENY) return pluginApprovalDeniedOutcome(params.baseParams);
+ 		const fallbackTimeoutReason = approval.timeoutReason ?? "Approval timed out";
+ 		const timeoutReason = requestResult?.deliveryRoute === "turn-source" ? buildPluginApprovalFailureReason({
+@@ -2808,6 +2838,7 @@
+ 			params: policyAdjustedParams
+ 		}) ?? toolIdentity;
+ 		const policyAdjustedToolContext = buildToolContext(policyAdjustedToolIdentity);
++		policyAdjustedToolContext.approvalExecutionRecheckVersion = 1;
+ 		const policyAdjustedDerivedToolParams = trustedPolicyResult?.params && isPlainObject(policyAdjustedParams) ? await deriveToolParams(toolName, policyAdjustedParams, deriveOptions) : derivedToolParams;
+ 		if (!hasBeforeToolCallHooks) {
+ 			const finalApprovalOutcome = await resolveSkillWorkshopApprovalForFinalParams({

@@ -1,0 +1,19 @@
+{
+  "schema_version": "linux-lx05-session-transition-candidate/v1",
+  "recorded_at": "2026-09-19T01:04:31.892437+00:00",
+  "status": "superseded_scoped_ui_repair_validation",
+  "fix": "Retire both pre-transition and transition-window admin requests when pairing or logout commits a new browser-session generation.",
+  "build": "CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -trimpath -o <private binary> ./cmd/agentshield",
+  "unsigned_linux_arm64_binary_sha256": "06ffd3288026799e82f0b7be4609dc1caf8927441643a473eece321d5687ca77",
+  "source_binding": {
+    "algorithm": "scripts/personal-experience/openshell-b2b3-perf-protocol.py:source_binding",
+    "file_count": 931,
+    "sha256": "5efac52849f0913aa17700db74713565213daeaa3e6cee8c06896b7f8c65fe16",
+    "file_hashes": "source-hashes-session-transition-provisional.json"
+  },
+  "validation_summary": "lx05-session-transition-seventh-summary.json",
+  "promotion_gates": "Scoped LX05 candidate only. Previous sixth-candidate backend/host evidence does not transfer; formal signing, installed-service and wider native journeys remain separate.",
+  "release_acceptance": false,
+  "superseded_by": "candidate-session-transition-final.json",
+  "supersession_reason": "The first scoped repair retired responses after transition commit but did not retire an old-bearer 401 that arrived before pairing committed."
+}

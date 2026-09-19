@@ -1,0 +1,13 @@
+{
+  "schema_version": "linux-lx02-symlink-guard-installed-summary/v1",
+  "host_os": "linux/arm64",
+  "trust_layer": "test_release",
+  "source_candidate_sha256": "36042d1b8ae8b305eeac5c83d14486bcfd884d9ac9b56af74e2beb8e7e469880",
+  "installed_binary_sha256": "a872b7968319169e5f7b02aad5381e2c3f38ee678fd754e409a33fe168bcef60",
+  "installed_service": {"passed": true, "checks": 16, "private_checks_sha256": "7c0b616380bb4f511ea85c939761d46e6f2998015b9dad07cb0e141b07a445ef"},
+  "installed_r07": {"passed": true, "checks": 31, "nested_r04_checks": 31, "private_report_sha256": "b0b6457fd0e34d3a3b145d75e445463b0f1457d41bae77120ecce2800b0c925e"},
+  "direct_process_comparison": {"passed": true, "checks": 30, "nested_r04_checks": 31, "private_report_sha256": "4219dd3b07f3ae130f6e8655288baeb709e5570762d2e2961d007c12da1a2c28"},
+  "private_evidence_manifest": "25/25 sha256sum -c passed",
+  "cleanup": "Batch-owned user service, port and temporary run directory removed after ownership checks; shared manager environment unchanged.",
+  "limitations": "Ephemeral test signing root; formal release signing remains unverified. The installed binary and unsigned direct binary have different hashes and trust layers."
+}

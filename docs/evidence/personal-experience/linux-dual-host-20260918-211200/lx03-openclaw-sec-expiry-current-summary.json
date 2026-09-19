@@ -1,0 +1,26 @@
+{
+  "schema_version": "linux-lx03-openclaw-sec-expiry-current/v1",
+  "recorded_at": "2026-09-18T20:10:57.642600+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "OpenClaw 2026.5.12 public CLI",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "passed": true,
+  "checks": 10,
+  "sec_ttl_seconds": 60,
+  "sec_expires_at": "2026-09-18T20:10:52.138806+00:00",
+  "post_expiry_call_sent_at": "2026-09-18T20:10:53.141655+00:00",
+  "post_expiry_reason_code": "skill_context_expired",
+  "private_report_sha256": "428466c41444932a6f8c1c3f53687f3dfe95bd729c4a56d2ba020e58693be381",
+  "private_log_sha256": "960cb4c3c86bd9cc1a8976b6456f55364586c2ea27d39750f8a96063012d3c7d",
+  "driver_sha256": "c8b1bea6e6bd64aea17abe6b8570b2a6dd7c7ce398963a362d6cbdde898cf568",
+  "dependency_driver_sha256": "30d4cfaa8bf19a51d4af28278e2306022277f3647f3299d49609e5a727aeb14f",
+  "native_cli_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733",
+  "observed": "same public OpenClaw native session across separate CLI processes: session-scoped SEC with minimum 60-second TTL; pre-expiry native read allowed and verified; after real wall-clock expiry a distinct read denied without protected content or execution observation; signed receipt chain verified",
+  "limitations": [
+    "native turns share an OpenClaw session but run in separate CLI processes",
+    "local deterministic model and synthetic operator; no paid provider or human approval",
+    "this is session-scoped attribution, not task-scoped identity or cross-process effect atomicity",
+    "the first passing run used an earlier, weaker observation assertion; final evidence binds the stricter rerun and retains first run privately"
+  ]
+}
