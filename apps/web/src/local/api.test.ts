@@ -84,6 +84,89 @@ describe('local session recovery', () => {
     expect(new Headers(vi.mocked(fetch).mock.calls.at(-1)?.[1]?.headers).has('Authorization')).toBe(false);
   });
 
+  it('ignores a response from the previous admin session after re-pairing', async () => {
+    const { pair, localApi, onSessionExpired, LocalSessionChangedError } = await import('./api');
+    const second = 'b'.repeat(64);
+    vi.mocked(fetch).mockResolvedValueOnce(response(sessionResponse));
+    await pair('first');
+
+    let finishOld!: (value: Response) => void;
+    vi.mocked(fetch).mockImplementationOnce(() => new Promise<Response>((resolve) => { finishOld = resolve; }));
+    const oldStatus = localApi.status();
+    vi.mocked(fetch).mockResolvedValueOnce(response({ ...sessionResponse, session: second }));
+    await pair('second');
+    finishOld(response({ version: 'old-session' }));
+    await expect(oldStatus).rejects.toBeInstanceOf(LocalSessionChangedError);
+
+    const expired = vi.fn();
+    const unsubscribe = onSessionExpired(expired);
+    let finishUnauthorized!: (value: Response) => void;
+    vi.mocked(fetch).mockImplementationOnce(() => new Promise<Response>((resolve) => { finishUnauthorized = resolve; }));
+    const oldUnauthorized = localApi.status();
+    vi.mocked(fetch).mockResolvedValueOnce(response(sessionResponse));
+    await pair('third');
+    finishUnauthorized(response({ error: 'old session expired' }, 401));
+    await expect(oldUnauthorized).rejects.toBeInstanceOf(LocalSessionChangedError);
+    expect(expired).not.toHaveBeenCalled();
+
+    vi.mocked(fetch).mockResolvedValueOnce(response({ version: 'current' }));
+    await localApi.status();
+    expect(new Headers(vi.mocked(fetch).mock.calls.at(-1)?.[1]?.headers).get('Authorization')).toBe(`Bearer ${access}`);
+    unsubscribe();
+  });
+
+  it('retires requests started while pairing or logout is in flight', async () => {
+    const { pair, logout, localApi, onSessionExpired, LocalSessionChangedError } = await import('./api');
+    const second = 'b'.repeat(64);
+    const third = 'c'.repeat(64);
+    vi.mocked(fetch).mockResolvedValueOnce(response(sessionResponse));
+    await pair('first');
+
+    let finishPair!: (value: Response) => void;
+    let finishDuringPair!: (value: Response) => void;
+    vi.mocked(fetch)
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => { finishPair = resolve; }))
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => { finishDuringPair = resolve; }));
+    const pairing = pair('second');
+    const duringPair = localApi.status();
+    finishPair(response({ ...sessionResponse, session: second }));
+    await pairing;
+    finishDuringPair(response({ version: 'old-session-during-pair' }));
+    await expect(duringPair).rejects.toBeInstanceOf(LocalSessionChangedError);
+
+    const expired = vi.fn();
+    const unsubscribe = onSessionExpired(expired);
+    let finishEarlyPair!: (value: Response) => void;
+    let finishEarlyUnauthorized!: (value: Response) => void;
+    vi.mocked(fetch)
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => { finishEarlyPair = resolve; }))
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => { finishEarlyUnauthorized = resolve; }));
+    const earlyPairing = pair('third');
+    const unauthorizedDuringPair = localApi.status();
+    finishEarlyUnauthorized(response({ error: 'previous bearer expired' }, 401));
+    await expect(unauthorizedDuringPair).rejects.toBeInstanceOf(LocalSessionChangedError);
+    expect(expired).not.toHaveBeenCalled();
+    finishEarlyPair(response({ ...sessionResponse, session: third }));
+    await earlyPairing;
+
+    let finishLogout!: (value: Response) => void;
+    let finishDuringLogout!: (value: Response) => void;
+    vi.mocked(fetch)
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => { finishLogout = resolve; }))
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => { finishDuringLogout = resolve; }));
+    const signingOut = logout();
+    const duringLogout = localApi.status();
+    finishLogout(response({ schema_version: 'local-logout/v1', signed_out: true }));
+    await signingOut;
+    finishDuringLogout(response({ version: 'old-session-during-logout' }));
+    await expect(duringLogout).rejects.toBeInstanceOf(LocalSessionChangedError);
+
+    vi.mocked(fetch).mockResolvedValueOnce(response({ version: 'signed-out' }));
+    await localApi.status();
+    expect(new Headers(vi.mocked(fetch).mock.calls.at(-1)?.[1]?.headers).has('Authorization')).toBe(false);
+    unsubscribe();
+  });
+
   it('reports expired admin authorization and never retries a mutation', async () => {
     const { pair, localApi, onSessionExpired } = await import('./api');
     vi.mocked(fetch).mockResolvedValueOnce(response(sessionResponse));
