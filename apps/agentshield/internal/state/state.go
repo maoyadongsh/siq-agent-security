@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -609,7 +610,7 @@ func (s *Store) PutDesiredPolicy(dp grant.DesiredPolicy) error {
 func writeDurable(path string, data []byte) error {
 	f, err := statefs.CreatePrivate(path)
 	if errors.Is(err, os.ErrExist) {
-		existing, readErr := statefs.ReadPrivateFile(path, max(1, int64(len(data))))
+		existing, readErr := readExistingPrivateRecord(path)
 		if readErr != nil {
 			return readErr
 		}
@@ -689,7 +690,7 @@ var ErrConflict = errors.New("state: immutable path exists with different conten
 func writeNew(path string, data []byte) error {
 	f, err := statefs.CreatePrivate(path)
 	if errors.Is(err, os.ErrExist) {
-		existing, readErr := statefs.ReadPrivateFile(path, max(1, int64(len(data))))
+		existing, readErr := readExistingPrivateRecord(path)
 		if readErr != nil {
 			return readErr
 		}
@@ -708,12 +709,42 @@ func writeNew(path string, data []byte) error {
 	return f.Close()
 }
 
+// Bound retries by the existing opened record, not the new serialization:
+// a shorter retry can still identify the same immutable admission or evidence.
+// OpenPrivate retains the Windows DACL, reparse-point and link checks.
+func readExistingPrivateRecord(path string) ([]byte, error) {
+	f, err := statefs.OpenPrivate(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	before, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if !before.Mode().IsRegular() || before.Size() < 0 {
+		return nil, errors.New("state: invalid existing record")
+	}
+	raw, err := io.ReadAll(io.LimitReader(f, before.Size()))
+	if err != nil {
+		return nil, err
+	}
+	after, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if int64(len(raw)) != before.Size() || after.Size() != before.Size() {
+		return nil, errors.New("state: existing record changed during read")
+	}
+	return raw, nil
+}
+
 func writeNewCompatible(path string, data []byte, sameIdentity func(existing []byte) bool) error {
 	err := writeNew(path, data)
 	if err == nil || !errors.Is(err, ErrConflict) {
 		return err
 	}
-	existing, readErr := statefs.ReadPrivateFile(path, max(1, int64(len(data))))
+	existing, readErr := readExistingPrivateRecord(path)
 	if readErr != nil {
 		return readErr
 	}
