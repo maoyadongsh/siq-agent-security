@@ -237,6 +237,15 @@ SIQ 的差异化集中在把**授权依据、真实调用与可核验结果连�
 下图展示当前本地运行时与企业控制面的主要关系：受管实例通过真实宿主会话接入，Context、参数来源和按需签发的 Skill 执行上下文（SEC）参与服务端复验。企业控制面是可选部署；个人控制台与企业控制台使用各自的身份和服务，不会因同时部署而自动同步授权。个人端还可独立接入 OpenShell，流程见下方[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
 
 ```mermaid
+---
+config:
+  themeVariables:
+    fontSize: 16px
+  flowchart:
+    nodeSpacing: 20
+    rankSpacing: 40
+    wrappingWidth: 178
+---
 flowchart TB
     subgraph Local[个人接入链路：宿主与本地服务]
         direction TB
@@ -268,6 +277,7 @@ flowchart TB
         Control --> DB[(PostgreSQL / 审计 / outbox)]
         Control --> Backend[企业执行后端适配 / 策略读回]
     end
+    Local ~~~ Enterprise
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
@@ -281,6 +291,11 @@ flowchart TB
 ### 任务执行与效果核验
 
 ```mermaid
+---
+config:
+  themeVariables:
+    fontSize: 16px
+---
 flowchart TB
     Task[用户任务] --> Proposal[Agent 规划 / Skill 选择 / 工具提议]
     Authority[Grant / Intent / 来源与上下文约束] --> Gate[SIQ 执行前复验]

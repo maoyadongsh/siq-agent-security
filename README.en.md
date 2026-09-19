@@ -122,6 +122,15 @@ These demonstrations use explicit model fixtures to drive real SIQ components. T
 This diagram shows the current local-runtime and enterprise control-plane relationships. Managed instances enroll real host sessions; trusted Context, parameter provenance and an optional Skill Execution Context (SEC) enter server-side verification. The optional enterprise deployment uses its own identity and service; running both consoles does not automatically synchronize authority. The personal runtime also has an independent OpenShell integration, described in the [Chinese integration overview](README.md#dgx-spark-与-nvidia-openshell-深度适配).
 
 ```mermaid
+---
+config:
+  themeVariables:
+    fontSize: 16px
+  flowchart:
+    nodeSpacing: 20
+    rankSpacing: 40
+    wrappingWidth: 170
+---
 flowchart TB
     subgraph Local[Personal integration: host and local service]
         direction TB
@@ -153,6 +162,7 @@ flowchart TB
         Control --> DB[(PostgreSQL / audit / outbox)]
         Control --> Backend[Enterprise backend adapter / policy readback]
     end
+    Local ~~~ Enterprise
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
@@ -166,6 +176,11 @@ flowchart TB
 ### Task execution and effect verification
 
 ```mermaid
+---
+config:
+  themeVariables:
+    fontSize: 16px
+---
 flowchart TB
     Task[User task] --> Proposal[Agent plan / Skill selection / tool proposal]
     Authority[Grant / Intent / provenance and context constraints] --> Gate[SIQ pre-execution checks]
