@@ -432,7 +432,23 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 ### 已归档结果
 
-以下数字属于已归档的特定运行，不能视作任意环境或未来版本的保证。
+更新至 **2026-09-19**。以下按近期工程与发行验证、历史研究复现分别列出已归档结果；每项绑定自己的源码或候选、环境和测试范围，不能合并分母或直接迁移到其他版本。
+
+**近期工程与签名发行验证（2026-09-18–19）**
+
+| 已归档观察 | 结果 | 证据与范围 |
+| --- | --- | --- |
+| 0.3.0-rc.1 签名安装包验证 | **13/13** 检查通过 | [发行包验证](docs/evidence/releases/0.3.0-rc.1/verification.json)；源码 `58ab22e`，含官方根验签、六条负向、Linux ARM64 bootstrap、控制台及正常退出；其他目标未做原生安装验收 |
+| 0.3.0-rc.1 远端资产回读 | **8/8** 资产摘要一致 | [发布回读记录](docs/evidence/releases/0.3.0-rc.1/publication.json)；四目标二进制 pin、Skill 内容与签名复验通过，并验证 Linux ARM64 签名 URL 下载与暂存 |
+| Linux 已安装服务与用户旅程 | B02 **16/16**；已装 R07 **31/31**，嵌套 R04 **31/31** | [同候选验证](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx02-sec-hold-fix-installed-summary.json)；第六代来源候选 `67bc48c4…`，使用测试发行信任根；不是 0.3.0-rc.1 的完整用户旅程验收 |
+| Hermes 原生 CLI 与浏览器审批 | **24/24** 检查通过 | [原生审批联合验证](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx03-hermes-browser-approval-native-summary.json)；候选 `67bc48c4…`，含批准、拒绝、参数/对象漂移、并发和撤权；使用无头浏览器与合成模型 |
+| OpenClaw 2026.9.4 受控启动 | **22/22** 检查通过 | [托管原生 CLI 验证](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx03-openclaw-2026.9.4-controlled-managed-native-summary.json)；候选 `67bc48c4…`，隔离安装与固定补丁副本；不代表上游原版具备批准后检查点 |
+| 浏览器管理会话竞态修复 | Web **117/117**；真实浏览器定向 **2/2** | [会话修复验证](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx05-session-transition-eighth-summary.json)；第八代局部修复候选 `a85c76b0…`；不继承第六代的 systemd/OpenShell 验收 |
+| OpenShell D05 实机功能矩阵 | **373** 步：365 pass / 7 partial / 1 blocked / **0 fail** | [D05 结果](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx06-sec-hold-fix-d05-summary.json)；候选 `67bc48c4…`、后端 0.0.83；远端单任务停止仍受限，零 fail 不等于全部验收通过 |
+| OpenShell B3 功能旅程 | **57/57** 通过 | [B3 结果](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx06-sec-hold-fix-b3-summary.json)；同为候选 `67bc48c4…`，覆盖策略应用、回执、拒绝、撤权与回滚；不含性能预算验收 |
+| PostgreSQL + OIDC/JWKS 集成 | **27/27** 检查通过 | [隔离集成结果](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx07-postgres-oidc-jwks-rotation-summary.json)；Control API 源码 `2187fea`，含密钥轮换、过期缓存拒绝与恢复；本地 PostgreSQL 与测试签发者，不是客户生产验收 |
+
+**历史研究复现与首发记录（保留原运行口径）**
 
 | 已归档观察 | 结果 | 证据与范围 |
 | --- | --- | --- |

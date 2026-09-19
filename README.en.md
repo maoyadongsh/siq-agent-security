@@ -275,7 +275,23 @@ Start with the [DGX deployment guide](deploy/dgx-spark/README.md), [private mode
 
 ## Research and evidence
 
-These numbers describe specific archived runs, not guarantees for arbitrary environments or future versions.
+Updated through **2026-09-19**. Recent engineering/release checks and historical research reproduction are listed separately. Each result belongs to its recorded source or candidate, environment and test scope; denominators must not be pooled or transferred to other versions.
+
+**Recent engineering and signed-release verification (2026-09-18–19)**
+
+| Archived observation | Result | Evidence and scope |
+| --- | --- | --- |
+| 0.3.0-rc.1 signed package | **13/13** checks passed | [Package verification](docs/evidence/releases/0.3.0-rc.1/verification.json); source `58ab22e`, official-root checks, six rejection cases, Linux ARM64 bootstrap, console and graceful stop; no native installation acceptance on other targets |
+| 0.3.0-rc.1 remote asset readback | **8/8** asset hashes match | [Publication verification](docs/evidence/releases/0.3.0-rc.1/publication.json); four binary pins, Skill content and signature reverified, plus Linux ARM64 signed-URL download and staging |
+| Linux installed service and user journey | B02 **16/16**; installed R07 **31/31**, nested R04 **31/31** | [Same-candidate checks](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx02-sec-hold-fix-installed-summary.json); sixth source candidate `67bc48c4…` with a test release trust root; not full user-journey acceptance of 0.3.0-rc.1 |
+| Hermes native CLI and browser approval | **24/24** checks passed | [Combined approval checks](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx03-hermes-browser-approval-native-summary.json); candidate `67bc48c4…`, approval, denial, parameter/object drift, concurrency and revocation; headless browser and synthetic model |
+| OpenClaw 2026.9.4 controlled start | **22/22** checks passed | [Managed native CLI checks](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx03-openclaw-2026.9.4-controlled-managed-native-summary.json); candidate `67bc48c4…`, isolated installation and pinned patch; does not establish a post-approval checkpoint in the stock host |
+| Browser management-session race repair | Web **117/117**; targeted real-browser checks **2/2** | [Session repair checks](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx05-session-transition-eighth-summary.json); eighth scoped candidate `a85c76b0…`; does not inherit sixth-candidate systemd/OpenShell acceptance |
+| OpenShell D05 native functional matrix | **373** steps: 365 pass / 7 partial / 1 blocked / **0 fail** | [D05 results](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx06-sec-hold-fix-d05-summary.json); candidate `67bc48c4…`, backend 0.0.83; remote single-task stop remains limited, and zero failures do not establish full acceptance |
+| OpenShell B3 functional journey | **57/57** passed | [B3 results](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx06-sec-hold-fix-b3-summary.json); candidate `67bc48c4…`, policy apply, receipts, denial, revocation and rollback; no performance-budget acceptance |
+| PostgreSQL + OIDC/JWKS integration | **27/27** checks passed | [Isolated integration results](docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx07-postgres-oidc-jwks-rotation-summary.json); Control API source `2187fea`, rotation, expired-cache rejection and recovery; local PostgreSQL and a test issuer, not customer production acceptance |
+
+**Historical research reproduction and initial release (original run scope preserved)**
 
 | Archived observation | Result | Evidence and scope |
 | --- | --- | --- |
