@@ -333,6 +333,22 @@ def _read_regular_bounded(path: str, remaining: int) -> bytes:
     return data
 
 
+def _tree_link(path: str) -> bool:
+    """Classify name-surrogate links without following them.
+
+    os.path.islink does not include Windows junctions. os.walk may descend
+    junctions even with followlinks=False, so they must be pruned explicitly.
+    """
+    info = os.lstat(path)
+    if stat.S_ISLNK(info.st_mode):
+        return True
+    if getattr(info, "st_file_attributes", 0) & 0x400:  # FILE_ATTRIBUTE_REPARSE_POINT
+        if getattr(info, "st_reparse_tag", 0) in (0xA0000003, 0xA000000C):
+            return True  # IO_REPARSE_TAG_MOUNT_POINT / SYMLINK
+        raise IncompleteSkillTree("unsupported reparse point")
+    return False
+
+
 def hash_skill_dir(
     root: str,
     *,
@@ -371,7 +387,7 @@ def hash_skill_dir(
             child_rel = f"{rel_dir}/{name}" if rel_dir else name
             if _depth(child_rel) >= max_depth:
                 raise IncompleteSkillTree("max depth exceeded")
-            if os.path.islink(child):
+            if _tree_link(child):
                 # Symlink-to-dir: Go records neither hash nor descent (fail-closed only for escapes).
                 try:
                     target = os.path.realpath(child)
@@ -391,7 +407,7 @@ def hash_skill_dir(
             if _depth(child_rel) >= max_depth:
                 raise IncompleteSkillTree("max depth exceeded")
 
-            if os.path.islink(child):
+            if _tree_link(child):
                 try:
                     target = os.path.realpath(child)
                 except OSError as e:
