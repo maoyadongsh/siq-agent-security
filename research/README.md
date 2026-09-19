@@ -13,6 +13,14 @@
 
 当前产品代码合并、组件测试、真实宿主验收与正式发行分别记账。贡献者实验也不自动等同独立第三方测评。[主张—证据表](../docs/research/claims-evidence.md)和各批次原始报告保留候选、语料、失败与限制；没有 DOI、论文接受或普遍安全保证的声明。
 
+## 研究路线
+
+研究材料位于根目录 `research/`，与 `apps/`、`docs/` 平级。沿以下顺序阅读；每页连接问题、方法、实现、协议与证据，正文只维护一份。
+
+[文献与理论线索](literature/README.md) → [研究问题 RQ1–RQ5](questions/README.md) → [方法与威胁边界](methods/README.md) → [实验设计与复现](experiments/README.md) → [发现与局限](findings/README.md)。[研究治理](governance/README.md)贯穿引用、贡献、数据与发布。
+
+现有研究价值在于提供可运行的独立授权机制、来源与动作绑定、效果证据及可核查的受控实验；方法适用性和效用仍受任务、来源登记、观察器与运行环境限制，不把工程实现称为已获同行评审的创新。
+
 ## 材料索引
 
 [文献目录](literature/README.md) · [评测与验收](../evaluations/README.md) · [平台交付](../platforms/README.md) · [当前开发](../docs/development/current.md)

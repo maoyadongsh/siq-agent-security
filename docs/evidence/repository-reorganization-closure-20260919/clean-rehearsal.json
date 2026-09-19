@@ -1,0 +1,181 @@
+{
+  "schema_version": "siq-repository-rehearsal/v1",
+  "candidate_sha": "68e17e2dedb51133e380ca669941a8c177e18e46",
+  "base_sha": "1173042275ae994faa4ed1c99cee58f7d541cb1c",
+  "checked_at_utc": "2026-09-19T13:10:31.075763+00:00",
+  "path_conditions": [
+    "space",
+    "Unicode"
+  ],
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "scripts/repository/check.py",
+        "--base",
+        "1173042275ae994faa4ed1c99cee58f7d541cb1c"
+      ],
+      "result": "passed",
+      "stdout": "{\"result\": \"passed\", \"asset_groups\": 21, \"documents\": 29, \"local_links\": 716, \"catalogs\": {\"research/literature/catalog.json\": 36, \"evaluations/catalog.json\": 8}}"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/repository",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "result": "passed",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/release",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "result": "passed",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/research/check_metadata.py"
+      ],
+      "result": "passed",
+      "stdout": "{\"result\": \"passed\", \"community_forms\": 6, \"cc_documents\": 14, \"documents\": 44}"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_research_task_ledger.py"
+      ],
+      "result": "passed",
+      "stdout": "{\"result\": \"passed\", \"workstreams\": 18, \"tasks\": 71, \"status_counts\": {\"done\": 47, \"not_applicable\": 1, \"todo\": 20, \"blocked\": 1, \"in_progress\": 2}, \"kind_counts\": {\"engineering\": 9, \"manual\": 2, \"conditional\": 3, \"documentation\": 25, \"validation\": 9, \"external_manual\": 11, \"research\": 9, \"review\": 1, \"recurring\": 2}}"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_capability_honesty.py"
+      ],
+      "result": "passed",
+      "stdout": "OK: capability matrix + runbook honesty gates"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_ci_action_pins.py"
+      ],
+      "result": "passed",
+      "stdout": "OK: ci.yml Actions pinned to full commit SHAs"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "ruff",
+        "check",
+        "scripts/repository",
+        "scripts/release"
+      ],
+      "result": "passed",
+      "stdout": "All checks passed!"
+    }
+  ],
+  "product_paths_unchanged": [
+    "apps",
+    "edge",
+    "connectors",
+    "adapters",
+    "packages",
+    "skills",
+    "patches",
+    "deploy",
+    "benchmarks",
+    "LICENSE",
+    "NOTICE",
+    "LICENSES",
+    "CITATION.cff",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "signed_release_offline_verification": {
+    "schema_version": "siq-release-verification/v1",
+    "version": "0.3.0",
+    "expected_source_sha": "83fde2df0bcfc817d85568978e3881e22474815e",
+    "source_identity_scope": "descriptive metadata matched; publisher signature binds Skill and binary pins, not source attestation",
+    "official_signature_and_skill_content": "passed",
+    "four_binary_pins": "passed",
+    "asset_inventory_and_checksums": "passed",
+    "bundle_skill_zip_and_flat_binaries": "passed",
+    "trusted_installation_instructions": "passed",
+    "native_installation": {
+      "status": "not_run"
+    },
+    "published": "not_checked",
+    "assets": [
+      {
+        "name": "SHA256SUMS",
+        "sha256": "d64584d2bb152997d5ab15081c1195258a4c0593b82933d627e6c2445dc9fe1f",
+        "bytes": 681
+      },
+      {
+        "name": "SOURCE-INFO.json",
+        "sha256": "7fb09acace42ca184018dc75aa9a189f543cd277dac65bb5da1c85a7557ff5fb",
+        "bytes": 25585
+      },
+      {
+        "name": "siq-agent-security-0.3.0-bundle.zip",
+        "sha256": "6132d68fa97b6b01fba36355a0636650cb1180cb0d703e0b48a4fcafd8d4211e",
+        "bytes": 46841225
+      },
+      {
+        "name": "siq-agent-security-darwin-arm64",
+        "sha256": "01ee7c67df6b6a082f2b8275e7189eb2f201f6256d8308e5a1bd481418b19634",
+        "bytes": 18999474
+      },
+      {
+        "name": "siq-agent-security-linux-amd64",
+        "sha256": "1f00a3441fc11e3739b5667eae6f021a3a79fd27f8950d504534fb4f4142124e",
+        "bytes": 19968162
+      },
+      {
+        "name": "siq-agent-security-linux-arm64",
+        "sha256": "d8fa47a406fdaf42d65540002f4a920c505bd293e6b9eaaf9c48c3eeec8fc46a",
+        "bytes": 18808994
+      },
+      {
+        "name": "siq-agent-security-skill-0.3.0.zip",
+        "sha256": "1a655553c9463a54fa82052d411313e517cb1684d2e63800eb85a3f6220f21df",
+        "bytes": 31405
+      },
+      {
+        "name": "siq-agent-security-windows-amd64.exe",
+        "sha256": "8b64c1007194c11c0ed8d380a0ec04fd1586464b41ee082dc52bd53b5feeabb9",
+        "bytes": 20549120
+      }
+    ]
+  },
+  "rollback": {
+    "reverted_commits": [
+      "68e17e2dedb51133e380ca669941a8c177e18e46",
+      "a7d48c670e60ab667f1e98f7cf8f8d8638508545",
+      "b32ee72e0d5c713145d5482d8ede49c513b97665",
+      "2bfbc32c89fe644aeeeadb4314ebcaae44dacfe3",
+      "ea0024f662039c4d7cc5aaaac3beba2c194cacbc"
+    ],
+    "tracked_tree_equals_base": true,
+    "scope": "temporary checkout only; no user state or releases involved"
+  },
+  "restore_candidate_and_recheck": "passed"
+}

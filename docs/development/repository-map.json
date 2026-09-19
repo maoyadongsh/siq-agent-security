@@ -1014,6 +1014,160 @@
         "actual official package and public readback",
         "isolated Linux ARM64 native installation"
       ]
+    },
+    {
+      "path": "research/questions/README.md",
+      "action": "add",
+      "reason": "root research design and stable tool/history navigation; no physical moves",
+      "consumers": [
+        "README readers",
+        "research contributors",
+        "current development entry",
+        "repository guard"
+      ],
+      "validation": [
+        "local links and frozen evidence guard",
+        "metadata and literature hashes",
+        "clean checkout and rollback rehearsal"
+      ]
+    },
+    {
+      "path": "research/methods/README.md",
+      "action": "add",
+      "reason": "root research design and stable tool/history navigation; no physical moves",
+      "consumers": [
+        "README readers",
+        "research contributors",
+        "current development entry",
+        "repository guard"
+      ],
+      "validation": [
+        "local links and frozen evidence guard",
+        "metadata and literature hashes",
+        "clean checkout and rollback rehearsal"
+      ]
+    },
+    {
+      "path": "research/experiments/README.md",
+      "action": "add",
+      "reason": "root research design and stable tool/history navigation; no physical moves",
+      "consumers": [
+        "README readers",
+        "research contributors",
+        "current development entry",
+        "repository guard"
+      ],
+      "validation": [
+        "local links and frozen evidence guard",
+        "metadata and literature hashes",
+        "clean checkout and rollback rehearsal"
+      ]
+    },
+    {
+      "path": "research/findings/README.md",
+      "action": "add",
+      "reason": "root research design and stable tool/history navigation; no physical moves",
+      "consumers": [
+        "README readers",
+        "research contributors",
+        "current development entry",
+        "repository guard"
+      ],
+      "validation": [
+        "local links and frozen evidence guard",
+        "metadata and literature hashes",
+        "clean checkout and rollback rehearsal"
+      ]
+    },
+    {
+      "path": "research/governance/README.md",
+      "action": "add",
+      "reason": "root research design and stable tool/history navigation; no physical moves",
+      "consumers": [
+        "README readers",
+        "research contributors",
+        "current development entry",
+        "repository guard"
+      ],
+      "validation": [
+        "local links and frozen evidence guard",
+        "metadata and literature hashes",
+        "clean checkout and rollback rehearsal"
+      ]
+    },
+    {
+      "path": "docs/development/tools.md",
+      "action": "add",
+      "reason": "root research design and stable tool/history navigation; no physical moves",
+      "consumers": [
+        "README readers",
+        "research contributors",
+        "current development entry",
+        "repository guard"
+      ],
+      "validation": [
+        "local links and frozen evidence guard",
+        "metadata and literature hashes",
+        "clean checkout and rollback rehearsal"
+      ]
+    },
+    {
+      "path": "docs/development/history.md",
+      "action": "add",
+      "reason": "root research design and stable tool/history navigation; no physical moves",
+      "consumers": [
+        "README readers",
+        "research contributors",
+        "current development entry",
+        "repository guard"
+      ],
+      "validation": [
+        "local links and frozen evidence guard",
+        "metadata and literature hashes",
+        "clean checkout and rollback rehearsal"
+      ]
+    },
+    {
+      "path": "docs/repository-architecture-reorganization-proposal-20260918-095230.md",
+      "action": "edit",
+      "source_blob": "e4c0ff1e825a30c75a6df8a15d0707f99c8ae90a",
+      "reason": "preserve original research design and record implementation choices without changing historical baselines",
+      "consumers": [
+        "project maintainer",
+        "RA execution ledger"
+      ],
+      "validation": [
+        "repository local link guard",
+        "requirement review against first proposal"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-closure-20260919/README.md",
+      "action": "add",
+      "reason": "RA-07 fixed-candidate clean checkout and complete rollback/restore evidence",
+      "consumers": [
+        "RA progress ledger",
+        "project maintainer"
+      ],
+      "validation": [
+        "review new public record for candidate identity and secrets",
+        "repository guard",
+        "complete batch reverse diff against baseline"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-closure-20260919/clean-rehearsal.json",
+      "action": "add",
+      "reason": "RA-07 fixed-candidate clean checkout and complete rollback/restore evidence",
+      "consumers": [
+        "RA progress ledger",
+        "project maintainer"
+      ],
+      "validation": [
+        "review new public record for candidate identity and secrets",
+        "repository guard",
+        "complete batch reverse diff against baseline"
+      ]
     }
   ],
   "frozen": {
@@ -1045,7 +1199,9 @@
     "AGENTSHIELD.md",
     "docs/README.md",
     "scripts/release/README.md",
-    "docs/evidence/repository-reorganization-20260919/README.md"
+    "docs/evidence/repository-reorganization-20260919/README.md",
+    "docs/repository-architecture-reorganization-proposal-20260918-095230.md",
+    "docs/evidence/repository-reorganization-closure-20260919/README.md"
   ],
   "navigation_globs": [
     "docs/development/*.md",

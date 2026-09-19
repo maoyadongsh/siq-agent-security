@@ -1,6 +1,6 @@
 # 项目文档
 
-[项目首页](../README.md) · [当前开发入口](development/current.md) · [仓库整理进度](development/reorganization-progress.md)
+[项目首页](../README.md) · [当前开发入口](development/current.md) · [仓库整理进度](development/reorganization-progress.md) · [工具索引](development/tools.md) · [历史导航](development/history.md)
 
 | 要做的事 | 从这里开始 | 权威材料 |
 | --- | --- | --- |
