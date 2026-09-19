@@ -1,0 +1,26 @@
+{
+  "scenario": "Native Windows suspended owned process loses its executable before preflight",
+  "source_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+  "binary_sha256": "5776d67d784c7131a7eb88faef1c26a8dbe939e5140fd2634603d4625fce9d2c",
+  "native_rejection_exit": 1,
+  "expected_error": "siq-agent-security: service-unit: current executable unavailable",
+  "binary_absent_at_resume": true,
+  "state_unchanged": true,
+  "system_task_absent_before_and_after": true,
+  "binary_restored": true,
+  "job_initial_cleanup": {
+    "active_processes": 0,
+    "total_processes": 2,
+    "terminated_processes": 0
+  },
+  "job_final": {
+    "active_processes": 0,
+    "total_processes": 2,
+    "terminated_processes": 0
+  },
+  "resource_cleanup": "owned Job settled to zero before close; no termination",
+  "raw_sha256": "91213d74d3af0239f8a5d3fc894a7d6a12814d4bd02c3a9fe809af4cfc22b73d",
+  "controller_sha256": "e191952dc140241cdc78520a247b2f7470c71f54bd1eb53661329810759f3264",
+  "prior_attempt": "r1 same native rejection, but sampled active Job count before final settlement; retained, not used for full cleanup claim",
+  "limits": "task-register preflight with missing on-disk current executable; does not prove installed-task start/recovery or another user SID."
+}

@@ -1,0 +1,163 @@
+{
+  "method": "native_cli_and_task_scheduler",
+  "candidate": {
+    "binary_sha256": "5776d67d784c7131a7eb88faef1c26a8dbe939e5140fd2634603d4625fce9d2c",
+    "source_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+    "private_root_ace_count": 3,
+    "protected_acl": true,
+    "source_dirty": false
+  },
+  "private_transport_sha256": "45ddc6b37255c02fafc75bec505fbb3463e40ed007404a0c1ab0f263d4e840b0",
+  "checks": {
+    "actual_system_trigger_count": 0,
+    "registration_has_no_logon_trigger": true,
+    "source_tamper_three_actions_denied_without_resign_or_execution": true,
+    "system_xml_tamper_three_actions_denied_without_execution": true,
+    "state_preserved_after_unregister": true,
+    "completed": true,
+    "cleanup_task_absent": true,
+    "cleanup_processes": {
+      "listener_pids": [],
+      "pids": []
+    }
+  },
+  "commands": [
+    {
+      "label": "init",
+      "args": [
+        "init",
+        "--port",
+        "<isolated-port>"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6229150000144728
+    },
+    {
+      "label": "prepare",
+      "args": [
+        "task-prepare"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.0268069000157993
+    },
+    {
+      "label": "register",
+      "args": [
+        "task-register",
+        "--confirm-register"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 17.371387399995
+    },
+    {
+      "label": "source-tamper-denied-register",
+      "args": [
+        "task-register",
+        "--confirm-register"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 1.2806853000074625,
+      "error": "siq-agent-security: state: WindowsTask XML changed; restore before retrying"
+    },
+    {
+      "label": "source-tamper-denied-start",
+      "args": [
+        "task-start",
+        "--confirm-start"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.5604085999948438,
+      "error": "siq-agent-security: state: WindowsTask configuration drift"
+    },
+    {
+      "label": "source-tamper-denied-unregister",
+      "args": [
+        "task-unregister",
+        "--confirm-unregister"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.8272371000202838,
+      "error": "siq-agent-security: state: WindowsTask configuration drift"
+    },
+    {
+      "label": "source-restored-query",
+      "args": [
+        "task-query"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.25592759999563
+    },
+    {
+      "label": "system-tamper-denied-register",
+      "args": [
+        "task-register",
+        "--confirm-register"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 12.908076599997003,
+      "error": "siq-agent-security: task: system configuration does not match owned configuration"
+    },
+    {
+      "label": "system-tamper-denied-start",
+      "args": [
+        "task-start",
+        "--confirm-start"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 6.972267199977068,
+      "error": "siq-agent-security: task: system configuration does not match owned configuration"
+    },
+    {
+      "label": "system-tamper-denied-unregister",
+      "args": [
+        "task-unregister",
+        "--confirm-unregister"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 10.622979800013127,
+      "error": "siq-agent-security: task: system configuration does not match owned configuration"
+    },
+    {
+      "label": "system-restored-query",
+      "args": [
+        "task-query"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.17778100000578
+    },
+    {
+      "label": "unregister",
+      "args": [
+        "task-unregister",
+        "--confirm-unregister"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 23.6332512999943
+    },
+    {
+      "label": "final-absence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.819355299987365
+    },
+    {
+      "label": "cleanup-presence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.496279500017408
+    },
+    {
+      "label": "cleanup-final-absence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.112521100003505
+    }
+  ],
+  "scope": "Windows common Task Scheduler lifecycle; file preservation means path-to-SHA256 snapshots, not all metadata or ACLs; not host protection or final integration acceptance"
+}

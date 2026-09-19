@@ -1,0 +1,1285 @@
+{
+  "schema_version": 1,
+  "scope": "Windows 原生 CLI 组件验证，非宿主或桌面验收",
+  "source_commit": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+  "source_clean_before_after": true,
+  "cli": {
+    "total_commands": 76,
+    "categories": {
+      "fixture": 2,
+      "positive": 4,
+      "negative": 70
+    },
+    "passed": 76,
+    "failed": 0,
+    "exit_counts": {
+      "0": 36,
+      "1": 40
+    },
+    "timeouts": 0,
+    "stdout_streams": 76,
+    "stderr_streams": 76,
+    "raw_bytes_sha256_verified": true,
+    "snapshot_pairs": 72,
+    "snapshot_pairs_equal": 72,
+    "snapshot_fields": [
+      "相对条目名",
+      "type",
+      "attributes",
+      "普通文件 size",
+      "普通文件 sha256"
+    ],
+    "snapshot_exclusions": [
+      "DACL",
+      "ADS",
+      "file ID",
+      "时间戳",
+      "瞬时 I/O"
+    ],
+    "hook_events": {
+      "PreToolUse": 15,
+      "PostToolUse": 15
+    },
+    "sentinel_post_requests": 0,
+    "sentinel_stopped": true,
+    "cases": [
+      {
+        "name": "fixture-legacy-init",
+        "category": "fixture",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 257,
+          "sha256": "90e47c7b2cba5e44ff5ba830d690e01edf2b6c1d611f65775d2c39808a7fce8b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": false
+      },
+      {
+        "name": "positive-chinese-internal-space-init",
+        "category": "positive",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 257,
+          "sha256": "3ca62475d3373e2c4b0f4c1612dbb9f86bca753193dac6f8cd94ed17b3b3d0e2"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": false
+      },
+      {
+        "name": "positive-chinese-internal-space-status",
+        "category": "positive",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 124,
+          "sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "positive-long-path-init",
+        "category": "positive",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 257,
+          "sha256": "4904dc73d787dc4f08d3ce298c2f6ea14245b3714a6c135ac368cce3857e2650"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": false
+      },
+      {
+        "name": "positive-long-path-status",
+        "category": "positive",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 124,
+          "sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-space-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-space-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-space-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-space-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-space-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-dot-navigation-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-dot-navigation-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-dot-navigation-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-dot-navigation-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-dot-navigation-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-space-navigation-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-space-navigation-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-space-navigation-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-space-navigation-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-middle-space-navigation-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-slash-dot-navigation-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-slash-dot-navigation-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-slash-dot-navigation-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-slash-dot-navigation-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-slash-dot-navigation-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-separator-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-separator-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-separator-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-separator-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "empty-tail-dot-separator-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "fixture-target-init",
+        "category": "fixture",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 257,
+          "sha256": "8cf5bc5901ad6c04361751f64078854ccd9c104191ea33618f8651bde0978a7b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": false
+      },
+      {
+        "name": "initialized-tail-dot-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-dot-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-dot-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-dot-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-dot-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-space-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-space-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-space-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-space-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-space-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-dot-navigation-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-dot-navigation-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-dot-navigation-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-dot-navigation-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-dot-navigation-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-space-navigation-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-space-navigation-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-space-navigation-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-space-navigation-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-middle-space-navigation-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-slash-dot-navigation-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-slash-dot-navigation-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-slash-dot-navigation-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-slash-dot-navigation-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-slash-dot-navigation-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-dot-separator-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-dot-separator-status",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-dot-separator-serve",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 89,
+          "sha256": "ac0cefc607abd24a1ab696add3f8884e38edfa7d2150e4bcbfa5aaca400fc3f8"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-dot-separator-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "initialized-tail-dot-separator-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "primary-whitespace-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "primary-whitespace-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "primary-whitespace-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "legacy-tail-space-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "legacy-tail-space-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "legacy-tail-space-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "invalid-default-base-init",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 68,
+          "sha256": "8837dd5b72f46cff896f591814b7e39b462aadcd3307715c7bdb998927be3d3f"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "invalid-default-base-PreToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 192,
+          "sha256": "6755a9522ca673425b49d23640731eeeed81155e0734c5af94bbb1159fd87b9b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "invalid-default-base-PostToolUse",
+        "category": "negative",
+        "exit_code": 0,
+        "passed": true,
+        "stdout": {
+          "bytes": 55,
+          "sha256": "4913e6242207d7e842831a316ee27adce151b367f31928a4a78a87975580ba56"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "snapshot_pair_verified": true
+      },
+      {
+        "name": "explicit-valid-over-invalid-env",
+        "category": "negative",
+        "exit_code": 1,
+        "passed": true,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 114,
+          "sha256": "893247abce132fcd0d07a6c256e32e018f98b3922d00306f341eba426380638c"
+        },
+        "snapshot_pair_verified": true
+      }
+    ]
+  },
+  "checks": {
+    "command_count": 8,
+    "all_exit_zero": true,
+    "gofmt_stdout_bytes": 0,
+    "vet_exit_code": 0,
+    "binaries": [
+      {
+        "basename": "agentshield-linux-amd64",
+        "os": "linux",
+        "arch": "amd64",
+        "bytes": 24602449,
+        "sha256": "29c2eadf0eb5d906c6803e11dd9b2a420c766549fb109922edb6167846f5cb3a",
+        "go_version": "go1.27.1",
+        "vcs_revision": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+        "vcs_modified": false
+      },
+      {
+        "basename": "agentshield-linux-arm64",
+        "os": "linux",
+        "arch": "arm64",
+        "bytes": 23166016,
+        "sha256": "840213b211ea0ea64267bfb27a982f067380441e257b3a7b4fdb3f2076f89e25",
+        "go_version": "go1.27.1",
+        "vcs_revision": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+        "vcs_modified": false
+      },
+      {
+        "basename": "agentshield-darwin-arm64",
+        "os": "darwin",
+        "arch": "arm64",
+        "bytes": 23485458,
+        "sha256": "fbd96ff71fadb1a1866a9bbd2b63c7b272c133ec758318828bffe211c86978a4",
+        "go_version": "go1.27.1",
+        "vcs_revision": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+        "vcs_modified": false
+      },
+      {
+        "basename": "agentshield-windows-amd64.exe",
+        "os": "windows",
+        "arch": "amd64",
+        "bytes": 24726528,
+        "sha256": "185403e60c6b1e83d23e7fa03d10e635d9930f39df4879702af1153845f5d0d3",
+        "go_version": "go1.27.1",
+        "vcs_revision": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+        "vcs_modified": false
+      }
+    ],
+    "cross_compilation_is_not_foreign_os_execution": true
+  },
+  "schema": {
+    "standard_exit_code": 4,
+    "standard_failure_category": "加载 conftest 时缺少 fcntl",
+    "isolated_exit_code": 0,
+    "isolated_passed": 206,
+    "combined_runner_expected_exit_code": 1
+  },
+  "targeted": {
+    "exit_code": 0,
+    "package_terminal_counts": {
+      "pass": 6
+    },
+    "top_level_test_terminal_counts": {
+      "pass": 11
+    },
+    "all_test_terminal_counts": {
+      "pass": 42
+    }
+  },
+  "limitations": [
+    "UNC 未进行真实访问验证",
+    "hook codebuddy 是 CLI 映射测试，不是 WorkBuddy GUI 验收",
+    "PostToolUse 无阻断字段不证明真实工具执行成功",
+    "sentinel 计数仅覆盖该自有 HTTP 端点的 POST",
+    "full-go/race 不属于本报告已核终态"
+  ],
+  "source_summaries": [
+    {
+      "role": "checks.summary",
+      "bytes": 8720,
+      "sha256": "fb7fb57d4f174c83c340b042d56c2ee28625753f15f5f5e9529e93c97a9ed042"
+    },
+    {
+      "role": "schema.summary",
+      "bytes": 2670,
+      "sha256": "f8af6b50225194d33d0049eb09361e686045da6aeb33374ddb50572e84400f7d"
+    },
+    {
+      "role": "targeted.summary",
+      "bytes": 2170,
+      "sha256": "805023d26cadd83eaeb1236550799327809fd97b7ba1bd358ca81abc315a2e82"
+    },
+    {
+      "role": "native-cli.summary",
+      "bytes": 97039,
+      "sha256": "a2035800bcd267e2b45b6ac6bc184b029c2e9c7fbedac3fd5f8767a459fb7fad"
+    }
+  ]
+}

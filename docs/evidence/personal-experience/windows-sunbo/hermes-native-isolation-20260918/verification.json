@@ -1,0 +1,34 @@
+{
+  "before": {
+    "source_sha": "ea3679f6a609a65c7375d361f03884c704e9fd9a",
+    "exit": 1,
+    "seconds": 211.44559230000596,
+    "model_calls": 0,
+    "temp_remaining_entries": []
+  },
+  "after": {
+    "source_sha": "e05a37d297182dd0834abc77f8034cfd8d4b5bae",
+    "exit": 0,
+    "seconds": 239.58980660000816,
+    "model_calls": 0,
+    "temp_remaining_entries": []
+  },
+  "native_cli_sha256": "fa802a97400fd6575bff8cf305ae68bc665a8fd933099abdd45cca96d2bee748",
+  "static": [
+    {
+      "name": "fmt",
+      "exit": 0,
+      "empty_output": true
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "empty_output": true
+    }
+  ],
+  "raw_log_sha256": {
+    "r1": "1f6b8ac988e15e63e0979df39f446bd721ba4cee7e4f03fc1f6dca1442b6fd4e",
+    "r2": "f182c1eaac5347c7730ec02b2087a51a07c62b0f7a0852f7bb670651532bce36"
+  },
+  "scope": "real installed Hermes configuration CLI plus production adapter library; SIQ executable path is an unexecuted test fixture; no tool runtime acceptance"
+}

@@ -1,0 +1,67 @@
+{
+  "source_sha": "196a3f1926887068e585114646fc6fccbba01ae9",
+  "environment": "child PATH: installed Git shell and existing native-Python argv shim; no global environment changes",
+  "checks": [
+    {
+      "name": "focused",
+      "exit": 0,
+      "seconds": 7.915
+    },
+    {
+      "name": "package",
+      "exit": 1,
+      "seconds": 13.826
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 2.71
+    },
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 0.091
+    }
+  ],
+  "temp_remaining": 0,
+  "package_counts": {
+    "pass": 31,
+    "fail": 1,
+    "skip": 1
+  },
+  "remaining": [
+    {
+      "test": "TestPythonHashSkillDirRejectsEscape",
+      "status": "fail",
+      "reason": "Windows symlink creation: A required privilege is not held by the client."
+    },
+    {
+      "test": "TestResolveStagesVerifiedBinary",
+      "status": "skip",
+      "reason": "repo binary missing"
+    }
+  ],
+  "diagnostic": [
+    {
+      "case": "old",
+      "exit": 1,
+      "stdout_empty": true,
+      "stderr": "siq-agent-security-verify: error: siq-agent-security binary not found. Build apps/agentshield or set SIQ_AGENT_SECURITY_BIN. To download a pinned release artifact after signed-manifest verify, set SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1.\n",
+      "stage_empty": true
+    },
+    {
+      "case": "extension",
+      "exit": 1,
+      "stdout_empty": true,
+      "stderr": "siq-agent-security-verify-manifest: binary sha256 does not match skill-manifest.json\r\nsiq-agent-security-verify: error: skill-manifest.json verification or staging failed\n",
+      "stage_empty": true
+    },
+    {
+      "case": "portable",
+      "exit": 1,
+      "stdout_empty": true,
+      "stderr": "siq-agent-security-verify-manifest: binary sha256 does not match skill-manifest.json\r\nsiq-agent-security-verify: error: skill-manifest.json verification or staging failed\n",
+      "stage_empty": true
+    }
+  ]
+}

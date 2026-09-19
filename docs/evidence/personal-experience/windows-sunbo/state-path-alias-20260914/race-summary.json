@@ -1,0 +1,215 @@
+{
+  "schema_version": "windows-state-path-race-review/v1",
+  "source_candidate": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+  "base_source": "b303c6f92392f3a44c306d81ad7323c6291ef4f2",
+  "phase": "race",
+  "outcome": "fail",
+  "go_exit_code": 1,
+  "compiler_version_exit_code": 0,
+  "go_command_elapsed_seconds": 422.70761629999834,
+  "toolchain": {
+    "go_version_file": "go1.27.1",
+    "go_binary_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490",
+    "cgo_enabled_by_frozen_race_branch": true,
+    "race_flag_present": true,
+    "compiler_version": "gcc 12.2.0 MSYS2 Rev10",
+    "compiler_binary_sha256": "c5005ba5380351c10743e9ca53ef9632164c54be3bd6b93324795114e4589a7d"
+  },
+  "source_integrity": {
+    "before_clean": true,
+    "after_clean": true,
+    "unchanged": true,
+    "independent_current_readback_clean": true
+  },
+  "counts": {
+    "packages": {
+      "total": 6,
+      "pass": 5,
+      "fail": 1,
+      "skip": 0
+    },
+    "top_level_tests": {
+      "total": 14,
+      "pass": 13,
+      "fail": 1,
+      "skip": 0
+    },
+    "subtests": {
+      "total": 33,
+      "pass": 33,
+      "fail": 0,
+      "skip": 0
+    },
+    "all_test_nodes": {
+      "total": 47,
+      "pass": 46,
+      "fail": 1,
+      "skip": 0,
+      "unfinished": 0
+    },
+    "new_top_level_path_tests": {
+      "total": 11,
+      "pass": 11,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "new_top_level_results": [
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/stateformat",
+      "test": "TestWindowsStatePathSpelling",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/statefs",
+      "test": "TestWindowsStatePathFileOperationsRejectBeforeEffects",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/signing",
+      "test": "TestWindowsStatePathSigningFileBranches",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestWindowsStatePathEnvironment",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestWindowsStatePathDirectAPIsRejectBeforeEffects",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestWindowsStatePathValidNavigationAndInitialization",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestWindowsStatePathOwnedWriterRejectsRawAliases",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestWindowsStatePathAdapterTransactionRoots",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestWindowsServeStatePathAliasSelection",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestWindowsStatePathAliasCommandsRejectBeforeMutation",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestWindowsStatePathAliasHookFailsClosedWithoutFallback",
+      "status": "pass"
+    }
+  ],
+  "existing_top_level_results": [
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestAcquireWriterBlocksSecondAndTakesOverDead",
+      "status": "fail"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestWriterReleaseRefusesForeignLock",
+      "status": "pass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestConcurrentVersionsPreserveEverySuccessfulWrite",
+      "status": "pass"
+    }
+  ],
+  "sole_failure": {
+    "test": "TestAcquireWriterBlocksSecondAndTakesOverDead",
+    "package": "siq-agent-security/apps/agentshield/internal/state",
+    "assertion_source": "internal/state/cas_test.go:103",
+    "assertion": "stale lock must be quarantined and acquired",
+    "returned_error_category": "state: write lock held by another process",
+    "bounded_explanation": "The existing test simulates a dead holder with a synthetic numeric lock identity; Windows processAlive conservatively returns true rather than proving that identity dead. This run reaches the stale-lock takeover assertion and is refused.",
+    "test_source_identical_to_base": true,
+    "process_alive_function_identical_to_base": true,
+    "attributed_to_patch_regression": false,
+    "new_p0_security_issue_established": false
+  },
+  "observations": {
+    "data_race_report_present": false,
+    "panic_present": false,
+    "test_timeout_present": false,
+    "build_failure_present": false,
+    "stderr_bytes": 0,
+    "all_started_test_nodes_terminal": true
+  },
+  "timeout_scope": {
+    "go_test_timeout_seconds": 300,
+    "python_subprocess_global_timeout_configured": false,
+    "command_elapsed_includes_compilation_and_test": true
+  },
+  "scope": {
+    "native_windows_component_tests": true,
+    "entire_stage_pass": false,
+    "full_go_result_included": false,
+    "native_host_acceptance_pass": false,
+    "review_reran_tests": false
+  },
+  "source_index": [
+    {
+      "role": "race-summary",
+      "bytes": 3090,
+      "sha256": "b09ec6cf38bd4346c28f08dcfdc1f9b98b83e57e4c2c1f8e82d01cd2c50492c2"
+    },
+    {
+      "role": "validation-runner",
+      "bytes": 7365,
+      "sha256": "68658b66915e436f2ed1f626a5c227f130031dd706a1fbf102d9a6ddc6b9f29a"
+    },
+    {
+      "role": "gcc-version-stdout",
+      "bytes": 254,
+      "sha256": "adc51d206aa680ad5a5ae541015b2741367b550654535892bbeee11dce98844f"
+    },
+    {
+      "role": "gcc-version-stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "gcc-version-metadata",
+      "bytes": 604,
+      "sha256": "d32a1e1b72117839439c20c4b635edf72624f948e5d8c005e5b734d020e87012"
+    },
+    {
+      "role": "go-test-path-race-stdout",
+      "bytes": 52399,
+      "sha256": "1763652542add3f8c986f2bad3f6006e38a74457a7f4ccbb78cd91f30432c651"
+    },
+    {
+      "role": "go-test-path-race-stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "go-test-path-race-metadata",
+      "bytes": 1109,
+      "sha256": "9a10bde8b57791ea0f5ecba71492bc7c85992813b2255b2b36e3d6e25905a216"
+    },
+    {
+      "role": "candidate-and-base-cas-test-git-blob",
+      "bytes": 3303,
+      "sha256": "f7b0a2ce898a775644b2bf14b1081f6c9f8985283e0b8baa961febc67a021211"
+    },
+    {
+      "role": "unchanged-process-alive-function-source-slice",
+      "bytes": 393,
+      "sha256": "1196a33f0701156a54bb5211eb5a1363d0c7f2f2cf26fea70ea5f9a7c587115d"
+    }
+  ]
+}

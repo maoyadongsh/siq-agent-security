@@ -1,0 +1,68 @@
+{
+  "source_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+  "mode": "Windows companion WSL2 actual host history; offline export of exact private state copy",
+  "exit": 0,
+  "original_state_unchanged": true,
+  "copied_file_count": 38,
+  "source_history": "session-newkey-r1",
+  "model_calls": 0,
+  "export_sha256": "1e0a879be1064d04ebacd30716d300a20bdc22b447f9e16e8815732be2332f95",
+  "export_bytes": 5648,
+  "top_keys": [
+    "admissions",
+    "assets",
+    "audit",
+    "chain_prefix_valid",
+    "chain_verified",
+    "checkpoint_consistent",
+    "derived_from",
+    "enforcement_mode",
+    "findings",
+    "format",
+    "generated_at",
+    "grants",
+    "history_integrity",
+    "identity",
+    "incomplete",
+    "overview",
+    "privacy_profile",
+    "receipts",
+    "signature",
+    "signing_schema"
+  ],
+  "export_literal_matches": {
+    "synthetic_write_content": 0,
+    "read_sentinel_content": 0,
+    "private_workspace_path": 0,
+    "user_home_prefix": 0
+  },
+  "export_secret_matches": {
+    "token": false,
+    "admin-recovery.token": false,
+    "keys/signing.seed": false
+  },
+  "export_forbidden_fields_present": [],
+  "receipts_exported": 2,
+  "export_integrity_flags": {
+    "chain_verified": true,
+    "chain_prefix_valid": true,
+    "checkpoint_consistent": true,
+    "history_integrity": "verified",
+    "incomplete": false
+  },
+  "state_content_match_classification": "params_excerpt on denied write receipt; bounded redacted excerpt is allowed by specification, not proof of raw trace enabled",
+  "controller_observation": "first wrapper printed valid guest exit0 then failed decoding WSL stderr as UTF-8; guest result retained; bounded read-only follow-up exit0",
+  "cleanup": "no service or model processes started; original 38-file state unchanged; private exact-copy state and export retained under mode0700 owned WSL2 directory",
+  "independent_export_signature_verification": true,
+  "independent_verifier": {
+    "canonicalization": "CPython JSON sorted keys, ASCII, comma/colon separators; only signature removed",
+    "signature_check": "Go standard library crypto/ed25519; no product verifier import",
+    "public_key_source": "actual pinned binary pubkey from exact private state copy; matched export identity; state hash unchanged",
+    "results": {
+      "actual_export_verified": true,
+      "changed_message_rejected": true,
+      "changed_signature_rejected": true,
+      "foreign_public_key_rejected": true
+    }
+  }
+}

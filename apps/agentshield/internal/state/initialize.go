@@ -10,6 +10,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
 type LocalInstance struct {
@@ -42,6 +43,9 @@ func readInitializationFile(path string) ([]byte, error) {
 
 func (s *Store) ReadLocalInstance() (LocalInstance, error) {
 	var instance LocalInstance
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return instance, err
+	}
 	raw, err := readInitializationFile(filepath.Join(s.Dir, "local-instance.json"))
 	if err != nil {
 		return instance, err
@@ -62,6 +66,14 @@ func (s *Store) ReadLocalInstance() (LocalInstance, error) {
 // Existing configuration is validated but never rewritten by initialization.
 func (s *Store) Initialize(w *Writer, port int) (InitializationResult, error) {
 	var result InitializationResult
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return result, err
+	}
+	if w != nil {
+		if err := stateformat.ValidatePath(w.Dir); err != nil {
+			return result, err
+		}
+	}
 	if port < 0 || port > 65535 {
 		return result, errors.New("state: initialization port must be in 1..65535")
 	}

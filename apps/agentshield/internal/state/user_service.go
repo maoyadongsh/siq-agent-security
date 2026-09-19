@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"siq-agent-security/apps/agentshield/internal/signing"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
 type UserServiceRecord struct {
@@ -57,6 +58,14 @@ func verifyServiceRecord(raw []byte, key *signing.Key, expected UserServiceRecor
 // PrepareUserService publishes signed intent before exclusive unit publication.
 func (s *Store) PrepareUserService(w *Writer, key *signing.Key, unit []byte) (UserServiceRecord, error) {
 	var empty UserServiceRecord
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return empty, err
+	}
+	if w != nil {
+		if err := stateformat.ValidatePath(w.Dir); err != nil {
+			return empty, err
+		}
+	}
 	if w == nil || filepath.Clean(w.Dir) != filepath.Clean(s.Dir) {
 		return empty, ErrWriterBusy
 	}

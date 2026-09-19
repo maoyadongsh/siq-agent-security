@@ -1,9 +1,11 @@
 package skillmanifest
 
 import (
+	"bytes"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -90,7 +92,8 @@ func TestAdapterAndBootstrapShareVerifiedResolve(t *testing.T) {
 		t.Fatal("bootstrap.sh must call shared resolve_verified_bin.sh")
 	}
 	// Pinned mode must refuse a wrong binary hash (same contract for adapter path).
-	tmpBin := filepath.Join(t.TempDir(), "fake-bin")
+	// Git/MSYS sh uses the executable suffix on Windows; this file is never run.
+	tmpBin := filepath.Join(t.TempDir(), "fake-bin.exe")
 	if err := os.WriteFile(tmpBin, []byte("not-a-release-binary"), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -106,8 +109,12 @@ func TestAdapterAndBootstrapShareVerifiedResolve(t *testing.T) {
 	if err == nil {
 		t.Fatalf("pinned resolve must reject mismatched binary\n%s", out)
 	}
-	if !strings.Contains(string(out), "verification failed") && !strings.Contains(string(out), "sha256") && !strings.Contains(string(out), "does not match") && !strings.Contains(string(out), "staging failed") {
-		t.Fatalf("expected hash/verify failure, got:\n%s", out)
+	if !strings.Contains(string(out), "binary sha256 does not match skill-manifest.json") {
+		t.Fatalf("expected binary hash rejection (shell must be installed on PATH), error=%v, output:\n%s", err, out)
+	}
+	entries, err := os.ReadDir(stage)
+	if err != nil || len(entries) != 0 {
+		t.Fatalf("rejected binary must not be staged: entries=%d, error=%v", len(entries), err)
 	}
 }
 
@@ -118,6 +125,9 @@ func TestResolveStagesVerifiedBinary(t *testing.T) {
 	}
 	resolve := filepath.Join(dir, "scripts", "resolve_verified_bin.sh")
 	repoBin := filepath.Join(dir, "..", "..", "apps", "agentshield", "siq-agent-security")
+	if runtime.GOOS == "windows" {
+		repoBin += ".exe"
+	}
 	if _, err := os.Stat(repoBin); err != nil {
 		t.Skip("repo binary missing")
 	}
@@ -146,8 +156,20 @@ func TestResolveStagesVerifiedBinary(t *testing.T) {
 	if path == "" || !strings.HasPrefix(path, stage) {
 		t.Fatalf("expected staged path under %s, got %q\nfull:\n%s", stage, path, out)
 	}
-	if st, err := os.Stat(path); err != nil || st.Mode()&0o111 == 0 {
-		t.Fatalf("staged binary missing or not executable: %v", err)
+	st, err := os.Stat(path)
+	if err != nil || !st.Mode().IsRegular() {
+		t.Fatalf("staged binary missing or not regular: %v", err)
+	}
+	if runtime.GOOS != "windows" && st.Mode()&0o111 == 0 {
+		t.Fatal("staged binary is not executable")
+	}
+	original, err := os.ReadFile(repoBin)
+	if err != nil {
+		t.Fatal(err)
+	}
+	copied, err := os.ReadFile(path)
+	if err != nil || !bytes.Equal(original, copied) {
+		t.Fatalf("staged binary differs from source: %v", err)
 	}
 }
 func TestPythonVerifierAcceptsSignedManifest(t *testing.T) {

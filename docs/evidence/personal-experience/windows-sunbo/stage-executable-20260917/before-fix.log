@@ -1,0 +1,9 @@
+=== RUN   TestStageVerifiedBinaryWindowsNativeExecutable
+    stage_windows_test.go:59: skillmanifest: stage source is not executable
+--- FAIL: TestStageVerifiedBinaryWindowsNativeExecutable (0.06s)
+=== RUN   TestStageVerifiedBinaryWindowsPinMismatchBeforeStage
+    stage_windows_test.go:114: native wrong pin must reach digest rejection, not the POSIX no-exec guard
+--- FAIL: TestStageVerifiedBinaryWindowsPinMismatchBeforeStage (0.06s)
+FAIL
+FAIL	siq-agent-security/apps/agentshield/internal/skillmanifest	2.735s
+FAIL

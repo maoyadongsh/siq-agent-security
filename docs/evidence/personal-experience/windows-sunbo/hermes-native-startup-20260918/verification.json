@@ -1,0 +1,127 @@
+{
+  "before": {
+    "source_sha": "d9f7a309e8cd29e0c2478bb2bdcbdea14ddc2ed6",
+    "exit": 1,
+    "seconds": 37.78894180001225,
+    "cli_sha256": "fa802a97400fd6575bff8cf305ae68bc665a8fd933099abdd45cca96d2bee748",
+    "model_calls": 0,
+    "temp_remaining_entries": []
+  },
+  "after": {
+    "source_sha": "de5de5f72d5a9a5f60323334f038abbae6c80ad1",
+    "exit": 0,
+    "seconds": 166.6299064999912,
+    "model_calls": 0,
+    "temp_remaining_entries": []
+  },
+  "startup_diagnostic": {
+    "exit": 0,
+    "timeout": false,
+    "seconds": 9.829076200025156,
+    "correct_document": true,
+    "stderr_bytes": 0,
+    "model_calls": 0
+  },
+  "builds": {
+    "source_sha": "de5de5f72d5a9a5f60323334f038abbae6c80ad1",
+    "checks": [
+      {
+        "name": "vet",
+        "exit": 0,
+        "seconds": 12.649
+      },
+      {
+        "name": "native-build",
+        "exit": 0,
+        "seconds": 11.682
+      },
+      {
+        "name": "build-linux-amd64",
+        "exit": 0,
+        "seconds": 8.091
+      },
+      {
+        "name": "build-linux-arm64",
+        "exit": 0,
+        "seconds": 9.157
+      },
+      {
+        "name": "build-darwin-arm64",
+        "exit": 0,
+        "seconds": 9.098
+      },
+      {
+        "name": "schema",
+        "exit": 0,
+        "seconds": 10.767
+      }
+    ]
+  },
+  "static": [
+    {
+      "name": "fmt",
+      "exit": 0,
+      "output_empty": true
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "output_empty": true
+    }
+  ],
+  "native_tests": [
+    {
+      "Action": "pass",
+      "Test": "TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings",
+      "Elapsed": 91.96
+    },
+    {
+      "Action": "pass",
+      "Test": "TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites",
+      "Elapsed": 20.79
+    },
+    {
+      "Action": "pass",
+      "Test": "TestHermesNativeCLIFreshConfig",
+      "Elapsed": 48.34
+    }
+  ],
+  "timeout_test": {
+    "Action": "pass",
+    "Test": "TestWindowsHermesNativeCommandTimeoutFailsClosed",
+    "Elapsed": 30.06
+  },
+  "adapter_package": {
+    "source_sha": "8ab38b598774e6d1f8370301c8dafa7250edadff",
+    "exit": 0,
+    "seconds": 167.21074539999245,
+    "native_cli_opt_in": "separately verified on de5de5f",
+    "temp_remaining_entries": [],
+    "top_tests": {
+      "pass": 83,
+      "skip": 13
+    },
+    "skipped_tests": [
+      "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/symlink",
+      "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink",
+      "TestDiagnosticsRejectUnsafeFilesWithoutLeakingContents",
+      "TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings",
+      "TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites",
+      "TestHermesNativeCLIFreshConfig",
+      "TestSymlinkConfigRefused",
+      "TestPlanRejectsInstanceRootSymlink",
+      "TestDefaultInstanceUpgradeRestoresLegacyWrapper",
+      "TestOpenClawInstalledPluginLoadsNatively",
+      "TestNativeRuntimeTargetPinsConfigurationServiceAndCLI",
+      "TestAdapterRealProcessDeathRecovery",
+      "TestTransactionPrivateStoreRejectsSymlinks/adapter-transactions",
+      "TestTransactionPrivateStoreRejectsSymlinks/adapter-operations",
+      "TestTransactionPrivateStoreRejectsSymlinks/adapter-write",
+      "TestHermesWrapperQuotesPathsAndRefusesFailedAdmission",
+      "TestRecoveryRejectsTamperedCiphertext",
+      "TestWorkBuddyHookQuotesBinaryAndStatePaths",
+      "TestWorkBuddyInvalidConfigOverrideNeverFallsBack/symlink",
+      "TestWorkBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink"
+    ]
+  }
+}

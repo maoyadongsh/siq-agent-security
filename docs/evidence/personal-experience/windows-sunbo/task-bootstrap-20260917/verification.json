@@ -1,0 +1,291 @@
+{
+  "candidate_sha": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+  "go": "go1.27.1 windows/amd64",
+  "before": {
+    "exit_code": 1
+  },
+  "after": {
+    "exit_code": 0
+  },
+  "windows_regression": {
+    "command": "go test ./cmd/agentshield -run ^TestWindows -count=1 -timeout 10m -v",
+    "exit_code": 0,
+    "top_level_pass": 27,
+    "skips": 0
+  },
+  "race": {
+    "command": "go test -race ./cmd/agentshield -run ^TestWindowsTask(Prepare|Bootstrap) -count=1 -timeout 5m",
+    "exit_code": 0,
+    "cgo_enabled": 1,
+    "compiler": "MSYS2 mingw64 gcc",
+    "scope": "TestWindowsTask(Prepare|Bootstrap)"
+  },
+  "static": {
+    "vet_exit": 0,
+    "gofmt_exit": 0,
+    "gofmt_files": []
+  },
+  "builds": [
+    {
+      "sha256": "62d820f30f3e39628a81939683132d4f7f9e87678e14b5afce0452401b01ec41",
+      "exit_code": 0,
+      "target": "linux/amd64"
+    },
+    {
+      "sha256": "a43ff5e970ac4da414591d2feb14142ee8bc05a768bc2de615f66cbd5860be50",
+      "exit_code": 0,
+      "target": "linux/arm64"
+    },
+    {
+      "sha256": "8ba74d4f993463cc3638b3a8bd7888e623ffca740f3e740db191c5c1337db14c",
+      "exit_code": 0,
+      "target": "darwin/arm64"
+    },
+    {
+      "sha256": "5776d67d784c7131a7eb88faef1c26a8dbe939e5140fd2634603d4625fce9d2c",
+      "exit_code": 0,
+      "target": "windows/amd64"
+    }
+  ],
+  "schema": {
+    "uv_lock_sha256": "c662fc35bb1180ef08d46ea8fe76009f7c3e85c5e18d2294e1a538c5f2d0e33e",
+    "exit_code": 0,
+    "locked_environment_reused": true,
+    "passed": 214,
+    "command": "python -m pytest app/tests/test_schema_contracts.py; locked uv environment; PYTHONUTF8=1"
+  },
+  "full_windows_go": {
+    "status": "completed",
+    "command": "go test -p 2 ./... -count=1 -timeout 20m",
+    "PYTHONUTF8": "1",
+    "package_timeout": "20m",
+    "exit_code": 1,
+    "package_parallelism": 2,
+    "temp_scope": "owned private non-AppData directory",
+    "failed_package_count": 16,
+    "timeout_package_count": 1,
+    "timeout_package": "internal/skillinstall",
+    "timeout_running_test": "TestConfirmedUpdateReplacesFilesWithoutActivatingAuthority",
+    "timeout_test_elapsed_at_alarm_seconds": 6,
+    "private_log_sha256": "d4ae940af6248a44955d590a2f8b3f810ef800fea8500d0f538b9b5826d3f094",
+    "failed_packages": [
+      {
+        "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+        "duration": "323.244s",
+        "failed_top_level_tests": [
+          "TestLoadRegisteredLaunchAgent",
+          "TestStartRegisteredLaunchAgent",
+          "TestStopRegisteredLaunchAgent",
+          "TestSwitchLaunchAgentUpgradeThenRollback",
+          "TestSwitchLaunchAgentFailedStartRecovers",
+          "TestSwitchLaunchAgentRefusesWithoutMutation",
+          "TestUnregisterLaunchAgent",
+          "TestServeStateDirectorySelection",
+          "TestPrepareRollbackMissingBinary",
+          "TestUnregisterExactLinkAndRetry",
+          "TestUnregisterRejectsUnknownAndFailedReload",
+          "TestTeardownLaunchAgentRecoveryAndRetention"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+        "duration": "204.803s",
+        "failed_top_level_tests": [
+          "TestUninstallOfOneInstanceRestoresOnlyThatInstance",
+          "TestHermesControlledInstallPathChecksBeforeNativeInstall",
+          "TestWorkBuddyCustomConfigLifecycle"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/adapters",
+        "duration": "7.016s",
+        "failed_top_level_tests": [
+          "TestPolicyExecBlocksQuarantineWarnsConditionsAllowsClean",
+          "TestPolicyExecRejectsSymlinkedStagedRoot"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/admission",
+        "duration": "4.674s",
+        "failed_top_level_tests": [
+          "TestAddFileDetectsReplacedInode"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/completion",
+        "duration": "2.583s",
+        "failed_top_level_tests": [
+          "TestCompletionRequiresActualSignedMaterialAndRetainsConflicts"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+        "duration": "43.853s",
+        "failed_top_level_tests": [
+          "TestActualFileWriteAndFakeSuccess",
+          "TestFileCaptureBoundsAndUnsafeTargets",
+          "TestPendingFileImmutableRestartAndTamper",
+          "TestRecoveryConcurrentDifferentOwnersHaveOneWinner",
+          "TestRecoveryStoredCapacityAndFailureIsolation",
+          "TestRecoveryMalformedStorageFailsClosed",
+          "TestStoreRejectsUnsafeStateAndInput"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/inventory",
+        "duration": "10.440s",
+        "failed_top_level_tests": [
+          "TestConnectorsMergeWithoutDroppingNative",
+          "TestConnectorsNetworkAccessSkipped",
+          "TestMCPSymlinkIsSkipped"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/pending",
+        "duration": "2.282s",
+        "failed_top_level_tests": [
+          "TestAppendWritesUnsignedJSONL"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/receipt",
+        "duration": "163.907s",
+        "failed_top_level_tests": [
+          "TestStageTimingFollowsExecutedBranchesAndPreservesDecisions"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+        "duration": "45.709s",
+        "failed_top_level_tests": [
+          "TestRuntimeCheckContractFixtures",
+          "TestCheckTemporaryAuthorityAndVerifiedCleanup",
+          "TestCancelStopsLaunchAndRevokesAuthority",
+          "TestRecoveryFindsBindingPublishedBeforeJournalUpdate",
+          "TestAuditFailureNeverStartsHostOrReportsPass",
+          "TestCleanupRefusesSymlinkAndCanBeRetriedAfterRepair",
+          "TestTamperedOrTrailingRecordCannotBeReadAsPassed"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+        "duration": "21.210s",
+        "failed_top_level_tests": [
+          "TestIdentityIssuanceRestartRevocationAndReplacement",
+          "TestIdentityCorruptAndAliasedRecordsFailClosed"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/server",
+        "duration": "924.900s",
+        "failed_top_level_tests": [
+          "TestInstanceAndPlanV2ContractFixtures",
+          "TestDiscoveryContractFixtures",
+          "TestFileObservationHTTPReadsRealState",
+          "TestToolSuccessConflictsWithIndependentMissingOutputHTTP",
+          "TestGrantDraftContractSamples",
+          "TestManagedPlanV3ContractFixture",
+          "TestImportedPermissionRejectsAmbiguousAndSymlinkOpenClawTargets",
+          "TestTaskExportsAcrossRawRevocationDeletionAndExpiry",
+          "TestUP07RealBinaryRefusesFutureStateBeforeSideEffects"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+        "duration": "75.558s",
+        "failed_top_level_tests": [
+          "TestGitImportClonesFixedCopyWithoutHooks",
+          "TestGitImportSubDirectorySelectsSubtree",
+          "TestRemoteImportContractSamples",
+          "TestImportTamperAndAnalysisBinding",
+          "TestImportLocalSymlinksAndWrongSigningKey",
+          "TestUpstreamCheckGitSeesAdvancedHeadWithoutTouchingRecord"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+        "duration": "1202.943s",
+        "failed_top_level_tests": [
+          "TestInspectionSeparatesHistoricalRecordAndCurrentContents"
+        ],
+        "timeout": true
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+        "duration": "16.689s",
+        "failed_top_level_tests": [
+          "TestPythonHashSkillDirRejectsEscape",
+          "TestDownloadVerifiedArtifactHappyAndNegatives",
+          "TestFetchAndStage",
+          "TestPythonFetchArtifact",
+          "TestStageVerifiedBinaryHappyPath",
+          "TestStageVerifiedBinarySelfConsistencyWithoutPin",
+          "TestAdapterAndBootstrapShareVerifiedResolve"
+        ],
+        "timeout": false
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/state",
+        "duration": "328.362s",
+        "failed_top_level_tests": [
+          "TestAcquireWriterBlocksSecondAndTakesOverDead",
+          "TestMigrationFullBackupAndEveryCheckpointRecovery",
+          "TestUnmarkedMigrationPreservesPrivateReadonlyTree",
+          "TestMigrationRecoversMissingMarkerOnlyAfterPreparedBackup",
+          "TestCommitRecoveryAfterProcessKill",
+          "TestIndependentProcessesPublishUniqueVersions"
+        ],
+        "timeout": false
+      }
+    ],
+    "acceptance": "failed",
+    "note": "Package cumulative timeout, not evidence that the running six-second test deadlocked; server finished with failures. No skips added, no safety requirements lowered."
+  },
+  "ci_at_code_head": {
+    "success": 39,
+    "skipped": 3,
+    "pending": 0,
+    "failed": 0,
+    "scope": "remote checks; not native final acceptance"
+  },
+  "private_log_sha256": {
+    "windows-regression.log": "4a2bca7de77cb1e7afd0486714fc2f9c4aaaf5b278821531151334f079ea9cd1",
+    "race.log": "2ccd84ff166b3f2dec490d20e56bb3e95f099f8940e918d1797ac857bc884046",
+    "schema.log": "b94e2280009b4824992f605c16181d71af0ccdddeac9080332458f33ca6c264c",
+    "vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gofmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ci_at_evidence_head": {
+    "head": "7699794d7e589323e099ec829a539a12b14c6e34",
+    "success": 39,
+    "skipped": 3,
+    "pending": 0,
+    "failed": 0
+  },
+  "skillinstall_suffix_completion": {
+    "result": "completed",
+    "selected_top_level_tests": 37,
+    "passed": 37,
+    "skipped": 0,
+    "group_exit_codes": [
+      0,
+      0,
+      0
+    ],
+    "evidence": "skillinstall-tail.json",
+    "full_run_exit_code_unchanged": 1
+  }
+}

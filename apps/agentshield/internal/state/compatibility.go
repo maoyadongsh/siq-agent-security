@@ -266,6 +266,14 @@ func RequireStateCompatibility(dir string) error {
 // EnforceStateCompatibility does not mutate or migrate. The writer must own the
 // exact directory; a version number alone never authorizes changing stored data.
 func (s *Store) EnforceStateCompatibility(w *Writer, _ string) error {
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return err
+	}
+	if w != nil {
+		if err := stateformat.ValidatePath(w.Dir); err != nil {
+			return err
+		}
+	}
 	if w == nil || filepath.Clean(w.Dir) != filepath.Clean(s.Dir) {
 		return ErrWriterBusy
 	}

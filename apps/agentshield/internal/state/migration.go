@@ -271,6 +271,9 @@ func (s *Store) MigrateState(version string) (MigrationResult, error) {
 
 // fault is only an internal test seam, never runtime configuration.
 func (s *Store) migrateState(version string, fault func(string) error) (result MigrationResult, resultErr error) {
+	if err := stateformat.ValidatePath(s.Dir); err != nil {
+		return result, err
+	}
 	fail := func(at string) error {
 		if fault != nil {
 			return fault(at)

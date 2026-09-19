@@ -41,6 +41,8 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 
 ## 测试要求
 
+Windows Writer 恢复按 dev-spec §2.3 的限定例外，允许在 `_windows.go` 中使用标准库 `syscall`/`unsafe` 调用进程只读查询和文件句柄重命名 API；独占创建仍用 `O_EXCL`，不引入第三方依赖、进程终止、提权或新的平台服务。跨平台文件不得直接引用这些 API，其他平台构建保持通过。
+
 ```bash
 gofmt -l . && go vet ./... && go test ./...
 for t in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do GOOS=${t%/*} GOARCH=${t#*/} go build ./cmd/agentshield || exit 1; done

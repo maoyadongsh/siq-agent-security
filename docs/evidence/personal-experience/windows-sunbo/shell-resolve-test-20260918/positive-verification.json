@@ -1,0 +1,59 @@
+{
+  "source_sha": "ac28c0f0de9ac1fb7c2fc3bc1e5b3fff72ae91e0",
+  "checks": [
+    {
+      "name": "native-build",
+      "exit": 0,
+      "seconds": 10.439
+    },
+    {
+      "name": "binary-info",
+      "exit": 0,
+      "seconds": 0.705
+    },
+    {
+      "name": "package",
+      "exit": 1,
+      "seconds": 21.798
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 2.641
+    },
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 0.076
+    }
+  ],
+  "binary_sha256": "a5c9a82624d7c46fca0c62a1cc9b267a6458f37f486d193c4b18c2db45f074c0",
+  "build_artifact_removed": true,
+  "temp_remaining": 0,
+  "source_dirty": false,
+  "package_counts": {
+    "pass": 32,
+    "fail": 1,
+    "skip": 0
+  },
+  "positive_test": "TestResolveStagesVerifiedBinary",
+  "remaining_failure": {
+    "test": "TestPythonHashSkillDirRejectsEscape",
+    "reason": "A required privilege is not held by the client."
+  },
+  "local_mode_not_release_pin": true,
+  "standalone_positive": {
+    "source_sha": "de5de5f72d5a9a5f60323334f038abbae6c80ad1",
+    "source_binary_sha256": "08b43f749f716d042a4d2a3a0219e605a9ebeee05f5eda66c742de9064f67658",
+    "resolve_exit": 0,
+    "stderr": "siq-agent-security-verify-manifest: warning: local binary sha256 does not match skill-manifest.json (set SIQ_AGENT_SECURITY_REQUIRE_PINNED=1 to refuse)\r\nsiq-agent-security-verify-manifest: ok (staged)\r\n",
+    "local_mode": true,
+    "pinned_release_verified": false,
+    "staged_sha256": "08b43f749f716d042a4d2a3a0219e605a9ebeee05f5eda66c742de9064f67658",
+    "source_unchanged": true,
+    "same_bytes": true,
+    "staged_suffix": ".exe",
+    "ordinary_single_link": true,
+    "stage_empty_after_cleanup": true
+  }
+}

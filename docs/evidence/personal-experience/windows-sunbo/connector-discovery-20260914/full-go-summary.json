@@ -1,0 +1,958 @@
+{
+  "schema": "windows-connector-full-go-summary/v1",
+  "publication_status": "public_evidence_reviewed",
+  "candidate_sha": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+  "command": "go test -json -p 2 -count=1 -timeout=10m ./...",
+  "platform": "windows/amd64",
+  "suite_status": "fail",
+  "exit_code": 1,
+  "source_unchanged": true,
+  "source_clean_before": true,
+  "source_clean_after": true,
+  "started_utc_as_recorded": "2026-09-14T11:58:27.021324+00:00",
+  "runner_monotonic_elapsed_seconds": 1800.6087021999992,
+  "first_json_event_time_as_recorded": "2026-09-14T20:00:23.6242318+08:00",
+  "last_json_event_time_as_recorded": "2026-09-14T20:28:26.6209318+08:00",
+  "timing_rule": "Preserve wall-clock timestamps and recorded monotonic elapsed separately; no kill or clock-change inference from their arithmetic.",
+  "runner_subprocess_timeout_configured": false,
+  "runner_1800_second_global_timeout_claimed": false,
+  "termination_classification": "go test returned exit 1; two package test binaries explicitly reported their configured 10-minute timeout",
+  "json_event_count": 10036,
+  "json_parse_errors": 0,
+  "observed_package_count": 45,
+  "package_terminal_counts": {
+    "pass": 23,
+    "fail": 16,
+    "skip": 6
+  },
+  "observed_packages_without_terminal": [],
+  "all_observed_packages_have_terminal_events": true,
+  "all_tests_completed": false,
+  "unstarted_test_count": null,
+  "top_level_tests": {
+    "started": 1066,
+    "terminal_counts": {
+      "pass": 954,
+      "fail": 62,
+      "skip": 48
+    },
+    "unfinished": [
+      {
+        "package": "internal/server",
+        "test": "TestSkillRemovalHTTPAdminAndStrictRequest"
+      },
+      {
+        "package": "internal/skillinstall",
+        "test": "TestInstalledRuntimeBindingAndImmediateInvalidation"
+      }
+    ]
+  },
+  "all_test_nodes_including_subtests": {
+    "started": 2297,
+    "terminal_counts": {
+      "pass": 2085,
+      "fail": 142,
+      "skip": 67
+    },
+    "unfinished": [
+      {
+        "package": "internal/server",
+        "test": "TestSkillRemovalHTTPAdminAndStrictRequest"
+      },
+      {
+        "package": "internal/skillinstall",
+        "test": "TestInstalledRuntimeBindingAndImmediateInvalidation"
+      },
+      {
+        "package": "internal/skillinstall",
+        "test": "TestInstalledRuntimeBindingAndImmediateInvalidation/instance"
+      }
+    ]
+  },
+  "counting_rule": "Package outcomes, top-level tests, and parent-plus-subtest nodes are separate views. Do not add their denominators. Unfinished means run observed without pass/fail/skip; unstarted tests are not counted or inferred.",
+  "package_timeouts": [
+    {
+      "package": "internal/server",
+      "active_test_node": "TestSkillRemovalHTTPAdminAndStrictRequest",
+      "marker": "panic: test timed out after 10m0s"
+    },
+    {
+      "package": "internal/skillinstall",
+      "active_test_node": "TestInstalledRuntimeBindingAndImmediateInvalidation/instance",
+      "marker": "panic: test timed out after 10m0s"
+    }
+  ],
+  "packages": [
+    {
+      "package": "cmd/agentshield",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 514.376,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 95,
+        "fail": 10,
+        "skip": 13
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 377,
+        "fail": 62,
+        "skip": 19
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "cmd/perfbaseline",
+      "terminal_status": "skip",
+      "reported_elapsed_seconds": 0,
+      "no_test_files_reported": true,
+      "top_level_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/adapterinstall",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 325.874,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 57,
+        "fail": 2,
+        "skip": 12
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 99,
+        "fail": 2,
+        "skip": 17
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/adapters",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 7.182,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 4,
+        "fail": 1,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 4,
+        "fail": 1,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/admission",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 5.45,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 31,
+        "fail": 1,
+        "skip": 8
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 44,
+        "fail": 1,
+        "skip": 8
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/canon",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.147,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/clientrelease",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 10.341,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 10,
+        "fail": 0,
+        "skip": 1
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 19,
+        "fail": 0,
+        "skip": 4
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/completion",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 2.476,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 1,
+        "fail": 1,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 1,
+        "fail": 1,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/contractvectors",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.404,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/controlsync",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.4699999999999998,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/display",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 1.775,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/effectevidence",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 41.651,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 11,
+        "fail": 7,
+        "skip": 1
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 19,
+        "fail": 12,
+        "skip": 1
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/export",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 3.657,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 18,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 28,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/fileopen",
+      "terminal_status": "skip",
+      "reported_elapsed_seconds": 0,
+      "no_test_files_reported": true,
+      "top_level_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/grant",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.433,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 45,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 98,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/hermeshome",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 4.061,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 5,
+        "fail": 0,
+        "skip": 1
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 5,
+        "fail": 0,
+        "skip": 1
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/importsource",
+      "terminal_status": "skip",
+      "reported_elapsed_seconds": 0,
+      "no_test_files_reported": true,
+      "top_level_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/intent",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 103.296,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 32,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 98,
+        "fail": 0,
+        "skip": 1
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/inventory",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 17.31,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 23,
+        "fail": 2,
+        "skip": 1
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 27,
+        "fail": 2,
+        "skip": 1
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/ledger",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 16.533,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 17,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/localcontrol",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.301,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/notify",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 4.519,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 12,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 12,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/openshell",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.987,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 46,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 46,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/pending",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 4.302,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 3,
+        "fail": 1,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 3,
+        "fail": 1,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/perfbaseline",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 6.969,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/product",
+      "terminal_status": "skip",
+      "reported_elapsed_seconds": 0,
+      "no_test_files_reported": true,
+      "top_level_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/provenance",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 176.137,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 21,
+        "fail": 0,
+        "skip": 1
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 50,
+        "fail": 0,
+        "skip": 1
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/rawcontent",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 12.016,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 23,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 33,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/receipt",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 153.842,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 118,
+        "fail": 1,
+        "skip": 1
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 379,
+        "fail": 3,
+        "skip": 1
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/rulepack",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.947,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 9,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 30,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/runtimeaction",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 8.514,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 16,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 22,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/runtimeauthz",
+      "terminal_status": "skip",
+      "reported_elapsed_seconds": 0,
+      "no_test_files_reported": true,
+      "top_level_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/runtimecheck",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 44.997,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 4,
+        "fail": 7,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 9,
+        "fail": 9,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/runtimeidentity",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 20.195,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 17,
+        "fail": 2,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 45,
+        "fail": 5,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/server",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 602.16,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 134,
+        "fail": 6,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 192,
+        "fail": 8,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [
+        "TestSkillRemovalHTTPAdminAndStrictRequest"
+      ],
+      "package_timeout_marker_count": 1
+    },
+    {
+      "package": "internal/signing",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 1.685,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/skillimport",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 62.959,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 36,
+        "fail": 6,
+        "skip": 2
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 122,
+        "fail": 9,
+        "skip": 5
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/skillinstall",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 602.116,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 27,
+        "fail": 2,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 60,
+        "fail": 4,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [
+        "TestInstalledRuntimeBindingAndImmediateInvalidation",
+        "TestInstalledRuntimeBindingAndImmediateInvalidation/instance"
+      ],
+      "package_timeout_marker_count": 1
+    },
+    {
+      "package": "internal/skillmanifest",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 20.696,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 23,
+        "fail": 7,
+        "skip": 1
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 23,
+        "fail": 7,
+        "skip": 1
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/state",
+      "terminal_status": "fail",
+      "reported_elapsed_seconds": 270.668,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 72,
+        "fail": 6,
+        "skip": 6
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 159,
+        "fail": 15,
+        "skip": 7
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/stateformat",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.338,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/statefs",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.7640000000000002,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 2,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 2,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/threat",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 7.032,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 16,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 16,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/trustedcontext",
+      "terminal_status": "skip",
+      "reported_elapsed_seconds": 0,
+      "no_test_files_reported": true,
+      "top_level_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    },
+    {
+      "package": "internal/ui",
+      "terminal_status": "pass",
+      "reported_elapsed_seconds": 2.276,
+      "no_test_files_reported": false,
+      "top_level_terminal_counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "all_test_node_terminal_counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "unfinished_test_nodes": [],
+      "package_timeout_marker_count": 0
+    }
+  ],
+  "stdout": {
+    "bytes": 2412447,
+    "sha256": "6f828005409c3f54faa564624c5b5ffd4af66d4fc44d6bfe9e4c23968be935a3"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "limitations": [
+    "Not a Windows full-Go pass.",
+    "Failures outside this patch are not all attributed to the patch or declared pre-existing without a same-scope baseline.",
+    "Package failure events after timeout do not mean every test in those packages finished.",
+    "Linux CI and cross-build success do not replace Windows results."
+  ],
+  "sources": [
+    {
+      "role": "full-go.summary",
+      "bytes": 1876,
+      "sha256": "d7b93123c1e47b9fdc3426128fa8d6667c69ccf3b81b549ce70e29501430ad04"
+    },
+    {
+      "role": "full-go.go-test-all.command-record",
+      "bytes": 750,
+      "sha256": "60e0e43b343eb20379e54664b3cc1aa740f675a2d1e276d9ee165afdd387552e"
+    },
+    {
+      "role": "full-go.go-test-all.stdout",
+      "bytes": 2412447,
+      "sha256": "6f828005409c3f54faa564624c5b5ffd4af66d4fc44d6bfe9e4c23968be935a3"
+    },
+    {
+      "role": "full-go.go-test-all.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "windows.environment-observation",
+      "bytes": 357,
+      "sha256": "2e334d9b8c25d9f0f16d9cf5cfbd31330d0c6049abdddbeca0d485d509ebe71b"
+    },
+    {
+      "role": "windows.postflight",
+      "bytes": 1044,
+      "sha256": "81a89a4c5f7848492cbaf1725df87be45b46b27dd7473f737b8d26c0a2247b90"
+    },
+    {
+      "role": "ci.merge-parent-proof",
+      "bytes": 149,
+      "sha256": "f0d1b7e9ffa66fe4b1ffa5d3d355d2e738f29bfd1ddf73db29a64ad53e34b3ae"
+    },
+    {
+      "role": "full-go.public-final-parser",
+      "bytes": 21265,
+      "sha256": "19c1c7a82f0e427767f9427c4cf2275a05dd5da0a5ce45038135f17ec14b8c05"
+    }
+  ]
+}

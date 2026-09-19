@@ -1,0 +1,198 @@
+{
+  "method": "native_cli_and_task_scheduler",
+  "candidate": {
+    "binary_sha256": "c86c7b500d479d208adf8419fd0796e74545d33209dbb25cff823241779b04ae",
+    "source_sha": "3b37589bd5e670401bfa255311573a883fec8749",
+    "source_dirty": false,
+    "protected_acl": true,
+    "private_root_ace_count": 3
+  },
+  "private_transport_sha256": "8399dcdc648c137f2a1b64bc65279cd7b64d88f33d348fbef447afe3c8b93f3d",
+  "checks": {
+    "export_read_only_and_system_absent": true,
+    "prepared_signature_xml_identity_and_absence": true,
+    "repeat_register_same_definition_no_state_change": true,
+    "repeat_start_same_single_process_listener": true,
+    "repeat_stop_idle_writer_and_state_unchanged": true,
+    "repeat_unregister_absent_history_preserved": true,
+    "completed": true,
+    "cleanup_task_absent": true,
+    "cleanup_processes": {
+      "listener_pids": [],
+      "pids": []
+    }
+  },
+  "commands": [
+    {
+      "label": "init",
+      "args": [
+        "init",
+        "--port",
+        "53245"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3586172999930568
+    },
+    {
+      "label": "explicit-bootstrap-public-key",
+      "args": [
+        "pubkey"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3622070999990683
+    },
+    {
+      "label": "export",
+      "args": [
+        "task-xml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.17117079999297857
+    },
+    {
+      "label": "prepare",
+      "args": [
+        "task-prepare"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.630864400009159
+    },
+    {
+      "label": "public-key",
+      "args": [
+        "pubkey"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.11699480001698248
+    },
+    {
+      "label": "prepared-absence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.864397299999837
+    },
+    {
+      "label": "register",
+      "args": [
+        "task-register",
+        "--confirm-register"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.805008199997246
+    },
+    {
+      "label": "query-before-repeat",
+      "args": [
+        "task-query"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.955927699978929
+    },
+    {
+      "label": "register-repeat",
+      "args": [
+        "task-register",
+        "--confirm-register"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.776054199988721
+    },
+    {
+      "label": "start",
+      "args": [
+        "task-start",
+        "--confirm-start"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.02564199999324
+    },
+    {
+      "label": "runtime-first",
+      "args": [
+        "task-runtime"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.988046300015412
+    },
+    {
+      "label": "start-repeat",
+      "args": [
+        "task-start",
+        "--confirm-start"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.5644792999955826
+    },
+    {
+      "label": "stop",
+      "args": [
+        "task-stop",
+        "--confirm-stop"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.164978399989195
+    },
+    {
+      "label": "runtime-stopped",
+      "args": [
+        "task-runtime"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.541847799991956
+    },
+    {
+      "label": "stop-repeat",
+      "args": [
+        "task-stop",
+        "--confirm-stop"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 13.219951899984153
+    },
+    {
+      "label": "unregister",
+      "args": [
+        "task-unregister",
+        "--confirm-unregister"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 13.835900200007018
+    },
+    {
+      "label": "unregister-repeat",
+      "args": [
+        "task-unregister",
+        "--confirm-unregister"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.6195424999750685
+    },
+    {
+      "label": "final-absence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.479306599998381
+    },
+    {
+      "label": "cleanup-presence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.58417049999116
+    },
+    {
+      "label": "cleanup-final-absence",
+      "args": [
+        "task-presence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.565188400010811
+    }
+  ],
+  "scope": "Windows common lifecycle only; not a host protection journey or final integrated candidate"
+}

@@ -1,0 +1,56 @@
+{
+  "schema_version": "windows-state-path-environment-public/v1",
+  "source_candidate": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+  "observed_utc": "2026-09-14T20:57:19.5326276Z",
+  "operating_system": {
+    "caption": "Microsoft Windows 11 专业工作站版",
+    "version": "10.0.26200",
+    "build_number": "26200",
+    "architecture": "X64",
+    "filesystem": "NTFS"
+  },
+  "observer_process": {
+    "architecture": "X64",
+    "powershell_version": "7.6.5",
+    "elevated": false,
+    "account_group_membership_not_established": true
+  },
+  "observation_timing": {
+    "after_setup_checks_targeted_schema": true,
+    "applies_to_observation_instant": true,
+    "whole_run_os_snapshot_claimed": false
+  },
+  "toolchain_observations": {
+    "go": {
+      "version": "go1.27.1",
+      "host_os": "windows",
+      "host_arch": "amd64",
+      "target_os": "windows",
+      "target_arch": "amd64",
+      "cgo_enabled_for_checks": "0",
+      "telemetry": "off",
+      "binary_sha256": "d3ccdb604eafa6031133aefe1a3db24f0bb7362b857bc2125ac4e4c178b4b490"
+    },
+    "uv": {
+      "version": "0.12.13",
+      "binary_sha256": "e43cc6ca110540ad845ad6aa1e468e224813eb1da76e145413a262d7073d05e7"
+    },
+    "setup_python": {
+      "implementation": "CPython",
+      "version": "3.13.7",
+      "basis": "dependency_setup_stderr"
+    }
+  },
+  "scope": {
+    "current_machine_component_observation": true,
+    "host_application_acceptance": false,
+    "private_environment_values_exported": false,
+    "private_paths_exported": false,
+    "process_ids_exported": false
+  },
+  "raw_source": {
+    "role": "environment-observation",
+    "bytes": 457,
+    "sha256": "f78e040b64fd7c50172504c99b839aea9c2fee52fc1ac4bc686c73f81c97ec11"
+  }
+}

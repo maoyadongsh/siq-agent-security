@@ -74,6 +74,12 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 | macOS | `~/Library/Application Support/siq-agent-security` | 同上 |
 | Windows | `%LOCALAPPDATA%\siq-agent-security` | 同上 |
 
+Windows 状态目录的原始输入须在 `TrimSpace`、`Clean`、`Abs`、`Join` 或文件访问前校验：实际路径组件以 ASCII 空格或点结尾时明确拒绝，不静默截断、改写目标或转用另一个实例。主变量 `SIQ_AGENT_SECURITY_STATE_DIR` 与旧变量 `AGENTSHIELD_STATE_DIR` 只在值确实为空时顺次回退；选中的非空值原样校验和保留，非法主值不得回退。默认目录实际采用的基目录也在拼接前校验。全局产品环境变量读取及非 Windows 行为不变。
+
+该输入规则区分完整 `.`、`..` 导航组件与普通名称，保留中文、内部空格以及原入口已有的相对路径、长路径前缀规则，不扩大支持范围。UNC host 属于 authority（例如 FQDN 尾点），不套用目录尾字符规则；UNC share 根与其后的目录组件按此状态目录输入政策拒绝尾 ASCII 空格/点。这是状态路径政策，不是对 SMB 别名行为的实测结论。显式 `serve --state-dir` 仍另外要求已存在、规范绝对目录，且优先于环境变量。
+
+DefaultDir、Open、兼容诊断、Writer、目录身份、初始化/迁移、签名文件入口、适配器事务状态验证以及核心配置/凭据访问须保留原始根参数并先校验；grant 恢复、服务切换及用户服务准备等拥有者辅助入口在比较或访问前也检查 Store/Writer 原始目录。statefs 经同一词法检查保护其收到的路径。调用方已清理而丢失的原文不能由底层恢复。拒绝沿既有固定错误类别或 hook 结构化 block 返回，不能创建目录、锁、token、密钥、状态或启动服务。本规则不替代 ACL、reparse、设备名、ADS 或 runtime 资源绑定校验。
+
 ### 2.2 布局
 
 ```
@@ -100,6 +106,10 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 ### 2.3 并发
 
 - 单写者：`serve` 通过 `state.AcquireWriter` 持有 `<state>/serve.lock`（O_EXCL；内含 pid/owner；启动时若 pid 不存活则将旧锁 rename 为 `serve.lock.stale.*` 后接管，禁止无条件删除）。离线 `grant` 子命令须取得同一写锁；锁被存活 `serve` 占用时拒绝直写。
+
+Windows Writer 恢复增量（2026-09-18，Issue #79）：Windows 专属实现通过标准库 Win32 封装，以 SYNCHRONIZE 权限、不可继承句柄打开锁中 PID，再以零等待检查进程对象。只有 OpenProcess 明确返回 ERROR_INVALID_PARAMETER（不存在的非零 DWORD PID），或等待返回 WAIT_OBJECT_0，才能认定死亡；活动进程、权限拒绝、未知错误、等待异常及超出 DWORD 范围的 PID 均保持 busy，禁止截断 PID。句柄必须关闭；不发送信号、不提权、不凭 OpenProcess 成功推断存活。
+
+Windows 回收在同一个 DELETE + 只读、禁止共享的文件句柄内读取有界锁内容、验证普通单链接且非重解析点、确认死亡，并通过 SetFileInformationByHandle 将该对象排他重命名到同目录唯一 stale 名。不能先读路径再按路径 rename；并发回收失败应拒绝，不得移动新持有者的锁。锁文件格式及新锁 O_EXCL 发布不变，旧锁保留原始字节；stale 目标已存在时不得覆盖。此保证限定于已打开的锁对象与合作 Writer，并非防任意同用户替换父目录的沙箱。非 Windows 恢复行为不在本增量中改写。
 - 子命令（`admit`/`grant`）与 `serve` 同时运行时，通过 HTTP 提交给 `serve` 写入；`serve` 未运行则子命令在写锁下直接写文件。
 - 回执链：`serve` 内存持有 `(seq, hash)`；写入顺序 = 先 append 行、`fsync`、再更新 `HEAD`。恢复时以文件最后一行为准，`HEAD` 只是加速。
 - 不可变版本按 ADR-012 先在同目录私有暂存文件完成写入/Sync，再排他发布最终版本名；版本占用只允许重试下一序号，不能返回伪成功。读者不得看见未完成暂存或把损坏最新版本忽略为空。
@@ -108,6 +118,7 @@ SKILL.md ──(1) 校验 manifest 与二进制哈希──► siq-agent-securit
 - 审批状态转换先校验 actor 与未解决 overlap，再消费挑战。缺 actor 或 overlap 未解决时返回 HTTP 400；不追加 Grant 版本或成功审批审计，也不消费挑战。挑战成功消费后的持久化故障仍遵循既有提交恢复协议，不将整个审批流程宣称为跨文件事务。
 - **多文档提交（DEV03-E）：** 在原单写者/CAS 上，`commits/<grant_id>.<seq>.prepare.json` 先持久化 `grant_commit/v1` 完整材料（已签 grant 原文、expected revision、可选 policy、审计）；随后排他发布 policy、`commit-audit/<id>.json`、grant 版本，最后写与 prepare SHA-256 绑定的 `.done.json`。`.done` 是可见性界限；未完成的当前或下一版本使 grant 读取失败关闭，不能继续沿用旧批准。`TailAudit` 合并历史 JSONL 与已提交的独立审计，不重复追加。所有写入采用同目录暂存+Sync+Link，Linux 同步目录；不支持目录 Sync 的 Windows 仅声明进程崩溃恢复，不声明断电保证。`serve`/离线 grant 获写锁后先恢复；`incomplete` 只读诊断，`incomplete --recover` 获同一写锁后幂等补齐，无新批准/后端副作用。旧 `.incomplete.json` 缺完整材料时保留且拒绝自动猜测恢复。升级前备份 state；不得用不理解 prepare/done 的旧二进制混跑或回退写入。
 - **发布 staging（DEV04-D）：** bootstrap/adapter 经 `resolve_verified_bin.sh` 在验签后将二进制复制到私有 staging（0700），对副本再算 sha256；与源摘要（及 pin，若强制）不一致则拒绝。stdout 仅输出 staged 路径。不宣称同 UID 进程无法在验证后改写。真实下载链另做。
+- **Go staging 的平台语义：** `skillmanifest.StageVerifiedBinary` 在非 Windows 继续要求普通源文件具有 POSIX 执行位；Windows 的 Go `FileMode` 不表达 loader 执行性，不以 `0111` 判定源是否可启动。普通文件、源与副本摘要、可选 pin、排他复制和失败清理条件不变，不增加扩展名或 PE 格式限制，也不改变下载信任。成功暂存只证明上述复制完整性；Windows 实际加载须由明确执行自建 staged `.exe` 的独立证据证明，`Chmod(0700)` 不证明 Windows DACL 私有。本增量不改 Python bootstrap、`clientrelease.Stage` 或原生客户端安装/升级支持范围。
 
 ### 2.3.1 状态格式前置拒绝（N01 审查修复，2026-09-13）
 
@@ -173,6 +184,8 @@ Ornith 未提交实现中的自动 `ApplyMigration`/整树备份/可覆写标记
 **新增（相对现有 Connector）**：Skill 目录扫描——每个 `SKILL.md` 产出 candidate `source_type=skill_dir`（需在 `candidate.schema.json` enum 增加 `skill_dir`，合同升版），附 `content_hash` 与是否已有 admission 记录。
 
 **实现方式（2026-09-04 修正）**：`connectors/*` 全部是 `package main` 的 NDJSON 子进程，不能作为库导入。inventory 用 Go **原生只读发现**，产出 `platform_config` / `skill_dir` / `hermes_profile` / `openclaw_agent` / `mcp_server` 候选。可选 `--connectors-dir`（或 `SIQ_AS_CONNECTORS_DIR`）：对 `hermes` / `openclaw` / `directory` / `mcp` **exec** `--serve`，超时 60s、stdout 上限 8MB；`describe.network_access=true` 或失败记入 `skipped`，不阻断原生结果。合同：`candidate.source_type` 已含上述枚举。
+
+**Windows Connector 发现（2026-09-14，#51）**：对每个固定名称 `name`，在显式 Connector 根目录内依次检查 `name/name-connector.exe`、`name/name.exe`、`name-connector.exe`、`name.exe`；仅选普通 `.exe` 文件，不以 POSIX 执行位判断，目录和符号链接文件不作为二进制候选。返回选中文件的绝对路径，根目录为 `.` 时也不得退化为裸文件名或经 PATH 查找；不使用 PATHEXT、shell 或 shebang 回退。文件被发现不代表可成功启动，启动失败仍按 `connector_failed:<name>` 处理。非 Windows 保留原四级无后缀名称及 `0111` 执行位判断；NDJSON、环境、限额、网络声明拒绝、合并与 effective 过滤不变。
 
 **实现状态（相对本表）**：
 
@@ -807,6 +820,8 @@ Go/Python 共用 XML 样例锁定输出及参数语义，XSD 格式依据 Micros
 新增 local-windows-task-record/v1，绑定 instance_id、state_directory_id、user_sid、task_name、xml_sha256 与规范签名。task_name 固定为根目录实例名 \\SIQ-Agent-Security-<instance_id>。记录位于状态目录 windows-task.json，源 XML 位于 SIQ-Agent-Security-<instance_id>.xml。SID 与 XML 都由当前用户/实例的固定渲染得到，不接受任意账户或外部 XML；SID 结构/范围检查与导出共用。
 
 task-prepare 仅 Windows、无参数，持生命周期与主 Writer，先签名归属意图排他发布，再发布 XML。重复准备必须完全匹配；记录已存在而 XML 缺失可按相同签名内容恢复。没有记录但 XML 已存在、源漂移、SID/实例/目录变化、未知记录或签名篡改均拒绝，不覆盖未知文件。只读 VerifyWindowsTask 不修复、不创建身份或占写锁。
+
+Windows 任务准备的首次身份建立先在单独的主 Writer 阶段执行既有 signing.Load 引导检查，再释放主 Writer，按原顺序取得生命周期与主 Writer 并只读加载、比对同一公钥，之后才发布任务记录/XML。这样本操作自身的 service-control 锁不会被误认成历史。不得忽略、删除或临时隐藏任何历史/锁文件来生成密钥；已有历史而密钥缺失、损坏密钥、其他持有者造成的冲突仍拒绝，不能自动旋转身份。首次身份一旦成功建立，后续准备失败时保留该身份，不回滚删钥。此阶段不注册或启动系统任务，不改变 signing.Load 的共享缺钥保护合同。
 
 该记录只声明本地配置归属，不证明 Windows Task Scheduler 已注册或当前系统任务可信；后续系统注册必须独立完整读回配置和当前用户域。Go/Python 共用签名记录与 XML 样例，验证摘要、身份关联与规范 Ed25519 签名。Windows 原生文件权限/任务环境仍待实机验收。
 
@@ -1832,7 +1847,7 @@ This changes resource selection, not taint policy or authority requirements.
 
 ### 个人实例接入增量（ADR-023）
 
-带 `instance_id` 的接入预览返回 `local-adapter-plan/v2`，应用与恢复绑定同一实例，按实例隔离操作记录；旧默认预览继续 v1。原生 CLI 只处理配置副本，由已有事务应用用户确认的输出。原生配置解析证据不能替代实际工具调用自检。
+带 `instance_id` 的接入预览返回 `local-adapter-plan/v2`，应用与恢复绑定同一实例，按实例隔离操作记录；旧默认预览继续 v1。原生 CLI 只处理配置副本，由已有事务应用用户确认的输出。原生配置解析证据不能替代实际工具调用自检。 Windows 原生 Hermes CLI 冷启动采用每条命令 30 秒上限（其他系统保持 8 秒），以容纳已实测超过 8 秒的解释器启动；仍仅处理隔离配置副本、无模型调用，输出上限与失败拒绝不变，超时不得把配置登记报告为已完成。
 
 接入预览还在进程内固定实例配置根的文件系统身份：准备计划前从打开的目录句柄读取身份，准备完成和确认应用前用 `os.SameFile` 复核。配置根缺失、变为符号链接或被另一目录替换（包括移走后在原路径重建）时返回 `ErrPlanChanged`，不得写入适配器配置。路径派生的 instance_id 不能代替这项校验；原路径重建后必须重新预览。身份快照不进入公开合同或加密恢复载荷，进程重启后不能恢复待确认计划；既有已开始事务的恢复仍按文件前后像和归属校验执行。此校验不宣称抵御同 UID 在校验后并发替换文件系统对象。
 

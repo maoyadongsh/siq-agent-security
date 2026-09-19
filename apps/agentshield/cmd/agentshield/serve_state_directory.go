@@ -12,6 +12,9 @@ func serveStateDirectory(selected string, explicit bool) (string, error) {
 		return stateDir()
 	}
 	invalid := errors.New("serve: --state-dir requires an existing canonical absolute directory")
+	if stateformat.ValidatePath(selected) != nil {
+		return "", invalid
+	}
 	if selected == "" || !filepath.IsAbs(selected) || filepath.Clean(selected) != selected {
 		return "", invalid
 	}

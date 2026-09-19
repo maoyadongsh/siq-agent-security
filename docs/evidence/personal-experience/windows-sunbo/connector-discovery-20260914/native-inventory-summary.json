@@ -1,0 +1,207 @@
+{
+  "schema": "windows-connector-component-summary.v1",
+  "publication_status": "public_evidence_reviewed",
+  "candidate_sha": "d8a66bbdcec988faf2a4e66d3cb7dcfe7e6703bd",
+  "source_dirty_before": false,
+  "source_dirty_after": false,
+  "scope": "Windows amd64 原生 inventory 组件测试；不是真实智能体宿主验收",
+  "binary": {
+    "role": "inventory.test.exe",
+    "bytes": 6883840,
+    "sha256": "76302ee6a11fc9927fcb25d5e41a67af2197e4af11d7406c11c970ec5f742c5f"
+  },
+  "compile_exit_code": 0,
+  "execution_exit_code": 1,
+  "elapsed_seconds": 20.264797799998632,
+  "suite_status": "fail",
+  "counting_rule": "仅统计行首 --- PASS/FAIL/SKIP 的顶层测试，不重复计入布局子例",
+  "top_level_counts": {
+    "pass": 23,
+    "fail": 2,
+    "skip": 1
+  },
+  "top_level_tests": [
+    {
+      "status": "pass",
+      "test": "TestFindConnectorBinWindowsLayouts",
+      "seconds": 0.14
+    },
+    {
+      "status": "pass",
+      "test": "TestFindConnectorBinWindowsPriority",
+      "seconds": 0.07
+    },
+    {
+      "status": "pass",
+      "test": "TestFindConnectorBinWindowsRejectsDirectories",
+      "seconds": 0.05
+    },
+    {
+      "status": "pass",
+      "test": "TestFindConnectorBinWindowsRejectsScriptsAndPATHEXT",
+      "seconds": 0.14
+    },
+    {
+      "status": "fail",
+      "test": "TestFindConnectorBinWindowsRejectsSymlink",
+      "seconds": 0.04
+    },
+    {
+      "status": "pass",
+      "test": "TestFindConnectorBinWindowsExplicitDotRootDoesNotUsePATH",
+      "seconds": 1.96
+    },
+    {
+      "status": "pass",
+      "test": "TestConnectorsStartFailureKeepsNative",
+      "seconds": 1.27
+    },
+    {
+      "status": "pass",
+      "test": "TestSkillInstallationIdentitySurvivesContentChange",
+      "seconds": 0.72
+    },
+    {
+      "status": "pass",
+      "test": "TestSharedSkillsRetainMultipleConsumers",
+      "seconds": 0.48
+    },
+    {
+      "status": "pass",
+      "test": "TestHermesProfileSkillsAreIsolatedAndNeverExecuted",
+      "seconds": 0.6
+    },
+    {
+      "status": "pass",
+      "test": "TestCustomHermesHomeUsesSameInstanceIdentityAndSeparateConsumers",
+      "seconds": 0.71
+    },
+    {
+      "status": "skip",
+      "test": "TestDiscoveryRejectsSymlinkAndOversizedConfig",
+      "seconds": 0.12
+    },
+    {
+      "status": "pass",
+      "test": "TestHomeRedactionUsesPathBoundary",
+      "seconds": 0
+    },
+    {
+      "status": "pass",
+      "test": "TestDiscoversPlatformsAndSkills",
+      "seconds": 1.15
+    },
+    {
+      "status": "pass",
+      "test": "TestNeverLeaksSecretsOrHomePath",
+      "seconds": 1.05
+    },
+    {
+      "status": "pass",
+      "test": "TestEveryEvidenceReferencedAndEveryCandidateBacked",
+      "seconds": 1.05
+    },
+    {
+      "status": "pass",
+      "test": "TestProjectSkillDirsAndDedup",
+      "seconds": 1.05
+    },
+    {
+      "status": "pass",
+      "test": "TestEmptyHomeYieldsEmptyReport",
+      "seconds": 0.1
+    },
+    {
+      "status": "pass",
+      "test": "TestSampleIsCurrent",
+      "seconds": 0.94
+    },
+    {
+      "status": "pass",
+      "test": "TestConnectorsMergeWithoutDroppingNative",
+      "seconds": 2.84
+    },
+    {
+      "status": "pass",
+      "test": "TestConnectorsNetworkAccessSkipped",
+      "seconds": 2.6
+    },
+    {
+      "status": "pass",
+      "test": "TestConnectorsDirUnreadable",
+      "seconds": 1.07
+    },
+    {
+      "status": "pass",
+      "test": "TestMCPSanitizesSecretsAndURL",
+      "seconds": 0.87
+    },
+    {
+      "status": "fail",
+      "test": "TestMCPSymlinkIsSkipped",
+      "seconds": 0.03
+    },
+    {
+      "status": "pass",
+      "test": "TestMCPMalformedJSONIsSkipped",
+      "seconds": 0.09
+    },
+    {
+      "status": "pass",
+      "test": "TestMCPEmptyServersIsNotError",
+      "seconds": 0.09
+    }
+  ],
+  "original_connector_tests": [
+    {
+      "test": "TestConnectorsMergeWithoutDroppingNative",
+      "status": "pass"
+    },
+    {
+      "test": "TestConnectorsNetworkAccessSkipped",
+      "status": "pass"
+    }
+  ],
+  "failures": [
+    {
+      "test": "TestFindConnectorBinWindowsRejectsSymlink",
+      "classification": "symlink_creation_privilege_prerequisite_unavailable",
+      "status": "fail",
+      "rejection_assertion_reached": false
+    },
+    {
+      "test": "TestMCPSymlinkIsSkipped",
+      "classification": "symlink_creation_privilege_prerequisite_unavailable",
+      "status": "fail",
+      "rejection_assertion_reached": false
+    }
+  ],
+  "skipped_tests": [
+    "TestDiscoveryRejectsSymlinkAndOversizedConfig"
+  ],
+  "stdout": {
+    "bytes": 4371,
+    "sha256": "3565d297851d03e53a7cf532496e784d01d8c0fd1b10ccc6d71a3cde4c619207"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "interpretations": [
+    "两个失败保留 fail/执行退出1；前置 symlink 创建权限不足不证明拒绝分支已通过。",
+    "原生 Connector fixture 是自建 Go 测试程序副本，不启动 Hermes/OpenClaw/WorkBuddy。",
+    "仅陈述本组件证据，不填原生宿主矩阵 pass，不关闭平台总体验收。"
+  ],
+  "full_go": {
+    "status": "fail",
+    "included_in_native_suite_counts": false,
+    "separate_summary_file": "full-go-summary.json",
+    "observed_package_terminal_counts": {
+      "pass": 23,
+      "fail": 16,
+      "skip": 6
+    },
+    "unfinished_top_level_tests": 2,
+    "all_tests_completed": false
+  }
+}

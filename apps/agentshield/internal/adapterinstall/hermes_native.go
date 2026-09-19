@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"runtime"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 	"strings"
@@ -122,7 +123,12 @@ func newNativeStage(cli string) (*nativeStage, error) {
 }
 func (n *nativeStage) close() { _ = statefs.RemoveAll(n.dir) } // Only our private, newly created temporary tree.
 func (n *nativeStage) command(profile string, args ...string) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
+	// Native Windows Python startup can exceed eight seconds before CLI parsing.
+	timeout := 8 * time.Second
+	if runtime.GOOS == "windows" {
+		timeout = 30 * time.Second
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, n.cli, args...)
 	cmd.Dir = n.dir

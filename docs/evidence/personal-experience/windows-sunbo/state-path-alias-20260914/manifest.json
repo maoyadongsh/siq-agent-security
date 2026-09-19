@@ -1,0 +1,51 @@
+{
+  "schema": "public-sha256-manifest/v1",
+  "source_candidate": "3461cd5540d9f84b8ebc144c5e7b06424966fcde",
+  "files": [
+    {
+      "path": "environment.json",
+      "bytes": 1726,
+      "sha256": "68bf9c9b6375232e11d1972c2c842c9ef5bd03774be839414a351e2cc53d8a51"
+    },
+    {
+      "path": "failure-triage.json",
+      "bytes": 28202,
+      "sha256": "b91d9c0ce1fb55d33d4e9541bf9561e1478d02f92af92ad80b1f4bff88e5fc4a"
+    },
+    {
+      "path": "full-go-comparison.json",
+      "bytes": 29213,
+      "sha256": "b719b663747fbf010a78838a3cd6bcebe92d85bbb820217e5298df225bbe0e18"
+    },
+    {
+      "path": "full-go-summary.json",
+      "bytes": 39983,
+      "sha256": "aef4577a868228bb2bcce4cc1a6a487aa6053cc8c3b8a8aed9cc804f5846ca17"
+    },
+    {
+      "path": "native-cli-summary.json",
+      "bytes": 39745,
+      "sha256": "d68323de3332eaf049315f5617615b9412547fd24a63a22c087804ac9f0feff3"
+    },
+    {
+      "path": "old-entrypoint-summary.json",
+      "bytes": 9606,
+      "sha256": "16c446a7763a4bc7b5a5cf94e6ceebefeaae26111d344469320b91b95c940a22"
+    },
+    {
+      "path": "race-summary.json",
+      "bytes": 6895,
+      "sha256": "d50b483391a162ebd2391b66927b5836a236331e5c9b854d9774507028af105d"
+    },
+    {
+      "path": "report.md",
+      "bytes": 12593,
+      "sha256": "546b3eb0434b6ca5dc4cc25dab47a295b93b290ca2385aa2c3596938c49112ee"
+    },
+    {
+      "path": "verification-summary.json",
+      "bytes": 24210,
+      "sha256": "ce134116a3702a113dd0503f99fbf6a507e483657ca62f5daa4728e25a313d5d"
+    }
+  ]
+}

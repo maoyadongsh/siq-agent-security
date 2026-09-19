@@ -30,6 +30,10 @@ func withPreparedWindowsTask(args []string, apply func(*state.Store, *signing.Ke
 	if err != nil {
 		return err
 	}
+	initialKey, err := loadWindowsTaskPreparationKey(dir)
+	if err != nil {
+		return err
+	}
 	lifecycle, err := state.AcquireScopedWriter(dir, "service-control")
 	if err != nil {
 		return err
@@ -44,13 +48,29 @@ func withPreparedWindowsTask(args []string, apply func(*state.Store, *signing.Ke
 	if err != nil {
 		return err
 	}
-	key, err := signing.Load(dir)
+	key, err := signing.LoadExisting(dir)
 	if err != nil {
 		return err
+	}
+	if key.PublicBase64() != initialKey.PublicBase64() {
+		return errors.New("task-prepare: signing identity changed during preparation")
 	}
 	record, err := st.PrepareWindowsTask(writer, key, taskXML.Bytes(), task.UserSID)
 	if err != nil {
 		return err
 	}
 	return apply(st, key, taskXML.Bytes(), record)
+}
+
+// Establish a first identity before creating our own scoped lifecycle lock.
+// The shared bootstrap guard remains unchanged: history or another scoped lock
+// still forbids generation. Release this writer before acquiring the usual
+// lifecycle-then-primary pair, then reload and compare the established identity.
+func loadWindowsTaskPreparationKey(dir string) (key *signing.Key, resultErr error) {
+	writer, err := state.AcquireWriter(dir)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { resultErr = errors.Join(resultErr, writer.Release()) }()
+	return signing.Load(dir)
 }
