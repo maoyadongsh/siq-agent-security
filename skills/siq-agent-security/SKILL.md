@@ -103,7 +103,7 @@ Legacy `agentshield` on PATH and `AGENTSHIELD_*` environment names still work.
 | `siq-agent-security inventory` | Read-only discovery of platforms and skill dirs |
 | `siq-agent-security admit <dir>` | Pre-install verdict. Exit 3 = quarantine |
 | `siq-agent-security grant <id> --platform P --subject S` | Draft a grant from an admission |
-| `siq-agent-security grant approve <id> --approve-as <human>` | Human-only approval |
+| `siq-agent-security grant challenge / approve` | Human-only challenge and approval flow; never execute as the model |
 | `siq-agent-security start` | Initialize/reuse matching state and run the foreground console |
 | `siq-agent-security serve` | Decision API + console after successful init |
 | `siq-agent-security pair --port 47611` | Request a local one-time browser pairing code |
@@ -114,14 +114,20 @@ Legacy `agentshield` on PATH and `AGENTSHIELD_*` environment names still work.
 
 ## Procedure
 
+The offline admission/grant steps below use an isolated or stopped state
+directory. When the service is running, use the paired local console for
+mutations; offline CLI must not bypass its writer lock. Do not delete locks or
+stop active protection merely to make a command work. A human approves through
+the console or the complete CLI challenge/approve flow with its one-use nonce.
+
 1. **Inventory.** `siq-agent-security inventory`. Show the report. Do not start MCP.
 2. **Admit.** For any skill the user wants to install: `siq-agent-security admit <path>`.
    Print `verdict`, `declared_facts`, and the Skill Card. If `quarantine`, stop.
    Do not edit the candidate to "make it pass".
 3. **Grant.** Only after a non-quarantine verdict:
    `siq-agent-security grant <admission_id> --platform <p> --subject <id>`.
-   Tell the user which capabilities need sign-off. **Stop. A human must run
-   `grant approve --approve-as`. You must not.**
+   Tell the user which capabilities need sign-off. **Stop. A human must complete
+   approval through the console or CLI challenge flow. You must not.**
 4. **Adapter.** `siq-agent-security adapter install` (or `scripts/adapter.sh`).
 5. **Start.** Use the verified program: `siq-agent-security start`. Do not
    start another instance if `status` identifies the matching running service.
