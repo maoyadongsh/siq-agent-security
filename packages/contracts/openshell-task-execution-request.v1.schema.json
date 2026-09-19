@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/openshell-task-execution-request.v1.schema.json",
+  "title": "Execute one approved task command inside an existing OpenShell sandbox",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "platform", "session_id", "agent_id", "tool",
+    "original_tool_call_id", "retry_tool_call_id", "action_id", "decision_receipt_id",
+    "target", "argv", "policy_revision", "policy_digest", "network_targets", "params"
+  ],
+  "properties": {
+    "schema_version": {"const": "openshell-task-execution-request/v1"},
+    "platform": {"type": "string", "minLength": 1, "maxLength": 64},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "agent_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "task_id": {"type": "string", "maxLength": 256},
+    "runtime_task_id": {"type": "string", "maxLength": 256},
+    "tool": {"const": "exec"},
+    "original_tool_call_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "retry_tool_call_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "action_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "decision_receipt_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "target": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,62}$"},
+    "argv": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {"type": "string", "minLength": 1, "maxLength": 4096, "pattern": "^[^\\u0000]*$"}
+    },
+    "workdir": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^/[^\\u0000-\\u001f\\u007f]*$",
+      "not": {"pattern": "(^|/)\\.\\.(/|$)"}
+    },
+    "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 900},
+    "output_limit_bytes": {"type": "integer", "minimum": 4096, "maximum": 1048576},
+    "policy_revision": {"type": "string", "pattern": "^[1-9][0-9]{0,18}$"},
+    "policy_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "network_targets": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9]([A-Za-z0-9._-]{0,251}[A-Za-z0-9])?:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3})$"
+      }
+    },
+    "store_raw_output": {"const": false},
+    "params": {"type": "object"}
+  }
+}

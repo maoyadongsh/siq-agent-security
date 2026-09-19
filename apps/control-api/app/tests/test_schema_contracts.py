@@ -207,10 +207,11 @@ def test_personal_discovery_contracts_and_inferred_relationships() -> None:
         assert list(validator.iter_errors({**relationship, "state": "effective"}))
 
 
-def test_adapter_configuration_diagnosis_never_claims_runtime_verification() -> None:
+@pytest.mark.parametrize("sample", ["adapter-diagnostics.json", "adapter-diagnostics-linux.json"])
+def test_adapter_configuration_diagnosis_never_claims_runtime_verification(sample: str) -> None:
     schema = json.loads((CONTRACTS / "local-adapter-diagnostics.v1.schema.json").read_text())
     Draft7Validator.check_schema(schema)
-    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / "adapter-diagnostics.json"
+    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / sample
     data = json.loads(fixture.read_text())
     validator = Draft7Validator(schema)
     validator.validate(data)
@@ -3027,3 +3028,290 @@ def test_n01_state_protocol_contracts(schema_name: str, sample: str) -> None:
     elif schema_name == "skill-manifest.v3":
         capability = data["state_compatibility"]
         assert list(validator.iter_errors(data | {"state_compatibility": capability | {"reader_version": 0}}))
+
+
+def test_d01_task_execution_request_contracts() -> None:
+    """D01：真实任务执行请求合同。
+
+    证明：请求形状唯一（argv 数组、策略修订/摘要强制、store_raw_output 恒 false），
+    且客户端不能自选 target 归属或凭据注入字段。
+    """
+    from jsonschema import Draft202012Validator
+
+    schema = json.loads((CONTRACTS / "openshell-task-execution-request.v1.schema.json").read_text())
+    Draft202012Validator.check_schema(schema)
+    validator = Draft202012Validator(schema)
+    request = {
+        "schema_version": "openshell-task-execution-request/v1",
+        "platform": "claude-code",
+        "session_id": "sess-fixture",
+        "agent_id": "agent-fixture",
+        "tool": "exec",
+        "original_tool_call_id": "call-fixture",
+        "retry_tool_call_id": "call-fixture-retry",
+        "action_id": "act-fixture",
+        "decision_receipt_id": "rcpt-fixture",
+        "target": "sandbox-fixture",
+        "argv": ["/usr/bin/python3", "-c", "print(1)"],
+        "workdir": "/tmp/work",
+        "timeout_seconds": 30,
+        "output_limit_bytes": 65536,
+        "policy_revision": "7",
+        "policy_digest": "a" * 64,
+        "network_targets": ["receiver.internal:8443"],
+        "store_raw_output": False,
+        "params": {"command": "siq-openshell-task-exec"},
+    }
+    validator.validate(request)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in request.items() if k != field}))
+        assert list(validator.iter_errors({**request, field: None}))
+    # 选项注入 / 凭据注入 / 自选归属 / 参数漂移都必须被协议拒绝
+    for patch in [
+        {"tool": "policy_apply"},
+        {"argv": []},
+        {"argv": ["/usr/bin/python3", ""]},
+        {"argv": ["/bin/sh", "-c", "echo \x00"]},
+        {"argv": ["x" * 4097]},
+        {"argv": "echo 1"},
+        {"workdir": "relative/path"},
+        {"workdir": "/tmp/../etc"},
+        {"target": "../escape"},
+        {"target": "-n"},
+        {"policy_revision": "0"},
+        {"policy_digest": "A" * 64},
+        {"policy_digest": "a" * 63},
+        {"network_targets": ["no-port"]},
+        {"network_targets": ["host:99999"]},
+        {"timeout_seconds": 0},
+        {"timeout_seconds": 901},
+        {"output_limit_bytes": 1024},
+        {"store_raw_output": True},
+        {"env": {"AWS_SECRET_ACCESS_KEY": "x"}},
+        {"credentials": {"token": "x"}},
+    ]:
+        assert list(validator.iter_errors({**request, **patch})), patch
+    # network_targets 没有 minItems：协议允许一个「声明了但为空」的目标集合。
+    # 执行侧的形状门必须与协议一致（不得比合同更严），授权范围另由 grant 决定；
+    # 若这里改成拒绝空列表，就必须同时改协议，否则边缘门会拒绝合法提交。
+    validator.validate({**request, "network_targets": []})
+    # 可选字段真的可以省略，而不是「必填但恰好给了值」。
+    optional = {"task_id", "runtime_task_id", "workdir", "timeout_seconds", "output_limit_bytes", "store_raw_output"}
+    validator.validate({k: v for k, v in request.items() if k not in optional})
+
+
+def test_d01_task_execution_status_contracts() -> None:
+    """D01：持久状态合同 —— 12 状态、reason_code 绑定与「不确定不可被洗白」。"""
+    from jsonschema import Draft202012Validator, FormatChecker
+
+    schema = json.loads((CONTRACTS / "openshell-task-execution-status.v1.schema.json").read_text())
+    Draft202012Validator.check_schema(schema)
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    common = {
+        "schema_version": "openshell-task-execution-status/v1",
+        "task_execution_kind": "real_sandbox_command",
+        "execution_id": "osx-fixture",
+        "action_id": "act-fixture",
+        "decision_receipt_id": "rcpt-fixture",
+        "reservation_receipt_id": "rcpt-fixture-exec",
+        "target": "sandbox-fixture",
+        "platform": "claude-code",
+        "session_id": "sess-fixture",
+        "agent_id": "agent-fixture",
+        "tool": "exec",
+        "policy_revision": "7",
+        "policy_digest": "a" * 64,
+        "argv_digest": "b" * 64,
+    }
+    output = {"digest": "c" * 64, "bytes": 12, "truncated": False, "raw_stored": False, "raw_opt_in": False}
+    validator.validate({**common, "state": "reserved", "reason_code": "openshell_task_reserved"})
+    validator.validate(
+        {**common, "state": "policy_unverified", "reason_code": "openshell_task_policy_not_loaded"}
+    )
+    validator.validate(
+        {
+            **common,
+            "state": "running",
+            "reason_code": "openshell_task_running",
+            "started_at": "2026-09-17T10:00:00Z",
+        }
+    )
+    validator.validate(
+        {
+            **common,
+            "state": "succeeded",
+            "reason_code": "openshell_task_succeeded",
+            "remote_exit_code": 0,
+            "output": output,
+        }
+    )
+    validator.validate(
+        {
+            **common,
+            "state": "timed_out",
+            "reason_code": "openshell_task_timeout_remote",
+            "timeout_bound_that_fired": "remote",
+        }
+    )
+    validator.validate({**common, "state": "uncertain", "reason_code": "openshell_task_result_uncertain"})
+    # 「已停止」不在枚举内：CLI 无远端停止能力，不得承诺 stopped
+    assert list(validator.iter_errors({**common, "state": "stopped", "reason_code": "openshell_task_succeeded"}))
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in common.items() if k != field}))
+        assert list(validator.iter_errors({**common, field: None}))
+    # reason_code 必须与 state 一致：不确定状态不能被改写成"从未执行"或"失败"
+    for patch in [
+        {"state": "uncertain", "reason_code": "openshell_task_confirmed_not_occurred"},
+        {"state": "uncertain", "reason_code": "openshell_task_failed"},
+        {"state": "succeeded", "reason_code": "openshell_task_failed", "remote_exit_code": 0, "output": output},
+        {"state": "succeeded", "reason_code": "openshell_task_succeeded", "remote_exit_code": 1, "output": output},
+        {"state": "denied", "reason_code": "openshell_task_reserved"},
+        {"state": "reserved", "reason_code": "openshell_task_denied_binding"},
+        {"state": "running", "reason_code": "openshell_task_running"},
+        {"state": "timed_out", "reason_code": "openshell_task_timeout_remote", "timeout_bound_that_fired": "none"},
+        {"state": "reconciled_occurred", "reason_code": "openshell_task_confirmed_occurred"},
+    ]:
+        assert list(validator.iter_errors({**common, **patch})), patch
+    # 对账必须带对账回执 ID
+    validator.validate(
+        {
+            **common,
+            "state": "reconciled_occurred",
+            "reason_code": "openshell_task_confirmed_occurred",
+            "reconciliation_receipt_id": "rcpt-fixture-exec-rec",
+        }
+    )
+    # 原文默认不得落盘；opt-in 才允许
+    assert list(
+        validator.iter_errors(
+            {
+                **common,
+                "state": "succeeded",
+                "reason_code": "openshell_task_succeeded",
+                "remote_exit_code": 0,
+                "output": {**output, "raw_stored": True},
+            }
+        )
+    )
+    validator.validate(
+        {
+            **common,
+            "state": "succeeded",
+            "reason_code": "openshell_task_succeeded",
+            "remote_exit_code": 0,
+            "output": {**output, "raw_stored": True, "raw_opt_in": True},
+        }
+    )
+    # 停止块：remote_stop 恒 unsupported、remote_stop_confirmed 恒 false
+    stop_ok = {
+        "requested_at": "2026-09-17T10:05:00Z",
+        "local_cli_termination": "terminated",
+        "remote_stop": "unsupported",
+        "remote_stop_confirmed": False,
+    }
+    validator.validate(
+        {
+            **common,
+            "state": "stop_requested",
+            "reason_code": "openshell_task_stop_requested_local_only",
+            "stop": stop_ok,
+        }
+    )
+    assert list(
+        validator.iter_errors(
+            {
+                **common,
+                "state": "stop_requested",
+                "reason_code": "openshell_task_stop_requested_local_only",
+                "stop": {**stop_ok, "remote_stop_confirmed": True},
+            }
+        )
+    )
+    assert list(
+        validator.iter_errors(
+            {
+                **common,
+                "state": "stop_requested",
+                "reason_code": "openshell_task_stop_requested_local_only",
+                "stop": {**stop_ok, "remote_stop": "stopped"},
+            }
+        )
+    )
+
+
+def test_d01_task_execution_control_contracts() -> None:
+    """D01：状态查询 / 停止请求 / 管理员对账 / 只读预览四份控制面合同。"""
+    from jsonschema import Draft202012Validator, FormatChecker
+
+    def load(name: str):
+        schema = json.loads((CONTRACTS / f"{name}.v1.schema.json").read_text())
+        Draft202012Validator.check_schema(schema)
+        return schema, Draft202012Validator(schema, format_checker=FormatChecker())
+
+    status_schema, status_validator = load("openshell-task-execution-status-request")
+    status_request = {
+        "schema_version": "openshell-task-execution-status-request/v1",
+        "platform": "claude-code",
+        "session_id": "sess-fixture",
+        "agent_id": "agent-fixture",
+        "tool": "exec",
+        "action_id": "act-fixture",
+        "decision_receipt_id": "rcpt-fixture",
+        "reservation_receipt_id": "rcpt-fixture-exec",
+    }
+    status_validator.validate(status_request)
+    for field in status_schema["required"]:
+        assert list(status_validator.iter_errors({k: v for k, v in status_request.items() if k != field}))
+
+    stop_schema, stop_validator = load("openshell-task-execution-stop")
+    stop_request = {
+        "schema_version": "openshell-task-execution-stop/v1",
+        "reservation_receipt_id": "rcpt-fixture-exec",
+        "action_id": "act-fixture",
+        "decision_receipt_id": "rcpt-fixture",
+        "target": "sandbox-fixture",
+        "platform": "claude-code",
+        "session_id": "sess-fixture",
+        "agent_id": "agent-fixture",
+        "tool": "exec",
+        "actor_id": "reviewer",
+    }
+    stop_validator.validate(stop_request)
+    for field in stop_schema["required"]:
+        assert list(stop_validator.iter_errors({k: v for k, v in stop_request.items() if k != field}))
+    # 删除整个 sandbox 不构成停止单个任务
+    assert list(stop_validator.iter_errors({**stop_request, "delete_sandbox": True}))
+
+    reconcile_schema, reconcile_validator = load("openshell-task-execution-reconcile")
+    reconcile_request = {
+        "schema_version": "openshell-task-execution-reconcile/v1",
+        "reservation_receipt_id": "rcpt-fixture-exec",
+        "reservation_hash": "1" * 64,
+        "action_id": "act-fixture",
+        "decision_receipt_id": "rcpt-fixture",
+        "outcome": "occurred",
+        "actor_id": "reviewer",
+    }
+    reconcile_validator.validate(reconcile_request)
+    for field in reconcile_schema["required"]:
+        assert list(reconcile_validator.iter_errors({k: v for k, v in reconcile_request.items() if k != field}))
+    for patch in [{"outcome": "retry"}, {"outcome": "stopped"}, {"reservation_hash": "A" * 64}, {"actor_id": "\n"}]:
+        assert list(reconcile_validator.iter_errors({**reconcile_request, **patch}))
+
+    preview_schema, preview_validator = load("openshell-task-execution-preview")
+    preview = {
+        "schema_version": "openshell-task-execution-preview/v1",
+        "mode": "advisory",
+        "target": "sandbox-fixture",
+        "grant_ids": ["grant-fixture"],
+        "authorized_network_targets": ["receiver.internal:8443"],
+        "execution_constraints_verified": False,
+        "task_executed": False,
+    }
+    preview_validator.validate(preview)
+    for field in preview_schema["required"]:
+        assert list(preview_validator.iter_errors({k: v for k, v in preview.items() if k != field}))
+    # 预览永远不能声称已授权/已执行
+    assert list(preview_validator.iter_errors({**preview, "task_executed": True}))
+    assert list(preview_validator.iter_errors({**preview, "execution_constraints_verified": True}))
+    assert list(preview_validator.iter_errors({**preview, "mode": "authorizing"}))

@@ -1,0 +1,38 @@
+{
+  "schema_version": "linux-lx02-sec-hold-fix-installed/v1",
+  "recorded_at": "2026-09-18T22:39:25.891168+00:00",
+  "host_os": "linux/arm64",
+  "trust_layer": "test_release",
+  "source_candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0",
+  "source_overlay": {
+    "production_files": 550,
+    "mismatches": 0
+  },
+  "installed_binary_sha256": "912bfd906df97667c38620aa3afbff55160a2787d82bf857bbedbc0cee357371",
+  "installed_service": {
+    "checks": 16,
+    "passed": true,
+    "private_checks_sha256": "eb9869087d0dcd3706f4b2ec79fc3d53d58b681b64f039f65fc1917f6438705e"
+  },
+  "installed_r07": {
+    "checks": 31,
+    "nested_r04_checks": 31,
+    "passed": true,
+    "private_report_sha256": "df556ac5e1458524338dd4f1e1b3f384f9b47d5e2ec098c3d71fe28cd6301e9e"
+  },
+  "direct_process_comparison": {
+    "checks": 30,
+    "nested_r04_checks": 31,
+    "passed": true,
+    "private_report_sha256": "2305fffa25ad94dda6a20ead297914389a9cd07c0b4db0a4e02e821b81e5eded"
+  },
+  "private_manifest": "25/25 sha256sum -c passed",
+  "cleanup": "Ownership-checked user unit, port 25229 and temporary run directory absent; shared user manager environment unchanged.",
+  "limitations": [
+    "Ephemeral test signing root; formal release signing remains separate.",
+    "Installed test-release binary differs from unsigned source candidate because test trust key is embedded.",
+    "Headless browser does not establish human GUI or desktop notification acceptance.",
+    "OpenShell D05 remains partial and sixth-candidate B2/S1-S4 performance has not run."
+  ]
+}

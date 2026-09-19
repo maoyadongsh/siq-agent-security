@@ -1,0 +1,36 @@
+{
+  "schema": "siq-v6-integration-resources/v1",
+  "scope": "v6-f04-e09-crash-20260917 batch (2026-09-17 late evening, local)",
+  "owned_retained": [
+    {
+      "path": "docs/evidence/personal-experience/v6-f04-e09-crash-20260917/d05-private/",
+      "type": "batch_private_evidence_and_candidate_copy",
+      "reason": "raw product traffic (0600, 548 files) plus the batch-private copy of the unchanged candidate binary d05-private/bin/siq-v6-hermes-post-e11-agent (0700), sha256 re-verified 0b16e5e0…c8177 after copying from the previous batch's private copy",
+      "running_dependency": false
+    }
+  ],
+  "owned_running_services": [],
+  "owned_listening_ports": [],
+  "owned_sandboxes": [],
+  "created_and_deleted": [
+    {
+      "name": "siq-v6-f04-e09-crash-20260917",
+      "type": "openshell_sandbox",
+      "created": "openshell sandbox create --name siq-v6-f04-e09-crash-20260917 --from siq/hermes-openshell-siq-analysis:f470321d2fb2b2cda14b7c3b --label siq_batch=v6-f04-e09-crash --no-tty -- /bin/true (trailing command makes the create CLI exit after provisioning; sandbox Ready at policy version 1)",
+      "deleted": "openshell sandbox delete siq-v6-f04-e09-crash-20260917 -> exit 0, 'Deleted sandbox' output",
+      "delete_readback": "sandbox list --output json after deletion: only siq-analysis-canary-a01b02c91503, siq-l01-o05-181930, siq-o05v6-taskexec-002524 remain; the batch name is gone",
+      "policy_state_at_delete": "pristine content hash 21ca0b7c8c0ee3fe… restored and loaded (K90d pass; version counter advanced by the E02/E06 windows, recorded as deltas)"
+    }
+  ],
+  "batch_processes": "the driver's own finally stopped every batch-owned daemon (main daemon across its two kill/restart cycles, K80 lost-backend, E04n/E04s/E06v side daemons); ps readback after the run shows no d05-acceptance or candidate-binary process alive. The executor CLI child orphaned by the E09x SIGKILL was observed (ppid daemon -> ppid 1 -> gone after the remote sleep ended); it exited on its own and was never killed by hand",
+  "batch_tmp_dirs": "deleted: /tmp/siq-v6-e09-iter1(+log), /tmp/siq-v6-e09-final.log, plus two diff-snapshot files used while checking concurrent edits. The journey roots were rmtree'd by the driver's finally; no siq-o05v6-* entry from this batch remains (the 19 pre-existing siq-o05v6-* dirs date from 2026-09-17 01:01-04:49 CST, earlier batches; not touched)",
+  "external_observed_not_touched": [
+    "OpenShell shared gateway on 127.0.0.1:17671: never restarted, never reconfigured",
+    "sandboxes siq-analysis-canary-a01b02c91503 / siq-l01-o05-181930 / siq-o05v6-taskexec-002524: untouched",
+    "candidate origin and the previous batch's evidence dir: read-only reuse",
+    "old CLI /home/maoyd/.local/bin/openshell v0.0.13: read-only use only; never modified",
+    "collaborator worktrees: untouched"
+  ],
+  "pending_manual_cleanup": [],
+  "concurrent_editing_note": "a concurrent review-hardening pass on the same driver landed during this batch (required_step_checks / timeout_observation_status / stricter 124-only timeout verdict / E06u4 'unsupported wait option not_run'). The interleaving was detected via file mtime churn, the file was re-read before every edit, and the final matrix was run once against the merged file state. Both batches' guard tests are green together (19 passed)."
+}

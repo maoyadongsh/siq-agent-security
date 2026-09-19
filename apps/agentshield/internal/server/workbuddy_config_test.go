@@ -4,11 +4,17 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
+
+	"siq-agent-security/apps/agentshield/internal/adapterinstall"
 )
 
 func TestWorkBuddyCustomConfigThroughAdminAPI(t *testing.T) {
+	if runtime.GOOS == "linux" {
+		t.Skip("Linux WorkBuddy new integration is outside current product scope")
+	}
 	dir := filepath.Join(t.TempDir(), "custom-workbuddy")
 	t.Setenv("WORKBUDDY_CONFIG_DIR", dir)
 	s, store := newServer(t, "block")
@@ -75,5 +81,50 @@ func TestWorkBuddyCustomConfigThroughAdminAPI(t *testing.T) {
 	}
 	if counts["workbuddy:install"] != 1 || counts["workbuddy:uninstall"] != 1 {
 		t.Fatalf("expected only successful admin mutations in audit: %v", counts)
+	}
+}
+
+func TestLinuxWorkBuddyNewInstallRejectedButLegacyUninstallAllowed(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("Linux-only product scope gate")
+	}
+	dir := filepath.Join(t.TempDir(), "custom-workbuddy")
+	t.Setenv("WORKBUDDY_CONFIG_DIR", dir)
+	s, _ := newServer(t, "block")
+	if code, _ := call(t, s, "POST", "/v1/adapter/preview", token, map[string]any{"platform": "workbuddy", "action": "install"}); code != 400 {
+		t.Fatalf("Linux WorkBuddy preview: got %d, want 400", code)
+	}
+	if code, _ := call(t, s, "POST", "/v1/adapter/install", token, map[string]any{"platform": "workbuddy", "plan_id": "old", "plan_digest": "old"}); code != 400 {
+		t.Fatalf("Linux WorkBuddy install: got %d, want 400", code)
+	}
+	if _, err := os.Stat(dir); !os.IsNotExist(err) {
+		t.Fatal("rejected install created WorkBuddy configuration")
+	}
+	if _, err := adapterinstall.Install(s.adapterOptions(adapterinstall.WorkBuddy)); err != nil {
+		t.Fatalf("create historical WorkBuddy fixture: %v", err)
+	}
+	code, status := call(t, s, "GET", "/v1/adapter/status", token, nil)
+	if code != 200 {
+		t.Fatal(status)
+	}
+	found := false
+	for _, raw := range status["platforms"].([]any) {
+		platform := raw.(map[string]any)
+		if platform["name"] != "workbuddy" {
+			continue
+		}
+		found = true
+		if platform["adapter"] != "installed" || !strings.Contains(platform["note"].(string), "Linux") {
+			t.Fatalf("historical adapter not disclosed: %v", platform)
+		}
+		if platform["diagnosis"].(map[string]any)["configuration_state"] != "unsupported" {
+			t.Fatalf("Linux diagnosis claimed support: %v", platform)
+		}
+	}
+	if !found {
+		t.Fatal("historical WorkBuddy adapter disappeared from status")
+	}
+	if code, out := adapterApplyCall(t, s, "workbuddy", "uninstall"); code != 200 || out["action"] != "uninstall" {
+		t.Fatalf("historical uninstall: %d %v", code, out)
 	}
 }

@@ -140,7 +140,8 @@ try {
       result = await execution;
     } catch (error) {
       assert.ok(["deny", "cancel"].includes(choice.decision), "unexpected native rejection");
-      assert.equal(error.message, choice.decision === "deny" ? "Denied by user" : "Approval cancelled (run aborted)");
+      if (choice.decision === "deny") assert.match(error.message, /^Denied by user(?:\.|$)/);
+      else assert.equal(error.message, "Approval cancelled (run aborted)");
       assert.ok(!fs.existsSync(marker), "denied tool executed before raising");
       result = { details: { status: "blocked" } };
     }

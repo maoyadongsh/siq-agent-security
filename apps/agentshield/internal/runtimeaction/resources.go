@@ -6,7 +6,10 @@ import (
 	"errors"
 	"net"
 	"net/url"
+	"os"
 	"path"
+	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 
@@ -42,6 +45,12 @@ func NormalizeResource(domain, value string) (string, error) {
 		if !path.IsAbs(value) || strings.ContainsAny(value, "\\\x00") {
 			return "", ErrResource
 		}
+		// Keep the existing in-root ".." contract, but refuse it when a
+		// symlink component exists: cleaning first would erase a component the
+		// host resolves before ".." and could bind another filesystem object.
+		if runtime.GOOS != "windows" && hasDotDot(value) && hasSymlinkComponent(value) {
+			return "", ErrResource
+		}
 		return path.Clean(value), nil
 	case "network":
 		return NormalizeHost(value)
@@ -56,6 +65,37 @@ func NormalizeResource(domain, value string) (string, error) {
 	default:
 		return "", ErrResource
 	}
+}
+
+func hasDotDot(value string) bool {
+	for _, component := range strings.Split(value, "/") {
+		if component == ".." {
+			return true
+		}
+	}
+	return false
+}
+
+func hasSymlinkComponent(value string) bool {
+	current := string(filepath.Separator)
+	for _, component := range strings.Split(value, "/") {
+		if component == "" || component == "." {
+			continue
+		}
+		if component == ".." {
+			current = filepath.Dir(current)
+			continue
+		}
+		current = filepath.Join(current, component)
+		info, err := os.Lstat(current)
+		if err == nil && info.Mode()&os.ModeSymlink != 0 {
+			return true
+		}
+		if err != nil && !os.IsNotExist(err) {
+			return true
+		}
+	}
+	return false
 }
 
 // NormalizeHost fixes the wire policy to ASCII DNS/Punycode or IP literals.

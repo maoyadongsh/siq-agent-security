@@ -1,0 +1,133 @@
+{
+  "schema_version": "linux-dual-host-lx06-performance-summary/v1",
+  "candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "source_binding_sha256": "036df1bd5fdd90d9ecb49f40d3f76761b1b85a03e74843c078600a0bacf77fab",
+  "gateway_cli_version": "0.0.83",
+  "evidence_level": "same_candidate_real_gateway_owned_sandbox",
+  "b2_doctor": {
+    "baseline_commit": "2187fea621ff40b368f2e01e51d26672239c9f8d",
+    "baseline_binary_sha256": "2f61ce17d1a55bfa97ce74e6b51e5ca848c55bda5f5bb52756fdab99f2b36479",
+    "protocol_sha256": "dbf8ae05382c9198c4146acddb7fb8b02f006e7256c8c5e82812eb6a81235d3e",
+    "private_report_sha256": "cd2e3eadcdd923a77088e0ce176e354610b2587b7a9440ba61cfb8ebaa808af7",
+    "private_samples_sha256": "333c19fffd2181c91204ae724865289b0d4e00cafbf3b28ebc9b3fa9364ed801",
+    "valid": true,
+    "budget_passed": true,
+    "budget_verdicts": {
+      "auxiliary:aux_control_plane_restore": {
+        "n": 5,
+        "p50_ms": 20077.789740171283,
+        "p95_ms": 20165.789952035993,
+        "p99_ms": 20165.789952035993,
+        "max_ms": 20165.789952035993,
+        "absolute_budget_p95_ms": 60000.0,
+        "absolute_verdict": "pass"
+      },
+      "new:doctor_readback": {
+        "n": 90,
+        "p50_ms": 112.31997306458652,
+        "p95_ms": 153.75858708284795,
+        "p99_ms": 156.41593793407083,
+        "max_ms": 156.41593793407083,
+        "absolute_budget_p95_ms": 15000.0,
+        "absolute_verdict": "pass"
+      },
+      "new:doctor_unreachable": {
+        "n": 90,
+        "p50_ms": 14.270946849137545,
+        "p95_ms": 16.514766961336136,
+        "p99_ms": 18.586911028251052,
+        "max_ms": 18.586911028251052,
+        "absolute_budget_p95_ms": 15000.0,
+        "absolute_verdict": "pass"
+      },
+      "old:doctor_readback": {
+        "n": 90,
+        "p50_ms": 111.97193711996078,
+        "p95_ms": 153.8815051317215,
+        "p99_ms": 156.8449737969786,
+        "max_ms": 156.8449737969786,
+        "absolute_budget_p95_ms": 15000.0,
+        "absolute_verdict": "pass"
+      },
+      "old:doctor_unreachable": {
+        "n": 90,
+        "p50_ms": 14.327449025586247,
+        "p95_ms": 16.51473087258637,
+        "p99_ms": 17.779611982405186,
+        "max_ms": 17.779611982405186,
+        "absolute_budget_p95_ms": 15000.0,
+        "absolute_verdict": "pass"
+      },
+      "relative:doctor_readback": {
+        "ratio": 0.9992012162295376,
+        "budget_ratio": 1.3,
+        "verdict": "pass"
+      }
+    },
+    "b3_status": "not_measured_in_b2_protocol"
+  },
+  "task_execution": {
+    "protocol_ref": "lx06-taskexec-perf/protocol.md",
+    "protocol_sha256": "5f883a47085ff07f5bc391ff219fbdf4fe4ced3012b1aa9956fde2dacacd498f",
+    "private_report_sha256": "8734fabee4edbaa82ec9adaa806b0baee9b4f230ce4b3c456a75ef9bdd77fd08",
+    "private_samples_sha256": "e35c5cf0f8ffb710187a3b156f4e51aacfea5ff3691461d881db45b51409a483",
+    "private_source_hashes_sha256": "23d5cc20cca377895bab17573035ad861ab8e18786012345e57a3dd394394286",
+    "prior_exclusivity_precheck": "aborted before timed samples; retained privately, not counted",
+    "rounds_completed": [
+      1,
+      2,
+      3
+    ],
+    "aborted": false,
+    "step_count": 324,
+    "step_failures": 0,
+    "budget_misses": [],
+    "scenarios": {
+      "S1": {
+        "n": 45,
+        "p95_ms": 52,
+        "max_ms": 52,
+        "budget_p95_ms": 15000.0,
+        "budget_max_ms": 30000.0,
+        "verdict": "within_budget",
+        "invalid_samples": 0
+      },
+      "S2": {
+        "n": 15,
+        "p95_ms": 93,
+        "max_ms": 93,
+        "budget_p95_ms": 60000.0,
+        "budget_max_ms": 60000.0,
+        "verdict": "within_budget",
+        "invalid_samples": 0
+      },
+      "S3": {
+        "n": 45,
+        "p95_ms": 768,
+        "max_ms": 776,
+        "budget_p95_ms": 2000.0,
+        "budget_max_ms": 15000.0,
+        "verdict": "within_budget",
+        "invalid_samples": 0
+      },
+      "S4": {
+        "n": 45,
+        "p95_ms": 30,
+        "max_ms": 31,
+        "budget_p95_ms": 1500.0,
+        "budget_max_ms": 15000.0,
+        "verdict": "within_budget",
+        "invalid_samples": 0
+      }
+    },
+    "relative_to_baseline": {
+      "S1": "not_measured",
+      "S2": "not_measured",
+      "S3": "not_measured",
+      "S4": "not_measured"
+    },
+    "method_boundary": "S3 timed submit round trip only; approval work before timed region; source-hashes and full report private"
+  },
+  "resource_cleanup": "owned sandbox deleted by exact name after K90d pristine policy proof; 3 pre-existing sandboxes retained; copied XDG client material removed",
+  "release_acceptance": false
+}

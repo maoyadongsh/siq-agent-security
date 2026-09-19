@@ -107,8 +107,16 @@ type NetworkRule struct {
 
 // Snapshot is a policy get --full read-back.
 type Snapshot struct {
-	Target          string         `json:"target"`
-	Revision        string         `json:"revision"`
+	Target   string `json:"target"`
+	Revision string `json:"revision"`
+	// LoadEpoch is the CLI's policy-get Loaded timestamp in milliseconds.
+	// It is internal evidence for task execution, not a published snapshot
+	// contract and not a unique gateway instance identity.
+	LoadEpoch string `json:"-"`
+	// PolicyStatus preserves the gateway's exact policy-get status for the
+	// task preflight. v0.0.83 reports a pre-existing loaded policy as
+	// Effective without a Loaded timestamp.
+	PolicyStatus    string         `json:"-"`
 	Policy          map[string]any `json:"policy"`
 	PolicyDigest    string         `json:"policy_digest"`
 	StaticDigest    string         `json:"static_digest"`

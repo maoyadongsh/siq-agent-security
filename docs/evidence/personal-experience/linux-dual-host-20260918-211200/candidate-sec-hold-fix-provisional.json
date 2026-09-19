@@ -1,0 +1,17 @@
+{
+  "build": "CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o <private binary> ./cmd/agentshield",
+  "fix": "Approved Skill hold re-evaluates current SEC attribution and exact call binding before status or reservation; changed or absent SEC fails closed.",
+  "promotion_gates": "Installed systemd journey, OpenShell D05 and frozen B2/B3/S1-S4 performance must run on this exact candidate; formal signing, visual UI and other OS are separate.",
+  "recorded_at": "2026-09-18T22:14:28.747408+00:00",
+  "release_acceptance": false,
+  "schema_version": "linux-lx03-sec-hold-fix-candidate/v1",
+  "source_binding": {
+    "algorithm": "scripts/personal-experience/openshell-b2b3-perf-protocol.py:source_binding",
+    "file_count": 931,
+    "file_hashes": "source-hashes-sec-hold-fix-provisional.json",
+    "sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0"
+  },
+  "status": "provisional_repair_validation",
+  "unsigned_linux_arm64_binary_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "validation_summary": "lx03-sec-hold-fix-provisional-summary.json"
+}

@@ -12,6 +12,8 @@
 
 本批采用原任务书建议架构形成 **18 个候选测试组合**：三平台分别列 Windows amd64 native/WSL2、macOS arm64/amd64 native、Linux amd64/arm64 native。它是待核实清单，不是最终支持矩阵，不宣称 WorkBuddy 有 Linux/WSL 版本。最低 OS、更多架构及不存在运行形态的产品裁决仍由 UX-001/Q01/Q02 产出。不得删除尚未验证行来制造全绿；调整候选清单须显式规格/合同更新和产品范围决策。
 
+后续范围更新（2026-09-17）：用户已在[产品范围决策](personal-platform-scope-decision-20260917.md)中明确 Linux 只交付 Hermes/OpenClaw，Linux/WorkBuddy 不再排期。上面的十八行及 `personal-platform-acceptance/v1` 是历史候选库存，仍可校验既有证据，**不能再解释为当前发布所需的十八项全部实机目标**；若需要新的离线库存合同，须另立版本，不静默改写 v1 材料。N09 v2 的新矩阵保留九格占位，但仅八格属于当前产品验收分母。
+
 ## 2. 每行需要记录什么
 
 平台仅允许 openclaw、hermes、workbuddy；CodeBuddy 不能代替 WorkBuddy。每行独立记录 os/arch/mode、实际 OS 和宿主版本、实际受测 SIQ 二进制 SHA-256；WSL2 还需 guest_version，并将 os_version 保留为 Windows 主系统版本。没有运行的版本/二进制值为 null，不猜测。

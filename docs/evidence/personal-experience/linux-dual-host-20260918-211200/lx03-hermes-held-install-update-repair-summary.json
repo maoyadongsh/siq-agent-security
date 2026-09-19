@@ -1,0 +1,22 @@
+{
+  "schema_version": "linux-lx03-hermes-held-install-update-repair/v1",
+  "recorded_at": "2026-09-18T21:04:34.136519+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "Hermes Agent v0.21.0 public CLI",
+  "candidate_sha256": "6ce92b692f099478e88a86e368e9132ab113c5eecc41c77a791ca7d367d3262e",
+  "source_binding_sha256": "dbc07ca53280c61052644b220d013e909b16c2a499d7a30c558b65bb738c1323",
+  "passed": true,
+  "checks": 10,
+  "private_report_sha256": "13364d18101876897837bd92cb6d1f4d7c14f2a42944efb372050a29adbf12e1",
+  "private_log_sha256": "960cb4c3c86bd9cc1a8976b6456f55364586c2ea27d39750f8a96063012d3c7d",
+  "driver_sha256": "a733d5524a29ed8645c7b4cc134ec6cbe9bfecca9416912c2ea1f8b457234c27",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "observed": "Installed V1 Skill native write held with zero file effect; confirmation pending and signed resolution allowed; confirmed V2 update changed content and revoked V1 Grant; old approved confirmation became unavailable; native retry had no file effect, reservation or execution observation; receipt chain verified.",
+  "limitations": [
+    "Synthetic local model and operator; no external effect or human click.",
+    "V2 update also revokes V1 Grant and runtime credential; refusal is not attributable to installation digest alone.",
+    "One daemon and one Hermes CLI process; no cross-daemon or external-effect atomicity claim.",
+    "Stock OpenClaw approval checkpoint remains unavailable.",
+    "Candidate provisional; predecessor LX04 and LX06 evidence cannot transfer."
+  ]
+}

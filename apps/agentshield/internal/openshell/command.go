@@ -34,6 +34,7 @@ type Options struct {
 	EnvScript         string
 	Runner            Runner
 	DockerRunner      Runner
+	TaskRunner        TaskRunner
 	Timeout           time.Duration
 	ProbeTimeout      time.Duration
 	PollInterval      time.Duration

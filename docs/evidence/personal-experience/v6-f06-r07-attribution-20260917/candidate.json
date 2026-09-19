@@ -1,0 +1,21 @@
+{
+  "schema": "v6-r07-attribution-candidate/v1",
+  "base_commit": "9b8c09af742cb9df94c6d02e6f2db6ecccd68951",
+  "branch": "codex/personal-v6-integration-20260917",
+  "git_state": "uncommitted dirty integration tree",
+  "source_binding_procedure": "B / openshell-b2b3-perf-protocol.py source_binding",
+  "source_file_count": 931,
+  "source_binding_sha256": "ba8d266ef5ba861282f23a8576be8744d6023118f3f42efd8e1054632ffe06fc",
+  "build": "CGO_ENABLED=0 go build -o /tmp/siq-v6-hermes-post-e11-agent ./cmd/agentshield",
+  "target": "linux/arm64",
+  "binary_sha256": "0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+  "binary_origin": "pinned executable copy at journey-private/siq-v6-hermes-post-e11-agent (0700), sha256 re-verified against the v6-f06-r07-journey-20260917 batch copy before this run",
+  "openclaw_host_version": "OpenClaw 2026.5.12 (f066dd2)",
+  "openclaw_root": "/home/maoyd/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw",
+  "node_version": "v22.22.1",
+  "playwright": "python 1.58.0 / chromium headless 145.0.7632.0",
+  "ui_under_test": "candidate-embedded console (//go:embed all:embedded); no Vite dev server involved",
+  "model": "local deterministic fixture only; no external or paid model contacted",
+  "harness_change_vs_previous_batch": "r07 script sha256 e1d9e4f6… -> 6a35bfbb…: step4 correlation upgraded from presence-only to field-by-field relation verification (plus digest-mismatch negatives) per v6-f06-r07-review-20260917 prescription; nested r04 V1 leg upgraded identically; failure diagnostics now record fixed journey-step IDs and locator categories without input values; product Go sources untouched",
+  "candidate_scope": "same-candidate R07 rerun closing the review's correlation-assertion and failure-diagnosis limitations; headless legs still prove transport/API/rendered-DOM only, not GUI visual acceptance"
+}

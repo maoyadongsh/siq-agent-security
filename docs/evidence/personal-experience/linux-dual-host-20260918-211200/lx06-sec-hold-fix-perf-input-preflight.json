@@ -1,0 +1,61 @@
+{
+  "ambient_path_cli": {
+    "must_not_be_used": true,
+    "sha256": "48b49e6418cd67f228083126d291d3b1bda6b19d1c92e110b8b18cc7dd64fb6c",
+    "version": "0.0.13"
+  },
+  "blocked_by": "LX04 12-hour admin session natural-expiry worker and owned daemon are still live",
+  "candidate_order": [
+    "fourth_predecessor",
+    "sixth_sec_hold_fix"
+  ],
+  "candidates": {
+    "fourth_predecessor": {
+      "mode": "0700",
+      "present": true,
+      "sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+      "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9"
+    },
+    "sixth_sec_hold_fix": {
+      "mode": "0700",
+      "present": true,
+      "sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+      "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0"
+    }
+  },
+  "drivers": {
+    "B2_doctor_sha256": "761ae1868f781d68f0018effd5d19a2087367cd09cec40adf4cf1c46cc515dd6",
+    "S1_S4_b2b3_source_binding_helper_sha256": "761ae1868f781d68f0018effd5d19a2087367cd09cec40adf4cf1c46cc515dd6",
+    "S1_S4_base_taskexec_journey_pre_env_isolation_sha256": "2d272e62f259e93c8074764d92210f2cbebebe2ff0050410f902f1f2346fadad",
+    "S1_S4_base_taskexec_journey_sha256": "4073dec7f1e811a1a65fd7eda6bf2c5a468e19ffdb7db7f30547971193247af9",
+    "S1_S4_offline_dependency_guard_sha256": "ad8971462b5e1210da1a5c10e7074c3ec805e00f292bec8a1ac80a6c65f92a21",
+    "S1_S4_offline_env_loading_guard_sha256": "cb1f4c5a1670bfb692f323029af88b8e7092e9a9fae7b219bc63f60db6c97b6c",
+    "S1_S4_task_execution_pre_dependency_binding_sha256": "c82eb065056e72c2ffdb0a5113b015a3f56a9a52c19a9aa442713e5e230c2c45",
+    "S1_S4_task_execution_pre_env_isolation_sha256": "bcfcee5672a3c7bd930e5c7892fc81402842963711c560c06a54cddee2434560",
+    "S1_S4_task_execution_sha256": "06699fcd80c2dc895d50720236703bbc2a025ce0cc47a594cfaa720436e9adf4"
+  },
+  "image": {
+    "id": "sha256:523904c19a4b886e87b8340d7d359e4400a1d2e58def479e351dddad8ff1ee72",
+    "matches_plan": true,
+    "repo_digest_available": false,
+    "tag": "siq/hermes-openshell-siq-analysis:f470321d2fb2b2cda14b7c3b"
+  },
+  "network_or_gateway_contacted": false,
+  "notes": [
+    "PATH drift is explicit and does not mutate the frozen 0.0.83 identity.",
+    "Sampling remains prohibited until LX04 terminal evidence and exact cleanup, followed by exclusive-host recheck.",
+    "S1-S4 now fails before live access if either imported helper drifts; main and both helper hashes are frozen before the first sample.",
+    "env.sh is now loaded with ambient XDG/OpenShell variables removed; pre-sourcing cannot erase required inputs and an ambient gateway absent from the file is excluded."
+  ],
+  "planned_cli": {
+    "logical_location": "managed OpenShell v0.0.83 toolchain",
+    "present": true,
+    "sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+    "version": "0.0.83"
+  },
+  "ready": false,
+  "recorded_at": "2026-09-19T00:37:57.146857+00:00",
+  "sampling_started": false,
+  "sandbox_created": false,
+  "schema_version": "linux-lx06-sec-hold-fix-perf-input-preflight/v1"
+}

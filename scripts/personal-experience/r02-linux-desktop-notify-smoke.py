@@ -48,9 +48,20 @@ def wait_for_notification(path: Path, process: subprocess.Popen, timeout: float)
 
 
 def main() -> None:
+    os.umask(0o077)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--binary", type=Path, help="prebuilt SIQ candidate; otherwise build current source")
+    parser.add_argument("--expected-sha256", help="required with --binary; binds the exact candidate")
     args = parser.parse_args()
+    require(bool(args.binary) == bool(args.expected_sha256), "--binary and --expected-sha256 must be provided together")
+    if args.binary:
+        require(
+            len(args.expected_sha256) == 64 and all(c in "0123456789abcdef" for c in args.expected_sha256),
+            "expected SHA256 must be lowercase hexadecimal",
+        )
+        args.binary = args.binary.resolve(strict=True)
+        require(sha256(args.binary) == args.expected_sha256, "selected candidate SHA256 mismatch")
     require(sys.platform.startswith("linux"), "Linux is required")
     require(shutil.which("notify-send") is not None, "notify-send is unavailable")
     require(shutil.which("dbus-monitor") is not None, "dbus-monitor is unavailable")
@@ -59,7 +70,8 @@ def main() -> None:
     with tempfile.TemporaryDirectory(prefix="siq-linux-notify-") as temporary:
         root = Path(temporary)
         fixture_args = argparse.Namespace(
-            openclaw_root=Path("/non-runtime-notification-test"), node=Path(sys.executable)
+            openclaw_root=Path("/non-runtime-notification-test"), node=Path(sys.executable),
+            binary=args.binary,
         )
         harness = approval.ApprovalHarness(root, fixture_args)
         harness.config("optional")
@@ -131,6 +143,7 @@ def main() -> None:
                     "platform": platform.platform(),
                     "runtime": {"platform": "openclaw", "os": "linux"},
                     "binary_sha256": sha256(harness.binary),
+                    "candidate_binding": "prebuilt-sha256" if args.binary else "built-current-source",
                     "harness_sha256": sha256(Path(__file__)),
                     "notify_send_sha256": sha256(Path(shutil.which("notify-send"))),
                     "checks": [
@@ -158,8 +171,9 @@ def main() -> None:
                         monitor.kill()
                         monitor.wait(timeout=5)
 
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    args.out.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    with args.out.open("x") as output:
+        output.write(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps({"passed": True, "checks": len(report["checks"])}))
 
 

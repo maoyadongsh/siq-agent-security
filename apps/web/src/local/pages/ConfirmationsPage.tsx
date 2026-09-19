@@ -7,6 +7,7 @@ import { platformLabel } from '../format';
 import { useLocalSession } from '../session';
 import { useConfirmations } from '../confirmations';
 import { NotificationPreferences } from '../components/ConfirmationNotifications';
+import TaskExecutionPanel from '../components/TaskExecutionPanel';
 import type { Confirmation } from '../types';
 
 const statusText: Record<Confirmation['status'], string> = {
@@ -114,6 +115,7 @@ export default function ConfirmationsPage() {
       </dl>
       <details><summary>查看对应证据</summary><p className="resource-cell">请求回执：{selected.decision_receipt_id}</p><p className="resource-cell">参数指纹：{selected.params_digest}</p></details>
       <p>{selected.grant_id && <Link to={grantLink(selected.grant_id)}>查看长期权限</Link>} · 批准本次请求不会扩大长期权限。</p>
+      <TaskExecutionPanel item={selected} />
       <p className="notice">{selected.platform === 'hermes'
         ? 'Hermes 会阻止原调用。批准后请在同一会话和任务中重试相同操作；适配器会先预留一次执行。若显示“结果不确定”，请先核对外部结果，系统不会自动再执行。'
         : '批准记录不代表工具已执行。支持恢复的平台仍需在有效期内核对原请求和当前权限。'}</p>

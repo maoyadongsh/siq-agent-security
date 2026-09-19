@@ -1,0 +1,28 @@
+{
+  "schema_version": "linux-dual-host-lx04-expiry-summary/v1",
+  "candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "evidence_level": "real_daemon_real_wall_clock_synthetic_runtime_bound_tasks",
+  "seed_private_sha256": "3984044d86adf87aa134ecfdf65fdb7d9ecc1235e4798e79e2c5f27d69927c99",
+  "verification_private_sha256": "d4016f65300991aa37e825f96558e830bbbe968220d523e25016f2a8bf7013cd",
+  "seed_and_verify_driver_sha256": "cf717a78a1032738a4451c95ab31331132939dda63f6496920d6f65196ecbf6a",
+  "checks": {
+    "total": 19,
+    "passed": 19,
+    "failed": 0
+  },
+  "earliest_expiry_utc": "2026-09-18T14:20:14.264907Z",
+  "checked_after_expiry_utc": "2026-09-18T14:20:15.364566Z",
+  "purge": {
+    "deleted_records": 2,
+    "released_encrypted_file_bytes": 1702,
+    "seed_expected_expired_plaintext_bytes": 386,
+    "byte_basis_note": "historical seed field expected_released_bytes mislabeled plaintext sum; product counts deleted encrypted envelope JSON file sizes"
+  },
+  "surviving_record_intact": true,
+  "grant_revocation_receipts_activities_retained": true,
+  "task_export_scope_verified": true,
+  "limits": [
+    "synthetic runtime-bound tasks; native host capture/export joint path not exercised",
+    "historical seed and verification artifacts retained unchanged; future seed field renamed after this run"
+  ]
+}

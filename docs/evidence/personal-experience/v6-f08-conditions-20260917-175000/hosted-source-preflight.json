@@ -1,0 +1,37 @@
+{
+  "schema": "v6-f08-hosted-source-preflight/v1",
+  "checked_at_utc": "2026-09-17T09:37:57.480191+00:00",
+  "hosts": [
+    {
+      "host": "github.com",
+      "addresses": [
+        "198.18.0.9"
+      ],
+      "classification": [
+        "reserved_fake_ip_198.18_15"
+      ]
+    },
+    {
+      "host": "codeload.github.com",
+      "addresses": [
+        "198.18.0.6"
+      ],
+      "classification": [
+        "reserved_fake_ip_198.18_15"
+      ]
+    },
+    {
+      "host": "objects.githubusercontent.com",
+      "addresses": [
+        "198.18.0.12"
+      ],
+      "classification": [
+        "reserved_fake_ip_198.18_15"
+      ]
+    }
+  ],
+  "tls": "not_attempted_due_to_reserved_fake_ip_resolution",
+  "redirects": "not_attempted_due_to_reserved_fake_ip_resolution",
+  "fixed_source_version": "not_attempted_without_trustworthy_public_resolution",
+  "ssrf_guard": "unchanged; no allowlist, DNS, hosts, proxy or TLS override"
+}

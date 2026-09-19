@@ -55,3 +55,22 @@ def test_diagnostic_does_not_persist_error_payload_or_read_page(tmp_path):
     }
     assert stat.S_IMODE(path.stat().st_mode) == 0o600
     assert list(tmp_path.iterdir()) == [path]
+
+
+def test_diagnostic_retains_only_fixed_wait_stage(tmp_path):
+    harness = object.__new__(journey.Harness)
+    harness.debug_directory = tmp_path
+    harness.journey_results = [{"id": "r07_step8", "status": "pass"}]
+    harness.mark("step8_pairing_form_after_invalidation", "role:heading")
+    error = TimeoutError("Bearer secret-token pairing code 1234-5678-90ab-cdef")
+    with pytest.raises(TimeoutError) as caught:
+        harness.debug_dump(object(), "phase-c", error)
+    assert caught.value is error
+    path = tmp_path / "phase-c.json"
+    assert json.loads(path.read_text()) == {
+        "phase": "phase-c", "error_type": "TimeoutError", "checks_completed": 1,
+        "last_wait": {"journey_step": "step8_pairing_form_after_invalidation",
+                      "wait_target": {"category": "role:heading", "state": "visible"}},
+    }
+    assert "secret-token" not in path.read_text()
+    assert stat.S_IMODE(path.stat().st_mode) == 0o600

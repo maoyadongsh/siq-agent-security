@@ -1,0 +1,94 @@
+{
+  "schema_version": "hermes-public-cli-synthetic-observations/v1",
+  "candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "checkout_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty": false,
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "harness_sha256": "ff1acd6063513bcaa5f4c8ddb61c738ee836ab5ebfc0323b46313703ed1c2924",
+  "entrypoint": "installed venv Python -m hermes_cli.main chat; public CLI, unchanged host dispatcher",
+  "host_version_from_prior_source_inventory": "0.21.2",
+  "host_python_sha256": "e1189fc39481bdb0949aa4eb2b2ad26b849e4d2d8f88c36cf0db3164ae222f5d",
+  "source_files_before": {
+    "hermes_cli/main.py": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3",
+    "hermes_constants.py": "e5f72a309b3689f5fa2e85065e8051f8e6f7686d1ec1741e7543cc5e56bea162",
+    "hermes_cli/plugins.py": "1b5aae9a34e97c9922b5ab7e76c4bd3562a6ab715a983bf9c4dfe6031c457942",
+    "agent/tool_executor.py": "9634ebdc01b12591753fa9a1653f4aa8937edde7130175bbd69be8a0e5895ab7",
+    "model_tools.py": "c99620c824ab59f341ac7d0e22cde016b0c469d0643e7a5a5a82e0d63176e4b5",
+    "hermes_cli/runtime_provider_backends.py": "b1c31df03b9f1b57bc06d57123e89a94371a5839ab91510b3460a76d5da80d05"
+  },
+  "source_files_unchanged": true,
+  "source_markers_present": {
+    ".env": false,
+    ".update-incomplete": false,
+    ".lazy-refresh-incomplete": false
+  },
+  "checks": [
+    {
+      "case": "A_control",
+      "status": "blocked",
+      "exit_code": 1,
+      "host_pid": 35664,
+      "process_reaped": true,
+      "elapsed_seconds": 90.564,
+      "timed_out": true,
+      "guard_loaded": true,
+      "guard_denials": [
+        {
+          "kind": "denied",
+          "event": "subprocess.Popen"
+        },
+        {
+          "kind": "denied",
+          "event": "subprocess.Popen"
+        },
+        {
+          "kind": "denied",
+          "event": "subprocess.Popen"
+        },
+        {
+          "kind": "denied",
+          "event": "open"
+        }
+      ],
+      "model_request_count": 0,
+      "full_tool_result_seen": false,
+      "siq_fail_closed_tool_result": false,
+      "target_exists": false,
+      "expected_control_content_written": false,
+      "plugin_install_method": "no SIQ plugin",
+      "preexisting_plugin_configuration": false,
+      "plugin_hashes": {},
+      "argv_public": [
+        "<HERMES_PYTHON>",
+        "-m",
+        "hermes_cli.main",
+        "chat",
+        "--provider",
+        "custom",
+        "--model",
+        "siq-synthetic-fixture",
+        "--toolsets",
+        "file",
+        "--max-turns",
+        "3",
+        "--run-budget",
+        "40",
+        "--ignore-rules",
+        "--quiet",
+        "--oneshot",
+        "-q",
+        "Write the private synthetic fixture marker using write_file."
+      ],
+      "raw_directory_relative": "A_control",
+      "protocol_errors": []
+    }
+  ],
+  "elapsed_seconds": 91.993,
+  "limits": [
+    "Synthetic loopback provider controls model outputs only; no real model or paid API",
+    "Python audit guard is not an OS sandbox; denies subprocesses and non-fixture networking",
+    "Offline SIQ token is synthetic and grants no authority; no live decision service or signed receipt claim",
+    "New manual plugin installation in a private profile; does not test production configuration migration",
+    "No native matrix promotion without independent raw/tool-effect review"
+  ]
+}

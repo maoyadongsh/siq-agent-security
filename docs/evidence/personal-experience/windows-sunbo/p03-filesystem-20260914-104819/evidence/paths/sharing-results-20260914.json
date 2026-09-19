@@ -1,0 +1,251 @@
+{
+  "schema_version": "windows-sharing-native-confirmation/v1",
+  "recorded_at": "2026-09-14T02:29:27.944562+00:00",
+  "candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "checkout_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty": false,
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "method": "native_cli",
+  "probe_sha256": "dae2dc365a91ab0dfe4d092d8cd12eff9a134f34ea6b1071df08b887b095ed35",
+  "helper_sha256": "76cb271f9975d109d5063935ddbce6969b9d8758156815881a6289f04a656724",
+  "initial_observations_sha256": "f2ee1ac82c691b39ffe5f552fbc0d3004de182c30e7e7af01f81249f5bccf82c",
+  "initial_report_retained": true,
+  "initial_lock_reason": "Python CRT OSError did not preserve Win32 sharing error 32; this was measurement failure, not evidence of an ineffective handle",
+  "commands": [
+    {
+      "case": "exclusive_config",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.183,
+      "stdout_sha256": "2d59962ad58443ac4513dd96fa170b3f2359f69b43578fc4ec3791e181919fad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "exclusive_config",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 1.491,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "fba745f5ba84fd8def1418bba6a1ba24550bf8784d9071a3c69e54ade9e2a403"
+    },
+    {
+      "case": "exclusive_config",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.326,
+      "stdout_sha256": "2d59962ad58443ac4513dd96fa170b3f2359f69b43578fc4ec3791e181919fad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "exclusive_marker",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.859,
+      "stdout_sha256": "e1d9dfead8af8de4e5f7bf9eef377ae888c561797d9f665c83f9c43eaecca893",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "exclusive_marker",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.217,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "668cd4be7fb7d9b45ea035add476308e4529afabdcd0177445d4cf7a13eb6194"
+    },
+    {
+      "case": "exclusive_marker",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.287,
+      "stdout_sha256": "e1d9dfead8af8de4e5f7bf9eef377ae888c561797d9f665c83f9c43eaecca893",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "exclusive_instance",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.057,
+      "stdout_sha256": "8434b6c2c372f8b8a6b71359357d228d42d6387216fcd9c40bbe0d4fb36cc33d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "exclusive_instance",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.282,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "668cd4be7fb7d9b45ea035add476308e4529afabdcd0177445d4cf7a13eb6194"
+    },
+    {
+      "case": "exclusive_instance",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.702,
+      "stdout_sha256": "8434b6c2c372f8b8a6b71359357d228d42d6387216fcd9c40bbe0d4fb36cc33d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "checks": [
+    {
+      "name": "exclusive_config",
+      "status": "pass",
+      "native_second_open_error": 32,
+      "init_while_locked_exit": 1,
+      "exclusive_handle_closed": true,
+      "init_after_release_exit": 0,
+      "before": {
+        "tree_sha256": "bb021daa788074ea54a23ac8987dfa3d3371b90f85964e335ce929dc20f92777",
+        "entries": 21,
+        "files": 3
+      },
+      "after_release": {
+        "tree_sha256": "bb021daa788074ea54a23ac8987dfa3d3371b90f85964e335ce929dc20f92777",
+        "entries": 21,
+        "files": 3
+      },
+      "after_recovery": {
+        "tree_sha256": "bb021daa788074ea54a23ac8987dfa3d3371b90f85964e335ce929dc20f92777",
+        "entries": 21,
+        "files": 3
+      },
+      "persistent_state_unchanged": true
+    },
+    {
+      "name": "exclusive_marker",
+      "status": "pass",
+      "native_second_open_error": 32,
+      "init_while_locked_exit": 1,
+      "exclusive_handle_closed": true,
+      "init_after_release_exit": 0,
+      "before": {
+        "tree_sha256": "a86c94edc9d43274d4fc2632f67c4bf81eb68aa225d1e36834f52fbaae430622",
+        "entries": 21,
+        "files": 3
+      },
+      "after_release": {
+        "tree_sha256": "a86c94edc9d43274d4fc2632f67c4bf81eb68aa225d1e36834f52fbaae430622",
+        "entries": 21,
+        "files": 3
+      },
+      "after_recovery": {
+        "tree_sha256": "a86c94edc9d43274d4fc2632f67c4bf81eb68aa225d1e36834f52fbaae430622",
+        "entries": 21,
+        "files": 3
+      },
+      "persistent_state_unchanged": true
+    },
+    {
+      "name": "exclusive_instance",
+      "status": "pass",
+      "native_second_open_error": 32,
+      "init_while_locked_exit": 1,
+      "exclusive_handle_closed": true,
+      "init_after_release_exit": 0,
+      "before": {
+        "tree_sha256": "b2f7e1c52d471de5179832ded1a94331f9843882ed410530880bb736fa3f9b8f",
+        "entries": 21,
+        "files": 3
+      },
+      "after_release": {
+        "tree_sha256": "b2f7e1c52d471de5179832ded1a94331f9843882ed410530880bb736fa3f9b8f",
+        "entries": 21,
+        "files": 3
+      },
+      "after_recovery": {
+        "tree_sha256": "b2f7e1c52d471de5179832ded1a94331f9843882ed410530880bb736fa3f9b8f",
+        "entries": 21,
+        "files": 3
+      },
+      "persistent_state_unchanged": true
+    }
+  ],
+  "supplemental_initial_readonly_assertions": [
+    {
+      "case": "unicode_spaces",
+      "status_exit_zero": true,
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "lower_drive",
+      "status_exit_zero": true,
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "trailing_dot",
+      "status_exit_zero": true,
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "trailing_space",
+      "status_exit_zero": true,
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "reserved_nul",
+      "status_exit_zero": true,
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "reserved_con_extension",
+      "status_exit_zero": true,
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "ads_component",
+      "status_exit_zero": true,
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "long_path",
+      "status_exit_zero": true,
+      "diagnostic_snapshot_unchanged": true
+    },
+    {
+      "case": "extended_path",
+      "status_exit_zero": true,
+      "diagnostic_snapshot_unchanged": true
+    }
+  ],
+  "limits": [
+    "Only existing initialization metadata reads; no signed publish/rename race claim",
+    "No timestamp or transient-file trace assertion",
+    "No host or second-user test",
+    "Private fixtures retained"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "linux-lx03-hermes-sec-expiry-current/v1",
+  "recorded_at": "2026-09-18T20:02:22.984293+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "Hermes Agent v0.21.0 public CLI",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "passed": true,
+  "checks": 10,
+  "sec_ttl_seconds": 60,
+  "sec_expires_at": "2026-09-18T20:01:37.893986+00:00",
+  "post_expiry_call_at": "2026-09-18T20:01:38.896498+00:00",
+  "post_expiry_reason_code": "skill_context_expired",
+  "private_report_sha256": "61a7c004d2920f1a5be268d8da954116356ed63acc174a23f1c8c60c7da0dbd8",
+  "private_log_sha256": "960cb4c3c86bd9cc1a8976b6456f55364586c2ea27d39750f8a96063012d3c7d",
+  "driver_sha256": "25ec9c81fcca234ec1e637bc47a93afb0606f996932e75cc9f72d8c59a4cf06a",
+  "dependency_driver_sha256": "2f85abea45c2221175e94f470f09dcbbb00834c4fb8391e8bc47435b70625a63",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "observed": "same public Hermes chat process: task-bound SEC with minimum 60-second TTL; pre-expiry native read allowed and verified; after real wall-clock expiry distinct read denied without protected content or execution observation; signed receipt chain verified",
+  "limitations": [
+    "local deterministic model and isolated synthetic files; no paid provider",
+    "test-only pre_llm observer reports host-generated IDs but carries no SIQ authority",
+    "this tests SEC expiry in one Hermes process, not cross-process atomicity or other hosts",
+    "The local model and identity synchronization are fixtures; this proves one Hermes native path, not OpenClaw, concurrent processes, or external side-effect atomicity."
+  ]
+}

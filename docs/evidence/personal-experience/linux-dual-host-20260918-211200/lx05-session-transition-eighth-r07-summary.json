@@ -1,0 +1,29 @@
+{
+  "candidate_sha256": "a85c76b03292eafea5f92e10b2a5a87dc1d46a0c90563751796d3dc19f672c0e",
+  "cleanup": "Journey-owned daemon, Node and Chromium processes exited; journey temporary directory was absent after completion; no shared daemon, gateway, user unit or LX04 expiry process was touched.",
+  "driver_sha256": "90a89143a83b5857264b75f88de1cc1f285470ca1cab9aa53845d615fdedaf73",
+  "host_os": "linux/arm64",
+  "host_platform": "OpenClaw 2026.5.12 public CLI + embedded local console + headless Chromium",
+  "limitations": [
+    "browser operator is automated (Playwright); UI journeys here are not human acceptance",
+    "step 1 starts a fixture-copied binary, not the R06 installed systemd service; the combined installation-to-journey gate remains open",
+    "step 6 is an HTTP decision plus browser approval test, not native host hold consumption or exactly-once execution",
+    "step 10 checks unexpired ciphertext preservation; expired deletion uses component clock fixtures, not elapsed real retention time",
+    "UP07 legacy/future signed state rejection is not covered by the stale source digest check",
+    "J11 default export exclusion, two native tasks' disjoint signed exports and administrator logout revocation are exercised; the 12-hour session natural expiry and elapsed-time native ciphertext expiry remain open; no plaintext export route exists in this product version",
+    "OS desktop notifications are not exercised in this headless journey; browser/OS notification layers are covered by the dedicated notification smokes",
+    "step 5 exercises missing-authority (no SEC) overreach; permission-scope overreach inside the granted read scope is not constructible at this fixture level because the host config restricts OpenClaw to the read tool",
+    "session-level attribution only (controlled_session), inherited from the L2 leg",
+    "local deterministic model and synthetic operator; no external or paid model"
+  ],
+  "nested_r04_checks": 31,
+  "nested_r04_passed": true,
+  "observed": "One complete direct journey on the final scoped candidate passed pairing, discovery, grant, fail-closed authority, signed attribution/export, approval/replay, update/remove, interruption/re-pair, raw-content controls, mobile UI, uninstall preservation and logout revocation.",
+  "passed": true,
+  "private_report_sha256": "0a644b15a8d16e003ad8b368df8ad0bd2d508291d22ea7fb0d85a6cd232a38e9",
+  "r07_checks": 30,
+  "recorded_at": "2026-09-19T01:22:05.910552+00:00",
+  "release_acceptance": false,
+  "schema_version": "linux-lx05-session-transition-eighth-r07/v1",
+  "source_binding_sha256": "163d5ded0c18b6a466b302f863edf534823882faf9ede1ea07ddddb0d4abfd31"
+}

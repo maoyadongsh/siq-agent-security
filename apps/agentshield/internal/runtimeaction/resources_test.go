@@ -2,10 +2,34 @@ package runtimeaction
 
 import (
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 )
+
+func TestFilesystemNormalizationRejectsSymlinkBeforeDotDot(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows filesystem path contract requires native host validation")
+	}
+	base := t.TempDir()
+	granted := filepath.Join(base, "granted")
+	nested := filepath.Join(base, "outside", "nested")
+	for _, dir := range []string{granted, nested} {
+		if err := os.MkdirAll(dir, 0o700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.Symlink(nested, filepath.Join(granted, "link")); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+	value := filepath.ToSlash(filepath.Join(granted, "link")) + "/../secret.txt"
+	if _, err := NormalizeResource("filesystem", value); err != ErrResource {
+		t.Fatalf("symlink before dotdot accepted: %v", err)
+	}
+}
 
 func TestResourceRefsNormalizeWithoutPlaintext(t *testing.T) {
 	for _, tc := range []struct {

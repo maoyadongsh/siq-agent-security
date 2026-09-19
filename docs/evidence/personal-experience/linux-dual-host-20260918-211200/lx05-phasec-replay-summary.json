@@ -1,0 +1,47 @@
+{
+  "schema_version": "linux-lx05-phasec-replay-result/v1",
+  "recorded_at": "2026-09-18T17:57:09.335545+00:00",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "driver_sha256": "90a89143a83b5857264b75f88de1cc1f285470ca1cab9aa53845d615fdedaf73",
+  "plan_sha256": "2bbe547b7ebca472063e6a36020f55049cf49f9593fbc3955732c66c1a5db0e1",
+  "attempts_planned": 3,
+  "attempts_run": 3,
+  "passed_count": 0,
+  "failed_count": 3,
+  "all_passed": false,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at_utc": "2026-09-18T17:57:08.692848+00:00",
+      "finished_at_utc": "2026-09-18T17:57:08.906873+00:00",
+      "exit_code": 1,
+      "timeout": false,
+      "private_log_sha256": "3fa7a5f8e4ba52128899491252dfaf5ad2cd95ae7bdfe99e69f8593a0386279e",
+      "valid_pass": false
+    },
+    {
+      "attempt": 2,
+      "started_at_utc": "2026-09-18T17:57:08.907009+00:00",
+      "finished_at_utc": "2026-09-18T17:57:09.121219+00:00",
+      "exit_code": 1,
+      "timeout": false,
+      "private_log_sha256": "3fa7a5f8e4ba52128899491252dfaf5ad2cd95ae7bdfe99e69f8593a0386279e",
+      "valid_pass": false
+    },
+    {
+      "attempt": 3,
+      "started_at_utc": "2026-09-18T17:57:09.121354+00:00",
+      "finished_at_utc": "2026-09-18T17:57:09.335452+00:00",
+      "exit_code": 1,
+      "timeout": false,
+      "private_log_sha256": "3fa7a5f8e4ba52128899491252dfaf5ad2cd95ae7bdfe99e69f8593a0386279e",
+      "valid_pass": false
+    }
+  ],
+  "inputs_unchanged_after_run": true,
+  "limitations": [
+    "A finite replay does not prove a historical intermittent timeout cannot recur.",
+    "The harness uses a synthetic model and automated browser operator.",
+    "Each attempt creates and cleans its own isolated runtime; logs remain private."
+  ]
+}

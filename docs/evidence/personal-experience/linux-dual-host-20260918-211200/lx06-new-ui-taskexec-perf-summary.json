@@ -1,0 +1,113 @@
+{
+  "schema_version": "linux-lx06-new-ui-taskexec-perf-summary/v1",
+  "recorded_at": "2026-09-18T17:14:30.027554+00:00",
+  "scope": "task_execution_only",
+  "evidence_level": "real_gateway_real_sandbox_real_executor_separate_candidate_runs",
+  "old_candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "new_candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "plan_sha256": "96497293d60df737fd25b183844253c2c43304599775be3888fa680b7e2377b1",
+  "protocol_sha256": "32246f7b3a3d8e137aade9a1fbe45c408fb9f42aaedd1db33136c4b40b537288",
+  "driver_sha256": "c82eb065056e72c2ffdb0a5113b015a3f56a9a52c19a9aa442713e5e230c2c45",
+  "candidate_order": [
+    "first_generation",
+    "second_generation"
+  ],
+  "old_report_private_sha256": "e614a3f6dab571b314a6f1bbbdb66a9b3889d387568a820ff351006e5d1c6b09",
+  "new_report_private_sha256": "a2e0236ce0094487ba46536ea77d84e7de205653a9a1c20c7e1c4b39cfda5892",
+  "old_samples_private_sha256": "ac819ca2c4b03cc6023caeee7a6b14489d98a123c923c2a9fa332194953086b3",
+  "new_samples_private_sha256": "424c2986471d557dec803dde7a41b7f9a280cf2d7c260127167051da8d9f4963",
+  "old_resource_private_sha256": "8925a895930a1d6f08edf7062f0574f98729bfc0b0c12c3b141e11769fd0cb6a",
+  "new_resource_private_sha256": "9a7f6515e4b0aedc12dfa094b45a4db7647d940ae993aef0320f987c025893e2",
+  "old_steps": 324,
+  "new_steps": 324,
+  "failed_steps": 0,
+  "invalid_measured_samples": 0,
+  "rounds_each": 3,
+  "scenarios": {
+    "S1": {
+      "name": "doctor_readback",
+      "old_n": 45,
+      "new_n": 45,
+      "old_p95_ms": 52,
+      "new_p95_ms": 52,
+      "p95_ratio_new_over_old": 1.0,
+      "old_max_ms": 53,
+      "new_max_ms": 53,
+      "frozen_p95_budget_ms": 15000.0,
+      "frozen_max_budget_ms": 30000.0,
+      "old_absolute_verdict": "within_budget",
+      "new_absolute_verdict": "within_budget"
+    },
+    "S2": {
+      "name": "policy_load_roundtrip",
+      "old_n": 15,
+      "new_n": 15,
+      "old_p95_ms": 91,
+      "new_p95_ms": 90,
+      "p95_ratio_new_over_old": 0.989010989010989,
+      "old_max_ms": 91,
+      "new_max_ms": 90,
+      "frozen_p95_budget_ms": 60000.0,
+      "frozen_max_budget_ms": 60000.0,
+      "old_absolute_verdict": "within_budget",
+      "new_absolute_verdict": "within_budget"
+    },
+    "S3": {
+      "name": "taskexec_read_only",
+      "old_n": 45,
+      "new_n": 45,
+      "old_p95_ms": 783,
+      "new_p95_ms": 770,
+      "p95_ratio_new_over_old": 0.9833971902937421,
+      "old_max_ms": 807,
+      "new_max_ms": 806,
+      "frozen_p95_budget_ms": 2000.0,
+      "frozen_max_budget_ms": 15000.0,
+      "old_absolute_verdict": "within_budget",
+      "new_absolute_verdict": "within_budget"
+    },
+    "S4": {
+      "name": "taskexec_status_read",
+      "old_n": 45,
+      "new_n": 45,
+      "old_p95_ms": 30,
+      "new_p95_ms": 26,
+      "p95_ratio_new_over_old": 0.8666666666666667,
+      "old_max_ms": 31,
+      "new_max_ms": 31,
+      "frozen_p95_budget_ms": 1500.0,
+      "frozen_max_budget_ms": 15000.0,
+      "old_absolute_verdict": "within_budget",
+      "new_absolute_verdict": "within_budget"
+    }
+  },
+  "absolute_budgets_passed_both": true,
+  "relative_budget": "not_frozen_for_S1_S4; ratios descriptive only",
+  "B3": "not_measured",
+  "resource_cleanup": {
+    "two_exact_owned_sandboxes_removed": true,
+    "preexisting_three_unchanged": true
+  },
+  "preflight_failures": [
+    {
+      "candidate": "first_generation",
+      "status": "zero_samples",
+      "reason": "env key delta absent because parent shell was pre-sourced",
+      "evidence_state": "initial console log was overwritten by the second zero-sample preflight; synchronous exit was observed, but no independent artifact remains"
+    },
+    {
+      "candidate": "first_generation",
+      "status": "zero_samples",
+      "reason": "frozen protocol was not copied into output directory",
+      "private_report_sha256": "6ea264b0ab45098e0a124fd6390b3e6be73ba24b3608a2a88bf868e94f912e8f"
+    }
+  ],
+  "limitations": [
+    "The two candidate runs were sequential, each with a separate sandbox; they were not interleaved within one process.",
+    "The same frozen protocol was used; ratios are descriptive because no S1-S4 relative budget was frozen.",
+    "The source binding embedded in each runner report was measured against the working tree at run start, not independently captured at binary build time; binary SHA256 and the candidate descriptors carry build identity.",
+    "The B2 doctor comparison is a separate same-run interleaved measurement; neither report measures B3.",
+    "No formal release acceptance follows from these performance results."
+  ],
+  "release_acceptance": false
+}

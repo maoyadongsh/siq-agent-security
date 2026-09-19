@@ -45,6 +45,15 @@ def canonical_hash(value):
     return hashlib.sha256(raw).hexdigest()
 
 
+def grant_digest(grant_doc):
+    """Python replica of skillcontext.GrantDigest: Go's encoding/json unmarshal
+    turns every number into float64 and canon.writeFloat renders the CPython
+    float repr, so the replica re-reads the document with parse_int=float."""
+    refloated = json.loads(json.dumps(grant_doc), parse_int=float, parse_float=float)
+    raw = json.dumps(refloated, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(raw.encode()).hexdigest()
+
+
 class Harness(r01sec.Harness):
     def setup_authority(self):
         super().setup_authority()
@@ -54,6 +63,76 @@ class Harness(r01sec.Harness):
         self.session_override = None
         self.override_steps = []
         self.model_failures, self.model_requests_seen = [], []
+
+    def attribution_relations(self, sec, row, grant_doc, install_view):
+        """Field-by-field correlation across install record, runtime identity,
+        grant document, SEC and decision receipt, anchored on the product's real
+        reference fields (skillcontext store.go Issue/liveInstall and receipt
+        engine.go's attribution copy). Digest domains are compared only where
+        the product itself derives one field from the other."""
+        attribution = row.get("skill_attribution") or {}
+        sec_subject = sec.get("subject") or {}
+        sec_skill = sec.get("skill") or {}
+        sec_install = sec.get("install") or {}
+        sec_authority = sec.get("authority") or {}
+        grant_skill = grant_doc.get("skill") or {}
+        plan = install_view.get("plan") or {}
+        identity = next(
+            (i for i in self.api("/v1/runtime-identities")["items"]
+             if i["identity_id"] == self.issued["identity"]["identity_id"]),
+            {},
+        )
+        checks = {
+            "grant_id_same_everywhere": row.get("matched_grant_id") == sec_authority.get("grant_id")
+                == grant_doc.get("grant_id") == plan.get("grant_id")
+                == (identity.get("grant_ref") or {}).get("grant_id"),
+            "install_record_live": install_view.get("schema_version") == "local-skill-install-view/v1"
+                and install_view.get("status") == "installed_unverified",
+            "sec_install_pin_matches_record": sec_install.get("install_id") == self.skill_installation["install_id"]
+                and sec_install.get("claim_signature") == install_view.get("claim_signature"),
+            "install_source_digest_matches_import": (plan.get("source") or {}).get("artifact_digest")
+                == self.skill_installation["source_digest"],
+            "sec_subject_matches_real_call": sec_subject.get("platform") == self.platform
+                and sec_subject.get("instance_id") == self.instance_id
+                and sec_subject.get("agent_id") == self.agent
+                and sec_subject.get("session_id") == row.get("session_id"),
+            "sec_skill_matches_grant_skill": bool(grant_skill.get("content_hash"))
+                and sec_skill.get("skill_id") == grant_skill.get("skill_id")
+                and sec_skill.get("content_hash") == grant_skill.get("content_hash"),
+            "receipt_attribution_copies_sec": attribution.get("skill_id") == sec_skill.get("skill_id")
+                and attribution.get("content_hash") == sec_skill.get("content_hash")
+                and attribution.get("context_id") == sec.get("context_id")
+                and attribution.get("evidence_level") == sec.get("evidence_level") == "controlled_session",
+            "sec_grant_digest_recomputed": bool(sec_authority.get("grant_digest"))
+                and sec_authority.get("grant_digest") == grant_digest(grant_doc),
+        }
+        failed = [name for name, ok in checks.items() if not ok]
+        detail = "relations=8/8" if not failed else "failed=" + ",".join(failed)
+        return (not failed, detail)
+
+    def attribution_mismatch_negative(self, sec, row, grant_doc, install_view):
+        """Tamper one digest-bearing field per copy and require the relation
+        check to detect every mismatch, proving the assertion is not vacuous."""
+        detections = []
+        broken_grant = json.loads(json.dumps(grant_doc))
+        broken_grant["status"] = "tampered-" + str(broken_grant.get("status"))
+        detections.append(not self.attribution_relations(sec, row, broken_grant, install_view)[0])
+        broken_sec = json.loads(json.dumps(sec))
+        broken_sec.setdefault("install", {})["claim_signature"] = (
+            "0" * 128 if sec.get("install", {}).get("claim_signature") != "0" * 128 else "1" * 128
+        )
+        detections.append(not self.attribution_relations(broken_sec, row, grant_doc, install_view)[0])
+        broken_install = json.loads(json.dumps(install_view))
+        broken_install["claim_signature"] = (
+            "f" * 128 if install_view.get("claim_signature") != "f" * 128 else "e" * 128
+        )
+        detections.append(not self.attribution_relations(sec, row, grant_doc, broken_install)[0])
+        broken_row = json.loads(json.dumps(row))
+        broken_row.setdefault("skill_attribution", {})["content_hash"] = (
+            "0" * 64 if (row.get("skill_attribution") or {}).get("content_hash") != "0" * 64 else "1" * 64
+        )
+        detections.append(not self.attribution_relations(sec, broken_row, grant_doc, install_view)[0])
+        return all(detections), "detections=" + str(sum(detections)) + "/4"
 
     def run_cli(self):
         if not self.session_override:
@@ -166,7 +245,10 @@ class Harness(r01sec.Harness):
         # the transcript it actually belongs to.
         harness = self
         calls_issued = self.calls_issued
-        counters = {"main": 0, "override": 0}
+        # A second native session may use the same fixture server during the
+        # raw-content isolation leg. Each OpenClaw session starts with an
+        # empty model transcript; never reuse another session's index.
+        counters = {"main": 0}
         failures, requests_seen, contents_seen = [], [], []
         self.model_failures, self.model_requests_seen = failures, requests_seen
         self.model_contents_seen = contents_seen
@@ -210,9 +292,9 @@ class Harness(r01sec.Harness):
                     require(0 < size < 2_000_000, "model request size invalid")
                     body = json.loads(self.rfile.read(size))
                     steps = harness.override_steps if harness.session_override else harness.steps
-                    transcript = "override" if harness.session_override else "main"
-                    index = counters[transcript]
-                    counters[transcript] += 1
+                    transcript = harness.session_override or "main"
+                    index = counters.get(transcript, 0)
+                    counters[transcript] = index + 1
                     require(index < len(steps), "unexpected model request")
                     results = [item for item in body.get("messages", []) if item.get("role") == "tool"]
                     expected_results = sum(1 for entry in steps[:index] if entry is not None)
@@ -475,16 +557,25 @@ class Harness(r01sec.Harness):
             content_hash_v1 = attribution.get("content_hash")
             old_view = self.api("/v1/skill-installations/operations/" + self.current_install)
             old_grant_route = "/v1/grants/" + old_view["plan"]["grant_id"]
-            v1_revision_start = self.api(old_grant_route)["state_revision"]
+            v1_grant_view = self.api(old_grant_route)
+            v1_grant_doc = v1_grant_view["grant"]
+            v1_revision_start = v1_grant_view["state_revision"]
             old_identity = self.issued["identity"]["identity_id"]
+            sec1_read = self.api("/v1/skill-contexts/" + sec1["context_id"])
+            relations_ok, relations_detail = self.attribution_relations(sec1_read, v1_row, v1_grant_doc, old_view)
             record(
                 "v1_attribution_correlates_grant_install_sec",
-                "decision correlates the real call with Grant, install content digest and SEC",
-                v1_row.get("matched_grant_id") == old_view["plan"]["grant_id"]
-                and bool(content_hash_v1) and attribution.get("context_id") == sec1["context_id"]
-                and self.skill_installation["source_digest"],
-                "matched_grant_id=" + str(v1_row.get("matched_grant_id")) + " content_hash="
+                "install record, runtime identity, grant document, SEC and receipt correlate field-by-field: one grant id across all five, SEC pins the install claim signature and the real subject, receipt attribution copies the SEC skill/content hash, SEC authority grant digest recomputes from the live grant document",
+                relations_ok and bool(content_hash_v1) and bool(self.skill_installation["source_digest"]),
+                relations_detail + " matched_grant_id=" + str(v1_row.get("matched_grant_id")) + " content_hash="
                 + str(content_hash_v1)[:16] + "… install_digest=" + str(self.skill_installation["source_digest"])[:16] + "…",
+            )
+            mismatch_ok, mismatch_detail = self.attribution_mismatch_negative(sec1_read, v1_row, v1_grant_doc, old_view)
+            record(
+                "v1_attribution_digest_mismatch_detected",
+                "tampering any one side's digest (grant document, SEC install pin, install claim signature, receipt content hash) is detected by the relation check",
+                mismatch_ok,
+                mismatch_detail,
             )
 
             # UP01 + journey step 4: candidate import alone must not change anything.

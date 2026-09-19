@@ -7,9 +7,11 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
+	"siq-agent-security/apps/agentshield/internal/adapterinstall"
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/product"
@@ -60,7 +62,7 @@ func cmdGrant(args []string) error {
 	}
 
 	fs := flag.NewFlagSet("grant", flag.ContinueOnError)
-	platform := fs.String("platform", "", "openclaw|hermes|codebuddy|workbuddy|trae")
+	platform := fs.String("platform", "", "openclaw|hermes|workbuddy|trae (CodeBuddy historical records only)")
 	subject := fs.String("subject", "", "agent instance id (grant subject)")
 	subjectType := fs.String("subject-type", "agent_instance", "subject type")
 	redact := fs.Bool("redact-secrets", true, "permit redact action on secret literals")
@@ -69,6 +71,9 @@ func cmdGrant(args []string) error {
 	}
 	if *platform == "" || *subject == "" {
 		return fmt.Errorf("grant: --platform and --subject are required")
+	}
+	if !adapterinstall.NewIntegrationSupportedOnOS(*platform, runtime.GOOS) {
+		return fmt.Errorf("grant: platform %s is outside the current product scope", *platform)
 	}
 	adm, err := st.GetAdmission(verb)
 	if err != nil {
@@ -135,6 +140,9 @@ func cmdGrantAction(st *state.Store, key *signing.Key, verb string, args []strin
 	g, seq, err := st.GetGrantWithSeq(id)
 	if err != nil {
 		return fmt.Errorf("grant: %w", err)
+	}
+	if verb != "reject" && verb != "revoke" && !adapterinstall.NewIntegrationSupportedOnOS(g.Platform, runtime.GOOS) {
+		return fmt.Errorf("grant: platform %s is outside the current product scope", g.Platform)
 	}
 	if importsource.Reserved(g.AdmissionID) && (verb == "challenge" || verb == "approve") {
 		if !grant.Verify(key.Public(), *g) {

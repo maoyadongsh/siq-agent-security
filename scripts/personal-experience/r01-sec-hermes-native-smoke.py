@@ -14,10 +14,12 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 import shutil
 import subprocess
 import tempfile
 import threading
+import time
 from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -29,14 +31,42 @@ loader = importlib.util.spec_from_file_location(
 installed = importlib.util.module_from_spec(loader)
 loader.loader.exec_module(installed)
 fixture = installed.fixture
+export_loader = importlib.util.spec_from_file_location(
+    "b04_export_review", REPO / "scripts/personal-experience/closure-b04-export-runner.py"
+)
+export_review = importlib.util.module_from_spec(export_loader)
+export_loader.loader.exec_module(export_review)
 
 
 class Harness(installed.Harness):
+    @property
+    def grant_write_probe(self):
+        # Service-down and native-update fixtures subclass this harness with
+        # older argparse namespaces; the write boundary mode is optional.
+        return bool(getattr(self.args, "grant_write_symlink_overreach", False))
+
     def setup_authority(self):
+        # The installed-skill fixture normally grants its whole workspace.
+        # This native SEC journey deliberately grants only company-a so the
+        # company-b probes below are outside a *valid* instance Grant.
+        self.narrow_read_only = self.workspace / "company-a"
+        if self.grant_write_probe:
+            self.narrow_read_write = self.workspace / "company-a"
         super().setup_authority()
         self.narrow_install = self.skill_installation["install_id"]
         self.product_config = (Path(self.env["HERMES_HOME"]) / "config.yaml").read_bytes()
         self.broad_install = self._install_broad_skill()
+        if self.args.raw_expiry_seconds:
+            self.api(
+                "/v1/raw-task-content/activation",
+                {
+                    "schema_version": "local-raw-task-content-activate/v1",
+                    "actor_id": "automated-fixture-operator",
+                    "retention_seconds": 3600,
+                    "budget_bytes": 16 << 20,
+                },
+                expected=201,
+            )
 
     def _install_broad_skill(self):
         skill = self.root / "fixture-broad-skill"
@@ -267,13 +297,24 @@ class Harness(installed.Harness):
                     for call, result in zip(calls[:index], results, strict=True):
                         fixture.require(result["tool_call_id"] == call["id"], "tool call identity changed")
                         text = str(result.get("content", ""))
-                        if call["outcome"] == "allow":
+                        if call["id"] == "sec-write-in-grant":
+                            fixture.require("siq-agent-security" not in text,
+                                            "in-grant write was blocked: " + repr(text[:220]))
+                        elif call["outcome"] == "allow":
                             category = "siq_block" if "siq-agent-security" in text else "host_result"
                             fixture.require(
-                                "fixture-visible-company-a" in text, "allowed read did not execute: " + category
+                                "fixture-visible-company-a" in text,
+                                "allowed read did not execute: " + category + " result=" + repr(text[:220]),
                             )
                         else:
                             fixture.require("siq-agent-security" in text, "denied call was not blocked by adapter")
+                            if forbidden_text := call.get("forbidden_text"):
+                                fixture.require(
+                                    forbidden_text not in text,
+                                    "denied call exposed protected fixture content",
+                                )
+                    if callback := getattr(harness, "_native_step_callback", None):
+                        callback(index)
                     message, finish = {"role": "assistant", "content": "SIQ_SEC_NATIVE_COMPLETE"}, "stop"
                     if index < len(calls):
                         call = calls[index]
@@ -310,7 +351,7 @@ class Harness(installed.Harness):
                 "--toolsets",
                 "file",
                 "--max-turns",
-                "5",
+                str(max(5, len(calls) + 2)),
                 "--run-budget",
                 "45",
                 "--ignore-rules",
@@ -324,7 +365,7 @@ class Harness(installed.Harness):
                 cwd=self.workspace,
                 env=env,
                 capture_output=True,
-                timeout=90,
+                timeout=max(90, self.args.raw_expiry_seconds + 90),
                 check=False,
             )
             if process.returncode != 0:
@@ -368,6 +409,139 @@ class Harness(installed.Harness):
         }
         canonical = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
         return hashlib.sha256(canonical).hexdigest()
+
+    def raw_records(self):
+        return self.api(
+            "/v1/raw-task-content/records/search",
+            {"schema_version": "local-raw-task-content-record-list/v1",
+             "task_id": self.raw_binding["task_id"]},
+        )["items"]
+
+    def verify_native_raw_export_boundary(self):
+        """Bind a genuine Hermes raw capture to its signed, raw-free task exports."""
+        page = self.api("/v1/task-activities")
+        items = [item for item in page["items"]
+                 if item.get("binding", {}).get("task_id") == self.raw_binding["task_id"]
+                 and item.get("binding", {}).get("platform") == "hermes"]
+        fixture.require(len(items) == 1 and page["next_offset"] is None,
+                        "native Hermes task activity missing or ambiguous")
+        item = items[0]
+        route = "/v1/task-activities/" + item["activity_id"]
+        query = "?snapshot=" + page["snapshot"]
+        detail = self.api(route + query)
+        expected = [(row["seq"], row["hash"]) for row in detail["receipts"]]
+        fixture.require(detail["next_offset"] is None and bool(expected),
+                        "native task activity has no complete receipt slice")
+        trusted_key = self.command([str(self.binary), "pubkey"]).strip()
+        for kind in ("export", "trace-export"):
+            target = route + "/" + kind + query
+            document = self.api(target)
+            fixture.require(
+                document["activity_id"] == item["activity_id"]
+                and document["snapshot"] == page["snapshot"]
+                and [(row["seq"], row["source_hash"]) for row in document["receipts"]] == expected
+                and export_review.verify_export(document, trusted_key),
+                "native task " + kind + " scope/signature mismatch",
+            )
+            serialized = json.dumps(document, ensure_ascii=False)
+            fixture.require(
+                "fixture-visible-company-a raw capture" not in serialized
+                and '"ciphertext"' not in serialized
+                and "raw-task-content" not in serialized
+                and self.admin not in serialized,
+                "native task " + kind + " leaked raw content or credential",
+            )
+            injected = self.api(target + "&task_id=foreign", expected=400)
+            fixture.require(injected.get("error") == "task_activity_query_invalid",
+                            "native task export accepted caller-selected scope")
+        self.native_export_receipt_count = len(expected)
+
+    def verify_two_native_task_boundary(self, second_session_id):
+        """Verify A/B are real Hermes tasks with disjoint signed exports."""
+        bindings = [row for row in self.api("/v1/intent-bindings")["items"]
+                    if row.get("session_id") == second_session_id]
+        fixture.require(len(bindings) == 1, "second native task binding missing or ambiguous")
+        second = bindings[0]
+        fixture.require(second["task_id"] != self.raw_binding["task_id"],
+                        "second native task reused first task identity")
+        self.raw_b_binding = second
+        first_records = self.raw_records()
+        second_records = self.api(
+            "/v1/raw-task-content/records/search",
+            {"schema_version": "local-raw-task-content-record-list/v1", "task_id": second["task_id"]},
+        )["items"]
+        fixture.require({row["record_id"] for row in first_records} == self.raw_before_ids
+                        and second_records == [],
+                        "second native task captured raw content without its own grant")
+
+        page = self.api("/v1/task-activities?limit=100")
+        fixture.require(page["next_offset"] is None, "native task activity page truncated")
+        task_ids = (self.raw_binding["task_id"], second["task_id"])
+        sessions = (self.raw_binding["session_id"], second_session_id)
+        selected = []
+        for task_id in task_ids:
+            matches = [item for item in page["items"]
+                       if item.get("binding", {}).get("platform") == "hermes"
+                       and item.get("binding", {}).get("task_id") == task_id]
+            fixture.require(len(matches) == 1, "native task activity missing or ambiguous")
+            selected.append(matches[0])
+        fixture.require(selected[0]["activity_id"] != selected[1]["activity_id"],
+                        "distinct native tasks shared an activity")
+        trusted_key = self.command([str(self.binary), "pubkey"]).strip()
+        groups = []
+        runtime_token = Path(self.issued["credential_path"]).read_text().strip()
+        decision_token = (self.state / "token").read_text().strip()
+        for index, item in enumerate(selected):
+            route = "/v1/task-activities/" + item["activity_id"]
+            query = "?snapshot=" + page["snapshot"]
+            detail = self.api(route + query)
+            expected = [(row["seq"], row["hash"]) for row in detail["receipts"]]
+            fixture.require(detail["next_offset"] is None and bool(expected),
+                            "native task activity receipt slice incomplete")
+            groups.append(set(expected))
+            for kind in ("export", "trace-export"):
+                target = route + "/" + kind + query
+                document = self.api(target)
+                fixture.require(
+                    document["activity_id"] == item["activity_id"]
+                    and document["snapshot"] == page["snapshot"]
+                    and [(row["seq"], row["source_hash"]) for row in document["receipts"]] == expected
+                    and export_review.verify_export(document, trusted_key),
+                    "native A/B task " + kind + " scope/signature mismatch",
+                )
+                if kind == "trace-export":
+                    fixture.require(all((row["seq"], row["receipt_hash"]) in groups[index]
+                                        for row in document["sources"]),
+                                    "native A/B trace sources crossed task receipt slice")
+                serialized = json.dumps(document, ensure_ascii=False)
+                fixture.require(
+                    task_ids[1 - index] not in serialized
+                    and sessions[1 - index] not in serialized
+                    and "native-b-canary" not in serialized
+                    and "raw capture" not in serialized
+                    and '"ciphertext"' not in serialized
+                    and self.admin not in serialized,
+                    "native A/B task " + kind + " leaked another task or raw content",
+                )
+                for credential, status in (("", 401), (runtime_token, 401), (decision_token, 403)):
+                    denied = self.api(target, token=credential, expected=status)
+                    fixture.require("receipts" not in denied and "sources" not in denied,
+                                    "unprivileged native export returned task contents")
+                injected = self.api(target + "&task_id=foreign", expected=400)
+                fixture.require(injected.get("error") == "task_activity_query_invalid",
+                                "native export accepted caller-selected task scope")
+        fixture.require(not groups[0].intersection(groups[1]),
+                        "native A/B task exports shared a signed receipt")
+        first_record = first_records[0]
+        denied_read = self.api(
+            "/v1/raw-task-content/records/" + first_record["record_id"] + "/read",
+            {"schema_version": "local-raw-task-content-record-read/v1", "task_id": second["task_id"]},
+            expected=503,
+        )
+        fixture.require(denied_read.get("error") == "raw_task_content_unavailable"
+                        and "fields" not in denied_read,
+                        "native B task selected A's encrypted raw record")
+        self.native_dual_export_receipt_counts = [len(group) for group in groups]
 
     def native_sec(self):
         controller_failures = []
@@ -425,6 +599,18 @@ class Harness(installed.Harness):
                                 harness._context_body(harness.narrow_install, session_id, task_id),
                                 expected=201,
                             )
+                        elif len(subjects) == 2 and harness.args.raw_dual_task:
+                            credential = Path(harness.issued["credential_path"]).read_text().strip()
+                            harness.api(
+                                "/v1/runtime-sessions",
+                                {"schema_version": "local-runtime-session-enroll/v1", "session_id": session_id},
+                                token=credential,
+                            )
+                            harness.second_sec = harness.api(
+                                "/v1/skill-contexts",
+                                harness._context_body(harness.narrow_install, session_id, task_id),
+                                expected=201,
+                            )
                         self.respond(200, {"ready": True})
                 except (RuntimeError, ValueError, TypeError, KeyError, OSError) as exc:
                     controller_failures.append(type(exc).__name__ + ": " + str(exc)[:200])
@@ -434,7 +620,9 @@ class Harness(installed.Harness):
         thread = threading.Thread(target=controller.serve_forever, daemon=True)
         thread.start()
         self._install_bootstrap_observer(f"http://127.0.0.1:{controller.server_port}/bind")
-        forbidden = self.workspace / "company-a/sec-must-not-exist.txt"
+        forbidden = self.workspace / ("company-b/sec-must-not-exist.txt"
+                                      if self.grant_write_probe else
+                                      "company-a/sec-must-not-exist.txt")
         calls = [
             {
                 "id": "sec-read",
@@ -449,12 +637,216 @@ class Harness(installed.Harness):
                 "outcome": "deny",
             },
         ]
+        if not self.args.raw_expiry_seconds:
+            # Keep the raw-expiry journey's callback indexes unchanged. In the
+            # ordinary SEC journey, prove a valid Grant and SEC still cannot
+            # read outside the Grant's company-a resource prefix. The second
+            # spelling also catches a lexical-prefix check that forgot to
+            # normalize `..` before deciding.
+            outside = self.workspace / "company-b/protected-fixture.txt"
+            outside.parent.mkdir(exist_ok=True)
+            outside_marker = "fixture-visible-company-b-protected"
+            outside.write_text(outside_marker + "\n")
+            alias = self.workspace / "company-a/protected-alias.txt"
+            alias.symlink_to(outside)
+            directory_alias = self.workspace / "company-a/escape-dir"
+            directory_alias.symlink_to(outside.parent, target_is_directory=True)
+            calls.extend([
+                {
+                    "id": "sec-read-outside-grant",
+                    "tool": "read_file",
+                    "params": {"path": str(outside)},
+                    "outcome": "deny",
+                    "forbidden_text": outside_marker,
+                },
+                {
+                    "id": "sec-read-traversal-outside-grant",
+                    "tool": "read_file",
+                    "params": {"path": str(self.workspace / "company-a/../company-b/protected-fixture.txt")},
+                    "outcome": "deny",
+                    "forbidden_text": outside_marker,
+                },
+                {
+                    "id": "sec-read-symlink-outside-grant",
+                    "tool": "read_file",
+                    "params": {"path": str(alias)},
+                    "outcome": "deny",
+                    "forbidden_text": outside_marker,
+                },
+                {
+                    "id": "sec-read-symlink-dotdot-outside-grant",
+                    "tool": "read_file",
+                    "params": {"path": str(self.workspace / "company-a/escape-dir/../company-b/protected-fixture.txt")},
+                    "outcome": "deny",
+                    "forbidden_text": outside_marker,
+                },
+            ])
+            if self.grant_write_probe:
+                write_control = self.workspace / "company-a/write-control.txt"
+                write_alias = self.workspace / "company-a/protected-write-alias.txt"
+                write_alias.symlink_to(outside)
+                calls.extend([
+                    {"id": "sec-write-in-grant", "tool": "write_file",
+                     "params": {"path": str(write_control),
+                                "content": "fixture-visible-company-a-write-control"},
+                     "outcome": "allow"},
+                    {"id": "sec-write-symlink-outside-grant", "tool": "write_file",
+                     "params": {"path": str(write_alias),
+                                "content": "must-not-overwrite-protected"},
+                     "outcome": "deny"},
+                    {"id": "sec-write-symlink-missing-tail-outside-grant", "tool": "write_file",
+                     "params": {"path": str(directory_alias / "must-not-create.txt"),
+                                "content": "must-not-create-outside"},
+                     "outcome": "deny"},
+                ])
+        if self.args.raw_expiry_seconds:
+            # Hermes returns an "unchanged" optimization for repeat reads of
+            # the same file in one conversation. Distinct fixture paths make
+            # both post-grant calls execute the real read_file tool and keep
+            # the raw-capture assertion about actual output meaningful.
+            captured_path = self.workspace / "company-a/raw-capture.txt"
+            expired_path = self.workspace / "company-a/post-expiry.txt"
+            captured_path.write_text("fixture-visible-company-a raw capture\n")
+            expired_path.write_text("fixture-visible-company-a after expiry\n")
+            second_path = self.workspace / "company-a/native-task-b.txt"
+            if self.args.raw_dual_task:
+                second_path.write_text("fixture-visible-company-a native-b-canary\n")
+            calls.extend(
+                [
+                    {
+                        "id": "raw-captured-read",
+                        "tool": "read_file",
+                        "params": {"path": str(captured_path)},
+                        "outcome": "allow",
+                    },
+                    {
+                        "id": "raw-expired-read",
+                        "tool": "read_file",
+                        "params": {"path": str(expired_path)},
+                        "outcome": "allow",
+                    },
+                ]
+            )
+
+            def raw_expiry_step(index):
+                # The first two native results prove the session is live before
+                # granting raw capture. Only the third tool call has an active
+                # task-scoped raw Grant; the fourth happens after wall-clock
+                # expiry in the SAME public Hermes chat process.
+                if index == 2:
+                    fixture.require(len(subjects) == 1, "native task identity unavailable for raw grant")
+                    session_id, _ = subjects[0]
+                    bindings = [
+                        row for row in self.api("/v1/intent-bindings")["items"]
+                        if row.get("session_id") == session_id
+                    ]
+                    fixture.require(len(bindings) == 1, "expected one signed native session binding")
+                    self.raw_binding = bindings[0]
+                    self.raw_grant = self.api(
+                        "/v1/raw-task-content/grants",
+                        {
+                            "schema_version": "local-raw-task-content-grant-create/v1",
+                            "task_id": self.raw_binding["task_id"],
+                            "kinds": ["parameters", "output"],
+                            "actor_id": "automated-fixture-operator",
+                            "duration_seconds": self.args.raw_expiry_seconds,
+                            "retention_seconds": 3600,
+                            "max_plaintext_bytes": 65536,
+                        },
+                        expected=201,
+                    )
+                elif index == 3:
+                    session_id, _ = subjects[0]
+                    before = self.raw_records()
+                    fixture.require(
+                        len(before) == 2 and {row["kind"] for row in before} == {"parameters", "output"},
+                        "native Hermes parameter/output capture missing before expiry",
+                    )
+                    self.raw_before_ids = {row["record_id"] for row in before}
+                    values = [
+                        self.api(
+                            f"/v1/raw-task-content/records/{row['record_id']}/read",
+                            {"schema_version": "local-raw-task-content-record-read/v1",
+                             "task_id": self.raw_binding["task_id"]},
+                        )
+                        for row in before
+                    ]
+                    fixture.require(
+                        all(value.get("contains_plaintext") is True for value in values)
+                        and any("fixture-visible-company-a" in json.dumps(value["fields"]) for value in values)
+                        and any(str(captured_path) in json.dumps(value["fields"]) for value in values),
+                        "native Hermes raw result did not match the executed read",
+                    )
+                    self.verify_native_raw_export_boundary()
+                    expires_at = datetime.fromisoformat(self.raw_grant["expires_at"].replace("Z", "+00:00"))
+                    if self.args.raw_dual_task:
+                        fixture.require(datetime.now(UTC) < expires_at,
+                                        "A raw Grant expired before native task B began")
+                        self.second_native_started_at = datetime.now(UTC).isoformat()
+                        # Run B while A's raw Grant is still live. The second
+                        # public Hermes process receives its own task-bound
+                        # SEC but no raw capture Grant. Suspend A's model
+                        # callback while B has a separate model server.
+                        del self._native_step_callback
+                        try:
+                            self._run_native(
+                                [{"id": "native-b-read", "tool": "read_file",
+                                  "params": {"path": str(second_path)}, "outcome": "allow"}],
+                                "Use the installed intent-fixture Skill for native task B.",
+                                skills=("intent-fixture",),
+                            )
+                        finally:
+                            self._native_step_callback = raw_expiry_step
+                        self.second_native_completed_at = datetime.now(UTC).isoformat()
+                        fixture.require(datetime.now(UTC) < expires_at,
+                                        "A raw Grant expired before native task B completed")
+                        fixture.require(len(subjects) == 2,
+                                        "second native task identity was not independently generated")
+                        self.verify_two_native_task_boundary(subjects[1][0])
+                    self.raw_expired_at = expires_at.isoformat()
+                    deadline = time.monotonic() + self.args.raw_expiry_seconds + 20
+                    while datetime.now(UTC) <= expires_at:
+                        fixture.require(time.monotonic() < deadline, "raw Grant did not naturally expire")
+                        time.sleep(min(1.0, max(0.1, (expires_at - datetime.now(UTC)).total_seconds())))
+                    credential = Path(self.issued["credential_path"]).read_text().strip()
+                    expired = self.api(
+                        "/v1/raw-task-content/capture-permits",
+                        {
+                            "schema_version": "local-raw-task-content-capture-permit-create/v1",
+                            "platform": "hermes",
+                            "agent_id": self.agent,
+                            "session_id": session_id,
+                            "task_id": self.raw_binding["task_id"],
+                            "grant_id": self.raw_grant["grant_id"],
+                            "expected_grant_signature": self.raw_grant["signature"],
+                            "kind": "parameters",
+                            "ttl_seconds": 10,
+                        },
+                        token=credential,
+                        expected=410,
+                    )
+                    fixture.require(
+                        expired.get("reason_code") == "raw_task_content_authority_expired",
+                        "expired raw Grant did not fail closed",
+                    )
+                    self.raw_expiry_confirmed_at = datetime.now(UTC).isoformat()
+                elif index == 4:
+                    after = self.raw_records()
+                    fixture.require(
+                        {row["record_id"] for row in after} == self.raw_before_ids,
+                        "allowed native call after expiry added raw content",
+                    )
+                    self.raw_post_expiry_call_at = datetime.now(UTC).isoformat()
+
+            self._native_step_callback = raw_expiry_step
         try:
             self._run_native(
                 calls,
                 "Use the installed intent-fixture Skill for the SIQ controlled-task check.",
                 skills=("intent-fixture",),
             )
+            if hasattr(self, "_native_step_callback"):
+                del self._native_step_callback
             cross = {
                 "id": "sec-cross-task",
                 "tool": "read_file",
@@ -467,19 +859,37 @@ class Harness(installed.Harness):
                 skills=("intent-fixture",),
             )
         finally:
+            if hasattr(self, "_native_step_callback"):
+                del self._native_step_callback
             controller.shutdown()
             controller.server_close()
             thread.join(timeout=2)
             (Path(self.env["HERMES_HOME"]) / "config.yaml").write_bytes(self.product_config)
             shutil.rmtree(Path(self.env["HERMES_HOME"]) / "plugins/sec-bootstrap", ignore_errors=True)
 
-        fixture.require(not controller_failures and len(subjects) == 2, "native SEC bootstrap sequence failed")
+        expected_subjects = 3 if self.args.raw_dual_task else 2
+        fixture.require(not controller_failures and len(subjects) == expected_subjects,
+                        "native SEC bootstrap sequence failed")
         fixture.require(not forbidden.exists(), "denied write produced a side effect")
+        if self.grant_write_probe:
+            fixture.require(write_control.read_text() == "fixture-visible-company-a-write-control",
+                            "in-grant native write did not execute")
+            fixture.require(not (outside.parent / "must-not-create.txt").exists(),
+                            "directory symlink created an out-of-grant file")
+        if not self.args.raw_expiry_seconds:
+            fixture.require(
+                outside.read_text() == outside_marker + "\n",
+                "the out-of-scope fixture changed during native calls",
+            )
         records = self.receipts()
         decisions = {row.get("tool_call_id"): row for row in records if row.get("record_type") == "decision"}
         for call in calls:
             row = decisions[call["id"]]
             fixture.require(row["action"] == call["outcome"], call["id"] + ": wrong action")
+            fixture.require(
+                row["session_id"] == subjects[0][0] and row.get("runtime_task_id") == subjects[0][1],
+                call["id"] + ": native session/task changed",
+            )
             attribution = row["skill_attribution"]
             fixture.require(
                 attribution["status"] == "verified"
@@ -489,6 +899,27 @@ class Harness(installed.Harness):
             )
             fixture.require(
                 attribution["call_binding"] == self._call_binding(row, call["params"]), "call binding mismatch"
+            )
+        if not self.args.raw_expiry_seconds:
+            for call_id in ("sec-read-outside-grant", "sec-read-traversal-outside-grant",
+                            "sec-read-symlink-outside-grant", "sec-read-symlink-dotdot-outside-grant",
+                            *(["sec-write-symlink-outside-grant",
+                               "sec-write-symlink-missing-tail-outside-grant"] if self.grant_write_probe else [])):
+                fixture.require(
+                    decisions[call_id]["reason_code"] == "grant_scope_violation",
+                    call_id + ": wrong resource-boundary rejection layer",
+                )
+        if self.args.raw_dual_task:
+            second_row = decisions["native-b-read"]
+            fixture.require(
+                second_row["action"] == "allow"
+                and second_row["session_id"] == subjects[1][0]
+                and second_row.get("runtime_task_id") == subjects[1][1]
+                and second_row["skill_attribution"]["status"] == "verified"
+                and second_row["skill_attribution"]["context_id"] == self.second_sec["context_id"]
+                and second_row["skill_attribution"]["call_binding"] == self._call_binding(
+                    second_row, {"path": str(second_path)}),
+                "second native task did not execute with independent verified authority",
             )
         cross_row = decisions["sec-cross-task"]
         fixture.require(cross_row["action"] == "deny", "cross-task SEC reuse was allowed")
@@ -504,6 +935,23 @@ class Harness(installed.Harness):
         fixture.require(
             self.broad_rejection == "skill_context_grant_changed", "other installed Skill borrowed authority"
         )
+        if self.args.raw_expiry_seconds:
+            fixture.require(
+                datetime.fromisoformat(self.raw_post_expiry_call_at)
+                > datetime.fromisoformat(self.raw_expired_at),
+                "post-expiry native call preceded Grant expiry",
+            )
+            fixture.require(
+                {row["record_id"] for row in self.raw_records()} == self.raw_before_ids,
+                "cross-task run changed expired raw capture set",
+            )
+            if self.args.raw_dual_task:
+                fixture.require(
+                    self.api("/v1/raw-task-content/records/search",
+                             {"schema_version": "local-raw-task-content-record-list/v1",
+                              "task_id": self.raw_b_binding["task_id"]})["items"] == [],
+                    "second native task acquired raw content after A expiry",
+                )
         fixture.require(
             (Path(self.env["HERMES_HOME"]) / "config.yaml").read_bytes() == self.product_config,
             "fixture plugin config not restored",
@@ -512,7 +960,14 @@ class Harness(installed.Harness):
         verified = json.loads(self.command([str(self.binary), "verify"]))
         fixture.require(verified["verified"], "receipt chain failed verification")
         return {
-            "schema_version": "personal-r01-sec-hermes-native/v1",
+            "schema_version": (
+                "personal-r01-sec-hermes-native-write-boundary/v1"
+                if self.grant_write_probe else
+                "personal-r01-sec-hermes-native-raw-dual-task/v1"
+                if self.args.raw_dual_task else
+                "personal-r01-sec-hermes-native-raw-expiry/v1"
+                if self.args.raw_expiry_seconds else "personal-r01-sec-hermes-native/v1"
+            ),
             "recorded_at": datetime.now(UTC).isoformat(),
             "passed": True,
             "binary_sha256": hashlib.sha256(self.binary.read_bytes()).hexdigest(),
@@ -532,16 +987,90 @@ class Harness(installed.Harness):
                 "native_prompt_contains_installed_skill",
                 "native_allowed_read_executes",
                 "native_write_denied_before_side_effect",
+                *(["valid_sec_direct_resource_overreach_denied",
+                   "valid_sec_traversal_resource_overreach_denied",
+                   "valid_sec_symlink_resource_overreach_denied",
+                   "valid_sec_symlink_dotdot_resource_overreach_denied"]
+                  if not self.args.raw_expiry_seconds else []),
+                *(["valid_sec_in_root_native_write_executes",
+                   "valid_sec_symlink_write_outside_root_denied",
+                   "valid_sec_symlink_directory_write_missing_tail_denied"]
+                  if self.grant_write_probe else []),
                 "verified_attribution_on_allow_and_deny",
                 "receipt_call_binding_recomputed",
                 "new_native_task_cannot_copy_sec",
                 "receipt_chain_verified",
                 "test_observer_removed_and_product_config_restored",
+                *(
+                    [
+                        "native_task_scoped_raw_grant_created_after_initial_calls",
+                        "native_parameters_and_output_captured_during_grant",
+                        "raw_plaintext_matches_native_result",
+                        "native_task_exports_signed_scoped_and_raw_free",
+                        "raw_grant_naturally_expired_on_real_wall_clock",
+                        "expired_capture_permit_rejected_410",
+                        "same_native_task_allowed_after_expiry_without_new_raw_capture",
+                        *(
+                            ["second_native_task_has_independent_sec_and_allowed_read",
+                             "only_first_native_task_captures_raw_while_grant_live",
+                             "two_native_task_signed_exports_are_disjoint",
+                             "second_native_task_cannot_read_first_raw_record",
+                             "two_native_task_exports_reject_unprivileged_credentials_and_scope_injection"]
+                            if self.args.raw_dual_task else []
+                        ),
+                    ]
+                    if self.args.raw_expiry_seconds else []
+                ),
             ],
             "receipt_count": len(records),
-            "verified_decision_count": 2,
+            "verified_decision_count": len(calls),
+            **({"resource_overreach": {
+                "granted_read_root": "company-a",
+                "granted_write_root": "company-a" if self.grant_write_probe else None,
+                "outside_read_direct": "denied_before_native_read",
+                "outside_read_dotdot": "denied_before_native_read",
+                "outside_read_symlink": "denied_before_native_read",
+                "outside_read_symlink_dotdot": "denied_before_native_read",
+                "in_root_write": ("executed" if self.grant_write_probe else "not_tested"),
+                "outside_write_symlink": ("denied_before_native_write"
+                                          if self.grant_write_probe else "not_tested"),
+                "outside_write_symlink_missing_tail": ("denied_before_native_write"
+                                                       if self.grant_write_probe else "not_tested"),
+                "reason_code": "grant_scope_violation",
+                "protected_fixture_content_seen_by_model": False,
+                "outside_fixture_unchanged": True,
+            }} if not self.args.raw_expiry_seconds else {}),
             "cross_task_verified": False,
             "other_skill_issue_error": self.broad_rejection,
+            **(
+                {"raw_content": {
+                    "authority_ended_by": "natural_expiry",
+                    "record_count": len(self.raw_before_ids),
+                    "kinds": ["parameters", "output"],
+                    "grant_id_sha256": hashlib.sha256(self.raw_grant["grant_id"].encode()).hexdigest(),
+                    "task_binding_source": "server-signed native session binding",
+                    "grant_duration_seconds": self.args.raw_expiry_seconds,
+                    "grant_expires_at": self.raw_expired_at,
+                    "expired_permit_confirmed_at": self.raw_expiry_confirmed_at,
+                    "post_expiry_native_result_at": self.raw_post_expiry_call_at,
+                    "native_session_sha256": hashlib.sha256(subjects[0][0].encode()).hexdigest(),
+                    "native_task_sha256": hashlib.sha256(subjects[0][1].encode()).hexdigest(),
+                    "native_export_receipt_count": self.native_export_receipt_count,
+                    **(
+                        {"dual_native_tasks": {
+                            "first_task_sha256": hashlib.sha256(subjects[0][1].encode()).hexdigest(),
+                            "second_task_sha256": hashlib.sha256(subjects[1][1].encode()).hexdigest(),
+                            "signed_export_receipt_counts": self.native_dual_export_receipt_counts,
+                            "second_task_raw_record_count": 0,
+                            "second_task_has_independent_sec": True,
+                            "second_task_started_at": self.second_native_started_at,
+                            "second_task_completed_at": self.second_native_completed_at,
+                        }}
+                        if self.args.raw_dual_task else {}
+                    ),
+                }}
+                if self.args.raw_expiry_seconds else {}
+            ),
             "limitations": [
                 "local deterministic synthetic model; no external provider or paid model",
                 "pre_llm observer is a test-only synchronization helper and carries no SIQ credential or authority",
@@ -552,11 +1081,24 @@ class Harness(installed.Harness):
 
 
 def main():
+    os.umask(0o077)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", required=True, type=Path)
     parser.add_argument("--hermes-cli", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--raw-expiry-seconds", type=int, default=0,
+                        help="run task-scoped native raw capture through real Grant expiry (60–600 seconds)")
+    parser.add_argument("--raw-dual-task", action="store_true",
+                        help="also run a second real Hermes task without raw opt-in while A's Grant is live")
+    parser.add_argument("--grant-write-symlink-overreach", action="store_true",
+                        help="grant writes in company-a and reject a real write through a link into company-b")
     args = parser.parse_args()
+    fixture.require(args.raw_expiry_seconds == 0 or 60 <= args.raw_expiry_seconds <= 600,
+                    "--raw-expiry-seconds must be zero or between 60 and 600")
+    fixture.require(not args.raw_dual_task or args.raw_expiry_seconds > 0,
+                    "--raw-dual-task requires --raw-expiry-seconds")
+    fixture.require(not args.grant_write_symlink_overreach or args.raw_expiry_seconds == 0,
+                    "write-overreach leg requires ordinary SEC run")
     args.binary, args.hermes_cli = args.binary.resolve(), args.hermes_cli.resolve()
     args.installer_managed_profile = True
     args.remove_installed_skill = False
@@ -570,8 +1112,9 @@ def main():
             report = harness.native_sec()
         finally:
             harness.stop()
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    args.out.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    with args.out.open("x") as output:
+        output.write(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps({"passed": report["passed"], "checks": len(report["checks"])}))
 
 

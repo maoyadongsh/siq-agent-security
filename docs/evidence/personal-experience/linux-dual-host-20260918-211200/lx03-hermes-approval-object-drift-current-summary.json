@@ -1,0 +1,34 @@
+{
+  "schema_version": "linux-lx03-hermes-approval-object-drift-current/v1",
+  "recorded_at": "2026-09-18T20:33:27.152139+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "Hermes Agent v0.21.0 public CLI",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "passed": true,
+  "checks": 24,
+  "attempts": 6,
+  "race_client_mode": "processes",
+  "race_http_statuses": [
+    201,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409
+  ],
+  "race_reservation_status": "uncertain_without_external_execution",
+  "private_report_sha256": "f83e800596174712c0e04b0b51ee87131205306abbac4ad952da94c1b51faf03",
+  "private_log_sha256": "1786cb195f16be59dcda11e2b9fd22644f79c2001ad6ab9c6f3c3b466cd7793b",
+  "driver_sha256": "2a89d55f8fa5089d65f7f042e27d5a505e0ffe5252d303245e1819a908ba446e",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "observed": "real Hermes CLI write approval bound to original object; retry changed only the destination path to another file inside the authorized directory, produced a fresh hold and no write to either target; content drift also re-held; eight independent client processes competed for a separate approval with one 201 and seven 409; signed chain verified",
+  "limitations": [
+    "synthetic model, operator, and file targets in isolated HOME",
+    "one daemon only; cross-daemon and external-effect atomicity unverified",
+    "winning competing reservation did not execute an external action and remains uncertain",
+    "stock OpenClaw approved hold execution checkpoint remains unavailable"
+  ]
+}

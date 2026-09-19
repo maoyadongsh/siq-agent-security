@@ -1,0 +1,12 @@
+{
+  "schema_version": "linux-dual-host-root-scope-cross-builds/v1",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "build_command": "CGO_ENABLED=0 GOOS=<target-os> GOARCH=<target-arch> go build -trimpath ./cmd/agentshield",
+  "targets": {
+    "linux/arm64": "72999091d10807ca1741d273b39e7f2da2cab44f805035117464ce4ff275e18d",
+    "linux/amd64": "45a155a8324fca0d35651c0c4658947af5845a361132df8e02198a953b2c6f49",
+    "darwin/arm64": "463f2a00b29596f5ab25d44f998b785f9721f66b9ed0e9eaecf7ae93f104063e",
+    "windows/amd64": "d75c6014fd59da69c69cc2bb6f3ab20bd28d4c69c663a20223b814ff2586b0f0"
+  },
+  "warning": "Build success is not macOS or Windows real-host authorization validation. Cross-build binaries are private non-executable evidence."
+}

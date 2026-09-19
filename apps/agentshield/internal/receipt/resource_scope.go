@@ -1,9 +1,14 @@
 package receipt
 
 import (
+	"errors"
+	"io/fs"
 	"net"
 	"net/url"
+	"os"
 	"path"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
@@ -91,6 +96,20 @@ func pathGranted(g *grant.Grant, target string, write bool) (string, bool) {
 		return "", false
 	}
 	target = path.Clean(target)
+	// The agent and local daemon share a filesystem on Unix. Lexical scope
+	// alone lets /granted/alias -> /private escape a read-only Grant, or lets
+	// an alias bypass an explicit deny below the granted root. Resolve the
+	// existing prefix on every decision; never cache symlink observations.
+	// Windows path identity needs its own host-specific contract and remains
+	// on the existing lexical path until that adapter's real-host validation.
+	canonicalTarget := ""
+	if runtime.GOOS != "windows" {
+		var ok bool
+		canonicalTarget, ok = canonicalPathWithMissingTail(target)
+		if !ok {
+			return "", false
+		}
+	}
 	matched := ""
 	for _, f := range g.Facts {
 		if f.Domain != "filesystem" || (f.Action != "fs.read" && f.Action != "fs.write") {
@@ -108,16 +127,68 @@ func pathGranted(g *grant.Grant, target string, write bool) (string, bool) {
 		if strings.ContainsAny(pattern, "\\\x00") || pattern == "" {
 			continue
 		}
-		pattern = strings.TrimSuffix(path.Clean(pattern), "/")
-		if target != pattern && !strings.HasPrefix(target, pattern+"/") {
-			continue
+		pattern = path.Clean(pattern)
+		if pattern != "/" {
+			pattern = strings.TrimSuffix(pattern, "/")
+		}
+		lexicalMatch := pattern == "/" || target == pattern || strings.HasPrefix(target, pattern+"/")
+		physicalMatch := lexicalMatch
+		if runtime.GOOS != "windows" {
+			canonicalPattern, ok := canonicalPathWithMissingTail(pattern)
+			if !ok {
+				return "", false
+			}
+			physicalMatch = pathWithin(canonicalPattern, canonicalTarget)
 		}
 		if f.Effect == "deny" {
-			return "", false
+			if lexicalMatch || physicalMatch {
+				return "", false
+			}
+			continue
 		}
-		if f.Effect == "allow" {
+		if f.Effect == "allow" && lexicalMatch && physicalMatch {
 			matched = f.FactID
 		}
 	}
 	return matched, matched != ""
+}
+
+func pathWithin(root, target string) bool {
+	rel, err := filepath.Rel(root, target)
+	return err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator))
+}
+
+// canonicalPathWithMissingTail resolves every existing ancestor. Writes may
+// name a file that does not exist yet, so a missing tail is appended to the
+// resolved ancestor. Dangling links, loops and inaccessible ancestors fail
+// closed. This is a decision-time guard, not an atomic openat2-style sandbox:
+// a host can still race a symlink swap after the decision.
+func canonicalPathWithMissingTail(value string) (string, bool) {
+	current := filepath.FromSlash(value)
+	if !filepath.IsAbs(current) {
+		return "", false
+	}
+	var missing []string
+	for {
+		_, err := os.Lstat(current)
+		if err == nil {
+			resolved, resolveErr := filepath.EvalSymlinks(current)
+			if resolveErr != nil {
+				return "", false
+			}
+			for i := len(missing) - 1; i >= 0; i-- {
+				resolved = filepath.Join(resolved, missing[i])
+			}
+			return filepath.Clean(resolved), true
+		}
+		if !errors.Is(err, fs.ErrNotExist) {
+			return "", false
+		}
+		parent := filepath.Dir(current)
+		if parent == current {
+			return "", false
+		}
+		missing = append(missing, filepath.Base(current))
+		current = parent
+	}
 }

@@ -1,0 +1,49 @@
+{
+  "scope": "Windows native Hermes public CLI; legacy plugin block-mode service-unavailable only",
+  "candidate": "47ad847fd74c60a23b5714c1f4be98ec1ad518aa",
+  "native_cli_exit": 0,
+  "original_controller_exit": 1,
+  "original_wrapper_exit": 1,
+  "original_B_pass": false,
+  "corrected_evidence_evaluation": "pass",
+  "correction": "Positive A expected one bash true probe; B blocks before subprocess, so correct requirement is zero. Original frozen controller/result untouched; no host rerun.",
+  "real_tool_result_count": 1,
+  "actual_offline_connection_attempts": 2,
+  "tool_subprocess_commands": 0,
+  "write_effect_exists": false,
+  "guard_denials": 0,
+  "native_process_identity_verified": true,
+  "job_active_after": 0,
+  "all_owned_handles_closed": true,
+  "provider_and_decision_sockets_closed": true,
+  "paid_model_calls": 0,
+  "plugin_files_sha256": {
+    "__init__.py": "36b03a9d5dd92fe6e872adf50c8a6dab92a6731ee31905c0e8db7284279501c2",
+    "plugin.yaml": "0f6a898c187c592f2a48270fc8d7fe3c1d77c896e36169028c7e0491004707bc"
+  },
+  "raw_sha256": {
+    "result.private.json": "18fffeae2b2b7e98f3175c68926f14598e90781c1fe06689e2a3d0bc47a688cb",
+    "wrapper.private.json": "af5506a8108761ce9abe1e230fd65e8e9d43265518f7620f0c4de482441f6d6f",
+    "provider-requests.private.json": "dcb3ee46fa65279964f86895840c51e3c6a5d5691d6977e4d896597e9f4eb3a9",
+    "guard-events.private.jsonl": "51f690fba7ada945de684a46db04e45a44dc40196f6a55088b30d67d8e18aa5e"
+  },
+  "limitations": [
+    "Not Hermes desktop evidence.",
+    "No positive Windows resource authority; #39 remains.",
+    "Endpoint reserved without listening; does not cover stopping a previously healthy SIQ instance and authorized recovery.",
+    "Audit guard is not OS sandbox."
+  ],
+  "earlier_attempts": [
+    {
+      "revision": "r1",
+      "spawned": false,
+      "result": "exact preflight profile layout rejected added plugins directory; cleaned"
+    },
+    {
+      "revision": "r2",
+      "spawned": true,
+      "exit": 85,
+      "result": "exact one-port guard rejected two declared ports before identity handshake; owned job empty, sockets closed"
+    }
+  ]
+}

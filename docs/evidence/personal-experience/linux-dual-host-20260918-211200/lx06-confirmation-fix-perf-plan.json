@@ -1,0 +1,138 @@
+{
+  "schema_version": "linux-lx06-confirmation-fix-perf-plan/v1",
+  "frozen_at": "2026-09-18T21:41:07.455926+00:00",
+  "state": "frozen_not_started_waiting_for_lx04_worker_terminal_and_exclusive_host",
+  "protocol_file": "lx06-confirmation-fix-perf-protocol.md",
+  "protocol_sha256": "353524ad1afcc71214135c7acda89d8187e553aa3b93fc88cdc11109c1e97e5a",
+  "candidate_order": [
+    "fourth_predecessor",
+    "fifth_confirmation_fix"
+  ],
+  "candidates": {
+    "fourth_predecessor": {
+      "binary_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+      "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9"
+    },
+    "fifth_confirmation_fix": {
+      "binary_sha256": "6ce92b692f099478e88a86e368e9132ab113c5eecc41c77a791ca7d367d3262e",
+      "source_binding_sha256": "dbc07ca53280c61052644b220d013e909b16c2a499d7a30c558b65bb738c1323"
+    }
+  },
+  "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+  "cli_version": "0.0.83",
+  "gateway_kind": "existing_loopback_https_mtls",
+  "sandbox_image": "siq/hermes-openshell-siq-analysis:f470321d2fb2b2cda14b7c3b",
+  "image_digest_last_observed": "sha256:523904c19a4b886e87b8340d7d359e4400a1d2e58def479e351dddad8ff1ee72",
+  "preconditions": [
+    "LX04 predecessor 12-hour admin expiry worker has terminal evidence and its owned daemon/port are cleaned",
+    "no parallel build, regression, benchmark, native expiry verifier, or other heavy workload",
+    "source bindings, both binary hashes, CLI hash, image digest and preexisting sandbox names rechecked",
+    "fresh exact batch-owned sandbox and output per leg; no shared gateway mutation"
+  ],
+  "B2_doctor": {
+    "driver_sha256": "27f4b8d58c5433f59e07626ac5aeec6222e31b2c54083b696baa792fb1c60d03",
+    "rounds": 3,
+    "warmups_per_leg_scenario": 2,
+    "samples_per_leg_scenario_round": 15,
+    "interleaved_orders": [
+      [
+        "old",
+        "new",
+        "new",
+        "old"
+      ],
+      [
+        "new",
+        "old",
+        "old",
+        "new"
+      ],
+      [
+        "old",
+        "new",
+        "new",
+        "old"
+      ]
+    ],
+    "aux_control_plane_restore_samples": 5,
+    "absolute_p95_budget_ms": {
+      "doctor_readback": 15000,
+      "doctor_unreachable": 15000,
+      "aux_control_plane_restore": 60000
+    },
+    "doctor_readback_relative_p95_budget_ratio": 1.3,
+    "B3": "not_measured_by_this_driver"
+  },
+  "S1_S4_task_execution": {
+    "driver_sha256": "c82eb065056e72c2ffdb0a5113b015a3f56a9a52c19a9aa442713e5e230c2c45",
+    "driver_expected_protocol_sha256": "353524ad1afcc71214135c7acda89d8187e553aa3b93fc88cdc11109c1e97e5a",
+    "rounds": 3,
+    "warmups_per_scenario_round": 2,
+    "samples_per_round": {
+      "S1": 15,
+      "S2": 5,
+      "S3": 15,
+      "S4": 15
+    },
+    "round_order": {
+      "1": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "2": [
+        "S2",
+        "cond",
+        "S3",
+        "S1",
+        "S4"
+      ],
+      "3": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ]
+    },
+    "absolute_budgets_ms": {
+      "S1": {
+        "p95": 15000,
+        "max": 30000
+      },
+      "S2": {
+        "p95": 60000,
+        "max": 60000
+      },
+      "S3": {
+        "p95": 2000,
+        "max": 15000
+      },
+      "S4": {
+        "p95": 1500,
+        "max": 15000
+      }
+    },
+    "run_order": [
+      "fourth_predecessor",
+      "fifth_confirmation_fix"
+    ],
+    "same_protocol_copied_to_each_fresh_output": true,
+    "relative_budget": "none_frozen; ratio descriptive only",
+    "baseline_has_taskexec": true,
+    "baseline_commit_arg": "2187fea621ff40b368f2e01e51d26672239c9f8d",
+    "baseline_arg_scope": "common committed ancestor with task routes; actual fourth predecessor binary and source binding are separate SHA256 identities",
+    "driver_relative_field": "not_measured for each single-candidate run; external two-run ratio descriptive only"
+  },
+  "B3_functional": {
+    "driver_sha256": "3623a058b5e1e67ad64047ac7b23e3dc3152a5ef36a1ffe761d40067562c84a1",
+    "candidate": "fifth_confirmation_fix",
+    "own_sandbox": true,
+    "performance_budget": "none_frozen; separate functional result"
+  },
+  "percentile": "nearest_rank_ceil_p_times_n_over_100",
+  "failure_handling": "retain every failed/timeout sample and preflight; invalid leg is not budget pass; no cherry-pick",
+  "release_acceptance": false
+}

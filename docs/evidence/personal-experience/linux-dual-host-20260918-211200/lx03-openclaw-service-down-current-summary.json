@@ -1,0 +1,24 @@
+{
+  "schema_version": "linux-lx03-openclaw-service-down-current/v1",
+  "recorded_at": "2026-09-18T19:52:12.820661+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "OpenClaw 2026.5.12 public CLI",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "passed": true,
+  "checks": 16,
+  "private_report_sha256": "9343e3f38262442e5e878e009ccb1dea85a77b731f59f4ec61e35e38c0317626",
+  "private_log_sha256": "47492fa52852c75a2d27a3d58347082b737295031347eeddfa81512df33772dc",
+  "driver_sha256": "8662a733569fdc7475ba25aa7111b74b787678e1b58ad9af8d7dafd90e09662a",
+  "native_cli_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733",
+  "online_control": "real native file write creates fixture marker while daemon reachable",
+  "offline_result": "native read and write denied with no new marker or protected read content; zero post-selftest loopback egress; audit_only override remains fail-closed",
+  "recovery_result": "same-port daemon restart restores authorized read; four pending denials promoted onto signed receipt chain; receipt verify passes",
+  "limitations": [
+    "local deterministic model and automated fixture operator; no external or paid model",
+    "exec-class tools are never intent-compatible (shell always carries an unknown effect), so no authorized-egress allow path exists through the real host; the loopback receiver therefore proves the zero-egress property on the denial paths, backed by a self-test",
+    "exec egress uses curl; host-level firewall isolation is not claimed",
+    "same-UID compromise and OS sandbox isolation remain outside the threat boundary",
+    "Stock OpenClaw post-approval execution checkpoint remains unavailable; this service-down result does not close hold consumption."
+  ]
+}

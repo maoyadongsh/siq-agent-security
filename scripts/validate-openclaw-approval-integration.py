@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -20,6 +21,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PATCH_DIR = ROOT / "patches/openclaw"
+PATCH_PROFILES = {
+    "2026.5.12": "2026.5.12-approval-execution-recheck-v2",
+    "2026.9.4": "2026.9.4-approval-execution-recheck-v1",
+}
 
 
 def digest(path):
@@ -42,16 +47,23 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--openclaw-root", type=Path, required=True)
     parser.add_argument("--node", type=Path, required=True)
+    parser.add_argument("--binary", type=Path, help="use a fixed SIQ candidate instead of building the worktree")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     runtime = args.openclaw_root.resolve()
     args.node = args.node.absolute()
-    metadata = json.loads((PATCH_DIR / "2026.5.12-approval-execution-recheck-v2.json").read_text())
-    patch = PATCH_DIR / "2026.5.12-approval-execution-recheck-v2.patch"
+    if args.binary:
+        args.binary = args.binary.resolve(strict=True)
+        require(args.binary.is_file(), "SIQ candidate must be a regular file")
+    package = json.loads((runtime / "package.json").read_text())
+    profile = PATCH_PROFILES.get(package.get("version"))
+    require(package.get("name") == "openclaw" and profile is not None,
+            "unsupported native package/version")
+    metadata = json.loads((PATCH_DIR / (profile + ".json")).read_text())
+    patch = PATCH_DIR / (profile + ".patch")
     source = runtime / metadata["target"]
     adapter = ROOT / metadata["adapter_source"]
     embedded = ROOT / "apps/agentshield/internal/adapterinstall/assets/openclaw/index.ts"
-    package = json.loads((runtime / "package.json").read_text())
     require(
         package["name"] == metadata["package"] and package["version"] == metadata["version"],
         "unsupported native package/version",
@@ -102,7 +114,7 @@ def main():
             print(f"Starting native integration: {name}.", flush=True)
             try:
                 result = harness.run()
-                result["runtime_kind"] = "stock" if native_root == runtime else "temporary checkpoint-v2 copy"
+                result["runtime_kind"] = "stock" if native_root == runtime else "temporary checkpoint copy"
                 result["executed_adapter_sha256"] = digest(installed_adapter)
                 results[name] = result
             finally:
@@ -128,6 +140,8 @@ def main():
             all(item["siq_binary_sha256"] == binary_sha256 for item in results.values()),
             "validation groups used different SIQ binaries",
         )
+        if args.binary:
+            require(binary_sha256 == digest(args.binary), "validation did not use the fixed SIQ candidate")
         require(
             all(item["receipt_chain_verified"] for item in results.values()),
             "a validation group did not verify its receipt chain",
@@ -158,6 +172,7 @@ def main():
             "shipping_adapter_used_without_patch": True,
             "runner_sha256": digest(Path(__file__)),
             "patch": metadata,
+            "patch_profile": profile,
             "validation": results,
             "limitations": [
                 "stock runtime cannot complete holds with this adapter; this is an explicit compatibility boundary",
@@ -167,8 +182,10 @@ def main():
                 "post-check races, real-world effects and human approval are not proven",
             ],
         }
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
+    args.out.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    fd = os.open(args.out, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as output:
+        output.write(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
     print(
         json.dumps(
             {

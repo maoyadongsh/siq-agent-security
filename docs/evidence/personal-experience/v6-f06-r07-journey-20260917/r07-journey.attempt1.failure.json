@@ -1,0 +1,72 @@
+{
+  "passed": false,
+  "error_type": "TimeoutError",
+  "binary_sha256": "0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+  "harness_sha256": "e1d9e4f60fdb01aa47826eea583bf40601808418dfe520e12964fd8e105d9f31",
+  "checks": [
+    {
+      "id": "r07_step10a_raw_content_store_default_disabled",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step1_daemon_health_paired",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step2_ui_pairing_with_wrong_code_retry",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step2_ui_bindings_discovers_openclaw",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step3_ui_grants_shows_v1_grant",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step5_missing_authority_denied_fail_closed",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step5_ui_receipts_consistent_with_deny",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step4_sec_issued_for_real_session",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step4_allow_read_with_session_attribution",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step4_call_binding_recomputed",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step4_attribution_correlates_grant_install_sec",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step10_native_capture_opt_in_and_revoke",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step6_hold_lands_in_siq_confirmations",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step6_ui_approval_records_confirmation",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step6_replayed_approval_rejected",
+      "status": "pass"
+    },
+    {
+      "id": "r07_step7_update_leg_v1_cancel_confirm_v2_remove",
+      "status": "pass"
+    }
+  ]
+}

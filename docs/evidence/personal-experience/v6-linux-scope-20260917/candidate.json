@@ -1,0 +1,21 @@
+{
+  "schema": "v6-platform-scope-candidate/v2",
+  "base_commit": "9b8c09af742cb9df94c6d02e6f2db6ecccd68951",
+  "branch": "codex/personal-v6-integration-20260917",
+  "git_state": "uncommitted dirty integration tree",
+  "source_binding": {
+    "procedure": "B / source_binding-family",
+    "files": 931,
+    "sha256": "8ad6cf83bfaddbf456979c30fd746c23ec98f8889fdc0c30093cda2585fa501b"
+  },
+  "build": "CGO_ENABLED=0 go build ./cmd/agentshield",
+  "targets": {
+    "linux/amd64": "d96de58ce54997b2625b191465ec3e6f4ed79e0aba8151a8999e0de15e906370",
+    "linux/arm64": "ac447ac92e65997952dc5a19ead7a83a8512924948a43f986d7f0d66aa0366ff",
+    "darwin/arm64": "e7c32b50c4f494497779105637f3259e5a0916c0d8a3f3c956e1289443d0a2bc",
+    "windows/amd64": "0c6e23427e5485ed7e801a7602200763cc1c86a0c080d4c3e030d86713ef6ff6"
+  },
+  "live_gateway_retested": false,
+  "performance_retested": false,
+  "release_status": "unsigned, unreleased"
+}

@@ -1,7 +1,9 @@
 """Offline negative gates; never contacts a gateway or executes a live driver."""
 import importlib.util
 import json
+import os
 import subprocess
+import sys
 import unittest
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -13,6 +15,32 @@ spec.loader.exec_module(perf)
 
 
 class PerfGates(unittest.TestCase):
+    def test_help_needs_no_live_environment(self):
+        script = Path(__file__).with_name("openshell-b2b3-perf-protocol.py")
+        result = subprocess.run(
+            [sys.executable, str(script), "--help"],
+            env={"PATH": os.environ.get("PATH", "")},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("B2B3_OLD_BIN", result.stdout)
+        self.assertNotIn("Traceback", result.stderr)
+
+    def test_missing_live_environment_is_clean_error(self):
+        script = Path(__file__).with_name("openshell-b2b3-perf-protocol.py")
+        result = subprocess.run(
+            [sys.executable, str(script)],
+            env={"PATH": os.environ.get("PATH", "")},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("missing required environment", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
     def diagnosis(self):
         now = datetime.now(UTC)
         return {"state": "policy_readable", "probe_ok": True, "identity_ok": True,

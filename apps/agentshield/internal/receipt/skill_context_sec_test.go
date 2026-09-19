@@ -311,3 +311,106 @@ func TestSECHoldResumeFailsWhenContextInvalidated(t *testing.T) {
 		t.Fatal("invalidated SEC must fail the resume authority check")
 	}
 }
+
+func TestSECHoldResumeRequiresSameVerifiedAttribution(t *testing.T) {
+	g := skillGrant(t, "hermes", skillID, skillVersion, skillHash)
+	g.OpenClawToolPolicy = &grant.OpenClawToolPolicy{Allow: []string{verifiedCall}, RequireApproval: []string{verifiedCall}}
+	for _, scenario := range []struct {
+		name       string
+		changeSEC  func(**SkillContextVerification)
+		wantStatus string
+	}{
+		{"unchanged", nil, "approved"},
+		{"missing", func(sec **SkillContextVerification) { *sec = nil }, "denied"},
+		{"revoked", func(sec **SkillContextVerification) {
+			*sec = &SkillContextVerification{Invalid: true, ReasonCode: "skill_context_revoked"}
+		}, "denied"},
+		{"different_context", func(sec **SkillContextVerification) {
+			changed := **sec
+			changed.ContextID = "sec-" + strings.Repeat("cd", 16)
+			*sec = &changed
+		}, "denied"},
+	} {
+		t.Run(scenario.name, func(t *testing.T) {
+			fx := newFixture(t, "block", g, false)
+			fx.eng.opts.SkillAttributionEnforced = true
+			sec := validSEC(g, skillID, skillVersion, skillHash)
+			fx.eng.opts.SkillContexts = func(p, a, s, taskID string, claim *SkillClaim) *SkillContextVerification {
+				if p == "hermes" && a == "inst_1" && s == "sess-1" {
+					return sec
+				}
+				return nil
+			}
+			r := req("hermes", verifiedCall, readCallPath())
+			d, err := fx.eng.Decide(r)
+			if err != nil || d.Action != ActionHold || d.Receipt.SkillAttribution == nil || d.Receipt.SkillAttribution.Status != SkillAttributionVerified {
+				t.Fatalf("verified SEC must produce a hold: %v %+v", err, d)
+			}
+			if _, err := fx.eng.ResolveHold(d.Receipt, true, "reviewer"); err != nil {
+				t.Fatal(err)
+			}
+			if scenario.changeSEC != nil {
+				scenario.changeSEC(&sec)
+			}
+			status, err := fx.eng.ReadHoldStatus(statusRequest(r, d))
+			if err != nil || status.Status != scenario.wantStatus {
+				t.Fatalf("approved hold status: %+v %v, want %s", status, err, scenario.wantStatus)
+			}
+			if scenario.wantStatus == "approved" {
+				reserveForRetry(t, fx, r, d, "retry-1")
+			} else {
+				_, err := fx.eng.ReserveHoldExecution(HoldExecutionReserve{
+					SchemaVersion: "hold-execution-reserve/v1", Platform: r.Platform, SessionID: r.SessionID,
+					AgentID: r.AgentID, Tool: r.Tool, OriginalToolCallID: r.ToolCallID,
+					RetryToolCallID: "retry-1", ActionID: d.Receipt.ActionID,
+					DecisionReceiptID: d.Receipt.ReceiptID, Params: r.Params,
+				})
+				if err == nil {
+					t.Fatal("changed SEC produced an execution reservation")
+				}
+			}
+		})
+	}
+}
+
+func TestInstalledSkillSECHoldCanReserveAfterApproval(t *testing.T) {
+	g := skillGrant(t, "hermes", skillID, skillVersion, skillHash)
+	g.Status = "approved"
+	g.AdmissionID = "adm-si-" + strings.Repeat("a", 64)
+	g.OpenClawToolPolicy = &grant.OpenClawToolPolicy{Allow: []string{verifiedCall}, RequireApproval: []string{verifiedCall}}
+	fx := newFixture(t, "block", nil, false)
+	fx.eng.opts.IntentLookup = func(platform, sessionID, agentID string) (*IntentContract, error) {
+		return &IntentContract{
+			IntentID: "intent-installed", TaskID: "task-intent", Principal: "user-1", AgentID: "inst_1",
+			Purpose: "read installed skill fixture", AllowedEffects: []string{"*"},
+			ValidUntil: "2099-01-01T00:00:00Z", AuthorityRevision: "rev-installed",
+			Digest: "digest-installed", SelectedGrant: g,
+		}, nil
+	}
+	fx.eng.opts.SkillContexts = secLookup(validSEC(g, skillID, skillVersion, skillHash), "hermes", "inst_1", "sess-1", "runtime-task")
+	r := req("hermes", verifiedCall, readCallPath())
+	r.TaskID = "task-intent"
+	r.RuntimeTaskID = "runtime-task"
+	d, err := fx.eng.Decide(r)
+	if err != nil || d.Action != ActionHold {
+		t.Fatalf("installed Skill call must hold: %v %+v", err, d)
+	}
+	if _, err = fx.eng.ResolveConfirmation(d.Receipt.ActionID, confirmationRequest(d)); err != nil {
+		t.Fatal(err)
+	}
+	statusReq := statusRequest(r, d)
+	statusReq.RuntimeTaskID = r.RuntimeTaskID
+	status, err := fx.eng.ReadHoldStatus(statusReq)
+	if err != nil || status.Status != "approved" {
+		t.Fatalf("unchanged approved installation was rejected: %+v %v", status, err)
+	}
+	reservation, err := fx.eng.ReserveHoldExecution(HoldExecutionReserve{
+		SchemaVersion: "hold-execution-reserve/v1", Platform: r.Platform, SessionID: r.SessionID,
+		AgentID: r.AgentID, TaskID: r.TaskID, RuntimeTaskID: r.RuntimeTaskID,
+		Tool: r.Tool, OriginalToolCallID: r.ToolCallID, RetryToolCallID: "retry-installed",
+		ActionID: d.Receipt.ActionID, DecisionReceiptID: d.Receipt.ReceiptID, Params: r.Params,
+	})
+	if err != nil || reservation.Status != "reserved" {
+		t.Fatalf("unchanged approved installation could not reserve: %+v %v", reservation, err)
+	}
+}

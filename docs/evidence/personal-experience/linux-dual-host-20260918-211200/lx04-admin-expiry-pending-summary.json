@@ -1,0 +1,22 @@
+{
+  "schema_version": "linux-lx04-admin-natural-expiry-pending/v1",
+  "recorded_at": "2026-09-18T17:46:30.047255+00:00",
+  "status": "pending_real_wall_clock",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "driver_sha256": "3bc3907735de42931d3aad6f9e8f2383c9afc2d047c3cbd416f81742526243af",
+  "private_seed_sha256": "560eb0fdb7f4eecc0a2387db1e0e196c3fbe83b0e1e6e4461dec59108c30d635",
+  "pre_expiry_signed_task_export_sha256": "238cb17e39d257f53009fd6f0d80f3036443662fd89db97dddd1f021aa4d988f",
+  "paired_at_utc": "2026-09-18T17:45:50.827239+00:00",
+  "verify_after_utc": "2026-09-19T05:45:52.827239+00:00",
+  "same_daemon_required": true,
+  "production_admin_ttl_seconds": 43200,
+  "worker_running_at_seed_audit": true,
+  "limitations": [
+    "Pre-expiry export and current live process identity were verified; expiry denial cannot be claimed until the real deadline passes.",
+    "The run uses a copied isolated state from a prior real OpenClaw task journey; it does not alter the original accepted evidence.",
+    "The private seed holds bearer and recovery cookie; it is ignored by Git and mode 0600."
+  ],
+  "release_acceptance": false,
+  "pre_expiry_signed_export_independently_verified": true,
+  "private_precheck_sha256": "a7fcee93847392512591f6b43cbc14912524fb310081e9233740fd05cc260753"
+}

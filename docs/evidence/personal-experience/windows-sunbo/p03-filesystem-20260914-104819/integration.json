@@ -1,0 +1,24 @@
+{
+  "schema_version": "windows-evidence-integration/v1",
+  "tested_candidate": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "test_execution_checkout": "973541733ccdb25d4578e56033901e4829ff257c",
+  "prior_pr": {
+    "number": 40,
+    "state_observed_before_new_commit": "MERGED",
+    "review_decision": "APPROVED",
+    "merged_at": "2026-09-14T02:23:00Z",
+    "merged_by": "maoyadongsh",
+    "final_head": "bd7276c2c3328d809b1a91a62ff15c0d252a0610",
+    "merge_commit": "61cf51aba02a521f9f1784af4da5d7e082300206",
+    "maintainer_followup_scope": "Launcher regression test and independent review record; no runtime change"
+  },
+  "new_evidence_branch": "codex/windows-filesystem-evidence-20260914",
+  "new_evidence_base": "df915ca21c25e04b1acbc81956e155f37ffd77e3",
+  "unchanged_from_candidate_to_new_base": [
+    "apps/agentshield",
+    "adapters/runtime/hermes-agentshield",
+    "scripts/personal-experience/platform_acceptance.py"
+  ],
+  "native_tests_rerun_after_base_change": false,
+  "identity_rule": "Docs-only followup preserves tested candidate and original observations; no new-main native acceptance claim"
+}

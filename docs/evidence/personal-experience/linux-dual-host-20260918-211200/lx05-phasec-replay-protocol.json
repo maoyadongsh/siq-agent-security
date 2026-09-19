@@ -1,0 +1,19 @@
+{
+  "schema_version": "linux-lx05-phasec-replay-protocol/v1",
+  "frozen_at": "2026-09-18T17:57:02.652159+00:00",
+  "private_plan_sha256": "2bbe547b7ebca472063e6a36020f55049cf49f9593fbc3955732c66c1a5db0e1",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "driver_sha256": "90a89143a83b5857264b75f88de1cc1f285470ca1cab9aa53845d615fdedaf73",
+  "node_sha256": "1ea16f5e8d590ca819f1db81e61a6bc4c8e7d8b69776c9236f8ebbf717113225",
+  "host_entry_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733",
+  "attempts": 3,
+  "expected_each": {
+    "journey_checks": 30,
+    "nested_update_checks": 31,
+    "phase_c_all_pass": true
+  },
+  "sample_policy": "Run three consecutive isolated journeys in order. Preserve every attempt and timeout. Do not retry or exclude any failure.",
+  "environment": "real OpenClaw 2026.5.12, real daemon, embedded UI, headless Chromium, isolated HOME per attempt; synthetic model and operator",
+  "purpose": "Revisit historical phase-c locator timeout without claiming finite runs prove root cause",
+  "release_acceptance": false
+}

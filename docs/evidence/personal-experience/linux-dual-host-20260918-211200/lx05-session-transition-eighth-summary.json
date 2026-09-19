@@ -1,0 +1,44 @@
+{
+  "schema_version": "linux-lx05-session-transition-summary/v2",
+  "recorded_at": "2026-09-19T01:14:59.657532+00:00",
+  "candidate_sha256": "a85c76b03292eafea5f92e10b2a5a87dc1d46a0c90563751796d3dc19f672c0e",
+  "source_binding_sha256": "163d5ded0c18b6a466b302f863edf534823882faf9ede1ea07ddddb0d4abfd31",
+  "host_os": "linux/arm64",
+  "repair": {
+    "scope": "browser admin-session transition ordering",
+    "behavior": "Ordinary requests started during pair/logout are retired before response status processing, including an old-bearer 401 that arrives before pairing commits.",
+    "web_client_source_sha256": "a5f4f665bab4e67d4f73032472216b0eccdba2cc82420e2f4d11d82da9b675c3",
+    "web_client_test_sha256": "c9c7269e8fdc9e465cbf8502262c02299ff17d5ea41c167a225739b50ce8ca69"
+  },
+  "component_test": {
+    "command": "npm test -- --run src/local/api.test.ts",
+    "test_files": 1,
+    "tests": 16,
+    "passed": true,
+    "coverage": "responses before/during pair and logout; early old-bearer 401 cannot emit expiry or cancel successful pairing; signed-out request has no Authorization"
+  },
+  "full_web_validation": {
+    "command": "npm test -- --run && npm run build && npm run build:local",
+    "test_files": 26,
+    "tests": 117,
+    "tests_passed": true,
+    "enterprise_build_passed": true,
+    "local_embedded_build_passed": true
+  },
+  "real_browser_smoke": {
+    "driver_sha256": "9ba41dbc127f2e30416858b9aff3f7024d78472a120dc25f08878c9b78ae2693",
+    "private_report_sha256": "261134495469b629ad70de6a13f0add458af9c6cae521e4ac86b4e020c0a20c1",
+    "browser_version": "145.0.7632.0",
+    "checks": 2,
+    "passed": true,
+    "old_401_preserves_new_session": true,
+    "duplicate_pair_submit_single_request": true
+  },
+  "supersedes_candidate_sha256": "06ffd3288026799e82f0b7be4609dc1caf8927441643a473eece321d5687ca77",
+  "limitations": [
+    "The exact early-401 transition ordering is deterministic module evidence; the real-browser smoke rechecks the existing stale-401 and duplicate-submit product paths.",
+    "This scoped UI repair candidate does not inherit sixth-candidate systemd, OpenShell D05/B3, R07/R04 or performance acceptance.",
+    "Headless Chromium is not desktop visual or notification acceptance."
+  ],
+  "passed": true
+}

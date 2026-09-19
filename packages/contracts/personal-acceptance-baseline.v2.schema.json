@@ -148,7 +148,8 @@
                     "controlled_start",
                     "unavailable",
                     "unverified",
-                    "blocked"
+                    "blocked",
+                    "out_of_scope"
                   ]
                 },
                 "classification": {
@@ -201,7 +202,8 @@
                   "enum": [
                     "environment_unavailable",
                     "upstream_runtime_unconfirmed",
-                    "host_capability_missing"
+                    "host_capability_missing",
+                    "product_scope_excluded"
                   ]
                 },
                 "required_evidence": {
