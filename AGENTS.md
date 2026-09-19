@@ -59,6 +59,10 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 | 适配器 | 每平台一条「装 → 扫 → 授 → 越权被拒」E2E + fail-closed 负向（服务不可达时 block 模式必须拒绝） |
 | Skill 包 | 用自建二进制 `admit` 自扫描不得 quarantine；四平台安装验证 |
 
+## 当前仓库组织实施（2026-09-19）
+
+用户已要求以仓库架构调整方案为持续目标，允许在本仓库实施导航、索引、路径守卫与发行工具的适用 RA 批次。执行入口为 [docs/development/current.md](docs/development/current.md)，整理进度为 [RA 台账](docs/development/reorganization-progress.md)。历史阶段指令按其冻结对象和授权周期适用，不把旧 V5 停止开发句子覆盖本次明确授权；原安全不变量、历史签名与证据保护继续适用。产品功能、平台支持与发行身份不由目录整理自动改变。工作树删除不属于本轮范围。
+
 ## 当前开发模板
 
 当前目标为 [Final Release & Submission Freeze V5 原文](docs/hackathon/final-release-requirements-v5.md)。

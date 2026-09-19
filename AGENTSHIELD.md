@@ -2,10 +2,10 @@
 
 本地单文件门禁官：盘点 Agent 资产、准入未知 Skill、签发最小权限、给每次工具调用签回执。
 
-**模型不判断 Skill 是否安全。** 裁决只由 `siq-agent-security` 二进制产出。产品说明见根 [`README.md`](./README.md)；本文件是本机操作与夹具步骤。企业控制面见 [`docs/control-plane.md`](./docs/control-plane.md)。本地模式只需 `serve`，不必启动 PostgreSQL / `:8600`。
+**模型不判断 Skill 是否安全。** 裁决只由 `siq-agent-security` 二进制产出。产品说明见根 [`README.md`](./README.md)；本文件是本机操作与夹具步骤。企业控制面见 [`docs/control-plane.md`](./docs/control-plane.md)。本地模式首次使用 `start` 初始化并启动，不必启动 PostgreSQL / `:8600`。
 
 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)  
-分支：`main`（本地产品与 Trusted Intent V2 核心已合入）。研究演示与发布入口见根 README；本地源码构建及 Skill 接入步骤见下文。
+分支：`main`。已签名客户端为 [0.3.0 正式版](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0)，源码固定 `83fde2d`；安装直接按[签名包指南](docs/signed-release-packaging.md)，不需要本地编译。下文源码开发命令面向当前检出，完整产品操作见[个人手册](docs/personal-client-operation-guide-20260916.md)，持续开发见[当前任务](docs/development/current.md)。
 
 Linux 个人体验开发版可在构建后使用 `./siq-agent-security setup --confirm-setup` 一次完成初始化、用户后台注册和启动；加 `--open-ui` 可在就绪后请求打开浏览器。再执行 `./siq-agent-security pair` 获取配对码，打开输出的管理地址。可选 `--port N` 指定初始端口；重复执行复用同一健康服务。需要 systemd 用户会话，尚不启用登录自启；Windows/macOS 的开发中 setup 入口见文末，尚待实机验收；也可使用下面的前台 `start`。
 
@@ -30,38 +30,38 @@ export SIQ_AGENT_SECURITY_STATE_DIR="${SIQ_AGENT_SECURITY_STATE_DIR:-$(pwd)/.sta
 
 浏览器打开 `http://127.0.0.1:47611`，在页面输入终端打印的**管理配对码**（5 分钟内单次有效）。适配器决策 token 在 `$SIQ_AGENT_SECURITY_STATE_DIR/token`（0600），不要贴进聊天或截图。当前是同 UID 桌面模式：不能防止同一用户下的 Agent 直接跑 CLI。
 
-以下是已构建本地二进制后，将 Skill 接入 Hermes / OpenClaw / WorkBuddy 的步骤。在仓库根目录执行，并保持与 `serve` 相同的状态目录环境变量：
+以下是在可信源码构建后接入适配器的开发步骤。在另一个终端回到仓库根目录，明确使用前台 `start` 的同一状态目录。Linux 当前范围是 Hermes/OpenClaw；WorkBuddy 仅在 macOS/Windows 范围内。安装钩子会修改宿主配置，应先预览并核对目标实例。
 
-个人体验开发版的 `start` 将初始化和启动合为一步，无需 Python。新状态默认 block；已有配置保留原有模式与端口。已有匹配服务时返回健康 JSON 并退出，可用 `pair` 生成新配对码；不同状态目录或错误服务占用端口时拒绝启动。新服务在前台运行，保持终端打开，Ctrl+C 正常停止；尚不代表后台注册或注销保活完成。智能体仍需用户确认接入与权限。
+个人体验开发版的 `start` 将初始化和启动合为一步，无需 Python。新状态默认 block；已有配置保留原有模式与端口。已有匹配服务时返回健康 JSON 并退出，可用 `pair` 生成新配对码；不同状态目录或错误服务占用端口时拒绝启动。新服务在前台运行，保持终端打开，Ctrl+C 正常停止；前台启动不代表已经注册后台服务或启用注销保活。智能体仍需用户确认接入与权限。
 
 需要分开执行时使用 `init --port 47611` 后运行 `serve`；已有端口不同会报错，初始化不修改已有配置或实例身份。服务运行期间不要重新初始化，可用 `status` 检查。历史发布二进制可能没有 `init`/`start`，以上命令对应当前源码开发版，不改变历史制品身份。
 
 ```bash
-export SIQ_AGENT_SECURITY_BIN="$(pwd)/apps/agentshield/siq-agent-security"
-export SIQ_AGENT_SECURITY_STAGE_DIR="$HOME/.cache/siq-agent-security-stage"
-skills/siq-agent-security/scripts/bootstrap.sh   # Windows: bootstrap.ps1
-skills/siq-agent-security/scripts/adapter.sh hermes  # 按实际平台替换；Windows: adapter.ps1
+export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/apps/agentshield/.state"  # 或刚才明确使用的目录
+./apps/agentshield/siq-agent-security adapter preview hermes install
+# 核对目标配置及预览后，由操作者执行：
+./apps/agentshield/siq-agent-security adapter install hermes
 ```
 
-bootstrap 会用内置公钥校验 `skill-manifest.json` 签名。本地 `go build` 的二进制哈希通常与清单里的发布钉不一致，默认只告警；要强制钉死则设 `SIQ_AGENT_SECURITY_REQUIRE_PINNED=1`。
+`skills/siq-agent-security/` 是开发源码，不附签名清单；直接复制它并执行 bootstrap 会拒绝。源码调试使用自己构建的 CLI；签名安装使用同一 Release 的 Skill 与程序，按[安装指南](docs/signed-release-packaging.md)先验签，再 `start`。不要把旧 fixture 的 manifest 复制回源码或降低校验来运行修改后的 Skill。
 
-清单里的 `binary.artifacts[].url` 指向 GitHub Release `siq-agent-security-v0.2.0`。bootstrap **默认不下载**；找不到本地二进制且显式设置 `SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1` 时，才下载并校验清单制品。该 Release 早于 V2 增量；体验当前代码应按上面的步骤从 main 构建，默认显示 `0.0.0-dev`。
+签名包 bootstrap 在已有配置上调用 `serve`。显式允许 `SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1` 才可从已验证清单的 URL 下载程序；完整包可离线使用自带程序。可信公钥来自已有发行信任根，当前版本和程序 pin 来自实际签名清单；不是从源码 frontmatter 或历史 0.2.0 URL 推断。
 
 ## 档位（诚实）
 
-Linux 开发版可在初始化后运行 `siq-agent-security service-unit` 导出 systemd 用户服务配置。先将二进制放在长期保留的位置，再导出；配置固定当前二进制和状态目录。可以将输出保存到新的暂存 `.service` 文件，用 `systemd-analyze --user verify <文件>` 检查。导出命令不注册、启动或覆盖已有服务。自动安装和可恢复卸载仍在开发，现阶段不要把配置导出当作后台已启用。
+Linux 开发版可在初始化后运行 `siq-agent-security service-unit` 导出 systemd 用户服务配置。先将二进制放在长期保留的位置，再导出；配置固定当前二进制和状态目录。可以将输出保存到新的暂存 `.service` 文件，用 `systemd-analyze --user verify <文件>` 检查。导出命令不注册、启动或覆盖已有服务。已有 `setup`、`teardown` 与服务生命周期命令；配置导出本身仍不代表后台已启用，具体候选验收见[当前任务](docs/development/current.md)。
 
 配置关闭 stdout/stderr 的 journal 输出，配对使用相同状态目录的 `pair` 命令。默认不自动重启；30 秒停止超时可能触发系统强杀，须区分正常停止和需要状态恢复的退出。是否注销后继续运行取决于用户服务管理器/linger 配置，本命令不修改该设置。
 
-机器可读事实源：[`skills/siq-agent-security/skill-manifest.json`](./skills/siq-agent-security/skill-manifest.json) 的 `support_matrix`。当前**没有任何一行 `supported`**。2026-09-05 已在 DGX Spark（linux/arm64）归档：Hermes 实机插件 L0–L2（[`hermes-linux-2026-09-05/`](./docs/evidence/agentshield/hermes-linux-2026-09-05/)）、OpenClaw 隔离 HOME 的 `policy-exec` + 插件形态 decide（[`openclaw-linux-2026-09-05/`](./docs/evidence/agentshield/openclaw-linux-2026-09-05/)）、CodeBuddy 隔离 HOME 的真实 `hook codebuddy`（[`codebuddy-linux-2026-09-05/`](./docs/evidence/agentshield/codebuddy-linux-2026-09-05/)）。grant 均由人类 `--approve-as maoyd` 批准并 deploy，授后越权为 deny，`verify` 通过。L3 需验明的 OpenShell 网关，可选、不宣称。OpenShell 由 PATH 或 `SIQ_AS_OPENSHELL_ENV_SH` 发现 CLI，但默认不得把未验明的网关（常见：端口被 OpenClaw 占用）当成 L3；矩阵在重签前不改 `supported`。
+安装资产的机器可读声明来自该版本包内已验签的 `support_matrix`；源码默认声明见 [matrix.go](apps/agentshield/internal/skillmanifest/matrix.go)，产品新增接入范围见[平台范围决策](docs/personal-platform-scope-decision-20260917.md)与[首页支持状态](README.md#当前产品方向与支持状态)。当前没有任何一行 `supported`，正式 Release 标签不改变这一点。
 
-| 平台 | Linux | macOS | Windows | 说明 |
-| --- | --- | --- | --- | --- |
-| Hermes | L0–L3 experimental | L0–L2 experimental | L0–L2 experimental | Linux L0–L2 有 Spark 证据；L3 可选未宣称 |
-| OpenClaw | L0–L3 experimental | L0–L2 experimental | L0–L2 experimental | Linux arm64 公共 CLI 托管会话已验证；`policy-exec` 组件证据不证明原生安装拦截，顶层 installPolicy 不受支持；其他 OS 原生验收待完成 |
-| CodeBuddy | L0–L2 experimental | L0–L2 experimental | L0–L2 experimental | linux `hook codebuddy` 证据已归档；非 GUI 客户端；无 L3；矩阵不改 |
-| Trae | L0 audit_only | L0 audit_only | L0 audit_only | 无工具钩子，不能阻断 |
-| Claude Code / Codex | L0 experimental | L0 experimental | L0 experimental | 非本轮 |
+| 当前范围 | 证据与限制 |
+| --- | --- |
+| Linux / OpenClaw、Hermes | 0.3.0 的 Linux ARM64 安装链路已实测；amd64 为构建/验签。宿主阶段证据另绑定候选，原版与固定补丁副本分开 |
+| macOS / OpenClaw、Hermes、WorkBuddy | 已有阶段实现，0.3.0 提供 arm64 程序；本版原生安装/升级、同候选宿主复测与 Apple 公证仍待 |
+| Windows / OpenClaw、Hermes、WorkBuddy | 已有任务/权限/恢复实现，0.3.0 提供 amd64 程序；本版原生验收仍待。历史 OpenClaw WSL Agent 不等于 Windows 原生 |
+| 已排除的新接入 | CodeBuddy 全平台、WorkBuddy/Linux 不再新增；保留历史查看、拒绝、撤销、卸载与恢复能力 |
+| 历史其他探测项 | Trae/Claude Code/Codex 的库存或 L0 记录不构成本期产品交付承诺 |
 
 L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网络策略下发。
 
@@ -73,7 +73,7 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 - siq-agent-security 会发现 PATH 上的 `openshell`，但**不会**执行 `openshell gateway start`，也不会猜测端口或改别人的网关
 - 接入已有 OpenShell（例如 research-engine 的 `siq-openshell-dev`）时设 `SIQ_AS_OPENSHELL_ENV_SH` 指向其 `scripts/openshell/env.sh`；不要改对方仓库。siq-agent-security 不 `gateway start`
 - Windows L3 需要 WSL2 / Docker；本快照不宣称
-- GitHub Release tag `siq-agent-security-v0.2.0`；当前 V2 复现以 main 源码构建为准。bootstrap 下载需显式开启。操作清单：[`docs/agentshield-release-checklist-v1.md`](./docs/agentshield-release-checklist-v1.md)
+- 当前签名包为 0.3.0；历史 0.2.0 fixture 只用于回归。发行流程见[打包指南](docs/signed-release-packaging.md)，原[发布检查表](docs/agentshield-release-checklist-v1.md)保留其历史范围。
 - 批准 grant 由操作者完成；离线 CLI 需要 `grant challenge` 产生的一次性挑战及 `--approve-as`，服务运行时使用控制台 / 管理 API。SKILL.md 禁止模型批准；该流程不构成同 UID 隔离
 - 控制台管理入口需要 `serve` 终端里的一次性配对码；`/ui-config.json` 不含凭据；适配器决策 token 不能调用管理接口
 - 当前桌面模式是 `desktop-same-uid`：同 OS 用户下的 Agent 仍可读状态目录并执行 CLI，**不**宣称“无法自批”
@@ -111,7 +111,7 @@ unset TOKEN
 
 ## 台账演示（加分主界面，非前置依赖）
 
-三步对抗之后，打开 `http://127.0.0.1:47611`（无需登录、不必起 PostgreSQL / `:8600`）：
+三步对抗之后，打开 `http://127.0.0.1:47611`（需要管理配对，不必起 PostgreSQL / `:8600`）：
 
 1. **智能体资产** `/agents`：本机平台、Hermes profile / OpenClaw agent、Skill；详情可确认/驳回，准入后起草签发，批准前可改五域。
 2. **权限视图** `/permissions`：五态分色。无 OpenShell 时「有效」列应为空；`deployed` grant 仍是声明态。filesystem / process 永不标有效。有 L3 时可跑漂移检测。
@@ -139,8 +139,8 @@ unset TOKEN
 | 路径 | 作用 |
 | --- | --- |
 | `apps/agentshield/` | Go 单文件二进制（仅标准库） |
-| `skills/siq-agent-security/` | SKILL.md、bootstrap、evals、签名清单 |
-| `adapters/runtime/` | Hermes / OpenClaw / CodeBuddy 薄适配器 |
+| `skills/siq-agent-security/` | 可变 SKILL.md、bootstrap、evals；签名清单仅在发行包中 |
+| `adapters/runtime/` | 宿主薄适配器与旧接入安全退出代码；当前范围见上表 |
 | `packages/contracts/` | admission / grant / receipt / skill-manifest schema |
 | `apps/web/src/local/` | 本地控制台；`npm run build:local` 嵌入二进制 |
 | `apps/control-api/` | 企业控制面（评委不必跑） |
@@ -149,8 +149,11 @@ unset TOKEN
 
 ```bash
 cd apps/agentshield && gofmt -l . && go vet ./... && go test ./...
-./siq-agent-security manifest-verify ../../skills/siq-agent-security/skill-manifest.json
-SIQ_AGENT_SECURITY_STATE_DIR=$(mktemp -d) ./siq-agent-security admit ../../skills/siq-agent-security
+go build -trimpath -o siq-agent-security ./cmd/agentshield
+# 使用独立状态，避免影响已有服务；以下检查可信开发源码。
+export SIQ_AGENT_SECURITY_STATE_DIR="$(mktemp -d)"
+./siq-agent-security init
+./siq-agent-security admit ../../skills/siq-agent-security
 # 期望 admit_with_conditions，不得 quarantine
 ```
 
@@ -159,7 +162,7 @@ SIQ_AGENT_SECURITY_STATE_DIR=$(mktemp -d) ./siq-agent-security admit ../../skill
 
 执行 `siq-agent-security init` 后，可执行 `siq-agent-security service-prepare`，在状态目录生成签名归属记录 `user-service.json` 和实例专属 `.service` 文件。重复执行会复验已有记录；中断后可补齐缺失文件。未知目标、内容漂移或二进制位置变化会明确失败，不自动覆盖。
 
-此命令仅准备配置，尚不注册或启动系统服务；记录不是运行状态。已有服务持有写锁时需先完成正常停止。当前原生单命令运行入口仍为 `siq-agent-security start`（前台）；后台安装与生命周期入口继续开发。
+此命令仅准备配置，尚不注册或启动系统服务；记录不是运行状态。已有服务持有写锁时需先完成正常停止。前台入口为 `start`；后台编排使用 `setup`，各原语及其验收范围见下文和当前操作手册。
 
 
 执行 `siq-agent-security service-register` 可注册 Linux 当前用户服务，`--runtime` 仅临时注册。命令会核对签名配置与系统加载来源；注册后尚未启动，也未启用登录自启。失败时保留配置供修复后重试，不手工删除未知服务或记录。完整程序卸载仍在开发；不同注册范围或程序位置变化暂不自动迁移。
@@ -173,13 +176,13 @@ Linux 已注册服务可用 `siq-agent-security service-start` 启动，`siq-age
 
 ### 原生制品暂存（升级准备）
 
-`siq-agent-security client-stage --manifest FILE --binary FILE` 仅接受既有发行根签名清单，并校验当前系统对应二进制的大小与摘要。验证后暂存到状态目录独立版本目录；不会执行候选、停止保护或切换版本。没有绕过验签的开发参数；升级兼容性检查与切换恢复仍在开发。
+`siq-agent-security client-stage --manifest FILE --binary FILE` 仅接受既有发行根签名清单，并校验当前系统对应二进制的大小与摘要。验证后暂存到状态目录独立版本目录；不会执行候选、停止保护或切换版本。没有绕过验签的开发参数；升级兼容性检查与切换恢复使用下列独立命令。
 
 
-升级前可执行 `siq-agent-security client-upgrade-check --manifest FILE --binary FILE`。它要求发行方签名的 v2 无迁移兼容声明并检查候选内容；v1 仍可暂存，但不能通过该预检。成功不代表已批准或切换版本。发行准备工具只有显式 `release-manifest --client-compatible` 才生成 v2；旧 Skill 引导脚本与冻结 v1 包保持原协议。
+升级前可执行 `siq-agent-security client-upgrade-check --manifest FILE --binary FILE`。它校验发行方签名、客户端兼容声明及候选内容。当前 `release-manifest --client-compatible` 生成 v3，包含状态读写兼容范围；v2 仅在实际状态兼容条件满足时使用，v1 不通过升级预检。成功不代表已批准或切换版本；旧签名包保持原协议与身份。
 
 
-Linux 已注册服务与 macOS 已注册 LaunchAgent 可执行 `siq-agent-security service-upgrade --manifest FILE --binary FILE --confirm-upgrade`。候选必须通过 v2 发行签名/兼容预检；确认后会短暂停止保护，block 模式下受控操作暂时拒绝。失败输出的事务 ID 可配合同一候选及 `--recover ID` 前滚恢复；不得替换目标。该流程不回滚台账。显式 `service-rollback` 可把已完成切换恢复到原事务源配置。macOS 使用独立的 `local-launch-agent-switch/v1` 日志切换 `<label>.plist` 与 `launch-agent.json`，随后对同一注册链接 `bootout`→`bootstrap`→`kickstart` 使 launchd 读到新程序。
+Linux 已注册服务与 macOS 已注册 LaunchAgent 可执行 `siq-agent-security service-upgrade --manifest FILE --binary FILE --confirm-upgrade`。候选必须通过发行签名及实际状态兼容预检（v2/v3 的适用范围分别检查）；确认后会短暂停止保护，block 模式下受控操作暂时拒绝。失败输出的事务 ID 可配合同一候选及 `--recover ID` 前滚恢复；不得替换目标。该流程不回滚台账。显式 `service-rollback` 可把已完成切换恢复到原事务源配置。macOS 使用独立的 `local-launch-agent-switch/v1` 日志切换 `<label>.plist` 与 `launch-agent.json`，随后对同一注册链接 `bootout`→`bootstrap`→`kickstart` 使 launchd 读到新程序。
 
 若候选因端口冲突等原因启动失败，先排除冲突，再使用同一候选和事务 ID 执行 `service-upgrade ... --confirm-upgrade --recover ID`。只有已停止/失败且无主进程的单位可恢复；活跃写锁或无法确认的进程状态会被拒绝，勿手工删除锁。
 
@@ -194,7 +197,7 @@ Linux 已注册服务与 macOS 已注册 LaunchAgent 可执行 `siq-agent-securi
 
 日常可运行 `siq-agent-security ui` 打开当前实例的管理页面，或 `ui --print` 仅输出地址。两者都会先验证服务身份和状态目录，不生成配对码；首次连接仍需单独执行 `pair`。浏览器无法打开时可手动访问输出地址，服务继续运行。
 
-Linux 正式发行安装入口为 `siq-agent-security client-install --manifest RELEASE.json --binary DOWNLOADED --confirm-install`，可加 `--port N`、`--open-ui`。它先校验发行签名与兼容声明，再保存到状态目录的稳定程序路径，由该程序执行后台 setup；安装成功显示后续管理应使用的程序路径。已有其他版本请走 `service-upgrade`，此入口不替换未知服务、不修改 PATH 或启用登录自启。当前为源码开发能力，正式签名制品安装验收仍待完成。
+Linux 正式发行安装入口为 `siq-agent-security client-install --manifest RELEASE.json --binary DOWNLOADED --confirm-install`，可加 `--port N`、`--open-ui`。它先校验发行签名与兼容声明，再保存到状态目录的稳定程序路径，由该程序执行后台 setup；安装成功显示后续管理应使用的程序路径。已有其他版本请走 `service-upgrade`，此入口不替换未知服务、不修改 PATH 或启用登录自启。当前签名包存在且前台首次启动已在 Linux ARM64 验证；该后台 client-install 与升级完整旅程仍需按同一发行候选验收。
 
 Linux 可用 `service-login --enable --confirm-enable` 明确启用当前实例的用户登录自启，`service-login --disable` 关闭。操作不启动/停止当前进程；默认 setup 的持久注册可用于后续登录，`--runtime` 注册只在本登录会话有效。注销前先关闭自启，再正常停止并注销服务；未知启动入口不会被覆盖或删除。
 
@@ -218,11 +221,11 @@ macOS `launch-agent-stop --confirm-stop` 停止当前归属实例并保留配置
 
 macOS 停止服务后，可执行 `launch-agent-unregister --confirm-unregister` 移除当前用户域注册。命令保留程序、配置、密钥和历史；再次使用先 `launch-agent-register`，再 `launch-agent-start --confirm-start`。注销失败保留现场，可检查状态后重试；不会自动终止仍在运行的实例。完整流程仍待 macOS 实机验证。
 
-macOS 开发入口现可使用 `setup --confirm-setup [--port N] [--open-ui]` 串联初始化、注册和启动。须在非 root 的 GUI 用户会话中运行；`--runtime` 仅适用于 Linux。健康的已归属实例会复用；任一步失败保留现场，排查后可重试。此编排尚待 macOS 实机验收，不代表已提供正式安装包或登录自启。
+macOS 开发入口现可使用 `setup --confirm-setup [--port N] [--open-ui]` 串联初始化、注册和启动。须在非 root 的 GUI 用户会话中运行；`--runtime` 仅适用于 Linux。健康的已归属实例会复用；任一步失败保留现场，排查后可重试。此编排尚待 macOS 实机验收，不代表 macOS 正式包已完成原生安装验收或启用登录自启。
 
 macOS 现可执行 `teardown --confirm-teardown` 串联停止与注销，并保留程序、配置、密钥和历史。停止未确认会阻止后续注销；已停止但注销中断可重试。退出后智能体钩子仍在，block 模式请求会拒绝；再次使用可运行 `setup --confirm-setup`。此完整旅程仍待 macOS 实机验收。
 
-后台启动器可使用 `serve --state-dir /absolute/canonical/path` 显式绑定已初始化实例；该参数优先于新旧状态目录环境变量，不修改环境。路径必须已存在且规范，不接受相对路径或符号链接别名；不指定则保留既有默认行为。Windows 计划任务接入将使用此入口，任务注册尚未实现。
+后台启动器可使用 `serve --state-dir /absolute/canonical/path` 显式绑定已初始化实例；该参数优先于新旧状态目录环境变量，不修改环境。路径必须已存在且规范，不接受相对路径或符号链接别名；不指定则保留既有默认行为。Windows 计划任务接入使用此入口，任务准备、注册与生命周期命令见下文；同候选原生验收单独记录。
 
 Windows 开发入口 `task-xml` 只读导出当前用户计划任务配置：绑定当前用户 SID、当前程序与实例目录，最低权限、无自动触发器。路径暂限本地盘符规范路径，不支持 UNC/设备路径或百分号环境展开。导出不会注册或启动任务；签名归属、任务生命周期及 Windows 实机验收尚待完成。
 

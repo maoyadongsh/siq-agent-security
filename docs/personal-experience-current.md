@@ -1,3 +1,5 @@
+> **入口已迁移（2026-09-19）：请从[当前开发导航](development/current.md)选择仍有效的任务及平台台账。以下内容保留为各历史阶段交接，不再叠加新的当前执行指令。**
+
 # 个人体验当前交接
 
 > **当前执行入口：[personal-experience-lan-team-next-development-taskbook-20260914-112027.md](personal-experience-lan-team-next-development-taskbook-20260914-112027.md)（v4.0）。** PR #45 已合入 main `4464dfbc8e66c8ec1fb2590b286351595fcd9667`，最终 HEAD 的 38 项 CI 通过、3 项按配置跳过。后续从新 main 新建 GLM 工作树，优先 R01 可信归属和 R02 审批重试；原 GLM 目录保留，不整体导入。下方旧入口均为历史。
