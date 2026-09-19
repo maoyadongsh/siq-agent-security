@@ -2,6 +2,8 @@
 
 **当前唯一产品候选：`6841a4957b179484f8dcd0faa9dddccb1f9a7ade`。** 已修复 WorkBuddy 安装载荷双硬链接、管理链和运行链响应期限，并补充固定脱敏的登记超时阶段信息。保持全部权限、签名、安装内容复验和 fail-closed；不自动重试。最新构建及归档见 [候选摘要](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/enrollment-stage-unsigned-candidate.json)。
 
+**最终收口提交：`2818c760a0b80c34e0223d6a29be6ae3f3a14e91`（基于交付提交 `2cb11a687dfdcb121aee8308a15ecec93ff4ecea`，规范化 Windows 测试私密状态路径初始化，产品源码与候选二进制未变）。**
+
 **三宿主均已有真实的最小 Skill 调用证据，完整任务书未全项验收。** 当前 `6841a49` 在 WorkBuddy 5.5.6 默认权限、快速 GLM-5.3-Flash 下完成“真实会话登记 → 未绑定拒绝 → 明确绑定 → 原生 Read 读取已安装 Skill → Write 一次写入”。独立验签 25 条链记录，其中本轮为 20–24 的 5 条真实回执，另验签 6 份身份/SEC/基础授权文档；23 字节文件内容完全一致。临时授权、身份、SEC、Skill、钩子和自有进程均已清理。见 [本候选真实调用与清理证据](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/native-6841a49-report.json)。
 
 **使用与验收边界：** OpenClaw 为本机 OpenClawGateway WSL Agent，Hermes 为 Windows 原生 CLI，两者保留各自候选的实测身份；WorkBuddy 本轮是读取已安装 SKILL.md 后执行受保护工具，不能据此承诺 slash/Skill 工具入口、桌面更新或完整审批恢复。此前登记超时全部保留；单轮成功不证明稳定性或时延保证。组件生命周期验证与真实调用分开记录。`6841a49` CI 为 38 成功、2 跳过、2 失败，失败仅为 #87 的旧清单摘要检查；见 [CI 核验](evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/ci-6841a49.json)。#83 保持 draft，正式签发集中交接 #87；用户已解除模型任务额度限制。
