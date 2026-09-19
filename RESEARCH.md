@@ -1,14 +1,7 @@
 # SIQ Agent Security 研究入口
 
-本页把研究问题、文献线索、产品机制和可核验的实验连接起来。产品的安装与运行说明见 [README](README.md)；[复现指南](REPRODUCIBILITY.md)解释如何复算固定语料。这里的关联用于定位材料，不表示某篇文献验证了 SIQ 的产品效果，也不替代论文原文的审读或引用信息核验。
+研究问题、文献与实现关联、协议和结果的唯一总览已迁至 [research/README.md](research/README.md)。本文件保留为稳定入口。
 
-| 研究问题 | 文献与理论线索 | 当前实现入口 | 评价方法、结果与边界 |
-| --- | --- | --- | --- |
-| Agent 的工具提议如何受独立授权约束？ | [Agent Security is a Systems Problem](<Frontier References on Agent Security/2605.18991v2-Agent Security is a Systems Problem.pdf>)；[Symbolic Guardrails](<Frontier References on Agent Security/2604.15579v2-Don't Make Models Guess Security and Safety：Symbolic Guardrails for Domain-Specific AI Agents.pdf>) | [本机安全规格](docs/agentshield-dev-spec-v1.md)；[企业合同](packages/contracts/) | [研究问题 RQ1](docs/research/research-questions.md)；[固定控制与证据](docs/research/claims-evidence.md)。固定样本不能外推一般防护率。 |
-| 同一参数值的来源是否改变授权结果？ | [Aligning Provenance with Authorization](<Frontier References on Agent Security/2605.26497v1-Aligning Provenance with Authorization：A Dual-Graph Defense for LLM Agents.pdf>)；[Provenance-Bound Context Attestation](<Frontier References on Agent Security/ssrn-6938859-Provenance-Bound Context Attestation and Deterministic Policy Authorization for Agentic AI Actions.pdf>) | [Secure Agent](apps/secure-agent/)；[本机运行时](apps/agentshield/) | [RQ2 与同值不同源对照](docs/research/research-questions.md)；[主张—证据映射](docs/research/claims-evidence.md)。已配置来源身份的对照不等于通用语义来源识别。 |
-| 工具声称成功与实际效果怎样区分？ | [Beyond Binary Success](<Frontier References on Agent Security/ssrn-7035858-Beyond Binary Success：Propagation Profiles for LLM Agent Security Traces.pdf>)；[SafeClawBench](<Frontier References on Agent Security/2606.18356v1-SafeClawBench：Separating Semantic, Audit-Evidence, and Sandbox Harm in Tool-Using LLM Agents.pdf>) | [效果证据与回执规格](docs/agentshield-dev-spec-v1.md)；[固定语料](benchmarks/hackathon/) | [RQ3](docs/research/research-questions.md)；[受控接收端对照](docs/research/claims-evidence.md)。未观察到效果与证明没有效果是两种不同状态。 |
-| 多宿主与隔离后端的能力如何分层声明？ | [Agent Security Needs Redefinition](<Frontier References on Agent Security/2607.22024v1-Agent Security Needs Redefinition through a Holistic Framework.pdf>)；[Two-Plane Approach](<Frontier References on Agent Security/Runtime Security for Agentic Systems A Practical Two-Plane Approach for OpenClaw-Class Agents.pdf>) | [运行时适配器](adapters/runtime/)；[OpenShell 接入](apps/agentshield/internal/openshell/)；[平台范围决策](docs/personal-platform-scope-decision-20260917.md) | [Linux 双宿主当前候选任务书](docs/linux-dual-host-integration-development-taskbook-20260918-205119.md)与[阶段进度](docs/linux-dual-host-progress-20260918.md)。配置、读回、加载和行为拦截分别验收；Linux 交付范围只有 OpenClaw/Hermes。 |
+[文献目录](research/literature/README.md) · [复现指南](REPRODUCIBILITY.md) · [测评与独立复现](evaluations/README.md) · [产品首页](README.md)
 
-完整的本仓研究设计、数据口径、技术报告、历史失败与复现记录由 [研究索引](docs/research/README.md)维护；原始文献文件保留在根目录的 [Frontier References on Agent Security](<Frontier References on Agent Security/>)。该目录包含不同来源和发表状态的材料，文件名不构成已同行评审或允许再分发的声明。引用前应核查原文、版本和权属；本仓的软件引用政策见 [citation policy](docs/research/citation-policy.md)。
-
-当前产品代码合并、组件测试、真实宿主验收与正式发行分别记账。贡献者实验也不自动等同独立第三方测评。[主张—证据表](docs/research/claims-evidence.md)和各批次原始报告保留候选、语料、失败与限制；没有 DOI、论文接受或普遍安全保证的声明。
+历史正文与证据路径保持，研究源码版和产品发行版分别引用，不将目录整理计作新实验或平台验收。

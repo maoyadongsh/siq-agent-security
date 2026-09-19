@@ -640,6 +640,260 @@
         "repository guard",
         "focused negative tests"
       ]
+    },
+    {
+      "path": "evaluations/catalog.json",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "evaluations/external/README.md",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "evaluations/gaps.md",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "evaluations/templates/README.md",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "platforms/linux/README.md",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "platforms/macos/README.md",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "platforms/support-matrix.md",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "platforms/windows/README.md",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "research/literature/README.md",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "research/literature/catalog.json",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "scripts/repository/catalogs.py",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": "scripts/repository/test_catalogs.py",
+      "action": "add",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ]
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "action": "edit",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ],
+      "source_blob": "2093adfccea14d97e0228f4b51bfaf1e2f558444"
+    },
+    {
+      "path": "docs/research/README.md",
+      "action": "edit",
+      "reason": "RA-02/03/04 navigation and curated indexes; no runtime or frozen payload move",
+      "consumers": [
+        "README.md",
+        "research/README.md",
+        "platforms/README.md",
+        "evaluations/README.md",
+        "scripts/repository/check.py"
+      ],
+      "validation": [
+        "repository/catalog guard",
+        "focused negative tests",
+        "research metadata",
+        "frozen base comparison"
+      ],
+      "source_blob": "6c587f46e03a45d7f165fffe0858545dac2782c6"
     }
   ],
   "frozen": {

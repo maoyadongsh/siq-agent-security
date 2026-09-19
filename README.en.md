@@ -34,7 +34,7 @@ The **personal client** provides a local service and browser console for agents,
 
 > **Signed installation package (2026-09-19):** [0.3.0 release (Latest)](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0) provides an offline bundle, signed Skill and four target binaries, built from main commit `83fde2d` and signed with the existing publisher key. Download the Release installation assets; GitHub automatic source archives and `skills/siq-agent-security/` remain development source. Linux ARM64 passed native bootstrap and tamper-rejection checks; the other targets have build and signature-pin verification only. See [installation instructions](docs/signed-release-packaging.md) and [signing/publication evidence](docs/evidence/releases/0.3.0/README.md).
 
-[Documentation map](docs/README.md) · [Current development](docs/development/current.md) · [Repository reorganization](docs/development/reorganization-progress.md)
+[Documentation map](docs/README.md) · [Current development](docs/development/current.md) · [Repository reorganization](docs/development/reorganization-progress.md) · [Platform delivery](platforms/README.md) · [Evaluations and external reproduction](evaluations/README.md)
 
 ## Product direction and support status
 

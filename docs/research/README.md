@@ -1,36 +1,7 @@
 # SIQ Agent Security research
 
-Protocols, reproducible artifacts and evidence for agent runtime security.
+The canonical research overview is [research/README.md](../../research/README.md), covering questions, literature, implementation links, protocols and evidence. This path remains a compatibility entry point; individual protocols, reports and frozen evidence stay at their existing paths.
 
-[简体中文首页](../../README.md) · [English home](../../README.en.md) · [Root research map](../../RESEARCH.md) · [Reproduction](../../REPRODUCIBILITY.md) · [Contributing](../../CONTRIBUTING.md)
+[Reproduction](../../REPRODUCIBILITY.md) · [Claims and evidence](claims-evidence.md) · [Research task ledger](../open-source-research-tasks-20260908.md) · [External reproduction](../../evaluations/external/README.md) · [License scope](../../LICENSES/README.md)
 
----
-
-SIQ Agent Security studies how agent tool proposals are constrained by trusted intent, provenance-bound authorization and independently collected effect evidence. The existing runtime, Secure Agent and fixed controls are research artifacts; the optional enterprise control plane stays in this repository.
-
-## Research map
-
-| Area | Read first | Purpose |
-| :--- | :--- | :--- |
-| Research design | [Questions](research-questions.md) · [Evaluation protocol](evaluation-protocol.md) | Hypotheses, task units and retrospective scope |
-| Data and claims | [Dataset card](dataset-card.md) · [Claims and evidence](claims-evidence.md) | Corpus origins, denominators and supported conclusions |
-| Reproduction | [Run guide](../../REPRODUCIBILITY.md) · [Archived results](result-reproduction.md) | Reproduce fixed controls and inspect verification records |
-| Contributor fixture run | [Four core scenarios, 2026-09-11](core-scenarios-reproduction-20260911.md) | Linux CPU run of all 23 controls with new evidence and setup failures recorded; no external-reproduction claim |
-| Community | [Contribution guide](../../CONTRIBUTING.md) · [Starter tasks](community-backlog.md) | Select a scoped contribution |
-| Reuse and citation | [License scope](../../LICENSES/README.md) · [CITATION.cff](../../CITATION.cff) | Attribute software and research materials correctly |
-
-## Source and historical identity
-
-Optional Skill distribution: [pinned vercel-labs/skills compatibility checks](skills-distribution.md). These verify project copy installation and removal; they do not establish runtime enforcement or alter frozen evaluation populations.
-
-The [V5 competition snapshot](../hackathon/final-submission-state.md) remains frozen at its recorded source and denominators. The earlier research open-source cycle started on `codex/research-open-source-r1` at `e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2`; that historical branch identity is not the current `main`. Later product and research runs record their own candidate, corpus and protocol identities. New measurements do not replace V5 results. The [root research map](../../RESEARCH.md) links current product mechanisms to research questions and evidence without moving frozen artifacts.
-
-## Evidence boundaries
-
-There is no published paper, DOI, independent reproduction badge or statistically established general security guarantee. Five-task model cohorts and synthetic attacks support scoped observations. Same-UID isolation, universal SaaS delivery proof and general semantic provenance are outside current claims.
-
-## Progress and release operations
-
-The [execution ledger](../open-source-research-tasks-20260908.md) distinguishes completed repository engineering from pending experimental, external reproduction, archival and publication work. The [operations report](operations-20260908.md) records actual remote changes and release blockers.
-
-Optional repository review services: [CodeFlow and SonarCloud setup](code-review-services.md). Configuration tests do not establish that external services are authorized or scanning.
+The research release and V5 competition identities remain unchanged. Product releases and contributor checks do not establish independent reproduction, a DOI, paper acceptance or general security guarantees.
