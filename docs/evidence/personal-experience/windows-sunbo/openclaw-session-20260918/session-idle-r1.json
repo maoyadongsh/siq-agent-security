@@ -1,0 +1,60 @@
+{
+  "scenario": "same-key idle rollover",
+  "candidate": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+  "host_version": "2026.9.4",
+  "host_mode": "Windows WSL2 OpenClawGateway; agent --local",
+  "binary_sha256": "62d820f30f3e39628a81939683132d4f7f9e87678e14b5afce0452401b01ec41",
+  "raw_sha256": "a06eafd4f94b6e887183bdf4ee31d79a5c03726ad0009e63b76cc5ff41f14386",
+  "manifest_sha256": "1f8998889782c1a0a5a8621a3464ee486bc5429c4e2f533a5807dc6be358f907",
+  "diagnostic_exit": 0,
+  "acceptance_pass": false,
+  "genuine_idle_seconds": 61.000167700996826,
+  "uuid_changed": true,
+  "routing_key_unchanged": true,
+  "old_binding_reused": true,
+  "receipts": {
+    "verified": true,
+    "selected": [
+      {
+        "tool_call_id": "siqfixturereadallowed20260916",
+        "action": "allow",
+        "reason_code": "allow",
+        "action_id": "act-f75a4bf326fced84756cc608",
+        "intent_binding": "bound",
+        "intent_digest": "4ba835db96fb5568cea36bb0270aa4c7d9feb2c7830756201db88932941f426a"
+      },
+      {
+        "tool_call_id": "siqfixturewritedenied20260916",
+        "action": "deny",
+        "reason_code": "intent_tool_not_allowed",
+        "action_id": "act-4bcb5d1c03df0382dfc618d1",
+        "intent_binding": "bound",
+        "intent_digest": "4ba835db96fb5568cea36bb0270aa4c7d9feb2c7830756201db88932941f426a"
+      }
+    ],
+    "receipt_count": 3
+  },
+  "target_after": {
+    "exists": false
+  },
+  "control_unchanged": true,
+  "siq_cleanup": {
+    "owned_process_reaped": true,
+    "log_closed": true,
+    "killed": false,
+    "exit_code": 0
+  },
+  "provider_cleanup": {
+    "stop_requested": true,
+    "join_attempted": true,
+    "join_timeout": false,
+    "errors": {},
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true,
+    "cleanup_deadline_exhausted": false
+  },
+  "cleanup_ack": "confirmed_by_guest_report",
+  "paid_model_calls": 0,
+  "result": "FAIL: after native idle rotation, actual read returned the owned sentinel using the old binding; write remained denied by its original scope."
+}

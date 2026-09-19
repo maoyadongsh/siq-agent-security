@@ -1,0 +1,13 @@
+{
+  "scope": "offline_regression_not_live_acceptance",
+  "unit_tests_passed": 21,
+  "original_evidence_hashes_verified": {
+    "v6-f04-e04e06e11-closure-20260917": 4,
+    "v6-f04-e09-crash-20260917": 4,
+    "v6-f06-r07-journey-20260917": 5,
+    "v6-f06-r07-attribution-20260917": 5
+  },
+  "ruff_without_E501": "passed",
+  "ruff_full": "21 pre-existing line-length violations in R07 script",
+  "git_diff_check": "passed"
+}

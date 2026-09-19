@@ -1,0 +1,38 @@
+{
+  "scenario": "session-rotation-r1",
+  "candidate": "185a0d6b9c8d6e17e00e169855273d2644c11a0f",
+  "host": "OpenClaw 2026.9.4 / Windows WSL2 OpenClawGateway",
+  "binary": "62d820f30f3e39628a81939683132d4f7f9e87678e14b5afce0452401b01ec41",
+  "raw_evidence_sha256": "df43abf9b64e2ab7e013179cbe9dc5bb2808ab160d4a84b3b3bc9171df4e4f2f",
+  "manifest_sha256": "710f7537e7f0345dd79636b14f7cdf9b6e8e59b0499db50647a165ef6c61e548",
+  "outer_exit": 1,
+  "guest_exit": 1,
+  "native_exit": 1,
+  "harness_error": "native read/deny CLI did not complete",
+  "session_isolation": null,
+  "receipts": null,
+  "target_after": {
+    "exists": false
+  },
+  "control_unchanged": true,
+  "siq_cleanup": {
+    "owned_process_reaped": true,
+    "log_closed": true,
+    "killed": false,
+    "exit_code": 0
+  },
+  "provider_cleanup": {
+    "stop_requested": true,
+    "join_attempted": true,
+    "join_timeout": false,
+    "errors": {},
+    "provider_socket_closed": true,
+    "provider_thread_joined": true,
+    "decision_socket_closed": true,
+    "cleanup_deadline_exhausted": false
+  },
+  "linux_cleanup_ack": "confirmed_by_guest_report",
+  "paid_model_calls": 0,
+  "scope_limit": "New routing key only; same-key rollover remains unverified.",
+  "result": "Host CLI rejected conflicting session selection before any tool call; not evidence of SIQ authorization reuse."
+}

@@ -1,0 +1,82 @@
+{
+  "schema_version": "lx05-ui-session-race-candidate/v1",
+  "recorded_at": "2026-09-18T16:04:32.807015+00:00",
+  "predecessor_binary_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "binary_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "binary_bytes": 22916704,
+  "architecture": "linux/arm64",
+  "cgo_enabled": false,
+  "source_binding": {
+    "algorithm": "openshell-b2b3-perf-protocol.py:source_binding",
+    "file_count": 931,
+    "sha256": "be63b032635ed78be4c743f05fbbbb923c6a252799374fe6dabf094e845ca0af"
+  },
+  "embedded_ui": {
+    "file_count": 214,
+    "manifest_sha256": "510e727ef39f737ee8b41b24e420dfca96834eb363f3f76b46dd5fce210b755e"
+  },
+  "web_source_sha256": {
+    "apps/web/src/local/App.tsx": "429840fabddea897085ffad03b83b9d2c43e0fc70362e93ebb638dc2f008aa60",
+    "apps/web/src/local/api.ts": "fc88fc0405030b5fe065fa016d203c9d5ae44aee940eecc8e34979dd31ceef77",
+    "apps/web/src/local/api.test.ts": "3cd88d840a32199d4bb25c24dc712a761b067b46a69ef1b3770514a7eed04b17"
+  },
+  "cross_build_sha256": {
+    "siq-agent-security-darwin-arm64": "04921e08e685f9887c2ff3af1351ae798ce9878b3959d7136aacb1265a61f9f4",
+    "siq-agent-security-linux-amd64": "e3b8b430048bf4eadd91b92c889d442a6e5b0a7fabfa437d062b0916273e2080",
+    "siq-agent-security-linux-arm64": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+    "siq-agent-security-windows-amd64.exe": "a4c81fb4292f8e92e03e7783fcb0ada21cf8de5ef570d53810ed1e53aa2d2597"
+  },
+  "validation": {
+    "web_test": "26 files, 116 passed",
+    "web_build": "pass",
+    "web_build_local": "pass",
+    "go_vet": "pass",
+    "go_test_all": "40 packages passed",
+    "real_browser_race_checks": 2,
+    "real_openclaw_r07_checks": 30,
+    "nested_r04_checks": 31,
+    "native_retention_seed_checks": 31,
+    "native_retention_expiry": "passed_14_of_14_real_wall_clock",
+    "installed_test_release_checks": 16,
+    "installed_r07_checks": 31,
+    "installed_nested_r04_checks": 31,
+    "test_release_source_overlay_files": 550,
+    "hermes_native_sec_checks": 11,
+    "hermes_native_approval_checks": 12,
+    "openclaw_managed_native_checks": 19,
+    "openclaw_stock_and_patched_copy_scenarios": 18,
+    "real_gateway_d05_steps": 373,
+    "real_gateway_d05_pass": 365,
+    "real_gateway_d05_partial": 7,
+    "real_gateway_d05_blocked": 1,
+    "new_candidate_performance": "B2_doctor_relative_pass_and_S1_S4_absolute_pass",
+    "real_gateway_b2_doctor": "passed_same_run_relative_ratio_1.005249",
+    "real_gateway_taskexec_steps": 324,
+    "hermes_grant_overreach_native_checks": 13,
+    "hermes_raw_expiry_driver_regression_checks": 18
+  },
+  "evidence_hashes": {
+    "old_browser_failure": "6a1e451ac8781209cc1908849b7ab21f42499f82e12bf0ca7ea596a048b4385f",
+    "new_browser_pass": "c47a74957bee1dadbf5e1fea042fa3870e0de9db77055f861f65f6e3a7104580",
+    "new_r07": "e79292d8671d4591b5ff0621304693d802825ed5d013f777d54374e9c40c412e",
+    "new_retention_seed": "1064ed8386d1b40b293cc8ceb2a18c39dd4597b7cf296c740f7ef1304c6e9a96",
+    "new_dual_host_native_summary": "e753eb0a8428ce7aff756f6b4bca4ec52a13a0061befd9ceb275ecdfb5b7f1cc",
+    "new_gateway_function_summary": "e22f311feda4a71e6d8737f4e6f36bc351fb049fdfe5ca4ccd13519097b5b35c",
+    "new_retention_verification": "1ac142034e74d874c5bd9e19d891e6b733f555f4064934ea9a6e85cc92b398d1",
+    "new_b2_perf_summary": "3579df745ba6edd2388b590a15270c55f48cf9c44c65209d8605cf220f2c33b0",
+    "new_taskexec_perf_summary": "fc3ad8556c3bc8a0f4781351c4983c50b133a7bc01786058ae33591847fc05ab",
+    "hermes_grant_overreach_summary": "96d6e21a38c8a9811b82d9b84c4bf0d757f915255f4354b681e466df673801da"
+  },
+  "trust": "unsigned local source build; not a formal release",
+  "release_acceptance": false,
+  "test_release": {
+    "binary_sha256": "ec8ea77654dc25e690fb92993dac48487d31ab2bef05154d16b32769a54b9c9b",
+    "trust": "ephemeral test root patched into build; not an official signed release",
+    "source_overlay_current_file_match": true,
+    "go_source_files": 336,
+    "embedded_ui_files": 214,
+    "private_checks_sha256": "8157c00ce6252c5ef0671b519b85c6206539efd095bf76f5cd8571f2da511d53",
+    "private_installed_journey_sha256": "14199980b816357aefde8ffe93d55ac6f25a0e5d703e46165c9a3aaef17dfcbe",
+    "private_direct_journey_sha256": "2ac5d066fe4fab33c13f784f0fb56be8f5cb54eb41977072278a141d4faf2e24"
+  }
+}

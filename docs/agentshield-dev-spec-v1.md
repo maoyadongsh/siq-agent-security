@@ -685,6 +685,8 @@ setup 新增 --open-ui，仅在既有初始化/注册/启动/健康成功后调�
 
 Linux `client-install --manifest FILE --binary FILE --confirm-install [--port N] [--runtime] [--open-ui]` 先验证候选发行签名与 v2 无迁移声明，再复用 Stage 保存稳定程序及清单。重新验证暂存文件，固定 SHA-256 目录身份和发行版本；只从该已验证路径执行 setup --confirm-setup，不从下载位置执行。子进程无 shell，明确传递同一状态目录，120 秒超时、输出丢弃；错误提示检查状态，不声称超时取消所有后台影响。
 
+首次安装的身份顺序：可信清单及原始二进制验证通过后、Stage 向 `client-releases/` 发布任何文件前，必须在所选状态目录建立或读取持久签名身份。否则暂存文件会使首次 `setup` 的缺失密钥保护将新安装误判为丢失历史身份。无效清单不得创建身份；已有历史但缺少原签名密钥仍拒绝并要求恢复。安装后台服务不接受仅由调用者临时环境变量提供的签名 seed，因为 systemd 单元不会继承该环境，重启后会失去同一身份。身份准备失败时不暂存、不启动服务。
+
 setup 完成后父进程重新核对目录健康、发行版本、签名 unit 指向暂存程序以及 manager 活跃进程，再报告安装成功并输出稳定程序路径和管理地址。可选打开页面发生在上述验证之后。不同已有 unit 不被安装入口覆盖，升级使用 service-upgrade；重复同版本安装可复用，原下载文件移动不会影响后台程序路径。安装入口不修改 PATH、不启用登录自启、不授予智能体权限，不把交叉构建称为跨系统安装验收。无确认/非法参数/非 Linux 在落盘和执行前拒绝。
 
 ### 3.11.21 明确启用和关闭用户登录自启（UX-003）
@@ -1278,6 +1280,10 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 
 **WorkBuddy 桌面（与 CodeBuddy CLI 分列）**：macOS/Windows 桌面应用的配置根为 `WORKBUDDY_CONFIG_DIR`（须为无符号链接祖先的绝对路径），未设置时为 `~/.workbuddy`。SIQ 不把 `CODEBUDDY_CONFIG_DIR` 当作 WorkBuddy 配置根，也不静默回退。安装、状态、自动发现、卸载与 inventory 读取该根下的 `settings.json`；不读取 `config.yaml`、`workbuddy.db`、`claw` 或 pairing 凭据。`adapter install workbuddy` 在 `settings.json` 的 `hooks.PreToolUse` / `hooks.PostToolUse` 追加 `` `<abs>/siq-agent-security hook workbuddy --state-dir <abs-state>` ``（先备份、可卸载），保留 `enabledPlugins` 及其他未知键。命令中的二进制和状态目录都按目标 OS 的单参数规则引用，空格、单引号、中文不得改变 argv。Electron 子进程通常不继承 SIQ 环境变量，因此 WorkBuddy 钩子命令必须带绝对 `--state-dir`；`siq-agent-security hook workbuddy [--state-dir DIR]` 与 CodeBuddy 使用同一 JSON 合同，但回执与 pending 的 `platform` 必须为 `workbuddy`。WorkBuddy 与 CodeBuddy 使用上一段的单根新安装和历史混合记录整批外科卸载规则。`POST /v1/grants` 与 CLI `grant --platform workbuddy` 必须接受该平台；ActiveGrant 按 platform+agent_id 匹配，WorkBuddy 的 allow 不得签发到 `codebuddy` 或其他平台。CodeBuddy CLI 的 `~/.codebuddy` 与 `hook codebuddy` 不得替代 WorkBuddy 桌面证据。原生桌面验收使用隔离 `WORKBUDDY_CONFIG_DIR` 或项目级 `.workbuddy/settings.json`，不得改写日常 `~/.workbuddy` 的 claw/db。桌面安装入口（插件市场）未被接管，`install_interception` 保持 host_capability_missing，直到有受支持的装前拦截。`block` 下决策不可达必须输出结构化 `permissionDecision=deny`；宿主把退出码 1 视为非阻断错误，不能用 exit 1 代替拒绝。
 
+2026-09-17 个人版范围收紧：Linux 仅以 OpenClaw/Hermes 为本轮原生宿主目标，WorkBuddy 只保留 Windows/macOS 接入与历史数据读取。Linux 上 `/v1/adapter/status` 和诊断仍可展示已存在的 WorkBuddy 文件，但必须标明不在当前系统支持范围；控制台不得提供新的安装/重装按钮。Linux 上 `adapter install workbuddy`、安装预览及对应管理 API 应在写入或签发安装计划前拒绝，旧计划应用也须拒绝；显式卸载既有接入仍可用，避免把历史钩子困在系统中。自动安装跳过该平台，不能导致其他可用平台被连带拒绝。不能据此删除历史 WorkBuddy Grant/回执或改变旧 hook 的 fail-closed 行为；macOS/Windows 原规则保持。此范围调整不把 Linux/WorkBuddy 的历史探测记为产品验收通过。
+
+同日用户进一步明确：**全平台取消 CodeBuddy 后续任务与新适配**。CodeBuddy 与 WorkBuddy 不得合并：Windows/macOS WorkBuddy 任务继续。Linux/macOS/Windows 均不得新安装/重装 CodeBuddy 适配器或签发新的 CodeBuddy Grant；已有 pending Grant 不得继续批准或部署。控制台、管理 API、CLI 应标明停止新接入并拒绝相应动作，自动安装跳过 CodeBuddy。历史资产/配置/Grant/回执仍可查看、拒绝或撤销，已有配置可外科卸载；旧钩子在卸载前保持原 fail-closed 行为。底层跨平台解析、验签与卸载代码可为兼容旧安装保留，不据此恢复 CodeBuddy 支持宣称；新产品验收和发布支持矩阵不得把 CodeBuddy 算入当前目标。
+
 ### 4.4 Trae / TraeWork（P2，审计）
 
 无钩子。SKILL.md 引导：安装前 `siq-agent-security admit`；`serve` 周期扫描 `.trae/skills`；UI 标「审计模式，无法阻断」。`skill-manifest.support_matrix` 对应行 `status=audit_only, tiers=[L0]`。
@@ -1865,6 +1871,12 @@ This changes resource selection, not taint policy or authority requirements.
 
 Grant 工具层文件读取与写入均 default-deny，必须解析到明确目标并匹配对应 fs.read/fs.write 范围；fs.read 不授予修改，fs.write 包含读取。deny 优先，凭据路径检查不能被目录 allow 绕过。网络按主机与端口精确匹配，不能丢弃端口或把含路径规则降低为整主机权限。未知资源拒绝；普通 warn/audit_only 仍只建议拒绝。原签名事实不改写，旧授权缺范围时需重新起草并人批，不自动扩大兼容范围。此修正及可信 Skill 归属缺口见 ADR-025。
 
+LX03 的 Linux 原生负向复核发现，单用词法路径判断时，授权根内的符号链接可指向根外，旧候选对真实 OpenClaw/Hermes 读取作出 allow。当前 Unix 本机决策对每个文件目标与 Grant 事实解析已存在路径前缀：allow 同时要求词法与实际目标均在授权根内；显式 deny 对任一命中生效；悬空链接、循环或不可访问前缀拒绝。尚未存在的写入尾路径由最近的现有祖先解析，避免通过父目录链接越界。带 `..` 的原生路径仍保留现有无链接规范化合同，但若原路径出现已存在符号链接分量则在资源规范化前拒绝，防止先清理 `..` 改变宿主实际解析对象。此检查是**决策时**防护，不是宿主原子打开：同 UID 在决定后换链、独立挂载命名空间、Windows 路径/重解析点均未由本修复证明安全；需要受控启动/宿主级文件访问约束与各平台实机负向继续验收。warn/audit_only 的建议模式语义不因这次收紧而改变。
+
+根路径 `/` 作为明确签发的文件 Grant 范围仍按原合同匹配绝对路径，显式根路径 deny 仍覆盖 allow；不能因为去除末尾分隔符而把 `/` 误归为空模式。第四代候选分别在真实 OpenClaw 与 Hermes CLI 上新增了“授权目录内链接 + `..`”负向：该字符串词法清理后仍在授权目录，宿主解析链接后会到目录外；两宿主均在文件读取前拒绝，受保护内容未进入模型结果。此项是指定入口的实机证据，不代表其他 OS、所有文件 API 或决定后的换链竞态已关闭。
+
+同候选另在 Linux 的 OpenClaw 与 Hermes 原生工具路径验证**写动作**：有效公司 A 读写 Grant 可写公司 A 内测试文件，指向公司 B 既有文件的文件链接写入及指向公司 B 目录、目标文件尚不存在的目录链接写入均以 `grant_scope_violation` 拒绝；原目标内容保持，尚不存在的文件未创建。OpenClaw 的此腿与原文采集拆开运行，避免把额外写入误算为固定两条原文记录；两宿主默认旅程仍独立回归。该结果只证明这两条宿主入口的决策时检查和副作用见证，不证明决定到打开之间不存在换链窗口。
+
 `POST /v1/grants/{id}/resources` 按 `grant-resource-edit/v1` 编辑待批准授权，完整列表明确替换，空数组清空，精确 revision 与审计后发布；文件 deny、凭据/进程保护和保留工具的人批条件不因编辑丢失。工具 deny 优先于 allow/hold。界面与兼容语义见 ADR-026，不把编辑成功显示为已生效或可信 Skill 归属。
 
 ### 会话固定授权选择（ADR-027）
@@ -2045,6 +2057,10 @@ Skill 执行上下文（SEC，`skill-execution-context/v1`）是归属从 unknow
 ### Secure Agent 审批消费者兼容修复（2026-09-16）
 Secure Agent 复用现有 hold-status/v1 与 hold-execution-reserve/v1 合同：复查携带已提交的 Intent task_id 和原有 runtime_task_id；approved 仅表示可申请预留。消费本地 pending 后，用唯一新 retry_tool_call_id 请求持久化预留，完整匹配回读 action/原 decision/reservation，成功才执行；观察与效果记录使用预留 receipt 和 retry ID。拒绝、冲突、未知或丢失响应都不得执行或盲目重试；不放宽后端身份、Authority 与参数绑定。原 hold receipt 保留用于 UI 审批追溯。
 
+批准后复查的归属必须由当前服务端验证的 SEC 重新构造，比较原签名 decision 的 Skill ID、版本、内容摘要、context ID、证据等级与按原调用重新计算的 call binding；复查不得直接信任客户端或旧回执中的归属字段。有效且未变化的 SEC 应使已批准的安装 Skill hold 可进入唯一预留；SEC 消失、失效或任一绑定变化时，hold-status 拒绝且预留不得产生。管理端显示批准不替代这道执行前检查。
+
+2026-09-19 已安装 Skill 确认投影修复：待确认状态和解决入口对 Grant 活性采用与决策引擎一致的安装终态；`approved` 且准入 ID 为 `adm-si-` 保留类型时，仅在当前可信 Intent 明确选中同一 Grant、身份/任务/摘要/修订均不变且 Grant 未过期时可供确认。未选中的安装 Grant 即使查询回退命中也不可确认；普通非安装 Grant 仍只接受 deployed/effective。确认只记录批准，执行前仍须重新验证 SEC、安装摘要、授权及唯一预留；安装更新或撤权后旧批准不得产生新效果。
+
 2026-09-17 Mac 阶段合并复核：OpenClaw 外科卸载仅移除本安装添加的注册与空容器；原始快照已有的空 allow、load、paths、entries 及本插件空 entry 必须保留，不能把缺省与显式空值合并。用户其他插件/设置保持不变。阶段合并不提升 P19 实机矩阵，修复候选仍需平台复测。
 
 ### 2026-09-16 L01/L02 安全复核增量
@@ -2066,3 +2082,15 @@ policy set 的提交成功和 policy get 的配置读回不等于沙箱已加载
 ### 2026-09-17 会话策略基线恢复前置检查
 
 会话 policy_apply 在消费 hold 前复验当前完整网络基线能否按既有 rollback 权限恢复。超出 Grant 端点、批准程序路径或无程序限制的基线，返回 403 / openshell_base_not_restorable，保留批准与网关原策略。在 Client 目标锁内，以捕获到的真实基线再次运行相同检查，避免预检与实际写入基线不同。回滚授权仍按当前 Grant/程序范围与操作摘要验签，不能为方便恢复放宽权限。无法解析/读取的基线先返回 503 / openshell_base_unreadable，同样零写入且不消费批准。该检查仅拒绝已知不可恢复的起点，不承诺跨进程原子性或撤权后仍可回滚。
+
+### 2026-09-17 v6 执行接续约束
+
+以下为 v6 未合入任务执行原型的接续要求；已合入的会话策略基线恢复检查继续生效。任务执行在同一 Client 目标锁内读取策略、复核授权并运行；后端读取可能阻塞，所以读取后、spawn 前再次复核当前授权。锁范围只覆盖本进程，不证明跨进程原子性，也不证明未知远端任务结束。**读回修订与摘要相符仍不能独立证明执行平面已经加载策略**；执行器需结合 `policy get --full` 的已加载状态及当前 `sandbox list --output json` 的唯一目标 UUID、`Ready` 状态和相同 `current_policy_version`。v0.0.83 协议中该版本由沙箱报告加载后更新；此版本对既有策略的 `Status: Effective` 不提供 `Loaded` 时间标记，所以只能由独立沙箱行补足加载证据，而 `Loaded`/`Active` 状态仍须有有效标记。已有 `policy set --wait` 成功可建立进程内确认；新进程或原本无写入的沙箱可在上述双读回后建立只读确认。每次启动前重读并绑定同一目标身份，确认最长 5 分钟；失败/变化/过期清除且锁定旧确认，不由旧字节恢复自动复活。同一沙箱已报告加载不同新修订时，可为该新修订与新批准建立新的双读回证明，旧批准仍拒绝；未知旧修订或沙箱 UUID 变化不能这样解锁。读回中每项 allow 网络端点必须属于本次批准的 `network_targets`，空目标列表不能借已有策略获得联网。v6 集成候选已将沙箱 UUID 纳入签名批准参数，预留前从网关重新取得唯一 Ready 实例并比较；旧的不含 UUID 的原型批准不能沿用。执行 CLI 仍按沙箱名称选择目标，UUID 读回与启动之间缺网关原子性；网络 binary 限制也未单列，因此跨进程替换和资源范围仍需进一步验收。
+
+停止响应的事实位于 `stop` 对象；409 `stop_not_observable` 响应中位于 `status.stop`。缺字段或类型不符属于验收失败，不自动记为后端不支持。当前 `unsupported/false` 来自 SIQ 实现，不是网关能力读回；本地 CLI 终止也不等于远端任务已停止。远端停止与状态查询需按真实网关版本单独验收，未确认时保留不确定状态。
+
+D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-private/` 内创建，目录 0700、文件 0600。真实网关复测须由操作者确认独占目标，显式传入目标、环境脚本、CLI 路径和预期基线摘要；服务启动前先只读核对。清理前读回版本/摘要必须匹配本批写入，恢复使用捕获的完整初始策略；漂移、读回失败或归属不明时拒绝写入，保留人工恢复项。此保护不是远端 CAS，不允许其他写入者并发修改目标。
+
+### v6 CI 补充：执行端点绑定
+
+任务执行、加载校验与实例读回要求 ResolveInvocation 成功且来源为显式 CLI/endpoint 对。缓存指纹可包含未配置或错误状态，非空指纹不能替代端点绑定。无配置、PATH、脚本、缺半对或非法 endpoint 均在后端 I/O 前拒绝。

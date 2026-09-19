@@ -1,0 +1,32 @@
+{
+  "schema_version": "linux-lx03-hermes-installed-sec-migration/v1",
+  "recorded_at": "2026-09-18T17:39:35.102563+00:00",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "host": "Linux real Hermes public CLI with isolated HOME and synthetic model",
+  "driver_sha256": "42960a9dece78a1fc6bddf945faaf4e3aab55009a2e84308d64d82717edec17f",
+  "parent_driver_sha256": "3fc35289ad5820e4b42671807d78ba4cdae2da6b86f311b7b4803a54b7434860",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "task_attribution": "test-only pre_llm_call observer sends Hermes-generated session/task identity to local API; product issues a task-bound SEC before the first native tool call; observer removed before self-check and withdrawal",
+  "results": {
+    "identity_revocation": {
+      "checks": 19,
+      "passed": true,
+      "private_report_sha256": "201427bb6f888512b36b7b8c9e3b91c2b364676cf68c58ade7c276dd4609e652",
+      "authority_withdrawal_method": "identity_revocation"
+    },
+    "installed_skill_removal": {
+      "checks": 19,
+      "passed": true,
+      "private_report_sha256": "ad30b5ba4323f552d40c42fd46fd1723b5854646e6b23034d0ac10b4cfaaea60",
+      "authority_withdrawal_method": "explicit_installed_skill_removal"
+    }
+  },
+  "failed_preflight": "Previous old harness lacked SEC and failed closed with skill_attribution_mismatch. Intermediate migrated attempts exposed missing fixture raw_grant initialization and raw content activation; private logs retained. These were harness errors, not product policy bypasses.",
+  "limits": [
+    "The native host and CLI are real; the model and skill content are synthetic fixtures.",
+    "A test-only observer coordinates SEC issuance; this is a harness capability, not shipped product adapter behavior.",
+    "The 19-check legs cover a fixed resource/action subset and do not prove distributed external-effect atomicity.",
+    "Stock OpenClaw post-approval execution remains a separate partial condition."
+  ],
+  "release_acceptance": false
+}

@@ -1,0 +1,32 @@
+{
+  "binary": {
+    "arch": "arm64",
+    "bytes": 22915922,
+    "cgo_enabled": false,
+    "os": "linux",
+    "sha256": "2f61ce17d1a55bfa97ce74e6b51e5ca848c55bda5f5bb52756fdab99f2b36479",
+    "storage": "lx00-private/siq-agent-security (ignored private directory)"
+  },
+  "build": {
+    "command": "CGO_ENABLED=0 go build -C apps/agentshield -trimpath -o <private path> ./cmd/agentshield",
+    "go_version": "go version go1.26.5 linux/arm64"
+  },
+  "embedded_ui": {
+    "file_count": 214,
+    "sha256": "addc73eaf60878efd12162efa7f94d3a5bb0f687b68f13a830339f6a94938fc3"
+  },
+  "evidence_scope": "build and component validation only; native journey pending",
+  "recorded_at": "2026-09-18T13:00:33.988770+00:00",
+  "schema_version": "lx00-current-main-candidate/v1",
+  "source_binding": {
+    "algorithm": "openshell-b2b3-perf-protocol.py:source_binding",
+    "file_count": 931,
+    "scope": "apps/agentshield/**/*.go, go.mod, internal/ui/embedded/**/*",
+    "sha256": "0aac524cbcbd54926bdea33d13cd8b297f9fbada6684954037a0d575ae07635c"
+  },
+  "source_branch": "codex/linux-dual-host-20260918",
+  "source_commit": "2187fea621ff40b368f2e01e51d26672239c9f8d",
+  "source_tracked_changes": 0,
+  "trust": "repository source build, no release signature or official release manifest",
+  "untracked_changes_scope": "documentation only; taskbook and architecture proposal, excluded from source_binding"
+}

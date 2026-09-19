@@ -1,0 +1,160 @@
+{
+  "schema": "siq-v6-integration-checks/v1",
+  "main_head": "9b8c09af742cb9df94c6d02e6f2db6ecccd68951",
+  "candidate_kind": "uncommitted_worktree",
+  "scope": "F00/F01/F02/F03 component and build verification; F02/F08 read-only local preflights",
+  "checks": [
+    {
+      "id": "go_vet",
+      "command": "go vet ./...",
+      "cwd": "apps/agentshield",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "go_test",
+      "command": "go test ./...",
+      "cwd": "apps/agentshield",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "go_race",
+      "command": "go test -race ./internal/openshell ./internal/server",
+      "cwd": "apps/agentshield",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "go_task_regressions",
+      "command": "go test ./internal/openshell ./internal/server -run 'TestOpenShellTaskExec|TestExecTask' -count=1",
+      "cwd": "apps/agentshield",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "go_stop_regressions",
+      "command": "go test ./internal/openshell ./internal/server -run 'TestTaskCanceller|TestOpenShellTaskStop' -count=1",
+      "cwd": "apps/agentshield",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "go_track_regressions",
+      "command": "go test ./internal/server -run 'TestOpenShellTaskTrack|TestOpenShellTaskStop' -count=1",
+      "cwd": "apps/agentshield",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "go_f02_integrity_and_duplicate",
+      "command": "go test ./internal/openshell ./internal/server -run 'TestTaskCanceller|TestExecTaskDuplicate|TestOpenShellTaskTrack|TestOpenShellTaskStop' -count=1",
+      "cwd": "apps/agentshield",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "python_contract",
+      "command": "uv run pytest -q app/tests/test_schema_contracts.py",
+      "cwd": "apps/control-api",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "python_all",
+      "command": "uv run pytest -q",
+      "cwd": "apps/control-api",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "ruff",
+      "command": "uv run ruff check app",
+      "cwd": "apps/control-api",
+      "level": "static",
+      "exit_code": 0
+    },
+    {
+      "id": "web_test",
+      "command": "npm test -- --run",
+      "cwd": "apps/web",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "web_build",
+      "command": "npm run build",
+      "cwd": "apps/web",
+      "level": "build",
+      "exit_code": 0
+    },
+    {
+      "id": "web_local_build",
+      "command": "npm run build:local",
+      "cwd": "apps/web",
+      "level": "build",
+      "exit_code": 0
+    },
+    {
+      "id": "review_guards",
+      "command": "python3 scripts/personal-experience/test_o05v6_review_guards.py",
+      "cwd": ".",
+      "level": "component",
+      "exit_code": 0
+    },
+    {
+      "id": "driver_syntax",
+      "command": "Python ast.parse for scripts/personal-experience/*o05v6*.py; node --check scripts/personal-experience/openshell-o05v6-d05-e12-browser.mjs",
+      "cwd": ".",
+      "level": "static",
+      "exit_code": 0
+    },
+    {
+      "id": "diff_check",
+      "command": "git diff --check",
+      "cwd": ".",
+      "level": "static",
+      "exit_code": 0
+    },
+    {
+      "id": "f02_cli_help",
+      "command": "openshell --version and openshell sandbox --help; pinned v0.0.83 sandbox exec --help",
+      "cwd": ".",
+      "level": "read_only_local_cli",
+      "exit_code": 0,
+      "note": "v0.0.83 CLI exposes exec but no per-execution query/stop command; this does not verify the gateway protocol"
+    },
+    {
+      "id": "f08_local_conditions",
+      "command": "getent ahostsv4 github.com raw.githubusercontent.com codeload.github.com (separately); command -v workbuddy",
+      "cwd": ".",
+      "level": "read_only_local_environment",
+      "exit_code": null,
+      "note": "The three DNS lookups succeeded but returned 198.18/15; workbuddy lookup exited 1. This is a blocked condition, not a passing product acceptance."
+    }
+  ],
+  "cross_builds": [
+    {
+      "target": "linux/amd64",
+      "sha256": "dba4bbff20a0a027aef2069e1cc011ec8510cea749c09464a8b433b7f96fa47c"
+    },
+    {
+      "target": "linux/arm64",
+      "sha256": "d1387752435add183cf767e96ba4623b27d8be67f8dff78cf328bdeb5722771d"
+    },
+    {
+      "target": "darwin/arm64",
+      "sha256": "690c88d6236f89971fefd48a77c98ffa5fa253d79a339b711f4f79262f6b2223"
+    },
+    {
+      "target": "windows/amd64",
+      "sha256": "cf8956d9a69297e11092879a3736d9ade63516cd3fd87a9b6ed1c8d9d6c825b7"
+    }
+  ],
+  "limits": [
+    "No live gateway execution, browser journey, enterprise service E2E, real macOS or Windows test in this stage.",
+    "Cross-build hashes are local unsigned binaries; no release candidate or signing claim.",
+    "The unversioned default CLI is 0.0.13 and does not support sandbox exec; only the pinned 0.0.83 CLI was inspected for task capability. No gateway connection was made.",
+    "F08 DNS returned 198.18/15 and WorkBuddy was not found; neither real hosted-source nor WorkBuddy acceptance was run."
+  ]
+}

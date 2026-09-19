@@ -2,7 +2,7 @@
 
 Protocols, reproducible artifacts and evidence for agent runtime security.
 
-[简体中文首页](../../README.md) · [English home](../../README.en.md) · [Reproduction](../../REPRODUCIBILITY.md) · [Contributing](../../CONTRIBUTING.md)
+[简体中文首页](../../README.md) · [English home](../../README.en.md) · [Root research map](../../RESEARCH.md) · [Reproduction](../../REPRODUCIBILITY.md) · [Contributing](../../CONTRIBUTING.md)
 
 ---
 
@@ -23,7 +23,7 @@ SIQ Agent Security studies how agent tool proposals are constrained by trusted i
 
 Optional Skill distribution: [pinned vercel-labs/skills compatibility checks](skills-distribution.md). These verify project copy installation and removal; they do not establish runtime enforcement or alter frozen evaluation populations.
 
-The [V5 competition snapshot](../hackathon/final-submission-state.md) remains frozen at its recorded source and denominators. Research work starts on `codex/research-open-source-r1`, based on `e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2`. New measurements live under this directory and do not replace V5 results.
+The [V5 competition snapshot](../hackathon/final-submission-state.md) remains frozen at its recorded source and denominators. The earlier research open-source cycle started on `codex/research-open-source-r1` at `e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2`; that historical branch identity is not the current `main`. Later product and research runs record their own candidate, corpus and protocol identities. New measurements do not replace V5 results. The [root research map](../../RESEARCH.md) links current product mechanisms to research questions and evidence without moving frozen artifacts.
 
 ## Evidence boundaries
 

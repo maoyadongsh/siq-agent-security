@@ -1,0 +1,53 @@
+{
+  "schema_version": "linux-dual-host-lx04-native-retention-summary/v1",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "host": "real OpenClaw 2026.5.12",
+  "journey": {
+    "passed": true,
+    "checks": 31,
+    "nested_r04_checks": 31,
+    "private_report_sha256": "9bfc63ece345fdedb3e15fb9cda35b535d2810ecef4a182d8ba00281fce21e56",
+    "driver_sha256": "dcb54e7509450e660f4694e2b3604db01a71f42d23dca2e2ea52ebdd95b5c557"
+  },
+  "retention_seed": {
+    "status": "verified_after_real_wall_clock_expiry",
+    "private_seed_sha256": "1064ed8386d1b40b293cc8ceb2a18c39dd4597b7cf296c740f7ef1304c6e9a96",
+    "first_expiry_at": "2026-09-18T17:01:35.144049263Z",
+    "groups": [
+      {
+        "label": "A1",
+        "native_record_count": 2,
+        "retention_seconds": 3600,
+        "expected_after_expiry": "deleted"
+      },
+      {
+        "label": "A2",
+        "native_record_count": 2,
+        "retention_seconds": 86400,
+        "expected_after_expiry": "byte_identical"
+      },
+      {
+        "label": "B1",
+        "native_record_count": 2,
+        "retention_seconds": 86400,
+        "expected_after_expiry": "byte_identical"
+      }
+    ]
+  },
+  "verification": {
+    "passed": true,
+    "checks": 14,
+    "private_report_sha256": "e200e57264c28eecd2b8ee92a90fb47ef8909045426306701f5d02a138c68b84",
+    "verifier_sha256": "e4a8137bf2636fb60a8e1e0d82f2074574c0a4964d89aa3e13b88375d3693851",
+    "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+    "seed_sha256": "1064ed8386d1b40b293cc8ceb2a18c39dd4597b7cf296c740f7ef1304c6e9a96",
+    "first_expiry_at": "2026-09-18T17:01:35.144049263Z",
+    "report_file_written_at": "2026-09-18T17:01:36.346269+00:00",
+    "elapsed_after_first_expiry_seconds": 1.202
+  },
+  "release_acceptance": false,
+  "limitations": [
+    "Native ciphertext retention is verified for this second-generation candidate and the listed two-task scenario only.",
+    "Natural 12-hour admin-session expiry and human desktop visual acceptance remain unverified."
+  ]
+}

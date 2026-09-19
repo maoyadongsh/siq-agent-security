@@ -123,7 +123,27 @@ def run(binary: Path, out: Path):
                 records = harness.search_records(task)
                 check(name + "_capture", len(records) == 1)
                 legs.append((name, task, grant, records[0]))
-            check_exports(harness, check, "before", canaries, trusted_public_key)
+            before_page = check_exports(harness, check, "before", canaries, trusted_public_key)
+            # A valid admin bearer must not turn malformed route IDs or
+            # caller-selected task scope into a different task's export.
+            # Probe both export forms against the real daemon; the payload
+            # assertion prevents a 4xx that still returns signed task data.
+            for kind in ("export", "trace-export"):
+                for label, invalid_id in (("short", "f" * 63),
+                                          ("encoded_slash", "%2f"),
+                                          ("encoded_parent", "%2e%2e")):
+                    code, result = harness.probe(
+                        f"/v1/task-activities/{invalid_id}/{kind}?snapshot={before_page['snapshot']}",
+                        token=harness.admin)
+                    check(f"malformed_{kind}_{label}_rejected", code in (400, 404)
+                          and all(c not in json.dumps(result) for c in canaries))
+                activity_id = before_page["items"][0]["activity_id"]
+                code, result = harness.probe(
+                    f"/v1/task-activities/{activity_id}/{kind}?snapshot={before_page['snapshot']}&task_id=../foreign",
+                    token=harness.admin)
+                check(f"malformed_{kind}_task_scope_rejected", code == 400
+                      and result.get("error") == "task_activity_query_invalid"
+                      and all(c not in json.dumps(result) for c in canaries))
             name, task, grant, record = legs[0]
             # Using a genuine other task ID is distinct from unknown activity 404.
             code, denied = harness.probe(

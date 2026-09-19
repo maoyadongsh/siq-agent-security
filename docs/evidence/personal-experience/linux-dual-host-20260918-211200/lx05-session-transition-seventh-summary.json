@@ -1,0 +1,38 @@
+{
+  "schema_version": "linux-lx05-session-transition-summary/v1",
+  "recorded_at": "2026-09-19T01:04:31.892437+00:00",
+  "candidate_sha256": "06ffd3288026799e82f0b7be4609dc1caf8927441643a473eece321d5687ca77",
+  "source_binding_sha256": "5efac52849f0913aa17700db74713565213daeaa3e6cee8c06896b7f8c65fe16",
+  "host_os": "linux/arm64",
+  "component_test": {
+    "command": "npm test -- --run src/local/api.test.ts",
+    "test_files": 1,
+    "tests": 16,
+    "passed": true,
+    "coverage": "old responses before and during pair/logout transitions; fresh signed-out request has no Authorization header"
+  },
+  "real_browser_smoke": {
+    "driver_sha256": "9ba41dbc127f2e30416858b9aff3f7024d78472a120dc25f08878c9b78ae2693",
+    "private_report_sha256": "6601e602d7ecc16d29c54807c86e47bc9c532036e803af889a0db29a5d208f11",
+    "browser_version": "145.0.7632.0",
+    "checks": 2,
+    "passed": true,
+    "old_401_preserves_new_session": true,
+    "duplicate_pair_submit_single_request": true
+  },
+  "embedded_ui_built": true,
+  "limitations": [
+    "The exact transition-window generations are covered by the focused module test; the real-browser smoke rechecks the existing stale-401 and duplicate-submit product paths.",
+    "This scoped UI repair candidate does not inherit sixth-candidate systemd, OpenShell D05/B3, R07/R04 or performance acceptance.",
+    "Headless Chromium is not desktop visual or notification acceptance."
+  ],
+  "passed": true,
+  "full_web_validation": {
+    "command": "npm test -- --run && npm run build",
+    "test_files": 26,
+    "tests": 117,
+    "tests_passed": true,
+    "enterprise_build_passed": true,
+    "local_embedded_build_passed": true
+  }
+}

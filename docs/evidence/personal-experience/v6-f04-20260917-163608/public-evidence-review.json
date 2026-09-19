@@ -1,0 +1,54 @@
+{
+  "schema": "v6-f04-public-evidence-review/v1",
+  "transformations": [
+    "replace two absolute local source/env roots with aliases in public matrix values",
+    "r7 E04 status adjudicated partial because expired SEC and mandatory Authority were unrun"
+  ],
+  "rows": [
+    {
+      "path": "v6-f04-20260917-163608/d05-acceptance-matrix.json",
+      "original_sha256": "c423d373c996c5e1951c8ef1217dc2cd250e3805b6179d4e3aaa5d20fc03f32c",
+      "public_sha256": "264a15fe7ca1ffd0aded9efbc0350c93d6fe7ea34c98b1a3900bc0a7ac75b5d8",
+      "corrections": []
+    },
+    {
+      "path": "v6-f04-r2-20260917-170800/d05-acceptance-matrix.json",
+      "original_sha256": "69c7d226683b819a7f4e97582ea20ee5d5d4643024e321f7fbbb9742b78865e7",
+      "public_sha256": "fc9a955e440de8430d9e70d48e92e32c06a11d7b9b6bc18c3f251258d4fc4bc5",
+      "corrections": []
+    },
+    {
+      "path": "v6-f04-r3-20260917-171400/d05-acceptance-matrix.json",
+      "original_sha256": "57fc3ed4b4ea322ffc708b15153d91332f8fa12b9d310f53d4c8660c5eb630c7",
+      "public_sha256": "d73872af779547dddcd9f6464eb5ef267822da073c16f70d25cbe7f39a4126c8",
+      "corrections": []
+    },
+    {
+      "path": "v6-f04-r4-20260917-171800/d05-acceptance-matrix.json",
+      "original_sha256": "aba4fbcf6da61df93405091de11542e64888f640b9a81cd92e08b4084107e784",
+      "public_sha256": "0bd007afcbd72146e22b46768a72db14175533dcde63e2d5cc9746b8893b7d7c",
+      "corrections": []
+    },
+    {
+      "path": "v6-f04-r5-20260917-174500/d05-acceptance-matrix.json",
+      "original_sha256": "2e6c62fe288f2a432f4a72de490cf0d99531dcc69c6b6c90ea347795ffaa4100",
+      "public_sha256": "a384d2a03d10fc96ac1b104f69973aa2ffaed321abeb04d4fed86faf5c3166c9",
+      "corrections": []
+    },
+    {
+      "path": "v6-f04-r6-20260917-175500/d05-acceptance-matrix.json",
+      "original_sha256": "ec6b395a00d3372e7837a7f4ce9546022f2d9904297e9f12c6bddcc2fa965c7d",
+      "public_sha256": "4b3d567e135991d1806aefd2c1508cf852c1d83c83169f520c7f0f71e9ef72ed",
+      "corrections": []
+    },
+    {
+      "path": "v6-f04-r7-20260917-180500/d05-acceptance-matrix.json",
+      "original_sha256": "8ab30f04b81a74f4f5986b8ff27451b743cad24bd3e04eacebe0c2c5e3b94428",
+      "public_sha256": "98d3e75a0dd640a0b337c45a81bfdd0bf813c3f1e9a3c25ecb284ce54fd2a7d7",
+      "corrections": [
+        "E04 pass -> partial due two unrun required negative cases"
+      ]
+    }
+  ],
+  "private_raw_originals": "each run has d05-private/d05-raw/d05-acceptance-matrix.private.json; ignored and not published"
+}

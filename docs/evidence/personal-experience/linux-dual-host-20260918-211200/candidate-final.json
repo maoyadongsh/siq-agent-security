@@ -1,0 +1,47 @@
+{
+  "binary": {
+    "arch": "arm64",
+    "bytes": 22916704,
+    "cgo_enabled": false,
+    "os": "linux",
+    "sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+    "storage": "lx01-private/siq-agent-security"
+  },
+  "build": {
+    "command": "CGO_ENABLED=0 go build -C apps/agentshield -trimpath -o <private path> ./cmd/agentshield",
+    "go_version": "go version go1.26.5 linux/arm64"
+  },
+  "component_validation": {
+    "go_test_all": "pass",
+    "go_vet": "pass",
+    "installer_negative_tests": "pass"
+  },
+  "embedded_ui": {
+    "file_count": 214,
+    "sha256": "addc73eaf60878efd12162efa7f94d3a5bb0f687b68f13a830339f6a94938fc3"
+  },
+  "installed_test_release": {
+    "binary_sha256": "fe964dabba5a14526bda3a879e1f70c8f4e8a2d517f771a0205e4d354a7c35a3",
+    "production_go_overlay_files": 336,
+    "production_go_overlay_matches_current_source": true,
+    "trust": "ephemeral test release root patched into build; not an official signed release"
+  },
+  "recorded_at": "2026-09-18T13:10:35.281419+00:00",
+  "schema_version": "lx01-linux-dual-host-candidate/v1",
+  "source_binding": {
+    "algorithm": "openshell-b2b3-perf-protocol.py:source_binding",
+    "file_count": 931,
+    "scope": "apps/agentshield/**/*.go, go.mod, internal/ui/embedded/**/*",
+    "sha256": "036df1bd5fdd90d9ecb49f40d3f76761b1b85a03e74843c078600a0bacf77fab"
+  },
+  "source_branch": "codex/linux-dual-host-20260918",
+  "source_commit": "2187fea621ff40b368f2e01e51d26672239c9f8d",
+  "tracked_go_patch_bytes": 5603,
+  "tracked_go_patch_sha256": "2c86668deb0575bdd3574dc77ddfbd9f737c766a8b7ee5a6ea8ac5094106603c",
+  "trust": "repository source build, unsigned; B02 separately uses test_release trust root",
+  "validation_refs": {
+    "hermes_approval_report_sha256": "91a37aaf5fef79cbe5c209efd72a6156a3c48e89b6e7711088cd57cdeb11558a",
+    "installed_test_release_checks_sha256": "91d8e0ea39a8ba85b6b2be88e21ba6cd6b7e5d925559b85991e043d2ed76529b",
+    "openclaw_direct_report_sha256": "3227f7659c2c54c691e21f212db2452dbb0c02e3eb2c98da72378aea115f33b0"
+  }
+}

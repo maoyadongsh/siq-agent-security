@@ -1,0 +1,65 @@
+{
+  "schema_version": "linux-lx03-native-write-symlink-boundary/v2",
+  "recorded_at": "2026-09-18T19:36:17.850254+00:00",
+  "host_os": "linux/arm64",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "scenario": "valid company-a read/write Grant and task authority: native in-root write succeeds; writes through a company-a file symlink to an existing company-b file and through a directory symlink to a missing company-b file are denied before side effects",
+  "real_host_results": {
+    "hermes_write_boundary": {
+      "checks": 18,
+      "passed": true,
+      "private_report_sha256": "5d0993c86a79c3c6da6f3e196485050ac95833261d744863cb422eaa79c67ce3",
+      "driver_sha256": "2f85abea45c2221175e94f470f09dcbbb00834c4fb8391e8bc47435b70625a63",
+      "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609"
+    },
+    "openclaw_write_boundary": {
+      "checks": 19,
+      "passed": true,
+      "private_report_sha256": "dd70f0a8dadff5f71244b05104ab1f4ac7d238bcb770d9cc8dfb22ab7c601d55",
+      "driver_sha256": "e8c01574b8d2b40f884df91be98d8147555082b46766d3210111cfdc1ca3b599",
+      "native_cli_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733"
+    },
+    "hermes_default_regression": {
+      "checks": 15,
+      "passed": true,
+      "private_report_sha256": "1bb364a83b044a09a571ee2b95436e947bffe28b9939552a1f06dde0d346f8e5",
+      "driver_sha256": "2f85abea45c2221175e94f470f09dcbbb00834c4fb8391e8bc47435b70625a63",
+      "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609"
+    },
+    "openclaw_default_regression": {
+      "checks": 19,
+      "passed": true,
+      "private_report_sha256": "48ee193dee4b9ddd032544b7d2cbe22a73295ccf780e8d81d7c9b0e710f08010",
+      "driver_sha256": "e8c01574b8d2b40f884df91be98d8147555082b46766d3210111cfdc1ca3b599",
+      "native_cli_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733"
+    }
+  },
+  "driver_dependency_sha256": "e3bde9e91cab297c7a50f29ba63082305ad88f3bf9626db62209a82991aedfe9",
+  "failed_attempts_not_counted": [
+    {
+      "host": "openclaw",
+      "private_log_sha256": "5e8fa1e512d3fc6852291b0b4aee9431e553a3a8fb2230b8e2c6737d34cfdc12",
+      "cause": "write-control request mixed with raw-capture journey, violating its fixed two-record assertion"
+    },
+    {
+      "host": "openclaw",
+      "private_log_sha256": "591461f43b0e8b8a66631dc00cf11518a02b077124c30ee77132b8d1e972b36a",
+      "cause": "raw Grant still enabled in write-boundary mode; capture count exceeded fixed read-only journey contract"
+    }
+  ],
+  "limitations": [
+    "native synthetic-model fixture in isolated HOME, not paid model or production user traffic",
+    "test-only Hermes pre_llm observer supplies host-generated identity; it carries no SIQ authority",
+    "decision-time canonical-path check is not an atomic host file-open guarantee; same-UID symlink swap remains possible",
+    "stock OpenClaw approval-after-hold checkpoint and cross-process exactly-once remain unverified",
+    "Windows/macOS real-host path identity is outside this Linux leg"
+  ],
+  "shared_driver_r07_regression": {
+    "passed": true,
+    "checks": 30,
+    "nested_r04_checks": 31,
+    "private_report_sha256": "4d25d96b38b57b4ffe840465e9a1a9f58f77efd715f47dc81a317f15c10b43b3",
+    "driver_sha256": "90a89143a83b5857264b75f88de1cc1f285470ca1cab9aa53845d615fdedaf73"
+  }
+}

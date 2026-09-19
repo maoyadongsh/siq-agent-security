@@ -1,0 +1,83 @@
+{
+  "schema_version": "windows-hermes-native-smoke/v1",
+  "recorded_at": "2026-09-14T00:51:45.933172+00:00",
+  "status": "observed_failure",
+  "source_state": "development-exploration",
+  "mode": "diagnostics",
+  "os": "windows",
+  "architecture": "",
+  "model": "none",
+  "paid_model_calls": false,
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "harness_sha256": "b33194a51c0b1b0d74624e99c02c8a12efc45df0e3752267f8f3246bc05f398e",
+  "host_source_sha256": {
+    "hermes_cli": "fa802a97400fd6575bff8cf305ae68bc665a8fd933099abdd45cca96d2bee748",
+    "host_hooks": "1b5aae9a34e97c9922b5ab7e76c4bd3562a6ab715a983bf9c4dfe6031c457942",
+    "host_dispatcher": "c99620c824ab59f341ac7d0e22cde016b0c469d0643e7a5a5a82e0d63176e4b5",
+    "host_cli_main": "ed90dc5aa03baae3407606895b0313deb57e64662bada559a89d9a90965b5de3"
+  },
+  "private_run_name": "hermes-native-20260914T005145929677Z",
+  "limits": [
+    "fixture config copied directly; not installation acceptance",
+    "diagnostics uses installed native hook dispatcher only; conversation mode is a separate attempt",
+    "no approval-resume, final recheck, or trusted Skill-attribution proof",
+    "Python audit guard constrains fixture; not a production OS sandbox"
+  ],
+  "path_contract": {
+    "issue": "WIN-INTENT-PATH-001",
+    "status": "fail",
+    "observed_failure": true,
+    "method": "component_fixture",
+    "path_values_redacted": true,
+    "cases": [
+      {
+        "case": "posix_absolute",
+        "http_status": 201,
+        "reason": null
+      },
+      {
+        "case": "windows_backslash_absolute",
+        "http_status": 400,
+        "reason": "intent_invalid_resource_constraint"
+      },
+      {
+        "case": "windows_slash_absolute",
+        "http_status": 400,
+        "reason": "intent_invalid_resource_constraint"
+      },
+      {
+        "case": "relative_negative",
+        "http_status": 400,
+        "reason": "intent_invalid_resource_constraint"
+      },
+      {
+        "case": "drive_relative_negative",
+        "http_status": 400,
+        "reason": "intent_invalid_resource_constraint"
+      }
+    ],
+    "desired_behavior": "Windows absolute resources need an explicitly defined contract and safe normalization",
+    "no_filesystem_effect_executed": true
+  },
+  "service_unavailable": {
+    "status": "pass",
+    "method": "component_fixture",
+    "installed_native_hook_dispatcher": true,
+    "full_tool_dispatcher": false,
+    "public_cli": false,
+    "block_directive_returned": true,
+    "decision_service_unavailable": true,
+    "forbidden_file_exists": false
+  },
+  "command_results": [
+    {
+      "executable": "python.exe",
+      "exit_code": 0
+    },
+    {
+      "executable": "python.exe",
+      "exit_code": 0
+    }
+  ],
+  "host_source_unchanged": true
+}

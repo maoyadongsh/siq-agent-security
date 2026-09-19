@@ -1,0 +1,23 @@
+{
+  "schema_version": "linux-lx05-phasec-replay-review/v1",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "initial_run": {
+    "protocol": "lx05-phasec-replay-protocol.json",
+    "result": "lx05-phasec-replay-summary.json",
+    "attempts": 3,
+    "classification": "invalid_browser_samples",
+    "reason": "All three attempts exited before browser phase-c with an AttributeError in a newly added optional OpenClaw harness argument. Failures are retained and excluded from browser reliability inference, not deleted or called passing attempts."
+  },
+  "corrected_run": {
+    "protocol": "lx05-phasec-replay-protocol-v2.json",
+    "result": "lx05-phasec-replay-v2-summary.json",
+    "attempts": 3,
+    "passed": 3,
+    "journey_checks_each": 30,
+    "nested_update_checks_each": 31,
+    "phase_c_passed_each": true,
+    "inputs_unchanged": true
+  },
+  "conclusion": "Historical phase-c locator timeout was not reproduced in three valid consecutive real-host browser journeys. Its root cause remains unknown; LX05 remains partial.",
+  "limitations": "A finite replay with a synthetic model and automated headless browser operator is not a desktop visual or release acceptance test."
+}

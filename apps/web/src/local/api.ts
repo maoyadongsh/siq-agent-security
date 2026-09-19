@@ -22,6 +22,12 @@ import type { TaskActivityItem } from './taskActivities';
 import { isTaskActivityDetail, isTaskActivityPage, isTaskActivitySearch, type ActivityFilters, type ActivityView } from './taskActivities';
 import { isSkillUpdateComparison, isSkillUpdateCreated, isSkillUpdatePlan, isSkillUpdateView } from './skillUpdate';
 import type { SkillUpdateCompareRequest, SkillUpdateStageRequest, SkillUpdateCommit, SkillUpdateRecover } from './types';
+import {
+  classifyTaskRead,
+  taskExecutionCandidate,
+  taskExecutionReadRequest,
+  type TaskReadOutcome,
+} from './taskExecutions';
 import { isSkillRemovalView } from './skillRemoval';
 import type { SkillRemoveRequest } from './types';
 import { isSkillInstallationCatalog, isSkillInstallationInspection } from './skillInspection';
@@ -82,6 +88,7 @@ export type {
 
 let session = '';
 let sessionEpoch = 0;
+let sessionTransitionEpoch: number | undefined;
 let restoring: Promise<boolean> | undefined;
 const expiredListeners = new Set<() => void>();
 
@@ -144,6 +151,26 @@ export class LocalApiError extends Error {
   }
 }
 
+export class LocalSessionChangedError extends LocalApiError {
+  constructor() {
+    super(0, '管理会话已更新，已忽略旧请求的响应。');
+  }
+}
+
+function requireSessionEpoch(epoch: number): void {
+  if (epoch !== sessionEpoch) throw new LocalSessionChangedError();
+}
+
+function beginSessionTransition(): number {
+  const epoch = ++sessionEpoch;
+  sessionTransitionEpoch = epoch;
+  return epoch;
+}
+
+function endSessionTransition(epoch: number): void {
+  if (sessionTransitionEpoch === epoch) sessionTransitionEpoch = undefined;
+}
+
 export async function boot(): Promise<UiBoot> {
   const resp = await fetchLocal('/ui-config.json');
   if (!resp.ok) {
@@ -163,19 +190,35 @@ export async function boot(): Promise<UiBoot> {
 }
 
 export async function pair(code: string): Promise<void> {
-  const epoch = ++sessionEpoch;
-  const resp = await fetchLocal('/v1/pair', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-SIQ-Session': '1' },
-    body: JSON.stringify({ code, remember: true }),
-  });
-  if (!resp.ok) {
-    throw new LocalApiError(resp.status, resp.status === 401
-      ? '配对码无效、已使用或已过期。请运行 siq-agent-security pair 获取新码。'
-      : `配对失败（HTTP ${resp.status}），请检查本地服务。`);
+  const epoch = beginSessionTransition();
+  try {
+    let resp: Response;
+    try {
+      resp = await fetchLocal('/v1/pair', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-SIQ-Session': '1' },
+        body: JSON.stringify({ code, remember: true }),
+      });
+    } catch (error) {
+      requireSessionEpoch(epoch);
+      throw error;
+    }
+    requireSessionEpoch(epoch);
+    if (!resp.ok) {
+      throw new LocalApiError(resp.status, resp.status === 401
+        ? '配对码无效、已使用或已过期。请运行 siq-agent-security pair 获取新码。'
+        : `配对失败（HTTP ${resp.status}），请检查本地服务。`);
+    }
+    const next = acceptSession(await readObject(resp));
+    requireSessionEpoch(epoch);
+    session = next;
+    // Requests started while pairing was in flight still carry the previous
+    // bearer. Advance once more after installing the new session so their late
+    // responses cannot update the new administration view.
+    ++sessionEpoch;
+  } finally {
+    endSessionTransition(epoch);
   }
-  const next = acceptSession(await readObject(resp));
-  if (epoch === sessionEpoch) session = next;
 }
 
 export function restoreSession(): Promise<boolean> {
@@ -197,22 +240,45 @@ export function restoreSession(): Promise<boolean> {
 }
 
 export async function logout(): Promise<void> {
-  ++sessionEpoch; // An in-flight restore must not repopulate a signed-out session.
-  const result = await request<{ schema_version?: string; signed_out?: boolean }>('/v1/session/logout', { method: 'POST' });
-  if (result?.schema_version !== 'local-logout/v1' || result.signed_out !== true) {
-    throw new LocalApiError(502, '无法确认管理会话已退出，请检查服务后重试。');
+  const epoch = beginSessionTransition(); // An in-flight restore must not repopulate a signed-out session.
+  try {
+    const result = await request<{ schema_version?: string; signed_out?: boolean }>('/v1/session/logout', { method: 'POST' }, true);
+    requireSessionEpoch(epoch);
+    if (result?.schema_version !== 'local-logout/v1' || result.signed_out !== true) {
+      throw new LocalApiError(502, '无法确认管理会话已退出，请检查服务后重试。');
+    }
+    session = '';
+    // A request may have started after logout began but before the server
+    // confirmed it. It used the session that has just been revoked, so retire
+    // that in-flight generation as part of the successful sign-out transition.
+    ++sessionEpoch;
+  } finally {
+    endSessionTransition(epoch);
   }
-  session = '';
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, init: RequestInit = {}, allowSessionTransition = false): Promise<T> {
+  const epoch = sessionEpoch;
+  // Ordinary requests that start inside a pair/logout window use a session
+  // whose final disposition is not known yet. They must never process even an
+  // early 401 before the transition itself commits or fails.
+  const startedDuringSessionTransition = sessionTransitionEpoch !== undefined && !allowSessionTransition;
   const headers = new Headers(init.headers);
   if (session) headers.set('Authorization', `Bearer ${session}`);
   if (init.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
-  const resp = await fetchLocal(path, { ...init, headers });
-  const text = await resp.text();
+  let resp: Response;
+  let text: string;
+  try {
+    resp = await fetchLocal(path, { ...init, headers });
+    text = await resp.text();
+  } catch (error) {
+    requireSessionEpoch(epoch);
+    throw error;
+  }
+  requireSessionEpoch(epoch);
+  if (startedDuringSessionTransition) throw new LocalSessionChangedError();
   let parsed: unknown = null;
   if (text) {
     try {
@@ -664,6 +730,29 @@ export const localApi = {
       effective_readback?: { backend: string; revision: string; evidence_id: string };
       failures?: string[];
     }>('/v1/openshell/apply', { method: 'POST', body: JSON.stringify(body) }),
+  /**
+   * 读取一次**真实任务执行**的后端投影（`/v1/openshell/task-executions/read`）。
+   *
+   * 管理会话走 `/read`，而不是决策凭据的 `/status`：控制台只持管理会话。
+   * 这条路径是只读的——不启动、不停止、不重放、不写链。
+   *
+   * 失败被归类而不是抛出：`404` 表示"该预留不是一次任务执行"，这既不是错误也不是
+   * 状态，UI 必须能把它与"读取失败"和"后端说它未决"区分开。真正的连接失败
+   * （status 0）同样只作为一次失败呈现，不推断任何任务状态。
+   */
+  readTaskExecution: async (item: Confirmation): Promise<TaskReadOutcome> => {
+    if (!taskExecutionCandidate(item)) return { kind: 'not_a_task_execution' };
+    try {
+      const data = await request<unknown>('/v1/openshell/task-executions/read', {
+        method: 'POST',
+        body: JSON.stringify(taskExecutionReadRequest(item)),
+      });
+      return classifyTaskRead(200, data);
+    } catch (error) {
+      if (error instanceof LocalApiError) return classifyTaskRead(error.status, { error: error.message });
+      return classifyTaskRead(0, null);
+    }
+  },
   openshellDriftCheck: () =>
     request<{ ok?: boolean; findings_written?: string[]; error?: string }>('/v1/openshell/drift-check', {
       method: 'POST',

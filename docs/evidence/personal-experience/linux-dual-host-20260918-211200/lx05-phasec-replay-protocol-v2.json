@@ -1,0 +1,30 @@
+{
+  "schema_version": "linux-lx05-phasec-replay-protocol/v2",
+  "frozen_at": "2026-09-18T17:58:22.765125+00:00",
+  "private_plan_sha256": "a34b7f9c218a6059e45f0b6425f2ec9885000403e892edb3de68229d35f89391",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "driver_sha256": "90a89143a83b5857264b75f88de1cc1f285470ca1cab9aa53845d615fdedaf73",
+  "node_sha256": "1ea16f5e8d590ca819f1db81e61a6bc4c8e7d8b69776c9236f8ebbf717113225",
+  "host_entry_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733",
+  "dependencies": {
+    "scripts/personal-experience/r07-linux-user-journey-smoke.py": "90a89143a83b5857264b75f88de1cc1f285470ca1cab9aa53845d615fdedaf73",
+    "scripts/personal-experience/r04-openclaw-native-update-smoke.py": "30d4cfaa8bf19a51d4af28278e2306022277f3647f3299d49609e5a727aeb14f",
+    "scripts/personal-experience/r01-sec-openclaw-native-smoke.py": "04ddce9f930ac426a0c23f304f12f7e7e8125c1c3c52916b8b01cb4deb1d72e7",
+    "scripts/personal-experience/openclaw-managed-native-smoke.py": "c11ebf134c924c1d046eb1df81453c151db394697816cdfc18c1f02641d4f8fa",
+    "scripts/validate-intent-v2-openclaw.py": "2241e9083e0fdf8ac782a3c8a8f3e7f6d9af59a5fc70ee705c405177b25fbefc",
+    "scripts/validate-intent-v2-hermes.py": "d21c2cc5218387a0062de99350c1daea7f393365d1a8dd1bd0daa98d6a2a1c68",
+    "scripts/personal-experience/closure-b04-export-runner.py": "9fa784d93959e227f47272d85bc041e265cdf546548348c09f777af7be5c2aa0",
+    "scripts/personal-experience/closure-b04-expiry-seed-runner.py": "373d92f8af194bac780081025b0c8feeb3603470abef26603844cf3baac413b5",
+    "scripts/personal-experience/lx05-phasec-replay.py": "e0ede6fca45f6b91912a91442928ec40fbf6f91fb27f9f2b820626ba513382a4"
+  },
+  "attempts": 3,
+  "expected_each": {
+    "journey_checks": 30,
+    "nested_update_checks": 31,
+    "phase_c_all_pass": true
+  },
+  "sample_policy": "Run three consecutive isolated journeys in order. Preserve every attempt and timeout. No retry or exclusion. The v1 preflight failures remain separate and cannot be counted as browser phase-c samples.",
+  "environment": "real OpenClaw 2026.5.12, real daemon, embedded UI, headless Chromium, isolated HOME per attempt; synthetic model and operator",
+  "v1_preflight_classification": "Three attempts failed before browser start because a new optional overreach argument was directly accessed in a transitive OpenClaw harness; fixed with a safe default and retained as harness-regression evidence, not phase-c timeout evidence.",
+  "release_acceptance": false
+}

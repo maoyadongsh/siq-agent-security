@@ -1,0 +1,31 @@
+{
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+  "driver_sha256": "3623a058b5e1e67ad64047ac7b23e3dc3152a5ef36a1ffe761d40067562c84a1",
+  "limitations": [
+    "B3 verifies functional policy/apply/receipt/denial/revoke/rollback paths; it has no frozen performance budget.",
+    "No browser or desktop UI was exercised in this leg.",
+    "Backend v0.0.83 remote single-task stop and cross-system atomicity are not proven by this journey.",
+    "Sixth-candidate B2 and S1-S4 performance remain not measured while LX04 natural-expiry worker is live."
+  ],
+  "private_console_sha256": "323d6c2ce61557d4ff14fd8db341ace30cb7caff64cb625caf17e85c1c62537c",
+  "private_report_sha256": "2ece787ab021a0f751c862622067363fbe5e4662a831faf902552eb6e6a91387",
+  "recorded_at": "2026-09-18T22:32:17.369478+00:00",
+  "release_acceptance": false,
+  "sandbox": {
+    "deleted": true,
+    "exact_owned_name": "siq-lx06-sec-hold-b3-20260919",
+    "post_delete_names_sha256": "068bbffbed7578e3aa888e23149b336b8ca351b36b327e8d39a86c2e624e9cf2",
+    "preexisting_count": 3,
+    "preexisting_names_sha256": "068bbffbed7578e3aa888e23149b336b8ca351b36b327e8d39a86c2e624e9cf2",
+    "preexisting_names_unchanged": true
+  },
+  "schema_version": "linux-lx06-sec-hold-fix-b3-summary/v1",
+  "scope": "real OpenShell B3 functional product journey, no latency budget",
+  "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0",
+  "steps": {
+    "failed": 0,
+    "passed": 57,
+    "total": 57
+  }
+}

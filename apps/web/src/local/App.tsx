@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './Layout';
 const TaskActivityDetailPage = lazy(() => import('./pages/TaskActivityDetailPage'));
@@ -7,7 +7,7 @@ const SkillUpdatesPage = lazy(() => import('./pages/SkillUpdatesPage'));
 const InstalledSkillsPage = lazy(() => import('./pages/InstalledSkillsPage'));
 const SkillImportsPage = lazy(() => import('./pages/SkillImportsPage'));
 import { Icon } from '@/components/icons';
-import { boot, localApi, pair, restoreSession, logout, onSessionExpired, LocalApiError } from './api';
+import { boot, localApi, pair, restoreSession, logout, onSessionExpired, LocalApiError, LocalSessionChangedError } from './api';
 import { LocalSessionContext, readActorId, writeActorId, type LocalSession } from './session';
 import type { Status } from './types';
 import OverviewPage from './pages/OverviewPage';
@@ -40,6 +40,8 @@ function LocalAdminApp() {
   const [pairingBusy, setPairingBusy] = useState(false);
   const [bootFailed, setBootFailed] = useState(false);
   const [bootAttempt, setBootAttempt] = useState(0);
+  const reloadGeneration = useRef(0);
+  const pairingInFlight = useRef(false);
 
   const setActorId = useCallback((id: string) => {
     const next = id.trim() || 'local';
@@ -48,13 +50,16 @@ function LocalAdminApp() {
   }, []);
 
   const reload = useCallback(() => {
+    const generation = ++reloadGeneration.current;
     localApi
       .status()
       .then((data) => {
+        if (generation !== reloadGeneration.current) return;
         setStatus(data);
         setError(null);
       })
       .catch((err: unknown) => {
+        if (generation !== reloadGeneration.current || err instanceof LocalSessionChangedError) return;
         setStatus(null);
         if (err instanceof LocalApiError && err.status === 401) {
           setNeedsPairing(true);
@@ -87,12 +92,14 @@ function LocalAdminApp() {
   }, [reload, bootAttempt]);
 
   useEffect(() => onSessionExpired(() => {
+    ++reloadGeneration.current;
     setStatus(null);
     setNeedsPairing(true);
     setError('管理会话已失效。请运行 siq-agent-security pair 获取新配对码。');
   }), []);
 
   const signOut = useCallback(async () => {
+    ++reloadGeneration.current;
     try {
       await logout();
       setStatus(null);
@@ -100,12 +107,16 @@ function LocalAdminApp() {
       setNeedsPairing(true);
       setPairingCode('');
     } catch (err) {
+      if (err instanceof LocalSessionChangedError) return;
       setError(err instanceof Error ? err.message : '退出失败，请重试');
     }
   }, []);
 
   const submitPairing = (event: FormEvent) => {
     event.preventDefault();
+    if (pairingInFlight.current) return;
+    pairingInFlight.current = true;
+    ++reloadGeneration.current;
     setPairingBusy(true);
     setError(null);
     pair(pairingCode)
@@ -115,9 +126,13 @@ function LocalAdminApp() {
         reload();
       })
       .catch((err: unknown) => {
+        if (err instanceof LocalSessionChangedError) return;
         setError(err instanceof Error ? err.message : '配对失败');
       })
-      .finally(() => setPairingBusy(false));
+      .finally(() => {
+        pairingInFlight.current = false;
+        setPairingBusy(false);
+      });
   };
 
   const session = useMemo<LocalSession>(

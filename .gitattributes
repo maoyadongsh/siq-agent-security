@@ -53,3 +53,6 @@ docs/evidence/personal-experience/release-openshell-20260916-142706/** -text
 docs/evidence/personal-experience/release-openshell-review-20260916/** -text
 # Unified diff context markers intentionally precede tabs and blank lines.
 docs/evidence/personal-experience/release-openshell-review-20260916/source-delta.patch whitespace=-space-before-tab,-blank-at-eol
+
+# Unified diff context markers intentionally precede upstream tabs.
+patches/openclaw/*.patch whitespace=-space-before-tab,-blank-at-eol

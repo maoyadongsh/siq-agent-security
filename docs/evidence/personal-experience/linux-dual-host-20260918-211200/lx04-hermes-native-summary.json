@@ -1,0 +1,55 @@
+{
+  "schema_version": "linux-dual-host-lx04-hermes-native-summary/v1",
+  "candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "driver_sha256": "4bfdcb6e23aebe50b345e838c60abc9bed021bea11bc7192be3acc5725aac3f7",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "prior_raw_expiry_leg": {
+    "private_report_sha256": "1109636557d2a359262e91163417057b92d75d9435efbf2f58e1f8d87f741ddd",
+    "checks": 17,
+    "passed": true,
+    "driver_sha256": "4b266bcc2ce48c6528d647f8b15b0baf6cc005a91ad2ac96e2968c7d03c2777b"
+  },
+  "joint_native_capture_export_leg": {
+    "private_report_sha256": "3f397e97fd5cd5af20b6b0c716daed05a5e5cc8be59d7f85b17cf85507135604",
+    "private_console_sha256": "3358452974f489b7b4779274255474f32a086d6a2a5ebe5b59301e61643e56f5",
+    "passed": true,
+    "checks": 18,
+    "raw_grant_duration_seconds": 60,
+    "native_parameter_and_output_capture": true,
+    "natural_grant_expiry": true,
+    "same_native_task_export_and_trace_export_signatures_valid": true,
+    "same_native_task_export_receipt_count": 5,
+    "default_exports_exclude_raw_content_and_credentials": true,
+    "caller_selected_export_scope_rejected": true,
+    "driver_sha256": "e0d799cf04d2b8dd1fee08b687bb11f5586d424e6a2953201d410d393922f4d8"
+  },
+  "evidence_level": "current_candidate_real_hermes_cli_with_isolated_profile",
+  "limitations": [
+    "Hermes two-native-task joint isolation passed in an isolated profile; OpenClaw two-native-task joint isolation not run",
+    "native task-activity export authorization revocation/expiry lifecycle not run",
+    "synthetic two-task export isolation and natural ciphertext retention are separate legs"
+  ],
+  "release_acceptance": false,
+  "two_native_task_isolation_leg": {
+    "private_report_sha256": "1e1fdc8043c50b59a167ff37d0ec6734187d201fdd3cc7524ed9a76901c728f9",
+    "private_console_sha256": "0cc0a080ad5ace662b2f764f11708a0da1081d09a22e305478a000c888484187",
+    "driver_sha256": "4bfdcb6e23aebe50b345e838c60abc9bed021bea11bc7192be3acc5725aac3f7",
+    "passed": true,
+    "checks": 23,
+    "real_native_tasks": 2,
+    "first_task_opted_in_raw_records": 2,
+    "second_task_unopted_raw_records": 0,
+    "first_and_second_task_signed_export_receipt_counts": [
+      5,
+      2
+    ],
+    "signed_receipt_slices_disjoint": true,
+    "unauthorized_export_and_caller_scope_injection_rejected": true,
+    "cross_task_raw_read_rejected": true,
+    "first_task_raw_grant_naturally_expired": true,
+    "prior_successful_report_sha256": "49cee5e4132d8f2d9b001f2a804aa0b917429447110119ad3d775b0fadc6035b",
+    "second_task_completed_before_first_raw_grant_expired": true,
+    "seconds_of_first_grant_remaining_after_second_task": 55.991,
+    "prior_successful_driver_sha256": "d11538923554ea71c74ee26af5dc47cc1afc01a7435b7b027216f8576fc84e55"
+  }
+}

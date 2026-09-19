@@ -234,3 +234,47 @@ func TestConfirmationsBindingWithdrawalAndOrder(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestConfirmationAuthorityForInstalledSkillGrant(t *testing.T) {
+	fx := newFixture(t, "block", nil, false)
+	g := deployedGrant(t, "hermes", false)
+	g.Status = "approved"
+	g.AdmissionID = "adm-si-" + strings.Repeat("a", 64)
+	fx.eng.sessions["sess-1"] = &session{boundIntentID: "intent-1", boundTaskID: "task-1"}
+	selected := g
+	fx.eng.opts.IntentLookup = func(platform, sessionID, agentID string) (*IntentContract, error) {
+		return &IntentContract{IntentID: "intent-1", TaskID: "task-1", Digest: "digest-1", AuthorityRevision: "rev-1", SelectedGrant: selected}, nil
+	}
+	id := "inst_1"
+	grantID := g.GrantID
+	d := Receipt{Platform: "hermes", SessionID: "sess-1", AgentID: &id, TaskID: "task-1", IntentID: "intent-1", IntentDigest: "digest-1", IntentBinding: "bound", AuthorityRevision: "rev-1", MatchedGrantID: &grantID}
+	if !fx.eng.confirmationAuthorityCurrent(d, fx.clock) {
+		t.Fatal("trusted selected installed Skill grant should remain confirmable")
+	}
+	for _, tc := range []struct {
+		name   string
+		change func()
+	}{
+		{"revoked", func() { g.Status = "revoked" }},
+		{"not_import_reserved", func() { g.AdmissionID = "adm-other" }},
+		{"changed_grant", func() { g.GrantID = "grt-changed" }},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			before := *g
+			tc.change()
+			if fx.eng.confirmationAuthorityCurrent(d, fx.clock) {
+				t.Fatal("changed installed Skill authority remained confirmable")
+			}
+			*g = before
+		})
+	}
+	selected = nil
+	fx.eng.opts.Grants = func(_, _ string) *grant.Grant { return g }
+	if fx.eng.confirmationAuthorityCurrent(d, fx.clock) {
+		t.Fatal("unselected import-reserved grant cannot authorize confirmation")
+	}
+	g.Status = "deployed"
+	if fx.eng.confirmationAuthorityCurrent(d, fx.clock) {
+		t.Fatal("even a deployed import-reserved grant requires trusted selection")
+	}
+}

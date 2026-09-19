@@ -1,0 +1,39 @@
+{
+  "schema_version": "linux-lx02-confirmation-fix-provisional-installed/v1",
+  "recorded_at": "2026-09-18T21:13:00.665258+00:00",
+  "host_os": "linux/arm64",
+  "trust_layer": "test_release",
+  "source_candidate_sha256": "6ce92b692f099478e88a86e368e9132ab113c5eecc41c77a791ca7d367d3262e",
+  "source_binding_sha256": "dbc07ca53280c61052644b220d013e909b16c2a499d7a30c558b65bb738c1323",
+  "source_overlay": {
+    "production_files": 550,
+    "mismatches": 0,
+    "canonical_sha256": "bcdfbbb263bdc6ca708f3584829c19f095ef6b561280765e93a1d2849d8d4c35"
+  },
+  "installed_binary_sha256": "57d08964db4f9e2a1ac8f04a6c5cc6b22f2a2ffb23e34a5024b8ad684fdd53c4",
+  "installed_service": {
+    "checks": 16,
+    "passed": true,
+    "private_checks_sha256": "8a3ea3dd8da9ca95ef69c35c19aa2e1cb5727c2bf470ad5b0d752e877da11f3c"
+  },
+  "installed_r07": {
+    "checks": 31,
+    "nested_r04_checks": 31,
+    "passed": true,
+    "private_report_sha256": "9e87bbde284567a8b1a7086e2caea0cb42155727565c49582be25e0de4e2dd66"
+  },
+  "direct_process_comparison": {
+    "checks": 30,
+    "nested_r04_checks": 31,
+    "passed": true,
+    "private_report_sha256": "ddcba03b483e27a1e73e4b19ca7ab052ef304ac0e4a6dbc0172da1ea5342e5d1"
+  },
+  "private_manifest": "25/25 sha256sum -c passed",
+  "cleanup": "Ownership-checked user unit, port 25228 and temporary run directory absent after test; shared user manager environment unchanged.",
+  "limitations": [
+    "Ephemeral test signing root; formal release signing remains separate.",
+    "Installed test-release binary differs from unsigned source candidate because the test trust key is embedded.",
+    "Automated headless browser is not human GUI or desktop notification acceptance.",
+    "OpenShell function and performance gates have not transferred to this source candidate."
+  ]
+}

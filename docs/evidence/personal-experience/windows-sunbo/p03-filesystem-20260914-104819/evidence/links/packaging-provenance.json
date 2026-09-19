@@ -1,0 +1,42 @@
+{
+  "method": "private_raw_retained_and_new_redacted_archive",
+  "source_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty": false,
+  "binary_candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "changed_from_private_draft_files": [
+    "admit-hardlink-regular-file.json",
+    "admit-junction-escape-quarantine.json",
+    "admit-ordinary-skill.json",
+    "report.md"
+  ],
+  "change_scope": "Nested JSON path redaction and report archive location; no test outcomes changed",
+  "private_raw_not_copied": true,
+  "test_execution_harness_manifest_retained": "harness-provenance.json",
+  "current_packaging_harness": [
+    {
+      "name": "admission-links.ps1",
+      "sha256": "ddc1a9f53f6685eb8f0c7e4ddba1224eeff67657b992bf27f719797fa7920d52"
+    },
+    {
+      "name": "common.ps1",
+      "sha256": "46ca3c75e03c428b4289c9a5785b73377e9011efe21f31c5d592c4cbb862c15b"
+    },
+    {
+      "name": "finalize.ps1",
+      "sha256": "3b4a4d998f55f80a5c094fd7ee413403a45b3fb9af0978c3f6ab98b420b7d59c"
+    },
+    {
+      "name": "package.ps1",
+      "sha256": "2429d3150101b07623af36d89d61d3e67af2ae3fc2d99133e0a5c3807a34fc53"
+    },
+    {
+      "name": "setup.ps1",
+      "sha256": "c256e224f908b83ae7bad438103408827cd51dfe4bf86df92916752d7ac2cdfb"
+    },
+    {
+      "name": "state-links.ps1",
+      "sha256": "5f91ad7810fb16aa61c69ecd89733b10f06c4c8205ccb80a36cacdde6600d706"
+    }
+  ]
+}

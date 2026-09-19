@@ -13,6 +13,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -58,10 +59,12 @@ type sessionExecGateway struct {
 	driftAfterReads int  // after a set, this many reads still see the new state
 	postSetReads    int
 	setCalls        int
+	phase           string
+	sandboxID       string
 }
 
 func (g *sessionExecGateway) output() string {
-	return fmt.Sprintf("Version:      %d\nStatus:       Active\nActive:       %d\n---\n%s", g.revision, g.revision, g.body)
+	return fmt.Sprintf("Version:      %d\nStatus:       Active\nActive:       %d\nLoaded:       %d ms\n---\n%s", g.revision, g.revision, g.revision, g.body)
 }
 
 func (g *sessionExecGateway) runner() openshell.Runner {
@@ -80,12 +83,22 @@ func (g *sessionExecGateway) runner() openshell.Runner {
 			if g.driftAfterReads > 0 && g.postSetReads >= g.driftAfterReads {
 				// The write landed, then the state drifted back: the
 				// verify readback no longer matches the applied digest.
-				return 0, fmt.Sprintf("Version:      %d\nStatus:       Active\nActive:       %d\n---\n%s", 1, 1, sessionExecBasePolicy), ""
+				return 0, fmt.Sprintf("Version:      %d\nStatus:       Active\nActive:       %d\nLoaded:       %d ms\n---\n%s", 1, 1, 1, sessionExecBasePolicy), ""
 			}
 			if g.driftAfterReads > 0 {
 				g.postSetReads++
 			}
 			return 0, g.output(), ""
+		case reflect.DeepEqual(rest, []string{"sandbox", "list", "--limit", "1000", "--output", "json"}):
+			phase := g.phase
+			if phase == "" {
+				phase = "Ready"
+			}
+			sandboxID := g.sandboxID
+			if sandboxID == "" {
+				sandboxID = "de99ab6a-8e47-487d-8f69-6e5b6ae9c7a2"
+			}
+			return 0, fmt.Sprintf(`[{"id":%q,"name":"inst_1","phase":%q,"current_policy_version":%d}]`, sandboxID, phase, g.revision), ""
 		case len(rest) == 8 && rest[0] == "policy" && rest[1] == "set" && rest[3] == "--policy" && rest[5] == "--wait" && rest[6] == "--timeout":
 			g.setCalls++
 			if g.failSet {

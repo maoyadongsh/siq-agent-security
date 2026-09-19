@@ -1,0 +1,32 @@
+{
+  "schema_version": "linux-lx06-root-scope-gateway-summary/v1",
+  "host_os": "linux/arm64",
+  "gateway_version": "0.0.83",
+  "gateway_endpoint_class": "loopback mTLS development gateway",
+  "intermediate_candidate": {
+    "binary_sha256": "36042d1b8ae8b305eeac5c83d14486bcfd884d9ac9b56af74e2beb8e7e469880",
+    "full_d05_steps": 373,
+    "pass": 365,
+    "partial": 7,
+    "blocked": 1,
+    "fail": 0,
+    "private_matrix_sha256": "d281f47d7f459a4bca82d24cb71f46221e0054fcbe146552ecd11f256f1d1c0e"
+  },
+  "final_candidate": {
+    "binary_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+    "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+    "full_d05_steps": 373,
+    "pass": 365,
+    "partial": 7,
+    "blocked": 1,
+    "fail": 0,
+    "matrix_items": "10 pass / 3 partial (E06, E08, E11)",
+    "private_matrix_sha256": "018c8eae03d00fb4bfc2705e8e78a89c4a5b408067b215ac6615c2b116ccc3f1"
+  },
+  "resources": "Each candidate used a distinct batch-owned sandbox; both were deleted by exact name and their absence was read back. The final delete initially appeared in a stale list before a subsequent list confirmed absence. Three pre-existing sandboxes remained unchanged.",
+  "limitations": [
+    "This is a real gateway functional matrix. No same-candidate B2/B3 or task-execution performance measurement has been completed after the final source change.",
+    "Remote single-task stop confirmation remains unavailable in the gateway protocol; local process termination is not a remote stop receipt.",
+    "The gateway interceptor capability and host-level enforcement ladder are separate from this task-execution matrix."
+  ]
+}

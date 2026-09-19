@@ -1,0 +1,44 @@
+{
+  "schema_version": "windows-hermes-candidate-provenance/v1",
+  "candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "source_dirty": false,
+  "source_before_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "source_after_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "source_before_dirty": false,
+  "source_after_dirty": false,
+  "started_at": "2026-09-14T00:51:43.3106275Z",
+  "finished_at": "2026-09-14T00:52:25.7611603Z",
+  "os": "windows",
+  "architecture": "amd64",
+  "method": "component_fixture",
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "binary_unchanged": true,
+  "harness_sha256": "b33194a51c0b1b0d74624e99c02c8a12efc45df0e3752267f8f3246bc05f398e",
+  "command": "python -B scripts/personal-experience/hermes-windows-native-smoke.py --mode diagnostics --hermes-cli <installed-native-cli> --hermes-root <installed-native-source> --hermes-python <installed-native-python> --binary <candidate-windows-amd64> --private-root <new-private-child> --out <hermes-native-diagnostics.json>",
+  "exit_code": 1,
+  "result_status": "observed_failure",
+  "report_path": "hermes-native-diagnostics.json",
+  "report_sha256": "3b48afb5c712f58f278042e9c40ec3324288d956ffa0da0ae1c1abda777c0f42",
+  "original_report_source_state": "development-exploration",
+  "original_report_source_state_note": "Unmodified harness hardcodes development-exploration. This outer record binds this new execution to the independently checked clean candidate; it does not relabel the original result or strengthen the component method.",
+  "model": "none",
+  "paid_model_calls": false,
+  "host_source_unchanged": true,
+  "cleanup": {
+    "private_state_retained": true,
+    "service_unavailability_created_by": "termination of this fixture-owned SIQ child",
+    "writer_lock_removed": false,
+    "graceful_lifecycle_not_claimed": true,
+    "owned_processes_remaining": 0
+  },
+  "privacy": {
+    "private_paths_archived": false,
+    "raw_harness_report_preserved": true,
+    "raw_startup_logs_archived": false,
+    "raw_config_archived": false
+  },
+  "limits": [
+    "Intent path failure remains fail; offline component pass does not make native execution pass",
+    "No full tool dispatcher, public CLI, desktop, approval, or trusted Skill-attribution proof"
+  ]
+}

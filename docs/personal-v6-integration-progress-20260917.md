@@ -1,0 +1,35 @@
+# 个人体验 v6 集成进度（2026-09-17）
+
+事实基线：`origin/main` 与集成树基点同为 `9b8c09af742cb9df94c6d02e6f2db6ecccd68951`。本文件追踪 [v6 集成任务书](personal-v6-integration-and-acceptance-taskbook-20260917-135521.md) 的 F00–F10，不替代原 D/E/N/R/B 验收分母。当前工作位于 `codex/personal-v6-integration-20260917`，未提交、推送、合并、签名或发布。
+
+| 任务 | 当前状态 | 依据与下一解除条件 |
+| --- | --- | --- |
+| F00 保护与集成 | 阶段完成 | GLM 源私有快照和前后 SHA 一致；独立集成树采纳 31 个原未跟踪源/合同/文档/脚本，另合入所需跟踪改动；旧证据与 embed 不混作新候选。[来源与决策](evidence/personal-experience/v6-integration-20260917-153208/integration-map.md)。 |
+| F01 加载确认与授权 | 本机真实网关部分完成 | 0.0.83 网关上的 UUID 签入批准、预留前读回和旧批准拒绝已在前候选证明；E11 修复后固定候选 `0b16e5e0…` 的 [D05 同候选复测](evidence/personal-experience/v6-f04-post-e11-d05-20260917/report.md) 238 步中 229 pass、8 partial、1 blocked、0 fail。最终 CLI 仍按名称执行，读回与启动间无网关原子性。 |
+| F02 停止/恢复/对账 | 本机真实服务部分完成 | 持久状态、签名读回、停止与句柄竞态负例已通过；D05 的 E09 真实 SIGKILL、同状态目录重启、链签名与无重放通过，E08 的本地停止和错误目标拒绝通过。v0.0.83 CLI 无单任务远端停止/查询，`remote_stop_confirmed` 保持 false；完整远端停止仍 partial。[能力复核](evidence/personal-experience/v6-integration-20260917-153208/f02-stop-capability.md)。 |
+| F03 用户界面 | 本机同候选 E12 通过；总体 partial | 确认页任务状态面板、旧响应隔离与失败对账指引已接通；E11 修复后 `0b16e5e0…` 的 [D05 E12](evidence/personal-experience/v6-f04-post-e11-d05-20260917/report.md) 在真实浏览器 × daemon × 沙箱的 12 个子检查通过。其他 OS/宿主及跨宿主完整旅程仍待验。 |
+| F04 同候选真实执行 | 本机真实服务部分完成 | 同候选 `0b16e5e0…` 的[扩展 D05 原记录](evidence/personal-experience/v6-f04-e04e06e11-closure-20260917/report.md)为 344 步 337 pass / 6 partial / 1 blocked / 0 fail，原汇总 11 pass / 2 partial。[独立复核](evidence/personal-experience/v6-f04-closure-review-20260917/report.md)采纳 E04 决策平面与 E11k 真实写盘故障，将 E06 恢复 partial：可用旧 CLI 支持 --wait，未覆盖不支持等待选项的分支。当前采纳 E 项 10 pass / 3 partial（E06/E08/E11），E05g/E09q/E10c/E13d 边界不变。原记录不改写，复核不冒充新实测。其后 [E09 崩溃点批次](evidence/personal-experience/v6-f04-e09-crash-20260917/report.md)以不变候选全矩阵复跑 373 步：365 pass / 7 partial / 1 blocked / 0 fail——新增 leg_e09_crash 在 start 标记已落盘、outcome 未落盘之间对 daemon 真实 SIGKILL，同 state 重启后实测不重放（启动计数器恒 1）、已消费批准 409 `hold_execution_already_reserved`、投影如实报 `uncertain`、链验证通过、daemon 恢复并执行新任务；E09q 仍 partial（余时钟注入禁止项与 plan↔start 窄窗），E06/E08/E11 保持 partial 口径不变。 |
+| F05 性能 | 最新候选本机绝对预算通过；总体 partial | `0b16e5e0…` 的[独立测前冻结复测](evidence/personal-experience/v6-f05-post-e11-perf-r2-20260917/report.md)：真实网关/沙箱，3 轮 150 有效样本、0 无效/失败、S1–S4 全部绝对预算内。零样本缺协议的[无效预检](evidence/personal-experience/v6-f05-post-e11-perf-20260917/INVALID-PREFLIGHT.md)原样保留。S1/S2 相对 main 基点未测，S3/S4 基点无路由不可比；跨平台及发行级性能未验。 |
+| F06 Linux 原文/导出/通知 | OpenClaw 与 Hermes 各自原生到期腿通过；总体 partial | 旧候选 `c8048691…` 的 OpenClaw 原生 opt-in 参数/结果采集及原文 Grant 撤销后零新捕获 19/19、真实宿主失联零副作用 16/16；Hermes 原生 SEC 归属 11/11、同候选服务失联 9/9；真实 daemon 双任务导出 192/192，真实 D-Bus 计数通知 6/6。两份独立 seed 经真实墙钟到期后各 19/19 verify 通过，证明定向清理、保留腿和导出隔离。`ac447ac9…` 在 OpenClaw 2026.5.12 上完成撤销对照 19/19 与 90 秒真实墙钟自然到期后原生新调用 20/20：到期许可 410、授权读取仍 allow、原文记录零新增；[独立到期报告](evidence/personal-experience/v6-f06-raw-native-expiry-20260917/report.md)。E11 修复后新构建 `0b16e5e0…` 在本机 Hermes v0.21.0 公共 CLI 的原生 SEC 回归 11/11 通过；[新候选独立报告](evidence/personal-experience/v6-f06-hermes-post-e11-20260917/report.md)。同一 `0b16e5e0…` 候选上的 [Hermes 原文自然到期原生新调用](evidence/personal-experience/v6-f06-hermes-native-expiry-20260917/report.md) 最终 17/17、默认对照 11/11：60 秒到期、permit 410、原生允许读取而原文记录不增。同一候选在本机真实 OpenClaw 2026.5.12 上完成 [R07 现有脚本范围旅程](evidence/personal-experience/v6-f06-r07-journey-20260917/report.md)：安装/配对→发现宿主→grant→SEC+原生读取归因→越权 fail-closed 且 UI 一致→审批与重放 409→Skill V1→取消→V2 更新→daemon 重启会话失效与键盘重配对→回执/活动页→原文默认关闭与 opt-in/清理/导出隔离→390×844 移动宽度与卸载保留宿主配置→退出管理，25/25 检查与嵌套 L2 更新腿 30/30 全过（首轮 phase-c 一处 locator 超时，原样重跑全绿，两轮事实原样保留）；真实宿主配置前后 sha256 零漂移，进程/临时目录清理复核完成。[独立复核](evidence/personal-experience/v6-f06-r07-review-20260917/report.md)采纳脚本范围证据：首轮超时根因尚未确认，安装摘要关联检查仅验证非空、待补关系断言。按复核处方的[关联断言收口复跑](evidence/personal-experience/v6-f06-r07-attribution-20260917/report.md)同候选 27/27 与嵌套腿 31/31 全过：step4 与嵌套 V1 关联检查升级为逐字段关系验证（grant_id 五处同一、SEC 钉安装 claim_signature 与真实 subject、安装 source 摘要域对应、回执归因复制 SEC、SEC grant_digest 对 live grant 文档重算相等），新增摘要错配负向 4/4 检出与篡改签名撤销 409 产品级拒绝；失败诊断落固定阶段 ID 与等待目标类别（前两轮失败即借此定位为 harness 字段假设错误并修复，三轮事实含一次误删 failure.json 均原样记录）。R06 已装服务联合门禁、原生 hold 消费、权限范围越权、任务专属导出/真实保留期删除、GUI/通知及其他 OS 仍待验；Hermes 不继承此旅程。各候选其他腿不自动转移。[旧候选阶段报告](evidence/personal-experience/v6-f06-20260917-175500/report.md)。 |
+| F07 企业真实服务 | 隔离开发服务级 33/33；总体 partial | 真实 uvicorn HTTP 路由接独占沙箱，身份/租户/职责分离、应用读回、回滚、进程重启拒绝及超时均通过，策略恢复且沙箱清理；开发身份和 SQLite 不替代生产 OIDC/PostgreSQL。[阶段报告](evidence/personal-experience/v6-f07-20260917-174700/report.md)。 |
+| F08 托管源/平台范围 | 托管源 blocked；Linux/WorkBuddy 与全平台 CodeBuddy 新接入门禁完成组件/CLI/浏览器验证 | [本机网络复核](evidence/personal-experience/v6-f08-conditions-20260917-175000/report.md)：GitHub 三域名仍解析到 198.18/15，不放宽 SSRF。[产品范围决策](personal-platform-scope-decision-20260917.md)明确 Linux 只验 Hermes/OpenClaw；[新范围候选](evidence/personal-experience/v6-linux-scope-20260917/report.md)拒绝 Linux/WorkBuddy 及全平台 CodeBuddy 新安装、新 CodeBuddy Grant 激活，保留历史查看/拒绝/撤销/卸载。它仍不记 passed，也不代替真实网关复测。 |
+| F09 Windows/macOS | 交接清单已落盘，协作者实机持续推进 | [公共变化与复测清单](personal-v6-platform-impact-20260917.md)已写明；Luke 的 macOS 三宿主路线已阶段性推送，WorkBuddy 阶段性完成；sunbo 的 Windows 三宿主路线仍在开发，已推送部分分支。本机四目标交叉构建不代替各自同候选原生验收。Linux 分母仅 Hermes/OpenClaw。 |
+| F10 验证与交付 | 阶段进行中 | 同候选 D05/E12、F05、Hermes 原生腿有独立证据。[D05 收口复核](evidence/personal-experience/v6-f04-closure-review-20260917/report.md)修复缺失检查误报通过、普通错误误计超时与异步故障注入收尾，18 项守卫测试及仓库 Ruff 通过；产品源码绑定未变。F01 原子性、F04 的 E06/E08/E11、F06 R06 联合旅程/原生 hold/GUI、F07 生产身份、托管源网络、Windows/macOS 实机与最终提交/发行仍待完成。 |
+
+下一执行次序：按独立复核继续解除 E06 不支持等待选项分支、E08 远端停止确认及 E11i 超时归因缺口；E04 决策平面与 E11k 真实持久故障已采纳。F01 原子执行接口、F06 R06 联合旅程、原生 hold 及桌面视觉、F07 生产身份、F08 可信公共网络及 F09 协作者实机仍待条件。Linux/WorkBuddy 与全平台 CodeBuddy 不再排期。
+
+新候选预检找到 OpenShell 0.0.83 独立 CLI 与隔离 mTLS。一次社区镜像拉取 403 的专属沙箱尝试已按精确名称删除，随后以本地固定镜像完成 D05/F05；共享网关未重启。本批沙箱也按确切名称删除并复查不存在，隔离 mTLS 副本已清理。首次性能驱动因遗漏协议在零样本处失败，原样保留；另目录测前冻结 R4，未修改预算或选取有利样本。`ac447ac9…` 的旧证据不移用于新候选。
+
+2026-09-17 F01 收紧及回归见 [独立阶段证据](evidence/personal-experience/v6-f01-hardening-20260917-162753/report.md)。这批改动发生在前一份 `v6-integration-20260917-153208/candidate.json` 之后；其旧二进制摘要不代表本批新源码。新构建摘要记录在独立证据目录，仍非 F04 冻结候选。
+
+## 续作后的独立修复复核
+
+归因关系补强已由 `v6-f06-r07-attribution-20260917` 的 27/27 + 嵌套 31/31 覆盖，当前不再列为待办。原旅程 phase-c locator 超时根因仍未知；补强批次的 API View 字段误用是另一失败事件，不作为原超时的根因。补强批次 attempt1 的 failure.json 曾误删，不能称失败原始材料全部完整留存；attempt2 已归档。
+
+失败报告生成器已移除原始异常文本（截断不构成脱敏），改为错误类型、失败检查 ID 与固定等待标记。该脚本修复改变 harness 摘要，历史实测证据保留其原摘要；本次离线回归不冒充新一次真实旅程。产品候选未重建，旧候选性能证据仍有效于原候选；未来产品改动需为新候选补测，而非删除或作废旧证据。
+
+## 2026-09-18 PR #75 CI 修复
+
+远端两项 CI 均发现 `TestExecTaskRequiresBoundBackendAndLiveAuthorization` 在未安装 OpenShell 的环境返回 policy_not_loaded 而非 backend_unbound。根因是错误/未配置状态也有缓存指纹；任务路径现要求 ResolveInvocation 成功且为显式 CLI/endpoint 对。五种无绑定情形在任何后端 I/O 前拒绝，补充执行、策略加载与实例读回负向回归。
+
+此项改变产品 Go 源，历史 `0b16e5e0…` / `ba8d266e…` 仍仅代表之前候选，不能作为本次修复后的源绑定或完整实机验收。本次不伪造新冻结候选，后续新候选需补相应实机与性能验证。

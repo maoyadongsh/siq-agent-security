@@ -1,0 +1,109 @@
+{
+  "schema_version": "linux-lx06-new-ui-perf-plan/v1",
+  "frozen_at": "2026-09-18T16:49:00.404136+00:00",
+  "state": "pending_second_generation_native_retention_verifier_and_exclusive_host",
+  "candidate_order": [
+    "first_generation",
+    "second_generation"
+  ],
+  "candidates": {
+    "first_generation": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+    "second_generation": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935"
+  },
+  "gateway_endpoint_kind": "loopback_https_mtls",
+  "sandbox_image": "siq/hermes-openshell-siq-analysis:f470321d2fb2b2cda14b7c3b",
+  "shared_gateway_mutation": "forbidden",
+  "interference_gate": "No concurrent native-retention verifier, build, stress, or other performance run; abort with raw evidence if precheck fails.",
+  "b2_doctor": {
+    "driver_sha256": "27f4b8d58c5433f59e07626ac5aeec6222e31b2c54083b696baa792fb1c60d03",
+    "rounds": 3,
+    "warmup": 2,
+    "samples_per_scenario_round": 15,
+    "round_orders": [
+      [
+        "old",
+        "new",
+        "new",
+        "old"
+      ],
+      [
+        "new",
+        "old",
+        "old",
+        "new"
+      ],
+      [
+        "old",
+        "new",
+        "new",
+        "old"
+      ]
+    ],
+    "absolute_p95_budgets_ms": {
+      "doctor_readback": 15000.0,
+      "doctor_unreachable": 15000.0,
+      "aux_control_plane_restore": 60000.0
+    },
+    "relative_p95_ratio_budget": 1.3,
+    "old_and_new_in_one_run": true,
+    "scope": "doctor CLI readback, not task execution; B3 remains not_measured"
+  },
+  "task_execution": {
+    "driver_sha256": "c82eb065056e72c2ffdb0a5113b015a3f56a9a52c19a9aa442713e5e230c2c45",
+    "frozen_protocol_sha256": "32246f7b3a3d8e137aade9a1fbe45c408fb9f42aaedd1db33136c4b40b537288",
+    "rounds": 3,
+    "warmup": 2,
+    "samples_per_scenario_round": 15,
+    "cycle_samples": 5,
+    "round_order": {
+      "1": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "2": [
+        "S2",
+        "cond",
+        "S3",
+        "S1",
+        "S4"
+      ],
+      "3": [
+        "S2",
+        "cond",
+        "S1",
+        "S3",
+        "S4"
+      ]
+    },
+    "absolute_budgets_ms": {
+      "S1": {
+        "p95": 15000.0,
+        "max": 30000.0
+      },
+      "S2": {
+        "p95": 60000.0,
+        "max": 60000.0
+      },
+      "S3": {
+        "p95": 2000.0,
+        "max": 15000.0
+      },
+      "S4": {
+        "p95": 1500.0,
+        "max": 15000.0
+      }
+    },
+    "candidate_runs": [
+      "first_generation",
+      "second_generation"
+    ],
+    "run_isolation": "separate exact batch-owned sandboxes, same image and gateway, old then new, no output reuse",
+    "comparison": "compare same frozen protocol S1-S4 only after both complete; report time/order and all failures, no cherry-pick"
+  },
+  "percentile": "nearest rank on all valid samples as frozen by each driver",
+  "failed_samples": "retain, mark run invalid rather than discard",
+  "release_acceptance": false
+}

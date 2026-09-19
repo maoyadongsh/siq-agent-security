@@ -1,0 +1,58 @@
+{
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "component": {
+    "cross_builds": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "go_test_all": "passed",
+    "go_vet_all": "passed",
+    "installed_grant_reservation_test": "TestInstalledSkillSECHoldCanReserveAfterApproval",
+    "new_positive_and_negative_test": "TestSECHoldResumeRequiresSameVerifiedAttribution",
+    "race_receipt": "passed"
+  },
+  "failed_attempts": {
+    "disposition": "Three fifth-candidate test-only attempts were retained privately. The first exposed post-drift 401, and the final diagnostic established pre-drift false denial (hold_authority_changed). They are not counted as passing evidence.",
+    "private_log_sha256": [
+      "6dce50978b4be0dc1887d8e3b0712301a06625cc3d085dbdb9bcacf2f64f6d0b",
+      "6cc9e3a581cf2bb2c5671aa14f3cda2ef7e7191e47a894f0df2718765f64d009",
+      "97478c084ee772e9eda52903c1f3a28197ceb20c3367d1af4f09285ff889df41"
+    ]
+  },
+  "host_os": "linux/arm64",
+  "limitations": [
+    "Unsigned provisional local candidate; formal release signature and installed-service combined gate are separate.",
+    "Real Hermes CLI with isolated HOME and synthetic model/operator; no external tool effect or cross-daemon atomicity claim.",
+    "Old credential rejection after content drift is an authentication-layer 401, not a signed skill_context denial.",
+    "OpenClaw journey is headless and its approval step does not prove stock host post-approval execution.",
+    "Sixth-candidate OpenShell D05, B2/B3 and S1-S4 performance have not been run; predecessor evidence cannot be transferred.",
+    "Fourth-candidate LX04 natural-expiry worker is still live and its result cannot be attributed to this candidate."
+  ],
+  "openclaw_headless_journey": {
+    "checks": 30,
+    "nested_r04_checks": 31,
+    "passed": true,
+    "private_log_sha256": "45d8dc10c02a378c860af2d0e16c9e6ee180dbdc8a6de58de6e5ff420af77d15",
+    "private_report_sha256": "6116bfa5f8d90c22bef58be6bc7ce0387d2cebdf6917a4b68a059c93e9a8e81c"
+  },
+  "real_hermes_content_drift": {
+    "checks": 14,
+    "driver_sha256": "11639b2e691b50211d8074eb7bef869dd3677f5915f4d391f26be485a35b7c66",
+    "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+    "observed": "Before test-owned installed Skill content changed, the signed approval was readable as approved. After content changed with Grant revision unchanged, the old task credential returned 401, the inbox item became unavailable, the next native call had no file effect or reservation, and the chain verified.",
+    "passed": true,
+    "private_log_sha256": "021dc5726451027754ac83c9793f4caeab50dacd49b48015ee44676664bfaa67",
+    "private_report_sha256": "91a7b7d4d6d20e3d59a3e50b64ac2bc59e63241f38d3d7646c844b7662b23a02"
+  },
+  "real_hermes_update": {
+    "checks": 10,
+    "passed": true,
+    "private_log_sha256": "960cb4c3c86bd9cc1a8976b6456f55364586c2ea27d39750f8a96063012d3c7d",
+    "private_report_sha256": "2c4949b8d884969673ecedd9bd842139e2833cfd63a6631896c4b55858db9ff8"
+  },
+  "recorded_at": "2026-09-18T22:14:28.747408+00:00",
+  "schema_version": "linux-lx03-sec-hold-fix-provisional-summary/v1",
+  "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0"
+}

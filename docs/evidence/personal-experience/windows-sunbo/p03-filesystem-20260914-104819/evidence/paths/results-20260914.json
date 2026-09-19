@@ -1,0 +1,1016 @@
+{
+  "schema_version": "windows-path-sharing-observations/v1",
+  "recorded_at": "2026-09-14T02:26:15.912122+00:00",
+  "candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "checkout_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty": false,
+  "runtime_tree_equal_to_candidate": true,
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "probe_sha256": "76cb271f9975d109d5063935ddbce6969b9d8758156815881a6289f04a656724",
+  "platform": "windows/amd64",
+  "method": "native_cli",
+  "commands": [
+    {
+      "case": "unicode_spaces",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.898,
+      "stdout_sha256": "aa5d0812e2a0133b9b6978213102814ff5a685d3bce346ce5eee1cd0bfa962e4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "unicode_spaces",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.219,
+      "stdout_sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "ok",
+      "compatible": true
+    },
+    {
+      "case": "unicode_spaces",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.965,
+      "stdout_sha256": "aa5d0812e2a0133b9b6978213102814ff5a685d3bce346ce5eee1cd0bfa962e4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "lower_drive",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.681,
+      "stdout_sha256": "d96bc8685d2b597d8fe089a99f343d9ab9de56774a6981f87b1e2c1d05b73d8d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "lower_drive",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.072,
+      "stdout_sha256": "d96bc8685d2b597d8fe089a99f343d9ab9de56774a6981f87b1e2c1d05b73d8d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "lower_drive",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.257,
+      "stdout_sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "ok",
+      "compatible": true
+    },
+    {
+      "case": "lower_drive",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.255,
+      "stdout_sha256": "d96bc8685d2b597d8fe089a99f343d9ab9de56774a6981f87b1e2c1d05b73d8d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "trailing_dot",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.01,
+      "stdout_sha256": "62fd5acfa08118a169d23eff36cef9b67f92b942df2dbf07ef2c061b1b2b56a2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "trailing_dot",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.314,
+      "stdout_sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "ok",
+      "compatible": true
+    },
+    {
+      "case": "trailing_dot",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.501,
+      "stdout_sha256": "62fd5acfa08118a169d23eff36cef9b67f92b942df2dbf07ef2c061b1b2b56a2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "trailing_space",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.063,
+      "stdout_sha256": "23d8a3ab9757d235ea59204791baabdb9e9f1ad9b40fb62e2abd69a7fc1499ad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "trailing_space",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.286,
+      "stdout_sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "ok",
+      "compatible": true
+    },
+    {
+      "case": "trailing_space",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.442,
+      "stdout_sha256": "23d8a3ab9757d235ea59204791baabdb9e9f1ad9b40fb62e2abd69a7fc1499ad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "reserved_nul",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.267,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "c10e173931df9e8d4227195dbd076d982c638c88fac46d0788afcd15f49c360b",
+      "status": null,
+      "compatible": null
+    },
+    {
+      "case": "reserved_nul",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.256,
+      "stdout_sha256": "02ecf5306c09eb0860618ab6ee72a2afe1df98fc3aac58c396d3ab6b64c3af2d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "corrupt",
+      "compatible": false
+    },
+    {
+      "case": "reserved_con_extension",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.189,
+      "stdout_sha256": "e3cd6c70349e38fdd3a814d9d9b2d4ac7a7b22a500617a4c80a8a9eeed2fa3f5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "reserved_con_extension",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.367,
+      "stdout_sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "ok",
+      "compatible": true
+    },
+    {
+      "case": "reserved_con_extension",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.864,
+      "stdout_sha256": "e3cd6c70349e38fdd3a814d9d9b2d4ac7a7b22a500617a4c80a8a9eeed2fa3f5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "ads_component",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.354,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "c10e173931df9e8d4227195dbd076d982c638c88fac46d0788afcd15f49c360b",
+      "status": null,
+      "compatible": null
+    },
+    {
+      "case": "ads_component",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.291,
+      "stdout_sha256": "02ecf5306c09eb0860618ab6ee72a2afe1df98fc3aac58c396d3ab6b64c3af2d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "corrupt",
+      "compatible": false
+    },
+    {
+      "case": "long_path",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.179,
+      "stdout_sha256": "426e8903643a10b56acde1dbd4f80454bbd63a75b4a24eaf9ad31c7121eac35b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "long_path",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.691,
+      "stdout_sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "ok",
+      "compatible": true
+    },
+    {
+      "case": "long_path",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.251,
+      "stdout_sha256": "426e8903643a10b56acde1dbd4f80454bbd63a75b4a24eaf9ad31c7121eac35b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "extended_path",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.236,
+      "stdout_sha256": "cfea8b299001364f28efa40f6af83fde1f6e3cbb4fbada3023557ca7ca71eefb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "extended_path",
+      "argv": [
+        "state-status"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.324,
+      "stdout_sha256": "61d67c6157fb171109cf0012814f3d54497c2817f4725a1e3ef974f47989afbe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "ok",
+      "compatible": true
+    },
+    {
+      "case": "extended_path",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.803,
+      "stdout_sha256": "cfea8b299001364f28efa40f6af83fde1f6e3cbb4fbada3023557ca7ca71eefb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "exclusive_config",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.112,
+      "stdout_sha256": "60e9df9601664b5e9c365778c38b1f3fabded6cf04857287041a4365ab608a0e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "exclusive_config",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 1.419,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "fba745f5ba84fd8def1418bba6a1ba24550bf8784d9071a3c69e54ade9e2a403",
+      "status": null,
+      "compatible": null
+    },
+    {
+      "case": "exclusive_config",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.407,
+      "stdout_sha256": "60e9df9601664b5e9c365778c38b1f3fabded6cf04857287041a4365ab608a0e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "exclusive_marker",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.926,
+      "stdout_sha256": "2cbf4161eba6249c7d28a59bf7092104b35d49293ba956f40c918c2b3863960b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "exclusive_marker",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.198,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "668cd4be7fb7d9b45ea035add476308e4529afabdcd0177445d4cf7a13eb6194",
+      "status": null,
+      "compatible": null
+    },
+    {
+      "case": "exclusive_marker",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.369,
+      "stdout_sha256": "2cbf4161eba6249c7d28a59bf7092104b35d49293ba956f40c918c2b3863960b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "exclusive_instance",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.07,
+      "stdout_sha256": "3dc22d7f3de5f503e6a3c24e1e8527b7124464ab4b9f7c38d9304974711ddeba",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "exclusive_instance",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.265,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "668cd4be7fb7d9b45ea035add476308e4529afabdcd0177445d4cf7a13eb6194",
+      "status": null,
+      "compatible": null
+    },
+    {
+      "case": "exclusive_instance",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.473,
+      "stdout_sha256": "3dc22d7f3de5f503e6a3c24e1e8527b7124464ab4b9f7c38d9304974711ddeba",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "readonly_config",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.066,
+      "stdout_sha256": "ddb79f1463dacc29440be3d123846102be6d5a04cead2d9cf907caf371095bfe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "readonly_config",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.301,
+      "stdout_sha256": "ddb79f1463dacc29440be3d123846102be6d5a04cead2d9cf907caf371095bfe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "readonly_config",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.278,
+      "stdout_sha256": "ddb79f1463dacc29440be3d123846102be6d5a04cead2d9cf907caf371095bfe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "readonly_marker",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.884,
+      "stdout_sha256": "38323a965f29ae4213f127aa5ce912fa0bf71b5be6c31919ab2f5aee12e89720",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "readonly_marker",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.291,
+      "stdout_sha256": "38323a965f29ae4213f127aa5ce912fa0bf71b5be6c31919ab2f5aee12e89720",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    },
+    {
+      "case": "readonly_marker",
+      "argv": [
+        "init",
+        "--port",
+        "47631"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.371,
+      "stdout_sha256": "38323a965f29ae4213f127aa5ce912fa0bf71b5be6c31919ab2f5aee12e89720",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "initialized",
+      "compatible": null
+    }
+  ],
+  "checks": [
+    {
+      "name": "unicode_spaces",
+      "status": "pass",
+      "input_leaf": "中文 空格状态",
+      "input_transform": "none",
+      "outcome": "supported_without_alias",
+      "init_exit": 0,
+      "status_exit": 0,
+      "compatible": true,
+      "actual_relative_path": "中文 空格状态",
+      "exact_path_identity": true,
+      "same_instance_on_repeat": true,
+      "before": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_init": {
+        "tree_sha256": "85383d3e7e2e1756bec2eac9b1f42adc3bedd82514eed2b21528a2b921fc8e03",
+        "entries": 22,
+        "files": 3
+      },
+      "after_status": {
+        "tree_sha256": "85383d3e7e2e1756bec2eac9b1f42adc3bedd82514eed2b21528a2b921fc8e03",
+        "entries": 22,
+        "files": 3
+      },
+      "after_repeat": {
+        "tree_sha256": "85383d3e7e2e1756bec2eac9b1f42adc3bedd82514eed2b21528a2b921fc8e03",
+        "entries": 22,
+        "files": 3
+      },
+      "status_read_only": true
+    },
+    {
+      "name": "lower_drive",
+      "status": "pass",
+      "input_leaf": "CaseState",
+      "input_transform": "lower_drive",
+      "outcome": "supported_without_alias",
+      "init_exit": 0,
+      "status_exit": 0,
+      "compatible": true,
+      "actual_relative_path": "CaseState",
+      "exact_path_identity": true,
+      "same_instance_on_repeat": true,
+      "before": {
+        "tree_sha256": "b5882a314dade8186e301163fed08738693c26186608227bebd1fce6573165fb",
+        "entries": 22,
+        "files": 3
+      },
+      "after_init": {
+        "tree_sha256": "b5882a314dade8186e301163fed08738693c26186608227bebd1fce6573165fb",
+        "entries": 22,
+        "files": 3
+      },
+      "after_status": {
+        "tree_sha256": "b5882a314dade8186e301163fed08738693c26186608227bebd1fce6573165fb",
+        "entries": 22,
+        "files": 3
+      },
+      "after_repeat": {
+        "tree_sha256": "b5882a314dade8186e301163fed08738693c26186608227bebd1fce6573165fb",
+        "entries": 22,
+        "files": 3
+      },
+      "status_read_only": true
+    },
+    {
+      "name": "trailing_dot",
+      "status": "fail",
+      "input_leaf": "target.",
+      "input_transform": "none",
+      "outcome": "accepted_with_alias_or_identity_mismatch",
+      "init_exit": 0,
+      "status_exit": 0,
+      "compatible": true,
+      "actual_relative_path": "target",
+      "exact_path_identity": false,
+      "same_instance_on_repeat": true,
+      "before": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_init": {
+        "tree_sha256": "ff27c7ad0c93924ad9ac1142127566966137f75359050cca875a9d654cf7ea47",
+        "entries": 22,
+        "files": 3
+      },
+      "after_status": {
+        "tree_sha256": "ff27c7ad0c93924ad9ac1142127566966137f75359050cca875a9d654cf7ea47",
+        "entries": 22,
+        "files": 3
+      },
+      "after_repeat": {
+        "tree_sha256": "ff27c7ad0c93924ad9ac1142127566966137f75359050cca875a9d654cf7ea47",
+        "entries": 22,
+        "files": 3
+      },
+      "status_read_only": true
+    },
+    {
+      "name": "trailing_space",
+      "status": "fail",
+      "input_leaf": "target ",
+      "input_transform": "none",
+      "outcome": "accepted_with_alias_or_identity_mismatch",
+      "init_exit": 0,
+      "status_exit": 0,
+      "compatible": true,
+      "actual_relative_path": "target",
+      "exact_path_identity": false,
+      "same_instance_on_repeat": true,
+      "before": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_init": {
+        "tree_sha256": "3674082f064b0dd49f1bba78e7fcb7182886e5ba275d706d5fa3ad29c093c3e4",
+        "entries": 22,
+        "files": 3
+      },
+      "after_status": {
+        "tree_sha256": "3674082f064b0dd49f1bba78e7fcb7182886e5ba275d706d5fa3ad29c093c3e4",
+        "entries": 22,
+        "files": 3
+      },
+      "after_repeat": {
+        "tree_sha256": "3674082f064b0dd49f1bba78e7fcb7182886e5ba275d706d5fa3ad29c093c3e4",
+        "entries": 22,
+        "files": 3
+      },
+      "status_read_only": true
+    },
+    {
+      "name": "reserved_nul",
+      "status": "pass",
+      "input_leaf": "NUL",
+      "input_transform": "none",
+      "outcome": "rejected_without_persistent_effects",
+      "init_exit": 1,
+      "status_exit": 0,
+      "compatible": false,
+      "actual_relative_path": null,
+      "exact_path_identity": null,
+      "same_instance_on_repeat": null,
+      "before": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_init": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_status": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_repeat": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "status_read_only": true
+    },
+    {
+      "name": "reserved_con_extension",
+      "status": "pass",
+      "input_leaf": "CON.txt",
+      "input_transform": "none",
+      "outcome": "supported_without_alias",
+      "init_exit": 0,
+      "status_exit": 0,
+      "compatible": true,
+      "actual_relative_path": "CON.txt",
+      "exact_path_identity": true,
+      "same_instance_on_repeat": true,
+      "before": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_init": {
+        "tree_sha256": "5ccec859839b447e4fb5503801b245599e221906328a06af2dd6287cd382b851",
+        "entries": 22,
+        "files": 3
+      },
+      "after_status": {
+        "tree_sha256": "5ccec859839b447e4fb5503801b245599e221906328a06af2dd6287cd382b851",
+        "entries": 22,
+        "files": 3
+      },
+      "after_repeat": {
+        "tree_sha256": "5ccec859839b447e4fb5503801b245599e221906328a06af2dd6287cd382b851",
+        "entries": 22,
+        "files": 3
+      },
+      "status_read_only": true
+    },
+    {
+      "name": "ads_component",
+      "status": "pass",
+      "input_leaf": "target:stream",
+      "input_transform": "none",
+      "outcome": "rejected_without_persistent_effects",
+      "init_exit": 1,
+      "status_exit": 0,
+      "compatible": false,
+      "actual_relative_path": null,
+      "exact_path_identity": null,
+      "same_instance_on_repeat": null,
+      "before": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_init": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_status": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_repeat": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "status_read_only": true
+    },
+    {
+      "name": "long_path",
+      "status": "pass",
+      "input_leaf": "segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\中文状态",
+      "input_transform": "none",
+      "outcome": "supported_without_alias",
+      "init_exit": 0,
+      "status_exit": 0,
+      "compatible": true,
+      "actual_relative_path": "segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\segment-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\中文状态",
+      "exact_path_identity": true,
+      "same_instance_on_repeat": true,
+      "before": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_init": {
+        "tree_sha256": "e95e737d06c410b693695165aecf843d5a45430520e064fe1f239bd54454de5c",
+        "entries": 27,
+        "files": 3
+      },
+      "after_status": {
+        "tree_sha256": "e95e737d06c410b693695165aecf843d5a45430520e064fe1f239bd54454de5c",
+        "entries": 27,
+        "files": 3
+      },
+      "after_repeat": {
+        "tree_sha256": "e95e737d06c410b693695165aecf843d5a45430520e064fe1f239bd54454de5c",
+        "entries": 27,
+        "files": 3
+      },
+      "status_read_only": true
+    },
+    {
+      "name": "extended_path",
+      "status": "pass",
+      "input_leaf": "extended-state",
+      "input_transform": "extended_path",
+      "outcome": "supported_without_alias",
+      "init_exit": 0,
+      "status_exit": 0,
+      "compatible": true,
+      "actual_relative_path": "extended-state",
+      "exact_path_identity": true,
+      "same_instance_on_repeat": true,
+      "before": {
+        "tree_sha256": "ea04142e03ad06ad1fabc59dfe00a08b689c2fe45bff119dd4c0726516fc9b7e",
+        "entries": 1,
+        "files": 0
+      },
+      "after_init": {
+        "tree_sha256": "0ddac1c5edb693b42756d4edbdc1fdaafbde3a827277ab6f9d70e57a3c37600f",
+        "entries": 22,
+        "files": 3
+      },
+      "after_status": {
+        "tree_sha256": "0ddac1c5edb693b42756d4edbdc1fdaafbde3a827277ab6f9d70e57a3c37600f",
+        "entries": 22,
+        "files": 3
+      },
+      "after_repeat": {
+        "tree_sha256": "0ddac1c5edb693b42756d4edbdc1fdaafbde3a827277ab6f9d70e57a3c37600f",
+        "entries": 22,
+        "files": 3
+      },
+      "status_read_only": true
+    },
+    {
+      "name": "exclusive_config",
+      "status": "fail",
+      "file": "config.json",
+      "read_only_fixture": false,
+      "sharing_violation_proved": false,
+      "init_exit": 1,
+      "recovery_init_exit": 0,
+      "after_recovery": {
+        "tree_sha256": "7280d68961b5090f18cfefa1b83624720023732dc28064df2526f3941f956e9f",
+        "entries": 21,
+        "files": 3
+      },
+      "before": {
+        "tree_sha256": "7280d68961b5090f18cfefa1b83624720023732dc28064df2526f3941f956e9f",
+        "entries": 21,
+        "files": 3
+      },
+      "after": {
+        "tree_sha256": "7280d68961b5090f18cfefa1b83624720023732dc28064df2526f3941f956e9f",
+        "entries": 21,
+        "files": 3
+      },
+      "persistent_state_unchanged": true,
+      "scope": "Existing initialization metadata read; no claim about signed version publication or replacement races"
+    },
+    {
+      "name": "exclusive_marker",
+      "status": "fail",
+      "file": "state-format.json",
+      "read_only_fixture": false,
+      "sharing_violation_proved": false,
+      "init_exit": 1,
+      "recovery_init_exit": 0,
+      "after_recovery": {
+        "tree_sha256": "0fff25f4fc978a1c38793db1ef1dcc83eac9c8e8cff991421c75a23459c6a434",
+        "entries": 21,
+        "files": 3
+      },
+      "before": {
+        "tree_sha256": "0fff25f4fc978a1c38793db1ef1dcc83eac9c8e8cff991421c75a23459c6a434",
+        "entries": 21,
+        "files": 3
+      },
+      "after": {
+        "tree_sha256": "0fff25f4fc978a1c38793db1ef1dcc83eac9c8e8cff991421c75a23459c6a434",
+        "entries": 21,
+        "files": 3
+      },
+      "persistent_state_unchanged": true,
+      "scope": "Existing initialization metadata read; no claim about signed version publication or replacement races"
+    },
+    {
+      "name": "exclusive_instance",
+      "status": "fail",
+      "file": "local-instance.json",
+      "read_only_fixture": false,
+      "sharing_violation_proved": false,
+      "init_exit": 1,
+      "recovery_init_exit": 0,
+      "after_recovery": {
+        "tree_sha256": "33628d48bd635cd9af7f01d60c5b99ae5437513845b333f44be9e48965c9e1b5",
+        "entries": 21,
+        "files": 3
+      },
+      "before": {
+        "tree_sha256": "33628d48bd635cd9af7f01d60c5b99ae5437513845b333f44be9e48965c9e1b5",
+        "entries": 21,
+        "files": 3
+      },
+      "after": {
+        "tree_sha256": "33628d48bd635cd9af7f01d60c5b99ae5437513845b333f44be9e48965c9e1b5",
+        "entries": 21,
+        "files": 3
+      },
+      "persistent_state_unchanged": true,
+      "scope": "Existing initialization metadata read; no claim about signed version publication or replacement races"
+    },
+    {
+      "name": "readonly_config",
+      "status": "pass",
+      "file": "config.json",
+      "read_only_fixture": true,
+      "sharing_violation_proved": null,
+      "init_exit": 0,
+      "recovery_init_exit": 0,
+      "after_recovery": {
+        "tree_sha256": "8bddf76a9b76816135f6eedf2f6dd822d32afdae8a319ab306322ca29fde18b0",
+        "entries": 21,
+        "files": 3
+      },
+      "before": {
+        "tree_sha256": "8bddf76a9b76816135f6eedf2f6dd822d32afdae8a319ab306322ca29fde18b0",
+        "entries": 21,
+        "files": 3
+      },
+      "after": {
+        "tree_sha256": "8bddf76a9b76816135f6eedf2f6dd822d32afdae8a319ab306322ca29fde18b0",
+        "entries": 21,
+        "files": 3
+      },
+      "persistent_state_unchanged": true,
+      "scope": "Existing initialization metadata read; no claim about signed version publication or replacement races"
+    },
+    {
+      "name": "readonly_marker",
+      "status": "pass",
+      "file": "state-format.json",
+      "read_only_fixture": true,
+      "sharing_violation_proved": null,
+      "init_exit": 0,
+      "recovery_init_exit": 0,
+      "after_recovery": {
+        "tree_sha256": "5919503b51774a3dbd5d784b48a4b088f13ca8201825d3615b3391eeba1d6ca2",
+        "entries": 21,
+        "files": 3
+      },
+      "before": {
+        "tree_sha256": "5919503b51774a3dbd5d784b48a4b088f13ca8201825d3615b3391eeba1d6ca2",
+        "entries": 21,
+        "files": 3
+      },
+      "after": {
+        "tree_sha256": "5919503b51774a3dbd5d784b48a4b088f13ca8201825d3615b3391eeba1d6ca2",
+        "entries": 21,
+        "files": 3
+      },
+      "persistent_state_unchanged": true,
+      "scope": "Existing initialization metadata read; no claim about signed version publication or replacement races"
+    }
+  ],
+  "snapshot_scope": "Entry names, default/named-stream content hashes, modes, link counts, Windows attributes and owner/group/DACL descriptor hashes; no timestamps or transient-file tracing",
+  "limits": [
+    "No real host integration",
+    "No signed publication/rename race assertion",
+    "No other-user login test",
+    "UNC/network share and second volume not tested",
+    "Private fixtures/logs retained; no cleanup or lock deletion performed"
+  ]
+}

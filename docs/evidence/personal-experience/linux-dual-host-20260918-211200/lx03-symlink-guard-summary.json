@@ -1,0 +1,32 @@
+{
+  "schema_version": "linux-lx03-symlink-guard-summary/v1",
+  "host_os": "linux/arm64",
+  "candidate_sha256": "36042d1b8ae8b305eeac5c83d14486bcfd884d9ac9b56af74e2beb8e7e469880",
+  "source_binding_sha256": "e14285024a855074cd24a5e59261a365a3887b1866b93ce8007bcf5336a2678e",
+  "failure_reproduced": {
+    "predecessor_candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+    "fixture": "valid read-only Grant for company-a; company-a/protected-alias.txt resolves to company-b/protected-fixture.txt",
+    "openclaw_observed": "signed allow and protected fixture content reached the model",
+    "hermes_observed": "signed allow and protected fixture content reached the model",
+    "private_openclaw_failure_log_sha256": "e6d8ec0cdb34401aca57086eda560928f9e6ad68cf4ad5a06564925414ca0bce",
+    "private_hermes_failure_log_sha256": "82632bd03bfcfd51c378c9984d586388539dbcf737bfef1a7e38c533116a9129",
+    "hermes_first_round_note": "Earlier attempt used an insufficient test-harness turn limit; the second pre-fix round above is the valid reproduction."
+  },
+  "fix": "On Unix, each decision checks both lexical and resolved filesystem scope for Grant allow/deny facts; unresolved links fail closed. File resources containing both a symlink component and .. are rejected before normalization.",
+  "regression": {
+    "openclaw_symlink": {"passed": true, "checks": 20, "private_report_sha256": "c35dab1e0232df464b9f15fc5dd7fb1170f8272ec23da9b2d1f8e47b679dbe74"},
+    "openclaw_direct_and_dotdot": {"passed": true, "checks": 21, "private_report_sha256": "6e474d67a3ff1cd15bcc98d847d25014980eb4ba16e06230c1775e9db775e8f7"},
+    "openclaw_default": {"passed": true, "checks": 19, "private_report_sha256": "e4b579501bae9d98f1285e639b54f7548802d0ecd3953dd4c828fd08e773940e"},
+    "hermes_symlink_and_overreach": {"passed": true, "checks": 14, "private_report_sha256": "7aeab32f01faf03897fcc88ac144083913dc7bfbecfc0f04bc1bcd743fa01d5c"},
+    "openclaw_r07": {"passed": true, "checks": 30, "nested_r04_checks": 31, "private_report_sha256": "5a10753d90c75c5f2a2d9a6333173a0b7bd4ac89ae633515963d6679b354f72a"},
+    "openclaw_driver_sha256": "a620ed253dd13b8b6176a4dee5e992b9fee27111850fcb9992a5f7ae6c60b069",
+    "hermes_driver_sha256": "cee59b2876ee308021b9a650aaaf6a2e3438d363bdcbccfc09bb72e0c9b771c4"
+  },
+  "validation": ["go test ./...", "go vet ./...", "go test -race ./internal/receipt ./internal/runtimeaction ./internal/intent", "ruff check and py_compile for changed native drivers"],
+  "limitations": [
+    "This is decision-time canonicalization, not an atomic host file open. A same-UID symlink swap after decision remains possible.",
+    "A different container mount namespace may resolve paths differently from the local daemon.",
+    "Windows retains its lexical path implementation pending a native path-identity contract and real-host validation; macOS was cross-built but not real-host tested.",
+    "Stock OpenClaw lacks a post-approval execution checkpoint. This evidence does not close hold execution or cross-process external-effect atomicity."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "v6-r07-journey-resources/v1",
+  "recorded_at": "2026-09-17T22:30:00+08:00",
+  "processes": {
+    "daemon": "fixture-copied candidate `serve --port <ephemeral> --mode block`; terminated by harness.stop() at script exit (twice per run incl. restart leg)",
+    "model_fixture": "in-process ThreadingHTTPServer on 127.0.0.1 ephemeral port; shutdown+server_close in _reset_model/stop",
+    "browser": "headless chromium via Playwright; browser.close() in finally of each phase",
+    "host_cli": "real `node openclaw.mjs agent --local` short-lived child per native turn; exits with each turn",
+    "post_run_check": "ps aux over siq-r07 / siq-v6-hermes-post / openclaw.mjs / headless_shell: no batch-owned process remains; pre-existing daemons from other batches (pids 276252 port 42817 since 2026-09-16, 2540314 port 58151 since 2026-09-08) untouched"
+  },
+  "ports": {
+    "allocation": "all 127.0.0.1 ephemeral via socket.bind(port=0) (daemon) and ThreadingHTTPServer (model fixture); no fixed ports, no collision with the parallel OpenShell matrix",
+    "post_run_listeners": "ss -tlnp shows only the two pre-existing foreign-batch siq-agent-security listeners above; no batch-owned listener remains"
+  },
+  "temporary_directories": {
+    "journey_root": "tempfile.TemporaryDirectory(prefix=siq-r07-user-journey-) per run — auto-removed; post-run glob confirms none left",
+    "attempt1_diagnostics": "/tmp/siq-r07-diagnostics-jwl1h2iv (phase-c TimeoutError, 16 checks) archived into r07-journey.attempt1.failure.json facts, then deleted",
+    "foreign_leftovers_untouched": ["/tmp/siq-r07-diagnostics-121rexm0 (2026-09-15)", "/tmp/siq-r07-diagnostics-c_1q7c5p (2026-09-16)", "/tmp/siq-r07-diagnostics-m4328r8t (2026-09-15)", "/tmp/siq-r07-diagnostics-o9m0jows (2026-09-16)"]
+  },
+  "host_config_backup_restore": {
+    "mechanism": "journey never targets the real host config root: harness pins HOME=<temp>/home and OPENCLAW_CONFIG_PATH=<temp>/home/.openclaw/openclaw.json; adapter install/uninstall (with its own backup) happens inside the fixture home and is verified by step11 (adapter_state_removed=true, fixture openclaw_json_kept=true)",
+    "real_host_files_sha256_before_after": {
+      "/home/maoyd/.openclaw/openclaw.json": {"before": "642238d1a9f6ea9e4b53c1806123fd7b0d6ab9a78101d85eb51c4528c0657f29", "after": "642238d1a9f6ea9e4b53c1806123fd7b0d6ab9a78101d85eb51c4528c0657f29", "unchanged": true},
+      "/home/maoyd/.openclaw/agentshield.json": {"before": "8df315255cc6ede0db11cf599aafa550c189d679897e7f9c46470d64ccb3d290", "after": "8df315255cc6ede0db11cf599aafa550c189d679897e7f9c46470d64ccb3d290", "unchanged": true},
+      "/home/maoyd/.openclaw/exec-approvals.json": {"before": "d691264bc0292cc71903d4dbaedf60051fa2303e58c0edcbd122ba2a9713fce4", "after": "d691264bc0292cc71903d4dbaedf60051fa2303e58c0edcbd122ba2a9713fce4", "unchanged": true}
+    }
+  },
+  "private_material": {
+    "journey-private/": "mode 0700, matched by .gitignore line 73 (docs/evidence/**/*-private/)",
+    "journey-private/siq-v6-hermes-post-e11-agent": "mode 0700 executable candidate copy, sha256 0b16e5e09e6d807b5be732e390c373e6a4354d096b272eba827bddb84a6c8177",
+    "journey-private/prereq-checks.json": "mode 0600; host/browser/driver preflight facts and pre-run host config digests"
+  },
+  "public_area_hygiene": "public files contain no tokens, pairing codes, credentials or raw tool content (script persists only check ids/statuses/digests by design)",
+  "parallel_safety": "no foreign sandbox, process, port or directory was modified; on conflict the plan was to switch to another ephemeral port (never needed — allocation is ephemeral)"
+}

@@ -1,0 +1,96 @@
+{
+  "schema_version": "linux-dual-host-lx04-openclaw-native-summary/v1",
+  "candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "host": "real OpenClaw 2026.5.12 in isolated profile, headless browser and daemon",
+  "retained_joint_runs": [
+    {
+      "private_report_sha256": "19af29daff567f0d320196f789276cb59704a6162e00c3316fd40315ee227c2a",
+      "driver_sha256": "7edf22ca548e113d167271b2d1ed8429b71f1577cdc75cd4de28dbb15c003b26",
+      "checks": 28,
+      "nested_r04_checks": 31,
+      "passed": true
+    },
+    {
+      "private_report_sha256": "b10ca6f24d6ce966ffdcbaa44630e542a3c9a8403e89a606effa20f60446be4b",
+      "driver_sha256": "87d63813f210ab6d341b34e6ced423e818a3647815a5713da417b266f860caf4",
+      "checks": 28,
+      "nested_r04_checks": 31,
+      "passed": true
+    },
+    {
+      "private_report_sha256": "5612dd88aba2c1114b4150c09f3000924982c0c4436dabd3f1dfb61438644e25",
+      "driver_sha256": "c794cd5409c83b97aa1a831300dc837a2cbd62e81f1c3eff199dc9acf876ac8f",
+      "checks": 28,
+      "nested_r04_checks": 31,
+      "passed": true
+    }
+  ],
+  "final_joint_result": {
+    "passed": true,
+    "checks": 28,
+    "nested_r04_checks": 31,
+    "task_export_receipt_count": 3,
+    "signed_export_and_trace_export": true,
+    "trace_sources_within_receipt_slice": true,
+    "raw_output_canary_absent": true,
+    "caller_selected_export_scope_rejected_http": 400
+  },
+  "limitations": [
+    "two real native OpenClaw tasks linked to disjoint signed exports in an isolated profile; browser operator is automated",
+    "native output plaintext was not independently read back from raw record; record kinds and absence before/after Grant were checked",
+    "explicit admin logout revokes signed task export; natural 12-hour admin-session expiry and native ciphertext retention expiry not measured by this leg"
+  ],
+  "release_acceptance": false,
+  "retained_dual_runs": [
+    {
+      "private_failure_sha256": "700ab386511fb3a55789be28ff8ef4dc807afee0de0fd153f3e422b0f260e7d8",
+      "passed": false,
+      "scope": "fixture model counter initialization before native task execution; no product result"
+    },
+    {
+      "private_report_sha256": "0f3d1d88f7b83b18bf03ffce2b4572cc094be09a8346d86ef010e547828e04a7",
+      "driver_sha256": "4384ec8a67f8a96d41afe9604cf32a70762c3436db1a7d0b792a2dd1f5ae0785",
+      "checks": 29,
+      "nested_r04_checks": 31,
+      "passed": true,
+      "note": "first dual-task success; stale limitation text retained in immutable private report"
+    },
+    {
+      "private_report_sha256": "23e2055a8e6d87d69b239f0296dcb0c12d99264d3b343d7c52a73bff8927d463",
+      "private_console_sha256": "d0d1b24f91d341a7084af65feaa6f556ec9eb05c5aa401608bc1d881f667ac71",
+      "driver_sha256": "8730f06bee8ca66ab08230f0ad366d0158f3b950cc6971a2d26accc659cacf72",
+      "nested_r04_driver_sha256": "30d4cfaa8bf19a51d4af28278e2306022277f3647f3299d49609e5a727aeb14f",
+      "checks": 29,
+      "nested_r04_checks": 31,
+      "passed": true
+    },
+    {
+      "private_report_sha256": "d056e40ef0f73c86065dc329384a6ef179a6a2568086bb33ac66364489c7eeae",
+      "private_console_sha256": "45d8dc10c02a378c860af2d0e16c9e6ee180dbdc8a6de58de6e5ff420af77d15",
+      "driver_sha256": "3caa94753f018a83784b05c85b8ed744cf59d6c462b67518db2c71e57f0ba3db",
+      "nested_r04_driver_sha256": "30d4cfaa8bf19a51d4af28278e2306022277f3647f3299d49609e5a727aeb14f",
+      "checks": 30,
+      "nested_r04_checks": 31,
+      "passed": true,
+      "note": "two real native OpenClaw tasks plus independent admin task-export logout revocation"
+    }
+  ],
+  "final_dual_result": {
+    "passed": true,
+    "checks": 30,
+    "nested_r04_checks": 31,
+    "real_native_tasks": 2,
+    "signed_export_and_trace_export_count": 4,
+    "first_and_second_task_signed_receipt_counts": [
+      3,
+      3
+    ],
+    "first_task_raw_records": 2,
+    "second_task_raw_records": 0,
+    "first_task_raw_grant_live_when_second_task_completed": true,
+    "signed_receipt_slices_disjoint": true,
+    "cross_task_raw_read_rejected_http": 503,
+    "unprivileged_exports_and_caller_scope_injection_rejected": true,
+    "signed_task_export_rejected_after_admin_logout": true
+  }
+}

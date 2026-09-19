@@ -1,0 +1,24 @@
+{
+  "schema": "v6-platform-scope-checks/v2",
+  "candidate_linux_arm64_sha256": "ac447ac92e65997952dc5a19ead7a83a8512924948a43f986d7f0d66aa0366ff",
+  "checks": [
+    {"name": "go_vet_all", "result": "passed", "exit_code": 0},
+    {"name": "go_test_all", "result": "passed", "exit_code": 0},
+    {"name": "go_race_adapterinstall_server", "result": "passed", "exit_code": 0},
+    {"name": "python_adapter_diagnostics_two_schema_samples", "result": "passed", "exit_code": 0},
+    {"name": "python_ruff_app", "result": "passed", "exit_code": 0},
+    {"name": "web_test", "result": "passed", "files": 26, "tests": 115, "exit_code": 0},
+    {"name": "web_build", "result": "passed", "exit_code": 0},
+    {"name": "web_build_local", "result": "passed", "exit_code": 0},
+    {"name": "cross_build", "result": "passed", "targets": 4, "exit_code": 0},
+    {"name": "isolated_linux_arm64_cli_new_integration_rejection", "result": "passed", "cases": 5, "host_config_created": false},
+    {"name": "embedded_browser_settings_bindings_scope", "result": "passed", "routes": 2, "platforms": ["workbuddy", "codebuddy"], "install_buttons": 0},
+    {"name": "server_historical_codebuddy_grant_activation_rejection", "result": "passed", "historical_read": true, "historical_reject": true}
+  ],
+  "not_run": ["same_candidate_D05", "same_candidate_performance", "native_windows_macos_runtime"],
+  "not_run_reasons": {
+    "same_candidate_D05": "current PATH CLI reports 0.0.13; prior live evidence used CLI 0.0.83; private mTLS environment script unavailable to this batch",
+    "same_candidate_performance": "requires same candidate live D05 prerequisites and an exclusive measurement window",
+    "native_windows_macos_runtime": "requires Luke and sunbo on their own devices; cross-compilation is not native acceptance"
+  }
+}

@@ -196,9 +196,18 @@ func (s *Server) rejectBadOrigin(w http.ResponseWriter, r *http.Request) bool {
 	return false
 }
 
+// isDecisionPath lists the routes that are reached with a decision credential
+// rather than an administrator session. It is consulted by the test harness so
+// that a request carrying the decision token is presented verbatim instead of
+// being silently re-issued under the boot admin session; a route missing here
+// would make an authorization test pass for the wrong reason. Production does
+// not read it: capability is decided by the caps passed to s.auth at the mux.
 func isDecisionPath(path string) bool {
 	return path == "/v1/decide" || path == "/v1/observe" || path == "/v1/hold-status" ||
 		path == "/v1/hold-executions/reserve" || path == "/v1/hold-executions/status" ||
+		path == "/v1/openshell/task-executions" ||
+		path == "/v1/openshell/task-executions/status" ||
+		path == "/v1/openshell/task-executions/stop" ||
 		path == "/v1/provenance-reports" || path == "/v1/provenance-select" || path == "/v1/tool-effect-reports"
 }
 

@@ -250,7 +250,9 @@ class B02Runner(B01.Runner):
         os.unlink(archive)
         overlay = {}
         if getattr(self.args, "working_tree", False):
-            # Copy production Go sources only; record exact bytes before test trust patch.
+            # The installed browser must exercise the same generated UI as the
+            # working-tree candidate. Overlaying Go alone silently leaves the
+            # archive's old embedded console in the test release.
             source = pathlib.Path(self.args.worktree) / "apps/agentshield"
             for path in source.rglob("*.go"):
                 if path.name.endswith("_test.go"):
@@ -260,6 +262,17 @@ class B02Runner(B01.Runner):
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(path, target)
                 overlay[str(rel)] = B01.sha256_file(target)
+            embed_source = source / "internal/ui/embedded"
+            embed_target = pathlib.Path(extract) / "apps/agentshield/internal/ui/embedded"
+            require((embed_source / "index.html").is_file(),
+                    "working-tree embedded console is missing")
+            if embed_target.exists():
+                shutil.rmtree(embed_target)
+            shutil.copytree(embed_source, embed_target)
+            for path in embed_target.rglob("*"):
+                if path.is_file():
+                    rel = path.relative_to(pathlib.Path(extract))
+                    overlay[str(rel)] = B01.sha256_file(path)
         self.source_overlay = overlay
         trust_patch = self.patch_test_trust(extract, self.test_trust["public_key_b64"])
         tree = subprocess.run(["git", "rev-parse", f"{commit}^{{tree}}"],
@@ -431,7 +444,14 @@ class B02Runner(B01.Runner):
                        self._restart_events_consistent(),
                        {"events": [e["stage"] for e in self.identity_events]})
 
+            # R07 now explicitly revokes this harness's admin bearer after its
+            # signed task-export check. Re-pair through the installed CLI;
+            # never reuse that revoked bearer for post-journey receipt checks.
+            harness.admin = driver.pair(self.staged_binary(driver.state_dir))
             receipt_count = len(harness.receipts())
+            self.check("b02_repair_after_journey_logout",
+                       "R07 显式注销后通过已装 CLI 重配对并读取历史回执",
+                       receipt_count > 0, {"receipt_count": receipt_count})
             harness.stop()  # service-stop + inactive 复验
             self.check("b02_stop_via_service_stop",
                        "journey 后 service-stop 正常停止且幂等路径确认",

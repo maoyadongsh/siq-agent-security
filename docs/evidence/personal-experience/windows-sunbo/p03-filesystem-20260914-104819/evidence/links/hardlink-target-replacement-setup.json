@@ -1,0 +1,754 @@
+{
+  "method": "native_File_Replace_before_cli",
+  "source_head": "973541733ccdb25d4578e56033901e4829ff257c",
+  "source_dirty": false,
+  "binary_candidate_sha": "ebc472f2e46aa7de837afe9d6a0ed422eef51cd0",
+  "binary_sha256": "4bc3f5ae95fd00aab528363d5d91e64145e0fd75257904a9f898323de68b6f74",
+  "replacement_completed_before_command": true,
+  "original_hardlink_alias_full_bytes_preserved": true,
+  "target_file_identity_changed": true,
+  "original_preserved_as_backup": true,
+  "tree_before": [
+    {
+      "path": "fixtures",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0009000000175ecc",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\links",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0009000000177f1a",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\links\\parent-junction",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets"
+      ],
+      "file_id": "23f6e969:000a00000017cb8f",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\links\\state-root-junction",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets\\valid-state-中文 空格"
+      ],
+      "file_id": "23f6e969:000900000017b49b",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f1d",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\core-junction-state",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000b00000017cc2a",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\core-junction-state\\keys",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets\\core-external-sentinel"
+      ],
+      "file_id": "23f6e969:000e00000017d0fd",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f14",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\core-external-sentinel",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000c00000017cd5e",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\core-external-sentinel\\sentinel.txt",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000900000017d0f4",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "a0fd9a4f77d2e1a30e58eb6e3edd771673ec96b36354f720571ce86011c10982"
+    },
+    {
+      "path": "fixtures\\targets\\hardlink-marker-external.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb7",
+      "link_count": 2,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "712ea624c0f61fd072aad70234bebc7639d70ff0299ed8b437e0395e33268eb5"
+    },
+    {
+      "path": "fixtures\\targets\\invalid-replacement.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000a00000017d13e",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "3a7f7e33cc1af8717fba11570ecf641186974db3a2b7474bfe72a4b7cc4f8369"
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f42",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\action-correlation",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fac",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\admissions",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f68",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\assets",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f98",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\backups",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f93",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\challenges",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fa8",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\checkpoints",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f87",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\commits",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fa5",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\config.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb3",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "e5f2802c8f94c6e28263f307e4eeb622aa27dcfcc6e2ec9c2797df2f33d75cd0"
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\evidence",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f7f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\findings",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f9f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\grants",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0009000000177f6c",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\intent-bindings",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fab",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\intents",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fa9",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\inventory",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f8b",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\keys",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f5b",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\local-instance.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb5",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "298b29822186264d92a4cf08fd77644178e738aa83be3c8f3c6de377d2acd925"
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\logs",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f95",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\policies",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f77",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\receipts",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f82",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\state-format.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb7",
+      "link_count": 2,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "712ea624c0f61fd072aad70234bebc7639d70ff0299ed8b437e0395e33268eb5"
+    }
+  ],
+  "tree_after": [
+    {
+      "path": "fixtures",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0009000000175ecc",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\links",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0009000000177f1a",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\links\\parent-junction",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets"
+      ],
+      "file_id": "23f6e969:000a00000017cb8f",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\links\\state-root-junction",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets\\valid-state-中文 空格"
+      ],
+      "file_id": "23f6e969:000900000017b49b",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f1d",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\core-junction-state",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000b00000017cc2a",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\states\\core-junction-state\\keys",
+      "directory": true,
+      "reparse": true,
+      "link_target": [
+        "<LINK_TEST_ROOT>\\fixtures\\targets\\core-external-sentinel"
+      ],
+      "file_id": "23f6e969:000e00000017d0fd",
+      "link_count": 1,
+      "attributes": 1040,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f14",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\core-external-sentinel",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000c00000017cd5e",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\core-external-sentinel\\sentinel.txt",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000900000017d0f4",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "a0fd9a4f77d2e1a30e58eb6e3edd771673ec96b36354f720571ce86011c10982"
+    },
+    {
+      "path": "fixtures\\targets\\hardlink-marker-external.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb7",
+      "link_count": 2,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "712ea624c0f61fd072aad70234bebc7639d70ff0299ed8b437e0395e33268eb5"
+    },
+    {
+      "path": "fixtures\\targets\\replaced-marker-original.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb7",
+      "link_count": 2,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "712ea624c0f61fd072aad70234bebc7639d70ff0299ed8b437e0395e33268eb5"
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f42",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\action-correlation",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fac",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\admissions",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f68",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\assets",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f98",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\backups",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f93",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\challenges",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fa8",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\checkpoints",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f87",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\commits",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fa5",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\config.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb3",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "e5f2802c8f94c6e28263f307e4eeb622aa27dcfcc6e2ec9c2797df2f33d75cd0"
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\evidence",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f7f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\findings",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f9f",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\grants",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0009000000177f6c",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\intent-bindings",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fab",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\intents",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fa9",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\inventory",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f8b",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\keys",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f5b",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\local-instance.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177fb5",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "298b29822186264d92a4cf08fd77644178e738aa83be3c8f3c6de377d2acd925"
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\logs",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f95",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\policies",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f77",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\receipts",
+      "directory": true,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:0008000000177f82",
+      "link_count": 1,
+      "attributes": 16,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": null
+    },
+    {
+      "path": "fixtures\\targets\\valid-state-中文 空格\\state-format.json",
+      "directory": false,
+      "reparse": false,
+      "link_target": null,
+      "file_id": "23f6e969:000a00000017d13e",
+      "link_count": 1,
+      "attributes": 32,
+      "sddl": "O:<CURRENT_USER_SID>G:<CURRENT_USER_SID>D:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;<CURRENT_USER_SID>)",
+      "sha256": "3a7f7e33cc1af8717fba11570ecf641186974db3a2b7474bfe72a4b7cc4f8369"
+    }
+  ],
+  "concurrent_race_not_tested": true
+}

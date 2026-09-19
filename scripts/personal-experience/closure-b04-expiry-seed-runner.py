@@ -156,6 +156,19 @@ def scope_changes(before: dict, after: dict) -> tuple:
     return removed, added, modified
 
 
+def append_only_snapshot(state_dir: pathlib.Path) -> dict[str, bytes]:
+    """Hold local bytes so an allowlisted audit change can be checked as append.
+
+    The bytes stay in this process and never enter a public report. Hashes alone
+    cannot distinguish an append from rewriting an older signed receipt line.
+    """
+    return {
+        path.relative_to(state_dir).as_posix(): path.read_bytes()
+        for path in state_dir.rglob("*")
+        if path.is_file() and is_append_only(path.relative_to(state_dir).as_posix())
+    }
+
+
 # 清理作用域白名单：purge 请求本身可能合法追加的 append-only 审计面。
 # audit.jsonl 由 state/ledgerstore.go AppendAudit 以 O_APPEND 写入；
 # receipts/<chainID>/<day>.jsonl 与 HEAD 由 internal/receipt/chain.go 以
@@ -169,23 +182,23 @@ def is_append_only(path: str) -> bool:
     return path in APPEND_ONLY_PATHS or path.startswith(APPEND_ONLY_DIRS)
 
 
-def out_of_scope_changes(removed, added, modified) -> list:
+def out_of_scope_changes(removed, added, modified, before_append: dict, after_append: dict) -> list:
     """清理契约：只允许删 raw-task-content/ 下的信封文件。
 
     - 删除：仅 raw-task-content/ 下的信封合法；append-only 审计面
       （audit.jsonl、receipts/**、commit-audit/**）不在其下，因此任何对
       审计链的删除都会被判越界（审计链绝不允许缩短）；
-    - 新增/变化：仅 append-only 审计面放行（O_APPEND 追加在 sha256 快照里
-      表现为整文件变化/新增，无法逐字节验证，按路径放行——假设注释：这些
-      文件在 Go 侧只以 O_APPEND 打开，见 ledgerstore.go AppendAudit 与
-      internal/receipt/chain.go）；
+    - 新增/变化：仅 append-only 审计面放行，且既有文件必须逐字节保留
+      原前缀；仅靠 sha256 无法区分追加与篡改旧字节。
     - raw-task-content/ 之外任何新增/改写一律越界。
     - serve.lock 是 serve 启动自身创建/持有的运行期锁文件（cmd/agentshield
       serve 启动路径），不是清理效果；启动前后快照里它必然表现为新增，按
       已知运行期工件放行（仅新增方向；其删除仍然越界）。
     """
     bad_removed = [p for p in removed if not p.startswith("raw-task-content/")]
-    bad_modified = [p for p in modified if not is_append_only(p)]
+    bad_modified = [p for p in modified if not is_append_only(p) or
+                    p not in before_append or p not in after_append or
+                    not after_append[p].startswith(before_append[p])]
     bad_added = [p for p in added if not is_append_only(p) and p != "serve.lock"]
     return sorted(bad_removed + bad_modified + bad_added)
 
@@ -516,21 +529,28 @@ class B04Runner:
 
     def write_json(self, payload: dict):
         out = pathlib.Path(self.args.out)
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+        out.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+        # Private evidence must never be briefly world-readable, nor silently
+        # overwrite a prior attempt with the same output path.
+        fd = os.open(out, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
         return out
 
     # ---------------- seed ----------------
 
     def run_seed(self):
-        root = pathlib.Path(self.args.run_dir)
+        # The daemon runs with cwd=self.workspace; keep its executable and
+        # state paths absolute even when the caller supplied a relative run-dir.
+        root = pathlib.Path(self.args.run_dir).resolve(strict=False)
         require(not root.exists(), f"run-dir must not pre-exist: {root}")
         root.mkdir(mode=0o700)
-        binary_path = pathlib.Path(self.args.binary)
+        binary_path = pathlib.Path(self.args.binary).resolve(strict=True)
         binary_digest = sha256_file(binary_path)
 
         harness = B04Harness(root, self.args)
         shutil.copy2(binary_path, harness.binary)
+        harness.binary.chmod(0o700)
         require(sha256_file(harness.binary) == binary_digest, "binary copy digest mismatch")
 
         seed = {
@@ -674,13 +694,20 @@ class B04Runner:
                 "expired_legs": [row["name"] for row in seed["legs"] if row["expect"] != "survives"],
                 "surviving_legs": [row["name"] for row in seed["legs"] if row["expect"] == "survives"],
                 "expected_deleted_records": sum(1 for row in seed["legs"] if row["expect"] != "survives"),
-                "expected_released_bytes": sum(row["plaintext_bytes"] for row in seed["legs"]
-                                               if row["expect"] != "survives"),
+                # The purge API reports deleted encrypted JSON file sizes,
+                # which cannot equal plaintext bytes. Keep the seeded number
+                # as a plaintext bound and observe actual disk bytes at purge.
+                "expected_expired_plaintext_bytes": sum(
+                    row["plaintext_bytes"] for row in seed["legs"]
+                    if row["expect"] != "survives"),
+                "released_bytes_basis": "deleted encrypted envelope JSON file sizes",
             }
             seed["notes"].append("task_id is derived by the product (task-ri-<hash(identity,session)>); "
                                  "leg names are the session_id labels")
         finally:
             harness.stop()
+            if harness.binary.exists():
+                harness.binary.chmod(0o600)
             self.log("seed daemon stopped")
 
         out = self.write_json(seed)
@@ -747,8 +774,10 @@ class B04Runner:
 
             # ---- 阶段 3：启动 daemon（同一状态目录、同一二进制、重新配对）。
             pre_start_snapshot = state_digest_snapshot(state_dir)
+            pre_start_append = append_only_snapshot(state_dir)
             harness = B04Harness(root, self.args, resume=True)
             shutil.copy2(self.args.binary, harness.binary)
+            harness.binary.chmod(0o700)
             require(sha256_file(harness.binary) == binary_digest, "binary copy digest mismatch")
             harness.start(port=seed["port"])
             self.log(f"daemon re-paired on 127.0.0.1:{harness.port} (same state dir)")
@@ -759,9 +788,11 @@ class B04Runner:
             # serve 启动本身会跑一次 lifecycle 清理：若 verify 启动时已过期，
             # 这里就该看到过期信封被删（且只删 raw-task-content/ 下的文件）。
             post_start_snapshot = state_digest_snapshot(harness.state)
+            post_start_append = append_only_snapshot(harness.state)
             s_removed, s_added, s_modified = scope_changes(pre_start_snapshot, post_start_snapshot)
             self.check("verify_startup_purge_scope",
-                       not out_of_scope_changes(s_removed, s_added, s_modified),
+                       not out_of_scope_changes(s_removed, s_added, s_modified,
+                                                pre_start_append, post_start_append),
                        f"removed={s_removed} added={s_added} modified={s_modified}")
 
             status = harness.raw_status()
@@ -798,6 +829,7 @@ class B04Runner:
             receipts_before = len(harness.api("/v1/receipts")["receipts"])
             activities_count_before = len(harness.api("/v1/task-activities")["items"])
             snapshot_before = state_digest_snapshot(harness.state)
+            append_before = append_only_snapshot(harness.state)
 
             # 期望清理数取"调用前盘上仍存在的过期信封数"：若 verify 是在过期后
             # 才启动的，startup lifecycle purge 已把它们删掉，手动 purge 应为
@@ -812,9 +844,11 @@ class B04Runner:
                        f"expected={len(still_on_disk)} released_bytes={result.get('released_bytes')}")
 
             snapshot_after = state_digest_snapshot(harness.state)
+            append_after = append_only_snapshot(harness.state)
             p_removed, p_added, p_modified = scope_changes(snapshot_before, snapshot_after)
             self.check("verify_purge_scope_state_dir",
-                       not out_of_scope_changes(p_removed, p_added, p_modified),
+                       not out_of_scope_changes(p_removed, p_added, p_modified,
+                                                append_before, append_after),
                        f"removed={p_removed} added={p_added} modified={p_modified}")
 
             post_ok, post_detail = True, []
@@ -886,6 +920,8 @@ class B04Runner:
         finally:
             if harness is not None:
                 harness.stop()
+                if harness.binary.exists():
+                    harness.binary.chmod(0o600)
                 self.log("verify daemon stopped")
 
         out = self.write_json(evidence)
@@ -972,6 +1008,7 @@ class B04Runner:
 
 
 def main(argv=None):
+    os.umask(0o077)
     parser = argparse.ArgumentParser(description="closure-b04 raw task content expiry leg")
     sub = parser.add_subparsers(dest="command", required=True)
 

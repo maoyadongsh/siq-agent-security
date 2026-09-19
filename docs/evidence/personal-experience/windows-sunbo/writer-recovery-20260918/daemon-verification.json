@@ -1,0 +1,100 @@
+{
+  "old_sha256": "08b43f749f716d042a4d2a3a0219e605a9ebeee05f5eda66c742de9064f67658",
+  "new_sha256": "2ab5c2ac7a290da64ec6faad72c822fcec7adfdd96de592862455caef4897f14",
+  "source_sha": "84c84a1d990f3783c2afe53e9a9657f6c21b4ffd",
+  "checks": [
+    {
+      "name": "old-init",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "old-service-healthy",
+      "passed": true
+    },
+    {
+      "name": "live-old-writer-denied",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "live-old-lock-unchanged",
+      "passed": true
+    },
+    {
+      "name": "owned-daemon-abnormal-exit",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "old-binary-reproduces-dead-lock-failure",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "old-failure-preserves-identity",
+      "passed": true
+    },
+    {
+      "name": "new-binary-recovers-old-crash",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "old-crash-lock-preserved",
+      "passed": true
+    },
+    {
+      "name": "identity-and-configuration-preserved",
+      "passed": true
+    },
+    {
+      "name": "new-service-healthy",
+      "passed": true
+    },
+    {
+      "name": "live-new-writer-denied",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "owned-daemon-abnormal-exit",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "new-binary-recovers-own-crash",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "both-crash-locks-preserved",
+      "passed": true
+    },
+    {
+      "name": "second-recovery-preserves-identity",
+      "passed": true
+    },
+    {
+      "name": "recovered-service-healthy",
+      "passed": true
+    },
+    {
+      "name": "signed-normal-stop",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "recovered-daemon-normal-exit",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "normal-stop-releases-writer",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "listener_closed": true,
+  "owned_process_exited": true
+}

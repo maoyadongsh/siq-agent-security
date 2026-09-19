@@ -1,0 +1,22 @@
+{
+  "schema_version": "linux-lx03-root-scope-final-summary/v1",
+  "host_os": "linux/arm64",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "pre_fix_failure_evidence": "lx03-symlink-guard-summary.json",
+  "hermes_driver_sha256": "70d77893071d7b7af0d389c581292b625854c0ab6e1be569463ab6f4ed81a5e4",
+  "post_fix_real_host": {
+    "openclaw_symlink": {"checks": 21, "passed": true, "private_report_sha256": "f3415ab146068b419c2e082cac9c7ada350f53fb02f090477953a541ce25256c", "driver_sha256": "26a564d2fcc675789c0bd50306981e83d244df79724d637495432a076bb8c40f"},
+    "openclaw_direct_dotdot": {"checks": 21, "passed": true, "private_report_sha256": "dee750c20f7e1ad8b6474370b5eb99fc1e4a0f4286993b78d0be4e3493bdcf65"},
+    "hermes_symlink_and_overreach": {"checks": 15, "passed": true, "private_report_sha256": "88791cb03ea8852aee3f51bdc82b6145015d4ed4f4e2d07e9d8501ea37b77949"},
+    "openclaw_r07": {"checks": 30, "nested_r04_checks": 31, "passed": true, "private_report_sha256": "b5790b41007184661bb9cbea157b8c9252ef7b0312c7faa9a85a1c6b485acbc9"}
+  },
+  "root_scope_regression": "A filesystem Grant at / still matches an absolute target; an explicit deny at / still overrides it. Focused Go test passed.",
+  "symlink_dotdot_native_negative": "The latest OpenClaw 21-check and Hermes 15-check real-host legs each include both a direct symlink to company-b and a symlink followed by .. whose lexical clean remains inside company-a. Both forms were denied before native read; the protected content was absent from model tool results.",
+  "limitations": [
+    "The real-host tests use synthetic safe fixture content and an isolated HOME; OpenClaw/Hermes are installed public CLI runtimes.",
+    "The decision-time check is not an atomic host open and cannot prevent a same-UID symlink swap after the decision.",
+    "Windows path identity and macOS real-host validation remain separate; cross-compilation does not close them.",
+    "Stock OpenClaw hold execution remains fail-closed without an approval-after-execution checkpoint."
+  ]
+}
