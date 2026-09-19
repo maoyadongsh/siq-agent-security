@@ -39,3 +39,7 @@
 ## 后续签发进展（2026-09-19）
 
 上述“本次合并不签发”和“待维护者完成”描述的是源码合并时状态。随后依据用户要求，已从集成主线 `58ab22e` 用原发行密钥签发 `0.3.0-rc.1`，完整离线包及 Skill ZIP 通过官方根验证，Linux ARM64 最终解压包通过真实 bootstrap 和负向校验。现已按用户授权发布为 [GitHub 预发布版](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0-rc.1)，八个资产下载回读与本地候选一致并通过验签；其他目标原生安装与稳定版验收仍未完成。详见[签发证据](evidence/releases/0.3.0-rc.1/README.md)与[固定源码打包工具](signed-release-packaging.md)。此进展不改变 main 的开发源码身份，也不改写历史发行样本。
+
+## 正式发行后续（2026-09-19）
+
+用户随后要求正式发布，已从主线 `83fde2d` 签发并发布 [0.3.0 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0)。新版本更新版本身份、签名清单和下载 URL，包内 `INSTALL.md` 补齐先验签、再初始化启动的步骤；最终包 14/14 检查及八个远端资产回读均通过。产品功能源码与 `58ab22e` 相同，原 `0.3.0-rc.1` 预发布及其证据保留。正式 Release 类型不替代其他目标的原生安装、升级与完整宿主验收。见[正式版签发与发布记录](evidence/releases/0.3.0/README.md)。
