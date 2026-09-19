@@ -1,0 +1,72 @@
+{
+  "base_source": "f2ab8a7238dbcd85fe82a4af19aad2cd490f2658",
+  "source_dirty": true,
+  "checks": [
+    {
+      "name": "stores",
+      "exit": 0,
+      "seconds": 137.155
+    },
+    {
+      "name": "receipt",
+      "exit": 0,
+      "seconds": 23.519
+    }
+  ],
+  "finished": true,
+  "summaries": {
+    "stores": {
+      "counts": {
+        "top_pass": 45,
+        "sub_pass": 87,
+        "package_pass": 3,
+        "sub_skip": 1
+      },
+      "failed_tests": [],
+      "skipped_tests": [
+        "TestBindingRevocationTamperingFailsClosed/symlink"
+      ],
+      "log_sha256": "55fee21d5783948fb4fff1cef2f7678882bb41a245e0aa99d164c5e9a323336a"
+    },
+    "receipt": {
+      "counts": {
+        "sub_pass": 62,
+        "top_pass": 4,
+        "package_pass": 1
+      },
+      "failed_tests": [],
+      "skipped_tests": [],
+      "log_sha256": "9d9a8069723431458286c2c9b66f16989f040447e0db51137baba8b94e9b8153"
+    }
+  },
+  "scope": "Dirty development source before final collision fast path; whole privatefs/statefs/intent packages and selected real receipt engine tests. One symbolic-link fixture skipped.",
+  "retry_regression": {
+    "before": {
+      "counts": {
+        "top_fail": 1,
+        "package_fail": 1
+      },
+      "failed_tests": [
+        "TestWindowsIntentRetryDoesNotAccumulatePrivateScratch"
+      ],
+      "skipped_tests": [],
+      "log_sha256": "07d80e3f4521e627ad8aec570b08a718d6868a7f5776d614cebf992986c8c419"
+    },
+    "after": {
+      "counts": {
+        "top_pass": 9,
+        "sub_pass": 13,
+        "package_pass": 1
+      },
+      "failed_tests": [],
+      "skipped_tests": [],
+      "log_sha256": "7cb2245b06d1d438a119dcf190a2b51eb864ffda69f99657b473e6ebb5917ba5"
+    },
+    "after_result": {
+      "source_dirty": true,
+      "exit": 0,
+      "seconds": 36.855
+    },
+    "scope": "Intermediate private publisher left scratch on existing-target retry. Added preflight; affected positive, negative, retry, concurrency and revocation tests passed before commit."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "production_source": "3f40a40cdfe77efbecec9f05ba94cc0d7eaf9840",
+  "modifications": "New tests only; production source unchanged",
+  "summary": {
+    "raw_log_sha256": "b9cc7772181e9a3edef0badbd895a74b937d7c0990a695e6bb9425af16943add",
+    "top_level": {
+      "fail": 3
+    },
+    "subtests": {
+      "fail": 7
+    },
+    "failed_tests": [
+      "TestWindowsAdapterBackupKeyRejectsBroadACL/key",
+      "TestWindowsAdapterBackupKeyRejectsBroadACL/root",
+      "TestWindowsAdapterBackupKeyRejectsBroadACL",
+      "TestWindowsAdapterPrivateRecoveryReadRejectsBroadACL/file",
+      "TestWindowsAdapterPrivateRecoveryReadRejectsBroadACL/parent",
+      "TestWindowsAdapterPrivateRecoveryReadRejectsBroadACL",
+      "TestWindowsAdapterTransactionDirectoriesRejectBroadACL/adapter-transactions",
+      "TestWindowsAdapterTransactionDirectoriesRejectBroadACL/adapter-operations",
+      "TestWindowsAdapterTransactionDirectoriesRejectBroadACL/adapter-write",
+      "TestWindowsAdapterTransactionDirectoriesRejectBroadACL"
+    ],
+    "skipped_tests": []
+  }
+}

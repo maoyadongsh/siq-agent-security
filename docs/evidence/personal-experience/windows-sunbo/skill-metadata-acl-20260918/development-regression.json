@@ -1,0 +1,29 @@
+{
+  "source_sha": "654be43093bc0d7d26b88bbba9d12bc9edf32ce6",
+  "source_dirty": true,
+  "command": [
+    "test",
+    "-json",
+    "-count=1",
+    "-timeout=15m",
+    "./internal/skillinstall",
+    "-run",
+    "^(TestWindowsSkill|TestInstallationApplyReadbackRetryAndNoAuthorityActivation$|TestInstallationFailureRollbackAndUnknownOwnership$|TestConfirmedUpdateReplacesFilesWithoutActivatingAuthority$|TestUpdateStagePreservesOldVersionAndReusesWithoutRenewal$|TestSaveUpdateSourceGitAndZeroInstallWrites$|TestLateUpdateOutcomeCannotOverwriteUserReconfiguration$|TestSaveUpdateSourcePreservesIncompatibleRecords$|TestRemovalRevokesBeforeCleaningAndNeverTouchesReusedPath$)"
+  ],
+  "finished": true,
+  "exit": 0,
+  "seconds": 156.209,
+  "summary": {
+    "raw_log_sha256": "4c7e5829bec23b72d7ba2acefc4244645533c115789ffdd9398afb08e2c5ce18",
+    "top_level": {
+      "pass": 14
+    },
+    "subtests": {
+      "pass": 27
+    },
+    "failed_tests": [],
+    "skipped_tests": []
+  },
+  "production_committed_as": "6a6e47ce17801074ae5d3e3244928b417814cc08",
+  "note": "Started in dirty development tree; not relabeled clean. New negative tests plus installation/update/removal/ownership/compatibility regressions."
+}

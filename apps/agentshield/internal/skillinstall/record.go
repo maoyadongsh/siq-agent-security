@@ -15,7 +15,6 @@ import (
 	"unicode/utf8"
 
 	"siq-agent-security/apps/agentshield/internal/canon"
-	"siq-agent-security/apps/agentshield/internal/fileopen"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
 
@@ -58,6 +57,9 @@ func (s *Store) readPlan(id string) (*Plan, error) {
 	if !planID.MatchString(id) {
 		return nil, ErrInvalid
 	}
+	if err := s.checkPrivateMetadataRoot(); err != nil {
+		return nil, err
+	}
 	if err := checkDirectories(filepath.Dir(s.record(id))); err != nil {
 		return nil, err
 	}
@@ -71,7 +73,7 @@ func (s *Store) readPlan(id string) (*Plan, error) {
 	if !before.Mode().IsRegular() || before.Size() > 1<<20 {
 		return nil, ErrChanged
 	}
-	f, err := fileopen.Regular(s.record(id))
+	f, err := openPrivateMetadata(s.record(id))
 	if err != nil {
 		return nil, ErrChanged
 	}
@@ -185,6 +187,9 @@ func (s *Store) Load(ctx context.Context, id string) (*Plan, error) {
 	return p, nil
 }
 func (s *Store) publish(p Plan) error {
+	if err := s.checkPrivateMetadataRoot(); err != nil {
+		return err
+	}
 	parent := filepath.Dir(s.record(p.PlanID))
 	if err := privateDirectory(parent); err != nil {
 		return err
@@ -197,30 +202,15 @@ func (s *Store) publish(p Plan) error {
 	if err != nil {
 		return ErrUnavailable
 	}
-	f, err := statefs.CreateTemp(parent, ".plan-*")
-	if err != nil {
-		return ErrUnavailable
-	}
-	defer statefs.Remove(f.Name())
-	if _, err = f.Write(raw); err == nil {
-		err = f.Sync()
-	}
-	closeErr := f.Close()
-	if err != nil || closeErr != nil {
-		return ErrUnavailable
-	}
-	if err := statefs.Link(f.Name(), s.record(p.PlanID)); err != nil {
-		if os.IsExist(err) {
-			return ErrConflict
-		}
-		return ErrUnavailable
-	}
-	return nil
+	return publishPrivateMetadata(s.record(p.PlanID), raw, ".plan-*")
 }
 
 // A request ID cannot silently acquire another target or authority after a
 // response is lost. Inspect bounded signed metadata, including expired plans.
 func (s *Store) checkRequest(candidate Plan) error {
+	if err := s.checkPrivateMetadataRoot(); err != nil {
+		return err
+	}
 	parent := filepath.Join(s.dir, "plans")
 	if err := checkDirectories(parent); err != nil {
 		return err

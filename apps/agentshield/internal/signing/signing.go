@@ -18,6 +18,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
@@ -32,8 +33,9 @@ const SeedEnv = product.EnvSigningSeed
 
 // Key is a loaded signing identity.
 type Key struct {
-	priv ed25519.PrivateKey
-	pub  ed25519.PublicKey
+	priv        ed25519.PrivateKey
+	pub         ed25519.PublicKey
+	storagePath string // empty only for explicitly supplied memory/environment seeds
 }
 
 // FromSeed builds a key from a raw 32-byte seed.
@@ -62,9 +64,12 @@ func Load(stateDir string) (*Key, error) {
 	if err := stateformat.ValidatePath(stateDir); err != nil {
 		return nil, err
 	}
+	if err := statefs.CheckPrivateDir(stateDir); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return nil, err
+	}
 	dir := filepath.Join(stateDir, "keys")
 	path := filepath.Join(dir, "signing.seed")
-	if raw, err := statefs.ReadFile(path); err == nil {
+	if raw, err := statefs.ReadPrivateFile(path, 1024); err == nil {
 		return decodeSeedFile(path, raw)
 	} else if !errors.Is(err, os.ErrNotExist) {
 		return nil, err
@@ -72,17 +77,20 @@ func Load(stateDir string) (*Key, error) {
 	if err := requireInitialIdentityState(stateDir); err != nil {
 		return nil, err
 	}
-	if err := statefs.MkdirAll(dir, 0o700); err != nil {
+	if err := statefs.MkdirAllPrivate(stateDir); err != nil {
+		return nil, err
+	}
+	if err := statefs.MkdirAllPrivate(dir); err != nil {
 		return nil, err
 	}
 	seed := make([]byte, ed25519.SeedSize)
 	if _, err := rand.Read(seed); err != nil {
 		return nil, err
 	}
-	f, err := statefs.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	f, err := statefs.CreatePrivate(path)
 	if err != nil {
 		if errors.Is(err, os.ErrExist) {
-			raw, rerr := statefs.ReadFile(path)
+			raw, rerr := statefs.ReadPrivateFile(path, 1024)
 			if rerr != nil {
 				return nil, rerr
 			}
@@ -101,7 +109,7 @@ func Load(stateDir string) (*Key, error) {
 	if err := f.Close(); err != nil {
 		return nil, err
 	}
-	return FromSeed(seed)
+	return decodeSeedFile(path, []byte(base64.StdEncoding.EncodeToString(seed)))
 }
 
 func decodeSeedFile(path string, raw []byte) (*Key, error) {
@@ -113,11 +121,24 @@ func decodeSeedFile(path string, raw []byte) (*Key, error) {
 	if err != nil {
 		return nil, fmt.Errorf("signing: seed file %s has invalid length", filepath.Base(path))
 	}
+	k.storagePath = path
 	return k, nil
 }
 
 // Public returns the verification key.
 func (k *Key) Public() ed25519.PublicKey { return k.pub }
+
+// CheckPrivateStorage revalidates the actual file backing a cached Windows key.
+// FromSeed and environment identities deliberately have no disk source.
+func (k *Key) CheckPrivateStorage() error {
+	if runtime.GOOS != "windows" || k.storagePath == "" {
+		return nil
+	}
+	if err := statefs.CheckPrivateDir(filepath.Dir(filepath.Dir(k.storagePath))); err != nil {
+		return err
+	}
+	return statefs.CheckPrivateFile(k.storagePath)
+}
 
 // PublicBase64 matches public_key_base64() on the Python side.
 func (k *Key) PublicBase64() string { return base64.StdEncoding.EncodeToString(k.pub) }
@@ -186,6 +207,9 @@ func LoadExisting(stateDir string) (*Key, error) {
 	if err := stateformat.ValidatePath(stateDir); err != nil {
 		return nil, err
 	}
+	if err := statefs.CheckPrivateDir(stateDir); err != nil {
+		return nil, err
+	}
 	path := filepath.Join(stateDir, "keys", "signing.seed")
 	info, err := os.Lstat(path)
 	if err != nil {
@@ -194,7 +218,7 @@ func LoadExisting(stateDir string) (*Key, error) {
 	if !info.Mode().IsRegular() || info.Size() > 1024 {
 		return nil, errors.New("signing: invalid existing identity file")
 	}
-	f, err := statefs.Open(path)
+	f, err := statefs.OpenPrivate(path)
 	if err != nil {
 		return nil, err
 	}

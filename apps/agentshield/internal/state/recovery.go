@@ -27,7 +27,7 @@ func (s *Store) ReadRecoveryToken() (string, error) {
 	if !info.Mode().IsRegular() || info.Size() != 64 || (runtime.GOOS != "windows" && info.Mode().Perm()&0o077 != 0) {
 		return "", errors.New("state: invalid recovery credential file or permissions")
 	}
-	raw, err := statefs.ReadFile(p)
+	raw, err := statefs.ReadPrivateFile(p, 64)
 	if err != nil {
 		return "", err
 	}

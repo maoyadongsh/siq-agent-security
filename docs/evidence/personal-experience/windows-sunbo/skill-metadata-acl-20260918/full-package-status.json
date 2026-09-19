@@ -1,0 +1,28 @@
+{
+  "source_sha": "6a6e47ce17801074ae5d3e3244928b417814cc08",
+  "source_dirty": false,
+  "command": "go test -json -p 2 -count=1 -timeout=45m ./internal/skillinstall",
+  "finished": true,
+  "exit": 1,
+  "seconds": 1593.681,
+  "source_clean_after": true,
+  "counts": {
+    "top_pass": 105,
+    "sub_pass": 128,
+    "sub_fail": 1,
+    "top_fail": 1,
+    "sub_skip": 1,
+    "top_skip": 1,
+    "package_fail": 1
+  },
+  "failed_tests": [
+    "TestInspectionSeparatesHistoricalRecordAndCurrentContents/type_changed",
+    "TestInspectionSeparatesHistoricalRecordAndCurrentContents"
+  ],
+  "skipped_tests": [
+    "TestStageAuthorityAndTargetFailures/symlink",
+    "TestDarwinSkillUnicodeCasePermissionClockAndOccupancy"
+  ],
+  "raw_log_sha256": "c3cdb30359b5fb4a20bca3dc3e77bc35a598d5733c19e14cd561d7f24797e93e",
+  "failure_detail": "Inspection/type_changed could not create its symbolic-link fixture: Windows ERROR_PRIVILEGE_NOT_HELD (1314). No timeout. Unexecuted check remains unverified."
+}

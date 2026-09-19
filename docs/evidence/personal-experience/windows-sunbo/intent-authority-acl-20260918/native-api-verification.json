@@ -1,0 +1,434 @@
+{
+  "source_sha": "a968d6194e41f4924653b39684a7fa4d8dfd0bcb",
+  "binary_sha256": "4724100e1b74aa16960e7f1b9eb2e9f7a80f7bd05d5d3ebee4aa7692e1bf1d1b",
+  "method": "native SIQ authority management and decision API with synthetic Hermes session; no host/model invocation",
+  "checks": [
+    {
+      "name": "init",
+      "passed": true
+    },
+    {
+      "name": "native-daemon-healthy",
+      "passed": true
+    },
+    {
+      "name": "repeat-same-authority",
+      "passed": true
+    },
+    {
+      "name": "repeat-no-scratch-or-rewrite",
+      "passed": true
+    },
+    {
+      "name": "baseline-authority-valid",
+      "passed": true
+    },
+    {
+      "name": "intents-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "intent-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "bindings-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "binding-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "binding-revocations-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "intent-revocations-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "contexts-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "intent-invalid-authority-denied",
+      "passed": true,
+      "reason_code": "intent_authority_invalid"
+    },
+    {
+      "name": "intent-authority-bytes-preserved",
+      "passed": true
+    },
+    {
+      "name": "intent-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "intent-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "intent-restored-authority-valid",
+      "passed": true
+    },
+    {
+      "name": "intents-invalid-authority-denied",
+      "passed": true,
+      "reason_code": "intent_state_unavailable"
+    },
+    {
+      "name": "intents-authority-bytes-preserved",
+      "passed": true
+    },
+    {
+      "name": "intents-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "intents-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "intents-restored-authority-valid",
+      "passed": true
+    },
+    {
+      "name": "binding-invalid-authority-denied",
+      "passed": true,
+      "reason_code": "intent_authority_invalid"
+    },
+    {
+      "name": "binding-authority-bytes-preserved",
+      "passed": true
+    },
+    {
+      "name": "binding-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "binding-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "binding-restored-authority-valid",
+      "passed": true
+    },
+    {
+      "name": "bindings-invalid-authority-denied",
+      "passed": true,
+      "reason_code": "intent_state_unavailable"
+    },
+    {
+      "name": "bindings-authority-bytes-preserved",
+      "passed": true
+    },
+    {
+      "name": "bindings-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "bindings-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "bindings-restored-authority-valid",
+      "passed": true
+    },
+    {
+      "name": "empty-revocations-invalid-authority-denied",
+      "passed": true,
+      "reason_code": "intent_binding_revocation_invalid"
+    },
+    {
+      "name": "empty-revocations-authority-bytes-preserved",
+      "passed": true
+    },
+    {
+      "name": "empty-revocations-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "empty-revocations-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "empty-revocations-restored-authority-valid",
+      "passed": true
+    },
+    {
+      "name": "missing-revocation-directory-denies",
+      "passed": true,
+      "reason_code": "intent_binding_revocation_invalid"
+    },
+    {
+      "name": "explicit-revocation-denies",
+      "passed": true
+    },
+    {
+      "name": "revocation-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "signed-stop",
+      "passed": true
+    },
+    {
+      "name": "owned-daemon-exit",
+      "passed": true
+    },
+    {
+      "name": "receipt-signatures-verify",
+      "passed": true
+    }
+  ],
+  "commands": [
+    {
+      "label": "01-init",
+      "args": [
+        "init",
+        "--port",
+        "54040"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "13-stop",
+      "args": [
+        "stop",
+        "--confirm-stop"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "14-verify",
+      "args": [
+        "verify",
+        "--chain",
+        "local"
+      ],
+      "exit": 0
+    }
+  ],
+  "http": [
+    {
+      "label": "02-pairing",
+      "method": "POST",
+      "path": "/v1/session/pairing",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "03-pair",
+      "method": "POST",
+      "path": "/v1/pair",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "04-issue",
+      "method": "POST",
+      "path": "/v1/intents",
+      "status": 201,
+      "error": null
+    },
+    {
+      "label": "05-repeat",
+      "method": "POST",
+      "path": "/v1/intents",
+      "status": 201,
+      "error": null
+    },
+    {
+      "label": "06-bind",
+      "method": "POST",
+      "path": "/v1/intent-bindings",
+      "status": 201,
+      "error": null
+    },
+    {
+      "label": "07-decision",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "08-denied-0",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "09-restored-0",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "08-denied-1",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "09-restored-1",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "08-denied-2",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "09-restored-2",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "08-denied-3",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "09-restored-3",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "08-denied-4",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "09-restored-4",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "10-missing-dir",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "11-revoke",
+      "method": "POST",
+      "path": "/v1/intents/int-native-acl/revoke",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "12-revoked-decision",
+      "method": "POST",
+      "path": "/v1/decide",
+      "status": 200,
+      "error": null
+    }
+  ],
+  "passed": true,
+  "all_fixture_acls_restored": true,
+  "all_fixture_directories_restored": true,
+  "owned_process_exited": true,
+  "model_calls": 0,
+  "listener_closed": true
+}

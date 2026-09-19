@@ -1,0 +1,235 @@
+{
+  "binary_sha256": "a32afce00f32c20f534885dc16a55ef62dba7f2220c22b5ee30f312f365e01c7",
+  "source_sha": "82a7da5b978dbbb7c72a10a97ad77976cf84a35f",
+  "source_dirty": false,
+  "checks": [
+    {
+      "name": "existing-broad-root-init-rejected",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "existing-broad-root-no-write",
+      "passed": true
+    },
+    {
+      "name": "existing-broad-root-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "init-creates-private-state-under-broad-parent",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "ambient-parent-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "native-daemon-healthy",
+      "passed": true
+    },
+    {
+      "name": "state-independent-descriptor-audit",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "keys-independent-descriptor-audit",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "seed-independent-descriptor-audit",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "token-independent-descriptor-audit",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "recovery-independent-descriptor-audit",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "cached-decision-route-baseline",
+      "passed": true
+    },
+    {
+      "name": "token-cached-credential-rejected",
+      "passed": true,
+      "http_status": 503
+    },
+    {
+      "name": "token-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "token-bytes-unchanged",
+      "passed": true
+    },
+    {
+      "name": "token-restored-fixture-recovers",
+      "passed": true
+    },
+    {
+      "name": "recovery-cached-credential-rejected",
+      "passed": true,
+      "http_status": 503
+    },
+    {
+      "name": "recovery-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "recovery-bytes-unchanged",
+      "passed": true
+    },
+    {
+      "name": "recovery-restored-fixture-recovers",
+      "passed": true
+    },
+    {
+      "name": "seed-cached-credential-rejected",
+      "passed": true,
+      "http_status": 503
+    },
+    {
+      "name": "seed-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "seed-bytes-unchanged",
+      "passed": true
+    },
+    {
+      "name": "seed-restored-fixture-recovers",
+      "passed": true
+    },
+    {
+      "name": "keys-cached-credential-rejected",
+      "passed": true,
+      "http_status": 503
+    },
+    {
+      "name": "keys-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "keys-restored-fixture-recovers",
+      "passed": true
+    },
+    {
+      "name": "root-cached-credential-rejected",
+      "passed": true,
+      "http_status": 503
+    },
+    {
+      "name": "root-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "root-restored-fixture-recovers",
+      "passed": true
+    },
+    {
+      "name": "signed-stop",
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "name": "owned-daemon-exit",
+      "passed": true
+    },
+    {
+      "name": "token-unsafe-startup-rejected",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "token-startup-preserves-business-files",
+      "passed": true
+    },
+    {
+      "name": "token-startup-preserves-unsafe-acl",
+      "passed": true
+    },
+    {
+      "name": "recovery-unsafe-startup-rejected",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "recovery-startup-preserves-business-files",
+      "passed": true
+    },
+    {
+      "name": "recovery-startup-preserves-unsafe-acl",
+      "passed": true
+    },
+    {
+      "name": "seed-unsafe-startup-rejected",
+      "passed": true,
+      "exit": 1
+    },
+    {
+      "name": "seed-startup-preserves-business-files",
+      "passed": true
+    },
+    {
+      "name": "seed-startup-preserves-unsafe-acl",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "owned_process_exited": true,
+  "listener_closed": true
+}

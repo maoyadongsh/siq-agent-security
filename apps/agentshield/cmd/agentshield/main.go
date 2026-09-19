@@ -459,7 +459,7 @@ func hostHookClient() (adapters.Decider, string, string) {
 		return nil, "block", dir
 	}
 	// Credential creation belongs to the daemon. A hook only reads its token.
-	raw, err := statefs.ReadFile(filepath.Join(dir, "token"))
+	raw, err := statefs.ReadPrivateFile(filepath.Join(dir, "token"), 4096)
 	tok := strings.TrimSpace(string(raw))
 	if err != nil || len(tok) < 32 {
 		return nil, cfg.EnforcementMode, dir
@@ -637,6 +637,12 @@ func cmdServe(args []string) error {
 			}
 		},
 		Store: st, Engine: eng, Chain: chain, Pack: pack, Key: key, Token: tok, RecoveryToken: recovery,
+		CheckPrivateState: func() error {
+			if err := st.CheckPrivateCredentials(); err != nil {
+				return err
+			}
+			return key.CheckPrivateStorage()
+		},
 		Version: Version, Mode: cfg.EnforcementMode, UI: ui.Handler(),
 		Home: home, Binary: bin, Endpoint: "http://" + addr,
 		HermesHome: os.Getenv("HERMES_HOME"), HermesCLI: os.Getenv("SIQ_AGENT_SECURITY_HERMES_CLI"), LocalAppData: os.Getenv("LOCALAPPDATA"),

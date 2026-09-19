@@ -1,0 +1,21 @@
+{
+  "production_source": "3dd953f83b9abb2c73a53d4cb15aa3105b2ea49b",
+  "test_changes": "Only test seam and real subprocess crash test added; production retained Link then cleanup.",
+  "result": {
+    "raw_log_sha256": "5b0cc76847f994bda3250cde88fdb3dcfec94cceccb55c2be00dc0c5ada3fc98",
+    "top_level": {
+      "fail": 1
+    },
+    "subtests": {
+      "pass": 2,
+      "fail": 2
+    },
+    "failed_tests": [
+      "TestWindowsMigrationPublicationCrashRecovery/600/published",
+      "TestWindowsMigrationPublicationCrashRecovery/400/published",
+      "TestWindowsMigrationPublicationCrashRecovery"
+    ],
+    "skipped_tests": []
+  },
+  "failure": "Published 0600 and 0400 files retained two links after owned child termination; retry returned unsafe output."
+}

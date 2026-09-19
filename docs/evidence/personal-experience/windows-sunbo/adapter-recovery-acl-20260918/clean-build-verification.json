@@ -1,0 +1,75 @@
+{
+  "source_sha": "17763748f957606bd04f0608cc90ee917a2f2aad",
+  "source_dirty": false,
+  "checks": [
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 0.832,
+      "output_empty": true
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 34.549
+    },
+    {
+      "name": "native-build",
+      "exit": 0,
+      "seconds": 32.687
+    },
+    {
+      "name": "native-build-info",
+      "exit": 0,
+      "seconds": 1.531
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0,
+      "seconds": 25.506
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0,
+      "seconds": 22.691
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0,
+      "seconds": 30.999
+    },
+    {
+      "name": "schema",
+      "exit": 0,
+      "seconds": 24.463
+    }
+  ],
+  "binary_sha256": "7199ffb61c80aa1e407106e5030be1cff0cd0d71d5a57755a21884d47853308b",
+  "finished": true,
+  "artifacts": [
+    {
+      "name": "agent.exe",
+      "source_sha": "17763748f957606bd04f0608cc90ee917a2f2aad",
+      "source_dirty": false,
+      "sha256": "7199ffb61c80aa1e407106e5030be1cff0cd0d71d5a57755a21884d47853308b"
+    },
+    {
+      "name": "agent-linux-amd64",
+      "source_sha": "17763748f957606bd04f0608cc90ee917a2f2aad",
+      "source_dirty": false,
+      "sha256": "28b260c63b52a99d3904743a9a76089717fbcdf3f864a6895fc989919f7e9ddb"
+    },
+    {
+      "name": "agent-linux-arm64",
+      "source_sha": "17763748f957606bd04f0608cc90ee917a2f2aad",
+      "source_dirty": false,
+      "sha256": "5a1a69cbee55eed03866a33b175735ee0742f0c35d077136ddd1d646fc2eacbb"
+    },
+    {
+      "name": "agent-darwin-arm64",
+      "source_sha": "17763748f957606bd04f0608cc90ee917a2f2aad",
+      "source_dirty": false,
+      "sha256": "3d941e32e32f97e2a3306e2167547043cc7f40062bdd3426345438b65c32865f"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -120,7 +121,7 @@ func Open(dir string) (*Store, error) {
 		return nil, err
 	}
 	for _, sub := range append([]string{""}, coreStateDirs...) {
-		if err := statefs.MkdirAll(filepath.Join(dir, sub), 0o700); err != nil {
+		if err := statefs.MkdirAllPrivate(filepath.Join(dir, sub)); err != nil {
 			return nil, err
 		}
 	}
@@ -212,22 +213,32 @@ func (s *Store) Token() (string, error) {
 		return "", err
 	}
 	p := filepath.Join(s.Dir, "token")
-	if raw, err := statefs.ReadFile(p); err == nil {
+	if raw, err := statefs.ReadPrivateFile(p, 4096); err == nil {
 		t := strings.TrimSpace(string(raw))
 		if len(t) >= 32 {
 			return t, nil
 		}
 		return "", errors.New("state: token file too short; refusing to use it")
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return "", err
 	}
 	b := make([]byte, 32)
 	if _, err := rand.Read(b); err != nil {
 		return "", err
 	}
 	t := hex.EncodeToString(b)
-	f, err := statefs.OpenFile(p, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	f, err := statefs.CreatePrivate(p)
 	if err != nil {
 		if errors.Is(err, os.ErrExist) {
-			return s.Token()
+			raw, readErr := statefs.ReadPrivateFile(p, 4096)
+			if readErr != nil {
+				return "", readErr
+			}
+			value := strings.TrimSpace(string(raw))
+			if len(value) < 32 {
+				return "", errors.New("state: token file too short; refusing to use it")
+			}
+			return value, nil
 		}
 		return "", err
 	}
@@ -597,9 +608,9 @@ func (s *Store) PutDesiredPolicy(dp grant.DesiredPolicy) error {
 // writeDurable creates path exclusively, Syncs, then closes. Identical content
 // at an existing path is treated as idempotent success (same as writeNew).
 func writeDurable(path string, data []byte) error {
-	f, err := statefs.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	f, err := statefs.CreatePrivate(path)
 	if errors.Is(err, os.ErrExist) {
-		existing, readErr := statefs.ReadFile(path)
+		existing, readErr := readExistingPrivateRecord(path)
 		if readErr != nil {
 			return readErr
 		}
@@ -677,9 +688,9 @@ func (s *Store) GetEvidence(id string) (map[string]any, error) {
 var ErrConflict = errors.New("state: immutable path exists with different content")
 
 func writeNew(path string, data []byte) error {
-	f, err := statefs.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	f, err := statefs.CreatePrivate(path)
 	if errors.Is(err, os.ErrExist) {
-		existing, readErr := statefs.ReadFile(path)
+		existing, readErr := readExistingPrivateRecord(path)
 		if readErr != nil {
 			return readErr
 		}
@@ -698,12 +709,42 @@ func writeNew(path string, data []byte) error {
 	return f.Close()
 }
 
+// Bound retries by the existing opened record, not the new serialization:
+// a shorter retry can still identify the same immutable admission or evidence.
+// OpenPrivate retains the Windows DACL, reparse-point and link checks.
+func readExistingPrivateRecord(path string) ([]byte, error) {
+	f, err := statefs.OpenPrivate(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	before, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if !before.Mode().IsRegular() || before.Size() < 0 {
+		return nil, errors.New("state: invalid existing record")
+	}
+	raw, err := io.ReadAll(io.LimitReader(f, before.Size()))
+	if err != nil {
+		return nil, err
+	}
+	after, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if int64(len(raw)) != before.Size() || after.Size() != before.Size() {
+		return nil, errors.New("state: existing record changed during read")
+	}
+	return raw, nil
+}
+
 func writeNewCompatible(path string, data []byte, sameIdentity func(existing []byte) bool) error {
 	err := writeNew(path, data)
 	if err == nil || !errors.Is(err, ErrConflict) {
 		return err
 	}
-	existing, readErr := statefs.ReadFile(path)
+	existing, readErr := readExistingPrivateRecord(path)
 	if readErr != nil {
 		return readErr
 	}

@@ -1,0 +1,7 @@
+{
+  "r1": "PowerShell Security module lookup failed before service creation; fixture corrected with a child-only system PSModulePath.",
+  "r2_and_r3": "Set-Acl requested unavailable SeSecurityPrivilege; owned service stopped, no elevation. Replaced fixture mutation with DACL-only SetFileSecurityW, matching the native unit fixture.",
+  "r4": "Dirty development binary passed 27 daemon assertions; retained as development evidence.",
+  "r5": "Clean source passed the same 27 assertions.",
+  "r6": "Added inheritable broad parent, independent .NET descriptor audit, and unsafe startup rejection with business-file preservation. See native-daemon-verification.json."
+}
