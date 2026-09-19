@@ -8,3 +8,10 @@
 - 证据解释：历史 OpenClaw 使用 WSL Agent，Hermes 是原生 CLI，WorkBuddy 为原生最小 Skill 读写；不能拼为一个 Windows 同候选完整旅程，也不承诺 WorkBuddy WSL2 形态。
 
 [`*.ps1` 资源](../../apps/agentshield/cmd/agentshield/)和 Windows Go 文件保留所属包；目录整理必须保留大小写、执行脚本资源和字节属性。跨平台编译不替代 DACL、junction、任务升级回滚与 GUI 的原生验证。[支持范围](../support-matrix.md)及[评测入口](../../evaluations/README.md)与实现状态分别记录。
+
+
+## 源码、基础检查与功能验收
+
+[运行时模块](../../apps/agentshield/README.md)、[Web](../../apps/web/README.md)与[宿主适配器](../../adapters/runtime/README.md)分别维护共享核心、界面和协议边界。平台生命周期按本页手册执行，不复制另一套实现到 platforms 目录。
+
+[四目标源码原生检查](../../docs/evidence/repository-reorganization-final-20260919/README.md)已有本平台自建程序的准入与基础启动/配对/控制台/停止记录。它与 0.3.0 正式包使用不同候选，不等于系统服务、升级回滚、通知或完整宿主验收；后续验收仍需固定同一程序、UI、适配器、宿主版本和状态格式，再记录允许、拒绝、撤销与恢复的实际结果。

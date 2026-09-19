@@ -28,7 +28,7 @@ Agent security research and implementation: permissions, runtime checks and exec
 
 **SIQ Agent Security is an open-source research project on agent authorization boundaries and execution evidence, with a working security management system for individuals and organizations.** It helps individuals and organizations inventory agents in local or connected environments, review tool and resource permissions, manage installation and updates, and check authorization on integrated execution paths. Users keep working in their existing agents while SIQ provides permission management, action approval and task evidence.
 
-The research asks how model proposals receive independent authorization, how provenance constrains execution, and how observed effects establish task completion. Root-level [research/](research/README.md) connects literature, questions, methods, experiments, findings and governance; [evaluations/](evaluations/README.md) separates research observations, engineering acceptance and external reproductions.
+The research asks how model proposals receive independent authorization, how provenance constrains execution, and how observed effects establish task completion. The implementation links trusted Intent, parameter provenance, Skill Execution Context (SEC), a unique post-approval execution reservation and effect verification: who authorized the action, which installation it belongs to, and what actually happened. Root-level [research/](research/README.md) connects literature, questions, methods, experiments, findings and governance; [evaluations/](evaluations/README.md) separates research observations, engineering acceptance and external reproductions.
 
 The **personal client** provides a local service and browser console for agents, Skills and tasks. The **enterprise control plane**, Edge and Connectors support environment inventory, policy approval and deployment readback. Current delivery focuses on the personal client, with the signed `0.3.0` regular release available; convenient LAN team-device workflows remain planned.
 
@@ -36,7 +36,7 @@ The **personal client** provides a local service and browser console for agents,
 
 > **Signed installation package (2026-09-19):** [0.3.0 release (Latest)](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0) provides an offline bundle, signed Skill and four target binaries, built from main commit `83fde2d` and signed with the existing publisher key. Download the Release installation assets; GitHub automatic source archives and `skills/siq-agent-security/` remain development source. Linux ARM64 passed native bootstrap and tamper-rejection checks; the other targets have build and signature-pin verification only. See [installation instructions](docs/signed-release-packaging.md) and [signing/publication evidence](docs/evidence/releases/0.3.0/README.md).
 
-[Documentation map](docs/README.md) · [Current development](docs/development/current.md) · [Repository reorganization](docs/development/reorganization-progress.md) · [Platform delivery](platforms/README.md) · [Evaluations and external reproduction](evaluations/README.md)
+[Application modules](apps/README.md) · [Documentation map](docs/README.md) · [Current development](docs/development/current.md) · [Repository reorganization](docs/development/reorganization-progress.md) · [Platform delivery](platforms/README.md) · [Evaluations and external reproduction](evaluations/README.md)
 
 ## Product direction and support status
 
@@ -119,65 +119,87 @@ These demonstrations use explicit model fixtures to drive real SIQ components. T
 
 ### Components and authorization chain
 
-This diagram shows the main local-runtime and enterprise control-plane relationships. The optional enterprise deployment uses its own identity and service; running both consoles does not automatically synchronize authority. The personal runtime also has an independent OpenShell integration, described in the [Chinese integration overview](README.md#dgx-spark-与-nvidia-openshell-深度适配).
+This diagram shows the current local-runtime and enterprise control-plane relationships. Managed instances enroll real host sessions; trusted Context, parameter provenance and an optional Skill Execution Context (SEC) enter server-side verification. The optional enterprise deployment uses its own identity and service; running both consoles does not automatically synchronize authority. The personal runtime also has an independent OpenShell integration, described in the [Chinese integration overview](README.md#dgx-spark-与-nvidia-openshell-深度适配).
 
 ```mermaid
 flowchart TB
-    Human[Operator confirms authority] --> Console[Local console / management API]
-    Skill[SIQ Skill: interaction and operating guidance] --> Agent[Application Agent]
-    Candidate[Candidate Skill / configuration] --> Admission[Static admission and capability extraction]
+    subgraph Local[Personal integration: host and local service]
+        direction TB
+    Human[Operator] --> Console[Local console / management API]
+    Skill[SIQ Skill: operating guidance] --> Agent[Application Agent]
+    Candidate[Candidate Skill] --> Admission[Static admission / content digest]
     Admission --> Console
     Console --> Authority[Signed Grant / Intent / session binding]
-    Agent --> Adapter[Runtime adapter]
-    Adapter --> Gate[Local decision engine]
+    Agent --> Adapter[Host runtime adapter]
+    Adapter --> Identity[Managed instance identity / native session enrollment]
+    Identity --> Gate[Local authority and decision engine]
+    Adapter -->|Concrete action and parameters| Gate
     Authority --> Gate
-    Gate --> Decision[allow / deny / hold / redact]
-    Decision --> Adapter
-    Adapter --> Tool[Authorized tool call]
-    Tool --> Observe[Result correlation and Observation]
-    Gate --> Receipts[Signed receipt chain]
+    Context[Trusted Context / parameter provenance / optional SEC] --> Gate
+    Gate --> Decision[Adapter handles decision / host gate retained]
+    Decision -->|Execution conditions met| Tool[Host tool]
+    Tool --> Observe[Call result correlation / Observation]
+    Gate --> Receipts[Signed decision and execution receipt chain]
     Observe --> Receipts
-    Receipts --> Console
+    Receipts --> View[Console review and trace]
+    Console -.->|Explicit integration| LocalBackend[Local OpenShell adapter / policy load and readback]
+    end
 
-    Connectors[Read-only Connector] --> Edge[Edge Agent]
-    Edge --> Control[Enterprise Control API / Worker]
-    EnterpriseUI[Enterprise console] --> Control
-    Control --> DB[(PostgreSQL)]
-    Control --> Backend[Execution backend adapter / readback verification]
-
+    subgraph Enterprise[Optional enterprise deployment: separate identity and service]
+        direction TB
+        Connectors[Read-only Connectors] --> Edge[Edge: task verification / evidence signing]
+        Edge --> Control[Control API / Worker]
+        EnterpriseUI[Enterprise console / human approval] --> Control
+        Control --> DB[(PostgreSQL / audit / outbox)]
+        Control --> Backend[Enterprise backend adapter / policy readback]
+    end
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
-    class Human,Authority authority
-    class Admission,Gate,Decision runtime
+    class Human,Authority,Identity,Context authority
+    class Admission,Gate,LocalBackend,Control runtime
     class Observe,Receipts evidence
 ```
 
 ### Task execution and effect verification
 
 ```mermaid
-flowchart LR
-    Task[User task] --> Agent[Agent planning and Skill selection]
-    Agent --> Proposal[Proposed tool call]
-    Authority[Trusted authority and parameter provenance] --> Runtime[SIQ runtime checks]
-    Proposal --> Runtime
-    Runtime -->|Execution allowed| Tool[Tool execution]
-    Runtime --> Receipts[Signed decision receipts]
-    Tool --> Observer[Independent effect collection]
-    Observer --> Completion[SIQ completion decision]
+flowchart TB
+    Task[User task] --> Proposal[Agent plan / Skill selection / tool proposal]
+    Authority[Grant / Intent / provenance and context constraints] --> Gate[SIQ pre-execution checks]
+    Proposal --> Gate
+    Gate -->|allow or host-supported redact| Tool[Execute approved parameters within host gate]
+    Gate -->|deny / unmet conditions| Stop[Block this call]
+    Gate -->|hold| Approval[Local approval / host-specific resume protocol]
+    Approval --> Recheck[Recheck current authority and final parameters]
+    Recheck -->|Invalid / expired / revoked| Stop
+    Recheck -->|Valid| Reserve[Atomically persist unique signed execution reservation]
+    Reserve -->|Reserved with unambiguous response| Tool
+    Reserve -.->|Reserved but execution unconfirmed| Uncertain[uncertain: inspect facts / no blind replay]
+    Tool --> Observation[Host result report / Observation]
+    Observation --> Receipts[Correlated action / decision / reservation receipts]
+    Gate --> Receipts
+    Reserve --> Receipts
+    Tool -.->|An integrated observer samples effects| Effect[File or receiver material / EffectEvidence]
+    Requirements[Effect requirements in signed Intent] --> Completion[SIQ validates material and actions / evaluates requirements]
+    Receipts --> Completion
+    Effect --> Completion
+    Completion --> Result[verified / incomplete / conflicting / unknown]
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
-    class Authority authority
-    class Runtime,Completion runtime
-    class Receipts,Observer evidence
+    class Authority,Approval,Requirements authority
+    class Gate,Recheck,Reserve,Completion runtime
+    class Observation,Receipts,Effect,Result,Uncertain evidence
 ```
 
-- **Before execution**: statically scan Skills and record capability requirements. Constrain actions with Grants, Intent, trusted Context and parameter provenance. Model output cannot create effective permissions.
-- **During execution**: check authority at integrated tool entry points and recheck held approvals before execution. Adapters associate actual calls with decisions.
-- **After execution**: record signed receipts and collect file or controlled-receiver effect evidence. Tool-reported success, observed effects and task completion are separate records.
+- **Before execution**: statically inspect Skills and pin content digests. Constrain actions with Grants, Intent, instance/session identity, trusted Context and parameter provenance. Verify SEC when trusted Skill attribution is required; a name or installation path alone is not proof. Model output cannot create effective permissions.
+- **During execution**: enforce decisions at integrated entry points while retaining the host gate. Supported hold-resume paths recheck authority and final parameters after local approval, then persist a unique reservation before attempting execution. Denial, expiry, revocation or missing resume capability blocks the call. Reserved but unconfirmed execution remains `uncertain`, without automatic replay.
+- **After execution**: correlate results and signed receipts by action, decision and reservation. Integrated file or receiver observers collect effect material. Completion checks signed Intent requirements, action authority and valid material; missing or conflicting evidence cannot be shown as completed.
 
-Ordinary Observation correlation and independent EffectEvidence establish different things. See the [technical report](docs/research/technical-report.md), [contracts](packages/contracts/README.md) and [security boundaries](#security-boundaries) for architecture and protocol details.
+Dashed edges denote explicit integration or conditional paths, not universal effect coverage. Approval and host-gate ordering follows each adapter protocol; stock OpenClaw and a pinned checkpoint-patched copy have separate acceptance. `redact` requires host parameter-rewrite support; other mappings follow the adapter contract.
+
+Ordinary Observation correlation and independent EffectEvidence establish different things. `uncertain` is an execution-reservation state, not a fifth Completion outcome. See the [technical report](docs/research/technical-report.md), [contracts](packages/contracts/README.md) and [security boundaries](#security-boundaries) for architecture and protocol details.
 
 ## Quick start
 
@@ -321,13 +343,13 @@ Research entry points: [questions](docs/research/research-questions.md) · [data
 | Component | Responsibility | Entry point |
 | --- | --- | --- |
 | Secure Agent and research Skills | Task planning and dynamic research / report / delivery selection | [Agent guide](apps/secure-agent/README.md), [Skills](skills/) |
-| Local Go runtime and personal console | Admission, authorization, Skill lifecycle, approvals, task/privacy management and signed receipts; the personal UI is embedded in Go | [Personal UI](apps/web/src/local/), [local operations](AGENTSHIELD.md), [development specification](docs/agentshield-dev-spec-v1.md) |
+| Local Go runtime and personal console | Admission, authorization, Skill lifecycle, approvals, task/privacy management and signed receipts; the personal UI is embedded in Go | [Personal UI](apps/web/README.md), [runtime guide](apps/agentshield/README.md), [local operations](AGENTSHIELD.md), [development specification](docs/agentshield-dev-spec-v1.md) |
 | SIQ Skill and release tools | Operating guidance, manifest verification and secure staging; building and signing installation packages from fixed commits | [Skill source](skills/siq-agent-security/), [release tool](scripts/release/package.py), [installation guide](docs/signed-release-packaging.md) |
-| Runtime adapters | OS-scoped Hermes, OpenClaw and WorkBuddy entry points; CodeBuddy is retained only for safe handling of historical configuration and records | [Adapters](adapters/runtime/), [capability matrix](docs/agentshield-capability-matrix-v1.md), [platform scope decision](docs/personal-platform-scope-decision-20260917.md) |
+| Runtime adapters | OS-scoped Hermes, OpenClaw and WorkBuddy entry points; CodeBuddy is retained only for safe handling of historical configuration and records | [Adapters](adapters/runtime/README.md), [capability matrix](docs/agentshield-capability-matrix-v1.md), [platform scope decision](docs/personal-platform-scope-decision-20260917.md) |
 | OpenShell and DGX Spark integration | Deployment checks, local-model configuration, policy authorization/loading/recovery and constrained task execution | [DGX deployment](deploy/dgx-spark/README.md), [OpenShell implementation](apps/agentshield/internal/openshell/), [native evidence](docs/openshell-policy-load-wait-repair-20260916.md) |
-| Enterprise control plane | Multi-tenant inventory, evidence, policy approval and Edge coordination | [Control plane](docs/control-plane.md), [production runbook](docs/enterprise-production-runbook-v1.md) |
-| Edge and Connectors | Configuration, directory, framework, process, container and cluster collection | [Edge](edge/agent/), [Connectors](connectors/), [compatibility](docs/compatibility.md) |
-| Contracts and benchmarks | Cross-component data contracts, fixed corpus and evidence verification | [Contracts](packages/contracts/), [Agent benchmark](benchmarks/hackathon/README.md), [runtime benchmark](benchmarks/runtime-security/README.md) |
+| Enterprise control plane | Multi-tenant inventory, evidence, policy approval and Edge coordination | [API module](apps/control-api/README.md), [control plane](docs/control-plane.md), [production runbook](docs/enterprise-production-runbook-v1.md) |
+| Edge and Connectors | Configuration, directory, framework, process, container and cluster collection | [Edge](edge/agent/README.md), [Connectors](connectors/README.md), [compatibility](docs/compatibility.md) |
+| Contracts and benchmarks | Cross-component data contracts, fixed corpus and evidence verification | [Contracts](packages/contracts/README.md), [Agent benchmark](benchmarks/hackathon/README.md), [runtime benchmark](benchmarks/runtime-security/README.md) |
 
 The local demonstration does not require PostgreSQL, enterprise login or the enterprise API. Collection, tool blocking and native validation are tracked separately for each platform. An adapter's existence does not establish protection across all versions or execution paths. Consult the relevant runbook for production prerequisites and unverified scope.
 

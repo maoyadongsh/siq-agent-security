@@ -5,8 +5,8 @@
 | 要做的事 | 从这里开始 | 权威材料 |
 | --- | --- | --- |
 | 安装个人客户端 | [签名包安装](signed-release-packaging.md) | [0.3.0 发行记录](evidence/releases/0.3.0/README.md)、[个人操作手册](personal-client-operation-guide-20260916.md) |
-| 从源码开发 | [本机开发与操作](../AGENTSHIELD.md) | [本机规格](agentshield-dev-spec-v1.md)、[设计](agentshield-design-v1.md)、[贡献指南](../CONTRIBUTING.md) |
-| 部署企业控制面 | [控制面](control-plane.md) | [生产运维模板与缺口](enterprise-production-runbook-v1.md)、[Compose](../deploy/compose/)、[版本化合同](../packages/contracts/) |
+| 从源码开发 | [应用模块](../apps/README.md)、[本机开发与操作](../AGENTSHIELD.md) | [本机规格](agentshield-dev-spec-v1.md)、[设计](agentshield-design-v1.md)、[贡献指南](../CONTRIBUTING.md) |
+| 部署企业控制面 | [控制面](control-plane.md) | [生产运维模板与缺口](enterprise-production-runbook-v1.md)、[Compose](../deploy/compose/README.md)、[版本化合同](../packages/contracts/README.md) |
 | 研究与复现 | [研究总览](../research/README.md) | [研究材料](research/README.md)、[复现指南](../REPRODUCIBILITY.md)、[主张与证据](research/claims-evidence.md) |
 | 平台与结果 | [平台交付](../platforms/README.md)、[测评索引](../evaluations/README.md) | [外部复现](../evaluations/external/README.md)、[当前缺口](../evaluations/gaps.md) |
 | 理解架构与约束 | [ADR](adr/) | [威胁模型](threat-model.md)、[本机规格](agentshield-dev-spec-v1.md)、[资产地图](development/repository-map.json) |

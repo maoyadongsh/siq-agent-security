@@ -1,6 +1,14 @@
 # 个人体验开发验证工具
 
-本目录对应 UX-003、UX-004、UX-005、UX-012。它使用当前仓库开发二进制，验证本地管理与启动流程。需要 Python 3；浏览器验证另需 Playwright 和 Chromium。正式安装包的“无需开发工具”交付由 UX-014 承担。
+本目录起源于 UX-003、UX-004、UX-005、UX-012，现还包含实例接入、Skill 生命周期、审批/隐私、客户端恢复及 Linux 双宿主验证。各脚本使用显式候选程序，验证本地管理与启动流程。需要 Python 3；浏览器验证另需 Playwright 和 Chromium。正式安装包的“无需开发工具”交付由 UX-014 承担。
+
+## 先选择验证对象
+
+- 当前任务、候选和未闭合项从[开发导航](../../docs/development/current.md)进入，不把脚本存在视为已验收。
+- Linux 双宿主按 [LX00–LX10 任务书](../../docs/linux-dual-host-integration-development-taskbook-20260918-205119.md)选择脚本；第六代功能与第八代 UI 分开记账。
+- 个人生命周期与浏览器场景查[工具索引](../../docs/development/tools.md)；正式包验签和原生启动改用[发行工具](../release/README.md)，自建候选不继承正式签名身份。
+
+运行前读所选脚本的 `--help` 与任务书，确认独立状态/profile、宿主二进制和输出位置。涉及配置、注册或生命周期的脚本需满足其显式确认参数；只读诊断不能替代完整执行。证据应包含源码/程序/UI 摘要、宿主版本、实际调用与副作用，并保留失败和 partial/blocked。不要上传私密状态、token 或配对输出。
 
 ## 构建
 
@@ -8,6 +16,7 @@
 
 ```bash
 cd apps/web
+npm ci
 npm run build:local
 cd ../agentshield
 go build -o ../../.tmp/personal-experience/siq-agent-security ./cmd/agentshield

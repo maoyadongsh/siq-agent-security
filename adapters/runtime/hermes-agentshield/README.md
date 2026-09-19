@@ -2,6 +2,12 @@
 
 把 Hermes 的 `pre_tool_call` / `post_tool_call` 钩子接到本机 `siq-agent-security serve` 的决策 API。只做 HTTP 映射，不含规则、判定或密钥（`apps/agentshield/AGENTS.md` 硬性规则）。
 
+## 当前定位与实现边界
+
+Hermes 在 Linux、macOS、Windows 均属于当前接入范围，实际通过情况逐候选登记于[平台矩阵](../../../platforms/support-matrix.md)。组件桥接、公开 CLI 合成模型会话与真实用户任务分别验证；不能用某个 OS 的插件单测代替全部原生验收。
+
+本适配器的重点是将真实实例/会话、参数来源和执行前授权连接起来。实例凭据不能调用管理 API；MCP 来源上报保持 untrusted；Skill 名称不自动证明执行归属，verified SEC 必须由 daemon 复验安装与授权。对应实现见[本地运行时](../../../apps/agentshield/README.md)，审批恢复见[适配器总览](../README.md)。
+
 ## 安装
 
 在本地管理页的设置中选择 **Hermes → 管理实例**，选择目标 profile，再预览并确认接入。安装前先展示文件清单；取消不改平台配置。

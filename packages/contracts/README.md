@@ -6,6 +6,8 @@
 
 ## 合同文件清单
 
+下表列出关键合同与不变量，并非全目录清单。新增版本以实际 schema、固定向量和消费方测试为准；旧版文件保留不表示新请求仍可使用。
+
 | 文件 | 内容 | 关键字段/约定 | 对应设计文档 |
 | --- | --- | --- | --- |
 | `admission.schema.json` | Skill 安装前准入结论（本机门禁） | 三值 `verdict`；`findings.disposition`（quarantine / declare / info）与 verdict 用 `if/then` 锁定自洽；`declared_facts` 只能 `state=declared`、`effect=allow`；`over_limit` / `symlink_escape` 强制 quarantine；`content_hash` 用于 tool pinning | ADR-011、设计方案 v1 §4.1 |
@@ -35,12 +37,14 @@
 ### 本机门禁四合同的数据流
 
 ```
-SKILL.md → skill-manifest（校验二进制哈希）→ siq-agent-security 二进制
+已签名发行包：SKILL.md → skill-manifest（清单签名与二进制哈希）→ 二进制
   inventory ──► candidate + evidence（既有合同）
   admit     ──► admission（declared_facts ⊂ permission-fact 语义，state 恒为 declared）
   grant     ──► grant（facts 五态；effective 只能来自后端读回）+ desired-policy 引用
   serve     ──► receipt（哈希链 + Ed25519；平台适配器与模型无签名密钥）
 ```
+
+开发目录 `skills/siq-agent-security/` 不附发行清单，bootstrap 缺清单时拒绝启动；源码调试从自建 Go 程序开始，不绕过发行验签。详见[源码与发行边界](../../docs/skill-source-release-boundary-20260919.md)。
 
 Go 实现（`apps/agentshield/`）与 Python 实现（control-api）共用本目录 schema 与同一套语料；`engine.name` 字段区分双实现，一致性测试以此比对。
 
@@ -83,20 +87,17 @@ Connector 是运行在 Edge Agent 侧的多语言插件（设计文档 §26.1：
 
 ### 已实现的 Connector
 
-| Connector | 语言 | 状态 | 负向测试 |
-| --- | --- | --- | --- |
-| hermes | Go | 已实现（build/vet/test 全绿） | scope 校验/符号链接逃逸/.env 拒绝/截断；toolsets → declared 工具权限事实 |
-| directory | Go | 已实现（build/vet/test 全绿） | 空范围拒绝（无默认范围）/符号链接逃逸/.env 永不读取/限额截断 |
-| openclaw | Go | 已实现（L1/L2 只读，build/vet/test 全绿） | 发现 agents.list + declared model/workspace 权限事实；auth-profiles 永不读（只记大小）；不写 OpenClaw 配置 |
-| docker | Go | 已实现（build/vet 通过） | 环境变量值不出机（结构体无 Env 字段）；**负向测试待补** |
+仓库当前有 11 个 Go Connector：hermes、directory、openclaw、docker、process、systemd、kubernetes、mcp、piagent、workbuddy、dify。各自采集对象、测试与限制统一见 [Connector README](../../connectors/README.md)；本地选择和远程注册能力的差异见 [Edge README](../../edge/agent/README.md)。
+
+Docker 已有分类与候选输出测试；这不自动补齐全部恶意输入/超时等负向。所有 Connector 都须按协议分别验证 scope、秘密字段、输出大小与失败响应，不能因共享协议而继承其他模块验收。
 
 ## Enforcement Adapter 合同
 
 合同定义见设计文档 §15.3（OpenShell Adapter）与 §16.2（Runtime Adapter）。首版实现位于 `apps/control-api/app/adapters/openshell/`（contracts / base / policy_compiler / fake_backend / client / cli_backend）：
 
 - **FakeBackend 契约测试**覆盖：能力探测、revision 冲突、静态 generation、正负验证、回滚、unsupported 显式标记；
-- **`openshell-cli` 后端**：已在 OpenShell v0.0.104 真实网关实测"审批 → `policy set` → 读回验证 → effective"闭环（含网络策略热更新，见 [`docs/control-plane.md`](../../docs/control-plane.md) 与 `docs/compatibility.md`）；SIQ 侧正式迁移（v0.0.83 → v0.0.104）处于 canary 窗口期，runbook 见 `docs/openshell-v083-to-v0104-migration.md`；
-- `adapters/enforcement/` 预留给未来的独立进程形态，当前为空（规划中）。
+- **`openshell-cli` 后端**：已在 OpenShell v0.0.104 真实网关实测"审批 → `policy set` → 读回验证 → effective"闭环（含网络策略热更新，见 [`docs/control-plane.md`](../../docs/control-plane.md) 与[兼容说明](../../docs/compatibility.md)）；该企业阶段记录将正式迁移（v0.0.83 → v0.0.104）列为 canary 窗口，不作为个人端当前后端版本声明，runbook 见[迁移说明](../../docs/openshell-v083-to-v0104-migration.md)；
+- 独立进程形态的 Enforcement Adapter 仍为规划；当前仓库没有 `adapters/enforcement/` 实现目录，应从上述实际控制面后端或 [Go OpenShell](../../apps/agentshield/internal/openshell/) 阅读，不能把规划路径当成可用组件。
 
 ## 与实现的对应关系（如实核对）
 
@@ -114,3 +115,15 @@ JSON Schema 负责结构；RE2 可编译性、时间窗顺序、证据存在性�
 审批后执行采用签名预留：`hold-execution-reserve/v1` 只允许决策凭据申请一次执行，后续读取
 `hold-execution-status/v1` 无法证明工具是否启动时必须返回 `uncertain`。管理员核对外部系统后可提交
 `hold-execution-reconcile/v1`，仅把“已发生/未发生”写入签名链；该操作不会重新启用旧预留或直接调用工具。
+
+
+## 如何理解跨层合同
+
+| 层次 | 解决的问题 | 不能据此推导的结论 |
+| --- | --- | --- |
+| Admission / Grant | 内容检查与明确批准的权限包络 | 准入通过不等于安装、加载或保护 |
+| Intent / Provenance / SEC | 当前动作、参数来源和已验证 Skill 执行归属 | Schema 合法不等于签名可信；名称相同不等于身份相同 |
+| Hold / Reservation | 批准后最终复验与唯一执行尝试 | approved 不等于已执行；uncertain 不等于没有副作用 |
+| Receipt / Effect / Completion | 决策、执行报告、观察材料与任务要求关联 | 签名不认证外部信任根；工具自报成功不等于实际完成 |
+
+开发入口为 [Go 运行时](../../apps/agentshield/README.md)、[控制面](../../apps/control-api/README.md)和[适配器](../../adapters/runtime/README.md)。合同测试在 `apps/control-api` 下执行 `uv run pytest app/tests/test_schema_contracts.py app/tests/test_intent_v2_contracts.py`；改字段还需运行各生产方/消费方对应测试。不能用文档示例替代服务端的签名、时效、撤销和资源复验。

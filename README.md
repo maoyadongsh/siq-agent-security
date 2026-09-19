@@ -34,7 +34,7 @@
 
 **SIQ Agent Security 是研究智能体授权边界与执行证据的开源项目，同时提供面向个人与组织的可运行安全管理系统。** 它帮助用户看清本机或已接入环境中的 Agent 与 Skill、确认工具和资源权限、管理安装与更新，并在已接入的执行路径上检查授权、处理高风险动作、追溯任务结果。用户继续使用原有智能体，SIQ 提供权限管理、运行检查和证据查询入口。
 
-研究主线是：模型提出的动作如何获得独立授权、参数来源如何约束执行，以及如何用实际效果证据判断任务完成。根目录 [research/](research/README.md) 连接文献、研究问题、方法、实验、结论与治理；[evaluations/](evaluations/README.md) 区分研究观察、工程验收与外部复现。
+研究主线是：模型提出的动作如何获得独立授权、参数来源如何约束执行，以及如何用实际效果证据判断任务完成。实现将受信 Intent、参数来源、Skill 执行上下文（SEC）、审批后唯一执行预留与效果核验串联，分别回答“谁授权、执行什么、归属哪个安装、是否实际发生”。根目录 [research/](research/README.md) 连接文献、研究问题、方法、实验、结论与治理；[evaluations/](evaluations/README.md) 区分研究观察、工程验收与外部复现。
 
 项目提供两条使用路线：**个人端**通过本地服务和浏览器控制台管理自己的智能体、Skill 与任务；**企业端**通过控制面、Edge 和 Connector 汇总环境资产、审批策略并核验部署结果。当前交付重点是个人客户端，已发布 `0.3.0` 签名正式版；企业端已有独立部署和治理基础，便捷的局域网团队多设备流程仍按后续路线推进。
 
@@ -42,7 +42,7 @@
 
 > **签名安装包（2026-09-19）**：[0.3.0 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0) 已提供完整离线包、签名 Skill 与四目标二进制，源码固定在 `83fde2d`，使用原发行密钥签发。请选择 Release 中的安装资产；GitHub 自动生成的源码压缩包及 `skills/siq-agent-security/` 仍是开发源码。Linux ARM64 已通过实际安装链路和篡改拒绝验证，其他目标本次仅完成构建与签名摘要核对。见[安装说明](docs/signed-release-packaging.md)和[签发与发布验证记录](docs/evidence/releases/0.3.0/README.md)。
 
-[文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md) · [平台交付](platforms/README.md) · [测评与外部复现](evaluations/README.md)
+[应用模块](apps/README.md) · [文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md) · [平台交付](platforms/README.md) · [测评与外部复现](evaluations/README.md)
 
 ## 当前产品方向与支持状态
 
@@ -234,65 +234,87 @@ SIQ 的差异化集中在把**授权依据、真实调用与可核验结果连�
 
 ### 组件与授权链路
 
-下图展示本地运行时与企业控制面的主要关系。企业控制面是可选部署；个人控制台与企业控制台使用各自的身份和服务，不会因同时部署而自动同步授权。个人端还可独立接入 OpenShell，流程见下方[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
+下图展示当前本地运行时与企业控制面的主要关系：受管实例通过真实宿主会话接入，Context、参数来源和按需签发的 Skill 执行上下文（SEC）参与服务端复验。企业控制面是可选部署；个人控制台与企业控制台使用各自的身份和服务，不会因同时部署而自动同步授权。个人端还可独立接入 OpenShell，流程见下方[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
 
 ```mermaid
 flowchart TB
-    Human[操作者确认授权] --> Console[本地控制台 / 管理 API]
-    Skill[SIQ Skill：交互与操作指引] --> Agent[业务 Agent]
-    Candidate[候选 Skill / 配置] --> Admission[静态准入与能力提取]
+    subgraph Local[个人接入链路：宿主与本地服务]
+        direction TB
+    Human[操作者] --> Console[本地控制台 / 管理 API]
+    Skill[SIQ Skill：操作指引] --> Agent[业务 Agent]
+    Candidate[候选 Skill] --> Admission[静态准入 / 内容摘要]
     Admission --> Console
     Console --> Authority[签名 Grant / Intent / 会话绑定]
-    Agent --> Adapter[运行时适配器]
-    Adapter --> Gate[本地决策引擎]
+    Agent --> Adapter[宿主运行时适配器]
+    Adapter --> Identity[受管实例身份 / 原生会话登记]
+    Identity --> Gate[本地授权与决策引擎]
+    Adapter -->|具体动作与参数| Gate
     Authority --> Gate
-    Gate --> Decision[allow / deny / hold / redact]
-    Decision --> Adapter
-    Adapter --> Tool[获准的工具调用]
-    Tool --> Observe[结果关联与 Observation]
-    Gate --> Receipts[签名回执链]
+    Context[受信 Context / 参数来源 / 按需 SEC] --> Gate
+    Gate --> Decision[裁决交给适配器 / 保留宿主门禁]
+    Decision -->|满足执行条件| Tool[宿主工具]
+    Tool --> Observe[调用结果关联 / Observation]
+    Gate --> Receipts[签名决策与执行回执链]
     Observe --> Receipts
-    Receipts --> Console
+    Receipts --> View[控制台追溯与核对]
+    Console -.->|显式接入| LocalBackend[本地 OpenShell 适配 / 策略加载与读回]
+    end
 
-    Connectors[只读 Connector] --> Edge[Edge Agent]
-    Edge --> Control[企业 Control API / Worker]
-    EnterpriseUI[企业控制台] --> Control
-    Control --> DB[(PostgreSQL)]
-    Control --> Backend[执行后端适配 / 读回验证]
-
+    subgraph Enterprise[可选企业部署：独立身份与服务]
+        direction TB
+        Connectors[只读 Connectors] --> Edge[Edge：任务核验 / 证据签名]
+        Edge --> Control[Control API / Worker]
+        EnterpriseUI[企业控制台 / 人工审批] --> Control
+        Control --> DB[(PostgreSQL / 审计 / outbox)]
+        Control --> Backend[企业执行后端适配 / 策略读回]
+    end
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
-    class Human,Authority authority
-    class Admission,Gate,Decision runtime
+    class Human,Authority,Identity,Context authority
+    class Admission,Gate,LocalBackend,Control runtime
     class Observe,Receipts evidence
 ```
 
 ### 任务执行与效果核验
 
 ```mermaid
-flowchart LR
-    Task[用户任务] --> Agent[Agent 规划与选择 Skills]
-    Agent --> Proposal[工具调用提议]
-    Authority[受信授权与参数来源] --> Runtime[SIQ 运行时检查]
-    Proposal --> Runtime
-    Runtime -->|允许执行| Tool[工具执行]
-    Runtime --> Receipts[签名决策回执]
-    Tool --> Observer[独立效果采集]
-    Observer --> Completion[SIQ 完成判定]
+flowchart TB
+    Task[用户任务] --> Proposal[Agent 规划 / Skill 选择 / 工具提议]
+    Authority[Grant / Intent / 来源与上下文约束] --> Gate[SIQ 执行前复验]
+    Proposal --> Gate
+    Gate -->|allow 或宿主支持的 redact| Tool[宿主门禁内执行获准参数]
+    Gate -->|deny / 不满足条件| Stop[阻断本次调用]
+    Gate -->|hold| Approval[等待本地批准 / 按宿主协议恢复]
+    Approval --> Recheck[重验当前授权与最终参数]
+    Recheck -->|无效 / 过期 / 已撤销| Stop
+    Recheck -->|有效| Reserve[原子持久化唯一签名执行预留]
+    Reserve -->|预留成功且响应明确| Tool
+    Reserve -.->|已预留但执行未确认| Uncertain[uncertain：核对事实 / 不盲目重放]
+    Tool --> Observation[宿主结果报告 / Observation]
+    Observation --> Receipts[关联 action / decision / reservation 回执]
+    Gate --> Receipts
+    Reserve --> Receipts
+    Tool -.->|已接入的观察器采样| Effect[文件或接收端材料 / EffectEvidence]
+    Requirements[签名 Intent 中的效果要求] --> Completion[SIQ 校验材料与动作 / 逐项判定完成]
+    Receipts --> Completion
+    Effect --> Completion
+    Completion --> Result[verified / incomplete / conflicting / unknown]
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
-    class Authority authority
-    class Runtime,Completion runtime
-    class Receipts,Observer evidence
+    class Authority,Approval,Requirements authority
+    class Gate,Recheck,Reserve,Completion runtime
+    class Observation,Receipts,Effect,Result,Uncertain evidence
 ```
 
-- **执行前**：静态扫描 Skill，记录能力需求；通过 Grant、Intent、受信 Context 和参数来源约束动作。模型输出不能创建有效权限。
-- **执行时**：在已接入的工具入口检查授权；需要审批的动作在执行前重新核验。适配器将实际调用与决策关联。
-- **执行后**：记录签名回执，采集文件或受控接收端的效果证据。工具自报成功、已观察效果和任务完成状态分别记录。
+- **执行前**：静态检查 Skill 并固定内容摘要；通过 Grant、Intent、实例/会话身份、受信 Context 和参数来源约束动作。需要可信 Skill 归属时复验 SEC，名称或安装路径本身不构成证明。模型输出不能创建有效权限。
+- **执行时**：适配器在已接入入口执行裁决并保留宿主自身门禁。支持的 hold 恢复路径在本地批准后重验权限与最终参数，先持久化唯一执行预留再尝试工具；拒绝、过期、撤权或恢复能力缺失时阻断。已预留而执行未确认记为 `uncertain`，不自动重放。
+- **执行后**：按动作/决策/预留身份关联结果与签名回执；在已接入的文件或接收端观察器中采集效果材料。Completion 结合签名 Intent 的效果要求、动作授权与有效材料判定，证据缺失或冲突不能显示为完成。
 
-普通 Observation 的结果关联与独立 EffectEvidence 的效果核验具有不同证明范围。架构、合同和方法细节见[技术报告](docs/research/technical-report.md)、[合同目录](packages/contracts/README.md)与[安全边界](#安全边界)。
+图中虚线表示显式接入或条件性路径，不代表所有工具都有独立效果采集。审批与宿主门禁的先后由各适配协议约束；OpenClaw 原版与固定检查点补丁副本的能力分开验证。`redact` 仅在宿主支持改参时使用；不支持的映射按适配器协议处理。
+
+普通 Observation 的结果关联与独立 EffectEvidence 的效果核验具有不同证明范围；`uncertain` 是执行预留状态，不是 Completion 的第五种完成结论。架构、合同和方法细节见[技术报告](docs/research/technical-report.md)、[合同目录](packages/contracts/README.md)与[安全边界](#安全边界)。
 
 ## DGX Spark 与 NVIDIA OpenShell 深度适配
 
@@ -476,13 +498,13 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 | 组件 | 职责 | 使用入口 |
 | --- | --- | --- |
 | Secure Agent 与研究 Skills | 任务规划、动态选择研究 / 报告 / 交付能力 | [Agent 说明](apps/secure-agent/README.md)、[Skills](skills/) |
-| 本地 Go 运行时与个人控制台 | 准入、授权、Skill 生命周期、审批、任务与隐私管理、签名回执；个人 UI 随 Go 服务内嵌 | [个人 UI](apps/web/src/local/)、[本地操作指南](AGENTSHIELD.md)、[开发规格](docs/agentshield-dev-spec-v1.md) |
+| 本地 Go 运行时与个人控制台 | 准入、授权、Skill 生命周期、审批、任务与隐私管理、签名回执；个人 UI 随 Go 服务内嵌 | [个人 UI](apps/web/README.md)、[运行时说明](apps/agentshield/README.md)、[本地操作指南](AGENTSHIELD.md)、[开发规格](docs/agentshield-dev-spec-v1.md) |
 | SIQ Skill 与发行工具 | 操作指引、发行清单验签与安全暂存；从固定提交构建和签发安装包 | [Skill 源码](skills/siq-agent-security/)、[发行工具](scripts/release/package.py)、[安装说明](docs/signed-release-packaging.md) |
-| 运行时适配器 | 当前产品矩阵按 OS 接入 Hermes、OpenClaw、WorkBuddy；CodeBuddy 仅保留历史配置、记录和安全退出兼容 | [适配器目录](adapters/runtime/)、[能力矩阵](docs/agentshield-capability-matrix-v1.md)、[平台范围决策](docs/personal-platform-scope-decision-20260917.md) |
+| 运行时适配器 | 当前产品矩阵按 OS 接入 Hermes、OpenClaw、WorkBuddy；CodeBuddy 仅保留历史配置、记录和安全退出兼容 | [适配器目录](adapters/runtime/README.md)、[能力矩阵](docs/agentshield-capability-matrix-v1.md)、[平台范围决策](docs/personal-platform-scope-decision-20260917.md) |
 | OpenShell 与 DGX Spark 接入 | 专用部署预检、本地推理配置、策略授权/加载/恢复、受约束任务执行与分级诊断 | [DGX Spark 部署](deploy/dgx-spark/README.md)、[OpenShell 适配](apps/agentshield/internal/openshell/)、[实机证据](docs/openshell-policy-load-wait-repair-20260916.md) |
-| 企业控制面 | 多租户资产、证据、策略审批及 Edge 协调 | [控制面说明](docs/control-plane.md)、[生产运行手册](docs/enterprise-production-runbook-v1.md) |
-| Edge 与 Connectors | 配置、目录、框架、进程、容器及集群采集 | [Edge](edge/agent/)、[Connectors](connectors/)、[兼容说明](docs/compatibility.md) |
-| 合同与基准 | 跨组件数据合同、固定语料和证据验证 | [合同](packages/contracts/)、[Agent 基准](benchmarks/hackathon/README.md)、[运行时基准](benchmarks/runtime-security/README.md) |
+| 企业控制面 | 多租户资产、证据、策略审批及 Edge 协调 | [API 模块](apps/control-api/README.md)、[控制面说明](docs/control-plane.md)、[生产运行手册](docs/enterprise-production-runbook-v1.md) |
+| Edge 与 Connectors | 配置、目录、框架、进程、容器及集群采集 | [Edge](edge/agent/README.md)、[Connectors](connectors/README.md)、[兼容说明](docs/compatibility.md) |
+| 合同与基准 | 跨组件数据合同、固定语料和证据验证 | [合同](packages/contracts/README.md)、[Agent 基准](benchmarks/hackathon/README.md)、[运行时基准](benchmarks/runtime-security/README.md) |
 
 本地演示无需 PostgreSQL、企业登录或企业 API。平台的采集能力、工具阻断能力和实机验证状态分别登记；存在适配器不代表所有版本、所有调用路径均受保护。企业生产部署条件和未验证事项以对应运行手册为准。
 

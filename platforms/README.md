@@ -7,3 +7,6 @@
 0.3.0 是普通 Release；平台支持等级仍由实际证据限定。四目标已构建并验签，仅 Linux ARM64 完成本版实际安装链路；同版本的完整升级/回滚与所有宿主旅程尚未验收。已合入共享核心修改需要各平台按同一候选复测，不能继承其他 OS 的通过结果。
 
 OS 负责路径、权限和生命周期，宿主负责配置、钩子和调用归属；Windows 原生与 WSL2 分列，DGX Spark 是 Linux 硬件环境，OpenShell 是执行后端。具体事实见[评测索引](../evaluations/README.md)、[平台范围决策](../docs/personal-platform-scope-decision-20260917.md)及源码/签名包实际能力声明。
+
+
+开发者从[本地运行时](../apps/agentshield/README.md)与[适配器](../adapters/runtime/README.md)定位实现；[四目标源码检查](../docs/evidence/repository-reorganization-final-20260919/README.md)提供后续基础原生记录。比较平台时须同时固定 OS/架构、宿主版本、程序摘要、UI/适配器和状态格式；不能仅凭相同版本号或目录名合并结果。

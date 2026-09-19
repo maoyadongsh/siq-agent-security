@@ -1,19 +1,18 @@
-# codebuddy-agentshield（CodeBuddy CLI 适配器：L2）
+# codebuddy-agentshield（历史 CodeBuddy CLI 接入与安全退出）
+
+依据[平台范围决策](../../../docs/personal-platform-scope-decision-20260917.md)，CodeBuddy 不再新增接入。此目录保留历史协议、证据及配置的查看/卸载兼容，不是当前安装推荐；Windows/macOS 的 WorkBuddy 是独立宿主，不能由这些 CLI 结果推定桌面支持。
 
 CodeBuddy 没有装前钩子；运行时用全局 `PreToolUse` / `PostToolUse` 命令钩子调用 `siq-agent-security hook codebuddy`（Go，在 `apps/agentshield`）。Skill frontmatter hooks 仅对 `context: fork` 生效且默认被 `allowUntrustedFrontmatterHooks=false` 关闭，因此不采用。WorkBuddy 桌面是独立平台，见 [`../workbuddy-agentshield/README.md`](../workbuddy-agentshield/README.md)；本适配器的 CodeBuddy CLI 结果不能代替桌面证据。
 
-## 安装（需用户确认；写入前备份）
+## 历史配置与现有实例
 
-```bash
-siq-agent-security adapter install codebuddy
-# merges command hooks into ${CODEBUDDY_CONFIG_DIR:-$HOME/.codebuddy}/settings.json (backup first)
-```
+早期安装器曾将 command hooks 合并到 `${CODEBUDDY_CONFIG_DIR:-$HOME/.codebuddy}/settings.json`，先备份原文件。下述参数只解释已有配置和历史记录；新用户应从[当前适配器路线](../README.md)选择宿主。
 
 安装、自动发现、状态和卸载均支持 `CODEBUDDY_CONFIG_DIR`；覆盖值须为绝对路径且现存目录及祖先无符号链接。安装器拒绝非法覆盖，不回退默认目录；卸载拒绝与最新安装记录不符的配置目录。为多个实例设置独立的 SIQ 状态目录，并向 CLI、CodeBuddy 与 daemon 传递相同环境。
 
 `siq-agent-security serve` 必须在运行；`hook` 子命令从状态目录读 `config.json`（端口、enforcement_mode）与 `token`。`SIQ_AGENT_SECURITY_AGENT_ID` 指定 grant 的 `subject.id`（默认 `default`）。
 
-## I/O 合同
+## 历史 I/O 合同
 
 stdin（CodeBuddy）：`{session_id, cwd, permission_mode, hook_event_name, tool_name, tool_input | tool_response}`
 
@@ -27,7 +26,7 @@ stdout：
 | --- | --- |
 | `allow` | `allow` |
 | `deny` | `deny`（reason 回传给模型）|
-| `hold` | `ask`（用户在 CodeBuddy UI 确认）|
+| `hold` | `ask`（历史宿主提示，不等同 SIQ 本地批准或签名执行预留）|
 | `redact` | `ask`（当前适配器尚未接入原生改参）|
 
 `PostToolUse` 只观测（`/v1/observe`），从不阻断。
