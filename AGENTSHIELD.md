@@ -192,7 +192,7 @@ Linux 已注册用户服务、macOS 已注册 LaunchAgent 与 Windows 已注册�
 若候选因端口冲突等原因启动失败，先排除冲突，再使用同一候选和事务 ID 执行 `service-upgrade ... --confirm-upgrade --recover ID`。只有已停止/失败且无主进程的单位可恢复；活跃写锁或无法确认的进程状态会被拒绝，勿手工删除锁。
 
 
-显式恢复原升级事务的源配置可使用 `siq-agent-security service-rollback --transaction ID --manifest OLD --binary OLD --confirm-rollback`。原升级事务必须含 v2 程序摘要绑定；旧程序必须在原路径、匹配原 source 摘要并通过 v2 发行校验；失败时保留原参数并使用回退输出的新事务 ID 加 `--recover ID`。此操作不回滚授权或台账，也不下载历史程序。
+显式恢复原升级事务的源配置可使用 `siq-agent-security service-rollback --transaction ID --manifest OLD --binary OLD --confirm-rollback`。原升级事务必须含 v2 程序摘要绑定；旧程序必须在原路径、匹配原 source 摘要并通过适用的发行签名与状态兼容校验（v2/v3）；失败时保留原参数并使用回退输出的新事务 ID 加 `--recover ID`。此操作不回滚授权或台账，也不下载历史程序。
 
 首次升级会在停止服务前把当前 CLI 程序复制到状态目录的 `client-snapshots/<sha256>/`。这是本地观测副本，不是发行信任证明；回退仍需已验证的旧清单；若原程序缺失，可在回退命令上明确加 `--restore-missing-binary`，从匹配历史摘要的本地快照恢复原路径。已有文件不覆盖，父目录必须存在；快照或发行校验失败时不恢复。
 
