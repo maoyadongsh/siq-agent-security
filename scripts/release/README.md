@@ -9,10 +9,10 @@
 ```bash
 mkdir -p .tmp
 release_dir=$(mktemp -d "${TMPDIR:-/tmp}/siq-release-assets.XXXXXX")
-env -u GITHUB_TOKEN gh release download siq-agent-security-v0.3.0 \
+env -u GITHUB_TOKEN gh release download siq-agent-security-v0.3.1 \
   --repo maoyadongsh/siq-agent-security --dir "$release_dir"
 python3 scripts/release/verify.py --release-dir "$release_dir" \
-  --version 0.3.0 --source-sha 83fde2df0bcfc817d85568978e3881e22474815e \
+  --version 0.3.1 --source-sha f3d9c3f0933f3b08d15b2d3dbc522f409c77a355 \
   --report .tmp/release-verification.json
 ```
 
@@ -28,7 +28,7 @@ python3 scripts/release/verify.py --release-dir "$release_dir" \
 
 ```bash
 python3 scripts/release/readback.py --reference-dir "$release_dir" \
-  --version 0.3.0 --source-sha 83fde2df0bcfc817d85568978e3881e22474815e \
+  --version 0.3.1 --source-sha f3d9c3f0933f3b08d15b2d3dbc522f409c77a355 \
   --report .tmp/release-readback.json
 ```
 
@@ -36,17 +36,17 @@ python3 scripts/release/readback.py --reference-dir "$release_dir" \
 
 ## 构建与边界
 
-[package.py](package.py) 从固定完整 Git SHA 导出产品允许清单，隔离构建四目标；`--help` 给出候选参数。没有签发参数时产生明确的未签名候选，不宣称为可安装发行版。签发是独立维护者流程，遵守[源码与发行边界](../../docs/skill-source-release-boundary-20260919.md)。本轮验证工具不更改已发布 0.3.0。
+[package.py](package.py) 从固定完整 Git SHA 导出产品允许清单，隔离构建四目标；`--help` 给出候选参数。没有签发参数时产生明确的未签名候选，不宣称为可安装发行版。签发是独立维护者流程，遵守[源码与发行边界](../../docs/skill-source-release-boundary-20260919.md)。工具不更改已发布资产。
 
 ```bash
 python3 -m unittest discover -s scripts/release -p 'test_*.py' -v
 python3 -m ruff check scripts/release
 ```
 
-[本轮复验记录](../../docs/evidence/repository-reorganization-20260919/README.md)与[原发行记录](../../docs/evidence/releases/0.3.0/README.md)分别记账；重复验证不增加独立环境数量。
+[仓库整理阶段复验](../../docs/evidence/repository-reorganization-20260919/README.md)与[0.3.1 发行记录](../../docs/evidence/releases/0.3.1/README.md)分别记账；重复验证不增加独立环境数量。
 
 ## Skill 源码说明的原生检查
 
 `skill_source_smoke.py --binary <self-built-program> --target <os/arch> --report <new-file>` 用自建程序自扫描源码 Skill，确认缺 manifest 的 bootstrap 在创建状态/暂存前拒绝，并在两个独立临时状态目录验证 `start` 和 `init`→`serve` 的 status/pair/控制台/停止链路。日志、状态和配对输出不进入公开报告；不注册宿主钩子、后台系统服务或发布签名包。
 
-[skills-compat 工作流](../../.github/workflows/skills-compat.yml)使用四个原生目标，执行前比较真实 OS/架构以防误用交叉编译冒充原生运行。runner 标签按 [GitHub 官方说明](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)选择；托管主机上的源码检查仍不证明用户桌面、完整宿主验收、发行安装升级或 OS 厂商签名。源码正文变化不改 0.3.0 的签名载荷，后续安装包需要新的候选与签发。
+[skills-compat 工作流](../../.github/workflows/skills-compat.yml)使用四个原生目标，执行前比较真实 OS/架构以防误用交叉编译冒充原生运行。runner 标签按 [GitHub 官方说明](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)选择；托管主机上的源码检查仍不证明用户桌面、完整宿主验收、发行安装升级或 OS 厂商签名。源码正文变化不改 0.3.1 的签名载荷，后续安装包需要新的候选与签发。

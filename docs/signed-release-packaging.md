@@ -2,7 +2,7 @@
 
 开发入口为 `main`；用户安装入口为经过签发的具体版本包。GitHub 自动生成的 Source code ZIP 和直接复制的 `skills/siq-agent-security/` 不含该版本签名清单，不能作为签名安装包使用。历史 `testdata/releases/` 只用于回归测试。
 
-当前可下载版本：[0.3.0 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0)。普通用户选择 `siq-agent-security-0.3.0-bundle.zip`，解压后按下文安装；维护者构建、签发步骤另列于下。该版 Linux ARM64 安装链路已验证，其他目标尚待原生验收，见[发行证据](evidence/releases/0.3.0/README.md)。
+当前可下载版本：[0.3.1 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.1)。普通用户选择 `siq-agent-security-0.3.1-bundle.zip`，解压后按下文安装；维护者构建、签发步骤另列于下。该版 Linux ARM64 安装链路已验证，其他目标尚待原生验收，见[发行证据](evidence/releases/0.3.1/README.md)。
 
 ## 构建固定版本
 
@@ -11,8 +11,8 @@
 ```bash
 python3 scripts/release/package.py \
   --source-sha <40位已审阅提交ID> \
-  --version 0.3.0 \
-  --out-dir .tmp/releases/0.3.0-unsigned
+  --version 0.3.1 \
+  --out-dir .tmp/releases/0.3.1-unsigned
 ```
 
 工具从 Git 提交导出构建输入，不复制工作区未提交文件、私有状态或论文；只在临时目录安装锁定 Web 依赖、重建 UI 和构建二进制。重建 UI 与提交的 embed 有差异时失败，应先修正并审阅源码/生成物，不能在发行过程中默默替换候选身份。需要 Python 3.12+、Git、Node/npm 和支持本仓 Go 模块的工具链；输出记录实际工具版本。
@@ -28,8 +28,8 @@ python3 scripts/release/package.py \
 ```bash
 python3 scripts/release/package.py \
   --source-sha <40位已审阅提交ID> \
-  --version 0.3.0 \
-  --out-dir .tmp/releases/0.3.0-signed \
+  --version 0.3.1 \
+  --out-dir .tmp/releases/0.3.1-signed \
   --sign
 ```
 
@@ -50,7 +50,7 @@ python3 scripts/release/package.py \
 
 准备 Python 3（建议 3.12+）；Windows 示例使用已加入 PATH 的 `python`。把完整包解压到本人拥有的新目录，在该目录执行。首次体验使用独立状态目录，验签成功后再运行程序。
 
-**0.3.0 已在包内 `INSTALL.md` 补齐以下首次启动步骤，并通过 Linux ARM64 空状态实际验证。**
+**0.3.1 包内 `INSTALL.md` 包含以下首次启动步骤，并通过 Linux ARM64 空状态实际验证。**
 
 **历史 0.3.0-rc.1 首次启动说明更正：** 包内 `INSTALL.md` 省略了状态初始化步骤。当前 bootstrap 调用的是 `serve`；空状态目录会报 `configuration missing`，因此首次启动按下面的“验签 → `start` 初始化并启动 → 浏览器配对”操作。已发布压缩包的字节和签名保持不变。本次更正不增加其他平台的实机验收结论。
 

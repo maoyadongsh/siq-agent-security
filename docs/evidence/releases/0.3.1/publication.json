@@ -1,0 +1,60 @@
+{
+  "schema_version": "siq-release-readback/v1",
+  "version": "0.3.1",
+  "tag_source_sha": "f3d9c3f0933f3b08d15b2d3dbc522f409c77a355",
+  "checked_at_utc": "2026-09-19T15:06:43.814230+00:00",
+  "release_url": "https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.1",
+  "published": true,
+  "prerelease": false,
+  "is_latest": true,
+  "remote_assets_equal_local_verified_reference": true,
+  "official_signature_and_all_pins_verified": true,
+  "public_checksum_download": "passed",
+  "signed_url_download_and_staging": {
+    "target": "linux/arm64",
+    "result": "passed"
+  },
+  "native_installation": "not_run; readback never starts a service",
+  "assets": [
+    {
+      "name": "SHA256SUMS",
+      "sha256": "71d4aa0aa39cbb6e5d1c0cef16d2fa9b65fc3fb37e9e90890653d7d7a4537627",
+      "bytes": 681
+    },
+    {
+      "name": "SOURCE-INFO.json",
+      "sha256": "fc4a98776e2b24758fc1b2eddaa3fc23940fcb9843856195e51480c0e11575a4",
+      "bytes": 25585
+    },
+    {
+      "name": "siq-agent-security-0.3.1-bundle.zip",
+      "sha256": "31a82b1d20cb27a96eba21517b8a78b4c704fc434fca7ae5cc784194b7d69850",
+      "bytes": 46851446
+    },
+    {
+      "name": "siq-agent-security-darwin-arm64",
+      "sha256": "1ddc16f194a713e57d9f8417413299fa46c4f130d11d9bf1c0492fa7f7cbbc2f",
+      "bytes": 19016018
+    },
+    {
+      "name": "siq-agent-security-linux-amd64",
+      "sha256": "6af7dbc8148fee23fa2d65803dc2199563339577df9fc06a80db957b95dfe45f",
+      "bytes": 19972258
+    },
+    {
+      "name": "siq-agent-security-linux-arm64",
+      "sha256": "f89ce14fe556378e8ea070ffb2bf605063e037a8cf0bc2a5cef3d87c1e10f290",
+      "bytes": 18808994
+    },
+    {
+      "name": "siq-agent-security-skill-0.3.1.zip",
+      "sha256": "bcd3efcc665f049dce83271a689a6edd4ed3c773237a2f5d22d4cb02ce40702c",
+      "bytes": 32703
+    },
+    {
+      "name": "siq-agent-security-windows-amd64.exe",
+      "sha256": "2605ee3d21bfeff3f535cddc1fcd77886a306f8439551b57a880bd47b2e10001",
+      "bytes": 20555264
+    }
+  ]
+}

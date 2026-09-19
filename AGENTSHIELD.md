@@ -5,7 +5,7 @@
 **模型不判断 Skill 是否安全。** 裁决只由 `siq-agent-security` 二进制产出。产品说明见根 [`README.md`](./README.md)；本文件是本机操作与夹具步骤。企业控制面见 [`docs/control-plane.md`](./docs/control-plane.md)。本地模式首次使用 `start` 初始化并启动，不必启动 PostgreSQL / `:8600`。
 
 仓库：[`maoyadongsh/siq-agent-security`](https://github.com/maoyadongsh/siq-agent-security)  
-分支：`main`。已签名客户端为 [0.3.0 正式版](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0)，源码固定 `83fde2d`；安装直接按[签名包指南](docs/signed-release-packaging.md)，不需要本地编译。下文源码开发命令面向当前检出，完整产品操作见[个人手册](docs/personal-client-operation-guide-20260916.md)，持续开发见[当前任务](docs/development/current.md)。
+分支：`main`。已签名客户端为 [0.3.1 正式版](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.1)，源码固定 `f3d9c3f`；安装直接按[签名包指南](docs/signed-release-packaging.md)，不需要本地编译。下文源码开发命令面向当前检出，完整产品操作见[个人手册](docs/personal-client-operation-guide-20260916.md)，持续开发见[当前任务](docs/development/current.md)。
 
 Linux 个人体验开发版可在构建后使用 `./siq-agent-security setup --confirm-setup` 一次完成初始化、用户后台注册和启动；加 `--open-ui` 可在就绪后请求打开浏览器。再执行 `./siq-agent-security pair` 获取配对码，打开输出的管理地址。可选 `--port N` 指定初始端口；重复执行复用同一健康服务。需要 systemd 用户会话，尚不启用登录自启；Windows/macOS 的 setup 入口已实现，见文末；完整原生安装与宿主验收仍按各平台任务分候选记录；也可使用下面的前台 `start`。
 
@@ -57,13 +57,13 @@ Linux 开发版可在初始化后运行 `siq-agent-security service-unit` 导出
 
 | 当前范围 | 证据与限制 |
 | --- | --- |
-| Linux / OpenClaw、Hermes | 0.3.0 的 Linux ARM64 安装链路已实测；amd64 为构建/验签。宿主阶段证据另绑定候选，原版与固定补丁副本分开 |
-| macOS / OpenClaw、Hermes、WorkBuddy | 已有阶段实现，0.3.0 提供 arm64 程序；本版原生安装/升级、同候选宿主复测与 Apple 公证仍待 |
-| Windows / OpenClaw、Hermes、WorkBuddy | 已有任务/权限/恢复实现，0.3.0 提供 amd64 程序；本版原生验收仍待。历史 OpenClaw WSL Agent 不等于 Windows 原生 |
+| Linux / OpenClaw、Hermes | 0.3.1 的 Linux ARM64 安装链路已实测；amd64 为构建/验签。宿主阶段证据另绑定候选，原版与固定补丁副本分开 |
+| macOS / OpenClaw、Hermes、WorkBuddy | 已有阶段实现，0.3.1 提供 arm64 程序；本版原生安装/升级、同候选宿主复测与 Apple 公证仍待 |
+| Windows / OpenClaw、Hermes、WorkBuddy | 已有任务/权限/恢复实现，0.3.1 提供 amd64 程序；本版原生验收仍待。历史 OpenClaw WSL Agent 不等于 Windows 原生 |
 | 已排除的新接入 | CodeBuddy 全平台、WorkBuddy/Linux 不再新增；保留历史查看、拒绝、撤销、卸载与恢复能力 |
 | 历史其他探测项 | Trae/Claude Code/Codex 的库存或 L0 记录不构成本期产品交付承诺 |
 
-本轮另有[四目标原生源码检查](docs/evidence/repository-reorganization-final-20260919/README.md)：PR #97 head `bf7dced`，实际检出 SHA 分别保存在报告中；Linux amd64/arm64、macOS arm64、Windows amd64 均完成自建程序自扫描、缺清单拒绝及隔离状态启动/配对/控制台/停止。未注册系统服务，不扩展上表 0.3.0 正式包安装或真实宿主验收范围。
+本轮另有[四目标原生源码检查](docs/evidence/repository-reorganization-final-20260919/README.md)：PR #97 head `bf7dced`，实际检出 SHA 分别保存在报告中；Linux amd64/arm64、macOS arm64、Windows amd64 均完成自建程序自扫描、缺清单拒绝及隔离状态启动/配对/控制台/停止。未注册系统服务，不扩展上表 0.3.1 正式包安装或真实宿主验收范围。
 
 L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网络策略下发。
 
@@ -75,7 +75,7 @@ L0 审计 · L1 安装门禁 · L2 运行时回执与阻断 · L3 OpenShell 网�
 - siq-agent-security 会发现 PATH 上的 `openshell`，但**不会**执行 `openshell gateway start`，也不会猜测端口或改别人的网关
 - 接入已有 OpenShell（例如 research-engine 的 `siq-openshell-dev`）时设 `SIQ_AS_OPENSHELL_ENV_SH` 指向其 `scripts/openshell/env.sh`；不要改对方仓库。siq-agent-security 不 `gateway start`
 - Windows L3 需要 WSL2 / Docker；本快照不宣称
-- 当前签名包为 0.3.0；历史 0.2.0 fixture 只用于回归。发行流程见[打包指南](docs/signed-release-packaging.md)，原[发布检查表](docs/agentshield-release-checklist-v1.md)保留其历史范围。
+- 当前签名包为 0.3.1；历史 0.2.0 fixture 只用于回归。发行流程见[打包指南](docs/signed-release-packaging.md)，原[发布检查表](docs/agentshield-release-checklist-v1.md)保留其历史范围。
 - 批准 grant 由操作者完成；离线 CLI 需要 `grant challenge` 产生的一次性挑战及 `--approve-as`，服务运行时使用控制台 / 管理 API。SKILL.md 禁止模型批准；该流程不构成同 UID 隔离
 - 控制台管理入口需要 `serve` 终端里的一次性配对码；`/ui-config.json` 不含凭据；适配器决策 token 不能调用管理接口
 - 当前桌面模式是 `desktop-same-uid`：同 OS 用户下的 Agent 仍可读状态目录并执行 CLI，**不**宣称“无法自批”
