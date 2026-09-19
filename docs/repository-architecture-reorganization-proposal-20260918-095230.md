@@ -209,7 +209,7 @@ siq-agent-security/
 │   │   ├── references.bib           提议：由已核实引用信息生成
 │   │   ├── notes/
 │   │   ├── reviews/
-│   │   └── papers/                  后续仅迁入权属确认且适合分发的全文
+│   │   └── papers/                  已有 35 份全文原字节归位；权属待核
 │   ├── questions/                   研究问题与假设
 │   ├── methods/                     威胁模型关联、方法、评测协议
 │   ├── experiments/                 实验设计和复现入口
@@ -262,7 +262,7 @@ siq-agent-security/
     └── archive/                     历史计划与迁移索引
 ```
 
-过渡期根 `Frontier References on Agent Security/` 保留。等逐项完成路径、权属与引用核查后，全文可分批迁到 `research/literature/papers/`，原目录保留 README 指向新路径。不采用 Windows 支持不一致的目录软链接作为兼容方式。
+按本轮用户关于研究资产归位的要求，已有 35 份 PDF 原字节迁到 `research/literature/papers/`，1 份历史 XLSX 放在 `research/literature/`；原目录保留 README 指向新路径。原件迁移不改变待核的权属状态，也不作为新增全文分发的依据。旧单文件 main URL 无透明重定向，迁移说明提供固定原提交入口。不采用 Windows 支持不一致的目录软链接作为兼容方式。
 
 不为目录数量而立刻建树。第一批只创建能填入真实内容的导航及清单；`notes/`、`reviews/`、各类指南等在首份实际材料归位时再创建。`apps/agentshield/testdata/releases/` 继续在测试所属模块内维护，不随根 `testdata/` 或 evaluations 归并。
 
@@ -272,7 +272,7 @@ siq-agent-security/
 
 已有根 [研究关联入口](../RESEARCH.md)、[研究总览](research/README.md)、[研究问题](research/research-questions.md)、[主张与证据](research/claims-evidence.md)、[评测协议](research/evaluation-protocol.md) 和 [外部复现模板](research/external-reproduction-template.md)。目标是迁移与补全这些材料，而不是重新编写另一套互不一致的研究结论。新 `research/README.md` 可承接现有 RESEARCH 关联表；验证入链及冻结范围后，`RESEARCH.md` 保留稳定短入口，旧 `docs/research/README.md` 解释历史资产位置，不让三处同时维护完整总览。
 
-实施已新增根 `research/literature/README.md` 与机器目录，记录原位 36 项文件摘要和项目关联。作者、年份、来源/权利等未核实字段明确待核；不从文件名制造 BibTeX。全文仍保留原路径，不对论文内容、真实性或全文再分发权利作已核验声明。
+实施已新增根 `research/literature/README.md` 与机器目录，记录 36 项文件的原路径、现路径、源 blob、摘要和项目关联。作者、年份、来源/权利等未核实字段明确待核；不从文件名制造 BibTeX。全文已原字节归入根级研究目录，不对论文内容、真实性或全文再分发权利作已核验声明。
 
 ### 5.2 文献目录最小字段
 
@@ -452,7 +452,7 @@ AI 开发提示词应给仓库相对路径、基线识别方法、允许修改�
 | 根 README / README.en.md | 保留已更新的 0.3.0 状态，按需补四类导航 | 首批；中英文同步，不重复重写首页或旧结果 |
 | `AGENTSHIELD.md` / `docs/signed-release-packaging.md` | 保留稳定地址；旧 0.2.0 入口改为准确分流并链接统一安装指南 | 首批检查消费者及冻结约束；签名命令不在多处复制 |
 | 根 `RESEARCH.md` / `docs/research/README.md` | 新根研究入口承接正文后，保留稳定导航与历史说明 | 不创建第三份手工维护的研究总览 |
-| 根 `Frontier References on Agent Security/` | 先原地索引；后续全文择项迁入 `research/literature/papers/` | 权属、SHA、外部链接和路径映射齐备后 |
+| 根 `Frontier References on Agent Security/` | 35 PDF 已归入 `research/literature/papers/`，XLSX 归入上级，旧目录仅留说明 | 36 项源 blob/摘要一致；消费者、许可例外与链接同步；权属仍待核 |
 | `docs/research/research-questions.md` | `research/questions/README.md` | 内容先保持，更新所有入链和许可索引 |
 | `docs/research/evaluation-protocol.md` | `research/methods/evaluation-protocol.md` | 保留“历史回顾协议而非预注册”的原说明 |
 | `docs/research/technical-report.md` | `research/findings/technical-report.md` | 许可与引用核查后，旧链接提供入口 |
@@ -596,7 +596,7 @@ macOS 同样以 Luke 的实际活跃分支和未完成任务为准，不能因�
 ### 13.2 本轮实施选择与第一版设计保留
 
 - **保留研究定位与产品功能**：README 双语简介、根研究总览和六类研究路线连接“文献—问题—方法—实现—实验—发现/局限—治理”。RQ1–RQ5 编号沿用原定义；平台能力专题不取代关于 locality 的 RQ4。`research/` 不放在 `docs/` 下。
-- **一份正文，根级组织**：根 RESEARCH 和旧研究 README 成为兼容入口；协议、技术报告、许可绑定文档和冻结证据不复制、不强制搬家。通过导航已经达到研究可见性，因此正文/PDF/规范/脚本物理迁移本轮不需要；未填入真实内容的 notes/reviews/references.bib 不建占位。
+- **一份正文，根级组织**：根 RESEARCH 和旧研究 README 成为兼容入口；协议、技术报告、许可绑定文档和冻结证据不复制、不强制搬家。根据用户进一步明确的研究资产归位要求，35 PDF 和 1 XLSX 已原字节迁入根级研究目录，映射及回退验证见[迁移记录](evidence/repository-literature-placement-20260919/README.md)。协议/规范/脚本本轮无需物理迁移；未填入真实内容的 notes/reviews/references.bib 不建占位。
 - **RA-03 工具落地**：[验包/回读说明](../scripts/release/README.md)及[新复验记录](evidence/repository-reorganization-20260919/README.md)替代仅依赖临时脚本的局面；签发、验签、下载、原生安装与研究观测仍分开记账，不重发 0.3.0。
 - **RA-05/06 原位归类**：[工具职责](development/tools.md)和[历史导航](development/history.md)提供消费者、责任角色、稳定命令和适用边界；未选择物理搬迁，没有新的旧命令退役日期。旧工作树清理仍不在本轮范围。
 - **Skill 独立收口**：内部旧正文已修订为下一源码候选，自扫描、缺清单拒绝与四原生目标源码启动/配对/停止，以及两 OS 复制安装检查通过，见[最终记录](evidence/repository-reorganization-final-20260919/README.md)。不混同新版本正式包安装验收，已发布旧包仍保持不变。文献逐项权属/来源核查、BibTeX、保留集与独立外部实验、DOI 按研究台账后续推进，不宣称已完成。Windows/macOS 等原生验收遵循原平台任务。

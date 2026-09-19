@@ -420,7 +420,7 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 | 研究阶段 | 仓库中的对应产物 |
 | --- | --- |
-| 明确信任边界与攻击路径 | [威胁模型](docs/threat-model.md)、[研究概览](docs/research/research-overview.md)、[前沿参考文献目录](<Frontier References on Agent Security/>) |
+| 明确信任边界与攻击路径 | [威胁模型](docs/threat-model.md)、[研究概览](docs/research/research-overview.md)、[前沿参考文献目录](research/literature/README.md) |
 | 将理论问题写成可执行约束 | [开发规格](docs/agentshield-dev-spec-v1.md)、[版本化合同](packages/contracts/README.md)、受信上下文与参数来源绑定 |
 | 实现跨组件运行时 | Go 决策与签名、Python Secure Agent、原生适配器、OpenShell 策略后端与浏览器管理界面 |
 | 用对照与负例检验机制 | 同值不同来源、伪成功、撤权、重放、漂移、未知恢复对象等测试；[固定案例](benchmarks/hackathon/README.md)与[运行时基准](benchmarks/runtime-security/README.md) |

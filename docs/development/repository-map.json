@@ -1,7 +1,7 @@
 {
   "schema_version": "siq-repository-map/v1",
   "base_main": "1173042275ae994faa4ed1c99cee58f7d541cb1c",
-  "scope": "RA-00 initial inventory; directories classify all tracked files, exact change rows describe the first batches; no physical moves authorized by this map",
+  "scope": "RA-00–07 asset classification, exact entry/tool changes, and byte-preserving literature placement; runtime and frozen evidence retain paths",
   "assets": [
     {
       "id": "apps",
@@ -129,10 +129,15 @@
       ],
       "kind": "literature",
       "owner_role": "research maintainers",
-      "strategy": "index original files; no PDF movement or license assumption",
+      "strategy": "legacy directory keeps migration README only; originals now under research/literature; old commit preserves exact historic paths",
       "consumers": [
+        "research/literature/catalog.json",
+        "research/literature/README.md",
+        "research/README.md",
         "README.md",
-        "existing module tests/build scripts/CI; enumerate affected files before any move"
+        "LICENSES/scope.json",
+        "THIRD_PARTY_NOTICES.md",
+        "historical Linux taskbook refers to legacy directory (README retained)"
       ],
       "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
       "validation": [
@@ -1335,6 +1340,752 @@
         "CI run and PR head readback",
         "ZIP negative tests and actual signed package offline verification"
       ]
+    },
+    {
+      "path": "research/literature/papers/2604.15579v2-Don't Make Models Guess Security and Safety：Symbolic Guardrails for Domain-Specific AI Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2604.15579v2-Don't Make Models Guess Security and Safety：Symbolic Guardrails for Domain-Specific AI Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "fcd58709fa9333d4d0dd38e12b70269b94a707be",
+      "sha256": "1b4e78b0099b1dcfe6ae5d10925af6a4a72731fbeac2fc81f546d8c3c43bfc63",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2604.17562v1-SafeAgent：A Runtime Protection Architecture for Agentic Systems.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2604.17562v1-SafeAgent：A Runtime Protection Architecture for Agentic Systems.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "bb54bed50937bbd233d709dc174c2b6f0444bbda",
+      "sha256": "ff1bda7d1a4fc4e12aab4966881f77f4c45a6e7051d968a0542f8a3fcdda01a1",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2604.22879v1-Beyond Single-Agent Alignment：Preventing Context-Fragmented Violations in Multi-Agent Systems.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2604.22879v1-Beyond Single-Agent Alignment：Preventing Context-Fragmented Violations in Multi-Agent Systems.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "b3f7f10f49cb945af65877dd043469bf8f754833",
+      "sha256": "65a438de0eb66d40a5719f149f9a8e9987c4d5f3fdc00860777a4ce2749da4ee",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2604.23374v1-Ghost in the Agent：Redefining Information Flow Tracking for LLM Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2604.23374v1-Ghost in the Agent：Redefining Information Flow Tracking for LLM Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "415262ac142c17e16d727a0ff74d737b5cf7873b",
+      "sha256": "ffdfc0073ed7632a78c7cf74e29de4ac71f782faad829337a66801ac6f065743",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2604.23459v1-Architecture Matters for Multi-Agent Security.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2604.23459v1-Architecture Matters for Multi-Agent Security.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "5f2344c2881ebf5745585c7a4913bad760143aab",
+      "sha256": "e53da5e486c58903605b2c0e9d701051be3ca5416b83777635454a490e4e9417",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2604.24826v1-A Comparative Evaluation of AI Agent Security Guardrails.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2604.24826v1-A Comparative Evaluation of AI Agent Security Guardrails.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "5b33f8ed938bf8851a41bbf2ce109d8b34274b76",
+      "sha256": "c52050a537f7e958039a5f66040d46756fb0b4af4f178a96d66dee031c9655cb",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2604.27464v1-Security Attack and Defense Strategies for Autonomous Agent Frameworks：A Layered Review with OpenClaw as a Case Study.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2604.27464v1-Security Attack and Defense Strategies for Autonomous Agent Frameworks：A Layered Review with OpenClaw as a Case Study.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "18b8a7ac534032bd7e36ba5827a56adf32a83852",
+      "sha256": "4abddd877830dfa8860c41681bb958ba1869e133a82b589ca061e1e23fb0a582",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2605.04808v1-DecodingTrust-Agent Platform (DTap)：A Controllable and Interactive Red-Teaming Platform for AI Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2605.04808v1-DecodingTrust-Agent Platform (DTap)：A Controllable and Interactive Red-Teaming Platform for AI Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "a2add86ae6252f4ff20da6a89016213fc20300a8",
+      "sha256": "2bf3999596554d3f2140bb28c926debb7f227975473b5adf0e953acf24cd8f24",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2605.06812v1-Towards Security-Auditable LLM Agents：A Unified Graph Representation.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2605.06812v1-Towards Security-Auditable LLM Agents：A Unified Graph Representation.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "5186a19d1d8d13316dc71b94fdf3f261e933e1c0",
+      "sha256": "1f2417bd271034a4c78db29dcee67992df037785abd9189c1ae92e267800bd88",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2605.17453v1-Trust No Tool：Evaluating and Defending LLM Agents under Untrusted Tool Feedback.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2605.17453v1-Trust No Tool：Evaluating and Defending LLM Agents under Untrusted Tool Feedback.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "d0c83aa57df2e06ce3baed2cffb53d28356b847f",
+      "sha256": "256ab52ed7084f397a2e5a989ee8aee03485a0abd091dc4bb52e89b9ffd71756",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2605.18991v2-Agent Security is a Systems Problem.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2605.18991v2-Agent Security is a Systems Problem.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "697cda5c54ebc28ce34339aead582966c594e298",
+      "sha256": "eb02d189389663de9e0b4a315ca9f33b07fa1b2e32b23972ea245273134bbadf",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2605.26497v1-Aligning Provenance with Authorization：A Dual-Graph Defense for LLM Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2605.26497v1-Aligning Provenance with Authorization：A Dual-Graph Defense for LLM Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "f2cf6e49eace2c803f7399d358eb1744ac2ef36c",
+      "sha256": "701591d07fc632d18bad66e33d7e33511b91f277e76e02f12f05e30cef31ab5a",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2606.02302v1-SeClaw：Spec-Driven Security Task Synthesis for Evaluating Autonomous Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2606.02302v1-SeClaw：Spec-Driven Security Task Synthesis for Evaluating Autonomous Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "6dbb1a60878ad546b8eb4a80764fe6ef623ba72f",
+      "sha256": "4c6cd408bd2680d9d8ff44fd53485fd85b24838a4787f86b7d26c70040022d6a",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2606.10749v2-Toward Secure LLM Agents：Threat Surfaces, Attacks, Defenses, and Evaluation.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2606.10749v2-Toward Secure LLM Agents：Threat Surfaces, Attacks, Defenses, and Evaluation.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "d50e9e6add33f297b44d20e7b607549655bee174",
+      "sha256": "878b26db78805a0edd186b004826227dcea007cdc9c45c4b756394f0674c4f89",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2606.18356v1-SafeClawBench：Separating Semantic, Audit-Evidence, and Sandbox Harm in Tool-Using LLM Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2606.18356v1-SafeClawBench：Separating Semantic, Audit-Evidence, and Sandbox Harm in Tool-Using LLM Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "215c46abb28d4f6809006ed14d5134d3df1cb88b",
+      "sha256": "fa076ff53f82cd403a080fa9014c429bbb1257e3c4761055978d7d37f678516f",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2606.31227v1-Securing the AI Agent：A Unified Framework for Multi-Layer Agent Red Teaming.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2606.31227v1-Securing the AI Agent：A Unified Framework for Multi-Layer Agent Red Teaming.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "df319df3165da893fba0a5fbc121d672cfd5c4ed",
+      "sha256": "3ad5749eea87939075a894c2497abce84e793e546431fcc8068c90980d60ccab",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2607.18485v1-Trusted Credentials, Untrusted Behavior：Benchmarking LLM-Agent Security in High-Performance Computing.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2607.18485v1-Trusted Credentials, Untrusted Behavior：Benchmarking LLM-Agent Security in High-Performance Computing.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "c03af7624632ff1b076e9927fb931bed7e0541f9",
+      "sha256": "40cab41bb8af0874906326172a57fa0d03bd74c46db573ab3e5f9f4731fbb161",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2607.19837v1-Know Your Agent：Reconnaissance-Driven Pentesting of AI Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2607.19837v1-Know Your Agent：Reconnaissance-Driven Pentesting of AI Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "d6c4fa4f5a342c529e020da4e24175b3e632ffd6",
+      "sha256": "302eab0439a0a67424ecec36874097e2b651550af4d8fb8db6ee017b95254cd5",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2607.22024v1-Agent Security Needs Redefinition through a Holistic Framework.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2607.22024v1-Agent Security Needs Redefinition through a Holistic Framework.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "53dc47af6b088ee7955242256f0ebed9123aa50e",
+      "sha256": "f7328eef3488f103168b7664cd7f19c0f2db018098f4ccf016995688797f7492",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2608.12172v1-Rethinking Agent Security as a Networking Problem.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2608.12172v1-Rethinking Agent Security as a Networking Problem.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "9f64f2b9ee98d68ddd043ffb58e8114656f6bba9",
+      "sha256": "381de0caf08c87359c0bbb31a2855ff0feb2e64045fa5858e7f0148d471b74f0",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2608.12880v1-Labels Are Not Endpoints：Treatment Leakage and Construct Validity in MCP Agent Security Evaluation.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2608.12880v1-Labels Are Not Endpoints：Treatment Leakage and Construct Validity in MCP Agent Security Evaluation.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "9ed8ad5c4eb099a84fd94534957c79f0b11c2aec",
+      "sha256": "21dd655ccbde64ef459361dfdaa943aeebda968ad623e5e3b07043119cbaf4b1",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2608.15108v1-Beyond Direct Access：Resource Hijacking in LLM Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2608.15108v1-Beyond Direct Access：Resource Hijacking in LLM Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "669de398e325be7c431e9541e6fd5a5f23538f53",
+      "sha256": "d33598c02179af6d202ea59866ba472a60a066d435957e2e73cbfabbeb794b50",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2608.16843v1-Security of Foundation-Model-Powered Embodied Agents：Attack Surfaces, Attacks, Defenses, and Evaluation.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2608.16843v1-Security of Foundation-Model-Powered Embodied Agents：Attack Surfaces, Attacks, Defenses, and Evaluation.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "6be33f848df00d7874aa882a68fa6c867ccf4605",
+      "sha256": "988e5b6a8a59dd007f3964eeddc470e1d33ff6795d1a7406026ba202bc2eadbb",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2608.21126v1-TraceGrant：A Contract-Governed Security Framework for the Task-Effect Lifecycle of Networked LLM Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2608.21126v1-TraceGrant：A Contract-Governed Security Framework for the Task-Effect Lifecycle of Networked LLM Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "f7553f0bf67e85c860e1d08104e7bc51ae6c7928",
+      "sha256": "792b43409241ec642203d85b4c11b01040efed86cd40cb3c05a22a795166331b",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2609.00267v1-Delegation Without Trust：An Empirical Gap Analysis of Identity, Authorization, and Runtime Governance in Multi-Agent LLM Systems.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2609.00267v1-Delegation Without Trust：An Empirical Gap Analysis of Identity, Authorization, and Runtime Governance in Multi-Agent LLM Systems.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "7ac41cf88e4e1df7007c9b6e2bf7027667ede8f8",
+      "sha256": "3e70ed2b15f1311cb45f8bf358e0a573f4daa7a6a34d424c175a08bce574bec8",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/2609.00595v1-SoK：When Safe Agents Fail Together：The Security of Multi Agent LLM Systems .pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/2609.00595v1-SoK：When Safe Agents Fail Together：The Security of Multi Agent LLM Systems .pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "04af1104d7032baccd2144713cd554097df7bc34",
+      "sha256": "5b6696c7244b60dcb6ebb17eba1cfc8fe9c9b0f82e3319978b30411efbde12d5",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/Runtime Security for Agentic Systems A Practical Two-Plane Approach for OpenClaw-Class Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/Runtime Security for Agentic Systems A Practical Two-Plane Approach for OpenClaw-Class Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "b9204f56a6ce902203ad13cd9a84ccc9753641a4",
+      "sha256": "d8ce111a0d6d93fb7a7cb1ae2137bc9b19651bb6df7d8ab9dadce5f308818629",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/SECURITY THREATS TO AI AGENTS：REVIEW ON THREATS, DEFENSE STRATEGIES AND THREAT MODELLING.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/SECURITY THREATS TO AI AGENTS：REVIEW ON THREATS, DEFENSE STRATEGIES AND THREAT MODELLING.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "643a5b6b1c676e23f8135b5a759eb05728601c56",
+      "sha256": "c0e225e51501a66cc2d116377a1a4b1e439d64f6d70aa630334c2900ead5fa00",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/SudoBench：A Contextual Authorization Benchmark for LLM Agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/SudoBench：A Contextual Authorization Benchmark for LLM Agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "dc1f7eb5ba91a2af961fd7b0aeca3fb24a052cc5",
+      "sha256": "ed65ba19db3c7e2f396ab7493c29b472817f00f788fdd31b776487da82b7fd07",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/Understanding and Evaluating Claw-like Agent Security Through a Computer-Systems Lens.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/Understanding and Evaluating Claw-like Agent Security Through a Computer-Systems Lens.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "4beeabae7a8f7cdd17aa9ff643b3e41f8f9d8f0e",
+      "sha256": "da950d546c41167f1b7a525a1b1606e4e6097a4cfea17df55e6cc078982e699e",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/byeon_IJCMEM_14.02_07-A trusted provenance and Trusted Execution Environment-based reference architecture for intent-execution binding in Large Language Model agents.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/byeon_IJCMEM_14.02_07-A trusted provenance and Trusted Execution Environment-based reference architecture for intent-execution binding in Large Language Model agents.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "78cc8fd3d47ec15ae865904f113c906f0b7268a7",
+      "sha256": "81cf447aae244cffdb69969a709ed127d68131473b4d69ad8223a3b99af1b584",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/preprints202608.2066.v1-Pandora’s Toolbox：A Survey of Generalist Agent Security from the Lifecycle Perspective.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/preprints202608.2066.v1-Pandora’s Toolbox：A Survey of Generalist Agent Security from the Lifecycle Perspective.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "e5db4140a63f60771ce39e8e21eb537a694e1657",
+      "sha256": "9ebc3c133b3eadc4db345c32c46af359f267e4ceac4e6d923c94a53893b569fb",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/ssrn-6938859-Provenance-Bound Context Attestation and Deterministic Policy Authorization for Agentic AI Actions.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/ssrn-6938859-Provenance-Bound Context Attestation and Deterministic Policy Authorization for Agentic AI Actions.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "677f1d72e1c3db6d0807a9bfd75f2428fc2945ec",
+      "sha256": "fa46e943fc9990d07e85b80c8398eedd01c483b5ef21eab531e457a8b0113641",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/ssrn-7035858-Beyond Binary Success：Propagation Profiles for LLM Agent Security Traces.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/ssrn-7035858-Beyond Binary Success：Propagation Profiles for LLM Agent Security Traces.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "601593c2f23638f1f76b6588bd2f05a97d18fa52",
+      "sha256": "70d124f493596af9c84d4d96d5bb74d63a8651c3300fa0836ad69eb67091834d",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/papers/ssrn-7045819-A Hash-based Trust Framework for Multi-agent AI Systems：Ensuring Instruction Integrity through Cryptographic Verification.pdf",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/ssrn-7045819-A Hash-based Trust Framework for Multi-agent AI Systems：Ensuring Instruction Integrity through Cryptographic Verification.pdf",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "276b9031bb67186f0345517f01a6982daa8ada4a",
+      "sha256": "ac685d98d042f19e0131dec9cee9ed73d9f1b86766c258ec4a3bf31dc815132a",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "research/literature/学术论文：Agent Security（无免费渠道查看）.xlsx",
+      "action": "add",
+      "previous_path": "Frontier References on Agent Security/学术论文：Agent Security（无免费渠道查看）.xlsx",
+      "migration_type": "git_rename_unchanged_bytes",
+      "source_blob": "595b05c90a3e257843a4bcb707a7d2265acf1dfd",
+      "sha256": "fb9b4c5b1b151cba3fb8a341d0dedfc7de2d78e66770e33493258efe591ae05b",
+      "reason": "user highlighted literature placement; consolidate physical research assets under root research",
+      "consumers": [
+        "literature catalog and research map",
+        "root README",
+        "license scope and third-party notices",
+        "legacy directory migration guide"
+      ],
+      "validation": [
+        "compare old Git blob and SHA-256",
+        "local links and frozen evidence guard",
+        "clean checkout and revert rehearsal"
+      ]
+    },
+    {
+      "path": "Frontier References on Agent Security/README.md",
+      "action": "add",
+      "reason": "explain new literature ownership and compatibility boundary",
+      "consumers": [
+        "old directory links",
+        "research readers"
+      ],
+      "validation": [
+        "link guard",
+        "license scope review"
+      ]
+    },
+    {
+      "path": "research/literature/papers/README.md",
+      "action": "add",
+      "reason": "explain new literature ownership and compatibility boundary",
+      "consumers": [
+        "old directory links",
+        "research readers"
+      ],
+      "validation": [
+        "link guard",
+        "license scope review"
+      ]
     }
   ],
   "frozen": {
@@ -1370,7 +2121,9 @@
     "docs/repository-architecture-reorganization-proposal-20260918-095230.md",
     "docs/evidence/repository-reorganization-closure-20260919/README.md",
     "skills/siq-agent-security/SKILL.md",
-    "docs/evidence/repository-reorganization-final-20260919/README.md"
+    "docs/evidence/repository-reorganization-final-20260919/README.md",
+    "Frontier References on Agent Security/README.md",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "navigation_globs": [
     "docs/development/*.md",
