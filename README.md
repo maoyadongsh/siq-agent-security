@@ -34,7 +34,7 @@
 
 **SIQ Agent Security 是研究智能体授权边界与执行证据的开源项目，同时提供面向个人与组织的可运行安全管理系统。** 它帮助用户看清本机或已接入环境中的 Agent 与 Skill、确认工具和资源权限、管理安装与更新，并在已接入的执行路径上检查授权、处理高风险动作、追溯任务结果。用户继续使用原有智能体，SIQ 提供权限管理、运行检查和证据查询入口。
 
-研究主线是：模型提出的动作如何获得独立授权、参数来源如何约束执行，以及如何用实际效果证据判断任务完成。根目录 [research/](research/README.md) 连接文献、研究问题、方法、实验、结论与治理；[evaluations/](evaluations/README.md) 区分研究观察、工程验收与外部复现。
+研究主线是：模型提出的动作如何获得独立授权、参数来源如何约束执行，以及如何用实际效果证据判断任务完成。实现将受信 Intent、参数来源、Skill 执行上下文（SEC）、审批后唯一执行预留与效果核验串联，分别回答“谁授权、执行什么、归属哪个安装、是否实际发生”。根目录 [research/](research/README.md) 连接文献、研究问题、方法、实验、结论与治理；[evaluations/](evaluations/README.md) 区分研究观察、工程验收与外部复现。
 
 项目提供两条使用路线：**个人端**通过本地服务和浏览器控制台管理自己的智能体、Skill 与任务；**企业端**通过控制面、Edge 和 Connector 汇总环境资产、审批策略并核验部署结果。当前交付重点是个人客户端，已发布 `0.3.0` 签名正式版；企业端已有独立部署和治理基础，便捷的局域网团队多设备流程仍按后续路线推进。
 
@@ -42,7 +42,7 @@
 
 > **签名安装包（2026-09-19）**：[0.3.0 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0) 已提供完整离线包、签名 Skill 与四目标二进制，源码固定在 `83fde2d`，使用原发行密钥签发。请选择 Release 中的安装资产；GitHub 自动生成的源码压缩包及 `skills/siq-agent-security/` 仍是开发源码。Linux ARM64 已通过实际安装链路和篡改拒绝验证，其他目标本次仅完成构建与签名摘要核对。见[安装说明](docs/signed-release-packaging.md)和[签发与发布验证记录](docs/evidence/releases/0.3.0/README.md)。
 
-[文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md) · [平台交付](platforms/README.md) · [测评与外部复现](evaluations/README.md)
+[应用模块](apps/README.md) · [文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md) · [平台交付](platforms/README.md) · [测评与外部复现](evaluations/README.md)
 
 ## 当前产品方向与支持状态
 
@@ -476,13 +476,13 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 | 组件 | 职责 | 使用入口 |
 | --- | --- | --- |
 | Secure Agent 与研究 Skills | 任务规划、动态选择研究 / 报告 / 交付能力 | [Agent 说明](apps/secure-agent/README.md)、[Skills](skills/) |
-| 本地 Go 运行时与个人控制台 | 准入、授权、Skill 生命周期、审批、任务与隐私管理、签名回执；个人 UI 随 Go 服务内嵌 | [个人 UI](apps/web/src/local/)、[本地操作指南](AGENTSHIELD.md)、[开发规格](docs/agentshield-dev-spec-v1.md) |
+| 本地 Go 运行时与个人控制台 | 准入、授权、Skill 生命周期、审批、任务与隐私管理、签名回执；个人 UI 随 Go 服务内嵌 | [个人 UI](apps/web/README.md)、[运行时说明](apps/agentshield/README.md)、[本地操作指南](AGENTSHIELD.md)、[开发规格](docs/agentshield-dev-spec-v1.md) |
 | SIQ Skill 与发行工具 | 操作指引、发行清单验签与安全暂存；从固定提交构建和签发安装包 | [Skill 源码](skills/siq-agent-security/)、[发行工具](scripts/release/package.py)、[安装说明](docs/signed-release-packaging.md) |
-| 运行时适配器 | 当前产品矩阵按 OS 接入 Hermes、OpenClaw、WorkBuddy；CodeBuddy 仅保留历史配置、记录和安全退出兼容 | [适配器目录](adapters/runtime/)、[能力矩阵](docs/agentshield-capability-matrix-v1.md)、[平台范围决策](docs/personal-platform-scope-decision-20260917.md) |
+| 运行时适配器 | 当前产品矩阵按 OS 接入 Hermes、OpenClaw、WorkBuddy；CodeBuddy 仅保留历史配置、记录和安全退出兼容 | [适配器目录](adapters/runtime/README.md)、[能力矩阵](docs/agentshield-capability-matrix-v1.md)、[平台范围决策](docs/personal-platform-scope-decision-20260917.md) |
 | OpenShell 与 DGX Spark 接入 | 专用部署预检、本地推理配置、策略授权/加载/恢复、受约束任务执行与分级诊断 | [DGX Spark 部署](deploy/dgx-spark/README.md)、[OpenShell 适配](apps/agentshield/internal/openshell/)、[实机证据](docs/openshell-policy-load-wait-repair-20260916.md) |
-| 企业控制面 | 多租户资产、证据、策略审批及 Edge 协调 | [控制面说明](docs/control-plane.md)、[生产运行手册](docs/enterprise-production-runbook-v1.md) |
-| Edge 与 Connectors | 配置、目录、框架、进程、容器及集群采集 | [Edge](edge/agent/)、[Connectors](connectors/)、[兼容说明](docs/compatibility.md) |
-| 合同与基准 | 跨组件数据合同、固定语料和证据验证 | [合同](packages/contracts/)、[Agent 基准](benchmarks/hackathon/README.md)、[运行时基准](benchmarks/runtime-security/README.md) |
+| 企业控制面 | 多租户资产、证据、策略审批及 Edge 协调 | [API 模块](apps/control-api/README.md)、[控制面说明](docs/control-plane.md)、[生产运行手册](docs/enterprise-production-runbook-v1.md) |
+| Edge 与 Connectors | 配置、目录、框架、进程、容器及集群采集 | [Edge](edge/agent/README.md)、[Connectors](connectors/README.md)、[兼容说明](docs/compatibility.md) |
+| 合同与基准 | 跨组件数据合同、固定语料和证据验证 | [合同](packages/contracts/README.md)、[Agent 基准](benchmarks/hackathon/README.md)、[运行时基准](benchmarks/runtime-security/README.md) |
 
 本地演示无需 PostgreSQL、企业登录或企业 API。平台的采集能力、工具阻断能力和实机验证状态分别登记；存在适配器不代表所有版本、所有调用路径均受保护。企业生产部署条件和未验证事项以对应运行手册为准。
 

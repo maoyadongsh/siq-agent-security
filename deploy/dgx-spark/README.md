@@ -1,19 +1,19 @@
 # DGX Spark deployment profile
 
-V4 uses StepFun for public planning and verified local Ornith for source analysis
+The archived V4/V5 research deployment uses StepFun for public planning and verified local Ornith for source analysis
 and recipient reasoning. The [V4 evidence index](../../docs/hackathon/evidence/INDEX.md)
 contains actual hardware, local inference, zero remote confidential transport,
 and separate small model cohorts with their earlier failures retained.
 
-From the repository root:
+From the repository root, start an explicit fixture run first (no paid model calls):
 
 ```bash
-./deploy/dgx-spark/start.sh
+./deploy/dgx-spark/start.sh --mode test
 ./deploy/dgx-spark/healthcheck.sh
 ./deploy/dgx-spark/preflight.sh --out .tmp/dgx-spark-environment.json
 ```
 
-Per the operator's latest 2026-09-08 instruction, start defaults to Step Plan
+In the recorded 2026-09-08 configuration, start defaults to Step Plan
 `step-3.7-flash`, using the [private provider configuration](../../docs/hackathon/step-plan.md)
 or a complete `SIQ_STEPFUN_*` environment bundle. Local Ornith is the default research provider; to use it for planning too:
 after managed reset, use `start.sh --provider ornith` and the defaults in
@@ -37,7 +37,7 @@ ornith or StepFun model listing and every configured service probe pass. A model
 does not prove inference, and preflight always leaves `deployment_verified`
 false. Real model-driven E2E evidence is a separate acceptance requirement.
 
-The current machine was identified as NVIDIA DGX Spark / GB10 / aarch64,
+The machine recorded on 2026-09-08 was identified as NVIDIA DGX Spark / GB10 / aarch64,
 driver 580.126.09 and CUDA 13.0. See the
 [recorded environment](../../docs/hackathon/evidence/dgx-spark/local-environment-20260908.json).
 That initial record had no model configuration. The later
@@ -50,3 +50,10 @@ For isolated real-tool execution and evidence export, follow the
 [Secure Agent commands](../../apps/secure-agent/README.md). Every run uses a new
 SIQ state directory and controlled message sink. Existing personal profiles are
 not read or reset.
+
+This profile is optional for [Secure Agent](../../apps/secure-agent/README.md)
+research runs; the [personal client](../../apps/agentshield/README.md) does not
+require DGX, a GPU or a real model. Model locality, execution authorization and
+observed task completion answer different questions. Deployment health must not
+be reported as confidential-data or security acceptance. Current OS and host
+scope is maintained in [platforms/linux](../../platforms/linux/README.md).

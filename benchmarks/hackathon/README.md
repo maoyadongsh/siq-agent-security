@@ -48,14 +48,35 @@ writes a new verification artifact including the input report hash. The original
 capture remains unchanged. An archived planning failure is valid evidence even
 though the runner returns nonzero because its benign task did not complete.
 
+Run from the repository root after installing the Control API development environment
+(`cd apps/control-api` then `uv sync --dev`); its Python provides the independent
+cryptographic verifier. The first block is fixture-only:
+
 ```bash
+mkdir -p .tmp/hackathon-bin
 GOTOOLCHAIN=go1.26.6 go -C apps/agentshield build -o "$PWD/.tmp/hackathon-bin/siq-agent-security" ./cmd/agentshield
 apps/control-api/.venv/bin/python benchmarks/hackathon/run.py \
   --binary .tmp/hackathon-bin/siq-agent-security \
   --state-root .tmp/hackathon-benchmark/new-controls --out .tmp/hackathon-controls.json
+apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py .tmp/hackathon-controls.json
+```
+
+Optional real-model utility run: configure an intended endpoint and budget first;
+this invokes actual inference and uses a separate fresh state root.
+
+```bash
 SIQ_MODEL_PROVIDER=ornith SIQ_ORNITH_ENDPOINT=http://127.0.0.1:8006/v1 \
 SIQ_ORNITH_MODEL=Ornith-1.5-35B-A3B-NVFP4 \
 apps/control-api/.venv/bin/python benchmarks/hackathon/run.py --cohort model-utility \
   --binary .tmp/hackathon-bin/siq-agent-security \
   --state-root .tmp/hackathon-benchmark/new-model --out .tmp/hackathon-model.json
 ```
+
+
+The archived [23-case control result and model cohorts](../../docs/hackathon/benchmark-report.md)
+remain fixed observations: 23/23 expected controls, 5/5 benign controls, and 0/13
+unsafe target materializations have different denominators. Later 5/5 StepFun
+and Ornith cohorts retain their earlier 4/5 failures. A new run must preserve its
+own source, provider, report and failures; it does not update those artifacts.
+Use the [research protocol](../../research/experiments/README.md) to plan new
+comparisons, and [evaluations](../../evaluations/README.md) to locate scoped evidence.

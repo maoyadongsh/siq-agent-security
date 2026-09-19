@@ -34,3 +34,8 @@
 各行精确证据路径、SHA-256、候选与未记录字段见 catalog。源提交、证据提交、集成提交和实际程序摘要是不同身份；dirty 候选不得补造 clean SHA。历史 Windows 原生/WSL 与 macOS 协作者记录见[平台页](../platforms/README.md)，其他未纳入机器索引的结果继续留在原台账，目录不声称穷尽全部测试。
 
 新增索引先补证据和范围，再由 `python3 scripts/repository/check.py --base origin/main` 验证；原报告失败、重跑和 partial/blocked 保留。公开材料不可带运行密钥、token、配对码、私有模型配置或客户原文。
+
+
+## 后续源码基础检查
+
+[四目标源码检查](../docs/evidence/repository-reorganization-final-20260919/README.md)另外登记 Linux amd64/arm64、macOS arm64、Windows amd64 的自建程序、准入与基础启动链路，及缺发行清单时拒绝 bootstrap 的边界。这批记录不在上表 15 条历史 catalog 中，不改写其分母，也不扩展 0.3.0 正式包的原生验收。查某项功能时，应同时核对[模块说明](../apps/README.md)、[宿主适配](../adapters/runtime/README.md)与该次候选报告。

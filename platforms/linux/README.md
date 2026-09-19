@@ -10,3 +10,10 @@
 - OpenShell：[Go 接入](../../apps/agentshield/internal/openshell/)、[企业接入](../../apps/control-api/app/adapters/openshell/)、[同步器](../../apps/control-api/app/openshell_sync.py)。沿用各控制面的合同；不自动启动网关或修改其他产品。
 
 实际原生桌面、远端单任务停止与性能缺口见原台账；[评测索引](../../evaluations/README.md)提供结果身份，平台页不复制逐步日志。
+
+
+## 源码、基础检查与功能验收
+
+[运行时模块](../../apps/agentshield/README.md)、[Web](../../apps/web/README.md)与[宿主适配器](../../adapters/runtime/README.md)分别维护共享核心、界面和协议边界。平台生命周期按本页手册执行，不复制另一套实现到 platforms 目录。
+
+[四目标源码原生检查](../../docs/evidence/repository-reorganization-final-20260919/README.md)已有本平台自建程序的准入与基础启动/配对/控制台/停止记录。它与 0.3.0 正式包使用不同候选，不等于系统服务、升级回滚、通知或完整宿主验收；后续验收仍需固定同一程序、UI、适配器、宿主版本和状态格式，再记录允许、拒绝、撤销与恢复的实际结果。

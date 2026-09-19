@@ -2097,6 +2097,299 @@
       ],
       "source_commit": "0b2c8135af39071e82effc339cdf88dfd559f9ac",
       "source_blob": "ecb49ced3b6e49ee7e5b2ab52857964743ace16a"
+    },
+    {
+      "path": "adapters/runtime/codebuddy-agentshield/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "409f786172d6fd3190a80674653ff979c5e255e5"
+    },
+    {
+      "path": "adapters/runtime/hermes-agentshield/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "1b1e86a47317fc8b6916a89ea57e0b1649cce885"
+    },
+    {
+      "path": "adapters/runtime/openclaw-agentshield/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "31a5796651f80cf0a291c545b8db39dfa0a3e015"
+    },
+    {
+      "path": "adapters/runtime/workbuddy-agentshield/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "55edf696a5ea7911ac07c4420098bf1d55b89292"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "d4a8b64edccc0f4c73070ef57fbcec7f64c5d0e7"
+    },
+    {
+      "path": "apps/secure-agent/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "ec68b2d907da44d01bf8dd8a2a4dcaf49c159458"
+    },
+    {
+      "path": "apps/web/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "a9f378585d23b0f112e3bbdafbb6b402d876e3f0"
+    },
+    {
+      "path": "benchmarks/hackathon/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "7dc2f45474ce1472d445d2bf6ae3d50daa00eef5"
+    },
+    {
+      "path": "benchmarks/runtime-security/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "307930a971716f5659d016254d05449c380c8616"
+    },
+    {
+      "path": "deploy/dgx-spark/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "c1ddd76d5e5f41a09ef4d2559f4bd005260b6175"
+    },
+    {
+      "path": "packages/contracts/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "5070fd559b0e5dbf47bd390de19731cce5234607"
+    },
+    {
+      "path": "patches/openclaw/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "de34ca7f01220558db112affbb7ba6f45187876b"
+    },
+    {
+      "path": "scripts/personal-experience/README.md",
+      "action": "edit",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ],
+      "source_blob": "043c3df03da6000d68ad7b727f5521b1c203785d"
+    },
+    {
+      "path": "adapters/runtime/README.md",
+      "action": "add",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ]
+    },
+    {
+      "path": "apps/README.md",
+      "action": "add",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ]
+    },
+    {
+      "path": "apps/agentshield/README.md",
+      "action": "add",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ]
+    },
+    {
+      "path": "apps/control-api/README.md",
+      "action": "add",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ]
+    },
+    {
+      "path": "connectors/README.md",
+      "action": "add",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ]
+    },
+    {
+      "path": "deploy/compose/README.md",
+      "action": "add",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ]
+    },
+    {
+      "path": "edge/agent/README.md",
+      "action": "add",
+      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
+      "consumers": [
+        "module contributors",
+        "root and module README readers"
+      ],
+      "validation": [
+        "README link guard",
+        "source/command review",
+        "research metadata and frozen-evidence checks"
+      ]
     }
   ],
   "frozen": {
@@ -2142,7 +2435,34 @@
     "GOVERNANCE.md",
     "SECURITY.md",
     "CODE_OF_CONDUCT.md",
-    "HACKATHON.md"
+    "HACKATHON.md",
+    "adapters/runtime/codebuddy-agentshield/README.md",
+    "adapters/runtime/hermes-agentshield/README.md",
+    "adapters/runtime/openclaw-agentshield/README.md",
+    "adapters/runtime/workbuddy-agentshield/README.md",
+    "apps/agentshield/internal/ui/README.md",
+    "apps/secure-agent/README.md",
+    "apps/web/README.md",
+    "benchmarks/hackathon/README.md",
+    "benchmarks/runtime-security/README.md",
+    "deploy/dgx-spark/README.md",
+    "evaluations/README.md",
+    "packages/contracts/README.md",
+    "patches/openclaw/README.md",
+    "platforms/README.md",
+    "platforms/linux/README.md",
+    "platforms/macos/README.md",
+    "platforms/windows/README.md",
+    "research/README.md",
+    "research/methods/README.md",
+    "scripts/personal-experience/README.md",
+    "adapters/runtime/README.md",
+    "apps/README.md",
+    "apps/agentshield/README.md",
+    "apps/control-api/README.md",
+    "connectors/README.md",
+    "deploy/compose/README.md",
+    "edge/agent/README.md"
   ],
   "navigation_globs": [
     "docs/development/*.md",

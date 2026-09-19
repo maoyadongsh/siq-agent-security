@@ -1,7 +1,9 @@
 # Secure Agent
 
-Application layer for the [hackathon V4 target](../../docs/hackathon/final-hardening-goal-v4.md).
-Python standard library only; no new authorization or evidence engine.
+Research reference application developed through the [V4/V5 work](../../HACKATHON.md):
+model planning and dynamic Skill selection run through the existing SIQ authorization
+and evidence engine. Python standard library only. This is separate from the
+[current personal management console](../web/README.md).
 
 The application contract is `UserTask → ModelRouter → TaskPlan V2 → SkillRunner
 → ToolGateway → SecurityClient → existing SIQ API → controlled tool`.
@@ -78,17 +80,18 @@ supports Chat Completions and JSON mode. Endpoint redirects are rejected so a
 redirect cannot carry the credential to another service. Non-loopback endpoints
 require HTTPS. Missing/invalid responses fail explicitly.
 
-Run a complete isolated application task from the repository root:
+Run a complete isolated fixture-model task from the repository root (no model key or GPU):
 
 ```bash
+mkdir -p .tmp/hackathon-bin
 GOTOOLCHAIN=go1.26.6 go -C apps/agentshield build -o "$PWD/.tmp/hackathon-bin/siq-agent-security" ./cmd/agentshield
 PYTHONPATH=apps/secure-agent python3 -m secure_agent \
   --binary .tmp/hackathon-bin/siq-agent-security \
-  --state-dir .tmp/hackathon-runs/first-demo
+  --state-dir .tmp/hackathon-runs/first-demo --mode test
 ```
 
-The CLI's default `demo` mode requires an explicitly configured real provider. Add `--mode test` for the
-explicit fixture model. The state directory must be new for each invocation;
+The command selects `--mode test` explicitly. The CLI's default `demo` mode
+requires a configured real provider; use it only with the intended endpoint and budget. The state directory must be new for each invocation;
 an existing SIQ state is never reused. This runs actual SIQ authorization,
 three Skills, GitHub-shaped reads, a filesystem write, MCP contact lookup,
 and a controlled HTTP message receiver. It sends no external email.
@@ -154,8 +157,12 @@ Python object visibility is not an OS sandbox: hostile installed Python code or
 a same-UID process is outside this containment claim. Do not load or execute
 arbitrary SKILL.md code. Local DGX Spark hardware and fixture-model application
 runs are [evidenced](../../docs/hackathon/evidence/agent-e2e-20260908.json).
-Dashboard scenarios are browser-tested; StepFun inference is deferred and full
-competition acceptance remains pending.
+The archived [benchmark report](../../docs/hackathon/benchmark-report.md) now
+contains actual StepFun and Ornith benign-task cohorts, each with later 5/5
+results and earlier 4/5 failures retained. These are candidate-specific small
+samples, separate from fixture control cases and browser checks; they do not
+prove a fresh checkout or another model/environment has passed. The frozen
+submission identity remains in [HACKATHON.md](../../HACKATHON.md).
 
 V4 supports trusted `--output research|report|delivery` and
 `--source-sensitivity PUBLIC|INTERNAL|CONFIDENTIAL|SECRET`. HTTP clients cannot
@@ -164,3 +171,17 @@ supply classification or authority overrides. The operator sets
 `SIQ_INTERNAL_REMOTE=false`, `SIQ_SECRET_LOCAL=false` are secure defaults;
 values must be literal true/false. Invalid policy and unavailable local sensitive
 inference fail closed. See the [egress contract](../../docs/hackathon/model-egress-v4.md).
+
+## Implementation map
+
+| Component | Role in the experiment |
+| --- | --- |
+| [application.py](secure_agent/application.py), [skills.py](secure_agent/skills.py) | Task orchestration and bounded Skill selection |
+| [models.py](secure_agent/models.py), [routing.py](secure_agent/routing.py), [model_policy.py](secure_agent/model_policy.py) | Typed model transport, routing and sensitivity policy |
+| [gateway.py](secure_agent/gateway.py), [security.py](secure_agent/security.py) | Controlled tools and requests to SIQ; no model-owned authority |
+| [service.py](secure_agent/service.py) | Persistent task service and paired operator-facing API |
+
+The distinguishing mechanism is the connection between exact precommitted intent,
+source replay, parameter provenance and independently observed effects. See the
+[research methods](../../research/methods/README.md) for hypotheses and limitations,
+and the [benchmark guide](../../benchmarks/hackathon/README.md) for separate metrics.

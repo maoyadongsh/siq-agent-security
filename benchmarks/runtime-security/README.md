@@ -10,7 +10,7 @@ D5 只有具有独立 observer 和可核验材料的样本才能计入分母。�
 
 统计必须按攻击/正常对照及D0–D5分别报告，不能通过混合分母遮蔽误拒。性能数据来自真实阶段计时，输出P50/P95/P99，不使用整体请求耗时冒充内部阶段耗时，不设置虚构SLA。
 
-当前已有20对组件场景执行器、公共回执证据与CI工作流；完整性能、恢复矩阵、native平台及远端CI验收仍未完成。下文增量记录中的较小场景数为历史阶段。
+当前 full 语料为 21 对 / 42 场景，PR smoke 为 5 对 / 10 场景；已有公共回执/效果离线验证、性能与恢复工具及 CI 入口。各自覆盖范围见下文，不等于所有恢复矩阵、原生平台与性能预算已验收。下文较小场景数和“当前合计”均为历史增量记录，不能作为当前总数或相加。
 
 ## 运行组件基准
 
@@ -19,7 +19,7 @@ python3 benchmarks/runtime-security/run.py --out /tmp/siq-runtime-benchmark.json
 python3 -m unittest discover -s benchmarks/runtime-security -p 'test_*.py'
 ```
 
-当前执行器复用实际 daemon 的准入、Grant challenge/approve/deploy、Intent V3、MCP HTTP 及来源 API，运行 MCP路径控制、来源缺失、内容替换、跨会话重放、跨任务重放、Intent绑定撤销6类攻击及各自可信USER对照，停服后离线验证回执链。D2来自实际决策回执；目标工具不执行，因此D3–D5为null。报告保留二进制与runner摘要、场景摘要、源码基线及回执ID，内部阶段耗时缺失时保持null。源码基线不表示工作树干净。
+早期六对执行器复用实际 daemon 的准入、Grant challenge/approve/deploy、Intent V3、MCP HTTP 及来源 API，运行 MCP路径控制、来源缺失、内容替换、跨会话重放、跨任务重放、Intent绑定撤销6类攻击及各自可信USER对照，停服后离线验证回执链。D2来自实际决策回执；目标工具不执行，因此D3–D5为null。报告保留二进制与runner摘要、场景摘要、源码基线及回执ID，内部阶段耗时缺失时保持null。源码基线不表示工作树干净。
 
 Intent绑定撤销场景先验证目标绑定可放行，再撤销该绑定，拒绝后续请求；正常对照使用未撤销绑定。不将该场景描述为全局Intent撤销。跨任务场景的来源与请求会话一致，仅任务不匹配。
 
@@ -128,3 +128,10 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/recovery_evidence.
 PR runtime-security-contracts使用smoke；nightly/workflow_dispatch的nightly job使用默认full的21对/42场景，并保留受控网络oracle、恢复测试及三次独立重复。重复次数不是新增场景类别。单独的性能与恢复报告不混入D5分母；完整安全race门禁继续覆盖全部Go包。
 
 性能脚本额外输出`decision_total`：完整Engine.Decide调用的单调时钟耗时，含回执发布及阶段回调，不含HTTP或工具执行。它与内部8阶段分开标注，不能叠加百分位。`GOTOOLCHAIN`显式传入Go子进程并记录实际版本，允许按安全门禁选择已修补工具链。
+
+
+## 阅读与结果使用
+
+本套件检验来源绑定、授权边界、审批时序和效果核验这些机制；[Secure Agent 基准](../hackathon/README.md)另检验应用层固定任务。两者不共享任务分母，也不测任意模型的攻击成功率。
+
+先确定 suite、源码与二进制摘要，再运行对应独立验证器；保留 false、null、失败与重跑。旧报告属于旧语料版本，必要时在其原候选 checkout 复验，不能删改报告以适配当前场景集合。研究假设、实验设计与已知局限见[研究方法](../../research/methods/README.md)和[复现指南](../../REPRODUCIBILITY.md)。

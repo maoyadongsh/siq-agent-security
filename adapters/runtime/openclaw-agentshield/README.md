@@ -4,6 +4,12 @@
 
 2026-09-18 会话轮换修复（#77）：当前运行身份为 `openclaw-session/v1:<sha256>`，同时绑定宿主 hook context 的 `sessionKey` 与 `sessionId` UUID。旧文档中的 raw `sessionKey` 绑定仅作为历史证据保留，不再用于新版本授权。新插件不接受 event、工具参数、模型或配置提供的 epoch；宿主缺字段时所有模式拒绝，并提示更新宿主/适配器。旧绑定须以真实宿主元数据重新建立，不能猜测 UUID 或自动继承；managed 模式按已验证实例权限自动建立新 epoch 的独立 Intent。daemon 与插件须成对更新，详细编码和兼容边界见 [会话规格](../../../docs/openclaw-native-session-spec-v1.md)。实现与组件检查不代表原生 idle/reset 回归已通过。
 
+## 当前接入与研究边界
+
+Linux/macOS/Windows 的产品范围与实际证据见[平台矩阵](../../../platforms/support-matrix.md)。原生 Skill 安装策略、插件加载、会话授权和审批后检查点是四项独立能力。OpenClaw 2026.9.4 原版与带固定检查点补丁的受控副本分别记账；Linux 阶段 22/22 来自后者，不证明上游原版已补齐审批后最终检查。
+
+当前受控使用入口见[Linux 启动说明](../../../docs/openclaw-controlled-start-linux-20260919.md)和[补丁索引](../../../patches/openclaw/README.md)。旧 raw sessionKey 绑定、历史失败与后续修复在下文按日期保留，不能用旧会话例子签发新 epoch 权限。核心机制是把宿主真实会话、最终动作参数和唯一执行预留关联起来，防止批准被挪用于其他调用。
+
 ## Skill 安装检查
 
 请通过 SIQ 的 Skill 导入、检查和确认安装流程安装 Skill。已验证的 OpenClaw 2026.5.12 不接受顶层 `security.installPolicy`；默认安装器仍不写入该字段。OpenClaw 2026.9.4 已支持 operator-owned `security.installPolicy`，可在确认目标实例版本后显式执行 `siq-agent-security adapter preview openclaw install --enable-install-policy`、审阅后执行 `adapter install openclaw --enable-install-policy`。此策略只覆盖原生 Skill 安装/更新，不覆盖 Plugin；未知既有策略不得覆盖。
@@ -43,10 +49,10 @@ siq-agent-security adapter install openclaw
 
 `siq-agent-security adapter uninstall openclaw` 按安装记录移除本插件注册与自建文件，保留其他用户配置；首次备份供人工恢复参考。
 
-## 验证状态
+## 验证记录（按候选与时间区分）
 
 - `policy-exec`：Go 单测 + linux 隔离 HOME 证据（隐藏注释 Skill → block；官方风格 Skill → warn）。见 [`docs/evidence/agentshield/openclaw-linux-2026-09-05/`](../../../docs/evidence/agentshield/openclaw-linux-2026-09-05/)。
-- 插件 TS：按 OpenClaw 2026-09 `before_tool_call` 合同编写（`block` 终止、`requireApproval` 首个生效、`params` 改写）。同一证据目录用插件会发出的 `/v1/decide` 请求体做了授前/授后 deny；**仍未**把插件加载进本机正在跑的 OpenClaw 网关进程。矩阵不标 `supported`。
+- 插件 TS：按 OpenClaw 2026-09 `before_tool_call` 合同编写（`block` 终止、`requireApproval` 首个生效、`params` 改写）。同一证据目录用插件会发出的 `/v1/decide` 请求体做了授前/授后 deny；该 2026-09-05 记录**未**把插件加载进网关进程；后续原生记录见下文，不回写早期范围。
 
 V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多 2048 项、TTL 300 秒，重复 ID 冲突不绑定旧动作。hold 的 execution observation 必须绑定本地批准后生成的签名 reservation；平台自身弹窗不创建本地批准。`node scripts/test-openclaw-adapter.cjs` 提供隔离 hook 回归，原生宿主验收见本节后续记录。
 
@@ -56,13 +62,13 @@ V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多
 
 2026-09-07 增量：[原生加载器及工具链验收](../../../docs/trusted-intent-v2-openclaw-validation-20260907-192539.md) 已在 OpenClaw 2026.5.12 / linux/arm64 的临时实例通过，包括 V2 关联、目录/工具拒绝、失联与重启。真实前置包装器和后置 relay 使用夹具提供的调用 ID，不等于完整网关/LLM 会话与平台审批验收；综合状态仍为 unverified。
 
-20:16 增量：[完整 CLI 会话验收](../../../docs/trusted-intent-v2-openclaw-conversation-20260907-201600.md) 从真实 `agent --local` 入口驱动本地合成模型，验证原生 pre/post、跨进程续聊与显式新会话不继承权限。创建 Intent Binding 时，`session_id` 使用 hook 提供的原生 `sessionKey`（如 `agent:<id>:main`），并非 transcript UUID。模型历史可能规范化调用 ID，SIQ 回执仍严格按真实 pre/post 执行 ID 关联。网关审批和同 key reset 生命周期尚未验收。
+20:16 增量：[完整 CLI 会话验收](../../../docs/trusted-intent-v2-openclaw-conversation-20260907-201600.md) 从真实 `agent --local` 入口驱动本地合成模型，验证原生 pre/post、跨进程续聊与显式新会话不继承权限。该旧候选创建 Intent Binding 时，`session_id` 使用 hook 提供的原生 `sessionKey`（如 `agent:<id>:main`），并非 transcript UUID。模型历史可能规范化调用 ID，SIQ 回执仍严格按真实 pre/post 执行 ID 关联。网关审批和同 key reset 生命周期尚未验收。
 
 20:36 增量：[空闲重置实测](../../../docs/trusted-intent-v2-openclaw-idle-reset-20260907-203600.md) 确认同 key 下 UUID 轮换不解除 SIQ 绑定或清除污点；但本机 OpenClaw 2026.5.12 仍将旧 transcript 发送给模型，整体重置测试失败。不能以 UUID 变化宣称上下文已清空。
 
 21:51 增量：[原生网关重置验收](../../../docs/trusted-intent-v2-gateway-reset-and-ci-20260907-215104.md) 通过 `sessions.reset` → 本地 CLI 路径：只读客户端拒绝、旧 transcript 完整归档、新 Session header 和下一次模型请求均无旧工具历史；同一 routing key 的 SIQ 绑定及污点保持。活动文件可以复用原路径，重置是否成功应检查实际内容和模型请求。此结果不覆盖消息渠道，也不改变上述空闲重置失败结论。
 
-22:00 增量：[平台等待期间 Grant 撤销](../../../docs/trusted-intent-v2-approval-revocation-20260907-220037.md) 已复现执行缺口：当前默认插件的本地预检通过后，等待平台审批时撤销 Grant 仍可能执行。宿主和适配器配套候选在独立副本通过八个场景，但未进入默认安装；原版没有可等待、可否决的审批后回调，不能仅添加异步 `onResolution` 就宣称修复。
+22:00 增量：[平台等待期间 Grant 撤销](../../../docs/trusted-intent-v2-approval-revocation-20260907-220037.md) 已复现执行缺口：当时默认插件的本地预检通过后，等待平台审批时撤销 Grant 仍可能执行。宿主和适配器配套候选在独立副本通过八个场景，但未进入默认安装；原版没有可等待、可否决的审批后回调，不能仅添加异步 `onResolution` 就宣称修复。
 
 22:08 增量：[候选检查点故障验收](../../../docs/trusted-intent-v2-checkpoint-faults-20260907-220834.md) 新增九个通过场景，覆盖超时、取消、异常、非法返回、最终参数篡改和审批后失联。实际原版组合未更新，该结果只属于配套候选的临时实例。
 
@@ -79,7 +85,7 @@ Managed 安装器写入 camelCase 配置 `runtimeIdentityId` / `agentId` / `toke
 - **原生原文捕获（best effort，250ms 预算）**：allow 后把参数按 JSON pointer 展平（`/tool/name` + `/tool/arguments/...`），observe 带决策引用时把结果按 `/tool/result/...` 捕获，POST `/v1/raw-task-content/native-captures`（期望 201）。层级 ≤32、路径 ≤256、字段 ≤1024、单值 ≤1MiB，超界即放弃本次捕获。daemon 拥有原文采集策略与 secret 过滤，适配器不读原文开关。
 - 非托管（legacy）路径行为不变：不注册、不捕获。
 
-验证：`node --experimental-strip-types --test tests/managed-bridge.test.mjs`（50 个场景，覆盖 legacy/托管注册、身份与 URL 边界、三种模式、参数/输出捕获、hold 相关性、签名预留拒绝/畸形响应/响应丢失及重复回调）。测试通过 resolution hook 替换 OpenClaw SDK 入口并用 mock 本地服务驱动真实 hook handler，**不是**真实 OpenClaw 网关验收；原生范围另见对应证据报告。
+验证：`node --experimental-strip-types --test tests/managed-bridge.test.mjs`（覆盖 legacy/托管注册、身份与 URL 边界、三种模式、参数/输出捕获、hold 相关性、签名预留拒绝/畸形响应/响应丢失及重复回调）。测试通过 resolution hook 替换 OpenClaw SDK 入口并用 mock 本地服务驱动真实 hook handler，**不是**真实 OpenClaw 网关验收；原生范围另见对应证据报告。
 
 凭据仅发送至显式端口的 HTTP loopback，localhost 固定为 127.0.0.1，不跟随重定向。托管模式要求真实会话、有效身份凭据及带 action/receipt 的允许裁决。输出原文仅在允许执行或 hold 最终复验通过后按精确调用关联采集一次；重复调用保持失效至关联过期。
 
