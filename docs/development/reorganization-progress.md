@@ -83,3 +83,5 @@ Skill 内部旧正文确有过时版本/宿主/配对说明，但它是签名载
 用户进一步明确研究资产的目录呈现要求后，将已有 35 PDF 迁入 `research/literature/papers/`，1 XLSX 迁入上级；这项决定替代前面中间批次“不移动论文”的安排。文件名、字节、源 Git blob 和 SHA-256 保持一致，目录保存 original_path 与现路径。旧根目录只保留迁移说明，不复制全文，不提供旧单文件 main URL 自动跳转。
 
 README、研究入口、文献清单、资产映射与许可例外同步；冻结证据、运行代码、Skill 载荷和已发布包不受影响。第三方权属/来源仍待核，不因归位而标为已审查。固定基线、36 项映射与验证见[迁移记录](../evidence/repository-literature-placement-20260919/README.md)。此前收口证据描述各自固定候选，不追写本次新路径；远端检查与集成以该批 PR 为准。
+
+文献迁移固定候选 `853f827` 的[干净检出及回退结果](../evidence/repository-literature-placement-20260919/clean-rehearsal.json)通过：36 项源 blob/字节一致、12 项仓库测试及目录/冻结/元数据/任务/能力检查通过；撤回迁移实现后跟踪树与 `ac585c8` 完全相同，恢复候选后再次检查通过。
