@@ -36,10 +36,7 @@ func seedRawExportSentinel(t *testing.T, dir string) {
 
 func newServer(t *testing.T, mode string) (*Server, *state.Store) {
 	t.Helper()
-	dir := t.TempDir()
-	if err := os.Chmod(dir, 0700); err != nil {
-		t.Fatal(err)
-	}
+	dir := filepath.Join(t.TempDir(), "state")
 	st, err := state.Open(dir)
 	if err != nil {
 		t.Fatal(err)

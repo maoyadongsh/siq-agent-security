@@ -74,7 +74,7 @@ func newWindowsAuthorityHTTPFixtureForPlatform(t *testing.T, mode string, requir
 		t.Helper()
 		t.Logf("Windows Authority setup %s: total=%s", name, time.Since(started).Round(time.Millisecond))
 	}
-	st, err := state.Open(t.TempDir())
+	st, err := state.Open(filepath.Join(t.TempDir(), "state"))
 	if err != nil {
 		t.Fatal(err)
 	}

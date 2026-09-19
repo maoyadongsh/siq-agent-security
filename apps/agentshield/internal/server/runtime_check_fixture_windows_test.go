@@ -16,7 +16,7 @@ import (
 
 func newRuntimeCheckHTTPServer(t *testing.T) *Server {
 	t.Helper()
-	st, err := state.Open(t.TempDir())
+	st, err := state.Open(filepath.Join(t.TempDir(), "state"))
 	if err != nil {
 		t.Fatal(err)
 	}

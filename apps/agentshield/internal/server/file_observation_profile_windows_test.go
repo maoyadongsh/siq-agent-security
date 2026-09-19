@@ -39,7 +39,7 @@ type windowsObservationFixture struct {
 // not start Hermes, OpenClaw or WorkBuddy and is not native-desktop evidence.
 func newWindowsObservationFixture(t *testing.T) windowsObservationFixture {
 	t.Helper()
-	st, err := state.Open(t.TempDir())
+	st, err := state.Open(filepath.Join(t.TempDir(), "state"))
 	if err != nil {
 		t.Fatal(err)
 	}

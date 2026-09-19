@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http/httptest"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -10,7 +11,7 @@ import (
 )
 
 func TestWindowsResourceConfirmationRejectsAmbiguousWireBeforeState(t *testing.T) {
-	st, err := state.Open(t.TempDir())
+	st, err := state.Open(filepath.Join(t.TempDir(), "state"))
 	if err != nil {
 		t.Fatal(err)
 	}
