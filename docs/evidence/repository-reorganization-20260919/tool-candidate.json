@@ -1,0 +1,15 @@
+{
+  "base_sha": "b32ee72e0d5c713145d5482d8ede49c513b97665",
+  "candidate_scope": "base plus uncommitted new verification tools, identified by SHA-256; not the 0.3.0 product source",
+  "files": {
+    "scripts/release/verify.py": "340655bcf05a9e7a5fb1a51a84e30049962374f492980a146e8a4f9b18c03100",
+    "scripts/release/readback.py": "99223e8ae5f5643ecbe3299b7c4d8cf49508a260ece682944aee59bd4f5f8c5c",
+    "scripts/release/package.py": "10f29284d2f3346dc17fcf90c30214f2a8ad5874b7ab0b6c681afd0e1deb584d",
+    "skills/siq-agent-security/scripts/verify_manifest.py": "101bb2dba5c0cccfdc09fef32e992f6dcbfb2c7f6b65b4262e86bf9ed9f3d1f2"
+  },
+  "unit_tests": {
+    "suite": "scripts/release/test_*.py",
+    "passed": 15
+  },
+  "platform": "linux/arm64"
+}
