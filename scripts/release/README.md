@@ -44,3 +44,9 @@ python3 -m ruff check scripts/release
 ```
 
 [本轮复验记录](../../docs/evidence/repository-reorganization-20260919/README.md)与[原发行记录](../../docs/evidence/releases/0.3.0/README.md)分别记账；重复验证不增加独立环境数量。
+
+## Skill 源码说明的原生检查
+
+`skill_source_smoke.py --binary <self-built-program> --target <os/arch> --report <new-file>` 用自建程序自扫描源码 Skill，确认缺 manifest 的 bootstrap 在创建状态/暂存前拒绝，并在两个独立临时状态目录验证 `start` 和 `init`→`serve` 的 status/pair/控制台/停止链路。日志、状态和配对输出不进入公开报告；不注册宿主钩子、后台系统服务或发布签名包。
+
+[skills-compat 工作流](../../.github/workflows/skills-compat.yml)使用四个原生目标，执行前比较真实 OS/架构以防误用交叉编译冒充原生运行。runner 标签按 [GitHub 官方说明](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)选择；托管主机上的源码检查仍不证明用户桌面、完整宿主验收、发行安装升级或 OS 厂商签名。源码正文变化不改 0.3.0 的签名载荷，后续安装包需要新的候选与签发。
