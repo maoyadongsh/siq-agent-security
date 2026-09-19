@@ -983,7 +983,10 @@ def test_go_desired_policy_sample_without_binary_fails_openshell_compile():
         compile_policy(dp, caps)
 
 
-RELEASE_MANIFEST = Path(__file__).parents[4] / "skills" / "siq-agent-security" / "skill-manifest.json"
+RELEASE_MANIFEST = (
+    Path(__file__).parents[4]
+    / "apps/agentshield/testdata/releases/siq-agent-security-v0.2.0/skill-manifest.json"
+)
 
 
 @pytest.mark.skipif(not (GO_SAMPLES / "skill-manifest.sample.json").exists(), reason="Go skill-manifest sample missing")
@@ -996,7 +999,6 @@ def test_go_skill_manifest_sample_conforms():
     assert all(row["status"] != "supported" for row in doc["support_matrix"])
 
 
-@pytest.mark.skipif(not RELEASE_MANIFEST.exists(), reason="signed skill-manifest.json not generated")
 def test_committed_skill_manifest_is_honest_and_valid():
     doc = json.loads(RELEASE_MANIFEST.read_text(encoding="utf-8"))
     errors = _validate("skill-manifest", doc)

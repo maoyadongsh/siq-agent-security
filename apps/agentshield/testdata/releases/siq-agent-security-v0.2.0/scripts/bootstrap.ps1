@@ -40,7 +40,7 @@ function Find-Python {
 }
 
 if (-not (Test-Path $Manifest)) {
-    throw "skill-manifest.json missing; development source is unsigned. Use a signed release package or build the daemon for development; refusing to start"
+    throw "skill-manifest.json missing; refusing to start"
 }
 
 $Bin = Find-Bin

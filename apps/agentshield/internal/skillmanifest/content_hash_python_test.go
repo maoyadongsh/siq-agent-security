@@ -75,19 +75,20 @@ func TestPythonHashSkillDirRejectsEscape(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "SKILL.md"), []byte("# x\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Symlink(filepath.Join(outside, "secret"), filepath.Join(dir, "leak")); err != nil {
-		t.Fatal(err)
-	}
+	makeHashEscape(t, dir, outside)
 	if _, err := HashSkillDir(dir); err == nil {
-		t.Fatal("go HashSkillDir must refuse symlink escape")
+		t.Error("go HashSkillDir must refuse link escape")
 	}
 	cmd := exec.Command("python3", py, "--print-content-hash", dir)
 	out, err := cmd.CombinedOutput()
 	if err == nil {
-		t.Fatalf("python must refuse symlink escape, got %s", out)
+		t.Fatalf("python must refuse link escape, got %s", out)
 	}
 	if !bytes.Contains(out, []byte("incomplete")) && !bytes.Contains(out, []byte("symlink")) {
 		t.Fatalf("unexpected python error: %s", out)
+	}
+	if got, err := os.ReadFile(filepath.Join(outside, "secret")); err != nil || string(got) != "x" {
+		t.Fatal("escape probe changed outside source", err)
 	}
 }
 

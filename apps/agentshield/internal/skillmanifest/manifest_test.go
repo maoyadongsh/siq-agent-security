@@ -191,14 +191,8 @@ func TestSampleManifestMatchesBuilder(t *testing.T) {
 }
 
 func TestCommittedReleaseManifest(t *testing.T) {
-	dir, err := FindSkillDir()
-	if err != nil {
-		t.Skip(err)
-	}
+	dir := historicalReleaseDir(t)
 	path := filepath.Join(dir, "skill-manifest.json")
-	if _, err := os.Stat(path); err != nil {
-		t.Skip("release manifest not generated yet")
-	}
 	m, err := LoadFile(path)
 	if err != nil {
 		t.Fatal(err)

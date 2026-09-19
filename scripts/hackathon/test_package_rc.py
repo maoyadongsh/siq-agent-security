@@ -25,7 +25,9 @@ class PackageTest(unittest.TestCase):
         self.assertEqual(inventory["secure-report"]["dependencies"], ["secure-research"])
         self.assertEqual(inventory["secure-delivery"]["dependencies"], ["secure-report"])
         self.assertIn("send_message", inventory["secure-delivery"]["tools"])
-        self.assertEqual(inventory["siq-agent-security"]["version"], "0.2.0")
+        self.assertEqual(inventory["siq-agent-security"]["version"], "0.3.0-rc.1")
+        self.assertEqual(inventory["siq-agent-security"]["version_scope"], "candidate source version")
+        self.assertEqual(inventory["siq-agent-security"]["manifest_kind"], "SKILL.md descriptor")
         for skill in inventory.values():
             self.assertEqual(skill["manifest_digest"], sha(source / skill["manifest_path"]))
             self.assertRegex(skill["source_digest"], r"^[0-9a-f]{64}$")
