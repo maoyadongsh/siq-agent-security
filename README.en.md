@@ -4,7 +4,8 @@
 
 <h1 align="center">SIQ Agent Security</h1>
 
-<p align="center"><strong>Secure Runtime for Agent Skills</strong></p>
+<p align="center"><strong>Secure Runtime for Agent Skills</strong><br />
+Agent permissions, runtime checks and execution audit for individuals and organizations</p>
 
 <p align="center">Agent Skills define what agents can do. SIQ defines what they are allowed to do.</p>
 
@@ -25,38 +26,43 @@
 
 ---
 
-SIQ Agent Security connects user authority, parameter provenance, tool execution and observed effects into an inspectable evidence chain. The Agent plans tasks and selects Skills. The SIQ runtime checks actions against trusted authority and determines task completion from independently collected effect evidence.
+**SIQ Agent Security is an open-source security management project for agents and Skills.** It helps individuals and organizations inventory agents in local or connected environments, review tool and resource permissions, manage installation and updates, and check authorization on integrated execution paths. Users keep working in their existing agents while SIQ provides permission management, action approval and task evidence.
 
-The project serves researchers, Agent tool and adapter developers, and platform teams evaluating agent permission controls. The initial demonstration runs on ordinary Linux with deterministic model fixtures, without API keys, a GPU or the enterprise control plane.
+The **personal client** provides a local service and browser console for agents, Skills and tasks. The **enterprise control plane**, Edge and Connectors support environment inventory, policy approval and deployment readback. Current delivery focuses on the personal client, with a signed `0.3.0-rc.1` prerelease available; convenient LAN team-device workflows remain planned.
+
+**Product focus: user-authorized security management throughout the Agent and Skill lifecycle.** Agents plan tasks; the SIQ runtime checks specific actions against trusted authority and associates signed receipts with observed effects where collection is integrated. The project also maintains reproducible provenance/effect research and DGX Spark/OpenShell integrations. Its deterministic research demonstration runs on ordinary Linux without model API keys or a GPU.
 
 > **Signed installation package (2026-09-19):** [0.3.0-rc.1 prerelease](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0-rc.1) provides an offline bundle, signed Skill and four target binaries, built from integrated main commit `58ab22e` and signed with the existing publisher key. Download the Release installation assets; GitHub automatic source archives and `skills/siq-agent-security/` remain development source. Linux ARM64 passed native bootstrap and tamper-rejection checks; the other targets have build and signature-pin verification only. See [installation instructions](docs/signed-release-packaging.md) and [signing/publication evidence](docs/evidence/releases/0.3.0-rc.1/README.md).
 
 ## Product direction and support status
 
-The current priority is the personal experience: discover existing agents and Skills, enable protection after the user confirms permissions, install and update Skills safely, and record authorization and execution evidence. The SIQ Skill provides interaction and operating guidance; actual decisions depend on the local Go runtime and platform adapters. Installing the Skill alone does not protect every agent. The local service provides a browser-based management console.
+The product follows **discovery and review → admission and authorization → execution and approval → traceability and maintenance**. Personal features include asset inventory, Skill install/update/removal, permission review, task activity, signed receipts and opt-in raw-content management. Enterprise features include environment and Edge enrollment, multi-tenant inventory and risk management, policy approval, deployment readback and audit. The immediate priority is native acceptance of the integrated personal features on a fixed release candidate, followed by team-device workflows.
 
-**Repository snapshot, 2026-09-18 (`main` at `2187fea`):** [PR #35](https://github.com/maoyadongsh/siq-agent-security/pull/35) added N01 state compatibility protection, recursive backup, recoverable migration and signed release compatibility checks. Subsequent work added Skill update checks, attribution, approval recovery and privacy controls. [PR #69](https://github.com/maoyadongsh/siq-agent-security/pull/69) merged a macOS stage; [PR #70](https://github.com/maoyadongsh/siq-agent-security/pull/70) merged OpenShell policy authorization and load checks; [PR #75](https://github.com/maoyadongsh/siq-agent-security/pull/75) merged the v6 constrained task execution and staged acceptance baseline; [PR #76](https://github.com/maoyadongsh/siq-agent-security/pull/76) merged a Windows timing test correction. Research tags and earlier binary releases do not include these changes. Code merge, component tests, native acceptance and formal release are tracked separately.
+The local Go service serves the personal browser console, the SIQ Skill provides operating guidance, and adapters connect host tool calls. Skill installation, asset discovery and runtime protection are confirmed separately; actual enforcement depends on the integrated host paths and platform evidence.
+
+**Repository snapshot, 2026-09-19 (`main` reviewed at `4965fbc`; product source for `0.3.0-rc.1` fixed at `58ab22e`):** The macOS stage, OpenShell policy and v6 constrained execution, Linux dual-host fixes and personal-client work are integrated. Windows #80–#83 added Writer, migration recovery, DACL, resource facts, host management and client lifecycle; #90 added junction verification and content-hash regressions. See the [local integration audit](docs/local-development-integration-audit-20260919.md), [Windows review](docs/windows-main-integration-review-20260919.md) and subsequent [source/release boundary update](docs/skill-source-release-boundary-20260919.md). The signed prerelease has been published and downloaded for verification. Historical component and native evidence remains bound to its recorded candidates; it does not establish full acceptance of this release.
 
 | Scope | Current evidence | Remaining work |
 | --- | --- | --- |
-| Linux personal management | Console, lifecycle, Skill update and selected native OpenClaw/Hermes paths have staged evidence; the sixth local candidate passed the installed B02 and combined R07/R04 journeys; raw-retention and task-export acceptance is complete for the current scope | The stock OpenClaw post-approval checkpoint, desktop visual checks and formal release acceptance; the supplemental continuous 12-hour admin-session leg is out of scope and is not claimed as passed |
-| macOS | LaunchAgent lifecycle and Luke's staged OpenClaw/Hermes/WorkBuddy work are merged or published in stages | Same-candidate native acceptance for all three hosts and distribution |
-| Windows | Task preparation, registration and lifecycle are on main; sunbo is still developing OpenClaw/Hermes/WorkBuddy support in separate branches | Review remaining changes and complete native and WSL2 acceptance separately |
+| Linux personal management | Console, lifecycle, Skill update and selected native OpenClaw/Hermes paths have staged evidence; the sixth local candidate passed the installed B02 and combined R07/R04 journeys; raw-retention and task-export acceptance is complete for the current scope; the 0.3.0-rc.1 bundle passed Linux ARM64 bootstrap, console and graceful-stop checks | The stock OpenClaw post-approval checkpoint, desktop visual checks and complete stable-release acceptance; the supplemental continuous 12-hour admin-session leg is out of scope and is not claimed as passed |
+| macOS | LaunchAgent lifecycle, staged OpenClaw/Hermes/WorkBuddy work and independent review fixes are merged; 0.3.0-rc.1 includes a manifest-signed arm64 binary | Same-candidate host retests, native installation/upgrade and Apple signing/notarization; the project manifest signature is not notarization |
+| Windows | Writer, migration recovery, DACL, resource/identity checks, host management, task install/upgrade/rollback and junction protection are merged; 0.3.0-rc.1 includes a manifest-signed amd64 binary and Skill | Native installation/upgrade and same-candidate host retests; historical OpenClaw evidence uses a WSL Agent, Hermes uses native CLI, and minimal WorkBuddy native I/O does not establish full approval recovery, desktop update or repeatability |
 | OpenClaw / Hermes / WorkBuddy | Linux delivery scope is OpenClaw and Hermes; selected real host paths have evidence | WorkBuddy is in scope only on macOS/Windows; no CodeBuddy result can establish WorkBuddy acceptance |
 | LAN team management | Optional enterprise Control API, Edge and Connectors already exist | Team device onboarding, unified management and acceptance after the personal phase |
 
 New CodeBuddy integration work is cancelled across all platforms. Historical records retain safe inspection, denial, revocation and uninstall paths. Linux WorkBuddy is outside the current delivery scope.
 
-The v6 OpenShell task endpoint is now in main. A policy-apply response alone is not proof of task execution: the execution path must bind its CLI and endpoint, confirm policy and instance readback, and recheck authorization before starting work. The sixth local candidate completed a zero-fail 373-step D05 run and a 57/57 B3 functional journey. Historical gateway and performance evidence still belongs to its recorded candidate; remote single-task stop confirmation, the remaining external/protocol conditions, performance and release acceptance remain open. See the [current Linux taskbook](docs/linux-dual-host-integration-development-taskbook-20260918-205119.md), its [progress ledger](docs/linux-dual-host-progress-20260918.md), the [v6 ledger](docs/personal-v6-integration-progress-20260917.md), and the [original development ledger](docs/personal-experience-development-progress-20260910.md) for exact scope. Discovery does not mean protection is enabled; enforcement depends on the integrated tool paths.
+The v6 OpenShell task endpoint is now in main. A policy-apply response alone is not proof of task execution: the execution path must bind its CLI and endpoint, confirm policy and instance readback, and recheck authorization before starting work. The sixth local candidate completed a zero-fail 373-step D05 run and a 57/57 B3 functional journey. Historical gateway and performance evidence still belongs to its recorded candidate; remote single-task stop confirmation, the remaining external/protocol conditions, performance and complete stable-release acceptance remain open. See the [current Linux taskbook](docs/linux-dual-host-integration-development-taskbook-20260918-205119.md), its [progress ledger](docs/linux-dual-host-progress-20260918.md), the [v6 ledger](docs/personal-v6-integration-progress-20260917.md), and the [original development ledger](docs/personal-experience-development-progress-20260910.md) for exact scope. Discovery does not mean protection is enabled; enforcement depends on the integrated tool paths.
 
 OpenClaw versions are tracked separately as well. The shared installation on the Linux validation host remains 2026.5.12. The current Linux candidate also ran the public OpenClaw 2026.9.4 CLI under isolated Node 24.18.0 through the [controlled-start entrypoint](docs/openclaw-controlled-start-linux-20260919.md), completing the product-managed native journey 22/22. That result belongs to a digest-pinned temporary patch copy: stock 2026.9.4 still lacks the post-approval, pre-execution final-parameter recheck contract required by SIQ. It is therefore not a default upgrade, an upstream approval capability, or formal release support. A version bump does not raise the protection level without same-version, same-candidate evidence.
 
 ## Core value
 
-**Core outcome: Trusted Agent Execution.** Agents plan dynamically; SIQ constrains permissions through trusted intent, checks actions against parameter provenance, and determines completion from observed effects.
+**Core outcome: manageable permissions, checked execution and traceable results.** Users can review what is allowed, check whether an integrated action is authorized, and inspect receipts and observations to establish what happened. These capabilities support Trusted Agent Execution.
 
-| Research focus | Implemented mechanism | Business use |
+| User concern | Implemented product and technical mechanism | Practical use |
 | :--- | :--- | :--- |
+| **Manage assets and changes** | Asset discovery and attribution, Skill admission checks, installation/update previews, confirmation and removal | Review sources and permission changes throughout the lifecycle |
 | **Authority independent of the model** | A Go runtime checks Grant / Intent, session bindings and approvals before execution; model proposals cannot expand permissions | Auditable authorization boundaries for automated operations |
 | **Same value, different provenance** | Trusted Context and parameter provenance bind to actions; identical recipient values can be allowed or denied based on trusted-database / MCP origin | Constrain recipient substitution and unauthorized delivery induced by tool results |
 | **Completion grounded in effects** | Signed receipts associate actions; independent file and controlled-receiver observers distinguish tool success, observed effects and task completion | Evidence for delivery acceptance, fault diagnosis and execution audits |
@@ -83,7 +89,8 @@ For distribution through `vercel-labs/skills`, run the [pinned compatibility che
 
 | Your goal | Entry point | What to expect |
 | :--- | :--- | :--- |
-| Manage local agents and Skills | [Personal console](#personal-console-linux-source-build) · [Operations guide](AGENTSHIELD.md) | Start the local service, pair the browser and enable protection within verified platform scope |
+| Manage local agents and Skills | [Signed package installation](docs/signed-release-packaging.md) · [Source build](#personal-console-linux-source-build) · [Operations guide](AGENTSHIELD.md) | Start the local service, pair the browser and enable protection within verified platform scope |
+| Govern organizational assets and policies | [Control-plane setup](docs/control-plane.md#快速开始) · [Production runbook](docs/enterprise-production-runbook-v1.md) | Enroll environments and Edge devices, review assets, approve policies and inspect deployment evidence |
 | Try the complete flow | [Quick start](#quick-start) | A local demonstration without model keys |
 | Reproduce and evaluate | [Reproduction guide](REPRODUCIBILITY.md) · [Research index](docs/research/README.md) | Fixed cases, evaluation protocols and evidence |
 | Integrate your Agent | [Components and integrations](#components-and-integrations) | Runtime, adapter and contract entry points |
@@ -167,6 +174,8 @@ flowchart LR
 Ordinary Observation correlation and independent EffectEvidence establish different things. See the [technical report](docs/research/technical-report.md), [contracts](packages/contracts/README.md) and [security boundaries](#security-boundaries) for architecture and protocol details.
 
 ## Quick start
+
+For the signed version, download the [0.3.0-rc.1 offline bundle](https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.0-rc.1/siq-agent-security-0.3.0-rc.1-bundle.zip) and follow the [installation instructions](docs/signed-release-packaging.md) to extract it, select your binary and run bootstrap. No local Go/UI compilation is needed. The source-development and research steps remain below; GitHub automatic Source code archives are not signed installation packages.
 
 ### Personal console: Linux source build
 
@@ -307,9 +316,15 @@ See the [threat model](docs/threat-model.md), [capability matrix](docs/agentshie
 
 Contributions are welcome for ordinary Linux reproduction, same-value provenance explanations, fixture diagnostics, metric corrections and negative cases with documented origins. Read [CONTRIBUTING.md](CONTRIBUTING.md), then choose a [starter task](docs/research/community-backlog.md), [Issue](https://github.com/maoyadongsh/siq-agent-security/issues) or [Discussion](https://github.com/maoyadongsh/siq-agent-security/discussions).
 
-Product development proceeds from the personal experience to LAN team management. Priorities include cross-platform background lifecycle, trusted Skill attribution during execution, resuming approved actions, task traceability, privacy controls and native platform acceptance. See the [personal and team development taskbook](docs/personal-experience-lan-team-next-development-taskbook-20260913-192253.md).
+Delivery proceeds from the personal experience to LAN team management:
 
-Research priorities remain long-term archival and a DOI, independent external reproduction, new experiments with protocols defined in advance, and paper/artifact review. A new binary research release still needs separate distribution and native acceptance checks. Actual progress is recorded in the [operations report](docs/research/operations-20260908.md) and [task ledger](docs/open-source-research-tasks-20260908.md). Contributions follow the [DCO](DCO) and [governance rules](GOVERNANCE.md); community participation follows the [code of conduct](CODE_OF_CONDUCT.md).
+1. **Complete release-candidate acceptance.** Complete same-candidate native installation, upgrade, rollback and exit checks across all four targets. Retain the existing Linux ARM64 bootstrap evidence and fill the remaining native scenarios, including platform signing/notarization and compatibility requirements.
+2. **Complete real-host workflows.** Retest discovery, Skill changes, authorization, approval recovery, traceability and privacy within each platform’s scope; resolve the remaining OpenClaw checkpoint, OpenShell stop and performance conditions using evidence from the same version and candidate.
+3. **Develop team-device management.** Build on the existing control plane and Edge to improve device onboarding, shared authorization, offline recovery and cross-device audit, with actual environment acceptance before expanding delivery.
+
+See the [v5 taskbook](docs/personal-experience-lan-team-next-development-taskbook-20260915-232155.md), [follow-up ledger](docs/personal-experience-closure-progress-20260913.md) and [Linux dual-host ledger](docs/linux-dual-host-progress-20260918.md).
+
+Research priorities remain long-term archival and a DOI, independent external reproduction, new experiments with protocols defined in advance, and paper/artifact review. The personal-client 0.3.0-rc.1 release does not change the research source tag, experimental denominators or conclusions; new research artifacts still need independent identity, distribution and acceptance records. Actual progress is recorded in the [operations report](docs/research/operations-20260908.md) and [task ledger](docs/open-source-research-tasks-20260908.md). Contributions follow the [DCO](DCO) and [governance rules](GOVERNANCE.md); community participation follows the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Licensing, citation and historical material
 
