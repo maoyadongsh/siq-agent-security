@@ -2,15 +2,20 @@
 """Verify SIQ-installed Skill permissions with the public Hermes CLI in isolation.
 
 Uses existing native conversation checks; no sibling internal code imports.
-The selected permission envelope scopes the instance, not trusted Skill attribution.
+The selected permission envelope scopes the instance. A test-only native hook
+supplies Hermes-generated task identity to the product SEC issuance API before
+the first tool call; the installed adapter still enforces attribution.
 """
 
 import argparse
 import hashlib
 import importlib.util
 import json
+import secrets
 import shutil
 import tempfile
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
@@ -23,6 +28,129 @@ fixture = managed.fixture
 
 
 class Harness(managed.Harness):
+    def prepare_task_attribution(self):
+        """Bind a real Hermes task and issue SEC before its first tool call."""
+        profile = Path(self.env["HERMES_HOME"])
+        config = profile / "config.yaml"
+        original_config = config.read_bytes()
+        observer = profile / "plugins/siq-installed-sec-bootstrap"
+        nonce = secrets.token_hex(32)
+        lock = threading.Lock()
+        seen = set()
+        failures = []
+        harness = self
+
+        class Bootstrap(BaseHTTPRequestHandler):
+            def log_message(self, *_):
+                pass
+
+            def do_POST(self):
+                try:
+                    fixture.require(self.path == "/bind", "unexpected SEC bootstrap route")
+                    fixture.require(self.headers.get("Authorization") == "Bearer " + nonce,
+                                    "SEC bootstrap nonce mismatch")
+                    size = int(self.headers.get("Content-Length", "0"))
+                    fixture.require(0 < size <= 2048, "SEC bootstrap request budget")
+                    body = json.loads(self.rfile.read(size))
+                    fixture.require(set(body) == {"session_id", "task_id"},
+                                    "SEC bootstrap fields mismatch")
+                    session_id, task_id = body["session_id"], body["task_id"]
+                    fixture.require(isinstance(session_id, str) and 0 < len(session_id) <= 256,
+                                    "native session invalid")
+                    fixture.require(isinstance(task_id, str) and 0 < len(task_id) <= 256,
+                                    "native task invalid")
+                    with lock:
+                        pair = (session_id, task_id)
+                        fixture.require(not seen or pair in seen, "unexpected second native task")
+                        if pair not in seen:
+                            credential = Path(harness.issued["credential_path"]).read_text().strip()
+                            harness.api(
+                                "/v1/runtime-sessions",
+                                {"schema_version": "local-runtime-session-enroll/v1",
+                                 "session_id": session_id},
+                                token=credential,
+                            )
+                            harness.api(
+                                "/v1/skill-contexts",
+                                {"schema_version": "local-skill-execution-context-issue/v1",
+                                 "instance_id": harness.instance_id,
+                                 "session_id": session_id, "task_id": task_id,
+                                 "install_id": harness.skill_installation["install_id"],
+                                 "ttl_seconds": 3600,
+                                 "actor_id": "automated-fixture-operator",
+                                 "confirm_issue": True},
+                                expected=201,
+                            )
+                            seen.add(pair)
+                    raw = b'{"ready":true}'
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(raw)))
+                    self.end_headers()
+                    self.wfile.write(raw)
+                except (RuntimeError, ValueError, TypeError, KeyError, OSError) as error:
+                    failures.append(type(error).__name__)
+                    self.send_error(500, "SEC bootstrap failed")
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Bootstrap)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self._sec_bootstrap = (server, thread, observer, config, original_config, seen, failures)
+        try:
+            observer.mkdir(parents=True)
+            (observer / "plugin.yaml").write_text(
+                "name: siq-installed-sec-bootstrap\nversion: 1.0.0\n"
+                "description: Isolated installed-Skill SEC synchronizer.\n"
+                "provides_hooks:\n  - pre_llm_call\nhooks:\n  - pre_llm_call\n"
+            )
+            (observer / "__init__.py").write_text(
+                "import json, os, urllib.request\n"
+                "_done = set()\n"
+                "def _pre_llm_call(session_id='', task_id='', **_):\n"
+                "    key = (session_id, task_id)\n"
+                "    if key in _done: return None\n"
+                "    if not session_id or not task_id: raise RuntimeError('missing native identity')\n"
+                "    data = json.dumps({'session_id': session_id, 'task_id': task_id}).encode()\n"
+                "    req = urllib.request.Request(os.environ['SIQ_SEC_BOOTSTRAP_URL'], data=data,\n"
+                "        headers={'Content-Type': 'application/json',\n"
+                "                 'Authorization': 'Bearer ' + os.environ['SIQ_SEC_BOOTSTRAP_NONCE']})\n"
+                "    with urllib.request.build_opener(urllib.request.ProxyHandler({})).open(req, timeout=20) as response:\n"
+                "        result = json.loads(response.read(4097))\n"
+                "    if response.status != 200 or result != {'ready': True}:\n"
+                "        raise RuntimeError('SEC bootstrap rejected')\n"
+                "    _done.add(key)\n"
+                "def register(ctx): ctx.register_hook('pre_llm_call', _pre_llm_call)\n"
+            )
+            self.command([str(self.args.hermes_cli), "plugins", "enable",
+                          "siq-installed-sec-bootstrap"], cwd=self.workspace, env=self.env)
+            self.env["SIQ_SEC_BOOTSTRAP_URL"] = f"http://127.0.0.1:{server.server_port}/bind"
+            self.env["SIQ_SEC_BOOTSTRAP_NONCE"] = nonce
+        except (RuntimeError, OSError, ValueError):
+            self.cleanup_task_attribution()
+            raise
+
+    def cleanup_task_attribution(self):
+        resources = getattr(self, "_sec_bootstrap", None)
+        if resources is None:
+            return
+        server, thread, observer, config, original_config, seen, failures = resources
+        self.env.pop("SIQ_SEC_BOOTSTRAP_URL", None)
+        self.env.pop("SIQ_SEC_BOOTSTRAP_NONCE", None)
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)
+        config.write_bytes(original_config)
+        shutil.rmtree(observer, ignore_errors=True)
+        self._sec_bootstrap = None
+        self.sec_bootstrap_count = len(seen)
+        self.sec_bootstrap_failures = failures
+
+    def verify_task_attribution(self):
+        fixture.require(
+            not self.sec_bootstrap_failures and self.sec_bootstrap_count == 1,
+            "native SEC bootstrap did not bind exactly one task",
+        )
+
     def withdraw_runtime_authority(self):
         if not self.args.remove_installed_skill:
             return super().withdraw_runtime_authority()
@@ -119,13 +247,21 @@ class Harness(managed.Harness):
                 else {}
             ),
             filesystem={
-                "read_only": [str(self.workspace)],
-                "read_write": [],
+                "read_only": [str(getattr(self, "narrow_read_only", self.workspace))],
+                "read_write": ([str(self.narrow_read_write)] if hasattr(self, "narrow_read_write") else []),
             },
         )
         for index, overlap in enumerate(result["grant"]["overlap_conflicts"]):
             if overlap["resolution"] == "unresolved":
                 action("resolve-overlap", index=index)
+        # A derived native acceptance driver may need a per-use approval on an
+        # installed Skill. The default journey remains unchanged.
+        if approval_tools := getattr(self, "require_approval_tools", ()):
+            action(
+                "require-approval",
+                schema_version="grant-tool-approval/v1",
+                tools=list(approval_tools),
+            )
         challenge = action("challenge")["challenge"]
         action("approve", challenge_id=challenge["challenge_id"], nonce=challenge["nonce"])
         fixture.require(result["grant"]["status"] == "approved", "grant approval did not transition")
@@ -238,6 +374,17 @@ class Harness(managed.Harness):
             "changed_file_count": len(plan["changes"]),
             "runtime_state": diagnosis["runtime_state"],
         }
+        self.api(
+            "/v1/raw-task-content/activation",
+            {
+                "schema_version": "local-raw-task-content-activate/v1",
+                "actor_id": "automated-fixture-operator",
+                "retention_seconds": 3600,
+                "budget_bytes": 16 << 20,
+            },
+            expected=201,
+        )
+        self.raw_grant = None
         self.env["SIQ_AGENT_SECURITY_AGENT_ID"] = "forged-environment-agent"
         fixture.require(self.api("/v1/intents")["items"] == [], "manual intent created")
 

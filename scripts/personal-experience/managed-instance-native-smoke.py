@@ -399,39 +399,77 @@ class Harness(fixture.Harness):
         thread = threading.Thread(target=model.serve_forever, daemon=True)
         thread.start()
         endpoint = f"http://127.0.0.1:{model.server_port}"
-        env = {
-            **self.env,
-            "CUSTOM_BASE_URL": endpoint + "/v1",
-        }
+        prepare_task = getattr(self, "prepare_task_attribution", None)
+        cleanup_task = getattr(self, "cleanup_task_attribution", None)
+        task_prepared = False
         try:
+            if prepare_task is not None:
+                prepare_task()
+                task_prepared = True
+            env = {**self.env, "CUSTOM_BASE_URL": endpoint + "/v1"}
             process = subprocess.run(
-                [
-                    str(self.args.hermes_cli),
-                    "chat",
-                    "--provider",
-                    "custom",
-                    "--model",
-                    "siq-synthetic-fixture",
-                    "--toolsets",
-                    "file",
-                    "--max-turns",
-                    "6",
-                    "--run-budget",
-                    "45",
-                    "--ignore-rules",
-                    "--quiet",
-                    "--oneshot",
-                    "-q",
-                    "Execute the SIQ synthetic runtime check.",
-                ],
-                cwd=self.workspace,
-                env=env,
-                capture_output=True,
-                timeout=90,
-                check=False,
+                    [
+                        str(self.args.hermes_cli),
+                        "chat",
+                        "--provider",
+                        "custom",
+                        "--model",
+                        "siq-synthetic-fixture",
+                        "--toolsets",
+                        "file",
+                        "--max-turns",
+                        "6",
+                        "--run-budget",
+                        "45",
+                        "--ignore-rules",
+                        "--quiet",
+                        "--oneshot",
+                        "-q",
+                        "Execute the SIQ synthetic runtime check.",
+                    ],
+                    cwd=self.workspace,
+                    env=env,
+                    capture_output=True,
+                    timeout=90,
+                    check=False,
             )
+            if task_prepared and cleanup_task is not None:
+                cleanup_task()
+                task_prepared = False
+                env.pop("SIQ_SEC_BOOTSTRAP_URL", None)
+                env.pop("SIQ_SEC_BOOTSTRAP_NONCE", None)
             if process.returncode:
-                raise RuntimeError("public CLI did not complete in isolated fixture")
+                # Do not print CLI output: it can contain host paths or model
+                # content. The exit code and model-handler failure categories
+                # distinguish a fixture protocol failure from a host exit.
+                diagnostic_markers = (
+                    "allowed read missing: siq_block",
+                    "allowed read missing: host_result",
+                    "native block missing",
+                    "unexpected model retry or lost history",
+                    "native binding unavailable for raw grant",
+                    "auxiliary request budget",
+                )
+                categories = [
+                    next((marker for marker in diagnostic_markers if marker in entry),
+                         entry.split(":", 1)[0])
+                    for entry in failures
+                ]
+                try:
+                    decision_codes = [
+                        {"action": row.get("action"), "reason_code": row.get("reason_code")}
+                        for row in self.receipts() if row.get("record_type") == "decision"
+                    ]
+                except (RuntimeError, OSError, ValueError):
+                    decision_codes = [{"error": "receipt_read_unavailable"}]
+                raise RuntimeError(
+                    f"public CLI did not complete in isolated fixture "
+                    f"(exit={process.returncode}, model_steps={len(received)}, "
+                    f"model_failure_categories={categories}, decision_codes={decision_codes})"
+                )
+            verify_task = getattr(self, "verify_task_attribution", None)
+            if verify_task is not None:
+                verify_task()
             fixture.require(not failures and len(received) == 4, "native conversation did not execute all probes")
             fixture.require(not forbidden.exists(), "forbidden write executed")
             records = self.receipts()
@@ -594,6 +632,8 @@ class Harness(fixture.Harness):
                 ],
             }
         finally:
+            if task_prepared and cleanup_task is not None:
+                cleanup_task()
             model.shutdown()
             model.server_close()
             thread.join(timeout=2)

@@ -8,6 +8,7 @@ Prior v1 measurements remain historical; v2 results require a fresh run.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import math
@@ -32,6 +33,15 @@ RELATIVE_SCENARIOS = ["doctor_readback"]
 RELATIVE_BUDGET_RATIO = 1.30
 BUDGETS = {"doctor_readback": 15000.0, "doctor_unreachable": 15000.0, "aux_control_plane_restore": 60000.0}
 MARKER = "SIQ_AUX_CONTROL_PLANE_RESTORE_VERIFIED"
+REQUIRED_ENV = (
+    "B2B3_OLD_BIN",
+    "B2B3_NEW_BIN",
+    "B2B3_CLI_BIN",
+    "B2B3_SANDBOX",
+    "B2B3_CONFIRM_OWNED_TARGET",
+    "SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT",
+    "B2B3_OUT",
+)
 
 
 def sha(path):
@@ -133,7 +143,25 @@ def budget_misses(verdicts):
             if v.get("absolute_verdict") == "MISS" or v.get("verdict") == "MISS"]
 
 
-def main():
+def argument_parser():
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "Configuration is supplied only through these required environment variables:\n  "
+            + "\n  ".join(REQUIRED_ENV)
+            + "\n\n--help never reads those variables or contacts the gateway."
+        ),
+    )
+    return parser
+
+
+def main(argv=None):
+    parser = argument_parser()
+    parser.parse_args(argv)
+    missing = [name for name in REQUIRED_ENV if not os.environ.get(name)]
+    if missing:
+        parser.error("missing required environment: " + ", ".join(missing))
     old, new, cli = (Path(os.environ[k]).resolve(strict=True)
                      for k in ("B2B3_OLD_BIN", "B2B3_NEW_BIN", "B2B3_CLI_BIN"))
     target = os.environ["B2B3_SANDBOX"]

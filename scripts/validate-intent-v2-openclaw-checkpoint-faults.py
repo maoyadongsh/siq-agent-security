@@ -102,7 +102,8 @@ class ApprovalHarness(native.OpenClawHarness):
                     "controlUi": {"enabled": False},
                 },
                 "browser": {"enabled": False},
-                "canvasHost": {"enabled": False},
+                # canvasHost/canvas was removed upstream in 2026.9; omitting
+                # it is valid on both the pinned older and current schemas.
                 "discovery": {"mdns": {"mode": "off"}},
                 "cron": {"enabled": False},
                 "update": {"checkOnStart": False},
@@ -323,10 +324,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--openclaw-root", type=Path, required=True)
     parser.add_argument("--node", type=Path, required=True)
+    parser.add_argument("--binary", type=Path, help="use a fixed SIQ candidate")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     args.openclaw_root = args.openclaw_root.resolve()
     args.node = args.node.absolute()
+    if args.binary:
+        args.binary = args.binary.resolve(strict=True)
+        require(args.binary.is_file(), "SIQ candidate must be a regular file")
     with tempfile.TemporaryDirectory(prefix="siq-openclaw-approval-") as temporary:
         harness = ApprovalHarness(Path(temporary), args)
         try:

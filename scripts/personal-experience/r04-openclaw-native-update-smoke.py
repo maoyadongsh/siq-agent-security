@@ -245,7 +245,10 @@ class Harness(r01sec.Harness):
         # the transcript it actually belongs to.
         harness = self
         calls_issued = self.calls_issued
-        counters = {"main": 0, "override": 0}
+        # A second native session may use the same fixture server during the
+        # raw-content isolation leg. Each OpenClaw session starts with an
+        # empty model transcript; never reuse another session's index.
+        counters = {"main": 0}
         failures, requests_seen, contents_seen = [], [], []
         self.model_failures, self.model_requests_seen = failures, requests_seen
         self.model_contents_seen = contents_seen
@@ -289,9 +292,9 @@ class Harness(r01sec.Harness):
                     require(0 < size < 2_000_000, "model request size invalid")
                     body = json.loads(self.rfile.read(size))
                     steps = harness.override_steps if harness.session_override else harness.steps
-                    transcript = "override" if harness.session_override else "main"
-                    index = counters[transcript]
-                    counters[transcript] += 1
+                    transcript = harness.session_override or "main"
+                    index = counters.get(transcript, 0)
+                    counters[transcript] = index + 1
                     require(index < len(steps), "unexpected model request")
                     results = [item for item in body.get("messages", []) if item.get("role") == "tool"]
                     expected_results = sum(1 for entry in steps[:index] if entry is not None)
