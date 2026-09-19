@@ -16,3 +16,7 @@ The Mermaid inventory is derived from the exact npm 11.4.1 distribution source m
 Web development dependencies are included in the lock inventory even when not intentionally redistributed in a runtime bundle. A new binary distribution must inspect its actual emitted files, helper code, fonts and dependencies rather than claiming this inventory is a complete binary SBOM. Installed Python wheels and container base images are outside the current source distribution; redistributing them requires their own notices. Model weights and external provider services are not covered by project licenses.
 
 License texts under LICENSES/third-party, the DCO text, and the standard license texts retain their original terms. The license source URLs and evidence limitations are in [license review](docs/research/license-review.md).
+
+## Research literature
+
+Third-party publications are organized under [research/literature/papers](research/literature/papers/README.md), with the historical spreadsheet and [catalog](research/literature/catalog.json) in the parent directory. These are the same files formerly stored under `Frontier References on Agent Security/`, moved without changing names or bytes. Original paths and content hashes remain recorded. Their inclusion or relocation does not establish publication status, peer review, redistribution permission, or coverage by this project's Apache-2.0/CC-BY grants. Bibliographic details and rights marked unreviewed remain unreviewed; this literature catalog is separate from software dependency notices and external evaluations.

@@ -1,0 +1,124 @@
+{
+  "candidate_sha": "853f8275fcee0846df8cba564281e877c1d635e0",
+  "implementation_sha": "23b063e623702ab05d6918b77f443284e8ebfd6e",
+  "rollback_target": "ac585c896b525deef6618eb582b7957c1a556dcf",
+  "checks": [
+    {
+      "command": [
+        "git",
+        "worktree",
+        "add",
+        "--detach",
+        "<temporary clean checkout>",
+        "853f8275fcee0846df8cba564281e877c1d635e0"
+      ],
+      "exit_code": 0,
+      "output": "Preparing worktree (detached HEAD 853f827)\nHEAD is now at 853f827 Merge remote-tracking branch 'origin/main' into codex/research-literature-placement-20260919"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/repository/check.py",
+        "--base",
+        "origin/main"
+      ],
+      "exit_code": 0,
+      "output": "{\"result\": \"passed\", \"asset_groups\": 21, \"documents\": 35, \"local_links\": 758, \"catalogs\": {\"research/literature/catalog.json\": 36, \"evaluations/catalog.json\": 15}}"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/repository",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "output": "......fatal: Needed a single revision\n......\n----------------------------------------------------------------------\nRan 12 tests in 0.108s\n\nOK"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/research/check_metadata.py"
+      ],
+      "exit_code": 0,
+      "output": "{\"result\": \"passed\", \"community_forms\": 6, \"cc_documents\": 14, \"documents\": 44}"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_research_task_ledger.py"
+      ],
+      "exit_code": 0,
+      "output": "{\"result\": \"passed\", \"workstreams\": 18, \"tasks\": 71, \"status_counts\": {\"done\": 47, \"not_applicable\": 1, \"todo\": 20, \"blocked\": 1, \"in_progress\": 2}, \"kind_counts\": {\"engineering\": 9, \"manual\": 2, \"conditional\": 3, \"documentation\": 25, \"validation\": 9, \"external_manual\": 11, \"research\": 9, \"review\": 1, \"recurring\": 2}}"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_capability_honesty.py"
+      ],
+      "exit_code": 0,
+      "output": "OK: capability matrix + runbook honesty gates"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "revert",
+        "--no-commit",
+        "23b063e623702ab05d6918b77f443284e8ebfd6e"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "ac585c896b525deef6618eb582b7957c1a556dcf",
+        "--"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "reset",
+        "--hard",
+        "853f8275fcee0846df8cba564281e877c1d635e0"
+      ],
+      "exit_code": 0,
+      "output": "HEAD is now at 853f827 Merge remote-tracking branch 'origin/main' into codex/research-literature-placement-20260919"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/repository/check.py",
+        "--base",
+        "origin/main"
+      ],
+      "exit_code": 0,
+      "output": "{\"result\": \"passed\", \"asset_groups\": 21, \"documents\": 35, \"local_links\": 758, \"catalogs\": {\"research/literature/catalog.json\": 36, \"evaluations/catalog.json\": 15}}"
+    }
+  ],
+  "unchanged_files": 36,
+  "rollback_tracked_tree_equal": true,
+  "restored_clean": true,
+  "result": "passed",
+  "checked_at": "2026-09-19T13:43:53.449737+00:00",
+  "comparison_base_sha": "3f90a2396a4630596970698df947e999298e62b5",
+  "path_environment": "fresh temporary Git worktree whose path contains spaces and Unicode"
+}
