@@ -2,17 +2,17 @@
 
 Reproduce an observation, improve an explanation, or propose a focused change.
 
-[简体中文首页](README.md) · [English home](README.en.md) · [Research guide](docs/research/README.md)
+[简体中文首页](README.md) · [English home](README.en.md) · [Research guide](research/README.md)
 
 ---
 
 ## Choose a contribution
 
-Start with [reproduction](REPRODUCIBILITY.md), the [research guide](docs/research/README.md), or a scoped [community task](docs/research/community-backlog.md). Reproduction failures and denominator corrections are useful contributions. Use synthetic data and preserve unsuccessful attempts. Vulnerabilities go through [SECURITY.md](SECURITY.md).
+Start with [reproduction](REPRODUCIBILITY.md), the [research guide](research/README.md), or a scoped [community task](docs/research/community-backlog.md). Reproduction failures and denominator corrections are useful contributions. Use synthetic data and preserve unsuccessful attempts. Vulnerabilities go through [SECURITY.md](SECURITY.md).
 
 ## Prepare a pull request
 
-Open a branch and pull request. Describe the trigger, changed behavior, provenance of added code/data, and commands actually run. Follow the nearest AGENTS.md. Changes to security contracts start with the schema/specification and include a negative test showing the old bypass is rejected. Do not change frozen V5 numbers or replace its evidence; new runs receive new paths and identities.
+Open a branch and pull request. Describe the trigger, changed behavior, provenance of added code/data, and commands actually run. Follow the nearest AGENTS.md and the [current development entry](docs/development/current.md). Start a scoped branch/worktree from an up-to-date main; old handoffs describe historical candidates. Place literature under `research/literature/` and evaluation indexes under `evaluations/`; keep original evidence at its recorded paths. Changes to security contracts start with the schema/specification and include a negative test showing the old bypass is rejected. Do not change frozen V5 numbers or replace its evidence; new runs receive new paths and identities.
 
 ## Validate your change
 
@@ -20,6 +20,9 @@ Usual checks from the repository root:
 
 ```bash
 python3 scripts/check_research_task_ledger.py
+python3 scripts/research/check_metadata.py
+# Navigation/catalog changes; origin/main must be fetched locally:
+python3 scripts/repository/check.py --base origin/main
 git diff --check
 # Go runtime changes:
 (cd apps/agentshield && go vet ./... && go test ./...)

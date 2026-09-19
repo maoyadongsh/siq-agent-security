@@ -2,7 +2,7 @@
 
 Respectful collaboration around methods, evidence and reproducibility.
 
-[简体中文首页](README.md) · [English home](README.en.md) · [Research guide](docs/research/README.md)
+[简体中文首页](README.md) · [English home](README.en.md) · [Research guide](research/README.md)
 
 ---
 

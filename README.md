@@ -442,6 +442,7 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 | 已归档观察 | 结果 | 证据与范围 |
 | --- | --- | --- |
+| Skill 源码四目标检查 | **4/4** 原生目标通过 | [固定候选记录](docs/evidence/repository-reorganization-final-20260919/README.md)；PR #97 head `bf7dced`，实际 merge 检出 SHA 见各报告；Linux amd64/arm64、macOS arm64、Windows amd64 的自扫描、缺清单拒绝与启动/配对/控制台/停止。属于源码检查，不是 0.3.0 系统服务安装、升级或宿主整体验收 |
 | 0.3.0 正式安装包验证 | **14/14** 检查通过 | [发行包验证](docs/evidence/releases/0.3.0/verification.json)；源码 `83fde2d`，官方根验签、篡改拒绝及 Linux ARM64 安装链路；新增执行包内 INSTALL.md，从空状态完成启动、配对、控制台与停止；其他目标未做原生安装验收 |
 | 0.3.0 正式发布与远端回读 | **8/8** 资产摘要一致 | [发布回读记录](docs/evidence/releases/0.3.0/publication.json)；普通 Release、Latest，四目标 pin、Skill 签名与内容复验通过，Linux ARM64 签名 URL 下载与暂存通过 |
 | 0.3.0 发行源码 CI | **5/5** 工作流成功 | [源码 CI 记录](docs/evidence/releases/0.3.0/source-ci.json)；固定提交 `83fde2d`，ci、research、runtime-security、personal-experience、sonarcloud；不替代发行资产的原生安装验收 |
