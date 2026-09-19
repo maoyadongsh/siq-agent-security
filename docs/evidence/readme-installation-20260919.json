@@ -1,0 +1,18 @@
+{
+  "schema_version": "readme-install-check/v1",
+  "version": "0.3.0-rc.1",
+  "host": "linux/arm64",
+  "archive_sha256": "8798594a13f2acb70343d3b4292006e974baf207955ec8aa737203cec62a9b14",
+  "guide": "docs/signed-release-packaging.md",
+  "guide_sha256": "cf323cc15faf96c179cbf178810df0692304b2bdd20aec0f100e79f460f4143b",
+  "command_source": "verbatim Linux bash block; only port replaced with an unused loopback port",
+  "fresh_state": true,
+  "xdg_runtime_dir_unset": true,
+  "verified_program_start_initializes_state": true,
+  "identity_status_passed": true,
+  "pair_passed": true,
+  "console_passed": true,
+  "graceful_stop_passed": true,
+  "windows_macos_native_validation": "not_run",
+  "private_logs_committed": false
+}

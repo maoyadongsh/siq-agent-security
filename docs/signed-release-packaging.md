@@ -48,24 +48,47 @@ python3 scripts/release/package.py \
 
 ## 用户从完整包安装
 
-把完整包解压到新目录，在该目录执行。Linux/macOS 选择对应二进制；以下以 Linux arm64 为例：
+准备 Python 3（建议 3.12+）；Windows 示例使用已加入 PATH 的 `python`。把完整包解压到本人拥有的新目录，在该目录执行。首次体验使用独立状态目录，验签成功后再运行程序。
+
+**0.3.0-rc.1 首次启动说明更正：** 包内 `INSTALL.md` 省略了状态初始化步骤。当前 bootstrap 调用的是 `serve`；空状态目录会报 `configuration missing`，因此首次启动按下面的“验签 → `start` 初始化并启动 → 浏览器配对”操作。已发布压缩包的字节和签名保持不变。本次更正不增加其他平台的实机验收结论。
+
+Linux/macOS 选择对应二进制；以下以 Linux arm64 为例：
 
 ```bash
 chmod +x bin/siq-agent-security-linux-arm64
 export SIQ_AGENT_SECURITY_BIN="$PWD/bin/siq-agent-security-linux-arm64"
-sh skills/siq-agent-security/scripts/bootstrap.sh
+export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/state"
+export SIQ_AGENT_SECURITY_STAGE_DIR="$PWD/.verified-bin"
+export SIQ_AGENT_SECURITY_REQUIRE_PINNED=1
+VERIFIED_BIN="$(sh skills/siq-agent-security/scripts/resolve_verified_bin.sh)" &&
+  "$VERIFIED_BIN" start --port 47611
 ```
 
-Windows PowerShell：
+resolver 先验证官方签名、实际 Skill 内容及选中程序的摘要，再返回私有暂存路径。只有验签成功才执行 `start`；它初始化状态并在前台提供服务。Linux amd64/macOS arm64 请替换第一、二行中的二进制文件名。
+
+Windows PowerShell（签名公钥是已固定的发行信任根，不从待验清单读取）：
 
 ```powershell
+$ErrorActionPreference = 'Stop'
 $env:SIQ_AGENT_SECURITY_BIN = (Resolve-Path '.\bin\siq-agent-security-windows-amd64.exe').Path
-& '.\skills\siq-agent-security\scripts\bootstrap.ps1'
+$env:SIQ_AGENT_SECURITY_STATE_DIR = Join-Path (Get-Location).Path 'state'
+$env:SIQ_AGENT_SECURITY_STAGE_DIR = Join-Path (Get-Location).Path '.verified-bin'
+$VerifiedBin = & python '.\skills\siq-agent-security\scripts\verify_manifest.py' `
+  --manifest '.\skills\siq-agent-security\skill-manifest.json' `
+  --pubkey 'LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=' `
+  --skill-dir '.\skills\siq-agent-security' `
+  --bin $env:SIQ_AGENT_SECURITY_BIN --stage-to $env:SIQ_AGENT_SECURITY_STAGE_DIR
+if ($LASTEXITCODE -ne 0 -or -not $VerifiedBin) { throw 'Package verification failed' }
+& "$VerifiedBin" start --port 47611
 ```
 
-沿用系统正常脚本执行策略，不要求关闭系统安全控制。bootstrap 在启动前验证清单、Skill 内容和二进制，并将程序暂存到受控位置。之后按本机操作指南配对管理界面、确认权限和接入宿主；启动服务本身不等于给所有宿主启用保护。
+保持终端运行，打开 `http://127.0.0.1:47611/overview`，输入终端显示的一次性配对码；按 `Ctrl+C` 停止前台服务。状态目录保存身份与历史，之后沿用同一路径。若程序返回已有匹配实例的状态，可对同一实例使用 `pair --port 47611` 获取新码。端口被其他实例占用时先核对归属，不结束不明进程。
 
-若仅使用 Skill ZIP，先确认同版本 Release 二进制已上传；只有显式设置 `SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1` 才允许 bootstrap 下载清单中固定的资产。完整离线包可以使用其自带二进制，无需下载。
+若要使用包内 bootstrap，须先通过上述校验取得暂存程序，再用它执行 `init --port 47611`，确认成功后，使用相同状态目录和端口调用 `bootstrap.sh` / `bootstrap.ps1`。沿用系统正常脚本执行策略。bootstrap 的“starting serve”输出本身不是健康检查；启动后用已验证程序的 `status --port 47611` 核对服务身份与就绪状态。
+
+若仅使用 Skill ZIP，同版本二进制已随本次 Release 上传。Linux/macOS 可先设置独立的状态与暂存目录，显式设置 `SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1`，从实际 Skill 目录运行 `scripts/resolve_verified_bin.sh` 取得验签后的程序，再执行 `start`。Windows 可使用上面的验证器，将 `--bin ...` 替换为显式 `--fetch-artifact`，保持 `--stage-to` 和固定公钥校验。完整离线包可直接使用自带二进制，无需下载。
+
+确认服务就绪后，按[个人客户端手册](personal-client-operation-guide-20260916.md)确认权限和接入宿主。启动服务本身不等于给所有宿主启用保护。
 
 ## 发布与回读
 

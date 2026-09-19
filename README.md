@@ -19,7 +19,7 @@
 
 <p align="center">
   CI / research 徽章仅反映 <code>main</code>，不代表未合并分支或已发布版本。<br />
-  个人客户端的实现与验收状态见<a href="docs/personal-experience-development-progress-20260910.md">开发台账</a>。
+  当前发行验证见<a href="docs/evidence/releases/0.3.0-rc.1/README.md">发行记录</a>，后续验收见<a href="docs/personal-experience-closure-progress-20260913.md">接续台账</a>。
 </p>
 
 <p align="center">
@@ -46,7 +46,7 @@
 
 个人端的浏览器界面由本地 Go 服务提供，SIQ Skill 提供操作指引，平台适配器连接宿主工具调用。安装 Skill、发现资产和启用运行时保护分别确认；实际可检查或阻断的范围以宿主接入与平台证据为准。
 
-**截至 2026-09-19，已核对主线 `4965fbc`；`0.3.0-rc.1` 的产品源码固定在 `58ab22e`：** Mac 阶段成果、OpenShell 策略与 v6 受约束任务执行、Linux 双宿主及个人客户端阶段修复均已纳入主线。Windows 的 #80–#83 已合入 Writer、迁移恢复、DACL、资源事实、三宿主管理与客户端生命周期；#90 已补齐 junction 验证及内容哈希回归。已核查的本地开发成果整合见[本地整合记录](docs/local-development-integration-audit-20260919.md)，Windows 范围见[整合复核](docs/windows-main-integration-review-20260919.md)及其后续[源码与发行边界更新](docs/skill-source-release-boundary-20260919.md)。签名预发布已完成上传与回读验证；历史候选的组件和实机证据仍绑定各自版本，不代表本次发行已完成全部平台验收。
+**截至 2026-09-19，已核对主线 `cfbacaf`（后续变更仅为文档）；`0.3.0-rc.1` 的产品源码固定在 `58ab22e`：** Mac 阶段成果、OpenShell 策略与 v6 受约束任务执行、Linux 双宿主及个人客户端阶段修复均已纳入主线。Windows 的 #80–#83 已合入 Writer、迁移恢复、DACL、资源事实、三宿主管理与客户端生命周期；#90 已补齐 junction 验证及内容哈希回归。已核查的本地开发成果整合见[本地整合记录](docs/local-development-integration-audit-20260919.md)，Windows 范围见[整合复核](docs/windows-main-integration-review-20260919.md)及其后续[源码与发行边界更新](docs/skill-source-release-boundary-20260919.md)。签名预发布已完成上传与回读验证；历史候选的组件和实机证据仍绑定各自版本，不代表本次发行已完成全部平台验收。
 
 | 范围 | 当前可核验状态 | 尚待完成 |
 | --- | --- | --- |
@@ -59,7 +59,7 @@
 
 主线现已有 v6 OpenShell 受约束任务执行入口：执行前需要显式绑定 CLI 与 endpoint、确认策略加载及实例身份，并再次校验授权。历史 `policy_apply` 响应仍不代表任务实际执行；任务是否启动以执行入口的回执和效果证据判断。旧候选的真实网关与性能结果只对应旧源码；[当前 Linux 续作任务](docs/linux-dual-host-integration-development-taskbook-20260918-205119.md)及其[进度台账](docs/linux-dual-host-progress-20260918.md)分别记录第六代候选的已装服务、双宿主与 OpenShell 功能结果。远端单任务停止确认、性能及稳定版完整验收仍未关闭。发现资产不等于已启用保护；保护范围取决于实际接入的工具路径。
 
-OpenClaw 的版本能力也分别记账：本机共享安装仍保持 2026.5.12；当前 Linux 候选另在隔离 Node 24.18.0 环境中，用[受控启动入口](docs/openclaw-controlled-start-linux-20260919.md)实际运行 OpenClaw 2026.9.4 公共 CLI，并完成产品托管原生旅程 22/22。该结果属于摘要固定的临时补丁副本；2026.9.4 原版仍没有 SIQ 所需的批准后、执行前最终参数复查合同，因此不能解释为默认升级、上游原版审批能力或正式发行支持。版本升级不会自动提升保护等级，具体范围以同版本、同候选证据为准。
+OpenClaw 的版本能力也分别记账：已归档验证环境中的共享安装为 2026.5.12；第六代 Linux 候选另在隔离 Node 24.18.0 环境中，用[受控启动入口](docs/openclaw-controlled-start-linux-20260919.md)实际运行 OpenClaw 2026.9.4 公共 CLI，并完成产品托管原生旅程 22/22。该结果属于摘要固定的临时补丁副本；2026.9.4 原版仍没有 SIQ 所需的批准后、执行前最终参数复查合同，因此不能解释为默认升级、上游原版审批能力或正式发行支持。版本升级不会自动提升保护等级，具体范围以同版本、同候选证据为准。
 
 2026-09-17 的[平台范围决策](docs/personal-platform-scope-decision-20260917.md)明确本机 Linux 仅支持 Hermes 与 OpenClaw 的后续交付；Linux/WorkBuddy 不再排期，历史探测或矩阵占位不代表验收通过。**CodeBuddy 后续任务和新适配已全平台取消**，不在当前支持矩阵中；本地候选阻止其新安装、新 Grant 和旧待激活 Grant 的启用，保留历史配置和记录的安全查看、拒绝、撤销及卸载。Linux 控制台、管理 API 与 CLI 同样阻止新的 WorkBuddy 接入，保留既有配置的查看与卸载。第六代本地候选已完成同二进制 D05 与 B3 功能复测；条件项、性能及新发行候选的完整验收继续单独记账。
 
@@ -109,9 +109,9 @@ SIQ 的差异化集中在把**授权依据、真实调用与可核验结果连�
 > [research-v0.1.0-rc.1](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1) 附 `SOURCE-INFO.json`、`SHA256SUMS` 与 `SHA256SUMS.sigstore.json`，不包含新编译的二进制或模型权重。签名绑定本仓库的 GitHub Actions 发布工作流身份，通过校验清单覆盖源码包和版本信息文件。请先验证签名，再核对文件摘要：[验证方法与签名范围](docs/research/release-authentication.md)。
 
 <details>
-<summary>发布源码与版本身份</summary>
+<summary>研究首发源码与版本身份</summary>
 
-发布源码固定在 [`aefab111`](https://github.com/maoyadongsh/siq-agent-security/commit/aefab111c7fcad9075c8f429f97c9eab519dcd22)，后续首页与发布回执更新不改变这一身份。
+该研究源码预发布固定在 [`aefab111`](https://github.com/maoyadongsh/siq-agent-security/commit/aefab111c7fcad9075c8f429f97c9eab519dcd22)，后续首页与发布回执更新不改变这一身份。
 
 2026-09-09 为原有附件补充独立签名，未改写原附件。`SOURCE-INFO.json` 中的 `official_signature=false` 保留首次打包时的历史状态；本次 Sigstore 签名及验证结果见[签名记录](docs/research/evidence/release-signing-20260909.json)。
 
@@ -119,7 +119,7 @@ SIQ 的差异化集中在把**授权依据、真实调用与可核验结果连�
 
 ## 从这里开始
 
-需要用 `vercel-labs/skills` 分发 SIQ Skill 时，先运行[固定版本的分发兼容验证](docs/research/skills-distribution.md)。安装内容一致性与二进制准备、准入授权、运行时保护分别验收。
+需要评估 `vercel-labs/skills` 的源码分发兼容性时，使用[固定版本验证工具](docs/research/skills-distribution.md)。该工具从 Git 提交复制开发源码，不能替代[签名安装包](docs/signed-release-packaging.md)；历史测试中的 CodeBuddy / Trae 目录投递结果也不扩展当前产品支持范围。
 
 | 你的目标 | 推荐入口 | 可以获得什么 |
 | :--- | :--- | :--- |
@@ -230,7 +230,7 @@ SIQ 的差异化集中在把**授权依据、真实调用与可核验结果连�
 
 ### 组件与授权链路
 
-下图保留完整的本地运行时与企业控制面关系。企业控制面是可选部署；本地演示不依赖该链路。
+下图展示本地运行时与企业控制面的主要关系。企业控制面是可选部署；个人控制台与企业控制台使用各自的身份和服务，不会因同时部署而自动同步授权。个人端还可独立接入 OpenShell，流程见下方[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
 
 ```mermaid
 flowchart TB
@@ -310,7 +310,7 @@ flowchart LR
 
 ## 快速开始
 
-使用已签发版本可直接下载 [0.3.0-rc.1 完整离线包](https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.0-rc.1/siq-agent-security-0.3.0-rc.1-bundle.zip)，按[安装说明](docs/signed-release-packaging.md)解压、选择对应二进制并运行 bootstrap，无需本地编译 Go/UI。以下保留源码开发与研究复现步骤；GitHub 自动生成的 Source code 压缩包不是签名安装包。
+使用已签发版本可直接下载 [0.3.0-rc.1 完整离线包](https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.0-rc.1/siq-agent-security-0.3.0-rc.1-bundle.zip)，按[安装说明](docs/signed-release-packaging.md)解压、验签并启动本地服务，无需本地编译 Go/UI。首次启动应使用已验签程序的 `start` 初始化状态；0.3.0-rc.1 的 bootstrap 只调用 `serve`，不能省略初始化。以下保留源码开发与研究复现步骤；GitHub 自动生成的 Source code 压缩包不是签名安装包。
 
 ### 个人管理端：Linux 源码体验
 
@@ -334,7 +334,7 @@ export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/.tmp/personal-state"
 .tmp/personal-bin/siq-agent-security pair --port 47611
 ```
 
-`start` 会初始化或复用该目录的配置；按 `Ctrl+C` 停止前台服务。示例状态保存在 `.tmp/personal-state`，再次使用时保持同一路径，清理 `.tmp` 前先保留需要的数据。后台安装、升级与恢复命令及其平台限制见[本地操作指南](AGENTSHIELD.md)，使用前核对所在分支是否包含对应实现。 完整的配对、权限确认、Skill 更新、原文与导出、保留退出流程见[个人客户端操作手册](docs/personal-client-operation-guide-20260916.md)。
+`start` 会初始化或复用该目录的配置；首次运行在前台提供服务，按 `Ctrl+C` 停止。若同一目录的匹配实例已在运行，命令返回其状态；需要新配对码时使用上面的 `pair`。示例状态保存在 `.tmp/personal-state`，再次使用时保持同一路径，清理 `.tmp` 前先保留需要的数据。后台安装、升级与恢复命令及其平台限制见[本地操作指南](AGENTSHIELD.md)，操作时保持状态目录与实例一致。完整的配对、权限确认、Skill 更新、原文与导出、保留退出流程见[个人客户端操作手册](docs/personal-client-operation-guide-20260916.md)。
 
 <details>
 <summary>前端开发与「未连接」排查</summary>
@@ -468,9 +468,10 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 | 组件 | 职责 | 使用入口 |
 | --- | --- | --- |
 | Secure Agent 与研究 Skills | 任务规划、动态选择研究 / 报告 / 交付能力 | [Agent 说明](apps/secure-agent/README.md)、[Skills](skills/) |
-| 本地 Go 运行时 | 准入、授权、管理 API、签名回执与效果核验 | [本地操作指南](AGENTSHIELD.md)、[开发规格](docs/agentshield-dev-spec-v1.md) |
+| 本地 Go 运行时与个人控制台 | 准入、授权、Skill 生命周期、审批、任务与隐私管理、签名回执；个人 UI 随 Go 服务内嵌 | [个人 UI](apps/web/src/local/)、[本地操作指南](AGENTSHIELD.md)、[开发规格](docs/agentshield-dev-spec-v1.md) |
+| SIQ Skill 与发行工具 | 操作指引、发行清单验签与安全暂存；从固定提交构建和签发安装包 | [Skill 源码](skills/siq-agent-security/)、[发行工具](scripts/release/package.py)、[安装说明](docs/signed-release-packaging.md) |
 | 运行时适配器 | 当前产品矩阵按 OS 接入 Hermes、OpenClaw、WorkBuddy；CodeBuddy 仅保留历史配置、记录和安全退出兼容 | [适配器目录](adapters/runtime/)、[能力矩阵](docs/agentshield-capability-matrix-v1.md)、[平台范围决策](docs/personal-platform-scope-decision-20260917.md) |
-| OpenShell 与 DGX Spark 接入 | 专用部署预检、本地推理配置、策略授权/加载/恢复与分级诊断 | [DGX Spark 部署](deploy/dgx-spark/README.md)、[OpenShell 适配](apps/agentshield/internal/openshell/)、[实机证据](docs/openshell-policy-load-wait-repair-20260916.md) |
+| OpenShell 与 DGX Spark 接入 | 专用部署预检、本地推理配置、策略授权/加载/恢复、受约束任务执行与分级诊断 | [DGX Spark 部署](deploy/dgx-spark/README.md)、[OpenShell 适配](apps/agentshield/internal/openshell/)、[实机证据](docs/openshell-policy-load-wait-repair-20260916.md) |
 | 企业控制面 | 多租户资产、证据、策略审批及 Edge 协调 | [控制面说明](docs/control-plane.md)、[生产运行手册](docs/enterprise-production-runbook-v1.md) |
 | Edge 与 Connectors | 配置、目录、框架、进程、容器及集群采集 | [Edge](edge/agent/)、[Connectors](connectors/)、[兼容说明](docs/compatibility.md) |
 | 合同与基准 | 跨组件数据合同、固定语料和证据验证 | [合同](packages/contracts/)、[Agent 基准](benchmarks/hackathon/README.md)、[运行时基准](benchmarks/runtime-security/README.md) |
@@ -504,7 +505,7 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 自有软件采用 **[Apache-2.0](LICENSE)**；明确列出的原创研究文档采用 **[CC BY 4.0](LICENSES/README.md)**。第三方代码、补丁与字体保留各自许可，详见[适用范围](LICENSES/scope.json)及[第三方归属](THIRD_PARTY_NOTICES.md)。模型权重和外部 API 服务不在项目许可之内。
 
-引用软件请使用 **[CITATION.cff](CITATION.cff)**，并记录实际使用的版本、提交和语料摘要；[引用指南](docs/research/citation-guide.md)说明了源码与研究材料的区别。
+引用软件时可从 **[CITATION.cff](CITATION.cff)** 取得项目名称与作者信息；其版本和日期当前对应 `research-v0.1.0-rc.1`。引用个人客户端 0.3.0-rc.1 时请另注明该发行标签、源码 `58ab22e` 及实际制品摘要；实验另记录所用语料摘要。详见[引用指南](docs/research/citation-guide.md)。
 
 | 社区与治理 | 研究与归档 |
 | :--- | :--- |

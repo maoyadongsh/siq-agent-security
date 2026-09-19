@@ -10,8 +10,8 @@ Agent permissions, runtime checks and execution audit for individuals and organi
 <p align="center">Agent Skills define what agents can do. SIQ defines what they are allowed to do.</p>
 
 <p align="center">
-  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
-  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml/badge.svg?branch=main" alt="Research reproduction · main" /></a>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml?query=branch%3Amain"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml/badge.svg?branch=main" alt="Research reproduction · main" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/code-Apache--2.0-001840?style=flat" alt="Project-owned code: Apache-2.0" /></a>
   <a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0-rc.1"><img src="https://img.shields.io/badge/release-0.3.0--rc.1%20signed-7c5a0c?style=flat" alt="Signed package prerelease 0.3.0-rc.1" /></a>
 </p>
@@ -40,7 +40,7 @@ The product follows **discovery and review → admission and authorization → e
 
 The local Go service serves the personal browser console, the SIQ Skill provides operating guidance, and adapters connect host tool calls. Skill installation, asset discovery and runtime protection are confirmed separately; actual enforcement depends on the integrated host paths and platform evidence.
 
-**Repository snapshot, 2026-09-19 (`main` reviewed at `4965fbc`; product source for `0.3.0-rc.1` fixed at `58ab22e`):** The macOS stage, OpenShell policy and v6 constrained execution, Linux dual-host fixes and personal-client work are integrated. Windows #80–#83 added Writer, migration recovery, DACL, resource facts, host management and client lifecycle; #90 added junction verification and content-hash regressions. See the [local integration audit](docs/local-development-integration-audit-20260919.md), [Windows review](docs/windows-main-integration-review-20260919.md) and subsequent [source/release boundary update](docs/skill-source-release-boundary-20260919.md). The signed prerelease has been published and downloaded for verification. Historical component and native evidence remains bound to its recorded candidates; it does not establish full acceptance of this release.
+**Repository snapshot, 2026-09-19 (`main` reviewed at `cfbacaf`, with documentation-only follow-ups; product source for `0.3.0-rc.1` fixed at `58ab22e`):** The macOS stage, OpenShell policy and v6 constrained execution, Linux dual-host fixes and personal-client work are integrated. Windows #80–#83 added Writer, migration recovery, DACL, resource facts, host management and client lifecycle; #90 added junction verification and content-hash regressions. See the [local integration audit](docs/local-development-integration-audit-20260919.md), [Windows review](docs/windows-main-integration-review-20260919.md) and subsequent [source/release boundary update](docs/skill-source-release-boundary-20260919.md). The signed prerelease has been published and downloaded for verification. Historical component and native evidence remains bound to its recorded candidates; it does not establish full acceptance of this release.
 
 | Scope | Current evidence | Remaining work |
 | --- | --- | --- |
@@ -50,11 +50,13 @@ The local Go service serves the personal browser console, the SIQ Skill provides
 | OpenClaw / Hermes / WorkBuddy | Linux delivery scope is OpenClaw and Hermes; selected real host paths have evidence | WorkBuddy is in scope only on macOS/Windows; no CodeBuddy result can establish WorkBuddy acceptance |
 | LAN team management | Optional enterprise Control API, Edge and Connectors already exist | Team device onboarding, unified management and acceptance after the personal phase |
 
+Personal Skill import accepts local directories, local ZIP files and policy-compliant HTTPS ZIP URLs. The Git repository import option remains disabled pending real-network acceptance; an arbitrary repository homepage is not an installation URL.
+
 New CodeBuddy integration work is cancelled across all platforms. Historical records retain safe inspection, denial, revocation and uninstall paths. Linux WorkBuddy is outside the current delivery scope.
 
 The v6 OpenShell task endpoint is now in main. A policy-apply response alone is not proof of task execution: the execution path must bind its CLI and endpoint, confirm policy and instance readback, and recheck authorization before starting work. The sixth local candidate completed a zero-fail 373-step D05 run and a 57/57 B3 functional journey. Historical gateway and performance evidence still belongs to its recorded candidate; remote single-task stop confirmation, the remaining external/protocol conditions, performance and complete stable-release acceptance remain open. See the [current Linux taskbook](docs/linux-dual-host-integration-development-taskbook-20260918-205119.md), its [progress ledger](docs/linux-dual-host-progress-20260918.md), the [v6 ledger](docs/personal-v6-integration-progress-20260917.md), and the [original development ledger](docs/personal-experience-development-progress-20260910.md) for exact scope. Discovery does not mean protection is enabled; enforcement depends on the integrated tool paths.
 
-OpenClaw versions are tracked separately as well. The shared installation on the Linux validation host remains 2026.5.12. The current Linux candidate also ran the public OpenClaw 2026.9.4 CLI under isolated Node 24.18.0 through the [controlled-start entrypoint](docs/openclaw-controlled-start-linux-20260919.md), completing the product-managed native journey 22/22. That result belongs to a digest-pinned temporary patch copy: stock 2026.9.4 still lacks the post-approval, pre-execution final-parameter recheck contract required by SIQ. It is therefore not a default upgrade, an upstream approval capability, or formal release support. A version bump does not raise the protection level without same-version, same-candidate evidence.
+OpenClaw versions are tracked separately as well. The archived Linux validation environment used a shared 2026.5.12 installation. The sixth Linux candidate also ran the public OpenClaw 2026.9.4 CLI under isolated Node 24.18.0 through the [controlled-start entrypoint](docs/openclaw-controlled-start-linux-20260919.md), completing the product-managed native journey 22/22. That result belongs to a digest-pinned temporary patch copy: stock 2026.9.4 still lacks the post-approval, pre-execution final-parameter recheck contract required by SIQ. It is therefore not a default upgrade, an upstream approval capability, or formal release support. A version bump does not raise the protection level without same-version, same-candidate evidence.
 
 ## Core value
 
@@ -75,9 +77,9 @@ Potential applications include enterprise Agent permission governance, research/
 > [research-v0.1.0-rc.1](https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1) includes `SOURCE-INFO.json`, `SHA256SUMS` and `SHA256SUMS.sigstore.json`, with no newly compiled binaries or model weights. The signature binds the checksum manifest to this repository's GitHub Actions release workflow identity, covering the source archive and metadata. Verify the signature before checking file hashes: [verification instructions and signature scope](docs/research/release-authentication.md).
 
 <details>
-<summary>Release source and version identity</summary>
+<summary>Initial research release source and identity</summary>
 
-The released source is fixed at [`aefab111`](https://github.com/maoyadongsh/siq-agent-security/commit/aefab111c7fcad9075c8f429f97c9eab519dcd22); later README and publication-record updates do not change that identity.
+The research source prerelease is fixed at [`aefab111`](https://github.com/maoyadongsh/siq-agent-security/commit/aefab111c7fcad9075c8f429f97c9eab519dcd22); later README and publication-record updates do not change that identity.
 
 A detached signature was added on 2026-09-09 without modifying the original assets. The `official_signature=false` field in `SOURCE-INFO.json` preserves the initial packaging status; see the separate [Sigstore signing and verification record](docs/research/evidence/release-signing-20260909.json).
 
@@ -85,7 +87,7 @@ A detached signature was added on 2026-09-09 without modifying the original asse
 
 ## Start here
 
-For distribution through `vercel-labs/skills`, run the [pinned compatibility checks](docs/research/skills-distribution.md) first. File equivalence, binary setup, admission, authorization and runtime protection have separate acceptance criteria.
+To evaluate source distribution through `vercel-labs/skills`, use the [pinned compatibility checks](docs/research/skills-distribution.md). This tool copies development source from a Git commit; it does not replace the [signed installation package](docs/signed-release-packaging.md). Historical CodeBuddy/Trae directory-copy checks do not expand current product support.
 
 | Your goal | Entry point | What to expect |
 | :--- | :--- | :--- |
@@ -113,7 +115,7 @@ These demonstrations use explicit model fixtures to drive real SIQ components. T
 
 ### Components and authorization chain
 
-This diagram preserves the complete local runtime and enterprise control-plane relationships. The enterprise control plane is optional; the local demonstration does not depend on that path.
+This diagram shows the main local-runtime and enterprise control-plane relationships. The optional enterprise deployment uses its own identity and service; running both consoles does not automatically synchronize authority. The personal runtime also has an independent OpenShell integration, described in the [Chinese integration overview](README.md#dgx-spark-与-nvidia-openshell-深度适配).
 
 ```mermaid
 flowchart TB
@@ -175,7 +177,7 @@ Ordinary Observation correlation and independent EffectEvidence establish differ
 
 ## Quick start
 
-For the signed version, download the [0.3.0-rc.1 offline bundle](https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.0-rc.1/siq-agent-security-0.3.0-rc.1-bundle.zip) and follow the [installation instructions](docs/signed-release-packaging.md) to extract it, select your binary and run bootstrap. No local Go/UI compilation is needed. The source-development and research steps remain below; GitHub automatic Source code archives are not signed installation packages.
+For the signed version, download the [0.3.0-rc.1 offline bundle](https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.0-rc.1/siq-agent-security-0.3.0-rc.1-bundle.zip) and follow the [installation instructions](docs/signed-release-packaging.md) to extract it, verify the package and start the local service. On first use, run the verified binary’s `start` command to initialize state: the 0.3.0-rc.1 bootstrap calls `serve` and requires initialization beforehand. No local Go/UI compilation is needed. The source-development and research steps remain below; GitHub automatic Source code archives are not signed installation packages.
 
 ### Personal console: Linux source build
 
@@ -199,7 +201,7 @@ export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/.tmp/personal-state"
 .tmp/personal-bin/siq-agent-security pair --port 47611
 ```
 
-`start` initializes or reuses this directory's configuration. Press `Ctrl+C` to stop the foreground service. This example stores state in `.tmp/personal-state`; reuse the same path and preserve any needed data before cleaning `.tmp`. See the [operations guide](AGENTSHIELD.md) for background setup, upgrade and recovery commands and platform limitations; check that your branch contains the implementation before using them.
+`start` initializes or reuses this directory's configuration and serves in the foreground on first use; press `Ctrl+C` to stop it. If a matching instance for the same directory is already running, it returns that instance's status; use `pair` above for a fresh pairing code. This example stores state in `.tmp/personal-state`; reuse the same path and preserve any needed data before cleaning `.tmp`. See the [operations guide](AGENTSHIELD.md) for background setup, upgrade and recovery commands and platform limitations; keep the selected state directory and instance consistent.
 
 <details>
 <summary>Frontend development and disconnected-state troubleshooting</summary>
@@ -311,8 +313,10 @@ Research entry points: [questions](docs/research/research-questions.md) · [data
 | Component | Responsibility | Entry point |
 | --- | --- | --- |
 | Secure Agent and research Skills | Task planning and dynamic research / report / delivery selection | [Agent guide](apps/secure-agent/README.md), [Skills](skills/) |
-| Local Go runtime | Admission, authorization, management API, signed receipts and effect verification | [Local operations](AGENTSHIELD.md), [development specification](docs/agentshield-dev-spec-v1.md) |
+| Local Go runtime and personal console | Admission, authorization, Skill lifecycle, approvals, task/privacy management and signed receipts; the personal UI is embedded in Go | [Personal UI](apps/web/src/local/), [local operations](AGENTSHIELD.md), [development specification](docs/agentshield-dev-spec-v1.md) |
+| SIQ Skill and release tools | Operating guidance, manifest verification and secure staging; building and signing installation packages from fixed commits | [Skill source](skills/siq-agent-security/), [release tool](scripts/release/package.py), [installation guide](docs/signed-release-packaging.md) |
 | Runtime adapters | OS-scoped Hermes, OpenClaw and WorkBuddy entry points; CodeBuddy is retained only for safe handling of historical configuration and records | [Adapters](adapters/runtime/), [capability matrix](docs/agentshield-capability-matrix-v1.md), [platform scope decision](docs/personal-platform-scope-decision-20260917.md) |
+| OpenShell and DGX Spark integration | Deployment checks, local-model configuration, policy authorization/loading/recovery and constrained task execution | [DGX deployment](deploy/dgx-spark/README.md), [OpenShell implementation](apps/agentshield/internal/openshell/), [native evidence](docs/openshell-policy-load-wait-repair-20260916.md) |
 | Enterprise control plane | Multi-tenant inventory, evidence, policy approval and Edge coordination | [Control plane](docs/control-plane.md), [production runbook](docs/enterprise-production-runbook-v1.md) |
 | Edge and Connectors | Configuration, directory, framework, process, container and cluster collection | [Edge](edge/agent/), [Connectors](connectors/), [compatibility](docs/compatibility.md) |
 | Contracts and benchmarks | Cross-component data contracts, fixed corpus and evidence verification | [Contracts](packages/contracts/), [Agent benchmark](benchmarks/hackathon/README.md), [runtime benchmark](benchmarks/runtime-security/README.md) |
@@ -346,7 +350,7 @@ Research priorities remain long-term archival and a DOI, independent external re
 
 Project-owned software uses **[Apache-2.0](LICENSE)**. Explicitly listed original research documents use **[CC BY 4.0](LICENSES/README.md)**. Third-party code, patches and fonts retain their own licenses; see the [scope mapping](LICENSES/scope.json) and [third-party notices](THIRD_PARTY_NOTICES.md). Model weights and external API services are outside the project license grant.
 
-Use **[CITATION.cff](CITATION.cff)** to cite the software, and record the version, commit and corpus digest actually used. The [citation guide](docs/research/citation-guide.md) explains source and research-material references.
+Use **[CITATION.cff](CITATION.cff)** for the project title and author information; its version/date currently identify `research-v0.1.0-rc.1`. When citing personal-client 0.3.0-rc.1, specify that release tag, source `58ab22e` and the actual artifact digest; experiments also need their corpus digest. See the [citation guide](docs/research/citation-guide.md).
 
 | Community and governance | Research and archives |
 | :--- | :--- |
