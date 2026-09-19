@@ -44,7 +44,10 @@ class VerifyReleaseTest(unittest.TestCase):
                  [('release/a', stat.S_IFREG | 0o644), ('release/A', stat.S_IFREG | 0o644)],
                  [('release/a', stat.S_IFREG | 0o644)] * 2,
                  [('release/CON.txt', stat.S_IFREG | 0o644)], [('release/file:stream', stat.S_IFREG | 0o644)],
-                 [('release/file\\escape', stat.S_IFREG | 0o644)], [('release/run', stat.S_IFREG | 0o4755)]]
+                 [('release/file\\escape', stat.S_IFREG | 0o644)], [('release/run', stat.S_IFREG | 0o4755)],
+                 [('.', stat.S_IFREG | 0o644)], [('release/new\nline', stat.S_IFREG | 0o644)],
+                 [('release/control\x01', stat.S_IFREG | 0o644)],
+                 [('release/a', stat.S_IFREG | 0o644), ('release/A/b', stat.S_IFREG | 0o644)]]
         for entries in cases:
             with self.subTest(entries=entries):
                 archive = self.archive(entries)

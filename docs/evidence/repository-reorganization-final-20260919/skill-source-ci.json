@@ -1,0 +1,40 @@
+{
+  "pr_head_sha": "bf7dcedddb00a6ef2ff359bd9a8e6ceb2b07e85c",
+  "run_url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35445726824",
+  "run_id": 35445726824,
+  "event": "pull_request",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "distribution (macos-latest)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35445726824/job/105904194935"
+    },
+    {
+      "name": "distribution (ubuntu-latest)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35445726824/job/105904194960"
+    },
+    {
+      "name": "Skill source setup (windows/amd64)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35445726824/job/105904195005"
+    },
+    {
+      "name": "Skill source setup (darwin/arm64)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35445726824/job/105904195019"
+    },
+    {
+      "name": "Skill source setup (linux/arm64)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35445726824/job/105904195049"
+    },
+    {
+      "name": "Skill source setup (linux/amd64)",
+      "conclusion": "success",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35445726824/job/105904195149"
+    }
+  ],
+  "candidate_note": "Each native artifact records its actual GitHub PR merge checkout SHA separately from the PR head. Source code/publisher release identities are not interchangeable."
+}

@@ -1215,6 +1215,126 @@
         "four native source setup runs; no full host acceptance claim",
         "missing-manifest refusal; frozen historical fixture and release unchanged"
       ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-final-20260919/README.md",
+      "action": "add",
+      "reason": "append final source setup CI and ZIP preflight verification identity; retain prior evidence",
+      "consumers": [
+        "RA progress ledger",
+        "maintainers",
+        "source Skill users"
+      ],
+      "validation": [
+        "four native source reports checked against actual Skill SHA",
+        "CI run and PR head readback",
+        "ZIP negative tests and actual signed package offline verification"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-final-20260919/release-offline-verification.json",
+      "action": "add",
+      "reason": "append final source setup CI and ZIP preflight verification identity; retain prior evidence",
+      "consumers": [
+        "RA progress ledger",
+        "maintainers",
+        "source Skill users"
+      ],
+      "validation": [
+        "four native source reports checked against actual Skill SHA",
+        "CI run and PR head readback",
+        "ZIP negative tests and actual signed package offline verification"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-final-20260919/skill-source-ci.json",
+      "action": "add",
+      "reason": "append final source setup CI and ZIP preflight verification identity; retain prior evidence",
+      "consumers": [
+        "RA progress ledger",
+        "maintainers",
+        "source Skill users"
+      ],
+      "validation": [
+        "four native source reports checked against actual Skill SHA",
+        "CI run and PR head readback",
+        "ZIP negative tests and actual signed package offline verification"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-final-20260919/skill-source-darwin-arm64.json",
+      "action": "add",
+      "reason": "append final source setup CI and ZIP preflight verification identity; retain prior evidence",
+      "consumers": [
+        "RA progress ledger",
+        "maintainers",
+        "source Skill users"
+      ],
+      "validation": [
+        "four native source reports checked against actual Skill SHA",
+        "CI run and PR head readback",
+        "ZIP negative tests and actual signed package offline verification"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-final-20260919/skill-source-linux-amd64.json",
+      "action": "add",
+      "reason": "append final source setup CI and ZIP preflight verification identity; retain prior evidence",
+      "consumers": [
+        "RA progress ledger",
+        "maintainers",
+        "source Skill users"
+      ],
+      "validation": [
+        "four native source reports checked against actual Skill SHA",
+        "CI run and PR head readback",
+        "ZIP negative tests and actual signed package offline verification"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-final-20260919/skill-source-linux-arm64.json",
+      "action": "add",
+      "reason": "append final source setup CI and ZIP preflight verification identity; retain prior evidence",
+      "consumers": [
+        "RA progress ledger",
+        "maintainers",
+        "source Skill users"
+      ],
+      "validation": [
+        "four native source reports checked against actual Skill SHA",
+        "CI run and PR head readback",
+        "ZIP negative tests and actual signed package offline verification"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-final-20260919/skill-source-windows-amd64.json",
+      "action": "add",
+      "reason": "append final source setup CI and ZIP preflight verification identity; retain prior evidence",
+      "consumers": [
+        "RA progress ledger",
+        "maintainers",
+        "source Skill users"
+      ],
+      "validation": [
+        "four native source reports checked against actual Skill SHA",
+        "CI run and PR head readback",
+        "ZIP negative tests and actual signed package offline verification"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-final-20260919/zip-preflight-candidate.json",
+      "action": "add",
+      "reason": "append final source setup CI and ZIP preflight verification identity; retain prior evidence",
+      "consumers": [
+        "RA progress ledger",
+        "maintainers",
+        "source Skill users"
+      ],
+      "validation": [
+        "four native source reports checked against actual Skill SHA",
+        "CI run and PR head readback",
+        "ZIP negative tests and actual signed package offline verification"
+      ]
     }
   ],
   "frozen": {
@@ -1249,7 +1369,8 @@
     "docs/evidence/repository-reorganization-20260919/README.md",
     "docs/repository-architecture-reorganization-proposal-20260918-095230.md",
     "docs/evidence/repository-reorganization-closure-20260919/README.md",
-    "skills/siq-agent-security/SKILL.md"
+    "skills/siq-agent-security/SKILL.md",
+    "docs/evidence/repository-reorganization-final-20260919/README.md"
   ],
   "navigation_globs": [
     "docs/development/*.md",

@@ -1,0 +1,11 @@
+{
+  "base_sha": "bf7dcedddb00a6ef2ff359bd9a8e6ceb2b07e85c",
+  "scope": "base plus ZIP preflight fixes; exact files by SHA-256, tested before commit",
+  "files": {
+    "scripts/release/verify.py": "f214f21227d9659dcfc7ef950b62209d2dbe236054318c7640acd88d4676827f",
+    "scripts/release/test_verify.py": "e53ce18e672b91e05d338721c6c930ae62ecc404c6f922ba91f024ab74d93f34"
+  },
+  "release_unit_tests_passed": 15,
+  "ruff": "passed",
+  "native_installation": "not rerun; no runtime/startup behavior changed"
+}

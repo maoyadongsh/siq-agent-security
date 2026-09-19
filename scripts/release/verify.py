@@ -48,10 +48,11 @@ def extract_zip(archive, target, prefix):
             path = PurePosixPath(item.filename)
             require(item.filename == path.as_posix() and not path.is_absolute()
                     and '..' not in path.parts and '\\' not in item.filename
-                    and path.parts[0] == prefix and len(path.parts) > 1, 'unsafe archive path')
+                    and len(path.parts) > 1 and path.parts[0] == prefix, 'unsafe archive path')
             reserved = {'con', 'prn', 'aux', 'nul', *(f'com{i}' for i in range(1, 10)),
                         *(f'lpt{i}' for i in range(1, 10))}
-            require(not any(any(c in part for c in ':<>"|?*') or part.endswith((' ', '.'))
+            require(not any(any(c in part for c in ':<>"|?*') or any(ord(c) < 32 or ord(c) == 127 for c in part)
+                            or part.endswith((' ', '.'))
                             or part.split('.')[0].casefold() in reserved for part in path.parts),
                     'nonportable archive path')
             require(item.filename.casefold() not in seen, 'duplicate archive entry')
@@ -59,6 +60,10 @@ def extract_zip(archive, target, prefix):
             mode = item.external_attr >> 16
             require(stat.S_ISREG(mode) and not item.is_dir() and not mode & 0o7000,
                     'archive must contain regular files only')
+        for item in items:
+            parts = PurePosixPath(item.filename).parts
+            require(not any('/'.join(parts[:n]).casefold() in seen for n in range(1, len(parts))),
+                    'archive file/directory collision')
         for item in items:
             path = target / item.filename
             path.parent.mkdir(parents=True, exist_ok=True)
