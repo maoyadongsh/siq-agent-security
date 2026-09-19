@@ -40,7 +40,7 @@
 
 > **签名安装包（2026-09-19）**：[0.3.0 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0) 已提供完整离线包、签名 Skill 与四目标二进制，源码固定在 `83fde2d`，使用原发行密钥签发。请选择 Release 中的安装资产；GitHub 自动生成的源码压缩包及 `skills/siq-agent-security/` 仍是开发源码。Linux ARM64 已通过实际安装链路和篡改拒绝验证，其他目标本次仅完成构建与签名摘要核对。见[安装说明](docs/signed-release-packaging.md)和[签发与发布验证记录](docs/evidence/releases/0.3.0/README.md)。
 
-[文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md)
+[文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md) · [平台交付](platforms/README.md) · [测评与外部复现](evaluations/README.md)
 
 ## 当前产品方向与支持状态
 

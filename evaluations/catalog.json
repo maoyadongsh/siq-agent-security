@@ -1,0 +1,352 @@
+{
+  "schema_version": "siq-evaluation-catalog/v1",
+  "indexed_at": "2026-09-19",
+  "scope": "Initial curated index of archived records; no new experiments; no independent external results registered",
+  "records": [
+    {
+      "id": "release-030-package",
+      "kind": "release-package",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "0.3.0",
+        "source_sha": "83fde2df0bcfc817d85568978e3881e22474815e",
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "linux",
+        "arch": "arm64",
+        "host_mode": "not_recorded",
+        "model_mode": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "package_checks_passed",
+          "value": 14,
+          "total": 14
+        }
+      ],
+      "limits": [
+        "Linux ARM64 native installation chain only; other targets build/signature checks"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/releases/0.3.0/verification.json",
+          "sha256": "87d223a2f3bb9a0a9aa2ebf655e3987ef2fb6161c2af77dd11a5683317ee284d"
+        }
+      ]
+    },
+    {
+      "id": "release-030-publication",
+      "kind": "publication-readback",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "0.3.0",
+        "source_sha": "83fde2df0bcfc817d85568978e3881e22474815e",
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "not_recorded",
+        "arch": "not_recorded",
+        "host_mode": "not_recorded",
+        "model_mode": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "matching_remote_assets",
+          "value": 8,
+          "total": 8
+        }
+      ],
+      "limits": [
+        "Publication metadata is a time-specific observation; not full platform acceptance"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/releases/0.3.0/publication.json",
+          "sha256": "24495282ca1bcdc45dcdc300c12336b377079e7f976ef519a59646f612d2517c"
+        }
+      ]
+    },
+    {
+      "id": "release-030-ci",
+      "kind": "source-ci",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "0.3.0 source",
+        "source_sha": "83fde2df0bcfc817d85568978e3881e22474815e",
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "not_recorded",
+        "arch": "not_recorded",
+        "host_mode": "not_recorded",
+        "model_mode": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "successful_workflows",
+          "value": 5,
+          "total": 5
+        }
+      ],
+      "limits": [
+        "Workflow count is not test count or required-check count"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/releases/0.3.0/source-ci.json",
+          "sha256": "026683acfff2e34000ba50eae070b3caaf9f55f2b64804531ce06d836343fdbd"
+        }
+      ]
+    },
+    {
+      "id": "release-030rc1",
+      "kind": "release-package",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "0.3.0-rc.1",
+        "source_sha": "58ab22e882452116444eb00e47e14cecdf98772a",
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "linux",
+        "arch": "arm64",
+        "host_mode": "not_recorded",
+        "model_mode": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "package_checks_passed",
+          "value": 13,
+          "total": 13
+        },
+        {
+          "metric": "matching_remote_assets",
+          "value": 8,
+          "total": 8
+        }
+      ],
+      "limits": [
+        "Historical prerelease; INSTALL first-start correction documented separately"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/releases/0.3.0-rc.1/verification.json",
+          "sha256": "a89427dcd9d8c4b5b6bf5f9e24112ba78235708f8413f34eb9f42b6b6b41b7a2"
+        },
+        {
+          "path": "docs/evidence/releases/0.3.0-rc.1/publication.json",
+          "sha256": "2bf443c92eed390287a55e354d0af9cd5b330c2984b379d27cb629630cddd446"
+        }
+      ]
+    },
+    {
+      "id": "linux-installed-sixth",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "67bc48c4… (recorded candidate prefix)",
+        "source_sha": null,
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "linux",
+        "arch": "not_recorded",
+        "host_mode": "not_recorded",
+        "model_mode": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "B02_passed",
+          "value": 16,
+          "total": 16
+        },
+        {
+          "metric": "R07_passed",
+          "value": 31,
+          "total": 31
+        },
+        {
+          "metric": "nested_R04_passed",
+          "value": 31,
+          "total": 31
+        }
+      ],
+      "limits": [
+        "Test release trust root; candidate differs from 0.3.0"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx02-sec-hold-fix-installed-summary.json",
+          "sha256": "1d7c51469409144e03838723ac40b3e03c5bf1f956c0ff3d02a298bc7d362223"
+        }
+      ]
+    },
+    {
+      "id": "openshell-d05-sixth",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "67bc48c4… (recorded candidate prefix)",
+        "source_sha": null,
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "linux",
+        "arch": "not_recorded",
+        "host_mode": "not_recorded",
+        "model_mode": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "pass",
+          "value": 365,
+          "total": 373
+        },
+        {
+          "metric": "partial",
+          "value": 7,
+          "total": 373
+        },
+        {
+          "metric": "blocked",
+          "value": 1,
+          "total": 373
+        },
+        {
+          "metric": "fail",
+          "value": 0,
+          "total": 373
+        }
+      ],
+      "limits": [
+        "Functional steps; not 373/373 passed or performance acceptance"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx06-sec-hold-fix-d05-summary.json",
+          "sha256": "344e433188e3d8032b416935e48e296dc6f3c89bf69f72d623e9d3896cbe229d"
+        }
+      ]
+    },
+    {
+      "id": "linux-ui-eighth",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "a85c76b0… (recorded scoped candidate prefix)",
+        "source_sha": null,
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "linux",
+        "arch": "not_recorded",
+        "host_mode": "not_recorded",
+        "model_mode": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "web_tests_passed",
+          "value": 117,
+          "total": 117
+        },
+        {
+          "metric": "targeted_browser_checks_passed",
+          "value": 2,
+          "total": 2
+        }
+      ],
+      "limits": [
+        "Scoped UI candidate; no inherited systemd/OpenShell/performance acceptance"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx05-session-transition-eighth-summary.json",
+          "sha256": "075cc95d4f0d896f446ef572858428f5bff7d8527e679863f1f0a77809c6cd5a"
+        }
+      ]
+    },
+    {
+      "id": "v5-controls",
+      "kind": "research",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "V5 fixed controls",
+        "source_sha": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "not_recorded",
+        "arch": "not_recorded",
+        "host_mode": "not_recorded",
+        "model_mode": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "expected_controls",
+          "value": 23,
+          "total": 23
+        },
+        {
+          "metric": "benign_completed",
+          "value": 5,
+          "total": 5
+        },
+        {
+          "metric": "unsafe_materialized",
+          "value": 0,
+          "total": 13
+        }
+      ],
+      "limits": [
+        "Controlled fixtures; distinct populations; no general guarantee"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/hackathon/final-submission-state.md",
+          "sha256": "77004e70268306b85e64fd43e90ff99d8784f5e2a26c927c876bebdc4c66eff3"
+        }
+      ]
+    }
+  ]
+}

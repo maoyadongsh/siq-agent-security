@@ -199,7 +199,10 @@ def check(root, base=None):
     for pattern in data['navigation_globs']:
         documents.update(p.relative_to(root).as_posix() for p in root.glob(pattern))
     links = sum(check_document(root, name) for name in sorted(documents))
-    return {'result': 'passed', 'asset_groups': count, 'documents': len(documents), 'local_links': links}
+    from catalogs import validate
+    catalogs = validate(root)
+    return {'result': 'passed', 'asset_groups': count, 'documents': len(documents),
+            'local_links': links, 'catalogs': catalogs}
 
 
 def main():
