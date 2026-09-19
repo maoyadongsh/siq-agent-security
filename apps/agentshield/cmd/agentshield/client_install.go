@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"siq-agent-security/apps/agentshield/internal/clientrelease"
+	"siq-agent-security/apps/agentshield/internal/product"
+	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
 	"strconv"
 	"strings"
@@ -49,7 +51,8 @@ func cmdClientInstall(args []string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	staged, version, err := prepareClientInstallation(dir, *manifest, *binary, checkUpgradeForCurrentState, clientrelease.Stage)
+	staged, version, err := prepareClientInstallationWithBootstrap(dir, *manifest, *binary,
+		checkUpgradeForCurrentState, func() error { return bootstrapClientIdentity(dir) }, clientrelease.Stage)
 	if err != nil {
 		return err
 	}
@@ -111,12 +114,32 @@ func cmdClientInstall(args []string, out io.Writer) error {
 	return nil
 }
 
+func bootstrapClientIdentity(dir string) error {
+	// A user service cannot inherit an installer shell's signing seed. The
+	// identity must already live in the selected state directory before Stage
+	// publishes files that would make a missing key look historical.
+	if product.Env(product.EnvSigningSeed, product.EnvSigningSeedOld) != "" {
+		return errors.New("client-install: background service requires a stored signing identity")
+	}
+	_, err := signing.Load(dir)
+	return err
+}
+
 // Production callers always use the embedded release root and Stage; hooks are
 // passed directly by tests and cannot be selected through flags or environment.
 func prepareClientInstallation(dir, manifest, binary string, check func(string, string) (string, error), stage func(string, string, string) (string, error)) (string, string, error) {
+	return prepareClientInstallationWithBootstrap(dir, manifest, binary, check, nil, stage)
+}
+
+func prepareClientInstallationWithBootstrap(dir, manifest, binary string, check func(string, string) (string, error), bootstrap func() error, stage func(string, string, string) (string, error)) (string, string, error) {
 	version, err := check(manifest, binary)
 	if err != nil {
 		return "", "", err
+	}
+	if bootstrap != nil {
+		if err := bootstrap(); err != nil {
+			return "", "", err
+		}
 	}
 	staged, err := stage(dir, manifest, binary)
 	if err != nil {

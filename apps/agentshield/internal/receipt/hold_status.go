@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
+	"siq-agent-security/apps/agentshield/internal/trustedcontext"
 	"time"
 )
 
@@ -111,6 +112,28 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 	if sec != nil && sec.Invalid {
 		return false
 	}
+	// The original decision's attribution is evidence, not authority for a
+	// resume. Recompute the exact call binding from the current verified SEC;
+	// a switched installation, context or task must not inherit its approval.
+	var currentAttribution *SkillAttribution
+	if sec != nil {
+		binding, bindingErr := trustedcontext.CallBinding(req.Platform, req.SessionID, req.AgentID, holdRequestRuntimeTaskID(req.TaskID, req.RuntimeTaskID), req.Tool, req.ToolCallID, req.Params)
+		if bindingErr != nil {
+			return false
+		}
+		currentAttribution = &SkillAttribution{
+			SkillID: sec.SkillID, Version: sec.Version, ContentHash: sec.ContentHash,
+			Status: SkillAttributionVerified, EvidenceLevel: sec.EvidenceLevel,
+			ContextID: sec.ContextID, CallBinding: binding,
+		}
+	}
+	if d.SkillAttribution != nil && d.SkillAttribution.Status == SkillAttributionVerified {
+		if currentAttribution == nil || *currentAttribution != *d.SkillAttribution {
+			return false
+		}
+	} else if currentAttribution != nil {
+		return false
+	}
 	var resolved *IntentContract
 	var err error
 	if e.opts.IntentLookup != nil {
@@ -138,7 +161,7 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 	if e.checkProvenance(r, resolved, now) != nil {
 		return false
 	}
-	var checked Receipt
+	checked := Receipt{SkillAttribution: currentAttribution}
 	descriptor := runtimeaction.Describe(req.Tool, req.Params)
 	action, _ := e.evaluate(r, s, descriptor, &checked, now, sec)
 	return (action == ActionAllow || action == ActionHold) && str(checked.MatchedGrantID) == str(d.MatchedGrantID)

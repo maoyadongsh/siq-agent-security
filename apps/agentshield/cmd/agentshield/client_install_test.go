@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"siq-agent-security/apps/agentshield/internal/product"
+	"siq-agent-security/apps/agentshield/internal/signing"
 	"testing"
 )
 
@@ -88,5 +90,74 @@ func TestInstallationEnvironmentPinsStateDirectory(t *testing.T) {
 	want := []string{"PATH=/test", "DISPLAY=:1", "SIQ_AGENT_SECURITY_STATE_DIR=/selected"}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatal("child inherited conflicting state directory", got)
+	}
+}
+
+func TestClientInstallationBootstrapsIdentityAfterTrustBeforeStaging(t *testing.T) {
+	for _, tc := range []struct {
+		name       string
+		trustError bool
+		history    bool
+	}{
+		{name: "fresh"},
+		{name: "untrusted", trustError: true},
+		{name: "missing_historical_identity", history: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv(signing.SeedEnv, "")
+			dir := t.TempDir()
+			if tc.history {
+				if err := os.WriteFile(filepath.Join(dir, "service.json"), []byte("history"), 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			checked, bootstrapped, staged := 0, 0, 0
+			check := func(_, _ string) (string, error) {
+				checked++
+				if tc.trustError {
+					return "", errors.New("untrusted")
+				}
+				return "v1", nil
+			}
+			bootstrap := func() error {
+				bootstrapped++
+				_, err := signing.Load(dir)
+				return err
+			}
+			stage := func(_, _, _ string) (string, error) {
+				staged++
+				if _, err := os.Stat(filepath.Join(dir, "keys", "signing.seed")); err != nil {
+					t.Fatal("staging preceded durable identity", err)
+				}
+				return "", errors.New("staging stopped after identity assertion")
+			}
+			_, _, err := prepareClientInstallationWithBootstrap(dir, "manifest", "binary", check, bootstrap, stage)
+			if err == nil {
+				t.Fatal("expected fixture stop or refusal")
+			}
+			if tc.trustError {
+				if checked != 1 || bootstrapped != 0 || staged != 0 {
+					t.Fatalf("untrusted source reached bootstrap/stage: %d/%d/%d", checked, bootstrapped, staged)
+				}
+			} else if tc.history {
+				if checked != 1 || bootstrapped != 1 || staged != 0 || !errors.Is(err, signing.ErrIdentityMissing) {
+					t.Fatalf("missing historical key accepted: %d/%d/%d %v", checked, bootstrapped, staged, err)
+				}
+			} else if checked != 1 || bootstrapped != 1 || staged != 1 {
+				t.Fatalf("fresh bootstrap order: %d/%d/%d", checked, bootstrapped, staged)
+			}
+		})
+	}
+}
+
+func TestClientInstallRejectsTransientSigningIdentity(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "new-state")
+	t.Setenv(product.EnvSigningSeedOld, "")
+	t.Setenv(product.EnvSigningSeed, "not-a-durable-seed")
+	if err := bootstrapClientIdentity(dir); err == nil {
+		t.Fatal("temporary installer identity accepted for a background service")
+	}
+	if _, err := os.Lstat(dir); !os.IsNotExist(err) {
+		t.Fatal("transient identity changed state")
 	}
 }
