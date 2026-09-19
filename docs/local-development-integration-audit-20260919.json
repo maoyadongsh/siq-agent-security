@@ -1,0 +1,683 @@
+{
+  "schema": "siq-local-development-integration-audit/v1",
+  "observed_at": "2026-09-19T11:20:59.886724+00:00",
+  "base_main": "56fd525ef869acb8d5aea86f0c994f77751102f9",
+  "scope": "registered local worktrees, local branch tips, one existing stash; ignored runtime/build/private files excluded",
+  "local_branch_count": 49,
+  "registered_worktree_count": 34,
+  "branches_before_integration": [
+    {
+      "branch": "codex/all-branches-main-20260913",
+      "head": "cbf44bea1bcf38ff4286bc1ae0a59e17b4ccd670",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/bilingual-research-readme",
+      "head": "15445f4d015489641a31745f73e9b5623728ee1d",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/dgx-spark-hackathon-v3",
+      "head": "9b4aaeae1a089b54fbbc50c33cdb72616be2b1b1",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/glm-committed-integration-20260917",
+      "head": "d7b0f59312b52dd06b39aa294e7c2f572e0891c0",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/glm-stage-integration-20260914",
+      "head": "9cc18630be584692905e1ce612b91a9ba5aee610",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/glm-v4-handoff-20260914",
+      "head": "9bc6487eb65e3356e5dedda480d8d1b6b9f5ce19",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/hackathon-final-hardening-v4",
+      "head": "4bdf7a46c93a9b6a4a5e872ee42cb919c6186c8e",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/hackathon-final-release-v5",
+      "head": "e72e8b36a71ae7f7f1fecd587bbe6eb2353f24d2",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/linux-dual-host-20260918",
+      "head": "6e419a70c569a7898ba7d85b8487a9e41576a84d",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/m132-review-fixes-20260913",
+      "head": "e12b3233b8874f6dc7ebbc6e5e7edb33c866333f",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/macos-stage-review-fixes-20260917",
+      "head": "f457e4cfdf1e656a42edc6a57312185f3f70f566",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/n09-evidence-review-20260914",
+      "head": "5c563bb6aa35268f1a51add5f23e9ee7b89e2de1",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/next-development-taskbook-20260913",
+      "head": "e264ab942b6fc9a00f02ccca5f3d7429ac6437ed",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/pages-research-refresh",
+      "head": "0e4d3f344428a0810d13e1d30f2a4c89ad0852dc",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/personal-client-upgrade-recovery",
+      "head": "274ed9791df24d5b061c528f1a3769879f5e5ba2",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/personal-k002-platform-readiness",
+      "head": "63a4843839850968f44a808a3a183a1a9880c7dc",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/personal-macos-stop-recovery",
+      "head": "274ed9791df24d5b061c528f1a3769879f5e5ba2",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/personal-next-taskbook-v3-20260913",
+      "head": "0ac5143f64f1e91db40f8f7caf00501a41a3abeb",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/personal-v6-integration-20260917",
+      "head": "4f0249dcbc6f404499b4d75574da7941fc24f5d9",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/platform-collaboration-taskbooks-20260913",
+      "head": "18b58f756e1d300792d5a40b92cd2c4756b22a57",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/pr40-review-fix-20260914",
+      "head": "bd7276c2c3328d809b1a91a62ff15c0d252a0610",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/provenance-bound-effect-v1",
+      "head": "3ed2d6aa13ef6d96ea7f1bd9422bc228ec2ac3ca",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/readme-personal-status-20260912",
+      "head": "b6f186df63e60fbe74b0cf32d508eaaf41a2a0de",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/release-signing",
+      "head": "c6054464395a93f77fd5ec6452c0d323e4dc80f6",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/release-signing-status",
+      "head": "8591c256d6e4a907680c126a4b97ffda2ef1f53a",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/research-open-source-r1",
+      "head": "e77fd75808e9e2b518a3b39d47cdf00bb5ae566e",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/research-readme-presentation",
+      "head": "edfdbf96fc063a52ad5b1e1ca874302aca7cb292",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/research-release-records",
+      "head": "0e2524b7f6e96524c00221cf7892a41c56380867",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/reviewed-instance-fixes-20260914",
+      "head": "37e0a2f6f8f91d7bf4f03d3e2e4318d25fa26dd3",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/reviewed-stage-fixes-20260913",
+      "head": "30b03ca829ae32e0d90c74cdf26b2fd3a71eb2c3",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/siq-shield-font-26",
+      "head": "2529ec95c208b400a8149ad1d62c81460285882c",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/siq-shield-lettering",
+      "head": "bf42d090b82f42787d0f4a79ce888bb4f3a66554",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/siq-shield-mark",
+      "head": "ec6ad2cae45d56c327e80a31cbf0cb4d148006db",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/siq-shield-title-font",
+      "head": "741fce6ef41f2e60193fe4cfe6ab9e0f921ca696",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/windows-bootstrap-signing-pending-20260919",
+      "head": "4c1ffade1768a5d3ade200d3df6eba7f3c23fec6",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/windows-final-integration-20260919",
+      "head": "72fa1a5cad71e01bb1559df008c8e7b30d849d73",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/windows-hermes-review-20260918",
+      "head": "71dc4dc4ae943c89690bdd39a5ed00c7a8cbbf9a",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/windows-second-review-20260918",
+      "head": "88f12fa8cd8cbdf95bc4a5e29f3475fc72305b6f",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/windows-stack-review-20260919",
+      "head": "94eea5706db7a87709472b7d851135471ea1034b",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "codex/windows-stage-review-20260918",
+      "head": "0597811b2d2bba325b4bfc880650d1b428eaaa0b",
+      "before_ahead_main": 3
+    },
+    {
+      "branch": "codex/windows-timing-review-20260918",
+      "head": "976c584eebe4905894fab058b470903e86883d6f",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "cursor/agentshield-w0-contracts-8eff",
+      "head": "2c5f79e1cc46f3b5bc2849cf839e1f7538e2c574",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "glm/local-o05-v6-20260917",
+      "head": "ff310716cc4c7e045456e3f44357f2c48baf3589",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "glm/personal-closure-20260913-161000",
+      "head": "c54b1390d449dc6f918f6a52a01eb15a08ec7275",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "glm/personal-next-20260913-193405",
+      "head": "0720730f821373b00bb8bfd5ec870fec147e5746",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "glm/release-openshell-readiness-20260916-142706",
+      "head": "ff310716cc4c7e045456e3f44357f2c48baf3589",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "kimi/personal-v4-r01-20260914",
+      "head": "76febc5d1b68bd6aa2de6c0cde7166f88ac97093",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "kimicode/personal-k001-baseline-repair",
+      "head": "497fb9ca0098812cf1b8c5caf55920c2e4de5cb8",
+      "before_ahead_main": 0
+    },
+    {
+      "branch": "main",
+      "head": "56fd525ef869acb8d5aea86f0c994f77751102f9",
+      "before_ahead_main": 0
+    }
+  ],
+  "worktrees_before_integration": [
+    {
+      "worktree_label": "siq-agent-security",
+      "head": "274ed9791df24d5b061c528f1a3769879f5e5ba2",
+      "branch": "refs/heads/codex/personal-macos-stop-recovery",
+      "exists": true,
+      "status_counts_untracked_expanded": {
+        " D": 6,
+        " M": 89,
+        "??": 375
+      },
+      "before_ahead_main": 0,
+      "content_comparison": {
+        "in_main_history": 120,
+        "identical_main": 344,
+        "absorbed_deleted": 6
+      }
+    },
+    {
+      "worktree_label": "siq-agent-security/.tmp/final-hardening-v4/clean-source",
+      "head": "7256c24e4d0208dbcd86ec8e3a25edec974ccf12",
+      "branch": null,
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "siq-agent-security/.tmp/final-hardening-v4/clean-source-final",
+      "head": "cfd1fbf8ca79e3244bd1e133ea000fbc9edf5a1d",
+      "branch": null,
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "siq-agent-security/.tmp/final-hardening-v4/clean-source-v3",
+      "head": "4da9e9e0a04c56620d101a583307b299b8484372",
+      "branch": null,
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "siq-agent-security/.tmp/final-release-v5/source",
+      "head": "d1277116e8291e72b09b0462a19d0268b68bf46c",
+      "branch": null,
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "siq-agent-security/.tmp/research-open-source/final-source",
+      "head": "aefab111c7fcad9075c8f429f97c9eab519dcd22",
+      "branch": null,
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-glm-committed-integration-20260917",
+      "head": "d7b0f59312b52dd06b39aa294e7c2f572e0891c0",
+      "branch": "refs/heads/codex/glm-committed-integration-20260917",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-glm-stage-integration-20260914",
+      "head": "9bc6487eb65e3356e5dedda480d8d1b6b9f5ce19",
+      "branch": "refs/heads/codex/glm-v4-handoff-20260914",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-linux-dual-host-20260918",
+      "head": "6e419a70c569a7898ba7d85b8487a9e41576a84d",
+      "branch": "refs/heads/codex/linux-dual-host-20260918",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-local-o05-v6-20260917",
+      "head": "ff310716cc4c7e045456e3f44357f2c48baf3589",
+      "branch": "refs/heads/glm/local-o05-v6-20260917",
+      "exists": true,
+      "status_counts_untracked_expanded": {
+        " D": 7,
+        " M": 11,
+        "??": 128
+      },
+      "before_ahead_main": 0,
+      "content_comparison": {
+        "identical_main": 15,
+        "different_main": 25,
+        "in_main_history": 15,
+        "absorbed_deleted": 7,
+        "absent_main": 84
+      }
+    },
+    {
+      "worktree_label": "worktrees/siq-macos-stage-review-fixes-20260917",
+      "head": "f457e4cfdf1e656a42edc6a57312185f3f70f566",
+      "branch": "refs/heads/codex/macos-stage-review-fixes-20260917",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-main-delivery-20260913",
+      "head": "56fd525ef869acb8d5aea86f0c994f77751102f9",
+      "branch": "refs/heads/main",
+      "exists": true,
+      "status_counts_untracked_expanded": {
+        " M": 1
+      },
+      "before_ahead_main": 0,
+      "content_comparison": {
+        "different_main": 1
+      }
+    },
+    {
+      "worktree_label": "worktrees/siq-n09-evidence-review-20260914",
+      "head": "5c563bb6aa35268f1a51add5f23e9ee7b89e2de1",
+      "branch": "refs/heads/codex/n09-evidence-review-20260914",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-personal-next-20260913-193405",
+      "head": "0720730f821373b00bb8bfd5ec870fec147e5746",
+      "branch": "refs/heads/glm/personal-next-20260913-193405",
+      "exists": true,
+      "status_counts_untracked_expanded": {
+        " D": 7,
+        " M": 57,
+        "??": 198
+      },
+      "before_ahead_main": 0,
+      "content_comparison": {
+        "in_main_history": 49,
+        "identical_main": 40,
+        "different_main": 31,
+        "absorbed_deleted": 7,
+        "absent_main": 135
+      }
+    },
+    {
+      "worktree_label": "worktrees/siq-personal-v4-r01-20260914",
+      "head": "76febc5d1b68bd6aa2de6c0cde7166f88ac97093",
+      "branch": "refs/heads/kimi/personal-v4-r01-20260914",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-platform-handoff-20260913",
+      "head": "18b58f756e1d300792d5a40b92cd2c4756b22a57",
+      "branch": "refs/heads/codex/platform-collaboration-taskbooks-20260913",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-pr40-review-20260914",
+      "head": "bd7276c2c3328d809b1a91a62ff15c0d252a0610",
+      "branch": "refs/heads/codex/pr40-review-fix-20260914",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-release-openshell-20260916-142706",
+      "head": "ff310716cc4c7e045456e3f44357f2c48baf3589",
+      "branch": "refs/heads/glm/release-openshell-readiness-20260916-142706",
+      "exists": true,
+      "status_counts_untracked_expanded": {
+        "??": 2
+      },
+      "before_ahead_main": 0,
+      "content_comparison": {
+        "identical_main": 1,
+        "different_main": 1
+      }
+    },
+    {
+      "worktree_label": "worktrees/siq-reviewed-instance-fixes-20260914",
+      "head": "37e0a2f6f8f91d7bf4f03d3e2e4318d25fa26dd3",
+      "branch": "refs/heads/codex/reviewed-instance-fixes-20260914",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-v6-integration-20260917",
+      "head": "4f0249dcbc6f404499b4d75574da7941fc24f5d9",
+      "branch": "refs/heads/codex/personal-v6-integration-20260917",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-windows-bootstrap-signing-pending-20260919",
+      "head": "4c1ffade1768a5d3ade200d3df6eba7f3c23fec6",
+      "branch": "refs/heads/codex/windows-bootstrap-signing-pending-20260919",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-windows-final-integration-20260919",
+      "head": "72fa1a5cad71e01bb1559df008c8e7b30d849d73",
+      "branch": "refs/heads/codex/windows-final-integration-20260919",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-windows-hermes-review-20260918",
+      "head": "71dc4dc4ae943c89690bdd39a5ed00c7a8cbbf9a",
+      "branch": "refs/heads/codex/windows-hermes-review-20260918",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-windows-second-review-20260918",
+      "head": "88f12fa8cd8cbdf95bc4a5e29f3475fc72305b6f",
+      "branch": "refs/heads/codex/windows-second-review-20260918",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-windows-stack-review-20260919",
+      "head": "94eea5706db7a87709472b7d851135471ea1034b",
+      "branch": "refs/heads/codex/windows-stack-review-20260919",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-windows-stage-review-20260918",
+      "head": "0597811b2d2bba325b4bfc880650d1b428eaaa0b",
+      "branch": "refs/heads/codex/windows-stage-review-20260918",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 3
+    },
+    {
+      "worktree_label": "worktrees/siq-windows-timing-review-20260918",
+      "head": "976c584eebe4905894fab058b470903e86883d6f",
+      "branch": "refs/heads/codex/windows-timing-review-20260918",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "siq-b07-final-review-20260916",
+      "head": "dafb4cd4a4077feaabad902ad6912ee7d4a2a4cd",
+      "branch": null,
+      "exists": true,
+      "status_counts_untracked_expanded": {
+        "??": 5
+      },
+      "before_ahead_main": 0,
+      "content_comparison": {
+        "identical_main": 5
+      }
+    },
+    {
+      "worktree_label": "siq-b07-review-b1-20260916",
+      "head": "dafb4cd4a4077feaabad902ad6912ee7d4a2a4cd",
+      "branch": null,
+      "exists": false,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": null
+    },
+    {
+      "worktree_label": "siq-m132-fixes-20260913",
+      "head": "e12b3233b8874f6dc7ebbc6e5e7edb33c866333f",
+      "branch": "refs/heads/codex/m132-review-fixes-20260913",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "siq-main-integration-20260913",
+      "head": "e264ab942b6fc9a00f02ccca5f3d7429ac6437ed",
+      "branch": "refs/heads/codex/next-development-taskbook-20260913",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "siq-personal-closure",
+      "head": "0ac5143f64f1e91db40f8f7caf00501a41a3abeb",
+      "branch": "refs/heads/codex/personal-next-taskbook-v3-20260913",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "siq-readme-personal-status-20260912",
+      "head": "b6f186df63e60fbe74b0cf32d508eaaf41a2a0de",
+      "branch": "refs/heads/codex/readme-personal-status-20260912",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    },
+    {
+      "worktree_label": "siq-review-fixes-publish-20260913",
+      "head": "30b03ca829ae32e0d90c74cdf26b2fd3a71eb2c3",
+      "branch": "refs/heads/codex/reviewed-stage-fixes-20260913",
+      "exists": true,
+      "status_counts_untracked_expanded": {},
+      "before_ahead_main": 0
+    }
+  ],
+  "merge": {
+    "head": "0597811b2d2bba325b4bfc880650d1b428eaaa0b",
+    "branch": "codex/windows-stage-review-20260918",
+    "previously_unmerged_commits": 3,
+    "merge_tree": "90dafeb51bacac9294067654ba66871806da4010",
+    "base_tree": "90dafeb51bacac9294067654ba66871806da4010",
+    "product_content_changes": false
+  },
+  "prior_integration_verification": [
+    {
+      "worktree_label": "siq-agent-security",
+      "identical_main_files": 344,
+      "files_with_blob_reachable_from_main_history": 120,
+      "deletions_already_in_main": 6,
+      "unaccounted_files": 0
+    },
+    {
+      "worktree_label": "worktrees/siq-personal-next-20260913-193405",
+      "source_record": "docs/evidence/personal-experience/glm-stage-review-20260914/source-inventory.json",
+      "matched": 262,
+      "total": 262,
+      "decision_record": "docs/evidence/personal-experience/glm-stage-review-20260914/report.md",
+      "handling": "reviewed implementation already integrated; rejected attribution/approval drafts and historical materials preserved in original worktree"
+    },
+    {
+      "worktree_label": "worktrees/siq-local-o05-v6-20260917",
+      "source_record": "docs/evidence/personal-experience/v6-integration-20260917-153208/source-summary.json",
+      "selected_matched": 31,
+      "selected_total": 31,
+      "original_manifest_sha256": "7c86b6569404e372373d20d96fbf92f434c66fbcb6a1f5076358c9122e10d0a5",
+      "all_untracked_matched": 128,
+      "all_untracked_total": 128,
+      "tracked_patch_sha256": "6efa7a5ba8245cad8ef03969a93bb00d785f2cf7556c5313bfa6e9bec5691740",
+      "tracked_patch_matches": true,
+      "decision_record": "docs/evidence/personal-experience/v6-integration-20260917-153208/integration-map.md",
+      "handling": "reviewed implementation already integrated with hardening; original evidence and obsolete bundles preserved separately"
+    },
+    {
+      "worktree_label": "worktrees/siq-release-openshell-20260916-142706",
+      "untracked": 2,
+      "handling": "execution prompt identical to main; taskbook identical except main adds later review correction"
+    },
+    {
+      "worktree_label": "siq-b07-final-review-20260916",
+      "untracked": 5,
+      "identical_main_files": 5
+    }
+  ],
+  "stash": {
+    "commit": "6ac5b073ba433ff412d9b2f4b82beb8945a6795d",
+    "path": "apps/control-api/uv.lock",
+    "change": "project source virtual to editable",
+    "current_main_has_change": true,
+    "retained": true
+  },
+  "validation_scope": "ancestry, object reachability, source digest comparison, unchanged merge tree, documentation checks; no new runtime acceptance",
+  "preservation": "original worktrees, stash, ignored assets and historical evidence retained; no cleanup/reset/rewrite/push/release",
+  "validation": [
+    {
+      "check": "all_local_branch_and_worktree_inventory",
+      "result": "passed"
+    },
+    {
+      "check": "main_blob_reachability",
+      "result": "passed"
+    },
+    {
+      "check": "glm_262_source_hashes",
+      "result": "passed"
+    },
+    {
+      "check": "v6_128_untracked_and_tracked_patch_hashes",
+      "result": "passed"
+    },
+    {
+      "check": "unchanged_product_merge_tree",
+      "result": "passed"
+    },
+    {
+      "check": "research_task_ledger",
+      "result": "passed"
+    },
+    {
+      "check": "research_metadata",
+      "result": "passed"
+    },
+    {
+      "check": "capability_honesty",
+      "result": "passed"
+    },
+    {
+      "check": "29_local_document_links",
+      "result": "passed"
+    },
+    {
+      "check": "json_parse",
+      "result": "passed"
+    },
+    {
+      "check": "git_diff_check",
+      "result": "passed"
+    },
+    {
+      "check": "gitleaks_changed_documents",
+      "result": "passed"
+    }
+  ]
+}
