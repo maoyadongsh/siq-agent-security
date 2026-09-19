@@ -894,6 +894,126 @@
         "frozen base comparison"
       ],
       "source_blob": "6c587f46e03a45d7f165fffe0858545dac2782c6"
+    },
+    {
+      "path": "scripts/release/verify.py",
+      "action": "add",
+      "reason": "RA-03 reproducible verification; frozen old release retained",
+      "consumers": [
+        "release maintainers",
+        "existing CI release unit tests",
+        "evaluation navigation"
+      ],
+      "validation": [
+        "release unit tests and Ruff",
+        "actual official package and public readback",
+        "isolated Linux ARM64 native installation"
+      ]
+    },
+    {
+      "path": "scripts/release/readback.py",
+      "action": "add",
+      "reason": "RA-03 reproducible verification; frozen old release retained",
+      "consumers": [
+        "release maintainers",
+        "existing CI release unit tests",
+        "evaluation navigation"
+      ],
+      "validation": [
+        "release unit tests and Ruff",
+        "actual official package and public readback",
+        "isolated Linux ARM64 native installation"
+      ]
+    },
+    {
+      "path": "scripts/release/test_verify.py",
+      "action": "add",
+      "reason": "RA-03 reproducible verification; frozen old release retained",
+      "consumers": [
+        "release maintainers",
+        "existing CI release unit tests",
+        "evaluation navigation"
+      ],
+      "validation": [
+        "release unit tests and Ruff",
+        "actual official package and public readback",
+        "isolated Linux ARM64 native installation"
+      ]
+    },
+    {
+      "path": "scripts/release/README.md",
+      "action": "add",
+      "reason": "RA-03 reproducible verification; frozen old release retained",
+      "consumers": [
+        "release maintainers",
+        "existing CI release unit tests",
+        "evaluation navigation"
+      ],
+      "validation": [
+        "release unit tests and Ruff",
+        "actual official package and public readback",
+        "isolated Linux ARM64 native installation"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-20260919/README.md",
+      "action": "add",
+      "reason": "RA-03 reproducible verification; frozen old release retained",
+      "consumers": [
+        "release maintainers",
+        "existing CI release unit tests",
+        "evaluation navigation"
+      ],
+      "validation": [
+        "release unit tests and Ruff",
+        "actual official package and public readback",
+        "isolated Linux ARM64 native installation"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-20260919/tool-candidate.json",
+      "action": "add",
+      "reason": "RA-03 reproducible verification; frozen old release retained",
+      "consumers": [
+        "release maintainers",
+        "existing CI release unit tests",
+        "evaluation navigation"
+      ],
+      "validation": [
+        "release unit tests and Ruff",
+        "actual official package and public readback",
+        "isolated Linux ARM64 native installation"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-20260919/release-public-readback.json",
+      "action": "add",
+      "reason": "RA-03 reproducible verification; frozen old release retained",
+      "consumers": [
+        "release maintainers",
+        "existing CI release unit tests",
+        "evaluation navigation"
+      ],
+      "validation": [
+        "release unit tests and Ruff",
+        "actual official package and public readback",
+        "isolated Linux ARM64 native installation"
+      ]
+    },
+    {
+      "path": "docs/evidence/repository-reorganization-20260919/release-native-verification.json",
+      "action": "add",
+      "reason": "RA-03 reproducible verification; frozen old release retained",
+      "consumers": [
+        "release maintainers",
+        "existing CI release unit tests",
+        "evaluation navigation"
+      ],
+      "validation": [
+        "release unit tests and Ruff",
+        "actual official package and public readback",
+        "isolated Linux ARM64 native installation"
+      ]
     }
   ],
   "frozen": {
@@ -923,7 +1043,9 @@
     "RESEARCH.md",
     "REPRODUCIBILITY.md",
     "AGENTSHIELD.md",
-    "docs/README.md"
+    "docs/README.md",
+    "scripts/release/README.md",
+    "docs/evidence/repository-reorganization-20260919/README.md"
   ],
   "navigation_globs": [
     "docs/development/*.md",

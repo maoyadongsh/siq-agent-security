@@ -4,7 +4,7 @@
 
 | 范围 | 仍待验证或建设 | 解除条件来自 |
 | --- | --- | --- |
-| 发行维护 | 通用最终包验证与回读驱动尚待从临时脚本沉淀；0.3.0 本身已发布 | [RA-03 进度](../docs/development/reorganization-progress.md) |
+| 发行维护 | 通用验包/回读已落地；Windows 驱动、其余目标原生链路与后续候选验收仍待完成 | [RA-03 进度](../docs/development/reorganization-progress.md) |
 | Linux | 原版 OpenClaw 最终检查点、桌面视觉、性能及完整同候选验收 | [Linux 台账](../docs/linux-dual-host-progress-20260918.md) |
 | macOS | 同候选宿主、原生安装升级及 Apple 签名/公证 | [M01–M11](../docs/personal-macos-luke-remaining-development-20260917.md) |
 | Windows | 原生安装升级及三宿主复测；WSL/原生分别验收 | [平台任务](../docs/personal-windows-sunbo-taskbook-20260913-202355.md)、[后续边界](../docs/skill-source-release-boundary-20260919.md) |
