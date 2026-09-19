@@ -126,13 +126,13 @@ func migrationSync(dir string) error {
 
 // Migration-only raw publication. Callers hold every writer and validate the
 // immutable plan. Ordinary statefs intentionally refuses this active barrier.
-func migrationPublish(root, path string, b []byte, mode os.FileMode) error {
+func migrationPublish(root, path string, b []byte, mode os.FileMode) (resultErr error) {
 	if e := stateformat.CheckParents(filepath.Dir(path)); e != nil {
 		return e
 	}
 	if old, e := stateformat.ReadRegular(path, migrationMaxFile); e == nil {
 		info, se := os.Lstat(path)
-		if se != nil || string(old) != string(b) || info.Mode().Perm() != mode.Perm() {
+		if se != nil || string(old) != string(b) || !migrationModeMatches(info.Mode(), mode) {
 			return errors.New("state-migrate: existing output differs")
 		}
 		return nil
@@ -147,7 +147,12 @@ func migrationPublish(root, path string, b []byte, mode os.FileMode) error {
 	if e != nil {
 		return e
 	}
-	defer os.Remove(f.Name())
+	created, e := f.Stat()
+	if e != nil {
+		_ = f.Close()
+		return e
+	}
+	defer func() { resultErr = errors.Join(resultErr, migrationRemoveScratch(f.Name(), created)) }()
 	if e = f.Chmod(mode); e == nil {
 		_, e = f.Write(b)
 	}
@@ -163,6 +168,16 @@ func migrationPublish(root, path string, b []byte, mode os.FileMode) error {
 	}
 	return migrationSync(filepath.Dir(path))
 }
+
+// Windows Chmod only controls FILE_ATTRIBUTE_READONLY through owner-write.
+// This is a mode-equivalence check, not a claim about Windows DACL privacy.
+func migrationModeMatches(actual, requested os.FileMode) bool {
+	if runtime.GOOS == "windows" {
+		return actual&0200 == requested&0200
+	}
+	return actual.Perm() == requested.Perm()
+}
+
 func migrationMkdir(path string, mode os.FileMode) error {
 	if e := os.Mkdir(path, mode); e != nil && !errors.Is(e, os.ErrExist) {
 		return e

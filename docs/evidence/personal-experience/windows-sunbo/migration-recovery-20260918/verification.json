@@ -1,0 +1,84 @@
+{
+  "source_sha": "54df8d44a33dfb6cd871b3fc8c21fd123190d770",
+  "source_dirty": false,
+  "checks": [
+    {
+      "name": "migration",
+      "exit": 0,
+      "seconds": 241.425
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 71.052
+    },
+    {
+      "name": "build-windows-amd64",
+      "exit": 0,
+      "seconds": 26.501
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0,
+      "seconds": 25.967
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0,
+      "seconds": 21.288
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0,
+      "seconds": 24.17
+    },
+    {
+      "name": "schema",
+      "exit": 0,
+      "seconds": 32.233
+    }
+  ],
+  "finished": true,
+  "binary_sha256": "ddc15369f6d3916cbc4be44995695346451b218733bb419bfc1d8765eb884df9",
+  "top_level_test_counts": {
+    "pass": 25
+  },
+  "subtest_counts": {
+    "pass": 68,
+    "skip": 1
+  },
+  "tests": {
+    "TestAcquireWriterBlocksSecondAndTakesOverDead": "pass",
+    "TestMigrationPublicationReuseAndDrift": "pass",
+    "TestMigrationScratchCleanupRefusesReplacement": "pass",
+    "TestMigrationFullBackupAndEveryCheckpointRecovery": "pass",
+    "TestMigrationRejectsDriftAndUntrustedPlan": "pass",
+    "TestMigrationExclusiveAndUnsupportedSource": "pass",
+    "TestUnmarkedMigrationPreservesPrivateReadonlyTree": "pass",
+    "TestMigrationPlanContractFixture": "pass",
+    "TestMigrationRecoversMissingMarkerOnlyAfterPreparedBackup": "pass",
+    "TestInitializeHistoricalStateDoesNotSkipMigration": "pass",
+    "TestCommitRecoveryAfterProcessKill": "pass",
+    "TestWindowsStatePathEnvironment": "pass",
+    "TestWindowsStatePathDirectAPIsRejectBeforeEffects": "pass",
+    "TestWindowsStatePathValidNavigationAndInitialization": "pass",
+    "TestWindowsStatePathOwnedWriterRejectsRawAliases": "pass",
+    "TestWindowsTaskOwnershipAndRecovery": "pass",
+    "TestWindowsTaskRejectsUnownedAndClonedRecords": "pass",
+    "TestWindowsTaskRecordContract": "pass",
+    "TestWindowsProcessProbeFailsClosed": "pass",
+    "TestWindowsWriterCrashRecovery": "pass",
+    "TestWindowsReclaimPinsObservedLock": "pass",
+    "TestWindowsConcurrentStaleAcquisition": "pass",
+    "TestWindowsReclaimRejectsUnsafeLock": "pass",
+    "TestWindowsHandleRenameRefusesExistingTarget": "pass",
+    "TestWindowsWriterRecoveryLongUnicodePath": "pass"
+  },
+  "verification_scope": "selected Windows native Go component recovery tests; not full host or historical-v1 acceptance",
+  "skipped_cases": [
+    {
+      "test": "TestMigrationRejectsDriftAndUntrustedPlan/symlink-backup",
+      "reason": "Windows symlink privilege unavailable; construction skipped; not acceptance pass"
+    }
+  ]
+}

@@ -43,6 +43,8 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 
 Windows Writer 恢复按 dev-spec §2.3 的限定例外，允许在 `_windows.go` 中使用标准库 `syscall`/`unsafe` 调用进程只读查询和文件句柄重命名 API；独占创建仍用 `O_EXCL`，不引入第三方依赖、进程终止、提权或新的平台服务。跨平台文件不得直接引用这些 API，其他平台构建保持通过。
 
+N01 Windows 迁移暂存清理按 `docs/n01-state-protocol-design-20260913.md` 的限定例外，允许同样通过标准库 Win32 句柄删除本次创建且身份复验一致的暂存链接；禁止通过清除只读位删除硬链接，禁止清理未知对象。
+
 ```bash
 gofmt -l . && go vet ./... && go test ./...
 for t in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do GOOS=${t%/*} GOARCH=${t#*/} go build ./cmd/agentshield || exit 1; done
