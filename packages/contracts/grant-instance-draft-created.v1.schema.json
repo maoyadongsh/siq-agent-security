@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/grant-instance-draft-created.v1.schema.json",
+  "title": "Independent instance draft and its current revision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "instance_id", "grant", "state_revision", "reused"],
+  "properties": {
+    "schema_version": {"const": "grant-instance-draft-created/v1"},
+    "instance_id": {"type": "string", "pattern": "^hi-[a-f0-9]{32}$"},
+    "grant": {
+      "allOf": [
+        {"anyOf": [{"$ref": "grant.schema.json"}, {"$ref": "grant.v2.schema.json"}]},
+        {"not": {"required": ["skill"]}, "properties": {
+          "grant_id": {"pattern": "^grt-id-[a-f0-9]{64}$"},
+          "subject": {"properties": {"type": {"const": "agent_instance"}, "id": {"pattern": "^hri-[a-f0-9]{32}$"}}}
+        }}
+      ]
+    },
+    "state_revision": {"type": "integer", "minimum": 0},
+    "reused": {"type": "boolean"}
+  },
+  "allOf": [{"if": {"properties": {"reused": {"const": false}}}, "then": {"properties": {"grant": {"properties": {"status": {"const": "pending_approval"}}}}}}]
+}

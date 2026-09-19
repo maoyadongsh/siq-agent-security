@@ -1,0 +1,176 @@
+{
+  "source_dirty": true,
+  "scope": "runtimecheck v5 targeted development components; no host/model",
+  "private_temp": ".tmp/rcv5r2",
+  "results": [
+    {
+      "label": "gofmt",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\gofmt.exe",
+        "-w",
+        "<WORKTREE>\\apps\\agentshield\\internal\\adapterinstall\\runtime_target.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\adapterinstall\\runtime_target_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\runtime_check.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\runtime_check_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\filesystem_profile.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\binding.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\types.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\validate.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\matcher.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\grant\\runtime_check_draft.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\grant\\runtime_check_draft_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\intent_http.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\file_observation_profile.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\runtime_check_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\runtime_check_fixture_windows_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\runtime_check_fixture_other_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\runtime_check_authority_windows_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\authority.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\authority_windows_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\contracts_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\execute.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\fixture_other_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\fixture_windows_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\manager.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\manager_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\native.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\records.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\recovery_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\types.go"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 0.294558
+    },
+    {
+      "label": "intent-grant-contracts",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-json",
+        "-p",
+        "1",
+        "-count=1",
+        "-run",
+        "^(TestWindowsIntent|TestWindowsRuntimeCheck|TestRuntimeCheckDraft)",
+        "./internal/intent",
+        "./internal/grant",
+        "-timeout=120s"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 46.284665
+    },
+    {
+      "label": "runtimecheck-positive",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-json",
+        "-p",
+        "1",
+        "-count=1",
+        "-run",
+        "^TestCheckTemporaryAuthorityAndVerifiedCleanup$",
+        "./internal/runtimecheck",
+        "-timeout=180s"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 29.650527
+    },
+    {
+      "label": "runtimecheck-authority",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-json",
+        "-p",
+        "1",
+        "-count=1",
+        "-run",
+        "^(TestWindowsCheck|TestPlanRequires|TestLaunchAttachment|TestCancelStops|TestExitSuccess|TestRecoveryFinds|TestAuditFailure|TestTamperedOrTrailing|TestPreviewExpiry)",
+        "./internal/runtimecheck",
+        "-timeout=900s"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 237.139282
+    },
+    {
+      "label": "http-boundaries",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-json",
+        "-p",
+        "1",
+        "-count=1",
+        "-run",
+        "^(TestRuntimeCheckHTTP|TestWindowsRuntimeCheckRejects)",
+        "./internal/server",
+        "-timeout=300s"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 43.229441
+    },
+    {
+      "label": "adapter-boundaries",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-json",
+        "-count=1",
+        "-run",
+        "^TestRuntimeTargetRequiresExplicitReadyHermesInstance$",
+        "./internal/adapterinstall",
+        "-timeout=60s"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 9.808188
+    },
+    {
+      "label": "schema-v5",
+      "command": [
+        "<WORKSPACE>\\.tmp\\win-stage-r2-20260917\\apps\\control-api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "app/tests/test_schema_contracts.py::test_windows_runtime_check_intent_v5_contract"
+      ],
+      "cwd": "<WORKTREE>\\apps\\control-api",
+      "exit_code": 0,
+      "seconds": 4.917456
+    },
+    {
+      "label": "ruff-schema",
+      "command": [
+        "<WORKSPACE>\\.tmp\\win-stage-r2-20260917\\apps\\control-api\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "app/tests/test_schema_contracts.py"
+      ],
+      "cwd": "<WORKTREE>\\apps\\control-api",
+      "exit_code": 0,
+      "seconds": 1.551848
+    },
+    {
+      "label": "vet",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "vet",
+        "./internal/intent",
+        "./internal/grant",
+        "./internal/runtimecheck",
+        "./internal/server",
+        "./internal/adapterinstall"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 9.539453
+    }
+  ]
+}

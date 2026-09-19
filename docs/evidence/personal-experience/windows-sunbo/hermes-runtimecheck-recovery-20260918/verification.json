@@ -1,0 +1,186 @@
+{
+  "evidence_format": "windows-hermes-runtimecheck-recovery-summary/1",
+  "date": "2026-09-18",
+  "overall_product_journey": "fail",
+  "product_native_acceptance": "not_passed",
+  "acceptance_rows_promoted": 0,
+  "clean_build": {
+    "candidate_commit": "13129e1e6e68c9632b127a4182d7739ae4508579",
+    "binary_sha256": "95bffe15d2957ccb97942a1d61a1ad4c3c8f9a857104d25cdae3d100d56d67b3",
+    "exit_code": 0,
+    "source_dirty": false,
+    "source_after_clean": true,
+    "seconds": 16.392
+  },
+  "runs": [
+    {
+      "batch": "r1",
+      "product_journey": "fail",
+      "controller_exit_code": 1,
+      "elapsed_seconds": 32.207,
+      "started_at": "2026-09-18T20:24:17.812734+08:00",
+      "finished_at": "2026-09-18T20:24:50.020158+08:00",
+      "candidate_commit": "13129e1e6e68c9632b127a4182d7739ae4508579",
+      "binary_sha256": "95bffe15d2957ccb97942a1d61a1ad4c3c8f9a857104d25cdae3d100d56d67b3",
+      "controller_sha256": "45643969ff58680a74cd7fa5641c2e26cca466b7ae454920e0a4cfb2ee9e1b98",
+      "plan_sha256": "c98f66ef83cb56e83e5de99d4a3a8b9fa5a937d9432652e3e0d292a7b4d92e0a",
+      "original_failed_report_sha256": "ac19682059001a54bc7084bc9eb95a1365aa7a606b7ecab99c01da96819d502c",
+      "candidate_source_files": 1376,
+      "candidate_source_files_digest": "de9550ec284bf0a95278d4e2d1490e35945cdaa0851f6fec6a1eebbde765579e",
+      "http_sequence": [
+        {
+          "method": "POST",
+          "endpoint": "/v1/adapter/preview",
+          "http_status": 400,
+          "action": "install",
+          "error_category": "generic_configuration_error",
+          "recovery_required": false
+        }
+      ],
+      "runtime_check_start_requested": false,
+      "runtime_check_chat_started": false,
+      "product_model_requests": 0,
+      "owned_jobs_closed": 4,
+      "observed_processes": 11,
+      "observed_processes_terminated": true,
+      "claim_scope": "actual installed native metadata CLI; no product runtime-check execution",
+      "cause": "Hermes metadata save removed redundant empty secrets mapping; SIQ unrelated-setting guard refused preview.",
+      "adapter_installed": false
+    },
+    {
+      "batch": "r2",
+      "product_journey": "fail",
+      "controller_exit_code": 1,
+      "elapsed_seconds": 59.048,
+      "started_at": "2026-09-18T20:37:11.443145+08:00",
+      "finished_at": "2026-09-18T20:38:10.491375+08:00",
+      "candidate_commit": "13129e1e6e68c9632b127a4182d7739ae4508579",
+      "binary_sha256": "95bffe15d2957ccb97942a1d61a1ad4c3c8f9a857104d25cdae3d100d56d67b3",
+      "controller_sha256": "27bed3f7560aa3d4df1561e0e8c0e47ea4a731e835e273a1035df4a956205517",
+      "plan_sha256": "94d4d527e19f8e76a38efdbae0b8adbb3ddc0dd72d5a11b71c4111662fd35ee2",
+      "original_failed_report_sha256": "7712d95fefe74eb5cf5cdc50c13546a402fe70d614db329dfa21d345d255ce2f",
+      "candidate_source_files": 1376,
+      "candidate_source_files_digest": "de9550ec284bf0a95278d4e2d1490e35945cdaa0851f6fec6a1eebbde765579e",
+      "http_sequence": [
+        {
+          "method": "POST",
+          "endpoint": "/v1/adapter/preview",
+          "http_status": 200,
+          "action": "install"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/v1/adapter/install",
+          "http_status": 200
+        },
+        {
+          "method": "POST",
+          "endpoint": "/v1/runtime-checks/preview",
+          "http_status": 500,
+          "error_code": "runtime_check_snapshot_failed"
+        }
+      ],
+      "runtime_check_start_requested": false,
+      "runtime_check_chat_started": false,
+      "product_model_requests": 0,
+      "owned_jobs_closed": 4,
+      "observed_processes": 26,
+      "observed_processes_terminated": true,
+      "claim_scope": "actual installed native metadata CLI; no product runtime-check execution",
+      "fixture_delta_from_r1": "omit only redundant secrets:{}; retain model, both fallback forms and 18 auxiliary routes",
+      "adapter_installed": true,
+      "cause": "Named Go FilesystemProfile value was passed directly to canonical JSON writer; runtime_check_snapshot_failed.",
+      "http_uninstall_preview": "RemoteDisconnected; no completed HTTP response status was recorded",
+      "controller_left_installation_for_explicit_recovery": true,
+      "original_failure_retained_after_recovery": true
+    }
+  ],
+  "metadata_diagnosis": {
+    "status": "pass",
+    "method": "three actual installed CLI metadata commands on a new isolated copy",
+    "command_exit_codes": [
+      0,
+      0,
+      0
+    ],
+    "only_non_siq_change": "redundant empty secrets mapping removed",
+    "original_failed_input_preserved": true,
+    "models_or_services_started": false,
+    "interpretation": "fixture normalization diagnosis; not general profile compatibility repair"
+  },
+  "official_cli_cleanup": {
+    "status": "pass",
+    "candidate_commit": "13129e1e6e68c9632b127a4182d7739ae4508579",
+    "preview_exit_code": 0,
+    "apply_exit_code": 0,
+    "status_exit_code": 0,
+    "command_seconds": [
+      22.44,
+      24.369,
+      0.821
+    ],
+    "jobs_closed_and_empty": true,
+    "native_registration_restored": true,
+    "unowned_configuration_semantics_restored": true,
+    "owned_plugin_files_removed": 3,
+    "adapter_status": "not installed",
+    "original_failed_report_and_backup_preserved": true,
+    "normalization_allowance": [
+      "Hermes _config_version metadata",
+      "empty plugins.entries mapping"
+    ],
+    "evidence_method": "retained formal CLI results and existing read-only cleanup verification; plugin-file absence rechecked during packaging",
+    "does_not_pass_http_uninstall": true
+  },
+  "snapshot_fix_components": {
+    "status": "pass",
+    "command": "go test ./internal/adapterinstall -run ^TestWindowsRuntimeTargetCanonicalProfile$ -count=1 -timeout=120s -v",
+    "old_exit_code": 1,
+    "old_failure": "runtime_check_snapshot_failed after actual Windows profile activation",
+    "fixed_exit_code": 0,
+    "fixed_test_seconds": 4.2,
+    "fixed_package_seconds": 6.064,
+    "positive": "production InspectRuntimeTarget equals independently built canonical JSON string snapshot with actual Windows directory identity",
+    "negative": [
+      "unconfirmed Windows state refused",
+      "configuration drift refused",
+      "launcher drift refused"
+    ],
+    "fixture_only_initial_attempts": {
+      "count": 2,
+      "exit_codes": [
+        1,
+        1
+      ],
+      "reason": "state initialized after legacy backup fixture was added; pristine initialization corrected before old behavior proof",
+      "excluded_from_product_failure_proof": true
+    },
+    "component_boundary": "program files and native installation record are synthetic metadata; real state and Windows filesystem inspector are used; no host, model, service, installation transaction or replacement Snapshot callback",
+    "source_identity": {
+      "native_candidate": "13129e1e6e68c9632b127a4182d7739ae4508579",
+      "fix_commit": "b8779b8ede94729c13c8056a13d3c1e99255e162",
+      "production_before": {
+        "path": "apps/agentshield/internal/adapterinstall/runtime_target.go",
+        "sha256": "ee8e604ca303d28c1b4b402f9390d4c88ebe8155020239d0213feef5d3ad032f"
+      },
+      "production_after": {
+        "path": "apps/agentshield/internal/adapterinstall/runtime_target.go",
+        "sha256": "1f2135d7c3ec8dee593ca02d11d535ded6064de076da7391b2edba20cd29cf5f"
+      },
+      "tested_test_sha256": "2ec6271a03b83c8e49d9adcd6d362318e526aba28361f0cad406aef08ac5d6d8",
+      "committed_test": {
+        "path": "apps/agentshield/internal/adapterinstall/runtime_target_windows_test.go",
+        "sha256": "ac735302a0ae2ac6215c5fe36379ea70435066a048271e43a9ce3725d5b87569"
+      },
+      "test_commit_delta": "comment-only; reconstructing the tested comment yields the recorded tested SHA256",
+      "production_delta": "one conversion from profile to string(profile); canonical JSON string contract unchanged"
+    }
+  },
+  "limitations": [
+    "Both clean131 product journeys failed before runtime-check start; no v5 five-receipt/model-routing acceptance is claimed.",
+    "Formal CLI cleanup passes only isolated recovery. The original HTTP uninstall failure remains recorded and is outside this fix.",
+    "The b877 snapshot repair has component evidence only; a new clean candidate must independently repeat the native journey.",
+    "No entries in the 303-row host acceptance ledger are promoted by this package.",
+    "Private reports, configuration, account paths, process IDs and environment are not copied; no signing key or credential file was read or hashed."
+  ]
+}

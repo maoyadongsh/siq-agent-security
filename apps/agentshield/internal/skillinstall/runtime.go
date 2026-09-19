@@ -74,7 +74,7 @@ func (s *Store) runtimeBinding(ctx context.Context, id string) (*RuntimeBinding,
 // bindingContent rechecks the complete target and imported source. It never
 // uses the old preview TTL to extend or shorten the independent Grant lifetime.
 func (s *Store) bindingContent(ctx context.Context, b *RuntimeBinding, g *grant.Grant) error {
-	if g == nil || !grant.Verify(s.key.Public(), *g) || grant.ValidateLifetime(*g, s.now()) != nil || g.GrantID != b.GrantID || !supportedPlatform(g.Platform) || g.Subject.Type != "agent_instance" || g.Subject.ID != subjectForInstance(b.InstanceID) {
+	if g == nil || !grant.Verify(s.key.Public(), *g) || grant.ValidateLifetime(*g, s.now()) != nil || g.GrantID != b.GrantID || (!supportedPlatform(g.Platform) && g.Platform != "workbuddy") || g.Subject.Type != "agent_instance" || g.Subject.ID != subjectForInstance(b.InstanceID) {
 		return ErrChanged
 	}
 	digest, err := grant.PermissionDigest(*g)
@@ -99,7 +99,7 @@ func (s *Store) bindingContent(ctx context.Context, b *RuntimeBinding, g *grant.
 	p := v.Plan
 	request := p.request()
 	request.ActorID = b.ActorID
-	if !validRequest(request) || v.Status != "installed_unverified" || v.Operation == nil || v.Operation.Signature != b.OperationSignature || p.Signature != b.PlanSignature || p.GrantID != b.GrantID || p.GrantRevision != b.ApprovedRevision || p.GrantSignature != b.ApprovedSignature || p.GrantPermissionDigest != b.PermissionDigest || p.Platform != g.Platform || p.InstanceID != b.InstanceID || p.Source != b.Source {
+	if !validRequest(request) || !validPlanTarget(p) || !planGrantProfile(p, g) || v.Status != "installed_unverified" || v.Operation == nil || v.Operation.Signature != b.OperationSignature || p.Signature != b.PlanSignature || p.GrantID != b.GrantID || p.GrantRevision != b.ApprovedRevision || p.GrantSignature != b.ApprovedSignature || p.GrantPermissionDigest != b.PermissionDigest || p.Platform != g.Platform || p.InstanceID != b.InstanceID || p.Source != b.Source {
 		return ErrChanged
 	}
 	return ctx.Err()
@@ -326,7 +326,11 @@ func (s *Store) ReadReadiness(ctx context.Context, id string) (*RuntimeReadiness
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
-	return &RuntimeReadiness{"local-skill-install-runtime-readiness/v1", id, g, revision, status, b}, nil
+	version := "local-skill-install-runtime-readiness/v1"
+	if g.SchemaVersion == "grant/v2" {
+		version = "local-skill-install-runtime-readiness/v2"
+	}
+	return &RuntimeReadiness{version, id, g, revision, status, b}, nil
 }
 
 func (s *Store) ReadGrantReadiness(ctx context.Context, grantID string) (*RuntimeReadiness, error) {

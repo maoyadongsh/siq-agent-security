@@ -12,9 +12,10 @@ import (
 type GrantLookup func(id string) (*grant.Grant, int, error)
 
 type GrantReference struct {
-	GrantID          string `json:"grant_id"`
-	AdmissionID      string `json:"admission_id"`
-	PermissionDigest string `json:"permission_digest"`
+	PermissionDigestSchema string `json:"permission_digest_schema,omitempty"`
+	GrantID                string `json:"grant_id"`
+	AdmissionID            string `json:"admission_id"`
+	PermissionDigest       string `json:"permission_digest"`
 }
 
 // SelectGrant validates committed authority before an instance credential is
@@ -31,7 +32,7 @@ func (s *Store) SelectGrant(id, platform, agent string, expectedRevision int) (G
 	if err != nil {
 		return GrantReference{}, violation("intent_invalid_grant_selection")
 	}
-	return GrantReference{GrantID: g.GrantID, AdmissionID: g.AdmissionID, PermissionDigest: digest}, nil
+	return GrantReference{GrantID: g.GrantID, AdmissionID: g.AdmissionID, PermissionDigest: digest, PermissionDigestSchema: permissionDigestSchema(g)}, nil
 }
 
 // GrantForReference never substitutes a newer or broader grant.
@@ -73,7 +74,7 @@ func (s *Store) resolveGrantSelection(b Binding) (*grant.Grant, error) {
 		return nil, err
 	}
 	digest, err := grant.PermissionDigest(*g)
-	if err != nil || b.GrantRef.AdmissionID != g.AdmissionID || b.GrantRef.PermissionDigest != digest {
+	if err != nil || b.GrantRef.AdmissionID != g.AdmissionID || b.GrantRef.PermissionDigest != digest || b.GrantRef.PermissionDigestSchema != permissionDigestSchema(g) {
 		return nil, violation("intent_grant_digest_mismatch")
 	}
 	return g, nil
@@ -96,7 +97,7 @@ func (s *Store) BindWithGrant(b Binding, grantID string, expectedRevision int) (
 	if err != nil {
 		return b, violation("intent_invalid_grant_selection")
 	}
-	b.GrantRef = &GrantReference{GrantID: g.GrantID, AdmissionID: g.AdmissionID, PermissionDigest: digest}
+	b.GrantRef = &GrantReference{GrantID: g.GrantID, AdmissionID: g.AdmissionID, PermissionDigest: digest, PermissionDigestSchema: permissionDigestSchema(g)}
 	return s.bindSelected(b, g)
 }
 

@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/openclaw-native-session.v1.schema.json",
+  "title": "OpenClaw native session key and epoch identity v1",
+  "description": "Opaque session_id derived only from trusted native hook context. SHA256 over UTF8(openclaw-native-session/v1), NUL, UTF8(sessionKey), NUL, UTF8(sessionId). Key: 1..256 UTF8 bytes without C0/DEL and valid Unicode; epoch: lowercase UUID 8-4-4-4-12. This identifier is not authority or host attestation. See docs/openclaw-native-session-spec-v1.md.",
+  "type": "string",
+  "pattern": "^openclaw-session/v1:[0-9a-f]{64}$"
+}

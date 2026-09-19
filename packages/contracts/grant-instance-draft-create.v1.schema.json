@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/grant-instance-draft-create.v1.schema.json",
+  "title": "Explicit instance permission draft from a real admission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "actor_id", "instance_id", "admission_id", "request_id", "confirm_instance_scope"],
+  "properties": {
+    "schema_version": {"const": "grant-instance-draft-create/v1"},
+    "actor_id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^(?!\\s)(?!.*[\\x00-\\x1f\\x7f-\\x9f])\\S(?:.*\\S)?$"},
+    "instance_id": {"type": "string", "pattern": "^hi-[a-f0-9]{32}$"},
+    "admission_id": {"type": "string", "pattern": "^adm-[a-f0-9]{12}$"},
+    "request_id": {"type": "string", "pattern": "^gid-[a-f0-9]{32}$"},
+    "confirm_instance_scope": {"const": true}
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "python_contract": {
+    "exit_code": 0,
+    "passed": 4,
+    "lock_hash": "49b598ab768fb1d2ff9af1fd724be5ecfcb78edf"
+  },
+  "python_ruff": {
+    "exit_code": 0,
+    "initial_exit_code": 1,
+    "initial_reason": "E501, formatting repaired"
+  },
+  "component": {
+    "exit_code": 0,
+    "top_pass": 10,
+    "sub_pass": 62,
+    "skip": 0
+  },
+  "regression": {
+    "exit_code": 0,
+    "top_pass": 15,
+    "sub_pass": 36,
+    "skip": 0
+  },
+  "regression_extra": {
+    "exit_code": 1,
+    "top_pass": 3,
+    "top_fail": 3,
+    "sub_pass": 9,
+    "sub_fail": 7,
+    "skip": 0
+  },
+  "baseline_macos": {
+    "source_sha": "1747f6c",
+    "exit_code": 1,
+    "top_fail": 3,
+    "sub_fail": 7
+  },
+  "native": {
+    "exit_code": 0,
+    "pass": 1,
+    "skip": 0,
+    "source_sha": "319d3ac4cf4f56a17f212ed45a927e7e29957490"
+  },
+  "full_go_test": {
+    "executed": false,
+    "reason": "pending final integrated candidate and baseline fixture repair"
+  }
+}

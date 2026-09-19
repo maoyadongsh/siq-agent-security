@@ -1,9 +1,10 @@
+import { grantFilesystemProfile, windowsFilesystemProfile } from '../filesystemProfile';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import { LocalApiError, localApi } from '../api';
 import { grantStatusLabel } from '../format';
-import { skillInstallErrorText } from '../skillInstall';
+import { skillInstallErrorText, skillInstallScopeLabel } from '../skillInstall';
 import { comparisonMatchesPlan, sameUpdateValue } from '../skillUpdate';
 import { useLocalSession } from '../session';
 import GrantScopeSummary from '../components/GrantScopeSummary';
@@ -117,7 +118,7 @@ export default function SkillUpdatesPage() {
     if (!controller.signal.aborted) { setComparison(result); setGrants(latest.grants); }
   });
   const prepare = () => run(async (controller) => {
-    if (!comparison?.record.operation || comparison.candidate_grant.status !== 'approved') throw mismatch();
+    if (!comparison?.record.operation || !candidateProfileReady || comparison.candidate_grant.status !== 'approved') throw mismatch();
     const previous = await localApi.skillRemoval(comparison.record.install_id, controller.signal);
     if (previous.status !== 'not_requested' || previous.state_revision !== comparison.previous_revision || previous.grant?.signature !== comparison.previous_grant.signature || !sameUpdateValue(previous.record, comparison.record)) throw mismatch();
     const request: SkillUpdateStageRequest = stageRequest ?? { schema_version: 'local-skill-update-stage-create/v1', request_id: 'up-' + crypto.randomUUID().replaceAll('-', ''), operation_signature: comparison.record.operation.signature,
@@ -147,13 +148,14 @@ export default function SkillUpdatesPage() {
     });
   };
   const candidates = grants.filter((g) => record && g.platform === record.plan.platform && g.subject?.type === 'agent_instance' && g.subject.id === record.plan.instance_id.replace(/^hi-/, 'hri-') && g.grant_id !== record.plan.grant_id && g.admission_id?.startsWith('adm-si-') && ['draft', 'pending_approval', 'approved'].includes(g.status));
+  const candidateProfileReady = !comparison || comparison.record.plan.platform !== 'workbuddy' || grantFilesystemProfile(comparison.candidate_grant) === windowsFilesystemProfile;
   const canContinue = view ? !view.result && (view.status !== 'recovery_required' || view.installation?.status === 'installed_unverified') && (!expired || view.installation?.status === 'installed_unverified') : !!plan && !!comparison && comparisonMatchesPlan(comparison, plan) && !expired;
   return <section className="local-imports-page skill-updates-page">
     <PageHeader title="更新 Skill" kicker="AGENTSHIELD" icon="shield" description="先审阅候选变化，再确认切换。更新不会自动启用新版本的运行权限。" connection={status ? 'connected' : 'loading'}
       actions={<Link className="btn btn-sm" to={installId ? `/installed-skills?install_id=${encodeURIComponent(installId)}` : '/installed-skills'}>返回安装记录</Link>} />
     {busy ? <p role="status">正在检查或处理更新，请稍候…</p> : null}
     {message ? <p className="action-error" role="alert">{message}</p> : null}
-    {record ? <section className="panel import-panel"><h2>{record.plan.directory_name}</h2><p>{record.plan.target_display}</p>
+    {record ? <section className="panel import-panel"><h2>{record.plan.directory_name}</h2><p>{skillInstallScopeLabel(record.plan)} · {record.plan.target_display}</p><p className="page-desc">更新保留原安装范围和目标。要迁往另一用户或项目位置，请另行安装并明确移除原安装。</p>
       <p>原副本：<code>{record.plan.source.artifact_digest}</code></p></section> : null}
     {!updateId && record ? <section className="panel import-panel"><h2>选择已导入的候选版本</h2>
       <p>先导入新版并为同一实例准备独立权限。候选未批准时可查看差异，批准后才可准备更新。</p>
@@ -167,7 +169,8 @@ export default function SkillUpdatesPage() {
     {comparison && !updateId ? <section className="panel import-panel"><h2>准备更新副本</h2>
       <p>准备不会修改旧版本或撤销旧权限。接下来还需明确确认切换。</p>
       {comparison.candidate_grant.status !== 'approved' ? <p>新权限尚未批准。<Link to={`/grants?grant=${encodeURIComponent(comparison.candidate_grant.grant_id)}`} target="_blank" rel="noopener noreferrer">审阅并批准候选权限（新窗口）</Link>，随后重新比较变化。</p> : null}
-      <button type="button" className="btn" disabled={busy || comparison.candidate_grant.status !== 'approved' || !actorId.trim()} onClick={() => void prepare()}>{stageRequest ? '重试原准备请求' : '准备更新副本'}</button>
+      {!candidateProfileReady ? <p role="alert">WorkBuddy 的候选权限需要明确确认 Windows 文件路径解释。请先在候选授权中编辑并审阅；原安装范围仍保持不变。</p> : null}
+      <button type="button" className="btn" disabled={busy || !candidateProfileReady || comparison.candidate_grant.status !== 'approved' || !actorId.trim()} onClick={() => void prepare()}>{stageRequest ? '重试原准备请求' : '准备更新副本'}</button>
     </section> : null}
     {chosen ? <section className="panel import-panel update-confirmation"><h2>{view ? labels[view.status] : '更新副本已准备'}</h2>
       <p>新副本：<code>{chosen.candidate_source.artifact_digest}</code> · {chosen.file_count} 个文件 · {chosen.total_bytes} 字节</p>

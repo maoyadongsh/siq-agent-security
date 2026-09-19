@@ -16,6 +16,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
 
@@ -135,7 +136,7 @@ type StateCompatibility struct {
 }
 
 func CurrentStateCompatibility() *StateCompatibility {
-	return &StateCompatibility{ReaderVersion: 2, WriterVersion: 2, MinFormat: 1, MaxFormat: 2}
+	return &StateCompatibility{ReaderVersion: stateformat.ReaderVersion, WriterVersion: stateformat.WriterVersion, MinFormat: 1, MaxFormat: 2}
 }
 
 type Manifest struct {

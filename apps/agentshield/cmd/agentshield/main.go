@@ -64,6 +64,8 @@ func main() {
 	switch os.Args[1] {
 	case "state-migrate":
 		err = cmdStateMigrate(os.Args[2:], os.Stdout)
+	case "state-enable-windows-resources":
+		err = cmdStateEnableWindowsResources(os.Args[2:], os.Stdout)
 	case "state-status":
 		err = cmdStateStatus(os.Args[2:], os.Stdout)
 	case "version":
@@ -199,6 +201,7 @@ func usage() {
   %[1]s version
   %[1]s state-status        # read-only compatibility diagnosis
   %[1]s state-migrate --confirm # explicit backed-up metadata migration; stop this instance first
+  %[1]s state-enable-windows-resources --confirm # explicit Windows resource compatibility activation
   %[1]s rulepack            # effective rule pack summary (JSON)
   %[1]s scan <file>...      # static threat scan, one JSON result per line
   %[1]s admit <skill-dir> [--trust trusted|community|unknown] [--out <dir>] [--card]
@@ -214,7 +217,7 @@ func usage() {
   %[1]s sync --control-api URL [--identity ID] [--secret-file PATH] [--task-id ID]
                                   # optional Edge upload; skip (exit 0) without creds; never auto-runs from serve
   %[1]s policy-exec         # OpenClaw security.installPolicy exec: stdin request → {decision,reason}
-  %[1]s hook codebuddy|workbuddy [--state-dir DIR]
+  %[1]s hook codebuddy|workbuddy [--state-dir DIR] [--managed-config FILE]
                                   # WorkBuddy hook; CodeBuddy retained only for historical installed hooks
   %[1]s adapter install|uninstall|status [platform]
                                   # new install: openclaw|hermes, plus workbuddy on macOS/Windows; legacy uninstall remains
@@ -416,6 +419,7 @@ func cmdHook(args []string) error {
 	}
 	fs := flag.NewFlagSet("hook", flag.ContinueOnError)
 	selected := fs.String("state-dir", "", "explicit canonical initialized state directory (overrides environment)")
+	managed := fs.String("managed-config", "", "explicit WorkBuddy managed connection document")
 	_ = fs.Bool("observe", false, "ignored; PostToolUse is selected from stdin hook_event_name")
 	if err := fs.Parse(args[1:]); err != nil {
 		return runUnavailableHostHook(args[0], os.Stdin, os.Stdout)
@@ -423,12 +427,18 @@ func cmdHook(args []string) error {
 	if fs.NArg() != 0 {
 		return runUnavailableHostHook(args[0], os.Stdin, os.Stdout)
 	}
-	explicit := false
+	explicit, managedExplicit := false, false
 	fs.Visit(func(f *flag.Flag) {
+		if f.Name == "managed-config" {
+			managedExplicit = true
+		}
 		if f.Name == "state-dir" {
 			explicit = true
 		}
 	})
+	if managedExplicit && args[0] != "workbuddy" {
+		return runUnavailableHostHook(args[0], os.Stdin, os.Stdout)
+	}
 	if explicit {
 		dir, err := serveStateDirectory(*selected, true)
 		if err != nil {
@@ -437,6 +447,9 @@ func cmdHook(args []string) error {
 		if err := os.Setenv(product.EnvStateDir, dir); err != nil {
 			return runUnavailableHostHook(args[0], os.Stdin, os.Stdout)
 		}
+	}
+	if args[0] == "workbuddy" {
+		return runWorkBuddySelectedHook(*managed, managedExplicit, os.Stdin, os.Stdout)
 	}
 	return runHostHook(args[0], os.Stdin, os.Stdout)
 }
@@ -469,6 +482,9 @@ func hostHookClient() (adapters.Decider, string, string) {
 }
 
 func runHostHook(platform string, in io.Reader, out io.Writer) error {
+	if platform == "workbuddy" {
+		return runWorkBuddySelectedHook("", false, in, out)
+	}
 	d, mode, dir := hostHookClient()
 	return writeHostHook(platform, in, out, d, mode, dir)
 }
@@ -477,6 +493,9 @@ func runHostHook(platform string, in io.Reader, out io.Writer) error {
 // even select a trustworthy state directory. These hosts do not treat exit 1
 // as a blocking decision, so returning a CLI error would be unsafe.
 func runUnavailableHostHook(platform string, in io.Reader, out io.Writer) error {
+	if platform == "workbuddy" {
+		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedDeny("", "", "block", "", "invalid WorkBuddy hook invocation"))
+	}
 	return writeHostHook(platform, in, out, nil, "block", "")
 }
 

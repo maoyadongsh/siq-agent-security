@@ -1,0 +1,356 @@
+{
+  "schema_version": "personal-r04-openclaw-native-update/v1",
+  "recorded_at": "2026-09-18T19:41:37.300305+00:00",
+  "passed": true,
+  "binary_sha256": "112f30fc30c10ec4516bf5244736a9f10477fbeac524badde83a667b335ac31a",
+  "harness_sha256": "ba0e9359ffae5e208d2f68660cec87f9165ce0aa51cb64d6978d36a98ef32723",
+  "native_cli_sha256": "97464647c50a1420d530db948cb203826306ef6b3a84810b6801c338366cecaf",
+  "openclaw_version": "2026.9.4",
+  "checks": [
+    "missing_sec_denied_before_v1_read",
+    "v1_native_read_allowed_with_verified_session_attribution",
+    "v1_call_binding_recomputed",
+    "v1_attribution_correlates_grant_install_sec",
+    "v1_attribution_digest_mismatch_detected",
+    "up01_import_generates_check_data_only",
+    "comparison_requires_confirmation_with_content_and_permission_diff",
+    "comparison_is_read_only",
+    "up02_cancel_and_repeated_requests_keep_v1",
+    "up07_stale_candidate_digest_refused",
+    "up10_source_unavailable_recorded",
+    "approved_candidate_recomparison_and_removal_view",
+    "up06_user_modified_target_not_silently_overwritten",
+    "prepared_update_leaves_v1_in_place_before_confirmation",
+    "up04_new_permissions_require_fresh_confirmation",
+    "up03_forged_plan_signature_refused",
+    "up03_candidate_drift_after_approval_refused",
+    "up08_commit_after_daemon_restart_from_recorded_plan",
+    "update_replaces_target_bytes",
+    "update_revokes_v1_grant",
+    "v1_runtime_identity_becomes_unavailable",
+    "up09_old_context_cannot_authorize_new_version",
+    "v2_activation_identity_and_adapter_rebind",
+    "v2_new_session_pre_sec_denied",
+    "v2_native_read_allowed_with_new_sec",
+    "v2_loaded_in_native_catalog",
+    "removal_revokes_authority_and_removes_target",
+    "v2_identity_survives_nothing_after_removal",
+    "unknown_user_files_preserved",
+    "host_config_final_state_preserved",
+    "receipt_chain_verified"
+  ],
+  "up_coverage": {
+    "UP01": "pass",
+    "UP02": "pass",
+    "UP03": "pass",
+    "UP04": "pass",
+    "UP05": "partial (stale-binding refusals exercised; concurrent operator interleaving out of scope here)",
+    "UP06": "pass",
+    "UP07": "partial (source digest refusal only; old/future state compatibility not covered)",
+    "UP08": "pass",
+    "UP09": "pass",
+    "UP10": "partial (local source unavailable only)"
+  },
+  "receipt_count": 9,
+  "limitations": [
+    "local deterministic model and synthetic operator; no external or paid model",
+    "candidate V2 is an explicitly imported local directory; public-network scheduled fetch is separate (does not close J6)",
+    "session-level attribution only (controlled_session); same-UID compromise and OS sandbox isolation remain outside the SEC threat boundary",
+    "UP05 covers stale-binding refusals, not two live operators racing; UP10 records the product's chosen safe behaviour",
+    "a session enrolled under the V1 identity can never be re-bound to the V2 identity (runtimeidentity.Store refuses the switch; SEC issuance then fails with skill_context_session_unbound), so the post-update journey uses an explicit new OpenClaw session (--session-key plus no-tool warmup) — a supported CLI path, not a manual production-state replacement",
+    "update flows here are local-dir journeys; production Git obeys R03 and is unchanged",
+    "Actual host is OpenClawGateway WSL, not a Windows-native Agent. Uses synthetic Skill versions; does not prove formal signed distribution or native hold/approval resume."
+  ],
+  "results": [
+    {
+      "id": "missing_sec_denied_before_v1_read",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v1_native_read_allowed_with_verified_session_attribution",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v1_call_binding_recomputed",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v1_attribution_correlates_grant_install_sec",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v1_attribution_digest_mismatch_detected",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up01_import_generates_check_data_only",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "comparison_requires_confirmation_with_content_and_permission_diff",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "comparison_is_read_only",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up02_cancel_and_repeated_requests_keep_v1",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up07_stale_candidate_digest_refused",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up10_source_unavailable_recorded",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "approved_candidate_recomparison_and_removal_view",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up06_user_modified_target_not_silently_overwritten",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "prepared_update_leaves_v1_in_place_before_confirmation",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up04_new_permissions_require_fresh_confirmation",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up03_forged_plan_signature_refused",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up03_candidate_drift_after_approval_refused",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up08_commit_after_daemon_restart_from_recorded_plan",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "update_replaces_target_bytes",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "update_revokes_v1_grant",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v1_runtime_identity_becomes_unavailable",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "up09_old_context_cannot_authorize_new_version",
+      "status": "pass",
+      "evidence_level": "observed"
+    },
+    {
+      "id": "v2_activation_identity_and_adapter_rebind",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v2_new_session_pre_sec_denied",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v2_native_read_allowed_with_new_sec",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v2_loaded_in_native_catalog",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "removal_revokes_authority_and_removes_target",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "v2_identity_survives_nothing_after_removal",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "unknown_user_files_preserved",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "host_config_final_state_preserved",
+      "status": "pass",
+      "evidence_level": "controlled"
+    },
+    {
+      "id": "receipt_chain_verified",
+      "status": "pass",
+      "evidence_level": "controlled"
+    }
+  ],
+  "candidate_sha": "eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8",
+  "source_dirty": false,
+  "elapsed_seconds": 80.08,
+  "independent_verification": {
+    "passed": true,
+    "target_removed": true,
+    "three_user_owned_files_unchanged": true,
+    "sentinel_unchanged": true,
+    "v2_native_read_allowed": true,
+    "managed_config_and_plugin_removed": true,
+    "owned_processes_remaining": 0
+  },
+  "historical_attempts": [
+    {
+      "attempt": 1,
+      "passed": false,
+      "checks": [],
+      "failure_report_sha256": "9bde48cd1f375d9c5e86aa10879a15b4bcbcb5a6eccd1cf3e9d996248f9e8e8e"
+    },
+    {
+      "attempt": 2,
+      "passed": false,
+      "checks": [],
+      "failure_report_sha256": "189d2d1c5a563b2383cf32587fc174d282bfa12448053e09f0fb4d370dd93937"
+    },
+    {
+      "attempt": 3,
+      "passed": false,
+      "checks": [
+        {
+          "id": "missing_sec_denied_before_v1_read",
+          "status": "pass"
+        },
+        {
+          "id": "v1_native_read_allowed_with_verified_session_attribution",
+          "status": "pass"
+        },
+        {
+          "id": "v1_call_binding_recomputed",
+          "status": "pass"
+        },
+        {
+          "id": "v1_attribution_correlates_grant_install_sec",
+          "status": "pass"
+        },
+        {
+          "id": "v1_attribution_digest_mismatch_detected",
+          "status": "pass"
+        },
+        {
+          "id": "up01_import_generates_check_data_only",
+          "status": "pass"
+        },
+        {
+          "id": "comparison_requires_confirmation_with_content_and_permission_diff",
+          "status": "pass"
+        },
+        {
+          "id": "comparison_is_read_only",
+          "status": "pass"
+        },
+        {
+          "id": "up02_cancel_and_repeated_requests_keep_v1",
+          "status": "pass"
+        },
+        {
+          "id": "up07_stale_candidate_digest_refused",
+          "status": "pass"
+        },
+        {
+          "id": "up10_source_unavailable_recorded",
+          "status": "pass"
+        },
+        {
+          "id": "approved_candidate_recomparison_and_removal_view",
+          "status": "pass"
+        },
+        {
+          "id": "up06_user_modified_target_not_silently_overwritten",
+          "status": "pass"
+        },
+        {
+          "id": "prepared_update_leaves_v1_in_place_before_confirmation",
+          "status": "pass"
+        },
+        {
+          "id": "up04_new_permissions_require_fresh_confirmation",
+          "status": "pass"
+        },
+        {
+          "id": "up03_forged_plan_signature_refused",
+          "status": "pass"
+        },
+        {
+          "id": "up03_candidate_drift_after_approval_refused",
+          "status": "pass"
+        },
+        {
+          "id": "up08_commit_after_daemon_restart_from_recorded_plan",
+          "status": "pass"
+        },
+        {
+          "id": "update_replaces_target_bytes",
+          "status": "pass"
+        },
+        {
+          "id": "update_revokes_v1_grant",
+          "status": "pass"
+        },
+        {
+          "id": "v1_runtime_identity_becomes_unavailable",
+          "status": "pass"
+        },
+        {
+          "id": "up09_old_context_cannot_authorize_new_version",
+          "status": "pass"
+        },
+        {
+          "id": "v2_activation_identity_and_adapter_rebind",
+          "status": "pass"
+        },
+        {
+          "id": "v2_new_session_pre_sec_denied",
+          "status": "fail"
+        }
+      ],
+      "failure_report_sha256": "5952a167cdf0f33103d67269fa89e8e6a2b778f281e175d3aef415f17da85868"
+    }
+  ],
+  "fixture_compatibility_changes": [
+    "Configure the isolated Agent before its native Skill catalog query.",
+    "Use alphanumeric model tool-call IDs to match this host normalization.",
+    "After V2 rebind use public --session-key and one no-tool turn to establish native epoch.",
+    "Retain private run roots and revoke/uninstall owned adapter in finally."
+  ]
+}

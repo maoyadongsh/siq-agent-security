@@ -11,6 +11,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/runtimeidentity"
 	"siq-agent-security/apps/agentshield/internal/state"
@@ -106,10 +107,14 @@ func TestOpenClawManagedInstallDecisionsAndRevocation(t *testing.T) {
 		t.Fatalf("managed fields not pinned: %v", cfg)
 	}
 
-	if code, _ := scopedCall(t, s, "/v1/runtime-sessions", credential, map[string]any{"schema_version": "local-runtime-session-enroll/v1", "session_id": "openclaw-native"}); code != 200 {
+	session, err := intent.OpenClawSessionID("openclaw-native", "11111111-1111-4111-8111-111111111111")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if code, _ := scopedCall(t, s, "/v1/runtime-sessions", credential, map[string]any{"schema_version": "local-runtime-session-enroll/v1", "session_id": session}); code != 200 {
 		t.Fatal("enrollment rejected")
 	}
-	decision := map[string]any{"platform": "openclaw", "agent_id": agent, "session_id": "openclaw-native", "tool": "read_file", "params": map[string]any{"path": "/work/public/report"}}
+	decision := map[string]any{"platform": "openclaw", "agent_id": agent, "session_id": session, "tool": "read_file", "params": map[string]any{"path": "/work/public/report"}}
 	if code, out := scopedCall(t, s, "/v1/decide", credential, decision); code != 200 || out["action"] != "allow" || out["authority_status"] != "valid" {
 		t.Fatal(code, out)
 	}

@@ -19,6 +19,11 @@ func TestRecoveryFindsBindingPublishedBeforeJournalUpdate(t *testing.T) {
 	id := "rc-" + strings.Repeat("a", 32)
 	now := time.Now().UTC()
 	r := &run{id: id, record: record{Revision: -1, Actor: "operator", IntentID: "rci-" + strings.Repeat("a", 32), Result: Result{SchemaVersion: "local-runtime-check-result/v1", ID: id, InstanceID: testInstance, Status: "preparing", StartedAt: now.Format(time.RFC3339Nano), ExpiresAt: now.Add(Duration).Format(time.RFC3339Nano), Cleanup: "pending", Checks: map[string]bool{}, ReceiptIDs: []string{}, Limitations: limitations(), Snapshot: strings.Repeat("a", 64)}}}
+	target, err := fx.m.snapshot(testInstance)
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.record.Result.Snapshot = target.Digest
 	if err := fx.m.persist(&r.record); err != nil {
 		t.Fatal(err)
 	}
@@ -29,7 +34,11 @@ func TestRecoveryFindsBindingPublishedBeforeJournalUpdate(t *testing.T) {
 	if err := fx.m.persist(&r.record); err != nil {
 		t.Fatal(err)
 	}
-	binding, err := fx.m.o.Intents.Bind(intent.Binding{Platform: "hermes", AgentID: agentID(id), SessionID: "native-interrupted", IntentID: r.record.IntentID})
+	_, revision, err := fx.m.o.Store.GetGrantWithSeq(r.record.GrantID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	binding, err := fx.m.o.Intents.BindWithGrant(intent.Binding{Platform: "hermes", AgentID: agentID(id), SessionID: "native-interrupted", IntentID: r.record.IntentID}, r.record.GrantID, revision)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -182,7 +191,9 @@ func TestTamperedOrTrailingRecordCannotBeReadAsPassed(t *testing.T) {
 				return fx.runProbes(r, nonce, p, true)
 			}
 			plan, _ := startFixture(t, fx)
-			_ = awaitResult(t, fx.m, plan.ID)
+			if result := awaitResult(t, fx.m, plan.ID); result.Status != "passed" {
+				t.Fatal("tamper precondition did not reach signed success", result)
+			}
 			all, err := fx.m.records()
 			if err != nil {
 				t.Fatal(err)

@@ -1,0 +1,29 @@
+{
+  "observed_head": "ec2fbe20809702103df0a126ee0b6586e3a79670",
+  "counts": {
+    "success": 38,
+    "failure": 2,
+    "skipped": 2
+  },
+  "control_api": "passed",
+  "failed_tests": [
+    "TestCommittedReleaseManifest",
+    "TestAdapterAndBootstrapShareVerifiedResolve",
+    "TestPythonVerifierAcceptsCommittedRelease"
+  ],
+  "reason": "Existing formal manifest Skill hash mismatch; tracked in Issue #87. No assertions or trust roots changed.",
+  "failed_jobs": [
+    {
+      "name": "runtime-security-toolchain",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35390745327/job/105748264833"
+    },
+    {
+      "name": "agentshield",
+      "url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35390745386/job/105748265042"
+    }
+  ],
+  "log_sha256": {
+    "ci-105748264833.log": "fd84ec512aa6101b40513379f39c5f54cd6027369348b320a145ba9d13570cf4",
+    "ci-105748265042.log": "791a0ec250c6ca68a5c3b9c57c08e6c02c949e8c93d572f19090818fb722245c"
+  }
+}

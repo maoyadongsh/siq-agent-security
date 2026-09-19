@@ -12,7 +12,7 @@ siq-agent-security adapter preview hermes install --instance <返回的实例ID>
 siq-agent-security adapter install hermes --instance <返回的实例ID> --enable-native
 ```
 
-实例目录解析覆盖 `HERMES_HOME`、默认目录和命名 profile。CLI 中的 `<返回的实例ID>` 需替换为第一条命令给出的 ID。新实例包装器放在 `<profile>/bin/hermes-skills-install`，固定该 profile 的 `HERMES_HOME`；不会覆盖其他实例的包装器。CLI `install` 是直接授权动作，会重新准备并应用计划；浏览器确认则严格绑定先前预览的 ID 和摘要。
+实例目录解析覆盖 `HERMES_HOME`、默认目录和命名 profile。CLI 中的 `<返回的实例ID>` 需替换为第一条命令给出的 ID。非 Windows 系统的新实例包装器放在 `<profile>/bin/hermes-skills-install`，固定该 profile 的 `HERMES_HOME`；不会覆盖其他实例的包装器。Windows 不安装该 shell 包装器，使用本地管理页的受控 Skill 安装入口，或显式先 `admit` 再调用原生命令；原生命令本身不受装前门禁接管。CLI `install` 是直接授权动作，会重新准备并应用计划；浏览器确认则严格绑定先前预览的 ID 和摘要。
 
 选择原生启用时，安装器调用已安装 Hermes 的公开 CLI，在私有临时副本上执行启用并验证其他配置未变，再由文件事务应用已确认的内容。Hermes 会规范化 YAML 格式；不授予内置工具覆盖权限。CLI 不在 PATH 时，可在启动 SIQ 前将 `SIQ_AGENT_SECURITY_HERMES_CLI` 设置为可信 Hermes CLI 的绝对路径。该路径仅用于定位已安装程序，不能指向 Skill 脚本。
 
@@ -20,13 +20,15 @@ siq-agent-security adapter install hermes --instance <返回的实例ID> --enabl
 
 插件文件存在不证明宿主已加载。设置页的“接入诊断”会分别显示文件、连接配置和运行验证状态；CLI `adapter status` 的 installed 仅表示发现安装文件。完成目标实例正常调用与执行前拒绝验证后，才可声明相应工具层保护。Grant 与运行时阻断仍复用原有引擎，不由诊断产生权限。
 
+Windows 新接入配置的 HTTP 等待为每请求 20 秒，其他系统为 5 秒；旧配置需经预览、确认重新接入才更新。安装内容仍逐次复验，更短专项超时仍生效，超时拒绝且不自动重试。有 allow 回执不等于工具实际执行，须结合 observation 和文件结果确认。
+
 ## 行为映射
 
 | 决策 API `action` | 插件返回 | 说明 |
 | --- | --- | --- |
 | `allow` | `None` | 放行 |
 | `deny` | `{"action":"block","message":...}` | Hermes 把 message 作为工具错误返回给模型 |
-| `hold` | block + 控制台 URL | Hermes 无审批通道，退化为阻断（规格 §4.2）|
+| `hold` | 首次 block + 控制台 URL | 控制台批准后，同会话、工具和参数的重试先取得唯一执行预留，再允许执行；不会自动恢复原调用。|
 | `redact` | block + 提示移除密钥 | `pre_tool_call` 不能改参 |
 
 `post_tool_call` 把结果（截断 64 KiB）发到 `/v1/observe`，服务端脱敏并更新会话污点。
@@ -51,7 +53,7 @@ siq-agent-security adapter uninstall hermes --instance <返回的实例ID>
 - L1 安装门禁：Hermes 无装前钩子；用 `siq-agent-security admit <src>` 后再 `hermes skills install`，或让 `siq-agent-security serve` 周期盘点 `~/.hermes/skills` 标出未准入 Skill。
 - `agent_id` 默认取 `HERMES_PROFILE` 或 `default`，需与 grant 的 `subject.id` 一致。
 
-V2：有 tool_call_id 时保存服务端 action_id/receipt_id（最多 2048 项、TTL 300 秒）并在 post 回传；重复 ID 冲突不覆盖旧关联，产生无关联的拒绝路径。无 ID 时由服务端用相同参数唯一匹配，歧义拒绝。除 hook 单测外，已有 [Hermes 原生分发器与真实 HTTP 集成证据](../../../docs/trusted-intent-v2-native-validation-20260907-191006.md)，覆盖合成工具调用的允许/拒绝、关联、失联及重启。新增 [原生 Agent 完整会话证据](../../../docs/trusted-intent-v2-conversation-validation-20260907-200400.md)，通过本地合成模型的 SSE 响应驱动实际会话循环，覆盖生成会话 ID、跨轮固定授权和动作链。hold/审批及真实平台 V2 综合验收仍为 unverified。
+V2：有 tool_call_id 时保存服务端 action_id/receipt_id（最多 2048 项、TTL 300 秒）并在 post 回传；重复 ID 冲突不覆盖旧关联，产生无关联的拒绝路径。无 ID 时由服务端用相同参数唯一匹配，歧义拒绝。除 hook 单测外，已有 [Hermes 原生分发器与真实 HTTP 集成证据](../../../docs/trusted-intent-v2-native-validation-20260907-191006.md)，覆盖合成工具调用的允许/拒绝、关联、失联及重启。新增 [原生 Agent 完整会话证据](../../../docs/trusted-intent-v2-conversation-validation-20260907-200400.md)，通过本地合成模型的 SSE 响应驱动实际会话循环，覆盖生成会话 ID、跨轮固定授权和动作链。hold/审批恢复已有 N06/R02 实现：适配器查询原 hold 状态并请求持久执行预留，预留响应丢失或结果不确定时不盲目重放；内存关联过期或宿主进程退出后不能凭旧提示恢复。实现存在不替代真实平台 V2 综合验收，该综合验收仍为 unverified。
 
 ## 显式MCP来源采集（组件集成）
 

@@ -1,0 +1,27 @@
+{
+  "source_sha": "d384e24690c8514fe4671dc39d255e7e86a566fc",
+  "source_dirty": false,
+  "checks": [
+    {
+      "target": "windows-amd64",
+      "exit": 0,
+      "seconds": 8.242
+    },
+    {
+      "target": "linux-amd64",
+      "exit": 0,
+      "seconds": 17.119
+    },
+    {
+      "target": "linux-arm64",
+      "exit": 0,
+      "seconds": 19.881
+    },
+    {
+      "target": "darwin-arm64",
+      "exit": 0,
+      "seconds": 17.959
+    }
+  ],
+  "finished": true
+}

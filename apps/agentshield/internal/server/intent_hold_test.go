@@ -73,7 +73,7 @@ func TestHoldHTTPRequiresManagementApprovalAcrossRecovery(t *testing.T) {
 			// Unbound optional mode exercises exec holds. Bound intents reject
 			// arbitrary shell effects before the grant approval gate.
 			request := map[string]any{
-				"platform": "openclaw", "session_id": "hold-session", "agent_id": "inst_1",
+				"platform": "openclaw", "session_id": nativeOpenClawSession(t, "hold-session"), "agent_id": "inst_1",
 				"tool": "exec", "tool_call_id": "held-call", "params": map[string]any{"command": "printf fixture"},
 			}
 			decision := post("/v1/decide", token, request, 200)
@@ -134,7 +134,7 @@ func TestHoldHTTPRequiresManagementApprovalAcrossRecovery(t *testing.T) {
 			if approve {
 				reserveRequest := map[string]any{
 					"schema_version": "hold-execution-reserve/v1", "platform": "openclaw",
-					"session_id": "hold-session", "agent_id": "inst_1", "tool": "exec",
+					"session_id": nativeOpenClawSession(t, "hold-session"), "agent_id": "inst_1", "tool": "exec",
 					"original_tool_call_id": "held-call", "retry_tool_call_id": "held-call-retry",
 					"action_id": decision["action_id"], "decision_receipt_id": decision["receipt_id"],
 					"params": map[string]any{"command": "printf fixture"},
@@ -144,7 +144,7 @@ func TestHoldHTTPRequiresManagementApprovalAcrossRecovery(t *testing.T) {
 				post("/v1/hold-executions/reserve", token, reserveRequest, 409)
 				statusBody := map[string]any{
 					"schema_version": "hold-execution-status-request/v1", "platform": "openclaw",
-					"session_id": "hold-session", "agent_id": "inst_1", "tool": "exec",
+					"session_id": nativeOpenClawSession(t, "hold-session"), "agent_id": "inst_1", "tool": "exec",
 					"retry_tool_call_id": "held-call-retry", "action_id": decision["action_id"],
 					"decision_receipt_id":    decision["receipt_id"],
 					"reservation_receipt_id": reservation["reservation_receipt_id"],

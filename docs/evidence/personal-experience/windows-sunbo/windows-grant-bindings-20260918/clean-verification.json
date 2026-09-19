@@ -1,0 +1,223 @@
+{
+  "source_sha": "a24e029b177c110a97637f3c6902ab99670b33b7",
+  "source_dirty": false,
+  "checks": [
+    {
+      "name": "grant-path",
+      "exit": 0,
+      "seconds": 10.815
+    },
+    {
+      "name": "state-commit",
+      "exit": 0,
+      "seconds": 17.788
+    },
+    {
+      "name": "receipt-authority",
+      "exit": 0,
+      "seconds": 11.897
+    },
+    {
+      "name": "race",
+      "exit": 0,
+      "seconds": 28.145
+    },
+    {
+      "name": "intent-compatibility",
+      "exit": 0,
+      "seconds": 8.864
+    },
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 0.458,
+      "output_empty": true
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 20.141
+    },
+    {
+      "name": "native-build",
+      "exit": 0,
+      "seconds": 16.59
+    },
+    {
+      "name": "native-build-info",
+      "exit": 0,
+      "seconds": 0.699
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0,
+      "seconds": 10.754
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0,
+      "seconds": 11.428
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0,
+      "seconds": 13.141
+    },
+    {
+      "name": "schema",
+      "exit": 0,
+      "seconds": 11.943
+    }
+  ],
+  "binary_sha256": "74eba15f5a51daad52a8564a3a171c0c0359a11397c4c8182429684da4fc7bc0",
+  "finished": true,
+  "component_results": {
+    "grant-path": {
+      "counts": {
+        "top_pass": 65,
+        "sub_pass": 64
+      },
+      "failures": [],
+      "skipped": [],
+      "packages": {
+        "siq-agent-security/apps/agentshield/internal/grant": "pass",
+        "siq-agent-security/apps/agentshield/internal/runtimepath": "pass"
+      },
+      "raw_sha256": "f7ce2e611c7b8d7f210c0b23895fd22ca4eca0ad90f943b4ecb77aa9df4832ee"
+    },
+    "intent-compatibility": {
+      "counts": {
+        "sub_pass": 20,
+        "top_pass": 1
+      },
+      "failures": [],
+      "skipped": [],
+      "packages": {
+        "siq-agent-security/apps/agentshield/internal/intent": "pass"
+      },
+      "raw_sha256": "39f27a309eba877f33244de1e6ed7b149686ca2c6dc0b6b5a49e387d5863b8fd"
+    },
+    "race": {
+      "counts": {
+        "top_pass": 65,
+        "sub_pass": 64
+      },
+      "failures": [],
+      "skipped": [],
+      "packages": {
+        "siq-agent-security/apps/agentshield/internal/runtimepath": "pass",
+        "siq-agent-security/apps/agentshield/internal/grant": "pass"
+      },
+      "raw_sha256": "6e00b74279ef435cdf7db998743ca5c64b44e575a2816a589ca60bce43f36812"
+    },
+    "receipt-authority": {
+      "counts": {
+        "top_pass": 7,
+        "sub_pass": 15
+      },
+      "failures": [],
+      "skipped": [],
+      "packages": {
+        "siq-agent-security/apps/agentshield/internal/receipt": "pass"
+      },
+      "raw_sha256": "e4866e994a17e11be5ee07ad1e0c7adbbefb8fe9127fa247aaa2e4fde7d29bdc"
+    },
+    "state-commit": {
+      "counts": {
+        "top_pass": 8,
+        "top_skip": 1,
+        "sub_pass": 4
+      },
+      "failures": [],
+      "skipped": [
+        {
+          "package": "siq-agent-security/apps/agentshield/internal/state",
+          "test": "TestRecoveryCredentialRefusesCorruptionAndSymlink"
+        }
+      ],
+      "packages": {
+        "siq-agent-security/apps/agentshield/internal/state": "pass"
+      },
+      "raw_sha256": "ff9c5fad70fb8404440312dbebfffbfc30f7d225d3805b79dc8a6bf18ef3dc7a"
+    }
+  },
+  "schema_tests_passed": 233,
+  "initial_build_identities": [
+    {
+      "artifact": "agent.exe",
+      "sha256": "74eba15f5a51daad52a8564a3a171c0c0359a11397c4c8182429684da4fc7bc0",
+      "exit": 0,
+      "vcs": [
+        "build\tvcs.revision=a24e029b177c110a97637f3c6902ab99670b33b7",
+        "build\tvcs.time=2026-09-18T04:42:02Z",
+        "build\tvcs.modified=false"
+      ]
+    },
+    {
+      "artifact": "agent-linux-amd64",
+      "sha256": "c56fc72498b38f3fb847ff01f2f2432ac634a77ca95046b2045771112103b111",
+      "exit": 0,
+      "vcs": [
+        "build\tvcs.revision=a24e029b177c110a97637f3c6902ab99670b33b7",
+        "build\tvcs.time=2026-09-18T04:42:02Z",
+        "build\tvcs.modified=true"
+      ]
+    },
+    {
+      "artifact": "agent-linux-arm64",
+      "sha256": "c7fb367745b784720d80189ec7d9740e1ee9d1bc54803c14ad5166bb4017ee47",
+      "exit": 0,
+      "vcs": [
+        "build\tvcs.revision=a24e029b177c110a97637f3c6902ab99670b33b7",
+        "build\tvcs.time=2026-09-18T04:42:02Z",
+        "build\tvcs.modified=true"
+      ]
+    },
+    {
+      "artifact": "agent-darwin-arm64",
+      "sha256": "cc166cdff9fbe643e2ee454c52abd91ed4675db91e731e3f0dcc7f1c541b343d",
+      "exit": 0,
+      "vcs": [
+        "build\tvcs.revision=a24e029b177c110a97637f3c6902ab99670b33b7",
+        "build\tvcs.time=2026-09-18T04:42:02Z",
+        "build\tvcs.modified=true"
+      ]
+    }
+  ],
+  "cross_build_recheck": [
+    {
+      "artifact": "agent-linux-amd64",
+      "exit": 0,
+      "seconds": 6.812,
+      "sha256": "15e4bca5fe09528b88dd352bb5fe6ef754904f9c7c03025d341d48535ed5b1f2",
+      "vcs": [
+        "build\tvcs.revision=a24e029b177c110a97637f3c6902ab99670b33b7",
+        "build\tvcs.time=2026-09-18T04:42:02Z",
+        "build\tvcs.modified=false"
+      ]
+    },
+    {
+      "artifact": "agent-linux-arm64",
+      "exit": 0,
+      "seconds": 9.273,
+      "sha256": "7ec12f67f51e4f03e2d3d84535290fdb26ed31c5fa9dc95ff59f2039ce65fec4",
+      "vcs": [
+        "build\tvcs.revision=a24e029b177c110a97637f3c6902ab99670b33b7",
+        "build\tvcs.time=2026-09-18T04:42:02Z",
+        "build\tvcs.modified=false"
+      ]
+    },
+    {
+      "artifact": "agent-darwin-arm64",
+      "exit": 0,
+      "seconds": 6.677,
+      "sha256": "664ee6a718fe11161c575f619804bbf012bb89c55932b487493e1f90e91ed217",
+      "vcs": [
+        "build\tvcs.revision=a24e029b177c110a97637f3c6902ab99670b33b7",
+        "build\tvcs.time=2026-09-18T04:42:02Z",
+        "build\tvcs.modified=false"
+      ]
+    }
+  ],
+  "cross_build_note": "Initial cross builds saw untracked evidence files and reported modified=true. Evidence moved out; only those three builds rerun with unchanged tracked source. All replacement builds embed a24e029 and modified=false. Native build was already clean."
+}

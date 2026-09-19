@@ -1,0 +1,64 @@
+{
+  "unique_go_top_level_passed": 29,
+  "per_log": {
+    "adapter-boundaries.stdout.log": {
+      "pass": [
+        "TestRuntimeTargetRequiresExplicitReadyHermesInstance"
+      ],
+      "fail": [],
+      "skip": []
+    },
+    "http-boundaries.stdout.log": {
+      "pass": [
+        "TestWindowsRuntimeCheckRejectsOrdinaryIssuerBindingAndObserver",
+        "TestRuntimeCheckHTTPAuthorizationAndStrictInput",
+        "TestRuntimeCheckHTTPConfirmationDriftAndFailureCleanup"
+      ],
+      "fail": [],
+      "skip": []
+    },
+    "intent-grant-contracts.stdout.log": {
+      "pass": [
+        "TestWindowsIntentUsesComponentBoundaryAndRejectsAliases",
+        "TestWindowsIntentCannotDowngradeOrUseRegex",
+        "TestWindowsIntentWireAndBindingRejectProfileSmuggling",
+        "TestWindowsIntentNestedAuthorityFieldsAreExact",
+        "TestWindowsIntentNestedStrictnessPreservesLegacyDecoding",
+        "TestWindowsIntentPrivateReadAndCachedStore",
+        "TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence",
+        "TestWindowsIntentMissingRevocationDirectoryDenies",
+        "TestWindowsIntentPublishAndOpenRejectBroadDirectory",
+        "TestWindowsIntentRetryDoesNotAccumulatePrivateScratch",
+        "TestWindowsRuntimeCheckEnvelopeIsClosed",
+        "TestWindowsRuntimeCheckDecodeRejectsAliasesAndVersionMix",
+        "TestWindowsRuntimeCheckStaticSignatureVector",
+        "TestRuntimeCheckDraftRequiresSignedBoundedTemplate"
+      ],
+      "fail": [],
+      "skip": []
+    },
+    "runtimecheck-authority.stdout.log": {
+      "pass": [
+        "TestWindowsCheckCurrentAuthorityRevalidated",
+        "TestWindowsCheckPreviewRequiresActivatedProfileAndTrustedRoot",
+        "TestPlanRequiresSameAdminSnapshotAndSingleUse",
+        "TestLaunchAttachmentRejectsSubstitutionExpiryAndReplay",
+        "TestCancelStopsLaunchAndRevokesAuthority",
+        "TestExitSuccessCannotReplaceObservationsOrSideEffectCheck",
+        "TestRecoveryFindsBindingPublishedBeforeJournalUpdate",
+        "TestAuditFailureNeverStartsHostOrReportsPass",
+        "TestPreviewExpiryReplacementAndCapacity",
+        "TestTamperedOrTrailingRecordCannotBeReadAsPassed"
+      ],
+      "fail": [],
+      "skip": []
+    },
+    "runtimecheck-positive.stdout.log": {
+      "pass": [
+        "TestCheckTemporaryAuthorityAndVerifiedCleanup"
+      ],
+      "fail": [],
+      "skip": []
+    }
+  }
+}

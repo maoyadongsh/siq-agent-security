@@ -1,3 +1,5 @@
+import { skillVersionMatches } from './skillInstall';
+import { grantWireVersion } from './filesystemProfile';
 import { isSkillInstallationRecord } from './skillInspection';
 import type { SkillRemovalView, SkillRemoveRequest } from './types';
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -9,7 +11,7 @@ const rev = (v: unknown): v is number => Number.isSafeInteger(v) && Number(v) >=
 const time = (v: unknown) => typeof v === 'string' && Number.isFinite(Date.parse(v));
 export function isSkillRemovalView(v: unknown, installId: string): v is SkillRemovalView {
   if (!object(v) || !exact(v, ['schema_version', 'record', 'claim', 'result', 'grant', 'state_revision', 'status', 'will_revoke_grant', 'retained_install_id', 'binding_signature']) ||
-    v.schema_version !== 'local-skill-install-removal-view/v1' || !isSkillInstallationRecord(v.record) || v.record.install_id !== installId ||
+    !isSkillInstallationRecord(v.record) || !skillVersionMatches(v.schema_version, 'local-skill-install-removal-view', v.record.schema_version, 'local-skill-install-record') || v.record.install_id !== installId ||
     v.record.recorded_status !== 'installed_unverified' || !v.record.operation || typeof v.will_revoke_grant !== 'boolean' ||
     !(v.binding_signature === '' || sig(v.binding_signature)) || !(v.retained_install_id === '' || id(v.retained_install_id)) ||
     (v.will_revoke_grant ? v.retained_install_id !== '' : !id(v.retained_install_id) || v.retained_install_id === installId || !sig(v.binding_signature))) return false;
@@ -28,7 +30,7 @@ export function isSkillRemovalView(v: unknown, installId: string): v is SkillRem
       r.actor_id === c.actor_id && time(r.recorded_at) && r.target_absent === true && sig(r.signature);
   }
   const g = v.grant;
-  if (v.result !== null || !rev(v.state_revision) || !object(g) || g.grant_id !== record.plan.grant_id || !sig(g.signature) ||
+  if (v.result !== null || !rev(v.state_revision) || !object(g) || grantWireVersion(g) === null || (v.schema_version === 'local-skill-install-removal-view/v1' && grantWireVersion(g) !== 1) || g.grant_id !== record.plan.grant_id || !sig(g.signature) ||
     !['approved', 'revoked'].includes(String(g.status)) || g.platform !== record.plan.platform || !object(g.subject) || g.subject.type !== 'agent_instance' ||
     g.subject.id !== record.plan.instance_id.replace(/^hi-/, 'hri-') || !Array.isArray(g.facts) ||
     !g.facts.every((f: unknown) => object(f) && text(f.fact_id, 256) && text(f.domain) && text(f.action) && ['allow', 'deny'].includes(String(f.effect)) &&

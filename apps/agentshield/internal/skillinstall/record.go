@@ -40,7 +40,11 @@ func document(value any, signature bool) (map[string]any, error) {
 	return doc, nil
 }
 func (p Plan) identity() (string, error) {
-	doc, err := document(map[string]any{"request": p.request(), "source": p.Source, "target_locator_digest": p.TargetLocatorDigest, "grant_signature": p.GrantSignature, "grant_permission_digest": p.GrantPermissionDigest}, true)
+	identity := map[string]any{"request": p.request(), "source": p.Source, "target_locator_digest": p.TargetLocatorDigest, "grant_signature": p.GrantSignature, "grant_permission_digest": p.GrantPermissionDigest}
+	if p.SchemaVersion == planV2 {
+		identity["target_ref"] = p.TargetRef
+	}
+	doc, err := document(identity, true)
 	if err != nil {
 		return "", err
 	}
@@ -106,7 +110,7 @@ func (s *Store) readPlan(id string) (*Plan, error) {
 	if err != nil || !bytes.Equal(raw, canonical) {
 		return nil, ErrChanged
 	}
-	if p.SchemaVersion != "local-skill-install-plan/v1" || p.PlanID != id || !validRequest(p.request()) || !supportedPlatform(p.Platform) || !displayValid(p.TargetDisplay) || !digestPattern.MatchString(p.TargetLocatorDigest) || !digestPattern.MatchString(p.GrantPermissionDigest) || !signaturePattern.MatchString(p.GrantSignature) || !signaturePattern.MatchString(p.Signature) || p.FileCount < 1 || p.FileCount > 2000 || p.TotalBytes < 0 || p.TotalBytes > 64<<20 || p.Installed || p.RuntimeVerified {
+	if !validPlanTarget(p) || p.PlanID != id || !validRequest(p.request()) || !displayValid(p.TargetDisplay) || !digestPattern.MatchString(p.TargetLocatorDigest) || !digestPattern.MatchString(p.GrantPermissionDigest) || !signaturePattern.MatchString(p.GrantSignature) || !signaturePattern.MatchString(p.Signature) || p.FileCount < 1 || p.FileCount > 2000 || p.TotalBytes < 0 || p.TotalBytes > 64<<20 || p.Installed || p.RuntimeVerified {
 		return nil, ErrChanged
 	}
 	if _, err := p.Source.Canonical(); err != nil {

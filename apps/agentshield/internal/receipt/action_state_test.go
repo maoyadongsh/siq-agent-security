@@ -40,6 +40,8 @@ func reserveForRetry(t *testing.T, fx *fixture, r Request, d *Decision, retryCal
 func TestObserveRequiresAuthorizedDecision(t *testing.T) {
 	fx := newFixture(t, "block", deployedGrant(t, "hermes", false), false)
 	r := req("hermes", "read_file", map[string]any{"path": "/home/u/proj/a.txt"})
+	// Keep the same valid session when changing only the platform below.
+	r.SessionID = req("openclaw", "", nil).SessionID
 	_, err := fx.eng.Observe(r, "forged")
 	assertCorrelation(t, err, "observation_decision_missing")
 	denied, err := fx.eng.Decide(req("hermes", "send_message", nil))

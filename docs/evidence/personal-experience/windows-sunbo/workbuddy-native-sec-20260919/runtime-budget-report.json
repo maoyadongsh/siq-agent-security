@@ -1,0 +1,63 @@
+{
+  "candidate": "be83cc71002e0184fb14767b976471946124514c",
+  "native_result": "not_accepted",
+  "native_tasks": 2,
+  "native_result_each": "managed session enrollment unavailable; fail-closed; no file effect",
+  "outer_budget_repair_not_sufficient": true,
+  "native_tasks_used_same_session": true,
+  "model": "Quick (GLM-5.3-Flash)",
+  "component_checks": {
+    "real_socket_routes_positive_and_old_deadline_negative": "pass (server 21.191s)",
+    "client_above_old_budget_and_shared_deadline_refusal": "pass (cmd 65.321s)",
+    "adapter_repair_preserves_user_hooks": "pass (1.277s)",
+    "go_vet": "pass",
+    "four_clean_builds": "pass"
+  },
+  "diagnostic_only_cli": {
+    "synthetic_diagnostic_only": true,
+    "no_tool_executed": true,
+    "elapsed": 20.832415300013963,
+    "exit_code": 0,
+    "output": {
+      "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "permissionDecision": "deny",
+        "permissionDecisionReason": "siq-agent-security: skill attribution does not verify for grant (default deny) (receipt rcp-e64fedcdacac-225646.346318)"
+      }
+    }
+  },
+  "diagnostic_only_enrollment": {
+    "native_session_sha256": "8759d93cb86f90aea9b197c6b98aa63c8ce96f127c076e94858cfd1bbc47ba1b",
+    "diagnostic_not_native": true,
+    "status": 200,
+    "schema_version": "local-runtime-session-enrolled/v2",
+    "elapsed": 10.401494199992158
+  },
+  "verification": {
+    "chain_entries": 20,
+    "identity_sec_documents": 4,
+    "marker_absent": true,
+    "temporary_baseline_revoked": true,
+    "hooks_skill_removed": true,
+    "owned_processes_closed": true
+  },
+  "private_evidence_sha256": {
+    "baseline-active.json": "588c9844f74bbf319202627ea1ec70cc0f5bb8ac3adc1c7d06401bfb2f8e065c",
+    "baseline-before.json": "7d152051ad86c0e53e7fa03cdef5392cea39ad5e01dd0414c1cac38e009eeaeb",
+    "baseline-revoked.json": "9135d2d5126fcd7580d5e16cc78f2f1328aac48f94d3321ad988fb0d4afcd24a",
+    "cleanup.json": "634c9e97d8d19ea740890133251b7077bc482bf7f6adb56ba0b775ce2a6fddd3",
+    "cli-enrollment-diagnostic.json": "fd7c392531ba5c45e4900738ad1bd150a84d164aac4d02037b989947ed739836",
+    "desktop-send-1.json": "7ea204881a79e78b7cdd108a7e010cfa3914556f5e4a955628d6dbd621d57e96",
+    "desktop-send-2.json": "33ced09a6228b2ca81dd26e34ddac0fe6469f71b8a9fdaa3b641a41c3e3d0298",
+    "desktop-terminal-1.json": "0382b2e6dda3247388159b14906e6e974e7c0aa7ae2163056f623e6f53766500",
+    "desktop-terminal-2.json": "369a569634da240a65e6e62aaadca48d82d277f1454acc816e66452de50e66a1",
+    "enrollment-diagnostic.json": "654747c0363a60118d067a46e5a7c2df60a536b9f35f0c874a3a755582263a8b",
+    "native-session-bound.json": "04a67a2a0a2ea3cb2c1827cc810a57a03a4b00b1bc8e4381738aa326665c5d0f",
+    "ready.json": "8e8b5513c10753fb42bec8691baf773713e3c6484ad715771bacd5a334ad0320",
+    "service-1.json": "47e92414149c5f7714c39d671d6d38b6d04d649bc013fd5d87224bd344adc31a",
+    "skill-removal.json": "4de011bb154590569e4fc76971800a3d15963f272f1da186dc4f7a7e949a4c35",
+    "snapshot-1.json": "63cdf77212b0e27494bc43ebaeb29d96681b4eaa5a3485782341c5f3e1dbe15a",
+    "snapshot-2.json": "5ef5edfd00f07931198d98d7afb61835e12295139fb352f88fba5efb2293aa91"
+  },
+  "next": "classify request-before vs request-during timeout; do not increase budget blindly; no whole acceptance claim"
+}

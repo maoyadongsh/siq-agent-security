@@ -1,0 +1,20 @@
+{
+  "capture_timing": "archive-time, after checks and after some implementation commits",
+  "captured_at_utc": "2026-09-18T11:26:51.318697+00:00",
+  "source_dirty": true,
+  "claim": "Selected current file digests only; not a before-run snapshot, clean checkout proof, or commit-blob verification.",
+  "files": {
+    "docs/windows-workbuddy-skill-install-v1.md": "043bf601fc0f7bebc65b7c1f0eba2aaf2bba9a2014cbb84b1c50676d97c378dd",
+    "apps/agentshield/internal/inventory/workbuddy.go": "6507fac1fbf080463701baf17faf91a7721d3a13ee633270c69bce2a584d08b8",
+    "apps/agentshield/internal/inventory/workbuddy_test.go": "80ff24a415244458a4f5dcd27eb853d2575d28777e04cb1ff1751cfcfaaf9cdd",
+    "apps/agentshield/internal/inventory/inventory_test.go": "381246a38a32fba6e8ef99ca5b37b32a57474ef82199391b01c666776deda1b8",
+    "apps/agentshield/internal/inventory/inventory_sample_test.go": "bed2637bf5de3daec48f67f42eb6d8f813dda9d986685e1431d96cd24785b468",
+    "apps/agentshield/internal/server/discovery_http_test.go": "710f1f7e60fd2d4e0d0af6cf035f16d711a178e12a52a86740e700aaed0230c7",
+    "apps/control-api/app/tests/test_schema_contracts.py": "fafee003ce50782d0abe2c5b108e0383619186846369665dee7ecadd935f7be3",
+    "apps/agentshield/testdata/contracts/inventory.sample.json": "92928985e2c3e828585d739392227454e5cff177ada5f4cb065d419a795ecae7",
+    "apps/agentshield/testdata/contracts/discovery-status.json": "4676c84505bb7d56386610e80c6a43da5c676e28ff822adbe96a371dc7fb68cf",
+    "apps/agentshield/testdata/contracts/discovery-preview.json": "2e3df6f0b1cd55700e985c1fabe938a313f4e55a2d5884ee6630d8c61810ea7d",
+    "apps/agentshield/testdata/contracts/discovery-status-windows.json": "b587c7d6f0af0cf54e560e5c15b9dbed7a297096e1e737a0155505f30174d7ac",
+    "apps/agentshield/testdata/contracts/discovery-preview-windows.json": "860608e55587ff311789f9ee58dc7b09a2adab196e0a214518fa871303d2900d"
+  }
+}

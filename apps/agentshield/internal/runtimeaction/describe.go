@@ -27,6 +27,10 @@ type Descriptor struct {
 var writeCommand = regexp.MustCompile(`(>>?|\b(cp|mv|tee|rm|chmod|install|mkdir)\b)`)
 
 func Describe(tool string, params map[string]any) Descriptor {
+	return describeWithNormalizer(tool, params, NormalizeResource)
+}
+
+func describeWithNormalizer(tool string, params map[string]any, normalize func(string, string) (string, error)) Descriptor {
 	if err := ValidateParameters(params); err != nil {
 		return Descriptor{Tool: tool, Operation: "invoke", Effects: []string{EffectUnknown}, ResourceError: err}
 	}
@@ -60,7 +64,7 @@ func Describe(tool string, params map[string]any) Descriptor {
 			}
 		}
 	}
-	d.Resources, d.ResourceError = extractResources(tool, params)
+	d.Resources, d.ResourceError = extractResourcesWithNormalizer(tool, params, normalize)
 	d.Hosts = extractHosts(d.Egress, fileLike, text)
 	d.Paths = extractPaths(fileLike, d.ShellLike, text)
 	if !d.ShellLike && fileLike {

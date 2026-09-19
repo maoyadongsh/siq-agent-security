@@ -1,0 +1,674 @@
+{
+  "source_sha": "d384e24690c8514fe4671dc39d255e7e86a566fc",
+  "source_dirty": false,
+  "method": "native_cli",
+  "scope": "Go component tests on Windows; not real host acceptance",
+  "tests": [
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestParameterTraversalBudget/depth-limit",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestParameterTraversalBudget/depth-over",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestParameterTraversalBudget/nodes-limit",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestParameterTraversalBudget/nodes-over",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestParameterTraversalBudget/pointer-limit",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestParameterTraversalBudget/pointer-over",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestParameterTraversalBudget",
+      "status": "pass",
+      "elapsed_seconds": 0.01
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestDescriptorInterpreterAliasesRemainUnknown",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestDescriptorHighImpactPointersAndCompatibility",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestDescriptorFileAliasesShareWriteChecks",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W01/backslash",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W01/lower-drive",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W01/mixed-separators",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W01/drive-root",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W02/unicode-space",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W03/drive-relative",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W03/relative",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W03/current-drive",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W03/posix",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W04/hidden-bad-dot-before-navigation",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W04/hidden-bad-space-before-navigation",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W04/trailing-dot",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W04/trailing-space",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W04/trailing-separator",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W05/dot",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W05/dotdot",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W05/double-separator",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W06/unc-backslash",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W06/unc-forward",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W06/unc-extended",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W07/ads",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W07/ads-data",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W07/second-colon",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W08/extended-drive",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W08/device",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W08/nt-object",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W08/globalroot",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W08/volume-guid",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/nul",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/nul-extension",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/nul-space-before-extension",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/com-extension",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/lpt-superscript",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/com-superscript-extension",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/conout",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/ordinary",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/com10-ordinary",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/nul-control",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/del-control",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W09/wildcard",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors/W14/windows-rejects-posix-double-slash",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileSharedLexicalVectors",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileLengthAndUTF8Boundaries/component255",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileLengthAndUTF8Boundaries/component256",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileLengthAndUTF8Boundaries/path259",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileLengthAndUTF8Boundaries/path260",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileLengthAndUTF8Boundaries/utf16-259",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileLengthAndUTF8Boundaries/utf16-260",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileLengthAndUTF8Boundaries/invalid-utf8",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsFilesystemProfileLengthAndUTF8Boundaries",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsProfileW01EquivalentResourcesKeepDistinctRawParams",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsProfileW10W11DoNotCollapseSiblingVolumeOrCase",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsProfileW12AllResourceFieldsAreValidated",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsProfileInvalidResourceCannotUseLegacyPathHints",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsProfileW13LegacyDescriptorStillRejectsWindows",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestWindowsProfileW14IsExplicitAndPreservesOtherDomains",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestNormalizeSeparatesToolOperationAndEffect",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestNormalizeUnknownIsExplicit",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestActionIDIsStableForSameEnvelope",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestActionIDDifferentiatesEverySecurityField",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestStructuredPayloadDoesNotInventTargets",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestExplicitAdditionalTargetsAndInterpreterHintsRemain",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestReportVerificationIsClosedAndDoesNotRelaxShell",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestResourceRefsNormalizeWithoutPlaintext",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestInvalidResourceCannotProducePartialReferences",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestActionIDBindsResourcePrincipalAndProvenance",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestHostLengthBoundaries",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeaction",
+      "test": "TestEnvelopeFixedVector",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsLiveResourceAndMissingLeaf",
+      "status": "pass",
+      "elapsed_seconds": 0.1
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceRejectsAliasesAndHardlinks",
+      "status": "pass",
+      "elapsed_seconds": 0.07
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceRechecksParentAndTargetReplacement/target",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceRechecksParentAndTargetReplacement/parent",
+      "status": "pass",
+      "elapsed_seconds": 0.08
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceRechecksParentAndTargetReplacement",
+      "status": "pass",
+      "elapsed_seconds": 0.14
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceRejectsRealJunction",
+      "status": "pass",
+      "elapsed_seconds": 0.05
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceRejectsShortName",
+      "status": "pass",
+      "elapsed_seconds": 0.02
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceSharingConflictFailsClosed",
+      "status": "pass",
+      "elapsed_seconds": 0.05
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceDeletePendingFailsClosed",
+      "status": "pass",
+      "elapsed_seconds": 0.04
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceReadHandlePinsRename",
+      "status": "pass",
+      "elapsed_seconds": 0.02
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceCaseSensitiveDirectory",
+      "status": "pass",
+      "elapsed_seconds": 0.02
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimepath",
+      "test": "TestWindowsResourceErrorsAndZeroSnapshot",
+      "status": "pass",
+      "elapsed_seconds": 0
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2/posix",
+      "status": "pass",
+      "elapsed_seconds": 0.08
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2/posix_navigation",
+      "status": "pass",
+      "elapsed_seconds": 0.07
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2/posix_double_slash",
+      "status": "pass",
+      "elapsed_seconds": 0.07
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2/windows_backslash",
+      "status": "pass",
+      "elapsed_seconds": 0.07
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2/windows_forward_slash",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2/windows_lower_drive",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2/windows_unc",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2/windows_extended",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2/windows_device",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v2",
+      "status": "pass",
+      "elapsed_seconds": 0.86
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3/posix",
+      "status": "pass",
+      "elapsed_seconds": 0.05
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3/posix_navigation",
+      "status": "pass",
+      "elapsed_seconds": 0.05
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3/posix_double_slash",
+      "status": "pass",
+      "elapsed_seconds": 0.05
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3/windows_backslash",
+      "status": "pass",
+      "elapsed_seconds": 0.05
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3/windows_forward_slash",
+      "status": "pass",
+      "elapsed_seconds": 0.05
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3/windows_lower_drive",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3/windows_unc",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3/windows_extended",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3/windows_device",
+      "status": "pass",
+      "elapsed_seconds": 0.06
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority/intent/v3",
+      "status": "pass",
+      "elapsed_seconds": 0.69
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestLegacyFilesystemRegexDoesNotGainWindowsAuthority",
+      "status": "pass",
+      "elapsed_seconds": 1.55
+    }
+  ]
+}

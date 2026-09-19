@@ -40,8 +40,11 @@ func cmdClientInstall(args []string, out io.Writer) error {
 	if !*confirm || *manifest == "" || *binary == "" || fs.NArg() != 0 || *port < 0 || *port > 65535 || (explicit && *port == 0) {
 		return errors.New("client-install: --manifest FILE --binary FILE --confirm-install and optional valid --port required")
 	}
-	if runtime.GOOS != "linux" {
-		return errors.New("client-install: Linux user service installation required; other OS installers remain unavailable")
+	if runtime.GOOS != "linux" && runtime.GOOS != "windows" {
+		return errors.New("client-install: Linux user service or Windows current-user task installation required")
+	}
+	if runtime.GOOS == "windows" && *runtimeOnly {
+		return errors.New("client-install: Windows does not support --runtime; omit this option")
 	}
 	dir, err := state.DefaultDir()
 	if err != nil {
@@ -77,19 +80,28 @@ func cmdClientInstall(args []string, out io.Writer) error {
 	command.Stderr = io.Discard
 	command.WaitDelay = time.Second
 	if err = command.Run(); err != nil {
+		if runtime.GOOS == "windows" {
+			return errors.New("client-install: installation not confirmed; staged program retained, inspect task-runtime/task-query before retrying")
+		}
 		return errors.New("client-install: installation not confirmed; staged program retained, inspect service-status before retrying")
 	}
 	st := &state.Store{Dir: dir}
-	unit, err := renderUserUnit(staged, dir)
-	if err != nil {
-		return err
-	}
-	_, props, err := ownedService(st, []byte(unit), runUserSystemctl)
-	if err != nil {
-		return err
-	}
-	if !serviceRunning(props) {
-		return errors.New("client-install: installed service is not running")
+	if runtime.GOOS == "windows" {
+		if err := verifyInstalledWindowsClient(st, staged); err != nil {
+			return err
+		}
+	} else {
+		unit, err := renderUserUnit(staged, dir)
+		if err != nil {
+			return err
+		}
+		_, props, err := ownedService(st, []byte(unit), runUserSystemctl)
+		if err != nil {
+			return err
+		}
+		if !serviceRunning(props) {
+			return errors.New("client-install: installed service is not running")
+		}
 	}
 	cfg, err := st.LoadConfig()
 	if err != nil {
@@ -121,6 +133,9 @@ func bootstrapClientIdentity(dir string) error {
 	if product.Env(product.EnvSigningSeed, product.EnvSigningSeedOld) != "" {
 		return errors.New("client-install: background service requires a stored signing identity")
 	}
+	if runtime.GOOS == "windows" {
+		return prepareWindowsClientInstallationIdentity(dir)
+	}
 	_, err := signing.Load(dir)
 	return err
 }
@@ -128,7 +143,11 @@ func bootstrapClientIdentity(dir string) error {
 // Production callers always use the embedded release root and Stage; hooks are
 // passed directly by tests and cannot be selected through flags or environment.
 func prepareClientInstallation(dir, manifest, binary string, check func(string, string) (string, error), stage func(string, string, string) (string, error)) (string, string, error) {
-	return prepareClientInstallationWithBootstrap(dir, manifest, binary, check, nil, stage)
+	var bootstrap func() error
+	if runtime.GOOS == "windows" {
+		bootstrap = func() error { return bootstrapClientIdentity(dir) }
+	}
+	return prepareClientInstallationWithBootstrap(dir, manifest, binary, check, bootstrap, stage)
 }
 
 func prepareClientInstallationWithBootstrap(dir, manifest, binary string, check func(string, string) (string, error), bootstrap func() error, stage func(string, string, string) (string, error)) (string, string, error) {
@@ -164,7 +183,11 @@ func prepareClientInstallationWithBootstrap(dir, manifest, binary string, check 
 	if err != nil {
 		return "", "", err
 	}
-	expected := filepath.Join(dir, "client-releases", digest, "siq-agent-security")
+	name := "siq-agent-security"
+	if runtime.GOOS == "windows" {
+		name += ".exe"
+	}
+	expected := filepath.Join(dir, "client-releases", digest, name)
 	stagedCanon, stagedErr := filepath.EvalSymlinks(staged)
 	expectedCanon, expectedErr := filepath.EvalSymlinks(expected)
 	if staged != expected && (stagedErr != nil || expectedErr != nil || stagedCanon != expectedCanon) {
@@ -172,10 +195,37 @@ func prepareClientInstallationWithBootstrap(dir, manifest, binary string, check 
 	}
 	return staged, version, nil
 }
+
+func prepareWindowsClientInstallationIdentity(dir string) error {
+	// A readable identity must not bypass the state writer-version or migration
+	// barrier. Stage independently checks it again before publishing files.
+	if err := state.RequireStateCompatibility(dir); err != nil {
+		return err
+	}
+	_, err := signing.LoadExisting(dir)
+	if err == nil || !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	// Do not interpret a missing prerequisite from the read path as permission
+	// to bootstrap an existing identity. Only this exact absent file qualifies;
+	// the writer-protected Load repeats the full historical-identity guard.
+	if _, missingErr := os.Lstat(filepath.Join(dir, "keys", "signing.seed")); !errors.Is(missingErr, os.ErrNotExist) {
+		if missingErr != nil {
+			return missingErr
+		}
+		return err
+	}
+	_, err = loadWindowsTaskPreparationKey(dir)
+	return err
+}
+
 func installationEnvironment(environment []string, dir string) []string {
 	result := make([]string, 0, len(environment)+1)
 	for _, entry := range environment {
 		name, _, _ := strings.Cut(entry, "=")
+		if runtime.GOOS == "windows" {
+			name = strings.ToUpper(name)
+		}
 		if name != "SIQ_AGENT_SECURITY_STATE_DIR" && name != "AGENTSHIELD_STATE_DIR" {
 			result = append(result, entry)
 		}

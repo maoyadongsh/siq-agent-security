@@ -1,0 +1,32 @@
+{
+  "schema_version": "windows-hermes-approval-evidence/v1",
+  "candidate_sha": "d9ad885f2f894dce3f7c9dd036130df7bb436e2a",
+  "source_dirty": false,
+  "binary_sha256": "f37203184bfb9041f93332f6828240f2e141c1f2156164b0de17f2c3d2a8df9e",
+  "status": "pass",
+  "method": "native Windows Hermes CLI; same process and session; local deterministic model and synthetic console reviewer",
+  "paid_model_calls": false,
+  "seconds": 86.56,
+  "checks": [
+    "require_approval_grant_deployed",
+    "held_write_has_no_side_effect",
+    "explicit_console_resolution",
+    "exact_retry_has_one_reservation",
+    "native_write_and_correlated_observation",
+    "repeated_call_returns_to_hold_without_modifying_file",
+    "five_receipts_and_checkpoint_independently_verified",
+    "identity_revoked_adapter_uninstalled_owned_jobs_closed"
+  ],
+  "receipt_count": 5,
+  "executions_observed": 1,
+  "owned_jobs_closed": 5,
+  "controller_sha256": "48493a3215c010219ebcebd461e2398471ef3433db200b89ef8464752b272863",
+  "private_report_sha256": "c523c5f29f2b24826640e0ca44cc59ecb804653f0e8e6a56a2cb889490cf57b9",
+  "limitations": [
+    "The operator uses public management HTTP, not a manual GUI acceptance run.",
+    "This is an instance-baseline Grant, not a Skill-installation-bound SEC flow.",
+    "Replayed call was held again; rejection/expiry/cross-process approval recovery are not covered here.",
+    "Native plugin enable configuration was prepared before the managed installation.",
+    "Full original taskbook is not covered by this check."
+  ]
+}

@@ -1,0 +1,337 @@
+{
+  "schema": "openclaw-native-epoch-acceptance-summary/v1",
+  "candidate_sha": "06745097c0d42523d10c5264e8290c6dc2d5835d",
+  "binary_sha256": "6df47cb59a90229f950a49329090e8e1b7ede66fb69bcc6de51f2889a3376f75",
+  "status": "six_scoped_legs_passed",
+  "scope": "Windows orchestration + WSL2/Linux OpenClaw native CLI with POSIX resource profile",
+  "windows_native_profile_claimed": false,
+  "desktop_claimed": false,
+  "managed_installation_claimed": false,
+  "accepted_cases": 6,
+  "unchanged_candidate_native_cases": 3,
+  "fault_injection_cases": 3,
+  "accepted_synthetic_provider_requests": 24,
+  "total_synthetic_requests_including_preserved_failed_attempt": 28,
+  "real_cloud_model_requests": 0,
+  "candidate_modified": false,
+  "cases": [
+    {
+      "case": "read-deny",
+      "batch": "epoch067-r1",
+      "pass": true,
+      "coverage": "unchanged_candidate_native_hook",
+      "manifest_sha256": "5150de299c1b80cff4b29371b45a909c375b57ede92d6c98548b166e7bd1e8fd",
+      "raw_evidence_sha256": "dc345f3e9d096e36944860d9b52fc8075f9a62664f77ed05412aa10773bf1b31",
+      "candidate_plugin_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "executed_plugin_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "runtime_seconds": 19.701476688002003,
+      "genuine_idle_seconds": null,
+      "session_key_sha256": "b4f6a7cf296ab0fd7f3dc39c1fe6b0520d93d21b740a61692ba991a9bf28ad47",
+      "session_epoch": {
+        "same_routing_key": true,
+        "uuid_changed": false,
+        "before_uuid_sha256": "03a832170cbba6569b14cc9c1ffa15be06156f28d7a3a7fbbc9ed275ca730652",
+        "after_uuid_sha256": "03a832170cbba6569b14cc9c1ffa15be06156f28d7a3a7fbbc9ed275ca730652",
+        "before_session_id": "openclaw-session/v1:b28378c21d74e5b58bfc5d38f2ae99d3a3eb1b1c51b236fd72002f2f45dc1da0",
+        "after_session_id": "openclaw-session/v1:b28378c21d74e5b58bfc5d38f2ae99d3a3eb1b1c51b236fd72002f2f45dc1da0",
+        "reset_mechanism": "same_native_session",
+        "native_cli_stdout_sha256": "e24e53353c6ffbb0d7e1a04fda9cc3793e6c7e76a8cb58f6881127a2cfc26944"
+      },
+      "receipt_proof": {
+        "verified": true,
+        "receipt_count": 3,
+        "selected": [
+          {
+            "tool_call_id": "siqfixturereadallowed20260916",
+            "action": "allow",
+            "reason_code": "allow",
+            "session_id": "openclaw-session/v1:b28378c21d74e5b58bfc5d38f2ae99d3a3eb1b1c51b236fd72002f2f45dc1da0",
+            "intent_id": "int-owned-read-deny",
+            "intent_digest": "be0179739d65a7aa2c9be6bfef28e36cb2979f134a59f7258ef64f5c0425e2b4",
+            "intent_binding": "bound",
+            "authority_status": "valid",
+            "matched_grant_id": "grt-59128246dfe6-726dcebe"
+          },
+          {
+            "tool_call_id": "siqfixturewritedenied20260916",
+            "action": "deny",
+            "reason_code": "intent_tool_not_allowed",
+            "session_id": "openclaw-session/v1:b28378c21d74e5b58bfc5d38f2ae99d3a3eb1b1c51b236fd72002f2f45dc1da0",
+            "intent_id": "int-owned-read-deny",
+            "intent_digest": "be0179739d65a7aa2c9be6bfef28e36cb2979f134a59f7258ef64f5c0425e2b4",
+            "intent_binding": "bound",
+            "authority_status": "valid",
+            "matched_grant_id": "grt-59128246dfe6-726dcebe"
+          }
+        ],
+        "old_epoch_reused": false,
+        "old_intent_id": "int-owned-read-deny",
+        "managed_new_epoch_verified": false
+      },
+      "missing_uuid_network": null,
+      "denied_target_absent_before_after": true,
+      "control_unchanged": true,
+      "real_model_requests": 0,
+      "synthetic_provider_requests": 4,
+      "cleanup_confirmed": true
+    },
+    {
+      "case": "idle-unbound",
+      "batch": "epoch067-r1",
+      "pass": true,
+      "coverage": "unchanged_candidate_native_hook",
+      "manifest_sha256": "2131b93cbf4bf6675e210b90548f0fb1a35780db856d4066a8b55295ac8de40c",
+      "raw_evidence_sha256": "64bdfc7856cc1f8379a5da23d43aa0dc38f730c686e0ea334378d2d830f21251",
+      "candidate_plugin_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "executed_plugin_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "runtime_seconds": 94.1697893849996,
+      "genuine_idle_seconds": 61.000213642000745,
+      "session_key_sha256": "b4f6a7cf296ab0fd7f3dc39c1fe6b0520d93d21b740a61692ba991a9bf28ad47",
+      "session_epoch": {
+        "same_routing_key": true,
+        "uuid_changed": true,
+        "before_uuid_sha256": "7927ee55cb641a40677cec74fd4a6ee90e4a3a425d1d19dcbd65f9bf6b30e0b6",
+        "after_uuid_sha256": "02f7c485be2ed4cca12ac9a922fa0ae3c8a208d219e7f38da7f9722f70bde7e3",
+        "before_session_id": "openclaw-session/v1:ea1cfea9384237ae3aa659512f369a4d7842869d6550fb1f646003a8da4451c3",
+        "after_session_id": "openclaw-session/v1:0889776fe7281bfd1227ad6bcb479595e18dbf400e2b03eb2af2c471cdb400e5",
+        "reset_mechanism": "configured_idle_1_minute",
+        "native_cli_stdout_sha256": "d45c7215ea426538ed4ff036ae1fcceabf62827ad06ba0cc499d1eb8a94afcb4"
+      },
+      "receipt_proof": {
+        "verified": true,
+        "receipt_count": 2,
+        "selected": [
+          {
+            "tool_call_id": "siqfixturereadallowed20260916",
+            "action": "deny",
+            "reason_code": "intent_binding_missing",
+            "session_id": "openclaw-session/v1:0889776fe7281bfd1227ad6bcb479595e18dbf400e2b03eb2af2c471cdb400e5",
+            "intent_binding": "unbound",
+            "authority_status": "invalid",
+            "matched_grant_id": null
+          },
+          {
+            "tool_call_id": "siqfixturewritedenied20260916",
+            "action": "deny",
+            "reason_code": "intent_binding_missing",
+            "session_id": "openclaw-session/v1:0889776fe7281bfd1227ad6bcb479595e18dbf400e2b03eb2af2c471cdb400e5",
+            "intent_binding": "unbound",
+            "authority_status": "invalid",
+            "matched_grant_id": null
+          }
+        ],
+        "old_epoch_reused": false,
+        "old_intent_id": "int-owned-read-deny",
+        "managed_new_epoch_verified": false
+      },
+      "missing_uuid_network": null,
+      "denied_target_absent_before_after": true,
+      "control_unchanged": true,
+      "real_model_requests": 0,
+      "synthetic_provider_requests": 4,
+      "cleanup_confirmed": true
+    },
+    {
+      "case": "managed-idle",
+      "batch": "epoch067-r1",
+      "pass": true,
+      "coverage": "unchanged_candidate_native_hook",
+      "manifest_sha256": "dad3d1fbee968f373a23a1f208bd4a9de9d030b7d7e4bdd5de63fed86ba50dfd",
+      "raw_evidence_sha256": "dbae1b167ec5a56a037233d845e9ec67d717065001472dd5994be60ca8f64c61",
+      "candidate_plugin_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "executed_plugin_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "runtime_seconds": 79.70609466599853,
+      "genuine_idle_seconds": 61.00024954100081,
+      "session_key_sha256": "b4f6a7cf296ab0fd7f3dc39c1fe6b0520d93d21b740a61692ba991a9bf28ad47",
+      "session_epoch": {
+        "same_routing_key": true,
+        "uuid_changed": true,
+        "before_uuid_sha256": "5288c317eafc3537e90ffff41122a270cc9bbfdc09e568f8ba53e38487aa0b2d",
+        "after_uuid_sha256": "c64eea8ea4b771f9a42ba7a61863c8988584abf545917b1bafb78ac526d5616b",
+        "before_session_id": "openclaw-session/v1:b9746b0d6dbf4f232f1bdbb9ea161ff010c41ee98d2f414fc465fd1b2f0edd88",
+        "after_session_id": "openclaw-session/v1:61241117e44c2fb0560cfd703b2a1eb633bb5beca1789b03122c474b69b391d3",
+        "reset_mechanism": "configured_idle_1_minute",
+        "native_cli_stdout_sha256": "01959fc0efab71c0fcf3ae35a25fae9af291456a61651d952109b4eb7803834f"
+      },
+      "receipt_proof": {
+        "verified": true,
+        "receipt_count": 3,
+        "selected": [
+          {
+            "tool_call_id": "siqfixturereadallowed20260916",
+            "action": "allow",
+            "reason_code": "allow",
+            "session_id": "openclaw-session/v1:61241117e44c2fb0560cfd703b2a1eb633bb5beca1789b03122c474b69b391d3",
+            "intent_id": "int-ri-e730db8a12af09fbc2618b729bf3fb40e37d442b2fbe647a86647889eb441bd8",
+            "intent_digest": "4284cfaa63cfdd8c64a23dddb73e119ba058a334229b1270517a906bfacef0cc",
+            "intent_binding": "bound",
+            "authority_status": "valid",
+            "matched_grant_id": "grt-59128246dfe6-c3b63ec3"
+          },
+          {
+            "tool_call_id": "siqfixturewritedenied20260916",
+            "action": "deny",
+            "reason_code": "grant_scope_violation",
+            "session_id": "openclaw-session/v1:61241117e44c2fb0560cfd703b2a1eb633bb5beca1789b03122c474b69b391d3",
+            "intent_id": "int-ri-e730db8a12af09fbc2618b729bf3fb40e37d442b2fbe647a86647889eb441bd8",
+            "intent_digest": "4284cfaa63cfdd8c64a23dddb73e119ba058a334229b1270517a906bfacef0cc",
+            "intent_binding": "bound",
+            "authority_status": "valid",
+            "matched_grant_id": "grt-59128246dfe6-c3b63ec3"
+          }
+        ],
+        "old_epoch_reused": false,
+        "old_intent_id": "int-ri-d5ca0fdd1ef4b10a8e94c7ccc54a268bcd368a518ca4ae0baa37def1200da73b",
+        "managed_new_epoch_verified": true
+      },
+      "missing_uuid_network": null,
+      "denied_target_absent_before_after": true,
+      "control_unchanged": true,
+      "real_model_requests": 0,
+      "synthetic_provider_requests": 4,
+      "cleanup_confirmed": true
+    },
+    {
+      "case": "missing-block",
+      "batch": "epoch067-r2",
+      "pass": true,
+      "coverage": "native_hook_fault_injection",
+      "manifest_sha256": "d7140ab5ed08404e162a1492e3a6c5af4270ace24bf8edfa5f3fc71d37798afa",
+      "raw_evidence_sha256": "c0f7fb89f042aef806bcd3c89eab37f9afceffd35fc7bd4dc78bd52976a29bac",
+      "candidate_plugin_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "executed_plugin_sha256": "b52b804bc4ad29b0af533b2dd1950d635c28b6d3ee6fa3ed12c710d664d7e231",
+      "runtime_seconds": 20.307146221995936,
+      "genuine_idle_seconds": null,
+      "session_key_sha256": "b4f6a7cf296ab0fd7f3dc39c1fe6b0520d93d21b740a61692ba991a9bf28ad47",
+      "session_epoch": {
+        "same_routing_key": true,
+        "uuid_changed": false,
+        "before_uuid_sha256": "d519940bf76027963bbba280d954207211189cbb0a2053541e1b136761aae255",
+        "after_uuid_sha256": "d519940bf76027963bbba280d954207211189cbb0a2053541e1b136761aae255",
+        "before_session_id": "openclaw-session/v1:09cd9012a05e719e5ea25495a5ca6288cae82d6330d93d8b77c594e0a6952519",
+        "after_session_id": "openclaw-session/v1:09cd9012a05e719e5ea25495a5ca6288cae82d6330d93d8b77c594e0a6952519",
+        "reset_mechanism": "same_native_session",
+        "native_cli_stdout_sha256": "12988a52685722aa5e32f18395e9430473d9ff13d24de624a37527c1ba1fb0c8"
+      },
+      "receipt_proof": {
+        "verified": true,
+        "receipt_count": 0,
+        "proof_kind": "instrumented_native_hook_hard_deny",
+        "signed_daemon_receipt_claimed": false,
+        "local_diagnostic_count": 2,
+        "diagnostic_sha256": "0457368936fb95b43c2c73eeb189c42c3eb21d3aebd2fe6861fbd4f7cd469ed9"
+      },
+      "missing_uuid_network": {
+        "fault_scope": "before_hook_ctx_only_after_hook_has_original_native_ctx",
+        "authority_requests": [],
+        "observe_attempt_count": 2,
+        "signed_receipts_written": 0,
+        "observe_attempt_is_not_execution_evidence": true
+      },
+      "denied_target_absent_before_after": true,
+      "control_unchanged": true,
+      "real_model_requests": 0,
+      "synthetic_provider_requests": 4,
+      "cleanup_confirmed": true
+    },
+    {
+      "case": "missing-warn",
+      "batch": "epoch067-r2",
+      "pass": true,
+      "coverage": "native_hook_fault_injection",
+      "manifest_sha256": "230839803ca1a5f6940a1c5ada0f0fc98c9fdc32a055b8e1a9f668e3a435d7d5",
+      "raw_evidence_sha256": "8998925f31217e1fd39c397776ee8d012b06f85327eb717212e7d53542715109",
+      "candidate_plugin_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "executed_plugin_sha256": "b52b804bc4ad29b0af533b2dd1950d635c28b6d3ee6fa3ed12c710d664d7e231",
+      "runtime_seconds": 14.222390303002612,
+      "genuine_idle_seconds": null,
+      "session_key_sha256": "b4f6a7cf296ab0fd7f3dc39c1fe6b0520d93d21b740a61692ba991a9bf28ad47",
+      "session_epoch": {
+        "same_routing_key": true,
+        "uuid_changed": false,
+        "before_uuid_sha256": "faced6e0d309d427c3ba2d7cefccf4afa97eb09c8a713484dd35945c9712adc7",
+        "after_uuid_sha256": "faced6e0d309d427c3ba2d7cefccf4afa97eb09c8a713484dd35945c9712adc7",
+        "before_session_id": "openclaw-session/v1:3cac65b4d4d07008ccdccc44773e9e11b570901b9d48900f91bc76a075a0d329",
+        "after_session_id": "openclaw-session/v1:3cac65b4d4d07008ccdccc44773e9e11b570901b9d48900f91bc76a075a0d329",
+        "reset_mechanism": "same_native_session",
+        "native_cli_stdout_sha256": "50b72685e10861dbddbb9b6682c7d4fe7e5ea243ccd339b875d7f6104df8145b"
+      },
+      "receipt_proof": {
+        "verified": true,
+        "receipt_count": 0,
+        "proof_kind": "instrumented_native_hook_hard_deny",
+        "signed_daemon_receipt_claimed": false,
+        "local_diagnostic_count": 2,
+        "diagnostic_sha256": "c72c8a2ed4b4517dede3f81218efa8a10df9bd4823410beb840073ee1d8cb604"
+      },
+      "missing_uuid_network": {
+        "fault_scope": "before_hook_ctx_only_after_hook_has_original_native_ctx",
+        "authority_requests": [],
+        "observe_attempt_count": 2,
+        "signed_receipts_written": 0,
+        "observe_attempt_is_not_execution_evidence": true
+      },
+      "denied_target_absent_before_after": true,
+      "control_unchanged": true,
+      "real_model_requests": 0,
+      "synthetic_provider_requests": 4,
+      "cleanup_confirmed": true
+    },
+    {
+      "case": "missing-audit_only",
+      "batch": "epoch067-r2",
+      "pass": true,
+      "coverage": "native_hook_fault_injection",
+      "manifest_sha256": "c6454d7943359046b3b833330675fd8e39761b75bc6235e3b7a9efc596dfd85d",
+      "raw_evidence_sha256": "04e95b734c229ad62983071268cb6292bce4203861af047f7fbcbd2f8ffdff67",
+      "candidate_plugin_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "executed_plugin_sha256": "b52b804bc4ad29b0af533b2dd1950d635c28b6d3ee6fa3ed12c710d664d7e231",
+      "runtime_seconds": 13.063089910996496,
+      "genuine_idle_seconds": null,
+      "session_key_sha256": "b4f6a7cf296ab0fd7f3dc39c1fe6b0520d93d21b740a61692ba991a9bf28ad47",
+      "session_epoch": {
+        "same_routing_key": true,
+        "uuid_changed": false,
+        "before_uuid_sha256": "1ca052d7cfb52c2674fe18a7473e0bc56fb542df842dcaef142ad5cd3b695fbb",
+        "after_uuid_sha256": "1ca052d7cfb52c2674fe18a7473e0bc56fb542df842dcaef142ad5cd3b695fbb",
+        "before_session_id": "openclaw-session/v1:9b161e1db463d527a504e6b74eec42dbded21981ac29d25645c3f39311c3f141",
+        "after_session_id": "openclaw-session/v1:9b161e1db463d527a504e6b74eec42dbded21981ac29d25645c3f39311c3f141",
+        "reset_mechanism": "same_native_session",
+        "native_cli_stdout_sha256": "9a8f57d3c1c29f9b8c4ba0938f2c8e75a6a605ee28600daac7a592149d4bbee3"
+      },
+      "receipt_proof": {
+        "verified": true,
+        "receipt_count": 0,
+        "proof_kind": "instrumented_native_hook_hard_deny",
+        "signed_daemon_receipt_claimed": false,
+        "local_diagnostic_count": 2,
+        "diagnostic_sha256": "ded45ac78309633d40bf8e92d960841c7715ea7f928b0aac696c1ea8a5ce2a04"
+      },
+      "missing_uuid_network": {
+        "fault_scope": "before_hook_ctx_only_after_hook_has_original_native_ctx",
+        "authority_requests": [],
+        "observe_attempt_count": 2,
+        "signed_receipts_written": 0,
+        "observe_attempt_is_not_execution_evidence": true
+      },
+      "denied_target_absent_before_after": true,
+      "control_unchanged": true,
+      "real_model_requests": 0,
+      "synthetic_provider_requests": 4,
+      "cleanup_confirmed": true
+    }
+  ],
+  "preserved_failed_attempt": {
+    "batch": "epoch067-r1",
+    "case": "missing-block",
+    "outer_exit_code": 1,
+    "cause": "Harness counted rejected after-hook /v1/observe traffic as authority calls; both native tools were blocked and no receipt/effect was produced.",
+    "fix": "Only /v1/decide and /v1/runtime-sessions must be absent; retain two observe attempts and zero backend receipts.",
+    "result_not_relabelled": true
+  },
+  "limitations": [
+    "WSL2 evidence does not establish Windows-native daemon/path profile support.",
+    "Missing-UUID cases remove only before-hook ctx.sessionId; the unmodified after-hook context still attempts observations, which produce no signed receipt.",
+    "Selected Node API guards are not an OS network sandbox or same-user filesystem isolation guarantee."
+  ]
+}

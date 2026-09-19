@@ -1,0 +1,41 @@
+{
+  "schema_version": "intent/v5",
+  "authority_kind": "runtime_check",
+  "filesystem_profile": "windows-local-drive/v1",
+  "intent_id": "rci-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "task_id": "rct-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "principal": {
+    "type": "user",
+    "id": "component-operator"
+  },
+  "agent": {
+    "id": "rca-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "platform": "hermes"
+  },
+  "purpose": "Read SIQ generated runtime check files",
+  "allowed_tools": [
+    "read_file"
+  ],
+  "allowed_effects": [
+    "file.read"
+  ],
+  "resource_constraints": [
+    {
+      "domain": "filesystem",
+      "operator": "prefix",
+      "value": "C:/Synthetic/runtime-check-materials/rc-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/allowed"
+    }
+  ],
+  "parameter_constraints": [],
+  "issued_at": "2026-09-18T00:00:00Z",
+  "valid_from": "2026-09-18T00:00:00Z",
+  "expires_at": "2026-09-18T00:02:00Z",
+  "authority": {
+    "issuer": "local-runtime-check",
+    "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "evidence_ids": []
+  },
+  "signing_schema": "local_canonical/v1",
+  "digest": "ec5836fa838088eca7b9f5450bec7ed339f2c7c55b093c6b26deee671b183fd0",
+  "signature": "8e6d3597d1b3dc4a732cf823526e9296cd28d5b531c24cf0745336a898e0a95b87dcb2963d7f50001c2b8d14b311dd9a0f88baba3007a458c3ee4a0e2d84d502"
+}

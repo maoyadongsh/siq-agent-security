@@ -44,6 +44,7 @@ var ErrUnavailable = errors.New("runtime_identity_unavailable")
 
 // Record is private signed storage metadata, not an HTTP response DTO.
 type Record struct {
+	FilesystemProfile string                `json:"filesystem_profile,omitempty"`
 	SchemaVersion     string                `json:"schema_version"`
 	IdentityID        string                `json:"identity_id"`
 	InstanceID        string                `json:"instance_id"`
@@ -67,18 +68,19 @@ type Revocation struct {
 }
 
 type CreateRequest struct {
-	SchemaVersion         string `json:"schema_version"`
-	InstanceID            string `json:"instance_id"`
-	GrantID               string `json:"grant_id"`
-	ExpectedGrantRevision int    `json:"expected_grant_revision"`
-	ActorID               string `json:"actor_id"`
-	SessionTTLSeconds     int    `json:"session_ttl_seconds"`
+	ConfirmFilesystemProfile bool   `json:"confirm_filesystem_profile,omitempty"`
+	SchemaVersion            string `json:"schema_version"`
+	InstanceID               string `json:"instance_id"`
+	GrantID                  string `json:"grant_id"`
+	ExpectedGrantRevision    int    `json:"expected_grant_revision"`
+	ActorID                  string `json:"actor_id"`
+	SessionTTLSeconds        int    `json:"session_ttl_seconds"`
 }
 
 // supportedIdentityPlatforms is the closed set of host products for which a
 // Runtime Identity may be issued. Extending it requires a real adapter and
 // contracts, not just a new constant here.
-var supportedIdentityPlatforms = map[string]bool{"hermes": true, "openclaw": true}
+var supportedIdentityPlatforms = map[string]bool{"hermes": true, "openclaw": true, "workbuddy": true}
 
 // ResolveInstance must resolve the ID against currently discovered roots of the
 // host product it names; it must not accept an arbitrary client-provided path.
@@ -86,10 +88,11 @@ var supportedIdentityPlatforms = map[string]bool{"hermes": true, "openclaw": tru
 type ResolveInstance func(string) (string, error)
 
 type Store struct {
-	dir     string
-	key     *signing.Key
-	intents *intent.Store
-	resolve ResolveInstance
+	dir             string
+	key             *signing.Key
+	intents         *intent.Store
+	resolve         ResolveInstance
+	resolveInstance ResolveInstanceInfo
 }
 
 func Open(dir string, key *signing.Key, intents *intent.Store, resolve ResolveInstance) (*Store, error) {
@@ -174,7 +177,7 @@ func (s *Store) read(id string) (Record, error) {
 	}
 	agent, err := AgentID(r.InstanceID)
 	_, timeErr := time.Parse(time.RFC3339Nano, r.CreatedAt)
-	if err != nil || timeErr != nil || r.SchemaVersion != "local-runtime-identity/v1" || r.IdentityID != id || r.AgentID != agent || !supportedIdentityPlatforms[r.Platform] || !textValid(r.ActorID, 128) || !textValid(r.GrantRef.GrantID, 256) || !textValid(r.GrantRef.AdmissionID, 256) || !hexDigest.MatchString(r.GrantRef.PermissionDigest) || !hexDigest.MatchString(r.CredentialHash) || r.SessionTTLSeconds < 60 || r.SessionTTLSeconds > 86400 || !s.verify(r, r.Signature) {
+	if err != nil || timeErr != nil || !validRecordProfile(r) || r.IdentityID != id || r.AgentID != agent || !supportedIdentityPlatforms[r.Platform] || !textValid(r.ActorID, 128) || !textValid(r.GrantRef.GrantID, 256) || !textValid(r.GrantRef.AdmissionID, 256) || !hexDigest.MatchString(r.GrantRef.PermissionDigest) || !hexDigest.MatchString(r.CredentialHash) || r.SessionTTLSeconds < 60 || r.SessionTTLSeconds > 86400 || !s.verify(r, r.Signature) {
 		return Record{}, ErrInvalid
 	}
 	return r, nil
@@ -203,7 +206,7 @@ func (s *Store) Create(req CreateRequest) (Record, error) {
 	writeMu.Lock()
 	defer writeMu.Unlock()
 	agent, err := AgentID(req.InstanceID)
-	if err != nil || req.SchemaVersion != "local-runtime-identity-create/v1" || !textValid(req.GrantID, 256) || req.ExpectedGrantRevision < 0 || !textValid(req.ActorID, 128) || req.SessionTTLSeconds < 60 || req.SessionTTLSeconds > 86400 {
+	if err != nil || !validCreateProfile(req) || !textValid(req.GrantID, 256) || req.ExpectedGrantRevision < 0 || !textValid(req.ActorID, 128) || req.SessionTTLSeconds < 60 || req.SessionTTLSeconds > 86400 {
 		return Record{}, ErrInvalid
 	}
 	platform, err := s.resolve(req.InstanceID)
@@ -215,6 +218,10 @@ func (s *Store) Create(req CreateRequest) (Record, error) {
 		return Record{}, err
 	}
 	g, err := s.intents.GrantForReference(ref, platform, agent)
+	if err != nil {
+		return Record{}, err
+	}
+	profile, err := s.creationProfile(req, platform, g)
 	if err != nil {
 		return Record{}, err
 	}
@@ -249,6 +256,9 @@ func (s *Store) Create(req CreateRequest) (Record, error) {
 	id := "ri-" + hex.EncodeToString(nonce[:16])
 	token := id + "." + hex.EncodeToString(nonce[16:])
 	r := Record{SchemaVersion: "local-runtime-identity/v1", IdentityID: id, InstanceID: req.InstanceID, AgentID: agent, Platform: platform, GrantRef: ref, ActorID: req.ActorID, CreatedAt: time.Now().UTC().Format(time.RFC3339Nano), SessionTTLSeconds: req.SessionTTLSeconds, CredentialHash: hash([]byte(token))}
+	if profile != "" {
+		r.SchemaVersion, r.FilesystemProfile = "local-runtime-identity/v2", profile
+	}
 	r.Signature, err = s.sign(r)
 	if err != nil {
 		return Record{}, ErrUnavailable
@@ -263,6 +273,9 @@ func (s *Store) Create(req CreateRequest) (Record, error) {
 		return Record{}, err
 	}
 	if p, e := s.resolve(req.InstanceID); e != nil || p != platform {
+		return Record{}, ErrUnavailable
+	}
+	if p, e := s.creationProfile(req, platform, g); e != nil || p != profile {
 		return Record{}, ErrUnavailable
 	}
 	b, err := json.Marshal(r)
@@ -321,6 +334,26 @@ func (s *Store) Authenticate(token string) (Record, error) {
 }
 
 func (s *Store) authenticate(token string) (Record, error) {
+	r, _, err := s.authenticateWithGrant(token)
+	return r, err
+}
+
+func (s *Store) authenticateWithGrant(token string) (Record, *grant.Grant, error) {
+	r, err := s.authenticateRecord(token)
+	if err != nil {
+		return Record{}, nil, err
+	}
+	g, err := s.intents.GrantForReference(r.GrantRef, r.Platform, r.AgentID)
+	if err != nil || !recordGrantProfileMatches(r, g) {
+		return Record{}, nil, ErrUnavailable
+	}
+	return r, g, nil
+}
+
+// authenticateRecord validates credential, signed record, current revocation
+// and profile only. Its caller must independently validate the current Grant
+// (or the selected Grant from its same-call ResolveBinding) before authorizing.
+func (s *Store) authenticateRecord(token string) (Record, error) {
 	if len(token) != 100 || token[35] != '.' || !identityID.MatchString(token[:35]) || !hexDigest.MatchString(token[36:]) {
 		return Record{}, ErrInvalid
 	}
@@ -342,7 +375,7 @@ func (s *Store) authenticate(token string) (Record, error) {
 	if err != nil || revoked {
 		return Record{}, ErrUnavailable
 	}
-	if _, err = s.intents.GrantForReference(r.GrantRef, r.Platform, r.AgentID); err != nil {
+	if s.checkRecordProfile(r) != nil {
 		return Record{}, ErrUnavailable
 	}
 	return r, nil

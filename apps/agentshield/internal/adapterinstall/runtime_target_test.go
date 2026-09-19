@@ -3,6 +3,8 @@ package adapterinstall
 import (
 	"os"
 	"path/filepath"
+	"runtime"
+	"siq-agent-security/apps/agentshield/internal/state"
 	"testing"
 
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
@@ -32,6 +34,26 @@ func TestNativeRuntimeTargetPinsConfigurationServiceAndCLI(t *testing.T) {
 		t.Skip("set SIQ_HERMES_NATIVE_CLI for installed native CLI verification")
 	}
 	o := testOpts(t, Hermes)
+	if runtime.GOOS == "windows" {
+		st, err := state.Open(o.StateDir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		writer, err := state.AcquireWriter(st.Dir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := st.Initialize(writer, 47611); err != nil {
+			_ = writer.Release()
+			t.Fatal(err)
+		}
+		if err := writer.Release(); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := st.ActivateWindowsProfile(true, "native-runtime-target-fixture"); err != nil {
+			t.Fatal(err)
+		}
+	}
 	root := filepath.Join(o.Home, ".hermes", "profiles", "work")
 	cfg := filepath.Join(root, "config.yaml")
 	putTestFile(t, cfg, []byte("terminal:\n  env: local\n"), 0600)

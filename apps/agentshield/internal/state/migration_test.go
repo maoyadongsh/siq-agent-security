@@ -53,14 +53,12 @@ func TestMigrationFullBackupAndEveryCheckpointRecovery(t *testing.T) {
 			if !errors.Is(e, injected) {
 				t.Fatal(e)
 			}
-			if point != "done" {
-				paths := treeSnapshot(t, s.Dir)
-				if _, e := Open(s.Dir); e == nil {
-					t.Fatal("ordinary access during migration")
-				}
-				if !reflect.DeepEqual(paths, treeSnapshot(t, s.Dir)) {
-					t.Fatal("blocked access wrote data")
-				}
+			paths := treeSnapshot(t, s.Dir)
+			if _, e := Open(s.Dir); e == nil {
+				t.Fatal("ordinary access during migration")
+			}
+			if !reflect.DeepEqual(paths, treeSnapshot(t, s.Dir)) {
+				t.Fatal("blocked access wrote data")
 			}
 			if _, e := s.MigrateState("n01-test"); e != nil {
 				t.Fatal("resume", e)
@@ -97,6 +95,41 @@ func TestMigrationFullBackupAndEveryCheckpointRecovery(t *testing.T) {
 		})
 	}
 }
+func TestMigrationCompletedBarrierRequiresExplicitRecovery(t *testing.T) {
+	s := migrationFixture(t)
+	interrupted := errors.New("interrupt after completion record")
+	_, err := s.migrateState("completion-test", func(at string) error {
+		if at == "done" {
+			return interrupted
+		}
+		return nil
+	})
+	if !errors.Is(err, interrupted) {
+		t.Fatal("completion checkpoint", err)
+	}
+	before := treeSnapshot(t, s.Dir)
+	if err := stateformat.CheckCompletedMigration(s.Dir); err != nil {
+		t.Fatal("valid recovery proof", err)
+	}
+	for _, write := range []bool{false, true} {
+		if err := stateformat.Check(s.Dir, write, false); !errors.Is(err, stateformat.ErrMigration) {
+			t.Fatalf("ordinary write=%v bypassed active barrier: %v", write, err)
+		}
+	}
+	if !reflect.DeepEqual(before, treeSnapshot(t, s.Dir)) {
+		t.Fatal("compatibility checks changed state")
+	}
+	if _, err := s.MigrateState("completion-test"); err != nil {
+		t.Fatal("explicit recovery", err)
+	}
+	if err := stateformat.Check(s.Dir, true, false); err != nil {
+		t.Fatal("ordinary access after recovery", err)
+	}
+	if err := stateformat.CheckCompletedMigration(s.Dir); !errors.Is(err, stateformat.ErrMigration) {
+		t.Fatal("absent barrier accepted as active recovery proof", err)
+	}
+}
+
 func TestMigrationRejectsDriftAndUntrustedPlan(t *testing.T) {
 	for _, kind := range []string{"source", "backup", "extra-backup-lock", "plan-path", "plan-instance", "symlink-backup"} {
 		t.Run(kind, func(t *testing.T) {
@@ -207,7 +240,7 @@ func TestBoundInitializationRejectsLostOrCopiedIdentity(t *testing.T) {
 	if e := stateformat.Check(other, true, false); !errors.Is(e, stateformat.ErrCorrupt) {
 		t.Fatal("copied marker accepted", e)
 	}
-	m.MinWriter = 3
+	m.MinWriter = stateformat.WriterVersion + 1
 	os.WriteFile(filepath.Join(s.Dir, stateformat.MarkerName), migrationJSON(m), 0600)
 	if e := stateformat.Check(s.Dir, false, false); e != nil {
 		t.Fatal("compatible reader rejected", e)

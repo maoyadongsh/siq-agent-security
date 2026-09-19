@@ -1,0 +1,42 @@
+{
+  "candidate": "cdfec5adaeb2b0fc7a6b28d2d57fdea9c1b53064",
+  "unsigned": true,
+  "results": [
+    {
+      "target": "windows/amd64",
+      "exit_code": 0,
+      "stderr": "",
+      "sha256": "c74d90591e7831892d8abcfd92e5552af57c95442b9fa7415584370d819e4876",
+      "bytes": 26401280
+    },
+    {
+      "target": "linux/amd64",
+      "exit_code": 0,
+      "stderr": "",
+      "sha256": "3c173ef084fad38d7d4791d4148a548f937a0f307baaadab80486e9c033ed44d",
+      "bytes": 25772344
+    },
+    {
+      "target": "linux/arm64",
+      "exit_code": 0,
+      "stderr": "",
+      "sha256": "0cae19d5a047497ccf33bb5487870f2da048c92268938f2afa5c4e50748ac805",
+      "bytes": 24214463
+    },
+    {
+      "target": "darwin/arm64",
+      "exit_code": 0,
+      "stderr": "",
+      "sha256": "68122d0805bd3a57d602d093437f0147b50133fc7c1dd63af9cde6a68b647f10",
+      "bytes": 24653202
+    }
+  ],
+  "embedded_version": "0.0.0-dev",
+  "release_requires_versioned_rebuild": true,
+  "archive": {
+    "file": "windows-unsigned-candidate-cdfec5a-reviewed.zip",
+    "sha256": "cb0aabd685013812072892b4f5271bff1e1715b49e1433ec28c0f3260c2cb2d7",
+    "bytes": 66048596
+  },
+  "skill_payload_unchanged_from": "2d5ee6c725e865b2c0769f0d35ac839161dbb717"
+}

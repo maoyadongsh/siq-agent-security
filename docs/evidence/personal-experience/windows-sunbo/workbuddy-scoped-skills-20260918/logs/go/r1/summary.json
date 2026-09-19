@@ -1,0 +1,44 @@
+{
+  "base_sha": "4449c94eb4707c8b32984635ac84209aad3b4ec8",
+  "source_dirty": true,
+  "scope": "targeted development checks only; no native host or desktop acceptance",
+  "private_temp": ".tmp/wsi1",
+  "protected_dacl_verified": true,
+  "helper_sha256": "aef152e1706c2d89caab077178ae23d3c4bb8235fab703fe71aa27f4061e3711",
+  "results": [
+    {
+      "label": "imported-windows-profile",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "./internal/grant",
+        "-json",
+        "-run",
+        "^TestWindowsImportedSkillProfile",
+        "-count=1",
+        "-timeout=90s"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 9.921219
+    },
+    {
+      "label": "workbuddy-contracts",
+      "command": [
+        "<WORKSPACE>\\.tmp\\win-stage-r2-20260917\\apps\\control-api\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-m",
+        "pytest",
+        "app/tests/test_schema_contracts.py",
+        "-q",
+        "-k",
+        "workbuddy_skill"
+      ],
+      "cwd": "<WORKTREE>\\apps\\control-api",
+      "exit_code": 0,
+      "seconds": 9.818083
+    }
+  ],
+  "result": "pass"
+}

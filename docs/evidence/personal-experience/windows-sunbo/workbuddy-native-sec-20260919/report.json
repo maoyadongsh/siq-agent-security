@@ -1,0 +1,74 @@
+{
+  "tested_candidate": "cdfec5adaeb2b0fc7a6b28d2d57fdea9c1b53064",
+  "native_result": "failed_not_accepted",
+  "model_tasks_submitted": 2,
+  "model": "existing GLM-5.3-Flash",
+  "user_authorization": "task/quota cap explicitly removed; same isolated account retained",
+  "attempts": [
+    {
+      "native_task_terminal": true,
+      "elapsed_display": "1m18s",
+      "usage_display": "0.45",
+      "result": "managed session enrollment unavailable; blocked (fail-closed)",
+      "marker_absent": true
+    },
+    {
+      "native_task_terminal": true,
+      "elapsed_display": "1m41s",
+      "usage_display": "0.46",
+      "result": "execution uncertain; inspect SIQ and do not replay; blocked (fail-closed)",
+      "marker_absent": true,
+      "no_retry": true
+    }
+  ],
+  "diagnostic_enrollment": {
+    "status": 200,
+    "error": null,
+    "schema_version": "local-runtime-session-enrolled/v2",
+    "elapsed": 14.406834599998547
+  },
+  "diagnostic_enrollment_not_claimed_as_native_success": true,
+  "signed_read_decision": {
+    "seq": 9,
+    "tool": "Read",
+    "action": "deny",
+    "reason_code": "intent_filesystem_identity_unavailable",
+    "skill_attribution": "verified controlled_session"
+  },
+  "actual_installed_skill_link_count_observed_before_cleanup": 2,
+  "root_cause": "WorkBuddy publication hardlinked payload to the operation pool; Windows runtimepath rejects multiple links. No runtimepath relaxation.",
+  "offline_verification": {
+    "receipt_chain_entries": 10,
+    "identity_sec_and_revocations_signed_documents": 4,
+    "marker_absent": true,
+    "owned_desktop_and_service_closed": true,
+    "owned_skill_hooks_removed_and_grant_revoked": true
+  },
+  "old_code_reproduction": "TestWorkBuddyV2InstallUpdateRemoveBothScopes/user fails installed Skill runtime identity check (41.675s package total)",
+  "private_evidence_sha256": {
+    "snapshot-2.json": "bb0ee3f3c5df21e8d0205194c0e94bdc3b5570ba5e64ed38a6765f9b40e3f2b8",
+    "ready.json": "cff550da5c0fa913139a9c90da22a56ff5c2f7107adf73377a2cfdfd19255adc",
+    "native-session-bound.json": "9429f6180a1089fa478b2c62dcf4a7d0f59fd46b9660bede9952ad2314b67512",
+    "enrollment-diagnostic.json": "f52e15d5d8c678a39451d2db452ab2b987dfe69d746995a11288b39f996a0635",
+    "cleanup.json": "634c9e97d8d19ea740890133251b7077bc482bf7f6adb56ba0b775ce2a6fddd3",
+    "skill-removal.json": "4de011bb154590569e4fc76971800a3d15963f272f1da186dc4f7a7e949a4c35",
+    "desktop-terminal-1.json": "73a328a29af0b0ee69f5ea2c82001b8945796811322a2a06e407e35011331a5f",
+    "desktop-terminal-2.json": "a837a7ddc042f91a73a5bc903db24d4351f85995a7410bc72dbdd69e1372509d"
+  },
+  "limitations": [
+    "No protected native Skill write passed.",
+    "The initial enrollment failure and later unknown execution outcome are not permission allows.",
+    "Native Skill tool is not mapped as a known runtime effect; its slash/menu path is not accepted by this evidence.",
+    "Verification derives an in-memory public key from this private fixture seed; no signatures created or secrets exported."
+  ],
+  "repair_checks": {
+    "scope": "WorkBuddy payload publication and inspection; runtime hardlink policy unchanged",
+    "old_publication_regression": "failed runtime path identity (41.675s)",
+    "intermediate_publication_only": "failed inspection; ownership inspection subsequently synchronized",
+    "both_scopes_install_inspect_update_remove_with_runtime_path_assertions": "pass (346.784s)",
+    "target_and_pool_tamper_negative": "pass (4.611s)",
+    "runtimepath_suite": "pass (3.732s)",
+    "go_vet_all": "pass",
+    "native_after_repair": "pending"
+  }
+}

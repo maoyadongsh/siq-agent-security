@@ -109,6 +109,25 @@
       "status": "candidate"
     },
     {
+      "candidate_id": "agent:workbuddy:hi-00000000000000000000000000000006",
+      "source_type": "workbuddy_profile",
+      "source_locator": "workbuddy://instances/hi-00000000000000000000000000000006",
+      "discovered_at": "2026-09-04T08:00:00Z",
+      "name": "workbuddy",
+      "framework": "workbuddy",
+      "attributes": {
+        "config_dir": "~/.workbuddy",
+        "detection": "configuration_directory",
+        "instance_id": "hi-00000000000000000000000000000006",
+        "platform": "workbuddy"
+      },
+      "evidence_ids": [
+        "ev-a8c89938118e1d19"
+      ],
+      "confidence": 1,
+      "status": "candidate"
+    },
+    {
       "candidate_id": "mcp:cursor:github@47b27826",
       "source_type": "mcp_server",
       "source_locator": "mcp://~/.cursor/mcp.json#github",
@@ -215,7 +234,7 @@
     {
       "candidate_id": "platform:workbuddy",
       "source_type": "platform_config",
-      "source_locator": "workbuddy://.workbuddy/settings.json",
+      "source_locator": "workbuddy://instances/hi-00000000000000000000000000000006/settings.json",
       "discovered_at": "2026-09-04T08:00:00Z",
       "name": "workbuddy",
       "framework": "workbuddy",
@@ -223,11 +242,11 @@
       "attributes": {
         "agentshield_tool_hook": "true",
         "bytes": "159",
-        "config": ".workbuddy/settings.json",
+        "config": "instances/hi-00000000000000000000000000000006/settings.json",
         "platform": "workbuddy"
       },
       "evidence_ids": [
-        "ev-b5e3bd1501f94501"
+        "ev-fac0f9a23c51e71f"
       ],
       "confidence": 1,
       "status": "candidate"
@@ -472,6 +491,22 @@
       "expires_at": null
     },
     {
+      "evidence_id": "ev-a8c89938118e1d19",
+      "source_type": "manifest",
+      "source_locator": "workbuddy://instances/hi-00000000000000000000000000000006",
+      "subject_ref": null,
+      "observed_at": "2026-09-04T08:00:00Z",
+      "collected_at": "2026-09-04T08:00:00Z",
+      "collector_id": "agentshield-local",
+      "connector_version": "test",
+      "content_hash": "97dce265cad31e664f4d286e77601669bb021b5f19eb4aafe9e105b8a6e44fb4",
+      "redaction_profile": "siq.redaction.v1",
+      "classification": "internal",
+      "payload_ref": null,
+      "signature": "4016eddafb412505ae749291f8419035d1f78767cf1f8f924006b505c7a7e53b47f9a68a45ebfd649ecfd0b3ce6f6861a97ecd3f531d189b45a0cf2b5cd4b906",
+      "expires_at": null
+    },
+    {
       "evidence_id": "ev-b5d42fc63d1ccff7",
       "source_type": "platform_config",
       "source_locator": "openclaw://.openclaw/openclaw.json",
@@ -488,22 +523,6 @@
       "expires_at": null
     },
     {
-      "evidence_id": "ev-b5e3bd1501f94501",
-      "source_type": "platform_config",
-      "source_locator": "workbuddy://.workbuddy/settings.json",
-      "subject_ref": null,
-      "observed_at": "2026-09-04T08:00:00Z",
-      "collected_at": "2026-09-04T08:00:00Z",
-      "collector_id": "agentshield-local",
-      "connector_version": "test",
-      "content_hash": "cba8aa3e0625e0e1a85c66f054b4b5dbfe1d895034eb53c70ad76ee19ca865dd",
-      "redaction_profile": "siq.redaction.v1",
-      "classification": "internal",
-      "payload_ref": null,
-      "signature": "726abdb7d6b0efe0bce3dcab453c8d6e91f2b7484325b8ade470c8af95a5481135662fadd42655aeab14e48ecb00a34da6855e95a69169a31938df1e0a186d07",
-      "expires_at": null
-    },
-    {
       "evidence_id": "ev-e57589243098b6ff",
       "source_type": "platform_config",
       "source_locator": "hermes://.hermes/config.yaml",
@@ -517,6 +536,22 @@
       "classification": "internal",
       "payload_ref": null,
       "signature": "fac77c9cd1ca6670defb7234acc657dbd20bcfaecc2a335bf247a3f9d44a83cf7c977778f36a84aa7fbee59ceebf6c17115a2a525e6a7a00f4d7ff0d14d8030e",
+      "expires_at": null
+    },
+    {
+      "evidence_id": "ev-fac0f9a23c51e71f",
+      "source_type": "platform_config",
+      "source_locator": "workbuddy://instances/hi-00000000000000000000000000000006/settings.json",
+      "subject_ref": null,
+      "observed_at": "2026-09-04T08:00:00Z",
+      "collected_at": "2026-09-04T08:00:00Z",
+      "collector_id": "agentshield-local",
+      "connector_version": "test",
+      "content_hash": "cba8aa3e0625e0e1a85c66f054b4b5dbfe1d895034eb53c70ad76ee19ca865dd",
+      "redaction_profile": "siq.redaction.v1",
+      "classification": "internal",
+      "payload_ref": null,
+      "signature": "23d9e9680e5f1a7281c5ba5f1bd52bd27a3b28da2d538a68e5e82a4ca8d1647392b47b78da22092ba5d48d72e906e9ee4bd2222c65ca08d7ecc0908e8a606806",
       "expires_at": null
     }
   ],
@@ -632,7 +667,7 @@
     {
       "subject": {
         "type": "agent_asset",
-        "id": "workbuddy://.workbuddy/settings.json"
+        "id": "workbuddy://instances/hi-00000000000000000000000000000006/settings.json"
       },
       "domain": "control_plane",
       "action": "tool.hook",
@@ -644,7 +679,7 @@
       "state": "observed",
       "authority": "agentshield",
       "evidence_ids": [
-        "ev-b5e3bd1501f94501"
+        "ev-fac0f9a23c51e71f"
       ]
     }
   ],

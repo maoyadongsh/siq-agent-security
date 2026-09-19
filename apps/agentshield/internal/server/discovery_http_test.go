@@ -5,11 +5,14 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 )
 
 func TestDiscoveryContractFixtures(t *testing.T) {
+	// The fixture describes an isolated home, never an ambient host override.
+	t.Setenv("WORKBUDDY_CONFIG_DIR", "")
 	s, _ := newServer(t, "block")
 	for _, tc := range []struct {
 		name, method, path string
@@ -27,7 +30,13 @@ func TestDiscoveryContractFixtures(t *testing.T) {
 			t.Fatal(err)
 		}
 		got, _ := json.MarshalIndent(body, "", "  ")
-		path := filepath.Join("..", "..", "testdata", "contracts", "discovery-"+tc.name+".json")
+		name := "discovery-" + tc.name
+		// Native Windows discovery includes the Hermes AppData root as well as
+		// its legacy home. Keep that real OS difference in a separate golden.
+		if runtime.GOOS == "windows" {
+			name += "-windows"
+		}
+		path := filepath.Join("..", "..", "testdata", "contracts", name+".json")
 		if os.Getenv("AGENTSHIELD_UPDATE_SAMPLES") == "1" {
 			if err := os.WriteFile(path, append(got, '\n'), 0o644); err != nil {
 				t.Fatal(err)

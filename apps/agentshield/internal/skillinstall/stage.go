@@ -51,6 +51,7 @@ type Request struct {
 	InstanceID       string `json:"instance_id"`
 	DirectoryName    string `json:"directory_name"`
 	ActorID          string `json:"actor_id"`
+	TargetID         string `json:"target_id,omitempty"`
 }
 type Target struct{ InstanceID, Platform, Root, Display string }
 
@@ -84,6 +85,7 @@ type Plan struct {
 	Installed             bool                `json:"installed"`
 	RuntimeVerified       bool                `json:"runtime_verified"`
 	Signature             string              `json:"signature"`
+	TargetRef             *TargetRef          `json:"target_ref,omitempty"`
 }
 type Store struct {
 	dir       string
@@ -91,6 +93,7 @@ type Store struct {
 	imports   *skillimport.Store
 	authority *state.Store
 	resolve   func(context.Context, string) (Target, error)
+	resolveV2 TargetResolverV2
 	now       func() time.Time
 	// Private test boundary, never set from runtime configuration.
 	boundary func(string) error
@@ -107,6 +110,12 @@ type Store struct {
 }
 
 func Open(authority *state.Store, key *signing.Key, imports *skillimport.Store, resolve func(context.Context, string) (Target, error)) (*Store, error) {
+	return OpenWithTargets(authority, key, imports, resolve, nil)
+}
+
+// OpenWithTargets preserves the legacy resolver and enables explicitly selected
+// v2 scopes. A missing v2 resolver always rejects v2 operations.
+func OpenWithTargets(authority *state.Store, key *signing.Key, imports *skillimport.Store, resolve func(context.Context, string) (Target, error), resolveV2 TargetResolverV2) (*Store, error) {
 	if authority == nil || key == nil || imports == nil || resolve == nil {
 		return nil, ErrInvalid
 	}
@@ -119,7 +128,7 @@ func Open(authority *state.Store, key *signing.Key, imports *skillimport.Store, 
 			return nil, err
 		}
 	}
-	return &Store{dir: dir, key: key, imports: imports, authority: authority, resolve: resolve, now: time.Now,
+	return &Store{dir: dir, key: key, imports: imports, authority: authority, resolve: resolve, resolveV2: resolveV2, now: time.Now,
 		boundary: func(string) error { return nil },
 		jitter: func(d time.Duration) time.Duration {
 			// Up to one eighth of the interval, drawn per write. math/rand's
@@ -145,11 +154,16 @@ func nameValid(name string) bool {
 	return !((strings.HasPrefix(upper, "COM") || strings.HasPrefix(upper, "LPT")) && len(upper) == 4 && strings.ContainsRune("123456789", rune(upper[3])))
 }
 func validRequest(r Request) bool {
-	return r.SchemaVersion == "local-skill-install-stage-create/v1" && requestID.MatchString(r.RequestID) && r.GrantID != "" && len(r.GrantID) <= 256 && r.ExpectedRevision >= 0 && instanceID.MatchString(r.InstanceID) && nameValid(r.DirectoryName) &&
+	version := r.SchemaVersion == "local-skill-install-stage-create/v1" && r.TargetID == "" || r.SchemaVersion == "local-skill-install-stage-create/v2" && strings.HasPrefix(r.TargetID, "sit-") && digestPattern.MatchString(strings.TrimPrefix(r.TargetID, "sit-"))
+	return version && requestID.MatchString(r.RequestID) && r.GrantID != "" && len(r.GrantID) <= 256 && r.ExpectedRevision >= 0 && instanceID.MatchString(r.InstanceID) && nameValid(r.DirectoryName) &&
 		r.ActorID != "" && strings.TrimSpace(r.ActorID) == r.ActorID && utf8.ValidString(r.ActorID) && utf8.RuneCountInString(r.ActorID) <= 128 && strings.IndexFunc(r.ActorID, unicode.IsControl) < 0
 }
 func (p Plan) request() Request {
-	return Request{"local-skill-install-stage-create/v1", p.RequestID, p.GrantID, p.GrantRevision, p.InstanceID, p.DirectoryName, p.ActorID}
+	r := Request{SchemaVersion: p.wireVersion("local-skill-install-stage-create"), RequestID: p.RequestID, GrantID: p.GrantID, ExpectedRevision: p.GrantRevision, InstanceID: p.InstanceID, DirectoryName: p.DirectoryName, ActorID: p.ActorID}
+	if p.TargetRef != nil {
+		r.TargetID = p.TargetRef.TargetID
+	}
+	return r
 }
 func hash(raw []byte) string             { digest := sha256.Sum256(raw); return hex.EncodeToString(digest[:]) }
 func (s *Store) stage(id string) string  { return filepath.Join(s.dir, "stages", id) }
@@ -162,16 +176,15 @@ func (s *Store) inspect(ctx context.Context, r Request) (Plan, error) {
 	if err := ctx.Err(); err != nil {
 		return p, err
 	}
-	target, err := s.resolve(ctx, r.InstanceID)
-	if err != nil || target.InstanceID != r.InstanceID || !supportedPlatform(target.Platform) || target.Display == "" || len(target.Display) > 4096 {
-		return p, ErrChanged
-	}
-	destination, err := targetPath(target, r.DirectoryName)
+	target, reference, destination, display, err := s.inspectRequestTarget(ctx, r)
 	if err != nil {
 		return p, err
 	}
 	current, revision, err := s.authority.GetGrantWithSeq(r.GrantID)
 	if err != nil || current == nil || revision != r.ExpectedRevision || !grant.Verify(s.key.Public(), *current) || current.Status != "approved" || current.Platform != target.Platform || current.Subject.Type != "agent_instance" || current.Subject.ID != subjectForInstance(r.InstanceID) || grant.ValidateLifetime(*current, s.now()) != nil {
+		return p, ErrChanged
+	}
+	if reference != nil && !planGrantProfile(Plan{SchemaVersion: planV2}, current) {
 		return p, ErrChanged
 	}
 	adm, err := s.authority.GetAdmission(current.AdmissionID)
@@ -195,10 +208,17 @@ func (s *Store) inspect(ctx context.Context, r Request) (Plan, error) {
 	if err != nil || latest == nil || latestRevision != revision || latest.Signature != current.Signature || !grant.Verify(s.key.Public(), *latest) || grant.ValidateLifetime(*latest, s.now()) != nil {
 		return p, ErrChanged
 	}
-	if _, err := targetPath(target, r.DirectoryName); err != nil {
+	_, nextRef, nextDestination, nextDisplay, err := s.inspectRequestTarget(ctx, r)
+	if err != nil {
 		return p, err
 	}
-	p = Plan{SchemaVersion: "local-skill-install-plan/v1", RequestID: r.RequestID, Source: source, GrantID: r.GrantID, GrantRevision: revision, GrantSignature: current.Signature, GrantPermissionDigest: permission, Platform: target.Platform, InstanceID: r.InstanceID, DirectoryName: r.DirectoryName, TargetLocatorDigest: hash([]byte(destination)), TargetDisplay: strings.TrimSuffix(target.Display, "/") + "/skills/" + r.DirectoryName, ActorID: r.ActorID}
+	if nextDestination != destination || nextDisplay != display || !sameTargetRef(reference, nextRef) {
+		return p, ErrChanged
+	}
+	p = Plan{SchemaVersion: "local-skill-install-plan/v1", RequestID: r.RequestID, Source: source, GrantID: r.GrantID, GrantRevision: revision, GrantSignature: current.Signature, GrantPermissionDigest: permission, Platform: target.Platform, InstanceID: r.InstanceID, DirectoryName: r.DirectoryName, TargetLocatorDigest: hash([]byte(destination)), TargetDisplay: display, ActorID: r.ActorID, TargetRef: reference}
+	if reference != nil {
+		p.SchemaVersion = planV2
+	}
 	if !displayValid(p.TargetDisplay) {
 		return Plan{}, ErrInvalid
 	}

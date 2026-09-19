@@ -1,0 +1,47 @@
+{
+  "base_sha": "09f5b165b4ef032208f39e2e03c69950200633c6",
+  "source_dirty": true,
+  "scope": "targeted development checks only; no native host or desktop acceptance",
+  "private_temp": ".tmp/wsi2",
+  "protected_dacl_verified": true,
+  "helper_sha256": "aef152e1706c2d89caab077178ae23d3c4bb8235fab703fe71aa27f4061e3711",
+  "results": [
+    {
+      "label": "scoped-skill-integration",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-p",
+        "1",
+        "./internal/skillinstall",
+        "./internal/skillcontext",
+        "./internal/server",
+        "./internal/inventory",
+        "-json",
+        "-run",
+        "^(TestWorkBuddyV2|TestWorkBuddyInventory|TestWorkBuddySkillTargets|TestSkillInstallStageRequestVersionBoundary|TestImportedResourceEdits|TestImportedGrantSkillReference|TestWorkBuddyImportedSkillPermission)",
+        "-count=1",
+        "-timeout=180s"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 1,
+      "seconds": 210.598182
+    },
+    {
+      "label": "targeted-vet",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "vet",
+        "./internal/grant",
+        "./internal/skillinstall",
+        "./internal/skillcontext",
+        "./internal/server",
+        "./internal/inventory"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 1,
+      "seconds": 7.726358
+    }
+  ],
+  "result": "fail"
+}

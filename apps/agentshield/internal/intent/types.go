@@ -6,6 +6,7 @@ import (
 	"io"
 	"siq-agent-security/apps/agentshield/internal/completion"
 	"siq-agent-security/apps/agentshield/internal/provenance"
+	"strings"
 	"time"
 )
 
@@ -34,8 +35,10 @@ type ParameterConstraint struct {
 	Values   []any  `json:"values,omitempty"`
 }
 
-// Contract dual-reads signed intent/v2 and intent/v3. V1 remains separate.
+// Contract preserves legacy v2/v3 bytes; v4 explicitly signs its interpretation.
 type Contract struct {
+	AuthorityKind         string                    `json:"authority_kind,omitempty"`
+	FilesystemProfile     string                    `json:"filesystem_profile,omitempty"`
 	EffectRequirements    *[]completion.Requirement `json:"effect_requirements,omitempty"`
 	ProvenanceConstraints *[]provenance.Constraint  `json:"provenance_constraints,omitempty"`
 	ProvenanceRefs        []string                  `json:"provenance_refs,omitempty"`
@@ -74,6 +77,19 @@ func (c *Contract) UnmarshalJSON(raw []byte) error {
 	var fields map[string]json.RawMessage
 	if json.Unmarshal(raw, &fields) != nil {
 		return violation("intent_invalid_contract")
+	}
+	if (value.SchemaVersion == "intent/v4" || value.SchemaVersion == RuntimeCheckSchema) && !exactProfileFields(raw, value) {
+		return violation("intent_invalid_contract")
+	}
+	for name, rawValue := range fields {
+		for _, added := range []string{"authority_kind", "filesystem_profile"} {
+			if strings.EqualFold(name, added) && (name != added || (value.SchemaVersion != "intent/v4" && value.SchemaVersion != RuntimeCheckSchema) || bytes.Equal(bytes.TrimSpace(rawValue), []byte("null"))) {
+				return violation("intent_invalid_contract")
+			}
+		}
+		if (value.SchemaVersion == "intent/v4" || value.SchemaVersion == RuntimeCheckSchema) && (strings.EqualFold(name, "provenance_constraints") || strings.EqualFold(name, "effect_requirements") || strings.EqualFold(name, "provenance_refs")) {
+			return violation("intent_invalid_contract")
+		}
 	}
 	if _, present := fields["provenance_constraints"]; present && value.SchemaVersion == "intent/v2" {
 		return violation("intent_invalid_contract")

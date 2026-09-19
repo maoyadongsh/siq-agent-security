@@ -1,0 +1,158 @@
+{
+  "schema_version": "windows-openclaw-minimum/v1",
+  "passed": true,
+  "candidate": "ff166068a9047d0cfca73f8dcfb6f8c2dd9102d8",
+  "binary_sha256": "19813a073bc21edb795cfc516eb665f7b645168071c7f3d4b81bde7e51f23f4b",
+  "host": "OpenClawGateway WSL / OpenClaw 2026.9.4 public agent --local",
+  "checks": [
+    "formal_install",
+    "native_allowed_read",
+    "native_denied_write_no_effect",
+    "service_offline_denied_read",
+    "revoked_identity_denied_read",
+    "uninstalled",
+    "receipt_chain_verified"
+  ],
+  "receipts": [
+    {
+      "seq": 0,
+      "record_type": "decision",
+      "tool_call_id": "writedenied",
+      "action": "deny",
+      "reason_code": "grant_scope_violation"
+    },
+    {
+      "seq": 1,
+      "record_type": "decision",
+      "tool_call_id": "allowedfirst",
+      "action": "allow",
+      "reason_code": "allow"
+    },
+    {
+      "seq": 2,
+      "record_type": "observation",
+      "tool_call_id": "allowedfirst",
+      "action": "allow",
+      "reason_code": "observation_accepted"
+    },
+    {
+      "seq": 3,
+      "record_type": null,
+      "tool_call_id": null,
+      "action": "deny",
+      "reason_code": null
+    }
+  ],
+  "model_requests": [
+    {
+      "tool_results": 0,
+      "stream": true
+    },
+    {
+      "tool_results": 0,
+      "stream": true
+    },
+    {
+      "tool_results": 1,
+      "stream": true
+    },
+    {
+      "tool_results": 2,
+      "stream": true
+    },
+    {
+      "tool_results": 2,
+      "stream": true
+    },
+    {
+      "tool_results": 3,
+      "stream": true
+    },
+    {
+      "tool_results": 3,
+      "stream": true
+    },
+    {
+      "tool_results": 4,
+      "stream": true
+    }
+  ],
+  "limitations": [
+    "synthetic local model",
+    "not Windows-native Agent",
+    "no approval-resume claim"
+  ],
+  "independent_verification": {
+    "passed": true,
+    "persisted_receipts": 4,
+    "allowed_read_observed": true,
+    "denied_write_absent": true,
+    "sentinel_unchanged": true,
+    "binary_hash_matches": true,
+    "managed_config_and_entry_removed": true,
+    "owned_processes_remaining": 0,
+    "pending_denials": [
+      {
+        "outcome": "deny",
+        "reason": "decision service unavailable (instance session could not be verified)"
+      },
+      {
+        "outcome": "deny",
+        "reason": "decision service unavailable (instance session could not be verified)"
+      }
+    ],
+    "config_byte_for_byte_restore_claimed": false
+  },
+  "elapsed_seconds": 67.09,
+  "first_run": {
+    "passed": false,
+    "reason": "harness incorrectly expected no receipts after restart; product promoted one pending fail-closed denial",
+    "cleanup": {
+      "runtime_identity_revoked": true,
+      "managed_configuration_removed": true,
+      "owned_daemon_stopped": true
+    }
+  },
+  "harness_assets": {
+    "siq-agent-security": {
+      "sha256": "19813a073bc21edb795cfc516eb665f7b645168071c7f3d4b81bde7e51f23f4b",
+      "bytes": 20299936
+    },
+    "scripts/openclaw-fixture-guard.mjs": {
+      "sha256": "dc5dbbc2cf74dc6ef5195733bb6f3b325dd83a79de451731ca4ce4acdf90895e",
+      "bytes": 816
+    },
+    "scripts/validate-intent-v2-hermes.py": {
+      "sha256": "16b5f6901259193c073c8679b9d9e551a727c3fe83540332e2c87cf757a53e74",
+      "bytes": 31898
+    },
+    "scripts/validate-intent-v2-openclaw.py": {
+      "sha256": "977562e22cb4614dd24a109c60e36f8504af8ce1469267609a69f9e32cc13d21",
+      "bytes": 5715
+    },
+    "scripts/personal-experience/openclaw-managed-native-smoke.py": {
+      "sha256": "22962ade389519c8046b6abf95820cb8309a621976a46ada22a41f8b1eacba56",
+      "bytes": 34114
+    },
+    "adapters/runtime/hermes-agentshield/plugin.yaml": {
+      "sha256": "0f6a898c187c592f2a48270fc8d7fe3c1d77c896e36169028c7e0491004707bc",
+      "bytes": 479
+    },
+    "adapters/runtime/hermes-agentshield/__init__.py": {
+      "sha256": "36b03a9d5dd92fe6e872adf50c8a6dab92a6731ee31905c0e8db7284279501c2",
+      "bytes": 29575
+    },
+    "adapters/runtime/openclaw-agentshield/index.ts": {
+      "sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "bytes": 29312
+    },
+    "adapters/runtime/openclaw-agentshield/openclaw.plugin.json": {
+      "sha256": "66923bad3ae69253cbfde9d05d16a5fbdb237f8173afdf35249067589e1ea875",
+      "bytes": 253
+    },
+    "adapters/runtime/openclaw-agentshield/package.json": {
+      "sha256": "6ee5ea4e98410ce050f3d18f88c68dd952463923724b7a55a458fa51a97d8ddd",
+      "bytes": 460
+    }
+  }
+}

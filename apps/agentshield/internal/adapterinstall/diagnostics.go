@@ -70,10 +70,15 @@ func Inspect(opts Options) Diagnosis {
 		entry = filepath.Join(root, "settings.json")
 	}
 	if _, err := os.Lstat(entry); errors.Is(err, os.ErrNotExist) {
+		managedWorkBuddy := false
+		if opts.Platform == WorkBuddy {
+			_, managed, managedErr := WorkBuddyManagedConfigReference(opts.Home, opts.StateDir)
+			managedWorkBuddy = managed || managedErr != nil || opts.RuntimeIdentityID != ""
+		}
 		// Partial installs and legacy roots need repair, not a false fresh state.
 		_, pluginErr := os.Lstat(plugin)
 		_, legacyErr := os.Lstat(filepath.Join(root, "plugins", product.LegacyName))
-		if opts.Platform == CodeBuddy || opts.Platform == WorkBuddy || errors.Is(pluginErr, os.ErrNotExist) && errors.Is(legacyErr, os.ErrNotExist) {
+		if !managedWorkBuddy && (opts.Platform == CodeBuddy || opts.Platform == WorkBuddy || errors.Is(pluginErr, os.ErrNotExist) && errors.Is(legacyErr, os.ErrNotExist)) {
 			d.check("adapter_files", "unknown", "尚未发现当前适配器文件")
 			d.NextSteps = append(d.NextSteps, "查看接入所需改动并安装适配器，随后验证宿主加载和工具调用。")
 			return d
@@ -117,6 +122,9 @@ func Inspect(opts Options) Diagnosis {
 			}
 		}
 	case CodeBuddy, WorkBuddy:
+		if opts.Platform == WorkBuddy && inspectWorkBuddyManaged(&d, opts) {
+			break
+		}
 		doc, err := inspectJSON(opts.Home, entry)
 		if err == nil && hostHookRegistered(doc, opts.Binary, opts.Platform, opts.StateDir) {
 			d.check("host_registration", "pass", "配置含本程序的前置和后置工具钩子")
@@ -173,14 +181,14 @@ func hermesNativeEvidence(d *Diagnosis, record *Record, recordErr error, current
 // false when no adapter configuration exists, the platform has no readable
 // connection document, or the endpoint field is absent.
 func ConfiguredEndpoint(opts Options) (string, bool) {
-	if opts.Platform != Hermes && opts.Platform != OpenClaw {
+	if opts.Platform != Hermes && opts.Platform != OpenClaw && opts.Platform != WorkBuddy {
 		return "", false
 	}
 	if opts.Home == "" {
 		opts.Home, _ = os.UserHomeDir()
 	}
 	config := filepath.Join(opts.configRoot(), "plugins", product.PluginDir(), "config.json")
-	if opts.Platform == OpenClaw {
+	if opts.Platform == OpenClaw || opts.Platform == WorkBuddy {
 		config = filepath.Join(opts.configRoot(), product.Name+".json")
 	}
 	doc, err := inspectJSON(opts.Home, config)
@@ -301,6 +309,10 @@ func hostHookRegistered(doc map[string]any, binary, platform, stateDir string) b
 		return false
 	}
 	command := hookCommand(binary, platform, stateDir)
+	return hostHookRegisteredCommand(doc, command)
+}
+
+func hostHookRegisteredCommand(doc map[string]any, command string) bool {
 	hooks, _ := doc["hooks"].(map[string]any)
 	for _, event := range []string{"PreToolUse", "PostToolUse"} {
 		found := false

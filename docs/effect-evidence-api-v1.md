@@ -106,8 +106,9 @@ observer DELETE成功204前写入不可变签名撤销记录，保存owner token
 | provenance-reports / provenance-select | 每次 ResolveBinding 与 Active；binding/全局Intent撤销后三模式均拒绝，包括旧report重放及服务重建 |
 | provenance issuer/assertion 管理与 Resolve | 管理操作不代表当前执行授权；issuer撤销使后续来源验证失败。签发或查询历史任务资料不能替代运行时有效binding |
 | tool-effect-reports / effect-evidence | 使用Engine历史action/rid记录；可补报已发生动作，不恢复当前Authority。独立observer另须当前有效、scope/source匹配 |
-| file-observations / network-observations | 关联历史动作、复核observer；当前Intent撤销不抹除此前授权或拒绝的事实。拒绝后实际效果保留incident |
-| file-observation-recoveries | 管理端接管原pending，复核source/scope、所有历史observer撤销和原期限；不生成新动作授权 |
+| file-observations | 新建、完成和恢复采样均复核当前有效的原 Intent/绑定/所选 Grant；managed 实例还复核运行身份。撤销后拒绝新采样，已签历史记录保留。Windows 路径和文件身份按 windows-file-observation-spec-v2.md 复验 |
+| network-observations | 关联历史动作、复核 observer；当前 Intent 撤销不抹除此前授权或拒绝的事实。拒绝后实际效果保留 incident；本次文件观察增量不改变网络观察语义 |
+| file-observation-recoveries | 管理端接管原 pending，复核 source/scope、所有历史 observer 撤销和原期限，并复核原动作当前 Authority；Windows v2 必须提供与原引用一致的路径。不生成新动作授权，不替换原采样 |
 | effect-evidence GET / action列表 / task completion | 管理端读取、签名与历史动作复验；可调查撤销任务，结果不会回写Intent、Grant或有效权限 |
 
 测试依据：`TestProvenanceReportsRejectRevokedAuthorityAcrossRestart`、`TestToolSuccessConflictsWithIndependentMissingOutputHTTP`、`TestEffectObserverHTTPSeparationScopeRevocationAndIncident`、`TestFileObservationHTTPReadsRealState`及双SIGKILL恢复夹具。历史证据的允许补报与当前执行权的拒绝是不同操作；撤销不承诺原子取消已经开始的外部操作。

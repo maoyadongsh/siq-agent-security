@@ -123,6 +123,13 @@ func publish(path string, b []byte) error {
 	return statefs.Link(f.Name(), path)
 }
 func readRecord(path string, out any) error {
+	if runtime.GOOS == "windows" {
+		raw, err := readPrivateRecord(path)
+		if err != nil {
+			return err
+		}
+		return decodeRecord(bytes.NewReader(raw), out)
+	}
 	if err := checkRecordDirectory(filepath.Dir(path)); err != nil {
 		return err
 	}
@@ -142,7 +149,11 @@ func readRecord(path string, out any) error {
 	if err != nil || !os.SameFile(fi, opened) || !opened.Mode().IsRegular() || opened.Size() > maxRecordBytes {
 		return violation("intent_invalid_record")
 	}
-	dec := json.NewDecoder(io.LimitReader(f, maxRecordBytes+1))
+	return decodeRecord(io.LimitReader(f, maxRecordBytes+1), out)
+}
+
+func decodeRecord(reader io.Reader, out any) error {
+	dec := json.NewDecoder(reader)
 	dec.DisallowUnknownFields()
 	dec.UseNumber()
 	if err := dec.Decode(out); err != nil {
@@ -220,6 +231,9 @@ func (s *Store) Issue(c Contract) (*Contract, error) {
 	authorityWriteMu.Lock()
 	defer authorityWriteMu.Unlock()
 	if err := c.Validate(); err != nil {
+		return nil, err
+	}
+	if err := s.checkProfileState(c); err != nil {
 		return nil, err
 	}
 	if err := s.checkEvidence(c); err != nil {
@@ -309,6 +323,9 @@ func (s *Store) List() ([]Contract, error) {
 func (s *Store) ResolveBinding(platform, sessionID, agentID string) (*Contract, *Binding, error) {
 	authorityWriteMu.RLock()
 	defer authorityWriteMu.RUnlock()
+	if err := ValidateNativeSession(platform, sessionID); err != nil {
+		return nil, nil, err
+	}
 	id := bindingID(platform, sessionID, agentID)
 	revoked, revokeErr := s.GetBindingRevocation(id)
 	if revokeErr != nil && !errors.Is(revokeErr, os.ErrNotExist) {
@@ -372,6 +389,12 @@ func (s *Store) ResolveBinding(platform, sessionID, agentID string) (*Contract, 
 	}
 	found.SelectedGrant, err = s.resolveGrantSelection(*found)
 	if err != nil {
+		return &c, found, err
+	}
+	if !bindingProfileMatches(c, *found, found.SelectedGrant) {
+		return &c, found, violation("intent_grant_profile_mismatch")
+	}
+	if err := s.checkProfileState(c); err != nil {
 		return &c, found, err
 	}
 	return &c, found, nil

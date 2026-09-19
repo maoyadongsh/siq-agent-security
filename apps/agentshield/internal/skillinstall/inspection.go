@@ -67,7 +67,7 @@ func (s *Store) historicalRecord(ctx context.Context, id string) (*Record, *Clai
 	if op != nil {
 		status = op.Status
 	}
-	return &Record{"local-skill-install-record/v1", id, c.Plan, c.Signature, status, op}, c, nil
+	return &Record{c.Plan.wireVersion("local-skill-install-record"), id, c.Plan, c.Signature, status, op}, c, nil
 }
 
 // RecordByID returns the signed install record for one ID without scanning
@@ -148,6 +148,9 @@ func (s *Store) Catalog(ctx context.Context) (*Catalog, error) {
 			continue
 		}
 		out.Items = append(out.Items, *record)
+		if record.SchemaVersion == "local-skill-install-record/v2" {
+			out.SchemaVersion = "local-skill-install-catalog/v2"
+		}
 	}
 	return out, nil
 }
@@ -187,7 +190,7 @@ func (s *Store) Inspect(ctx context.Context, id string) (*Inspection, error) {
 	if err != nil {
 		return nil, err
 	}
-	out := &Inspection{SchemaVersion: "local-skill-install-inspection/v1", Record: *record, TargetState: "unavailable", Changes: []ContentChange{}}
+	out := &Inspection{SchemaVersion: record.Plan.wireVersion("local-skill-install-inspection"), Record: *record, TargetState: "unavailable", Changes: []ContentChange{}}
 	err = s.compareTarget(ctx, c, out)
 	if ctx.Err() != nil {
 		return nil, ctx.Err()
@@ -361,6 +364,12 @@ func (s *Store) compareTarget(ctx context.Context, c *Claim, out *Inspection) er
 			}
 			if checkDirectories(pool) != nil {
 				out.add(file.Path, "file", "ownership_changed")
+				continue
+			}
+			if c.Plan.Platform == "workbuddy" {
+				if ownedFile(ctx, destination, pool, file, child.fileIndex, c.Plan.Platform) != nil {
+					out.add(file.Path, "file", "ownership_changed")
+				}
 				continue
 			}
 			owned, err := os.Lstat(opaque(pool, "f", child.fileIndex))

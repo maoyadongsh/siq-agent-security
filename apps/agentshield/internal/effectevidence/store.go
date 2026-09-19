@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 	"strings"
@@ -191,6 +192,9 @@ func (s *Store) submit(input Evidence, action Action, observer Source, now time.
 	if input.Signature != "" || len(action.TaskID) > 256 {
 		return Record{}, ErrInvalid
 	}
+	if material != nil && material.SchemaVersion == "file-observation/v2" && stateformat.RequireWindowsProfile(filepath.Dir(s.dir)) != nil {
+		return Record{}, ErrState
+	}
 	e, code, err := Correlate(input, action, observer, now)
 	if err != nil {
 		return Record{}, err
@@ -228,6 +232,9 @@ func (s *Store) submit(input Evidence, action Action, observer Source, now time.
 		return Record{}, ErrState
 	}
 	r := Record{NetworkObservation: network, FileObservation: material, SchemaVersion: "effect-evidence-record/v1", Evidence: e, FindingCode: code, RequestDigest: digest, TaskID: action.TaskID, SigningSchema: signing.SchemaLocalCanonicalV1}
+	if material != nil && material.SchemaVersion == "file-observation/v2" {
+		r.SchemaVersion = "effect-evidence-record/v2"
+	}
 	r.Signature, err = s.key.SignCanonical(r.unsigned())
 	if err != nil {
 		return Record{}, ErrState
@@ -256,7 +263,8 @@ func (s *Store) submit(input Evidence, action Action, observer Source, now time.
 
 // Verify checks both signatures and retained observation material.
 func (r Record) Verify(pub ed25519.PublicKey, now time.Time) error {
-	if r.SchemaVersion != "effect-evidence-record/v1" || r.Evidence.Verify(pub, now) != nil || !digestPattern.MatchString(r.RequestDigest) || len(r.TaskID) > 256 || !member(r.FindingCode, "", "unauthorized_effect_observed", "effect_scope_mismatch") || r.SigningSchema != signing.SchemaLocalCanonicalV1 || !signing.VerifyCanonical(pub, r.unsigned(), r.Signature) {
+	versionOK := r.SchemaVersion == "effect-evidence-record/v1" && (r.FileObservation == nil || r.FileObservation.SchemaVersion == "") || r.SchemaVersion == "effect-evidence-record/v2" && r.NetworkObservation == nil && r.FileObservation != nil && r.FileObservation.SchemaVersion == "file-observation/v2"
+	if !versionOK || r.Evidence.Verify(pub, now) != nil || !digestPattern.MatchString(r.RequestDigest) || len(r.TaskID) > 256 || !member(r.FindingCode, "", "unauthorized_effect_observed", "effect_scope_mismatch") || r.SigningSchema != signing.SchemaLocalCanonicalV1 || !signing.VerifyCanonical(pub, r.unsigned(), r.Signature) {
 		return ErrState
 	}
 	if r.NetworkObservation != nil && (r.FileObservation != nil || !networkMaterialMatches(*r.NetworkObservation, r.Evidence, now)) {

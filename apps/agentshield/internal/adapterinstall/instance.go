@@ -45,7 +45,7 @@ func (o Options) configRoot() string {
 	return configDir(o.Home, o.Platform)
 }
 func operationKey(o Options) string {
-	if o.Instance == nil || o.Platform == Hermes && o.Instance.ConfigDir == hermeshome.LegacyRoot(o.Home) {
+	if o.Instance == nil || o.Platform == WorkBuddy || o.Platform == Hermes && o.Instance.ConfigDir == hermeshome.LegacyRoot(o.Home) {
 		return o.Platform
 	}
 	return o.Platform + "-" + strings.TrimPrefix(o.Instance.ID, "hi-")
@@ -60,11 +60,14 @@ func validateInstance(o Options) error {
 	if o.Instance == nil {
 		return nil
 	}
-	if o.Platform != Hermes && o.Platform != OpenClaw {
+	if o.Platform != Hermes && o.Platform != OpenClaw && o.Platform != WorkBuddy {
 		return errors.New("adapter: invalid instance target")
 	}
 	if !filepath.IsAbs(o.Instance.ConfigDir) || o.Instance.ID != hermeshome.Identifier(o.Instance.ConfigDir) || o.Instance.Name == "" {
 		return errors.New("adapter: invalid instance target")
+	}
+	if o.Platform == WorkBuddy && o.Instance.ConfigDir != configDir(o.Home, WorkBuddy) {
+		return errors.New("adapter: WorkBuddy instance differs from discovered configuration root")
 	}
 	return nil
 }
@@ -86,5 +89,25 @@ func RecoverInstance(opts Options) (*Result, error) {
 	if err := opts.normalise(); err != nil {
 		return nil, err
 	}
-	return recoverOperation(opts.StateDir, opts.Platform, operationKey(opts))
+	return recoverOperation(opts.StateDir, opts.Platform, operationKey(opts), &opts)
+}
+
+// WorkBuddy keeps one historical operation key across config-root changes.
+// Compare only the authenticated plan, while recoverOperation holds its writer;
+// claim.Record is an unauthenticated summary and cannot authorize recovery.
+func workBuddyRecoveryMatches(p *Plan, selected Options) bool {
+	root := selected.configRoot()
+	old := p.payload.Options
+	record := p.payload.Record
+	paths := hostConfigPaths(record)
+	if old.Platform != WorkBuddy || record.Platform != WorkBuddy || len(paths) != 1 || paths[0] != filepath.Join(root, "settings.json") {
+		return false
+	}
+	id := hermeshome.Identifier(root)
+	if old.Instance != nil {
+		return old.Instance.ConfigDir == root && old.Instance.ID == id && record.ConfigDir == root && record.InstanceID == id
+	}
+	// Legacy plans did not freeze an InstanceTarget. Their sole recorded host
+	// config path above pins the old root without consulting today's environment.
+	return (record.ConfigDir == "" || record.ConfigDir == root) && (record.InstanceID == "" || record.InstanceID == id)
 }

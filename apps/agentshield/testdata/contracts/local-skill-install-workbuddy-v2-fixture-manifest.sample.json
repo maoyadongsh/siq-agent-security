@@ -1,0 +1,77 @@
+{
+  "fixture_kind": "static_contract_vectors",
+  "evidence": "Not native execution, installation evidence, or a formal release signature. All identities and paths are synthetic. Signatures use the repository public test seed, byte 0x07 repeated 32 times.",
+  "public_key": "ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c",
+  "locator_hash": "sha256(UTF8(windows-local-drive/v1 canonical absolute path)); use forward-slash separators from NormalizeResourceForProfile, preserve canonical spelling and case; no normalization after signing",
+  "target_identity_domain": "workbuddy-skill-target/v1",
+  "identity_vectors": [
+    {
+      "scope": "user",
+      "synthetic_root": "C:/SIQ-Contract-Fixture/WorkBuddy",
+      "synthetic_destination": "C:/SIQ-Contract-Fixture/WorkBuddy/skills/example",
+      "target_ref": {
+        "target_id": "sit-123326bcffdbbca156af2e10a90af05a03f28abefc4a908dea9ed79a7465feff",
+        "scope": "user",
+        "filesystem_profile": "windows-local-drive/v1",
+        "root_locator_digest": "715aa2a93f10dafa9b2fc48560036d46a0d19f40d5b3587611e421131b7c0074",
+        "root_identity_digest": "26eb88153e365ad6d24a97e612da7f66895c542e45e71e3a0efd4d9e470da3d6",
+        "config_root_identity_digest": "26eb88153e365ad6d24a97e612da7f66895c542e45e71e3a0efd4d9e470da3d6",
+        "existing_parent_relative_path": "",
+        "existing_parent_identity_digest": "26eb88153e365ad6d24a97e612da7f66895c542e45e71e3a0efd4d9e470da3d6"
+      },
+      "target_id_input": {
+        "domain": "workbuddy-skill-target/v1",
+        "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "scope": "user",
+        "root_locator_digest": "715aa2a93f10dafa9b2fc48560036d46a0d19f40d5b3587611e421131b7c0074"
+      },
+      "request": {
+        "schema_version": "local-skill-install-stage-create/v2",
+        "request_id": "is-dddddddddddddddddddddddddddddddd",
+        "grant_id": "grt-si-3333333333333333333333333333333333333333333333333333333333333333",
+        "expected_revision": 0,
+        "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "directory_name": "example",
+        "actor_id": "human",
+        "target_id": "sit-123326bcffdbbca156af2e10a90af05a03f28abefc4a908dea9ed79a7465feff"
+      },
+      "plan_id": "sip-a35a995046424f8a27c13d5bac3218a2e8f24c6390852f14d0cfba76db61fdc7",
+      "target_locator_digest": "5b3717edcaafec82b0e7546b7f4ec761c03e6c371068e20e38a8bfe05babb5ac",
+      "plan_sample": "local-skill-install-plan.v2.user.sample.json"
+    },
+    {
+      "scope": "project",
+      "synthetic_root": "C:/SIQ-Contract-Fixture/Project",
+      "synthetic_destination": "C:/SIQ-Contract-Fixture/Project/.codebuddy/skills/example",
+      "target_ref": {
+        "target_id": "sit-112b9c11595f39953c2f17b24eaae94cb9315d331382b441b411d78c6a4d1a39",
+        "scope": "project",
+        "filesystem_profile": "windows-local-drive/v1",
+        "root_locator_digest": "3a3e77126e1c3ce5a8211279d0541b2588854e9c74ff477b31417c516fe35429",
+        "root_identity_digest": "8260c6b97031c8e1a804837a800d1a8ad6743e23de754e47410d529355f1525c",
+        "config_root_identity_digest": "26eb88153e365ad6d24a97e612da7f66895c542e45e71e3a0efd4d9e470da3d6",
+        "existing_parent_relative_path": "",
+        "existing_parent_identity_digest": "8260c6b97031c8e1a804837a800d1a8ad6743e23de754e47410d529355f1525c"
+      },
+      "target_id_input": {
+        "domain": "workbuddy-skill-target/v1",
+        "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "scope": "project",
+        "root_locator_digest": "3a3e77126e1c3ce5a8211279d0541b2588854e9c74ff477b31417c516fe35429"
+      },
+      "request": {
+        "schema_version": "local-skill-install-stage-create/v2",
+        "request_id": "is-dddddddddddddddddddddddddddddddd",
+        "grant_id": "grt-si-3333333333333333333333333333333333333333333333333333333333333333",
+        "expected_revision": 0,
+        "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "directory_name": "example",
+        "actor_id": "human",
+        "target_id": "sit-112b9c11595f39953c2f17b24eaae94cb9315d331382b441b411d78c6a4d1a39"
+      },
+      "plan_id": "sip-8e88b111bc616a80704c2c78c6a12ac915d03d26ad8e435cca1498862e2d976f",
+      "target_locator_digest": "e3be9ae433011f717d9d1c792d891943bb71c431e67a657015cc93486cdc29b2",
+      "plan_sample": "local-skill-install-plan.v2.sample.json"
+    }
+  ]
+}

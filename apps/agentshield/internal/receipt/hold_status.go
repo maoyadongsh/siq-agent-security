@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"siq-agent-security/apps/agentshield/internal/trustedcontext"
 	"time"
@@ -90,6 +91,9 @@ func (e *Engine) ReadHoldStatus(req HoldStatusRequest) (*HoldStatus, error) {
 }
 
 func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time.Time) bool {
+	if intent.ValidateNativeSession(req.Platform, req.SessionID) != nil {
+		return false
+	}
 	s := e.sessions[req.SessionID]
 	if s == nil {
 		return false
@@ -162,7 +166,8 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 		return false
 	}
 	checked := Receipt{SkillAttribution: currentAttribution}
-	descriptor := runtimeaction.Describe(req.Tool, req.Params)
+	r.resourceProfile = verifiedResourceProfile(resolved)
+	descriptor := runtimeaction.DescribeForProfile(r.resourceProfile, req.Tool, req.Params)
 	action, _ := e.evaluate(r, s, descriptor, &checked, now, sec)
 	return (action == ActionAllow || action == ActionHold) && str(checked.MatchedGrantID) == str(d.MatchedGrantID)
 }

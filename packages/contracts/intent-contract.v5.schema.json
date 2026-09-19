@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/intent-contract.v5.json",
+  "title": "WindowsRuntimeCheckEnvelopeV5",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "intent_id",
+    "task_id",
+    "principal",
+    "agent",
+    "purpose",
+    "allowed_tools",
+    "allowed_effects",
+    "resource_constraints",
+    "parameter_constraints",
+    "issued_at",
+    "valid_from",
+    "expires_at",
+    "authority",
+    "signing_schema",
+    "digest",
+    "signature",
+    "authority_kind",
+    "filesystem_profile"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "intent/v5"
+    },
+    "intent_id": {
+      "type": "string",
+      "pattern": "^rci-[a-f0-9]{32}$"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^rct-[a-f0-9]{32}$"
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "const": "user"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "platform"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^rca-[a-f0-9]{32}$"
+        },
+        "platform": {
+          "const": "hermes"
+        }
+      }
+    },
+    "purpose": {
+      "const": "Read SIQ generated runtime check files"
+    },
+    "allowed_tools": {
+      "const": [
+        "read_file"
+      ]
+    },
+    "allowed_effects": {
+      "const": [
+        "file.read"
+      ]
+    },
+    "resource_constraints": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "domain",
+          "operator",
+          "value"
+        ],
+        "properties": {
+          "domain": {
+            "const": "filesystem"
+          },
+          "operator": {
+            "const": "prefix"
+          },
+          "value": {
+            "type": "string",
+            "pattern": "^[A-Z]:/.*/runtime-check-materials/rc-[a-f0-9]{32}/allowed$"
+          }
+        }
+      }
+    },
+    "parameter_constraints": {
+      "const": []
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issuer",
+        "revision",
+        "evidence_ids"
+      ],
+      "properties": {
+        "issuer": {
+          "const": "local-runtime-check"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidence_ids": {
+          "const": []
+        }
+      }
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    },
+    "authority_kind": {
+      "const": "runtime_check"
+    },
+    "filesystem_profile": {
+      "const": "windows-local-drive/v1"
+    }
+  },
+  "description": "Bounded Windows Hermes runtime check; issued only by the confirmed active check controller. Not managed identity or general task authority."
+}

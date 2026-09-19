@@ -484,6 +484,28 @@ function reportedAgentId(ctx?: { agentId?: string }): string {
   return ctx?.agentId ?? cfg.agentId;
 }
 
+// Only native hook context is accepted. A routing key survives idle/reset
+// rollover; binding it without the host UUID would reuse the preceding Intent.
+// This identifier is not authority: the daemon still verifies the credential
+// and immutable binding on every call. Never pass event/params/config here.
+export function nativeSessionID(ctx?: { sessionKey?: unknown; sessionId?: unknown }): string | null {
+  const key = ctx?.sessionKey;
+  const epoch = ctx?.sessionId;
+  if (typeof key !== "string" || !key || Buffer.byteLength(key, "utf8") > 256 ||
+    /[\x00-\x1f\x7f]/.test(key) || Buffer.from(key, "utf8").toString("utf8") !== key ||
+    typeof epoch !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(epoch)) return null;
+  return "openclaw-session/v1:" + createHash("sha256")
+    .update("openclaw-native-session/v1\0", "utf8").update(key, "utf8")
+    .update("\0", "utf8").update(epoch, "utf8").digest("hex");
+}
+
+function missingNativeSession() {
+  // Missing Authority is a hard deny in every mode, unlike network advisory.
+  appendPending({ platform: "openclaw", session_id: "", enforcement_mode: cfg.enforcementMode,
+    outcome: "deny", reason: "native_session_epoch_required" });
+  return { block: true, blockReason: "siq-agent-security: native session epoch unavailable; update the adapter/host" };
+}
+
 export default definePluginEntry({
   id: "siq-agent-security",
   name: "siq-agent-security",
@@ -492,9 +514,11 @@ export default definePluginEntry({
       "before_tool_call",
       async (event, ctx) => {
         const hookDeadline = Date.now() + 12000;
+        const session = nativeSessionID(ctx);
+        if (!session) return missingNativeSession();
         const call = {
           platform: "openclaw",
-          session_id: (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? (managed() ? "" : "openclaw-default"),
+          session_id: session,
           agent_id: reportedAgentId(ctx as { agentId?: string } | undefined),
           tool: event.toolName,
           tool_call_id: event.toolCallId ?? "",
@@ -511,6 +535,7 @@ export default definePluginEntry({
         if (!(await enrollRuntimeSession(call.session_id, ctx?.abortSignal, hookDeadline - Date.now()))) {
           return failClosed("instance session could not be verified", event.toolName, call.session_id);
         }
+        if (nativeSessionID(ctx) !== session) return missingNativeSession();
         const decision = await post<Decision>(
           "/v1/decide",
           {
@@ -520,20 +545,21 @@ export default definePluginEntry({
           ctx?.abortSignal,
           hookDeadline - Date.now(),
         );
-        if (!decision) return failClosed("no response", event.toolName, (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default");
+        if (nativeSessionID(ctx) !== session) return missingNativeSession();
+        if (!decision) return failClosed("no response", event.toolName, session);
         if (typeof decision.reason !== "string" || typeof decision.receipt_id !== "string" || !decision.receipt_id ||
           (managed() && ["allow", "redact", "hold"].includes(decision.action) &&
             (typeof decision.action_id !== "string" || !decision.action_id || !call.tool_call_id))) {
           return failClosed("malformed decision reference", event.toolName, call.session_id);
         }
         if (["allow", "redact", "hold"].includes(decision.action) && !rememberDecision(
-          (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default",
+          session,
           event.toolName, event.toolCallId ?? "", decision,
         )) return failClosed("decision correlation conflict or capacity", event.toolName);
         switch (decision.action) {
           case "allow":
             await captureNativeRawContent("parameters", call.session_id, event.toolName, event.params ?? {});
-            return undefined;
+            return nativeSessionID(ctx) === session ? undefined : missingNativeSession();
           case "deny":
             return { block: true, blockReason: `siq-agent-security denied: ${decision.reason} (receipt ${decision.receipt_id})` };
           case "redact":
@@ -543,6 +569,7 @@ export default definePluginEntry({
               return failClosed("native approval execution recheck unsupported", event.toolName, call.session_id);
             }
             const approval = await waitForLocalApproval(decision, call, hookDeadline, ctx?.abortSignal);
+            if (nativeSessionID(ctx) !== session) return missingNativeSession();
             if (approval.state === "unavailable") return failClosed("local approval status unavailable", event.toolName, call.session_id);
             if (approval.state !== "approved" || !approval.expires || ctx?.abortSignal?.aborted) {
               return { block: true, blockReason: `siq-agent-security: local approval required or expired (receipt ${decision.receipt_id})` };
@@ -555,6 +582,7 @@ export default definePluginEntry({
                 timeoutMs: Math.max(1, approval.expires - Date.now()),
                 timeoutBehavior: "deny",
                 beforeExecute: async (finalParams: Record<string, unknown>, signal?: AbortSignal) => {
+                  if (nativeSessionID(ctx) !== session) return false;
                   const deadline = Date.now() + 1000;
                   const checked = await waitForLocalApproval(
                     decision, { ...call, params: finalParams }, deadline, signal,
@@ -567,7 +595,7 @@ export default definePluginEntry({
                     return false;
                   }
                   const reservation = await reserveHoldExecution(decision, call, finalParams, deadline, signal);
-                  const executable = !!reservation && !signal?.aborted;
+                  const executable = !!reservation && !signal?.aborted && nativeSessionID(ctx) === session;
                   ref.executable = executable;
                   ref.execution = executable
                     ? {
@@ -589,14 +617,15 @@ export default definePluginEntry({
             };
           }
           default:
-            return failClosed("malformed decision", event.toolName, (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default");
+            return failClosed("malformed decision", event.toolName, session);
         }
       },
       { priority: 10 },
     );
 
     api.on("after_tool_call", async (event, ctx) => {
-      const session = (event as { sessionKey?: string }).sessionKey ?? ctx?.sessionKey ?? "openclaw-default";
+      const session = nativeSessionID(ctx);
+      if (!session) { missingNativeSession(); return; }
       const result = (event as { result?: unknown }).result;
       const text = typeof result === "string" ? result : JSON.stringify(result ?? "");
       const reference = decisionReference(session, event.toolName, event.toolCallId ?? "");

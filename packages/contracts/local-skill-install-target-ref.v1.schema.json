@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-target-ref.v1.schema.json",
+  "description": "Signed Windows WorkBuddy install location and native directory identities. This reference does not grant runtime authority or prove native Skill selection. No absolute path is carried.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "target_id",
+    "scope",
+    "filesystem_profile",
+    "root_locator_digest",
+    "root_identity_digest",
+    "config_root_identity_digest",
+    "existing_parent_relative_path",
+    "existing_parent_identity_digest"
+  ],
+  "properties": {
+    "target_id": {
+      "type": "string",
+      "pattern": "^sit-[a-f0-9]{64}$",
+      "description": "sit- plus SHA256 of canonical JSON {domain:\"workbuddy-skill-target/v1\",instance_id,scope,root_locator_digest}; physical identities are separately signed."
+    },
+    "scope": {
+      "enum": [
+        "user",
+        "project"
+      ]
+    },
+    "filesystem_profile": {
+      "const": "windows-local-drive/v1"
+    },
+    "root_locator_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA256 of UTF-8 bytes of the windows-local-drive/v1 canonical absolute scope root returned by NormalizeResourceForProfile (forward-slash separators); no post-signing case, separator, or Unicode normalization. See static workbuddy-v2 fixture identity vectors."
+    },
+    "root_identity_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "config_root_identity_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "existing_parent_relative_path": {
+      "type": "string",
+      "enum": [
+        "",
+        "skills",
+        ".codebuddy",
+        ".codebuddy/skills"
+      ]
+    },
+    "existing_parent_identity_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "scope": {
+            "const": "user"
+          }
+        },
+        "required": [
+          "scope"
+        ]
+      },
+      "then": {
+        "properties": {
+          "existing_parent_relative_path": {
+            "enum": [
+              "",
+              "skills"
+            ]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "existing_parent_relative_path": {
+            "enum": [
+              "",
+              ".codebuddy",
+              ".codebuddy/skills"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

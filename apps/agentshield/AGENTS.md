@@ -41,6 +41,10 @@ siq-agent-security 本地二进制（Go；模块路径仍为 `apps/agentshield`�
 
 ## 测试要求
 
+Windows WorkBuddy 安装目标按 `docs/windows-workbuddy-skill-install-v1.md` 的限定增量执行：用户级仅写已确认配置根下的 `skills`，项目级仅写已登记且已确认项目下的 `.codebuddy/skills`；各自私密事务目录位于对应已验证根的 `.siq-agent-security-installs`，不进入原生 Skill 扫描根。父目录创建事实只追加并签名，操作前复验目标身份，保留未知用户对象；此例外不授予普通项目文件写入或运行权限。
+
+Windows 资源事实按 `docs/windows-resource-profile-spec-v1.md` 的限定例外，允许 `internal/runtimepath/*_windows.go` 使用标准库 syscall/unsafe 只读查询盘符映射、文件/目录句柄、卷和目录大小写属性；不更改资源、盘符或 ACL，不提权，不把路径事实本身当作 Authority。测试可在临时目录内建立并清理 junction，不修改用户对象。
+
 Windows 私密状态按 dev-spec §2 的限定例外，允许 `internal/privatefs/*_windows.go` 使用标准库 `syscall`/`unsafe` 查询文件句柄安全描述符、构造受限 DACL 并在新对象创建时传入。禁止改已有对象 ACL、提权、调用外部权限工具或让其他平台直接引用 Windows API；保留兼容屏障和仅标准库约束。
 
 ACL 负向测试允许仅由 `_test.go` 引用的 `internal/acltest` 辅助包使用同类标准库 API 修改本次测试临时根内的合成对象 DACL，并在结束时还原测试夹具；不得用于产品代码或真实用户对象。
@@ -65,6 +69,8 @@ for t in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do GOOS=${t%/*} GOA
 - 不写变更探测器：不要断言规则条数、版本号字面量等预期会变的数据；断言关系（如「每条规则至少一个语料命中」）。
 
 ## 提交
+
+Windows 后台通知按 `docs/windows-desktop-notifications-v1.md` 的限定例外，允许 `internal/notify/*_windows.go` 使用标准库 `syscall`/`unsafe` 创建并清理本进程专属隐藏消息窗口和通知区图标，仅通过 Shell_NotifyIconW 投递固定计数提醒、ShellExecuteW 打开已监听本实例的固定 loopback 待办页。不得注册系统协议或自启、改系统设置、默认启用、执行脚本/任意目标或修改其他窗口；点击不产生批准权限。
 
 `agentshield: <主题>`；规则包改动用 `rulepack:`；涉及合同同时改 `packages/contracts/` 并用 `contracts:` 单独提交。安全修复必须带证明旧行为被拒绝的负向测试。
 
@@ -94,3 +100,6 @@ M78 按规格 §3.11.40 允许 `task-register --confirm-register` 在当前用�
 M79 按规格 §3.11.41 允许 `task-start --confirm-start` 在生命周期锁、完整签名/系统配置核对后按需 Run 当前用户已注册实例；主 Writer 检查后先释放再启动，不传动作参数，不强制重启、改配置或自动删除。无 Windows 宿主只测试模拟控制器。
 
 M88 按规格 §3.11.50 允许明确 task-unregister --confirm-unregister 在双 Writer、签名/完整配置与空闲状态复验后，删除当前用户精确实例任务并读回缺席；保留本地源配置、密钥和历史。无 Windows 宿主只测试模拟控制器，不执行真实系统删除。
+
+
+按 docs/windows-task-upgrade-spec-v1.md 的 Windows 升级增量，明确确认后允许在主 Writer 与 service-control Writer 保护下，以签名事务复验并替换本实例的任务 XML/windows-task.json；只删除与记录精确匹配且空闲的当前用户系统任务，并以 TASK_CREATE 排他注册同名目标。未知对象不覆盖，业务授权和撤销历史不回放。故障只保留可恢复事务，不重启/注销 Windows、不更改信任根或系统防护。

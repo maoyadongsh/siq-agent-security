@@ -1,0 +1,39 @@
+{
+  "base_source_sha": "fbaa771e2717d458e5cd63094f67d1062818eb36",
+  "test_added_without_fix": true,
+  "exit": 1,
+  "tests": {
+    "counts": {
+      "subtest_fail": 2,
+      "test_fail": 1,
+      "package_fail": 1
+    },
+    "failures": [
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/state",
+        "test": "TestWindowsProfilePublishedMarkerRequiresOriginalPreparation/plan.json"
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/state",
+        "test": "TestWindowsProfilePublishedMarkerRequiresOriginalPreparation/prepared.json"
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/state",
+        "test": "TestWindowsProfilePublishedMarkerRequiresOriginalPreparation"
+      },
+      {
+        "package": "siq-agent-security/apps/agentshield/internal/state",
+        "test": null
+      }
+    ],
+    "packages": {
+      "siq-agent-security/apps/agentshield/internal/state": "fail"
+    },
+    "raw_log_sha256": "3672760a641e8336050e939fac18b61269dc46c363676ea232d7ccaa80873f6c"
+  },
+  "observations": [
+    "Lost archived plan was reconstructed after target marker publication.",
+    "Lost prepared proof caused a done record to be written before rejection."
+  ],
+  "fixed_by": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7"
+}

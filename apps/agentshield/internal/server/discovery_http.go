@@ -66,7 +66,8 @@ func (s *Server) discoveryRoots(r *http.Request) (state.DiscoveryRoots, int, err
 }
 
 func (s *Server) previewDiscovery(roots state.DiscoveryRoots) []inventory.ScanRoot {
-	return inventory.Preview(inventory.Options{Home: s.d.Home, HermesHome: s.d.HermesHome, LocalAppData: s.d.LocalAppData, ProjectDirs: roots.ProjectDirs, SkillDirs: roots.SkillDirs})
+	workBuddyRoot, workBuddyDisabled := s.inventoryWorkBuddyRoot()
+	return inventory.Preview(inventory.Options{Home: s.d.Home, HermesHome: s.d.HermesHome, LocalAppData: s.d.LocalAppData, WorkBuddyConfigDir: workBuddyRoot, WorkBuddyDisabled: workBuddyDisabled, ProjectDirs: roots.ProjectDirs, SkillDirs: roots.SkillDirs})
 }
 
 func (s *Server) discoveryStatus(w http.ResponseWriter, r *http.Request) {

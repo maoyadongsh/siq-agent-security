@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-skill-install-targets.v1.schema.json",
+  "description": "Read-only Windows WorkBuddy install targets derived from one verified instance and explicit registered project roots. Displays are redacted, availability grants no write permission, and no absolute path or physical root identity is returned. At most one user target and sixteen project targets; cross-field identity/uniqueness is also enforced by the producer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "instance_id",
+    "targets",
+    "platform_changes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-install-targets/v1"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "targets": {
+      "type": "array",
+      "maxItems": 17,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "target_id": {
+            "type": "string",
+            "pattern": "^sit-[a-f0-9]{64}$"
+          },
+          "instance_id": {
+            "type": "string",
+            "pattern": "^hi-[a-f0-9]{32}$"
+          },
+          "platform": {
+            "const": "workbuddy"
+          },
+          "scope": {
+            "enum": [
+              "user",
+              "project"
+            ]
+          },
+          "root_display": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^(?![A-Za-z]:[\\\\/]|[/\\\\]{2})[^\\u0000-\\u001f\\u007f]+$"
+          },
+          "target_display": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^(?![A-Za-z]:[\\\\/]|[/\\\\]{2})[^\\u0000-\\u001f\\u007f]+$"
+          },
+          "filesystem_profile": {
+            "const": "windows-local-drive/v1"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "error_code": {
+            "enum": [
+              null,
+              "target_unavailable",
+              "target_changed",
+              "target_ambiguous",
+              "target_unsupported"
+            ]
+          }
+        },
+        "required": [
+          "target_id",
+          "instance_id",
+          "platform",
+          "scope",
+          "root_display",
+          "target_display",
+          "filesystem_profile",
+          "available",
+          "error_code"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "available": {
+                  "const": true
+                }
+              },
+              "required": [
+                "available"
+              ]
+            },
+            "then": {
+              "properties": {
+                "error_code": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "error_code": {
+                  "enum": [
+                    "target_unavailable",
+                    "target_changed",
+                    "target_ambiguous",
+                    "target_unsupported"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "platform_changes": {
+      "const": false
+    }
+  }
+}

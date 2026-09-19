@@ -1,0 +1,18 @@
+{
+  "schema_version": "workbuddy-hook-correlation/v1",
+  "kind": "decision",
+  "scope_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "effect_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "session_id": "workbuddy-session/v1:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "agent_id": "hri-dddddddddddddddddddddddddddddddd",
+  "tool": "Read",
+  "tool_call_id": "workbuddy-call/v1:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "params_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "created_at": "2026-09-18T00:00:00Z",
+  "expires_at": "2026-09-18T00:01:00Z",
+  "outcome": "hold",
+  "action_id": "act-synthetic",
+  "decision_receipt_id": "rcp-synthetic",
+  "task_id": "trusted-task-synthetic",
+  "runtime_task_id": "trusted-task-synthetic"
+}

@@ -12,6 +12,52 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def check_session_hash_exception(binary, config, token):
+    """A reviewed content digest is excepted only at its exact field and path."""
+    evidence = ("docs/evidence/personal-experience/windows-sunbo/"
+                "openclaw-session-epoch-20260918/summary.json")
+    outside = "docs/evidence/not-reviewed/summary.json"
+    nested = "copied/" + evidence
+    reviewed = "b4f6a7cf296ab0fd7f3dc39c1fe6b0520d93d21b740a61692ba991a9bf28ad47"
+    reviewed_line = f'  "session_key_sha256": "{reviewed}",\n'
+    files = {
+        evidence: (reviewed_line * 6
+                   + f'  "session_key_sha256": "{secrets.token_hex(32)}",\n'
+                   + f'  "api_key": "{reviewed}",\n'
+                   + f'  "token": "{token}"\n'),
+        outside: reviewed_line,
+        nested: reviewed_line,
+    }
+    with tempfile.TemporaryDirectory(prefix="siq-session-hash-calibration-") as directory:
+        root = Path(directory)
+        for name, content in files.items():
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+        for arguments in (("init", "-q", "-b", "main"),
+                          ("config", "user.name", "Scanner calibration"),
+                          ("config", "user.email", "scanner@example.invalid"),
+                          ("config", "commit.gpgsign", "false"),
+                          ("add", "."), ("commit", "-qm", "synthetic digest fixtures")):
+            subprocess.run(["git", *arguments], cwd=root, capture_output=True,
+                           timeout=30, check=True)
+        report = root / "report.json"
+        result = subprocess.run([
+            str(binary.resolve()), "git", str(root), "--config", str(config.resolve()),
+            "--log-opts=-1 HEAD",
+            "--redact", "--report-format", "json", "--report-path", str(report),
+        ], capture_output=True, timeout=30, check=False)
+        rows = json.loads(report.read_text(encoding="utf-8")) if report.exists() else []
+        actual = {(row["RuleID"], row["File"].replace("\\", "/"),
+                   row["StartLine"]) for row in rows}
+        required = {("generic-api-key", evidence, 7), ("generic-api-key", evidence, 8),
+                    ("generic-api-key", outside, 1), ("generic-api-key", nested, 1),
+                    ("github-pat", evidence, 9)}
+        excepted = {("generic-api-key", evidence, line) for line in range(1, 7)}
+        if result.returncode != 1 or not required <= actual or actual & excepted:
+            raise SystemExit("scanner calibration failed: session digest exception is not exact")
+
+
 def check_history(binary, config, token):
     """Root commits, merged side branches and merge-only additions remain visible."""
     with tempfile.TemporaryDirectory(prefix="siq-scanner-history-") as directory:
@@ -100,12 +146,16 @@ def main():
         historical_rows = [row for row in rows if row["File"].endswith(historical_path) and row["RuleID"] == "github-pat"]
         if len(historical_rows) != 1 or historical_rows[0]["StartLine"] != 2:
             raise SystemExit("scanner calibration failed: historical test exception is not exact")
+    check_session_hash_exception(args.binary, args.config, token)
     check_history(args.binary, args.config, token)
     summary = {"status": "passed", "synthetic_only": True, "checks": [
         "ordinary credential detected", "new credential in allowed test path detected",
         "new credential in hash-evidence path detected", "exact fixture exception restricted to test path",
         "private-key block detected", "source hash metadata is not a secret",
         "historical synthetic value exception is exact and path-restricted",
+        "reviewed session digest exception is exact by value, field and path",
+        "new digest and credentials in the same evidence file are detected",
+        "same reviewed digest under a prefixed copy of the path is detected",
         "removed credentials in root, independent history and merge-only additions detected"], "raw_values_retained": False}
     if args.out:
         with args.out.open("x") as output:

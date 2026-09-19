@@ -1,0 +1,3 @@
+# siq-agent-security/apps/agentshield/internal/server
+# [siq-agent-security/apps/agentshield/internal/server]
+vet.exe: internal\server\skill_install_targets.go:144:74: cannot use runtimeaction.FilesystemWindowsLocalDriveV1 (constant "windows-local-drive/v1" of string type runtimeaction.FilesystemProfile) as string value in struct literal

@@ -27,7 +27,7 @@ func TestStateProtocolCLIContractFixtures(t *testing.T) {
 			t.Fatal("CLI contract differs", name)
 		}
 	}
-	check("local-state-status")
+	check("local-state-status-reader3")
 	if _, e := os.Lstat(dir); !os.IsNotExist(e) {
 		t.Fatal("diagnosis created state")
 	}

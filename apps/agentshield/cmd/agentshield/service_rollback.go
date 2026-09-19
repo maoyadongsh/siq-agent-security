@@ -26,11 +26,14 @@ func cmdServiceRollback(args []string, out io.Writer) error {
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
-	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
-		return errors.New("service-rollback: Linux user service or macOS LaunchAgent integration required")
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" && runtime.GOOS != "windows" {
+		return errors.New("service-rollback: Linux user service, macOS LaunchAgent or Windows task integration required")
 	}
 	if !*confirm || *original == "" || *binary == "" || fs.NArg() != 0 {
 		return errors.New("回退会短暂停止保护；请提供 --transaction ID --binary OLD --confirm-rollback；可用 --manifest OLD 指定旧发行清单")
+	}
+	if runtime.GOOS == "windows" {
+		return cmdServiceRollbackWindows(*original, *manifest, *binary, *restore, *recoverID, out)
 	}
 	if runtime.GOOS == "darwin" {
 		return cmdServiceRollbackDarwin(*original, *manifest, *binary, *restore, *recoverID, out)

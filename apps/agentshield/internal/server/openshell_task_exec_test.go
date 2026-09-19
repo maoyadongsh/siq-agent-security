@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/openshell"
 )
 
@@ -139,7 +140,7 @@ func taskExecApproveHold(t *testing.T, s *Server) map[string]any {
 	t.Helper()
 	params := taskExecParams(t, s)
 	decision := sessionExecPostOK(t, s, "/v1/decide", token, map[string]any{
-		"platform": "openclaw", "session_id": "hold-session", "agent_id": taskExecTarget(),
+		"platform": "openclaw", "session_id": nativeOpenClawSession(t, "hold-session"), "agent_id": taskExecTarget(),
 		"tool": "exec", "tool_call_id": "held-call", "params": params,
 	})
 	if decision["action"] != "hold" {
@@ -156,9 +157,10 @@ func taskExecApproveHold(t *testing.T, s *Server) map[string]any {
 
 func taskExecBody(decision map[string]any) map[string]any {
 	p := decision["fixture_params"].(map[string]any)
+	session, _ := intent.OpenClawSessionID("hold-session", "11111111-1111-4111-8111-111111111111")
 	return map[string]any{
 		"schema_version": openshellTaskSchemaRequest, "platform": "openclaw",
-		"session_id": "hold-session", "agent_id": taskExecTarget(), "tool": "exec",
+		"session_id": session, "agent_id": taskExecTarget(), "tool": "exec",
 		"original_tool_call_id": "held-call", "retry_tool_call_id": "held-call-retry",
 		"action_id": decision["action_id"], "decision_receipt_id": decision["receipt_id"],
 		"target":          taskExecTarget(),

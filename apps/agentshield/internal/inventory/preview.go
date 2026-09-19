@@ -40,7 +40,7 @@ func Preview(opts Options) []ScanRoot {
 	seen := map[string]bool{}
 	r := &run{opts: opts, report: &Report{}, skillIDs: map[string]string{}, rootOwners: map[string][]rootOwner{}}
 	add := func(path, kind, platform string) {
-		key := path + "|" + kind
+		key := path + "|" + kind + "|" + platform
 		if seen[key] {
 			return
 		}
@@ -59,6 +59,16 @@ func Preview(opts Options) []ScanRoot {
 	}
 	for _, p := range platforms {
 		if p.name == "hermes" {
+			continue
+		}
+		if p.name == "workbuddy" {
+			if root, ok := r.workBuddyRoot(); ok {
+				add(filepath.Join(root, "settings.json"), "platform_config", p.name)
+				add(filepath.Join(root, "skills"), "skill_directory", p.name)
+				for _, project := range opts.ProjectDirs {
+					add(filepath.Join(project, ".codebuddy", "skills"), "skill_directory", p.name)
+				}
+			}
 			continue
 		}
 		for _, config := range p.configs {
@@ -100,7 +110,10 @@ func Preview(opts Options) []ScanRoot {
 		if out[i].Path != out[j].Path {
 			return out[i].Path < out[j].Path
 		}
-		return out[i].Kind < out[j].Kind
+		if out[i].Kind != out[j].Kind {
+			return out[i].Kind < out[j].Kind
+		}
+		return out[i].Platform < out[j].Platform
 	})
 	return out
 }

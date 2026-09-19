@@ -1,0 +1,201 @@
+{
+  "schema_version": "public-evidence-summary/v1",
+  "archive_status": "frozen_reviewed_evidence",
+  "candidate": {
+    "commit": "494464ea9f3cff90be4dc0ceac0dd5980c464617",
+    "source_dirty": false,
+    "clean_after_build": true,
+    "binary_sha256": "ad7680ba64672c9abbaab341ecebea4946e317e2fc3c6160cb5a0ade7e6d9d16",
+    "product_fix_commit_refs": [
+      "b8779b8",
+      "494464ea9f3cff90be4dc0ceac0dd5980c464617"
+    ]
+  },
+  "scope": "Windows native installed Hermes; product-provided synthetic model; official HTTP self-check and restoration",
+  "r3": {
+    "controller_status": "pass",
+    "driver_exit_code": 0,
+    "driver_seconds": 126.83,
+    "product_status": "passed",
+    "product_seconds": 63.877,
+    "product_budget_seconds": 120,
+    "product_cleanup": "complete",
+    "checks": {
+      "allowed_after_denial": true,
+      "allowed_read": true,
+      "native_session_bound": true,
+      "receipt_chain_verified": true,
+      "write_denied_before_execution": true
+    },
+    "strict_verifier_status": "pass",
+    "strict_signed_document_count": 16,
+    "receipt_count": 5,
+    "probe_samples": 60,
+    "auxiliary_routes": 18,
+    "strict_evidence_gaps": [],
+    "source_files_verified": 1380,
+    "pinned_files_verified": 23,
+    "source_files_digest": "ae55444de246a8c97fac61526c4055103a244432f27ce1c7b1b08451d61c1a72",
+    "signed_full_read_results_match_digest": true,
+    "authority": "Grant/v2 + Intent/v5 + Binding/v2; signed withdrawals verified; no managed RI",
+    "profile_original_semantics_restored": true,
+    "owned_plugin_files_removed": true,
+    "product_materials_removed": true,
+    "formal_adapter_uninstall": "restored-isolated-native-registration",
+    "observer": {
+      "observed_handles": 108,
+      "all_observed_signaled": true,
+      "fatal_errors": 0,
+      "signaled_before_image_records": 2,
+      "such_records_are_image_evidence": false,
+      "owned_jobs_closed": 4,
+      "service_job_total_processes": 136,
+      "complete_process_capture_claimed": false
+    }
+  },
+  "independent_review": {
+    "status": "pass",
+    "is_second_native_run": false,
+    "crypto_rerun": false,
+    "method": "Independent read-only retained evidence and source comparison; prior strict verifier result read back.",
+    "source_sha256": "26366944ebbede25f63a513b129a751984bdd52b3a5cc17a04b1833a5d6f5718",
+    "counts": {
+      "source_files": 1380,
+      "pinned_files": 23,
+      "retained_process_handles": 108,
+      "transients": 2,
+      "observer_errors": 0,
+      "observer_samples": 1067,
+      "diagnostic_events": 2,
+      "closed_jobs": 4
+    },
+    "checks": {
+      "terminal_and_cleanup": true,
+      "observer_errors_empty_and_bounds_respected": true,
+      "all_retained_handles_terminated": true,
+      "all_owned_jobs_closed": true,
+      "actual_hermes_python_observed": true,
+      "transients_individually_reviewed": true,
+      "adapter_confirmation_bindings": [
+        {
+          "action": "install",
+          "preview_count": 1,
+          "apply_count": 1,
+          "ordered_http_200": true,
+          "exact_plan_id_digest_actor_instance_match": true,
+          "native_enable": true
+        },
+        {
+          "action": "uninstall",
+          "preview_count": 1,
+          "apply_count": 1,
+          "ordered_http_200": true,
+          "exact_plan_id_digest_actor_instance_match": true,
+          "native_enable": true
+        }
+      ],
+      "owned_original_backup_retained": true,
+      "original_config_semantics_restored": true,
+      "native_registration_and_three_managed_files_removed": true,
+      "product_materials_removed": true,
+      "all_23_pins_reread": true,
+      "actual_source_manifest_recomputed": true
+    },
+    "both_transients_have_terminal_wait_evidence": true,
+    "transients_are_image_evidence": false
+  },
+  "prior_attempts": [
+    {
+      "attempt": "r1",
+      "same_product_candidate": true,
+      "controller_status": "fail",
+      "product_status": "passed",
+      "failure": "Unlocalized observer WinError 5; original observation gap remains.",
+      "diagnostic_v2_status": "incomplete",
+      "whole_batch_pass": false
+    },
+    {
+      "attempt": "r2",
+      "same_product_candidate": true,
+      "controller_status": "fail",
+      "product_status": "passed",
+      "failure": "Recheck recorded unsignaled Wait with exit code 0. The helper read order has a confirmed cross-API snapshot risk; this does not prove the original WinError 5 harmless. Old failure is retained.",
+      "strict_verifier_status": "fail",
+      "whole_batch_pass": false
+    }
+  ],
+  "supporting_components": {
+    "pure_snapshot_cases": 16,
+    "old_helper_rejection_cases": 2,
+    "owned_python_exit_codes": [
+      0,
+      7,
+      259
+    ],
+    "owned_python_component_status": "pass",
+    "components_are_not_host_acceptance": true
+  },
+  "ci": {
+    "head_sha": "494464ea9f3cff90be4dc0ceac0dd5980c464617",
+    "tested_merge_sha": "f6a647a45f68817e882e6e950e572562d283fcdf",
+    "counts": {
+      "SUCCESS": 38,
+      "SKIPPED": 2,
+      "FAILURE": 2
+    },
+    "failure_remains_real": true,
+    "failed_jobs": [
+      {
+        "name": "runtime-security-toolchain",
+        "run_id": 35348784810,
+        "job_id": 105611628151,
+        "exit_code": 1
+      },
+      {
+        "name": "agentshield",
+        "run_id": 35348784785,
+        "job_id": 105611628839,
+        "exit_code": 1
+      }
+    ],
+    "failed_tests": [
+      "TestCommittedReleaseManifest",
+      "TestAdapterAndBootstrapShareVerifiedResolve",
+      "TestPythonVerifierAcceptsCommittedRelease"
+    ],
+    "cause": "Existing signed Skill manifest content binding differs from current Skill contents; no signature bypass or re-signing."
+  },
+  "acceptance": {
+    "suggested_pass": [
+      "P02-HM-A03-01",
+      "P02-HM-A03-02"
+    ],
+    "supplemental_only": [
+      "P02-HM-A03-04",
+      "P02-HM-A03-06"
+    ],
+    "not_tested": [
+      "P02-HM-A03-05"
+    ],
+    "ledger_modified": false,
+    "denominator_remains": 303
+  },
+  "limits": [
+    "Single fresh isolated profile; no desktop or paid-provider acceptance.",
+    "Polling and signed execution evidence do not prove continuous forbidden-file absence or capture all processes.",
+    "Deleted live directory identities and temporary launch credentials cannot be re-observed after cleanup.",
+    "Local fixture signatures are not release signing, public attestation or an external reproduction.",
+    "Strict journal verification corrects only the revision float64 preimage; no signature fallback.",
+    "Process transient classifications were checked by the separate independent review; strict verifier alone does not replay them.",
+    "P02-HM-A03-01 covers formal management API preview and confirmation, not browser interaction.",
+    "P02-HM-A03-04 lacks unrelated nonempty entry/allow/deny plus user edits after installation; P02-HM-A03-06 lacks other-instance preservation and conflict variants.",
+    "No other journey or whole-project completion is claimed."
+  ],
+  "publication": {
+    "selection": "allowlisted summary and original non-secret source SHA256 only",
+    "raw_signed_documents_published": false,
+    "sanitized_objects_claimed_signature_verifiable": false,
+    "private_paths_or_identifiers_published": false,
+    "secret_sources_read_by_archiver": false
+  }
+}

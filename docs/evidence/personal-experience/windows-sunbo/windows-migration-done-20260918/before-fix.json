@@ -1,0 +1,371 @@
+{
+  "source_base_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+  "recovery_cli_source_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+  "recovery_cli_sha256": "12c1f24e63e76351384ec0db8cf8e9595058c8498e327c85cbf16c8ce798c76c",
+  "helper_sha256": "05cd5755001d7fdac7e5d6139eb455a16a80ad7c93d9961edd79cc992a8a0f02",
+  "test_driver_sha256": "13939d8bb370537f71f61cbf407116b51ed7affd2284a0b8003b3b059ce72d9d",
+  "historical_source_sha": "ff99317450784c9563f5b6a2308c98e8262df98d",
+  "production_source_unmodified": true,
+  "test_driver_uncommitted": true,
+  "scope": "authentic unmarked historical state migration, actual child exit and native CLI recovery; not protected v1 migration, host or system restart",
+  "fixture_acl": "private inherited test parent; not product root ACL proof",
+  "passed": false,
+  "cases": [
+    {
+      "point": "plan",
+      "passed": true,
+      "steps": [
+        {
+          "role": "old",
+          "command": "init",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "admit",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "crash_test_driver",
+          "command": "-test.run=^TestHistoricalMigrationAuditCrash$",
+          "exit": 73
+        },
+        {
+          "role": "recovery_cli",
+          "command": "init",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        }
+      ],
+      "ordinary_access_refused_without_mutation": true,
+      "historical_entries_preserved": 33,
+      "backup_entries_verified": 37,
+      "full_backup_bytes_verified": true,
+      "revoked_revision_preserved": true,
+      "revoked_actions_refused": true,
+      "repeated_recovery_without_mutation": true,
+      "active_barrier_removed": true
+    },
+    {
+      "point": "backup:0",
+      "passed": true,
+      "steps": [
+        {
+          "role": "old",
+          "command": "init",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "admit",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "crash_test_driver",
+          "command": "-test.run=^TestHistoricalMigrationAuditCrash$",
+          "exit": 73
+        },
+        {
+          "role": "recovery_cli",
+          "command": "init",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        }
+      ],
+      "ordinary_access_refused_without_mutation": true,
+      "historical_entries_preserved": 33,
+      "backup_entries_verified": 37,
+      "full_backup_bytes_verified": true,
+      "revoked_revision_preserved": true,
+      "revoked_actions_refused": true,
+      "repeated_recovery_without_mutation": true,
+      "active_barrier_removed": true
+    },
+    {
+      "point": "backup",
+      "passed": true,
+      "steps": [
+        {
+          "role": "old",
+          "command": "init",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "admit",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "crash_test_driver",
+          "command": "-test.run=^TestHistoricalMigrationAuditCrash$",
+          "exit": 73
+        },
+        {
+          "role": "recovery_cli",
+          "command": "init",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        }
+      ],
+      "ordinary_access_refused_without_mutation": true,
+      "historical_entries_preserved": 33,
+      "backup_entries_verified": 37,
+      "full_backup_bytes_verified": true,
+      "revoked_revision_preserved": true,
+      "revoked_actions_refused": true,
+      "repeated_recovery_without_mutation": true,
+      "active_barrier_removed": true
+    },
+    {
+      "point": "before-marker",
+      "passed": true,
+      "steps": [
+        {
+          "role": "old",
+          "command": "init",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "admit",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "crash_test_driver",
+          "command": "-test.run=^TestHistoricalMigrationAuditCrash$",
+          "exit": 73
+        },
+        {
+          "role": "recovery_cli",
+          "command": "init",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        }
+      ],
+      "ordinary_access_refused_without_mutation": true,
+      "historical_entries_preserved": 33,
+      "backup_entries_verified": 37,
+      "full_backup_bytes_verified": true,
+      "revoked_revision_preserved": true,
+      "revoked_actions_refused": true,
+      "repeated_recovery_without_mutation": true,
+      "active_barrier_removed": true
+    },
+    {
+      "point": "marker",
+      "passed": true,
+      "steps": [
+        {
+          "role": "old",
+          "command": "init",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "admit",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "crash_test_driver",
+          "command": "-test.run=^TestHistoricalMigrationAuditCrash$",
+          "exit": 73
+        },
+        {
+          "role": "recovery_cli",
+          "command": "init",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "state-migrate",
+          "exit": 0
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        },
+        {
+          "role": "recovery_cli",
+          "command": "grant",
+          "exit": 1
+        }
+      ],
+      "ordinary_access_refused_without_mutation": true,
+      "historical_entries_preserved": 33,
+      "backup_entries_verified": 37,
+      "full_backup_bytes_verified": true,
+      "revoked_revision_preserved": true,
+      "revoked_actions_refused": true,
+      "repeated_recovery_without_mutation": true,
+      "active_barrier_removed": true
+    },
+    {
+      "point": "done",
+      "passed": false,
+      "steps": [
+        {
+          "role": "old",
+          "command": "init",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "admit",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "old",
+          "command": "grant",
+          "exit": 0
+        },
+        {
+          "role": "crash_test_driver",
+          "command": "-test.run=^TestHistoricalMigrationAuditCrash$",
+          "exit": 73
+        },
+        {
+          "role": "recovery_cli",
+          "command": "init",
+          "exit": 0
+        }
+      ]
+    }
+  ]
+}

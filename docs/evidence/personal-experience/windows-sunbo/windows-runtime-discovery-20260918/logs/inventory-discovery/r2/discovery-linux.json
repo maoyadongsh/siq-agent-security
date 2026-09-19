@@ -1,0 +1,278 @@
+{
+  "scope": "isolated Go contract components, not host/model or clean-candidate acceptance",
+  "base_sha": "72140795963244d293232c905a34ef00312b8253",
+  "source_dirty": true,
+  "phase": "discovery-linux",
+  "results": [
+    {
+      "label": "discovery-linux-architecture",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/uname",
+        "-m"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.435585
+    },
+    {
+      "label": "discovery-linux-private-temp",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/mktemp",
+        "-d",
+        "<WSL_TMP>"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.507083
+    },
+    {
+      "label": "server-linux-build",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-c",
+        "./internal/server",
+        "-o",
+        "<WORKSPACE>\\.tmp\\windows-goal-20260916\\inventory-discovery-fixtures-r2\\server-linux-amd64.test"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {
+        "GOOS": "linux",
+        "GOARCH": "amd64"
+      },
+      "exit_code": 0,
+      "seconds": 24.733529
+    },
+    {
+      "label": "server-linux-create-cwd",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/mkdir",
+        "-p",
+        "-m",
+        "700",
+        "--",
+        "<WSL_TMP>/module/internal/server",
+        "<WSL_TMP>/module/testdata/contracts"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.62507
+    },
+    {
+      "label": "server-linux-transfer",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/tar",
+        "--extract",
+        "--file=-",
+        "--directory=<WSL_TMP>"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "stdin_sha256": "24b43cd0ee48776e7318dd491b017db5c7210068825ade05c74aa9ed1c802305",
+      "exit_code": 0,
+      "seconds": 0.529819
+    },
+    {
+      "label": "server-linux-generate",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--cd",
+        "<WSL_TMP>/module/internal/server",
+        "--exec",
+        "/usr/bin/env",
+        "-i",
+        "PATH=/usr/bin:/bin",
+        "HOME=<WSL_TMP>",
+        "TMPDIR=<WSL_TMP>",
+        "AGENTSHIELD_UPDATE_SAMPLES=1",
+        "<WSL_TMP>/server-linux-amd64.test",
+        "-test.v",
+        "-test.run=^TestDiscoveryContractFixtures$",
+        "-test.count=1",
+        "-test.timeout=90s"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.4317
+    },
+    {
+      "label": "server-linux-verify",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--cd",
+        "<WSL_TMP>/module/internal/server",
+        "--exec",
+        "/usr/bin/env",
+        "-i",
+        "PATH=/usr/bin:/bin",
+        "HOME=<WSL_TMP>",
+        "TMPDIR=<WSL_TMP>",
+        "<WSL_TMP>/server-linux-amd64.test",
+        "-test.v",
+        "-test.run=^TestDiscoveryContractFixtures$",
+        "-test.count=2",
+        "-test.timeout=90s"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.49698
+    },
+    {
+      "label": "linux-read-discovery-status.json",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/cat",
+        "--",
+        "<WSL_TMP>/module/testdata/contracts/discovery-status.json"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.476615
+    },
+    {
+      "label": "linux-read-discovery-preview.json",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/cat",
+        "--",
+        "<WSL_TMP>/module/testdata/contracts/discovery-preview.json"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.424484
+    },
+    {
+      "label": "server-linux-clean-files",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/rm",
+        "--",
+        "<WSL_TMP>/server-linux-amd64.test",
+        "<WSL_TMP>/module/testdata/contracts/discovery-status.json",
+        "<WSL_TMP>/module/testdata/contracts/discovery-preview.json"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.412931
+    },
+    {
+      "label": "server-linux-clean-directories",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/rmdir",
+        "--",
+        "<WSL_TMP>/module/internal/server",
+        "<WSL_TMP>/module/internal",
+        "<WSL_TMP>/module/testdata/contracts",
+        "<WSL_TMP>/module/testdata",
+        "<WSL_TMP>/module",
+        "<WSL_TMP>"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.387488
+    }
+  ],
+  "source_scope": "fixed 7214079 module copy with only discovery_http_test.go fixture patch",
+  "module_source": "<FIXED_MODULE_COPY>",
+  "private_temp": ".tmp/isc4r2",
+  "protected_dacl_verified": true,
+  "helper_sha256": "aef152e1706c2d89caab077178ae23d3c4bb8235fab703fe71aa27f4061e3711",
+  "wsl_temp": "<WSL_TMP>",
+  "transfer_manifest": [
+    {
+      "path": "server-linux-amd64.test",
+      "sha256": "1e75edf58d6275ac86236f250b60cfb858b9cccb07e39016bfe6827fb85cd20d",
+      "mode": "0o700"
+    },
+    {
+      "path": "module/testdata/contracts/discovery-status.json",
+      "sha256": "dcf80e15ccb5ebd56d5cbb1d8b14669b481c4757ca68196d8f67c38b3c76bb11",
+      "mode": "0o600"
+    },
+    {
+      "path": "module/testdata/contracts/discovery-preview.json",
+      "sha256": "bb29b13d13df31e618341b81319452c5d553975b20e4713e8c0c398f5be9745e",
+      "mode": "0o600"
+    }
+  ],
+  "fixture_recovery": [
+    {
+      "name": "discovery-status.json",
+      "before_sha256": "dcf80e15ccb5ebd56d5cbb1d8b14669b481c4757ca68196d8f67c38b3c76bb11",
+      "recovered_sha256": "4676c84505bb7d56386610e80c6a43da5c676e28ff822adbe96a371dc7fb68cf",
+      "generator": "TestDiscoveryContractFixtures with AGENTSHIELD_UPDATE_SAMPLES=1"
+    },
+    {
+      "name": "discovery-preview.json",
+      "before_sha256": "bb29b13d13df31e618341b81319452c5d553975b20e4713e8c0c398f5be9745e",
+      "recovered_sha256": "2e3df6f0b1cd55700e985c1fabe938a313f4e55a2d5884ee6630d8c61810ea7d",
+      "generator": "TestDiscoveryContractFixtures with AGENTSHIELD_UPDATE_SAMPLES=1"
+    }
+  ],
+  "server_linux_binary_sha256": "1e75edf58d6275ac86236f250b60cfb858b9cccb07e39016bfe6827fb85cd20d",
+  "samples": [
+    {
+      "name": "inventory.sample.json",
+      "sha256": "f46e4b27500a0258d8771490e6cf1df0b250ca1c96449b09ae38e67e4f1e23e5"
+    },
+    {
+      "name": "discovery-status.json",
+      "sha256": "4676c84505bb7d56386610e80c6a43da5c676e28ff822adbe96a371dc7fb68cf"
+    },
+    {
+      "name": "discovery-preview.json",
+      "sha256": "2e3df6f0b1cd55700e985c1fabe938a313f4e55a2d5884ee6630d8c61810ea7d"
+    },
+    {
+      "name": "discovery-status-windows.json",
+      "sha256": "b587c7d6f0af0cf54e560e5c15b9dbed7a297096e1e737a0155505f30174d7ac"
+    },
+    {
+      "name": "discovery-preview-windows.json",
+      "sha256": "860608e55587ff311789f9ee58dc7b09a2adab196e0a214518fa871303d2900d"
+    }
+  ],
+  "result": "pass"
+}

@@ -1,0 +1,52 @@
+=== RUN   TestWindowsReadSnapshotRejectsReparseAndExistingWriter
+--- PASS: TestWindowsReadSnapshotRejectsReparseAndExistingWriter (0.33s)
+=== RUN   TestWindowsReadSnapshotPinsAndRechecks
+--- PASS: TestWindowsReadSnapshotPinsAndRechecks (0.15s)
+=== RUN   TestWindowsReadSnapshotRejectsACLDriftAndHardLinks
+=== RUN   TestWindowsReadSnapshotRejectsACLDriftAndHardLinks/file
+=== RUN   TestWindowsReadSnapshotRejectsACLDriftAndHardLinks/directory
+--- PASS: TestWindowsReadSnapshotRejectsACLDriftAndHardLinks (0.37s)
+    --- PASS: TestWindowsReadSnapshotRejectsACLDriftAndHardLinks/file (0.13s)
+    --- PASS: TestWindowsReadSnapshotRejectsACLDriftAndHardLinks/directory (0.14s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/privatefs	5.415s
+=== RUN   TestPrivateRecordAbsenceRequiresCurrentPrivateDirectories
+--- PASS: TestPrivateRecordAbsenceRequiresCurrentPrivateDirectories (0.21s)
+=== RUN   TestPrivateRecordBoundsAndCurrentObjects
+--- PASS: TestPrivateRecordBoundsAndCurrentObjects (0.43s)
+=== RUN   TestPrivateRecordKeepsOuterAndNestedCompatibilityBarriers
+=== RUN   TestPrivateRecordKeepsOuterAndNestedCompatibilityBarriers/outer
+=== RUN   TestPrivateRecordKeepsOuterAndNestedCompatibilityBarriers/nested
+=== RUN   TestPrivateRecordKeepsOuterAndNestedCompatibilityBarriers/migration
+--- PASS: TestPrivateRecordKeepsOuterAndNestedCompatibilityBarriers (0.24s)
+    --- PASS: TestPrivateRecordKeepsOuterAndNestedCompatibilityBarriers/outer (0.08s)
+    --- PASS: TestPrivateRecordKeepsOuterAndNestedCompatibilityBarriers/nested (0.06s)
+    --- PASS: TestPrivateRecordKeepsOuterAndNestedCompatibilityBarriers/migration (0.10s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/statefs	5.582s
+=== RUN   TestWindowsIntentPrivateReadAndCachedStore
+=== RUN   TestWindowsIntentPrivateReadAndCachedStore/file
+=== RUN   TestWindowsIntentPrivateReadAndCachedStore/directory
+=== RUN   TestWindowsIntentPrivateReadAndCachedStore/state
+--- PASS: TestWindowsIntentPrivateReadAndCachedStore (0.78s)
+    --- PASS: TestWindowsIntentPrivateReadAndCachedStore/file (0.20s)
+    --- PASS: TestWindowsIntentPrivateReadAndCachedStore/directory (0.12s)
+    --- PASS: TestWindowsIntentPrivateReadAndCachedStore/state (0.10s)
+=== RUN   TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence
+=== RUN   TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence/intent-binding-revocations
+=== RUN   TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence/intent-revocations
+=== RUN   TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence/intent-bindings
+--- PASS: TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence (1.50s)
+    --- PASS: TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence/intent-binding-revocations (0.20s)
+    --- PASS: TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence/intent-revocations (0.30s)
+    --- PASS: TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence/intent-bindings (0.20s)
+=== RUN   TestWindowsIntentMissingRevocationDirectoryDenies
+--- PASS: TestWindowsIntentMissingRevocationDirectoryDenies (0.76s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/intent	5.389s
+=== RUN   TestEnrollmentContextNeverReusesAuthorityAcrossCalls
+--- PASS: TestEnrollmentContextNeverReusesAuthorityAcrossCalls (1.22s)
+=== RUN   TestEnrollmentContextRechecksGrantBeforeBindingPublication
+--- PASS: TestEnrollmentContextRechecksGrantBeforeBindingPublication (0.70s)
+PASS
+ok  	siq-agent-security/apps/agentshield/internal/runtimeidentity	8.610s

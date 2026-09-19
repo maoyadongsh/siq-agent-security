@@ -1,0 +1,76 @@
+{
+  "source_sha": "e09b68489a495fa263488634508e11f661b5936f",
+  "source_dirty": false,
+  "checks": [
+    {
+      "name": "native-build",
+      "exit": 0
+    },
+    {
+      "name": "identity-windows-amd64",
+      "exit": 0
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0
+    },
+    {
+      "name": "identity-linux-amd64",
+      "exit": 0
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0
+    },
+    {
+      "name": "identity-linux-arm64",
+      "exit": 0
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0
+    },
+    {
+      "name": "identity-darwin-arm64",
+      "exit": 0
+    },
+    {
+      "name": "stateformat",
+      "exit": 0
+    },
+    {
+      "name": "vet",
+      "exit": 0
+    },
+    {
+      "name": "gofmt",
+      "exit": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "target": "windows/amd64",
+      "sha256": "5f7118b53ff270d25147f07e66b7e496b3117d8c3592c6d1e55b2e17a5db90d6",
+      "source_sha": "e09b68489a495fa263488634508e11f661b5936f",
+      "source_dirty": false
+    },
+    {
+      "target": "linux/amd64",
+      "sha256": "a5ffc1499ce992cdb562efa5d96eb70ab188c0139c05f694ae7c890660e35a2f",
+      "source_sha": "e09b68489a495fa263488634508e11f661b5936f",
+      "source_dirty": false
+    },
+    {
+      "target": "linux/arm64",
+      "sha256": "cb83435603ee58947baa9f65f83986bc575fa7c1d81081f4c2ed45bc7d6a05a2",
+      "source_sha": "e09b68489a495fa263488634508e11f661b5936f",
+      "source_dirty": false
+    },
+    {
+      "target": "darwin/arm64",
+      "sha256": "9b6faeaab3db6f83cc42981620f1b9bf75ac02b48f3e17744ac6bcd573d31373",
+      "source_sha": "e09b68489a495fa263488634508e11f661b5936f",
+      "source_dirty": false
+    }
+  ]
+}

@@ -48,6 +48,9 @@ func (s *Server) skillContextCollection(w http.ResponseWriter, r *http.Request) 
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": skillContextRequestError})
 		return
 	}
+	if !skillContextResponseReady(w, r) {
+		return
+	}
 	scope := skillcontext.EvidenceSession
 	if req.TaskID != "" {
 		scope = skillcontext.EvidenceTask
@@ -82,6 +85,9 @@ func (s *Server) skillContextOne(w http.ResponseWriter, r *http.Request) {
 	rest := strings.TrimPrefix(r.URL.Path, "/v1/skill-contexts/")
 	parts := strings.Split(rest, "/")
 	if len(parts) == 1 && parts[0] != "" && r.Method == http.MethodGet {
+		if !skillContextResponseReady(w, r) {
+			return
+		}
 		c, err := s.skillContexts.Get(parts[0])
 		if err != nil {
 			skillContextError(w, err)
@@ -102,6 +108,9 @@ func (s *Server) skillContextOne(w http.ResponseWriter, r *http.Request) {
 		}
 		if !req.Valid() {
 			writeJSON(w, http.StatusBadRequest, map[string]string{"error": skillContextRequestError})
+			return
+		}
+		if !skillContextResponseReady(w, r) {
 			return
 		}
 		if err := s.d.Store.AppendAudit(state.AuditEvent{

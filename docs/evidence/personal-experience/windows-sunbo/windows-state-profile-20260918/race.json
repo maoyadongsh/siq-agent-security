@@ -1,0 +1,20 @@
+{
+  "result": {
+    "source_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+    "source_dirty": false,
+    "exit": 0,
+    "seconds": 93.894
+  },
+  "tests": {
+    "counts": {
+      "test_pass": 7,
+      "subtest_pass": 4,
+      "package_pass": 1
+    },
+    "failures": [],
+    "packages": {
+      "siq-agent-security/apps/agentshield/internal/state": "pass"
+    },
+    "raw_log_sha256": "07edaef29c61f31e5d658161b35fa406ab516fac63fc7a5c96f506c4a3f66c90"
+  }
+}

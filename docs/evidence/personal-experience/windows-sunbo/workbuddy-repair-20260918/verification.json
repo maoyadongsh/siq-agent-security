@@ -1,0 +1,88 @@
+{
+  "implementation_source_sha": "ff166068a9047d0cfca73f8dcfb6f8c2dd9102d8",
+  "scope": "WorkBuddy managed installation repair; component verification, not desktop model execution",
+  "old_code_regression_exit": 1,
+  "fixed_code_regression_exit": 0,
+  "old_code_expected_failure": "repair must preserve user scope and replace all owned hooks",
+  "formal_install_repair_inspect_uninstall": {
+    "exit": 0,
+    "output": "ok  \tsiq-agent-security/apps/agentshield/internal/adapterinstall\t15.530s"
+  },
+  "focused_workbuddy": {
+    "exit": 0,
+    "pattern": "^TestWorkBuddy(Managed|CustomConfigLifecycle|ReinstallAfterSurgicalUninstall|PreservesEnabledPluginsAndDoesNotTouchCodeBuddy|IsIdempotentAndFailClosedUninstallWithoutRecord)",
+    "output": "ok  \tsiq-agent-security/apps/agentshield/internal/adapterinstall\t29.063s"
+  },
+  "gofmt_changed_files": {
+    "exit": 0,
+    "output": ""
+  },
+  "go_vet_all": {
+    "exit": 0,
+    "output": ""
+  },
+  "adapter_all_default_temp": {
+    "exit": 1,
+    "reason": "private-state unsafe or unverifiable permissions while initializing fixtures"
+  },
+  "adapter_all_private_temp": {
+    "exit": 1,
+    "reason": "5-minute timeout",
+    "timeout_test": [
+      "TestNativePreviewContextCancellation (3.90s)",
+      "TestPlanPinnedToMovedInstanceIsRejected (3s)"
+    ],
+    "additional_failure": {
+      "test": "TestNativePreviewContextCancellation/canceled",
+      "message": "helper did not start"
+    }
+  },
+  "go_test_all": {
+    "exit": 1,
+    "seconds": 669.7,
+    "failed_packages": [
+      "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "siq-agent-security/apps/agentshield/internal/adapters",
+      "siq-agent-security/apps/agentshield/internal/admission",
+      "siq-agent-security/apps/agentshield/internal/clientrelease",
+      "siq-agent-security/apps/agentshield/internal/completion",
+      "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "siq-agent-security/apps/agentshield/internal/intent",
+      "siq-agent-security/apps/agentshield/internal/inventory",
+      "siq-agent-security/apps/agentshield/internal/ledger",
+      "siq-agent-security/apps/agentshield/internal/pending",
+      "siq-agent-security/apps/agentshield/internal/perfbaseline",
+      "siq-agent-security/apps/agentshield/internal/provenance",
+      "siq-agent-security/apps/agentshield/internal/rawcontent",
+      "siq-agent-security/apps/agentshield/internal/receipt",
+      "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "siq-agent-security/apps/agentshield/internal/server",
+      "siq-agent-security/apps/agentshield/internal/signing",
+      "siq-agent-security/apps/agentshield/internal/skillimport",
+      "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "siq-agent-security/apps/agentshield/internal/state",
+      "siq-agent-security/apps/agentshield/internal/statefs"
+    ],
+    "private_permission_message_count": 944,
+    "manifest_mismatch_message_count": 1,
+    "timeout_headers": [
+      "panic: test timed out after 8m0s"
+    ]
+  },
+  "native_host_e2e": "not_run_in_this_batch",
+  "four_target_builds": "see unsigned-candidate.json",
+  "final_acceptance": "not_passed",
+  "embedded_runtime_assets_match": true,
+  "product_changes_from_previous_candidate": [
+    "adapters/runtime/hermes-agentshield/README.md",
+    "apps/agentshield/internal/adapterinstall/workbuddy_hook_repair_test.go",
+    "apps/agentshield/internal/adapterinstall/workbuddy_managed.go"
+  ],
+  "test_source_sha256": {
+    "apps/agentshield/internal/adapterinstall/workbuddy_hook_repair_test.go": "5433b25f91dd298c683a91693682f6e694569628e9022dd5593a975b4a4598c6",
+    "apps/agentshield/internal/adapterinstall/workbuddy_managed_windows_test.go": "5acffbcd9b98a0c8d305544895655451820c192728ef248b47787261b12b3175"
+  }
+}

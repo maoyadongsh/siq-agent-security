@@ -1,0 +1,38 @@
+{
+  "schema_version": "local-skill-install-plan/v2",
+  "plan_id": "sip-a35a995046424f8a27c13d5bac3218a2e8f24c6390852f14d0cfba76db61fdc7",
+  "request_id": "is-dddddddddddddddddddddddddddddddd",
+  "source": {
+    "schema_version": "local-skill-import-permission-source/v1",
+    "import_id": "si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "artifact_digest": "5616f02435c352c063ab2587f17c78c40012548318a44dd1c52a88a7e387d459",
+    "analysis_sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "grant_id": "grt-si-3333333333333333333333333333333333333333333333333333333333333333",
+  "grant_revision": 0,
+  "grant_signature": "330945472e0b9f236ea9d9d06f40361c54a8c25e24f3c1e64f7d1c4dcbed2ead32ec9685bed47c1b26ae643b37d730f4f463316b43969380176b51baad61a30b",
+  "grant_permission_digest": "96cf4e302d4a87a28bcd3bf46e035d98c101f5700c37cb64219d8228e537bcc4",
+  "platform": "workbuddy",
+  "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "directory_name": "example",
+  "target_locator_digest": "5b3717edcaafec82b0e7546b7f4ec761c03e6c371068e20e38a8bfe05babb5ac",
+  "target_display": "WorkBuddy user/skills/example",
+  "actor_id": "human",
+  "created_at": "2026-09-11T03:00:00Z",
+  "expires_at": "2026-09-11T03:05:00Z",
+  "file_count": 2,
+  "total_bytes": 135,
+  "installed": false,
+  "runtime_verified": false,
+  "target_ref": {
+    "target_id": "sit-123326bcffdbbca156af2e10a90af05a03f28abefc4a908dea9ed79a7465feff",
+    "scope": "user",
+    "filesystem_profile": "windows-local-drive/v1",
+    "root_locator_digest": "715aa2a93f10dafa9b2fc48560036d46a0d19f40d5b3587611e421131b7c0074",
+    "root_identity_digest": "26eb88153e365ad6d24a97e612da7f66895c542e45e71e3a0efd4d9e470da3d6",
+    "config_root_identity_digest": "26eb88153e365ad6d24a97e612da7f66895c542e45e71e3a0efd4d9e470da3d6",
+    "existing_parent_relative_path": "",
+    "existing_parent_identity_digest": "26eb88153e365ad6d24a97e612da7f66895c542e45e71e3a0efd4d9e470da3d6"
+  },
+  "signature": "ccfc4f2d16199db62ca6406e6b10876d8cde47521e174fb624773a257d4523bfd285100dd33101a19d7460d0f298c605b9cecff3881ee7b9511cc2020797d005"
+}

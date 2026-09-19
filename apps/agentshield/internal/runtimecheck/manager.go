@@ -13,8 +13,12 @@ import (
 	"unicode/utf8"
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
+	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/intent"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
+	"siq-agent-security/apps/agentshield/internal/runtimepath"
 	"siq-agent-security/apps/agentshield/internal/state"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
 // New recovers interrupted probes. The caller holds state.AcquireWriter for
@@ -57,7 +61,35 @@ func (m *Manager) snapshot(id string) (adapterinstall.RuntimeTarget, error) {
 	if err != nil {
 		return target, err
 	}
-	target.Digest, err = digest(map[string]any{"target": target.Digest, "service_public_key": m.o.Key.PublicBase64(), "method": "hermes-native-read-deny-read/v1"})
+	if target.InstanceID != id {
+		return target, errors.New("runtime_check_instance_unavailable")
+	}
+	material := map[string]any{"target": target.Digest, "service_public_key": m.o.Key.PublicBase64(), "method": "hermes-native-read-deny-read/v1"}
+	switch target.FilesystemProfile {
+	case "":
+		if target.RootIdentityDigest != "" {
+			return target, errors.New("runtime_check_configuration_unavailable")
+		}
+		if _, e := runtimeaction.NormalizeResource("filesystem", target.ProfilePath); e != nil {
+			return target, errors.New("runtime_check_windows_profile_required")
+		}
+	case runtimeaction.FilesystemWindowsLocalDriveV1:
+		if stateformat.RequireWindowsProfile(m.o.Store.Dir) != nil {
+			return target, errors.New("runtime_check_windows_profile_required")
+		}
+		facts, e := runtimepath.InspectWindows(target.ProfilePath, false)
+		if e != nil || !facts.IsDirectory() {
+			return target, errors.New("runtime_check_configuration_unavailable")
+		}
+		identity, e := facts.IdentityDigest()
+		if e != nil || identity != target.RootIdentityDigest {
+			return target, errors.New("runtime_check_snapshot_changed")
+		}
+		material["filesystem_profile"], material["root_identity_digest"] = target.FilesystemProfile, identity
+	default:
+		return target, errors.New("runtime_check_configuration_unavailable")
+	}
+	target.Digest, err = digest(material)
 	return target, err
 }
 func (m *Manager) Preview(instanceID, owner string) (Plan, error) {
@@ -314,6 +346,7 @@ func (m *Manager) Close(ctx context.Context) error {
 	r := m.active
 	if r != nil {
 		r.cancel()
+		r.record.Result.Reason = "runtime_check_cancelling"
 	}
 	m.mu.Unlock()
 	if r == nil {
@@ -341,8 +374,28 @@ func (m *Manager) AuthorizeDecision(credential, platform, agent, session string)
 	if err != nil || !time.Now().Before(expires) || subtle.ConstantTimeCompare(got[:], r.credential[:]) != 1 {
 		return false
 	}
-	c, b, err := m.o.Intents.ResolveBinding(platform, session, agent)
-	return err == nil && c != nil && b != nil && b.BindingID == r.record.BindingID && c.IntentID == r.record.IntentID && b.GrantRef != nil && b.GrantRef.GrantID == r.record.GrantID
+	return m.checkBoundAuthority(r) == nil
+}
+
+// Caller holds m.mu. Each invocation reads current signed authority; nothing
+// from a previous request is accepted as authentication.
+func (m *Manager) checkBoundAuthority(r *run) error {
+	c, b, err := m.o.Intents.ResolveBinding("hermes", r.session, agentID(r.id))
+	if err != nil || c == nil || b == nil || b.BindingID != r.record.BindingID || c.IntentID != r.record.IntentID || c.Digest != r.record.IntentDigest || c.TaskID != "rct-"+strings.TrimPrefix(r.id, "rc-") || b.IntentDigest != c.Digest || b.TaskID != c.TaskID || b.AuthorityRevision != c.Authority.Revision || b.GrantRef == nil || b.GrantRef.GrantID != r.record.GrantID || b.SelectedGrant == nil {
+		return errors.New("runtime_check_authority_unavailable")
+	}
+	if c.SchemaVersion == intent.RuntimeCheckSchema {
+		expected, e := runtimeaction.NormalizeResourceForProfile(runtimeaction.FilesystemWindowsLocalDriveV1, "filesystem", filepath.Join(m.materials(r.id), "allowed"))
+		g := b.SelectedGrant
+		if e != nil || c.Authority.Revision != r.record.Result.Snapshot || c.IssuedAt != r.record.Result.StartedAt || c.ExpiresAt != r.record.Result.ExpiresAt || len(c.ResourceConstraints) != 1 || c.ResourceConstraints[0].Value != expected || b.SchemaVersion != "intent-grant-binding/v2" || b.GrantRef.PermissionDigestSchema != "grant-permissions/v2" || g.SchemaVersion != "grant/v2" || g.FilesystemProfile != string(runtimeaction.FilesystemWindowsLocalDriveV1) || g.Skill != nil || g.GrantID != "grt-rc-"+strings.TrimPrefix(r.id, "rc-") || grant.RecheckFilesystemBindings(*g) != nil {
+			return errors.New("runtime_check_authority_unavailable")
+		}
+		current, e := m.snapshot(r.record.Result.InstanceID)
+		if e != nil || current.Digest != r.record.Result.Snapshot || current.FilesystemProfile != runtimeaction.FilesystemWindowsLocalDriveV1 {
+			return errors.New("runtime_check_snapshot_changed")
+		}
+	}
+	return nil
 }
 
 // HasDecisionCredential permits rejecting unrelated credentials before parsing

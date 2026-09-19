@@ -248,8 +248,8 @@ func TestToolSuccessConflictsWithIndependentMissingOutputHTTP(t *testing.T) {
 		}
 	}
 	check("unknown")
-	// Revocation stops new actions, but must not erase or block historical
-	// observations needed to diagnose effects of an already issued decision.
+	// Revocation stops new actions and new independent file sampling. Historical
+	// records and self-reported tool claims remain available for diagnosis.
 	effectCall(t, s, "POST", "/v1/intents/int-api/revoke", s.bootAdmin, map[string]any{"expected_intent_digest": issuedIntent["digest"]}, 200)
 	claim.EvidenceID = "tool-success-after-revoke"
 	effectCall(t, s, "POST", "/v1/tool-effect-reports", token, claim, 201)
@@ -259,8 +259,35 @@ func TestToolSuccessConflictsWithIndependentMissingOutputHTTP(t *testing.T) {
 	}
 	host := issueObserver(effectevidence.Source{Type: "host_observer", SourceID: "fixture-host", Independence: "host_independent"})
 	effectCall(t, s, "POST", "/v1/tool-effect-reports", host, claim, 401)
-	effectCall(t, s, "POST", "/v1/file-observations", host, map[string]any{"observation_id": "missing", "action_id": d["action_id"], "decision_receipt_id": d["receipt_id"], "path": path, "expected_digest": expected, "max_bytes": 1024}, 201)
+	effectCall(t, s, "POST", "/v1/file-observations", host, map[string]any{"observation_id": "revoked-missing", "action_id": d["action_id"], "decision_receipt_id": d["receipt_id"], "path": path, "expected_digest": expected, "max_bytes": 1024}, 400)
+	if historical, err := s.effects.Get("tool-success", time.Now()); err != nil || historical.Signature != first["signature"] {
+		t.Fatal("revocation changed historical evidence", err)
+	}
+	check("unknown")
+
+	// Preserve the successful-tool/missing-file conflict under a separate live
+	// authority. The revoked action must not be revived to perform this sample.
+	c.IntentID, c.TaskID = "int-live-missing", "task-live-missing"
+	effectCall(t, s, "POST", "/v1/intents", s.bootAdmin, c, 201)
+	effectCall(t, s, "POST", "/v1/intent-bindings", s.bootAdmin, map[string]any{"platform": "hermes", "session_id": "s-live", "agent_id": "a-1", "intent_id": c.IntentID}, 201)
+	live := effectCall(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "hermes", "session_id": "s-live", "agent_id": "a-1", "tool": "write_file", "tool_call_id": "live-missing-call", "params": map[string]any{"path": path}}, 200)
+	if live["action"] != "allow" {
+		t.Fatal(live)
+	}
+	claim.EvidenceID, claim.ActionID, claim.DecisionReceiptID = "tool-success-live", live["action_id"].(string), live["receipt_id"].(string)
+	claim.ObservedAt = time.Now().UTC().Format(time.RFC3339Nano)
+	effectCall(t, s, "POST", "/v1/tool-effect-reports", token, claim, 201)
+	liveCompletion := effectCall(t, s, "GET", "/v1/tasks/"+c.TaskID+"/completion", s.bootAdmin, nil, 200)
+	if liveCompletion["status"] != "unknown" {
+		t.Fatal("tool success alone verified file effect", liveCompletion)
+	}
+	liveHost := effectCall(t, s, "POST", "/v1/effect-observers", s.bootAdmin, map[string]any{"source": effectevidence.Source{Type: "host_observer", SourceID: "fixture-host", Independence: "host_independent"}, "scope": provenance.Scope{Platform: "hermes", SessionID: "s-live", AgentID: "a-1", TaskID: c.TaskID}, "expires_in": 60}, 201)["token"].(string)
+	effectCall(t, s, "POST", "/v1/file-observations", liveHost, map[string]any{"observation_id": "missing", "action_id": live["action_id"], "decision_receipt_id": live["receipt_id"], "path": path, "expected_digest": expected, "max_bytes": 1024}, 201)
 	// The controlled tool claims success but creates no output; the host samples reality.
-	effectCall(t, s, "POST", "/v1/file-observations/missing/finish", host, map[string]any{"path": path}, 201)
-	check("conflicting")
+	effectCall(t, s, "POST", "/v1/file-observations/missing/finish", liveHost, map[string]any{"path": path}, 201)
+	liveCompletion = effectCall(t, s, "GET", "/v1/tasks/"+c.TaskID+"/completion", s.bootAdmin, nil, 200)
+	if liveCompletion["status"] != "conflicting" {
+		t.Fatal("independent missing output did not conflict with tool success", liveCompletion)
+	}
+	check("unknown")
 }

@@ -1,0 +1,162 @@
+{
+  "source_sha": "b00012a4e75929abd76dec6ef5e2a0b3f1312695",
+  "source_dirty": false,
+  "verifier_sha256": "101bb2dba5c0cccfdc09fef32e992f6dcbfb2c7f6b65b4262e86bf9ed9f3d1f2",
+  "checks": [
+    {
+      "name": "python-ast",
+      "exit": 0
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 47.403
+    },
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 0.831
+    },
+    {
+      "name": "build-windows-amd64",
+      "exit": 0,
+      "seconds": 9.551
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0,
+      "seconds": 23.797
+    },
+    {
+      "name": "test-compile-linux-amd64",
+      "exit": 0,
+      "seconds": 18.983
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0,
+      "seconds": 19.505
+    },
+    {
+      "name": "test-compile-linux-arm64",
+      "exit": 0,
+      "seconds": 16.337
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0,
+      "seconds": 20.121
+    },
+    {
+      "name": "test-compile-darwin-arm64",
+      "exit": 0,
+      "seconds": 15.971
+    },
+    {
+      "name": "skillmanifest-tests",
+      "exit": 1,
+      "seconds": 40.629
+    },
+    {
+      "name": "self-init",
+      "exit": 0,
+      "seconds": 1.54
+    },
+    {
+      "name": "self-admit",
+      "exit": 0,
+      "seconds": 2.415
+    }
+  ],
+  "artifacts": [
+    {
+      "target": "windows-amd64",
+      "sha256": "12918f91ec05db8f43e69b745923f9948edb9a9f177cc1aee6c7e47c4bcb2c76",
+      "source_sha": "b00012a4e75929abd76dec6ef5e2a0b3f1312695",
+      "vcs_modified": false
+    },
+    {
+      "target": "linux-amd64",
+      "sha256": "f01029579bd05c7e63b60d46074466889a4366bbd6dd3f98552be6e5e908a7a3",
+      "source_sha": "b00012a4e75929abd76dec6ef5e2a0b3f1312695",
+      "vcs_modified": false
+    },
+    {
+      "target": "linux-arm64",
+      "sha256": "8e02bb1f66d4cdd32dc91b96bf38e550013143f33b22e824ce289048592bfa37",
+      "source_sha": "b00012a4e75929abd76dec6ef5e2a0b3f1312695",
+      "vcs_modified": false
+    },
+    {
+      "target": "darwin-arm64",
+      "sha256": "b16c9422aa6e8ac3881f5f63c9560d7520a9d552cc482058453e352837648f94",
+      "source_sha": "b00012a4e75929abd76dec6ef5e2a0b3f1312695",
+      "vcs_modified": false
+    }
+  ],
+  "release_signature_updated": false,
+  "self_admit_verdict": "admit_with_conditions",
+  "whole_module_pass_claim": false,
+  "release_status": "unsigned_candidate",
+  "suite": {
+    "counts": {
+      "test_pass": 31,
+      "test_fail": 3,
+      "test_skip": 1,
+      "package_fail": 1
+    },
+    "failed_tests": [
+      "TestCommittedReleaseManifest",
+      "TestAdapterAndBootstrapShareVerifiedResolve",
+      "TestPythonVerifierAcceptsCommittedRelease"
+    ],
+    "passed_tests": [
+      "TestClientCompatibilityContractAndTampering",
+      "TestPythonHashSkillDirWindowsInternalJunctionParity",
+      "TestPythonVerifierWindowsJunctionRejectsSignedTree",
+      "TestPythonHashSkillDirParity",
+      "TestPythonHashSkillDirRejectsEscape",
+      "TestSelectArtifact",
+      "TestDownloadVerifiedArtifactHappyAndNegatives",
+      "TestFetchAndStage",
+      "TestPythonFetchArtifact",
+      "TestSignAndVerify",
+      "TestVerifyRejectsWrongKey",
+      "TestDefaultMatrixHonesty",
+      "TestValidateMatrixRejectsLies",
+      "TestHashDirExcludesManifest",
+      "TestSampleManifestMatchesBuilder",
+      "TestParsePublicKeyRejectsJunk",
+      "TestHashFile",
+      "TestKeyFromEnvFailClosed",
+      "TestSampleJSONIsObject",
+      "TestStageVerifiedBinaryHappyPath",
+      "TestStageVerifiedBinaryDetectsPinMismatch",
+      "TestStageVerifiedBinaryDetectsCorruptCopy",
+      "TestStageVerifiedBinarySelfConsistencyWithoutPin",
+      "TestStageVerifiedBinaryWindowsNativeExecutable",
+      "TestStageVerifiedBinaryWindowsPinMismatchBeforeStage",
+      "TestStateProtocolReleaseContract",
+      "TestReleaseVerificationRejectsSelfSignedManifest",
+      "TestBootstrapEmbedsConstant",
+      "TestEmbedReleasePubkeyKeepsPS1Variable",
+      "TestPythonVerifierAcceptsSignedManifest",
+      "TestPythonVerifierRejectsContentHashMismatch"
+    ],
+    "skipped_tests": [
+      "TestResolveStagesVerifiedBinary"
+    ],
+    "log_sha256": "821eb2b39e7460f4896b7646d476c2675a5aa23d235d4fbffaa75c30ff657f7a"
+  },
+  "frozen_manifest_unchanged": true,
+  "self_admit_content_hash": "d815fc4a118aaafb2efbb7f2baa454832a21f63776b1b13110632e848d88d0b1",
+  "frozen_manifest_content_hash": "e69b1486c4dda3b6c8be242a80ab610ca04988a59dd5e3bb5c142e157e0a7098",
+  "cleanup": {
+    "junctions": "test cleanup removes owned junction objects only",
+    "test_processes": "completed",
+    "model_calls": 0,
+    "services_started": 0,
+    "system_configuration_changed": false,
+    "private_self_admit_state": "retained for evidence"
+  }
+}

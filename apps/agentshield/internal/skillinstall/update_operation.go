@@ -59,7 +59,21 @@ func (s *Store) updateOperationPath(id, suffix string) string {
 	return filepath.Join(s.dir, "update-operations", id+"."+suffix+".json")
 }
 func (s *Store) replacementPlan(p UpdatePlan) (Plan, error) {
+	return s.replacementPlanWithTarget(p, p.Record.Plan.TargetRef)
+}
+
+func (s *Store) replacementPlanWithTarget(p UpdatePlan, reference *TargetRef) (Plan, error) {
 	n := p.Record.Plan
+	if n.SchemaVersion == planV2 && reference == nil {
+		return Plan{}, ErrChanged
+	}
+	if reference != nil {
+		ref := *reference
+		n.TargetRef = &ref
+	}
+	if !replacementAnchorValid(p.Record.Plan, n) {
+		return Plan{}, ErrChanged
+	}
 	n.RequestID = "is-" + hash([]byte("update-install:" + p.UpdateID))[:32]
 	n.Source = p.CandidateSource
 	n.GrantID = p.CandidateGrantID
@@ -95,14 +109,14 @@ func (s *Store) readUpdateClaim(ctx context.Context, id string) (*UpdateClaim, e
 	if err != nil {
 		return nil, err
 	}
-	n, err := s.replacementPlan(*p)
+	n, err := s.replacementPlanWithTarget(*p, c.ReplacementPlan.TargetRef)
 	if err != nil {
 		return nil, err
 	}
 	created, e1 := time.Parse(time.RFC3339Nano, c.CreatedAt)
 	begin, e2 := time.Parse(time.RFC3339Nano, p.CreatedAt)
 	end, e3 := time.Parse(time.RFC3339Nano, p.ExpiresAt)
-	if c.SchemaVersion != "local-skill-update-claim/v1" || c.UpdateID != id || c.ActorID != p.ActorID || !sameDocument(c.Plan, p) || !sameDocument(c.ReplacementPlan, n) || e1 != nil || e2 != nil || e3 != nil || created.Before(begin) || !created.Before(end) {
+	if c.SchemaVersion != p.Record.Plan.wireVersion("local-skill-update-claim") || c.UpdateID != id || c.ActorID != p.ActorID || !sameDocument(c.Plan, p) || !sameDocument(c.ReplacementPlan, n) || e1 != nil || e2 != nil || e3 != nil || created.Before(begin) || !created.Before(end) {
 		return nil, ErrChanged
 	}
 	return &c, nil
@@ -133,7 +147,7 @@ func (s *Store) readUpdate(ctx context.Context, id string) (*UpdateView, error) 
 	} else if !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
-	v := &UpdateView{SchemaVersion: "local-skill-update-view/v1", UpdateID: id, Claim: *c, Status: "confirmed"}
+	v := &UpdateView{SchemaVersion: c.Plan.Record.Plan.wireVersion("local-skill-update-view"), UpdateID: id, Claim: *c, Status: "confirmed"}
 	removal, err := s.ReadRemoval(ctx, c.Plan.Record.InstallID)
 	if err != nil {
 		return nil, err
@@ -356,11 +370,25 @@ func (s *Store) CommitUpdate(ctx context.Context, r UpdateCommitRequest) (*Updat
 		if e = s.operationCapacity(); e != nil {
 			return nil, e
 		}
-		n, e := s.replacementPlan(*p)
+		var reference *TargetRef
+		if p.Record.Plan.SchemaVersion == planV2 {
+			old, err := s.claim(ctx, p.Record.InstallID)
+			if err != nil {
+				return nil, err
+			}
+			if _, err := s.verifyTarget(ctx, old, true); err != nil {
+				return nil, err
+			}
+			reference, e = s.advancedTargetRef(ctx, p.Record.Plan)
+			if e != nil {
+				return nil, e
+			}
+		}
+		n, e := s.replacementPlanWithTarget(*p, reference)
 		if e != nil {
 			return nil, e
 		}
-		c = &UpdateClaim{SchemaVersion: "local-skill-update-claim/v1", UpdateID: r.UpdateID, Plan: *p, ReplacementPlan: n, ActorID: r.ActorID, CreatedAt: s.now().UTC().Format(time.RFC3339Nano)}
+		c = &UpdateClaim{SchemaVersion: p.Record.Plan.wireVersion("local-skill-update-claim"), UpdateID: r.UpdateID, Plan: *p, ReplacementPlan: n, ActorID: r.ActorID, CreatedAt: s.now().UTC().Format(time.RFC3339Nano)}
 		d, e := document(c, false)
 		if e != nil {
 			return nil, e
@@ -542,7 +570,7 @@ func (s *Store) reserveUpdateReplacement(ctx context.Context, c *UpdateClaim) er
 // Final results refer to historical records; a later user operation must not
 // alter the meaning of a previously aborted or successful update.
 func (s *Store) completedUpdate(ctx context.Context, c *UpdateClaim, r *UpdateResult) (*UpdateView, error) {
-	v := &UpdateView{SchemaVersion: "local-skill-update-view/v1", UpdateID: c.UpdateID, Claim: *c, Result: r, Status: r.Status}
+	v := &UpdateView{SchemaVersion: c.Plan.Record.Plan.wireVersion("local-skill-update-view"), UpdateID: c.UpdateID, Claim: *c, Result: r, Status: r.Status}
 	at, e := time.Parse(time.RFC3339Nano, r.RecordedAt)
 	start, _ := time.Parse(time.RFC3339Nano, c.CreatedAt)
 	if r.SchemaVersion != "local-skill-update-result/v1" || r.UpdateID != c.UpdateID || r.ClaimSignature != c.Signature || r.ActorID != c.ActorID || r.RuntimeVerified || e != nil || at.Before(start) {

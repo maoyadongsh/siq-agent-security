@@ -1,0 +1,253 @@
+{
+  "schema_version": "local-skill-update-comparison/v2",
+  "record": {
+    "schema_version": "local-skill-install-record/v2",
+    "install_id": "sin-8e88b111bc616a80704c2c78c6a12ac915d03d26ad8e435cca1498862e2d976f",
+    "plan": {
+      "schema_version": "local-skill-install-plan/v2",
+      "plan_id": "sip-8e88b111bc616a80704c2c78c6a12ac915d03d26ad8e435cca1498862e2d976f",
+      "request_id": "is-dddddddddddddddddddddddddddddddd",
+      "source": {
+        "schema_version": "local-skill-import-permission-source/v1",
+        "import_id": "si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "artifact_digest": "5616f02435c352c063ab2587f17c78c40012548318a44dd1c52a88a7e387d459",
+        "analysis_sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "grant_id": "grt-si-3333333333333333333333333333333333333333333333333333333333333333",
+      "grant_revision": 0,
+      "grant_signature": "330945472e0b9f236ea9d9d06f40361c54a8c25e24f3c1e64f7d1c4dcbed2ead32ec9685bed47c1b26ae643b37d730f4f463316b43969380176b51baad61a30b",
+      "grant_permission_digest": "96cf4e302d4a87a28bcd3bf46e035d98c101f5700c37cb64219d8228e537bcc4",
+      "platform": "workbuddy",
+      "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "directory_name": "example",
+      "target_locator_digest": "e3be9ae433011f717d9d1c792d891943bb71c431e67a657015cc93486cdc29b2",
+      "target_display": "Registered project/.codebuddy/skills/example",
+      "actor_id": "human",
+      "created_at": "2026-09-11T03:00:00Z",
+      "expires_at": "2026-09-11T03:05:00Z",
+      "file_count": 2,
+      "total_bytes": 135,
+      "installed": false,
+      "runtime_verified": false,
+      "target_ref": {
+        "target_id": "sit-112b9c11595f39953c2f17b24eaae94cb9315d331382b441b411d78c6a4d1a39",
+        "scope": "project",
+        "filesystem_profile": "windows-local-drive/v1",
+        "root_locator_digest": "3a3e77126e1c3ce5a8211279d0541b2588854e9c74ff477b31417c516fe35429",
+        "root_identity_digest": "8260c6b97031c8e1a804837a800d1a8ad6743e23de754e47410d529355f1525c",
+        "config_root_identity_digest": "26eb88153e365ad6d24a97e612da7f66895c542e45e71e3a0efd4d9e470da3d6",
+        "existing_parent_relative_path": "",
+        "existing_parent_identity_digest": "8260c6b97031c8e1a804837a800d1a8ad6743e23de754e47410d529355f1525c"
+      },
+      "signature": "ad69e0e9fa1fec8a0f2878d0c02915f8a60740b3405a3e601bb5959c85cb015e504db093ef7dcc9a10896b91a16ed398883803757687240460ba0abad5a74c01"
+    },
+    "claim_signature": "720e24399aae39342c75279468550e18f2391fe948c79a8398b7098a82f0a1e7db1de8d574e8093bf3a7763008cfd576c3795d20830e209c630516009809c30b",
+    "recorded_status": "installed_unverified",
+    "operation": {
+      "schema_version": "local-skill-install-operation/v1",
+      "install_id": "sin-8e88b111bc616a80704c2c78c6a12ac915d03d26ad8e435cca1498862e2d976f",
+      "plan_id": "sip-8e88b111bc616a80704c2c78c6a12ac915d03d26ad8e435cca1498862e2d976f",
+      "claim_signature": "720e24399aae39342c75279468550e18f2391fe948c79a8398b7098a82f0a1e7db1de8d574e8093bf3a7763008cfd576c3795d20830e209c630516009809c30b",
+      "status": "installed_unverified",
+      "actor_id": "human",
+      "recorded_at": "2026-09-11T03:00:02Z",
+      "runtime_verified": false,
+      "signature": "935866dd5d44656b517f70b1faa0eaf51fd002f7d7e7467525058f2c19e984dc587b1e49cf74f8569fee699ab22ddabcb9ad7998222d89a62d0345a39f26850f"
+    }
+  },
+  "candidate_source": {
+    "schema_version": "local-skill-import-permission-source/v1",
+    "import_id": "si-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "artifact_digest": "038902ec12dd2548fa50651765a45499ad67326380199cdd32fd18c635af9c92",
+    "analysis_sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+  },
+  "previous_grant": {
+    "grant_id": "grt-si-3333333333333333333333333333333333333333333333333333333333333333",
+    "admission_id": "adm-si-03c384ab0f19fb037ed12c8458bccde23b0bf6c8319c38dad57f088982996243",
+    "skill": {
+      "skill_id": "local_dir:example@674ae54c64fa",
+      "content_hash": "674ae54c64fab0f5e2dbfad37056e6b95b902735156868071f3b58f16795b441"
+    },
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "platform": "workbuddy",
+    "facts": [
+      {
+        "fact_id": "pf-1-811cbc58",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "evi-si-95e686dd836054703645bb54d15ccb48a781dde9862e9338c6b16d8dd2dc94ff"
+        ]
+      }
+    ],
+    "default_effect": "deny",
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-si-dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "version": 1,
+      "static_domains_unavailable": []
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "approved",
+    "approved_by": {
+      "actor_type": "human",
+      "actor_id": "human",
+      "approved_at": "2026-09-11T03:00:01Z"
+    },
+    "effective_readback": null,
+    "created_at": "2026-09-11T03:00:00Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "schema_version": "grant/v2",
+    "filesystem_profile": "windows-local-drive/v1",
+    "filesystem_bindings": {},
+    "signature": "330945472e0b9f236ea9d9d06f40361c54a8c25e24f3c1e64f7d1c4dcbed2ead32ec9685bed47c1b26ae643b37d730f4f463316b43969380176b51baad61a30b"
+  },
+  "previous_revision": 0,
+  "candidate_grant": {
+    "grant_id": "grt-si-5555555555555555555555555555555555555555555555555555555555555555",
+    "admission_id": "adm-si-6cfa4bfe4b06fc8d286f1c5ba676bcffb3ba43c015fa6dde61b6ee34c43b8791",
+    "skill": {
+      "skill_id": "local_dir:example@434db58c0fc0",
+      "content_hash": "434db58c0fc0afe59a68610c0caaa45bcd6c7a86cd0e2fe111641c8804878fb6"
+    },
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "platform": "workbuddy",
+    "facts": [
+      {
+        "fact_id": "pf-1-811cbc58",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": [
+          "evi-si-95e686dd836054703645bb54d15ccb48a781dde9862e9338c6b16d8dd2dc94ff"
+        ]
+      }
+    ],
+    "default_effect": "deny",
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-si-dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "version": 1,
+      "static_domains_unavailable": []
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "approved",
+    "approved_by": {
+      "actor_type": "human",
+      "actor_id": "human",
+      "approved_at": "2026-09-11T03:00:01Z"
+    },
+    "effective_readback": null,
+    "created_at": "2026-09-11T03:00:00Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "schema_version": "grant/v2",
+    "filesystem_profile": "windows-local-drive/v1",
+    "filesystem_bindings": {},
+    "signature": "40d8bb93f9bd48c1eba312466b2b99d89b62d05085854e6d0fbdd08b51bc02905f519b47893e75c8afeecf2232317ea4cf801c7cbeba2d72b23fda766cd0a70b"
+  },
+  "candidate_revision": 0,
+  "checked_at": "2026-09-11T05:00:04Z",
+  "comparison_basis": "signed_installation_manifest",
+  "platform_changes": false,
+  "runtime_verified": false,
+  "requires_confirmation": true,
+  "content_changes": [
+    {
+      "path_display": "SKILL.md",
+      "path_digest": "0e95f5a3666031d6fac42bc6ca698b40b61648f4974c8ec355181ed4888c5c26",
+      "before": {
+        "kind": "file",
+        "sha256": "12b52e3a22d384e3cd4776d636abf309d498b3b7cfbc3f874b6d1e94df8a9d97",
+        "bytes": 110,
+        "executable": false
+      },
+      "after": {
+        "kind": "file",
+        "sha256": "e94623bc7541e3acbf6479a29148cd76e4e9beb6e6475d78d5da6b609a853b6e",
+        "bytes": 120,
+        "executable": false
+      }
+    },
+    {
+      "path_display": "references",
+      "path_digest": "07a0b0962107485c3c1375cffa0f2ed9254efe640801713a6c4a358af3d8aa00",
+      "before": null,
+      "after": {
+        "kind": "directory",
+        "sha256": "",
+        "bytes": 0,
+        "executable": false
+      }
+    },
+    {
+      "path_display": "references/guide.md",
+      "path_digest": "c6aa121458e653f2cae4c7ed6cced4eb36c52d30a12257da6e8fb523bacdca07",
+      "before": null,
+      "after": {
+        "kind": "file",
+        "sha256": "42906b7cf0624ddaa963f5227e927c3fd534ce00f60eb08e7e05726c4f8c77df",
+        "bytes": 13,
+        "executable": false
+      }
+    },
+    {
+      "path_display": "skill-manifest.json",
+      "path_digest": "c60d07e903d85a555194cdc5d5e27c020418b19a4ac1dcd9d0251a6d31cf061c",
+      "before": {
+        "kind": "file",
+        "sha256": "e40c684663e89527ace642a7aeb1b8c86352b583612bdbdb44bde37f1c90177f",
+        "bytes": 25,
+        "executable": false
+      },
+      "after": null
+    }
+  ],
+  "content_changes_total": 4,
+  "content_changes_truncated": false,
+  "permission_changes": [
+    {
+      "change": "added",
+      "rule": {
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "conditions": null,
+        "state": "declared"
+      }
+    }
+  ],
+  "permission_changes_total": 1,
+  "permission_changes_truncated": false,
+  "settings_changed": [
+    "hermes_toolset_allowlist"
+  ]
+}

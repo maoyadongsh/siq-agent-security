@@ -2,6 +2,7 @@ package adapterinstall
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
@@ -75,7 +76,8 @@ type planPayload struct {
 // into an HTTP response or CLI output. Durable recovery material is encrypted.
 type Plan struct {
 	payload      planPayload
-	instanceRoot os.FileInfo // Process-local preview binding, never recovery material.
+	instanceRoot os.FileInfo     // Process-local preview binding, never recovery material.
+	prepareCtx   context.Context // Only while preparing; never retained by Apply.
 }
 
 func (p *Plan) View() PlanView { return p.payload.View }
@@ -204,7 +206,9 @@ func (p *Plan) write(path string, raw []byte, mode uint32, purpose string) error
 			return err
 		}
 		if snapshot.Exists && !bytes.Equal(snapshot.Data, before.Data) && !jsonDocumentsEqual(snapshot.Data, before.Data) {
-			return errors.New("adapter: existing original snapshot needs review")
+			if !p.workBuddyReinstallSnapshot(path, original, snapshot) {
+				return errors.New("adapter: existing original snapshot needs review")
+			}
 		}
 		if !snapshot.Exists {
 			if err := p.add(original, fileImage{Exists: true, Data: before.Data, Mode: 0o600}, "保留首次接入前的不可变恢复副本"); err != nil {
@@ -248,6 +252,15 @@ func jsonDocumentsEqual(a, b []byte) bool {
 }
 
 func Prepare(opts Options, action string) (*Plan, error) {
+	return PrepareContext(context.Background(), opts, action)
+}
+
+// PrepareContext cancels preview work, not the later independently confirmed
+// transaction. The context is never serialized or retained in the returned plan.
+func PrepareContext(ctx context.Context, opts Options, action string) (*Plan, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	if err := opts.normalise(); err != nil {
 		return nil, err
 	}
@@ -286,6 +299,12 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		}
 	}
 	if prior != nil && prior.RuntimeIdentityID != "" {
+		if opts.Platform == WorkBuddy && opts.Instance == nil {
+			opts = WithWorkBuddyInstance(opts, opts.configRoot())
+			if prior.InstanceID != opts.Instance.ID || prior.ConfigDir != opts.Instance.ConfigDir {
+				return nil, ErrPlanChanged
+			}
+		}
 		if action == "uninstall" && opts.RuntimeIdentityID != "" && opts.RuntimeIdentityID != prior.RuntimeIdentityID {
 			return nil, ErrPlanChanged
 		}
@@ -317,11 +336,15 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		}
 	}
 	if opts.Instance != nil {
-		view.SchemaVersion = "local-adapter-plan/v2"
-		view.InstanceID = opts.Instance.ID
-		view.InstanceName = opts.Instance.Name
-		enabled := opts.NativeEnable
-		view.NativeEnable = &enabled
+		// WorkBuddy discovery may pin the legacy (including macOS) root. It
+		// must not turn that historical operation into Hermes' v2 protocol.
+		if opts.Platform != WorkBuddy || opts.RuntimeIdentityID != "" {
+			view.SchemaVersion = "local-adapter-plan/v2"
+			view.InstanceID = opts.Instance.ID
+			view.InstanceName = opts.Instance.Name
+			enabled := opts.NativeEnable
+			view.NativeEnable = &enabled
+		}
 		rec.InstanceID = opts.Instance.ID
 		rec.ConfigDir = opts.Instance.ConfigDir
 	}
@@ -331,6 +354,9 @@ func Prepare(opts Options, action string) (*Plan, error) {
 	}
 	if opts.RuntimeIdentityID != "" {
 		view.SchemaVersion = "local-adapter-plan/v3"
+		if opts.Platform == WorkBuddy {
+			view.SchemaVersion = "local-adapter-plan/v4"
+		}
 		view.RuntimeIdentityID = opts.RuntimeIdentityID
 		rec.RuntimeIdentityID = opts.RuntimeIdentityID
 		if action == "uninstall" {
@@ -338,6 +364,8 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		}
 	}
 	p := &Plan{payload: planPayload{View: view, Options: opts, ExpectedRevision: rev, Record: rec, Files: []fileChange{}, Inputs: map[string]fileImage{}, BinaryDigest: binaryDigest}}
+	p.prepareCtx = ctx
+	defer func() { p.prepareCtx = nil }()
 	if opts.Instance != nil {
 		p.instanceRoot, err = inspectInstanceRoot(opts.Instance)
 		if err != nil {
@@ -352,6 +380,9 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		err = p.prepareUninstall()
 	}
 	if err != nil {
+		return nil, err
+	}
+	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
 	if action == "install" {
@@ -373,6 +404,9 @@ func Prepare(opts Options, action string) (*Plan, error) {
 		return nil, err
 	}
 	p.payload.View.PlanDigest = digest
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	return p, nil
 }
 
@@ -417,6 +451,9 @@ func (p *Plan) prepareInstall() error {
 		}
 		path := filepath.Join(plugin, "config.json")
 		cfg := map[string]any{"endpoint": o.Endpoint, "token_path": filepath.Join(o.StateDir, "token"), "enforcement_mode": o.Mode, "timeout_s": 5}
+		if o.Platform == Hermes && runtime.GOOS == "windows" {
+			cfg["timeout_s"] = 20
+		}
 		if o.Platform == Hermes {
 			previous, err := p.planJSON(path)
 			if err != nil {
@@ -512,6 +549,11 @@ func (p *Plan) prepareInstall() error {
 		}
 		return p.write(path, encodePlanJSON(doc), 0o600, "登记本插件的加载路径与启用项；保留其他平台设置")
 	case CodeBuddy, WorkBuddy:
+		if o.Platform == WorkBuddy {
+			if err := p.prepareWorkBuddyManagedConfig(); err != nil {
+				return err
+			}
+		}
 		path := filepath.Join(root, "settings.json")
 		doc, err := p.planJSON(path)
 		if err != nil {
@@ -525,13 +567,20 @@ func (p *Plan) prepareInstall() error {
 			hooks = map[string]any{}
 		}
 		command := hookCommand(o.Binary, o.Platform, o.StateDir)
+		if o.Platform == WorkBuddy && o.RuntimeIdentityID != "" {
+			command = workBuddyManagedCommand(o.Binary, o)
+		}
 		for _, event := range []string{"PreToolUse", "PostToolUse"} {
 			if v, exists := hooks[event]; exists {
 				if _, ok := v.([]any); !ok {
 					return errors.New("adapter: invalid host hook list")
 				}
 			}
-			hooks[event] = upsertHook(hooks[event], command, o.Platform, p.payload.Record.Binary, o.StateDir)
+			if o.Platform == WorkBuddy && o.RuntimeIdentityID != "" {
+				hooks[event] = upsertWorkBuddyManagedHook(hooks[event], command, o, p.payload.Record.Binary)
+			} else {
+				hooks[event] = upsertHook(hooks[event], command, o.Platform, p.payload.Record.Binary, o.StateDir)
+			}
 		}
 		doc["hooks"] = hooks
 		purpose := "登记工具执行前和执行后的 SIQ 钩子；保留其他设置"

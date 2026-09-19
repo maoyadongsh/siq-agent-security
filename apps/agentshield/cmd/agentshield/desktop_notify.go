@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"io"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/notify"
@@ -19,11 +21,7 @@ func desktopNotifier(cfg state.Config) notify.Notifier {
 	if cmd := strings.Fields(cfg.DesktopNotifyCommand); len(cmd) > 0 {
 		return notify.CommandNotifier{Bin: cmd[0], Args: cmd[1:], Timeout: 5 * time.Second}
 	}
-	argv, ok := notify.DefaultCommand(runtime.GOOS)
-	if !ok {
-		return nil
-	}
-	return notify.CommandNotifier{Bin: argv[0], Args: argv[1:], Timeout: 5 * time.Second}
+	return notify.DefaultNotifier(runtime.GOOS, cfg.Port)
 }
 
 // pendingConfirmations counts confirmations that are actionable right now.
@@ -54,13 +52,37 @@ func startDesktopNotify(cfg state.Config, eng *receipt.Engine, logf func(string,
 		logf("desktop notifications enabled but no notifier available on %s and none configured; confirmation inbox remains fully usable", runtime.GOOS)
 		return nil
 	}
+	startupDelay := time.Duration(0)
+	if runtime.GOOS == "windows" {
+		startupDelay = 15 * time.Second
+	}
 	d := notify.NewDispatcher(pendingConfirmations(eng), notifier, notify.DispatcherOptions{
+		StartupDelay: startupDelay,
 		Log: func(err error) {
 			logf("desktop notification delivery failed (will retry after coalesce window): %v", err)
 		},
 	})
 	ctx, cancel := context.WithCancel(context.Background())
-	go d.Run(ctx)
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		d.Run(ctx)
+	}()
 	logf("desktop notification dispatcher started (count-only, coalesce 15s)")
-	return cancel
+	var closeOnce sync.Once
+	return func() {
+		closeOnce.Do(func() {
+			cancel()
+			if closer, ok := notifier.(io.Closer); ok {
+				if err := closer.Close(); err != nil {
+					logf("desktop notification cleanup did not finish")
+				}
+			}
+			select {
+			case <-done:
+			case <-time.After(5 * time.Second):
+				logf("desktop notification dispatcher shutdown timed out")
+			}
+		})
+	}
 }

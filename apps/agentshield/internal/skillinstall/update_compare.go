@@ -268,7 +268,7 @@ func (s *Store) compareUpdate(ctx context.Context, id string, req UpdateCompareR
 	if candidate.ArtifactDigest != source.ArtifactDigest || candidate.AnalysisSHA256 != source.AnalysisSHA256 {
 		return nil, ErrChanged
 	}
-	out := &UpdateComparison{SchemaVersion: "local-skill-update-comparison/v1", Record: *record, CandidateSource: source, PreviousGrant: *old, PreviousRevision: oldRevision, CandidateGrant: *next, CandidateRevision: nextRevision, ComparisonBasis: "signed_installation_manifest", RequiresConfirmation: true, ContentChanges: []UpdateContentChange{}, PermissionChanges: []UpdatePermissionChange{}, SettingsChanged: []string{}}
+	out := &UpdateComparison{SchemaVersion: record.Plan.wireVersion("local-skill-update-comparison"), Record: *record, CandidateSource: source, PreviousGrant: *old, PreviousRevision: oldRevision, CandidateGrant: *next, CandidateRevision: nextRevision, ComparisonBasis: "signed_installation_manifest", RequiresConfirmation: true, ContentChanges: []UpdateContentChange{}, PermissionChanges: []UpdatePermissionChange{}, SettingsChanged: []string{}}
 	out.compareContents(updateTree(installed.Directories, installed.Files), updateTree(candidate.Directories, candidate.Files))
 	if err := out.comparePermissions(); err != nil {
 		return nil, ErrChanged
