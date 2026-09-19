@@ -123,28 +123,6 @@
       ]
     },
     {
-      "id": "frontier-references-on-agent-security",
-      "paths": [
-        "Frontier References on Agent Security/"
-      ],
-      "kind": "literature",
-      "owner_role": "research maintainers",
-      "strategy": "legacy directory keeps migration README only; originals now under research/literature; old commit preserves exact historic paths",
-      "consumers": [
-        "research/literature/catalog.json",
-        "research/literature/README.md",
-        "research/README.md",
-        "README.md",
-        "LICENSES/scope.json",
-        "THIRD_PARTY_NOTICES.md",
-        "historical Linux taskbook refers to legacy directory (README retained)"
-      ],
-      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
-      "validation": [
-        "file hashes; source and rights statuses"
-      ]
-    },
-    {
       "id": "scripts",
       "paths": [
         "scripts/"
@@ -458,21 +436,6 @@
       "path": "AGENTS.md",
       "action": "edit",
       "source_blob": "83fcab0ed179b0bbf2c71751f6bdb878a63577ea",
-      "reason": "navigation, current status or checks; preserve runtime and published payload",
-      "consumers": [
-        "repository users",
-        "existing metadata/CI checks"
-      ],
-      "validation": [
-        "repository guard",
-        "metadata/capability/ledger checks",
-        "diff and secret scan"
-      ]
-    },
-    {
-      "path": "docs/personal-experience-current.md",
-      "action": "edit",
-      "source_blob": "2bb1643dd9dc448c648fd390090f59f6bb59bd02",
       "reason": "navigation, current status or checks; preserve runtime and published payload",
       "consumers": [
         "repository users",
@@ -2063,16 +2026,16 @@
     },
     {
       "path": "Frontier References on Agent Security/README.md",
-      "action": "add",
-      "reason": "explain new literature ownership and compatibility boundary",
+      "action": "delete",
+      "reason": "Temporary migration directory retired after literature moved; user requested obsolete path cleanup",
       "consumers": [
-        "old directory links",
-        "research readers"
+        "research/literature/README.md now links fixed original Git snapshot"
       ],
       "validation": [
-        "link guard",
-        "license scope review"
-      ]
+        "retired path absent; original Git blob; navigation and frozen guards"
+      ],
+      "source_commit": "0b2c8135af39071e82effc339cdf88dfd559f9ac",
+      "source_blob": "ded00a5a3924af0af7f9e9dee4d3adf2e24c7512"
     },
     {
       "path": "research/literature/papers/README.md",
@@ -2086,6 +2049,54 @@
         "link guard",
         "license scope review"
       ]
+    },
+    {
+      "path": "docs/personal-experience-current.md",
+      "action": "edit",
+      "reason": "Replace obsolete current instructions with concise navigation and fixed original text",
+      "consumers": [
+        "docs/development/history.md",
+        "existing taskbook and platform links"
+      ],
+      "validation": [
+        "no in-repository old anchor consumers",
+        "original full Git commit links",
+        "navigation and frozen guards"
+      ],
+      "source_commit": "0b2c8135af39071e82effc339cdf88dfd559f9ac",
+      "source_blob": "29661d0257dc31d0239edbff97dedbbbd9fbf90a"
+    },
+    {
+      "path": "docs/windows-branch-pr-status-20260918.md",
+      "action": "edit",
+      "reason": "Replace obsolete current instructions with concise navigation and fixed original text",
+      "consumers": [
+        "docs/development/history.md",
+        "existing taskbook and platform links"
+      ],
+      "validation": [
+        "no in-repository old anchor consumers",
+        "original full Git commit links",
+        "navigation and frozen guards"
+      ],
+      "source_commit": "0b2c8135af39071e82effc339cdf88dfd559f9ac",
+      "source_blob": "553041d968a52b238a412c44cda03398710a4abd"
+    },
+    {
+      "path": "docs/windows-signing-handoff-20260918.md",
+      "action": "edit",
+      "reason": "Replace obsolete current instructions with concise navigation and fixed original text",
+      "consumers": [
+        "docs/development/history.md",
+        "existing taskbook and platform links"
+      ],
+      "validation": [
+        "no in-repository old anchor consumers",
+        "original full Git commit links",
+        "navigation and frozen guards"
+      ],
+      "source_commit": "0b2c8135af39071e82effc339cdf88dfd559f9ac",
+      "source_blob": "ecb49ced3b6e49ee7e5b2ab52857964743ace16a"
     }
   ],
   "frozen": {
@@ -2122,8 +2133,11 @@
     "docs/evidence/repository-reorganization-closure-20260919/README.md",
     "skills/siq-agent-security/SKILL.md",
     "docs/evidence/repository-reorganization-final-20260919/README.md",
-    "Frontier References on Agent Security/README.md",
-    "THIRD_PARTY_NOTICES.md"
+    "THIRD_PARTY_NOTICES.md",
+    "AGENTS.md",
+    "docs/personal-experience-current.md",
+    "docs/windows-branch-pr-status-20260918.md",
+    "docs/windows-signing-handoff-20260918.md"
   ],
   "navigation_globs": [
     "docs/development/*.md",

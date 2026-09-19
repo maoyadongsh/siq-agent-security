@@ -63,7 +63,9 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 
 用户已要求以仓库架构调整方案为持续目标，允许在本仓库实施导航、索引、路径守卫与发行工具的适用 RA 批次。执行入口为 [docs/development/current.md](docs/development/current.md)，整理进度为 [RA 台账](docs/development/reorganization-progress.md)。历史阶段指令按其冻结对象和授权周期适用，不把旧 V5 停止开发句子覆盖本次明确授权；原安全不变量、历史签名与证据保护继续适用。产品功能、平台支持与发行身份不由目录整理自动改变。工作树删除不属于本轮范围。
 
-## 当前开发模板
+以下阶段记录只说明当时的范围、授权与冻结对象；当前任务从上方开发导航进入，不把历史“当前目标”或旧分支指令应用到新一轮开发。
+
+## 历史开发模板（V5 比赛冻结周期）
 
 当前目标为 [Final Release & Submission Freeze V5 原文](docs/hackathon/final-release-requirements-v5.md)。
 从最新 main 创建 `codex/hackathon-final-release-v5`，仅允许文档、发布工具、证据与治理准备，以及有负向测试证明的真实 P0 修复。
@@ -73,10 +75,10 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 未经明确 publisher / governance authorization 不发布或改仓库设置，准备可审阅材料并记录 external_manual。
 历史 V4/V3/V1 需求与证据保留，V5 原文覆盖冲突的分支、状态和提交口径。
 
-## 当前研究开源周期（2026-09-08）
+## 历史研究开源授权（2026-09-08）
 
 用户已要求直接实施研究开源，并确认自有代码和原创研究材料属于本人。研究分支 `codex/research-open-source-r1` 基于 V5 文档提交，执行 docs/open-source-research-plan-20260908.md；实际状态见 docs/research/operations-20260908.md 和任务台账。此授权覆盖许可、社区文件、仓库治理、远端提交和研究复现准备，不重复套用上方 V5 的未授权占位状态。V5 比赛源码、制品、视频与原分母仍冻结，不改 runtime 架构。新制品必须有新身份，不伪造正式签名、DOI、外部复现或论文接受。
 
-## 当前个人体验与团队管理开发周期（2026-09-10）
+## 历史个人体验与团队管理授权（2026-09-10）
 
 用户已明确要求以 [个人体验与局域网团队任务书](docs/personal-experience-lan-team-development-taskbook-20260910-145507.md) 为持续目标实施并落盘。此新周期允许在当前项目内增量修改规格、合同、代码、测试和交付工具，不把旧 V5 停止功能开发要求误用于本次已授权工作；原比赛和发布快照仍冻结。任务进度与证据见 [开发台账](docs/personal-experience-development-progress-20260910.md)。先个人 UX-000–015，后团队 LAN-001–006；缺少真实 OS/平台证据的项不得记为通过。不得擅自提交、推送、发布或修改远端治理设置。常规实现选择按已确认范围自主推进。

@@ -47,4 +47,4 @@
 
 ## 全文归位与引用兼容
 
-35 份 PDF 已原字节迁入 [papers/](papers/README.md)，XLSX 保留于本目录作为历史清单。`catalog.json` 是维护入口，`original_path` 保留旧路径，`path` 为现位置；不会同时维护第二份全文。旧根目录仅留[迁移说明](<../../Frontier References on Agent Security/README.md>)，旧单文件 main URL 可改用固定原提交链接。未知来源/作者/权属/阅读状态不会因归位而变为已核实。
+35 份 PDF 已原字节迁入 [papers/](papers/README.md)，XLSX 保留于本目录作为历史清单。`catalog.json` 是维护入口，`original_path` 保留旧路径，`path` 为现位置；不会同时维护第二份全文。旧根目录及临时迁移说明已清理；历史路径可从[原始目录快照](https://github.com/maoyadongsh/siq-agent-security/tree/1173042275ae994faa4ed1c99cee58f7d541cb1c/Frontier%20References%20on%20Agent%20Security)访问，旧 main URL 不再提供兼容入口。未知来源/作者/权属/阅读状态不会因归位而变为已核实。
