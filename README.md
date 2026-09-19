@@ -14,7 +14,7 @@
   <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
   <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml?query=branch%3Amain"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml/badge.svg?branch=main" alt="Research reproduction · main" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/code-Apache--2.0-001840?style=flat" alt="Project-owned code: Apache-2.0" /></a>
-  <a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1"><img src="https://img.shields.io/badge/release-source%20prerelease-7c5a0c?style=flat" alt="Source prerelease" /></a>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0-rc.1"><img src="https://img.shields.io/badge/release-0.3.0--rc.1%20signed-7c5a0c?style=flat" alt="Signed package prerelease 0.3.0-rc.1" /></a>
 </p>
 
 <p align="center">
@@ -38,7 +38,7 @@ SIQ Agent Security 将用户授权、参数来源、工具执行和实际效果�
 
 **项目定位：研究驱动、授权独立、效果可核验的智能体安全管控。** 围绕 Agent 与 Skill 从发现、准入、授权、运行到更新和退出的生命周期，SIQ 将前沿智能体安全研究中的来源约束、运行时权限检查与可验证证据转化为实际产品机制，并针对 **NVIDIA DGX Spark 本地 AI 环境与 NVIDIA OpenShell 执行后端开展深度适配**。目标是在保持智能体任务规划能力的同时，让用户和组织能够界定权限、确认高风险动作、追溯实际结果。
 
-> **开发源码与发行包（2026-09-19）**：`skills/siq-agent-security/` 是开发源码，Windows junction 修复可以随普通 PR 合并，不需要发布私钥。该目录不再附带失效的旧版发行清单；从 GitHub 复制源码不等于取得已签名可安装包，bootstrap 缺少清单时仍拒绝启动。开发调试可按下文从源码构建 Go 客户端；正式安装包须对实际源码与二进制签名。历史签名仅作[验签回归样本](apps/agentshield/testdata/releases/README.md)，不代表新版本已发布。详见[源码与签名发行边界](docs/skill-source-release-boundary-20260919.md)。
+> **签名安装包（2026-09-19）**：[0.3.0-rc.1 预发布版](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0-rc.1) 已提供完整离线包、签名 Skill 与四目标二进制，基于集成主线 `58ab22e`，使用原发行密钥签发。请选择 Release 中的安装资产；GitHub 自动生成的源码压缩包及 `skills/siq-agent-security/` 仍是开发源码。Linux ARM64 已通过实际安装链路和篡改拒绝验证，其他目标本次仅完成构建与签名摘要核对。见[安装说明](docs/signed-release-packaging.md)和[签发与发布验证记录](docs/evidence/releases/0.3.0-rc.1/README.md)。
 
 ## 当前产品方向与支持状态
 

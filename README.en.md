@@ -12,7 +12,7 @@
   <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI · main" /></a>
   <a href="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml"><img src="https://github.com/maoyadongsh/siq-agent-security/actions/workflows/research.yml/badge.svg?branch=main" alt="Research reproduction · main" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/code-Apache--2.0-001840?style=flat" alt="Project-owned code: Apache-2.0" /></a>
-  <a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/research-v0.1.0-rc.1"><img src="https://img.shields.io/badge/release-source%20prerelease-7c5a0c?style=flat" alt="Source prerelease" /></a>
+  <a href="https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0-rc.1"><img src="https://img.shields.io/badge/release-0.3.0--rc.1%20signed-7c5a0c?style=flat" alt="Signed package prerelease 0.3.0-rc.1" /></a>
 </p>
 
 <p align="center">
@@ -28,6 +28,8 @@
 SIQ Agent Security connects user authority, parameter provenance, tool execution and observed effects into an inspectable evidence chain. The Agent plans tasks and selects Skills. The SIQ runtime checks actions against trusted authority and determines task completion from independently collected effect evidence.
 
 The project serves researchers, Agent tool and adapter developers, and platform teams evaluating agent permission controls. The initial demonstration runs on ordinary Linux with deterministic model fixtures, without API keys, a GPU or the enterprise control plane.
+
+> **Signed installation package (2026-09-19):** [0.3.0-rc.1 prerelease](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0-rc.1) provides an offline bundle, signed Skill and four target binaries, built from integrated main commit `58ab22e` and signed with the existing publisher key. Download the Release installation assets; GitHub automatic source archives and `skills/siq-agent-security/` remain development source. Linux ARM64 passed native bootstrap and tamper-rejection checks; the other targets have build and signature-pin verification only. See [installation instructions](docs/signed-release-packaging.md) and [signing/publication evidence](docs/evidence/releases/0.3.0-rc.1/README.md).
 
 ## Product direction and support status
 

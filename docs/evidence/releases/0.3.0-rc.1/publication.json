@@ -1,0 +1,55 @@
+{
+  "version": "0.3.0-rc.1",
+  "published": true,
+  "prerelease": true,
+  "checked_at_utc": "2026-09-19T11:48:13.830718+00:00",
+  "release_url": "https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0-rc.1",
+  "tag_source_sha": "58ab22e882452116444eb00e47e14cecdf98772a",
+  "all_assets_equal_local_verified_candidate": true,
+  "official_signature_and_skill_content_verified": true,
+  "all_four_signed_binary_pins_verified": true,
+  "unauthenticated_checksum_download_verified": true,
+  "assets": [
+    {
+      "asset": "SHA256SUMS",
+      "sha256": "a8f86e68d7d129e288ebdbc33e57659ef1e4721ca63c793217fc9c000333819e",
+      "bytes": 691
+    },
+    {
+      "asset": "SOURCE-INFO.json",
+      "sha256": "1835bbe33a24693d67da7186b17a072fe3057dd9049ebb3c32fa179e29b88d07",
+      "bytes": 25590
+    },
+    {
+      "asset": "siq-agent-security-0.3.0-rc.1-bundle.zip",
+      "sha256": "8798594a13f2acb70343d3b4292006e974baf207955ec8aa737203cec62a9b14",
+      "bytes": 46841425
+    },
+    {
+      "asset": "siq-agent-security-darwin-arm64",
+      "sha256": "de975de6fb893713a77d5ba40f82db6920e7194adb994eae8d709b22fb90e42a",
+      "bytes": 18999474
+    },
+    {
+      "asset": "siq-agent-security-linux-amd64",
+      "sha256": "bdcfb037066be3525042eec62ec0cd79cd82babdb184814404c9e13f9dd120a4",
+      "bytes": 19968162
+    },
+    {
+      "asset": "siq-agent-security-linux-arm64",
+      "sha256": "186332339a23e4c0dfd5fb11c20e57d426e124ff3dc84ceab1315694f0f716e9",
+      "bytes": 18808994
+    },
+    {
+      "asset": "siq-agent-security-skill-0.3.0-rc.1.zip",
+      "sha256": "18d814f63876135a7cc9c1aaedd94deb4c9c32108325a71d2cb2e85a80ef018c",
+      "bytes": 31415
+    },
+    {
+      "asset": "siq-agent-security-windows-amd64.exe",
+      "sha256": "804994374676e22dabbef63d9b9309249445014264e1da1765356c13dff45283",
+      "bytes": 20549120
+    }
+  ],
+  "verified_linux_arm64_download_and_staging_from_signed_public_url": true
+}

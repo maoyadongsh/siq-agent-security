@@ -1357,6 +1357,14 @@ SKILL.md 正文结构：`# siq-agent-security Skill` / 简介 / When to Use / Pr
 
 操作清单（tag 未切前 URL 对象不存在；bootstrap 不下载）：[`agentshield-release-checklist-v1.md`](./agentshield-release-checklist-v1.md)。哈希核对脚本 `scripts/agentshield-release-check.sh` 不需要种子；重签需要 `SIQ_AGENT_SECURITY_RELEASE_SEED`。矩阵不得出现 `supported` 行。
 
+#### 5.2.1 固定源码的发行打包（2026-09-19）
+
+`scripts/release/package.py` 从显式完整 Git commit 导出构建所需的跟踪文件，不复制工作树、历史 fixture 清单、私有状态或论文。隔离重建 local UI，要求生成物与该提交中的 embed 字节一致，再以显式版本构建四目标及本机验证器。构建和依赖安装子进程不继承发行种子；种子只传给显式 `--sign` 的 `release-manifest` 子进程。
+
+默认只生成注明 unsigned 的候选，不生成可安装 Skill ZIP。签名模式必须使用原内置信任根，生成 v3 client-compatible 清单后，先执行 Go 官方根验签、Skill 内容校验及四目标摘要/大小/URL 核对，再生成完整离线包及可分发 Skill ZIP。缺密钥、错密钥、目标缺失、内容变化、旧版 URL 或 UI 源/产物不一致均失败，不修改信任根、不覆盖已有输出、不把候选标成已发布。Skill frontmatter 的发行版本仅在暂存副本更新；main 仍为开发源码。
+
+完整包包含四目标二进制、实际 Skill 与清单、许可和操作说明；独立 Skill ZIP 可在显式允许下载时获取同一签名清单固定的二进制。签名保证的范围是清单绑定的 Skill 与二进制，不将未签名校验和或源码元数据冒称发行者认证。打包不会启动服务、安装宿主适配器、操作日常状态、上传 Release 或提升平台支持等级。跨平台安装/升级、Apple 签名公证等门槛继续独立记录。
+
 ### 5.3 分发仓库
 
 不新开（ADR-011 D5）。若市场要求根目录即 Skill，由 CI 镜像 `skills/siq-agent-security/` 到分发仓，源码不迁出。

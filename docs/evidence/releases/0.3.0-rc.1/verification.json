@@ -1,0 +1,64 @@
+{
+  "version": "0.3.0-rc.1",
+  "source_sha": "58ab22e882452116444eb00e47e14cecdf98772a",
+  "official_signature_verified": true,
+  "host": "linux/arm64",
+  "checks": [
+    {
+      "check": "official_signature_skill_and_native_binary",
+      "passed": true
+    },
+    {
+      "check": "changed_skill_rejected",
+      "passed": true
+    },
+    {
+      "check": "changed_binary_rejected",
+      "passed": true
+    },
+    {
+      "check": "changed_signed_manifest_rejected",
+      "passed": true
+    },
+    {
+      "check": "wrong_publisher_rejected",
+      "passed": true
+    },
+    {
+      "check": "missing_manifest_rejected",
+      "passed": true
+    },
+    {
+      "check": "old_manifest_cannot_authorize_new_skill",
+      "passed": true
+    },
+    {
+      "check": "go_official_trust_root_verification",
+      "passed": true
+    },
+    {
+      "check": "native_binary_version",
+      "passed": true
+    },
+    {
+      "check": "all_published_asset_checksums",
+      "passed": true
+    },
+    {
+      "check": "signed_bundle_bootstrap_isolated_linux_arm64",
+      "passed": true
+    },
+    {
+      "check": "embedded_console_from_signed_service",
+      "passed": true
+    },
+    {
+      "check": "signed_service_graceful_stop",
+      "passed": true
+    }
+  ],
+  "other_os_native_installation": "not_run",
+  "published": false,
+  "bundle_sha256": "8798594a13f2acb70343d3b4292006e974baf207955ec8aa737203cec62a9b14",
+  "release_payload_secret_scan": "passed: gitleaks configured text scan; raw/base64/hex publisher seed absent from every asset and decompressed ZIP entry"
+}

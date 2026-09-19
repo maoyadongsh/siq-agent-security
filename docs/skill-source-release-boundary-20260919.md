@@ -35,3 +35,7 @@
 #80/#81/#82 的 Writer、迁移、DACL 修复和 #83 的 Windows 资源事实、宿主接入、客户端生命周期已经进入 main；#90 补齐 junction 验证器与 Go/Python 内容哈希回归。Windows OpenClaw 的 WSL Agent、Hermes 原生 CLI、WorkBuddy 原生最小读写证据按原报告保留，不扩大为所有运行模式均已验收。未推送的协作者工作不包含在本次合并中。#68 云开发环境继续排除。
 
 旧报告的“待签名才能合并”是此前处理状态，本决策取代该源码合并限制；正式新发行签名仍待维护者单独完成。历史证据与已冻结比赛包不重写。
+
+## 后续签发进展（2026-09-19）
+
+上述“本次合并不签发”和“待维护者完成”描述的是源码合并时状态。随后依据用户要求，已从集成主线 `58ab22e` 用原发行密钥签发 `0.3.0-rc.1`，完整离线包及 Skill ZIP 通过官方根验证，Linux ARM64 最终解压包通过真实 bootstrap 和负向校验。现已按用户授权发布为 [GitHub 预发布版](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0-rc.1)，八个资产下载回读与本地候选一致并通过验签；其他目标原生安装与稳定版验收仍未完成。详见[签发证据](evidence/releases/0.3.0-rc.1/README.md)与[固定源码打包工具](signed-release-packaging.md)。此进展不改变 main 的开发源码身份，也不改写历史发行样本。

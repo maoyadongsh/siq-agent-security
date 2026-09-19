@@ -1,0 +1,634 @@
+{
+  "schema_version": "siq-binary-release-preparation/v1",
+  "source_sha": "58ab22e882452116444eb00e47e14cecdf98772a",
+  "version": "0.3.0-rc.1",
+  "publisher_manifest_verified": true,
+  "published": false,
+  "signature_scope": "Skill content and four binary pins",
+  "platform_installation_acceptance": "not_run",
+  "ui_matches_committed_embed": true,
+  "skill_self_admission": "admit_with_conditions",
+  "go_version": "go version go1.26.5 linux/arm64",
+  "node_version": "v22.22.2",
+  "packaging_tool_sha256": "576f5aea418a2c89eedd20d48e399d8531c61661c160c900c5ee9a766b5005a2",
+  "staged_skill_changes": [
+    "SKILL.md frontmatter version; historical manifest excluded before signing"
+  ],
+  "files": {
+    "LICENSE": {
+      "sha256": "074e6e32c86a4c0ef8b3ed25b721ca23aca83df277cd88106ef7177c354615ff",
+      "bytes": 10280,
+      "executable": false
+    },
+    "LICENSES/CC-BY-4.0.txt": {
+      "sha256": "d557539df68e771cc1eedcc91d13f70fca930e508d11eedcafa4b15db49e3744",
+      "bytes": 17023,
+      "executable": false
+    },
+    "LICENSES/Go-BSD-3-Clause.txt": {
+      "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+      "bytes": 1453,
+      "executable": false
+    },
+    "LICENSES/README.md": {
+      "sha256": "500df100e50fe44f1f23d6131d38c92e259788a6cc0146fcbe624d6cf0e25e8e",
+      "bytes": 1888,
+      "executable": false
+    },
+    "LICENSES/scope.json": {
+      "sha256": "f35ea5af01ceb16cf57491a32acf9bc2a6819e97d5a3169d4c72a7700220f291",
+      "bytes": 1531,
+      "executable": false
+    },
+    "LICENSES/third-party/@braintree__sanitize-url-7.1.0--package__LICENSE": {
+      "sha256": "0984740e0c3d725c8044dec7edcefe1dbce180ef5a7bc710c251e19607000158",
+      "bytes": 1066,
+      "executable": false
+    },
+    "LICENSES/third-party/@chevrotain__cst-dts-gen-11.0.3--package__LICENSE.txt": {
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "executable": false
+    },
+    "LICENSES/third-party/@chevrotain__gast-11.0.3--package__LICENSE.txt": {
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "executable": false
+    },
+    "LICENSES/third-party/@chevrotain__regexp-to-ast-11.0.3--package__LICENSE.txt": {
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "executable": false
+    },
+    "LICENSES/third-party/@chevrotain__utils-11.0.3--package__LICENSE.txt": {
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "executable": false
+    },
+    "LICENSES/third-party/@fontsource__dm-serif-display-5.3.0--LICENSE": {
+      "sha256": "e9d4ced9825bf03a6b634c37fe8ae974f6d1b80fbb0bd3ae9b089987e4dc541b",
+      "bytes": 4599,
+      "executable": false
+    },
+    "LICENSES/third-party/@fontsource__inter-5.3.0--LICENSE": {
+      "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345",
+      "bytes": 4477,
+      "executable": false
+    },
+    "LICENSES/third-party/@fontsource__noto-serif-sc-5.3.0--LICENSE": {
+      "sha256": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+      "bytes": 4314,
+      "executable": false
+    },
+    "LICENSES/third-party/@fontsource__playfair-display-5.3.0--LICENSE": {
+      "sha256": "c052aafd2a71e90bcee6e69f475029d430a10d548c08ffcae350171f0e9668b1",
+      "bytes": 4630,
+      "executable": false
+    },
+    "LICENSES/third-party/@iconify__utils-2.1.33--package__license.txt": {
+      "sha256": "a86793ac023162ce98b91899601c15f6712f44943163c4f92a0a4bf89152b3bf",
+      "bytes": 1083,
+      "executable": false
+    },
+    "LICENSES/third-party/chevrotain-11.0.3--package__LICENSE.txt": {
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "executable": false
+    },
+    "LICENSES/third-party/chevrotain-allstar-0.3.1--package__LICENSE": {
+      "sha256": "1db2cfbc7ce5fa3b82699b4ac4badce8984084d25b5308ece00f5c9b1381a0a5",
+      "bytes": 1068,
+      "executable": false
+    },
+    "LICENSES/third-party/cookie-1.1.1--LICENSE": {
+      "sha256": "c02110eedc16c7114f1a9bdc026c65626ce1d9c7e27fd51a8e0feee8a48a6858",
+      "bytes": 1175,
+      "executable": false
+    },
+    "LICENSES/third-party/cose-base-1.0.3--package__LICENSE": {
+      "sha256": "5fb3cf4a14c3c5af6e473a192df8bca10c77754e3a0c6492c79fb92a76a5478a",
+      "bytes": 1081,
+      "executable": false
+    },
+    "LICENSES/third-party/cose-base-2.2.0--package__LICENSE": {
+      "sha256": "5fb3cf4a14c3c5af6e473a192df8bca10c77754e3a0c6492c79fb92a76a5478a",
+      "bytes": 1081,
+      "executable": false
+    },
+    "LICENSES/third-party/cytoscape-3.30.2--package__LICENSE": {
+      "sha256": "a29c0d78a54de204b78357976c3d272a573b8592d0478b9db07af3f1da31a65a",
+      "bytes": 1082,
+      "executable": false
+    },
+    "LICENSES/third-party/cytoscape-3.30.2--package__license-update.js": {
+      "sha256": "dc621a910b0a2312e3c3db1cf281d93c6170ccc7e69a55d6ca782afe621473e9",
+      "bytes": 1255,
+      "executable": false
+    },
+    "LICENSES/third-party/cytoscape-cose-bilkent-4.1.0--package__LICENSE": {
+      "sha256": "440fc58a56a12814e417d2b341da89b050da052dc75bdb235607d37ec5fe74ef",
+      "bytes": 1084,
+      "executable": false
+    },
+    "LICENSES/third-party/cytoscape-fcose-2.2.0--package__LICENSE": {
+      "sha256": "2837634f403949215760fcdd2fa1ed0c64875d02099ecc8318c704b852f1421d",
+      "bytes": 1079,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-7.9.0--package__LICENSE": {
+      "sha256": "3e6849627f74ff73c257a3ae1efb574015d94fc1035c05ec3c15805165efcbc4",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-array-2.12.1--package__LICENSE": {
+      "sha256": "0747bebeb06b10954913149be9b9a8bdf6fad3e6fdcbd9f9524e7a94c13d2cea",
+      "bytes": 1475,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-array-3.2.4--package__LICENSE": {
+      "sha256": "3e6849627f74ff73c257a3ae1efb574015d94fc1035c05ec3c15805165efcbc4",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-axis-3.0.0--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-brush-3.0.0--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-chord-3.0.1--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-color-3.1.0--package__LICENSE": {
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-contour-4.0.2--package__LICENSE": {
+      "sha256": "e51cba0e4fa1d8c078e15319868f2b90188f413f9ce9dac1043b62db32901e93",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-delaunay-6.0.4--package__LICENSE": {
+      "sha256": "582c3022bd01942336095f92b58a90b1be624dc547d987555c6c956512dd24c1",
+      "bytes": 757,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-dispatch-3.0.1--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-drag-3.0.0--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-dsv-3.0.1--package__LICENSE": {
+      "sha256": "7842a82012622e5a37bfe4f6c1b67cd3bae6350716b5bf87f36cea0bdc1319dc",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-ease-3.0.1--package__LICENSE": {
+      "sha256": "b989d9085148d21ff64a75e14462aefa06b2589a55553b07b1460c70081c7d08",
+      "bytes": 1504,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-fetch-3.0.1--package__LICENSE": {
+      "sha256": "ffdc17dc9040006bddeb891c95bfbb492e86d6bc64a4a4233666febab1be35e0",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-force-3.0.0--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-format-3.1.0--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-geo-3.1.1--package__LICENSE": {
+      "sha256": "3e3edc1224eec9c39cd26491a21304a62883c1e5b6a65c5283ccc7a6cc94baee",
+      "bytes": 1857,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-hierarchy-3.1.2--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-interpolate-3.0.1--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-path-1.0.9--package__LICENSE": {
+      "sha256": "b8265327ab678f554800e71188b1cc6b1ff57522e292d2b1c0be66f27cf328b6",
+      "bytes": 1475,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-path-3.1.0--package__LICENSE": {
+      "sha256": "a09b0d6d76e768fca2085fad05743ee81ddd11946bcda160a3cf5e1081a479aa",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-polygon-3.0.1--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-quadtree-3.0.1--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-random-3.0.1--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-sankey-0.12.3--package__LICENSE": {
+      "sha256": "2bf785e778d67a4f5266cffcd4f2cc5bb98cde73791666e7efeb8002ba32dfa5",
+      "bytes": 1471,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-scale-4.0.2--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-scale-chromatic-3.1.0--package__LICENSE": {
+      "sha256": "0986d93944902cca9af86824b6a641b4b7c2d10602fc510c433a8bcd443919fe",
+      "bytes": 1423,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-selection-3.0.0--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-shape-1.3.7--package__LICENSE": {
+      "sha256": "7eea8533ea92bd8c32a901e89ecb0305890905bb12711449565ddff96891146d",
+      "bytes": 1475,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-shape-3.2.0--package__LICENSE": {
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-time-3.1.0--package__LICENSE": {
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-time-format-4.1.0--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-timer-3.0.1--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-transition-3.0.1--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/d3-zoom-3.0.0--package__LICENSE": {
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee",
+      "bytes": 731,
+      "executable": false
+    },
+    "LICENSES/third-party/dagre-d3-es-7.0.11--package__LICENSE.md": {
+      "sha256": "d01eb84ccce437dbf5fd40853bceea0f287930920acea066597a4a25ead63858",
+      "bytes": 1328,
+      "executable": false
+    },
+    "LICENSES/third-party/dayjs-1.11.13--package__LICENSE": {
+      "sha256": "5faab7526d055651be3aab769d58897be6bd91f3d39d137f25f12dba1b31d5dc",
+      "bytes": 1072,
+      "executable": false
+    },
+    "LICENSES/third-party/debug-4.3.7--package__LICENSE": {
+      "sha256": "3a61c6c96caf5c1d9b623fb9b04c822b783dfcb78aa7e49c76a3f643e6ed7f95",
+      "bytes": 1139,
+      "executable": false
+    },
+    "LICENSES/third-party/dompurify-3.2.1--package__LICENSE": {
+      "sha256": "7de658e2401fe36e2a3965a5a11a560d2fffe768194849718a4b58c75bf84bda",
+      "bytes": 27729,
+      "executable": false
+    },
+    "LICENSES/third-party/internmap-2.0.3--package__LICENSE": {
+      "sha256": "9ea8903938dab5f12c4572d60725069bec2d1b0dc3bcc210b09bae946a5ebb1f",
+      "bytes": 726,
+      "executable": false
+    },
+    "LICENSES/third-party/js-tokens-4.0.0--LICENSE": {
+      "sha256": "2213d91c606205c71eb051a199478cdc2adde945893404d7f1421436dd6d5cc1",
+      "bytes": 1103,
+      "executable": false
+    },
+    "LICENSES/third-party/js-yaml-4.1.0--package__LICENSE": {
+      "sha256": "a07bc24468b9654ce76a547d47a2db282d07733b715db4c73a98bd63961f9550",
+      "bytes": 1084,
+      "executable": false
+    },
+    "LICENSES/third-party/katex-0.16.11--package__LICENSE": {
+      "sha256": "766ccc1f306c885aa45542a9846bbd0a505b27a0374f146778171c2254ce18e3",
+      "bytes": 1107,
+      "executable": false
+    },
+    "LICENSES/third-party/khroma-2.1.0--package__license": {
+      "sha256": "66b333b0f66759a0b710459e03f7029abe17f4358114a128d2c972e642961b49",
+      "bytes": 1105,
+      "executable": false
+    },
+    "LICENSES/third-party/langium-3.0.0--package__LICENSE": {
+      "sha256": "599bf70b4e55f06250571d103dbd8441e0c47cb7f858c0147ca312ce38e9ef2a",
+      "bytes": 1052,
+      "executable": false
+    },
+    "LICENSES/third-party/layout-base-1.0.2--package__LICENSE": {
+      "sha256": "eabb762d8a95109a39c9be3247325529a5239a7aca327d909c3ccdc41f3a06bf",
+      "bytes": 1069,
+      "executable": false
+    },
+    "LICENSES/third-party/layout-base-2.0.1--package__LICENSE": {
+      "sha256": "eabb762d8a95109a39c9be3247325529a5239a7aca327d909c3ccdc41f3a06bf",
+      "bytes": 1069,
+      "executable": false
+    },
+    "LICENSES/third-party/lodash-es-4.17.21--package__LICENSE": {
+      "sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc",
+      "bytes": 1952,
+      "executable": false
+    },
+    "LICENSES/third-party/loose-envify-1.4.0--LICENSE": {
+      "sha256": "4eb7543b08d955a6d23fcc224601d43ff566e775be918805e26210d7f6eb4893",
+      "bytes": 1100,
+      "executable": false
+    },
+    "LICENSES/third-party/marked-13.0.3--package__LICENSE.md": {
+      "sha256": "8e3a3f82f59a60958f56ca08f445647c32a4733dc7ca6c2c46f6eb898471ab9c",
+      "bytes": 2942,
+      "executable": false
+    },
+    "LICENSES/third-party/ms-2.1.3--package__license.md": {
+      "sha256": "1662fae9b5314d11cf51284e2dcd1f006a354f7343f08712a730fcff9a359801",
+      "bytes": 1079,
+      "executable": false
+    },
+    "LICENSES/third-party/react-18.3.1--LICENSE": {
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85",
+      "bytes": 1086,
+      "executable": false
+    },
+    "LICENSES/third-party/react-dom-18.3.1--LICENSE": {
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85",
+      "bytes": 1086,
+      "executable": false
+    },
+    "LICENSES/third-party/react-router-7.18.2--LICENSE.md": {
+      "sha256": "77c9ee6a9c5d5782fb0c50b50d101189116314c14f7df0a1b0d385fc96a7ba49",
+      "bytes": 1161,
+      "executable": false
+    },
+    "LICENSES/third-party/react-router-dom-7.18.2--LICENSE.md": {
+      "sha256": "77c9ee6a9c5d5782fb0c50b50d101189116314c14f7df0a1b0d385fc96a7ba49",
+      "bytes": 1161,
+      "executable": false
+    },
+    "LICENSES/third-party/roughjs-4.6.6--package__LICENSE": {
+      "sha256": "dca9a392272606ac748ac0976a2a1133f14eef841c27beaa51a844d53c56a09d",
+      "bytes": 1068,
+      "executable": false
+    },
+    "LICENSES/third-party/scheduler-0.23.2--LICENSE": {
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85",
+      "bytes": 1086,
+      "executable": false
+    },
+    "LICENSES/third-party/set-cookie-parser-2.7.2--LICENSE": {
+      "sha256": "c5c6c5183a789d122f267c405f685037efb87e27fcde28ab1dd7378a2d2f5962",
+      "bytes": 1126,
+      "executable": false
+    },
+    "LICENSES/third-party/stylis-4.3.4--package__LICENSE": {
+      "sha256": "88c579c6ee44b41137a21321190d177982e5b17d4fa1b83a4a2e3ea325a8fc9a",
+      "bytes": 1078,
+      "executable": false
+    },
+    "LICENSES/third-party/ts-dedent-2.2.0--package__LICENSE": {
+      "sha256": "eff13095d9d762c3bd9dda74370c81e2130c28f2691bc455603abf973bac25b9",
+      "bytes": 1073,
+      "executable": false
+    },
+    "LICENSES/third-party/uuid-9.0.1--package__LICENSE.md": {
+      "sha256": "beaa6b04fb82e41dd2ad679e19e27953afb5999b1abbb455b6564e78ebfeb332",
+      "bytes": 1109,
+      "executable": false
+    },
+    "LICENSES/third-party/vscode-jsonrpc-8.2.0--package__License.txt": {
+      "sha256": "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+      "bytes": 1095,
+      "executable": false
+    },
+    "LICENSES/third-party/vscode-languageserver-textdocument-1.0.12--package__License.txt": {
+      "sha256": "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+      "bytes": 1095,
+      "executable": false
+    },
+    "LICENSES/third-party/vscode-languageserver-types-3.17.5--package__License.txt": {
+      "sha256": "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+      "bytes": 1095,
+      "executable": false
+    },
+    "LICENSES/third-party/vscode-uri-3.0.8--package__LICENSE.md": {
+      "sha256": "c669138cb1eb01fbb745e8e460b291e4f2869c14a40061390b6095d845ed4c82",
+      "bytes": 1070,
+      "executable": false
+    },
+    "NOTICE": {
+      "sha256": "44454fd3d7568d08eb5c391dddcac538d745e61a39bce83dd8067115c3120037",
+      "bytes": 426,
+      "executable": false
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "sha256": "1ac61b57dfc38b54affc74806bc57bad57bc32f3bd55a72ea5056a75f9c7b41a",
+      "bytes": 2773,
+      "executable": false
+    },
+    "bin/siq-agent-security-darwin-arm64": {
+      "sha256": "de975de6fb893713a77d5ba40f82db6920e7194adb994eae8d709b22fb90e42a",
+      "bytes": 18999474,
+      "executable": true
+    },
+    "bin/siq-agent-security-linux-amd64": {
+      "sha256": "bdcfb037066be3525042eec62ec0cd79cd82babdb184814404c9e13f9dd120a4",
+      "bytes": 19968162,
+      "executable": true
+    },
+    "bin/siq-agent-security-linux-arm64": {
+      "sha256": "186332339a23e4c0dfd5fb11c20e57d426e124ff3dc84ceab1315694f0f716e9",
+      "bytes": 18808994,
+      "executable": true
+    },
+    "bin/siq-agent-security-windows-amd64.exe": {
+      "sha256": "804994374676e22dabbef63d9b9309249445014264e1da1765356c13dff45283",
+      "bytes": 20549120,
+      "executable": true
+    },
+    "skills/siq-agent-security/SKILL.md": {
+      "sha256": "5bb5ba9cacde2b66dbbdabc9c0d8bf8867bc440f97e8a16d12a82b68acb88703",
+      "bytes": 5563,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/.gitignore": {
+      "sha256": "f370ad043ec0c98a166fd98646c3b94280ed78bc996223b6cca2ba936f7c6781",
+      "bytes": 9,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/evals.json": {
+      "sha256": "43a8e8711f76511f13a61149e076b02733a24de73e3dd871b78b9f308772c77c",
+      "bytes": 3555,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/clean-finreport-enhancer/SKILL.md": {
+      "sha256": "94aff3251eacc5fe604f8a4b6042b48ac7e8473da47a8be947b46655a093594a",
+      "bytes": 1301,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/clean-finreport-enhancer/references/format.md": {
+      "sha256": "d102f739c92a7b874ca7e04d95eff1c46e2a7929a545914bea11abbacb2f6524",
+      "bytes": 319,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/clean-finreport-enhancer/scripts/summarize.py": {
+      "sha256": "70d185b0586e3ee138cd8836eb4d07e2a93901a759da4a4668febc07e2927517",
+      "bytes": 1218,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/clean-finreport-enhancer/skill.manifest.json": {
+      "sha256": "150bfeccab0f4fab0b48883e99b7baa84ed836030d91089d02a0b37417bb1ed2",
+      "bytes": 460,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/frontmatter-mismatch/SKILL.md": {
+      "sha256": "70def0296414c6875ee0d8c1451ae717cfa596790b32543b8912ae701167df55",
+      "bytes": 361,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/official-like/SKILL.md": {
+      "sha256": "a5329211ea070bde1e45d46df66ca57562573b709eddc590eab7accaa1d5e507",
+      "bytes": 576,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/official-like/references/setup.md": {
+      "sha256": "5734589f41fbe6f5ee05fee4b630e9b652eb8ca058a26386b896ebaa4f9d504b",
+      "bytes": 214,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/official-like/scripts/fetch.py": {
+      "sha256": "ca97427d00e9f1e1a6a8112b9d77e327ba971714ef209edd6b13e6a06f1472e0",
+      "bytes": 190,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/tampered-clean-enhancer/SKILL.md": {
+      "sha256": "533b1711d23174962f58cbe0577a289cf3acb082632faa0a41756130cc7a8b5d",
+      "bytes": 1300,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/tampered-clean-enhancer/references/format.md": {
+      "sha256": "d102f739c92a7b874ca7e04d95eff1c46e2a7929a545914bea11abbacb2f6524",
+      "bytes": 319,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/tampered-clean-enhancer/scripts/summarize.py": {
+      "sha256": "9246ce3e96ca66fc3de1c1be66bc22d105db98a58a55501195abc32b7bd78c7d",
+      "bytes": 1278,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/tampered-clean-enhancer/skill.manifest.json": {
+      "sha256": "5c89883fb9f97914f1545209498be7a583e061dd75a59b760f26442fb23ddf8d",
+      "bytes": 436,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/toxic-finreport-enhancer/SKILL.md": {
+      "sha256": "d87561309494e30cd28c30271b31af2e620b68f0d7d8493bda38b91705b8ad51",
+      "bytes": 970,
+      "executable": false
+    },
+    "skills/siq-agent-security/evals/fixtures/toxic-finreport-enhancer/scripts/enhance.py": {
+      "sha256": "f5b5571113064da8575b7ba17e1764a782d491541317ea9f787c81331794c607",
+      "bytes": 1473,
+      "executable": false
+    },
+    "skills/siq-agent-security/references/decision-table.md": {
+      "sha256": "8264eae912d5269fd878b0e7e5ed5da074a969544e92342d6c69e570be2101c4",
+      "bytes": 1421,
+      "executable": false
+    },
+    "skills/siq-agent-security/references/tiers.md": {
+      "sha256": "10e1a9227e9dba383b07558cf9ba14c4b47fcd7180dee952a2f3146e0ec4a57b",
+      "bytes": 1667,
+      "executable": false
+    },
+    "skills/siq-agent-security/scripts/adapter.ps1": {
+      "sha256": "ce6e4fae863d0de78c14158b619d61e62ee6d86bb55118751e79e298f7c0ec1c",
+      "bytes": 2372,
+      "executable": false
+    },
+    "skills/siq-agent-security/scripts/adapter.sh": {
+      "sha256": "5de78434f89f827bad2a9fef356d367f4db6100830e3bdf6dcb2cf2371505e05",
+      "bytes": 621,
+      "executable": true
+    },
+    "skills/siq-agent-security/scripts/bootstrap.ps1": {
+      "sha256": "ace195f12a93f6299c1c79dcdd1683eb1bdbed8fc699c12788c99d645a79ef73",
+      "bytes": 4106,
+      "executable": false
+    },
+    "skills/siq-agent-security/scripts/bootstrap.sh": {
+      "sha256": "69a5f7b42d028d3da26d03195a857e75e513f398b240f2edb7d9401765433a4b",
+      "bytes": 1735,
+      "executable": true
+    },
+    "skills/siq-agent-security/scripts/resolve_verified_bin.sh": {
+      "sha256": "0154d82d262637577c22f58c37128895c27a33bdd28688c97e04d47dfd30e717",
+      "bytes": 4053,
+      "executable": true
+    },
+    "skills/siq-agent-security/scripts/run_evals.sh": {
+      "sha256": "9f00b12f0b9901546219136ce63906336b9b5919e3a5d16ecdf211024acb6a87",
+      "bytes": 2575,
+      "executable": true
+    },
+    "skills/siq-agent-security/scripts/verify_manifest.py": {
+      "sha256": "101bb2dba5c0cccfdc09fef32e992f6dcbfb2c7f6b65b4262e86bf9ed9f3d1f2",
+      "bytes": 21243,
+      "executable": true
+    },
+    "skills/siq-agent-security/skill-card.md": {
+      "sha256": "81b9dacb3581b05191b709415aa67e037adde5fb3ff4db346ee4d43e2c01f7ec",
+      "bytes": 1709,
+      "executable": false
+    },
+    "skills/siq-agent-security/skill-manifest.json": {
+      "sha256": "1b54bf5a98aed38fba597d052af013b84ae6fd2dba4ff50318f433397a47cd32",
+      "bytes": 6132,
+      "executable": false
+    }
+  }
+}
