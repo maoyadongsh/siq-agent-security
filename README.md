@@ -40,6 +40,8 @@
 
 > **签名安装包（2026-09-19）**：[0.3.0 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0) 已提供完整离线包、签名 Skill 与四目标二进制，源码固定在 `83fde2d`，使用原发行密钥签发。请选择 Release 中的安装资产；GitHub 自动生成的源码压缩包及 `skills/siq-agent-security/` 仍是开发源码。Linux ARM64 已通过实际安装链路和篡改拒绝验证，其他目标本次仅完成构建与签名摘要核对。见[安装说明](docs/signed-release-packaging.md)和[签发与发布验证记录](docs/evidence/releases/0.3.0/README.md)。
 
+[文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md)
+
 ## 当前产品方向与支持状态
 
 当前产品围绕“**发现与核对 → 准入与授权 → 运行与确认 → 追溯与维护**”组织功能。个人端已有资产盘点、Skill 安装/更新/移除、权限确认、任务活动、签名回执及按需原文管理；企业端已有环境与 Edge 注册、多租户资产与风险管理、策略审批、部署读回和审计。当前工作重点是把已集成的个人能力按同一发行候选完成跨平台验收，再推进团队多设备协同。
