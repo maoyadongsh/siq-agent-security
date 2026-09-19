@@ -1168,6 +1168,53 @@
         "repository guard",
         "complete batch reverse diff against baseline"
       ]
+    },
+    {
+      "path": "skills/siq-agent-security/SKILL.md",
+      "action": "edit",
+      "reason": "complete source Skill entry-point debt independently from published signed payload",
+      "consumers": [
+        "source developers",
+        "future release packager",
+        "skills compatibility CI"
+      ],
+      "validation": [
+        "self-admission by self-built binary",
+        "four native source setup runs; no full host acceptance claim",
+        "missing-manifest refusal; frozen historical fixture and release unchanged"
+      ],
+      "source_blob": "8c1d0c220053b56de0e75aef461b4af409194d3a"
+    },
+    {
+      "path": ".github/workflows/skills-compat.yml",
+      "action": "edit",
+      "reason": "complete source Skill entry-point debt independently from published signed payload",
+      "consumers": [
+        "source developers",
+        "future release packager",
+        "skills compatibility CI"
+      ],
+      "validation": [
+        "self-admission by self-built binary",
+        "four native source setup runs; no full host acceptance claim",
+        "missing-manifest refusal; frozen historical fixture and release unchanged"
+      ],
+      "source_blob": "4902f0a13aab5593a0096ad35cc7cb182924522d"
+    },
+    {
+      "path": "scripts/release/skill_source_smoke.py",
+      "action": "add",
+      "reason": "complete source Skill entry-point debt independently from published signed payload",
+      "consumers": [
+        "source developers",
+        "future release packager",
+        "skills compatibility CI"
+      ],
+      "validation": [
+        "self-admission by self-built binary",
+        "four native source setup runs; no full host acceptance claim",
+        "missing-manifest refusal; frozen historical fixture and release unchanged"
+      ]
     }
   ],
   "frozen": {
@@ -1201,7 +1248,8 @@
     "scripts/release/README.md",
     "docs/evidence/repository-reorganization-20260919/README.md",
     "docs/repository-architecture-reorganization-proposal-20260918-095230.md",
-    "docs/evidence/repository-reorganization-closure-20260919/README.md"
+    "docs/evidence/repository-reorganization-closure-20260919/README.md",
+    "skills/siq-agent-security/SKILL.md"
   ],
   "navigation_globs": [
     "docs/development/*.md",

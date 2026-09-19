@@ -5,6 +5,8 @@ on:
   pull_request:
     paths:
       - 'skills/siq-agent-security/**'
+      - 'scripts/release/skill_source_smoke.py'
+      - 'scripts/release/package.py'
       - 'scripts/research/*distribution*'
       - 'scripts/research/skills-upstream.json'
       - '.github/workflows/skills-compat.yml'
@@ -12,6 +14,8 @@ on:
     branches: [main]
     paths:
       - 'skills/siq-agent-security/**'
+      - 'scripts/release/skill_source_smoke.py'
+      - 'scripts/release/package.py'
       - 'scripts/research/*distribution*'
       - 'scripts/research/skills-upstream.json'
       - '.github/workflows/skills-compat.yml'
@@ -44,4 +48,50 @@ jobs:
         with:
           name: skills-distribution-${{ matrix.os }}-${{ github.run_attempt }}
           path: .tmp/skills-compat/ci/result.json
+          if-no-files-found: warn
+
+  source-setup:
+    name: Skill source setup (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            target: linux/amd64
+          - os: ubuntu-24.04-arm
+            target: linux/arm64
+          - os: macos-14
+            target: darwin/arm64
+          - os: windows-2022
+            target: windows/amd64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      CGO_ENABLED: '0'
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.26.6'
+          cache: false
+      - name: Build native source candidate
+        shell: bash
+        run: |
+          mkdir -p .tmp/skill-source
+          go -C apps/agentshield build -trimpath -o "$PWD/.tmp/skill-source/siq-agent-security.exe" ./cmd/agentshield
+      - name: Self-scan and isolated source setup; no host or service-manager installation
+        shell: bash
+        run: |
+          python scripts/release/skill_source_smoke.py \
+            --binary .tmp/skill-source/siq-agent-security.exe \
+            --target '${{ matrix.target }}' --report .tmp/skill-source/result.json
+      - name: Preserve public summary only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: skill-source-${{ matrix.os }}-${{ github.run_attempt }}
+          path: .tmp/skill-source/result.json
           if-no-files-found: warn
