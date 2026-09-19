@@ -1,0 +1,52 @@
+{
+  "schema_version": "linux-lx03-hermes-grant-overreach/v1",
+  "recorded_at": "2026-09-18T17:25:08.811551+00:00",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "host": "Linux Hermes real public CLI",
+  "driver_sha256": "60d328b300757a82bdb9f0de6d04e287107e85011733db82f1d2e8d889f9c392",
+  "parent_fixture_driver_sha256": "8eeb1ff24ebb741054eb33a7bcc0cfbfd2cf0d36510541412511763ecd9a423d",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "native_report_private_sha256": "71356586d87bad0339875544552e6f4aebdc30c4afda0a324a35f01e37875db5",
+  "raw_expiry_regression_private_sha256": "7aeb44d1be40d172ed96338d76b28822af8a799280b14e57c4d9eb6d3e2fd604",
+  "native_checks": 13,
+  "raw_expiry_regression_checks": 18,
+  "verified_native_decisions": 4,
+  "valid_identity_and_sec": true,
+  "granted_read_root": "isolated_fixture/company-a",
+  "allowed_read_executed": true,
+  "write_outside_grant_denied_before_effect": true,
+  "direct_read_outside_grant_denied": true,
+  "dotdot_read_outside_grant_denied": true,
+  "denial_reason_code": "grant_scope_violation",
+  "protected_content_reached_model": false,
+  "receipt_chain_verified": true,
+  "raw_capture_grant_naturally_expired": true,
+  "fixture_preflight_failures": [
+    {
+      "attempt": 1,
+      "classification": "harness setup error: company-b already existed",
+      "private_log_sha256": "7ae46e4d713fda5d72c075d5540c006a6d1158c02f16b6a20d68e408320830f8"
+    },
+    {
+      "attempt": 2,
+      "classification": "harness authorization assumption error: initial Grant covered all workspace, so company-b read was legitimately allowed; not a product defect",
+      "private_log_sha256": "eadf034c84fd932b4587cfc899ac542c007e62eb36664b3738ca3dce4f9aedbb"
+    }
+  ],
+  "limitations": [
+    "This proves the two specified native read paths under a correctly narrowed real Grant and task-bound SEC, not all possible filesystem resources or distributed effect atomicity.",
+    "The runtime-generated permission envelope intentionally has no independent task resource constraint; this check exercises Grant scope.",
+    "No stock OpenClaw post-approval checkpoint is inferred from Hermes results.",
+    "At the time of this scope leg, the older installed-Skill smoke lacked task-bound SEC and failed closed; a later isolated harness migration passed both identity-revocation and Skill-removal variants (see lx03-hermes-installed-sec-summary.json)."
+  ],
+  "release_acceptance": false,
+  "legacy_default_smoke_followup": {
+    "status": "failed_expected_fail_closed_under_current_SEC_requirements",
+    "reason_code": "skill_attribution_mismatch",
+    "cause": "The separate older installed-skill native smoke does not issue a task-bound SEC before its first read; valid runtime identity plus installed Skill no longer satisfies the current attribution boundary. This is a stale harness precondition, not evidence of a new product denial bug.",
+    "private_final_log_sha256": "34000ed15e70cf48fa27dca5771b143028b0d218e7c906a29e74954f90b7ee85",
+    "attempts_retained_privately": 4,
+    "remediation": "Migrate the older smoke to explicit task-bound SEC before reusing it as a current acceptance gate.",
+    "resolution": "Completed in a later isolated harness migration; both real Hermes native variants passed 19/19. Historical fail-closed logs remain unchanged."
+  }
+}

@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="#quick-start">Quick start</a> · <a href="#research-and-evidence">Research evidence</a> · <a href="#components-and-integrations">Integrations</a> · <a href="#contributing-and-next-steps">Contributing</a>
+  <a href="#quick-start">Quick start</a> · <a href="RESEARCH.md">Research map</a> · <a href="#research-and-evidence">Research evidence</a> · <a href="#components-and-integrations">Integrations</a> · <a href="#contributing-and-next-steps">Contributing</a>
 </p>
 
 ---
@@ -33,17 +33,21 @@ The project serves researchers, Agent tool and adapter developers, and platform 
 
 The current priority is the personal experience: discover existing agents and Skills, enable protection after the user confirms permissions, install and update Skills safely, and record authorization and execution evidence. The SIQ Skill provides interaction and operating guidance; actual decisions depend on the local Go runtime and platform adapters. Installing the Skill alone does not protect every agent. The local service provides a browser-based management console.
 
-**Repository snapshot, 2026-09-13:** audited development branches and client lifecycle increments are merged into `main`. [PR #35](https://github.com/maoyadongsh/siq-agent-security/pull/35) adds N01 state compatibility protection, recursive backup, recoverable migration and signed release compatibility checks, meeting its Linux minimum acceptance gate. Production Git fetching, automatic update checks, trusted Skill attribution, native approval continuation and full OS acceptance remain open. Research tags and earlier binary releases do not include these subsequent changes; merging is not a release.
+**Repository snapshot, 2026-09-18 (`main` at `2187fea`):** [PR #35](https://github.com/maoyadongsh/siq-agent-security/pull/35) added N01 state compatibility protection, recursive backup, recoverable migration and signed release compatibility checks. Subsequent work added Skill update checks, attribution, approval recovery and privacy controls. [PR #69](https://github.com/maoyadongsh/siq-agent-security/pull/69) merged a macOS stage; [PR #70](https://github.com/maoyadongsh/siq-agent-security/pull/70) merged OpenShell policy authorization and load checks; [PR #75](https://github.com/maoyadongsh/siq-agent-security/pull/75) merged the v6 constrained task execution and staged acceptance baseline; [PR #76](https://github.com/maoyadongsh/siq-agent-security/pull/76) merged a Windows timing test correction. Research tags and earlier binary releases do not include these changes. Code merge, component tests, native acceptance and formal release are tracked separately.
 
 | Scope | Current evidence | Remaining work |
 | --- | --- | --- |
-| Linux personal management | Console and selected native integrations validated in isolated Linux environments; background lifecycle, upgrade and recovery validation merged into main | Official release installation, actual re-login and complete user acceptance |
-| macOS | LaunchAgent lifecycle implemented on main, with simulated tests and cross-compilation | Native macOS acceptance and distribution |
-| Windows | Task preparation, registration and lifecycle implemented on main with simulated tests/cross-builds | Complete native Windows journey and distribution acceptance |
-| OpenClaw / Hermes / WorkBuddy | Selected native Linux paths verified for OpenClaw and Hermes | WorkBuddy desktop and the complete OS/platform matrix; a CodeBuddy adapter does not establish WorkBuddy acceptance |
+| Linux personal management | Console, lifecycle, Skill update and selected native OpenClaw/Hermes paths have staged evidence; the sixth local candidate passed the installed B02 and combined R07/R04 journeys; raw-retention and task-export acceptance is complete for the current scope | The stock OpenClaw post-approval checkpoint, desktop visual checks and formal release acceptance; the supplemental continuous 12-hour admin-session leg is out of scope and is not claimed as passed |
+| macOS | LaunchAgent lifecycle and Luke's staged OpenClaw/Hermes/WorkBuddy work are merged or published in stages | Same-candidate native acceptance for all three hosts and distribution |
+| Windows | Task preparation, registration and lifecycle are on main; sunbo is still developing OpenClaw/Hermes/WorkBuddy support in separate branches | Review remaining changes and complete native and WSL2 acceptance separately |
+| OpenClaw / Hermes / WorkBuddy | Linux delivery scope is OpenClaw and Hermes; selected real host paths have evidence | WorkBuddy is in scope only on macOS/Windows; no CodeBuddy result can establish WorkBuddy acceptance |
 | LAN team management | Optional enterprise Control API, Edge and Connectors already exist | Team device onboarding, unified management and acceptance after the personal phase |
 
-See the [development taskbook](docs/personal-experience-lan-team-next-development-taskbook-20260913-192253.md) and [progress ledger with evidence](docs/personal-experience-development-progress-20260910.md) for exact scope. Discovery does not mean protection is enabled; enforcement depends on the integrated tool paths.
+New CodeBuddy integration work is cancelled across all platforms. Historical records retain safe inspection, denial, revocation and uninstall paths. Linux WorkBuddy is outside the current delivery scope.
+
+The v6 OpenShell task endpoint is now in main. A policy-apply response alone is not proof of task execution: the execution path must bind its CLI and endpoint, confirm policy and instance readback, and recheck authorization before starting work. The sixth local candidate completed a zero-fail 373-step D05 run and a 57/57 B3 functional journey. Historical gateway and performance evidence still belongs to its recorded candidate; remote single-task stop confirmation, the remaining external/protocol conditions, performance and release acceptance remain open. See the [current Linux taskbook](docs/linux-dual-host-integration-development-taskbook-20260918-205119.md), its [progress ledger](docs/linux-dual-host-progress-20260918.md), the [v6 ledger](docs/personal-v6-integration-progress-20260917.md), and the [original development ledger](docs/personal-experience-development-progress-20260910.md) for exact scope. Discovery does not mean protection is enabled; enforcement depends on the integrated tool paths.
+
+OpenClaw versions are tracked separately as well. The shared installation on the Linux validation host remains 2026.5.12. The current Linux candidate also ran the public OpenClaw 2026.9.4 CLI under isolated Node 24.18.0 through the [controlled-start entrypoint](docs/openclaw-controlled-start-linux-20260919.md), completing the product-managed native journey 22/22. That result belongs to a digest-pinned temporary patch copy: stock 2026.9.4 still lacks the post-approval, pre-execution final-parameter recheck contract required by SIQ. It is therefore not a default upgrade, an upstream approval capability, or formal release support. A version bump does not raise the protection level without same-version, same-candidate evidence.
 
 ## Core value
 
@@ -281,7 +285,7 @@ Research entry points: [questions](docs/research/research-questions.md) · [data
 | --- | --- | --- |
 | Secure Agent and research Skills | Task planning and dynamic research / report / delivery selection | [Agent guide](apps/secure-agent/README.md), [Skills](skills/) |
 | Local Go runtime | Admission, authorization, management API, signed receipts and effect verification | [Local operations](AGENTSHIELD.md), [development specification](docs/agentshield-dev-spec-v1.md) |
-| Runtime adapters | Specific tool entry points in Hermes, OpenClaw and CodeBuddy | [Adapters](adapters/runtime/), [capability matrix](docs/agentshield-capability-matrix-v1.md) |
+| Runtime adapters | OS-scoped Hermes, OpenClaw and WorkBuddy entry points; CodeBuddy is retained only for safe handling of historical configuration and records | [Adapters](adapters/runtime/), [capability matrix](docs/agentshield-capability-matrix-v1.md), [platform scope decision](docs/personal-platform-scope-decision-20260917.md) |
 | Enterprise control plane | Multi-tenant inventory, evidence, policy approval and Edge coordination | [Control plane](docs/control-plane.md), [production runbook](docs/enterprise-production-runbook-v1.md) |
 | Edge and Connectors | Configuration, directory, framework, process, container and cluster collection | [Edge](edge/agent/), [Connectors](connectors/), [compatibility](docs/compatibility.md) |
 | Contracts and benchmarks | Cross-component data contracts, fixed corpus and evidence verification | [Contracts](packages/contracts/), [Agent benchmark](benchmarks/hackathon/README.md), [runtime benchmark](benchmarks/runtime-security/README.md) |

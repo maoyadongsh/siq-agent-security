@@ -1,0 +1,31 @@
+{
+  "artifacts": [
+    {
+      "bytes": 24331206,
+      "evidence_level": "build_only",
+      "sha256": "83aa64498a949f66e3c8857e6fef5af8c5fae32c80bfce7551e41452376dda43",
+      "target": "linux/amd64"
+    },
+    {
+      "bytes": 22916704,
+      "evidence_level": "build_only",
+      "sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+      "target": "linux/arm64"
+    },
+    {
+      "bytes": 23362722,
+      "evidence_level": "build_only",
+      "sha256": "d156aa7272fa3311fb63595c9546b8e083aac49fbbb7a23fa8e415745b97de8f",
+      "target": "darwin/arm64"
+    },
+    {
+      "bytes": 24464896,
+      "evidence_level": "build_only",
+      "sha256": "509aa8451344ba3ec199d0c931a68370317ed0fefaf28b0168e6e2ccc27b3e06",
+      "target": "windows/amd64"
+    }
+  ],
+  "build_command": "CGO_ENABLED=0 GOOS=<os> GOARCH=<arch> go build -C apps/agentshield -trimpath -o <private path> ./cmd/agentshield",
+  "schema_version": "linux-dual-host-cross-builds/v1",
+  "source_binding_sha256": "036df1bd5fdd90d9ecb49f40d3f76761b1b85a03e74843c078600a0bacf77fab"
+}

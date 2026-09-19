@@ -1,0 +1,24 @@
+{
+  "schema_version": "linux-lx03-hermes-installed-hold-denial-summary/v1",
+  "recorded_at": "2026-09-18T21:58:33.084067+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "Hermes v0.21.0 public CLI",
+  "candidate_sha256": "6ce92b692f099478e88a86e368e9132ab113c5eecc41c77a791ca7d367d3262e",
+  "source_binding_sha256": "dbc07ca53280c61052644b220d013e909b16c2a499d7a30c558b65bb738c1323",
+  "driver_sha256": "e10dd3d4513890c42f4c209427a56329173cca814afd5b2e4e031061c0c3bfaf",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "private_report_sha256": "bec528a080c23689e9b8daa5b1fce3f5dd85c48f842daf7dd2c4e493d9463870",
+  "failed_attempt_log_sha256": "52e295a0425eda2c1e97acd88542a54db3e433c42bec19ab3df9eba55feaf50f",
+  "passing_attempt_log_sha256": "c0541f5ccce8b219fdd1650ff4a95d52fade7946f3cb5f43a078f5e3f624197c",
+  "passed": true,
+  "checks": 11,
+  "observed": "Installed V1 Skill native write held with verified task attribution and no file effect; console denial yielded signed resolution; identical resolution replay returned 409; decision-scope hold-status reported denied; subsequent native write formed a new hold with zero file effect; no reservation/observation; chain verified.",
+  "failed_attempt_disposition": "First driver attempt used a management token for hold-status and received designed scoped_decision_credential_required 403. The next passing attempt lacked a separate assertion that the second write formed a new hold. Both are retained privately but only the final strengthened 11/11 run is the public result.",
+  "limitations": [
+    "local deterministic model and operator; no human click or external effect",
+    "one daemon and one Hermes CLI task; no cross-daemon atomicity claim",
+    "the second tool call is a new hold, not replay of the first action",
+    "The original OpenClaw post-approval execution checkpoint and cross-daemon external effect atomicity remain unverified."
+  ],
+  "preassertion_passing_report_sha256": "e58e20c0175c9cdc2067deef9316ffa316e83371cb40d21f50929b7759a2e2e7"
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "personal-lx03-openclaw-controlled-ui-hold-summary/v1",
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "host_platform": "OpenClaw 2026.5.12 temporary pinned checkpoint-v2 copy",
+  "host_os": "linux/arm64",
+  "evidence_level": "isolated_native_host_and_embedded_browser_ui",
+  "passed": true,
+  "cases": [
+    {
+      "id": "ui-approved-native-once",
+      "browser_resolution": "approve",
+      "platform_approval": "fixture_allow_once",
+      "native_execution_count": 1,
+      "signed_reservation_count": 1,
+      "signed_observation_count": 1
+    },
+    {
+      "id": "ui-denied-native-zero",
+      "browser_resolution": "deny",
+      "platform_approval_requested": false,
+      "native_execution_count": 0,
+      "signed_reservation_count": 0,
+      "signed_observation_count": 0
+    }
+  ],
+  "signed_receipt_chain_verified": true,
+  "receipt_count": 6,
+  "installed_openclaw_unchanged": true,
+  "private_report_sha256": "b5d16a6cf6abaab330aef7dc921138a04e39be1c822fc369689117653a02068c",
+  "driver_sha256": "2ec40ec208b392029dae58b46424d941a7370b1c8dcea8228a1bbc032293a1ea",
+  "approval_harness_sha256": "06a81ffee36210315034bfc70755ffe44683e4632c8c9fdace9b17a05bf7238c",
+  "adapter_sha256": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5",
+  "host_source_before_sha256": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+  "host_source_after_sha256": "6ff914993889c1933f8d450e3b5111f084bdbbc69b59d33fab82ef67fd764cdc",
+  "limitations": [
+    "The host was a temporary patched copy; the installed stock host still safely refuses approval holds.",
+    "The browser operator, platform approver, model and file-effect tool were local deterministic fixtures.",
+    "One local execution and reservation do not establish atomicity for external effects or cross-process exactly-once."
+  ]
+}

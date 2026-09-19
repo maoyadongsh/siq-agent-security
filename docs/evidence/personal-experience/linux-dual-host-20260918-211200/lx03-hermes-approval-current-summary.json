@@ -1,0 +1,38 @@
+{
+  "schema_version": "linux-lx03-hermes-approval-current/v3",
+  "recorded_at": "2026-09-18T19:56:06.467876+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "Hermes public CLI v0.21.0",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "passed": true,
+  "checks": 18,
+  "private_report_sha256": "5ab96174ad37a46edb128237b5d17f0e259dbf57175e0742103803b301209710",
+  "private_log_sha256": "3af38f657d2e7a8f72491643a198614dd308edbae423fb319e738ee470d27cbc",
+  "driver_sha256": "539d052c05b4ab969102442255887ed7a3bbcf1f0c41239ec9fef1faade845ea",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "observed": "Real Hermes chat --oneshot: original hold zero side effect; synthetic console approval then fresh native retry writes once with linked reservation/observation; denial zero effect; approved original with changed-content retry creates new hold; consumed reservation replay HTTP 409; approved original followed by Grant revocation yields native retry with zero write and signed deny grant_missing; receipt chain verifies",
+  "limitations": [
+    "approved execution is at-most-once locally; external systems can still require uncertain reconciliation",
+    "synthetic model, operator and target; no real user data, contacts or external services",
+    "isolated fixture profile and daemon state; no claim about other platforms or adapter versions",
+    "desktop notification delivery and manual browser clicking are covered by separate evidence",
+    "The Grant-revocation leg is real native Hermes plus local fixture; SEC natural expiry and concurrent native process submissions remain separate.",
+    "Stock OpenClaw approval checkpoint remains unavailable; this Hermes leg does not close it."
+  ],
+  "earlier_passed_leg": {
+    "checks": 12,
+    "private_report_sha256": "52f65cf63f737ba620f59e5c59f2dd181fa151f47b62461585b5fbde0a17605c",
+    "driver_sha256": "2e2735e266de730edae9c815797c1d5c79e3b55b4e0348d3d0d7ff7496b0ae1c"
+  },
+  "failed_intermediate_attempt": {
+    "private_log_sha256": "89df8d62a96ca6d50cc762717a5565b9c5f0c4c50a4e74e116159ae1c870a4e6",
+    "classification": "harness assertion read a target previously removed during fixture cleanup; no product defect inferred"
+  },
+  "revoked_retry_reason_code": "grant_missing",
+  "earlier_extended_passed_leg": {
+    "checks": 15,
+    "private_report_sha256": "ccc3b4cbca4be3e8b79ec3f8f4efa70f6cf14c31f8c889dcc0f24c7109cee3f3",
+    "driver_sha256": "3a2a63dcd2821d1f2b86682e14bcb57e0d87a4bb2fd91525242f7648b58f630e"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "schema_version": "linux-lx02-new-ui-installed-service-summary/v1",
+  "recorded_at": "2026-09-18T16:14:46.134961+00:00",
+  "source_candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "test_release_binary_sha256": "ec8ea77654dc25e690fb92993dac48487d31ab2bef05154d16b32769a54b9c9b",
+  "source_overlay": {
+    "matched_current_worktree": true,
+    "go_files": 336,
+    "embedded_ui_files": 214
+  },
+  "installed_service": {
+    "checks": 16,
+    "passed": true,
+    "r07_checks": 31,
+    "nested_r04_checks": 31,
+    "private_checks_sha256": "8157c00ce6252c5ef0671b519b85c6206539efd095bf76f5cd8571f2da511d53",
+    "private_journey_sha256": "14199980b816357aefde8ffe93d55ac6f25a0e5d703e46165c9a3aaef17dfcbe"
+  },
+  "direct_process_control": {
+    "passed": true,
+    "r07_checks": 30,
+    "nested_r04_checks": 31,
+    "private_report_sha256": "2ac5d066fe4fab33c13f784f0fb56be8f5cb54eb41977072278a141d4faf2e24"
+  },
+  "failed_attempts": [
+    {
+      "reason": "R07 standalone-only retention flag absent in embedded B02 Namespace",
+      "private_console_sha256": "e15b0c3495c97aa3ae7a3ca0e1d8396bc8a816513dee0abe835dcdc2d0b39e4c"
+    },
+    {
+      "reason": "B02 reused the admin bearer explicitly revoked at R07 journey end",
+      "private_console_sha256": "82312151ac71e92ae8bccd988589e0b6e9ace55bc19a8d1cbdcda36ee55dff93"
+    }
+  ],
+  "resource_cleanup": "all three batch-owned B02 run directories removed after owner/PID/unit/port verification; no owned unit or listener remains",
+  "limitations": [
+    "test release trust root is not the maintainer formal release signature",
+    "headless browser is not human desktop visual acceptance",
+    "Windows/macOS native acceptance is separate"
+  ],
+  "release_acceptance": false
+}

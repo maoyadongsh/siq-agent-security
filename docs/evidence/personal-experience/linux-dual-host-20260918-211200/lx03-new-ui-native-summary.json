@@ -1,0 +1,51 @@
+{
+  "schema_version": "linux-lx03-new-ui-native-summary/v1",
+  "recorded_at": "2026-09-18T16:26:11.203066+00:00",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "evidence_level": "real_linux_arm64_hosts_with_isolated_profiles",
+  "legs": [
+    {
+      "host": "Hermes v0.21.0",
+      "scope": "native SEC allowed read, denied write, cross-task reuse",
+      "observed_count": 11,
+      "passed": true,
+      "private_report_sha256": "8046dc787fa369ea004c9b431efcd13193efd35a7aa86e4bfa350e95a5d53d66",
+      "driver_sha256": "4bfdcb6e23aebe50b345e838c60abc9bed021bea11bc7192be3acc5725aac3f7",
+      "driver_path": "scripts/personal-experience/r01-sec-hermes-native-smoke.py"
+    },
+    {
+      "host": "Hermes v0.21.0",
+      "scope": "native hold blocks before effect, approved retry executes once locally, denied retry has zero effect",
+      "observed_count": 12,
+      "passed": true,
+      "private_report_sha256": "ad9bbedc7e215f40e3b51fc44e398483de1736da0250685ff4bbe79d43f6b285",
+      "driver_sha256": "2e2735e266de730edae9c815797c1d5c79e3b55b4e0348d3d0d7ff7496b0ae1c",
+      "driver_path": "scripts/personal-experience/hermes-approval-gap-native-smoke.py"
+    },
+    {
+      "host": "OpenClaw 2026.5.12",
+      "scope": "managed native CLI allowed read, denied write, identity revoke",
+      "observed_count": 19,
+      "passed": true,
+      "private_report_sha256": "b9b4fca1dbd78c885d4e5863ef74708e7cb04889923675869ffb0190d8fbd345",
+      "driver_sha256": "15302922cf5ae81d48f2cc947042815d2e4329c25a212c42759274a2f655b544",
+      "driver_path": "scripts/personal-experience/openclaw-managed-native-smoke.py"
+    },
+    {
+      "host": "OpenClaw 2026.5.12",
+      "scope": "stock host fail-closed; independent checkpoint-capable runtime copy",
+      "observed_count": 18,
+      "passed": true,
+      "private_report_sha256": "caabd2740005f65bdda43615498fdd953923788e7a1136c91c253cee4e7831e3",
+      "driver_sha256": "576aa4197a1cd4e46e1532b9f9add7558e22ede7eb52b0614f478ad6499fdb25",
+      "driver_path": "scripts/validate-openclaw-approval-integration.py"
+    }
+  ],
+  "limitations": [
+    "Stock OpenClaw 2026.5.12 lacks the post-approval execution checkpoint; its hold safely rejects. The 18 executable scenarios use an isolated patched runtime copy, not the installed stock host.",
+    "These checks cover listed resource/action combinations only; cross-process external effect atomicity and distributed exactly-once are not proven.",
+    "Local deterministic model/operator and headless/browser evidence do not establish manual desktop notification or other OS acceptance."
+  ],
+  "lx03_overall_status": "partial",
+  "release_acceptance": false
+}

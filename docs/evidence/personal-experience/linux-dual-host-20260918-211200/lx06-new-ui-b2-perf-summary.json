@@ -1,0 +1,47 @@
+{
+  "schema_version": "linux-lx06-new-ui-b2-perf-summary/v1",
+  "recorded_at": "2026-09-18T17:07:22.701162+00:00",
+  "evidence_level": "same_run_real_gateway_doctor_interleaved",
+  "old_candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "new_candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "plan_sha256": "96497293d60df737fd25b183844253c2c43304599775be3888fa680b7e2377b1",
+  "protocol_private_sha256": "d73cab281520fba990df48824a51fc341d3d15b483edaf9a5db2be427b17e0e8",
+  "report_private_sha256": "f04e184cba581e92747bc0df124e74a04a8f4ed42b57b18f9b54f2eac5918188",
+  "samples_private_sha256": "b1335a498a1c2bac09c1ea5310bb056eb3477a43a4d3c216dd0a159b163376fb",
+  "driver_sha256": "27f4b8d58c5433f59e07626ac5aeec6222e31b2c54083b696baa792fb1c60d03",
+  "doctor_readback": {
+    "old_n": 90,
+    "new_n": 90,
+    "old_p95_ms": 152.88955811411142,
+    "new_p95_ms": 153.69213605299592,
+    "relative_ratio": 1.0052493966807432,
+    "relative_budget_ratio": 1.3,
+    "verdict": "pass"
+  },
+  "doctor_unreachable": {
+    "old_n": 90,
+    "new_n": 90,
+    "old_p95_ms": 16.03453978896141,
+    "new_p95_ms": 16.256029019132257,
+    "absolute_verdicts": "pass"
+  },
+  "aux_control_plane_restore": {
+    "n": 5,
+    "p95_ms": 20284.84690398909,
+    "absolute_verdict": "pass"
+  },
+  "all_budgets_passed": true,
+  "failed_samples": 0,
+  "B3": "not_measured",
+  "resource_cleanup": {
+    "owned_sandbox_removed": true,
+    "preexisting_three_unchanged": true,
+    "private_resource_sha256": "611acc955cdd97342043c2970e6488b0d191d63ae3802e081b05924ebf9ccd73"
+  },
+  "limitations": [
+    "Doctor readback and unreachable probes are not real task execution or enforcement behavior.",
+    "B3 and S1-S4 task execution are outside this run.",
+    "No formal release acceptance is inferred from component latency."
+  ],
+  "release_acceptance": false
+}

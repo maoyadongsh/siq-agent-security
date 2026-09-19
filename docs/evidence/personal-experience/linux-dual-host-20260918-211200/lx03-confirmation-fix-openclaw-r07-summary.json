@@ -1,0 +1,19 @@
+{
+  "schema_version": "linux-lx03-confirmation-fix-openclaw-r07-regression/v1",
+  "recorded_at": "2026-09-18T21:04:34.136519+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "OpenClaw 2026.5.12 and headless Chromium",
+  "candidate_sha256": "6ce92b692f099478e88a86e368e9132ab113c5eecc41c77a791ca7d367d3262e",
+  "source_binding_sha256": "dbc07ca53280c61052644b220d013e909b16c2a499d7a30c558b65bb738c1323",
+  "passed": true,
+  "r07_checks": 30,
+  "nested_r04_checks": 31,
+  "private_report_sha256": "0c0b55d489d35b8441b1a632da8bb77178b5d9399008a1778ed9b12026ec8057",
+  "private_log_sha256": "45d8dc10c02a378c860af2d0e16c9e6ee180dbdc8a6de58de6e5ff420af77d15",
+  "driver_sha256": "90a89143a83b5857264b75f88de1cc1f285470ca1cab9aa53845d615fdedaf73",
+  "limitations": [
+    "Direct fixture daemon and automated browser; installed systemd journey not covered.",
+    "Synthetic model and operator; no external or paid model.",
+    "Stock OpenClaw native hold consumption remains separate."
+  ]
+}

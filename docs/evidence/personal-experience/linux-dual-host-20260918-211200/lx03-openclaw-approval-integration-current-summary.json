@@ -1,0 +1,29 @@
+{
+  "schema_version": "linux-lx03-openclaw-approval-integration-current/v1",
+  "recorded_at": "2026-09-18T20:38:00.237543+00:00",
+  "host_os": "linux/arm64",
+  "host_platform": "OpenClaw 2026.5.12 installed stock runtime plus temporary checkpoint-v2 copy",
+  "candidate_sha256": "a13d623492efa0241deb73dcd4b09cbf9ca4c85bb53bca747101b4e9fdd59686",
+  "source_binding_sha256": "b3276b62b40c34a09aff16eeeed931d9549895f2430faa37f4e67724e894fbf9",
+  "passed": true,
+  "checks": 9,
+  "cases": 18,
+  "group_cases": {
+    "stock_unsupported": 1,
+    "ordinary": 6,
+    "revocation": 2,
+    "faults": 9
+  },
+  "private_report_sha256": "60cec4276c64a3a79ecfcab46f09c8843f823968068bc3e59f8c504f064e3166",
+  "private_log_sha256": "60d779c0d7d3e4fd84daf0db9c299058d79f26e8efb522672965ea08bf666eb9",
+  "driver_sha256": "576aa4197a1cd4e46e1532b9f9add7558e22ede7eb52b0614f478ad6499fdb25",
+  "installed_source_unchanged": true,
+  "shipping_adapter_used_without_patch": true,
+  "observed": "one stock OpenClaw case refused unsupported hold before execution; 17 cases on a temporary checkpoint-v2 runtime copy covered approved execution, denial, revocation, checkpoint faults, parameter changes, uncertain reservation and signed chain; installed runtime remained byte-identical",
+  "limitations": [
+    "temporary checkpoint-v2 copy is not installed stock OpenClaw or an upstream API",
+    "stock host cannot complete approved hold execution with current adapter; this is a capability gap, not acceptance",
+    "synthetic local operator and fixture; no real external effects or human approval",
+    "post-check races and cross-system effect atomicity remain unverified"
+  ]
+}

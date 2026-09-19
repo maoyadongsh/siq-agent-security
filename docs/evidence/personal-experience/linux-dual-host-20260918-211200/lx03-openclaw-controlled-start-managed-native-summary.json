@@ -1,0 +1,40 @@
+{
+  "schema_version": "personal-lx03-openclaw-controlled-start-managed-native-summary/v1",
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "host_platform": "OpenClaw 2026.5.12 temporary pinned checkpoint-v2 copy",
+  "host_os": "linux/arm64",
+  "evidence_level": "isolated_prepared_host_public_cli_and_product_managed_adapter",
+  "passed": true,
+  "checks": 22,
+  "native_entrypoint": "controlled-start run -> public openclaw agent --local",
+  "managed_adapter_installed_by_product": true,
+  "native_session_enrolled": true,
+  "authorized_read_executed": true,
+  "write_without_authority_denied_before_execution": true,
+  "valid_grant_out_of_root_read_denied": true,
+  "raw_capture_authorized_then_revoked": true,
+  "runtime_identity_revocation_denied_new_calls": true,
+  "ambient_override_probe": {
+    "injected_names": [
+      "AGENTSHIELD_MODE",
+      "AGENTSHIELD_ENDPOINT",
+      "SIQ_AGENT_SECURITY_MODE",
+      "OPENCLAW_CONFIG_PATH",
+      "NODE_OPTIONS",
+      "NODE_PATH"
+    ],
+    "ignored": true
+  },
+  "signed_receipt_chain_verified": true,
+  "receipt_count": 7,
+  "installed_host_target_sha256": "042d9a61c028964fe320c6217852820d0af9be8628b2762532912db2050cd082",
+  "private_report_sha256": "66194d6a5fa07f0abcb21b1e7ca5f35ed65b55b4c3009c17d2dff1ad43de349d",
+  "harness_sha256": "3c5bae25640c263f71b96553e217b212985aa53a2fe3df85aef6b19f20d63dc5",
+  "controlled_start_sha256": "eabb9b8fab651a9844ceded3b0b8ff0edef43bdc63a2ec8264fbd7b3a7d7652c",
+  "limitations": [
+    "Pinned temporary checkpoint copy, not installed stock OpenClaw or latest 2026.9.4.",
+    "Synthetic model and operator, isolated profile and harmless fixture files; no human desktop acceptance.",
+    "The browser approval path is separately evidenced; this CLI leg does not exercise approval hold.",
+    "No OS sandbox, external side-effect atomicity or cross-process exactly-once proof."
+  ]
+}

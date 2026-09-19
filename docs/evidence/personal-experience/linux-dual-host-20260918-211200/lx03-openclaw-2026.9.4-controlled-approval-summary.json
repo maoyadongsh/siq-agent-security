@@ -1,0 +1,52 @@
+{
+  "adapter_sha256": "c293bd0979050e042244f0f4723524ffe4302d48f0ccbfa8e0f3b109105512a5",
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "cases": 18,
+  "checkpoint_target_sha256": "d94f361a7e1abe6754f09897a6bbfabae87b25bc4cd446a51c5c969a494bf7fe",
+  "controlled_host_approved_execution_once": true,
+  "controlled_start_checks": {
+    "2026.5.12_full_approval_regression": true,
+    "2026.5.12_prepare_inspect": true,
+    "2026.9.4_prepare_inspect_run_version": true
+  },
+  "controlled_start_sha256": "33d6cee00b61afc6248a975441d6a12eb067c96e61a386811c52d40185c8edee",
+  "driver_compatibility_fixes": [
+    "accept stable denial prefix because 2026.9.4 appends guidance",
+    "omit removed canvasHost key",
+    "accept .mjs and renamed agent-tools/hook-helpers chunks",
+    "standalone revocation/fault drivers accept fixed candidate input"
+  ],
+  "fault_worker_sha256": "c1c0c96dff229812bd586cc476001d8dccad2f70c8409bac8e0dbf6cd9e735f8",
+  "faults_parameter_drift_timeout_cancellation_offline_rejected": true,
+  "groups": {
+    "faults": 9,
+    "ordinary": 6,
+    "revocation": 2,
+    "stock_unsupported": 1
+  },
+  "host_os": "linux/arm64",
+  "host_platform": "OpenClaw 2026.9.4 isolated self-contained npm installation",
+  "installed_openclaw_2026_5_12_unchanged": true,
+  "integration_driver_sha256": "5d4ee8ea1ac476f31993e7f83d2b7bac3d0f16ce9c42e3967ff82782c740d872",
+  "limitations": [
+    "Latest host is an isolated self-contained npm installation with a pinned local patch; the installed host was not upgraded.",
+    "Patch is a SIQ controlled-start compatibility profile, not an upstream OpenClaw capability or formal release artifact.",
+    "Synthetic operator/model and harmless local effect do not prove human desktop acceptance or atomic external effects.",
+    "The context capability is trusted same-process host metadata; it is not a cryptographic boundary against a malicious plugin."
+  ],
+  "node_version": "v24.18.0",
+  "openclaw_2026_5_12_post_compat_cases": 18,
+  "openclaw_2026_5_12_post_compat_passed": true,
+  "openclaw_2026_5_12_post_compat_private_report_sha256": "0827cd8635bc143b0105f23f2202f799eb318aa5135ecce0a8e49ec112ac8e18",
+  "passed": true,
+  "patch_profile_sha256": "671d3f84d644c6cfcbe8fd3d3f536faf35f5ba29a161d2734457da2acbe13a1e",
+  "patch_sha256": "404812315a0056d44cc05b32442d1756a7f3a7a6e12ace2285e8ae8ab499fbd3",
+  "private_report_sha256": "c4218a3af17ae8ae1568ec91682a863a02cdace26f24b2163b0fe4a2a0679d03",
+  "receipt_chains_verified": true,
+  "revoked_authority_rejected_after_platform_approval": true,
+  "schema_version": "linux-lx03-openclaw-2026.9.4-controlled-approval/v1",
+  "source_npm_archive_sha256": "4f1f656770461d4677dea755b1899cba12b912b06798c89a59e2f0c18688b761",
+  "stock_host_hold_failed_closed": true,
+  "stock_target_sha256": "809c4545e65460961c9cb3e43fcfa506a4829c1a0f6c83889b689ff266903274",
+  "worker_sha256": "0109ebb5d73a42a3f52c10f5470a550e42feffe3dc465a471169a628a8bf7f41"
+}

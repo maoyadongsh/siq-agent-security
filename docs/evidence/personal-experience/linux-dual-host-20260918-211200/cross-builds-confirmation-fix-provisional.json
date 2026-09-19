@@ -1,0 +1,12 @@
+{
+  "schema_version": "linux-lx03-confirmation-fix-cross-builds/v1",
+  "source_binding_sha256": "dbc07ca53280c61052644b220d013e909b16c2a499d7a30c558b65bb738c1323",
+  "build_command": "CGO_ENABLED=0 GOOS=<target-os> GOARCH=<target-arch> go build -o <private binary> ./cmd/agentshield",
+  "targets": {
+    "linux/arm64": "6ce92b692f099478e88a86e368e9132ab113c5eecc41c77a791ca7d367d3262e",
+    "linux/amd64": "cad7a9d1e26470157175215f6117d461320a11942c3d97efe26aac66aba845e2",
+    "darwin/arm64": "48f091d7d45a2b95b6612ed1992529df5e4ce31e762c6b98bea186195d8c6101",
+    "windows/amd64": "ff99f979bc77828229c853176aa18016a412a6f0f03c93d6adaa8e27ed974382"
+  },
+  "warning": "Build success is not Windows/macOS real-host acceptance; non-executed artifacts private 0600, executed Linux arm64 binary private 0700."
+}

@@ -1,0 +1,20 @@
+{
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "check_ids": [
+    "old_401_preserves_new_session",
+    "duplicate_pair_submit_single_request"
+  ],
+  "checks": 2,
+  "driver_sha256": "9ba41dbc127f2e30416858b9aff3f7024d78472a120dc25f08878c9b78ae2693",
+  "limitations": [
+    "Real isolated daemon and headless browser, not a human visual inspection.",
+    "The historical phase-c locator timeout did not reproduce here; its root cause remains unproven."
+  ],
+  "observed": "A delayed 401 from an old admin session did not invalidate the new paired session; concurrent pair form submits yielded one request.",
+  "passed": true,
+  "private_report_sha256": "0686c7ccaa422699fe9696b431947a8081bcba0298c0a1c2d4b7bfb3d8b72005",
+  "recorded_at": "2026-09-18T22:28:21.662906+00:00",
+  "release_acceptance": false,
+  "schema_version": "linux-lx05-session-race-sixth-summary/v1",
+  "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0"
+}

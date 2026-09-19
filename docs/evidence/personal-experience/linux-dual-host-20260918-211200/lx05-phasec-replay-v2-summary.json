@@ -1,0 +1,77 @@
+{
+  "schema_version": "linux-lx05-phasec-replay-result/v1",
+  "recorded_at": "2026-09-18T18:02:31.884987+00:00",
+  "candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "driver_sha256": "90a89143a83b5857264b75f88de1cc1f285470ca1cab9aa53845d615fdedaf73",
+  "plan_sha256": "a34b7f9c218a6059e45f0b6425f2ec9885000403e892edb3de68229d35f89391",
+  "attempts_planned": 3,
+  "attempts_run": 3,
+  "passed_count": 3,
+  "failed_count": 0,
+  "all_passed": true,
+  "attempts": [
+    {
+      "attempt": 1,
+      "started_at_utc": "2026-09-18T17:58:28.597207+00:00",
+      "finished_at_utc": "2026-09-18T17:59:49.809219+00:00",
+      "exit_code": 0,
+      "timeout": false,
+      "private_log_sha256": "45d8dc10c02a378c860af2d0e16c9e6ee180dbdc8a6de58de6e5ff420af77d15",
+      "private_report_sha256": "71d00578741e5c53ca438751dafc802e2e89304819f29bbc4a7acb1a42f809a4",
+      "candidate_matches": true,
+      "driver_matches": true,
+      "check_count": 30,
+      "phase_c_checks": 2,
+      "phase_c_passed": true,
+      "nested_checks": [
+        31
+      ],
+      "reported_passed": true,
+      "valid_pass": true
+    },
+    {
+      "attempt": 2,
+      "started_at_utc": "2026-09-18T17:59:49.809546+00:00",
+      "finished_at_utc": "2026-09-18T18:01:10.571268+00:00",
+      "exit_code": 0,
+      "timeout": false,
+      "private_log_sha256": "45d8dc10c02a378c860af2d0e16c9e6ee180dbdc8a6de58de6e5ff420af77d15",
+      "private_report_sha256": "de472750c37e1e0c0edfc17edf8b43bf0ba3d660ee89406b5f2cbc8c58652fe0",
+      "candidate_matches": true,
+      "driver_matches": true,
+      "check_count": 30,
+      "phase_c_checks": 2,
+      "phase_c_passed": true,
+      "nested_checks": [
+        31
+      ],
+      "reported_passed": true,
+      "valid_pass": true
+    },
+    {
+      "attempt": 3,
+      "started_at_utc": "2026-09-18T18:01:10.571606+00:00",
+      "finished_at_utc": "2026-09-18T18:02:31.884612+00:00",
+      "exit_code": 0,
+      "timeout": false,
+      "private_log_sha256": "45d8dc10c02a378c860af2d0e16c9e6ee180dbdc8a6de58de6e5ff420af77d15",
+      "private_report_sha256": "999f39d025997b958306f105ec1c6f432231dba429e38d60c5cbf4aac7cf4649",
+      "candidate_matches": true,
+      "driver_matches": true,
+      "check_count": 30,
+      "phase_c_checks": 2,
+      "phase_c_passed": true,
+      "nested_checks": [
+        31
+      ],
+      "reported_passed": true,
+      "valid_pass": true
+    }
+  ],
+  "inputs_unchanged_after_run": true,
+  "limitations": [
+    "A finite replay does not prove a historical intermittent timeout cannot recur.",
+    "The harness uses a synthetic model and automated browser operator.",
+    "Each attempt creates and cleans its own isolated runtime; logs remain private."
+  ]
+}

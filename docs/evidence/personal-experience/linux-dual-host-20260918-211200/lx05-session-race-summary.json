@@ -1,0 +1,47 @@
+{
+  "schema_version": "linux-lx05-session-race-summary/v1",
+  "recorded_at": "2026-09-18T16:04:32.807015+00:00",
+  "old_candidate_sha256": "70df54555205ccd6dca9779c5c18a4ccb2b5e1256038db387ff3030d572db02e",
+  "new_candidate_sha256": "929bfbe5ded6ea0e0c6a76766d5f2dcec84f99fedd3defc530eb63129fcb1935",
+  "failure": {
+    "level": "real_daemon_embedded_ui_headless_browser",
+    "old_response_http_status": 401,
+    "observed": "old-session 401 moved the newly paired page back to pairing",
+    "private_report_sha256": "6a1e451ac8781209cc1908849b7ab21f42499f82e12bf0ca7ea596a048b4385f",
+    "private_console_sha256": "fd0213629f6f21d6a6507826cfa27e92213b9fa8fb64d41953624c09bc8a71f3"
+  },
+  "fix": {
+    "api": "requests and pairing/logout responses bound to session epoch; stale 401 cannot invalidate a newer bearer",
+    "ui": "status reload generation rejects stale resolution; duplicate same-tick pairing guarded"
+  },
+  "verification": {
+    "passed": true,
+    "real_browser_checks": [
+      {
+        "id": "old_401_preserves_new_session",
+        "status": "pass",
+        "old_http_status": 401
+      },
+      {
+        "id": "duplicate_pair_submit_single_request",
+        "status": "pass",
+        "request_count": 1
+      }
+    ],
+    "private_report_sha256": "c47a74957bee1dadbf5e1fea042fa3870e0de9db77055f861f65f6e3a7104580",
+    "private_console_sha256": "61deff397a2f626415fb9a040fdedd1491501293dc2e6dc17a3199f76060802b",
+    "r07_checks": 30,
+    "r07_nested_r04_checks": 31,
+    "r07_private_report_sha256": "e79292d8671d4591b5ff0621304693d802825ed5d013f777d54374e9c40c412e",
+    "browser_version": "145.0.7632.0",
+    "web_unit_tests": 116,
+    "go_test_packages": 40
+  },
+  "candidate_ref": "candidate-ui-session-race.json",
+  "limitations": [
+    "original historical phase-c locator timeout remains unreproduced and its cause unproven",
+    "new candidate real-host and performance acceptance beyond these scoped legs remains pending",
+    "headless browser is not a human desktop visual acceptance"
+  ],
+  "release_acceptance": false
+}

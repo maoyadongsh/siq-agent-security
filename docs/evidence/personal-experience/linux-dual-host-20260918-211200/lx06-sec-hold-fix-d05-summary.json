@@ -1,0 +1,52 @@
+{
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+  "cli_version": "0.0.83",
+  "driver_sha256": "d11aacc835ce961a145a830b741be97aac8b0ca35fcb423c2812ad4ada650717",
+  "image_sha256": "sha256:523904c19a4b886e87b8340d7d359e4400a1d2e58def479e351dddad8ff1ee72",
+  "limitations": [
+    "E06, E08 and E11 remain partial; E08h remote single-task stop is not confirmed by the v0.0.83 backend.",
+    "Exit code zero and no fail steps mean the driver completed; they do not mean the entire acceptance matrix passed.",
+    "The sandbox was dedicated to this batch; shared gateway configuration and pre-existing sandboxes were not changed.",
+    "No B2/B3 or S1-S4 sixth-candidate latency/RSS budget result is asserted.",
+    "Fourth-candidate LX04 admin-session natural expiry evidence cannot be attributed to this binary."
+  ],
+  "matrix": {
+    "acceptance": {
+      "partial": 3,
+      "pass": 10
+    },
+    "k90_restore_pass": 4,
+    "partial_requirements": [
+      "E06",
+      "E08",
+      "E11"
+    ],
+    "steps": {
+      "blocked": 1,
+      "fail": 0,
+      "partial": 7,
+      "pass": 365
+    },
+    "total": 373
+  },
+  "performance": "not_measured; LX04 expiry worker remains live and fifth frozen plan does not bind this candidate",
+  "private_console_sha256": "85cc8333ec5eefd2893816db7f34145412003fc99fff752d7bd1aac076d086b1",
+  "private_env_script_sha256": "770657be5b6e7f65d0ba8ef1bdc2198750b5f6760da4878776b454b5e1a1392d",
+  "private_matrix_sha256": "6d1b9ca8866cd90466ac9d2e9f42ba3eafb1e092ea6157635772b175cf269281",
+  "recorded_at": "2026-09-18T22:28:09.887007+00:00",
+  "release_acceptance": false,
+  "sandbox": {
+    "created_by_this_batch": true,
+    "delete_cli_exit": 0,
+    "exact_owned_name": "siq-lx06-sec-hold-fix-20260919",
+    "post_delete_get": "absent",
+    "post_delete_names_sha256": "068bbffbed7578e3aa888e23149b336b8ca351b36b327e8d39a86c2e624e9cf2",
+    "preexisting_count": 3,
+    "preexisting_names_sha256": "068bbffbed7578e3aa888e23149b336b8ca351b36b327e8d39a86c2e624e9cf2",
+    "preexisting_names_unchanged": true
+  },
+  "schema_version": "linux-lx06-sec-hold-fix-d05-summary/v1",
+  "scope": "real OpenShell D05 functional matrix, not performance",
+  "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0"
+}

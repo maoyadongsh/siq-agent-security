@@ -1,0 +1,42 @@
+{
+  "schema_version": "linux-lx03-confirmation-fix-service-down/v1",
+  "recorded_at": "2026-09-18T21:31:03.641168+00:00",
+  "host_os": "linux/arm64",
+  "candidate_sha256": "6ce92b692f099478e88a86e368e9132ab113c5eecc41c77a791ca7d367d3262e",
+  "source_binding_sha256": "dbc07ca53280c61052644b220d013e909b16c2a499d7a30c558b65bb738c1323",
+  "status": "passed_with_scoped_limitations",
+  "legs": {
+    "openclaw": {
+      "host_platform": "OpenClaw 2026.5.12 public CLI",
+      "checks_passed": 16,
+      "private_report_sha256": "e9599403958d87a9ad55aef194bdd1f7c42b31c6fbc8578445e329bfe75bc377",
+      "driver_sha256": "8662a733569fdc7475ba25aa7111b74b787678e1b58ad9af8d7dafd90e09662a",
+      "native_entry_sha256": "ee861ae6f3298a0c2062ff52a682b5ce4786ae515a3eb816921f9a128341c733"
+    },
+    "hermes": {
+      "host_platform": "Hermes v0.21.0 public CLI",
+      "checks_passed": 9,
+      "private_report_sha256": "ab8ac6f7396a3d811e739620bb1e04b3fdb6d31427948965dc030ae76a3f6e11",
+      "driver_sha256": "c97bec9724916a1631321227f49e2ec4f1128f8b9c0fa57ed2d82b613f0e5e97",
+      "native_entry_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609"
+    },
+    "hermes_same_task": {
+      "host_platform": "Hermes v0.21.0 public CLI",
+      "checks_passed": 12,
+      "private_report_sha256": "1c6fc34eebd6904b36341a07c61741c0973d772c4ed335b0936cf68738b02e4a",
+      "driver_sha256": "1b18e0e17c0ea3b53ef6e25957b35b2faf92d072f878de6be61784a137f8fa58",
+      "native_entry_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+      "same_native_task": true,
+      "online_read_and_write_control": true
+    }
+  },
+  "openclaw_observed": "Online native file write created a fixture marker; stopping only the isolated daemon denied native read/write with no new file effect and no post-selftest loopback arrival; same-port restart promoted four pending denials to signed receipts and recovered an allowed read.",
+  "hermes_observed": "Online native read succeeded; after stopping only its isolated daemon, native read denied without protected body, write created no marker, and the signed receipt chain was unchanged.",
+  "limitations": [
+    "The earlier Hermes 9/9 offline leg had no online write permission; the new 12/12 same-task leg independently establishes online read/write positive controls under one valid Grant and SEC.",
+    "OpenClaw network receiver only covers denied exec; no authorized network-egress allow path or OS firewall guarantee is established.",
+    "Local deterministic models and isolated fixture operator; no external provider.",
+    "Stock OpenClaw post-approval execution checkpoint and cross-daemon/external-effect atomicity remain unverified."
+  ],
+  "hermes_same_task_observed": "12/12: one SEC bootstrap and one public CLI task; authorized native read and write both executed before stopping only the isolated daemon; the same task's subsequent read and write were blocked, with no protected body, no new file, and no signed receipt mutation."
+}

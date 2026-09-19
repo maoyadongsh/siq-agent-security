@@ -1,0 +1,73 @@
+{
+  "schema_version": "personal-lx03-hermes-browser-approval-native-summary/v1",
+  "candidate_sha256": "67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+  "host_platform": "Hermes Agent v0.21.0 public chat --oneshot",
+  "host_os": "linux/arm64",
+  "evidence_level": "isolated_real_hermes_cli_and_embedded_browser_ui",
+  "passed": true,
+  "checks": 24,
+  "browser_actions": [
+    {
+      "case": "approve",
+      "action": "approve",
+      "native_file_effect": true,
+      "execution_observations": 1
+    },
+    {
+      "case": "deny",
+      "action": "deny",
+      "native_file_effect": false,
+      "execution_observations": 0
+    },
+    {
+      "case": "drift",
+      "action": "approve",
+      "native_file_effect": false,
+      "execution_observations": 0
+    },
+    {
+      "case": "object_drift",
+      "action": "approve",
+      "native_file_effect": false,
+      "execution_observations": 0
+    },
+    {
+      "case": "race",
+      "action": "approve",
+      "native_file_effect": false,
+      "execution_observations": 0
+    },
+    {
+      "case": "revoke",
+      "action": "approve",
+      "native_file_effect": false,
+      "execution_observations": 0
+    }
+  ],
+  "replay_rejected": true,
+  "parameter_drift_rejected": true,
+  "object_drift_rejected": true,
+  "grant_revoke_rejected": true,
+  "race_reservation_statuses": [
+    201,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409,
+    409
+  ],
+  "signed_receipt_chain_verified": true,
+  "receipt_count": 20,
+  "host_profile_config_unchanged": true,
+  "private_report_sha256": "ebb2e29075ed79007755df71448cfe13d70c936390d824825a1d19561bf4c8f2",
+  "browser_driver_sha256": "42644ecb31c66f920d79c6e620f2803c8a95f096d135e58a4083e7d90ced3293",
+  "base_approval_driver_sha256": "2a89d55f8fa5089d65f7f042e27d5a505e0ffe5252d303245e1819a908ba446e",
+  "native_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+  "limitations": [
+    "Automated headless Chromium reviewer and synthetic model/target; no human visual or desktop notification acceptance.",
+    "One local file effect and one daemon do not prove cross-daemon or external-effect atomicity.",
+    "This Hermes result does not transfer to stock OpenClaw approval behavior."
+  ]
+}

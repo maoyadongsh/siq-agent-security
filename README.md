@@ -27,7 +27,7 @@
 </p>
 
 <p align="center">
-  <a href="#个人用户使用路线">个人用户</a> · <a href="#企业用户使用路线">企业用户</a> · <a href="#快速开始">快速开始</a> · <a href="#研究与证据">研究证据</a> · <a href="#组件与接入">组件接入</a> · <a href="#贡献与下一步">参与贡献</a>
+  <a href="#个人用户使用路线">个人用户</a> · <a href="#企业用户使用路线">企业用户</a> · <a href="#快速开始">快速开始</a> · <a href="RESEARCH.md">研究链路</a> · <a href="#研究与证据">研究证据</a> · <a href="#组件与接入">组件接入</a> · <a href="#贡献与下一步">参与贡献</a>
 </p>
 
 ---
@@ -42,20 +42,22 @@ SIQ Agent Security 将用户授权、参数来源、工具执行和实际效果�
 
 当前优先完善个人用户体验：发现已有智能体与 Skill、由用户确认权限后启用保护、安全安装和更新 Skill，并记录授权与执行证据。SIQ Skill 提供交互与操作指引；实际裁决依赖本机 Go 运行时与平台适配器，安装 Skill 本身不会自动保护所有智能体。管理界面由本地服务提供，可在浏览器打开。
 
-**截至 2026-09-17，以下状态以 `main` 的 `7b4186f` 集成基线为准：** [PR #35](https://github.com/maoyadongsh/siq-agent-security/pull/35) 的 N01 状态兼容、递归备份、迁移恢复和签名发行预检已纳入主线；此后个人客户端的 Skill 更新检查、归属与审批恢复、隐私控制及 Linux 阶段验证持续落盘。[PR #69](https://github.com/maoyadongsh/siq-agent-security/pull/69) 已合入 Mac 阶段成果，[PR #70](https://github.com/maoyadongsh/siq-agent-security/pull/70) 已合入 OpenShell 策略授权、加载等待、签名身份保护和集成修复。研究源码标签与早期二进制发行版不包含这些后续成果；代码合并、组件测试、实机验收和正式发行分别记账。
+**截至 2026-09-18，以下状态以 `main` 的 `2187fea` 集成基线为准：** [PR #35](https://github.com/maoyadongsh/siq-agent-security/pull/35) 的 N01 状态兼容、递归备份、迁移恢复和签名发行预检已纳入主线；此后个人客户端的 Skill 更新检查、归属与审批恢复、隐私控制及 Linux 阶段验证持续落盘。[PR #69](https://github.com/maoyadongsh/siq-agent-security/pull/69) 已合入 Mac 阶段成果，[PR #70](https://github.com/maoyadongsh/siq-agent-security/pull/70) 已合入 OpenShell 策略授权、加载等待、签名身份保护和集成修复。[PR #75](https://github.com/maoyadongsh/siq-agent-security/pull/75) 已合入 v6 受约束任务执行与阶段验收代码，[PR #76](https://github.com/maoyadongsh/siq-agent-security/pull/76) 已合入 Windows 阶段计时测试修正。研究源码标签与早期二进制发行版不包含这些后续成果；代码合并、组件测试、实机验收和正式发行分别记账。
 
 | 范围 | 当前可核验状态 | 尚待完成 |
 | --- | --- | --- |
-| Linux 个人管理 | 本地控制台、后台生命周期、Skill 安装/更新/移除、审批恢复、原文与导出已有实现及分批 Linux 验证 | 按最终候选完成剩余完整旅程、桌面通知视觉确认与正式发行验收 |
+| Linux 个人管理 | 本地控制台、后台生命周期、Skill 安装/更新/移除、审批恢复、原文与导出已有实现及分批 Linux 验证；第六代本地候选的已装 B02、R07/R04 联合旅程已通过；原文保留与任务导出已按当前范围验收 | 原版 OpenClaw 审批后检查点、桌面通知视觉确认与正式发行验收；补充性的管理员会话连续 12 小时腿已移出当前范围，未记通过 |
 | macOS | LaunchAgent 生命周期与 Mac 适配修复已合入；Luke 的 OpenClaw、Hermes、WorkBuddy 开发成果已有阶段性推送，其中 WorkBuddy 阶段性完成 | 新候选的三宿主同候选复测、完整平台验收和签名公证分发；阶段性完成不等于发布验收 |
 | Windows | 主线已有任务准备、注册及后台生命周期；sunbo 正在进行 OpenClaw、Hermes、WorkBuddy 原生/WSL2 实测与适配，已推送部分分支 | 审阅尚未合入的成果并完成剩余开发；原生与 WSL2 分开验收，不能以交叉构建替代实机 |
 | OpenClaw / Hermes / WorkBuddy | OpenClaw、Hermes 的部分本机 Linux 原生归属与批准重试路径已有验证；Skill 新版检查与更新流程已有实现 | Linux 只交付 OpenClaw、Hermes；Windows/macOS 的三宿主按各自同候选实机证据验收，WorkBuddy 不借用 CodeBuddy 证据 |
-| DGX Spark / OpenShell | 已有 DGX Spark / GB10 / Linux ARM64 部署与本地推理证据；真实 OpenShell 网络策略读回、加载等待及恢复已分批验证 | 最终候选性能与完整任务执行、远端停止/恢复闭环；不将旧候选或其他网关版本的结果迁移为当前通过 |
+| DGX Spark / OpenShell | 已有 DGX Spark / GB10 / Linux ARM64 部署与本地推理证据；第六代本地候选的真实 OpenShell D05 为 373 步零 fail，B3 功能旅程 57/57 | 远端单任务停止协议、少数外部/协议残余项、性能与正式发行门；不将旧候选或其他网关版本的结果迁移为当前通过 |
 | 局域网团队多设备管理 | 仓库已有可选企业 Control API、Edge、Connectors 与多租户治理基础 | 个人体验优先收口，再完成团队设备接入、统一管控与多设备验收 |
 
-主线 OpenShell 会话接口当前为 **`policy_apply`，`task_executed=false`**；v6 新增真实任务执行接口仍在独立开发工作树，尚未合入本基线。发现资产不等于已启用保护；保护范围取决于实际接入的工具路径。
+主线现已有 v6 OpenShell 受约束任务执行入口：执行前需要显式绑定 CLI 与 endpoint、确认策略加载及实例身份，并再次校验授权。历史 `policy_apply` 响应仍不代表任务实际执行；任务是否启动以执行入口的回执和效果证据判断。旧候选的真实网关与性能结果只对应旧源码；[当前 Linux 续作任务](docs/linux-dual-host-integration-development-taskbook-20260918-205119.md)及其[进度台账](docs/linux-dual-host-progress-20260918.md)分别记录第六代候选的已装服务、双宿主与 OpenShell 功能结果。远端单任务停止确认、性能及完整发行门槛仍未关闭。发现资产不等于已启用保护；保护范围取决于实际接入的工具路径。
 
-2026-09-17 的[平台范围决策](docs/personal-platform-scope-decision-20260917.md)明确本机 Linux 仅支持 Hermes 与 OpenClaw 的后续交付；Linux/WorkBuddy 不再排期，历史探测或矩阵占位不代表验收通过。**CodeBuddy 后续任务和新适配已全平台取消**，不在当前支持矩阵中；本地候选阻止其新安装、新 Grant 和旧待激活 Grant 的启用，保留历史配置和记录的安全查看、拒绝、撤销及卸载。Linux 控制台、管理 API 与 CLI 同样阻止新的 WorkBuddy 接入，保留既有配置的查看与卸载。该候选仍待同二进制真实网关复测。
+OpenClaw 的版本能力也分别记账：本机共享安装仍保持 2026.5.12；当前 Linux 候选另在隔离 Node 24.18.0 环境中，用[受控启动入口](docs/openclaw-controlled-start-linux-20260919.md)实际运行 OpenClaw 2026.9.4 公共 CLI，并完成产品托管原生旅程 22/22。该结果属于摘要固定的临时补丁副本；2026.9.4 原版仍没有 SIQ 所需的批准后、执行前最终参数复查合同，因此不能解释为默认升级、上游原版审批能力或正式发行支持。版本升级不会自动提升保护等级，具体范围以同版本、同候选证据为准。
+
+2026-09-17 的[平台范围决策](docs/personal-platform-scope-decision-20260917.md)明确本机 Linux 仅支持 Hermes 与 OpenClaw 的后续交付；Linux/WorkBuddy 不再排期，历史探测或矩阵占位不代表验收通过。**CodeBuddy 后续任务和新适配已全平台取消**，不在当前支持矩阵中；本地候选阻止其新安装、新 Grant 和旧待激活 Grant 的启用，保留历史配置和记录的安全查看、拒绝、撤销及卸载。Linux 控制台、管理 API 与 CLI 同样阻止新的 WorkBuddy 接入，保留既有配置的查看与卸载。第六代本地候选已完成同二进制 D05 与 B3 功能复测；条件项、性能与正式发行继续单独记账。
 
 当前入口：[个人与团队 v5 总体任务书](docs/personal-experience-lan-team-next-development-taskbook-20260915-232155.md) · [接续进度与复核记录](docs/personal-experience-closure-progress-20260913.md) · [原始开发台账](docs/personal-experience-development-progress-20260910.md) · [Mac 后续任务](docs/personal-macos-luke-remaining-development-20260917.md) · [Mac 集成报告](docs/evidence/personal-experience/macos-stage-review-fixes-20260917/report.md) · [GLM/OpenShell 集成报告](docs/evidence/personal-experience/glm-stage-integration-20260917/report.md)。历史文档中的“未提交”等表述是当时快照，当前提交范围以 Git 历史和后续复核为准。尚未合入的任务书不作为主线可用功能承诺。
 
@@ -293,11 +295,12 @@ flowchart LR
 | 网关身份与能力诊断 | 配置指纹、真实网关握手、mTLS 环境接入、目标策略读回；区分 CLI 版本、配置事实、握手及行为证据 | `gateway info` 成功不等于后端已就绪；版本提升不自动赋予能力，缓存与证据会失效 |
 | 策略保真与权限编译 | 从获准网络范围生成策略；读回保留程序、端点及可表达的 method/path、CIDR 等限制；不可保真写入拒绝降格 | 网络动态策略与文件系统/进程等静态段分开处理，不承诺所有限制都能在线修改 |
 | 加载确认与恢复 | Go 与 Python 的实际应用/回滚使用有界 `--wait --timeout`；核对修订/摘要，拒绝漂移、越权恢复和已知不可恢复的基线替换 | 加载超时保留副作用可能发生的不确定性，不重试为无等待写入；当前操作协调有明确进程范围 |
+| 受约束任务执行 | `main` 已含 v6 执行入口：执行前重验目标实例、策略加载与授权，区分任务启动、结果证据和不确定状态；[本机续作进度](docs/linux-dual-host-progress-20260918.md)单独记录新候选实测 | 执行入口的存在不等于所有网关版本可远端单任务停止，也不等于正式发行验收 |
 | 实机负向验证 | 归档 OpenShell **0.0.83** 独占测试目标的允许正控、跨边界 HTTP 403、独立接收端零到达及原策略恢复；另有 rc.6 的 57 项策略 HTTP 旅程 | [加载等待修复与实测](docs/openshell-policy-load-wait-repair-20260916.md)绑定当时源码、候选和网关；后续候选及其他版本需重新验证 |
 
 上游策略机制参考 [NVIDIA OpenShell 官方文档](https://docs.nvidia.com/openshell/sandboxes/policies)。上游文档会随版本演进，本仓能力声明以已适配实现和具体版本实测为准。**配置可表达、策略可读回、沙箱确认加载、行为实际受阻是不同证据层级**，不能相互替代。
 
-主线目前完成的是上述策略管控与分级验证，完整 OpenShell 任务执行、远端停止确认和新候选端到端性能仍在后续开发范围。DGX 上的 CPU 夹具测试也与 GPU/本地模型推理分别统计。普通 Linux 用户仍可独立使用本地安全管理和无密钥研究演示。
+主线已有受约束 OpenShell 任务执行入口及分级验证；跨场景完整验收、远端单任务停止确认和新候选端到端性能继续分别记账。DGX 上的 CPU 夹具测试也与 GPU/本地模型推理分别统计。普通 Linux 用户仍可独立使用本地安全管理和无密钥研究演示。
 
 ## 快速开始
 
